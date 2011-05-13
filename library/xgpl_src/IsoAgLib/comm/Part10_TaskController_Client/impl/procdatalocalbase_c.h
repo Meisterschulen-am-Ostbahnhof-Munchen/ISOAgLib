@@ -49,8 +49,8 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataLocalBase_c( const IsoAgLib::ElementDdi_s* aps_elementDDI = NULL, uint16_t aui16_element = 0xFFFF,
-                       const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
+  ProcDataLocalBase_c( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
+                       const IsoName_c& acrc_isoName,
                        const IsoName_c *apc_externalOverridingIsoName = NULL,
                        bool ab_cumulativeValue = false,
                        IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -96,7 +96,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-            const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& acrc_isoName,
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
 			IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,

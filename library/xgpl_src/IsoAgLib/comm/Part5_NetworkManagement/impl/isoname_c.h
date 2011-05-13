@@ -40,10 +40,6 @@ public:
     */
   static const IsoName_c& IsoNameUnspecified();
 
-  /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
-    */
-  static const IsoName_c& IsoNameInitialProcessData();
-
   /** default constructor
     using "explicit" to avoid WRONG implicit cast from SA to ISONAME!
     @param aui8_devClass     initial DEVCLASS (device type)

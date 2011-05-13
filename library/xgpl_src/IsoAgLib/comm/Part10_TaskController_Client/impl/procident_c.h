@@ -44,9 +44,9 @@ public:
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c(
-              const IsoAgLib::ElementDdi_s* aps_elementDDI = NULL,
-              uint16_t aui16_element = 0xFFFF,
-              const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
+              const IsoAgLib::ElementDdi_s* aps_elementDDI,
+              uint16_t aui16_element,
+              const IsoName_c& acrc_isoName,
               const IsoName_c *apc_externalOverridingIsoName = NULL,
               int ai_multitonInst = 0);
 

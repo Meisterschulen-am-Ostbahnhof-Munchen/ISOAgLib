@@ -60,22 +60,11 @@ public:
     */
   static const iIsoName_c& iIsoNameUnspecified() { return IsoNameUnspecified().toConstIisoName_c(); }
 
-  /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
-      the instantiation of this constant variable is located in the module cancustomer_c.cpp
-    */
-  static const iIsoName_c& iIsoNameInitialProcessData() { return IsoNameInitialProcessData().toConstIisoName_c(); }
-
   /** constant for default parameters and initialization, where the device type is not yet spcified.
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
       THIS VARIANT IS ONLY FOR BACKWARD COMPATIBILITY AT API LEVEL
     */
   static const iIsoName_c& iISONameUnspecified() { return iIsoNameUnspecified(); }
-
-  /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
-      the instantiation of this constant variable is located in the module cancustomer_c.cpp
-      THIS VARIANT IS ONLY FOR BACKWARD COMPATIBILITY AT API LEVEL
-    */
-  static const iIsoName_c& iISONameInitialProcessData() { return iIsoNameInitialProcessData(); }
 
   /** default constructor
     using "explicit" to avoid WRONG implicit cast from SA to ISONAME!

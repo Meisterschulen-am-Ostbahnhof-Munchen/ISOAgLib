@@ -28,14 +28,6 @@ IsoName_c::IsoNameUnspecified()
 }
 
 
-const IsoName_c&
-IsoName_c::IsoNameInitialProcessData()
-{
-  static IsoName_c sc_isoNameInitialProcessData( 0x00, 0xF );
-  return sc_isoNameInitialProcessData;
-}
-
-
 void
 IsoName_c::set(
   bool ab_selfConf,

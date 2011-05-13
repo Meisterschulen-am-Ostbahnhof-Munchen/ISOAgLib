@@ -50,9 +50,9 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  iProcDataLocal_c( const ElementDdi_s* ps_elementDDI = NULL,
-                    uint16_t aui16_element = 0xFFFF,
-                    const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+  iProcDataLocal_c( const ElementDdi_s* ps_elementDDI,
+                    uint16_t aui16_element,
+                    const iIsoName_c& acrc_isoName,
                     const iIsoName_c *apc_externalOverridingIsoName = NULL,
                     bool ab_cumulativeValue = false,
                   ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -71,7 +71,7 @@ public:
     ...
   */
   iProcDataLocal_c( uint16_t aui16_DDI, uint16_t aui16_element,
-                    const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+                    const iIsoName_c& acrc_isoName,
                     const iIsoName_c *apc_externalOverridingIsoName = NULL,
                     bool ab_cumulativeValue = false,
                    ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -127,9 +127,9 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void init( const ElementDdi_s* ps_elementDDI = NULL,
-             uint16_t aui16_element = 0xFFFF,
-             const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+  void init( const ElementDdi_s* ps_elementDDI,
+             uint16_t aui16_element,
+             const iIsoName_c& acrc_isoName,
              const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_multitonInst = 0
@@ -173,7 +173,7 @@ public:
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
   void init( uint16_t aui16_DDI, uint16_t aui16_element,
-             const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+             const iIsoName_c& acrc_isoName,
              const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_multitonInst = 0
