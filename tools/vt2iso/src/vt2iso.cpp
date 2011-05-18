@@ -594,7 +594,7 @@ void vt2iso_c::clean_exit (const char* error_message)
       fprintf (partFile_list, "\n  all_iVtObjects%s%d,", mstr_poolIdent.c_str(), i);
     fprintf (partFile_list, "\n  NULL // indicate end of list");
     fprintf (partFile_list, "\n};\n");
-    fprintf (partFile_list, mstr_namespaceDeclarationEnd.c_str());
+    fprintf ( partFile_list, "%s", mstr_namespaceDeclarationEnd.c_str());
 
     fclose(partFile_list);
   }
@@ -602,7 +602,7 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (partFile_listAttributes)
   { // -list_attributes.inc
     fputs ("\n};\n", partFile_listAttributes); 
-    fprintf (partFile_listAttributes, mstr_namespaceDeclarationEnd.c_str());
+    fprintf ( partFile_listAttributes, "%s", mstr_namespaceDeclarationEnd.c_str());
     fclose(partFile_listAttributes);
   }
 
@@ -734,11 +734,11 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (pc_specialParsing)
     pc_specialParsing->outputCollectedData2Files();
 
-  fprintf (partFile_variables,         mstr_namespaceDeclarationEnd.c_str());
-  fprintf (partFile_variables_extern,  mstr_namespaceDeclarationEnd.c_str());
-  fprintf (partFile_attributes,        mstr_namespaceDeclarationEnd.c_str());
-  fprintf (partFile_attributes_extern, mstr_namespaceDeclarationEnd.c_str());
-  fprintf (partFile_defines,           mstr_namespaceDeclarationEnd.c_str());
+  fprintf ( partFile_variables, "%s", mstr_namespaceDeclarationEnd.c_str());
+  fprintf ( partFile_variables_extern, "%s", mstr_namespaceDeclarationEnd.c_str());
+  fprintf ( partFile_attributes, "%s", mstr_namespaceDeclarationEnd.c_str());
+  fprintf ( partFile_attributes_extern, "%s", mstr_namespaceDeclarationEnd.c_str());
+  fprintf ( partFile_defines, "%s", mstr_namespaceDeclarationEnd.c_str());
 
   if (partFile_derived)           fclose (partFile_derived);
   if (partFile_variables_extern)  fclose (partFile_variables_extern);
@@ -1090,20 +1090,20 @@ vt2iso_c::init (
 
   partFileName = mstr_destinDirAndProjectPrefix + "-variables.inc";
   partFile_variables = &save_fopen (partFileName.c_str(),"wt");
-  fprintf (partFile_variables, mstr_namespaceDeclarationBegin.c_str());
+  fprintf (partFile_variables, "%s", mstr_namespaceDeclarationBegin.c_str());
 
   partFileName = mstr_destinDirAndProjectPrefix + "-variables-extern.inc";
   partFile_variables_extern = &save_fopen (partFileName.c_str(),"wt");
-  fprintf (partFile_variables_extern, mstr_namespaceDeclarationBegin.c_str());
+  fprintf (partFile_variables_extern, "%s", mstr_namespaceDeclarationBegin.c_str());
 
   partFileName_attributes = mstr_destinDirAndProjectPrefix + "-attributes.inc"; // store original file-name for later wrap-copying over
   partFileName = partFileName_attributes + ".tmp";
   partFile_attributes = &save_fopen (partFileName.c_str(),"wt");
-  fprintf (partFile_attributes, mstr_namespaceDeclarationBegin.c_str());
+  fprintf (partFile_attributes, "%s", mstr_namespaceDeclarationBegin.c_str());
 
   partFileName = mstr_destinDirAndProjectPrefix + "-attributes-extern.inc";
   partFile_attributes_extern = &save_fopen (partFileName.c_str(),"wt");
-  fprintf (partFile_attributes_extern, mstr_namespaceDeclarationBegin.c_str());
+  fprintf (partFile_attributes_extern, "%s", mstr_namespaceDeclarationBegin.c_str());
 
   partFileName = mstr_destinDirAndProjectPrefix + "-functions.inc";
   partFile_functions = &save_fopen (partFileName.c_str(),"wt");
@@ -1113,7 +1113,7 @@ vt2iso_c::init (
 
   partFileName = mstr_destinDirAndProjectPrefix + "-defines.inc";
   partFile_defines = &save_fopen (partFileName.c_str(),"wt");
-  fprintf (partFile_defines, mstr_namespaceDeclarationBegin.c_str());
+  fprintf (partFile_defines, "%s", mstr_namespaceDeclarationBegin.c_str());
 
   partFileName_obj_selection = mstr_destinDirAndProjectPrefix + "-objectselection.inc";
   partFileName = partFileName_obj_selection + ".tmp";
@@ -1121,12 +1121,12 @@ vt2iso_c::init (
 
   partFileName = mstr_destinDirAndProjectPrefix + "-list.inc";
   partFile_list = &save_fopen (partFileName.c_str(),"wt");
-  fprintf (partFile_list, mstr_namespaceDeclarationBegin.c_str());
+  fprintf (partFile_list, "%s", mstr_namespaceDeclarationBegin.c_str());
   fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s [] = {", mstr_poolIdent.c_str());
 
   partFileName = mstr_destinDirAndProjectPrefix + "-list_attributes.inc";
   partFile_listAttributes = &save_fopen (partFileName.c_str(),"wt");
-  fprintf (partFile_listAttributes, mstr_namespaceDeclarationBegin.c_str());
+  fprintf (partFile_listAttributes, "%s", mstr_namespaceDeclarationBegin.c_str());
   fprintf (partFile_listAttributes, "IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs%s [] = {", mstr_poolIdent.c_str());
 
   partFileName = mstr_destinDirAndProjectPrefix + "-handler-derived.inc";
@@ -5338,7 +5338,7 @@ bool vt2iso_c::doAllFiles (action_en aen_action)
   uint16_t u16_xmlFileCnt = getAmountXmlFiles();
   for (indexXmlFile = 0; indexXmlFile < u16_xmlFileCnt; indexXmlFile++)
   { // loop all xmlFiles!
-    XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = NULL;
 
     resetErrors();
 
@@ -5532,7 +5532,7 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
 
   resetErrors();
 
-  XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
+  XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = NULL;
 
   bool errorOccurred = false;
 
@@ -5714,7 +5714,7 @@ vt2iso_c::processVtPresetFile(const std::string& pch_fileName)
 
   resetErrors();
 
-  XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
+  XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc = NULL;
 
   bool errorOccurred = false;
 
@@ -5785,6 +5785,7 @@ vt2iso_c::processVtPresetFile(const std::string& pch_fileName)
       if (!errorOccurred)
       {
         int i_colIndex, i_colRed, i_colGreen, i_colBlue;
+        i_colIndex = i_colRed = i_colGreen = i_colBlue = 0;
 
         for (DOMNode* child = proprietaryTableNode->getFirstChild(); child != 0; child=child->getNextSibling())
         {
@@ -6029,12 +6030,12 @@ void vt2iso_c::diffFileSave( const std::string &destFileName, const std::string 
       if ( destBuf && srcBuf )
       {
         fseek( destFile, 0, SEEK_SET );
-        fread( destBuf, 1, destLen, destFile);
+        int r = fread( destBuf, 1, destLen, destFile);
         destBuf[destLen++] = '\n';
         destBuf[destLen] = '\0';
 
         fseek( srcFile, 0, SEEK_SET );
-        fread( srcBuf, 1, srcLen, srcFile);
+        r = fread( srcBuf, 1, srcLen, srcFile);
         srcBuf[srcLen++] = '\n';
         srcBuf[srcLen] = '\0';
 
