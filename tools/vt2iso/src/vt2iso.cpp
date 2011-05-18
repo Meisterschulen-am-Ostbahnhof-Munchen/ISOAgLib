@@ -241,6 +241,7 @@ static void usage()
     " -a     (Not specifying a value for -a lets vt2iso use the name of the XML/VTP - think of it as Legacy-Mode!)\n"
     " -c=xxx Specify a VT preset which contains proprietary colours (important for images with poprietary colours)\n"
     " -x=pre Use the given Prefix for Multilanguage objects. Will generate iVtObjectX_pre1 instead of iVtObjectX_1.\n"
+    " -k     Pedantic mode during resolving values from translation files for inputstring, stringvariable and outputstring.\n"
 #if 0
     /*  This feature is not shown up in the help here in order to avoid confusion about. Furthermore it is not
      *  yet extensively testd FOB 06/19/2009
@@ -999,6 +1000,7 @@ vt2iso_c::init (
   const std::string& arcstr_namespace,
   bool ab_acceptUnknownAttributes,
   bool ab_silentMode,
+  bool ab_pedanticMode,
   const std::string& arcstr_outFileName,
   const std::string& arcstr_searchPath,
   const std::string& arcstr_langPrefix)
@@ -1007,6 +1009,7 @@ vt2iso_c::init (
   mb_verbose = ab_verbose;
   mb_acceptUnknownAttributes = ab_acceptUnknownAttributes;
   mb_silentMode = ab_silentMode;
+  mb_pedanticMode = ab_pedanticMode;
   mstr_outDirName = arcstr_outDirName; // overriding parameters!
   mstr_outFileName = arcstr_outFileName; // overriding parameters!
   mstr_langPrefix = arcstr_langPrefix;
@@ -2610,11 +2613,28 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
         }
 
+
+
+        // check whether the objecttype could have a translateable value - otherwise
+        // we don't need to lookup in the parsed buffer
+        bool b_hasTranslateableValue;
+        switch( objType ) {
+          case otOutputstring:
+          case otInputstring:
+          case otStringvariable:
+            b_hasTranslateableValue = true;
+            break;
+          default:
+            b_hasTranslateableValue = false;
+            break;
+        }
+
+
         /// Try to retrieve   value='...'   from language-value-file
-        if (arrs_language[curLang].valueBuffer != NULL)
+        if ( b_hasTranslateableValue && ( arrs_language[curLang].valueBuffer != NULL) )
         {
           //std::cout << "searching language file for ["<<objName<<"]."<<std::endl;
-          bool b_foundValue=false;
+          bool b_foundLanguageValue = false;
           char* bufferCur = arrs_language[curLang].valueBuffer;
           char* bufferEnd = bufferCur + arrs_language[curLang].valueBufferLen;
           std::string pc_foundValue;
@@ -2666,7 +2686,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                 if ((mstr_poolIdent+pc_id).compare(m_objName) == 0)
                 { // set value and break
                   //std::cout << "found language value for [" << objName << "]."<<std::endl;
-                  b_foundValue = true;
+                  b_foundLanguageValue= true;
                   break;
                 }
               }
@@ -2681,7 +2701,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             bufferCur += lineLen;
           }
 
-          if (b_foundValue)
+          if (b_foundLanguageValue)
           {
             /// Do we have conflicting 'value='s now? Just put out a warning (if in verbose-mode)!
             if (arrc_attributes [attrValue].isGiven())
@@ -2690,6 +2710,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             // anyway, override attrValue and clear length (so it gets auto-calculated below!)
             arrc_attributes [attrValue].set( pc_foundValue );
             arrc_attributes [attrLength].clear();
+          } else {
+            if( mb_pedanticMode ) {
+              clean_exit( str(format("could not find a translated value for language %s, object %s (%d)\n") % arrs_language[curLang].code % m_objName % objID ).c_str() );
+              exit( -1 );
+            }
           }
         }
       }
@@ -4229,6 +4254,7 @@ vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
   , mb_verbose (false)
   , mb_acceptUnknownAttributes(false)
   , mb_silentMode(false)
+  , mb_pedanticMode(false)
   , ui_picBufferSize(1200*1600)
   , b_hasUnknownAttributes(false)
   , b_hasMoreThan6SoftKeys(false)
@@ -4997,6 +5023,7 @@ int main(int argC, char* argV[])
   bool verbose = false;
   bool b_accept_unknown_attributes = false;
   bool b_silentMode = false;
+  bool b_pedanticMode = false;
   bool b_disableContainmentRules = false;
   std::string str_outFileName;
   std::string poolIdentStr;
@@ -5150,6 +5177,9 @@ int main(int argC, char* argV[])
       b_silentMode = true;
       verbose = false;
     }
+    else if(!strcmp(argV[argInd], "-k")){
+      b_pedanticMode = true;
+    }
     else
     {
       usage();
@@ -5226,7 +5256,7 @@ int main(int argC, char* argV[])
   // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, str_outFileName, str_searchPath, str_langPrefix );
+  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, b_pedanticMode, str_outFileName, str_searchPath, str_langPrefix );
 
   if (cb_initSuccess)
   {

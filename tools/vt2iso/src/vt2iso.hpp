@@ -237,6 +237,7 @@ public:
     const std::string& arcstr_namespace,
     bool ab_acceptUnknownAttributes,
     bool ab_silentMode,
+    bool ab_pedanticMode,
     const std::string& str_outFileName,
     const std::string& arcstr_searchPath,
     const std::string& arcstr_langPrefix);
@@ -370,6 +371,7 @@ private:
   bool mb_verbose;
   bool mb_acceptUnknownAttributes;
   bool mb_silentMode;
+  bool mb_pedanticMode;
 
 
   OneAttribute_c arrc_attributes [maxAttributeNames];
