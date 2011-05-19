@@ -1,8 +1,0 @@
-#include "tutorialDisplay-defines.inc"
-#include "tutorialDisplay-variables.inc"
-#include "tutorialDisplay-attributes.inc"
-#include "tutorialDisplay-list00.inc"
-#include "tutorialDisplay-list01.inc"
-#include "tutorialDisplay-list.inc"
-#include "tutorialDisplay-list_attributes.inc"
-#include "tutorialDisplay-functions.inc"

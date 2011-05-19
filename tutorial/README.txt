@@ -1,8 +1,7 @@
-In this Open Source repository only the Tutorial Network "Display" ECU is available.
-Nevertheless this example does already show how to use Basic Diagnostics Services,
-the VT-Client interface and toolchain, Tractor-Client functionality and GPS reception.
-
-To get access to the full Tutorial Network including the ECUs
+In this Open Source repository there are no tutorial examples available.
+The binaries will be available on http://isoaglib.com so you can get
+them running and see how ISOAbLib performs.
+To get access to the full Tutorial Network examples including the ECUs
 
  - "Data Source"
  - "Remote I/O"
