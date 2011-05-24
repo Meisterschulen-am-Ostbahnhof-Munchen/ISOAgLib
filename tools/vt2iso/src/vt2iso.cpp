@@ -3363,7 +3363,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             {
               arrc_attributes [attrLength].set( str(format("%d") % ret) );
             }
-            if (!copyWithQuoteAndLength(tempString, arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrLength].getIntValue()))
+            if (!copyWithQuoteAndLength(tempString, escapedString(arrc_attributes [attrValue].get()).c_str(), arrc_attributes [attrLength].getIntValue()))
               return false;
 
             arrc_attributes [attrValue].set( tempString );
@@ -6134,7 +6134,6 @@ std::list<std::string>
 vt2iso_c::scanLanguageFilesOS( const language_s& a_lang )
 {
   std::list<std::string> files;
-
 
   for ( std::list<Path_s>::iterator p = l_dictionaryPath.begin(); p != l_dictionaryPath.end(); ++p ) {
 
