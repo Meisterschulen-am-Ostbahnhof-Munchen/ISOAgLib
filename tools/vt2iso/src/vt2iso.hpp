@@ -304,6 +304,8 @@ private:
 
   void diffFileSave( const std::string &destFileName, const std::string &tempFileName );
 
+  std::list<std::string> scanLanguageFilesOS( const language_s& a_lang );
+
 public:
   bool isVerbose() { return mb_verbose; }
 

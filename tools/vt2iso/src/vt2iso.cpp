@@ -6107,67 +6107,149 @@ void vt2iso_c::diffFileSave( const std::string &destFileName, const std::string 
 }
 
 
-std::list<std::string> vt2iso_c::scanLanguageFiles( const language_s& a_lang ) {
+bool
+isLanguageFile( const char *name, const char *langCode )
+{
+  // check filename length
+  if ( strlen( name ) < ( 2 + 1 + 3 ) ) { // code + dot + vtl
+    return false;
+  }
 
+  // check first two chars
+  if ( 0 != strncmp( name, langCode, 2 ) ) {
+    return false;
+  }
+
+  // check postfix
+  if ( 0 != strncmp( ".vtl", name + strlen( name ) - 4,  4 ) ) {
+    return false;
+  }
+
+  return true;
+}
+
+
+#ifdef WIN32
+std::list<std::string>
+vt2iso_c::scanLanguageFilesOS( const language_s& a_lang )
+{
   std::list<std::string> files;
 
+
+  for ( std::list<Path_s>::iterator p = l_dictionaryPath.begin(); p != l_dictionaryPath.end(); ++p ) {
+
+    std::string str_tmpWorkDir = p->b_relativePath ? mstr_sourceDir : "";
+
+    HANDLE hList;
+    TCHAR  szDir[255];
+    TCHAR  szCurDir[255];
+    WIN32_FIND_DATA FileData;
+
+    // save current directory
+    GetCurrentDirectory(255, szCurDir);
+
+    // go to new working directory
+    if (SetCurrentDirectory( ( str_tmpWorkDir + scc_dirSeparatorCorrect + p->str_pathName ).c_str() ) != 0)
+    {
+      // Get the proper directory path
+      wsprintf(szDir, TEXT("*") );
+      hList = FindFirstFile(szDir, &FileData);
+      if (hList != INVALID_HANDLE_VALUE)
+      { // Traverse through the directory structure
+        do
+        { // Check the object is a directory or not
+          if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+          { // it's a file
+            std::string c_directoryCompareItem (FileData.cFileName);
+
+            if ( isLanguageFile( FileData.cFileName, a_lang.code ) )
+            {
+              std::string langFileName = str_tmpWorkDir + p->str_pathName + scc_dirSeparatorCorrect + std::string( FileData.cFileName );
+              files.push_front( langFileName );
+            }
+          }
+        } while (FindNextFile(hList, &FileData));
+        FindClose(hList);
+      }
+      else
+      {
+        clean_exit( "vt2iso: Couldn't open the directory." );
+        exit( -1 );
+      }
+      // get back to old directory
+      SetCurrentDirectory(szCurDir);
+    }
+    else
+    { /* could not open directory */
+/*    CHAR szBuf[80];
+      DWORD dw = GetLastError();
+      sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
+      printf(szBuf);
+      HRESULT_FROM_WIN32(dw); */
+      perror( "" );
+      files.clear(); // this is an error - we should not use partial results from file search
+      break;
+    }
+  }
+  return files;
+}
+#else
+std::list<std::string>
+vt2iso_c::scanLanguageFilesOS( const language_s& a_lang )
+{
+  std::list<std::string> files;
+
+  for ( std::list<Path_s>::iterator p = l_dictionaryPath.begin(); p != l_dictionaryPath.end(); ++p ) {
+
+    std::string str_tmpWorkDir = p->b_relativePath ? mstr_sourceDir : "";
+
+    DIR *dir;
+    struct dirent *ent;
+    dir = opendir(( str_tmpWorkDir + scc_dirSeparatorCorrect + p->str_pathName ).c_str() );
+    if ( dir != NULL ) {
+
+      while (( ent = readdir( dir ) ) != NULL ) {
+
+        if ( !isLanguageFile( ent->d_name, a_lang.code ) )
+          continue;
+
+        std::string langFileName = str_tmpWorkDir + p->str_pathName + scc_dirSeparatorCorrect + std::string( ent->d_name );
+        files.push_front( langFileName );
+      }
+
+      closedir( dir );
+    }
+    else
+    { /* could not open directory */
+      perror( "" );
+      files.clear(); // this is an error - we should not use partial results from file search
+      break;
+    }
+  }
+  return files;
+}
+#endif
+
+
+std::list<std::string>
+vt2iso_c::scanLanguageFiles( const language_s& a_lang )
+{
   if ( mb_projectFile ) {
 
     if ( l_dictionaryPath.empty() ) {
       std::cerr << "Warning: empty dictionary path!";
-      return files;
+      return std::list<std::string>();
     }
-
-    for ( std::list<Path_s>::iterator p = l_dictionaryPath.begin(); p != l_dictionaryPath.end(); ++p ) {
-
-      std::string str_tmpWorkDir = p->b_relativePath ? mstr_sourceDir : "";
-
-      DIR *dir;
-      struct dirent *ent;
-      dir = opendir(( str_tmpWorkDir + scc_dirSeparatorCorrect + p->str_pathName ).c_str() );
-      if ( dir != NULL ) {
-
-        while (( ent = readdir( dir ) ) != NULL ) {
-
-          // check filename length
-          if ( strlen( ent->d_name ) < ( 2 + 1 + 3 ) ) { // code + dot + vtl
-            continue;
-          }
-
-          // check first two chars
-          if ( 0 != strncmp( ent->d_name, a_lang.code, 2 ) ) {
-            continue;
-          }
-
-          // check postfix
-          if ( 0 != strncmp( ".vtl", ent->d_name + strlen( ent->d_name ) - 4,  4 ) ) {
-            continue;
-          }
-
-          std::string langFileName = str_tmpWorkDir + p->str_pathName + scc_dirSeparatorCorrect + std::string( ent->d_name );
-
-          files.push_front( langFileName );
-        }
-
-        closedir( dir );
-
-      } else {
-        /* could not open directory */
-        perror( "" );
-        files.clear(); // this is an error - we should not use partial results from file search
-        return files;
-      }
-    }
-
-
-  } else {
+    return scanLanguageFilesOS( a_lang );
+  }
+  else
+  {
     // old style without world class ISO11783 mask editor format
     std::string langFileName = str( format( "%s.values.%s.txt" ) % mstr_sourceDirAndProjectPrefix % a_lang.code );
+    std::list<std::string> files;
     files.push_front( langFileName );
+    return files;
   }
-
-
-  return files;
 }
 
 
