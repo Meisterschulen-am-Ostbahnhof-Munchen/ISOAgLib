@@ -285,7 +285,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             { // speed information is usable and the current selected speed is at least not better or outdated
               updateSpeed(IsoAgLib::WheelBasedSpeed, pkg.time() );
             }
-            if ( ( mui32_distReal <= 0xFAFFFFFF ) &&
+            if ( ( mui32_distTheor <= 0xFAFFFFFF ) &&
                  ( ( mt_distDirecSource <= IsoAgLib::WheelBasedDistDirec )
                 || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000u) )
                  )
