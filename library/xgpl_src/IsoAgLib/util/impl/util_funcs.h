@@ -638,52 +638,14 @@ class Flexible8ByteString_c {
   uint8_t* getUint8DataPointer() { return uint8;};
 
 
-#if (SIZEOF_INT >= 4) && !defined( __IAR_SYSTEMS_ICC__ )
-  /** assignment */
-  const Flexible8ByteString_c& operator=( const Flexible8ByteString_c& acrc_src )
-  { uint64[0] = acrc_src.uint64[0]; return *this; };
-  /** compare for EQUAL */
-  bool operator==( const Flexible8ByteString_c& acrc_cmp ) const
-  { // use inline implementation for this case
-    return ( uint64[0] == acrc_cmp.uint64[0] );
-  };
-  /** compare for DIFFERENT */
-  bool operator!=( const Flexible8ByteString_c& acrc_cmp ) const
-  {
-    return ( uint64[0] != acrc_cmp.uint64[0] );
-  };
-  #else
   /** assignment */
   const Flexible8ByteString_c& operator=( const Flexible8ByteString_c& acrc_src );
   /** compare for EQUAL */
   bool operator==( const Flexible8ByteString_c& acrc_cmp ) const;
   /** compare for DIFFERENT */
   bool operator!=( const Flexible8ByteString_c& acrc_cmp ) const;
-  #endif
 
 
-  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && SIZEOF_INT >= 4
-  /** compare for LOWER */
-  bool operator<( const Flexible8ByteString_c& acrc_cmp ) const
-  { // use inline implementation for this case
-    return ( uint64[0] < acrc_cmp.uint64[0] );
-  };
-  /** compare for LARGER */
-  bool operator>( const Flexible8ByteString_c& acrc_cmp ) const
-  { // use inline implementation for this case
-    return ( uint64[0] > acrc_cmp.uint64[0] );
-  };
-  /** compare with:
-    @return 0 == equal;
-           +1 == this item has higher value than par;
-           -1 == this item has lower value than par */
-  int compare( const Flexible8ByteString_c& acrc_cmp ) const
-  {
-    if      (uint64[0] < acrc_cmp.uint64[0]) return -1;
-    else if (uint64[0] > acrc_cmp.uint64[0]) return +1;
-    return 0;
-  };
-  #else
   /** compare for LOWER */
   bool operator<( const Flexible8ByteString_c& acrc_cmp ) const;
   /** compare for LARGER */
@@ -693,7 +655,6 @@ class Flexible8ByteString_c {
            +1 == this item has higher value than par;
            -1 == this item has lower value than par */
   int compare( const Flexible8ByteString_c& acrc_cmp ) const;
-  #endif
 
   /**
     set an uint8_t value at specified position in string.
@@ -929,7 +890,7 @@ class Flexible8ByteString_c {
     int16_t   int16[4];
     uint32_t uint32[2];
     int32_t   int32[2];
-    #if (SIZEOF_INT >= 4) && !defined( __IAR_SYSTEMS_ICC__ )
+    #if defined( SUPPORTS_64BIT )
     uint64_t uint64[1];
     int64_t   int64[1];
     #endif

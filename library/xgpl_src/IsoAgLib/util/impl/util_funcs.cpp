@@ -527,7 +527,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
     pui8_target[(ind*4)+3] = ( ( temp[ind] >> 24 ) & 0xFF );
   }
   #endif
-#elif (SIZEOF_INT == 4) && !defined( __IAR_SYSTEMS_ICC__ )
+#elif defined( SUPPORTS_64BIT )
   uint64_t temp;
 #ifdef SYSTEM_PC_VC
   sscanf( ac_src, "%16I64x", &temp );
@@ -605,7 +605,7 @@ Flexible8ByteString_c::Flexible8ByteString_c( const Flexible8ByteString_c& acrc_
   for (uint8_t index = 0; index < 8; index++)
     uint8[index] = acrc_src.uint8[index];
 #else
-  #if SIZEOF_INT < 4 || defined( __IAR_SYSTEMS_ICC__ )
+  #if !defined( SUPPORTS_64BIT )
   uint32[1] = acrc_src.uint32[1];
   uint32[0] = acrc_src.uint32[0];
   #else
@@ -642,7 +642,7 @@ Flexible8ByteString_c::Flexible8ByteString_c( const uint8_t* apui8_srcStream )
     for (uint8_t index = 0; index < 8; index++)
       uint8[index] = ~0U;
 #else
-    #if (SIZEOF_INT < 4) || defined( __IAR_SYSTEMS_ICC__ )
+    #if !defined( SUPPORTS_64BIT )
     uint32[0] = uint32[1] = ~0UL;
     #else
     uint64[0] = ~0ULL;
@@ -684,13 +684,14 @@ Flexible8ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_targe
 }
 
 
-#if   SIZEOF_INT < 4
 const Flexible8ByteString_c &
 Flexible8ByteString_c::operator=( const Flexible8ByteString_c& acrc_src )
 {
-#ifdef NO_8BIT_CHAR_TYPE
+#if defined ( NO_8BIT_CHAR_TYPE )
   for (uint8_t index = 0; index < 8; index++)
     uint8[index] = acrc_src.uint8[index];
+#elif defined ( SUPPORTS_64BIT )
+  uint64[0] = acrc_src.uint64[0]; 
 #else
   uint32[1] = acrc_src.uint32[1];
   uint32[0] = acrc_src.uint32[0];
@@ -702,12 +703,14 @@ Flexible8ByteString_c::operator=( const Flexible8ByteString_c& acrc_src )
 bool
 Flexible8ByteString_c::operator==( const Flexible8ByteString_c& acrc_cmp ) const
 {
-#ifdef NO_8BIT_CHAR_TYPE
+#if defined ( NO_8BIT_CHAR_TYPE )
   for (uint8_t index = 0; index < 8; index++)
     if ( uint8[index] != acrc_cmp.uint8[index] )
       return false;
 
   return true;
+#elif defined ( SUPPORTS_64BIT )
+  return ( uint64[0] == acrc_cmp.uint64[0] );
 #else
   return ( ( uint32[1] == acrc_cmp.uint32[1] )
         && ( uint32[0] == acrc_cmp.uint32[0] ) );
@@ -718,18 +721,19 @@ Flexible8ByteString_c::operator==( const Flexible8ByteString_c& acrc_cmp ) const
 bool
 Flexible8ByteString_c::operator!=( const Flexible8ByteString_c& acrc_cmp ) const
 {
-#ifdef NO_8BIT_CHAR_TYPE
+#if defined ( NO_8BIT_CHAR_TYPE )
   for (uint8_t index = 0; index < 8; index++)
     if ( uint8[index] != acrc_cmp.uint8[index] )
       return true;
 
   return false;
+#elif defined ( SUPPORTS_64BIT )
+  return ( uint64[0] != acrc_cmp.uint64[0] );
 #else
   return ( ( uint32[1] != acrc_cmp.uint32[1] )
         || ( uint32[0] != acrc_cmp.uint32[0] ) );
 #endif
 }
-#endif // end SIZEOF_INT < 4
 
 
 #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
@@ -783,11 +787,10 @@ Flexible4ByteString_c::compare( const Flexible4ByteString_c& acrc_cmp ) const
 #endif // end !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
 
 
-#if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || SIZEOF_INT < 4
 bool
 Flexible8ByteString_c::operator<( const Flexible8ByteString_c& acrc_cmp ) const
 {
-  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
+#if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
@@ -798,19 +801,21 @@ Flexible8ByteString_c::operator<( const Flexible8ByteString_c& acrc_cmp ) const
   }
   // if reached here - all comparisons led to EQUAL
   return false;
-  #else
+#elif defined ( SUPPORTS_64BIT )
+  return uint64[0] < acrc_cmp.uint64[0];
+#else
   if (uint32[1] != acrc_cmp.uint32[1])
     return (uint32[1] < acrc_cmp.uint32[1]);
   else
     return (uint32[0] < acrc_cmp.uint32[0]);
-  #endif
+#endif
 }
 
 
 bool
 Flexible8ByteString_c::operator>( const Flexible8ByteString_c& acrc_cmp ) const
 {
-  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
+#if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
@@ -821,19 +826,21 @@ Flexible8ByteString_c::operator>( const Flexible8ByteString_c& acrc_cmp ) const
   }
   // if reached here - all comparisons led to EQUAL
   return false;
-  #else
+#elif defined ( SUPPORTS_64BIT )
+  return (uint64[0] > acrc_cmp.uint64[0]);
+#else
   if (uint32[1] != acrc_cmp.uint32[1])
     return (uint32[1] > acrc_cmp.uint32[1]);
   else
     return (uint32[0] > acrc_cmp.uint32[0]);
-  #endif
+#endif
 }
 
 
 int
 Flexible8ByteString_c::compare( const Flexible8ByteString_c& acrc_cmp ) const
 {
-  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
+#if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
@@ -843,20 +850,18 @@ Flexible8ByteString_c::compare( const Flexible8ByteString_c& acrc_cmp ) const
     else if (uint8[ind] > acrc_cmp.uint8[ind]) return +1;
     // else: equal, compare next byte
   }
-  // if reached here - all comparisons led to EQUAL
-  return 0;
-  #elif SIZEOF_INT < 4
+#elif defined ( SUPPORTS_64BIT )
+  if      (uint64[0] < acrc_cmp.uint64[0]) return -1;
+  else if (uint64[0] > acrc_cmp.uint64[0]) return +1;
+#else
   if      (uint32[1] < acrc_cmp.uint32[1]) return -1;
   else if (uint32[1] > acrc_cmp.uint32[1]) return +1;
   if      (uint32[0] < acrc_cmp.uint32[0]) return -1;
   else if (uint32[0] > acrc_cmp.uint32[0]) return +1;
+#endif
+  // if reached here - all comparisons led to EQUAL
   return 0;
-  #else
-  #error "Shouldn't reach here as this function would be unimplemented..."
-  #endif
 };
-#endif // end !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || SIZEOF_INT < 4
-
 
 void
 Flexible8ByteString_c::setFloatData(uint8_t aui8_pos, const float af_val)
