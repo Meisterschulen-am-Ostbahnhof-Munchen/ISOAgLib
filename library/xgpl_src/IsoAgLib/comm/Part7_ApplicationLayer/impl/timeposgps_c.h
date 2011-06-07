@@ -238,7 +238,7 @@ public:
   void setTimeLocal(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0);
 
   /** set the time in UTC timezone */
-  void setTimeUtc(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0, bool b_updateDate = FALSE);
+  void setTimeUtc(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0, bool b_updateDate = false);
 
   /** set the actual calendar year value */
   void setYearUtc(uint16_t aui16_year){mi32_lastCalendarSet = System_c::getTime();bit_calendar.year = aui16_year; mt_cachedLocalSeconds1970AtLastSet = 0;};

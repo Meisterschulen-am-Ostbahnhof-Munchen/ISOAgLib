@@ -272,7 +272,7 @@ public:
   { return TimePosGps_c::setTimeLocal(ab_hour, ab_minute, ab_second, aui16_msec);}
 
   /** set the time in UTC timezone */
-  void setTimeUtc(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0, bool b_updateDate = FALSE)
+  void setTimeUtc(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec = 0, bool b_updateDate = false)
   { return TimePosGps_c::setTimeUtc(ab_hour, ab_minute, ab_second, aui16_msec, b_updateDate);};
   /** set the actual calendar year value */
   void setYearUtc(uint16_t aui16_year)
