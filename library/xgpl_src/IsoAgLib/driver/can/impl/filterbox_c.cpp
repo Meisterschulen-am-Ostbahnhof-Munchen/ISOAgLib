@@ -125,7 +125,6 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
   {
     case HAL_NO_ERR:
       return true;
-      break;
     case HAL_BUSY_ERR:
       /* this BIOS-Obj is already in use */
       getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Can );
