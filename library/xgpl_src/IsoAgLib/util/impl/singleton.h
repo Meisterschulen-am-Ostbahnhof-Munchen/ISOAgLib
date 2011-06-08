@@ -173,6 +173,7 @@ union MaxAlign_u {
   if (0 == rpt_instance) { \
     DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE); \
     rpt_instance = new STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instance) T; \
+    rpt_instance->setMultitonInst(instance); \
   } \
   return *rpt_instance
 
