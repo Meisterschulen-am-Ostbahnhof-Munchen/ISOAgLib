@@ -68,15 +68,13 @@ public:
 
   /**
     check for the input value (uses BIOS function)
-    @return true for counter > 0
   */
-  int16_t val() const {return CounterI_c::val();}
+  uint16_t val() const {return CounterI_c::val();}
 
   /**
     check for the input value (uses BIOS function)
-    @return true for counter > 0
   */
-  int32_t valLong(){return CounterI_c::valLong();}
+  uint32_t valLong(){return CounterI_c::valLong();}
 
   /**
     check for the input value (uses BIOS function)

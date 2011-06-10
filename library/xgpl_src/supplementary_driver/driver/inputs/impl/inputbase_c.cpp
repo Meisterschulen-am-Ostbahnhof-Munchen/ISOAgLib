@@ -40,7 +40,7 @@ InputBase_c::~InputBase_c()
 }
 
 
-int32_t
+uint32_t
 InputBase_c::valLong()
 { // as far as not overloaded otherwise answer simply val()
   return val();

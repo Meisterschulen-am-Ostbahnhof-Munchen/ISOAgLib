@@ -78,20 +78,15 @@ CounterI_c::~CounterI_c(){
 bool CounterI_c::active() const {
   return (val() > 0);
 }
-/**
-  check for the input value (uses BIOS function)
-  @return amount of signals since initialisation or last reset
-*/
-int16_t CounterI_c::val() const {
-  return int16_t(HAL::getCounter(channelNr()));
+
+uint16_t CounterI_c::val() const {
+  return uint16_t(HAL::getCounter(channelNr()));
 }
-/**
-  check for the input value (uses BIOS function)
-  @return amount of signals since initialisation or last reset
-*/
-int32_t CounterI_c::valLong(){
+
+uint32_t CounterI_c::valLong(){
   return HAL::getCounter(channelNr());
 }
+
 /**
   reset the given counter
 

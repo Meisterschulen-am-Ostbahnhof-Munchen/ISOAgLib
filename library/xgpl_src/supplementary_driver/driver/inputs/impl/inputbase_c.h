@@ -71,7 +71,7 @@ public:
     @see AnalogI_c::val
     @see DigitalI_c::val
   */
-  virtual int16_t val() const  = 0;
+  virtual uint16_t val() const  = 0;
 
   /**
     deliver the value from the sensor (for digital input: active->1; else->0)
@@ -79,7 +79,7 @@ public:
     @see AnalogI_c::val
     @see DigitalI_c::val
   */
-  virtual int32_t valLong();
+  virtual uint32_t valLong();
 
   /**
     check if the input channel is active (for analog input true if |value| > 0)

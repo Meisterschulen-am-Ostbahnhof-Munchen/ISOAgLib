@@ -24,6 +24,8 @@
 #define _HAL_INDEPENDENT_EEPROM_H_
 
 #include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/hal/hal_config.h>
 
 
 namespace HAL

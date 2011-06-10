@@ -39,6 +39,8 @@
 #define _HAL_INDEPENDENT_INPUTS_H_
 
 #include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/hal/hal_config.h>
 
 
 namespace HAL
@@ -48,14 +50,14 @@ namespace HAL
     @param bNumber number of the analog input channel
     @return error state (C_NO_ERR == o.k.)
   */
-  int16_t  init_analoginVolt(uint8_t bNumber);
+  int16_t init_analoginVolt(uint8_t bNumber);
 
   /**
     initialize one of the [0..7] analog input channels to CURRENT input
     @param bNumber number of the analog input channel
     @return error state (C_NO_ERR == o.k.)
   */
-  int16_t  init_analoginCurrent(uint8_t bNumber);
+  int16_t init_analoginCurrent(uint8_t bNumber);
 
   /**
     initialize one of the [0..15] digital input channels
@@ -65,7 +67,7 @@ namespace HAL
     @param pfFunctionName adress of function which is called on input events (NULL -> none)
     @return error state (C_NO_ERR == o.k.)
   */
-  int16_t  init_digin(uint8_t ab_channel,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)());
+  int16_t init_digin(uint8_t ab_channel,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)());
 
   /**
     init counter for trigger events on digital inoput;
@@ -144,7 +146,7 @@ namespace HAL
     @param ab_channel measured channel
     @return current [4000..20000] [uA] or C_RANGE on wrong input channel number
   */
-  int16_t  getAdcCurrent(uint8_t ab_channel);
+  int16_t getAdcCurrent(uint8_t ab_channel);
 
   /**
     get the MEDIUM of measured current value of a channel in [uA]

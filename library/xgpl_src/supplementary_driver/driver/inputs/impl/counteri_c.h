@@ -73,15 +73,13 @@ public:
 
   /**
     check for the input value (uses BIOS function)
-    @return true for counter > 0
   */
-  int32_t valLong();
+  uint32_t valLong();
 
   /**
     check for the input value (uses BIOS function)
-    @return true for counter > 0
   */
-  int16_t val() const;
+  uint16_t val() const;
 
   /**
     check for the input value (uses BIOS function)
