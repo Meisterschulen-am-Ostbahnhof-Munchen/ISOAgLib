@@ -21,6 +21,50 @@
 #include <vector>
 
 
+template <unsigned N> class Isoaglib32Bitset {
+  private:
+    STL_NAMESPACE::vector<uint32_t> _v;
+  public:
+    Isoaglib32Bitset( void ): _v((N+31)>>5, uint32_t(0) ) {}
+    Isoaglib32Bitset( const Isoaglib32Bitset& ar_src ) : _v(ar_src._v){};
+
+    Isoaglib32Bitset<N>& set( void ) {
+      STL_NAMESPACE::vector<uint32_t>::iterator i;
+      for (i=_v.begin(); i!=_v.end(); ++i) *i = 0xFFFFFFFFUL;
+      return *this;
+    }
+
+    Isoaglib32Bitset<N>& reset( void ) {
+      STL_NAMESPACE::vector<uint32_t>::iterator i;
+      for (i=_v.begin(); i!=_v.end(); ++i) *i = 0;
+      return *this;
+    }
+
+    bool test(unsigned n) const {
+      return bool((_v[n>>5] & (uint32_t(1)<<(n&0x1F)))>0);
+    }
+
+    Isoaglib32Bitset<N>& set( unsigned n, int val = 1 ) {
+      if (0 == val)
+        _v[n>>5] &= ~(uint32_t(1)<<(n&0x1F));
+      else
+        _v[n>>5] |=  (uint32_t(1)<<(n&0x1F));
+      return *this;
+    }
+
+    Isoaglib32Bitset<N>& reset( unsigned n ) {
+      return set(n,0);
+    }
+
+    unsigned count( void ) const {
+      unsigned n,c=0;
+      for (n=0; n<N; ++n) if (test(n)) ++c;
+      return c;
+    }
+
+};
+
+
 template <unsigned N> class IsoaglibBitset {
   private:
     STL_NAMESPACE::vector<uint8_t> _v;
@@ -70,9 +114,6 @@ template <unsigned N> class IsoaglibBitset {
 
 
 
-#if 0
-//! This "better" version is commented out, because the IAR-compiler does not know #include <bitset>
-//!
 //! Example:
 //! 11 bit
 //! gets put into 2 bytes counted from 0 starting at the outmost left:
@@ -86,8 +127,6 @@ template <unsigned N> class IsoaglibBitset {
 //! };
 //! typedef BitFieldWrapper_c<Certification_s> CertificationBitMask_t;
 
-#include <bitset>
-
 
 template <class T>
 class BitFieldWrapper_c
@@ -96,10 +135,12 @@ class BitFieldWrapper_c
     enum {sizeInBits = T::number_of_bits};
     enum {sizeInBytes = ( T::number_of_bits+7 ) >> 3 };
 
+    STL_NAMESPACE::vector<uint8_t> m_bitField;
+
   public:
     /** Constructor */
-      BitFieldWrapper_c ():
-        m_bitField()
+    BitFieldWrapper_c ():
+      m_bitField()
     {
     }
 
@@ -117,7 +158,7 @@ class BitFieldWrapper_c
     {
       if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
       {
-         m_bitField.set (a_bitsFromTheLeft);
+        m_bitField[a_bitsFromTheLeft>>3] |= (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07)));
       }
       // else: Out of Range - nothing done.
       return *this;
@@ -127,7 +168,8 @@ class BitFieldWrapper_c
         or if there are any reserved bits which should not be set */
     BitFieldWrapper_c& setAllBits()
     {
-      m_bitField.set();
+      STL_NAMESPACE::vector<uint8_t>::iterator i;
+      for (i=m_bitField.begin(); i!=m_bitField.end(); ++i) *i = 0xFFu;
       return *this;
     }
 
@@ -140,7 +182,7 @@ class BitFieldWrapper_c
     {
       if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
       {
-        return m_bitField.test (a_bitsFromTheLeft);
+        return ((m_bitField[a_bitsFromTheLeft>>3] & (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07))))>0);
       }
       // else: Out of Range handling: return false.
       return false;
@@ -149,53 +191,48 @@ class BitFieldWrapper_c
     /** do bitwise AND assignment */
     void operator &= ( const BitFieldWrapper_c& c_refBitField )
     {
-      m_bitField &= c_refBitField;
+      STL_NAMESPACE::vector<uint8_t>::iterator i = m_bitField.begin();
+      STL_NAMESPACE::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
+      for (; i!=m_bitField.end(); ++i, ++j)
+        *i &= *j;
     }
 
     /** do bitwise OR assignment */
     void operator |= ( const BitFieldWrapper_c& c_refBitField )
     {
-      m_bitField |= c_refBitField;
+      STL_NAMESPACE::vector<uint8_t>::iterator i = m_bitField.begin();
+      STL_NAMESPACE::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
+      for (; i!=m_bitField.end(); ++i, ++j)
+        *i |= *j;
     }
 
     /** do bitwise XOR assignment */
     void operator ^= ( const BitFieldWrapper_c& c_refBitField )
     {
-      m_bitField ^= c_refBitField;
+      STL_NAMESPACE::vector<uint8_t>::iterator i = m_bitField.begin();
+      STL_NAMESPACE::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
+      for (; i!=m_bitField.end(); ++i, ++j)
+        *i ^= *j;
     }
 
     /** do bitwise left shift */
-    void operator <<= ( size_t num )
-    { // for bitset, bit 0 is the LSB => we need to invert <<= to >>=
-      m_bitField >>= num;
-    }
+    void operator <<= ( size_t num ); // not implemented currently!
+//    { // for bitset, bit 0 is the LSB => we need to invert <<= to >>=
+// TODO      m_bitField >>= num;
+//    }
 
     /** do bitwise right shift */
-    void operator >>= ( size_t num )
-    { // for bitset, bit 0 is the LSB => we need to invert >>= to <<=
-      m_bitField <<= num;
-    }
+    void operator >>= ( size_t num ); // not implemented currently!
+//    { // for bitset, bit 0 is the LSB => we need to invert >>= to <<=
+// TODO      m_bitField <<= num;
+//    }
 
     /** A bytewise getter */
     uint8_t getByte ( uint8_t aui8_byteOffset ) const
     {
-      if ( aui8_byteOffset < sizeInBytes )
-      {
-          uint8_t ui8_res = 0;
-          for (int i=0; i<8; ++i)
-          {
-            if (m_bitField[aui8_byteOffset*8+i])
-              ui8_res |= (1 << (7-i));
-          }
-          return ui8_res;
-      }
-      // out-of-range handling
-      return 0;
+// TODO      isoaglib_assert (n < ((N+7)>>3));
+      return m_bitField[ aui8_byteOffset ];
     }
-
-  private:
-    STL_NAMESPACE::bitset<T::number_of_bits> m_bitField;
 };
-#endif
 
 #endif

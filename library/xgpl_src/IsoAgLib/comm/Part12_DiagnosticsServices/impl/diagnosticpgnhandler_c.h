@@ -55,7 +55,14 @@ enum Certification_t
   CertificationGpsReceiver
 };
 
-typedef IsoaglibBitset<24> CertificationBitMask_t;
+struct Certification_s
+{
+  typedef Certification_t enum_type;
+  enum { number_of_bits = 24 };
+};
+
+typedef BitFieldWrapper_c<Certification_s> CertificationBitMask_t;
+
 } // namespace IsoAgLib
 
 
