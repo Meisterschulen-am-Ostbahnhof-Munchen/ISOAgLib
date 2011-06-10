@@ -350,7 +350,6 @@ int read_data(SOCKET_TYPE s,     /* connected socket */
   int bcount; /* counts bytes read */
   int br;     /* bytes read this pass */
 
-  //printf("read_data size %d\n", n);
   bcount= 0;
   br= 0;
   while (bcount < n) {             /* loop until full buffer */
@@ -403,6 +402,7 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
     if (iter_delete->canBus(ui8_cnt).mb_initReceived && (pc_serverData->canBus(ui8_cnt).mui16_busRefCnt > 0))
     {
       pc_serverData->canBus(ui8_cnt).mui16_busRefCnt--; // decrement bus ref count when client dropped off
+
       if (!pc_serverData->canBus(ui8_cnt).mui16_busRefCnt)
         closeBusOnCard(ui8_cnt, pc_serverData);
     }
@@ -595,6 +595,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
             pc_serverData->canBus(j).mui16_busRefCnt--; // decrement ref count only when we received the INIT command before
         }
 
+
         releaseClient(pc_serverData, iter_client);
         // i32_error will stay at 0 for "no error"
       } break;
@@ -651,7 +652,6 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           {
             pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt--; // decrement ref count only when we received the INIT command before
           }
-
           iter_client->canBus(p_writeBuf->s_init.ui8_bus).mb_initReceived = false; // reset flag
 
           if (pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt == 0)
@@ -982,6 +982,41 @@ void readWrite(__HAL::server_c* pc_serverData)
 
     pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
+  }
+}
+
+
+void sendUserMsg(uint32_t DLC, uint32_t ui32_id, uint32_t ui32_bus, uint8_t ui8_xtd, uint8_t* pui8_data, __HAL::server_c* pc_serverData)
+{
+  __HAL::transferBuf_s s_transferBuf;
+
+  // set the necessary data for monitorCanMsg
+  s_transferBuf.s_data.s_canMsg.i32_msgType = ui8_xtd;
+  s_transferBuf.s_data.s_canMsg.i32_len = DLC;
+  s_transferBuf.s_data.s_canMsg.ui32_id = ui32_id;
+  memcpy(s_transferBuf.s_data.s_canMsg.ui8_data, pui8_data, DLC);
+
+  s_transferBuf.s_data.ui8_bus = ui32_bus;
+
+  // acquire mutex (prevents concurrent read/write access to can driver and modification of client list during execution of enqueue_msg
+  pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
+
+  enqueue_msg(&s_transferBuf, 0, pc_serverData);
+
+  if (isBusOpen(s_transferBuf.s_data.ui8_bus))
+  {
+    (void)sendToBus(s_transferBuf.s_data.ui8_bus, &(s_transferBuf.s_data.s_canMsg), pc_serverData);
+  }
+
+  pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
+  
+  if (pc_serverData->mb_logMode)
+  {
+    dumpCanMsg( &s_transferBuf, pc_serverData);
+  }
+  if (pc_serverData->mb_monitorMode)
+  {
+    monitorCanMsg (&s_transferBuf);
   }
 }
 

@@ -29,11 +29,6 @@
 #include <sys/times.h>
 #endif
 
-// The implementation of the new "send" feature is not finished,
-// so the first parts are just commited #if'd out so they are right
-// in place if it will be continued later...
-#define ENABLE_NEW_SEND_FEATURE 0
-
 
 struct PrintSetting_s : public std::unary_function< yasper::ptr< AOption_c >, void >{
   PrintSetting_s( __HAL::server_c &ar_server ) : mr_server(ar_server) {}
@@ -127,7 +122,7 @@ static std::string readInputLine()
   bool b_eof = false;
   do {
     ssize_t len = read(fileno(stdin), &c_buf, sizeof(c_buf));
-    if (len == -1) // error condition
+    if (len == -1) // error condition 
       break;
     b_eof = (0 < len) && ('\n' == c_buf);
     ostr_accumulator << std::string(&c_buf, len - ssize_t(b_eof));
@@ -135,7 +130,6 @@ static std::string readInputLine()
   return ostr_accumulator.str();
 #endif
 }
-
 static void enableLog( __HAL::server_c *p_server )
 {
   for (size_t n_bus = 0; n_bus < p_server->nCanBusses(); ++n_bus) {
@@ -165,9 +159,8 @@ void *readUserInput( void *ap_arg )
   static char const s_monitor[] = "monitor";
   static char const s_log[] = "log";
   static char const s_help[] = "help";
-#if ENABLE_NEW_SEND_FEATURE
   static char const s_send[] = "send";
-#endif
+  static char const s_send_short[] = "s";
   __HAL::server_c *pc_serverData = static_cast< __HAL::server_c * >(ap_arg);
   for (;;) {
     std::istringstream istr_inputLine( readInputLine() );
@@ -201,8 +194,24 @@ void *readUserInput( void *ap_arg )
         std::cerr << "Don't know how to disable " << s_toDisable << "." << std::endl;
         b_needHelp = true;
       }
-#if ENABLE_NEW_SEND_FEATURE
-    } else if (!s_command.compare( s_send )) {
+    } // compare only "s" or "send" and skip additional repeat counts
+    else if ( (s_command.compare(0, strlen(s_send), s_send ) == 0) || (s_command.compare(0, strlen(s_send_short), s_send_short ) == 0) ) {
+
+      int repeatCount = 1;
+      std::string s_repeat;
+
+      // extract repeat count
+      if (s_command.compare(0, strlen(s_send), s_send ) == 0)
+      {
+        s_repeat = s_command.substr(strlen(s_send));
+      }
+      else if (s_command.compare(0, strlen(s_send_short), s_send_short ) == 0)
+      {
+        s_repeat = s_command.substr(strlen(s_send_short));
+      }
+      std::istringstream istr_repeatCount( s_repeat );
+      istr_repeatCount >> repeatCount;
+
       std::string s_type;
       istr_inputLine >> s_type;
       bool b_ext = false;
@@ -216,8 +225,11 @@ void *readUserInput( void *ap_arg )
       if (!b_needHelp)
       { // parse and send the data
         int i_id=0;
-        int i_db [8]={-1,-1,-1,-1,-1,-1,-1,-1};
-        istr_inputLine >> std::hex >> i_id >> i_db[0] >> i_db[1] >> i_db[2] >> i_db[3] >> i_db[4] >> i_db[5] >> i_db[6] >> i_db[7];
+        int i_db [8]={-1,-1,-1,-1,-1,-1,-1,-1}; // used for getting user input
+        uint8_t ui8_db [8]={0,0,0,0,0,0,0,0}; // passed to sendUserMsg
+        int i_bus=-1;
+
+        istr_inputLine >> std::dec >> i_bus >> std::hex >> i_id  >> i_db[0] >> i_db[1] >> i_db[2] >> i_db[3] >> i_db[4] >> i_db[5] >> i_db[6] >> i_db[7];
         int i_len = 0;
         for (int i=0; i < 8; ++i)
         { // count databytes
@@ -229,16 +241,28 @@ void *readUserInput( void *ap_arg )
             b_needHelp = true;
             break;
           }
+
+          ui8_db[i] = i_db[i]; // copy to uint8 array
           ++i_len;
         }
+
+        if (i_bus < 0 || i_bus > 255)
+        {
+          std::cout << "ERROR: invalid bus. Valid range is 0..FF" << std::endl;
+          b_needHelp = true;
+        }
+
         if (!b_needHelp)
         { // still everything fine
-          std::cout << "Sending ID " << i_id << " with " << i_len << " databytes";
-          for (int i=0; i<i_len; ++i) std::cout << " " << i_db[i];
+          std::cout << "Sending ID 0x" << std::hex << i_id << std::dec << " on bus " << i_bus << " with " << i_len << " databytes";
+          for (int i=0; i<i_len; ++i) std::cout << " " << std::hex << i_db[i] << std::dec;
           std::cout << std::endl;
+
+          for (int i=0; i<repeatCount; ++i)
+            sendUserMsg(i_len, i_id, i_bus, b_ext, ui8_db, pc_serverData);
+
         }
       }
-#endif
     } else if (!s_command.compare( s_help )) {
       b_needHelp = true; // set to wrongCommand to get help shown!
     } else {
@@ -254,9 +278,7 @@ void *readUserInput( void *ap_arg )
         "  " << s_disable << " " << s_log << " FILENAMEPREFIX" << std::endl <<
         "  " << s_on << " ... (see " << s_enable << " ...)" << std::endl <<
         "  " << s_off << " ... (see " << s_disable << " ...)" << std::endl <<
-#if ENABLE_NEW_SEND_FEATURE
-        "  " << s_send << " s/std/standard/x/ext/extended ID(hex) DB1 DB2 .. DBx" << std::endl <<
-#endif
+        "  " << "send|s[<reapeat count>] s|std|standard|x|ext|extended <bus(dec)> <ID(hex)> DB1 DB2 .. DB8" << std::endl <<
         "  " << s_help << std::endl;
     }
   }

@@ -194,4 +194,6 @@ bool     isBusOpen(uint8_t ui8_bus);
 
 void addSendTimeStampToList(__HAL::client_c *ps_client, int32_t i32_sendTimeStamp);
 
+void sendUserMsg(uint32_t DLC, uint32_t ui32_id, uint32_t ui32_bus, uint8_t ui8_xtd, uint8_t* pui8_data, __HAL::server_c* pc_serverData);
+
 #endif //ndef _CAN_SERVER_COMMON_H_

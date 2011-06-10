@@ -583,7 +583,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
 STL_NAMESPACE::list<int32_t> __HAL::list_sendTimeStamps;
 
-// This thread ahndles the client's writes to the server (us).
+// This thread handles the client's writes to the server (us).
 /////////////////////////////////////////////////////////////////////////
 static void* can_write_thread_func(void* ptr)
 {
@@ -1236,6 +1236,40 @@ static void* command_thread_func(void* ptr)
 
   } // end for
 
+}
+
+
+
+void sendUserMsg(uint32_t DLC, uint32_t ui32_id, uint32_t ui32_bus, uint8_t ui8_xtd, uint8_t* pui8_data, __HAL::server_c* pc_serverData)
+{
+  static canMsg_s s_canMsg;
+
+  // set the necessary data for monitorCanMsg
+  s_canMsg.i32_msgType = ui8_xtd;
+  s_canMsg.i32_len = DLC;
+  s_canMsg.ui32_id = ui32_id;
+  memcpy(s_canMsg.ui8_data, pui8_data, DLC);
+
+  // acquire mutex (prevents concurrent read/write access to can driver and modification of client list during execution of enqueue_msg
+  pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
+
+  enqueue_msg(DLC, ui32_id, ui32_bus, ui8_xtd, pui8_data, 0, pc_serverData);
+
+  if (isBusOpen(ui32_bus)) {
+    sendToBus(ui32_bus, &s_canMsg, pc_serverData);
+  }
+
+  pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
+
+  if (pc_serverData->mb_logMode)
+  {
+    dumpCanMsg(ui32_bus, 0, &s_canMsg, pc_serverData);
+  }
+
+  if (pc_serverData->mb_monitorMode)
+  { 
+    monitorCanMsg (ui32_bus, 0, &s_canMsg);
+  }
 }
 
 
