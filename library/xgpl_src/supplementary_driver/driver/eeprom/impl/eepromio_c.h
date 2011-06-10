@@ -52,7 +52,7 @@ public:
     uses BIOS function
     @return size of EEPROM in BYTE
   */
-  static uint16_t eepromSize(){return (HAL::getEepromSize());};
+  static uint32_t eepromSize(){return (HAL::getEepromSize());};
 
   /**
     set the write position in EEPROM (in Byte); answer if possible

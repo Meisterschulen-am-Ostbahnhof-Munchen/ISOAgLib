@@ -51,7 +51,7 @@ namespace HAL {
    deliver the EEPROM size in uint8_t -> mult P1MC BIOS value with 1024
    @return EEPROM size in byte
   */
-  inline int16_t getEepromSize( void ) {
+  inline uint32_t getEepromSize( void ) {
     /* DWS */ // return ( 1024 * __HAL::getEepromSize() );
     return 0;
   };
@@ -60,7 +60,7 @@ namespace HAL {
    deliver the EEPROM segment size in kbyte
    @return EEPROM segment size in kbyte
   */
-  inline int16_t getEepromSegmentSize( void )
+  inline uint16_t getEepromSegmentSize( void )
   /* DWS */ { //    {return __HAL::getEepromSegmentSize();};
     return 0;
   }

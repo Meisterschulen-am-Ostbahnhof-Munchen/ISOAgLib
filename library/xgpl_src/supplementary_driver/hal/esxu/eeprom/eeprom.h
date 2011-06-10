@@ -55,7 +55,7 @@ namespace HAL
    deliver the EEPROM size in uint8_t -> mult ESXu BIOS value with 1024
    @return EEPROM size in byte
   */
-  inline int16_t getEepromSize(void)
+  inline uint32_t getEepromSize(void)
     {return (1024 * __HAL::get_eeprom_size());};
 
   /**
@@ -67,7 +67,7 @@ namespace HAL
   // MSCHMIDT - bytes.
   // ESXu has no segment size, only get_eeprom_size() function.  So, I guess that means
   // there are no segments for this BIOS.  Set segment size to 32 like was done for the PC.
-  inline int16_t getEepromSegmentSize(void)
+  inline uint16_t getEepromSegmentSize(void)
     { return 32; };
 
   /**

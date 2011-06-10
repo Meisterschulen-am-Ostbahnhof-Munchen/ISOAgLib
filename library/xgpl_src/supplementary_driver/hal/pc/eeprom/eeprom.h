@@ -52,14 +52,14 @@ namespace HAL
    deliver the EEPROM size in kbyte
    @return EEPROM size in kbyte
   */
-  inline int16_t getEepromSize(void)
+  inline uint32_t getEepromSize(void)
     {return __HAL::getEepromSize();};
 
   /**
    deliver the EEPROM segment size in kbyte
    @return EEPROM segment size in kbyte
   */
-  inline int16_t getEepromSegmentSize(void)
+  inline uint16_t getEepromSegmentSize(void)
     {return __HAL::getEepromSegmentSize();};
 
   /**

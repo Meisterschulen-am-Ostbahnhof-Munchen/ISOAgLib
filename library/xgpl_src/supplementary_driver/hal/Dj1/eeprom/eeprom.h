@@ -56,7 +56,7 @@ namespace HAL
    deliver the EEPROM size
      @return EEPROM size in bytes
   */
-  inline int16_t getEepromSize ( void )
+  inline uint32_t getEepromSize ( void )
   {
     return ( __HAL::DjBios_EepromGetSize() );
   };
@@ -69,7 +69,7 @@ namespace HAL
   // MSCHMIDT - I think this is actually supposed to say size in bytes instead
   // MSCHMIDT - of size in kbyte.  get_eeprom_segment_size() returns size in
   // MSCHMIDT - bytes.
-  inline int16_t getEepromSegmentSize ( void )
+  inline uint16_t getEepromSegmentSize ( void )
   {
     return ( __HAL::DjBios_EepromGetSegmentSize() );
   };
