@@ -90,7 +90,7 @@ public:
   void init();
   void close();
 
-  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/);
+  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t );
 
 
   bool setEcuIdentification( const char *acstr_partNr, const char *acstr_serialNr, const char *acstr_location, const char *acstr_type, const char *acstr_manufacturerName );
@@ -109,6 +109,9 @@ public:
     uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision,
     IsoAgLib::CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
     const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
+
+private:
+  void sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,int32_t ai32_pgn);
 
 private: // attributes
   IdentItem_c& mrc_identItem;
