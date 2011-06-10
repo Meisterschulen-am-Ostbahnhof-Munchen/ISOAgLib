@@ -73,6 +73,13 @@
 #endif
 
 
+#ifndef __TSW_CPP__
+ #define IRQ_FUNC_PAR ...
+#else
+ #define IRQ_FUNC_PAR
+#endif
+
+
 #undef CNAMESPACE
 #if defined( __TSW_CPP_70__ )
  #define CNAMESPACE

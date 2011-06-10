@@ -67,7 +67,7 @@ namespace HAL
     @param pfFunctionName adress of function which is called on input events (NULL -> none)
     @return error state (C_NO_ERR == o.k.)
   */
-  int16_t init_digin(uint8_t ab_channel,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)());
+  int16_t init_digin(uint8_t ab_channel,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(IRQ_FUNC_PAR));
 
   /**
     init counter for trigger events on digital inoput;

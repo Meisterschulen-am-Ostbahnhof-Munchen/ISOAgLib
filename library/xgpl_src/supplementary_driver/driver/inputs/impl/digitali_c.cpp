@@ -37,12 +37,6 @@ void iInputEventHandler::handleDigitalEvent( uint8_t )
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-#ifndef __TSW_CPP__
- #define IRQ_FUNC_PAR ...
-#else
- #define IRQ_FUNC_PAR
-#endif
-
 void digitalInputIrqFunc_0(IRQ_FUNC_PAR){DigitalI_c::handleHalIrqEvent(0);}
 void digitalInputIrqFunc_1(IRQ_FUNC_PAR){DigitalI_c::handleHalIrqEvent(1);}
 void digitalInputIrqFunc_2(IRQ_FUNC_PAR){DigitalI_c::handleHalIrqEvent(2);}
