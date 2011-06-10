@@ -184,7 +184,7 @@ namespace HAL
     get the voltage at the PIC
     @return PIC voltage [mV]
   */
-  int16_t getAdcPic()
+  int16_t getAdcPic();
 
   /**
     get the complete sum of all currents
