@@ -330,10 +330,6 @@ private: // Private attributes
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
-#ifdef __IAR_SYSTEMS_ICC__
-  friend class IarSingletonDerived<Process_c,Scheduler_Task_c>;
-#else
-#endif
   friend class IsoAgLib::iProcess_c;
   friend class IsoAgLib::iDevPropertyHandler_c;
   /**
