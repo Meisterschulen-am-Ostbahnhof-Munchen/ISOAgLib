@@ -172,7 +172,7 @@ DigitalI_c::active() const
 }
 
 
-int16_t
+uint16_t
 DigitalI_c::val()const
 {
   int16_t i16_val;
@@ -187,7 +187,7 @@ DigitalI_c::val()const
   if (i16_val == HAL_RANGE_ERR)
   { // wrong input channel
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Input );
-    return ERROR_VAL_16S;
+    return uint16_t( ERROR_VAL_16S ); // needs to be fixed!
   }
   else
   { // correct input channel

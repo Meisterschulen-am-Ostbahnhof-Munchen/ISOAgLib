@@ -67,7 +67,7 @@ public:
 
     @return input value: A) Volt [mV], or B) Ampere [mA]
   */
-  int16_t val() const {return AnalogI_c::val();}
+  uint16_t val() const {return AnalogI_c::val();}
 
   /**
     check if value is greater than 0

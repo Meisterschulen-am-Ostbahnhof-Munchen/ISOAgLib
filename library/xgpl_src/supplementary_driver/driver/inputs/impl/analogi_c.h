@@ -76,7 +76,7 @@ public:
 
     @return sensor value: A) Volt [mV], or B) Ampere [mA]
   */
-  int16_t val() const;
+  uint16_t val() const;
 
   /**
     check if value is greater than 0

@@ -102,7 +102,7 @@ public:
         * Err_c::range wrong input number
     @return 1 for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise 0
   */
-  int16_t val()const{ return DigitalI_c::val(); }
+  uint16_t val()const{ return DigitalI_c::val(); }
 
   /**
     check for the input value (uses BIOS function)

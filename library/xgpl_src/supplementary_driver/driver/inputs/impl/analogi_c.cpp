@@ -67,7 +67,7 @@ AnalogI_c::~AnalogI_c()
 }
 
 
-int16_t
+uint16_t
 AnalogI_c::val()const
 {
   int16_t i16_sensor;
@@ -91,7 +91,7 @@ AnalogI_c::val()const
       return ERROR_VAL_16S;
     }
   }
-  return i16_sensor;
+  return uint16_t( i16_sensor );
 }
 
 

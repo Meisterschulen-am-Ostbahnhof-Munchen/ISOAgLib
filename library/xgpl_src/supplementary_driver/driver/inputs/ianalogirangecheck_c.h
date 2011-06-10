@@ -73,7 +73,7 @@ public:
 
     @return input value: A) Volt [mV], or B) Ampere [mA]
   */
-  int16_t val() const {return AnalogIRangeCheck_c::val();}
+  uint16_t val() const {return AnalogIRangeCheck_c::val();}
 
   /** get validate val
     @param rb_tooLow  reference to bool value which is set dependent on ( value < minLimit )
