@@ -63,12 +63,15 @@ namespace HAL
   */
   int16_t getRs232TxBufCount(uint8_t aui8_channel);
 
+// put the following out of the HAL-declaration, because
+// of the "_huge" which is different... Don't want to care right now...
+#if 0
   /**
     configure a receive buffer and set optional irq function pointer for receive
     @param wBuffersize wanted buffer size
     @param pFunction pointer to irq function or NULL if not wanted
   */
-  int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(byte _huge *bByte), uint8_t aui8_channel);
+  int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t _huge *bByte), uint8_t aui8_channel);
 
   /**
     configure a send buffer and set optional irq function pointer for send
@@ -76,8 +79,9 @@ namespace HAL
     @param funktionAfterTransmit pointer to irq function or NULL if not wanted
     @param funktionBeforTransmit pointer to irq function or NULL if not wanted
   */
-  int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(byte _huge *bByte),
-                                  void (*funktionBeforTransmit)(byte _huge *bByte), uint8_t aui8_channel);
+  int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint8_t _huge *bByte),
+                           void (*funktionBeforTransmit)(uint8_t _huge *bByte), uint8_t aui8_channel);
+#endif
 
   /**
     get errr code of BIOS
