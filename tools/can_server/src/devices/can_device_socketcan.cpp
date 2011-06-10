@@ -190,6 +190,8 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         }
 
         pc_serverData->canBus(ui8_bus).mi32_can_device = m_handle;
+        pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
+
         ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen  = true;
 
         return true;
@@ -201,10 +203,19 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
 void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData )
 {
+  if (!ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen)
+    return; // not yet initialized => return
+
   ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
+
   if( 0 > close( pc_serverData->canBus(ui8_bus).mi32_can_device ) ) {
       perror( "close" );
   }
+
+  // signal that no device handle is available and device is closed
+  pc_serverData->canBus(ui8_bus).mi32_can_device = 0;
+  pc_serverData->canBus(ui8_bus).mb_deviceConnected = false;
+
 }
 
 
