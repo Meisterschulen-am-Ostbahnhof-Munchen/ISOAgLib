@@ -99,6 +99,14 @@
 #endif
 
 
+#ifdef __IAR_SYSTEMS_ICC__
+    // needed for AMS5
+    #ifndef NULL
+        #define NULL 0
+    #endif
+#endif
+
+
 #if defined( __GNUC__ ) || __GNUC__ >= 4
   #define MALLOC_TEMPLATE(PAR) __gnu_cxx::malloc_allocator<PAR>
 #else
@@ -109,7 +117,7 @@
 //==============================================================================
 // WINCE
 // The following section covers Windows CE specific definitions and global
-// macros! 
+// macros!
 //==============================================================================
 #ifdef _WIN32_WCE
   #ifndef WINCE
@@ -124,9 +132,9 @@
 #if defined(WINCE)
   #define MACRO_ISOAGLIB_ABORT() TerminateProcess(GetCurrentProcess(), 0)
   #define MACRO_ISOAGLIB_PERROR(x) printf("error: %s\n",x)
-#else 
+#else
   #define MACRO_ISOAGLIB_ABORT() abort()
-  #define MACRO_ISOAGLIB_PERROR(x) perror(x)  
+  #define MACRO_ISOAGLIB_PERROR(x) perror(x)
 #endif
 
 #ifdef WINCE
@@ -140,7 +148,7 @@
   struct stat
   {
 	//_dev_t st_dev;		// ID of device containing file
-	//_ino_t st_ino;		// file serial number 
+	//_ino_t st_ino;		// file serial number
 	//unsigned short st_mode; // mode of file (see below)
 	//short st_nlink;		// number of links to the file
 	//short st_uid;			// user ID of file
