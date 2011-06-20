@@ -14,7 +14,7 @@
 #ifndef PROPRIETARYMESSAGECLIENT_H
 #define PROPRIETARYMESSAGECLIENT_H
 
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
@@ -66,9 +66,14 @@ namespace __IsoAgLib
 
 
     public:
+      virtual void process( const IsoAgLib::iIsoName_c &sender ) {}
+
       /** virtual bool processProprietaryMsg() must be overloaded by the application
+	      (or the interface function process(), whatever you use in your application).
         */
-      virtual void processProprietaryMsg() = 0;
+      virtual void processProprietaryMsg( const __IsoAgLib::IsoName_c &sender )
+      { process( static_cast<const IsoAgLib::iIsoName_c&>(sender) ); }
+
 
       /** the application shall only get a constant reference to the received data
           is only set by the friend class __IsoAgLib::ProprietaryMessageHandler_c

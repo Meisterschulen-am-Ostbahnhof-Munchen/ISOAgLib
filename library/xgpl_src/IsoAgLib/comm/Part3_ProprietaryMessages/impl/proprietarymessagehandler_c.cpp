@@ -405,7 +405,7 @@ namespace __IsoAgLib
         }
         for ( STL_NAMESPACE::vector<ProprietaryMessageClientVectorIterator_t>::iterator iter_consumer = vec_consumers.begin(); iter_consumer != vec_consumers.end(); ++iter_consumer)
         { /** call process message from client to evaluate the stored data */
-          (*iter_consumer)->pc_client->processProprietaryMsg();
+          (*iter_consumer)->pc_client->processProprietaryMsg( ac_ident.getSaIsoName() );
         }
       }
     }
@@ -452,7 +452,7 @@ namespace __IsoAgLib
           /** set data bytes along with len */
           (*client_iterator).pc_client->ms_receivedData.setDataStream(0, pkg.getUint8DataConstPointer(), pkg.getLen());
           /** process message from client */
-          (*client_iterator).pc_client->processProprietaryMsg();
+          (*client_iterator).pc_client->processProprietaryMsg( pkg.getISONameForSA() );
           /** ms_receivedData will NOT be cleared here in case the client
               wants the data to remain. it can clear it itself in processProprietaryMsg() */
         }

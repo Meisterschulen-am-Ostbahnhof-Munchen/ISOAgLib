@@ -57,7 +57,7 @@ namespace IsoAgLib
     /** receives the messages
         has to be overloaded by the Application
     */
-    virtual void processProprietaryMsg() = 0;
+    virtual void process( const iIsoName_c &sender ) = 0;
 
     /** define receive filter which will be used by ProprietaryMessageHandler for definition of CAN filter.
         trigger an update of CAN receive filters with call of ProprietaryMessageHandler::tiggerClientDataUpdate()
