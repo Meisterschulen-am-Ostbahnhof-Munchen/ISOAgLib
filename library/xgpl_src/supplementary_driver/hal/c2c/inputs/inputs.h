@@ -105,11 +105,10 @@ namespace HAL
   /**
     initialize one of the [0..3] analog input channels to VOLTAGE input
     @param bNumber number of the analog input channel
-    @param bitPullDownResistor set to TRUE to add an additional pull down resistor
     @return error state (C_NO_ERR == o.k.)
   */
-  inline int16_t init_analoginVolt(uint8_t bNumber, bool bitPullDownResistor)
-    {return __HAL::init_analogin(bNumber, bitPullDownResistor);}
+  inline int16_t init_analoginVolt(uint8_t bNumber)
+    {return __HAL::init_analogin(bNumber, /* bitPullDownResistor: */ false);}
 
   /**
     initialize one of the [0..7] analog input channels to CURRENT input
