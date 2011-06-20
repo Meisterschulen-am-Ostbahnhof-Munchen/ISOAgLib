@@ -108,16 +108,16 @@ namespace HAL
     @param bitPullDownResistor set to TRUE to add an additional pull down resistor
     @return error state (C_NO_ERR == o.k.)
   */
-  inline int16_t  init_analoginVolt(uint8_t bNumber, bool bitPullDownResistor = FALSE)
-    {return __HAL::init_analogin(bNumber, bitPullDownResistor);};
+  inline int16_t init_analoginVolt(uint8_t bNumber, bool bitPullDownResistor)
+    {return __HAL::init_analogin(bNumber, bitPullDownResistor);}
 
   /**
     initialize one of the [0..7] analog input channels to CURRENT input
     @param bNumber number of the analog input channel
     @return error state (C_NO_ERR == o.k.)
   */
-  inline int16_t  init_analoginCurrent(uint8_t bNumber)
-    {return HAL_CONFIG_ERR;};
+  inline int16_t init_analoginCurrent(uint8_t bNumber)
+    {return HAL_CONFIG_ERR;}
 
   /**
     initialize one of the [0..0] digital input channels
@@ -156,21 +156,24 @@ namespace HAL
     @return C_NO_ERR if no error occured
   */
   inline int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge)
-  {return __HAL::init_counter(aui16_timebase, ab_risingEdge);};
+  {return __HAL::init_counter(aui16_timebase, ab_risingEdge);}
+
   /**
     get counter value of an digital counter input
    @param ab_channel channel of counter [0..15]
     @return counter events since init or last reset
   */
   inline uint32_t getCounter(uint8_t ab_channel)
-  {  return (ab_channel == DIN1) ? __HAL::getCounter() : 0; };
+  {  return (ab_channel == DIN1) ? __HAL::getCounter() : 0; }
+
   /**
     reset the given counter
    @param ab_channel channel of counter [0..15]
     @return C_NO_ERR ; C_RANGE if counter for ab_channel isn�t configured properly
   */
   inline int16_t resetCounter(uint8_t ab_channel)
-  {  return (ab_channel == DIN1) ? __HAL::resetCounter() : C_RANGE; };
+  {  return (ab_channel == DIN1) ? __HAL::resetCounter() : C_RANGE; }
+
   /**
     get period of counter channel
     @param ab_channel channel of counter [0..15]
@@ -178,7 +181,8 @@ namespace HAL
              given timebase
   */
   inline uint16_t getCounterPeriod(uint8_t ab_channel)
-  {  return (ab_channel == DIN1) ? __HAL::getCounterPeriod() : 0xFFFF; };
+  {  return (ab_channel == DIN1) ? __HAL::getCounterPeriod() : 0xFFFF; }
+
   /**
     get frequency of counter channel
    @param ab_channel channel of counter [0..15]
@@ -186,14 +190,15 @@ namespace HAL
             or 0 if time is longer than initially given timebase
   */
   inline uint16_t getCounterFrequency(uint8_t ab_channel)
-  {  return (ab_channel == DIN1) ? __HAL::getCounterFrequency() : 0; };
+  {  return (ab_channel == DIN1) ? __HAL::getCounterFrequency() : 0; }
+
   /**
    get time since last signal
    @param ab_channel channel of counter
    @return time since last signal [msec.]
   */
   inline uint32_t getCounterLastSignalAge(uint8_t ab_channel)
-  {  return (ab_channel == DIN1) ? __HAL::getCounterLastSignalAge() : 0xFFFF; };
+  {  return (ab_channel == DIN1) ? __HAL::getCounterLastSignalAge() : 0xFFFF; }
 
   /**
     set fast ADC mode ON or OFF
@@ -201,52 +206,57 @@ namespace HAL
     @param bMode set fast ADC to ON or OFF
   */
   inline void setFastAnalogin(bool bMode)
-    {return;};
+    {return;}
 
   /**
     get the measured voltage value of a channel in [mV]
     @param ab_channel measured channel
     @return voltage [0..8500] [mV] or C_RANGE on wrong input channel number
   */
-  inline int16_t  getAdcVoltage(uint8_t ab_channel)
+  inline int16_t getAdcVoltage(uint8_t ab_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getAnaloginCheckNr(ab_channel));
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * MAX_ADC_V); }
+
   /**
     get the MEDIUM of measured voltage value of a channel in [mV]
     @param ab_channel measured channel
     @return voltage [0..8500] [mV] or C_RANGE on wrong input channel number
   */
-  inline int16_t  getAdcMeanVoltage(uint8_t ab_channel)
+  inline int16_t getAdcMeanVoltage(uint8_t ab_channel)
     {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getAnaloginCheckNr(ab_channel));
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * MAX_ADC_V); }
+
   /**
     get the measured current value of a channel in [uA]
     @param ab_channel measured channel
     @return current [4000..20000] [uA] or C_RANGE on wrong input channel number
   */
-  inline int16_t  getAdcCurrent(uint8_t ab_channel)
+  inline int16_t getAdcCurrent(uint8_t ab_channel)
     { return C_RANGE; }
+
   /**
     get the MEDIUM of measured current value of a channel in [uA]
     @param ab_channel measured channel
     @return current [4000..20000] [uA] or C_RANGE on wrong input channel number
   */
-  inline int16_t  getAdcMeanCurrent(uint8_t ab_channel)
+  inline int16_t getAdcMeanCurrent(uint8_t ab_channel)
     { return C_RANGE; }
+
   /**
     get the diagnose ADC value from specified DIGITAL INPUT channel
     @param ab_channel channel number [0..15]
     @return ADC diagnose voltage [ or C_RANGE on wrong input channel number
   */
-  inline int16_t  getDiginDiagnoseAdc(uint8_t ab_channel)
+  inline int16_t getDiginDiagnoseAdc(uint8_t ab_channel)
     { return C_RANGE; }
+
   /**
     get the temperature
     @return temperature in degree [-40..85]
   */
-  inline int16_t  getAdcTemp( void )
+  inline int16_t getAdcTemp()
     { return __HAL::get_boardtemperature(); }
    #if !defined(GET_U_THRESHOLD) && defined(GET_U_2_3_V)
      #define GET_U_THRESHOLD GET_U_2_3_V
@@ -258,8 +268,8 @@ namespace HAL
     @param ab_channelNumber input channel number [DIN1..DIN16]
     @return ON, OFF or C_RANGE
   */
-  inline int16_t  getDiginOnoff(uint8_t ab_channelNumber)
-    {return __HAL::get_digin_hilo();};
+  inline int16_t getDiginOnoff(uint8_t ab_channelNumber)
+    {return __HAL::get_digin_hilo();}
 
   /**
     deliver debounced state of digital input based on Activ-High/Low setting
@@ -267,8 +277,8 @@ namespace HAL
     @param ab_channelNumber input channel number [DIN1..DIN16]
     @return ON, OFF or C_RANGE
   */
-  inline int16_t  getDiginOnoffStatic(uint8_t ab_channelNumber)
-    {return __HAL::get_digin_hilo_static();};
+  inline int16_t getDiginOnoffStatic(uint8_t ab_channelNumber)
+    {return __HAL::get_digin_hilo_static();}
 
   /**
     deliver frequency of digital interrupt channel
@@ -280,9 +290,9 @@ namespace HAL
            -> virt_val uses time from last trigger to actual time
     @return frequency of triggered events [mHz] or BIOS_WARN on too less impulses
   */
-  inline uint16_t getDiginFreq(uint8_t ab_channelNumber, bool b_useVirtual = false)
+  inline uint16_t getDiginFreq(uint8_t ab_channelNumber, bool b_useVirtual)
     {uint16_t ui16_result;
-     return ((__HAL::get_digin_freq(&ui16_result) == C_NO_ERR) || (b_useVirtual))?ui16_result:0;};
+     return ((__HAL::get_digin_freq(&ui16_result) == C_NO_ERR) || (b_useVirtual))?ui16_result:0;}
 
   /*@}*/
 }

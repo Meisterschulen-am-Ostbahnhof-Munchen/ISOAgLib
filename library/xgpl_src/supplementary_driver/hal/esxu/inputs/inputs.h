@@ -64,6 +64,7 @@ namespace __HAL {
   */
   inline uint8_t getAnaloginCheckNr(uint8_t channel)
     {return (GET_A_IN_1 - channel);}
+
   /**
     deliver channel number for checking/requesting of
     ADC value at digital input
@@ -104,7 +105,8 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_analogin( "
 << (uint16_t)VOLTAGE_IN << ") returns " << retval << "\r";
 #endif
 
-    return retval;};
+    return retval;}
+
   /**
     initialize one of the [0..7] analog input channels to CURRENT input
     @param bNumber number of the analog input channel
@@ -120,7 +122,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_analogin( "
 << (uint16_t)CURRENT_IN << ") returns " << retval << "\r";
 #endif
 
-    return retval;};
+    return retval;}
 
   /**
     initialize one of the [0..7] digital input channels
@@ -142,7 +144,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_digin( "
 << (pfFunctionName?"pfFunctionName":"NULL") << ") returns " << retval << "\r";
 #endif
 
-    return retval;};
+    return retval;}
 
   /**
     init counter for trigger events on digital inoput;
@@ -156,21 +158,24 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_digin( "
     @return C_NO_ERR if no error occured
   */
   inline int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge)
-  {return __HAL::init_counter(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge);};
+  {return __HAL::init_counter(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge);}
+
   /**
     get counter value of an digital counter input
    @param ab_channel channel of counter [0..15]
     @return counter events since init or last reset
   */
   inline uint32_t getCounter(uint8_t ab_channel)
-  {return __HAL::getCounter(ab_channel);};
+  {return __HAL::getCounter(ab_channel);}
+
   /**
     reset the given counter
    @param ab_channel channel of counter [0..15]
     @return C_NO_ERR ; C_RANGE if counter for ab_channel isn�t configured properly
   */
   inline int16_t resetCounter(uint8_t ab_channel)
-  {return __HAL::resetCounter(ab_channel);};
+  {return __HAL::resetCounter(ab_channel);}
+
   /**
     get period of counter channel
     @param ab_channel channel of counter [0..15]
@@ -178,7 +183,8 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_digin( "
              given timebase
   */
   inline uint16_t getCounterPeriod(uint8_t ab_channel)
-  {return __HAL::getCounterPeriod(ab_channel);};
+  {return __HAL::getCounterPeriod(ab_channel);}
+
   /**
     get frequency of counter channel
    @param ab_channel channel of counter [0..15]
@@ -186,21 +192,23 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_digin( "
             or 0 if time is longer than initially given timebase
   */
   inline uint16_t getCounterFrequency(uint8_t ab_channel)
-  {  return __HAL::getCounterFrequency(ab_channel); };
+  {  return __HAL::getCounterFrequency(ab_channel); }
+
   /**
    get time since last signal
    @param ab_channel channel of counter
    @return time since last signal [msec.]
   */
   inline uint32_t getCounterLastSignalAge(uint8_t ab_channel)
-  {  return __HAL::getCounterLastSignalAge(ab_channel); };
+  {  return __HAL::getCounterLastSignalAge(ab_channel); }
+
   /**
     set fast ADC mode ON or OFF
     !!! the ESXu doesn't provide setFastAnalogin !!
     @param bMode set fast ADC to ON or OFF
   */
   inline void setFastAnalogin(bool bMode)
-    {return;};
+    {return;}
 
   /**
     get the measured voltage value of a channel in [mV]
@@ -216,7 +224,8 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
 #endif
 
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return (i16_temp * 10);};
+     return (i16_temp * 10);}
+
   /**
     get the MEDIUM of measured voltage value of a channel in [mV]
     @param ab_channel measured channel
@@ -231,7 +240,8 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc_mean( "
 #endif
 
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return (i16_temp * 10);};
+     return (i16_temp * 10);}
+
   /**
     get the measured current value of a channel in [uA]
     @param ab_channel measured channel
@@ -246,7 +256,8 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
 #endif
 
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return (i16_temp * 25);};
+     return (i16_temp * 25);}
+
   /**
     get the MEDIUM of measured current value of a channel in [uA]
     @param ab_channel measured channel
@@ -261,7 +272,8 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc_mean( "
 #endif
 
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return (i16_temp * 25);};
+     return (i16_temp * 25);}
+
   /**
     get the diagnose ADC value from specified DIGITAL INPUT channel
     @param ab_channel channel number [0..7]
@@ -276,7 +288,8 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
 #endif
 
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return (i16_temp * 10);};
+     return (i16_temp * 10);}
+
   /**
     get the temperature
     @return temperature in degree [-40..120 C]
@@ -311,7 +324,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_onoff( "
 << (uint16_t)ab_channelNumber << ") returns " << retval << "\r";
 #endif
 
-  return retval;};
+  return retval;}
 
   /**
     deliver debounced state of digital input based on Activ-High/Low setting
@@ -328,7 +341,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_onoff_stati
 << (uint16_t)ab_channelNumber << ") returns " << retval << "\r";
 #endif
 
-  return retval;};
+  return retval;}
 
   /**
     deliver frequency of digital interrupt channel
@@ -340,7 +353,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_onoff_stati
            -> virt_val uses time from last trigger to actual time
     @return frequency of triggered events [mHz] or BIOS_WARN on too less impulses
   */
-  inline uint16_t getDiginFreq(uint8_t ab_channelNumber, bool b_useVirtual = false)
+  inline uint16_t getDiginFreq(uint8_t ab_channelNumber, bool b_useVirtual)
     {
     uint16_t ui16_result;
     int16_t retval = __HAL::get_digin_freq(ab_channelNumber, &ui16_result);
@@ -351,7 +364,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_freq( "
 << (uint16_t)ui16_result << ") returns " << retval << "\r";
 #endif
 
-    return (( retval == C_NO_ERR) || (b_useVirtual))?ui16_result:0;};
+    return (( retval == C_NO_ERR) || (b_useVirtual))?ui16_result:0;}
 
   /*@}*/
 }
