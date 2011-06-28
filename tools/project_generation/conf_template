@@ -6,8 +6,8 @@
 #  [0. On Windows, have MSYS/MinGW installed.]
 #   1. Copy conf_template -> conf_<PROJECTNAME>
 #   2. Setup your wanted IsoAgLib configuration here
-#   3. Create your application files (these will be collected by update_makefile.sh)
-#   4. Run "<PATH_TO_bin>/update_makefile.sh conf_<PROJECTNAME>"
+#   3. Create your application files (these will be collected by conf2build.sh)
+#   4. Run "<PATH_TO_bin>/conf2build.sh conf_<PROJECTNAME>"
 #       in your native Linux or MSYS/MinGW Windows shell to get the generated project
 
 
@@ -145,9 +145,8 @@ PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
 # Select wanted type of CAN driver connection:
 # embedded targets: "sys"
-# pc_win32 targets: "simulating" | "socket_server"
-# pc_linux targets: "simulating" | "socket_server" | "msq_server" 
-# (Note: "sys" for pc_linux to come soon. This will be the SocketCAN interface)
+# pc_win32 targets: "simulating" | "socket_server" | "socket_server_hal_simulator"
+# pc_linux targets: "simulating" | "socket_server" | "msq_server" | "sys"
 USE_CAN_DRIVER="socket_server"
 
 # Define the amount of CAN instances to support
@@ -277,14 +276,20 @@ PRJ_ISO11783=1
 # and you intend to use more than one RS232 channel at the same time.
 # RS232_INSTANCE_CNT=1
 
-# Select wanted type of RS232 driver connection: "simulating" | "sys" | "rte"
+# Select wanted type of RS232 driver connection:
 # embedded targets: "sys"
-# pc_win32 targets: "sys" | "simulating"
-# pc_linux targets: "sys" | "simulating" | "rte"
+# pc_win32 targets: "sys" | "simulating" | "hal_simulator"
+# pc_linux targets: "sys" | "simulating" | "hal_simulator" | "rte"
 # USE_RS232_DRIVER="simulating"
 
 # select special RS232 virtual driver HAL for RS232_over_CAN
 # PRJ_RS232_OVER_CAN=1
+
+# Select wanted type of INPUTS/OUTPUTS driver connection:
+# embedded targets: "sys"
+# pc targets: "simulating" | "hal_simulator"
+# USE_INPUTS_DRIVER="simulating"
+# USE_OUTPUTS_DRIVER="simulating"
 
 # select iDigitalO_c ( one instance/variable of this class per channel )
 # for digital On/Off input

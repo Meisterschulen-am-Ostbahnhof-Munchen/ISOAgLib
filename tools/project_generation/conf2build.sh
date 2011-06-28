@@ -106,37 +106,6 @@ status_le1() { [ $? -le 1 ]; }
 # variables
 # if one of the following variables isn't set
 # the corresponding default values are used
-# + USE_LITTLE_ENDIAN_CPU=1 --> most CPU types have little endian number variable representation -> number variable can be converted directly from int variable memory representation into CAN little endian string
-# + USE_CAN_DRIVER="simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator" -> select wanted driver connection for CAN
-# + USE_RS232_DRIVER="simulating"|"sys"|"rte"|"hal_simulator" -> select wanted driver connection for RS232
-# + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
-# + PRT_INSTANCE_CNT ( specify amount of CAN channels to use for protocol; must be <= CAN_INSTANCE_CNT; default 1 )
-# + RS232_INSTANCE_CNT ( specify amount of RS232 channels; default 1 )
-# + PROJECT ( subdirectory name and executable filename defined by created Makefile )
-# + REL_APP_PATH ( specify path to application of this project - error message if not given; use relative path!! )
-# + APP_NAME ( optionally select single CC file for the main app - otherwise the whole given path is interpreted as part of this project )
-#
-# + PRJ_ISO11783=1 ( select ISO 11783, default not even ISO for internal CAN comm only )
-# + PRJ_ISO_TERMINAL ( specify if ISO virtual terminal is wanted; default 0; only possible if PRJ_ISO11783=1 -> error message if not )
-# + PRJ_ISO_TASKCONTROLLER_CLIENT ( specify if ISO task controller client is wanted; default 0; only possible if PRJ_ISO11783=1 -> error message if not )
-# + PRJ_BASE ( specify if Base data - main tractor information as PGN or LBS Base message - is wanted; default 0 )
-# + PRJ_TRACTOR_GENERAL (only incorporate parts from BASE that provide tractor hitch and RPM information)
-# + PRJ_TRACTOR_MOVE (only incorporate parts from BASE that provide tractor distance and speed information)
-# + PRJ_TRACTOR_PTO (only incorporate parts from BASE that provide tractor PTO information)
-# + PRJ_TRACTOR_LIGHT (only incorporate parts from BASE that provide tractor lighting information)
-# + PRJ_TRACTOR_FACILITIES (only incorporate parts from BASE that provide tractor facilities information)
-# + PRJ_TRACTOR_AUX (only incorporate parts from BASE that provide tractor auxiliary valve information)
-# + PRJ_TRACTOR_GUIDANCE (only incorporate parts from BASE that provide tractor guidance information)
-# + PRJ_TRACTOR_CERTIFICATION (only incorporate parts from BASE that provide tractor certification information)
-# + PRJ_TIME_GPS (only incorporate parts from BASE that provide time and GPS information)
-# + PRJ_DATASTREAMS ( specify if the input and output filestream should be accessed by IsoAgLib; provides target HAL for filestream handling; default 0 )
-# + PRJ_EEPROM ( specify if the EEPROM should be accessed by IsoAgLib; default 0 )
-# + PRJ_OUTPUTS ( specify if IsoAgLib extension for PWM access should be used; provides several utility and diagnostic functions; default 0 )
-# + PRJ_INPUTS_DIGITAL ( specify if IsoAgLib extension for digital input data read should be used; provides several utility and diagnostic functions; default 0 )
-# + PRJ_INPUTS_COUNTER ( specify if IsoAgLib extension for counting input data read should be used; provides several utility and diagnostic functions; default 0 )
-# + PRJ_INPUTS_ANALOG ( specify if IsoAgLib extension for analog input data read should be used; provides several utility and diagnostic functions; default 0 )
-# + PRJ_RS232 ( specify if IsoAgLib extension for C++ stream oriented I/O should be used; default 0 )
-
 set_default_values()
 {
     PARAMETER_TARGET_SYSTEM="UseConfigFile"
@@ -237,6 +206,8 @@ set_default_values()
     USE_MSVC_EXTERNAL_LIBRARIES=''
     APP_SRC_FILE=''
     USE_RS232_DRIVER='none'
+	USE_INPUTS_DRIVER='none'
+	USE_OUTPUTS_DRIVER='none'
     DEBUG_DEFINES=''
     NDEBUG_DEFINE="$(wrap NDEBUG)"
     COMBINED_DEFINES="$NDEBUG_DEFINE $DEBUG_DEFINES"
@@ -569,7 +540,7 @@ driver_and_hal_features()
     printf '%s' \
       " -path '*${HAL_PATH_ISOAGLIB_CAN}/can*.h'  -o " \
       " -path '*${HAL_PATH_ISOAGLIB_CAN}/hal_can*' -o " \
-      "\( -path '*${HAL_PATH_ISOAGLIB}/system*' -not -path '*hal_simulator*' \) -o " \
+      " -path '*${HAL_PATH_ISOAGLIB}/system*' -o " \
       " -path '*${HAL_PATH_ISOAGLIB}/errcodes.h' -o " \
       " -path '*${HAL_PATH_ISOAGLIB}/config.h' -o " \
       " -path '*${HAL_PATH_ISOAGLIB}/typedef.h' " >&4
@@ -613,7 +584,23 @@ driver_and_hal_features()
     fi
     if [ "$PRJ_OUTPUTS" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/outputs*' -o -path '*/hal/hal_outputs.h'" >&3
-        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_OUTPUTS}/outputs.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_OUTPUTS}/outputs_target_extensions.*'" >&4
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_OUTPUTS}/outputs.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_OUTPUTS}/outputs_target_extensions.h'" >&4
+		echo_ "OUTPUTS driver:$USE_OUTPUTS_DRIVER"
+        case "$USE_OUTPUTS_DRIVER" in
+			(simulating)
+				printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_OUTPUTS}/target_extension_outputs_simulating*'" >&4
+				;;
+			(hal_simulator)
+				printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_OUTPUTS}/target_extension_outputs_hal_simulator*'" >&4
+				;;
+			(sys)
+				printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_OUTPUTS}/target_extension_outputs_sys*'" >&4
+				;;
+			(*)
+				echo_ 'ERROR! Please set the config variable "USE_OUTPUTS_DRIVER" to one of "simulating"|"sys"|"hal_simulator"'
+				echo_ 'Current Setting is $USE_OUTPUTS_DRIVER'
+				exit 3
+		esac
     fi
     if [ "$PRJ_INPUTS_DIGITAL" -gt 0 ]; then
         printf '%s' " -o -name '*digitali_c.*'" >&3
@@ -626,7 +613,23 @@ driver_and_hal_features()
     fi
     if [ "$PRJ_INPUTS_DIGITAL" -gt 0 -o "$PRJ_INPUTS_ANALOG" -gt 0 -o "$PRJ_INPUTS_COUNTER" -gt 0 ]; then
         printf '%s' " -o -name '*inputbase_c.*' -o -name '*inputs_c.*' -o -path '*/hal/hal_inputs.h'" >&3
-        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/inputs.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/inputs_target_extensions.*'" >&4
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/inputs.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/inputs_target_extensions.h'" >&4
+		echo_ "INPUTS driver: $USE_INPUTS_DRIVER"
+        case "$USE_INPUTS_DRIVER" in
+			(simulating)
+				printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/target_extension_inputs_simulating*'" >&4
+				;;
+			(hal_simulator)
+				printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/target_extension_inputs_hal_simulator*'" >&4
+				;;
+			(sys)
+				printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/target_extension_inputs_sys*'" >&4
+				;;
+			(*)
+				echo_ 'ERROR! Please set the config variable "USE_INPUTS_DRIVER" to one of "simulating"|"sys"|"hal_simulator"'
+				echo_ 'Current Setting is $USE_INPUTS_DRIVER'
+				exit 3
+		esac
     fi
     if [ "$PRJ_RS232" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/rs232/*' -o -path '*/hal/hal_rs232.h'" >&3
@@ -2089,7 +2092,7 @@ create_buildfiles()
     # echo_ "Create project for $USE_TARGET_SYSTEM in $GENERATE_FILES_ROOT_DIR"
 
 
-    echo_ "IsoAgLib's Project-Generator running..."
+    echo_ "ISOAgLib's Project-Generator (conf2build) running..."
     echo_
 
 
@@ -2156,7 +2159,7 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
 --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                   target which is specified in the configuration file
-                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"Dj1"|"p1mc"|"src9")
+                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"Dj1")
 --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
                                   --> ("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator")
 --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
@@ -2418,7 +2421,7 @@ check_after_user_configuration()
     fi
     if [ $PRJ_RS232 -gt 0 ]; then
       case "$USE_RS232_DRIVER" in
-          (simulating)
+          (simulating | hal_simulator)
               case "$USE_TARGET_SYSTEM" in
                   (pc_linux | pc_win32)
                       ;;
@@ -2442,6 +2445,66 @@ check_after_user_configuration()
               ;;
           (*)
               echo_ "Unknown RS232 driver $USE_RS232_DRIVER" 1>&2
+              usage
+              exit 1
+              ;;
+      esac
+    fi
+
+    if [ $PRJ_OUTPUTS -gt 0 ]; then
+      case "$USE_OUTPUTS_DRIVER" in
+          (simulating | hal_simulator)
+              case "$USE_TARGET_SYSTEM" in
+                  (pc_linux | pc_win32)
+                      ;;
+                  (*)
+                      printf 'ERROR: USE_OUTPUTS_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". ' "$USE_OUTPUTS_DRIVER" "$USE_TARGET_SYSTEM" >&2
+                      exit 2
+                      ;;
+              esac
+              ;;
+          (sys)
+              case "$USE_TARGET_SYSTEM" in
+                  (pc_linux | pc_win32)
+                      printf 'ERROR: USE_OUTPUTS_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". ' "$USE_OUTPUTS_DRIVER" "$USE_TARGET_SYSTEM" >&2
+                      exit 2
+                      ;;
+                  (*)
+                      ;;
+              esac
+              ;;
+          (*)
+              echo_ "Unknown OUTPUTS driver $USE_OUTPUTS_DRIVER" 1>&2
+              usage
+              exit 1
+              ;;
+      esac
+    fi
+
+    if [ "$PRJ_INPUTS_DIGITAL" -gt 0 -o "$PRJ_INPUTS_ANALOG" -gt 0 -o "$PRJ_INPUTS_COUNTER" -gt 0 ]; then
+      case "$USE_INPUTS_DRIVER" in
+          (simulating | hal_simulator)
+              case "$USE_TARGET_SYSTEM" in
+                  (pc_linux | pc_win32)
+                      ;;
+                  (*)
+                      printf 'ERROR: USE_INPUTS_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". ' "$USE_INPUTS_DRIVER" "$USE_TARGET_SYSTEM" >&2
+                      exit 2
+                      ;;
+              esac
+              ;;
+          (sys)
+              case "$USE_TARGET_SYSTEM" in
+                  (pc_linux | pc_win32)
+                      printf 'ERROR: USE_INPUTS_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". ' "$USE_INPUTS_DRIVER" "$USE_TARGET_SYSTEM" >&2
+                      exit 2
+                      ;;
+                  (*)
+                      ;;
+              esac
+              ;;
+          (*)
+              echo_ "Unknown INPUTS driver $USE_INPUTS_DRIVER" 1>&2
               usage
               exit 1
               ;;
