@@ -140,7 +140,7 @@ class BitFieldWrapper_c
   public:
     /** Constructor */
     BitFieldWrapper_c ():
-      m_bitField()
+      m_bitField(sizeInBytes, 0x00)
     {
     }
 
