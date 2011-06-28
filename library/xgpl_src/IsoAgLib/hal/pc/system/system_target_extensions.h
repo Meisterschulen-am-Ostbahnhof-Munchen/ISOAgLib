@@ -46,7 +46,7 @@ public:
   virtual int16_t getAdc( uint8_t /*bKanalnummer*/ ) { return 0; }
 
   // RS-232
-  virtual void init_rs232( uint32_t /*baudrate, uint8_t /*bMode*/, uint8_t /*bStoppbits*/, bool /*bitSoftwarehandshake*/, uint8_t /*comport*/ ) {}
+  virtual void init_rs232( uint32_t /*baudrate*/, uint8_t /*bMode*/, uint8_t /*bStoppbits*/, bool /*bitSoftwarehandshake*/, uint8_t /*comport*/ ) {}
   virtual void write_rs232( uint8_t /*aui8_channel*/, const uint8_t * /*lpBuf*/, uint16_t /*dwToWrite*/ )	{}
   virtual int16_t getRs232RxBufCount( uint8_t /*comport*/ )	{ return 0; }
   virtual int16_t getRs232Char( uint8_t /*aui8_channel*/, uint8_t * /*pbRead*/ ) { return 0; }
