@@ -193,11 +193,8 @@ library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock_hal_simulator.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_socketcan.cpp -text
-library/xgpl_src/IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.cpp -text
-library/xgpl_src/IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.h -text
 library/xgpl_src/IsoAgLib/hal/pc/system/isoaglibthread_c.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/system/isoaglibthread_c.h -text
-library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions_hal_simulator.cpp -text
 library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.cpp -text
 library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.h -text
 library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp -text
@@ -226,7 +223,7 @@ library/xgpl_src/supplementary_driver/hal/c2c/inputs/inputs_target_extensions.h 
 library/xgpl_src/supplementary_driver/hal/c2c/outputs/outputs.h -text
 library/xgpl_src/supplementary_driver/hal/c2c/outputs/outputs_target_extensions.cpp -text
 library/xgpl_src/supplementary_driver/hal/c2c/rs232/rs232.h -text
-library/xgpl_src/supplementary_driver/hal/esx/outputs/outputs_target_extensions.cpp -text
+library/xgpl_src/supplementary_driver/hal/esx/outputs/target_extension_outputs_sys.cpp -text
 library/xgpl_src/supplementary_driver/hal/esxu/eeprom/eeprom.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/inputs/inputs.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/inputs/inputs_target_extensions.cpp -text
@@ -235,8 +232,8 @@ library/xgpl_src/supplementary_driver/hal/esxu/outputs/outputs.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/outputs/outputs_target_extensions.cpp -text
 library/xgpl_src/supplementary_driver/hal/esxu/rs232/rs232.h -text
 library/xgpl_src/supplementary_driver/hal/p1mc/eeprom/eeprom.h -text
-library/xgpl_src/supplementary_driver/hal/pc/inputs/inputs_target_extensions_hal_simulator.cpp -text
-library/xgpl_src/supplementary_driver/hal/pc/outputs/outputs_target_extensions_hal_simulator.cpp -text
+library/xgpl_src/supplementary_driver/hal/pc/inputs/target_extension_inputs_hal_simulator.cpp -text
+library/xgpl_src/supplementary_driver/hal/pc/outputs/target_extension_outputs_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232_over_can/rs232.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232_over_can/rs232.h -text

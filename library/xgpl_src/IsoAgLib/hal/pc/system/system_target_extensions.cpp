@@ -24,6 +24,7 @@
 #include <IsoAgLib/hal/pc/can/can.h>
 #include <IsoAgLib/hal/pc/can/can_target_extensions.h>
 #include <IsoAgLib/util/config.h>
+#include <IsoAgLib/util/iassert.h>
 #include <cstdio>
 #include <stdlib.h>
 #include <string.h>
@@ -59,7 +60,35 @@
 #endif
 
 
+int16_t HALSimulator_c::getOn_offSwitch()
+{
+  #if 0
+    // old style execution stop detection when
+    // application shoul stop if all CAN messages of
+    // FILE based CAN simulation were processed
+    return (getTime() - can_lastReceiveTime() < 1000)?1:0;
+  #elif 0
+    uint8_t b_temp;
+    // exit function if key typed
+    if (KeyGetByte(&b_temp) ==1) return 0;
+    else return 1;
+  #else
+    // use std C++ cin function to check for unprocessed input
+    // -> as soon as RETURN is hit, the programm stops
+    if ( STL_NAMESPACE::cin.rdbuf()->in_avail() > 0 ) return 0;
+    else return 1;
+  #endif
+}
+
+
 namespace __HAL {
+
+static HALSimulator_c* g_halSimulator = NULL;
+
+HALSimulator_c &halSimulator() { isoaglib_assert( g_halSimulator ); return *g_halSimulator; }
+void setHalSimulator( HALSimulator_c* sim ) { g_halSimulator = sim; }
+
+
 static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 
 #ifndef WIN32
@@ -113,7 +142,15 @@ int32_t getStartupTime()
   @return error state (HAL_NO_ERR == o.k.)
 */
 int16_t open_system()
-{ // init system start time
+{
+  // check if system is opened before user set the halSimulator?
+  if (g_halSimulator == NULL)
+  { // use default halSimulator then!
+    static HALSimulator_c dummyDefaultHalSimulator;
+    setHalSimulator( &dummyDefaultHalSimulator );
+  }
+
+  // init system start time
   getTime();
 
   t_biosextSysdata.wRAMSize = 1000;
@@ -244,7 +281,7 @@ int16_t  getCpuFreq(void)
 /* to activate the power selfholding*/
 void stayingAlive(void)
 {
-  DEBUG_PRINT("DEBUG: staying alive aktiviert\n");
+  DEBUG_PRINT("DEBUG: staying alive activated.\n");
 }
 
 /* to deactivate the power selfholding*/
@@ -257,50 +294,11 @@ void powerDown(void)
   }
 }
 
-#if defined(USE_SENSOR_I)
-typedef void (*_counterIrqFunction)(...);
-static _counterIrqFunction _irqFuncArr[16] = {NULL, NULL, NULL, NULL, NULL, NULL,
- NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-int32_t i32_lastTime[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-#endif
 
 /* the evaluation of the on/off-switch (D+)*/
-int16_t  getOn_offSwitch(void)
+int16_t getOn_offSwitch(void)
 {
-#if defined(USE_SENSOR_I)
-  // simulate digital RPM input
-  uint8_t ui8_ind;
-  int32_t i32_time = getTime();
-  double dRand = ((double)rand())/(double)RAND_MAX;
-  dRand *= 80000.0F;
-  for (ui8_ind = 0; ui8_ind < 16; ui8_ind++)
-  {
-    if (_irqFuncArr[ui8_ind] != NULL)
-    {
-      if (((i32_time - i32_lastTime[ui8_ind])/100) >= (2 + dRand))
-      {
-        i32_lastTime[ui8_ind] = i32_time;
-        (_irqFuncArr[ui8_ind])();
-      }
-    }
-  }
-#endif
-  #if 0
-    // old style execution stop detection when
-    // application shoul stop if all CAN messages of
-    // FILE based CAN simulation were processed
-    return (getTime() - can_lastReceiveTime() < 1000)?1:0;
-  #elif 0
-    uint8_t b_temp;
-    // exit function if key typed
-    if (KeyGetByte(&b_temp) ==1) return 0;
-    else return 1;
-  #else
-    // use std C++ cin function to check for unprocessed input
-    // -> as soon as RETURN is hit, the programm stops
-    if ( STL_NAMESPACE::cin.rdbuf()->in_avail() > 0 ) return 0;
-    else return 1;
-  #endif
+	return halSimulator().getOn_offSwitch();
 }
 
 /* switch relais on or off*/

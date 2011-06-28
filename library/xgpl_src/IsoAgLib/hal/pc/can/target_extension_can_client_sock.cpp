@@ -45,6 +45,21 @@
 
 #include "can_server.h"
 
+
+// if not specially defined, define them empty, so there's no overhead!
+#ifndef ENTRY_POINT_FOR_INSERT_RECEIVE_CAN_MSG
+#define ENTRY_POINT_FOR_INSERT_RECEIVE_CAN_MSG
+#endif
+
+#ifndef ENTRY_POINT_FOR_SEND_CAN_MSG
+#define ENTRY_POINT_FOR_SEND_CAN_MSG
+#endif
+
+#ifndef ENTRY_POINT_FOR_RECEIVE_CAN_MSG
+#define ENTRY_POINT_FOR_RECEIVE_CAN_MSG
+#endif
+
+
 namespace __HAL {
 
 
@@ -62,6 +77,8 @@ int32_t getPipeHandleForCanRcvEvent()
 SOCKET_TYPE call_socket(unsigned short portnum)
 {
   SOCKET_TYPE connectSocket = INVALID_SOCKET;
+  bool printedRetryMsg = false;
+
 #ifdef WIN32
   // Create a SOCKET for listening for
   // incoming connection requests
@@ -81,16 +98,22 @@ SOCKET_TYPE call_socket(unsigned short portnum)
 
   //----------------------
   // Connect to server.
-  if (connect(connectSocket, (SOCKADDR*) &service, sizeof(service) ) == SOCKET_ERROR) {
-    DEBUG_PRINT( "Failed to connect.\n" );
-    WSACleanup();
-    return INVALID_SOCKET;
+  while (connect(connectSocket, (SOCKADDR*) &service, sizeof(service) ) == SOCKET_ERROR)   /* connect */
+  { // couldn't connect for some reason.
+    // Assume CAN-Server not yet started!
+    if (!printedRetryMsg)
+    { // notify user that can_server needs to be started! (only once)
+      fprintf (stderr,"ISOAgLib CAN-Init: Can't connect to CAN-Server (socket-variant).\n"
+                      "ISOAgLib CAN-Init: Waiting for CAN-Server to be started - Retrying every second...\n");
+      printedRetryMsg = true;
+    }      
+    // wait until can_server may be ready...
+    Sleep (1000); // 1 second
   }
 
 #else
 
   uint32_t ui32_len;
-
 #ifdef USE_UNIX_SOCKET
   struct sockaddr_un sa;
   memset(&sa, 0, sizeof(struct sockaddr_un));   /* clear our address */
@@ -109,7 +132,6 @@ SOCKET_TYPE call_socket(unsigned short portnum)
   if ((connectSocket = socket(SOCKET_TYPE_INET_OR_UNIX, SOCK_STREAM, 0)) < 0)   /* get socket */
     return INVALID_SOCKET;
 
-  bool printedRetryMsg = false;
   while (connect(connectSocket, (struct sockaddr *)&sa, ui32_len) < 0)   /* connect */
   { // couldn't connect for some reason. why?
     if (errno == ECONNREFUSED)
@@ -132,13 +154,13 @@ SOCKET_TYPE call_socket(unsigned short portnum)
       return INVALID_SOCKET;
     }
   }
-  
+#endif
+
   if (printedRetryMsg)
   { // if retry was printed, print success, too.
     printf ("ISOAgLib CAN-Init: Finally connected to CAN-Server. Continuing with application...\n\n");
   }
 
-#endif
   return connectSocket;
 }
 
@@ -578,6 +600,8 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 {
   transferBuf_s s_transferBuf;
 
+  ENTRY_POINT_FOR_INSERT_RECEIVE_CAN_MSG
+
   //DEBUG_PRINT2("getCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
@@ -631,6 +655,8 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
          ptReceive->abData[6], ptReceive->abData[7]);
 #endif
 
+  ENTRY_POINT_FOR_RECEIVE_CAN_MSG
+
   return HAL_NO_ERR;
 
 };
@@ -660,6 +686,8 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   s_transferBuf.s_data.s_canMsg.i32_msgType = ptSend->bXtd;
   s_transferBuf.s_data.i32_sendTimeStamp = getTime();
   memcpy(s_transferBuf.s_data.s_canMsg.ui8_data, ptSend->abData, 8);
+
+  ENTRY_POINT_FOR_SEND_CAN_MSG
 
   if (send(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32

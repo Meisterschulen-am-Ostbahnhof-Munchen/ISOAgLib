@@ -23,12 +23,11 @@
 
 #include "inputs_target_extensions.h"
 
-#include <IsoAgLib/hal/pc/system/system.h>
-#include <IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.h>
-
 #include <stdlib.h>
 #include <cstring>
 #include <cstdio>
+
+#include <IsoAgLib/hal/hal_system.h>
 
 
 namespace __HAL {
@@ -114,77 +113,87 @@ static counterIrqFunction irqFuncArr[16] =
 
 
 
-int16_t init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(...))
+int16_t
+init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(...))
 {
-	HALSimulator_c::GetHALSimulator_c().init_digin( bInput, bMode, bAktivhighlow, pfFunctionName );
+	halSimulator().init_digin( bInput, bMode, bAktivhighlow, pfFunctionName );
 
 	return HAL_NO_ERR;
 }
 
-int16_t getDiginOnoff(uint8_t bInputNumber)
+
+int16_t
+getDiginOnoff(uint8_t bInputNumber)
 {
-	return HALSimulator_c::GetHALSimulator_c().getDiginOnoff( bInputNumber );
+	return halSimulator().getDiginOnoff( bInputNumber );
 }
 
-int16_t  getDiginOnoffStatic(uint8_t bInputNumber)
+
+int16_t
+getDiginOnoffStatic(uint8_t bInputNumber)
 {
 	return getDiginOnoff(bInputNumber);
 }
 
-int16_t  setDiginPrescaler(uint8_t bGroup, uint8_t bMode)
+
+int16_t
+setDiginPrescaler(uint8_t bGroup, uint8_t bMode)
 {
 	return HAL_NO_ERR;
 }
 
-int16_t getDiginPeriod(uint8_t bInput, uint16_t *pwPeriod, uint16_t *pwImpulse)
+
+int16_t
+getDiginPeriod(uint8_t bInput, uint16_t *pwPeriod, uint16_t *pwImpulse)
 {
-	HALSimulator_c::GetHALSimulator_c().getDiginPeriod( bInput, pwPeriod, pwImpulse );
+	halSimulator().getDiginPeriod( bInput, pwPeriod, pwImpulse );
 
 	return HAL_NO_ERR;
 }
 
-int16_t  getDiginFreq(uint8_t bInput, uint16_t *pwFrequency)
-{
-	HALSimulator_c::GetHALSimulator_c().getDiginFreq( bInput, pwFrequency );
-	
-	return HAL_NO_ERR;
-}
 
-/* evaluation of analog channels */
-int16_t getAdc(uint8_t bKanalnummer)
+int16_t
+getDiginFreq(uint8_t bInput, uint16_t *pwFrequency)
 {
-  return HALSimulator_c::GetHALSimulator_c().getAdc( bKanalnummer );
-}
-
-/* initialisation of analog inputs */
-int16_t init_analogin(uint8_t bNumber, uint8_t bType)
-{
-	HALSimulator_c::GetHALSimulator_c().init_analogin( bNumber, bType );
+	halSimulator().getDiginFreq( bInput, pwFrequency );
 
 	return HAL_NO_ERR;
 }
 
-/* switching between fast and slow input sampling */
-void setFastAnalogin(boolean bMode)
+
+int16_t
+getAdc(uint8_t bKanalnummer)
+{
+  return halSimulator().getAdc( bKanalnummer );
+}
+
+
+int16_t
+init_analogin(uint8_t bNumber, uint8_t bType)
+{
+	halSimulator().init_analogin( bNumber, bType );
+
+	return HAL_NO_ERR;
+}
+
+
+void
+setFastAnalogin(boolean bMode)
 {
 }
 
-/* evaluation of the mean value of an analog input */
-int16_t  getAnaloginMean(uint8_t bInput)
+
+int16_t
+getAnaloginMean(uint8_t bInput)
 {
   return getAdc( bInput );
 }
-
-/* *************************************** */
-/* *** Special Extension for Counters  *** */
-/* *************************************** */
 
 
 /** prescaler value for digin input channels 1_4 */
 static uint8_t _b_prescale_1_4Index;
 /** prescaler value for digin input channels 5_16 */
 static uint8_t _b_prescale_5_16Index;
-
 
 /**
   configured timebase for counter channels;
@@ -195,19 +204,8 @@ static uint8_t _b_prescale_5_16Index;
 static uint16_t *_puiDiginTimebase[4];
 
 
-
-/**
-  init counter for trigger events on digital inoput;
-  rising edges are counted;
-  @param ab_channel input channel to use [0..15]
-  @param aui16_timebase timebase to calculate periods, frequency
-                     should be at least longer than longest
-                     awaited signal period [msec.]
-  @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
-  @return HAL_NO_ERR if no error occured
-*/
-int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_activHigh, boolean ab_risingEdge)
+int16_t
+init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_activHigh, boolean ab_risingEdge)
 {
   int32_t i32_prescale = aui16_timebase;
   uint8_t b_codeActiv = (ab_activHigh)?HIGH_ACTIV:LOW_ACTIV;
@@ -290,12 +288,10 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_act
 
   return i16_errorState;
 }
-/**
-  get counter value of an digital counter input
-  @param ab_channel channel of counter
-  @return counter events since init or last reset
-*/
-uint32_t getCounter(uint8_t ab_channel)
+
+
+uint32_t
+getCounter(uint8_t ab_channel)
 {
   /* check if ab_channel is allowed and var array is allocated */
   if ((ab_channel < 16) && (_pulDiginCounter[(ab_channel / 4)] != NULL))
@@ -304,12 +300,10 @@ uint32_t getCounter(uint8_t ab_channel)
   }
   else return 0;
 }
-/**
-  reset the given counter
-  @param ab_channel channel of counter
-  @return HAL_NO_ERR ; HAL_RANGE_ERR if counter for ab_channel isn�t configured properly
-*/
-int16_t resetCounter(uint8_t ab_channel)
+
+
+int16_t
+resetCounter(uint8_t ab_channel)
 {
   /* check if ab_channel is allowed and var array is allocated */
   if ((ab_channel < 16) && (_pulDiginCounter[(ab_channel / 4)] != NULL))
@@ -319,13 +313,10 @@ int16_t resetCounter(uint8_t ab_channel)
   }
   else return HAL_RANGE_ERR;
 }
-/**
-  get period of counter channel
-  @param ab_channel channel of counter
-  @return time between last two signals or 0xFFFF if time is longer than initially
-           given timebase [msec.]
-*/
-uint16_t getCounterPeriod(uint8_t ab_channel)
+
+
+uint16_t
+getCounterPeriod(uint8_t ab_channel)
 {
   uint16_t ui16_timebase, ui16_result = 0xFFFF, ui16_counter;
   /* check if ab_channel is allowed and var array is allocated */
@@ -360,13 +351,10 @@ uint16_t getCounterPeriod(uint8_t ab_channel)
   }
   return ui16_result;
 }
-/**
-  get frequency of counter channel
-  @param ab_channel channel of counter
-  @return frequency calculated from time between last two signals
-          or 0 if time is longer than initially given timebase [100mHz]
-*/
-uint16_t getCounterFrequency(uint8_t ab_channel)
+
+
+uint16_t
+getCounterFrequency(uint8_t ab_channel)
 {
   uint16_t ui16_timebase, ui16_result = 0;
   uint16_t ui16_lastSignalAge = 0;
@@ -401,13 +389,9 @@ uint16_t getCounterFrequency(uint8_t ab_channel)
   return ui16_result;
 }
 
-/**
- get time since last signal and reset according trigger timers
- if timebase is exceeded -> avoid overflow problems if timer floated around 0xFFFF
- @param ab_channel channel of counter
- @return time since last signal [msec.]
-*/
-uint16_t getCounterLastSignalAge(uint8_t ab_channel)
+
+uint16_t
+getCounterLastSignalAge(uint8_t ab_channel)
 {
   uint16_t uiResult = 0xFFFF, uiTime = (getTime() & 0xFFFF);
   uint16_t ui16_period, ui16_actTime;
