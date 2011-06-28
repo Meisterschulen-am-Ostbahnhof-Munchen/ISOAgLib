@@ -66,7 +66,7 @@ namespace __IsoAgLib
 
 
     public:
-      virtual void process( const IsoAgLib::iIsoName_c &sender ) {}
+      virtual void process( const IsoAgLib::iIsoName_c &/*sender*/ ) {}
 
       /** virtual bool processProprietaryMsg() must be overloaded by the application
 	      (or the interface function process(), whatever you use in your application).
