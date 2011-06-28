@@ -1251,10 +1251,10 @@ bool IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
 #endif
   } // end switch for DESTINATION pgn
 
+#ifdef USE_WORKING_SET
   // Handle NON-DESTINATION PGNs
   switch ((c_isoData.isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
   {
-    #ifdef USE_WORKING_SET
     case WORKING_SET_MASTER_PGN:
     { // working set master
       b_processed = true;
@@ -1300,11 +1300,11 @@ bool IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
         //getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
       }
     } break;
-    #endif
 
     default:
       break;
   } // end switch for NON-DESTINATION pgn
+#endif
 
 #if DEBUG_ISOMONITOR
   INTERNAL_DEBUG_DEVICE << "IsoMonitor_c::processMsg()-END" << INTERNAL_DEBUG_DEVICE_ENDL;

@@ -28,6 +28,10 @@
   #include <cctype>
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
+
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -364,7 +368,7 @@ RS232IO_c& RS232IO_c::operator>>(uint8_t& b_data)
   readToken(); // it set rs232_underflow error if no data is read
   uint16_t ui16_val;
   sscanf(pc_token, "%hu", &ui16_val);
-  b_data = ui16_val;
+  b_data = static_cast<uint8_t>(ui16_val);
   return *this;
 }
 
@@ -374,7 +378,7 @@ RS232IO_c& RS232IO_c::operator>>(int8_t& c_data)
   readToken(); // it set rs232_underflow error if no data is read
   int16_t i16_val;
   sscanf(pc_token, "%hi", &i16_val);
-  c_data = i16_val;
+  c_data = static_cast<int8_t>(i16_val);
 
   return *this;
 }
