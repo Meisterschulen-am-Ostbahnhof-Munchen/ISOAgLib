@@ -2,7 +2,7 @@
   msgobj_c.h: MsgObj_c encapsulate a hardware CAN Msg Object, to
     present a standard interaction with CAN for all platforms
 
-  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+  (C) Copyright 2009 - 2011 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
