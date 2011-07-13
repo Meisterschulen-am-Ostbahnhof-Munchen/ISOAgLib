@@ -31,7 +31,7 @@ PROJECT_NAME           = Complete
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 2.2.1
+PROJECT_NUMBER         = 2.3.0
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -1131,8 +1131,7 @@ INCLUDE_FILE_PATTERNS  =
 # undefined via #undef or recursively expanded use the := operator 
 # instead of the = operator.
 
-PREDEFINED             = SYSTEM_PC \
-                         USE_ISO_11783 \
+PREDEFINED             = USE_ISO_11783 \
                          USE_ISO_TERMINAL \
                          USE_TRACTOR_LIGHT \
                          USE_TRACTOR_GENERAL \
@@ -1177,21 +1176,17 @@ PREDEFINED             = SYSTEM_PC \
 # The macro definition that is found in the sources will be used. 
 # Use the PREDEFINED tag if you want to use a different macro definition.
 
-EXPAND_AS_DEFINED      = gluemacs1 \
-                         gluemacs2 \
-                         gluemacs3 \
-                         gluemacs4 \
-                         gluemacs5 \
-                         gluemacs6 \
-                         HAL_SUBDIR \
-                         SINGLETON \
-                         SINGLETON_CLIENT1 \
-                         SINGLETON_CLIENT2 \
-                         SINGLETON_CLIENT3 \
-                         BASE_CLASS_NAME \
-                         CLASS_NAME \
-                         TEMPLATE_DECL \
-                         TEMPLATE_QUAL
+EXPAND_AS_DEFINED      = MACRO_SINGLETON_CONTRIBUTION \
+						 MACRO_MULTITON_CONTRIBUTION \
+                         CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST \
+                         CONTAINER_CLIENT2_CTOR_INITIALIZER_LIST \
+                         CONTAINER_CLIENT3_CTOR_INITIALIZER_LIST \
+						 CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN \
+						 CONTAINER_CLIENT2_MEMBER_FUNCTIONS_MAIN \
+						 CONTAINER_CLIENT3_MEMBER_FUNCTIONS_MAIN \
+						 CONTAINER_CLIENT1_MEMBER_FUNCTIONS_KEY \
+						 CONTAINER_CLIENT2_MEMBER_FUNCTIONS_KEY \
+						 CONTAINER_CLIENT3_MEMBER_FUNCTIONS_KEY
 
 # If the SKIP_FUNCTION_MACROS tag is set to YES (the default) then 
 # doxygen's preprocessor will remove all function-like macros that are alone 

@@ -13,7 +13,6 @@ checkout the subrepositories (that were formerly used) to there.
 In this case please get in contact with OSB AG to get access to these.
 
 Valid directory-names for the available HALs are:
- - bios_a2
  - bios_c2c
  - bios_Dj1
  - bios_esx
