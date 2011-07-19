@@ -48,6 +48,8 @@ namespace HAL
   /** \name Output BIOS functions */
   /*@{*/
 
+  inline void setMainRelais( bool bitState ) { __HAL::setMainRelais(bitState); }
+
   /**
     define the frequency of the pwm signal
     @param bOutputGroup PWM output channel [0..4] (4 means channel 4 to 11)

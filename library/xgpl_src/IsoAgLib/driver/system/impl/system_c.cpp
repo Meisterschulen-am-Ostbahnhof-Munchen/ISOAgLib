@@ -46,7 +46,7 @@ void System_c::close( void )
   possible errors:
       * Err_c::SystemOpen problem during start of system with BIOS call
       * Err_c::SystemWatchdog the System_c::init_wd call caused an error
-      * Err_c::unspecified Bios calls for TaskTimer, Relais or StayAlive caused an error
+      * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
   @return true -> everything without errors initialised
 */
 bool System_c::init( bool ab_forceReinit, IsoAgLib::SystemPowerdownStrategy_t at_strategy ){
@@ -83,24 +83,13 @@ bool System_c::init( bool ab_forceReinit, IsoAgLib::SystemPowerdownStrategy_t at
     // start the task timer (also needed for CAN)
     HAL::startTaskTimer();
     // configure POWER HOLD after loss of CAN_EN
-		setPowerdownStrategy( at_strategy );
-		/** start Relais either for not defined CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
-				- update_makefile.sh creates CONFIG_DO_NOT_START_RELAIS_ON_STARTUP */
-#ifndef CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
-    // set Relais to ON
-    HAL::setRelais(true);
-#endif
+    setPowerdownStrategy( at_strategy );
   }
   // avoid second call of sensible ECU functions
   b_firstCall = false;
   return b_result;
 }
-/** control the relay which is responsible for activation of the PWM output */
-void System_c::setRelais( bool ab_activateRelaisForPwm )
-{
-  if ( ab_activateRelaisForPwm ) HAL::setRelais(true);
-  else                           HAL::setRelais(false);
-}
+
 
 /**
 	default behaviour of IsoAgLib is to activate power hold, so that

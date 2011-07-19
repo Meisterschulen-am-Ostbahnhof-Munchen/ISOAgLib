@@ -56,7 +56,6 @@ int16_t closeSystem( void )
 { // if CAN_EN ist active -> shut peripherals off and stay in idle loop
   if ( get_on_off_switch() )
   { // CanEn still active
-    set_relais( OFF );
     power_down();
   }
   // trigger Watchdog, till CanEn is off

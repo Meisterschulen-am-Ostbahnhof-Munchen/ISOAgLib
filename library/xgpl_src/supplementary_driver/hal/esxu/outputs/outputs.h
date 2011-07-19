@@ -52,6 +52,7 @@ namespace __HAL {
   */
   inline uint8_t getPwmoutAdcCheckNr(uint8_t ab_channel)
     { return GET_OUT_1-ab_channel; }
+
   /**
     deliver channel number for checking/requesting of
     current output through given PWM output
@@ -61,6 +62,7 @@ namespace __HAL {
   inline uint8_t getPwmCurrentCheckNr(uint8_t ab_channel)
     {return GET_I_PWM_1-ab_channel;}
 }
+
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
    inline function with call to orig BIOS function)
@@ -73,6 +75,8 @@ namespace HAL
   /* **************************** */
   /** \name Output BIOS functions */
 /*@{*/
+
+  inline void setMainRelais(bool bitState) { __HAL::set_relais(bitState); }
 
   /**
     define the frequency of the pwm signal

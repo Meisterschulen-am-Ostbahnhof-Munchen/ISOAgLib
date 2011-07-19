@@ -85,8 +85,6 @@ namespace HAL
 
   inline void powerDown() { __HAL::powerDown(); }
 
-  inline void setRelais( bool bitState ) { __HAL::setRelais(bitState); }
-
   inline void sleep_max_ms( uint32_t ms ) { __HAL::sleep_max_ms( ms ); }
 } // HAL
 

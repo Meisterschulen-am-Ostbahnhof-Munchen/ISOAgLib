@@ -172,14 +172,12 @@ int16_t closeSystem( void )
   if ( getOn_offSwitch() )
   #endif
   { // CanEn still active
-    setRelais( OFF );
     powerDown();
   }
   #if defined(NO_CAN_EN_CHECK)
   // trigger Watchdog, till CanEn is off
   // while ( getOn_offSwitch() ) wdTriggern();
   // close ESX as soon as
-  setRelais( OFF );
   powerDown();
   #else
   // while ( true ) wdTriggern();
@@ -299,14 +297,6 @@ void powerDown(void)
 int16_t getOn_offSwitch(void)
 {
 	return halSimulator().getOn_offSwitch();
-}
-
-/* switch relais on or off*/
-void setRelais(boolean bitState)
-{
-  (void)bitState;
-
-  DEBUG_PRINT1("DEBUG: setRelais(%d) called\n", bitState);
 }
 
 int16_t KeyGetByte(uint8_t *p)

@@ -24,6 +24,12 @@
 namespace HAL
 {
   /**
+    switch main relais on or off
+    @param bitState true -> Main Relais ON
+  */
+  void setMainRelais( bool bitState );
+
+  /**
     define the frequency of the pwm signal
     @param bOutput PWM output channel [0..11] ([0..15] with babyboard)
         (4 sets for ESX equivalent freq for channels [4..11])

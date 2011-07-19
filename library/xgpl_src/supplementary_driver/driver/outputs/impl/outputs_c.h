@@ -41,6 +41,9 @@ public:
   /** destructor for the outputs manager object */
   ~Outputs_c();
 
+  /** control the relay which is responsible for activation of the PWM output */
+  void setMainRelais( bool ab_active ); 
+
   /**
     initialisation for the outputs management which sets the allowed number
     ranges for digital ouptut channels.

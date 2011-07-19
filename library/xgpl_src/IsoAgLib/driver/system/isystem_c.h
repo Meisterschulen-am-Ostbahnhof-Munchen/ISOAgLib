@@ -38,7 +38,7 @@ public:
     possible errors:
         * Err_c::SystemOpen problem during start of system with BIOS call
         * Err_c::SystemWatchdog the System_c::init_wd call caused an error
-        * Err_c::unspecified Bios calls for TaskTimer, Relais or StayAlive caused an error
+        * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
     @return true -> everything without errors initialised
   */
   bool init( bool ab_forceReinit = false, SystemPowerdownStrategy_t at_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY ) { return System_c::init(ab_forceReinit, at_strategy);};

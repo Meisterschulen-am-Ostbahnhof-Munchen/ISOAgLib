@@ -37,8 +37,8 @@ namespace __HAL {
     #ifdef _INIT_BABYBOARD_
     #include <commercial_BIOS/bios_esx/Module/xma20.h>
     #endif
-
   }
+
   /**
     deliver channel number for checking/requesting of
     ADC value at pwm output
@@ -54,6 +54,7 @@ namespace __HAL {
     else if (channel < 8) return ((47+5) - channel);
     else return ((93+8) - channel);
     };
+
   /**
     deliver channel number for checking/requesting of
     current output through given PWM output
@@ -63,6 +64,7 @@ namespace __HAL {
   inline uint8_t getPwmCurrentCheckNr(uint8_t channel)
     {return (42 - (2 * channel));};
 }
+
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
    inline function with call to orig BIOS function)
@@ -76,6 +78,8 @@ namespace HAL
   /** \name Output BIOS functions */
 /*@{*/
 
+  inline void setMainRelais(bool bitState) { __HAL::set_relais(bitState); }
+  
   /**
     define the frequency of the pwm signal
     @param bOutput PWM output channel [0..11] ([0..15] with babyboard)

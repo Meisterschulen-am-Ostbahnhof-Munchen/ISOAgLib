@@ -279,13 +279,6 @@ namespace HAL
   };
 
 
-  inline void setRelais( bool bitState )
-  {
-    /* ON during system Initialization and off during close */
-    __HAL::DjBios_PowerHold ( bitState ? __HAL::BIOS_TRUE: __HAL::BIOS_FALSE );
-  };
-  
-   
   inline void sleep_max_ms( uint32_t ms )
   {
     // currently no sleeping on Dj1 hardware, but that's fine!

@@ -113,8 +113,6 @@ namespace HAL
   inline void powerDown() {__HAL::power_down(); }
 
   inline void delay_us(unsigned int i_tm) {__HAL::delay_us(i_tm); }
-
-  inline void setRelais(bool bitState) {};
   
   inline void sleep_max_ms( uint32_t ms ) { __HAL::delay_us( ms * 1000); }
 }

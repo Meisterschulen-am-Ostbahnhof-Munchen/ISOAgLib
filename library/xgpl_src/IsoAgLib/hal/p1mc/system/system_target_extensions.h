@@ -68,8 +68,6 @@ void  stayingAlive(void);
 
 void  powerDown(void);
 
-void  setRelais(bool bitState);
-
 int16_t  __getAdcUbat();
 
 int16_t  getAdc_u85();

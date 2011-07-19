@@ -83,8 +83,6 @@ namespace HAL
 
   inline void powerDown() {__HAL::powerDown();}
 
-  inline void setRelais(bool bitState) {__HAL::setRelais(bitState);}
-
   inline int16_t getAdcUbat() {return 14000;}
 
   inline int16_t getAdc_u85() {return 8500;}

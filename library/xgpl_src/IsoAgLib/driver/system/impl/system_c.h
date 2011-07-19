@@ -46,7 +46,7 @@ public:
     possible errors:
         * Err_c::SystemOpen problem during start of system with BIOS call
         * Err_c::SystemWatchdog the System_c::init_wd call caused an error
-        * Err_c::unspecified Bios calls for TaskTimer, Relais or StayAlive caused an error
+        * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
     @return true -> everything without errors initialised
   */
   bool init( bool ab_forceReinit = false, IsoAgLib::SystemPowerdownStrategy_t at_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY );
@@ -95,9 +95,6 @@ public:
     @return voltage at external reference [mV]
   */
   static int16_t getExternalSensorPowerVoltage( void ) { return HAL::getAdc_u85();};
-
-  /** control the relay which is responsible for activation of the PWM output */
-  static void setRelais( bool ab_activateRelaisForPwm );
 
   /**
     deliver the CanEn setting -> if system goes down

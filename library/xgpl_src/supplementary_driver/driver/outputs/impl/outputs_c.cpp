@@ -17,6 +17,7 @@
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
+#include <supplementary_driver/hal/hal_outputs.h>
 
 
 // Begin Namespace __IsoAgLib
@@ -29,6 +30,10 @@ Outputs_c &getOutputsInstance()
 }
 
 
+Outputs_c::~Outputs_c(){
+}
+
+
 void
 Outputs_c::init (uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
 { // store the channel limits for dig and analog
@@ -36,7 +41,10 @@ Outputs_c::init (uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
 }
 
 
-Outputs_c::~Outputs_c(){
+void
+Outputs_c::setMainRelais( bool ab_active )
+{
+  HAL::setRelais( ab_active );
 }
 
 

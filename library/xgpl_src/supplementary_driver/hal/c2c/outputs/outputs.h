@@ -34,6 +34,7 @@ namespace __HAL {
     /** include the BIOS specific header into __HAL */
     #include <commercial_BIOS/bios_c2c/c2c10osy.h>
   }
+
   /**
     deliver channel number for checking/requesting of
     ADC value at pwm output
@@ -44,6 +45,7 @@ namespace __HAL {
   */
   inline uint8_t getPwmoutAdcCheckNr(uint8_t ab_channel)
     { return ab_channel+1; }
+
   /**
     deliver channel number for checking/requesting of
     current output through given PWM output
@@ -53,6 +55,7 @@ namespace __HAL {
   inline uint8_t getPwmCurrentCheckNr(uint8_t ab_channel)
     {return ab_channel;}
 }
+
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
    inline function with call to orig BIOS function)
@@ -65,6 +68,8 @@ namespace HAL
   /* **************************** */
   /** \name Output BIOS functions */
 /*@{*/
+
+  inline void setMainRelais(bool bitState) {}
 
   /**
     define the frequency of the pwm signal

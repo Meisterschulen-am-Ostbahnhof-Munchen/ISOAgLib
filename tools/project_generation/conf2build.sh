@@ -1026,12 +1026,6 @@ END_OF_PATH
             echo_e "// #define USE_PCAN_LIB$ENDLINE" >&3
         fi
     
-        if [ "$PRJ_DO_NOT_START_RELAIS_ON_STARTUP" -gt 0 ] ; then
-            echo_e "#define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >&3
-        else
-            echo_e "// #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >&3
-        fi
-    
         if [ "$USE_VT_UNICODE_SUPPORT" -gt 0 ] ; then
             echo_e "#define USE_VT_UNICODE_SUPPORT$ENDLINE" >&3
         fi

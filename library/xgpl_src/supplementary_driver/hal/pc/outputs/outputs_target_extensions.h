@@ -36,6 +36,13 @@ typedef struct   {
 int16_t  setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency);  /* define the frequency of the pwm signal */
 int16_t  setDigout(uint8_t bOutputNo, uint16_t wPWMValue);          /* set pwm value 0 ... 100 %*/
 
+  /* switch main relais on or off*/
+  void setMainRelais(boolean bitState)
+  {
+    (void)bitState;
+
+    DEBUG_PRINT1("DEBUG: setMainRelais(%d) called\n", bitState);
+  }
 
   /**
     deliver channel number for checking/requesting of

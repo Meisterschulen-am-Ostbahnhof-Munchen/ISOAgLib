@@ -88,7 +88,6 @@ int16_t closeSystem( void )
 { // if CAN_EN ist active -> shut peripherals off and stay in idle loop
   if ( get_on_off_switch() )
   { // CanEn still active
-    set_relais( OFF );
     power_down();
   }
   // trigger Watchdog, till CanEn is off
@@ -152,16 +151,6 @@ static bool sb_isWdTriggerTaskRunning = false;
 */
 int16_t configWatchdog()
 {
-  #if 0
-  tWDConfig t_watchdogConf = {
-      WD_MAX_TIME,
-      WD_MIN_TIME,
-      UD_MAX,
-      UD_MIN,
-      0, // CONFIG_RELAIS,
-      0 // CONFIG_RESET
-  };
-  #else
   tWDConfig t_watchdogConf = {
       WD_MAX_TIME,
       WD_MIN_TIME,
@@ -170,7 +159,6 @@ int16_t configWatchdog()
       CONFIG_RELAIS,
       CONFIG_RESET
   };
-  #endif
 
    int iReturn = config_wd( &t_watchdogConf );
    if ((iReturn == DATA_CHANGED) || (iReturn == C_CHECKSUM)) 

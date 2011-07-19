@@ -90,11 +90,6 @@ void powerDown(void)
 
 }
 
-void setRelais(bool bitState)
-{
-
-}
-
 int16_t __getAdcUbat()
 {
   return -1;

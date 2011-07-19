@@ -111,7 +111,6 @@ void stayingAlive(void);                /* to activate the power selfholding*/
 void powerDown(void);                   /* to deactivate the power selfholding*/
 int16_t  getOn_offSwitch(void);            /* the evaluation of the on/off-switch (D+)*/
 
-void setRelais(boolean bitState);       /* switch relais on or off*/
 int16_t KeyGetByte(uint8_t *p);
 
 void sleep_max_ms( uint32_t ms );

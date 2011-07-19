@@ -99,12 +99,6 @@ namespace HAL
   void powerDown();
 
   /**
-    switch relais on or off
-    @param bitState true -> Relais ON
-  */
-  void setRelais( bool bitState );
-
-  /**
     Sleep and yield CPU for other tasks.
     Especially important for Multitasking environments
     as Windows/Linux running with CAN-Server for example.

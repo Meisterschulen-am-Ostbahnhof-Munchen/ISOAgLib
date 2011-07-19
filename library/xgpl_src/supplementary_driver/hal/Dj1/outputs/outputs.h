@@ -51,6 +51,13 @@ namespace HAL
   /* **************************** */
   /** \name Output BIOS functions */
 
+  inline void setMainRelais( bool bitState )
+  {
+    /* ON during system Initialization and off during close */
+    __HAL::DjBios_PowerHold ( bitState ? __HAL::BIOS_TRUE: __HAL::BIOS_FALSE );
+  };
+   
+
   /**
     define the frequency of the pwm signal
       @param bOutput PWM output channel [0..1]
