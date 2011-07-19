@@ -73,9 +73,10 @@
 #ifndef T_TASK_BASIC
 	#define T_TASK_BASIC 2
 #endif
-/* Initialisierung Watchdog 0 */
-/* 100 ms                     */
+
+/* WATCHDOG DISABLED */
 #define WD_MAX_TIME   100
+
 /* 16.7 V                     */
 #define UD_MAX        16700
 /* 7.2 V                      */

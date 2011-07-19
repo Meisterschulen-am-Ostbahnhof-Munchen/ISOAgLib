@@ -72,12 +72,10 @@
 
 // basic period of task manager (scheduler)= const * 500 us = 1 ms
 #define T_TASK_BASIC 2
-/* Initialisierung Watchdog 0 */
-/* 128 ms                     */
-#define WD_MAX_TIME   254
-// 255
-/* 0 ms                       */
-#define WD_MIN_TIME    0
+
+/* WATCHDOG DISABLED */
+#define WD_MAX_TIME   0
+#define WD_MIN_TIME   0
 /* 16.7 V                     */
 #define UD_MAX        255
 /* 7.2 V                      */

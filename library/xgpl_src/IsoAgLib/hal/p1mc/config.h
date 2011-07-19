@@ -70,20 +70,6 @@
 
 // basic period of task manager (scheduler)= const * 500 us = 1 ms
 #define T_TASK_BASIC 2
-/* Initialisierung Watchdog 0 */
-#define WD_MAX_TIME      254
-//200        /* 128 ms                    */
-#define WD_MIN_TIME      0
-/* 0 ms                      */
-#define UD_MAX          233
-/* 16.7 V                    */
-#define UD_MIN        100
-/* 7.2 V                    */
-#define CONFIG_RELAIS    255
-/* Relais wird bei allen Fehlern abgeschaltet */
-#define  CONFIG_RESET    0x10
-/* (b 0001 0000) Reset bei WD Verzug      */
-
 
 // the P1MC processor modul has no static power line
 // where check of D-Plus can be used

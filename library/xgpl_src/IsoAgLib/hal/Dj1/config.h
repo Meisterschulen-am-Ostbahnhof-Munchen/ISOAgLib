@@ -69,10 +69,6 @@
 #if !defined( T_TASK_BASIC )
 	#define T_TASK_BASIC 2
 #endif
-/* Initialisierung Watchdog 0 */
-/* Initialize Watchdog 0 */
-/* 128 ms                     */
-#define WD_MAX_TIME   WD_TIME_100_MS
 
 /** limit of digit value from getAdc as feedback input from a digital output
   * which decides between interpretation as High or Low
