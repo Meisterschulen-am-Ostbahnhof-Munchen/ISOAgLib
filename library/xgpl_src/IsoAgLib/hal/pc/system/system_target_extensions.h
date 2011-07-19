@@ -34,7 +34,7 @@ public:
   virtual int16_t getOn_offSwitch();
 
   // Outputs
-  virtual void eventMainRelais( bool on ) {}
+  virtual void eventMainRelais( bool /*on*/ ) {}
   virtual void eventSetPwmFreq(uint8_t /*bOutputGroup*/, uint32_t /*dwFrequency*/) {}
   virtual void eventSetDigout(uint8_t /*bOutputNo*/, uint16_t /*wPWMValue*/) {}
 

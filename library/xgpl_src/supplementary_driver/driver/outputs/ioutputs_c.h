@@ -48,7 +48,7 @@ public:
   void close() {}
 
   /** control the relay which is responsible for activation of the PWM output */
-  void setMainRelais( bool ab_active ) { Outputs_c::setRelais( ab_active ); }
+  void setMainRelais( bool ab_active ) { Outputs_c::setMainRelais( ab_active ); }
 
   /** destructor for the outputs manager object */
   ~iOutputs_c() {}

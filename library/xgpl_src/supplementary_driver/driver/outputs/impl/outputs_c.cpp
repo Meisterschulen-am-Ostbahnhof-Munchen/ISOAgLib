@@ -44,7 +44,7 @@ Outputs_c::init (uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
 void
 Outputs_c::setMainRelais( bool ab_active )
 {
-  HAL::setRelais( ab_active );
+  HAL::setMainRelais( ab_active );
 }
 
 
