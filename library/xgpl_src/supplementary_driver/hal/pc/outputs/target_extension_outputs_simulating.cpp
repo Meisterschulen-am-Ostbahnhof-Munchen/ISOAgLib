@@ -22,20 +22,27 @@
 
 namespace __HAL {
 
-/* define the frequency of the pwm signal */
-int16_t  setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency)
+
+void
+setMainRelais( bool on )
 {
-  printf("PWM von Kanal %hi auf %i gesetzt\n", bOutputGroup, dwFrequency);
-   return HAL_NO_ERR;
+  printf("Outputs: MainRelais set to %d\n", on);
 }
 
-/* set pwm value 0 ... 100 %*/
-int16_t  setDigout(uint8_t /* bOutputNo */, uint16_t /* wPWMValue */ )
+
+int16_t
+setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency)
 {
-  #if 0
-	printf("digout fuer Kanal %i auf %i gesetzt\n", bOutputNo, wPWMValue);
-	#endif
-   return HAL_NO_ERR;
+  printf("Outputs: Channel %i: PwmFreq set to %i.\n", bOutputGroup, dwFrequency);
+  return HAL_NO_ERR;
 }
 
-} // End of name space __HAL
+
+int16_t
+setDigout( uint8_t bOutputNo, uint16_t wPWMValue )
+{
+  printf("Outputs: Channel %i: DigOut set to %i.\n", bOutputNo, wPWMValue);
+  return HAL_NO_ERR;
+}
+
+} // __HAL

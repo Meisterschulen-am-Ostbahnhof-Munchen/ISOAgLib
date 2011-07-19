@@ -23,6 +23,13 @@
 
 namespace __HAL {
 
+void
+setMainRelais( bool on )
+{
+  halSimulator().eventMainRelais( on );
+}
+
+
 int16_t
 setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency)
 {
