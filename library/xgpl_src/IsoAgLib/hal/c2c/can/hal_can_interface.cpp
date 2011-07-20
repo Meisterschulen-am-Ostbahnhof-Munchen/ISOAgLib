@@ -126,9 +126,9 @@ tCanMsgReg HUGE_MEM * IRQ_TriggerSend(byte bBus,byte bOjekt,tCanMsgReg HUGE_MEM 
 __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::tCanMsgReg HUGE_MEM *tCanregister)
 {
 
-     int32_t i32_fbIndex = -1; /** initialization value*/
-	 int32_t i32_msgId = ((tCanregister->tArbit.dw & 0xF8000000) >> 27) | ((tCanregister->tArbit.dw & 0xFF0000) >> 11)
-							   | ((tCanregister->tArbit.dw & 0xFF00) << 5) | ((tCanregister->tArbit.dw & 0xFF) << 21);
+   int32_t i32_fbIndex = -1; /** initialization value*/
+   int32_t i32_msgId = ((tCanregister->tArbit.dw & 0xF8000000) >> 27) | ((tCanregister->tArbit.dw & 0xFF0000) >> 11)
+                     | ((tCanregister->tArbit.dw & 0xFF00) << 5) | ((tCanregister->tArbit.dw & 0xFF) << 21);
 
   if ((tCanregister->tCfg_D0.b[0] & 0x4) == 0)
   { // for STD ident, the bits0..17 are marked as "don't care" in the C167 documentation
@@ -136,16 +136,16 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::t
     i32_msgId >>= 18; // shift down by 18 bits, as bits0..17 are "don't care" in this case
   }
 
-	  #ifdef USE_CAN_MEASURE_BUSLOAD
-	  if ((tCanregister->tCfg_D0.b[0] & 0x4) != 0)
-	  { // extended 29bit ident
-	    updateCanBusLoad(bBus, (((tCanregister->tCfg_D0.b[0] & 0xF0) >> 4) + 4));
-	  }
-	  else
-	  { // standard 11bit ident
-	    updateCanBusLoad(bBus, (((tCanregister->tCfg_D0.b[0] & 0xF0) >> 4) + 2));
-	  }
-      #endif
+  #ifdef USE_CAN_MEASURE_BUSLOAD
+  if ((tCanregister->tCfg_D0.b[0] & 0x4) != 0)
+  { // extended 29bit ident
+    updateCanBusLoad(bBus, (((tCanregister->tCfg_D0.b[0] & 0xF0) >> 4) + 4));
+  }
+  else
+  { // standard 11bit ident
+    updateCanBusLoad(bBus, (((tCanregister->tCfg_D0.b[0] & 0xF0) >> 4) + 2));
+  }
+  #endif
 
       /** if the irQTable is not valid, maybe there is a reconfiguration,
       * so put all the received message in the FIFO
@@ -420,41 +420,30 @@ int16_t can_configGlobalClose(uint8_t aui8_busNr)
   return close_can(aui8_busNr);
 }
 
-/** wait until specified timeout or until next CAN message receive
- *  @return true -> there are CAN messages waiting for process. else: return due to timeout
- */
 
-#define MAX_SLEEP_SLICE 5
 /** wait until specified timeout or until next CAN message receive
  *  @return true -> there are CAN messages waiting for process. else: return due to timeout
+ *  NOTE: This should only be called from the lowest priority process
+ *        It will use 100% of the CPU just waiting for a CAN message, unless something of 
+ *        higher priority interrupts it.
+ *        This is normal for embedded ECUs.
+ *  NOTE: This was using 100% CPU even in the old version with "delay_us",
+ *        because "delay_us" is also busy-looping.
  */
 bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
 {
-  const int32_t ci32_endWait = HAL::getTime() + aui16_timeoutInterval;
-  int32_t i32_waitSlice = aui16_timeoutInterval;
+  const int32_t ci32_endWait = __IsoAgLib::System_c::getTime() + aui16_timeoutInterval;
 
-  // if greater than MAX_SLEEP_SLICE msec -> divide so that about 10 slices are realized
-  if ( i32_waitSlice > MAX_SLEEP_SLICE ) i32_waitSlice /= 10;
-  // if still more than 10msec slice limit to MAX_SLEEP_SLICE
-  if ( i32_waitSlice > MAX_SLEEP_SLICE ) i32_waitSlice = MAX_SLEEP_SLICE;
-
-
-  while (true)
+  while ( __IsoAgLib::System_c::getTime() < ci32_endWait )
   {
-    // check whether any message is waiting for processing in central FIFO
-  // return true, as soon as at least one message is available
-    for ( unsigned int busInd = 0; busInd < cui32_maxCanBusCnt; busInd++)
+    for ( unsigned int busInd = 0; busInd < cui32_maxCanBusCnt; ++busInd)
     {
-
-        /** a message is available */
-        if (HAL::iFifoIsMsgAvailable(busInd)) return true;
-     }
-
-    delay_us( i32_waitSlice * 1000 );
-    if ( HAL::getTime() >= ci32_endWait ) return false;
+       if (HAL::iFifoIsMsgAvailable(busInd))
+         return true;
+    }
   }
+  return false;
 }
-
 
 
 /* ***************************** */
