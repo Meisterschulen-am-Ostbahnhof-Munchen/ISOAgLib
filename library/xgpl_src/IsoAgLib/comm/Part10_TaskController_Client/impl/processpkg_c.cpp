@@ -40,8 +40,8 @@ ProcessPkg_c::ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst )
 }
 
 /** default constructor which has nothing to do */
-ProcessPkg_c::ProcessPkg_c( int ai_multitonInst )
-  : CanPkgExt_c( ai_multitonInst )
+ProcessPkg_c::ProcessPkg_c( int /*ai_multitonInst*/ )
+  : CanPkgExt_c( )
   , mi32_pdValue( 0 )
   , bit_data()
 {
