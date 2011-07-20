@@ -275,6 +275,8 @@ public:
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
   uint8_t  getClientId() const { return mui8_clientId; }
 
+  void sendCommandsToBus( bool commandsToBus ) { mb_commandsToBus = commandsToBus; }
+
   bool connectedToVtServer() const               { return (mpc_vtServerInstance != NULL); }
   /** ATTENTION: Please assure "connectedToVtServer()" before getting this reference */
   VtServerInstance_c& getVtServerInst() const    { return *mpc_vtServerInstance; }
@@ -579,6 +581,8 @@ private:
   bool mb_isSlave; // @todo WS SLAVE: could be substituted by master/slave specific derived classes
 
   int mi_multitonInst;
+
+  bool mb_commandsToBus;
 };
 
 }

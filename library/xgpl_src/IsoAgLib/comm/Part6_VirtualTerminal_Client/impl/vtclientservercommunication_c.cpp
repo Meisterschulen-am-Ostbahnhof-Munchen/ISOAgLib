@@ -372,6 +372,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mi32_fakeVtOffUntil (-1) // no faking initially
   , mb_isSlave(ab_isSlave)
   , mi_multitonInst( MULTITON_INST_PARAMETER_USE )
+  , mb_commandsToBus( true )
 {
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   mrc_pool.initAllObjectsOnce (MULTITON_INST);
@@ -2112,6 +2113,9 @@ VtClientServerCommunication_c::sendCommandEsc (bool b_enableReplaceOfCmd)
 bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd)
 {
+  if (!mb_commandsToBus)
+    return false; // discard SendCommand
+
   if (men_objectPoolState != OPUploadedSuccessfully)
   {
 #if DEBUG_VTCOMM
