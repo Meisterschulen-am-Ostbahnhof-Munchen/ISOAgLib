@@ -31,9 +31,6 @@
 #endif
 
 #if DEBUG_HEAP_USEAGE
-static uint16_t sui16_localProcPointerTotal = 0;
-static uint16_t sui16_remoteProcPointerTotal = 0;
-
 #ifdef MASSERT
 extern unsigned int AllocateHeapMalloc;
 extern unsigned int DeallocateHeapMalloc;

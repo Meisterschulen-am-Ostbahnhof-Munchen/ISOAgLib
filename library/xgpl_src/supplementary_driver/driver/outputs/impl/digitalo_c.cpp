@@ -23,6 +23,10 @@ namespace __IsoAgLib {
 
 DigitalO_c::DigitalO_c(uint8_t aui8_channel)
   : OutputBase_c(aui8_channel)
+  , ui16_value( 0 )
+  , ui16_minAllowedCurrent( 0 )
+  , ui16_maxAllowedCurrent( 0 )
+  , ui16_maxOutputPwmFreq( 0 )
 {
   init( aui8_channel );
 }

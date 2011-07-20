@@ -1664,6 +1664,8 @@ TimePosGps_c::reactOnStateChange(const SendStream_c& sendStream)
 {
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
   mt_multiSendSuccessState = sendStream.getSendSuccess();
+#else
+  (void)sendStream;
 #endif
 }
 

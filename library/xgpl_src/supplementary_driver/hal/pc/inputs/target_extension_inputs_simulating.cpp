@@ -138,7 +138,7 @@ readNewLineSimulatedDigitalValues (uint8_t bInputNumber)
   if ( feof(sensorDigitalInput[bInputNumber]) == 0 )
   { // read next line
     char zeile[100];
-    fgets(zeile, 99, sensorDigitalInput[bInputNumber]);
+    (void)fgets(zeile, 99, sensorDigitalInput[bInputNumber]);
       // default the next values to the last ones, in case not all columns are specified in the read line.
     next_sensorDigitalInputVal[bInputNumber] = lastSensorDigitalInputVal[bInputNumber];
     sscanf(zeile, "%u %u %u\n", &(next_sensorDigitalInputTime[bInputNumber]), &(next_sensorDigitalInputVal[bInputNumber].val), &(next_sensorDigitalInputVal[bInputNumber].freq));
@@ -193,7 +193,7 @@ init_digin (uint8_t bInput, uint8_t bMode, uint8_t bAktivhighlow, void (*pfFunct
   // END: Added by M.Wodok 6.12.04
 
   sensorDigitalInputOpen[bInput] = true;
-  fgets(zeile, 99, sensorDigitalInput[bInput]);
+  (void)fgets(zeile, 99, sensorDigitalInput[bInput]);
   sscanf(zeile, "%u %u %u\n", &(next_sensorDigitalInputTime[bInput]), &(next_sensorDigitalInputVal[bInput].val), &(next_sensorDigitalInputVal[bInput].freq));
 
   readNewLineSimulatedDigitalValues (bInput);
@@ -264,7 +264,7 @@ int16_t  getAdc(uint8_t bKanalnummer)
     if ( feof(sensorAnalogInput[bKanalnummer]) == 0 )
     { // read next line
       char zeile[100];
-      fgets(zeile, 99, sensorAnalogInput[bKanalnummer]);
+      (void)fgets(zeile, 99, sensorAnalogInput[bKanalnummer]);
       sscanf(zeile, "%u %u\n", &(next_sensorAnalogInputTime[bKanalnummer]), &(next_sensorAnalogInputVal[bKanalnummer]));
     }
   }
@@ -303,11 +303,11 @@ init_analogin (uint8_t bNumber, uint8_t bType)
   }
   // END: Added by M.Wodok 6.12.04
   sensorAnalogInputOpen[bNumber] = true;
-  fgets(zeile, 99, sensorAnalogInput[bNumber]);
+  (void)fgets(zeile, 99, sensorAnalogInput[bNumber]);
   sscanf(zeile, "%u %u\n", &(lastSensorAnalogInputTime[bNumber]), &(lastSensorAnalogInputVal[bNumber]));
   if ( feof(sensorAnalogInput[bNumber]) == 0 )
   { // read next line
-    fgets(zeile, 99, sensorAnalogInput[bNumber]);
+    (void)fgets(zeile, 99, sensorAnalogInput[bNumber]);
     sscanf(zeile, "%u %u\n", &(next_sensorAnalogInputTime[bNumber]), &(next_sensorAnalogInputVal[bNumber]));
   }
   return HAL_NO_ERR;
@@ -332,7 +332,7 @@ int16_t  getAnaloginMean(uint8_t bInput)
     if ( sensorAnalogInput[bInput] != NULL && feof(sensorAnalogInput[bInput]) == 0 )
     { // read next line
       char zeile[100];
-      fgets(zeile, 99, sensorAnalogInput[bInput]);
+      (void)fgets(zeile, 99, sensorAnalogInput[bInput]);
       sscanf(zeile, "%u %u\n", &(next_sensorAnalogInputTime[bInput]), &(next_sensorAnalogInputVal[bInput]));
     }
   }

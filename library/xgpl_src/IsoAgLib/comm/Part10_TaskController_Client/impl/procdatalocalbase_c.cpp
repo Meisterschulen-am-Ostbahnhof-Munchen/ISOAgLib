@@ -279,6 +279,8 @@ void ProcDataLocalBase_c::processSetpoint( const ProcessPkg_c& pkg )
     pkg.setPd(1);
     processProg(pkg);
   }
+  #else
+  (void)pkg;
   #endif
 }
 

@@ -69,11 +69,11 @@ IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
 
       IsoAgLib::getISchedulerInstance().init();
       bool isoRetVal = IsoAgLib::getIIsoBusInstance().init (aui8_busNr);
-      isoaglib_assert (isoRetVal == true);
+      isoaglib_assert (isoRetVal == true); (void)isoRetVal;
 
       mb_requestThreadToStop = false;
       int createRetVal = pthread_create (&mthread_core, NULL, thread_core, (void *)this);
-      isoaglib_assert (createRetVal == 0);
+      isoaglib_assert (createRetVal == 0); (void)createRetVal;
 
       mc_protectAccess.releaseAccess();
       return startSuccess;
@@ -108,10 +108,10 @@ IsoAgLibThread_c::stop (void *key)
 #endif
       mb_requestThreadToStop = true;
       int joinRetVal = pthread_join (mthread_core, NULL);
-      isoaglib_assert (joinRetVal == 0);
+      isoaglib_assert (joinRetVal == 0); (void)joinRetVal
       // Thread is not running now anymore...
       bool isoRetVal = IsoAgLib::getIIsoBusInstance().close();
-      isoaglib_assert (isoRetVal == true);
+      isoaglib_assert (isoRetVal == true); (void)isoRetVal;
       IsoAgLib::getISchedulerInstance().close();
       // Last one closed the door.
     }
