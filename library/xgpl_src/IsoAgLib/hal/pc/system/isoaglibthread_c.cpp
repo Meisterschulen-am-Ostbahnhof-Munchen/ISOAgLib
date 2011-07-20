@@ -108,7 +108,7 @@ IsoAgLibThread_c::stop (void *key)
 #endif
       mb_requestThreadToStop = true;
       int joinRetVal = pthread_join (mthread_core, NULL);
-      isoaglib_assert (joinRetVal == 0); (void)joinRetVal
+      isoaglib_assert (joinRetVal == 0); (void)joinRetVal;
       // Thread is not running now anymore...
       bool isoRetVal = IsoAgLib::getIIsoBusInstance().close();
       isoaglib_assert (isoRetVal == true); (void)isoRetVal;
