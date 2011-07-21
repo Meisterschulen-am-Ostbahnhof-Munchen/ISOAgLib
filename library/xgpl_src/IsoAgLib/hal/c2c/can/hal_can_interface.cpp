@@ -25,6 +25,7 @@
 #include "../config.h"
 #include "../errcodes.h"
 
+#include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
