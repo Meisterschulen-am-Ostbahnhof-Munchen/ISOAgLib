@@ -544,9 +544,11 @@ CanIo_c::deleteAllFiltersForCustomer(
 int16_t
 CanIo_c::processMsg()
 {
-  // immediately leave this function, if this CAN_IO instance is marked as currently processing
+  if (mui8_busNumber == 0xFF)
+    return -1;
   // --> detect and avoid CAN message processing loops
-  if ( mb_runningCanProcess ) return -1;
+  if ( mb_runningCanProcess )
+    return -1;
   mb_runningCanProcess = true;
   mui8_processedMsgCnt = 0;
 
