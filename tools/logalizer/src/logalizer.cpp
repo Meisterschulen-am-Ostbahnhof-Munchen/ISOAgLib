@@ -71,31 +71,34 @@ void exit_with_usage(const char* progname)
   std::cout << "          6 -> JohnDeere"<<std::endl;
   std::cout << "          7 -> rte2"<<std::endl;
   std::cout << "          8 -> JRF (.jrf)"<<std::endl;
+  std::cout << "          9 -> PCANExplorer"<<std::endl;
   std::cout << std::endl;
   std::cout << "wrapMultipacket: Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cout << std::endl;
 #ifdef WIN32
-  std::cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
-  std::cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
-  std::cout << "             (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
-  std::cout << "CANMon:     'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
-  std::cout << "CANoe:      '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
-  std::cout << "A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff    '..."<<std::endl;
-  std::cout << "            ...'   446270'"<<std::endl;
-  std::cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
-  std::cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<std::endl;
-  std::cout << "            ...'    17920  ....... '"<<std::endl;
-  std::cout << "JRF:        '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
+  std::cout << "can_server:  '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
+  std::cout << "rte:         '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
+  std::cout << "              (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
+  std::cout << "CANMon:      'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
+  std::cout << "CANoe:       '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
+  std::cout << "A1ASCII:     'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff    '..."<<std::endl;
+  std::cout << "             ...'   446270'"<<std::endl;
+  std::cout << "PCANView:    '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
+  std::cout << "JohnDeere:   'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<std::endl;
+  std::cout << "             ...'    17920  ....... '"<<std::endl;
+  std::cout << "JRF:         '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
+  std::cout << "PCANExplorer:'    13)       116.6 1  Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
 #else
-  std::cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
-  std::cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
-  std::cout << "             (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
-  std::cout << "CANMon:     'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
-  std::cout << "CANoe:      '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
-  std::cout << "A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<std::endl;
-  std::cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
-  std::cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<std::endl;
-  std::cout << "JRF:        '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
+  std::cout << "can_server:   '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
+  std::cout << "rte:          '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
+  std::cout << "               (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
+  std::cout << "CANMon:       'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
+  std::cout << "CANoe:        '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
+  std::cout << "A1ASCII:      'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<std::endl;
+  std::cout << "PCANView:     '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
+  std::cout << "JohnDeere:    'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<std::endl;
+  std::cout << "JRF:          '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
+  std::cout << "PCANExplorer: '    13)       116.6 1 Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
 #endif
 
   exit(0);
@@ -328,6 +331,24 @@ std::pair< int, PtrDataFrame_t > parseLogLineTrc(
   return std::make_pair( i_result, t_ptrFrame );
 }
 
+std::pair< int, PtrDataFrame_t > parseLogLineTrc2(
+  std::string const &acr_line) // "    13)       116.6 1 Rx     18EF808B 80 8  12 15 15 15 15 15 15 15"
+{
+  unsigned arru_d[8];
+  int iA, iB, iDb;
+  int parsed_count = sscanf(
+      acr_line.c_str(),
+      " %*s %u.%*u %*u %*s %x %*x %u %x %x %x %x %x %x %x %x",
+      &iA, &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
+  int i_result = parsed_count == (3+iDb) ? 0 : -1;
+  if (i_result < 0)
+    return std::make_pair( i_result, PtrDataFrame_t(0) );
+
+  std::vector< uint8_t > vec_data;
+  copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data);
+  return std::make_pair( i_result, t_ptrFrame );
+}
 
 std::pair< int, PtrDataFrame_t > parseLogLineJrf(
   std::string const &acr_line) // "41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF"
@@ -1838,6 +1859,7 @@ ParseLogLine_t *getLogLineParser(size_t at_choice)
     parseLogLineJohnDeere,
     parseLogLineRte2,
     parseLogLineJrf,
+	parseLogLineTrc2,
     defaultParseLogLine
   };
 
