@@ -38,13 +38,16 @@ public:
   virtual void eventSetPwmFreq(uint8_t /*bOutputGroup*/, uint32_t /*dwFrequency*/) {}
   virtual void eventSetDigout(uint8_t /*bOutputNo*/, uint16_t /*wPWMValue*/) {}
 
-  // Sensors
+  // Inputs
   virtual void init_digin( uint8_t /*bInput*/, uint8_t /*bMode*/, uint8_t /*bAktivhighlow*/, void (*pfFunctionName)(...) ) { (void)pfFunctionName; }
   virtual void init_analogin( uint8_t /*bNumber*/, uint8_t /*bType*/ ) {}
   virtual int16_t getDiginOnoff( uint8_t /*bInputNumber*/ ) { return false; }
   virtual void getDiginPeriod( uint8_t /*bInput*/, uint16_t * /*pwPeriod*/, uint16_t * /*pwImpulse*/ ) {}
   virtual void getDiginFreq( uint8_t /*bInput*/, uint16_t * /*pwFrequency*/ ) {}
   virtual int16_t getAdc( uint8_t /*bKanalnummer*/ ) { return 0; }
+  virtual uint32_t getCounter( uint8_t /*bInput*/ ) { return 0; }
+  virtual int16_t resetCounter( uint8_t /*bInput*/ ) { return 0; }
+  virtual uint32_t getCounterLastSignalAge( uint8_t /*bInput*/ ) { return 0; }
 
   // RS-232
   virtual void init_rs232( uint32_t /*baudrate*/, uint8_t /*bMode*/, uint8_t /*bStoppbits*/, bool /*bitSoftwarehandshake*/, uint8_t /*comport*/ ) {}

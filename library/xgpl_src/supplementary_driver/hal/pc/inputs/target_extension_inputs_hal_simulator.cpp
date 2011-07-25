@@ -116,48 +116,45 @@ static counterIrqFunction irqFuncArr[16] =
 int16_t
 init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(...))
 {
-	halSimulator().init_digin( bInput, bMode, bAktivhighlow, pfFunctionName );
-
-	return HAL_NO_ERR;
+  halSimulator().init_digin( bInput, bMode, bAktivhighlow, pfFunctionName );
+  return HAL_NO_ERR;
 }
 
 
 int16_t
 getDiginOnoff(uint8_t bInputNumber)
 {
-	return halSimulator().getDiginOnoff( bInputNumber );
+  return halSimulator().getDiginOnoff( bInputNumber );
 }
 
 
 int16_t
 getDiginOnoffStatic(uint8_t bInputNumber)
 {
-	return getDiginOnoff(bInputNumber);
+  return getDiginOnoff(bInputNumber);
 }
 
 
 int16_t
 setDiginPrescaler(uint8_t bGroup, uint8_t bMode)
 {
-	return HAL_NO_ERR;
+  return HAL_NO_ERR;
 }
 
 
 int16_t
 getDiginPeriod(uint8_t bInput, uint16_t *pwPeriod, uint16_t *pwImpulse)
 {
-	halSimulator().getDiginPeriod( bInput, pwPeriod, pwImpulse );
-
-	return HAL_NO_ERR;
+  halSimulator().getDiginPeriod( bInput, pwPeriod, pwImpulse );
+  return HAL_NO_ERR;
 }
 
 
 int16_t
 getDiginFreq(uint8_t bInput, uint16_t *pwFrequency)
 {
-	halSimulator().getDiginFreq( bInput, pwFrequency );
-
-	return HAL_NO_ERR;
+  halSimulator().getDiginFreq( bInput, pwFrequency );
+  return HAL_NO_ERR;
 }
 
 
@@ -171,9 +168,8 @@ getAdc(uint8_t bKanalnummer)
 int16_t
 init_analogin(uint8_t bNumber, uint8_t bType)
 {
-	halSimulator().init_analogin( bNumber, bType );
-
-	return HAL_NO_ERR;
+  halSimulator().init_analogin( bNumber, bType );
+  return HAL_NO_ERR;
 }
 
 
@@ -294,121 +290,43 @@ uint32_t
 getCounter(uint8_t ab_channel)
 {
   /* check if ab_channel is allowed and var array is allocated */
-  if ((ab_channel < 16) && (_pulDiginCounter[(ab_channel / 4)] != NULL))
-  {
-    return _pulDiginCounter[(ab_channel / 4)][(ab_channel % 4)];
-  }
-  else return 0;
+  return halSimulator().getCounter( ab_channel );
 }
 
 
 int16_t
 resetCounter(uint8_t ab_channel)
 {
-  /* check if ab_channel is allowed and var array is allocated */
-  if ((ab_channel < 16) && (_pulDiginCounter[(ab_channel / 4)] != NULL))
-  {
-    _pulDiginCounter[(ab_channel / 4)][(ab_channel % 4)] = 0;
-    return HAL_NO_ERR;
-  }
-  else return HAL_RANGE_ERR;
+  return halSimulator().resetCounter( ab_channel );
 }
 
 
 uint16_t
 getCounterPeriod(uint8_t ab_channel)
 {
-  uint16_t ui16_timebase, ui16_result = 0xFFFF, ui16_counter;
-  /* check if ab_channel is allowed and var array is allocated */
-  if (ab_channel > 15) return 0xFFFF;
-  if (_puiDiginTimebase[(ab_channel / 4)] != NULL)
-  {
-    ui16_timebase = _puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)];
-    if (ui16_timebase == 0) ui16_result = 0xFFFF;
-    else if (ui16_timebase < (1024 * 65534 / (getCpuFreq() * 1000)))
-    { /* use standard BIOS method because timebase is short enough */
-      getDiginPeriod(ab_channel, &ui16_result, &ui16_counter);
-      if (ab_channel < 5)
-      {
-        ui16_result = (((2 << (_b_prescale_1_4Index + 2)) * ui16_result )/ (getCpuFreq() * 1000));
-      }
-      else
-      {
-        ui16_result = (((2 << (_b_prescale_5_16Index + 2)) * ui16_result )/ (getCpuFreq() * 1000));
-      }
-    }
-    else
-    { /* use extension method */
-      if (_pt_diginTriggerTime[(ab_channel / 4)] != NULL)
-      { /* vars are accessible */
-        if (getCounterLastSignalAge(ab_channel) < ui16_timebase)
-        { // handle overflow between uiLast and uiAct
-          ui16_result = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod;
-          if (ui16_result == 0) ui16_result = 1;
-        }
-      }
-    }
-  }
-  return ui16_result;
+  uint16_t pwPeriod;
+  uint16_t pwImpulse;
+
+  getDiginPeriod(ab_channel, &pwPeriod, &pwImpulse);
+  return pwPeriod;
 }
 
 
 uint16_t
 getCounterFrequency(uint8_t ab_channel)
 {
-  uint16_t ui16_timebase, ui16_result = 0;
-  uint16_t ui16_lastSignalAge = 0;
-  uint16_t ui16_lastPeriod;
-  /* check if ab_channel is allowed and var array is allocated */
-  if ((ab_channel < 16) && (_puiDiginTimebase[(ab_channel / 4)] != NULL))
-  {
-    ui16_timebase = _puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)];
-    if (ui16_timebase == 0) ui16_result = 0;
-    else if (ui16_timebase < (1024 * 65534 / (getCpuFreq() * 1000)))
-    { /* use standard BIOS method because timebase is short enough */
-      getDiginFreq(ab_channel, &ui16_result);
-    }
-    else
-    { /* use extension method */
-      if (_pt_diginTriggerTime[(ab_channel / 4)] != NULL)
-      { /* vars are accessible */
-        ui16_lastSignalAge = getCounterLastSignalAge(ab_channel);
-        if (ui16_lastSignalAge < ui16_timebase)
-        { // handle overflow between uiLast and uiAct
-          ui16_lastPeriod = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod;
-          if (ui16_lastPeriod == 0) ui16_result = 0;
-          else
-          {
-            if ((ui16_lastPeriod * 2) < ui16_lastSignalAge) ui16_lastPeriod = ((int32_t)ui16_lastPeriod + (int32_t)ui16_lastSignalAge)/(int32_t)2;
-            ui16_result = (10000 / ui16_lastPeriod);
-          }
-        }
-      }
-    }
-  }
-  return ui16_result;
+  uint16_t pwFrequency;
+
+  getDiginFreq(ab_channel, &pwFrequency);
+  return pwFrequency;
 }
 
 
 uint16_t
 getCounterLastSignalAge(uint8_t ab_channel)
 {
-  uint16_t uiResult = 0xFFFF, uiTime = (getTime() & 0xFFFF);
-  uint16_t ui16_period, ui16_actTime;
-  /* check if ab_channel is allowed and var array is allocated */
-  if ((ab_channel < 16) && (_pt_diginTriggerTime[(ab_channel / 4)] != NULL))
-  {
-    ui16_period = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod;
-    ui16_actTime = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiAct;
-    if (ui16_period <= 0xFFFE)
-    { // both values are valid and not resetted
-      uiResult = (uiTime >= ui16_actTime)?(uiTime - ui16_actTime): (uiTime + (0xFFFF - ui16_actTime));
-      // if timebase is exceeded -> reset *puiAct and *puiLast
-      if (_puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)] < uiResult)
-        _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod = 0xFFFF; // if both are equal answers in future time age 0xFFFF
-    }
-  }
-  return uiResult;
+  return halSimulator().getCounterLastSignalAge( ab_channel );
 }
 
-} // end namespace __HAL
+
+} // __HAL
