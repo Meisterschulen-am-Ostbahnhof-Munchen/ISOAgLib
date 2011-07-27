@@ -38,12 +38,12 @@ public:
 
 /**
   Provides interface for accessing the diagnostics services DM1/DM2/DM3 manager
+  NOTE: this class is not Application-constructable
   @short Interface access class managing diagnostics services DM1/DM2/DM3
   @author Antoine Kandera, reviewed by Martin Wodok
 */
 class iDiagnosticsServices_c : private __IsoAgLib::DiagnosticsServices_c
 {
-
 public:
   /**
     Registering of the "iServiceToolVerifier_c"
@@ -109,6 +109,12 @@ public:
   {
     __IsoAgLib::DiagnosticsServices_c::serviceTool_dtcClearPrevious();
   }
+
+private:
+  // this constructor is only needed to be compilable on some compilers.
+  iDiagnosticsServices_c(__IsoAgLib::IdentItem_c &x) : DiagnosticsServices_c(x) {}
+  ~iDiagnosticsServices_c() {}
+
 private:
   friend class iIdentItem_c;
 };
