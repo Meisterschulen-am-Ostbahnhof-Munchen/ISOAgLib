@@ -50,7 +50,7 @@ int16_t open_system()
 // MSCHMIDT - I think there is a bug here...  
 // I think it should read:
 //    if( !get_on_off_switch() )
-// Same is true for hal\esx\system\system_target_extensions.cc
+// Same is true for hal\c2c\system\system_target_extensions.cpp
 //
 int16_t closeSystem( void )
 { // if CAN_EN ist active -> shut peripherals off and stay in idle loop
@@ -86,7 +86,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 /** check if open_System() has already been called */
 bool isSystemOpened( void )
 {
-	return system_is_opened;
+  return system_is_opened;
 }
 
 /**

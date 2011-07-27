@@ -33,8 +33,6 @@
 #define HAL_RS232_BITRATE_CNT 10
 
 
-// include target independent configs
-#include <IsoAgLib/isoaglib_config.h>
 
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
 // -> all needed offsets shall be added at the lowest possible layer
@@ -75,7 +73,7 @@
 #endif
 
 /* WATCHDOG DISABLED */
-#define WD_MAX_TIME   100
+#define WD_MAX_TIME   0
 
 /* 16.7 V                     */
 #define UD_MAX        16700

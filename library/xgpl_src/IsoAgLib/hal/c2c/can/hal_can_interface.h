@@ -12,7 +12,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/** \file library/xgpl_src/IsoAgLib/hal/c2c/can/hal_can_interface.h
+/** \file c2c/can/hal_can_interface.h
  * The module halCanInterface implements a standard
  * interface for the CAN interactions of the IsoAgLib
  * This way the the adaptation of the IsoAgLib can be
@@ -25,12 +25,19 @@
 #define _HAL_C2C_CAN_INTERFACE_H_
 
 #include <IsoAgLib/isoaglib_config.h>
-#include "../typedef.h"
-
-
-namespace __IsoAgLib { class Ident_c; class CanPkg_c;}
 
 namespace __HAL {
+  extern "C" {
+    /** include the BIOS specific header into __HAL */
+    #include <commercial_BIOS/bios_c2c/c2c10osy.h>
+  }
+}
+
+#include <IsoAgLib/hal/c2c/config.h>
+#include <IsoAgLib/hal/c2c/typedef.h>
+#include <IsoAgLib/hal/c2c/errcodes.h>
+
+namespace __IsoAgLib { class Ident_c; class CanPkg_c;}
 
 /* ************************************************** */
 /** \name Global Status Per BUS
@@ -38,9 +45,10 @@ namespace __HAL {
 /* ************************************************** */
 /*@{*/
 
-#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
-int32_t can_getMaxSendDelay(void);
-#endif
+namespace __HAL {
+
+
+
 
 /**
   test if the CAN BUS is in WARN state
@@ -92,7 +100,6 @@ bool can_stateGlobalBit1err(uint8_t aui8_busNr = 0);
 */
 bool can_stateMsgobjOverflow(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
 
-
 /**
   deliver amount of messages in buffer
   (interesting for RX objects)
@@ -135,7 +142,7 @@ int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
           HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
           HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
 */
-int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
+int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
 
 /**
   set the global masks
@@ -147,7 +154,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   @return HAL_NO_ERR == no error;
           HAL_RANGE_ERR == wrong BUS nr
 */
-int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
+int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
 
 int16_t can_configMsgobjSendpause(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, uint16_t aui16_minSend);
 
@@ -167,7 +174,6 @@ int16_t can_configGlobalClose(uint8_t aui8_busNr);
 bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval );
 /*@}*/
 
-int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data);
 
 /* ************************************************** */
 /** \name Configuration specific for one MsgObj
@@ -192,7 +198,6 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx);
 
 
-
 /**
   close a MsgObj
   @param aui8_busNr number of the BUS to config
@@ -211,6 +216,26 @@ int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
 /*@{*/
 
 /**
+  send a message via a MsgObj;
+  CanPkg_c (or derived object) must provide (virtual)
+  functions:
+  * Ident_c& getIdent() -> deliver ident of msg to send
+  * void getData(MASK_TYPE& rt_ident, uint8_t& rui8_identType,
+                 uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget)
+    -> put DLC in referenced r_dlc and insert data in uint8_t string pb_data
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param apc_data pointer to CanPkg_c instance with data to send
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised, MsgObj is no send object
+          HAL_NOACT_ERR == BUS OFF
+          HAL_OVERFLOW_ERR == send buffer overflowed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+*/
+int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data);
+
+
+/**
   clear th buffer of a MsgObj (e.g. to stop sending retries)
   @param aui8_busNr number of the BUS to config
   @param aui8_msgobjNr number of the MsgObj to config
@@ -220,5 +245,10 @@ int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
 */
 int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
 /*@}*/
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+int32_t can_getMaxSendDelay(void);
+#endif
+
 }
+
 #endif

@@ -47,8 +47,11 @@ namespace HAL
   inline bool can_stateGlobalOff(uint8_t aui8_busNr)
     {return __HAL::can_stateGlobalOff(aui8_busNr);}
 
+
+ #ifdef USE_CAN_MEASURE_BUSLOAD
   inline int32_t can_stateGlobalBusload(uint8_t aui8_busNr)
     {return __HAL::can_stateGlobalBusload(aui8_busNr);}
+ #endif
 
   inline bool can_stateGlobalBit1err(uint8_t aui8_busNr)
     {return __HAL::can_stateGlobalBit1err(aui8_busNr);}
@@ -91,7 +94,11 @@ namespace HAL
   inline int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
     {return __HAL::can_useMsgobjClear(aui8_busNr, aui8_msgobjNr);}
 
-  inline int32_t can_getMaxSendDelay(uint8_t aui8_busNr)
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+  inline int32_t can_getMaxSendDelay(uint8_t /*aui8_busNr*/)
     {return __HAL::can_getMaxSendDelay(); }
+#endif
+
 }
+
 #endif

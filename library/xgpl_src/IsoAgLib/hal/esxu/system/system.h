@@ -54,7 +54,7 @@ namespace HAL
     uint8_t uint8 [6];
     int16_t errCode = __HAL::get_snr(uint8);
     if (pi16_errCode) *pi16_errCode = errCode;
-    // ESX Serial number is coded in BCD. As we only get 21 bits,
+    // Serial number is coded in BCD. As we only get 21 bits,
     // we can take only a part of the information transmitted here.
     //  - uint8[0] is the year of construction -> 7 bits
     //  - uint8[2] and uint8[3] a contract numering -> 14 bits
@@ -65,6 +65,15 @@ namespace HAL
 
   inline void startTaskTimer() { __HAL::start_task_timer ( T_TASK_BASIC ); }
 
+  /**
+    init the Task Call
+	This function permits cyclic and/or delayed calls of user functions. If 0 is tranferred as parameter
+	for wInterval, the function call will occur only once. (For starting the tasks start task timer
+	(word wBasicTick) has to be queried.)
+	The ordering of the task into the interrupt system uses the transfer parameter wHandle. If a zero-pointer
+	is used in the user function parameter, the function will stop when the handle is called.
+	The maximum number of tasks is limited to 4.
+  */
   inline int16_t initTaskCall( uint16_t wHandle, uint16_t wInterval, uint16_t wOffset, void (* pfFunction)(void) )
   { return __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction ); }
 

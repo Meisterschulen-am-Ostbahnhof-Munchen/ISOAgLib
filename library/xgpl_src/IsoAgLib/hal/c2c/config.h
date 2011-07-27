@@ -17,7 +17,6 @@
 #define SYSTEM_C2C
 
 
-
 #define HAL_CAN_BITRATE_LIST {10, 20, 40, 50, 100, 125, 250, 500, 1000}
 #define HAL_CAN_BITRATE_CNT 9
 /** index for "LastMsgObj" where all messages are stored, which map through the special lastMsgMask */
@@ -38,7 +37,7 @@
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
 // -> all needed offsets shall be added at the lowest possible layer
 //    ( i.e. direct in the BIOS/OS call)
-#define HAL_CAN_MAX_BUS_NR 2
+#define HAL_CAN_MAX_BUS_NR 1
 
 /** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */
 #define FLOAT_WORD_ORDER WORD_HI_LO
@@ -69,7 +68,7 @@
 #define MAX_EEPROM_WRITE_TRY_CYCLE_CNT 5
 
 // basic period of task manager (scheduler)= const * 500 us = 1 ms
-#if !defined( T_TASK_BASIC )
+#ifndef T_TASK_BASIC
 	#define T_TASK_BASIC 2
 #endif
 

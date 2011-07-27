@@ -25,13 +25,24 @@
 #include "../config.h"
 #include "../errcodes.h"
 
-#include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
+#include <list>
 
 #include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
-#include <list>
+
+
+#include <IsoAgLib/driver/system/impl/system_c.h>
+
+#if DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
 
 
 using namespace std; // simple version to avoid problems with using CNAMESPACE
@@ -39,7 +50,7 @@ using namespace std; // simple version to avoid problems with using CNAMESPACE
 
 namespace __HAL {
 extern "C" {
-  /** include the BIOS specific header with the part for CAN into __HAL */
+  /** include the BIOS specific header into __HAL */
   #include <commercial_BIOS/bios_c2c/c2c10osy.h>
 }
 
@@ -51,30 +62,34 @@ static tCanObjConfig t_cinterfMsgobjConfig;
 static tSend t_cinterfMsgobjSend;
 static tCanObjStatus t_cinterfMsgobjState;
 
+
 static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 
-
 static int32_t i32_cinterfBeginBit1err[cui32_maxCanBusCnt];
+static uint8_t ui8_cinterfLastSendBufCnt[cui32_maxCanBusCnt][16];
 
 #ifdef USE_CAN_MEASURE_BUSLOAD
+
 void updateCanBusLoad(uint8_t aui8_busNr, uint8_t ab_dlc);
 /** array of 100msec. timeslice conters of received and sent msg per BUS [uint8_t] */
 static uint16_t gwCinterfBusLoad[cui32_maxCanBusCnt][10];
+
 /** actual index in gwBusLoad */
 static uint8_t gb_cinterfBusLoadSlice[cui32_maxCanBusCnt];
+
 #endif
 
 
 /** store size of each MsgObj - needed to answer the Free Item Cnt */
 static uint8_t ui8_cinterfBufSize[cui32_maxCanBusCnt][16];
 
-#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
 
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
 static int32_t i32_maxSendDelay = 0;
+
 /**
   structure to save actual time stamp and Identifier
 */
-
 struct can_timeStampAndId_t
 {
   can_timeStampAndId_t (int32_t i32_ttimeStamp, __IsoAgLib::Ident_c& arc_ident): i32_timeStamp(i32_ttimeStamp),at_ident(arc_ident) {}
@@ -86,9 +101,7 @@ static STL_NAMESPACE::list<can_timeStampAndId_t> list_sendTimeStamps;
 
 #endif
 
-
 extern "C" {
-
 #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
 /** user defined CAN IRQ Function
     @param bBus bus number [0,1]
@@ -166,7 +179,7 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::t
           }
 
          bool b_ret = HAL::iFifoWrite(bBus,i32_fbIndex,i32_msgId,(void*)tCanregister);
-         (void)b_ret; // normally, don't care for the return value - only for debug.
+         (void)b_ret; // return value currently only used for debug...
 
           #if DEBUG_FIFO_WRITE
            if(!b_ret)
@@ -184,7 +197,7 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::t
 
 /** user defined function to retrieve the data from tCanMsgReg  */
 
-void getIrqData(void* inputData,_near HAL::fifoData_s* destination ,uint8_t aui8_bXtd)
+void getIrqData(void* inputData,_near HAL::fifoData_s* destination,uint8_t aui8_bXtd)
 {
 
   tCanMsgReg* tCanregister = (tCanMsgReg*)inputData;
@@ -201,6 +214,7 @@ void getIrqData(void* inputData,_near HAL::fifoData_s* destination ,uint8_t aui8
   destination->abData[7] = tCanregister->tD5_D7.b[2];
 
 }
+
 } // extern "C"
 
 /* ******************************************************* */
@@ -210,7 +224,6 @@ void getIrqData(void* inputData,_near HAL::fifoData_s* destination ,uint8_t aui8
 /* ******************** */
 /* ***Global Per BUS*** */
 /* ******************** */
-
 #ifdef USE_CAN_MEASURE_BUSLOAD
 /**
   update the CAN BUS load statistic
@@ -259,8 +272,8 @@ bool can_stateGlobalOff(uint8_t aui8_busNr)
   return ((ui16_canState & CanStateOff) != 0);
 }
 
-
 #ifdef USE_CAN_MEASURE_BUSLOAD
+
 /**
   deliver the baudrate of the CAN BUS in [kbaud]
   @param aui8_busNr number of the BUS to check (default 0)
@@ -275,7 +288,6 @@ int32_t can_stateGlobalBusload(uint8_t aui8_busNr)
   }
   return i32_baudrate;
 }
-
 #endif
 
 /**
@@ -297,7 +309,6 @@ bool can_stateGlobalBit1err(uint8_t aui8_busNr)
 /* ***Specific for one MsgObj*** */
 /* ***************************** */
 
-
 /**
   test if buffer of a MsgObj is full (e.g. no more
   msg can be put into buffer (important for TX objects))
@@ -308,15 +319,17 @@ bool can_stateGlobalBit1err(uint8_t aui8_busNr)
 bool can_stateMsgobjOverflow(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 { // map aui8_msgobjNr 1 to 0
   bool b_overflow = false;
-  // add offset 1 to aui8_msgobjNr as ESX BIOS starts counting with 1
+
+  // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
+
   if (get_can_obj_status(aui8_busNr, (aui8_msgobjNr+1), &t_cinterfMsgobjState) == HAL_NO_ERR)
   {
     if (t_cinterfMsgobjState.bOverflow == 1) b_overflow = true;
-
   }
   return b_overflow;
 }
+
 
 /**
   deliver amount of messages in buffer
@@ -329,7 +342,7 @@ bool can_stateMsgobjOverflow(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 */
 int16_t can_stateMsgobjBuffercnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  // add offset 1 to aui8_msgobjNr as C2C BIOS starts counting with 1
+  // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   return get_can_msg_buf_count(aui8_busNr, (aui8_msgobjNr+1));
 }
@@ -344,7 +357,7 @@ int16_t can_stateMsgobjBuffercnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
     HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
 int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
-{ // add offset 1 to aui8_msgobjNr as C2C BIOS starts counting with 1
+{ // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   int16_t i16_msgcnt = get_can_msg_buf_count(aui8_busNr, (aui8_msgobjNr+1));
   if (i16_msgcnt < 0)
@@ -352,7 +365,6 @@ int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
   else
     return ( ui8_cinterfBufSize[aui8_busNr][aui8_msgobjNr] - i16_msgcnt);
 }
-
 
 /* ***************************************************** */
 /* ***************** Configuration ********************* */
@@ -379,10 +391,11 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   // init variables
   i32_cinterfBeginBit1err[aui8_busNr] = -1;
 
- #ifdef USE_CAN_MEASURE_BUSLOAD
+  #ifdef USE_CAN_MEASURE_BUSLOAD
   gb_cinterfBusLoadSlice[aui8_busNr] = 0;
+  // cnt 0xFF is sign, that this MsgObj isn't configured for send
   CNAMESPACE::memset((gwCinterfBusLoad[aui8_busNr]),0,10);
-#endif
+  #endif
 
   // now config BUS
   return init_can(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg, ab_baudrate);
@@ -470,23 +483,22 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
   tCanObjConfig* pt_config = &t_cinterfMsgobjConfig;
   pt_config->dwId = arc_ident.ident();
 
-
   pt_config->bXtd = arc_ident.identType();
 
   if (ab_rxtx == 0)
   { // receive
+
     // retrieve current global masks
     get_can_bus_status(aui8_busNr, &t_cinterfCanState);
 
-
+    ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr] = 0xFF;
     pt_config->bMsgType = RX;
     pt_config->pfIrqFunction = IwriteCentralCanfifo;
     pt_config->wNumberMsgs = 0;
-
   }
   else
   { // send
-
+    ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr] = 0;
     pt_config->bMsgType = TX;
 
     #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
@@ -498,15 +510,12 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
 
     pt_config->wNumberMsgs = CONFIG_CAN_SEND_BUFFER_SIZE;
     #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
-	// clear send timestamp list
+    // clear send timestamp list
     list_sendTimeStamps.erase(list_sendTimeStamps.begin(),list_sendTimeStamps.end());
     #endif
-
   }
   ui8_cinterfBufSize[aui8_busNr][aui8_msgobjNr] = pt_config->wNumberMsgs;
-
   pt_config->bTimeStamped = false;
-
   pt_config->wPause = 0;
 
   #if DEBUG_CAN_BUFFER_FILLING
@@ -516,7 +525,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
   INTERNAL_DEBUG_DEVICE << temp << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
-  // add offset 1 to aui8_msgobjNr as C2C BIOS starts counting with 1
+  // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   return config_can_obj(aui8_busNr, (aui8_msgobjNr+1), pt_config);
 }
@@ -535,7 +544,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
 */
 int16_t can_configMsgobjSendpause(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, uint16_t aui16_minSend)
 {
-  // add offset 1 to aui8_msgobjNr as C2C BIOS starts counting with 1
+  // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   return chg_can_obj_pause(aui8_busNr, (aui8_msgobjNr+1), aui16_minSend);
 }
@@ -549,7 +558,7 @@ int16_t can_configMsgobjSendpause(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, uin
           HAL_RANGE_ERR == wrong BUS or MsgObj number
 */
 int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
-{ // add offset 1 to aui8_msgobjNr as C2C BIOS starts counting with 1
+{ // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   if ( ( aui8_busNr >= cui32_maxCanBusCnt ) || ( aui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
 
@@ -560,14 +569,19 @@ int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 /* ***************** Use of MsgObj ********************* */
 /* ***************************************************** */
 
-
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+int32_t can_getMaxSendDelay(void)
+{
+    return(i32_maxSendDelay);
+}
+#endif
 /**
   send a message via a MsgObj;
   CanPkg_c (or derived object) must provide (virtual)
   functions:
   * MASK_TYPE ident() -> deliver ident value
   * __IsoAgLib::Ident_c::identType_t identType() -> deliver type of ident
-  * void getData(MASK_TYPE& at_ident, uint8_t& rui8_identType,
+  * void getData(MASK_TYPE& rt_ident, uint8_t& rui8_identType,
                  uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget)
     -> put DLC in referenced r_dlc and insert data in uint8_t string pb_data
   @param aui8_busNr number of the BUS to config
@@ -578,28 +592,25 @@ int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
           HAL_NOACT_ERR == BUS OFF
           HAL_OVERFLOW_ERR == send buffer overflowed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
+          HAL_NEW_SEND_DELAY == new send delay is stored
 */
 int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data)
 { // check if some msg were sent from buffer
-
   tSend* pt_send = &t_cinterfMsgobjSend;
 
 
-  #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
   __IsoAgLib::Ident_c at_ident (pt_send->dwId, (pt_send->bXtd == 1) ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent);
   can_timeStampAndId_t t_can_timeStampAndId (__HAL::get_time(), at_ident);
   list_sendTimeStamps.push_back(t_can_timeStampAndId);
-  #endif
-
-    // CanPkgExt_c::getData transforms flag data to ident and 8byte string
-   apc_data->getData(pt_send->dwId, pt_send->bXtd, pt_send->bDlc, pt_send->abData);
+#endif
 
 
-  // pt_send->dwId = apc_data->ident();
-  // if (apc_data->identType() == 1)
-  // CanPkg_c::ident() and CanPkg_c::identType() changed to static
-  // pt_send->dwId = __IsoAgLib::CanPkg_c::ident();
-#ifdef USE_CAN_MEASURE_BUSLOAD
+  // CanPkgExt_c::getData transforms flag data to ident and 8byte string
+  apc_data->getData(pt_send->dwId, pt_send->bXtd, pt_send->bDlc, pt_send->abData);
+
+ #ifdef USE_CAN_MEASURE_BUSLOAD
   if (pt_send->bXtd == 1)
   { // extended 29bit ident
     updateCanBusLoad(aui8_busNr, (pt_send->bDlc + 4));
@@ -610,8 +621,10 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
     // pt_send->bXtd = 0;
     updateCanBusLoad(aui8_busNr, (pt_send->bDlc + 2));
   }
-#endif
+  #endif
 
+  // increase counter of to be sent msg in buffer
+  ++ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr];
   #if 0
   if ( ( pt_send->bDlc == 3 )
     && ( aui8_busNr == 1 )
@@ -644,9 +657,8 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   return retval;
   #endif
 
-
 #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
-  // add offset 1 to aui8_msgobjNr as ESX BIOS starts counting with 1
+  // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   int16_t i16_retSend = send_can_msg(aui8_busNr, (aui8_msgobjNr+1), pt_send);
 
@@ -661,11 +673,12 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 
   return i16_retSend;
 #else
-	 // add offset 1 to aui8_msgobjNr as ESX BIOS starts counting with 1
+	 // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
 	 return send_can_msg(aui8_busNr, (aui8_msgobjNr+1), pt_send);
 #endif
-}
+  }
+
 
 /**
   clear th buffer of a MsgObj (e.g. to stop sending retries)
@@ -677,16 +690,8 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 */
 int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  // add offset 1 to aui8_msgobjNr as C2C BIOS starts counting with 1
+  // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   return clear_can_obj_buf(aui8_busNr, (aui8_msgobjNr+1));
 }
-
-#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
-int32_t can_getMaxSendDelay(void)
-{
-    return(i32_maxSendDelay);
-}
-#endif
-
 } // end of namespace

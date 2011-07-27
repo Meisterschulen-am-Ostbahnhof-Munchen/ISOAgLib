@@ -64,7 +64,7 @@ bool can_stateGlobalWarn(uint8_t aui8_busNr = 0);
 */
 bool can_stateGlobalOff(uint8_t aui8_busNr = 0);
 
-
+#ifdef USE_CAN_MEASURE_BUSLOAD
 
 /**
   deliver the baudrate of the CAN BUS in [kbaud]
@@ -73,6 +73,7 @@ bool can_stateGlobalOff(uint8_t aui8_busNr = 0);
 */
 int32_t can_stateGlobalBusload(uint8_t aui8_busNr = 0);
 
+#endif
 /**
   check if a send try on this BUS caused an Bit1Error
   (occurs if >1 controller try to send msg with same ident)
@@ -244,7 +245,9 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 */
 int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
 /*@}*/
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
 int32_t can_getMaxSendDelay(void);
+#endif
 
 }
 

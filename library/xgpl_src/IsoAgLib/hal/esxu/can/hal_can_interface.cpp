@@ -320,14 +320,12 @@ bool can_stateMsgobjOverflow(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 { // map aui8_msgobjNr 1 to 0
   bool b_overflow = false;
 
-
   // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
 
-if (get_can_obj_status(aui8_busNr, (aui8_msgobjNr+1), &t_cinterfMsgobjState) == HAL_NO_ERR)
+  if (get_can_obj_status(aui8_busNr, (aui8_msgobjNr+1), &t_cinterfMsgobjState) == HAL_NO_ERR)
   {
     if (t_cinterfMsgobjState.bOverflow == 1) b_overflow = true;
-
   }
   return b_overflow;
 }
@@ -391,11 +389,11 @@ int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
   // init variables
-    i32_cinterfBeginBit1err[aui8_busNr] = -1;
+  i32_cinterfBeginBit1err[aui8_busNr] = -1;
 
   #ifdef USE_CAN_MEASURE_BUSLOAD
-   gb_cinterfBusLoadSlice[aui8_busNr] = 0;
-  // cnt 0xFF ist sign, that this MsgObj isn't configured for send
+  gb_cinterfBusLoadSlice[aui8_busNr] = 0;
+  // cnt 0xFF is sign, that this MsgObj isn't configured for send
   CNAMESPACE::memset((gwCinterfBusLoad[aui8_busNr]),0,10);
   #endif
 
@@ -485,9 +483,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
   tCanObjConfig* pt_config = &t_cinterfMsgobjConfig;
   pt_config->dwId = arc_ident.ident();
 
-
   pt_config->bXtd = arc_ident.identType();
-
 
   if (ab_rxtx == 0)
   { // receive
@@ -495,32 +491,28 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
     // retrieve current global masks
     get_can_bus_status(aui8_busNr, &t_cinterfCanState);
 
-
     ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr] = 0xFF;
     pt_config->bMsgType = RX;
     pt_config->pfIrqFunction = IwriteCentralCanfifo;
     pt_config->wNumberMsgs = 0;
-
   }
   else
   { // send
     ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr] = 0;
     pt_config->bMsgType = TX;
 
-
-#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+    #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
     // user defined IRQ Function
     pt_config->pfIrqFunction = IRQ_TriggerSend;
-#else
+    #else
     pt_config->pfIrqFunction = 0;
-#endif
-
-    pt_config->wNumberMsgs = CONFIG_CAN_SEND_BUFFER_SIZE;
-	#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
-	// clear send timestamp list
-    list_sendTimeStamps.erase(list_sendTimeStamps.begin(),list_sendTimeStamps.end());
     #endif
 
+    pt_config->wNumberMsgs = CONFIG_CAN_SEND_BUFFER_SIZE;
+    #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+    // clear send timestamp list
+    list_sendTimeStamps.erase(list_sendTimeStamps.begin(),list_sendTimeStamps.end());
+    #endif
   }
   ui8_cinterfBufSize[aui8_busNr][aui8_msgobjNr] = pt_config->wNumberMsgs;
   pt_config->bTimeStamped = false;
@@ -605,7 +597,6 @@ int32_t can_getMaxSendDelay(void)
 int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data)
 { // check if some msg were sent from buffer
   tSend* pt_send = &t_cinterfMsgobjSend;
-  uint8_t b_count = ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr];
 
 
 
@@ -616,7 +607,6 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 #endif
 
 
-  b_count = ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr];
   // CanPkgExt_c::getData transforms flag data to ident and 8byte string
   apc_data->getData(pt_send->dwId, pt_send->bXtd, pt_send->bDlc, pt_send->abData);
 
@@ -634,7 +624,7 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   #endif
 
   // increase counter of to be sent msg in buffer
-  ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr] = b_count + 1;
+  ++ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr];
   #if 0
   if ( ( pt_send->bDlc == 3 )
     && ( aui8_busNr == 1 )
@@ -668,7 +658,7 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   #endif
 
 #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
-  // add offset 1 to aui8_msgobjNr as ESX BIOS starts counting with 1
+  // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   int16_t i16_retSend = send_can_msg(aui8_busNr, (aui8_msgobjNr+1), pt_send);
 
@@ -683,7 +673,7 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 
   return i16_retSend;
 #else
-	 // add offset 1 to aui8_msgobjNr as ESX BIOS starts counting with 1
+	 // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
 	 return send_can_msg(aui8_busNr, (aui8_msgobjNr+1), pt_send);
 #endif

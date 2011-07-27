@@ -28,9 +28,16 @@
 #ifndef _HAL_C2C_CAN_H_
 #define _HAL_C2C_CAN_H_
 
-#include "hal_can_interface.h"
+namespace __HAL {
+  extern "C" {
+    /** include the BIOS specific header into __HAL */
+    #include <commercial_BIOS/bios_c2c/c2c10osy.h>
+  }
+}
+
 #include "../errcodes.h"
 
+#include "hal_can_interface.h"
 
 namespace HAL
 {
@@ -57,11 +64,6 @@ namespace HAL
 
   inline int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
     {return __HAL::can_stateMsgobjFreecnt(aui8_busNr, aui8_msgobjNr);}
-
-#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
-   inline int32_t can_getMaxSendDelay(uint8_t /*aui8_busNr*/)
-   {return __HAL::can_getMaxSendDelay();}
-#endif
 
   inline int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd,
         uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
@@ -91,7 +93,12 @@ namespace HAL
 
   inline int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
     {return __HAL::can_useMsgobjClear(aui8_busNr, aui8_msgobjNr);}
+
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+  inline int32_t can_getMaxSendDelay(uint8_t /*aui8_busNr*/)
+    {return __HAL::can_getMaxSendDelay(); }
+#endif
+
 }
 
 #endif
-

@@ -26,18 +26,9 @@
 #ifndef _HAL_C2C_SYSTEM_H_
 #define _HAL_C2C_SYSTEM_H_
 
-#include <cstdio>
-#include "../errcodes.h"
 #include "system_target_extensions.h"
 
 #include <IsoAgLib/util/impl/util_funcs.h>
-
-namespace __HAL {
-  extern "C" {
-    /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_c2c/c2c10osy.h>
-  }
-}
 
 
 namespace HAL
@@ -52,7 +43,7 @@ namespace HAL
 
   inline void wdReset() { (void)__HAL::reset_wd(); }
 
-  inline void wdTriggern() {__HAL::trigger_wd(); }
+  inline void wdTriggern() { __HAL::trigger_wd(); }
 
   inline int32_t getTime() { return __HAL::get_time(); }
 
@@ -60,14 +51,14 @@ namespace HAL
 
   inline int32_t getSerialNr(int16_t* pi16_errCode)
   {
-      uint8_t uint8 [6];
-      int16_t errCode = __HAL::get_snr(uint8);
-      if (pi16_errCode) *pi16_errCode = errCode;
-    // ESX Serial number is coded in BCD. As we only get 21 bits,
+    uint8_t uint8 [6];
+    int16_t errCode = __HAL::get_snr(uint8);
+    if (pi16_errCode) *pi16_errCode = errCode;
+    // Serial number is coded in BCD. As we only get 21 bits,
     // we can take only a part of the information transmitted here.
     //  - uint8[0] is the year of construction -> 7 bits
     //  - uint8[2] and uint8[3] a contract numering -> 14 bits
-      return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
+    return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
   };
 
   inline int16_t getLokalId(uint8_t *Dat) { return __HAL::get_lokal_id(Dat); }
@@ -92,10 +83,20 @@ namespace HAL
 	a flag is set. The function get_task_overload returns the condition of this flag.
 	With reset_task_overload this flag can be deleted.
   */
-  inline int16_t getTaskOverload ( uint16_t /*wHandle*/ )
-  { return __HAL::get_task_overload (); }
+  inline int16_t getTaskOverload( uint16_t /*wHandle*/ ) { return __HAL::get_task_overload (); }
 
-  inline int16_t getAdcUbat() { return (40 * __HAL::get_adc(GET_U_E)); }
+  /**
+    Reset Task Overload
+	If a task has already been running and is called up a second time by a timer interrupt,
+	a flag is set. The function get_task_overload returns the condition of this flag.
+	With reset_task_overload this flag can be deleted.
+  */
+  inline int16_t resetTaskOverload( uint16_t /*wHandle*/ ) { return __HAL::get_task_overload (); }	// On C2C, task_overload is reset by calling the get function
+
+  inline int16_t getAdcUbat()
+  {
+	return (40 * __HAL::get_adc(GET_U_E));
+  }
 
   inline int16_t getAdc_u85() { return 8500; }
 
@@ -110,12 +111,13 @@ namespace HAL
 
   inline void stayingAlive() { __HAL::staying_alive(); }
 
-  inline void powerDown() {__HAL::power_down(); }
+  inline void powerDown() { __HAL::power_down(); }
 
-  inline void delay_us(unsigned int i_tm) {__HAL::delay_us(i_tm); }
-  
-  inline void sleep_max_ms( uint32_t ms ) { __HAL::delay_us( ms * 1000); }
+  inline void delay_us(unsigned int i_tm) { __HAL::delay_us(i_tm); }
+   
+  inline void sleep_max_ms( uint32_t ms ) { __HAL::delay_us( ms * 1000 ); }
 }
+
 
 #ifdef USE_MUTUAL_EXCLUSION
 #include <IsoAgLib/hal/generic_utils/system/mutex_emulated.h>

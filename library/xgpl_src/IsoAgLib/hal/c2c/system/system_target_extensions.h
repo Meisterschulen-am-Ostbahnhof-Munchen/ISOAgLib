@@ -1,7 +1,6 @@
 /*
-  system_target_extensions.h: header for C2C specific
-    extensions for the HAL
-    for central system
+  system_target_extensions.h: header for C2C specific extensions for
+    the HAL for central system
 
   (C) Copyright 2009 - 2011 by OSB AG and developing partners
 
@@ -24,8 +23,22 @@
 #ifndef _HAL_C2C_SYSTEM_TARGET_EXTENSIONS_H_
 #define _HAL_C2C_SYSTEM_TARGET_EXTENSIONS_H_
 
-#include "../typedef.h"
-#include "../errcodes.h"
+namespace __HAL {
+  extern "C" {
+    /** include the BIOS specific header into __HAL */
+    #include <commercial_BIOS/bios_c2c/c2c10osy.h>
+  }
+}
+
+#include <cstdio>
+#include <IsoAgLib/hal/c2c/config.h>
+#include <IsoAgLib/hal/c2c/typedef.h>
+#include <IsoAgLib/hal/c2c/errcodes.h>
+
+#if DEBUG_HAL
+#  include <supplementary_driver/driver/rs232/irs232io_c.h>
+#endif
+
 namespace __HAL {
 
 /* ******************************************** */

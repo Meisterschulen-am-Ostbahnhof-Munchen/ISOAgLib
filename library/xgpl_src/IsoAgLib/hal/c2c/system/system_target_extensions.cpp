@@ -20,39 +20,28 @@
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
  * ********************************************************** */
 
-#include "system_target_extensions.h"
-#include "../config.h"
-
+#include "system.h"
 
 namespace __HAL {
-extern "C" {
-  /** include the BIOS specific header with the part for CAN into __HAL */
-  #include <commercial_BIOS/bios_c2c/c2c10osy.h>
-  }
-/** initialise static tSystem to complete zero, so that a call of
-  * open_system can be reliable detected
-  */
-static tSystem t_biosextSysdata =
-  {0,0,0,0,0,0,0,0,0,0,
-    {0,0,0,0,0,0,0,0},
-  0,
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0},
-  0,0};
 
+static bool system_is_opened = false;
 
 int16_t open_system()
 {
-  const int16_t i16_result = open_c2c(&t_biosextSysdata);
+  tSystem t_biosextSysdata;
+  const int16_t i16_result = open_c2c( &t_biosextSysdata );
 
   switch( i16_result )
   {
     case C_NOACT:
     case C_BUSY:
     case C_CHECKSUM:
+    case C_RANGE:
+    case C_RD_WR:
       return i16_result;
     case C_DEFAULT:
     case C_NO_ERR:
+      system_is_opened = true;
       return HAL_NO_ERR;
   }
 
@@ -62,7 +51,7 @@ int16_t open_system()
 // MSCHMIDT - I think there is a bug here...  
 // I think it should read:
 //    if( !get_on_off_switch() )
-// Same is true for hal\esx\system\system_target_extensions.cc
+// Same is true for hal\esx\system\system_target_extensions.cpp
 //
 int16_t closeSystem( void )
 { // if CAN_EN ist active -> shut peripherals off and stay in idle loop
@@ -73,18 +62,32 @@ int16_t closeSystem( void )
   // trigger Watchdog, till CanEn is off
   while ( get_on_off_switch() ) trigger_wd();
   // power off
-  power_down();
-  return C_NO_ERR;
+  int16_t retval = power_down();
+  system_is_opened = false;
+
+#if DEBUG_HAL
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "power_down() returns " << retval << "\r";
+
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
+uint8_t buf[64];
+CNAMESPACE::sprintf( (char*)buf, "%u ms - power_down() returns %i\r"
+, (uint16_t)__HAL::get_time()
+, (int16_t) retval
+);
+HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
+#endif
+
+  return retval;
 }
 
 /** check if open_System() has already been called */
 bool isSystemOpened( void )
 {
-  if ( ( t_biosextSysdata.bCPU_freq != 0 )
-    && ( t_biosextSysdata.wRAMSize != 0 )
-    && ( t_biosextSysdata.wROMSize != 0 )
-    && ( t_biosextSysdata.bEESize != 0 ) ) return true;
-  else return false;
+  return system_is_opened;
 }
 
 /**
