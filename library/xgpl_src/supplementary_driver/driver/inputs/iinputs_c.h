@@ -187,8 +187,8 @@ private:
   friend iInputs_c& getIinputsInstance( void );
 };
 
-/** C-style function, to get access to the unique iSensorI_c singleton instance */
-iInputs_c& getIinputsInstance( void ) { return static_cast<iInputs_c&>(__IsoAgLib::getInputsInstance()); }
+/** C-style function, to get access to the unique iInputs_c singleton instance */
+inline iInputs_c& getIinputsInstance( void ) { return static_cast<iInputs_c&>(__IsoAgLib::getInputsInstance()); }
 
 } // IsoAgLib
 
