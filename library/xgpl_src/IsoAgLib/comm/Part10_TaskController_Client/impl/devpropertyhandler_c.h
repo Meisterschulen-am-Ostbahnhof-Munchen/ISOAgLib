@@ -78,7 +78,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     virtual ~DevPropertyHandler_c()  {};
 
     /** initialisation for DevPropertyHandler_c */
-    void init( ProcessPkg_c *apc_data);
+    void init();
 
     /** start processing of a process msg */
     bool processMsg( ProcessPkg_c& arc_data );
@@ -223,7 +223,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     bool mb_receivedStructureLabel;
     bool mb_receivedLocalizationLabel;
 
-    ProcessPkg_c* mpc_data;
+    ProcessPkg_c mc_data;
 
     STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c> mmap_deviceDescription; //map with language label and related bytestream
 

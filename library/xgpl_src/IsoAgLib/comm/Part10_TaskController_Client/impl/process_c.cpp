@@ -65,6 +65,8 @@ Process_c::init()
   mui8_lastTcStatus = 0;
   mpc_processWsmTaskMsgHandler = NULL;
 
+  mc_devPropertyHandler.init();
+
   mpc_processDataChangeHandler = NULL;
 
   // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
