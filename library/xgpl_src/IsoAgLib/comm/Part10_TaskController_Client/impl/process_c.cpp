@@ -177,11 +177,7 @@ void Process_c::resetTimerPeriod( void )
 
 bool Process_c::processMsg( const CanPkg_c& arc_data )
 {
-
   ProcessPkg_c pkg( arc_data, getMultitonInst() );
-
-  // call string2flags function that was done formerly in the filterbox
-  pkg.string2Flags();
 
   // check for invalid SA/DA
   if (pkg.getMonitorItemForSA() == NULL)

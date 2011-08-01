@@ -147,9 +147,9 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     uint16_t ui16_currentSendPosition;
     uint16_t ui16_storedSendPosition;
     /** enum type for defining all message types for possible changes in ISO definitions ;) */
-    enum en_processDataMsg {procCmdPar_RequestVersionMsg = 0x0,
+    enum en_processDataMsg {procCmdPar_RequestVersionMsg = 0x00,
                             procCmdPar_VersionMsg = 0x10,
-                            procCmdPar_RequestStructureLabelMsg = 0x1,
+                            procCmdPar_RequestStructureLabelMsg = 0x01,
                             procCmdPar_StructureLabelMsg = 0x11,
                             procCmdPar_RequestLocalizationLabelMsg = 0x21,
                             procCmdPar_LocalizationLabelMsg = 0x31,

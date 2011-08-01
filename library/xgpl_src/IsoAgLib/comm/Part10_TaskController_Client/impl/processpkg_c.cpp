@@ -31,17 +31,19 @@ ProcessPkg_c::ProcessPkg_c( const ProcessPkg_c& arc_src )
 }
 
 ProcessPkg_c::ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst )
-: CanPkgExt_c( arc_src, ai_multitonInst )
-, mc_processCmd()
-, mi32_pdValue( 0 )
-, bit_data()
-
+  : CanPkgExt_c( arc_src, ai_multitonInst )
+  , mc_processCmd()
+  , mi32_pdValue( 0 )
+  , bit_data()
 {
+  // call string2flags function that was done formerly in the filterbox
+  string2Flags();
 }
 
 /** default constructor which has nothing to do */
 ProcessPkg_c::ProcessPkg_c( int /*ai_multitonInst*/ )
   : CanPkgExt_c( )
+  , mc_processCmd()
   , mi32_pdValue( 0 )
   , bit_data()
 {
