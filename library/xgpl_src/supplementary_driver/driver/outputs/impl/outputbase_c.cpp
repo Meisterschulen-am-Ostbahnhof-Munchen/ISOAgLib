@@ -18,8 +18,8 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-OutputBase_c::OutputBase_c( uint8_t channelNr )
-  : ui8_channelNr( channelNr )
+OutputBase_c::OutputBase_c( uint8_t a_channelNr )
+  : ui8_channelNr( a_channelNr )
 {
 }
 
