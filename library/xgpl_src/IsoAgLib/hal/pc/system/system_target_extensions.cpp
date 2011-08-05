@@ -115,9 +115,11 @@ int32_t getStartupTime()
   }
   static int32_t st_startup4Times = int32_t (times(NULL));
 #else
+  static bool sb_init_done = false;
   static int32_t st_startup4Times = int32_t (-1);
-  if (st_startup4Times < 0)
+  if (!sb_init_done)
   {
+    sb_init_done = true;
     timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     st_startup4Times = int32_t(ts.tv_sec)*1000 + int32_t(ts.tv_nsec/1000000);
