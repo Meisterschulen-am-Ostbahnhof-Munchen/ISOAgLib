@@ -126,8 +126,8 @@ public:
   uint16_t getMaxOutputPwmFreq() const { return DigitalO_c::getMaxOutputPwmFreq(); }
 
 private:
-  iDigitalO_c(const iDigitalO_c& /*acrc_src*/) : DigitalO_c() {} // intentionally private
-  iDigitalO_c& operator=(const iDigitalO_c& /*acrc_src*/){ return *this;} // intentionally private
+  iDigitalO_c(const iDigitalO_c& /*acrc_src*/); // intentionally private and unimplemented
+  iDigitalO_c& operator=(const iDigitalO_c& /*acrc_src*/); // intentionally private and unimplemented
 
   friend class iOutputs_c;
 };
