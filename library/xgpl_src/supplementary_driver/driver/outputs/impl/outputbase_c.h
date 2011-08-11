@@ -31,7 +31,8 @@ public:
     : ui8_channelNr( a_channelNr )
   {}
 
-  ~OutputBase_c();
+  ~OutputBase_c()
+  {}
 
   void setChannel(uint8_t aui8_channelNr) { ui8_channelNr = aui8_channelNr; }
   uint8_t channelNr() const { return ui8_channelNr; }
