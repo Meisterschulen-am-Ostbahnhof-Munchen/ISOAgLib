@@ -27,7 +27,7 @@ namespace __IsoAgLib {
   */
 class OutputBase_c {
 public:
-  OutputBase_c (uint8_t aui8_channelNr)
+  OutputBase_c (uint8_t a_channelNr)
     : ui8_channelNr( a_channelNr )
   {}
 
