@@ -18,7 +18,6 @@
 #include <IsoAgLib/util/iliberr_c.h>
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 DigitalO_c::DigitalO_c(uint8_t aui8_channel)
@@ -28,37 +27,24 @@ DigitalO_c::DigitalO_c(uint8_t aui8_channel)
   , ui16_maxAllowedCurrent( 0 )
   , ui16_maxOutputPwmFreq( 0 )
 {
-  init( aui8_channel );
 }
 
 
 void
-DigitalO_c::init(uint8_t aui8_channel)
+DigitalO_c::setChannel(uint8_t aui8_channel)
 {
-  OutputBase_c::init( aui8_channel );
-  // config the PWM freq with BIOS call
-  if (HAL::setPwmFreq(aui8_channel, CONFIG_PWM_DEFAULT_FREQUENCY) == HAL_RANGE_ERR)
-  { // wrong channel or PWM
-    ui16_maxOutputPwmFreq = 0xFFFF;
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Output );
-  }
-  else
-  { // correct channel and PWM - now register the valid new analog input into Outputs_c
-    // retrieve max allowed PWM freq
-    ui16_maxOutputPwmFreq = HAL::getMaxPwmDigout( aui8_channel );
-
-    getOutputsInstance().registerClient( this );
-  }
+  OutputBase_c::setChannel( aui8_channel );
 }
+
 
 DigitalO_c::~DigitalO_c()
 {
-  getOutputsInstance().unregisterClient( this );
 }
 
 
 void
-DigitalO_c::setFreq(uint32_t aui32_val){
+DigitalO_c::setFreq(uint32_t aui32_val)
+{
   // set output PWM frequency with BIOS call
   if (HAL::setPwmFreq(channelNr(), aui32_val) == HAL_RANGE_ERR)
   { // wrong channel number or wrong frequency

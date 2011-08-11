@@ -30,24 +30,12 @@ public:
   /** enum for error states of digital output */
   typedef enum { noDoutErr, dout_openErr, dout_shortcutErr } dout_err_t;
 
-  /**
-    internal called constructor for a new digital input channel which performs configuration of hardware
-    (uses BIOS function)
+  DigitalO_c(uint8_t aui8_channel);
+  ~DigitalO_c();
 
-    possible errors:
-        * Err_c::range wrong output channel number
-    @see Outputs_c::createDigital
-    @param aui8_channel default-argument for setting hardware channel for this input
+  /** set to a new channel
   */
-  DigitalO_c(uint8_t aui8_channel = 0);
-
-  /** init this instance
-    @param aui8_channel default-argument for setting hardware channel for this input
-  */
-  void init(uint8_t aui8_channel);
-
-  /**  destructor of the input object which can close explicit the hardware input */
-  virtual ~DigitalO_c();
+  void setChannel(uint8_t aui8_channel);
 
   /** compare this channel to an uint8_t value representing a dout channel
     * this function is used by the base Singleton to find a specific item
@@ -137,24 +125,8 @@ public:
   { return ui16_maxOutputPwmFreq; }
 
 private:
-  /**
-    HIDDEN! copy constructor for Digital_O
-    NEVER copy a DigitalO_c around!!!!
-    ONLY copy pointers to the wanted instance!!!
-    ==> the copy constructor is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    @param acrc_src source
-  */
-  DigitalO_c(const DigitalO_c&);
-
-  /**
-    HIDDEN! assignment for Digital_O
-    NEVER assign a DigitalO_c to another instance!!!!
-    ==> the asignment is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    <!--@param acrc_src source-->
-  */
-  DigitalO_c& operator=(const DigitalO_c&);
+  DigitalO_c(const DigitalO_c&); // intentionally private and unimplemented
+  DigitalO_c& operator=(const DigitalO_c&); // intentionally private and unimplemented
 
   uint16_t ui16_value;
 

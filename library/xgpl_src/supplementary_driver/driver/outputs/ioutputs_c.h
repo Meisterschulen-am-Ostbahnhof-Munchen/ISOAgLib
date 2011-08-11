@@ -64,34 +64,6 @@ public:
   void setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
     { Outputs_c::setDigitalLimits(ab_digitalFirst, ab_digitalLast); }
 
-  /**
-    check if digital output object to given ab_channel exist
-    @see iOutputs_c::createDigital
-    @see iOutputs_c::deleteDigital
-    @param ab_channel number of the tested input channel
-    @return true -> searched input object exist
-  */
-  bool existDigital(uint8_t ab_channel)
-    { return Outputs_c::existDigital(ab_channel); }
-
-  /**
-    deliver reference to requested digital channel object to access this output;
-    IMPORTANT: an digital output channel object with the wanted number must exist
-               -> creating with createDigital and checking with existDigital
-               (throw exception if exceptions are activated on compile time)
-
-    possible errors:
-        * Err_c::elNonexistant wanted digital input with given channel no does not exist
-    @see iOutputs_c::createDigital
-    @see iOutputs_c::existDigital
-    @see iDigitalO_c::iDigital_O
-    @param ab_channel channel of the digital input
-    @return reference to the wanted digital output channel
-    @exception containerElementNonexistant
-  */
-  iDigitalO_c& digital(uint8_t ab_channel)
-    { return static_cast<iDigitalO_c&>(Outputs_c::digital(ab_channel)); }
-
 private:
   /** allow getIoutputsInstance() access to shielded base class.
       otherwise __IsoAgLib::getOutputsInstance() wouldn't be accepted by compiler

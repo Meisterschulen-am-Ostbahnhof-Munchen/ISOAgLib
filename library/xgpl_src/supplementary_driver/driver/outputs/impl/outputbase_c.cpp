@@ -18,29 +18,8 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-OutputBase_c::OutputBase_c( uint8_t a_channelNr )
-  : ui8_channelNr( a_channelNr )
-{
-}
 
-
-OutputBase_c::~OutputBase_c()
-{
-}
-
-
-uint8_t
-OutputBase_c::channelNr() const
-{
-  return ui8_channelNr;
-}
-
-
-void
-OutputBase_c::set(uint16_t)
-{  // normally this function should be abstract,
-   // but the Tasking Linker needs this
-}
+// no implementation at the moment.
 
 
 } // end of namespace __IsoAgLib
