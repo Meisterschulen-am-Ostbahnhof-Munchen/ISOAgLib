@@ -70,12 +70,4 @@ Outputs_c::setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast){
 }
 
 
-void
-Outputs_c::registerAccessFlt( void )
-{
-  getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Output );
-  // throw exception if defined to do
-  THROW_CONT_EL_NONEXIST
-}
-
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
