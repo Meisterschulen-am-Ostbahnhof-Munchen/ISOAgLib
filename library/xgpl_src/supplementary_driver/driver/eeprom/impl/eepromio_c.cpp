@@ -15,7 +15,7 @@
 #include "eepromio_c.h"
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 
@@ -346,4 +346,4 @@ operator>>(EepromIo_c& rc_stream, IsoName_c& rc_data )
 }
 
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib

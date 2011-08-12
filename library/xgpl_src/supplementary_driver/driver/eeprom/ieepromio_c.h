@@ -18,8 +18,8 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 
 
-// Begin Namespace IsoAgLib
-namespace IsoAgLib {
+namespace IsoAgLib
+{
 /**
   object for communication with the EEPROM,
   stream read/write operators for all basic types;
@@ -208,4 +208,5 @@ inline iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data )
   { return static_cast<iEepromIo_c&>(operator>>(static_cast<__IsoAgLib::EepromIo_c&>(rc_stream), rc_data ) );};
 
 } // IsoAgLib
+
 #endif

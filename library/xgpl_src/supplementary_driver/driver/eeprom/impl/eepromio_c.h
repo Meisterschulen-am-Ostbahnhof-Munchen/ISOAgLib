@@ -14,17 +14,13 @@
 #ifndef EEPROM_IO_H
 #define EEPROM_IO_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/hal/hal_eeprom.h>
-#include <supplementary_driver/hal/hal_rs232.h>
 
 
-// Begin Namespace __IsoAgLib
-namespace __IsoAgLib {
+namespace __IsoAgLib 
+{
 class IsoName_c;
 
 /**
