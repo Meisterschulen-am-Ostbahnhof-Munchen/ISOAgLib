@@ -1285,9 +1285,12 @@ CanIo_c::canMsg2FilterBox(
 
   while (ar_arrFilterBoxIter != m_arrFilterBox.end())
   {
-    if ( ar_arrFilterBoxIter->maskFilterPair().matchMsgId( Ident_c( aui32_ident, at_type ) ) )
-    { // matching FilterBox_c found
-      return true;
+    if (!ar_arrFilterBoxIter->isIdle())
+    {
+      if ( ar_arrFilterBoxIter->maskFilterPair().matchMsgId( Ident_c( aui32_ident, at_type ) ) )
+      { // matching FilterBox_c found
+        return true;   
+      }
     }
     ar_arrFilterBoxIter++;
   }
