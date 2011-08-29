@@ -38,6 +38,10 @@ public:
     : DigitalO_c(aui8_channel)
   {}
 
+  iDigitalO_c()
+    : DigitalO_c()
+  {}
+
   ~iDigitalO_c() {}
 
   /** set a new channel

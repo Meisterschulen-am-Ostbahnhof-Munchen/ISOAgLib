@@ -30,6 +30,18 @@ DigitalO_c::DigitalO_c(uint8_t aui8_channel)
 }
 
 
+// Default constructor for use in arrays
+// Must call setChannel after using this constructor!
+DigitalO_c::DigitalO_c()
+  : OutputBase_c(0xFF) // uninitialized
+  , ui16_value( 0 )
+  , ui16_minAllowedCurrent( 0 )
+  , ui16_maxAllowedCurrent( 0 )
+  , ui16_maxOutputPwmFreq( 0 )
+{
+}
+
+
 void
 DigitalO_c::setChannel(uint8_t aui8_channel)
 {

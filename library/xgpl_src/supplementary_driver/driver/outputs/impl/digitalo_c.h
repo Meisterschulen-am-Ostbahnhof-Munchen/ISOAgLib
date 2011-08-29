@@ -31,6 +31,7 @@ public:
   typedef enum { noDoutErr, dout_openErr, dout_shortcutErr } dout_err_t;
 
   DigitalO_c(uint8_t aui8_channel);
+  DigitalO_c();
   ~DigitalO_c();
 
   /** set to a new channel
