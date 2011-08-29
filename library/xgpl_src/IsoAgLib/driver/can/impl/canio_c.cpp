@@ -118,17 +118,25 @@ CanIo_c::init(
 #endif
   mui8_busNumber = aui8_busNumber;
 
-  return baseCanInit (aui16_bitrate);
+  const bool baseCanInitSuccess = baseCanInit (aui16_bitrate);
+  if (baseCanInitSuccess)
+  {
+    setInitialized();
+    return true;
+  }
+  else
+  { // for backwards compatibility, better reset the bus nummer!
+    mui8_busNumber = 0xFF;
+    return false;
+  }
 }
 
 
 void
 CanIo_c::close()
 {
-  if ( mui8_busNumber == 0xFF )
-  { // CAN already closed -> don't call HAL close again
+  if (!initialized())
     return;
-  }
 
   #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
   for (uint8_t i = 0; i < cntFilter(); i++)
@@ -169,7 +177,8 @@ CanIo_c::close()
 #endif
 
   // indicated closed instance
-  mui8_busNumber = 0xFF;
+  setClosed();
+  mui8_busNumber = 0xFF; // just for backward compatibility
 }
 
 
