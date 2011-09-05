@@ -29,9 +29,7 @@
 #include "processpkg_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processwsmtaskmsghandler_c.h>
-#if defined(USE_ISO_TASKCONTROLLER_CLIENT)
-  #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
-#endif
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 
 #include <list>
 
@@ -71,9 +69,7 @@ public:
   */
   bool processMsg( const CanPkg_c& arc_data );
 
-#if defined(USE_ISO_TASKCONTROLLER_CLIENT)
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
-#endif
 
   /**
     checks if a suitable ProcDataLocalBase_c item exist
@@ -343,13 +339,11 @@ private: // Private attributes
     CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
   {}
 
-#if defined(USE_ISO_TASKCONTROLLER_CLIENT)
   /**
     deliver reference to process pkg as reference to DevPropertyHandler_c which
     handles sending and processing of messages from can
   */
   DevPropertyHandler_c mc_devPropertyHandler;
-#endif
 
   /** last timestamp with FilterBox_c check */
   int32_t mi32_lastFilterBoxTime;
