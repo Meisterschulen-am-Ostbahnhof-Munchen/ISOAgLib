@@ -547,7 +547,7 @@ void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, 
 
 
 /////////////////////////////////////////////////////////////////////////
-void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::iterator& iter_client, __HAL::transferBuf_s* p_writeBuf)
+bool handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::iterator& iter_client, __HAL::transferBuf_s* p_writeBuf)
 {
   int32_t i32_error;
   int32_t i32_dataContent;
@@ -595,14 +595,12 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
             pc_serverData->canBus(j).mui16_busRefCnt--; // decrement ref count only when we received the INIT command before
         }
 
-
-        releaseClient(pc_serverData, iter_client);
         // i32_error will stay at 0 for "no error"
-      } break;
+        releaseClient(pc_serverData, iter_client);
+      } return true; // don't send answer and report "clientReleased" as return value!
 
 
       case COMMAND_INIT:
-
         if (p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR)
           i32_error = HAL_RANGE_ERR;
         else if (!pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt)
@@ -783,6 +781,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
     if (i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE) i32_data = i32_error;
 
     send_command_ack(iter_client->i32_commandSocket, i32_dataContent, i32_data, *pc_serverData);
+    return false; // client not released, we did even send the ACK :)
 }
 
 
@@ -891,7 +890,7 @@ void readWrite(__HAL::server_c* pc_serverData)
     pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
     // new message from socket ?
-    for (iter_client = pc_serverData->mlist_clients.begin(); iter_client != pc_serverData->mlist_clients.end(); iter_client++)
+    for (iter_client = pc_serverData->mlist_clients.begin(); iter_client != pc_serverData->mlist_clients.end(); )
     {
       if (FD_ISSET(iter_client->i32_commandSocket, &rfds))
       {
@@ -917,14 +916,18 @@ void readWrite(__HAL::server_c* pc_serverData)
             printf( "connection closed.\n");
           }
           releaseClient(pc_serverData, iter_client);
-          break;
+          continue;
         }
 
         ui16_bytesRead = read_data(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(s_transferBuf));
 
         if (s_transferBuf.ui16_command != COMMAND_DATA)
         {
-          handleCommand(pc_serverData, iter_client, &s_transferBuf);
+          const bool clientReleased =
+            handleCommand(pc_serverData, iter_client, &s_transferBuf);
+
+          if( clientReleased )
+            continue; // no "++iter" then, iter_client was "moved on" with the erase inside of the releaseClient()-call!
         }
       }
       if (FD_ISSET(iter_client->i32_dataSocket, &rfds))
@@ -952,7 +955,7 @@ void readWrite(__HAL::server_c* pc_serverData)
             printf( "connection closed.\n");
           }
           releaseClient(pc_serverData, iter_client);
-          break;
+          continue;
         }
 
         ui16_bytesRead = read_data(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(s_transferBuf));
@@ -978,7 +981,11 @@ void readWrite(__HAL::server_c* pc_serverData)
           }
         }
       }
-    }
+
+      // if the client wasn't released (and hence "iter = list.erase(iter);" was called),
+      // do step on to the next item.
+      ++iter_client;
+    } // for
 
     pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
