@@ -311,38 +311,45 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         // if speedSource == IsoNotAvailableSpeed
         const IsoAgLib::IsoSpeedSourceFlag_t t_testSpeedSource = IsoAgLib::IsoSpeedSourceFlag_t( ( (pkg.getUint8Data(7) >> 2) & 0x7) );
 
-        if ( ( ( checkParseReceived( rcc_tempISOName ) ) ) && (t_testSpeedSource != IsoAgLib::IsoNotAvailableSpeed))
+        if( t_testSpeedSource == IsoAgLib::IsoNotAvailableSpeed )
         {
-          mt_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (pkg.getUint8Data(7) >> 5) & 0x7) );
-          mt_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( pkg.getUint8Data(7) & 0x3);
-
-          setSelectedDataSourceISOName(rcc_tempISOName);
-          setUpdateTime( ci32_now );
-
-          if (pkg.getUint16Data(0) <= 0xFAFF) //valid selected speed?
+          // Not a valid speed source.  Ignore the message totally even if from a valid Source Address
+        }
+        else
+        {
+          if ( checkParseReceived( rcc_tempISOName ) )
           {
-            mi32_selectedSpeed = pkg.getUint16Data(0);
-            mt_selectedSpeedSource =  t_testSpeedSource;
-            updateSpeed(IsoAgLib::SelectedSpeed, pkg.time());
-            if (mt_selectedDirection == IsoAgLib::IsoReverse)
-              mi32_selectedSpeed *= -1; //driving reverse
+              mt_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (pkg.getUint8Data(7) >> 5) & 0x7) );
+              mt_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( pkg.getUint8Data(7) & 0x3);
+
+              setSelectedDataSourceISOName(rcc_tempISOName);
+              setUpdateTime( ci32_now );
+
+              if (pkg.getUint16Data(0) <= 0xFAFF) //valid selected speed?
+              {
+                mi32_selectedSpeed = pkg.getUint16Data(0);
+                mt_selectedSpeedSource =  t_testSpeedSource;
+                updateSpeed(IsoAgLib::SelectedSpeed, pkg.time());
+                if (mt_selectedDirection == IsoAgLib::IsoReverse)
+                  mi32_selectedSpeed *= -1; //driving reverse
+              }
+              else //fall back to ground based speed
+                mt_speedSource = IsoAgLib::GroundBasedSpeed;
+
+              if (pkg.getUint32Data(2) <= 0xFAFFFFFF) //valid selected distance?
+              {
+                mui32_selectedDistance = pkg.getUint32Data(2);
+                mt_distDirecSource = IsoAgLib::SelectedDistDirec;
+                mt_selectedDirection = IsoAgLib::IsoDirectionFlag_t(   ( (pkg.getUint8Data(7) >> 0) & 0x3) );
+                updateDistanceDirection(IsoAgLib::SelectedDistDirec);
+              } else //fall back to ground based direction and distance
+                mt_distDirecSource = IsoAgLib::GroundBasedDistDirec;
+
+          } else
+          { // there is a sender conflict
+            getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+            return false;
           }
-          else //fall back to ground based speed
-            mt_speedSource = IsoAgLib::GroundBasedSpeed;
-
-          if (pkg.getUint32Data(2) <= 0xFAFFFFFF) //valid selected distance?
-          {
-            mui32_selectedDistance = pkg.getUint32Data(2);
-            mt_distDirecSource = IsoAgLib::SelectedDistDirec;
-            mt_selectedDirection = IsoAgLib::IsoDirectionFlag_t(   ( (pkg.getUint8Data(7) >> 0) & 0x3) );
-            updateDistanceDirection(IsoAgLib::SelectedDistDirec);
-          } else //fall back to ground based direction and distance
-            mt_distDirecSource = IsoAgLib::GroundBasedDistDirec;
-
-        } else
-        { // there is a sender conflict
-          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
-          return false;
         }
         break;
     }
