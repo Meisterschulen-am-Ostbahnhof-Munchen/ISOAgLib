@@ -37,8 +37,6 @@ class System_c {
   MACRO_SINGLETON_CONTRIBUTION();
 public:
 
-
-
   /**
     Initialize the system hardware.
     (uses BIOS function)
@@ -48,9 +46,11 @@ public:
         * Err_c::SystemWatchdog the System_c::init_wd call caused an error
         * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
     @return true -> everything without errors initialised
+           false -> init failure or already initialized
   */
-  bool init( bool ab_forceReinit = false, IsoAgLib::SystemPowerdownStrategy_t at_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY );
-	/**
+  bool init( IsoAgLib::SystemPowerdownStrategy_t at_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY );
+	
+  /**
 		default behaviour of IsoAgLib is to activate power hold, so that
 		the application can decide on its own, if a CAN_EN loss shall cause
 		a power down of the target. This allows to inhibit stop of application
@@ -59,10 +59,11 @@ public:
 		                   PowerdownOnCanEnLoss   -> let BIOS/OS automatically switch off on CAN_EN loss
 	*/
 	void setPowerdownStrategy( IsoAgLib::SystemPowerdownStrategy_t at_strategy );
+  
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     * the call of System_c::close() stimulates final shutdown of power
     */
-  static void close( void );
+  bool close( void );
 
   ~System_c( void ) {}
 
@@ -75,8 +76,10 @@ public:
     @return true -> watchdog successful configured
   */
   static bool initWd ( void );
+
   /** trigger the watchdog */
   static inline void triggerWd( void ) { HAL::wdTriggern();};
+
   /**
     deliver lasted time from start of system in msec.
     (use BIOS function)
@@ -90,6 +93,7 @@ public:
   */
   static int16_t getBatteryVoltage( void )
     {return HAL::getAdcUbat();};
+
   /**
     get the voltage of the external reference 8.5Volt for work of external sensors
     @return voltage at external reference [mV]
@@ -131,6 +135,7 @@ private:
 // Private attributes
   friend System_c &getSystemInstance(uint8_t aui8_instance);
 };
+
 /** C-style function, to get access to the unique System_c singleton instance */
 System_c &getSystemInstance(uint8_t aui8_instance = 0);
 }

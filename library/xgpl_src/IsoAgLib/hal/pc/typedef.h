@@ -88,12 +88,7 @@ typedef struct
 
 typedef struct
 {
-  uint8_t bHardware;
-  uint8_t bEESize;
-  uint16_t wRAMSize;
-  uint16_t wROMSize;
-  uint8_t bReset;
-  uint16_t wL0Err;
+  bool started;
 } tSystem;
 
 } // End of namespace __HAL

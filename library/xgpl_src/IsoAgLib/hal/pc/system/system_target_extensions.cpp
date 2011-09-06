@@ -89,7 +89,7 @@ HALSimulator_c &halSimulator() { isoaglib_assert( g_halSimulator ); return *g_ha
 void setHalSimulator( HALSimulator_c* sim ) { g_halSimulator = sim; }
 
 
-static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
+static tSystem t_biosextSysdata = { false };
 
 #ifndef WIN32
 /** define the amount of MSec per Clock_t, in case the project config didn't this before */
@@ -139,12 +139,11 @@ int32_t getStartupTime()
 #endif
 
 
-/**
-  open the system with system specific function call
-  @return error state (HAL_NO_ERR == o.k.)
-*/
-int16_t open_system()
+int16_t
+open_system()
 {
+  isoaglib_assert( !isSystemOpened() );
+
   // check if system is opened before user set the halSimulator?
   if (g_halSimulator == NULL)
   { // use default halSimulator then!
@@ -152,30 +151,31 @@ int16_t open_system()
     setHalSimulator( &dummyDefaultHalSimulator );
   }
 
-  // init system start time
-  getTime();
+  // init system start time (first call sets the start-time-base)
+  (void)getTime();
 
-  t_biosextSysdata.wRAMSize = 1000;
   DEBUG_PRINT("DEBUG: open_system called.\n");
   DEBUG_PRINT("DEBUG: PRESS RETURN TO STOP PROGRAM!!!\n\n");
-  return can_startDriver();
+
+  const int16_t canStarted = can_startDriver();
+  t_biosextSysdata.started = (canStarted == HAL_NO_ERR);
+  return canStarted;
 }
-/**
-  close the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t closeSystem( void )
-{ // remember if are are already talked
-  static bool sb_firstCall = true;
-  if ( !sb_firstCall ) return HAL_NO_ERR;
-  sb_firstCall = false;
-  // if CAN_EN ist active -> shut peripherals off and stay in idle loop
+
+
+int16_t
+closeSystem()
+{
+  isoaglib_assert( isSystemOpened() );
+
+  // if CAN_EN is active -> shut peripherals off and stay in idle loop
   #if defined(NO_CAN_EN_CHECK)
   if ( getOn_offSwitch() )
   #endif
   { // CanEn still active
     powerDown();
   }
+
   #if defined(NO_CAN_EN_CHECK)
   // trigger Watchdog, till CanEn is off
   // while ( getOn_offSwitch() ) wdTriggern();
@@ -184,23 +184,21 @@ int16_t closeSystem( void )
   #else
   // while ( true ) wdTriggern();
   #endif
+
+  t_biosextSysdata.started = false;
   return HAL_NO_ERR;
 }
-/** check if open_System() has already been called */
-bool isSystemOpened( void )
+
+
+bool
+isSystemOpened()
 {
-  if ( t_biosextSysdata.wRAMSize != 0 ) return true;
-  else return false;
+  return t_biosextSysdata.started;
 }
 
-/**
-  configure the watchdog of the system with the
-  settings of configEsx
-  @return error state (HAL_NO_ERR == o.k.)
-    or DATA_CHANGED on new values -> need call of wdReset to use new settings
-  @see wdReset
-*/
-int16_t configWatchdog()
+
+int16_t
+configWatchdog()
 {
   tWDConfig t_watchdogConf = {
       WD_MAX_TIME,
@@ -213,6 +211,7 @@ int16_t configWatchdog()
 
   return configWd(&t_watchdogConf);
 }
+
 
 #ifdef WIN32
   // VC++ and mingw with native Win32 API provides very accurate
@@ -235,8 +234,8 @@ int32_t getTime()
 #endif
 
 
-/* serial number of esx */
-int16_t getSnr(uint8_t *snrDat)
+int16_t
+getSnr(uint8_t *snrDat)
 {
   snrDat[0] = 0x99;
   snrDat[1] = 0x12;
@@ -248,8 +247,9 @@ int16_t getSnr(uint8_t *snrDat)
   return HAL_NO_ERR;
 }
 
-/* configuration of the system supervisor*/
-int16_t  configWd(tWDConfig *tConfigArray)
+
+int16_t
+configWd(tWDConfig *tConfigArray)
 {
   (void)tConfigArray;
 
@@ -258,34 +258,43 @@ int16_t  configWd(tWDConfig *tConfigArray)
   return 0;
 }
 
-void wdTriggern(void)
-{
-  //DEBUG_PRINT("<WD>");
-}
 
-void wdReset()
+void
+wdTriggern()
 {
 }
 
-void startTaskTimer ( void )
+
+void
+wdReset()
+{
+}
+
+
+void
+startTaskTimer()
 {
   DEBUG_PRINT1("DEBUG: startTaskTimer with %d called\n", T_TASK_BASIC );
 }
-/* get the cpu frequency*/
-int16_t  getCpuFreq(void)
+
+
+int16_t
+getCpuFreq()
 {
   DEBUG_PRINT("DEBUG: getCpuFreq called\n");
   return 20;
 }
 
-/* to activate the power selfholding*/
-void stayingAlive(void)
+
+void
+stayingAlive()
 {
   DEBUG_PRINT("DEBUG: staying alive activated.\n");
 }
 
-/* to deactivate the power selfholding*/
-void powerDown(void)
+
+void
+powerDown()
 {
   if ( getOn_offSwitch() == 0 )
   { // CAN_EN is OFF -> stop now system
@@ -295,11 +304,11 @@ void powerDown(void)
 }
 
 
-/* the evaluation of the on/off-switch (D+)*/
 int16_t getOn_offSwitch(void)
 {
 	return halSimulator().getOn_offSwitch();
 }
+
 
 int16_t KeyGetByte(uint8_t *p)
 {
@@ -317,6 +326,7 @@ int16_t KeyGetByte(uint8_t *p)
   #endif
 }
 
+
 void sleep_max_ms( uint32_t ms )
 {
 #ifdef WIN32
@@ -327,4 +337,4 @@ void sleep_max_ms( uint32_t ms )
 }
 
 
-} // end namespace __HAL
+} // __HAL

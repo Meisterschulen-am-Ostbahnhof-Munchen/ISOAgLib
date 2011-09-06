@@ -30,7 +30,8 @@ namespace IsoAgLib {
 class iSystem_c : private __IsoAgLib::System_c {
 public:
   /** destructor which shuts down the hardware (f.e. power off) */
-  ~iSystem_c(){};
+  ~iSystem_c() {}
+
   /**
     Initialize the system hardware.
     (uses BIOS function)
@@ -41,7 +42,8 @@ public:
         * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
     @return true -> everything without errors initialised
   */
-  bool init( bool ab_forceReinit = false, SystemPowerdownStrategy_t at_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY ) { return System_c::init(ab_forceReinit, at_strategy);};
+  bool init( SystemPowerdownStrategy_t at_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY ) { return System_c::init(at_strategy);}
+
 	/**
 		default behaviour of IsoAgLib is to activate power hold, so that
 		the application can decide on its own, if a CAN_EN loss shall cause
@@ -50,11 +52,12 @@ public:
 		@param at_strategy PowerdownByExplcitCall -> stop system only on explicit call of System_c::close()
 		                   PowerdownOnCanEnLoss   -> let BIOS/OS automatically switch off on CAN_EN loss
 	*/
-	void setPowerdownStrategy( SystemPowerdownStrategy_t at_strategy ) { System_c::setPowerdownStrategy( at_strategy );};
+	void setPowerdownStrategy( SystemPowerdownStrategy_t at_strategy ) { System_c::setPowerdownStrategy( at_strategy );}
+
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     * the call of System_c::close() stimulates final shutdown of power
     */
-  static void close( void ) { System_c::close();};
+  bool close( void ) { return System_c::close();}
 
   /**
     init the hardware watchdog
@@ -64,9 +67,11 @@ public:
         * Err_c::SystemWatchdog BIOS watchdog configuration without success
     @return true -> watchdog successful configured
   */
-  static bool initWd ( void ) { return System_c::initWd();};
+  static bool initWd ( void ) { return System_c::initWd();}
+
   /** trigger the watchdog */
-  static inline void triggerWd( void ) { System_c::triggerWd();};
+  static inline void triggerWd( void ) { System_c::triggerWd();}
+
   /**
     deliver lasted time from start of system in msec.
     @return running time in [msec.]

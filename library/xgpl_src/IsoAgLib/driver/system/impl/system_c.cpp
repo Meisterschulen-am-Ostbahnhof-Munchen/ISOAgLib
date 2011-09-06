@@ -23,83 +23,54 @@
 #endif
 
 namespace __IsoAgLib {
+
 /** C-style function, to get access to the unique System_c singleton instance */
 System_c &getSystemInstance(uint8_t aui8_instance)
 {
   MACRO_MULTITON_GET_INSTANCE_BODY(System_c, 1, aui8_instance);
 }
 
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown
-  * the call of System_c::close() stimulates final shutdown of power
-  */
-void System_c::close( void )
+
+bool
+System_c::close()
 {
-  // stop ESX
-  HAL::closeSystem();
-}
-
-
-/**
-  Initialize the system hardware
-  (uses BIOS function)
-
-  possible errors:
-      * Err_c::SystemOpen problem during start of system with BIOS call
-      * Err_c::SystemWatchdog the System_c::init_wd call caused an error
-      * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
-  @return true -> everything without errors initialised
-*/
-bool System_c::init( bool ab_forceReinit, IsoAgLib::SystemPowerdownStrategy_t at_strategy ){
-  bool b_result = true;
-  static bool b_firstCall = true;
-
-  // avoid call of open_system() if system is already started, and init is only called
-  // for RE-Initialization
-  #if 0
   if ( !HAL::isSystemOpened() )
-  #else
-  if ( b_firstCall )
-  #endif
-  { // open the system with the configured BIOS call - as not yet called
-    const int16_t ci_err = HAL::open_system();
+    return false;
 
-    if ( ci_err != HAL_NO_ERR)
-    {
-		#if DEBUG_SYSTEM
-		INTERNAL_DEBUG_DEVICE
-        << "Fehler bei Systemstart: " << ci_err << INTERNAL_DEBUG_DEVICE_ENDL;
-		#endif
-      getILibErrInstance().registerError( iLibErr_c::SystemOpen, iLibErr_c::HwSystem ); // something is still wrong
-      b_result = false;
-    }
-  }
-  if ( ab_forceReinit || b_firstCall )
-  { // init and config the Watchdog
-    if (!initWd())
-    {  // init of watchdog without success
-       b_result = false;
-    }
+  HAL::closeSystem();
 
-    // start the task timer (also needed for CAN)
-    HAL::startTaskTimer();
-    // configure POWER HOLD after loss of CAN_EN
-    setPowerdownStrategy( at_strategy );
-  }
-  // avoid second call of sensible ECU functions
-  b_firstCall = false;
-  return b_result;
+  return true;
 }
 
 
-/**
-	default behaviour of IsoAgLib is to activate power hold, so that
-	the application can decide on its own, if a CAN_EN loss shall cause
-	a power down of the target. This allows to inhibit stop of application
-	on short power supply voltage low bursts.
-	@param at_strategy PowerdownByExplcitCall -> stop system only on explicit call of System_c::close()
-											PowerdownOnCanEnLoss   -> let BIOS/OS automatically switch off on CAN_EN loss
-*/
-void System_c::setPowerdownStrategy( IsoAgLib::SystemPowerdownStrategy_t at_strategy )
+bool
+System_c::init( IsoAgLib::SystemPowerdownStrategy_t at_strategy )
+{
+  if ( HAL::isSystemOpened() )
+    return false;
+
+  if ( HAL::open_system() != HAL_NO_ERR)
+  {
+    getILibErrInstance().registerError( iLibErr_c::SystemOpen, iLibErr_c::HwSystem ); // something is still wrong
+    return false;
+  }
+
+  // init and config the Watchdog
+  if (!initWd())
+    return false;
+
+  // start the task timer (also needed for CAN)
+  HAL::startTaskTimer();
+
+  // configure POWER HOLD after loss of CAN_EN
+  setPowerdownStrategy( at_strategy );
+
+  return true;
+}
+
+
+void
+System_c::setPowerdownStrategy( IsoAgLib::SystemPowerdownStrategy_t at_strategy )
 {
 	switch ( at_strategy )
 	{
@@ -113,15 +84,9 @@ void System_c::setPowerdownStrategy( IsoAgLib::SystemPowerdownStrategy_t at_stra
 	}
 }
 
-/**
-  init the hardware watchdog
-  (uses BIOS function)
 
-  possible errors:
-      * Err_c::SystemWatchdog BIOS watchdog configuration without success
-  @return true -> watchdog successful configured
-*/
-bool System_c::initWd ( void )
+bool
+System_c::initWd ( void )
 {
   bool b_result = true;
   // perform the watchdog config (BIOS function)
@@ -143,13 +108,10 @@ bool System_c::initWd ( void )
   return b_result;
 }
 
-/**
-	deliver the CanEn setting -> if system goes down
-	(bios_namespace.h always return ON independent from D+ signal
-	if NO_CAN_EN_CHECK is defined in config_esx.h)
-	@return true -> D+ or. CAN_EN is active OR D+ should not be checked
-*/
-bool System_c::canEn( void ) {
+
+bool
+System_c::canEn( void )
+{
 	#ifndef CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
 	return HAL::getOn_offSwitch();
 	#else
