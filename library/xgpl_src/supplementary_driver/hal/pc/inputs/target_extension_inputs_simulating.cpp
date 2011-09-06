@@ -541,7 +541,9 @@ uint32_t getCounterFrequency(uint8_t ab_channel)
     if (ui16_timebase == 0) ui16_result = 0;
     else if (ui16_timebase < (1024 * 65534 / (getCpuFreq() * 1000)))
     { /* use standard BIOS method because timebase is short enough */
-      getDiginFreq(ab_channel, &ui16_result);
+	  uint32_t ui32_result;
+      getDiginFreq(ab_channel, &ui32_result);
+	  ui16_result = (uint16_t)ui32_result; // for now okay.
     }
     else
     { /* use extension method */
