@@ -203,7 +203,7 @@ namespace HAL
       @return frequency calculated from time between last two signals
             or 0 if time is longer than initially given timebase
   */
-  inline uint16_t getCounterFrequency ( uint8_t ab_channel )
+  inline uint32_t getCounterFrequency ( uint8_t ab_channel )
   {
     return ( __HAL::DjBios_CounterGetFreq(ab_channel) );
   };
@@ -300,26 +300,6 @@ namespace HAL
   {
     return ( 0 );
   };
-
-
-
-  /**
-    deliver frequency of digital interrupt channel
-      @param ab_channelNumber input channel number [DIN1..DIN16]
-      @param b_useVirtual (default false) use virtual calculated
-             value, if last trigger is lasted longer than last period
-             -> virt_val uses time from last trigger to actual time
-      @return frequency of triggered events [mHz] or BIOS_WARN on too less impulses
-  */
-  inline uint16_t getDiginFreq ( uint8_t ab_channelNumber, bool b_useVirtual = false )
-  {
-    /* Frequency Estimation on inputs configured for Digital is not supported.
-       Use Counter configuration.  Channel may be configured for counter and
-       digital at the same time.  This does not seem to be called from IsoAgLib */
-    return ( 0 );  /* Not supported */
-  };
-
-
 
 
   /**

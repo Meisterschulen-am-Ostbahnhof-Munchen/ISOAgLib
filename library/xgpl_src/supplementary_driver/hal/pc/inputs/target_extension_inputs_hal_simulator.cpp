@@ -151,7 +151,7 @@ getDiginPeriod(uint8_t bInput, uint16_t *pwPeriod, uint16_t *pwImpulse)
 
 
 int16_t
-getDiginFreq(uint8_t bInput, uint16_t *pwFrequency)
+getDiginFreq(uint8_t bInput, uint32_t *pwFrequency)
 {
   halSimulator().getDiginFreq( bInput, pwFrequency );
   return HAL_NO_ERR;
@@ -312,10 +312,10 @@ getCounterPeriod(uint8_t ab_channel)
 }
 
 
-uint16_t
+uint32_t
 getCounterFrequency(uint8_t ab_channel)
 {
-  uint16_t pwFrequency;
+  uint32_t pwFrequency;
 
   getDiginFreq(ab_channel, &pwFrequency);
   return pwFrequency;

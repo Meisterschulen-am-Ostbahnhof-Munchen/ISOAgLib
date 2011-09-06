@@ -116,7 +116,7 @@ uint16_t CounterI_c::period()
   @return frequency calculated from time between last two signals
           or 0 if time is longer than initially given timebase
 */
-uint16_t CounterI_c::frequency()
+uint32_t CounterI_c::frequency()
 {
   return HAL::getCounterFrequency(channelNr());
 }

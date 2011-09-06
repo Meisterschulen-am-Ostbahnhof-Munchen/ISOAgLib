@@ -145,7 +145,7 @@ namespace HAL
     @return frequency calculated from time between last two signals
             or 0 if time is longer than initially given timebase
   */
-  inline uint16_t getCounterFrequency(uint8_t ab_channel)
+  inline uint32_t getCounterFrequency(uint8_t ab_channel)
   {return __HAL::getCounterFrequency(ab_channel);};
   /**
    get time since last signal

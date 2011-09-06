@@ -107,7 +107,7 @@ public:
     @return frequency calculated from time between last two signals
             or 0 if time is longer than initially given timebase
   */
-  uint16_t frequency();
+  uint32_t frequency();
 
   /**
    get time since last signal

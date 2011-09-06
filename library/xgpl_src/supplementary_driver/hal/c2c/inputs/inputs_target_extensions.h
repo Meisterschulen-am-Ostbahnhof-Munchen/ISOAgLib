@@ -63,7 +63,7 @@ uint16_t getCounterPeriod();
   @return frequency calculated from time between last two signals
           or 0 if time is longer than initially given timebase
 */
-uint16_t getCounterFrequency();
+uint32_t getCounterFrequency();
 /**
  get time since last signal and reset according trigger timers
  if timebase is exceeded -> avoid overflow problems if timer floated around 0xFFFF

@@ -160,11 +160,11 @@ namespace HAL
 
   /**
     get frequency of counter channel
-   @param ab_channel channel of counter [0..15]
+    @param ab_channel channel of counter [0..15]
     @return frequency calculated from time between last two signals
             or 0 if time is longer than initially given timebase
   */
-  inline uint16_t getCounterFrequency(uint8_t ab_channel)
+  inline uint32_t getCounterFrequency(uint8_t ab_channel)
   {return __HAL::getCounterFrequency(ab_channel);}
 
   /**
@@ -293,21 +293,5 @@ namespace HAL
   */
   inline int16_t  getDiginOnoffStatic(uint8_t ab_channelNumber)
     {return __HAL::get_digin_onoff_static(ab_channelNumber);}
-
-  /**
-    deliver frequency of digital interrupt channel
-    (this function uses default value for timebase for
-     calculating frequency == 1,67sec. for 20MHz CPU)
-    @param ab_channelNumber input channel number [DIN1..DIN16]
-    @param b_useVirtual (default false) use virtual calculated
-           value, if last trigger is lasted longer than last period
-           -> virt_val uses time from last trigger to actual time
-    @return frequency of triggered events [mHz] or BIOS_WARN on too less impulses
-  */
-  inline uint16_t getDiginFreq(uint8_t ab_channelNumber, bool b_useVirtual)
-    {uint16_t ui16_result;
-     return ((__HAL::get_digin_freq(ab_channelNumber, &ui16_result) == C_NO_ERR) || (b_useVirtual))?ui16_result:0;}
-
-  /*@}*/
 }
 #endif

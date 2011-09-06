@@ -191,7 +191,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_digin( "
     @return frequency calculated from time between last two signals
             or 0 if time is longer than initially given timebase
   */
-  inline uint16_t getCounterFrequency(uint8_t ab_channel)
+  inline uint32_t getCounterFrequency(uint8_t ab_channel)
   {  return __HAL::getCounterFrequency(ab_channel); }
 
   /**
@@ -341,31 +341,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_onoff_stati
 << (uint16_t)ab_channelNumber << ") returns " << retval << "\r";
 #endif
 
-  return retval;}
-
-  /**
-    deliver frequency of digital interrupt channel
-    (this function uses default value for timebase for
-     calculating frequency == 1,67sec. for 20MHz CPU)
-    @param ab_channelNumber input channel number [DIN1..DIN16]
-    @param b_useVirtual (default false) use virtual calculated
-           value, if last trigger is lasted longer than last period
-           -> virt_val uses time from last trigger to actual time
-    @return frequency of triggered events [mHz] or BIOS_WARN on too less impulses
-  */
-  inline uint16_t getDiginFreq(uint8_t ab_channelNumber, bool b_useVirtual)
-    {
-    uint16_t ui16_result;
-    int16_t retval = __HAL::get_digin_freq(ab_channelNumber, &ui16_result);
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_freq( "
-<< (uint16_t)ab_channelNumber << ", "
-<< (uint16_t)ui16_result << ") returns " << retval << "\r";
-#endif
-
-    return (( retval == C_NO_ERR) || (b_useVirtual))?ui16_result:0;}
-
-  /*@}*/
+    return retval;
+  }
 }
 #endif

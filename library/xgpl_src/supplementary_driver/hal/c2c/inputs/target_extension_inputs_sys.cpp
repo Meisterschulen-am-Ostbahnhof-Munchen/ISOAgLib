@@ -230,7 +230,7 @@ _prevCounter = ui16_counter;
   @return frequency calculated from time between last two signals
           or 0 if time is longer than initially given timebase [100mHz]
 */
-uint16_t getCounterFrequency()
+uint32_t getCounterFrequency()
 {
   uint16_t ui16_result = 0;
 

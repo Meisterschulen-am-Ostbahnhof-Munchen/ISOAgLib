@@ -51,7 +51,7 @@ int16_t  getDiginOnoff(uint8_t bInputNumber);
 int16_t  getDiginOnoffStatic(uint8_t bInputNumber);
 int16_t  setDiginPrescaler(uint8_t bGroup, uint8_t bMode);
 int16_t  getDiginPeriod(uint8_t bInput, uint16_t *pwPeriod, uint16_t *pwImpulse);
-int16_t  getDiginFreq(uint8_t bInput, uint16_t *pwFrequency);
+int16_t  getDiginFreq(uint8_t bInput, uint32_t *pwFrequency);
 
 
 int16_t  getAdc(uint8_t bKanalnummer);              /* evaluation of analog channels */
@@ -116,7 +116,7 @@ uint16_t getCounterPeriod(uint8_t ab_channel);
   @return frequency calculated from time between last two signals
           or 0 if time is longer than initially given timebase
 */
-uint16_t getCounterFrequency(uint8_t ab_channel);
+uint32_t getCounterFrequency(uint8_t ab_channel);
 /**
  get time since last signal and reset according trigger timers
  if timebase is exceeded -> avoid overflow problems if timer floated around 0xFFFF

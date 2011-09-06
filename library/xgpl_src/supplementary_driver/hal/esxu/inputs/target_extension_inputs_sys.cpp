@@ -287,7 +287,7 @@ uint16_t getCounterPeriod(uint8_t ab_channel)
   @return frequency calculated from time between last two signals
           or 0 if time is longer than initially given timebase [100mHz]
 */
-uint16_t getCounterFrequency(uint8_t ab_channel)
+uint32_t getCounterFrequency(uint8_t ab_channel)
 {
 	word ui16_result = 0;
 
