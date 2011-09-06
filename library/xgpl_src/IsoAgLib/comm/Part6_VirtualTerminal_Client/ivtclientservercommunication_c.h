@@ -75,6 +75,9 @@ public:
   uint8_t getClientId() const
     { return VtClientServerCommunication_c::getClientId(); }
 
+  bool isClientActive()
+    { return VtClientServerCommunication_c::isClientActive(); }
+
   iIdentItem_c& getIdentItem() const { return static_cast<IsoAgLib::iIdentItem_c&>(VtClientServerCommunication_c::getIdentItem()); }
   bool connectedToVtServer() const   { return VtClientServerCommunication_c::connectedToVtServer(); }
   /** ATTENTION: Please assure "connectedToVtServer()" before getting this reference */

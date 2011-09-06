@@ -411,6 +411,8 @@ public:
 
   vtClientDisplayState_t getVtDisplayState() { return men_displayState; }
 
+  bool isClientActive() { return getVtDisplayState() == VtClientDisplayStateActive; }
+
 private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
   public:
