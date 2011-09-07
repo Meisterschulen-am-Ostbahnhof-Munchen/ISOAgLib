@@ -48,10 +48,15 @@ public:
   virtual void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) = 0;
 #endif
 
-  /** @todo ON REQUEST: check for double initialization via flags & STRUCT_IN_RAM etc.
-           - double init call should normally not happen
-    */
-  void init (iVtObject_s* aps_vtObject_a MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_a = aps_vtObject_a; MULTITON_INST_INIT_CALL }
+  void init (iVtObject_s* aps_vtObject_a MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  {
+    // Only init once, don't overwrite the ptr when it's been set (probably to RAM) already
+    if (vtObject_a == NULL)
+    {
+      vtObject_a = aps_vtObject_a;
+      MULTITON_INST_INIT_CALL
+    }
+  }
 
 protected:
   //  Operation: get_vtObject_a
