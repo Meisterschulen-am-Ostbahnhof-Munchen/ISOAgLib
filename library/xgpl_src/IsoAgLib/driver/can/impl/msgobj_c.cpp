@@ -239,12 +239,10 @@ bool MsgObj_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_msgNr)
     //store busNumber and msgNr for each filterBox
     for(uint8_t i = 0; i < cnt_filterBox(); i++)
     {
-      getFilterBoxInstance(marr_filterBoxIndex[i]).configCan(aui8_busNumber, aui8_msgNr);
+      getFilterBoxInstance(marr_filterBoxIndex[i]).setBusNumber(aui8_busNumber);
+      getFilterBoxInstance(marr_filterBoxIndex[i]).setFilterBoxNr(aui8_msgNr);
     }
-
-
   }
-
 
   switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_msgNr, mc_filter, 0))
   {

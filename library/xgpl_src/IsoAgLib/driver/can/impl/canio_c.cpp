@@ -60,8 +60,7 @@ CanIo_c::init(
   uint8_t aui8_minObjNr,
   uint8_t aui8_maxObjNr)
 {
-  // check preconditions
-  if (mui8_busNumber != 0xFF)
+  if (initialized())
   { // don't allow a re-init of the bus, app has to close bus first.
     return false;
   }
@@ -275,6 +274,9 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
       printMyFilterBox();
 #endif
 
+  // do not allow filterbox insertion before CanIo_c initialization 
+  isoaglib_assert(initialized());
+
   if (existFilter(ar_customer, arc_filterpair, NULL))
   { // filter,mask,cancustomer definition already inserted
     return NULL;
@@ -332,12 +334,11 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
       setFullReconfigNecessary();
       #endif
 
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if ( mui8_busNumber != 0xFF ) /* when the add is made before the init CAN don't do the config, config is done at the init CAN */
-  {
-      m_arrFilterBox[ui8_overwritenFilterBoxIndex].configCan(mui8_busNumber, ui8_overwritenFilterBoxIndex + minReceiveObjNr());
-  }
-#endif
+      #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+        m_arrFilterBox[ui8_overwritenFilterBoxIndex].setBusNumber(mui8_busNumber);
+      #else
+        m_arrFilterBox[ui8_overwritenFilterBoxIndex].configCan(mui8_busNumber, ui8_overwritenFilterBoxIndex + minReceiveObjNr());
+      #endif
 
       filterBoxOverwrite = true;
       #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
@@ -384,14 +385,12 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
         setMinChangedFilterBox(m_arrFilterBox.size() - 1);
     #endif
 
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if ( mui8_busNumber != 0xFF ) /* when the add is made before the init CAN don't do the config, config is done at the init CAN */
-  {
-    uint8_t tempMsgObjNr = minReceiveObjNr() + b_oldSize;
-    m_arrFilterBox.back().configCan(mui8_busNumber, tempMsgObjNr);
-  }
-#endif
-
+    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+      m_arrFilterBox.back().setBusNumber(mui8_busNumber);
+    #else
+      uint8_t tempMsgObjNr = minReceiveObjNr() + b_oldSize;
+      m_arrFilterBox.back().configCan(mui8_busNumber, tempMsgObjNr);
+    #endif
 
     #if DEBUG_HEAP_USEAGE
     sui16_filterBoxTotal++;

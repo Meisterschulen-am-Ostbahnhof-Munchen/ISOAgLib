@@ -99,25 +99,13 @@ void FilterBox_c::clearData()
   mi32_fbVecIdx = InvalidIdx;
 }
 
-/**
-  configures the CAN hardware of given FilterBox (uses BIOS function)
-
-  possible errors:
-      * hwConfig used CAN BUS wans't configured properly
-      * range given BUS or FilterBox number not in allowed area
-      * hwBusy wanted FilterBox already in use
-      * unspecified some other error
-  @param aui8_busNumber BUS number, where this instance should act
-  @param aui8_FilterBoxNr CAN hardware msg number for BIOS interaction
-  @return true -> BIOS CAN object without errors configured
- */
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
 bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
 {
   // store mui8_busNumber for later close of can
   mui8_busNumber = aui8_busNumber;
   mui8_filterBoxNr = aui8_FilterBoxNr;
 
-  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   isoaglib_assert( ! mc_maskFilterPair.empty() );
   Ident_c c_mask = mc_maskFilterPair.getMaskIdent();
   Ident_c c_filter = mc_maskFilterPair.getFilterIdent();
@@ -145,9 +133,9 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
       getILibErrInstance().registerError( iLibErr_c::Unspecified, iLibErr_c::Can );
       break;
   }
-  #endif
   return false;
 }
+#endif
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
 /**   close the BIOS filterbox object of this instance and close hardware CAN filterbox object */

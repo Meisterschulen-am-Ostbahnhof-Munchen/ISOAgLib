@@ -106,6 +106,7 @@ public:
    void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {mvec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
 
 
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   /** configures the CAN hardware of given FilterBox (uses BIOS function with EXTENDED_HAL)
 
     possible errors:
@@ -118,6 +119,7 @@ public:
     @return true -> BIOS CAN object without errors configured
   */
   bool configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr);
+#endif
 
   /* *************************************** */
   /* ******* filter/mask managing ********** */
@@ -182,6 +184,9 @@ public:
 
   int32_t getFbVecIdx(){return mi32_fbVecIdx;};
   void setFbVecIdx(int32_t ri32_fbIdx){mi32_fbVecIdx = ri32_fbIdx;};
+  
+  void setBusNumber(uint8_t aui8_busNumber) { mui8_busNumber = aui8_busNumber; }
+  void setFilterBoxNr(uint8_t aui8_filterBoxNr) { mui8_filterBoxNr = aui8_filterBoxNr; }
 
 private:
 // Private attributes
