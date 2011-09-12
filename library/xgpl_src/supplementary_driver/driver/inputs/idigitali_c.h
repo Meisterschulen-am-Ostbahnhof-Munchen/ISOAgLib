@@ -54,6 +54,14 @@ class iInputEventHandler {
 class iDigitalI_c : private __IsoAgLib::DigitalI_c {
 public:
   /**
+    Promote baseclass private enums to public
+  */
+    typedef InputBase_c::analogType_t analogType_t;
+    typedef InputBase_c::state_t state_t;
+    typedef InputBase_c::onoff_t onoff_t;
+    typedef InputBase_c::inputType_t inputType_t;
+
+  /**
     internal called constructor for a new digital input channel which performs configuration of hardware
 
     possible errors:

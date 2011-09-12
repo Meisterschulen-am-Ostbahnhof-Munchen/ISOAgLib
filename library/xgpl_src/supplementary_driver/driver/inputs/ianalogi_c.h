@@ -27,6 +27,14 @@ class iAnalogI_c : private __IsoAgLib::AnalogI_c
 {
 public:
   /**
+    Promote baseclass private enums to public
+  */
+    typedef InputBase_c::analogType_t analogType_t;
+    typedef InputBase_c::state_t state_t;
+    typedef InputBase_c::onoff_t onoff_t;
+    typedef InputBase_c::inputType_t inputType_t;
+
+  /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
 
     possible errors:

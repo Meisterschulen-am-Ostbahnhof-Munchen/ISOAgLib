@@ -30,6 +30,14 @@ namespace IsoAgLib {
 class iCounterI_c : private __IsoAgLib::CounterI_c {
 public:
   /**
+    Promote baseclass private enums to public
+  */
+    typedef InputBase_c::analogType_t analogType_t;
+    typedef InputBase_c::state_t state_t;
+    typedef InputBase_c::onoff_t onoff_t;
+    typedef InputBase_c::inputType_t inputType_t;
+
+  /**
     internal called constructor for a new digital input channel which performs configuration of hardware
     (uses BIOS function)
 
@@ -109,6 +117,12 @@ public:
    @return time since last signal [msec.]
   */
   uint32_t lastSignalAge(){return CounterI_c::lastSignalAge();}
+
+  /**
+    deliver the channel number of the output object
+    @return number to use for BIOS access to this channel
+  */
+  uint8_t channelNr() const { return CounterI_c::channelNr(); }
 };
 
 } // IsoAgLib
