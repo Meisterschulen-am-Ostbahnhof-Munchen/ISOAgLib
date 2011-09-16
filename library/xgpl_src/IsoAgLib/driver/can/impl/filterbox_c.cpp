@@ -305,7 +305,7 @@ bool FilterBox_c::processMsg()
     if (( ci8_vecCustomerDlcForce < 0 ) || ( ci8_vecCustomerDlcForce == c_pkg.getLen() ) )
     {
       // either no dlc-check requested or dlc matches the check!
-      b_result = pc_customer->processMsg( c_pkg );
+      b_result |= pc_customer->processMsg( c_pkg );
     }
     else
     { // dlc-check was requested but failed
