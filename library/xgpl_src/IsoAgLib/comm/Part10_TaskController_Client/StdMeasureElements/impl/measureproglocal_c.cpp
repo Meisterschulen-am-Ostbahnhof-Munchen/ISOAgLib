@@ -382,6 +382,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
 
     // ISO: value in message contains reset value
     const int32_t ci32_val = arc_data.getValue();
+    const uint32_t cui32_ddi = arc_data.getValue();
 
     // the message was a value message -> evaluate it here
     if ( arc_data.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
@@ -396,7 +397,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
 
       // call handler function if handler class is registered
       if ( processDataConst().getProcessDataChangeHandler() != NULL )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), ci32_val, c_senderIsoNameOrig.toConstIisoName_c());
+        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c());
     } // write
     else
     { // read -> answer wanted value
@@ -405,7 +406,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
       if ((Proc_c::defaultDataLoggingDDI == arc_data.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
         // call handler function if handler class is registered
-        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), ci32_val, c_senderIsoNameOrig.toConstIisoName_c() );
+        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c() );
     } // read
   }
 

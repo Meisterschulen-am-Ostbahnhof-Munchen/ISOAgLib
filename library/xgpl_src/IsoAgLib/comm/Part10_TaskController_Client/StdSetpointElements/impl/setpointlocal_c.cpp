@@ -688,6 +688,7 @@ void SetpointLocal_c::processSet( const ProcessPkg_c& pkg )
   }
 
   const int32_t i32_val = pkg.getValue();
+  const uint32_t cui32_ddi = pkg.getValue();
 
   // check if setpoint is released -  SETPOINT_RELEASE_COMMAND
   if (pkg.isSpecCmd( setpointReleaseCmd))
@@ -723,7 +724,7 @@ void SetpointLocal_c::processSet( const ProcessPkg_c& pkg )
   }
   // call handler function if handler class is registered
   if ( processDataConst().getProcessDataChangeHandler() != NULL )
-    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), i32_val, c_callerISOName.toConstIisoName_c(), b_change );
+    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), cui32_ddi, i32_val, c_callerISOName.toConstIisoName_c(), b_change );
 }
 
 } // end of namespace __IsoAgLib
