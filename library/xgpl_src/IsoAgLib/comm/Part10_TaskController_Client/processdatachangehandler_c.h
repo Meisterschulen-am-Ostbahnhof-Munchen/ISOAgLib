@@ -87,7 +87,7 @@ class ProcessDataChangeHandler_c {
    * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processSetpointSet( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName, bool ab_change );
+ virtual bool processSetpointSet( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName, bool ab_change ) = 0;
 
  /** react on measurement reset from external system for local process data
    * @param ac_src general event source class, which provides conversion functions to get needed event source class
@@ -95,7 +95,7 @@ class ProcessDataChangeHandler_c {
    * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementReset( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName );
+ virtual bool processMeasurementReset( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName ) = 0;
 
  /** react on new received measurement update for remote process data
    * (remote system which manages the process data sent new value on request or
@@ -105,7 +105,7 @@ class ProcessDataChangeHandler_c {
    * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName, bool ab_change );
+ virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName, bool ab_change ) = 0;
 
  /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
    * (remote system which manages the process data, local or other system sent previously a
@@ -115,7 +115,7 @@ class ProcessDataChangeHandler_c {
    * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processSetpointResponse( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName );
+ virtual bool processSetpointResponse( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName ) = 0;
 
  /** react on received value request for default data logging (DDI 0xDFFF)
    * (can be used to start measurement programms in local process data instances)
@@ -124,14 +124,14 @@ class ProcessDataChangeHandler_c {
    * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processDefaultLoggingStart( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName );
+ virtual bool processDefaultLoggingStart( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName ) = 0;
 
  /** react on received value for TC status message
    * @param ab_taskRunning
    * @param ac_callerISOName ISONameof calling device - i.e. TC
    * @return true -> handler class reacted on change event
    */
- virtual bool processTcStatusMessage(bool ab_taskRunning, const iIsoName_c& ac_callerISOName );
+ virtual bool processTcStatusMessage(bool ab_taskRunning, const iIsoName_c& ac_callerISOName ) = 0;
 };
 }
 #endif
