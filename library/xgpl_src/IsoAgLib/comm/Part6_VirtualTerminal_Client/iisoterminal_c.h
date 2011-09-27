@@ -39,7 +39,7 @@ public:
     @param apc_versionLabel pointer to a 7-char name under which the object pool is loaded/stored (NULL for disabling non-volatile operation)
     @param apc_vtEventHandler pointer to an instance of IsoAgLib::iIsoTerminalEventHandler_c so the hook funtions for key activation, input values and successfull objectpool upload can be invoked-->
   */
-  iVtClientServerCommunication_c* initAndRegisterIsoObjectPool (iIdentItem_c& arc_wsMasterIdentItem, iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel)
+  iVtClientServerCommunication_c* initAndRegisterIsoObjectPool (iIdentItem_c& arc_wsMasterIdentItem, iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel)
   { return IsoTerminal_c::initAndRegisterIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(arc_wsMasterIdentItem), arc_pool, apc_versionLabel)->toInterfacePointer(); }
 
   /**

@@ -54,7 +54,7 @@ public:
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close();
 
-  VtClientServerCommunication_c* initAndRegisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel);
+  VtClientServerCommunication_c* initAndRegisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel);
 
   VtClientServerCommunication_c* initAndRegisterIsoObjectPoolForSlave (IdentItem_c& apc_slaveIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool);
 
@@ -227,7 +227,7 @@ private:
     return getForcedMinExecTimeDefault();
   }
 
-  VtClientServerCommunication_c* initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, bool ab_isSlave);
+  VtClientServerCommunication_c* initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, bool ab_isSlave);
 
 protected:
 

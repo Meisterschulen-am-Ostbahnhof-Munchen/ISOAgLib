@@ -85,7 +85,7 @@ IsoTerminal_c::close()
 
 
 VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel)
+IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel)
 {
   if (!rc_identItem.isMaster())
   {
@@ -112,7 +112,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPoolForSlave (IdentItem_c& rc_identItem, 
           or if you already registered an object-pool for this IdentItem
  */
 VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, bool ab_isSlave)
+IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, bool ab_isSlave)
 {
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
