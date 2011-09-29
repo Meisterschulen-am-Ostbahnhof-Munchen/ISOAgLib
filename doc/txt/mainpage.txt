@@ -22,10 +22,6 @@
     All members of the internal HAL namespace are only for internal use inside of IsoAgLib. Applications are not allowed to directly use this namespace. All code using this namespace is treated as an extension of IsoAgLib and hence needs to be given back to the IsoAgLib project.
 */
 
-/*! \namespace AMSBIOS
-    \brief Namespace for the AMS5-BIOS.
-*/
-
 /*! \namespace convert_n
     \brief Common convert helpers
 
@@ -60,6 +56,174 @@ Please use the upper navigation bar to browse the documentation.
 To get more information about ISOAgLib in general, please visit <a href="http://www.isoaglib.com">www.isoaglib.com</a> where you can find information about licensing, ISOAgLib as product, ISOAgLib's functions, principles and toolchain, the Tutorial Network, download and commercial services.
 
 \section Changes Changes
+
+\subsection Change_R 2.2.1 to 2.3.0
+
+CAN:
+- Enhancement: Added initial support for SocketCAN under Linux: Enable by using "sys" for "x86linux"
+- Bugfix: Not processing uninitialized CAN-busses anymore. (Avoid crashing)
+- Bugfix: If send-queue of CAN-device is full a certain amount of time (defaulting currently to 10 ms) is waited, if queue is still full, CAN-device-queue is cleared and new message inserted.
+- Bugfix: On removing filters check for empty filterbox-array was missing (only theoretical problem)
+- Bugfix: CanPkg_c::operator!= fixed. (Wasn't used in last release anyway)
+- Bugfix: No more busy waiting if send buffer full. (Introduced new HAL-function)
+- Bugfix: CAN-processing could crash in rare cases (canMsgToFilterBox was matching/processing idle Filterboxes)
+- Bugfix: Avoid possible crash by setting the FilterBox's BusNr directly at CanIo_c::insertFilter(..)
+- Bugfix: Properly shielding Init/Close now, close didn't close. (Maybe in previous versions it did)
+- Cleanup: Mask/Filter: Encapsulation of CAN mask/filter combinations
+  * Removed DEFAULT_IDENT_TYPE, CanIo_c loses the IdentType
+  * Removed Ident_c::empty() / setEmpty() functionality. Use iMaskFilter_c instead.
+  * Removed 16bit filter functions. (Optimization not needed)
+  * CanPkgExt_c: removed explicit can frame type argument
+  * Introduced new file imaskfilter_c.h: iMaskFilter_c, iMaskFilterType_c
+  * Renamed set method in CanPkg_c to setByte
+  * Changed IsoFilter_s interface to make use of iFilterMask_c
+- Cleanup: Refacturing of complete CAN processing
+  * Pass received CAN data a argument of processMsg
+  * Removed static member of CanPkg/Ext
+  * Removed flags2string/string2flags functionality
+  * Removed getData()/data() declaration of CanCustomer
+    Added filter and ability to receive Std CAN frames on IsoBus instance
+
+vt2iso:
+- Enhancement: Include vtl files that match <languagecode>.*.vtl:
+  In order to split translation into seperate vtl files, vt2iso scans all dictionary directories for <languagecode>.*.vtl files, that will be parsed.
+- Enhancement: Added pedantic mode for translation value resolving:
+  Added -k option to vt2iso that makes vt2iso abort when a translateable value is marked language specific in the xml, but no value is found for every associated language in the .vtl/.values* files.
+- Fix: Version-Checks added: Now checking the OP Version for different elements/attributes, e.g. if OutputLists are being used in a v2 pool, etc.
+- Fix: Conversion:
+  * Allowing all characters now in Strings - they will be escaped now.
+  * <stringvariable> now also properly escapes special characters just as the <output/inputstring> does.]
+
+update_makefile.sh/conf2build:
+- IMPORTANT: Renamed "update_makefile.sh" to "conf2build.sh", which expresses more what this tool is about.
+- Enhancement: The CMakeLists.txt is extended by an additional target that creates tag files for cscope and ctags.
+- Enhancement: Generally improved the CMakeLists.txt output for Windows / Linux.
+- Bugfix: With external HALs: Now not collecting .cpp-files twice anymore.
+- Cleanup: Removed obsolete VC6 creation. (Use CMake instead!)
+- Cleanup: Removed kdevelop3 and Doxygen creation.
+
+Tractor/GPS:
+- Enhancement: Added rough support for J1939 PGSs: Enable this feature with "USE_J1939_VEHICLE_PGNS". It's not on by default, because there may be a problem when both speeds are on the bus.
+- Bugfix TracMove:
+  * Set selected Isoname on move msg reception, was ignored before somehow.
+  * Fix selected distance direction usage for wheel based PGN.
+- Bugfix: Don't regard Sender with N/A Selected Speed Source at all, just discard msg. (Before a SenderConflict was registered in iLibErr.)
+ 
+Logalizer:
+- Enhancement: Added support for PCANExplorer log-files.
+- Enhancement: Extended with the Vehicle PGNs.
+- Enhancement: Updated JRF format-parsing to new (hex) format.
+- Enhancement: Now supporting Multiple (extended) transport protocol sessions.
+- Enhancement: (E)TP-Sessions output as single frames and also as complete chunk of data.
+- Enhancement: Added "Auxiliary valve estimated flow" and "Auxiliary valve measured flow".
+- Enhancement: Tracking addresses now.
+- Bugfix: Logalizer now recognizes RTE log which starts with REQUEST_MSG.
+
+General:
+- Enhancement: iLibErr_c interface enhanced with error observer.
+- Refactoring: CAN-/Singleton-API: 
+  * Introduced IsoBus_c/ProprietaryBus_c, cleaned up singleton mechanismn (removed "singletonInit")
+  * IdentItem needs to be (de-)registered at IsoMonitor now explicitly.
+  * Properly cleaned up init/close methods accordingly
+  * BaseCommon_c-classed get "init_specialized" for clarification
+  * Removed implicit System_c::init calls from differenct modules, application needs to properly init all modules (System, IsoBus, IdentItem, etc.) explicitly in the correct order now.
+  * Added USE_INPUTS / USE_OUTPUTS / USE_FILESERVER_CLIENT defines
+  * Singleton framework changed to work properly with all compilers (Singletons/multitons no longer rely on template classes.). No more unused scheduler instances.
+  * Separated Container out of singletons.
+- Unicode: Now using ISOAGLIB_USE_UNICODE instead of UNICODE/_UNICODE.
+- Removed all warnings, even the Visual Studio deprecated ones...
+- Cleanup: Actor/Sensor: Changed names from (incorrectly named) Actor and Sensor to Inputs and Outputs.
+- Cleanup: Subsystem-Init/Close: Now wrong init/close sequences assert instead of ignoring.
+
+proc2iso:
+- Cleanup: proc2iso now generates an iIsoName instead of an iIdentItem
+
+Network Management:
+- Bugfix: IsoRequestPgn - Request to Global wasn't registered as init() wasn't called!
+- Bugfix: IsoMonitor Destruction: ~IsoItem doesn't do any functionality anymore.
+- Bugfix/Interface: The storage of a successfully claimed SA is fixed and now handled by an instance of a iIdentDataStorage_c implementation.
+- Cleanup: Interface: An iIdentitem is no longer initialized via constructor. Parameters can be passed only with the init call. Furthermore the parameters are grouped by the usage of iIsoname_c.
+- Cleanup: Diagnostics-Handler: Replaced std::string with c-string
+- Cleanup: Address-Claiming: Send Req4AdrCl with 0xFE as SA always now, even if one IdentItem has already claimed an address.
+- Cleanup: Removed obsolete DiagnosticsMode "mc_serviceTool"
+
+RS232:
+- Cleanup: Interface now always has the channel-number so simplicity.
+- Cleanup: Removed std::string and std::deque from RS232-Interface.
+
+Transport Protocol:
+- Enhancement: Added interface for aborting a stream.
+- Enhancement: Improvement MultiSend callback system (create base class MultiSendEventHandler for callback). Replace &SendSuccess with pointer to handler.
+- Bugfix: Fixed sending of ConnAbort for wrong sequence (on receive).
+- Bugfix: FP-Reception - Now FastPacket is processed properly again, messages were discarded before!
+- Cleanup: Removed sendIsoBroadcastOrSinglePacket
+
+EEPROM:
+- Refactoring: Moved from "IsoAgLib" mandatory modules to "supplementary_driver" - It's not mandatory anymore as the SA for the iIdentItems will be stored by the application now instead of ISOAgLib in the EEPROM.
+- Cleanup: Removed support for STW's ESX EEPROM Editor (via CAN & RS232)
+- Cleanup: Removed unnecessary RS232-include
+  
+ISOAgLibThread:
+- Bugfix: Made IsoAgLibThread thread-safety
+  * Ran into race-conditions (of course) when used from multiple threads as it was not designed for multiple threads in the first place (intentionally).
+  * Now it mutexes itself, so it can be run from different threads
+
+CAN-Server:
+- Enhancement: Allow interactive message sending.
+- Enhancement: You can start CAN-Server now before or after the ECUs. (Proper messages will be displayed)
+- Enhancement: Added return-value for Scheduler_c::init() to properly detect if e.g. CAN-Server is started as root and can't be connected to.
+- Bugfix: Potential crash on client-disconnection fixed
+- Bugfix SocketCAN: closeBusOnCard - only close if previously opened and set/reset mb_deviceConnected flag
+
+Diagnostics Services:
+- Enhancement: Added support for DM1/DM2/DM3 messages (interface added to iIdentItem_c)
+
+Scheduler:
+- Bugfix: Now limiting Scheduler-Sleep to 50ms for proper WD-triggering.
+  * If no CAN-Packets were on the bus and/or ISO wasn't enabled, the Scheduler could command a long sleep that may have triggered the watchdog.
+  * Short term solution: We're now limiting the Scheduler-sleep to 50ms.
+- Bugfix: Properly shielding Init/Close now, close didn't close. (Maybe in previous versions it did)
+
+Process-Data / TC-Client:
+- Cleanup:
+  * Remove ProcDataRemote and rename option PRJ_PROCESS to PRJ_ISO_TASKCONTROLLER_CLIENT.
+  * Moved all files to Part10-directory.
+  * Not checking for USE_ISO_TASKCONTROLLER_CLIENT anymore, if Process_c is included, it always uses the DeviceDescription handler now.
+- Cleanup: Made TC-Client handler functions abstract because of the DDI-parameter addition, so you have to implement all of the handler functions.
+
+VT-Client:
+- Enhancement: Added feature to suppress sending of Commands to the VT (actually putting it into the queue), so the changes can be done locally and sent to the VT via Partial Objectpool Update.
+- Enhancement: Added "isClientActive()"-Function to iVtClientServerCommunication.
+- Bugfix: Fixed crash when a client is re-initialized completely during runtime (by API). Now the vtObject's init is protected to not double init itself with the attributes pointer.
+- Cleanup: Added const to char* for versionLabel in initAndRegisterIsoObjectpool()
+
+HAL:
+- Enhancement: Counter-Frequency changed from uint16 -> uint32.
+- Enhancement: Incorporated HAL-Simulator into PC-System-HAL.
+   * Also adapted conf2build.
+   * Added USE_OUTPUTS_DRIVER and USE_INPUTS_DRIVER for proper selection of the associated HAL.
+   * Renamed some target extension files so the scheme is the same everywhere now.
+   * CAN-Server-Socket-HAL-Simulator is now including the Socket-HAL directly to avoid code duplication.
+- Enhancement: Extended HAL-Simulator by some more functions.
+- Enhancement: Speed up waitUntilCanReceiveOrTimeout in the ESX, ESXµ and C2C HALs. For those embedded platforms a busy-loop-checking for received CAN-messages will be performed, because it's the lowest priority Task and even a delay_us() on the STW hardware will perform a busy-wait.
+- Bugfix: PC-System-HAL: On Linux >= 2.6.0 if the application is started with clock_gettime being negative, the startup was always re-generated.
+- Cleanup: System-HAL's wdReset() now has "void" return type. Wasn't consistent.
+- Cleanup: Proper HAL-interfaces created now. (HAL functions declared in hal_<module>.h now) HAL-implementations can't have a different signature now (as it should be)!
+- Cleanup: Moved implicit handling of main-relais from System-module to Outputs_c, where it belongs. It has to be switched on/off explicitly now by the application, ISOAgLib is not touching it anymore.
+- Cleanup: Watchdog is now disabled by defeault in all HALs. If the application needs the watchdog enabled, it needs to properly define the watchdog-time and enable it.
+- Cleanup: HALs for C2C and ESXµ are unified now.
+
+Inputs: (former Sensor)
+- Enhancement: Promoted enums to API, add channelNr() to public API
+- Cleanup: CounterI: Value made unsigned to increase range - and HAL getter was already unsigned anyhow!
+
+Outputs: (former Actor)
+- Cleanup: Outputs_c is not managing DigitalO_c-instances anymore
+- Cleanup: DigitalO_c now has a default-c'tor for array-initialization
+
+ProprietaryPGN:
+- Enhancement: Passing sender to process()-function now so application can respond destination specific even if the incoming message was broadcast.
+
 
 \subsection Change_R 2.2.0 to 2.2.1
 
