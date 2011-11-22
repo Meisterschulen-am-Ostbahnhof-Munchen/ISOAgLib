@@ -72,6 +72,7 @@ void exit_with_usage(const char* progname)
   std::cout << "          7 -> rte2"<<std::endl;
   std::cout << "          8 -> JRF (.jrf)"<<std::endl;
   std::cout << "          9 -> PCANExplorer"<<std::endl;
+  std::cout << "         10 -> SocketCAN candump -l"<<std::endl;
   std::cout << std::endl;
   std::cout << "wrapMultipacket: Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cout << std::endl;
@@ -88,6 +89,7 @@ void exit_with_usage(const char* progname)
   std::cout << "             ...'    17920  ....... '"<<std::endl;
   std::cout << "JRF:         '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
   std::cout << "PCANExplorer:'    13)       116.6 1  Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
+  std::cout << "SocketCAN:  '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
 #else
   std::cout << "can_server:   '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
   std::cout << "rte:          '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
@@ -99,6 +101,7 @@ void exit_with_usage(const char* progname)
   std::cout << "JohnDeere:    'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<std::endl;
   std::cout << "JRF:          '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
   std::cout << "PCANExplorer: '    13)       116.6 1 Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
+  std::cout << "SocketCAN:  '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
 #endif
 
   exit(0);
@@ -379,6 +382,34 @@ std::pair< int, PtrDataFrame_t > defaultParseLogLine(std::string const &acr_line
       PtrDataFrame_t(0) );
   exit_with_error("Unknown Log-Type!");
   return std::make_pair(1, result.second); // return just to satisfy compiler. exit_with_error will exit anyway ;)
+}
+
+std::pair< int, PtrDataFrame_t > parseLogLineSocketCAN(
+    std::string const &acr_line ) // (1321953173.064559) can1 10844D4C#FF7F737F73FFFFFF ( candump -l format )
+{
+#if DEBUG
+  std::cout << acr_line << std::endl;
+#endif
+
+  unsigned int d[8];
+  unsigned int t_s, t_us;
+  unsigned int id;
+
+  const int cnt = sscanf(
+                    acr_line.c_str(),
+                    "(%d.%d) can%*d %x#%02x%02x%02x%02x%02x%02x%02x%02x",
+                    &t_s, &t_us, &id, d, d+1, d+2, d+3, d+4, d+5, d+6, d+7 );
+
+  const int r = (cnt >= 3) ? 0 : -1;
+  if (r < 0)
+    return std::make_pair(r, PtrDataFrame_t(0));
+
+  const uint64_t t_ms = uint64_t((t_s*1000)+(t_us/1000));
+  std::vector<uint8_t> vec_data;
+  copy(d, d + size_t(cnt-3), back_inserter(vec_data));
+
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(t_ms, id, vec_data);
+  return std::make_pair(r, t_ptrFrame);
 }
 
 void partiallyInterpretePgnsVtEcu(PtrDataFrame_t at_ptrFrame)
@@ -1860,6 +1891,7 @@ ParseLogLine_t *getLogLineParser(size_t at_choice)
     parseLogLineRte2,
     parseLogLineJrf,
 	parseLogLineTrc2,
+    parseLogLineSocketCAN,
     defaultParseLogLine
   };
 
