@@ -44,22 +44,21 @@ class iFsClient_c
       * virtual function called once a new fileserver has been initialized. implementing class has to decide what to do with that
       * information.
       */
-    virtual void finishedConnectingToFileserver(iFsServerInstance_c &/*rc_fileServer*/) {}
+    virtual void finishedConnectingToFileserver(iFsServerInstance_c &/*rc_fileServer*/) = 0;
     /**
       * when registering to a fileserver, the fsclientservercommunication starts to request additional information on the fileserver.
       * once this inforamtion has been received the client is notified using this function.
       */
-    virtual void fileserverReady() {}
+    virtual void fileserverReady() = 0;
     /**
       * If the request for information on the fileserver was not sucessful,this function is called with an error code.
       */
-    virtual void fileserverError(iFsError /*ui8_errorCode*/) {}
+    virtual void fileserverError(iFsError /*ui8_errorCode*/) = 0;
 
     /**
       * Method called once the client's fileserver has gone offline.
-      * @return OBSOLETE - Return value isn't used anymore.
       */
-    virtual bool notifyOnOfflineFileServer(iFsServerInstance_c &/*rc_fsServerInstance*/) { return true; }
+    virtual void notifyOnOfflineFileServer(iFsServerInstance_c &/*rc_fsServerInstance*/) = 0;
 
     /**
       * methods that are called once the requested information has been received.
@@ -68,12 +67,12 @@ class iFsClient_c
     /**
       * The registered fileserver's properties as defined in the ISO 11873 standard.
       */
-    virtual void getFileServerPropertiesResponse(uint8_t /*ui8_versionNumber*/, uint8_t /*ui8_maxNumberOpenFiles*/, bool /*b_fsMultiVolumes*/) {}
+    virtual void getFileServerPropertiesResponse(uint8_t /*ui8_versionNumber*/, uint8_t /*ui8_maxNumberOpenFiles*/, bool /*b_fsMultiVolumes*/) = 0;
 
     /**
       * After the call for a current directory change, this function is used to receive the successstatus of the command.
       */
-    virtual void changeCurrentDirectoryResponse(iFsError /*ui8_errorCode*/) {}
+    virtual void changeCurrentDirectoryResponse(iFsError /*ui8_errorCode*/) = 0;
     /**
       * After the call to open a file, this function is used to receive the successstatus of the command and the additional
       * information on the opened file. IMPORTANT: The filehandle is used for all further file access!
@@ -87,42 +86,42 @@ class iFsClient_c
                           bool /*b_directory*/,
                           bool /*b_volume*/,
                           bool /*b_hidden*/,
-                          bool /*b_readOnly*/) {}
+                          bool /*b_readOnly*/) = 0;
     /**
       * After the call to seek in a file, this function is used to receive the successstatus of the command and the new possition
       * of the filepointer of the file.
       */
 
-    virtual void seekFileResponse(iFsError /*ui8_errorCode*/, uint32_t /*ui32_position*/) {}
+    virtual void seekFileResponse(iFsError /*ui8_errorCode*/, uint32_t /*ui32_position*/) = 0;
     /**
       * After the call to read a file, this function is used to receive the successstatus of the command and the read file content.
       * IMPORTANT: the content of th file has to be copied to the applications memory as it can be changed by the library.
       */
 
-    virtual void readFileResponse(iFsError /*ui8_errorCode*/, uint16_t /*ui16_dataLength*/, uint8_t * /*pui8_data*/) {}
+    virtual void readFileResponse(iFsError /*ui8_errorCode*/, uint16_t /*ui16_dataLength*/, uint8_t * /*pui8_data*/) = 0;
     /**
       * After the call to read a file, this function is used to receive the successstatus of the command if the file was a directory.
       * The content of the file is returned.
       */
-    virtual void readDirectoryResponse(iFsError /*ui8_errorCode*/, iFsDirList /*v_directories*/) {}
+    virtual void readDirectoryResponse(iFsError /*ui8_errorCode*/, iFsDirList /*v_directories*/) = 0;
     /**
       * After the call to write data to a file, this function is used to receive the successstatus of the command and the number of
       * written data.
       */
-    virtual void writeFileResponse(iFsError /*ui8_errorCode*/, uint16_t /*ui16_dataWritten*/) {}
+    virtual void writeFileResponse(iFsError /*ui8_errorCode*/, uint16_t /*ui16_dataWritten*/) = 0;
     /**
       * After the call to close a file, this function is used to receive the successstatus of the command.
       */
-    virtual void closeFileResponse(iFsError /*ui8_errorCode*/) {}
+    virtual void closeFileResponse(iFsError /*ui8_errorCode*/) = 0;
 
     /**
       * After the call to move a file, this function is used to receive the successstatus of the command.
       */
-    virtual void moveFileResponse(iFsError /*ui8_errorCode*/) {}
+    virtual void moveFileResponse(iFsError /*ui8_errorCode*/) = 0;
     /**
       * After the call to delete a file, this function is used to receive the successstatus of the command.
       */
-    virtual void deleteFileResponse(iFsError /*ui8_errorCode*/) {}
+    virtual void deleteFileResponse(iFsError /*ui8_errorCode*/) = 0;
     /**
       * After the call to get a file's attributes, this function is used to receive the successstatus of the command. In addition
       * the files attributes are returned.
@@ -134,11 +133,11 @@ class iFsClient_c
                                    bool /*b_directory*/,
                                    bool /*b_volume*/,
                                    bool /*b_hidden*/,
-                                   bool /*b_readOnly*/) {}
+                                   bool /*b_readOnly*/) = 0;
     /**
       * After the call to set a files attributes, this function is used to receive the successstatus of the command.
       */
-    virtual void setFileAttributesResponse(iFsError /*ui8_errorCode*/) {}
+    virtual void setFileAttributesResponse(iFsError /*ui8_errorCode*/) = 0;
     /**
       * After the call to get a files date and time, this function is used to receive the successstatus of the command and the files
       * date and time.
@@ -149,7 +148,7 @@ class iFsClient_c
                                  uint8_t /*ui8_fileDay*/,
                                  uint8_t /*ui8_fileHour*/,
                                  uint8_t /*ui8_fileMinute*/,
-                                 uint8_t /*ui8_fileSecond*/) {}
+                                 uint8_t /*ui8_fileSecond*/) = 0;
 
     /**
       * After the call to initialize a volume, this function is used to receive the successstatus of the command and the volumes
@@ -162,7 +161,7 @@ class iFsClient_c
                                    bool /*b_directory*/,
                                    bool /*b_volume*/,
                                    bool /*b_hidden*/,
-                                   bool /*b_readOnly*/) {}
+                                   bool /*b_readOnly*/) = 0;
 
     /// FileServer access response functions END
 };

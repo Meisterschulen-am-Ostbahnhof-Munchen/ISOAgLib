@@ -90,7 +90,7 @@ FsClientServerCommunication_c::notifyOnOfflineFileServer (FsServerInstance_c &rc
     return;
 
   // notify the Application on lost FS
-  (void) c_fsClient.notifyOnOfflineFileServer (*(getFileserver().toInterfacePointer()));
+  c_fsClient.notifyOnOfflineFileServer (*(getFileserver().toInterfacePointer()));
 
   // now delete the FsCommand (incl. the reference to the connected FS)
   delete pc_commandHandler;
