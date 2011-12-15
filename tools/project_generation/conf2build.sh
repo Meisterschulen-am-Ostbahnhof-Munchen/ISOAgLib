@@ -1061,6 +1061,10 @@ END_OF_PATH
         if [ "$PRJ_TIME_GPS" -gt 0 ]; then
             echo_e "#ifndef USE_TIME_GPS $ENDLINE\t#define USE_TIME_GPS $ENDLINE#endif" >&3
         fi
+        
+        if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
+            echo_e "#ifndef USE_ISO_PROPRIETARY_PGN $ENDLINE\t#define USE_ISO_PROPRIETARY_PGN $ENDLINE#endif" >&3
+        fi
     
         echo_ "// Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed" >&3
         echo_ "// Strong Advice: Don't activate this, as long your target has not too tight memory restrictions" >&3
