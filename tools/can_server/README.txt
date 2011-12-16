@@ -1,7 +1,7 @@
 For the PEAK PCAN driver read ../libs/pcan/README.txt .
 
-For the Sontheim driver download
-    http://www.s-i-e.de/daten/software/MT_API_Setup.zip
+For the Sontheim driver download the MT-API from the download center at
+    http://www.s-i-e.de/
 and run the contained installation program. Install to
     C:\Programme\Sontheim\MT_Api .
 If it's already installed in a different path, then adapt
