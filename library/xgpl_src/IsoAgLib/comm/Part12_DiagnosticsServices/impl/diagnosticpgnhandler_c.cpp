@@ -61,8 +61,8 @@ DiagnosticPgnHandler_c::init()
   __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
-//__IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
-//__IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
+  __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
+  __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
 //__IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, DIAGNOSTIC_DATA_CLEAR_PGN);
 }
 
@@ -74,8 +74,8 @@ DiagnosticPgnHandler_c::close()
   __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );
-//__IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
-//__IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
+  __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
+  __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
 //__IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, DIAGNOSTIC_DATA_CLEAR_PGN);
 }
 
@@ -156,14 +156,13 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
       }
       break;
 
-#if 0
     case ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN: {
-      static const uint8_t activeTroubleCodes[6] = {
-        0xFF,0xFF,0x00,0x00,0x00
+      static const uint8_t activeTroubleCodes[8] = {
+        0xFF,0xFF,0x00,0x00,0x00,0x00,0xFF,0xFF
       };
       if ( __IsoAgLib::getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
                                                                     activeTroubleCodes,
-                                                                    6,
+                                                                    8,
                                                                     ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
                                                                     st_sendSuccessDONTCAREFOR ))
       { // Message successfully transmitted to multisend -> return true
@@ -175,12 +174,12 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
       break; }
 
     case PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:
-      static const uint8_t previouslyActiveTroubleCodes[6] = {
-        0xFF,0xFF,0x00,0x00,0x00
+      static const uint8_t previouslyActiveTroubleCodes[8] = {
+        0xFF,0xFF,0x00,0x00,0x00,0x00,0xFF,0xFF
       };
       if ( __IsoAgLib::getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
                                                                     previouslyActiveTroubleCodes,
-                                                                    6,
+                                                                    8,
                                                                     PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
                                                                     st_sendSuccessDONTCAREFOR ))
       { // Message successfully transmitted to multisend -> return true
@@ -191,6 +190,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
       }
       break;
 
+#if 0
     case DIAGNOSTIC_DATA_CLEAR_PGN:
       // in future: clear the DTCs actually ;-)
       if (rpc_isoItemReceiver != NULL)
