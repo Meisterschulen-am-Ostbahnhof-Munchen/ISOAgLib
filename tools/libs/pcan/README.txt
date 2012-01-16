@@ -9,12 +9,15 @@ The driver is used in IsoAgLib at least for
 ---------------------------------------
 
 For Windows, please download the driver from
-  http://p103112.typo3server.info/fileadmin/media/files/usb.zip
+  *NEW* http://www.peak-system.com/fileadmin/media/files/pcan-light.zip
+  (was formerly http://p103112.typo3server.info/fileadmin/media/files/usb.zip)
 
 and place the content of
   Disk/PCAN-Light API
 
 in this directory!
+
+(Note: With the new version, you may need to adapt the directory structure a little bit, check the include/linker paths in the Visual Studio project!)
 
 ---------------------------------------
 
