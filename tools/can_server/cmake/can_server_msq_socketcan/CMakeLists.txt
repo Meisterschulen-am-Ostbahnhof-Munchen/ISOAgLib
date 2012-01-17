@@ -46,6 +46,7 @@ add_executable(
   can_server_msq_socketcan
   ../../src/can_server_common.cpp
   ../../src/can_server_msq.cpp
+  ../../src/can_filtering.cpp
   ../../src/devices/can_device_socketcan.cpp
   ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp)
 

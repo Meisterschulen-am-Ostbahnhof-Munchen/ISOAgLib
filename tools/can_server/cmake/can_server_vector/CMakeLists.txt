@@ -46,6 +46,7 @@ add_executable(
   can_server_vector
   ../../src/can_server_common.cpp
   ../../src/can_server_sock.cpp
+  ../../src/can_filtering.cpp
   ../../src/devices/can_device_vector_canlib.cpp)
 
 target_link_libraries(can_server_vector ${ISOAGLIB_ADDITIONAL_LIBRARIES})

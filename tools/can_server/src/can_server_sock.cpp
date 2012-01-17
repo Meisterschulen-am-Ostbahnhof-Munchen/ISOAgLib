@@ -26,6 +26,7 @@
 
 #include "can_server.h"
 #include "can_server_common.h"
+#include "can_filtering.h"
 
 #ifdef WIN32
   #ifndef WINCE
@@ -51,6 +52,12 @@
 
 #include <time.h>
 #include <errno.h>
+
+
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
+
 
 static const uint32_t scui32_selectTimeoutMax = 50000;
 static const uint32_t scui32_selectTimeoutMin = 1000;
@@ -381,6 +388,13 @@ void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server
 
 void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)
 {
+  if( !can_filtering::pass(
+        ps_transferBuf->s_data.ui8_bus,
+        ps_transferBuf->s_data.s_canMsg.ui32_id,
+        ps_transferBuf->s_data.s_canMsg.i32_len,
+        ps_transferBuf->s_data.s_canMsg.ui8_data) )
+   return;
+
   printf("%10d %-2d %-2d %-2d %-2d %-2d %-8x  ",
          __HAL::getTime(), ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
          (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);

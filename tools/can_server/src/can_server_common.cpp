@@ -14,6 +14,7 @@
 
 #include "can_server.h"
 #include "can_server_common.h"
+#include "can_filtering.h"
 
 #include <iostream>
 #include <sstream>
@@ -161,9 +162,12 @@ void *readUserInput( void *ap_arg )
   static char const s_help[] = "help";
   static char const s_send[] = "send";
   static char const s_send_short[] = "s";
+  static char const s_filter[] = "filter";
+  static char const s_filter_short[] = "f";
   __HAL::server_c *pc_serverData = static_cast< __HAL::server_c * >(ap_arg);
   for (;;) {
-    std::istringstream istr_inputLine( readInputLine() );
+    std::string inputline = readInputLine();
+    std::istringstream istr_inputLine( inputline );
     std::string s_rawCommand;
     istr_inputLine >> s_rawCommand;
     size_t size_ignore = ( s_rawCommand.substr(0,2) == "--" ) ? 2 : 0;
@@ -194,7 +198,19 @@ void *readUserInput( void *ap_arg )
         std::cerr << "Don't know how to disable " << s_toDisable << "." << std::endl;
         b_needHelp = true;
       }
-    } // compare only "s" or "send" and skip additional repeat counts
+    }
+    else if (s_command.compare(0, strlen(s_filter), s_filter ) == 0) {
+      int startPos = size_ignore+strlen(s_filter);
+      while( inputline[ startPos ] == ' ' )
+        ++startPos;
+      std::cout << can_filtering::config( inputline.substr( startPos ) );
+    }
+    else if (s_command.compare(0, strlen(s_filter_short), s_filter_short ) == 0) {
+      int startPos = size_ignore+strlen(s_filter_short);
+      while( inputline[ startPos ] == ' ' )
+        ++startPos;
+      std::cout << can_filtering::config( inputline.substr( startPos ) );
+    }
     else if ( (s_command.compare(0, strlen(s_send), s_send ) == 0) || (s_command.compare(0, strlen(s_send_short), s_send_short ) == 0) ) {
 
       int repeatCount = 1;
@@ -278,6 +294,7 @@ void *readUserInput( void *ap_arg )
         "  " << s_disable << " " << s_log << " FILENAMEPREFIX" << std::endl <<
         "  " << s_on << " ... (see " << s_enable << " ...)" << std::endl <<
         "  " << s_off << " ... (see " << s_disable << " ...)" << std::endl <<
+        "  " << s_filter << "|"<< s_filter_short << " ... (see \"" << s_filter << " help\")" << std::endl <<
         "  " << "send|s[<reapeat count>] s|std|standard|x|ext|extended <bus(dec)> <ID(hex)> DB1 DB2 .. DB8" << std::endl <<
         "  " << s_help << std::endl;
     }
@@ -557,6 +574,13 @@ void closeFileLog(
 
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE *f_handle)
 {
+  if( !can_filtering::pass(
+        bBusNumber,
+        ps_canMsg->ui32_id,
+        ps_canMsg->i32_len,
+        ps_canMsg->ui8_data) )
+    return;
+
     fprintf(f_handle, "%10d %-2d %-2d %-2d %-2d %-2d %-8x  ",
             __HAL::getTime(), bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
             (ps_canMsg->ui32_id >> 26) & 7 /* priority */, ps_canMsg->ui32_id);

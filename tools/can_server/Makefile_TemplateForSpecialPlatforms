@@ -11,6 +11,7 @@ COMPILER_BINARY_PRE :=<cross compile directory>/<cross compile prefix>
 # platform specific stuff
 SOURCES_MSQ_SPECIAL := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_MSQ) \
 	src/devices/can_device_special.cpp
 

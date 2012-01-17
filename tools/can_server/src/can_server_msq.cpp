@@ -44,6 +44,7 @@
 
 #include "can_server.h"
 #include "can_server_common.h"
+#include "can_filtering.h"
 
 #if DEBUG_CANSERVER
   //backtrace
@@ -277,6 +278,13 @@ void dumpCanMsg(uint8_t au8_bus, uint8_t au8_msgObj, canMsg_s *ap_canMsg, __HAL:
 
 void monitorCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg)
 {
+  if( !can_filtering::pass(
+        bBusNumber,
+        ps_canMsg->ui32_id,
+        ps_canMsg->i32_len,
+        ps_canMsg->ui8_data) )
+    return;
+
   printf("%10d %-2d %-2d %-2d %-2d %-2d %-8x  ",
          __HAL::getTime(), bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
          (ps_canMsg->ui32_id >> 26) & 7 /* priority */, ps_canMsg->ui32_id);

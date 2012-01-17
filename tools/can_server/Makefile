@@ -20,50 +20,59 @@ SOURCES_SOCKET := src/can_server_sock.cpp
 
 SOURCES_MSQ_NO_CARD := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_MSQ) \
 	src/devices/can_device_no_card.cpp
 
 SOURCES_SOCKET_NO_CARD := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_SOCKET) \
 	src/devices/can_device_no_card.cpp
 
 
 SOURCES_MSQ_PCAN := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_MSQ) \
 	src/devices/can_device_pcan.cpp
 
 SOURCES_SOCKET_PCAN := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_SOCKET) \
 	src/devices/can_device_pcan.cpp
 
 
 SOURCES_MSQ_SOCKETCAN := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_MSQ) \
 	src/devices/can_device_socketcan.cpp
 
 SOURCES_SOCKET_SOCKETCAN := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_SOCKET) \
 	src/devices/can_device_socketcan.cpp
 
 
 SOURCES_MSQ_RTE := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_MSQ) \
 	src/devices/can_device_rte.cpp
 
 SOURCES_SOCKET_RTE := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_SOCKET) \
 	src/devices/can_device_rte.cpp
 
 # SOURCES_ALL_MSQ/SOCKET are used for the target "clean"
 SOURCES_ALL_MSQ := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_MSQ) \
 	src/devices/can_device_no_card.cpp \
 	src/devices/can_device_pcan.cpp	\
@@ -72,6 +81,7 @@ SOURCES_ALL_MSQ := \
 
 SOURCES_ALL_SOCKET := \
 	src/can_server_common.cpp \
+	src/can_filtering.cpp \
 	$(SOURCES_SOCKET) \
 	src/devices/can_device_no_card.cpp \
 	src/devices/can_device_pcan.cpp	\

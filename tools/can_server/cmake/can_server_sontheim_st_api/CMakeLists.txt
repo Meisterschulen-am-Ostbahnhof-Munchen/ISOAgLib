@@ -45,6 +45,7 @@ add_executable(
   can_server_sontheim_st_api
   ../../src/can_server_common.cpp
   ../../src/can_server_sock.cpp
+  ../../src/can_filtering.cpp
   ../../src/devices/can_device_sontheim_st_api.cpp)
 
 target_link_libraries(can_server_sontheim_st_api ${ISOAGLIB_ADDITIONAL_LIBRARIES})

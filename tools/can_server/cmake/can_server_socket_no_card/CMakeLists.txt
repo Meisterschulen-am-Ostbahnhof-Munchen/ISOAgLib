@@ -41,6 +41,7 @@ add_executable(
   can_server_socket_no_card
   ../../src/can_server_common.cpp
   ../../src/can_server_sock.cpp
+  ../../src/can_filtering.cpp
   ../../src/devices/can_device_no_card.cpp)
 
 target_link_libraries(can_server_socket_no_card ${ISOAGLIB_ADDITIONAL_LIBRARIES})

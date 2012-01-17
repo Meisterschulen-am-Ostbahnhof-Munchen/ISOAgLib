@@ -46,6 +46,7 @@ add_executable(
   can_server_socket_pcan
   ../../src/can_server_common.cpp
   ../../src/can_server_sock.cpp
+  ../../src/can_filtering.cpp
   ../../src/devices/can_device_pcan.cpp)
 
 target_link_libraries(can_server_socket_pcan ${ISOAGLIB_ADDITIONAL_LIBRARIES})
