@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#include <string.h>
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4996 )
@@ -113,7 +114,7 @@ std::vector<std::string>
 tokenize( std::string input )
 {
   std::vector<std::string> result;
-  char *inputCopy = _strdup( input.c_str() );
+  char *inputCopy = strdup( input.c_str() );
 
   char *p = strtok( inputCopy, " " );
   while (p)
