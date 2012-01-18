@@ -17,9 +17,6 @@
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
-#include <IsoAgLib/driver/can/icanpkg_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
-#include <IsoAgLib/util/impl/util_funcs.h>
 
 
 /** Begin Namespace IsoAgLib */
@@ -36,7 +33,6 @@ namespace IsoAgLib
 
     /** Destructor */
     ~iGenericData_c();
-
 
     /**
       set ident for the telegram

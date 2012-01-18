@@ -11,10 +11,10 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "igenericdata_c.h"
 
 #include <IsoAgLib/util/iliberr_c.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 
 // Begin Namespace IsoAgLib
