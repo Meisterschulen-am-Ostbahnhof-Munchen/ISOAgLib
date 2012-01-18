@@ -37,6 +37,12 @@ void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE 
 
 namespace __HAL {
 
+
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable : 4996 )
+#endif
+
 class LogFile_c {
 public:
   LogFile_c ( std::string const &arstr_filename )
@@ -59,6 +65,11 @@ private:
   LogFile_c( LogFile_c const & );
   LogFile_c &operator= ( LogFile_c const & );
 };
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+
 
 // server specific data
 class server_c {

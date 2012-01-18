@@ -44,10 +44,13 @@ canFilterMatch( const CanFilter &filter, uint32_t id, unsigned dlc, uint8_t *dat
   (void)databytes;
 
   uint32_t idPgn = (id & 0x3FFFF00) >> 8;
-  if( (idPgn & 0x0FF00) <= 0x0EF00 )
-    idPgn &= 0x3FF00;
-  uint8_t idDa = uint8_t( id >> 8 );
+  uint8_t idDa = 0xFF; // default to broadcast for PDU2
   uint8_t idSa = uint8_t( id );
+  if( (idPgn & 0x0FF00) <= 0x0EF00 )
+  { // PDU1, with DA
+    idDa = uint8_t( idPgn );
+    idPgn &= 0x3FF00;
+  }
 
   return
        (!filter.doPgn || (filter.pgn == idPgn) )
