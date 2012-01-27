@@ -31,6 +31,7 @@ class AddressResolveResults_c
   public:
     AddressResolveResults_c(Ident_c& arc_ident, uint8_t aui8_position);
     ~AddressResolveResults_c();
+    AddressResolveResults_c(const AddressResolveResults_c&);
 
     uint8_t getAddress() const {return mrc_ident.ident(mui8_position);}
     void setAddress(uint8_t aui8_newAddress) { mrc_ident.setByte(aui8_newAddress,mui8_position); }
@@ -42,6 +43,10 @@ class AddressResolveResults_c
     Ident_c& mrc_ident;
     //can be source or destination address
     uint8_t mui8_position;
+
+  private:
+    /** not copyable : copy operator is only declared, never defined */
+    AddressResolveResults_c& operator=(const AddressResolveResults_c&); 
 };
 
 

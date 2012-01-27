@@ -41,7 +41,12 @@ AddressResolveResults_c::AddressResolveResults_c( Ident_c& arc_ident, uint8_t au
 AddressResolveResults_c::~AddressResolveResults_c()
 {}
 
-
+AddressResolveResults_c::AddressResolveResults_c(const AddressResolveResults_c& acrc_src)
+  : mc_isoName( acrc_src.mc_isoName ),
+    mpc_monitorItem( acrc_src.mpc_monitorItem ),
+    mrc_ident( acrc_src.mrc_ident ),
+    mui8_position( acrc_src.mui8_position )
+{}
 
 
 CanPkgExt_c::CanPkgExt_c()

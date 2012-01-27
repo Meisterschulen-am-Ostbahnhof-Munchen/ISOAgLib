@@ -120,6 +120,12 @@ private: // attributes
   char *mcstr_SwIdentification;
   bool mb_certificationIsSet;
   uint8_t m_certification[8];
+
+private:
+  /** not copyable : copy constructor is only declared, never defined */
+  DiagnosticPgnHandler_c(const DiagnosticPgnHandler_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  DiagnosticPgnHandler_c& operator=(const DiagnosticPgnHandler_c&); 
 };
 
 } // namespace __IsoAgLib
