@@ -305,7 +305,8 @@ uint16_t DiagnosticsServices_c::dtcActivate(uint32_t SPN, IsoAgLib::FailureModeI
     isoaglib_assert(DtcContainer_c::scui16_sizeDTCList != dtcId);
 
     // insert DTC
-    mc_dtcs[dtcId] = DtcContainer_c::Dtc_s(SPN,FMI);
+    const DtcContainer_c::Dtc_s dtc(SPN,FMI); // explizit call of = operator case of weird issue with HighTec TC 1796 gcc v.3.4.6
+    mc_dtcs[dtcId] = dtc;
 
     // request send out immediately
     mb_dm1CurrentNeedsToBeSent = true;
