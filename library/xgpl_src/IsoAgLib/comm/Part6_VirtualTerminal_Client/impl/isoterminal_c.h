@@ -78,7 +78,12 @@ public:
 
   VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!mvec_vtClientServerComm.empty()) ? mvec_vtClientServerComm[ui8_clientIndex] : NULL; }
 
-  bool isAnyVtAvailable() { return !ml_vtServerInst.empty(); }
+  bool isAnyVtAvailable() const { return !ml_vtServerInst.empty(); }
+  // is any claimed VT sending VT status
+  bool isAnyVtActive() const { return (getFirstActiveVtServer() != NULL); }
+
+  VtServerInstance_c* getFirstActiveVtServer() const;
+  VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const;
 
   ////////////////////////
   // INTERFACE FUNTIONS //
@@ -93,7 +98,7 @@ public:
 #endif
 
 private:
-  uint16_t getClientCount();
+  uint16_t getClientCount() const;
 
   class CanCustomerProxy_c : public CanCustomer_c {
   public:
@@ -233,7 +238,7 @@ protected:
 
 private: // attributes
 
-  STL_NAMESPACE::list<VtServerInstance_c> ml_vtServerInst;
+  STL_NAMESPACE::vector<VtServerInstance_c*> ml_vtServerInst;
 
   STL_NAMESPACE::vector<VtClientServerCommunication_c*> mvec_vtClientServerComm;
   Handler_t mt_handler;

@@ -147,6 +147,12 @@ public:
   uint8_t marr_uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
   uint8_t m_uploadBufferFilledStored;
   uint8_t m_uploadBufferPositionStored;
+
+private:
+  /** not copyable : copy constructor is only declared, never defined */
+  iVtObjectStreamer_c(const iVtObjectStreamer_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  iVtObjectStreamer_c& operator=(const iVtObjectStreamer_c&); 
 };
 
 
@@ -268,10 +274,10 @@ public:
 
   virtual bool processMsg( const CanPkg_c& arc_data );
 
-  uint16_t getVtObjectPoolDimension();
-  uint16_t getVtObjectPoolSoftKeyWidth();
-  uint16_t getVtObjectPoolSoftKeyHeight();
-  uint32_t getUploadBufferSize();
+  uint16_t getVtObjectPoolDimension() const;
+  uint16_t getVtObjectPoolSoftKeyWidth() const;
+  uint16_t getVtObjectPoolSoftKeyHeight() const;
+  uint32_t getUploadBufferSize() const;
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
   uint8_t  getClientId() const { return mui8_clientId; }
 
@@ -283,7 +289,6 @@ public:
   VtServerInstance_c* getVtServerInstPtr() const { return mpc_vtServerInstance; }
   IdentItem_c& getIdentItem() const              { return mrc_wsMasterIdentItem; }
 
-  void notifyOnNewVtServerInstance  (VtServerInstance_c& r_newVtServerInst);
   void notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst);
 
   /** sendCommand... methods */
@@ -407,11 +412,11 @@ public:
   void enableSameCommandCheck() { mb_checkSameCommand = true; }
   void disableSameCommandCheck() { mb_checkSameCommand = false; }
 
-  bool isVtActive();
+  bool isVtActive() const;
 
-  vtClientDisplayState_t getVtDisplayState() { return men_displayState; }
+  vtClientDisplayState_t getVtDisplayState() const { return men_displayState; }
 
-  bool isClientActive() { return getVtDisplayState() == VtClientDisplayStateActive; }
+  bool isClientActive() const { return getVtDisplayState() == VtClientDisplayStateActive; }
 
 private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
@@ -482,6 +487,8 @@ private:
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
 
   int getMultitonInst() { return mi_multitonInst; };
+
+  bool isPreferredVTTimeOut() const;
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */
@@ -585,6 +592,9 @@ private:
   int mi_multitonInst;
 
   bool mb_commandsToBus;
+
+  IsoName_c mc_prefferedVTIsoName;
+  int32_t mi32_bootTime_ms;
 };
 
 }

@@ -13,7 +13,7 @@
 */
 
 //#define GET_VERSIONS
-
+//#define DEBUG_MULTIPLEVTCOMM 1
 
 #include "vtclientservercommunication_c.h"
 #include "../ivtclientservercommunication_c.h"
@@ -52,6 +52,22 @@
   static uint16_t sui16_lastPrintedMaxSendUploadQueueSize = 0;
   static uint16_t sui16_sendUploadQueueSize = 0;
   static uint16_t sui16_maxSendUploadQueueSize = 0;
+#endif
+
+#if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
+#include <iomanip>
+std::ostream& operator<<(std::ostream& os, const __IsoAgLib::IsoName_c& dt)
+{
+  if (dt.isUnspecified())
+    os << " [not specified] ";
+  else
+  {
+    os << std::hex;
+    for (uint8_t counter = 0; counter < 8; ++counter) os << std::setw(2) << std::setfill('0') << (uint16_t)dt.outputString()[counter];
+    os << std::dec;
+  }
+  return os;
+}
 #endif
 
 static const uint8_t scui8_cmdCompareTableMin = 0x92;
@@ -373,6 +389,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mb_isSlave(ab_isSlave)
   , mi_multitonInst( MULTITON_INST_PARAMETER_USE )
   , mb_commandsToBus( true )
+  , mc_prefferedVTIsoName(IsoName_c::IsoNameUnspecified())
+  , mi32_bootTime_ms(0)
 {
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   mrc_pool.initAllObjectsOnce (MULTITON_INST);
@@ -408,6 +426,14 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   ms_uploadPhasesAutomatic[0] = UploadPhase_s (&mc_iVtObjectStreamer, 0);
   ms_uploadPhasesAutomatic[1] = UploadPhase_s (&mc_iVtObjectStreamer, 0);
   ms_uploadPhaseUser = UploadPhase_s (&mc_iVtObjectStreamer, 0);
+
+  // load the preferred ISOVT
+  uint8_t bootTime_s = 0;
+  mrc_wsMasterIdentItem.getIIdentDataStorage().loadPreferredVt( mc_prefferedVTIsoName.toIisoName_c(), bootTime_s );
+  mi32_bootTime_ms = (bootTime_s!=0xFF) ? (bootTime_s * 1000) : 0; // 0xFF means the feature is not supported by the VT
+#if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
+  INTERNAL_DEBUG_DEVICE << "LOAD PreferredVt with timeout " << mi32_bootTime_ms << " and NAME = " << mc_prefferedVTIsoName << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
 }
 
 
@@ -746,7 +772,43 @@ VtClientServerCommunication_c::timeEvent(void)
   checkAndHandleVtStateChange();
 
   // Do nothing if there's no VT active
-  if (!isVtActive()) return true;
+  if (!isVtActive())
+  {
+    // check if initial timeout is done
+    if (isPreferredVTTimeOut())
+    {
+      // check if other VT is available
+      mpc_vtServerInstance = getIsoTerminalInstance4Comm().getFirstActiveVtServer();
+#if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
+      static bool sb_foundNewVt = false;
+      if (mpc_vtServerInstance && !sb_foundNewVt)
+      {
+        sb_foundNewVt = true;
+        INTERNAL_DEBUG_DEVICE << "VT not active and PreferredVTTimeOut is out -> FOUND NEW VT" << INTERNAL_DEBUG_DEVICE_ENDL;
+      }
+      else if (!mpc_vtServerInstance && sb_foundNewVt)
+      {
+        sb_foundNewVt = false;
+        INTERNAL_DEBUG_DEVICE << "VT not active and PreferredVTTimeOut is out -> NO NEW VT FOUND" << INTERNAL_DEBUG_DEVICE_ENDL;
+      }
+#endif
+    }
+    else
+    {
+      mpc_vtServerInstance = getIsoTerminalInstance4Comm().getPreferredVtServer(mc_prefferedVTIsoName);
+      if (mpc_vtServerInstance != NULL)
+        mi32_bootTime_ms = 0;
+#if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
+      static bool sb_foundNewVt = false;
+      if (mpc_vtServerInstance && !sb_foundNewVt)
+      {
+        sb_foundNewVt = true;
+        INTERNAL_DEBUG_DEVICE << "take PreferredVT" << INTERNAL_DEBUG_DEVICE_ENDL;
+      }
+#endif
+    }
+    return true;
+  }
 
   if (mb_isSlave)
   {
@@ -1477,7 +1539,7 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
 
 
 uint32_t
-VtClientServerCommunication_c::getUploadBufferSize()
+VtClientServerCommunication_c::getUploadBufferSize() const
 {
   return mq_sendUpload.size();
 }
@@ -1494,16 +1556,6 @@ VtClientServerCommunication_c::getUserClippedColor (uint8_t colorValue, IsoAgLib
   }
   return colorValue;
 }
-
-
-void
-VtClientServerCommunication_c::notifyOnNewVtServerInstance (VtServerInstance_c& r_newVtServerInst)
-{
-  if (mpc_vtServerInstance) return;
-
-  mpc_vtServerInstance = &r_newVtServerInst;
-}
-
 
 void
 VtClientServerCommunication_c::notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst)
@@ -2329,31 +2381,34 @@ VtClientServerCommunication_c::doStop()
   men_displayState = VtClientDisplayStateHidden;
 }
 
+bool VtClientServerCommunication_c::isPreferredVTTimeOut() const
+{
+  return ( HAL::getTime() > mi32_bootTime_ms );
+}
 
 void
 VtClientServerCommunication_c::checkAndHandleVtStateChange()
 {
   const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
 
-  bool b_vtAliveOld = mb_vtAliveCurrent;
+  const bool b_vtAliveOld = mb_vtAliveCurrent;
   mb_vtAliveCurrent = !cb_fakeVtOff && isVtActive();
 
   if (!b_vtAliveOld && mb_vtAliveCurrent)
   { /// OFF --> ON  ***  VT has (re-)entered the system
-#if DEBUG_VTCOMM
+#if DEBUG_VTCOMM || DEBUG_MULTIPLEVTCOMM
     INTERNAL_DEBUG_DEVICE
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=========================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has entered the system, trying to receive all Properties now... ==="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== time: " << HAL::getTime() << " ==="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=========================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-
 #endif
     doStart();
   }
   else if (b_vtAliveOld && !mb_vtAliveCurrent)
   { /// ON -> OFF  ***  Connection to VT lost
-#if DEBUG_VTCOMM
+#if DEBUG_VTCOMM || DEBUG_MULTIPLEVTCOMM
     INTERNAL_DEBUG_DEVICE
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
@@ -2368,7 +2423,7 @@ VtClientServerCommunication_c::checkAndHandleVtStateChange()
 
 
 bool
-VtClientServerCommunication_c::isVtActive()
+VtClientServerCommunication_c::isVtActive() const
 {
   if (!mpc_vtServerInstance) return false;
   return mpc_vtServerInstance->isVtActive();
@@ -2496,6 +2551,15 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
       men_objectPoolState = OPUploadedSuccessfully;
       men_uploadType = UploadIdle;
     }
+    // save this ISOVT as the preferred one
+    mc_prefferedVTIsoName = mpc_vtServerInstance->getIsoName();
+    mrc_wsMasterIdentItem.getIIdentDataStorage().storePreferredVt(mc_prefferedVTIsoName.toConstIisoName_c(), mpc_vtServerInstance->getConstVtCapabilities()->bootTime );
+#if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
+    INTERNAL_DEBUG_DEVICE << "SAVE prefferedVT with current address " << (uint16_t)mpc_vtServerInstance->getIsoItem()->nr()
+                          << " NAME = " << mpc_vtServerInstance->getIsoName()
+                          << " Boottime = " << (uint16_t)mpc_vtServerInstance->getConstVtCapabilities()->bootTime
+                          << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
     mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mi8_objectPoolUploadedLanguage, mui16_objectPoolUploadedLanguageCode);
   }
 }
@@ -2771,21 +2835,21 @@ IsoAgLib::iVtClientServerCommunication_c* VtClientServerCommunication_c::toInter
 
 
 uint16_t
-VtClientServerCommunication_c::getVtObjectPoolSoftKeyWidth()
+VtClientServerCommunication_c::getVtObjectPoolSoftKeyWidth() const
 {
   return mrc_pool.getSkWidth();
 }
 
 
 uint16_t
-VtClientServerCommunication_c::getVtObjectPoolDimension()
+VtClientServerCommunication_c::getVtObjectPoolDimension() const
 {
   return mrc_pool.getDimension();
 }
 
 
 uint16_t
-VtClientServerCommunication_c::getVtObjectPoolSoftKeyHeight()
+VtClientServerCommunication_c::getVtObjectPoolSoftKeyHeight() const
 {
   return mrc_pool.getSkHeight();
 }

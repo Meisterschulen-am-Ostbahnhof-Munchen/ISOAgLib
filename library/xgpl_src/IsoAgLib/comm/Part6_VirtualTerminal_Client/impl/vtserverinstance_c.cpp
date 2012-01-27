@@ -156,6 +156,7 @@ void
 VtServerInstance_c::setHardwareData( const CanPkgExt_c& arc_data )
 {
   ms_vtCapabilitiesA.lastReceivedHardware = arc_data.time();
+  ms_vtCapabilitiesA.bootTime =             arc_data.getUint8Data (1);
   ms_vtCapabilitiesA.hwGraphicType =        arc_data.getUint8Data (2);
   ms_vtCapabilitiesA.hwHardware =           arc_data.getUint8Data (3);
   ms_vtCapabilitiesA.hwWidth =              arc_data.getUint8Data (4) + (arc_data.getUint8Data (5) << 8);

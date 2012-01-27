@@ -94,6 +94,9 @@ public:
     uint8_t  skVirtual;
     uint8_t  skWidth;
     uint8_t  skHeight;
+
+    uint8_t  bootTime;
+
   } vtCapabilities_s;
 
 
@@ -167,6 +170,12 @@ private: // attributes
 
   /** stores the Local Settings like Language, Units, Date Format */
   localSettings_s ms_localSettingsA;
+
+private:
+  /** copy constructor not declared and not defined -> implicit copy constructor */
+  VtServerInstance_c(const VtServerInstance_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  VtServerInstance_c& operator=(const VtServerInstance_c&); 
 };
 
 } // namespace __IsoAgLib

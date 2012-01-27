@@ -59,8 +59,7 @@ public:
   iVtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex)
   { return IsoTerminal_c::getClientPtrByID (ui8_clientIndex)->toInterfacePointer(); }
 
-  bool isAnyVtAvailable()
-  { return IsoTerminal_c::isAnyVtAvailable(); }
+  bool isAnyVtAvailable() const { return IsoTerminal_c::isAnyVtAvailable(); }
 
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES

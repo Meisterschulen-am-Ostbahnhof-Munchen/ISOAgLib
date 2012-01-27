@@ -64,6 +64,18 @@ class iIdentDataStorage_c {
         @param arr_dtc
       */
     virtual void storeDtcs( const __IsoAgLib::DtcContainer_c &arc_dtcContainer ) = 0;
+
+    /** Application needs to load the stored preferred ISOVT iIsoName_c and boottime.
+        @param arc_isoname saved isoname. Set to Undefined if not known
+        @param arui8_boottime_s saved boottime in second. Set to 0 or 0xFF if not known
+      */
+    virtual void loadPreferredVt( IsoAgLib::iIsoName_c &arc_isoname, uint8_t &arui8_boottime_s ) = 0;
+
+    /** Application needs to store the preferred ISOVT iIsoName_c and boottime.
+        @param arc_isoname isoname to be saved
+        @param arui8_boottime_s boottime to be saved, in second
+      */
+    virtual void storePreferredVt( const IsoAgLib::iIsoName_c &arc_isoname, uint8_t aui8_bootTime) = 0;
 };
 
 /**

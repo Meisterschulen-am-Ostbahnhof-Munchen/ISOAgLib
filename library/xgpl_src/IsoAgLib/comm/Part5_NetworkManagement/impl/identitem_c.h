@@ -213,6 +213,8 @@ public: // methods
   void updateLastIsoSaRequestForThisItem() { i32_lastIsoSaRequestForThisItem = HAL::getTime(); }
   int32_t getLastIsoSaRequestForThisItem() const { return i32_lastIsoSaRequestForThisItem; }
 
+  IsoAgLib::iIdentDataStorage_c& getIIdentDataStorage();
+
 protected: // methods
 
   /** calculate an individual number between [0,1000] to get an individual wait time before first

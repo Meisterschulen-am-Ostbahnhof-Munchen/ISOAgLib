@@ -30,7 +30,6 @@ namespace __IsoAgLib {
 
 IdentItem_c::~IdentItem_c()
 {
-  isoaglib_assert (mpc_diagnosticPgnHandler);
   delete mpc_diagnosticPgnHandler;
   if (mpc_diagnosticsServices) delete mpc_diagnosticsServices;
 }
@@ -51,8 +50,6 @@ IdentItem_c::IdentItem_c ()
 
 {
   mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
-
-  isoaglib_assert(mpc_diagnosticPgnHandler);
 }
 
 
@@ -120,10 +117,16 @@ IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
   if (ab_enablediagnosticsServices)
   {
     mpc_diagnosticsServices = new DiagnosticsServices_c(*this);
-    if (mpc_dataStorageHandler) mpc_dataStorageHandler->loadDtcs(mpc_diagnosticsServices->getDtcContainer());
+    mpc_dataStorageHandler->loadDtcs(mpc_diagnosticsServices->getDtcContainer());
   }
 }
 
+IsoAgLib::iIdentDataStorage_c&
+IdentItem_c::getIIdentDataStorage()
+{
+  isoaglib_assert(mpc_dataStorageHandler != NULL);
+  return *mpc_dataStorageHandler;
+}
 
 bool
 IdentItem_c::activate (int ai_multitonInst)
@@ -138,7 +141,6 @@ IdentItem_c::activate (int ai_multitonInst)
       ai_multitonInst);
 
     // The Diagnostics Handler needs to be created on Construction!
-    isoaglib_assert (mpc_diagnosticPgnHandler);
     mpc_diagnosticPgnHandler->init();
     if (mpc_diagnosticsServices) mpc_diagnosticsServices->init();
     return true;
@@ -159,7 +161,7 @@ IdentItem_c::deactivate()
   mpc_diagnosticPgnHandler->close();
   if (mpc_diagnosticsServices)
   {
-    if (mpc_dataStorageHandler) mpc_dataStorageHandler->storeDtcs(mpc_diagnosticsServices->getDtcContainer());
+    mpc_dataStorageHandler->storeDtcs(mpc_diagnosticsServices->getDtcContainer());
     mpc_diagnosticsServices->close();
   }
 
