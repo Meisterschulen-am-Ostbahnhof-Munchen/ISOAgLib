@@ -637,8 +637,8 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_derived, "\npublic:");
     fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF);");
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
-    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {}\n",
-             mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
+    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d,  ObjectPoolSettings_s(iIsoTerminalObjectPool_c::ObjectPoolVersion%d, %d, %d, %d) ) {}\n",
+             mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, mi_objectPoolVersion, opDimension, skWidth, skHeight);
     fprintf (partFile_handler_derived, "\n};\n");
     fprintf (partFile_handler_derived, "\n#endif\n" );
     fclose (partFile_handler_derived);
@@ -2189,6 +2189,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       case otContainer:
       case otAuxiliaryfunction:
       case otAuxiliaryinput:
+      case otAuxiliaryFunction2:
+      case otAuxiliaryInput2:
         objHasArrayObjectXY = true;
         break;
     }
@@ -3509,7 +3511,55 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           if (auxfunctiontypetoi (arrc_attributes [attrFunction_type].get().c_str()) == -1)
             return false;
-          fprintf (partFile_attributes, ", %d, %d, %s", colourtoi (arrc_attributes [attrBackground_colour].get().c_str()), auxfunctiontypetoi (arrc_attributes [attrFunction_type].get().c_str()), arrc_attributes [attrInput_id].get().c_str());
+          fprintf (partFile_attributes, ", %d, %d, %s", colourtoi (arrc_attributes [attrBackground_colour].get().c_str()),
+                   auxfunctiontypetoi (arrc_attributes [attrFunction_type].get().c_str()),
+                   arrc_attributes [attrInput_id].get().c_str());
+          break;
+
+        case otAuxiliaryFunction2:
+          if (!(arrc_attributes [attrBackground_colour].isGiven() && arrc_attributes[attrFunction_type].isGiven() && arrc_attributes[attrOptions].isGiven()))
+          {
+            std::cout << "YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction2> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            return false;
+          }
+          if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
+            return false;
+          if (aux2functiontypetoi (arrc_attributes [attrFunction_type].get().c_str()) == -1)
+            return false;
+          if (auxfunction2optionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+            return false;
+          fprintf (partFile_attributes, ", %d, %d", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()),
+                   aux2functiontypetoi(arrc_attributes [attrFunction_type].get().c_str())
+                   | auxfunction2optionstoi(arrc_attributes [attrOptions].get().c_str()) );
+          break;
+
+        case otAuxiliaryInput2:
+          if (!(arrc_attributes [attrBackground_colour].isGiven() && arrc_attributes [attrFunction_type].isGiven() && arrc_attributes[attrOptions].isGiven()) )
+          {
+            std::cout << "YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryinput2> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            return false;
+          }
+          if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
+            return false;
+          if (aux2functiontypetoi (arrc_attributes [attrFunction_type].get().c_str()) == -1)
+            return false;
+          if (auxinput2optionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+            return false;
+          fprintf (partFile_attributes, ", %d, %d", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()),
+                   aux2functiontypetoi(arrc_attributes [attrFunction_type].get().c_str())
+                   | auxinput2optionstoi(arrc_attributes [attrOptions].get().c_str()) );
+          break;
+
+        case otAuxiliaryControlDesignatorObjectPointer:
+          if (!arrc_attributes [attrPointer_type].isGiven() && arrc_attributes [attrValue].isNull() )
+          {
+            std::cout << "YOU NEED TO SPECIFY THE pointer_type= and value= ATTRIBUTE FOR THE <auxiliarycontroldesignatorobjectpointer> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            return false;
+          }
+          if (auxcondesignobjptrtypetoi(arrc_attributes [attrPointer_type].get().c_str()) == -1)
+            return false;
+          fprintf (partFile_attributes, ", %d, %s", auxcondesignobjptrtypetoi(arrc_attributes [attrPointer_type].get().c_str()),
+                   getObjectReferencePrefixed(attrValue).c_str());
           break;
 
         case otGraphicsContext:

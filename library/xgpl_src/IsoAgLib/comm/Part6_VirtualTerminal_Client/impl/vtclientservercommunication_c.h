@@ -22,6 +22,11 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
+#include "../ivtobjectauxiliaryfunction2_c.h"
+#include "vtobjectauxiliaryinput2_c.h"
+#include "aux2inputs_c.h"
+#include "aux2functions_c.h"
+
 #define USE_LIST_FOR_FIFO
 
 #ifdef USE_LIST_FOR_FIFO
@@ -238,7 +243,7 @@ public:
 
   /** constructor of VtClientServerCommunication_c
    */
-  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, uint8_t aui8_clientId, bool ab_isSlave MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
+  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, uint8_t aui8_clientId, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
 
 
   /** explicit conversion to reference of interface class type */
@@ -271,6 +276,18 @@ public:
   void notifyOnVtStatusMessage();
 
   void notifyOnAuxInputStatus( const CanPkgExt_c& arc_data );
+
+  void notifyOnAux2InputStatus( const CanPkgExt_c& arc_data );
+
+  void notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data);
+
+#ifdef USE_VTOBJECT_auxiliaryinput2
+  void triggerAux2InputStatusMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj) { m_aux2Inputs.timeEventInputStateMsg(a_aux2InputObj); }
+#endif
+
+  void setAux2ModelIdentificationCodeForInputDevice(uint16_t a_model) { m_aux2Inputs.setModelIdentificationCode(a_model); }
+
+  void setAux2WaitTimeForSendingPreferredAssignment(uint32_t a_waitTime)  { m_aux2Functions.setWaitTimeForSendingPreferredAssignment(a_waitTime); }
 
   virtual bool processMsg( const CanPkg_c& arc_data );
 
@@ -448,8 +465,15 @@ private:
 private:
   friend class IsoTerminal_c;
 
+  void timeEventSearchForNewVt();
+
   //! @return true for successful assignment, false if SA couldn't be found.
   bool storeAuxAssignment( const CanPkgExt_c& arc_data );
+
+  //! @return true for successful assignment, false if aux function2 object ID couldn't be found.
+  //! @return rui16_functionObjId
+  bool storeAux2Assignment( Stream_c& arc_stream, uint16_t& rui16_functionObjId );
+
 
   void doStart();
   void doStop();
@@ -581,13 +605,17 @@ private:
 
   STL_NAMESPACE::list<AuxAssignment_s> mlist_auxAssignments;
 
+  Aux2Inputs_c m_aux2Inputs;
+
+  Aux2Functions_c m_aux2Functions;
+
   iVtObjectStreamer_c mc_iVtObjectStreamer;
 
   int32_t mi32_timeWsAnnounceKey;
 
   int32_t mi32_fakeVtOffUntil;
 
-  bool mb_isSlave; // @todo WS SLAVE: could be substituted by master/slave specific derived classes
+  IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en men_registerPoolMode;
 
   int mi_multitonInst;
 

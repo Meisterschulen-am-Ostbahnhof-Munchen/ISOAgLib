@@ -64,6 +64,9 @@ class vtObjectArchedBarGraph_c;
 
 class vtObjectAuxiliaryFuntion_c;
 class vtObjectAuxiliaryInput_c;
+class vtObjectAuxiliaryFuntion2_c;
+class vtObjectAuxiliaryInput2_c;
+class vtObjectAuxiliaryControlDesignatorObjectPointer_c;
 
 } // end namespace __IsoAgLib
 

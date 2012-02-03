@@ -398,7 +398,6 @@ public:
     const repeat_vtLanguage_s* languagesToFollow;
   } iVtObjectWorkingSet_s;
 
-// Added by  Brad Cox Oct 25 2004
   typedef struct iVtObjectAuxiliaryInput_s {
     uint16_t ID;
     uint8_t backgroundColour;
@@ -408,7 +407,6 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   } iVtObjectAuxiliaryInput_s;
 
-// Added by  Brad Cox Oct 25 2004
   typedef struct iVtObjectAuxiliaryFunction_s {
     uint16_t ID;
     uint8_t backgroundColour;
@@ -417,7 +415,6 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   } iVtObjectAuxiliaryFunction_s;
 
-  // Added by M. Winkler Jul 25 2006
   typedef struct iVtObjectGraphicsContext_s {
     uint16_t ID;
     uint16_t viewportWidth;
@@ -438,6 +435,28 @@ public:
     uint8_t  options;         //!< Bit 0 transparent flag; Bit 1 line, font, fill colour usage
     uint8_t  transparencyColour;  //!< Colour to be shown transparent.
   } iVtObjectGraphicsContext_s;
+
+  typedef struct iVtObjectAuxiliaryInput2_s {
+    uint16_t ID;
+    uint8_t backgroundColour;
+    uint8_t functionType;
+    uint8_t numberOfObjectsToFollow;
+    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+  } iVtObjectAuxiliaryInput2_s;
+
+  typedef struct iVtObjectAuxiliaryFunction2_s {
+    uint16_t ID;
+    uint8_t backgroundColour;
+    uint8_t functionType;
+    uint8_t numberOfObjectsToFollow;
+    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+  } iVtObjectAuxiliaryFunction2_s;
+
+  typedef struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s {
+    uint16_t ID;
+    uint8_t pointerType;
+    iVtObject_c* value;
+  } iVtObjectAuxiliaryControlDesignatorObjectPointer_s;
 
 // METHODS
 public:

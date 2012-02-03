@@ -80,7 +80,7 @@ public:
 
   bool isAnyVtAvailable() const { return !ml_vtServerInst.empty(); }
   // is any claimed VT sending VT status
-  bool isAnyVtActive() const { return (getFirstActiveVtServer() != NULL); }
+  bool isAnyVtActive( bool mustBePrimary ) const { return (getFirstActiveVtServer( mustBePrimary ) != NULL); }
 
   VtServerInstance_c* getFirstActiveVtServer() const;
   VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const;

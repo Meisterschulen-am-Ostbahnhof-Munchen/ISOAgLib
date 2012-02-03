@@ -123,6 +123,7 @@ class iIsoTerminalObjectPool_c {
 
 public:
 
+
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Soft Key Activation" / "Button Activation" Message
@@ -255,6 +256,28 @@ public:
 
   /**
     hook function that gets called immediately after recognizing an incoming
+    Auxiliary Input Type 2 Status message - but only if you have a function assigned to it!
+   */
+  virtual void eventAuxFunction2Value (uint16_t /*aui16_functionUid*/,
+                                       uint16_t /*aui16_inputValue1*/,
+                                       uint16_t /*aui16_inputValue2*/,
+                                       uint8_t  /*aui8_operatingState*/) {}
+
+  /**
+    gets called after
+    - VT changes one or more assigned AUX2 input in the AUX2 functions
+    - an AUX2 input maintenance timeout is detected by the client
+   */
+  virtual void aux2AssignmentChanged () {}
+
+  /**
+    gets called after
+    - VT changes one or more preferred AUX2 input assignments in the AUX2 functions
+   */
+  virtual void aux2PreferredAssignmentChanged () {}
+
+  /**
+    hook function that gets called immediately after recognizing an incoming
     Display Activation Msg or Vt Status Msg with display state change.
    */
   virtual void eventDisplayActivation() {}
@@ -270,18 +293,48 @@ public:
   uint8_t eventProprietaryCommand (iIsoName_c const &acr_isoname, uint8_t aui8_commandByte, __IsoAgLib::Stream_c& arc_stream)
   { return doEventProprietaryCommand(acr_isoname, aui8_commandByte, arc_stream); };
 
+  /** 
+   * this enumeration is used as parameter for initAndRegisterIsoObjectPool (no member of this type exists in this class!)
+   */
+  enum RegisterPoolMode_en
+  {
+    RegisterPoolMode_MasterToAnyVt,
+    RegisterPoolMode_MasterToPrimaryVt,
+    RegisterPoolMode_Slave
+  };
+
+  enum ObjectPoolVersion_en
+  {
+    ObjectPoolVersion2 = 2, // use init values because these enum is compared against VtServerInstance_c::getVtIsoVersion() (return uint8_t)
+    ObjectPoolVersion3 = 3,
+    ObjectPoolVersion4 = 4
+  };
+
+  struct ObjectPoolSettings_s
+  {
+    ObjectPoolSettings_s(ObjectPoolVersion_en a_version, uint16_t a_dimension, uint16_t a_skWidth, uint16_t a_skHeight)
+      : version(a_version), dimension(a_dimension), skWidth(a_skWidth), skHeight(a_skHeight) {}
+
+    ObjectPoolVersion_en version;
+    uint16_t dimension;
+    uint16_t skWidth;
+    uint16_t skHeight;
+  };
+
+
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
   virtual void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF)=0;
 
-  iIsoTerminalObjectPool_c(iVtObject_c*HUGE_MEM** a_iVtObjects, uint16_t a_numObjects, uint16_t a_numObjectsLang, uint16_t a_dimension, uint16_t a_skWidth=60, uint16_t a_skHeight=32)
+  iIsoTerminalObjectPool_c(iVtObject_c*HUGE_MEM** a_iVtObjects, uint16_t a_numObjects, uint16_t a_numObjectsLang, ObjectPoolSettings_s a_objectPoolSettings)
     : iVtObjects (a_iVtObjects)
     , numObjects (a_numObjects)
     , numObjectsLang (a_numObjectsLang)
-    , dimension (a_dimension)
-    , skWidth (a_skWidth)
-    , skHeight (a_skHeight)
+    , version(a_objectPoolSettings.version)
+    , dimension (a_objectPoolSettings.dimension)
+    , skWidth (a_objectPoolSettings.skWidth)
+    , skHeight (a_objectPoolSettings.skHeight)
     , b_initAllObjects (false)
   {
     numLang=0;
@@ -355,6 +408,7 @@ protected:
   iVtObject_c*HUGE_MEM** iVtObjects;
   uint16_t numObjects;
   uint16_t numObjectsLang;
+  ObjectPoolVersion_en version;
   uint16_t dimension;
   uint16_t skWidth;
   uint16_t skHeight;
@@ -363,13 +417,14 @@ protected:
 
 public:
   iVtObject_c*HUGE_MEM**
-            getIVtObjects()     const { return iVtObjects; }
-  uint16_t  getNumObjects()     const { return numObjects; }
-  uint16_t  getNumObjectsLang() const { return numObjectsLang; }
-  uint16_t  getDimension()      const { return dimension; }
-  uint16_t  getSkWidth()        const { return skWidth; }
-  uint16_t  getSkHeight()       const { return skHeight; }
-  uint8_t   getNumLang()        const { return numLang; }
+                        getIVtObjects()     const { return iVtObjects; }
+  uint16_t              getNumObjects()     const { return numObjects; }
+  uint16_t              getNumObjectsLang() const { return numObjectsLang; }
+  ObjectPoolVersion_en  getVersion()        const { return version; }
+  uint16_t              getDimension()      const { return dimension; }
+  uint16_t              getSkWidth()        const { return skWidth; }
+  uint16_t              getSkHeight()       const { return skHeight; }
+  uint8_t               getNumLang()        const { return numLang; }
 
   iVtObjectWorkingSet_c&
   getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects); }

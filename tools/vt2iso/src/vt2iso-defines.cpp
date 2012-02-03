@@ -50,14 +50,14 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
   "auxiliaryinput",     // Object ID 30
   "auxiliaryfunction2",
   "auxiliaryinput2",
-  "auxiliaryassignment",
   "auxiliarycontroldesignatorobjectpointer",
-  "colourmap",
+  "windowmask",
+  "keygroup",
   "graphicscontext",    // Object ID 36
   "outputlist",
   "extendedinputattributes",
-  "",
-  "",
+  "colourmap",
+  "objectlabelreferencelist",
   "",
   "",
   "",
@@ -110,18 +110,18 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
   /* "inputattributes",*/ ombMacro | 0,
   /* "objectpointer", */  0, // really NONE
   /* "macro", */          0, // really NONE
-  /* "auxfunction", */    ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext, // really NONE
-  /* "auxinput", */       ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext, // really NONE
-                          0, //31
-                          0,
-                          0,
-                          0,
-                          0,
-  /* "graphicscontext" */ 0,
+  /* "auxfunction", */    ombOutputfield | ombOutputshape | ombPicturegraphic,
+  /* "auxinput", */       ombOutputfield | ombOutputshape | ombPicturegraphic,
+  /* "auxfunction2", */   ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombGraphicsContext | ombContainer | ombObjectpointer,
+  /* "auxinput2", */      ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombGraphicsContext | ombContainer | ombObjectpointer,
+  /* "auxiliarycontroldesignatorobjectpointer", */  ombAuxiliaryFunction2 | ombAuxiliaryInput2,
+                          0, // check for windowmask
+                          0, // ckeck for keygroup
+  /* "graphicscontext" */ 0, // check for graphics context object
   /* "outputlist" */      ombMacro | ombOutputfield | ombOutputshape | ombOutputgraphic | ombInputfield | ombPicturegraphic | ombGraphicsContext | ombObjectpointer,
-                          0,
-                          0,
-                          0,
+                          0, // check for extended input attributes
+                          0, // check for colour map
+                          0, // check for object label reference list
                           0,
                           0,
                           0,
@@ -178,12 +178,14 @@ char otClassnameTable [maxObjectTypes] [stringLength+1] = {
   "AuxiliaryInput",
   "AuxiliaryFunction2",
   "AuxiliaryInput2",
-  "AuxiliaryAssignment",
   "AuxiliaryControlDesignatorObjectPointer",
-  "ColourMap",
+  "WindowMask",
+  "KeyGroup",
   "GraphicsContext",
   "OutputList",
-  "ExtendedInputAttributes"
+  "ExtendedInputAttributes",
+  "ColourMap",
+  "ObjectLabelReferenceList"
 };
 
 char attrNameTable [maxAttributeNames] [stringLength+1] = {
@@ -262,6 +264,7 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
 //
   "function_type",
   "input_id",
+  "pointer_type",
 //
 //
   "object_id",
@@ -604,6 +607,43 @@ char auxFunctionTypeTable [maxAuxFunctionTypes] [stringLength+1] = {
   "nonlatchingboolean"
 };
 
+char auxFunction2TypeTable [maxAuxFunction2Types] [stringLength+1] = {
+  "latchingboolean",
+  "analog",
+  "nonlatchingboolean",
+  "analogreturnto50",
+  "analogreturnto0",
+  "bothlatchingdualboolean",
+  "bothnonlatchingdualboolean",
+  "latchingdualbooleanup",
+  "latchingdualbooleandown",
+  "combinedanalogreturnto50duallatchingboolean",
+  "combinedanalogduallatchingboolean",
+  "nonlatchingquadboolean",
+  "analogquad",
+  "analogreturnto50quad",
+  "encoder"
+};
+
+char auxFunction2OptionsTable [maxAuxFunction2Options] [stringLength+1] = {
+  "criticalcontrol",
+  "assignmentlock",
+  "singleassignment"
+};
+
+char auxInput2OptionsTable [maxAuxInput2Options] [stringLength+1] = {
+  "criticalcontrol",
+  "reserved",
+  "singleassignment"
+};
+
+char auxConDesignObjPtrTypeTable [maxAuxConDesignObjPtrTypes] [stringLength+1] = {
+  "object",
+  "objectassigned",
+  "workingset",
+  "workingsetassigned"
+};
+
 char GCOptionsTable [maxGCOptions] [stringLength+1] = {
   "transparent",
   "uselinefontfillcolourfordraw"
@@ -621,6 +661,11 @@ char buttonOptionsTable [maxButtonOptions] [stringLength+1] = {
 char inputobjectOptionsTable [maxInputObjectOptionsTable] [stringLength+1] = {
   "enabled",
   "liveediting"
+};
+
+char keyGroupOptionsTable [maxKeyGroupOptionsTable] [stringLength+1] = {
+  "available",
+  "transparent"
 };
 
 int utf16_strlen(const char* source)

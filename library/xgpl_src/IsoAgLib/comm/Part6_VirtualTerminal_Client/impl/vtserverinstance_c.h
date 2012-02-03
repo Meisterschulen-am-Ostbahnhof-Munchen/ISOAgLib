@@ -129,6 +129,7 @@ public:
   const IsoAgLib::vtState_s* getVtState()             const  { return &ms_vtStateA; }
   localSettings_s*           getLocalSettings()       { return &ms_localSettingsA; }
   const IsoItem_c*           getIsoItem()             const { return mcpc_isoItem; }
+  bool                       isPrimaryVt()            const { return (getIsoName().funcInst() == 0); }
 
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES

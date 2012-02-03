@@ -595,6 +595,7 @@
 #define VT_TO_GLOBAL_PGN        0x00E6FFLU
 #define VT_TO_ECU_PGN           0x00E600LU
 #define ECU_TO_VT_PGN           0x00E700LU
+#define ECU_TO_GLOBAL_PGN       0x00E7FFLU
 /* we're NOT using ACK/NACK to Global address, we're directing directly to the sender! */
 #define ACKNOWLEDGEMENT_PGN     0x00E800LU
 #define REQUEST_PGN_MSG_PGN     0x00EA00LU

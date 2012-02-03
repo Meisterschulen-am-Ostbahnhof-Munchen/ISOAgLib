@@ -976,6 +976,164 @@ bool itoauxfunctiontype(unsigned int ui_index, string& c_outputText)
 }
 
 
+signed int aux2functiontypetoi(const char *text_auxFunction2Type)
+{
+  int l;
+  for (l=0; l<maxAuxFunction2Types; ++l)
+  {
+    if (strcmp (text_auxFunction2Type, auxFunction2TypeTable [l]) == 0)
+    {
+      return l;
+    }
+  }
+
+  std::cout << "INVALID AUXFUNCTION2TYPE '" << text_auxFunction2Type << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
+}
+
+bool itoaux2functiontype(unsigned int ui_index, string& c_outputText)
+{
+  ui_index &= 0x1F;
+
+  if ( ui_index < maxAuxFunction2Types )
+  {
+    c_outputText = auxFunction2TypeTable[ui_index];
+
+    return true;
+  }
+
+  return false;
+}
+
+
+signed int auxfunction2optionstoi(const char *text_auxFunction2Type)
+{
+  int l, retval=0;
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_auxFunction2Type, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
+  {
+    for (l=0; l<maxAuxFunction2Options; l++)
+    {
+      if (iter->compare(auxFunction2OptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxAuxFunction2Options) // error
+    {
+      std::cout << "INVALID AUXFUNCTION2OPTION '" << text_auxFunction2Type << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
+    }
+  }
+
+  return retval << 5;
+}
+
+signed int auxinput2optionstoi(const char *text_auxInput2Options)
+{
+  int l, retval=0;
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_auxInput2Options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
+  {
+    for (l=0; l<maxAuxInput2Options; l++)
+    {
+      if (iter->compare(auxInput2OptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxAuxInput2Options) // error
+    {
+      std::cout << "INVALID AUXINPUT2OPTION '" << text_auxInput2Options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
+    }
+  }
+
+  return retval << 5;
+}
+
+bool itoauxfunction2options(unsigned int ui_index, string& c_outputText)
+{
+  uint8_t ui8_options = ui_index >> 5;
+  
+  return itogeneraloption(ui8_options, c_outputText, maxAuxFunction2Options, &auxFunction2OptionsTable[0][0]);
+}
+
+bool itoauxinput2options(unsigned int ui_index, string& c_outputText)
+{
+  uint8_t ui8_options = ui_index >> 5;
+  
+  return itogeneraloption(ui8_options, c_outputText, maxAuxInput2Options, &auxInput2OptionsTable[0][0]);
+}
+
+signed int auxcondesignobjptrtypetoi(const char *text_auxConDesignObjPtrType)
+{
+  int l;
+  for (l=0; l<maxAuxConDesignObjPtrTypes; ++l)
+  {
+    if (strcmp (text_auxConDesignObjPtrType, auxConDesignObjPtrTypeTable [l]) == 0)
+    {
+      return l;
+    }
+  }
+  std::cout << "INVALID AUXCONDESIGNOBJPTRTYPE '" << text_auxConDesignObjPtrType << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
+}
+
+bool itoauxcondesignobjptrtype(unsigned int ui_index, std::string& c_outputText)
+{
+  if(ui_index < maxAuxConDesignObjPtrTypes )
+  {
+    c_outputText = auxConDesignObjPtrTypeTable[ui_index];
+    return true;
+  }
+  return false;
+}
+
+
+
+signed int keygroupoptionstoi (const char *text_options)
+{
+  int l, retval=0;
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
+  {
+    for (l=0; l<maxKeyGroupOptionsTable; l++)
+    {
+      if (iter->compare(keyGroupOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxKeyGroupOptionsTable) // error
+    {
+      std::cout << "INVALID KEY GROUP OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
+    }
+  }
+
+  return retval;
+}
+
+bool itokeygroupoptions(uint8_t ui8_options, string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxKeyGroupOptionsTable, &keyGroupOptionsTable[0][0]);
+}
+
+
+
 signed int gcoptionstoi (const char *text_options)
 {
   int l, retval=0;
@@ -1086,3 +1244,6 @@ bool itomacrocommand(uint8_t ui8_command, string& c_outputText)
   }
   return false;
 }
+
+
+

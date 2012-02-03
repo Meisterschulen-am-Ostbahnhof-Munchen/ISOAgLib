@@ -290,6 +290,7 @@ private:
   friend class iProcDataRemoteSimpleSetpointSimpleMeasure_c;
   friend class iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c;
   friend class iMeasureProgRemote_c;
+  friend class iVtObjectAuxiliaryFunction2_c;
   friend iEepromIo_c& operator<<(iEepromIo_c& rc_stream, const iIsoName_c& rc_data );
   friend iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data );
   friend struct iIsoFilter_s;

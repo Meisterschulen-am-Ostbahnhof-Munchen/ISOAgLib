@@ -91,6 +91,15 @@
 #ifdef USE_VTOBJECT_stringvariable
   #include "ivtobjectstringvariable_c.h"
 #endif
+#ifdef USE_VTOBJECT_auxiliaryfunction2
+  #include "ivtobjectauxiliaryfunction2_c.h"
+#endif
+#ifdef USE_VTOBJECT_auxiliaryinput2
+  #include "ivtobjectauxiliaryinput2_c.h"
+#endif
+#ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
+  #include "ivtobjectauxiliarycontroldesignatorobjectpointer_c.h"
+#endif
 
 
 #include "iisoterminalobjectpool_c.h"

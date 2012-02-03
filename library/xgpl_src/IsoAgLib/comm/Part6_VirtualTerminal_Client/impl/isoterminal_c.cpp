@@ -55,8 +55,10 @@ IsoTerminal_c::init()
 
   // register ISO Filters
   bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(VT_TO_GLOBAL_PGN),false);
-  bool const cb_set = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(LANGUAGE_PGN),false);
-  if (cb_set)
+  bool const cb_set1 = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(LANGUAGE_PGN),false);
+  bool const cb_set2 = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(ECU_TO_GLOBAL_PGN),false);
+
+  if (cb_set1 || cb_set2)
     b_atLeastOneFilterAdded = true;
 
   if (b_atLeastOneFilterAdded)
@@ -89,21 +91,23 @@ IsoTerminal_c::close()
 
 
 VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel)
+IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& arc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
 {
-  if (!rc_identItem.isMaster())
+  switch (aen_mode)
   {
-    /// IdentItem must be a Master
-    return NULL;
+    case IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_MasterToPrimaryVt:
+    case IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_MasterToAnyVt:
+      if (!arc_identItem.isMaster())
+      {
+        /// IdentItem must be a Master
+        return NULL;
+      }
+      break;  
+    case IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_Slave:
+      break;
   }
 
-  return initAndRegisterIsoObjectPoolCommon(rc_identItem, arc_pool, apc_versionLabel, false /* ab_isSlave */);
-}
-
-VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPoolForSlave (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool)
-{
-  return initAndRegisterIsoObjectPoolCommon(rc_identItem, arc_pool, NULL /* apc_versionLabel */, true /* ab_isSlave */);
+  return initAndRegisterIsoObjectPoolCommon(arc_identItem, arc_pool, apc_versionLabel, aen_mode);
 }
 
 /** Register the given object pool
@@ -116,7 +120,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPoolForSlave (IdentItem_c& rc_identItem, 
           or if you already registered an object-pool for this IdentItem
  */
 VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, bool ab_isSlave)
+IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
 {
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
@@ -136,7 +140,8 @@ IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, Is
     }
   }
   // create new instance
-  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, ui8_index, ab_isSlave MULTITON_INST_WITH_COMMA);
+  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, ui8_index,
+                                                                               aen_mode MULTITON_INST_WITH_COMMA);
   if (pc_vtCSC->men_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
   { // most likely due to wrong version label
     /// Error already registered in the VtClientServerCommunication_c(..) constructor!
@@ -180,13 +185,20 @@ IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
     return true; // IdentItem was found and deleted
 }
 
-VtServerInstance_c* IsoTerminal_c::getFirstActiveVtServer() const
+VtServerInstance_c* IsoTerminal_c::getFirstActiveVtServer( bool mustBePrimary ) const
 {
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
-  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+  if( mustBePrimary )
   {
-    if ((*lit_vtServerInst)->isVtActive())
-      return (*lit_vtServerInst);
+    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+      if ( (*lit_vtServerInst)->isVtActive() && (*lit_vtServerInst)->isPrimaryVt() )
+        return (*lit_vtServerInst);
+  }
+  else
+  {
+    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+      if ( (*lit_vtServerInst)->isVtActive() )
+        return (*lit_vtServerInst);
   }
   return NULL;
 }
@@ -257,6 +269,7 @@ IsoTerminal_c::processMsg( const CanPkg_c& arc_data )
   if ((c_data.isoPgn() & 0x3FFFFLU) == VT_TO_GLOBAL_PGN)
   { // iterate through all registered VtServerInstances and process msg if vtSourceAddress == isoSa
     uint8_t const cui8_cmdByte = c_data.getUint8Data (1-1);
+
     if (cui8_cmdByte == 0xFE) // Command: "Status", Parameter: "VT Status Message"
     {
       for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
@@ -290,7 +303,21 @@ IsoTerminal_c::processMsg( const CanPkg_c& arc_data )
         }
       }
     }
+    else if (cui8_cmdByte == 0x26) // Command: "Auxiliary Control Type 2", Parameter: "Auxiliary Input Status"
+    { 
+      // iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that input status!
+      notifyAllVtClientsOnAux2InputStatus( c_data );
+    }
     return true;
+  }
+
+  if ((c_data.isoPgn() & 0x3FFFFLU) == ECU_TO_GLOBAL_PGN)
+  {
+    uint8_t const cui8_cmdByte = c_data.getUint8Data (1-1);
+    if (cui8_cmdByte == 0x23) // Command: "Auxiliary Control", Parameter: "input maintenance message"
+    { // iterate through all registered VtClientServerCommunication and notify them
+      notifyAllVtClientsOnAux2InputMaintenance(c_data);
+    }
   }
 
 
@@ -410,7 +437,29 @@ IsoTerminal_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoIte
 }
 
 
+void
+IsoTerminal_c::notifyAllVtClientsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const
+{
+  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  {
+    if (mvec_vtClientServerComm[ui8_index])
+    {
+      mvec_vtClientServerComm[ui8_index]->notifyOnAux2InputStatus( refc_data );
+    }
+  }
+}
 
+void
+IsoTerminal_c::notifyAllVtClientsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const
+{
+  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  {
+    if (mvec_vtClientServerComm[ui8_index])
+    {
+      mvec_vtClientServerComm[ui8_index]->notifyOnAux2InputMaintenance( refc_data );
+    }
+  }
+}
 
 /// INTERFACE FUNTIONS ///
 // the following define should be globally defined in the project settings...

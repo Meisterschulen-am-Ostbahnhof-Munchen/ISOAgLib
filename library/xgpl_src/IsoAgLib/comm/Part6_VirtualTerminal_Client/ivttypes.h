@@ -69,6 +69,9 @@ class iVtObjectMacro_c;
 
 class iVtObjectAuxiliaryFuntion_c;
 class iVtObjectAuxiliaryInput_c;
+class iVtObjectAuxiliaryFuntion2_c;
+class iVtObjectAuxiliaryInput2_c;
+class iVtObjectAuxiliaryControlDesignatorObjectPointer_c;
 
 // +++ (attribute list) struct declarations
 struct repeat_iVtObject_s {
