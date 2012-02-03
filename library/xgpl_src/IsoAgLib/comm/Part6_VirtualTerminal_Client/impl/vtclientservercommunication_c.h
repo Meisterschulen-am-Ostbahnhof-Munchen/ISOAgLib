@@ -19,7 +19,6 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
 #include "../ivtobjectauxiliaryfunction2_c.h"
@@ -38,6 +37,7 @@
 namespace IsoAgLib {
   class iVtObjectString_c;
   class iVtClientServerCommunication_c;
+  class iVtClientDataStorage_c;
 }
 
 // Begin Namespace __IsoAgLib
@@ -243,7 +243,13 @@ public:
 
   /** constructor of VtClientServerCommunication_c
    */
-  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, uint8_t aui8_clientId, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
+  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem,
+                                 IsoTerminal_c &r_isoTerminal,
+                                 IsoAgLib::iIsoTerminalObjectPool_c& arc_pool,
+                                 const char* apc_versionLabel,
+                                 IsoAgLib::iVtClientDataStorage_c& arc_claimDataStorage,
+                                 uint8_t aui8_clientId,
+                                 IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
 
 
   /** explicit conversion to reference of interface class type */
@@ -623,6 +629,9 @@ private:
 
   IsoName_c mc_prefferedVTIsoName;
   int32_t mi32_bootTime_ms;
+
+  /** pointer to a valid claim data Storage handler. If 0 not used. */
+  IsoAgLib::iVtClientDataStorage_c& m_dataStorageHandler; 
 };
 
 }

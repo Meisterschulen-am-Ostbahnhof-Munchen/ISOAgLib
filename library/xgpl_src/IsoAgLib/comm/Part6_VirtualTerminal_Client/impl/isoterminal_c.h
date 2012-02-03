@@ -54,9 +54,7 @@ public:
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close();
 
-  VtClientServerCommunication_c* initAndRegisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel);
-
-  VtClientServerCommunication_c* initAndRegisterIsoObjectPoolForSlave (IdentItem_c& apc_slaveIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool);
+  VtClientServerCommunication_c* initAndRegisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode);
 
   bool deregisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem);
 
@@ -82,7 +80,17 @@ public:
   // is any claimed VT sending VT status
   bool isAnyVtActive( bool mustBePrimary ) const { return (getFirstActiveVtServer( mustBePrimary ) != NULL); }
 
-  VtServerInstance_c* getFirstActiveVtServer() const;
+  /**
+   * iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that AUX2 input status!
+   */
+  void notifyAllVtClientsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const;
+
+  /**
+   * iterate through all registered VtClientServerCommunication and notify them, maybe they need to process that AUX2 input maintenance message!
+   */
+  void notifyAllVtClientsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const;
+
+  VtServerInstance_c* getFirstActiveVtServer( bool mustBePrimary ) const;
   VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const;
 
   ////////////////////////
@@ -232,7 +240,7 @@ private:
     return getForcedMinExecTimeDefault();
   }
 
-  VtClientServerCommunication_c* initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, bool ab_isSlave);
+  VtClientServerCommunication_c* initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode);
 
 protected:
 

@@ -17,6 +17,7 @@
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
 #include <IsoAgLib/util/iassert.h>
+#include "../iisoterminalobjectpool_c.h"
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
@@ -91,7 +92,7 @@ IsoTerminal_c::close()
 
 
 VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& arc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
+IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& arc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
 {
   switch (aen_mode)
   {
@@ -107,7 +108,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& arc_identItem, IsoAgLi
       break;
   }
 
-  return initAndRegisterIsoObjectPoolCommon(arc_identItem, arc_pool, apc_versionLabel, aen_mode);
+  return initAndRegisterIsoObjectPoolCommon(arc_identItem, arc_pool, apc_versionLabel, apc_claimDataStorage, aen_mode);
 }
 
 /** Register the given object pool
@@ -120,7 +121,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& arc_identItem, IsoAgLi
           or if you already registered an object-pool for this IdentItem
  */
 VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
+IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
 {
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
@@ -140,7 +141,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, Is
     }
   }
   // create new instance
-  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, ui8_index,
+  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, apc_claimDataStorage, ui8_index,
                                                                                aen_mode MULTITON_INST_WITH_COMMA);
   if (pc_vtCSC->men_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
   { // most likely due to wrong version label

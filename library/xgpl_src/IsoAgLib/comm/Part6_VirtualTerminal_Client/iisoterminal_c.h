@@ -22,6 +22,25 @@ namespace IsoAgLib {
 class iScheduler_c;
 
 /**
+  class to define an interface class for the storage of Preferred ISOVT. Users can derive from
+  and implement the load and store functions to their needs.
+ */
+class iVtClientDataStorage_c {
+  public:
+    /** Application needs to load the stored preferred ISOVT iIsoName_c and boottime.
+        @param arc_isoname saved isoname. Set to Undefined if not known
+        @param arui8_boottime_s saved boottime in second. Set to 0 or 0xFF if not known
+      */
+    virtual void loadPreferredVt( IsoAgLib::iIsoName_c &arc_isoname, uint8_t &arui8_boottime_s ) = 0;
+
+    /** Application needs to store the preferred ISOVT iIsoName_c and boottime.
+        @param arc_isoname isoname to be saved
+        @param arui8_boottime_s boottime to be saved, in second
+      */
+    virtual void storePreferredVt( const IsoAgLib::iIsoName_c &arc_isoname, uint8_t aui8_bootTime) = 0;
+};
+
+/**
   central ISO11783 terminal management object
 
   For how to specify an ISO VT Object Pool please refer to \ref XMLspec .
@@ -31,16 +50,9 @@ public:
 
   /**
     register given object pool for uploading when possible.
-    @param arc_identItem pointer to an IdentItem_c instance for that the ISO_Terminal acts (master or slave ident item)
-    @param arc_pool
-    @param apc_versionLabel
-    <!--@param apc_allVtObjects pointer to a list which contains pointers to the objects that deinfe the object pool (and hence should be uploaded)
-    @param aui32_numOfObjects amount of objects in the apc_allVtObjects list
-    @param apc_versionLabel pointer to a 7-char name under which the object pool is loaded/stored (NULL for disabling non-volatile operation)
-    @parameter aen_mode: upload pool a) to primary VT, b) to any VT or c) slave mode (initialize only without upload)
   */
-  iVtClientServerCommunication_c* initAndRegisterIsoObjectPool (iIdentItem_c& arc_identItem, iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
-  { return IsoTerminal_c::initAndRegisterIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(arc_identItem), arc_pool, apc_versionLabel, aen_mode)->toInterfacePointer(); }
+  iVtClientServerCommunication_c* initAndRegisterIsoObjectPool (iIdentItem_c& arc_identItem, iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
+  { return IsoTerminal_c::initAndRegisterIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(arc_identItem), arc_pool, apc_versionLabel, apc_claimDataStorage, aen_mode)->toInterfacePointer(); }
 
   bool deregisterIsoObjectPool (iIdentItem_c& arc_wsMasterIdentItem)
   { return IsoTerminal_c::deregisterIsoObjectPool (arc_wsMasterIdentItem); }

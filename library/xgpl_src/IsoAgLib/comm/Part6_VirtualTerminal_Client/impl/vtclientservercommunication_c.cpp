@@ -34,7 +34,10 @@
 #include "../ivtobjectstring_c.h"
 #include "../ivtobjectworkingset_c.h"
 #include "../ivtobject_c.h"
+#include "../iisoterminalobjectpool_c.h"
 
+#include "../ivtobjectauxiliaryfunction2_c.h"
+#include "../ivtobjectauxiliaryinput2_c.h"
 
 #if DEBUG_VTCOMM || DEBUG_HEAP_USEAGE
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -331,7 +334,7 @@ VtClientServerCommunication_c::processPartStreamDataChunk (Stream_c& arc_stream,
 
     case 0x24:
       // Command: "Auxiliary Control", parameter "Auxiliary Assignment type 2 response"
-      if (mrc_pool.getVersion() == iIsoTerminalObjectPool::ObjectPoolVersion2)
+      if (mrc_pool.getVersion() == IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
         break;
 
       if (ab_isLastChunk)
@@ -373,6 +376,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   IsoTerminal_c &r_isoTerminal,
   IsoAgLib::iIsoTerminalObjectPool_c& arc_pool,
   const char* apc_versionLabel,
+  IsoAgLib::iVtClientDataStorage_c& arc_claimDataStorage,
   uint8_t aui8_clientId,
   IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   : mt_multiSendEventHandler(*this)
@@ -421,6 +425,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mb_commandsToBus( true )
   , mc_prefferedVTIsoName(IsoName_c::IsoNameUnspecified())
   , mi32_bootTime_ms(0)
+  , m_dataStorageHandler(arc_claimDataStorage)
 {
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   mrc_pool.initAllObjectsOnce (MULTITON_INST);
@@ -435,8 +440,12 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
       {
         mrc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID (mui8_clientId);
         // do not allow language dependent AUX2 objects
-        isoaglib_assert(mrc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->getObjectType() != iVtObjectAuxiliaryFunction2_c::objectType());
-        isoaglib_assert(mrc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->getObjectType() != iVtObjectAuxiliaryInput2_c::objectType());
+#ifdef USE_VTOBJECT_auxiliaryfunction2
+        isoaglib_assert(mrc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->getObjectType() != IsoAgLib::iVtObjectAuxiliaryFunction2_c::objectType());
+#endif
+#ifdef USE_VTOBJECT_auxiliaryinput2
+        isoaglib_assert(mrc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->getObjectType() != IsoAgLib::iVtObjectAuxiliaryInput2_c::objectType());
+#endif
       }
     }
   }
@@ -458,12 +467,13 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
 #endif
   }
 
-
+#ifdef USE_VTOBJECT_auxiliaryinput2
   if (!m_aux2Inputs.getObjectList().empty())
   {
     // register in scheduler client
     m_aux2Inputs.init(this);
   }
+#endif
 
   if (apc_versionLabel)
   {
@@ -490,7 +500,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
 
   // load the preferred ISOVT
   uint8_t bootTime_s = 0;
-  mrc_wsMasterIdentItem.getIIdentDataStorage().loadPreferredVt( mc_prefferedVTIsoName.toIisoName_c(), bootTime_s );
+  m_dataStorageHandler.loadPreferredVt( mc_prefferedVTIsoName.toIisoName_c(), bootTime_s );
   mi32_bootTime_ms = (bootTime_s!=0xFF) ? (bootTime_s * 1000) : 0; // 0xFF means the feature is not supported by the VT
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
   INTERNAL_DEBUG_DEVICE << "LOAD PreferredVt with timeout " << mi32_bootTime_ms << " and NAME = " << mc_prefferedVTIsoName << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -1143,7 +1153,7 @@ VtClientServerCommunication_c::notifyOnVtStatusMessage()
   // set client display state appropriately
   setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
 
-  if (mrc_pool.getVersion() != iIsoTerminalObjectPool::ObjectPoolVersion2)
+  if (mrc_pool.getVersion() != IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
   {
     m_aux2Inputs.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
     m_aux2Functions.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
@@ -1412,11 +1422,11 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
 
     case 0x25:
     { // Command: "Auxiliary Control type 2", parameter "input status enable"
-      if (mrc_pool.getVersion() == iIsoTerminalObjectPool::ObjectPoolVersion2)
+      if (mrc_pool.getVersion() == IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
         break;
 
       const uint16_t ui16_inputObjId = (arc_data.getUint8Data( 1 ) | (arc_data.getUint8Data( 2 ) << 8));
-      const bool b_objFound = m_aux2Inputs.setInputStateEnabledInObjects(ui16_inputObjId, arc_data.getUint8Data( 3 ));
+      const bool b_objFound = m_aux2Inputs.setInputStateEnabledInObjects(ui16_inputObjId, ( 0 != arc_data.getUint8Data( 3 ) ));
 
       CanPkgExt_c sendData;
       sendData.setExtCanPkg8 (
@@ -2526,13 +2536,15 @@ VtClientServerCommunication_c::doStop()
     // that case should be handles by the multisend itself
   }
 
-  if (mrc_pool.getVersion() != iIsoTerminalObjectPool::ObjectPoolVersion2)
+  if (mrc_pool.getVersion() != IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
   {
     m_aux2Functions.setState(Aux2Functions_c::State_WaitForPoolUploadSuccessfully);
+#ifdef USE_VTOBJECT_auxiliaryinput2
     if (!m_aux2Inputs.getObjectList().empty())
     {
       m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Initializing);
     }
+#endif
   }
 
   mrc_pool.eventEnterSafeState();
@@ -2713,7 +2725,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
     }
     // save this ISOVT as the preferred one
     mc_prefferedVTIsoName = mpc_vtServerInstance->getIsoName();
-    mrc_wsMasterIdentItem.getIIdentDataStorage().storePreferredVt(mc_prefferedVTIsoName.toConstIisoName_c(), mpc_vtServerInstance->getConstVtCapabilities()->bootTime );
+    m_dataStorageHandler.storePreferredVt(mc_prefferedVTIsoName.toConstIisoName_c(), mpc_vtServerInstance->getConstVtCapabilities()->bootTime );
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
     INTERNAL_DEBUG_DEVICE << "SAVE prefferedVT with current address " << (uint16_t)mpc_vtServerInstance->getIsoItem()->nr()
                           << " NAME = " << mpc_vtServerInstance->getIsoName()
@@ -2722,15 +2734,16 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
 #endif
     mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mi8_objectPoolUploadedLanguage, mui16_objectPoolUploadedLanguageCode);
 
-    if (mrc_pool.getVersion() != iIsoTerminalObjectPool::ObjectPoolVersion2)
+    if (mrc_pool.getVersion() != IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
     {
       // set internal state and send empty preferred AUX2 assignment message, if we don't have any preferred assignments
       m_aux2Functions.objectPoolUploadedSuccessfully();
-
+#ifdef USE_VTOBJECT_auxiliaryinput2
       if (!m_aux2Inputs.getObjectList().empty())
       {
         m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Ready);
       }
+#endif
     }
   }
 }

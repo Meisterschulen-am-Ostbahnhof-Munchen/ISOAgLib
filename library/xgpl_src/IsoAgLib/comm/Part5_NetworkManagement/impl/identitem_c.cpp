@@ -121,13 +121,6 @@ IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
   }
 }
 
-IsoAgLib::iIdentDataStorage_c&
-IdentItem_c::getIIdentDataStorage()
-{
-  isoaglib_assert(mpc_dataStorageHandler != NULL);
-  return *mpc_dataStorageHandler;
-}
-
 bool
 IdentItem_c::activate (int ai_multitonInst)
 {
