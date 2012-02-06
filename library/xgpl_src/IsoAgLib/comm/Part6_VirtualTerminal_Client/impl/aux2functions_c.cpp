@@ -86,6 +86,9 @@ Aux2Functions_c::notifyOnAux2InputStatus( const CanPkgExt_c& arc_data, IsoAgLib:
       arc_pool.eventAuxFunction2Value ((*iter)->getID(), cui16_value1, cui16_value2, cui8_operatingState);
     }
   }
+#else
+  (void)arc_data;
+  (void)arc_pool;
 #endif
 }
 
@@ -160,7 +163,8 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data)
 
   if (b_sendPreferredAssignments)
     sendPreferredAux2Assignments();
-
+#else
+  (void)arc_data;
 #endif
 }
 
@@ -248,7 +252,10 @@ Aux2Functions_c::storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_funct
 
   if (b_preferredAssignedInputsChanged)
     arc_pool.aux2PreferredAssignmentChanged();
-
+#else
+  (void)arc_stream;
+  (void)rui16_functionObjId;
+  (void)arc_pool;
 #endif
   return true;
 }
@@ -278,6 +285,8 @@ Aux2Functions_c::checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iIsoTerminalObje
 
   if (b_assignedInputsChanged)
     arc_pool.aux2AssignmentChanged();
+#else
+  (void)arc_pool;
 #endif
 }
 
