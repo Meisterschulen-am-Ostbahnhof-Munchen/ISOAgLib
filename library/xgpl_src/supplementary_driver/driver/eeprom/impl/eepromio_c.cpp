@@ -73,7 +73,7 @@ EepromIo_c::setg(uint16_t aui16_adress)
 bool
 EepromIo_c::eofp(uint16_t aui16_lookahead, bool ab_setState)
 { // compare (write position + lookahead) with size of EEPROM memory
-  if ((mui16_wPosition + aui16_lookahead) >= eepromSize())
+  if ((uint32_t(mui16_wPosition) + uint32_t(aui16_lookahead)) >= eepromSize())
   { // position of write access + lookahead exceeds EEPROM memory
     if (ab_setState) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
     return true;  // means: End of EEPROM memory is reached
@@ -88,7 +88,7 @@ EepromIo_c::eofp(uint16_t aui16_lookahead, bool ab_setState)
 bool
 EepromIo_c::eofg(uint16_t aui16_lookahead, bool ab_setState)
 { // compare (read position + lookahead) with size of EEPROM memory
-  if ((mui16_rPosition + aui16_lookahead) >= eepromSize())
+  if ((uint32_t(mui16_rPosition) + uint32_t(aui16_lookahead)) >= eepromSize())
   { // position of read access + lookahead exceeds EEPROM memory
     if (ab_setState) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
     return true; // means: End of EEPROM memory is reached
@@ -156,7 +156,7 @@ EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* a
   uint8_t pb_compare[MAX_EEPROM_SEGMENT_SIZE];
 
   /* check input data */
-  if ((aui16_adress + aui16_number) > eepromSize())
+  if ((uint32_t(aui16_adress) + uint32_t(aui16_number)) > eepromSize())
   { // range error because wanted write operation exceeds EEPROM memory
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
   }
