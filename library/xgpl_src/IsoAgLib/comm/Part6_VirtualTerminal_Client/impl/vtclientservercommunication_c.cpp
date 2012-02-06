@@ -450,6 +450,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
     }
   }
 
+#if defined(USE_VTOBJECT_auxiliaryfunction2) || defined (USE_VTOBJECT_auxiliaryinput2)
   for (uint16_t ui16_objIndex = 0; ui16_objIndex < mrc_pool.getNumObjects(); ui16_objIndex++)
   {
     IsoAgLib::iVtObject_c* p_obj = mrc_pool.getIVtObjects()[0][ui16_objIndex];
@@ -466,6 +467,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
     }
 #endif
   }
+#endif
 
 #ifdef USE_VTOBJECT_auxiliaryinput2
   if (!m_aux2Inputs.getObjectList().empty())
