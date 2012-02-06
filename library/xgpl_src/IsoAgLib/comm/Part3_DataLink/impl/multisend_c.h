@@ -139,7 +139,7 @@ public: // methods
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoBroadcast (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
-    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, ai32_pgn, NULL /* NOT "yet" supported */, SendStream_c::IsoTPbroadcast, apc_multiSendEventHandler); }
+    { return sendIntern (acrc_isoNameSender, IsoName_c(), rhpb_data, aui16_dataSize, ai32_pgn, NULL /* NOT "yet" supported */, SendStream_c::IsoTPbroadcast, apc_multiSendEventHandler); }
 
   /**
     send an ISO 11783 (E)TP broadcast multipacket message using a given MultiSendStreamer
@@ -153,7 +153,7 @@ public: // methods
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoBroadcast(const IsoName_c& acrc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
-    { return sendIntern(acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), NULL, apc_mss->getStreamSize(), ai32_pgn, apc_mss, SendStream_c::IsoTPbroadcast, apc_multiSendEventHandler);}
+    { return sendIntern(acrc_isoNameSender, IsoName_c(), NULL, apc_mss->getStreamSize(), ai32_pgn, apc_mss, SendStream_c::IsoTPbroadcast, apc_multiSendEventHandler);}
 
 
 #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
@@ -197,7 +197,7 @@ public: // methods
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
-    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, ai32_pgn, NULL, SendStream_c::NmeaFastPacket, apc_multiSendEventHandler); }
+    { return sendIntern (acrc_isoNameSender, IsoName_c(), rhpb_data, aui16_dataSize, ai32_pgn, NULL, SendStream_c::NmeaFastPacket, apc_multiSendEventHandler); }
 
   /**
     Send a FastPacket broadcast multipacket message using a given MultiSendStreamer
@@ -211,7 +211,7 @@ public: // methods
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
-    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), NULL, apc_mss->getStreamSize(), ai32_pgn, apc_mss, SendStream_c::NmeaFastPacket, apc_multiSendEventHandler); }
+    { return sendIntern (acrc_isoNameSender, IsoName_c(), NULL, apc_mss->getStreamSize(), ai32_pgn, apc_mss, SendStream_c::NmeaFastPacket, apc_multiSendEventHandler); }
 #endif
 
   /**

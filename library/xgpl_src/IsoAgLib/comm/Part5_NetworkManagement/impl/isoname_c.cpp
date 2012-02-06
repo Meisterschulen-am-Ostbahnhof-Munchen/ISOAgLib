@@ -49,16 +49,8 @@ IsoName_c::set(
   setSerNo (aui32_serNo);
   setFuncInst (ab_funcInst);
   setEcuInst (ab_ecuInst);
-}
 
-
-void
-IsoName_c::set(
-  uint8_t aui8_devClass,
-  uint8_t aui8_pos)
-{
-  setDevClass (aui8_devClass);
-  setDevClassInst (aui8_pos);
+  setSpecified();
 }
 
 
@@ -96,6 +88,7 @@ IsoName_c::getEcuType() const
 bool
 IsoName_c::isEqualRegardingNonInstFields (const IsoName_c& acrc_isoName) const
 {
+  // NOTE: We're not considering specified/unspecified here!
   return ( (devClass()  == acrc_isoName.devClass() )
         && (indGroup()  == acrc_isoName.indGroup() )
         && (func()      == acrc_isoName.func()     )

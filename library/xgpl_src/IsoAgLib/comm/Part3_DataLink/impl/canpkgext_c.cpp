@@ -32,10 +32,10 @@ namespace __IsoAgLib {
 
 
 AddressResolveResults_c::AddressResolveResults_c( Ident_c& arc_ident, uint8_t aui8_position )
-  : mc_isoName( IsoName_c::IsoNameUnspecified() ),
-    mpc_monitorItem( NULL ),
-    mrc_ident(arc_ident),
-    mui8_position( aui8_position )
+  : mc_isoName()
+  , mpc_monitorItem( NULL )
+  , mrc_ident(arc_ident)
+  , mui8_position( aui8_position )
 {}
 
 AddressResolveResults_c::~AddressResolveResults_c()

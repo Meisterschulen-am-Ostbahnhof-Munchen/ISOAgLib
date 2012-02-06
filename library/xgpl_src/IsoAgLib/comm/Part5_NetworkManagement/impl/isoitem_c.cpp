@@ -52,7 +52,7 @@ IsoItem_c::IsoItem_c()
   , mui8_nr(0xFE)
   , mb_repeatClaim (false) // wouldn't be needed to be set here as it's set when entering AddressClaim
   , mpc_identItem (NULL) // per default not a local item which has a back-reference to an IdentItem
-  , mc_isoName (IsoName_c::IsoNameUnspecified())
+  , mc_isoName()
 {
 }
 

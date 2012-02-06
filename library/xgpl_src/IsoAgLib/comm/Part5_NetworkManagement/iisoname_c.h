@@ -13,19 +13,8 @@
 #ifndef IISO_NAME_H
 #define IISO_NAME_H
 
-/// The following define is only to be used in Variable-definitions when
-/// "IsoAgLib::iIsoName_c(IsoAgLib::iIsoName_c::iIsoNameUnspecified)"
-/// does NOT work as "iIsoNameUnspecified" itself is (probably!!) not yet
-/// constructed. This may be the case if the variable-definition order
-/// indicates that it gets initialized later then it's being used.
-#define IISONAME_UNSPECIFIED_CONSTRUCTOR IsoAgLib::iIsoName_c(0x7F, 0xF)
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "impl/isoname_c.h"
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib
 { // forward declarations
   class ProprietaryMessageHandler_c;
@@ -33,18 +22,16 @@ namespace __IsoAgLib
   class TimePosGps_c;
 }
 
-// Begin Namespace IsoAgLib
+
 namespace IsoAgLib {
 
-// forward declarations
 class iEepromIo_c;
 class iProprietaryMessageHandler_c;
 class iProprietaryMessageClient_c;
 
-/** handle the 64bit ISO11783 NAME field
-  with input/output from/to 8byte string
-  and specific read/write access to single
-  flags
+/** handle the 64bit ISO11783 NAME field with
+  input/output from/to 8byte string and specific
+  read/write access to single flags
   @author Dipl.-Inform. Achim Spangler
 */
 #ifdef __IAR_SYSTEMS_ICC__
@@ -59,20 +46,6 @@ public:
       the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
   static const iIsoName_c& iIsoNameUnspecified() { return IsoNameUnspecified().toConstIisoName_c(); }
-
-  /** constant for default parameters and initialization, where the device type is not yet spcified.
-      the instantiation of this constant variable is located in the module cancustomer_c.cpp
-      THIS VARIANT IS ONLY FOR BACKWARD COMPATIBILITY AT API LEVEL
-    */
-  static const iIsoName_c& iISONameUnspecified() { return iIsoNameUnspecified(); }
-
-  /** default constructor
-    using "explicit" to avoid WRONG implicit cast from SA to ISONAME!
-    @param aui8_devClass     initial DEVCLASS (device type)
-    @param aui8_devClassInst initial DEVCLASSINST (instance). Defaults to "unknown" (=0xF)
-    */
-  explicit iIsoName_c( uint8_t aui8_devClass, uint8_t aui8_devClassInst=0xF)
-  : IsoName_c( aui8_devClass, aui8_devClassInst ) {}
 
   /** constructor which format data string from series of input flags
     @param ab_selfConf true -> indicate sefl configuring ECU
@@ -146,6 +119,7 @@ public:
 
 
   /** deliver the data NAME string as pointer to 8byte string
+    NOTE: make sure that the NAME is/was "specified"!
     @return const pointer to 8 uint8_t string with NAME
   */
   const uint8_t* outputString() const {return IsoName_c::outputString();}
@@ -248,13 +222,18 @@ public:
   */
   void setSerNo(uint32_t aui32_serNo) { IsoName_c::setSerNo( aui32_serNo );}
 
+  /** set this instance to indicator for specified value - with the NAME prior set
+   * Attention: Make sure that the NAME was properly set before or will be properly
+   *            set at latest before using this instance! */
+  void setSpecified( void ) { IsoName_c::setSpecified( );}
+
   /** set this instance to indicator for unspecified value */
   void setUnspecified( void ) { IsoName_c::setUnspecified( );}
 
-  /** check if this instance has specified value (different from default) */
+  /** check if this instance has specified value */
   bool isSpecified( void ) const { return IsoName_c::isSpecified( );}
 
-  /** check if this instance has unspecified value (match default) */
+  /** check if this instance has unspecified value (no NAME fields set up) */
   bool isUnspecified( void ) const { return IsoName_c::isUnspecified( );}
 
 private:
@@ -300,9 +279,6 @@ private:
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class __IsoAgLib::TimePosGps_c;
 };
-
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef iIsoName_c iISOName_c;
 
 
 }

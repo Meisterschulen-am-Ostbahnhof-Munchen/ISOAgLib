@@ -272,16 +272,6 @@ public:
   /** deregister a ControlFunctionStateHandler */
   void deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c & arc_client);
 
-  /* For backwards compatibility only: */
-  void registerSaClaimHandler (ControlFunctionStateHandler_c *apc_handler) {
-    registerControlFunctionStateHandler( *apc_handler );
-  }
-
-  /* For backwards compatibility only: */
-  void deregisterSaClaimHandler (ControlFunctionStateHandler_c *apc_handler) {
-    deregisterControlFunctionStateHandler( *apc_handler );
-  }
-
   void broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const;
 
   /**

@@ -259,8 +259,5 @@ private: // attributes
  */
 IsoTerminal_c &getIsoTerminalInstance(uint8_t aui8_instance = 0);
 
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef IsoTerminal_c ISOTerminal_c;
-
 }
 #endif

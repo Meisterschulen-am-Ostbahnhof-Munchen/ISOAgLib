@@ -226,7 +226,7 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
 
 
 bool
-MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, SendStream_c::msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
+MultiSend_c::sendIntern (const IsoName_c& isoNameSender, const IsoName_c& isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, SendStream_c::msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
   isoaglib_assert( aui32_dataSize >= endSinglePacketSize );
   isoaglib_assert( (ren_msgType != SendStream_c::NmeaFastPacket) || (aui32_dataSize < endNmeaFastPacketSize) );
@@ -237,32 +237,31 @@ MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& a
 
   /// first check if new transfer can be started
   /// - is the sender correct?
-  bool const cb_existSender = getIsoMonitorInstance4Comm().existIsoMemberISOName(acrc_isoNameSender);
-  if (!cb_existSender)
+  if( !getIsoMonitorInstance4Comm().existIsoMemberISOName( isoNameSender ) )
     return false;
 
-  IsoName_c const *p_isoNameReceiver = &acrc_isoNameReceiver;
   // - is the receiver correct?:
   switch (ren_msgType) {
   case SendStream_c::IsoTPbroadcast:
   case SendStream_c::NmeaFastPacket:
-    // no destination-isoname checks needed for broadcast messages!
-    // Force destination to be "IsoNameUnspecified"
-    p_isoNameReceiver = &IsoName_c::IsoNameUnspecified();
+    // Destination must be "Unspecified"
+    isoaglib_assert( isoNameReceiver.isUnspecified() );
+    if( isoNameReceiver.isSpecified() )
+      return false;
     break;
   default:
     // destination specific - so the receiver must be registered!
-    bool const b_existReceiver = getIsoMonitorInstance4Comm().existIsoMemberISOName(*p_isoNameReceiver);
-    if (!b_existReceiver)
+    if( !getIsoMonitorInstance4Comm().existIsoMemberISOName( isoNameReceiver ) )
       return false;
   }
   /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
   /// - if not NULL is returned, it points to the newly generated stream.
-  SendStream_c * const cpc_newSendStream = addSendStream(acrc_isoNameSender, *p_isoNameReceiver);
+  SendStream_c * const cpc_newSendStream = addSendStream( isoNameSender, isoNameReceiver );
   if (!cpc_newSendStream)
     return false;
 
-  cpc_newSendStream->init(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, apc_mss, ren_msgType, apc_multiSendEventHandler);
+  cpc_newSendStream->init( isoNameSender, isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, apc_mss, ren_msgType, apc_multiSendEventHandler );
+
   // let this SendStream get sorted in now...
   calcAndSetNextTriggerTime();
   return true;

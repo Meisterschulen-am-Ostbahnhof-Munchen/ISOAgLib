@@ -13,9 +13,6 @@
 #ifndef ISO_NAME_H
 #define ISO_NAME_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/util/iassert.h>
@@ -25,28 +22,20 @@ namespace IsoAgLib {
   class iIsoName_c;
 }
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-/** handle the 64bit ISO11783 NAME field
-  with input/output from/to 8byte string
-  and specific read/write access to single
-  flags
-  @author Dipl.-Inform. Achim Spangler
+
+/** handle the 64bit ISO11783 NAME field with input/output from/to 8byte string
+  and specific read/write access to single flags. Additionally it can be set
+  to "unspecified", which has a special meaning in the different modules.
+  When set to unspecified, the NAME will still be kept as is and can be
+  "reactivated" by setting it to specified again.
+  @author Martin Wodok (originally Achim Spangler)
 */
 class IsoName_c {
-private:
 public:
   /** constant for default parameters and initialization, where the device type is not yet spcified.
     */
   static const IsoName_c& IsoNameUnspecified();
-
-  /** default constructor
-    using "explicit" to avoid WRONG implicit cast from SA to ISONAME!
-    @param aui8_devClass     initial DEVCLASS (device type)
-    @param aui8_devClassInst initial DEVCLASSINST (instance). Defaults to "unknown" (=0xF)
-  */
-  inline explicit IsoName_c( uint8_t aui8_devClass, uint8_t aui8_devClassInst=0xF )
-  { set( true, 2, aui8_devClass, aui8_devClassInst, 0xFF, 0x7FF, 0x1FFFFFLU, 0x1F, 0x7 ); }
 
   /** constructor which can read in initial data from uint8_t string
     @param apb_src 64bit input data string, mustn't be NULL.
@@ -86,7 +75,7 @@ public:
   /** default destructor */
   inline ~IsoName_c();
 
-  /** set data string with all flags with one call
+  /** set data string with all flags with one call - and set to specified!
     @param ab_selfConf true -> indicate sefl configuring ECU
     @param aui8_indGroup industry group of device (2 for agriculture)
     @param aui8_devClass device class of ECU
@@ -102,25 +91,19 @@ public:
   void set(bool ab_selfConf, uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
         uint8_t ab_func, uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0);
 
-  /** set device class & instance with two seperate parameters */
-  void set( uint8_t aui8_devClass, uint8_t aui8_devClassInst );
+  /** set this instance to indicator for specified value - with the NAME prior set
+   * Attention: Make sure that the NAME was properly set before or will be properly
+   *            set at latest before using this instance! */
+  void setSpecified( void ) { m_specified = true; }
 
-  /** set this instance to indicator for unspecified value
-      NOTE: The "unspecified" value is the one also used
-            in Part 6 when needing an "empty" NAME for
-            unassignment of an aux assignment.
-            So we use it here, too. (Although technically
-            we'd need another flag to indicate unspecified,
-            but this "empty" NAME is not one that would be
-            certified on the BUS, so it's fine for
-            production area usage.*/
-  void setUnspecified( void ) { mu_data = IsoNameUnspecified().mu_data; }
+  /** set this instance to indicator for unspecified value - and keep the NAME */
+  void setUnspecified( void ) { m_specified = false; }
 
-  /** check if this instance has specified value (different from default) */
-  bool isSpecified( void ) const { return (mu_data != IsoNameUnspecified().mu_data); }
+  /** check if this instance has specified value */
+  bool isSpecified( void ) const { return m_specified; }
 
-  /** check if this instance has unspecified value (match default) */
-  bool isUnspecified( void ) const { return (mu_data == IsoNameUnspecified().mu_data); }
+  /** check if this instance has unspecified value (no NAME fields set up) */
+  bool isUnspecified( void ) const { return !isSpecified(); }
 
   /** IsoAgLib-specific enum for often used types of "functions" of IsoNames */
   enum ecuType_t {
@@ -137,11 +120,13 @@ public:
 
 
   /** deliver the data NAME string as pointer to 8byte string
+    NOTE: Make sure that this instance is Specified or has all NAME fields properly set up
     @return const pointer to 8 uint8_t string with NAME
   */
   const uint8_t* outputString() const{return mu_data.getUint8DataConstPointer();}
 
-  /** deliver the data NAME string as pointer to 8byte string
+  /** deliver the data NAME string as pointer to internal Flexible8ByteString_c
+    NOTE: Make sure that this instance is Specified or has all NAME fields properly set up
     @return const pointer to 8 uint8_t string with NAME
   */
   const Flexible8ByteString_c* outputUnion() const{return &mu_data;}
@@ -191,12 +176,12 @@ public:
   */
   inline uint32_t serNo() const;
 
-  /** set the NAME data from 8 uint8_t string
+  /** set the NAME data from 8 uint8_t string - sets this instance to Specified.
     @param apb_src pointer to 8byte source string, mustn't be NULL!
   */
   inline void inputString(const uint8_t* apb_src);
 
-  /** set the NAME data from 8 uint8_t string
+  /** set the NAME data from Flexible8ByteString_c - sets this instance to Specified.
     @param apu_src pointer to 8byte source string, mustn't be NULL!
   */
   inline void inputUnion(const Flexible8ByteString_c* apu_src);
@@ -249,23 +234,29 @@ public:
   inline void setSerNo(uint32_t aui32_serNo);
 
   /** Check if all Non-Instance fields of both ISONames match
-    @return true if equal, false if one non-inst field differs!
+   * Attention: Ignores if the NAMEs are specified or not!
+   * @return true if equal, false if one non-inst field differs!
   */
   bool isEqualRegardingNonInstFields (const IsoName_c& acrc_isoName) const;
 
   /** assignment operator */
-  inline const IsoName_c& operator=(const IsoName_c& acrc_src)
-    { mu_data = acrc_src.mu_data; return acrc_src; }
+  inline const IsoName_c& operator=(const IsoName_c& src)
+    { mu_data = src.mu_data; m_specified = src.m_specified; return src; }
 
   /** compare two IsoName_c values with operator== */
-  inline bool operator==( const IsoName_c& rc_right ) const
-    { return (mu_data == rc_right.mu_data); }
+  inline bool operator==( const IsoName_c& right ) const
+    { return( (m_specified == true) && (right.m_specified == true) )
+        ? (mu_data == right.mu_data)
+        : (m_specified == right.m_specified); }
 
   /** compare two IsoName_c values with operator!= */
-  inline bool operator!=( const IsoName_c& rc_right ) const
-    { return operator!= (rc_right.mu_data); }
+  inline bool operator!=( const IsoName_c& right ) const
+    { return( (m_specified == true) && (right.m_specified == true) )
+        ? operator!= (right.mu_data)
+        : (m_specified != right.m_specified); }
 
-  /** compare IsoName_c value and Flexible8ByteString_c with operator!= */
+  /** compare IsoName_c-NAME value (regardless of "Specified")
+      and Flexible8ByteString_c with operator!= */
   inline bool operator!=( const Flexible8ByteString_c& acrc_right ) const
     { return (mu_data != acrc_right); }
 
@@ -273,9 +264,12 @@ public:
       NOTE: The NAMEs are being compared based on the PRIORITY
             and not on the numeric value.
       NOTE: A NAME has a lower priority if it has a higher numeric value!
+      NOTE: If either NAME is unspecified, false will be returned!
   */
-  inline bool operator<( const IsoName_c& rc_right ) const
-    { return (mu_data > rc_right.mu_data); }
+  inline bool operator<( const IsoName_c& right ) const
+    { return( (m_specified == true) && (right.m_specified == true) )
+        ? (mu_data > right.mu_data)
+        : false; }
 
   /** convert function */
   IsoAgLib::iIsoName_c& toIisoName_c();
@@ -286,6 +280,8 @@ public:
 private:
   /** ISO 8-uint8_t NAME field */
   Flexible8ByteString_c mu_data;
+
+  bool m_specified;
 };
 
 inline
@@ -458,13 +454,15 @@ IsoName_c::setSerNo (uint32_t aui32_serNo)
 inline
 IsoName_c::IsoName_c (const uint8_t* apb_src)
   : mu_data (apb_src)
+  , m_specified( true )
 {
 }
 
 
 inline
 IsoName_c::IsoName_c()
-  : mu_data() // initializes to UNSPECIFIED already
+  : mu_data()
+  , m_specified( false )
 {
 }
 
@@ -472,6 +470,7 @@ IsoName_c::IsoName_c()
 inline
 IsoName_c::IsoName_c (const Flexible8ByteString_c* apu_src)
   : mu_data (*apu_src)
+  , m_specified( true )
 {
 }
 
@@ -479,7 +478,8 @@ IsoName_c::IsoName_c (const Flexible8ByteString_c* apu_src)
 inline
 IsoName_c::IsoName_c (bool ab_selfConf, uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
                       uint8_t ab_func, uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t ab_funcInst, uint8_t ab_ecuInst)
-  : mu_data() // initializes to UNSPECIFIED
+  : mu_data()
+  , m_specified( true )
 {
   set (ab_selfConf, aui8_indGroup, aui8_devClass, aui8_devClassInst,
        ab_func, aui16_manufCode, aui32_serNo, ab_funcInst, ab_ecuInst);
@@ -487,9 +487,10 @@ IsoName_c::IsoName_c (bool ab_selfConf, uint8_t aui8_indGroup, uint8_t aui8_devC
 
 
 inline
-IsoName_c::IsoName_c (const IsoName_c& acrc_src)
-  : mu_data (acrc_src.mu_data)
-{ // simply copy data string
+IsoName_c::IsoName_c (const IsoName_c& src)
+  : mu_data( src.mu_data )
+  , m_specified( src.m_specified )
+{ // simply copy data string / specified
 }
 
 

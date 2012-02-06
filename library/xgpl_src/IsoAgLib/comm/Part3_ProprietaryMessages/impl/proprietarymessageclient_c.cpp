@@ -131,18 +131,18 @@ namespace __IsoAgLib
   IsoFilter_s
   ProprietaryMessageClient_c::getCurrentFilter (CanCustomer_c &arc_customer)
   {
-    const IsoName_c& rc_localIsoName = (
+    const IsoName_c* localIsoName = (
                                         (mpc_localIdent == NULL)
                                         ||
                                         (((mui32_canFilter & 0x3FF0000LU) >> 8) == PROPRIETARY_B_PGN)
                                        )
-                                        ? IsoName_c::IsoNameUnspecified() // if we have no IdentItem, we have no IsoName
-                                        : mpc_localIdent->isoName();
+                                        ? NULL // if we have no IdentItem, we have no IsoName
+                                        : &(mpc_localIdent->isoName());
 
     // create new IsoFilter
     return IsoFilter_s (arc_customer,
                         IsoAgLib::iMaskFilter_c( mui32_canMask, mui32_canFilter ),
-                        &rc_localIsoName,
+                        localIsoName,
                         &mc_isonameRemoteECU);
   }
 

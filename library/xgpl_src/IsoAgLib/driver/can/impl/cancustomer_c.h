@@ -180,9 +180,6 @@ private:
   Owner_t &mrt_owner;
 };
 
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef CanCustomer_c CANCustomer_c;
-
 
 } // end of namespace __IsoAgLib
 #endif //CAN_CUSTOMER_H
