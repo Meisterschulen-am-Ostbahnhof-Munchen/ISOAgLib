@@ -110,9 +110,9 @@ bool Aux2Inputs_c::timeEvent(void)
 }
 
 
+#ifdef USE_VTOBJECT_auxiliaryinput2
 void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj)
 {
-#ifdef USE_VTOBJECT_auxiliaryinput2
   if (mrc_wsMasterIdentItem.isClaimedAddress())
   {
     CanPkgExt_c sendData;
@@ -193,8 +193,8 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
       }
     }
   }    
-#endif
 }
+#endif
 
 
 bool Aux2Inputs_c::setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool a_enabled)
