@@ -42,6 +42,8 @@ void Aux2Inputs_c::init(VtClientServerCommunication_c* ap_vtClientServerCommunic
   setState(Aux2InputsState_Initializing);
 
   mp_vtClientServerCommunication = ap_vtClientServerCommunication;
+#else
+  (void)ap_vtClientServerCommunication;
 #endif
 }
 
@@ -211,6 +213,8 @@ bool Aux2Inputs_c::setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool
   }
   return b_objFound;
 #else
+  (void)aui16_inputObjId;
+  (void)a_enabled;
   return false;
 #endif
 }
