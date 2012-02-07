@@ -278,13 +278,12 @@ DiagnosticPgnHandler_c::setSwIdentification ( const char *acstr_SwId )
   if (mcstr_SwIdentification)
     CNAMESPACE::free (mcstr_SwIdentification);
 
-  int newLen = 1+swIdLen+1+1; // // uint8,swid,*,0x00
+  int newLen = 1+swIdLen+1; // // uint8,swid,0x00
   mcstr_SwIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
 
   char *destPtr = mcstr_SwIdentification;
   *destPtr++ = uint8_t (numStars); // number of fields
   addCStringWithoutTermination (&destPtr, acstr_SwId);
-  addCStringWithoutTermination (&destPtr, "*");
   *destPtr++ = 0x00;
 
   // detect buffer-overruns!
