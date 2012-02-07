@@ -15,8 +15,6 @@
 //#define GET_VERSIONS
 //#define DEBUG_MULTIPLEVTCOMM 1
 
-#include <map>
-
 #include "vtclientservercommunication_c.h"
 #include "../ivtclientservercommunication_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
@@ -38,6 +36,8 @@
 
 #include "../ivtobjectauxiliaryfunction2_c.h"
 #include "../ivtobjectauxiliaryinput2_c.h"
+
+#include <map>
 
 #if DEBUG_VTCOMM || DEBUG_HEAP_USEAGE
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
