@@ -144,11 +144,11 @@ private:
 
 // T1/T2 here are the same as in "multireceive_c.h"
 // T1/T2 here are the same as in "multireceive_c.h"
-static const int32_t msci32_timeOutT1=1000;  // data -> data
+static const int32_t msci32_timeOutT1=250;  // data -> data
 static const int32_t msci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)
 static const int32_t msci32_timeOutT3=1250; // data/rts -> cts (not needed for checking here)
-static const int32_t msci32_timeOutT4=1100;  // cts(0)<->cts
-static const int32_t msci32_timeOutT5=1000;  // dpo -> data (ETP only, naming "T5" done by Martin)
+static const int32_t msci32_timeOutT4=550;  // cts(0)<->cts
+static const int32_t msci32_timeOutT5=250;  // dpo -> data (ETP only, naming "T5" done by Martin)
 static const int32_t msci32_timeOutFP=1000;  // FPdata <-> FPdata
 static const int32_t msci32_timeNever=-1;
 /** @todo SOON-178 DataLinkLayerRevision The above should be adapted to the new revision of Part 3 - Data Link Layer, or should we use the old IS timings to be correct??
