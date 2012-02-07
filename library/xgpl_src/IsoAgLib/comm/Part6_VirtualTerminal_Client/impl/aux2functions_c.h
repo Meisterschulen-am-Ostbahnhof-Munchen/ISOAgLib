@@ -13,14 +13,14 @@
 #ifndef AUX2FUNCTIONS_H
 #define AUX2FUNCTIONS_H
 
-#include <list>
-#include <map>
-
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
 #include "../ivtobjectauxiliaryfunction2_c.h"
+
+#include <list>
+#include <map>
 
 namespace __IsoAgLib {
 
