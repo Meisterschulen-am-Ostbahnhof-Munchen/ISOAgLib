@@ -150,7 +150,7 @@ bool DiagnosticProtocol_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c*
     {
       sendSinglePacket((uint8_t *) mcstr_currentFunctionalities,ECU_DIAGNOSTIC_PROTOCOL_PGN);
 #if DEBUG_DIAGNOSTICPGN
-      INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_DIAGNOSTIC_PROTOCOL_PGN: first byte (diag protocol id) is " << uint16_t (diagProtocolId[0]) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_DIAGNOSTIC_PROTOCOL_PGN: first byte (diag protocol id) is " << uint16_t (mcstr_currentFunctionalities[0]) << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       return true;
     }
@@ -164,7 +164,7 @@ bool DiagnosticProtocol_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c*
             NULL) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
-        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_DIAGNOSTIC_PROTOCOL_PGN: " << mcstr_SwIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN ECU_DIAGNOSTIC_PROTOCOL_PGN"  << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
       }
@@ -212,7 +212,7 @@ bool DiagnosticProtocol_c::addFunctionality(IsoAgLib::FunctionalitiesCharacteris
   return false; // already there
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesVirtualTerminal(bool implement, uint8_t version, const ArrVirtualTerminalOptions& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesVirtualTerminal(bool implement, uint8_t /*version*/, const ArrVirtualTerminalOptions& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::VirtualTerminalWorkingSet : IsoAgLib::VirtualTerminal );
   Functionality_s functionality_description;
@@ -220,7 +220,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesVirtualTerminal(bool implement, 
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType1(bool implement, uint8_t version, const ArrAuxControlType1Options& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType1(bool implement, uint8_t /*version*/, const ArrAuxControlType1Options& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::AuxiliaryControlType1Inputs : IsoAgLib::AuxiliaryControlType1Functions );
   Functionality_s functionality_description;
@@ -228,7 +228,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType1(bool implement, 
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType2(bool implement, uint8_t version, const ArrAuxControlType2Options& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType2(bool implement, uint8_t /*version*/, const ArrAuxControlType2Options& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::AuxiliaryControlType2Inputs : IsoAgLib::AuxiliaryControlType2Functions );
   Functionality_s functionality_description;
@@ -236,7 +236,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType2(bool implement, 
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerBasic(bool implement, uint8_t version, const ArrTaskControllerBasicOptions& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerBasic(bool implement, uint8_t /*version*/, const ArrTaskControllerBasicOptions& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::TaskControllerBasicWorkingSet : IsoAgLib::TaskControllerBasic );
   Functionality_s functionality_description;
@@ -244,7 +244,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerBasic(bool impleme
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerGeo(bool implement, uint8_t version, const ArrTaskControllerGeoOptions& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerGeo(bool implement, uint8_t /*version*/, const ArrTaskControllerGeoOptions& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::TaskControllerGeoWorkingSet : IsoAgLib::TaskControllerGeo );
   Functionality_s functionality_description;
@@ -252,7 +252,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerGeo(bool implement
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerSectionControl(bool implement, uint8_t version, uint8_t numberOfBooms, uint8_t numberOfSections)
+bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerSectionControl(bool implement, uint8_t /*version*/, uint8_t /*numberOfBooms*/, uint8_t /*numberOfSections*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::TaskControllerSectionControlWorkingSet : IsoAgLib::TaskControllerSectionControl );
   Functionality_s functionality_description;
@@ -260,7 +260,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerSectionControl(boo
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesBasicTractorECU(bool implement, uint8_t version, const ArrBasicTractorECUOptions& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesBasicTractorECU(bool implement, uint8_t /*version*/, const ArrBasicTractorECUOptions& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::BasicTractorECUImplementSet : IsoAgLib::BasicTractorECU );
   Functionality_s functionality_description;
@@ -268,7 +268,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesBasicTractorECU(bool implement, 
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesAdvanceTractorECU(bool implement, uint8_t version, const ArrAdvanceTractorECUOptions& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesAdvanceTractorECU(bool implement, uint8_t /*version*/, const ArrAdvanceTractorECUOptions& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::AdvanceTractorECUImplementSet : IsoAgLib::AdvanceTractorECU );
   Functionality_s functionality_description;
@@ -276,7 +276,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesAdvanceTractorECU(bool implement
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesSequenceControl(bool implement, uint8_t version, const ArrSequenceControlOptions& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesSequenceControl(bool implement, uint8_t /*version*/, const ArrSequenceControlOptions& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::SequenceControlClient : IsoAgLib::SequenceControlServer );
   Functionality_s functionality_description;
@@ -284,7 +284,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesSequenceControl(bool implement, 
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesStopAllImplement(bool implement, uint8_t version, const ArrStopAllImplementOptions& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesStopAllImplement(bool implement, uint8_t /*version*/, const ArrStopAllImplementOptions& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::StopAllImplementOperationsImplementSet : IsoAgLib::StopAllImplementOperationsInput );
   Functionality_s functionality_description;
@@ -292,7 +292,7 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesStopAllImplement(bool implement,
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesFileServer(bool implement, uint8_t version, const ArrFileServerOptions& options)
+bool DiagnosticProtocol_c::addAefFunctionalitiesFileServer(bool implement, uint8_t /*version*/, const ArrFileServerOptions& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::FileServerClient : IsoAgLib::FileServer );
   Functionality_s functionality_description;
