@@ -20,6 +20,7 @@ library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.cp
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/processwsmtaskmsghandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/iprocesscmd_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticprotocoltypes.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticstypes.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.cpp -text

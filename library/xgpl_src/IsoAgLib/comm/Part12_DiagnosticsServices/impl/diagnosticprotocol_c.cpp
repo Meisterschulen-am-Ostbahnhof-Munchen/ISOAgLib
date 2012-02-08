@@ -39,27 +39,28 @@
 // okay for this case here, as the singletons are currently all done by define.
 #define getMultitonInst() mrc_identItem.getMultitonInst()
 
+namespace {
+struct Calculator
+{
+  uint16_t operator() ( uint16_t result, const __IsoAgLib::DiagnosticProtocol_c::FunctionitiesArr::value_type& obj )
+  {
+      return (result + 2 + obj.second.number_of_options);
+  }
+};
+}
 
 namespace __IsoAgLib
 {
 
-DiagnosticProtocol_c::DiagnosticProtocol_c ( IdentItem_c& arc_identItem ) :
+DiagnosticProtocol_c::DiagnosticProtocol_c ( IdentItem_c& arc_identItem, const IsoAgLib::EcuDiagnosticProtocolIdentificationBitMask_t& protocol ) :
     mrc_identItem ( arc_identItem ),
+    mui8_protocol(protocol.getByte(0)),
     mcstr_currentFunctionalities ( NULL ),
     mui16_arrayLenght( 0 ),
     marr_functionalities (),
     mb_arrIsDirty ( true ),
     mb_useAefSpecifications ( false )
-{
-  //static const uint8_t diagProtocolId[8] = {
-  //  0, // Only ISO 11783 Level 1 diagnostics
-  //  0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF// Reserved bytes according to the standard
-  //};
-
-  //mui16_arrayLenght = 8;
-  //mcstr_currentFunctionalities = (uint8_t *) CNAMESPACE::malloc (sizeof (uint8_t) * mui16_arrayLenght);
-  //CNAMESPACE::memcpy(mcstr_currentFunctionalities, diagProtocolId, mui16_arrayLenght);
-  
+{  
 }
 
 
@@ -83,14 +84,6 @@ DiagnosticProtocol_c::close()
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
 }
 
-struct Calculator
-{
-  uint16_t operator() ( uint16_t result, const DiagnosticProtocol_c::FunctionitiesArr::value_type& obj )
-  {
-      return (result + 2 + obj.second.number_of_options);
-  }
-};
-
 void DiagnosticProtocol_c::updatePackage()
 {
   // destroy previously constructed message
@@ -105,8 +98,11 @@ void DiagnosticProtocol_c::updatePackage()
   }
   if (mui16_arrayLenght < 8) mui16_arrayLenght = 8;
 
+  // create array for the message
   mcstr_currentFunctionalities = (uint8_t *) CNAMESPACE::malloc (sizeof (uint8_t) * mui16_arrayLenght);
-  mcstr_currentFunctionalities[0] = 0x00; // @TBD
+  
+  // fill the array
+  mcstr_currentFunctionalities[0] = mui8_protocol; // TBD
   uint16_t counter = 1;
   if ( mb_useAefSpecifications )
   {
@@ -123,11 +119,16 @@ void DiagnosticProtocol_c::updatePackage()
         mcstr_currentFunctionalities[counter++] = iter->second.options_bytes[option];
     }
   }
-  for (; counter < mui16_arrayLenght; ++counter)
+ 
+  // in case size is less than 8 -> fill rest of the message with 0xFF
+  for (; counter < 8; ++counter)
   {
     mcstr_currentFunctionalities[counter] = 0xFF;
   }
+  
+  // control size in debug mode
   isoaglib_assert(mui16_arrayLenght == counter);
+  
   mb_arrIsDirty = false;
 }
 
@@ -137,7 +138,7 @@ bool DiagnosticProtocol_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c*
   if ( !mrc_identItem.isClaimedAddress() ) return false;
   if ( ( rpc_isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != rpc_isoItemReceiver ) ) return false; // request not adressed to us!
 
-  if ( ECU_DIAGNOSTIC_PROTOCOL_PGN == rui32_pgn )
+  if ( ECU_DIAGNOSTIC_PROTOCOL_PGN == rui32_pgn ) // TBD : is that necessary ?
   {
     // update package if necessary
     if (mb_arrIsDirty)
@@ -200,6 +201,64 @@ DiagnosticProtocol_c::sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data, int32
   getIsoBusInstance4Comm() << pkg;
 }
 
+uint8_t DiagnosticProtocol_c::getGeneration(IsoAgLib::FunctionalitiesCharacteristics_t functionality, uint8_t version) const
+{
+  switch (functionality)
+  {
+    case IsoAgLib::NoFunctionalitiesReported:
+      break;
+    case IsoAgLib::VirtualTerminal:
+    case IsoAgLib::VirtualTerminalWorkingSet:
+      if (version == 2) return 1;
+      if (version == 3) return 2;
+      if (version == 4) return 3;
+      break;
+    case IsoAgLib::AuxiliaryControlType1Inputs:
+    case IsoAgLib::AuxiliaryControlType1Functions:
+      if (version == 2) return 1;
+      break;
+    case IsoAgLib::AuxiliaryControlType2Inputs:
+    case IsoAgLib::AuxiliaryControlType2Functions:
+      if (version == 3) return 1;
+      break;
+    case IsoAgLib::TaskControllerBasic:
+    case IsoAgLib::TaskControllerBasicWorkingSet:
+    case IsoAgLib::TaskControllerGeo:
+    case IsoAgLib::TaskControllerGeoWorkingSet:
+    case IsoAgLib::TaskControllerSectionControl:
+    case IsoAgLib::TaskControllerSectionControlWorkingSet:
+      if (version == 2) return 1;
+      break;
+    case IsoAgLib::BasicTractorECU:
+    case IsoAgLib::BasicTractorECUImplementSet:
+    case IsoAgLib::AdvanceTractorECU:
+    case IsoAgLib::AdvanceTractorECUImplementSet:
+      if (version == 1) return 1;
+      break;
+    case IsoAgLib::FileServer:
+    case IsoAgLib::FileServerClient:
+      if (version == 2) return 1;
+      if (version == 3) return 2;
+      break;
+    case IsoAgLib::SequenceControlServer:
+    case IsoAgLib::SequenceControlClient:
+      if (version == 1) return 1; // TBD : NOT SPECIFIED IN DOC
+      break;
+    case IsoAgLib::StopAllImplementOperationsInput:
+    case IsoAgLib::StopAllImplementOperationsImplementSet:
+      if (version == 1) return 1;
+      break;
+    case IsoAgLib::DiagnosticTool:
+    case IsoAgLib::DiagnosticECU:
+      if (version == 1) return 1; // TBD : NOT SPECIFIED IN DOC
+      break;
+    case IsoAgLib::Functionality_ReservedForISO:
+        break;
+  }
+  isoaglib_assert(false);
+  return 0;
+}
+
 bool DiagnosticProtocol_c::addFunctionality(IsoAgLib::FunctionalitiesCharacteristics_t functionality, const Functionality_s& functionality_description)
 {
   FunctionitiesArrIter iter = marr_functionalities.find(functionality);
@@ -212,90 +271,140 @@ bool DiagnosticProtocol_c::addFunctionality(IsoAgLib::FunctionalitiesCharacteris
   return false; // already there
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesVirtualTerminal(bool implement, uint8_t /*version*/, const ArrVirtualTerminalOptions& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesVirtualTerminal(bool implement, uint8_t version, const IsoAgLib::VirtualTerminalOptionsBitMask_t& options)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::VirtualTerminalWorkingSet : IsoAgLib::VirtualTerminal );
+  
+#ifdef USE_TEMPLATES
+  return fillStructure(functionality, version, options);
+#else
+  // fill structure
   Functionality_s functionality_description;
-  // TBD fill structure
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = options.getSizeInBytes();
+  for (uint8_t counter = 0; counter < options.getSizeInBytes(); ++counter) 
+    functionality_description.options_bytes[counter] = options.getByte(counter);
+
   return addFunctionality(functionality, functionality_description);
+#endif
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType1(bool implement, uint8_t /*version*/, const ArrAuxControlType1Options& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType1(bool implement, uint8_t version, const IsoAgLib::AuxControlType1OptionsBitMask_t& options)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::AuxiliaryControlType1Inputs : IsoAgLib::AuxiliaryControlType1Functions );
+  
+  // fill structure
   Functionality_s functionality_description;
-  // TBD fill structure
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = options.getSizeInBytes();
+  for (uint8_t counter = 0; counter < options.getSizeInBytes(); ++counter) 
+    functionality_description.options_bytes[counter] = options.getByte(counter);
+
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType2(bool implement, uint8_t /*version*/, const ArrAuxControlType2Options& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesAuxControlType2(bool implement, uint8_t version, const IsoAgLib::AuxControlType2OptionsBitMask_t& options)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::AuxiliaryControlType2Inputs : IsoAgLib::AuxiliaryControlType2Functions );
+  
+  // fill structure
   Functionality_s functionality_description;
-  // TBD fill structure
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = options.getSizeInBytes();
+  for (uint8_t counter = 0; counter < options.getSizeInBytes(); ++counter) 
+    functionality_description.options_bytes[counter] = options.getByte(counter);
+
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerBasic(bool implement, uint8_t /*version*/, const ArrTaskControllerBasicOptions& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerBasic(bool implement, uint8_t version, const IsoAgLib::TaskControllerBasicOptionsBitMask_t& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::TaskControllerBasicWorkingSet : IsoAgLib::TaskControllerBasic );
   Functionality_s functionality_description;
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = 0;
   // TBD fill structure
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerGeo(bool implement, uint8_t /*version*/, const ArrTaskControllerGeoOptions& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerGeo(bool implement, uint8_t version, const IsoAgLib::TaskControllerGeoOptionsBitMask_t& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::TaskControllerGeoWorkingSet : IsoAgLib::TaskControllerGeo );
   Functionality_s functionality_description;
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = 0;
   // TBD fill structure
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerSectionControl(bool implement, uint8_t /*version*/, uint8_t /*numberOfBooms*/, uint8_t /*numberOfSections*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesTaskControllerSectionControl(bool implement, uint8_t version, uint8_t numberOfBooms, uint8_t numberOfSections)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::TaskControllerSectionControlWorkingSet : IsoAgLib::TaskControllerSectionControl );
+  
+  // fill structure
   Functionality_s functionality_description;
-  // TBD fill structure
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = 2;
+  functionality_description.options_bytes[0] = numberOfBooms;
+  functionality_description.options_bytes[1] = numberOfSections;  
+
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesBasicTractorECU(bool implement, uint8_t /*version*/, const ArrBasicTractorECUOptions& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesBasicTractorECU(bool implement, uint8_t version, const IsoAgLib::BasicTractorECUOptionsBitMask_t& options)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::BasicTractorECUImplementSet : IsoAgLib::BasicTractorECU );
+  
+  // fill structure
   Functionality_s functionality_description;
-  // TBD fill structure
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = options.getSizeInBytes();
+  for (uint8_t counter = 0; counter < options.getSizeInBytes(); ++counter) 
+    functionality_description.options_bytes[counter] = options.getByte(counter);
+
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesAdvanceTractorECU(bool implement, uint8_t /*version*/, const ArrAdvanceTractorECUOptions& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesAdvanceTractorECU(bool implement, uint8_t version, const IsoAgLib::AdvanceTractorECUOptionsBitMask_t& options)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::AdvanceTractorECUImplementSet : IsoAgLib::AdvanceTractorECU );
+  
+  // fill structure
   Functionality_s functionality_description;
-  // TBD fill structure
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = options.getSizeInBytes();
+  for (uint8_t counter = 0; counter < options.getSizeInBytes(); ++counter) 
+    functionality_description.options_bytes[counter] = options.getByte(counter);
+  
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesSequenceControl(bool implement, uint8_t /*version*/, const ArrSequenceControlOptions& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesSequenceControl(bool implement, uint8_t version, const IsoAgLib::SequenceControlOptionsBitMask_t& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::SequenceControlClient : IsoAgLib::SequenceControlServer );
   Functionality_s functionality_description;
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = 0;
   // TBD fill structure
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesStopAllImplement(bool implement, uint8_t /*version*/, const ArrStopAllImplementOptions& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesStopAllImplement(bool implement, uint8_t version, const IsoAgLib::StopAllImplementOptionsBitMask_t& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::StopAllImplementOperationsImplementSet : IsoAgLib::StopAllImplementOperationsInput );
   Functionality_s functionality_description;
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = 0;
   // TBD fill structure
   return addFunctionality(functionality, functionality_description);
 }
 
-bool DiagnosticProtocol_c::addAefFunctionalitiesFileServer(bool implement, uint8_t /*version*/, const ArrFileServerOptions& /*options*/)
+bool DiagnosticProtocol_c::addAefFunctionalitiesFileServer(bool implement, uint8_t version, const IsoAgLib::FileServerOptionsBitMask_t& /*options*/)
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = ( implement ? IsoAgLib::FileServerClient : IsoAgLib::FileServer );
   Functionality_s functionality_description;
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = 0;
   // TBD fill structure
   return addFunctionality(functionality, functionality_description);
 }
@@ -304,6 +413,8 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesDiagnosticTool()
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = IsoAgLib::DiagnosticTool;
   Functionality_s functionality_description;
+  functionality_description.generation = getGeneration(functionality, 1); // TBD DiagnosticTool version ?
+  functionality_description.number_of_options = 0;
   // TBD fill structure
   return addFunctionality(functionality, functionality_description);
 }
@@ -312,6 +423,8 @@ bool DiagnosticProtocol_c::addAefFunctionalitiesDiagnosticECU()
 {
   IsoAgLib::FunctionalitiesCharacteristics_t functionality = IsoAgLib::DiagnosticECU;
   Functionality_s functionality_description;
+  functionality_description.generation = getGeneration(functionality, 1); // TBD DiagnosticECU version ?
+  functionality_description.number_of_options = 0;
   // TBD fill structure
   return addFunctionality(functionality, functionality_description);
 }

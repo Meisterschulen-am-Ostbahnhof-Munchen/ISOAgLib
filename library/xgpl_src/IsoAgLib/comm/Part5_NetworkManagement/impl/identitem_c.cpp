@@ -54,7 +54,7 @@ IdentItem_c::IdentItem_c ()
 
 {
   mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
-  mpc_diagnosticProtocol = new DiagnosticProtocol_c(*this);
+  mpc_diagnosticProtocol = new DiagnosticProtocol_c(*this, IsoAgLib::EcuDiagnosticProtocolIdentificationBitMask_t().setBit (IsoAgLib::ProtocolId_OnlyISO11783Level1Diagnostics));
 }
 
 

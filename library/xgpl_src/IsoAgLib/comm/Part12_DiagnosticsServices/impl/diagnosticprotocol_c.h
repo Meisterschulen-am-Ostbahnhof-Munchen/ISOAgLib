@@ -15,139 +15,10 @@
 
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
+#include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
+#include "../idiagnosticprotocoltypes.h"
 
 #include <map>
-
-namespace IsoAgLib
-{
-
-enum FunctionalitiesCharacteristics_t
-{
-  NoFunctionalitiesReported = 0,
-  VirtualTerminal,
-  VirtualTerminalWorkingSet,
-  AuxiliaryControlType1Inputs,
-  AuxiliaryControlType1Functions,
-  AuxiliaryControlType2Inputs,
-  AuxiliaryControlType2Functions,
-  TaskControllerBasic,
-  TaskControllerBasicWorkingSet,
-  TaskControllerGeo,
-  TaskControllerGeoWorkingSet,
-  TaskControllerSectionControl,
-  TaskControllerSectionControlWorkingSet,
-  BasicTractorECU,
-  BasicTractorECUImplementSet,
-  AdvanceTractorECU,
-  AdvanceTractorECUImplementSet,
-  FileServer,
-  FileServerClient,
-  SequenceControlServer,
-  SequenceControlClient,
-  StopAllImplementOperationsInput,
-  StopAllImplementOperationsImplementSet,
-  DiagnosticTool,
-  DiagnosticECU,
-  ReservedForISO = 0xFF
-};
-
-enum VirtualTerminalOptions_t
-{
-  VirtualTerminal_NoOptions = 0,
-  VirtualTerminal_ProportionalFonts,
-  VirtualTerminal_UserLayoutScreens,
-  VirtualTerminal_ColourMap,
-  VirtualTerminal_GraphicsContext,
-  VirtualTerminal_ReservedForISO = 8
-};
-
-enum AuxControlType1Options_t
-{
-  AuxControlType1_NoOptions = 0,
-  AuxControlType1_SupportsType0Function,
-  AuxControlType1_SupportsType1Function,
-  AuxControlType1_SupportsType2Function,
-  AuxControlType1_ReservedForISO = 8
-};
-
-enum AuxControlType2Options_t
-{
-  AuxControlType2_NoOptions = 0,
-  AuxControlType2_SupportsType0Function,
-  AuxControlType2_SupportsType1Function,
-  AuxControlType2_SupportsType2Function,
-  AuxControlType2_SupportsType3Function,
-  AuxControlType2_SupportsType4Function,
-  AuxControlType2_SupportsType5Function,
-  AuxControlType2_SupportsType6Function,
-  AuxControlType2_SupportsType7Function,
-  AuxControlType2_SupportsType8Function,
-  AuxControlType2_SupportsType9Function,
-  AuxControlType2_SupportsType10Function,
-  AuxControlType2_SupportsType11Function,
-  AuxControlType2_SupportsType12Function,
-  AuxControlType2_SupportsType13Function,
-  AuxControlType2_SupportsType14Function,
-  AuxControlType2_ReservedForISO = 16
-};
-
-enum TaskControllerBasicOptions_t
-{
-  TaskControllerBasic_NoOptions = 0,
-  TaskControllerBasic_ReservedForISO = 8
-};
-
-enum TaskControllerGeoOptions_t
-{
-  TaskControllerGeo_NoOptions = 0,
-  TaskControllerGeo_ReservedForISO = 8
-};
-
-enum BasicTractorECUOptions_t
-{
-  BasicTractorECU_TECUNotMeetingCompleteClass1Requirements = 0,
-  BasicTractorECU_Class1NoOptions,
-  BasicTractorECU_Class2NoOptions,
-  BasicTractorECU_ClassRequiredLighting,
-  BasicTractorECU_NavigationOption,
-  BasicTractorECU_FrontHitchOption,
-  BasicTractorECU_GuidanceOption,
-  BasicTractorECU_ReservedForISO = 8
-};
-
-enum AdvanceTractorECUOptions_t
-{
-  AdvanceTractorECU_TECUNotMeetingCompleteClass3Requirements = 0,
-  AdvanceTractorECU_Class3NoOptions,
-  AdvanceTractorECU_FullLightingMessageSet,
-  AdvanceTractorECU_NavigationOption,
-  AdvanceTractorECU_FrontHitchOption,
-  AdvanceTractorECU_GuidanceOption,
-  AdvanceTractorECU_PowertrainOption,
-  AdvanceTractorECU_MotionInitiationOption,
-  AdvanceTractorECU_ReservedForISO = 8
-};
-
-enum SequenceControlOptions_t
-{
-  SequenceControl_NoOptions = 0,
-  SequenceControl_ReservedForISO = 8
-};
-
-enum StopAllImplementOptions_t
-{
-  StopAllImplement_NoOptions = 0,
-  StopAllImplement_ReservedForISO = 8
-};
-
-enum FileServerOptions_t
-{
-  FileServer_NoOptions = 0,
-  FileServer_ReservedForISO = 8
-};
-
-} // namespace IsoAgLib
-
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -175,55 +46,50 @@ public:
   typedef std::map<IsoAgLib::FunctionalitiesCharacteristics_t,Functionality_s>::const_iterator FunctionitiesArrCIter;
   typedef std::pair<IsoAgLib::FunctionalitiesCharacteristics_t,Functionality_s> FunctionitiesArrPair;
 
-  typedef std::vector<IsoAgLib::VirtualTerminalOptions_t> ArrVirtualTerminalOptions;
-  typedef std::vector<IsoAgLib::AuxControlType1Options_t> ArrAuxControlType1Options;
-  typedef std::vector<IsoAgLib::AuxControlType2Options_t> ArrAuxControlType2Options;
-  typedef std::vector<IsoAgLib::TaskControllerBasicOptions_t> ArrTaskControllerBasicOptions;
-  typedef std::vector<IsoAgLib::TaskControllerGeoOptions_t> ArrTaskControllerGeoOptions;
-  //typedef std::vector<IsoAgLib::TaskControllerSectionControlOptions_t> ArrTaskControllerSectionControlOptions;
-  typedef std::vector<IsoAgLib::BasicTractorECUOptions_t> ArrBasicTractorECUOptions;
-  typedef std::vector<IsoAgLib::AdvanceTractorECUOptions_t> ArrAdvanceTractorECUOptions;
-  typedef std::vector<IsoAgLib::SequenceControlOptions_t> ArrSequenceControlOptions;
-  typedef std::vector<IsoAgLib::StopAllImplementOptions_t> ArrStopAllImplementOptions;
-  typedef std::vector<IsoAgLib::FileServerOptions_t> ArrFileServerOptions;
-
 public:
-  DiagnosticProtocol_c (IdentItem_c&);
-  virtual ~DiagnosticProtocol_c();
+  DiagnosticProtocol_c (IdentItem_c&, const IsoAgLib::EcuDiagnosticProtocolIdentificationBitMask_t& protocol);
+  ~DiagnosticProtocol_c();
 
   void init();
   void close();
 
-  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t );
-
-  bool addAefFunctionalitiesVirtualTerminal(bool implement, uint8_t version, const ArrVirtualTerminalOptions& options);
-  bool addAefFunctionalitiesAuxControlType1(bool implement, uint8_t version, const ArrAuxControlType1Options& options);
-  bool addAefFunctionalitiesAuxControlType2(bool implement, uint8_t version, const ArrAuxControlType2Options& options);
-  bool addAefFunctionalitiesTaskControllerBasic(bool implement, uint8_t version, const ArrTaskControllerBasicOptions& options);
-  bool addAefFunctionalitiesTaskControllerGeo(bool implement, uint8_t version, const ArrTaskControllerGeoOptions& options);
+  bool addAefFunctionalitiesVirtualTerminal             (bool implement, uint8_t version, const IsoAgLib::VirtualTerminalOptionsBitMask_t& options);
+  bool addAefFunctionalitiesAuxControlType1             (bool implement, uint8_t version, const IsoAgLib::AuxControlType1OptionsBitMask_t& options);
+  bool addAefFunctionalitiesAuxControlType2             (bool implement, uint8_t version, const IsoAgLib::AuxControlType2OptionsBitMask_t& options);
+  bool addAefFunctionalitiesTaskControllerBasic         (bool implement, uint8_t version, const IsoAgLib::TaskControllerBasicOptionsBitMask_t& options);
+  bool addAefFunctionalitiesTaskControllerGeo           (bool implement, uint8_t version, const IsoAgLib::TaskControllerGeoOptionsBitMask_t& options);
   bool addAefFunctionalitiesTaskControllerSectionControl(bool implement, uint8_t version, uint8_t numberOfBooms, uint8_t numberOfSections);
-  bool addAefFunctionalitiesBasicTractorECU(bool implement, uint8_t version, const ArrBasicTractorECUOptions& options);
-  bool addAefFunctionalitiesAdvanceTractorECU(bool implement, uint8_t version, const ArrAdvanceTractorECUOptions& options);
-  bool addAefFunctionalitiesSequenceControl(bool implement, uint8_t version, const ArrSequenceControlOptions& options);
-  bool addAefFunctionalitiesStopAllImplement(bool implement, uint8_t version, const ArrStopAllImplementOptions& options);
-  bool addAefFunctionalitiesFileServer(bool implement, uint8_t version, const ArrFileServerOptions& options);
+  bool addAefFunctionalitiesBasicTractorECU             (bool implement, uint8_t version, const IsoAgLib::BasicTractorECUOptionsBitMask_t& options);
+  bool addAefFunctionalitiesAdvanceTractorECU           (bool implement, uint8_t version, const IsoAgLib::AdvanceTractorECUOptionsBitMask_t& options);
+  bool addAefFunctionalitiesSequenceControl             (bool implement, uint8_t version, const IsoAgLib::SequenceControlOptionsBitMask_t& options);
+  bool addAefFunctionalitiesStopAllImplement            (bool implement, uint8_t version, const IsoAgLib::StopAllImplementOptionsBitMask_t& options);
+  bool addAefFunctionalitiesFileServer                  (bool implement, uint8_t version, const IsoAgLib::FileServerOptionsBitMask_t& options);
 
   bool addAefFunctionalitiesDiagnosticTool();
   bool addAefFunctionalitiesDiagnosticECU();
-
+    
   bool remAefFunctionalities(IsoAgLib::FunctionalitiesCharacteristics_t);
 
   void setUseAEFSpecifications(bool useAEF) { mb_useAefSpecifications = useAEF; mb_arrIsDirty = true; }
 
 private:
+  bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t );
+
   void sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,int32_t ai32_pgn);
 
   void updatePackage();
 
   bool addFunctionality(IsoAgLib::FunctionalitiesCharacteristics_t functionality, const Functionality_s& functionality_description);
 
+  uint8_t getGeneration(IsoAgLib::FunctionalitiesCharacteristics_t functionality, uint8_t version) const;
+  
+#ifdef USE_TEMPLATES
+  template <class T> bool fillStructure(IsoAgLib::FunctionalitiesCharacteristics_t functionality, uint8_t generation, const T& options);
+#endif
+
 private: // attributes
   IdentItem_c& mrc_identItem;
+  uint8_t mui8_protocol;
 
   uint8_t *mcstr_currentFunctionalities;
   uint16_t mui16_arrayLenght;
@@ -239,6 +105,22 @@ private:
   /** not copyable : copy operator is only declared, never defined */
   DiagnosticProtocol_c& operator=(const DiagnosticProtocol_c&); 
 };
+
+#ifdef USE_TEMPLATES
+template <class T>
+bool DiagnosticProtocol_c::fillStructure(IsoAgLib::FunctionalitiesCharacteristics_t functionality, uint8_t version, const T& options)
+{
+  // fill structure
+  Functionality_s functionality_description;
+  functionality_description.generation = getGeneration(functionality, version);
+  functionality_description.number_of_options = options.getSizeInBytes();
+  for (uint8_t counter = 0; counter < options.getSizeInBytes(); ++counter) 
+    functionality_description.options_bytes[counter] = options.getByte(counter);
+
+  // add functionality
+  return addFunctionality(functionality, functionality_description);
+}
+#endif
 
 } // namespace __IsoAgLib
 #endif
