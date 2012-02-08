@@ -65,7 +65,6 @@ DiagnosticPgnHandler_c::init()
 {
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
-  getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
 }
 
@@ -75,7 +74,6 @@ DiagnosticPgnHandler_c::close()
 {
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
-  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );
 }
 
@@ -97,18 +95,6 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
         return true;
       }
       break;
-
-    case ECU_DIAGNOSTIC_PROTOCOL_PGN: {
-      static const uint8_t diagProtocolId[8] = {
-        0, // Only ISO 11783 Level 1 diagnostics
-        0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF// Reserved bytes according to the standard
-      };
-
-      sendSinglePacket(diagProtocolId,ECU_DIAGNOSTIC_PROTOCOL_PGN);
-#if DEBUG_DIAGNOSTICPGN
-      INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_DIAGNOSTIC_PROTOCOL: first byte (diag protocol id) is " << uint16_t (diagProtocolId[0]) << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-      return true; }
 
     case SOFTWARE_IDENTIFICATION_PGN:
       if (mcstr_SwIdentification != NULL)

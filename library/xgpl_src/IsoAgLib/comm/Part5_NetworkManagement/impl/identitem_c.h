@@ -20,6 +20,7 @@
 #include "isoname_c.h"
 #include "isoitem_c.h"
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h>
+
 #include <IsoAgLib/driver/system/isystem_c.h>
 
 // forward declaration of iIdentDataStorage_c - no internal definition
@@ -31,6 +32,7 @@ namespace IsoAgLib {
 namespace __IsoAgLib {
 
   class DiagnosticsServices_c;
+  class DiagnosticProtocol_c;
 
 /**
   class for identity/ies (Control Function(s)) which are managed by the actual ECU;
@@ -284,9 +286,8 @@ private: // attributes
   /** IsoName code of this identity */
   IsoName_c mc_isoName;
 
-  /** Diagnostic PGN handler */
   DiagnosticPgnHandler_c* mpc_diagnosticPgnHandler;
-  /** Diagnostics Services handler */
+  DiagnosticProtocol_c* mpc_diagnosticProtocol;
   DiagnosticsServices_c* mpc_diagnosticsServices;
 
   #ifdef USE_WORKING_SET

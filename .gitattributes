@@ -24,6 +24,8 @@ library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticstypes.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticsservices_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticsservices_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.cpp -text
