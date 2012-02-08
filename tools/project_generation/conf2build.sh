@@ -879,7 +879,7 @@ create_filelist( )
       eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $SRC_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
       eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $HDR_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
     fi
-
+    
     ##############################
     # find application files
     ##############################
@@ -892,11 +892,12 @@ create_filelist( )
         local APP_SEARCH_SRC_TYPE_PART="$(find_part '' "-name '*%s'" "$APP_SEARCH_SRC_CONDITION1" 3>&1 1>&9)"
         local APP_SEARCH_HDR_TYPE_PART="$(find_part '' "-name '%s'" "$APP_SEARCH_HDR_CONDITION" 3>&1 1>&9)"
     } 9>&1
-
+    
     for EACH_REL_APP_PATH in ${REL_APP_PATH:-}; do
         eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&3"
         eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&4"
     done 3>"$FILELIST_APP_PURE" 4>"$FILELIST_APP_HDR"
+
 
     cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
     cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
@@ -1341,6 +1342,11 @@ create_cmake_winlin()
 {
     CompletePrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
 
+    IsoAglibPrjHeaderFilelist="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
+    IsoAglibPrjSourceFilelist="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
+    AppPrjHeaderFilelist="$1/$PROJECT/$FILELIST_APP_HDR"
+    AppPrjSourceFilelist="$1/$PROJECT/$FILELIST_APP_PURE"    
+        
     local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
     local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)})"
 
@@ -1356,7 +1362,19 @@ create_cmake_winlin()
     local INSERT_CMAKE_ADD_EXECUTABLE="$(
         omit_or_printf '\n  %s' "$PROJECT" $(
             grep -E '\.cc|\.cpp|\.c|\.h' <"$CompletePrjFilelist" || status_le1))"
-
+    local INSERT_CMAKE_APP_SOURCE_GROUP="$(
+        omit_or_printf '\n  %s' $(
+            grep -E '\.cc|\.cpp|\.c|\.h' <"$AppPrjSourceFilelist" || status_le1))"
+    local INSERT_CMAKE_APP_HEADER_GROUP="$(
+        omit_or_printf '\n  %s' $(
+            grep -E '\.cc|\.cpp|\.c|\.h' <"$AppPrjHeaderFilelist" || status_le1))"
+    local INSERT_CMAKE_ISOAGLIB_SOURCE_GROUP="$(
+        omit_or_printf '\n  %s' $(
+            grep -E '\.cc|\.cpp|\.c|\.h' <"$IsoAglibPrjSourceFilelist" || status_le1))"
+    local INSERT_CMAKE_ISOAGLIB_HEADER_GROUP="$(
+        omit_or_printf '\n  %s' $(
+            grep -E '\.cc|\.cpp|\.c|\.h' <"$IsoAglibPrjHeaderFilelist" || status_le1))"
+    
     : ${CMAKE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_CMakeLists.txt}
     expand_template "$CMAKE_SKELETON_FILE" >"CMakeLists.txt"
 }
