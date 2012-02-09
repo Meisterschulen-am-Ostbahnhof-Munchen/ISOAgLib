@@ -17,7 +17,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
-#include "../idiagnosticprotocoltypes.h"
+#include "diagnosticprotocoltypes.h"
 
 #include <map>
 
