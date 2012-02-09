@@ -149,7 +149,7 @@ class BitFieldWrapper_c
     {
     }
     
-    uint8_t getSizeInBytes() const { return sizeInBytes; }
+    unsigned int getSizeInBytes() const { return sizeInBytes; }
 
     /** Set the given bit to 1. Bits are counted from the left
         @param  a_bitsFromTheLeft  bit position from the left, counting from 0
