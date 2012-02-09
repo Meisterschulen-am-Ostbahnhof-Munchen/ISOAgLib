@@ -15,7 +15,7 @@
 
 #include <IsoAgLib/hal/hal_typedef.h>
 
-namespace IsoAgLib {
+namespace __IsoAgLib {
 
 enum EcuDiagnosticProtocolIdentification_t
 {
@@ -36,8 +36,8 @@ typedef BitFieldWrapper_c<EcuDiagnosticProtocolIdentification_s> EcuDiagnosticPr
 
 enum FunctionalitiesCharacteristics_t
 {
-  NoFunctionalitiesReported = 0,  // TBD : PURPOSE OF NoFunctionalitiesReported ? REMOVE FROM ENUM AND START WITH VirtualTerminal = 1 ?
-  VirtualTerminal,
+  //NoFunctionalitiesReported = 0,
+  VirtualTerminal = 1,
   VirtualTerminalWorkingSet,
   AuxiliaryControlType1Inputs,
   AuxiliaryControlType1Functions,
@@ -67,43 +67,40 @@ enum FunctionalitiesCharacteristics_t
 // VT
 enum VirtualTerminalOptions_t
 {
-  VirtualTerminal_NoOptions = 0,          // TBD : PURPOSE OF NoOptions ? REMOVE FROM ENUM AND START WITH VALID OPTION = 1 ?
-  VirtualTerminal_ProportionalFonts,
+  VirtualTerminal_ProportionalFonts = 0,
   VirtualTerminal_UserLayoutScreens,
   VirtualTerminal_ColourMap,
   VirtualTerminal_GraphicsContext,
-  VirtualTerminal_ReservedForISO = 8
+  VirtualTerminal_BITSIZE = 8
 };
 
 struct VirtualTerminalOptions_s
 {
   typedef VirtualTerminalOptions_t enum_type;
-  enum { number_of_bits = VirtualTerminal_ReservedForISO };
+  enum { number_of_bits = VirtualTerminal_BITSIZE };
 };
 typedef BitFieldWrapper_c<VirtualTerminalOptions_s> VirtualTerminalOptionsBitMask_t;
 
 // Aux 1
 enum AuxControlType1Options_t
 {
-  AuxControlType1_NoOptions = 0,          // TBD : PURPOSE OF NoOptions ? REMOVE FROM ENUM AND START WITH VALID OPTION = 1 ?
-  AuxControlType1_SupportsType0Function,
+  AuxControlType1_SupportsType0Function = 0,
   AuxControlType1_SupportsType1Function,
   AuxControlType1_SupportsType2Function,
-  AuxControlType1_ReservedForISO = 8
+  AuxControlType1_BITSIZE = 8
 };
 
 struct AuxControlType1Options_s
 {
   typedef AuxControlType1Options_t enum_type;
-  enum { number_of_bits = AuxControlType1_ReservedForISO };
+  enum { number_of_bits = AuxControlType1_BITSIZE };
 };
 typedef BitFieldWrapper_c<AuxControlType1Options_s> AuxControlType1OptionsBitMask_t;
 
 // Aux 2
 enum AuxControlType2Options_t
 {
-  AuxControlType2_NoOptions = 0,          // TBD : PURPOSE OF NoOptions ? REMOVE FROM ENUM AND START WITH VALID OPTION = 1 ?
-  AuxControlType2_SupportsType0Function,
+  AuxControlType2_SupportsType0Function = 0,
   AuxControlType2_SupportsType1Function,
   AuxControlType2_SupportsType2Function,
   AuxControlType2_SupportsType3Function,
@@ -118,124 +115,117 @@ enum AuxControlType2Options_t
   AuxControlType2_SupportsType12Function,
   AuxControlType2_SupportsType13Function,
   AuxControlType2_SupportsType14Function,
-  AuxControlType2_ReservedForISO = 16
+  AuxControlType2_BITSIZE = 16
 };
 
 struct AuxControlType2Options_s
 {
   typedef AuxControlType2Options_t enum_type;
-  enum { number_of_bits = AuxControlType2_ReservedForISO };
+  enum { number_of_bits = AuxControlType2_BITSIZE };
 };
 typedef BitFieldWrapper_c<AuxControlType2Options_s> AuxControlType2OptionsBitMask_t;
 
 // TC Basic
-enum TaskControllerBasicOptions_t          // TBD : NO OPTIONS SPECIFIED YET ? REMOVE ENUM ?
+enum TaskControllerBasicOptions_t
 {
-  TaskControllerBasic_NoOptions = 0,
-  TaskControllerBasic_ReservedForISO = 8
+  TaskControllerBasic_BITSIZE = 0
 };
 
 struct TaskControllerBasicOptions_s
 {
   typedef TaskControllerBasicOptions_t enum_type;
-  enum { number_of_bits = TaskControllerBasic_ReservedForISO };
+  enum { number_of_bits = TaskControllerBasic_BITSIZE };
 };
 typedef BitFieldWrapper_c<TaskControllerBasicOptions_s> TaskControllerBasicOptionsBitMask_t;
 
 // TC Geo
-enum TaskControllerGeoOptions_t          // TBD : NO OPTIONS SPECIFIED YET ? REMOVE ENUM ?
+enum TaskControllerGeoOptions_t
 {
-  TaskControllerGeo_NoOptions = 0,
-  TaskControllerGeo_ReservedForISO = 8
+  TaskControllerGeo_BITSIZE = 0
 };
 
 struct TaskControllerGeoOptions_s
 {
   typedef TaskControllerGeoOptions_t enum_type;
-  enum { number_of_bits = TaskControllerGeo_ReservedForISO };
+  enum { number_of_bits = TaskControllerGeo_BITSIZE };
 };
 typedef BitFieldWrapper_c<TaskControllerGeoOptions_s> TaskControllerGeoOptionsBitMask_t;
 
 // Basic TECU
 enum BasicTractorECUOptions_t
 {
-  BasicTractorECU_TECUNotMeetingCompleteClass1Requirements = 0,
-  BasicTractorECU_Class1NoOptions,
+  BasicTractorECU_Class1NoOptions = 0,
   BasicTractorECU_Class2NoOptions,
   BasicTractorECU_ClassRequiredLighting,
   BasicTractorECU_NavigationOption,
   BasicTractorECU_FrontHitchOption,
   BasicTractorECU_GuidanceOption,
-  BasicTractorECU_ReservedForISO = 8
+  BasicTractorECU_BITSIZE = 8
 };
 
 struct BasicTractorECUOptions_s
 {
   typedef BasicTractorECUOptions_t enum_type;
-  enum { number_of_bits = BasicTractorECU_ReservedForISO };
+  enum { number_of_bits = BasicTractorECU_BITSIZE };
 };
 typedef BitFieldWrapper_c<BasicTractorECUOptions_s> BasicTractorECUOptionsBitMask_t;
 
 // Advance TECU
 enum AdvanceTractorECUOptions_t
 {
-  AdvanceTractorECU_TECUNotMeetingCompleteClass3Requirements = 0,
-  AdvanceTractorECU_Class3NoOptions,
+  AdvanceTractorECU_Class3NoOptions = 0,
   AdvanceTractorECU_FullLightingMessageSet,
   AdvanceTractorECU_NavigationOption,
   AdvanceTractorECU_FrontHitchOption,
   AdvanceTractorECU_GuidanceOption,
   AdvanceTractorECU_PowertrainOption,
   AdvanceTractorECU_MotionInitiationOption,
-  AdvanceTractorECU_ReservedForISO = 8
+  AdvanceTractorECU_BITSIZE = 8
 };
 
 struct AdvanceTractorECUOptions_s
 {
   typedef AdvanceTractorECUOptions_t enum_type;
-  enum { number_of_bits = AdvanceTractorECU_ReservedForISO };
+  enum { number_of_bits = AdvanceTractorECU_BITSIZE };
 };
 typedef BitFieldWrapper_c<AdvanceTractorECUOptions_s> AdvanceTractorECUOptionsBitMask_t;
 
 // SC
-enum SequenceControlOptions_t          // TBD : NO OPTIONS SPECIFIED YET ? REMOVE ENUM ?
+enum SequenceControlOptions_t
 {
-  SequenceControl_NoOptions = 0,
-  SequenceControl_ReservedForISO = 8
+  SequenceControl_BITSIZE = 0
 };
 
 struct SequenceControlOptions_s
 {
   typedef SequenceControlOptions_t enum_type;
-  enum { number_of_bits = SequenceControl_ReservedForISO };
+  enum { number_of_bits = SequenceControl_BITSIZE };
 };
 typedef BitFieldWrapper_c<SequenceControlOptions_s> SequenceControlOptionsBitMask_t;
 
 // Stop implements
-enum StopAllImplementOptions_t          // TBD : NO OPTIONS SPECIFIED YET ? REMOVE ENUM ?
+enum StopAllImplementOptions_t
 {
-  StopAllImplement_NoOptions = 0,
-  StopAllImplement_ReservedForISO = 8
+  StopAllImplement_BITSIZE = 0
 };
 
 struct StopAllImplementOptions_s
 {
   typedef StopAllImplementOptions_t enum_type;
-  enum { number_of_bits = StopAllImplement_ReservedForISO };
+  enum { number_of_bits = StopAllImplement_BITSIZE };
 };
 typedef BitFieldWrapper_c<StopAllImplementOptions_s> StopAllImplementOptionsBitMask_t;
 
 // FS
-enum FileServerOptions_t          // TBD : NO OPTIONS SPECIFIED YET ? REMOVE ENUM ?
+enum FileServerOptions_t
 {
-  FileServer_NoOptions = 0,
-  FileServer_ReservedForISO = 8
+  FileServer_BITSIZE = 0
 };
 
 struct FileServerOptions_s
 {
   typedef FileServerOptions_t enum_type;
-  enum { number_of_bits = FileServer_ReservedForISO };
+  enum { number_of_bits = FileServer_BITSIZE };
 };
 typedef BitFieldWrapper_c<FileServerOptions_s> FileServerOptionsBitMask_t;
 
