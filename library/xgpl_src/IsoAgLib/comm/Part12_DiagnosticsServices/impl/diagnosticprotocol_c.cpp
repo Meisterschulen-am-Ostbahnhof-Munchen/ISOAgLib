@@ -39,16 +39,6 @@
 // okay for this case here, as the singletons are currently all done by define.
 #define getMultitonInst() mrc_identItem.getMultitonInst()
 
-namespace {
-struct Calculator
-{
-  uint16_t operator() ( uint16_t result, const __IsoAgLib::DiagnosticProtocol_c::FunctionitiesArr::value_type& obj )
-  {
-      return (result + 2 + obj.second.number_of_options);
-  }
-};
-}
-
 namespace __IsoAgLib
 {
 
@@ -94,7 +84,13 @@ void DiagnosticProtocol_c::updatePackage()
   mui16_arrayLenght = 2; // header size
   if ( mb_useAefSpecifications )
   {
-    mui16_arrayLenght += CNAMESPACE::accumulate(marr_functionalities.begin(),marr_functionalities.end(), 0, Calculator());
+    for (FunctionitiesArrIter iter = marr_functionalities.begin();
+         iter != marr_functionalities.end();
+         ++iter )
+    {
+      // Functionality - generation - number_of_options - option_1 - ... - option_n
+      mui16_arrayLenght += (3 + iter->second.number_of_options);
+    }
   }
   if (mui16_arrayLenght < 8) mui16_arrayLenght = 8;
 
@@ -246,7 +242,7 @@ uint8_t DiagnosticProtocol_c::getGeneration(IsoAgLib::FunctionalitiesCharacteris
       break;
     case IsoAgLib::StopAllImplementOperationsInput:
     case IsoAgLib::StopAllImplementOperationsImplementSet:
-      if (version == 1) return 1;
+      if (version == 1) return 1; // TBD : NOT SPECIFIED IN DOC
       break;
     case IsoAgLib::DiagnosticTool:
     case IsoAgLib::DiagnosticECU:
