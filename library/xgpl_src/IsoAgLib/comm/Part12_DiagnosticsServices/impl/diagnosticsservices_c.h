@@ -158,7 +158,7 @@ private: // typedef
        mrt_owner.reactOnStateChange(sendStream);
     }
 
-    // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
+    // MultiSendEventHandlerProxy_c shall not be copyable. Otherwise
     // the reference to the containing object would become invalid.
     MultiSendEventHandlerProxy_c(MultiSendEventHandlerProxy_c const &);
 
