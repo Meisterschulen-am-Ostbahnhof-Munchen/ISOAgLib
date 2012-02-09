@@ -17,54 +17,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
-
-namespace IsoAgLib
-{
-
-enum CertificationRevision_t
-{
-  CertificationRevisionFirstRevision = 0,
-  CertificationRevisionSecondRevision = 1,
-  CertificationRevisionThirdRevision = 2,
-  CertificationRevisionFourthRevision = 3,
-  CertificationRevisionNotAvailable = 7
-};
-
-enum CertificationLabType_t
-{
-  CertificationLabTypeNonCertifiedLab = 0,
-  CertificationLabTypeEUCertifiedLab = 1,
-  CertificationLabTypeNACertifiedLab = 2,
-  CertificationLabTypeNotAvailable = 7
-};
-
-enum Certification_t
-{
-  CertificationMinEcu = 0,
-  CertificationTecuClass_1,
-  CertificationTecuClass_2,
-  CertificationTecuClass_3,
-  CertificationClass_3_Ecu,
-  CertificationVirtualTerminal,
-  CertificationVtWsMaster,
-  CertificationVtWsMember,
-  CertificationTaskController,
-  CertificationTcWsMaster,
-  CertificationTcWsMember,
-  CertificationFileServer,
-  CertificationGpsReceiver
-};
-
-struct Certification_s
-{
-  typedef Certification_t enum_type;
-  enum { number_of_bits = 24 };
-};
-
-typedef BitFieldWrapper_c<Certification_s> CertificationBitMask_t;
-
-} // namespace IsoAgLib
-
+#include "../idiagnosticstypes.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

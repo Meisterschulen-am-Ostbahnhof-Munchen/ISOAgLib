@@ -26,6 +26,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticsservices_c.h>
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h>
 
 namespace __IsoAgLib {
 
@@ -381,5 +382,34 @@ IdentItem_c::equalNr(uint8_t aui8_nr)
   return b_result;
 }
 
+bool IdentItem_c::setEcuIdentification(
+    const char *acstr_partNr,
+    const char *acstr_serialNr,
+    const char *acstr_location,
+    const char *acstr_type,
+    const char *acstr_manufacturerName)
+{ // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
+  return mpc_diagnosticPgnHandler->setEcuIdentification(
+      acstr_partNr,
+      acstr_serialNr,
+      acstr_location,
+      acstr_type,
+      acstr_manufacturerName);
+}
+
+bool IdentItem_c::setSwIdentification( const char *acstr_partNbr )
+{ // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
+  return mpc_diagnosticPgnHandler->setSwIdentification( acstr_partNbr );
+}
+
+bool IdentItem_c::setCertificationData(
+  uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision, IsoAgLib::CertificationLabType_t a_laboratoryType,
+  uint16_t aui16_laboratoryId, const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
+{
+  // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
+  return mpc_diagnosticPgnHandler->setCertificationData(
+    ui16_year , a_revision, a_laboratoryType, aui16_laboratoryId,
+    acrc_certificationBitMask, aui16_referenceNumber );
+}
 
 } // end of namespace __IsoAgLib
