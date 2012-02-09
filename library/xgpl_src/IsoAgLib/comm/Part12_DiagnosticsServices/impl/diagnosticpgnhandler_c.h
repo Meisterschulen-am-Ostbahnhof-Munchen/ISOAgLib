@@ -71,7 +71,7 @@ namespace __IsoAgLib {
 
 // forward declarations
 class IdentItem_c;
-
+class DiagnosticProtocol_c;
 
 /**
   This class implements the handling of Diagnostic
@@ -115,6 +115,7 @@ private:
 
 private: // attributes
   IdentItem_c& mrc_identItem;
+  DiagnosticProtocol_c* mpc_diagnosticProtocol;
 
   char *mcstr_EcuIdentification;
   char *mcstr_SwIdentification;

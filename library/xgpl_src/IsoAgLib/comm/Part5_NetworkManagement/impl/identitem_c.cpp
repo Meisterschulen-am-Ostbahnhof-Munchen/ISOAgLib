@@ -25,7 +25,7 @@
 
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
-#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.h>
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticsservices_c.h>
 
 namespace __IsoAgLib {
 
@@ -33,7 +33,6 @@ namespace __IsoAgLib {
 IdentItem_c::~IdentItem_c()
 {
   delete mpc_diagnosticPgnHandler;
-  delete mpc_diagnosticProtocol;
   if (mpc_diagnosticsServices) delete mpc_diagnosticsServices;
 }
 
@@ -44,7 +43,6 @@ IdentItem_c::IdentItem_c ()
   , mpc_dataStorageHandler(NULL)
   , mui8_sa(0x0)
   , mpc_diagnosticPgnHandler (NULL)
-  , mpc_diagnosticProtocol(NULL)
   , mpc_diagnosticsServices (NULL)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
@@ -54,7 +52,6 @@ IdentItem_c::IdentItem_c ()
 
 {
   mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
-  mpc_diagnosticProtocol = new DiagnosticProtocol_c(*this, IsoAgLib::EcuDiagnosticProtocolIdentificationBitMask_t().setBit (IsoAgLib::ProtocolId_OnlyISO11783Level1Diagnostics));
 }
 
 
@@ -140,7 +137,6 @@ IdentItem_c::activate (int ai_multitonInst)
 
     // The Diagnostics Handler needs to be created on Construction!
     mpc_diagnosticPgnHandler->init();
-    mpc_diagnosticProtocol->init();
     if (mpc_diagnosticsServices) mpc_diagnosticsServices->init();
     return true;
   }
@@ -158,7 +154,6 @@ IdentItem_c::deactivate()
   goOffline (true);
 
   mpc_diagnosticPgnHandler->close();
-  mpc_diagnosticProtocol->close();
   if (mpc_diagnosticsServices)
   {
     mpc_dataStorageHandler->storeDtcs(mpc_diagnosticsServices->getDtcContainer());

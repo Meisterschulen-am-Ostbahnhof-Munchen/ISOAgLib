@@ -21,6 +21,8 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <stdlib.h>
 
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.h>
+
 #if DEBUG_DIAGNOSTICPGN
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -42,16 +44,21 @@ namespace __IsoAgLib
 
 DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_identItem ) :
     mrc_identItem ( arc_identItem ),
+    mpc_diagnosticProtocol(NULL),
     mcstr_EcuIdentification ( NULL ),
     mcstr_SwIdentification ( NULL),
     mb_certificationIsSet ( false )
 {
+  mpc_diagnosticProtocol = new DiagnosticProtocol_c(arc_identItem, EcuDiagnosticProtocolIdentificationBitMask_t().setBit (ProtocolId_OnlyISO11783Level1Diagnostics));
+
   // m_certification is not set as mb_certificationIsSet indicates it not being used!
 }
 
 
 DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
 {
+  delete mpc_diagnosticProtocol;
+
   if (mcstr_EcuIdentification)
     CNAMESPACE::free (mcstr_EcuIdentification);
 
@@ -63,6 +70,8 @@ DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
 void
 DiagnosticPgnHandler_c::init()
 {
+  mpc_diagnosticProtocol->init();
+
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
@@ -72,6 +81,8 @@ DiagnosticPgnHandler_c::init()
 void
 DiagnosticPgnHandler_c::close()
 {
+  mpc_diagnosticProtocol->close();
+
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );

@@ -32,7 +32,6 @@ namespace IsoAgLib {
 namespace __IsoAgLib {
 
   class DiagnosticsServices_c;
-  class DiagnosticProtocol_c;
 
 /**
   class for identity/ies (Control Function(s)) which are managed by the actual ECU;
@@ -287,7 +286,6 @@ private: // attributes
   IsoName_c mc_isoName;
 
   DiagnosticPgnHandler_c* mpc_diagnosticPgnHandler;
-  DiagnosticProtocol_c* mpc_diagnosticProtocol;
   DiagnosticsServices_c* mpc_diagnosticsServices;
 
   #ifdef USE_WORKING_SET
