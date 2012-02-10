@@ -210,6 +210,9 @@ class BitFieldWrapper_c
 template <class T>
 class BitFieldWrapperLeft_c : public BitFieldWrapper_c<T>
 {
+  using BitFieldWrapper_c<T>::m_bitField;
+  using BitFieldWrapper_c<T>::sizeInBits;
+
 public:
   /** Set the given bit to 1. Bits are counted from the left
       @param  a_bitsFromTheLeft  bit position from the left, counting from 0
@@ -243,6 +246,9 @@ public:
 template <class T>
 class BitFieldWrapperRight_c : public BitFieldWrapper_c<T>
 {
+  using BitFieldWrapper_c<T>::m_bitField;
+  using BitFieldWrapper_c<T>::sizeInBits;
+
 public:
   /** Set the given bit to 1. Bits are counted from the right
       @param  a_bitsFromTheRight  bit position from the right, counting from 0
