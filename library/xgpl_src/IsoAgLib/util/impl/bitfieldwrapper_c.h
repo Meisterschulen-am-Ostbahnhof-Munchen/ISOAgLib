@@ -145,9 +145,9 @@ class BitFieldWrapper_c
     }
 
     /** Destructor */
-    virtual ~BitFieldWrapper_c() = 0
-    {
-    }
+    ~BitFieldWrapper_c()
+	{
+	}
     
     unsigned int getSizeInBytes() const { return sizeInBytes; }
 
