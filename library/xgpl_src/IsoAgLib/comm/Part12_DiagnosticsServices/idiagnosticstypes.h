@@ -84,7 +84,7 @@ struct Certification_s
   enum { number_of_bits = 24 };
 };
 
-typedef BitFieldWrapper_c<Certification_s> CertificationBitMask_t;
+typedef BitFieldWrapperLeft_c<Certification_s> CertificationBitMask_t;
 
 } // end namespace IsoAgLib
 

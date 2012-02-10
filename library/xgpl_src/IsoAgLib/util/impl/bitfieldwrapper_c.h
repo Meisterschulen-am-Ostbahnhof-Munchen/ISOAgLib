@@ -131,7 +131,7 @@ template <unsigned N> class IsoaglibBitset {
 template <class T>
 class BitFieldWrapper_c
 {
-  private:
+  protected:
     enum {sizeInBits = T::number_of_bits};
     enum {sizeInBytes = ( T::number_of_bits+7 ) >> 3 };
 
@@ -145,25 +145,11 @@ class BitFieldWrapper_c
     }
 
     /** Destructor */
-    ~BitFieldWrapper_c()
+    virtual ~BitFieldWrapper_c() = 0
     {
     }
     
     unsigned int getSizeInBytes() const { return sizeInBytes; }
-
-    /** Set the given bit to 1. Bits are counted from the left
-        @param  a_bitsFromTheLeft  bit position from the left, counting from 0
-        @return  reference to BitFieldWrapper_c
-      */
-    BitFieldWrapper_c& setBit( typename T::enum_type a_bitsFromTheLeft )
-    {
-      if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
-      {
-        m_bitField[a_bitsFromTheLeft>>3] |= (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07)));
-      }
-      // else: Out of Range - nothing done.
-      return *this;
-    }
 
     /** set all bits - be sure to check if this is appropriate,
         or if there are any reserved bits which should not be set */
@@ -174,23 +160,8 @@ class BitFieldWrapper_c
       return *this;
     }
 
-    /** Checks wheether the given bit is set to 1. Bits are counted from the left
-    @param  a_bitsFromTheLeft  bit position from the left, counting from 0
-                               if it is out-of-range, false (0 bit) is returned
-    @return  true if the bit is set
-    */
-    bool isBitSet( typename T::enum_type a_bitsFromTheLeft )
-    {
-      if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
-      {
-        return ((m_bitField[a_bitsFromTheLeft>>3] & (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07))))>0);
-      }
-      // else: Out of Range handling: return false.
-      return false;
-    }
-
     /** do bitwise AND assignment */
-    void operator &= ( const BitFieldWrapper_c& c_refBitField )
+    virtual void operator &= ( const BitFieldWrapper_c& c_refBitField )
     {
       STL_NAMESPACE::vector<uint8_t>::iterator i = m_bitField.begin();
       STL_NAMESPACE::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
@@ -234,6 +205,72 @@ class BitFieldWrapper_c
 // TODO      isoaglib_assert (n < ((N+7)>>3));
       return m_bitField[ aui8_byteOffset ];
     }
+};
+
+template <class T>
+class BitFieldWrapperLeft_c : public BitFieldWrapper_c<T>
+{
+public:
+  /** Set the given bit to 1. Bits are counted from the left
+      @param  a_bitsFromTheLeft  bit position from the left, counting from 0
+      @return  reference to BitFieldWrapper_c
+    */
+  BitFieldWrapperLeft_c& setBit( typename T::enum_type a_bitsFromTheLeft )
+  {
+    if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
+    {
+      m_bitField[a_bitsFromTheLeft>>3] |= (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07)));
+    }
+    // else: Out of Range - nothing done.
+    return *this;
+  }
+  /** Checks wheether the given bit is set to 1. Bits are counted from the left
+      @param  a_bitsFromTheLeft  bit position from the left, counting from 0
+                                 if it is out-of-range, false (0 bit) is returned
+      @return  true if the bit is set
+  */
+  bool isBitSet( typename T::enum_type a_bitsFromTheLeft )
+  {
+    if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
+    {
+      return ((m_bitField[a_bitsFromTheLeft>>3] & (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07))))>0);
+    }
+    // else: Out of Range handling: return false.
+    return false;
+  }
+};
+
+template <class T>
+class BitFieldWrapperRight_c : public BitFieldWrapper_c<T>
+{
+public:
+  /** Set the given bit to 1. Bits are counted from the right
+      @param  a_bitsFromTheRight  bit position from the right, counting from 0
+      @return  reference to BitFieldWrapper_c
+    */
+  BitFieldWrapperRight_c& setBit( typename T::enum_type a_bitsFromTheRight )
+  {
+    if ( static_cast<unsigned int>(a_bitsFromTheRight) < static_cast<unsigned int>(sizeInBits) )
+    {
+      m_bitField[m_bitField.size() - (a_bitsFromTheRight>>3) - 1] |= (uint8_t(1)<<(a_bitsFromTheRight&0x07));
+    }
+    // else: Out of Range - nothing done.
+    return *this;
+  }
+  /** Checks wheether the given bit is set to 1. Bits are counted from the right
+      @param  a_bitsFromTheLeft  bit position from the right, counting from 0
+                                 if it is out-of-range, false (0 bit) is returned
+      @return  true if the bit is set
+  */
+  bool isBitSet( typename T::enum_type a_bitsFromTheRight )
+  {
+    if ( static_cast<unsigned int>(a_bitsFromTheRight) < static_cast<unsigned int>(sizeInBits) )
+    {
+      return ((m_bitField[m_bitField.size() - (a_bitsFromTheRight>>3) - 1] & (uint8_t(1)<<(a_bitsFromTheRight&0x07)))>0);
+    }
+    // else: Out of Range handling: return false.
+    return false;
+  }
 };
 
 #endif
