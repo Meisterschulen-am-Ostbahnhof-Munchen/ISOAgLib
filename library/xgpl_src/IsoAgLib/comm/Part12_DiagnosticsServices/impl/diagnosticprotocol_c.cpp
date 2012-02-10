@@ -268,7 +268,7 @@ uint8_t DiagnosticProtocol_c::getGeneration(FunctionalitiesCharacteristics_t fun
 
 bool DiagnosticProtocol_c::addFunctionality(FunctionalitiesCharacteristics_t functionality, const Functionality_s& functionality_description)
 {
-  if ( marr_functionalities.find(functionality) != marr_functionalities.end() )
+  if ( marr_functionalities.find(functionality) == marr_functionalities.end() )
   {
     marr_functionalities.insert( FunctionitiesArrPair(functionality, functionality_description) );
     mb_arrIsDirty = true;
