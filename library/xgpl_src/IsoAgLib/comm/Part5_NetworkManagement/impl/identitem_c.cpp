@@ -268,28 +268,10 @@ IdentItem_c::timeEventPreAddressClaim( void )
 bool
 IdentItem_c::timeEventActive( void )
 {
-  #ifdef CHANGE_DEV_CLASS_INST_ON_CONFLICT
-  // only change dev class inst and repeated address claim on adress conflicts, if following define
-  // is set in masterHeader
   /** @todo SOON-240 USE THIS PRINCIPLE IN CASE WE RECEIVE MESSAGE WITH LOCAL SA -> detected in DataLinkLayer (CanPkgExt_c->resolving)
            --> we should change SA in such a case AND maybe send some sort of DIAGNOSE MESSAGE
-    */
-  // because of errors caused by terminals, which doesn't claim correctly an address
-  // don't do conflict changing of POS
-  if ((pc_memberItem->affectedConflictCnt() > 3) && (itemState(IState_c::Din)))
-  { // repeated address claim needed
-    // send an adress release for according number
-    pc_memberItem->sendAdressRelease();
-    // delete item from memberList
-    getDinMonitorInstance4Comm().deleteDinMemberISOName(isoName());
-    pc_memberItem = NULL;
-    // restart with init
-    init();
-    // set time to individual wait time
-    setIndividualWait();
-  }
-  else
-  #endif
+  if ((pc_memberItem->affectedConflictCnt() > 3))
+   */
 
   /// If we're in Activetimeevent, we always do have a valid mpc_isoItem!
   if (mpc_isoItem->itemState(IState_c::Local))
