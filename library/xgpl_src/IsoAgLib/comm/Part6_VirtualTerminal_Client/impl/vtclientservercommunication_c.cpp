@@ -37,6 +37,8 @@
 #include "../ivtobjectauxiliaryfunction2_c.h"
 #include "../ivtobjectauxiliaryinput2_c.h"
 
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.h>
+
 #include <map>
 
 #if DEBUG_VTCOMM || DEBUG_HEAP_USEAGE
@@ -427,6 +429,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mi32_bootTime_ms(0)
   , m_dataStorageHandler(arc_claimDataStorage)
 {
+  r_wsMasterIdentItem.getDiagnosticProtocol().addAefFunctionalitiesVirtualTerminal(true, static_cast<uint8_t>(mrc_pool.getVersion()), VirtualTerminalOptionsBitMask_t());
+
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   mrc_pool.initAllObjectsOnce (MULTITON_INST);
   // now let all clients know which client they belong to

@@ -34,6 +34,7 @@ namespace __IsoAgLib {
 
   class DiagnosticsServices_c;
   class DiagnosticPgnHandler_c;
+  class DiagnosticProtocol_c;
 
 /**
   class for identity/ies (Control Function(s)) which are managed by the actual ECU;
@@ -183,6 +184,7 @@ public: // methods
   bool setSwIdentification( const char *acstr_partNbr );
 
   DiagnosticsServices_c* getDiagnosticsServices() { return mpc_diagnosticsServices; }
+  DiagnosticProtocol_c& getDiagnosticProtocol();
 
   //! Setter for the different certification message fields
   //! Parameter:

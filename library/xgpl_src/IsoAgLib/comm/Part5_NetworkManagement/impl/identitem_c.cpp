@@ -394,4 +394,9 @@ bool IdentItem_c::setCertificationData(
     acrc_certificationBitMask, aui16_referenceNumber );
 }
 
+DiagnosticProtocol_c& IdentItem_c::getDiagnosticProtocol()
+{
+  return mpc_diagnosticPgnHandler->getDiagnosticProtocol();
+}
+
 } // end of namespace __IsoAgLib

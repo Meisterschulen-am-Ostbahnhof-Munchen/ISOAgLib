@@ -49,8 +49,7 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_identItem ) :
     mcstr_SwIdentification ( NULL),
     mb_certificationIsSet ( false )
 {
-  mpc_diagnosticProtocol = new DiagnosticProtocol_c(arc_identItem, EcuDiagnosticProtocolIdentificationBitMask_t().setBit (ProtocolId_OnlyISO11783Level1Diagnostics));
-
+  mpc_diagnosticProtocol = new DiagnosticProtocol_c(arc_identItem, EcuDiagnosticProtocolIdentificationBitMask_t());
   // m_certification is not set as mb_certificationIsSet indicates it not being used!
 }
 
@@ -330,6 +329,11 @@ DiagnosticPgnHandler_c::sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,
     pkg.setUint8Data (ui, rhpb_data[ui]);
 
   getIsoBusInstance4Comm() << pkg;
+}
+
+DiagnosticProtocol_c& DiagnosticPgnHandler_c::getDiagnosticProtocol()
+{
+  return *mpc_diagnosticProtocol;
 }
 
 }

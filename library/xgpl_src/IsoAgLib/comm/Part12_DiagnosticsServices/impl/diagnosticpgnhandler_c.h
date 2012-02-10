@@ -63,6 +63,8 @@ public:
     IsoAgLib::CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
     const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
 
+  DiagnosticProtocol_c& getDiagnosticProtocol();
+
 private:
   void sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,int32_t ai32_pgn);
 
