@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef IDIAGNOSTICPROTOCOL_TYPES_H
-#define IDIAGNOSTICPROTOCOL_TYPES_H
+#ifndef DIAGNOSTICPROTOCOL_TYPES_H
+#define DIAGNOSTICPROTOCOL_TYPES_H
 
 #include <IsoAgLib/hal/hal_typedef.h>
 
@@ -19,20 +19,19 @@ namespace __IsoAgLib {
 
 enum EcuDiagnosticProtocolIdentification_t
 {
-  ProtocolId_OnlyISO11783Level1Diagnostics = 0,
-  ProtocolId_J1939_73,
+  ProtocolId_J1939_73 = 0,
   ProtocolId_ISO14230,
   ProtocolId_ISO15765_3,
   ProtocolId_ISO11783Level2,
-  ProtocolId_ReservedForISO = 8
+  ProtocolId_BITSIZE = 8
 };
 
 struct EcuDiagnosticProtocolIdentification_s
 {
   typedef EcuDiagnosticProtocolIdentification_t enum_type;
-  enum { number_of_bits = ProtocolId_ReservedForISO };
+  enum { number_of_bits = ProtocolId_BITSIZE };
 };
-typedef BitFieldWrapper_c<EcuDiagnosticProtocolIdentification_s> EcuDiagnosticProtocolIdentificationBitMask_t;
+typedef BitFieldWrapperRight_c<EcuDiagnosticProtocolIdentification_s> EcuDiagnosticProtocolIdentificationBitMask_t;
 
 enum FunctionalitiesCharacteristics_t
 {
@@ -79,7 +78,7 @@ struct VirtualTerminalOptions_s
   typedef VirtualTerminalOptions_t enum_type;
   enum { number_of_bits = VirtualTerminal_BITSIZE };
 };
-typedef BitFieldWrapper_c<VirtualTerminalOptions_s> VirtualTerminalOptionsBitMask_t;
+typedef BitFieldWrapperRight_c<VirtualTerminalOptions_s> VirtualTerminalOptionsBitMask_t;
 
 // Aux 1
 enum AuxControlType1Options_t
@@ -95,7 +94,7 @@ struct AuxControlType1Options_s
   typedef AuxControlType1Options_t enum_type;
   enum { number_of_bits = AuxControlType1_BITSIZE };
 };
-typedef BitFieldWrapper_c<AuxControlType1Options_s> AuxControlType1OptionsBitMask_t;
+typedef BitFieldWrapperRight_c<AuxControlType1Options_s> AuxControlType1OptionsBitMask_t;
 
 // Aux 2
 enum AuxControlType2Options_t
@@ -123,7 +122,7 @@ struct AuxControlType2Options_s
   typedef AuxControlType2Options_t enum_type;
   enum { number_of_bits = AuxControlType2_BITSIZE };
 };
-typedef BitFieldWrapper_c<AuxControlType2Options_s> AuxControlType2OptionsBitMask_t;
+typedef BitFieldWrapperRight_c<AuxControlType2Options_s> AuxControlType2OptionsBitMask_t;
 
 // TC Basic
 enum TaskControllerBasicOptions_t
@@ -136,7 +135,7 @@ struct TaskControllerBasicOptions_s
   typedef TaskControllerBasicOptions_t enum_type;
   enum { number_of_bits = TaskControllerBasic_BITSIZE };
 };
-typedef BitFieldWrapper_c<TaskControllerBasicOptions_s> TaskControllerBasicOptionsBitMask_t;
+typedef BitFieldWrapperRight_c<TaskControllerBasicOptions_s> TaskControllerBasicOptionsBitMask_t;
 
 // TC Geo
 enum TaskControllerGeoOptions_t
@@ -149,7 +148,7 @@ struct TaskControllerGeoOptions_s
   typedef TaskControllerGeoOptions_t enum_type;
   enum { number_of_bits = TaskControllerGeo_BITSIZE };
 };
-typedef BitFieldWrapper_c<TaskControllerGeoOptions_s> TaskControllerGeoOptionsBitMask_t;
+typedef BitFieldWrapperRight_c<TaskControllerGeoOptions_s> TaskControllerGeoOptionsBitMask_t;
 
 // Basic TECU
 enum BasicTractorECUOptions_t
@@ -168,7 +167,7 @@ struct BasicTractorECUOptions_s
   typedef BasicTractorECUOptions_t enum_type;
   enum { number_of_bits = BasicTractorECU_BITSIZE };
 };
-typedef BitFieldWrapper_c<BasicTractorECUOptions_s> BasicTractorECUOptionsBitMask_t;
+typedef BitFieldWrapperRight_c<BasicTractorECUOptions_s> BasicTractorECUOptionsBitMask_t;
 
 // Advance TECU
 enum AdvanceTractorECUOptions_t
@@ -188,7 +187,7 @@ struct AdvanceTractorECUOptions_s
   typedef AdvanceTractorECUOptions_t enum_type;
   enum { number_of_bits = AdvanceTractorECU_BITSIZE };
 };
-typedef BitFieldWrapper_c<AdvanceTractorECUOptions_s> AdvanceTractorECUOptionsBitMask_t;
+typedef BitFieldWrapperRight_c<AdvanceTractorECUOptions_s> AdvanceTractorECUOptionsBitMask_t;
 
 // SC
 enum SequenceControlOptions_t
@@ -201,7 +200,7 @@ struct SequenceControlOptions_s
   typedef SequenceControlOptions_t enum_type;
   enum { number_of_bits = SequenceControl_BITSIZE };
 };
-typedef BitFieldWrapper_c<SequenceControlOptions_s> SequenceControlOptionsBitMask_t;
+typedef BitFieldWrapperRight_c<SequenceControlOptions_s> SequenceControlOptionsBitMask_t;
 
 // Stop implements
 enum StopAllImplementOptions_t
@@ -214,7 +213,7 @@ struct StopAllImplementOptions_s
   typedef StopAllImplementOptions_t enum_type;
   enum { number_of_bits = StopAllImplement_BITSIZE };
 };
-typedef BitFieldWrapper_c<StopAllImplementOptions_s> StopAllImplementOptionsBitMask_t;
+typedef BitFieldWrapperRight_c<StopAllImplementOptions_s> StopAllImplementOptionsBitMask_t;
 
 // FS
 enum FileServerOptions_t
@@ -227,7 +226,7 @@ struct FileServerOptions_s
   typedef FileServerOptions_t enum_type;
   enum { number_of_bits = FileServer_BITSIZE };
 };
-typedef BitFieldWrapper_c<FileServerOptions_s> FileServerOptionsBitMask_t;
+typedef BitFieldWrapperRight_c<FileServerOptions_s> FileServerOptionsBitMask_t;
 
 } // end namespace IsoAgLib
 
