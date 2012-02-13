@@ -854,6 +854,7 @@ VtClientServerCommunication_c::timeEvent(void)
   // Do nothing if there's no VT active
   if (!isVtActive())
   {
+    timeEventSearchForNewVt();
     return true;
   }
 
