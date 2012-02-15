@@ -230,44 +230,6 @@ IsoBus_c::operator<<(CanPkg_c& acrc_src)
 }
 
 
-FilterBox_c*
-IsoBus_c::insertStandardIsoFilter(
-  __IsoAgLib::CanCustomer_c& ar_customer,
-  uint32_t aui32_pgn,
-  bool ab_reconfigImmediate)
-{
-  int8_t i8_dataLen = 0;
-
-  switch(aui32_pgn)
-  {
-    case REQUEST_PGN_MSG_PGN:
-    case (REQUEST_PGN_MSG_PGN | 0xFF): //xxeaffxx
-      i8_dataLen = 3;
-      break;
-
-    case ACKNOWLEDGEMENT_PGN: /**variable data len : see ISO/CD ISO-11783-12 */
-    case CLIENT_TO_FS_PGN:    /** variable data len : see ISO-11783 -13 */
-    case FS_TO_CLIENT_PGN:    /** variable data len : see ISO-11783 -13 */
-    case PROPRIETARY_A_PGN: /** multipacket supported, data len 0..1785 bytes*/
-    case PROPRIETARY_A2_PGN: /** multipacket supported, data len 0..1785 bytes*/
-    case SOFTWARE_IDENTIFICATION_PGN: /** variable data len: see ISO/CD ISO-11783-12 */
-    case ECU_IDENTIFICATION_INFORMATION_PGN: /** variable data len: see ISO/CD ISO-11783-12 */
-    case PROPRIETARY_B_PGN: /** variable data len: see SAE J1939 71 */
-      i8_dataLen = -1;
-      break;
-
-    default:
-      i8_dataLen= 8;
-      break;
-  }
-
-  return insertFilter(
-    ar_customer, 
-    IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (aui32_pgn << 8) ),
-    i8_dataLen,
-    ab_reconfigImmediate);
-}
-
 IsoBus_c &getIsoBusInstance( uint8_t aui8_instance)
 {
   MACRO_MULTITON_GET_INSTANCE_BODY(IsoBus_c, PRT_INSTANCE_CNT, aui8_instance);

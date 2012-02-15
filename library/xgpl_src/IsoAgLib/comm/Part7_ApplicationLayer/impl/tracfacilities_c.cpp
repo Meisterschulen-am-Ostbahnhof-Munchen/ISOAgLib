@@ -93,9 +93,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setFilterCreated();
-      // create FilterBox_c for PGN TRACTOR_FACILITIES_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (TRACTOR_FACILITIES_PGN << 8)
-      c_can.insertStandardIsoFilter(*this,TRACTOR_FACILITIES_PGN,true);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (TRACTOR_FACILITIES_PGN<<8) ), 8, true);
     }
   }
 

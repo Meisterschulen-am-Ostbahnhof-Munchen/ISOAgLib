@@ -28,7 +28,7 @@ IsoRequestPgn_c::init()
 {
   isoaglib_assert (!mc_subsystemState.initialized());
 
-  getIsoBusInstance4Comm().insertStandardIsoFilter(*this,(REQUEST_PGN_MSG_PGN | 0xFF),true);
+  getIsoBusInstance4Comm().insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (REQUEST_PGN_MSG_PGN | 0xFF)<<8 ), 3, true);
 
   mc_subsystemState.setInitialized();
 }

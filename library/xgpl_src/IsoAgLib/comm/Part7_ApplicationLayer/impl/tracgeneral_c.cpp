@@ -133,10 +133,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
-      c_can.insertStandardIsoFilter(*this,FRONT_HITCH_STATE_PGN,false);
-      c_can.insertStandardIsoFilter(*this,REAR_HITCH_STATE_PGN,false);
-      c_can.insertStandardIsoFilter(*this,MAINTAIN_POWER_REQUEST_PGN,false);
-      c_can.insertStandardIsoFilter(*this,LANGUAGE_PGN,true);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (FRONT_HITCH_STATE_PGN<<8) ), 8, false);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (REAR_HITCH_STATE_PGN<<8) ), 8, false);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (MAINTAIN_POWER_REQUEST_PGN<<8) ), 8, false);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (LANGUAGE_PGN<<8) ), 8, true);
     }
   }
 

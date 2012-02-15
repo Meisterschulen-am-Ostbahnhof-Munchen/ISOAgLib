@@ -1207,10 +1207,10 @@ MultiReceive_c::init()
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
   // insert receive filters for broadcasted TP
-  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ), 8, false);
-  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ), 8, false);
-  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ), 8, false);
-  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ), 8, false);
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ), 8, false);
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ), 8, false);
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ), 8, false);
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ), 8, false);
   getIsoBusInstance4Comm().reconfigureMsgObj();
 
   setTimePeriod (5000); // nothing to do per default!

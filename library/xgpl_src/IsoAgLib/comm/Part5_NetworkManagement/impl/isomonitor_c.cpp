@@ -99,12 +99,12 @@ IsoMonitor_c::init()
   getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, WORKING_SET_MEMBER_PGN);
 #endif
 
-  if( getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, ((ADDRESS_CLAIM_PGN)+0xFF), false))
+  if( getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN)+0xFF)<<8 ), 8, false))
     b_configure = true;
 #ifdef USE_WORKING_SET
-  if (getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MASTER_PGN), false))
+  if (getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WORKING_SET_MASTER_PGN<<8) ), 8, false))
     b_configure = true;
-  if (getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MEMBER_PGN), false))
+  if (getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WORKING_SET_MEMBER_PGN<<8) ), 8, false))
     b_configure = true;
 #endif
 

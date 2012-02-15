@@ -55,9 +55,9 @@ IsoTerminal_c::init()
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
   // register ISO Filters
-  bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(VT_TO_GLOBAL_PGN),false);
-  bool const cb_set1 = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(LANGUAGE_PGN),false);
-  bool const cb_set2 = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(ECU_TO_GLOBAL_PGN),false);
+  bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VT_TO_GLOBAL_PGN<<8) ), 8, false);
+  bool const cb_set1 = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (LANGUAGE_PGN<<8) ), 8, false);
+  bool const cb_set2 = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ECU_TO_GLOBAL_PGN<<8) ), 8, false);
 
   if (cb_set1 || cb_set2)
     b_atLeastOneFilterAdded = true;
