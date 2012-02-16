@@ -532,7 +532,7 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError
       }
       else
       { // send error command
-        sendSetpointVals( masterConst(), true, SETPOINT_ERROR_COMMAND);
+        //sendSetpointVals( masterConst(), true, SETPOINT_ERROR_COMMAND);
       }
     }
   }
