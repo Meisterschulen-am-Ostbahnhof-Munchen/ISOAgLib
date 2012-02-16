@@ -88,6 +88,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracPTOSetPoint_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
+    if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+      return true;
+
     switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, as we're interested in the whole PGN
     {
       case HITCH_PTO_COMMANDS:

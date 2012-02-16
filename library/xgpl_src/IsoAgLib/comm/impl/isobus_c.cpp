@@ -192,7 +192,7 @@ IsoBus_c::close()
 
 IsoBus_c&
 IsoBus_c::operator<<(CanPkgExt_c& acrc_src)
-{ // when some IsoBus-module is send, the IsoBus has to be initialized!
+{
   isoaglib_assert (getCanInstance4Comm().isReady2Send());
   if ( ! getCanInstance4Comm().isReady2Send() )
     return *this;

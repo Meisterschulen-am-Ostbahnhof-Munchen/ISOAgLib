@@ -95,12 +95,13 @@ TracGuidanceCommand_c::TracGuidanceCommand_c() {}
 bool TracGuidanceCommand_c::processMsg( const CanPkg_c& arc_data )
 {
   CanPkgExt_c pkg( arc_data, getMultitonInst() );
-  uint8_t ui8_sa = pkg.isoSa();
+  if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+    return true;
 
   switch (pkg.isoPgn() & 0x3FF00LU)
   {
     case GUIDANCE_SYSTEM_CMD:
-      if ( checkMode(IsoAgLib::IdentModeTractor) && ( getCommander() == ui8_sa ) )
+      if ( checkMode(IsoAgLib::IdentModeTractor) && ( getCommander() == pkg.isoSa() ) )
       {
         mmap_commanders[mui8_commanderSa].ui16_curvatureCmd = pkg.getUint16Data(0);
         mmap_commanders[mui8_commanderSa].t_curvatureCmdStatus = IsoAgLib::IsoSteerFlag_t( pkg.getUint8Data(2) & 0x3 );

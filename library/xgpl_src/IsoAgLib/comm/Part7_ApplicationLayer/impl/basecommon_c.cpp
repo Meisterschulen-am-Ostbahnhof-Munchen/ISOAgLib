@@ -207,8 +207,12 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 /** check if preconditions for request for pgn are fullfilled
     @return  true -> the request for pgn can be send
   */
-bool BaseCommon_c::check4ReqForPgn(uint32_t /* aui32_pgn */, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver)
+bool BaseCommon_c::check4ReqForPgn(uint32_t /* aui32_pgn */, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
 {
+  // we're not Network Management, so don't answer requests from 0xFE
+  if( apc_isoItemSender == NULL )
+    return false;
+
   if ( NULL == getISOName() ) return false; // not configured for Send
   if ( ! getIsoMonitorInstance( 0 ).existIsoMemberISOName( *getISOName(), true ) ) return false; // XXX TODO
 

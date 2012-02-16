@@ -57,14 +57,18 @@ typedef enum Scope_en
 } Scope;
 
 
-/** values which indicate the state of the received can-message */
+/** values which indicate the state of the received can-message
+   Note: For a valid resolving/packet
+     - DA may be FF
+     - SA may be FE
+   --> The ISO-modules need to check if DE==FF is wanted and SA==FE is allowed!
+ */
 typedef enum MessageState_en {
   MessageValid        = 0,
 
   AdrResolveMask      = (0x3<<0), // AdrResolve wraps SA and DA into one!
   AdrValid            = (0x0<<0),
-  AdrOnlyNetworkMgmt  = (0x1<<0), // e.g. someone sending to a remote address (can be interesting to snoop!)
-  AdrInvalid          = (0x3<<0), // e.g. someone sending with SA 0xFF. definitely malformed can-packet!
+  AdrInvalid          = (0x3<<0), // any of the SaInvalid/DaInvalid set.
 
   // from here on it's just additional information -
   // decisions can be purely taken on the flags above!
@@ -98,6 +102,9 @@ class CanPkgExt_c : public CanPkg_c
 
   /** virtual default destructor, which has nothing to do */
   virtual ~CanPkgExt_c();
+
+  // Note: FE is considered here a VALID SA!
+  bool isValid() const { return (mt_msgState == MessageValid); }
 
   /**
     get the value of the ISO11783 ident field SA
@@ -151,8 +158,6 @@ class CanPkgExt_c : public CanPkg_c
     @return parameter group number
   */
   void setIsoPgn(uint32_t aui32_val);
-
-  bool resolveAddress(AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance );
 
   /**
     set the value of the ISO11783 ident field DP
@@ -233,15 +238,6 @@ class CanPkgExt_c : public CanPkg_c
   }
 
   /** check if source and destination address are valid
-      @see     FilterBox_c::processMsg()
-      @pre     we want to process a message
-      @return  Valid -> both addresses are valid
-               Invalid -> one or both addresses are invalid
-               OnlyNetworkMgmt -> one or both addresses are only useable for network management
-    */
-  MessageState_t resolveReceivingInformation( int ai_multitonInstance );
-
-  /** check if source and destination address are valid
       @see     CanPkgExt_c::operator<<
       @pre     we want to send a message
       @return  Valid -> both addresses are valid
@@ -293,7 +289,11 @@ class CanPkgExt_c : public CanPkg_c
   const IsoName_c& getISONameForDA() const { return mc_addrResolveResDA.mc_isoName; }
 
 private:
-// Private methods
+  /** check if source and destination address are valid - called from the c'tor */
+  MessageState_t resolveReceivingInformation( int ai_multitonInstance );
+
+  bool resolveAddress(AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance );
+
   /** report if the combination of address and scope is valid in context of message processing
       @return  true -> address, scope combination is valid
     */
@@ -318,16 +318,15 @@ private:
     */
   bool resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance  );
 
-
+private:
   /** variable which holds the results for a resolved source address */
   AddressResolveResults_c mc_addrResolveResSA;
 
   /** variable which holds the results for a resolved destination address */
   AddressResolveResults_c mc_addrResolveResDA;
 
-  /** Iso msg state of this can pkg after resolving */
+  /** Address-resolve-state */
   MessageState_t mt_msgState;
-
 };
 
 }

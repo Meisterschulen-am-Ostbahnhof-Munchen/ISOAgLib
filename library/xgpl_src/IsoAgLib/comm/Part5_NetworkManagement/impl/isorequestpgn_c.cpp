@@ -147,16 +147,17 @@ IsoRequestPgn_c::checkIfAlreadyRegistered(
 bool
 IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
 {
-  CanPkgExt_c isoPkg( arc_data, getMultitonInst() );
-  /// Store incoming information for possible later user-triggered "sendAcknowledgePGN()"
-  mpc_isoItemSA = isoPkg.getMonitorItemForSA();
-  mpc_isoItemDA = isoPkg.getMonitorItemForDA();
-  mui32_requestedPGN = ( (static_cast<uint32_t>(isoPkg.operator[](0)))
-                      | (static_cast<uint32_t>(isoPkg.operator[](1)) << 8)
-                      | (static_cast<uint32_t>(isoPkg.operator[](2)) << 16) );
+  CanPkgExt_c pkg( arc_data, getMultitonInst() );
+  if( !pkg.isValid() ) // allow packets with "(pkg.getMonitorItemForSA() == NULL)"
+    return true;
 
-  /// In case a node on the bus has not yet claimed an address (it sends with sa=0xFE, i.e. MonitorItem_c==NULL),
-  /// it can still request ANY PGNs according to Mike - so no special check done here!
+  /// Store incoming information for possible later user-triggered "sendAcknowledgePGN()"
+  mpc_isoItemSA = pkg.getMonitorItemForSA();
+  mpc_isoItemDA = pkg.getMonitorItemForDA();
+  mui32_requestedPGN = ( (static_cast<uint32_t>(pkg.operator[](0)))
+                      | (static_cast<uint32_t>(pkg.operator[](1)) << 8)
+                      | (static_cast<uint32_t>(pkg.operator[](2)) << 16) );
+
   /// 1. Distribute to all clients
   bool b_processedByAnyClient = false;
   for (STL_NAMESPACE::vector<PGN_s>::iterator it_pgn = m_registeredClientsWithPGN.begin();;) {
@@ -167,7 +168,7 @@ IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
         DoesMatchPgn_s(mui32_requestedPGN));
     if (it_pgn == m_registeredClientsWithPGN.end())
       break;
-    bool const cb_set = it_pgn->p_handler->processMsgRequestPGN(mui32_requestedPGN, mpc_isoItemSA, mpc_isoItemDA, isoPkg.time() );
+    bool const cb_set = it_pgn->p_handler->processMsgRequestPGN(mui32_requestedPGN, mpc_isoItemSA, mpc_isoItemDA, pkg.time() );
     if (cb_set)
       b_processedByAnyClient = true;
     ++it_pgn;

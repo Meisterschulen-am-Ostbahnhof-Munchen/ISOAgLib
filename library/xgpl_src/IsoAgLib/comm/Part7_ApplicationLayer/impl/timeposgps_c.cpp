@@ -505,8 +505,9 @@ namespace __IsoAgLib {
   bool TimePosGps_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
-    // there is no need to check if sender exist in the monitor list because this is already done
-    // in CanPkgExt_c -> resolveSendingInformation
+    if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+      return true;
+
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
     const int32_t ci32_now = pkg.time();

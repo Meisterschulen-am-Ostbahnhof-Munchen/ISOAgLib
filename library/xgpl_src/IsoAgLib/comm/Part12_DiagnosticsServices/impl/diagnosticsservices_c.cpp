@@ -439,6 +439,10 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_
   if ( !mrc_identItem.isClaimedAddress() )
     return false;
 
+  // we're not Network Management, so don't answer requests from 0xFE
+  if( apc_isoItemSender == NULL )
+    return false;
+
   switch (aui32_pgn)
   {
     case ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:

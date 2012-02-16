@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/hal/generic_utils/can/icanfifo.h>

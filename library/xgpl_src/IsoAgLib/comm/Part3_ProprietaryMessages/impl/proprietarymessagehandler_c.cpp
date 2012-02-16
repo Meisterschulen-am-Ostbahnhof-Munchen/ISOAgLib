@@ -423,8 +423,10 @@ namespace __IsoAgLib
   bool
   ProprietaryMessageHandler_c::processMsg( const CanPkg_c& arc_data )
   {
-
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
+    if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+      return true;
+
     // look in the whole list
     for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
     {
@@ -458,7 +460,7 @@ namespace __IsoAgLib
         }
       }
     }
-    return (true);
+    return true;
   }
 
 

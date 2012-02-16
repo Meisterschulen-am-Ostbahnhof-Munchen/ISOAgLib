@@ -380,11 +380,14 @@ MultiSend_c::updateEarlierAndLatestInterval()
 bool
 MultiSend_c::processMsg( const CanPkg_c& arc_data )
 {
-  CanPkgExt_c c_data( arc_data, getMultitonInst() );
-  SendStream_c* pc_sendStreamFound = getSendStream (c_data.getISONameForDA(), c_data.getISONameForSA()); // sa/da swapped, of course ;-) !
+  CanPkgExt_c pkg( arc_data, getMultitonInst() );
+  if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+    return true;
+
+  SendStream_c* pc_sendStreamFound = getSendStream (pkg.getISONameForDA(), pkg.getISONameForSA()); // sa/da swapped, of course ;-) !
   if (pc_sendStreamFound)
   { // found a matching SendStream, so call its processMsg()
-    const bool cb_success = pc_sendStreamFound->processMsg( c_data );
+    const bool cb_success = pc_sendStreamFound->processMsg( pkg );
     calcAndSetNextTriggerTime();
     return cb_success;
   }

@@ -142,10 +142,17 @@ void DiagnosticProtocol_c::MultiSendEventHandlerProxy_c::reactOnStateChange(cons
   }
 }
 
-bool DiagnosticProtocol_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* rpc_isoItemReceiver, int32_t )
+bool DiagnosticProtocol_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* rpc_isoItemReceiver, int32_t )
 {
-  if ( !mrc_identItem.isClaimedAddress() ) return false;
-  if ( ( rpc_isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != rpc_isoItemReceiver ) ) return false; // request not adressed to us!
+  if ( !mrc_identItem.isClaimedAddress() )
+    return false;
+
+  // we're not Network Management, so don't answer requests from 0xFE
+  if( apc_isoItemSender == NULL )
+    return false;
+
+  if ( ( rpc_isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != rpc_isoItemReceiver ) )
+    return false; // request not adressed to us!
 
   isoaglib_assert(ECU_DIAGNOSTIC_PROTOCOL_PGN == rui32_pgn);
 

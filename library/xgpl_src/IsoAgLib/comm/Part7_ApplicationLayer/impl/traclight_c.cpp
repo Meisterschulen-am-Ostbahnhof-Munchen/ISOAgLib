@@ -511,12 +511,11 @@ namespace __IsoAgLib {
       @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
     */
   bool TracLight_c::processMsg( const CanPkg_c& arc_data )
-  {
-    
+  {    
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
-    // an ISO11783 base information msg received
-    // there is no need to check if sender exist in the monitor list because this is already done
-    // in CanPkgExt_c -> resolveSendingInformation
+    if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+      return true;
+
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
     lightBitData_t* pt_data = NULL;

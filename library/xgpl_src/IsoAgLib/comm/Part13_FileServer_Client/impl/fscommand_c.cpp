@@ -486,7 +486,7 @@ FsCommand_c::processMsg( const CanPkg_c& arc_data )
       return true;
 
     case en_openFile:
-      decodeOpenFileResponse( CanPkgExt_c( pkg, getMultitonInst() ) );
+      decodeOpenFileResponse( pkg ) );
 
       if (ui8_errorCode == IsoAgLib::fsSuccess)
         ++ui8_nrOpenFiles;
@@ -522,7 +522,7 @@ FsCommand_c::processMsg( const CanPkg_c& arc_data )
         return true;
       }
 
-      decodeSeekFileResponse( CanPkgExt_c( arc_data, getMultitonInst() ));
+      decodeSeekFileResponse( pkg );
 
       //init case get volumes or real external seek file?
       if (mb_initializingFileserver && ui8_possitionMode == 2)
@@ -1200,7 +1200,7 @@ FsCommand_c::decodeGetCurrentDirectoryResponse()
 
 
 void
-FsCommand_c::decodeOpenFileResponse( const CanPkgExt_c& arc_data )
+FsCommand_c::decodeOpenFileResponse( const CanPkg_c& arc_data )
 {
   b_receivedResponse = true;
   ++ui8_tan;
@@ -1211,7 +1211,7 @@ FsCommand_c::decodeOpenFileResponse( const CanPkgExt_c& arc_data )
 
 
 void
-FsCommand_c::decodeSeekFileResponse( const CanPkgExt_c& arc_data )
+FsCommand_c::decodeSeekFileResponse( const CanPkg_c& arc_data )
 {
   b_receivedResponse = true;
   ++ui8_tan;

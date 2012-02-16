@@ -109,8 +109,8 @@ class FsCommand_c : CanCustomer_c
 
     /** functions to decode fileserver repsonses. **/
     void decodeGetCurrentDirectoryResponse();
-    void decodeOpenFileResponse( const CanPkgExt_c& arc_data );
-    void decodeSeekFileResponse( const CanPkgExt_c& arc_data );
+    void decodeOpenFileResponse( const CanPkg_c& arc_data );
+    void decodeSeekFileResponse( const CanPkg_c& arc_data );
     void decodeSeekFileResponse();
     void decodeReadFileResponse();
     void decodeReadDirectoryResponse();

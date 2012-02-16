@@ -221,7 +221,7 @@ CanPkgExt_c::address2IdentLocalDa( int ai_multitonInstance )
         INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state. Destination is a remote node." << INTERNAL_DEBUG_DEVICE_ENDL;
         INTERNAL_DEBUG_DEVICE << "address =  " << int(mc_addrResolveResDA.getAddress()) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      return static_cast<MessageState_t>(DaInvalidRemote | AdrOnlyNetworkMgmt);
+      return static_cast<MessageState_t>(DaInvalidRemote | AdrInvalid);
     }
   }
   else if ( mc_addrResolveResDA.getAddress() == 0xFF )
@@ -270,7 +270,7 @@ CanPkgExt_c::address2IdentRemoteSa( int ai_multitonInstance )
       #if DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Someone sends with one of our SA's." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      return static_cast<MessageState_t>(SaInvalidLocal | AdrOnlyNetworkMgmt);
+      return static_cast<MessageState_t>(SaInvalidLocal | AdrInvalid);
     }
     else
     { // everything is fine
@@ -287,7 +287,7 @@ CanPkgExt_c::address2IdentRemoteSa( int ai_multitonInstance )
     #endif
 
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
-    return static_cast<MessageState_t>(SaInvalidGlobal | AdrInvalid); // mark as invalid
+    return static_cast<MessageState_t>(SaInvalidGlobal | AdrInvalid);
   }
   else if ( mc_addrResolveResSA.getAddress() == 0xFE )
   { // each RequestForXY message (not only ReqForAdrClaim) is allowed to be sent with SA == 0xFE
@@ -301,7 +301,7 @@ CanPkgExt_c::address2IdentRemoteSa( int ai_multitonInstance )
     #if DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    return static_cast<MessageState_t>(SaInvalidUnknown | AdrOnlyNetworkMgmt);
+    return static_cast<MessageState_t>(SaInvalidUnknown | AdrInvalid);
   }
 }
 

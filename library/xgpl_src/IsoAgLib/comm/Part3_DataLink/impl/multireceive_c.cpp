@@ -197,6 +197,9 @@ bool
 MultiReceive_c::processMsg( const CanPkg_c& arc_data )
 {
   CanPkgExt_c pkg( arc_data, getMultitonInst() );
+  if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+    return true;
+
   const uint8_t cui8_pgnFormat = pkg.isoPf();
 
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET

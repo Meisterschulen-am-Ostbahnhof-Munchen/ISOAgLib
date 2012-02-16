@@ -168,9 +168,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracGeneral_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
+    if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+      return true;
+
     bool b_result = false;
-    // there is no need to check if sender exist in the monitor list because this is already done
-    // in CANPkgExt_c -> resolveSendingInformation
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
     switch (pkg.isoPgn() /* & 0x3FFFF */) // don't need to &0x3FFFF, as this is the whole PGN...

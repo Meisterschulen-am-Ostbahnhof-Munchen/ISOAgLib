@@ -1054,7 +1054,7 @@ IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender )
 
 /** process system msg with informations which are
   important for managing of members
-  @return true -> message processed by IsoMonitor_c; false -> process msg by ServiceMonitor
+  @return true -> message processed by IsoMonitor_c;
 */
 bool IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
 {
@@ -1068,57 +1068,139 @@ bool IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
   debugPrintNameTable();
 #endif
 
-  CanPkgExt_c c_isoData( arc_data, getMultitonInst() );
+  CanPkgExt_c pkg( arc_data, getMultitonInst() );
 
-  // get sender isoname
-  const IsoName_c cc_dataIsoName (c_isoData.getDataUnionConst());
+  const IsoName_c cc_dataIsoName (pkg.getDataUnionConst());
 
-  // Handle DESTINATION PGNs
-  switch ((c_isoData.isoPgn() & 0x3FF00LU))
+  // Special NETWORK-MANAGEMENT Handling of ADDRESS_CLAIM_PGN
+  // don't do the generic "valid-resolving" check here!
+  if( (pkg.isoPgn() & 0x3FF00LU) == ADDRESS_CLAIM_PGN )
   {
-    case ADDRESS_CLAIM_PGN:
-    { // address claim
-      b_processed = true;
-      const uint8_t cui8_sa = c_isoData.isoSa();
-      const int32_t ci32_time = c_isoData.time();
+    b_processed = true;
+    const uint8_t cui8_sa = pkg.isoSa();
+    const int32_t ci32_time = pkg.time();
 
-      if ( existIsoMemberISOName (cc_dataIsoName) )
-      {
-        pc_itemSameISOName = &(isoMemberISOName (cc_dataIsoName));
-        if (pc_itemSameISOName->itemState(IState_c::PreAddressClaim))
-          // no need to check here for LostAddress, as it's only about the ISOName,
-          // and that's correct in all other cases!
-        { // this item is still in PreAddressClaim, so don't consider its
-          // ISOName as final, it may be able to adapt it when switching to AddressClaim
-          // Note: Only LOCAL Items can be in state PreAddressClaim
-          pc_itemSameISOName = NULL;
-        }
+    if ( existIsoMemberISOName (cc_dataIsoName) )
+    {
+      pc_itemSameISOName = &(isoMemberISOName (cc_dataIsoName));
+      if (pc_itemSameISOName->itemState(IState_c::PreAddressClaim))
+        // no need to check here for LostAddress, as it's only about the ISOName,
+        // and that's correct in all other cases!
+      { // this item is still in PreAddressClaim, so don't consider its
+        // ISOName as final, it may be able to adapt it when switching to AddressClaim
+        // Note: Only LOCAL Items can be in state PreAddressClaim
+        pc_itemSameISOName = NULL;
       }
-      if ( existIsoMemberNr (cui8_sa) )
-      {
-        pc_itemSameSa = &(isoMemberNr (cui8_sa));
-        if (pc_itemSameSa->itemState(IState_c::PreAddressClaim)
-         || pc_itemSameSa->itemState(IState_c::AddressLost) )
-        { // this item has no valid address, as it's not (anymore) active.
-          // so don't consider it as item with the same SA as the received one.
-          pc_itemSameSa = NULL;
-        }
+    }
+    if ( existIsoMemberNr (cui8_sa) )
+    {
+      pc_itemSameSa = &(isoMemberNr (cui8_sa));
+      if (pc_itemSameSa->itemState(IState_c::PreAddressClaim)
+       || pc_itemSameSa->itemState(IState_c::AddressLost) )
+      { // this item has no valid address, as it's not (anymore) active.
+        // so don't consider it as item with the same SA as the received one.
+        pc_itemSameSa = NULL;
       }
+    }
 
-      /// Receiving REMOTE Address-Claim
-      /// ##############################
+    /// Receiving REMOTE Address-Claim
+    /// ##############################
 
-      if (NULL == pc_itemSameISOName)
-      { // We have NO item with this IsoName
-        /// Insert this new remote node (new isoname). Just check before if it steals a SA from someone
-        if (NULL == pc_itemSameSa)
-        { // New remote node took a fresh SA. The way it should be. Insert it to the list.
-          insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
+    if (NULL == pc_itemSameISOName)
+    { // We have NO item with this IsoName
+      /// Insert this new remote node (new isoname). Just check before if it steals a SA from someone
+      if (NULL == pc_itemSameSa)
+      { // New remote node took a fresh SA. The way it should be. Insert it to the list.
+        insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
+      }
+      else
+      { // New remote node stole a SA. Check if it stole from local or remote.
+        if (pc_itemSameSa->itemState(IState_c::Local))
+        { /// New remote node steals SA from Local node!
+          // --> change address if it has lower PRIO
+          if (pc_itemSameSa->isoName() < cc_dataIsoName)
+          { // the LOCAL item has lower PRIO
+            if (pc_itemSameSa->itemState(IState_c::AddressClaim))
+            { // the LOCAL item was still in AddressClaim (250ms) phase
+              pc_itemSameSa->setNr (unifyIsoSa (pc_itemSameSa, true));
+              // No need to broadcast anything, we didn't yet even call AddToMonitorList...
+              pc_itemSameSa->sendAddressClaim (false); // false: Address-Claim due to SA-change on conflict **while 250ms-phase** , so we can skip the "AddressClaim"-phase!
+            }
+            else
+            { // the LOCAL item is already up and running, so simply change the SA, claim again and go on
+              pc_itemSameSa->changeAddressAndBroadcast (unifyIsoSa (pc_itemSameSa, true));
+              pc_itemSameSa->sendAddressClaim (true); // true: Address-Claim due to SA-change on conflict **after 250ms-phase**, so we can skip the "AddressClaim"-phase!
+            }
+
+            if (pc_itemSameSa->nr() == 254)
+            { // Couldn't get a new address -> remove the item and let IdentItem go to OffUnable!
+              if (pc_itemSameSa->getIdentItem())
+              { // as it should be! as it's local!
+                pc_itemSameSa->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
+              }
+            }
+            insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
+          }
+          else
+          { // let local IsoItem_c process the conflicting adr claim
+            // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
+            pc_itemSameSa->processAddressClaimed (ci32_time, cui8_sa);
+            insertIsoMember (cc_dataIsoName, 0xFE, IState_c::AddressLost, NULL, true);
+            /// ATTENTION: We insert the IsoName WITHOUT a valid Address. (and even notify the registered clients about it!)
+            /// But this may also happen anyway if you register your handler at a later time -
+            /// then your handler will be called with "AddToMonitorList" for all yet known IsoItems -
+            /// and those don't need to have a valid SA at this moment!!
+          }
         }
         else
-        { // New remote node stole a SA. Check if it stole from local or remote.
-          if (pc_itemSameSa->itemState(IState_c::Local))
-          { /// New remote node steals SA from Local node!
+        { /// New remote node steals SA from Remote node!
+          pc_itemSameSa->giveUpAddressAndBroadcast();
+          insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
+        }
+      }
+    }
+    else
+    { // We already have an item with this IsoName
+      if (pc_itemSameISOName->itemState(IState_c::Local))
+      { // We have a local item with this IsoName
+        /// WE GOT A PROBLEM! SOMEONE IS SENDING WITH OUR ISONAME!
+        /// @todo SOON-240 Handle the case when a remote message claims an address with a local running IsoName!
+        // for now, we shut down our own Ident...
+        if (pc_itemSameISOName->getIdentItem())
+        { // as it should be! as it's local!
+          if ( (pc_itemSameISOName->itemState(IState_c::PreAddressClaim)              )
+            && (pc_itemSameISOName->getIdentItem()->itemState(IState_c::AddressClaim) ) )
+          { // special state:
+            // A) the IdentItem_c started already the SA-Claim phase
+            // BUT
+            // B) the IsoItem_c has not yet sent any SA-Claim
+            // ===>> thus we can restart the SA-Claim phase of IdentItem_c with removal of IsoItem_c and setting
+            //       item state of IdentItem_c back to PreAddressClaim
+            pc_itemSameISOName->getIdentItem()->restartWithPreAddressClaim();
+          }
+          else
+          { // the IsoItem_c of the local ident has already sent a first SA-Claim, so that no clean restart is allowed
+            pc_itemSameISOName->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
+          }
+          // now create a new node for the remote SA claim
+          insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
+        }
+      }
+      else
+      { // We have a remote item with this IsoName
+        /// Change SA of existing remote node. Just check before if it steals a SA from someone
+        if (NULL == pc_itemSameSa)
+        { // (A9) Existing remote node took a fresh SA. The way it should be. Just change its address.
+          pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa);
+        }
+        else
+        { // Existing remote node took an already existing SA.
+          if (pc_itemSameSa == pc_itemSameISOName)
+          { // (A1) Existing remote node reclaimed its SA, so it's just a repeated address-claim.
+            pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa); // only call to update the timestamp basically
+          }
+          else if (pc_itemSameSa->itemState(IState_c::Local))
+          { // (A5) Existing remote node steals SA from Local node!
             // --> change address if it has lower PRIO
             if (pc_itemSameSa->isoName() < cc_dataIsoName)
             { // the LOCAL item has lower PRIO
@@ -1141,170 +1223,69 @@ bool IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
                   pc_itemSameSa->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
                 }
               }
-              insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
+              pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa);
             }
             else
             { // let local IsoItem_c process the conflicting adr claim
               // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
               pc_itemSameSa->processAddressClaimed (ci32_time, cui8_sa);
-              insertIsoMember (cc_dataIsoName, 0xFE, IState_c::AddressLost, NULL, true);
-              /// ATTENTION: We insert the IsoName WITHOUT a valid Address. (and even notify the registered clients about it!)
-              /// But this may also happen anyway if you register your handler at a later time -
-              /// then your handler will be called with "AddToMonitorList" for all yet known IsoItems -
-              /// and those don't need to have a valid SA at this moment!!
+              pc_itemSameISOName->giveUpAddressAndBroadcast();
             }
           }
           else
-          { /// New remote node steals SA from Remote node!
+          { // (A3) Existing remote node steals other remote node's SA
             pc_itemSameSa->giveUpAddressAndBroadcast();
-            insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
+            pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa); // will set the new SA and do broadcasting
           }
         }
       }
-      else
-      { // We already have an item with this IsoName
-        if (pc_itemSameISOName->itemState(IState_c::Local))
-        { // We have a local item with this IsoName
-          /// WE GOT A PROBLEM! SOMEONE IS SENDING WITH OUR ISONAME!
-          /// @todo SOON-240 Handle the case when a remote message claims an address with a local running IsoName!
-          // for now, we shut down our own Ident...
-          if (pc_itemSameISOName->getIdentItem())
-          { // as it should be! as it's local!
-            if ( (pc_itemSameISOName->itemState(IState_c::PreAddressClaim)              )
-              && (pc_itemSameISOName->getIdentItem()->itemState(IState_c::AddressClaim) ) )
-            { // special state:
-              // A) the IdentItem_c started already the SA-Claim phase
-              // BUT
-              // B) the IsoItem_c has not yet sent any SA-Claim
-              // ===>> thus we can restart the SA-Claim phase of IdentItem_c with removal of IsoItem_c and setting
-              //       item state of IdentItem_c back to PreAddressClaim
-              pc_itemSameISOName->getIdentItem()->restartWithPreAddressClaim();
-            }
-            else
-            { // the IsoItem_c of the local ident has already sent a first SA-Claim, so that no clean restart is allowed
-              pc_itemSameISOName->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
-            }
-            // now create a new node for the remote SA claim
-            insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
-          }
-        }
-        else
-        { // We have a remote item with this IsoName
-          /// Change SA of existing remote node. Just check before if it steals a SA from someone
-          if (NULL == pc_itemSameSa)
-          { // (A9) Existing remote node took a fresh SA. The way it should be. Just change its address.
-            pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa);
-          }
-          else
-          { // Existing remote node took an already existing SA.
-            if (pc_itemSameSa == pc_itemSameISOName)
-            { // (A1) Existing remote node reclaimed its SA, so it's just a repeated address-claim.
-              pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa); // only call to update the timestamp basically
-            }
-            else if (pc_itemSameSa->itemState(IState_c::Local))
-            { // (A5) Existing remote node steals SA from Local node!
-              // --> change address if it has lower PRIO
-              if (pc_itemSameSa->isoName() < cc_dataIsoName)
-              { // the LOCAL item has lower PRIO
-                if (pc_itemSameSa->itemState(IState_c::AddressClaim))
-                { // the LOCAL item was still in AddressClaim (250ms) phase
-                  pc_itemSameSa->setNr (unifyIsoSa (pc_itemSameSa, true));
-                  // No need to broadcast anything, we didn't yet even call AddToMonitorList...
-                  pc_itemSameSa->sendAddressClaim (false); // false: Address-Claim due to SA-change on conflict **while 250ms-phase** , so we can skip the "AddressClaim"-phase!
-                }
-                else
-                { // the LOCAL item is already up and running, so simply change the SA, claim again and go on
-                  pc_itemSameSa->changeAddressAndBroadcast (unifyIsoSa (pc_itemSameSa, true));
-                  pc_itemSameSa->sendAddressClaim (true); // true: Address-Claim due to SA-change on conflict **after 250ms-phase**, so we can skip the "AddressClaim"-phase!
-                }
-
-                if (pc_itemSameSa->nr() == 254)
-                { // Couldn't get a new address -> remove the item and let IdentItem go to OffUnable!
-                  if (pc_itemSameSa->getIdentItem())
-                  { // as it should be! as it's local!
-                    pc_itemSameSa->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
-                  }
-                }
-                pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa);
-              }
-              else
-              { // let local IsoItem_c process the conflicting adr claim
-                // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
-                pc_itemSameSa->processAddressClaimed (ci32_time, cui8_sa);
-                pc_itemSameISOName->giveUpAddressAndBroadcast();
-              }
-            }
-            else
-            { // (A3) Existing remote node steals other remote node's SA
-              pc_itemSameSa->giveUpAddressAndBroadcast();
-              pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa); // will set the new SA and do broadcasting
-            }
-          }
-        }
-      }
-    } break;
+    }
+  }
+  else
+  {
+    // for all following modules, we do the "typical" "valid-resolving"-check!
+    if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+      return true;
 
 #ifdef USE_ISO_TASKCONTROLLER_CLIENT
-    case PROCESS_DATA_PGN:
-      // TODO copy arc data in procesMsg of process_c
-      return getProcessInstance4Comm().processMsg( arc_data );
+    switch ((pkg.isoPgn() & 0x3FF00LU))
+    {
+      case PROCESS_DATA_PGN:
+        // TODO copy arc data in procesMsg of process_c
+        return getProcessInstance4Comm().processMsg( arc_data );
+    }
 #endif
-  } // end switch for DESTINATION pgn
 
 #ifdef USE_WORKING_SET
-  // Handle NON-DESTINATION PGNs
-  switch ((c_isoData.isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
-  {
-    case WORKING_SET_MASTER_PGN:
-    { // working set master
-      b_processed = true;
-      // get and check sender
-      IsoItem_c* pc_masterItem = c_isoData.getMonitorItemForSA();
-      // we have to check here because we also receive network-management messages here").
-      if (pc_masterItem)
-      { // in Record Byte 1 (i.e. offset-byte 0) stands the number of TOTAL MEMBERS of this Working-Set.
+    // Handle NON-DESTINATION PGNs
+    switch ((pkg.isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
+    {
+      case WORKING_SET_MASTER_PGN:
+      { // working set master
+        b_processed = true;
+        // in Record Byte 1 (i.e. offset-byte 0) stands the number of TOTAL MEMBERS of this Working-Set.
         // Note that this includes the Master, too - So we need to substract the master
-        pc_masterItem->setMaster (c_isoData.getUint8Data (1-1)-1, c_isoData.time() );
+        pkg.getMonitorItemForSA()->setMaster (pkg.getUint8Data (1-1)-1, pkg.time() );
         /** @todo SOON-240: WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
          * for now the slaves' isonames are just initialized with IsoNameUnspecified until the WORKING_SET_SLAVE message arrives...
          * AND: Check what happens if the WS-sequence arrives a further time?
          * --> for timings see Iso11783-Part1
          */
-      }
-      else
-      { // shouldn't happen normally (but could be a theoretical message on the bus,
-        // so we needed the check. But we don't have to do anything...
-        // ! Someone with an unknown SA sent a WORKING_SET_MASTER_PGN message...
-        /// @todo SOON-240 Should we register such errors at all? Should we register such errors as "(iLibErr_c::Inconsistency, iLibErr_c::System)" ?
-        //getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
-      }
-    } break;
+      } break;
 
-    case WORKING_SET_MEMBER_PGN:
-    { // working set member
-      b_processed = true;
-      // get and check sender
-      IsoItem_c* pc_masterItem = c_isoData.getMonitorItemForSA();
-      // we have to check here because we also receive network-management messages here").
-      if (pc_masterItem)
-      {
+      case WORKING_SET_MEMBER_PGN:
+      { // working set member
+        b_processed = true;
         // the working set master places the NAME field of each children
         // in the data part of this message type
-        pc_masterItem->addSlave (cc_dataIsoName);
-      }
-      else
-      { // shouldn't happen normally (but could be a theoretical message on the bus,
-        // so we needed the check. But we don't have to do anything...
-        // ! Someone with an unknown SA sent a WORKING_SET_MASTER_PGN message...
-        /// @todo SOON-240 Should we register such errors at all? Should we register such errors as "(iLibErr_c::Inconsistency, iLibErr_c::System)" ?
-        //getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
-      }
-    } break;
+        pkg.getMonitorItemForSA()->addSlave (cc_dataIsoName);
+      } break;
 
-    default:
-      break;
-  } // end switch for NON-DESTINATION pgn
+      default:
+        break;
+    } // end switch for NON-DESTINATION pgn
 #endif
+  }
 
 #if DEBUG_ISOMONITOR
   INTERNAL_DEBUG_DEVICE << "IsoMonitor_c::processMsg()-END" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -1315,34 +1296,42 @@ bool IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
 }
 
 bool
-IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver, int32_t ai_requestTimestamp )
+IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t ai_requestTimestamp )
 {
-  switch (aui32_pgn)
+  // ADDRESS_CLAIM_PGN is NETWORK-MANAGEMENT, so SA=0xFE is allowed
+  if( aui32_pgn == ADDRESS_CLAIM_PGN )
   {
-    case ADDRESS_CLAIM_PGN:
-      if (apc_isoItemReceiver == NULL)
-      { // No specific destination so it's broadcast: Let all local item answer!
-        // update time of last GLOBAL adress claim request to detect dead nodes
-        setLastIsoSaRequest (ai_requestTimestamp); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
+    if (apc_isoItemReceiver == NULL)
+    { // No specific destination so it's broadcast: Let all local item answer!
+      // update time of last GLOBAL adress claim request to detect dead nodes
+      setLastIsoSaRequest (ai_requestTimestamp); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
 
-
-        bool b_processedRequestPGN = false;
-        for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
-              pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
-        { // let all local pc_iterItem process this request
-          bool const cb_set = pc_iterItem->itemState (IState_c::Local) &&
-            pc_iterItem->sendSaClaim();
-          if (cb_set)
-            b_processedRequestPGN = true;
-        }
-        return b_processedRequestPGN; //return value doesn't matter, because the request was for GLOBAL (255), so it isn't NACKed anyway
+      bool b_processedRequestPGN = false;
+      for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
+        pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
+      { // let all local pc_iterItem process this request
+        bool const cb_set = pc_iterItem->itemState (IState_c::Local) &&
+        pc_iterItem->sendSaClaim();
+        if (cb_set)
+          b_processedRequestPGN = true;
       }
-      else
-      { // ISORequestPGN ensured that the Item exists and is local: Let it process!
-        return apc_isoItemReceiver->sendSaClaim();
-      }
+      return b_processedRequestPGN; //return value doesn't matter, because the request was for GLOBAL (255), so it isn't NACKed anyway
+    }
+    else
+    { // ISORequestPGN ensured that the Item exists and is local: Let it process!
+      return apc_isoItemReceiver->sendSaClaim();
+    }
+  }
+  
+  // for all other PGNs, SA=0xFE is not allowed, enforce a valid sender!
+  
+  // we're not Network Management, so don't answer requests from 0xFE
+  if( apc_isoItemSender == NULL )
+    return false;
 
 #ifdef USE_WORKING_SET
+  switch (aui32_pgn)
+  {
     case WORKING_SET_MASTER_PGN: // break intentionally left out - react on both PGNs with sending out the complete ws-announce sequence!
     case WORKING_SET_MEMBER_PGN:
       if (apc_isoItemReceiver == NULL)
@@ -1376,12 +1365,11 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItem
           return false; // let it get NACKed
         }
       }
-#endif
-
-    default:
-      // shouldn't happen as we only registered for the above handled PGNs
-      return false;
+	  break;
   }
+#endif
+  // shouldn't happen as we only registered for the above handled PGNs
+  return false;
 }
 
 
