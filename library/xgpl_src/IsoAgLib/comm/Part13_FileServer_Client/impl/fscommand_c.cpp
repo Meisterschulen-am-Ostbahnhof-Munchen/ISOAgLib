@@ -486,7 +486,7 @@ FsCommand_c::processMsg( const CanPkg_c& arc_data )
       return true;
 
     case en_openFile:
-      decodeOpenFileResponse( pkg ) );
+      decodeOpenFileResponse( pkg );
 
       if (ui8_errorCode == IsoAgLib::fsSuccess)
         ++ui8_nrOpenFiles;
