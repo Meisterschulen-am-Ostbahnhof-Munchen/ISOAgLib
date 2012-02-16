@@ -210,31 +210,16 @@ protected: // methods
 
   /** periodically called functions do perform
       time dependent actions in prepare address claim state
-      -> unify ISOName (Device Class / Device Class Instance)
       -> insert item in appropriate monitor lists and initiate address claim
-
-      possible errors:
-          * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
-      @see Scheduler_c::timeEvent
-      @see SystemMgmt_c::timeEvent
-      @see System_c::getTime
-      @return true -> all planned activities performed
     */
-  bool timeEventPreAddressClaim( void );
+  void timeEventPreAddressClaim( void );
 
   /** periodically called functions do perform
       time dependent actions in active (address claim/claimed address) state
       -> call timeEvent for corresponding items in MemberMonitor/ISOMonitor
-      -> initiate repeated address claim with changed Nr / ISOName if conflict with other item occured
-
-      possible errors:
-          * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
-      @see Scheduler_c::timeEvent
-      @see SystemMgmt_c::timeEvent
-      @see System_c::getTime
-      @return true -> all planned activities performed
+      -> eventually store SA via IdentDataStorage_c.
     */
-  bool timeEventActive( void );
+  void timeEventActive( void );
 
 
 private: // methods

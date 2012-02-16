@@ -214,30 +214,26 @@ IdentItem_c::timeEvent( void )
       || (getIsoItem()->itemState (IState_c::OffUnable))
        )
     { // if the IsoItem dictates us to go offline, we're NOT offline by User of course...
-      goOffline(false);
+      goOffline( false );
     }
   }
-  if ( (itemState (IState_c::OffExplicitly))
-    || (itemState (IState_c::OffUnable))
-     )
-  { // We're OFF! So nothing to do!
-    return true;
-  }
-  else
-  { // the system is not switched to off state
+
+  if(! ( (itemState (IState_c::OffExplicitly)) || (itemState (IState_c::OffUnable)) ) )
+  { // We're ON, so do something!
     // if state is prepare address claim check if isoName unique and insert item in list
     if (itemState(IState_c::PreAddressClaim))
-      return timeEventPreAddressClaim();
+      timeEventPreAddressClaim();
     else
-      return timeEventActive();
+      timeEventActive();
   }
+  return true;
 }
 
 
-bool
+void
 IdentItem_c::timeEventPreAddressClaim( void )
 {
-  if( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( mc_isoName, true ) ) 
+  if( !getIsoMonitorInstance4Comm().existIsoMemberISOName( mc_isoName, true ) ) 
   {
     // insert element in list
     mpc_isoItem = getIsoMonitorInstance4Comm().insertIsoMember (isoName(), mui8_sa,
@@ -260,97 +256,41 @@ IdentItem_c::timeEventPreAddressClaim( void )
     }
     setItemState(IState_c::AddressClaim);
   }
-
-  return true;
 }
 
 
-bool
+void
 IdentItem_c::timeEventActive( void )
 {
-  /** @todo SOON-240 USE THIS PRINCIPLE IN CASE WE RECEIVE MESSAGE WITH LOCAL SA -> detected in DataLinkLayer (CanPkgExt_c->resolving)
-           --> we should change SA in such a case AND maybe send some sort of DIAGNOSE MESSAGE
-  if ((pc_memberItem->affectedConflictCnt() > 3))
-   */
+  isoaglib_assert( mpc_isoItem );
+  isoaglib_assert( mpc_isoItem->itemState(IState_c::Local) );
 
-  /// If we're in Activetimeevent, we always do have a valid mpc_isoItem!
-  if (mpc_isoItem->itemState(IState_c::Local))
+  const bool b_oldAddressClaimState = mpc_isoItem->itemState(IState_c::ClaimedAddress);
+
+  mpc_isoItem->timeEvent();
+
+  // check if IsoItem_c reports now to have finished address claim and store it in Ident_Item
+  if( mpc_isoItem->itemState(IState_c::ClaimedAddress) )
   {
     bool b_storeAddress = false;
-    bool b_oldAddressClaimState = mpc_isoItem->itemState(IState_c::ClaimedAddress);
 
-    mpc_isoItem->timeEvent();
-    // check if IsoItem_c reports now to have finished address claim and store it in Ident_Item
-    if(mpc_isoItem->itemState(IState_c::ClaimedAddress)) {
+    if( !b_oldAddressClaimState )
+    { // item changed from address claim to claimed address state
+      setItemState( IState_c::ClaimedAddress );
+      b_storeAddress = true;
+    }
 
-      if(!b_oldAddressClaimState) {
-        // item changed from address claim to claimed address state
-        // -> create local filter for processs data
-        setItemState(IState_c::ClaimedAddress);
-        b_storeAddress = true;
-      }
+    if( (mpc_isoItem->nr() != mui8_sa) )
+    { // we got a new SA
+      mui8_sa = mpc_isoItem->nr();
+      b_storeAddress = true;
+    }
 
-      // check for a changed SA - there's no state change cause of address conflict handling
-      if((mpc_isoItem->nr() != mui8_sa)) {
-        mui8_sa = mpc_isoItem->nr();
-        b_storeAddress = true;
-      }
-
-      isoaglib_assert(mpc_dataStorageHandler);
-      if(b_storeAddress) {
-        mpc_dataStorageHandler->storeSa(mui8_sa);
-      }
+    isoaglib_assert( mpc_dataStorageHandler );
+    if( b_storeAddress ) {
+      mpc_dataStorageHandler->storeSa( mui8_sa );
     }
   }
-  else
-  { // remote ISO item has overwritten local item
-    /// @todo SOON-240 This case shouldn't happen anymore!!!!!!!! --> See conflict handling when some sends an ADDRESS_CLAIM with our ISONAME!
-    // ->see if we can still live with our IsoName
-    // ->if not, we'lost because we can't change our IsoName
-    IsoMonitor_c& rc_isoMonitor = getIsoMonitorInstance4Comm();
-    const bool cb_isoNameStillAvailable = !rc_isoMonitor.existIsoMemberISOName (mc_isoName);
-
-    if (cb_isoNameStillAvailable)
-    { // insert element in list
-      mpc_isoItem =  rc_isoMonitor.insertIsoMember(isoName(), mui8_sa,
-        IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false);
-      if ( NULL != mpc_isoItem )
-      {
-        // register the new item for ISORequestPGN
-        getIsoRequestPgnInstance4Comm().registerLocalDevice( isoName() );
-
-        #ifdef USE_WORKING_SET
-        mpc_isoItem->setMasterSlaves (mpvec_slaveIsoNames);
-        #endif
-
-        mpc_isoItem->timeEvent();
-      }
-    }
-    else
-    { /// IsoName now already used on the bus - we can't claim an address now anymore!
-      /** @todo SOON-240 insert new error-location/type for those cases! */
-      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System );
-      IsoItem_c& rc_foundIsoItemSameIsoName = rc_isoMonitor.isoMemberISOName (mc_isoName);
-      if (rc_foundIsoItemSameIsoName.itemState (IState_c::Local))
-      { // now the ISOName is used by some other member on the BUS
-        mpc_isoItem = &rc_foundIsoItemSameIsoName; // seems to be our IsoItem although it's a case that shouldn't occur!
-        #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
-        INTERNAL_DEBUG_DEVICE << "ERROR: IsoName stolen by other local member, take this IsoItem then, although this shouldn't happen!" << INTERNAL_DEBUG_DEVICE_ENDL;
-        MACRO_ISOAGLIB_ABORT();
-        #endif
-      }
-      else
-      { // now the ISOName is used by some other member on the BUS
-        // ==> conflict
-        setItemState (OffUnable); // withdraw from action
-        #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
-        INTERNAL_DEBUG_DEVICE << "WARNING: IsoName stolen by other member on the bus (remote), so we have to shut off forever!" << INTERNAL_DEBUG_DEVICE_ENDL;
-        #endif
-      }
-    }
-  }
-
-  return true;
 }
 
 
