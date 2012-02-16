@@ -195,7 +195,7 @@ IsoMonitor_c::timeEvent()
     switch( (*pc_iter)->itemState() & 0x7C )
     {
     case IState_c::AddressClaim | IState_c::Active:
-      if (i32_checkPeriod > 150) i32_checkPeriod = 150;
+      if (i32_checkPeriod > 10) i32_checkPeriod = 10;
       break;
 
     case IState_c::ClaimedAddress | IState_c::Active:
