@@ -51,8 +51,7 @@ struct iFsWhitelist_c
   uint8_t ui8_minSimultaniouslyOpenFiles;
 };
 
-typedef struct iFsWhitelist_c * iFsWhitelistPtr;
-typedef STL_NAMESPACE::vector<iFsWhitelistPtr> iFsWhitelistList;
+typedef STL_NAMESPACE::vector<iFsWhitelist_c> iFsWhitelistList;
 
 enum iFsCommandErrors
 {

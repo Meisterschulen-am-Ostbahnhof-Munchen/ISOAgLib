@@ -64,7 +64,7 @@ class FsClientServerCommunication_c
     IsoAgLib::iFsDirList getFsVolumes() { return pc_commandHandler->getFileserver().getFsVolumes(); }
 
     /** constructor to init client-server communication without fileserver*/
-    FsClientServerCommunication_c(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_fsClient, IsoAgLib::iFsWhitelistList v_fsWhitelist);
+    FsClientServerCommunication_c(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_fsClient, const IsoAgLib::iFsWhitelistList &v_fsWhitelist);
 
     /** explicit conversion to reference of interface class type*/
     IsoAgLib::iFsClientServerCommunication_c* toInterfacePointer();

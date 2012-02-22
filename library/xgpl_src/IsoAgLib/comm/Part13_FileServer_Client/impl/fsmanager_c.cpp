@@ -158,7 +158,7 @@ FsManager_c::FsManager_c()
   * the original FsClientServerCommunication_c is returned.
   */
 FsClientServerCommunication_c *
-FsManager_c::initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, IsoAgLib::iFsWhitelistList v_fsWhitelist)
+FsManager_c::initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, const IsoAgLib::iFsWhitelistList &v_fsWhitelist)
 {
   FsClientServerCommunication_c *c_fscscClient = NULL;
 

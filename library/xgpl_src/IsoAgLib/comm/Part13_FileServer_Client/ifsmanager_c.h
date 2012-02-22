@@ -29,7 +29,7 @@ class iFsManager_c : private __IsoAgLib::FsManager_c
       * Registered a client to the fsmanager and returnes the clients fsclientservercommunication used for interaction with a
       * fileserver.
       */
-    iFsClientServerCommunication_c *initFsClient(iIdentItem_c &rc_identItem, iFsClient_c &rc_fsClient, iFsWhitelistList v_fsWhitelist)
+    iFsClientServerCommunication_c *initFsClient(iIdentItem_c &rc_identItem, iFsClient_c &rc_fsClient, const iFsWhitelistList &v_fsWhitelist)
     {
       return __IsoAgLib::FsManager_c::initFsClient(static_cast<__IsoAgLib::IdentItem_c&>(rc_identItem), (rc_fsClient), v_fsWhitelist)->toInterfacePointer();
     }

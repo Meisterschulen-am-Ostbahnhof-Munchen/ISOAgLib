@@ -38,7 +38,7 @@ namespace __IsoAgLib {
 FsClientServerCommunication_c::FsClientServerCommunication_c(
     IdentItem_c &rc_identItem,
     IsoAgLib::iFsClient_c &rc_fsClient,
-    IsoAgLib::iFsWhitelistList v_inFsWhitelist
+    const IsoAgLib::iFsWhitelistList &v_inFsWhitelist
 )
   : v_fsWhitelist( v_inFsWhitelist )
   , c_fsClient(rc_fsClient)
@@ -64,10 +64,10 @@ FsClientServerCommunication_c::notifyOnUsableFileServer(FsServerInstance_c &rc_f
        it_whitelist != v_fsWhitelist.end();
        ++it_whitelist)
   { /// @todo #854 Properly compare removable request with volumes-list. Therefor enhance volume-list with volume-flags.
-    if ( // (*it_whitelist)->b_requestRemoveableMedium == rc_fsServerInstance.getSupportsMultiVolumes() &&
-        ((*it_whitelist)->i32_requestedManufacturer == rc_fsServerInstance.getIsoName().manufCode() ||
-         (*it_whitelist)->i32_requestedManufacturer == -1) &&
-        (*it_whitelist)->ui8_minSimultaniouslyOpenFiles <= rc_fsServerInstance.getMaxNrOpenFiles())
+    if ( // (*it_whitelist).b_requestRemoveableMedium == rc_fsServerInstance.getSupportsMultiVolumes() &&
+        ((*it_whitelist).i32_requestedManufacturer == rc_fsServerInstance.getIsoName().manufCode() ||
+         (*it_whitelist).i32_requestedManufacturer == -1) &&
+        (*it_whitelist).ui8_minSimultaniouslyOpenFiles <= rc_fsServerInstance.getMaxNrOpenFiles())
     {
       c_fsClient.finishedConnectingToFileserver (*rc_fsServerInstance.toInterfacePointer());
       break;

@@ -100,7 +100,7 @@ class FsManager_c : public Scheduler_Task_c
   * @return a new FsClientServerCommunication_c* if the client has not been registered yet. If the fileserver has been registered,
   * the original FsClientServerCommunication_c is returned.
   */
-    FsClientServerCommunication_c *initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, IsoAgLib::iFsWhitelistList v_fsWhitelist);
+    FsClientServerCommunication_c *initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, const IsoAgLib::iFsWhitelistList &v_fsWhitelist);
 
    /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
      <!-- @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
