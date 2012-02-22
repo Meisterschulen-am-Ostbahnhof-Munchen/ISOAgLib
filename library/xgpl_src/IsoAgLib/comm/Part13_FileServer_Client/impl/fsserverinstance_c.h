@@ -179,6 +179,12 @@ class FsServerInstance_c : public CanCustomer_c
 
    /** time-triggered operations */
    void timeEvent();
+
+ private:
+  /** not copyable : copy constructor is only declared, never defined */
+  FsServerInstance_c(const FsServerInstance_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  FsServerInstance_c& operator=(const FsServerInstance_c&); 
 };
 
 

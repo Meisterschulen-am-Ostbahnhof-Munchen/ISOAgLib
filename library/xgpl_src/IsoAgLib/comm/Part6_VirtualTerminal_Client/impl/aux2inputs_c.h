@@ -96,6 +96,12 @@ private:
   bool mb_learnMode;
 
   VtClientServerCommunication_c* mp_vtClientServerCommunication;
+
+private:
+  /** not copyable : copy constructor is only declared, never defined */
+  Aux2Inputs_c(const Aux2Inputs_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  Aux2Inputs_c& operator=(const Aux2Inputs_c&); 
 };
 
 

@@ -212,6 +212,12 @@ class FsClientServerCommunication_c
       * directory as well as the existing volumes of the fileserver have been requested successfully.
       */
     bool mb_finishedRegistering;
+
+ private:
+  /** not copyable : copy constructor is only declared, never defined */
+  FsClientServerCommunication_c(const FsClientServerCommunication_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  FsClientServerCommunication_c& operator=(const FsClientServerCommunication_c&); 
 };
 
 

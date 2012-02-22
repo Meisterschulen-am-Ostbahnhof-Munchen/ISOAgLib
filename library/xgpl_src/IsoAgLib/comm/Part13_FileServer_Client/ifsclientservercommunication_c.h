@@ -28,7 +28,11 @@ namespace IsoAgLib {
   */
 class iFsClientServerCommunication_c : private __IsoAgLib::FsClientServerCommunication_c
 {
-  friend class __IsoAgLib::FsClientServerCommunication_c;
+  private:
+    /** only declared, never defined -> not constructable */
+    iFsClientServerCommunication_c();
+
+    friend class __IsoAgLib::FsClientServerCommunication_c;
 
   public :
 

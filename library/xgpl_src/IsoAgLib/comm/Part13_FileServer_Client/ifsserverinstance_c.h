@@ -23,6 +23,10 @@ class iFsClientServerCommunication_c;
 
 class iFsServerInstance_c : private __IsoAgLib::FsServerInstance_c
 {
+private:
+  /** only declared, never defined -> not constructable */
+  iFsServerInstance_c();
+
   friend class __IsoAgLib::FsServerInstance_c;
   friend class iFsClientServerCommunication_c;
 };

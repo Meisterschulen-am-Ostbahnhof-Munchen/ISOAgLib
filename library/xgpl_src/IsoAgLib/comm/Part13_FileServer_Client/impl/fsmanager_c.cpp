@@ -226,14 +226,10 @@ FsManager_c::notifyOnFileserverStateChange(
       break;
 
     case FsServerInstance_c::online:
-      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
-          it_communications != v_communications.end();
-          ++it_communications)
+      if ( !v_communications.empty() )
       {
-        FsCommand_c *pc_command = new FsCommand_c(*(*it_communications), rc_fileserver);
-
+        FsCommand_c *pc_command = new FsCommand_c(*v_communications.front(), rc_fileserver);
         l_initializingCommands.push_back(pc_command);
-        return;
       }
       break;
 

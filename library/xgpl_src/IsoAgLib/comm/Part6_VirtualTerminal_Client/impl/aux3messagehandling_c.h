@@ -24,6 +24,12 @@ class Aux3MessageHandling_c {
  private:
   /** back reference to Aux3Mgmt_c */
   Aux3Mgmt_c& mrc_aux3Mgmt;
+
+ private:
+  /** not copyable : copy constructor is only declared, never defined */
+  Aux3MessageHandling_c(const Aux3MessageHandling_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  Aux3MessageHandling_c& operator=(const Aux3MessageHandling_c&); 
 };
 
 }
