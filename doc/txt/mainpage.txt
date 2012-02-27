@@ -57,7 +57,7 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
-\subsection Change_R 2.2.1 to 2.3.0
+\subsection Change_S 2.2.1 to 2.3.0
 
 CAN:
 - Enhancement: Added initial support for SocketCAN under Linux: Enable by using "sys" for "x86linux"
