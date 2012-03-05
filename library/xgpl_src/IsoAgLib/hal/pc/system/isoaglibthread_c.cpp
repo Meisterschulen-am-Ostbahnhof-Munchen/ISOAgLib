@@ -29,6 +29,12 @@
 
 namespace __IsoAgLib {
 
+void
+IsoAgLibThread_c::installThreadSetupHook (void (*pf_threadSetupHook)())
+{
+  mpf_threadSetupHook = pf_threadSetupHook;
+}
+
 
 IsoAgLibThread_c::startResult
 IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
@@ -131,6 +137,10 @@ void *
 IsoAgLibThread_c::thread_core (void* thread_param)
 {
   IsoAgLibThread_c &thisThread = *(static_cast<IsoAgLibThread_c *>(thread_param));
+
+  // call user-hook for setting up things like thread-name, -priority, etc.
+  if( mpf_threadSetupHook != NULL )
+    mpf_threadSetupHook();
 
   while (!thisThread.mb_requestThreadToStop)
   {

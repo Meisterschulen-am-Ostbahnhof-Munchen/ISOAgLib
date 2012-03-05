@@ -62,6 +62,7 @@ private:
   IsoAgLibThread_c()
     : mc_protectAccess()
     , mthread_core()
+	, mpf_threadSetupHook (NULL)
     , mb_requestThreadToStop (false)
     , mset_keys()
   {} // private c'tor
@@ -108,6 +109,8 @@ public:
   //!         false => ISOAgLib Thread was not started by "key"
   bool isRunning (void *key) const;
 
+  void installThreadSetupHook (void (*pf_threadSetupHook)());
+
 private: // methods
   // thread stuff
   static void* thread_core (void* thread_param);
@@ -115,6 +118,7 @@ private: // methods
 private: // attributes
   HAL::ExclusiveAccess_c mc_protectAccess; // make start/stop sequence thread-safe
   pthread_t mthread_core;
+  void ( *mpf_threadSetupHook )();
   bool mb_requestThreadToStop;
 
   STL_NAMESPACE::set<void *>mset_keys;
