@@ -209,6 +209,7 @@ public:
 
   enum uploadPoolState_t {
     UploadPoolInit,
+    UploadPoolWaitingForGetVersionsResponse,
     UploadPoolWaitingForLoadVersionResponse,
     UploadPoolWaitingForMemoryResponse,
     UploadPoolUploading,
@@ -519,6 +520,10 @@ private:
   int getMultitonInst() { return mi_multitonInst; };
 
   bool isPreferredVTTimeOut() const;
+
+  bool isVersionFound(Stream_c& arc_stream) const;
+  void startUploadVersion();
+  void startLoadVersion();
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */

@@ -157,19 +157,19 @@ public:
 
   /**
     hook function that gets called after the ISO_Terminal_c instance
-    receives a "Input String Value" Message
+    receives a "Input String Value" Message. The function is called after
+    the last TP package is received.
     @param aui16_objId of the object where the user changed the value
     @param aui8_length the length in 8bit
     @param rc_streaminput reference to streaminput
     @param aui8_unparsedBytes
-    @param b_isFirst
-    @param b_isLast
+    @param b_isFirst -> OBSOLETE. Always true
+    @param b_isLast -> OBSOLETE. Always true
   */
   virtual void eventStringValue (uint16_t aui16_objId, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t aui8_unparsedBytes, bool b_isFirst, bool b_isLast)=0;
 
   /**
-    the abort function is implemented empty by default because
-    it is only needed for on-the-fly parsing of the string value
+    OBSOLETE : no on-the-fly parsing anymore
   */
   virtual void eventStringValueAbort() {}
 

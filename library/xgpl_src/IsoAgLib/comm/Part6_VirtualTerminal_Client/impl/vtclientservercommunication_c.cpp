@@ -143,6 +143,7 @@ namespace __IsoAgLib {
 #define DEF_TimeOut_GetMemory 10000
 #define DEF_TimeOut_EndOfObjectPool 60000
 #define DEF_TimeOut_VersionLabel 60000
+#define DEF_TimeOut_GetVersions 60000
 #define DEF_WaitFor_Reupload 5000
 
 
@@ -289,7 +290,7 @@ SendUpload_c VtClientServerCommunication_c::msc_tempSendUpload;
 void
 VtClientServerCommunication_c::reactOnAbort (Stream_c& /*arc_stream*/)
 {
-  mrc_pool.eventStringValueAbort();
+  // mrc_pool.eventStringValueAbort(); // OBSOLETE no on-the-fly parsing anymore
 }
 
 
@@ -324,14 +325,18 @@ VtClientServerCommunication_c::processPartStreamDataChunk (Stream_c& arc_stream,
         const uint16_t ui16_totalstreamsize = arc_stream.getByteTotalSize();
         if (ui16_totalstreamsize < (mui8_inputStringLength + 4))
         { /** @todo SOON-258 "if (ui16_totalstreamsize > (mui8_inputStringLength + 4)) registerErronousVtMessage("VT Input String Activation CAN-Message too long.");
-	      This is/was a problem of the John Deere GS2 VT and needs to be registered for any VT.
-	      It will be fixed in the GS2 in 2008, but for now we have relaxed the checking and put this comment in here.
-	   */
+	              This is/was a problem of the John Deere GS2 VT and needs to be registered for any VT.
+	              It will be fixed in the GS2 in 2008, but for now we have relaxed the checking and put this comment in here.
+	        */
           arc_stream.setStreamInvalid();
           return false;
         }
       }
-      mrc_pool.eventStringValue (mui16_inputStringId, mui8_inputStringLength, arc_stream, arc_stream.getNotParsedSize(), ab_isFirstChunk, ab_isLastChunk);
+      if (ab_isLastChunk)
+      {
+        // no on-the-fly parsing anymore
+        mrc_pool.eventStringValue (mui16_inputStringId, mui8_inputStringLength, arc_stream, arc_stream.getNotParsedSize(), true, true);
+      }
       break;
 
     case 0x24:
@@ -357,7 +362,32 @@ VtClientServerCommunication_c::processPartStreamDataChunk (Stream_c& arc_stream,
 
       }
       break;
+#ifdef GET_VERSIONS
+    case 0xE0:
+      // Command: "Non Volatile Memory", parameter "Get Versions Response"
+      if (men_uploadPoolState != UploadPoolWaitingForGetVersionsResponse)
+        break;
 
+      if (ab_isLastChunk)
+      {
+        // decide to load a saved version or to upload the objectpool
+        if (isVersionFound(arc_stream))
+        { // Version label found -> load version
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
+          INTERNAL_DEBUG_DEVICE << "Version found -> Load pool" << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+          startLoadVersion();
+        }
+        else
+        { // Version label not known -> upload the objectpool
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
+          INTERNAL_DEBUG_DEVICE << "Version not known -> Upload pool" << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+          startUploadVersion(); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
+        }
+      }
+      break;
+#endif
     default:
       if ( ui8_streamFirstByte >= 0x60 && ui8_streamFirstByte <= 0x7F && ab_isLastChunk)
       { // a proprietary stream message has been completely received -> process it
@@ -542,25 +572,23 @@ void
 VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
 {
   /// Do TIME-OUT Checks ALWAYS!
-  if ((men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)
-   || (men_uploadPoolState == UploadPoolWaitingForMemoryResponse)
-   || (men_uploadPoolState == UploadPoolWaitingForEOOResponse))
-  { // waiting for initial stuff was timed out
-    if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
-    {
+  if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
+  {
+    if ((men_uploadPoolState == UploadPoolWaitingForGetVersionsResponse)
+     || (men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)
+     || (men_uploadPoolState == UploadPoolWaitingForMemoryResponse)
+     || (men_uploadPoolState == UploadPoolWaitingForEOOResponse))
+    { // waiting for initial stuff was timed out
       men_uploadPoolState = UploadPoolFailed;
       mui32_uploadTimestamp = HAL::getTime();
       mui32_uploadTimeout = DEF_WaitFor_Reupload; // wait X secs for possible reuploading...
     }
-  }
-
-  if (men_uploadPoolState == UploadPoolWaitingForStoreVersionResponse)
-  { // store version was timed out
-    if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
-    { // we couldn't store for some reason, but don't care, finalize anyway...
-#if DEBUG_VTCOMM
+    if (men_uploadPoolState == UploadPoolWaitingForStoreVersionResponse)
+    { // store version was timed out
+      // we couldn't store for some reason, but don't care, finalize anyway...
+  #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
       INTERNAL_DEBUG_DEVICE << "StoreVersion TimedOut!" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
+  #endif
       finalizeUploading();
     }
   }
@@ -695,7 +723,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
                           194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getIsoBusInstance4Comm() << mc_sendData;      // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys = HAL::getTime();
-#if DEBUG_VTCOMM
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
     INTERNAL_DEBUG_DEVICE << "Requested first property (C2)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
@@ -710,7 +738,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
                           195, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getIsoBusInstance4Comm() << mc_sendData;      // Command: Get Technical Data --- Parameter: Get Text Font Data
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedFont = HAL::getTime();
-#if DEBUG_VTCOMM
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
     INTERNAL_DEBUG_DEVICE << "Requested fonts (C3)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
@@ -727,7 +755,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
                           199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getIsoBusInstance4Comm() << mc_sendData;      // Command: Get Technical Data --- Parameter: Get Hardware
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedHardware = HAL::getTime();
-#if DEBUG_VTCOMM
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
     INTERNAL_DEBUG_DEVICE << "Requested hardware (C7)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
@@ -743,65 +771,90 @@ VtClientServerCommunication_c::timeEventPoolUpload()
   {
     // Take the version that's been set up NOW and try to load/upload it.
     setObjectPoolUploadingLanguage();
-    // Do we want to try to "Load Version" or go directly to uploading?
-    // Added this preprocessor so loading of object pools can be prevented for development purposes
-#ifdef NO_LOAD_VERSION
-#else
+    // Do we have to try to "get Versions / Load Version" or go directly to uploading?
     if (mb_usingVersionLabel)
     {
 #ifdef GET_VERSIONS
-      // this is for test purposes only!
-      static int b_getVersionsSendTime = 0;
-      if (b_getVersionsSendTime == 0)
-      { // send out get versions first
-        mc_sendData.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
-                              mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
-                              223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        getIsoBusInstance4Comm() << mc_sendData;     // Command: Non Volatile Memory --- Parameter: Load Version
-        b_getVersionsSendTime = HAL::getTime();
-      }
-      if ((b_getVersionsSendTime+500) > HAL::getTime())
-      { // wait for answer first
-        return true;
-      }
-#endif
-      char lang1, lang2;
-      if (mui16_objectPoolUploadingLanguageCode != 0x0000)
-      {
-        lang1 = mui16_objectPoolUploadingLanguageCode >> 8;
-        lang2 = mui16_objectPoolUploadingLanguageCode & 0xFF;
-      }
-      else
-      {
-        lang1 = marrp7c_versionLabel [5];
-        lang2 = marrp7c_versionLabel [6];
-      }
-
-      // Try to "Non Volatile Memory - Load Version" first!
+      // GetVersions first!
       CanPkgExt_c mc_sendData;
-      mc_sendData.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
-                            209,
-                            marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], lang1, lang2);
-      getIsoBusInstance4Comm() << mc_sendData;     // Command: Non Volatile Memory --- Parameter: Load Version
-                                            //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
-      // start uploading after reception of LoadVersion Response
-      men_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
-      men_uploadPoolType = UploadPoolTypeCompleteInitially; // need to set this, so that eventObjectPoolUploadedSucessfully is getting called (also after load, not only after upload)
-      mui32_uploadTimeout = DEF_TimeOut_VersionLabel;
+      mc_sendData.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
+                                 mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
+                                 223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+      getIsoBusInstance4Comm() << mc_sendData;
+
+      men_uploadPoolState = UploadPoolWaitingForGetVersionsResponse;
+      mui32_uploadTimeout = DEF_TimeOut_GetVersions;
       mui32_uploadTimestamp = HAL::getTime();
-#if DEBUG_VTCOMM
-      INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<marrp7c_versionLabel [0]<< marrp7c_versionLabel [1]<< marrp7c_versionLabel [2]<< marrp7c_versionLabel [3]<< marrp7c_versionLabel [4]<< lang1<< lang2<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
+#else
+      startLoadVersion();
 #endif
     }
     else
+    {
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
+      INTERNAL_DEBUG_DEVICE << "No Version Label : start uploading" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-    { // NO_LOAD_VERSION
-      // Start uploading right now, no "LoadVersion" first
-      initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially); // no language specific upload - normal upload!
-      sendGetMemory();
+      startUploadVersion();
     }
   }
   return false;
+}
+
+bool VtClientServerCommunication_c::isVersionFound(Stream_c& arc_stream) const
+{
+#ifdef GET_VERSIONS
+  const uint8_t number_of_versions = arc_stream.get();
+ 
+  // check get versions response is consistency
+  if ( arc_stream.getByteTotalSize() != (2 + 7*uint16_t(number_of_versions)) )
+    return false; // not valid -> return;
+
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
+  INTERNAL_DEBUG_DEVICE << "Version to be checked " << std::string(marrp7c_versionLabel,7).c_str() << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
+  for (uint8_t counter = 0; counter < number_of_versions; ++counter)
+  {
+    char c_nextversion[7];
+    for (uint16_t i = 0; i < 7; i++)
+    {
+      c_nextversion[i] = arc_stream.get();
+    }
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
+    INTERNAL_DEBUG_DEVICE << "  - compare with version saved #" << (uint16_t)counter << " : " << std::string(c_nextversion,7).c_str() << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+    if (0 == CNAMESPACE::memcmp(c_nextversion, marrp7c_versionLabel, 7))
+      return true;
+  }
+#endif
+  return false;
+}
+
+void
+VtClientServerCommunication_c::startUploadVersion()
+{
+  initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially);
+  sendGetMemory();
+}
+
+void
+VtClientServerCommunication_c::startLoadVersion()
+{
+  // Try to "Non Volatile Memory - Load Version" first!
+  CanPkgExt_c mc_sendData;
+  mc_sendData.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
+                        209,
+                        marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], marrp7c_versionLabel[5], marrp7c_versionLabel[6]);
+  getIsoBusInstance4Comm() << mc_sendData;     // Command: Non Volatile Memory --- Parameter: Load Version
+                                        //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
+
+  men_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
+  men_uploadPoolType = UploadPoolTypeCompleteInitially; // need to set this, so that eventObjectPoolUploadedSucessfully is getting called (also after load, not only after upload)
+  mui32_uploadTimeout = DEF_TimeOut_VersionLabel;
+  mui32_uploadTimestamp = HAL::getTime();
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
+  INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<marrp7c_versionLabel [0]<< marrp7c_versionLabel [1]<< marrp7c_versionLabel [2]<< marrp7c_versionLabel [3]<< marrp7c_versionLabel [4]<< marrp7c_versionLabel [5]<< marrp7c_versionLabel [6]<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
 }
 
 
@@ -1360,20 +1413,9 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
 #ifndef NO_STORE_VERSION
           if (mb_usingVersionLabel)
           { // Store Version and finalize after "Store Version Response"
-            char lang1, lang2;
-            if (mui16_objectPoolUploadingLanguageCode != 0x0000)
-            {
-              lang1 = mui16_objectPoolUploadingLanguageCode >> 8;
-              lang2 = mui16_objectPoolUploadingLanguageCode & 0xFF;
-            }
-            else
-            {
-              lang1 = marrp7c_versionLabel [5];
-              lang2 = marrp7c_versionLabel [6];
-            }
             CanPkgExt_c mc_sendData;
             mc_sendData.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
-                                  208 /* D0 */, marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], lang1, lang2);
+                                  208 /* D0 */, marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], marrp7c_versionLabel [5], marrp7c_versionLabel [6]);
             getIsoBusInstance4Comm() << mc_sendData;     // Command: Non Volatile Memory --- Parameter: Store Version
 
             // Now wait for response
@@ -1631,7 +1673,7 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
         if ((arc_data.getUint8Data( 5 ) & 0x0F) == 0)
         { // Successfully loaded
           finalizeUploading ();
-#if DEBUG_VTCOMM
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
           INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) without error..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         }
@@ -1639,7 +1681,7 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
         {
           if (arc_data.getUint8Data( 5 ) & (1<<2))
           { // Bit 2: // Insufficient memory available
-#if DEBUG_VTCOMM
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
             INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
             vtOutOfMemory();
@@ -1647,17 +1689,26 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
           else
           { // Not used
             // General error
-            // Version label not known
-            initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
-            sendGetMemory();
-#if DEBUG_VTCOMM
+            // Version label not known -> upload the pool
+            startUploadVersion(); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
             INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with VersionNotFound..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
           }
         }
       }
       break;
-
+#ifdef GET_VERSIONS
+    case 0xE0: // Command: "Non Volatile Memory", parameter "Get Versions Response"
+      if (men_uploadPoolState != UploadPoolWaitingForGetVersionsResponse)
+        break;
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
+      INTERNAL_DEBUG_DEVICE << "No Version saved" << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+      // single message -> no version saved. Start uploading pool
+      startUploadVersion(); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
+      break;
+#endif
     default:
       // handle proprietary messages from an AGCO VT
       if (    arc_data.getUint8Data( 0 ) >= 0x60
@@ -2713,7 +2764,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
     mui16_objectPoolUploadedLanguageCode = mui16_objectPoolUploadingLanguageCode;
     mi8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
     mui16_objectPoolUploadingLanguageCode = 0x0000;
-  #if DEBUG_VTCOMM
+  #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
     INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)mi8_objectPoolUploadedLanguage;
     if (mi8_objectPoolUploadedLanguage >= 0) INTERNAL_DEBUG_DEVICE <<" ["<<uint8_t(mui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(mui16_objectPoolUploadedLanguageCode&0xFF)<<"]";
     INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -2724,7 +2775,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
     }
     else
     {
-  #if DEBUG_VTCOMM
+  #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
       INTERNAL_DEBUG_DEVICE << "Now men_objectPoolState = OPUploadedSuccessfully;" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
       men_objectPoolState = OPUploadedSuccessfully;
@@ -3010,6 +3061,8 @@ VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
     const int8_t ci8_realUploadingLanguage = (mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage;
     const uint8_t* lang = mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
     mui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
+    marrp7c_versionLabel[5] = lang [0];
+    marrp7c_versionLabel[6] = lang [1];
   }
 }
 
