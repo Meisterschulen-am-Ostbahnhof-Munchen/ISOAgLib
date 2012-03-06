@@ -228,10 +228,8 @@ PRJ_ISO11783=1
 ### Special Setup / Customization / Optimization
 ##############################################
 
-# Specify if Part 3 - Data Link Layer: Transport Protocol is enabled.
-# (Note: This is done automatically if other features like VT-/TC-/FS-Client
-#  require it - Normally you shouldn't need to set this manually!)
-# PRJ_MULTIPACKET=1
+# NOTE: Part 3 - Data Link Layer: Transport Protocol is always enabled!
+# The setting "PRJ_MULTIPACKET" is obsolete!
 
 # Specify Part 3 - Data Link Layer: Transport Protocol stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> useful when on-the-fly parsing is used

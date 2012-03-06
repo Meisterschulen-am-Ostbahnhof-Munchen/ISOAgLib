@@ -182,7 +182,6 @@ set_default_values()
     PRJ_INPUTS_ANALOG=0
     PRJ_INPUTS_COUNTER=0
     PRJ_RS232=0
-    PRJ_MULTIPACKET=0
     # has to be overridden by configuration:
     USE_TARGET_SYSTEM='void'
     USE_HAL_PATH=''
@@ -402,8 +401,6 @@ check_set_correct_variables()
         HAL_PATH_SUPPLEMENTARY_RS232="supplementary_driver/hal/virtualDrivers/rs232_over_can"
     fi
 
-    PRJ_MULTIPACKET=$(expr "$PRJ_MULTIPACKET" \| "$PRJ_ISO_TASKCONTROLLER_CLIENT" \| "$PRJ_ISO_FILESERVER_CLIENT" \| "$PRJ_ISO_TERMINAL" \| "$PRJ_PROPRIETARY_PGN_INTERFACE" || status_le1)
-
     case "$USE_CAN_DRIVER" in
         (simulating)
             update_prj_system_with_enhanced_can_hal 0 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.\n'
@@ -482,25 +479,15 @@ comm_features()
     fi
 
     if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
-        if [ "$PRJ_ISO11783" -gt 0 ]; then
-            printf '%s' " -o -path '*/Part13_FileServer_Client/*'" >&3
-        fi
+        printf '%s' " -o -path '*/Part13_FileServer_Client/*'" >&3
     fi
 
     if [ "$PRJ_ISO_TERMINAL" -gt 0 ]; then
         if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" -eq 0 ]; then
             # exclude graphicscontext_c
-            if [ "$PRJ_ISO_TERMINAL_LAYOUT_MANAGER" -gt 0 ]; then
-                printf '%s' " -o \( -path '*/Part6_VirtualTerminal_Client/*' -a -not -name '*graphicscontext_c*' \)" >&3
-            else
-                printf '%s' " -o \( -path '*/Part6_VirtualTerminal_Client/i*' -a -not -name '*graphicscontext_c*' \)" >&3
-            fi
+            printf '%s' " -o \( -path '*/Part6_VirtualTerminal_Client/i*' -a -not -name '*graphicscontext_c*' \)" >&3
         else
-            if [ "$PRJ_ISO_TERMINAL_LAYOUT_MANAGER" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part6_VirtualTerminal_Client/*'" >&3
-            else
-                printf '%s' " -o -path '*/Part6_VirtualTerminal_Client/i*'" >&3
-            fi
+            printf '%s' " -o -path '*/Part6_VirtualTerminal_Client/i*'" >&3
         fi
     fi
     if [ "$PRJ_DATASTREAMS" -lt 1 ]; then
@@ -514,12 +501,6 @@ comm_features()
             printf '%s' " -o -path '*/Part3_DataLink/impl/streamchunk_c.*' -o -path '*/Part3_DataLink/impl/chunk_c.*'" >&3
         else
             printf '%s' " -o -path '*/Part3_DataLink/impl/streamlinear_c.*'" >&3
-        fi
-    fi
-
-    if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
-        if [ "$PRJ_ISO11783" -gt 0 ]; then
-            printf '%s' " -o -path '*/Part13_FileServer_Client/*'" >&3
         fi
     fi
 }
@@ -1133,14 +1114,12 @@ END_OF_PATH
             if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ] ; then
                 echo_e "#ifndef USE_ISO_FILESERVER_CLIENT $ENDLINE\t#define USE_ISO_FILESERVER_CLIENT $ENDLINE#endif" >&3
             fi
-            if [ "$PRJ_MULTIPACKET" -gt 0 ] ; then
-                if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ] ; then
-                    echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamChunk   $ENDLINE#endif" >&3
-                    echo_e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamChunk_c $ENDLINE#endif" >&3
-                else
-                    echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamLinear   $ENDLINE#endif" >&3
-                    echo_e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamLinear_c $ENDLINE#endif" >&3
-                fi
+            if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ] ; then
+                echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamChunk   $ENDLINE#endif" >&3
+                echo_e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamChunk_c $ENDLINE#endif" >&3
+            else
+                echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamLinear   $ENDLINE#endif" >&3
+                echo_e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamLinear_c $ENDLINE#endif" >&3
             fi
         fi
 
