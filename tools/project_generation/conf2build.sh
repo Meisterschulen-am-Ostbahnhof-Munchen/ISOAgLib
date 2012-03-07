@@ -1237,9 +1237,10 @@ generate_interface_filelist()
     grep -v "/impl/" <"$MakefileFilelistLibraryHdr" | grep -v ".cpp" > "$TMP_INTERFACE_FILELIST"
     grep -E "driver/*/i*.h" < "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST" || status_le1
     
-    # special exceptions to enable ISO-Request-PGN/MultiReceive implementation in app scope
+    # special exceptions to enable ISO-Request-PGN/MultiReceive/DiagnosticsProtocol implementation in app scope
     grep -E "isorequestpgn_c.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
     grep -E "multireceive_c.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
+    grep -E "diagnosticprotocol_c.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
 
     local INTERFACE_FILE
     while read -r INTERFACE_FILE; do
