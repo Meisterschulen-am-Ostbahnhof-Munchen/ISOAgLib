@@ -1,6 +1,6 @@
 /*
-  target_extension_can_client_msq.cpp: CAN-Server client based on
-    message-queues.
+  target_extension_can_client_msq.cpp:
+    CAN-Server client based on message-queues
 
   (C) Copyright 2009 - 2011 by OSB AG and developing partners
 
