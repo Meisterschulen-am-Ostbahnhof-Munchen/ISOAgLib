@@ -26,7 +26,7 @@ class StreamLinear_c : public Stream_c
 {
 public:
   StreamLinear_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize, int32_t ai32_creationTime MULTITON_INST_PARAMETER_DEF_WITH_COMMA , bool b_skipCtsAwait);
-  virtual ~StreamLinear_c ()
+  virtual ~StreamLinear_c();
 
   void immediateInitAfterConstruction() const {}
 
