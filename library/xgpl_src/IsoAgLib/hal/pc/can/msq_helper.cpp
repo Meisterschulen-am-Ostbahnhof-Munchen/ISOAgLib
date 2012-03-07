@@ -1,7 +1,5 @@
 /*
-  target_extension_can_A1_binary.cpp: source for the PSEUDO BIOS for
-    development and test on the Opus A1 with CAN communication using
-    the Binary can drivers for /dev/wecan0 and /dev/wecan1
+  msq_helper: helper functions for command messaging
 
   (C) Copyright 2009 - 2011 by OSB AG and developing partners
 
