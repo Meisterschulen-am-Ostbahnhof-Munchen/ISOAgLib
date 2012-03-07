@@ -177,7 +177,7 @@ IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
   /// 2. Check if we have to send a NACK as nobody could answer it
   if (!b_processedByAnyClient)
   { // no client could answer the Request PGN
-    if (mpc_isoItemDA != NULL)
+    if ( (mpc_isoItemDA != NULL) && (mpc_isoItemSA != NULL) )
     { // and it was Destination specific
       answerRequestPGNwithACK (*mpc_isoItemDA, 0x01);  // so "NOT Acknowledge (NACK)" it (Control Byte 0x01)
     }
