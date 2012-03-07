@@ -13,8 +13,6 @@
 
 #include "streamlinear_c.h"
 
-
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 
@@ -27,7 +25,8 @@ StreamLinear_c::StreamLinear_c (
   : Stream_c (ac_rsi, aui32_msgSize, ai32_creationTime MULTITON_INST_PARAMETER_USE_WITH_COMMA , ab_skipCtsAwait)
   , mui32_parsedCnt (0)
 {
-  mvecui8_buffer.reserve (aui32_msgSize); // as reactOnStreamStart told we have enough memory!
+  // reserve one byte less than the maximum insert-command inserts at once (7 byte). 
+  mvecui8_buffer.reserve (aui32_msgSize+6); // as reactOnStreamStart told we have enough memory!
 };
 
 StreamLinear_c::~StreamLinear_c()
@@ -51,7 +50,7 @@ StreamLinear_c::insertFirst6Bytes(const uint8_t* pui8_data)
 
 void
 StreamLinear_c::insert7Bytes(const uint8_t* pui8_data)
-{ // ~X2C
+{
   mvecui8_buffer.push_back (pui8_data[0]);
   mvecui8_buffer.push_back (pui8_data[1]);
   mvecui8_buffer.push_back (pui8_data[2]);
@@ -60,7 +59,7 @@ StreamLinear_c::insert7Bytes(const uint8_t* pui8_data)
   mvecui8_buffer.push_back (pui8_data[5]);
   mvecui8_buffer.push_back (pui8_data[6]);
   // as ui32_recCnt is mvecui8_buffer.size(), it is automatically increased!
-} // -X2C
+}
 
 
-} // end namespace __IsoAgLib
+} // __IsoAgLib
