@@ -3,7 +3,7 @@
     header file for InputBase_c, a base class for AnalogI_c,
     DigitalI_c and CounterI_c
 
-  (C) Copyright 2009 - 2011 by OSB AG and developing partners
+  (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

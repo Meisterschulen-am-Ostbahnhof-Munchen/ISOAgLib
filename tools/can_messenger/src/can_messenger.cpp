@@ -2,7 +2,7 @@
   can_messenger.cpp: Testtool to inject CAN packages in a running
     can_server_bus.
 
-  (C) Copyright 2009 - 2011 by OSB AG and developing partners
+  (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

@@ -1,7 +1,15 @@
 /***************************************************************************
                           managemeasureproglocal_c.cpp
-*/
 
+  (C) Copyright 2009 - 2012 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
 #include "managemeasureproglocal_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
