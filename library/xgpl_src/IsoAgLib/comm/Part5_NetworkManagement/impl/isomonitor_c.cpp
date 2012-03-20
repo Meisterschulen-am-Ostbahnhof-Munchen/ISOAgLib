@@ -831,61 +831,68 @@ IsoMonitor_c::deleteIsoMemberNr(uint8_t aui8_nr)
   }
 }
 
+bool isAddressFree( const IsoItem_c* apc_isoItem, const STL_NAMESPACE::list<IsoItem_c>& vec_isoMember, uint8_t address, bool ab_resolveConflict )
+{
+  for (STL_NAMESPACE::list<IsoItem_c>::const_iterator pc_iterItem = vec_isoMember.begin();
+        pc_iterItem != vec_isoMember.end(); pc_iterItem++)
+  {
+    if ((pc_iterItem->nr() == address)
+         && (ab_resolveConflict || (&(*pc_iterItem) != apc_isoItem))
+       )
+    { // the tried SA is already used by this item
+      return false;
+    }
+  }
+  return true;
+}
 
 uint8_t
 IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveConflict)
 {
+  const uint8_t scui8_addressRangeLower = 0x80; // 128
+  const uint8_t scui8_addressRangeHigher = 0xEE; // 238
+  const uint8_t scui8_noAddressFound = 0xFE;
+
   uint8_t ui8_wishSa = apc_isoItem->nr();
-  const bool cb_selfConf = apc_isoItem->selfConf();
-
-  if (ui8_wishSa >= 254) // also include 255
-  { // no preferred SA
-    if (cb_selfConf)
-    { // We're self-conf, so start at 128 (0x80)
-      ui8_wishSa = 128;
-    }
-    else
-    { // we're not self-conf, but request the address that's used as "take-any": that won't work!
-      ui8_wishSa = 254; // couldn't find a suitable SA!
-    }
+  if ( (ui8_wishSa < scui8_noAddressFound) && (isAddressFree(apc_isoItem, mvec_isoMember, ui8_wishSa, ab_resolveConflict)) )
+  { // address is FREE: use it
+    return ui8_wishSa;
   }
-
-  /// @todo SOON-240 Maybe wrap around to SA 0 if we couldn't allocate one up to 253!?
-
-  // while we have addresses to try, try!
-  while (ui8_wishSa < 254)
-  { // try the current ui8_wishSa
-    bool b_free = true;
-    for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
-          pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
-    {
-      if ((pc_iterItem->nr() == ui8_wishSa)
-           && (ab_resolveConflict || (&(*pc_iterItem) != apc_isoItem))
-         )
-      { // the tried SA is already used by this item
-        // -> break this search loop and try another ui8_wishSa
-        b_free = false;
-        break;
-      }
-    }
-    if (b_free)
-    { // address is FREE
-      break; // after breaking, ui8_wishSa is returned, so we're done unifying
+  //else: address not available
+  const bool cb_selfConf = apc_isoItem->selfConf();
+  if (!cb_selfConf)
+  { // not configurable -> no need to loop free address
+    return scui8_noAddressFound;
+  }
+  else
+  { // self-configurable
+    if ( (ui8_wishSa >= scui8_addressRangeLower) &&
+         (ui8_wishSa <= scui8_addressRangeHigher) )
+    { // address already in dynamic address range,
+      // search on from the wished address
     }
     else
-    { // address is USED
-      if (cb_selfConf)
-      { // we're self-configurable, so let's try the next higher one
-        ui8_wishSa++;
+    { // moved to dynamic address range
+      ui8_wishSa = scui8_addressRangeLower;
+    }
+
+    const uint8_t stopSa = ui8_wishSa;
+    do
+    { // try the current ui8_wishSa
+      if (isAddressFree(apc_isoItem, mvec_isoMember, ui8_wishSa, ab_resolveConflict))
+      { // address is FREE: use it
+        return ui8_wishSa;
       }
       else
-      { // we're not self-configurable, and we didn't get the requested SA --> report this with 254
-        ui8_wishSa = 254;
-        break;
+      {
+        ++ui8_wishSa;
+        if (ui8_wishSa >= scui8_addressRangeHigher)
+          ui8_wishSa = scui8_addressRangeLower;
       }
-    }
+    } while (ui8_wishSa != stopSa);
+    // completely looped one time, but no free address found
+    return scui8_noAddressFound;
   }
-  return ui8_wishSa; // return the best we could get (may 254 if no addresses were free below.
 }
 
 
