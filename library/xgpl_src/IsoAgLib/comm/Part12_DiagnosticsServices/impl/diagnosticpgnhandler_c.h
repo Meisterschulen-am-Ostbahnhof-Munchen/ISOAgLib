@@ -14,6 +14,7 @@
 #define DIAGNOSTIC_PGN_HANDLER_C_H
 
 #include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
@@ -35,16 +36,12 @@ class DiagnosticProtocol_c;
 */
 class DiagnosticPgnHandler_c : public IsoRequestPgnHandler_c
 {
-
 public:
   DiagnosticPgnHandler_c (IdentItem_c&);
   virtual ~DiagnosticPgnHandler_c();
 
   void init();
   void close();
-
-  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t );
-
 
   bool setEcuIdentification( const char *acstr_partNr, const char *acstr_serialNr, const char *acstr_location, const char *acstr_type, const char *acstr_manufacturerName );
 
@@ -65,10 +62,19 @@ public:
 
   DiagnosticProtocol_c& getDiagnosticProtocol();
 
+  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t );
+
 private:
   void sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,int32_t ai32_pgn);
 
-private: // attributes
+private:
+  class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c
+  {
+  private:
+    virtual void reactOnStateChange(const SendStream_c& sendStream);
+  };
+
+  MultiSendEventHandlerProxy_c m_mrEventProxy;
   IdentItem_c& mrc_identItem;
   DiagnosticProtocol_c* mpc_diagnosticProtocol;
 
