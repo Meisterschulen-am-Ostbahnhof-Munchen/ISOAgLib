@@ -145,10 +145,10 @@ VtServerInstance_c::setSoftKeyData( const CanPkgExt_c& arc_data )
 void
 VtServerInstance_c::setTextFontData( const CanPkgExt_c& arc_data )
 {
-  ms_vtCapabilitiesA.lastReceivedFont =     arc_data.time();
-  ms_vtCapabilitiesA.fontSizes =           (arc_data.getUint8Data (5) << 1) | 0x01;
-  ms_vtCapabilitiesA.fontSizes +=           arc_data.getUint8Data (6) << 8;
-  ms_vtCapabilitiesA.fontTypes =            arc_data.getUint8Data (7);
+  ms_vtCapabilitiesA.lastReceivedFont = arc_data.time();
+  ms_vtCapabilitiesA.fontSizes = (static_cast<uint16_t>(arc_data.getUint8Data (5) & 0x7F) << 1) | 0x01;
+  ms_vtCapabilitiesA.fontSizes += static_cast<uint16_t>(arc_data.getUint8Data (6) & 0x7F) << 8;
+  ms_vtCapabilitiesA.fontTypes = arc_data.getUint8Data (7);
 }
 
 
@@ -159,8 +159,8 @@ VtServerInstance_c::setHardwareData( const CanPkgExt_c& arc_data )
   ms_vtCapabilitiesA.bootTime =             arc_data.getUint8Data (1);
   ms_vtCapabilitiesA.hwGraphicType =        arc_data.getUint8Data (2);
   ms_vtCapabilitiesA.hwHardware =           arc_data.getUint8Data (3);
-  ms_vtCapabilitiesA.hwWidth =              arc_data.getUint8Data (4) + (arc_data.getUint8Data (5) << 8);
-  ms_vtCapabilitiesA.hwHeight =             arc_data.getUint8Data (6) + (arc_data.getUint8Data (7) << 8);
+  ms_vtCapabilitiesA.hwWidth =              arc_data.getUint8Data (4) + (static_cast<uint16_t>(arc_data.getUint8Data (5)) << 8);
+  ms_vtCapabilitiesA.hwHeight =             arc_data.getUint8Data (6) + (static_cast<uint16_t>(arc_data.getUint8Data (7)) << 8);
 }
 
 
