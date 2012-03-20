@@ -89,16 +89,16 @@ DiagnosticPgnHandler_c::close()
 
 
 bool
-DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* rpc_isoItemReceiver, int32_t )
+DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* isoItemSender, IsoItem_c* isoItemReceiver, int32_t )
 {
   if ( !mrc_identItem.isClaimedAddress() )
     return false;
 
   // we're not Network Management, so don't answer requests from 0xFE
-  if( apc_isoItemSender == NULL )
+  if( isoItemSender == NULL )
     return false;
 
-  if ( ( rpc_isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != rpc_isoItemReceiver ) )
+  if ( ( isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != isoItemReceiver ) )
     return false; // request not adressed to us!
 
   switch ( rui32_pgn )

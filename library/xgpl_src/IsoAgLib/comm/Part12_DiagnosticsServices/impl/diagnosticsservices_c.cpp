@@ -434,14 +434,17 @@ DiagnosticsServices_c::sendSingleDM1DM2(uint32_t ui32_pgn, uint8_t* arr_send8byt
 }
 
 bool
-DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* /*apc_isoItemReceiver*/, int32_t )
+DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* isoItemSender, IsoItem_c* isoItemReceiver, int32_t )
 {
   if ( !mrc_identItem.isClaimedAddress() )
     return false;
 
   // we're not Network Management, so don't answer requests from 0xFE
-  if( apc_isoItemSender == NULL )
+  if( isoItemSender == NULL )
     return false;
+
+  if ( ( isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != isoItemReceiver ) )
+    return false; // request not adressed to us!
 
   switch (aui32_pgn)
   {
@@ -473,7 +476,7 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_
         { // Send out MultiPacket Destination specific
           if (getMultiSendInstance4Comm().sendIsoTarget (
                 mrc_identItem.isoName(),
-                apc_isoItemSender->isoName(),
+                isoItemSender->isoName(),
                 (uint8_t *) marr_dm1SendingDestination,
                 ms_dm1SendingDestination.marr_bufferSize,
                 ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
@@ -517,7 +520,7 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_
         {
           if (getMultiSendInstance4Comm().sendIsoTarget (
                 mrc_identItem.isoName(),
-                apc_isoItemSender->isoName(),
+                isoItemSender->isoName(),
                 (uint8_t *) marr_dm2SendingDestination,
                 ms_dm2SendingDestination.marr_bufferSize,
                 PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
@@ -541,7 +544,7 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_
         uint8_t responsevalue = 0x00; // Positive ACKNOWLEDGE
 
         // check if diagnostic tool is accepted
-        if (mpc_serviceToolVerifier && !mpc_serviceToolVerifier->acceptAsServiceTool(apc_isoItemSender->isoName().toConstIisoName_c()))
+        if (mpc_serviceToolVerifier && !mpc_serviceToolVerifier->acceptAsServiceTool(isoItemSender->isoName().toConstIisoName_c()))
           responsevalue = 0x01; // so "NOT Acknowledge (NACK)" it (Control Byte 0x01)
         else
           serviceTool_dtcClearPrevious(); // ServiceTool accepted (or no ServiceToolVerifier defined) 
