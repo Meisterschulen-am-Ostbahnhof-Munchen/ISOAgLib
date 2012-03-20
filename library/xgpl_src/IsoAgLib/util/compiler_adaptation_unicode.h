@@ -38,7 +38,7 @@
 //
 // text macro(s)
 //
-#	ifdef WIN32
+#	if (defined WIN32) && (!defined ( __GNUC__ ))
 #		pragma warning(disable:4005)
 #	endif
 #	if !defined(TEXT)
