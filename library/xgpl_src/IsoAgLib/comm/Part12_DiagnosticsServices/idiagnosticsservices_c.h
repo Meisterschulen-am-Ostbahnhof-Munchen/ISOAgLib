@@ -110,6 +110,10 @@ public:
     __IsoAgLib::DiagnosticsServices_c::serviceTool_dtcClearPrevious();
   }
 
+#if DEBUG_DIAGNOSTICPGN
+  bool isAtLeastOneDTCInCurrent() const { return __IsoAgLib::DiagnosticsServices_c::isAtLeastOneDTCInCurrent(); }
+#endif
+
 private:
   // this constructor is only needed to be compilable on some compilers.
   iDiagnosticsServices_c(__IsoAgLib::IdentItem_c &x) : DiagnosticsServices_c(x) {}

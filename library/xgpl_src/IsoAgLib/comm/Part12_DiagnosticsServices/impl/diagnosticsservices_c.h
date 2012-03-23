@@ -97,6 +97,7 @@ public:
 
   /** perform periodical actions */
   bool timeEvent();
+  virtual void updateEarlierAndLatestInterval();
 
   /** initialisation for DiagnosticsServices_c */
   void init();
@@ -110,6 +111,9 @@ public:
 
 #if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
+#if DEBUG_DIAGNOSTICPGN
+  bool isAtLeastOneDTCInCurrent() const { return m_dm1CurrentAtLeastOneDTC; }
 #endif
 
 private: // typedef
@@ -175,7 +179,7 @@ private: // method
   */
   uint32_t calculateNextActionTime();
 
-  uint16_t assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_searchForActiveDtc);
+  uint16_t assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_searchForActiveDtc, bool* atleastoneDTC);
 
   // do not call from this->timeEvent
   void changeActiveDtcStatusAndRetrigger(DtcContainer_c::Dtc_s& dtcToChange, bool active);
@@ -197,6 +201,7 @@ private: // attributes
   /// The current buffer as created/changed by timeEvent/add/remove/clear
   uint8_t marr_dm1Current [2+4*(CONFIG_MAX_ACTIVE_DTCS)];
   uint32_t marr_dm1CurrentSize;
+  bool m_dm1CurrentAtLeastOneDTC;
 
   uint8_t marr_dm1SendingBroadcast [2+4*(CONFIG_MAX_ACTIVE_DTCS)]; // the buffer currently being broadcast'
   BufferDescription_s ms_dm1SendingBroadcast;

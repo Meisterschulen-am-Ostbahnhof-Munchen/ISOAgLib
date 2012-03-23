@@ -149,7 +149,6 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
               return true;
             }
           }
-          // else
         }
       } // else
       break;

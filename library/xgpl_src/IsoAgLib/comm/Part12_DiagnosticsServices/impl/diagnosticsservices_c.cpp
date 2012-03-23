@@ -29,14 +29,16 @@
 
 namespace __IsoAgLib {
 
-static const int32_t sci132_periodDM1 = 1000;
+static const int32_t sci32_periodDM1 = 1000;
+static const int32_t sci32_periodDM1noDTC = 0x7FFF; // arbitrary never timeevent call
+static const int32_t sci32_periodDM1waitForTP = 0x7FFF; // arbitrary never timeevent call
 
 DiagnosticsServices_c::DiagnosticsServices_c( IdentItem_c& arc_identItem ) :
   mrc_identItem ( arc_identItem ),
   mpc_serviceToolVerifier(NULL),
   mc_dtcs(),
   mi32_dm1LastSentTime(-1),
-  mb_dm1CurrentNeedsToBeSent(true),
+  mb_dm1CurrentNeedsToBeSent(false),
   marr_dm1CurrentSize(0),
   ms_dm1SendingBroadcast(marr_dm1SendingBroadcast),
   ms_dm1SendingDestination(marr_dm1SendingDestination),
@@ -51,8 +53,8 @@ DiagnosticsServices_c::DiagnosticsServices_c( IdentItem_c& arc_identItem ) :
   //std::memset(marr_dm2SendingDestination,0,2+4*(CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS));
 
   // prepare initial DM1 and DM2
-  marr_dm1CurrentSize                       = assembleDM1DM2(marr_dm1Current,true);
-  ms_dm2SendingDestination.marr_bufferSize  = assembleDM1DM2(ms_dm2SendingDestination.marr_buffer,false); // not required but nice to be prepared
+  marr_dm1CurrentSize                       = assembleDM1DM2(marr_dm1Current,true, &m_dm1CurrentAtLeastOneDTC);
+  ms_dm2SendingDestination.marr_bufferSize  = assembleDM1DM2(ms_dm2SendingDestination.marr_buffer,false, NULL); // not required but nice to be prepared
 }
 
 DiagnosticsServices_c::~DiagnosticsServices_c()
@@ -97,8 +99,15 @@ bool DiagnosticsServices_c::timeEvent()
   if (!mb_dm1CurrentNeedsToBeSent)
   { // check if we have to send the DM1 out NOW?
     // simple, unoptimzed but secure version
-    if (0 == calculateNextActionTime())
+    const uint32_t nextActionTime = calculateNextActionTime();
+    if ((0 == nextActionTime) && m_dm1CurrentAtLeastOneDTC)
+    {
       mb_dm1CurrentNeedsToBeSent = true;
+    }
+    else
+    { // no need for any action, simply retrigger when needed
+      setTimePeriod (nextActionTime);
+    }
   }
 
   // Is a DM1 to be sent out now definitely?
@@ -121,15 +130,17 @@ bool DiagnosticsServices_c::timeEvent()
 
     if (ms_dm1SendingBroadcast.marr_bufferSize < 9)
     { // Send out Single Packet
-#if DEBUG_DIAGNOSTICPGN
-      INTERNAL_DEBUG_DEVICE << "Send DM1 single frame" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
       isoaglib_assert(ms_dm1SendingBroadcast.marr_bufferSize == 8);
-      sendSingleDM1DM2(ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,marr_dm1SendingBroadcast);
-      setTimePeriod (sci132_periodDM1);
-
       mi32_dm1LastSentTime = HAL::getTime();
+      sendSingleDM1DM2(ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,marr_dm1SendingBroadcast);
+ 
+      setTimePeriod ( m_dm1CurrentAtLeastOneDTC ? sci32_periodDM1 : sci32_periodDM1noDTC );
+
       mb_dm1CurrentNeedsToBeSent = false;
+
+#if DEBUG_DIAGNOSTICPGN
+      INTERNAL_DEBUG_DEVICE << "Send Periodic DM1 single frame " << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
     }
     else
     { // Send out MultiPacket Broadcast
@@ -141,11 +152,12 @@ bool DiagnosticsServices_c::timeEvent()
             &mt_multiSendEventHandler ) )
       { // Message successfully transmitted to multisend
 #if DEBUG_DIAGNOSTICPGN
-        INTERNAL_DEBUG_DEVICE << "Send DM1 multi frame" << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Send Periodic DM1 multi frame" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         // indicate that TP (BAM) is sending now.
         ms_dm1SendingBroadcast.mb_bufferUsedForTP = true;
-        setTimePeriod (0x7FFF); // wait for multisend to call back reactOnFinished()
+
+        setTimePeriod (sci32_periodDM1waitForTP); // wait for multisend to call back reactOnFinished()
         
         mi32_dm1LastSentTime = HAL::getTime();
         mb_dm1CurrentNeedsToBeSent = false;
@@ -155,10 +167,6 @@ bool DiagnosticsServices_c::timeEvent()
         setTimePeriod (10); // retrigger in 10ms to check if it could be sent then.
       }
     }
-  }
-  else // !mb_dm1CurrentNeedsToBeSent
-  { // no need for any action, simply retrigger when needed
-    setTimePeriod (calculateNextActionTime());
   }
 
   return true;
@@ -221,18 +229,25 @@ DiagnosticsServices_c::calculateNextActionTime()
   }
   else
   { // calculate the minimum
+    if (!m_dm1CurrentAtLeastOneDTC)
+    { // no DTC -> return with max period
+      return sci32_periodDM1noDTC;
+    }
+
     isoaglib_assert(mi32_dm1LastSentTime >= 0);
+
     // global 1s periodic sending
-    int32_t i32_minNextAction = (mi32_dm1LastSentTime + sci132_periodDM1) - HAL::getTime();
-        
+    int32_t i32_minNextAction = (mi32_dm1LastSentTime + sci32_periodDM1) - HAL::getTime();
+  
     // and the need to send changes from the DTCs
     for (uint16_t counter = 0;counter < DtcContainer_c::scui16_sizeDTCList ;++counter) // loop_all_DTCs
     {
       if (mc_dtcs[counter].ui32_spn == DtcContainer_c::Dtc_s::spiNone)   
         continue;
 
-      const int32_t ci32_minNextDtcAction = (mc_dtcs[counter].i32_timeLastStateChangeSent + sci132_periodDM1)
+      const int32_t ci32_minNextDtcAction = (mc_dtcs[counter].i32_timeLastStateChangeSent + sci32_periodDM1)
                                               - mc_dtcs[counter].i32_timeLastStateChange;
+
       if (ci32_minNextDtcAction < i32_minNextAction)
         i32_minNextAction = ci32_minNextDtcAction;
     }
@@ -249,7 +264,7 @@ DiagnosticsServices_c::changeActiveDtcStatusAndRetrigger(DtcContainer_c::Dtc_s& 
   arc_dtcToChange.b_active = a_active;
   arc_dtcToChange.i32_timeLastStateChange = HAL::getTime();
 
-  if (arc_dtcToChange.i32_timeLastStateChange >= (arc_dtcToChange.i32_timeLastStateChangeSent + sci132_periodDM1) )
+  if (arc_dtcToChange.i32_timeLastStateChange >= (arc_dtcToChange.i32_timeLastStateChangeSent + sci32_periodDM1) )
   { // Last State Change Sent is more than 1s,
     // need to send this change out now!
     mb_dm1CurrentNeedsToBeSent = true;
@@ -317,7 +332,7 @@ uint16_t DiagnosticsServices_c::dtcActivate(uint32_t SPN, IsoAgLib::FailureModeI
   }
 
   // update send buffer -> "marr_dm1Current"
-  marr_dm1CurrentSize = assembleDM1DM2(marr_dm1Current,true);
+  marr_dm1CurrentSize = assembleDM1DM2(marr_dm1Current,true, &m_dm1CurrentAtLeastOneDTC);
 
   ms_dm1SendingBroadcast.mb_bufferIsValid = false;
   ms_dm1SendingDestination.mb_bufferIsValid = false;
@@ -341,11 +356,15 @@ uint16_t DiagnosticsServices_c::dtcDeactivate(uint32_t SPN, IsoAgLib::FailureMod
       changeActiveDtcStatusAndRetrigger(mc_dtcs[dtcId],false);
 
       // update send buffer -> "marr_dm1Current"
-      marr_dm1CurrentSize = assembleDM1DM2(marr_dm1Current,true);
+      marr_dm1CurrentSize = assembleDM1DM2(marr_dm1Current,true, &m_dm1CurrentAtLeastOneDTC);
 
       ms_dm1SendingBroadcast.mb_bufferIsValid = false;
       ms_dm1SendingDestination.mb_bufferIsValid = false;
       ms_dm2SendingDestination.mb_bufferIsValid = false;
+
+      // no DTC anymore -> final DM1 message with no content
+      if (!m_dm1CurrentAtLeastOneDTC)
+        mb_dm1CurrentNeedsToBeSent = true;
 
       return mc_dtcs[dtcId].ui16_occurrenceCount;
     }
@@ -368,7 +387,7 @@ uint16_t DiagnosticsServices_c::dtcDeactivate(uint32_t SPN, IsoAgLib::FailureMod
  *
  * No need for further design, that's plain implementation.
  */
-uint16_t DiagnosticsServices_c::assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_searchForActiveDtc)
+uint16_t DiagnosticsServices_c::assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_searchForActiveDtc, bool* atleastoneDTC)
 {
   // control if more than CONFIG_MAX_ACTIVE_DTCS element are active. Should not happened here, tested earlier in application
   isoaglib_assert(mc_dtcs.getNumberOfDtc(ab_searchForActiveDtc) <= (ab_searchForActiveDtc?CONFIG_MAX_ACTIVE_DTCS:CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS));
@@ -393,18 +412,23 @@ uint16_t DiagnosticsServices_c::assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_
     }
   }
 
+  bool noDTC = false;
   if (2 == temp_size)
   {
     arr_send8bytes[temp_size++] = 0;
     arr_send8bytes[temp_size++] = 0;
     arr_send8bytes[temp_size++] = 0;
     arr_send8bytes[temp_size++] = 0;
+    noDTC = true;
   }
   if (6 == temp_size)
   {
     arr_send8bytes[temp_size++] = 0xFF;
     arr_send8bytes[temp_size++] = 0xFF;
   }
+
+  if (atleastoneDTC)
+    *atleastoneDTC = !noDTC;
 
   return temp_size;
 }
@@ -465,7 +489,7 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* isoI
         if (ms_dm1SendingDestination.marr_bufferSize < 9)
         { // Send out Single Packet
     #if DEBUG_DIAGNOSTICPGN
-          INTERNAL_DEBUG_DEVICE << "Send destination specific DM1 single frame" << INTERNAL_DEBUG_DEVICE_ENDL;
+          INTERNAL_DEBUG_DEVICE << "Send response DM1 single frame" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
           isoaglib_assert(ms_dm1SendingDestination.marr_bufferSize == 8);
           sendSingleDM1DM2(ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,marr_dm1SendingDestination);
@@ -485,7 +509,7 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* isoI
             // indicate that TP (BAM) is sending now.
             ms_dm1SendingDestination.mb_bufferUsedForTP = true;
     #if DEBUG_DIAGNOSTICPGN
-            INTERNAL_DEBUG_DEVICE << "Send destination specific DM1 multi frame" << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "Send response destination specific DM1 multi frame" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
             return true;
           }
@@ -505,7 +529,7 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* isoI
         //* - Build buffer if necessary
         if (!ms_dm2SendingDestination.mb_bufferIsValid)
         {
-          ms_dm2SendingDestination.marr_bufferSize = assembleDM1DM2(marr_dm2SendingDestination,false);
+          ms_dm2SendingDestination.marr_bufferSize = assembleDM1DM2(marr_dm2SendingDestination,false, NULL);
           ms_dm2SendingDestination.mb_bufferIsValid = true;
         }
 
@@ -572,6 +596,11 @@ bool DiagnosticsServices_c::deregisterServiceToolVerifier (IsoAgLib::iServiceToo
 
   mpc_serviceToolVerifier = NULL;
   return true;
+}
+
+void DiagnosticsServices_c::updateEarlierAndLatestInterval(){
+  mui16_earlierInterval = 0;
+  mui16_latestInterval  = 5;
 }
 
 #if DEBUG_SCHEDULER
