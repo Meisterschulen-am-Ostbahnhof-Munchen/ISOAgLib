@@ -58,6 +58,8 @@ class FsCommand_c : CanCustomer_c
 
   private:
     virtual bool timeEvent() { return mrt_owner.timeEvent(); }
+    void updateEarlierAndLatestInterval() { updateEarlierAndLatestIntervalDefault(); }
+
 #if DEBUG_SCHEDULER
     virtual const char *getTaskName() const { return "FsCommand_c\n"; }
 #endif

@@ -85,6 +85,7 @@ class FsManager_c : public Scheduler_Task_c
   * @return true if all tasks where performed correctly
   */
   bool timeEvent(void);
+  void updateEarlierAndLatestInterval() { updateEarlierAndLatestIntervalDefault(); }
 
 #if DEBUG_SCHEDULER
   const char* getTaskName() const;
