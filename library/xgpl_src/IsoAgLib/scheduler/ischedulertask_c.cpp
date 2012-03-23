@@ -60,9 +60,9 @@ uint16_t iSchedulerTask_c::getForcedMinExecTime() const
 //! ui16_laterInterval that will be used by
 //! getTimeToNextTrigger(retriggerType_t)
 //! can be overloaded by Childclass for special condition
-void iSchedulerTask_c::updateEarlierAndLatestInterval()
+void iSchedulerTask_c::updateEarlierAndLatestIntervalDefault()
 {
-  return updateEarlierAndLatestIntervalDefault();
+  return Scheduler_Task_c::updateEarlierAndLatestIntervalDefault();
 }
 
 
