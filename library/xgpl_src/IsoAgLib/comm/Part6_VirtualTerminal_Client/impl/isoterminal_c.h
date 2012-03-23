@@ -63,6 +63,10 @@ public:
   */
   bool timeEvent(void);
 
+  virtual void updateEarlierAndLatestInterval() {
+    updateEarlierAndLatestIntervalDefault();
+  }
+
   /** @todo SOON-241 Remove this - this should only be temporary and a good solution needs to be implemented! */
   void TEMPORARYSOLUTION_setTimePeriod(uint16_t aui16_timePeriod) { setTimePeriod (aui16_timePeriod); }
 

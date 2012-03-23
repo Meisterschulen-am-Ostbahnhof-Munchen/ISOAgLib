@@ -35,7 +35,7 @@ namespace __IsoAgLib {
     @short Manager for handling of inserting/adapting FilterBox_c-instances
     @see __IsoAgLib::ControlFunctionStateHandler_c
     @author Dipl.-Inf. Martin Wodok */
-class IsoFilterManager_c : public Scheduler_Task_c
+class IsoFilterManager_c : public Subsystem_c
 {
 #if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
@@ -46,8 +46,8 @@ public:
   typedef STL_NAMESPACE::vector<IsoFilterBox_c> IsoFilterBox_vec;
   typedef STL_NAMESPACE::vector<IsoFilterBox_c>::iterator IsoFilterBox_it;
 
-  /** initialisation for IsoFilterManager_c */
   void init();
+  void close();
 
   ~IsoFilterManager_c () {}
 
@@ -57,19 +57,7 @@ public:
 
   bool removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
-  virtual bool timeEvent( void );
-  void close( void );
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
-
-
 private:
-  virtual uint16_t getForcedMinExecTime() const
-  {
-    return getForcedMinExecTimeDefault();
-  }
-
   class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
   public:
     typedef IsoFilterManager_c Owner_t;

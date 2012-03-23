@@ -30,29 +30,12 @@ IsoFilterManager_c::IsoFilterManager_c () :
 {
 }
 
-
-/** just a dummy implementation of virtual abstract functions in Scheduler_Task_c */
-bool IsoFilterManager_c::timeEvent( void )
-{
-  return true;
-}
-
-
-#if DEBUG_SCHEDULER
-const char* IsoFilterManager_c::getTaskName() const
-{ return "IsoFilterManager_c"; }
-#endif
-
-
 void
 IsoFilterManager_c::init()
 {
   isoaglib_assert (!initialized());
 
   __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
-
-  // set very long execution period as this singleton has no periodic jobs
-  setTimePeriod( 10000 );
 
   setInitialized();
 }

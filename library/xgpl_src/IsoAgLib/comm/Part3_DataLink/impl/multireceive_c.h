@@ -185,6 +185,10 @@ public:
   //  Operation: timeEvent
   bool timeEvent( void );
 
+  virtual void updateEarlierAndLatestInterval() {
+    updateEarlierAndLatestIntervalDefault();
+  }
+
   //  Operation: init
   void init();
 

@@ -213,9 +213,7 @@ protected:
   //! ui16_laterInterval that will be used by
   //! getTimeToNextTrigger(retriggerType_t)
   //! can be overloaded by Childclass for special condition
-  virtual void updateEarlierAndLatestInterval() {
-    updateEarlierAndLatestIntervalDefault();
-  }
+  virtual void updateEarlierAndLatestInterval() = 0;
 
   //! Operation: setEarlierInterval
   //! Set lowest time interval that can be handled by the application. The time period of a task is within the range

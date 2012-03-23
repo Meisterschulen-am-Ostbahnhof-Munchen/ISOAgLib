@@ -54,6 +54,11 @@ public:
   */
   bool timeEvent(void);
 
+  virtual void updateEarlierAndLatestInterval() {
+    mui16_earlierInterval = 0;
+    mui16_latestInterval  = 5;
+  }
+
   inline void setState(Aux2InputsState_en a_state) { m_state = a_state; }
 
   inline void setModelIdentificationCode(uint16_t a_model) { m_modelIdentificationCode = a_model; }
