@@ -110,7 +110,7 @@ System_c::initWd ( void )
 
 
 bool
-System_c::canEn( void )
+System_c::switchedOn()
 {
 	#ifndef CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
 	return HAL::getOn_offSwitch();

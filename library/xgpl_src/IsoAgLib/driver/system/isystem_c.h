@@ -29,9 +29,6 @@ namespace IsoAgLib {
 */
 class iSystem_c : private __IsoAgLib::System_c {
 public:
-  /** destructor which shuts down the hardware (f.e. power off) */
-  ~iSystem_c() {}
-
   /**
     Initialize the system hardware.
     (uses BIOS function)
@@ -54,8 +51,7 @@ public:
 	*/
 	void setPowerdownStrategy( SystemPowerdownStrategy_t at_strategy ) { System_c::setPowerdownStrategy( at_strategy );}
 
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    * the call of System_c::close() stimulates final shutdown of power
+  /** Stimulate final shutdown of ECU
     */
   bool close( void ) { return System_c::close();}
 
@@ -79,10 +75,13 @@ public:
   static int32_t getTime(){return System_c::getTime();};
 
   /**
-    deliver the CanEn setting -> if system goes down
-    @return true -> D+ or. CAN_EN is active OR D+ should not be checked
+    @return true -> ECU's On/Off-Switch reports system being "On".
   */
-  static bool canEn() {return System_c::canEn();};
+  static bool switchedOn() { return System_c::switchedOn(); }
+
+  // deprecated - only for backwards compatibility.
+  // NOTE: Will be removed soon, please use "switchedOn()".
+  static bool canEn() { return switchedOn(); }
 
   /**
     get the main power voltage

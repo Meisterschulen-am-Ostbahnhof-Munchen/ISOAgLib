@@ -60,8 +60,7 @@ public:
 	*/
 	void setPowerdownStrategy( IsoAgLib::SystemPowerdownStrategy_t at_strategy );
   
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    * the call of System_c::close() stimulates final shutdown of power
+  /** Stimulate final shutdown of ECU
     */
   bool close( void );
 
@@ -101,12 +100,13 @@ public:
   static int16_t getExternalSensorPowerVoltage( void ) { return HAL::getAdc_u85();};
 
   /**
-    deliver the CanEn setting -> if system goes down
-    (bios_namespace.h always return ON independent from D+ signal
-    if NO_CAN_EN_CHECK is defined in config_esx.h)
-    @return true -> D+ or. CAN_EN is active OR D+ should not be checked
+    @return true -> ECU's On/Off-Switch reports system being "On".
   */
-  static bool canEn( void );
+  static bool switchedOn();
+
+  // deprecated - only for backwards compatibility.
+  // NOTE: Will be removed soon, please use "switchedOn()".
+  static bool canEn() { return switchedOn(); }
 
   /**
     deliver the serial nr of the device into uint8_t[6] array
