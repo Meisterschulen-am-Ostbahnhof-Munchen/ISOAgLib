@@ -604,27 +604,30 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracGeneral_c::setKeySwitch(IsoAgLib::IsoActiveFlag_t at_val)
   {
-    if ( (getISOName() == NULL) ||
-         (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
-      return;
-
     mt_keySwitch = at_val;
 
-    if (IsoAgLib::IsoActive != at_val)
+    if (checkMode(IsoAgLib::IdentModeTractor))
     {
-      // IsoInactive, IsoError and IsoNotAvailable
-      indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[*getISOName()];
-      rt_indicateData.b_maintainEcuPower = true;
-      rt_indicateData.b_maintainActuatorPower = true;
-      rt_indicateData.i32_lastMaintainPowerRequest = mi32_lastMaintainPowerRequest = HAL::getTime();
-    }
-    else
-    {
-      // IsoActive
-      mmap_indicatedState.clear();
-    }
+      if ( (getISOName() == NULL) ||
+           (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
+        return;
 
-    updateMaintainPowerRequest();
+      if (IsoAgLib::IsoActive != at_val)
+      {
+        // IsoInactive, IsoError and IsoNotAvailable
+        indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[*getISOName()];
+        rt_indicateData.b_maintainEcuPower = true;
+        rt_indicateData.b_maintainActuatorPower = true;
+        rt_indicateData.i32_lastMaintainPowerRequest = mi32_lastMaintainPowerRequest = HAL::getTime();
+      }
+      else
+      {
+        // IsoActive
+        mmap_indicatedState.clear();
+      }
+
+      updateMaintainPowerRequest();
+    }
   }
 
 void
