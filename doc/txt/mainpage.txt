@@ -57,6 +57,65 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
+\subsection Change_T 2.3.0 to 2.4.0
+
+Diagnostics Services / Certification issues:
+- Fix: According to Part 3, the diagnostic messages are now broadcast if requested via broadcast, else they are responded directly.
+- Enhancement: Added support of AEF functionality message. Please note that this is currently an AEF specification, which is reflected in the API. As soon as this will be official ISO-standard, it'll be renamed.
+- Fix: (Change/Clarification): Send DM1 only if at least one DTC active. Also fixed the timing.
+- SW-Identification now with correct '*' at the end (only one)
+- Transport Protocol: Timeouts set down to values from the standard for certification reasons.
+
+Tractor-Client:
+- Bugfix: Querying the KeySwitch works again. (backported to 2.3.0 and 2.2.1 also)
+
+General:
+- API-Cleanup: Removed some obsolete APIs like CANCustomer-typedef, IsoName with DIN-like constructors (devClass, devClassInst=0), etc.
+- Compiler-Cleanup: Many warnings removed for several platforms.
+
+System:
+- Renamed canEn() -> switchedOn(), because CAN-Enable is a DIN name. Kept canEn() as deprecated for backwards-compatibility until the next release
+ 
+Network-Management:
+- Bugfix: Proper address-verification added in all modules using processMsg/processMsgRequestPGN, don't NACK if unanswered PGN requested from NULL address.
+- Fix: Address-Claiming now properly tries addresses in the range of 0x80..0xEE cyclically from the start-address.
+- Enhancement: More exact timing while in the 250ms AdressClaim phase
+- Redesign: IsoName_c's "unspecified" is now an additional boolean, so NAMEs with all bits set (8 times FF) arenow valid ISO-nodes.
+
+VT-Client:
+- Fix: Getting Font-Properties from the VT now filters out the reserved bits (only valid for non-certified-VTs that send the reserved bit as 1).
+- Enhancement: First support for Multiple VTs: Application can store the "preferred VT" now via callback.
+- Enhancement: First Aux Type2 implementations added for testing - be aware that this is not implemented by 100% right now.
+- Enhancement: Query stored Versions before trying to load via Load Version. This needs to be enabled with "GET_VERSIONS" if desired.
+- Enhancement: Added getVtColorDepth() to iVtServerInstance_c.
+
+CAN-Server:
+- Enhancement: Added interactive filtering
+
+Build-system:
+- Fix: Proprietary PGN define was not generated, hence PropPGN-Module didn't work although enabled.
+- Cleanup: Removed PRJ_MULTIPACKET, as support for TP/ETP is now always included, regardless of any setting.
+- Enhancement: Improved conf2build's VisualC++ Makefile generation (via CMake). Will now split ISOAgLib/App files into groups.
+
+FS-Client:
+- Cleanup: Made the methods of iFsClient_c abstract.
+- API-Change: Now passing Whitelist per value instead of pointer in the std::vector, and the vector itself per const reference.
+
+TC-Client:
+- Fix for VRT: Don't send any PROCESS_DATA with SETPOINT_ERROR_COMMAND.
+
+Logalizer:
+- Enhancement: Added parser for SocketCAN tool 'candump'.
+
+PC-HAL:
+- Enhancement: Added setup-hook for ISOAgLib-Thread (for setting of priority, etc.)
+
+Multipacket (TP/ETP):
+- Fix: Don't accept ETP with <1786 bytes anymore.
+  NOTE: This may cause issues with non-conformant/-certified implements that were using ETP instead of TP.
+- Enhancement: Buffer is now reserved with the correct size, so really no reallocation takes place as it was intended to be.
+
+
 \subsection Change_S 2.2.1 to 2.3.0
 
 CAN:
