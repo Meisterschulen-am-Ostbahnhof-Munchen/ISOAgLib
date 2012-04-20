@@ -306,9 +306,8 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
 
             // Calculate Number of Packets (only for TP-#Pkg-Check!)
             const uint32_t cui32_numPkg = (ui32_msgSize + 6) / 7;
-            // check for TP-RTS if pkg-count matches the calculated AND if size > 8
-            if (  (c_isoRSI.isIsoTp() && (arc_pkg.getUint8Data(3) != cui32_numPkg))
-                || (ui32_msgSize < 9))
+            if (  (c_isoRSI.isIsoTp() && ((arc_pkg.getUint8Data(3) != cui32_numPkg) || (ui32_msgSize < 9)))
+               || (c_isoRSI.isIsoEtp() && (ui32_msgSize < 1786))  )
             { // This handles both
               notifyErrorConnAbort (c_isoRSI, TransferErrorWrongPackageAmountOrMessageSize, true);
               #if DEBUG_MULTIRECEIVE
