@@ -16,7 +16,7 @@
 #ifndef _HAL_PC_OUTPUTS_H_
 #define _HAL_PC_OUTPUTS_H_
 
-#include <IsoAgLib/hal/pc/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/pc/typedef.h>
 #include <IsoAgLib/hal/pc/errcodes.h>
 #include "outputs_target_extensions.h"

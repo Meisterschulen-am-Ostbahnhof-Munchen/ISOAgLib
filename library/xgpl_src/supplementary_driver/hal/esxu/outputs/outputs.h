@@ -14,8 +14,6 @@
 #ifndef _HAL_ESXu_OUTPUTS_H_
 #define _HAL_ESXu_OUTPUTS_H_
 
-#include <IsoAgLib/isoaglib_config.h>
-
 namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
@@ -23,7 +21,7 @@ namespace __HAL {
   }
 }
 
-#include <IsoAgLib/hal/esxu/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/esxu/typedef.h>
 #include <IsoAgLib/hal/esxu/errcodes.h>
 

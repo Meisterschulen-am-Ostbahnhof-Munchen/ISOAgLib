@@ -29,7 +29,7 @@
 #ifndef _HAL_C2C_INPUTS_H_
 #define _HAL_C2C_INPUTS_H_
 
-#include <IsoAgLib/hal/c2c/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/c2c/typedef.h>
 #include <IsoAgLib/hal/c2c/errcodes.h>
 #include "inputs_target_extensions.h"

@@ -15,6 +15,7 @@
 #ifndef _HAL_ESX_INPUTS_TARGET_EXTENSIONS_H_
 #define _HAL_ESX_INPUTS_TARGET_EXTENSIONS_H_
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/esx/typedef.h>
 #include <IsoAgLib/hal/esx/errcodes.h>
 

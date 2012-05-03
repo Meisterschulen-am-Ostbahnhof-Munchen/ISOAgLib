@@ -24,8 +24,6 @@
 #ifndef _HAL_C2C_CAN_INTERFACE_H_
 #define _HAL_C2C_CAN_INTERFACE_H_
 
-#include <IsoAgLib/isoaglib_config.h>
-
 namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
@@ -33,9 +31,9 @@ namespace __HAL {
   }
 }
 
-#include <IsoAgLib/hal/c2c/config.h>
-#include <IsoAgLib/hal/c2c/typedef.h>
-#include <IsoAgLib/hal/c2c/errcodes.h>
+#include <IsoAgLib/isoaglib_config.h>
+#include "../../typedef.h"
+#include "../../errcodes.h"
 
 namespace __IsoAgLib { class Ident_c; class CanPkg_c;}
 

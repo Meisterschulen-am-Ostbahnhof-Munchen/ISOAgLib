@@ -17,7 +17,7 @@
 #ifndef _HAL_ESX_INPUTS_H_
 #define _HAL_ESX_INPUTS_H_
 
-#include <IsoAgLib/hal/esx/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/esx/typedef.h>
 #include <IsoAgLib/hal/esx/errcodes.h>
 #include "inputs_target_extensions.h"

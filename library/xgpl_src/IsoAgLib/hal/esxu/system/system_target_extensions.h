@@ -30,11 +30,10 @@ namespace __HAL {
   }
 }
 
-//#include <cstdio>
 #include <cstdio>
-#include <IsoAgLib/hal/esxu/config.h>
-#include <IsoAgLib/hal/esxu/typedef.h>
-#include <IsoAgLib/hal/esxu/errcodes.h>
+#include <IsoAgLib/isoaglib_config.h>
+#include "../../typedef.h"
+#include "../../errcodes.h"
 
 #if DEBUG_HAL
 #  include <supplementary_driver/driver/rs232/irs232io_c.h>

@@ -27,7 +27,7 @@
 #ifndef _HAL_P1MC_EEPROM_H_
 #define _HAL_P1MC_EEPROM_H_
 
-#include <IsoAgLib/hal/p1mc/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/p1mc/typedef.h>
 #include <IsoAgLib/hal/p1mc/errcodes.h>
 

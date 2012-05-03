@@ -28,7 +28,7 @@
 #ifndef _HAL_ESXu_RS232_H_
 #define _HAL_ESXu_RS232_H_
 
-#include <IsoAgLib/hal/esxu/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/esxu/typedef.h>
 #include <IsoAgLib/hal/esxu/errcodes.h>
 #include <IsoAgLib/util/iassert.h>

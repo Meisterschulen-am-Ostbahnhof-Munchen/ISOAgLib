@@ -31,9 +31,9 @@ namespace __HAL {
 }
 
 #include <cstdio>
-#include <IsoAgLib/hal/c2c/config.h>
-#include <IsoAgLib/hal/c2c/typedef.h>
-#include <IsoAgLib/hal/c2c/errcodes.h>
+#include <IsoAgLib/isoaglib_config.h>
+#include "../../typedef.h"
+#include "../../errcodes.h"
 
 #if DEBUG_HAL
 #  include <supplementary_driver/driver/rs232/irs232io_c.h>

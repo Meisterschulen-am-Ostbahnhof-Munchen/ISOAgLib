@@ -14,7 +14,7 @@
 #ifndef TARGETFILESTREAMINPUT_C_H
 #define TARGETFILESTREAMINPUT_C_H
 
-
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 
 #include <compilerswitches.h>

@@ -15,7 +15,7 @@
 #ifndef _HAL_DJ1_OUTPUTS_H_
 #define _HAL_DJ1_OUTPUTS_H_
 
-#include <IsoAgLib/hal/Dj1/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/Dj1/typedef.h>
 #include <IsoAgLib/hal/Dj1/errcodes.h>
 

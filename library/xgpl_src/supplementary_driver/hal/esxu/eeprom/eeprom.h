@@ -34,7 +34,7 @@ namespace __HAL {
   }
 }
 
-#include <IsoAgLib/hal/esxu/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/esxu/typedef.h>
 #include <IsoAgLib/hal/esxu/errcodes.h>
 

@@ -23,6 +23,7 @@
 #ifndef _HAL_C2C_INPUTS_TARGET_EXTENSIONS_H_
 #define _HAL_C2C_INPUTS_TARGET_EXTENSIONS_H_
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/c2c/typedef.h>
 #include <IsoAgLib/hal/c2c/errcodes.h>
 

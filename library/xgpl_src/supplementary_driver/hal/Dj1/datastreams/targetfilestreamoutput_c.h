@@ -14,6 +14,7 @@
 #ifndef TARGETFILESTREAMOUTPUT_C_H
 #define TARGETFILESTREAMOUTPUT_C_H
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <compilerswitches.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <supplementary_driver/hal/hal_datastreams.h>

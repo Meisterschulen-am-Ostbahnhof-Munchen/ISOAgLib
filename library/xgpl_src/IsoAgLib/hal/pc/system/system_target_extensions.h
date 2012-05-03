@@ -15,7 +15,7 @@
 #ifndef _HAL_PC_SYSTEM_TARGET_EXTENSIONS_H_
 #define _HAL_PC_SYSTEM_TARGET_EXTENSIONS_H_
 
-#include "../config.h"
+#include <IsoAgLib/isoaglib_config.h>
 #include "../typedef.h"
 #include "../errcodes.h"
 #if !defined( WIN32 ) && !defined( __IAR_SYSTEMS_ICC__ )

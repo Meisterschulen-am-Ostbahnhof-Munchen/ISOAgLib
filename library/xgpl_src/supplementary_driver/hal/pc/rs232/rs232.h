@@ -28,7 +28,7 @@
 #ifndef _HAL_PC_RS232_H_
 #define _HAL_PC_RS232_H_
 
-#include <IsoAgLib/hal/pc/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/pc/typedef.h>
 #include <IsoAgLib/hal/pc/errcodes.h>
 #include "rs232_target_extensions.h"

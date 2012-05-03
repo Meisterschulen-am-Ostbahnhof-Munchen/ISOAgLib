@@ -24,8 +24,8 @@
 #ifndef _HAL_PC_CAN_INTERFACE_H_
 #define _HAL_PC_CAN_INTERFACE_H_
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "../typedef.h"
-#include "../config.h"
 
 
 namespace __IsoAgLib { class Ident_c; class CanPkg_c;}
