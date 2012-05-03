@@ -264,7 +264,6 @@ tools/can_messenger/src/can_messenger.cpp -text
 tools/can_messenger/src/config_can_messenger.h -text
 tools/can_messenger/src/config_can_messenger_msq.h -text
 tools/can_messenger/src/config_can_messenger_socket.h -text
-tools/can_messenger/src/version.h -text
 tools/can_server/Makefile -text
 tools/can_server/Makefile_TemplateForSpecialPlatforms -text
 tools/can_server/README.txt -text
