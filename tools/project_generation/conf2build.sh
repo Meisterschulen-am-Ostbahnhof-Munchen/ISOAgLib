@@ -1114,8 +1114,6 @@ END_OF_PATH
         cat $CONFIG_NAME.bak >&3
         rm -f $CONFIG_NAME.bak
     } 3>>"$CONFIG_NAME"
-    sed -e 's|^[ \t]*//|//|g' $CONFIG_NAME > $TMP_CONFIG1
-    sed -e 's|^[ \t]*/\*|/\*|g' $TMP_CONFIG1 > $CONFIG_NAME
 
     # go back to directory where config file resides
     cd $1
