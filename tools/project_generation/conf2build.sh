@@ -132,7 +132,6 @@ set_default_values()
 
     USE_FLOAT_DATA_TYPE=0
     OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
-    USE_LITTLE_ENDIAN_CPU=1
     # set default USE_LITTLE_ENDIAN_CPU, so that quick number variable
     # to CAN string conversions are possible:
     USE_LITTLE_ENDIAN_CPU=1
@@ -141,7 +140,6 @@ set_default_values()
     USE_BIG_ENDIAN_CPU=0
     # option to not switch the system relais to ON, on startup
     # (default: set relais to ON on startup):
-    PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
     USE_VT_UNICODE_SUPPORT=0
     # no reasonable default for all targets (will be set later
     # conditionally):
@@ -964,8 +962,8 @@ END_OF_PATH
         else
           echo_ "// keep HAL_PATH_SUPPLEMENTARY_DATASTREAMS undefined as this module is not available for the given configuration/target" >&3
         fi
-        echo_e "$ENDLINE" >&3
 
+        echo_e "$ENDLINE" >&3
         echo_ "// These defines are set in the $CONF_FILE:" >&3
         for SinglePrjDefine in $PRJ_DEFINES ; do
             SingleDefName="${SinglePrjDefine%%=*}"
@@ -975,15 +973,13 @@ END_OF_PATH
             echo_ "#define $SingleDefName $SingleDefValue" >&3
             echo_ "#endif // $SingleDefName" >&3
         done
+
+        echo_e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT" >&3
+        echo_e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT" >&3
+        echo_e "#define RS232_CHANNEL_CNT $RS232_CHANNEL_CNT" >&3
+        echo_e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT" >&3    
+    
         echo_e "$ENDLINE" >&3
-    
-    
-        echo_e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >&3
-        echo_e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >&3
-        echo_e "#define RS232_CHANNEL_CNT $RS232_CHANNEL_CNT $ENDLINE" >&3
-        echo_e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT $ENDLINE" >&3
-    
-    
         echo_ "// Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory." >&3
         echo_ "// Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian." >&3
         echo_ "// Please check the manual of your targret cpu. This setting is used to activate some quick number conversion algorithms," >&3
@@ -1113,7 +1109,7 @@ END_OF_PATH
         fi
         cat $CONFIG_NAME.bak >&3
         rm -f $CONFIG_NAME.bak
-    } 3>>"$CONFIG_NAME"
+    } 3>"$CONFIG_NAME"
 
     # go back to directory where config file resides
     cd $1
