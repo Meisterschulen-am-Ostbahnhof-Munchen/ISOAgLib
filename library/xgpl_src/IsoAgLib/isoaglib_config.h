@@ -197,46 +197,6 @@
 
 
 /* ******************************************************** */
-
-/**
- * \name Config access to RS232
- * Set the baudrate, buffer sizes and value coding.
- * These settings are used for initialisation on first access to RS232 ( pattern of singletons ).
- * All defines of this block can be overridden by project specific config file.
- */
-/*@{*/
-#ifndef CONFIG_RS232_DEFAULT_XON_XOFF
-  /// define default RS232 XON-XOFF usage - can be manually overridden in project config file
-#  define CONFIG_RS232_DEFAULT_XON_XOFF false
-#endif
-
-#ifndef CONFIG_RS232_DEFAULT_SND_PUF_SIZE
-  /// define default size of RS232 send buffer - can be manually overridden in project config file
-#  define CONFIG_RS232_DEFAULT_SND_PUF_SIZE 200
-#endif
-
-#ifndef CONFIG_RS232_DEFAULT_REC_PUF_SIZE
-  /// define size of RS232 receive buffer - can be manually overridden in project config file
-#  define CONFIG_RS232_DEFAULT_REC_PUF_SIZE 10
-#endif
-/*@}*/
-
-/* ******************************************************** */
-/**
- * \name Basic config for sensor and actor
- * Set default PWM value for digital output and
- * calculation factors for analog input.
- * All defines of this block can be overridden by project specific config file.
- */
-/*@{*/
-#ifndef CONFIG_PWM_DEFAULT_FREQUENCY
-  /// set default PWM frequency for digital output - can be manually overridden in project config file
-#  define CONFIG_PWM_DEFAULT_FREQUENCY 100000
-#endif
-/*@}*/
-
-
-/* ******************************************************** */
 /**
  * \name Different time intervalls
  * Define execution time of timeEvent calls
@@ -266,30 +226,6 @@
 #  define CONFIG_ISO_ITEM_MAX_AGE 3000
 #endif
 /*@}*/
-
-
-/* ******************************************************** */
-/**
- * \name Basic BUS and MsgObj settings for CAN access
- */
-/*@{*/
-#ifndef CONFIG_CAN_DEFAULT_BUS_NUMBER
-  /// CAN BUS number for IsoAgLib (0xFF forces explicit call of init, to open the CAN BUS )
-#  define CONFIG_CAN_DEFAULT_BUS_NUMBER 0xFF
-#endif
-
-#ifndef CONFIG_CAN_DEFAULT_MIN_OBJ_NR
-  /// define default min number for CAN Msg-Obj used for IsoAgLib
-#  define CONFIG_CAN_DEFAULT_MIN_OBJ_NR 0
-#endif
-
-#ifndef CONFIG_CAN_DEFAULT_MAX_OBJ_NR
-  /// define default max number for CAN Msg-Obj used for IsoAgLib
-#  define CONFIG_CAN_DEFAULT_MAX_OBJ_NR 13
-#endif
-/*@}*/
-
-
 
 
 /* ******************************************************** */
@@ -327,18 +263,6 @@
 #define SETPOINT_RELEASE_COMMAND  NO_VAL_32S
 /// define special command value for signaling setpoint error
 #define SETPOINT_ERROR_COMMAND  ERROR_VAL_32S
-
-/**
-  * @def RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN
-  * some systems send exact setpoint cmd with value 0 to reset a measurement value
-  @todo TaskControllerClient cleanup!!
-  */
-#  ifndef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN
-#    define RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN NO
-#  endif
-#  if RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN == YES && !defined(RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT)
-#    define RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
-#  endif
 
 /*@}*/
 

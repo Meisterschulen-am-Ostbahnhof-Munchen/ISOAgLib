@@ -58,10 +58,10 @@ public:
   bool init(
       uint32_t aui32_baudrate,
       t_dataMode ren_dataMode,
-      bool ab_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
-      uint16_t aui16_sndBuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE,
-      uint16_t aui16_recBuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE,
-      uint8_t aui8_channel = 0)
+      bool ab_xonXoff,
+      uint16_t aui16_sndBuf,
+      uint16_t aui16_recBuf,
+      uint8_t aui8_channel
   {
     return RS232IO_c::init(
         aui32_baudrate,

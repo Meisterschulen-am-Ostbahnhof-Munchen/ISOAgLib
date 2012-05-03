@@ -20,7 +20,7 @@
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
-#if DEBUG_SCHEDULER || DEBUG_HEAP_USEAGE || defined(TEST_TIMING) || DEBUG_ELEMENTBASE	|| DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE
+#if DEBUG_SCHEDULER || DEBUG_HEAP_USEAGE || defined(TEST_TIMING) || DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>

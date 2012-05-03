@@ -67,8 +67,4 @@
 // basic period of task manager (scheduler)= const * 500 us = 1 ms
 #define T_TASK_BASIC 2
 
-// the P1MC processor modul has no static power line
-// where check of D-Plus can be used
-#define NO_CAN_EN_CHECK
-
 #endif

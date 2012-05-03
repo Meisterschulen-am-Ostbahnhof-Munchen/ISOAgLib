@@ -182,12 +182,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     const int32_t ci32_now = pkg.time();
 
-    #ifdef USE_RS232_FOR_DEBUG
-    INTERNAL_DEBUG_DEVICE << "c_tempISOName: " <<  static_cast<const int>(rcc_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "senderISOName: " <<  static_cast<const int>(getSelectedDataSourceISOName().devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "PGN:          " << (pkg.isoPgn() /*& 0x1FFFF*/) << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
-
     switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &0x3FFFF as this is the whole PGN...
     {
       case GROUND_BASED_SPEED_DIST_PGN:
@@ -237,9 +231,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             // real dist
             setDistReal( ui32_tempDist );
             mt_directionReal = IsoAgLib::IsoDirectionFlag_t(pkg.getUint8Data(7) & 0x3 );
-            #ifdef USE_RS232_FOR_DEBUG
-            INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(rcc_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
 
             //decide if ground based speed is actually the best available speed
             if ( ( b_usableSpeed ) &&
@@ -275,9 +266,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             mt_operatorDirectionReversed = IsoAgLib::IsoOperatorDirectionFlag_t( ( pkg.getUint8Data(7) >> 6) & 0x3);
             mt_startStopState = IsoAgLib::IsoActiveFlag_t( ( pkg.getUint8Data(7) >> 4) & 0x3);
             mt_directionTheor = IsoAgLib::IsoDirectionFlag_t(pkg.getUint8Data(7)       & 0x3 );
-            #ifdef USE_RS232_FOR_DEBUG
-            INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(rcc_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
             if ( ( b_usableSpeed ) &&
                  ( ( mt_speedSource <= IsoAgLib::WheelBasedSpeed )
                 || ( testTimeOutdatedSpeed >= getTimeOut() && testTimeOutdatedSpeed < (getTimeOut()+1000u) )
@@ -469,11 +457,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     pkg.setISONameForSA( *getISOName() );
     pkg.setIsoPri(3);
     pkg.setLen(8);
-
-    #ifdef USE_RS232_FOR_DEBUG
-    INTERNAL_DEBUG_DEVICE << "getISOName: " <<  static_cast<const int>(getISOName()->devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "SEND TRAC senderISOName: " <<  static_cast<const int>(getSelectedDataSourceISOName().devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
 
     setSelectedDataSourceISOName(*getISOName());
   }

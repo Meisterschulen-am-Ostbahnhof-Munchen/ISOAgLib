@@ -45,7 +45,6 @@ namespace __HAL {
    --> simply replace the call to the corresponding BIOS function in this header
        for adaptation to new platform
  */
-#define CONSOLE 	RS232_1
 namespace HAL
 {
   /* ****************************** */
@@ -91,28 +90,17 @@ namespace HAL
     @param wBuffersize wanted buffer size
     @param pFunction pointer to irq function or NULL if not wanted
   */
-  #if 0
-  inline int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(byte _huge *bByte))
-    {return __HAL::config_rs232_rx_obj(CONSOLE,wBuffersize,pFunction) ;};
-  #else
   inline int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(byte *bByte), uint8_t aui8_channel)
     {return __HAL::config_rs232_rx_obj(aui8_channel,wBuffersize,pFunction) ;};
-  #endif
   /**
     configure a send buffer and set optional irq function pointer for send
     @param wBuffersize wanted buffer size
     @param funktionAfterTransmit pointer to irq function or NULL if not wanted
     @param funktionBeforTransmit pointer to irq function or NULL if not wanted
   */
-  #if 0
-  inline int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(byte _huge *bByte),
-                                  void (*funktionBeforTransmit)(byte _huge *bByte))
-    {return __HAL::config_rs232_tx_obj(CONSOLE,wBuffersize,funktionAfterTransmit,funktionBeforTransmit);};
-  #else
   inline int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(byte *bByte),
                                   void (*funktionBeforTransmit)(byte *bByte), uint8_t aui8_channel)
     {return __HAL::config_rs232_tx_obj(aui8_channel,wBuffersize,funktionAfterTransmit,funktionBeforTransmit);};
-  #endif
   /**
     get errr code of BIOS
     @return 0=parity, 1=stopbit framing error, 2=overflow

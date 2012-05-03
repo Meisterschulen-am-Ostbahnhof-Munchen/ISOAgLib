@@ -122,13 +122,6 @@ int16_t init_counter(uint16_t aui16_timebase, bool ab_risingEdge)
 //  init_digin(b_codeEdge, irqFuncArr);
   (void) init_digin(b_codeEdge, NULL);
 
-{
-//    byte pbString[128];
-//    sprintf( (char*)pbString, "__HAL::init_digin(%u,%u) returned %u\r", (unsigned int)b_codeEdge, (unsigned int)(irqFuncArr!=NULL), (unsigned int)ret );
-//    sprintf( (char*)pbString, "__HAL::init_digin(%u,%u) returned %u\r", (unsigned int)b_codeEdge, (unsigned int)(NULL), (unsigned int)ret );
-//    __HAL::put_rs232_string(RS232_1, pbString);
-}
-
   /* standard BIOS supports two prescaler parts */
   for (ui8_pow = 9; ui8_pow > 1; ui8_pow--)
   { /* the prescaler must be configured by (2 << pow) values */
@@ -141,12 +134,6 @@ int16_t init_counter(uint16_t aui16_timebase, bool ab_risingEdge)
   }
   /* set prescaler */
   i16_errorState = set_digin_prescaler(_b_prescale_1_Index);
-
-//{
-//    byte pbString[128];
-//    sprintf( (char*)pbString, "__HAL::set_digin_prescaler(%u) returned %u\r", (unsigned int)_b_prescale_1_Index, (unsigned int)i16_errorState );
-//    __HAL::put_rs232_string(RS232_1, pbString);
-//}
 
   /* clear counter value
    */

@@ -31,19 +31,6 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 
-#ifndef RS232_1
-#  define RS232_1		0
-#endif
-#ifndef RS232_2
-#  define RS232_2		1
-#  endif
-#ifndef RS232_3
-#  define RS232_3		2
-#endif
-#ifndef RS232_4
-#  define RS232_4		3
-#endif
-
 namespace HAL
 {
   /* ****************************** */

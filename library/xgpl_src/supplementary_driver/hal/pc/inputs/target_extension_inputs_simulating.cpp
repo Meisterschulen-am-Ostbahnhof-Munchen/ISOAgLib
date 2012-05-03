@@ -158,9 +158,6 @@ checkForNewSimulatedDigitalValues (uint8_t bInputNumber)
 int16_t
 init_digin (uint8_t bInput, uint8_t bMode, uint8_t bAktivhighlow, void (*pfFunctionName)(...))
 {
-#if DEBUG_SENSORS
-  printf("init_digin called with channel %i, mode %i and HiLo %i.\n", bInput, bMode, bAktivhighlow);
-#endif
   (void)bMode;
   (void)bAktivhighlow;
 
@@ -223,9 +220,6 @@ getDiginOnoffStatic(uint8_t bInputNumber)
 int16_t
 setDiginPrescaler(uint8_t bGroup, uint8_t bMode)
 {
-#if DEBUG_SENSORS
-  printf("setDiginPrescaler called for group %d with prescale mode %d.\n", bGroup, bMode);
-#endif
   (void)bGroup;
   (void)bMode;
   return HAL_NO_ERR;
@@ -235,9 +229,6 @@ setDiginPrescaler(uint8_t bGroup, uint8_t bMode)
 int16_t
 getDiginPeriod(uint8_t bInput, uint16_t *pwPeriod, uint16_t *pwImpulse)
 {
-#if DEBUG_SENSORS
-  printf("getDiginPeriod called for channel %d.\n", bInput);
-#endif
   *pwPeriod = ((getTime()%10000 +bInput)) / 3;
   *pwImpulse = ((getTime()%1000 +bInput)) / 3;
   return HAL_NO_ERR;
@@ -275,9 +266,6 @@ int16_t  getAdc(uint8_t bKanalnummer)
 int16_t
 init_analogin (uint8_t bNumber, uint8_t bType)
 {
-#if DEBUG_SENSORS
-  printf("init_analogin called for channel %i, type %i.\n", bNumber, bType);
-#endif
   (void)bType;
 
   if ( sensorAnalogInputOpen[bNumber] ) fclose(sensorAnalogInput[bNumber]);
@@ -316,9 +304,6 @@ init_analogin (uint8_t bNumber, uint8_t bType)
 /* switching between fast and slow input sampling */
 void setFastAnalogin (boolean bMode)
 {
-#if DEBUG_SENSORS
-  printf("setFastAnalogin called with mode %i.\n", bMode);
-#endif
   (void)bMode;
 }
 

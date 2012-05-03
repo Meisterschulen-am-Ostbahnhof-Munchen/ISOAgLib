@@ -71,8 +71,7 @@ namespace HAL
   void startTaskTimer();
 
   /**
-    check if D+/CAN_EN is active
-    (if NO_CAN_EN_CHECK is defined this function return always return ON)
+    check if D+/OnOffSwitch is active
     @return ON(1) or OFF(0)
   */
   int16_t getOn_offSwitch();

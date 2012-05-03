@@ -100,14 +100,7 @@ namespace HAL
 
   inline int16_t getAdc_u85() { return 8500; }
 
-  inline int16_t getOn_offSwitch()
-  {
-    #if defined(NO_CAN_EN_CHECK)
-      return ON;
-    #else
-      return __HAL::get_on_off_switch();
-    #endif
-  };
+  inline int16_t getOn_offSwitch() { return __HAL::get_on_off_switch(); }
 
   inline void stayingAlive() { __HAL::staying_alive(); }
 

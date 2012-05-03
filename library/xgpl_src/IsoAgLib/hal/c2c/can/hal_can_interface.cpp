@@ -625,37 +625,6 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 
   // increase counter of to be sent msg in buffer
   ++ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr];
-  #if 0
-  if ( ( pt_send->bDlc == 3 )
-    && ( aui8_busNr == 1 )
-    && ( pt_send->bXtd == 0 )
-    ) {
-    IsoAgLib::getIrs232Instance()
-      << "Alive Msg?? -\n\rIdent:" << pt_send->dwId << ", MsgObj Nr: "
-      << uint16_t( aui8_msgobjNr ) << "\n\r";
-  }
-  #endif
-
-  #if 0
-  int16_t retval = send_can_msg(aui8_busNr, (aui8_msgobjNr+1), pt_send);
-  char testString[500];
-    sprintf( testString, "ret = %d, send_can_msg( %d, %d, { { %ld, %d }, len=%d { %d, %d, %d, %d, %d, %d, %d, %d } } )\r"
-    , (int) retval
-    , (int)aui8_busNr, (int)aui8_msgobjNr
-    , (long int)pt_send->dwId, (int)pt_send->bXtd
-    , (int)pt_send->bDlc
-    , (int)pt_send->abData[0]
-    , (int)pt_send->abData[1]
-    , (int)pt_send->abData[2]
-    , (int)pt_send->abData[3]
-    , (int)pt_send->abData[4]
-    , (int)pt_send->abData[5]
-    , (int)pt_send->abData[6]
-    , (int)pt_send->abData[7]
-      );
-      put_rs232_string( RS232_1, (__HAL::byte*)testString );
-  return retval;
-  #endif
 
 #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
   // add offset 1 to aui8_msgobjNr as the BIOS starts counting with 1

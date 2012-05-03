@@ -46,8 +46,6 @@ namespace __HAL {
    --> simply replace the call to the corresponding BIOS function in this header
        for adaptation to new platform
  */
-#define CONSOLE 	RS232_1
-
 namespace HAL
 {
   /* ****************************** */

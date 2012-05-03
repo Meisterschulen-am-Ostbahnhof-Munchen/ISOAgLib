@@ -41,26 +41,13 @@
 //       Should be really enough for everybody - just like 640kB of RAM on the PC ;-)
 #define HAL_CAN_MAX_BUS_NR 31
 
-/** define uint16_t order of float: WORD_LO_HI, BYTE_HI_LO, WORD_HI_LO */
-#ifndef FLOAT_WORD_ORDER
-  #if defined(SYSTEM_A5) || defined(SYSTEM_MCC)
-    #define FLOAT_WORD_ORDER BYTE_HI_LO
-  #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
-    #define FLOAT_WORD_ORDER WORD_LO_HI
-  #endif
+#if (!defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN ) && !defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN ) )
+#  error "Please specify little or big endian!"
 #endif
 
-#if (!defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN ) && !defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN ) )
-#  ifdef SYSTEM_A1
-   /* we know that this cpu is little endian */
-#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-#  elif defined(SYSTEM_A5)
-   /* we know that this cpu is little endian */
-#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
-#  elif defined(WIN32)
-   /* we know that the Microsoft Visual C++ platform is little endian */
-#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-#  endif
+/** define uint16_t order of float: WORD_LO_HI, BYTE_HI_LO, WORD_HI_LO */
+#ifndef FLOAT_WORD_ORDER
+#  define FLOAT_WORD_ORDER WORD_LO_HI
 #endif
 
 #define HAL_SIZEOF_INT 4

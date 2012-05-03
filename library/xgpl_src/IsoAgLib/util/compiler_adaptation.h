@@ -23,48 +23,6 @@
 /* * names                                      */
 /* ******************************************** */
 
-/* IMPORTANT:
-   The current short names are the LONGEST possible
-   version for Tasking 7.56.
-   The most problematic case is the mangled version of
-   the class name for Process_c, which is derived from
-   SINGLETON_CLIENT2_KEY(Process_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c )
-   --> the last ProcIdent_c would be cut down to some number which
-       can't be resolved for link-recompile-stage
-   --> if on any other change of names, the Tasking 7.56 results in link
-       errors, the short names must be made shorter
-       - it's the most probable reason for irritating
-         link problems
- */
-#if defined(__TSW_CPP__) && !defined(SHORTEN_SYMBOL_NAMES_DEFINE)
-  #define SHORTEN_SYMBOL_NAMES_DEFINE
-  #define __IsoAgLib                                   _I_N
-  #define Process_c                                    Pr_c
-  #define ProcDataLocalBase_c                          PrLB_c
-  #define ProcDataRemoteBase_c                         PrRB_c
-  #define ProcDataLocalSimpleMeasure_c                 PrLSM_c
-  #define ProcDataLocalSimpleSetpoint_c                PrLSS_c
-  #define ProcDataLocalSimpleMeasureSimpleSetpoint_c   PrLSMSS_c
-  #define ProcDataSimpleMeasureLocal_c                 PrSML_c
-  #define Simple_Manage_Setpoint_Local_c               SMSL_c
-  #define ProcDataRemoteSimpleMeasure_c                PrRSM_c
-  #define ProcDataRemoteSimpleSetpoint_c               PrRSS_c
-  #define ProcDataRemoteSimpleMeasureSimpleSetpoint_c  PrRSMSS_c
-  #define ProcDataSimpleMeasureRemote_c                PrSMR_c
-  #define Simple_Manage_Setpoint_Remote_c              SMSR_c
-  #define ProcIdent_c                                  PrId_c
-  #define SingletonVec                                 SgV_c
-  #define SingletonVecCont1                            SgVC1
-  #define SingletonVecCont2                            SgVC2
-  #define SingletonVecCont3                            SgVC3
-  #define SingletonCont1                               SgC1
-  #define SingletonCont2                               SgC2
-  #define SingletonCont3                               SgC3
-  #define SystemMgmt_c                                 SysMg_c
-  #define IdentItem_c                                  IdIt_c
-  #define Element_Base_c                               LElBas_c
-  #define CAN_Customer_c                               CCus_c
-#endif
 
 #if defined(__TSW_CPP__)
   #define DEF_GET_POINTER_ADR_DEBUG_OUTPUT( pointer ) uint32_t( pointer )

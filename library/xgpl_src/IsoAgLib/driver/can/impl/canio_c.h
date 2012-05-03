@@ -96,13 +96,6 @@ class CanIo_c : public Subsystem_c
       called by specified constructor or external functions;
       wrong BUS and msg obj numbers are rejected and cause set of Err_c:range
 
-      If even the aui8_busNumber parameter has the default value 0xFF,
-      then the configuration settings of a previous init call are not
-      changed. In this case, the CAN BUS is only reset with the old settings.
-      This is enabled by the default value 0xFF for aui8_busNumber, which is
-      changed to CONFIG_CAN_DEFAULT_BUS_NUMBER for the first call of init() after the constructor.
-      In all other cases, the special value 0xFF is indicator for empty parameter list.
-
       possible errors:
           * Err_c::range on undefined BUS,  msgOb_nr or sendBufferSize,
           * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
@@ -124,8 +117,8 @@ class CanIo_c : public Subsystem_c
   bool init(
     uint8_t aui8_busNumber,
     uint16_t aui16_bitrate,
-    uint8_t aui8_minObjNr = CONFIG_CAN_DEFAULT_MIN_OBJ_NR,
-    uint8_t aui8_maxObjNr = CONFIG_CAN_DEFAULT_MAX_OBJ_NR);
+    uint8_t aui8_minObjNr = 0,
+    uint8_t aui8_maxObjNr = 13 );
 
   /** check if this CanIo_c instance is configured so that it can be used to send */
   bool isReady2Send() const { return ( mui8_busNumber != 0xFF ); }

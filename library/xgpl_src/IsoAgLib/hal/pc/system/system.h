@@ -68,14 +68,7 @@ namespace HAL
 
   inline void startTaskTimer() { __HAL::startTaskTimer (); }
 
-  inline int16_t getOn_offSwitch()
-  {
-    #if defined(NO_CAN_EN_CHECK)
-      return ON;
-    #else
-      return __HAL::getOn_offSwitch();
-    #endif
-  };
+  inline int16_t getOn_offSwitch() { return __HAL::getOn_offSwitch(); }
 
   inline int16_t getAdcUbat() { return 13500; }
 

@@ -135,11 +135,6 @@ namespace HAL
 	    ret = __HAL::init_digin(bMode, pfFunctionName);
 	else
 		ret = C_RANGE;
-//{
-//    byte pbString[128];
-//    sprintf( (char*)pbString, "HAL::init_digin(%u,%u) returned %u\r", (unsigned int)bMode, (unsigned int)(pfFunctionName!=NULL), (unsigned int)ret );
-//    __HAL::put_rs232_string(RS232_1, pbString);
-//}
 	return ret;
 	}
 

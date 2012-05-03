@@ -77,14 +77,7 @@ namespace HAL
     { int16_t i16_temp = __HAL::get_adc(GET_U_EXT_8_5_V);
       return ((i16_temp * 14) + ((i16_temp * 67)/100)); }
 
-  inline int16_t getOn_offSwitch()
-  {
-    #if defined(NO_CAN_EN_CHECK)
-      return ON;
-    #else
-      return __HAL::get_on_off_switch();
-    #endif
-  };
+  inline int16_t getOn_offSwitch() { return __HAL::get_on_off_switch(); }
 
   inline void stayingAlive() { __HAL::staying_alive(); }
 

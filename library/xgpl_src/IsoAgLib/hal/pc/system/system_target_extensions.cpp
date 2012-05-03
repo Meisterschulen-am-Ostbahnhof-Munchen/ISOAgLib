@@ -168,22 +168,7 @@ closeSystem()
 {
   isoaglib_assert( isSystemOpened() );
 
-  // if CAN_EN is active -> shut peripherals off and stay in idle loop
-  #if defined(NO_CAN_EN_CHECK)
-  if ( getOn_offSwitch() )
-  #endif
-  { // CanEn still active
-    powerDown();
-  }
-
-  #if defined(NO_CAN_EN_CHECK)
-  // trigger Watchdog, till CanEn is off
-  // while ( getOn_offSwitch() ) wdTriggern();
-  // close ESX as soon as
-  powerDown();
-  #else
-  // while ( true ) wdTriggern();
-  #endif
+  can_stopDriver();
 
   t_biosextSysdata.started = false;
   return HAL_NO_ERR;
@@ -296,11 +281,6 @@ stayingAlive()
 void
 powerDown()
 {
-  if ( getOn_offSwitch() == 0 )
-  { // CAN_EN is OFF -> stop now system
-    can_stopDriver();
-    DEBUG_PRINT("DEBUG: Power Down called.\n");
-  }
 }
 
 
