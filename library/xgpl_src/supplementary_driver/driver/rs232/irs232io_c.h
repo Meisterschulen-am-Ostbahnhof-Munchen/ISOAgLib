@@ -61,7 +61,7 @@ public:
       bool ab_xonXoff,
       uint16_t aui16_sndBuf,
       uint16_t aui16_recBuf,
-      uint8_t aui8_channel
+      uint8_t aui8_channel)
   {
     return RS232IO_c::init(
         aui32_baudrate,

@@ -77,7 +77,6 @@ public:
       uint16_t aui16_recBuf,
       uint8_t aui8_channel);
 
-
   /**
     checks whether the BIOS RS232 is correctly initialized
   */
