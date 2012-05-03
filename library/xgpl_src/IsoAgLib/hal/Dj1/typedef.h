@@ -45,14 +45,19 @@ typedef unsigned long uint32_t;
 typedef long int32_t;
 
 #ifdef HANDLE_FAST_DATATYPE_AS_STRICT
-
 typedef signed char     int_fast8_t;
 typedef int             int_fast16_t;
 typedef long            int_fast32_t;
 typedef unsigned char   uint_fast8_t;
 typedef unsigned int    uint_fast16_t;
 typedef unsigned long   uint_fast32_t;
-
+#else
+typedef int             int_fast8_t;
+typedef int             int_fast16_t;
+typedef long            int_fast32_t;
+typedef unsigned int    uint_fast8_t;
+typedef unsigned int    uint_fast16_t;
+typedef unsigned long   uint_fast32_t;
 #endif //end HANDLE_FAST_DATATYPE_AS_STRICT
 
 

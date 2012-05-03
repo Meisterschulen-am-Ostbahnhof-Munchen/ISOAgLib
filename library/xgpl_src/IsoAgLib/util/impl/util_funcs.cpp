@@ -479,9 +479,8 @@ void bigEndianHexNumberText2CanStringUint32( const char* ac_src, uint8_t* pui8_t
 }
 
 #if 0
-This function is currently commented out because the SYSTEM_PC_VC case needs to be checked
-(as the SYSTEM_PC_VC define was removed for cleanup reason. Question is if the problem
-still occurs on today's MVSC, at which specific version(s) and if it's a Windows or MSVC problem.
+This function is currently commented out because there was a SYSTEM_PC_VC define which
+was removed and hence the function needs to be checked before it is being reactivated again!
 
 /** convert big endian textual unsigned int 64Bit number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_target )
@@ -529,11 +528,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
   #endif
 #elif defined( SUPPORTS_64BIT )
   uint64_t temp;
-#ifdef SYSTEM_PC_VC
-  sscanf( ac_src, "%16I64x", &temp );
-#else
   sscanf( ac_src, "%16llx", &temp );
-#endif
   #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target, &temp, 8 );
   #else
