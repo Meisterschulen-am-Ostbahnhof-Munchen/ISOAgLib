@@ -46,9 +46,6 @@
 #ifndef NO
   #define NO 0
 #endif
-#ifndef USE_PROCESS_YN 
-	#define USE_PROCESS_YN NO 
-#endif
 #ifndef USE_EEPROM_IO_YN 
 	#define USE_EEPROM_IO_YN NO 
 #endif
