@@ -136,9 +136,6 @@ set_default_values()
     # set default USE_LITTLE_ENDIAN_CPU, so that quick number variable
     # to CAN string conversions are possible:
     USE_LITTLE_ENDIAN_CPU=1
-    # set default USE_PCAN_LIB, so that quick number variable to CAN
-    # string conversions are possible:
-    USE_PCAN_LIB=0
     # set default USE_BIG_ENDIAN_CPU, so that quick number variable to
     # CAN string conversions are possible:
     USE_BIG_ENDIAN_CPU=0
@@ -1002,17 +999,6 @@ END_OF_PATH
             echo_e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN$ENDLINE" >&3
         fi
     
-        if [ "$USE_PCAN_LIB" -gt 0 ] ; then
-            echo_e "#define USE_PCAN_LIB$ENDLINE" >&3
-        else
-            echo_e "// #define USE_PCAN_LIB$ENDLINE" >&3
-        fi
-    
-        if [ "$USE_VT_UNICODE_SUPPORT" -gt 0 ] ; then
-            echo_e "#define USE_VT_UNICODE_SUPPORT$ENDLINE" >&3
-        fi
-    
-    
         if [ "$PRJ_BASE" -gt 0 ] ; then
             echo_e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >&3
         fi
@@ -1057,21 +1043,10 @@ END_OF_PATH
             echo_e "// #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED$ENDLINE" >&3
         fi
     
-        echo_ "/** allow configuration by parameter value YES */" >&3
-        echo_ "#ifndef YES" >&3
-        echo_ "  #define YES 1" >&3
-        echo_ "#endif" >&3
-        echo_ "/** allow configuration by parameter value NO */" >&3
-        echo_ "#ifndef NO" >&3
-        echo_ "  #define NO 0" >&3
-        echo_ "#endif" >&3
-    
-    
         if [ "$USE_FLOAT_DATA_TYPE" -gt 0 ] ; then
             echo_ "// Decide if float shall be used for the project" >&3
             echo_e "#define USE_FLOAT_DATA_TYPE$ENDLINE" >&3
         fi
-    
     
 		if [ "$PRJ_EEPROM" -gt 0 ] ; then
             echo_e "#define USE_EEPROM_IO" >&3
@@ -1079,10 +1054,6 @@ END_OF_PATH
     
         if [ "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ]; then
             echo_e "#ifndef USE_DATASTREAMS_IO $ENDLINE\t#define USE_DATASTREAMS_IO $ENDLINE#endif" >&3
-        else
-        # the default in isoaglib_config.h is to activate
-        # DATASTREAMS as long as USE_DATASTREAMS_IO_YN unset
-            echo_e "#ifndef USE_DATASTREAMS_IO_YN $ENDLINE\t#define USE_DATASTREAMS_IO_YN NO $ENDLINE#endif" >&3
         fi
     
         if [ "$PRJ_ISO11783" -gt 0 ] ; then
@@ -1135,29 +1106,6 @@ END_OF_PATH
             echo_e "#ifndef USE_INPUTS$ENDLINE\t#define USE_INPUTS$ENDLINE#endif" >&3
         fi
 
-        # write overwriteable parts of isoaglib_config.h
-        echo_e "$ENDLINE// The following configuration values can be overwritten." >&3
-        echo_ "// These settings are initially defined in isoaglib_config.h ." >&3
-        echo_ "// These settings are in commented-out, so that you can activate and adapt them by" >&3
-        echo_e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG$ENDLINE"  >&3
-    } 3>"$CONFIG_NAME"
-    TMP_CONFIG1="${TEMPFILE_PREFIX}config1"
-    while read -r conf_line; do
-        conf_name=$(echo_ $conf_line | sed 's/# *define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
-        INDIV_CNT=$(grep -c $conf_name $CONFIG_NAME.bak || status_le1)
-        if [ "$INDIV_CNT" -lt 1 ] ; then
-            grep -B1 "# *define $conf_line" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h >> $CONFIG_NAME
-            sed "s|# *define $conf_name|// #define $conf_name|g" $CONFIG_NAME > $TMP_CONFIG1
-            #     CMDLINE=$(echo_ "sed -e 's|# *define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $TMP_CONFIG1")
-            #     echo_ $CMDLINE | sh
-            cp $TMP_CONFIG1 $CONFIG_NAME
-            echo_e_n "$ENDLINE" >> $CONFIG_NAME
-        fi
-    done <<END_OF_CONFIG_SET
-$(grep "# *define CONFIG_" <$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h |
-  sed 's/# *define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
-END_OF_CONFIG_SET
-    {
         echo_e "$ENDLINE// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!" >&3
         FRESH=$(grep -c "// START_INDIVIDUAL_PROJECT_CONFIG" < $CONFIG_NAME.bak || status_le1)
         if [ "$FRESH" -lt 1 ] ; then
