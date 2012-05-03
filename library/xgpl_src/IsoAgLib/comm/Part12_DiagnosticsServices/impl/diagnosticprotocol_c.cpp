@@ -154,6 +154,7 @@ bool DiagnosticProtocol_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c*
   if ( ( rpc_isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != rpc_isoItemReceiver ) )
     return false; // request not adressed to us!
 
+  (void)rui32_pgn; // currently only this one PGN handled in here!
   isoaglib_assert(ECU_DIAGNOSTIC_PROTOCOL_PGN == rui32_pgn);
 
   if (!mt_multiSendEventHandler.m_isMultiSendRunning)

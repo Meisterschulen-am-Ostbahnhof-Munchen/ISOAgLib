@@ -805,7 +805,7 @@ bool VtClientServerCommunication_c::isVersionFound(Stream_c& arc_stream) const
   const uint8_t number_of_versions = arc_stream.get();
  
   // check get versions response is consistency
-  if ( arc_stream.getByteTotalSize() != (2 + 7*uint16_t(number_of_versions)) )
+  if ( uint32_t(arc_stream.getByteTotalSize()) != uint32_t(2 + 7*uint16_t(number_of_versions)) )
     return false; // not valid -> return;
 
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
