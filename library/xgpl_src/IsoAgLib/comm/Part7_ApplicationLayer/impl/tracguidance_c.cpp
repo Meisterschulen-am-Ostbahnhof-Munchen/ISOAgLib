@@ -45,7 +45,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     ///Set time Period for Scheduler_c
     if (at_identMode == IsoAgLib::IdentModeTractor) setTimePeriod( (uint16_t) 100);
-    else  setTimePeriod( (uint16_t) TIMEOUT_TRACTOR_DATA   );
+    else  setTimePeriod( (uint16_t) CONFIG_TIMEOUT_TRACTOR_DATA   );
 
     mui16_estCurvature = 32128;
     mt_requestResetCmdStatus = IsoAgLib::IsoNotAvailableReset ;

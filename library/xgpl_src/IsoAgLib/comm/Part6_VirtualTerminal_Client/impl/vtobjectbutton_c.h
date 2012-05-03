@@ -76,7 +76,7 @@ public:
 
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
 
-#ifdef REVISION3_CLIENT
+#ifdef PROPRIETARY_VERSION4_CLIENT_HACK
   void setOptions (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), options) : 0, sizeof(iVtObjectButton_s), 6, newValue, newValue, b_enableReplaceOfCmd);
   }

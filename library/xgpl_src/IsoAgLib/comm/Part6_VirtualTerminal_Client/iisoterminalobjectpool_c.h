@@ -186,8 +186,8 @@ public:
     "End Of Object Pool Response"/"Load Version Response
     Message was received for complete initial uploads
     or automatical language update partial uploads.
-    @param ab_wasLanguageUpdate TRUE if the object pool was updated while it was already active/being displayed.
-                                FALSE if the object pool was initially uploaded
+    @param ab_wasLanguageUpdate true if the object pool was updated while it was already active/being displayed.
+                                false if the object pool was initially uploaded
     @param ai8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) has been uploaded/updated)
                              0..(n-1) for the index to the supported languages. 0 is the first (=default) language. 1 the second, etc.
     @param aui16_languageCode the language code of the uploaded language (one of your supported languages!)

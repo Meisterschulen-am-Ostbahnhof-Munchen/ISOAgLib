@@ -63,11 +63,7 @@
 #  endif
 #endif
 
-/** define size of int */
-#define SIZEOF_INT 4
-
-/** don't use CanEn check */
-// #define NO_CAN_EN_CHECK
+#define HAL_SIZEOF_INT 4
 
 /** define suitable keyword for huge memory type */
 #define HUGE_MEM

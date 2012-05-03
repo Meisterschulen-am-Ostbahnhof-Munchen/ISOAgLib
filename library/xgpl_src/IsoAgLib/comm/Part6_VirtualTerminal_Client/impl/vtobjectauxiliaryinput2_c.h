@@ -109,7 +109,7 @@ public:
        - default value: the active state is calculated from aui16_value1 != 0
        - StateForLearnMode_SetActive: set state to activated
        - StateForLearnMode_SetInactive: set state to not activated
-    @return TRUE if range of value matches the expected range for this function type
+    @return true if range of value matches the expected range for this function type
   */
   bool setValue(uint16_t aui16_value1, uint16_t aui16_value2, StateForLearnMode_en aen_stateForLearnMode);
 
@@ -141,7 +141,7 @@ private:
   uint16_t mui16_value1;
   uint16_t mui16_value2;
 
-  // set this value to TRUE when the input is "activated" via setValue()
+  // set this value to true when the input is "activated" via setValue()
   bool mb_inputActivatedInLearnMode;
 
   // non latching booleans have to send status at higher update rate when pressed

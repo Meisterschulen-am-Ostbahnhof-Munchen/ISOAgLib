@@ -164,7 +164,7 @@ namespace __HAL
     int16_t Code = __HAL::DjBios_CanOpen ( aui8_busNr, ab_baudrate, aui16_maskStd,
                                      aui32_maskExt, aui32_maskLastmsg );
 
-#if DEBUG_HAL && OBJECT_CONFIG
+#if DEBUG_HAL && DEBUG_CONFIG
 INTERNAL_DEBUG_DEVICE << "GI: ";
 #endif
     if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_RATE) )
@@ -200,7 +200,7 @@ INTERNAL_DEBUG_DEVICE << "GI: ";
     int16_t Code = __HAL::DjBios_CanConfig ( aui8_busNr, aui16_maskStd,
                                           aui32_maskExt, aui32_maskLastmsg );
 
-#if DEBUG_HAL && OBJECT_CONFIG
+#if DEBUG_HAL && DEBUG_CONFIG
 INTERNAL_DEBUG_DEVICE << "GM: ";
 #endif
     if ( Code == BIOS_CAN_BAD_BUS )
@@ -231,7 +231,7 @@ INTERNAL_DEBUG_DEVICE << "GM: ";
   int16_t Can_Close ( uint8_t aui8_busNr )
   {
     int16_t Code = __HAL::DjBios_CanClose ( aui8_busNr );
-#if DEBUG_HAL && OBJECT_CONFIG
+#if DEBUG_HAL && DEBUG_CONFIG
 INTERNAL_DEBUG_DEVICE << "CanClose: ";
 #endif
 
@@ -285,7 +285,7 @@ INTERNAL_DEBUG_DEVICE << "CanClose: ";
     (void)__HAL::DjBios_CanObjCallback ( aui8_busNr, aui8_msgobjNr, (ab_rxtx==1)?NULL:Can_IrqRxToFifo );
 #endif
 
-#if DEBUG_HAL && OBJECT_CONFIG
+#if DEBUG_HAL && DEBUG_CONFIG
 INTERNAL_DEBUG_DEVICE << "I:" << uint16_t(rui8_msgobjNr) << " ";
 #endif
 
@@ -317,7 +317,7 @@ INTERNAL_DEBUG_DEVICE << "I:" << uint16_t(rui8_msgobjNr) << " ";
   Description   : This is the call back function for the CAN Rx ISR.  This will
                   be called for each Rx interrupt.  The given message should be
                   handled (copied to the system Fifo).  Return FALSE if the message
-                  hase been used. Return TRUE if the message is to be procesed
+                  hase been used. Return BIOS_TRUE if the message is to be procesed
                   (queued) within the bios.
 
   Notes :         This is called directly from the interrupt.  This could have
@@ -400,7 +400,7 @@ extern "C"
     int16_t Code = __HAL::DjBios_CanObjChangeIdent ( aui8_busNr, aui8_msgobjNr, Ident,
                                                (Type==0)?BIOS_FALSE:BIOS_TRUE);
 
-#if DEBUG_HAL && OBJECT_CONFIG
+#if DEBUG_HAL && DEBUG_CONFIG
 INTERNAL_DEBUG_DEVICE << "C:" << uint16_t(rui8_msgobjNr) << " ";
 #endif
 
@@ -436,7 +436,7 @@ INTERNAL_DEBUG_DEVICE << "C:" << uint16_t(rui8_msgobjNr) << " ";
     int16_t Code = __HAL::DjBios_CanObjLock ( rui8_busNr, rui8_msgobjNr,
                                               (rb_doLock) ? BIOS_TRUE : BIOS_FALSE );
 
-#if DEBUG_HAL && OBJECT_CONFIG
+#if DEBUG_HAL && DEBUG_CONFIG
 INTERNAL_DEBUG_DEVICE << "Lock:" << uint16_t(rui8_msgobjNr) << " " << (rb_doLock? "On" : "Off") << " ";
 #endif
 
@@ -469,7 +469,7 @@ INTERNAL_DEBUG_DEVICE << "Lock:" << uint16_t(rui8_msgobjNr) << " " << (rb_doLock
   {
     int16_t Code = __HAL::DjBios_CanObjClose ( aui8_busNr, aui8_msgobjNr );
 
-#if DEBUG_HAL && OBJECT_CONFIG
+#if DEBUG_HAL && DEBUG_CONFIG
 INTERNAL_DEBUG_DEVICE << "ObjClose:" << uint16_t(rui8_msgobjNr) << " ";
 #endif
 

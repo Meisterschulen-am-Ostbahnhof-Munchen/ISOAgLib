@@ -39,13 +39,9 @@
 //    ( i.e. direct in the BIOS/OS call)
 #define HAL_CAN_MAX_BUS_NR 2
 
-/** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */
 #define FLOAT_WORD_ORDER WORD_HI_LO
-/* we know that this cpu is little endian */
 #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-
-/** define size of int */
-#define SIZEOF_INT 2
+#define HAL_SIZEOF_INT 2
 
 /** define suitable keyword for huge memory type */
 #define HUGE_MEM huge

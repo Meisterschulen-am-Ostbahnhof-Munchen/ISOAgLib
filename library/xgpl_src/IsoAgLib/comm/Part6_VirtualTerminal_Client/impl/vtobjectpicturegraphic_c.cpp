@@ -94,20 +94,15 @@ namespace __IsoAgLib {
       } \
     }
 
-#if defined (NO_BITMAP_SCALING)
-  #define MACRO_calculateRequestedSize \
-    uint16_t width = vtObjectPictureGraphic_a->width;
-#else
-  #define MACRO_calculateRequestedSize \
-    uint16_t width; \
-    if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
-      width = (((uint32_t) vtObjectPictureGraphic_a->width * factorM)/factorD); \
-    } else { \
-      width = (((uint32_t) vtObjectPictureGraphic_a->width * vtDimension) /opDimension); \
-    }
-#endif
+#define MACRO_calculateRequestedSize \
+  uint16_t width; \
+  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
+    width = (((uint32_t) vtObjectPictureGraphic_a->width * factorM)/factorD); \
+  } else { \
+    width = (((uint32_t) vtObjectPictureGraphic_a->width * vtDimension) /opDimension); \
+  }
 
-
+  
 // Operation : stream
 //! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer

@@ -101,7 +101,7 @@ public:
   // INTERFACE FUNTIONS //
   ////////////////////////
 // the following define should be globally defined in the project settings...
-#ifdef FAKE_VT_PROPERTIES
+#ifdef USE_IOP_GENERATOR_FAKE_VT_PROPERTIES
   void fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes);
 #endif
 

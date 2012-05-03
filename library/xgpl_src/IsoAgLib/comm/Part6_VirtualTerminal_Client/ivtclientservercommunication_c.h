@@ -32,7 +32,7 @@ public:
   bool isVtActive() { return VtClientServerCommunication_c::isVtActive(); }
 
   /* enable/disable sending of commands to the VT over the ISOBUS.
-     defaults to TRUE, can be temporarily switched OFF (false) to locally
+     defaults to true, can be temporarily switched OFF (false) to locally
      modify the objects, partial pool update them and then switched
      ON (true) again. */     
   void sendCommandsToBus( bool commandsToBus ) { return VtClientServerCommunication_c::sendCommandsToBus( commandsToBus ); }

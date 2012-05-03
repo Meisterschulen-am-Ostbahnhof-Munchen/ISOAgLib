@@ -102,7 +102,7 @@ vtObjectAuxiliaryFunction2_c::setAssignedInput(const IsoName_c& arc_isoName, uin
   }
   ms_assignedInput.mui16_inputUid = aui16_inputUid;
 
-  // TRUE if changed
+  // true if changed
   return !(assignedInputBackup == ms_assignedInput);
 }
 
@@ -132,7 +132,7 @@ vtObjectAuxiliaryFunction2_c::setPreferredAssignedInput(const IsoName_c& arc_iso
   ms_preferredAssignedInput.mui16_inputModelIdentificationCode = aui16_inputModelIdentificationCode;
   ms_preferredAssignedInput.mui16_inputUid = aui16_inputUid;
 
-  // TRUE if changed
+  // true if changed
   return !(preferredAssignedInputBackup == ms_preferredAssignedInput);
 }
 

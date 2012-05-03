@@ -52,7 +52,7 @@ namespace HAL{
 * The number of buffer elements should be 2^N where N must be less than  TARGET_WORDSIZE -1,
 * otherwise the overflow of the UC and AC counter can lead to loss of data between producer and consumer.
 */
-#define TARGET_WORDSIZE (SIZEOF_INT * 8)
+#define TARGET_WORDSIZE (HAL_SIZEOF_INT * 8)
 
 #if CAN_FIFO_EXPONENT_BUFFER_SIZE >= (TARGET_WORDSIZE - 1)
 #error CAN_FIFO_EXPONENT_BUFFER_SIZE must be less than  TARGET_WORDSIZE -1

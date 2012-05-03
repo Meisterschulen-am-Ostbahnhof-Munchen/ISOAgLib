@@ -92,7 +92,7 @@ public:
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate() { return TimePosGps_c::sendRequestUpdateTimeDate(); }
 
-  /** @return TRUE => data source dev key is specified */
+  /** @return true => data source dev key is specified */
   bool checkDataSourceSpecified() { return TimePosGps_c::getSelectedDataSourceISONameConst().isSpecified();}
 
   /** get Devkey of data source (e.g. tractor, terminal) from which commands are send exclusively */

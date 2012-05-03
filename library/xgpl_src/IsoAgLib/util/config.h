@@ -25,6 +25,7 @@
 /* ********************************* */
 
 /**
+  @TODO TaskControllerClient cleanup!
   enumeration to define special cmds in he 4byte process data value
 */
 enum proc_specCmd_t {setpointReleaseCmd = 1, setpointErrCmd = 2, noVal_32s = 4, errVal_32s = 8};
@@ -50,12 +51,6 @@ enum proc_specCmd_t {setpointReleaseCmd = 1, setpointErrCmd = 2, noVal_32s = 4, 
   #define THROW_CONT_EL_NONEXIST
   #define THROW_PRECOND_VIOLATION
 #endif
-
-
-
-// special Scheduler_c values
-#define SETPOINT_RELEASE_COMMAND  NO_VAL_32S
-#define SETPOINT_ERROR_COMMAND  ERROR_VAL_32S
 
 
 #define NO_VAL_32S ((int32_t)0x80000000l)

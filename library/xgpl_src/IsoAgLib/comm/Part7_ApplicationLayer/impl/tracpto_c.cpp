@@ -49,7 +49,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     ///Set time Period for Scheduler_c
     if (at_identMode == IsoAgLib::IdentModeTractor) setTimePeriod( (uint16_t) 100);
-    else  setTimePeriod( (uint16_t) TIMEOUT_TRACTOR_DATA   );
+    else  setTimePeriod( (uint16_t) CONFIG_TIMEOUT_TRACTOR_DATA   );
 
     // set the member base msg value vars to NO_VAL codes
     mt_ptoFront.ui16_pto8DigitPerRpm = mt_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16;
@@ -170,7 +170,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         setUpdateTime( pt_ptoData->i32_lastPto );
 
         //msg from Tractor received do tell Scheduler_c next call not until  3000ms
-        changeRetriggerTimeAndResort(pkg.time() + TIMEOUT_TRACTOR_DATA);
+        changeRetriggerTimeAndResort(pkg.time() + CONFIG_TIMEOUT_TRACTOR_DATA);
       }
 
       else
@@ -212,7 +212,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     const int32_t ci32_now = getLastRetriggerTime();
     // check for different pto data types whether the previously
     // sending node stopped sending -> other nodes can now step in
-    if ( ( (ci32_now - mt_ptoFront.i32_lastPto)  >= TIMEOUT_TRACTOR_DATA
+    if ( ( (ci32_now - mt_ptoFront.i32_lastPto)  >= CONFIG_TIMEOUT_TRACTOR_DATA
            || getSelectedDataSourceISOName().isUnspecified()
          )
          && ( (IsoAgLib::IsoActiveFlag_t)(mt_ptoFront.ui16_pto8DigitPerRpm) != 0 && (IsoAgLib::IsoActiveFlag_t)(mt_ptoFront.t_ptoEngaged) != IsoAgLib::IsoInactive)
@@ -222,7 +222,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       mt_ptoFront.ui16_pto8DigitPerRpm = 0;
       mt_ptoFront.t_ptoEngaged = IsoAgLib::IsoInactive;
     }
-    if ( ( ( ci32_now - mt_ptoRear.i32_lastPto ) >= TIMEOUT_TRACTOR_DATA
+    if ( ( ( ci32_now - mt_ptoRear.i32_lastPto ) >= CONFIG_TIMEOUT_TRACTOR_DATA
            || (getSelectedDataSourceISOName().isUnspecified() )
          )
          && ((IsoAgLib::IsoActiveFlag_t)(mt_ptoRear.ui16_pto8DigitPerRpm) != 0 && (IsoAgLib::IsoActiveFlag_t)(mt_ptoRear.t_ptoEngaged) != IsoAgLib::IsoInactive )

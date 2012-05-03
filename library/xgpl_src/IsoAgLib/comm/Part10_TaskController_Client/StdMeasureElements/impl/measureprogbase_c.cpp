@@ -445,9 +445,9 @@ bool MeasureProgBase_c::processMsg( const ProcessPkg_c& pkg ){
           start(en_typePkg, en_doSendPkg);
       }
       else
-       // call MeasureProgLocal_c::stop() with TRUE and en_typePkg != Proc_c::NullType
+       // call MeasureProgLocal_c::stop() with true and en_typePkg != Proc_c::NullType
        // => only the appropriate MeasureSubprog_c is deleted (selective stop)
-       stop(TRUE /* b_deleteSubProgs */, en_typePkg, en_doSendPkg);
+       stop(true /* b_deleteSubProgs */, en_typePkg, en_doSendPkg);
     }
   }
 

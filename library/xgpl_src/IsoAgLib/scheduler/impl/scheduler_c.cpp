@@ -36,11 +36,6 @@
 
 #if DEBUG_HEAP_USEAGE
 static uint16_t volatile sui16_clientPointerTotal = 0;
-
-#ifdef MASSERT
-extern unsigned int AllocateHeapMalloc;
-extern unsigned int DeallocateHeapMalloc;
-#endif
 #endif
 
 

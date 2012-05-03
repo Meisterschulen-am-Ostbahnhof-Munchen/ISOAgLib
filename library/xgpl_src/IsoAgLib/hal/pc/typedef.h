@@ -18,12 +18,6 @@
 #define USER_WATCHDOG           0      /* Define for User-Watchdog */
 #define DATA_CHANGED            1      /* Returnvalue from config_wd */
 
-#ifndef FALSE
-  #define FALSE             0
-#endif
-#ifndef TRUE
-  #define TRUE              1
-#endif
 #define HIGH              1
 #define LOW               0
 

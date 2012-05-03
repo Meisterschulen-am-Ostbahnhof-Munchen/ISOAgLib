@@ -29,11 +29,6 @@ static uint16_t sui16_MeasureProgLocalTotal = 0;
 static uint16_t sui16_lastPrintedMeasureProgLocalTotal = 0;
 static uint16_t sui16_deconstructMeasureProgLocalTotal = 0;
 static uint16_t sui16_printedDeconstructMeasureProgLocalTotal = 0;
-
-#ifdef MASSERT
-extern unsigned int AllocateHeapMalloc;
-extern unsigned int DeallocateHeapMalloc;
-#endif
 #endif
 
 namespace __IsoAgLib {
@@ -122,13 +117,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
         << ", Chunk-Alloc: "
         << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
         << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-      #ifndef MASSERT
         << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-      #else
-        << ", __mall tot:" << AllocateHeapMalloc
-        << ", _mall deal tot: " << DeallocateHeapMalloc
-        << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
     }
   }
   #endif
@@ -164,13 +153,7 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-    #ifndef MASSERT
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #else
-      << ", __mall tot:" << AllocateHeapMalloc
-      << ", _mall deal tot: " << DeallocateHeapMalloc
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
   }
   #endif
 }
@@ -201,13 +184,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-    #ifndef MASSERT
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #else
-      << ", __mall tot:" << AllocateHeapMalloc
-      << ", _mall deal tot: " << DeallocateHeapMalloc
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
   }
   #endif
 
@@ -269,13 +246,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
                 << ", Chunk-Alloc: "
                 << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
                 << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-              #ifndef MASSERT
                 << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-              #else
-                << ", __mall tot:" << AllocateHeapMalloc
-                << ", _mall deal tot: " << DeallocateHeapMalloc
-                << INTERNAL_DEBUG_DEVICE_ENDL;
-              #endif
             }
             #endif
             b_repeat = true;
@@ -289,7 +260,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   // call the time event for all measure programs
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
        pc_iter != vec_prog().end(); pc_iter++)
-    // if timeEvent of item returns FALSE, return this function also with false
+    // if timeEvent of item returns false, return this function also with false
     if ( ! pc_iter->timeEvent(pui16_nextTimePeriod) ) return false;
 
   return true;
@@ -334,13 +305,7 @@ void ManageMeasureProgLocal_c::processProg( const ProcessPkg_c& arc_data )
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-    #ifndef MASSERT
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #else
-      << ", __mall tot:" << AllocateHeapMalloc
-      << ", _mall deal tot: " << DeallocateHeapMalloc
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
   }
   #endif
   // now call process msg for cached item
@@ -426,13 +391,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
       << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-    #ifndef MASSERT
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #else
-      << ", __mall tot:" << AllocateHeapMalloc
-      << ", _mall deal tot: " << DeallocateHeapMalloc
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
   }
   #endif
 
@@ -506,7 +465,7 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
                                                 int32_t ai32_increment, const IsoName_c* apc_receiverDevice )
 {
   if ( !apc_receiverDevice )
-    return FALSE;
+    return false;
 
   // create new item if none found
   updateProgCache(*apc_receiverDevice, true);
@@ -520,7 +479,7 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
 
   mpc_progCache->start(ren_type, Proc_c::DoVal);
 
-  return TRUE;
+  return true;
 }
 
 /**

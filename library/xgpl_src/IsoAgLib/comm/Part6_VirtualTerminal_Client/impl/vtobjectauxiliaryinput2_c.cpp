@@ -264,9 +264,9 @@ vtObjectAuxiliaryInput2_c::setValue(uint16_t aui16_value1, uint16_t aui16_value2
 
   if ((oldValue1 != mui16_value1) || (oldValue2 != mui16_value2))
   {
-    // mb_valueChangeToHandle is set to FALSE in updateValueForHeldPositionAfterFirstMsg(), 
+    // mb_valueChangeToHandle is set to false in updateValueForHeldPositionAfterFirstMsg(), 
     // called by triggerAux2InputStatusMsg() when the state message is sent successfully (no timing restrictions: 200msec minimum time diff)
-    // As long as the message can not be sent, mb_valueChangeToHandle stays TRUE 
+    // As long as the message can not be sent, mb_valueChangeToHandle stays true 
     // => message sending is tried in Aux2Inputs_c::timeEventInputStateMsg() until timing allows message sending
     mb_valueChangeToHandle = true;
     __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).triggerAux2InputStatusMsg(this);

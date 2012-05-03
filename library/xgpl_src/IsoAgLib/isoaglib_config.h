@@ -81,19 +81,15 @@
 #  define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
 #endif
 
-#ifndef CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-  /** select time intervall in MSEC during which the loss of CAN_EN is ignored.
-      IMPORTANT: This slection has only influence on system if IsoAgLib::PowerdownByExplcitCall
-      is selected, as this settings causes iSystem_c::canEn() to return _TRUE_ in shorter power loss
-      phases than the time intervall specified here.
-      The automatic power down of the ECU ( OS or BIOS ) can't be manipulated this way.
-      IF iSystem_c::canEn() shall immediately answer false on CAN_EN loss, set this defined as
-      UNDEFINED!!! - the handling of this buffer time is then compiled away
-    */
+/** select time intervall in MSEC during which the loss of CAN_EN is ignored.
+  IMPORTANT: This selection has only influence on system if IsoAgLib::PowerdownByExplcitCall
+  is selected.
+  The automatic power down of the ECU ( OS or BIOS ) can't be manipulated this way.
+  If iSystem_c::canEn() shall immediately answer false on CAN_EN loss, don't set this define
+
   /// define consolidation time for CAN_EN loss detection - can be manually overridden in project config file
-#  define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC 1000
-#endif
-/*@}*/
+  #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC 1000
+*/
 
 
 /* ******************************************************** */
@@ -309,9 +305,9 @@
     -> should normally NOT be changed by the user/app.
        keep it as is!
 */
-#ifndef TIMEOUT_TRACTOR_DATA
+#ifndef CONFIG_TIMEOUT_TRACTOR_DATA
   /// Message reception lost if no message received in this time
-#  define TIMEOUT_TRACTOR_DATA 3000
+#  define CONFIG_TIMEOUT_TRACTOR_DATA 3000
 #endif
 
 #ifndef CONFIG_EEPROM_PADDING_BYTE
@@ -324,6 +320,7 @@
 /**
  * \name Config basic properties of process data handling
  * Choose basic properties for process data handling
+ @todo TaskControllerClient cleanup!
  */
 /*@{*/
 /// define special command value for release of setpoint
@@ -334,6 +331,7 @@
 /**
   * @def RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN
   * some systems send exact setpoint cmd with value 0 to reset a measurement value
+  @todo TaskControllerClient cleanup!!
   */
 #  ifndef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN
 #    define RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN NO
@@ -430,11 +428,6 @@
   */
 #ifndef PRT_INSTANCE_CNT
 #  define PRT_INSTANCE_CNT 1
-#endif
-
-#ifndef DEFAULT_BITRATE
-  /// define DEFAULT BITRATE to default ISOBUS bitrate
-#  define DEFAULT_BITRATE 250
 #endif
 
 /** set the amount of RS232IO_c channels available at the ECU
@@ -771,21 +764,5 @@ struct NullOut_s {
 #  endif
 #endif
 /*@}*/
-
-
-#ifndef gluetoks
-#  define gluetoks(a, b)  a ## b
-#  define gluetoks3(a, b, c)  a ## b ## c
-#  define gluetoks4(a, b, c, d)  a ## b ## c ## d
-#  define gluetoks5(a, b, c, d, e)  a ## b ## c ## d ## e
-#endif
-#ifndef gluemacs
-#  define gluemacs(a, b)  gluetoks(a, b)
-#  define gluemacs3(a, b, c)  gluetoks3(a, b, c)
-#  define gluemacs4(a, b, c, d)  gluetoks4(a, b, c, d)
-#  define gluemacs5(a, b, c, d, e)  gluetoks5(a, b, c, d, e)
-#endif
-/*@}*/
-
 
 #endif

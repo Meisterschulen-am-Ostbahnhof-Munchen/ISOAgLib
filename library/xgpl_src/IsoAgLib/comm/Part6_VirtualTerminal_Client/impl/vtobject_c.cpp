@@ -287,10 +287,10 @@ vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iV
           objectsToFollow[i].y = dy;
         }
       }
-      return true; // Object was child object, so its position could be changed --> return TRUE!
+      return true; // Object was child object, so its position could be changed
     }
   }
-  return false; // Object was not child object --> return FALSE!
+  return false; // Object was not child object
 }
 
 // only using int16_t because ISO's offset is -127 and hence the range is -127..0..+128 :-(((

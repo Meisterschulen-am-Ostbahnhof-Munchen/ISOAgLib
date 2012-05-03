@@ -558,80 +558,42 @@ namespace __IsoAgLib {
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // from here on, we can safely process the message as all preconditions are fullfilled
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    #if SIZEOF_INT == 2
-      uint16_t ui16_temp = pkg.getUint16Data( 0 );
-      pt_data->daytimeRunning =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
-      pt_data->alternateHead  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
-      pt_data->lowBeamHead  =         IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
-      pt_data->highBeamHead  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  6) & 3 ) ;
-      pt_data->frontFog =             IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  8) & 3 ) ;
-      pt_data->beacon  =              IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
-      pt_data->rightTurn  =           IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
-      pt_data->leftTurn  =            IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
-      ui16_temp = pkg.getUint16Data( 2 );
-      pt_data->backUpLightAlarmHorn = IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
-      pt_data->centerStop  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
-      pt_data->rightStop  =           IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
-      pt_data->leftStop  =            IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  6) & 3 ) ;
-      pt_data->implClearance =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  8) & 3 ) ;
-      pt_data->tracClearance  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
-      pt_data->implMarker  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
-      pt_data->tracMarker  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
-      ui16_temp = pkg.getUint16Data( 4 );
-      pt_data->rearFog =              IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
-      pt_data->undersideWork  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
-      pt_data->rearLowWork  =         IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
-      pt_data->rearHighWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  6) & 3 ) ;
-      pt_data->sideLowWork =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  8) & 3 ) ;
-      pt_data->sideHighWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
-      pt_data->frontLowWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
-      pt_data->frontHighWork  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
-      ui16_temp = pkg.getUint16Data( 6 );
-      pt_data->implOEMOpt2 =           IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
-      pt_data->implOEMOpt1  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
-      pt_data->implRightForwardWork  =    IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
-      pt_data->implLeftForwardWork  =     IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  6) & 3 ) ;
-      // pt_data->dataMsgReq is treated separately
-      pt_data->implRightFacingWork  =     IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
-      pt_data->implLeftFacingWork  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
-      pt_data->implRearWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
-    #else
-      // 32-Bit CPU
-      uint32_t ui32_temp = pkg.getUint32Data( 0 );
-      pt_data->daytimeRunning =       IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  0) & 3 ) ;
-      pt_data->alternateHead =        IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  2) & 3 ) ;
-      pt_data->lowBeamHead =          IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  4) & 3 ) ;
-      pt_data->highBeamHead =         IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  6) & 3 ) ;
-      pt_data->frontFog =             IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  8) & 3 ) ;
-      pt_data->beacon =               IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 10) & 3 ) ;
-      pt_data->rightTurn =            IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 12) & 3 ) ;
-      pt_data->leftTurn =             IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 14) & 3 ) ;
-      pt_data->backUpLightAlarmHorn = IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 16) & 3 ) ;
-      pt_data->centerStop =           IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 18) & 3 ) ;
-      pt_data->rightStop =            IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 20) & 3 ) ;
-      pt_data->leftStop =             IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 22) & 3 ) ;
-      pt_data->implClearance =        IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 24) & 3 ) ;
-      pt_data->tracClearance =        IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 26) & 3 ) ;
-      pt_data->implMarker =           IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 28) & 3 ) ;
-      pt_data->tracMarker =           IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 30) & 3 ) ;
-      ui32_temp = pkg.getUint32Data( 4 );
-      pt_data->rearFog =              IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  0) & 3 ) ;
-      pt_data->undersideWork =        IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  2) & 3 ) ;
-      pt_data->rearLowWork =          IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  4) & 3 ) ;
-      pt_data->rearHighWork =         IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  6) & 3 ) ;
-      pt_data->sideLowWork =          IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  8) & 3 ) ;
-      pt_data->sideHighWork =         IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 10) & 3 ) ;
-      pt_data->frontLowWork =         IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 12) & 3 ) ;
-      pt_data->frontHighWork =        IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 14) & 3 ) ;
-      pt_data->implOEMOpt2 =          IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 16) & 3 ) ;
-      pt_data->implOEMOpt1 =          IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 18) & 3 ) ;
-      pt_data->implRightForwardWork = IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 20) & 3 ) ;
-      pt_data->implLeftForwardWork =  IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 22) & 3 ) ;
-      //pt_data->dataMsgReq is treated separately
-      pt_data->implRightFacingWork =  IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 26) & 3 ) ;
-      pt_data->implLeftFacingWork =   IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 28) & 3 ) ;
-      pt_data->implRearWork =         IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 30) & 3 ) ;
-    #endif
+    uint16_t ui16_temp = pkg.getUint16Data( 0 );
+    pt_data->daytimeRunning =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
+    pt_data->alternateHead  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
+    pt_data->lowBeamHead  =         IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
+    pt_data->highBeamHead  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  6) & 3 ) ;
+    pt_data->frontFog =             IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  8) & 3 ) ;
+    pt_data->beacon  =              IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
+    pt_data->rightTurn  =           IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
+    pt_data->leftTurn  =            IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
+    ui16_temp = pkg.getUint16Data( 2 );
+    pt_data->backUpLightAlarmHorn = IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
+    pt_data->centerStop  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
+    pt_data->rightStop  =           IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
+    pt_data->leftStop  =            IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  6) & 3 ) ;
+    pt_data->implClearance =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  8) & 3 ) ;
+    pt_data->tracClearance  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
+    pt_data->implMarker  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
+    pt_data->tracMarker  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
+    ui16_temp = pkg.getUint16Data( 4 );
+    pt_data->rearFog =              IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
+    pt_data->undersideWork  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
+    pt_data->rearLowWork  =         IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
+    pt_data->rearHighWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  6) & 3 ) ;
+    pt_data->sideLowWork =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  8) & 3 ) ;
+    pt_data->sideHighWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
+    pt_data->frontLowWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
+    pt_data->frontHighWork  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
+    ui16_temp = pkg.getUint16Data( 6 );
+    pt_data->implOEMOpt2 =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
+    pt_data->implOEMOpt1  =         IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
+    pt_data->implRightForwardWork  =IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
+    pt_data->implLeftForwardWork  = IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  6) & 3 ) ;
+    // pt_data->dataMsgReq is treated separately
+    pt_data->implRightFacingWork  = IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
+    pt_data->implLeftFacingWork  =  IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
+    pt_data->implRearWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
 
     if ( mb_cmdWait4Response )
       sendMessage();

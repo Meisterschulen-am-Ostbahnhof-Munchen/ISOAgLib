@@ -115,19 +115,19 @@ public:
 
   void getPreferredAssignedInput(IsoName_c& arc_isoName, uint16_t& arui16_inputModelIdentificationCode, uint16_t& arui16_inputUid) const;
 
-  //! @return TRUE, if values are changed
+  //! @return true, if values are changed
   bool setAssignedInput(const IsoName_c& arc_isoName, uint16_t aui16_inputUid);
 
-  //! @return TRUE, if values are changed
+  //! @return true, if values are changed
   bool unassignInputIfIsoNameMatches(const IsoName_c& arc_isoName);
 
-  //! @return TRUE, if values are changed
+  //! @return true, if values are changed
   bool setPreferredAssignedInput(const IsoName_c& arc_isoName, uint16_t aui16_inputModelIdentificationCode, uint16_t aui16_inputUid);
 
-  //! @return TRUE, if AUX2 input is assigned
+  //! @return true, if AUX2 input is assigned
   bool isAssigned() const;
 
-  //! @return TRUE, if preferred assignment available
+  //! @return true, if preferred assignment available
   bool hasPreferredAssigment() const;
 
   void setMatchingPreferredAssignedInputReady(bool a_isReady) { m_matchingPreferredAssignedInputReady = a_isReady; }

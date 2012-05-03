@@ -48,7 +48,7 @@ const float gcf_rapidUpdateFilter = 0.15f;  // 15% new, 85%old to filter the upd
 // Off-class/namespace c-style helper functions
 void getDegree10Minus7FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32_result )
 {
-  #if SIZEOF_INT == 4
+  #if HAL_SIZEOF_INT == 4
   // use 64 bit variable
   int64_t i64_temp;
   IsoAgLib::convertIstream( rc_stream, i64_temp );
@@ -70,7 +70,7 @@ void getDegree10Minus7FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32
 
 void getAltitude10Minus2FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32_result )
 {
-  #if SIZEOF_INT == 4
+  #if HAL_SIZEOF_INT == 4
   // use 64 bit variable
   int64_t i64_temp;
   IsoAgLib::convertIstream( rc_stream, i64_temp );
@@ -1148,7 +1148,7 @@ void TimePosGps_c::isoSendDirection( void )
   CanPkgExt_c pkg;
   // little pre-Setup
   mui8_directionSequenceID = 0xFF; // not using tied-together-packaging right now
-  mui8_courseOverGroundReference = 0; // for now, we only send TRUE NORTH
+  mui8_courseOverGroundReference = 0; // for now, we only send true NORTH
 
   pkg.setIsoPri(2);
   pkg.setLen(8);
@@ -1173,7 +1173,7 @@ void TimePosGps_c::isoSendDirection( void )
 #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
   void setDegree10Minus7ToStream( const int32_t& ri32_src, STL_NAMESPACE::vector<uint8_t>& writeRef )
   {
-    #if SIZEOF_INT == 4
+    #if HAL_SIZEOF_INT == 4
     // use 64 bit variable
     const double d_temp = double(ri32_src) * 1.0e+9;
     int64_t i64_temp = int64_t(d_temp);
@@ -1189,7 +1189,7 @@ void TimePosGps_c::isoSendDirection( void )
 
   void setAltitude10Minus2ToStream( const int32_t& ri32_result, STL_NAMESPACE::vector<uint8_t>& writeRef )
   {
-    #if SIZEOF_INT == 4
+    #if HAL_SIZEOF_INT == 4
     // use 64 bit variable
     // NMEA sends with 1.0e-6, while normally 1.0e-2 is enough -> mult with 1.0e-4
     const double d_temp = double(ri32_result) * 1.0e+4;

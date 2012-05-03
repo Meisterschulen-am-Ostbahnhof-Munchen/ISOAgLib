@@ -143,9 +143,9 @@ bool updateTable(uint8_t aui8_busNum,uint8_t aui8_objNr,uint32_t aui32_numEl, co
 /** Find the FilterBoxNr which is interested in the CAN message
 *@param aui8_busNum : Bus number
 *@param aui8_objNr : MsgObjNr in the MsgObj_c class
-*@param rui32_msgId : type of CAN frame : FALSE = standard (11 bits) or TRUE = extended (29 bits)
+*@param rui32_msgId : type of CAN frame : false = standard (11 bits) or true = extended (29 bits)
 *@param pi32_filterBoxIdx
-*@return TRUE if a filterBox is found and rui8_filterBoxNr is the FilterBoxNr.
+*@return true if a filterBox is found and rui8_filterBoxNr is the FilterBoxNr.
 */
 void findFilterBox(uint8_t aui8_busNum, uint8_t aui8_objNr,uint32_t rui32_msgId,int32_t* pi32_filterBoxIdx )
 {

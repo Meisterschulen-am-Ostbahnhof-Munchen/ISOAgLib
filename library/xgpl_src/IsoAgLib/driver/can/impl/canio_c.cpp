@@ -37,11 +37,6 @@ static uint16_t sui16_msgObjTotal = 0;
 static uint16_t sui16_deconstructMsgObjCnt = 0;
 #  endif
 static uint16_t sui16_filterBoxTotal = 0;
-
-#  ifdef MASSERT
-extern unsigned int AllocateHeapMalloc;
-extern unsigned int DeallocateHeapMalloc;
-#  endif
 #endif
 
 
@@ -486,13 +481,7 @@ CanIo_c::deleteFilter(
       << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
       << ", Chunk-Alloc: "
       << sizeSlistTWithChunk( sizeof(FilterBox_c), sui16_filterBoxTotal )
-    #ifdef MASSERT
-      << "\r\n__mall tot:" << AllocateHeapMalloc
-      << ", _mall deal tot: " << DeallocateHeapMalloc
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-    #else
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
     #endif
 
     #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -1238,13 +1227,7 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERN
     << "/" << sizeSlistTWithMalloc( sizeof(MsgObj_c), 1 )
     << ", Chunk-Alloc: "
     << sizeSlistTWithChunk( sizeof(MsgObj_c), sui16_msgObjTotal )
-#ifdef MASSERT
-    << "\r\n__mall tot:" << AllocateHeapMalloc
-    << ", _mall deal tot: " << DeallocateHeapMalloc
-    << INTERNAL_DEBUG_DEVICE_ENDL;
-#else
     << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
 #endif
 
    HAL::wdTriggern();
@@ -1362,13 +1345,7 @@ CanIo_c::reconfigureMsgObj()
     << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
     << ", Chunk-Alloc: "
     << sizeSlistTWithChunk( sizeof(FilterBox_c), sui16_filterBoxTotal )
-  #ifdef MASSERT
-    << "\r\n__mall tot:" << AllocateHeapMalloc
-    << ", _mall deal tot: " << DeallocateHeapMalloc
-    << INTERNAL_DEBUG_DEVICE_ENDL;
-  #else
     << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
   #endif
 
   //process the message arrived during the reconfiguration

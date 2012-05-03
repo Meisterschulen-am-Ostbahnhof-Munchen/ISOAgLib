@@ -12,7 +12,6 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-//#define GET_VERSIONS
 //#define DEBUG_MULTIPLEVTCOMM 1
 
 #include "vtclientservercommunication_c.h"
@@ -362,7 +361,7 @@ VtClientServerCommunication_c::processPartStreamDataChunk (Stream_c& arc_stream,
 
       }
       break;
-#ifdef GET_VERSIONS
+#ifndef NO_GET_VERSIONS
     case 0xE0:
       // Command: "Non Volatile Memory", parameter "Get Versions Response"
       if (men_uploadPoolState != UploadPoolWaitingForGetVersionsResponse)
@@ -774,7 +773,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
     // Do we have to try to "get Versions / Load Version" or go directly to uploading?
     if (mb_usingVersionLabel)
     {
-#ifdef GET_VERSIONS
+#ifndef NO_GET_VERSIONS
       // GetVersions first!
       CanPkgExt_c mc_sendData;
       mc_sendData.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
@@ -802,7 +801,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
 
 bool VtClientServerCommunication_c::isVersionFound(Stream_c& arc_stream) const
 {
-#ifdef GET_VERSIONS
+#ifndef NO_GET_VERSIONS
   const uint8_t number_of_versions = arc_stream.get();
  
   // check get versions response is consistency
@@ -1698,7 +1697,7 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
         }
       }
       break;
-#ifdef GET_VERSIONS
+#ifndef NO_GET_VERSIONS
     case 0xE0: // Command: "Non Volatile Memory", parameter "Get Versions Response"
       if (men_uploadPoolState != UploadPoolWaitingForGetVersionsResponse)
         break;

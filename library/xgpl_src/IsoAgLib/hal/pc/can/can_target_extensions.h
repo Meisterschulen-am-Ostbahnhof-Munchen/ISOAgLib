@@ -66,7 +66,7 @@ int32_t getPipeHandleForCanRcvEvent();
 typedef struct  {
   tTime tLastIrqTime;        /* Timerecording by send/receive data on CAN */
   uint32_t dwId;                /* Identifier */
-  uint8_t bXtd;                  /* :=FALSE  11bit-Identifier, :=TRUE  29bit-Identifier */
+  uint8_t bXtd;                  /* == 0 => 11bit-Identifier    == 1 => 29bit-Identifier */
   uint16_t wPause;               /* Delaytime for transmit data (0...32000ms) */
   uint8_t bType;                /* Typ of Messageobject */
   uint8_t bUsage;               /* Usage of Messageobject */

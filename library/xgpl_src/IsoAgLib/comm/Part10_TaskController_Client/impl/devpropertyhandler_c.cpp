@@ -14,6 +14,7 @@
 // Note: The define PROPRIETARY_DEVPROPERTYHANDLER_CPP is just a temporary solution
 //       and may be removed as soon as IsoAgLib's own DPH is able to handle the
 //       complete feature-set. If you're don't know what this is for, don't use it!
+// @todo TaskControllerClient cleanup - remove this hack!
 #ifdef PROPRIETARY_DEVPROPERTYHANDLER_CPP
   #define _devproperty_handler_source <PROPRIETARY_DEVPROPERTYHANDLER_CPP>
   #include _devproperty_handler_source
@@ -195,10 +196,10 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
 {
   if ((arc_data.isoPgn() & 0x3FF00LU) != PROCESS_DATA_PGN)
     //should never be the case
-    return FALSE;
+    return false;
 
-  // set FALSE if "default" is selected in switch case
-  bool b_rc = TRUE;
+  // set false if "default" is selected in switch case
+  bool b_rc = true;
 
   //handling of nack
   //-> means that no device description is uploaded before
@@ -231,7 +232,7 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
         }
         break;
       default:
-        b_rc = FALSE;
+        b_rc = false;
     }
   }
 
@@ -394,7 +395,7 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
       }
       break;
     default:
-      b_rc = FALSE;
+      b_rc = false;
   }
 
   return b_rc;
@@ -412,7 +413,7 @@ DevPropertyHandler_c::init()
   {
     mi32_tcStateLastReceived = mi32_timeStartWaitAfterAddrClaim = mi32_timeWsTaskMsgSent = mi32_timeWsAnnounceKey = -1;
     mui8_lastTcState = 0;
-    mb_initDone = FALSE;
+    mb_initDone = false;
     mui8_tcSourceAddress = 0x7F;
 
     men_poolState = OPNotRegistered;
@@ -433,7 +434,7 @@ DevPropertyHandler_c::timeEvent( void )
   if (!mb_initDone)
   { /// Handling 6.4.2.b) here: Wait 6s after successful Address-Claimed
     checkInitState();
-    return TRUE;
+    return true;
   }
 
   // Just getting sure that we really do always have a valid pointer
@@ -867,7 +868,7 @@ DevPropertyHandler_c::checkInitState()
 
   if ( (mi32_timeStartWaitAfterAddrClaim >= 0) && (HAL::getTime() - mi32_timeStartWaitAfterAddrClaim >= 6000) && (-1 != mi32_tcStateLastReceived))
   { // init is finished when more then 6sec after addr claim and at least one TC status message was received
-    mb_initDone = TRUE;
+    mb_initDone = true;
   }
 }
 

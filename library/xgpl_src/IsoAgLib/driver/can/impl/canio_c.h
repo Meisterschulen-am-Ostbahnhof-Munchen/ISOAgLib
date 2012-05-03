@@ -516,7 +516,7 @@ class CanIo_c : public Subsystem_c
   uint8_t mui8_processedMsgCnt;
 
   /** flag to avoid loop of CAN message processing, when timeEvent() is called during previous
-   *  timeEvent triggered CAN processing -> when this flag is TRUE, no further processing is performed
+   *  timeEvent triggered CAN processing -> when this flag is true, no further processing is performed
    */
   bool mb_runningCanProcess;
 

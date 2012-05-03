@@ -608,7 +608,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
 #ifdef WIN32
   #ifdef WINCE
-    if( TRUE ) /// @todo WINCE-176: get number of bytes waiting in socket stream
+    if( true ) /// @todo WINCE-176: get number of bytes waiting in socket stream
   #else
     if (recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_PEEK) > 0)
   #endif

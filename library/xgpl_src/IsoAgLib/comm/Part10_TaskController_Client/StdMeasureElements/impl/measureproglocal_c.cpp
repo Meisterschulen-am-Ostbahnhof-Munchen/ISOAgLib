@@ -106,7 +106,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
   // call start function of base class
   MeasureProgBase_c::start(ren_type, ren_doSend);
   mi32_lastMasterVal = ai32_masterVal;
-  bool b_sendVal = TRUE;
+  bool b_sendVal = true;
 
   // start the given subprog items
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
@@ -130,16 +130,16 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
       case Proc_c::MaximumThreshold:
       {
         pc_iter->start();
-        b_sendVal = FALSE; // do not send value when a threshold is set
-        const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), TRUE};
+        b_sendVal = false; // do not send value when a threshold is set
+        const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), true};
         mlist_thresholdInfo.push_front(s_thresholdInfo);
         break;
       }
       case Proc_c::MinimumThreshold:
       {
         pc_iter->start();
-        b_sendVal = FALSE;  // do not send value when a threshold is set
-        const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), FALSE};
+        b_sendVal = false;  // do not send value when a threshold is set
+        const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), false};
         mlist_thresholdInfo.push_front(s_thresholdInfo);
         break;
       }
@@ -190,7 +190,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doS
   */
 bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // send the registered values
-  bool b_sendResult = TRUE;
+  bool b_sendResult = true;
   if ((Proc_c::MinimumThreshold != ren_type) && (Proc_c::MaximumThreshold != ren_type)
       && (Proc_c::NullType != ren_type) ) // do not send values for threshold resets and NullType
   {
@@ -250,7 +250,7 @@ bool MeasureProgLocal_c::sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGro
 bool MeasureProgLocal_c::sendSetpointValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
   ProcessPkg_c pkg;
   // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(TRUE /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, ProcessCmd_c::setValue);
   return processDataConst().sendValISOName( pkg, ac_targetISOName, setpointValForGroup(en_valueGroup));
 }
@@ -321,7 +321,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
 
       if (Proc_c::defaultDataLoggingDDI == arc_data.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
-        getProcessInstance4Comm().processTcStatusMsg(0, c_senderIsoNameOrig, TRUE /* ab_skipLastTcStatus */);
+        getProcessInstance4Comm().processTcStatusMsg(0, c_senderIsoNameOrig, true /* ab_skipLastTcStatus */);
       }
 
       // call handler function if handler class is registered
@@ -678,8 +678,8 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 
 bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
 {
-  bool b_checkMin = FALSE;
-  bool b_checkMax = FALSE;
+  bool b_checkMin = false;
+  bool b_checkMax = false;
   int32_t i32_maxVal = 0;
   int32_t i32_minVal = 0;
 
@@ -689,21 +689,21 @@ bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
     {
       switch (ps_iterThreshold->en_type)
       {
-        case Proc_c::MaximumThreshold: b_checkMax = TRUE; i32_maxVal = ps_iterThreshold->i32_threshold; break;
-        case Proc_c::MinimumThreshold: b_checkMin = TRUE; i32_minVal = ps_iterThreshold->i32_threshold; break;
+        case Proc_c::MaximumThreshold: b_checkMax = true; i32_maxVal = ps_iterThreshold->i32_threshold; break;
+        case Proc_c::MinimumThreshold: b_checkMin = true; i32_minVal = ps_iterThreshold->i32_threshold; break;
         default: ;
       }
     }
   }
 
   if ( b_checkMin && b_checkMax && (i32_maxVal < i32_minVal) && ((i32_maxVal >= val()) || (i32_minVal <= val())) )
-    return TRUE;
+    return true;
 
   if ( (b_checkMin && i32_minVal > val() ) ||
        (b_checkMax && i32_maxVal < val() ) )
-    return FALSE;
+    return false;
 
-  return TRUE;
+  return true;
 }
 
 

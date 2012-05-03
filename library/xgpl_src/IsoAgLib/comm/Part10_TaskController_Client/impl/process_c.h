@@ -158,10 +158,10 @@ public:
     - task status suspended: stop running measurement (started by default data logging)
     @param ui8_tcStatus
     @param rc_isoName         device key of TC
-    @param ab_skipLastTcStatus TRUE => don't check for changed TC status
-    @return TRUE
+    @param ab_skipLastTcStatus true => don't check for changed TC status
+    @return true
   */
-  bool processTcStatusMsg(uint8_t ui8_tcStatus, const IsoName_c& rc_isoName, bool ab_skipLastTcStatus = FALSE);
+  bool processTcStatusMsg(uint8_t ui8_tcStatus, const IsoName_c& rc_isoName, bool ab_skipLastTcStatus = false);
 
   /**
     @return isoName, saved from TC status messages
@@ -172,7 +172,7 @@ public:
     process working set task messages
     @param ui8_tcStatus
     @param rc_isoName         device key of working set
-    @return TRUE
+    @return true
   */
   bool processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const IsoName_c& /* rc_isoName */);
 

@@ -30,13 +30,6 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-#if DEBUG_HEAP_USEAGE
-#ifdef MASSERT
-extern unsigned int AllocateHeapMalloc;
-extern unsigned int DeallocateHeapMalloc;
-#endif
-#endif
-
 
 namespace __IsoAgLib {
   /** C-style function, to get access to the unique Process_c singleton instance

@@ -67,11 +67,11 @@ public:
   void getPreferredAssignedInput(__IsoAgLib::IsoName_c& arc_isoName, uint16_t& arui16_inputModelIdentificationCode, uint16_t& arui16_inputUid) const
   { __IsoAgLib::vtObjectAuxiliaryFunction2_c::getPreferredAssignedInput(arc_isoName, arui16_inputModelIdentificationCode, arui16_inputUid); }
 
-  //! @return TRUE, if values are changed
+  //! @return true, if values are changed
   bool setPreferredAssignedInput(const __IsoAgLib::IsoName_c& arc_isoName, uint16_t aui16_inputModelIdentificationCode, uint16_t aui16_inputUid)
   { return __IsoAgLib::vtObjectAuxiliaryFunction2_c::setPreferredAssignedInput(arc_isoName, aui16_inputModelIdentificationCode, aui16_inputUid); }
 
-  //! @return TRUE, if AUX2 input is assigned
+  //! @return true, if AUX2 input is assigned
   bool isAssigned() const
   { return __IsoAgLib::vtObjectAuxiliaryFunction2_c::isAssigned(); }
 

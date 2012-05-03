@@ -166,7 +166,7 @@ uint16_t sizeSlistTWithMalloc( uint16_t aui16_sizeT, uint16_t aui16_cnt )
 { // size calculated from: stored class size + pointer to next item + block pointers in MALLOC HEAP structure
   const uint16_t unalignedItemSize = ( aui16_sizeT + 3 * sizeof(void*) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * HAL_SIZEOF_INT ) - 1 );
   const uint16_t alignedItemSize= (unalignedItemSize + alignmentBase) & (unsigned int)~alignmentBase;
 
   return ( alignedItemSize * aui16_cnt );
@@ -177,7 +177,7 @@ uint16_t sizeListTWithMalloc( uint16_t aui16_sizeT, uint16_t aui16_cnt )
 { // size calculated from: stored class size + pointer to next+prev item + block pointers in MALLOC HEAP structure
   const uint16_t unalignedItemSize = ( aui16_sizeT + 4 * sizeof(void*) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * HAL_SIZEOF_INT ) - 1 );
   const uint16_t alignedItemSize= (unalignedItemSize + alignmentBase) & (unsigned int)~alignmentBase;
 
   return ( alignedItemSize * aui16_cnt );
@@ -188,7 +188,7 @@ uint16_t sizeVectorTWithMalloc( uint16_t aui16_sizeT, uint16_t aui16_capacity )
 { // size calculated from: stored class size + block pointers in MALLOC HEAP structure
   const uint16_t sizeWithoutAlignment = (aui16_capacity * aui16_sizeT) + ( 2 * sizeof(void*) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * HAL_SIZEOF_INT ) - 1 );
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
@@ -213,7 +213,7 @@ uint16_t sizeSlistTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_cnt )
   const uint16_t sizeWithoutAlignment
     = ( ( ( aui16_sizeT + sizeof(void*) ) * chunkCnt ) + ( 2 * sizeof(void*) ) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * HAL_SIZEOF_INT ) - 1 );
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
@@ -225,7 +225,7 @@ uint16_t sizeListTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_cnt )
   const uint16_t sizeWithoutAlignment
     = ( ( ( aui16_sizeT + ( 2 * sizeof(void*) ) ) * chunkCnt ) + ( 2 * sizeof(void*) ) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * HAL_SIZEOF_INT ) - 1 );
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
@@ -236,7 +236,7 @@ uint16_t sizeVectorTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_capacity )
   // chunked amount of items stored in one compact vector
   const uint16_t sizeWithoutAlignment = (chunkCnt * aui16_sizeT) + ( 2 * sizeof(void*) );
   // regard alignment
-  const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
+  const uint16_t alignmentBase = ( ( 2 * HAL_SIZEOF_INT ) - 1 );
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
@@ -360,13 +360,13 @@ void int2littleEndianString( unsigned int input, uint8_t* pui8_target, unsigned 
   #endif
 }
 
-#if SIZEOF_INT == 1
+#if HAL_SIZEOF_INT == 1
   #define SCANF_INT_STRING "%2x"
-#elif SIZEOF_INT == 2
+#elif HAL_SIZEOF_INT == 2
   #define SCANF_INT_STRING "%4x"
-#elif SIZEOF_INT == 4
+#elif HAL_SIZEOF_INT == 4
   #define SCANF_INT_STRING "%8x"
-#elif SIZEOF_INT == 8
+#elif HAL_SIZEOF_INT == 8
   #define SCANF_INT_STRING "%8x"
 #endif
 
@@ -383,17 +383,17 @@ void bigEndianHexNumberText2CanString( const char* ac_src, uint8_t* pui8_target,
   const unsigned int inputLen = CNAMESPACE::strlen(ac_src);
   uint8_t* pui8_write = pui8_target;
 
-  int ind = inputLen - ( 2 * SIZEOF_INT );
-  for ( ; ind >= 0; ind -= ( 2 * SIZEOF_INT ) )
+  int ind = inputLen - ( 2 * HAL_SIZEOF_INT );
+  for ( ; ind >= 0; ind -= ( 2 * HAL_SIZEOF_INT ) )
   {
     sscanf( (ac_src+ind), SCANF_INT_STRING, &temp );
-    int2littleEndianString( temp, pui8_write, SIZEOF_INT );
-    pui8_write += SIZEOF_INT;
+    int2littleEndianString( temp, pui8_write, HAL_SIZEOF_INT );
+    pui8_write += HAL_SIZEOF_INT;
     if ( (unsigned int)( pui8_write - pui8_target ) > size ) break;
   }
-  if ( ( ind < 0 ) && ( ind  > ( -1 * ( 2 * SIZEOF_INT ) ) ) )
+  if ( ( ind < 0 ) && ( ind  > ( -1 * ( 2 * HAL_SIZEOF_INT ) ) ) )
   {
-    unsigned ci_overhandByte = ind + ( 2 * SIZEOF_INT );
+    unsigned ci_overhandByte = ind + ( 2 * HAL_SIZEOF_INT );
     switch ( ci_overhandByte )
     {
       case 1:  case 2:  sscanf( ac_src, "%2x",  &temp );   break;
@@ -409,7 +409,7 @@ void bigEndianHexNumberText2CanString( const char* ac_src, uint8_t* pui8_target,
   }
 }
 
-#if SIZEOF_INT <= 2
+#if HAL_SIZEOF_INT <= 2
   #define SCANF_HEX_INT16_STRING "%4x"
 #else
   #define SCANF_HEX_INT16_STRING "%4hx"
@@ -436,7 +436,7 @@ void bigEndianHexNumberText2CanStringUint16( const char* ac_src, uint8_t* pui8_t
     CNAMESPACE::memset( pui8_target, 0, 2 );
     return;
   }
-#if SIZEOF_INT <= 4
+#if HAL_SIZEOF_INT <= 4
   uint16_t temp;
   sscanf( ac_src, SCANF_HEX_INT16_STRING, &temp );
   #else
@@ -458,10 +458,10 @@ void bigEndianHexNumberText2CanStringUint32( const char* ac_src, uint8_t* pui8_t
     CNAMESPACE::memset( pui8_target, 0, 4 );
     return;
   }
-#if SIZEOF_INT <= 2
+#if HAL_SIZEOF_INT <= 2
   uint32_t temp;
   sscanf( ac_src, "%8lx", &temp );
-  #elif SIZEOF_INT == 4
+  #elif HAL_SIZEOF_INT == 4
   uint32_t temp;
   sscanf( ac_src, "%8x", &temp );
   #else
@@ -491,7 +491,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
     CNAMESPACE::memset( pui8_target, 0, 8 );
     return;
   }
-#if SIZEOF_INT <= 2
+#if HAL_SIZEOF_INT <= 2
   uint32_t temp[2] = {0UL, 0UL};
   const unsigned int len = strlen( ac_src );
   const int lowerPartValStart = len - 8;
@@ -552,7 +552,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
 #endif
 
 
-#if SIZEOF_INT <= 2
+#if HAL_SIZEOF_INT <= 2
 #define SCANF_DEC_INT16_STRING "%4d"
 #else
 #define SCANF_DEC_INT16_STRING "%4hd"
@@ -566,7 +566,7 @@ void bigEndianDecNumberText2CanStringUint( const char* ac_src, uint8_t* pui8_tar
     CNAMESPACE::memset( pui8_target, 0, 2 );
     return;
   }
-#if SIZEOF_INT <= 4
+#if HAL_SIZEOF_INT <= 4
   uint16_t temp;
   sscanf( ac_src, SCANF_DEC_INT16_STRING, &temp );
 #else

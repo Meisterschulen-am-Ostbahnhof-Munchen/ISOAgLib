@@ -69,7 +69,7 @@ public:
 
   /**
     set enabled state for matching input object ID (0xFFFF => all input objects)
-    @return TRUE if at least one object ID matches
+    @return true if at least one object ID matches
   */
   bool setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool a_enabled);
 

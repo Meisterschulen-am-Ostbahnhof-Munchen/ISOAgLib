@@ -308,7 +308,7 @@ private: // Private methods
 
   /**
     helper function to check val() against limits
-    @return TRUE if value sending allowed
+    @return true if value sending allowed
   */
   bool minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const;
 
