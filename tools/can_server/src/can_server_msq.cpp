@@ -564,10 +564,12 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 
 #ifndef CAN_SERVER_SKIP_PIPE_CLEARING
             // clear pipe (is done also in client)
-            (void)read(iter->i32_pipeHandle, &ui8_buf, 1); // just read one byte into static variable
+            ssize_t dontcareRead = read(iter->i32_pipeHandle, &ui8_buf, 1); // just read one byte into static variable
+            (void)dontcareRead;
 #endif
             // trigger wakeup
-            (void)write(iter->i32_pipeHandle, &ui8_buf, 1);
+            ssize_t dontcareWrite = write(iter->i32_pipeHandle, &ui8_buf, 1);
+            (void)dontcareWrite;
           }
 #endif
 
@@ -801,7 +803,8 @@ static void can_read(__HAL::server_c* pc_serverData)
         if (FD_ISSET(pc_serverData->marri32_fileDescrWakeUpPipeForNewBusEvent[0], &rfds) == 1) {
           // wake up for new bus => just read pipe for clearing
           char readbuffer[1];
-          (void)read(pc_serverData->marri32_fileDescrWakeUpPipeForNewBusEvent[0], readbuffer, sizeof(readbuffer));
+          ssize_t dontcareRead = read(pc_serverData->marri32_fileDescrWakeUpPipeForNewBusEvent[0], readbuffer, sizeof(readbuffer));
+          (void)dontcareRead;
         }
 
         // get device with changes
@@ -1061,8 +1064,8 @@ static void* command_thread_func(void* ptr)
 
             // wake up can_read thread to use file descriptor of new bus in next select call
             char writebuffer[1];
-            (void)write(pc_serverData->marri32_fileDescrWakeUpPipeForNewBusEvent[1], writebuffer, sizeof(writebuffer));
-
+            ssize_t dontcareWrite = write(pc_serverData->marri32_fileDescrWakeUpPipeForNewBusEvent[1], writebuffer, sizeof(writebuffer));
+            (void)dontcareWrite;
           }
 
           if (!i32_error) {
