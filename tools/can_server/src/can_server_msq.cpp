@@ -84,9 +84,9 @@ __HAL::server_c::canBus_s::canBus_s() :
 }
 
 __HAL::server_c::server_c() :
-  mb_logMode(FALSE),
-  mb_monitorMode(FALSE),
-  mb_inputFileMode(FALSE),
+  mb_logMode(false),
+  mb_monitorMode(false),
+  mb_inputFileMode(false),
   mf_canInput(0),
   mb_daemon(false),
   mi32_lastPipeId(0),
@@ -295,7 +295,7 @@ bool readCanDataFile(__HAL::server_c* pc_serverData, __HAL::can_recv_data* ps_re
 {
   char zeile[100];
   static struct timeval tv_start;
-  static bool first_call = TRUE;
+  static bool first_call = true;
   struct timeval tv_current;
   struct timezone tz;
   int32_t mydiff;
@@ -304,7 +304,7 @@ bool readCanDataFile(__HAL::server_c* pc_serverData, __HAL::can_recv_data* ps_re
   tz.tz_dsttime=0;
 
   if (first_call) {
-    first_call = FALSE;
+    first_call = false;
 
     if ((pc_serverData->mf_canInput = fopen(pc_serverData->mstr_inputFile.c_str(), "r")) == NULL ) {
       perror("fopen");
@@ -322,7 +322,7 @@ bool readCanDataFile(__HAL::server_c* pc_serverData, __HAL::can_recv_data* ps_re
     if (fgets(zeile, 99, pc_serverData->mf_canInput) == NULL) {
       if ( feof(pc_serverData->mf_canInput) )
         // no more data available
-        return FALSE;
+        return false;
     }
 
     if ( strlen(zeile) == 0 )
@@ -341,7 +341,7 @@ bool readCanDataFile(__HAL::server_c* pc_serverData, __HAL::can_recv_data* ps_re
       ps_receiveData->msg.pb_data[i] = static_cast<uint8_t>(db[i]);
 
     if (!rc)
-      return FALSE;
+      return false;
 
     // sscanf uses int by default (overwriting of two adjacent uint8_t with format "%d"!)
     ps_receiveData->msg.b_xtd = xtd;
@@ -364,7 +364,7 @@ bool readCanDataFile(__HAL::server_c* pc_serverData, __HAL::can_recv_data* ps_re
   }
 
   // more data available
-  return TRUE;
+  return true;
 }
 
 void releaseClient(__HAL::server_c* pc_serverData, STL_NAMESPACE::list< __HAL::client_c >::iterator& iter_delete) {
@@ -598,7 +598,7 @@ static void* can_write_thread_func(void* ptr)
 
   __HAL::server_c* pc_serverData = static_cast< __HAL::server_c * >(ptr);
 
-  bool b_highPrioMode=false; // default to FALSE until some bus reports >= 5 pending msgs.
+  bool b_highPrioMode=false; // default to false until some bus reports >= 5 pending msgs.
   for (;;) {
 
     i32_error = 0;
@@ -612,7 +612,7 @@ static void* can_write_thread_func(void* ptr)
         updatePendingMsgs(pc_serverData, -1); // will get ALL "marri_pendingMsgs" variables updated!
       }
 
-      b_highPrioMode=false; // default to FALSE until some bus reports >= 5 pending msgs.
+      b_highPrioMode=false; // default to false until some bus reports >= 5 pending msgs.
       for (uint8_t ui8_bus = 0; ui8_bus < pc_serverData->nCanBusses(); ui8_bus++)
       {
         if (pc_serverData->canBus(ui8_bus).mi_pendingMsgs >= pc_serverData->mi_highPrioModeIfMin)
@@ -752,8 +752,8 @@ static void can_read(__HAL::server_c* pc_serverData)
 {
   __HAL::can_recv_data receiveData;
   uint32_t DLC;
-  bool b_moreToRead = TRUE;
-  bool b_processMsg = FALSE;
+  bool b_moreToRead = true;
+  bool b_processMsg = false;
 
   static canMsg_s s_canMsg;
 
@@ -767,7 +767,7 @@ static void can_read(__HAL::server_c* pc_serverData)
 
   for (;;) {
 
-    b_processMsg = FALSE;
+    b_processMsg = false;
 
     FD_ZERO(&rfds);
 
@@ -809,7 +809,7 @@ static void can_read(__HAL::server_c* pc_serverData)
           if (isBusOpen(channel_with_change)) {
             if (FD_ISSET(pc_serverData->canBus(channel_with_change).mi32_can_device, &rfds) == 1) {
               DEBUG_PRINT2("change on channel %d, FD_ISSET %d\n", channel_with_change, FD_ISSET(pc_serverData->canBus(channel_with_change).mi32_can_device, &rfds));
-              b_processMsg = TRUE;
+              b_processMsg = true;
               break;
             }
           }
@@ -820,7 +820,7 @@ static void can_read(__HAL::server_c* pc_serverData)
     {
       usleep(ui32_sleepTime); // no device => nothing to read
       // check devices which have no device handle (RTE)
-      b_processMsg = TRUE;
+      b_processMsg = true;
     }
 
     if (b_processMsg) {
@@ -842,7 +842,7 @@ static void can_read(__HAL::server_c* pc_serverData)
 
     if (pc_serverData->mb_inputFileMode && b_moreToRead) {
       b_moreToRead = readCanDataFile(pc_serverData, &receiveData);
-      b_processMsg = TRUE;
+      b_processMsg = true;
 
       // acquire mutex to prevent modification of client list during execution of enqueue_msg
       pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
@@ -1138,7 +1138,7 @@ static void* command_thread_func(void* ptr)
             i32_error = HAL_RANGE_ERR;
           else
           {
-            iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canObjConfigured = TRUE;
+            iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canObjConfigured = true;
 
             iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].ui8_bufXtd = s_transferBuf.s_config.ui8_bXtd;
             iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].ui32_filter = s_transferBuf.s_config.ui32_dwId;
@@ -1169,10 +1169,10 @@ static void* command_thread_func(void* ptr)
             i32_error = HAL_RANGE_ERR;
           else {
             if (s_transferBuf.ui16_command == COMMAND_LOCK) {
-              iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canBufferLock = TRUE;
+              iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canBufferLock = true;
               DEBUG_PRINT2("locked buf %d, obj %d\n", s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj);
             } else {
-              iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canBufferLock = FALSE;
+              iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canBufferLock = false;
               DEBUG_PRINT2("unlocked buf %d, obj %d\n", s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj);
             }
           }
@@ -1195,16 +1195,16 @@ static void* command_thread_func(void* ptr)
           if ((s_transferBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( s_transferBuf.s_config.ui8_obj > iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj.size()-1 ))
             i32_error = HAL_RANGE_ERR;
           else {
-            iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canObjConfigured = FALSE;
+            iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canObjConfigured = false;
 
-            iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canBufferLock = FALSE;
+            iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].b_canBufferLock = false;
             iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].ui16_size = 0;
             __HAL::clearReadQueue (s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //          clearWriteQueue(s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
             // erase element if it is the last in the vector, otherwise it can stay there
-            while (iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj.back().b_canObjConfigured == FALSE)
+            while (iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj.back().b_canObjConfigured == false)
                 iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj.pop_back();
   #endif
           }

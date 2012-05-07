@@ -74,9 +74,9 @@ __HAL::server_c::canBus_s::canBus_s() :
 }
 
 __HAL::server_c::server_c() :
-  mb_logMode(FALSE),
-  mb_monitorMode(FALSE),
-  mb_inputFileMode(FALSE),
+  mb_logMode(false),
+  mb_monitorMode(false),
+  mb_inputFileMode(false),
   mf_canInput(0),
 #ifndef WIN32
   mb_daemon(false),
@@ -705,7 +705,7 @@ bool handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           i32_error = HAL_RANGE_ERR;
         else
         {
-          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canObjConfigured = TRUE;
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canObjConfigured = true;
 
           iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui8_bufXtd = p_writeBuf->s_config.ui8_bXtd;
           iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui32_filter = p_writeBuf->s_config.ui32_dwId;
@@ -734,10 +734,10 @@ bool handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           i32_error = HAL_RANGE_ERR;
         else {
           if (p_writeBuf->ui16_command == COMMAND_LOCK) {
-            iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = TRUE;
+            iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = true;
             DEBUG_PRINT2("locked buf %d, obj %d\n", p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj);
           } else {
-            iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = FALSE;
+            iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = false;
             DEBUG_PRINT2("unlocked buf %d, obj %d\n", p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj);
           }
         }
@@ -760,15 +760,15 @@ bool handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
         if ((p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( p_writeBuf->s_config.ui8_obj > iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.size()-1 ))
           i32_error = HAL_RANGE_ERR;
         else {
-          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canObjConfigured = FALSE;
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canObjConfigured = false;
 
-          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = FALSE;
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = false;
           iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui16_size = 0;
  //           clearReadQueue (p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //          clearWriteQueue(p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
 
           // erase element if it is the last in the vector, otherwise it can stay there
-          while (iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.back().b_canObjConfigured == FALSE)
+          while (iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.back().b_canObjConfigured == false)
               iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.pop_back();
         }
         break;
