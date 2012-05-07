@@ -128,7 +128,7 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
           { // dest-spec. request -> answer TP
             if ( getMultiSendInstance4Comm().sendIsoTarget(
                   mrc_identItem.isoName(),
-                  isoItemReceiver->isoName(),
+                  isoItemSender->isoName(),
                   (uint8_t *) mcstr_SwIdentification,
                   getCStringLength (mcstr_SwIdentification),
                   SOFTWARE_IDENTIFICATION_PGN,
@@ -167,7 +167,7 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
           { // dest-spec. request -> answer TP
             if( getMultiSendInstance4Comm().sendIsoTarget(
                   mrc_identItem.isoName(),
-                  isoItemReceiver->isoName(),
+                  isoItemSender->isoName(),
                   (uint8_t *) mcstr_EcuIdentification,
                   getCStringLength (mcstr_EcuIdentification),
                   ECU_IDENTIFICATION_INFORMATION_PGN,
