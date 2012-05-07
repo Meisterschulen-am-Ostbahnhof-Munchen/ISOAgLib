@@ -218,7 +218,7 @@ class XStr
 // ---------------------------------------------------------------------------
 //  unsigned int getID (char* objName, bool wishingID, unsigned int wishID=0)
 // ---------------------------------------------------------------------------
-unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, unsigned int objType, bool b_skipParentCheck = FALSE)
+unsigned int getID (const char* objName, bool wishingID, unsigned int wishID, unsigned int objType, bool b_skipParentCheck = false)
 {
   bool isThere = false;
   unsigned int foundID = 0;
@@ -459,7 +459,7 @@ unsigned int objectIsType (char* lookup_name)
 };
 
 
-unsigned int idOrName_toi(const char* apc_string, unsigned int parentObjType, bool b_skipParentCheck = FALSE)
+unsigned int idOrName_toi(const char* apc_string, unsigned int parentObjType, bool b_skipParentCheck = false)
 {
   if (apc_string [0] == 0x00)
   {
@@ -1171,8 +1171,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         buf_length += 2;
 
         //parent_name
-        buffer << (idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType, TRUE) & 0xFF) << ", "
-               << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType, TRUE) >> 8) & 0xFF) << ", ";
+        buffer << (idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType, true) & 0xFF) << ", "
+               << ((idOrName_toi(vecstr_attrString[attrParent_name].c_str(), parentObjType, true) >> 8) & 0xFF) << ", ";
         buf_length += 2;
 
         //number_of_objects_to_follow
@@ -1372,7 +1372,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         else
           fprintf(partFileB, "0x%x, %i, ", stringtonumber(vecstr_constructor[3].c_str(), 0, -1), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
 
-        b_dpdCombination = FALSE;
+        b_dpdCombination = false;
 
         fprintf(partFileB, "c_myIsoName, &c_myIsoName, %s", vecstr_constructor[1].c_str());
 #if 0
