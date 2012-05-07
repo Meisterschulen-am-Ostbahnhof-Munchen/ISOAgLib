@@ -10,6 +10,10 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 project(LOGALIZER)
 
+add_definitions(
+  -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  -DCAN_INSTANCE_CNT=1)
+
 include_directories(
   ../src
   ../../../library/xgpl_src
