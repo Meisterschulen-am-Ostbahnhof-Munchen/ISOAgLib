@@ -97,7 +97,7 @@
  */
 /*@{*/
 #ifndef CONFIG_CAN_OBJ_CNT
-#  CONFIG_CAN_OBJ_CNT 14
+#  define CONFIG_CAN_OBJ_CNT 14
 #endif
 
 #ifndef CONFIG_CAN_SEND_BUFFER_SIZE
