@@ -809,7 +809,7 @@ bool VtClientServerCommunication_c::isVersionFound(Stream_c& arc_stream) const
     return false; // not valid -> return;
 
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
-  INTERNAL_DEBUG_DEVICE << "Version to be checked " << std::string(marrp7c_versionLabel,7).c_str() << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "Version to be checked " << marrp7c_versionLabel[0] << marrp7c_versionLabel[1] << marrp7c_versionLabel[2] << marrp7c_versionLabel[3] << marrp7c_versionLabel[4] << marrp7c_versionLabel[5] << marrp7c_versionLabel[6] << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
   for (uint8_t counter = 0; counter < number_of_versions; ++counter)
@@ -820,7 +820,7 @@ bool VtClientServerCommunication_c::isVersionFound(Stream_c& arc_stream) const
       c_nextversion[i] = arc_stream.get();
     }
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
-    INTERNAL_DEBUG_DEVICE << "  - compare with version saved #" << (uint16_t)counter << " : " << std::string(c_nextversion,7).c_str() << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "  - compare with version saved #" << (uint16_t)counter << " : " << c_nextversion[0] << c_nextversion[1] << c_nextversion[2] << c_nextversion[3] << c_nextversion[4] << c_nextversion[5] << c_nextversion[6] << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
     if (0 == CNAMESPACE::memcmp(c_nextversion, marrp7c_versionLabel, 7))
       return true;
