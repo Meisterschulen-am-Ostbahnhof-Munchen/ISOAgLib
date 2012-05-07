@@ -29,7 +29,7 @@
 namespace __IsoAgLib
 {
   /** initialization parameter for local ident */
-  static const IdentItem_c* spc_nolocalIdent = NULL;
+  const IdentItem_c* const spc_nolocalIdent = NULL;
 
   /** initialization parameter for IsoName */
   static const IsoName_c& screfc_noIsoName = IsoName_c::IsoNameUnspecified();
