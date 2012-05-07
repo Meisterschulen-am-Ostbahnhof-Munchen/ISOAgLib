@@ -23,8 +23,10 @@
 #ifndef _HAL_ESX_SYSTEM_TARGET_EXTENSIONS_H_
 #define _HAL_ESX_SYSTEM_TARGET_EXTENSIONS_H_
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "../typedef.h"
 #include "../errcodes.h"
+
 namespace __HAL {
 
 /* ******************************************** */

@@ -26,12 +26,11 @@
 #ifndef _HAL_PC_SYSTEM_H_
 #define _HAL_PC_SYSTEM_H_
 
-#include "../errcodes.h"
 #include "system_target_extensions.h"
 #include "isoaglibthread_c.h"
 
 #include <IsoAgLib/util/impl/util_funcs.h>
-#include <IsoAgLib/hal/pc/can/can_typedef.h>
+#include "../can/can_typedef.h"
 
 #include <cstdio>
 

@@ -28,7 +28,6 @@
 #ifndef _HAL_PC_CAN_H_
 #define _HAL_PC_CAN_H_
 
-#include "../errcodes.h"
 #include "hal_can_interface.h"
 
 #include <cstdio>

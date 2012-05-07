@@ -29,7 +29,6 @@
 #define _HAL_P1MC_CAN_H_
 
 #include "hal_can_interface.h"
-#include "../errcodes.h"
 
 namespace HAL
 {

@@ -26,7 +26,6 @@
 #ifndef _HAL_ESX_SYSTEM_H_
 #define _HAL_ESX_SYSTEM_H_
 
-#include "../errcodes.h"
 #include "system_target_extensions.h"
 
 #include <IsoAgLib/util/impl/util_funcs.h>

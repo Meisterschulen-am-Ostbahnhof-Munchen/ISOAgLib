@@ -25,7 +25,7 @@
 #define _HAL_ESX_CAN_INTERFACE_H_
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/hal/esx/typedef.h>
+#include "../typedef.h"
 
 namespace __IsoAgLib { class Ident_c; class CanPkg_c;}
 

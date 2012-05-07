@@ -35,8 +35,6 @@ namespace __HAL {
   }
 }
 
-#include "../errcodes.h"
-
 #include "hal_can_interface.h"
 
 namespace HAL

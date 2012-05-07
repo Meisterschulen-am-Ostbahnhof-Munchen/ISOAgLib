@@ -25,6 +25,7 @@
 #define _HAL_P1MC_CAN_INTERFACE_H_
 
 #include <IsoAgLib/isoaglib_config.h>
+#include "../errcodes.h"
 #include "../typedef.h"
 
 #define NUMBER_CANMESSAGES 24

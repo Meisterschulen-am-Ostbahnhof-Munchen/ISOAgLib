@@ -23,11 +23,9 @@
 #ifndef _HAL_P1MC_SYSTEM_TARGET_EXTENSIONS_H_
 #define _HAL_P1MC_SYSTEM_TARGET_EXTENSIONS_H_
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "../typedef.h"
 #include "../errcodes.h"
-
-#include "system_target_extensions.h"
-
 
 #define C_NO_ERR   0
 #define ON   1

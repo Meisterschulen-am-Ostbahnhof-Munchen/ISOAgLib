@@ -32,8 +32,8 @@ namespace __HAL {
 }
 
 #include <IsoAgLib/isoaglib_config.h>
-#include "../../typedef.h"
-#include "../../errcodes.h"
+#include "../typedef.h"
+#include "../errcodes.h"
 
 namespace __IsoAgLib { class Ident_c; class CanPkg_c;}
 
