@@ -25,7 +25,7 @@ extern "C" {
 
 
 
-const uint8_t cui8_numMsbObj = CONFIG_CAN_DEFAULT_MAX_OBJ_NR + 1;
+const uint8_t cui8_numMsbObj = CONFIG_CAN_OBJ_CNT;
 
 typedef struct {
 

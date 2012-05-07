@@ -96,8 +96,11 @@
  * \name Set buffer sizes for CAN handling
  */
 /*@{*/
+#ifndef CONFIG_CAN_OBJ_CNT
+#  CONFIG_CAN_OBJ_CNT 14
+#endif
+
 #ifndef CONFIG_CAN_SEND_BUFFER_SIZE
-  /// set buffer size for CAN send
 #  define CONFIG_CAN_SEND_BUFFER_SIZE 20
 #endif
 
