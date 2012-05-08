@@ -16,8 +16,8 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
-#ifndef USE_ISO11783
-#  error "iLibErr_c only works with enabled USE_ISO11783 and set PRT_INSTANCE_CNT."
+#ifndef USE_ISO_11783
+#  error "iLibErr_c only works with enabled USE_ISO_11783 and set PRT_INSTANCE_CNT."
 #endif
 
 #include <IsoAgLib/hal/hal_typedef.h>
