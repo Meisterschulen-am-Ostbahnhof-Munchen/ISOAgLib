@@ -12,6 +12,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "can_target_extensions.h"
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <cstring>
