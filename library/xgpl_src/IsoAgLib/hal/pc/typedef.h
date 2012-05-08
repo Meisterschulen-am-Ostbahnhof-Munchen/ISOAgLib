@@ -50,26 +50,6 @@ typedef uint8_t boolean;
 
 namespace __HAL {
 
-/** Union uint8_t, uint16_t Zugriff (2 Byte) */
-typedef union   {
-  uint8_t  b[2];
-  uint16_t  w;
-} tBw;
-
-/** Union uint8_t, uint16_t, uint32_t Zugriff (4 Byte) */
-typedef union   {
-  uint8_t  b[4];
-  uint16_t  w[2];
-  uint32_t dw;
-} tDw;
-
-typedef struct
-{
-  int32_t  l1ms;
-  uint16_t  w1us;
-} tTime;
-
-
 typedef struct
 {
   uint8_t bWDmaxTime;

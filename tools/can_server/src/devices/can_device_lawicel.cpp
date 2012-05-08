@@ -11,10 +11,8 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-// IsoAgLib
-#include "can_server.h"
-// can_server
-#include "../can_server_common.h"
+#include "wrapper_for_can_server.h"
+#include "can_server_common.h"
 
 // system/drivers
 #include <windows.h>

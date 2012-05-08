@@ -42,8 +42,8 @@ typedef int HINSTANCE;
 #define c_CANUSB_Std_Api    11
 
 
-#include "can_server.h"
-#include "../can_server_common.h"
+#include "wrapper_for_can_server.h"
+#include "can_server_common.h"
 #include <assert.h>
 
 using namespace __HAL;

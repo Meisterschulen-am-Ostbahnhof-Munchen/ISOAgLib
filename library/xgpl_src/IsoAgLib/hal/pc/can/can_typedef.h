@@ -14,12 +14,33 @@
 #ifndef __CAN_TYPEDEF_
 #define __CAN_TYPEDEF_
 
-#include "../typedef.h"
+#include <cstdlib>  // Include before vector or else CNAMESPACE stuff is screwed up for Tasking
+#include <cstring>
+#include <vector>
+#include <list>
+#include <string>
+#include <time.h>
+#include "../config.h"
+#include "../errcodes.h"
 
 namespace __HAL {
 
-/** Funktionszeiger Fehlerreaktion auf Can Bus Fehler*/
-typedef uint16_t (*tCAN_ERR_FUNC)(uint8_t,uint16_t);
+typedef union {
+  uint8_t  b[2];
+  uint16_t w;
+} tBw;
+
+typedef union {
+  uint8_t  b[4];
+  uint16_t w[2];
+  uint32_t dw;
+} tDw;
+
+typedef struct
+{
+  int32_t  l1ms;
+  uint16_t w1us;
+} tTime;
 
 /** Datenstruktur im CAN Register (16 Byte) */
 typedef struct
@@ -34,8 +55,7 @@ typedef struct
 /** Funktionszeiger =Funktion nach Sende- Empfangsinterrupt
  * uint8_t bBusNumber, uint8_t bMsgObj [0..13],
  * tCanMsgReg * ptCanMsgObj = Adresse Nachrichtenobjekt Can Register */
- typedef tCanMsgReg * (*tIRQ_FUNCTION)(uint8_t,uint8_t,tCanMsgReg *);
-
+typedef tCanMsgReg * (*tIRQ_FUNCTION)(uint8_t,uint8_t,tCanMsgReg *);
 
 
 /** Datenstruktur fuer CAN status */

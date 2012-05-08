@@ -76,14 +76,6 @@
 #define DATA_TRANSFER_PORT    (36799 + (CAN_SERVER_CHANNEL)*2)
 
 
-#include <cstdlib>  // Include before vector or else CNAMESPACE stuff is screwed up for Tasking
-#include <cstring>
-#include <vector>
-#include <list>
-#include <string>
-#include <time.h>
-#include <IsoAgLib/util/compiler_adaptation.h>
-
 #include "can_target_extensions.h"
 
 // USE_UNIX_SOCKET to use /tmp/can_server.sock.<command_port> and /tmp/can_server.sock.<data_port> instead of real sockets 

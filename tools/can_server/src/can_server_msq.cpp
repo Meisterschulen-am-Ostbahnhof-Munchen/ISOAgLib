@@ -12,7 +12,6 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include <IsoAgLib/isoaglib_config.h>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -24,6 +23,7 @@
 #include <list>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 #include <sys/types.h>
 #include <sys/ipc.h>

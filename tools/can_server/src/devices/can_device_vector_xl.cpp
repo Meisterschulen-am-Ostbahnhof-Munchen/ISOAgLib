@@ -28,8 +28,8 @@ extern "C" {
 
 #endif
 
-#include "can_server.h"
-#include "../can_server_common.h"
+#include "wrapper_for_can_server.h"
+#include "can_server_common.h"
 #include <assert.h>
 #include <vector>
 

@@ -14,7 +14,7 @@
 #define CAN_FILTERING_H
 
 #include <string>
-#include "can_server.h"
+#include "wrapper_for_can_server.h"
 
 // Author: Martin Wodok
 namespace can_filtering

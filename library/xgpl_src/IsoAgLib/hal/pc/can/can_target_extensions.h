@@ -14,9 +14,6 @@
 #ifndef _PC_HAL_CAN_EXTENSIONS_H_
 #define _PC_HAL_CAN_EXTENSIONS_H_
 
-#include <IsoAgLib/isoaglib_config.h>
-#include "../typedef.h"
-#include "../errcodes.h"
 #include "can_typedef.h"
 
 namespace __HAL {

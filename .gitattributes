@@ -284,7 +284,6 @@ tools/can_server/src/can_server_common.cpp -text
 tools/can_server/src/can_server_common.h -text
 tools/can_server/src/can_server_msq.cpp -text
 tools/can_server/src/can_server_sock.cpp -text
-tools/can_server/src/config_can_server.h -text
 tools/can_server/src/devices/can_device_a1.cpp -text
 tools/can_server/src/devices/can_device_lawicel.cpp -text
 tools/can_server/src/devices/can_device_no_card.cpp -text
@@ -295,6 +294,7 @@ tools/can_server/src/devices/can_device_sontheim_mt_api.cpp -text
 tools/can_server/src/devices/can_device_sontheim_st_api.cpp -text
 tools/can_server/src/devices/can_device_vector_canlib.cpp -text
 tools/can_server/src/devices/can_device_vector_xl.cpp -text
+tools/can_server/src/wrapper_for_can_server.h -text
 tools/libs/README.txt -text
 tools/libs/boost/README.txt -text
 tools/libs/boost/boost_1_38_0/LICENSE_1_0.txt -text

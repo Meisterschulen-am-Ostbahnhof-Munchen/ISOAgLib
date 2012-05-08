@@ -12,7 +12,6 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include <IsoAgLib/isoaglib_config.h>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -23,8 +22,8 @@
 #include <list>
 #include <string>
 #include <sstream>
-
-#include "can_server.h"
+#include <iostream>
+#include "wrapper_for_can_server.h"
 #include "can_server_common.h"
 #include "can_filtering.h"
 
@@ -315,12 +314,12 @@ SOCKET_TYPE establish(unsigned short portnum)
 
   if ((listenSocket= socket(SOCKET_TYPE_INET_OR_UNIX, SOCK_STREAM, 0)) < 0) /* create socket */
   {
-    MACRO_ISOAGLIB_PERROR("socket");
+    perror("socket");
     return(-1);
   }
 
   if (bind(listenSocket, (struct sockaddr *)&sa, ui32_len) < 0) {
-    MACRO_ISOAGLIB_PERROR("bind");
+    perror("bind");
     printf("\nmaybe socket is in TIME_WAIT state, check this with the netstat command\n");
     printf("=> please wait one minute (or stop all clients before stopping the can_server)\n\n");
     close(listenSocket);
@@ -521,7 +520,7 @@ static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketS
 #endif
              ) < 0)
           {
-            MACRO_ISOAGLIB_PERROR("send");
+            perror("send");
           }
 
           // don't check following objects if message is already enqueued for this client
@@ -554,7 +553,7 @@ void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, 
           ) < 0)
   {
     if (ar_server.mb_interactive) {
-      MACRO_ISOAGLIB_PERROR("send");
+      perror("send");
     }
   }
 }
@@ -634,7 +633,7 @@ bool handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
             std::cerr << "Can't initialize CAN-BUS." << std::endl;
             std::cerr << "CAN device/driver not ready.\n" << std::endl;
             i32_error = HAL_CONFIG_ERR;
-            MACRO_ISOAGLIB_ABORT();
+            abort();
           }
         }
 
@@ -1054,7 +1053,7 @@ static void* collectClient(void* ptr) {
   __HAL::server_c* pc_serverData = static_cast<__HAL::server_c*>(ptr);
 
   if ((base_commandSocket = establish(COMMAND_TRANSFER_PORT)) < 0) {
-    MACRO_ISOAGLIB_PERROR("establish");
+    perror("establish");
     exit(1);
   }
   if (pc_serverData->mb_interactive) {
@@ -1062,7 +1061,7 @@ static void* collectClient(void* ptr) {
   }
 
   if ((base_dataSocket = establish(DATA_TRANSFER_PORT)) < 0) {
-    MACRO_ISOAGLIB_PERROR("establish");
+    perror("establish");
     exit(1);
   }
   if (pc_serverData->mb_interactive) {
@@ -1073,7 +1072,7 @@ static void* collectClient(void* ptr) {
 
 #ifdef WIN32
     if ((new_socket=get_connection(base_commandSocket)) == INVALID_SOCKET) {
-      MACRO_ISOAGLIB_PERROR("socket connect failed");
+      perror("socket connect failed");
       exit(1);
     }
 #else
@@ -1087,7 +1086,7 @@ static void* collectClient(void* ptr) {
 
 #ifdef WIN32
     if ((new_socket=get_connection(base_dataSocket)) == INVALID_SOCKET) {
-      MACRO_ISOAGLIB_PERROR("socket connect failed");
+      perror("socket connect failed");
       exit(1);
     }
 #else

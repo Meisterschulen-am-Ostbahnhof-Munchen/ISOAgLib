@@ -11,7 +11,6 @@ endif(NOT CMAKE_BUILD_TYPE)
 project(CAN_SERVER_SOCKET_NO_CARD)
 
 add_definitions(
-  -DPRJ_USE_AUTOGEN_CONFIG=config_can_server.h
   -DSYSTEM_WITH_ENHANCED_CAN_HAL
   -DCAN_DRIVER_SOCKET)
 
