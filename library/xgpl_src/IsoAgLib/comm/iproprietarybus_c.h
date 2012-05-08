@@ -60,7 +60,7 @@ class iProprietaryBus_c {
     uint8_t aui8_busNumber,
     uint16_t aui16_bitrate,
     uint8_t aui8_minObjNr = 0,
-    uint8_t aui8_maxObjNr = 13)
+    uint8_t aui8_maxObjNr = (CONFIG_CAN_OBJ_CNT-1))
   { return __IsoAgLib::getCanInstance4Prop().init (aui8_busNumber, aui16_bitrate, aui8_minObjNr, aui8_maxObjNr); }
 
   /** Close the opened Proprietary CAN-bus */

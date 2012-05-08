@@ -239,7 +239,7 @@ public:
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
   RS232IO_c& operator<<(int32_t ai32_data);
-  #ifdef USE_FLOAT_DATA_TYPE
+
   /**
     send float value as text on RS232
 
@@ -249,7 +249,6 @@ public:
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
   RS232IO_c& operator<<(float af_data);
-  #endif
 
   /* ******************************** */
   /* iostream related output operator */
@@ -338,7 +337,7 @@ public:
     @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
   */
   RS232IO_c& operator>>(int32_t& i32_data);
-  #ifdef USE_FLOAT_DATA_TYPE
+
   /**
     receive float value as text on RS232
     (ignore white spaces)
@@ -349,7 +348,6 @@ public:
     @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
   */
   RS232IO_c& operator>>(float& f_data);
-  #endif
 
 private: //Private methods
   friend class IsoAgLib::iRS232IO_c;

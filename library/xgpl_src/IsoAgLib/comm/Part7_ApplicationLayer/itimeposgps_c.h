@@ -160,7 +160,6 @@ public:
   /** check if an NMEA2000 direction signal was received */
   bool isDirectionReceived() const { return TimePosGps_c::isDirectionReceived(); }
 
-#if defined(USE_FLOAT_DATA_TYPE)
   /** deliver Minute GPS Latitude */
   float getGpsLatitudeMinute(void) const { return TimePosGps_c::getGpsLatitudeMinute();}
 
@@ -172,7 +171,6 @@ public:
 
   /** deliver Degree GPS Longitude */
   float getGpsLongitudeDegree(void) const { return TimePosGps_c::getGpsLongitudeDegree();}
-  #endif // END of USE_FLOAT_DATA_TYPE
 
   /** deliver GPS Speed Over Ground as [cm/s] */
   uint16_t getGpsSpeedCmSec(void) const { return TimePosGps_c::getGpsSpeedCmSec(); }

@@ -118,7 +118,7 @@ class CanIo_c : public Subsystem_c
     uint8_t aui8_busNumber,
     uint16_t aui16_bitrate,
     uint8_t aui8_minObjNr = 0,
-    uint8_t aui8_maxObjNr = 13 );
+    uint8_t aui8_maxObjNr = (CONFIG_CAN_OBJ_CNT-1) );
 
   /** check if this CanIo_c instance is configured so that it can be used to send */
   bool isReady2Send() const { return ( mui8_busNumber != 0xFF ); }

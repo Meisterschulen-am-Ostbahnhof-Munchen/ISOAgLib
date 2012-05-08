@@ -446,7 +446,6 @@ public:
     { return ( (mi32_latitudeDegree10Minus7  >= ( -90*10000000)) && (mi32_latitudeDegree10Minus7  <= ( 90*10000000))
             && (mi32_longitudeDegree10Minus7 >= (-180*10000000)) && (mi32_longitudeDegree10Minus7 <= (180*10000000))); }
 
-#if defined(USE_FLOAT_DATA_TYPE)
   /** deliver Minute GPS Latitude */
   float getGpsLatitudeMinute( void ) const { return ( mi32_latitudeDegree10Minus7 * 6.0e-4  ); }
 
@@ -458,10 +457,8 @@ public:
 
   /** deliver Degree GPS Longitude */
   float getGpsLongitudeDegree( void ) const { return ( float(mi32_longitudeDegree10Minus7) * 1.0e-7 ); }
-#endif // END of USE_FLOAT_DATA_TYPE
 
-
-
+  
   /** *** Direction *** **/
 
   /** deliver GPS Speed Over Ground as [cm/s] */

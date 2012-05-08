@@ -238,7 +238,7 @@ public:
   */
   iRS232IO_c& operator<<(int32_t ai32_data)
     {return static_cast<iRS232IO_c&>(RS232IO_c::operator<<(ai32_data));};
-  #ifdef USE_FLOAT_DATA_TYPE
+
   /**
     send float value as text on RS232
 
@@ -249,7 +249,7 @@ public:
   */
   iRS232IO_c& operator<<(float af_data)
     {return static_cast<iRS232IO_c&>(RS232IO_c::operator<<(af_data));};
-  #endif
+
   /* ******************************** */
   /* iostream related output operator */
   /* ********    receiving     ******** */
@@ -345,7 +345,7 @@ public:
   */
   iRS232IO_c& operator>>(int32_t& i32_data)
     {return static_cast<iRS232IO_c&>(RS232IO_c::operator>>(i32_data));};
-  #ifdef USE_FLOAT_DATA_TYPE
+
   /**
     receive float value as text on RS232
     (ignore white spaces)
@@ -357,7 +357,7 @@ public:
   */
   iRS232IO_c& operator>>(float& f_data)
     {return static_cast<iRS232IO_c&>(RS232IO_c::operator>>(f_data));};
-  #endif
+
 private: //Private methods
   #if defined( RS232_INSTANCE_CNT ) && ( RS232_INSTANCE_CNT > 1 )
   /** allow getIrs232Instance() access to shielded base class.

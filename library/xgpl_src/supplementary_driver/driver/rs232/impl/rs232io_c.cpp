@@ -311,7 +311,6 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   }
 
 
-#ifdef USE_FLOAT_DATA_TYPE
 RS232IO_c& RS232IO_c::operator<<(float af_data)
 {
   char pc_data[20];
@@ -322,7 +321,6 @@ RS232IO_c& RS232IO_c::operator<<(float af_data)
 
   return operator<<(pc_data);
 }
-#endif
 
 
 /* ******************************** */
@@ -428,14 +426,12 @@ RS232IO_c& RS232IO_c::operator>>(int32_t& i32_data)
 }
 
 
-#ifdef USE_FLOAT_DATA_TYPE
 RS232IO_c& RS232IO_c::operator>>(float& f_data)
 {
   readToken(); // it set rs232_underflow error if no data is read
   sscanf(pc_token, "%f", &f_data);
   return *this;
 }
-#endif
 
 
 void RS232IO_c::readToken()
