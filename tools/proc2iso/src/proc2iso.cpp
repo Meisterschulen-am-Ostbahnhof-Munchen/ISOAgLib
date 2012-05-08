@@ -13,8 +13,8 @@
 
 //this file is the version with "hardcoded" file-path
 
-#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/AbstractDOMParser.hpp>
