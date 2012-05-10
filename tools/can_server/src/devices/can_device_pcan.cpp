@@ -264,7 +264,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   unsigned int i_pendingMsgs = pc_serverData->canBus(ui8_bus).mi_pendingMsgs;
   if ((i_pendingMsgs > 0) && (list_sendTimeStamps.size() >= (i_pendingMsgs)))
   { // something pending!
-    STL_NAMESPACE::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();
+    std::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();
     i_pendingMsgs--; // we're >0 at the beginning!
     while (i_pendingMsgs)
     {
