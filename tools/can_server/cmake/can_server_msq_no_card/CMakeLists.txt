@@ -38,10 +38,10 @@ endif(WIN32)
 
 add_executable(
   can_server_msq_no_card
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.cpp
   ../../src/can_server_common.cpp
   ../../src/can_server_msq.cpp
   ../../src/can_filtering.cpp
-  ../../src/devices/can_device_no_card.cpp
-  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp)
+  ../../src/devices/can_device_no_card.cpp)
 
 target_link_libraries(can_server_msq_no_card ${ISOAGLIB_ADDITIONAL_LIBRARIES})

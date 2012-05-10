@@ -14,9 +14,8 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 #include "can_target_extensions.h"
-#include <IsoAgLib/hal/pc/system/system.h>
-#include <IsoAgLib/hal/pc/system/system_target_extensions.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include "../system/system.h"
+#include "../system/system_target_extensions.h>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -34,7 +33,7 @@
 #include <sys/time.h>
 
 
-#include "can_server.h"
+#include "can_server_interface.h"
 
 namespace __HAL {
 

@@ -25,4 +25,4 @@
 #endif
 
 // include ISOAgLib's "can_server.h"
-#include <can_server.h>
+#include <can_server_interface.h>

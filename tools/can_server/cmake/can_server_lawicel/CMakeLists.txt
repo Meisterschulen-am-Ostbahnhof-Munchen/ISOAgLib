@@ -42,6 +42,7 @@ endif(WIN32)
 
 add_executable(
   can_server_lawicel
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.cpp
   ../../src/can_server_common.cpp
   ../../src/can_server_sock.cpp
   ../../src/can_filtering.cpp

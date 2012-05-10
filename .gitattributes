@@ -195,8 +195,8 @@ library/xgpl_src/IsoAgLib/hal/p1mc/system/system.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/system/system_target_extensions.cpp -text
 library/xgpl_src/IsoAgLib/hal/p1mc/system/system_target_extensions.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/typedef.h -text
-library/xgpl_src/IsoAgLib/hal/pc/can/can_server.h -text
-library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.h -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock_hal_simulator.cpp -text
@@ -294,7 +294,7 @@ tools/can_server/src/devices/can_device_sontheim_mt_api.cpp -text
 tools/can_server/src/devices/can_device_sontheim_st_api.cpp -text
 tools/can_server/src/devices/can_device_vector_canlib.cpp -text
 tools/can_server/src/devices/can_device_vector_xl.cpp -text
-tools/can_server/src/wrapper_for_can_server.h -text
+tools/can_server/src/wrapper_for_can_server_interface.h -text
 tools/libs/README.txt -text
 tools/libs/boost/README.txt -text
 tools/libs/boost/boost_1_38_0/LICENSE_1_0.txt -text

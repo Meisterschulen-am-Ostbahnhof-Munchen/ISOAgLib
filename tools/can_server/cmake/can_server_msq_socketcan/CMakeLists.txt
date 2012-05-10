@@ -43,10 +43,10 @@ endif(WIN32)
 
 add_executable(
   can_server_msq_socketcan
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.cpp
   ../../src/can_server_common.cpp
   ../../src/can_server_msq.cpp
   ../../src/can_filtering.cpp
-  ../../src/devices/can_device_socketcan.cpp
-  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp)
+  ../../src/devices/can_device_socketcan.cpp)
 
 target_link_libraries(can_server_msq_socketcan ${ISOAGLIB_ADDITIONAL_LIBRARIES})

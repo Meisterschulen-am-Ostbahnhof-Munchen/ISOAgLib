@@ -43,7 +43,7 @@
 #endif
 #include <list>
 
-#include "can_server.h"
+#include "can_server_interface.h"
 
 
 // if not specially defined, define them empty, so there's no overhead!
