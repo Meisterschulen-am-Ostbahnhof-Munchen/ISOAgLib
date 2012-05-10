@@ -11,7 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include "wrapper_for_can_server.h"
+#include "wrapper_for_can_server_interface.h"
 #include "can_server_common.h"
 #include <string.h>
 #include <iostream>
