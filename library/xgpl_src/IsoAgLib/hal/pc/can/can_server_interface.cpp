@@ -20,7 +20,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include "can_target_extensions.h"
 
-#include "can_server.h"
+#include "can_server_interface.h"
 
 namespace __HAL {
 
