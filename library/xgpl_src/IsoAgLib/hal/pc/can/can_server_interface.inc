@@ -19,6 +19,7 @@
 
 namespace __HAL {
 
+#ifdef CAN_DRIVER_MESSAGE_QUEUE
 void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai32_dataContent, int32_t ai32_data)
 {
   transferBuf_s s_transferBuf;
@@ -138,5 +139,6 @@ void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pid)
     ;
 }
 */
+#endif
 
 }; // end namespace __HAL
