@@ -195,8 +195,9 @@ library/xgpl_src/IsoAgLib/hal/p1mc/system/system.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/system/system_target_extensions.cpp -text
 library/xgpl_src/IsoAgLib/hal/p1mc/system/system_target_extensions.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/typedef.h -text
-library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.h -text
+library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.inc -text
+library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface_client.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock_hal_simulator.cpp -text
@@ -282,6 +283,7 @@ tools/can_server/src/can_filtering.cpp -text
 tools/can_server/src/can_filtering.h -text
 tools/can_server/src/can_server_common.cpp -text
 tools/can_server/src/can_server_common.h -text
+tools/can_server/src/can_server_interface_server.cpp -text
 tools/can_server/src/can_server_msq.cpp -text
 tools/can_server/src/can_server_sock.cpp -text
 tools/can_server/src/devices/can_device_a1.cpp -text

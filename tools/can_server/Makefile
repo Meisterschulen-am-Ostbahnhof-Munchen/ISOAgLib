@@ -14,9 +14,10 @@ PROJ_DEFINES_SOCKET := -DCAN_DRIVER_SOCKET
 # Files
 SOURCES_MSQ := \
   src/can_server_msq.cpp \
-	$(ISOAGLIB_PATH)/library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
+  src/can_server_interface_server.cpp
 
-SOURCES_SOCKET := src/can_server_sock.cpp
+SOURCES_SOCKET := src/can_server_sock.cpp \
+  src/can_server_interface_server.cpp
 
 SOURCES_MSQ_NO_CARD := \
 	src/can_server_common.cpp \

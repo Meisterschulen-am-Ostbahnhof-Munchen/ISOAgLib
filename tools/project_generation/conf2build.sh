@@ -527,10 +527,10 @@ driver_and_hal_features()
             printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_simulating*'" >&4
             ;;
         (msq_server)
-            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_msq.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface*'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_msq.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface_client.cpp' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface.h'" >&4
             ;;
         (socket_server)
-            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface*'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface_client.cpp' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface.h'" >&4
             ;;
         (socket_server_hal_simulator)
             printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock_hal_simulator.*'" >&4

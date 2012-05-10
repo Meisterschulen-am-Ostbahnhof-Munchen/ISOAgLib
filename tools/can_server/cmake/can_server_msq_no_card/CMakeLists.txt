@@ -38,7 +38,7 @@ endif(WIN32)
 
 add_executable(
   can_server_msq_no_card
-  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.cpp
+  ../../src/can_server_interface_server.cpp
   ../../src/can_server_common.cpp
   ../../src/can_server_msq.cpp
   ../../src/can_filtering.cpp

@@ -17,8 +17,6 @@
 #include <sys/stat.h>
 #include <cstdio>
 
-#include "can_server_interface.h"
-
 namespace __HAL {
 
 void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai32_dataContent, int32_t ai32_data)
