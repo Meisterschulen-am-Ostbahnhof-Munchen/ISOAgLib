@@ -131,7 +131,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				AdditionalIncludeDirectories="..\..\library\xgpl_src;..\..\library\boost\boost_1_38_0;&quot;..\libs\xerces-c\xerces-c_2_5_0-windows_nt-msvc_60\include&quot;;src"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;USE_FREE_IMAGE_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NONSTDC_NO_DEPRECATE=1;OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN;HAL_PATH_ISOAGLIB=IsoAgLib/hal/pc;HAL_PATH_ISOAGLIB_SYSTEM=IsoAgLib/hal/pc/system"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;USE_FREE_IMAGE_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NONSTDC_NO_DEPRECATE=1;OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN;HAL_PATH_ISOAGLIB=IsoAgLib/hal/pc;HAL_PATH_ISOAGLIB_SYSTEM=IsoAgLib/hal/pc/system;CAN_INSTANCE_CNT=1"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
 				WarningLevel="3"
