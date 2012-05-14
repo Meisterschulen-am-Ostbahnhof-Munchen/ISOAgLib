@@ -15,6 +15,10 @@
 #define LOGENVIRONS_H
 
 #define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
+#define CAN_INSTANCE_CNT 0
+#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#define CNAMESPACE
+
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/isoaglib_config.h>
 #include <stdlib.h>
