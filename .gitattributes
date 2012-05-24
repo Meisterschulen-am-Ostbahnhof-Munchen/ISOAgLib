@@ -592,6 +592,7 @@ tools/proc2iso/src/proc2iso-defines.hpp -text
 tools/proc2iso/src/proc2iso.cpp -text
 tools/proc2iso/src/proc2iso.hpp -text
 tools/proc2iso/version.incl -text
+tools/project_generation/conf2build.sh eol=lf
 tools/project_generation/conf2build_CCSSkeleton.pjt -text
 tools/project_generation/conf2build_CMakeLists.txt -text
 tools/project_generation/conf2build_EDE.part1.pjt -text
