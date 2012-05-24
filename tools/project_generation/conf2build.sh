@@ -1779,8 +1779,8 @@ create_EdePrj()
 
         TMP_EDE="${TEMPFILE_PREFIX}ede"
         cp $EdePrjFilelist $TMP_EDE
-        sed -e 's|/|\\|g' $TMP_EDE |
-        tee $EdePrjFilelist >&3
+        sed -e 's|/|\\|g' $TMP_EDE >$EdePrjFilelist
+        cat $EdePrjFilelist >&3
 
         # insert specific BIOS/OS sources
         local FORMAT="$(literal_format "$USE_EMBED_LIB_DIRECTORY")/%s\n"
