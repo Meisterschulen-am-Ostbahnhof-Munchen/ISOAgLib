@@ -89,12 +89,12 @@ library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux3prefassignm
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux3prefassignmgmt_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliarycontroldesignatorobjectpointer_c.cpp -text
-library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliarycontroldesignatorobjectpointer_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryfunction2_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryfunction2_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryinput2_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryinput2_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliarypointer_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliarypointer_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectgraphicscontext_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectgraphicscontext_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectoutputlist_c.cpp -text
@@ -102,9 +102,9 @@ library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectoutputl
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientservercommunication_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliarycontroldesignatorobjectpointer_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliaryfunction2_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliaryinput2_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliarypointer_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectgraphicscontext_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectoutputlist_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtserverinstance_c.h -text

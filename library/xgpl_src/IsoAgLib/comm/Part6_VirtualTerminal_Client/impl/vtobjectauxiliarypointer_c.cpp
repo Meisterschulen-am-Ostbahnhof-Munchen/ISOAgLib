@@ -1,5 +1,7 @@
 /*
-  vtobjectauxiliarycontroldesignatorobjectpointer_c.cpp
+  vtobjectauxiliarypointer_c.cpp - actually
+  "vtobjectauxiliarycontroldesignatorobjectpointer_c.cpp" but shortened
+  because of problems with the filesystem's name/path-lengths.
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 

@@ -98,7 +98,7 @@
   #include "ivtobjectauxiliaryinput2_c.h"
 #endif
 #ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
-  #include "ivtobjectauxiliarycontroldesignatorobjectpointer_c.h"
+  #include "ivtobjectauxiliarypointer_c.h"
 #endif
 
 

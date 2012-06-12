@@ -14,7 +14,7 @@
 #define IVTOBJECTAUXILIARYCONTROLDESIGNATOROBJECTPOINTER_C_H
 
 // +X2C includes
-#include "impl/vtobjectauxiliarycontroldesignatorobjectpointer_c.h"
+#include "impl/vtobjectauxiliarypointer_c.h"
 // ~X2C
 #ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
