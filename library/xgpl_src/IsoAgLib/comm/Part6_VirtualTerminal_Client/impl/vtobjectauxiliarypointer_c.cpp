@@ -13,7 +13,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include "vtobjectauxiliarycontroldesignatorobjectpointer_c.h"
+#include "vtobjectauxiliarypointer_c.h"
 
 #ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
