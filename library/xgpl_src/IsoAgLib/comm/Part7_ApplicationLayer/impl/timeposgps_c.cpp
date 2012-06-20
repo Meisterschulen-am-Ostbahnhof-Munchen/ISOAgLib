@@ -646,7 +646,7 @@ namespace __IsoAgLib {
              )
           {
 #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
-            getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed);
+            getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed, pkg.time() );
 #endif
             notifyOnEvent (SAE_J1939_71_VEHECLE_DIRECTION_SPEED);
           }
@@ -1036,7 +1036,7 @@ namespace __IsoAgLib {
           mui16_speedOverGroundCmSec = ui16_newSOG;
           mi32_lastIsoDirection = rc_stream.getStartTime();
 #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
-          getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed);
+          getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed, mi32_lastIsoDirection );
 #endif
           notifyOnEvent (NMEA_GPS_DIRECTION_DATA_PGN);
         }
