@@ -33,6 +33,7 @@ public:
 
   // System
   virtual int16_t getOn_offSwitch();
+  virtual void powerHold( bool /* ab_on */ ) {}
 
   // Outputs
   virtual void eventMainRelais( bool /*on*/ ) {}
@@ -111,9 +112,9 @@ void wdReset();
 
 void startTaskTimer ( void );
 int16_t  getCpuFreq(void);                 /* get the cpu frequency*/
-void stayingAlive(void);                /* to activate the power selfholding*/
 
-void powerDown(void);                   /* to deactivate the power selfholding*/
+void powerHold( bool ab_on );              /* turn on and off self power holding */
+
 int16_t  getOn_offSwitch(void);            /* the evaluation of the on/off-switch (D+)*/
 
 int16_t KeyGetByte(uint8_t *p);

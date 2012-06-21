@@ -263,15 +263,9 @@ namespace HAL
   };
 
 
-  inline void stayingAlive()
+  inline void powerHold( bool ab_on )
   {
-    __HAL::DjBios_PowerHold ( __HAL::BIOS_TRUE );
-  };
-
-
-  inline void powerDown()
-  {
-    __HAL::DjBios_PowerHold ( __HAL::BIOS_FALSE );
+    __HAL::DjBios_PowerHold ( ab_on ? __HAL::BIOS_TRUE : __HAL::BIOS_FALSE );
   };
 
 

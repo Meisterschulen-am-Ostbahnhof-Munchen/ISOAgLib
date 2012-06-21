@@ -62,9 +62,7 @@ int16_t  getSnr(uint8_t *snrDat);
 
 void  start_task_timer ( void );
 
-void  stayingAlive(void);
-
-void  powerDown(void);
+void powerHold( bool ab_on );
 
 int16_t  __getAdcUbat();
 

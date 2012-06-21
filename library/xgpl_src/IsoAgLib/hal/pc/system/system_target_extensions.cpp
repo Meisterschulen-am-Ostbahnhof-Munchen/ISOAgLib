@@ -271,18 +271,9 @@ getCpuFreq()
 }
 
 
-void
-stayingAlive()
-{
-  DEBUG_PRINT("DEBUG: staying alive activated.\n");
+void powerHold( bool ab_on ) {
+  halSimulator().powerHold( ab_on );
 }
-
-
-void
-powerDown()
-{
-}
-
 
 int16_t getOn_offSwitch(void)
 {

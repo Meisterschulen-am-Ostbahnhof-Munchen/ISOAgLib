@@ -95,7 +95,7 @@ namespace HAL
   void stayingAlive();
 
   /** shut off the whole system (set power down) */
-  void powerDown();
+  void powerHold( bool ab_on );
 
   /**
     Sleep and yield CPU for other tasks.

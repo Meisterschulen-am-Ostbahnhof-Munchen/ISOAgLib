@@ -30,6 +30,7 @@ System_c::close()
   if ( !HAL::isSystemOpened() )
     return false;
 
+  HAL::powerHold( false );
   HAL::closeSystem();
 
   return true;
@@ -54,6 +55,8 @@ System_c::init()
 
   // start the task timer (also needed for CAN)
   HAL::startTaskTimer();
+
+  HAL::powerHold( true );
 
   return true;
 }

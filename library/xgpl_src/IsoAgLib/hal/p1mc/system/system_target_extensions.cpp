@@ -80,12 +80,7 @@ void start_task_timer ( void )
 
 }
 
-void stayingAlive(void)
-{
-
-}
-
-void powerDown(void)
+void powerHold( bool )
 {
 
 }

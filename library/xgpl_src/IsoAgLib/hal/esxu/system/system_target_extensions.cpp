@@ -47,40 +47,13 @@ int16_t open_system()
   return HAL_UNKNOWN_ERR;
 }
 
-// MSCHMIDT - I think there is a bug here...  
-// I think it should read:
-//    if( !get_on_off_switch() )
-// Same is true for hal\c2c\system\system_target_extensions.cpp
-//
 int16_t closeSystem( void )
-{ // if CAN_EN ist active -> shut peripherals off and stay in idle loop
-  if ( get_on_off_switch() )
-  { // CanEn still active
-    power_down();
-  }
-  // trigger Watchdog, till CanEn is off
-  while ( get_on_off_switch() ) trigger_wd();
-  // power off
-  int16_t retval = close_micro();
+{
+  close_micro();
+  // close micro performs a CPU reset - so
+  // the following is just for convenience
   system_is_opened = false;
-
-#if DEBUG_HAL
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< "close_micro() returns " << retval << "\r";
-
-#if 0
-// don't use CNAMESPACE in header, doesn't always work properly
-// maybe reactivate the statement above using getIrs232Instance(..)
-uint8_t buf[64];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - close_micro() returns %i\r"
-, (uint16_t)__HAL::get_time()
-, (int16_t) retval
-);
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-#endif
-#endif
-
-  return retval;
+  return HAL_NO_ERR;
 }
 
 /** check if open_System() has already been called */

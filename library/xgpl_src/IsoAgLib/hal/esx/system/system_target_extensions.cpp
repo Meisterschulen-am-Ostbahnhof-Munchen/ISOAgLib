@@ -85,15 +85,9 @@ int16_t open_system()
   @return error state (C_NO_ERR == o.k.)
 */
 int16_t closeSystem( void )
-{ // if CAN_EN ist active -> shut peripherals off and stay in idle loop
-  if ( get_on_off_switch() )
-  { // CanEn still active
-    power_down();
-  }
-  // trigger Watchdog, till CanEn is off
-  while ( get_on_off_switch() ) wd_triggern();
-  // close ESX as soon as
+{
   close_esx();
+  // close esx performs a CPU reset
   return C_NO_ERR;
 }
 

@@ -71,9 +71,7 @@ namespace HAL
 
   inline int16_t getOn_offSwitch() {return __HAL::getOn_offSwitch();}
 
-  inline void stayingAlive() {__HAL::stayingAlive();}
-
-  inline void powerDown() {__HAL::powerDown();}
+  inline void powerHold( bool ab_on ) { __HAL::powerHold( ab_on ); }
 
   inline int16_t getAdcUbat() {return 14000;}
 

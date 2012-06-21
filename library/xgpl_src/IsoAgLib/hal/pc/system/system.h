@@ -73,9 +73,7 @@ namespace HAL
 
   inline int16_t getAdc_u85() { return 8500; }
 
-  inline void stayingAlive() { __HAL::stayingAlive(); }
-
-  inline void powerDown() { __HAL::powerDown(); }
+  inline void powerHold( bool ab_on ) { __HAL::powerHold( ab_on ); }
 
   inline void sleep_max_ms( uint32_t ms ) { __HAL::sleep_max_ms( ms ); }
 } // HAL
