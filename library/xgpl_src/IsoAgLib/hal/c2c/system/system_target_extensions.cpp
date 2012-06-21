@@ -20,6 +20,8 @@
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
  * ********************************************************** */
 
+#include <stdlib.h>
+
 #include "system.h"
 
 namespace __HAL {
@@ -52,7 +54,7 @@ bool isSystemOpened()
   return system_is_opened;
 }
 
-int16_t configWatchdog()
+void configWatchdog()
 {
   byte bTime = WD_MAX_TIME;
   if( C_NO_ERR != config_wd(bTime) ) {

@@ -19,6 +19,7 @@
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
  * ********************************************************** */
+#include <stdlib.h>
 
 #include "system.h"
 
