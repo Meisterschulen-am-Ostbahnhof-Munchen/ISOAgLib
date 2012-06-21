@@ -1,6 +1,5 @@
 /*
-  isystem.h: central object for encapsulation of platform dependent
-    elements
+  isystem_c.h: module for a interfacing the system hardware
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -16,79 +15,57 @@
 
 #include "impl/system_c.h"
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
 /**
   Layer class to encapsulate the hardware specific details.
   All system interaction have to be done via this class.
+  @author Dipl.-Inform. Martin Wodok
   @author Dipl.-Inform. Achim Spangler
 */
 class iSystem_c : private __IsoAgLib::System_c {
 public:
-  /**
-    Initialize the system hardware.
-
-    possible errors:
-        * Err_c::SystemOpen problem during start of system with BIOS call
-        * Err_c::SystemWatchdog the System_c::init_wd call caused an error
-        * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
-  */
-  void init() { System_c::init(); }
+  /** Initialize the system hardware */
+  static void init() { System_c::init(); }
 
   /** Shutdown system hardware */
-  void close() { System_c::close(); }
+  static void close() { System_c::close(); }
 
   /** init the hardware watchdog */
-  static void initWd () { System_c::initWd();}
+  static void initWd () { System_c::initWd(); }
 
   /** trigger the watchdog */
-  static inline void triggerWd( void ) { System_c::triggerWd();}
+  static void triggerWd() { System_c::triggerWd(); }
 
   /**
     deliver lasted time from start of system in msec.
     @return running time in [msec.]
   */
-  static int32_t getTime(){return System_c::getTime();};
+  static int32_t getTime() { return System_c::getTime(); }
 
-  /**
-    @return true -> ECU's On/Off-Switch reports system being "On".
-  */
+  /** @return true -> ECU's On/Off-Switch reports system being "On" */
   static bool switchedOn() { return System_c::switchedOn(); }
 
   /**
     get the main power voltage
     @return voltage of power [mV]
   */
-  static int16_t getBatteryVoltage( void ) {return System_c::getBatteryVoltage();};
+  static int16_t getBatteryVoltage() {return System_c::getBatteryVoltage(); }
   /**
     get the voltage of the external reference 8.5Volt for work of external sensors
     @return voltage at external reference [mV]
   */
-  static int16_t getExternalSensorPowerVoltage( void )
-    { return System_c::getExternalSensorPowerVoltage();};
+  static int16_t getExternalSensorPowerVoltage()
+  { return System_c::getExternalSensorPowerVoltage(); }
 
   /**
     deliver the serial nr of the device into uint8_t[6] array
     - f.e. to calculated individual wait berfore address claim
     @param snrDat pointer to 6 uint8_t array, where the serial no of the device is stored
   */
-  static void serialNo(uint8_t *const snrDat){System_c::serialNo(snrDat);};
-//  static uint32_t serialNo( void ){return System_c::serialNo();};
+  static void serialNo( uint8_t *const snrDat) { System_c::serialNo(snrDat); }
 
-private:
-  /** allow getIsystemInstance() access to shielded base class.
-      otherwise __IsoAgLib::getSystemInstance() wouldn't be accepted by compiler
-    */
-  friend iSystem_c& getIsystemInstance( void );
-  /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of iSystem_c within application
-    */
-  iSystem_c( void ) : System_c() {};
 };
-
-/** C-style function, to get access to the unique System_c singleton instance */
-inline iSystem_c& getIsystemInstance( void ) { return static_cast<iSystem_c&>(__IsoAgLib::getSystemInstance());};
 
 }
 

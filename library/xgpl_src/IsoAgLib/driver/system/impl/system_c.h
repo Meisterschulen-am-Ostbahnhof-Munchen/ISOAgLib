@@ -1,6 +1,5 @@
 /*
-  system_c.h: central object for encapsulation of platform dependent
-    elements (mostly BIOS)
+  system_c.h: module for a interfacing the system hardware
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -11,105 +10,66 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/isoaglib_config.h>
+
 #include <IsoAgLib/hal/hal_system.h>
 
-namespace IsoAgLib {
- class iSystem_c;
-}
-
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-/**
-  Layer class to encapsulate the hardware specific details.
-  All system interaction have to be done via this class.
-  @author Dipl.-Inform. Achim Spangler
-*/
-class System_c {
-  MACRO_SINGLETON_CONTRIBUTION();
-public:
 
   /**
-    Initialize the system hardware.
-
-    possible errors:
-        * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
+    Layer class to encapsulate the hardware specific details.
+    All system interaction have to be done via this class.
+    @author Dipl.-Inform. Martin Wodok
+    @author Dipl.-Inform. Achim Spangler
   */
-  void init();
-  
-  /** Shutdown system hardware */
-  void close();
+  class System_c {
+    public:
 
-  ~System_c( void ) {}
+      /** Initialize the system hardware. */
+      static void init();
 
-  /** init the hardware watchdog */
-  static void initWd() {
-    HAL::configWatchdog();
-  }
+      /** Shutdown system hardware */
+      static void close();
 
-  /** trigger the watchdog */
-  static inline void triggerWd( void ) { HAL::wdTriggern();};
+      /** init the hardware watchdog */
+      static void initWd() {
+        HAL::configWatchdog();
+      }
 
-  /**
-    deliver lasted time from start of system in msec.
-    (use BIOS function)
-    @return running time in [msec.]
-  */
-  static inline int32_t getTime(){return HAL::getTime();};
+      /** trigger the watchdog */
+      static void triggerWd() { HAL::wdTriggern(); }
 
-  /**
-    get the main power voltage
-    @return voltage of power [mV]
-  */
-  static int16_t getBatteryVoltage( void )
-    {return HAL::getAdcUbat();};
+      /** deliver lasted time from start of system in msec.
+        (use BIOS function)
+        @return running time in [msec.]
+      */
+      static int32_t getTime() { return HAL::getTime(); }
 
-  /**
-    get the voltage of the external reference 8.5Volt for work of external sensors
-    @return voltage at external reference [mV]
-  */
-  static int16_t getExternalSensorPowerVoltage( void ) { return HAL::getAdc_u85();};
+      /** get the main power voltage
+        @return voltage of power [mV]
+      */
+      static int16_t getBatteryVoltage() { return HAL::getAdcUbat(); }
 
-  /**
-    @return true -> ECU's On/Off-Switch reports system being "On".
-  */
-  static bool switchedOn() {
-    return HAL::getOn_offSwitch();
-  }
+      /** get the voltage of the external reference 8.5Volt for work of external sensors
+        @return voltage at external reference [mV]
+      */
+      static int16_t getExternalSensorPowerVoltage() { return HAL::getAdc_u85(); }
 
-  /**
-    deliver the serial nr of the device into uint8_t[6] array
-    - f.e. to calculated individual wait berfore address claim
-    (uses BIOS function)
-    @param snrDat pointer to 6 uint8_t array, where the serial no of the device is stored
-  */
-  static inline void serialNo(uint8_t *const snrDat){HAL::getSnr(snrDat);};
+      /** @return true -> ECU's On/Off-Switch reports system being "On".  */
+      static bool switchedOn() { return HAL::getOn_offSwitch(); }
 
-  /**
-  return the serial nr of the device as an uint32_t
-  (uses BIOS function)
-  @param
-  @return serial nr of the device
-   */
-//  static inline uint32_t serialNo( void ) {return HAL::getSerialNr();};
+      /**
+        deliver the serial nr of the device into uint8_t[6] array
+        - f.e. to calculated individual wait berfore address claim
+        (uses BIOS function)
+        @param snrDat pointer to 6 uint8_t array, where the serial no of the device is stored
+      */
+      static inline void serialNo( uint8_t *const snrDat ) { HAL::getSnr( snrDat ); }
+  };
 
-protected:
-private:
-  friend class IsoAgLib::iSystem_c;
-  /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of System_c within application
-    */
-  System_c() {}
-
-// Private attributes
-  friend System_c &getSystemInstance(uint8_t aui8_instance);
-};
-
-/** C-style function, to get access to the unique System_c singleton instance */
-System_c &getSystemInstance(uint8_t aui8_instance = 0);
 }
 #endif
