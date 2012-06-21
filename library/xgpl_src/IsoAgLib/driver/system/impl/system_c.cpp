@@ -101,18 +101,4 @@ System_c::initWd ( void )
   return b_result;
 }
 
-
-bool
-System_c::switchedOn()
-{
-	#ifndef CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
-	return HAL::getOn_offSwitch();
-	#else
-	static int32_t si32_lastCanEnActive = 0;
-	const int32_t ci32_now = getTime();
-	if ( HAL::getOn_offSwitch() ) si32_lastCanEnActive = ci32_now;
-	return ( ci32_now - si32_lastCanEnActive <= CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC );
-	#endif
-}
-
 } // end of namespace __IsoAgLib

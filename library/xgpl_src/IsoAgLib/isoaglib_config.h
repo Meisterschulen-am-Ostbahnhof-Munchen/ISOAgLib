@@ -79,17 +79,6 @@
 #  define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
 #endif
 
-/** select time intervall in MSEC during which the loss of CAN_EN is ignored.
-  IMPORTANT: This selection has only influence on system if IsoAgLib::PowerdownByExplcitCall
-  is selected.
-  The automatic power down of the ECU ( OS or BIOS ) can't be manipulated this way.
-  If iSystem_c::canEn() shall immediately answer false on CAN_EN loss, don't set this define
-
-  /// define consolidation time for CAN_EN loss detection - can be manually overridden in project config file
-  #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC 1000
-*/
-
-
 /* ******************************************************** */
 /**
  * \name Set buffer sizes for CAN handling

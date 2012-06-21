@@ -102,7 +102,9 @@ public:
   /**
     @return true -> ECU's On/Off-Switch reports system being "On".
   */
-  static bool switchedOn();
+  static bool switchedOn() {
+    return HAL::getOn_offSwitch();
+  }
 
   // deprecated - only for backwards compatibility.
   // NOTE: Will be removed soon, please use "switchedOn()".
