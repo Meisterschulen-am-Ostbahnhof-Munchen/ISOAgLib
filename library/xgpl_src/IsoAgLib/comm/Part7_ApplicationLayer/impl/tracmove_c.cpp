@@ -16,7 +16,6 @@
 
 #include "tracmove_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
 #endif
@@ -145,19 +144,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     else return true;
   }
 
-  /** check if filter boxes shall be created - create only filters based
-      on active local idents which has already claimed an address
-      --> avoid to much Filter Boxes
-    */
+  /** check if filter boxes shall be created and create them */
   void TracMove_c::checkCreateReceiveFilter()
   {
-    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    IsoBus_c &c_can = getIsoBusInstance4Comm();
-
-    if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
+    if ( ! checkFilterCreated() )
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
+      IsoBus_c &c_can = getIsoBusInstance4Comm();
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (GROUND_BASED_SPEED_DIST_PGN<<8) ), 8, false);
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WHEEL_BASED_SPEED_DIST_PGN<<8) ), 8, false);
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (SELECTED_SPEED_MESSAGE<<8) ), 8, true);
