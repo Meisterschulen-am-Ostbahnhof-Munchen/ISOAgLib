@@ -23,6 +23,14 @@ System_c &getSystemInstance(uint8_t aui8_instance)
   MACRO_MULTITON_GET_INSTANCE_BODY(System_c, 1, aui8_instance);
 }
 
+void 
+System_c::init()
+{
+  isoaglib_assert( ! HAL::isSystemOpened() );
+  HAL::openSystem();
+  HAL::powerHold( true );
+  initWd();
+}
 
 void
 System_c::close()
@@ -32,15 +40,5 @@ System_c::close()
   HAL::closeSystem();
 }
 
-
-void 
-System_c::init()
-{
-  isoaglib_assert( ! HAL::isSystemOpened() );
-
-  HAL::openSystem();
-  HAL::powerHold( true );
-  initWd();
-}
 
 } // end of namespace __IsoAgLib
