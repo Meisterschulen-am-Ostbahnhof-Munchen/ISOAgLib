@@ -78,13 +78,7 @@ namespace HAL
   */
   int16_t getAdc_u85();
 
-  /**
-    activate the power selfholding to perform system
-    stop (f.e. store values) actions after loss of CAN_EN
-  */
-  void stayingAlive();
-
-  /** shut off the whole system (set power down) */
+  /** allow the HAL to power down the system (or not) */
   void powerHold( bool ab_on );
 
   /**
