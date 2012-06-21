@@ -69,7 +69,7 @@ namespace HAL
 
   inline void startTaskTimer() {__HAL::start_task_timer ( );}
 
-  inline int16_t getOn_offSwitch() {return __HAL::getOn_offSwitch();}
+  inline bool getOn_offSwitch() {return __HAL::getOn_offSwitch();}
 
   inline void powerHold( bool ab_on ) { __HAL::powerHold( ab_on ); }
 

@@ -72,9 +72,9 @@ namespace HAL
 
   /**
     check if D+/OnOffSwitch is active
-    @return ON(1) or OFF(0)
+    @return true if D+ is switched on
   */
-  int16_t getOn_offSwitch();
+  bool getOn_offSwitch();
 
   /**
     get the main power voltage

@@ -60,23 +60,21 @@
 #endif
 
 
-int16_t HALSimulator_c::getOn_offSwitch()
+bool HALSimulator_c::getOn_offSwitch()
 {
   #if 0
     // old style execution stop detection when
     // application shoul stop if all CAN messages of
     // FILE based CAN simulation were processed
-    return (getTime() - can_lastReceiveTime() < 1000)?1:0;
+    return (getTime() - can_lastReceiveTime() < 1000);
   #elif 0
-    uint8_t b_temp;
     // exit function if key typed
-    if (KeyGetByte(&b_temp) ==1) return 0;
-    else return 1;
+    uint8_t b_temp;
+    return ( KeyGetByte( &b_temp ) !=1 );
   #else
     // use std C++ cin function to check for unprocessed input
     // -> as soon as RETURN is hit, the programm stops
-    if ( STL_NAMESPACE::cin.rdbuf()->in_avail() > 0 ) return 0;
-    else return 1;
+    return ( STL_NAMESPACE::cin.rdbuf()->in_avail() <= 0 );
   #endif
 }
 
@@ -275,7 +273,7 @@ void powerHold( bool ab_on ) {
   halSimulator().powerHold( ab_on );
 }
 
-int16_t getOn_offSwitch(void)
+bool getOn_offSwitch(void)
 {
 	return halSimulator().getOn_offSwitch();
 }

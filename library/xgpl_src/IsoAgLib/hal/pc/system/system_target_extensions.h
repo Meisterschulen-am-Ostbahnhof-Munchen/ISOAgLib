@@ -32,7 +32,7 @@ public:
   virtual ~HALSimulator_c() {} 
 
   // System
-  virtual int16_t getOn_offSwitch();
+  virtual bool getOn_offSwitch();
   virtual void powerHold( bool /* ab_on */ ) {}
 
   // Outputs
@@ -115,7 +115,7 @@ int16_t  getCpuFreq(void);                 /* get the cpu frequency*/
 
 void powerHold( bool ab_on );              /* turn on and off self power holding */
 
-int16_t  getOn_offSwitch(void);            /* the evaluation of the on/off-switch (D+)*/
+bool getOn_offSwitch(void);               /* the evaluation of the on/off-switch (D+)*/
 
 int16_t KeyGetByte(uint8_t *p);
 

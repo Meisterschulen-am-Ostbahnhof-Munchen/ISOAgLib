@@ -80,6 +80,10 @@ void start_task_timer ( void )
 
 }
 
+bool getOn_offSwitch() {
+  return true;
+}
+
 void powerHold( bool )
 {
 

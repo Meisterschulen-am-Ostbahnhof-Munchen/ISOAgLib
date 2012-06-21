@@ -257,9 +257,9 @@ namespace HAL
   };
 
 
-  inline int16_t getOn_offSwitch()
+  inline bool getOn_offSwitch()
   {
-    return ( (__HAL::DjBios_IgnOn() == __HAL::BIOS_TRUE) ? 1 : 0 );
+    return (__HAL::DjBios_IgnOn() == __HAL::BIOS_TRUE );
   };
 
 

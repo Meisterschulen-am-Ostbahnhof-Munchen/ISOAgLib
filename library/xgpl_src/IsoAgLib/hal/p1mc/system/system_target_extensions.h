@@ -62,6 +62,8 @@ int16_t  getSnr(uint8_t *snrDat);
 
 void  start_task_timer ( void );
 
+bool getOn_offSwitch();
+
 void powerHold( bool ab_on );
 
 int16_t  __getAdcUbat();
