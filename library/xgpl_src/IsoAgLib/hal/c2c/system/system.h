@@ -61,38 +61,6 @@ namespace HAL
     return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
   };
 
-  inline int16_t getLokalId(uint8_t *Dat) { return __HAL::get_lokal_id(Dat); }
-
-  inline void startTaskTimer() { __HAL::start_task_timer ( T_TASK_BASIC ); }
-
-  /**
-    init the Task Call
-	This function permits cyclic and/or delayed calls of user functions. If 0 is tranferred as parameter
-	for wInterval, the function call will occur only once. (For starting the tasks start task timer
-	(word wBasicTick) has to be queried.)
-	The ordering of the task into the interrupt system uses the transfer parameter wHandle. If a zero-pointer
-	is used in the user function parameter, the function will stop when the handle is called.
-	The maximum number of tasks is limited to 4.
-  */
-  inline int16_t initTaskCall( uint16_t wHandle, uint16_t wInterval, uint16_t wOffset, void (* pfFunction)(void) )
-  { return __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction ); }
-
-  /**
-    Get Task Overload
-	If a task has already been running and is called up a second time by a timer interrupt,
-	a flag is set. The function get_task_overload returns the condition of this flag.
-	With reset_task_overload this flag can be deleted.
-  */
-  inline int16_t getTaskOverload( uint16_t /*wHandle*/ ) { return __HAL::get_task_overload (); }
-
-  /**
-    Reset Task Overload
-	If a task has already been running and is called up a second time by a timer interrupt,
-	a flag is set. The function get_task_overload returns the condition of this flag.
-	With reset_task_overload this flag can be deleted.
-  */
-  inline int16_t resetTaskOverload( uint16_t /*wHandle*/ ) { return __HAL::get_task_overload (); }	// On C2C, task_overload is reset by calling the get function
-
   inline int16_t getAdcUbat()
   {
 	return (40 * __HAL::get_adc(GET_U_E));

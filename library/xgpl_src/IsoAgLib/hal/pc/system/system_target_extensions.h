@@ -91,8 +91,6 @@ int16_t getSnr(uint8_t *snrDat);               /* serial number of target */
 void wdTriggern(void);
 void wdReset();
 
-
-void startTaskTimer ( void );
 int16_t  getCpuFreq(void);                 /* get the cpu frequency*/
 
 void powerHold( bool ab_on );              /* turn on and off self power holding */

@@ -66,8 +66,6 @@ namespace HAL
     return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
   };
 
-  inline void startTaskTimer() {__HAL::start_task_timer ( );}
-
   inline bool getOn_offSwitch() {return __HAL::getOn_offSwitch();}
 
   inline void powerHold( bool ab_on ) { __HAL::powerHold( ab_on ); }

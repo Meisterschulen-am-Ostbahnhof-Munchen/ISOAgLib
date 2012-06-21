@@ -68,8 +68,6 @@ namespace HAL
     return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
   };
 
-  inline void startTaskTimer() {__HAL::start_task_timer ( T_TASK_BASIC ); }
-
   inline int16_t getAdcUbat() { return (33 * __HAL::get_adc(GET_U_C)); }
 
   inline int16_t getAdc_u85()

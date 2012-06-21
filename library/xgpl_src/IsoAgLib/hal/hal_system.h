@@ -57,9 +57,6 @@ namespace HAL
 
   int32_t getSerialNr(int16_t* pi16_errCode = NULL);
 
-  /** start the Task Timer -> time between calls of Task Manager */
-  void startTaskTimer();
-
   /**
     check if D+/OnOffSwitch is active
     @return true if D+ is switched on

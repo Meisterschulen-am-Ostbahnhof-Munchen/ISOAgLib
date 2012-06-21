@@ -229,13 +229,6 @@ wdReset()
 }
 
 
-void
-startTaskTimer()
-{
-  DEBUG_PRINT1("DEBUG: startTaskTimer with %d called\n", T_TASK_BASIC );
-}
-
-
 int16_t
 getCpuFreq()
 {
