@@ -42,7 +42,7 @@ void openSystem()
 
 void closeSystem()
 {
-  if( C_NO_ERR == close_micro() )
+  if( C_NO_ERR != close_micro() )
     abort();
 
   // close micro performs a CPU reset - so
