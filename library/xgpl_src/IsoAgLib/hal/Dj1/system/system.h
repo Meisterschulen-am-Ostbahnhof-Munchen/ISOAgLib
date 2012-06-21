@@ -47,18 +47,16 @@ namespace __HAL
 
 namespace HAL
 {
-  inline int16_t open_system()
+  inline void openSystem()
   {
     __HAL::DjBios_SysOpen();
     __HAL::DjBios_AnalogInit(10); /* Allow HAL::getAdcUbat() to work */
-      return ( HAL_NO_ERR );
   };
 
 
-  inline int16_t closeSystem()
+  inline void closeSystem()
   {
     __HAL::DjBios_SysClose();
-    return ( HAL_NO_ERR );
   };
 
 
@@ -68,11 +66,7 @@ namespace HAL
   };
 
 
-  inline int16_t configWatchdog()
-  {
-//jtm    return __HAL::configWatchdog();
-    return ( HAL_NO_ERR );
-  };
+  inline void configWatchdog() {}
 
 
   inline void wdReset()

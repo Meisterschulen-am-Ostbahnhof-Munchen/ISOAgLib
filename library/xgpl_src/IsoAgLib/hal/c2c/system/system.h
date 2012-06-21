@@ -33,13 +33,13 @@
 
 namespace HAL
 {
-  inline int16_t open_system() { return __HAL::open_system(); }
+  inline void openSystem() { __HAL::openSystem(); }
 
-  inline int16_t closeSystem() { return __HAL::closeSystem(); }
+  inline void closeSystem() { __HAL::closeSystem(); }
 
   inline bool isSystemOpened() { return __HAL::isSystemOpened(); }
 
-  inline int16_t configWatchdog() { return __HAL::configWatchdog(); }
+  inline void configWatchdog() { __HAL::configWatchdog(); }
 
   inline void wdReset() { (void)__HAL::reset_wd(); }
 

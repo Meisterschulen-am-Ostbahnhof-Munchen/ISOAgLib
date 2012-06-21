@@ -102,11 +102,10 @@ namespace HAL {
 
   /**
     check if EEPROM is ready for actions
-    @return EE_READY -> ready
+    @return HAL_NO_ERR -> ready
   */
   inline int16_t eepromReady( void )
-  /* DWS */ { //    {return __HAL::eepromReady();};
-    return 0;
+    return HAL_NO_ERR;
   }
 }
 #endif

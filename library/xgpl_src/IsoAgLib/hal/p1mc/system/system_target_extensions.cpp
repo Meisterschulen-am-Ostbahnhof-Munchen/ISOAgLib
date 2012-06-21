@@ -35,35 +35,14 @@ extern "C"
 
 namespace __HAL {
 
-/**
-  open the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t open_system()
+void openSystem()
 {
   // set repetition time for maintask to 1 ms
   OS.ExecTimeOut = 1;
-  return C_NO_ERR;
 }
-/**
-  close the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t closeSystem( void )
-{
-  return C_NO_ERR;
-}
+void closeSystem() {}
 
-/**
-  configure the watchdog of the system
-  @return error state (C_NO_ERR == o.k.)
-    or DATA_CHANGED on new values -> need call of wdReset to use new settings
-  @see wdReset
-*/
-int16_t configWatchdog()
-{
-  return 0;
-}
+void configWatchdog() {}
 
 int32_t getTime(void)
 {

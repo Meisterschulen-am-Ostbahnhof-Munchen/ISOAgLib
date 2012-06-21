@@ -26,52 +26,38 @@ namespace __HAL {
 
 static bool system_is_opened = false;
 
-int16_t open_system()
+void openSystem()
 {
   tSystem t_biosextSysdata;
   const int16_t i16_result = open_c2c( &t_biosextSysdata );
 
   switch( i16_result )
   {
-    case C_NOACT:
-    case C_BUSY:
-    case C_CHECKSUM:
-    case C_RANGE:
-    case C_RD_WR:
-      return i16_result;
     case C_DEFAULT:
     case C_NO_ERR:
       system_is_opened = true;
-      return HAL_NO_ERR;
+      break;
+    default:
+      abort();
   }
-
-  return HAL_UNKNOWN_ERR;
 }
 
-int16_t closeSystem( void )
+void closeSystem()
 {
   system_is_opened = false;
-  return HAL_NO_ERR;
 }
 
-/** check if open_System() has already been called */
-bool isSystemOpened( void )
+bool isSystemOpened()
 {
   return system_is_opened;
 }
 
-/**
-  configure the watchdog of the system with the
-  settings of configC2C
-  @return error state (C_NO_ERR == o.k.)
-    or DATA_CHANGED on new values -> need call of wdReset to use new settings
-  @see wdReset
-*/
 int16_t configWatchdog()
 {
   byte bTime = WD_MAX_TIME;
-
-  return config_wd(bTime);
+  if( C_NO_ERR != config_wd(bTime) ) {
+    abort();
+  }
 }
 
 } // end namespace __HAL

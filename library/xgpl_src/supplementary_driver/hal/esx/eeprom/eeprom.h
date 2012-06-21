@@ -96,7 +96,7 @@ namespace HAL
 
   /**
     check if EEPROM is ready for actions
-    @return EE_READY -> ready
+    @return HAL_NO_ERR -> ready
   */
   inline int16_t eepromReady(void)
     {return __HAL::eeprom_ready();};

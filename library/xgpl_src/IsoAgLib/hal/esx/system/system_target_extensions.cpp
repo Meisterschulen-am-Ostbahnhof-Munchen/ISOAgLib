@@ -40,7 +40,7 @@ extern "C" {
 void taskTriggerWatchdog();
 }
 /** initialise static tSystem to complete zero, so that a call of
-  * open_system can be reliable detected
+  * openSystem can be reliable detected
   */
 static tSystem t_biosextSysdata =
   {0,0,0,0,0,0,0,
@@ -49,11 +49,7 @@ static tSystem t_biosextSysdata =
   0,0,0,0,0};
 
 
-/**
-  open the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t open_system()
+void openSystem()
 {
   const int16_t i16_result = open_esx(&t_biosextSysdata);
 
@@ -69,36 +65,26 @@ int16_t open_system()
 
   switch( i16_result )
   {
-    case C_NOACT:
-    case C_BUSY:
-    case C_CHECKSUM:
-      return i16_result;
     case C_CONFIG:
     case C_NO_ERR:
-      return HAL_NO_ERR;
+      return;
+    default:
+      abort();
   }
-
-  return HAL_UNKNOWN_ERR;
 }
-/**
-  close the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t closeSystem( void )
+
+void closeSystem()
 {
-  close_esx();
-  // close esx performs a CPU reset
-  return C_NO_ERR;
+  if( C_NO_ERR != close_esx() )
+    abort();
 }
 
-/** check if open_System() has already been called */
 bool isSystemOpened( void )
 {
-  if ( ( t_biosextSysdata.bCPU_freq != 0 )
+  return ( ( t_biosextSysdata.bCPU_freq != 0 )
     && ( t_biosextSysdata.wRAMSize != 0 )
     && ( t_biosextSysdata.wROMSize != 0 )
-    && ( t_biosextSysdata.bEESize != 0 ) ) return true;
-  else return false;
+    && ( t_biosextSysdata.bEESize != 0 ) );
 }
 
 /** max amount of task triggered WD resets */
@@ -136,14 +122,7 @@ void wdTriggern(void)
 /** flag to control if WD-Task is started already */
 static bool sb_isWdTriggerTaskRunning = false;
 
-/**
-  configure the watchdog of the system with the
-  settings of configEsx
-  @return error state (C_NO_ERR == o.k.)
-    or DATA_CHANGED on new values -> need call of wdReset to use new settings
-  @see wdReset
-*/
-int16_t configWatchdog()
+void configWatchdog()
 {
   tWDConfig t_watchdogConf = {
       WD_MAX_TIME,
@@ -154,21 +133,20 @@ int16_t configWatchdog()
       CONFIG_RESET
   };
 
-   int iReturn = config_wd( &t_watchdogConf );
-   if ((iReturn == DATA_CHANGED) || (iReturn == C_CHECKSUM)) 
-   {  /* Daten wurden geaendert bzw. Checksummenfehler festgestellt -> RESET*/
-	  iReturn = wd_reset();
-   }
+  switch( config_wd( &t_watchdogConf ) ) {
+    case DATA_CHANGED:
+    case C_CHECKSUM:
+      if( C_NO_ERR != wd_reset() ) {
+        abort();
+      }
+  }
 
-	if ( ! sb_isWdTriggerTaskRunning )
-	{
-		init_task_call( TASKLEVEL_2A, 5, 5, taskTriggerWatchdog );
-		start_task_timer( 20 );
-		sb_isWdTriggerTaskRunning = true;
-	}
-
-
-  return iReturn;
+  if ( ! sb_isWdTriggerTaskRunning )
+  {
+    init_task_call( TASKLEVEL_2A, 5, 5, taskTriggerWatchdog );
+    start_task_timer( 20 );
+    sb_isWdTriggerTaskRunning = true;
+  }
 }
 
 } // end namespace __HAL

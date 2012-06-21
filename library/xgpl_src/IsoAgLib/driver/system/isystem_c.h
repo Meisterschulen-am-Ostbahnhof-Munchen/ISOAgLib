@@ -21,39 +21,26 @@ namespace IsoAgLib {
 
 /**
   Layer class to encapsulate the hardware specific details.
-  All system interaction must be done via this class (and member
-  classes). To avoid runtime overhead, most functions are declared inline.
-  @short Central layer object to encapsulate hardware specific details which uses
-    other object to implement specific I/O operations.
+  All system interaction have to be done via this class.
   @author Dipl.-Inform. Achim Spangler
 */
 class iSystem_c : private __IsoAgLib::System_c {
 public:
   /**
     Initialize the system hardware.
-    (uses BIOS function)
 
     possible errors:
         * Err_c::SystemOpen problem during start of system with BIOS call
         * Err_c::SystemWatchdog the System_c::init_wd call caused an error
         * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
-    @return true -> everything without errors initialised
   */
-  bool init() { return System_c::init();}
+  void init() { System_c::init(); }
 
-  /** Stimulate final shutdown of ECU
-    */
-  bool close( void ) { return System_c::close();}
+  /** Shutdown system hardware */
+  void close() { System_c::close(); }
 
-  /**
-    init the hardware watchdog
-    (uses BIOS function)
-
-    possible errors:
-        * Err_c::SystemWatchdog BIOS watchdog configuration without success
-    @return true -> watchdog successful configured
-  */
-  static bool initWd ( void ) { return System_c::initWd();}
+  /** init the hardware watchdog */
+  static void initWd () { System_c::initWd();}
 
   /** trigger the watchdog */
   static inline void triggerWd( void ) { System_c::triggerWd();}

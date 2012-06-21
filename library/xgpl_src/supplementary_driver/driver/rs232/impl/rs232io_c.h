@@ -81,8 +81,8 @@ public:
     checks whether the BIOS RS232 is correctly initialized
   */
   bool isInitialized () const {
-    return ui32_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE &&
-      ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE;
+    return mui32_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE &&
+      mui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE;
   }
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
@@ -103,12 +103,12 @@ public:
     deliver the actual baudrate
     @return RS232 baudrate
   */
-  uint32_t baudrate()const{return ui32_baudrate;};
+  uint32_t baudrate()const{return mui32_baudrate;};
   /**
     deliver the decoding type
     @return RS232 type
    */
-  t_dataMode dataMode()const{return en_dataMode;};
+  t_dataMode dataMode()const{return men_dataMode;};
 
   /**
     set send buffer size
@@ -123,11 +123,11 @@ public:
     deliver the actual send buffer size
     @return send buffer size
   */
-  uint16_t sndBufferSize()const{return ui16_sndBuf;};
+  uint16_t sndBufferSize()const{return mui16_sndBuf;};
   /**
     clear the send buffer without send of actual data in buffer
   */
-  void clearSndBuffer()const{HAL::clearRs232TxBuffer(ui8_channel);};
+  void clearSndBuffer()const{HAL::clearRs232TxBuffer(mui8_channel);};
   /**
     set receive buffer size
     @param aui16_bufferSize receiving buffer size
@@ -141,25 +141,25 @@ public:
     deliver the actual receive buffer size
     @return receive buffer size
   */
-  uint16_t rec_bufferSize()const{return ui16_recBuf;};
+  uint16_t rec_bufferSize()const{return mui16_recBuf;};
 
   /** get the channel */
-  uint8_t getChannel() const { return ui8_channel;};
+  uint8_t getChannel() const { return mui8_channel;};
 
   /**
     clear the receive buffer without reading of actual data in buffer
   */
-  void clearRecBuffer()const{HAL::clearRs232RxBuffer(ui8_channel);};
+  void clearRecBuffer()const{HAL::clearRs232RxBuffer(mui8_channel);};
   /**
     check if the receive buffer is empty
     @return true -> receive buffer is empty
   */
-  bool eof()const{return (HAL::getRs232RxBufCount(ui8_channel) == 0);};
+  bool eof()const{return (HAL::getRs232RxBufCount(mui8_channel) == 0);};
   /**
     deliver the count of data uint8_t in receive buffer
     @return amount of data bytes in receive buffer
   */
-  uint16_t rec_bufferCnt()const{return HAL::getRs232RxBufCount(ui8_channel);};
+  uint16_t rec_bufferCnt()const{return HAL::getRs232RxBufCount(mui8_channel);};
 
   /* ******************************** */
   /* iostream related output operator */
@@ -366,13 +366,13 @@ private: //Private methods
 private:
   // Private attributes
   
-  uint32_t ui32_baudrate;
-  t_dataMode en_dataMode;
-  bool b_xon_xoff;
-  uint16_t ui16_sndBuf;
-  uint16_t ui16_recBuf;
-  char pc_token[15];
-  uint8_t ui8_channel; /**< channel to use for RS232 */
+  uint32_t mui32_baudrate;
+  t_dataMode men_dataMode;
+  bool mb_xon_xoff;
+  uint16_t mui16_sndBuf;
+  uint16_t mui16_recBuf;
+  char mpc_token[15];
+  uint8_t mui8_channel; /**< channel to use for RS232 */
 
   friend RS232IO_c &getRs232Instance( uint8_t aui8_instance );
 };

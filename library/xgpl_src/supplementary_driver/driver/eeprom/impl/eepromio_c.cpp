@@ -230,7 +230,7 @@ EepromIo_c::writeInit()
   getILibErrInstance().clear( iLibErr_c::Eeprom );
 
   // check if eeprom is ready; call BIOS function
-  if ( wait_eepromReady() != EE_READY )
+  if ( wait_eepromReady() != HAL_NO_ERR )
   { // error -> got not ready
     getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Eeprom );
     return false;
@@ -253,14 +253,14 @@ int16_t
 EepromIo_c::wait_eepromReady( void )
 { // test if EEPROM is ready for up to 1000msec.
   // don't builf timestamps, if EEPROM immediately ready
-  if(HAL::eepromReady() == EE_READY) return EE_READY;
+  if(HAL::eepromReady() == HAL_NO_ERR ) return HAL_NO_ERR;
 
   int16_t i16_result = HAL_BUSY_ERR;
   int32_t i32_startTime = HAL::getTime();
   while ((HAL::getTime() - i32_startTime) < 1000)
   { // call BIOS function and exit loop if EEPROM is ready
     i16_result = HAL::eepromReady();
-    if( i16_result == EE_READY) break;
+    if( i16_result == HAL_NO_ERR ) break;
     // trigger watchdog
     HAL::wdTriggern();
   }

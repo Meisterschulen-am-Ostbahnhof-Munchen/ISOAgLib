@@ -104,14 +104,10 @@ namespace HAL
 
   /**
     check if EEPROM is ready for actions
-    @return EE_READY -> ready
+    @return HAL_NO_ERR -> ready
   */
-  // MSCHMIDT - EE_READY is not defined for ESXu.  Using hard-coded 0 instead.
-/*--- GLOBAL DEFINES CONSTANTS ---*/
-#define EE_READY                    0
-#define EE_NOT_READY                1
   inline int16_t eepromReady(void)
-    {return 0;};
+  {return HAL_NO_ERR; };
 // MSCHMIDT - Should really implement a target extension for the esxu in eeprom_target_extensions.cc
 // MSCHMIDT - (see C:\DEV\IsoAgLib\lgpl_src\IsoAgLib\hal\pc\eeprom\eeprom_target_extensions.cc)
 // MSCHMIDT - /* get the status of eeprom*/

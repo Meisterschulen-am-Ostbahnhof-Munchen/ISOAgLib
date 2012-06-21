@@ -98,16 +98,9 @@ namespace HAL
 
   /**
     check if EEPROM is ready for actions
-    @return EE_READY -> ready
+    @return HAL_NO_ERR -> ready
   */
   inline int16_t eepromReady(void)
-    {return EE_READY;};
-// MSCHMIDT - Should really implement a target extension for the c2c in eeprom_target_extensions.cc
-// MSCHMIDT - (see C:\DEV\IsoAgLib\lgpl_src\IsoAgLib\hal\pc\eeprom\eeprom_target_extensions.cc)
-// MSCHMIDT - /* get the status of eeprom*/
-// MSCHMIDT - int16_t eepromReady(void){
-// MSCHMIDT -   // printf("eeprom ready aufgerufen\n");
-// MSCHMIDT -   return EE_READY;
-// MSCHMIDT - }
+    {return HAL_NO_ERR; }
 }
 #endif

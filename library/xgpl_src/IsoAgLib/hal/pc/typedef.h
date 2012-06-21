@@ -52,16 +52,6 @@ namespace __HAL {
 
 typedef struct
 {
-  uint8_t bWDmaxTime;
-  uint8_t bWDminTime;
-  uint8_t bUDmax;
-  uint8_t bUDmin;
-  uint8_t bConfigRelais;
-  uint8_t bConfigReset;
-} tWDConfig;
-
-typedef struct
-{
   bool started;
 } tSystem;
 

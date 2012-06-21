@@ -61,7 +61,7 @@ int16_t getEepromSegmentSize(void){
 /* get the status of eeprom */
 int16_t eepromReady(void)
 {
-  return EE_READY; // PC EEPROM is always ready.
+  return HAL_NO_ERR; // PC EEPROM is always ready.
 }
 
 /* enable or disable write protection */

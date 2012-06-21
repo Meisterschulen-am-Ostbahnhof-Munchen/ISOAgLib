@@ -29,27 +29,17 @@
 
 namespace HAL
 {
-  /**
-    open the system with system specific function call
-    @return error state (HAL_NO_ERR == o.k.)
-  */
-  int16_t open_system();
+  /** open the system with system specific function call */
+  void openSystem();
 
-  /**
-    close the system with system specific function call
-    @return error state (HAL_NO_ERR == o.k.)
-  */
-  int16_t closeSystem();
+  /** close the system with system specific function call */
+  void closeSystem();
 
   /** check if open_System() has already been called */
   bool isSystemOpened();
 
-  /**
-    configure the watchdog of the system with the settings of configEsx
-    @return error state (HAL_NO_ERR == o.k.)
-      or DATA_CHANGED on new values -> need call of wdReset to use new settings
-  */
-  int16_t configWatchdog();
+  /** configure the watchdog of the system */
+  void configWatchdog();
 
   /** reset the watchdog to use new configured watchdog settings */
   void wdReset();

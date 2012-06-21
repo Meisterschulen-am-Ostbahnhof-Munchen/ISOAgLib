@@ -170,11 +170,11 @@ namespace HAL
 
   /**
     check if EEPROM is ready for actions
-    @return EE_READY -> ready
+    @return HAL_NO_ERR -> ready
   */
   inline int16_t eepromReady ( void )
   {
-    return ( (__HAL::DjBios_EepromStatus() == __HAL::BIOS_EE_NO_ERR) ? EE_READY : HAL_BUSY_ERR );
+    return ( (__HAL::DjBios_EepromStatus() == __HAL::BIOS_EE_NO_ERR) ? HAL_NO_ERR : HAL_BUSY_ERR );
   };
 
 } /* namespace HAL */

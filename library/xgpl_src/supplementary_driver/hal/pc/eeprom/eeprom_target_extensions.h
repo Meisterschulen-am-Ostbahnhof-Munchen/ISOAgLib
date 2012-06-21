@@ -24,13 +24,7 @@ namespace __HAL {
 /* ******************************************************** */
 
 /*@{*/
-/*--- GLOBAL DEFINES CONSTANTS ---*/
-#define EE_READY                    0
-#define EE_NOT_READY                1
 
-
-/*--- GLOBAL VARIABLES ---*/
-/*--- PROTOTYPES ---*/
 int16_t getEepromSize(void);            /* get the size of the eeprom */
 int16_t getEepromSegmentSize(void);    /* get the segment size of the eeprom for page write access*/
 int16_t eepromReady(void);               /* get the status of eeprom*/

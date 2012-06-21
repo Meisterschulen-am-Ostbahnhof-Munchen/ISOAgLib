@@ -220,7 +220,7 @@ private:
   /**
     wait with triggering the watchdog, till the EEPROM is ready
 
-    @return EE_READY -> EEPROM is ready for next operation
+    @return HAL_NO_ERR -> EEPROM is ready for next operation
   */
   static int16_t wait_eepromReady( void );
   /**

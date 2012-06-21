@@ -137,11 +137,9 @@ int32_t getStartupTime()
 #endif
 
 
-int16_t
-open_system()
+void 
+openSystem()
 {
-  isoaglib_assert( !isSystemOpened() );
-
   // check if system is opened before user set the halSimulator?
   if (g_halSimulator == NULL)
   { // use default halSimulator then!
@@ -152,24 +150,22 @@ open_system()
   // init system start time (first call sets the start-time-base)
   (void)getTime();
 
-  DEBUG_PRINT("DEBUG: open_system called.\n");
+  DEBUG_PRINT("DEBUG: openSystem called.\n");
   DEBUG_PRINT("DEBUG: PRESS RETURN TO STOP PROGRAM!!!\n\n");
 
   const int16_t canStarted = can_startDriver();
   t_biosextSysdata.started = (canStarted == HAL_NO_ERR);
-  return canStarted;
+  if( ! t_biosextSysdata.started ) {
+    abort();
+  }
 }
 
 
-int16_t
+void 
 closeSystem()
 {
-  isoaglib_assert( isSystemOpened() );
-
   can_stopDriver();
-
   t_biosextSysdata.started = false;
-  return HAL_NO_ERR;
 }
 
 
@@ -180,19 +176,9 @@ isSystemOpened()
 }
 
 
-int16_t
+void 
 configWatchdog()
 {
-  tWDConfig t_watchdogConf = {
-      WD_MAX_TIME,
-      WD_MIN_TIME,
-      UD_MAX,
-      UD_MIN,
-      CONFIG_RELAIS,
-      CONFIG_RESET
-  };
-
-  return configWd(&t_watchdogConf);
 }
 
 
@@ -228,17 +214,6 @@ getSnr(uint8_t *snrDat)
   snrDat[5] = 0x01;
 
   return HAL_NO_ERR;
-}
-
-
-int16_t
-configWd(tWDConfig *tConfigArray)
-{
-  (void)tConfigArray;
-
-  DEBUG_PRINT4("DEBUG: configWd called with MaxTime %hu, MinTime %hu, UDmax %hu, UDmin %hd\n",
-    tConfigArray->bWDmaxTime, tConfigArray->bWDminTime, tConfigArray->bUDmax, tConfigArray->bUDmin);
-  return 0;
 }
 
 

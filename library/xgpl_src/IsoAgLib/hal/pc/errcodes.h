@@ -22,17 +22,11 @@ namespace HAL {
 #define HAL_NO_ERR         ((int16_t) 0 )
 #define HAL_UNKNOWN_ERR    ((int16_t)-1 )
 #define HAL_WARN_ERR       ((int16_t)-2 )
-#define HAL_DEFAULT        ((int16_t)-3 )
 #define HAL_BUSY_ERR       ((int16_t)-4 )
 #define HAL_RANGE_ERR      ((int16_t)-5 )
 #define HAL_OVERFLOW_ERR   ((int16_t)-6 )
-#define HAL_RD_WR          ((int16_t)-7 )
 #define HAL_NOACT_ERR      ((int16_t)-8 )
-#define HAL_COM            ((int16_t)-9 )
 #define HAL_CONFIG_ERR     ((int16_t)-10)
-#define HAL_CHECKSUM       ((int16_t)-11)
-
-#define HAL_WD_DATA_CHANGED   1
 
 #define HAL_DIGOUT_OPEN        ((int16_t)-20 )
 #define HAL_DIGOUT_SHORTCUT    ((int16_t)-21 )

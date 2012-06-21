@@ -36,24 +36,11 @@ namespace __HAL {
 /* ******************************************** */
 /** \name General BIOS Extenders                */
 /*@{*/
-/**
-  open the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t open_system();
-/**
-  close the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t closeSystem( void );
 
-/**
-  configure the watchdog of the system
-  @return error state (C_NO_ERR == o.k.)
-    or DATA_CHANGED on new values -> need call of wdReset to use new settings
-  @see wdReset
-*/
+void openSystem();
+void closeSystem();
 int16_t configWatchdog();
+
 /*@}*/
 
 int32_t getTime(void);
