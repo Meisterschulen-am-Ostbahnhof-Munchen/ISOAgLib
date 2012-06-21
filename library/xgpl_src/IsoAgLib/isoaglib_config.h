@@ -50,35 +50,6 @@
 #  endif
 #endif
 
-
-/* ******************************************************** */
-/**
- * \name CONFIG_DEFAULT_POWERDOWN_STRATEGY Default strategy which is used by
- * IsoAgLib to decide on powerdown. As an automatic poweroff due to
- * detection of CanEn loss could cause unwanted system stopp on short
- * voltage low bursts of the power supply, it is appropriate to
- * stop the automatic powerdown in favour of an explicit call of
- * power off.
- * But this explicit handling could cause problems, if the application
- * reaches a state, where the watchdog is triggered, so that no reset
- * occurs, but the application doesn't either handle a loss of CanEn.
- * This could causes a never ending run of the ECU, if the application
- * can reach such a state.
- * Possible Settings: IsoAgLib::PowerdownByExplcitCall
- *                    or  IsoAgLib::PowerdownOnCanEnLoss
- */
-/*@{*/
-#ifndef CONFIG_DEFAULT_POWERDOWN_STRATEGY
-  /** select Power Down trigger source:
-      - IsoAgLib::PowerdownByExplcitCall for staying alive during CAN_EN loss,
-          and allowing controlled powerdown after detection of CAN_EN loss
-      - IsoAgLib::PowerdownOnCanEnLoss for automatic stop of ECU on detection of
-          CAN_EN loss
-  */
-  /// select reaction on powerdown detection - can be manually overridden in project config file
-#  define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
-#endif
-
 /* ******************************************************** */
 /**
  * \name Set buffer sizes for CAN handling

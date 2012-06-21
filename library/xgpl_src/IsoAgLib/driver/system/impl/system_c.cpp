@@ -37,7 +37,7 @@ System_c::close()
 
 
 bool
-System_c::init( IsoAgLib::SystemPowerdownStrategy_t at_strategy )
+System_c::init()
 {
   if ( HAL::isSystemOpened() )
     return false;
@@ -55,26 +55,7 @@ System_c::init( IsoAgLib::SystemPowerdownStrategy_t at_strategy )
   // start the task timer (also needed for CAN)
   HAL::startTaskTimer();
 
-  // configure POWER HOLD after loss of CAN_EN
-  setPowerdownStrategy( at_strategy );
-
   return true;
-}
-
-
-void
-System_c::setPowerdownStrategy( IsoAgLib::SystemPowerdownStrategy_t at_strategy )
-{
-	switch ( at_strategy )
-	{
-		case IsoAgLib::PowerdownByExplcitCall:
-			HAL::stayingAlive();
-			break;
-		case IsoAgLib::PowerdownOnCanEnLoss:
-		default:
-			HAL::powerDown();
-			break;
-	}
 }
 
 

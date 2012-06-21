@@ -39,17 +39,7 @@ public:
         * Err_c::unspecified Bios calls for TaskTimer or StayAlive caused an error
     @return true -> everything without errors initialised
   */
-  bool init( SystemPowerdownStrategy_t at_strategy = CONFIG_DEFAULT_POWERDOWN_STRATEGY ) { return System_c::init(at_strategy);}
-
-	/**
-		default behaviour of IsoAgLib is to activate power hold, so that
-		the application can decide on its own, if a CAN_EN loss shall cause
-		a power down of the target. This allows to inhibit stop of application
-		on short power supply voltage low bursts.
-		@param at_strategy PowerdownByExplcitCall -> stop system only on explicit call of System_c::close()
-		                   PowerdownOnCanEnLoss   -> let BIOS/OS automatically switch off on CAN_EN loss
-	*/
-	void setPowerdownStrategy( SystemPowerdownStrategy_t at_strategy ) { System_c::setPowerdownStrategy( at_strategy );}
+  bool init() { return System_c::init();}
 
   /** Stimulate final shutdown of ECU
     */
