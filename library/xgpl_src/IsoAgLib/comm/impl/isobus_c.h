@@ -29,11 +29,7 @@ namespace __IsoAgLib {
   @see CanIo_c
 */
 class IsoBus_c {
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
 public:
 
   /** Initialize the CAN hardware and all related ISO-protocol modules.

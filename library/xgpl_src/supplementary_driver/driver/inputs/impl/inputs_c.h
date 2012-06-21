@@ -38,7 +38,6 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
   */
 class Inputs_c {
-  MACRO_SINGLETON_CONTRIBUTION();
 public:
   /**
     initialisation for the inputs management which sets the allowed number

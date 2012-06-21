@@ -23,7 +23,7 @@ namespace __IsoAgLib {
 /** C-style function, to get access to the unique Inputs_c singleton instance */
 Inputs_c &getInputsInstance()
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(Inputs_c, 1, 0);
+  MACRO_SINGLETON_GET_INSTANCE_BODY(Inputs_c);
 }
 
 

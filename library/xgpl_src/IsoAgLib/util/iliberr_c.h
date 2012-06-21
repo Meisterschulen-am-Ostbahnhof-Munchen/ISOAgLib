@@ -44,11 +44,7 @@ namespace IsoAgLib {
   *@author Dipl.-Inform. Achim Spangler
 */
 class iLibErr_c {
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
 public:
   /** enum to identify the different error types */
   typedef enum iLibErrTypes_en {

@@ -23,7 +23,6 @@ namespace IsoAgLib
 // IsoAgLib
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/hal/hal_typedef.h>
-#include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
@@ -50,12 +49,10 @@ namespace __IsoAgLib {
 */
 class Scheduler_c : public Subsystem_c
 {
-  MACRO_SINGLETON_CONTRIBUTION();
 public:
-
   /** Initialisation for the central IsoAgLib object
       @param apc_observer Optional pointer to an error-handler
-      @return true if Scheduler/System could be initialized/opened
+      @return true if Scheduler could be initialized/opened
    */
   bool init( IsoAgLib::iErrorObserver_c *apc_observer = NULL );
 

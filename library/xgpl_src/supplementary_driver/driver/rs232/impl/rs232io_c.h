@@ -32,11 +32,7 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
 */
 class RS232IO_c {
-#if 1 < RS232_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
 
 #define BAUDERATE_CONTRUCTOR_DEFAULT_VALUE 0xFFFF
 #define CHANNEL_CONTRUCTOR_DEFAULT_VALUE 0xFF

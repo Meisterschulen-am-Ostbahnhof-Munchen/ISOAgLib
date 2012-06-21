@@ -31,8 +31,8 @@ class IsoName_c;
   @short Simple data communication with EEPROM.
   @author Dipl.-Inform. Achim Spangler
 */
-class EepromIo_c {
-  MACRO_SINGLETON_CONTRIBUTION();
+class EepromIo_c 
+{
 public:
   ~EepromIo_c() {}
 

@@ -28,11 +28,7 @@ class VtClientServerCommunication_c;
 class Aux2Inputs_c : public Scheduler_Task_c
 {
   // @todo: check correct singleton instantiation!
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
 
 public:
 

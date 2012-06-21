@@ -49,11 +49,7 @@ typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::const_iterator Co
 */
 class IsoMonitor_c : public Scheduler_Task_c
 {
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
 private:
   // private typedef alias names
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED

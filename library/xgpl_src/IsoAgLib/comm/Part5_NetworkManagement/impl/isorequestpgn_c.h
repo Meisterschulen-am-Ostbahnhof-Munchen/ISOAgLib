@@ -41,11 +41,7 @@ class IsoRequestPgnHandler_c;
 
 class IsoRequestPgn_c : CanCustomer_c
 {
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
 private:
   struct PGN_s
   {

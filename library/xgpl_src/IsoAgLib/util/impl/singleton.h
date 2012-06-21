@@ -119,19 +119,6 @@ public: \
 private: \
   int mi_multitonInst
 
-/** Like MACRO_MULTITON_CONTRIBUTION except for the special case
- *  SIZE==0 where the member variable mi_multitonInst is omitted for
- *  optimization:
- */
-#define MACRO_SINGLETON_CONTRIBUTION() \
-public: \
-  int getMultitonInst() const { return multitonInst; } \
-  void setMultitonInst(int ai_instance) { (void)ai_instance; } \
-private: \
-  enum { multitonInst }
-
-#define MACRO_MULTITON_INITIALIZATION_LIST_PART() mi_multitonInst(0)
-
 #define DO_PLACEMENT_NEW_ON_STATIC_BUFFER 1
 
 #if DO_PLACEMENT_NEW_ON_STATIC_BUFFER
@@ -161,6 +148,14 @@ union MaxAlign_u {
     DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE); \
     rpt_instance = new STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instance) T; \
     rpt_instance->setMultitonInst(instance); \
+  } \
+  return *rpt_instance
+
+#define MACRO_SINGLETON_GET_INSTANCE_BODY(T)  \
+  static T *rpt_instance=0; \
+  if (0 == rpt_instance) { \
+    DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, 1); \
+    rpt_instance = new STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, 0) T; \
   } \
   return *rpt_instance
 

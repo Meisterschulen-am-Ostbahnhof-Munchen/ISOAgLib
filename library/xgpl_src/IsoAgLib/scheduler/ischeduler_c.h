@@ -16,7 +16,6 @@
 
 #include "impl/scheduler_c.h"
 #include <IsoAgLib/scheduler/ischedulertask_c.h>
-#include <IsoAgLib/driver/system/isystem_c.h>
 
 
 /// Begin Namespace IsoAgLib
@@ -34,7 +33,7 @@ namespace IsoAgLib {
 class iScheduler_c : private __IsoAgLib::Scheduler_c {
 public:
   /** initialisation for the central IsoAgLib object
-      @return true if Scheduler/System could be initialized/opened
+      @return true if Scheduler could be initialized/opened
     */
   bool init( IsoAgLib::iErrorObserver_c *apc_observer = NULL ) { return Scheduler_c::init( apc_observer ); }
 

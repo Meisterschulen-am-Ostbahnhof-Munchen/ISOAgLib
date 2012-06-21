@@ -118,11 +118,7 @@ MultiReceiveClientWrapper_s::doesAcceptStream (const ReceiveStreamIdentifier_c &
 //!  Stereotype: 76
 class MultiReceive_c : public Scheduler_Task_c
 {
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
 public:
   ~MultiReceive_c() {}
 

@@ -47,11 +47,7 @@ namespace __IsoAgLib {
 
 class Process_c : public Scheduler_Task_c
 {
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
 public:
   /** initialisation for Process_c
   */

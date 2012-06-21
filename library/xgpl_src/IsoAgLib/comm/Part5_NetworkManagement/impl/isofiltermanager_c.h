@@ -37,11 +37,7 @@ namespace __IsoAgLib {
     @author Dipl.-Inf. Martin Wodok */
 class IsoFilterManager_c : public Subsystem_c
 {
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
 public:
   typedef STL_NAMESPACE::vector<IsoFilterBox_c> IsoFilterBox_vec;
   typedef STL_NAMESPACE::vector<IsoFilterBox_c>::iterator IsoFilterBox_it;

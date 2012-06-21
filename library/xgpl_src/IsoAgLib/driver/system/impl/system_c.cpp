@@ -19,7 +19,7 @@ namespace __IsoAgLib {
 
 System_c& getSystemInstance()
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(System_c, 1, 0);
+  MACRO_SINGLETON_GET_INSTANCE_BODY(System_c);
 }
 
 void

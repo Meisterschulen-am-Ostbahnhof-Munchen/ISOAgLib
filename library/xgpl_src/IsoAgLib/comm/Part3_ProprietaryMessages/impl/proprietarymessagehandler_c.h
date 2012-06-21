@@ -36,11 +36,7 @@ namespace __IsoAgLib
 
   class ProprietaryMessageHandler_c : public Scheduler_Task_c
   {
-#if 1 < PRT_INSTANCE_CNT
     MACRO_MULTITON_CONTRIBUTION();
-#else
-    MACRO_SINGLETON_CONTRIBUTION();
-#endif
   public:
     ProprietaryMessageHandler_c();
 

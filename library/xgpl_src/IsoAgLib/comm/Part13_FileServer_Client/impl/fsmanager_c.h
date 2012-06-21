@@ -36,12 +36,8 @@ namespace __IsoAgLib {
 /** central IsoAgLib terminal management object */
 class FsManager_c : public Scheduler_Task_c
 {
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
-  public:
+public:
 
   class SaClaimHandlerProxy_c : public SaClaimHandler_c {
   public:

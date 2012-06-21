@@ -71,12 +71,8 @@ typedef struct
     */
 class TracCert_c : public BaseCommon_c
 {
-#if 1 < PRT_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
-#else
-  MACRO_SINGLETON_CONTRIBUTION();
-#endif
- public:
+public:
 
   /** @param apc_ident pointer to the variable of the responsible member instance. If NULL the module cannot send requests!
       @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor

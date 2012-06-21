@@ -44,7 +44,7 @@ namespace __IsoAgLib {
 /** C-style function, to get access to the unique Scheduler_c singleton instance */
 Scheduler_c &getSchedulerInstance()
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(Scheduler_c, 1, 0);
+  MACRO_SINGLETON_GET_INSTANCE_BODY(Scheduler_c);
 }
 
 
@@ -83,7 +83,6 @@ Scheduler_c::init( IsoAgLib::iErrorObserver_c *apc_observer )
       mpc_registeredErrorObserver = apc_observer;
   }
 
-  // either way regardless of result avoid double init!
   setInitialized();
   
   return true;
@@ -281,7 +280,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   Scheduler_Task_c::setDemandedExecEnd( (i32_endCanProcessing <ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   );
 
   // process CAN messages
-  if ( getCanInstance4Comm().timeEvent() )
+  if ( getCanInstance(0).timeEvent() )
   { // all CAN_IO activities ready -> update statistic for CAN_IO
     mi16_canExecTime = System_c::getTime() - i32_stepStartTime;
   }

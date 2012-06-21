@@ -26,7 +26,7 @@ namespace __IsoAgLib {
 /** C-style function, to get access to the unique Outputs_c singleton instance */
 Outputs_c &getOutputsInstance()
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(Outputs_c, 1, 0);
+  MACRO_SINGLETON_GET_INSTANCE_BODY(Outputs_c);
 }
 
 

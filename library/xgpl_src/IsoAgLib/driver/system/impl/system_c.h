@@ -27,10 +27,9 @@ namespace __IsoAgLib {
     @author Dipl.-Inform. Martin Wodok
     @author Dipl.-Inform. Achim Spangler
   */
-  class System_c {
-    MACRO_SINGLETON_CONTRIBUTION();
+  class System_c
+  {
     public:
-
       /** Initialize the system hardware. */
       void init();
 
@@ -71,6 +70,7 @@ namespace __IsoAgLib {
         @param snrDat pointer to 6 uint8_t array, where the serial no of the device is stored
       */
       static inline void serialNo( uint8_t *const snrDat ) { HAL::getSnr( snrDat ); }
+
     private:
       System_c() {}
       friend System_c &getSystemInstance();

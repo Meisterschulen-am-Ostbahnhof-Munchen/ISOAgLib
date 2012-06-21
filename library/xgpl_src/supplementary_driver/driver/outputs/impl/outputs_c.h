@@ -26,9 +26,8 @@ namespace __IsoAgLib {
   @see DigitalO_c
   @see OutputBase_c
   */
-class Outputs_c {
-  MACRO_SINGLETON_CONTRIBUTION();
-
+class Outputs_c
+{
 public:
   /** destructor for the outputs manager object */
   ~Outputs_c();
