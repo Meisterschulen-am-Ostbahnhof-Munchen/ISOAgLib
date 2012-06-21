@@ -31,13 +31,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     MACRO_MULTITON_GET_INSTANCE_BODY(TracPTO_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
-  /** config the TracPTO_c object after init -> set pointer to isoName and
-      config send/receive of different base msg types
-      @param apc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+  /**
+      @param apc_ident pointer to the variable of the responsible member instance. If NULL the module cannot send requests!
       @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
    */
-  bool TracPTO_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+  bool TracPTO_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
     //store old mode to decide to register or unregister from request for pgn
     //and set Periode for Scheduler_c
@@ -45,7 +44,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (apc_isoName, at_identMode, aui16_suppressMask) ) return false;
+    if ( ! BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask) ) return false;
 
     ///Set time Period for Scheduler_c
     if (at_identMode == IsoAgLib::IdentModeTractor) setTimePeriod( (uint16_t) 100);

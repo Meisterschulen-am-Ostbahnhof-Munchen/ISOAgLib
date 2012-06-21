@@ -17,9 +17,9 @@
 #ifndef ISOAGLIBITRACGUIDANCECOMMAND_C_H
 #define ISOAGLIBITRACGUIDANCECOMMAND_C_H
 
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include "ibasetypes.h"
 #include "impl/tracguidancecommand_c.h"
-
 
 namespace IsoAgLib {
 
@@ -33,16 +33,12 @@ namespace IsoAgLib {
 class iTracGuidanceCommand_c :
 private __IsoAgLib::TracGuidanceCommand_c {
  public:
-  // Public methods
-  /**
-      config the iTracGuidanceCommand_c object after init -> set pointer to isoName and
-      config send/receive of different base msg types
-      @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+  /** @param apc_ident pointer to the variable of the responsible member instance. If NULL the module cannot send requests!
       @param at_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config (const iIsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0)
-  { return TracGuidanceCommand_c::config_base (apc_isoName, at_identMode, aui16_suppressMask ); }
+  bool config ( const iIdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0 )
+  { return TracGuidanceCommand_c::config_base ( apc_ident, at_identMode, aui16_suppressMask ); }
 
   /* ******************************************* */
   /** \name Set Values for periodic send on BUS  */

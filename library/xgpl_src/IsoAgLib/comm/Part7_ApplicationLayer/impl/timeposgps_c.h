@@ -125,13 +125,11 @@ class TimePosGps_c : public BaseCommon_c
   // from BaseCommon_c
   virtual void init_specialized();
 
-  /** config the Base_c object after init -> set pointer to isoName and
-      config send/receive of different base msg types
-      @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+  /** @param apc_ident pointer to the variable of the responsible member instance. If NULL the module cannot send requests!
       @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
+  virtual bool config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0 );
 
   virtual ~TimePosGps_c() {}
 
@@ -151,7 +149,7 @@ class TimePosGps_c : public BaseCommon_c
       @param at_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool configGps(const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identModeGps);
+  bool configGps( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identModeGps);
 
   /** return if you currently are in gps mode*/
   bool checkModeGps(IsoAgLib::IdentMode_t at_identModeGps) const {return (mt_identModeGps == at_identModeGps);}
@@ -778,7 +776,7 @@ private:
   /** isoName which act as sender of a msg: either responses on behalf of implement or commands as tractor.
       This pointer is set in config function
     */
-  const IsoName_c* mpc_isoNameGps;
+  const IdentItem_c* mpc_identGps;
   IsoAgLib::IdentMode_t  mt_identModeGps;
 
   STL_NAMESPACE::vector<MsgEventHandler_c*> mvec_msgEventHandlers;

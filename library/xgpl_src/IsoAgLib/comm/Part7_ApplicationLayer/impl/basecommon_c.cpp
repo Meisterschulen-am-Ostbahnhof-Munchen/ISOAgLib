@@ -56,24 +56,17 @@ BaseCommon_c::close( )
 };
 
 
-/** config tractor object after init --> store isoName and mode
-    @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    @return true -> configuration was successfull
-  */
-bool BaseCommon_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+bool BaseCommon_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
 {
   mui16_suppressMask = aui16_suppressMask;
-  if (   at_identMode == IsoAgLib::IdentModeTractor
-      && apc_isoName == NULL
-     )
+  if ( at_identMode == IsoAgLib::IdentModeTractor && ( NULL == apc_ident ))
   { // the application is in tractor mode but has no valid isoName
     // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
     return false;
   }
   // set configure values
-  mpc_isoName = apc_isoName; // store the pointer in any case
+  mpc_ident = apc_ident;
   setMode(at_identMode);
 
   // set the timestamps to 0
@@ -82,7 +75,7 @@ bool BaseCommon_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMod
   //setSelectedDataSourceISOName is only used in tractor mode
   if (at_identMode == IsoAgLib::IdentModeTractor)
   {
-    mc_selectedDataSourceISOName = *apc_isoName;
+    mc_selectedDataSourceISOName = apc_ident->isoName();
   }
   else
   { //implement mode
@@ -127,8 +120,7 @@ bool BaseCommon_c::timeEvent()
     mc_selectedDataSourceISOName.setUnspecified();
   }
 
-  if ( ( getISOName() != NULL )
-    && (!getIsoMonitorInstance( 0 ).existLocalIsoMemberISOName(*getISOName(), true)) ) // XXX TODO
+  if ( mpc_ident && ( ! getIsoMonitorInstance( 0 ).existLocalIsoMemberISOName( mpc_ident->isoName(), true) ) ) // XXX TODO
   { // local isoname for sending is registrated, but it is not yet fully claimed
     // --> nothing to do
     return true;

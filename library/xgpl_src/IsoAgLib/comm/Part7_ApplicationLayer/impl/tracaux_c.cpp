@@ -38,20 +38,14 @@ namespace __IsoAgLib {
     MACRO_MULTITON_GET_INSTANCE_BODY(TracAux_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
-  /** config the TracAux_c object after init -> set pointer to isoName and
-      config send/receive of different base msg types
-      @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      @return true -> configuration was successfull
-    */
-  bool TracAux_c::config_base(const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t rui16_suppressMask)
+  bool TracAux_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask )
   {
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, at_identMode, rui16_suppressMask) ) return false;
+    if ( ! BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask ) ) return false;
 
     if ( at_identMode == IsoAgLib::IdentModeImplement )
     {

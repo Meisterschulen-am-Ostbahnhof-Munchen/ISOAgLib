@@ -41,20 +41,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     MACRO_MULTITON_GET_INSTANCE_BODY(TracMove_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
-  /** config the TracMove_c object after init -> set pointer to isoName and
-      config send/receive of a moving msg type
-      @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      @return true -> configuration was successfull
-    */
-  bool TracMove_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+  bool TracMove_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (apc_isoName, at_identMode, aui16_suppressMask) ) return false;
+    if ( ! BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask ) ) return false;
 
     ///Set time Period for Scheduler_c
     if (at_identMode == IsoAgLib::IdentModeTractor)

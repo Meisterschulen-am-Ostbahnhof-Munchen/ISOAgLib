@@ -36,6 +36,18 @@ namespace IsoAgLib {
 class iIsoTerminal_c;
 class iProprietaryMessageHandler_c;
 class iProprietaryMessageClient_c;
+class iTimePosGps_c;
+class iTracCert_c;
+class iTracFacilities_c;
+class iTracGeneral_c;
+class iTracGuidanceCommand_c;
+class iTracGuidance_c;
+class iTracLight_c;
+class iTracMoveSetPoint_c;
+class iTracMove_c;
+class iTracPTOSetPoint_c;
+class iTracPTO_c;
+class iTracAux_c;
 
 /**
   class to define an interface class for the storage a retrieved SA. Users can derive from
@@ -206,6 +218,18 @@ private:
   friend class iProprietaryMessageClient_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class __IsoAgLib::ProprietaryMessageClient_c;
+  friend class iTimePosGps_c;
+  friend class iTracAux_c;
+  friend class iTracCert_c;
+  friend class iTracFacilities_c;
+  friend class iTracGeneral_c;
+  friend class iTracGuidanceCommand_c;
+  friend class iTracGuidance_c;
+  friend class iTracLight_c;
+  friend class iTracMoveSetPoint_c;
+  friend class iTracMove_c;
+  friend class iTracPTOSetPoint_c;
+  friend class iTracPTO_c;
 };
 
 } // IsoAgLib

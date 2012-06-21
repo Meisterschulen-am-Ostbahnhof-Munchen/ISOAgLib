@@ -121,13 +121,11 @@ typedef struct {
     virtual void init_specialized();
     virtual void close_specialized();
 
-    /** config the TracLight_c object after init -> set pointer to isoName, set implementMode,
-        store pointer to isoName separately if we send as tractor
-        @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    /** @param apc_ident pointer to the variable of the responsible member instance. If NULL the module cannot send requests!
         @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
         @return true -> configuration was successfull
-      */
-    virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
+    */
+    virtual bool config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0 );
 
     bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 

@@ -55,7 +55,7 @@ namespace __IsoAgLib
       mt_identMode(IsoAgLib::IdentModeImplement),
       mb_filterCreated(false),
       mi32_lastMsgReceived(0),
-      mpc_isoName(NULL),
+      mpc_ident(NULL),
       mc_selectedDataSourceISOName(),
       mt_task(*this),
       mt_handler(*this),
@@ -69,13 +69,10 @@ namespace __IsoAgLib
     void close();
 
     /** tractor object after init --> store isoName and mode
-        this function was originally named "config", but to avoid warnings with the interface classes'
-        "config" function this one is now named "config_base". It's simply not clean to name interface
-        functions to virtual functions the same!
-        @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+        @param apc_ident pointer to the ident  instance (pointer enables automatic value update if var val is changed)
         @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0);
+    virtual bool config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0);
 
 
     /** functions with actions, which must be performed periodically
@@ -133,7 +130,9 @@ namespace __IsoAgLib
     void clearFilterCreated() {mb_filterCreated = false;}
 
     /** return sender of a msg*/
-    const IsoName_c* getISOName() const {return mpc_isoName;}
+    const IsoName_c* getISOName() const { return &( mpc_ident->isoName() ); }
+
+    const IdentItem_c* getIdentItem() const { return mpc_ident; }
 
     /** get IsoName of data source (e.g. tractor, terminal) from which commands are send exclusively */
     IsoName_c& getSelectedDataSourceISOName() {return mc_selectedDataSourceISOName;}
@@ -296,9 +295,6 @@ namespace __IsoAgLib
     */
     virtual void checkCreateReceiveFilter() = 0;
 
-    /** set sender of a msg */
-    void setISOName(const IsoName_c* isoName) {mpc_isoName = isoName;}
-
     virtual void updateEarlierAndLatestInterval() {
       mt_task.updateEarlierAndLatestIntervalDefault();
     }
@@ -331,10 +327,8 @@ namespace __IsoAgLib
     /** last time of data msg [msec] */
     int32_t mi32_lastMsgReceived;
 
-    /** isoName which act as sender of a msg: either responses on behalf of implement or commands as tractor.
-        This pointer is set in config function
-      */
-    const IsoName_c* mpc_isoName;
+    /** identItem which act as sender of a msg: either responses on behalf of implement or commands as tractor. */
+    const IdentItem_c* mpc_ident;
 
     /** IsoName of data source (e.g. tractor, terminal) from which commands are send exclusively */
     IsoName_c mc_selectedDataSourceISOName;

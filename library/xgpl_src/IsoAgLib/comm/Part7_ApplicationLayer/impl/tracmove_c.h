@@ -45,12 +45,11 @@ namespace __IsoAgLib {
 #endif
   public:// Public methods
 
-    /** config the TracMove_c object after init -> set pointer to isoName and
-        config send/receive of a moving msg type
-        @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+    /** @param apc_ident pointer to the variable of the responsible member instance. If NULL the module cannot send requests!
         @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      */
-    virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
+        @return true -> configuration was successfull
+    */
+    virtual bool config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
 
     /** update selected speed with actually best available speed
         @param t_speedSrc  from which source is the speed available

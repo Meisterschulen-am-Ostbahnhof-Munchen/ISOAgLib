@@ -64,18 +64,16 @@ class TracGeneral_c : public BaseCommon_c
 #else
   MACRO_SINGLETON_CONTRIBUTION();
 #endif
-public: // Public methods
+public:
   /* ********************************************* */
   /** \name Management Functions for class TracGeneral_c  */
   /*@{*/
 
-  /** config the TracGeneral_c object after init -> set pointer to isoName and
-      config send/receive of different general base msg types
-      @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
+  /** @param apc_ident pointer to the variable of the responsible member instance. If NULL the module cannot send requests!
       @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
-    */
-  virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
+   */
+  virtual bool config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
 
   virtual ~TracGeneral_c() {}
 

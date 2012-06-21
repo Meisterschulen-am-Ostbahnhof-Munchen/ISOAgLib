@@ -161,7 +161,7 @@ namespace __IsoAgLib {
   , mi32_rapidUpdateRateMs(0)
   , mi32_altitudeCm(0x7FFFFFFF)
   , mc_sendGpsISOName()
-  , mpc_isoNameGps(NULL)
+  , mpc_identGps(NULL)
   , mt_identModeGps( IsoAgLib::IdentModeImplement )
   , mvec_msgEventHandlers()
   {}
@@ -249,8 +249,8 @@ namespace __IsoAgLib {
     }
 
 
-    if ( ( ( getISOName() != NULL )  && (getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true))  && ( checkMode(IsoAgLib::IdentModeTractor) ) )
-      || ( ( mpc_isoNameGps != NULL ) && (getIsoMonitorInstance4Comm().existIsoMemberISOName(*mpc_isoNameGps, true)) && (checkModeGps(IsoAgLib::IdentModeTractor) ) ) )
+    if ( ( getIdentItem() && ( getIsoMonitorInstance4Comm().existIsoMemberISOName( getIdentItem()->isoName(), true ) )  && ( checkMode(IsoAgLib::IdentModeTractor) ) )
+      || ( mpc_identGps && ( getIsoMonitorInstance4Comm().existIsoMemberISOName( mpc_identGps->isoName(), true ) ) && ( checkModeGps( IsoAgLib::IdentModeTractor ) ) ) )
     { // there is at least something configured for send where the time sending or GPS sending is activated
       return timeEventTracMode();
     }
@@ -285,7 +285,7 @@ namespace __IsoAgLib {
   void
   TimePosGps_c::init_specialized()
   {
-    mpc_isoNameGps = NULL;
+    mpc_identGps = NULL;
     // set the GPS mode always to non-sending
     configGps( NULL, IsoAgLib::IdentModeImplement );
 
@@ -303,20 +303,14 @@ namespace __IsoAgLib {
     }
   }
 
-  /** config the TimePosGps_c object after init -> set pointer to isoName and
-      config send/receive of different base msg types
-      @param apc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      @return true -> configuration was successfull
-    */
-  bool TimePosGps_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+  bool TimePosGps_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask )
   {
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (apc_isoName, at_identMode, aui16_suppressMask) ) return false;
+    if ( ! BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask ) ) return false;
 
 
     if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
@@ -369,17 +363,11 @@ namespace __IsoAgLib {
     else
       return false;
   }
-  /** config the Base_c object after init -> set pointer to isoName and
-      config send/receive of different base msg types
-      @param apc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param at_identModeGps implement mode (true) or tractor mode (false)!!!
-      @return true -> configuration was successfull
-    */
-  bool TimePosGps_c::configGps(const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identModeGps)
+
+
+  bool TimePosGps_c::configGps( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identModeGps)
   {
-    if (   at_identModeGps == IsoAgLib::IdentModeTractor
-        && apc_isoName == NULL
-      )
+    if ( ( at_identModeGps == IsoAgLib::IdentModeTractor ) && ( NULL == apc_ident ))
     { // the application is in tractor mode but has no valid isoName
       // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
       getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
@@ -396,7 +384,7 @@ namespace __IsoAgLib {
     mui8_satelliteCnt = 0;
 #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
-    mpc_isoNameGps = apc_isoName;
+    mpc_identGps = apc_ident;
     mt_identModeGps = at_identModeGps;
 
     mi32_latitudeDegree10Minus7 = mi32_longitudeDegree10Minus7 = 0x7FFFFFFF;
@@ -405,7 +393,7 @@ namespace __IsoAgLib {
     if ( at_identModeGps == IsoAgLib::IdentModeTractor )
     { // GPS send from now on
       // because wer are in tractor mode the apc_isoName cannot be NULL
-      mc_sendGpsISOName = *apc_isoName;
+      mc_sendGpsISOName = apc_ident->isoName();
       #ifdef ENABLE_NMEA_2000_MULTI_PACKET
       // also remove any previously registered MultiReceive connections
       getMultiReceiveInstance4Comm().deregisterClient( *this );
@@ -1064,7 +1052,7 @@ namespace __IsoAgLib {
     // time/date is only sent on request
 
     if ( checkModeGps(IsoAgLib::IdentModeTractor) )
-    { // mpc_isoNameGps must be != NULL, because we are in tractor mode
+    { // mpc_identGps must be != NULL, because we are in tractor mode
       if ( isPositionSimpleToSend() && ((ci32_now - mi32_lastIsoPositionSimple) >= 100) )
       {
         sendPositionRapidUpdate();
@@ -1091,12 +1079,10 @@ namespace __IsoAgLib {
   /** send position rapid update message */
   void TimePosGps_c::sendPositionRapidUpdate( void )
   {
-    // retreive the actual dynamic sender no of the member with the registered isoName
-    uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberISOName(*mpc_isoNameGps, true).nr();
     CanPkgExt_c pkg;
     pkg.setIsoPri(2);
     pkg.setLen(8);
-    pkg.setIsoSa(b_sa);
+    pkg.setMonitorItemForSA( mpc_identGps->getIsoItem() );
 
     pkg.setIsoPgn(NMEA_GPS_POSITION_RAPID_UPDATE_PGN);
     pkg.setInt32Data(0, mi32_latitudeDegree10Minus7 );
@@ -1152,7 +1138,7 @@ void TimePosGps_c::isoSendDirection( void )
 
   pkg.setIsoPri(2);
   pkg.setLen(8);
-  pkg.setISONameForSA(*mpc_isoNameGps);
+  pkg.setMonitorItemForSA( mpc_identGps->getIsoItem() );
 
   pkg.setIsoPgn (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
   pkg.setUint8Data (0, mui8_directionSequenceID );
