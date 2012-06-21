@@ -17,6 +17,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 #include <IsoAgLib/hal/hal_system.h>
+#include <IsoAgLib/util/impl/singleton.h>
 
 namespace __IsoAgLib {
 
@@ -27,13 +28,14 @@ namespace __IsoAgLib {
     @author Dipl.-Inform. Achim Spangler
   */
   class System_c {
+    MACRO_SINGLETON_CONTRIBUTION();
     public:
 
       /** Initialize the system hardware. */
-      static void init();
+      void init();
 
       /** Shutdown system hardware */
-      static void close();
+      void close();
 
       /** init the hardware watchdog */
       static void initWd() {
@@ -69,7 +71,12 @@ namespace __IsoAgLib {
         @param snrDat pointer to 6 uint8_t array, where the serial no of the device is stored
       */
       static inline void serialNo( uint8_t *const snrDat ) { HAL::getSnr( snrDat ); }
+    private:
+      System_c() {}
+      friend System_c &getSystemInstance();
   };
+
+  System_c& getSystemInstance();
 
 }
 #endif

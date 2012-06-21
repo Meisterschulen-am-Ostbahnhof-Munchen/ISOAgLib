@@ -26,10 +26,10 @@ namespace IsoAgLib {
 class iSystem_c : private __IsoAgLib::System_c {
 public:
   /** Initialize the system hardware */
-  static void init() { System_c::init(); }
+  void init() { System_c::init(); }
 
   /** Shutdown system hardware */
-  static void close() { System_c::close(); }
+  void close() { System_c::close(); }
 
   /** init the hardware watchdog */
   static void initWd () { System_c::initWd(); }
@@ -65,7 +65,12 @@ public:
   */
   static void serialNo( uint8_t *const snrDat) { System_c::serialNo(snrDat); }
 
+private:
+  friend iSystem_c& getIsystemInstance( void );
+
 };
+
+inline iSystem_c& getIsystemInstance( void ) { return static_cast<iSystem_c&>( __IsoAgLib::getSystemInstance()) ; }
 
 }
 
