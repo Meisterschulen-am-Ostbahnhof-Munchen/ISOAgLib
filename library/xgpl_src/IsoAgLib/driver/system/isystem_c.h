@@ -79,10 +79,6 @@ public:
   */
   static bool switchedOn() { return System_c::switchedOn(); }
 
-  // deprecated - only for backwards compatibility.
-  // NOTE: Will be removed soon, please use "switchedOn()".
-  static bool canEn() { return switchedOn(); }
-
   /**
     get the main power voltage
     @return voltage of power [mV]

@@ -106,10 +106,6 @@ public:
     return HAL::getOn_offSwitch();
   }
 
-  // deprecated - only for backwards compatibility.
-  // NOTE: Will be removed soon, please use "switchedOn()".
-  static bool canEn() { return switchedOn(); }
-
   /**
     deliver the serial nr of the device into uint8_t[6] array
     - f.e. to calculated individual wait berfore address claim
