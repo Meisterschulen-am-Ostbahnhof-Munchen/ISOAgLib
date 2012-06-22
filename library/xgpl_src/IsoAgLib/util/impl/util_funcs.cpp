@@ -386,7 +386,7 @@ void bigEndianHexNumberText2CanString( const char* ac_src, uint8_t* pui8_target,
   int ind = inputLen - ( 2 * HAL_SIZEOF_INT );
   for ( ; ind >= 0; ind -= ( 2 * HAL_SIZEOF_INT ) )
   {
-    sscanf( (ac_src+ind), SCANF_INT_STRING, &temp );
+    CNAMESPACE::sscanf( (ac_src+ind), SCANF_INT_STRING, &temp );
     int2littleEndianString( temp, pui8_write, HAL_SIZEOF_INT );
     pui8_write += HAL_SIZEOF_INT;
     if ( (unsigned int)( pui8_write - pui8_target ) > size ) break;
@@ -396,12 +396,12 @@ void bigEndianHexNumberText2CanString( const char* ac_src, uint8_t* pui8_target,
     unsigned ci_overhandByte = ind + ( 2 * HAL_SIZEOF_INT );
     switch ( ci_overhandByte )
     {
-      case 1:  case 2:  sscanf( ac_src, "%2x",  &temp );   break;
-      case 3:  case 4:  sscanf( ac_src, "%4x",  &temp );   break;
-      case 5:  case 6:  sscanf( ac_src, "%6x",  &temp );   break;
-      case 7:  case 8:  sscanf( ac_src, "%8x",  &temp );   break;
-      case 9:  case 10: sscanf( ac_src, "%10x", &temp );   break;
-      case 11: case 12: sscanf( ac_src, "%12x", &temp );   break;
+      case 1:  case 2:  CNAMESPACE::sscanf( ac_src, "%2x",  &temp );   break;
+      case 3:  case 4:  CNAMESPACE::sscanf( ac_src, "%4x",  &temp );   break;
+      case 5:  case 6:  CNAMESPACE::sscanf( ac_src, "%6x",  &temp );   break;
+      case 7:  case 8:  CNAMESPACE::sscanf( ac_src, "%8x",  &temp );   break;
+      case 9:  case 10: CNAMESPACE::sscanf( ac_src, "%10x", &temp );   break;
+      case 11: case 12: CNAMESPACE::sscanf( ac_src, "%12x", &temp );   break;
     }
     unsigned int availableSize = size - ( pui8_write - pui8_target );
     if ( ci_overhandByte < availableSize ) availableSize = ci_overhandByte;
@@ -424,7 +424,7 @@ void bigEndianHexNumberText2CanStringUint8( const char* ac_src, uint8_t* pui8_ta
     return;
   }
   unsigned int temp;
-  sscanf( ac_src, "%2x",  &temp );
+  CNAMESPACE::sscanf( ac_src, "%2x",  &temp );
   pui8_target[0] = ( temp & 0xFF );
 }
 
@@ -438,7 +438,7 @@ void bigEndianHexNumberText2CanStringUint16( const char* ac_src, uint8_t* pui8_t
   }
 #if HAL_SIZEOF_INT <= 4
   uint16_t temp;
-  sscanf( ac_src, SCANF_HEX_INT16_STRING, &temp );
+  CNAMESPACE::sscanf( ac_src, SCANF_HEX_INT16_STRING, &temp );
   #else
   unsigned int temp;
   sscanf( ac_src, "%4x",  &temp );
@@ -460,7 +460,7 @@ void bigEndianHexNumberText2CanStringUint32( const char* ac_src, uint8_t* pui8_t
   }
 #if HAL_SIZEOF_INT <= 2
   uint32_t temp;
-  sscanf( ac_src, "%8lx", &temp );
+  CNAMESPACE::sscanf( ac_src, "%8lx", &temp );
   #elif HAL_SIZEOF_INT == 4
   uint32_t temp;
   sscanf( ac_src, "%8x", &temp );
@@ -528,7 +528,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
   #endif
 #elif defined( SUPPORTS_64BIT )
   uint64_t temp;
-  sscanf( ac_src, "%16llx", &temp );
+  CNAMESPACE::sscanf( ac_src, "%16llx", &temp );
   #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target, &temp, 8 );
   #else
@@ -536,7 +536,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
   #endif
 #else
   unsigned int temp;
-  sscanf( ac_src, "%16x", &temp );
+  CNAMESPACE::sscanf( ac_src, "%16x", &temp );
   #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target, &temp, 8 );
   #else
@@ -563,10 +563,10 @@ void bigEndianDecNumberText2CanStringUint( const char* ac_src, uint8_t* pui8_tar
   }
 #if HAL_SIZEOF_INT <= 4
   uint16_t temp;
-  sscanf( ac_src, SCANF_DEC_INT16_STRING, &temp );
+  CNAMESPACE::sscanf( ac_src, SCANF_DEC_INT16_STRING, &temp );
 #else
   unsigned int temp;
-  sscanf( ac_src, "%4d",  &temp );
+  CNAMESPACE::sscanf( ac_src, "%4d",  &temp );
 #endif
   #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target, &temp, 2 );

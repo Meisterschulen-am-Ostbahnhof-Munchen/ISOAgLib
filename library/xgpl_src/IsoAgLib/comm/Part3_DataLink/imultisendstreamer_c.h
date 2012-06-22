@@ -14,7 +14,7 @@
 #ifndef IMULTI_SEND_STREAMER_C_H
 #define IMULTI_SEND_STREAMER_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
 /* *************************************** */

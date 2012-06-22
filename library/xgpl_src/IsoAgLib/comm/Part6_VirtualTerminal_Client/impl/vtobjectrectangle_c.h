@@ -13,7 +13,7 @@
 #ifndef VTOBJECTRECTANGLE_C_H
 #define VTOBJECTRECTANGLE_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 #ifdef USE_VTOBJECT_rectangle
 #include "vtobject_c.h"

@@ -11,6 +11,10 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+
+#include <IsoAgLib/isoaglib_config.h>
+#include <cstdio>
+
 #include "isoitem_c.h"
 // necessary for convert operators
 #include "../iisoitem_c.h"
@@ -191,7 +195,7 @@ void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen)
 {
   char c_temp[30];
   const uint8_t* pb_src = name();
-  sprintf(c_temp, "0x%02x%02x%02x%02x%02x%02x%02x%02x", pb_src[0],pb_src[1],pb_src[2],pb_src[3],
+  CNAMESPACE::sprintf(c_temp, "0x%02x%02x%02x%02x%02x%02x%02x%02x", pb_src[0],pb_src[1],pb_src[2],pb_src[3],
       pb_src[4],pb_src[5],pb_src[6],pb_src[7]);
 
   uint8_t ui8_len = CNAMESPACE::strlen(c_temp);

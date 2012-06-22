@@ -14,7 +14,7 @@
 #ifndef SETPOINT_REGISTER_H
 #define SETPOINT_REGISTER_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.h>

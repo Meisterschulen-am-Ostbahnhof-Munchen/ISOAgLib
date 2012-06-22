@@ -15,6 +15,8 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
+#include <new>
+
 #if defined(OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED) && defined( __GNUC__ ) && __GNUC__ >= 4
 #  include <ext/malloc_allocator.h>
 #endif
@@ -94,23 +96,6 @@ private:
 #  endif
 #endif
 
-
-/** @todo ON REQUEST TASKING: try to remove these include hacks, as soon as Tasking provides a bugfix
-    for their broken version 7.x STL headers.
-    Official STL headers like "c166/include.cpp/stl_algobase.h"
-    where the C-Header \<string.h\> is imported into the global namespace, prevent
-    a later include of \<cstring\> ( the correct C++ standard method ) to get
-    functions like memmove into "STL_NAMESPACE::" namespace.
-    To avoid comparable problems with other compilers, and to avoid any compatibility
-    problems with other correct compilers, but which are not used by the maintainers,
-    these includes are used for ALL compiler types ( there is only a small impact on
-    compile time - but no impact on resulting program ).
-*/
-#include <new>
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>  // Include before vector or else CNAMESPACE stuff is screwed up for Tasking
-#include <vector>
 
 #define MACRO_MULTITON_CONTRIBUTION() \
 public: \

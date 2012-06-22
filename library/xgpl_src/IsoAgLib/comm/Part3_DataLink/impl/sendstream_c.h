@@ -13,7 +13,7 @@
 #ifndef SEND_STREAM_H
 #define SEND_STREAM_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>

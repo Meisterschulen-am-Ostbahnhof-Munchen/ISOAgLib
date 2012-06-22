@@ -30,6 +30,14 @@
   #define DEF_GET_POINTER_ADR_DEBUG_OUTPUT( pointer ) pointer
 #endif
 
+#if defined(__TSW_CPP__)
+/* include this header here cause they have to be included *before* some other stl
+ * container header (e.g. vector>) when using Tasking 7.5r6.  */
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
+#endif
+
 
 #ifndef __TSW_CPP__
  #define IRQ_FUNC_PAR ...

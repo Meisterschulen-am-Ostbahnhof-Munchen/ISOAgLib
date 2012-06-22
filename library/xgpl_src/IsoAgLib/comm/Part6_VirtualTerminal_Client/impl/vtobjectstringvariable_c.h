@@ -12,8 +12,8 @@
 */
 #ifndef VTOBJECTSTRINGVARIABLE_C_H
 #define VTOBJECTSTRINGVARIABLE_C_H
+#include <IsoAgLib/isoaglib_config.h>
 #include "../ivtobjectstring_c.h"
-#include <IsoAgLib/hal/hal_typedef.h>
 
 #ifdef USE_VTOBJECT_stringvariable
 

@@ -13,7 +13,7 @@
 #ifndef VTOBJECTMETER_C_H
 #define VTOBJECTMETER_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 #ifdef USE_VTOBJECT_meter
 #include "vtobject_c.h"

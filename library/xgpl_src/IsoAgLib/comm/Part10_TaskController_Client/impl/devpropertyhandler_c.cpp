@@ -21,6 +21,7 @@
 #else
 
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>

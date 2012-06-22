@@ -16,7 +16,7 @@
 #ifndef UTIL_FUNCS_H
 #define UTIL_FUNCS_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #ifdef USE_DATASTREAMS_IO
 class StreamInput_c;
 #endif

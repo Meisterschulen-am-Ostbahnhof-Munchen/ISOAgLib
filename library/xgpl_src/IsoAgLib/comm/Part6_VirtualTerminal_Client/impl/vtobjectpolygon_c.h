@@ -13,7 +13,7 @@
 #ifndef VTOBJECTPOLYGON_C_H
 #define VTOBJECTPOLYGON_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 #ifdef USE_VTOBJECT_polygon
 #include "vtobject_c.h"

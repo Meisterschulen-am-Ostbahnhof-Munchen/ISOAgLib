@@ -13,11 +13,10 @@
 #ifndef FSCOMMAND_C_H
 #define FSCOMMAND_C_H
 
-// own
+#include <IsoAgLib/isoaglib_config.h>
+
 #include "fsserverinstance_c.h"
 
-// ISOAgLib
-#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>

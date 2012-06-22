@@ -13,8 +13,10 @@
 #ifndef __HAL_TYPEDEF_H__
 #define __HAL_TYPEDEF_H__
 
-#include <IsoAgLib/isoaglib_config.h>
 
+#ifndef _ISOAGLIB_CONFIG_H_
+#error Please include isoaglib_config.h!
+#endif
 
 #ifdef HAL_PATH_ISOAGLIB
 #  define _hal_typedef_header_ <HAL_PATH_ISOAGLIB/typedef.h>

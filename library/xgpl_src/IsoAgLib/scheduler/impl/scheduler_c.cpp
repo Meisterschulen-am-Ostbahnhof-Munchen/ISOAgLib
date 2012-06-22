@@ -13,6 +13,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "scheduler_c.h"
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>

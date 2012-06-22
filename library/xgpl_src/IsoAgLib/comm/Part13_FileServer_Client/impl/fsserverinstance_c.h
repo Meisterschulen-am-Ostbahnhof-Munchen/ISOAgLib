@@ -13,11 +13,10 @@
 #ifndef FSSERVERINSTANCE_C_H
 #define FSSERVERINSTANCE_C_H
 
-// own
+#include <IsoAgLib/isoaglib_config.h>
+
 #include "../ifsstructs.h"
 
-// ISOAgLib
-#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>

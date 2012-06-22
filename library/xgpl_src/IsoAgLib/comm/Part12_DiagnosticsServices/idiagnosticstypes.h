@@ -13,7 +13,7 @@
 #ifndef IDIAGNOSTICS_TYPES_H
 #define IDIAGNOSTICS_TYPES_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 namespace IsoAgLib {
 

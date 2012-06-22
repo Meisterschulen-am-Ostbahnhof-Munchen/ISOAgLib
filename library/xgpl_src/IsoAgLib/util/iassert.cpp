@@ -11,17 +11,19 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#include <IsoAgLib/isoaglib_config.h>
+
 #if defined(__GNUC__) || defined(WIN32)
 // nothing to do: provided by standard libraries
 #elif !defined(NEBUG)
 
 #include "iassert.h"
-#include <stdlib.h>
+#include <cstdlib>
 
 #if defined(__TSW_CPP__)
 void assert_fail()
 {
-  abort();
+  STL_NAMESPACE::abort();
 }
 #else
 void assert_fail(char const *pcs_file, int i_line, char const *pcs_expression)

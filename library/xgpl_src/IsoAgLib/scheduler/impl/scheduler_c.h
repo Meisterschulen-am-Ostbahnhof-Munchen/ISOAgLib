@@ -20,7 +20,7 @@ namespace IsoAgLib
   class iErrorObserver_c;
 }
 
-// IsoAgLib
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>

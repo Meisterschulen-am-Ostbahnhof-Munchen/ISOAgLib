@@ -20,7 +20,6 @@
 #  error "iLibErr_c only works with enabled USE_ISO_11783 and set PRT_INSTANCE_CNT."
 #endif
 
-#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/container.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>

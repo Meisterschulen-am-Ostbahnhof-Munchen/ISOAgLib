@@ -14,7 +14,8 @@
 */
 #ifndef VTOBJECTAUXILIARYCONTROLDESIGNATOROBJECTPOINTER_C_H
 #define VTOBJECTAUXILIARYCONTROLDESIGNATOROBJECTPOINTER_C_H
-#include <IsoAgLib/hal/hal_typedef.h>
+
+#include <IsoAgLib/isoaglib_config.h>
 
 #ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 #include "vtobject_c.h"

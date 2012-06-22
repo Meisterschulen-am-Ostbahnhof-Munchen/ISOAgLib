@@ -13,7 +13,7 @@
 #ifndef ISTATE_H
 #define ISTATE_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
 // Begin Namespace __IsoAgLib

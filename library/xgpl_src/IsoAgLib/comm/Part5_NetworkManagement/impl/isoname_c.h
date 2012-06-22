@@ -13,7 +13,7 @@
 #ifndef ISO_NAME_H
 #define ISO_NAME_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/util/iassert.h>
 

@@ -14,7 +14,7 @@
 #ifndef MEASURE_SUBPROG_H
 #define MEASURE_SUBPROG_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 

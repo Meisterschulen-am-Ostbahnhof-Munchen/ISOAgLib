@@ -13,8 +13,8 @@
 #ifndef DTC_CONTAINER_H
 #define DTC_CONTAINER_H
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 #include "../idiagnosticstypes.h"

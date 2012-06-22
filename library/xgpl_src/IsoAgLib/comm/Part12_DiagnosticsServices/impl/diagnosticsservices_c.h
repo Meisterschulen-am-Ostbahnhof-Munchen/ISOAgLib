@@ -13,7 +13,7 @@
 #ifndef DIAGNOSTICS_SERVICES_H
 #define DIAGNOSTICS_SERVICES_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>

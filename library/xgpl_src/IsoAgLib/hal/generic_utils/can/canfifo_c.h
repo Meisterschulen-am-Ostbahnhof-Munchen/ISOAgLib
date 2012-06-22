@@ -34,7 +34,7 @@
 #endif
 
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/driver/can/impl/filterbox_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 

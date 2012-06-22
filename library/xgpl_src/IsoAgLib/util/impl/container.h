@@ -13,6 +13,7 @@
 #ifndef CONTAINER_H
 #define CONTAINER_H
 
+#include <vector>
 
 #define CONTAINER_CLIENTx_CTOR_INITIALIZER_LIST(pc_searchCacheCx,c_arrClientCx) \
   c_arrClientCx(), \

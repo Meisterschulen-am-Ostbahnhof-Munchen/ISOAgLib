@@ -13,9 +13,9 @@
 #ifndef IFSSTRUCTS_H
 #define IFSSTRUCTS_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 
-// STL
+#include <cstdlib>
 #include <vector>
 
 

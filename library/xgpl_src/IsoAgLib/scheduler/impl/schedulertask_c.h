@@ -15,7 +15,7 @@
 #ifndef SCHEDULERTASK_C_H
 #define SCHEDULERTASK_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 

@@ -13,7 +13,7 @@
 #ifndef SA_CLAIM_HANDLER_C_H
 #define SA_CLAIM_HANDLER_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include "isorequestpgnhandler_c.h"
 
 /* *************************************** */

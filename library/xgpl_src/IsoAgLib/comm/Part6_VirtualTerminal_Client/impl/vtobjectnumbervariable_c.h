@@ -13,7 +13,7 @@
 #ifndef VTOBJECTNUMBERVARIABLE_C_H
 #define VTOBJECTNUMBERVARIABLE_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 #ifdef USE_VTOBJECT_numbervariable
 #include "vtobject_c.h"

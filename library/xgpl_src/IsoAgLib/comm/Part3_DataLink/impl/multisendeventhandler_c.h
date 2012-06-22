@@ -13,7 +13,7 @@
 #ifndef MULTI_SEND_EVENT_HANDLER_H
 #define MULTI_SEND_EVENT_HANDLER_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/config.h>
 
 namespace __IsoAgLib {

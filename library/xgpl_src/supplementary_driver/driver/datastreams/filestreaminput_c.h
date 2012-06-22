@@ -15,7 +15,7 @@
 #define FILESTREAMINPUT_C_H
 
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include "streaminput_c.h"
 #include <supplementary_driver/hal/hal_datastreams.h>
 #include <stdio.h>

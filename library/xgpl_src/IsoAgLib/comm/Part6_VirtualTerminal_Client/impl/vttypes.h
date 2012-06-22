@@ -13,8 +13,7 @@
 #ifndef VTTYPES_H
 #define VTTYPES_H
 
-
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 #define FLAG_BIT_IN_RAM 0
 #define FLAG_BIT_ORIGIN_SKM 1

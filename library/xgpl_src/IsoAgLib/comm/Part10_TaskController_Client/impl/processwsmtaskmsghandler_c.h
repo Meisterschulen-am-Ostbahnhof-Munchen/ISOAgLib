@@ -13,7 +13,7 @@
 #ifndef PROCESS_WSM_TASK_MSG_HANDLER_C_H
 #define PROCESS_WSM_TASK_MSG_HANDLER_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 /* *************************************** */
 /* ********** include headers ************ */

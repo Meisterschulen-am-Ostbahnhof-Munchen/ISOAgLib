@@ -12,7 +12,7 @@
 */
 #ifndef VTOBJECTAUXILIARYFUNCTION2_C_H
 #define VTOBJECTAUXILIARYFUNCTION2_C_H
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 #ifdef USE_VTOBJECT_auxiliaryfunction2
 // includes

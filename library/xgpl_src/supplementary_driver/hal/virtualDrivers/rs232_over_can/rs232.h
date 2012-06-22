@@ -28,8 +28,8 @@
 #ifndef _HAL_RS232_OVER_CAN_H_
 #define _HAL_RS232_OVER_CAN_H_
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/hal/hal_typedef.h>
 
 namespace HAL
 {

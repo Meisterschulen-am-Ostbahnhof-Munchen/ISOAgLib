@@ -13,7 +13,7 @@
 #ifndef DIAGNOSTIC_PROTOCOL_C_H
 #define DIAGNOSTIC_PROTOCOL_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>

@@ -25,7 +25,6 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 #include "hal_config.h"
-#include "hal_typedef.h"
 
 namespace HAL
 {

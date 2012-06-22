@@ -16,7 +16,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h>
 #include "procident_c.h"

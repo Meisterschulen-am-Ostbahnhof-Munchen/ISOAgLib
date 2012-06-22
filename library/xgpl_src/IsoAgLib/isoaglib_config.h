@@ -20,6 +20,7 @@
 #endif
 
 #include <IsoAgLib/util/compiler_adaptation.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/hal/hal_config.h>
 // Note: "hal_config.h" needs the path-defines from PRJ_USE_AUTOGEN_CONFIG
 

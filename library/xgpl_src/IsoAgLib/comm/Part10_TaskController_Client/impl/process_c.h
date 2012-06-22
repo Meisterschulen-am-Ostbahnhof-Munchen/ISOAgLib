@@ -14,6 +14,8 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
+#include <IsoAgLib/isoaglib_config.h>
+
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
@@ -21,7 +23,6 @@
 
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/container.h>
-#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>

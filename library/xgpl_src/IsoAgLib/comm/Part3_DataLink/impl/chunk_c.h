@@ -13,11 +13,8 @@
 #ifndef CHUNK_C_H
 #define CHUNK_C_H
 
+#include <IsoAgLib/isoaglib_config.h>
 
-// IsoAgLib
-#include <IsoAgLib/hal/hal_typedef.h>
-
-// stl
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
