@@ -233,7 +233,7 @@ CanPkgExt_c::address2IdentLocalDa( int ai_multitonInstance )
   }
   else
   { // the receiver is not known OR is 0xFE (which is not a valid receiver address) -> don't process this message
-    getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::MonitorInvalidDa, ai_multitonInstance );
     if ( mc_addrResolveResDA.getAddress() == 0xFE ) {
       #if DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is 0xFE which is NOT possible." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -286,7 +286,7 @@ CanPkgExt_c::address2IdentRemoteSa( int ai_multitonInstance )
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state with address = 0xFF." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
-    getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::MonitorInvalidSa, ai_multitonInstance );
     return static_cast<MessageState_t>(SaInvalidGlobal | AdrInvalid);
   }
   else if ( mc_addrResolveResSA.getAddress() == 0xFE )

@@ -51,22 +51,16 @@ Outputs_c::setMainRelais( bool ab_active )
 void
 Outputs_c::setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast){
   // check if output values are correct
-  if (
+  isoaglib_assert (
        (ab_digitalFirst <= DIGITAL_OUTPUT_MAX)
 #ifdef DIGITAL_OUTPUT_MIN_GREATER_ZERO
      &&(ab_digitalFirst >= DIGITAL_OUTPUT_MIN)
      &&(ab_digitalLast >= DIGITAL_OUTPUT_MIN)
 #endif
      &&(ab_digitalLast <= DIGITAL_OUTPUT_MAX)
-     )
-  { // correct range
-    setMinDigitalLimit(ab_digitalFirst);
-    setMaxDigitalLimit(ab_digitalLast);
-  }
-  else
-  { // wrong range
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Output );
-  }
+     );
+  setMinDigitalLimit(ab_digitalFirst);
+  setMaxDigitalLimit(ab_digitalLast);
 }
 
 

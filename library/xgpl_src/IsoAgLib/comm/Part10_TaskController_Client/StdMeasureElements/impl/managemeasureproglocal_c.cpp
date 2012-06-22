@@ -48,10 +48,9 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   { // insert default entry wihtout connection to root proc-data class into list
     vec_prog().push_front(MeasureProgLocal_c(0) );
   }
-  if (vec_prog().size() < 1)
-  { // first element added without success
-    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
-  }
+
+  isoaglib_assert( ! vec_prog.empty() );
+
   #if DEBUG_HEAP_USEAGE
   else
   {
@@ -96,31 +95,6 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
 { // copy dynamic array
   mvecc_prog = acrc_src.mvecc_prog;
   // now initialise the elements
-  if (vec_prog().size() < acrc_src.constVecProg().size())
-  { // not all items copied
-    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
-  }
-  #if DEBUG_HEAP_USEAGE
-  else
-  {
-    sui16_MeasureProgLocalTotal += vec_prog().size();
-
-    if ( ( ( vec_prog().size() > 0 ) && ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal ) )
-      || ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal                                  ) )
-    {
-      sui16_lastPrintedMeasureProgLocalTotal = sui16_MeasureProgLocalTotal;
-      sui16_printedDeconstructMeasureProgLocalTotal = sui16_deconstructMeasureProgLocalTotal;
-      INTERNAL_DEBUG_DEVICE
-        << sui16_MeasureProgLocalTotal << " x MeasureProgLocal_c: Mal-Alloc: "
-        <<  sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
-        << "/" << sizeSlistTWithMalloc( sizeof(MeasureProgLocal_c), 1 )
-        << ", Chunk-Alloc: "
-        << sizeSlistTWithChunk( sizeof(MeasureProgLocal_c), sui16_MeasureProgLocalTotal )
-        << ", Deconstruct-Cnt: " << sui16_deconstructMeasureProgLocalTotal
-        << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
-  }
-  #endif
   // the mpc_progCache is a pointer, which must be assignet relative to the start of mvecc_prog
   mpc_progCache = vec_prog().begin();
 
@@ -326,7 +300,7 @@ MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& acrc_isoName
   // update the prog cache
   if (!updateProgCache(acrc_isoName, ab_doCreate) && (!ab_doCreate))
   { // not found and no creation wanted
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcData, getMultitonInst() );
   }
 
   // now return the cache pointed prog

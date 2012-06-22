@@ -1025,7 +1025,7 @@ DevPropertyHandler_c::startUpload()
 void
 DevPropertyHandler_c::outOfMemory()
 { // can't (up)load the pool.
-  getILibErrInstance().registerError( iLibErr_c::RemoteServiceOutOfMemory, iLibErr_c::TaskController );
+  IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TcOutOfMemory, getMultitonInst() );
   men_uploadStep = UploadFailed; // no timeout needed
   men_poolState = OPCannotBeUploaded;
   #if DEBUG_DEVPROPERTYHANDLER

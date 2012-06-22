@@ -147,13 +147,7 @@ bool ProcDataBase_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& /*ac_va
   // send the msg
   pkg.flags2String();
   getIsoBusInstance4Comm() << pkg;
-  // check for any error during send resolve, ...
-  if ( getILibErrInstance().good(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can) )
-  { // good
-    return true;
-  }
-  else
-    return false;
+  return true;
 }
 
 

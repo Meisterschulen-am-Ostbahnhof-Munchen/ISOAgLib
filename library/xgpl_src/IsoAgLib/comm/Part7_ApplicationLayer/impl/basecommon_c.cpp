@@ -59,12 +59,8 @@ BaseCommon_c::close( )
 bool BaseCommon_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
 {
   mui16_suppressMask = aui16_suppressMask;
-  if ( at_identMode == IsoAgLib::IdentModeTractor && ( NULL == apc_ident ))
-  { // the application is in tractor mode but has no valid isoName
-    // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
-    getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
-    return false;
-  }
+  isoaglib_assert( ( at_identMode != IsoAgLib::IdentModeTractor ) || ( NULL != apc_ident ));
+
   // set configure values
   mpc_ident = apc_ident;
   setMode(at_identMode);

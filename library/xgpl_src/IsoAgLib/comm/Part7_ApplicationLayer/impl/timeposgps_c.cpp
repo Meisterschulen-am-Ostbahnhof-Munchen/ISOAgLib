@@ -26,6 +26,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
 #include <IsoAgLib/util/iutil_funcs.h>
+#include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 #if DEBUG_NMEA
@@ -367,12 +368,9 @@ namespace __IsoAgLib {
 
   bool TimePosGps_c::configGps( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identModeGps)
   {
-    if ( ( at_identModeGps == IsoAgLib::IdentModeTractor ) && ( NULL == apc_ident ))
-    { // the application is in tractor mode but has no valid isoName
-      // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
-      getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
-      return false;
-    }
+
+    isoaglib_assert( ! ( at_identModeGps == IsoAgLib::IdentModeTractor ) && ( NULL == apc_ident ) );
+
     //set configure values
     mi32_lastIsoPositionSimple = 0;
     mi32_lastIsoDirection = 0;
@@ -529,7 +527,7 @@ namespace __IsoAgLib {
         }
         else
         { // there is a sender conflict
-          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
         }
         return true;
 
@@ -604,7 +602,7 @@ namespace __IsoAgLib {
         }
         else
         { // there is a sender conflict
-          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
         }
         return true;
 
@@ -676,7 +674,7 @@ namespace __IsoAgLib {
         }
         else
         { // there is a sender conflict
-          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
         }
         return true;
 

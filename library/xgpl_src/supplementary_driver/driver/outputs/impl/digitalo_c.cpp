@@ -61,7 +61,7 @@ DigitalO_c::setFreq(uint32_t aui32_val)
   if (HAL::setPwmFreq(channelNr(), aui32_val) == HAL_RANGE_ERR)
   { // wrong channel number or wrong frequency
     ui16_maxOutputPwmFreq = 0xFFFF;
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Output );
+    isoaglib_assert( !"setFreq range error" );
   }
   else
   {
@@ -77,7 +77,7 @@ DigitalO_c::set(uint16_t aui16_val)
   // set output PWM signal with BIOS call
   if (HAL::setDigout(channelNr(), aui16_val) == HAL_RANGE_ERR)
   { // wrong channel number
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Output );
+    isoaglib_assert( !"set range error" );
   }
   else
   { // correct channel number

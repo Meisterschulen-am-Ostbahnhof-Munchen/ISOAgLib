@@ -74,11 +74,11 @@ Scheduler_c::init( IsoAgLib::iErrorObserver_c *apc_observer )
 {
   isoaglib_assert (!initialized());
 
-  getILibErrInstance().init();
+  IsoAgLib::getILibErrInstance().init();
   if (apc_observer != NULL)
   {
     const bool cb_observerRegistered
-      = getILibErrInstance().registerObserver (*apc_observer);
+      = IsoAgLib::getILibErrInstance().registerObserver (*apc_observer);
 
     if (cb_observerRegistered)
       mpc_registeredErrorObserver = apc_observer;
@@ -97,11 +97,11 @@ Scheduler_c::close()
 
   if (mpc_registeredErrorObserver != NULL)
   {
-    getILibErrInstance().deregisterObserver( *mpc_registeredErrorObserver );
+    IsoAgLib::getILibErrInstance().deregisterObserver( *mpc_registeredErrorObserver );
     mpc_registeredErrorObserver = NULL;
   }
 
-  getILibErrInstance().close();
+  IsoAgLib::getILibErrInstance().close();
 
   // Reset all member variables to initial state.
   pc_currentlyExecutedTask = NULL;
@@ -117,13 +117,6 @@ Scheduler_c::close()
   // mc_protectAccess() // nothing to reset here.
 
   setClosed();
-}
-
-
-void
-Scheduler_c::registerAccessFlt( void )
-{
-  getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Scheduler );
 }
 
 

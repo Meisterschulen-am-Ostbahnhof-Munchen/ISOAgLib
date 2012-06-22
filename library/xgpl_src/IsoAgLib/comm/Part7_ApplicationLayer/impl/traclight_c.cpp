@@ -169,7 +169,6 @@ namespace __IsoAgLib {
     if (pt_data != NULL)
       return getInfo(*pt_data, at_command);
     else {
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return IsoAgLib::IsoError;
     }
   }
@@ -191,7 +190,6 @@ namespace __IsoAgLib {
     if (pt_data != NULL)
       return getInfo(*pt_data, t_command);
     else {
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return IsoAgLib::IsoError;
     }
   }
@@ -540,7 +538,7 @@ namespace __IsoAgLib {
           setUpdateTime( pkg.time() );
         } else
         { // there is a sender conflict
-          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
         }
         break;
     }

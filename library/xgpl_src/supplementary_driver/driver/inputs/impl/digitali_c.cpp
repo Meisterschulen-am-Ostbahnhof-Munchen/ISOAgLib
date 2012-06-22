@@ -98,20 +98,14 @@ DigitalI_c::init(uint8_t ab_channel, onoff_t ren_onoff, bool ab_static, IsoAgLib
 
   b_static = ab_static;
 
-  if (i16_initResult)
-  { // wrong input channel no
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Input );
-  }
-  else
-  { // correct input channel no - now register the valid new analog input into Inputs_c
-    getInputsInstance().registerClient( this );
-    // register optional pointer to handler
-    if ( ab_channel < 16 ) ppc_handler[ab_channel] = apc_handler;
-    #if DEBUG_INPUTS
-    if ( apc_handler != NULL )
-     INTERNAL_DEBUG_DEVICE << "DigitalI_c::init() zu Channel: " << uint16_t(ab_channel) << " mit IRQ Handler" << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
-  }
+  isoaglib_assert( ! i16_initResult );
+  getInputsInstance().registerClient( this );
+  // register optional pointer to handler
+  if ( ab_channel < 16 ) ppc_handler[ab_channel] = apc_handler;
+  #if DEBUG_INPUTS
+  if ( apc_handler != NULL )
+   INTERNAL_DEBUG_DEVICE << "DigitalI_c::init() zu Channel: " << uint16_t(ab_channel) << " mit IRQ Handler" << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
 }
 
 
@@ -124,10 +118,7 @@ void DigitalI_c::setOnHigh( void )
   else
     i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnHigh, NULL);
 
-  if (i16_initResult)
-  { // wrong input channel no
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Input );
-  }
+  isoaglib_assert( ! i16_initResult );
 }
 
 
@@ -140,10 +131,7 @@ void DigitalI_c::setOnLow( void )
   else
     i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnLow, NULL);
 
-  if (i16_initResult)
-  { // wrong input channel no
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Input );
-  }
+  isoaglib_assert( ! i16_initResult );
 }
 
 
@@ -180,7 +168,6 @@ DigitalI_c::val()const
   }
   if (i16_val == HAL_RANGE_ERR)
   { // wrong input channel
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Input );
     return uint16_t( ERROR_VAL_16S ); // needs to be fixed!
   }
   else

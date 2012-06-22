@@ -94,11 +94,8 @@ CONTAINER_CLIENTx_MEMBERS(Cx,c_arrClientCx,pc_searchCacheCx,cacheTypeCx_t)
 \
   Cx& getCx ( Kx at_key ) \
   { \
-    if ( !existCx( at_key ) ) \
-    { \
-      registerAccessFlt(); \
-    } \
-\
+    const bool __b = existCx( at_key ); \
+    isoaglib_assert( __b ); \
     return **pc_searchCacheCx; \
   }
 

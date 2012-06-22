@@ -279,8 +279,7 @@ int32_t MeasureProgLocal_c::setpointValForGroup(ProcessCmd_c::ValueGroup_t en_va
         i32_value = pc_procdata->setpointMaxValue();
         break;
       default:
-        // wrong range
-        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
+        IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcData, getMultitonInst() );
     }
   }
   return i32_value;

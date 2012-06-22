@@ -14,6 +14,8 @@
 #ifndef BITFIELDWRAPPER_C_H
 #define BITFIELDWRAPPER_C_H
 
+#include <IsoAgLib/isoaglib_config.h>
+
 // ISOAgLib
 #include <IsoAgLib/util/iassert.h>
 

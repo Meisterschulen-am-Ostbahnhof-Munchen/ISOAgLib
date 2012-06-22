@@ -41,62 +41,35 @@ void EepromIo_c::init()
 bool
 EepromIo_c::setp(uint16_t aui16_adress)
 {
-  if (eepromSize() > aui16_adress)
-  { // wanted position is in EEPROM range
-    mui16_wPosition = aui16_adress;
-    return true;
-  }
-  else
-  { // wanted position exceeds memory -> set range error
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
-    return false;
-  }
+  isoaglib_assert( eepromSize() > aui16_adress );
+  mui16_wPosition = aui16_adress;
+  return true;
 };
 
 
 bool
 EepromIo_c::setg(uint16_t aui16_adress)
 {
-  if (eepromSize() > aui16_adress)
-  { // wanted position is in EEPROM range
-    mui16_rPosition = aui16_adress;
-    return true;
-  }
-  else
-  { // wanted position exceeds memory -> set range error
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
-    return false;
-  }
+  isoaglib_assert( eepromSize() > aui16_adress );
+  mui16_rPosition = aui16_adress;
+  return true;
 };
 
 
 bool
-EepromIo_c::eofp(uint16_t aui16_lookahead, bool ab_setState)
+EepromIo_c::eofp(uint16_t aui16_lookahead )
 { // compare (write position + lookahead) with size of EEPROM memory
-  if ((uint32_t(mui16_wPosition) + uint32_t(aui16_lookahead)) >= eepromSize())
-  { // position of write access + lookahead exceeds EEPROM memory
-    if (ab_setState) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
-    return true;  // means: End of EEPROM memory is reached
-  }
-  else
-  {
-    return false;  // means: End of EEPROM memory is NOT reached
-  }
+  isoaglib_assert( (uint32_t(mui16_wPosition) + uint32_t(aui16_lookahead)) > eepromSize() );
+  return( (uint32_t(mui16_wPosition) + uint32_t(aui16_lookahead)) > eepromSize() );
 };
 
 
 bool
-EepromIo_c::eofg(uint16_t aui16_lookahead, bool ab_setState)
+EepromIo_c::eofg(uint16_t aui16_lookahead )
 { // compare (read position + lookahead) with size of EEPROM memory
-  if ((uint32_t(mui16_rPosition) + uint32_t(aui16_lookahead)) >= eepromSize())
-  { // position of read access + lookahead exceeds EEPROM memory
-    if (ab_setState) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
-    return true; // means: End of EEPROM memory is reached
-  }
-  else
-  {
-    return false; // means: End of EEPROM memory is NOT reached
-  }
+
+  isoaglib_assert( (uint32_t(mui16_rPosition) + uint32_t(aui16_lookahead)) > eepromSize());
+  return( ( uint32_t(mui16_rPosition) + uint32_t(aui16_lookahead)) > eepromSize() );
 };
 
 
@@ -104,12 +77,10 @@ EepromIo_c&
 EepromIo_c::writeString(const uint8_t *const apb_string, uint16_t aui16_number)
 { // check if enough space for string is after actual write position
   if (aui16_number > 0)
-  { // second parameter true -> set Err_c::range if end is reached
-    if (!eofp(aui16_number-1, true))
-    { // use private write function to read in correct number of bytes into data string
-      write (mui16_wPosition, aui16_number, apb_string);
-      mui16_wPosition += (aui16_number); //increment position
-    }
+  {
+    isoaglib_assert( ! eofp( aui16_number - 1 ) );
+    write (mui16_wPosition, aui16_number, apb_string);
+    mui16_wPosition += (aui16_number); //increment position
   }
   return *this;
 };
@@ -148,18 +119,15 @@ EepromIo_c::readString(uint8_t *const apb_string, uint16_t aui16_number)
 
 
 bool
-EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* apb_data){
+EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* apb_data)
+{
   uint16_t ui16_restNumber = aui16_number,
        ui16_actualStart = aui16_adress,
        ui16_actualSize;
   const uint8_t* pb_data = apb_data;
   uint8_t pb_compare[MAX_EEPROM_SEGMENT_SIZE];
 
-  /* check input data */
-  if ((uint32_t(aui16_adress) + uint32_t(aui16_number)) > eepromSize())
-  { // range error because wanted write operation exceeds EEPROM memory
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
-  }
+  isoaglib_assert( eofp( aui16_adress, aui16_number ) );
 
   while (ui16_restNumber > 0)
   { // if data doesn't fit in one segment write with series of BIOS write calls
@@ -199,11 +167,11 @@ EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* a
       }
       if ( ui8_tryCnt == MAX_EEPROM_WRITE_TRY_CYCLE_CNT )
       { // write without success, as re-read delivers always different value
-        getILibErrInstance().registerError( iLibErr_c::EepromWriteError, iLibErr_c::Eeprom );
+        IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalEpromWriteError, 0 );
         // don't try further writes
         break;
       }
-      else if (getILibErrInstance().good( iLibErr_c::Eeprom  ))
+      else if ( IsoAgLib::getILibErrInstance().good( IsoAgLib::iLibErr_c::HalEpromWriteError, 0 ) )
       { //update the write vals
         // decrement number of uint8_t which must be written in next loop run
         ui16_restNumber -= ui16_actualSize;
@@ -218,8 +186,7 @@ EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* a
       }
     } // if write init
   } // while
-  // if good()
-  return (getILibErrInstance().good( iLibErr_c::Eeprom ));
+  return ( IsoAgLib::getILibErrInstance().good( IsoAgLib::iLibErr_c::HalEpromWriteError, 0 ) );
 }
 
 
@@ -227,25 +194,25 @@ bool
 EepromIo_c::writeInit()
 {
   // clear the BIOS state
-  getILibErrInstance().clear( iLibErr_c::Eeprom );
+  IsoAgLib::getILibErrInstance().clear( IsoAgLib::iLibErr_c::HalEpromWriteError, 0 );
 
   // check if eeprom is ready; call BIOS function
   if ( wait_eepromReady() != HAL_NO_ERR )
   { // error -> got not ready
-    getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Eeprom );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalEpromWriteError, 0 );
     return false;
   }
 
   // set EEPROM to writable
   setState4BiosReturn(HAL::eepromWp(false));
 
-  if (getILibErrInstance().good( iLibErr_c::Eeprom ))
+  if ( IsoAgLib::getILibErrInstance().good( IsoAgLib::iLibErr_c::HalEpromWriteError, 0 ) )
   { // only try writing if write protect was succesful deactivated
     // call wait_eepromReady() to test if EEPROM is ready
     setState4BiosReturn(wait_eepromReady());
   }
   // return if EEPROM is in good state with writeable and ready state
-  return (getILibErrInstance().good( iLibErr_c::Eeprom ));
+  return ( IsoAgLib::getILibErrInstance().good( IsoAgLib::iLibErr_c::HalEpromWriteError, 0 ) );
 }
 
 
@@ -279,23 +246,8 @@ EepromIo_c::maxSize(uint16_t aui16_adress)
 void
 EepromIo_c::setState4BiosReturn(int16_t ai16_biosReturn)
 {
-  switch (ai16_biosReturn)
-  {
-    case HAL_NO_ERR:
-      break;
-    case HAL_RANGE_ERR:
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
-      break;
-    case HAL_BUSY_ERR:
-      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Eeprom );
-      break;
-    case HAL_OVERFLOW_ERR:
-      getILibErrInstance().registerError( iLibErr_c::EepromSegment, iLibErr_c::Eeprom );
-      break;
-    case HAL_NOACT_ERR:
-    default:
-      getILibErrInstance().registerError( iLibErr_c::Unspecified, iLibErr_c::Eeprom );
-      break;
+  if( ai16_biosReturn != HAL_NO_ERR ) {
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalEpromError, 0 );
   }
 };
 
@@ -304,7 +256,7 @@ EepromIo_c&
 EepromIo_c::writeIntern(const uint8_t* apb_data, uint8_t aui8_len)
 { // check if enough space for type T is after actual write position
   // second parameter true -> set Err_c::range if end is reached
-  if (!eofp(aui8_len, true))
+  if ( ! eofp( aui8_len ) )
   { // use private write function to read in correct number of bytes into data string
     write (mui16_wPosition, aui8_len, apb_data);
     mui16_wPosition += aui8_len; //inkrement position
@@ -317,7 +269,7 @@ EepromIo_c&
 EepromIo_c::readIntern(uint8_t* apb_data, uint8_t aui8_len) {
   // check if enough space for string is after actual read position
   // second parameter true -> set Err_c::range if end is reached
-  if (!eofg(aui8_len, true))
+  if ( ! eofg( aui8_len ) )
   { // use private eepromRead function to read in correct number of bytes into data string
     // call BIOS function to check that EEPROM is ready
     setState4BiosReturn(wait_eepromReady());

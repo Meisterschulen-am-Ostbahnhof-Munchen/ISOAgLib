@@ -276,7 +276,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         }
         else
         { // there is a sender conflict
-          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
           return false;
         }
         break;
@@ -324,7 +324,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
           } else
           { // there is a sender conflict
-            getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+            IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
             return false;
           }
         }

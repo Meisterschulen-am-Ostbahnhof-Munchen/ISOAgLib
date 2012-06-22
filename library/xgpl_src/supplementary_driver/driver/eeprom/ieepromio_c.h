@@ -90,13 +90,13 @@ public:
     (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
 
     possible errors:
-        * range if (ab_setState == true) and (current read position + lookahead) is out of EEPROM range
+        * range if current read position + lookahead is out of EEPROM range
 
     @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current write mark position tested)
     @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
   */
-  bool eofp(uint16_t aui16_lookahead = 0, bool ab_setState = false)
-   {return EepromIo_c::eofp(aui16_lookahead, ab_setState);};
+  bool eofp(uint16_t aui16_lookahead = 0 )
+   { return EepromIo_c::eofp( aui16_lookahead ); };
 
   /**
     check if read position is at end of EEPROM
@@ -108,8 +108,8 @@ public:
     @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current read mark position tested)
     @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
   */
-  bool eofg(uint16_t aui16_lookahead = 0, bool ab_setState = false)
-    {return EepromIo_c::eofg(aui16_lookahead, ab_setState);};
+  bool eofg(uint16_t aui16_lookahead = 0 )
+    { return EepromIo_c::eofg(aui16_lookahead); };
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */

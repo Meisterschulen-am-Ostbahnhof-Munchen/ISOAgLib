@@ -163,7 +163,7 @@ namespace __IsoAgLib {
         }
         else
         { // there is a sender conflict
-          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
           return false;
         }
         break;
@@ -214,7 +214,7 @@ namespace __IsoAgLib {
         }
         else
         { // there is a sender conflict
-          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
           return false;
         }
         break;
@@ -472,8 +472,6 @@ namespace __IsoAgLib {
       marr_valve[valveNumber].ui8_extendPortEstFlow = (t_val + a21_2to5_Offset);
     else
     {
-      // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -501,7 +499,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -524,7 +521,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -547,7 +543,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -573,7 +568,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -599,7 +593,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -624,7 +617,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -649,7 +641,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -674,7 +665,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -700,7 +690,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -723,7 +712,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -746,7 +734,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -769,7 +756,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;
@@ -792,7 +778,6 @@ namespace __IsoAgLib {
     else
     {
       // wrong data range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
       return false;
     }
     return true;

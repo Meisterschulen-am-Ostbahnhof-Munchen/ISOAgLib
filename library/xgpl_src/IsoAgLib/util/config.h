@@ -34,25 +34,6 @@ enum proc_specCmd_t {setpointReleaseCmd = 1, setpointErrCmd = 2, noVal_32s = 4, 
 /* * declaration of HW independent constants  */
 /* ****************************************** */
 
-// define if exception handling should be used
-// (f.e. signalling bad dynamic array access)
-// check dependent on EXCEPTION use configured for STL
-#if defined(__EXCEPTIONS) || defined(__STL_USE_EXCEPTIONS)
-  #define __USE_EXCEPTIONS
-#endif
-
-// define some declaration constants for exceptions
-#ifdef __USE_EXCEPTIONS
-  #define THROW_BAD_ALLOC throw bad_alloc();
-  #define THROW_CONT_EL_NONEXIST
-  #define THROW_PRECOND_VIOLATION
-#else
-  #define THROW_BAD_ALLOC
-  #define THROW_CONT_EL_NONEXIST
-  #define THROW_PRECOND_VIOLATION
-#endif
-
-
 #define NO_VAL_32S ((int32_t)0x80000000l)
 #define NO_VAL_16S ((int16_t)0x8000)
 #define NO_VAL_8S ((int8_t)0x80)

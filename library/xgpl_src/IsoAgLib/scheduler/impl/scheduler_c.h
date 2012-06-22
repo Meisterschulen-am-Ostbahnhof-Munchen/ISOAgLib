@@ -140,11 +140,6 @@ public:
   /** get last timestamp of Scheduler_c::timeEvent trigger */
   int32_t getLastTimeEventTrigger( void ) { return mi32_lastTimeEventTime;}
 
-  /** handler function for access to undefined client.
-    * the base Singleton calls this function, if it detects an error
-    */
-  void registerAccessFlt( void );
-
   /** register pointer to a new client
     * this function is called within construction of new client instance
     */

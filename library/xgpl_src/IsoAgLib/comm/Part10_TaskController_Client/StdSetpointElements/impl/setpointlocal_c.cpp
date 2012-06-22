@@ -93,21 +93,6 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& acrc_src )
   mvec_register = acrc_src.mvec_register;
 
 
-  if (mvec_register.size() < acrc_src.mvec_register.size())
-  { // not all items copied
-    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
-  }
-  #if DEBUG_HEAP_USEAGE
-  else
-  {
-    sui16_setpointLocalTotal += ( mvec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
-
-    INTERNAL_DEBUG_DEVICE
-      << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  #endif
-
-
   // mpc_registerCache is a pointer, which must be copied relative to mvec_register.begin()
   // the distance operator needs a const_iterator
   Vec_SetpointRegister::const_iterator pc_iter = acrc_src.mpc_registerCache;
@@ -183,7 +168,7 @@ bool SetpointLocal_c::existUnhandledMaster() {
 SetpointRegister_c& SetpointLocal_c::unhandledMaster(){
   if (existUnhandledMaster())
   { // no unhandled master found
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcDataSetpoint, getMultitonInst() );
   }
   return *mpc_registerCache;
 }
@@ -239,7 +224,7 @@ void SetpointLocal_c::acceptNewMaster( bool ab_accept){
   }
   else
   { // no master setpoint
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcDataSetpoint, getMultitonInst() );
   }
 }
 
@@ -310,7 +295,7 @@ SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t aui8_ind){
   // check if enough unhandled items found
   if (b_counter != aui8_ind)
   { // aui8_ind was too big
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcDataSetpoint, getMultitonInst() );
     mpc_registerCache = mvec_register.begin();
   }
 

@@ -90,12 +90,12 @@ public:
     (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
 
     possible errors:
-        * range if (ab_setState == true) and (current read position + lookahead) is out of EEPROM range
+        * range if current read position + lookahead is out of EEPROM range
 
     @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current write mark position tested)
-    @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
+    @return false -> current position + lookahead is a valid EEPROM address. (true -> out of EEPROM range)
   */
-  bool eofp(uint16_t aui16_lookahead = 0, bool ab_setState = false);
+  bool eofp( uint16_t aui16_lookahead = 0 );
 
   /**
     check if read position is at end of EEPROM
@@ -107,7 +107,7 @@ public:
     @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current read mark position tested)
     @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
   */
-  bool eofg(uint16_t aui16_lookahead = 0, bool ab_setState = false);
+  bool eofg( uint16_t aui16_lookahead = 0 );
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */
@@ -331,10 +331,8 @@ bool EepromIo_c::write(uint16_t aui16_adress, T rTemplateVal)
     // copy to local var -> then call string write
     T tempVal = rTemplateVal;
     b_result =  write(aui16_adress, sizeof(T), static_cast<uint8_t*>(static_cast<void*>(&tempVal)));
-  }
-  else
-  { // write action would exceed limits
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom ); // changed by M.Wodok, was "eeprom"
+  } else {
+    isoaglib_assert( !"adress + sizeof value exceed eeprom size" );
   }
   return b_result;
 };

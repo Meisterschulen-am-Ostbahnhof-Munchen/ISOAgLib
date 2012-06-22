@@ -115,11 +115,6 @@ public:
   /** called when a new measurement is started */
   void resetTimerPeriod( void );
 
-  /** handler function for access to undefined client.
-    * the base Singleton calls this function, if it detects an error
-    */
-  void registerAccessFlt( void );
-
   /** register pointer to a new local process data instance
     * this function is called within construction of new local process data instance
     */

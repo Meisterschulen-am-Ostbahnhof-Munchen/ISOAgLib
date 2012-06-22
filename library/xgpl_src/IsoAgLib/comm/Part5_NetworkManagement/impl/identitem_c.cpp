@@ -64,17 +64,7 @@ IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
                     bool ab_enablediagnosticsServices
   )
 {
-  /// Check if Item was already properly initialized
-  if (mb_readyForActivation)
-  { // For init again, you'd first have to stop the identity - this feature is to come somewhen (when needed)...
-    getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::System );
-    #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
-    INTERNAL_DEBUG_DEVICE << "ERROR: Double initialization of IdentItem_c detected!!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
-    MACRO_ISOAGLIB_ABORT();
-    #else
-    return;
-    #endif
-  }
+  isoaglib_assert( mb_readyForActivation );
 
   // store claim data Storage handler for further usage
   mpc_dataStorageHandler = &apc_claimDataStorage;
@@ -96,12 +86,8 @@ IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
     // which is indicated by "mpvec_slaveIsoNames != NULL"
     if (ai8_slaveCount > 0)
     { // we have Slaves
+      isoaglib_assert( apc_slaveIsoNameList );
       mpvec_slaveIsoNames->reserve (ai8_slaveCount);
-      if (apc_slaveIsoNameList == NULL)
-      { // Catch bad case and to avoid dereferencing NULL we set ai8_slaveCount to 0.
-        getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::System );
-        ai8_slaveCount = 0;
-      }
       for (int i=0; i<ai8_slaveCount; i++)
       { // copy the given Slave-IsoNames to the member stl-vector variable
         mpvec_slaveIsoNames->push_back (apc_slaveIsoNameList [i]);

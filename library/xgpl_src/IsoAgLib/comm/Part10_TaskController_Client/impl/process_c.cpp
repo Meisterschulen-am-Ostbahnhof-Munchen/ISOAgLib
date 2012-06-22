@@ -88,16 +88,6 @@ void Process_c::close()
 };
 
 
-/** handler function for access to undefined client.
-  * the base Singleton calls this function, if it detects an error
-  */
-void Process_c::registerAccessFlt( void )
-{
-
-  getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
-}
-
-
 
 /**
   performs periodically actions,
@@ -260,7 +250,7 @@ ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui1
   bool b_found = updateLocalCache( aui16_DDI, aui16_element, acrc_isoNameReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcData, getMultitonInst() );
   }
   return **pc_searchCacheC1;
 }

@@ -57,14 +57,10 @@ void CounterI_c::init(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activ
 {
   InputBase_c::init(ab_channel, counter);
   // now init the digital input
-  if (HAL::init_counter(channelNr(), aui16_timebase, ab_activHigh, ab_risingEdge) == HAL_RANGE_ERR)
-  { // wrong input channel no
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Input );
-  }
-  else
-  { // correct input channel no - now register the valid new analog input into Inputs_c
-    getInputsInstance().registerClient( this );
-  }
+  const bool r = ( HAL::init_counter(channelNr(), aui16_timebase, ab_activHigh, ab_risingEdge) != HAL_RANGE_ERR);
+  isoaglib_assert( r );
+
+  getInputsInstance().registerClient( this );
 }
 /**  destructor of the input object which can close explicit the hardware input */
 CounterI_c::~CounterI_c(){
@@ -87,18 +83,10 @@ uint32_t CounterI_c::valLong(){
   return HAL::getCounter(channelNr());
 }
 
-/**
-  reset the given counter
-
-  possible errors:
-      * iLibErr_c::Range wrong input number
-*/
+/** reset the given counter */
 void CounterI_c::reset()
 {
-  if (HAL::resetCounter(channelNr()))
-  { // wrong input channel no
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Input );
-  }
+  HAL::resetCounter(channelNr());
 }
 
 /**

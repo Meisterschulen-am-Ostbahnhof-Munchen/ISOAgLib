@@ -159,6 +159,7 @@ public:
   */
   iIsoItem_c& isoMemberNr(uint8_t aui8_nr) { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberNr( aui8_nr));}
 
+#if 0
   /** deliver member item with given ISOName, set pointed bool var to true on success
     and set a Member Array Iterator to the result
     @param acrc_isoName searched ISOName
@@ -168,6 +169,7 @@ public:
   */
   iIsoItem_c& isoMemberISOName(const iIsoName_c& acrc_isoName, bool *const pb_success, bool ab_forceClaimedAddress = false )
   { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberISOName( acrc_isoName, pb_success, ab_forceClaimedAddress ));}
+#endif
 
   /** check if one of the own local members is active with claimed address at ISO11783
     @return true -> at least one of the own identities is active with claimed address at ISO11783

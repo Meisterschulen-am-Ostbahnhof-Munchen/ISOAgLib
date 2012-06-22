@@ -121,28 +121,6 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& acrc_src )
   mi32_min = acrc_src.mi32_min;
   mi32_val = acrc_src.mi32_val;
   mvec_measureSubprog = acrc_src.mvec_measureSubprog;
-
-  if (mvec_measureSubprog.size() < acrc_src.mvec_measureSubprog.size())
-  { // not all items copied
-    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
-  }
-  #if DEBUG_HEAP_USEAGE
-  else
-  {
-    sui16_MeasureProgBaseTotal += mvec_measureSubprog.size();
-
-    if ( mvec_measureSubprog.size() > 0 )
-    {
-      INTERNAL_DEBUG_DEVICE
-        << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
-        <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-        << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
-        << ", Chunk-Alloc: "
-        << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-        << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
-  }
-  #endif
 }
 
 /** default destructor which has nothing to do */
@@ -482,8 +460,7 @@ int32_t MeasureProgBase_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup)
       i32_value = max();
       break;
     default:
-      // wrong range
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcData, getMultitonInst() );
   }
 
   return i32_value;
@@ -549,7 +526,7 @@ void MeasureProgBase_c::resetValForGroup(ProcessCmd_c::ValueGroup_t en_valueGrou
         resetMax();
         break;
       default:
-        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
+        IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcData, getMultitonInst() );
     }
 }
 

@@ -112,15 +112,8 @@ namespace IsoAgLib
   */
   uint8_t iGenericData_c::getDataUi8( uint16_t aui16_pos) const
   {
-    if ( CheckSizeOfVectorForRead( aui16_pos, sizeof(uint8_t) ) )
-    { /** element is existing */
-      return __IsoAgLib::convertLittleEndianStringUi8 (&vec_data[ aui16_pos ]);
-    }
-    else
-    { /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
-      return(0);
-    }
+    isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(uint8_t) ) );
+    return __IsoAgLib::convertLittleEndianStringUi8 (&vec_data[ aui16_pos ]);
   }
 
   /** deliver data from vector
@@ -129,15 +122,8 @@ namespace IsoAgLib
   */
   int8_t iGenericData_c::getDataI8( uint16_t aui16_pos) const
   {
-    if ( CheckSizeOfVectorForRead( aui16_pos, sizeof(int8_t) ) )
-    { /** element is existing */
-      return __IsoAgLib::convertLittleEndianStringI8 (&vec_data[ aui16_pos ]);
-    }
-    else
-    { /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
-      return(0);
-    }
+    isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(int8_t) ) );
+    return __IsoAgLib::convertLittleEndianStringI8 (&vec_data[ aui16_pos ]);
   }
 
   /** deliver data from vector
@@ -146,15 +132,8 @@ namespace IsoAgLib
   */
   uint16_t iGenericData_c::getDataUi16( uint16_t aui16_pos) const
   {
-    if ( CheckSizeOfVectorForRead( aui16_pos, sizeof(uint16_t) ) )
-    { /** element is existing */
-      return __IsoAgLib::convertLittleEndianStringUi16 (&vec_data[ aui16_pos ]);
-    }
-    else
-    { /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
-      return(0);
-    }
+    isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(uint16_t) ) );
+    return __IsoAgLib::convertLittleEndianStringUi16 (&vec_data[ aui16_pos ]);
   }
 
   /** deliver data from vector
@@ -163,15 +142,8 @@ namespace IsoAgLib
   */
   int16_t iGenericData_c::getDataI16( uint16_t aui16_pos) const
   {
-    if (CheckSizeOfVectorForRead( aui16_pos, sizeof(int16_t) ) )
-    { /** element is existing */
-      return __IsoAgLib::convertLittleEndianStringI16 (&vec_data[ aui16_pos ]);
-    }
-    else
-    { /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
-      return(0);
-    }
+    isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(int16_t) ) );
+    return __IsoAgLib::convertLittleEndianStringI16 (&vec_data[ aui16_pos ]);
   }
 
   /** deliver data from vector
@@ -180,15 +152,8 @@ namespace IsoAgLib
   */
   uint32_t iGenericData_c::getDataUi32( uint16_t aui16_pos) const
   {
-    if ( CheckSizeOfVectorForRead( aui16_pos, sizeof(uint32_t) ) )
-    { /** element is existing */
-      return __IsoAgLib::convertLittleEndianStringUi32 (&vec_data[ aui16_pos ]);
-    }
-    else
-    { /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
-      return(0);
-    }
+    isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(uint32_t) ) );
+    return __IsoAgLib::convertLittleEndianStringUi32 (&vec_data[ aui16_pos ]);
   }
 
   /** deliver data from vector
@@ -197,15 +162,8 @@ namespace IsoAgLib
   */
   int32_t iGenericData_c::getDataI32( uint16_t aui16_pos) const
   {
-    if ( CheckSizeOfVectorForRead( aui16_pos, sizeof(int32_t) ) )
-    { /** element is existing */
-      return __IsoAgLib::convertLittleEndianStringI32 (&vec_data[ aui16_pos ]);
-    }
-    else
-    { /** in case of an error */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::ProprietaryCan);
-      return(0);
-    }
+    isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(int32_t) ) );
+    return __IsoAgLib::convertLittleEndianStringI32 (&vec_data[ aui16_pos ]);
   }
 
   /** set data stream to vector vec_data
@@ -229,14 +187,8 @@ namespace IsoAgLib
   */
   void iGenericData_c::setDataStream(uint16_t aui16_pos, const uint8_t* apui8_data, uint16_t aui16_dataLength)
   { 
-    if (apui8_data != NULL )
-    { /** apui8_data exist */
-      setDataStream (aui16_pos, *apui8_data, aui16_dataLength);
-    }
-    else
-    { /** caught NULL pointer */
-      IsoAgLib::getILibErrInstance().registerError(IsoAgLib::iLibErr_c::Precondition, IsoAgLib::iLibErr_c::ProprietaryCan);
-    }
+    isoaglib_assert( apui8_data );
+    setDataStream (aui16_pos, *apui8_data, aui16_dataLength);
   }
 
   /** deliver a pointer to the wanted data
@@ -272,15 +224,7 @@ namespace IsoAgLib
    */
   bool iGenericData_c::CheckSizeOfVectorForRead( uint16_t aui16_pos, uint16_t aui16_size ) const
   {
-    /** have a look to the size of the vector */
-    if ( static_cast<uint32_t>(aui16_pos + aui16_size) > vec_data.size() )
-    { /** data at position aui16_pos not existent */
-      return(false);
-    }
-    else
-    { /** data ok */
-      return(true);
-    }
+    return ( static_cast<uint32_t>(aui16_pos + aui16_size) <= vec_data.size() );
   }
 
   /** return the length of the data vector */

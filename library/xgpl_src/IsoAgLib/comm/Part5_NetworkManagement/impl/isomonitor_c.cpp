@@ -350,11 +350,9 @@ IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, uint8_t aui8_
       }
     }
   }
-  // check if aui8_ind was in correct range
-  if (aui8_ind != c_cnt)
-  { // wrong range of aui8_ind
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
-  }
+
+  isoaglib_assert( aui8_ind != c_cnt );
+
   return *mpc_isoMemberCache;
 }
 
@@ -411,11 +409,9 @@ IsoMonitor_c::isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui8_ind, bool
       }
     }
   }
-  // check if aui8_ind was in correct range
-  if (aui8_ind != c_cnt)
-  { // wrong range of aui8_ind
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
-  }
+
+  isoaglib_assert( aui8_ind != c_cnt );
+
   return *mpc_isoMemberCache;
 }
 
@@ -498,12 +494,7 @@ IsoMonitor_c::insertIsoMember(
 {
   IsoItem_c* pc_result = NULL;
 
-  // check if another IsoItem_c with same ISOName already exist
-  if (existIsoMemberISOName(acrc_isoName))
-  { // another member with same ISOName found
-    getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System );
-    return NULL; // don't insert
-  }
+  isoaglib_assert( ! existIsoMemberISOName(acrc_isoName) );
 
   // FROM NOW ON WE DECIDE TO (TRY TO) CREATE A NEW IsoItem_c
   // prepare temp item with wanted data
@@ -569,10 +560,8 @@ IsoMonitor_c::localIsoMemberInd(uint8_t aui8_ind)
     }
   } // for
 
-  if ( pc_result == NULL )
-  { // index exceeds array size
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::System );
-  }
+
+  isoaglib_assert( pc_result );
 
   return *pc_result;
 }
@@ -626,20 +615,8 @@ IsoMonitor_c::existActiveLocalIsoMember()
 IsoItem_c&
 IsoMonitor_c::getActiveLocalIsoMember()
 {
-  if( existActiveLocalIsoMember() )
-  { // return reference to the pointed ident element
-    return *mpc_activeLocalMember;
-  }
-  else
-  { // no active own identity found -> set error state
-    getILibErrInstance().registerError( iLibErr_c::SysNoActiveLocalMember, iLibErr_c::System );
-
-    // throw exception by constant -> if no exception configured no command is created
-    THROW_PRECOND_VIOLATION
-
-    //return reference to the first ident in IsoMonitor_c
-    return isoMemberISOName(c_arrClientC1.front()->isoName(), true);
-  }
+  isoaglib_assert( existActiveLocalIsoMember() );
+  return *mpc_activeLocalMember;
 }
 
 
@@ -732,43 +709,20 @@ IsoMonitor_c::broadcastIsoItemModification2Clients( ControlFunctionStateHandler_
 IsoItem_c&
 IsoMonitor_c::isoMemberISOName(const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress)
 {
-  if (existIsoMemberISOName(acrc_isoName, ab_forceClaimedAddress))
-  { // no error
-    return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
-  }
-  else
-  { // wanted element not found
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );
-
-    // throw exception by constant -> if no exception configured no command is created
-    THROW_CONT_EL_NONEXIST
-
-    //return reference to first element as fallback
-    return mvec_isoMember.front();
-  }
+  isoaglib_assert( existIsoMemberISOName( acrc_isoName, ab_forceClaimedAddress ) );
+  return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
 }
 
 
 IsoItem_c&
 IsoMonitor_c::isoMemberNr(uint8_t aui8_nr)
 {
-  if (existIsoMemberNr(aui8_nr))
-  { // no error
-    return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
-  }
-  else
-  { // wanted element not found
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );
-
-    // throw exception by constant -> if no exception configured no command is created
-    THROW_CONT_EL_NONEXIST
-
-    //return reference to first element as fallback
-    return mvec_isoMember.front();
-  }
+  isoaglib_assert( existIsoMemberNr( aui8_nr ) );
+  return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
 }
 
 
+#if 0
 IsoItem_c&
 IsoMonitor_c::isoMemberISOName(const IsoName_c& acrc_isoName, bool *const pb_success, bool ab_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
 {
@@ -780,56 +734,45 @@ IsoMonitor_c::isoMemberISOName(const IsoName_c& acrc_isoName, bool *const pb_suc
   }
   return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
 }
+#endif
 
 
 bool
 IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
 {
-  if (existIsoMemberISOName(acrc_isoName))
-  { // set correct state
-    // check if "mpc_activeLocalMember" will be invalidated by this deletion
-    if (mpc_activeLocalMember == &(*mpc_isoMemberCache))
-    { // clear cached active local item - it points to the to be deleted one
-      mpc_activeLocalMember = NULL;
-    }
-    // erase it from list (existIsoMemberISOName sets mpc_isoMemberCache to the wanted item)
-    internalIsoItemErase (mpc_isoMemberCache);
-    // immediately reset cache, because it may have gotten invalid due to the erase!!
-    mpc_isoMemberCache = mvec_isoMember.begin();
-    #if DEBUG_HEAP_USEAGE
-    sui16_isoItemTotal--;
+  isoaglib_assert( existIsoMemberISOName( acrc_isoName) );
+  // check if "mpc_activeLocalMember" will be invalidated by this deletion
+  if (mpc_activeLocalMember == &(*mpc_isoMemberCache))
+  { // clear cached active local item - it points to the to be deleted one
+    mpc_activeLocalMember = NULL;
+  }
+  // erase it from list (existIsoMemberISOName sets mpc_isoMemberCache to the wanted item)
+  internalIsoItemErase (mpc_isoMemberCache);
+  // immediately reset cache, because it may have gotten invalid due to the erase!!
+  mpc_isoMemberCache = mvec_isoMember.begin();
+  #if DEBUG_HEAP_USEAGE
+  sui16_isoItemTotal--;
 
-    INTERNAL_DEBUG_DEVICE
-      << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
-      <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
-      << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
-    return true;
-  }
-  else
-  { // to be deleted member ISOName does not exist
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );
-    return false;
-  }
+  INTERNAL_DEBUG_DEVICE
+    << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
+    <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
+    << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )
+    << ", Chunk-Alloc: "
+    << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
+    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
+  return true;
 }
 
 
+#if 0
 bool
 IsoMonitor_c::deleteIsoMemberNr(uint8_t aui8_nr)
 {
-  if (existIsoMemberNr(aui8_nr))
-  { // use deleteIsoMemberISOName
-    return deleteIsoMemberISOName(mpc_isoMemberCache->isoName());
-  }
-  else
-  { // to be deleted member number does not exist
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );
-    return false;
-  }
+  isoaglib_assert( existIsoMemberNr( aui8_nr ) )
+  return deleteIsoMemberISOName( mpc_isoMemberCache->isoName() );
 }
+#endif
 
 bool isAddressFree( const IsoItem_c* apc_isoItem, const STL_NAMESPACE::list<IsoItem_c>& vec_isoMember, uint8_t address, bool ab_resolveConflict )
 {

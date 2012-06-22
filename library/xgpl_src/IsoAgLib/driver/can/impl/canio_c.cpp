@@ -63,28 +63,18 @@ CanIo_c::init(
   /* ****************************** */
   /* *****check input parameter**** */
   /* ****************************** */
-  // check aui8_minObjNr, aui8_maxObjNr and aui8_busNumber
-  if (
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-      (aui8_minObjNr > HAL_CAN_MAX_SEND_OBJ)
-      ||(aui8_maxObjNr > HAL_CAN_MAX_SEND_OBJ)
+    isoaglib_assert( ! ( (aui8_minObjNr > HAL_CAN_MAX_SEND_OBJ) || ( aui8_maxObjNr > HAL_CAN_MAX_SEND_OBJ ) ) );
 #if HAL_CAN_MIN_SEND_OBJ > 0
-      ||(aui8_minObjNr < HAL_CAN_MIN_SEND_OBJ) // use this comparison only for (HAL_CAN_MIN_SEND_OBJ > 0), else it gives a warning!
-      ||(aui8_maxObjNr < HAL_CAN_MIN_SEND_OBJ) // use this comparison only for (HAL_CAN_MIN_SEND_OBJ > 0), else it gives a warning!
+    isoaglib_assert( aui8_minObjNr >= HAL_CAN_MIN_SEND_OBJ );
+    isoaglib_assert( aui8_maxObjNr >= HAL_CAN_MIN_SEND_OBJ);
 #endif
-      ||
 #else
 #if HAL_CAN_MIN_SEND_OBJ > 0
-      (aui8_minObjNr < HAL_CAN_MIN_SEND_OBJ)
-      ||
+    isoaglib_assert( aui8_minObjNr >= HAL_CAN_MIN_SEND_OBJ );
 #endif
 #endif
-      (aui8_busNumber > HAL_CAN_MAX_BUS_NR)
-     )
-  { // one of the range tests not passed
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    return false;
-  }
+    isoaglib_assert( aui8_busNumber <= HAL_CAN_MAX_BUS_NR );
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   (void) aui8_maxObjNr;
@@ -129,8 +119,7 @@ CanIo_c::init(
 void
 CanIo_c::close()
 {
-  if (!initialized())
-    return;
+  isoaglib_assert( initialized() );
 
   #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
   for (uint8_t i = 0; i < cntFilter(); i++)
@@ -149,8 +138,7 @@ CanIo_c::close()
       #endif
       break;
     default:
-      // wrong channel
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
+      isoaglib_assert( !"other HAL error" );
       break;
   }
 #if DEBUG_HEAP_USEAGE
@@ -592,31 +580,20 @@ uint32_t ui32_msgNbr = 0;
           to_be_processed = true;
           break;
         case HAL_RANGE_ERR:
-          getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-          #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
-          INTERNAL_DEBUG_DEVICE << "CAN-Receive Range Err" << INTERNAL_DEBUG_DEVICE_ENDL;
-          #endif
-          break;
         case HAL_CONFIG_ERR:
-          #if DEBUG_CAN_BUFFER_FILLING || DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
-          INTERNAL_DEBUG_DEVICE << "\r\nBUS not initialized or wrong BUS nr: " << uint16_t(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
-          #endif
-          getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
-          break;
         case HAL_NOACT_ERR:
           #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
           INTERNAL_DEBUG_DEVICE << "CAN-Receive NoAct Err" << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
-          // wrong use of MsgObj (not likely) or CAN BUS OFF
-          getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusOff, getMultitonInst() );
           break;
         case HAL_WARN_ERR:
           to_be_processed = true;
-          getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, getMultitonInst() );
           break;
         case HAL_OVERFLOW_ERR:
           to_be_processed = true;
-          getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusOverflow, getMultitonInst() );
 
           #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
           HAL::can_stateMsgobjOverflow(mui8_busNumber, i32_ident );
@@ -640,7 +617,7 @@ uint32_t ui32_msgNbr = 0;
         break;
         default:
          to_be_processed = true;
-         getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
+         IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, getMultitonInst() );
         break;
       }
 
@@ -814,7 +791,7 @@ CanIo_c::operator<<( CanPkg_c& acrc_src )
       #endif
       // typically we're in BUS-WARN here, so the messages won't get sent out,
       // that's why we overflow the send-buffer...
-      getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusOverflow, getMultitonInst() );
       HAL::can_useMsgobjClear(mui8_busNumber,ui8_sendObjNr);
       break;
     }
@@ -847,30 +824,30 @@ CanIo_c::operator<<( CanPkg_c& acrc_src )
       #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
         INTERNAL_DEBUG_DEVICE << "\r\nBUS " << uint16_t(mui8_busNumber) << " not initialized or MsgObj: " << uint16_t(ui8_sendObjNr) << " no send obj" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, getMultitonInst() );
       break;
     case HAL_NOACT_ERR:
       // BUS off
       #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
       INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(mui8_busNumber) << " in BUS OFF STATE" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusOff, getMultitonInst() );
       break;
     case HAL_OVERFLOW_ERR:
       // overflow of send buffer
       // With the current max-10ms-block strategy this case shouldn't be reached anymore.
-      getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusOverflow, getMultitonInst() );
       break;
     case HAL_RANGE_ERR:
       // BUS nr or obj nr outer allowed limits (shouldn't be the case after successful init call)
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, getMultitonInst() );
       break;
     case HAL_WARN_ERR:
       // signal for BUS-WARN problem
       #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
       INTERNAL_DEBUG_DEVICE << "BUS " << uint16_t(mui8_busNumber) << " in WARN STATE" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getILibErrInstance().registerError( iLibErr_c::CanWarn, iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, getMultitonInst() );
       break;
 
    #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
@@ -1305,22 +1282,14 @@ CanIo_c::getFilterBox( const IsoAgLib::iMaskFilterType_c& arc_maskFilter ) const
 
 
 bool
-CanIo_c::verifyBusMsgobjNr(
-  uint8_t aui8_busNr, 
-  uint8_t aui8_objNr)
+CanIo_c::verifyBusMsgobjNr( uint8_t aui8_busNr, uint8_t aui8_objNr)
 {
-  //check if there is an error
-  if (
-     (aui8_busNr > HAL_CAN_MAX_BUS_NR)
-  || (aui8_objNr < HAL_CAN_MIN_REC_OBJ)
+  isoaglib_assert( aui8_busNr <= HAL_CAN_MAX_BUS_NR );
+  isoaglib_assert( aui8_busNr <= HAL_CAN_MAX_BUS_NR );
+  isoaglib_assert( aui8_objNr >= HAL_CAN_MIN_REC_OBJ );
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  || (aui8_objNr > HAL_CAN_MAX_REC_OBJ)
+  isoaglib_assert(aui8_objNr <= HAL_CAN_MAX_REC_OBJ);
   #endif
-     )
-  {
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    return false;
-  }
   return true;
 }
 
@@ -1332,11 +1301,7 @@ CanIo_c::reconfigureMsgObj()
   // no msg objects exist only filterboxes and no register restrictions therefore no reconfigure must be done
   return true;
   #else
-  if ( mui8_busNumber > HAL_CAN_MAX_BUS_NR )
-  {
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    return false;
-  }
+  isoaglib_assert( mui8_busNumber <= HAL_CAN_MAX_BUS_NR );
 
   #if DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
@@ -1471,7 +1436,7 @@ CanIo_c::reconfigureMsgObj()
    {
     if (HAL::can_configMsgobjClose(mui8_busNumber, i+minReceiveObjNr() ) == HAL_RANGE_ERR)
     { // given BUS or MsgObj number is wrong
-        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
+        IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::Range, iLibErr_c::Can );
     }
     #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
     INTERNAL_DEBUG_DEVICE << "Close can object num = "<< (i+minReceiveObjNr() )<< " on can bus number =" << int(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -1499,7 +1464,7 @@ INTERNAL_DEBUG_DEVICE << "-------------------------------------IRQ TABLE " << IN
 
   // clear any CAN BUFFER OVERFLOW error that might occure
   // for last message object
-  getILibErrInstance().clear( iLibErr_c::CanOverflow, iLibErr_c::Can );
+  IsoAgLib::getILibErrInstance().clear( IsoAgLib::iLibErr_c::CanOverflow, iLibErr_c::Can );
 
   HAL::wdTriggern();
 
@@ -1607,7 +1572,6 @@ CanIo_c::baseCanInit (uint16_t aui16_bitrate)
   // if given bitrate fits to no allowed value set a range error state
   if (!b_allowed)
   {
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
     return false; // exit function with error value
   }
 
@@ -1638,16 +1602,7 @@ CanIo_c::baseCanInit (uint16_t aui16_bitrate)
   // init CAN BUS (BIOS function)
   mc_maskLastmsg.set(0, Ident_c::ExtendedIdent);
 
-  int16_t i16_retvalInit = HAL::can_configGlobalInit(mui8_busNumber, mui16_bitrate, mc_maskStd.ident(), mc_maskExt.ident(),
-                      mc_maskLastmsg.ident());
-
-  // check for error state
-  if (i16_retvalInit == HAL_RANGE_ERR)
-  { // BIOS complains about limits of BUSnr or msgObj
-    // seldom, because before checked with defined LIMITS
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    return false;
-  }
+  (void)HAL::can_configGlobalInit(mui8_busNumber, mui16_bitrate, mc_maskStd.ident(), mc_maskExt.ident(), mc_maskLastmsg.ident());
 
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( b_lastMsgObjWasOpen )
@@ -1685,13 +1640,11 @@ CanIo_c::baseCanInit (uint16_t aui16_bitrate)
       break;
     case HAL_BUSY_ERR:
       // send obj already in use
-      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Can );
-      break;
     case HAL_CONFIG_ERR:
       // because CAN was initialized direct above without error, msgObj limits was
       // allowed and the SEND type is hardcoded to an allowed number,
       // HAL_CONFIG_ERR error can only be caused by allocating problem
-      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerFatal( IsoAgLib::iLibErr_c::HalCanConfig, getMultitonInst() );
       b_configSuccess = false;
       break;
   }

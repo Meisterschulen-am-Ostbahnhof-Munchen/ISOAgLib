@@ -163,7 +163,7 @@ CurvatureCommander_s* TracGuidanceCommand_c::getCommanderDataBySA( uint8_t ui8_s
   }
   else
   { // there exist no commander data for this source address
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracError, getMultitonInst() );
   }
 
   return ps_commander;
@@ -181,7 +181,7 @@ CurvatureCommander_s* TracGuidanceCommand_c::getCommanderDataByIndex( uint8_t ui
 
   if ( ui8_index > mmap_commanders.size() )
   {
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Base );
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracError, getMultitonInst() );
     return ps_commander;
   }
 

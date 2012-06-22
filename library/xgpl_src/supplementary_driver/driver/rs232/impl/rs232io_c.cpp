@@ -120,9 +120,7 @@ RS232IO_c::init(
     if (HAL::configRs232TxObj(mui16_sndBuf, NULL, NULL, aui8_channel) != HAL_NO_ERR) b_result = false;
     if (HAL::configRs232RxObj(mui16_recBuf, NULL, aui8_channel) != HAL_NO_ERR) b_result = false;
 
-    if (!b_result)
-      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
-    else
+    if (b_result)
     {
       // Only here do we store the values, as these two fields help us know whether the device is already initialized
       mui32_baudrate = aui32_baudrate;
@@ -132,7 +130,6 @@ RS232IO_c::init(
   else
   { //wrong values given
     b_result = false;
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Rs232 ); // something is still wrong
   }
 
   return b_result;
@@ -162,7 +159,7 @@ bool RS232IO_c::setBaudrate(uint32_t aui32_baudrate)
   }
   else
   { // wrong setting
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Rs232 );
+    b_baudAllowed = false;
   }
   return b_baudAllowed;
 }
@@ -177,7 +174,6 @@ bool RS232IO_c::setSndBufferSize(uint16_t aui16_bufferSize)
   }
   else
   {
-    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
     return false;
   }
 }
@@ -192,8 +188,6 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   }
   else
   {
-    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
-
     return false;
   }
 
@@ -222,7 +216,6 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
       if ( ui16_maxSendItemSize > ui16_restLen ) ui16_maxSendItemSize = ui16_restLen;
       // send actual item
       if( HAL::put_rs232NChar((apb_data + ui16_startSendPos), ui16_maxSendItemSize, mui8_channel) != HAL_NO_ERR) {
-        getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
         isoaglib_assert( !"Impossible RS232 Overflow. Gratulation!" );
         return;
       }
@@ -246,11 +239,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   RS232IO_c& RS232IO_c::operator<<(uint8_t ab_data)
   {
     isoaglib_assert( isInitialized() );
-
-    if (HAL::put_rs232Char(ab_data, mui8_channel) != HAL_NO_ERR)
-    {
-      getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
-    }
+    (void)HAL::put_rs232Char(ab_data, mui8_channel);
     return *this;
   }
 
@@ -340,7 +329,6 @@ void RS232IO_c::receive(uint8_t* pb_data, uint16_t aui16_len)
   {
     if (eof())
     { // error - buffer empty before reading wanted count of data
-      getILibErrInstance().registerError( iLibErr_c::Rs232Underflow, iLibErr_c::Rs232 );
       break;
     }
     HAL::getRs232Char(pb_writer, mui8_channel);
@@ -448,8 +436,8 @@ void RS232IO_c::readToken()
   // if buffer is empty, overwrite old data, set rs232_underflow error and exit
   if (eof())
   { // overwrite old token data with '\0'
-    for (ui8_ind = 0; ui8_ind < 12; ui8_ind++)mpc_token[ui8_ind] = '\0';
-    getILibErrInstance().registerError( iLibErr_c::Rs232Underflow, iLibErr_c::Rs232 );
+    for (ui8_ind = 0; ui8_ind < 12; ui8_ind++)
+      mpc_token[ui8_ind] = '\0';
     return;
   }
 

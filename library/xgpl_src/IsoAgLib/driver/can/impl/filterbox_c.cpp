@@ -109,31 +109,11 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
   isoaglib_assert( ! mc_maskFilterPair.empty() );
   Ident_c c_mask = mc_maskFilterPair.getMaskIdent();
   Ident_c c_filter = mc_maskFilterPair.getFilterIdent();
-  switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_FilterBoxNr, c_filter, c_mask, 0))
-  {
-    case HAL_NO_ERR:
-      return true;
-    case HAL_BUSY_ERR:
-      /* this BIOS-Obj is already in use */
-      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Can );
-      break;
-    case HAL_CONFIG_ERR:
-      /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
-      #if DEBUG_CAN_BUFFER_FILLING || DEBUG_FILTERBOX
-      INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer" << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-      getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
-      break;
-    case HAL_RANGE_ERR:
-      /* undefined BUS number, undefined BIOS-Obj number, wrong buffer size */
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-      break;
-    default:
-      /* unspecified error */
-      getILibErrInstance().registerError( iLibErr_c::Unspecified, iLibErr_c::Can );
-      break;
+  if( HAL::can_configMsgobjInit(aui8_busNumber, aui8_FilterBoxNr, c_filter, c_mask, 0) != HAL_NO_ERR ) {
+    IsoAgLib::getILibErrInstance().registerFatal( IsoAgLib::iLibErr_c::HalCanConfig, aui8_busNumber );
+    return false;
   }
-  return false;
+  return true;
 }
 #endif
 
@@ -145,7 +125,7 @@ void FilterBox_c::closeHAL()
   {
     if (HAL::can_configMsgobjClose(mui8_busNumber, mui8_filterBoxNr ) == HAL_RANGE_ERR)
     { // given BUS or filterBox number is wrong
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerFatal( IsoAgLib::iLibErr_c::HalCanConfig, 0 );
     }
     mui8_busNumber = mui8_filterBoxNr = IdleState;
   }

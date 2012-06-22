@@ -291,6 +291,7 @@ public:
   */
   IsoItem_c& isoMemberNr(uint8_t aui8_nr);
 
+#if 0
   /** deliver member item with given ISOName, set pointed bool var to true on success
     and set a Member Array Iterator to the result
     @param acrc_isoName searched ISOName
@@ -299,6 +300,7 @@ public:
     @return reference to the searched item
   */
   IsoItem_c& isoMemberISOName(const IsoName_c& acrc_isoName, bool *const pb_success, bool ab_forceClaimedAddress = false, Vec_ISOIterator *const pbc_iter = NULL);
+#endif
 
   /**
     delete item with specified isoName
@@ -308,12 +310,14 @@ public:
   */
   bool deleteIsoMemberISOName(const IsoName_c& acrc_isoName);
 
+#if 0
   /** delete item with specified member number
     possible errors:
       * Err_c::elNonexistent no member with given ISOName exists
     @param aui8_nr number of to be deleted member
   */
   bool deleteIsoMemberNr(uint8_t aui8_nr);
+#endif
 
   /** check if SA of an announcing IsoItem_c is unique and deliver
     another free SA if not yet unique (else deliver its actual SA if unique yet)
@@ -396,11 +400,6 @@ protected: // Protected methods
   virtual void updateEarlierAndLatestInterval();
 
 private:
-  /** handler function for access to undefined client.
-    * the base Singleton calls this function, if it detects an error
-     */
-  void registerAccessFlt( void ) {getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );}
-
   /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
   IsoMonitor_c( void );
 

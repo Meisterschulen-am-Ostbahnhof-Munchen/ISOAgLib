@@ -513,14 +513,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   if (apc_versionLabel)
   {
     const uint32_t cui_len = CNAMESPACE::strlen (apc_versionLabel);
-    if ( ((mrc_pool.getNumLang() == 0) && (cui_len > 7))
-      || ((mrc_pool.getNumLang()  > 0) && (cui_len > 5))
-       )
-    { // too long, fail!
-      getILibErrInstance().registerError (iLibErr_c::Precondition, iLibErr_c::IsoTerminal);
-      men_objectPoolState = OPCannotBeUploaded; // has to be checked after calling this constructor!
-      return;
-    }
+    isoaglib_assert( ! ( ( (mrc_pool.getNumLang() == 0) && (cui_len > 7) ) || ( (mrc_pool.getNumLang()  > 0) && (cui_len > 5) ) ) ); 
     unsigned int i=0;
     for (; i<cui_len; i++) marrp7c_versionLabel [i] = apc_versionLabel [i];
     for (; i<7;       i++) marrp7c_versionLabel [i] = ' '; // ASCII: Space
@@ -1656,7 +1649,7 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
             break;
           case 4: // Insufficient memory available
           default: // well....
-            getILibErrInstance().registerError(iLibErr_c::RemoteServiceOutOfMemory, iLibErr_c::IsoTerminal);
+            IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::VtOutOfStorageSpace, getMultitonInst() );
             break;
         }
         finalizeUploading();
@@ -2996,7 +2989,7 @@ VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fro
 void
 VtClientServerCommunication_c::vtOutOfMemory()
 {  // can't (up)load the pool.
-  getILibErrInstance().registerError (iLibErr_c::RemoteServiceOutOfMemory, iLibErr_c::IsoTerminal);
+  IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::VtOutOfMemory, getMultitonInst() );
   men_uploadPoolState = UploadPoolFailed; // no timeout needed
   men_objectPoolState = OPCannotBeUploaded;
 }

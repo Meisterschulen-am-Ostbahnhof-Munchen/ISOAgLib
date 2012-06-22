@@ -18,6 +18,7 @@
 /* *************************************** */
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/container.h>
+#include <IsoAgLib/util/iliberr_c.h>
 
 #include "analogi_c.h"
 #include "digitali_c.h"
@@ -93,11 +94,6 @@ public:
     @param ab_counterLast number of the greatest allowed counter input channel
   */
   void setCounterLimits(uint8_t ab_counterFirst, uint8_t ab_counterLast);
-
-    /** handler function for access to undefined client.
-    * the base Singleton calls this function, if it detects an error
-    */
-  void registerAccessFlt( void );
 
   /**
     check if analog input object to given ab_channel exist
