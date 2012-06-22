@@ -221,7 +221,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
       // restrict actual max item size to waiting chars to send
       if ( ui16_maxSendItemSize > ui16_restLen ) ui16_maxSendItemSize = ui16_restLen;
       // send actual item
-      if( HAL::put_rs232NChar((apb_data + ui16_startSendPos), ui16_maxSendItemSize, ui8_channel) != HAL_NO_ERR) {
+      if( HAL::put_rs232NChar((apb_data + ui16_startSendPos), ui16_maxSendItemSize, mui8_channel) != HAL_NO_ERR) {
         getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
         isoaglib_assert( !"Impossible RS232 Overflow. Gratulation!" );
         return;
@@ -247,7 +247,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   {
     isoaglib_assert( isInitialized() );
 
-    if (HAL::put_rs232Char(ab_data, ui8_channel) != HAL_NO_ERR)
+    if (HAL::put_rs232Char(ab_data, mui8_channel) != HAL_NO_ERR)
     {
       getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
     }
