@@ -292,9 +292,9 @@ namespace __IsoAgLib {
 
   void TracAux_c::prepareSendingEstimatedMeasured( CanPkgExt_c& pkg )
   {
-    setSelectedDataSourceISOName(*getISOName());
+    setSelectedDataSourceISOName( getIdentItem()->isoName() );
 
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(3);
     pkg.setLen(8);    
   }
@@ -367,13 +367,13 @@ namespace __IsoAgLib {
   {
     isoaglib_assert(AUX_VALVE_0_COMMAND <= aui32_pgn);
     isoaglib_assert(aui32_pgn <= AUX_VALVE_15_COMMAND);
-    // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
-    // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
-    if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
-      return CommandNotSent;
+
+    if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) ) {
+      return CommandSent;
+    }
 
     CanPkgExt_c pkg;
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(3);
     pkg.setLen(8);
 
@@ -399,15 +399,15 @@ namespace __IsoAgLib {
       @see CanIo_c::operator<<
     */
   void TracAux_c::isoSendCommand()
-  { // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
-    // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
-    if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
+  {
+    if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) ) {
       return;
+    }
 
     IsoBus_c& c_can = getIsoBusInstance4Comm();
 
     CanPkgExt_c pkg;
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(3);
     pkg.setLen(8);
 

@@ -300,15 +300,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   {
     //check for isoName and if address claim has yet occured, because this function can also bo called
     //independent from timeEvent() function
-    if ( (getISOName() == NULL) ||
-         (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
+    if( ( ! getIdentItem() ) || ( ! getIdentItem()->getIsoItem() ) )
       return HitchStateNotSent;
 
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(3);
     pkg.setLen(8);
 
-    setSelectedDataSourceISOName( *getISOName() );
+    setSelectedDataSourceISOName( getIdentItem()->isoName()  );
     return HitchStateSent;
   }
 
@@ -460,19 +459,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setUint8Data(7, 0xFF);
 
     c_can << data();*/
-    if ( ( getISOName() == NULL ) // shouldn't be NULL as we're in tractor-mode
-          || ( getISOName()->isUnspecified()  )
-          || !getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)
-      )
+
+    if( ( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) ) )
     { //if VT has up to now not send the language command there is no sense to send it
       return LanguageNotSent;
     }
     CanPkgExt_c pkg;
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(6);
     pkg.setLen(8);
 
-    setSelectedDataSourceISOName( *getISOName() );
+    setSelectedDataSourceISOName( getIdentItem()->isoName() );
     IsoBus_c& c_can = getIsoBusInstance4Comm();
     pkg.setIsoPgn(LANGUAGE_PGN);
     //Bytes 1,2: language command
@@ -502,10 +499,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   void TracGeneral_c::forceMaintainPower( bool ab_ecuPower, bool ab_actuatorPower, IsoAgLib::IsoMaintainPower_t at_implState)
   {
     if ( (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK) != 0) return;
-    // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
-    // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
-    if ( (getISOName() == NULL) ||
-         (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
+
+    isoaglib_assert( getIdentItem() );
+    if ( ! getIdentItem()->isClaimedAddress() )
       return;
 
      uint8_t val1 = IsoAgLib::IsoInactive,
@@ -536,7 +532,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         val2 |= ( mt_implState.inWork                   << 2);
     }
     CanPkgExt_c pkg;
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(6);
 
     pkg.setIsoPgn(MAINTAIN_POWER_REQUEST_PGN);
@@ -603,14 +599,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     if (checkMode(IsoAgLib::IdentModeTractor))
     {
-      if ( (getISOName() == NULL) ||
-           (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
-        return;
 
       if (IsoAgLib::IsoActive != at_val)
       {
         // IsoInactive, IsoError and IsoNotAvailable
-        indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[*getISOName()];
+        indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[getIdentItem()->isoName()];
         rt_indicateData.b_maintainEcuPower = true;
         rt_indicateData.b_maintainActuatorPower = true;
         rt_indicateData.i32_lastMaintainPowerRequest = mi32_lastMaintainPowerRequest = HAL::getTime();

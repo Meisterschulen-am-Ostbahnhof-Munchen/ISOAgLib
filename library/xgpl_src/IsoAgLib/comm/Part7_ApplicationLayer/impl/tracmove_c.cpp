@@ -439,14 +439,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
   void TracMove_c::prepareSending( CanPkgExt_c& pkg )
   {
-    // there is no need to check for address claim because this is already done in the timeEvent
-    // function of base class BaseCommon_c
-
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(3);
     pkg.setLen(8);
 
-    setSelectedDataSourceISOName(*getISOName());
+    setSelectedDataSourceISOName( getIdentItem()->isoName());
   }
 
   TracMove_c::SendMessage_e TracMove_c::sendGroundBasedSpeedDist()

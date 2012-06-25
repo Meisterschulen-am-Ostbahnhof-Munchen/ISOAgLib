@@ -143,12 +143,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   void TracFacilities_c::sendFacilities( )
   {// there is no need to check for address claim because this is already done in the processMsgRequestPGN;
    // this function is only be called on request!!
+    isoaglib_assert( getIdentItem() );
 
     IsoBus_c& c_can = getIsoBusInstance4Comm();
 
     CanPkgExt_c pkg;
-    pkg.setISONameForSA( *getISOName() );
-    setSelectedDataSourceISOName(*getISOName());
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
+    setSelectedDataSourceISOName( getIdentItem()->isoName() );
     pkg.setIsoPri(3);
     pkg.setLen(8);
 

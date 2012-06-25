@@ -127,9 +127,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @see  CanIo_c::operator<<
     */
   void TracPTOSetPoint_c::sendPtoMsg()
-  { // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
-    // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
-    if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
+  {
+    if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) )
       return;
 
     #if defined(USE_BASE) || defined(USE_TRACTOR_PTO)
@@ -141,7 +140,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     IsoBus_c& c_can = getIsoBusInstance4Comm();
 
     CanPkgExt_c pkg;
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(3);
     pkg.setLen(8);
     pkg.setIsoPgn(HITCH_PTO_COMMANDS);

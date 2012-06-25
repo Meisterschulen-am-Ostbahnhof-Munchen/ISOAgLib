@@ -130,19 +130,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @see  CanIo_c::operator<<
     */
   void TracGuidance_c::isoSendMessageTracMode( )
-  { // there is no need to check for address claim in tractor mode because this is already done in the timeEvent
-    // function isoSendEstimatedMeasuredof base class BaseCommon_c
-
+  {
     IsoBus_c& c_can = getIsoBusInstance4Comm();
 
-    setSelectedDataSourceISOName(*getISOName());
+    setSelectedDataSourceISOName( getIdentItem()->isoName() );
 
     CanPkgExt_c pkg;
     // retrieve the actual dynamic sender no of the member with the registered isoName
     pkg.setIsoPri(3);
     pkg.setLen(8);
 
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     if ( getIsoMonitorInstance4Comm().existIsoMemberNr( getTracGuidanceCommandInstance4Comm().getCommander() ) )
       pkg.setISONameForDA( getIsoMonitorInstance4Comm().isoMemberNr( getTracGuidanceCommandInstance4Comm().getCommander() ).isoName() );
     else

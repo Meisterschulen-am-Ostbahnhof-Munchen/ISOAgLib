@@ -632,7 +632,7 @@ namespace __IsoAgLib {
     // there is no need to check for address claim in tractor mode because this is already done in the timeEvent
     // function of base class BaseCommon_c
 
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setLen(8);
 
     uint16_t ui16_temp = 0;
@@ -683,9 +683,9 @@ namespace __IsoAgLib {
     // precondition checks for sending as implement
     if (!mb_cmdWait4Response) return MessageNotSent;
 
-    // getISOName() might report NULL at least during init time
-    if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
+    if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) ) {
       return MessageNotSent;
+    }
 
     pkg.setIsoPgn(LIGHTING_DATA_PGN);
     //reset flag because msg will now be send
@@ -726,7 +726,7 @@ namespace __IsoAgLib {
     mb_changeNeedBeSend = false;
     // now it's evident, that we have to send a command
     pkg.setIsoPgn(LIGHTING_COMMAND_PGN);
-    setSelectedDataSourceISOName(*getISOName());
+    setSelectedDataSourceISOName( getIdentItem()->isoName() );
 
     pkg.setIsoPri(3);
     uint16_t ui16_temp = 0;

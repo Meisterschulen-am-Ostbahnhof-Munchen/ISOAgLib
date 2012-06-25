@@ -129,9 +129,6 @@ namespace __IsoAgLib
     /** clear mb_filterCreated*/
     void clearFilterCreated() {mb_filterCreated = false;}
 
-    /** return sender of a msg*/
-    const IsoName_c* getISOName() const { return &( mpc_ident->isoName() ); }
-
     const IdentItem_c* getIdentItem() const { return mpc_ident; }
 
     /** get IsoName of data source (e.g. tractor, terminal) from which commands are send exclusively */

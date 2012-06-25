@@ -116,7 +116,8 @@ bool BaseCommon_c::timeEvent()
     mc_selectedDataSourceISOName.setUnspecified();
   }
 
-  if ( mpc_ident && ( ! getIsoMonitorInstance( 0 ).existLocalIsoMemberISOName( mpc_ident->isoName(), true) ) ) // XXX TODO
+
+  if ( mpc_ident && ( ! mpc_ident->isClaimedAddress() ) )
   { // local isoname for sending is registrated, but it is not yet fully claimed
     // --> nothing to do
     return true;
@@ -157,24 +158,19 @@ bool BaseCommon_c::timeEventImplMode()
 /** send a PGN request */
 bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 {
+  if( ( ! getIdentItem() ) || ( ! getIdentItem()->getIsoItem() ) )
+    return false;
+
   CanPkgExt_c pkg;
   pkg.setIsoPri(6);
   // set PGN first, as this might overwrite the PS field
   pkg.setIsoPgn(REQUEST_PGN_MSG_PGN);
 
-  /// if the IsoItem_c is not in the monitor list, ignore this request
-  if ( getIsoMonitorInstance(0 ).existActiveLocalIsoMember() ) // XXX TODO
-  { // use the SA of the already active node
-    pkg.setMonitorItemForSA( &getIsoMonitorInstance( 0 ).getActiveLocalIsoMember() ); // XXX TODO
-  }
-  else
-  { // there exists no local ident which is in claimed state -> we are not allowed to send on ISOBUS
-    return false;
-  }
+  pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
 
   // now check and retrieve the target
   if ( ( getSelectedDataSourceISONameConst().isSpecified() )
-    && ( getIsoMonitorInstance( 0 ).existIsoMemberISOName( getSelectedDataSourceISONameConst(), true ) ) ) // XXX TODO
+    && ( getIsoMonitorInstance( getIdentItem()->getMultitonInst() ).existIsoMemberISOName( getSelectedDataSourceISONameConst(), true ) ) )
   { // we have a valid tractor data source, that can be asked directly
     pkg.setISONameForDA( getSelectedDataSourceISONameConst() );
   }
@@ -187,7 +183,7 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   pkg.setUint32Data( 0 , ui32_requestedPGN );
   pkg.setLen( 3 );
   // now CanPkgExt_c has right data -> send
-  getIsoBusInstance( 0 ) << pkg; // XXX TODO
+  getIsoBusInstance( getIdentItem()->getMultitonInst() ) << pkg;
   return true;
 }
 
@@ -201,21 +197,18 @@ bool BaseCommon_c::check4ReqForPgn(uint32_t /* aui32_pgn */, IsoItem_c* apc_isoI
   if( apc_isoItemSender == NULL )
     return false;
 
-  if ( NULL == getISOName() ) return false; // not configured for Send
-  if ( ! getIsoMonitorInstance( 0 ).existIsoMemberISOName( *getISOName(), true ) ) return false; // XXX TODO
+  if ( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) )
+    return false; // not claimed
 
-  // now we can be sure, that we are in tractor mode, and the registered tractor isoname
-  // belongs to an already claimed IsoItem_c --> we are allowed to send
-  if ( ( apc_isoItemReceiver == NULL ) ||
-  ( &getIsoMonitorInstance(0 ).isoMemberISOName( *getISOName() ) == apc_isoItemReceiver ) ) // XXX TODO
-  { // the REQUEST was directed to GLOBAL or to the SA that belongs to the
-    // tractor IdentItem_c that is matched by the registrated IsoName_c (getISOName())
+  // request to global
+  if( ! apc_isoItemReceiver )
     return true;
-  }
-  else
-  { // we are not allowed to send the request
-    return false;
-  }
+
+  // we're the receiver
+  if( apc_isoItemReceiver == getIdentItem()->getIsoItem() )
+    return true;
+
+  return false;
 }
 
 }// end namespace __IsoAgLib

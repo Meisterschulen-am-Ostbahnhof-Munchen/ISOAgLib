@@ -690,7 +690,7 @@ namespace __IsoAgLib {
     // call TimePosGps_c function to send time/date
     // isoSendCalendar checks if this item (identified by ISOName)
     // is configured to send time/date
-    sendCalendar(*getISOName());
+    sendCalendar();
     return true;
   };
 
@@ -1277,19 +1277,20 @@ void TimePosGps_c::isoSendDirection( void )
       @see CanPkgExt_c::getData
       @see CanIo_c::operator<<
     */
-  void TimePosGps_c::sendCalendar(const IsoName_c& acrc_isoName)
+  void TimePosGps_c::sendCalendar()
   {
-    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(acrc_isoName, true)) return;
+    if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) )
+      return;
 
     CanPkgExt_c pkg;
-    pkg.setISONameForSA( acrc_isoName );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(6);
     pkg.setLen(8);
 
-    if ( ( getSelectedDataSourceISOName() == acrc_isoName ) )
+    if ( ( getSelectedDataSourceISOName() == getIdentItem()->isoName() ) )
     { // this item (identified by ISOName is configured to send
       if ( checkMode(IsoAgLib::IdentModeTractor) )
-        setSelectedDataSourceISOName(*getISOName());
+        setSelectedDataSourceISOName( getIdentItem()->isoName() );
 
       pkg.setIsoPgn(TIME_DATE_PGN);
 

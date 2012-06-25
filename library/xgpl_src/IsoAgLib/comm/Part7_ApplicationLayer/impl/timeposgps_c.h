@@ -152,14 +152,8 @@ public:
 
   bool checkParseReceivedGps(const IsoName_c& acrc_currentSender) const;
 
-  /** send ISO11783 calendar PGN
-    possible errors:
-      * dependant error in CanIo_c on CAN send problems
-    @see CanPkg_c::getData
-    @see CanPkgExt_c::getData
-    @see CanIo_c::operator<<
-    */
-  void sendCalendar(const IsoName_c& apc_isoName);
+  /** send ISO11783 calendar PGN */
+  void sendCalendar();
 
   /** Retrieve the last update time of the specified information type*/
   int32_t lastedTimeSinceUpdateGps() const;

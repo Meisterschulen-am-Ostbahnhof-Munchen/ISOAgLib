@@ -115,15 +115,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         && c_tracmove.getSelectedDataSourceISONameConst().isSpecified()
       #endif
        )
-    { // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
-      // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
-      if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
+    {
+      if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) ) {
         return false;
+      }
 
       IsoBus_c& c_can = getIsoBusInstance4Comm();
 
       CanPkgExt_c pkg;
-      pkg.setISONameForSA( *getISOName() );
+      pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
       pkg.setIsoPri(3);
       pkg.setLen(8);
 

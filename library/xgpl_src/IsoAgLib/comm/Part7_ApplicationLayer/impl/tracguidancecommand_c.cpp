@@ -113,7 +113,7 @@ bool TracGuidanceCommand_c::processMsg( const CanPkg_c& arc_data )
   */
 void TracGuidanceCommand_c::isoSendMessageImplMode( )
 {
-  if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
+  if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) )
     return;
 
 
@@ -125,7 +125,7 @@ void TracGuidanceCommand_c::isoSendMessageImplMode( )
   pkg.setLen(8);
 
   pkg.setISONameForDA( getTracGuidanceInstance4Comm().getSelectedDataSourceISONameConst() );
-  pkg.setISONameForSA( *getISOName() );
+  pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
   pkg.setIsoPgn(GUIDANCE_SYSTEM_CMD);
   pkg.setUint16Data(0, mmap_commanders[mui8_commanderSa].ui16_curvatureCmd);
   uint8_t ui8_temp = 0;

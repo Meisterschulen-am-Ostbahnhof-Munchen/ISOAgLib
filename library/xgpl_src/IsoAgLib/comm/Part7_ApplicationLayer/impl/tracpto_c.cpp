@@ -242,17 +242,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracPTO_c::sendMessage(SendPtoData_t t_sendptodata)
   {
-    if ( getISOName() == NULL ) return;
-    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) return;
+    if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) )
+      return;
 
     IsoBus_c& c_can = getIsoBusInstance4Comm();
 
     CanPkgExt_c pkg;
-    pkg.setISONameForSA( *getISOName() );
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(3);
     pkg.setLen(8);
 
-    setSelectedDataSourceISOName(*getISOName());
+    setSelectedDataSourceISOName( getIdentItem()->isoName() );
 
     PtoData_t* pt_ptoData = NULL;
     if (t_sendptodata == sendFrontPto)
