@@ -52,10 +52,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   isoaglib_assert( ! vec_prog.empty() );
 
   #if DEBUG_HEAP_USEAGE
-  else
-  {
-    sui16_MeasureProgLocalTotal++;
-  }
+  sui16_MeasureProgLocalTotal++;
   #endif
   // point cache initially to default first element
   mpc_progCache = mvecc_prog.begin();
