@@ -710,6 +710,8 @@ IsoItem_c&
 IsoMonitor_c::isoMemberISOName(const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress)
 {
   isoaglib_assert( existIsoMemberISOName( acrc_isoName, ab_forceClaimedAddress ) );
+  (void)acrc_isoName;
+  (void)ab_forceClaimedAddress;
   return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
 }
 
@@ -718,23 +720,9 @@ IsoItem_c&
 IsoMonitor_c::isoMemberNr(uint8_t aui8_nr)
 {
   isoaglib_assert( existIsoMemberNr( aui8_nr ) );
+  (void)aui8_nr;
   return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
 }
-
-
-#if 0
-IsoItem_c&
-IsoMonitor_c::isoMemberISOName(const IsoName_c& acrc_isoName, bool *const pb_success, bool ab_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
-{
-  *pb_success = (existIsoMemberISOName(acrc_isoName, ab_forceClaimedAddress));
-
-  if (pbc_iter != NULL)
-  {
-    *pbc_iter = mpc_isoMemberCache;
-  }
-  return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
-}
-#endif
 
 
 bool

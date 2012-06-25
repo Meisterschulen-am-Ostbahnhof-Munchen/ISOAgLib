@@ -291,17 +291,6 @@ public:
   */
   IsoItem_c& isoMemberNr(uint8_t aui8_nr);
 
-#if 0
-  /** deliver member item with given ISOName, set pointed bool var to true on success
-    and set a Member Array Iterator to the result
-    @param acrc_isoName searched ISOName
-    @param pb_success bool pointer to store the success (true on success)
-    @param pbc_iter optional member array iterator which points to searched IsoItem_c on success
-    @return reference to the searched item
-  */
-  IsoItem_c& isoMemberISOName(const IsoName_c& acrc_isoName, bool *const pb_success, bool ab_forceClaimedAddress = false, Vec_ISOIterator *const pbc_iter = NULL);
-#endif
-
   /**
     delete item with specified isoName
     possible errors:

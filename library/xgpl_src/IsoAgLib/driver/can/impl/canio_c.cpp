@@ -1281,6 +1281,8 @@ CanIo_c::verifyBusMsgobjNr( uint8_t aui8_busNr, uint8_t aui8_objNr)
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   isoaglib_assert(aui8_objNr <= HAL_CAN_MAX_REC_OBJ);
   #endif
+  (void)aui8_busNr;
+  (void)aui8_objNr;
   return true;
 }
 
