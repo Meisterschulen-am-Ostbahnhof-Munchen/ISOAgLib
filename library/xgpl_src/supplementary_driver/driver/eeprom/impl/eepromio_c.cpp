@@ -94,27 +94,21 @@ EepromIo_c::readString(uint8_t *const apb_string, uint16_t aui16_number)
     return true;
   }
 
-  // second parameter true -> set Err_c::range if end is reached
-  if (!eofg(aui16_number-1), true)
-  { // enough space in EEPROM from actual position on
-    // call BIOS function to check that EEPROM is ready
-    setState4BiosReturn(wait_eepromReady());
-    // use eepromRead BIOS function to read in correct number of bytes into data string
-    // don't update read position
-    int16_t i16_retVal = HAL::eepromRead(mui16_rPosition, aui16_number, apb_string);
-    setState4BiosReturn(i16_retVal); // update state dependent on return of BIOS function
-    // increment position on success
-    if (i16_retVal == HAL_NO_ERR)
-    {
-      mui16_rPosition += aui16_number;
-      return true;
-    }
-    else return false;
+  isoaglib_assert( ! eofg( aui16_number-1 ) );
+  // call BIOS function to check that EEPROM is ready
+  setState4BiosReturn(wait_eepromReady());
+  // use eepromRead BIOS function to read in correct number of bytes into data string
+  // don't update read position
+  int16_t i16_retVal = HAL::eepromRead(mui16_rPosition, aui16_number, apb_string);
+  setState4BiosReturn(i16_retVal); // update state dependent on return of BIOS function
+  // increment position on success
+  if (i16_retVal == HAL_NO_ERR)
+  {
+    mui16_rPosition += aui16_number;
+    return true;
   }
   else
-  { // report that read access had no success because of range error
     return false;
-  }
 }
 
 
