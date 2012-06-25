@@ -250,8 +250,8 @@ namespace __IsoAgLib {
     }
 
 
-    if ( ( getIdentItem() && ( getIsoMonitorInstance4Comm().existIsoMemberISOName( getIdentItem()->isoName(), true ) )  && ( checkMode(IsoAgLib::IdentModeTractor) ) )
-      || ( mpc_identGps && ( getIsoMonitorInstance4Comm().existIsoMemberISOName( mpc_identGps->isoName(), true ) ) && ( checkModeGps( IsoAgLib::IdentModeTractor ) ) ) )
+    if ( ( getIdentItem() && getIdentItem()->isClaimedAddress() && checkMode(IsoAgLib::IdentModeTractor ) )
+      || ( mpc_identGps && mpc_identGps->isClaimedAddress() && checkModeGps( IsoAgLib::IdentModeTractor ) ) )
     { // there is at least something configured for send where the time sending or GPS sending is activated
       return timeEventTracMode();
     }
@@ -368,8 +368,7 @@ namespace __IsoAgLib {
 
   bool TimePosGps_c::configGps( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identModeGps)
   {
-
-    isoaglib_assert( ! ( at_identModeGps == IsoAgLib::IdentModeTractor ) && ( NULL == apc_ident ) );
+    isoaglib_assert( ! ( ( at_identModeGps == IsoAgLib::IdentModeTractor ) && ( NULL == apc_ident ) ) );
 
     //set configure values
     mi32_lastIsoPositionSimple = 0;

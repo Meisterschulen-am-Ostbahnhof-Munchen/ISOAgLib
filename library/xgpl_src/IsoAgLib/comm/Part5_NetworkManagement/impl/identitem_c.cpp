@@ -64,7 +64,7 @@ IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
                     bool ab_enablediagnosticsServices
   )
 {
-  isoaglib_assert( mb_readyForActivation );
+  isoaglib_assert( ! mb_readyForActivation );
 
   // store claim data Storage handler for further usage
   mpc_dataStorageHandler = &apc_claimDataStorage;
