@@ -11,6 +11,10 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
+
+#include <IsoAgLib/isoaglib_config.h>
+
 #include <logenvirons.h>
 #include <transfercollection.h>
 #include <alivecollection.h>
@@ -263,7 +267,6 @@ std::pair< int, PtrDataFrame_t > parseLogLineRte2(
 {
     static uint64_t sui64_rteTime = 0;
     int big;
-    int little;
     char *cursor;
     size_t byte;
 
@@ -279,7 +282,8 @@ std::pair< int, PtrDataFrame_t > parseLogLineRte2(
         fprintf (stderr, "unexpected terminator %c (%d): %s\n", *cursor, *cursor, acr_line.c_str());
         return std::make_pair( -4, PtrDataFrame_t(0) );
     }
-    little = strtol (&cursor[1], &cursor, 10);
+    long ret = strtol (&cursor[1], &cursor, 10);
+    (void)ret;
     while (isspace (*cursor))
         cursor++;
     if (*cursor == 'X')
