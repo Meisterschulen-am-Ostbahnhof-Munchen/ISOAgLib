@@ -45,18 +45,9 @@ static uint8_t minReceiveObjNr[cui32_maxNbrCan];
 
 bool isIrqTable(uint8_t aui8_busNum, uint8_t aui8_objNum)
 {
-#if DEBUG_FIFO_CAN
-  if(aui8_busNum > HAL_CAN_MAX_BUS_NR || aui8_objNum - minReceiveObjNr[aui8_busNum] >= cui8_numMsbObj)
-  {
-    // range error
-    IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can );
-    return false;
-  }
-#endif
-
-  if(moIdentArr[aui8_busNum][aui8_objNum - minReceiveObjNr[aui8_busNum]].sizeTable == 0)
-    return false;
-  return true;
+  isoaglib_assert( aui8_busNum <= HAL_CAN_MAX_BUS_NR );
+  isoaglib_assert( aui8_objNum - minReceiveObjNr[aui8_busNum] < cui8_numMsbObj );
+  return (moIdentArr[aui8_busNum][aui8_objNum - minReceiveObjNr[aui8_busNum]].sizeTable != 0);
 }
 
 //static bool b_irqWritingFlag[cui32_maxCanBusCnt];
@@ -73,14 +64,8 @@ void setIrqMinReceiveObjNr(uint8_t aui8_busNum,uint8_t aui8_minObjNr)
 /** free the table related a busNum */
 void freeIrqTable(uint8_t aui8_busNum)
 {
-#if DEBUG_FIFO_CAN
-  if(aui8_busNum > HAL_CAN_MAX_BUS_NR )
-  {
-    // range error
-    IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Can );
-  }
-#endif
-
+  isoaglib_assert( aui8_busNum <= HAL_CAN_MAX_BUS_NR );
+  
   for(uint8_t i = 0 ; i < cui8_numMsbObj ; i++ )
   {
     moIdentArr[aui8_busNum][i].sizeTable = 0;
