@@ -49,7 +49,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
     vec_prog().push_front(MeasureProgLocal_c(0) );
   }
 
-  isoaglib_assert( ! vec_prog.empty() );
+  isoaglib_assert( ! vec_prog().empty() );
 
   #if DEBUG_HEAP_USEAGE
   sui16_MeasureProgLocalTotal++;
