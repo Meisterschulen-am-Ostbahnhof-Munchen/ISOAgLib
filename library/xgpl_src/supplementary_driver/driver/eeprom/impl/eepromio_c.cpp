@@ -127,7 +127,7 @@ EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* a
   const uint8_t* pb_data = apb_data;
   uint8_t pb_compare[MAX_EEPROM_SEGMENT_SIZE];
 
-  isoaglib_assert( eofp( aui16_adress, aui16_number ) );
+  isoaglib_assert( eofp( aui16_adress + sizeof( uint16_t ) ) );
 
   while (ui16_restNumber > 0)
   { // if data doesn't fit in one segment write with series of BIOS write calls
