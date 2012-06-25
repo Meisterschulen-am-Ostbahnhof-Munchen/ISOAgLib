@@ -1220,17 +1220,8 @@ CanIo_c::registerChangedGlobalMasks(void)
     mc_maskExt.ident(),
     mc_maskLastmsg.ident());
 
-  // check for error state
-  if (i16_retvalInit == HAL_RANGE_ERR)
-  { // BIOS complains about limits of BUSnr or msgObj
-    // seldom, because before checked with defined LIMITS
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    return false;
-  }
-  else
-  {
-    return true;
-  }
+  isoaglib_assert( i16_retvalInit != HAL_RANGE_ERR );
+  return true;
 }
 #endif //end not defined SYSTEM_WITH_ENHANCED_CAN_HAL
 
@@ -1399,7 +1390,6 @@ CanIo_c::reconfigureMsgObj()
 /** 5. update IRQ table for each CAN MsgObj */
 
   uint16_t i = 0;
-  bool b_retUpdTbl = false;
 
   // config the hardware -> config all MsgObj_c in CAN hardware
   for (ArrMsgObj::iterator pc_iterMsgObj = marr_msgObj.begin();
@@ -1411,20 +1401,14 @@ CanIo_c::reconfigureMsgObj()
    /** reinitialize the each AN MSGOBJ : CLOSE and OPEN with the new mask*/
     pc_iterMsgObj->setIsOpen(false);
 
-    if (HAL::can_configMsgobjClose(mui8_busNumber, i+minReceiveObjNr() ) == HAL_RANGE_ERR)
-    { // given BUS or MsgObj number is wrong
-        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    }
+    int16_t ret = HAL::can_configMsgobjClose(mui8_busNumber, i+minReceiveObjNr() );
+    isoaglib_assert( ret != HAL_RANGE_ERR ); (void)ret;
 
     // call the configCan function for each MsgObj
     pc_iterMsgObj->configCan(mui8_busNumber, i+minReceiveObjNr());
 
-    b_retUpdTbl = pc_iterMsgObj->msgObjUpdateTable(mui8_busNumber,i);
-
-    if(false == b_retUpdTbl)
-    {
-      IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Process );
-    }
+    const bool b_retUpdTbl = pc_iterMsgObj->msgObjUpdateTable(mui8_busNumber,i);
+    isoaglib_assert( b_retUpdTbl ); (void)b_retUpdTbl;
 
     i++;
   }
@@ -1434,10 +1418,9 @@ CanIo_c::reconfigureMsgObj()
 
    for(;i < ui32_oldMsgBoxArrsize; i++)
    {
-    if (HAL::can_configMsgobjClose(mui8_busNumber, i+minReceiveObjNr() ) == HAL_RANGE_ERR)
-    { // given BUS or MsgObj number is wrong
-        IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::Range, iLibErr_c::Can );
-    }
+    int16_t ret = HAL::can_configMsgobjClose(mui8_busNumber, i+minReceiveObjNr() );
+    isoaglib_assert( ret != HAL_RANGE_ERR );
+
     #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
     INTERNAL_DEBUG_DEVICE << "Close can object num = "<< (i+minReceiveObjNr() )<< " on can bus number =" << int(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
@@ -1461,10 +1444,6 @@ INTERNAL_DEBUG_DEVICE << "-------------------------------------IRQ TABLE " << IN
   HAL::printIrqTable(mui8_busNumber);
 
 #endif
-
-  // clear any CAN BUFFER OVERFLOW error that might occure
-  // for last message object
-  IsoAgLib::getILibErrInstance().clear( IsoAgLib::iLibErr_c::CanOverflow, iLibErr_c::Can );
 
   HAL::wdTriggern();
 

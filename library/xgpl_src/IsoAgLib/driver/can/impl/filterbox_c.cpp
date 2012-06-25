@@ -271,7 +271,7 @@ bool FilterBox_c::processMsg()
       INTERNAL_DEBUG_DEVICE
       << "Central Fifo - Reading problem on bus : " << int( mui8_busNumber ) << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-      IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, mui8_busNumber );
       break; // so that "msi_processMsgLoopIndex = -1" will be done before returning.
     }
 #if DEBUG_FILTERBOX

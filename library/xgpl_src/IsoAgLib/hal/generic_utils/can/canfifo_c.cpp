@@ -380,7 +380,7 @@ bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* 
           #if DEBUG_FIFO_WRITE
             INTERNAL_DEBUG_DEVICE << "Discarded an old message " << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
-           IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
+           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, aui8_busNum );
 
           //overwrite the old message
            ui_tmpAc = s_canFifoInstance[aui8_busNum].ui_AckCount;
@@ -408,10 +408,8 @@ bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* 
       }
       else // trace, new message discarded
       {
-
-          IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
-
-          return false;
+        IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, aui8_busNum );
+        return false;
       }
 
   }

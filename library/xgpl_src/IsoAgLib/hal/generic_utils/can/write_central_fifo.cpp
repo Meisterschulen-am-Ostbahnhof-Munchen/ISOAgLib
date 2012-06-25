@@ -113,16 +113,10 @@ static void initMoIdentArr(uint8_t aui8_busNum)
 
 bool updateTable(uint8_t aui8_busNum,uint8_t aui8_objNr,uint32_t aui32_numEl, comparableTable_s* p_newTable )
 {
+  isoaglib_assert( aui8_busNum <= HAL_CAN_MAX_BUS_NR );
+  isoaglib_assert( aui8_objNr < cui8_numMsbObj );
 
-
-   if(aui8_busNum > HAL_CAN_MAX_BUS_NR || aui8_objNr >= cui8_numMsbObj)
-  {
-    // range error
-    IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Process );
-    return false;
-  }
-
- /** initializing */
+  /** initializing */
   if(sb_initialized[aui8_busNum] != true)
     initMoIdentArr(aui8_busNum);
 

@@ -202,10 +202,6 @@ bool MsgObj_c::deleteFilterBox(FilterRef arc_box)
       break;
     }
   }
-  if ( !b_result )
-  { // nothing has been erased
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Can );
-  }
 
   return b_result;
 }
@@ -225,23 +221,15 @@ bool MsgObj_c::deleteFilterBox(FilterRef arc_box)
 bool MsgObj_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_msgNr)
 {
   bool b_result = false;
-  if (!verifyBusMsgobjNr(aui8_busNumber, aui8_msgNr))
-  { // the given values are not within allowed limits (defined in isoaglib_config.h)
-    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    return false;
-  }
-  else
-  { // values are o.k.
-    // store mui8_busNumber for later close of can
-    setBusNumber(aui8_busNumber);
-    setMsgObjNr(aui8_msgNr);
+  isoaglib_assert( verifyBusMsgobjNr(aui8_busNumber, aui8_msgNr));
+  setBusNumber(aui8_busNumber);
+  setMsgObjNr(aui8_msgNr);
 
-    //store busNumber and msgNr for each filterBox
-    for(uint8_t i = 0; i < cnt_filterBox(); i++)
-    {
-      getFilterBoxInstance(marr_filterBoxIndex[i]).setBusNumber(aui8_busNumber);
-      getFilterBoxInstance(marr_filterBoxIndex[i]).setFilterBoxNr(aui8_msgNr);
-    }
+  //store busNumber and msgNr for each filterBox
+  for(uint8_t i = 0; i < cnt_filterBox(); i++)
+  {
+    getFilterBoxInstance(marr_filterBoxIndex[i]).setBusNumber(aui8_busNumber);
+    getFilterBoxInstance(marr_filterBoxIndex[i]).setFilterBoxNr(aui8_msgNr);
   }
 
   switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_msgNr, mc_filter, 0))
@@ -254,24 +242,11 @@ bool MsgObj_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_msgNr)
 
       b_result = true;
       break;
-    case HAL_BUSY_ERR:
-      /* this BIOS-Obj is already in use */
-      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::Can );
-      break;
+    case HAL_BUSY_ERR: /* this BIOS-Obj is already in use */
     case HAL_CONFIG_ERR:
-      /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
-      #if DEBUG_CAN_BUFFER_FILLING || DEBUG_MSGOBJ
-      INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer" << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-      getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
-      break;
     case HAL_RANGE_ERR:
-      /* undefined BUS number, undefined BIOS-Obj number, wrong buffer size */
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-      break;
     default:
-      /* unspecified error */
-      getILibErrInstance().registerError( iLibErr_c::Unspecified, iLibErr_c::Can );
+      IsoAgLib::getILibErrInstance().registerFatal( IsoAgLib::iLibErr_c::HalCanConfig, aui8_busNumber );
       break;
   }
   return b_result;
@@ -294,19 +269,10 @@ bool MsgObj_c::verifyBusMsgobjNr(int8_t ac_busNr, int8_t ac_msgobjNr)
   uint8_t b_testMsgobj = (ac_msgobjNr >= 0)?ac_msgobjNr:msgObjNr();
 
   //check if there is an error
-  if (
-     (b_testBus > HAL_CAN_MAX_BUS_NR)
+  return ( ! ( (b_testBus > HAL_CAN_MAX_BUS_NR)
   || (b_testMsgobj < HAL_CAN_MIN_REC_OBJ)
   || (b_testMsgobj > HAL_CAN_MAX_REC_OBJ)
-     )
-  { // set range-error status if called with default values for both parameters
-    if ((ac_busNr < 0) && (ac_msgobjNr < 0)) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    return false;
-  }
-  else
-  { // set no-range-error status if called with default values for both parameters
-    return true;
-  }
+  ) );
 }
 
 /** get the common filter part of all merged
@@ -329,10 +295,8 @@ void MsgObj_c::closeCan()
   // check isOpen() and close CAN
   if (isOpen())
   {
-    if (HAL::can_configMsgobjClose(busNumber(), msgObjNr() ) == HAL_RANGE_ERR)
-    { // given BUS or MsgObj number is wrong
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-    }
+    int16_t ret = HAL::can_configMsgobjClose(busNumber(), msgObjNr() );
+    isoaglib_assert( ret == HAL_NO_ERR ); (void)ret;
     setIsOpen(false);
   }
 }
@@ -354,28 +318,12 @@ inline FilterBox_c& MsgObj_c::getFilterBoxInstance(int32_t ai32_fbIdx ){
 bool MsgObj_c::prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* cp_elem, uint32_t aui32_numEl)
 {
 
-  if(aui8_busNum > HAL_CAN_MAX_BUS_NR || aui8_objNr >= HAL::cui8_numMsbObj)
-  {
-    // range error
-    IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::Range, IsoAgLib::iLibErr_c::Process );
-    return false;
-  }
+  isoaglib_assert( ( aui8_busNum <= HAL_CAN_MAX_BUS_NR ) && ( aui8_objNr < HAL::cui8_numMsbObj) );
 
-/**allocate memory for the new array*/
- HAL::comparableTable_s* p_newTable = static_cast<HAL::comparableTable_s*> (STL_NAMESPACE::malloc(sizeof(HAL::comparableTable_s) * aui32_numEl));
+  /**allocate memory for the new array*/
+  HAL::comparableTable_s* p_newTable = static_cast<HAL::comparableTable_s*> (STL_NAMESPACE::malloc(sizeof(HAL::comparableTable_s) * aui32_numEl));
 
-// problem on the dynamic memory allocation - Trace the error
-  if(p_newTable == NULL)
-  {
-    //Bad allocation
-
-#if DEBUG_MSGOBJ
-    INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory , malloc failed" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-
-    IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::BadAlloc, IsoAgLib::iLibErr_c::System );
-    return false; // not enough memory for allocate a new element
-  }
+  isoaglib_assert( p_newTable );
 
   HAL::comparableTable_s s_data;
 
@@ -385,8 +333,6 @@ bool MsgObj_c::prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* c
       /** if the FbVecIdx is -1, doesn`t register the FB */
       if(cp_elem[tblIdx] < 0 )
       {
-        //range error
-        IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::ElNonexistent, IsoAgLib::iLibErr_c::Process );
         continue;
       }
 
@@ -416,14 +362,8 @@ bool MsgObj_c::prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* c
 
 bool MsgObj_c::msgObjUpdateTable(uint8_t aui8_busNumber, uint8_t aui8_msgObjNr)
 {
-
-    bool b_ret = prepareIrqTable(aui8_busNumber,aui8_msgObjNr,&marr_filterBoxIndex[0],marr_filterBoxIndex.size());
-
-    if(b_ret == false)
-      return false;
-
-    return true;
-  }
+  return prepareIrqTable(aui8_busNumber,aui8_msgObjNr,&marr_filterBoxIndex[0],marr_filterBoxIndex.size());
+}
 
 
 #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION

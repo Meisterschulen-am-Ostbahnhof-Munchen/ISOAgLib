@@ -106,7 +106,7 @@
   #define MACRO_ISOAGLIB_ABORT() TerminateProcess(GetCurrentProcess(), 0)
   #define MACRO_ISOAGLIB_PERROR(x) printf("error: %s\n",x)
 #else
-  #define MACRO_ISOAGLIB_ABORT() abort()
+  #define MACRO_ISOAGLIB_ABORT() CNAMESPACE::abort()
   #define MACRO_ISOAGLIB_PERROR(x) perror(x)
 #endif
 
