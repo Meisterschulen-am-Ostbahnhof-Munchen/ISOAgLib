@@ -130,15 +130,9 @@ tCanMsgReg HUGE_MEM * IRQ_TriggerSend(byte bBus,byte bOjekt,tCanMsgReg HUGE_MEM 
 #endif
 
 
-/** user defined CAN IRQ Function
-    @param bBus bus number [0,1]
-    @param bOjekt Message Object number [1...14] (send)
-    @param tCanregister pointer to the CAN register
-    @return tCanregister
-  */
-
-__HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::tCanMsgReg HUGE_MEM *tCanregisterParam )
+__HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo( byte bBus, byte bOjekt, __HAL::tCanMsgReg HUGE_MEM *tCanregisterParam )
 {
+
    static __HAL::tCanMsgReg tCanregisterLocal;
    CNAMESPACE::memcpy( &tCanregisterLocal, (__HAL::tCanMsgReg*)tCanregisterParam, sizeof( __HAL::tCanMsgReg ) );
    __HAL::tCanMsgReg HUGE_MEM *tCanregister = &tCanregisterLocal;
@@ -164,42 +158,25 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::t
   }
   #endif
 
-      /** if the irQTable is not valid, maybe there is a reconfiguration,
-      * so put all the received message in the FIFO
-      */
+  /** if the irQTable is not valid, maybe there is a reconfiguration,
+  * so put all the received message in the FIFO
+  */
 
-          if(true == HAL::isIrqTable(bBus, bOjekt - 1 ))
-          {
+  if( HAL::isIrqTable(bBus, bOjekt - 1 ) )
+  {
+    /** BIOS objects starts from 1 */
+    HAL::findFilterBox(bBus, bOjekt - 1 , i32_msgId,&i32_fbIndex);
 
-           /** BIOS objects starts from 1 */
-            HAL::findFilterBox(bBus, bOjekt - 1 ,i32_msgId,&i32_fbIndex);
+    if( i32_fbIndex == -1 )
+      return 0; /* do not write the msg into the fifo */
+  }
 
-            if(i32_fbIndex == -1)
-            {/** message discarded, no FB interested **/
-              return 0;
-              /** exit from the switch and doesn't write in the central fifo **/
-            }
-          }
-
-         bool b_ret = HAL::iFifoWrite(bBus,i32_fbIndex,i32_msgId,(void*)tCanregister);
-         (void)b_ret; // return value currently only used for debug...
-
-          #if DEBUG_FIFO_WRITE
-           if(!b_ret)
-           {
-              INTERNAL_DEBUG_DEVICE << "Fifo FULL" << INTERNAL_DEBUG_DEVICE_ENDL;
-           }
-           if(i32_fbIndex == -1)
-           {
-            INTERNAL_DEBUG_DEVICE << "message received during the reconfiguration" << INTERNAL_DEBUG_DEVICE_ENDL;
-           }
-           #endif
-
+  HAL::iFifoWrite( bBus, i32_fbIndex, i32_msgId, (void*)tCanregister );
   return 0;
 }
 
-/** user defined function to retrieve the data from tCanMsgReg  */
 
+/** user defined function to retrieve the data from tCanMsgReg  */
 void getIrqData(void* inputData,_near HAL::fifoData_s* destination,uint8_t aui8_bXtd)
 {
 

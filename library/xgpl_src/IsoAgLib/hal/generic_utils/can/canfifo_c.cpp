@@ -364,122 +364,55 @@ inline  void getFifoCanIdenType(bool b_isExt,__IsoAgLib::Ident_c::identType_t& r
 
 
 /** function used by the productor for writing in the FIFO */
-bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* irqData, uint8_t aui8_bXtd)
+void iFifoWrite(uint8_t aui8_busNum, int32_t ai32_fbIdx, int32_t ai32_msgId, void* irqData, uint8_t aui8_bXtd)
 {
 
   unsigned int ui_tmpAc = s_canFifoInstance[aui8_busNum].ui_AckCount;
   const unsigned int ui_tmpUc = s_canFifoInstance[aui8_busNum].ui_UpdCount;
 
-/**buffer is full, the productor should wait and try after a while */
-  if(ui_tmpUc == ui_tmpAc +(getBufferSize() * 2) )
+  /** buffer is full, the productor should wait and try after a while */
+  if( ui_tmpUc == ui_tmpAc + ( getBufferSize() * 2 ) )
   {
-      if(!isConsumerReading(aui8_busNum)) // discard an old message
-      {
-           iFifoDiscardOldMessage(aui8_busNum); //AC+=2
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, aui8_busNum );
 
-          #if DEBUG_FIFO_WRITE
-            INTERNAL_DEBUG_DEVICE << "Discarded an old message " << INTERNAL_DEBUG_DEVICE_ENDL;
-          #endif
-           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, aui8_busNum );
-
-          //overwrite the old message
-           ui_tmpAc = s_canFifoInstance[aui8_busNum].ui_AckCount;
-
-			#if DEBUG_FIFO_CAN
-
-			  __HAL::tSend pt_send;
-			  pt_send.bXtd = 1;
-			  pt_send.dwId = ai32_msgId;
-			  pt_send.bDlc = 8;
-			  pt_send.abData[0] = 0xff;
-			  pt_send.abData[1] = 0xff;
-			  pt_send.abData[2] = 0xff;
-			  pt_send.abData[3] = 0xff;
-			  pt_send.abData[4] = 0xff;
-			  pt_send.abData[5] = 0xff;
-			  pt_send.abData[6] = 0xff;
-			  pt_send.abData[7] = 0xff;
-
-
-      		  send_can_msg(aui8_busNum, 1, &pt_send);
-
-			#endif
-           // b_ret = iFifoWrite(bBus,fifoData);
-      }
-      else // trace, new message discarded
-      {
-        IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, aui8_busNum );
-        return false;
-      }
-
+    if( ! isConsumerReading( aui8_busNum ) )
+    {
+      iFifoDiscardOldMessage( aui8_busNum ); //AC+=2
+      //overwrite the old message
+      ui_tmpAc = s_canFifoInstance[aui8_busNum].ui_AckCount;
+    }
+    else // trace, new message discarded
+      return;
   }
 
-/*************************************************************************
-  Before writing the UC should have an odd value;
-  With UC = odd value, the consumer knows that the buffer is not accessible
-*****************************************************************************/
-// atomic operation
-/** UC ++ */
+  /* Before writing the UC should have an odd value;
+     With UC = odd value, the consumer knows that the buffer is not accessible */
   s_canFifoInstance[aui8_busNum].ui_UpdCount++;
-//end atomic operation
 
-/** write in the FIFO **/
-
-  USE_NEAR_MEM fifoData_s* ps_writeData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(ui_tmpUc/2)% getBufferSize()];
+  /* write in the FIFO */
+  USE_NEAR_MEM fifoData_s* ps_writeData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(ui_tmpUc/2) % getBufferSize()];
   ps_writeData->dwId = ai32_msgId;
   ps_writeData->i32_time = HAL::getTime();
   ps_writeData->i32_fbIndex = ai32_fbIdx;
 
-
-
   // getIrqData is implemented in the target specific HAL and can directly place the data of the
   // received message into pointed place inside the FIFO
-  __HAL::getIrqData( irqData, ps_writeData , aui8_bXtd);
+  __HAL::getIrqData( irqData, ps_writeData , aui8_bXtd );
 
-/******************************
-       WRITE INTO THE BUFFER
-********************************/
-// necessary copy byte to byte in target environment for the _near using
-/*
-  NEAR uint8_t* pui8_destination = (uint8_t*)&s_canFifoInstance[rui8_busNum].p_fifoBuffer[(ui_tmpUc/2)% getBufferSize()];
-  uint8_t* pui8_source = (uint8_t*)&acref_writeData;
-  for ( unsigned int cnt = sizeof(fifoData_s); cnt > 0; cnt--)
-  {
-         *pui8_destination= *pui8_source;
-          pui8_destination++;
-          pui8_source++;
-  }
-*/
-#if DEBUG_FIFO_WRITE
-  INTERNAL_DEBUG_DEVICE << "WRITER in the buffer index = " << ((ui_tmpUc/2)% getBufferSize()) ;
-  INTERNAL_DEBUG_DEVICE << ", DATA WRITTEN fbIndex = " << s_canFifoInstance[aui8_busNum].p_fifoBuffer[(ui_tmpUc/2)% getBufferSize()].i32_fbIndex ;
+  /* After the writing operation, the productor set the UC to a even value.
+     With UC = even value the consumer knows that the buffer is accessible. */
 
-#ifdef SYSTEM_PC
-  std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
-#endif
-  INTERNAL_DEBUG_DEVICE << ", DATA WRITTEN msgId = " << s_canFifoInstance[aui8_busNum].p_fifoBuffer[(ui_tmpUc/2)% getBufferSize()].dwId << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-
-
-/***************************************************************************
-  After the writing operation, the productor set the UC to a even value.
-  With UC = even value the consumer knows that the buffer is accessible.
-****************************************************************************/
-
-  //atomic operation
-/** UC ++ */
   s_canFifoInstance[aui8_busNum].ui_UpdCount++;
-  //end atomic operation
-  /*
-  The C++ instruction is traslated to the following asm instructions:
+
+  /* The instruction is traslated to the following asm instructions:
   extp r9,#0x1
   mov r1,[r8]
   add r1,#0x1
   extp r9,#0x1
   mov [r8],r1
-*/
 
-  return true;
+  TODO atomic? verify!
+  */
 }
 
 /** pop up the message from the Fifo after having read */
