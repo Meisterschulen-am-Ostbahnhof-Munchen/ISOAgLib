@@ -95,7 +95,7 @@ CONTAINER_CLIENTx_MEMBERS(Cx,c_arrClientCx,pc_searchCacheCx,cacheTypeCx_t)
   Cx& getCx ( Kx at_key ) \
   { \
     const bool __b = existCx( at_key ); \
-    isoaglib_assert( __b ); \
+    isoaglib_assert( __b ); (void)__b; \
     return **pc_searchCacheCx; \
   }
 
