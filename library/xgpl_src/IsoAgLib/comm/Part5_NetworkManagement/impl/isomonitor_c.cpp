@@ -728,7 +728,7 @@ IsoMonitor_c::isoMemberNr(uint8_t aui8_nr)
 bool
 IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
 {
-  isoaglib_assert( existIsoMemberISOName( acrc_isoName) );
+  isoaglib_assert( existIsoMemberISOName( acrc_isoName) ); (void)acrc_isoName;
   // check if "mpc_activeLocalMember" will be invalidated by this deletion
   if (mpc_activeLocalMember == &(*mpc_isoMemberCache))
   { // clear cached active local item - it points to the to be deleted one
