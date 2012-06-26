@@ -32,7 +32,6 @@
 
 using namespace __HAL;
 
-#warning "At time of writing, these constants are not defined in the headers"
 #ifndef PF_CAN
   #define PF_CAN 29
 #endif
