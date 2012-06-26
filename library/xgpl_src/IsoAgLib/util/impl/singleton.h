@@ -117,10 +117,10 @@ union MaxAlign_u {
 #  define DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE) \
     static union { \
       __IsoAgLib::MaxAlign_u mu_dummy; \
-      char mc_mem[SIZE * sizeof(T)]; \
+      char mc_mem[SIZE * (sizeof(T)+sizeof(__IsoAgLib::MaxAlign_u))]; \
     } su_place
 #  define STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instance) \
-  (su_place.mc_mem + (instance * sizeof(T)))
+  (su_place.mc_mem + (instance * (((sizeof(T) + sizeof(__IsoAgLib::MaxAlign_u))/sizeof(__IsoAgLib::MaxAlign_u))*sizeof(__IsoAgLib::MaxAlign_u)) ))
 #else //DO_PLACEMENT_NEW_ON_STATIC_BUFFER
 #  define DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE) (void)0
 #  define STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instance)
@@ -128,13 +128,18 @@ union MaxAlign_u {
 
 #define MACRO_MULTITON_GET_INSTANCE_BODY(T, SIZE, instance)  \
   static T *sarrpt_instances[SIZE]; \
-  T *&rpt_instance = sarrpt_instances[instance]; \
-  if (0 == rpt_instance) { \
-    DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE); \
-    rpt_instance = new STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instance) T; \
-    rpt_instance->setMultitonInst(instance); \
+  static bool isInitialized = false; \
+  DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE); \
+  if( !isInitialized ) \
+  { \
+    for( unsigned instLoop=0; instLoop < SIZE; ++instLoop ) \
+    { \
+      sarrpt_instances[ instLoop ] = new STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instLoop) T; \
+      sarrpt_instances[ instLoop ]->setMultitonInst( instLoop ); \
+    } \
+    isInitialized = true; \
   } \
-  return *rpt_instance
+  return *sarrpt_instances[ instance ]
 
 #define MACRO_SINGLETON_GET_INSTANCE_BODY(T)  \
   static T *rpt_instance=0; \
