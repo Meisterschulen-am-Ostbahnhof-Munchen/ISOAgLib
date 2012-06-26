@@ -38,10 +38,8 @@ iLibErr_c::close()
 }
 
 
-iLibErr_c::iLibErr_c()
-  : m_nonFatal()
-  , m_fatal()
-  , CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
+iLibErr_c::iLibErr_c() :
+  CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
 {
 }
 
