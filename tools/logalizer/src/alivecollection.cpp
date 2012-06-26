@@ -41,7 +41,7 @@ void AliveCollection_c::report() const
          loop_msg = nextCategory(loop_msg))
     {
       const int32_t ci32_alivePeriod = alivePeriod(loop_msg);
-      if (alives(loop_msg, i).size()>0)
+      if (alives(loop_msg, static_cast<uint8_t>( i )).size()>0)
       {
         if (ci32_alivePeriod > 0)
         { // we have a periodic event!
@@ -55,14 +55,14 @@ void AliveCollection_c::report() const
         { // sinlge events!! "== 0"
           std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" sent out ["<<name(loop_msg)<<"] at the following times:"<<std::endl;
         }
-        std::vector<msgType_e>::const_iterator type_iter=response(loop_msg, i).begin();
-        for (std::vector<uint64_t>::const_iterator iter=alives(loop_msg, i).begin();
-             iter != alives(loop_msg, i).end();
+        std::vector<msgType_e>::const_iterator type_iter=response(loop_msg, static_cast<uint8_t>( i ) ).begin();
+        for (std::vector<uint64_t>::const_iterator iter=alives(loop_msg, static_cast<uint8_t>( i )).begin();
+             iter != alives(loop_msg, static_cast<uint8_t>( i )).end();
              iter++)
         {
           std::cout << std::setfill (' ');
           std::cout << "absolute time: "<<std::setw(10)<<(*iter/1000)<<"."<<std::setw(3)<<std::setfill('0')<<(*iter%1000)<<std::setfill(' ');
-          if (iter != alives(loop_msg, i).begin())
+          if (iter != alives(loop_msg, static_cast<uint8_t>( i )).begin())
           {
             const uint64_t cui32_delta = ( *(iter) - *(iter-1) );
             std::cout<< "  relative time: "<<std::setw(10)<<cui32_delta;
@@ -88,7 +88,7 @@ void AliveCollection_c::report() const
             }
             else if (ci32_alivePeriod < 0)
             { // Handshaking
-              if (type_iter == response(loop_msg, i).end()) exit_with_error("No direction/msgType set but is expected. System failure.");
+              if (type_iter == response(loop_msg,static_cast<uint8_t>( i )).end()) exit_with_error("No direction/msgType set but is expected. System failure.");
               int32_t i32_alivePeriodSpecial;
               switch (*type_iter)
               {
@@ -125,7 +125,7 @@ void AliveCollection_c::report() const
             }
           }
           std::cout << std::endl;
-          if (type_iter != response(loop_msg, i).end()) type_iter++;
+          if (type_iter != response(loop_msg, static_cast<uint8_t>( i )).end()) type_iter++;
         }
       }
     }

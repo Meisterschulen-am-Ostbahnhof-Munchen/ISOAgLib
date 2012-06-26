@@ -587,7 +587,7 @@ void interpretePgnsCl2Fs(
                std::cout << ((at_ptrFrame->dataOctet(2) && 0x02)? " force" : " not force");
                std::cout << ((at_ptrFrame->dataOctet(2) && 0x01)? " copy" : " not copy");
 
-               i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | at_ptrFrame->dataOctet(3);
+               i_pathNameLength = static_cast<uint16_t>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) |  at_ptrFrame->dataOctet(3) );
 
                std::cout << " Source Path Name Length: "  << std::hex << i_pathNameLength;
                std::cout << " Source Path Name: ";
@@ -595,7 +595,7 @@ void interpretePgnsCl2Fs(
                  std::cout << uint8_t(at_ptrFrame->dataOctet(7 + i));
                }
 
-               i_destPathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(6))<<8) | at_ptrFrame->dataOctet(5);
+               i_destPathNameLength = static_cast<uint16_t>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(6))<<8) | at_ptrFrame->dataOctet(5) );
 
                std::cout << " Destination Path Name Length: " << std::hex << i_destPathNameLength;
                std::cout << " Destination Path Name: ";
@@ -610,7 +610,7 @@ void interpretePgnsCl2Fs(
                std::cout << ((at_ptrFrame->dataOctet(2) && 0x02)? " force" : " not force");
                std::cout << ((at_ptrFrame->dataOctet(2) && 0x01)? " copy" : " not copy");
 
-               i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | at_ptrFrame->dataOctet(3);
+               i_pathNameLength = static_cast<uint16_t>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | at_ptrFrame->dataOctet(3) );
 
                std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
                std::cout << " Path Name: ";
@@ -622,7 +622,7 @@ void interpretePgnsCl2Fs(
       break;
     case 0x32: std::cout << "\tGet Files Attributes Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
 
-               i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))<<8) | at_ptrFrame->dataOctet(2);
+               i_pathNameLength = static_cast<uint16_t>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))<<8) | at_ptrFrame->dataOctet(2) );
 
                std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
                std::cout << " Path Name: " ;
@@ -637,7 +637,7 @@ void interpretePgnsCl2Fs(
                if (at_ptrFrame->dataOctet(2) == 0x13) std::cout <<" Clear hidden attribute";
                if (at_ptrFrame->dataOctet(2) == 0x17) std::cout <<" Set hidden attribute";
 
-               i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | at_ptrFrame->dataOctet(3);
+               i_pathNameLength = static_cast<uint16_t>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | at_ptrFrame->dataOctet(3) );
 
                std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
                std::cout << " Path Name: " ;
@@ -647,7 +647,7 @@ void interpretePgnsCl2Fs(
       break;
     case 0x34: std::cout << "\tGet File Date & File Time Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
 
-               i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))<<8) | at_ptrFrame->dataOctet(2);
+               i_pathNameLength = static_cast<uint16_t>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))<<8) | at_ptrFrame->dataOctet(2) );
 
                std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
                std::cout << " Path Name: " ;
@@ -664,7 +664,7 @@ void interpretePgnsCl2Fs(
                if (at_ptrFrame->dataOctet(6) == 0x02) std::cout <<" create  a new volume using space specified";
                if (at_ptrFrame->dataOctet(6) == 0x01) std::cout <<" Overwrite the existing volume";
 
-               i_pathNameLength = static_cast<uint16_t>(at_ptrFrame->dataOctet(8)<<8) | at_ptrFrame->dataOctet(7);
+               i_pathNameLength = static_cast<uint16_t>( static_cast<uint16_t>(at_ptrFrame->dataOctet(8)<<8) | at_ptrFrame->dataOctet(7) );
 
                std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
                std::cout << " Path Name: " ;
