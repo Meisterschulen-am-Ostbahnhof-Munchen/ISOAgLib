@@ -47,13 +47,12 @@ Inputs_c::~Inputs_c()
 void
 Inputs_c::setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast){
 
-  isoaglib_assert( ( ab_digitalFirst <= DIGITAL_INPUT_MAX )
+  isoaglib_assert( ab_digitalFirst <= DIGITAL_INPUT_MAX );
 #ifdef DIGITAL_INPUT_MIN_GREATER_ZERO
-     && ( ab_digitalFirst >= DIGITAL_INPUT_MIN)
-     && ( ab_digitalLast >= DIGITAL_INPUT_MIN)
+  isoaglib_assert( ab_digitalFirst >= DIGITAL_INPUT_MIN );
+  isoaglib_assert( ab_digitalLast >= DIGITAL_INPUT_MIN);
 #endif
-     &&(ab_digitalLast <= DIGITAL_INPUT_MAX)
-     );
+  isoaglib_assert( ab_digitalLast <= DIGITAL_INPUT_MAX );
 
   setDigitalFirst(ab_digitalFirst);
   setDigitalLast(ab_digitalLast);
@@ -63,12 +62,12 @@ Inputs_c::setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast){
 
 void
 Inputs_c::setAnalogLimits(uint8_t ab_analogFirst, uint8_t ab_analogLast){
-  isoaglib_assert( ( ab_analogFirst <= ANALOG_INPUT_MAX )
+  isoaglib_assert( ab_analogFirst <= ANALOG_INPUT_MAX );
 #ifdef ANALOG_INPUT_MIN_GREATER_ZERO
-    && ( ab_analogFirst >= ANALOG_INPUT_MIN )
-    && ( ab_analogLast >= ANALOG_INPUT_MIN )
+  isoaglib_assert( ab_analogFirst >= ANALOG_INPUT_MIN );
+  isoaglib_assert( ab_analogLast >= ANALOG_INPUT_MIN );
 #endif
-    &&( ab_analogLast <= ANALOG_INPUT_MAX ));
+  isoaglib_assert( ab_analogLast <= ANALOG_INPUT_MAX );
 
   setAnalogFirst( ab_analogFirst );
   setAnalogLast( ab_analogLast );
@@ -77,13 +76,13 @@ Inputs_c::setAnalogLimits(uint8_t ab_analogFirst, uint8_t ab_analogLast){
 
 void
 Inputs_c::setCounterLimits(uint8_t ab_counterFirst, uint8_t ab_counterLast){
-  isoaglib_assert ( (ab_counterFirst <= COUNTER_INPUT_MAX)
+  isoaglib_assert ( ab_counterFirst <= COUNTER_INPUT_MAX );
 #ifdef COUNTER_INPUT_MIN_GREATER_ZERO
-     &&(ab_counterFirst >= COUNTER_INPUT_MIN)
-     &&(ab_counterLast >= COUNTER_INPUT_MIN)
+  isoaglib_assert( ab_counterFirst >= COUNTER_INPUT_MIN );
+  isoaglib_assert( ab_counterLast >= COUNTER_INPUT_MIN );
 #endif
-     &&(ab_counterLast <= COUNTER_INPUT_MAX)
-     );
+  isoaglib_assert( ab_counterLast <= COUNTER_INPUT_MAX );
+
   setCounterFirst(ab_counterFirst);
   setCounterLast(ab_counterLast);
 }

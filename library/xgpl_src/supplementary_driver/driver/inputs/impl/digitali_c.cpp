@@ -98,7 +98,7 @@ DigitalI_c::init(uint8_t ab_channel, onoff_t ren_onoff, bool ab_static, IsoAgLib
 
   b_static = ab_static;
 
-  isoaglib_assert( ! i16_initResult );
+  isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
   getInputsInstance().registerClient( this );
   // register optional pointer to handler
   if ( ab_channel < 16 ) ppc_handler[ab_channel] = apc_handler;
@@ -118,7 +118,7 @@ void DigitalI_c::setOnHigh( void )
   else
     i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnHigh, NULL);
 
-  isoaglib_assert( ! i16_initResult );
+  isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
 }
 
 
@@ -131,7 +131,7 @@ void DigitalI_c::setOnLow( void )
   else
     i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnLow, NULL);
 
-  isoaglib_assert( ! i16_initResult );
+  isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
 }
 
 
