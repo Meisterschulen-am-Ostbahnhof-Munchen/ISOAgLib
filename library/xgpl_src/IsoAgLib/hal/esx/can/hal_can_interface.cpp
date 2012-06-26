@@ -121,7 +121,7 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo( byte bBus, byte bOjekt, __HAL
    int32_t i32_msgId = ((tCanregister->tArbit.dw & 0xF8000000) >> 27) | ((tCanregister->tArbit.dw & 0xFF0000) >> 11)
                      | ((tCanregister->tArbit.dw & 0xFF00) << 5) | ((tCanregister->tArbit.dw & 0xFF) << 21);
 
-  const bool ext = ((tCanregister->tCfg_D0.b[0] & 0x4) != 0)
+  const bool ext = ((tCanregister->tCfg_D0.b[0] & 0x4) != 0);
   if( ! ext )
   { // for STD ident, the bits0..17 are marked as "don't care" in the C167 documentation
     // --> shift i32_msgId down by 18 bits
@@ -129,7 +129,7 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo( byte bBus, byte bOjekt, __HAL
   }
 
   #ifdef USE_CAN_MEASURE_BUSLOAD
-  canBusLoads[ bBus ].updateCanBusLoad(( ( (tCanregister->tCfg_D0.b[0] & 0xF0) >> 4) + ( ext ? 4 : 2 ) ) );
+  HAL::canBusLoads[ bBus ].updateCanBusLoad(( ( (tCanregister->tCfg_D0.b[0] & 0xF0) >> 4) + ( ext ? 4 : 2 ) ) );
   #endif
 
   /** if the irQTable is not valid, maybe there is a reconfiguration,
@@ -302,7 +302,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   i32_cinterfBeginBit1err[aui8_busNr] = -1;
 
   #ifdef USE_CAN_MEASURE_BUSLOAD
-  canBusLoads[ aui8_busNr ].init();
+  HAL::canBusLoads[ aui8_busNr ].init();
   #endif
 
   // now config BUS
