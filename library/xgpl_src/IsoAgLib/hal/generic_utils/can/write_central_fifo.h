@@ -13,6 +13,9 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#include <IsoAgLib/isoaglib_config.h>
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+
 #ifndef WRITE_CENTRALFIFO_H
 #define WRITE_CENTRALFIFO_H
 
@@ -27,10 +30,6 @@
 #include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
 
-
-
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-
 namespace HAL {
 
 extern "C" {
@@ -41,9 +40,6 @@ extern "C" {
 
 /** the highest receive MsgObj number (including the special last message object!!) is ONE larger than the highest
     number for a message object for SEND */
-
-
-
 
 typedef struct {
 // uint8_t sizeTable;

@@ -18,7 +18,9 @@
  */
 
 
+#include <IsoAgLib/isoaglib_config.h>
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+
 #include "canfifo_c.h"
 #if DEBUG_FIFO_CAN
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -429,5 +431,3 @@ void iFifoPopMessage(uint8_t aui8_busNum)
 }// HAL
 
 #endif
-
-

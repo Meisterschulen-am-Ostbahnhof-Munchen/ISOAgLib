@@ -32,10 +32,9 @@
 
 #include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
+#include <IsoAgLib/hal/generic_utils/can/canutils.h>
 
 #include <list>
-
-
 
 namespace __HAL {
 
@@ -81,16 +80,6 @@ static int32_t i32_cinterfBeginBusWarnOff[cui32_maxCanBusCnt];
 static int32_t i32_cinterfBeginBit1err[cui32_maxCanBusCnt];
 static int32_t i32_cinterfLastSuccSend[cui32_maxCanBusCnt];
 static int32_t i32_cinterfLastSuccReceive[cui32_maxCanBusCnt];
-
-#ifdef USE_CAN_MEASURE_BUSLOAD
-void updateCanBusLoad(uint8_t aui8_busNr, uint8_t ab_dlc);
-/** array of 100msec. timeslice conters of received and sent msg per BUS [uint8_t] */
-static uint16_t gwCinterfBusLoad[cui32_maxCanBusCnt][10];
-/** actual index in gwBusLoad */
-static uint8_t gb_cinterfBusLoadSlice[cui32_maxCanBusCnt];
-
-#endif
-
 
 typedef struct {
 
@@ -167,23 +156,6 @@ void updateSuccSendTimestamp(uint8_t aui8_busNr)
     }
   }
 }
-
-#ifdef USE_CAN_MEASURE_BUSLOAD
-/**
-  deliver the baudrate of the CAN BUS in [kbaud]
-  @param aui8_busNr number of the BUS to check (default 0)
-  @return BUS load of the last second [kbaud]
-*/
-int32_t can_stateGlobalBusload(uint8_t aui8_busNr)
-{
-  int32_t i32_baudrate = 0;
-  for (uint8_t ui8_ind = 0; ui8_ind < 10; ui8_ind++)
-  {
-    i32_baudrate += (gwCinterfBusLoad[aui8_busNr][ui8_ind] * 8);
-  }
-  return i32_baudrate;
-}
-#endif
 
 /**
   check if send try of this MsgObj caused an Bit1Error
@@ -294,9 +266,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
 #endif
 
 #ifdef USE_CAN_MEASURE_BUSLOAD
-   gb_cinterfBusLoadSlice[aui8_busNr] = 0;
-  // cnt 0xFF ist sign, that this MsgObj isn't configured for send
-  CNAMESPACE::memset((gwCinterfBusLoad[aui8_busNr]),0,10);
+  HAL::canBusLoads[ aui8_busNr ].init();
 #endif
 
   // now config BUS
@@ -472,28 +442,6 @@ bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
 /* ***************** Use of MsgObj ********************* */
 /* ***************************************************** */
 
-  #ifdef USE_CAN_MEASURE_BUSLOAD
-/**
-  update the CAN BUS load statistic
-  @param aui8_busNr BUS number to update
-  @param ab_dlc length ot the detected (send or receive) message
-*/
-void updateCanBusLoad(uint8_t aui8_busNr, uint8_t ab_dlc)
-{
-  int32_t i32_now = getTime();
-  uint8_t b_newSlice = ((i32_now / 100)%10);
-  if (gb_cinterfBusLoadSlice[aui8_busNr] != b_newSlice)
-  {
-    gwCinterfBusLoad[aui8_busNr][b_newSlice] = ab_dlc;
-    gb_cinterfBusLoadSlice[aui8_busNr] = b_newSlice;
-  }
-  else
-  {
-    gwCinterfBusLoad[aui8_busNr][b_newSlice] += ab_dlc;
-  }
-}
-#endif
-
 /**
   send a message via a MsgObj;
   CanPkg_c (or derived object) must provide (virtual)
@@ -520,25 +468,7 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 
   updateSuccSendTimestamp(aui8_busNr);
   b_count = arrHalCan[aui8_busNr][(aui8_msgobjNr)].ui8_cinterfLastSendBufCnt;
-  // CanPkgExt_c::getData transforms flag data to ident and 8byte string
   apc_data->getData(pt_send->dwId, pt_send->bXtd, pt_send->bDlc, pt_send->abData);
-  // pt_send->dwId = apc_data->ident();
-  // if (apc_data->identType() == 1)
-  // CanPkg_c::ident() and CanPkg_c::identType() changed to static
-  // pt_send->dwId = __IsoAgLib::CanPkg_c::ident();
-  // if (__IsoAgLib::CanPkg_c::identType() == 1)
-#ifdef USE_CAN_MEASURE_BUSLOAD
-  if (pt_send->bXtd == 1)
-  { // extended 29bit ident
-    updateCanBusLoad(aui8_busNr, (pt_send->bDlc + 4));
-    // pt_send->bXtd = 1;
-  }
-  else
-  { // standard 11bit ident
-    // pt_send->bXtd = 0;
-    updateCanBusLoad(aui8_busNr, (pt_send->bDlc + 2));
-  }
-#endif
 
   // increase counter of to be sent msg in buffer
   arrHalCan[aui8_busNr][(aui8_msgobjNr)].ui8_cinterfLastSendBufCnt = b_count + 1;
@@ -652,8 +582,7 @@ int16_t can_useMsgobjGet(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::
       idType = __IsoAgLib::Ident_c::ExtendedIdent;
 
 #ifdef USE_CAN_MEASURE_BUSLOAD
-
-      updateCanBusLoad(aui8_busNr, (pt_receive->bDlc + 4));
+      HAL::canBusLoads[ aui8_busNr ].updateCanBusLoad( pt_receive->bDlc + 4 );
 #endif
 
     }
@@ -661,7 +590,7 @@ int16_t can_useMsgobjGet(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::
     { // standard  11bit ident
       idType = __IsoAgLib::Ident_c::StandardIdent;
 #ifdef USE_CAN_MEASURE_BUSLOAD
-      updateCanBusLoad(aui8_busNr, (pt_receive->bDlc + 2));
+      HAL::canBusLoads[ aui8_busNr ].updateCanBusLoad( pt_receive->bDlc + 2 );
 #endif
     }
 
@@ -764,11 +693,11 @@ __HAL::tCanMsgReg* IwriteCentralCanfifo(uint8_t bBus,uint8_t bOjekt,__HAL::tCanM
   #ifdef USE_CAN_MEASURE_BUSLOAD
    if ((tCanregister->tMessageCtrl.w) != 0)
    { // extended 29bit ident
-     updateCanBusLoad(bBus, tCanregister->tCfg_D0.b[0]+ 4);
+     canBusLoads[ bBus ].updateCanBusLoad( tCanregister->tCfg_D0.b[0] + 4 );
    }
    else
    { // standard 11bit ident
-     updateCanBusLoad(bBus, tCanregister->tCfg_D0.b[0] + 2);
+     canBusLoads[ bBus ].updateCanBusLoad( tCanregister->tCfg_D0.b[0] + 2 );
    }
    #endif
 

@@ -22,6 +22,7 @@
 
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
+#include <IsoAgLib/hal/generic_utils/can/canutils.h>
 
 extern "C" {
 #include "datacontainer.h"

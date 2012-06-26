@@ -50,7 +50,7 @@ public:
   uint8_t getBusNumber() const { return getCanInstance4Comm().getBusNumber(); }
 
   #ifdef USE_CAN_MEASURE_BUSLOAD
-  uint16_t getBusLoad() const { return getCanInstance4Comm().getBusLoad(); }
+  uint16_t getProcessedThroughput() const { return getCanInstance4Comm().getProcessedThroughput(); }
   #endif
 
   uint8_t sendCanFreecnt() { return getCanInstance4Comm().sendCanFreecnt(); }

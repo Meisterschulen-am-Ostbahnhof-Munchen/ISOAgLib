@@ -179,6 +179,12 @@ class iProprietaryBus_c {
     { (void) __IsoAgLib::getCanInstance4Prop().operator<< (acrc_src);
       return *this; }
 
+#ifdef USE_CAN_MEASURE_BUSLOAD
+  uint32_t getProcessedThroughput() const {
+    return getCanInstance4Prop().getBusLoad();
+  }
+#endif
+
  private:
   /** allow getIproprietaryBusInstance() access to shielded base class.
       otherwise __IsoAgLib::getProprietaryBusInstance() wouldn't be accepted by compiler

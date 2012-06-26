@@ -13,10 +13,11 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#include <IsoAgLib/isoaglib_config.h>
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+
 #ifndef ICANFIFO_H
 #define ICANFIFO_H
-
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 
 
 namespace HAL {

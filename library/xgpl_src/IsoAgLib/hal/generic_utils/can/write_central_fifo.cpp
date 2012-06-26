@@ -13,8 +13,11 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 
+#include <IsoAgLib/isoaglib_config.h>
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+
+#include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 
 #ifdef SYSTEM_PC
 #include <IsoAgLib/hal/pc/errcodes.h>
@@ -23,11 +26,9 @@
 #endif
 
 #include <IsoAgLib/util/iliberr_c.h>
-
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/hal/hal_system.h>
 
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 
 namespace HAL {
 

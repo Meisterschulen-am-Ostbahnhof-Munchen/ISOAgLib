@@ -40,11 +40,6 @@ namespace HAL
   inline bool can_stateGlobalOff(uint8_t aui8_busNr)
     {return __HAL::can_stateGlobalOff(aui8_busNr);}
 
-#ifdef USE_CAN_MEASURE_BUSLOAD
-  inline int32_t can_stateGlobalBusload(uint8_t aui8_busNr)
-    {return __HAL::can_stateGlobalBusload(aui8_busNr);}
-#endif
-
   inline bool can_stateGlobalBit1err(uint8_t aui8_busNr)
     {return __HAL::can_stateGlobalBit1err(aui8_busNr);}
 

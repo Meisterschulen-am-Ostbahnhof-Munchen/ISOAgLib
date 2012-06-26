@@ -51,15 +51,6 @@ bool can_stateGlobalWarn(uint8_t aui8_busNr = 0);
 */
 bool can_stateGlobalOff(uint8_t aui8_busNr = 0);
 
-#ifdef USE_CAN_MEASURE_BUSLOAD
-/**
-  deliver the baudrate of the CAN BUS in [kbaud]
-  @param aui8_busNr number of the BUS to check (default 0)
-  @return BUS load of the last second [kbaud]
-*/
-int32_t can_stateGlobalBusload(uint8_t aui8_busNr = 0);
-#endif
-
 /**
   check if a send try on this BUS caused an Bit1Error
   (occurs if >1 controller try to send msg with same ident)

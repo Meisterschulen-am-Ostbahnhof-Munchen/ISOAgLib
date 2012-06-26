@@ -21,6 +21,7 @@
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
+#include <IsoAgLib/hal/generic_utils/can/canutils.h>
 
 #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION || DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING
   #ifdef SYSTEM_PC
@@ -176,12 +177,11 @@ CanIo_c::timeEvent( void )
 
 
 #ifdef USE_CAN_MEASURE_BUSLOAD
-/** deliver actual BUS load in baud
-  @return baudrate in [kbaud] on used CAN BUS
-*/
-uint16_t CanIo_c::getBusLoad() const
+/** deliver actual BUS load in baud */
+uint32_t CanIo_c::getProcessedThroughput() const
 {
-  return HAL::can_stateGlobalBusload(mui8_busNumber);
+  isoaglib_assert( mui8_busNumber <= HAL_CAN_MAX_BUS_NR );
+  return HAL::canBusLoads[ mui8_busNumber ].getBusLoad();
 }
 #endif
 

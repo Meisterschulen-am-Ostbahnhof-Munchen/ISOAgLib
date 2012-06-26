@@ -21,16 +21,16 @@
 * compilation define:
 * - CAN_FIFO_READ_WAITING : when the consumer in the read operation waits the time necessary to the producer for writing.*.
 */
-#ifndef _CANFIFO_H
 
-#define _CANFIFO_H
-
+#include <IsoAgLib/isoaglib_config.h>
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 
+#ifndef _CANFIFO_H
+#define _CANFIFO_H
+
+
 #ifdef SYSTEM_PC
-
 #include <iostream>
-
 #endif
 
 

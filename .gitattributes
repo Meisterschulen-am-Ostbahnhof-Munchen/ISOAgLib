@@ -181,6 +181,8 @@ library/xgpl_src/IsoAgLib/hal/esxu/system/system_target_extensions.h -text
 library/xgpl_src/IsoAgLib/hal/esxu/typedef.h -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/can/canfifo_c.cpp -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/can/canfifo_c.h -text
+library/xgpl_src/IsoAgLib/hal/generic_utils/can/canutils.cpp -text
+library/xgpl_src/IsoAgLib/hal/generic_utils/can/canutils.h -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/can/icanfifo.h -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/can/write_central_fifo.cpp -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/can/write_central_fifo.h -text

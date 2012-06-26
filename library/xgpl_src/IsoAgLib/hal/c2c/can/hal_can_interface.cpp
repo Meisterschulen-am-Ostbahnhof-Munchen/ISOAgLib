@@ -31,6 +31,7 @@
 
 #include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
+#include <IsoAgLib/hal/generic_utils/can/canutils.h>
 
 
 #include <IsoAgLib/driver/system/impl/system_c.h>
@@ -67,18 +68,6 @@ static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 
 static int32_t i32_cinterfBeginBit1err[cui32_maxCanBusCnt];
 static uint8_t ui8_cinterfLastSendBufCnt[cui32_maxCanBusCnt][16];
-
-#ifdef USE_CAN_MEASURE_BUSLOAD
-
-void updateCanBusLoad(uint8_t aui8_busNr, uint8_t ab_dlc);
-/** array of 100msec. timeslice conters of received and sent msg per BUS [uint8_t] */
-static uint16_t gwCinterfBusLoad[cui32_maxCanBusCnt][10];
-
-/** actual index in gwBusLoad */
-static uint8_t gb_cinterfBusLoadSlice[cui32_maxCanBusCnt];
-
-#endif
-
 
 /** store size of each MsgObj - needed to answer the Free Item Cnt */
 static uint8_t ui8_cinterfBufSize[cui32_maxCanBusCnt][16];
@@ -141,21 +130,15 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo( byte bBus, byte bOjekt, __HAL
    int32_t i32_msgId = ((tCanregister->tArbit.dw & 0xF8000000) >> 27) | ((tCanregister->tArbit.dw & 0xFF0000) >> 11)
                      | ((tCanregister->tArbit.dw & 0xFF00) << 5) | ((tCanregister->tArbit.dw & 0xFF) << 21);
 
-  if ((tCanregister->tCfg_D0.b[0] & 0x4) == 0)
+  const bool ext = ((tCanregister->tCfg_D0.b[0] & 0x4) != 0)
+  if( ! ext )
   { // for STD ident, the bits0..17 are marked as "don't care" in the C167 documentation
     // --> shift i32_msgId down by 18 bits
     i32_msgId >>= 18; // shift down by 18 bits, as bits0..17 are "don't care" in this case
   }
 
   #ifdef USE_CAN_MEASURE_BUSLOAD
-  if ((tCanregister->tCfg_D0.b[0] & 0x4) != 0)
-  { // extended 29bit ident
-    updateCanBusLoad(bBus, (((tCanregister->tCfg_D0.b[0] & 0xF0) >> 4) + 4));
-  }
-  else
-  { // standard 11bit ident
-    updateCanBusLoad(bBus, (((tCanregister->tCfg_D0.b[0] & 0xF0) >> 4) + 2));
-  }
+  HAL::canBusLoads[ bBus ].updateCanBusLoad(( ( (tCanregister->tCfg_D0.b[0] & 0xF0) >> 4) + ( ext ? 4 : 2 ) ) );
   #endif
 
   /** if the irQTable is not valid, maybe there is a reconfiguration,
@@ -200,31 +183,6 @@ void getIrqData(void* inputData,_near HAL::fifoData_s* destination,uint8_t aui8_
 /* ***************** Status Checking ********************* */
 /* ******************************************************* */
 
-/* ******************** */
-/* ***Global Per BUS*** */
-/* ******************** */
-#ifdef USE_CAN_MEASURE_BUSLOAD
-/**
-  update the CAN BUS load statistic
-  @param aui8_busNr BUS number to update
-  @param rb_dlc length ot the detected (send or receive) message
-*/
-void updateCanBusLoad(uint8_t aui8_busNr, uint8_t ab_dlc)
-{
-  int32_t i32_now = get_time();
-  uint8_t b_newSlice = ((i32_now / 100)%10);
-  if (gb_cinterfBusLoadSlice[aui8_busNr] != b_newSlice)
-  {
-    gwCinterfBusLoad[aui8_busNr][b_newSlice] = ab_dlc;
-    gb_cinterfBusLoadSlice[aui8_busNr] = b_newSlice;
-  }
-  else
-  {
-    gwCinterfBusLoad[aui8_busNr][b_newSlice] += ab_dlc;
-  }
-}
-#endif
-
 /**
   test if the CAN BUS is in WARN state
   @param aui8_busNr number of the BUS to check (default 0)
@@ -250,24 +208,6 @@ bool can_stateGlobalOff(uint8_t aui8_busNr)
   // check if OFF bit is set in CAN control status register
   return ((ui16_canState & CanStateOff) != 0);
 }
-
-#ifdef USE_CAN_MEASURE_BUSLOAD
-
-/**
-  deliver the baudrate of the CAN BUS in [kbaud]
-  @param aui8_busNr number of the BUS to check (default 0)
-  @return BUS load of the last second [kbaud]
-*/
-int32_t can_stateGlobalBusload(uint8_t aui8_busNr)
-{
-  int32_t i32_baudrate = 0;
-  for (uint8_t ui8_ind = 0; ui8_ind < 10; ui8_ind++)
-  {
-    i32_baudrate += (gwCinterfBusLoad[aui8_busNr][ui8_ind] * 8);
-  }
-  return i32_baudrate;
-}
-#endif
 
 /**
   check if send try of this MsgObj caused an Bit1Error
@@ -371,9 +311,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   i32_cinterfBeginBit1err[aui8_busNr] = -1;
 
   #ifdef USE_CAN_MEASURE_BUSLOAD
-  gb_cinterfBusLoadSlice[aui8_busNr] = 0;
-  // cnt 0xFF is sign, that this MsgObj isn't configured for send
-  CNAMESPACE::memset((gwCinterfBusLoad[aui8_busNr]),0,10);
+  HAL::canBusLoads[ aui8_busNr ].init();
   #endif
 
   // now config BUS
@@ -588,19 +526,6 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 
   // CanPkgExt_c::getData transforms flag data to ident and 8byte string
   apc_data->getData(pt_send->dwId, pt_send->bXtd, pt_send->bDlc, pt_send->abData);
-
- #ifdef USE_CAN_MEASURE_BUSLOAD
-  if (pt_send->bXtd == 1)
-  { // extended 29bit ident
-    updateCanBusLoad(aui8_busNr, (pt_send->bDlc + 4));
-    // pt_send->bXtd = 1;
-  }
-  else
-  { // standard 11bit ident
-    // pt_send->bXtd = 0;
-    updateCanBusLoad(aui8_busNr, (pt_send->bDlc + 2));
-  }
-  #endif
 
   // increase counter of to be sent msg in buffer
   ++ui8_cinterfLastSendBufCnt[aui8_busNr][aui8_msgobjNr];

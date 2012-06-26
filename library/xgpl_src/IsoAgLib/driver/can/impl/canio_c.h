@@ -135,10 +135,8 @@ class CanIo_c : public Subsystem_c
   uint8_t getBusNumber( void ) const { return mui8_busNumber; }
 
   #ifdef USE_CAN_MEASURE_BUSLOAD
-  /** deliver actual BUS load in baud
-    @return baudrate in [kbaud] on used CAN BUS
-  */
-  uint16_t getBusLoad() const;
+  /** deliver actual BUS load in baud */
+  uint32_t getProcessedThroughput() const;
   #endif
 
   /** wait until specified timeout or until next CAN message receive

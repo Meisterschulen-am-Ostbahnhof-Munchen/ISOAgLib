@@ -66,6 +66,13 @@ class iIsoBus_c : private __IsoAgLib::IsoBus_c {
     return IsoBus_c::existStdFilter (ar_customer, arc_maskFilter);
   }
 
+  #ifdef USE_CAN_MEASURE_BUSLOAD
+  /** deliver actual BUS load in baud */
+  uint32_t getProcessedThroughput() const {
+    return IsoBus_c::getProcessedThroughput();
+  }
+  #endif
+
  private:
   /** allow getIisoBusInstance() access to shielded base class.
       otherwise __IsoAgLib::getIsoBusInstance() wouldn't be accepted by compiler
