@@ -435,16 +435,16 @@ public:
             && (mi32_longitudeDegree10Minus7 >= (-180*10000000)) && (mi32_longitudeDegree10Minus7 <= (180*10000000))); }
 
   /** deliver Minute GPS Latitude */
-  float getGpsLatitudeMinute( void ) const { return ( mi32_latitudeDegree10Minus7 * 6.0e-4  ); }
+  float getGpsLatitudeMinute( void ) const { return ( mi32_latitudeDegree10Minus7 * 6.0e-4f  ); }
 
   /** deliver Minute GPS Longitude */
-  float getGpsLongitudeMinute( void ) const { return ( mi32_longitudeDegree10Minus7 * 6.0e-4 ); }
+  float getGpsLongitudeMinute( void ) const { return ( mi32_longitudeDegree10Minus7 * 6.0e-4f ); }
 
   /** deliver Degree GPS Latitude */
-  float getGpsLatitudeDegree( void ) const { return ( float(mi32_latitudeDegree10Minus7) * 1.0e-7  ); }
+  float getGpsLatitudeDegree( void ) const { return ( float(mi32_latitudeDegree10Minus7) * 1.0e-7f  ); }
 
   /** deliver Degree GPS Longitude */
-  float getGpsLongitudeDegree( void ) const { return ( float(mi32_longitudeDegree10Minus7) * 1.0e-7 ); }
+  float getGpsLongitudeDegree( void ) const { return ( float(mi32_longitudeDegree10Minus7) * 1.0e-7f ); }
 
   
   /** *** Direction *** **/
