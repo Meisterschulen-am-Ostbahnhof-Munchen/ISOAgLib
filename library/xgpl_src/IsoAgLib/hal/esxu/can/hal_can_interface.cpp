@@ -137,8 +137,11 @@ tCanMsgReg HUGE_MEM * IRQ_TriggerSend(byte bBus,byte bOjekt,tCanMsgReg HUGE_MEM 
     @return tCanregister
   */
 
-__HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::tCanMsgReg HUGE_MEM *tCanregister)
+__HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::tCanMsgReg HUGE_MEM *tCanregisterParam )
 {
+   static __HAL::tCanMsgReg tCanregisterLocal;
+   CNAMESPACE::memcpy( &tCanregisterLocal, (__HAL::tCanMsgReg*)tCanregisterParam, sizeof( __HAL::tCanMsgReg ) );
+   __HAL::tCanMsgReg HUGE_MEM *tCanregister = &tCanregisterLocal;
 
    int32_t i32_fbIndex = -1; /** initialization value*/
    int32_t i32_msgId = ((tCanregister->tArbit.dw & 0xF8000000) >> 27) | ((tCanregister->tArbit.dw & 0xFF0000) >> 11)
