@@ -16,7 +16,11 @@
 
 
 #include <stdlib.h>
+#ifdef WIN32
 #include <cstdint>
+#else
+#include <stdint.h>
+#endif
 #include <iostream>
 
 
