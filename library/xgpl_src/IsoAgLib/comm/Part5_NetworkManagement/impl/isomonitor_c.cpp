@@ -1124,10 +1124,8 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSe
     return false;
 
 #ifdef USE_WORKING_SET
-  switch (aui32_pgn)
+  if( ( aui32_pgn == WORKING_SET_MASTER_PGN ) || ( aui32_pgn == WORKING_SET_MEMBER_PGN ) )
   {
-    case WORKING_SET_MASTER_PGN: // break intentionally left out - react on both PGNs with sending out the complete ws-announce sequence!
-    case WORKING_SET_MEMBER_PGN:
       if (apc_isoItemReceiver == NULL)
       { // No specific destination so it's broadcast: Let all local item answer!
         for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
@@ -1159,7 +1157,7 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSe
           return false; // let it get NACKed
         }
       }
-	  break;
+	 
   }
 #endif
   // shouldn't happen as we only registered for the above handled PGNs

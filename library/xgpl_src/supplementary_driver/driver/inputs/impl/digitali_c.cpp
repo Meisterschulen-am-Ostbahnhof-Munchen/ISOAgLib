@@ -89,16 +89,20 @@ DigitalI_c::init(uint8_t ab_channel, onoff_t ren_onoff, bool ab_static, IsoAgLib
 { // now init the digital input
   InputBase_c::init(ab_channel, digital);
 
-  int16_t i16_initResult;
-  if ( ( apc_handler != NULL ) && ( ab_channel < 16 ) )
+  ;
+  if ( ( apc_handler != NULL ) && ( ab_channel < 16 ) ) {
     // register pointer to IRQ handler
-    i16_initResult = HAL::init_digin(channelNr(), BOTH_EDGE, ren_onoff,digitalInputIrqFuncArr[ab_channel] );
-  else
-    i16_initResult = HAL::init_digin(channelNr(), DIGIN, ren_onoff, NULL);
+    const int16_t i16_initResult = HAL::init_digin(channelNr(), BOTH_EDGE, ren_onoff,digitalInputIrqFuncArr[ab_channel] );
+	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+  }
+  else {
+    const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, ren_onoff, NULL);
+	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+  }
 
   b_static = ab_static;
 
-  isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+  
   getInputsInstance().registerClient( this );
   // register optional pointer to handler
   if ( ab_channel < 16 ) ppc_handler[ab_channel] = apc_handler;
@@ -111,27 +115,33 @@ DigitalI_c::init(uint8_t ab_channel, onoff_t ren_onoff, bool ab_static, IsoAgLib
 
 void DigitalI_c::setOnHigh( void )
 {
-  int16_t i16_initResult;
-  if ( channelNr() < 16 )
+  if ( channelNr() < 16 ) {
     // register pointer to IRQ handler
-    i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnHigh, digitalInputIrqFuncArr[channelNr()] );
+    const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnHigh, digitalInputIrqFuncArr[channelNr()] );
+	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+  }
   else
-    i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnHigh, NULL);
-
-  isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+  {
+    const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnHigh, NULL);
+	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+  }
+  
 }
 
 
 void DigitalI_c::setOnLow( void )
 {
-  int16_t i16_initResult;
-  if ( channelNr() < 16 )
+  
+  if ( channelNr() < 16 ) {
     // register pointer to IRQ handler
-    i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnLow, digitalInputIrqFuncArr[channelNr()] );
+    const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnLow, digitalInputIrqFuncArr[channelNr()] );
+	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+  }
   else
-    i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnLow, NULL);
-
-  isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+  {
+    const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnLow, NULL);
+	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+   }
 }
 
 

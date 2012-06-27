@@ -77,15 +77,7 @@ AnalogI_c::val()const
     if ( en_analogType == voltage ) i16_sensor =  HAL::getAdcVoltage(channelNr());
     else i16_sensor =  HAL::getAdcCurrent(channelNr());
   }
-  // check if error occured
-  if (i16_sensor < 0)
-  {
-    if (i16_sensor == HAL_RANGE_ERR)
-    { // error during measure -> wrong input channel no
-      // return error code for 16bit input values
-      return ERROR_VAL_16S;
-    }
-  }
+  isoaglib_assert( i16_sensor != HAL_RANGE_ERR );
   return uint16_t( i16_sensor );
 }
 
