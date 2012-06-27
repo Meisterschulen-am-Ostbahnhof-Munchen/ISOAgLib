@@ -16,8 +16,9 @@
 
 
 #include <stdlib.h>
-#include <stdint.h>
+#include <cstdint>
 #include <iostream>
+
 
 char getAscii(uint8_t val);
 

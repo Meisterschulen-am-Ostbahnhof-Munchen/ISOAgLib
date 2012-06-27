@@ -12,7 +12,8 @@ project(LOGALIZER)
 
 add_definitions(
   -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  -DCAN_INSTANCE_CNT=1)
+  -DCAN_INSTANCE_CNT=1
+  -D_CRT_SECURE_NO_WARNINGS)
 
 include_directories(
   ../src

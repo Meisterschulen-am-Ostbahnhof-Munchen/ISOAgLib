@@ -21,8 +21,8 @@ CXX      = $(COMPILER_BINARY_PRE)g++
 STRIP	  := $(COMPILER_BINARY_PRE)strip
 LEX      = flex
 YACC     = yacc
-CFLAGS   = -pipe -O2 -Wall -Wextra -g -fno-builtin -fno-exceptions -fno-exceptions -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -DCAN_INSTANCE_CNT=1
-CXXFLAGS = -pipe -O2 -Wall -Wextra -g -fno-builtin -fno-exceptions -fno-exceptions -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wconversion -Woverloaded-virtual -Wpointer-arith -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -DCAN_INSTANCE_CNT=1
+CFLAGS   = -pipe -O2 -Wall -Wextra -g -fno-builtin -fno-exceptions -fno-exceptions -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -DCAN_INSTANCE_CNT=1 -D_CRT_SECURE_NO_WARNINGS
+CXXFLAGS = -pipe -O2 -Wall -Wextra -g -fno-builtin -fno-exceptions -fno-exceptions -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wconversion -Woverloaded-virtual -Wpointer-arith -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -DCAN_INSTANCE_CNT=1 -D_CRT_SECURE_NO_WARNING
 LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I../../library/xgpl_src -I../../tools/libs/misc $(APP_INC)
