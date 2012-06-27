@@ -18,7 +18,6 @@
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 typedef __IsoAgLib::IState_c IState_c;
-typedef __IsoAgLib::IStateExt_c IStateExt_c;
 }
 
 #endif

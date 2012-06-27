@@ -283,8 +283,6 @@ public:
 
   /** deliver member item with given nr
     (check with existIsoMemberNr before access to not defined item)
-    possible errors:
-      * Err_c::elNonexistent on failed search
     @param aui8_nr searched number
     @return reference to searched ISOItem
      @exception containerElementNonexistant
@@ -298,15 +296,6 @@ public:
     @param acrc_isoName ISOName of to be deleted member
   */
   bool deleteIsoMemberISOName(const IsoName_c& acrc_isoName);
-
-#if 0
-  /** delete item with specified member number
-    possible errors:
-      * Err_c::elNonexistent no member with given ISOName exists
-    @param aui8_nr number of to be deleted member
-  */
-  bool deleteIsoMemberNr(uint8_t aui8_nr);
-#endif
 
   /** check if SA of an announcing IsoItem_c is unique and deliver
     another free SA if not yet unique (else deliver its actual SA if unique yet)

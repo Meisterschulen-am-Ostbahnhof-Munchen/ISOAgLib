@@ -43,8 +43,11 @@ public:
 
   enum TypeNonFatal_en {
     VtOutOfStorageSpace,
-    VtOutOfMemory, MonitorInvalidDa,
+    VtOutOfMemory,
+    MonitorInvalidDa,
     MonitorInvalidSa,
+    MonitorSaRxConflict, /* rxed a message with a locally claimed SA */
+    MonitorNameRxConflict, /* rxed an addres claim with a locally registered NAME */
     TracMultipleSender,
     TracError,
     HalCanBusWarn,

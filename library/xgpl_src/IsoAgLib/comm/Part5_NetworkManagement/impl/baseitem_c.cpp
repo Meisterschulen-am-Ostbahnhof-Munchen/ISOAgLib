@@ -24,7 +24,7 @@ namespace __IsoAgLib {
   @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
 BaseItem_c::BaseItem_c( int32_t ai32_time, IState_c::itemState_t ab_status, int ai_multitonInst)
-  : IStateExt_c(ab_status, ai_multitonInst), mi32_lastTime(ai32_time)
+  : IState_c(ab_status, ai_multitonInst), mi32_lastTime(ai32_time)
 {}
 
 /**
@@ -32,7 +32,7 @@ BaseItem_c::BaseItem_c( int32_t ai32_time, IState_c::itemState_t ab_status, int 
   @param acrc_baseItem reference to the source BaseItem_c instance
 */
 BaseItem_c::BaseItem_c(const BaseItem_c& acrc_baseItem)
-: IStateExt_c(acrc_baseItem), mi32_lastTime(acrc_baseItem.mi32_lastTime)
+: IState_c(acrc_baseItem), mi32_lastTime(acrc_baseItem.mi32_lastTime)
 {}
 
 /** destructor which sets the update timestamp to 0 */
@@ -92,39 +92,6 @@ int32_t BaseItem_c::lastedTime( void ) const {
 */
 bool BaseItem_c::checkTime(uint16_t aui16_timeInterval) const  {
   return ( lastedTime() >= aui16_timeInterval );
-}
-
-/**
-  check if given time intervall is lasted;
-  if time intervall is lasted - update time
-  INFO: Interval is only an uint16. That's because of SPEED reasons
-        for 16-bit platforms and of the not existing need to check
-        for more than a minute and 5 seconds (65535 msec)
-  @param aui16_timeInterval time intervall in msec
-  @return true -> time last timestamp older than intervall
-*/
-bool BaseItem_c::checkUpdateTime(uint16_t aui16_timeInterval) {
-  if ( checkTime( aui16_timeInterval ) ) {
-    // enable constant time intervalls without growing time drift
-	// -> simply add aui16_timeIntervall, if current time
-	//    has max 10% deviation from correct timing
-	const uint16_t cui16_maxDeviation = aui16_timeInterval / 10;
-	if ( Scheduler_Task_c::getLastRetriggerTime() <= ( mi32_lastTime + aui16_timeInterval + cui16_maxDeviation ) ) {
-	  // time correctness is close enough to increment last timestamp by exact
-	  // aui16_timeIntervall -> avoid growing time drift if %e.g. each alive msg
-	  // is triggered 5 msec too late
-	  mi32_lastTime += aui16_timeInterval;
-	}
-	else {
-	  // time difference is too big -> allow reset of timestamp
-      mi32_lastTime = Scheduler_Task_c::getLastRetriggerTime();
-	}
-	return true;
-
-  }
-  else {
-    return false;
-  }
 }
 
 } // end of namespace __IsoAgLib

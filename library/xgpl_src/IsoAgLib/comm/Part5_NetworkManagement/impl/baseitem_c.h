@@ -30,7 +30,7 @@ namespace __IsoAgLib {
   in case more than one CAN BUS is used for IsoAgLib.
   @author Dipl.-Inform. Achim Spangler
 */
-class BaseItem_c  : public IStateExt_c {
+class BaseItem_c  : public IState_c {
 public:
   /**
     constructor which takes optional the pointer to the containing Scheduler_c instance
@@ -104,14 +104,6 @@ public:
     @return true -> time last timestamp older than intervall
   */
   bool checkTime(uint16_t aui16_timeInterval) const;
-
-  /**
-    check if given time intervall is lasted;
-    if time intervall is lasted - update time
-    @param aui16_timeInterval time intervall in msec
-    @return true -> time last timestamp older than intervall
-  */
-  bool checkUpdateTime(uint16_t aui16_timeInterval);
 
 protected:
 private:

@@ -263,10 +263,7 @@ CanPkgExt_c::address2IdentRemoteSa( int ai_multitonInstance )
   { // only problem might be: when we receive a message with SA of a local ident
     if ( mc_addrResolveResSA.mpc_monitorItem->itemState(IState_c::Local) )
     {
-      /** @todo SOON-105: isoItem is not const anymore, so we could inform the item of the conflict.
-                      Call for this problem case a function of IsoItem_c to inform it about a remote ECU which sends with our SA;
-                      arc_addressResolveResults.mpc_monitorItem->affectedConflictCnt( IStateExt_c::Incr, time() );
-        */
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::MonitorSaRxConflict, ai_multitonInstance ); 
       #if DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Someone sends with one of our SA's." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif

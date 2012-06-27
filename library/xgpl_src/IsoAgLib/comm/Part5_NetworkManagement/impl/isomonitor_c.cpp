@@ -971,11 +971,9 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
     { // We already have an item with this IsoName
       if (pc_itemSameISOName->itemState(IState_c::Local))
       { // We have a local item with this IsoName
-        /// @todo SOON-240 Handle the case when a remote message claims an address with a local running IsoName!
-        // for now, we shut down our own Ident...
         isoaglib_assert( pc_itemSameISOName->getIdentItem() );
         pc_itemSameISOName->getIdentItem()->goOffline( false ); // false: we couldn't get a new address for this item!
-
+        IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::MonitorNameRxConflict, getMultitonInst() );
         // now create a new node for the remote SA claim
         insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
       }
