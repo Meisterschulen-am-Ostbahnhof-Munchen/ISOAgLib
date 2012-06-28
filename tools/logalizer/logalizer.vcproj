@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="src;../../library/xgpl_src;../../tools/libs/misc"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;DEBUG=1"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;DEBUG=1;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
