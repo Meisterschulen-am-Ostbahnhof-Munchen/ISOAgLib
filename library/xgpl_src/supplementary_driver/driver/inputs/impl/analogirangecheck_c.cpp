@@ -18,7 +18,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-AnalogIRangeCheck_c::AnalogIRangeCheck_c(uint8_t ab_channel, analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc,
+AnalogIRangeCheck_c::AnalogIRangeCheck_c(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc,
   uint16_t aui16_minValid, uint16_t aui16_maxValid )
   : AnalogI_c( ab_channel, ren_analogType, ab_useMean, ab_fastAdc ) {
   setRange( aui16_minValid, aui16_maxValid );
@@ -26,7 +26,7 @@ AnalogIRangeCheck_c::AnalogIRangeCheck_c(uint8_t ab_channel, analogType_t ren_an
 
 
 void
-AnalogIRangeCheck_c::init(uint8_t ab_channel, analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc,
+AnalogIRangeCheck_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc,
   uint16_t aui16_minValid, uint16_t aui16_maxValid )
 {
   AnalogI_c::init( ab_channel, ren_analogType, ab_useMean, ab_fastAdc );

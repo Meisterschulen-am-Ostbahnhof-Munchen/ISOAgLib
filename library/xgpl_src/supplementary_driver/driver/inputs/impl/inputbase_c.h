@@ -16,6 +16,7 @@
 #define INPUTBASE_C_H
 
 #include <supplementary_driver/hal/hal_inputs.h>
+#include <supplementary_driver/driver/inputs/iinput_c.h>
 
 
 // Begin Namespace __IsoAgLib
@@ -32,17 +33,14 @@ namespace __IsoAgLib {
   */
 class InputBase_c {
 public:
-  /** enum type input type of analog: voltage or current (values equivalent to BIOS) */
-  enum analogType_t {voltage = 0, current = 1};
-
-  /** enum type for state of an sensor input */
-  enum state_t {good = 0, error = 1};
-
-  /** enum type for mapping input HI/LO to on/off */
-  enum onoff_t {OnHigh = 1, OnLow = 0};
-
-  /** enum type for the different input type object: at the moment digital and analog */
-  enum inputType_t {undef_input = 0, digital = 1, analog = 2, counter = 3};
+  /**
+    Basic constructor for an input channel object (only internal accessed)
+    @param aui8_channelNr hardware channel of this input object
+    @param ren_inputType input type, which is needed because of the relation
+           of config number and gathering number which vary dependent on input type
+    @see input_type
+  */
+  InputBase_c(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType = IsoAgLib::iInput_c::undef_input);
 
   /**
     Basic constructor for an input channel object (only internal accessed)
@@ -51,16 +49,7 @@ public:
            of config number and gathering number which vary dependent on input type
     @see input_type
   */
-  InputBase_c(uint8_t aui8_channelNr, inputType_t ren_inputType = undef_input);
-
-  /**
-    Basic constructor for an input channel object (only internal accessed)
-    @param aui8_channelNr hardware channel of this input object
-    @param ren_inputType input type, which is needed because of the relation
-           of config number and gathering number which vary dependent on input type
-    @see input_type
-  */
-  void init(uint8_t aui8_channelNr, inputType_t ren_inputType = undef_input);
+  void init(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType = IsoAgLib::iInput_c::undef_input);
 
   /** basic destructor of sensor input object with no function at the moment (only internal accessed) */
   virtual ~InputBase_c();
@@ -97,7 +86,7 @@ public:
 
 private:
   /** input type of this channel */
-  inputType_t en_inputType;
+  IsoAgLib::iInput_c::inputType_t en_inputType;
 
 protected:
   /** channel number of this input */

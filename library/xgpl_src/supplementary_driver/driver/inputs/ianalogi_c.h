@@ -27,14 +27,6 @@ class iAnalogI_c : private __IsoAgLib::AnalogI_c
 {
 public:
   /**
-    Promote baseclass private enums to public
-  */
-    typedef InputBase_c::analogType_t analogType_t;
-    typedef InputBase_c::state_t state_t;
-    typedef InputBase_c::onoff_t onoff_t;
-    typedef InputBase_c::inputType_t inputType_t;
-
-  /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
 
     possible errors:
@@ -47,7 +39,7 @@ public:
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
     @param ab_fastAdc default-argument for setting fast ADC method (false as default)
   */
-  iAnalogI_c(uint8_t ab_channel = 0xFF, analogType_t ren_analogType = voltage, bool ab_useMean = false, bool ab_fastAdc = false )
+  iAnalogI_c(uint8_t ab_channel = 0xFF, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false, bool ab_fastAdc = false )
     : AnalogI_c(ab_channel, ren_analogType, ab_useMean, ab_fastAdc ) {}
 
   /**
@@ -63,7 +55,7 @@ public:
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
     @param ab_fastAdc default-argument for setting fast ADC method (false as default)
   */
-  void init(uint8_t ab_channel, analogType_t ren_analogType = voltage, bool ab_useMean = false, bool ab_fastAdc = false )
+  void init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false, bool ab_fastAdc = false )
     { AnalogI_c::init(ab_channel, ren_analogType, ab_useMean, ab_fastAdc );}
 
   /** destructor which can close the hardware input channel */

@@ -47,7 +47,7 @@ public:
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
     @param ab_fastAdc default-argument for setting fast ADC method (false as default)
   */
-  AnalogI_c(uint8_t ab_channel = 0xFF, analogType_t ren_analogType = voltage, bool ab_useMean = false,
+  AnalogI_c(uint8_t ab_channel = 0xFF, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false,
              bool ab_fastAdc = false);
 
   /**
@@ -64,7 +64,7 @@ public:
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
     @param ab_fastAdc default-argument for setting fast ADC method (false as default)
   */
-  void init(uint8_t ab_channel, analogType_t ren_analogType = voltage, bool ab_useMean = false,
+  void init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false,
              bool ab_fastAdc = false);
 
   /** destructor which can close the hardware input channel */
@@ -122,7 +122,7 @@ private: // Private attributes
     input type: voltage or current
     @see __IsoAgLib::t_analogType
   */
-  analogType_t en_analogType;
+  IsoAgLib::iInput_c::analogType_t en_analogType;
 
   /** if true a mean of the sensor values is retreived */
   bool b_useMean;

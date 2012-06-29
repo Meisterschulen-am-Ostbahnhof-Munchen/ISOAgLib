@@ -223,6 +223,7 @@ library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -t
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememorywithsize_c.cpp -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememorywithsize_c.h -text
+library/xgpl_src/supplementary_driver/driver/inputs/iinput_c.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/eeprom/eeprom.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/inputs/inputs.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/outputs/outputs.h -text

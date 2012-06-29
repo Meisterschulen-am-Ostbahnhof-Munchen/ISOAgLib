@@ -42,7 +42,7 @@ public:
     @param aui16_minValid default min allowed value (min limit of range)
     @param aui16_maxValid default max allowed value (max limit of range)
   */
-  iAnalogIRangeCheck_c(uint8_t ab_channel = 0xFF, analogType_t ren_analogType = voltage, bool ab_useMean = false, bool ab_fastAdc = false,
+  iAnalogIRangeCheck_c(uint8_t ab_channel = 0xFF, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false, bool ab_fastAdc = false,
     uint16_t aui16_minValid = 0, uint16_t aui16_maxValid = 0xFFFF )
     : AnalogIRangeCheck_c(ab_channel, ren_analogType, ab_useMean, ab_fastAdc, aui16_minValid, aui16_maxValid ) {}
 
@@ -60,7 +60,7 @@ public:
     @param aui16_minValid default min allowed value (min limit of range)
     @param aui16_maxValid default max allowed value (max limit of range)
   */
-  void init(uint8_t ab_channel, analogType_t ren_analogType = voltage, bool ab_useMean = false, bool ab_fastAdc = false,
+  void init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false, bool ab_fastAdc = false,
     uint16_t aui16_minValid = 0, uint16_t aui16_maxValid = 0xFFFF )
     { AnalogIRangeCheck_c::init(ab_channel, ren_analogType, ab_useMean, ab_fastAdc, aui16_minValid, aui16_maxValid );}
 

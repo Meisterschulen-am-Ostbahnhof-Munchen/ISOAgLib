@@ -20,7 +20,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-InputBase_c::InputBase_c(uint8_t aui8_channelNr, inputType_t ren_inputType)
+InputBase_c::InputBase_c(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType)
 {
   // store the channel number (software side
   ui8_channelNr = aui8_channelNr;
@@ -29,7 +29,7 @@ InputBase_c::InputBase_c(uint8_t aui8_channelNr, inputType_t ren_inputType)
 
 
 void
-InputBase_c::init(uint8_t aui8_channelNr, inputType_t ren_inputType )
+InputBase_c::init(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType )
 { // store the channel number (software side
   ui8_channelNr = aui8_channelNr;
   en_inputType = ren_inputType;

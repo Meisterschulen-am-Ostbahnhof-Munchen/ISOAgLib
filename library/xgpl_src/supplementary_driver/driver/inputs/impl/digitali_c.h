@@ -16,26 +16,6 @@
 
 #include "inputbase_c.h"
 
-namespace IsoAgLib {
-/** virtual base class for classes in applications, which want
-  * to be called on a sensor related HAL IRQ event
-  * a special application class must overload the appropriate
-  * event handler function for the specific type;
-  * additionally, the contructor of the DigitalI_c, AnalogI_c
-  * or CounterI_c instance must be called with a pointer to the
-  * handling object, which must be derived from this class
-  */
-class iInputEventHandler {
- public:
-  /** function to handle a DigitalI_c event from HAL
-    * @param aui8_channel channel of the input object, which received the IRQ
-    *        from HAL
-    */
-  virtual void handleDigitalEvent( uint8_t aui8_channel );
-  virtual ~iInputEventHandler() {};
-};
-
-};
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -46,7 +26,7 @@ namespace __IsoAgLib {
   @see InputBase_c
   @author Dipl.-Inform. Achim Spangler
   */
-class DigitalI_c : public InputBase_c  {
+class DigitalI_c : public InputBase_c {
 public:
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
@@ -61,7 +41,7 @@ public:
     @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
     @param apc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
-  DigitalI_c(uint8_t ab_channel = 0xFF, onoff_t ren_onoff = OnHigh,
+  DigitalI_c(uint8_t ab_channel = 0xFF, IsoAgLib::iInput_c::onoff_t ren_onoff = IsoAgLib::iInput_c::OnHigh,
               bool ab_static = false, IsoAgLib::iInputEventHandler* apc_handler = NULL );
 
   /**
@@ -77,7 +57,7 @@ public:
     @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
     @param apc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
-  void init(uint8_t ab_channel, onoff_t ren_onoff = OnHigh,
+  void init(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff = IsoAgLib::iInput_c::OnHigh,
               bool ab_static = false, IsoAgLib::iInputEventHandler* apc_handler = NULL );
 
   /** change detection mode of activity to OnHigh */
@@ -139,7 +119,7 @@ private:
     mapping type for sensor HI/LO -> ON/OFF
     @see t_onoff
   */
-  onoff_t en_onoff;
+  IsoAgLib::iInput_c::onoff_t en_onoff;
 
   /** array of pointers to handler for IRQ events */
   #ifndef __TSW_CPP__

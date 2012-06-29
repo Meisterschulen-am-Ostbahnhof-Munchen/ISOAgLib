@@ -36,7 +36,7 @@ namespace __IsoAgLib {
   @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
 */
 CounterI_c::CounterI_c(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge)
-  : InputBase_c(ab_channel, counter){
+  : InputBase_c(ab_channel, IsoAgLib::iInput_c::counter){
   if ( ab_channel != 0xFF ) init(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge);
 }
 /**
@@ -55,7 +55,7 @@ CounterI_c::CounterI_c(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_acti
 */
 void CounterI_c::init(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge )
 {
-  InputBase_c::init(ab_channel, counter);
+  InputBase_c::init(ab_channel, IsoAgLib::iInput_c::counter);
   // now init the digital input
   const bool r = ( HAL::init_counter(channelNr(), aui16_timebase, ab_activHigh, ab_risingEdge) != HAL_RANGE_ERR);
   isoaglib_assert( r ); (void)r;
