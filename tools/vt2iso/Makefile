@@ -80,14 +80,13 @@ GCC = yes
 GXX = yes
 STRIP = strip
 CP = cp
-CXXFLAGS = -g -O2 -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith
-CFLAGS   = -g -O2 -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith
+CXXFLAGS = -g -O2 -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB -D_CRT_SECURE_NO_WARNINGS -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith
+CFLAGS   = -g -O2 -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB -D_CRT_SECURE_NO_WARNINGS -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith
 LDFLAGS =
 THREADS = none
 EXTRA_LIBS =
 PREFIX = /usr
 
-include version.incl
 include Makefile.incl
 
 APP_NAME=vt2iso

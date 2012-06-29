@@ -1,9 +1,0 @@
-# KDevelop Custom Project File List
-Makefile
-Makefile.incl
-version.incl
-src/proc2iso-defines.hpp
-src/proc2iso.cpp
-src/proc2iso.hpp
-Pool.xml
-Device_Description.xml

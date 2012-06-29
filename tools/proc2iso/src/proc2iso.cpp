@@ -123,8 +123,6 @@ char proName[1024+1];
 
 void clean_exit (int return_value, const char* error_message=NULL)
 {
-  char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
-
   if (error_message != NULL)
     std::cout << error_message;
 
@@ -934,7 +932,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
 
             if (b_test)
             { //alle Attribute zum Workingset_mastername zusammensetzen
-              c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()),
+              c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()) != 0,
                             stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
                             stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
                             stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
@@ -946,7 +944,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
             }
             else
             { //alle Attribute zum Workingset_mastername zusammensetzen
-              c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()),
+              c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()) != 0,
                             stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
                             stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
                             stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
@@ -1476,7 +1474,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         buf_length += 4;
 
         //scale
-        float f_temp = atof(vecstr_attrString[attrScale].c_str());
+        float f_temp = float( atof(vecstr_attrString[attrScale].c_str()) );
         uint8_t *pui8_temp = (uint8_t*)&f_temp;
         buffer  << uint16_t(pui8_temp[0]) << ", "
                 << uint16_t(pui8_temp[1]) << ", "
@@ -1626,7 +1624,6 @@ int main(int argC, char* argV[])
   #ifdef WIN32
   HANDLE hList;
   TCHAR  szDir[255];
-  TCHAR  szSubDir[255];
   TCHAR  szCurDir[255];
   WIN32_FIND_DATA FileData;
 
