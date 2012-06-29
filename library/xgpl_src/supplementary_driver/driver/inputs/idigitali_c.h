@@ -54,14 +54,6 @@ class iInputEventHandler {
 class iDigitalI_c : private __IsoAgLib::DigitalI_c {
 public:
   /**
-    Promote baseclass private enums to public
-  */
-    typedef InputBase_c::analogType_t analogType_t;
-    typedef InputBase_c::state_t state_t;
-    typedef InputBase_c::onoff_t onoff_t;
-    typedef InputBase_c::inputType_t inputType_t;
-
-  /**
     internal called constructor for a new digital input channel which performs configuration of hardware
 
     possible errors:
@@ -73,7 +65,7 @@ public:
     @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
     @param apc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
-  iDigitalI_c(uint8_t ab_channel = 0xFF, onoff_t ren_onoff = OnHigh,
+  iDigitalI_c(uint8_t ab_channel = 0xFF, IsoAgLib::iInput_c::onoff_t ren_onoff = IsoAgLib::iInput_c::OnHigh,
       bool ab_static = false, iInputEventHandler* apc_handler = NULL )
     : DigitalI_c(ab_channel, ren_onoff, ab_static, apc_handler)
   {}
@@ -90,7 +82,7 @@ public:
     @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
     @param apc_handler optional pointer to handler class, which can be called, if an HAL irq event occurs
   */
-  void init(uint8_t ab_channel, onoff_t ren_onoff = OnHigh,
+  void init(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff = IsoAgLib::iInput_c::OnHigh,
               bool ab_static = false, iInputEventHandler* apc_handler = NULL )
     { DigitalI_c::init(ab_channel, ren_onoff, ab_static, apc_handler);}
 

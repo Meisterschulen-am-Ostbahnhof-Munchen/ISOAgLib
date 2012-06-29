@@ -78,16 +78,16 @@ DigitalI_c::handleHalIrqEvent( uint8_t aui8_channel ) {
 }
 
 
-DigitalI_c::DigitalI_c(uint8_t ab_channel, onoff_t ren_onoff, bool ab_static, IsoAgLib::iInputEventHandler* apc_handler)
-  : InputBase_c(ab_channel, digital), b_static(ab_static), en_onoff(ren_onoff) {
+DigitalI_c::DigitalI_c(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff, bool ab_static, IsoAgLib::iInputEventHandler* apc_handler)
+  : InputBase_c(ab_channel, IsoAgLib::iInput_c::digital), b_static(ab_static), en_onoff(ren_onoff) {
   if ( ab_channel != 0xFF )init( ab_channel, ren_onoff, ab_static, apc_handler );
 }
 
 
 void
-DigitalI_c::init(uint8_t ab_channel, onoff_t ren_onoff, bool ab_static, IsoAgLib::iInputEventHandler* apc_handler)
+DigitalI_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff, bool ab_static, IsoAgLib::iInputEventHandler* apc_handler)
 { // now init the digital input
-  InputBase_c::init(ab_channel, digital);
+  InputBase_c::init(ab_channel, IsoAgLib::iInput_c::digital);
 
   int16_t i16_initResult;
   if ( ( apc_handler != NULL ) && ( ab_channel < 16 ) )
@@ -120,9 +120,9 @@ void DigitalI_c::setOnHigh( void )
   int16_t i16_initResult;
   if ( channelNr() < 16 )
     // register pointer to IRQ handler
-    i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnHigh, digitalInputIrqFuncArr[channelNr()] );
+    i16_initResult = HAL::init_digin(channelNr(), DIGIN, IsoAgLib::iInput_c::OnHigh, digitalInputIrqFuncArr[channelNr()] );
   else
-    i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnHigh, NULL);
+    i16_initResult = HAL::init_digin(channelNr(), DIGIN, IsoAgLib::iInput_c::OnHigh, NULL);
 
   if (i16_initResult)
   { // wrong input channel no
@@ -136,9 +136,9 @@ void DigitalI_c::setOnLow( void )
   int16_t i16_initResult;
   if ( channelNr() < 16 )
     // register pointer to IRQ handler
-    i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnLow, digitalInputIrqFuncArr[channelNr()] );
+    i16_initResult = HAL::init_digin(channelNr(), DIGIN, IsoAgLib::iInput_c::OnLow, digitalInputIrqFuncArr[channelNr()] );
   else
-    i16_initResult = HAL::init_digin(channelNr(), DIGIN, OnLow, NULL);
+    i16_initResult = HAL::init_digin(channelNr(), DIGIN, IsoAgLib::iInput_c::OnLow, NULL);
 
   if (i16_initResult)
   { // wrong input channel no
