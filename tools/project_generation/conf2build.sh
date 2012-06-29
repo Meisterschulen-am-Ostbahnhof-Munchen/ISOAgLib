@@ -586,7 +586,7 @@ driver_and_hal_features()
         printf '%s' " -o -name '*counteri*'" >&3
     fi
     if [ "$PRJ_INPUTS_DIGITAL" -gt 0 -o "$PRJ_INPUTS_ANALOG" -gt 0 -o "$PRJ_INPUTS_COUNTER" -gt 0 ]; then
-        printf '%s' " -o -name '*inputbase_c.*' -o -name '*inputs_c.*' -o -path '*/hal/hal_inputs.h'" >&3
+        printf '%s' " -o -name '*inputbase_c.*' -o -name '*iinput_c.*' -o -name '*inputs_c.*' -o -path '*/hal/hal_inputs.h'" >&3
         printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/inputs.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/inputs_target_extensions.h'" >&4
 		echo_ "INPUTS driver: $USE_INPUTS_DRIVER"
         case "$USE_INPUTS_DRIVER" in
