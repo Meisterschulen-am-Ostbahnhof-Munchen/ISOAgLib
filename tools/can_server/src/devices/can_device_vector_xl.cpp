@@ -20,6 +20,10 @@
 #ifdef WIN32
 #include <dos.h>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
+
 /* Typedef taken from windows.h to avoid complete windows inclusion: */
 typedef void *HANDLE;
 extern "C" {

@@ -24,6 +24,10 @@
 #include <algorithm>
 #include <iterator>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
+
 // <DESTINATION> PGNs
 #define CLIENT_TO_FS_PGN        0x00AA00LU
 #define FS_TO_GLOBAL_PGN        0x00ABFFLU

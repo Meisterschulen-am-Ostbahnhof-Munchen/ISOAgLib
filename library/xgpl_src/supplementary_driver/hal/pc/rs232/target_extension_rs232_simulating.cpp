@@ -15,6 +15,9 @@
 #include <cstdio>
 #include <cstring>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
 
 using namespace std; // simple version to avoid problems with using CNAMESPACE
 
