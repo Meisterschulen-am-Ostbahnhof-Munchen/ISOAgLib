@@ -53,6 +53,9 @@ public:
     */
   void init (iVtObject_s* aps_vtObject_a MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_a = aps_vtObject_a; MULTITON_INST_INIT_CALL }
 
+  //! Internal checker function
+  bool isOmittedFromUpload() const;
+
 protected:
   //  Operation: get_vtObject_a
   iVtObject_s& get_vtObject_a()
@@ -130,6 +133,15 @@ private:
   virtual void updateEnable(uint8_t /*aui8_enOrDis*/) {}
 
 }; // ~X2C
+
+
+inline
+bool
+vtObject_c::isOmittedFromUpload() const
+{
+  return (s_properties.flags & FLAG_OMIT_OBJECT) != 0;
+}
+
 
 } // end of namespace __IsoAgLib
 
