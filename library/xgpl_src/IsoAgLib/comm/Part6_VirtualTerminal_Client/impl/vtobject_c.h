@@ -51,12 +51,13 @@ public:
   void init (iVtObject_s* aps_vtObject_a MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   {
     // Only init once, don't overwrite the ptr when it's been set (probably to RAM) already
-    if (vtObject_a == NULL)
-    {
-      vtObject_a = aps_vtObject_a;
-      MULTITON_INST_INIT_CALL
-    }
+    isoaglib_assert( vtObject_a == NULL );
+    vtObject_a = aps_vtObject_a;
+    MULTITON_INST_INIT_CALL
   }
+
+  //! Internal checker function
+  bool isOmittedFromUpload() const;
 
 protected:
   //  Operation: get_vtObject_a
@@ -134,6 +135,15 @@ private:
   virtual void updateEnable(uint8_t /*aui8_enOrDis*/) {}
 
 }; // ~X2C
+
+
+inline
+bool
+vtObject_c::isOmittedFromUpload() const
+{
+  return (s_properties.flags & FLAG_OMIT_OBJECT) != 0;
+}
+
 
 } // end of namespace __IsoAgLib
 

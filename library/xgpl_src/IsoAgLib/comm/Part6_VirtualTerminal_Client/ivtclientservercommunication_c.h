@@ -72,6 +72,12 @@ public:
   bool sendCommandEsc (bool b_enableReplaceOfCmd=true)
     {return VtClientServerCommunication_c::sendCommandEsc(b_enableReplaceOfCmd);}
 
+  //! @param versionLabel7chars == NULL: Use VersionLabel used for Uploading/Loading (must be given at init!)
+  //!                                    This includes the language-code for multi-language pools!
+  //!        versionLabel7chars != NULL: Use VersionLabel given. Must be 7 characters!
+  bool sendNonVolatileDeleteVersion( const char* versionLabel7chars )
+    { return VtClientServerCommunication_c::sendNonVolatileDeleteVersion( versionLabel7chars ); }
+
   uint8_t getClientId() const
     { return VtClientServerCommunication_c::getClientId(); }
 

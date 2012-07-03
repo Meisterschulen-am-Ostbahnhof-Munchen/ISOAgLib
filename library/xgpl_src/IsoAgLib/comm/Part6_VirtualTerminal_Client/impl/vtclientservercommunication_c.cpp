@@ -224,14 +224,27 @@ iVtObjectStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t byt
     m_uploadBufferFilled = j;
 
     // stream some more bytes into internal ISO_VT_UPLOAD_BUFFER_SIZE byte buffer...
-    uint16_t bytes2Buffer;
-    while ((bytes2Buffer = ((vtObject_c*)(*mpc_iterObjects))->stream (marr_uploadBuffer+m_uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-m_uploadBufferFilled, mui32_objectStreamPosition)) == 0)
+    while( true )
     {
-      mpc_iterObjects++;
-      mui32_objectStreamPosition = 0;
+      vtObject_c &object = *((vtObject_c*)(*mpc_iterObjects));
+      
+      const uint16_t bytes2Buffer = object.isOmittedFromUpload()
+        ? 0
+        : object.stream( marr_uploadBuffer+m_uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-m_uploadBufferFilled, mui32_objectStreamPosition );
+
+      if( bytes2Buffer == 0 )
+      { // no data for this object, try next one!
+        mpc_iterObjects++;
+        mui32_objectStreamPosition = 0;
+        continue;
+      }
+      else
+      { // could stream bytes for this object.
+        m_uploadBufferFilled += bytes2Buffer;
+        mui32_objectStreamPosition += bytes2Buffer;
+        break; // fine. let's get to the other objects..
+      }
     }
-    m_uploadBufferFilled += bytes2Buffer;
-    mui32_objectStreamPosition += bytes2Buffer;
   }
   mspData->setDataPart (marr_uploadBuffer, m_uploadBufferPosition, bytes);
   m_uploadBufferPosition += bytes;
@@ -1690,6 +1703,11 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
         }
       }
       break;
+
+    case 0xD2: // Command: "Non Volatile Memory", parameter "Delete Version Response"
+      MACRO_setStateDependantOnError (6)
+      break;
+
 #ifndef NO_GET_VERSIONS
     case 0xE0: // Command: "Non Volatile Memory", parameter "Get Versions Response"
       if (men_uploadPoolState != UploadPoolWaitingForGetVersionsResponse)
@@ -2373,6 +2391,34 @@ VtClientServerCommunication_c::sendCommandEsc (bool b_enableReplaceOfCmd)
 }
 
 bool
+VtClientServerCommunication_c::sendNonVolatileDeleteVersion( const char* versionLabel7chars )
+{
+  if( versionLabel7chars != NULL )
+  {
+    return sendCommand (210 /* Non-Volatile Memory Operation Delete Version */,
+                        static_cast<uint8_t>( versionLabel7chars[0] ),
+                        static_cast<uint8_t>( versionLabel7chars[1] ),
+                        static_cast<uint8_t>( versionLabel7chars[2] ),
+                        static_cast<uint8_t>( versionLabel7chars[3] ),
+                        static_cast<uint8_t>( versionLabel7chars[4] ),
+                        static_cast<uint8_t>( versionLabel7chars[5] ),
+                        static_cast<uint8_t>( versionLabel7chars[6] ), false );
+  }
+  else
+  {
+    isoaglib_assert( mb_usingVersionLabel );
+    return sendCommand (210 /* Non-Volatile Memory Operation Delete Version */,
+                        static_cast<uint8_t>( marrp7c_versionLabel[0] ),
+                        static_cast<uint8_t>( marrp7c_versionLabel[1] ),
+                        static_cast<uint8_t>( marrp7c_versionLabel[2] ),
+                        static_cast<uint8_t>( marrp7c_versionLabel[3] ),
+                        static_cast<uint8_t>( marrp7c_versionLabel[4] ),
+                        static_cast<uint8_t>( marrp7c_versionLabel[5] ),
+                        static_cast<uint8_t>( marrp7c_versionLabel[6] ), false );
+  }
+}
+
+bool
 VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd)
 {
   if (!mb_commandsToBus)
@@ -2652,6 +2698,16 @@ VtClientServerCommunication_c::isVtActive() const
 }
 
 
+// helper-function for "initObjectPoolUploadingPhases" below
+uint32_t
+fitTerminalWrapper( const vtObject_c& object )
+{
+  return( object.isOmittedFromUpload() )
+    ? 0
+    : object.fitTerminal();
+}
+
+
 //! initialize the streamer. calculate streams size and (if needed) request Get Memory with the complete size.
 void
 VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, uint16_t aui16_numOfUserPoolUpdateObjects)
@@ -2669,7 +2725,7 @@ VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t r
 
     /// COUNT
     for (uint32_t curObject=0; curObject < aui16_numOfUserPoolUpdateObjects; ++curObject)
-      ms_uploadPhaseUser.ui32_size += (static_cast<vtObject_c*>(mppc_uploadPhaseUserObjects[curObject]))->fitTerminal ();
+      ms_uploadPhaseUser.ui32_size += fitTerminalWrapper( *static_cast<vtObject_c*>( mppc_uploadPhaseUserObjects[curObject] ) );
   }
   else
   { // *CONDITIONALLY* Calculate GENERAL Parts sizes
@@ -2681,7 +2737,7 @@ VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t r
       ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].pc_streamer = &mc_iVtObjectStreamer;
       ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size = 1; // the 0x11 command-byte is always there.
       for (uint32_t curObject=0; curObject < mrc_pool.getNumObjects(); ++curObject)
-        ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size += ((vtObject_c*)mrc_pool.getIVtObjects()[0][curObject])->fitTerminal ();
+        ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size += fitTerminalWrapper( *static_cast<vtObject_c*>( mrc_pool.getIVtObjects()[0][curObject] ) );
 
       /// Phase 2
       const STL_NAMESPACE::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = mrc_pool.getAppSpecificFixPoolData();
@@ -2702,7 +2758,7 @@ VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t r
       const int8_t ci8_realUploadingLanguage = ((mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage) + 1;
 
       for (uint32_t curObject=0; curObject < mrc_pool.getNumObjectsLang(); ++curObject)
-        ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size += ((vtObject_c*)mrc_pool.getIVtObjects()[ci8_realUploadingLanguage][curObject])->fitTerminal ();
+        ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size += fitTerminalWrapper( *static_cast<vtObject_c*>( mrc_pool.getIVtObjects()[ci8_realUploadingLanguage][curObject] ) );
       if (ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size > 0)
       { // only if there's at least one object being streamed up as user-partial-objectpool-update add the CMD byte for size calculation...
         ++ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size; // add the 0x11 byte!

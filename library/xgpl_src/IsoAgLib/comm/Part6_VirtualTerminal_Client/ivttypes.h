@@ -16,6 +16,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <cstdlib>       // using abs()
 #include <algorithm>     // using min() max()
+#include "impl/vttypes.h"
 
 
 #define BUTTON_HAS_BEEN_RELEASED 0

@@ -430,6 +430,8 @@ public:
   }
   bool sendCommandEsc (bool b_enableReplaceOfCmd=true);
 
+  bool sendNonVolatileDeleteVersion( const char* versionLabel7chars );
+
   bool queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd=true);
   void dumpQueue();
 

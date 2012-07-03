@@ -16,6 +16,7 @@
 #include "ivttypes.h"
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/iassert.h>
 
 
 // Begin Namespace IsoAgLib
@@ -468,6 +469,14 @@ public:
   //  Operation: getID
   uint16_t getID() const;
 
+  //! *** API-function ***
+  //! Per default, all objects are uploaded.
+  //! This function inhibts objects from being uploaded
+  //! to the VT. Only use this function if you know what
+  //! you're doing and if there's no other way.
+  //! This can be useful for omitting e.g. AuxFunction
+  //! objects that should not be available due to configuration.
+  void omitFromUpload();
 
   //  Operation: setOriginSKM
   //! @param b_SKM:
@@ -477,7 +486,7 @@ public:
   //! @param p_btn:
   virtual void setOriginBTN(iVtObjectButton_c* p_btn);
 
-  void setClientID (uint8_t ui8_clientID) { s_properties.clientId = ui8_clientID; }
+  void setClientID (uint8_t ui8_clientID);
 
   /** return object type
       !!! BE AWARE that this function is currently NOT overloaded by the standard vt-objects
@@ -492,10 +501,28 @@ protected: // Attributes
   iVtObjectButton_c* p_parentButtonObject;
 
   struct {
-    uint8_t flags:4;
-    uint8_t clientId:4;
+    uint8_t flags:5;
+    uint8_t clientId:3; // when changing, adapt the assertion in "setClientID(..)"!
   } s_properties;
 };
+
+inline
+void
+iVtObject_c::omitFromUpload()
+{
+  s_properties.flags |= FLAG_OMIT_OBJECT;
+}
+
+
+inline
+void
+iVtObject_c::setClientID( uint8_t ui8_clientID )
+{
+  isoaglib_assert( ui8_clientID < 8 ); // 3 bits only, see struct s_clientId
+  s_properties.clientId = ui8_clientID;
+}
+
+
 
 } // end of namespace IsoAgLib
 
