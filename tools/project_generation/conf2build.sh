@@ -119,8 +119,6 @@ set_default_values()
     #USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
     #USE_EMBED_ILO="Xos20lcs.ilo"
     USE_EMBED_COMPILER_DIR="c:/programme/tasking/c166"
-    USE_STLPORT_HEADER_DIRECTORY="C:/STLport/stlport"
-    # USE_STLPORT_LIBRARY_DIRECTORY=""
     # if spec file defines this, the setting is simply overwritten
     APP_SEARCH_SRC_CONDITION="*.C *.cc *.c *.cpp *.cxx"
     APP_SEARCH_HDR_CONDITION="*.h *.hpp"
@@ -195,9 +193,6 @@ set_default_values()
     PRJ_COMPILER_BINARY_PRE=''
     USE_WIN32_EXTERNAL_INCLUDE_PATH=''
     USE_WIN32_EXTERNAL_LIBRARY_PATH=''
-    USE_WIN32_EXTERNAL_INCLUDE_PATH=''
-    USE_WIN32_EXTERNAL_LIBRARY_PATH=''
-    USE_MSVC_EXTERNAL_LIBRARIES=''
     APP_SRC_FILE=''
     USE_RS232_DRIVER='none'
 	USE_INPUTS_DRIVER='none'
@@ -1368,19 +1363,7 @@ create_standard_makefile()
         define_insert_and_report PROJ_DEFINES "$RULE_PROJ_DEFINES"
         printf 'PROJ_DEFINES = %s\n' "$INSERT_PROJ_DEFINES" >&3
 
-        local RULE_COMPILER_BINARY_PRE=$(
-                [ -n "$PRJ_COMPILER_BINARY_PRE" ] && printf '%s' "$PRJ_COMPILER_BINARY_PRE" && return
-                case "$PRJ_DEFINES" in
-                    (*SYSTEM_A1*)
-                        printf '%s' '/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-'
-                        ;;
-                    (*SYSTEM_MCC*)
-                        printf '%s' '/opt/eldk/usr/bin/ppc_6xx-'
-                        ;;
-                    (*)
-                        ;;
-                esac;)
-        define_insert_and_report COMPILER_BINARY_PRE "$RULE_COMPILER_BINARY_PRE"
+        define_insert_and_report COMPILER_BINARY_PRE "$PRJ_COMPILER_BINARY_PRE"
         printf "\n####### Definition of compiler binary prefix corresponding to selected target\n" >&3
         printf 'COMPILER_BINARY_PRE = %s\n' "$INSERT_COMPILER_BINARY_PRE" >&3
         
@@ -1528,23 +1511,7 @@ create_pure_application_makefile()
         fi
         
         echo_e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >&3
-        if [ -n "$PRJ_COMPILER_BINARY_PRE" ] ; then
-            echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >&3
-        else
-            case $PRJ_DEFINES in
-                (*SYSTEM_A1*)
-                    echo_ "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >&3
-                    echo_ "SYSTEM_A1"
-                    ;;
-                (*SYSTEM_MCC*)
-                    echo_ "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >&3
-                    echo_ "SYSTEM_MCC"
-                    ;;
-                (*)
-                    echo_ "COMPILER_BINARY_PRE = " >&3
-                    ;;
-            esac
-        fi
+        echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >&3
         
         echo_e "\n\nfirst: all\n" >&3
         echo_ "####### Files" >&3
@@ -1970,18 +1937,6 @@ create_library_makefile()
                 printf -- ' -DCAN_DRIVER_SOCKET'
                 ;;
         esac;)"
-    local INSERT_COMPILER_BINARY_PRE=$(
-            [ -n "$PRJ_COMPILER_BINARY_PRE" ] && printf '%s' "$PRJ_COMPILER_BINARY_PRE" && return
-            case "$PRJ_DEFINES" in
-                (*SYSTEM_A1*)
-                    printf '%s' '/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-'
-                    ;;
-                (*SYSTEM_MCC*)
-                    printf '%s' '/opt/eldk/usr/bin/ppc_6xx-'
-                    ;;
-                (*)
-                    ;;
-            esac;)
     local INSERT_SOURCES_LIBRARY="$(
         list_source_files '%s' ' \\\n\t%s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary")"
     generate_interface_filelist

@@ -132,10 +132,6 @@ USE_TARGET_SYSTEM="pc_win32"
 # typical cases for BIG ENDIAN are some ARM and mostly all Motorola 68k and PowerPC CPUs
 # USE_LITTLE_ENDIAN_CPU=1
 
-# IsoAgLib switches by default the system relais to ON on startup
-# this can be avoided by setting PRJ_DO_NOT_START_RELAIS_ON_STARTUP to 1
-# PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
-
 # Select enhanced CAN processing which is only available for some
 # CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
@@ -227,9 +223,6 @@ PRJ_ISO11783=1
 
 ### Special Setup / Customization / Optimization
 ##############################################
-
-# NOTE: Part 3 - Data Link Layer: Transport Protocol is always enabled!
-# The setting "PRJ_MULTIPACKET" is obsolete!
 
 # Specify Part 3 - Data Link Layer: Transport Protocol stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> useful when on-the-fly parsing is used
@@ -380,26 +373,11 @@ PRJ_ISO11783=1
 # Build System Configuration for Win32 (Visual C++)
 # ###############################################################
 
-# specify path to headers of STLport - default corresponds to \ref Vc6StlPort
-# USE_STLPORT_HEADER_DIRECTORY="C:/STLport/stlport"
-
-# specify path to STLport libraries in case you selected the option to use the STLport
-# version of IOSTREAMS ( and not the native version as advised by the doc at \ref Vc6StlPort )
-# let empty if native IOSTREAMS library is used
-# USE_STLPORT_LIBRARY_DIRECTORY=""
-
-# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# include directory for external libraries in windows
 # USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# library directory for external libraries in windows
 # USE_WIN32_EXTERNAL_LIBRARY_PATH=""
-
-# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
-# USE_MSVC_EXTERNAL_LIBRARIES=""
-
-# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
-# USE_DEVCPP_EXTERNAL_LIBRARIES=""
-
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
