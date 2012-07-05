@@ -33,7 +33,6 @@
 
 #include "../ivtobjectauxiliaryfunction2_c.h"
 #include "../ivtobjectauxiliaryinput2_c.h"
-#include "sendupload_c.h"
 
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.h>
 

@@ -25,6 +25,7 @@
 #include "aux2inputs_c.h"
 #include "aux2functions_c.h"
 #include "objectpoolstreamer_c.h"
+#include "sendupload_c.h"
 
 #define USE_LIST_FOR_FIFO
 
@@ -44,7 +45,6 @@ namespace IsoAgLib {
 namespace __IsoAgLib {
 class VtServerInstance_c;
 class IsoTerminal_c;
-class SendUpload_c;
 
 
 class VtClientServerCommunication_c : public CanCustomer_c
