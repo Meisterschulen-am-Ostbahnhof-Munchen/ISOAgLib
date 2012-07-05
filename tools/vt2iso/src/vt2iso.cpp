@@ -44,13 +44,7 @@
 #endif
 
 
-#ifdef USE_FREE_IMAGE_LIB
 #include "vt2isoimagefreeimage_c.h"
-#else
-#include "vt2isoimagepaintlib_c.h"
-#endif
-
- // Includes (vt2iso)
 #include "vt2iso.hpp"
 #include "boost/format.hpp"
 #include <sstream>
@@ -79,14 +73,8 @@ using boost::format;
 
 extern BGR_s vtColourTable[256];
 
-/**** CHOOSE YOU IMAGE_PROCESSOR *****/
-/** set it here or in the makefile! **/
-// #define USE_FREE_IMAGE_LIB
-// #define USE_PAINTLIB
-
-//#define MACRO_16bitToLE(value) (value & 0xFF), ((value >> 8) & 0xFF)
+// special formatting with "%" for "str(format(...."
 #define MACRO_16bitToLE(value) (value & 0xFF) % ((value >> 8) & 0xFF)
-//#define MACRO_32bitToLE(value) (value & 0xFF), ((value >> 8) & 0xFF), ((value >> 16) & 0xFF), ((value >> 24) & 0xFF)
 #define MACRO_32bitToLE(value) (value & 0xFF) % ((value >> 8) & 0xFF) % ((value >> 16) & 0xFF) %  ((value >> 24) & 0xFF)
 
 // ### GLOBALS ###
@@ -203,11 +191,7 @@ void DOMCountErrorHandler::resetErrors()
 // ---------------------------------------------------------------------------
 //  GLOBAL Bitmap instance
 // ---------------------------------------------------------------------------
-#ifdef USE_FREE_IMAGE_LIB
-  Vt2IsoImageFreeImage_c c_Bitmap;
-#else
-  Vt2IsoImagePaintlib_c c_Bitmap;
-#endif
+Vt2IsoImageFreeImage_c c_Bitmap;
 
 
 

@@ -86,11 +86,9 @@ APP_SRC_FILE="ecu_main.cpp"
 # - DEBUG for different internal IsoAgLib information
 # - DEBUG_CAN_BUFFER_FILLING for RS232 output of MAX amount of buffered CAN messages
 #   (important to decide on amount of items in the BIOS/OS CAN receive buffer)
-# - DEBUG_HEAP_USEAGE for RS232 output of amount of bytes which are needed of one
-#   item in the different types of dynamic lists:
-#     MsgObj_c, FilterBox_c, IsoItem_c, MeasureSubprog_c, SetpointRegister
-#   Additionally print calculated amount of HEAP memory which is used by the
-#   several types of dynamic lists (output on each list change)
+# Also available to be used:
+# - ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+# - ENABLE_NMEA_2000_MULTI_PACKET
 # (separate multiple defines by whitespace)
 # PRJ_DEFINES=""
 

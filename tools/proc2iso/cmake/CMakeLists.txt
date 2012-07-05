@@ -17,8 +17,7 @@ add_definitions(
   -DCAN_INSTANCE_CNT=1
   -DAPP_NO_THREADS
   -D_CRT_SECURE_NO_WARNINGS
-  -DXML_USE_NO_THREADS
-  -DUSE_FREE_IMAGE_LIB)
+  -DXML_USE_NO_THREADS)
 
 include_directories(
   ../../../library/xgpl_src)
