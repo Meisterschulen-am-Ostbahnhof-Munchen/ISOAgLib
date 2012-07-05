@@ -23,21 +23,13 @@
 #include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
 #include <IsoAgLib/hal/generic_utils/can/canutils.h>
 
-#if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION || DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING
+#if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION || DEBUG_CAN_BUFFER_FILLING
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
     #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #endif
   #include <IsoAgLib/util/impl/util_funcs.h>
-#endif
-
-#if DEBUG_HEAP_USEAGE
-#  ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-static uint16_t sui16_msgObjTotal = 0;
-static uint16_t sui16_deconstructMsgObjCnt = 0;
-#  endif
-static uint16_t sui16_filterBoxTotal = 0;
 #endif
 
 
@@ -142,12 +134,6 @@ CanIo_c::close()
       isoaglib_assert( !"other HAL error" );
       break;
   }
-#if DEBUG_HEAP_USEAGE
-  sui16_filterBoxTotal -= cntFilter();
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  sui16_msgObjTotal -= cntMsgObj();
-#endif
-#endif
 
   // Clear Filters
   m_arrFilterBox.clear();
@@ -374,10 +360,6 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
       uint8_t tempMsgObjNr = minReceiveObjNr() + b_oldSize;
       m_arrFilterBox.back().configCan(mui8_busNumber, tempMsgObjNr);
     #endif
-
-    #if DEBUG_HEAP_USEAGE
-    sui16_filterBoxTotal++;
-    #endif
   }
 
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -459,18 +441,6 @@ CanIo_c::deleteFilter(
 
       setCntFilter( m_arrFilterBox.size() );
     }
-
-    #if DEBUG_HEAP_USEAGE
-    sui16_filterBoxTotal--;
-
-    INTERNAL_DEBUG_DEVICE
-      << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
-      <<  sizeSlistTWithMalloc( sizeof(FilterBox_c), sui16_filterBoxTotal )
-      << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(FilterBox_c), sui16_filterBoxTotal )
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
 
     #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     reconfigureMsgObj();
@@ -1032,9 +1002,6 @@ CanIo_c::FilterBox2MsgObj()
             // insert obj in vector
             marr_msgObj.push_front(mc_tempObj);
             setCntMsgObj( marr_msgObj.size() );
-#if DEBUG_HEAP_USEAGE
-            sui16_msgObjTotal++;
-#endif
             pc_search4MsgObjReuse = marr_msgObj.end();
 
           }
@@ -1053,16 +1020,9 @@ CanIo_c::FilterBox2MsgObj()
   // -> behind the last instance is NOT the list end
   if (pc_search4MsgObjReuse!= marr_msgObj.end())
   {
-#if DEBUG_HEAP_USEAGE
-    const uint16_t cui16_oldSize = cntMsgObj();
-#endif
     HAL::wdTriggern();
     marr_msgObj.erase(pc_search4MsgObjReuse, marr_msgObj.end());
     setCntMsgObj( marr_msgObj.size() );
-#if DEBUG_HEAP_USEAGE
-    sui16_msgObjTotal -= ( cui16_oldSize - cntMsgObj() );
-    sui16_deconstructMsgObjCnt += (cui16_oldSize - cntMsgObj() );
-#endif
   }
 
 #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
@@ -1073,10 +1033,6 @@ CanIo_c::FilterBox2MsgObj()
   << ui16_debugOldSize << ", New size = " << cntMsgObj() << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   if ( i16_result >= 0) i16_result = cntMsgObj();
-#if DEBUG_HEAP_USEAGE
-  INTERNAL_DEBUG_DEVICE
-    << "MsgObj: " << sui16_msgObjTotal << " -> ";
-#endif
   HAL::wdTriggern();
 
   return i16_result;
@@ -1175,10 +1131,6 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERN
       pc_minLeft->merge(*pc_minRight);
       marr_msgObj.erase(pc_minRight);
       setCntMsgObj( marr_msgObj.size() );
-#if DEBUG_HEAP_USEAGE
-      sui16_msgObjTotal--;
-      sui16_deconstructMsgObjCnt++;
-#endif
       // update the filters in the filters in the existing MsgObj_c to the changed mask
       for (ArrMsgObj::iterator c_iter = marr_msgObj.begin(); c_iter != marr_msgObj.end(); c_iter++)
       {
@@ -1197,16 +1149,6 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERN
   }
 
   // now the amount of marr_msgObj is allowed
-#if DEBUG_HEAP_USEAGE
-  INTERNAL_DEBUG_DEVICE
-    << sui16_msgObjTotal << " x MsgObj_c: Mal-Alloc: "
-    <<  sizeSlistTWithMalloc( sizeof(MsgObj_c), sui16_msgObjTotal )
-    << "/" << sizeSlistTWithMalloc( sizeof(MsgObj_c), 1 )
-    << ", Chunk-Alloc: "
-    << sizeSlistTWithChunk( sizeof(MsgObj_c), sui16_msgObjTotal )
-    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-
    HAL::wdTriggern();
 }
 
@@ -1295,16 +1237,6 @@ CanIo_c::reconfigureMsgObj()
   return true;
   #else
   isoaglib_assert( mui8_busNumber <= HAL_CAN_MAX_BUS_NR );
-
-  #if DEBUG_HEAP_USEAGE
-  INTERNAL_DEBUG_DEVICE
-    << sui16_filterBoxTotal << " x FilterBox_c: Mal-Alloc: "
-    <<  sizeSlistTWithMalloc( sizeof(FilterBox_c), sui16_filterBoxTotal )
-    << "/" << sizeSlistTWithMalloc( sizeof(FilterBox_c), 1 )
-    << ", Chunk-Alloc: "
-    << sizeSlistTWithChunk( sizeof(FilterBox_c), sui16_filterBoxTotal )
-    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
 
   //process the message arrived during the reconfiguration
   if(HAL::isFifoCriticalFilled(mui8_busNumber))

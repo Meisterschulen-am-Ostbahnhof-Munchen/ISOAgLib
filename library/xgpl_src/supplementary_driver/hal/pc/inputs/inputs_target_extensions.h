@@ -41,7 +41,6 @@ namespace __HAL {
 #define  CURRENT_IN               1       /* Define to configure the input as current input */
 #define  GET_M_VIRT            16        /* Virtuelle Masse */
 #define  GET_D_T               17        /* Temperaturaenderung DT */
-#define  GET_U_2_3_V           80        /* U 2,3 V   */
 #define  GET_U_THRESHOLD       80        /* U 2,3 V   */
 #define  GET_U_PIC             32        /* Spannungsversg. PIC, 5V   */
 #define  GET_SUM_I             1         /* Messung Summenstrom       */

@@ -248,9 +248,6 @@ namespace HAL
   inline int16_t  getAdcTemp( void )
     {int16_t i16_temp = __HAL::get_adc(GET_D_T);
      return ((100*(i16_temp - 273))/(-83));}
-   #if !defined(GET_U_THRESHOLD) && defined(GET_U_2_3_V)
-     #define GET_U_THRESHOLD GET_U_2_3_V
-   #endif
 
   /**
     get the threshold value

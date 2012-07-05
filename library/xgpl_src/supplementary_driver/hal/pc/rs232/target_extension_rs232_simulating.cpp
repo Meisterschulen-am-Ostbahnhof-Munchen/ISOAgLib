@@ -22,8 +22,6 @@
 using namespace std; // simple version to avoid problems with using CNAMESPACE
 
 
-// #define WRITE_LOG_FILE
-
 namespace __HAL {
 
 /* **************************************** */
@@ -32,7 +30,7 @@ namespace __HAL {
 typedef FILE* FilePointer_t;
 static FilePointer_t rs232_output[RS232_CHANNEL_CNT];
 
-#ifdef WRITE_LOG_FILE
+#ifdef CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
   static FilePointer_t rs232_log[RS232_CHANNEL_CNT];
 #endif
 static char sendName[RS232_CHANNEL_CNT][200];
@@ -51,7 +49,7 @@ int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
 {
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   if (rs232_output[aui8_channel]) fclose( rs232_output[aui8_channel] );
-  #ifdef WRITE_LOG_FILE
+  #ifdef CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
   if (rs232_log[aui8_channel]) fclose( rs232_log[aui8_channel] );
   #endif
   #ifdef WIN32
@@ -77,7 +75,7 @@ int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   // END: Added by M.Wodok 6.12.04
   #endif
 
-  #ifdef WRITE_LOG_FILE
+  #ifdef CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
   char name[50];
   #ifdef WIN32
   sprintf(name, "rs232_log_%hd", aui8_channel);
@@ -101,7 +99,7 @@ int16_t close_rs232(uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   if (rs232_output[aui8_channel]) fclose( rs232_output[aui8_channel] );
-  #ifdef WRITE_LOG_FILE
+  #ifdef CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
   if (rs232_log[aui8_channel]) fclose( rs232_log[aui8_channel] );
   #endif
   return HAL_NO_ERR;
@@ -189,7 +187,7 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   int32_t i32_time = getTime();
   *pbRead = ((uint8_t*)&i32_time)[3];
-  #ifdef WRITE_LOG_FILE
+  #ifdef CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
   fprintf(rs232_log[aui8_channel], "%d read %c\n", getTime(), *pbRead);
   #endif
   return HAL_NO_ERR;
@@ -222,7 +220,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
   fprintf(rs232_output[aui8_channel], "%c", bByte);
   fflush( rs232_output[aui8_channel] );
 
-  #if defined(WRITE_LOG_FILE)
+  #ifdef CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
   fprintf(rs232_log[aui8_channel], "%d write %c\n", getTime(), bByte);
   #endif
   return HAL_NO_ERR;
@@ -244,18 +242,18 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
 //    putc(bpWrite[ui8_ind], rs232_output[aui8_channel]);
 //  }
 //  printf("\n");
-  #ifdef WRITE_LOG_FILE
+  #ifdef CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
   fprintf(rs232_log[aui8_channel], "%d write ", getTime());
   #endif
   for (ui8_ind = 0; ui8_ind < wNumber; ui8_ind++)
   {
     fprintf(rs232_output[aui8_channel], "%c", bpWrite[ui8_ind]);
     fflush( rs232_output[aui8_channel] );
-    #ifdef WRITE_LOG_FILE
+    #ifdef CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
     fprintf(rs232_log[aui8_channel], "%c", bpWrite[ui8_ind]);
     #endif
   }
-  #ifdef WRITE_LOG_FILE
+  #ifdef CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
   fprintf(rs232_log[aui8_channel], "\n");
   #endif
   return HAL_NO_ERR;

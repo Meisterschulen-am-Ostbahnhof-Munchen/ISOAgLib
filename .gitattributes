@@ -87,6 +87,10 @@ library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux3mgmt_c.cpp 
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux3mgmt_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux3prefassignmgmt_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux3prefassignmgmt_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/objectpoolstreamer_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/objectpoolstreamer_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/sendupload_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/sendupload_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryfunction2_c.cpp -text

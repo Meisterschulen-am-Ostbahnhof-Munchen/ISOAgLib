@@ -44,16 +44,10 @@
 #define USE_LITTLE_ENDIAN_CPU 1
 #define HAL_SIZEOF_INT 2
 
-/** define suitable keyword for huge memory type */
+#ifdef USE_HUGE_MEM
+#  error "USE_HUGE_MEM must not be set!"
+#endif
 #define HUGE_MEM
-//#define HUGE_MEM huge
-/** the preprocessor can only distinguish between undefined or defined
-  * constant for conditional compilation
-  * -> use USE_HUGE_MEM
-  */
-#define USE_HUGE_MEM
-
-/** define suitable  keyword for near memory type */
 #define NEAR_MEM      _near
 #define USE_NEAR_MEM  _near
 
@@ -63,8 +57,5 @@
     ( one cycle: write value, re-read, compare )
   */
 #define MAX_EEPROM_WRITE_TRY_CYCLE_CNT 5
-
-// basic period of task manager (scheduler)= const * 500 us = 1 ms
-#define T_TASK_BASIC 2
 
 #endif

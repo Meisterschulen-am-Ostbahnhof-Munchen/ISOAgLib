@@ -306,9 +306,6 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
 
     return t_Sys_AnalogData.iTemperatur;
     }
-   #if !defined(GET_U_THRESHOLD) && defined(GET_U_2_3_V)
-     #define GET_U_THRESHOLD GET_U_2_3_V
-   #endif
 
   /**
     deliver state of digital input based on Activ-High/Low setting

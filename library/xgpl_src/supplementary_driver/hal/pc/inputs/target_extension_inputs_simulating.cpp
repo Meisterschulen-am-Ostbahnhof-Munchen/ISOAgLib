@@ -250,9 +250,10 @@ getDiginFreq (uint8_t bInputNumber, uint32_t *pwFrequency)
 }
 
 /* evaluation of analog channels */
-int16_t  getAdc(uint8_t bKanalnummer)
+int16_t
+getAdc(uint8_t bKanalnummer)
 {
-  if ( bKanalnummer > DIGITAL_INPUT_MAX ) return 1000;
+  if ( bKanalnummer > ANALOG_INPUT_MAX ) return 1000;
   else if ( getTime() >= next_sensorAnalogInputTime[bKanalnummer] )
   { // save next_XX to last_XX
     lastSensorAnalogInputTime[bKanalnummer] = next_sensorAnalogInputTime[bKanalnummer];
@@ -312,7 +313,8 @@ void setFastAnalogin (boolean bMode)
 }
 
 /* evaluation of the mean value of an analog input */
-int16_t  getAnaloginMean(uint8_t bInput)
+int16_t
+getAnaloginMean(uint8_t bInput)
 {
   if ( getTime() >= next_sensorAnalogInputTime[bInput] )
   { // save next_XX to last_XX

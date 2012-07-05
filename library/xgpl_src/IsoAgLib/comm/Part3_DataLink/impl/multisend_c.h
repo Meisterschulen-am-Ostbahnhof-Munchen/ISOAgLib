@@ -28,21 +28,21 @@
 #include "multisendpkg_c.h"
 #include "sendstream_c.h"
 
+#include <vector>
 #include <list>
 #include <functional>
 
+
 namespace IsoAgLib {
-class iMultiSendStreamer_c;
+  class iMultiSendStreamer_c;
 }
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-// forward declarations
-class vtObjectString_c;
 
-class SendUploadBase_c {
+class SendUploadBase_c
+{
 public:
   SendUploadBase_c () : vec_uploadBuffer() {}
 

@@ -227,11 +227,6 @@
   /// Message reception lost if no message received in this time
 #  define CONFIG_TIMEOUT_TRACTOR_DATA 3000
 #endif
-
-#ifndef CONFIG_EEPROM_PADDING_BYTE
-  /** set byte-value to retrieve when reading EEPROM out of bounds */
-#  define CONFIG_EEPROM_PADDING_BYTE 0xFF
-#endif
 /*@}*/
 
 /* ******************************************************** */

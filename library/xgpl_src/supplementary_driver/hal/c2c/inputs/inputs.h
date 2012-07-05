@@ -67,8 +67,8 @@
 ///Those with single CAN (that we have) are setup to be 0-30 V
 ///Those with dual CAN (that we have)  are setup to be 0-10 V
 // Override this in your config_xxx.h file if you use single CAN C2Cs with 0-30 V range.
-#ifndef MAX_ADC_V
-#  define MAX_ADC_V 10
+#ifndef CONFIG_HAL_C2C_MAX_ADC_V
+#  define CONFIG_HAL_C2C_MAX_ADC_V 10
 #endif
 
 /*@}*/
@@ -210,7 +210,7 @@ namespace HAL
   inline int16_t getAdcVoltage(uint8_t ab_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getAnaloginCheckNr(ab_channel));
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return (i16_temp * MAX_ADC_V); }
+     return (i16_temp * CONFIG_HAL_C2C_MAX_ADC_V); }
 
   /**
     get the MEDIUM of measured voltage value of a channel in [mV]
@@ -220,7 +220,7 @@ namespace HAL
   inline int16_t getAdcMeanVoltage(uint8_t ab_channel)
     {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getAnaloginCheckNr(ab_channel));
      if ( i16_temp == C_RANGE ) return C_RANGE;
-     return (i16_temp * MAX_ADC_V); }
+     return (i16_temp * CONFIG_HAL_C2C_MAX_ADC_V); }
 
   /**
     get the measured current value of a channel in [uA]
@@ -252,9 +252,6 @@ namespace HAL
   */
   inline int16_t getAdcTemp()
     { return __HAL::get_boardtemperature(); }
-   #if !defined(GET_U_THRESHOLD) && defined(GET_U_2_3_V)
-     #define GET_U_THRESHOLD GET_U_2_3_V
-   #endif
 
   /**
     deliver state of digital input based on Activ-High/Low setting

@@ -36,7 +36,7 @@
 
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
-#if DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING
+#if DEBUG_CAN_BUFFER_FILLING
   #ifdef SYSTEM_PC
     #include <iostream>
   #else

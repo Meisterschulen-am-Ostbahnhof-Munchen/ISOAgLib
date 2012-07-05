@@ -17,7 +17,6 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
@@ -25,6 +24,7 @@
 #include "vtobjectauxiliaryinput2_c.h"
 #include "aux2inputs_c.h"
 #include "aux2functions_c.h"
+#include "objectpoolstreamer_c.h"
 
 #define USE_LIST_FOR_FIFO
 
@@ -40,131 +40,13 @@ namespace IsoAgLib {
   class iVtClientDataStorage_c;
 }
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-class SendUpload_c : public SendUploadBase_c
-{
-public:
-  SendUpload_c()
-    : SendUploadBase_c()
-    , mssObjectString (NULL)
-    , ppc_vtObjects (NULL)
-    , ui16_numObjects (0)
-  {}
-
-  SendUpload_c (vtObjectString_c* apc_objectString)
-    : SendUploadBase_c()
-    , mssObjectString (NULL)
-    , ppc_vtObjects (NULL)
-    , ui16_numObjects (0)
-  {
-    set (apc_objectString);
-  }
-
-  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
-    : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8)
-    , mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
-    , ppc_vtObjects (rppc_vtObjects)
-    , ui16_numObjects (aui16_numObjects)
-    {}
-
-    SendUpload_c (uint8_t* apui8_buffer, uint32_t bufferSize)
-    : SendUploadBase_c (apui8_buffer, bufferSize)
-    , mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
-    , ppc_vtObjects (NULL)
-    , ui16_numObjects (0)
-    {}
-
-  void set (vtObjectString_c* apc_objectString);
-  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9);
-  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
-  void set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength);
-  void set (uint8_t* apui8_buffer, uint32_t bufferSize);
-
-  SendUpload_c (const SendUpload_c& r_source)
-    : SendUploadBase_c(r_source)
-    , mssObjectString(r_source.mssObjectString)
-    , ppc_vtObjects (r_source.ppc_vtObjects)
-    , ui16_numObjects (r_source.ui16_numObjects)
-    {}
-
-  const SendUpload_c& operator= (const SendUpload_c& r_source)
-  {
-    SendUploadBase_c::operator=(r_source);
-    mssObjectString = r_source.mssObjectString;
-    ppc_vtObjects = r_source.ppc_vtObjects;
-    ui16_numObjects = r_source.ui16_numObjects;
-    return r_source;
-  }
-
-  /// Use either an MultiSendStreamer or a direct ui8-Buffer
-  __IsoAgLib::vtObjectString_c* mssObjectString;
-
-  IsoAgLib::iVtObject_c** ppc_vtObjects;
-  uint16_t ui16_numObjects; // don't care for if "ppc_vtObjects==NULL"
-};
-
-
-// forward declaration
-class VtClientServerCommunication_c;
-
-
-/** helper class for low level streaming.
-  This function was excluded from IsoTerminal_c,
-  as some STL aware compilers don't support multiple inheritance
-  (e.g. IAR). So this helper construction was defined.
-*/
-class iVtObjectStreamer_c : public IsoAgLib::iMultiSendStreamer_c
-{
-public:
-  iVtObjectStreamer_c (VtClientServerCommunication_c& arc_vtCSCbackRef)
-    : mrc_vtCSCbackRef (arc_vtCSCbackRef)
-  { /* nop */ }
-
-  virtual ~iVtObjectStreamer_c(){}
-
-  /// Implementation of iMultiSendStreamer_c methods
-  void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
-  void resetDataNextStreamPart();
-  void saveDataNextStreamPart();
-  void restoreDataNextStreamPart();
-  uint32_t getStreamSize() { return mui32_size; }
-
-  void setStreamSize(uint32_t aui32_size) { mui32_size = aui32_size; }
-
-  uint8_t getFirstByte() { return 0x11; } // If ISOTerminal streams out, it's because of an Annex C. Object Pool Upload, so 0x11 can be returned ALWAYS!
-
-  uint32_t mui32_objectStreamPosition;
-  uint32_t mui32_objectStreamPositionStored;
-  uint32_t mui32_size;
-  IsoAgLib::iVtObject_c*HUGE_MEM* mpc_objectsToUpload; // @todo maybe this variable can be optimized away and mpc_iterObjects be directly used...
-
-  /** pointers needed by MultiSendStreamer */
-  IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjects;
-  IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjectsStored;
-
-  VtClientServerCommunication_c& mrc_vtCSCbackRef;
-#define ISO_VT_UPLOAD_BUFFER_SIZE 128
-  uint8_t marr_uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
-  uint8_t m_uploadBufferFilled;
-  uint8_t m_uploadBufferPosition;
-
-  uint8_t marr_uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
-  uint8_t m_uploadBufferFilledStored;
-  uint8_t m_uploadBufferPositionStored;
-
-private:
-  /** not copyable : copy constructor is only declared, never defined */
-  iVtObjectStreamer_c(const iVtObjectStreamer_c&);
-  /** not copyable : copy operator is only declared, never defined */
-  iVtObjectStreamer_c& operator=(const iVtObjectStreamer_c&); 
-};
-
-
-// forward declaration
 class VtServerInstance_c;
 class IsoTerminal_c;
-/** class for managing the communication between vt client and server */
+class SendUpload_c;
+
+
 class VtClientServerCommunication_c : public CanCustomer_c
 {
 private:
@@ -252,16 +134,12 @@ public:
                                  uint8_t aui8_clientId,
                                  IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
 
+  virtual ~VtClientServerCommunication_c();
 
   /** explicit conversion to reference of interface class type */
   IsoAgLib::iVtClientServerCommunication_c& toInterfaceReference();
   /** explicit conversion to reference of interface class type */
   IsoAgLib::iVtClientServerCommunication_c* toInterfacePointer();
-
-  /** default destructor, which initiate sending address release for all own identities
-  @see VtClientServerCommunication_c::~VtClientServerCommunication_c
-  */
-  virtual ~VtClientServerCommunication_c();
 
   /** periodically event -> call timeEvent for all  identities and parent objects
     @return true -> all planned activities performed in allowed time
@@ -273,19 +151,13 @@ public:
   void timeEventPrePoolUpload();
   bool timeEventPoolUpload();
 
-  /** function that handles incoming acknowledgement messages */
+  virtual bool processMsg( const CanPkg_c& arc_data );
   bool processMsgAck( const CanPkgExt_c& arc_data );
 
-  /** function that handles incoming language pgn */
   void notifyOnVtsLanguagePgn();
-
-  /** function that handles incoming Vt Status Message */
   void notifyOnVtStatusMessage();
-
   void notifyOnAuxInputStatus( const CanPkgExt_c& arc_data );
-
   void notifyOnAux2InputStatus( const CanPkgExt_c& arc_data );
-
   void notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data);
 
 #ifdef USE_VTOBJECT_auxiliaryinput2
@@ -295,8 +167,6 @@ public:
   void setAux2ModelIdentificationCodeForInputDevice(uint16_t a_model) { m_aux2Inputs.setModelIdentificationCode(a_model); }
 
   void setAux2WaitTimeForSendingPreferredAssignment(uint32_t a_waitTime)  { m_aux2Functions.setWaitTimeForSendingPreferredAssignment(a_waitTime); }
-
-  virtual bool processMsg( const CanPkg_c& arc_data );
 
   uint16_t getVtObjectPoolDimension() const;
   uint16_t getVtObjectPoolSoftKeyWidth() const;
@@ -320,64 +190,27 @@ public:
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd=true, IsoAgLib::iVtObject_c** rppc_vtObjects=NULL, uint16_t aui16_numObjects=0);
   bool sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size);
 
-  bool sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeNumericValue(apc_object->getID(), byte1, byte2, byte3, byte4, b_enableReplaceOfCmd);
-  };
-  bool sendCommandChangeAttribute    (IsoAgLib::iVtObject_c* apc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeAttribute(apc_object->getID(), attrId, byte1, byte2, byte3, byte4, b_enableReplaceOfCmd);
-  };
-  bool sendCommandChangeSoftKeyMask  (IsoAgLib::iVtObject_c* apc_object, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeSoftKeyMask(apc_object->getID(), maskType, newSoftKeyMaskID, b_enableReplaceOfCmd);
-  };
-  bool sendCommandChangeStringValue (IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeStringValue(apc_object->getID(), apc_newValue, overrideSendLength, b_enableReplaceOfCmd);
-  };
-  bool sendCommandChangeActiveMask (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_mask, bool b_enableReplaceOfCmd=true )
-  {
-    return sendCommandChangeActiveMask( apc_object->getID(), apc_mask->getID(), b_enableReplaceOfCmd );
-  }
+  /** sendCommand... methods with iVtObject_c parameters */
+  bool sendCommandHideShow (IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd);
+  bool sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeAttribute (IsoAgLib::iVtObject_c* apc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeSoftKeyMask (IsoAgLib::iVtObject_c* apc_object, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeStringValue (IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeActiveMask (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_mask, bool b_enableReplaceOfCmd=true );
   bool sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectstring, bool b_enableReplaceOfCmd=true);
-
-  bool sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeChildPosition(apc_object->getID(), apc_childObject->getID(), x, y, b_enableReplaceOfCmd);
-  };
-  bool sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeChildLocation(apc_object->getID(), apc_childObject->getID(), dx, dy, b_enableReplaceOfCmd);
-  };
-  bool sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newColour,  bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeBackgroundColour(apc_object->getID(), newColour, b_enableReplaceOfCmd);
-  };
+  bool sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newColour,  bool b_enableReplaceOfCmd=true);
   bool sendCommandChangePriority (IsoAgLib::iVtObject_c* apc_object, int8_t newPriority, bool b_enableReplaceOfCmd=true);
-  bool sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeSize(apc_object->getID(), newWidth, newHeight, b_enableReplaceOfCmd);
-  };
+  bool sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeEndPoint (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_enableReplaceOfCmd=true);
-
-  bool sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeFillAttributes(apc_object->getID(), newFillType, newFillColour, newFillPatternObject, b_enableReplaceOfCmd);
-  };
-  bool sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeFontAttributes( apc_object->getID(), newFontColour, newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd);
-  };
-  bool sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandChangeLineAttributes( apc_object->getID(), newLineColour, newLineWidth, newLineArt, b_enableReplaceOfCmd);
-  };
-
-  bool sendCommandControlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
-  bool sendCommandSetAudioVolume (uint8_t aui8_volume);
+  bool sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
+  bool sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd = true);
 
   /** version of the change command functions with UID value as parameter - works independent from iVtObject_c* pointer */
+  bool sendCommandHideShow (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeNumericValue (uint16_t aui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeAttribute    (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeSoftKeyMask  (uint16_t aui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd=true);
@@ -390,7 +223,6 @@ public:
   bool sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeFontAttributes (uint16_t aui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes (uint16_t aui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
-
 
 #ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
   bool sendCommandSetGraphicsCursor (IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd=true);
@@ -417,18 +249,13 @@ public:
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   bool sendCommandGetAttributeValue (IsoAgLib::iVtObject_c* apc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd=true);
 #endif
-  bool sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd = true);
 
+  bool sendCommandControlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
+  bool sendCommandSetAudioVolume (uint8_t aui8_volume);
+  bool sendCommandEsc (bool b_enableReplaceOfCmd=true);
   bool sendCommandDeleteObjectPool();
   bool sendCommandUpdateLanguagePool();
   bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
-
-  bool sendCommandHideShow (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
-  bool sendCommandHideShow( IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true)
-  {
-    return sendCommandHideShow(apc_object->getID(), b_hideOrShow, b_enableReplaceOfCmd);
-  }
-  bool sendCommandEsc (bool b_enableReplaceOfCmd=true);
 
   bool sendNonVolatileDeleteVersion( const char* versionLabel7chars );
 
@@ -438,32 +265,25 @@ public:
   void enableSameCommandCheck() { mb_checkSameCommand = true; }
   void disableSameCommandCheck() { mb_checkSameCommand = false; }
 
+  bool isClientActive() const { return getVtDisplayState() == VtClientDisplayStateActive; }
   bool isVtActive() const;
-
   vtClientDisplayState_t getVtDisplayState() const { return men_displayState; }
 
-  bool isClientActive() const { return getVtDisplayState() == VtClientDisplayStateActive; }
-
 private:
-  class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
+  class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c 
+  {
   public:
     typedef VtClientServerCommunication_c Owner_t;
 
     MultiSendEventHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
-
     ~MultiSendEventHandlerProxy_c() {}
 
   private:
     void reactOnStateChange(const SendStream_c& sendStream)
-    {
-       mrt_owner.reactOnStateChange(sendStream);
-    }
+      { mrt_owner.reactOnStateChange(sendStream); }
 
-    // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
-    // the reference to the containing object would become invalid.
-    MultiSendEventHandlerProxy_c(MultiSendEventHandlerProxy_c const &);
-
-    MultiSendEventHandlerProxy_c &operator=(MultiSendEventHandlerProxy_c const &);
+    MultiSendEventHandlerProxy_c(MultiSendEventHandlerProxy_c const &); // make class non-copyable
+    MultiSendEventHandlerProxy_c &operator=(MultiSendEventHandlerProxy_c const &); // make class non-copyable
 
     Owner_t &mrt_owner;
   }; // MultiSendEventHandlerProxy_c
@@ -482,7 +302,6 @@ private:
   //! @return true for successful assignment, false if aux function2 object ID couldn't be found.
   //! @return rui16_functionObjId
   bool storeAux2Assignment( Stream_c& arc_stream, uint16_t& rui16_functionObjId );
-
 
   void doStart();
   void doStop();
@@ -535,17 +354,12 @@ private: // attributes
   bool mb_vtAliveCurrent;
   bool mb_checkSameCommand;
 
-  /** has to be set using registerIsoObjectPool (...) so that IsoTerminal
-    can interact in the name of the wsMaster
-  */
   IdentItem_c& mrc_wsMasterIdentItem;
-
   IsoTerminal_c& mrc_isoTerminal; // back ref.
-
   VtServerInstance_c* mpc_vtServerInstance;
 
   bool mb_usingVersionLabel; // if NOT using version label, "marrp7c_versionLabel" has random values!
-  char marrp7c_versionLabel [7];
+  char marrp7c_versionLabel[ 7 ];
 
   /// General Object-Pool state (empty, loaded, etc.)
   objectPoolState_t men_objectPoolState;
@@ -591,7 +405,6 @@ private:
   uint8_t mui8_inputStringLength;
   int32_t mi32_nextWsMaintenanceMsg;
 
-  /** receive filters are already created */
   bool mb_receiveFilterCreated;
 
   uint8_t mui8_clientId;
@@ -619,13 +432,11 @@ private:
   STL_NAMESPACE::list<AuxAssignment_s> mlist_auxAssignments;
 
   Aux2Inputs_c m_aux2Inputs;
-
   Aux2Functions_c m_aux2Functions;
 
-  iVtObjectStreamer_c mc_iVtObjectStreamer;
+  ObjectPoolStreamer_c mc_iVtObjectStreamer;
 
   int32_t mi32_timeWsAnnounceKey;
-
   int32_t mi32_fakeVtOffUntil;
 
   IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en men_registerPoolMode;
@@ -641,5 +452,46 @@ private:
   IsoAgLib::iVtClientDataStorage_c& m_dataStorageHandler; 
 };
 
-}
+
+inline bool VtClientServerCommunication_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeNumericValue(apc_object->getID(), byte1, byte2, byte3, byte4, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeAttribute    (IsoAgLib::iVtObject_c* apc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeAttribute(apc_object->getID(), attrId, byte1, byte2, byte3, byte4, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeSoftKeyMask  (IsoAgLib::iVtObject_c* apc_object, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeSoftKeyMask(apc_object->getID(), maskType, newSoftKeyMaskID, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeStringValue(apc_object->getID(), apc_newValue, overrideSendLength, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeActiveMask (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_mask, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeActiveMask( apc_object->getID(), apc_mask->getID(), b_enableReplaceOfCmd ); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeChildPosition(apc_object->getID(), apc_childObject->getID(), x, y, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeChildLocation(apc_object->getID(), apc_childObject->getID(), dx, dy, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newColour,  bool b_enableReplaceOfCmd)
+{ return sendCommandChangeBackgroundColour(apc_object->getID(), newColour, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeSize(apc_object->getID(), newWidth, newHeight, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeFillAttributes(apc_object->getID(), newFillType, newFillColour, newFillPatternObject, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeFontAttributes( apc_object->getID(), newFontColour, newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+{ return sendCommandChangeLineAttributes( apc_object->getID(), newLineColour, newLineWidth, newLineArt, b_enableReplaceOfCmd); }
+
+inline bool VtClientServerCommunication_c::sendCommandHideShow( IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
+{ return sendCommandHideShow(apc_object->getID(), b_hideOrShow, b_enableReplaceOfCmd); }
+
+} // __IsoAgLib
+
 #endif

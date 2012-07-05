@@ -22,19 +22,10 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 
-
-#if DEBUG_ADDRESS_CLAIM
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
-#endif
-
 #if defined(_MSC_VER)
 #pragma warning( disable : 4996 )
 #endif
+
 
 namespace __IsoAgLib {
 
@@ -257,10 +248,6 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
 
   updateTime();
 
-  #if DEBUG_ADDRESS_CLAIM
-  INTERNAL_DEBUG_DEVICE << "Sending initial SA claim (sendAddressClaim())" << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
-
   mb_repeatClaim = false;
 }
 
@@ -427,9 +414,6 @@ IsoItem_c::processAddressClaimed(
     c_pkg.setDataUnion(outputNameUnion());
       // now IsoSystemPkg_c has right data -> send
     getIsoBusInstance4Comm() << c_pkg;
-  #if DEBUG_ADDRESS_CLAIM
-  INTERNAL_DEBUG_DEVICE << "sending sa claim" << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
   }
   else
   { // remote item
@@ -450,9 +434,6 @@ bool IsoItem_c::sendSaClaim()
   if ( ! itemState(IState_c::ClaimedAddress) ) return false; ///< send no answer, if not yet ready claimed
   if ( ! itemState(IState_c::Local) ) return false;
   // now this ISOItem should/can send a SA claim
-  #if DEBUG_ADDRESS_CLAIM
-  INTERNAL_DEBUG_DEVICE << "Send SA claim (sendSaClaim())" << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
   CanPkgExt_c c_pkg;
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);

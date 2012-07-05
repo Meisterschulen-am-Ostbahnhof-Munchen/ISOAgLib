@@ -24,8 +24,9 @@
 		get_digin_period() is very unprecise as long as the
 		chosen timebase is not 80 times larger than the signal period.
 		--> the better precision is worth while the more calculation afford
+    NOTE: Currently hard-set in here by default.
 	*/
-#define CALC_PERDIOD_FROM_FREQ
+#define CONFIG_HAL_ESX_CALC_PERDIOD_FROM_FREQ
 
 namespace __HAL {
 extern "C" {
@@ -268,7 +269,7 @@ int16_t resetCounter(uint8_t ab_channel)
 */
 uint16_t getCounterPeriod(uint8_t ab_channel)
 {
-	#ifndef CALC_PERDIOD_FROM_FREQ
+	#ifndef CONFIG_HAL_ESX_CALC_PERDIOD_FROM_FREQ
 	uint16_t ui16_counter;
 	#endif
   uint16_t ui16_timebase, ui16_result = 0xFFFF;
@@ -280,7 +281,7 @@ uint16_t getCounterPeriod(uint8_t ab_channel)
     if (ui16_timebase == 0) ui16_result = 0xFFFF;
     else if ( ui16_timebase <= get_max_bios_timebase() )
     { /* use standard BIOS method because timebase is short enough */
-			#ifdef CALC_PERDIOD_FROM_FREQ
+			#ifdef CONFIG_HAL_ESX_CALC_PERDIOD_FROM_FREQ
 			get_digin_freq(ab_channel, &ui16_result);
 			// result of get_digin_freq has scaling [100mHz] -> use 10000/result to get period [msec]
 			ui16_result = ( ( 1000 * 10 ) / ui16_result );

@@ -23,7 +23,7 @@
   #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
 #endif
 
-#if DEBUG_ISOMONITOR || DEBUG_HEAP_USEAGE
+#if DEBUG_ISOMONITOR
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -43,9 +43,6 @@
  */
 #define SA_REQUEST_PERIOD_MSEC 60000
 
-#if DEBUG_HEAP_USEAGE
-static uint16_t sui16_isoItemTotal = 0;
-#endif
 
 namespace __IsoAgLib {
 /** C-style function, to get access to the unique IsoMonitor_c singleton instance
@@ -72,9 +69,6 @@ IsoMonitor_c::init()
 {
   isoaglib_assert (!initialized());
 
-  #if DEBUG_HEAP_USEAGE
-  sui16_isoItemTotal -= mvec_isoMember.size();
-  #endif
   isoaglib_assert (mvec_isoMember.empty());
   mpc_isoMemberCache = mvec_isoMember.end();
   mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
@@ -280,17 +274,6 @@ IsoMonitor_c::timeEvent()
         if ( pc_iter->itemState( IState_c::PossiblyOffline) )
         { // it's too late the second time -> remove it
           Vec_ISOIterator pc_iterDelete = pc_iter;
-          #if DEBUG_HEAP_USEAGE
-          sui16_isoItemTotal--;
-
-          INTERNAL_DEBUG_DEVICE
-            << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
-            <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
-            << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )
-            << ", Chunk-Alloc: "
-            << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
-            << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-          #endif
           pc_iter = internalIsoItemErase (pc_iterDelete); // erase returns iterator to next element after the erased one
           // immediately reset cache, because it may have gotten invalid due to the erase!!
           mpc_isoMemberCache = mvec_isoMember.begin();
@@ -514,17 +497,6 @@ IsoMonitor_c::insertIsoMember(
     // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
     broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::AddToMonitorList, *pc_result);
   }
-#if DEBUG_HEAP_USEAGE
-  sui16_isoItemTotal++;
-
-  INTERNAL_DEBUG_DEVICE
-    << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
-    <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
-    << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )
-    << ", Chunk-Alloc: "
-    << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
-    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
 
   return pc_result;
 }
@@ -738,17 +710,6 @@ IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
   internalIsoItemErase (mpc_isoMemberCache);
   // immediately reset cache, because it may have gotten invalid due to the erase!!
   mpc_isoMemberCache = mvec_isoMember.begin();
-  #if DEBUG_HEAP_USEAGE
-  sui16_isoItemTotal--;
-
-  INTERNAL_DEBUG_DEVICE
-    << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
-    <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
-    << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )
-    << ", Chunk-Alloc: "
-    << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
-    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
   return true;
 }
 

@@ -27,8 +27,6 @@ namespace HAL {
 
   #define HAL_NEW_SEND_DELAY    14
 
-  #define HAL_WD_DATA_CHANGED   15
-
   #define HAL_DIGOUT_OPEN        (int16_t)(-(20 * 0x0001))
   #define HAL_DIGOUT_SHORTCUT    (int16_t)(-(21 * 0x0001))
   #define HAL_DIGOUT_OVERTEMP    (int16_t)(-(22 * 0x0001))

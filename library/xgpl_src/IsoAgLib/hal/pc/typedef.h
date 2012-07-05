@@ -14,10 +14,6 @@
 #ifndef _TYPEDEF_PC_H
 #define _TYPEDEF_PC_H
 
-/* --- GLOBAL DEFINES CONSTANTS --- */
-#define USER_WATCHDOG           0      /* Define for User-Watchdog */
-#define DATA_CHANGED            1      /* Returnvalue from config_wd */
-
 #define HIGH              1
 #define LOW               0
 

@@ -101,7 +101,7 @@ int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   sprintf( param, "C%hd,R,E0,B%d,L%d%c%hd", aui8_channel,baudrate, ui16_dataBit, par, bStoppbits );
 
   if ( ! rte_is_init() ) {
-		std::string c_rteServer = HAL_PC_RTE_DEFAULT_SERVER;
+		std::string c_rteServer = CONFIG_HAL_PC_RTE_DEFAULT_SERVER;
 		if ( getenv( "RTE_HOST" ) != NULL ) c_rteServer = getenv( "RTE_HOST" );
 
     if (rte_connect( c_rteServer.c_str() ) < 0) {

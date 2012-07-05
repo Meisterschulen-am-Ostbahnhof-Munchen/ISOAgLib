@@ -142,7 +142,7 @@ int16_t can_startDriver()
   }
 
   if ( ! rte_is_init() ) {
-    std::string c_rteServer = HAL_PC_RTE_DEFAULT_SERVER;
+    std::string c_rteServer = CONFIG_HAL_PC_RTE_DEFAULT_SERVER;
     if ( getenv( "RTE_HOST" ) != NULL ) c_rteServer = getenv( "RTE_HOST" );
 
     if (rte_connect( c_rteServer.c_str() ) < 0) {

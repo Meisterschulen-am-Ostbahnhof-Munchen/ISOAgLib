@@ -24,7 +24,7 @@
 
 #include "../imultisendstreamer_c.h"
 
-#if DEBUG_MULTISEND || DEBUG_HEAP_USEAGE
+#if DEBUG_MULTISEND
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -34,10 +34,6 @@
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
-#endif
-
-#if DEBUG_HEAP_USEAGE
-  static uint16_t sui16_lastPrintedBufferCapacity = 0;
 #endif
 
 /** @todo SOON-178 figure that one out... new ISO says we can put out head2head messages! */
@@ -69,14 +65,6 @@ void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)
   for (; i < 8; i++) {
     vec_uploadBuffer.push_back (0xFF);
   }
-
-  #if DEBUG_HEAP_USEAGE
-  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
-  {
-    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    INTERNAL_DEBUG_DEVICE << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  #endif
 }
 
 

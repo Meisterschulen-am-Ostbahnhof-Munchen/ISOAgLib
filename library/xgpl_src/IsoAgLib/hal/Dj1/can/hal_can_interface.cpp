@@ -32,7 +32,7 @@
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
-#if DEBUG_HAL || DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING || DEBUG_SENDING
+#if DEBUG_HAL || DEBUG_CAN_BUFFER_FILLING || DEBUG_SENDING
   #ifdef SYSTEM_PC
     #include <iostream>
   #else

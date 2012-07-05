@@ -52,15 +52,10 @@
 
 #define HAL_SIZEOF_INT 4
 
-/** define suitable keyword for huge memory type */
+#ifdef USE_HUGE_MEM
+#  error "USE_HUGE_MEM must not be set!"
+#endif
 #define HUGE_MEM
-/** the preprocessor can only distinguish between undefined or defined
-  * constant for conditional compilation
-  * -> use USE_HUGE_MEM
-  */
-// #define USE_HUGE_MEM
-
-/** define suitable  keyword for near memory type */
 #define NEAR_MEM
 #define USE_NEAR_MEM
 
@@ -72,12 +67,10 @@
   */
 #define MAX_EEPROM_WRITE_TRY_CYCLE_CNT 5
 
-#ifndef HAL_PC_RTE_DEFAULT_SERVER
-  #define HAL_PC_RTE_DEFAULT_SERVER "rte4"
+#ifndef CONFIG_HAL_PC_RTE_DEFAULT_SERVER
+  #define CONFIG_HAL_PC_RTE_DEFAULT_SERVER "rte4"
 #endif
 
-// basic period of task manager (scheduler)= const * 500 us = 1 ms
-#define T_TASK_BASIC 2
 /* Initialisierung Watchdog 0 */
 #define WD_MAX_TIME      0//200        /* 128 ms                    */
 #define WD_MIN_TIME      0      /* 0 ms                      */

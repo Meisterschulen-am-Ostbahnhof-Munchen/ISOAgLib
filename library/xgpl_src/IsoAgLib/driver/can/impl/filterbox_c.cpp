@@ -18,7 +18,7 @@
 #include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
 #include <IsoAgLib/util/iassert.h>
 
-#if DEBUG_FILTERBOX || DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING
+#if DEBUG_FILTERBOX || DEBUG_CAN_BUFFER_FILLING
   #ifdef SYSTEM_PC
     #include <iostream>
   #else

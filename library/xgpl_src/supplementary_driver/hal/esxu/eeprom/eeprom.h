@@ -108,12 +108,5 @@ namespace HAL
   */
   inline int16_t eepromReady(void)
   {return HAL_NO_ERR; };
-// MSCHMIDT - Should really implement a target extension for the esxu in eeprom_target_extensions.cc
-// MSCHMIDT - (see C:\DEV\IsoAgLib\lgpl_src\IsoAgLib\hal\pc\eeprom\eeprom_target_extensions.cc)
-// MSCHMIDT - /* get the status of eeprom*/
-// MSCHMIDT - int16_t eepromReady(void){
-// MSCHMIDT -   // printf("eeprom ready aufgerufen\n");
-// MSCHMIDT -   return EE_READY;
-// MSCHMIDT - }
 }
 #endif

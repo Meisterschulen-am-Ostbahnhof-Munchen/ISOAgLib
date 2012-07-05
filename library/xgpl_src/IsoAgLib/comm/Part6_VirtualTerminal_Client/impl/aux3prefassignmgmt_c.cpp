@@ -14,7 +14,7 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "isoterminal_c.h"
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+#if defined(DEBUG)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC

@@ -22,9 +22,7 @@
 #include <IsoAgLib/util/iassert.h>
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 #include "../ivtobjectpicturegraphic_c.h"
-//#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
-  #include "../ivtobjectgraphicscontext_c.h"
-//#endif
+#include "../ivtobjectgraphicscontext_c.h"
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectfontattributes_c.h"
@@ -35,12 +33,11 @@
 
 #include "../ivtobjectauxiliaryfunction2_c.h"
 #include "../ivtobjectauxiliaryinput2_c.h"
+#include "sendupload_c.h"
 
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.h>
 
-#include <map>
-
-#if DEBUG_VTCOMM || DEBUG_HEAP_USEAGE
+#if DEBUG_VTCOMM
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
@@ -52,13 +49,6 @@
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
-#endif
-
-#if DEBUG_HEAP_USEAGE
-  static uint16_t sui16_lastPrintedSendUploadQueueSize = 0;
-  static uint16_t sui16_lastPrintedMaxSendUploadQueueSize = 0;
-  static uint16_t sui16_sendUploadQueueSize = 0;
-  static uint16_t sui16_maxSendUploadQueueSize = 0;
 #endif
 
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
@@ -145,155 +135,6 @@ namespace __IsoAgLib {
 #define DEF_TimeOut_GetVersions 60000
 #define DEF_WaitFor_Reupload 5000
 
-
-void SendUpload_c::set (vtObjectString_c* apc_objectString)
-{
-  ppc_vtObjects = NULL;
-
-  mssObjectString = apc_objectString;
-}
-
-void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9)
-{
-  SendUploadBase_c::set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9);
-  mssObjectString = NULL;
-  ppc_vtObjects = NULL; /// Use BUFFER - NOT MultiSendStreamer!
-  ui16_numObjects = 0;
-}
-
-void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
-{
-  SendUploadBase_c::set( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8 );
-  mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
-  ppc_vtObjects = rppc_vtObjects;
-  ui16_numObjects = aui16_numObjects;
-}
-
-void SendUpload_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength)
-{
-  // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
-  uint16_t strLen = (CNAMESPACE::strlen(apc_string) < overrideSendLength) ? CNAMESPACE::strlen(apc_string) : overrideSendLength;
-
-  /// Use BUFFER - NOT MultiSendStreamer!
-  vec_uploadBuffer.clear();
-  vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
-
-  vec_uploadBuffer.push_back (179);
-  vec_uploadBuffer.push_back (aui16_objId & 0xFF);
-  vec_uploadBuffer.push_back (aui16_objId >> 8);
-  vec_uploadBuffer.push_back (strLen & 0xFF);
-  vec_uploadBuffer.push_back (strLen >> 8);
-  int i=0;
-  for (; i < strLen; i++) {
-    vec_uploadBuffer.push_back (*apc_string);
-    apc_string++;
-  }
-  for (; i < 3; i++) {
-    // at least 3 bytes from the string have to be written, if not, fill with 0xFF, so the pkg-len is 8!
-    vec_uploadBuffer.push_back (0xFF);
-  }
-
-  mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
-  ppc_vtObjects = NULL;
-}
-
-void SendUpload_c::set (uint8_t* apui8_buffer, uint32_t bufferSize)
-{
-  SendUploadBase_c::set (apui8_buffer, bufferSize);
-  mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
-  ppc_vtObjects = NULL;
-}
-
-
-/** place next data to send direct into send buffer of pointed
-    stream send package - MultiSendStreamer_c will send this
-    buffer afterwards
-    - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
- */
-void
-iVtObjectStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes)
-{
-  while ((m_uploadBufferFilled-m_uploadBufferPosition) < bytes)
-  {
-    // copy down the rest of the buffer (we have no ring buffer here!)
-    int j = m_uploadBufferFilled - m_uploadBufferPosition;
-    for (int i=0; i<j; i++)
-      marr_uploadBuffer [i] = marr_uploadBuffer [i+m_uploadBufferPosition];
-    // adjust pointers
-    m_uploadBufferPosition = 0;
-    m_uploadBufferFilled = j;
-
-    // stream some more bytes into internal ISO_VT_UPLOAD_BUFFER_SIZE byte buffer...
-    while( true )
-    {
-      vtObject_c &object = *((vtObject_c*)(*mpc_iterObjects));
-      
-      const uint16_t bytes2Buffer = object.isOmittedFromUpload()
-        ? 0
-        : object.stream( marr_uploadBuffer+m_uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-m_uploadBufferFilled, mui32_objectStreamPosition );
-
-      if( bytes2Buffer == 0 )
-      { // no data for this object, try next one!
-        mpc_iterObjects++;
-        mui32_objectStreamPosition = 0;
-        continue;
-      }
-      else
-      { // could stream bytes for this object.
-        m_uploadBufferFilled += bytes2Buffer;
-        mui32_objectStreamPosition += bytes2Buffer;
-        break; // fine. let's get to the other objects..
-      }
-    }
-  }
-  mspData->setDataPart (marr_uploadBuffer, m_uploadBufferPosition, bytes);
-  m_uploadBufferPosition += bytes;
-}
-
-
-/** set cache for data source to stream start
-    - implementation of the abstract IsoAgLib::MultiSendStreamer_c function */
-void
-iVtObjectStreamer_c::resetDataNextStreamPart()
-{
-  mpc_iterObjects = mpc_objectsToUpload;
-  mui32_objectStreamPosition = 0;
-  m_uploadBufferPosition = 0;
-  m_uploadBufferFilled = 1;
-  marr_uploadBuffer [0] = 0x11; // Upload Object Pool!
-}
-
-
-/** save current send position in data source - neeed for resend on send problem
-    - implementation of the abstract IsoAgLib::MultiSendStreamer_c function */
-void
-iVtObjectStreamer_c::saveDataNextStreamPart()
-{
-  mpc_iterObjectsStored = mpc_iterObjects;
-  mui32_objectStreamPositionStored = mui32_objectStreamPosition;
-  m_uploadBufferPositionStored = m_uploadBufferPosition;
-  m_uploadBufferFilledStored = m_uploadBufferFilled;
-  for (int i=0; i<ISO_VT_UPLOAD_BUFFER_SIZE; i++)
-    marr_uploadBufferStored [i] = marr_uploadBuffer [i];
-}
-
-
-/** reactivate previously stored data source position - used for resend on problem
-    - implementation of the abstract IsoAgLib::MultiSendStreamer_c function */
-void
-iVtObjectStreamer_c::restoreDataNextStreamPart()
-{
-  mpc_iterObjects = mpc_iterObjectsStored;
-  mui32_objectStreamPosition = mui32_objectStreamPositionStored;
-  m_uploadBufferPosition = m_uploadBufferPositionStored;
-  m_uploadBufferFilled = m_uploadBufferFilledStored;
-  for (int i=0; i<ISO_VT_UPLOAD_BUFFER_SIZE; i++)
-    marr_uploadBuffer [i] = marr_uploadBufferStored [i];
-}
-
-/** *****************************************************/
-/** ** Vt Client Server Communication Implementation ****/
-/** *****************************************************/
 
 /** static instance to store temporarily before push_back into list */
 SendUpload_c VtClientServerCommunication_c::msc_tempSendUpload;
@@ -728,9 +569,6 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
                           194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getIsoBusInstance4Comm() << mc_sendData;      // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys = HAL::getTime();
-#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
-    INTERNAL_DEBUG_DEVICE << "Requested first property (C2)..." << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
   }
 
   if (mpc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys
@@ -743,9 +581,6 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
                           195, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getIsoBusInstance4Comm() << mc_sendData;      // Command: Get Technical Data --- Parameter: Get Text Font Data
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedFont = HAL::getTime();
-#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
-    INTERNAL_DEBUG_DEVICE << "Requested fonts (C3)..." << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
   }
 
   if (mpc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys
@@ -760,9 +595,6 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
                           199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getIsoBusInstance4Comm() << mc_sendData;      // Command: Get Technical Data --- Parameter: Get Hardware
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedHardware = HAL::getTime();
-#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
-    INTERNAL_DEBUG_DEVICE << "Requested hardware (C7)..." << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
   }
 }
 
@@ -869,22 +701,6 @@ VtClientServerCommunication_c::startLoadVersion()
 bool
 VtClientServerCommunication_c::timeEvent(void)
 {
-#if DEBUG_HEAP_USEAGE
-  if ((sui16_lastPrintedSendUploadQueueSize < sui16_sendUploadQueueSize)
-  || (sui16_lastPrintedMaxSendUploadQueueSize < sui16_maxSendUploadQueueSize))
-  { // MAX amount of sui16_sendUploadQueueSize or sui16_maxSendUploadQueueSize
-    sui16_lastPrintedSendUploadQueueSize = sui16_sendUploadQueueSize;
-    sui16_lastPrintedMaxSendUploadQueueSize = sui16_maxSendUploadQueueSize;
-    INTERNAL_DEBUG_DEVICE << "Max: " << sui16_sendUploadQueueSize << " Items in FIFO, "
-                            << sui16_sendUploadQueueSize << " x SendUpload_c: Mal-Alloc: "
-                            << sizeSlistTWithMalloc (sizeof (SendUpload_c), sui16_sendUploadQueueSize)
-                            << "/" << sizeSlistTWithMalloc (sizeof (SendUpload_c), 1)
-                            << ", Chunk-Alloc: "
-                            << sizeSlistTWithChunk (sizeof (SendUpload_c), sui16_sendUploadQueueSize)
-                            << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-#endif
-
   // do further activities only if registered ident is initialised as ISO and already successfully address-claimed...
   if (!mrc_wsMasterIdentItem.isClaimedAddress()) return true;
 
@@ -1319,9 +1135,6 @@ bool
 VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
 {
   CanPkgExt_c c_data( arc_data, getMultitonInst() );
-//  #if DEBUG_VTCOMM
-//  INTERNAL_DEBUG_DEVICE << "Incoming Message: c_data.isoPgn=" << c_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime() << " - data[0]=" << (uint16_t)c_data.getUint8Data (0) << "...  ";
-//  #endif
 
   if ((c_data.isoPgn() & 0x3FF00LU) == ACKNOWLEDGEMENT_PGN)
   { // Pass on to ACK-Processing!
@@ -1415,7 +1228,7 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
         if (arc_data.getUint8Data( 1 ) == 0)
         { /// NO Error with UPLOADING pool
 // Added this preprocessor so storing of object pools can be prevented for development purposes
-#ifndef NO_STORE_VERSION
+#ifndef DEBUG_VTCOMM_NO_STORE_VERSION
           if (mb_usingVersionLabel)
           { // Store Version and finalize after "Store Version Response"
             CanPkgExt_c mc_sendData;
@@ -1429,7 +1242,7 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
             mui32_uploadTimestamp = HAL::getTime();
           }
           else
-#endif // NO_STORE_VERSION
+#endif // DEBUG_VTCOMM_NO_STORE_VERSION
           { // Finalize now!
             finalizeUploading();
           }
@@ -1497,11 +1310,6 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
     case 0xA3: // Command: "Command", parameter "Control Audio Device Response"
     case 0xA4: // Command: "Command", parameter "Set Audio Volume Response"
     case 0xB2: // Command: "Command", parameter "Delete Object Pool Response"
-
-#if DEBUG_VTCOMM
-      if (0xB2 == arc_data.getUint8Data( 0 ))
-        INTERNAL_DEBUG_DEVICE << "Received response for 'Delete Object Pool' message!" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
       MACRO_setStateDependantOnError (2)
       break;
 
@@ -1720,7 +1528,7 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
       break;
 #endif
     default:
-      // handle proprietary messages from an AGCO VT
+      // handle proprietary messages from VT
       if (    arc_data.getUint8Data( 0 ) >= 0x60
            && arc_data.getUint8Data( 0 ) <= 0x7F
          )
@@ -1747,12 +1555,6 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
             ui8_uploadCommandError = arc_data.getUint8Data( ui8_errByte-1 );
           /// Inform user on success/error of this command
           mrc_pool.eventCommandResponse (ui8_uploadCommandError, arc_data.getUint8DataConstPointer( 0 )); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "arc_data.name()"
-#if DEBUG_VTCOMM
-          if (ui8_uploadCommandError != 0)
-          { /* error */
-            INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) mui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!" << INTERNAL_DEBUG_DEVICE_ENDL;
-          }
-#endif
           finishUploadCommand(false); // finish command no matter if "okay" or "error"...
         }
       }
@@ -1799,12 +1601,7 @@ VtClientServerCommunication_c::notifyOnVtServerInstanceLoss (VtServerInstance_c&
 bool
 VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, bool b_enableReplaceOfCmd)
 {
-#if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << "Enqueued 9-bytes: " << mq_sendUpload.size() << " -> ";
-#endif
-
   msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9);
-
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
@@ -1812,34 +1609,20 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
 bool
 VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
-#if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << mq_sendUpload.size() << " -> " << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-
   msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rppc_vtObjects, aui16_numObjects);
-
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
 VtClientServerCommunication_c::sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size)
 {
-#if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << "Enqueued TP-bytes: " << mq_sendUpload.size() << " -> ";
-#endif
-
   msc_tempSendUpload.set (apui8_buffer, ui32_size);
-
   return queueOrReplace (msc_tempSendUpload, false);
 }
 
 bool
 VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectString, bool b_enableReplaceOfCmd)
 {
-#if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << "Enqueued stringObject-mss: " << mq_sendUpload.size() << " -> ";
-#endif
-
   msc_tempSendUpload.set (apc_objectString);
 
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
@@ -1959,12 +1742,7 @@ VtClientServerCommunication_c::sendCommandChangeActiveMask (uint16_t aui16_objec
 bool
 VtClientServerCommunication_c::sendCommandChangeStringValue (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
-#if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << mq_sendUpload.size() << " -> ";
-#endif
-
   msc_tempSendUpload.set (aui16_objectUid, apc_newValue, overrideSendLength);
-
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
@@ -2531,11 +2309,6 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
   }
   else
     *p_queue = ar_sendUpload; // overloaded "operator="
-#if DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize++;
-  if (sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize)
-    sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
-#endif
 
 #if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << mq_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -2612,9 +2385,6 @@ VtClientServerCommunication_c::doStop()
   mi32_timeWsAnnounceKey = -1;
 
   // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
-#if DEBUG_HEAP_USEAGE
-  sui16_sendUploadQueueSize -= mq_sendUpload.size();
-#endif
 #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
   mq_sendUpload.clear();
@@ -3004,9 +2774,6 @@ VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fro
     mq_sendUpload.pop_front();
     #else
     mq_sendUpload.pop();
-    #endif
-    #if DEBUG_HEAP_USEAGE
-    sui16_sendUploadQueueSize--;
     #endif
 
     #if DEBUG_VTCOMM

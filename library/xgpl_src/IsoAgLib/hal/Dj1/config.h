@@ -43,15 +43,8 @@
 #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 #define HAL_SIZEOF_INT 2
 
-/** define suitable keyword for huge memory type */
-#define HUGE_MEM huge
-/** the preprocessor can only distinguish between undefined or defined
-  * constant for conditional compilation
-  * -> use USE_HUGE_MEM
-  */
 #define USE_HUGE_MEM
-
-/** define suitable  keyword for near memory type */
+#define HUGE_MEM      huge
 #define NEAR_MEM      _near
 #define USE_NEAR_MEM  _near
 #define MAX_EEPROM_SEGMENT_SIZE 64
@@ -60,11 +53,6 @@
     ( one cycle: write value, re-read, compare )
   */
 #define MAX_EEPROM_WRITE_TRY_CYCLE_CNT 5
-
-// basic period of task manager (scheduler)= const * 500 us = 1 ms
-#if !defined( T_TASK_BASIC )
-	#define T_TASK_BASIC 2
-#endif
 
 /** limit of digit value from getAdc as feedback input from a digital output
   * which decides between interpretation as High or Low
