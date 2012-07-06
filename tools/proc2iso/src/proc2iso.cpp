@@ -596,7 +596,7 @@ uint32_t stringtonumber(const char *text_number, int8_t ui8_bitRange, int8_t i8_
   {
     //test correct range of value
     if (i8_attrIndex == -1) return ui32_temp;
-    if ((ui32_temp >= 0) && (ui32_temp <= ((uint32_t)(1 << ui8_bitRange) - 1)))
+    if ( (ui32_temp <= ((uint32_t)(1 << ui8_bitRange) - 1)))
       return ui32_temp;
     else
     {
@@ -651,7 +651,7 @@ bool deviceElementExists=false;
 bool firstElement=true;
 
 
-void utf16convert (char* source, char* destin, int count)
+void utf16convert (char* source, char* destin, int )
 {
   int i=-1;
   do
@@ -662,7 +662,7 @@ void utf16convert (char* source, char* destin, int count)
 }
 
 
-void getAttributesFromNode(DOMNode *node, unsigned int objType)
+void getAttributesFromNode(DOMNode *node, unsigned int )
 {
   DOMNamedNodeMap *pAttributes;
   if (node->hasAttributes())
