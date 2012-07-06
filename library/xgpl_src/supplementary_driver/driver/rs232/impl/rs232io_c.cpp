@@ -14,7 +14,7 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <stdio.h>
-#include <ctype>
+#include <ctype.h>
 
 // ISOAgLib
 #include <IsoAgLib/util/config.h>
