@@ -324,7 +324,7 @@ getFilter( CanFilter &filter, const std::vector<std::string> &tokens, int startI
   iss.setf ( std::ios::hex, std::ios::basefield );
   iss >> pgn;
   std::istringstream iss2( tokens[startIndex+1] );
-  iss.setf ( std::ios::hex, std::ios::basefield );
+  iss2.setf ( std::ios::hex, std::ios::basefield );
   iss2 >> da;
   std::istringstream iss3( tokens[startIndex+2] );
   iss3.setf ( std::ios::hex, std::ios::basefield );
