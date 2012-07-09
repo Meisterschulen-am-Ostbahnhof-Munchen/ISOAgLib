@@ -111,6 +111,7 @@ set_default_values()
     PARAMETER_TARGET_SYSTEM="UseConfigFile"
     PARAMETER_CAN_DRIVER="UseConfigFile"
     PARAMETER_RS232_DRIVER="UseConfigFile"
+    PARAMETER_EEPROM_DRIVER="UseConfigFile"
     # may be overridden by configuration file or check_after_user_configuration:
     USE_EMBED_LIB_DIRECTORY=''
     # may be overridden by configuration file or check_after_user_configuration:
@@ -195,6 +196,7 @@ set_default_values()
     USE_WIN32_EXTERNAL_LIBRARY_PATH=''
     APP_SRC_FILE=''
     USE_RS232_DRIVER='none'
+	USE_EEPROM_DRIVER='none'
 	USE_INPUTS_DRIVER='none'
 	USE_OUTPUTS_DRIVER='none'
     DEBUG_DEFINES=''
@@ -303,6 +305,10 @@ check_set_correct_variables()
     if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
         USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
         #echo_ "Use Parameter value for rs232 driver: $PARAMETER_RS232_DRIVER"
+    fi
+    if [ $PARAMETER_EEPROM_DRIVER != "UseConfigFile" ] ; then
+        USE_EEPROM_DRIVER=$PARAMETER_EEPROM_DRIVER
+        #echo_ "Use Parameter value for eeprom driver: $PARAMETER_EEPROM_DRIVER"
     fi
 
     # workaround as long as we don't have separate HALs
@@ -543,10 +549,6 @@ driver_and_hal_features()
         printf '%s' " -o -path '*/driver/can/*'" >&3
     fi
 
-    if [ "$PRJ_EEPROM" -gt 0 ]; then
-        printf '%s' " -o -path '*/driver/eeprom/*' -o -path '*/hal/hal_eeprom.h'" >&3
-        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_EEPROM}/*'" >&4
-    fi
     if [ "$PRJ_DATASTREAMS" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/datastreams/*' -o -path '*/hal/hal_datastreams.h'" >&3
         printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_DATASTREAMS}/*'" >&4
@@ -632,6 +634,27 @@ driver_and_hal_features()
             esac
             printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/rs232_target_extensions.h'" >&4
         fi
+    fi
+    if [ "$PRJ_EEPROM" -gt 0 ]; then
+        printf '%s' " -o -path '*/driver/eeprom/*' -o -path '*/hal/hal_eeprom.h'" >&3
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_EEPROM}/eeprom.h'" >&4
+        echo_ "EEPROM driver: $USE_EEPROM_DRIVER"
+        case "$USE_EEPROM_DRIVER" in
+            (simulating)
+                printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_EEPROM}/target_extension_eeprom_simulating*'" >&4
+                ;;
+            (hal_simulator)
+                printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_EEPROM}/target_extension_eeprom_hal_simulator*'" >&4
+                ;;
+            (sys)
+                printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_EEPROM}/target_extension_eeprom_sys*'" >&4
+                ;;
+            (*)
+                echo_ 'ERROR! Please set the config variable "USE_EEPROM_DRIVER" to one of "sys"|"simulating"|"hal_simulator"'
+                echo_ 'Current Setting is $USE_EEPROM_DRIVER'
+                exit 3
+        esac
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_EEPROM}/eeprom_target_extensions.h'" >&4
     fi
 }
 
@@ -2053,6 +2076,8 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
                                   --> ("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator")
 --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                   --> ("simulating"|"sys"|"rte"|"hal_simulator").
+--pc-eeprom-driver=EEPROM_DRIVER  produce the project definition files for the selected EEPROM_DRIVER if the project shall run on PC
+                                  --> ("simulating"|"sys"|"hal_simulator").
 --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
 --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
 --with-makefile-skeleton=filename define project specific MakefileSkeleton text file which is used as base for
@@ -2067,9 +2092,6 @@ It then collects the corresponding files which can then be imported to an indivi
 Additionally a project specific configuration header is created in the application source directory with the
 name scheme "config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to "config_<project_name>.h",
 the central configuration header library/xgpl_src/IsoAgLib/isoaglib_config.h will include this header.
-Additionally set the SYSTEM_FOO for the wanted platform (this is already done in generated projectfiles).
-"conf2build.sh" will output the correct define at the end of the run.
-Thus with these two DEFINE settings, the compiler can generate a clean running executable / HEX.
 
 Report bugs to <m.wodok@osb-ag.de>.
 EOF
@@ -2161,6 +2183,9 @@ check_before_user_configuration()
             ('--pc-rs232-driver='*)
                 PARAMETER_RS232_DRIVER=$(echo_ "$option" | sed 's/--pc-rs232-driver=//')
                 ;;
+            ('--pc-eeprom-driver='*)
+                PARAMETER_EEPROM_DRIVER=$(echo_ "$option" | sed 's/--pc-eeprom-driver=//')
+                ;;
             (--little-endian-cpu)
                 PARAMETER_LITTLE_ENDIAN_CPU=1
                 ;;
@@ -2246,7 +2271,7 @@ check_after_user_configuration()
             ;;
     esac
     
-    # check for corrext CAN driver - and automatically adapt to embedded targets
+    # check for correct CAN driver - and automatically adapt to embedded targets
     if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
         USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
     fi
@@ -2305,6 +2330,39 @@ check_after_user_configuration()
             ;;
     esac
     
+    if [ $PARAMETER_EEPROM_DRIVER != "UseConfigFile" ] ; then
+        USE_EEPROM_DRIVER=$PARAMETER_EEPROM_DRIVER
+    fi
+    if [ $PRJ_EEPROM -gt 0 ]; then
+      case "$USE_EEPROM_DRIVER" in
+          (simulating | hal_simulator)
+              case "$USE_TARGET_SYSTEM" in
+                  (pc_linux | pc_win32)
+                      ;;
+                  (*)
+                      printf 'ERROR: USE_EEPROM_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_EEPROM_DRIVER=sys instead.\n' "$USE_EEPROM_DRIVER" "$USE_TARGET_SYSTEM" >&2
+                      exit 2
+                      ;;
+              esac
+              ;;
+          (sys)
+              case "$USE_TARGET_SYSTEM" in
+                  (pc_linux | pc_win32)
+                      printf 'ERROR: USE_EEPROM_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_EEPROM_DRIVER=simulating/hal_simulator instead.\n' "$USE_EEPROM_DRIVER" "$USE_TARGET_SYSTEM" >&2
+                      exit 2
+                      ;;
+                  (*)
+                      ;;
+              esac
+              ;;
+          (*)
+              echo_ "Unknown EEPROM driver $USE_EEPROM_DRIVER" 1>&2
+              usage
+              exit 1
+              ;;
+      esac
+    fi
+
     if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
         USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
     fi

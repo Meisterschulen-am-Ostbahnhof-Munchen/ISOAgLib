@@ -248,6 +248,11 @@ PRJ_ISO11783=1
 # select if support for EEPROM access should be enabled.
 # PRJ_EEPROM=1
 
+# Select wanted type of EEPROM driver connection:
+# embedded targets: "sys"
+# pc targets: "simulating" | "hal_simulator"
+# USE_EEPROM_DRIVER="simulating"
+
 # select if the datastreams from HAL for file input and output shall be used
 # PRJ_DATASTREAMS=1
 
