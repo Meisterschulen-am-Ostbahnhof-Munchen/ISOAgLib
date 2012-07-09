@@ -61,6 +61,9 @@ public:
   virtual void SendCanMsg( uint8_t /*bBusNumber*/, uint32_t /*dwTimeStamp*/, uint8_t /*bXtd*/, uint32_t /*dwId*/, uint8_t /*bDlc*/, uint8_t /*abData*/[8] )	{}
   virtual void ReceiveCanMsg( uint8_t /*bBusNumber*/, uint32_t /*dwTimeStamp*/, uint8_t /*bXtd*/, uint32_t /*dwId*/, uint8_t /*bDlc*/, uint8_t /*abData*/[8] ) {}
   virtual bool InsertReceiveCanMsg( uint8_t /*bBusNumber*/, uint8_t* /*bMsgObj*/, uint8_t* /*bXtd*/, uint32_t* /*dwId*/, uint8_t* /*bDlc*/, uint8_t* /*abData*/ ) { return false; }
+
+  // EEPROM
+  virtual const char* GetEEPROM_FileName()  { return "eeprom.dat"; }
 };
 
 

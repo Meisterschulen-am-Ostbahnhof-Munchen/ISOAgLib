@@ -248,6 +248,7 @@ library/xgpl_src/supplementary_driver/hal/esxu/outputs/outputs.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/outputs/target_extension_outputs_sys.cpp -text
 library/xgpl_src/supplementary_driver/hal/esxu/rs232/rs232.h -text
 library/xgpl_src/supplementary_driver/hal/p1mc/eeprom/eeprom.h -text
+library/xgpl_src/supplementary_driver/hal/pc/eeprom/target_extension_eeprom_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/pc/inputs/target_extension_inputs_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/pc/outputs/target_extension_outputs_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_simulator.cpp -text
