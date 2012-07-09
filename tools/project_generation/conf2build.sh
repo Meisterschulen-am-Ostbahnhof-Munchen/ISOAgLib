@@ -711,110 +711,6 @@ find_part()
     fi
 }
 
-add_feature_partition_rule()
-{
-    local FEATURE_NAME="$1"
-    local FEATURE_PATTERN="$2"
-    append FEATURE_PARTITION_RULES "$FEATURE_NAME$LF$FEATURE_PATTERN$LF"
-}
-
-# Partition paths read from STDIN by the given rules and set variables
-# PARTITIONED_ accordingly.
-partition_features()
-{
-    local FEATURE_NAME
-
-    if [ -n "${PARTITIONED_DIRECTORY:-}" ]; then
-        # delete old partitions:
-        while read -r FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
-            unset "PARTITIONED_${FEATURE_NAME}"
-        done <<END_OF_PARTITIONED_FEATURES
-$PARTITIONED_DIRECTORY
-END_OF_PARTITIONED_FEATURES
-        unset "$PARTITIONED_DIRECTORY"
-    fi
-
-    local CANDIDATES1="$(cat)"
-    while read -r FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
-        read -r FEATURE_PATTERN
-        local CANDIDATES2="$CANDIDATES1"
-        CANDIDATES1=''
-        local FILE
-        while read -r FILE && [ -n "$FILE" ]; do
-            if expr "$FILE" : "$FEATURE_PATTERN" >/dev/null; then
-                if ! grep -q "^${FEATURE_NAME}$" <<END_OF_FEATURES >/dev/null
-${PARTITIONED_DIRECTORY:-}
-END_OF_FEATURES
-                then
-                    append PARTITIONED_DIRECTORY "$FEATURE_NAME$LF"
-                fi
-                append "PARTITIONED_${FEATURE_NAME}" "$FILE$LF"
-            else
-                append CANDIDATES1 "$FILE$LF"
-            fi
-        done <<END_OF_FILELIST
-${CANDIDATES2:-}
-END_OF_FILELIST
-    done <<END_OF_FEATURE_PARTITION_RULES
-${FEATURE_PARTITION_RULES:-}
-END_OF_FEATURE_PARTITION_RULES
-}
-
-report_feature_partitions()
-{
-    local FEATURE_NAME
-    while read -r FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
-        printf '\n    (%s' "$FEATURE_NAME"
-        eval "local FILESUBLIST=\"\$PARTITIONED_${FEATURE_NAME}\""
-        local FILE
-        while read -r FILE && [ -n "$FILE" ]; do
-            printf '\n      %s' "$FILE"
-        done <<END_OF_FILELIST
-$FILESUBLIST
-END_OF_FILELIST
-        printf ')'
-    done <<END_OF_PARTITIONED_FEATURES
-$PARTITIONED_DIRECTORY
-END_OF_PARTITIONED_FEATURES
-}
-
-prepare_feature_partitions()
-{
-    FEATURE_PARTITION_RULES=''
-    # COMM PROC features:
-    add_feature_partition_rule PRJ_ISO_TASKCONTROLLER_CLIENT '.*/processdatachangehandler_c\.[^/]*$\|.*/iprocess_c\.[^/]*$\|.*/elementddi_s\.h$\|.*/proc_c\.h$\|.*/Part10_TaskController_Client/impl/proc\|.*/Part10_TaskController_Client/iprocesscmd\|.*/Part10_TaskController_Client/impl/processcmd\|.*/Part10_TaskController_Client/[^/]*procdata[^/]*base_c\.h$\|.*/Part10_TaskController_Client/.*devproperty\|.*/Part10_TaskController_Client/.*/StdMeasureElements/\|.*/Part10_TaskController_Client/.*/StdSetpointElements'
-
-    # COMM features:
-    add_feature_partition_rule PRJ_BASE '.*ibasetypes\.h\.[^/]*$\|.*basecommon_c*\.[^/]*$'
-    add_feature_partition_rule PRJ_TRACTOR_GENERAL '.*/Part7_ApplicationLayer/.*tracgeneral_c\.[^/]*$'
-    add_feature_partition_rule PRJ_TRACTOR_MOVE '.*/Part7_ApplicationLayer/.*tracmove'
-    add_feature_partition_rule PRJ_TRACTOR_PTO '.*/Part7_ApplicationLayer/.*tracpto'
-    add_feature_partition_rule PRJ_TRACTOR_LIGHT '.*/Part7_ApplicationLayer/.*traclight'
-    add_feature_partition_rule PRJ_TRACTOR_FACILITIES '.*/Part7_ApplicationLayer/.*tracfacilities_c*'
-    add_feature_partition_rule PRJ_TRACTOR_AUX '.*/Part7_ApplicationLayer/.*tracaux'
-    add_feature_partition_rule PRJ_TRACTOR_GUIDANCE -path '.*/Part7_ApplicationLayer/.*tracguidance'
-    add_feature_partition_rule PRJ_TRACTOR_CERTIFICATION '.*/Part7_ApplicationLayer/.*traccert'
-    add_feature_partition_rule PRJ_TIME_GPS '.*/Part7_ApplicationLayer/.*timeposgps.*'
-    add_feature_partition_rule PRJ_PROPRIETARY_PGN_INTERFACE '.*/Part3_ProprietaryMessages/'
-    add_feature_partition_rule PRJ_ISO_FILESERVER_CLIENT '.*/Part13_FileServer_Client/'
-    add_feature_partition_rule PRJ_ISO_TERMINAL '.*/Part6_VirtualTerminal_Client/'
-    add_feature_partition_rule PRJ_DATASTREAMS '.*/driver/datastreams/volatilememory_c\.[^/]*$'
-    add_feature_partition_rule PRJ_MULTIPACKET_STREAM_CHUNK '.*/Part3_DataLink/impl/streamchunk_c\.[^/]*$'
-    add_feature_partition_rule PRJ_ISO11783 '.*/Part3_DataLink/i.*multi.*\|.*/Part3_DataLink/impl/sendstream_c\.[^/]*$\|.*/Part3_DataLink/impl/stream_c\.[^/]*$\|.*/Part3_DataLink/istream_c\.[^/]*$\|.*/supplementary_driver/driver/datastreams/streaminput_c\.h\|.*/IsoAgLib/convert\.h'
-
-    # DRIVER features:
-    add_feature_partition_rule PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL '.*/hal/generic_utils/can/\|.*/driver/can/'
-    add_feature_partition_rule PRJ_EEPROM '.*/driver/eeprom/\|.*/hal/.*/eeprom/\|.*/hal/hal_eeprom\.h$'
-    add_feature_partition_rule PRJ_DATASTREAMS '.*/driver/datastreams/\|.*/hal/.*/datastreams/\|.*/hal/hal_datastreams\.h$'
-    add_feature_partition_rule PRJ_OUTPUTS '.*/driver/outputs\|.*/hal/.*/outputs/outputs\.h$\|.*/hal/.*/outputs/outputs_target_extensions\.\|*/hal/hal_outputs\.h$'
-    add_feature_partition_rule PRJ_INPUTS_DIGITAL '.*digitali_c\.[^/]*$'
-    add_feature_partition_rule PRJ_INPUTS_ANALOG '.*analogi\.[^/]*$'
-    add_feature_partition_rule PRJ_INPUTS_COUNTER '.*counteri\.[^/]*$'
-    add_feature_partition_rule PRJ_INPUTS____ '.*/hal/.*/inputs/inputs\.h$\|.*/hal/.*/inputs/inputs_target_extensions\.\|.*inputbase_c\.[^/]*$\|.*inputs_c\.[^/]*$\|.*/hal/hal_inputs\.h$'
-    add_feature_partition_rule PRJ_RS232_OVER_CAN '.*/hal/virtualDrivers/rs232_over_can/'
-    add_feature_partition_rule PRJ_RS232 '.*/hal/.*/rs232/\|.*/driver/rs232/'
-    add_feature_partition_rule 'MISCELLANEOUS' '.'
-}
 
 # this function uses the "find" cmd
 # to derive based on the selected features the
@@ -897,8 +793,6 @@ create_filelist( )
     cat $FILELIST_COMBINED_HDR >> $FILELIST_COMBINED_PURE
     rm -f $FILELIST_COMBINED_HDR
 
-    prepare_feature_partitions
-
     # go back to directory where config file resides
     cd "$GENERATE_FILES_ROOT_DIR"
 
@@ -940,13 +834,9 @@ END_OF_PATH
         # write INST counts
         CONFIG_HEADER_FILENAME=$(basename $CONFIG_NAME)
         echo_ "// File: $CONFIG_HEADER_FILENAME" >&3
-        echo_ "// IMPORTANT: Never change the first block of this header manually!!!" >&3
+        echo_ "// IMPORTANT: Never change this header manually!!!" >&3
         echo_ "//            All manual changes are overwritten by the next call of \"conf2build.sh $CONF_FILE\" " >&3
         echo_ "//            Perform changes direct in the feature and project setup file $CONF_FILE"  >&3
-        echo_ "//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after" >&3
-        echo_ "//                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there."  >&3
-        echo_ "//                      All commented out defines in the middle block will be upated on next \"conf2build.sh $CONF_FILE\" call,"  >&3
-        echo_ "//                      if the corresponding value in isoaglib_config.h changed" >&3
         echo_e "$ENDLINE" >&3
 
         echo_ "// These defines are needed for inclusion of the correct HAL modules:" >&3
@@ -1420,20 +1310,6 @@ create_standard_makefile()
         define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
         define_insert_and_report LINKER_PARAMETERS_1 '$($F LFLAGS)'
         define_insert_and_report LINKER_PARAMETERS_2 '$($F LIBS)'
-
-        printf '(Linux_specific_settings\n' >&5
-        printf '  (Miscellaneous_parameters\n' >&5
-        printf '    (Compiler_binary_prefix %s))\n' "$REPORT_COMPILER_BINARY_PRE" >&5
-        printf '  (Compiler_parameters %s)\n' "$REPORT_CPP_PARAMETERS" >&5
-        printf '  (Linker_parameters %s %s)\n' "$REPORT_LINKER_PARAMETERS_1" "$REPORT_LINKER_PARAMETERS_2" >&5
-
-        partition_features <<EOF
-$(cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" |
-  grep -E '\.cc|\.cpp|\.c' || status_le1)
-EOF
-        printf '  (Modules' >&5
-        report_feature_partitions >&5
-        printf '))\n' >&5
 
         ##### Library install header file gathering BEGIN
         
