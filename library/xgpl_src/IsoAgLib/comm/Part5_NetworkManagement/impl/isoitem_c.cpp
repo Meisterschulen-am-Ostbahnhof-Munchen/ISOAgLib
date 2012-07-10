@@ -574,13 +574,11 @@ int32_t IsoItem_c::startWsAnnounce()
 }
 
 
-/** get master of this IsoItem
-    @return  this if master himself; get master if client; NULL if standalone
-  */
-IsoItem_c* IsoItem_c::getMaster()
+IsoItem_c*
+IsoItem_c::getMaster()
 {
-  // check if called for a master isoItem_c
-  if ( isMaster() ) return this;
+  if ( isMaster() )
+    return this;
 
   uint8_t ui8_numberOfMembers = getIsoMonitorInstance4Comm().isoMemberCnt(true);
   for ( uint8_t ui8_index = 0; ui8_index < ui8_numberOfMembers; ui8_index++)
@@ -589,11 +587,14 @@ IsoItem_c* IsoItem_c::getMaster()
     if ( refc_isoItem.isMaster() )
     {
       STL_NAMESPACE::vector<IsoName_c>* mpvec_slaveIsoNamesTmp = refc_isoItem.getVectorOfClients();
-      if (mpvec_slaveIsoNamesTmp == NULL) continue;
+      if (mpvec_slaveIsoNamesTmp == NULL)
+        continue;
 
-      for (IsoName_c* c_isoNameOfClient = &*mpvec_slaveIsoNamesTmp->begin(); c_isoNameOfClient != &*mpvec_slaveIsoNamesTmp->end(); c_isoNameOfClient++)
+      for (STL_NAMESPACE::vector<IsoName_c>::iterator iter = mpvec_slaveIsoNamesTmp->begin();
+           iter != mpvec_slaveIsoNamesTmp->end();
+           ++iter)
       {
-        if ( *c_isoNameOfClient == isoName() )
+        if ( *iter == isoName() )
         { // found master to this
           return &refc_isoItem;
         }
