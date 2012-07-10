@@ -40,14 +40,14 @@ public:
   //  Operation: get_vtObjectButton_a
   const iVtObjectButton_s& get_vtObjectButton_a();
 
-#ifdef PROPRIETARY_VERSION4_CLIENT_HACK
+  //  Operation: enable
+  bool v4enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); }
+
+  //  Operation: disable
+  bool v4disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
+
   //  Operation: select
-  //  ATTENTION: THIS IS ONLY SUPPORTED BY VERSION 4 VTs
-  //  WHICH ARE CURRENTLY NOT YET ON THE MARKET.
-  //  SO USE THIS COMMAND ONLY FOR SPECIAL PURPOSES AND IF YOU KNOW YOUR VT-SERVER
-  //  SUPPORTS THIS COMMAND - OTHER THAN THAT YOU WILL GET 4,5 SECONDS OF DELAY IN YOUR COMMUNICATION!
-  bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
-#endif
+  bool v4select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 
   /// Operation: setSize
   /// 
@@ -98,15 +98,13 @@ public:
     vtObjectButton_c::setKeyCode (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-#ifdef PROPRIETARY_VERSION4_CLIENT_HACK
   //  Operation: setOptions
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void v4setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectButton_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
-#endif
 
   //  Operation: moveChildLocation
   //! Parameter:
