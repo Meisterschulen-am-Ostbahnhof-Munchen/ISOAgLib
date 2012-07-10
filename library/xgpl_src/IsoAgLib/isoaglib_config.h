@@ -499,31 +499,6 @@ struct NullOut_s {
 #  endif
 #endif
 
-#ifndef EXTERNAL_DEBUG_DEVICE
-#  ifdef SYSTEM_PC
-#    include <iostream>
-#    include <fstream>
-#    ifndef ISOAGLIB_USE_UNICODE
-#      define EXTERNAL_DEBUG_DEVICE STL_NAMESPACE::cout
-#      define EXTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
-#    else
-#      define EXTERNAL_DEBUG_DEVICE STL_NAMESPACE::wcout
-#      define EXTERNAL_DEBUG_DEVICE_NEWLINE L"\r\n"
-#    endif
-#    define EXTERNAL_DEBUG_DEVICE_ENDL STL_NAMESPACE::endl
-#    define EXTERNAL_DEBUG_FLUSH fflush(0);
-#  else
-#    define EXTERNAL_DEBUG_DEVICE IsoAgLib::getIrs232Instance()
-#    ifndef ISOAGLIB_USE_UNICODE
-#      define EXTERNAL_DEBUG_DEVICE_ENDL "\r\n"
-#      define EXTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
-#    else
-#      define EXTERNAL_DEBUG_DEVICE_ENDL L"\r\n"
-#      define EXTERNAL_DEBUG_DEVICE_NEWLINE L"\r\n"
-#    endif
-#    define EXTERNAL_DEBUG_FLUSH
-#  endif
-#endif
 /*@}*/
 
 #endif
