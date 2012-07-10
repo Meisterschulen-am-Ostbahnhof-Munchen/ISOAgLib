@@ -1039,24 +1039,13 @@ expand_insert()
     printf '$(%s)' "$1"
 }
 
-expand_report()
-{
-    local NAME="$1"
-    eval "printf '%s' \"\$REPORT_$NAME\""
-}
-
-define_insert_and_report()
+define_insert()
 {
     local NAME="$1"
     RULE="$2"
     local F=expand_insert # first expand for insertion
     eval "INSERT_${NAME}=\"\$(expand_definition)\"" || {
         printf 'ERROR when trying to set variable %s\n' "INSERT_${NAME}" >&2
-        exit 1
-    }
-    F=expand_report # then expand for report
-    eval "REPORT_${NAME}=\"\$(expand_definition)\"" || {
-        printf 'ERROR when trying to set variable %s\n' "REPORT_${NAME}" >&2
         exit 1
     }
 }
@@ -1242,23 +1231,22 @@ create_standard_makefile()
         KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;${ALL_INC_PATHS:+$(printf '%s;' $ALL_INC_PATHS)}"
         
         local RULE_LIBPATH="$(map join_space prefix_library_path ${USE_LINUX_EXTERNAL_LIBRARY_PATH:-})"
-        define_insert_and_report LIBPATH "$RULE_LIBPATH"
-        printf 'LIBPATH = %s\n' "$REPORT_LIBPATH" >&3
+        define_insert LIBPATH "$RULE_LIBPATH"
+        printf 'LIBPATH = %s\n' "$INSERT_LIBPATH" >&3
         local REPORT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
         printf 'EXTERNAL_LIBS = %s\n' "$REPORT_EXTERNAL_LIBS" >&3
         
         echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >&3
         printf -- '-include versions.mk\n\n\n' >&3
         
-        define_insert_and_report BIOS_INC ''
-        define_insert_and_report BIOS_LIB ''
+        define_insert BIOS_INC ''
+        define_insert BIOS_LIB ''
         if [ "$USE_RS232_DRIVER" = "rte" ] ; then
-            define_insert_and_report BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
+            define_insert BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
             echo_ "BIOS_LIB = $INSERT_BIOS_LIB" >&3
             # the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
             echo_n "BIOS_INC =" >&3
         fi
-        local REPORT_VERSION_DEFINES=''
         local RULE_PROJ_DEFINES="\$(\$F VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h${PRJ_DEFINES:+$(printf -- " -D'%s'" $PRJ_DEFINES)}${COMBINED_DEFINES:+$(printf -- " -D'%s'" $COMBINED_DEFINES)}"
 
         if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
@@ -1273,10 +1261,10 @@ create_standard_makefile()
                 ;;
         esac
 
-        define_insert_and_report PROJ_DEFINES "$RULE_PROJ_DEFINES"
+        define_insert PROJ_DEFINES "$RULE_PROJ_DEFINES"
         printf 'PROJ_DEFINES = %s\n' "$INSERT_PROJ_DEFINES" >&3
 
-        define_insert_and_report COMPILER_BINARY_PRE "$PRJ_COMPILER_BINARY_PRE"
+        define_insert COMPILER_BINARY_PRE "$PRJ_COMPILER_BINARY_PRE"
         printf "\n####### Definition of compiler binary prefix corresponding to selected target\n" >&3
         printf 'COMPILER_BINARY_PRE = %s\n' "$INSERT_COMPILER_BINARY_PRE" >&3
         
@@ -1292,24 +1280,23 @@ create_standard_makefile()
         list_source_files ' %s' ' \\\n\t\t%s' '\.h|\.hpp|\.hh' "$MakefileFilelistAppHdr" >&3
         printf '\n\n' >&3
 
-        local REPORT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
-        define_insert_and_report EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
-        define_insert_and_report CFLAGS "${RULE_CFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Wpointer-arith \$(\$F PROJ_DEFINES)}"
-        define_insert_and_report CXXFLAGS "${RULE_CXXFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith \$(\$F PROJ_DEFINES)}"
-        define_insert_and_report INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
-        define_insert_and_report CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
-        define_insert_and_report C_PARAMETERS '$($F CFLAGS) $($F INCPATH)'
+        define_insert EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
+        define_insert CFLAGS "${RULE_CFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Wpointer-arith \$(\$F PROJ_DEFINES)}"
+        define_insert CXXFLAGS "${RULE_CXXFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith \$(\$F PROJ_DEFINES)}"
+        define_insert INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
+        define_insert CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
+        define_insert C_PARAMETERS '$($F CFLAGS) $($F INCPATH)'
         local RULE_LFLAGS=$(
             case "$USE_CAN_DRIVER" in
                 (msq_server|socket_server|socket_server_hal_simulator)
                     printf -- '-pthread'
                     ;;
             esac;)' $($F LIBPATH)'
-        define_insert_and_report LFLAGS "$RULE_LFLAGS"
-        define_insert_and_report SUBLIBS '-lrt'
-        define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
-        define_insert_and_report LINKER_PARAMETERS_1 '$($F LFLAGS)'
-        define_insert_and_report LINKER_PARAMETERS_2 '$($F LIBS)'
+        define_insert LFLAGS "$RULE_LFLAGS"
+        define_insert SUBLIBS '-lrt'
+        define_insert LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
+        define_insert LINKER_PARAMETERS_1 '$($F LFLAGS)'
+        define_insert LINKER_PARAMETERS_2 '$($F LIBS)'
 
         ##### Library install header file gathering BEGIN
         
@@ -1653,33 +1640,6 @@ create_EdePrj()
     } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
     cd $DEV_PRJ_DIR
 
-    printf '(Tasking_specific_settings\n' >&5
-    printf '  (Miscellaneous_parameters\n' >&5
-    printf '    (Target_cpu %s)\n' "$INSERT_TARGET_CPU" >&5
-    printf '    (Compiler_directory %s)\n' "$INSERT_EMBED_COMPILER_DIR" >&5
-    printf '    (Project_path %s)\n' "$INSERT_PRJ_PATH" >&5
-    printf '    (Target_ILO %s))\n' "$INSERT_TARGET_ILO" >&5
-    printf '  (Compiler_parameters\n' >&5
-    printf '    (Includes' >&5
-    report_ede_fileparts()
-    {
-        printf '\n      %s' "$@"
-    }
-    with_ede_includes report_ede_fileparts >&5
-    printf ')\n    (Defines %s))\n' "$INSERT_DEFINES" >&5
-    printf '  (Linker_parameters\n' >&5
-    printf '    (Libraries ' >&5
-    with_ede_libraries report_ede_fileparts >&5
-    printf ')\n    (Target_libraries ' >&5
-    map report_ede_fileparts embedlib_path_for_ede $USE_EMBED_LIBS >&5
-    printf '))\n  (Sources' >&5
-    while read -r FILE; do
-        printf '\n    %s' "$FILE"
-    done <$EdePrjFilelist >&5
-    FORMAT="\n    $(literal_format "$USE_EMBED_LIB_DIRECTORY")/%s"
-    printf -- "$FORMAT" $USE_EMBED_BIOS_SRC >&5
-    printf '))\n' >&5
-
     #echo_ "Converted UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
     unix_lines_to_windows_lines <<EOF >"$PROJECT_FILE_NAME"
 $(cat "$PROJECT_FILE_NAME")
@@ -1807,16 +1767,13 @@ create_library_makefile()
     : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_MakefileLibSkeleton.txt}
 
     local INSERT_APPLICATION_NAME="$PROJECT"
-    local REPORT_ISOAGLIB_PATH='dummy'
     local INSERT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
     local INSERT_ISOAGLIB_INSTALL_PATH="$ISOAGLIB_INSTALL_PATH"
     local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
     local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_LINUX_EXTERNAL_INCLUDE_PATH)"
     local INSERT_APP_INCS="$(echo_ ${ALL_INC_PATHS:+$(printf -- '-I%s\n' $ALL_INC_PATHS)})"
-    local REPORT_LIBPATH='dummy'
     local INSERT_LIBPATH="${USE_LINUX_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_LINUX_EXTERNAL_LIBRARY_PATH)}"
     local INSERT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
-    local REPORT_PROJ_DEFINES='dummy'
     local INSERT_PROJ_DEFINES="$(
         printf -- '$(VERSION_DEFINES)'
         printf -- ' -DPRJ_USE_AUTOGEN_CONFIG=config_%s.h' "$PROJECT"
@@ -1841,26 +1798,24 @@ create_library_makefile()
     generate_interface_filelist
     local INSERT_INSTALL_FILES_LIBRARY="$(
         list_source_files '%s' ' \\\n\t%s' '.' "$TMP_INTERFACE_FILELIST")"
-    define_insert_and_report SUBLIBS '-lrt'
-    define_insert_and_report EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
-    define_insert_and_report CXXFLAGS "${RULE_CXXFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith \$(\$F PROJ_DEFINES)}"
-    define_insert_and_report BIOS_INC ''
-    local REPORT_APP_INC='dummy'
-    define_insert_and_report INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
+    define_insert SUBLIBS '-lrt'
+    define_insert EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
+    define_insert CXXFLAGS "${RULE_CXXFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith \$(\$F PROJ_DEFINES)}"
+    define_insert BIOS_INC ''
+    define_insert INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
     local RULE_LFLAGS=$(
         case "$USE_CAN_DRIVER" in
             (msq_server|socket_server|socket_server_hal_simulator)
                 printf -- '-pthread'
                 ;;
         esac;)' $($F LIBPATH)'
-    define_insert_and_report LFLAGS "$RULE_LFLAGS"
-    define_insert_and_report BIOS_LIB ''
+    define_insert LFLAGS "$RULE_LFLAGS"
+    define_insert BIOS_LIB ''
     if [ "$USE_RS232_DRIVER" = "rte" ] ; then
-        define_insert_and_report BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
+        define_insert BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
     fi
-    local REPORT_EXTERNAL_LIBS='dummy'
     local INSERT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
-    define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
+    define_insert LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
     local INSERT_PROJECT_CONFIG="$CONFIG_NAME"
 
     expand_template "$MAKEFILE_SKELETON_FILE" |
@@ -1942,8 +1897,6 @@ Usage: conf2build.sh [OPTIONS] project_config_file
 Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLib project.
 
 -h, --help                        print this message and exit.
---report                          Print generation report.
---report=REPORT_FILE              print generation report to REPORT_FILE.
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
 --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                   target which is specified in the configuration file
@@ -2029,9 +1982,6 @@ check_before_user_configuration()
         exit 1
     fi
     
-    # Initialize file descriptor for reports (may be overridden by option --report):
-    exec 5>/dev/null
-
     # Check the arguments.
     for option in "$@"; do
         case "$option" in
@@ -2076,15 +2026,6 @@ check_before_user_configuration()
             ('--with-makefile-app-skeleton='*)
                 RootDir=$PWD
                 MAKEFILE_APP_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-app-skeleton=//')
-                ;;
-            ('--report'*) # Set file descriptor for report:
-                local REPORTFILE="$(printf '%s' "$option" | sed -e 's|^--report\(=-\?\)\?||')"
-                if [ -n "$REPORTFILE" ]; then
-                    exec 5>"$REPORTFILE"
-                else
-                    TMP_REPORTFILE="${TEMPFILE_PREFIX}report"
-                    exec 5>"$TMP_REPORTFILE"
-                fi
                 ;;
             ('--debugdefgroup=0')
                 # Keep default for release build.
