@@ -338,9 +338,12 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
             }
             // else: Client accepts this stream, so create a representation of the stream NOW -
             // - further handling is done in "timeEvent()" now!*/
-            createStream (c_isoRSI, ui32_msgSize, arc_pkg.time() );
+            Stream_c* newStream = createStream (c_isoRSI, ui32_msgSize, arc_pkg.time() );
             // the constructor above sets the Stream to "AwaitCtsSend" and "StreamRunning"
-            // so next timeEvent will send out the CTS and set the pkgRemainingInBurst to a correct value!
+            sendCurrentCts ((DEF_Stream_c_IMPL&)*newStream); // send out the initial CTS
+            #if DEBUG_MULTIRECEIVE
+              INTERNAL_DEBUG_DEVICE << "Send CTS to get initial burst!" << INTERNAL_DEBUG_DEVICE_ENDL;
+            #endif
           } // end local variables allowment!
           return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
 
@@ -534,11 +537,16 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
           }
           tellClientRemoveStream (*pc_streamFound); // won't be told to Broadcast streams anyway...
         }
-        // further handling (send next CTS) is moved to timeEvent, so we don't get confused with CM/DATA PGNs, as they come very fast!
-
-        // Stream is now set to either
-        // -- StreamFinished -or- AwaitCtsSend
-        // OR REMOVED!
+        else
+        {
+          if (pc_streamFound->getStreamingState() == StreamFinished)
+          {
+            const bool keepStream = finishStream ((DEF_Stream_c_IMPL&)*pc_streamFound); // Send EoMAck
+            if (!keepStream)
+              removeStream (*pc_streamFound);
+          }
+          // else: Stream not yet finished, set to "AwaitCtsSend" to expect next burst...
+        }
 
         // if code execution comes to here, then the right SA/DA Pair was
         // there so it WAS for MultiReceive, so we can return true safely!
@@ -810,20 +818,6 @@ MultiReceive_c::getStreamInternal(
     DEF_Stream_c_IMPL& curStream = *i_list_streams;
     if (curStream.getIdent().match (arcc_streamIdent, ab_includePgnInSearch))
     {
-      if (curStream.getStreamingState() == StreamFinished)
-      { // finish it now, because a new one will have to be created NOW - do we can't wait with finishing until timeEvent!
-        const bool cb_keepStream = finishStream (curStream);
-        if (cb_keepStream)
-        { // keep it, do NOT delete
-          i_list_streams++;
-          continue;
-        }
-        else
-        { // delete it
-          i_list_streams = mlist_streams.erase (i_list_streams);
-          continue;
-        }
-      }
       if (curStream.getStreamingState() != StreamFinishedJustKept)
       { // only return streams that are not "kept". ignore kept streams here for further processing!
         return &curStream;
@@ -937,32 +931,16 @@ MultiReceive_c::timeEvent()
       ++i_list_streams;
       continue;
     }
-    else if (rc_stream.getStreamingState() == StreamFinished)
-    {
-      const bool cb_keepStream = finishStream (rc_stream);
- 
-      if (cb_keepStream)
-      { // do NOT delete stream then!
-        ++i_list_streams;
-      }
-      else
-      { // if not "continue"d, remove Stream
-        i_list_streams = mlist_streams.erase (i_list_streams);
-      }
-      continue;
-    }
     else if ((rc_stream.getNextComing() == AwaitCtsSend) && (rc_stream.readyToSendCts()))
     { // this case shouldn't happen for BAM / FastPacket
       #if DEBUG_MULTIRECEIVE
         INTERNAL_DEBUG_DEVICE << "Processing Burst" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       // CTS after Burst? -> process last Burst!
-      if (rc_stream.getBurstNumber() > 0) { // 0 means that no CTS has been sent, the first incoming burst is nr. 1 !
-        processStreamDataChunk_ofMatchingClient(rc_stream, false);
-        // don't care for result here!
-      }
+      isoaglib_assert( rc_stream.getBurstNumber() > 0); // 0 would be right after creation.
+      processStreamDataChunk_ofMatchingClient(rc_stream, false);
       #if DEBUG_MULTIRECEIVE
-        INTERNAL_DEBUG_DEVICE << "Send CTS to get first/next burst!" << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Send CTS to get next burst!" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       sendCurrentCts (rc_stream); // will increase the burstCurrent
     }
@@ -1045,7 +1023,7 @@ MultiReceive_c::removeKeptStream (Stream_c* apc_keptStream)
 void
 MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
 {
-  // This function actually IS only called if in state "AwaitCtsSend" !
+  isoaglib_assert( arc_stream.getNextComing() == AwaitCtsSend );
 
   /* may also be 0, meaning HOLD CONNECTION OPEN, but we can handle multiple streams... ;-)
      and we don't want to hold connections open that are very short, so well........... */
