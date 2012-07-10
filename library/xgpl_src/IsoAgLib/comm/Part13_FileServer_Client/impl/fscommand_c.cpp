@@ -676,7 +676,7 @@ FsCommand_c::sendRequest (RequestType_en aen_reqType)
   }
 
 #if DEBUG_FILESERVER
-  INTERNAL_DEBUG_DEVICE << "Sending Request " << int(pui8_sendBuffer[0]) << " -> Fileserver [Try No. " << int(ui8_requestAttempts) << "]." << EXTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "Sending Request " << int(pui8_sendBuffer[0]) << " -> Fileserver [Try No. " << int(ui8_requestAttempts) << "]." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
   if (ui8_packetLength <= 8)

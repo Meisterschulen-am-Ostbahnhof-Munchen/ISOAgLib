@@ -41,8 +41,8 @@ SchedulerEntry_c::timeEventExec(int32_t ai32_demandedExecEnd)
   if ( mpc_taskInstance == NULL )
   {
     #ifdef SYSTEM_PC
-    EXTERNAL_DEBUG_DEVICE << "SchedulerEntry_c::timeEvent() had no mpc_taskInstance."
-    << EXTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "SchedulerEntry_c::timeEvent() had no mpc_taskInstance."
+    << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return true;
   }
