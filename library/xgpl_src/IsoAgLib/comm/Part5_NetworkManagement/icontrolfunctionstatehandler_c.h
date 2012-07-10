@@ -29,8 +29,6 @@ public:
   using __IsoAgLib::ControlFunctionStateHandler_c::LostAddress;
   using __IsoAgLib::ControlFunctionStateHandler_c::ReclaimedAddress;
   using __IsoAgLib::ControlFunctionStateHandler_c::RemoveFromMonitorList;
-  /* For backwards compatibility only: */
-  using __IsoAgLib::ControlFunctionStateHandler_c::IsoItemModification_t;
 
   virtual ~iControlFunctionStateHandler_c() {}
 

@@ -44,9 +44,6 @@ public:
     RemoveFromMonitorList    /// No more Address-Claims (after requests) --> Node removed from IsoMonitor
   };
 
-  /* For backwards compatibility only: */
-  typedef iIsoItemAction_e IsoItemModification_t;
-
   ControlFunctionStateHandler_c() {}
   virtual ~ControlFunctionStateHandler_c() {}
 
@@ -58,10 +55,6 @@ public:
       iIsoItemAction_e ae_action,
       IsoItem_c const &acrc_isoItem) = 0;
 };
-
-/** For backward compatibility.
-  */
-typedef ControlFunctionStateHandler_c SaClaimHandler_c;
 
 /** Proxy for ControlFunctionStateHandler_c.
   * Having such a proxy as component is an alternative to subclassing
