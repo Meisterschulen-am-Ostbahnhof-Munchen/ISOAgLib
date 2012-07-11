@@ -15,7 +15,7 @@
 #define ICONTROLFUNCTIONSTATEHANDLER_C_H
 
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/cfstatehandler_c.h>
 
 namespace IsoAgLib
 {

@@ -24,7 +24,7 @@
 namespace __IsoAgLib {
 
 /** class for central management of AUX3 */
-class Aux3Mgmt_c : public SaClaimHandler_c
+class Aux3Mgmt_c : public ControlFunctionStateHandler_c
 {
 private:
   /** operation states of AUX3 */

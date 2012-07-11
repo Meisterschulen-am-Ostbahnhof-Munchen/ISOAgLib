@@ -16,7 +16,7 @@
 // ISOAgLib
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/cfstatehandler_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 
 // own
@@ -99,7 +99,7 @@ public:
   */
   FsClientServerCommunication_c *initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, const IsoAgLib::iFsWhitelistList &v_fsWhitelist);
 
-   virtual void reactOnIsoItemModification (SaClaimHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+   virtual void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   private:
     /** constructor is private, so singleton has to be used */

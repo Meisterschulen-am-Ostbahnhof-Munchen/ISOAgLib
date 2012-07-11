@@ -17,7 +17,7 @@
 #include "proprietarymessageclient_c.h"
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/cfstatehandler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>

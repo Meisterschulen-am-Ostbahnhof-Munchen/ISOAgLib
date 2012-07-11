@@ -1,5 +1,5 @@
 /*
-  saclaimhandler_c.h
+  cfstatehandler_c.h - ControlFunctionStateHandler_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef SA_CLAIM_HANDLER_C_H
-#define SA_CLAIM_HANDLER_C_H
+#ifndef CF_STATE_HANDLER_C_H
+#define CF_STATE_HANDLER_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
 #include "isorequestpgnhandler_c.h"

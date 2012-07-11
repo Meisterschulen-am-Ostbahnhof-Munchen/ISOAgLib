@@ -79,24 +79,14 @@ class iIdentDataStorage_c {
 };
 
 /**
-  class for identity/ies (Control Function(s)) which are managed by the actual ECU;
+  class for a Control Function.
   new instances start in prepare address claim state and stay there for a random and serialNo dependent time;
   then they are inserted as announcing member in the monitoring list and start announcing;
 
-  If the IsoAgLib shall not start immediately with address claim on definition of the variable
-  ( e.g. if some data must be read for definition of local identity ),
-  the address claim can be started later with explicit call of iIdentItem_c::start( ).
-
-  The IsoAgLib backend is responsible for answering all requests like
-  RequestForClaimedSourceAdress ( ISO 11783 )
-
-  The application just has to call the main trigger function Scheduler_c::timeEvent().
-
-  After the monitor list report a completed address claim the status changes to active/claimed address;
-
   @short member ident item of this Control Function 
+  @author Martin Wodok
   @author Dipl.-Inform. Achim Spangler
-  */
+*/
 class iIdentItem_c : private __IsoAgLib::IdentItem_c  {
 public:
   /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
