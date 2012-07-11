@@ -39,7 +39,7 @@ class FsManager_c : public Scheduler_Task_c
   MACRO_MULTITON_CONTRIBUTION();
 public:
 
-  class SaClaimHandlerProxy_c : public SaClaimHandler_c {
+  class SaClaimHandlerProxy_c : public ControlFunctionStateHandler_c {
   public:
     typedef FsManager_c Owner_t;
 
