@@ -200,21 +200,13 @@ public:
   */
   bool isoDevClass2ISONameClaimedAddress(IsoName_c &rc_isoName);
 
-  /** insert a new IsoItem_c in the list; with unset aui8_nr the member is initiated as
-    address claim state; otherwise the given state can be given or state Active is used
-    possible errors:
-      * Err_c::badAlloc not enough memory to insert new IsoItem_c instance
-      * Err_c::busy another member with same ident exists already in the list
-    @param acrc_isoName ISOName of the member
-    @param aui8_nr member number
-    @param ren_state wanted status
-    @param apc_identItemForLocalItems back reference to the IdentItem, set if the IsoItem is local...
-    @param ab_announceAddition
+  /** insert a new IsoItem_c in the list
     @return pointer to new IsoItem_c or NULL if not succeeded
   */
-  IsoItem_c* insertIsoMember(const IsoName_c& acrc_isoName, uint8_t aui8_nr = 0xFF,
-                             IState_c::itemState_t ren_state = IState_c::Active, IdentItem_c* apc_identItemForLocalItems = NULL, bool ab_announceAddition=false);
-
+  IsoItem_c* insertIsoMember(const IsoName_c& acrc_isoName, uint8_t aui8_nr,
+                             IState_c::itemState_t ren_state,
+                             IdentItem_c* apc_identItemForLocalItems,
+                             bool ab_announceAddition);
 
   /** deliver the amount of local members which matches the searched proto types
       @return amount of registered local members with wanted type
