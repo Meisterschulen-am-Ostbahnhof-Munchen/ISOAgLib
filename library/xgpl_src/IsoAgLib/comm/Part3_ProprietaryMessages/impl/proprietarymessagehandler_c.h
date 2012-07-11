@@ -203,10 +203,10 @@ namespace __IsoAgLib
 
     private:
       virtual void reactOnIsoItemModification(
-          IsoItemModification_t at_action,
-          IsoItem_c const &acrc_isoItem)
+          iIsoItemAction_e action,
+          IsoItem_c const &isoItem)
       {
-        mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
+        mrt_owner.reactOnIsoItemModification(action, isoItem);
       }
 
       // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
@@ -219,7 +219,6 @@ namespace __IsoAgLib
     };
 
   private:
-
     /** dynamic array of memberItems for handling
         of single member informations
     */
