@@ -13,18 +13,19 @@
 #ifndef ISO_ITEM_H
 #define ISO_ITEM_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h>
+#include "isoname_c.h"
+#include "baseitem_c.h"
+
 
 namespace IsoAgLib {
   class iIsoItem_c;
 }
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
+
+class IdentItem_c;
+
 /** item class for ISO 11783 members monitor list to manage
   local (with address claim) and remote (statistic information)
   systems; utilizes BaseItem_c for basic MonitorList
@@ -32,17 +33,10 @@ namespace __IsoAgLib {
   @short Item with services needed for ISO11783 monitor lists.
   @author Dipl.-Inform. Achim Spangler
   @see BaseItem
-  @see ISOName
+  @see IsoName
 */
-// forward declarations
-class IdentItem_c;
-
 class IsoItem_c : public BaseItem_c  {
-private:
-  // private typedef alias names
 public:
-  /** default constructor - all data has to be initialized with a call to "set(..)"
-  */
   IsoItem_c();
 
   /** copy constructor for ISOItem.
@@ -204,8 +198,6 @@ public:
   /** periodically time evented actions:
       * find free SA or check if last SA is available
       * send adress claim
-    possible errors:
-      * dependant error in CanIo_c during send
     @return true -> all planned time event activitie performed
   */
   bool timeEvent( void );

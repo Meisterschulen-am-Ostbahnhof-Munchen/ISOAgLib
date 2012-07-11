@@ -252,32 +252,22 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
 }
 
 
-/** periodically time evented actions:
-    * find free SA or check if last SA is available
-    * send adress claim
-  possible errors:
-    * dependant error in CanIo_c during send
-  @return true -> all planned time event activitie performed
-*/
-bool IsoItem_c::timeEvent( void )
+bool
+IsoItem_c::timeEvent()
 {
-  IsoBus_c& c_isobus = getIsoBusInstance4Comm();
-  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-
+  isoaglib_assert( itemState( IState_c::Local ) );
+  isoaglib_assert( mpc_identItem != NULL );
+  
   int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
   if (itemState(IState_c::PreAddressClaim))
   { // this item is in prepare address claim state -> wait for sending first adress claim
-    int32_t i32_lastAdrRequestTime = c_isoMonitor.lastIsoSaRequest();
+    const int32_t lastAdrRequestTime = mpc_identItem->getLastIsoSaRequestForThisItem();
 
-    // for local instance (mpc_identItem is set): use timestamp from ident item and not the global one from ISO monitor
-    if (mpc_identItem)
-      i32_lastAdrRequestTime = mpc_identItem->getLastIsoSaRequestForThisItem();
-
-    if (i32_lastAdrRequestTime != -1)
+    if (lastAdrRequestTime != -1)
     {
       int32_t i32_wait = 1250 + calc_randomWait();
-      if ((i32_time - i32_lastAdrRequestTime) > i32_wait)
+      if ((i32_time - lastAdrRequestTime) > i32_wait)
       { // last iso adress claim request is still valid and should have been answered till now
         // check if this item is self conf
         // unifyIsoSa delivers actual SA of this item if free
@@ -285,7 +275,7 @@ bool IsoItem_c::timeEvent( void )
         // if actual SA is not free for self-conf item
         // -> a free SA is searched and answered
         // - if no free SA is found, 254 is answered for NACK
-        setNr(c_isoMonitor.unifyIsoSa (this, false)); // false: We're NOT resolving a conflict here.
+        setNr(getIsoMonitorInstance4Comm().unifyIsoSa (this, false)); // false: We're NOT resolving a conflict here.
 
         sendAddressClaim (false); // false: Initial Address-Claim, so we need to go to "AddressClaim"-phase!
         // we may be "Off" here now but can't delete ourself,
@@ -297,15 +287,14 @@ bool IsoItem_c::timeEvent( void )
     { // no adress claim request sent till now
       getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true, NULL );
 
-      if (mpc_identItem)
-        mpc_identItem->updateLastIsoSaRequestForThisItem();
+      mpc_identItem->updateLastIsoSaRequestForThisItem();
     }
   }
   else if (itemState(IState_c::AddressClaim))
   { // item in address claim mode (time between send of claim and
     // check if there is a CAN send conflict during send of adress claim
     // final acceptance of adr claim (wait for possible contention)
-    if (c_isobus.stopSendRetryOnErr())
+    if (getIsoBusInstance4Comm().stopSendRetryOnErr())
     { // item was in address claim state and send of claim caused error
       setItemState(IState_c::PreAddressClaim);
     }
@@ -364,7 +353,7 @@ bool IsoItem_c::timeEvent( void )
         { // Really send it out on the bus now!
           c_pkg.setIsoPri (7);
           c_pkg.setMonitorItemForSA (this);
-          c_isobus << c_pkg;
+          getIsoBusInstance4Comm() << c_pkg;
           updateTime();
 
           // did we send the last message of the announce sequence?
