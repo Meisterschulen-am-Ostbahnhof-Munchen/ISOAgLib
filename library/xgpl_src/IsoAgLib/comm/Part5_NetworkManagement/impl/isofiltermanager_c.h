@@ -64,7 +64,7 @@ private:
 
   private:
     virtual void reactOnIsoItemModification(
-        IsoItemModification_t at_action,
+        iIsoItemAction_e at_action,
         IsoItem_c const &acrc_isoItem)
     {
       mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
@@ -82,11 +82,7 @@ private:
 
   // Private methods
 
-  /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
-   * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
-   * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
-   */
-  void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+  void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
 private:
   /** constructor for IsoFilterManager_c */

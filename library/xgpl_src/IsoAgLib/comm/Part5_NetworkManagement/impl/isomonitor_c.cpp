@@ -669,7 +669,7 @@ IsoMonitor_c::deregisterControlFunctionStateHandler (ControlFunctionStateHandler
 
 
 void
-IsoMonitor_c::broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const
+IsoMonitor_c::broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::iIsoItemAction_e at_isoItemModification, IsoItem_c const& acrc_isoItem ) const
 {
   for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client

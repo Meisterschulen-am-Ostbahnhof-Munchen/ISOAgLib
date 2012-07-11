@@ -71,7 +71,7 @@ FsManager_c::timeEvent(void)
 
 
 void
-FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
 {
   // we only care for fileservers
   if (acrc_isoItem.isoName().getEcuType() != IsoName_c::ecuTypeFileServerOrPrinter)

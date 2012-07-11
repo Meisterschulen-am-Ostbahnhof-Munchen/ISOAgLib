@@ -1319,13 +1319,8 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
 }
 
 
-
-/** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
- * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
- * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
- */
 void
-MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {

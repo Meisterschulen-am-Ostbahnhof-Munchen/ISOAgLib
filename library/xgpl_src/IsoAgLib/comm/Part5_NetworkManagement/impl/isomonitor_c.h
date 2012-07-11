@@ -268,7 +268,7 @@ public:
   /** deregister a ControlFunctionStateHandler */
   void deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c & arc_client);
 
-  void broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const;
+  void broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::iIsoItemAction_e action, IsoItem_c const& acrc_isoItem ) const;
 
   /**
     deliver member item with given isoName

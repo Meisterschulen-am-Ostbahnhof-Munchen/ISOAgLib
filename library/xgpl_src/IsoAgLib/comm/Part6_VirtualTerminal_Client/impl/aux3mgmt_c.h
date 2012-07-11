@@ -76,11 +76,10 @@ public:
       Use Aux3PrefAssignMgmt_c::deriveSelectOptimalPreferredAssignment() for checking
       set state to UploadPrefAssign if deriveSelectOptimalPreferredAssignment() indicates new preferred assignment
       else leave state unchanged
-     @see IsoItemModification_en / IsoItemModification_t
      @param at_action enumeration indicating what happened to this IsoItem.
      @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
   */
-  virtual void reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem);
+  virtual void reactOnIsoItemModification (iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem);
 
   /** handle EndOfTP from TP for uploading a preferred assignment data set
       this function is called when MultiSend_c detects finish of TP.

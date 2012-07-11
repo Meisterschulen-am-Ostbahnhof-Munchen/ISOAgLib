@@ -117,12 +117,8 @@ IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& arcs_isoFilter)
 
 
 
-/** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
- * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
- * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
-   */
 void
-IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
 {
 #if DEBUG_NETWORK_MANAGEMENT
   INTERNAL_DEBUG_DEVICE

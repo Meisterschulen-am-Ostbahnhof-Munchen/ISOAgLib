@@ -178,7 +178,7 @@ namespace __IsoAgLib
 
   void
   ProprietaryMessageHandler_c::reactOnIsoItemModification(
-    ControlFunctionStateHandler_c::IsoItemModification_t at_action,
+    ControlFunctionStateHandler_c::iIsoItemAction_e at_action,
     IsoItem_c const& acrc_isoItem)
   {
     switch (at_action)

@@ -304,7 +304,7 @@ bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, co
  * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-Process_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+Process_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {
