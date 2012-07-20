@@ -331,6 +331,8 @@ Stream_c::nextTimeEvent() const
       isoaglib_assert( mi32_delayCtsUntil != msci32_timeNever ); // should never be set to c'tor's default value!
       return mi32_delayCtsUntil;
   }
+  
+  return msci32_timeNever; // make (at least Tasking) compiler happy.
 }
 
 } //__IsoAgLib
