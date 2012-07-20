@@ -126,10 +126,6 @@ MultiReceiveClientWrapper_s::stop (CanCustomer_c& apc_fpCustomer)
 MultiReceive_c::MultiReceive_c()
   : mlist_streams()
   , mlist_clients()
-  , mi32_ctsSendDelayOneStream (CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM) // data -> cts
-  , mi32_ctsSendDelayMoreStreams (CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS) // data -> cts
-  , mi32_retriggerDelayForFirstCts (100)
-  , mi32_timePeriodForActiveStreams (100)
   , mt_handler(*this)
   , mt_customer(*this)
 {
@@ -202,6 +198,8 @@ MultiReceive_c::processMsg( const CanPkg_c& arc_data )
 
   const uint8_t cui8_pgnFormat = pkg.isoPf();
 
+  bool result = false;
+
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   /// Setup TP/ETP/FP identification
   const StreamType_t ct_streamType = (  (cui8_pgnFormat == MACRO_pgnFormatOfPGN(ETP_CONN_MANAGE_PGN))
@@ -216,13 +214,12 @@ MultiReceive_c::processMsg( const CanPkg_c& arc_data )
   {
     case StreamTP:
     case StreamETP:
-      return processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
+      result = processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
 
     case StreamFastPacket:
       processMsgNmea( pkg );
-      return true; // unidirectional PGN, so always not of interest for others (as far as currently known)
+      result = true; // unidirectional PGN, so always not of interest for others (as far as currently known)
   }
-  return false; // make compiler happy... we should've caught all cases in the switch, so...
 #else
   /// Setup TP/ETP identification
   const StreamType_t ct_streamType = (  (cui8_pgnFormat == MACRO_pgnFormatOfPGN(ETP_CONN_MANAGE_PGN))
@@ -230,8 +227,26 @@ MultiReceive_c::processMsg( const CanPkg_c& arc_data )
                                      ? StreamETP
                                      : StreamTP;
 
-  return processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
+  result = processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
 #endif
+
+  // only if it was processed.
+  // NOTE: ConnAbort is treated as not processed, so that
+  // MultiSend can process it, too. We don't necessarily
+  // need to adjust our next timeEvent-call, so it's fine
+  // to just ignore that here....
+  if( result )
+  {
+    int32_t nextTime = nextTimeEvent();
+    const int32_t now = System_c::getTime();
+
+    if( nextTime <= now )
+      nextTime = now;
+
+    __IsoAgLib::getSchedulerInstance().changeRetriggerTimeAndResort( this, nextTime, 123 ); // 123 = dummy!
+  }
+
+  return result;
 }
 
 
@@ -517,12 +532,11 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
           return false;
         }
 
-        // From now on we use the Stream's RSI, because that has the PGN embedded!
-        const ReceiveStreamIdentifier_c& c_streamRsi = pc_streamFound->getIdent();
-
         // From this point on the SA/DA pair matches, so that we can return true
-        if (!(pc_streamFound->handleDataPacket (arc_pkg))) {
+        if (!(pc_streamFound->handleDataPacket (arc_pkg)))
+		{
           // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
+          const ReceiveStreamIdentifier_c& c_streamRsi = pc_streamFound->getIdent();
           if (c_streamRsi.getDa() == 0xFF)
           {
             notifyErrorConnAbort (c_streamRsi, TransferErrorBamSequenceError, false /* don't send connAbort-Msg */);
@@ -794,14 +808,8 @@ Stream_c*
 MultiReceive_c::createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize, int32_t ai_time )
 {
   // Assumption/Precondition: Stream not there, so create and add it without checking!
-
-  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize, ai_time MULTITON_INST_WITH_COMMA , false));
+  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize, ai_time MULTITON_INST_WITH_COMMA, false));
   mlist_streams.back().immediateInitAfterConstruction();
-
-  // notify the Scheduler that we want to a 100ms timeEvent now (as we have at least one stream!)
-  // this is yet to optimize because we can detect exactly how long to sleep, etc.etc.
-  /// THIS IS ALWAYS CALLED FROM ::processMsg, so we can't use setTimePeriod() here
-  __IsoAgLib::getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime()+mi32_retriggerDelayForFirstCts, mi32_timePeriodForActiveStreams);
 
   return &mlist_streams.back();
 }
@@ -967,14 +975,12 @@ MultiReceive_c::timeEvent()
     // END timeEvent every Stream_c
     ++i_list_streams;
   }
-  if (mlist_streams.begin() == mlist_streams.end())
-  { // we have NO Streams - we got NOTHING to do..
-    setTimePeriod (5000);
-  }
-  else
-  { // we have at least on Stream in the list...
-    setTimePeriod (mi32_timePeriodForActiveStreams);
-  }
+
+  int32_t newPeriod = nextTimeEvent() - System_c::getTime();
+  if( newPeriod < 1 )
+    newPeriod = 1;
+  
+  setTimePeriod( newPeriod );
   return true;
 }
 
@@ -1376,6 +1382,25 @@ MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoI
       if (rc_rsi.getSaIsoName() == acrc_isoItem.isoName()) rc_rsi.setSa (cui8_nr);
     }
   }
+}
+
+
+int32_t
+MultiReceive_c::nextTimeEvent() const
+{
+  int32_t nextTrigger = System_c::getTime() + 5000; // default: idle around...
+
+  for( STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator i_list_streams = mlist_streams.begin();
+    i_list_streams != mlist_streams.end();
+    ++i_list_streams )
+  {
+    DEF_Stream_c_IMPL const& rc_stream = *i_list_streams;
+
+    const int32_t streamNextTrigger = rc_stream.nextTimeEvent();
+    if( (streamNextTrigger != msci32_timeNever) && (streamNextTrigger < nextTrigger) )
+      nextTrigger = streamNextTrigger;
+  }
+  return nextTrigger;
 }
 
 

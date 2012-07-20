@@ -107,7 +107,7 @@
 /** This delay is being used if MORE THAN ONE stream (2, 3, 4, ...) is being received */
 #ifndef CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS
   /// defines the amount of msec. to be wait until sending out the next CTS to the sender IF MULTIPLE STREAMS BEING RECEIVED
-#  define CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS 50
+#  define CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS 0
 #endif
 
 

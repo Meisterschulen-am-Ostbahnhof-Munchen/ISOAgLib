@@ -14,11 +14,7 @@
 
 #include "stream_c.h"
 #include "multireceive_c.h"
-
-// IsoAgLib
 #include <IsoAgLib/hal/hal_system.h>
-
-// STL
 #include <algorithm>
 
 // Debugging
@@ -157,7 +153,7 @@ Stream_c::readyToSendCts()
 /**
   will be directly called in sendCurrentCts
   (anyway, be sure to only call if in the right state)
-  */
+*/
 uint8_t
 Stream_c::expectBurst(uint8_t wishingPkgs)
 {
@@ -318,4 +314,23 @@ Stream_c::timedOut()
 }
 
 
-} // end namespace __IsoAgLib
+int32_t
+Stream_c::nextTimeEvent() const
+{
+  switch( getNextComing() )
+  {
+    case AwaitNothing:
+      return msci32_timeNever; /* stream finished, no timeEvent request! */
+
+    case AwaitDpo:
+    case AwaitData:
+      isoaglib_assert( mi32_timeoutLimit != msci32_timeNever );
+      return mi32_timeoutLimit;
+
+    case AwaitCtsSend:
+      isoaglib_assert( mi32_delayCtsUntil != msci32_timeNever ); // should never be set to c'tor's default value!
+      return mi32_delayCtsUntil;
+  }
+}
+
+} //__IsoAgLib

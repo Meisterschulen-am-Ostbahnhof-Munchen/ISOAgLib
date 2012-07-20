@@ -224,13 +224,14 @@ public:
 //  virtual bool eof() const=0; // pass on abstract method
 /// End StreamInput_c methods
 
+  int32_t nextTimeEvent() const;
 
   bool setDataPageOffset(uint32_t aui32_dataPageOffset);
 
   const ReceiveStreamIdentifier_c& getIdent()   { return mc_ident; }
-  StreamType_t     getStreamType()              { return mc_ident.getStreamType(); };
-  StreamingState_t getStreamingState ()         { return mt_streamState; };
-  NextComing_t     getNextComing ()             { return mt_awaitStep; };
+  StreamType_t     getStreamType()        const { return mc_ident.getStreamType(); };
+  StreamingState_t getStreamingState ()   const { return mt_streamState; };
+  NextComing_t     getNextComing ()       const { return mt_awaitStep; };
   uint32_t getPkgNextToWrite ()           const { return mui32_pkgNextToWrite; };
   uint32_t getPkgTotalSize ()             const { return mui32_pkgTotalSize; };
   uint32_t getByteTotalSize ()            const { return mui32_byteTotalSize; };

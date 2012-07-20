@@ -16,13 +16,11 @@
 #define StreamLinear 0
 #define StreamChunk 1
 
-// forward declarations
 namespace IsoAgLib {
   class ReceiveStreamIdentifier_c;
 }
 
 
-// IsoAgLib
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
@@ -30,7 +28,6 @@ namespace IsoAgLib {
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/cfstatehandler_c.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
-// stl
 #include <list>
 
 // first line is for the include directive
@@ -51,7 +48,6 @@ namespace IsoAgLib {
 
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 
@@ -114,12 +110,32 @@ MultiReceiveClientWrapper_s::doesAcceptStream (const ReceiveStreamIdentifier_c &
 
 
 
-//  +X2C Class 192 : MultiReceive_c
-//!  Stereotype: 76
 class MultiReceive_c : public Scheduler_Task_c
 {
   MACRO_MULTITON_CONTRIBUTION();
 public:
+  enum TransferError_e {
+    TransferErrorWrongCommandByteForThisPgn = 100,
+    TransferErrorAlreadyRunningStream = 101,
+    TransferErrorWrongPackageAmountOrMessageSize = 102,
+    TransferErrorClientRejectingStream = 103,
+    TransferErrorDpoForUnknownOrUnopenedStream = 104,
+    TransferErrorDpoNotAwaitedNow = 105,
+    TransferErrorAbortedBySender = 107,
+    TransferErrorUnknownOrInvalidCommandWithTpEtpPgn = 108,
+    TransferErrorWrongSequenceNumber = 109,
+    TransferErrorStreamTimedOut = 110,
+    TransferErrorNoStreamRunningForMultiPacketData = 111,
+    TransferErrorBamToNonGlobalAddress = 112,
+    TransferErrorBamNotTakenWrongPkgNumberOrMessageSize = 113,
+    TransferErrorBamSequenceError = 114,
+    TransferErrorPgnNotRequestedToReceive = 115,
+    TransferErrorDpoForAStandardTpStream = 116,
+    TransferErrorBamInBetweenAlreadyRunningStream = 117,
+    TransferErrorFastPacketFrameButNoOpenStream = 118,
+    TransferErrorFastpacketSequenceError = 119
+  };
+
   ~MultiReceive_c() {}
 
   //  Operation: processMsg
@@ -152,22 +168,8 @@ public:
   //! @pre ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
   Stream_c* createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize, int32_t ai_time );
 
-  int32_t getCtsDelay() const { return (getStreamCount() == 1) ? mi32_ctsSendDelayOneStream : mi32_ctsSendDelayMoreStreams; }
-
-  //! Override the default configured values CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM and CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS
-  //! This function is "thread safe", it only overwrites member variables.
-  void setCtsDelays (int32_t ai32_ctsSendDelayOneStream, int32_t ai32_ctsSendDelayMoreStreams)
-  { mi32_ctsSendDelayOneStream = ai32_ctsSendDelayOneStream;
-    mi32_ctsSendDelayMoreStreams = ai32_ctsSendDelayMoreStreams; }
-
-  //! This method is intentionally not placed in the interface class iMultiReceive_c,
-  //! as it's only for experimental reasons (until the internal stream-scheduling is improved)
-  //! This function is "thread safe", it only overwrites member variables.
-  //! @param ai32_retriggerDelayForFirstCts defaults to 100 ms
-  //! @param ai32_timePeriodForActiveStreams defaults to 100 ms
-  void setExperimentalTimings (int32_t ai32_retriggerDelayForFirstCts, int32_t ai32_timePeriodForActiveStreams)
-  { mi32_retriggerDelayForFirstCts = ai32_retriggerDelayForFirstCts;
-    mi32_timePeriodForActiveStreams = ai32_timePeriodForActiveStreams; }
+  int32_t nextTimeEvent() const;
+  int32_t getCtsDelay() const { return (getStreamCount() == 1) ? CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM : CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS; }
 
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
@@ -178,7 +180,8 @@ public:
   bool timeEvent( void );
 
   virtual void updateEarlierAndLatestInterval() {
-    updateEarlierAndLatestIntervalDefault();
+    mui16_earlierInterval = 0;
+    mui16_latestInterval  = 5;
   }
 
   //  Operation: init
@@ -203,30 +206,6 @@ public:
 #if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
 #endif
-
-  enum TransferError_e {
-    TransferErrorWrongCommandByteForThisPgn = 100,
-    TransferErrorAlreadyRunningStream = 101,
-    TransferErrorWrongPackageAmountOrMessageSize = 102,
-    TransferErrorClientRejectingStream = 103,
-    TransferErrorDpoForUnknownOrUnopenedStream = 104,
-    TransferErrorDpoNotAwaitedNow = 105,
-    TransferErrorAbortedBySender = 107,
-    TransferErrorUnknownOrInvalidCommandWithTpEtpPgn = 108,
-    TransferErrorWrongSequenceNumber = 109,
-    TransferErrorStreamTimedOut = 110,
-    TransferErrorNoStreamRunningForMultiPacketData = 111,
-    TransferErrorBamToNonGlobalAddress = 112,
-    TransferErrorBamNotTakenWrongPkgNumberOrMessageSize = 113,
-    TransferErrorBamSequenceError = 114,
-    TransferErrorPgnNotRequestedToReceive = 115,
-    TransferErrorDpoForAStandardTpStream = 116,
-    TransferErrorBamInBetweenAlreadyRunningStream = 117,
-    TransferErrorFastPacketFrameButNoOpenStream = 118,
-    TransferErrorFastpacketSequenceError = 119
-  };
-
-protected:
 
 private:
   class CanCustomerProxy_c : public CanCustomer_c {
@@ -321,22 +300,13 @@ private:
   Stream_c* getStreamInternal  (const ReceiveStreamIdentifier_c &arcc_streamIdent,
                                 bool ab_includePgnInSearch);
 
-  //  Operation: getClient
-  //! Parameter:
-  //! @param ac_streamIdent:
   //! @return NULL for "doesn't exist", otherwise valid "CanCustomer_c*"
   CanCustomer_c* getClient (ReceiveStreamIdentifier_c ac_streamIdent);
 
-  //  Operation: sendCurrentCts
-  //! Parameter:
-  //! @param apc_stream:
   void sendCurrentCts(DEF_Stream_c_IMPL &arc_stream);
 
   bool finishStream (DEF_Stream_c_IMPL& rc_stream);
 
-  //  Operation: sendEndOfMessageAck
-  //! Parameter:
-  //! @param apc_stream
   void sendEndOfMessageAck(DEF_Stream_c_IMPL &arc_stream);
 
 
@@ -413,22 +383,17 @@ private:
   STL_NAMESPACE::list<DEF_Stream_c_IMPL> mlist_streams;
   STL_NAMESPACE::list<MultiReceiveClientWrapper_s> mlist_clients;
 
-  int32_t mi32_ctsSendDelayOneStream;
-  int32_t mi32_ctsSendDelayMoreStreams;
-
-  // soon obsolete - only used for the current "bad" management of multiple streams with one schedulertask.
-  int32_t mi32_retriggerDelayForFirstCts;
-  int32_t mi32_timePeriodForActiveStreams;
   Handler_t mt_handler;
   Customer_t mt_customer;
 private:
   MultiReceive_c();
   friend MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance );
-}; // ~X2C
+};
 
   /** C-style function, to get access to the unique MultiReceive_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
   MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance = 0 );
-} // end namespace __IsoAgLib
-#endif // -X2C
+
+} // __IsoAgLib
+#endif
