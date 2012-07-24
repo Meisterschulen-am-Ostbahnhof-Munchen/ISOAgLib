@@ -456,7 +456,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     pkg.setUint16Data( 0, __IsoAgLib::abs(mi32_speedReal));
     pkg.setUint32Data(2, mui32_distReal);
 
-    uint8_t b_val8 = 0;
+    uint8_t b_val8 = 0xFC; // set reserved bits to 1
     b_val8 |= mt_directionReal;
     pkg.setUint8Data(7, b_val8);
     //reserved fields
