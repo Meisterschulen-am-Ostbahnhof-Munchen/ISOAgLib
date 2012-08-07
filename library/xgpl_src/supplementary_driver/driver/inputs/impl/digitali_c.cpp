@@ -89,20 +89,18 @@ DigitalI_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff, bool
 { // now init the digital input
   InputBase_c::init(ab_channel, IsoAgLib::iInput_c::digital);
 
-  ;
   if ( ( apc_handler != NULL ) && ( ab_channel < 16 ) ) {
     // register pointer to IRQ handler
     const int16_t i16_initResult = HAL::init_digin(channelNr(), BOTH_EDGE, ren_onoff,digitalInputIrqFuncArr[ab_channel] );
-	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+    isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
   }
   else {
     const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, ren_onoff, NULL);
-	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+    isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
   }
 
   b_static = ab_static;
 
-  
   getInputsInstance().registerClient( this );
   // register optional pointer to handler
   if ( ab_channel < 16 ) ppc_handler[ab_channel] = apc_handler;
@@ -118,30 +116,28 @@ void DigitalI_c::setOnHigh( void )
   if ( channelNr() < 16 ) {
     // register pointer to IRQ handler
     const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, IsoAgLib::iInput_c::OnHigh, digitalInputIrqFuncArr[channelNr()] );
-	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+    isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
   }
   else
   {
     const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, IsoAgLib::iInput_c::OnHigh, NULL);
-	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+    isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
   }
-  
 }
 
 
 void DigitalI_c::setOnLow( void )
 {
-  
   if ( channelNr() < 16 ) {
     // register pointer to IRQ handler
     const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, IsoAgLib::iInput_c::OnLow, digitalInputIrqFuncArr[channelNr()] );
-	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+    isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
   }
   else
   {
     const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, IsoAgLib::iInput_c::OnLow, NULL);
-	isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
-   }
+    isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
+  }
 }
 
 
