@@ -73,6 +73,7 @@ IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
       std::cout << "IsoAgLibThread_c::start - Init ISOAgLib-core and -CAN/ISOBUS & Start THREAD for key " << key << "." << std::endl;
 #endif
 
+      IsoAgLib::getIsystemInstance().init();
       IsoAgLib::getISchedulerInstance().init();
       bool isoRetVal = IsoAgLib::getIIsoBusInstance().init (aui8_busNr);
       isoaglib_assert (isoRetVal == true); (void)isoRetVal;
@@ -119,6 +120,7 @@ IsoAgLibThread_c::stop (void *key)
       bool isoRetVal = IsoAgLib::getIIsoBusInstance().close();
       isoaglib_assert (isoRetVal == true); (void)isoRetVal;
       IsoAgLib::getISchedulerInstance().close();
+      IsoAgLib::getIsystemInstance().close();
       // Last one closed the door.
     }
     else
