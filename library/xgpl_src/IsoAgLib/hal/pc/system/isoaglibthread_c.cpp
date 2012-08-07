@@ -21,6 +21,7 @@
 
 // ISOAgLib
 #include <IsoAgLib/scheduler/ischeduler_c.h>
+#include <IsoAgLib/system/isystem_c.h>
 #include <IsoAgLib/comm/iisobus_c.h>
 
 // system (we know we're on PC!)
