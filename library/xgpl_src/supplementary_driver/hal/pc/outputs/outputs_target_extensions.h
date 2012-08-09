@@ -18,25 +18,7 @@
 #include <IsoAgLib/hal/pc/typedef.h>
 
 namespace __HAL {
-/* ******************************************************** */
-/**
- * \name Actor_c Specific Functions
- */
-/* ******************************************************** */
-/*@{*/
-/** --- GLOBAL TYPDEFINITIONS --- */
-#if 0
-// doesn't seem to be needed in PC case, can be removed if everything still compiles...
-typedef struct   {
-  uint16_t wOutputValue;              /* aktual output value */
-  uint16_t wMaxOutput;                /* highest pwm puls width value */
-  uint32_t dwOutputFreq;             /* pwm frequence */
-  tTime TSetTime;                 /* time of output setting */
-} tOutput;
-#endif
 
-/* --- GLOBAL VARIABLES --- */
-/* --- PROTOTYPEN --- */
 int16_t  setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency);  /* define the frequency of the pwm signal */
 int16_t  setDigout(uint8_t bOutputNo, uint16_t wPWMValue);          /* set pwm value 0 ... 100 %*/
 
