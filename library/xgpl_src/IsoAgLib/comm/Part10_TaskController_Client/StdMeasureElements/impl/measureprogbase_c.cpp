@@ -18,21 +18,6 @@
 #include <algorithm>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocal_c.h>
 
-#if DEBUG_HEAP_USEAGE
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
-#endif
-
-#if DEBUG_HEAP_USEAGE
-static uint16_t sui16_MeasureProgBaseTotal = 0;
-static uint16_t sui16_printedMeasureProgBaseTotal = 0;
-static uint16_t sui16_deconstructMeasureProgBaseTotal = 0;
-static uint16_t sui16_printedDeconstructMeasureProgBaseTotal = 0;
-#endif
 
 namespace __IsoAgLib {
 
@@ -40,21 +25,6 @@ void MeasureProgBase_c::init( ProcDataLocal_c *const apc_processData,
   int32_t ai32_val,
   const IsoName_c& acrc_isoName)
 { // set the dynamic list to a well defined cleared starting condition
-  #if DEBUG_HEAP_USEAGE
-  static bool b_doPrint = true;
-  if ( b_doPrint )
-  {
-    b_doPrint = false;
-    INTERNAL_DEBUG_DEVICE
-      << "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
-      << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  if ( sui16_MeasureProgBaseTotal > 0 )
-  {
-    sui16_MeasureProgBaseTotal -= ( mvec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
-  }
-  #endif
-
   mvec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
   set(apc_processData);
@@ -109,13 +79,6 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& acrc_src )
 }
 
 MeasureProgBase_c::~MeasureProgBase_c(){
-  #if DEBUG_HEAP_USEAGE
-  if ( mvec_measureSubprog.size() > 0 )
-  {
-    sui16_deconstructMeasureProgBaseTotal++;
-    sui16_MeasureProgBaseTotal -= mvec_measureSubprog.size();
-  }
-  #endif
 }
 
 bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend){
@@ -137,17 +100,6 @@ bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ai32_increme
   else
   { // no subprog with same type exist -> insert new one
     mvec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment MULTITON_INST_WITH_COMMA));
-    #if DEBUG_HEAP_USEAGE
-    sui16_MeasureProgBaseTotal++;
-
-    INTERNAL_DEBUG_DEVICE
-      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
-      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
   }
 
   return true;
@@ -163,23 +115,6 @@ bool MeasureProgBase_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSe
 
 bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_type */, Proc_c::doSend_t /* ren_doSend */){
   // clear the array with all subprogs -> no trigger test is done on value set
-  #if DEBUG_HEAP_USEAGE
-  sui16_MeasureProgBaseTotal -= mvec_measureSubprog.size();
-
-  if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
-  || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
-  {
-    sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
-    sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
-    INTERNAL_DEBUG_DEVICE
-      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
-      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  #endif
   mvec_measureSubprog.clear();
   men_doSend = Proc_c::DoNone;
   return true;
@@ -229,42 +164,11 @@ int32_t MeasureProgBase_c::max(bool ab_sendRequest) const
 }
 
 void MeasureProgBase_c::initVal(int32_t ai32_val){
-  #if DEBUG_HEAP_USEAGE
-  if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
-  || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
-  {
-    sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
-    sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
-    INTERNAL_DEBUG_DEVICE
-      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
-      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  #endif
   mi32_val = mi32_min = mi32_max = ai32_val;
 }
 
 bool MeasureProgBase_c::processMsg( const ProcessPkg_c& pkg ){
   ProcessCmd_c::CommandType_t en_command = pkg.mc_processCmd.getCommand();
-
-  #if DEBUG_HEAP_USEAGE
-  if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
-  || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
-  {
-    sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
-    sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
-    INTERNAL_DEBUG_DEVICE
-      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
-      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  #endif
   bool b_edited = false;
 
   if (en_command == ProcessCmd_c::setValue)
