@@ -62,7 +62,6 @@ public:
   void timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod, int32_t value );
 
   void setVal(ProcData_c& ac_processData, int32_t ai32_val);
-  //int32_t val( ProcData_c& ac_processData ) const { return ac_processData.measurementVal(); }
 
   IsoAgLib::ProcData::remoteType_t isoNameType() const { return m_ecuType; }
 

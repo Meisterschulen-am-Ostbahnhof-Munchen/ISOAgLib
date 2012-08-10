@@ -32,9 +32,8 @@ typedef long int long int64_t;
 #define otDeviceElement                (1)
 #define otDeviceProcessData            (2)
 #define otDeviceProperty               (3)
-#define otDeviceProcessDataCombination (4)
-#define otDeviceValuePresentation      (5)
-#define maxObjectTypes                 (6) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
+#define otDeviceValuePresentation      (4)
+#define maxObjectTypes                 (5) // +++ MAX +++ //object will not be inserted if (objType >= maxObjectTypes)
 
 
 // Object May Be
@@ -42,8 +41,7 @@ typedef long int long int64_t;
 #define ombDeviceElement                (uint64_t(1)<<1)
 #define ombDeviceProcessData            (uint64_t(1)<<2)
 #define ombDeviceProperty               (uint64_t(1)<<3)
-#define ombDeviceProcessDataCombination (uint64_t(1)<<4)
-#define ombDeviceValuePresentation      (uint64_t(1)<<5)
+#define ombDeviceValuePresentation      (uint64_t(1)<<4)
 
 // Attributes
 #define attrDesignator (0)
@@ -91,16 +89,14 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
     "deviceelement",
     "deviceprocessdata",
     "deviceproperty",
-    "deviceprocessdatacombination",
     "devicevaluepresentation"
 };
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
     /* "device", */                       ombDeviceElement | ombDeviceValuePresentation,
     /* "deviceelement" */                 ombDeviceProcessData | ombDeviceProperty,
-    /* "deviceprocessdata" */             ombDeviceProcessDataCombination,
+    /* "deviceprocessdata" */             0,
     /* "deviceproperty" */                0,
-    /* "deviceprocessdatacombination" */  0,
     /* "devicevaluepresentation" */       0
 };
 
@@ -109,7 +105,6 @@ char otClassnameTable [maxObjectTypes] [stringLength+1] = {
     "DeviceElement",
     "DeviceProcessData",
     "DeviceProperty",
-    "DeviceProcessDataCombination",
     "DeviceValuePresentation"
 };
 
@@ -158,7 +153,6 @@ char tableIDTable [maxTableID] [stringLength+1] = {
     "DET",
     "DPD",
     "DPT",
-    "DPC",
     "DVP"
 };
 
@@ -185,7 +179,7 @@ char triggerMethodTable [maxTriggerMethods] [stringLength+1] = {
     "distanceinterval",
     "thresholdlimits",
     "onchange",
-    "counter"
+    "total"
 };
 
 #define maxTruthTable 2
@@ -198,20 +192,4 @@ char truthTable [maxTruthTable] [stringLength+1] = {
 char falseTable [maxFalseTable] [stringLength+1] = {
     "no",
     "false"
-};
-
-#define maxFeatureSet 4
-char featureSetTable [maxFeatureSet] [stringLength+1] = {
-    "Standard",
-    "SimpleMeasure",
-    "SimpleSetpoint",
-    "SimpleSetpointSimpleMeasure"
-};
-
-#define maxCommandTypes 4
-char commandTypeTable [maxCommandTypes] [stringLength+1] = {
-    "exact",
-    "default",
-    "min",
-    "max"
 };

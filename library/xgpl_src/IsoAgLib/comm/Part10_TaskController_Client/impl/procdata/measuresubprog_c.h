@@ -60,7 +60,7 @@ public:
   /** stop a measuring subprogram  */
   void stop() {}
 
-private: // Private attributes
+private:
   /** last value for the increment test of this instance */
   int32_t mi32_lastVal;
   /** increment of this subprog item */

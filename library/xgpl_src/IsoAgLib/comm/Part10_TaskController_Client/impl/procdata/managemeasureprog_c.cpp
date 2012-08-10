@@ -64,10 +64,9 @@ MeasureProg_c& ManageMeasureProg_c::getMeasureProg( IsoAgLib::ProcData::remoteTy
 }
 
 void ManageMeasureProg_c::startDataLogging(ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::MeasurementCommandTimeProp, IsoAgLib::ProcData::DistProp, ... */,
-                                                int32_t ai32_increment, const IsoName_c& ac_remoteDevice )
+                                                int32_t ai32_increment, IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
-  const IsoAgLib::ProcData::remoteType_t ecuType = getProcessInstance( ac_processData.getMultitonInst() ).getTypeFromISOName( ac_remoteDevice );
-  MeasureProg_c& progCache = getMeasureProg(ecuType);
+  MeasureProg_c& progCache = getMeasureProg(a_ecuType);
 
   // for MeasurementCommandTimeProp no negative value allowed
   isoaglib_assert( (IsoAgLib::ProcData::MeasurementCommandTimeProp != ren_type) || (ai32_increment > 0) );

@@ -35,6 +35,7 @@ class ProcData_c  {
 
 public:
   ProcData_c();
+  ~ProcData_c();
 
   void init(IdentItem_c& acrc_identItem,
             uint16_t aui16_ddi,
@@ -44,8 +45,6 @@ public:
             IsoAgLib::iProcDataHandler_c *apc_procDataHandler = NULL
             );
 
-  ~ProcData_c();
-  bool registerIdentItem( IdentItem_c& arc_item ) {return true;}
   IsoAgLib::iProcDataHandler_c* getProcDataHandler( ) const { return mpc_procDataHandler; }
   void setProcDataHandler( IsoAgLib::iProcDataHandler_c *apc_procDataHandler )
     { mpc_procDataHandler = apc_procDataHandler; }
@@ -62,7 +61,7 @@ public:
   void sendMeasurementVal( const IsoName_c& ac_targetISOName ) const;
 
   void startDataLogging(IsoAgLib::ProcData::measurementCommand_t ren_type,
-                        int32_t ai32_increment, const IsoName_c& ac_receiverDevice );
+                        int32_t ai32_increment, IsoAgLib::ProcData::remoteType_t a_ecuType );
 
   void stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t a_ecuType);
 

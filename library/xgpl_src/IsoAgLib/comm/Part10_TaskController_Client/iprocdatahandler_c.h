@@ -16,6 +16,7 @@
 #define IPROCESSDATAHANDLER_H
 
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
 namespace IsoAgLib {
 
@@ -25,9 +26,12 @@ class iProcDataHandler_c {
 public:
   virtual ~iProcDataHandler_c() {}
 
-  virtual void processSetpointSet( iProcData_c& procdata, int32_t value, const iIsoName_c& callerISOName, bool change ) = 0;
-  virtual void processDefaultLoggingStart( const iIsoName_c& callerISOName ) = 0;
-  virtual void processTcStatusMessage( bool taskRunning, const iIsoName_c& callerISOName ) = 0;
+  virtual void processSetpointSet( iProcData_c& procdata, int32_t value, IsoAgLib::ProcData::remoteType_t a_ecuType, bool change ) = 0;
+  virtual void processDefaultLoggingStart( IsoAgLib::ProcData::remoteType_t ecuType ) = 0;
+  virtual void processTcConnected( IsoAgLib::ProcData::remoteType_t ecuType, const IsoAgLib::iIsoName_c& tcname) = 0;
+
+  virtual void processTaskStarted( IsoAgLib::ProcData::remoteType_t ecuType ) = 0;
+  virtual void processTaskStopped( IsoAgLib::ProcData::remoteType_t ecuType ) = 0;
 };
 
 }

@@ -37,9 +37,6 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  bool registerIdentItem( iIdentItem_c& arc_item )
-  { return ProcData_c::registerIdentItem( arc_item ); }
-
   void init( iIdentItem_c& acrc_identItem,
              uint16_t aui16_ddi,
              uint16_t aui16_element,
@@ -145,8 +142,8 @@ public:
     @param apc_receiverDevice commanding ISOName
   */
   void startDataLogging(ProcData::measurementCommand_t ren_type /* ProcData::TimeProp, ProcData::DistProp, ... */,
-                        int32_t ai32_increment, const iIsoName_c& ac_receiverDevice )
-  { ProcData_c::startDataLogging(ren_type, ai32_increment, ac_receiverDevice ); }
+                        int32_t ai32_increment, IsoAgLib::ProcData::remoteType_t a_ecuType )
+  { ProcData_c::startDataLogging(ren_type, ai32_increment, a_ecuType ); }
 
 };
 

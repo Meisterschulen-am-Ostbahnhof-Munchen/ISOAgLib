@@ -52,80 +52,33 @@ class Process_c : public Scheduler_Task_c
 {
   MACRO_MULTITON_CONTRIBUTION();
 public:
-  /** initialisation for Process_c */
   void init( void );
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
 
   virtual ~Process_c() {}
 
-  /**
-    process msg
-    @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-  */
   bool processMsg( const CanPkg_c& arc_data );
 
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
 
-  /**
-    checks if a suitable ProcData_c item exist
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
-    @return true -> suitable instance found
-  */
-ProcData_c* procData( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver, bool& elementFound);
+  ProcData_c* procData( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver, bool& elementFound);
 
-  /**
-    performs periodically actions
-    @return true -> all planned activities performed in allowed time
-  */
   bool timeEvent();
 
-  /** called when a new measurement is started */
   void resetTimerPeriod();
 
-  /** handler function for access to undefined client.
-    * the base Singleton calls this function, if it detects an error
-    */
   void registerAccessFlt() {}
 
-  /** register pointer to a new local process data instance
-    * this function is called within construction of new local process data instance
-    */
   bool registerLocalProcessData( ProcData_c* pc_localClient)
   { bool b_result = registerC1( pc_localClient ); mpc_iter = c_arrClientC1.begin(); return b_result;}
-
-  /** unregister pointer to a already registered local process data instance
-    * this function is called within destruction of local process data instance
-    */
   void unregisterLocalProcessData( ProcData_c* pc_localClient)
   { unregisterC1( pc_localClient ); mpc_iter = c_arrClientC1.begin();}
 
-  /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
-   * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
-   * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
-   */
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
-  /**
-    process TC status messages:
-    - task status suspended: stop running measurement (started by default data logging)
-    @param ui8_tcStatus
-    @param rc_isoName         device key of TC
-    @param ab_skipLastTcStatus true => don't check for changed TC status
-    @return true
-  */
-  bool processTcStatusMsg(uint8_t ui8_tcStatus, const IsoName_c& rc_isoName, bool ab_skipLastTcStatus = false);
+  bool processTcStatusMsg(uint8_t ui8_tcStatus, const __IsoAgLib::IsoName_c& sender);
 
-  /**
-    @return isoName, saved from remote status messages
-  */
   const IsoName_c& getISONameFromType( IsoAgLib::ProcData::remoteType_t ecuType ) const;
-  /**
-    @return remoteType_t from given IsoName_c
-  */
   IsoAgLib::ProcData::remoteType_t getTypeFromISOName( const IsoName_c& isoName ) const;
 
 #if DEBUG_SCHEDULER
@@ -157,7 +110,7 @@ private: // Private methods
     return getForcedMinExecTimeDefault();
   }
 
-  void stopRunningMeasurement(const IsoName_c& rc_isoName);
+  void stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t ecuType);
 
 private: // Private attributes
 
@@ -228,10 +181,11 @@ private: // Private attributes
   */
   DevPropertyHandler_c mc_devPropertyHandler;
 
-  uint8_t mui8_lastTcStatus;
-
+  bool m_lastActiveTaskTC;
   IsoName_c mc_isoNameTC;
+
 #ifdef USE_DATALOGGER
+  bool m_lastActiveTaskLogger;
   IsoName_c mc_isoNameLogger;
 #endif
 

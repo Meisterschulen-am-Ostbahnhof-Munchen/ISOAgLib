@@ -15,6 +15,7 @@
 
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
 namespace __IsoAgLib {
 
@@ -27,7 +28,7 @@ public:
 
   int32_t setpointValue() const { return mi32_value; }
   
-  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg );
+  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType );
 
 private:
   int32_t mi32_value;

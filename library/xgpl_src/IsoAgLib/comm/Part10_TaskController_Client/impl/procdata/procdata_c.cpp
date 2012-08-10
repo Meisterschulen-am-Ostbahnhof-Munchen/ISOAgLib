@@ -50,7 +50,7 @@ void ProcData_c::init( IdentItem_c& acrc_identItem,
 
   mpc_procDataHandler = apc_procDataHandler;
 
-  getProcessInstance( mc_myIdentItem->getMultitonInst() ).registerLocalProcessData( this );
+  getProcessInstance4Comm( ).registerLocalProcessData( this );
 
   // "Device process data objects with a data log trigger method of type total shall be settable."
   isoaglib_assert( ( IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTotal)
@@ -58,8 +58,7 @@ void ProcData_c::init( IdentItem_c& acrc_identItem,
 }
 
 ProcData_c::~ProcData_c() {
-  isoaglib_assert( mc_myIdentItem != NULL );
-  getProcessInstance( mc_myIdentItem->getMultitonInst() ).unregisterLocalProcessData( this );
+  getProcessInstance4Comm().unregisterLocalProcessData( this );
 }
 
 void ProcData_c::setMeasurementVal(int32_t ai32_val) {
@@ -85,8 +84,7 @@ void ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t
     
     // if method is request, notify the application and later respond to the request
     if ( pkg.men_command == ProcessPkg_c::requestValue)
-      getProcDataHandler()->processDefaultLoggingStart(
-               pkg.getMonitorItemForSA()->isoName().toConstIisoName_c() );
+      getProcDataHandler()->processDefaultLoggingStart(a_ecuType );
     //else // command not supported for default DDI
     //NACK ? Bit 0 = 1 = Process Data Command not supported
     //return;
@@ -96,16 +94,16 @@ void ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t
   { // process setpoint command
     if (isSetPoint())
     {
-      mc_setpoint.processMsg( *this, pkg );
+      mc_setpoint.processMsg( *this, pkg, a_ecuType );
     }
     else
     { // set value but DPD is not settable
-      getProcessInstance( mc_myIdentItem->getMultitonInst() ).sendNack(
-                                          pkg.getMonitorItemForSA()->isoName(),
-                                          isoName(),
-                                          DDI(),
-                                          element(),
-                                          IsoAgLib::ProcData::NackProcessDataNotSetable);
+      getProcessInstance4Comm().sendNack(
+                                      pkg.getMonitorItemForSA()->isoName(),
+                                      isoName(),
+                                      DDI(),
+                                      element(),
+                                      IsoAgLib::ProcData::NackProcessDataNotSetable);
     }
   }
   else
@@ -115,11 +113,11 @@ void ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t
 }
 
 void ProcData_c::startDataLogging(IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::TimeProp, IsoAgLib::ProcData::DistProp, ... */,
-                                  int32_t ai32_increment, const IsoName_c& ac_receiverDevice )
+                                  int32_t ai32_increment, IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
-  isoaglib_assert( ac_receiverDevice.isSpecified() );
+  isoaglib_assert( IsoAgLib::ProcData::remoteTypeUndefined != a_ecuType );
 
-  mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, ac_receiverDevice);
+  mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, a_ecuType);
 }
 
 void ProcData_c::stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t a_ecuType)
@@ -129,8 +127,7 @@ void ProcData_c::stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t a_ecuTy
 
 void ProcData_c::sendValue( IsoAgLib::ProcData::remoteType_t a_ecuType, int32_t ai32_val) const
 {
-  isoaglib_assert( mc_myIdentItem != NULL );
-  const IsoName_c& c_destinationISOName = getProcessInstance( mc_myIdentItem->getMultitonInst() ).getISONameFromType( a_ecuType );
+  const IsoName_c& c_destinationISOName = getProcessInstance4Comm().getISONameFromType( a_ecuType );
 
   if (!c_destinationISOName.isSpecified()) return;
   
@@ -168,12 +165,11 @@ void ProcData_c::sendValue( IsoAgLib::ProcData::remoteType_t a_ecuType, int32_t 
   pkg.setLen(8);
 
   // send the msg
-  getIsoBusInstance( mc_myIdentItem->getMultitonInst() ) << pkg;
+  getIsoBusInstance4Comm() << pkg;
 }
 
 void ProcData_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) const {
-  isoaglib_assert( mc_myIdentItem != NULL );
-  sendValue( getProcessInstance( mc_myIdentItem->getMultitonInst() ).getTypeFromISOName( ac_targetISOName ), measurementVal());
+  sendValue( getProcessInstance4Comm().getTypeFromISOName( ac_targetISOName ), measurementVal());
 }
 
 } // end of namespace __IsoAgLib

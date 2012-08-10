@@ -33,7 +33,7 @@ class ManageMeasureProg_c
   void setVal( ProcData_c& ac_processData, int32_t ai32_val );
 
   void startDataLogging(ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::TimeProp, IsoAgLib::ProcData::DistProp, ... */,
-                        int32_t ai32_increment, const IsoName_c& ac_receiverDevice );
+                        int32_t ai32_increment, IsoAgLib::ProcData::remoteType_t a_ecuType );
 
   void stopRunningMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcData::remoteType_t a_ecuType);
 
