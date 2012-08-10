@@ -258,6 +258,7 @@ private:
   friend class IsoName_c;
   friend class iProcess_c;
   friend class iProcDataLocal_c;
+  friend class iProcDataSetPoint_c;
   friend class iMeasureProgLocal_c;
   friend class iSetpointRegister_c;
   friend class iVtObjectAuxiliaryFunction2_c;
