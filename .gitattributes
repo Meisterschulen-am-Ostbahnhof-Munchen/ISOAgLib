@@ -639,3 +639,8 @@ tutorial/src/ecu_simple_section_control/component_tcclient_pool/tutorialSimpleSe
 tutorial/src/ecu_simple_section_control/component_tcclient_pool/tutorialSimpleSectionControl.xml -text
 tutorial/src/ecu_simple_section_control/config_ecuSimpleSectionControl.h -text
 tutorial/src/ecu_simple_section_control/ecu_simple_section_control.cpp -text
+tutorial/src/ecu_simple_section_control_dynamic/component_tcclient.cpp -text
+tutorial/src/ecu_simple_section_control_dynamic/component_tcclient.h -text
+tutorial/src/ecu_simple_section_control_dynamic/ecu_simple_section_control.cpp -text
+tutorial/src/ecu_simple_section_control_dynamic/tcclientdynamic_c.cpp -text
+tutorial/src/ecu_simple_section_control_dynamic/tcclientdynamic_c.h -text
