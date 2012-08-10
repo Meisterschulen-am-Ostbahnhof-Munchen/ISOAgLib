@@ -1,5 +1,5 @@
 /*
-  procdata_c.h
+  procdata_c.cpp
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -12,7 +12,7 @@
 */
 #include "procdata_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 
 #if defined(_MSC_VER)
@@ -50,7 +50,7 @@ void ProcData_c::init( IdentItem_c& acrc_identItem,
 
   mpc_procDataHandler = apc_procDataHandler;
 
-  getProcessInstance4Comm( ).registerLocalProcessData( this );
+  getTcClientInstance4Comm( ).registerLocalProcessData( this );
 
   // "Device process data objects with a data log trigger method of type total shall be settable."
   isoaglib_assert( ( IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTotal)
@@ -58,7 +58,7 @@ void ProcData_c::init( IdentItem_c& acrc_identItem,
 }
 
 ProcData_c::~ProcData_c() {
-  getProcessInstance4Comm().unregisterLocalProcessData( this );
+  getTcClientInstance4Comm().unregisterLocalProcessData( this );
 }
 
 void ProcData_c::setMeasurementVal(int32_t ai32_val) {
@@ -86,7 +86,7 @@ void ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t
     if ( pkg.men_command == ProcessPkg_c::requestValue)
       getProcDataHandler()->processDefaultLoggingStart(a_ecuType );
     //else // command not supported for default DDI
-    //NACK ? Bit 0 = 1 = Process Data Command not supported
+    //@TODO NACK ? Bit 0 = 1 = Process Data Command not supported
     //return;
   }
   
@@ -98,7 +98,7 @@ void ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t
     }
     else
     { // set value but DPD is not settable
-      getProcessInstance4Comm().sendNack(
+      getTcClientInstance4Comm().sendNack(
                                       pkg.getMonitorItemForSA()->isoName(),
                                       isoName(),
                                       DDI(),
@@ -127,7 +127,7 @@ void ProcData_c::stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t a_ecuTy
 
 void ProcData_c::sendValue( IsoAgLib::ProcData::remoteType_t a_ecuType, int32_t ai32_val) const
 {
-  const IsoName_c& c_destinationISOName = getProcessInstance4Comm().getISONameFromType( a_ecuType );
+  const IsoName_c& c_destinationISOName = getTcClientInstance4Comm().getISONameFromType( a_ecuType );
 
   if (!c_destinationISOName.isSpecified()) return;
   
@@ -169,7 +169,7 @@ void ProcData_c::sendValue( IsoAgLib::ProcData::remoteType_t a_ecuType, int32_t 
 }
 
 void ProcData_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) const {
-  sendValue( getProcessInstance4Comm().getTypeFromISOName( ac_targetISOName ), measurementVal());
+  sendValue( getTcClientInstance4Comm().getTypeFromISOName( ac_targetISOName ), measurementVal());
 }
 
-} // end of namespace __IsoAgLib
+}

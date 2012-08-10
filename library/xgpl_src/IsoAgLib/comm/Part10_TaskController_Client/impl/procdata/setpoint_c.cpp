@@ -11,16 +11,16 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "setpoint_c.h"
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/itcclient_c.h>
 
 namespace __IsoAgLib {
 
 void Setpoint_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
   isoaglib_assert(ProcessPkg_c::setValue == pkg.men_command);
-  isoaglib_assert(pkg.getISONameForSA().isSpecified()); // already tested before in Process_c::processMsg
+  isoaglib_assert(pkg.getISONameForSA().isSpecified()); // already tested before in TcClient_c::processMsg
  
   const bool b_change = ( mi32_value != pkg.mi32_pdValue );
   mi32_value = pkg.mi32_pdValue;

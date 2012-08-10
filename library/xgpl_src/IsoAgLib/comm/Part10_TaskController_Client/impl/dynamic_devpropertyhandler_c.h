@@ -34,7 +34,7 @@
 #include <vector>
 #include <string>
 
-namespace IsoAgLib { class iProcess_c;};
+namespace IsoAgLib { class iTcClient_c;};
 
 namespace __IsoAgLib {
 
@@ -155,7 +155,7 @@ private:
 		UploadFailed                            //Upload failed
 	};
 
-	friend class IsoAgLib::iProcess_c;
+	friend class IsoAgLib::iTcClient_c;
 
 // check if the TC is active (has sent a status message in the past six seconds)
 	bool isTcAlive (int32_t i32_currentTime);

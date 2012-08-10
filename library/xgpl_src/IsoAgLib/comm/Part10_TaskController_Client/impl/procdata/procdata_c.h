@@ -24,13 +24,8 @@ namespace IsoAgLib {
   class iProcDataHandler_c;
 }
 
-// Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 
-/**
-  @brief Internal implementation for managing of local process data object with standard
-  ( %i.e. no restrictions ) feature set.
-*/
 class ProcData_c  {
 
 public:
@@ -84,12 +79,9 @@ private:
 private:
   IdentItem_c* mc_myIdentItem;
   
-  /** ProcessData ddi */
   uint16_t mui16_ddi;
-  /** ProcessData parent device element */
   uint16_t mui16_element;
 
-  /** ProcessData configuration : setpoint and trigger method information */
   struct {
     bool mb_isSetpoint : 1;
     uint8_t mui8_triggerMethod : 7;
@@ -97,10 +89,8 @@ private:
 
   IsoAgLib::iProcDataHandler_c* mpc_procDataHandler;
 
-  /** flaxible management of measure progs */
   ManageMeasureProg_c mc_measureprog;
 
-  /** flaxible management of setpoint */
   Setpoint_c mc_setpoint;
 
 private:

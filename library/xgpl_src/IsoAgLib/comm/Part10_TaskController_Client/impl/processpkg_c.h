@@ -18,11 +18,6 @@
 
 namespace __IsoAgLib {
 
-/**
-  data object for Process-Data messages
-  transforms flag formated information to/from CAN uint8_t string
-  @author Antoine Kandera, reviewed by Martin Wodok
-*/
 class ProcessPkg_c : public CanPkgExt_c  {
 public:
   enum CommandType_t {
@@ -46,14 +41,11 @@ public:
     CommandUndefined                      = 0x10
   };
 public:
-  //ProcessPkg_c( const ProcessPkg_c& arc_src );
   ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst = 0 );
-  /** default constructor which has nothing to do */
   ProcessPkg_c();
-  /** default constructor which has nothing to do */
   ~ProcessPkg_c() {}
 
-public: // all attributes are simply public
+public:
 
   int32_t mi32_pdValue;
 

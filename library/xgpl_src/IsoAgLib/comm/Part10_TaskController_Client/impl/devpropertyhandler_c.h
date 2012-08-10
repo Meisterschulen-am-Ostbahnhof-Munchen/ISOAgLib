@@ -31,7 +31,7 @@
 #include <map>
 #include <list>
 
-namespace IsoAgLib { class iProcess_c;};
+namespace IsoAgLib { class iTcClient_c;};
 
 namespace __IsoAgLib {
 
@@ -190,7 +190,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
                                 UploadCommandTimedOut                             //upload was timed out
                               };
 
-    friend class IsoAgLib::iProcess_c;
+    friend class IsoAgLib::iTcClient_c;
     /** check if there's already been at least one tc_statusMessage in the last 3 seconds
         @return true if at least one tc_statusMessage - false if there's not yet been one or the last one is more than 3 seconds old */
     bool isTcAlive (int32_t i32_currentTime);

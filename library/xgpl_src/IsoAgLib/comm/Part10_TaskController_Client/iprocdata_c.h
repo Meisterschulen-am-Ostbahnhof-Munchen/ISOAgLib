@@ -144,7 +144,6 @@ public:
   void startDataLogging(ProcData::measurementCommand_t ren_type /* ProcData::TimeProp, ProcData::DistProp, ... */,
                         int32_t ai32_increment, IsoAgLib::ProcData::remoteType_t a_ecuType )
   { ProcData_c::startDataLogging(ren_type, ai32_increment, a_ecuType ); }
-
 };
 
 }

@@ -38,7 +38,7 @@ public:
     { return DevPropertyHandler_c::sendCommandChangeDesignator(apui16_objectID, apc_newString, stringLength); }
 
 private:
-  friend class iProcess_c;
+  friend class iTcClient_c;
 };
 
 } // end of namespace IsoAgLib::iDevPropertyHandler_c

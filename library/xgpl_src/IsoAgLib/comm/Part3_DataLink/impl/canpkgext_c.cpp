@@ -215,7 +215,7 @@ CanPkgExt_c::address2IdentLocalDa( int ai_multitonInstance )
       return DaValid;
     }
     else
-    { // this is ONLY interesting for BUS-SNOOPING classes like Process_c or handling
+    { // this is ONLY interesting for BUS-SNOOPING classes like TcClient_c or handling
       // of Working-Set-Slaves which have to snoop messages to their Working-Set-Master
       #if DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state. Destination is a remote node." << INTERNAL_DEBUG_DEVICE_ENDL;

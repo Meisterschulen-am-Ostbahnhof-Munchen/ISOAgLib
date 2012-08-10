@@ -29,7 +29,7 @@
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclient_c.h>
 #endif
 #ifdef USE_ISO_TASKCONTROLLER_CLIENT
-  #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
+  #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #endif
 #ifdef USE_TRACTOR_GENERAL
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
@@ -114,7 +114,7 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   #endif
   /// Part 10 - Task Controller (Client)
   #ifdef USE_ISO_TASKCONTROLLER_CLIENT
-    getProcessInstance4Comm().init();
+    getTcClientInstance4Comm().init();
   #endif
   /// Part 12 - Diagnostics Services
   // nop - only additional items for Part 5 currently
@@ -141,7 +141,7 @@ IsoBus_c::close()
   // nop - only additional items for Part 5 currently
   /// Part 10 - Task Controller (Client)
   #ifdef USE_ISO_TASKCONTROLLER_CLIENT
-    getProcessInstance4Comm().close();
+    getTcClientInstance4Comm().close();
   #endif
   /// Part 7 - Application (Tractor-Client)
   #ifdef USE_TIME_GPS

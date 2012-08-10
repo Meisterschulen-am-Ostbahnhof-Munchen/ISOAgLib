@@ -104,4 +104,4 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
   }
 }
 
-} // end of namespace __IsoAgLib
+}

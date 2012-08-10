@@ -19,11 +19,7 @@
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/iassert.h>
 
-#ifdef USE_ISO_TASKCONTROLLER_CLIENT
-  #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
-#endif
-
-#if DEBUG_ISOMONITOR
+#if DEBUG_ISOMONITOR || DEBUG_HEAP_USEAGE
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -998,15 +994,6 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
     // for all following modules, we do the "typical" "valid-resolving"-check!
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
       return true;
-
-#ifdef USE_ISO_TASKCONTROLLER_CLIENT
-    switch ((pkg.isoPgn() & 0x3FF00LU))
-    {
-      case PROCESS_DATA_PGN:
-        // TODO copy arc data in procesMsg of process_c
-        return getProcessInstance4Comm().processMsg( arc_data );
-    }
-#endif
 
 #ifdef USE_WORKING_SET
     // Handle NON-DESTINATION PGNs

@@ -11,53 +11,53 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef IPROCESS_H
-#define IPROCESS_H
+#ifndef ITCCLIENT_H
+#define ITCCLIENT_H
 
-#include "impl/process_c.h"
+#include "impl/tcclient_c.h"
 #include "iprocdata.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/idevpropertyhandler_c.h>
 
-// Begin Namespace IsoAgLib::iProcess_c
+// Begin Namespace IsoAgLib::iTcClient_c
 namespace IsoAgLib {
 
 
-class iProcess_c : private __IsoAgLib::Process_c  {
+class iTcClient_c : private __IsoAgLib::TcClient_c  {
 public:
 
 #if defined(USE_ISO_TASKCONTROLLER_CLIENT)
   iDevPropertyHandler_c& getDevPropertyHandlerInstance( void )
-  {return static_cast<iDevPropertyHandler_c&>(Process_c::getDevPropertyHandlerInstance());};
+  {return static_cast<iDevPropertyHandler_c&>(TcClient_c::getDevPropertyHandlerInstance());};
 #endif
 
   /** set the pointer to the handler class (used for callback when TC status message is processed)
     * @param apc_processDataChangeHandler pointer to handler class of application
     */
   void setProcDataHandler( iProcDataHandler_c *apc_procDataHandler )
-   { Process_c::setProcDataHandler( apc_procDataHandler ); } ;
+   { TcClient_c::setProcDataHandler( apc_procDataHandler ); } ;
 
  private:
-  /** allow getIProcessInstance() access to shielded base class.
-      otherwise __IsoAgLib::getProcessInstance() wouldn't be accepted by compiler
+  /** allow getITcClientInstance() access to shielded base class.
+      otherwise __IsoAgLib::getTcClientInstance() wouldn't be accepted by compiler
     */
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iProcess_c& getIProcessInstance( uint8_t aui8_instance );
+  friend iTcClient_c& getITcClientInstance( uint8_t aui8_instance );
   #else
-  friend iProcess_c& getIProcessInstance( void );
+  friend iTcClient_c& getITcClientInstance( void );
   #endif
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique Process_c singleton instance
+  /** C-style function, to get access to the unique TcClient_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  inline iProcess_c& getIProcessInstance( uint8_t aui8_instance = 0 )
-  { return static_cast<iProcess_c&>(__IsoAgLib::getProcessInstance(aui8_instance));};
+  inline iTcClient_c& getITcClientInstance( uint8_t aui8_instance = 0 )
+  { return static_cast<iTcClient_c&>(__IsoAgLib::getTcClientInstance(aui8_instance));};
 #else
-  /** C-style function, to get access to the unique Process_c singleton instance */
-  inline iProcess_c& getIProcessInstance( void )
-  { return static_cast<iProcess_c&>(__IsoAgLib::getProcessInstance());};
+  /** C-style function, to get access to the unique TcClient_c singleton instance */
+  inline iTcClient_c& getITcClientInstance( void )
+  { return static_cast<iTcClient_c&>(__IsoAgLib::getTcClientInstance());};
 #endif
 
-} // end of namespace IsoAgLib::iProcess_c
+} // end of namespace IsoAgLib::iTcClient_c
 #endif

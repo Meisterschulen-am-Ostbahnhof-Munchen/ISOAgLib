@@ -1,5 +1,5 @@
 /*
-  iiso_name.h: handles the ISO 64bit NAME field
+  iisoname.h: handles the ISO 64bit NAME field
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -26,8 +26,6 @@ namespace __IsoAgLib
 namespace IsoAgLib {
 
 class iEepromIo_c;
-class iProprietaryMessageHandler_c;
-class iProprietaryMessageClient_c;
 
 /** handle the 64bit ISO11783 NAME field with
   input/output from/to 8byte string and specific
@@ -256,7 +254,7 @@ private:
   friend class iTracGuidance_c;
   friend class iTracGuidanceCommand_c;
   friend class IsoName_c;
-  friend class iProcess_c;
+  friend class iTcClient_c;
   friend class iProcData_c;
   friend class iVtObjectAuxiliaryFunction2_c;
   friend iEepromIo_c& operator<<(iEepromIo_c& rc_stream, const iIsoName_c& rc_data );

@@ -11,7 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "measureprog_c.h"
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
@@ -42,7 +42,7 @@ bool MeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& 
       // measurementCommand_t and CommandType_t are unified for all measurement types
       if (!startMeasurement(ac_processData, static_cast<IsoAgLib::ProcData::measurementCommand_t>(en_command), pkg.mi32_pdValue, value))
       {
-        getProcessInstance( ac_processData.getMultitonInst() ).sendNack(
+        getTcClientInstance( ac_processData.getMultitonInst() ).sendNack(
                                             pkg.getMonitorItemForSA()->isoName(),
                                             ac_processData.isoName(),
                                             ac_processData.DDI(),
@@ -276,7 +276,7 @@ bool MeasureProg_c::startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcD
 
   // set the timer period for process_c to a low value (maybe the new programm triggers soon)
   if (b_validTriggerMethod)
-    getProcessInstance( ac_processData.getMultitonInst() ).resetTimerPeriod();
+    getTcClientInstance( ac_processData.getMultitonInst() ).resetTimerPeriod();
 
   return b_validTriggerMethod;
 }

@@ -11,14 +11,10 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef PROCESS_H
-#define PROCESS_H
+#ifndef TCCLIENT_H
+#define TCCLIENT_H
 
 #include <IsoAgLib/isoaglib_config.h>
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <functional>
 
 #include <IsoAgLib/util/impl/singleton.h>
@@ -34,28 +30,25 @@
 #include <list>
 
 namespace IsoAgLib {
-  class iProcess_c;
+  class iTcClient_c;
   class iDevPropertyHandler_c;
 }
-
 
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable : 4355 )
 #endif
 
-
-// Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 
-class Process_c : public Scheduler_Task_c
+class TcClient_c : public Scheduler_Task_c
 {
   MACRO_MULTITON_CONTRIBUTION();
 public:
   void init( void );
   void close( void );
 
-  virtual ~Process_c() {}
+  virtual ~TcClient_c() {}
 
   bool processMsg( const CanPkg_c& arc_data );
 
@@ -98,13 +91,8 @@ public:
                  int16_t element,
                  IsoAgLib::ProcData::nackResponse_t a_errorcodes) const;
 
-private: // Private methods
-  //! Function set ui16_earlierInterval and
-  //! ui16_laterInterval that will be used by
-  //! getTimeToNextTrigger(retriggerType_t)
-  //! can be overloaded by Childclass for special condition
+private:
   virtual void updateEarlierAndLatestInterval();
-
   virtual uint16_t getForcedMinExecTime() const
   {
     return getForcedMinExecTimeDefault();
@@ -112,11 +100,11 @@ private: // Private methods
 
   void stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t ecuType);
 
-private: // Private attributes
+private:
 
   class CanCustomerProxy_c : public CanCustomer_c {
   public:
-    typedef Process_c Owner_t;
+    typedef TcClient_c Owner_t;
 
     CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
@@ -137,7 +125,7 @@ private: // Private attributes
   typedef CanCustomerProxy_c Customer_t;
   class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
   public:
-    typedef Process_c Owner_t;
+    typedef TcClient_c Owner_t;
 
     ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
@@ -161,11 +149,11 @@ private: // Private attributes
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
   /**
-    HIDDEN constructor for a Process_c object instance
-    NEVER instantiate a variable of type Process_c within application
-    only access Process_c via getProcessInstance() or getProcessInstance( int riLbsBusNr ) in case more than one ISO11783 BUS is used for IsoAgLib
+    HIDDEN constructor for a TcClient_c object instance
+    NEVER instantiate a variable of type TcClient_c within application
+    only access TcClient_c via getTcClientInstance() or getTcClientInstance( int riLbsBusNr ) in case more than one ISO11783 BUS is used for IsoAgLib
     */
-  Process_c() :
+  TcClient_c() :
     mt_handler(*this),
     mt_customer(*this),
     mc_isoNameTC(IsoName_c::IsoNameUnspecified()),
@@ -175,10 +163,6 @@ private: // Private attributes
     CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
   {}
 
-  /**
-    deliver reference to process pkg as reference to DevPropertyHandler_c which
-    handles sending and processing of messages from can
-  */
   DevPropertyHandler_c mc_devPropertyHandler;
 
   bool m_lastActiveTaskTC;
@@ -189,9 +173,6 @@ private: // Private attributes
   IsoName_c mc_isoNameLogger;
 #endif
 
-  /** pointer to applications handler class, with handler functions
-      which shall be called when a TC status message arrives
-  */
   IsoAgLib::iProcDataHandler_c* mpc_procDataHandler;
 
   Handler_t mt_handler;
@@ -199,14 +180,14 @@ private: // Private attributes
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcData_c);
   cacheTypeC1_t mpc_iter;
 
-  friend Process_c &getProcessInstance( uint8_t aui8_instance );
+  friend TcClient_c &getTcClientInstance( uint8_t aui8_instance );
 };
 
 
-/** C-style function, to get access to the unique Process_c singleton instance
+/** C-style function, to get access to the unique TcClient_c singleton instance
   * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
   */
-Process_c &getProcessInstance( uint8_t aui8_instance = 0 );
+TcClient_c &getTcClientInstance( uint8_t aui8_instance = 0 );
 }
 
 #if defined(_MSC_VER)

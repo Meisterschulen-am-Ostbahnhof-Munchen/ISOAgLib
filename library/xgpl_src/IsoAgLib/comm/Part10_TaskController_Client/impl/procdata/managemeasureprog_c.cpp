@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+
 #include "managemeasureprog_c.h"
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
 
 namespace __IsoAgLib {
 
@@ -89,4 +89,4 @@ void ManageMeasureProg_c::stopRunningMeasurement(ProcData_c& ac_processData, Iso
 #endif
 }
 
-} // end of namespace __IsoAgLib
+}

@@ -12,7 +12,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include "process_c.h"
+#include "tcclient_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
@@ -23,18 +23,18 @@
 
 namespace __IsoAgLib {
 
-Process_c &getProcessInstance( uint8_t aui8_instance )
+TcClient_c &getTcClientInstance( uint8_t aui8_instance )
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(Process_c, PRT_INSTANCE_CNT, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(TcClient_c, PRT_INSTANCE_CNT, aui8_instance);
 }
 
-DevPropertyHandler_c& Process_c::getDevPropertyHandlerInstance( void )
+DevPropertyHandler_c& TcClient_c::getDevPropertyHandlerInstance( void )
 {
   return mc_devPropertyHandler;
 }
 
 void
-Process_c::init()
+TcClient_c::init()
 {
   isoaglib_assert (!initialized());
 
@@ -58,7 +58,7 @@ Process_c::init()
   setInitialized();
 }
 
-void Process_c::close()
+void TcClient_c::close()
 {
   isoaglib_assert (initialized());
 
@@ -68,7 +68,7 @@ void Process_c::close()
   setClosed();
 };
 
-bool Process_c::timeEvent() {
+bool TcClient_c::timeEvent() {
 
   mc_devPropertyHandler.timeEvent();
 
@@ -109,12 +109,12 @@ bool Process_c::timeEvent() {
   return true;
 };
 
-void Process_c::resetTimerPeriod( void )
+void TcClient_c::resetTimerPeriod( void )
 {
   getSchedulerInstance().changeTimePeriodAndResortTask(this, 100);
 }
 
-bool Process_c::processMsg( const CanPkg_c& arc_data )
+bool TcClient_c::processMsg( const CanPkg_c& arc_data )
 {
   ProcessPkg_c pkg( arc_data, getMultitonInst() );
 
@@ -143,7 +143,7 @@ bool Process_c::processMsg( const CanPkg_c& arc_data )
   }
 
   // use remoteType_t for the remote item
-  const IsoAgLib::ProcData::remoteType_t ecuType = getProcessInstance4Comm().getTypeFromISOName( pkg.getMonitorItemForSA()->isoName() );
+  const IsoAgLib::ProcData::remoteType_t ecuType = getTcClientInstance4Comm().getTypeFromISOName( pkg.getMonitorItemForSA()->isoName() );
 
   // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
   if ( ( pkg.men_command == ProcessPkg_c::requestConfiguration )
@@ -193,7 +193,7 @@ bool Process_c::processMsg( const CanPkg_c& arc_data )
   return true;
 }
 
-void Process_c::sendNack( const IsoName_c& ac_da,
+void TcClient_c::sendNack( const IsoName_c& ac_da,
                           const IsoName_c& ac_sa,
                           int16_t a_ddi,
                           int16_t a_element,
@@ -223,7 +223,7 @@ void Process_c::sendNack( const IsoName_c& ac_da,
   getIsoBusInstance4Comm() << pkg;
 }
 
-ProcData_c* Process_c::procData( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver, bool& elementFound)
+ProcData_c* TcClient_c::procData( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver, bool& elementFound)
 {
   elementFound = false;
   for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
@@ -247,7 +247,7 @@ ProcData_c* Process_c::procData( uint16_t aui16_DDI, uint16_t aui16_element, con
 }
 
 void
-Process_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+TcClient_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {
@@ -278,7 +278,7 @@ Process_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemMod
   }
 }
 
-bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const __IsoAgLib::IsoName_c& sender)
+bool TcClient_c::processTcStatusMsg(uint8_t ui8_tcStatus, const __IsoAgLib::IsoName_c& sender)
 {
   // @TODO logger not supported yet
 
@@ -316,17 +316,17 @@ bool Process_c::processTcStatusMsg(uint8_t ui8_tcStatus, const __IsoAgLib::IsoNa
 
 #if DEBUG_SCHEDULER
 const char*
-Process_c::getTaskName() const
-{ return "Process_c"; }
+TcClient_c::getTaskName() const
+{ return "TcClient_c"; }
 #endif
 
 void
-Process_c::updateEarlierAndLatestInterval(){
+TcClient_c::updateEarlierAndLatestInterval(){
   mui16_earlierInterval = 0;
   mui16_latestInterval   =  ( getTimePeriod() / 2) ;
 }
 
-const IsoName_c& Process_c::getISONameFromType( IsoAgLib::ProcData::remoteType_t ecuType ) const
+const IsoName_c& TcClient_c::getISONameFromType( IsoAgLib::ProcData::remoteType_t ecuType ) const
 {
   if (IsoAgLib::ProcData::remoteTypeTaskControl == ecuType)
     return mc_isoNameTC;
@@ -338,7 +338,7 @@ const IsoName_c& Process_c::getISONameFromType( IsoAgLib::ProcData::remoteType_t
   return IsoName_c::IsoNameUnspecified();
 }
 
-IsoAgLib::ProcData::remoteType_t Process_c::getTypeFromISOName( const IsoName_c& isoName ) const
+IsoAgLib::ProcData::remoteType_t TcClient_c::getTypeFromISOName( const IsoName_c& isoName ) const
 {
   if ( isoName == mc_isoNameTC )
     return IsoAgLib::ProcData::remoteTypeTaskControl;
@@ -350,7 +350,7 @@ IsoAgLib::ProcData::remoteType_t Process_c::getTypeFromISOName( const IsoName_c&
   return IsoAgLib::ProcData::remoteTypeUndefined;
 }
 
-void Process_c::stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t ecuType)
+void TcClient_c::stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t ecuType)
 {
   for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin(); pc_iter != c_arrClientC1.end(); pc_iter++ )
   {
@@ -358,4 +358,4 @@ void Process_c::stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t ecuType)
   }
 }
 
-} // end of namespace __IsoAgLib
+}
