@@ -112,8 +112,7 @@ public:
     ecuTypeTaskControl,
     ecuTypeVirtualTerminal,
     ecuTypeFileServerOrPrinter,
-    ecuTypeNavigation,
-    ecuTypeLogger,
+    ecuTypeNavigation
   };
 
   /** deliver type of ECU: Tractor, VT, Navigation, etc. */
