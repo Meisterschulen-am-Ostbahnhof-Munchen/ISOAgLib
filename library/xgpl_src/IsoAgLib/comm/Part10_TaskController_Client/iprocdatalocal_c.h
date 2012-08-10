@@ -168,11 +168,10 @@ public:
     @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ai32_increment
     @param apc_receiverDevice commanding ISOName
-    @return true -> measurement started
   */
-  bool startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+  void startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                         int32_t ai32_increment, const iIsoName_c& ac_receiverDevice )
-  { return ProcDataLocal_c::startDataLogging(ren_type, ai32_increment, ac_receiverDevice ); }
+  { ProcDataLocal_c::startDataLogging(ren_type, ai32_increment, ac_receiverDevice ); }
 
 };
 

@@ -81,7 +81,7 @@ void ProcDataLocal_c::timeEvent( uint16_t& rui16_nextTimePeriod ){
   mc_measureprog.timeEvent( *this, rui16_nextTimePeriod);
 }
 
-void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
+void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg, IsoName_c::ecuType_t a_ecuType )
 {
   isoaglib_assert( DDI() == pkg.mui16_DDI );
   
@@ -102,26 +102,33 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
   }
   else
   { // process measurement commands
-    mc_measureprog.processMsg( *this, pkg );
+    mc_measureprog.processMsg( *this, pkg, a_ecuType );
   }
 }
 
-bool ProcDataLocal_c::startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+void ProcDataLocal_c::startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                                        int32_t ai32_increment, const IsoName_c& ac_receiverDevice )
 {
   isoaglib_assert( ac_receiverDevice.isSpecified() );
 
-  return mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, ac_receiverDevice);
+  mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, ac_receiverDevice);
 }
 
-void ProcDataLocal_c::stopRunningMeasurement(const IsoName_c& rc_isoName)
+void ProcDataLocal_c::stopRunningMeasurement(IsoName_c::ecuType_t a_ecuType)
 {
-  mc_measureprog.stopRunningMeasurement(*this, rc_isoName);
+  mc_measureprog.stopRunningMeasurement(*this, a_ecuType);
 }
 
-void ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const
+void ProcDataLocal_c::sendValue( IsoName_c::ecuType_t a_ecuType_t, int32_t ai32_val) const
 {
-  pkg.setISONameForDA(ac_varISOName);
+  const IsoName_c& c_destinationISOName = getProcessInstance4Comm().getISONameFromType( a_ecuType_t );
+
+  if (!c_destinationISOName.isSpecified()) return;
+  
+  ProcessPkg_c pkg;
+  pkg.men_command = ProcessPkg_c::setValue;
+
+  pkg.setISONameForDA(c_destinationISOName);
   pkg.setISONameForSA(isoName());
 
   pkg.setIsoPri(3);
@@ -170,12 +177,7 @@ bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameReceiver,
 }
 
 void ProcDataLocal_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) const {
-
-  ProcessPkg_c pkg;
-  // prepare general command in process pkg
-  pkg.men_command = ProcessPkg_c::setValue;
-
-  sendValISOName( pkg, ac_targetISOName, measurementVal());
+   sendValue( getProcessInstance4Comm().getTypeFromISOName( ac_targetISOName ), measurementVal());
 }
 
 } // end of namespace __IsoAgLib

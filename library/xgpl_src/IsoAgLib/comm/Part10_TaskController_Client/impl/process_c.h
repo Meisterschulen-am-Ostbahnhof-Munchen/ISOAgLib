@@ -149,19 +149,19 @@ public:
                  int16_t element,
                  Proc_c::nackResponse_t a_errorcodes) const;
 
-protected:
+private: // Private methods
   //! Function set ui16_earlierInterval and
   //! ui16_laterInterval that will be used by
   //! getTimeToNextTrigger(retriggerType_t)
   //! can be overloaded by Childclass for special condition
   virtual void updateEarlierAndLatestInterval();
 
-private: // Private methods
-
   virtual uint16_t getForcedMinExecTime() const
   {
     return getForcedMinExecTimeDefault();
   }
+
+  void stopRunningMeasurement(const IsoName_c& rc_isoName);
 
 private: // Private attributes
 
@@ -178,41 +178,12 @@ private: // Private attributes
       return mrt_owner.processMsg( arc_data );
     }
 
-    virtual bool reactOnStreamStart(
-        ReceiveStreamIdentifier_c const &ac_ident,
-        uint32_t aui32_totalLen)
-    {
-      return reactOnStreamStartDefault(ac_ident, aui32_totalLen);
-    }
-
-    virtual void reactOnAbort(Stream_c &arc_stream)
-    {
-      reactOnAbortDefault(arc_stream);
-    }
-
-    virtual bool processPartStreamDataChunk(
-        Stream_c &apc_stream,
-        bool ab_isFirstChunk,
-        bool ab_isLastChunk)
-    {
-      return processPartStreamDataChunkDefault(apc_stream,ab_isFirstChunk,ab_isLastChunk);
-    }
-
-    virtual void notificationOnMultiReceiveError(
-        ReceiveStreamIdentifier_c const &ac_streamIdent,
-        uint8_t aui8_multiReceiveError,
-        bool ab_isGlobal)
-    {
-      notificationOnMultiReceiveErrorDefault(ac_streamIdent,aui8_multiReceiveError,ab_isGlobal);
-    }
-
     Owner_t &mrt_owner;
 
   private:
     // not copyable
     CanCustomerProxy_c(CanCustomerProxy_c const &);
     CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
-
   };
   typedef CanCustomerProxy_c Customer_t;
   class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
@@ -261,7 +232,6 @@ private: // Private attributes
   */
   DevPropertyHandler_c mc_devPropertyHandler;
 
-  //STL_NAMESPACE::list<IsoName_c> ml_filtersToDeleteISO;
   uint8_t mui8_lastTcStatus;
 
   IsoName_c mc_isoNameTC;

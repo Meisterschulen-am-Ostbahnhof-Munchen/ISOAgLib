@@ -15,7 +15,6 @@
 
 #include "measuresubprog_c.h"
 #include <IsoAgLib/hal/hal_typedef.h>
-#include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 
@@ -72,15 +71,14 @@ public:
    virtual ~MeasureProgLocal_c() {}
 
   /**
-    start a measuring programm with new master measurement value
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
+    start local measuring programs -> create if necessary and send initial value
   */
-  void start(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type);
+  bool startMeasurement(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type, int32_t ai32_increment);
 
   /**
-    stop local measuring programs -> send actual values
+    stop local measuring programs 
   */
-  void stop(ProcDataLocal_c& ac_processData);
+  void stopMeasurement(ProcDataLocal_c& ac_processData);
 
   /**
     process a message: reset command or value requests
@@ -101,19 +99,6 @@ public:
   void timeEvent( ProcDataLocal_c& ac_processData, uint16_t& rui16_nextTimePeriod );
 
   /**
-    add an aditional subprog or update if one with same kind exist already
-    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ai32_increment increment value
-  */
-  void addSubprog(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment);
-
-  /**
-    check if this measure prog is running
-    @return true -> program is running
-  */
-  bool started() const {return (men_doSend != Proc_c::DoNone);};
-
-  /**
     deliver actual last received value
     @param ab_sendRequest choose wether a request for value update should be
         sent (default false == send no request)
@@ -129,17 +114,11 @@ public:
 
 private: // Private methods
   /**
-    send the values which are registered by a running mesuring program
-    @param ren_doSend value types to send on trigger of subprog
+    add an aditional subprog or update if one with same kind exist already
+    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
+    @param ai32_increment increment value
   */
-  void sendRegisteredVals( ProcDataLocal_c& ac_processData);
-
-  /**
-    send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
-    @param en_valueGroup value group to send
-    @param ac_targetISOName ISOName of target
-  */
-  void sendVal( ProcDataLocal_c& ac_processData, const IsoName_c& ac_targetISOName) const;
+  MeasureSubprog_c& addSubprog(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment);
 
   /**
     helper function to check val() against limits
@@ -151,7 +130,7 @@ private: // Private methods
     process a message with an increment for a measuring program
     @param ren_doSend set process data subtype to send
   */
-  void processIncrementMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg);
+  void processMeasurementMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg, Proc_c::measurementCommand_t ren_type);
 
 private: // Private attributes
 
@@ -166,9 +145,6 @@ private: // Private attributes
 
   /** dynamic array for subprogs */
   Vec_MeasureSubprog mvec_measureSubprog;
-
-  /** specifies which value types should be sent if one subprog triggers */
-  Proc_c::doSend_t men_doSend;
 
   /** isoName type value of caller of program */
   IsoName_c::ecuType_t m_ecuType;

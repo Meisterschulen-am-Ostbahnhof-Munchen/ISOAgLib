@@ -20,7 +20,6 @@ namespace __IsoAgLib {
 
 /**
   class with special (enum) types for ProcessData management
-  @author Dipl.-Inform. Achim Spangler
 */
 class Proc_c {
 public:
@@ -50,19 +49,8 @@ public:
 
   static bool isMethodSet(uint8_t value, triggerMethod_t method) { return ((value & (0x1 << method)) != 0 ); }
 
-  /** enum type for to sending values */
-  enum doSend_t {DoNone = 0, DoVal = 1};
-
   /** enum type for special DDIs */
   enum specialDDI_t {defaultDataLoggingDDI = 0xDFFF};
-
-  /** enum type for task status */
-  enum taskStatus_t {NoTask = 0, Initial = 1, Running = 2, Suspended = 3, Finished = 4 };
-
-  enum thresholdValues_t {ThresholdMaximumStopVal = int32_t(0x80000001),
-                          ThresholdMinimumStopVal = int32_t(0x7fffffff),
-                          ThresholdChangeStopVal = 0,
-                          ThresholdEachChangeVal = 1 };
 
   /** default unused constructor */
   Proc_c(){};

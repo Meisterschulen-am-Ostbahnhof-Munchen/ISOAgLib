@@ -18,7 +18,6 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointlocal_c.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
 #include "processpkg_c.h"
 
 namespace IsoAgLib {
@@ -106,16 +105,14 @@ public:
   void incrMeasurementVal(int32_t ai32_val);
 
   /** process a message, which is adressed for this process data item */
-  void processMsg( ProcessPkg_c& pkg );
+  void processMsg( ProcessPkg_c& pkg, IsoName_c::ecuType_t a_ecuType );
 
   /**
-    perform periodic actions
     delete all running measure programs of members which are >3sec inactive;
     deletion of outdated setpoints is managed by SetpointLocal_c::timeEvent
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
-    @return true -> all planned executions performed
   */
-  void timeEvent(  uint16_t& rui16_nextTimePeriod );
+  void timeEvent( uint16_t& rui16_nextTimePeriod );
 
   /** send the value to a specified target (selected by ISOName)
     @param ac_targetISOName ISOName of target
@@ -135,16 +132,15 @@ public:
     @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ai32_increment
     @param apc_receiverDevice commanding ISOName
-    @return true -> measurement started
   */
-  bool startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+  void startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                         int32_t ai32_increment, const IsoName_c& ac_receiverDevice );
 
   /**
     stop all measurement progs in all local process instances, started with given isoName
     @param rc_isoName
   */
-  void stopRunningMeasurement(const IsoName_c& rc_isoName);
+  void stopRunningMeasurement(IsoName_c::ecuType_t a_ecuType);
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
@@ -191,15 +187,7 @@ public:
                ) const;
 
 private: // Private methods
-  /** send the given int32_t value with variable ISOName ac_varISOName;
-      set the int32_t value with conversion (according to central data type) in message
-      string and set data format flags corresponding to central data type of this process data
-      set general command before sendValISOName !
-      @param ac_varISOName variable ISOName
-      @param ai32_val int32_t value to send
-      @return true -> sendIntern set successful EMPF and SEND
-  */
-  void sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
+  void sendValue( IsoName_c::ecuType_t a_ecuType_t, int32_t ai32_val) const;
 
 private: // Private attributes
   /** IsoName_c used for this instance */
