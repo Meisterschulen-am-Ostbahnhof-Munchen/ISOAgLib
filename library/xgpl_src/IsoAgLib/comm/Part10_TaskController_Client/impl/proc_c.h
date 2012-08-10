@@ -26,18 +26,27 @@ class Proc_c {
 public:
 
 /** enum type definition as part of class */
-  enum measurementCommand_t { MeasurementCommandNullType = 0,
-                              MeasurementCommandDistProp = 1,
-                              MeasurementCommandTimeProp = 4,
-                              MeasurementCommandMaximumThreshold = 0x10,
-                              MeasurementCommandMinimumThreshold = 0x20,
-                              MeasurementCommandOnChange = 0x40 };
+  enum measurementCommand_t { MeasurementCommandTimeProp =          0x4,
+                              MeasurementCommandDistProp =          0x5,
+                              MeasurementCommandMinimumThreshold =  0x6,
+                              MeasurementCommandMaximumThreshold =  0x7,
+                              MeasurementCommandOnChange =          0x8 };
 
   enum triggerMethod_t { MethodTimeInterval = 0,
                          MethodDistInterval = 1,
                          MethodThresholdLimit = 2, 
                          MethodOnChange = 3,
                          MethodTotal = 4 };
+
+  enum nackResponse_t { NackProcessDataCommandNotSupported = 0x01, // Bit 0 = 1 Process Data Command not supported
+                        NackInvalidElementNumber = 0x02, // Bit 1 = 1 Invalid Element Number
+                        NackDDINoSupportedByElement = 0x04, // Bit 2 = 1 DDI not supported by element
+                        NackTriggerMethodNotSupported = 0x08, // Bit 3 = 1 Trigger method not supported
+                        NackProcessDataNotSetable = 0x10, // Bit 4 = 1 Process Data not setable
+                        NackInvalidOrUnsupportedIntervalOrThreshold = 0x20, // Bit 5 = 1 Invalid or unsupported interval or threshold
+                        NackReserved1 = 0x40,
+                        NackReserved2 = 0x80,
+                        NackUndefined };
 
   static bool isMethodSet(uint8_t value, triggerMethod_t method) { return ((value & (0x1 << method)) != 0 ); }
 

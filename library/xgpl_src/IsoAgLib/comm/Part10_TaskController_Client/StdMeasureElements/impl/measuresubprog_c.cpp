@@ -23,33 +23,20 @@
 
 namespace __IsoAgLib {
 
-MeasureSubprog_c::MeasureSubprog_c(Proc_c::measurementCommand_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+MeasureSubprog_c::MeasureSubprog_c(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
 : ClientBase( MULTITON_INST_PARAMETER_USE ),
   mi32_lastVal( 0 ),
   mi32_increment( ai32_increment ),
-  mb_started( false ),
-  men_type( ren_type ),
-  men_doSend( ren_doSend )
+  men_type( ren_type )
 {
-}
-
-const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& acrc_src){
-  mb_started = acrc_src.mb_started;
-  men_type = acrc_src.men_type;
-  men_doSend = acrc_src.men_doSend;
-  mi32_increment = acrc_src.mi32_increment;
-  mi32_lastVal = acrc_src.mi32_lastVal;
-  return acrc_src;
 }
 
 MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& acrc_src)
-: ClientBase(acrc_src)
+: ClientBase(acrc_src),
+  mi32_lastVal(acrc_src.mi32_lastVal),
+  mi32_increment(acrc_src.mi32_increment),
+  men_type(acrc_src.men_type)
 {
-  mb_started = acrc_src.mb_started;
-  men_type = acrc_src.men_type;
-  men_doSend = acrc_src.men_doSend;
-  mi32_increment = acrc_src.mi32_increment;
-  mi32_lastVal = acrc_src.mi32_lastVal;
 }
 
 MeasureSubprog_c::~MeasureSubprog_c(){
@@ -59,9 +46,6 @@ void MeasureSubprog_c::start(int32_t ai32_lastVal, int32_t ai32_increment){
   // if wanted store given values (in both cases 0 is interpreted as not wanted)
   if (ai32_increment != 0) mi32_increment = ai32_increment;
   if (ai32_lastVal != 0) mi32_lastVal = ai32_lastVal;
-
-  // register as started
-  mb_started = true;
 }
 
 bool MeasureSubprog_c::updateTrigger(int32_t ai32_val){

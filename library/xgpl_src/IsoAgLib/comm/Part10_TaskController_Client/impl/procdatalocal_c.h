@@ -190,7 +190,7 @@ public:
                  uint16_t aui16_element
                ) const;
 
-protected: // Protected methods
+private: // Private methods
   /** send the given int32_t value with variable ISOName ac_varISOName;
       set the int32_t value with conversion (according to central data type) in message
       string and set data format flags corresponding to central data type of this process data

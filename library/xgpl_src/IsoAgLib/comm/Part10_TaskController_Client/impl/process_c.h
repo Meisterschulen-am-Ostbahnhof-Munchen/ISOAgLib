@@ -147,7 +147,7 @@ public:
                  const IsoName_c& ac_sa,
                  int16_t ddi,
                  int16_t element,
-                 uint8_t a_errorcodes) const;
+                 Proc_c::nackResponse_t a_errorcodes) const;
 
 protected:
   //! Function set ui16_earlierInterval and

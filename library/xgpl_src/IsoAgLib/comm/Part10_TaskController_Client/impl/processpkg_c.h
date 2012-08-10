@@ -43,7 +43,7 @@ public:
     taskControllerStatus                  = 0xe,
     workingsetMasterMaintenance           = 0xf,
 
-    CommandUndefined
+    CommandUndefined                      = 0x10
   };
 public:
   //ProcessPkg_c( const ProcessPkg_c& arc_src );

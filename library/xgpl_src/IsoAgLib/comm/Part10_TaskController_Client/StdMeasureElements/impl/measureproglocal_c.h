@@ -40,9 +40,7 @@ private:
   struct ThresholdInfo_s
   {
     Proc_c::measurementCommand_t en_type;
-    Proc_c::doSend_t en_doSend;
     int32_t i32_threshold;
-    bool b_isMax;
   };
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::list<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s) > List_ThresholdInfo;
@@ -66,11 +64,9 @@ public:
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
-    @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param ecuType ecuType_t of remote member
   */
-  MeasureProgLocal_c();
+  MeasureProgLocal_c(IsoName_c::ecuType_t ecutype);
 
   /** default destructor which has nothing to do */
    virtual ~MeasureProgLocal_c() {}
@@ -78,27 +74,13 @@ public:
   /**
     start a measuring programm with new master measurement value
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
-    @param ai32_masterVal actual master value to start with
-    @return true -> starting values sent with success
   */
-  void start(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type, Proc_c::doSend_t ren_doSend);
+  void start(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type);
 
   /**
     stop local measuring programs -> send actual values
-    @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
-    @return true -> stop values sent with success
   */
-  void stop(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type, Proc_c::doSend_t ren_doSend);
-
-  /**
-    send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
-    @param en_valueGroup value group to send
-    @param ac_targetISOName ISOName of target
-  */
-  void sendVal( ProcDataLocal_c& ac_processData, const IsoName_c& ac_targetISOName) const;
+  void stop(ProcDataLocal_c& ac_processData);
 
   /**
     process a message: reset command or value requests
@@ -113,15 +95,8 @@ public:
   void setVal(ProcDataLocal_c& ac_processData, int32_t ai32_val);
 
   /**
-    send the values which are registered by a running mesuring program
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
-  */
-  void sendRegisteredVals( ProcDataLocal_c& ac_processData, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
-
-  /**
     periodic events (e.g. send value for time proportional progs)
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
-    @return true -> all planned activities performed in available time
   */
   void timeEvent( ProcDataLocal_c& ac_processData, uint16_t& rui16_nextTimePeriod );
 
@@ -129,17 +104,8 @@ public:
     add an aditional subprog or update if one with same kind exist already
     @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ai32_increment increment value
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal...)
-    @return always true; only relevant for overoaded methods in derived classes
   */
-  void addSubprog(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
-
-  /**
-    set active flag
-    @param ab_active
-  */
-  // @TODO remove ? Check if necessary ?
-  void setActive(bool ab_active) { mb_active = ab_active; }
+  void addSubprog(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment);
 
   /**
     check if this measure prog is running
@@ -159,30 +125,31 @@ public:
     return the ecuType_t code for this measureprog
     @return ecuType_t of this measureprog
   */
-  IsoName_c::ecuType_t isoNameType () const { return m_ecuType; }
-
-  /**
-    return the program active flag
-    @return true -> is active
-  */
-  bool getActive() const { return mb_active; };
-
-  /**
-    set the m_ecuType code for this measureprog
-    @param ecuType ecuType_t for specification of partner system
-  */
-  void setISONameType( IsoName_c::ecuType_t ecuType ) {m_ecuType = ecuType;}
+  IsoName_c::ecuType_t isoNameType() const { return m_ecuType; }
 
 private: // Private methods
+  /**
+    send the values which are registered by a running mesuring program
+    @param ren_doSend value types to send on trigger of subprog
+  */
+  void sendRegisteredVals( ProcDataLocal_c& ac_processData);
+
+  /**
+    send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
+    @param en_valueGroup value group to send
+    @param ac_targetISOName ISOName of target
+  */
+  void sendVal( ProcDataLocal_c& ac_processData, const IsoName_c& ac_targetISOName) const;
+
   /**
     helper function to check val() against limits
     @return true if value sending allowed
   */
-  bool minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const;
+  bool minMaxLimitsPassed() const;
 
   /**
     process a message with an increment for a measuring program
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal...)
+    @param ren_doSend set process data subtype to send
   */
   void processIncrementMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg);
 
@@ -202,9 +169,6 @@ private: // Private attributes
 
   /** specifies which value types should be sent if one subprog triggers */
   Proc_c::doSend_t men_doSend;
-
-  /** stores if programm is active */
-  bool mb_active;
 
   /** isoName type value of caller of program */
   IsoName_c::ecuType_t m_ecuType;

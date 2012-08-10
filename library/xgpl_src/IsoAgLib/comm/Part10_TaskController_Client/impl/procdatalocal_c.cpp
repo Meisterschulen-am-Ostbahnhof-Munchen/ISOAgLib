@@ -87,7 +87,7 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
   
   if ( pkg.men_command == ProcessPkg_c::setValue)
   { // process setpoint command
-    if (procdataconfiguration.mb_isSetpoint)
+    if (isSetPoint())
     {
       mc_setpoint.processMsg( *this, pkg );
     }
@@ -97,7 +97,7 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
                                           isoName(),
                                           DDI(),
                                           element(),
-                                          0x10); // Bit 4 = 1 Process Data not setable // @TODO avoid magic number.
+                                          Proc_c::NackProcessDataNotSetable);
     }
   }
   else

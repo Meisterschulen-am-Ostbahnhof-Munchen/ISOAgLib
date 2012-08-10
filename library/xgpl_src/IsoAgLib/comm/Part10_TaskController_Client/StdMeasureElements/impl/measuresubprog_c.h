@@ -32,19 +32,13 @@ public:
   /**
     default constructor which can optionally set increment type, increment and running state
     @param ren_type optional increment type (default time proportional)
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal...)
+    @param ren_doSend set process data subtype to send
     @param ai32_increment optional increment value of ren_type (default 0)
     @param ab_started optional running state (default off)
     @param ai32_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::measurementCommand_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment  MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
+  MeasureSubprog_c(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment  MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
 
-  /**
-    operator= for Subprogs
-    @param acrc_src source instance
-    @return reference to source instance for commands like "subp1 = subp2 = subp3;"
-  */
-  const MeasureSubprog_c& operator=(const MeasureSubprog_c& acrc_src);
   /**
     copy constructor for Subprogs
     @param acrc_src source instance
@@ -59,18 +53,6 @@ public:
     @return type of this measure subprogram increment
   */
   Proc_c::measurementCommand_t type() const { return men_type; }
-
-  /**
-    set subprog type
-    @param ren_type wanted increment type of this subprogram
-  */
-  void setType(Proc_c::measurementCommand_t ren_type) { men_type = ren_type; }
-
-  /**
-    deliver subprog data send type
-    @return data send type of this measure subprogram increment
-  */
-  Proc_c::doSend_t doSend() const { return men_doSend; }
 
   /**
     deliver the increment value of this subprog
@@ -99,7 +81,7 @@ public:
   int32_t nextTriggerTime(int32_t ai32_val);
 
   /** stop a measuring subprogram  */
-  void stop() { mb_started = false; }
+  void stop() {}
 
 private: // Private attributes
   /** last value for the increment test of this instance */
@@ -107,11 +89,12 @@ private: // Private attributes
   /** increment of this subprog item */
   int32_t mi32_increment;
 
-  /** states if this subprog is started */
-  bool mb_started;
   /** type of this subprog instance */
-  Proc_c::measurementCommand_t men_type;
-  Proc_c::doSend_t men_doSend;
+  const Proc_c::measurementCommand_t men_type;
+
+private:
+  /** not copyable : copy operator is only declared, never defined */
+  MeasureSubprog_c& operator=(const MeasureSubprog_c&); 
 };
 
 }
