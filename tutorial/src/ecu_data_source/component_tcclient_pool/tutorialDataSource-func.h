@@ -16,25 +16,3 @@ IsoAgLib::iProcDataLocal_c c_workStateSection01(0x8d, 1, c_myIsoName, true, 9);
 
 IsoAgLib::iProcDataLocal_c c_workStateSection02(0x8d, 2, c_myIsoName, true, 9);
 
-IsoAgLib::iProcDataLocal_c c_workStateSection03(0x8d, 3, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection04(0x8d, 4, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection05(0x8d, 5, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection06(0x8d, 6, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection07(0x8d, 7, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection08(0x8d, 8, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection09(0x8d, 9, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection10(0x8d, 10, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection11(0x8d, 11, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection12(0x8d, 12, c_myIsoName, true, 9);
-
-IsoAgLib::iProcDataLocal_c c_workStateSection13(0x8d, 13, c_myIsoName, true, 9);
-
