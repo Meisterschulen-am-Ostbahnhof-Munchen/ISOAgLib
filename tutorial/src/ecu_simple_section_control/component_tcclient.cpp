@@ -4,7 +4,7 @@
 #include "component_tcclient.h"
 
 // IsoAgLib
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocess_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/itcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
@@ -65,7 +65,7 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::init( IsoAgLib::iIde
   initProcData(arc_identItem);
 
   const bool cb_registerSuccess =
-    IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(
+    IsoAgLib::getITcClientInstance().getDevPropertyHandlerInstance().registerDevicePool(
       &arc_identItem, deviceDescription_en, ui32_arrayLength_en, true);
 
   (void)cb_registerSuccess;
