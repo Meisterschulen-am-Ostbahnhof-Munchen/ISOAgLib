@@ -73,6 +73,7 @@ ProcDataLocal_c::~ProcDataLocal_c(){
   getProcessInstance4Comm().unregisterLocalProcessData( this );
 }
 
+#if 0 // no copy constructor and assign operator for now
 const ProcDataLocal_c& ProcDataLocal_c::operator=(const ProcDataLocal_c& acrc_src)
 { // call base class operator
   ClientBase::operator=(acrc_src);
@@ -102,13 +103,16 @@ void ProcDataLocal_c::assignFromSource( const ProcDataLocal_c& acrc_src )
 
 ProcDataLocal_c::ProcDataLocal_c(const ProcDataLocal_c& acrc_src)
    : ClientBase( acrc_src ),
-		mc_isoName( acrc_src.mc_isoName )
+		 mc_isoName( acrc_src.mc_isoName )
+     mc_measureprog( this ),
+     mc_setpoint( this )
 {
   // NOT COMPLETE ?
   assignFromSource(acrc_src);
 
   getProcessInstance4Comm().registerLocalProcessData( this );
 }
+#endif
 
 void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
 {

@@ -64,25 +64,23 @@ public:
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
     @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
     @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c(
     ProcDataLocal_c *const apc_processData = NULL,
     int32_t ai32_masterVal = 0,
-    int32_t ai32_initialVal = 0,
-    const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() );
+    int32_t ai32_initialVal = 0);
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
     @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
     @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
     ProcDataLocal_c *const apc_processData,
     int32_t ai32_masterVal = 0,
-    int32_t ai32_initialVal = 0,
-    const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() );
+    int32_t ai32_initialVal = 0);
 
   /**
     assignment of MeasureProgLocal_c objects
@@ -250,10 +248,11 @@ public:
   int32_t val(bool ab_sendRequest = false) const;
 
   /**
-    return the mc_isoName code for this measureprog
-    @return ISOName of this measureprog
+    return the ecuType_t code for this measureprog
+    @return ecuType_t of this measureprog
   */
-  const IsoName_c& isoName() const{return mc_isoName;}
+  IsoName_c::ecuType_t isoNameType () const { return m_ecuType; }
+
 
   /**
     return the program active flag
@@ -262,52 +261,10 @@ public:
   bool getActive() const { return mb_active; };
 
   /**
-    set the mc_isoName code for this measureprog
-    @param acrc_isoName ISOName for exact specification of partner system
+    set the m_ecuType code for this measureprog
+    @param ecuType ecuType_t for specification of partner system
   */
-  // This has something to do with the init failing for the iProcDataRemote_c object. -bac
-  void setISOName(const IsoName_c& acrc_isoName){mc_isoName = acrc_isoName;}
-
-public:
-  /**
-    compare two items for PRI and ISOName
-    @param acrc_right compared object
-    @return true -> both instances are equal (ISOName and active flag)
-  */
-  bool operator==(const MeasureProgLocal_c& acrc_right) const
-    {return (calcCompVal() == acrc_right.calcCompVal());}
-
-  /**
-    compare two MeasureProg with <
-    @param acrc_right compared object
-    @return true -> this instance is < than the other (ISOName and active flag)
-  */
-  bool operator<(const MeasureProgLocal_c& acrc_right) const
-    {return (calcCompVal() < acrc_right.calcCompVal());}
-
-  /**
-    compare two MeasureProg with <=
-    @param acrc_right compared object
-    @return true -> this instance is <= than the other (ISOName and active flag)
-  */
-  bool operator<=(const MeasureProgLocal_c& acrc_right) const
-    {return (calcCompVal() <= acrc_right.calcCompVal());}
-
-  /**
-    compare two MeasureProg with >
-    @param acrc_right compared object
-    @return true -> this instance is > than the other (ISOName and active flag)
-  */
-  bool operator>(const MeasureProgLocal_c& acrc_right) const
-    {return (calcCompVal() > acrc_right.calcCompVal());}
-
-  /**
-    compare two MeasureProg with >=
-    @param acrc_right compared object
-    @return true -> this instance is >= than the other (ISOName and active flag)
-  */
-  bool operator>=(const MeasureProgLocal_c& acrc_right) const
-    {return (calcCompVal() >= acrc_right.calcCompVal());}
+  void setISONameType( IsoName_c::ecuType_t ecuType ) {m_ecuType = ecuType;}
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
@@ -318,13 +275,6 @@ private: // Private methods
     @return true if value sending allowed
   */
   bool minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const;
-
-  /**
-    calculates a single value from identifying values
-    (for easy <,>,...)
-    @return single comparison value (depends on ISOName and active flag)
-  */
-  int32_t calcCompVal()const {return ( ( (mc_isoName.devClass() << 4) | (mc_isoName.devClassInst()) ) * (mb_active + 1));}
 
   /**
     process a message with an increment for a measuring program
@@ -363,8 +313,8 @@ private: // Private attributes
   /** stores if programm is active */
   bool mb_active;
 
-  /** isoName value of caller of program */
-  IsoName_c mc_isoName;
+  /** isoName type value of caller of program */
+  IsoName_c::ecuType_t m_ecuType;
 };
 
 }

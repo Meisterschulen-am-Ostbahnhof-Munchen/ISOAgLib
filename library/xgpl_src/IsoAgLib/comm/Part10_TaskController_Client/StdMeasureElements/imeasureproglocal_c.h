@@ -42,12 +42,6 @@ public:
   */
   int32_t val(){return MeasureProgLocal_c::val();};
 
-  /**
-    return the c_isoName code for this measureProg
-    @return ISOName of this measureProg
-  */
-  const iIsoName_c& isoName(){return MeasureProgLocal_c::isoName().toConstIisoName_c();};
-
  private:
   friend class iProcDataLocal_c;
 };

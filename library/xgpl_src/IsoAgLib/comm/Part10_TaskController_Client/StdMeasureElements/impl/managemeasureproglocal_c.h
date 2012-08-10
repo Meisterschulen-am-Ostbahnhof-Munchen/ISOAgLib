@@ -33,22 +33,14 @@ namespace __IsoAgLib {
   */
 class ManageMeasureProgLocal_c : public ProcessElementBase_c
 {
-private:
-  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::list<MeasureProgLocal_c,MALLOC_TEMPLATE(MeasureProgLocal_c) > Vec_MeasureProgLocal;
-  typedef STL_NAMESPACE::list<MeasureProgLocal_c,MALLOC_TEMPLATE(MeasureProgLocal_c)  >::iterator Vec_MeasureProgLocalIterator;
-  #else
-  typedef STL_NAMESPACE::list<MeasureProgLocal_c> Vec_MeasureProgLocal;
-  typedef STL_NAMESPACE::list<MeasureProgLocal_c>::iterator Vec_MeasureProgLocalIterator;
-  #endif
  public:
   /**
     constructor which initialse both pointers if given
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  ManageMeasureProgLocal_c( ProcDataLocal_c *const apc_processData = NULL )
-  : ProcessElementBase_c( apc_processData )
-  { init( apc_processData );};
+  ManageMeasureProgLocal_c( ProcDataLocal_c *const apc_processData );
+  
+  /** destructor */
   virtual ~ManageMeasureProgLocal_c();
 
   /**
@@ -120,12 +112,12 @@ private:
     deliver a reference to the list of measure prog objects
     @return reference to list of measure prog entries
   */
-  Vec_MeasureProgLocal& vec_prog() { return mvecc_prog;};
+  MeasureProgLocal_c& vec_prog( IsoName_c::ecuType_t ecuType );
   /**
     deliver a reference to the list of measure prog objects
     @return reference to list of measure prog entries
   */
-  const Vec_MeasureProgLocal& constVecProg() const { return mvecc_prog;};
+  const MeasureProgLocal_c& constVecProg( IsoName_c::ecuType_t ecuType ) const;
   /**
     create a new measure prog item;
     if there is still the default initial item undefined define it
@@ -142,9 +134,10 @@ private:
   bool updateProgCache(const IsoName_c& acrc_isoName, bool ab_createIfNotFound);
  protected:
   /** container of objects for managing jobs of local measure programs */
-  Vec_MeasureProgLocal mvecc_prog;
+  MeasureProgLocal_c mc_measureprogTC;
+  MeasureProgLocal_c mc_measureprogLogger;
   /** cache iterator to measure prog */
-  Vec_MeasureProgLocalIterator mpc_progCache;
+  MeasureProgLocal_c* mpc_progCache;
  private:
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ManageMeasureProgLocal_c& acrc_src );

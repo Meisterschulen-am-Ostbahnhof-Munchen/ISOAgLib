@@ -127,6 +127,10 @@ public:
     @return isoName, saved from TC status messages
   */
   const IsoName_c* getTcISOName() { return mpc_tcISOName; };
+  const IsoName_c& getTcISONameRef() const { return mc_isoNameTC; };
+
+  const IsoName_c& getISONameFromType( IsoName_c::ecuType_t ecuType ) const;
+  IsoName_c::ecuType_t getTypeFromISOName( const IsoName_c& isoName ) const;
 
 #if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
@@ -237,6 +241,9 @@ private: // Private attributes
   Process_c() :
     mt_handler(*this),
     mt_customer(*this),
+    mpc_tcISOName(NULL),
+    mc_isoNameTC(IsoName_c::IsoNameUnspecified()),
+    mc_isoNameLogger(IsoName_c::IsoNameUnspecified()),
     CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
   {}
 
@@ -249,6 +256,9 @@ private: // Private attributes
   //STL_NAMESPACE::list<IsoName_c> ml_filtersToDeleteISO;
   const IsoName_c* mpc_tcISOName;
   uint8_t mui8_lastTcStatus;
+
+  IsoName_c mc_isoNameTC;
+  IsoName_c mc_isoNameLogger;
 
   /** pointer to applications handler class, with handler functions
       which shall be called when a TC status message arrives

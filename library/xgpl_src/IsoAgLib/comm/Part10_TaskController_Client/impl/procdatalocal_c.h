@@ -166,8 +166,6 @@ public:
   MeasureProgLocal_c& prog(const IsoName_c& acrc_isoName, bool ab_doCreate)
     { return mc_measureprog.prog(acrc_isoName, ab_doCreate);};
 
-  virtual const IsoName_c& commanderISOName() const { return IsoName_c::IsoNameUnspecified(); }
-
   /** set the pointer to the handler class
     * @param apc_processDataChangeHandler pointer to handler class of application
     */

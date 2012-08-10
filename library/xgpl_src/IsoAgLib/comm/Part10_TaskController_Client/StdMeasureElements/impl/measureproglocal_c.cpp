@@ -26,14 +26,14 @@ namespace __IsoAgLib {
 void MeasureProgLocal_c::init(
   ProcDataLocal_c *const apc_processData,
   int32_t ai32_masterVal,
-  int32_t ai32_initialVal,
-  const IsoName_c& ac_callerISOName)
+  int32_t ai32_initialVal)
 {
   mvec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
   set(apc_processData);
   // store the parameter init vals
-  mc_isoName = ac_callerISOName;
+  m_ecuType = IsoName_c::ecuTypeANYOTHER;
+  //mc_isoName = ac_callerISOName;
   mi32_val = ai32_masterVal;
   mb_active = false;
 
@@ -43,17 +43,11 @@ void MeasureProgLocal_c::init(
 
   mi32_lastTime = 0;
 
-  // setting of isoName in MeasureProg is normally done via ProcDataRemote_c::timeEvent( void )
-  // if start follows immedeately addSubprog, timeEvent is not called yet => do it here
-  // remote: virtual ProcDataRemote::commanderISOName() can give a value different to IsoName_c::IsoNameUnspecified
-  // local: virtual ProcDataLocal::commanderISOName() gives IsoName_c::IsoNameUnspecified
-  if (pprocessDataConst() && pprocessDataConst()->commanderISOName().isSpecified())
-    setISOName(pprocessDataConst()->commanderISOName());
-
   mi32_lastMasterVal = ai32_masterVal;
   mlist_thresholdInfo.clear();
 }
 
+#if 0 // no copy constructor and assign operator for now
 const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c& acrc_src){
   // call base class operator
   ProcessElementBase_c::operator=(acrc_src);
@@ -79,6 +73,7 @@ void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& acrc_src )
   mvec_measureSubprog = acrc_src.mvec_measureSubprog;
   mi32_lastMasterVal = acrc_src.mi32_lastMasterVal;
 }
+#endif
 
 MeasureProgLocal_c::~MeasureProgLocal_c(){
 }
@@ -353,11 +348,12 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
 MeasureProgLocal_c::MeasureProgLocal_c(
   ProcDataLocal_c *const apc_processData,
   int32_t ai32_masterVal,
-  int32_t ai32_initialVal,
-  const IsoName_c& ac_callerISOName)
-  : ProcessElementBase_c(apc_processData), mvec_measureSubprog()
+  int32_t ai32_initialVal)
+  : ProcessElementBase_c(apc_processData),
+    mvec_measureSubprog(),
+    m_ecuType(IsoName_c::ecuTypeANYOTHER)
 {
-  init( apc_processData, ai32_masterVal, ai32_initialVal, ac_callerISOName );
+  init( apc_processData, ai32_masterVal, ai32_initialVal );
 }
 
 void MeasureProgLocal_c::setVal(int32_t ai32_val){
@@ -419,11 +415,11 @@ bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
 
   if (Proc_c::DoValForExactSetpoint == ren_doSend)
     // get value from corresponding setpoint and send it
-    b_success = (sendSetpointValForGroup( isoName()))?true : b_success;
+    b_success = (sendSetpointValForGroup( getProcessInstance4Comm().getISONameFromType( m_ecuType ) ))? true : b_success;
 
   // normal measurement (no measurement on setpoint DDI)
   if (Proc_c::DoVal == ren_doSend)
-    b_success = (sendValForGroup( isoName()))?true : b_success;
+    b_success = (sendValForGroup( getProcessInstance4Comm().getISONameFromType( m_ecuType ) ))? true : b_success;
 
   return b_success;
 }
@@ -445,7 +441,7 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   //mi32_val = 0;
   mi32_val = ai32_val;
 
-  b_sendSuccess = processData().sendValISOName( pkg, mc_isoName, val());
+  b_sendSuccess = processData().sendValISOName( pkg, getProcessInstance4Comm().getISONameFromType( m_ecuType ), val());
 
   return b_sendSuccess;
 }
@@ -578,7 +574,7 @@ int32_t MeasureProgLocal_c::val(bool ab_sendRequest) const
     ProcessPkg_c pkg;
     pkg.mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */, ProcessCmd_c::requestValue);
 
-    processData().sendValISOName(pkg, isoName(), int32_t(0));
+    processData().sendValISOName(pkg, getProcessInstance4Comm().getISONameFromType( m_ecuType ), int32_t(0));
   }
 
   return mi32_val;
@@ -592,7 +588,7 @@ void MeasureProgLocal_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::d
   }
 
   // set mc_isoName to caller of prog
-  mc_isoName = pkg.senderItem()->isoName();
+  m_ecuType = getProcessInstance4Comm().getTypeFromISOName( pkg.senderItem()->isoName() );
 
   const int32_t ci32_val = pkg.getValue();
 
