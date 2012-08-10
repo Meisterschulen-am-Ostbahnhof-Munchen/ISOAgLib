@@ -16,13 +16,6 @@ doc/index.html -text
 doc/stylesheet.css -text
 library/commercial_BIOS/readme.txt -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/ddidefinition.h -text
-library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/ddopbase_c.cpp -text
-library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/ddopbase_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.cpp -text
-library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/devicepoolhandler_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/dynamic_devpropertyhandler_c.cpp -text
-library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/dynamic_devpropertyhandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/managemeasureprog_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/managemeasureprog_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.cpp -text
