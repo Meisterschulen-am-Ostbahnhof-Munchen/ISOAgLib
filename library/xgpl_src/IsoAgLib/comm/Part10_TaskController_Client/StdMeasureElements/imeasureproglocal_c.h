@@ -41,16 +41,6 @@ public:
     @return measure val for this prog (can differ from master measure val)
   */
   int32_t val(){return MeasureProgLocal_c::val();};
-   /**
-    deliver the delta
-    @return:delta between the last two measure vals [1/sec]
-  */
-  int32_t delta(){return MeasureProgLocal_c::delta();};
-  /**
-    deliver the acceleration
-    @return acceleration calculated from the last delta values [1/(sec*sec)]
-  */
-  int32_t accel(){return MeasureProgLocal_c::accel();};
 
   /**
     return the c_isoName code for this measureProg
@@ -58,13 +48,6 @@ public:
   */
   const iIsoName_c& isoName(){return MeasureProgLocal_c::isoName().toConstIisoName_c();};
 
-  /**
-    check if given send type is activated
-    @param ren_doSend tested sended value
-    @return true -> given value is sent on trigger
-  */
-  bool checkDoSend(Proc_c::doSend_t ren_doSend)
-    {return MeasureProgLocal_c::checkDoSend(ren_doSend);};
  private:
   friend class iProcDataLocal_c;
 };

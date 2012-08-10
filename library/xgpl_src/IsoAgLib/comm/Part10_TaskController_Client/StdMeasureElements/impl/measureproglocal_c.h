@@ -13,7 +13,9 @@
 #ifndef MEASUREPROG_LOCAL_H
 #define MEASUREPROG_LOCAL_H
 
-#include <IsoAgLib/comm/Part10_TaskController_Client/StdMeasureElements/impl/measureprogbase_c.h>
+#include "measuresubprog_c.h"
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processelementbase_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -28,7 +30,7 @@ class ProcDataLocal_c;
   @see MeasureProgRemote
   @author Dipl.-Inform. Achim Spangler
 */
-class MeasureProgLocal_c : public MeasureProgBase_c  {
+class MeasureProgLocal_c : public ProcessElementBase_c  {
 private:
 
   struct ThresholdInfo_s
@@ -46,6 +48,14 @@ private:
   typedef STL_NAMESPACE::list<ThresholdInfo_s> List_ThresholdInfo;
   typedef STL_NAMESPACE::list<ThresholdInfo_s>::iterator List_ThresholdInfoIterator;
   typedef STL_NAMESPACE::list<ThresholdInfo_s>::const_iterator List_ThresholdInfoConstIterator;
+  #endif
+
+  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+  typedef STL_NAMESPACE::list<MeasureSubprog_c,MALLOC_TEMPLATE(MeasureSubprog_c) > Vec_MeasureSubprog;
+  typedef STL_NAMESPACE::list<MeasureSubprog_c,MALLOC_TEMPLATE(MeasureSubprog_c)>::iterator Vec_MeasureSubprogIterator;
+  #else
+  typedef STL_NAMESPACE::list<MeasureSubprog_c> Vec_MeasureSubprog;
+  typedef STL_NAMESPACE::list<MeasureSubprog_c>::iterator Vec_MeasureSubprogIterator;
   #endif
 
 public:
@@ -158,7 +168,9 @@ public:
       * dependant error in CanIo_c on send problems
     @return true -> received msg processed by this instance
   */
-  virtual bool processMsg( const ProcessPkg_c& arc_data );
+  bool processMsg( const ProcessPkg_c& arc_data );
+  bool processMsgHelper( const ProcessPkg_c& pkg );
+
   /**
     set the measure prog value and send values if triggered to do
 
@@ -208,30 +220,101 @@ public:
   */
   virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
+  /**
+    add an aditional subprog or update if one with same kind exist already
+
+    possible errors:
+        * Err_c::badAlloc not enough memory to add new subprog
+    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
+    @param ai32_increment increment value
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+    @return always true; only relevant for overoaded methods in derived classes
+  */
+  bool addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+
+  /**
+    set active flag
+    @param ab_active
+  */
+  void setActive(bool ab_active) { mb_active = ab_active; }
+
+  /**
+    check if this measure prog is running
+    @return true -> program is running
+  */
+  bool started() {return (men_doSend != Proc_c::DoNone);};
+
+  /**
+    deliver actual last received value
+    @param ab_sendRequest choose wether a request for value update should be
+        sent (default false == send no request)
+    @return measure val for this prog (can differ from master measure val)
+  */
+  int32_t val(bool ab_sendRequest = false) const;
+
+  /**
+    return the mc_isoName code for this measureprog
+    @return ISOName of this measureprog
+  */
+  const IsoName_c& isoName() const{return mc_isoName;}
+
+  /**
+    return the program active flag
+    @return true -> is active
+  */
+  bool getActive() const { return mb_active; };
+
+  /**
+    set the mc_isoName code for this measureprog
+    @param acrc_isoName ISOName for exact specification of partner system
+  */
+  // This has something to do with the init failing for the iProcDataRemote_c object. -bac
+  void setISOName(const IsoName_c& acrc_isoName){mc_isoName = acrc_isoName;}
+
+public:
+  /**
+    compare two items for PRI and ISOName
+    @param acrc_right compared object
+    @return true -> both instances are equal (ISOName and active flag)
+  */
+  bool operator==(const MeasureProgLocal_c& acrc_right) const
+    {return (calcCompVal() == acrc_right.calcCompVal());}
+
+  /**
+    compare two MeasureProg with <
+    @param acrc_right compared object
+    @return true -> this instance is < than the other (ISOName and active flag)
+  */
+  bool operator<(const MeasureProgLocal_c& acrc_right) const
+    {return (calcCompVal() < acrc_right.calcCompVal());}
+
+  /**
+    compare two MeasureProg with <=
+    @param acrc_right compared object
+    @return true -> this instance is <= than the other (ISOName and active flag)
+  */
+  bool operator<=(const MeasureProgLocal_c& acrc_right) const
+    {return (calcCompVal() <= acrc_right.calcCompVal());}
+
+  /**
+    compare two MeasureProg with >
+    @param acrc_right compared object
+    @return true -> this instance is > than the other (ISOName and active flag)
+  */
+  bool operator>(const MeasureProgLocal_c& acrc_right) const
+    {return (calcCompVal() > acrc_right.calcCompVal());}
+
+  /**
+    compare two MeasureProg with >=
+    @param acrc_right compared object
+    @return true -> this instance is >= than the other (ISOName and active flag)
+  */
+  bool operator>=(const MeasureProgLocal_c& acrc_right) const
+    {return (calcCompVal() >= acrc_right.calcCompVal());}
+
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const MeasureProgLocal_c& acrc_src );
-  /**  update proportional dependent values */
-  void updatePropDepVals();
-
-  /**
-    deliver a reference to ProcDataLocal_c
-    (the base function only delivers ProcDataLocal_c)
-    @return reference to containing ProcDataLocal_c
-  */
-  ProcDataLocal_c& processData()
-  {
-    return *((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
-  };
-  /**
-    deliver a pointer to ProcDataLocal_c
-      (the base function only delivers ProcDataLocal_c)
-    @return pointer to containing ProcDataLocal_c
-  */
-  ProcDataLocal_c * pprocessData()const
-  {
-    return ((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
-  };
 
   /**
     helper function to check val() against limits
@@ -239,12 +322,55 @@ private: // Private methods
   */
   bool minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const;
 
+  /**
+    calculates a single value from identifying values
+    (for easy <,>,...)
+    @return single comparison value (depends on ISOName and active flag)
+  */
+  int32_t calcCompVal()const {return ( ( (mc_isoName.devClass() << 4) | (mc_isoName.devClassInst()) ) * (mb_active + 1));}
+
+  /**
+    process a message with an increment for a measuring program
+
+    possible errors:o
+        * Err_c::badAlloc not enough memory to add new subprog
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+  */
+  void processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+
+  /**
+    internal increment the value
+    @param ai32_val increment for internal measure val
+  */
+  void incrVal(int32_t ai32_val){mi32_val += ai32_val;}
+
 private: // Private attributes
+
+  /**  last time were value was set */
+  int32_t mi32_lastTime;
+
+  /** actual value
+      (can differ from masterVal if f.e. value of this program
+      was resetted by caller)
+  */
+  int32_t mi32_val;
+
   /** last master (eg. main prog or sensor) val  */
   int32_t mi32_lastMasterVal;
 
   /** gathered information about currently running threshold sub progs */
   List_ThresholdInfo mlist_thresholdInfo;
+
+  /** dynamic array for subprogs */
+  Vec_MeasureSubprog mvec_measureSubprog;
+  /** specifies which value types should be sent if one subprog triggers */
+  Proc_c::doSend_t men_doSend;
+
+  /** stores if programm is active */
+  bool mb_active;
+
+  /** isoName value of caller of program */
+  IsoName_c mc_isoName;
 };
 
 }

@@ -29,21 +29,8 @@ public:
   enum type_t {NullType = 0, DistProp = 1, TimeProp = 4, ValIncr = 8, 
                MaximumThreshold = 0x10, MinimumThreshold = 0x20, OnChange = 0x40, Counter };
 
-  /** enum type for distinguish between Local or Remote data */
-  enum homeEcu_t {Local = 1, Remote = 2};
-
-  /** enum type for setting test conditions for setpoint validity */
-  enum testSetpoint_t{TestAllowed = 1, TestMaster = 2};
-
   /** enum type for to sending values */
-  enum doSend_t {DoNone = 0, DoVal = 1, DoMed = 2, DoInteg = 4, DoDelta = 8, DoAccel = 16, DoMin = 32, DoMax = 64,
-                 // ISO specific
-                 DoValForExactSetpoint = 0x80, DoValForDefaultSetpoint = 0x100, DoValForMinSetpoint = 0x200, DoValForMaxSetpoint = 0x400,
-                 DoValForMinMeasurement = 0x800, DoValForMaxMeasurement = 0x1000
-                };
-
-  /** enum type for proportional type used for calculating accumulated vaslues */
-  enum accumProp_t {AccumNone, AccumDist = 1, AccumTime = 4};
+  enum doSend_t {DoNone = 0, DoVal = 1, DoValForExactSetpoint = 0x80};
 
   /** enum type for special DDIs */
   enum specialDDI_t {defaultDataLoggingDDI = 0xDFFF};
