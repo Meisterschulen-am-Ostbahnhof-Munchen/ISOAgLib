@@ -79,10 +79,6 @@ public:
 
   /**
     search for suitable ProcDataLocal_c item
-
-    possible errors:
-        * Err_c::elNonexistent if element not found
-    ISO parameter
     @param aui16_DDI
     @param aui16_element
     @param acrc_isoNameReceiver isoName code of searched local Process Data instance

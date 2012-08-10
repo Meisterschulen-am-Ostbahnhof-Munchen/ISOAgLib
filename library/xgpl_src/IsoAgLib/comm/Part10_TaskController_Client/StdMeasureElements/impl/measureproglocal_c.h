@@ -222,9 +222,6 @@ public:
 
   /**
     add an aditional subprog or update if one with same kind exist already
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to add new subprog
     @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ai32_increment increment value
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
@@ -331,9 +328,6 @@ private: // Private methods
 
   /**
     process a message with an increment for a measuring program
-
-    possible errors:o
-        * Err_c::badAlloc not enough memory to add new subprog
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   */
   void processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);

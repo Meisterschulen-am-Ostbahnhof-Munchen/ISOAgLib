@@ -86,10 +86,6 @@ private:
   /**
     search for suiting measureprog, if not found AND if ab_doCreate == true
     create copy from first element at end of vector
-
-    possible errors:
-        * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
-
     @param acrc_isoName DEVCLASS code of searched measure program
     @param ab_doCreate true -> create suitable measure program if not found
   */
@@ -134,19 +130,11 @@ private:
     create a new measure prog item;
     if there is still the default initial item undefined define it
     and create no new item
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
-
     @param acrc_isoName commanding ISOName
   */
   void insertMeasureprog(const IsoName_c& acrc_isoName);
   /**
     update the programm cache, create an programm item, if wanted
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
-
     @param acrc_isoName commanding ISOName
     @param ab_createIfNotFound true -> create new item if not found
     @return true -> instance found

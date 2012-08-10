@@ -59,13 +59,8 @@ class ProcDataLocal_c : public ClientBase  {
 public:
   /**
     constructor which can set all element vars
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
-    ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-
     @param acrc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
@@ -100,13 +95,8 @@ public:
 
   /**
     initialise this ProcDataLocal_c instance to a well defined initial state
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
-    ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-
     @param acrc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
@@ -170,10 +160,6 @@ public:
   /**
     search for suiting measureprog, if not found AND if ab_doCreate == true
     create copy from first element at end of vector
-
-    possible errors:
-        * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
-
     @param acrc_isoName DEVCLASS code of searched measure program
     @param ab_doCreate true -> create suitable measure program if not found
   */
@@ -312,17 +298,9 @@ public: // from former base class
     check if this item has the same identity as defined by the parameters,
     if aui8_devClassInst is 0xFF a lazy match disregarding pos is done
     (important for matching received process data msg);
-    if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
-    <li>parameter INSTANCE == ident INSTANCE (devClassInst())
-    <li>parameter acrc_isoName == isoName()
-    </ul>
-
-    ISO parameter
-    @param acrc_isoNameSender compare this parameter with owner isoName (only for remote, local calls: IsoNameUnspecified)
     @param acrc_isoNameReceiver compared isoName value
     @param aui16_DDI compared DDI value
     @param aui16_element compared element value
-
     @return true -> this instance has same Process-Data identity
   */
   bool matchISO( const IsoName_c& acrc_isoNameReceiver,
@@ -337,11 +315,6 @@ protected: // Protected methods
       (local: receiver; remote: sender)
       (other paramter fixed by ident of process data)
       set general command before sendValISOName !
-
-        possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CanIo_c on CAN send problems
-
       @param ac_varISOName variable ISOName
       @param ai32_val int32_t value to send
       @return true -> sendIntern set successful EMPF and SEND
