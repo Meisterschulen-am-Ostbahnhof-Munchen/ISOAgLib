@@ -30,9 +30,13 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
+
 #include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
+
+#ifndef USE_DYNAMIC_PART10
+
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
@@ -1181,7 +1185,7 @@ DevPropertyHandler_c::reactOnStateChange(const SendStream_c& sendStream)
 }
 
 };
-
+#endif
 #endif
 // endif for "#ifdef PROPRIETARY_DEVPROPERTYHANDLER_CPP" workaround
 

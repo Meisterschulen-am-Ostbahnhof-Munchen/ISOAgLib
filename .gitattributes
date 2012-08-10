@@ -15,6 +15,14 @@ doc/html/csshover.htc -text
 doc/index.html -text
 doc/stylesheet.css -text
 library/commercial_BIOS/readme.txt -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/ddidefinition.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/ddopbase_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/ddopbase_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/devicepoolhandler_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/dynamic_devpropertyhandler_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/dynamic_devpropertyhandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h -text
@@ -610,6 +618,10 @@ tools/vt2iso/src/vt2iso.hpp -text
 tools/vt2iso/vt2iso.sln -text
 tools/vt2iso/vt2iso.vcproj -text
 tutorial/README.txt -text
+tutorial/compiler_projects/conf2build.bat -text
+tutorial/compiler_projects/conf2build.sh -text
+tutorial/compiler_projects/conf_ecu_simple_section_control_dynamic_win32 -text
+tutorial/compiler_projects/conf_ecu_simple_section_control_static_win32 -text
 tutorial/src/common/component_internal_can_protocol.h -text
 tutorial/src/common/component_vtclient_clientsideskmpaging_c.h -text
 tutorial/src/common/ecu_main.cpp -text

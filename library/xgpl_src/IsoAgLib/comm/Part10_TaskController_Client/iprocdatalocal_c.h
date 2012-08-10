@@ -50,6 +50,14 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
+    iProcDataLocal_c( ) : 
+      ProcDataLocal_c (
+        0xFFFF,
+        0xFFFF,
+        iIsoName_c::IsoNameUnspecified(),
+        false,
+        0) {}
+        
   iProcDataLocal_c( uint16_t aui16_ddi,
                     uint16_t aui16_element,
                     const iIsoName_c& acrc_isoName,
