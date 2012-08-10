@@ -20,16 +20,6 @@
 #define STANDARD_CAN_IDENT uint16_t
 #define EXTENDED_CAN_IDENT uint32_t
 
-/* ********************************* */
-/* *** declaration of some types *** */
-/* ********************************* */
-
-/**
-  @TODO TaskControllerClient cleanup!
-  enumeration to define special cmds in he 4byte process data value
-*/
-enum proc_specCmd_t {setpointReleaseCmd = 1, setpointErrCmd = 2, noVal_32s = 4, errVal_32s = 8};
-
 /* ****************************************** */
 /* * declaration of HW independent constants  */
 /* ****************************************** */
