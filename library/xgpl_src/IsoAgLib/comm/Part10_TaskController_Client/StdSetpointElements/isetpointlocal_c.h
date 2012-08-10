@@ -54,38 +54,7 @@ public:
   */
   iSetpointRegister_c& master()
     {return ((iSetpointRegister_c&)(SetpointLocal_c::master()));};
-  /**
-    check if unhandled new setpoint from actual master was received
-    -> check the actual master first before answering the other unhandled
-    @see unhandledMaster
-    @see acceptNewMaster
-    @return true -> master setpoint comanding member sent new setpoint
-  */
-  bool existUnhandledMaster() {return SetpointLocal_c::existUnhandledMaster();};
-  /**
-    deliver the new sent setpoint values from the actual master;
-    if no unhandled setpoint of the master exist, return the actual accepted value
 
-    possible errors:
-        * Err_c::elNonexistent no master setpoint found
-    @see existUnhandledMaster
-    @see acceptNewMaster
-    @return reference to master setpoint register
-  */
-  iSetpointRegister_c& unhandledMaster()
-      {return ((iSetpointRegister_c&)(SetpointLocal_c::unhandledMaster()));};
-  /**
-    if there exist a new unhandled setpoint from the master setpoint sender;
-    accept the new value with this command
-    otherwise the old value is still used and answered
-
-    possible errors:
-        * Err_c::elNonexistent no master setpoint found
-    @see existUnhandledMaster
-    @see unhandledMaster
-    @param ab_accept true ( default ) -> new setpoint of master is accepted -> send positive notify
-  */
-  void acceptNewMaster(bool ab_accept = true ) {SetpointLocal_c::acceptNewMaster(ab_accept);};
   /**
     set the master setpoint manually
     (in some cases remote systems request informations
@@ -95,44 +64,6 @@ public:
   void setMasterMeasurementVal(int32_t ai32_val)
     {SetpointLocal_c::setMasterMeasurementVal(ai32_val);};
 
-  /**
-    deliver the count of unhandled setpoints
-    @return count of unhandled received setpoints
-  */
-  uint8_t unhandledCnt() {return SetpointLocal_c::unhandledCnt();};
-  /**
-    deliver the aui8_ind of the unhandled setpoints
-    @param aui8_ind position of the wanted setpoint entry in list of unhandled setpoints
-      (first entry: aui8_ind == 0!!)
-
-    possible errors:
-        * Err_c::range there are less than aui8_ind unhandled setpoints found
-    @see unhandledCnt
-    @return wanted unhandled setpoint
-  */
-  iSetpointRegister_c& unhandledInd(uint8_t aui8_ind)
-    {return ((iSetpointRegister_c&)(SetpointLocal_c::unhandledInd(aui8_ind)));};
-  /**
-    deliver the first unhandled entry
-
-    possible errors:
-        * Err_c::elNonexistent no unhandled stepoint exist
-    @see unhandledCnt
-    @return reference to first unhandled new received setpoint entry
-  */
-  iSetpointRegister_c& unhandledFirst()
-    {return ((iSetpointRegister_c&)(SetpointLocal_c::unhandledFirst()));};
-  /**
-    answer all unhandled setpoint enties;
-    if new master setpoint was set, send the master
-    the new accepted setpoint value;
-    send all others NO_VAL_32S
-
-    possible errors:
-        * dependant error in ProcessDataLocal_c commander of some setpoint isn't found in Monitor List
-        * dependant error in CanIo_c on CAN send problems
-  */
-  void respondAckNack() {SetpointLocal_c::respondAckNack();};
   /**
     check if the given measuremet value is correct for the actual
     master setpoint;

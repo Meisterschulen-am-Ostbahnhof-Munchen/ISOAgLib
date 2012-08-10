@@ -26,7 +26,7 @@ void SetpointRegister_c::init(const IsoName_c& acrc_isoName, int32_t ai32_value,
 
   setISOName(acrc_isoName);
   setHandled(ab_handled, 0);
-  setMaster(ab_master);
+  //setMaster(ab_master);
   setValid(ab_valid);
 }
 
@@ -49,7 +49,7 @@ void SetpointRegister_c::assignFromSource( const SetpointRegister_c& acrc_src )
 
   setISOName(acrc_src.isoName());
   setHandled(acrc_src.handled(), acrc_src.mi32_lastHandledTime);
-  setMaster(acrc_src.master());
+  //setMaster(acrc_src.master());
   setValid(acrc_src.valid());
 }
 
@@ -85,10 +85,6 @@ void SetpointRegister_c::setValue(int32_t ai32_val)
   setHandled(false);
 };
 
-void SetpointRegister_c::setValForGroup(int32_t ai32_val, ProcessCmd_c::ValueGroup_t en_valueGroup){
-  setValue(ai32_val);
-}
-
 bool SetpointRegister_c::setHandled(bool ab_state, int32_t ai32_handledTime)
 {
   if (ai32_handledTime >= 0)mi32_lastHandledTime = ai32_handledTime;
@@ -103,18 +99,18 @@ bool SetpointRegister_c::setHandled(bool ab_state, int32_t ai32_handledTime)
   }
 }
 
-bool SetpointRegister_c::setMaster(bool ab_state)
-{
-  if (master() != ab_state)
-  { // state was changed
-    data.b_master = ab_state;
-    return true;
-  }
-  else
-  {  //nothing has changed (f.e. -> no acknowledge must be sent to requester)
-    return false;
-  }
-}
+//bool SetpointRegister_c::setMaster(bool ab_state)
+//{
+//  if (master() != ab_state)
+//  { // state was changed
+//    data.b_master = ab_state;
+//    return true;
+//  }
+//  else
+//  {  //nothing has changed (f.e. -> no acknowledge must be sent to requester)
+//    return false;
+//  }
+//}
 
 bool SetpointRegister_c::setValid(bool ab_state)
 {

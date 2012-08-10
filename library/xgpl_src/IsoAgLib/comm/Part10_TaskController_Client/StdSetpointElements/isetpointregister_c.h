@@ -57,7 +57,7 @@ public:
     check if setpoint is used as master control
     @return true -> the application set this setpoint as master before
   */
-  bool master()const {return SetpointRegister_c::master();};
+  //bool master()const {return SetpointRegister_c::master();};
   /**
     check if setpoint is conformant with actual (!!) master setpoint
     @return true -> the application set this setpoint as valid (accepted)
@@ -86,22 +86,13 @@ public:
     @param ab_state true -> mark this setpoint as master
     @return true -> this call caused a state change for master state
   */
-  bool setMaster(bool ab_state = true){return SetpointRegister_c::setMaster(ab_state);};
+  //bool setMaster(bool ab_state = true){return SetpointRegister_c::setMaster(ab_state);};
   /**
     set the valid state; return if state was changed
     @param ab_state true -> mark this setpoint as valid (accepted)
     @return true -> this call caused a state change for valid state
   */
   bool setValid(bool ab_state = true){return SetpointRegister_c::setValid(ab_state);};
-  /**
-    set a limit val for type given by value group
-    @param ai32_val new setpoint value
-    @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3, default)
-  */
-  void setValForGroup(int32_t ai32_val, ProcessCmd_c::ValueGroup_t en_valueGroup)
-  {
-    SetpointRegister_c::setValForGroup(ai32_val, en_valueGroup);
-  };
 };
 
 }
