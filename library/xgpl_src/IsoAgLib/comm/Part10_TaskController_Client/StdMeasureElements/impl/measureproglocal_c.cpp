@@ -302,7 +302,7 @@ bool MeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const Proc
 
     // ISO: value in message contains reset value
     const int32_t ci32_val = arc_data.getValue();
-    const uint32_t cui32_ddi = arc_data.getValue();
+    const uint32_t cui32_ddi = arc_data.DDI();
 
     // the message was a value message -> evaluate it here
     if ( arc_data.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
