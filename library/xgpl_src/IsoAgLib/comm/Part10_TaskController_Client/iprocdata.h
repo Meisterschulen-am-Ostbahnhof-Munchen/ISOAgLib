@@ -10,19 +10,15 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef PROC_H
-#define PROC_H
+#ifndef IPROCDATA_H
+#define IPROCDATA_H
 
 #include <IsoAgLib/hal/hal_typedef.h>
 
-// Begin Namespace __IsoAgLib
-namespace __IsoAgLib {
+// Begin Namespace IsoAgLib
+namespace IsoAgLib {
 
-/**
-  class with special (enum) types for ProcessData management
-*/
-class Proc_c {
-public:
+namespace ProcData {
 
   enum remoteType_t {
     remoteTypeTaskControl,
@@ -57,11 +53,7 @@ public:
   /** enum type for special DDIs */
   enum specialDDI_t {defaultDataLoggingDDI = 0xDFFF};
 
-  /** default unused constructor */
-  Proc_c(){};
-  /** default unused destructor */
-  ~Proc_c(){};
-};
+}
 
 }
 #endif
