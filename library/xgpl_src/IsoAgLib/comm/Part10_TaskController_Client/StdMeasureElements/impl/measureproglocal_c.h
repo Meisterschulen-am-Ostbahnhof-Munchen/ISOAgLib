@@ -17,7 +17,7 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-class ProcDataLocalBase_c;
+class ProcDataLocal_c;
 
 
 /**
@@ -292,18 +292,18 @@ private: // Private methods
     (the base function only delivers ProcDataBase_c)
     @return reference to containing ProcDataLocal_c
   */
-  ProcDataLocalBase_c& processData()
+  ProcDataLocal_c& processData()
   {
-    return *((ProcDataLocalBase_c*)((void*)ProcessElementBase_c::pprocessData()));
+    return *((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
   };
   /**
     deliver a pointer to ProcDataLocal_c
       (the base function only delivers ProcDataBase_c)
     @return pointer to containing ProcDataLocal_c
   */
-  ProcDataLocalBase_c * pprocessData()const
+  ProcDataLocal_c * pprocessData()const
   {
-    return ((ProcDataLocalBase_c*)((void*)ProcessElementBase_c::pprocessData()));
+    return ((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
   };
 
   /**

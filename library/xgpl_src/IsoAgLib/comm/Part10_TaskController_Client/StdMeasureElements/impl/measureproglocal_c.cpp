@@ -261,7 +261,7 @@ bool MeasureProgLocal_c::sendSetpointValForGroup( ProcessCmd_c::ValueGroup_t en_
   */
 int32_t MeasureProgLocal_c::setpointValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const {
   int32_t i32_value = 0;
-  ProcDataLocalBase_c* pc_procdata = pprocessData();
+  ProcDataLocal_c* pc_procdata = pprocessData();
   if (pc_procdata->setpointExistMaster())
   {
     switch (en_valueGroup)

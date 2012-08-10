@@ -16,7 +16,8 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocalbase_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatabase_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/StdMeasureElements/impl/managemeasureproglocal_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointlocal_c.h>
 
@@ -82,7 +83,7 @@ namespace __IsoAgLib {
 
   @author Dipl.-Inform. Achim Spangler
 */
-class ProcDataLocal_c : public ProcDataLocalBase_c  {
+class ProcDataLocal_c : public ProcDataBase_c  {
 
 public:
   /**
@@ -265,6 +266,92 @@ public:
   */
   virtual void stopRunningMeasurement(const IsoName_c& rc_isoName);
 
+public: // FROM FORMER BASE CLASS
+
+  /** copy constructor */
+  ProcDataLocal_c( const ProcDataLocal_c& acrc_src );
+
+  /** assignment operator */
+  const ProcDataLocal_c& operator=( const ProcDataLocal_c& acrc_src );
+
+  /** deliver the master value (central measure value of this process data;
+    can differ from measure vals of measure progs, as these can be reseted
+    independent)
+    @return actual master value
+  */
+  const int32_t& masterMeasurementVal() const {return mi32_masterVal;}
+
+  /** set the masterMeasurementVal from main application independent from any measure progs
+    @param ai32_val new measure value
+  */
+  //virtual void setMasterMeasurementVal (int32_t ai32_val);
+
+  /** increment the value -> update the local and the measuring programs values
+    @param ai32_val size of increment of master value
+  */
+  //virtual void incrMasterMeasurementVal (int32_t ai32_val);
+
+  /** perform periodic actions
+    task for ProcDataLocal_c::timeEvent is to store the actual
+    eeprom value in the defined time intervall
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
+    @return true -> all planned executions performed
+  */
+  //virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
+
+  /** send a min-information (selected by value group) to a specified target (selected by ISOName)
+    @param ac_targetISOName ISOName of target
+    @return true -> successful sent
+  */
+  bool sendMasterMeasurementVal( const IsoName_c& ac_targetISOName ) const;
+
+  /** check if a setpoint master exists
+    (used for accessing setpoint values from measure progs)
+    @return true -> setpoint master exists
+  */
+  //virtual bool setpointExistMaster() const { return false;}
+
+  /** (used for accessing setpoint values from measure progs)
+    @return exact value of master setpoint
+  */
+  //virtual int32_t setpointExactValue() const { return 0;}
+
+  /** (used for accessing setpoint values from measure progs)
+    @return default value of master setpoint
+  */
+  //virtual int32_t setpointDefaultValue() const { return 0;}
+
+  /** (used for accessing setpoint values from measure progs)
+    @return min value of master setpoint
+  */
+  //virtual int32_t setpointMinValue() const { return 0;}
+
+  /** (used for accessing setpoint values from measure progs)
+    @return max value of master setpoint
+  */
+  //virtual int32_t setpointMaxValue() const { return 0;}
+
+  /** stop all measurement progs in all local process instances, started with given isoName
+    (not used for simple measurement)
+    <!--@param rc_isoName-->
+  */
+  //virtual void stopRunningMeasurement(const IsoName_c& /* rc_isoName */) {}
+
+  /** send the given int32_t value with variable ISOName ac_varISOName;
+      set the int32_t value with conversion (according to central data type) in message
+      string and set data format flags corresponding to central data type of this process data
+      (other parameter fixed by ident of process data)
+        possible errors:
+      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
+      * dependant error in CanIo_c on CAN send problems
+
+      @param ac_varISOName variable ISOName
+      @param ai32_val int32_t value to send
+      @return true -> sendIntern set successful EMPF and SEND
+  */
+  bool sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
+
+
 private: // Private methods
 
   /** processing of a setpoint message */
@@ -276,13 +363,28 @@ private: // Private methods
   /** deliver reference to ManageMeasureProgLocal_c */
   ManageMeasureProgLocal_c& getManageProg( void ) { return mc_measureprog;}
 
- private:
+  /** base function for assignment of element vars for copy constructor and operator= */
+  void assignFromSource( const ProcDataLocal_c& acrc_src );
+
+private:
 
   /** flaxible management of measure progs */
   ManageMeasureProgLocal_c mc_measureprog;
 
   /** flaxible management of setpoint */
   SetpointLocal_c mc_setpoint;
+
+ private:
+   /** allow explicit MeasureProgLocal_c the access to private elements */
+  friend class MeasureProgLocal_c;
+  friend class ManageMeasureProgLocal_c; /** allow access to eepromVal() and resetEeprom() */
+  friend class ProcDataLocal_c; /** allow access to eepromVal() and resetEeprom() */
+
+  /** store the master value of the main programm */
+  int32_t mi32_masterVal;
+
+  /** register if this data is a cumulative type like distance, time, area */
+  bool mb_cumulativeValue;
 };
 
 

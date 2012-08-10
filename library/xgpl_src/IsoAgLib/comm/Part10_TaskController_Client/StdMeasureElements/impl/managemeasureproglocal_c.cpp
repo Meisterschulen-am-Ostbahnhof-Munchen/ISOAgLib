@@ -39,8 +39,8 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   // insert default entry
   if ( pprocessData() != NULL )
   {
-    ProcDataLocalBase_c* pc_procdata =
-      static_cast<ProcDataLocalBase_c*>(pprocessData());
+    ProcDataLocal_c* pc_procdata =
+      static_cast<ProcDataLocal_c*>(pprocessData());
     vec_prog().push_front(MeasureProgLocal_c(pc_procdata,
                                               pc_procdata->masterMeasurementVal()));
   }

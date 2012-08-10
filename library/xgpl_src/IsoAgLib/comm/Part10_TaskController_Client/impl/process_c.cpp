@@ -245,7 +245,7 @@ bool Process_c::existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, 
   @param acrc_isoNameReceiver isoName code of searched local Process Data instance
   @return reference to searched/created ProcDataLocal_c instance
 */
-ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver)
+ProcDataLocal_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver)
 {
   bool b_found = updateLocalCache( aui16_DDI, aui16_element, acrc_isoNameReceiver);
   if (!b_found)

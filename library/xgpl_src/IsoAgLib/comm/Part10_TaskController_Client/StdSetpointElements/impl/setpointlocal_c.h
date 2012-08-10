@@ -21,7 +21,7 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-class ProcDataLocalBase_c;
+class ProcDataLocal_c;
 
 /**
   object for managing setpoints commanded from remote to local process data objects;
@@ -180,7 +180,7 @@ public:
     send all others NO_VAL_32S
 
     possible errors:
-        * dependant error in ProcDataLocalBase_c commander of some setpoint isn't found in Monitor List
+        * dependant error in ProcDataLocal_c commander of some setpoint isn't found in Monitor List
         * dependant error in CanIo_c on CAN send problems
   */
   void respondAckNack();
@@ -249,29 +249,29 @@ private: // Private methods
   /**
     deliver a reference to ProcDataLocal_c
     (the base function only delivers ProcDataBase_c )
-    @return reference to containing ProcDataLocalBase_c instance
+    @return reference to containing ProcDataLocal_c instance
   */
-  ProcDataLocalBase_c& processData()
+  ProcDataLocal_c& processData()
   {
-    return *((ProcDataLocalBase_c*)((void*)ProcessElementBase_c::pprocessData()));
+    return *((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
   };
   /**
     deliver a reference to ProcDataLocal_c
     (the base function only delivers ProcDataBase_c )
     @return reference to containing ProcDataLocalBase_c instance
   */
-  const ProcDataLocalBase_c& processDataConst() const
+  const ProcDataLocal_c& processDataConst() const
   {
-    return *((ProcDataLocalBase_c*)((void*)ProcessElementBase_c::pprocessData()));
+    return *((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
   };
   /**
     deliver a pointer to ProcDataLocal_c
     (the base function only delivers ProcDataBase_c )
     @return pointer to containing ProcDataLocalBase_c instance
   */
-  ProcDataLocalBase_c* pprocessData()
+  ProcDataLocal_c* pprocessData()
   {
-    return ((ProcDataLocalBase_c*)((void*)ProcessElementBase_c::pprocessData()));
+    return ((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
   };
 
 private: // Private attributes

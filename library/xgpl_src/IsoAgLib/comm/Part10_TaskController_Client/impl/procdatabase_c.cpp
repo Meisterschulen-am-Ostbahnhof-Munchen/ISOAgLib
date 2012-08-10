@@ -27,7 +27,16 @@ void ProcDataBase_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
                            IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                            int ai_multitonInst)
 {
-  ProcIdent_c::init( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName);
+  //ProcIdent_c::init( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName);
+  setElementDDI(aui16_ddi);
+  setElementNumber(aui16_element);
+
+  mpc_externalOverridingIsoName = apc_externalOverridingIsoName;
+
+  // the ISOName of ident is best defined by pointed value of apc_externalOverridingIsoName
+  if ( apc_externalOverridingIsoName != 0 ) mc_isoName = *apc_externalOverridingIsoName;
+  // last choice is definition of mc_isoName by process data identiy
+  else mc_isoName = acrc_isoName;
 
   setMultitonInst(ai_multitonInst);
   mpc_processDataChangeHandler = apc_processDataChangeHandler;
@@ -35,8 +44,8 @@ void ProcDataBase_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
 
 const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& acrc_src)
 { // call base class operator
-  ProcIdent_c::operator=(acrc_src);
-
+  //ProcIdent_c::operator=(acrc_src);
+  ClientBase::operator=(acrc_src);
   assignFromSource(acrc_src);
 
   // return source reference
@@ -44,7 +53,10 @@ const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& acrc_src)
 }
 
 ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& acrc_src)
-   : ProcIdent_c(acrc_src)
+   //: ProcIdent_c(acrc_src)
+   : ClientBase( acrc_src ),
+	  mpc_externalOverridingIsoName( acrc_src.mpc_externalOverridingIsoName ),
+		mc_isoName( acrc_src.mc_isoName )
 {
   assignFromSource(acrc_src);
 }
@@ -52,6 +64,11 @@ ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& acrc_src)
 void ProcDataBase_c::assignFromSource( const ProcDataBase_c& acrc_src )
 { // copy element vars
   mpc_processDataChangeHandler = acrc_src.mpc_processDataChangeHandler;
+
+  mc_isoName = acrc_src.mc_isoName;
+  mpc_externalOverridingIsoName = acrc_src.mpc_externalOverridingIsoName;
+  // elementDDI() returns list reference, setElementDDI() expects pointer to list
+  setElementDDI(acrc_src.DDI());
 }
 
 ProcDataBase_c::~ProcDataBase_c() {}
@@ -116,6 +133,44 @@ void ProcDataBase_c::processProg( const ProcessPkg_c& )
 void ProcDataBase_c::processSetpoint( const ProcessPkg_c& )
 {
   return;
+}
+
+//void ProcDataBase_c::assignFromSource( const ProcIdent_c& acrc_src )
+//{
+//  mc_isoName = acrc_src.mc_isoName;
+//  mpc_externalOverridingIsoName = acrc_src.mpc_externalOverridingIsoName;
+//  // elementDDI() returns list reference, setElementDDI() expects pointer to list
+//  setElementDDI(acrc_src.DDI());
+//}
+
+
+void ProcDataBase_c::setExternalOverridingIsoName(const IsoName_c* apc_val)
+{
+  mpc_externalOverridingIsoName = apc_val;
+  mc_isoName = *apc_val;
+}
+
+bool ProcDataBase_c::matchISO( const IsoName_c& acrc_isoNameSender,
+                            const IsoName_c& acrc_isoNameReceiver,
+                            uint16_t aui16_DDI,
+                            uint16_t aui16_element
+                          ) const
+{
+  // check wether current element/DDI combination matches one list element in process data element/DDI list
+  if (aui16_element != element()) return false;
+  if (aui16_DDI != DDI()) return false;
+
+  if (acrc_isoNameSender.isSpecified())
+  { // check in remote case: check if devClass of ownerISOName in procident matches devClass of sender
+    if (isoName() != acrc_isoNameSender) return false;
+  }
+  else
+  { // check in local case: check if procident devClass matches devClass of empf
+    if (isoName() != acrc_isoNameReceiver) return false;
+  }
+
+  // all previous tests are positive -> answer positive match
+  return true;
 }
 
 } // end of namespace __IsoAgLib

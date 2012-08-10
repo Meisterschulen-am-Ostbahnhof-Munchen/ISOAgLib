@@ -139,13 +139,13 @@ public:
     deliver value DDI (only possible if only one elementDDI in list)
     @return DDI
    */
-  uint16_t DDI() const { return ProcIdent_c::DDI();}
+  uint16_t DDI() const { return ProcDataLocal_c::DDI();}
 
   /**
   deliver value element (only possible if only one elementDDI in list)
   @return element
    */
-  uint16_t element() const  { return ProcIdent_c::element();}
+  uint16_t element() const  { return ProcDataLocal_c::element();}
 
   /**
     send the base value (the one that is updated via setMasterMeasurementVal() )

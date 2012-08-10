@@ -19,7 +19,8 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h>
-#include "procident_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
 #include "processpkg_c.h"
 #include "processcmd_c.h"
 
@@ -35,7 +36,7 @@ namespace __IsoAgLib {
   has standard functions in mostly abstract way for derived classes
   @author Dipl.-Inform. Achim Spangler
 */
-class ProcDataBase_c : public ProcIdent_c {
+class ProcDataBase_c : public ClientBase {
 
 protected:
 public:
@@ -66,8 +67,10 @@ public:
                  const IsoName_c *apc_externalOverridingIsoName = NULL,
                  IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                  int ai_multitonInst = 0)
-
-    : ProcIdent_c( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ai_multitonInst)
+    : ClientBase( ai_multitonInst ),
+      mpc_externalOverridingIsoName(NULL),
+		  mc_isoName(IsoName_c::IsoNameUnspecified())
+    //: ProcIdent_c( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ai_multitonInst)
     {
       init( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName,
             apc_processDataChangeHandler, ai_multitonInst );
@@ -133,6 +136,72 @@ public:
 
   virtual const IsoName_c& commanderISOName() const { return IsoName_c::IsoNameUnspecified(); }
 
+  /**
+    deliver value DDI (only possible if only one elementDDI in list)
+    @return DDI
+  */
+  uint16_t DDI() const{ return mui16_ddi; }
+
+  /**
+    deliver value element (only possible if only one elementDDI in list)
+    @return element
+  */
+  uint16_t element() const{ return mui16_element; }
+
+  /**
+    deliver the isoName (retrieved from pointed isoName value, if valid pointer)
+    @return actual ISOName
+  */
+  const IsoName_c& isoName() const
+    { return ((mpc_externalOverridingIsoName != 0)?(*mpc_externalOverridingIsoName):(mc_isoName));}
+
+  /**
+    set DDI, value group and setpoint/measure type of process msg
+    @param aps_elementDDI
+  */
+  void setElementDDI(uint16_t aui16_ddi) { mui16_ddi = aui16_ddi; }
+
+  /** set device element number
+    * @param  aui16_element */
+  void setElementNumber(uint16_t aui16_element) { mui16_element = aui16_element; }
+
+  /**
+    set value ISOName (machine type specific table of process data types)
+    @param ac_val new ISOName val
+  */
+  void setISOName(const IsoName_c& ac_val){mc_isoName = ac_val;}
+
+  /**
+    set pointer to external isoName instances (used by isoName())
+    @param apc_val pointer to ISOName
+  */
+  void setExternalOverridingIsoName(const IsoName_c* apc_val);
+
+  /**
+    check if this item has the same identity as defined by the parameters,
+    if aui8_devClassInst is 0xFF a lazy match disregarding pos is done
+    (important for matching received process data msg);
+    if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
+    <li>parameter INSTANCE == ident INSTANCE (devClassInst())
+    <li>parameter acrc_isoName == isoName()
+    </ul>
+
+    ISO parameter
+    @param acrc_isoNameSender compare this parameter with owner isoName (only for remote, local calls: IsoNameUnspecified)
+    @param acrc_isoNameReceiver compared isoName value
+    @param aui16_DDI compared DDI value
+    @param aui16_element compared element value
+
+    @return true -> this instance has same Process-Data identity
+  */
+  bool matchISO( const IsoName_c& acrc_isoNameSender,
+                 const IsoName_c& acrc_isoNameReceiver,
+                 uint16_t aui16_DDI,
+                 uint16_t aui16_element
+               ) const;
+
+
+
 protected: // Protected methods
   /** send the given int32_t value with variable ISOName ac_varISOName;
     set the int32_t value with conversion (according to central data type) in message
@@ -164,6 +233,10 @@ private: // Private methods
   /** virtual base for processing of a setpoint message */
   virtual void processSetpoint( const ProcessPkg_c& pkg );
 
+//private: // Private attributes
+//  /** internal base function for copy constructor and assignement */
+//  void assignFromSource( const ProcIdent_c& acrc_src );
+
 private: // Private attributes
   /** pointer to applications handler class, with handler functions
       which shall be called on correltating change events.
@@ -171,6 +244,15 @@ private: // Private attributes
        or new received measurement value for remote process data)
     */
   IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
+
+  /** DEVCLASS code of process data identity */
+  const IsoName_c* mpc_externalOverridingIsoName; // only defined for own local data, otherwise NULL
+
+  /** IsoName_c information for this instance */
+  IsoName_c mc_isoName;
+
+  uint16_t mui16_ddi;
+  uint16_t mui16_element;
 };
 
 }
