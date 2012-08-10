@@ -1,5 +1,5 @@
-/***************************************************************************
-                          procdatalocal_c.cpp  - 
+/*
+  procdata_c.h
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,7 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#include "procdatalocal_c.h"
+#include "procdata_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 
@@ -21,72 +22,77 @@
 
 namespace __IsoAgLib {
 
-ProcDataLocal_c::ProcDataLocal_c( uint16_t aui16_ddi, uint16_t aui16_element,
-                                  const IsoName_c& acrc_isoName,
-                                  bool ab_isSetpoint,
-                                  uint8_t aui8_triggerMethod,
-                                  IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
-                                  int ai_multitonInst
-                                  )
-    : ClientBase( ai_multitonInst ),
-      mc_isoName(IsoName_c::IsoNameUnspecified()),
+ProcData_c::ProcData_c( )
+    : mc_myIdentItem( NULL ),
+      mui16_ddi( 0xFFFF ),
+      mui16_element( 0xFFFF ),
+      mpc_procDataHandler( NULL ),
       mc_measureprog(),
       mc_setpoint()
 {
-      init( aui16_ddi, aui16_element, acrc_isoName, ab_isSetpoint, aui8_triggerMethod,
-            apc_processDataChangeHandler, ai_multitonInst);
+  procdataconfiguration.mb_isSetpoint = false;
+  procdataconfiguration.mui8_triggerMethod = 0;
 }
 
-void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
-                            const IsoName_c& acrc_isoName,
-                            bool ab_isSetpoint,
-                            uint8_t aui8_triggerMethod,
-                            IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
-                            int ai_multitonInst
-                           )
+void ProcData_c::init( IdentItem_c& acrc_identItem,
+                       uint16_t aui16_ddi,
+                       uint16_t aui16_element,
+                       bool ab_isSetpoint,
+                       uint8_t aui8_triggerMethod,
+                       IsoAgLib::iProcDataHandler_c *apc_procDataHandler)
 {
+  mc_myIdentItem = &acrc_identItem;
+
   mui16_ddi = aui16_ddi;
   mui16_element = aui16_element;
   procdataconfiguration.mb_isSetpoint = ab_isSetpoint;
   procdataconfiguration.mui8_triggerMethod = aui8_triggerMethod & 0x3F; // 6 bits
-  mc_isoName = acrc_isoName;
 
-  setMultitonInst(ai_multitonInst);
-  mpc_processDataChangeHandler = apc_processDataChangeHandler;
+  mpc_procDataHandler = apc_procDataHandler;
 
-  mi32_value = 0;
-
-  getProcessInstance4Comm().registerLocalProcessData( this );
+  getProcessInstance( mc_myIdentItem->getMultitonInst() ).registerLocalProcessData( this );
 
   // "Device process data objects with a data log trigger method of type total shall be settable."
-  isoaglib_assert( ( Proc_c::isMethodSet(aui8_triggerMethod, Proc_c::MethodTotal)
-                          && (aui16_ddi != Proc_c::defaultDataLoggingDDI) ) ? ab_isSetpoint : true );
+  isoaglib_assert( ( IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTotal)
+                          && (aui16_ddi != IsoAgLib::ProcData::defaultDataLoggingDDI) ) ? ab_isSetpoint : true );
 }
 
-ProcDataLocal_c::~ProcDataLocal_c(){
-  // now unregister the pointer to this instance in Process_c
-  getProcessInstance4Comm().unregisterLocalProcessData( this );
+ProcData_c::~ProcData_c() {
+  isoaglib_assert( mc_myIdentItem != NULL );
+  getProcessInstance( mc_myIdentItem->getMultitonInst() ).unregisterLocalProcessData( this );
 }
 
-void ProcDataLocal_c::setMeasurementVal(int32_t ai32_val){
-  mi32_value = ai32_val;
-  mc_measureprog.setVal( *this, mi32_value );
+void ProcData_c::setMeasurementVal(int32_t ai32_val) {
+  mc_measureprog.setVal( *this, ai32_val );
 }
 
-void ProcDataLocal_c::incrMeasurementVal(int32_t ai32_val){
-  mi32_value += ai32_val;
-  mc_measureprog.setVal( *this, mi32_value );
+void ProcData_c::incrMeasurementVal(int32_t ai32_val){
+  int32_t i32_value = mc_measureprog.measurementValue() + ai32_val;
+  mc_measureprog.setVal( *this, i32_value );
 }
 
-void ProcDataLocal_c::timeEvent( uint16_t& rui16_nextTimePeriod ){
+void ProcData_c::timeEvent( uint16_t& rui16_nextTimePeriod ){
   mc_measureprog.timeEvent( *this, rui16_nextTimePeriod);
 }
 
-void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg, Proc_c::remoteType_t a_ecuType )
+void ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
   isoaglib_assert( DDI() == pkg.mui16_DDI );
   
-  if ( pkg.men_command == ProcessPkg_c::setValue)
+  if ( IsoAgLib::ProcData::defaultDataLoggingDDI == pkg.mui16_DDI ) 
+  {
+    isoaglib_assert( getProcDataHandler() != NULL );
+    
+    // if method is request, notify the application and later respond to the request
+    if ( pkg.men_command == ProcessPkg_c::requestValue)
+      getProcDataHandler()->processDefaultLoggingStart(
+               pkg.getMonitorItemForSA()->isoName().toConstIisoName_c() );
+    //else // command not supported for default DDI
+    //NACK ? Bit 0 = 1 = Process Data Command not supported
+    //return;
+  }
+  
+  if ( pkg.men_command == ProcessPkg_c::setValue )
   { // process setpoint command
     if (isSetPoint())
     {
@@ -94,11 +100,12 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg, Proc_c::remoteType_t a_ecuT
     }
     else
     { // set value but DPD is not settable
-      getProcessInstance4Comm().sendNack( pkg.getMonitorItemForSA()->isoName(),
+      getProcessInstance( mc_myIdentItem->getMultitonInst() ).sendNack(
+                                          pkg.getMonitorItemForSA()->isoName(),
                                           isoName(),
                                           DDI(),
                                           element(),
-                                          Proc_c::NackProcessDataNotSetable);
+                                          IsoAgLib::ProcData::NackProcessDataNotSetable);
     }
   }
   else
@@ -107,22 +114,23 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg, Proc_c::remoteType_t a_ecuT
   }
 }
 
-void ProcDataLocal_c::startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                                       int32_t ai32_increment, const IsoName_c& ac_receiverDevice )
+void ProcData_c::startDataLogging(IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::TimeProp, IsoAgLib::ProcData::DistProp, ... */,
+                                  int32_t ai32_increment, const IsoName_c& ac_receiverDevice )
 {
   isoaglib_assert( ac_receiverDevice.isSpecified() );
 
   mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, ac_receiverDevice);
 }
 
-void ProcDataLocal_c::stopRunningMeasurement(Proc_c::remoteType_t a_ecuType)
+void ProcData_c::stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t a_ecuType)
 {
   mc_measureprog.stopRunningMeasurement(*this, a_ecuType);
 }
 
-void ProcDataLocal_c::sendValue( Proc_c::remoteType_t a_ecuType, int32_t ai32_val) const
+void ProcData_c::sendValue( IsoAgLib::ProcData::remoteType_t a_ecuType, int32_t ai32_val) const
 {
-  const IsoName_c& c_destinationISOName = getProcessInstance4Comm().getISONameFromType( a_ecuType );
+  isoaglib_assert( mc_myIdentItem != NULL );
+  const IsoName_c& c_destinationISOName = getProcessInstance( mc_myIdentItem->getMultitonInst() ).getISONameFromType( a_ecuType );
 
   if (!c_destinationISOName.isSpecified()) return;
   
@@ -160,25 +168,12 @@ void ProcDataLocal_c::sendValue( Proc_c::remoteType_t a_ecuType, int32_t ai32_va
   pkg.setLen(8);
 
   // send the msg
-  getIsoBusInstance4Comm() << pkg;
+  getIsoBusInstance( mc_myIdentItem->getMultitonInst() ) << pkg;
 }
 
-bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameReceiver,
-                                uint16_t aui16_DDI,
-                                uint16_t aui16_element
-                                ) const
-{
-  // check wether current element/DDI combination matches one list element in process data element/DDI list
-  if (aui16_element != element()) return false;
-  if (aui16_DDI != DDI()) return false;
-  if (isoName() != acrc_isoNameReceiver) return false;
-
-  // all previous tests are positive -> answer positive match
-  return true;
-}
-
-void ProcDataLocal_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) const {
-   sendValue( getProcessInstance4Comm().getTypeFromISOName( ac_targetISOName ), measurementVal());
+void ProcData_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) const {
+  isoaglib_assert( mc_myIdentItem != NULL );
+  sendValue( getProcessInstance( mc_myIdentItem->getMultitonInst() ).getTypeFromISOName( ac_targetISOName ), measurementVal());
 }
 
 } // end of namespace __IsoAgLib

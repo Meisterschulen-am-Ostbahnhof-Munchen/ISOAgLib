@@ -15,44 +15,21 @@
 #define MEASURE_SUBPROG_H
 
 #include <IsoAgLib/hal/hal_typedef.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-
-/**
-  Every increment type of a measure prog is
-  managed by a MeasureSubprog_c instance.
-  @author Dipl.-Inform. Achim Spangler
-*/
-class MeasureSubprog_c : public ClientBase {
+class MeasureSubprog_c {
 public:
-  /**
-    default constructor which can optionally set increment type, increment and running state
-    @param ren_type optional increment type (default time proportional)
-    @param ren_doSend set process data subtype to send
-    @param ai32_increment optional increment value of ren_type (default 0)
-    @param ab_started optional running state (default off)
-    @param ai32_lastVal optional value of last trigger event (default 0)
-  */
-  MeasureSubprog_c(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment  MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
-
-  /**
-    copy constructor for Subprogs
-    @param acrc_src source instance
-  */
-   MeasureSubprog_c(const MeasureSubprog_c& acrc_src);
-
-  /** default destructor which has nothing to do */
+  MeasureSubprog_c( IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment);
+  MeasureSubprog_c( const MeasureSubprog_c& acrc_src );
   ~MeasureSubprog_c();
 
   /**
     deliver subprog type
     @return type of this measure subprogram increment
   */
-  Proc_c::measurementCommand_t type() const { return men_type; }
+  IsoAgLib::ProcData::measurementCommand_t type() const { return men_type; }
 
   /**
     deliver the increment value of this subprog
@@ -90,7 +67,7 @@ private: // Private attributes
   int32_t mi32_increment;
 
   /** type of this subprog instance */
-  const Proc_c::measurementCommand_t men_type;
+  const IsoAgLib::ProcData::measurementCommand_t men_type;
 
 private:
   /** not copyable : copy operator is only declared, never defined */

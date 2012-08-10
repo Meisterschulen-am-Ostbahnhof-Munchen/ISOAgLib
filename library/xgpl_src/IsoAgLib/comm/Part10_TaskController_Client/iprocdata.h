@@ -10,12 +10,11 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef IPROCDATA_H
-#define IPROCDATA_H
+#ifndef IPROCDATA_N_H
+#define IPROCDATA_N_H
 
 #include <IsoAgLib/hal/hal_typedef.h>
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
 namespace ProcData {

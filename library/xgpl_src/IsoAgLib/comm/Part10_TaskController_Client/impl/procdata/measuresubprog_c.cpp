@@ -23,17 +23,15 @@
 
 namespace __IsoAgLib {
 
-MeasureSubprog_c::MeasureSubprog_c(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
-: ClientBase( MULTITON_INST_PARAMETER_USE ),
-  mi32_lastVal( 0 ),
+MeasureSubprog_c::MeasureSubprog_c(IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment)
+: mi32_lastVal( 0 ),
   mi32_increment( ai32_increment ),
   men_type( ren_type )
 {
 }
 
 MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& acrc_src)
-: ClientBase(acrc_src),
-  mi32_lastVal(acrc_src.mi32_lastVal),
+: mi32_lastVal(acrc_src.mi32_lastVal),
   mi32_increment(acrc_src.mi32_increment),
   men_type(acrc_src.men_type)
 {
@@ -49,7 +47,7 @@ void MeasureSubprog_c::start(int32_t ai32_lastVal, int32_t ai32_increment){
 }
 
 bool MeasureSubprog_c::updateTrigger(int32_t ai32_val){
-  if ( ( type() == Proc_c::MeasurementCommandOnChange ) && ( mi32_increment == 0 ) )
+  if ( ( type() == IsoAgLib::ProcData::MeasurementCommandOnChange ) && ( mi32_increment == 0 ) )
   { // special case: OnChange with value 0 means: SEND NO value; 1 meanse: send any change; ...
     return false;
   }
@@ -68,9 +66,9 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
 {
   switch (type())
   {
-    case Proc_c::MeasurementCommandTimeProp:
+    case IsoAgLib::ProcData::MeasurementCommandTimeProp:
       return (mi32_lastVal + mi32_increment - ai32_val);
-    case Proc_c::MeasurementCommandDistProp:
+    case IsoAgLib::ProcData::MeasurementCommandDistProp:
     {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;

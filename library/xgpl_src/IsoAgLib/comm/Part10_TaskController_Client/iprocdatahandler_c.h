@@ -19,13 +19,13 @@
 
 namespace IsoAgLib {
 
-class iProcDataLocal_c;
+class iProcData_c;
 
-class iProcessDataHandler_c {
+class iProcDataHandler_c {
 public:
-  virtual ~iProcessDataHandler_c() {}
+  virtual ~iProcDataHandler_c() {}
 
-  virtual void processSetpointSet( iProcDataLocal_c& procdata, int32_t value, const iIsoName_c& callerISOName, bool change ) = 0;
+  virtual void processSetpointSet( iProcData_c& procdata, int32_t value, const iIsoName_c& callerISOName, bool change ) = 0;
   virtual void processDefaultLoggingStart( const iIsoName_c& callerISOName ) = 0;
   virtual void processTcStatusMessage( bool taskRunning, const iIsoName_c& callerISOName ) = 0;
 };

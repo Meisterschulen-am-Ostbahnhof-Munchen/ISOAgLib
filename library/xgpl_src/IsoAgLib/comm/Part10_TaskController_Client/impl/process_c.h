@@ -26,9 +26,9 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/ProcDataLocal_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 #include "processpkg_c.h"
-#include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatahandler_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 
 #include <list>
@@ -68,43 +68,39 @@ public:
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
 
   /**
-    checks if a suitable ProcDataLocal_c item exist
+    checks if a suitable ProcData_c item exist
     ISO parameter
     @param aui16_DDI
     @param aui16_element
     @param acrc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
-
-  /**
-    search for suitable ProcDataLocal_c item
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
-    @return reference to searched ProcDataLocal_c instance
-  */
-  ProcDataLocal_c& procDataLocal();
+ProcData_c* procData( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver, bool& elementFound);
 
   /**
     performs periodically actions
     @return true -> all planned activities performed in allowed time
   */
-  bool timeEvent( void );
+  bool timeEvent();
 
   /** called when a new measurement is started */
-  void resetTimerPeriod( void );
+  void resetTimerPeriod();
+
+  /** handler function for access to undefined client.
+    * the base Singleton calls this function, if it detects an error
+    */
+  void registerAccessFlt() {}
 
   /** register pointer to a new local process data instance
     * this function is called within construction of new local process data instance
     */
-  bool registerLocalProcessData( ProcDataLocal_c* pc_localClient)
+  bool registerLocalProcessData( ProcData_c* pc_localClient)
   { bool b_result = registerC1( pc_localClient ); mpc_iter = c_arrClientC1.begin(); return b_result;}
 
   /** unregister pointer to a already registered local process data instance
     * this function is called within destruction of local process data instance
     */
-  void unregisterLocalProcessData( ProcDataLocal_c* pc_localClient)
+  void unregisterLocalProcessData( ProcData_c* pc_localClient)
   { unregisterC1( pc_localClient ); mpc_iter = c_arrClientC1.begin();}
 
   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
@@ -126,11 +122,11 @@ public:
   /**
     @return isoName, saved from remote status messages
   */
-  const IsoName_c& getISONameFromType( Proc_c::remoteType_t ecuType ) const;
+  const IsoName_c& getISONameFromType( IsoAgLib::ProcData::remoteType_t ecuType ) const;
   /**
     @return remoteType_t from given IsoName_c
   */
-  Proc_c::remoteType_t getTypeFromISOName( const IsoName_c& isoName ) const;
+  IsoAgLib::ProcData::remoteType_t getTypeFromISOName( const IsoName_c& isoName ) const;
 
 #if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
@@ -139,15 +135,15 @@ public:
   /** set the pointer to the handler class (used for callback when TC status message is processed)
     * @param apc_processDataChangeHandler pointer to handler class of application
     */
-  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
-   { mpc_processDataChangeHandler = apc_processDataChangeHandler; }
+  void setProcDataHandler( IsoAgLib::iProcDataHandler_c *apc_procDataHandler )
+   { mpc_procDataHandler = apc_procDataHandler; }
 
   /** send NACK */
   void sendNack( const IsoName_c& ac_da,
                  const IsoName_c& ac_sa,
                  int16_t ddi,
                  int16_t element,
-                 Proc_c::nackResponse_t a_errorcodes) const;
+                 IsoAgLib::ProcData::nackResponse_t a_errorcodes) const;
 
 private: // Private methods
   //! Function set ui16_earlierInterval and
@@ -242,11 +238,11 @@ private: // Private attributes
   /** pointer to applications handler class, with handler functions
       which shall be called when a TC status message arrives
   */
-  IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
+  IsoAgLib::iProcDataHandler_c* mpc_procDataHandler;
 
   Handler_t mt_handler;
   Customer_t mt_customer;
-  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcDataLocal_c);
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcData_c);
   cacheTypeC1_t mpc_iter;
 
   friend Process_c &getProcessInstance( uint8_t aui8_instance );

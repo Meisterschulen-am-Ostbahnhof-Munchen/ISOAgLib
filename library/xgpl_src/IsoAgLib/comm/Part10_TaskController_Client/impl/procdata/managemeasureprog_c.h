@@ -15,55 +15,46 @@
 
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
-#include "measureproglocal_c.h"
+#include "measureprog_c.h"
 
 #include <list>
 
-// Begin Namespace IsoAgLib
 namespace __IsoAgLib {
-/** 
-  management of a measurement valuem with possibility of measurement programs
-  */
-class ManageMeasureProgLocal_c : public ClientBase
+
+class ManageMeasureProg_c
 {
  public:
-  /** constructor */
-  ManageMeasureProgLocal_c();
-  
-  /** destructor */
-  virtual ~ManageMeasureProgLocal_c() {}
+  ManageMeasureProg_c();
+  virtual ~ManageMeasureProg_c() {}
 
-  void timeEvent( ProcDataLocal_c& ac_processData, uint16_t& rui16_nextTimePeriod );
+  void timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod );
+  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, IsoAgLib::ProcData::remoteType_t a_ecuType );
 
-  /** process a measure prog message for local process data */
-  void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data, Proc_c::remoteType_t a_ecuType );
+  void setVal( ProcData_c& ac_processData, int32_t ai32_val );
 
-  /** set value for all registered Measure Progs */
-  void setVal( ProcDataLocal_c& ac_processData, int32_t ai32_val );
-
-  void startDataLogging(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+  void startDataLogging(ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::TimeProp, IsoAgLib::ProcData::DistProp, ... */,
                         int32_t ai32_increment, const IsoName_c& ac_receiverDevice );
-  /**
-    stop all measurement progs in all local process instances, started with given isoName
-    @param a_ecuType
-  */
-  void stopRunningMeasurement(ProcDataLocal_c& ac_processData, Proc_c::remoteType_t a_ecuType);
+
+  void stopRunningMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcData::remoteType_t a_ecuType);
+
+  int32_t measurementValue() const { return mi32_value; }
 
 private:
-  MeasureProgLocal_c& getMeasureProgLocal( Proc_c::remoteType_t a_ecuType );
+  MeasureProg_c& getMeasureProg( IsoAgLib::ProcData::remoteType_t a_ecuType );
 
 private:
-  /** container of objects for managing jobs of local measure programs */
-  MeasureProgLocal_c mc_measureprogTC;
+  MeasureProg_c mc_measureprogTC;
 #ifdef USE_DATALOGGER
-  MeasureProgLocal_c mc_measureprogLogger;
+  MeasureProg_c mc_measureprogLogger;
 #endif
+
+  int32_t mi32_value;
 
 private:
   /** not copyable : copy constructor is only declared, never defined */
-  ManageMeasureProgLocal_c(const ManageMeasureProgLocal_c&);
+  ManageMeasureProg_c(const ManageMeasureProg_c&);
   /** not copyable : copy operator is only declared, never defined */
-  ManageMeasureProgLocal_c& operator=(const ManageMeasureProgLocal_c&); 
+  ManageMeasureProg_c& operator=(const ManageMeasureProg_c&); 
 };
 
 

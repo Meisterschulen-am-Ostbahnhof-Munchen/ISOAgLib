@@ -1,5 +1,5 @@
 /*
-  managemeasureproglocal_c.cpp
+  managemeasureprog_c.cpp
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,73 +10,73 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#include "managemeasureproglocal_c.h"
+#include "managemeasureprog_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
-
 
 namespace __IsoAgLib {
 
-ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( )
-: ClientBase(),
-  mc_measureprogTC(Proc_c::remoteTypeTaskControl)
+ManageMeasureProg_c::ManageMeasureProg_c( )
+: mc_measureprogTC(IsoAgLib::ProcData::remoteTypeTaskControl)
 #ifdef USE_DATALOGGER
-  ,mc_measureprogLogger(Proc_c::remoteTypeLogger)
+  ,mc_measureprogLogger(IsoAgLib::ProcData::remoteTypeLogger)
 #endif
 {
 }
 
-void ManageMeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t& rui16_nextTimePeriod )
+void ManageMeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod )
 {
-  mc_measureprogTC.timeEvent(ac_processData, rui16_nextTimePeriod);
+  mc_measureprogTC.timeEvent(ac_processData, rui16_nextTimePeriod, measurementValue());
 #ifdef USE_DATALOGGER
-  mc_measureprogLogger.timeEvent(ac_processData, rui16_nextTimePeriod);
+  mc_measureprogLogger.timeEvent(ac_processData, rui16_nextTimePeriod, measurementValue());
 #endif
 }
 
-void ManageMeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data, Proc_c::remoteType_t a_ecuType )
+void ManageMeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
   isoaglib_assert(arc_data.getMonitorItemForSA() != NULL); // should have been filtered earlier !
   
   // now call process msg
-  getMeasureProgLocal(a_ecuType).processMsg( ac_processData, arc_data );
+  getMeasureProg(a_ecuType).processMsg( ac_processData, arc_data, measurementValue() );
 }
 
-void ManageMeasureProgLocal_c::setVal( ProcDataLocal_c& ac_processData, int32_t ai32_val )
+void ManageMeasureProg_c::setVal( ProcData_c& ac_processData, int32_t ai32_val )
 {
+  mi32_value = ai32_val;
+  
   mc_measureprogTC.setVal(ac_processData, ai32_val);
 #ifdef USE_DATALOGGER
   mc_measureprogLogger.setVal(ac_processData, ai32_val);
 #endif
 }
 
-MeasureProgLocal_c& ManageMeasureProgLocal_c::getMeasureProgLocal( Proc_c::remoteType_t a_ecuType )
+MeasureProg_c& ManageMeasureProg_c::getMeasureProg( IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
   switch (a_ecuType)
   {
-  case Proc_c::remoteTypeTaskControl: return mc_measureprogTC;
+  case IsoAgLib::ProcData::remoteTypeTaskControl: return mc_measureprogTC;
 #ifdef USE_DATALOGGER
-  case Proc_c::remoteTypeLogger: return mc_measureprogLogger;
+  case IsoAgLib::ProcData::remoteTypeLogger: return mc_measureprogLogger;
 #endif
   default:
-    isoaglib_assert(false); // should not happened
+    isoaglib_assert(!"TaskController-Client : invalid ECU type");
     return mc_measureprogTC;
   }
 }
 
-void ManageMeasureProgLocal_c::startDataLogging(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type /* Proc_c::MeasurementCommandTimeProp, Proc_c::DistProp, ... */,
+void ManageMeasureProg_c::startDataLogging(ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::MeasurementCommandTimeProp, IsoAgLib::ProcData::DistProp, ... */,
                                                 int32_t ai32_increment, const IsoName_c& ac_remoteDevice )
 {
-  const Proc_c::remoteType_t ecuType = getProcessInstance4Comm().getTypeFromISOName( ac_remoteDevice );
-  MeasureProgLocal_c& progCache = getMeasureProgLocal(ecuType);
+  const IsoAgLib::ProcData::remoteType_t ecuType = getProcessInstance( ac_processData.getMultitonInst() ).getTypeFromISOName( ac_remoteDevice );
+  MeasureProg_c& progCache = getMeasureProg(ecuType);
 
   // for MeasurementCommandTimeProp no negative value allowed
-  isoaglib_assert( (Proc_c::MeasurementCommandTimeProp != ren_type) || (ai32_increment > 0) );
+  isoaglib_assert( (IsoAgLib::ProcData::MeasurementCommandTimeProp != ren_type) || (ai32_increment > 0) );
 
-  const bool started = progCache.startMeasurement(ac_processData, ren_type, ai32_increment);
+  const bool started = progCache.startMeasurement(ac_processData, ren_type, ai32_increment, measurementValue());
   isoaglib_assert(started); (void)started;
 }
 
-void ManageMeasureProgLocal_c::stopRunningMeasurement(ProcDataLocal_c& ac_processData, Proc_c::remoteType_t a_ecuType)
+void ManageMeasureProg_c::stopRunningMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcData::remoteType_t a_ecuType)
 {
   if ((mc_measureprogTC.isoNameType() == a_ecuType))
   {

@@ -15,7 +15,7 @@
 #define IPROCESS_H
 
 #include "impl/process_c.h"
-#include "proc_c.h"
+#include "iprocdata.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/idevpropertyhandler_c.h>
 
 // Begin Namespace IsoAgLib::iProcess_c
@@ -33,8 +33,8 @@ public:
   /** set the pointer to the handler class (used for callback when TC status message is processed)
     * @param apc_processDataChangeHandler pointer to handler class of application
     */
-  void setProcessDataChangeHandler( ProcessDataChangeHandler_c *apc_processDataChangeHandler )
-   { Process_c::setProcessDataChangeHandler( apc_processDataChangeHandler ); } ;
+  void setProcDataHandler( iProcDataHandler_c *apc_procDataHandler )
+   { Process_c::setProcDataHandler( apc_procDataHandler ); } ;
 
  private:
   /** allow getIProcessInstance() access to shielded base class.

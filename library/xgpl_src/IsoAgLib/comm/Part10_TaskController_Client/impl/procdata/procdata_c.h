@@ -1,5 +1,5 @@
 /*
-  procdatalocal_c.h: managing of local
+  procdata_c.h
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,18 +10,18 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef PROCDATA_LOCAL_H
-#define PROCDATA_LOCAL_H
+#ifndef PROCDATA_H
+#define PROCDATA_H
 
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/StdMeasureElements/impl/managemeasureproglocal_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointlocal_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/managemeasureprog_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/setpoint_c.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
-#include "processpkg_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
+#include "../processpkg_c.h"
 
 namespace IsoAgLib {
-  class ProcessDataChangeHandler_c;
+  class iProcDataHandler_c;
 }
 
 // Begin Namespace IsoAgLib
@@ -31,168 +31,60 @@ namespace __IsoAgLib {
   @brief Internal implementation for managing of local process data object with standard
   ( %i.e. no restrictions ) feature set.
 */
-class ProcDataLocal_c : public ClientBase  {
+class ProcData_c  {
 
 public:
-  /**
-    constructor which can set all element vars
-    @param aui16_ddi process data ddi
-    @param aui16_element process data parent element
-    @param acrc_isoName process data ISOName
-    @param ab_isSetpoint set this process data as set point
-    @param aui8_triggerMethod set process data trigger methods
-    @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
-  */
-  ProcDataLocal_c(uint16_t aui16_ddi,
-                  uint16_t aui16_element,
-                  const IsoName_c& acrc_isoName,
-                  bool ab_isSetpoint,
-                  uint8_t aui8_triggerMethod,
-                  IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-                  int ai_multitonInst = 0
-                  );
+  ProcData_c();
 
-  /**
-    initialise this ProcDataLocal_c
-    @param aui16_ddi process data ddi
-    @param aui16_element process data parent element
-    @param acrc_isoName process data ISOName
-    @param ab_isSetpoint set this process data as set point
-    @param aui8_triggerMethod set process data trigger methods
-    @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
-  */
-  void init(uint16_t aui16_ddi,
+  void init(IdentItem_c& acrc_identItem,
+            uint16_t aui16_ddi,
             uint16_t aui16_element,
-            const IsoName_c& acrc_isoName,
             bool ab_isSetpoint,
             uint8_t aui8_triggerMethod,
-            IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-            int ai_multitonInst = 0
+            IsoAgLib::iProcDataHandler_c *apc_procDataHandler = NULL
             );
 
-  /** default destructor which has nothing to do */
-  ~ProcDataLocal_c();
+  ~ProcData_c();
+  bool registerIdentItem( IdentItem_c& arc_item ) {return true;}
+  IsoAgLib::iProcDataHandler_c* getProcDataHandler( ) const { return mpc_procDataHandler; }
+  void setProcDataHandler( IsoAgLib::iProcDataHandler_c *apc_procDataHandler )
+    { mpc_procDataHandler = apc_procDataHandler; }
 
-  /** set the pointer to the handler class
-    * @param apc_processDataChangeHandler pointer to handler class of application
-    */
-  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
-   { mpc_processDataChangeHandler = apc_processDataChangeHandler; }
+  int32_t measurementVal() const { return mc_measureprog.measurementValue(); }
+  int32_t setpointVal() const { return mc_setpoint.setpointValue(); }
 
-  /** deliver the poitner to the handler class
-    * @return pointer to handler class of application (or NULL if not defined by application)
-    */
-  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return mpc_processDataChangeHandler; }
-
-  /** deliver the measured value
-    can differ from measure vals of measure progs, as these can be reseted
-    @return actual value
-  */
-  const int32_t& measurementVal() const { return mi32_value; }
-
-  /**
-    Get setpoint value as received from remote system
-    @return exact value of master setpoint
-  */
-  int32_t setpointValue() const { return mc_setpoint.setpointValue(); }
-
-  /**
-    set the value independent from any measure progs
-    @param ai32_val new measure value
-  */
   void setMeasurementVal(int32_t ai32_val);
-
-  /**
-    increment the value -> update the measuring programs values
-    @param ai32_val size of increment of master value
-  */
   void incrMeasurementVal(int32_t ai32_val);
 
-  /** process a message, which is adressed for this process data item */
-  void processMsg( ProcessPkg_c& pkg, Proc_c::remoteType_t a_ecuType );
-
-  /**
-    delete all running measure programs of members which are >3sec inactive;
-    deletion of outdated setpoints is managed by SetpointLocal_c::timeEvent
-    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
-  */
+  void processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType );
   void timeEvent( uint16_t& rui16_nextTimePeriod );
 
-  /** send the value to a specified target (selected by ISOName)
-    @param ac_targetISOName ISOName of target
-    @return true -> successful sent
-  */
   void sendMeasurementVal( const IsoName_c& ac_targetISOName ) const;
 
-  /**
-    allow local client to actively start a measurement program
-    (to react on a incoming "start" command for default data logging)
-    @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ai32_increment
-    @param apc_receiverDevice commanding ISOName
-  */
-  void startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+  void startDataLogging(IsoAgLib::ProcData::measurementCommand_t ren_type,
                         int32_t ai32_increment, const IsoName_c& ac_receiverDevice );
 
-  /**
-    stop all measurement progs in all local process instances, started with given isoName
-    @param rc_isoName
-  */
-  void stopRunningMeasurement(Proc_c::remoteType_t a_ecuType);
+  void stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t a_ecuType);
 
-  /**
-    deliver value DDI (only possible if only one elementDDI in list)
-    @return DDI
-  */
   uint16_t DDI() const{ return mui16_ddi; }
-
-  /**
-    deliver value element (only possible if only one elementDDI in list)
-    @return element
-  */
   uint16_t element() const{ return mui16_element; }
 
-  /**
-    return true if ProcessData is set as setpoint 
-    @return setpoint information
-  */
   bool isSetPoint() const { return procdataconfiguration.mb_isSetpoint; }
-
-  /**
-    deliver trigger method information
-    @return setpoint information
-  */
   uint8_t triggerMethod() const { return procdataconfiguration.mui8_triggerMethod; } 
 
-  /**
-    deliver the isoName (retrieved from pointed isoName value, if valid pointer)
-    @return actual ISOName
-  */
-  const IsoName_c& isoName() const { return mc_isoName; }
+  const IsoName_c& isoName() const
+  {
+    isoaglib_assert(mc_myIdentItem != NULL);
+    return mc_myIdentItem->isoName();
+  }
+  int getMultitonInst() const { isoaglib_assert(mc_myIdentItem != NULL); return mc_myIdentItem->getMultitonInst(); }
 
-  /**
-    check if this item has the same identity as defined by the parameters,
-    if aui8_devClassInst is 0xFF a lazy match disregarding pos is done
-    (important for matching received process data msg);
-    @param acrc_isoNameReceiver compared isoName value
-    @param aui16_DDI compared DDI value
-    @param aui16_element compared element value
-    @return true -> this instance has same Process-Data identity
-  */
-  bool matchISO( const IsoName_c& acrc_isoNameReceiver,
-                 uint16_t aui16_DDI,
-                 uint16_t aui16_element
-               ) const;
+private:
+  void sendValue( IsoAgLib::ProcData::remoteType_t a_remoteType, int32_t ai32_val) const;
 
-private: // Private methods
-  void sendValue( Proc_c::remoteType_t a_remoteType, int32_t ai32_val) const;
-
-private: // Private attributes
-  /** IsoName_c used for this instance */
-  IsoName_c mc_isoName;
-
+private:
+  IdentItem_c* mc_myIdentItem;
+  
   /** ProcessData ddi */
   uint16_t mui16_ddi;
   /** ProcessData parent device element */
@@ -204,30 +96,22 @@ private: // Private attributes
     uint8_t mui8_triggerMethod : 7;
   } procdataconfiguration;
 
-  /** store the value of the main programm */
-  int32_t mi32_value;
-
-  /** pointer to applications handler class, with handler functions
-      which shall be called on correltating change events.
-      (e.g. new received setpoint for local process data
-       or new received measurement value for remote process data)
-    */
-  IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
+  IsoAgLib::iProcDataHandler_c* mpc_procDataHandler;
 
   /** flaxible management of measure progs */
-  ManageMeasureProgLocal_c mc_measureprog;
+  ManageMeasureProg_c mc_measureprog;
 
   /** flaxible management of setpoint */
-  SetpointLocal_c mc_setpoint;
+  Setpoint_c mc_setpoint;
 
 private:
-  friend class MeasureProgLocal_c;
+  friend class MeasureProg_c;
 
 private:
   /** not copyable : copy constructor is only declared, never defined */
-  ProcDataLocal_c(const ProcDataLocal_c&);
+  ProcData_c(const ProcData_c&);
   /** not copyable : copy operator is only declared, never defined */
-  ProcDataLocal_c& operator=(const ProcDataLocal_c&); 
+  ProcData_c& operator=(const ProcData_c&); 
 
 };
 

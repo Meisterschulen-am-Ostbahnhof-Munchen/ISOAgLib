@@ -257,10 +257,7 @@ private:
   friend class iTracGuidanceCommand_c;
   friend class IsoName_c;
   friend class iProcess_c;
-  friend class iProcDataLocal_c;
-  friend class iProcDataSetPoint_c;
-  friend class iMeasureProgLocal_c;
-  friend class iSetpointRegister_c;
+  friend class iProcData_c;
   friend class iVtObjectAuxiliaryFunction2_c;
   friend iEepromIo_c& operator<<(iEepromIo_c& rc_stream, const iIsoName_c& rc_data );
   friend iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data );

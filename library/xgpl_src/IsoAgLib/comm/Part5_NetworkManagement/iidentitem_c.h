@@ -199,6 +199,7 @@ public:
 
 private:
   friend class iIsoMonitor_c;
+  friend class iProcData_c;
   friend class iFsManager_c;
   friend class iVtClient_c;
   friend class iVtClientConnection_c;
