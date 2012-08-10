@@ -32,7 +32,7 @@ static uint16_t sui16_printedDeconstructMeasureProgLocalTotal = 0;
 #endif
 
 namespace __IsoAgLib {
-/** create first default measure prog, if no measure prog in list */
+
 void ManageMeasureProgLocal_c::checkInitList( void )
 {
   if ( mvecc_prog.size() > 0 ) return;
@@ -41,6 +41,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   {
     ProcDataLocal_c* pc_procdata =
       static_cast<ProcDataLocal_c*>(pprocessData());
+
     vec_prog().push_front(MeasureProgLocal_c(pc_procdata,
                                               pc_procdata->masterMeasurementVal()));
   }
@@ -58,10 +59,6 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   mpc_progCache = mvecc_prog.begin();
 }
 
-/**
-  initialise this ManageMeasureProgLocal_c instance to a well defined initial state
-  @param apc_processData optional pointer to containing ProcessData instance
-*/
 void ManageMeasureProgLocal_c::init( ProcDataLocal_c *const apc_processData )
 { // set the pointer to the corresponging process data class
   ProcessElementBase_c::set( apc_processData );
@@ -74,20 +71,20 @@ void ManageMeasureProgLocal_c::init( ProcDataLocal_c *const apc_processData )
   mvecc_prog.clear();
   mpc_progCache = vec_prog().begin();
 }
-/** copy constructor */
+
 ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& acrc_src )
 : ProcessElementBase_c( acrc_src )
 {
   assignFromSource( acrc_src );
 }
-/** assignment operator */
+
 const ManageMeasureProgLocal_c& ManageMeasureProgLocal_c::operator=( const ManageMeasureProgLocal_c& acrc_src )
 {
   ProcessElementBase_c::operator=( acrc_src );
   assignFromSource( acrc_src );
   return *this;
 }
-/** base function for assignment of element vars for copy constructor and operator= */
+
 void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c& acrc_src )
 { // copy dynamic array
   mvecc_prog = acrc_src.mvecc_prog;
@@ -129,13 +126,6 @@ ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
   #endif
 }
 
-/**
-  perform periodic actions
-  delete all running measure programs of members which are >3sec inactive
-  deletion of outdated setpoints is managed by SetpointLocal_c::timeEvent
-  @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
-  @return true -> all planned executions performed
-*/
 bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
@@ -237,7 +227,6 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   return true;
 }
 
-/** process a measure prog message for local process data */
 void ManageMeasureProgLocal_c::processProg( const ProcessPkg_c& arc_data )
 {
   if (arc_data.senderItem() == NULL)
@@ -283,16 +272,6 @@ void ManageMeasureProgLocal_c::processProg( const ProcessPkg_c& arc_data )
   mpc_progCache->processMsg( arc_data );
 }
 
-/**
-  search for suiting measureprog, if not found AND if ab_doCreate == true
-  create copy from first element at end of vector
-
-  possible errors:
-      * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
-
-  @param acrc_isoName DEVCLASS code of searched measure program
-  @param ab_doCreate true -> create suitable measure program if not found
-*/
 MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& acrc_isoName, bool ab_doCreate){
   // update the prog cache
   if (!updateProgCache(acrc_isoName, ab_doCreate) && (!ab_doCreate))
@@ -304,13 +283,12 @@ MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& acrc_isoName
   return *mpc_progCache;
 }
 
-/** initialise value for all registered Measure Progs */
 void ManageMeasureProgLocal_c::initGlobalVal( int32_t ai32_val )
 {
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
       pc_iter != vec_prog().end(); pc_iter++)pc_iter->initVal(ai32_val);
 }
-/** set value for all registered Measure Progs */
+
 void ManageMeasureProgLocal_c::setGlobalVal( int32_t ai32_val )
 {
   checkInitList();
@@ -318,16 +296,6 @@ void ManageMeasureProgLocal_c::setGlobalVal( int32_t ai32_val )
       pc_iter != vec_prog().end(); pc_iter++)pc_iter->setVal(ai32_val);
 }
 
-/**
-  create a new measure prog item;
-  if there is still the inactive initial item use it
-  and create no new item
-
-  possible errors:
-      * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
-
-  @param acrc_isoName commanding ISOName
-*/
 void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
 {
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
@@ -372,16 +340,6 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
   mpc_progCache->setActive(true);
 }
 
-/**
-  update the programm cache, create an programm item, if wanted
-
-  possible errors:
-      * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
-
-  @param acrc_isoName commanding ISOName
-  @param ab_createIfNotFound true -> create new item if not found
-  @return true -> instance found
-*/
 bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& acrc_isoName, bool ab_createIfNotFound)
 {
   bool b_result = false;
@@ -424,14 +382,6 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& acrc_isoName, bo
   return b_result;
 }
 
-/**
-  allow local client to actively start a measurement program
-  (to react on a incoming "start" command for default data logging)
-  @param ren_type measurement type: Proc_c::TimeProp, Proc_c::DistProp, ...
-  @param ai32_increment
-  @param apc_receiverDevice commanding ISOName
-  @return true -> apc_receiverDevice is set
-*/
 bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                                                 int32_t ai32_increment, const IsoName_c* apc_receiverDevice )
 {
@@ -453,10 +403,6 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
   return true;
 }
 
-/**
-  stop all measurement progs in all local process instances, started with given isoName
-  @param rc_isoName
-*/
 void ManageMeasureProgLocal_c::stopRunningMeasurement(const IsoName_c& rc_isoName)
 {
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();

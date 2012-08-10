@@ -23,12 +23,6 @@
 
 namespace __IsoAgLib {
 
-/** initialise this MeasureProgLocal_c instance to a well defined initial state
-    @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
-    @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
-  */
 void MeasureProgLocal_c::init(
   ProcDataLocal_c *const apc_processData,
   int32_t ai32_masterVal,
@@ -53,10 +47,6 @@ void MeasureProgLocal_c::init(
   mlist_thresholdInfo.clear();
 }
 
-/** assignment of MeasureProgLocal_c objects
-    @param acrc_src source MeasureProgLocal_c instance
-    @return reference to source instance for assignment like "prog1 = prog2 = prog3;"
-  */
 const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c& acrc_src){
   // call base class operator
   MeasureProgBase_c::operator=(acrc_src);
@@ -67,16 +57,11 @@ const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c
   return acrc_src;
 }
 
-/** copy constructor for MeasureProgLocal
-    @param acrc_src source MeasureProgLocal_c instance
-  */
 MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& acrc_src)
    : MeasureProgBase_c(acrc_src){
   assignFromSource( acrc_src );
 }
 
-
-/** base function for assignment of element vars for copy constructor and operator= */
 void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& acrc_src )
 { // copy element vars
   mb_triggeredIncrement = acrc_src.mb_triggeredIncrement;
@@ -86,22 +71,9 @@ void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& acrc_src )
   mi32_integ = acrc_src.mi32_integ;
 }
 
-
-/** default destructor which has nothing to do */
 MeasureProgLocal_c::~MeasureProgLocal_c(){
 }
 
-/** start a measuring programm with new master measurement value
-
-    possible errors:
-        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CanIo_c on send problems
-
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-    @param ai32_masterVal actual master value to start with
-    @return true -> starting values sent with success
-  */
 bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
                         Proc_c::doSend_t ren_doSend, int32_t ai32_masterVal){
   // call start function of base class
@@ -162,33 +134,11 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
   return mb_triggeredIncrement;
 }
 
-
-/** start a measuring program without new master measurement value
-
-    possible errors:
-        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CanIo_c on send problems
-
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-    @return true -> starting values sent with success
-  */
 bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
 {
   return start(ren_type, ren_doSend, mi32_lastMasterVal);
 }
 
-
-/** stop local measuring programs -> send actual values
-
-    possible errors:
-        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CanIo_c on send problems
-    @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-    @return true -> stop values sent with success
-  */
 bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // send the registered values
   bool b_sendResult = true;
@@ -228,11 +178,6 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
   return b_sendResult;
 }
 
-/** send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
-    @param en_valueGroup value group to send
-    @param ac_targetISOName ISOName of target
-    @return true -> successful sent
-  */
 bool MeasureProgLocal_c::sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const
 {
   ProcessPkg_c pkg;
@@ -242,12 +187,6 @@ bool MeasureProgLocal_c::sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGro
   return processDataConst().sendValISOName( pkg, ac_targetISOName, valForGroup(en_valueGroup));
 }
 
-
-/** send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
-    @param en_valueGroup value group to send
-    @param ac_targetISOName ISOName of target
-    @return true -> successful sent
-  */
 bool MeasureProgLocal_c::sendSetpointValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
   ProcessPkg_c pkg;
   // prepare general command in process pkg
@@ -256,10 +195,6 @@ bool MeasureProgLocal_c::sendSetpointValForGroup( ProcessCmd_c::ValueGroup_t en_
   return processDataConst().sendValISOName( pkg, ac_targetISOName, setpointValForGroup(en_valueGroup));
 }
 
-/** deliver to en_valueGroup according setpoint from a master setpoint
-    @param en_valueGroup of wanted subtype
-    @return value of specified subtype
-  */
 int32_t MeasureProgLocal_c::setpointValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const {
   int32_t i32_value = 0;
   ProcDataLocal_c* pc_procdata = pprocessData();
@@ -286,14 +221,6 @@ int32_t MeasureProgLocal_c::setpointValForGroup(ProcessCmd_c::ValueGroup_t en_va
   return i32_value;
 }
 
-
-/** process a message: reset command or value requests
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @return true -> received msg processed by this instance
-  */
 bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
 {
   bool b_result = MeasureProgBase_c::processMsg( arc_data );
@@ -342,14 +269,6 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
   return true;
 }
 
-
-/**
-  constructor which can optionally set most element vars of MeasureProgLocal
-  @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-  @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
-  @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-  @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
-*/
 MeasureProgLocal_c::MeasureProgLocal_c(
   ProcDataLocal_c *const apc_processData,
   int32_t ai32_masterVal,
@@ -360,15 +279,6 @@ MeasureProgLocal_c::MeasureProgLocal_c(
   init( apc_processData, ai32_masterVal, ai32_initialVal, ac_callerISOName );
 }
 
-
-/** set the measure prog value and send values if triggered to do
-
-    possible errors:
-
-        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CanIo_c on send problems
-    @param ai32_val new measure value
-  */
 void MeasureProgLocal_c::setVal(int32_t ai32_val){
   int32_t i32_incr =  ai32_val - mi32_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
@@ -440,15 +350,6 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
   } // for
 }
 
-
-/** send the values which are registered by a running mesuring program
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-    @return true -> value send triggered and performed with success
-  */
 bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   bool b_success = false;
 
@@ -478,10 +379,6 @@ bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   return b_success;
 }
 
-
-/** init the element vals
-    @param ai32_val initial measure val
-  */
 void MeasureProgLocal_c::initVal(int32_t ai32_val){
   // first call the base function
   MeasureProgBase_c::initVal(ai32_val);
@@ -490,15 +387,6 @@ void MeasureProgLocal_c::initVal(int32_t ai32_val){
   mi32_medCnt = 1;
 }
 
-
-/** reset the local value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @param ai32_val reset measure value to this value
-    @return true -> reseted measure val sent with success
-  */
 bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   // send resetted val
   bool b_sendSuccess;
@@ -517,14 +405,6 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   return b_sendSuccess;
 }
 
-
-/** reset the local intgral value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @return true -> reseted integ val sent with success
-  */
 bool MeasureProgLocal_c::resetInteg()
 {
   mi32_integ = 0;
@@ -532,14 +412,6 @@ bool MeasureProgLocal_c::resetInteg()
   return true;
 }
 
-
-/** reset the local medium value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @return true -> reseted medium val sent with success
-  */
 bool MeasureProgLocal_c::resetMed()
 {
   mi32_medCnt = 0;
@@ -548,14 +420,6 @@ bool MeasureProgLocal_c::resetMed()
   return true;
 }
 
-
-/** reset the local min value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @return true -> reseted minimum val sent with success
-  */
 bool MeasureProgLocal_c::resetMin()
 {
   ProcessPkg_c pkg;
@@ -566,14 +430,6 @@ bool MeasureProgLocal_c::resetMin()
   return processData().sendValISOName( pkg, mc_isoName, min());
 }
 
-
-/** reset the local max value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @return true -> reseted maximum val sent with success
-  */
 bool MeasureProgLocal_c::resetMax()
 {
   ProcessPkg_c pkg;
@@ -584,16 +440,6 @@ bool MeasureProgLocal_c::resetMax()
   return processData().sendValISOName( pkg, mc_isoName, max());
 }
 
-
-/** periodic events
-    (e.g. send value for time proportional progs)
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
-    @return true -> all planned activities performed in available time
-  */
 bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 {
   if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
@@ -675,7 +521,6 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
   return true;
 }
 
-
 bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
 {
   bool b_checkMin = false;
@@ -706,8 +551,6 @@ bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
   return true;
 }
 
-
-/** update proportional dependent values */
 void MeasureProgLocal_c::updatePropDepVals()
 {
   incrInteg(val()); // increment integral

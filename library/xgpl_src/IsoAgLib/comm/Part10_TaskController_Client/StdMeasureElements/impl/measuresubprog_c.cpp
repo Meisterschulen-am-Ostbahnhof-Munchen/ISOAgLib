@@ -23,14 +23,6 @@
 
 namespace __IsoAgLib {
 
-/**
-  default constructor which can optionally set increment type, increment and running state
-  @param ren_type optional increment type (default time proportional)
-  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-  @param ai32_increment optional increment value of ren_type (default 0)
-  @param ab_started optional running state (default off)
-  @param ai32_lastVal optional value of last trigger event (default 0)
-*/
 MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
 : ClientBase( MULTITON_INST_PARAMETER_USE ),
   mi32_lastVal( 0 ),
@@ -41,11 +33,6 @@ MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren
 {
 }
 
-/**
-  operator= for Subprogs
-  @param acrc_src source instance
-  @return reference to source instance for commands like "subp1 = subp2 = subp3;"
-*/
 const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& acrc_src){
   mb_started = acrc_src.mb_started;
   men_type = acrc_src.men_type;
@@ -55,10 +42,6 @@ const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& acrc
   return acrc_src;
 }
 
-/**
-  copy constructor for Subprogs
-  @param acrc_src source instance
-*/
 MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& acrc_src)
 : ClientBase(acrc_src)
 {
@@ -69,15 +52,9 @@ MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& acrc_src)
   mi32_lastVal = acrc_src.mi32_lastVal;
 }
 
-/** default destructor which has nothing to do */
 MeasureSubprog_c::~MeasureSubprog_c(){
 }
 
-/**
-  start a measuring subprogramm, potentially with increment and lastVal definition
-  @param ai32_increment optional increment value (default old increment value used)
-  @param ai32_lastVal last trigger value (default 0)
-*/
 void MeasureSubprog_c::start(int32_t ai32_lastVal, int32_t ai32_increment){
   // if wanted store given values (in both cases 0 is interpreted as not wanted)
   if (ai32_increment != 0) mi32_increment = ai32_increment;
@@ -87,11 +64,6 @@ void MeasureSubprog_c::start(int32_t ai32_lastVal, int32_t ai32_increment){
   mb_started = true;
 }
 
- /**
-   delivers if given value forces trigger of send of registered informations
-   @param ai32_val actual increment relevant value (time for TimeProp, distance for DistProp, ...)
-   @return true -> this subprog triggers (e.g. send actual value)
- */
 bool MeasureSubprog_c::updateTrigger(int32_t ai32_val){
   if ( ( type() == Proc_c::OnChange ) && ( mi32_increment == 0 ) )
   { // special case: OnChange with value 0 means: SEND NO value; 1 meanse: send any change; ...
@@ -150,114 +122,55 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
   }
 }
 
-
-/**
-  calculate a single identifying value for easier compare of Subprogs
-  @return single value for comparison of Subprogs
-*/
 int32_t MeasureSubprog_c::calcCompVal()const{
   // for Subprog two items are considered equiv if type is identical
   return (men_type);
 }
 
-/**
-  compare two Subprogs with ==
-  @param acrc_right compared MeasureSubprog_c instance
-  @return true -> this instance is equal to the other
-*/
 bool MeasureSubprog_c::operator==(const MeasureSubprog_c& acrc_right)const{
   return (calcCompVal() == acrc_right.calcCompVal());
 }
 
-/**
-  compare two Subprogs with !=
-  @param acrc_right compared MeasureSubprog_c instance
-  @return true -> this instance is different to the other
-*/
 bool MeasureSubprog_c::operator!=(const MeasureSubprog_c& acrc_right)const{
   return (calcCompVal() != acrc_right.calcCompVal());
 }
 
-/**
-  compare two Subprogs with <
-  @param acrc_right compared MeasureSubprog_c instance
-  @return true -> this instance is < than the other
-*/
 bool MeasureSubprog_c::operator<(const MeasureSubprog_c& acrc_right)const{
   return (calcCompVal() < acrc_right.calcCompVal());
 }
-/**
-  compare two Subprogs with <=
-  @param acrc_right compared MeasureSubprog_c instance
-  @return true -> this instance is <= than the other
-*/
+
 bool MeasureSubprog_c::operator<=(const MeasureSubprog_c& acrc_right)const{
   return (calcCompVal() <= acrc_right.calcCompVal());
 }
-/**
-  compare two Subprogs with >
-  @param acrc_right compared MeasureSubprog_c instance
-  @return true -> this instance is > than the other
-*/
+
 bool MeasureSubprog_c::operator>(const MeasureSubprog_c& acrc_right)const{
   return (calcCompVal() > acrc_right.calcCompVal());
 }
-/**
-  compare two Subprogs with >=
-  @param acrc_right compared MeasureSubprog_c instance
-  @return true -> this instance is >= than the other
-*/
+
 bool MeasureSubprog_c::operator>=(const MeasureSubprog_c& acrc_right)const{
   return (calcCompVal() >= acrc_right.calcCompVal());
 }
 
-/**
-  compare two Subprogs with ==
-  @param ren_type compared increment type
-  @return true -> this instance is equal to the compared increment type
-*/
 bool MeasureSubprog_c::operator==(Proc_c::type_t ren_type)const{
   return (men_type == ren_type);
 }
 
-/**
-  compare two Subprogs with !=
-  @param ren_type compared increment type
-  @return true -> this instance is different to the compared increment type
-*/
 bool MeasureSubprog_c::operator!=(Proc_c::type_t ren_type)const{
   return (men_type != ren_type);
 }
 
-/**
-  compare two Subprogs with <
-  @param ren_type compared increment type
-  @return true -> this instance is < than the compared increment type
-*/
 bool MeasureSubprog_c::operator<(Proc_c::type_t ren_type)const{
   return (men_type < ren_type);
 }
-/**
-  compare two Subprogs with <=
-  @param ren_type compared increment type
-  @return true -> this instance is <= than the compared increment type
-*/
+
 bool MeasureSubprog_c::operator<=(Proc_c::type_t ren_type)const{
   return (men_type <= ren_type);
 }
-/**
-  compare two Subprogs with >
-  @param ren_type compared increment type
-  @return true -> this instance is > than the compared increment type
-*/
+
 bool MeasureSubprog_c::operator>(Proc_c::type_t ren_type)const{
   return (men_type > ren_type);
 }
-/**
-  compare two Subprogs with >=
-  @param ren_type compared increment type
-  @return true -> this instance is >= than the compared increment type
-*/
+
 bool MeasureSubprog_c::operator>=(Proc_c::type_t ren_type)const{
   return (men_type >= ren_type);
 }

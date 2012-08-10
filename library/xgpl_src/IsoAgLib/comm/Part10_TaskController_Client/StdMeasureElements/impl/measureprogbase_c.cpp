@@ -36,11 +36,6 @@ static uint16_t sui16_printedDeconstructMeasureProgBaseTotal = 0;
 
 namespace __IsoAgLib {
 
-/** initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param apc_processData optional reference to containing ProcDataLocal_c instance (default NULL)
-    @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param acrc_isoName optional ISOName of partner member for this measure program
-  */
 void MeasureProgBase_c::init( ProcDataLocal_c *const apc_processData,
   int32_t ai32_val,
   const IsoName_c& acrc_isoName)
@@ -71,7 +66,7 @@ void MeasureProgBase_c::init( ProcDataLocal_c *const apc_processData,
   // set the rest of element vals to defined init
   men_accumProp = Proc_c::AccumNone;
   men_doSend = Proc_c::DoNone;
-  men_type = Proc_c::DistProp;
+  //men_type = Proc_c::DistProp;
 
   mi32_accel = mi32_delta = mi32_lastTime = mi32_max = mi32_min = 0;
 
@@ -83,11 +78,6 @@ void MeasureProgBase_c::init( ProcDataLocal_c *const apc_processData,
     setISOName(pprocessDataConst()->commanderISOName());
 }
 
-
-/** assignment of MeasureProgBase_c objects
-    @param acrc_src source MeasureProgBase_c instance
-    @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
-  */
 const MeasureProgBase_c& MeasureProgBase_c::operator=(const MeasureProgBase_c& acrc_src){
   // call base class operator
   ProcessElementBase_c::operator=(acrc_src);
@@ -98,17 +88,11 @@ const MeasureProgBase_c& MeasureProgBase_c::operator=(const MeasureProgBase_c& a
   return acrc_src;
 }
 
-
-/** copy constructor
-    @param acrc_src source MeasureProgBase_c instance
-  */
 MeasureProgBase_c::MeasureProgBase_c(const MeasureProgBase_c& acrc_src)
  : ProcessElementBase_c(acrc_src)  {
   assignFromSource( acrc_src );
 }
 
-
-/** base function for assignment of element vars for copy constructor and operator= */
 void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& acrc_src )
 { // copy element vars
   mc_isoName = acrc_src.mc_isoName;
@@ -124,7 +108,6 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& acrc_src )
   mvec_measureSubprog = acrc_src.mvec_measureSubprog;
 }
 
-/** default destructor which has nothing to do */
 MeasureProgBase_c::~MeasureProgBase_c(){
   #if DEBUG_HEAP_USEAGE
   if ( mvec_measureSubprog.size() > 0 )
@@ -135,16 +118,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   #endif
 }
 
-/** add an aditional subprog or update if one with same kind exist already
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to add new subprog
-    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ai32_increment increment value
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-    @return true -> subprog was created successfully; fals -> out-of-memory error
-  */
- bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend){
+bool MeasureProgBase_c::addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend){
   if (ren_type == Proc_c::TimeProp) men_accumProp = Proc_c::AccumTime;
   else if (ren_type == Proc_c::DistProp) men_accumProp = Proc_c::AccumDist;
 
@@ -179,26 +153,14 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   return true;
 }
 
-
-/** start a measuring programm
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-    @return always true; only relevant for overloaded methods in derived classes
-  */
 bool MeasureProgBase_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // register values
   men_doSend = (ren_doSend != Proc_c::DoNone)?ren_doSend : men_doSend;
   if (men_doSend == Proc_c::DoNone) men_doSend = Proc_c::DoVal;
-  men_type = ren_type;
+  //men_type = ren_type;
   return true;
 }
 
-/** stop all running subprog
-    @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
-    @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-    @return always true; only relevant for overloaded methods in derived classes
-  */
 bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_type */, Proc_c::doSend_t /* ren_doSend */){
   // clear the array with all subprogs -> no trigger test is done on value set
   #if DEBUG_HEAP_USEAGE
@@ -223,11 +185,6 @@ bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_ty
   return true;
 }
 
-/** deliver actual last received value
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return measure val for this prog (can differ from master measure val)
-  */
 int32_t MeasureProgBase_c::val(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
@@ -243,11 +200,6 @@ int32_t MeasureProgBase_c::val(bool ab_sendRequest) const
   return mi32_val;
 }
 
-/** deliver min val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MIN val for this measure prog
-  */
 int32_t MeasureProgBase_c::min(bool ab_sendRequest) const
 {
   if(ab_sendRequest) {
@@ -262,11 +214,6 @@ int32_t MeasureProgBase_c::min(bool ab_sendRequest) const
   return mi32_min;
 }
 
-/** deliver max val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MAX val for this measure prog
-  */
 int32_t MeasureProgBase_c::max(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
@@ -281,10 +228,6 @@ int32_t MeasureProgBase_c::max(bool ab_sendRequest) const
   return mi32_max;
 }
 
-
-/** init the element vars
-    @param ai32_val initial measure val
-  */
 void MeasureProgBase_c::initVal(int32_t ai32_val){
   #if DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
@@ -304,12 +247,6 @@ void MeasureProgBase_c::initVal(int32_t ai32_val){
   mi32_val = mi32_min = mi32_max = ai32_val;
 }
 
-
-/** process a message;
-    MeasureProgBase_c::processMsg is responsible for measure prog
-    controlling commands
-    @return true -> message was already edited complete
-  */
 bool MeasureProgBase_c::processMsg( const ProcessPkg_c& pkg ){
   ProcessCmd_c::CommandType_t en_command = pkg.mc_processCmd.getCommand();
 
@@ -433,19 +370,6 @@ bool MeasureProgBase_c::processMsg( const ProcessPkg_c& pkg ){
   return b_edited;
 }
 
-
-/** perform periodic actions
-    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
-    @return true -> all planned activities performed in available time
-  */
-bool MeasureProgBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
-{return true;}
-
-
-/** deliver to en_valueGroup according measure val type
-    @param en_valueGroup of wanted subtype
-    @return value of specified subtype
-  */
 int32_t MeasureProgBase_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const {
   int32_t i32_value = val();
   switch (en_valueGroup)
@@ -467,13 +391,6 @@ int32_t MeasureProgBase_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup)
   return i32_value;
 }
 
-
-/** process a message with an increment for a measuring program
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to add new subprog
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-  */
 void MeasureProgBase_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend)
 {
 
@@ -508,11 +425,6 @@ void MeasureProgBase_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::do
     addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
 }
 
-
-/** reset according to the value group the appropriate value type
-    @param en_valueGroup of wanted subtype
-    @param ai32_val reset measure value to this value (ISO remote only)
-  */
 void MeasureProgBase_c::resetValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup, int32_t ai32_val){
     switch (en_valueGroup)
     {

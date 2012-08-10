@@ -77,18 +77,7 @@ public:
     @return ISOName of this measureProg
   */
   const iIsoName_c& isoName(){return MeasureProgLocal_c::isoName().toConstIisoName_c();};
-  /**
-    deliver the type of the active increment types
-    @return actual Bit-OR combined increment types
-  */
-  Proc_c::type_t type(){return MeasureProgLocal_c::type();};
-  /**
-    check if the given increment type is active
-    @param ren_type tested increment type
-    @return true -> given increment type is set
-  */
-  bool checkType(Proc_c::type_t ren_type)
-    {return MeasureProgLocal_c::checkType(ren_type);};
+
   /**
     check if given send type is activated
     @param ren_doSend tested sended value

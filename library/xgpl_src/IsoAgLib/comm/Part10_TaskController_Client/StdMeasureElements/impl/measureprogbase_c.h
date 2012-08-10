@@ -179,20 +179,6 @@ public:
   const IsoName_c& isoName() const{return mc_isoName;}
 
   /**
-    deliver the type of the active increment types
-    @return actual Bit-OR combined increment types
-  */
-  Proc_c::type_t type() const {return men_type;}
-
-  /**
-    check if the given increment type is active
-    @param ren_type tested increment type
-    @return true -> given increment type is set
-  */
-  bool checkType(Proc_c::type_t ren_type) const
-    {return ((men_type & ren_type) > 0);}
-
-  /**
     return the program active flag
     @return true -> is active
   */
@@ -235,12 +221,6 @@ public:
   virtual void setVal(int32_t ai32_val) = 0;
 
   /**
-    set the type of the active increment types
-    @param ren_type Bit-OR combined increment type(s)
-  */
-  void setType(Proc_c::type_t ren_type){men_type = ren_type;}
-
-  /**
     set the mc_isoName code for this measureprog
     @param acrc_isoName ISOName for exact specification of partner system
   */
@@ -254,13 +234,6 @@ public:
     @return true -> message was already edited complete
   */
   virtual bool processMsg( const ProcessPkg_c& arc_data );
-
-  /**
-    perform periodic actions
-    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
-    @return true -> all planned activities performed in available time
-  */
-  virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
   /**
     compare two items for PRI and ISOName
@@ -376,14 +349,9 @@ private: // Private methods
 
 private: // Private attributes
 
-  /**
-    minimum value (only defined if one proportional prog is active)
-  */
+  /** minimum value (only defined if one proportional prog is active) */
   int32_t mi32_min;
-
-  /**
-    maximum value (only defined if one proportional prog is active)
-  */
+  /** maximum value (only defined if one proportional prog is active) */
   int32_t mi32_max;
 
   /** dynamic array for subprogs */
@@ -391,19 +359,10 @@ private: // Private attributes
   /** specifies which value types should be sent if one subprog triggers */
   Proc_c::doSend_t men_doSend;
 
-  /**
-    stores if programm is active
-  */
+  /** stores if programm is active */
   bool mb_active;
 
-  /**
-    active increment types: some of {TimeProp, DistProp, ...}
-  */
-  Proc_c::type_t men_type;
-
-  /**
-    used proportional type for calculating accumulated values (min, max, med, insteg)
-  */
+  /** used proportional type for calculating accumulated values (min, max, med, insteg) */
   Proc_c::accumProp_t men_accumProp;
   /** isoName value of caller of program */
   IsoName_c mc_isoName;
