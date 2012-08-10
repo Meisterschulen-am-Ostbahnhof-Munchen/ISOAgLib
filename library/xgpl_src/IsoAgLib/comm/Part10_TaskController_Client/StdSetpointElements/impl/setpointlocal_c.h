@@ -187,39 +187,9 @@ private: // Private methods
   */
   virtual void processSet( const ProcessPkg_c& pkg );
 
-  /**
-    deliver a reference to ProcDataLocal_c
-    (the base function only delivers ProcDataLocal_c )
-    @return reference to containing ProcDataLocal_c instance
-  */
-  ProcDataLocal_c& processData()
-  {
-    return *((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
-  };
-  /**
-    deliver a reference to ProcDataLocal_c
-    (the base function only delivers ProcDataLocal_c )
-    @return reference to containing ProcDataLocal_c instance
-  */
-  const ProcDataLocal_c& processDataConst() const
-  {
-    return *((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
-  };
-  /**
-    deliver a pointer to ProcDataLocal_c
-    (the base function only delivers ProcDataLocal_c )
-    @return pointer to containing ProcDataLocal_c instance
-  */
-  ProcDataLocal_c* pprocessData() const
-  {
-    return ((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
-  };
-
 private: // Private attributes
   /** container of registered setpoint values */
   Vec_SetpointRegister mvec_register;
-  /** iterator cache to actual master setpoint */
-  mutable Vec_SetpointRegisterIterator mpc_registerCache;
   /** SetpointRegister_c entry, which represents the actual used setpoint value */
   Vec_SetpointRegisterIterator mpc_master;
 

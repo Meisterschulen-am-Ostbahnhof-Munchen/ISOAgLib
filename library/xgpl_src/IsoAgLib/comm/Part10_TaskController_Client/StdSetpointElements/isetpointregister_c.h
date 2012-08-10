@@ -47,17 +47,6 @@ public:
     @return exact setpoint value
   */
   int32_t value()const{return SetpointRegister_c::value();};
-
-  /**
-    check if setpoint value was already handled
-    @return true -> this setpoint was handled by the application
-  */
-  bool handled()const {return SetpointRegister_c::handled();};
-  /**
-    check if setpoint is used as master control
-    @return true -> the application set this setpoint as master before
-  */
-  //bool master()const {return SetpointRegister_c::master();};
   /**
     check if setpoint is conformant with actual (!!) master setpoint
     @return true -> the application set this setpoint as valid (accepted)
@@ -74,19 +63,6 @@ public:
   */
   void setValue(int32_t ai32_val){SetpointRegister_c::setValue(ai32_val);};
 
-
-  /**
-    set the handled state; return if state was changed
-    @param ab_state true -> mark this setpoint as handled
-    @return true -> this call caused a state change for handled state
-  */
-  bool setHandled(bool ab_state = true){return SetpointRegister_c::setHandled(ab_state);};
-  /**
-    set the master state; return if state was changed
-    @param ab_state true -> mark this setpoint as master
-    @return true -> this call caused a state change for master state
-  */
-  //bool setMaster(bool ab_state = true){return SetpointRegister_c::setMaster(ab_state);};
   /**
     set the valid state; return if state was changed
     @param ab_state true -> mark this setpoint as valid (accepted)

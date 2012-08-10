@@ -145,22 +145,6 @@ public:
   int32_t val(bool ab_sendRequest = false) const;
 
   /**
-    deliver min val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MIN val for this measure prog
-  */
-  int32_t min(bool ab_sendRequest = false) const;
-
-  /**
-    deliver max val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MAX val for this measure prog
-  */
-  int32_t max(bool ab_sendRequest = false) const;
-
-  /**
     deliver the delta
     @return:delta between the last two measure vals [1/sec]
   */
@@ -203,16 +187,6 @@ public:
     @param ai32_val reset measure value to this value (ISO remote only)
   */
   virtual bool resetVal(int32_t ai32_val = 0) = 0;
-
-  /**
-    reset MIN (pure virtual function)
-  */
-  virtual bool resetMin() = 0;
-
-  /**
-    reset MAX (pure virtual function)
-  */
-  virtual bool resetMax() = 0;
 
   /**
     set a new value (pure virtual function)
@@ -282,25 +256,11 @@ protected: // Protected methods
     @param ai32_val reset measure value to this value (ISO remote only)
   */
   void resetValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup, int32_t ai32_val = 0);
-
   /**
     internal increment the value
     @param ai32_val increment for internal measure val
   */
   void incrVal(int32_t ai32_val){mi32_val += ai32_val;}
-
-  /**
-    set min val
-    @param ai32_val new MIN value
-  */
-  void setMin(int32_t ai32_val){mi32_min = ai32_val;}
-
-  /**
-    set max val
-    @param ai32_val new MAN value
-  */
-  void setMax(int32_t ai32_val){mi32_max = ai32_val;}
-
 
 protected: // Protected attributes
   /**  last time were value was set */
@@ -330,14 +290,12 @@ private: // Private methods
     @return single comparison value (depends on ISOName and active flag)
   */
   int32_t calcCompVal()const {return ( ( (mc_isoName.devClass() << 4) | (mc_isoName.devClassInst()) ) * (mb_active + 1));}
-
   /**
     deliver value according measure value group
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
   int32_t valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const;
-
   /**
     process a message with an increment for a measuring program
 

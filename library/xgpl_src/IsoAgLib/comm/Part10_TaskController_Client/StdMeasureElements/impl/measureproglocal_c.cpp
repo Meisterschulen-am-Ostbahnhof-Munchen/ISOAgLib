@@ -32,18 +32,6 @@ void MeasureProgLocal_c::init(
   MeasureProgBase_c::init( apc_processData, ai32_initialVal, ac_callerISOName  );
 
   mi32_lastMasterVal = ai32_masterVal;
-  if (ai32_initialVal != 0)
-  { // set medSum, medCnt to initial value read from EEPROM
-    mi32_medCnt = 1;
-    mi32_medSum = ai32_initialVal;
-  }
-  else
-  {
-    mi32_medCnt = mi32_medSum = 0;
-  }
-
-  mi32_integ = 0;
-
   mlist_thresholdInfo.clear();
 }
 
@@ -65,9 +53,6 @@ MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& acrc_src)
 void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& acrc_src )
 { // copy element vars
   mi32_lastMasterVal = acrc_src.mi32_lastMasterVal;
-  mi32_medCnt = acrc_src.mi32_medCnt;
-  mi32_medSum = acrc_src.mi32_medSum;
-  mi32_integ = acrc_src.mi32_integ;
 }
 
 MeasureProgLocal_c::~MeasureProgLocal_c(){
@@ -277,10 +262,6 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
   if (processData().mb_cumulativeValue) mi32_val += i32_incr;
   else mi32_val = ai32_val;
 
-  // update min max
-  if (val() > max()) setMax(val());
-  if (val() < min()) setMin(val());
-
   // claculate delta and accel in 1/s
   if (i32_timeDelta > 0)
   { // if two calls to this function follow immediate
@@ -365,9 +346,6 @@ bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
 void MeasureProgLocal_c::initVal(int32_t ai32_val){
   // first call the base function
   MeasureProgBase_c::initVal(ai32_val);
-
-  mi32_medSum = mi32_integ = ai32_val;
-  mi32_medCnt = 1;
 }
 
 bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
@@ -386,41 +364,6 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   b_sendSuccess = processData().sendValISOName( pkg, mc_isoName, val());
 
   return b_sendSuccess;
-}
-
-bool MeasureProgLocal_c::resetInteg()
-{
-  mi32_integ = 0;
-  // do not send a message to remote instance
-  return true;
-}
-
-bool MeasureProgLocal_c::resetMed()
-{
-  mi32_medCnt = 0;
-  mi32_medSum = 0;
-  // do not send a message to remote instance
-  return true;
-}
-
-bool MeasureProgLocal_c::resetMin()
-{
-  ProcessPkg_c pkg;
-  // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                              ProcessCmd_c::minValue, ProcessCmd_c::setValue);
-  mi32_min = 0;
-  return processData().sendValISOName( pkg, mc_isoName, min());
-}
-
-bool MeasureProgLocal_c::resetMax()
-{
-  ProcessPkg_c pkg;
-  // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                              ProcessCmd_c::maxValue, ProcessCmd_c::setValue);
-  mi32_max = 0;
-  return processData().sendValISOName( pkg, mc_isoName, max());
 }
 
 bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
@@ -533,11 +476,6 @@ bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
 
 void MeasureProgLocal_c::updatePropDepVals()
 {
-  incrInteg(val()); // increment integral
-  // update medium based on actual val and count of actual calculated vals
-  incrMedSum(val());
-
-  incrMedCnt(); // increment medCnt to calc medium from integ
 }
 
 

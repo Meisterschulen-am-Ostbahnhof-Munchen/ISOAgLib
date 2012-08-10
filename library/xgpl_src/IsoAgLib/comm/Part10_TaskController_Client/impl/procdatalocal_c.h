@@ -266,7 +266,6 @@ public: // from former base class
 
   /** check if this ProcIdent_c has the given DDI as element */
   bool hasDDI( uint16_t aui16_checkDDI ) const;
-  bool hasType(bool ab_isSetpoint, ProcessCmd_c::ValueGroup_t t_ddiType) const;
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)

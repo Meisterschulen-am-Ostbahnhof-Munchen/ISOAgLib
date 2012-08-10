@@ -35,33 +35,13 @@ private:
   // private typedef alias names
   typedef __IsoAgLib::Proc_c Proc_c;
 public:
-  /**
-    deliver med val
-  */
-  virtual int32_t med() const {return MeasureProgLocal_c::med();};
-
 
   /**
     deliver value
     @return measure val for this prog (can differ from master measure val)
   */
   int32_t val(){return MeasureProgLocal_c::val();};
-  /**
-    deliver integ val
-    @return integral val for this measure prog
-  */
-  int32_t integ(){return MeasureProgLocal_c::integ();};
-  /**
-    deliver min val
-    @return MIN val for this measure prog
-  */
-  int32_t min(){return MeasureProgLocal_c::min();};
-  /**
-    deliver max val
-    @return MAX val for this measure prog
-  */
-  int32_t max(){return MeasureProgLocal_c::max();};
-  /**
+   /**
     deliver the delta
     @return:delta between the last two measure vals [1/sec]
   */

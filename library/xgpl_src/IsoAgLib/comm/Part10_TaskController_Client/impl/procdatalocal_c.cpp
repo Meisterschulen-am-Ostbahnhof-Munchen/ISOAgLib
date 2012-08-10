@@ -227,11 +227,6 @@ void ProcDataLocal_c::setBasicSendFlags( ProcessPkg_c& pkg ) const
   pkg.setIsoPri(3);
   pkg.setIsoPgn(PROCESS_DATA_PGN);
 
-  // general command is already set, use these values:
-  // set command in ProcessPkg::flags2string
-  const ProcessCmd_c::ValueGroup_t men_valueGroup = pkg.mc_processCmd.getValueGroup();
-  const bool mb_isSetpoint = pkg.mc_processCmd.checkIsSetpoint();
-
   pkg.set_Element(element());
   pkg.set_DDI(DDI());
 }

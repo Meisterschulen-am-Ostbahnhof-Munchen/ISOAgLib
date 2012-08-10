@@ -127,17 +127,6 @@ public:
   */
   virtual bool stop(bool b_deleteSubProgs = true, Proc_c::type_t ren_type = Proc_c::NullType,
                     Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
-  /**
-    deliver med val
-    @return actual medium value
-  */
-  int32_t med() const {return ( (mi32_medCnt > 0) ? (mi32_medSum/mi32_medCnt) : 0 );};
-
-  /**
-    deliver integ val
-    @return integral val for this measure prog
-  */
-  int32_t integ() const { return mi32_integ; };
 
   /**
     send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
@@ -208,42 +197,6 @@ public:
   virtual bool resetVal(int32_t ai32_val = 0);
 
   /**
-    reset the local intgral value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @return true -> reseted integ val sent with success
-  */
-  virtual bool resetInteg();
-  /**
-    reset the local medium value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @return true -> reseted medium val sent with success
-  */
-  virtual bool resetMed();
-  /**
-    reset the local min value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @return true -> reseted minimum val sent with success
-  */
-  virtual bool resetMin();
-  /**
-    reset the local max value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @return true -> reseted maximum val sent with success
-  */
-  virtual bool resetMax();
-  /**
     periodic events
     (e.g. send value for time proportional progs)
 
@@ -260,32 +213,6 @@ private: // Private methods
   void assignFromSource( const MeasureProgLocal_c& acrc_src );
   /**  update proportional dependent values */
   void updatePropDepVals();
-
-  /**
-    set medium val
-    @param ai32_val initial medium value
-  */
-  void setMed(int32_t ai32_val){mi32_medSum = ai32_val; mi32_medCnt = 1;};
-  /**
-    increment medCnt
-  */
-  void incrMedCnt(){mi32_medCnt++;};
-  /**
-    increment the mediumSum
-    @param ai32_val new measure val to use for calculating the medium value
-  */
-  void incrMedSum(int32_t ai32_val){mi32_medSum += ai32_val;};
-
-  /**
-    set integ val
-    @param ai32_val new integral value
-  */
-  void setInteg(int32_t ai32_val){mi32_integ = ai32_val;}
-  /**
-    increment the integer value
-    @param ai32_val increment for integral
-  */
-  void incrInteg(int32_t ai32_val){mi32_integ += ai32_val;}
 
   /**
     deliver a reference to ProcDataLocal_c
@@ -315,19 +242,6 @@ private: // Private methods
 private: // Private attributes
   /** last master (eg. main prog or sensor) val  */
   int32_t mi32_lastMasterVal;
-  /**
-    sum of values which are used to calculate the medium
-    (only defined if one proportional prog is active)
-  */
-  int32_t mi32_medSum;
-  /**
-    integral value (only defined if one proportional prog is active)
-  */
-  int32_t mi32_integ;
-
-  /** count of used songle values to calculate medium val  */
-  int32_t mi32_medCnt;
-
 
   /**
     stores if one subprog triggered,

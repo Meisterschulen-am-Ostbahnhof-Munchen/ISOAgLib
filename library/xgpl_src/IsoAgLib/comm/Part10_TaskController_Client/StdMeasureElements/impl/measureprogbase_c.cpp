@@ -135,34 +135,6 @@ int32_t MeasureProgBase_c::val(bool ab_sendRequest) const
   return mi32_val;
 }
 
-int32_t MeasureProgBase_c::min(bool ab_sendRequest) const
-{
-  if(ab_sendRequest) {
-    // prepare general command in process pkg
-    ProcessPkg_c pkg;
-    pkg.mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                             ProcessCmd_c::minValue,
-                                                             ProcessCmd_c::requestValue);
-
-    processData().sendValISOName(pkg, isoName(), int32_t(0));
-  }
-  return mi32_min;
-}
-
-int32_t MeasureProgBase_c::max(bool ab_sendRequest) const
-{
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    ProcessPkg_c pkg;
-    pkg.mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                             ProcessCmd_c::maxValue,
-                                                             ProcessCmd_c::requestValue);
-
-    processData().sendValISOName( pkg, isoName(), int32_t(0));
-  }
-  return mi32_max;
-}
-
 void MeasureProgBase_c::initVal(int32_t ai32_val){
   mi32_val = mi32_min = mi32_max = ai32_val;
 }
@@ -187,7 +159,6 @@ bool MeasureProgBase_c::processMsg( const ProcessPkg_c& pkg ){
 
     // set en_doSendPkg (for ISO)
     ProcessCmd_c::ValueGroup_t en_valueGroup = pkg.mc_processCmd.getValueGroup();
-
     Proc_c::doSend_t en_doSendPkg = Proc_c::DoVal;  //default send data mode
     if (pkg.mc_processCmd.checkIsSetpoint())
       en_doSendPkg = Proc_c::DoValForExactSetpoint; // measurement for exact value setpoint
@@ -282,14 +253,9 @@ int32_t MeasureProgBase_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup)
       // set val with function, to calc delta and accel
       // i32_value = val();
       break;
-    case ProcessCmd_c::minValue:
-      i32_value = min();
-      break;
-    case ProcessCmd_c::maxValue:
-      i32_value = max();
-      break;
     default:
-      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcData, getMultitonInst() );
+      // wrong range
+      break;
   }
 
   return i32_value;
@@ -336,16 +302,9 @@ void MeasureProgBase_c::resetValForGroup(ProcessCmd_c::ValueGroup_t en_valueGrou
         // set val with function, to calc delta and accel
         resetVal(ai32_val);
         break;
-      case ProcessCmd_c::minValue:
-        resetMin();
-        break;
-      case ProcessCmd_c::maxValue:
-        resetMax();
-        break;
       default:
-        IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcData, getMultitonInst() );
+        break;
     }
 }
-
 
 } // end of namespace __IsoAgLib
