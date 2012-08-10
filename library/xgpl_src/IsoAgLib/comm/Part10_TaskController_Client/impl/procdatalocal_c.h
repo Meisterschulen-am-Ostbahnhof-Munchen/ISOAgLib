@@ -313,61 +313,11 @@ public: // FROM FORMER BASE CLASS
   */
   const int32_t& masterMeasurementVal() const {return mi32_masterVal;}
 
-  /** set the masterMeasurementVal from main application independent from any measure progs
-    @param ai32_val new measure value
-  */
-  //virtual void setMasterMeasurementVal (int32_t ai32_val);
-
-  /** increment the value -> update the local and the measuring programs values
-    @param ai32_val size of increment of master value
-  */
-  //virtual void incrMasterMeasurementVal (int32_t ai32_val);
-
-  /** perform periodic actions
-    task for ProcDataLocal_c::timeEvent is to store the actual
-    eeprom value in the defined time intervall
-    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
-    @return true -> all planned executions performed
-  */
-  //virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
-
   /** send a min-information (selected by value group) to a specified target (selected by ISOName)
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
   bool sendMasterMeasurementVal( const IsoName_c& ac_targetISOName ) const;
-
-  /** check if a setpoint master exists
-    (used for accessing setpoint values from measure progs)
-    @return true -> setpoint master exists
-  */
-  //virtual bool setpointExistMaster() const { return false;}
-
-  /** (used for accessing setpoint values from measure progs)
-    @return exact value of master setpoint
-  */
-  //virtual int32_t setpointExactValue() const { return 0;}
-
-  /** (used for accessing setpoint values from measure progs)
-    @return default value of master setpoint
-  */
-  //virtual int32_t setpointDefaultValue() const { return 0;}
-
-  /** (used for accessing setpoint values from measure progs)
-    @return min value of master setpoint
-  */
-  //virtual int32_t setpointMinValue() const { return 0;}
-
-  /** (used for accessing setpoint values from measure progs)
-    @return max value of master setpoint
-  */
-  //virtual int32_t setpointMaxValue() const { return 0;}
-
-  /** stop all measurement progs in all local process instances, started with given isoName
-    (not used for simple measurement)
-    <!--@param rc_isoName-->
-  */
-  //virtual void stopRunningMeasurement(const IsoName_c& /* rc_isoName */) {}
 
   /** send the given int32_t value with variable ISOName ac_varISOName;
       set the int32_t value with conversion (according to central data type) in message
@@ -384,7 +334,6 @@ public: // FROM FORMER BASE CLASS
   bool sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
   void setBasicSendFlags( ProcessPkg_c& pkg ) const;
-
 
   /** set the pointer to the handler class
     * @param apc_processDataChangeHandler pointer to handler class of application
@@ -405,12 +354,6 @@ public: // FROM FORMER BASE CLASS
     process data the suitable reaction can be implemented
   */
   void processMsg( ProcessPkg_c& pkg );
-
-  /** perform periodic acoins
-    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
-    @return true -> all planned executions performed
-  */
-  //virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
   virtual const IsoName_c& commanderISOName() const { return IsoName_c::IsoNameUnspecified(); }
 

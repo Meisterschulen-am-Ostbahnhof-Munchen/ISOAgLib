@@ -45,11 +45,6 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
                            int ai_multitonInst
                            )
 {
-  //ProcDataBase_c::init( aui16_ddi, aui16_element,
-  //                      acrc_isoName, apc_externalOverridingIsoName,
-  //                      apc_processDataChangeHandler,
-  //                      ai_multitonInst );
-
   setElementDDI(aui16_ddi);
   setElementNumber(aui16_element);
 
@@ -78,7 +73,6 @@ ProcDataLocal_c::~ProcDataLocal_c(){
 
 const ProcDataLocal_c& ProcDataLocal_c::operator=(const ProcDataLocal_c& acrc_src)
 { // call base class operator
-  //ProcIdent_c::operator=(acrc_src);
   ClientBase::operator=(acrc_src);
   assignFromSource(acrc_src);
 
@@ -88,7 +82,6 @@ const ProcDataLocal_c& ProcDataLocal_c::operator=(const ProcDataLocal_c& acrc_sr
 }
 
 ProcDataLocal_c::ProcDataLocal_c(const ProcDataLocal_c& acrc_src)
-   //: ProcIdent_c(acrc_src)
    : ClientBase( acrc_src ),
 	  mpc_externalOverridingIsoName( acrc_src.mpc_externalOverridingIsoName ),
 		mc_isoName( acrc_src.mc_isoName )
@@ -105,11 +98,12 @@ void ProcDataLocal_c::assignFromSource( const ProcDataLocal_c& acrc_src )
   // NOT COMPLETE ?
   mc_isoName = acrc_src.mc_isoName;
   mpc_externalOverridingIsoName = acrc_src.mpc_externalOverridingIsoName;
-  // elementDDI() returns list reference, setElementDDI() expects pointer to list
+
   setElementDDI(acrc_src.DDI());
 
   mi32_masterVal = acrc_src.mi32_masterVal;
   mb_cumulativeValue = acrc_src.mb_cumulativeValue;
+
 }
 
 void ProcDataLocal_c::setMasterMeasurementVal(int32_t ai32_val){
@@ -164,29 +158,6 @@ void ProcDataLocal_c::stopRunningMeasurement(const IsoName_c& rc_isoName)
 {
   mc_measureprog.stopRunningMeasurement(rc_isoName);
 }
-
-
-//ProcDataLocal_c::ProcDataLocal_c( const ProcDataLocal_c& acrc_src )
-//  //: ClientBase( acrc_src )
-//{
-//  //assignFromSource( acrc_src );
-//
-//  // now register the pointer to this instance in Process_c
-//  getProcessInstance4Comm().registerLocalProcessData( this );
-//}
-
-//const ProcDataLocal_c& ProcDataLocal_c::operator=( const ProcDataLocal_c& acrc_src )
-//{
-//  ProcDataBase_c::operator=( acrc_src );
-//  assignFromSource( acrc_src );
-//  return *this;
-//}
-
-//void ProcDataLocal_c::assignFromSource( const ProcDataLocal_c& acrc_src )
-//{
-//  mi32_masterVal = acrc_src.mi32_masterVal;
-//  mb_cumulativeValue = acrc_src.mb_cumulativeValue;
-//}
 
 bool ProcDataLocal_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {
 
@@ -268,30 +239,6 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
     processProg(pkg);
 }
 
-//bool ProcDataLocal_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
-//{
-//  return true;
-//}
-
-//bool ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& /*ac_varISOName*/, int32_t ai32_val) const
-//{
-//  setBasicSendFlags( pkg );
-//
-//  pkg.setData( ai32_val );
-//
-//  // send the msg
-//  pkg.flags2String();
-//  getIsoBusInstance4Comm() << pkg;
-//  // check for any error during send resolve, ...
-//  if ( getILibErrInstance().good(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can) )
-//  { // good
-//    return true;
-//  }
-//  else
-//    return false;
-//}
-
-
 void ProcDataLocal_c::setBasicSendFlags( ProcessPkg_c& pkg ) const
 {
   // the communicating devices are represented on ISO11783
@@ -313,25 +260,6 @@ void ProcDataLocal_c::setBasicSendFlags( ProcessPkg_c& pkg ) const
   pkg.set_Element(element());
   pkg.set_DDI(DDI());
 }
-
-//void ProcDataLocal_c::processProg( const ProcessPkg_c& )
-//{
-//  return;
-//}
-//
-//void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& )
-//{
-//  return;
-//}
-
-//void ProcDataBase_c::assignFromSource( const ProcIdent_c& acrc_src )
-//{
-//  mc_isoName = acrc_src.mc_isoName;
-//  mpc_externalOverridingIsoName = acrc_src.mpc_externalOverridingIsoName;
-//  // elementDDI() returns list reference, setElementDDI() expects pointer to list
-//  setElementDDI(acrc_src.DDI());
-//}
-
 
 void ProcDataLocal_c::setExternalOverridingIsoName(const IsoName_c* apc_val)
 {
