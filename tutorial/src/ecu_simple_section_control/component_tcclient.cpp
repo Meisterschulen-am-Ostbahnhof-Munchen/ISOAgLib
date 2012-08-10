@@ -47,8 +47,9 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::TutorialSectionContr
   m_mapProcDataSetPoint.insert(PairProcDataLocal(&c_workStateSection07,IndexWorkStateSection07));
   m_mapProcDataSetPoint.insert(PairProcDataLocal(&c_workStateSection08,IndexWorkStateSection08));
   m_mapProcDataSetPoint.insert(PairProcDataLocal(&c_condensedWorkState,IndexCondensedWorkState));
-
+#ifdef SYSTEM_PC
   std::cout << "CONSTRUCTOR" << std::endl;
+#endif
 }
 
 
@@ -100,7 +101,7 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::updateSectionStatus(
     vec_condensedWorkStateCurrent[2*ui8_sectionId + 1] = 0;
     // 2. set workstate. For now both setMasterMeasurementVal and setSetpointMasterVal call are required.
     arr_workStateProcData[ui8_sectionId]->setMasterMeasurementVal(static_cast<int32_t>(vec_sectionStatusCurrent[ui8_sectionId]));
-    //arr_workStateProcData[ui8_sectionId]->seexistMaster()tMasterMeasurementVal(static_cast<int32_t>(vec_sectionStatusCurrent[ui8_sectionId]));
+    //arr_workStateProcData[ui8_sectionId]->setMasterMeasurementVal(static_cast<int32_t>(vec_sectionStatusCurrent[ui8_sectionId]));
   }
 
   // 3. set condensed workstate. For now both setMasterMeasurementVal and setSetpointMasterVal call are required.
@@ -113,9 +114,9 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::processSetpointSet(
   IsoAgLib::EventSource_c ac_src, uint16_t ddi, int32_t ai32_val, const IsoAgLib::iIsoName_c& ac_callerISOName, bool /* ab_change*/ )
 {
   //if (!ab_change) return false;
-
+#ifdef SYSTEM_PC
   std::cout << ac_src.makeIProcDataLocal()->DDI() << " " << ddi << std::endl;
-
+#endif
   IterProcDataLocal iter = m_mapProcDataSetPoint.find(ac_src.makeIProcDataLocal());
   if (iter != m_mapProcDataSetPoint.end())
   {
@@ -126,9 +127,9 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::processSetpointSet(
       // send response to TC
       c_sectionControlState.setMasterMeasurementVal(ai32_val);
       c_sectionControlState.sendMasterMeasurementVal(ac_callerISOName); // force sending the message (see ISOBUS-11)
-
+#ifdef SYSTEM_PC
       std::cout << "IndexSectionControlState " << ai32_val << std::endl;
-
+#endif
       break;
     }
     case IndexWorkStateSection01:
@@ -158,9 +159,10 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::processSetpointSet(
           vec_sectionStatusTaskController[sectionId] = vec_condensedWorkStateTaskController[sectionId*2] & !vec_condensedWorkStateTaskController[sectionId*2 + 1];
         }
         
+#ifdef SYSTEM_PC
         std::cout << "vec_condensedWorkStateTaskController " << vec_condensedWorkStateTaskController.to_string() << std::endl;
         std::cout << "vec_sectionStatusTaskController      " << vec_sectionStatusTaskController.to_string() << std::endl;
-
+#endif
         updateSectionStatus( );
       }
       break;

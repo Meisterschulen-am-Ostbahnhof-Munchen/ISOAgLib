@@ -1383,7 +1383,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
 
         b_dpdCombination = false;
 
-        fprintf(partFileB, "c_myIsoName, %s, %d, %s", (issetpoint ? "true" : "false"), triggermethodtoi(vecstr_dataFromDPD[1].c_str()), vecstr_constructor[1].c_str());
+        fprintf(partFileB, "c_myIsoName, %s, %d", (issetpoint ? "true" : "false"), triggermethodtoi(vecstr_dataFromDPD[1].c_str()));
 #if 0
         fprintf(partFileB, "\n#ifdef USE_EEPROM_IO\n");
         fprintf(partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
