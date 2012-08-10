@@ -38,7 +38,6 @@ class EventSource_c {
   EventSource_c( __IsoAgLib::ProcDataLocal_c* apc_src ) : pc_src(apc_src) {};
   iProcDataLocal_c* makeIProcDataLocal( void );
 
-
  private:
   __IsoAgLib::ProcDataLocal_c* pc_src;
 };

@@ -1,5 +1,5 @@
-/***************************************************************************
-                          measureproglocal_c.cpp - object for managing local
+/*
+  measureproglocal_c.cpp: object for managing local
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -36,48 +36,15 @@ void MeasureProgLocal_c::init(
   int32_t ai32_initialVal)
 {
   mvec_measureSubprog.clear();
-  // set the pointers in the baseClass ProcessElementBase
-  //set(&ac_processData);
-  // store the parameter init vals
+
   m_ecuType = IsoName_c::ecuTypeANYOTHER;
-  //mc_isoName = ac_callerISOName;
   mi32_val = ai32_masterVal;
   mb_active = false;
 
   // set the rest of element vals to defined init
   men_doSend = Proc_c::DoNone;
-  //men_type = Proc_c::DistProp;
 
   mlist_thresholdInfo.clear();
-}
-
-#if 0 // no copy constructor and assign operator for now
-const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c& acrc_src){
-  // call base class operator
-  ProcessElementBase_c::operator=(acrc_src);
-
-  assignFromSource( acrc_src );
-
-  // return reference to source
-  return acrc_src;
-}
-
-MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& acrc_src)
-   : ProcessElementBase_c(acrc_src){
-  assignFromSource( acrc_src );
-}
-
-void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& acrc_src )
-{ // copy element vars
-  mc_isoName = acrc_src.mc_isoName;
-  men_doSend = acrc_src.men_doSend;
-  mb_active = acrc_src.mb_active;
-  mi32_val = acrc_src.mi32_val;
-  mvec_measureSubprog = acrc_src.mvec_measureSubprog;
-}
-#endif
-
-MeasureProgLocal_c::~MeasureProgLocal_c(){
 }
 
 void MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type,

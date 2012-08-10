@@ -41,50 +41,27 @@ public:
     @param apc_processData pointer to containing ProcessData instance
   */
   SetpointLocal_c( ) : ClientBase()
-    {init();};
+    {init();}
 
   /**
     initialise this SetpointLocal_c to a well defined starting condition
     @param apc_processData pointer to containing ProcessData instance
   */
   void init();
-  /**
-    assginment from another object
-    @param acrc_src source SetpointLocal_c instance
-    @return reference to source for cmd like "setp1 = setp2 = setp3;"
-  */
-  const SetpointLocal_c& operator=( const SetpointLocal_c& acrc_src );
-  /**
-    copy constructor for SetpointLocal
-    @param acrc_src source SetpointLocal_c instance
-  */
-   SetpointLocal_c( const SetpointLocal_c& acrc_src );
+
   /** default destructor which has nothing to do */
-  ~SetpointLocal_c();
+   ~SetpointLocal_c() {}
 
   /**
     retreive simple master setpoint
     @return actual received setpoint value (calculated with setpoint )
   */
   int32_t setpointVal() const {return mpc_master->value();}
-
-  /**
-    deliver the actual master entry
-    @return actual valid master setpoint
-  */
-  SetpointRegister_c& master(){return *mpc_master;};
-  /**
-    deliver the actual master entry
-    @return actual valid master setpoint
-  */
-  const SetpointRegister_c& masterConst() const {return *mpc_master;};
   
   /**  process a setpoint message */
   void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg );
 
 private: // Private methods
-  /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SetpointLocal_c& acrc_src );
   /**
     process a setpoint set for local process data
   */
@@ -95,6 +72,12 @@ private: // Private attributes
   SetpointRegister_c m_tcRegister;
   /** SetpointRegister_c entry, which represents the actual used setpoint value */
   SetpointRegister_c* mpc_master;
+
+private:
+  /** not copyable : copy constructor is only declared, never defined */
+  SetpointLocal_c(const SetpointLocal_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  SetpointLocal_c& operator=(const SetpointLocal_c&); 
 };
 
 }

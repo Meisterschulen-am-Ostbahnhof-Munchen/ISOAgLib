@@ -1,5 +1,5 @@
-/***************************************************************************
-                          managemeasureproglocal_c.h - managing of local
+/*
+  managemeasureproglocal_c.h
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -40,22 +40,16 @@ class ManageMeasureProgLocal_c : public ClientBase
     constructor which initialse both pointers if given
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  ManageMeasureProgLocal_c( );
+  ManageMeasureProgLocal_c();
   
   /** destructor */
-  virtual ~ManageMeasureProgLocal_c();
+  virtual ~ManageMeasureProgLocal_c() {}
 
   /**
     initialise this ManageMeasureProgLocal_c instance to a well defined initial state
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  void init( );
-
-  /** copy constructor */
-  ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& acrc_src );
-
-  /** assignment operator */
-  const ManageMeasureProgLocal_c& operator=( const ManageMeasureProgLocal_c& acrc_src );
+  void init();
 
   /**
     perform periodic actions
@@ -131,12 +125,15 @@ class ManageMeasureProgLocal_c : public ClientBase
 #endif
   /** cache iterator to measure prog */
   MeasureProgLocal_c* mpc_progCache;
- private:
-  /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ManageMeasureProgLocal_c& acrc_src );
+private:
   /** create first default measure prog, if no measure prog in list */
   void checkInitList( void );
 
+private:
+  /** not copyable : copy constructor is only declared, never defined */
+  ManageMeasureProgLocal_c(const ManageMeasureProgLocal_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  ManageMeasureProgLocal_c& operator=(const ManageMeasureProgLocal_c&); 
 };
 
 

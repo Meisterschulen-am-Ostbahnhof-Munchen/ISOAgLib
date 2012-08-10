@@ -130,22 +130,6 @@ public:
   /** default destructor which has nothing to do */
   ~ProcDataLocal_c();
 
-  /** assignment operator for this base object
-    @param acrc_src source instance
-    @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
-  */
-  const ProcDataLocal_c& operator=(const ProcDataLocal_c& acrc_src);
-
-  /** copy constructor for ProcDataLocal_c
-    @param acrc_src source instance
-  */
-  ProcDataLocal_c(const ProcDataLocal_c& acrc_src);
-
-  /** deliver a reference to the setpoint management class */
-  SetpointLocal_c& setpoint( void ) { return mc_setpoint; }
-
-  const SetpointLocal_c& setpointConst( void ) const { return mc_setpoint; }
-
   /** set the pointer to the handler class
     * @param apc_processDataChangeHandler pointer to handler class of application
     */
@@ -194,17 +178,17 @@ public:
   */
   virtual bool timeEvent(  uint16_t *pui16_nextTimePeriod = NULL );
 
-  /** send a min-information (selected by value group) to a specified target (selected by ISOName)
+  /** send the value to a specified target (selected by ISOName)
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
   void sendMasterMeasurementVal( const IsoName_c& ac_targetISOName ) const;
 
   /**
-    (used for accessing setpoint values from measure progs)
+    Get setpoint value as received from remote system
     @return exact value of master setpoint
   */
-  virtual int32_t setpointValue() const { return setpointConst().masterConst().value();}
+  virtual int32_t setpointValue() const { return mc_setpoint.setpointVal(); }
 
   /**
     allow local client to actively start a measurement program
@@ -223,11 +207,6 @@ public:
   */
   virtual void stopRunningMeasurement(const IsoName_c& rc_isoName);
 
-  bool isSetPoint() const { return procdataconfiguration.mb_isSetpoint; }
-  uint8_t triggerMethod() const { return procdataconfiguration.mui8_triggerMethod; } 
-
-public: // from former base class
-
   /**
     deliver value DDI (only possible if only one elementDDI in list)
     @return DDI
@@ -241,28 +220,22 @@ public: // from former base class
   uint16_t element() const{ return mui16_element; }
 
   /**
+    return true if ProcessData is set as setpoint 
+    @return setpoint information
+  */
+  bool isSetPoint() const { return procdataconfiguration.mb_isSetpoint; }
+
+  /**
+    deliver trigger method information
+    @return setpoint information
+  */
+  uint8_t triggerMethod() const { return procdataconfiguration.mui8_triggerMethod; } 
+
+  /**
     deliver the isoName (retrieved from pointed isoName value, if valid pointer)
     @return actual ISOName
   */
   const IsoName_c& isoName() const { return mc_isoName; }
-
-  /**
-    set DDI, value group and setpoint/measure type of process msg
-    @param aps_elementDDI
-  */
-  void setElementDDI(uint16_t aui16_ddi) { mui16_ddi = aui16_ddi; }
-
-  /**
-    set device element number
-    @param  aui16_element
-  */
-  void setElementNumber(uint16_t aui16_element) { mui16_element = aui16_element; }
-
-  /**
-    set value ISOName (machine type specific table of process data types)
-    @param ac_val new ISOName val
-  */
-  void setISOName(const IsoName_c& ac_val){mc_isoName = ac_val;}
 
   /**
     check if this item has the same identity as defined by the parameters,
@@ -290,9 +263,6 @@ protected: // Protected methods
   void sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
 private: // Private methods
-  /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ProcDataLocal_c& acrc_src );
-
   /** processing of a setpoint message */
   virtual void processSetpoint( const ProcessPkg_c& pkg );
 
@@ -332,6 +302,12 @@ private:
 
 private:
   friend class MeasureProgLocal_c;
+
+private:
+  /** not copyable : copy constructor is only declared, never defined */
+  ProcDataLocal_c(const ProcDataLocal_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  ProcDataLocal_c& operator=(const ProcDataLocal_c&); 
 
 };
 

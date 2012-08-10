@@ -45,9 +45,10 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
                             int ai_multitonInst
                            )
 {
-  setElementDDI(aui16_ddi);
-  setElementNumber(aui16_element);
-
+  mui16_ddi = aui16_ddi;
+  mui16_element = aui16_element;
+  procdataconfiguration.mb_isSetpoint = ab_isSetpoint;
+  procdataconfiguration.mui8_triggerMethod = aui8_triggerMethod & 0x3F; // 6 bits
   mc_isoName = acrc_isoName;
 
   setMultitonInst(ai_multitonInst);
@@ -60,55 +61,13 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
   mc_setpoint.init();
   mc_measureprog.init();
 
-  procdataconfiguration.mb_isSetpoint = ab_isSetpoint;
-  procdataconfiguration.mui8_triggerMethod = aui8_triggerMethod & 0x3F; // 6 bits
+
 }
 
 ProcDataLocal_c::~ProcDataLocal_c(){
   // now unregister the pointer to this instance in Process_c
   getProcessInstance4Comm().unregisterLocalProcessData( this );
 }
-
-#if 0 // no copy constructor and assign operator for now
-const ProcDataLocal_c& ProcDataLocal_c::operator=(const ProcDataLocal_c& acrc_src)
-{ // call base class operator
-  ClientBase::operator=(acrc_src);
-  // now assign flags of this class
-  assignFromSource(acrc_src);
-
-  // NOT COMPLETE ?
-  // return source reference
-  return *this;
-}
-
-void ProcDataLocal_c::assignFromSource( const ProcDataLocal_c& acrc_src )
-{ // copy element vars
-  // NOT COMPLETE ?
-  mc_isoName = acrc_src.mc_isoName;
-  // elementDDI() returns list reference, setElementDDI() expects pointer to list
-  setElementDDI(acrc_src.DDI());
-
-  mpc_processDataChangeHandler = acrc_src.mpc_processDataChangeHandler;
-
-  mi32_masterVal = acrc_src.mi32_masterVal;
-  mb_cumulativeValue = acrc_src.mb_cumulativeValue;
-
-  mb_isSetpoint = acrc_src.mb_cumulativeValue;
-  mui8_triggerMethod = acrc_src.mui8_triggerMethod;
-}
-
-ProcDataLocal_c::ProcDataLocal_c(const ProcDataLocal_c& acrc_src)
-   : ClientBase( acrc_src ),
-		 mc_isoName( acrc_src.mc_isoName )
-     mc_measureprog( this ),
-     mc_setpoint( this )
-{
-  // NOT COMPLETE ?
-  assignFromSource(acrc_src);
-
-  getProcessInstance4Comm().registerLocalProcessData( this );
-}
-#endif
 
 void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
 {
@@ -121,7 +80,6 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
   else
     processProg(pkg);
 }
-
 
 void ProcDataLocal_c::setMasterMeasurementVal(int32_t ai32_val){
   mi32_masterVal = ai32_val;

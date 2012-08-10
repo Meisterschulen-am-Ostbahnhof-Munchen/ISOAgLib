@@ -35,32 +35,19 @@ public:
     @param ai32_value setpoint value
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(IsoName_c::ecuType_t ecuType = IsoName_c::ecuTypeANYOTHER, int32_t ai32_value = NO_VAL_32S,
-     bool ab_valid = true)
-      {  init(ecuType, ai32_value, ab_valid);}
+  SetpointRegister_c()
+      {  init(IsoName_c::ecuTypeANYOTHER, NO_VAL_32S, true); }
+
   /**
     initialise this SetpointRegister_c to a well defined starting condition
     @param acrc_isoName device key of commander of this setpoint register set
     @param ai32_value setpoint value
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(IsoName_c::ecuType_t ecuType = IsoName_c::ecuTypeANYOTHER, int32_t ai32_value = NO_VAL_32S,
-      bool ab_valid = true);
-
-  /**
-    operator= for SetpointRegister_c class
-    @param acrc_src source SetpointRegister_c instance
-    @return reference to source instance for cmd like "setp1 = setp2 = setp3;"
-  */
-  const SetpointRegister_c& operator=(const SetpointRegister_c& acrc_src);
-  /**
-    copy constructor for SetpointRegister_c class
-    @param acrc_src source SetpointRegister_c instance
-  */
-  SetpointRegister_c(const SetpointRegister_c& acrc_src);
+  void init(IsoName_c::ecuType_t ecuType, int32_t ai32_value, bool ab_valid);
 
   /** default destructor which has nothing to do */
-  ~SetpointRegister_c();
+  ~SetpointRegister_c() {}
 
   /**
     compare two Setpoint Register items by value
@@ -112,10 +99,6 @@ public:
   */
   bool setValid(bool ab_state = true);
 
-private: // Private methods
-  /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SetpointRegister_c& acrc_src );
-
 private: // Private attributes
   /** setpoint value */
   int32_t mi32_value;
@@ -125,6 +108,12 @@ private: // Private attributes
 
   /** valid state == the setpoint value is actually valid - it is conformant with the master setpoint */
   bool b_valid;
+
+private:
+  /** not copyable : copy constructor is only declared, never defined */
+  SetpointRegister_c(const SetpointRegister_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  SetpointRegister_c& operator=(const SetpointRegister_c&); 
 };
 
 }

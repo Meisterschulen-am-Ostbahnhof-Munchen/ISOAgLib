@@ -1,5 +1,5 @@
-/***************************************************************************
-                          measureproglocal_c.h - object for managing local
+/*
+  measureproglocal_c.h: object for managing local
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -78,19 +78,9 @@ public:
   */
   void init( int32_t ai32_masterVal = 0, int32_t ai32_initialVal = 0);
 
-  /**
-    assignment of MeasureProgLocal_c objects
-    @param acrc_src source MeasureProgLocal_c instance
-    @return reference to source instance for assignment like "prog1 = prog2 = prog3;"
-  */
-  const MeasureProgLocal_c& operator=(const MeasureProgLocal_c& acrc_src);
-  /**
-    copy constructor for MeasureProgLocal
-    @param acrc_src source MeasureProgLocal_c instance
-  */
-   MeasureProgLocal_c(const MeasureProgLocal_c& acrc_src);
   /** default destructor which has nothing to do */
-  virtual ~MeasureProgLocal_c();
+   virtual ~MeasureProgLocal_c() {}
+
   /**
     start a measuring programm with new master measurement value
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
@@ -202,9 +192,6 @@ public:
   void setISONameType( IsoName_c::ecuType_t ecuType ) {m_ecuType = ecuType;}
 
 private: // Private methods
-  /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const MeasureProgLocal_c& acrc_src );
-
   /**
     helper function to check val() against limits
     @return true if value sending allowed
@@ -238,6 +225,12 @@ private: // Private attributes
 
   /** isoName type value of caller of program */
   IsoName_c::ecuType_t m_ecuType;
+
+private:
+  /** not copyable : copy constructor is only declared, never defined */
+  MeasureProgLocal_c(const MeasureProgLocal_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  MeasureProgLocal_c& operator=(const MeasureProgLocal_c&); 
 };
 
 }

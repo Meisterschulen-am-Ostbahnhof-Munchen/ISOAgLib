@@ -195,7 +195,7 @@ public:
     @return actual received setpoint value
   */
   int32_t setpointVal() const
-    { return ProcDataLocal_c::setpointConst().setpointVal();}
+    { return ProcDataLocal_c::setpointValue();}
 
   /**
     allow local client to actively start a measurement program

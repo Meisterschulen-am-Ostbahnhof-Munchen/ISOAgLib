@@ -27,28 +27,6 @@ void SetpointRegister_c::init(IsoName_c::ecuType_t ecuType, int32_t ai32_value, 
   setValid(ab_valid);
 }
 
-#if 0
-const SetpointRegister_c& SetpointRegister_c::operator=(const SetpointRegister_c& acrc_src){
-  assignFromSource(acrc_src);
-  return *this;
-}
-
-SetpointRegister_c::SetpointRegister_c(const SetpointRegister_c& acrc_src){
-  assignFromSource(acrc_src);
-}
-/** base function for assignment of element vars for copy constructor and operator= */
-void SetpointRegister_c::assignFromSource( const SetpointRegister_c& acrc_src )
-{ // direct value set to avoid special functions of equivalent set functions
-  mi32_value = acrc_src.mi32_value;
-
-  setISOName(acrc_src.isoName());
-  setValid(acrc_src.valid());
-}
-#endif
-
-SetpointRegister_c::~SetpointRegister_c(){
-}
-
 void SetpointRegister_c::setValue(int32_t ai32_val)
 {
   if (ai32_val != NO_VAL_32S) // @TODO remove
