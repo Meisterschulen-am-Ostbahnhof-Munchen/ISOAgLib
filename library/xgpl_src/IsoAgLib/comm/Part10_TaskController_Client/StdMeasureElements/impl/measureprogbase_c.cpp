@@ -125,9 +125,7 @@ int32_t MeasureProgBase_c::val(bool ab_sendRequest) const
   if (ab_sendRequest) {
     // prepare general command in process pkg
     ProcessPkg_c pkg;
-    pkg.mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                             ProcessCmd_c::exactValue,
-                                                             ProcessCmd_c::requestValue);
+    pkg.mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */, ProcessCmd_c::requestValue);
 
     processData().sendValISOName(pkg, isoName(), int32_t(0));
   }
@@ -158,29 +156,9 @@ bool MeasureProgBase_c::processMsg( const ProcessPkg_c& pkg ){
     b_edited = true;
 
     // set en_doSendPkg (for ISO)
-    ProcessCmd_c::ValueGroup_t en_valueGroup = pkg.mc_processCmd.getValueGroup();
     Proc_c::doSend_t en_doSendPkg = Proc_c::DoVal;  //default send data mode
     if (pkg.mc_processCmd.checkIsSetpoint())
       en_doSendPkg = Proc_c::DoValForExactSetpoint; // measurement for exact value setpoint
-
-    switch (en_valueGroup)
-    {
-      case ProcessCmd_c::minValue:
-        en_doSendPkg = Proc_c::DoValForMinSetpoint; // measurement for min value setpoint
-        if (!pkg.mc_processCmd.checkIsSetpoint())
-          en_doSendPkg = Proc_c::DoValForMinMeasurement; // measurement for min value measurement
-        break;
-      case ProcessCmd_c::maxValue:
-        en_doSendPkg = Proc_c::DoValForMaxSetpoint; // measurement for max value setpoint
-        if (!pkg.mc_processCmd.checkIsSetpoint())
-          en_doSendPkg = Proc_c::DoValForMaxMeasurement; // measurement for max value measurement
-        break;
-      case ProcessCmd_c::defaultValue:
-        en_doSendPkg = Proc_c::DoValForDefaultSetpoint; // measurement for default value setpoint
-        break;
-      default:
-        ;
-    }
 
     // programm controlling command
     if (// ISO
@@ -245,20 +223,8 @@ bool MeasureProgBase_c::processMsg( const ProcessPkg_c& pkg ){
   return b_edited;
 }
 
-int32_t MeasureProgBase_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const {
-  int32_t i32_value = val();
-  switch (en_valueGroup)
-  {
-    case ProcessCmd_c::exactValue:
-      // set val with function, to calc delta and accel
-      // i32_value = val();
-      break;
-    default:
-      // wrong range
-      break;
-  }
-
-  return i32_value;
+int32_t MeasureProgBase_c::valForGroup() const {
+  return val();
 }
 
 void MeasureProgBase_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend)
@@ -295,16 +261,8 @@ void MeasureProgBase_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::do
     addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
 }
 
-void MeasureProgBase_c::resetValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup, int32_t ai32_val){
-    switch (en_valueGroup)
-    {
-      case ProcessCmd_c::exactValue:
-        // set val with function, to calc delta and accel
-        resetVal(ai32_val);
-        break;
-      default:
-        break;
-    }
+void MeasureProgBase_c::resetValForGroup(int32_t ai32_val){
+  resetVal(ai32_val);
 }
 
 } // end of namespace __IsoAgLib

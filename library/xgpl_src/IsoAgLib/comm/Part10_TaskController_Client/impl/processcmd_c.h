@@ -27,9 +27,6 @@ namespace __IsoAgLib {
 class ProcessCmd_c {
 public:
 
-  /** enum for specification of defined setpoint types */
-  enum ValueGroup_t { noValue = 0, exactValue = 1, minValue = 2, maxValue = 4, defaultValue = 8 };
-
   /** enum for general commands */
   enum CommandType_t {
     noCommand                             = 0,
@@ -62,23 +59,16 @@ public:
   /** read access for isRequest */
   bool checkIsRequest() const { return mb_isRequest; };
 
-  /** read access for men_valueGroup */
-  ValueGroup_t getValueGroup() const { return men_valueGroup; };
-
   /** read access for men_command */
   CommandType_t getCommand() const { return men_command; };
 
   /** set values, called in ProcessPkg_c::resolveCommand() */
-  void setValues(bool mb_isSetpoint, bool mb_isRequest, ValueGroup_t men_valueGroup,
-                 CommandType_t men_command);
+  void setValues(bool mb_isSetpoint, bool mb_isRequest, CommandType_t men_command);
 
 private:
 
   bool mb_isSetpoint;
   bool mb_isRequest;
-
-  /** command affects min, max, exact or default value */
-  ValueGroup_t men_valueGroup;
 
   /** current command */
   CommandType_t men_command;

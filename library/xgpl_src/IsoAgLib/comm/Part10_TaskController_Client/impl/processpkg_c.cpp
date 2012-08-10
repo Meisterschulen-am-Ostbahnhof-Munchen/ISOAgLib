@@ -201,7 +201,6 @@ bool ProcessPkg_c::resolveCommandTypeForISO(uint16_t aui16_ddi)
 {
   bool b_isSetpoint = false;
   bool b_isRequest = false;
-  ProcessCmd_c::ValueGroup_t en_valueGroup = ProcessCmd_c::noValue;
   ProcessCmd_c::CommandType_t en_command = ProcessCmd_c::noCommand;
 
   if ( identType() != Ident_c::StandardIdent) {
@@ -247,15 +246,9 @@ bool ProcessPkg_c::resolveCommandTypeForISO(uint16_t aui16_ddi)
     }
   }
 
-  if ( aui16_ddi == DDI() )
-  {
-    //b_isSetpoint = rl_elementDDI.b_isSetpoint;
-    en_valueGroup = ProcessCmd_c::exactValue;
-  }
-
   if (en_command != ProcessCmd_c::noCommand)
   {
-    mc_processCmd.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command);
+    mc_processCmd.setValues(b_isSetpoint, b_isRequest, en_command);
     return true;
   }
   else return false;

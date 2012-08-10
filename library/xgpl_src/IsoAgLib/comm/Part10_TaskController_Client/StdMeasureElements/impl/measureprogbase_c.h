@@ -255,7 +255,7 @@ protected: // Protected methods
     @param en_valueGroup of wanted subtype
     @param ai32_val reset measure value to this value (ISO remote only)
   */
-  void resetValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup, int32_t ai32_val = 0);
+  void resetValForGroup(int32_t ai32_val = 0);
   /**
     internal increment the value
     @param ai32_val increment for internal measure val
@@ -295,7 +295,7 @@ private: // Private methods
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-  int32_t valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const;
+  int32_t valForGroup() const;
   /**
     process a message with an increment for a measuring program
 

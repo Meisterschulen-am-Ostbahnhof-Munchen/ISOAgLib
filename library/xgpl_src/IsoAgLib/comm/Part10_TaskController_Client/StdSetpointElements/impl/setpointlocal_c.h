@@ -149,7 +149,6 @@ public:
      @return true -> successful sent
   */
   bool sendSetpointForGroup(const IsoName_c& ac_targetISOName,
-                            ProcessCmd_c::ValueGroup_t en_valueGroup = ProcessCmd_c::noValue,
                             ProcessCmd_c::CommandType_t en_command = ProcessCmd_c::noCommand) const;
 
   /**
@@ -158,7 +157,7 @@ public:
     @return true -> successful sent
   */
   bool sendMasterSetpointVal( const IsoName_c& ac_targetISOName) const
-   { return sendSetpointForGroup(ac_targetISOName, ProcessCmd_c::exactValue, ProcessCmd_c::setValue );};
+   { return sendSetpointForGroup(ac_targetISOName, ProcessCmd_c::setValue );};
 
 protected: // Protected methods
   /**

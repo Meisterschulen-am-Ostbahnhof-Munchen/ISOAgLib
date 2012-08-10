@@ -172,10 +172,9 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendSetpointForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const iIsoName_c& ac_targetISOName ) const
+  bool sendSetpointForGroup( const iIsoName_c& ac_targetISOName ) const
   {
-    return setpointConst().sendSetpointForGroup( ac_targetISOName,
-                                            en_valueGroup, __IsoAgLib::ProcessCmd_c::setValue );
+    return setpointConst().sendSetpointForGroup( ac_targetISOName, __IsoAgLib::ProcessCmd_c::setValue );
   }
 
   /**

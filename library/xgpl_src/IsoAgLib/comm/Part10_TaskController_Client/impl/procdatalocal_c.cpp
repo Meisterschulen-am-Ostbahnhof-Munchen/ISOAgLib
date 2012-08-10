@@ -263,9 +263,7 @@ bool ProcDataLocal_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISONam
 
   ProcessPkg_c pkg;
   // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                           ProcessCmd_c::exactValue,
-                                                           ProcessCmd_c::setValue);
+  pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
 
   return sendValISOName( pkg, ac_targetISOName, masterMeasurementVal());
 }

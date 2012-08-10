@@ -134,7 +134,7 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const;
+  bool sendValForGroup( const IsoName_c& ac_targetISOName) const;
 
   /**
     send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
@@ -142,13 +142,13 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendSetpointValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const;
+  bool sendSetpointValForGroup( const IsoName_c& ac_targetISOName) const;
   /**
     deliver to en_valueGroup according setpoint from a master setpoint
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-  int32_t setpointValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const;
+  int32_t setpointValForGroup() const;
 
   /**
     process a message: reset command or value requests

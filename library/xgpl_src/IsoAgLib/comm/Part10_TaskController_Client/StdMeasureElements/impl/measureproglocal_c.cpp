@@ -163,24 +163,22 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
   return b_sendResult;
 }
 
-bool MeasureProgLocal_c::sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const
+bool MeasureProgLocal_c::sendValForGroup( const IsoName_c& ac_targetISOName) const
 {
   ProcessPkg_c pkg;
   // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                           en_valueGroup, ProcessCmd_c::setValue);
-  return processDataConst().sendValISOName( pkg, ac_targetISOName, valForGroup(en_valueGroup));
+  pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
+  return processDataConst().sendValISOName( pkg, ac_targetISOName, valForGroup());
 }
 
-bool MeasureProgLocal_c::sendSetpointValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
+bool MeasureProgLocal_c::sendSetpointValForGroup( const IsoName_c& ac_targetISOName) const {
   ProcessPkg_c pkg;
   // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
-                                                              en_valueGroup, ProcessCmd_c::setValue);
-  return processDataConst().sendValISOName( pkg, ac_targetISOName, setpointValForGroup(en_valueGroup));
+  pkg.mc_processCmd.setValues(TRUE /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
+  return processDataConst().sendValISOName( pkg, ac_targetISOName, setpointValForGroup());
 }
 
-int32_t MeasureProgLocal_c::setpointValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const {
+int32_t MeasureProgLocal_c::setpointValForGroup() const {
   int32_t i32_value = 0;
   ProcDataLocal_c* pc_procdata = pprocessData();
   if (pc_procdata->setpointExistMaster())
@@ -213,7 +211,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
     if ( arc_data.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
 
-      resetValForGroup(arc_data.mc_processCmd.getValueGroup(), ci32_val);
+      resetValForGroup(ci32_val);
 
       if (Proc_c::defaultDataLoggingDDI == arc_data.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
@@ -226,7 +224,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
     } // write
     else
     { // read -> answer wanted value
-      sendValForGroup( arc_data.mc_processCmd.getValueGroup(), c_senderIsoNameOrig );
+      sendValForGroup( c_senderIsoNameOrig );
 
       if ((Proc_c::defaultDataLoggingDDI == arc_data.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
@@ -317,28 +315,13 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
 bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   bool b_success = false;
 
-  ProcessCmd_c::ValueGroup_t en_valueGroup;
-
-  switch (ren_doSend)
-  {
-    case Proc_c::DoValForDefaultSetpoint: en_valueGroup = ProcessCmd_c::defaultValue; break;
-    case Proc_c::DoValForMinSetpoint:
-    case Proc_c::DoValForMinMeasurement:
-      en_valueGroup = ProcessCmd_c::minValue; break;
-    case Proc_c::DoValForMaxSetpoint:
-    case Proc_c::DoValForMaxMeasurement:
-      en_valueGroup = ProcessCmd_c::maxValue; break;
-    case Proc_c::DoValForExactSetpoint:   en_valueGroup = ProcessCmd_c::exactValue; break;
-    default:                              en_valueGroup = ProcessCmd_c::noValue;
-  }
-
-  if (ProcessCmd_c::noValue != en_valueGroup)
+  if (Proc_c::DoValForExactSetpoint == ren_doSend)
     // get value from corresponding setpoint and send it
-    b_success = (sendSetpointValForGroup( en_valueGroup, isoName()))?true : b_success;
+    b_success = (sendSetpointValForGroup( isoName()))?true : b_success;
 
   // normal measurement (no measurement on setpoint DDI)
   if (Proc_c::DoVal == ren_doSend)
-    b_success = (sendValForGroup( ProcessCmd_c::exactValue, isoName()))?true : b_success;
+    b_success = (sendValForGroup( isoName()))?true : b_success;
 
   return b_success;
 }
@@ -355,8 +338,7 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   ProcessPkg_c pkg;
 
   // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                              ProcessCmd_c::exactValue, ProcessCmd_c::setValue);
+  pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
   // allow reset with value
   //mi32_val = 0;
   mi32_val = ai32_val;
