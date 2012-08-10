@@ -126,11 +126,11 @@ public:
   /**
     @return isoName, saved from remote status messages
   */
-  const IsoName_c& getISONameFromType( IsoName_c::ecuType_t ecuType ) const;
+  const IsoName_c& getISONameFromType( Proc_c::remoteType_t ecuType ) const;
   /**
-    @return ecuType_t from given IsoName_c
+    @return remoteType_t from given IsoName_c
   */
-  IsoName_c::ecuType_t getTypeFromISOName( const IsoName_c& isoName ) const;
+  Proc_c::remoteType_t getTypeFromISOName( const IsoName_c& isoName ) const;
 
 #if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;

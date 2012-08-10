@@ -36,7 +36,7 @@ class ManageMeasureProgLocal_c : public ClientBase
   void timeEvent( ProcDataLocal_c& ac_processData, uint16_t& rui16_nextTimePeriod );
 
   /** process a measure prog message for local process data */
-  void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data, IsoName_c::ecuType_t a_ecuType );
+  void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data, Proc_c::remoteType_t a_ecuType );
 
   /** set value for all registered Measure Progs */
   void setVal( ProcDataLocal_c& ac_processData, int32_t ai32_val );
@@ -47,10 +47,10 @@ class ManageMeasureProgLocal_c : public ClientBase
     stop all measurement progs in all local process instances, started with given isoName
     @param a_ecuType
   */
-  void stopRunningMeasurement(ProcDataLocal_c& ac_processData, IsoName_c::ecuType_t a_ecuType);
+  void stopRunningMeasurement(ProcDataLocal_c& ac_processData, Proc_c::remoteType_t a_ecuType);
 
 private:
-  MeasureProgLocal_c& getMeasureProgLocal( IsoName_c::ecuType_t a_ecuType );
+  MeasureProgLocal_c& getMeasureProgLocal( Proc_c::remoteType_t a_ecuType );
 
 private:
   /** container of objects for managing jobs of local measure programs */

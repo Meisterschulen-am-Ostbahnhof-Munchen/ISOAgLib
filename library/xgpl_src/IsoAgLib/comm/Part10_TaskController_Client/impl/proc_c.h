@@ -24,7 +24,12 @@ namespace __IsoAgLib {
 class Proc_c {
 public:
 
-/** enum type definition as part of class */
+  enum remoteType_t {
+    remoteTypeTaskControl,
+    remoteTypeLogger,
+    remoteTypeUndefined
+  };
+
   enum measurementCommand_t { MeasurementCommandTimeProp =          0x4,
                               MeasurementCommandDistProp =          0x5,
                               MeasurementCommandMinimumThreshold =  0x6,

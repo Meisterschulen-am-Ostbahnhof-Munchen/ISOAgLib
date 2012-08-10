@@ -19,7 +19,7 @@
 
 namespace __IsoAgLib {
 
-MeasureProgLocal_c::MeasureProgLocal_c(IsoName_c::ecuType_t ecutype)
+MeasureProgLocal_c::MeasureProgLocal_c(Proc_c::remoteType_t ecutype)
   : ClientBase(),
     mi32_val(0),
     mlist_thresholdInfo(),
@@ -49,9 +49,9 @@ bool MeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const Proc
       if ( (Proc_c::defaultDataLoggingDDI == arc_data.mui16_DDI) 
         && ( ac_processData.getProcessDataChangeHandler() != NULL ) )
       {
-         // call handler function if handler class is registered
-          ac_processData.getProcessDataChangeHandler()->processDefaultLoggingStart(
-              arc_data.getMonitorItemForSA()->isoName().toConstIisoName_c() );
+        // call handler function if handler class is registered
+        ac_processData.getProcessDataChangeHandler()->processDefaultLoggingStart(
+                   arc_data.getMonitorItemForSA()->isoName().toConstIisoName_c() );
       }
       break;
     default:

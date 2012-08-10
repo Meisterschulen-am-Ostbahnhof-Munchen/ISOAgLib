@@ -63,9 +63,9 @@ public:
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param ecuType ecuType_t of remote member
+    @param ecutype remoteType_t of remote member
   */
-  MeasureProgLocal_c(IsoName_c::ecuType_t ecutype);
+  MeasureProgLocal_c(Proc_c::remoteType_t ecutype);
 
   /** default destructor which has nothing to do */
    virtual ~MeasureProgLocal_c() {}
@@ -107,10 +107,10 @@ public:
   int32_t val() const { return mi32_val; }
 
   /**
-    return the ecuType_t code for this measureprog
-    @return ecuType_t of this measureprog
+    return the remoteType_t code for this measureprog
+    @return remoteType_t of this measureprog
   */
-  IsoName_c::ecuType_t isoNameType() const { return m_ecuType; }
+  Proc_c::remoteType_t isoNameType() const { return m_ecuType; }
 
 private: // Private methods
   /**
@@ -147,7 +147,7 @@ private: // Private attributes
   Vec_MeasureSubprog mvec_measureSubprog;
 
   /** isoName type value of caller of program */
-  IsoName_c::ecuType_t m_ecuType;
+  Proc_c::remoteType_t m_ecuType;
 
 private:
   /** not copyable : copy constructor is only declared, never defined */

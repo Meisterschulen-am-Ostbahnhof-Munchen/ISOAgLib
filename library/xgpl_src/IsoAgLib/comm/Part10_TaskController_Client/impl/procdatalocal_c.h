@@ -111,7 +111,7 @@ public:
   void incrMeasurementVal(int32_t ai32_val);
 
   /** process a message, which is adressed for this process data item */
-  void processMsg( ProcessPkg_c& pkg, IsoName_c::ecuType_t a_ecuType );
+  void processMsg( ProcessPkg_c& pkg, Proc_c::remoteType_t a_ecuType );
 
   /**
     delete all running measure programs of members which are >3sec inactive;
@@ -140,7 +140,7 @@ public:
     stop all measurement progs in all local process instances, started with given isoName
     @param rc_isoName
   */
-  void stopRunningMeasurement(IsoName_c::ecuType_t a_ecuType);
+  void stopRunningMeasurement(Proc_c::remoteType_t a_ecuType);
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
@@ -187,7 +187,7 @@ public:
                ) const;
 
 private: // Private methods
-  void sendValue( IsoName_c::ecuType_t a_ecuType_t, int32_t ai32_val) const;
+  void sendValue( Proc_c::remoteType_t a_remoteType, int32_t ai32_val) const;
 
 private: // Private attributes
   /** IsoName_c used for this instance */

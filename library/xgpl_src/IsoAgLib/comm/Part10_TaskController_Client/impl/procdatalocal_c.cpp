@@ -81,7 +81,7 @@ void ProcDataLocal_c::timeEvent( uint16_t& rui16_nextTimePeriod ){
   mc_measureprog.timeEvent( *this, rui16_nextTimePeriod);
 }
 
-void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg, IsoName_c::ecuType_t a_ecuType )
+void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg, Proc_c::remoteType_t a_ecuType )
 {
   isoaglib_assert( DDI() == pkg.mui16_DDI );
   
@@ -114,14 +114,14 @@ void ProcDataLocal_c::startDataLogging(Proc_c::measurementCommand_t ren_type /* 
   mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, ac_receiverDevice);
 }
 
-void ProcDataLocal_c::stopRunningMeasurement(IsoName_c::ecuType_t a_ecuType)
+void ProcDataLocal_c::stopRunningMeasurement(Proc_c::remoteType_t a_ecuType)
 {
   mc_measureprog.stopRunningMeasurement(*this, a_ecuType);
 }
 
-void ProcDataLocal_c::sendValue( IsoName_c::ecuType_t a_ecuType_t, int32_t ai32_val) const
+void ProcDataLocal_c::sendValue( Proc_c::remoteType_t a_ecuType, int32_t ai32_val) const
 {
-  const IsoName_c& c_destinationISOName = getProcessInstance4Comm().getISONameFromType( a_ecuType_t );
+  const IsoName_c& c_destinationISOName = getProcessInstance4Comm().getISONameFromType( a_ecuType );
 
   if (!c_destinationISOName.isSpecified()) return;
   
