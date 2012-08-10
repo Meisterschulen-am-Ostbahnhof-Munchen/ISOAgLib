@@ -58,30 +58,30 @@ public:
     deliver subprog type
     @return type of this measure subprogram increment
   */
-  Proc_c::type_t type(){return men_type;};
+  Proc_c::type_t type() const { return men_type; }
 
   /**
     set subprog type
     @param ren_type wanted increment type of this subprogram
   */
-  void setType(Proc_c::type_t ren_type){men_type = ren_type;};
+  void setType(Proc_c::type_t ren_type) { men_type = ren_type; }
 
   /**
     deliver subprog data send type
     @return data send type of this measure subprogram increment
   */
-  Proc_c::doSend_t doSend(){return men_doSend;};
+  Proc_c::doSend_t doSend() const { return men_doSend; }
 
   /**
     deliver the increment value of this subprog
     @return increment value
   */
-  int32_t increment() const {return mi32_increment;};
+  int32_t increment() const { return mi32_increment; }
   /**
     set increment value
     @param ai32_val wanted increment value
   */
-  void setIncrement(int32_t ai32_val){mi32_increment = ai32_val;};
+  void setIncrement(int32_t ai32_val) { mi32_increment = ai32_val; }
 
   /**
     start a measuring subprogramm, potentially with increment and lastVal definition
@@ -99,7 +99,7 @@ public:
   int32_t nextTriggerTime(int32_t ai32_val);
 
   /** stop a measuring subprogram  */
-  void stop(){mb_started = false;};
+  void stop() { mb_started = false; }
 
 private: // Private attributes
   /** last value for the increment test of this instance */

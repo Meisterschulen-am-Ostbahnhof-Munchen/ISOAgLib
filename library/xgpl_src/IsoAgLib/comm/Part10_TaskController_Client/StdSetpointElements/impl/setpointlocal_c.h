@@ -69,24 +69,12 @@ public:
   int32_t setpointVal() const {return mpc_master->value();}
 
   /**
-    check if actual a master setpoint item is defined
-    @see master
-    @return true -> an active master setpoint exist
-  */
-  bool existMaster() const {
-    // Keep this argument order for operator !=, otherwise tasking 7.5
-    // won't compile:
-    return (NULL != mpc_master);
-  }
-  /**
     deliver the actual master entry
-    @see existMaster
     @return actual valid master setpoint
   */
   SetpointRegister_c& master(){return *mpc_master;};
   /**
     deliver the actual master entry
-    @see existMaster
     @return actual valid master setpoint
   */
   const SetpointRegister_c& masterConst() const {return *mpc_master;};

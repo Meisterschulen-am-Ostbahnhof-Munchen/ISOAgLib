@@ -148,15 +148,6 @@ public:
 
   const SetpointLocal_c& setpointConst( void ) const { return mc_setpoint; }
 
-  /**
-    search for suiting measureprog, if not found AND if ab_doCreate == true
-    create copy from first element at end of vector
-    @param acrc_isoName DEVCLASS code of searched measure program
-    @param ab_doCreate true -> create suitable measure program if not found
-  */
-  MeasureProgLocal_c& prog(const IsoName_c& acrc_isoName, bool ab_doCreate)
-    { return mc_measureprog.prog(acrc_isoName, ab_doCreate);};
-
   /** set the pointer to the handler class
     * @param apc_processDataChangeHandler pointer to handler class of application
     */
@@ -212,13 +203,6 @@ public:
   bool sendMasterMeasurementVal( const IsoName_c& ac_targetISOName ) const;
 
   /**
-    check if a setpoint master exists
-    (used for accessing setpoint values from measure progs)
-    @return true -> setpoint master exists
-  */
-  virtual bool setpointExistMaster() const { return setpointConst().existMaster();}
-
-  /**
     (used for accessing setpoint values from measure progs)
     @return exact value of master setpoint
   */
@@ -241,13 +225,11 @@ public:
   */
   virtual void stopRunningMeasurement(const IsoName_c& rc_isoName);
 
-  bool isSetPoint() const { return mb_isSetpoint; }
-  uint8_t triggerMethod() const { return mui8_triggerMethod; } 
+  bool isSetPoint() const { return procdataconfiguration.mb_isSetpoint; }
+  bool isCumulative() const { return procdataconfiguration.mb_cumulativeValue; }
+  uint8_t triggerMethod() const { return procdataconfiguration.mui8_triggerMethod; } 
 
 public: // from former base class
-
-  /** check if this ProcIdent_c has the given DDI as element */
-  bool hasDDI( uint16_t aui16_checkDDI ) const;
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
@@ -273,8 +255,10 @@ public: // from former base class
   */
   void setElementDDI(uint16_t aui16_ddi) { mui16_ddi = aui16_ddi; }
 
-  /** set device element number
-    * @param  aui16_element */
+  /**
+    set device element number
+    @param  aui16_element
+  */
   void setElementNumber(uint16_t aui16_element) { mui16_element = aui16_element; }
 
   /**
@@ -310,8 +294,6 @@ protected: // Protected methods
   */
   virtual bool sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
-  void setBasicSendFlags( ProcessPkg_c& pkg ) const;
-
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ProcDataLocal_c& acrc_src );
@@ -322,10 +304,22 @@ private: // Private methods
   /** process a measure prog message for local process data */
   virtual void processProg( const ProcessPkg_c& pkg );
 
-  /** deliver reference to ManageMeasureProgLocal_c */
-  ManageMeasureProgLocal_c& getManageProg( void ) { return mc_measureprog;}
-
 private: // Private attributes
+
+  /** IsoName_c information for this instance */
+  IsoName_c mc_isoName;
+
+  uint16_t mui16_ddi;
+  uint16_t mui16_element;
+
+  struct {
+    bool mb_cumulativeValue : 1;
+    bool mb_isSetpoint : 1;
+    uint8_t mui8_triggerMethod : 6;
+  } procdataconfiguration;
+
+  /** store the master value of the main programm */
+  int32_t mi32_masterVal;
 
   /** pointer to applications handler class, with handler functions
       which shall be called on correltating change events.
@@ -335,37 +329,16 @@ private: // Private attributes
   IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
 
 private:
-  friend class ManageMeasureProgLocal_c; /** allow access to eepromVal() and resetEeprom() */
-  friend class MeasureProgBase_c;
-  friend class MeasureProgLocal_c;
-  friend class SetpointBase_c;
-  friend class SetpointLocal_c;
-
-  /** store the master value of the main programm */
-  int32_t mi32_masterVal;
-
-  /** register if this data is a cumulative type like distance, time, area */
-  bool mb_cumulativeValue;
-
-  bool mb_isSetpoint;
-
-  uint8_t mui8_triggerMethod;
-
-private: // Private attributes
-
-  /** IsoName_c information for this instance */
-  IsoName_c mc_isoName;
-
-  uint16_t mui16_ddi;
-  uint16_t mui16_element;
-
-private:
 
   /** flaxible management of measure progs */
   ManageMeasureProgLocal_c mc_measureprog;
 
   /** flaxible management of setpoint */
   SetpointLocal_c mc_setpoint;
+
+private:
+  friend class MeasureProgLocal_c;
+
 };
 
 

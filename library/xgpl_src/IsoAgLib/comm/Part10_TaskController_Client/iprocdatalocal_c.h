@@ -25,10 +25,6 @@ private:
 public:
   /**
     constructor which can set all element vars
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
-    ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
@@ -72,11 +68,6 @@ public:
 
   /**
     initialise this ProcDataLocal_c
-    instance to a well defined initial state
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
-    ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
@@ -136,9 +127,6 @@ public:
     @return ISOName
   */
   const iIsoName_c& isoName() const {return ProcDataLocal_c::isoName().toConstIisoName_c();}
-
-  /** check if this ProcIdent_c has the given DDI as element */
-  bool hasDDI( uint16_t aui16_checkDDI ) const { return ProcDataLocal_c::hasDDI( aui16_checkDDI );}
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)

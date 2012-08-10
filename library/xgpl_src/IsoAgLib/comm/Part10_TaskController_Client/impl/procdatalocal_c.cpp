@@ -56,7 +56,6 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
   setMultitonInst(ai_multitonInst);
   mpc_processDataChangeHandler = apc_processDataChangeHandler;
 
-  mb_cumulativeValue = ab_cumulativeValue;
   mi32_masterVal = 0;
 
   getProcessInstance4Comm().registerLocalProcessData( this );
@@ -64,8 +63,9 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
   mc_setpoint.init();
   mc_measureprog.init();
 
-  mb_isSetpoint = ab_isSetpoint;
-  mui8_triggerMethod = aui8_triggerMethod;
+  procdataconfiguration.mb_isSetpoint = ab_isSetpoint;
+  procdataconfiguration.mui8_triggerMethod = aui8_triggerMethod & 0x3F; // 6 bits
+  procdataconfiguration.mb_cumulativeValue = ab_cumulativeValue;
 }
 
 ProcDataLocal_c::~ProcDataLocal_c(){
@@ -118,7 +118,7 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
 {
   isoaglib_assert( DDI() == pkg.DDI() );
 
-  pkg.resolveCommandTypeForISO( DDI(), mb_isSetpoint );
+  pkg.resolveCommandTypeForISO( DDI(), procdataconfiguration.mb_isSetpoint );
 
   if (pkg.mc_processCmd.checkIsSetpoint())
     processSetpoint(pkg);
@@ -216,7 +216,11 @@ bool ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_var
   pkg.setISONameForDA(ac_varISOName);
   pkg.setISONameForSA(isoName());
 
-  setBasicSendFlags( pkg );
+  pkg.setIsoPri(3);
+  pkg.setIsoPgn(PROCESS_DATA_PGN);
+
+  pkg.set_Element(element());
+  pkg.set_DDI(DDI());
 
   pkg.setData( ai32_val );
 
@@ -232,16 +236,6 @@ bool ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_var
     return false;
 }
 
-void ProcDataLocal_c::setBasicSendFlags( ProcessPkg_c& pkg ) const
-{
-  // the communicating devices are represented on ISO11783
-  pkg.setIsoPri(3);
-  pkg.setIsoPgn(PROCESS_DATA_PGN);
-
-  pkg.set_Element(element());
-  pkg.set_DDI(DDI());
-}
-
 bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameReceiver,
                                 uint16_t aui16_DDI,
                                 uint16_t aui16_element
@@ -254,11 +248,6 @@ bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameReceiver,
 
   // all previous tests are positive -> answer positive match
   return true;
-}
-
-bool ProcDataLocal_c::hasDDI( uint16_t aui16_checkDDI ) const
-{
-  return ( aui16_checkDDI == DDI() );
 }
 
 bool ProcDataLocal_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {

@@ -126,7 +126,9 @@ class ManageMeasureProgLocal_c : public ClientBase
  protected:
   /** container of objects for managing jobs of local measure programs */
   MeasureProgLocal_c mc_measureprogTC;
+#ifdef USE_DATALOGGER
   MeasureProgLocal_c mc_measureprogLogger;
+#endif
   /** cache iterator to measure prog */
   MeasureProgLocal_c* mpc_progCache;
  private:

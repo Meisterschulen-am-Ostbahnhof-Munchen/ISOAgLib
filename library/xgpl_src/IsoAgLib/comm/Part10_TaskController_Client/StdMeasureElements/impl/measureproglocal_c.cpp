@@ -342,7 +342,7 @@ void MeasureProgLocal_c::setVal(ProcDataLocal_c& ac_processData, int32_t ai32_va
   // for cumulative values -> update mi32_val by increment
   // else take the actual given master value
   mi32_lastMasterVal = ai32_val;
-  if ( ac_processData.mb_cumulativeValue )
+  if ( ac_processData.isCumulative() )
     mi32_val += i32_incr;
   else
     mi32_val = ai32_val;
