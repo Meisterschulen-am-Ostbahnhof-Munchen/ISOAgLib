@@ -66,14 +66,6 @@ class ProcessDataChangeHandler_c {
    */
  virtual bool processSetpointSet( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName, bool ab_change ) = 0;
 
- /** react on measurement reset from external system for local process data
-   * @param ac_src general event source class, which provides conversion functions to get needed event source class
-   * @param ai32_val new value, which caused the event (for immediate access)
-   * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
-   * @return true -> handler class reacted on change event
-   */
- virtual bool processMeasurementReset( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName ) = 0;
-
  /** react on received value request for default data logging (DDI 0xDFFF)
    * (can be used to start measurement programms in local process data instances)
    * @param ac_src general event source class, which provides conversion functions to get needed event source class

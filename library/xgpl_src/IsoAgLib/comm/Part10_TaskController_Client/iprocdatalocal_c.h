@@ -24,40 +24,23 @@ private:
   friend class EventSource_c;
 public:
   /**
-    constructor which can set all element vars
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-
-    @param acrc_isoName optional ISOName code of Process-Data
-    @param apc_externalOverridingIsoName pointer to updated ISOName variable
-    @param ab_cumulativeValue
-             -# for process data like distance, time, area
-                 the value of the measure prog data sets is updated
-                 on master value update dependent on the value increment
-                 since the last master value update
-                 -> if a remote member resets his data set copy, datas of
-                    other members aren't changed
-                 -> if this data is saved in EEPROM, the main application
-                    needn't take into account the initial EEPROM value, as
-                     setting of the master val is independent from EEPROM
-             -#  for values like speed, state, rpm aren't updated by increment,
-                  -> the given master value is propagated equally to all
-                      measure prog data sets
-                  -> if this data is saved in EEPROM, the stored value is loaded
-                     as initial master value, and is initially propagated to all
-                     measure prog data sets
-    @param aui16_eepromAdr optional adress where value is stored in EEPROM
+    default constructor. init() mathod shall be called manually
+  */
+    iProcDataLocal_c( ) : 
+      ProcDataLocal_c (0xFFFF,0xFFFF, // no ddi and no element specified
+        iIsoName_c::IsoNameUnspecified(),
+        false,0) {}
+  
+  /**
+    constructor which can set all element vars. No need to call init() method
+    @param aui16_ddi process data ddi
+    @param aui16_element process data parent element
+    @param acrc_isoName process data ISOName
+    @param ab_isSetpoint set this process data as set point
+    @param aui8_triggerMethod set process data trigger methods
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-    iProcDataLocal_c( ) : 
-      ProcDataLocal_c (
-        0xFFFF,
-        0xFFFF,
-        iIsoName_c::IsoNameUnspecified(),
-        false,
-        0) {}
-        
   iProcDataLocal_c( uint16_t aui16_ddi,
                     uint16_t aui16_element,
                     const iIsoName_c& acrc_isoName,
@@ -70,32 +53,15 @@ public:
                        aui8_triggerMethod,
                        apc_processDataChangeHandler,
                        ai_multitonInst
-                      )
-{}
+                      ) {}
 
   /**
     initialise this ProcDataLocal_c
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-
-    @param acrc_isoName optional ISOName code of Process-Data
-    @param ab_cumulativeValue
-             -# for process data like distance, time, area
-                 the value of the measure prog data sets is updated
-                 on master value update dependent on the value increment
-                 since the last master value update
-                 -> if a remote member resets his data set copy, datas of
-                    other members aren't changed
-                 -> if this data is saved in EEPROM, the main application
-                    needn't take into account the initial EEPROM value, as
-                     setting of the master val is independent from EEPROM
-             -#  for values like speed, state, rpm aren't updated by increment,
-                  -> the given master value is propagated equally to all
-                      measure prog data sets
-                  -> if this data is saved in EEPROM, the stored value is loaded
-                     as initial master value, and is initially propagated to all
-                     measure prog data sets
-    @param aui16_eepromAdr optional adress where value is stored in EEPROM
+    @param aui16_ddi process data ddi
+    @param aui16_element process data parent element
+    @param acrc_isoName process data ISOName
+    @param ab_isSetpoint set this process data as set point
+    @param aui8_triggerMethod set process data trigger methods
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
@@ -107,7 +73,8 @@ public:
              ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
              int ai_multitonInst = 0
             )
-  {ProcDataLocal_c::init( aui16_ddi, aui16_element,
+  {
+    ProcDataLocal_c::init( aui16_ddi, aui16_element,
                          acrc_isoName, ab_isSetpoint,
                          aui8_triggerMethod,
                          apc_processDataChangeHandler,
@@ -123,7 +90,7 @@ public:
   /** deliver the poitner to the handler class
     * @return pointer to handler class of application (or NULL if not defined by application)
     */
-  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const
+  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler() const
    { return ProcDataLocal_c::getProcessDataChangeHandler(); }
 
   /**
@@ -131,7 +98,7 @@ public:
     use everytime the _device_class_ from the ident part, and take the _instance_ from the owner
     @return ISOName
   */
-  const iIsoName_c& isoName() const {return ProcDataLocal_c::isoName().toConstIisoName_c();}
+  const iIsoName_c& isoName() const { return ProcDataLocal_c::isoName().toConstIisoName_c(); }
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
@@ -151,8 +118,8 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  void sendMasterMeasurementVal( const iIsoName_c& ac_targetISOName ) const
-    { ProcDataLocal_c::sendMasterMeasurementVal( ac_targetISOName );}
+  void sendMeasurementVal( const iIsoName_c& ac_targetISOName ) const
+    { ProcDataLocal_c::sendMeasurementVal( ac_targetISOName );}
 
   /**
     deliver the master value (central measure value of this process data;
@@ -160,42 +127,42 @@ public:
     independent)
     @return actual master value
   */
-  const int32_t& masterMeasurementVal()const{return ProcDataLocal_c::masterMeasurementVal();}
+  const int32_t& measurementVal() const { return ProcDataLocal_c::measurementVal(); }
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param ai32_val new measure value
   */
-  void setMasterMeasurementVal(int32_t ai32_val)
-    {ProcDataLocal_c::setMasterMeasurementVal(ai32_val);}
+  void setMeasurementVal(int32_t ai32_val)
+    { ProcDataLocal_c::setMeasurementVal(ai32_val); }
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param ai16_val new measure value
   */
-  void setMasterMeasurementVal(int16_t ai16_val)
-    {ProcDataLocal_c::setMasterMeasurementVal((int32_t)ai16_val);}
+  void setMeasurementVal(int16_t ai16_val)
+    { ProcDataLocal_c::setMeasurementVal((int32_t)ai16_val); }
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
     @param ab_val new measure value
   */
-  void setMasterMeasurementVal(uint8_t ab_val)
-    {ProcDataLocal_c::setMasterMeasurementVal((int32_t)ab_val);}
+  void setMeasurementVal(uint8_t ab_val)
+    { ProcDataLocal_c::setMeasurementVal((int32_t)ab_val); }
 
   /**
     increment the value -> update the local and the measuring programs values
     @param ai32_val size of increment of master value
   */
-  void incrMasterMeasurementVal(int32_t ai32_val)
-    {ProcDataLocal_c::incrMasterMeasurementVal(ai32_val);}
+  void incrMeasurementVal(int32_t ai32_val)
+    { ProcDataLocal_c::incrMeasurementVal(ai32_val); }
 
   /**
     retreive simple master setpoint
     @return actual received setpoint value
   */
   int32_t setpointVal() const
-    { return ProcDataLocal_c::setpointValue();}
+    { return ProcDataLocal_c::setpointValue(); }
 
   /**
     allow local client to actively start a measurement program
@@ -206,9 +173,8 @@ public:
     @return true -> measurement started
   */
   bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                        int32_t ai32_increment, const iIsoName_c* apc_receiverDevice = NULL )
-    { return ProcDataLocal_c::startDataLogging(ren_type, ai32_increment, apc_receiverDevice); }
-
+                        int32_t ai32_increment, const iIsoName_c& ac_receiverDevice )
+  { return ProcDataLocal_c::startDataLogging(ren_type, ai32_increment, ac_receiverDevice ); }
 
 };
 

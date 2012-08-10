@@ -84,7 +84,7 @@ public:
     @param acrc_isoNameReceiver isoName code of searched local Process Data instance
     @return reference to searched ProcDataLocal_c instance
   */
-  ProcDataLocal_c& procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
+  ProcDataLocal_c& procDataLocal();
 
   /**
     performs periodically actions
@@ -124,12 +124,12 @@ public:
   bool processTcStatusMsg(uint8_t ui8_tcStatus, const IsoName_c& rc_isoName, bool ab_skipLastTcStatus = false);
 
   /**
-    @return isoName, saved from TC status messages
+    @return isoName, saved from remote status messages
   */
-  const IsoName_c* getTcISOName() { return mpc_tcISOName; };
-  const IsoName_c& getTcISONameRef() const { return mc_isoNameTC; };
-
   const IsoName_c& getISONameFromType( IsoName_c::ecuType_t ecuType ) const;
+  /**
+    @return ecuType_t from given IsoName_c
+  */
   IsoName_c::ecuType_t getTypeFromISOName( const IsoName_c& isoName ) const;
 
 #if DEBUG_SCHEDULER
@@ -142,6 +142,7 @@ public:
   void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
    { mpc_processDataChangeHandler = apc_processDataChangeHandler; }
 
+  /** send NACK */
   void sendNack( const IsoName_c& ac_da,
                  const IsoName_c& ac_sa,
                  int16_t ddi,
@@ -247,9 +248,10 @@ private: // Private attributes
   Process_c() :
     mt_handler(*this),
     mt_customer(*this),
-    mpc_tcISOName(NULL),
     mc_isoNameTC(IsoName_c::IsoNameUnspecified()),
+#ifdef USE_DATALOGGER
     mc_isoNameLogger(IsoName_c::IsoNameUnspecified()),
+#endif
     CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
   {}
 
@@ -260,11 +262,12 @@ private: // Private attributes
   DevPropertyHandler_c mc_devPropertyHandler;
 
   //STL_NAMESPACE::list<IsoName_c> ml_filtersToDeleteISO;
-  const IsoName_c* mpc_tcISOName;
   uint8_t mui8_lastTcStatus;
 
   IsoName_c mc_isoNameTC;
+#ifdef USE_DATALOGGER
   IsoName_c mc_isoNameLogger;
+#endif
 
   /** pointer to applications handler class, with handler functions
       which shall be called when a TC status message arrives

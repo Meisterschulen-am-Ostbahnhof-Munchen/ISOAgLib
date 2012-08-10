@@ -47,19 +47,19 @@ public:
     deliver Cmd of process msg
     @return Command value of message
   */
-  uint8_t cmd()const{return bit_data.ui8_Command;}
+  uint8_t cmd() const { return bit_data.ui8_Command; }
 
   /**
     deliver Element Number of process msg
     @return Element Number value of message
   */
-  uint16_t element()const{return bit_data.ui16_Element;}
+  uint16_t element() const { return bit_data.ui16_Element; }
 
     /**
     deliver DDI of process msg
     @return Data Dictionary Identifier value of message
   */
-  uint16_t DDI()const{return bit_data.ui16_DDI;}
+  uint16_t DDI() const { return bit_data.ui16_DDI; }
 
   /**
     deliver data value as int32_t
@@ -85,19 +85,19 @@ public:
     set command of process msg
     @param ab_cmd command value of process data message
   */
-  void set_Cmd(uint8_t ab_cmd){bit_data.ui8_Command = ab_cmd;}
+  void set_Cmd(uint8_t ab_cmd) { bit_data.ui8_Command = ab_cmd; }
 
    /**
     set DDI of process msg
     @param ab_DDI Data dictionary Itendifier
   */
-  void set_DDI(uint16_t ab_DDI){bit_data.ui16_DDI = ab_DDI;}
+  void set_DDI(uint16_t ab_DDI) { bit_data.ui16_DDI = ab_DDI; }
 
    /**
     set Element Number of Process Data Message
     @param ab_Element command value of process data message
   */
-  void set_Element(uint16_t ab_Element){bit_data.ui16_Element = ab_Element;}
+  void set_Element(uint16_t ab_Element) { bit_data.ui16_Element = ab_Element; }
 
   /**
     set data value
@@ -133,7 +133,6 @@ public:
   ProcessCmd_c mc_processCmd;
 
 private: // Private attributes
-
 
   int32_t mi32_pdValue;
 

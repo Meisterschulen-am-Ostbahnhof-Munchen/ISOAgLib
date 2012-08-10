@@ -19,33 +19,18 @@
 
 namespace __IsoAgLib {
 
-void SetpointRegister_c::init(IsoName_c::ecuType_t ecuType, int32_t ai32_value, bool ab_valid)
-{ // direct value set to avoid special functions of equivalent set functions
+void SetpointRegister_c::init(IsoName_c::ecuType_t ecuType, int32_t ai32_value)
+{
   setValue(ai32_value);
-
   setISONameType(ecuType);
-  setValid(ab_valid);
 }
 
 void SetpointRegister_c::setValue(int32_t ai32_val)
 {
-  if (ai32_val != NO_VAL_32S) // @TODO remove
+  if (ai32_val != NO_VAL_32S) // @TODO remove ?
   {
     mi32_value = ai32_val;
   }
 };
-
-bool SetpointRegister_c::setValid(bool ab_state)
-{
-  if (valid() != ab_state)
-  { // state was changed
-    b_valid = ab_state;
-    return true;
-  }
-  else
-  {  //nothing has changed (f.e. -> no acknowledge must be sent to requester)
-    return false;
-  }
-}
 
 } // end of namespace __IsoAgLib

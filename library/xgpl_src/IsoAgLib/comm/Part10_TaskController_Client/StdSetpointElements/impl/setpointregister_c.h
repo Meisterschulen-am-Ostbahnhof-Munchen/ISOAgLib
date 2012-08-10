@@ -36,7 +36,7 @@ public:
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
   SetpointRegister_c()
-      {  init(IsoName_c::ecuTypeANYOTHER, NO_VAL_32S, true); }
+  { init(IsoName_c::ecuTypeANYOTHER, NO_VAL_32S); }
 
   /**
     initialise this SetpointRegister_c to a well defined starting condition
@@ -44,17 +44,10 @@ public:
     @param ai32_value setpoint value
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(IsoName_c::ecuType_t ecuType, int32_t ai32_value, bool ab_valid);
+  void init(IsoName_c::ecuType_t ecuType, int32_t ai32_value);
 
   /** default destructor which has nothing to do */
   ~SetpointRegister_c() {}
-
-  /**
-    compare two Setpoint Register items by value
-    @param acrc_src compared instance
-    @return true -> both setpoint sets are equal
-  */
-  bool operator==(const SetpointRegister_c& acrc_src)const;
 
   /* ************************************ */
   /* ***reading member variable access*** */
@@ -72,12 +65,6 @@ public:
   */
   int32_t value() const {return mi32_value;}
  
-  /**
-    check if setpoint is conformant with actual (!!) master setpoint
-    @return true -> the application set this setpoint as valid (accepted)
-  */
-  bool valid() const {return b_valid;}
-
   /* ************************************ */
   /* ***writing member variable access*** */
   /* ************************************ */
@@ -92,12 +79,6 @@ public:
     @param ai32_val new exact setpoint value
   */
   void setValue(int32_t ai32_val);
-  /**
-    set the valid state; return if state was changed
-    @param ab_state true -> mark this setpoint as valid (accepted)
-    @return true -> this call caused a state change for valid state
-  */
-  bool setValid(bool ab_state = true);
 
 private: // Private attributes
   /** setpoint value */
@@ -105,9 +86,6 @@ private: // Private attributes
 
   /** isoName code of requester */
   IsoName_c::ecuType_t m_requestEcuType;
-
-  /** valid state == the setpoint value is actually valid - it is conformant with the master setpoint */
-  bool b_valid;
 
 private:
   /** not copyable : copy constructor is only declared, never defined */

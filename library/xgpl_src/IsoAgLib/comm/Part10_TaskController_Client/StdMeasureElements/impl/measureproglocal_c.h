@@ -112,7 +112,6 @@ public:
     @return true -> received msg processed by this instance
   */
   bool processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data );
-  bool processMsgHelper( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg );
 
   /**
     set the measure prog value and send values if triggered to do

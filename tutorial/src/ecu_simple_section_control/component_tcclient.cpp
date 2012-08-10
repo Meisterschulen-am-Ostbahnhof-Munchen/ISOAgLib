@@ -73,16 +73,16 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::init( IsoAgLib::iIde
   }
 
   // setup init value
-  c_actualVolumeRate.setMasterMeasurementVal(200); // Section Control coverage is working only if c_actualVolumeRate != 0
-  c_workState.setMasterMeasurementVal(true); // main work state must be ON
+  c_actualVolumeRate.setMeasurementVal(200); // Section Control coverage is working only if c_actualVolumeRate != 0
+  c_workState.setMeasurementVal(true); // main work state must be ON
 
-  c_setpointVolumeRate.setMasterMeasurementVal(200);
-  c_sectionControlState.setMasterMeasurementVal(0);
+  c_setpointVolumeRate.setMeasurementVal(200);
+  c_sectionControlState.setMeasurementVal(0);
 
-  c_actualWidth.setMasterMeasurementVal(24000);
-  c_maxWidth.setMasterMeasurementVal(24000);
+  c_actualWidth.setMeasurementVal(24000);
+  c_maxWidth.setMeasurementVal(24000);
 
-  c_xOffset.setMasterMeasurementVal(-500);
+  c_xOffset.setMeasurementVal(-500);
 
   // init section status
   resetSectionStatus();
@@ -99,13 +99,13 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::updateSectionStatus(
     // 1.2 convert to CondensedWorkState (2 bits per section)
     vec_condensedWorkStateCurrent[2*ui8_sectionId] = vec_sectionStatusTaskController[ui8_sectionId];
     vec_condensedWorkStateCurrent[2*ui8_sectionId + 1] = 0;
-    // 2. set workstate. For now both setMasterMeasurementVal and setSetpointMasterVal call are required.
-    arr_workStateProcData[ui8_sectionId]->setMasterMeasurementVal(static_cast<int32_t>(vec_sectionStatusCurrent[ui8_sectionId]));
-    //arr_workStateProcData[ui8_sectionId]->setMasterMeasurementVal(static_cast<int32_t>(vec_sectionStatusCurrent[ui8_sectionId]));
+    // 2. set workstate. For now both setMeasurementVal and setSetpointMasterVal call are required.
+    arr_workStateProcData[ui8_sectionId]->setMeasurementVal(static_cast<int32_t>(vec_sectionStatusCurrent[ui8_sectionId]));
+    //arr_workStateProcData[ui8_sectionId]->setMeasurementVal(static_cast<int32_t>(vec_sectionStatusCurrent[ui8_sectionId]));
   }
 
   // 3. set condensed workstate. For now both setMasterMeasurementVal and setSetpointMasterVal call are required.
-  c_condensedWorkState.setMasterMeasurementVal(static_cast<int32_t>(vec_condensedWorkStateCurrent.to_ulong()));
+  c_condensedWorkState.setMeasurementVal(static_cast<int32_t>(vec_condensedWorkStateCurrent.to_ulong()));
   //c_condensedWorkState.setSetpointVal(static_cast<int32_t>(vec_condensedWorkStateCurrent.to_ulong()));
 }
 
@@ -125,8 +125,8 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::processSetpointSet(
     case IndexSectionControlState: // GS2 Swath control
     {
       // send response to TC
-      c_sectionControlState.setMasterMeasurementVal(ai32_val);
-      c_sectionControlState.sendMasterMeasurementVal(ac_callerISOName); // force sending the message (see ISOBUS-11)
+      c_sectionControlState.setMeasurementVal(ai32_val);
+      c_sectionControlState.sendMeasurementVal(ac_callerISOName); // force sending the message (see ISOBUS-11)
 #ifdef SYSTEM_PC
       std::cout << "IndexSectionControlState " << ai32_val << std::endl;
 #endif

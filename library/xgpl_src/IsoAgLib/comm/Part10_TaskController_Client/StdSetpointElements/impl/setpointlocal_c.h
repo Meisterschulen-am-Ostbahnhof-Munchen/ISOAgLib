@@ -40,14 +40,7 @@ public:
     default constructor which can set needed pointers to containing objects
     @param apc_processData pointer to containing ProcessData instance
   */
-  SetpointLocal_c( ) : ClientBase()
-    {init();}
-
-  /**
-    initialise this SetpointLocal_c to a well defined starting condition
-    @param apc_processData pointer to containing ProcessData instance
-  */
-  void init();
+  SetpointLocal_c( ) : ClientBase() {}
 
   /** default destructor which has nothing to do */
    ~SetpointLocal_c() {}
@@ -56,22 +49,14 @@ public:
     retreive simple master setpoint
     @return actual received setpoint value (calculated with setpoint )
   */
-  int32_t setpointVal() const {return mpc_master->value();}
+  int32_t setpointVal() const {return m_tcRegister.value();}
   
   /**  process a setpoint message */
   void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg );
 
-private: // Private methods
-  /**
-    process a setpoint set for local process data
-  */
-  virtual void processSet( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg );
-
 private: // Private attributes
   /** container of registered setpoint values */
   SetpointRegister_c m_tcRegister;
-  /** SetpointRegister_c entry, which represents the actual used setpoint value */
-  SetpointRegister_c* mpc_master;
 
 private:
   /** not copyable : copy constructor is only declared, never defined */

@@ -41,6 +41,8 @@ public:
                          MethodOnChange = 3,
                          MethodTotal = 4 };
 
+  static bool isMethodSet(uint8_t value, triggerMethod_t method) { return ((value & (0x1 << method)) != 0 ); }
+
   /** enum type for to sending values */
   enum doSend_t {DoNone = 0, DoVal = 1};
 

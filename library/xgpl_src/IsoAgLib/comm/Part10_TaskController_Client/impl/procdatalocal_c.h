@@ -59,27 +59,11 @@ class ProcDataLocal_c : public ClientBase  {
 public:
   /**
     constructor which can set all element vars
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-    @param acrc_isoName optional ISOName code of Process-Data
-    @param apc_externalOverridingIsoName pointer to updated ISOName variable
-    @param ab_cumulativeValue
-             -# for process data like distance, time, area
-                 the value of the measure prog data sets is updated
-                 on master value update dependent on the value increment
-                 since the last master value update
-                 -> if a remote member resets his data set copy, datas of
-                    other members aren't changed
-                 -> if this data is saved in EEPROM, the main application
-                    needn't take into account the initial EEPROM value, as
-                     setting of the master val is independent from EEPROM
-             -#  for values like speed, state, rpm aren't updated by increment,
-                  -> the given master value is propagated equally to all
-                      measure prog data sets
-                  -> if this data is saved in EEPROM, the stored value is loaded
-                     as initial master value, and is initially propagated to all
-                     measure prog data sets
-    @param aui16_eepromAdr optional adress where value is stored in EEPROM
+    @param aui16_ddi process data ddi
+    @param aui16_element process data parent element
+    @param acrc_isoName process data ISOName
+    @param ab_isSetpoint set this process data as set point
+    @param aui8_triggerMethod set process data trigger methods
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
@@ -93,28 +77,12 @@ public:
                   );
 
   /**
-    initialise this ProcDataLocal_c instance to a well defined initial state
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
-                         (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-    @param acrc_isoName optional ISOName code of Process-Data
-    @param apc_externalOverridingIsoName pointer to updated ISOName variable
-    @param ab_cumulativeValue
-             -# for process data like distance, time, area
-                 the value of the measure prog data sets is updated
-                 on master value update dependent on the value increment
-                 since the last master value update
-                 -> if a remote member resets his data set copy, datas of
-                    other members aren't changed
-                 -> if this data is saved in EEPROM, the main application
-                    needn't take into account the initial EEPROM value, as
-                     setting of the master val is independent from EEPROM
-             -#  for values like speed, state, rpm aren't updated by increment,
-                  -> the given master value is propagated equally to all
-                      measure prog data sets
-                  -> if this data is saved in EEPROM, the stored value is loaded
-                     as initial master value, and is initially propagated to all
-                     measure prog data sets
-    @param aui16_eepromAdr optional adress where value is stored in EEPROM
+    initialise this ProcDataLocal_c
+    @param aui16_ddi process data ddi
+    @param aui16_element process data parent element
+    @param acrc_isoName process data ISOName
+    @param ab_isSetpoint set this process data as set point
+    @param aui8_triggerMethod set process data trigger methods
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
@@ -141,32 +109,25 @@ public:
     */
   IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return mpc_processDataChangeHandler; }
 
-  /** deliver the master value (central measure value of this process data;
+  /** deliver the measured value
     can differ from measure vals of measure progs, as these can be reseted
-    independent)
-    @return actual master value
+    @return actual value
   */
-  const int32_t& masterMeasurementVal() const {return mi32_masterVal;}
+  const int32_t& measurementVal() const {return mi32_value;}
 
   /**
-    set the masterMeasurementVal from main application independent from any measure progs
+    set the value independent from any measure progs
     @param ai32_val new measure value
   */
-  virtual void setMasterMeasurementVal(int32_t ai32_val);
+  virtual void setMeasurementVal(int32_t ai32_val);
 
   /**
-    increment the value -> update the local and the measuring programs values
+    increment the value -> update the measuring programs values
     @param ai32_val size of increment of master value
   */
-  virtual void incrMasterMeasurementVal(int32_t ai32_val);
+  virtual void incrMeasurementVal(int32_t ai32_val);
 
-  /** process a message, which is adressed for this process data item;
-    ProcDataLocal_c::processMsg() is responsible to delegate the
-    processing of setpoint and measurement messages to the appripriate
-    functions processSetpoint and processProg;
-    both functions are virtual, so that depending on loacl or remote
-    process data the suitable reaction can be implemented
-  */
+  /** process a message, which is adressed for this process data item */
   void processMsg( ProcessPkg_c& pkg );
 
   /**
@@ -182,7 +143,7 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  void sendMasterMeasurementVal( const IsoName_c& ac_targetISOName ) const;
+  void sendMeasurementVal( const IsoName_c& ac_targetISOName ) const;
 
   /**
     Get setpoint value as received from remote system
@@ -199,7 +160,7 @@ public:
     @return true -> measurement started
   */
   bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                        int32_t ai32_increment, const IsoName_c* apc_receiverDevice = NULL );
+                        int32_t ai32_increment, const IsoName_c& ac_receiverDevice );
 
   /**
     stop all measurement progs in all local process instances, started with given isoName
@@ -264,26 +225,28 @@ protected: // Protected methods
 
 private: // Private methods
   /** processing of a setpoint message */
-  virtual void processSetpoint( const ProcessPkg_c& pkg );
+  //virtual void processSetpoint( const ProcessPkg_c& pkg );
 
   /** process a measure prog message for local process data */
-  virtual void processProg( const ProcessPkg_c& pkg );
+  //virtual void processProg( const ProcessPkg_c& pkg );
 
 private: // Private attributes
-
   /** IsoName_c information for this instance */
   IsoName_c mc_isoName;
 
+  /** ProcessData ddi */
   uint16_t mui16_ddi;
+  /** ProcessData parent device element */
   uint16_t mui16_element;
 
+  /** ProcessData configuration : setpoint and trigger method information */
   struct {
     bool mb_isSetpoint : 1;
     uint8_t mui8_triggerMethod : 7;
   } procdataconfiguration;
 
-  /** store the master value of the main programm */
-  int32_t mi32_masterVal;
+  /** store the value of the main programm */
+  int32_t mi32_value;
 
   /** pointer to applications handler class, with handler functions
       which shall be called on correltating change events.
@@ -291,8 +254,6 @@ private: // Private attributes
        or new received measurement value for remote process data)
     */
   IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
-
-private:
 
   /** flaxible management of measure progs */
   ManageMeasureProgLocal_c mc_measureprog;

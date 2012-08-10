@@ -25,31 +25,17 @@
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
-/**
-  management of a measurement value
-  with possibility of measurement programs and
-  MIN/MAX... value handling.
-  This is especially usefull for process data values
-  where other systems can be interested in MIN/MAX/AVG
-  with/without measure programs.
+/** 
+  management of a measurement valuem with possibility of measurement programs
   */
 class ManageMeasureProgLocal_c : public ClientBase
 {
  public:
-  /**
-    constructor which initialse both pointers if given
-    @param apc_processData optional pointer to containing ProcessData instance
-  */
+  /** constructor */
   ManageMeasureProgLocal_c();
   
   /** destructor */
   virtual ~ManageMeasureProgLocal_c() {}
-
-  /**
-    initialise this ManageMeasureProgLocal_c instance to a well defined initial state
-    @param apc_processData optional pointer to containing ProcessData instance
-  */
-  void init();
 
   /**
     perform periodic actions
@@ -61,15 +47,7 @@ class ManageMeasureProgLocal_c : public ClientBase
   bool timeEvent( ProcDataLocal_c& ac_processData, uint16_t *pui16_nextTimePeriod = NULL );
 
   /** process a measure prog message for local process data */
-  void processProg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data );
-
-  /**
-    search for suiting measureprog, if not found AND if ab_doCreate == true
-    create copy from first element at end of vector
-    @param acrc_isoName DEVCLASS code of searched measure program
-    @param ab_doCreate true -> create suitable measure program if not found
-  */
-  MeasureProgLocal_c& prog(const IsoName_c& acrc_isoName, bool ab_doCreate);
+  void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data );
 
   /** set value for all registered Measure Progs */
   void setGlobalVal( ProcDataLocal_c& ac_processData, int32_t ai32_val );
@@ -83,33 +61,22 @@ class ManageMeasureProgLocal_c : public ClientBase
     @return true -> apc_receiverDevice is set
   */
   bool startDataLogging(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                        int32_t ai32_increment, const IsoName_c* apc_receiverDevice );
+                        int32_t ai32_increment, const IsoName_c& ac_receiverDevice );
   /**
     stop all measurement progs in all local process instances, started with given isoName
     @param rc_isoName
   */
   void stopRunningMeasurement(ProcDataLocal_c& ac_processData, const IsoName_c& rc_isoName);
 
-
  protected:
   friend class ProcDataLocal_c;
-  /**
-    deliver a reference to the list of measure prog objects
-    @return reference to list of measure prog entries
-  */
-  MeasureProgLocal_c& vec_prog( IsoName_c::ecuType_t ecuType );
-  /**
-    deliver a reference to the list of measure prog objects
-    @return reference to list of measure prog entries
-  */
-  const MeasureProgLocal_c& constVecProg( IsoName_c::ecuType_t ecuType ) const;
   /**
     create a new measure prog item;
     if there is still the default initial item undefined define it
     and create no new item
     @param acrc_isoName commanding ISOName
   */
-  void insertMeasureprog(const IsoName_c& acrc_isoName);
+  void setupMeasureprog(const IsoName_c& acrc_isoName);
   /**
     update the programm cache, create an programm item, if wanted
     @param acrc_isoName commanding ISOName

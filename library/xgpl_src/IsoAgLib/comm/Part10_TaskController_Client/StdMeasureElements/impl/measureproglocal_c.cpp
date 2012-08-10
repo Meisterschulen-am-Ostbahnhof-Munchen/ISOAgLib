@@ -151,24 +151,15 @@ void MeasureProgLocal_c::sendVal( ProcDataLocal_c& ac_processData, const IsoName
   ac_processData.sendValISOName( pkg, ac_targetISOName, val());
 }
 
-bool MeasureProgLocal_c::processMsgHelper( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg ){
-  ProcessCmd_c::CommandType_t en_command = pkg.mc_processCmd.getCommand();
-  bool b_edited = false;
+bool MeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data )
+{
+  ProcessCmd_c::CommandType_t en_command = arc_data.mc_processCmd.getCommand();
 
-  if (en_command == ProcessCmd_c::setValue)
-    // setValue command indicates receiving of a measure value
-    // => handle this in measure prog remote => return false
-    // or a reset
-    // => handle this in measure prog local => return false
-    return false;
+  isoaglib_assert( en_command != ProcessCmd_c::setValue );
 
-  // Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
-  // check if PD==0 -> SET increment message
   // --- Checking of "Proc_c::defaultDataLoggingDDI != pkg.DDI()" is a workaround for bad TCs ---
-  if ((!pkg.mc_processCmd.checkIsRequest()) && (Proc_c::defaultDataLoggingDDI != pkg.DDI()) )
-  { // mark that msg already edited
-    b_edited = true;
-
+  if ((!arc_data.mc_processCmd.checkIsRequest()) && (Proc_c::defaultDataLoggingDDI != arc_data.DDI()) )
+  {
     // set en_doSendPkg (for ISO)
     Proc_c::doSend_t en_doSendPkg = Proc_c::DoVal;  //default send data mode
 
@@ -180,7 +171,7 @@ bool MeasureProgLocal_c::processMsgHelper( ProcDataLocal_c& ac_processData, cons
         en_command == ProcessCmd_c::measurementMinimumThresholdValueStart ||
         en_command == ProcessCmd_c::measurementMaximumThresholdValueStart)
       // increment
-      processIncrementMsg( ac_processData, pkg, en_doSendPkg);
+      processIncrementMsg( ac_processData, arc_data, en_doSendPkg);
 
     if (en_command == ProcessCmd_c::measurementStop)
        stop(ac_processData);
@@ -193,7 +184,7 @@ bool MeasureProgLocal_c::processMsgHelper( ProcDataLocal_c& ac_processData, cons
         en_command == ProcessCmd_c::measurementMaximumThresholdValueStart)
     {
       Proc_c::type_t en_typePkg = Proc_c::NullType;
-      int32_t i32_dataLong = pkg.getValue();
+      int32_t i32_dataLong = arc_data.getValue();
       switch (en_command) {
         case ProcessCmd_c::measurementTimeValueStart:
           en_typePkg = Proc_c::TimeProp;
@@ -231,65 +222,26 @@ bool MeasureProgLocal_c::processMsgHelper( ProcDataLocal_c& ac_processData, cons
        stop(ac_processData, en_typePkg, en_doSendPkg);
     }
   }
-
-  return b_edited;
-}
-
-bool MeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data )
-{
-  bool b_result = processMsgHelper( ac_processData, arc_data );
-
-  // call base function - if base function returns true, nothing else must be done
-  if (!b_result)
+  else  // request or default data logging
   {
+    // @TODO check if this is necessary (may be checked in Process already
     if (arc_data.senderItem() == NULL)
     { // sender with SA 0xFE is not of interest here!
       return true;
     }
 
-    // backup sender isoname before answering with resetValForGroup() or sendVal() (modification during send in c_pkg !)
+    // backup sender isoname before answering (modification during send in c_pkg !)
     const IsoName_c c_senderIsoNameOrig = arc_data.senderItem()->isoName();
 
-    // ISO: value in message contains reset value
     const int32_t ci32_val = arc_data.getValue();
     const uint32_t cui32_ddi = arc_data.DDI();
 
-    // the message was a value message -> evaluate it here
-    if ( arc_data.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
-    { // write - accept only write actions to local data only if this is reset try
-      // @TODO : test if allowed. Maybe if totals. Note : totals shall be setable !!
-      // @TODO : If so, this piece of code belong to setpoint and not to measurement ...
+    sendVal( ac_processData, c_senderIsoNameOrig );
 
-      if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodTotal)) == 0 )
-      { // it is a value set. This DDI is no setpoint and no totals -> Process Data not setable
-        getProcessInstance4Comm().sendNack( arc_data.senderItem()->isoName(),
-                                            ac_processData.isoName(),
-                                            ac_processData.DDI(),
-                                            ac_processData.element(),
-                                            0x10); // Bit 4 = 1 Process Data not setable // @TODO avoid magic number.
-        return true;
-      }
-
-      resetVal(ac_processData, ci32_val);
-
-      if (Proc_c::defaultDataLoggingDDI == arc_data.DDI())
-      { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
-        getProcessInstance4Comm().processTcStatusMsg(0, c_senderIsoNameOrig, true /* ab_skipLastTcStatus */);
-      }
-
+    if ((Proc_c::defaultDataLoggingDDI == arc_data.DDI()) &&
+        (ac_processData.getProcessDataChangeHandler() != NULL ))
       // call handler function if handler class is registered
-      if ( ac_processData.getProcessDataChangeHandler() != NULL )
-        ac_processData.getProcessDataChangeHandler()->processMeasurementReset( &ac_processData, cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c());
-    } // write
-    else
-    { // read -> answer wanted value
-      sendVal( ac_processData, c_senderIsoNameOrig );
-
-      if ((Proc_c::defaultDataLoggingDDI == arc_data.DDI()) &&
-          (ac_processData.getProcessDataChangeHandler() != NULL ))
-        // call handler function if handler class is registered
-        ac_processData.getProcessDataChangeHandler()->processDefaultLoggingStart( &ac_processData, cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c() );
-    } // read
+      ac_processData.getProcessDataChangeHandler()->processDefaultLoggingStart( &ac_processData, cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c() );
   }
 
   return true;

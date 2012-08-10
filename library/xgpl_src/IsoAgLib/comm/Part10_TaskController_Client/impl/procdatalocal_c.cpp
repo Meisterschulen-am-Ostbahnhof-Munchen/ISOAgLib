@@ -54,14 +54,12 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
   setMultitonInst(ai_multitonInst);
   mpc_processDataChangeHandler = apc_processDataChangeHandler;
 
-  mi32_masterVal = 0;
+  mi32_value = 0;
 
   getProcessInstance4Comm().registerLocalProcessData( this );
 
-  mc_setpoint.init();
-  mc_measureprog.init();
-
-
+  // "Device process data objects with a data log trigger method of type total shall be settable."
+  isoaglib_assert( Proc_c::isMethodSet(aui8_triggerMethod, Proc_c::MethodTotal) ? ab_isSetpoint : true );
 }
 
 ProcDataLocal_c::~ProcDataLocal_c(){
@@ -69,26 +67,14 @@ ProcDataLocal_c::~ProcDataLocal_c(){
   getProcessInstance4Comm().unregisterLocalProcessData( this );
 }
 
-void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
-{
-  isoaglib_assert( DDI() == pkg.DDI() );
-
-  pkg.resolveCommandTypeForISO( DDI(), procdataconfiguration.mb_isSetpoint );
-
-  if (pkg.mc_processCmd.checkIsSetpoint())
-    processSetpoint(pkg);
-  else
-    processProg(pkg);
-}
-
-void ProcDataLocal_c::setMasterMeasurementVal(int32_t ai32_val){
-  mi32_masterVal = ai32_val;
+void ProcDataLocal_c::setMeasurementVal(int32_t ai32_val){
+  mi32_value = ai32_val;
   mc_measureprog.setGlobalVal( *this, ai32_val );
 }
 
-void ProcDataLocal_c::incrMasterMeasurementVal(int32_t ai32_val){
-  mi32_masterVal += ai32_val;
-  mc_measureprog.setGlobalVal( *this, masterMeasurementVal() );
+void ProcDataLocal_c::incrMeasurementVal(int32_t ai32_val){
+  mi32_value += ai32_val;
+  mc_measureprog.setGlobalVal( *this, measurementVal() );
 }
 
 bool ProcDataLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
@@ -98,66 +84,39 @@ bool ProcDataLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   return true;
 }
 
-void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& pkg ){
-  switch ( pkg.mc_processCmd.getCommand())
-  {
-    case ProcessCmd_c::setValue:
+void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
+{
+  isoaglib_assert( DDI() == pkg.DDI() );
+
+  pkg.resolveCommandTypeForISO( DDI(), procdataconfiguration.mb_isSetpoint );
+  
+  if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
+  { // process setpoint command
+    if (pkg.mc_processCmd.checkIsSetpoint())
+    {
       mc_setpoint.processMsg( *this, pkg );
-      break;
-    default:
-      // process measurement commands even if this DDI is defined as a setpoint
-      mc_measureprog.processProg( *this, pkg );
+    }
+    else
+    { // set value but DPD is not settable
+      getProcessInstance4Comm().sendNack( pkg.senderItem()->isoName(),
+                                          isoName(),
+                                          DDI(),
+                                          element(),
+                                          0x10); // Bit 4 = 1 Process Data not setable // @TODO avoid magic number.
+    }
+  }
+  else
+  { // process measurement commands
+    mc_measureprog.processMsg( *this, pkg );
   }
 }
 
-void ProcDataLocal_c::processProg( const ProcessPkg_c& pkg ){
-  mc_measureprog.processProg( *this, pkg );
-}
-#if 0
-void ProcDataLocal_c::processProg( const ProcessPkg_c& pkg )
-{
-  if (pkg.senderItem() == NULL)
-  { // sender with SA 0xFE is not of interest
-    return;
-  }
-
-  // handle for simple measurement value
-  if (pkg.mc_processCmd.checkIsRequest() &&
-      // pkg.mc_processCmd.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
-      pkg.mc_processCmd.getValueGroup() == ProcessCmd_c::exactValue)
-  { // request for measurement value
-    sendMasterMeasurementVal( pkg.senderItem()->isoName() );
-  }
-}
-
-void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& pkg )
-{
-  #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
-  if (pkg.dataRawCmdLong() == 0)
-  { // let processProg process measurement value reset -> change PD to use std. reset
-    pkg.setPd(1);
-    processProg(pkg);
-  }
-  #else
-  (void)pkg;
-  #endif
-}
-#endif
 bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
-                                       int32_t ai32_increment, const IsoName_c* apc_receiverDevice )
+                                       int32_t ai32_increment, const IsoName_c& ac_receiverDevice )
 {
-  if ( !apc_receiverDevice )
-    // get isoName of TC from last TC status message
-    apc_receiverDevice = getProcessInstance4Comm().getTcISOName();
+  isoaglib_assert( ac_receiverDevice.isSpecified() );
 
-  // if still no apc_receiverDevice => get it from ISO monitor list
-  if ( !apc_receiverDevice )
-  {  // get TC dev key (device class 0)
-    const IsoItem_c& c_tcISOItem = getIsoMonitorInstance4Comm().isoMemberDevClassInd(0 /* aui8_devClass */, 0 /* aui8_ind */, true /* ab_forceClaimedAddress */);
-    apc_receiverDevice = &(c_tcISOItem.isoName());
-  }
-
-  return mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, apc_receiverDevice);
+  return mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, ac_receiverDevice);
 }
 
 void ProcDataLocal_c::stopRunningMeasurement(const IsoName_c& rc_isoName)
@@ -197,13 +156,13 @@ bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameReceiver,
   return true;
 }
 
-void ProcDataLocal_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {
+void ProcDataLocal_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) const {
 
   ProcessPkg_c pkg;
   // prepare general command in process pkg
   pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
 
-  sendValISOName( pkg, ac_targetISOName, masterMeasurementVal());
+  sendValISOName( pkg, ac_targetISOName, measurementVal());
 }
 
 } // end of namespace __IsoAgLib
