@@ -38,7 +38,7 @@ namespace __IsoAgLib {
   initialise this SetpointLocal_c to a well defined starting condition
   @param apc_processData pointer to containing ProcessData instance
 */
-void SetpointLocal_c::init( ProcDataBase_c *const apc_processData )
+void SetpointLocal_c::init( ProcDataLocal_c *const apc_processData )
 {
   SetpointBase_c::init( apc_processData );
   // set mpc_registerCache to a well defined value

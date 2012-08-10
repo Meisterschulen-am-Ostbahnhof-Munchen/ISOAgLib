@@ -40,7 +40,7 @@ namespace __IsoAgLib {
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param acrc_isoName optional ISOName of partner member for this measure program
   */
-void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
+void MeasureProgBase_c::init( ProcDataLocal_c *const apc_processData,
   int32_t ai32_val,
   const IsoName_c& acrc_isoName)
 { // set the dynamic list to a well defined cleared starting condition

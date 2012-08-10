@@ -13,6 +13,7 @@
 #ifndef PROC_H
 #define PROC_H
 
+#include <IsoAgLib/hal/hal_typedef.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

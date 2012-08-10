@@ -30,12 +30,12 @@ public:
     default constructor which can set all member vars
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  SetpointBase_c( ProcDataBase_c *const apc_processData = NULL );
+  SetpointBase_c( ProcDataLocal_c *const apc_processData = NULL );
   /**
     default constructor which can set all member vars
     @param arc_processData optional reference to containing ProcessData instance
   */
-  SetpointBase_c( ProcDataBase_c &arc_processData );
+  SetpointBase_c( ProcDataLocal_c &arc_processData );
   /**
     assignement from another object
     @param acrc_src source SetpointBase_c instance
@@ -54,7 +54,7 @@ public:
     was inserted in a list completely
     @param apc_data pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c* apc_data = 0 );
+  void init( ProcDataLocal_c* apc_data = 0 );
   /**
     perform periodic actions
     @return true -> all planned executions performed

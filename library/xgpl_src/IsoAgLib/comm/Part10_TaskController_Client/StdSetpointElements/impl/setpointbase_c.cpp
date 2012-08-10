@@ -23,7 +23,7 @@ namespace __IsoAgLib {
   @param apc_processData optional pointer to containing ProcessData instance
 */
 SetpointBase_c::SetpointBase_c(
-    ProcDataBase_c *const apc_processData)
+    ProcDataLocal_c *const apc_processData)
     : ProcessElementBase_c( apc_processData){
 }
 
@@ -32,7 +32,7 @@ SetpointBase_c::SetpointBase_c(
   @param arc_processData optional reference to containing ProcessData instance
 */
 SetpointBase_c::SetpointBase_c(
-    ProcDataBase_c &arc_processData)
+    ProcDataLocal_c &arc_processData)
     : ProcessElementBase_c( arc_processData){
 }
 
@@ -66,7 +66,7 @@ SetpointBase_c::~SetpointBase_c(){
   was inserted in a list completely
   @param apc_data pointer to containing ProcessData instance
 */
-void SetpointBase_c::init( ProcDataBase_c* apc_data )
+void SetpointBase_c::init( ProcDataLocal_c* apc_data )
 {
   set( apc_data );
 }

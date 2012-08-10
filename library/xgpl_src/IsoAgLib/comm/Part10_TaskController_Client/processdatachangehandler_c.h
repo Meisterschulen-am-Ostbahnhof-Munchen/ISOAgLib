@@ -20,7 +20,7 @@
 
 // predeclare __IsoAgLib_c::ProcDataBase_c
 namespace __IsoAgLib {
-  class ProcDataBase_c;
+  class ProcDataLocal_c;
 }
 
 // Begin Namespace IsoAgLib
@@ -35,12 +35,12 @@ namespace IsoAgLib {
   */
 class EventSource_c {
  public:
-  EventSource_c( __IsoAgLib::ProcDataBase_c* apc_src ) : pc_src(apc_src) {};
+  EventSource_c( __IsoAgLib::ProcDataLocal_c* apc_src ) : pc_src(apc_src) {};
   iProcDataLocal_c* makeIProcDataLocal( void );
 
 
  private:
-  __IsoAgLib::ProcDataBase_c* pc_src;
+  __IsoAgLib::ProcDataLocal_c* pc_src;
 };
 
 /** Base class for application classes, with handler methods for different change events.

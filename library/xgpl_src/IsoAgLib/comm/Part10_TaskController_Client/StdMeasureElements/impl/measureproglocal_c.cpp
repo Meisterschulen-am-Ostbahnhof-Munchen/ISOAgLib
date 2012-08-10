@@ -29,7 +29,7 @@ namespace __IsoAgLib {
     @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
 void MeasureProgLocal_c::init(
-  ProcDataBase_c *const apc_processData,
+  ProcDataLocal_c *const apc_processData,
   int32_t ai32_masterVal,
   int32_t ai32_initialVal,
   const IsoName_c& ac_callerISOName)
@@ -350,7 +350,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
   @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
 */
 MeasureProgLocal_c::MeasureProgLocal_c(
-  ProcDataBase_c *const apc_processData,
+  ProcDataLocal_c *const apc_processData,
   int32_t ai32_masterVal,
   int32_t ai32_initialVal,
   const IsoName_c& ac_callerISOName)

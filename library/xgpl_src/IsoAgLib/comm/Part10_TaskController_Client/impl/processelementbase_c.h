@@ -18,11 +18,11 @@
 /* *************************************** */
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include "procdatabase_c.h"
+#include "processpkg_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-class ProcDataBase_c;
+class ProcDataLocal_c;
 
 /**
   base class for elements of ProcessData which has pointer to
@@ -36,12 +36,12 @@ public:
     constructor which initialse both pointers if given
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  ProcessElementBase_c( ProcDataBase_c *const apc_processData = NULL );
+  ProcessElementBase_c( ProcDataLocal_c *const apc_processData = NULL );
   /**
     constructor which initialse both pointers if given
     @param arc_processData optional reference to containing ProcessData instance
   */
-  ProcessElementBase_c( ProcDataBase_c &arc_processData );
+  ProcessElementBase_c( ProcDataLocal_c &arc_processData );
   /**
     copy constructor
     @param acrc_src source ProcessElementBase_c instance
@@ -59,37 +59,37 @@ public:
     set the pointer to Scheduler_c and ProcessData by references to the object instances
     @param arc_processData optional reference to containing ProcessData instance
   */
-  void set(ProcDataBase_c& arc_processData );
+  void set(ProcDataLocal_c& arc_processData );
   /**
     set the pointer to Scheduler_c and ProcessData by pointer to the object instances
     @param acpc_processData optional pointer to containing ProcessData instance
   */
-  void set(ProcDataBase_c *const acpc_processData );
+  void set(ProcDataLocal_c *const acpc_processData );
   
   /**
     deliver a reference to the containing ProcessData item
     @return reference to containing ProcessData
   */
-  ProcDataBase_c& processData() const { return *mpc_processData; }
+  ProcDataLocal_c& processData() const { return *mpc_processData; }
   /**
     deliver the pointer to the containing ProcessData item
     @return pointer to containing ProcessData
   */
-  ProcDataBase_c * pprocessData() const { return mpc_processData; }
+  ProcDataLocal_c * pprocessData() const { return mpc_processData; }
   /**
     deliver a reference to the containing ProcessData item
     @return reference to containing ProcessData
   */
-  const ProcDataBase_c& processDataConst() const { return *mpc_processData; }
+  const ProcDataLocal_c& processDataConst() const { return *mpc_processData; }
   /**
     deliver the pointer to the containing ProcessData item
     @return pointer to containing ProcessData
   */
-  const ProcDataBase_c * pprocessDataConst() const { return mpc_processData; }
+  const ProcDataLocal_c * pprocessDataConst() const { return mpc_processData; }
 
 private: // Private attributes
   /** pointer to the containing ProcessData item */
-  ProcDataBase_c* mpc_processData;
+  ProcDataLocal_c* mpc_processData;
 };
 
 }

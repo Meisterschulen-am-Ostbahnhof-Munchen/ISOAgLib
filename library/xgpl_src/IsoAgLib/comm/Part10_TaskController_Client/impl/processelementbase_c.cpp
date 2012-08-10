@@ -15,6 +15,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "processelementbase_c.h"
+#include "procdatalocal_c.h"
 
 namespace __IsoAgLib {
 
@@ -23,7 +24,7 @@ namespace __IsoAgLib {
   @param apc_processData optional pointer to containing ProcessData instance
 */
 ProcessElementBase_c::ProcessElementBase_c(
-    ProcDataBase_c *const apc_processData )
+    ProcDataLocal_c *const apc_processData )
     : ClientBase(){
   mpc_processData = apc_processData;
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
@@ -38,7 +39,7 @@ ProcessElementBase_c::ProcessElementBase_c(
   @param arc_processData optional reference to containing ProcessData instance
 */
 ProcessElementBase_c::ProcessElementBase_c(
-    ProcDataBase_c &arc_processData )
+    ProcDataLocal_c &arc_processData )
     : ClientBase(arc_processData){
   mpc_processData = &arc_processData;
 }
@@ -72,7 +73,7 @@ ProcessElementBase_c::~ProcessElementBase_c(){
   set the pointer to Scheduler_c and ProcessData by references to the object instances
   @param arc_processData optional reference to containing ProcessData instance
 */
-void ProcessElementBase_c::set(ProcDataBase_c& arc_processData )
+void ProcessElementBase_c::set(ProcDataLocal_c& arc_processData )
 {
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
   ClientBase::setMultitonInst(arc_processData.getMultitonInst());
@@ -84,7 +85,7 @@ void ProcessElementBase_c::set(ProcDataBase_c& arc_processData )
   deliver the pointer to the containing ProcessData item
   @param acpc_processData optional pointer to containing ProcessData instance
 */
-void ProcessElementBase_c::set(ProcDataBase_c *const acpc_processData)
+void ProcessElementBase_c::set(ProcDataLocal_c *const acpc_processData)
 {
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
   if ( acpc_processData != NULL )

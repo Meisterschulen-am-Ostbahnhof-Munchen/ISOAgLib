@@ -49,7 +49,7 @@ public:
     @param acrc_isoName optional ISOName of partner member for this measure program
   */
   MeasureProgBase_c(
-    ProcDataBase_c *const apc_processData = NULL,
+    ProcDataLocal_c *const apc_processData = NULL,
     int32_t ai32_val = 0,
     const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified() ) : ProcessElementBase_c(apc_processData),
       mvec_measureSubprog() {init(apc_processData, ai32_val, acrc_isoName);}
@@ -61,7 +61,7 @@ public:
     @param acrc_isoName optional ISOName of partner member for this measure program
   */
   MeasureProgBase_c(
-    ProcDataBase_c &acrc_processData,
+    ProcDataLocal_c &acrc_processData,
     int32_t ai32_val = 0,
     const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified()) : ProcessElementBase_c(acrc_processData),
       mvec_measureSubprog() {init(&acrc_processData, ai32_val, acrc_isoName);}
@@ -73,7 +73,7 @@ public:
     @param acrc_isoName optional ISOName of partner member for this measure program
   */
   void init(
-    ProcDataBase_c *const apc_processData,
+    ProcDataLocal_c *const apc_processData,
     int32_t ai32_val = 0,
     const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified());
 

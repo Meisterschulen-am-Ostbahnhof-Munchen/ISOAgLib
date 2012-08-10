@@ -43,14 +43,14 @@ public:
     @param apc_processData pointer to containing ProcessData instance
   */
   SetpointLocal_c(
-    ProcDataBase_c *const apc_processData = NULL ) : SetpointBase_c( apc_processData )
+    ProcDataLocal_c *const apc_processData = NULL ) : SetpointBase_c( apc_processData )
     {init( apc_processData );};
 
   /**
     initialise this SetpointLocal_c to a well defined starting condition
     @param apc_processData pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c *const apc_processData );
+  void init( ProcDataLocal_c *const apc_processData );
   /**
     assginment from another object
     @param acrc_src source SetpointLocal_c instance

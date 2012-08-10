@@ -46,7 +46,7 @@ private:
     constructor which initialse both pointers if given
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  ManageMeasureProgLocal_c( ProcDataBase_c *const apc_processData = NULL )
+  ManageMeasureProgLocal_c( ProcDataLocal_c *const apc_processData = NULL )
   : ProcessElementBase_c( apc_processData )
   { init( apc_processData );};
   virtual ~ManageMeasureProgLocal_c();
@@ -55,7 +55,7 @@ private:
     initialise this ManageMeasureProgLocal_c instance to a well defined initial state
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c *const apc_processData = NULL );
+  void init( ProcDataLocal_c *const apc_processData = NULL );
 
   /** copy constructor */
   ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& acrc_src );

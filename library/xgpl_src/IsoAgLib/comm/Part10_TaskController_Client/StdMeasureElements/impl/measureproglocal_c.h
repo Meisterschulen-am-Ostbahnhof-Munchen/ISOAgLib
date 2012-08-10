@@ -57,7 +57,7 @@ public:
     @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c(
-    ProcDataBase_c *const apc_processData = NULL,
+    ProcDataLocal_c *const apc_processData = NULL,
     int32_t ai32_masterVal = 0,
     int32_t ai32_initialVal = 0,
     const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() );
@@ -69,7 +69,7 @@ public:
     @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
-    ProcDataBase_c *const apc_processData,
+    ProcDataLocal_c *const apc_processData,
     int32_t ai32_masterVal = 0,
     int32_t ai32_initialVal = 0,
     const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() );

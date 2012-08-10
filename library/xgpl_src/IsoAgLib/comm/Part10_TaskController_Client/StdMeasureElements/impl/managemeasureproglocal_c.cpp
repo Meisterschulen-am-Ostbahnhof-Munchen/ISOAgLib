@@ -62,7 +62,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   initialise this ManageMeasureProgLocal_c instance to a well defined initial state
   @param apc_processData optional pointer to containing ProcessData instance
 */
-void ManageMeasureProgLocal_c::init( ProcDataBase_c *const apc_processData )
+void ManageMeasureProgLocal_c::init( ProcDataLocal_c *const apc_processData )
 { // set the pointer to the corresponging process data class
   ProcessElementBase_c::set( apc_processData );
   // as init() can be also called to re-init (bring this instance to well

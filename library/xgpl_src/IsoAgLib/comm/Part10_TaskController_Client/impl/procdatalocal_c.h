@@ -16,10 +16,20 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatabase_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/StdMeasureElements/impl/managemeasureproglocal_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointlocal_c.h>
+#include <IsoAgLib/util/config.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
+#include "processpkg_c.h"
+#include "processcmd_c.h"
+
+namespace IsoAgLib {
+  class ProcessDataChangeHandler_c;
+  class EventSource_c;
+}
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
@@ -83,7 +93,18 @@ namespace __IsoAgLib {
 
   @author Dipl.-Inform. Achim Spangler
 */
-class ProcDataLocal_c : public ProcDataBase_c  {
+class ProcDataLocal_c : public ClientBase  {
+public:
+  /** allow explicit SetpointBase_c the access to private elements */
+  friend class SetpointBase_c;
+
+  /** allow explicit MeasureProgBase_c the access to private elements */
+  friend class MeasureProgBase_c;
+
+  /** allow explicit MeasureProgLocal_c the access to private elements */
+  friend class MeasureProgLocal_c;
+
+  friend class SetpointLocal_c;
 
 public:
   /**
@@ -168,6 +189,17 @@ public:
 
   /** default destructor which has nothing to do */
   ~ProcDataLocal_c();
+
+  /** assignment operator for this base object
+    @param acrc_src source instance
+    @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
+  */
+  const ProcDataLocal_c& operator=(const ProcDataLocal_c& acrc_src);
+
+  /** copy constructor for ProcDataBase_c
+    @param acrc_src source instance
+  */
+  ProcDataLocal_c(const ProcDataLocal_c& acrc_src);
 
   /** deliver a reference to the setpoint management class */
   SetpointLocal_c& setpoint( void ) { return mc_setpoint; }
@@ -269,10 +301,10 @@ public:
 public: // FROM FORMER BASE CLASS
 
   /** copy constructor */
-  ProcDataLocal_c( const ProcDataLocal_c& acrc_src );
+  //ProcDataLocal_c( const ProcDataLocal_c& acrc_src );
 
   /** assignment operator */
-  const ProcDataLocal_c& operator=( const ProcDataLocal_c& acrc_src );
+  //const ProcDataLocal_c& operator=( const ProcDataLocal_c& acrc_src );
 
   /** deliver the master value (central measure value of this process data;
     can differ from measure vals of measure progs, as these can be reseted
@@ -351,6 +383,100 @@ public: // FROM FORMER BASE CLASS
   */
   bool sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
+  void setBasicSendFlags( ProcessPkg_c& pkg ) const;
+
+
+  /** set the pointer to the handler class
+    * @param apc_processDataChangeHandler pointer to handler class of application
+    */
+  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
+   { mpc_processDataChangeHandler = apc_processDataChangeHandler; }
+
+  /** deliver the poitner to the handler class
+    * @return pointer to handler class of application (or NULL if not defined by application)
+    */
+  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return mpc_processDataChangeHandler; }
+
+  /** process a message, which is adressed for this process data item;
+    ProcDataBase_c::processMsg() is responsible to delegate the
+    processing of setpoint and measurement messages to the appripriate
+    functions processSetpoint and processProg;
+    both functions are virtual, so that depending on loacl or remote
+    process data the suitable reaction can be implemented
+  */
+  void processMsg( ProcessPkg_c& pkg );
+
+  /** perform periodic acoins
+    @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
+    @return true -> all planned executions performed
+  */
+  //virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
+
+  virtual const IsoName_c& commanderISOName() const { return IsoName_c::IsoNameUnspecified(); }
+
+  /**
+    deliver value DDI (only possible if only one elementDDI in list)
+    @return DDI
+  */
+  uint16_t DDI() const{ return mui16_ddi; }
+
+  /**
+    deliver value element (only possible if only one elementDDI in list)
+    @return element
+  */
+  uint16_t element() const{ return mui16_element; }
+
+  /**
+    deliver the isoName (retrieved from pointed isoName value, if valid pointer)
+    @return actual ISOName
+  */
+  const IsoName_c& isoName() const
+    { return ((mpc_externalOverridingIsoName != 0)?(*mpc_externalOverridingIsoName):(mc_isoName));}
+
+  /**
+    set DDI, value group and setpoint/measure type of process msg
+    @param aps_elementDDI
+  */
+  void setElementDDI(uint16_t aui16_ddi) { mui16_ddi = aui16_ddi; }
+
+  /** set device element number
+    * @param  aui16_element */
+  void setElementNumber(uint16_t aui16_element) { mui16_element = aui16_element; }
+
+  /**
+    set value ISOName (machine type specific table of process data types)
+    @param ac_val new ISOName val
+  */
+  void setISOName(const IsoName_c& ac_val){mc_isoName = ac_val;}
+
+  /**
+    set pointer to external isoName instances (used by isoName())
+    @param apc_val pointer to ISOName
+  */
+  void setExternalOverridingIsoName(const IsoName_c* apc_val);
+
+  /**
+    check if this item has the same identity as defined by the parameters,
+    if aui8_devClassInst is 0xFF a lazy match disregarding pos is done
+    (important for matching received process data msg);
+    if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
+    <li>parameter INSTANCE == ident INSTANCE (devClassInst())
+    <li>parameter acrc_isoName == isoName()
+    </ul>
+
+    ISO parameter
+    @param acrc_isoNameSender compare this parameter with owner isoName (only for remote, local calls: IsoNameUnspecified)
+    @param acrc_isoNameReceiver compared isoName value
+    @param aui16_DDI compared DDI value
+    @param aui16_element compared element value
+
+    @return true -> this instance has same Process-Data identity
+  */
+  bool matchISO( const IsoName_c& acrc_isoNameSender,
+                 const IsoName_c& acrc_isoNameReceiver,
+                 uint16_t aui16_DDI,
+                 uint16_t aui16_element
+               ) const;
 
 private: // Private methods
 
@@ -378,13 +504,28 @@ private:
    /** allow explicit MeasureProgLocal_c the access to private elements */
   friend class MeasureProgLocal_c;
   friend class ManageMeasureProgLocal_c; /** allow access to eepromVal() and resetEeprom() */
-  friend class ProcDataLocal_c; /** allow access to eepromVal() and resetEeprom() */
 
   /** store the master value of the main programm */
   int32_t mi32_masterVal;
 
   /** register if this data is a cumulative type like distance, time, area */
   bool mb_cumulativeValue;
+
+  /** pointer to applications handler class, with handler functions
+      which shall be called on correltating change events.
+      (e.g. new received setpoint for local process data
+       or new received measurement value for remote process data)
+    */
+  IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
+
+  /** DEVCLASS code of process data identity */
+  const IsoName_c* mpc_externalOverridingIsoName; // only defined for own local data, otherwise NULL
+
+  /** IsoName_c information for this instance */
+  IsoName_c mc_isoName;
+
+  uint16_t mui16_ddi;
+  uint16_t mui16_element;
 };
 
 
