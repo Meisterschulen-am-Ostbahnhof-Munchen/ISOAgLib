@@ -20,7 +20,6 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include "processpkg_c.h"
-#include "processcmd_c.h"
 
 namespace IsoAgLib {
   class ProcessDataChangeHandler_c;

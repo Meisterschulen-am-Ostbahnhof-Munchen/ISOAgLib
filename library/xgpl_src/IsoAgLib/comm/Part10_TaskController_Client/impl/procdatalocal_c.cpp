@@ -83,19 +83,17 @@ void ProcDataLocal_c::timeEvent( uint16_t& rui16_nextTimePeriod ){
 
 void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
 {
-  isoaglib_assert( DDI() == pkg.DDI() );
-
-  pkg.resolveCommandTypeForISO( DDI(), procdataconfiguration.mb_isSetpoint );
+  isoaglib_assert( DDI() == pkg.mui16_DDI );
   
-  if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
+  if ( pkg.men_command == ProcessPkg_c::setValue)
   { // process setpoint command
-    if (pkg.mc_processCmd.checkIsSetpoint())
+    if (procdataconfiguration.mb_isSetpoint)
     {
       mc_setpoint.processMsg( *this, pkg );
     }
     else
     { // set value but DPD is not settable
-      getProcessInstance4Comm().sendNack( pkg.senderItem()->isoName(),
+      getProcessInstance4Comm().sendNack( pkg.getMonitorItemForSA()->isoName(),
                                           isoName(),
                                           DDI(),
                                           element(),
@@ -129,13 +127,31 @@ void ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_var
   pkg.setIsoPri(3);
   pkg.setIsoPgn(PROCESS_DATA_PGN);
 
-  pkg.set_Element(element());
-  pkg.set_DDI(DDI());
+  pkg.mui16_element = element();
+  pkg.mui16_DDI = DDI();
 
-  pkg.setData( ai32_val );
+  pkg.mi32_pdValue = ai32_val;
+
+  // check if command is valid
+  isoaglib_assert(pkg.men_command != ProcessPkg_c::commandReserved1);
+  isoaglib_assert(pkg.men_command != ProcessPkg_c::commandReserved2);
+  isoaglib_assert(pkg.men_command != ProcessPkg_c::commandReserved3);
+  isoaglib_assert(pkg.men_command != ProcessPkg_c::commandReserved4);
+  isoaglib_assert(pkg.men_command != ProcessPkg_c::CommandUndefined);
+
+  uint8_t ui8_cmd = static_cast<uint8_t>(pkg.men_command);
+
+  pkg.setUint8Data(0, (ui8_cmd & 0xf) | ( (pkg.mui16_element & 0xf) << 4) );
+  pkg.setUint8Data(1, pkg.mui16_element >> 4 );
+  pkg.setUint8Data(2, pkg.mui16_DDI & 0x00FF );
+  pkg.setUint8Data(3, (pkg.mui16_DDI& 0xFF00) >> 8 );
+  // for ISO the ident is directly read and written
+
+  pkg.setInt32Data(4, pkg.mi32_pdValue);
+
+  pkg.setLen(8);
 
   // send the msg
-  pkg.flags2String();
   getIsoBusInstance4Comm() << pkg;
 }
 
@@ -157,7 +173,7 @@ void ProcDataLocal_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) con
 
   ProcessPkg_c pkg;
   // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
+  pkg.men_command = ProcessPkg_c::setValue;
 
   sendValISOName( pkg, ac_targetISOName, measurementVal());
 }

@@ -19,6 +19,8 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 
+#include <list>
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class ProcDataLocal_c;
