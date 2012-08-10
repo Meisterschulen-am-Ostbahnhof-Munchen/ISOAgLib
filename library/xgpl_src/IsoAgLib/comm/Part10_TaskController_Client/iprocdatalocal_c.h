@@ -55,12 +55,11 @@ public:
                     const iIsoName_c& acrc_isoName,
                     bool ab_isSetpoint,
                     uint8_t aui8_triggerMethod,
-                    bool ab_cumulativeValue = false,
                     ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                     int ai_multitonInst = 0)
     : ProcDataLocal_c( aui16_ddi, aui16_element,
                        acrc_isoName, ab_isSetpoint,
-                       aui8_triggerMethod, ab_cumulativeValue,
+                       aui8_triggerMethod,
                        apc_processDataChangeHandler,
                        ai_multitonInst
                       )
@@ -72,7 +71,6 @@ public:
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
     @param acrc_isoName optional ISOName code of Process-Data
-    @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
                  the value of the measure prog data sets is updated
@@ -98,13 +96,12 @@ public:
              const iIsoName_c& acrc_isoName,
              bool ab_isSetpoint,
              uint8_t aui8_triggerMethod,
-             bool ab_cumulativeValue = false,
              ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
              int ai_multitonInst = 0
             )
   {ProcDataLocal_c::init( aui16_ddi, aui16_element,
                          acrc_isoName, ab_isSetpoint,
-                         aui8_triggerMethod, ab_cumulativeValue,
+                         aui8_triggerMethod,
                          apc_processDataChangeHandler,
                          ai_multitonInst);
   }
@@ -146,8 +143,8 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendMasterMeasurementVal( const iIsoName_c& ac_targetISOName ) const
-    { return ProcDataLocal_c::sendMasterMeasurementVal( ac_targetISOName );}
+  void sendMasterMeasurementVal( const iIsoName_c& ac_targetISOName ) const
+    { ProcDataLocal_c::sendMasterMeasurementVal( ac_targetISOName );}
 
   /**
     deliver the master value (central measure value of this process data;

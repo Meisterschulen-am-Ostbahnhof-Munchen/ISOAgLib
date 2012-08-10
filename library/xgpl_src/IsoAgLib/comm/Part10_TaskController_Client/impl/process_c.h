@@ -142,6 +142,12 @@ public:
   void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
    { mpc_processDataChangeHandler = apc_processDataChangeHandler; }
 
+  void sendNack( const IsoName_c& ac_da,
+                 const IsoName_c& ac_sa,
+                 int16_t ddi,
+                 int16_t element,
+                 uint8_t a_errorcodes) const;
+
 protected:
   //! Function set ui16_earlierInterval and
   //! ui16_laterInterval that will be used by

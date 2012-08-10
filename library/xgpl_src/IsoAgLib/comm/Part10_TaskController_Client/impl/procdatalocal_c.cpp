@@ -25,7 +25,6 @@ ProcDataLocal_c::ProcDataLocal_c( uint16_t aui16_ddi, uint16_t aui16_element,
                                   const IsoName_c& acrc_isoName,
                                   bool ab_isSetpoint,
                                   uint8_t aui8_triggerMethod,
-                                  bool ab_cumulativeValue,
                                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                   int ai_multitonInst
                                   )
@@ -34,16 +33,14 @@ ProcDataLocal_c::ProcDataLocal_c( uint16_t aui16_ddi, uint16_t aui16_element,
       mc_measureprog(),
       mc_setpoint()
 {
-      init( aui16_ddi, aui16_element, acrc_isoName, ab_isSetpoint, aui8_triggerMethod, ab_cumulativeValue
-          , apc_processDataChangeHandler
-          , ai_multitonInst);
+      init( aui16_ddi, aui16_element, acrc_isoName, ab_isSetpoint, aui8_triggerMethod,
+            apc_processDataChangeHandler, ai_multitonInst);
 }
 
 void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
                             const IsoName_c& acrc_isoName,
                             bool ab_isSetpoint,
                             uint8_t aui8_triggerMethod,
-                            bool ab_cumulativeValue,
                             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                             int ai_multitonInst
                            )
@@ -65,7 +62,6 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
 
   procdataconfiguration.mb_isSetpoint = ab_isSetpoint;
   procdataconfiguration.mui8_triggerMethod = aui8_triggerMethod & 0x3F; // 6 bits
-  procdataconfiguration.mb_cumulativeValue = ab_cumulativeValue;
 }
 
 ProcDataLocal_c::~ProcDataLocal_c(){
@@ -211,7 +207,7 @@ void ProcDataLocal_c::stopRunningMeasurement(const IsoName_c& rc_isoName)
   mc_measureprog.stopRunningMeasurement(*this, rc_isoName);
 }
 
-bool ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const
+void ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const
 {
   pkg.setISONameForDA(ac_varISOName);
   pkg.setISONameForSA(isoName());
@@ -227,13 +223,6 @@ bool ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_var
   // send the msg
   pkg.flags2String();
   getIsoBusInstance4Comm() << pkg;
-  // check for any error during send resolve, ...
-  if ( getILibErrInstance().good(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can) )
-  { // good
-    return true;
-  }
-  else
-    return false;
 }
 
 bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameReceiver,
@@ -250,13 +239,13 @@ bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameReceiver,
   return true;
 }
 
-bool ProcDataLocal_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {
+void ProcDataLocal_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {
 
   ProcessPkg_c pkg;
   // prepare general command in process pkg
   pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
 
-  return sendValISOName( pkg, ac_targetISOName, masterMeasurementVal());
+  sendValISOName( pkg, ac_targetISOName, masterMeasurementVal());
 }
 
 } // end of namespace __IsoAgLib

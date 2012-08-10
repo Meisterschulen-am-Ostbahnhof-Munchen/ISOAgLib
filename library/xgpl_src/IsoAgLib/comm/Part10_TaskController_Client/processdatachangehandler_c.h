@@ -75,26 +75,6 @@ class ProcessDataChangeHandler_c {
    */
  virtual bool processMeasurementReset( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName ) = 0;
 
- /** react on new received measurement update for remote process data
-   * (remote system which manages the process data sent new value on request or
-   *  during active measurement programm)
-   * @param ac_src general event source class, which provides conversion functions to get needed event source class
-   * @param ai32_val new value, which caused the event (for immediate access)
-   * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
-   * @return true -> handler class reacted on change event
-   */
- virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName, bool ab_change ) = 0;
-
- /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
-   * (remote system which manages the process data, local or other system sent previously a
-   *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
-   * @param ac_src general event source class, which provides conversion functions to get needed event source class
-   * @param ai32_val new value, which caused the event (for immediate access)
-   * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
-   * @return true -> handler class reacted on change event
-   */
- virtual bool processSetpointResponse( EventSource_c ac_src, uint16_t rui16_ddi, int32_t ai32_val, const iIsoName_c& ac_callerISOName ) = 0;
-
  /** react on received value request for default data logging (DDI 0xDFFF)
    * (can be used to start measurement programms in local process data instances)
    * @param ac_src general event source class, which provides conversion functions to get needed event source class

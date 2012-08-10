@@ -88,7 +88,6 @@ public:
                   const IsoName_c& acrc_isoName,
                   bool ab_isSetpoint,
                   uint8_t aui8_triggerMethod,
-                  bool ab_cumulativeValue = false,
                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                   int ai_multitonInst = 0
                   );
@@ -124,7 +123,6 @@ public:
             const IsoName_c& acrc_isoName,
             bool ab_isSetpoint,
             uint8_t aui8_triggerMethod,
-            bool ab_cumulativeValue = false,
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_multitonInst = 0
             );
@@ -200,7 +198,7 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendMasterMeasurementVal( const IsoName_c& ac_targetISOName ) const;
+  void sendMasterMeasurementVal( const IsoName_c& ac_targetISOName ) const;
 
   /**
     (used for accessing setpoint values from measure progs)
@@ -226,7 +224,6 @@ public:
   virtual void stopRunningMeasurement(const IsoName_c& rc_isoName);
 
   bool isSetPoint() const { return procdataconfiguration.mb_isSetpoint; }
-  bool isCumulative() const { return procdataconfiguration.mb_cumulativeValue; }
   uint8_t triggerMethod() const { return procdataconfiguration.mui8_triggerMethod; } 
 
 public: // from former base class
@@ -285,14 +282,12 @@ protected: // Protected methods
   /** send the given int32_t value with variable ISOName ac_varISOName;
       set the int32_t value with conversion (according to central data type) in message
       string and set data format flags corresponding to central data type of this process data
-      (local: receiver; remote: sender)
-      (other paramter fixed by ident of process data)
       set general command before sendValISOName !
       @param ac_varISOName variable ISOName
       @param ai32_val int32_t value to send
       @return true -> sendIntern set successful EMPF and SEND
   */
-  virtual bool sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
+  void sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
@@ -313,9 +308,8 @@ private: // Private attributes
   uint16_t mui16_element;
 
   struct {
-    bool mb_cumulativeValue : 1;
     bool mb_isSetpoint : 1;
-    uint8_t mui8_triggerMethod : 6;
+    uint8_t mui8_triggerMethod : 7;
   } procdataconfiguration;
 
   /** store the master value of the main programm */

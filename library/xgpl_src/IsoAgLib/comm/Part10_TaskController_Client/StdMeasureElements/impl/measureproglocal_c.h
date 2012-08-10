@@ -76,9 +76,7 @@ public:
     @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
     @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
   */
-  void init(
-    int32_t ai32_masterVal = 0,
-    int32_t ai32_initialVal = 0);
+  void init( int32_t ai32_masterVal = 0, int32_t ai32_initialVal = 0);
 
   /**
     assignment of MeasureProgLocal_c objects
@@ -95,59 +93,32 @@ public:
   virtual ~MeasureProgLocal_c();
   /**
     start a measuring programm with new master measurement value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @param ai32_masterVal actual master value to start with
     @return true -> starting values sent with success
   */
-  bool start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type,
-             Proc_c::doSend_t ren_doSend, int32_t ai32_masterVal);
+  void start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
 
-  /**
-    start a measuring program without new master measurement value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
-    @return true -> starting values sent with success
-  */
-  bool start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
   /**
     stop local measuring programs -> send actual values
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
     @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @return true -> stop values sent with success
   */
-  bool stop(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type = Proc_c::NullType,
+  void stop(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type = Proc_c::NullType,
                     Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
     send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
     @param en_valueGroup value group to send
     @param ac_targetISOName ISOName of target
-    @return true -> successful sent
   */
-  bool sendVal( ProcDataLocal_c& ac_processData, const IsoName_c& ac_targetISOName) const;
+  void sendVal( ProcDataLocal_c& ac_processData, const IsoName_c& ac_targetISOName) const;
 
   /**
     process a message: reset command or value requests
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
     @return true -> received msg processed by this instance
   */
   bool processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data );
@@ -155,24 +126,15 @@ public:
 
   /**
     set the measure prog value and send values if triggered to do
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
     @param ai32_val new measure value
   */
   void setVal(ProcDataLocal_c& ac_processData, int32_t ai32_val);
 
   /**
     send the values which are registered by a running mesuring program
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
-    @return true -> value send triggered and performed with success
   */
-  bool sendRegisteredVals( ProcDataLocal_c& ac_processData, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+  void sendRegisteredVals( ProcDataLocal_c& ac_processData, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
     init the element vals
@@ -181,22 +143,12 @@ public:
   void initVal(int32_t ai32_val);
   /**
     reset the local value
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
     @param ai32_val reset measure value to this value
-    @return true -> reseted measure val sent with success
   */
-  bool resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_val = 0);
+  void resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_val = 0);
 
   /**
-    periodic events
-    (e.g. send value for time proportional progs)
-
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
+    periodic events (e.g. send value for time proportional progs)
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
   */
@@ -221,7 +173,7 @@ public:
     check if this measure prog is running
     @return true -> program is running
   */
-  bool started() {return (men_doSend != Proc_c::DoNone);};
+  bool started() const {return (men_doSend != Proc_c::DoNone);};
 
   /**
     deliver actual last received value
@@ -267,17 +219,11 @@ private: // Private methods
 
 private: // Private attributes
 
-  /**  last time were value was set */
-  int32_t mi32_lastTime;
-
   /** actual value
       (can differ from masterVal if f.e. value of this program
       was resetted by caller)
   */
   int32_t mi32_val;
-
-  /** last master (eg. main prog or sensor) val  */
-  int32_t mi32_lastMasterVal;
 
   /** gathered information about currently running threshold sub progs */
   List_ThresholdInfo mlist_thresholdInfo;

@@ -48,9 +48,6 @@ void MeasureProgLocal_c::init(
   men_doSend = Proc_c::DoNone;
   //men_type = Proc_c::DistProp;
 
-  mi32_lastTime = 0;
-
-  mi32_lastMasterVal = ai32_masterVal;
   mlist_thresholdInfo.clear();
 }
 
@@ -75,24 +72,22 @@ void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& acrc_src )
   mc_isoName = acrc_src.mc_isoName;
   men_doSend = acrc_src.men_doSend;
   mb_active = acrc_src.mb_active;
-  mi32_lastTime = acrc_src.mi32_lastTime;
   mi32_val = acrc_src.mi32_val;
   mvec_measureSubprog = acrc_src.mvec_measureSubprog;
-  mi32_lastMasterVal = acrc_src.mi32_lastMasterVal;
 }
 #endif
 
 MeasureProgLocal_c::~MeasureProgLocal_c(){
 }
 
-bool MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend, int32_t ai32_masterVal){
+void MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type,
+                        Proc_c::doSend_t ren_doSend){
   // call start function of base class
   men_doSend = (ren_doSend != Proc_c::DoNone)?ren_doSend : men_doSend;
   if (men_doSend == Proc_c::DoNone) men_doSend = Proc_c::DoVal;
 
-  mi32_lastMasterVal = ai32_masterVal;
-  bool b_sendVal = true;
+  //mi32_lastMasterVal = ai32_masterVal;
+  bool b_sendVal = TRUE;
 
   // start the given subprog items
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
@@ -135,29 +130,19 @@ bool MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t r
   } // for
 
   // send first values: if now without success mark for later resend with true
-  bool triggeredIncrement = false;
   if (b_sendVal)
-    triggeredIncrement = !sendRegisteredVals(ac_processData, ren_doSend);
+    sendRegisteredVals(ac_processData, ren_doSend);
 
   // set the timer period for process_c to a low value (maybe the new programm triggers soon)
   getProcessInstance4Comm().resetTimerPeriod();
-
-  // return if successful sent starting values
-  return triggeredIncrement;
 }
 
-bool MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
-{
-  return start(ac_processData, ren_type, ren_doSend, mi32_lastMasterVal);
-}
-
-bool MeasureProgLocal_c::stop(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
+void MeasureProgLocal_c::stop(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // send the registered values
-  bool b_sendResult = true;
   if ((Proc_c::MinimumThreshold != ren_type) && (Proc_c::MaximumThreshold != ren_type)
       && (Proc_c::NullType != ren_type) ) // do not send values for threshold resets and NullType
   {
-    b_sendResult = sendRegisteredVals(ac_processData);
+    sendRegisteredVals(ac_processData);
   }
 
   if (Proc_c::NullType == ren_type)
@@ -189,16 +174,14 @@ bool MeasureProgLocal_c::stop(ProcDataLocal_c& ac_processData, Proc_c::type_t re
         ps_iterThreshold++;
     }
   }
-
-  return b_sendResult;
 }
 
-bool MeasureProgLocal_c::sendVal( ProcDataLocal_c& ac_processData, const IsoName_c& ac_targetISOName) const
+void MeasureProgLocal_c::sendVal( ProcDataLocal_c& ac_processData, const IsoName_c& ac_targetISOName) const
 {
   ProcessPkg_c pkg;
   // prepare general command in process pkg
   pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
-  return ac_processData.sendValISOName( pkg, ac_targetISOName, val());
+  ac_processData.sendValISOName( pkg, ac_targetISOName, val());
 }
 
 bool MeasureProgLocal_c::processMsgHelper( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg ){
@@ -307,6 +290,18 @@ bool MeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const Proc
     // the message was a value message -> evaluate it here
     if ( arc_data.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
+      // @TODO : test if allowed. Maybe if totals. Note : totals shall be setable !!
+      // @TODO : If so, this piece of code belong to setpoint and not to measurement ...
+
+      if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodTotal)) == 0 )
+      { // it is a value set. This DDI is no setpoint and no totals -> Process Data not setable
+        getProcessInstance4Comm().sendNack( arc_data.senderItem()->isoName(),
+                                            ac_processData.isoName(),
+                                            ac_processData.DDI(),
+                                            ac_processData.element(),
+                                            0x10); // Bit 4 = 1 Process Data not setable // @TODO avoid magic number.
+        return true;
+      }
 
       resetVal(ac_processData, ci32_val);
 
@@ -334,18 +329,10 @@ bool MeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const Proc
 }
 
 void MeasureProgLocal_c::setVal(ProcDataLocal_c& ac_processData, int32_t ai32_val){
-  int32_t i32_incr =  ai32_val - mi32_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
-  mi32_lastTime = i32_time;
 
-  // update values:
-  // for cumulative values -> update mi32_val by increment
-  // else take the actual given master value
-  mi32_lastMasterVal = ai32_val;
-  if ( ac_processData.isCumulative() )
-    mi32_val += i32_incr;
-  else
-    mi32_val = ai32_val;
+  // update values
+  mi32_val = ai32_val;
 
   // now check if one subprog triggers
   bool b_singleTest = false;
@@ -357,17 +344,14 @@ void MeasureProgLocal_c::setVal(ProcDataLocal_c& ac_processData, int32_t ai32_va
     {
       case Proc_c::TimeProp:
         triggeredIncrement = pc_iter->updateTrigger(i32_time);
-        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
         break;
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         triggeredIncrement = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
         #endif
-        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
         break;
       case Proc_c::OnChange:
         triggeredIncrement = pc_iter->updateTrigger(val());
-        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
         break;
       case Proc_c::NullType: break; // just to make compiler happy
       default: ;
@@ -387,14 +371,10 @@ void MeasureProgLocal_c::setVal(ProcDataLocal_c& ac_processData, int32_t ai32_va
   } // for
 }
 
-bool MeasureProgLocal_c::sendRegisteredVals(ProcDataLocal_c& ac_processData, Proc_c::doSend_t ren_doSend){
-  bool b_success = false;
-
+void MeasureProgLocal_c::sendRegisteredVals(ProcDataLocal_c& ac_processData, Proc_c::doSend_t ren_doSend){
   // normal measurement (no measurement on setpoint DDI)
   if (Proc_c::DoVal == ren_doSend)
-    b_success = (sendVal( ac_processData, getProcessInstance4Comm().getISONameFromType( m_ecuType ) ))? true : b_success;
-
-  return b_success;
+    sendVal( ac_processData, getProcessInstance4Comm().getISONameFromType( m_ecuType ) );
 }
 
 void MeasureProgLocal_c::initVal(int32_t ai32_val){
@@ -402,21 +382,16 @@ void MeasureProgLocal_c::initVal(int32_t ai32_val){
   mi32_val = ai32_val;
 }
 
-bool MeasureProgLocal_c::resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_val){
-  // send resetted val
-  bool b_sendSuccess;
-
+void MeasureProgLocal_c::resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_val)
+{
   ProcessPkg_c pkg;
-
   // prepare general command in process pkg
   pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
   // allow reset with value
   //mi32_val = 0;
   mi32_val = ai32_val;
 
-  b_sendSuccess = ac_processData.sendValISOName( pkg, getProcessInstance4Comm().getISONameFromType( m_ecuType ), val());
-
-  return b_sendSuccess;
+  ac_processData.sendValISOName( pkg, getProcessInstance4Comm().getISONameFromType( m_ecuType ), val());
 }
 
 bool MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t *pui16_nextTimePeriod )
@@ -550,46 +525,54 @@ void MeasureProgLocal_c::processIncrementMsg( ProcDataLocal_c& ac_processData, c
   // set mc_isoName to caller of prog
   m_ecuType = getProcessInstance4Comm().getTypeFromISOName( pkg.senderItem()->isoName() );
 
+  bool b_wrongTriggerMethod = false;
   const int32_t ci32_val = pkg.getValue();
 
   if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementTimeValueStart)
   { // time proportional
     if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodTimeInterval)) != 0 )
       addSubprog(Proc_c::TimeProp, __IsoAgLib::abs(ci32_val), ren_doSend);
-    //else
-    //  responseNACK();
+    else
+      b_wrongTriggerMethod = true;
   }
   else if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementDistanceValueStart)
   {    // distance proportional
     if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodDistInterval)) != 0 )
       addSubprog(Proc_c::DistProp, ci32_val, ren_doSend);
-    //else
-    //  responseNACK();
+    else
+      b_wrongTriggerMethod = true;
   }
   else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementChangeThresholdValueStart)
   {
     // change threshold proportional
     if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodOnChange)) != 0 )
       addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
-    //else
-    //  responseNACK();
+    else
+      b_wrongTriggerMethod = true;
   }
   else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMaximumThresholdValueStart)
   {
     // change threshold proportional
     if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
       addSubprog(Proc_c::MaximumThreshold, ci32_val, ren_doSend);
-    //else
-    //  responseNACK();
+    else
+      b_wrongTriggerMethod = true;
   }
   else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMinimumThresholdValueStart)
   {
     // change threshold proportional
     if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
       addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
-    //else
-    //  responseNACK();
+    else
+      b_wrongTriggerMethod = true;
   }
+
+  if (b_wrongTriggerMethod)
+    getProcessInstance4Comm().sendNack( pkg.senderItem()->isoName(),
+                                        ac_processData.isoName(),
+                                        ac_processData.DDI(),
+                                        ac_processData.element(),
+                                        0x08); // Bit 3 = 1 Trigger method not supported // @TODO avoid magic number.
 }
 
 } // end of namespace __IsoAgLib
