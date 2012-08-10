@@ -150,10 +150,8 @@ set_default_values()
     APP_NAME=''
     PRJ_PROPRIETARY_PGN_INTERFACE=0
     PRJ_ISO11783=0
-    PRJ_ISO_TERMINAL=0
+    PRJ_ISO_VIRTUALTERMINAL_CLIENT=0
     PRJ_ISO_FILESERVER_CLIENT=0
-    PRJ_ISO_TERMINAL=0
-    PRJ_ISO_TERMINAL_LAYOUT_MANAGER=0
     PRJ_ISO_TASKCONTROLLER_CLIENT=0
     PRJ_RS232_OVER_CAN=0
     PRJ_MULTIPACKET_STREAM_CHUNK=1
@@ -253,8 +251,8 @@ check_set_correct_variables()
 
     : ${PROJECT:?"ERROR! Please set the variable PROJECT to the build sub-directory and executable filename"}
 
-    if [ "$PRJ_ISO11783" -lt 1 -a "$PRJ_ISO_TERMINAL" -gt 0 ]; then
-        echo_ "ERROR! Can't utilize PRJ_ISO_TERMINAL as ISO11783 is not activated"
+    if [ "$PRJ_ISO11783" -lt 1 -a "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 ]; then
+        echo_ "ERROR! Can't utilize PRJ_ISO_VIRTUALTERMINAL_CLIENT as ISO11783 is not activated"
         echo_ "Set PRJ_ISO11783 to 1 if you want ISO 11783 virtual terminal-client support."
         exit 2
     fi
@@ -482,7 +480,7 @@ comm_features()
         printf '%s' " -o -path '*/Part10_TaskController_Client/*'" >&3
     fi
     
-    if [ "$PRJ_ISO_TERMINAL" -gt 0 ]; then
+    if [ "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 ]; then
         if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" -eq 0 ]; then
             # exclude graphicscontext_c
             printf '%s' " -o \( -path '*/Part6_VirtualTerminal_Client/i*' -a -not -name '*graphicscontext_c*' \)" >&3
@@ -491,7 +489,7 @@ comm_features()
         fi
     fi
     if [ "$PRJ_DATASTREAMS" -lt 1 ]; then
-        if [ "$PRJ_ISO_TERMINAL" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 ]; then
+        if [ "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 ]; then
             printf '%s' " -o -path '*/driver/datastreams/volatilememory_c.*'" >&3
         fi
     fi
@@ -941,14 +939,14 @@ END_OF_PATH
             echo_e "#define USE_EEPROM_IO" >&3
         fi
     
-        if [ "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ]; then
+        if [ "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_VIRTUALTERMINAL_CLIENT -gt 0 -o $PRJ_TIME_GPS -gt 0 ]; then
             echo_e "#ifndef USE_DATASTREAMS_IO $ENDLINE\t#define USE_DATASTREAMS_IO $ENDLINE#endif" >&3
         fi
     
         if [ "$PRJ_ISO11783" -gt 0 ] ; then
             echo_e "#ifndef USE_ISO_11783 $ENDLINE\t#define USE_ISO_11783 $ENDLINE#endif" >&3
-            if [ "$PRJ_ISO_TERMINAL" -gt 0 ] ; then
-                echo_e "#ifndef USE_ISO_TERMINAL $ENDLINE\t#define USE_ISO_TERMINAL $ENDLINE#endif" >&3
+            if [ "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 ] ; then
+                echo_e "#ifndef USE_ISO_VIRTUALTERMINAL_CLIENT $ENDLINE\t#define USE_ISO_VIRTUALTERMINAL_CLIENT $ENDLINE#endif" >&3
                 if [ "$USE_ISO_TERMINAL_ATTRIBUTES" -ne 0 ] ; then
                     echo_e "#ifndef USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE\t#define USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE#endif" >&3
                 fi

@@ -235,10 +235,6 @@
 				RelativePath=".\src\vt2isoimagefreeimage_c.h"
 				>
 			</File>
-			<File
-				RelativePath=".\src\vt2isoimagepaintlib_c.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

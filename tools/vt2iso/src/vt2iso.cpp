@@ -621,11 +621,11 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_derived, "\n// forward declaration");
     fprintf (partFile_handler_derived, "\nextern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists%s [];", mstr_poolIdent.c_str());
     fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationEnd.c_str());
-    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", mstr_className.c_str());
+    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iVtClientObjectPool_c {", mstr_className.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
     fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF);");
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
-    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d,  ObjectPoolSettings_s(iIsoTerminalObjectPool_c::ObjectPoolVersion%d, %d, %d, %d) ) {}\n",
+    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iVtClientObjectPool_c (%sall_iVtObjectLists%s, %d, %d,  ObjectPoolSettings_s(iVtClientObjectPool_c::ObjectPoolVersion%d, %d, %d, %d) ) {}\n",
              mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, mi_objectPoolVersion, opDimension, skWidth, skHeight);
     fprintf (partFile_handler_derived, "\n};\n");
     fprintf (partFile_handler_derived, "\n#endif\n" );

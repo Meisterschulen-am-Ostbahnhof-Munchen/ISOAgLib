@@ -18,11 +18,6 @@
 # Project name - used for directory with make-/project-file
 PROJECT=ProjectName
 
-# Project author/email
-# - used for IDE project file types, where the author is stored in the project file
-PROJECT_AUTHOR="Author Name"
-PROJECT_AUTHOR_EMAIL=MyEmail@Location
-
 
 # ###############################################################
 # Main IsoAgLib Path
@@ -168,14 +163,13 @@ PRJ_ISO11783=1
 # PRJ_PROPRIETARY_PGN_INTERFACE=1
 
 # Specify if Part 6 - VT-Client support is enabled.
-# PRJ_ISO_TERMINAL=1
+# PRJ_ISO_VIRTUALTERMINAL_CLIENT=1
 
 # Specify if Part 10 - TC-Client support is enabled.
 # PRJ_ISO_TASKCONTROLLER_CLIENT=1
 
 # Specify if Part 12 - Diagnostic Services is enabled.
-# Note: This is currently always added to IsoAgLib as it was
-#       specified to be mandatory in the first place.
+# Note: This is currently always added to IsoAgLib as it is mandatory now.
 
 # Specify if Part 13 - FS-Client support is enabled.
 # PRJ_ISO_FILESERVER_CLIENT=1
