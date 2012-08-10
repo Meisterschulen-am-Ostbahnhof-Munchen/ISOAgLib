@@ -12,16 +12,14 @@
 */
 #include "vtobjectworkingset_c.h"
 
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
-// Begin Namespace __IsoAgLib
+
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectWorkingSet_c::stream(uint8_t* destMemory,
                              uint16_t maxBytes,
@@ -36,7 +34,7 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
         destMemory [0] = vtObjectWorkingSet_a->ID & 0xFF;
         destMemory [1] = vtObjectWorkingSet_a->ID >> 8;
         destMemory [2] = 0; // Object Type = Working Set
-        destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectWorkingSet_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+        destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectWorkingSet_a->backgroundColour, this, IsoAgLib::BackgroundColour);
         destMemory [4] = vtObjectWorkingSet_a->selectable;
         if (vtObjectWorkingSet_a->activeMask != NULL) {
             destMemory [5] = vtObjectWorkingSet_a->activeMask->getID() & 0xFF;
@@ -62,10 +60,9 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-// Operation : vtObjectWorkingSet_c
 vtObjectWorkingSet_c::vtObjectWorkingSet_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectWorkingSet_c::fitTerminal() const
 {
@@ -73,15 +70,13 @@ vtObjectWorkingSet_c::fitTerminal() const
   return 10+vtObjectWorkingSet_a->numberOfObjectsToFollow*6+vtObjectWorkingSet_a->numberOfMacrosToFollow*2+vtObjectWorkingSet_a->numberOfLanguagesToFollow*2;
 }
 
-// Operation : changeActiveMask
-//! @param apc_vtObjectMask:
-//! @param b_updateObject:
+
 void
 vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), apc_vtObjectMask);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeActiveMask( this, apc_vtObjectMask, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeActiveMask( this, apc_vtObjectMask, b_enableReplaceOfCmd);
 }
 
 void
@@ -89,7 +84,7 @@ vtObjectWorkingSet_c::changeBackgroundColour(uint8_t newValue, bool b_updateObje
 {
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), backgroundColour), sizeof(iVtObjectWorkingSet_s), newValue);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
 }
 
 bool
@@ -109,18 +104,16 @@ vtObjectWorkingSet_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, i
 bool
 vtObjectWorkingSet_c::controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime)
 {
-  return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandControlAudioDevice (aui8_repetitions, aui16_frequency, aui16_onTime, aui16_offTime);
+  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandControlAudioDevice (aui8_repetitions, aui16_frequency, aui16_onTime, aui16_offTime);
 }
 
 bool
 vtObjectWorkingSet_c::setAudioVolume (uint8_t aui8_volume)
 {
-  return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandSetAudioVolume (aui8_volume);
+  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandSetAudioVolume (aui8_volume);
 }
 
 
-// Operation : setOriginSKM
-//! @param b_SKM:
 void
 vtObjectWorkingSet_c::setOriginSKM(bool /*b_SKM*/)
 {
@@ -174,4 +167,5 @@ vtObjectWorkingSet_c::saveReceivedAttribute (uint8_t attrID, uint8_t* /*pui8_att
   }
 }
 #endif
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib

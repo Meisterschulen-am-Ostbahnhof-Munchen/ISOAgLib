@@ -1,5 +1,5 @@
 /*
-  isoterminal_c.cpp: central ISO terminal management
+  vtclient_c.cpp: central VT Client management
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -11,32 +11,32 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.h>
 #include <IsoAgLib/util/iassert.h>
-#include "../iisoterminalobjectpool_c.h"
+#include "../ivtclientobjectpool_c.h"
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
 #endif
 
 namespace __IsoAgLib {
-  /** C-style function, to get access to the unique IsoTerminal_c singleton instance
+  /** C-style function, to get access to the unique VtClient_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  IsoTerminal_c &getIsoTerminalInstance(uint8_t aui8_instance)
+  VtClient_c &getVtClientInstance(uint8_t aui8_instance)
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(IsoTerminal_c, PRT_INSTANCE_CNT, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(VtClient_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
 
 
 /** default constructor
  */
-IsoTerminal_c::IsoTerminal_c() :
+VtClient_c::VtClient_c() :
   ml_vtServerInst(),
   mvec_vtClientServerComm(),
   mt_handler(*this),
@@ -47,7 +47,7 @@ IsoTerminal_c::IsoTerminal_c() :
 
 
 void
-IsoTerminal_c::init()
+VtClient_c::init()
 {
   isoaglib_assert (!initialized());
 
@@ -70,7 +70,7 @@ IsoTerminal_c::init()
 
 
 void
-IsoTerminal_c::close()
+VtClient_c::close()
 {
   isoaglib_assert (initialized());
 
@@ -91,20 +91,25 @@ IsoTerminal_c::close()
 }
 
 
-VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& arc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
+VtClientConnection_c*
+VtClient_c::initAndRegisterIsoObjectPool(
+  IdentItem_c& arc_identItem,
+  IsoAgLib::iVtClientObjectPool_c& arc_pool, 
+  const char* apc_versionLabel, 
+  IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, 
+  IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode)
 {
   switch (aen_mode)
   {
-    case IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_MasterToPrimaryVt:
-    case IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_MasterToAnyVt:
+    case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt:
+    case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToAnyVt:
       if (!arc_identItem.isMaster())
       {
         /// IdentItem must be a Master
         return NULL;
       }
       break;  
-    case IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_Slave:
+    case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave:
       break;
   }
 
@@ -120,8 +125,8 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& arc_identItem, IsoAgLi
           - longer than 5 characters for a multilanguage object-pool
           or if you already registered an object-pool for this IdentItem
  */
-VtClientServerCommunication_c*
-IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode)
+VtClientConnection_c*
+VtClient_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode)
 {
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
@@ -141,11 +146,11 @@ IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, Is
     }
   }
   // create new instance
-  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, apc_claimDataStorage, ui8_index,
+  VtClientConnection_c* pc_vtCSC = new VtClientConnection_c (rc_identItem, *this, arc_pool, apc_versionLabel, apc_claimDataStorage, ui8_index,
                                                                                aen_mode MULTITON_INST_WITH_COMMA);
-  if (pc_vtCSC->men_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
+  if (pc_vtCSC->men_objectPoolState == VtClientConnection_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
   { // most likely due to wrong version label
-    /// Error already registered in the VtClientServerCommunication_c(..) constructor!
+    /// Error already registered in the VtClientConnection_c(..) constructor!
     delete pc_vtCSC;
     return NULL;
   }
@@ -160,7 +165,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, Is
 }
 
 bool
-IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
+VtClient_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
 {
   /* what states the IdentItem could have we have to interrupt???
   * - IState_c::ClaimedAddress -> that item is Active and Member on ISOBUS
@@ -186,7 +191,7 @@ IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
     return true; // IdentItem was found and deleted
 }
 
-VtServerInstance_c* IsoTerminal_c::getFirstActiveVtServer( bool mustBePrimary ) const
+VtServerInstance_c* VtClient_c::getFirstActiveVtServer( bool mustBePrimary ) const
 {
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   if( mustBePrimary )
@@ -204,7 +209,7 @@ VtServerInstance_c* IsoTerminal_c::getFirstActiveVtServer( bool mustBePrimary ) 
   return NULL;
 }
 
-VtServerInstance_c* IsoTerminal_c::getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const
+VtServerInstance_c* VtClient_c::getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const
 {
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
@@ -216,7 +221,7 @@ VtServerInstance_c* IsoTerminal_c::getPreferredVtServer(const IsoName_c& aref_pr
 }
 
 uint16_t
-IsoTerminal_c::getClientCount() const
+VtClient_c::getClientCount() const
 {
   uint16_t ui16_count = 0;
   for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ++ui8_index)
@@ -232,7 +237,7 @@ IsoTerminal_c::getClientCount() const
   @return true -> all planned activities from all vtClientServerCommuniactions were performed in allowed time
  */
 bool
-IsoTerminal_c::timeEvent(void)
+VtClient_c::timeEvent(void)
 {
   bool b_allActivitiesPerformed = true;
 
@@ -243,7 +248,7 @@ IsoTerminal_c::timeEvent(void)
     if (cb_clear)
         b_allActivitiesPerformed = false;
   }
-  /** @todo SOON-241: maybe store the one that was out of time if not all could perform their actions? - by member variable of IsoTerminal_c
+  /** @todo SOON-241: maybe store the one that was out of time if not all could perform their actions? - by member variable of VtClient_c
                       Update: They all need to be scheduled on their own, so then it's okay with this point. */
 
   // set back the scheduler period to 100msec, as any waiting command has been set
@@ -257,7 +262,7 @@ IsoTerminal_c::timeEvent(void)
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
  */
 bool
-IsoTerminal_c::processMsg( const CanPkg_c& arc_data )
+VtClient_c::processMsg( const CanPkg_c& arc_data )
 {
 
   CanPkgExt_c c_data( arc_data, getMultitonInst() );
@@ -361,7 +366,7 @@ IsoTerminal_c::processMsg( const CanPkg_c& arc_data )
 
 
 bool
-IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size)
+VtClient_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size)
 {
   for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
@@ -373,7 +378,7 @@ IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem
 
 
 void
-IsoTerminal_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
+VtClient_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
 {
   // we only care for the VTs
   if (acrc_isoItem.isoName().getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
@@ -434,7 +439,7 @@ IsoTerminal_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoIt
 
 
 void
-IsoTerminal_c::notifyAllVtClientsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const
+VtClient_c::notifyAllVtClientsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const
 {
   for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
@@ -446,7 +451,7 @@ IsoTerminal_c::notifyAllVtClientsOnAux2InputStatus( const CanPkgExt_c& refc_data
 }
 
 void
-IsoTerminal_c::notifyAllVtClientsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const
+VtClient_c::notifyAllVtClientsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const
 {
   for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
@@ -461,7 +466,7 @@ IsoTerminal_c::notifyAllVtClientsOnAux2InputMaintenance( const CanPkgExt_c& refc
 // the following define should be globally defined in the project settings...
 #ifdef USE_IOP_GENERATOR_FAKE_VT_PROPERTIES
 void
-IsoTerminal_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes)
+VtClient_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes)
 {
   const IsoItem_c c_dummyIsoItem;
   // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
@@ -479,8 +484,8 @@ IsoTerminal_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidt
 
 #if DEBUG_SCHEDULER
 const char*
-IsoTerminal_c::getTaskName() const
-{ return "IsoTerminal_c()"; }
+VtClient_c::getTaskName() const
+{ return "VtClient_c()"; }
 #endif
 
 

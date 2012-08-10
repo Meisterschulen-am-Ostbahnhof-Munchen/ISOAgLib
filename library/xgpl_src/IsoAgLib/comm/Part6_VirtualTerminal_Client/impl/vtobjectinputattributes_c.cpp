@@ -14,14 +14,11 @@
 #include "vtobjectinputattributes_c.h"
 
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectInputAttributes_c::stream(uint8_t* destMemory,
                                   uint16_t maxBytes,
@@ -63,10 +60,10 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-// Operation : vtObjectInputAttributes_c
+
 vtObjectInputAttributes_c::vtObjectInputAttributes_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectInputAttributes_c::fitTerminal() const
 {
@@ -74,9 +71,7 @@ vtObjectInputAttributes_c::fitTerminal() const
   return 6+vtObjectInputAttributes_a->length+vtObjectInputAttributes_a->numberOfMacrosToFollow*2;
 }
 
-// Operation : setValidationStringCopy
-//! @param newValidationString:
-//! @param b_updateObject:
+
 void
 vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
@@ -96,12 +91,10 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
 }
 
-// Operation : setValidationStringRef
-//! @param newValidationString:
-//! @param b_updateObject:
+
 void
 vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
@@ -118,11 +111,11 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
   setStringToStream( newValidationString ); // use MultiSendStreamer with mpc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 }
 
 
-// Operation : getString
+
 const char*
 vtObjectInputAttributes_c::getString()
 {
@@ -149,4 +142,5 @@ vtObjectInputAttributes_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*
   */
 }
 #endif
-} // end namespace __IsoAgLib
+
+} // __IsoAgLib

@@ -17,52 +17,33 @@
 
 #ifdef USE_VTOBJECT_outputlist
 #include "vtobject_c.h"
-#include "vtclientservercommunication_c.h"
+#include "vtclientconnection_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 class vtObjectOutputList_c : public vtObject_c
 {
 public:
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectOutputListSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectOutputList_s* vtObjectOutputListSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectOutputListSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
 
-  //  Operation: get_vtObjectOutputList_a
   iVtObjectOutputList_s* get_vtObjectOutputList_a() { return (iVtObjectOutputList_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectOutputList_c
   vtObjectOutputList_c();
 
-  //  Operation: getListItem
-  //! @param xth:
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
 
-  //  Operation: getNumberOfListItems
   uint8_t getNumberOfListItems();
 
-  //  Operation: size
   uint32_t fitTerminal() const;
 
-  //  Operation: setValue
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValue(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
-  //  Operation: setItem
-  //! @param aui8_index:
-  //! @param apc_object:
   void setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false);
 
   // //////////////////////////////////
@@ -103,7 +84,8 @@ public:
 private:
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif
+
 #endif

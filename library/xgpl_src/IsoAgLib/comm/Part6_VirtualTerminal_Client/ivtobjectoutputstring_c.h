@@ -13,19 +13,14 @@
 #ifndef IVTOBJECTOUTPUTSTRING_C_H
 #define IVTOBJECTOUTPUTSTRING_C_H
 
-// +X2C includes
 #include "impl/vtobjectoutputstring_c.h"
-//#include "ivtobjectstringvariable_c.h"
-// ~X2C
+
 #ifdef USE_VTOBJECT_outputstring
-#include "iisoterminal_c.h"
-// Begin Namespace IsoAgLib
+#include "ivtclient_c.h"
+
 namespace IsoAgLib {
 
 
-
-//  +X2C Class 109 : iVtObjectOutputString_c
-//!  Stereotype: Klasse
 class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 {
 
@@ -33,22 +28,12 @@ public:
   iVtObjectOutputString_c();
   ~iVtObjectOutputString_c();
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectOutputStringSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
     vtObjectOutputString_c::init (vtObjectOutputStringSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
-  //  Operation: get_vtObjectOutputString_a
   const iVtObjectOutputString_s& get_vtObjectOutputString_a() { return *vtObjectOutputString_c::get_vtObjectOutputString_a(); }
 
-
-  //  Operation: setValueCopy
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValueCopy(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -63,79 +48,41 @@ public:
   }
 #endif
 
-  //  Operation: setValueRef
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setVariableReference
-  //! Parameter:
-  //! @param newVariable:
-  //! @param b_updateObject:
   void setVariableReference(iVtObjectStringVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false)  {
     vtObjectOutputString_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: getString
   const char* getString() { return vtObjectOutputString_c::getString(); }
 
 
-  //  Operation: setWidth
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setHeight
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setBackgroundColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setFontAttributes
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setFontAttributes(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setOptions
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setHorizontalJustification
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setSize
-  //! Parameter:
-  //! @param newWidth:
-  //! @param newHeight:
-  //! @param b_updateObject:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -176,7 +123,8 @@ public:
 #endif
 };
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
-#endif // -X2C
+#endif
+
 #endif

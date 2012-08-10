@@ -18,7 +18,7 @@
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
 namespace IsoAgLib {
   // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple
@@ -27,12 +27,9 @@ namespace IsoAgLib {
   iVtObjectContainer_c::~iVtObjectContainer_c() {}
 }
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectContainer_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
@@ -72,10 +69,10 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-// Operation : vtObjectContainer_c
+
 vtObjectContainer_c::vtObjectContainer_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectContainer_c::fitTerminal() const
 {
@@ -84,15 +81,12 @@ vtObjectContainer_c::fitTerminal() const
 }
 
 
-// Operation : hideShow
-//! @param b_hideOrShow:
-//! @param b_updateObject:
 void
 vtObjectContainer_c::hideShow(uint8_t b_hideOrShow, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s), (!b_hideOrShow)&0x01);
 
-   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandHideShow (this, b_hideOrShow,b_enableReplaceOfCmd);
+   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandHideShow (this, b_hideOrShow,b_enableReplaceOfCmd);
 }
 
 void
@@ -103,7 +97,7 @@ vtObjectContainer_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectContainer_a(), height), sizeof(iVtObjectContainer_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 bool
@@ -187,5 +181,5 @@ vtObjectContainer_c::saveReceivedAttribute(uint8_t attrID, uint8_t* /*pui8_attri
   }
 }
 #endif
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 #endif

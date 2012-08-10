@@ -14,8 +14,8 @@
 
 //#define DEBUG_MULTIPLEVTCOMM 1
 
-#include "vtclientservercommunication_c.h"
-#include "../ivtclientservercommunication_c.h"
+#include "vtclientconnection_c.h"
+#include "../ivtclientconnection_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
@@ -29,7 +29,7 @@
 #include "../ivtobjectstring_c.h"
 #include "../ivtobjectworkingset_c.h"
 #include "../ivtobject_c.h"
-#include "../iisoterminalobjectpool_c.h"
+#include "../ivtclientobjectpool_c.h"
 
 #include "../ivtobjectauxiliaryfunction2_c.h"
 #include "../ivtobjectauxiliaryinput2_c.h"
@@ -136,11 +136,11 @@ namespace __IsoAgLib {
 
 
 /** static instance to store temporarily before push_back into list */
-SendUpload_c VtClientServerCommunication_c::msc_tempSendUpload;
+SendUpload_c VtClientConnection_c::msc_tempSendUpload;
 
 
 void
-VtClientServerCommunication_c::reactOnAbort (Stream_c& /*arc_stream*/)
+VtClientConnection_c::reactOnAbort (Stream_c& /*arc_stream*/)
 {
   // mrc_pool.eventStringValueAbort(); // OBSOLETE no on-the-fly parsing anymore
 }
@@ -148,7 +148,7 @@ VtClientServerCommunication_c::reactOnAbort (Stream_c& /*arc_stream*/)
 
 // handle all string values between length of 9 and 259 bytes
 bool
-VtClientServerCommunication_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen)
+VtClientConnection_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen)
 {
   // if SA is not the address from the vt -> don't react on stream
   if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName())) return false;
@@ -161,7 +161,7 @@ VtClientServerCommunication_c::reactOnStreamStart (const ReceiveStreamIdentifier
 
 
 bool
-VtClientServerCommunication_c::processPartStreamDataChunk (Stream_c& arc_stream, bool ab_isFirstChunk, bool ab_isLastChunk)
+VtClientConnection_c::processPartStreamDataChunk (Stream_c& arc_stream, bool ab_isFirstChunk, bool ab_isLastChunk)
 {
   if (arc_stream.getStreamInvalid()) return false;
 
@@ -193,7 +193,7 @@ VtClientServerCommunication_c::processPartStreamDataChunk (Stream_c& arc_stream,
 
     case 0x24:
       // Command: "Auxiliary Control", parameter "Auxiliary Assignment type 2 response"
-      if (mrc_pool.getVersion() == IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
+      if (mrc_pool.getVersion() == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
         break;
 
       if (ab_isLastChunk)
@@ -255,20 +255,20 @@ VtClientServerCommunication_c::processPartStreamDataChunk (Stream_c& arc_stream,
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
  */
-VtClientServerCommunication_c::VtClientServerCommunication_c(
+VtClientConnection_c::VtClientConnection_c(
   IdentItem_c& r_wsMasterIdentItem,
-  IsoTerminal_c &r_isoTerminal,
-  IsoAgLib::iIsoTerminalObjectPool_c& arc_pool,
+  VtClient_c &r_vtclient,
+  IsoAgLib::iVtClientObjectPool_c& arc_pool,
   const char* apc_versionLabel,
   IsoAgLib::iVtClientDataStorage_c& arc_claimDataStorage,
   uint8_t aui8_clientId,
-  IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   : mt_multiSendEventHandler(*this)
   , mrc_pool (arc_pool)
   , mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , mb_checkSameCommand (true)
   , mrc_wsMasterIdentItem (r_wsMasterIdentItem)
-  , mrc_isoTerminal (r_isoTerminal)
+  , mrc_vtclient (r_vtclient)
   , mpc_vtServerInstance (NULL)
   , mb_usingVersionLabel (false)
   //marrp7c_versionLabel [7] will be initialized below
@@ -307,7 +307,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , men_registerPoolMode(aen_mode)
   , mi_multitonInst( MULTITON_INST_PARAMETER_USE )
   , mb_commandsToBus( true )
-  , mc_prefferedVTIsoName(IsoName_c::IsoNameUnspecified())
+  , mc_preferredVt(IsoName_c::IsoNameUnspecified())
   , mi32_bootTime_ms(0)
   , m_dataStorageHandler(arc_claimDataStorage)
 {
@@ -381,18 +381,18 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
 
   // load the preferred ISOVT
   uint8_t bootTime_s = 0;
-  m_dataStorageHandler.loadPreferredVt( mc_prefferedVTIsoName.toIisoName_c(), bootTime_s );
+  m_dataStorageHandler.loadPreferredVt( mc_preferredVt.toIisoName_c(), bootTime_s );
   mi32_bootTime_ms = (bootTime_s!=0xFF) ? (bootTime_s * 1000) : 0; // 0xFF means the feature is not supported by the VT
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
-  INTERNAL_DEBUG_DEVICE << "LOAD PreferredVt with timeout " << mi32_bootTime_ms << " and NAME = " << mc_prefferedVTIsoName << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "LOAD PreferredVt with timeout " << mi32_bootTime_ms << " and NAME = " << mc_preferredVt << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 }
 
 
 /** default destructor, which initiate sending address release for all own identities
-  @see VtClientServerCommunication_c::~VtClientServerCommunication_c
+  @see VtClientConnection_c::~VtClientConnection_c
  */
-VtClientServerCommunication_c::~VtClientServerCommunication_c()
+VtClientConnection_c::~VtClientConnection_c()
 {
   getMultiReceiveInstance4Comm().deregisterClient (*this);
   getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_ECU_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
@@ -401,7 +401,7 @@ VtClientServerCommunication_c::~VtClientServerCommunication_c()
 
 
 void
-VtClientServerCommunication_c::timeEventSendLanguagePGN()
+VtClientConnection_c::timeEventSendLanguagePGN()
 {
   // Get Local Settings (may not be reached, when terminal is switched on after ECU, as VT sends LNAGUAGE Info on startup!
   CanPkgExt_c mc_sendData;
@@ -414,7 +414,7 @@ VtClientServerCommunication_c::timeEventSendLanguagePGN()
 
 
 void
-VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
+VtClientConnection_c::timeEventUploadPoolTimeoutCheck()
 {
   /// Do TIME-OUT Checks ALWAYS!
   if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
@@ -445,7 +445,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
 }
 
 void
-VtClientServerCommunication_c::checkPoolPhaseRunningMultiSend()
+VtClientConnection_c::checkPoolPhaseRunningMultiSend()
 {
   switch (men_sendSuccess)
   {
@@ -465,7 +465,7 @@ VtClientServerCommunication_c::checkPoolPhaseRunningMultiSend()
 
 
 void
-VtClientServerCommunication_c::indicateUploadPhaseCompletion()
+VtClientConnection_c::indicateUploadPhaseCompletion()
 {
   if (men_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { // we only have one part, so we're done!
@@ -488,7 +488,7 @@ VtClientServerCommunication_c::indicateUploadPhaseCompletion()
 
 
 void
-VtClientServerCommunication_c::startCurrentUploadPhase()
+VtClientConnection_c::startCurrentUploadPhase()
 {
   IsoAgLib::iMultiSendStreamer_c* streamer = NULL;
   switch (men_uploadPoolType)
@@ -555,7 +555,7 @@ VtClientServerCommunication_c::startCurrentUploadPhase()
 
 
 void
-VtClientServerCommunication_c::timeEventPrePoolUpload()
+VtClientConnection_c::timeEventPrePoolUpload()
 {
   /// first you have to get number of softkeys, text font data and hardware before you could upload
   if (!mpc_vtServerInstance->getVtCapabilities()->lastReceivedSoftkeys
@@ -599,7 +599,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
 
 
 bool
-VtClientServerCommunication_c::timeEventPoolUpload()
+VtClientConnection_c::timeEventPoolUpload()
 {
   // Do MAIN-Phase a) at INIT and b) <timeout> seconds after FAIL
   if (((men_uploadPoolState == UploadPoolFailed) && (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp)))
@@ -636,7 +636,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
   return false;
 }
 
-bool VtClientServerCommunication_c::isVersionFound(Stream_c& arc_stream) const
+bool VtClientConnection_c::isVersionFound(Stream_c& arc_stream) const
 {
 #ifndef NO_GET_VERSIONS
   const uint8_t number_of_versions = arc_stream.get();
@@ -667,14 +667,14 @@ bool VtClientServerCommunication_c::isVersionFound(Stream_c& arc_stream) const
 }
 
 void
-VtClientServerCommunication_c::startUploadVersion()
+VtClientConnection_c::startUploadVersion()
 {
   initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially);
   sendGetMemory();
 }
 
 void
-VtClientServerCommunication_c::startLoadVersion()
+VtClientConnection_c::startLoadVersion()
 {
   // Try to "Non Volatile Memory - Load Version" first!
   CanPkgExt_c mc_sendData;
@@ -698,7 +698,7 @@ VtClientServerCommunication_c::startLoadVersion()
   @return true -> all planned activities performed in allowed time
  */
 bool
-VtClientServerCommunication_c::timeEvent(void)
+VtClientConnection_c::timeEvent(void)
 {
   // do further activities only if registered ident is initialised as ISO and already successfully address-claimed...
   if (!mrc_wsMasterIdentItem.isClaimedAddress()) return true;
@@ -731,7 +731,7 @@ VtClientServerCommunication_c::timeEvent(void)
     return true;
   }
 
-  if (IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_Slave == men_registerPoolMode)
+  if (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave == men_registerPoolMode)
   {
     if (men_objectPoolState != OPUploadedSuccessfully)
     { // @todo WS SLAVE: set to OPUploadedSuccessfully only after master has successfully uploaded pool
@@ -758,14 +758,14 @@ VtClientServerCommunication_c::timeEvent(void)
       uint8_t ui8_version = 0xFF;
       switch (mrc_pool.getVersion())
       {
-        case IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2:
+        case IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2:
           ui8_version = 0xFF;
           ui8_sendAtStartup = 0xFF; // "send at startup" is only used for version 3 and later
           break;
-        case IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion3:
+        case IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion3:
           ui8_version = 3;
           break;
-        case IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion4:
+        case IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion4:
           ui8_version = 4;
           break;
       }
@@ -896,17 +896,17 @@ VtClientServerCommunication_c::timeEvent(void)
 
 
 void
-VtClientServerCommunication_c::timeEventSearchForNewVt()
+VtClientConnection_c::timeEventSearchForNewVt()
 {
-  if( IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_Slave == men_registerPoolMode )
+  if( IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave == men_registerPoolMode )
     return; // Slave needs to get the Master's VT-ISONAME told proprietarily!
 
   // check if initial timeout is done
   if (isPreferredVTTimeOut())
   {
     // check if other VT is available
-    mpc_vtServerInstance = getIsoTerminalInstance4Comm().getFirstActiveVtServer(
-        (IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_MasterToPrimaryVt == men_registerPoolMode) );
+    mpc_vtServerInstance = getVtClientInstance4Comm().getFirstActiveVtServer(
+        (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt == men_registerPoolMode) );
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
     static bool sb_foundNewVt = false;
     if (mpc_vtServerInstance && !sb_foundNewVt)
@@ -923,7 +923,7 @@ VtClientServerCommunication_c::timeEventSearchForNewVt()
   }
   else
   {
-    mpc_vtServerInstance = getIsoTerminalInstance4Comm().getPreferredVtServer(mc_prefferedVTIsoName);
+    mpc_vtServerInstance = getVtClientInstance4Comm().getPreferredVtServer(mc_preferredVt);
     if (mpc_vtServerInstance != NULL)
       mi32_bootTime_ms = 0;
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
@@ -941,7 +941,7 @@ VtClientServerCommunication_c::timeEventSearchForNewVt()
 /** process received ack messages
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c */
 bool
-VtClientServerCommunication_c::processMsgAck( const CanPkgExt_c& arc_data )
+VtClientConnection_c::processMsgAck( const CanPkgExt_c& arc_data )
 {
   // shouldn't be possible, but check anyway to get sure.
   if (!mpc_vtServerInstance) return false;
@@ -1002,13 +1002,13 @@ VtClientServerCommunication_c::processMsgAck( const CanPkgExt_c& arc_data )
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
  */
 void
-VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
+VtClientConnection_c::notifyOnVtsLanguagePgn()
 {
   mi8_vtLanguage = -1; // indicate that VT's language is not supported by this WS, so the default language should be used
 
   if (mpc_vtServerInstance)
   { // slave may have no WS in pool!
-    if (IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_Slave != men_registerPoolMode)
+    if (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave != men_registerPoolMode)
     {
       const uint8_t cui8_languages = mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
       for (int i=0; i<cui8_languages; i++)
@@ -1026,14 +1026,14 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
 }
 
 void
-VtClientServerCommunication_c::notifyOnVtStatusMessage()
+VtClientConnection_c::notifyOnVtStatusMessage()
 {
   mrc_pool.eventVtStatusMsg();
 
   // set client display state appropriately
   setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
 
-  if (mrc_pool.getVersion() != IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
+  if (mrc_pool.getVersion() != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
   {
     m_aux2Inputs.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
     m_aux2Functions.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
@@ -1042,7 +1042,7 @@ VtClientServerCommunication_c::notifyOnVtStatusMessage()
 
 
 void
-VtClientServerCommunication_c::notifyOnAuxInputStatus( const CanPkgExt_c& arc_data)
+VtClientConnection_c::notifyOnAuxInputStatus( const CanPkgExt_c& arc_data)
 {
   const IsoName_c& ac_inputIsoName = arc_data.getISONameForSA();
   uint8_t const cui8_inputNumber = arc_data.getUint8Data(2-1);
@@ -1062,20 +1062,20 @@ VtClientServerCommunication_c::notifyOnAuxInputStatus( const CanPkgExt_c& arc_da
 }
 
 void
-VtClientServerCommunication_c::notifyOnAux2InputStatus( const CanPkgExt_c& arc_data)
+VtClientConnection_c::notifyOnAux2InputStatus( const CanPkgExt_c& arc_data)
 {
   m_aux2Functions.notifyOnAux2InputStatus(arc_data, mrc_pool);
 }
 
 void
-VtClientServerCommunication_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data)
+VtClientConnection_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data)
 {
   m_aux2Functions.notifyOnAux2InputMaintenance(arc_data);
 }
 
 
 bool
-VtClientServerCommunication_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
+VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
 {
   uint8_t const cui8_inputSaNew = arc_data.getUint8Data (2-1);
   uint8_t const cui8_inputNrNew = arc_data.getUint8Data (3-1); /// 0xFF means unassign!
@@ -1119,7 +1119,7 @@ VtClientServerCommunication_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
 }
 
 bool
-VtClientServerCommunication_c::storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId)
+VtClientConnection_c::storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId)
 {
   return m_aux2Functions.storeAux2Assignment(arc_stream, rui16_functionObjId, mrc_pool);
 }
@@ -1131,7 +1131,7 @@ VtClientServerCommunication_c::storeAux2Assignment(Stream_c& arc_stream, uint16_
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
  */
 bool
-VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
+VtClientConnection_c::processMsg( const CanPkg_c& arc_data )
 {
   CanPkgExt_c c_data( arc_data, getMultitonInst() );
 
@@ -1288,7 +1288,7 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
 
     case 0x25:
     { // Command: "Auxiliary Control type 2", parameter "input status enable"
-      if (mrc_pool.getVersion() == IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
+      if (mrc_pool.getVersion() == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
         break;
 
       const uint16_t ui16_inputObjId = (arc_data.getUint8Data( 1 ) | (arc_data.getUint8Data( 2 ) << 8));
@@ -1568,14 +1568,14 @@ VtClientServerCommunication_c::processMsg( const CanPkg_c& arc_data )
 
 
 uint32_t
-VtClientServerCommunication_c::getUploadBufferSize() const
+VtClientConnection_c::getUploadBufferSize() const
 {
   return mq_sendUpload.size();
 }
 
 
 uint8_t
-VtClientServerCommunication_c::getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour)
+VtClientConnection_c::getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour)
 {
   if (mpc_vtServerInstance)
   {
@@ -1587,7 +1587,7 @@ VtClientServerCommunication_c::getUserClippedColor (uint8_t colorValue, IsoAgLib
 }
 
 void
-VtClientServerCommunication_c::notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst)
+VtClientConnection_c::notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst)
 {
   if (&r_oldVtServerInst == mpc_vtServerInstance)
     mpc_vtServerInstance = NULL;
@@ -1598,7 +1598,7 @@ VtClientServerCommunication_c::notifyOnVtServerInstanceLoss (VtServerInstance_c&
   @returns true if there was place in the SendUpload-Buffer (should always be the case now)
  */
 bool
-VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, bool b_enableReplaceOfCmd)
 {
   msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9);
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
@@ -1606,21 +1606,21 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
 
 /** @returns true if there was place in the SendUpload-Buffer (should always be the case now) */
 bool
-VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
+VtClientConnection_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
   msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rppc_vtObjects, aui16_numObjects);
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size)
+VtClientConnection_c::sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size)
 {
   msc_tempSendUpload.set (apui8_buffer, ui32_size);
   return queueOrReplace (msc_tempSendUpload, false);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectString, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectString, bool b_enableReplaceOfCmd)
 {
   msc_tempSendUpload.set (apc_objectString);
 
@@ -1628,7 +1628,7 @@ VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObject
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangePriority (IsoAgLib::iVtObject_c* apc_object, int8_t newPriority, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangePriority (IsoAgLib::iVtObject_c* apc_object, int8_t newPriority, bool b_enableReplaceOfCmd)
 {
   if(newPriority < 3)
   {
@@ -1643,7 +1643,7 @@ VtClientServerCommunication_c::sendCommandChangePriority (IsoAgLib::iVtObject_c*
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c* apc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c* apc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (169 /* Command: Command --- Parameter: Change Size */,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
@@ -1654,7 +1654,7 @@ VtClientServerCommunication_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c*
 }
 
 bool
-VtClientServerCommunication_c::sendCommandControlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime)
+VtClientConnection_c::sendCommandControlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime)
 {
   return sendCommand (163 /* Command: Command --- Parameter: Control Audio Device */,
                       aui8_repetitions,
@@ -1665,21 +1665,21 @@ VtClientServerCommunication_c::sendCommandControlAudioDevice (uint8_t aui8_repet
 }
 
 bool
-VtClientServerCommunication_c::sendCommandSetAudioVolume (uint8_t aui8_volume)
+VtClientConnection_c::sendCommandSetAudioVolume (uint8_t aui8_volume)
 {
   return sendCommand (164 /* Command: Command --- Parameter: Set Audio Volume */,
                       aui8_volume, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false); // don't care for enableReplaceOfCommand parameter actually
 }
 
 bool
-VtClientServerCommunication_c::sendCommandDeleteObjectPool()
+VtClientConnection_c::sendCommandDeleteObjectPool()
 {
   return sendCommand (178 /* Command: Command --- Parameter: Delete Object Pool */,
                       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, true); // don't care for enableReplaceOfCommand parameter actually
 }
 
 bool
-VtClientServerCommunication_c::sendCommandUpdateLanguagePool()
+VtClientConnection_c::sendCommandUpdateLanguagePool()
 {
   /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
   return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
@@ -1689,7 +1689,7 @@ VtClientServerCommunication_c::sendCommandUpdateLanguagePool()
 }
 
 bool
-VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
+VtClientConnection_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
   /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
   return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
@@ -1701,7 +1701,7 @@ VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_
 
 //////////////
 bool
-VtClientServerCommunication_c::sendCommandChangeNumericValue (uint16_t aui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeNumericValue (uint16_t aui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 {
   return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1710,7 +1710,7 @@ VtClientServerCommunication_c::sendCommandChangeNumericValue (uint16_t aui16_obj
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeAttribute (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeAttribute (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 {
   return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1719,7 +1719,7 @@ VtClientServerCommunication_c::sendCommandChangeAttribute (uint16_t aui16_object
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (uint16_t aui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeSoftKeyMask (uint16_t aui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
 {
   return sendCommand (174 /* Command: Command --- Parameter: Change Soft Key Mask */,
                       maskType,
@@ -1730,7 +1730,7 @@ VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (uint16_t aui16_obje
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeActiveMask (uint16_t aui16_objectUid, uint16_t maskId, bool b_enableReplaceOfCmd )
+VtClientConnection_c::sendCommandChangeActiveMask (uint16_t aui16_objectUid, uint16_t maskId, bool b_enableReplaceOfCmd )
 {
   return sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1739,14 +1739,14 @@ VtClientServerCommunication_c::sendCommandChangeActiveMask (uint16_t aui16_objec
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeStringValue (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeStringValue (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
   msc_tempSendUpload.set (aui16_objectUid, apc_newValue, overrideSendLength);
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeChildPosition (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeChildPosition (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
 {
   return sendCommand (180 /* Command: Command --- Parameter: Change Child Position */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1758,7 +1758,7 @@ VtClientServerCommunication_c::sendCommandChangeChildPosition (uint16_t aui16_ob
 
 //! should only be called with valid values ranging -127..0..128 (according to ISO!!!)
 bool
-VtClientServerCommunication_c::sendCommandChangeChildLocation (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeChildLocation (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
 {
   return sendCommand (165 /* Command: Command --- Parameter: Change Child Location */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1768,7 +1768,7 @@ VtClientServerCommunication_c::sendCommandChangeChildLocation (uint16_t aui16_ob
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, uint8_t newColour, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, uint8_t newColour, bool b_enableReplaceOfCmd)
 {
   return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1777,7 +1777,7 @@ VtClientServerCommunication_c::sendCommandChangeBackgroundColour (uint16_t aui16
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeSize (uint16_t aui16_objectUid,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeSize (uint16_t aui16_objectUid,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 {
   return sendCommand (166 /* Command: Command --- Parameter: Change Size */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1788,7 +1788,7 @@ VtClientServerCommunication_c::sendCommandChangeSize (uint16_t aui16_objectUid,u
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (172 /* Command: Command --- Parameter: Change FillAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1800,7 +1800,7 @@ VtClientServerCommunication_c::sendCommandChangeFillAttributes (uint16_t aui16_o
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 {
   return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1809,7 +1809,7 @@ VtClientServerCommunication_c::sendCommandChangeFontAttributes (uint16_t aui16_o
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeLineAttributes (uint16_t aui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandChangeLineAttributes (uint16_t aui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
 {
   return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1821,7 +1821,7 @@ VtClientServerCommunication_c::sendCommandChangeLineAttributes (uint16_t aui16_o
 // ########## Graphics Context ##########
 //! @return Flag if successful
 bool
-VtClientServerCommunication_c::sendCommandSetGraphicsCursor(
+VtClientConnection_c::sendCommandSetGraphicsCursor(
   IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
   uint16_t x=convert_n::castUI( ai16_x );
@@ -1834,7 +1834,7 @@ VtClientServerCommunication_c::sendCommandSetGraphicsCursor(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandSetForegroundColour(
+VtClientConnection_c::sendCommandSetForegroundColour(
   IsoAgLib::iVtObject_c* apc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -1845,7 +1845,7 @@ VtClientServerCommunication_c::sendCommandSetForegroundColour(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandSetBackgroundColour(
+VtClientConnection_c::sendCommandSetBackgroundColour(
   IsoAgLib::iVtObject_c* apc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -1856,7 +1856,7 @@ VtClientServerCommunication_c::sendCommandSetBackgroundColour(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandSetGCLineAttributes(
+VtClientConnection_c::sendCommandSetGCLineAttributes(
   IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -1867,7 +1867,7 @@ VtClientServerCommunication_c::sendCommandSetGCLineAttributes(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandSetGCFillAttributes(
+VtClientConnection_c::sendCommandSetGCFillAttributes(
   IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -1878,7 +1878,7 @@ VtClientServerCommunication_c::sendCommandSetGCFillAttributes(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandSetGCFontAttributes(
+VtClientConnection_c::sendCommandSetGCFontAttributes(
   IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -1889,7 +1889,7 @@ VtClientServerCommunication_c::sendCommandSetGCFontAttributes(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandEraseRectangle(
+VtClientConnection_c::sendCommandEraseRectangle(
   IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
   uint16_t x=convert_n::castUI( ai16_x );
@@ -1902,7 +1902,7 @@ VtClientServerCommunication_c::sendCommandEraseRectangle(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandDrawPoint(
+VtClientConnection_c::sendCommandDrawPoint(
   IsoAgLib::iVtObject_c* apc_object, bool  b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -1913,7 +1913,7 @@ VtClientServerCommunication_c::sendCommandDrawPoint(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandDrawLine(
+VtClientConnection_c::sendCommandDrawLine(
   IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
   uint16_t x=convert_n::castUI( ai16_x );
@@ -1926,7 +1926,7 @@ VtClientServerCommunication_c::sendCommandDrawLine(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandDrawRectangle(
+VtClientConnection_c::sendCommandDrawRectangle(
   IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
   uint16_t x=convert_n::castUI( ai16_x );
@@ -1939,7 +1939,7 @@ VtClientServerCommunication_c::sendCommandDrawRectangle(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandDrawClosedEllipse(
+VtClientConnection_c::sendCommandDrawClosedEllipse(
   IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
   uint16_t x=convert_n::castUI( ai16_x );
@@ -1953,7 +1953,7 @@ VtClientServerCommunication_c::sendCommandDrawClosedEllipse(
 
 /// @todo OPTIMIZATION Revision4 Better struct for array of x/y pairs!
 bool
-VtClientServerCommunication_c::sendCommandDrawPolygon(
+VtClientConnection_c::sendCommandDrawPolygon(
   IsoAgLib::iVtObject_c* apc_object, uint16_t ui16_numOfPoints, const int16_t* api16_x, const int16_t* api16_y, bool b_enableReplaceOfCmd)
 {
   // Prevent from derefernzing NULL pointer.
@@ -2003,7 +2003,7 @@ VtClientServerCommunication_c::sendCommandDrawPolygon(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandDrawText(
+VtClientConnection_c::sendCommandDrawText(
   IsoAgLib::iVtObject_c* apc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *apc_newValue, bool b_enableReplaceOfCmd)
 {
   // Non TP case
@@ -2035,7 +2035,7 @@ VtClientServerCommunication_c::sendCommandDrawText(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandPanViewport(
+VtClientConnection_c::sendCommandPanViewport(
   IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
   uint16_t x = convert_n::castUI( ai16_x );
@@ -2048,7 +2048,7 @@ VtClientServerCommunication_c::sendCommandPanViewport(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandZoomViewport(
+VtClientConnection_c::sendCommandZoomViewport(
   IsoAgLib::iVtObject_c* apc_object, int8_t newValue, bool b_enableReplaceOfCmd)
 {
   uint8_t zoom = convert_n::castUI( newValue );
@@ -2060,7 +2060,7 @@ VtClientServerCommunication_c::sendCommandZoomViewport(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandPanAndZoomViewport(
+VtClientConnection_c::sendCommandPanAndZoomViewport(
   IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, int8_t newValue, bool b_enableReplaceOfCmd)
 {
   uint16_t x = convert_n::castUI( ai16_x );
@@ -2083,7 +2083,7 @@ VtClientServerCommunication_c::sendCommandPanAndZoomViewport(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandChangeViewportSize(
+VtClientConnection_c::sendCommandChangeViewportSize(
 IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -2094,7 +2094,7 @@ IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b
 }
 
 bool
-VtClientServerCommunication_c::sendCommandDrawVtObject(
+VtClientConnection_c::sendCommandDrawVtObject(
   IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -2105,7 +2105,7 @@ VtClientServerCommunication_c::sendCommandDrawVtObject(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandCopyCanvas2PictureGraphic(
+VtClientConnection_c::sendCommandCopyCanvas2PictureGraphic(
   IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -2116,7 +2116,7 @@ VtClientServerCommunication_c::sendCommandCopyCanvas2PictureGraphic(
 }
 
 bool
-VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic(
+VtClientConnection_c::sendCommandCopyViewport2PictureGraphic(
   IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -2130,7 +2130,7 @@ VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic(
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 bool
-VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* apc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* apc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd)
 {
   return sendCommand (185 /* Command: Get Technical Data --- Parameter: Get Attribute Value */,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
@@ -2141,7 +2141,7 @@ VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject
 #endif
 
 bool
-VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
 {
   return sendCommand (189 /* Command: Command --- Parameter: Lock/Undlock Mask */,
                       b_lockMask,
@@ -2152,7 +2152,7 @@ VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c*
 }
 
 bool
-VtClientServerCommunication_c::sendCommandHideShow (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandHideShow (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
 {
   return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -2161,14 +2161,14 @@ VtClientServerCommunication_c::sendCommandHideShow (uint16_t aui16_objectUid, ui
 }
 
 bool
-VtClientServerCommunication_c::sendCommandEsc (bool b_enableReplaceOfCmd)
+VtClientConnection_c::sendCommandEsc (bool b_enableReplaceOfCmd)
 {
   return sendCommand (146 /* Command: Command --- Parameter: ESC */,
                       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
 }
 
 bool
-VtClientServerCommunication_c::sendNonVolatileDeleteVersion( const char* versionLabel7chars )
+VtClientConnection_c::sendNonVolatileDeleteVersion( const char* versionLabel7chars )
 {
   if( versionLabel7chars != NULL )
   {
@@ -2196,7 +2196,7 @@ VtClientServerCommunication_c::sendNonVolatileDeleteVersion( const char* version
 }
 
 bool
-VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd)
+VtClientConnection_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd)
 {
   if (!mb_commandsToBus)
     return false; // discard SendCommand
@@ -2319,7 +2319,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
 
 
 void
-VtClientServerCommunication_c::dumpQueue()
+VtClientConnection_c::dumpQueue()
 {
 #ifdef USE_LIST_FOR_FIFO
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
@@ -2364,7 +2364,7 @@ VtClientServerCommunication_c::dumpQueue()
 
 
 void
-VtClientServerCommunication_c::doStart()
+VtClientConnection_c::doStart()
 {
   /// First, trigger sending of WS-Announce
   mi32_timeWsAnnounceKey = mrc_wsMasterIdentItem.getIsoItem()->startWsAnnounce();
@@ -2378,7 +2378,7 @@ VtClientServerCommunication_c::doStart()
 
 
 void
-VtClientServerCommunication_c::doStop()
+VtClientConnection_c::doStop()
 {
   // actually not needed to be reset here, because if VT not active it's not checked and if VT gets active we restart the sending.
   mi32_timeWsAnnounceKey = -1;
@@ -2401,7 +2401,7 @@ VtClientServerCommunication_c::doStop()
     // that case should be handles by the multisend itself
   }
 
-  if (mrc_pool.getVersion() != IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
+  if (mrc_pool.getVersion() != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
   {
     m_aux2Functions.setState(Aux2Functions_c::State_WaitForPoolUploadSuccessfully);
 #ifdef USE_VTOBJECT_auxiliaryinput2
@@ -2418,13 +2418,13 @@ VtClientServerCommunication_c::doStop()
   men_displayState = VtClientDisplayStateHidden;
 }
 
-bool VtClientServerCommunication_c::isPreferredVTTimeOut() const
+bool VtClientConnection_c::isPreferredVTTimeOut() const
 {
   return ( HAL::getTime() > mi32_bootTime_ms );
 }
 
 void
-VtClientServerCommunication_c::checkAndHandleVtStateChange()
+VtClientConnection_c::checkAndHandleVtStateChange()
 {
   const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
 
@@ -2460,7 +2460,7 @@ VtClientServerCommunication_c::checkAndHandleVtStateChange()
 
 
 bool
-VtClientServerCommunication_c::isVtActive() const
+VtClientConnection_c::isVtActive() const
 {
   if (!mpc_vtServerInstance) return false;
   return mpc_vtServerInstance->isVtActive();
@@ -2479,7 +2479,7 @@ fitTerminalWrapper( const vtObject_c& object )
 
 //! initialize the streamer. calculate streams size and (if needed) request Get Memory with the complete size.
 void
-VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, uint16_t aui16_numOfUserPoolUpdateObjects)
+VtClientConnection_c::initObjectPoolUploadingPhases (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, uint16_t aui16_numOfUserPoolUpdateObjects)
 {
   if (ren_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { // Activate User triggered Partial Pool Update
@@ -2544,7 +2544,7 @@ VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t r
 
 
 void
-VtClientServerCommunication_c::sendGetMemory()
+VtClientConnection_c::sendGetMemory()
 { // Issue GetMemory-Command (don't care if several 0x11s are counted from each partial object pool...)
   uint32_t ui32_size = 0;
   for (int i=0; i <= UploadPhaseLAST; ++i)
@@ -2568,7 +2568,7 @@ VtClientServerCommunication_c::sendGetMemory()
 
 /// finalizeUploading() is getting called after LoadVersion or UploadPool...
 void
-VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
+VtClientConnection_c::finalizeUploading() //bool ab_wasLanguageUpdate)
 {
   if (men_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { /// Was user-pool-update
@@ -2599,8 +2599,8 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
       men_uploadType = UploadIdle;
     }
     // save this ISOVT as the preferred one
-    mc_prefferedVTIsoName = mpc_vtServerInstance->getIsoName();
-    m_dataStorageHandler.storePreferredVt(mc_prefferedVTIsoName.toConstIisoName_c(), mpc_vtServerInstance->getConstVtCapabilities()->bootTime );
+    mc_preferredVt = mpc_vtServerInstance->getIsoName();
+    m_dataStorageHandler.storePreferredVt(mc_preferredVt.toConstIisoName_c(), mpc_vtServerInstance->getConstVtCapabilities()->bootTime );
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
     INTERNAL_DEBUG_DEVICE << "SAVE prefferedVT with current address " << (uint16_t)mpc_vtServerInstance->getIsoItem()->nr()
                           << " NAME = " << mpc_vtServerInstance->getIsoName()
@@ -2609,7 +2609,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
 #endif
     mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mi8_objectPoolUploadedLanguage, mui16_objectPoolUploadedLanguageCode);
 
-    if (mrc_pool.getVersion() != IsoAgLib::iIsoTerminalObjectPool_c::ObjectPoolVersion2)
+    if (mrc_pool.getVersion() != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
     {
       // set internal state and send empty preferred AUX2 assignment message, if we don't have any preferred assignments
       m_aux2Functions.objectPoolUploadedSuccessfully();
@@ -2626,7 +2626,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
 
 /** Send "End of Object Pool" message */
 void
-VtClientServerCommunication_c::indicateUploadCompletion()
+VtClientConnection_c::indicateUploadCompletion()
 {
   switch (men_uploadType)
   {
@@ -2655,7 +2655,7 @@ VtClientServerCommunication_c::indicateUploadCompletion()
 
 // only being called if there IS a msq_sendUpload.front()
 bool
-VtClientServerCommunication_c::startUploadCommand()
+VtClientConnection_c::startUploadCommand()
 {
   /** @todo SOON-258 Up to now, noone cares for the return code. implement error handling in case multisend couldn't be started? */
   // Set new state
@@ -2756,7 +2756,7 @@ VtClientServerCommunication_c::startUploadCommand()
 
 
 void
-VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fromTimeEvent)
+VtClientConnection_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fromTimeEvent)
 {
   men_uploadType = UploadIdle;
 
@@ -2780,22 +2780,22 @@ VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fro
     #endif
 
     // trigger fast reschedule if more messages are waiting
-    if ( ( getUploadBufferSize() > 0 ) && ( getIsoTerminalInstance4Comm().getTimePeriod() != 4 ) )
+    if ( ( getUploadBufferSize() > 0 ) && ( getVtClientInstance4Comm().getTimePeriod() != 4 ) )
     { // there is a command waiting
       if (ab_TEMPORARYSOLUTION_fromTimeEvent)
       { // from timeEvent we can just call
-        // IsoTerminal's setTimePeriod() is protected, so we need a wrapper for it.
+        // VtClient's setTimePeriod() is protected, so we need a wrapper for it.
         // this is all just a bad hack and should really be TEMPORARY
         // Make a mechanismn where all vtCSCs are asked for the state and the
-        // IsoTerminal calculates the appropriate period from
+        // VtClient calculates the appropriate period from
         // - timeEvent
         // - processMsg
         // This needs to be replaced by new scheduling architecture: every vtCSC should be an own SchedulerTask_c.
-        getIsoTerminalInstance4Comm().TEMPORARYSOLUTION_setTimePeriod (4);
+        getVtClientInstance4Comm().TEMPORARYSOLUTION_setTimePeriod (4);
       }
       else
       { // from processMsg or elsewhere we call
-        getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 4);
+        getSchedulerInstance().changeTimePeriodAndResortTask(&(getVtClientInstance4Comm()), 4);
       }
     }
   }
@@ -2809,7 +2809,7 @@ VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fro
 
 
 void
-VtClientServerCommunication_c::vtOutOfMemory()
+VtClientConnection_c::vtOutOfMemory()
 {  // can't (up)load the pool.
   IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::VtOutOfMemory, getMultitonInst() );
   men_uploadPoolState = UploadPoolFailed; // no timeout needed
@@ -2818,7 +2818,7 @@ VtClientServerCommunication_c::vtOutOfMemory()
 
 /** set display state of vt client */
 void
-VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState)
+VtClientConnection_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState)
 {
   if (men_objectPoolState != OPUploadedSuccessfully) return;
   // as we don't properly seem to reset "men_objectPoolState" at doStop(), we'll for now add the extra
@@ -2866,7 +2866,7 @@ VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t 
 
 
 void
-VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
+VtClientConnection_c::setObjectPoolUploadingLanguage()
 {
   mi8_objectPoolUploadingLanguage = mi8_vtLanguage;
   mui16_objectPoolUploadingLanguageCode = 0x0000;
@@ -2881,38 +2881,38 @@ VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
 }
 
 /** explicit conversion to reference of interface class type */
-IsoAgLib::iVtClientServerCommunication_c& VtClientServerCommunication_c::toInterfaceReference()
+IsoAgLib::iVtClientConnection_c& VtClientConnection_c::toInterfaceReference()
 {
-  return static_cast<IsoAgLib::iVtClientServerCommunication_c&>(*this);
+  return static_cast<IsoAgLib::iVtClientConnection_c&>(*this);
 }
 /** explicit conversion to reference of interface class type */
-IsoAgLib::iVtClientServerCommunication_c* VtClientServerCommunication_c::toInterfacePointer()
+IsoAgLib::iVtClientConnection_c* VtClientConnection_c::toInterfacePointer()
 {
-  return static_cast<IsoAgLib::iVtClientServerCommunication_c*>(this);
+  return static_cast<IsoAgLib::iVtClientConnection_c*>(this);
 }
 
 
 uint16_t
-VtClientServerCommunication_c::getVtObjectPoolSoftKeyWidth() const
+VtClientConnection_c::getVtObjectPoolSoftKeyWidth() const
 {
   return mrc_pool.getSkWidth();
 }
 
 
 uint16_t
-VtClientServerCommunication_c::getVtObjectPoolDimension() const
+VtClientConnection_c::getVtObjectPoolDimension() const
 {
   return mrc_pool.getDimension();
 }
 
 
 uint16_t
-VtClientServerCommunication_c::getVtObjectPoolSoftKeyHeight() const
+VtClientConnection_c::getVtObjectPoolSoftKeyHeight() const
 {
   return mrc_pool.getSkHeight();
 }
 
-void VtClientServerCommunication_c::reactOnStateChange(const SendStream_c& sendStream)
+void VtClientConnection_c::reactOnStateChange(const SendStream_c& sendStream)
 {
   men_sendSuccess = sendStream.getSendSuccess();
 }

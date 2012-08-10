@@ -14,14 +14,11 @@
 
 #ifdef USE_VTOBJECT_inputlist
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectInputList_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
@@ -62,24 +59,23 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
 }
 
 
-// Operation : vtObjectInputList_c
 vtObjectInputList_c::vtObjectInputList_c() {}
 
-// Operation : getListItem
+
 IsoAgLib::iVtObject_c*
 vtObjectInputList_c::getListItem(uint8_t xth)
 {
   return ((iVtObjectInputList_s *) vtObject_a)->objectsToFollow[xth].vtObject;
 }
 
-// Operation : getNumberOfListItems
+
 uint8_t
 vtObjectInputList_c::getNumberOfListItems()
 {
     return ((iVtObjectInputList_s *) vtObject_a)->numberOfObjectsToFollow;
 }
 
-// Operation : fitTerminal
+
 uint32_t
 vtObjectInputList_c::fitTerminal() const
 {
@@ -87,30 +83,25 @@ vtObjectInputList_c::fitTerminal() const
   return 13+vtObjectInputList_a->numberOfObjectsToFollow*2+vtObjectInputList_a->numberOfMacrosToFollow*2;
 }
 
-// Operation : updateEnable
-//! @param b_enableOrDisable:
+
 void
 vtObjectInputList_c::updateEnable(uint8_t aui8_enOrDis)
 {
   saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), aui8_enOrDis);
 }
 
-// Operation : setValue
-//! @param newValue:
-//! @param b_updateObject:
+
 void
 vtObjectInputList_c::setValue(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (get_vtObjectInputList_a()->variableReference == NULL) {
     if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s), newValue);
 
-    __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
+    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 }
 
-// Operation : setItem
-//! @param aui8_index:
-//! @param apc_object:
+
 void
 vtObjectInputList_c::setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_object, bool b_enableReplaceOfCmd)
 {
@@ -122,7 +113,7 @@ vtObjectInputList_c::setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_obje
     lo = apc_object->getID() & 0xFF;
     hi = apc_object->getID() >> 8;
   }
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (177 /* Command: Command --- Parameter: Change List Item */,
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommand (177 /* Command: Command --- Parameter: Change List Item */,
                                                    this->getID() & 0xFF,
                                                    this->getID() >> 8,
                                                    aui8_index,
@@ -142,7 +133,7 @@ vtObjectInputList_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectInputList_a(), height), sizeof(iVtObjectInputList_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -209,5 +200,7 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
   }
 }
 #endif
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib
+
 #endif

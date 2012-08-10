@@ -248,7 +248,7 @@
 
 #ifndef USE_WORKING_SET
   /// auto-define USE_WORKING_SET dependend on the parts that need it!
-#  if defined (USE_ISO_TERMINAL) || defined (USE_ISO_TASKCONTROLLER_CLIENT)
+#  if defined (USE_ISO_VIRTUALTERMINAL_CLIENT) || defined (USE_ISO_TASKCONTROLLER_CLIENT)
 #    define USE_WORKING_SET
 #  endif
 #endif
@@ -265,7 +265,7 @@
 
 /* ***** Special VT-Client optimizations ***** */
 
-#if defined USE_ISO_TERMINAL
+#if defined USE_ISO_VIRTUALTERMINAL_CLIENT
 #  if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1
 #    define _autogen_config_header1_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION1>
 #    include _autogen_config_header1_

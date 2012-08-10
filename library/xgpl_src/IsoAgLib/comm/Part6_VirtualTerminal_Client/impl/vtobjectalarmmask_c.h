@@ -18,38 +18,28 @@
 #ifdef USE_VTOBJECT_alarmmask
 #include "../ivtobjectmask_c.h"
 #include "../ivtobjectsoftkeymask_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 class vtObjectAlarmMask_c : public IsoAgLib::iVtObjectMask_c
 {
 public:
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectAlarmMaskSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAlarmMaskSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
-  //  Operation: get_vtObjectAlarmMask_a
   iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a() { return (iVtObjectAlarmMask_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectAlarmMask_c
   vtObjectAlarmMask_c();
 
-  //  Operation: size
   uint32_t fitTerminal() const;
 
   void setBackgroundColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour) : 0, sizeof(iVtObjectAlarmMask_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour) : 0, sizeof(iVtObjectAlarmMask_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
 
   void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
@@ -80,7 +70,7 @@ public:
 #endif
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif
 #endif

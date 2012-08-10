@@ -38,8 +38,8 @@
 #pragma warning( disable : 4355 )
 #endif
 
-#ifdef USE_ISO_TERMINAL
-  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
+#ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclient_c.h>
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
 #endif
 
@@ -874,7 +874,7 @@ DevPropertyHandler_c::checkInitState()
 }
 
 /** compare the received structure label from TC with that from the pool which should be uploaded
-    if they are different, try a match via the local settings from the ISOTerminal
+    if they are different, try a match via the local settings from the VtClient
   */
 void
 DevPropertyHandler_c::initUploading()
@@ -890,14 +890,14 @@ DevPropertyHandler_c::initUploading()
     if (mb_receivedLocalizationLabel)
     {
       char ch_temp[2] = { 'e', 'n' };
-      #ifdef USE_ISO_TERMINAL
-      //if there are no local settings in ISOTerminal take default language "en"
-      if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientPtrByID(0) &&
-          __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInstPtr() &&
-          (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0))
+      #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
+      //if there are no local settings in VtClient take default language "en"
+      if (__IsoAgLib::getVtClientInstance4Comm().getClientPtrByID(0) &&
+          __IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInstPtr() &&
+          (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0))
       {
-        ch_temp[0] = ((__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;
-        ch_temp[1] = (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
+        ch_temp[0] = ((__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;
+        ch_temp[1] = (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
       }
       #endif
       if (CNAMESPACE::strncmp(marrpch_localizationLabel, ch_temp, 2) == 0)
@@ -922,17 +922,17 @@ DevPropertyHandler_c::initUploading()
 void
 DevPropertyHandler_c::getPoolForUpload()
 {
-  #ifdef USE_ISO_TERMINAL
-  //if there are no local settings in ISOTerminal just take the default pool from the map
+  #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
+  //if there are no local settings in VtClient just take the default pool from the map
   // check first if ptr to client exists
-  if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientPtrByID(0) &&
-      __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInstPtr() &&
-      (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0))
+  if (__IsoAgLib::getVtClientInstance4Comm().getClientPtrByID(0) &&
+      __IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInstPtr() &&
+      (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->lastReceived != 0))
   {
-    //get local language from ISOTerminal
+    //get local language from VtClient
     char pc_langCode [2];
-    pc_langCode[0] = ((__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;
-    pc_langCode[1] = (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
+    pc_langCode[0] = ((__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) >> 8) & 0xFF;
+    pc_langCode[1] = (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->languageCode) & 0xFF;
     //compare with all stored pools -> take the first found pool
     STL_NAMESPACE::map<LanguageLabel_c, DevicePool_c>::iterator it_maps;
     for (it_maps = mmap_deviceDescription.begin();it_maps !=mmap_deviceDescription.end(); it_maps++)
@@ -948,22 +948,22 @@ DevPropertyHandler_c::getPoolForUpload()
     for (it_maps = mmap_deviceDescription.begin();it_maps !=mmap_deviceDescription.end(); it_maps++)
     {
       //get all units from localization label
-      if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uDistance == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 6) & 0x3))
+      if (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uDistance == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 6) & 0x3))
       {
         mpc_devPoolForUpload = &it_maps->second;
         return;
       }
-      if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uArea == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 4) & 0x3))
+      if (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uArea == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 4) & 0x3))
       {
         mpc_devPoolForUpload = &it_maps->second;
         return;
       }
-      if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uVolume == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
+      if (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uVolume == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
       {
         mpc_devPoolForUpload = &it_maps->second;
         return;
       }
-      if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uMass == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
+      if (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->uMass == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+4] >> 2) & 0x3))
       {
         mpc_devPoolForUpload = &it_maps->second;
         return;
@@ -972,7 +972,7 @@ DevPropertyHandler_c::getPoolForUpload()
     //compare date format
     for (it_maps = mmap_deviceDescription.begin();it_maps !=mmap_deviceDescription.end(); it_maps++)
     {
-      if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->dFormat == (uint8_t)(it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+3] & 0xFF))
+      if (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->dFormat == (uint8_t)(it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+3] & 0xFF))
       {
         mpc_devPoolForUpload = &it_maps->second;
         return;
@@ -981,7 +981,7 @@ DevPropertyHandler_c::getPoolForUpload()
     //compare time format
     for (it_maps = mmap_deviceDescription.begin();it_maps !=mmap_deviceDescription.end(); it_maps++)
     {
-      if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->nTimeFormat == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+2] >> 4) & 0x3))
+      if (__IsoAgLib::getVtClientInstance4Comm().getClientByID(0).getVtServerInst().getLocalSettings()->nTimeFormat == (uint8_t)((it_maps->second.p_DevicePool[getLabelOffset(it_maps->second.p_DevicePool)+2] >> 4) & 0x3))
       {
         mpc_devPoolForUpload = &it_maps->second;
         return;
@@ -1020,8 +1020,6 @@ DevPropertyHandler_c::startUpload()
 }
 
 
-/** if a pool couldn't be uploaded, register error in IsoTerminal and set the necessary states
-  */
 void
 DevPropertyHandler_c::outOfMemory()
 { // can't (up)load the pool.

@@ -16,15 +16,11 @@
 #ifdef USE_VTOBJECT_auxiliaryfunction2
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
 int16_t
 vtObjectAuxiliaryFunction2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
@@ -36,7 +32,7 @@ vtObjectAuxiliaryFunction2_c::stream(uint8_t* destMemory, uint16_t maxBytes, obj
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 31; // Object Type = Auxiliary Function 2
-    destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectAuxiliaryFunction2_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectAuxiliaryFunction2_a->backgroundColour, this, IsoAgLib::BackgroundColour);
     destMemory [4] = vtObjectAuxiliaryFunction2_a->functionType;
     destMemory [5] = vtObjectAuxiliaryFunction2_a->numberOfObjectsToFollow;
     sourceOffset += 6;
@@ -48,7 +44,7 @@ vtObjectAuxiliaryFunction2_c::stream(uint8_t* destMemory, uint16_t maxBytes, obj
   return curBytes;
 }
 
-// Operation : vtObjectAuxiliaryFunction2_c
+
 vtObjectAuxiliaryFunction2_c::vtObjectAuxiliaryFunction2_c()
   : m_matchingPreferredAssignedInputReady(false)
 {}
@@ -74,8 +70,7 @@ vtObjectAuxiliaryFunction2_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childO
   return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectAuxiliaryFunction2_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectAuxiliaryFunction2_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAuxiliaryFunction2_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryFunction2_s), b_enableReplaceOfCmd);
 }
 
-// Operation : setOriginSKM
-//! @param b_SKM:
+
 void
 vtObjectAuxiliaryFunction2_c::setOriginSKM(bool /* b_SKM */)
 {
@@ -165,5 +160,5 @@ vtObjectAuxiliaryFunction2_c::hasPreferredAssigment() const
 }
 
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 #endif

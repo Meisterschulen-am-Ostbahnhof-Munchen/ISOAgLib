@@ -14,15 +14,11 @@
 #include "vtobjectobjectpointer_c.h"
 
 #ifdef USE_VTOBJECT_objectpointer
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
 int16_t
 vtObjectObjectPointer_c::stream(uint8_t* destMemory,
                                 uint16_t /*maxBytes*/,
@@ -49,26 +45,23 @@ vtObjectObjectPointer_c::stream(uint8_t* destMemory,
 }
 
 
-// Operation : vtObjectObjectPointer_c
 vtObjectObjectPointer_c::vtObjectObjectPointer_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectObjectPointer_c::fitTerminal() const
 {
   return 5;
 }
 
-// Operation : setValue
-//! @param apc_newObject:
-//! @param b_updateObject:
+
 void
 vtObjectObjectPointer_c::setValue(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectObjectPointer_a(), value),  sizeof(iVtObjectObjectPointer_s), apc_newObject);
 
-  if (apc_newObject != NULL) __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, apc_newObject->getID() & 0xFF, (apc_newObject->getID() >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
-  else                       __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, 0xFF, 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+  if (apc_newObject != NULL) __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, apc_newObject->getID() & 0xFF, (apc_newObject->getID() >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+  else                       __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, 0xFF, 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
 }
 
 void
@@ -111,5 +104,7 @@ vtObjectObjectPointer_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pu
   */
 }
 #endif
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib
+
 #endif

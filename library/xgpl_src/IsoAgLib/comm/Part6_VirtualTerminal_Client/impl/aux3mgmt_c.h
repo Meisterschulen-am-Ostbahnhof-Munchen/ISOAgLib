@@ -57,7 +57,7 @@ public:
   /** constructor
      @param reference to VT object pool data for direct initialization of mvec_aux3FunctionObject
    */
-  Aux3Mgmt_c(IsoAgLib::iIsoTerminalObjectPool_c& arc_pool)
+  Aux3Mgmt_c(IsoAgLib::iVtClientObjectPool_c& arc_pool)
   : mc_prefAssignMgmt(arc_pool), mc_aux3MessageHandling(*this), men_aux3State(Idle){init();};
 
   /** initialize AUX3 management. called from constructor
@@ -96,7 +96,7 @@ public:
 
   /** process a received AUX3 message.
       Use Aux3MessageHandling_c.
-      Called from VtClientServerCommunication_c::processMsg()
+      Called from VtClientConnection_c::processMsg()
    */
   bool processMsg(){ return mc_aux3MessageHandling.processMsg()};
 

@@ -17,41 +17,28 @@
 
 #ifdef USE_VTOBJECT_container
 #include "vtobject_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 class vtObjectContainer_c : public vtObject_c
 {
 public:
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectContainer_sROM:
-  //! @param b_initPointer:
   void init(const iVtObjectContainer_s* vtObjectContainer_sROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectContainer_sROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
 
-  //  Operation: get_vtObjectContainer_a
   iVtObjectContainer_s* get_vtObjectContainer_a() { return (iVtObjectContainer_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectContainer_c
   vtObjectContainer_c();
 
-  //  Operation: size
   uint32_t fitTerminal() const;
 
-  //  Operation: setOriginSKM
-  //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
-  //! @param p_btn:
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/);
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -81,7 +68,7 @@ protected:
   void hideShow(uint8_t b_hideOrShow, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif
 #endif

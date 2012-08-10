@@ -25,8 +25,8 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
-#ifdef USE_ISO_TERMINAL
-  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
+#ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclient_c.h>
 #endif
 #ifdef USE_ISO_TASKCONTROLLER_CLIENT
   #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
@@ -87,8 +87,8 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   getProprietaryMessageHandlerInstance4Comm().init();
   #endif
   /// Part 6 - Virtual Terminal (Client)
-  #ifdef USE_ISO_TERMINAL
-    getIsoTerminalInstance4Comm().init();
+  #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
+    getVtClientInstance4Comm().init();
   #endif
   /// Part 7 - Application (Tractor-Client)
   #ifdef USE_TRACTOR_GENERAL
@@ -166,8 +166,8 @@ IsoBus_c::close()
     getTracGeneralInstance4Comm().close();
   #endif
   /// Part 6 - Virtual Terminal (Client)
-  #ifdef USE_ISO_TERMINAL
-    getIsoTerminalInstance4Comm().close();
+  #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
+    getVtClientInstance4Comm().close();
   #endif
   /// Part 3 - Proprietary PGNs
   #ifdef USE_ISO_PROPRIETARY_PGN

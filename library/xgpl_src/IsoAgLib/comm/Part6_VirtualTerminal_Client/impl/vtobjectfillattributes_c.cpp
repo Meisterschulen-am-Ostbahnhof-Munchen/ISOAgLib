@@ -14,14 +14,11 @@
 
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectFillAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
@@ -36,7 +33,7 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 25; // Object Type = Fill Attributes
       destMemory [3] = vtObjectFillAttributes_a->fillType;
-      destMemory [4] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectFillAttributes_a->fillColour, this, IsoAgLib::FillColour);
+      destMemory [4] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectFillAttributes_a->fillColour, this, IsoAgLib::FillColour);
       if (vtObjectFillAttributes_a->fillPatternObject != NULL)
       {
         destMemory [5] = vtObjectFillAttributes_a->fillPatternObject->getID() & 0xFF;
@@ -56,10 +53,10 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-// Operation : vtObjectFillAttributes_c
+
 vtObjectFillAttributes_c::vtObjectFillAttributes_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectFillAttributes_c::fitTerminal() const
 {
@@ -72,10 +69,10 @@ vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, uint8_t newFill
 {
   if (b_updateObject) {
     saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType),   sizeof(iVtObjectFillAttributes_s), newFillType);
-    saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFillColour, this, IsoAgLib::FillColour));
+    saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFillColour, this, IsoAgLib::FillColour));
     saveValueP (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s), newFillPattern);
   }
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -118,4 +115,4 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
   }
 }
 #endif
-} // end namespace __IsoAgLib
+} // __IsoAgLib

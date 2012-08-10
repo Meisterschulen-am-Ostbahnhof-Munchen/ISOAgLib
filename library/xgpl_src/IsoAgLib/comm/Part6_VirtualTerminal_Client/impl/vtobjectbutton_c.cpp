@@ -16,7 +16,7 @@
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
 namespace IsoAgLib {
   // implement here a normal functions, as the compiler dislikes inlining of that simple functions
@@ -29,12 +29,8 @@ namespace IsoAgLib {
 }
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectButton_c::stream(uint8_t* destMemory,
                          uint16_t maxBytes,
@@ -53,8 +49,8 @@ vtObjectButton_c::stream(uint8_t* destMemory,
       destMemory [4] = (((uint32_t) vtObjectButton_a->width*vtDimension)/opDimension) >> 8;
       destMemory [5] = (((uint32_t) vtObjectButton_a->height*vtDimension)/opDimension) & 0xFF;
       destMemory [6] = (((uint32_t) vtObjectButton_a->height*vtDimension)/opDimension) >> 8;
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectButton_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      destMemory [8] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectButton_a->borderColour, this, IsoAgLib::BorderColour);
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectButton_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectButton_a->borderColour, this, IsoAgLib::BorderColour);
       destMemory [9] = vtObjectButton_a->keyCode;
       destMemory [10] = vtObjectButton_a->options;
       destMemory [11] = vtObjectButton_a->numberOfObjectsToFollow;
@@ -69,10 +65,9 @@ vtObjectButton_c::stream(uint8_t* destMemory,
 }
 
 
-// Operation : vtObjectButton_c
 vtObjectButton_c::vtObjectButton_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectButton_c::fitTerminal() const
 {
@@ -88,7 +83,7 @@ vtObjectButton_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateOb
     saveValue16 (MACRO_getStructOffset(get_vtObjectButton_a(), height), sizeof(iVtObjectButton_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize(this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize(this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 bool
@@ -185,4 +180,4 @@ vtObjectButton_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeV
   }
 }
 #endif
-} // end of namespace __IsoAgLib
+} // __IsoAgLib

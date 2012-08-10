@@ -15,17 +15,13 @@
 #ifdef USE_VTOBJECT_auxiliaryinput2
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
 #include <IsoAgLib/driver/system/isystem_c.h>
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
 int16_t
 vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
@@ -37,7 +33,7 @@ vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 32; // Object Type = Auxiliary Input 2
-    destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectAuxiliaryInput2_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectAuxiliaryInput2_a->backgroundColour, this, IsoAgLib::BackgroundColour);
     destMemory [4] = vtObjectAuxiliaryInput2_a->functionType;
     destMemory [5] = vtObjectAuxiliaryInput2_a->numberOfObjectsToFollow;
     sourceOffset += 6;
@@ -89,7 +85,7 @@ void vtObjectAuxiliaryInput2_c::init(const iVtObjectAuxiliaryInput2_s* vtObjectA
   }
 }
 
-// Operation : size
+
 uint32_t
 vtObjectAuxiliaryInput2_c::fitTerminal() const
 {
@@ -112,8 +108,7 @@ vtObjectAuxiliaryInput2_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObje
   return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectAuxiliaryInput2_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectAuxiliaryInput2_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryInput2_s), b_enableReplaceOfCmd);
 }
 
-// Operation : setOriginSKM
-//! @param b_SKM:
+
 void
 vtObjectAuxiliaryInput2_c::setOriginSKM(bool /* b_SKM */)
 {
@@ -269,7 +264,7 @@ vtObjectAuxiliaryInput2_c::setValue(uint16_t aui16_value1, uint16_t aui16_value2
     // As long as the message can not be sent, mb_valueChangeToHandle stays true 
     // => message sending is tried in Aux2Inputs_c::timeEventInputStateMsg() until timing allows message sending
     mb_valueChangeToHandle = true;
-    __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).triggerAux2InputStatusMsg(this);
+    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).triggerAux2InputStatusMsg(this);
   }
 
   return true;
@@ -358,5 +353,5 @@ void vtObjectAuxiliaryInput2_c::setTimeStampLastStateMsg()
 }
 
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 #endif

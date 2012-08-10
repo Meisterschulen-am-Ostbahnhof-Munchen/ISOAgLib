@@ -14,16 +14,13 @@
 #include "vtobjectmeter_c.h"
 
 #ifdef USE_VTOBJECT_meter
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectMeter_c::stream(uint8_t* destMemory,
                         uint16_t maxBytes,
@@ -46,9 +43,9 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
         destMemory [3] = (((uint32_t) vtObjectMeter_a->width*vtDimension)/opDimension) & 0xFF;
         destMemory [4] = (((uint32_t) vtObjectMeter_a->width*vtDimension)/opDimension) >> 8;
       }
-      destMemory [5] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectMeter_a->needleColour, this, IsoAgLib::NeedleColour);
-      destMemory [6] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectMeter_a->borderColour, this, IsoAgLib::BorderColour);
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectMeter_a->arcAndTickColour, this, IsoAgLib::ArcAndTickColour);
+      destMemory [5] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectMeter_a->needleColour, this, IsoAgLib::NeedleColour);
+      destMemory [6] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectMeter_a->borderColour, this, IsoAgLib::BorderColour);
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectMeter_a->arcAndTickColour, this, IsoAgLib::ArcAndTickColour);
       destMemory [8] = vtObjectMeter_a->options;
       destMemory [9] = vtObjectMeter_a->numberOfTicks;
       destMemory [10] = vtObjectMeter_a->startAngle;
@@ -76,10 +73,10 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-// Operation : vtObjectMeter_c
+
 vtObjectMeter_c::vtObjectMeter_c() {}
 
-// Operation : fitTerminal
+
 uint32_t
 vtObjectMeter_c::fitTerminal() const
 {
@@ -87,16 +84,14 @@ vtObjectMeter_c::fitTerminal() const
   return 21+vtObjectMeter_a->numberOfMacrosToFollow*2;
 }
 
-// Operation : setValue
-//! @param newValue:
-//! @param b_updateObject:
+
 void
 vtObjectMeter_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (get_vtObjectMeter_a()->variableReference == NULL) {
     if (b_updateObject) saveValue16 (MACRO_getStructOffset(get_vtObjectMeter_a(), value), sizeof(iVtObjectMeter_s), newValue);
 
-    __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
+    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 }
 
@@ -234,5 +229,7 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
   }
 }
 #endif
-} // end namespace __IsoAgLib
+
+} // __IsoAgLib
+
 #endif

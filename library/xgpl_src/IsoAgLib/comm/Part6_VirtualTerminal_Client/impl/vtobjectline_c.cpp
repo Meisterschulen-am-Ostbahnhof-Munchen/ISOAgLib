@@ -17,14 +17,11 @@
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectLine_c::stream(uint8_t* destMemory,
                        uint16_t maxBytes,
@@ -63,10 +60,10 @@ vtObjectLine_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-// Operation : vtObjectLine_c
+
 vtObjectLine_c::vtObjectLine_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectLine_c::fitTerminal() const
 {
@@ -74,8 +71,7 @@ vtObjectLine_c::fitTerminal() const
   return 11+vtObjectLine_a->numberOfMacrosToFollow*2;
 }
 
-// Operation : setOriginSKM
-//! @param b_SKM:
+
 void
 vtObjectLine_c::setOriginSKM(bool b_SKM)
 {
@@ -94,7 +90,7 @@ vtObjectLine_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObje
     saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 void
@@ -106,7 +102,7 @@ vtObjectLine_c::setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newL
     saveValue8  (MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s), newLineDirection);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeEndPoint (this, newWidth, newHeight, newLineDirection, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeEndPoint (this, newWidth, newHeight, newLineDirection, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -159,5 +155,7 @@ vtObjectLine_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVal
   }
 }
 #endif
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib
+
 #endif

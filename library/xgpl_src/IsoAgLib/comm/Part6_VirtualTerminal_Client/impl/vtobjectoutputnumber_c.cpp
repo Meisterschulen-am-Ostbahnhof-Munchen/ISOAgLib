@@ -18,15 +18,11 @@
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
 int16_t
 vtObjectOutputNumber_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
@@ -53,7 +49,7 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectOutputNumber_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectOutputNumber_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectOutputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectOutputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObjectOutputNumber_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectOutputNumber_a->fontAttributes->getID() >> 8;
       destMemory [10] = vtObjectOutputNumber_a->options;
@@ -89,10 +85,10 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-// Operation : vtObjectOutputNumber_c
+
 vtObjectOutputNumber_c::vtObjectOutputNumber_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectOutputNumber_c::fitTerminal() const
 {
@@ -100,9 +96,7 @@ vtObjectOutputNumber_c::fitTerminal() const
   return 29+vtObjectOutputNumber_a->numberOfMacrosToFollow*2;
 }
 
-// Operation : setValue
-//! @param newValue:
-//! @param b_updateObject:
+
 void
 vtObjectOutputNumber_c::setValue(uint32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
@@ -111,12 +105,11 @@ vtObjectOutputNumber_c::setValue(uint32_t newValue, bool b_updateObject, bool b_
     if (b_updateObject) saveValue32 (MACRO_getStructOffset(get_vtObjectOutputNumber_a(), value), sizeof(iVtObjectOutputNumber_s), newValue);
 
     // Send Value update
-    __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
+    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
   }
 }
 
-// Operation : setOriginSKM
-//! @param b_SKM:
+
 void
 vtObjectOutputNumber_c::setOriginSKM(bool b_SKM)
 {
@@ -146,7 +139,7 @@ vtObjectOutputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_up
     saveValue16 (MACRO_getStructOffset(get_vtObjectOutputNumber_a(), height), sizeof(iVtObjectOutputNumber_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -283,5 +276,7 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
   }
 }
 #endif
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib
+
 #endif

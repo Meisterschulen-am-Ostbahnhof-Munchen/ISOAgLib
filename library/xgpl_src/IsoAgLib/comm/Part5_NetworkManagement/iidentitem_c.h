@@ -23,7 +23,7 @@
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h>
 
 namespace __IsoAgLib {
-  class IsoTerminal_c;
+  class VtClient_c;
   class DevPropertyHandler_c;
   class ProprietaryMessageHandler_c;
   class ProprietaryMessageClient_c;
@@ -31,9 +31,9 @@ namespace __IsoAgLib {
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
-// predeclare iIsoTerminal_c, as this class is allowed to access private ( hidden )
+// predeclare iVtClient_c, as this class is allowed to access private ( hidden )
 // elements of this class exclusively ( see friend declaration at end of this file )
-class iIsoTerminal_c;
+class iVtClient_c;
 class iProprietaryMessageHandler_c;
 class iProprietaryMessageClient_c;
 class iTimePosGps_c;
@@ -200,10 +200,10 @@ public:
 private:
   friend class iIsoMonitor_c;
   friend class iFsManager_c;
-  friend class iIsoTerminal_c;
-  friend class iVtClientServerCommunication_c;
+  friend class iVtClient_c;
+  friend class iVtClientConnection_c;
   friend class iDevPropertyHandler_c;
-  friend class __IsoAgLib::IsoTerminal_c;
+  friend class __IsoAgLib::VtClient_c;
   friend class iProprietaryMessageHandler_c;
   friend class iProprietaryMessageClient_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;

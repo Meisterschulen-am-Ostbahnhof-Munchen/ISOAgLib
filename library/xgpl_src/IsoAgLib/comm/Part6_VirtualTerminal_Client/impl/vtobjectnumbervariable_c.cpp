@@ -14,14 +14,11 @@
 #include "vtobjectnumbervariable_c.h"
 
 #ifdef USE_VTOBJECT_numbervariable 
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectNumberVariable_c::stream(uint8_t* destMemory,
                                  uint16_t /*maxBytes*/,
@@ -45,10 +42,10 @@ vtObjectNumberVariable_c::stream(uint8_t* destMemory,
     return 0;
 }
 
-// Operation : vtObjectNumberVariable_c
+
 vtObjectNumberVariable_c::vtObjectNumberVariable_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectNumberVariable_c::fitTerminal() const
 {
@@ -56,16 +53,14 @@ vtObjectNumberVariable_c::fitTerminal() const
   return (3+4);
 }
 
-// Operation : setValue
-//! @param newValue:
-//! @param b_updateObject:
+
 void
 vtObjectNumberVariable_c::setValue(uint32_t newValue,
                                    bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) saveValue32 (MACRO_getStructOffset(get_vtObjectNumberVariable_a(), value), sizeof(iVtObjectNumberVariable_s), newValue);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -89,5 +84,7 @@ vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*p
   */
 }
 #endif
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib
+
 #endif

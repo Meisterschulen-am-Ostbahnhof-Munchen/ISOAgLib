@@ -12,7 +12,7 @@
 
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
 #if defined(DEBUG)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>

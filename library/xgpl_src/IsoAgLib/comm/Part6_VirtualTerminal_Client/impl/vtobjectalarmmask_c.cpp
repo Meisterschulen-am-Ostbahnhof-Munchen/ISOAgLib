@@ -14,17 +14,13 @@
 #include "vtobjectalarmmask_c.h"
 
 #ifdef USE_VTOBJECT_alarmmask
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectmacro_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
 int16_t
 vtObjectAlarmMask_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
@@ -41,7 +37,7 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObjectAlarmMask_a->ID & 0xFF;
       destMemory [1] = vtObjectAlarmMask_a->ID >> 8;
       destMemory [2] = 2; // Object Type = Alarm Mask
-      destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectAlarmMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectAlarmMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       if (vtObjectAlarmMask_a->softKeyMask != NULL) {
           destMemory [4] = vtObjectAlarmMask_a->softKeyMask->getID() & 0xFF;
           destMemory [5] = vtObjectAlarmMask_a->softKeyMask->getID() >> 8;
@@ -63,11 +59,9 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
 }
 
 
-// Operation : vtObjectAlarmMask_c
 vtObjectAlarmMask_c::vtObjectAlarmMask_c() {}
 
 
-// Operation : size
 uint32_t
 vtObjectAlarmMask_c::fitTerminal() const
 {
@@ -75,16 +69,14 @@ vtObjectAlarmMask_c::fitTerminal() const
   return 10+vtObjectAlarmMask_a->numberOfObjectsToFollow*6+vtObjectAlarmMask_a->numberOfMacrosToFollow*2;
 }
 
-// Operation : setSoftKeyMask
-//! @param newSoftKeyMask:
-//! @param b_updateObject:
+
 void
 vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask,
                                     bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s), newSoftKeyMask);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSoftKeyMask (this, 2 /* "Type: Alarm Mask" */, (newSoftKeyMask == NULL) ? 0xFFFF : newSoftKeyMask->getID(), b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSoftKeyMask (this, 2 /* "Type: Alarm Mask" */, (newSoftKeyMask == NULL) ? 0xFFFF : newSoftKeyMask->getID(), b_enableReplaceOfCmd);
 }
 
 /// No cmdReplacing here, as it's a relative command!!

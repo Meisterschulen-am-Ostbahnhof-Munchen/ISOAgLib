@@ -1,5 +1,5 @@
 /*
-  iisoterminalobjectpool.h: class for managing an object pool with
+  ivtclientobjectpool.h: class for managing an object pool with
     softkey/button activation event handling
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -11,12 +11,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef IISOTERMINALOBJECTPOOL_H
-#define IISOTERMINALOBJECTPOOL_H
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
+#ifndef IVTCLIENTOBJECTPOOL_H
+#define IVTCLIENTOBJECTPOOL_H
 
 #include "ivttypes.h"
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
@@ -24,19 +20,11 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
 #include <utility>
 
-/* *************************************** */
-/* ********** command defines ************ */
-/* *************************************** */
-
-
-// forward declaration
 struct localSettings_s;
 
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib
 {
-  // forward declarations
   class iMultiSendStreamer_c;
 /**
   @brief This class is needed to handle Terminal KeyCodes (SoftKey or Button) and Numeric Value Changes and also
@@ -45,11 +33,9 @@ namespace IsoAgLib
   For how to specify an ISO VT Object Pool please refer to \ref XMLspec .
 */
 
-class iIsoTerminalObjectPool_c {
-
+class iVtClientObjectPool_c
+{
 public:
-
-
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Soft Key Activation" / "Button Activation" Message
@@ -146,14 +132,14 @@ public:
   /**
     hook function that gets called immediately after recognizing the success/error
     of a command-response message. please keep the implementation short as
-    this is directly called from IsoTerminal_c's processMsg();
+    this is directly called from VtClient_c's processMsg();
   */
   virtual void eventCommandResponse(uint8_t /*aui8_responseCommandError*/, const uint8_t /*apui8_responseDataBytes*/[8]) {}
 
   /**
     hook function that gets called immediately after recognizing an incoming LANGUAGE_PGN.
     react on any change by adjusting your pool to the new UNITS.
-    please keep the implementation short as this is directly called from IsoTerminal_c's processMsg();
+    please keep the implementation short as this is directly called from VtClient_c's processMsg();
     for changing the LANGUAGE please refer to "eventObjectPoolUploadedSuccessfully".
     VERY IMPORTANT: THIS FUNCTION CALL MAY OCCUR PRIOR TO AN SUCCESSFULLY UPLOADED POOL !!!!!!!
   */
@@ -253,7 +239,7 @@ public:
   */
   virtual void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF)=0;
 
-  iIsoTerminalObjectPool_c(iVtObject_c*HUGE_MEM** a_iVtObjects, uint16_t a_numObjects, uint16_t a_numObjectsLang, ObjectPoolSettings_s a_objectPoolSettings)
+  iVtClientObjectPool_c(iVtObject_c*HUGE_MEM** a_iVtObjects, uint16_t a_numObjects, uint16_t a_numObjectsLang, ObjectPoolSettings_s a_objectPoolSettings)
     : iVtObjects (a_iVtObjects)
     , numObjects (a_numObjects)
     , numObjectsLang (a_numObjectsLang)
@@ -268,7 +254,7 @@ public:
     while (*iter++ != NULL) numLang++;
   };
 
-   virtual ~iIsoTerminalObjectPool_c() {}
+   virtual ~iVtClientObjectPool_c() {}
 
   /** Default implementation for convertColour which can also be used
    *  by custom color conversion implementations.

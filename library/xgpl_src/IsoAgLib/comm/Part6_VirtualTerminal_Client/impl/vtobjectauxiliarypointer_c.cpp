@@ -17,15 +17,11 @@
 
 #ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
 int16_t
 vtObjectAuxiliaryControlDesignatorObjectPointer_c::stream(uint8_t* destMemory,
                                                           uint16_t /*maxBytes*/,
@@ -58,10 +54,9 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::stream(uint8_t* destMemory,
 }
 
 
-// Operation : vtObjectAuxiliaryControlDesignatorObjectPointer_c
 vtObjectAuxiliaryControlDesignatorObjectPointer_c::vtObjectAuxiliaryControlDesignatorObjectPointer_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectAuxiliaryControlDesignatorObjectPointer_c::fitTerminal() const
 {
@@ -91,5 +86,5 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::saveReceivedAttribute(uint8_t
 }
 #endif
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 #endif

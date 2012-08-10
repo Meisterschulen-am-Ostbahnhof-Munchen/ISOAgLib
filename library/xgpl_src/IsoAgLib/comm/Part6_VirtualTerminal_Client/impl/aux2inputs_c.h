@@ -22,8 +22,7 @@
 
 namespace __IsoAgLib {
 
-// forward declaration
-class VtClientServerCommunication_c;
+class VtClientConnection_c;
 
 class Aux2Inputs_c : public Scheduler_Task_c
 {
@@ -43,7 +42,7 @@ public:
 
   virtual ~Aux2Inputs_c(void);
 
-  void init(VtClientServerCommunication_c* a_vtClientServerCommunication);
+  void init(VtClientConnection_c* a_vtClientServerCommunication);
 
   /**
     send AUX2 input maintenance message (100msec) and call timeEventInputStateMsg(NULL) (1sec)
@@ -96,7 +95,7 @@ private:
 
   bool mb_learnMode;
 
-  VtClientServerCommunication_c* mp_vtClientServerCommunication;
+  VtClientConnection_c* mp_vtClientServerCommunication;
 
 private:
   /** not copyable : copy constructor is only declared, never defined */

@@ -16,7 +16,7 @@
 
 #ifdef USE_VTOBJECT_stringvariable
 
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
 namespace IsoAgLib {
   // implement here a normal constructor, as the compiler dislikes inlining of that simple constructor
@@ -25,12 +25,8 @@ namespace IsoAgLib {
 }
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectStringVariable_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
@@ -59,11 +55,10 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
   return curBytes;
 }
 
-// Operation : vtObjectStringVariable_c
+
 vtObjectStringVariable_c::vtObjectStringVariable_c() {}
 
 
-// Operation : size
 uint32_t
 vtObjectStringVariable_c::fitTerminal() const
 {
@@ -88,9 +83,7 @@ vtObjectStringVariable_c::setValueCopyUTF8 (const char* newValue, uint8_t aui8_f
 }
 #endif
 
-// Operation : setValueCopy
-//! @param newValue:
-//! @param b_updateObject:
+
 void
 vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
@@ -110,12 +103,10 @@ vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length, b_enableReplaceOfCmd);
 }
 
-// Operation : setValue
-//! @param newValue:
-//! @param b_updateObject:
+
 void
 vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
@@ -133,15 +124,16 @@ vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject,
   uint16_t ui16_tempLen = 0;
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectStringVariable_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectStringVariable_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 }
 
-// Operation : getString
+
 const char*
 vtObjectStringVariable_c::getString()
 {
   return get_vtObjectStringVariable_a()->value;
 }
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
+
 #endif

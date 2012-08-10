@@ -16,15 +16,11 @@
 #ifdef USE_VTOBJECT_auxiliaryfunction
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
 int16_t
 vtObjectAuxiliaryFunction_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
@@ -36,7 +32,7 @@ vtObjectAuxiliaryFunction_c::stream(uint8_t* destMemory, uint16_t maxBytes, objR
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 29; // Object Type = Auxiliary Function
-    destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectAuxiliaryFunction_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectAuxiliaryFunction_a->backgroundColour, this, IsoAgLib::BackgroundColour);
     destMemory [4] = vtObjectAuxiliaryFunction_a->functionType;
     destMemory [5] = vtObjectAuxiliaryFunction_a->numberOfObjectsToFollow;
     sourceOffset += 6;
@@ -48,10 +44,10 @@ vtObjectAuxiliaryFunction_c::stream(uint8_t* destMemory, uint16_t maxBytes, objR
   return curBytes;
 }
 
-// Operation : vtObjectAuxiliaryFunction_c
+
 vtObjectAuxiliaryFunction_c::vtObjectAuxiliaryFunction_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectAuxiliaryFunction_c::fitTerminal() const
 {
@@ -84,5 +80,5 @@ vtObjectAuxiliaryFunction_c::setOriginSKM(bool /* b_SKM */)
   }
 }
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 #endif

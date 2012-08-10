@@ -14,9 +14,6 @@
 #include "identitem_c.h"
 #include "../impl/isomonitor_c.h"
 #include "../impl/isorequestpgn_c.h"
-#if !defined(IGNORE_VTSERVER_NACK) && defined(USE_ISO_TERMINAL)
-  #include "../../Part6_VirtualTerminal_Client/impl/isoterminal_c.h"
-#endif
 
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>

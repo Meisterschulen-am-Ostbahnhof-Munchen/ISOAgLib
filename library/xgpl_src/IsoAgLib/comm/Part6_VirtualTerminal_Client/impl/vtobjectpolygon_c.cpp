@@ -18,14 +18,10 @@
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
 int16_t
 vtObjectPolygon_c::stream(uint8_t* destMemory,
                           uint16_t maxBytes,
@@ -75,10 +71,10 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-// Operation : vtObjectPolygon_c
+
 vtObjectPolygon_c::vtObjectPolygon_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectPolygon_c::fitTerminal() const
 {
@@ -87,8 +83,6 @@ vtObjectPolygon_c::fitTerminal() const
 }
 
 
-// Operation : setOriginSKM
-//! @param b_SKM:
 void
 vtObjectPolygon_c::setOriginSKM(bool b_SKM)
 {
@@ -107,7 +101,7 @@ vtObjectPolygon_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
     saveValue16 (MACRO_getStructOffset(get_vtObjectPolygon_a(), height), sizeof(iVtObjectPolygon_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -171,5 +165,6 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 }
 #endif
 
-} // end namespace __IsoAgLib
+} // __IsoAgLib
+
 #endif

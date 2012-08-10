@@ -14,49 +14,37 @@
 #define VTOBJECTFONTATTRIBUTES_C_H
 
 #include "vtobject_c.h"
-#include "isoterminal_c.h"
-#include "vtclientservercommunication_c.h"
+#include "vtclient_c.h"
+#include "vtclientconnection_c.h"
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 class vtObjectFontAttributes_c : public vtObject_c
 {
 public:
-  /// Operation: stream
-  /// @param destMemory
-  /// @param maxBytes don't stream out more than that or you'll overrun the internal upload-buffer
-  /// @param sourceOffset
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  /// Operation: init
-  /// @param vtObjectFontAttributesSROM
-  /// @param b_initPointer
   void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectFontAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
 
-  //  Operation: get_vtObjectFontAttributes_a
   iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a() { return (iVtObjectFontAttributes_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectFontAttributes_c
   vtObjectFontAttributes_c();
 
   virtual ~vtObjectFontAttributes_c();
 
-  //  Operation: size
   uint32_t fitTerminal() const;
 
-  //  Operation: getScaledWidthHeight
   uint16_t getScaledWidthHeight();
 
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setFontColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) :
-        0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
+        0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
   }
 
   void setFontSize(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -102,7 +90,7 @@ private:
 
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
-#endif // VTOBJECTFONTATTRIBUTES_C_H
+#endif
 

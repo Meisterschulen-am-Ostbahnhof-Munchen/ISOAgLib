@@ -76,7 +76,6 @@ library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux2functions_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux2functions_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux2inputs_c.cpp -text
@@ -91,8 +90,8 @@ library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/objectpoolstrea
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/objectpoolstreamer_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/sendupload_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/sendupload_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.cpp -text
-library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryfunction2_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryfunction2_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryinput2_c.cpp -text
@@ -105,7 +104,8 @@ library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectoutputl
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectoutputlist_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientservercommunication_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientconnection_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliaryfunction2_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliaryinput2_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliarypointer_c.h -text

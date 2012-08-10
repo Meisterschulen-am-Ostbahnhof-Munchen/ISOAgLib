@@ -14,36 +14,26 @@
 #define VTOBJECTPICTUREGRAPHIC_C_H
 
 #include "vtobject_c.h"
-#include "isoterminal_c.h"
-#include "vtclientservercommunication_c.h"
+#include "vtclient_c.h"
+#include "vtclientconnection_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 class vtObjectPictureGraphic_c : public vtObject_c
 {
 public:
-  /// Operation: stream
-  /// @param destMemory
-  /// @param maxBytes don't stream out more than that or you'll overrun the internal upload-buffer
-  /// @param sourceOffset
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  /// Operation: init
-  /// @param vtObjectPictureGraphicSROM
-  /// @param b_initPointer
   void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
-  //  Operation: get_vtObjectPictureGraphic_a
   inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return (iVtObjectPictureGraphic_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectPictureGraphic_c
   vtObjectPictureGraphic_c();
 
-  //  Operation: fitTerminal
   uint32_t fitTerminal() const;
 
   // //////////////////////////////////
@@ -55,7 +45,7 @@ public:
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options) : 0, sizeof(iVtObjectPictureGraphic_s), 2, newValue, newValue, b_enableReplaceOfCmd);
   }
   void setTransparencyColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
   }
 
   /// The following modification functions will only take affect on updating the object pool!
@@ -116,6 +106,6 @@ public:
 #endif
 };
 
-} // end of namespace __IsoAgLib
+} //__IsoAgLib
 
 #endif

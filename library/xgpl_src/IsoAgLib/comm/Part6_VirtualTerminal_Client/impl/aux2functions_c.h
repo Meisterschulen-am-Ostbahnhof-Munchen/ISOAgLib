@@ -13,7 +13,7 @@
 #ifndef AUX2FUNCTIONS_H
 #define AUX2FUNCTIONS_H
 
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
@@ -24,8 +24,7 @@
 
 namespace __IsoAgLib {
 
-// forward declaration
-class VtClientServerCommunication_c;
+class VtClientConnection_c;
 
 class Aux2Functions_c
 {
@@ -42,7 +41,7 @@ public:
     State_Ready
   };
 
-  Aux2Functions_c(VtClientServerCommunication_c* a_vtClientServerCommunication);
+  Aux2Functions_c(VtClientConnection_c* a_vtClientServerCommunication);
 
   virtual ~Aux2Functions_c(void);
 
@@ -50,7 +49,7 @@ public:
   STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>& getObjectList() { return mlist_aux2Function; }
 #endif
 
-  void notifyOnAux2InputStatus( const CanPkgExt_c& arc_data, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool);
+  void notifyOnAux2InputStatus( const CanPkgExt_c& arc_data, IsoAgLib::iVtClientObjectPool_c& arc_pool);
 
   /** update maintenance time stamp in mmap_receivedInputMaintenanceData and decide when to send the preferred assignment message
    *
@@ -63,9 +62,9 @@ public:
    */
   void notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data);
 
-  bool storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool);
+  bool storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId, IsoAgLib::iVtClientObjectPool_c& arc_pool);
 
-  void checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iIsoTerminalObjectPool_c& arc_pool);
+  void checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iVtClientObjectPool_c& arc_pool);
 
   bool sendPreferredAux2Assignments();
 
@@ -109,7 +108,7 @@ private:
 #endif
 
   // back reference for accessing functions in parent
-  VtClientServerCommunication_c* m_vtClientServerCommunication;
+  VtClientConnection_c* m_vtClientServerCommunication;
 
   Aux2FunctionsState_en m_state;
 

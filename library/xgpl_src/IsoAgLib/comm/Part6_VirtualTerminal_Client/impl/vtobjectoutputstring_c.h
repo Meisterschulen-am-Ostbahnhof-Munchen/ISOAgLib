@@ -17,60 +17,40 @@
 
 #ifdef USE_VTOBJECT_outputstring
 #include "../ivtobjectstring_c.h"
-#include "vtclientservercommunication_c.h"
-#include "isoterminal_c.h"
+#include "vtclientconnection_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 class vtObjectOutputString_c : public IsoAgLib::iVtObjectString_c
 {
 public:
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectOutputStringSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectOutputStringSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
-  //  Operation: get_vtObjectOutputString_a
   iVtObjectOutputString_s* get_vtObjectOutputString_a() { return (iVtObjectOutputString_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectOutputString_c
   vtObjectOutputString_c();
   ~vtObjectOutputString_c();
 
-  //  Operation: fitTerminal
   uint32_t fitTerminal() const;
 
-  //  Operation: setOriginSKM
-  //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
-  //! @param p_btn:
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
 
-  //  Operation: getString
   const char* getString();
 
-  //  Operation: setValueCopy / setValueCopyUTF8
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
   void setValueCopyUTF8(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
-  //  Operation: setValueRef
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   // //////////////////////////////////
@@ -82,7 +62,7 @@ public:
     saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), height) : 0, sizeof(iVtObjectOutputString_s), 2, newValue, b_enableReplaceOfCmd);
   }
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour) : 0, sizeof(iVtObjectOutputString_s), 3, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour) : 0, sizeof(iVtObjectOutputString_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
   void setFontAttributes(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes) : 0, sizeof(iVtObjectOutputString_s), 4, newValue, b_enableReplaceOfCmd);
@@ -123,7 +103,8 @@ public:
 #endif
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif
+
 #endif

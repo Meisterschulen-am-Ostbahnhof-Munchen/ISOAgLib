@@ -18,14 +18,11 @@
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectRectangle_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
@@ -75,10 +72,10 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-// Operation : vtObjectRectangle_c
+
 vtObjectRectangle_c::vtObjectRectangle_c() {}
 
-// Operation : fitTerminal
+
 uint32_t
 vtObjectRectangle_c::fitTerminal() const
 {
@@ -87,7 +84,6 @@ vtObjectRectangle_c::fitTerminal() const
 }
 
 
-// Operation : setOriginSKM
 void
 vtObjectRectangle_c::setOriginSKM(bool b_SKM)
 {
@@ -105,7 +101,7 @@ vtObjectRectangle_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectRectangle_a(), width),  sizeof(iVtObjectRectangle_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s), newHeight);
   }
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -169,5 +165,6 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 }
 #endif
 
-} // end namespace __IsoAgLib
+} // __IsoAgLib
+
 #endif

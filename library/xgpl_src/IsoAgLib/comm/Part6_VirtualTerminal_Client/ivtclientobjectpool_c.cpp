@@ -17,7 +17,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 
-#include "iisoterminalobjectpool_c.h"
+#include "ivtclientobjectpool_c.h"
 #include <IsoAgLib/util/iassert.h>
 
 namespace
@@ -35,7 +35,7 @@ inline uint8_t normalizeDepth2Color(uint8_t ui8_color) {
 namespace IsoAgLib
 {
 
-uint8_t iIsoTerminalObjectPool_c::convertColourDefault(
+uint8_t iVtClientObjectPool_c::convertColourDefault(
     uint8_t colorValue,
     uint8_t colorDepth,
     IsoAgLib::iVtObject_c * /*obj*/,

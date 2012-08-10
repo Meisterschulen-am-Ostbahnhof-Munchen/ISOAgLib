@@ -14,14 +14,11 @@
 #include "vtobjectsoftkeymask_c.h"
 #include "../ivtobjectmacro_c.h"
 
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
                               uint16_t maxBytes,
@@ -31,7 +28,7 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectSoftKeyMask_s
   MACRO_streamLocalVars;
 
-  if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId)
+  if (__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId)
       .getVtServerInst().getVtCapabilities()->skVirtual < vtObjectSoftKeyMask_a->numberOfObjectsToFollow)
   { // can't upload this SKM because it has more Keys than virtually supported
     return 0;
@@ -41,7 +38,7 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 4; // Object Type = Soft Key Mask
-    destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectSoftKeyMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectSoftKeyMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
     destMemory [4] = vtObjectSoftKeyMask_a->numberOfObjectsToFollow;
     destMemory [5] = vtObjectSoftKeyMask_a->numberOfMacrosToFollow;
 
@@ -55,18 +52,17 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
 }
 
 
-// Operation : vtObjectSoftKeyMask_c
 vtObjectSoftKeyMask_c::vtObjectSoftKeyMask_c()
 {
 }
 
-// Operation : size
+
 uint32_t
 vtObjectSoftKeyMask_c::fitTerminal() const
 {
   MACRO_localVars;
 
-  if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId)
+  if (__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId)
       .getVtServerInst().getVtCapabilities()->skVirtual < vtObjectSoftKeyMask_a->numberOfObjectsToFollow)
   { // can't upload this SKM because it has more Keys than virtually supported
     return 0;
@@ -77,8 +73,7 @@ vtObjectSoftKeyMask_c::fitTerminal() const
   }
 }
 
-// Operation : setOriginSKM
-//! @param b_SKM:
+
 void
 vtObjectSoftKeyMask_c::setOriginSKM(bool /*b_SKM*/)
 {
@@ -104,4 +99,5 @@ vtObjectSoftKeyMask_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     saveValue8(MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour), sizeof(iVtObjectSoftKeyMask_s), convertLittleEndianStringUi8(pui8_attributeValue));
 }
 #endif
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib

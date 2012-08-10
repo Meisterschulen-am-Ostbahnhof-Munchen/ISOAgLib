@@ -12,8 +12,8 @@
 */
 
 #include "aux2functions_c.h"
-#include "isoterminal_c.h"
-#include "vtclientservercommunication_c.h"
+#include "vtclient_c.h"
+#include "vtclientconnection_c.h"
 
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 
@@ -43,7 +43,7 @@ namespace __IsoAgLib {
   };
 
 
-Aux2Functions_c::Aux2Functions_c(VtClientServerCommunication_c* a_vtClientServerCommunication)
+Aux2Functions_c::Aux2Functions_c(VtClientConnection_c* a_vtClientServerCommunication)
   : m_vtClientServerCommunication(a_vtClientServerCommunication),
     m_state(State_WaitForPoolUploadSuccessfully),
     m_timeStampWaitForSendingPreferredAssignment(0),
@@ -59,7 +59,9 @@ Aux2Functions_c::~Aux2Functions_c(void)
 
 
 void
-Aux2Functions_c::notifyOnAux2InputStatus( const CanPkgExt_c& arc_data, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool)
+Aux2Functions_c::notifyOnAux2InputStatus(
+  const CanPkgExt_c& arc_data, 
+  IsoAgLib::iVtClientObjectPool_c& arc_pool )
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   if (mb_learnMode || ((arc_data.getUint8Data(8-1) & 0x3) != 0))
@@ -191,7 +193,10 @@ Aux2Functions_c::objectPoolUploadedSuccessfully()
 }
 
 bool
-Aux2Functions_c::storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool)
+Aux2Functions_c::storeAux2Assignment(
+  Stream_c& arc_stream, 
+  uint16_t& rui16_functionObjId, 
+  IsoAgLib::iVtClientObjectPool_c& arc_pool )
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   const uint16_t ui16_totalstreamsize = arc_stream.getByteTotalSize();
@@ -261,7 +266,7 @@ Aux2Functions_c::storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_funct
 }
 
 void
-Aux2Functions_c::checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iIsoTerminalObjectPool_c& arc_pool)
+Aux2Functions_c::checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iVtClientObjectPool_c& arc_pool)
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   bool b_assignedInputsChanged = false;

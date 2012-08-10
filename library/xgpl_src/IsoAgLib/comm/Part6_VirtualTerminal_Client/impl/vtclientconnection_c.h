@@ -1,6 +1,5 @@
 /*
-  vtclientservercommunication_c.h: class for managing the
-    communication between vt client and server
+  vtclientconnection_c.h: class for managing a connection
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -11,10 +10,10 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef VT_CLIENT_SERVER_COMMUNICATION_H
-#define VT_CLIENT_SERVER_COMMUNICATION_H
+#ifndef VTCLIENTCONNECTION_H
+#define VTCLIENTCONNECTION_H
 
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
@@ -37,17 +36,17 @@
 
 namespace IsoAgLib {
   class iVtObjectString_c;
-  class iVtClientServerCommunication_c;
+  class iVtClientConnection_c;
   class iVtClientDataStorage_c;
 }
 
 
 namespace __IsoAgLib {
 class VtServerInstance_c;
-class IsoTerminal_c;
+class VtClient_c;
 
 
-class VtClientServerCommunication_c : public CanCustomer_c
+class VtClientConnection_c : public CanCustomer_c
 {
 private:
   struct AuxAssignment_s
@@ -124,22 +123,22 @@ public:
   virtual bool reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen);
   virtual bool processPartStreamDataChunk (Stream_c& apc_stream, bool ab_isFirstChunk, bool ab_isLastChunk);
 
-  /** constructor of VtClientServerCommunication_c
+  /** constructor of VtClientConnection_c
    */
-  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem,
-                                 IsoTerminal_c &r_isoTerminal,
-                                 IsoAgLib::iIsoTerminalObjectPool_c& arc_pool,
+  VtClientConnection_c (IdentItem_c& mrc_wsMasterIdentItem,
+                                 VtClient_c &r_isoTerminal,
+                                 IsoAgLib::iVtClientObjectPool_c& arc_pool,
                                  const char* apc_versionLabel,
                                  IsoAgLib::iVtClientDataStorage_c& arc_claimDataStorage,
                                  uint8_t aui8_clientId,
-                                 IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
+                                 IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
 
-  virtual ~VtClientServerCommunication_c();
+  virtual ~VtClientConnection_c();
 
   /** explicit conversion to reference of interface class type */
-  IsoAgLib::iVtClientServerCommunication_c& toInterfaceReference();
+  IsoAgLib::iVtClientConnection_c& toInterfaceReference();
   /** explicit conversion to reference of interface class type */
-  IsoAgLib::iVtClientServerCommunication_c* toInterfacePointer();
+  IsoAgLib::iVtClientConnection_c* toInterfacePointer();
 
   /** periodically event -> call timeEvent for all  identities and parent objects
     @return true -> all planned activities performed in allowed time
@@ -273,7 +272,7 @@ private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c 
   {
   public:
-    typedef VtClientServerCommunication_c Owner_t;
+    typedef VtClientConnection_c Owner_t;
 
     MultiSendEventHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
     ~MultiSendEventHandlerProxy_c() {}
@@ -292,7 +291,7 @@ private:
   void reactOnStateChange(const SendStream_c& sendStream);
 
 private:
-  friend class IsoTerminal_c;
+  friend class VtClient_c;
 
   void timeEventSearchForNewVt();
 
@@ -349,13 +348,13 @@ private:
 private: // attributes
   /** static instance to store temporarily before push_back into list */
   static SendUpload_c msc_tempSendUpload;
-  IsoAgLib::iIsoTerminalObjectPool_c& mrc_pool;
+  IsoAgLib::iVtClientObjectPool_c& mrc_pool;
 
   bool mb_vtAliveCurrent;
   bool mb_checkSameCommand;
 
   IdentItem_c& mrc_wsMasterIdentItem;
-  IsoTerminal_c& mrc_isoTerminal; // back ref.
+  VtClient_c& mrc_isoTerminal; // back ref.
   VtServerInstance_c* mpc_vtServerInstance;
 
   bool mb_usingVersionLabel; // if NOT using version label, "marrp7c_versionLabel" has random values!
@@ -439,13 +438,13 @@ private:
   int32_t mi32_timeWsAnnounceKey;
   int32_t mi32_fakeVtOffUntil;
 
-  IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en men_registerPoolMode;
+  IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en men_registerPoolMode;
 
   int mi_multitonInst;
 
   bool mb_commandsToBus;
 
-  IsoName_c mc_prefferedVTIsoName;
+  IsoName_c mc_preferredVt;
   int32_t mi32_bootTime_ms;
 
   /** pointer to a valid claim data Storage handler. If 0 not used. */
@@ -453,43 +452,43 @@ private:
 };
 
 
-inline bool VtClientServerCommunication_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 { return sendCommandChangeNumericValue(apc_object->getID(), byte1, byte2, byte3, byte4, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeAttribute    (IsoAgLib::iVtObject_c* apc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeAttribute    (IsoAgLib::iVtObject_c* apc_object, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 { return sendCommandChangeAttribute(apc_object->getID(), attrId, byte1, byte2, byte3, byte4, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeSoftKeyMask  (IsoAgLib::iVtObject_c* apc_object, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeSoftKeyMask  (IsoAgLib::iVtObject_c* apc_object, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd)
 { return sendCommandChangeSoftKeyMask(apc_object->getID(), maskType, newSoftKeyMaskID, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 { return sendCommandChangeStringValue(apc_object->getID(), apc_newValue, overrideSendLength, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeActiveMask (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_mask, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeActiveMask (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_mask, bool b_enableReplaceOfCmd)
 { return sendCommandChangeActiveMask( apc_object->getID(), apc_mask->getID(), b_enableReplaceOfCmd ); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
 { return sendCommandChangeChildPosition(apc_object->getID(), apc_childObject->getID(), x, y, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
 { return sendCommandChangeChildLocation(apc_object->getID(), apc_childObject->getID(), dx, dy, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newColour,  bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newColour,  bool b_enableReplaceOfCmd)
 { return sendCommandChangeBackgroundColour(apc_object->getID(), newColour, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 { return sendCommandChangeSize(apc_object->getID(), newWidth, newHeight, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 { return sendCommandChangeFillAttributes(apc_object->getID(), newFillType, newFillColour, newFillPatternObject, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 { return sendCommandChangeFontAttributes( apc_object->getID(), newFontColour, newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
 { return sendCommandChangeLineAttributes( apc_object->getID(), newLineColour, newLineWidth, newLineArt, b_enableReplaceOfCmd); }
 
-inline bool VtClientServerCommunication_c::sendCommandHideShow( IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
+inline bool VtClientConnection_c::sendCommandHideShow( IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
 { return sendCommandHideShow(apc_object->getID(), b_hideOrShow, b_enableReplaceOfCmd); }
 
 } // __IsoAgLib

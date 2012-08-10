@@ -16,14 +16,11 @@
 #ifdef USE_VTOBJECT_inputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
-// Operation : stream
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectInputNumber_c::stream(uint8_t* destMemory,
                               uint16_t maxBytes,
@@ -42,7 +39,7 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
       destMemory [4] = (((uint32_t) vtObjectInputNumber_a->width*vtDimension)/opDimension) >> 8;
       destMemory [5] = (((uint32_t) vtObjectInputNumber_a->height*vtDimension)/opDimension) & 0xFF;
       destMemory [6] = (((uint32_t) vtObjectInputNumber_a->height*vtDimension)/opDimension) >> 8;
-      destMemory [7] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectInputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectInputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObjectInputNumber_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectInputNumber_a->fontAttributes->getID() >> 8;
       destMemory [10] = vtObjectInputNumber_a->options;
@@ -89,10 +86,9 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
 }
 
 
-// Operation : vtObjectInputNumber_c
 vtObjectInputNumber_c::vtObjectInputNumber_c() {}
 
-// Operation : size
+
 uint32_t
 vtObjectInputNumber_c::fitTerminal() const
 {
@@ -100,17 +96,14 @@ vtObjectInputNumber_c::fitTerminal() const
   return 38+vtObjectInputNumber_a->numberOfMacrosToFollow*2;
 }
 
-// Operation : updateEnable
-//! @param b_enableOrDisable:
+
 void
 vtObjectInputNumber_c::updateEnable(uint8_t aui8_enOrDis)
 {
   saveValue8 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), secondOptionsByte), sizeof(iVtObjectInputNumber_s), aui8_enOrDis);
 }
 
-// Operation : setValue
-//! @param newValue:
-//! @param b_updateObject:
+
 void
 vtObjectInputNumber_c::setValue(uint32_t newValue,
                                 bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -118,7 +111,7 @@ vtObjectInputNumber_c::setValue(uint32_t newValue,
   if (get_vtObjectInputNumber_a()->variableReference == NULL) {
     if (b_updateObject) saveValue32 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), value),  sizeof(iVtObjectInputNumber_s), newValue);
 
-    __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
+    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
   }
 }
 
@@ -130,7 +123,7 @@ vtObjectInputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_upd
     saveValue16 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), height), sizeof(iVtObjectInputNumber_s), newHeight);
   }
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -297,5 +290,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
   }
 }
 #endif
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib
+
 #endif

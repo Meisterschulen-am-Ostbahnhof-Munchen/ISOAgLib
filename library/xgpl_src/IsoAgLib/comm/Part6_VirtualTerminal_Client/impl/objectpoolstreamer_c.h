@@ -25,18 +25,18 @@ namespace IsoAgLib {
 namespace __IsoAgLib {
 
 
-class VtClientServerCommunication_c;
+class VtClientConnection_c;
 
 
 /** helper class for low level streaming.
-  This function was excluded from IsoTerminal_c,
+  This function was excluded from VtClient_c,
   as some STL aware compilers don't support multiple inheritance
   (e.g. IAR). So this helper construction was defined.
 */
 class ObjectPoolStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
 public:
-  ObjectPoolStreamer_c (VtClientServerCommunication_c& arc_vtCSCbackRef)
+  ObjectPoolStreamer_c (VtClientConnection_c& arc_vtCSCbackRef)
     : mrc_vtCSCbackRef (arc_vtCSCbackRef)
   {}
 
@@ -61,7 +61,7 @@ public:
   IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjects;
   IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjectsStored;
 
-  VtClientServerCommunication_c& mrc_vtCSCbackRef;
+  VtClientConnection_c& mrc_vtCSCbackRef;
 #define ISO_VT_UPLOAD_BUFFER_SIZE 128
   uint8_t marr_uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
   uint8_t m_uploadBufferFilled;

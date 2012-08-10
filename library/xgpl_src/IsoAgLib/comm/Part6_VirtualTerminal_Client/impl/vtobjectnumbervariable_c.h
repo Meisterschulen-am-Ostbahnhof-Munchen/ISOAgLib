@@ -17,40 +17,27 @@
 
 #ifdef USE_VTOBJECT_numbervariable
 #include "vtobject_c.h"
-#include "vtclientservercommunication_c.h"
+#include "vtclientconnection_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 class vtObjectNumberVariable_c : public vtObject_c
 {
 public:
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectNumberVariableSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectNumberVariableSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
-  //  Operation: get_vtObjectNumberVariable_a
   iVtObjectNumberVariable_s* get_vtObjectNumberVariable_a() { return (iVtObjectNumberVariable_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectNumberVariable_c
   vtObjectNumberVariable_c();
 
-  //  Operation: size
   uint32_t fitTerminal() const;
 
-  //  Operation: setValue
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -65,7 +52,8 @@ public:
 #endif
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif
+
 #endif

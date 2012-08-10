@@ -19,13 +19,12 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include "../ivttypes.h"
 
-// forward declarations
 namespace IsoAgLib {
   class iVtServerInstance_c;
 }
 namespace __IsoAgLib {
-  class IsoTerminal_c;
-  class VtClientServerCommunication_c;
+  class VtClient_c;
+  class VtClientConnection_c;
 }
 
 
@@ -150,18 +149,18 @@ public:
   IsoAgLib::iVtServerInstance_c& toIvtServerInstance_c();
 
 private:
-  friend class IsoTerminal_c;
+  friend class VtClient_c;
   /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of IsoTerminal_c within application
+    * NEVER define instance of VtClient_c within application
     */
-  VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, IsoTerminal_c& r_isoTerminal MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
+  VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, VtClient_c& r_isoTerminal MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
 
 private: // attributes
   const IsoItem_c* mcpc_isoItem;
 
   IsoName_c mc_isoName;
 
-  IsoTerminal_c& mrc_isoTerminal; // back ref.
+  VtClient_c& mrc_isoTerminal; // back ref.
 
   /** stores the last "VT Status Message" */
   IsoAgLib::vtState_s ms_vtStateA;
@@ -179,5 +178,6 @@ private:
   VtServerInstance_c& operator=(const VtServerInstance_c&); 
 };
 
-} // namespace __IsoAgLib
+} // __IsoAgLib
+
 #endif

@@ -16,7 +16,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 #include "vtobject_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
 namespace __IsoAgLib {
 //! VT client object for graphics context.
@@ -198,6 +198,6 @@ private:
   static const unsigned mi_totalSize = 3+mi_attributesSize;
 };
 
-} // namespace __IsoAgLib
+} // __IsoAgLib
 
-#endif // VTOBJECTGRAPHICSCONTEXT_C_H
+#endif

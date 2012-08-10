@@ -14,38 +14,27 @@
 #define VTOBJECTINPUTATTRIBUTES_C_H
 
 #include "../ivtobjectstring_c.h"
-#include "vtclientservercommunication_c.h"
+#include "vtclientconnection_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 class vtObjectInputAttributes_c : public IsoAgLib::iVtObjectString_c
 {
 public:
-  /// Operation: stream
-  /// @param destMemory
-  /// @param maxBytes don't stream out more than that or you'll overrun the internal upload-buffer
-  /// @param sourceOffset
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  ///  Operation: init
-  /// @param vtObjectInputAttributesSROM
-  /// @param b_initPointer
   void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectInputAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
-  //  Operation: get_vtObjectInputAttributes_a
   iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return (iVtObjectInputAttributes_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectInputAttributes_c
   vtObjectInputAttributes_c();
 
-  //  Operation: size
   uint32_t fitTerminal() const;
 
-  //  Operation: getString
   const char* getString();
 
   /// Operation: setValidationStringCopy
@@ -69,6 +58,6 @@ public:
 #endif
 };
 
-} // end namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif

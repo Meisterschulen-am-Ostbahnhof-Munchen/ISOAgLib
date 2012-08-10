@@ -1,5 +1,5 @@
 /*
-  isoterminal_c.h: central ISO terminal management
+  vtclient_c.h: central ISO terminal management
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,53 +10,46 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef ISO_TERMINAL_H
-#define ISO_TERMINAL_H
+#ifndef VTCLIENT_H
+#define VTCLIENT_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include "vtserverinstance_c.h"
-#include "vtclientservercommunication_c.h"
+#include "vtclientconnection_c.h"
 
 #include <list>
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
-// forward declarations
-class VtClientServerCommunication_c;
+class VtClientConnection_c;
 class iIdentItem_c;
 
 /** central IsoAgLib terminal management object */
-class IsoTerminal_c : public Scheduler_Task_c {
+class VtClient_c : public Scheduler_Task_c {
   MACRO_MULTITON_CONTRIBUTION();
 public:
-  virtual ~IsoTerminal_c() {}
+  virtual ~VtClient_c() {}
 
-  /** initialise element which can't be done during construct and registerIsoObjectPool
-    possible errors:
-  */
   void init();
-
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close();
 
-  VtClientServerCommunication_c* initAndRegisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode);
+  VtClientConnection_c* initAndRegisterIsoObjectPool(
+    IdentItem_c& apc_wsMasterIdentItem, 
+    IsoAgLib::iVtClientObjectPool_c& arc_pool, 
+    const char* apc_versionLabel, 
+    IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, 
+    IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode );
 
   bool deregisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem);
 
-  /** periodically event -> call timeEvent for all  identities and parent objects
-    @return true -> all planned activities performed in allowed time
-  */
   bool timeEvent(void);
 
   virtual void updateEarlierAndLatestInterval() {
@@ -72,9 +65,9 @@ public:
   bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& apc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size);
 
 
-  VtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex) { return *mvec_vtClientServerComm[ui8_clientIndex]; }
+  VtClientConnection_c& getClientByID (uint8_t ui8_clientIndex) { return *mvec_vtClientServerComm[ui8_clientIndex]; }
 
-  VtClientServerCommunication_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!mvec_vtClientServerComm.empty()) ? mvec_vtClientServerComm[ui8_clientIndex] : NULL; }
+  VtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!mvec_vtClientServerComm.empty()) ? mvec_vtClientServerComm[ui8_clientIndex] : NULL; }
 
   bool isAnyVtAvailable() const { return !ml_vtServerInst.empty(); }
   // is any claimed VT sending VT status
@@ -110,7 +103,7 @@ private:
 
   class CanCustomerProxy_c : public CanCustomer_c {
   public:
-    typedef IsoTerminal_c Owner_t;
+    typedef VtClient_c Owner_t;
 
     CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
@@ -166,7 +159,7 @@ private:
   typedef CanCustomerProxy_c Customer_t;
   class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
   public:
-    typedef IsoTerminal_c Owner_t;
+    typedef VtClient_c Owner_t;
 
     ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
@@ -191,9 +184,9 @@ private:
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
   /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of IsoTerminal_c within application
+    * NEVER define instance of VtClient_c within application
     */
-  IsoTerminal_c();
+  VtClient_c();
 
   virtual void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem);
 
@@ -236,7 +229,12 @@ private:
     return getForcedMinExecTimeDefault();
   }
 
-  VtClientServerCommunication_c* initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iIsoTerminalObjectPool_c::RegisterPoolMode_en aen_mode);
+  VtClientConnection_c* initAndRegisterIsoObjectPoolCommon(
+    IdentItem_c& rc_identItem, 
+    IsoAgLib::iVtClientObjectPool_c& arc_pool, 
+    const char* apc_versionLabel, 
+    IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, 
+    IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode );
 
 protected:
 
@@ -244,16 +242,16 @@ private: // attributes
 
   STL_NAMESPACE::vector<VtServerInstance_c*> ml_vtServerInst;
 
-  STL_NAMESPACE::vector<VtClientServerCommunication_c*> mvec_vtClientServerComm;
+  STL_NAMESPACE::vector<VtClientConnection_c*> mvec_vtClientServerComm;
   Handler_t mt_handler;
   Customer_t mt_customer;
-  friend IsoTerminal_c &getIsoTerminalInstance(uint8_t aui8_instance);
+  friend VtClient_c &getVtClientInstance(uint8_t aui8_instance);
 };
 
 /** C-style function, to get access to the unique Scheduler_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
  */
-IsoTerminal_c &getIsoTerminalInstance(uint8_t aui8_instance = 0);
+VtClient_c &getVtClientInstance(uint8_t aui8_instance = 0);
 
 }
 #endif

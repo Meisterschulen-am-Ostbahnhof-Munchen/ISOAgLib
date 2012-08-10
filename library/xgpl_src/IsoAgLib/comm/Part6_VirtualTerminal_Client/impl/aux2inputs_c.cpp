@@ -13,7 +13,7 @@
 */
 
 #include "aux2inputs_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
 
@@ -32,7 +32,7 @@ namespace __IsoAgLib {
 {
 }
 
-void Aux2Inputs_c::init(VtClientServerCommunication_c* ap_vtClientServerCommunication)
+void Aux2Inputs_c::init(VtClientConnection_c* ap_vtClientServerCommunication)
 {
 #ifdef USE_VTOBJECT_auxiliaryinput2
   getSchedulerInstance().registerClient( this );
@@ -93,7 +93,7 @@ bool Aux2Inputs_c::timeEvent(void)
 
           // if this application has also AUX2 functions which handle the AUX2 inputs
           // => notify them directly (sender won't get his own CAN message!)
-          getIsoTerminalInstance4Comm().notifyAllVtClientsOnAux2InputMaintenance( sendData );
+          getVtClientInstance4Comm().notifyAllVtClientsOnAux2InputMaintenance( sendData );
 
         }
       }
@@ -185,7 +185,7 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
           if (!mb_learnMode)
           { // if this application has also AUX2 functions which handle the AUX2 inputs
             // => notify them directly (sender won't get his own CAN message!)
-            getIsoTerminalInstance4Comm().notifyAllVtClientsOnAux2InputStatus( sendData );
+            getVtClientInstance4Comm().notifyAllVtClientsOnAux2InputStatus( sendData );
           }
           else
           {

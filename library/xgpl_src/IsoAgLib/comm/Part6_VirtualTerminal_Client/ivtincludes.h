@@ -102,5 +102,5 @@
 #endif
 
 
-#include "iisoterminalobjectpool_c.h"
-#include "iisoterminal_c.h"
+#include "ivtclientobjectpool_c.h"
+#include "ivtclient_c.h"

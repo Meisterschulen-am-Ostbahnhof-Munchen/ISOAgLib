@@ -17,7 +17,7 @@
 
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 
 
 namespace __IsoAgLib {
@@ -25,7 +25,7 @@ namespace __IsoAgLib {
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
 */
-VtServerInstance_c::VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, IsoTerminal_c& r_isoTerminal MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+VtServerInstance_c::VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, VtClient_c& r_isoTerminal MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   : ClientBase(MULTITON_INST_PARAMETER_USE)
   , mcpc_isoItem (&r_newItem)
   , mc_isoName (c_newISOName)
@@ -187,4 +187,4 @@ VtServerInstance_c::toIvtServerInstance_c()
   return static_cast<IsoAgLib::iVtServerInstance_c&>(*this);
 }
 
-} // end namespace __IsoAgLib
+} // __IsoAgLib
