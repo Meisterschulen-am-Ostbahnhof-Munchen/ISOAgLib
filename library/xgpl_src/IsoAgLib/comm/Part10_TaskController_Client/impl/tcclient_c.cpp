@@ -247,7 +247,7 @@ ProcData_c* TcClient_c::procData( uint16_t aui16_DDI, uint16_t aui16_element, co
 }
 
 void
-TcClient_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+TcClient_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {

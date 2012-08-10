@@ -34,8 +34,6 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
 
-#ifndef USE_DYNAMIC_PART10
-
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 
 #if defined(_MSC_VER)
@@ -1192,7 +1190,6 @@ DevPropertyHandler_c::reactOnStateChange(const SendStream_c& sendStream)
 }
 
 };
-#endif
 #endif
 // endif for "#ifdef PROPRIETARY_DEVPROPERTYHANDLER_CPP" workaround
 

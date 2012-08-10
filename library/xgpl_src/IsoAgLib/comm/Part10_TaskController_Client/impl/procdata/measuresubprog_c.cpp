@@ -16,6 +16,7 @@
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <cstdlib>
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
@@ -62,7 +63,7 @@ bool MeasureSubprog_c::updateTrigger(int32_t ai32_val){
   }
 }
 
-int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
+int32_t MeasureSubprog_c::nextTriggerTime(ProcData_c& ac_processData, int32_t ai32_val)
 {
   switch (type())
   {
@@ -72,13 +73,13 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
     {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;
-      const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance4Comm().selectedSpeed());  // speed can be negative
+      const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance(ac_processData.getMultitonInst()).selectedSpeed());  // speed can be negative
 
       if (0 == ci32_speed)
         // speed == 0
         return 500;
 
-      if ( ! getTracMoveInstance4Comm().isSelectedSpeedUsable() )
+      if ( ! getTracMoveInstance(ac_processData.getMultitonInst()).isSelectedSpeedUsable() )
       { // invalid speed, no tractor available
         return 200;
       }
@@ -96,6 +97,7 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
 
       return i32_nextTriggerTime;  // distance (in mm) div speed (in mm/sec) => time in msec
 #else
+      (ProcData_c&)ac_processData;
       return 200; // 200 msec
 #endif
     }

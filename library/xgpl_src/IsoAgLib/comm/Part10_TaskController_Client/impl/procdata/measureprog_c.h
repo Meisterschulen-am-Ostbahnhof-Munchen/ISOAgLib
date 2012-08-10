@@ -14,7 +14,7 @@
 #define MEASUREPROG_H
 
 #include "measuresubprog_c.h"
-#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 

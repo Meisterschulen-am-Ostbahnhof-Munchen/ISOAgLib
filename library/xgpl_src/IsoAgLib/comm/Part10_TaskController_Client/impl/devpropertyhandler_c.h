@@ -24,10 +24,6 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 
-#ifdef USE_DYNAMIC_PART10
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/dynamic_devpropertyhandler_c.h>
-#else
-
 #include <map>
 #include <list>
 
@@ -264,7 +260,6 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 };
 
 }
-#endif
 #endif
 #endif
 // endif for "#ifdef PROPRIETARY_DEVPROPERTYHANDLER_H" workaround

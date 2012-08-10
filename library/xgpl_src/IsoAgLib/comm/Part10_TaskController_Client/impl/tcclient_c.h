@@ -67,7 +67,7 @@ public:
   void unregisterLocalProcessData( ProcData_c* pc_localClient)
   { unregisterC1( pc_localClient ); mpc_iter = c_arrClientC1.begin();}
 
-  void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+  void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   bool processTcStatusMsg(uint8_t ui8_tcStatus, const __IsoAgLib::IsoName_c& sender);
 

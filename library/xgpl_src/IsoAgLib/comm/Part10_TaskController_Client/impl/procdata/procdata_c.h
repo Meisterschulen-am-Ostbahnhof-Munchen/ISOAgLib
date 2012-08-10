@@ -13,6 +13,7 @@
 #ifndef PROCDATA_H
 #define PROCDATA_H
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/managemeasureprog_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/setpoint_c.h>

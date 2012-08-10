@@ -77,7 +77,7 @@ void MeasureProg_c::setVal(ProcData_c& ac_processData, int32_t ai32_val)
         break;
       case IsoAgLib::ProcData::MeasurementCommandDistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        triggeredIncrement = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
+        triggeredIncrement = pc_iter->updateTrigger(int32_t(getTracMoveInstance( ac_processData.getMultitonInst() ).distTheor()));
         #endif
         break;
       case IsoAgLib::ProcData::MeasurementCommandOnChange:
@@ -113,17 +113,17 @@ void MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextT
     {
       case IsoAgLib::ProcData::MeasurementCommandTimeProp:
         triggeredIncrement = pc_iter->updateTrigger(i32_time);
-        i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_time);
+        i32_nextTimePeriod = pc_iter->nextTriggerTime(ac_processData, i32_time);
         break;
       case IsoAgLib::ProcData::MeasurementCommandDistProp:
         {
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        int32_t i32_distTheor = getTracMoveInstance4Comm().distTheor();
+        int32_t i32_distTheor = getTracMoveInstance(ac_processData.getMultitonInst()).distTheor();
         triggeredIncrement = pc_iter->updateTrigger(i32_distTheor);
         #else
         int32_t i32_distTheor = 0;
         #endif
-        i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_distTheor);
+        i32_nextTimePeriod = pc_iter->nextTriggerTime(ac_processData, i32_distTheor);
         }
         break;
       case IsoAgLib::ProcData::MeasurementCommandOnChange:
@@ -232,7 +232,7 @@ bool MeasureProg_c::startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcD
     if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodDistInterval) )
     {
       MeasureSubprog_c& subprog = addSubprog(ren_type, ai32_increment);
-      subprog.start(int32_t(getTracMoveInstance4Comm().distTheor()));
+      subprog.start(int32_t(getTracMoveInstance(ac_processData.getMultitonInst()).distTheor()));
       ac_processData.sendValue( m_ecuType, value);
       b_validTriggerMethod = true;
     }
