@@ -13,7 +13,6 @@ DdopBase_c::DdopBase_c()
 {
 }
 
-
 void DdopBase_c::init(IsoAgLib::iIdentItem_c* myIdent)
 {
 	m_myIdent = myIdent;
@@ -113,7 +112,7 @@ DdopBase_c::eventLocalizationLabelResponse(uint8_t result, const std::vector<uin
 		DeviceObjectDvc_c* dvc = m_DevicePool.getDvcObject(0);	// DVC entry is always 0
 		if (dvc)
 		{
-			const Localization_s& locale = dvc->Localization();
+			const Localization_s& locale = dvc->getLocalization();
 			if (std::memcmp((void*)&locale, (void *)&label[0], 7) != 0)
 			{
 				m_DevicePool.updateLocale();
@@ -143,7 +142,7 @@ DdopBase_c::eventStructureLabelResponse(uint8_t result, const std::string& label
 		DeviceObjectDvc_c* dvc = m_DevicePool.getDvcObject(0);	// DVC entry is always 0
 		if (dvc)
 		{
-			if (label != dvc->StructureLabel())
+			if (label != dvc->getStructureLabel())
 			{
 				m_DevicePool.setDirty();
 				setPoolState(PoolStateInvalid);

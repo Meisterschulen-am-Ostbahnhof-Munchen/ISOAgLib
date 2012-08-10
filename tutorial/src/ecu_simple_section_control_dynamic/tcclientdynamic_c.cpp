@@ -109,11 +109,11 @@ tcClientDynamic_c::initDevicePool()
 {
   std::cout << "Start creating device description" << std::endl;
   // Create the main device
-	DeviceObjectDvc_c dvcObj(0);
-	dvcObj.WsmName(m_myIdent->isoName());
-	dvcObj.Version("V1.00");
-	dvcObj.StructureLabel("TC00001");
-	dvcObj.Designator("OSBSprayer");
+	DeviceObjectDvc_c dvcObj;
+	dvcObj.setWsmName(m_myIdent->isoName());
+	dvcObj.setVersion("V1.00");
+	dvcObj.setStructureLabel("TC00001");
+	dvcObj.setDesignator("OSBSprayer");
 
 	m_DevicePool.Add(dvcObj);
 
@@ -225,7 +225,7 @@ tcClientDynamic_c::updateUnitSettings(const localSettings_s& settings)
 {
 	DeviceObjectDvc_c* dvcObj = m_DevicePool.getDvcObject(0);
 	if (dvcObj)
-		dvcObj->Localization(settings);
+		dvcObj->setLocalization(settings);
 }
 
 bool 

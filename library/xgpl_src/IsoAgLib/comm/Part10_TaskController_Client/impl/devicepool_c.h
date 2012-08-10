@@ -1,21 +1,16 @@
-////////////////////////////////////////////////////////////////////////////////
-//  devicepool_c.h -
-//		Implementation of a device description object pool using modifiable
-//		C++ objects.  The pool is represented of a collection of objects
-//		derived from a common base class.  The device pool synchronization
-//		with the Task Controller is accomplished by uploading a partial pool
-//		when objects change.
-//
-//
-//   Copyright (C) 2008,2009 AGCO Corporation, as an unpublished work.
-//   THIS SOFTWARE AND/OR MATERIAL IS THE PROPERTY OF AGCO
-//   Corporation. ALL USE, DISCLOSURE, AND/OR REPRODUCTION NOT
-//   SPECIFICALLY AUTHORIZED BY AGCO CORPORATION IS PROHIBITED.
-//
-// $Workfile: $
-// $Header: $
-//
-////////////////////////////////////////////////////////////////////////////////
+/*
+  devicepool_c.h
+
+  (C) Copyright 2009 - 2012 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
 #ifndef	_DEVICEPOOL_C_H_
 #define	_DEVICEPOOL_C_H_
 
@@ -61,9 +56,9 @@ public:
 	uint16_t			getObjectId() const		{ return m_ObjectId; }
 	ObjectType_e	getObjectType() const	{ return m_ObjectType; }
 
-	void Designator(const char* str, uint8_t encoding = 0)	{ Designator(std::string(str), encoding); }
-	void Designator(const std::string& str, uint8_t encoding = 0);
-	const std::string& Designator() const { return m_Designator; }
+	void setDesignator(const char* str, uint8_t encoding = 0)	{ setDesignator(std::string(str), encoding); }
+	void setDesignator(const std::string& str, uint8_t encoding = 0);
+	const std::string& getDesignator() const { return m_Designator; }
 
 	virtual bool isValid() const			{ return ((m_ObjectType != ObjectTypeUndefined) && (m_ObjectId != 65535)); }
 
@@ -72,7 +67,7 @@ public:
   virtual uint16_t getSizeInBytes() const;
 	virtual bool formatBytestream(uint8_t* byteStream, uint16_t& position) const;
 
-	virtual bool isDirty() const	{ return m_isDirty; }
+	virtual bool isDirty() const { return m_isDirty; }
 
 protected:
 	template<typename T> inline bool checkDirty(T lhs, T rhs) {	 setDirty(lhs != rhs); return isDirty(); }
@@ -94,8 +89,6 @@ protected:
 	void setDirty(bool flag)		{ if (flag) m_isDirty = true; }
 	void clearDirty()				{ m_isDirty = false; }
 
-	void storeString(std::string& toString, const std::string& fromString, uint16_t encoding);
-
 protected:
 	std::string		m_Designator;
 	ObjectType_e m_ObjectType;
@@ -111,7 +104,7 @@ private:
 class DeviceObjectDvc_c : public DeviceObject_c
 {
 public:
-	DeviceObjectDvc_c(uint16_t objId = 65535);
+	DeviceObjectDvc_c();
 	virtual ~DeviceObjectDvc_c()	{}
 
 	DeviceObjectDvc_c*	clone() const	{ return new DeviceObjectDvc_c(*this); }
@@ -122,29 +115,29 @@ public:
   virtual uint16_t getSizeInBytes() const;
 	virtual bool formatBytestream(uint8_t* byteStream, uint16_t& position) const;
 
-	void Version(const char* str);
-	void Version(const std::string& str);
-	void SerialNumber(const char* str);
-	void SerialNumber(const std::string& str);
-	void WsmName(const IsoAgLib::iIsoName_c& name);
+	void setVersion(const char* str);
+	void setVersion(const std::string& str);
+	void setSerialNumber(const char* str);
+	void setSerialNumber(const std::string& str);
+	void setWsmName(const IsoAgLib::iIsoName_c& name);
 	
-	void Localization(const Localization_s& localization);
-	void Localization(const localSettings_s& currentSettings);
+	void setLocalization(const Localization_s& localization);
+	void setLocalization(const localSettings_s& currentSettings);
 	
-	void StructureLabel(const std::string& label)
+	void setStructureLabel(const std::string& label)
 		{ checkDirty(label, m_StructLabel); m_StructLabel = label; }
 
-	const IsoAgLib::iIsoName_c& WsmName() const		{ return m_WsmName; }
-	const Localization_s&	Localization() const	{ return m_Localization; }
-	const std::string&	StructureLabel() const		{ return m_StructLabel; }
-	const std::string&	SerialNumber() const		{ return m_SerialNumber; }
+	const IsoAgLib::iIsoName_c& getWsmName() const { return m_WsmName; }
+	const Localization_s&	getLocalization() const { return m_Localization; }
+	const std::string&	getStructureLabel() const { return m_StructLabel; }
+	const std::string&	getSerialNumber() const { return m_SerialNumber; }
 
 protected:
-	std::string				m_Version;
-	std::string				m_SerialNumber;
-	IsoAgLib::iIsoName_c	m_WsmName;
-	std::string				m_StructLabel;
-	Localization_s			m_Localization;
+  std::string           m_Version;
+  std::string           m_SerialNumber;
+  IsoAgLib::iIsoName_c  m_WsmName;
+  std::string           m_StructLabel;
+  Localization_s        m_Localization;
 };
 
 class DeviceObjectDet_c : public DeviceObject_c
@@ -291,7 +284,6 @@ public:
 
 protected:
 	uint16_t Add(DeviceObject_c* devObj);
-	DeviceObject_c*	createDeviceObject(const HUGE_MEM uint8_t* bp, size_t cnt);
   DeviceObject_c*	getObject(uint16_t objId, DeviceObject_c::ObjectType_e objectType) const;
 
 protected:

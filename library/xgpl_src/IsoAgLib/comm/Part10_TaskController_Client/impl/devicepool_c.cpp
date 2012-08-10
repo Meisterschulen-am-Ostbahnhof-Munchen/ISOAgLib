@@ -22,7 +22,22 @@
 #ifdef USE_DYNAMIC_PART10
 
 // The ISO standard object labels
-const std::string deviceLabels[] = { "DVC", "DET", "DPD", "DPT", "DVP" };
+const char* const deviceLabels[] = { "DVC", "DET", "DPD", "DPT", "DVP" };
+
+const char* getObjectTypeString(DeviceObject_c::ObjectType_e objecttype)
+{
+  switch (objecttype)
+  {
+  case DeviceObject_c::DeviceObject: return "DVC";
+  case DeviceObject_c::DeviceElementObject: return "DET";
+  case DeviceObject_c::DeviceProcessDataObject: return "DPD";
+  case DeviceObject_c::DevicePropertyObject: return "DPT";
+  case DeviceObject_c::DeviceValuePresentationObject: return "DVP";
+  case DeviceObject_c::ObjectTypeUndefined: break;
+  }
+  isoaglib_assert(false);
+  return "NOT"; 
+}
 
 //
 // DevicePool_c class
@@ -151,65 +166,6 @@ DevicePool_c::Add(DeviceObject_c* devObj)
 	return devObj->getObjectId();
 }
 
-#if 0
-//
-//	init(bytestream, count)
-//	initialize the object pool from buffer.  This is useful when creating
-//	a dynamic device pool from the static pool of proc2iso.
-bool
-DevicePool_c::init(const HUGE_MEM uint8_t* bytestream, size_t count)
-{
-	clear();	// delete the old pool
-
-	while (count)
-	{
-		size_t objByteCnt;
-		DeviceObject_c* newObj = createDeviceObject(bytestream, count);
-		if (newObj == 0 || ((objByteCnt = newObj->init(bytestream, count)) == 0))
-		{
-			delete newObj;
-			clear();
-			return false;
-		}
-
-		Add(newObj);
-		newObj->clearDirty();
-
-		count -= objByteCnt;
-		bytestream += objByteCnt;
-	}
-
-	m_isDirty = false;
-	return true;
-}
-#endif
-
-//
-// createDeviceObject()
-//	create a DeviceObject_c object based on the object type label
-DeviceObject_c*
-DevicePool_c::createDeviceObject(const HUGE_MEM uint8_t* bp, size_t cnt)
-{
-	if (cnt < 3)
-		return 0;
-
-	std::string label;
-	label.push_back((char)*bp++);
-	label.push_back((char)*bp++);
-	label.push_back((char)*bp++);
-	if (label == "DVC")
-		return new DeviceObjectDvc_c;
-	else if (label == "DET")
-		return new DeviceObjectDet_c;
-	else if (label == "DPD")
-		return new DeviceObjectDpd_c;
-	else if (label == "DPT")
-		return new DeviceObjectDpt_c;
-	else if (label == "DVP")
-		return new DeviceObjectDvp_c;
-	return 0;
-}
-
 uint16_t
 DevicePool_c::getByteStreamSize() const
 {
@@ -317,7 +273,7 @@ DevicePool_c::updateDvpObject(uint16_t objId, float scale, int32_t offset, uint8
 	dvpObj->Scale(scale);
 	dvpObj->Offset(offset);
 	dvpObj->Decimals(decimals);
-	dvpObj->Designator(desig.c_str());
+	dvpObj->setDesignator(desig.c_str());
 
 	return dvpObj->getObjectId();
 }
@@ -325,21 +281,6 @@ DevicePool_c::updateDvpObject(uint16_t objId, float scale, int32_t offset, uint8
 /////////////////////////////////////////////////////////////////////
 // DeviceObject_c
 /////////////////////////////////////////////////////////////////////
-
-const char* getObjectTypeString(DeviceObject_c::ObjectType_e objecttype)
-{
-  switch (objecttype)
-  {
-  case DeviceObject_c::DeviceObject: return "DVC";
-  case DeviceObject_c::DeviceElementObject: return "DET";
-  case DeviceObject_c::DeviceProcessDataObject: return "DPD";
-  case DeviceObject_c::DevicePropertyObject: return "DPT";
-  case DeviceObject_c::DeviceValuePresentationObject: return "DVP";
-  case DeviceObject_c::ObjectTypeUndefined: break;
-  }
-  isoaglib_assert(false);
-  return "NOT"; 
-}
 
 uint16_t
 DeviceObject_c::getSizeInBytes() const
@@ -423,7 +364,7 @@ DeviceObject_c::format(uint8_t* byteStream, float val, uint16_t& position) const
 }
 
 void
-DeviceObject_c::Designator(const std::string& str, uint8_t /*encoding*/)
+DeviceObject_c::setDesignator(const std::string& str, uint8_t /*encoding*/)
 {
 	if (m_Designator != str) 
 	{
@@ -433,23 +374,17 @@ DeviceObject_c::Designator(const std::string& str, uint8_t /*encoding*/)
 	}
 }
 
-void
-DeviceObject_c::storeString(std::string& /*toString*/, const std::string& /*fromString*/, uint16_t /*encoding*/)
-{
-}
-
 /////////////////////////////////////////////////////////////////////
 // DeviceObjectDvc_c
 /////////////////////////////////////////////////////////////////////
-DeviceObjectDvc_c::DeviceObjectDvc_c(uint16_t objId) : DeviceObject_c(DeviceObject_c::DeviceObject, objId)
+DeviceObjectDvc_c::DeviceObjectDvc_c() : DeviceObject_c(DeviceObject_c::DeviceObject, 0), m_WsmName(IsoAgLib::iIsoName_c::iIsoNameUnspecified())
 {
 	std::memset((void*)&m_Localization, 0, sizeof(m_Localization));
 	m_Localization.reserved = 0xff;	// Reserved field
-	m_WsmName.setUnspecified();
 }
 
 void
-DeviceObjectDvc_c::Localization(const localSettings_s& currentSettings)
+DeviceObjectDvc_c::setLocalization(const localSettings_s& currentSettings)
 {
 	Localization_s	localSettings;
 
@@ -473,11 +408,11 @@ DeviceObjectDvc_c::Localization(const localSettings_s& currentSettings)
 
 	localSettings.reserved = 0xff;
 
-	Localization(localSettings);
+	setLocalization(localSettings);
 }
 
 void
-DeviceObjectDvc_c::Localization(const Localization_s& local)
+DeviceObjectDvc_c::setLocalization(const Localization_s& local)
 {
 	if (std::memcmp((void*)&local, (void*)&m_Localization, sizeof(Localization_s)) != 0)
 		setDirty(true);
@@ -485,13 +420,13 @@ DeviceObjectDvc_c::Localization(const Localization_s& local)
 }
 
 void
-DeviceObjectDvc_c::Version(const char* str)
+DeviceObjectDvc_c::setVersion(const char* str)
 {
-	Version(std::string(str));
+	setVersion(std::string(str));
 }
 
 void
-DeviceObjectDvc_c::Version(const std::string& str)
+DeviceObjectDvc_c::setVersion(const std::string& str)
 {
 	checkDirty(m_Version, str);
 	m_Version = str;
@@ -499,13 +434,13 @@ DeviceObjectDvc_c::Version(const std::string& str)
 }
 
 void
-DeviceObjectDvc_c::SerialNumber(const char* str)
+DeviceObjectDvc_c::setSerialNumber(const char* str)
 {
-	SerialNumber(std::string(str));
+	setSerialNumber(std::string(str));
 }
 
 void
-DeviceObjectDvc_c::SerialNumber(const std::string& str)
+DeviceObjectDvc_c::setSerialNumber(const std::string& str)
 {
 	checkDirty(m_SerialNumber.c_str(), str.c_str());
 	m_SerialNumber = str;
@@ -513,100 +448,11 @@ DeviceObjectDvc_c::SerialNumber(const std::string& str)
 }
 
 void
-DeviceObjectDvc_c::WsmName(const IsoAgLib::iIsoName_c& name)
+DeviceObjectDvc_c::setWsmName(const IsoAgLib::iIsoName_c& name)
 {
 	checkDirty(name, m_WsmName);
 	m_WsmName = name;
 }
-
-#if 0
-// init()
-//	Created a DeviceObjectDvc_c from a byte array
-//	@ returns	number of bytes used to create object
-//				0 on error
-size_t
-DeviceObjectDvc_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
-{
-// check minimum size
-	if (cnt < 30)
-		return 0;
-
-	std::string str;
-	const HUGE_MEM uint8_t* bp = bytestream;
-
-	str.push_back((char)*bp++);
-	str.push_back((char)*bp++);
-	str.push_back((char)*bp++);
-	if (str != "DVC")
-		return 0;
-
-	uint16_t objId = *bp++;
-	objId += (((uint16_t)(*bp++)) << 8);
-	setObjectId(objId);
-	
-	size_t total = 5;
-
-// designator
-	uint8_t len = *bp++;
-	total += (len + 1);		// 1 for length byte
-	if (len > 32 || total >= cnt)	// error if designator is too long or not enough bytes in stream
-		return 0;
-
-// copy the bytes to temp string and save it
-	str = "";
-	str.insert(0, (char*)bp, len);
-	Designator(str);
-	bp += len;
-
-// DVC Software Version
-	len = *bp++;
-	total += (len + 1);
-	if (len > 32 || total >= cnt)	// error if version is too long or not enough bytes in stream
-		return 0;
-
-	m_Version = "";
-	m_Version.insert(0, (char*)bp, len);
-	bp += len;
-
-// Wsm NAME 
-	total += 8;	// fixed length
-	if (total  >= cnt)
-		return 0;
-
-// Bytes are stored in reverse order in device pool and IsoName_c object
-	uint8_t newName[8];
-	for (int i = 7; i >= 0; i--)
-		newName[i] = *bp++;
-	m_WsmName.inputString(newName);
-
-// DVC Serial Number
-	len = *bp++;
-	total += (len + 1);
-	if (len > 32 || total >= cnt)
-		return false;
-
-	m_SerialNumber = "";
-	m_SerialNumber.insert(0, (char*)bp, len);
-	bp += len;
-
-// Structure Label
-	total += 7;		// length fixed by standard
-	if (total  >= cnt)
-		return false;
-	m_SerialNumber = "";
-	m_SerialNumber.insert(0, (char*)bp, 7);
-	bp += 7;
-
-// Localization label
-	total += 7;		// length fixed by standard
-	if (total  > cnt)
-		return 0;
-	std::memcpy((void*)&m_Localization, (void*)bp, 7);
-	bp += 7;
-
-	return total;
-}
-#endif
 
 uint16_t
 DeviceObjectDvc_c::getSizeInBytes() const
@@ -659,80 +505,6 @@ DeviceObjectDet_c::isValid() const
 
 	return m_ElementNumber != 4095 && m_ParentId != 65535;
 }
-
-#if 0
-size_t
-DeviceObjectDet_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
-{
-// check minimum size
-	if (cnt < 14)
-		return 0;
-
-	std::string label;
-	const HUGE_MEM uint8_t* bp = bytestream;
-
-	label.push_back((char)*bp++);
-	label.push_back((char)*bp++);
-	label.push_back((char)*bp++);
-	if (label != "DET")
-		return 0;
-
-	uint16_t objId = *bp++;
-	objId += ((uint16_t)(*bp++)) << 8;
-	setObjectId(objId);
-	
-	size_t total = 5;
-
-// Type
-	m_Type = *bp++;
-	total++;
-
-// DET designator
-	uint8_t len = *bp++;
-	total += (len + 1);
-	if (len > 32 || total >= cnt)
-		return 0;
-
-	m_Designator = "";
-	m_Designator.insert(0, (char*)bp, len);
-	bp += len;
-
-// Element number
-	total += 2;
-	if (total > cnt)
-		return 0;
-	m_ElementNumber = (uint16_t)(*bp++);
-	m_ElementNumber += ((uint16_t)(*bp++)) << 8;
-
-// Parent Object Id
-	total += 2;
-	if (total > cnt)
-		return 0;
-	m_ParentId = (uint16_t)(*bp++);
-	m_ParentId += ((uint16_t)(*bp++)) << 8;
-
-// Number of children
-	total += 2;
-	if (total > cnt)
-		return 0;
-	uint16_t childCount = (uint16_t)(*bp++);
-	childCount += ((uint16_t)(*bp++)) << 8;
-
-// Child Object list
-	total += 2 * childCount;
-	if (total > cnt)
-		return 0;
-	m_ChildList.clear();
-	while (childCount--)
-	{
-		uint16_t childId = (uint16_t)(*bp++);
-		childId += ((uint16_t)(*bp++)) << 8;
-		m_ChildList.push_back(childId);
-	}
-
-	return total;
-}
-#endif
 
 uint16_t
 DeviceObjectDet_c::getSizeInBytes() const
@@ -797,66 +569,8 @@ DeviceObjectDpd_c::DeviceObjectDpd_c(uint16_t objId, uint16_t ddi, uint8_t props
 	, m_Method(method)
 	, m_DvpObjectId(dvpRef)
 {
-	Designator(desig);
+	setDesignator(desig);
 }
-
-#if 0
-size_t
-DeviceObjectDpd_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
-{
-// check minimum size
-	if (cnt < 11)
-		return 0;
-
-	std::string str;
-	const HUGE_MEM uint8_t* bp = bytestream;
-
-	str.push_back((char)*bp++);
-	str.push_back((char)*bp++);
-	str.push_back((char)*bp++);
-	if (str != "DPD")
-		return 0;
-
-	uint16_t objId = *bp++;
-	objId += ((uint16_t)(*bp++)) << 8;
-	setObjectId(objId);
-	
-	size_t total = 5;
-
-// DDI
-	total += 2;
-	m_Ddi = (uint16_t)(*bp++);
-	m_Ddi += ((uint16_t)(*bp++)) << 8;
-
-// Properties
-	total++;
-	m_Properties = *bp++;
-
-// Method
-	total++;
-	m_Method = *bp++;
-
-// DPD designator
-	uint8_t len = *bp++;
-	total += (len + 1);
-	if (len > 32 || total >= cnt)
-		return 0;
-
-	str = "";
-	str.insert(0, (char*)bp, len);
-	Designator(str);
-	bp += len;
-
-// DVP Object Id
-	total += 2;
-	if (total > cnt)
-		return 0;
-	m_DvpObjectId = (uint16_t)(*bp++);
-	m_DvpObjectId += ((uint16_t)(*bp++)) << 8;
-
-	return total;
-}
-#endif
 
 uint16_t
 DeviceObjectDpd_c::getSizeInBytes() const
@@ -900,62 +614,6 @@ DeviceObjectDpt_c::DeviceObjectDpt_c(uint16_t objId, uint16_t ddi, int32_t value
 	m_Designator = desig;
 }
 
-#if 0
-size_t
-DeviceObjectDpt_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
-{
-// check minimum size
-	if (cnt < 13)
-		return 0;
-
-	std::string label;
-	const HUGE_MEM uint8_t* bp = bytestream;
-
-	label.push_back((char)*bp++);
-	label.push_back((char)*bp++);
-	label.push_back((char)*bp++);
-	if (label != "DPT")
-		return 0;
-
-	uint16_t objId = *bp++;
-	objId += ((uint16_t)(*bp++)) << 8;
-	setObjectId(objId);
-	
-	size_t total = 5;
-
-// DDI
-	total += 2;
-	m_Ddi = (uint16_t)(*bp++);
-	m_Ddi += ((uint16_t)(*bp++)) << 8;
-
-// Value
-	total += 4;
-	m_Value = *bp++;
-	m_Value += ((*bp++) << 8);
-	m_Value += ((*bp++) << 16);
-	m_Value += ((*bp++) << 24);
-
-// DPT designator
-	uint8_t len = *bp++;
-	total += (len + 1);
-	if (len > 32 || total >= cnt)
-		return 0;
-
-	m_Designator = "";
-	m_Designator.insert(0, (char*)bp, len);
-	bp += len;
-
-// DVP Object Id
-	total += 2;
-	if (total > cnt)
-		return 0;
-	m_DvpObjectId = (uint16_t)(*bp++);
-	m_DvpObjectId += ((uint16_t)(*bp++)) << 8;
-
-	return total;
-}
-#endif
-
 uint16_t
 DeviceObjectDpt_c::getSizeInBytes() const
 {
@@ -998,70 +656,8 @@ DeviceObjectDvp_c::DeviceObjectDvp_c(uint16_t objId,
 	, m_Scale(scale)
 	, m_Decimals(decimals)
 {
-	Designator(desig);
+	setDesignator(desig);
 }
-
-#if 0
-size_t
-DeviceObjectDvp_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
-{
-	union
-	{
-		uint8_t bVal[4];
-		float fVal;
-	} btofval;
-
-// check minimum size
-	if (cnt < 15)
-		return 0;
-
-	std::string label;
-	const HUGE_MEM uint8_t* bp = bytestream;
-
-	label.push_back((char)*bp++);
-	label.push_back((char)*bp++);
-	label.push_back((char)*bp++);
-	if (label != "DVP")
-		return 0;
-
-	uint16_t objId = *bp++;
-	objId += ((uint16_t)(*bp++)) << 8;
-	setObjectId(objId);
-	
-	size_t total = 5;
-
-// Offset (stored as little endian in byte stream)
-	total += 4;
-	m_Offset = *bp++;
-	m_Offset += ((*bp++) << 8);
-	m_Offset += ((*bp++) << 16);
-	m_Offset += ((*bp++) << 24);
-
-// Scale
-	total += 4;
-	btofval.bVal[0] = *bp++;
-	btofval.bVal[1] = *bp++;
-	btofval.bVal[2] = *bp++;
-	btofval.bVal[3] = *bp++;
-	m_Scale = btofval.fVal;
-
-// Number of Decimals
-	total++;
-	m_Decimals = *bp++;
-
-// DVP designator
-	uint8_t len = *bp++;
-	total += (len + 1);
-	if (len > 32 || total > cnt)
-		return 0;
-
-	m_Designator = "";
-	m_Designator.insert(0, (char*)bp, len);
-	bp += len;
-
-	return total;
-}
-#endif
 
 uint16_t
 DeviceObjectDvp_c::getSizeInBytes() const
