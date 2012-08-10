@@ -69,12 +69,12 @@ ProcDataLocal_c::~ProcDataLocal_c(){
 
 void ProcDataLocal_c::setMeasurementVal(int32_t ai32_val){
   mi32_value = ai32_val;
-  mc_measureprog.setGlobalVal( *this, ai32_val );
+  mc_measureprog.setVal( *this, mi32_value );
 }
 
 void ProcDataLocal_c::incrMeasurementVal(int32_t ai32_val){
   mi32_value += ai32_val;
-  mc_measureprog.setGlobalVal( *this, measurementVal() );
+  mc_measureprog.setVal( *this, mi32_value );
 }
 
 void ProcDataLocal_c::timeEvent( uint16_t& rui16_nextTimePeriod ){
@@ -108,7 +108,7 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
   }
 }
 
-bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+bool ProcDataLocal_c::startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                                        int32_t ai32_increment, const IsoName_c& ac_receiverDevice )
 {
   isoaglib_assert( ac_receiverDevice.isSpecified() );

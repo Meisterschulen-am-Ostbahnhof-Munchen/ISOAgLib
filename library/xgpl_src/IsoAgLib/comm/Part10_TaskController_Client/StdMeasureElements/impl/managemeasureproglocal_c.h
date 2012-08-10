@@ -47,7 +47,7 @@ class ManageMeasureProgLocal_c : public ClientBase
   void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data );
 
   /** set value for all registered Measure Progs */
-  void setGlobalVal( ProcDataLocal_c& ac_processData, int32_t ai32_val );
+  void setVal( ProcDataLocal_c& ac_processData, int32_t ai32_val );
 
   /**
     allow local client to actively start a measurement program
@@ -57,7 +57,7 @@ class ManageMeasureProgLocal_c : public ClientBase
     @param apc_receiverDevice commanding ISOName
     @return true -> apc_receiverDevice is set
   */
-  bool startDataLogging(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+  bool startDataLogging(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                         int32_t ai32_increment, const IsoName_c& ac_receiverDevice );
   /**
     stop all measurement progs in all local process instances, started with given isoName
@@ -65,33 +65,20 @@ class ManageMeasureProgLocal_c : public ClientBase
   */
   void stopRunningMeasurement(ProcDataLocal_c& ac_processData, const IsoName_c& rc_isoName);
 
- protected:
-  friend class ProcDataLocal_c;
+private:
   /**
-    create a new measure prog item;
-    if there is still the default initial item undefined define it
-    and create no new item
+    get the MeasureProgLocal_c associated with the ISOName
     @param acrc_isoName commanding ISOName
+    @return MeasureProgLocal_c& -> instance found
   */
-  void setupMeasureprog(const IsoName_c& acrc_isoName);
-  /**
-    update the programm cache, create an programm item, if wanted
-    @param acrc_isoName commanding ISOName
-    @param ab_createIfNotFound true -> create new item if not found
-    @return true -> instance found
-  */
-  bool updateProgCache(const IsoName_c& acrc_isoName, bool ab_createIfNotFound);
- protected:
+  MeasureProgLocal_c& getMeasureProgLocal( const IsoName_c& acrc_isoName );
+
+private:
   /** container of objects for managing jobs of local measure programs */
   MeasureProgLocal_c mc_measureprogTC;
 #ifdef USE_DATALOGGER
   MeasureProgLocal_c mc_measureprogLogger;
 #endif
-  /** cache iterator to measure prog */
-  MeasureProgLocal_c* mpc_progCache;
-private:
-  /** create first default measure prog, if no measure prog in list */
-  void checkInitList( void );
 
 private:
   /** not copyable : copy constructor is only declared, never defined */

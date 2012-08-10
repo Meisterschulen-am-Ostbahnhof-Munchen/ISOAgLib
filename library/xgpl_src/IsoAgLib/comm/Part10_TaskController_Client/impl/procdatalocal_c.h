@@ -138,7 +138,7 @@ public:
     @param apc_receiverDevice commanding ISOName
     @return true -> measurement started
   */
-  bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+  bool startDataLogging(Proc_c::measurementCommand_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                         int32_t ai32_increment, const IsoName_c& ac_receiverDevice );
 
   /**

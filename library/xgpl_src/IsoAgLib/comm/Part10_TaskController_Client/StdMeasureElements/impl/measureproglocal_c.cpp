@@ -21,36 +21,21 @@ namespace __IsoAgLib {
 
 MeasureProgLocal_c::MeasureProgLocal_c()
   : ClientBase(),
+    mi32_val(0),
+    mlist_thresholdInfo(),
     mvec_measureSubprog(),
+    men_doSend(Proc_c::DoNone),
+    mb_active(false),
     m_ecuType(IsoName_c::ecuTypeANYOTHER)
-{
-  init( 0, 0 );
-}
+{}
 
-void MeasureProgLocal_c::init(
-  int32_t ai32_masterVal,
-  int32_t ai32_initialVal)
-{
-  mvec_measureSubprog.clear();
-
-  m_ecuType = IsoName_c::ecuTypeANYOTHER;
-  mi32_val = ai32_masterVal;
-  mb_active = false;
-
-  // set the rest of element vals to defined init
-  men_doSend = Proc_c::DoNone;
-
-  mlist_thresholdInfo.clear();
-}
-
-void MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type,
+void MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type,
                         Proc_c::doSend_t ren_doSend){
   // call start function of base class
-  men_doSend = (ren_doSend != Proc_c::DoNone)?ren_doSend : men_doSend;
-  if (men_doSend == Proc_c::DoNone) men_doSend = Proc_c::DoVal;
+  men_doSend = Proc_c::DoVal;
 
   //mi32_lastMasterVal = ai32_masterVal;
-  bool b_sendVal = TRUE;
+  bool b_sendVal = true;
 
   // start the given subprog items
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
@@ -61,7 +46,7 @@ void MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t r
 
     switch (pc_iter->type() & ren_type)
     {
-      case Proc_c::TimeProp:
+      case Proc_c::MeasurementCommandTimeProp:
         pc_iter->start(System_c::getTime());
         break;
       #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
@@ -69,7 +54,7 @@ void MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t r
         pc_iter->start(int32_t(getTracMoveInstance4Comm().distTheor()));
         break;
       #endif
-      case Proc_c::MaximumThreshold:
+      case Proc_c::MeasurementCommandMaximumThreshold:
       {
         pc_iter->start();
         b_sendVal = false; // do not send value when a threshold is set
@@ -77,7 +62,7 @@ void MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t r
         mlist_thresholdInfo.push_front(s_thresholdInfo);
         break;
       }
-      case Proc_c::MinimumThreshold:
+      case Proc_c::MeasurementCommandMinimumThreshold:
       {
         pc_iter->start();
         b_sendVal = false;  // do not send value when a threshold is set
@@ -85,10 +70,10 @@ void MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t r
         mlist_thresholdInfo.push_front(s_thresholdInfo);
         break;
       }
-      case Proc_c::OnChange:
+      case Proc_c::MeasurementCommandOnChange:
         pc_iter->start(val());
         break;
-      case Proc_c::NullType: break; // just to make compiler happy
+      case Proc_c::MeasurementCommandNullType: break; // just to make compiler happy
     } // switch
   } // for
 
@@ -100,15 +85,15 @@ void MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t r
   getProcessInstance4Comm().resetTimerPeriod();
 }
 
-void MeasureProgLocal_c::stop(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
+void MeasureProgLocal_c::stop(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type, Proc_c::doSend_t ren_doSend){
   // send the registered values
-  if ((Proc_c::MinimumThreshold != ren_type) && (Proc_c::MaximumThreshold != ren_type)
-      && (Proc_c::NullType != ren_type) ) // do not send values for threshold resets and NullType
+  if ((Proc_c::MeasurementCommandMinimumThreshold != ren_type) && (Proc_c::MeasurementCommandMaximumThreshold != ren_type)
+      && (Proc_c::MeasurementCommandNullType != ren_type) ) // do not send values for threshold resets and NullType
   {
     sendRegisteredVals(ac_processData);
   }
 
-  if (Proc_c::NullType == ren_type)
+  if (Proc_c::MeasurementCommandNullType == ren_type)
   {
     mvec_measureSubprog.clear();
     men_doSend = Proc_c::DoNone;
@@ -127,7 +112,7 @@ void MeasureProgLocal_c::stop(ProcDataLocal_c& ac_processData, Proc_c::type_t re
   }
 
   // cleanup corresponding threshold info
-  if ((Proc_c::MaximumThreshold & ren_type) || (Proc_c::MinimumThreshold & ren_type))
+  if ((Proc_c::MeasurementCommandMaximumThreshold & ren_type) || (Proc_c::MeasurementCommandMinimumThreshold & ren_type))
   { // search corresponding threshold info
     for (List_ThresholdInfoIterator ps_iterThreshold = mlist_thresholdInfo.begin(); ps_iterThreshold != mlist_thresholdInfo.end();)
     {
@@ -152,80 +137,11 @@ bool MeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const Proc
   ProcessCmd_c::CommandType_t en_command = arc_data.mc_processCmd.getCommand();
 
   isoaglib_assert( en_command != ProcessCmd_c::setValue );
+  isoaglib_assert(arc_data.senderItem() != NULL); // should have been filtered earlier !
 
   // --- Checking of "Proc_c::defaultDataLoggingDDI != pkg.DDI()" is a workaround for bad TCs ---
-  if ((!arc_data.mc_processCmd.checkIsRequest()) && (Proc_c::defaultDataLoggingDDI != arc_data.DDI()) )
+  if ( Proc_c::defaultDataLoggingDDI == arc_data.DDI() )
   {
-    // set en_doSendPkg (for ISO)
-    Proc_c::doSend_t en_doSendPkg = Proc_c::DoVal;  //default send data mode
-
-    // programm controlling command
-    if (// ISO
-        en_command == ProcessCmd_c::measurementDistanceValueStart ||
-        en_command == ProcessCmd_c::measurementTimeValueStart ||
-        en_command == ProcessCmd_c::measurementChangeThresholdValueStart ||
-        en_command == ProcessCmd_c::measurementMinimumThresholdValueStart ||
-        en_command == ProcessCmd_c::measurementMaximumThresholdValueStart)
-      // increment
-      processIncrementMsg( ac_processData, arc_data, en_doSendPkg);
-
-    if (en_command == ProcessCmd_c::measurementStop)
-       stop(ac_processData);
-
-    // ISO, local
-    if (en_command == ProcessCmd_c::measurementDistanceValueStart ||
-        en_command == ProcessCmd_c::measurementTimeValueStart ||
-        en_command == ProcessCmd_c::measurementChangeThresholdValueStart ||
-        en_command == ProcessCmd_c::measurementMinimumThresholdValueStart ||
-        en_command == ProcessCmd_c::measurementMaximumThresholdValueStart)
-    {
-      Proc_c::type_t en_typePkg = Proc_c::NullType;
-      int32_t i32_dataLong = arc_data.getValue();
-      switch (en_command) {
-        case ProcessCmd_c::measurementTimeValueStart:
-          en_typePkg = Proc_c::TimeProp;
-          break;
-        case ProcessCmd_c::measurementDistanceValueStart:
-          en_typePkg = Proc_c::DistProp;
-          break;
-        case ProcessCmd_c::measurementChangeThresholdValueStart:
-          en_typePkg = Proc_c::OnChange;
-          if (Proc_c::ThresholdChangeStopVal == i32_dataLong)
-            i32_dataLong = 0; // stop command
-          break;
-        case ProcessCmd_c::measurementMaximumThresholdValueStart:
-          en_typePkg = Proc_c::MaximumThreshold;
-          if (Proc_c::ThresholdMaximumStopVal == i32_dataLong)
-            i32_dataLong = 0; // stop command
-          break;
-        case ProcessCmd_c::measurementMinimumThresholdValueStart:
-          en_typePkg = Proc_c::MinimumThreshold;
-          if (Proc_c::ThresholdMinimumStopVal == i32_dataLong)
-            i32_dataLong = 0; // stop command
-          break;
-        default: ;
-      }
-
-      // if dataLong() == 0 => stop
-      if (i32_dataLong != 0)
-      {
-        if (en_typePkg != Proc_c::NullType)
-          start(ac_processData, en_typePkg, en_doSendPkg);
-      }
-      else
-       // call MeasureProgLocal_c::stop() with TRUE and en_typePkg != Proc_c::NullType
-       // => only the appropriate MeasureSubprog_c is deleted (selective stop)
-       stop(ac_processData, en_typePkg, en_doSendPkg);
-    }
-  }
-  else  // request or default data logging
-  {
-    // @TODO check if this is necessary (may be checked in Process already
-    if (arc_data.senderItem() == NULL)
-    { // sender with SA 0xFE is not of interest here!
-      return true;
-    }
-
     // backup sender isoname before answering (modification during send in c_pkg !)
     const IsoName_c c_senderIsoNameOrig = arc_data.senderItem()->isoName();
 
@@ -234,41 +150,90 @@ bool MeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const Proc
 
     sendVal( ac_processData, c_senderIsoNameOrig );
 
-    if ((Proc_c::defaultDataLoggingDDI == arc_data.DDI()) &&
-        (ac_processData.getProcessDataChangeHandler() != NULL ))
+    if ( ac_processData.getProcessDataChangeHandler() != NULL )
       // call handler function if handler class is registered
       ac_processData.getProcessDataChangeHandler()->processDefaultLoggingStart( &ac_processData, cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c() );
+    
+    return true;
+  }
+
+  // --- Checking of "Proc_c::defaultDataLoggingDDI != pkg.DDI()" is a workaround for bad TCs ---
+  if (!arc_data.mc_processCmd.checkIsRequest())
+  {
+    // ISO, local
+    if (en_command == ProcessCmd_c::measurementDistanceValueStart ||
+        en_command == ProcessCmd_c::measurementTimeValueStart ||
+        en_command == ProcessCmd_c::measurementChangeThresholdValueStart ||
+        en_command == ProcessCmd_c::measurementMinimumThresholdValueStart ||
+        en_command == ProcessCmd_c::measurementMaximumThresholdValueStart)
+    {
+      // increment
+      processIncrementMsg( ac_processData, arc_data);
+
+      Proc_c::measurementCommand_t en_typePkg = Proc_c::MeasurementCommandNullType;
+      int32_t i32_dataLong = arc_data.getValue();
+      // @TODO remove scgwitch and / or unify enums
+      switch (en_command) {
+        case ProcessCmd_c::measurementTimeValueStart:
+          en_typePkg = Proc_c::MeasurementCommandTimeProp;
+          break;
+        case ProcessCmd_c::measurementDistanceValueStart:
+          en_typePkg = Proc_c::MeasurementCommandDistProp;
+          break;
+        case ProcessCmd_c::measurementChangeThresholdValueStart:
+          en_typePkg = Proc_c::MeasurementCommandOnChange;
+          break;
+        case ProcessCmd_c::measurementMaximumThresholdValueStart:
+          en_typePkg = Proc_c::MeasurementCommandMaximumThreshold;
+          break;
+        case ProcessCmd_c::measurementMinimumThresholdValueStart:
+          en_typePkg = Proc_c::MeasurementCommandMinimumThreshold;
+          break;
+        default: ;
+      }
+
+      start(ac_processData, en_typePkg, Proc_c::DoVal);
+    }
+  }
+  else  // request or default data logging
+  {
+    // backup sender isoname before answering (modification during send in c_pkg !)
+    const IsoName_c c_senderIsoNameOrig = arc_data.senderItem()->isoName();
+
+    const int32_t ci32_val = arc_data.getValue();
+    const uint32_t cui32_ddi = arc_data.DDI();
+
+    sendVal( ac_processData, c_senderIsoNameOrig );
   }
 
   return true;
 }
 
 void MeasureProgLocal_c::setVal(ProcDataLocal_c& ac_processData, int32_t ai32_val){
-  int32_t i32_time =  System_c::getTime();
+  const int32_t i32_time =  System_c::getTime();
 
   // update values
   mi32_val = ai32_val;
 
   // now check if one subprog triggers
-  bool b_singleTest = false;
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin();
        pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {
     bool triggeredIncrement = false;
     switch (pc_iter->type())
     {
-      case Proc_c::TimeProp:
+      case Proc_c::MeasurementCommandTimeProp:
         triggeredIncrement = pc_iter->updateTrigger(i32_time);
         break;
-      case Proc_c::DistProp:
+      case Proc_c::MeasurementCommandDistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         triggeredIncrement = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
         #endif
         break;
-      case Proc_c::OnChange:
+      case Proc_c::MeasurementCommandOnChange:
         triggeredIncrement = pc_iter->updateTrigger(val());
         break;
-      case Proc_c::NullType: break; // just to make compiler happy
+      case Proc_c::MeasurementCommandNullType: break; // just to make compiler happy
       default: ;
     } // switch
 
@@ -292,26 +257,9 @@ void MeasureProgLocal_c::sendRegisteredVals(ProcDataLocal_c& ac_processData, Pro
     sendVal( ac_processData, getProcessInstance4Comm().getISONameFromType( m_ecuType ) );
 }
 
-void MeasureProgLocal_c::initVal(int32_t ai32_val){
-  // first call the base function
-  mi32_val = ai32_val;
-}
-
-void MeasureProgLocal_c::resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_val)
-{
-  ProcessPkg_c pkg;
-  // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
-  // allow reset with value
-  //mi32_val = 0;
-  mi32_val = ai32_val;
-
-  ac_processData.sendValISOName( pkg, getProcessInstance4Comm().getISONameFromType( m_ecuType ), val());
-}
-
 void MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t& rui16_nextTimePeriod )
 {
-  int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
+  const int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
   int32_t i32_nextTimePeriod;
   int32_t i32_distTheor;
@@ -322,12 +270,12 @@ void MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t& r
     i32_nextTimePeriod = 0;
     switch (pc_iter->type())
     {
-      case Proc_c::TimeProp:
+      case Proc_c::MeasurementCommandTimeProp:
         triggeredIncrement = pc_iter->updateTrigger(i32_time);
         // calculate next timer period
         i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_time);
         break;
-      case Proc_c::DistProp:
+      case Proc_c::MeasurementCommandDistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         i32_distTheor = getTracMoveInstance4Comm().distTheor();
         triggeredIncrement = pc_iter->updateTrigger(i32_distTheor);
@@ -337,7 +285,7 @@ void MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t& r
         // calculate next timer period
         i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_distTheor);
         break;
-      case Proc_c::OnChange:
+      case Proc_c::MeasurementCommandOnChange:
         triggeredIncrement = pc_iter->updateTrigger(val());
         break;
       default:
@@ -382,8 +330,8 @@ bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
     {
       switch (ps_iterThreshold->en_type)
       {
-        case Proc_c::MaximumThreshold: b_checkMax = true; i32_maxVal = ps_iterThreshold->i32_threshold; break;
-        case Proc_c::MinimumThreshold: b_checkMin = true; i32_minVal = ps_iterThreshold->i32_threshold; break;
+        case Proc_c::MeasurementCommandMaximumThreshold: b_checkMax = true; i32_maxVal = ps_iterThreshold->i32_threshold; break;
+        case Proc_c::MeasurementCommandMinimumThreshold: b_checkMin = true; i32_minVal = ps_iterThreshold->i32_threshold; break;
         default: ;
       }
     }
@@ -399,7 +347,7 @@ bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
   return true;
 }
 
-bool MeasureProgLocal_c::addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend){
+void MeasureProgLocal_c::addSubprog(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend){
 
   // if subprog with this type exist, update only value
   Vec_MeasureSubprog::iterator pc_subprog = mvec_measureSubprog.end();
@@ -417,16 +365,19 @@ bool MeasureProgLocal_c::addSubprog(Proc_c::type_t ren_type, int32_t ai32_increm
   { // no subprog with same type exist -> insert new one
     mvec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment MULTITON_INST_WITH_COMMA));
   }
-
-  return true;
 }
 
-void MeasureProgLocal_c::processIncrementMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend)
+void MeasureProgLocal_c::processIncrementMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg)
 {
+  Proc_c::doSend_t ren_doSend = Proc_c::DoVal;  //default send data mode
+
+  // @TODO check if nessessary to test this here. Maybe checked already in Process
   if (pkg.senderItem() == NULL)
   { // don't care for packets from SA 0xFE
     return;
   }
+
+  const ProcessCmd_c::CommandType_t en_command = pkg.mc_processCmd.getCommand();
 
   // set mc_isoName to caller of prog
   m_ecuType = getProcessInstance4Comm().getTypeFromISOName( pkg.senderItem()->isoName() );
@@ -434,41 +385,41 @@ void MeasureProgLocal_c::processIncrementMsg( ProcDataLocal_c& ac_processData, c
   bool b_wrongTriggerMethod = false;
   const int32_t ci32_val = pkg.getValue();
 
-  if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementTimeValueStart)
+  if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementTimeValueStart )
   { // time proportional
-    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodTimeInterval)) != 0 )
-      addSubprog(Proc_c::TimeProp, __IsoAgLib::abs(ci32_val), ren_doSend);
+    if ( Proc_c::isMethodSet(ac_processData.triggerMethod(), Proc_c::MethodTimeInterval) )
+      addSubprog(Proc_c::MeasurementCommandTimeProp, __IsoAgLib::abs(ci32_val), ren_doSend);
     else
       b_wrongTriggerMethod = true;
   }
-  else if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementDistanceValueStart)
+  else if ( en_command == ProcessCmd_c::measurementDistanceValueStart )
   {    // distance proportional
-    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodDistInterval)) != 0 )
-      addSubprog(Proc_c::DistProp, ci32_val, ren_doSend);
+    if ( Proc_c::isMethodSet(ac_processData.triggerMethod(), Proc_c::MethodDistInterval) )
+      addSubprog(Proc_c::MeasurementCommandDistProp, ci32_val, ren_doSend);
     else
       b_wrongTriggerMethod = true;
   }
-  else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementChangeThresholdValueStart)
+  else if ( en_command == ProcessCmd_c::measurementChangeThresholdValueStart )
   {
     // change threshold proportional
-    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodOnChange)) != 0 )
-      addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
+    if ( Proc_c::isMethodSet(ac_processData.triggerMethod(), Proc_c::MethodOnChange) )
+      addSubprog(Proc_c::MeasurementCommandOnChange, ci32_val, ren_doSend);
     else
       b_wrongTriggerMethod = true;
   }
-  else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMaximumThresholdValueStart)
+  else if ( en_command == ProcessCmd_c::measurementMaximumThresholdValueStart )
   {
     // change threshold proportional
-    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
-      addSubprog(Proc_c::MaximumThreshold, ci32_val, ren_doSend);
+    if ( Proc_c::isMethodSet(ac_processData.triggerMethod(), Proc_c::MethodThresholdLimit) )
+      addSubprog(Proc_c::MeasurementCommandMaximumThreshold, ci32_val, ren_doSend);
     else
       b_wrongTriggerMethod = true;
   }
-  else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMinimumThresholdValueStart)
+  else if ( en_command == ProcessCmd_c::measurementMinimumThresholdValueStart )
   {
     // change threshold proportional
-    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
-      addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
+    if ( Proc_c::isMethodSet(ac_processData.triggerMethod(), Proc_c::MethodThresholdLimit) )
+      addSubprog(Proc_c::MeasurementCommandMinimumThreshold, ci32_val, ren_doSend);
     else
       b_wrongTriggerMethod = true;
   }

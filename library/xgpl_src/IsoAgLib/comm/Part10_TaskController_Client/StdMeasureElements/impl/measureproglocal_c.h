@@ -37,7 +37,7 @@ private:
 
   struct ThresholdInfo_s
   {
-    Proc_c::type_t en_type;
+    Proc_c::measurementCommand_t en_type;
     Proc_c::doSend_t en_doSend;
     int32_t i32_threshold;
     bool b_isMax;
@@ -69,14 +69,6 @@ public:
     @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c();
-  /**
-    initialise this MeasureProgLocal_c instance to a well defined initial state
-    @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
-    @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
-  */
-  void init( int32_t ai32_masterVal = 0, int32_t ai32_initialVal = 0);
 
   /** default destructor which has nothing to do */
    virtual ~MeasureProgLocal_c() {}
@@ -88,7 +80,7 @@ public:
     @param ai32_masterVal actual master value to start with
     @return true -> starting values sent with success
   */
-  void start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
+  void start(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type, Proc_c::doSend_t ren_doSend);
 
   /**
     stop local measuring programs -> send actual values
@@ -97,8 +89,7 @@ public:
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @return true -> stop values sent with success
   */
-  void stop(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type = Proc_c::NullType,
-                    Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+  void stop(ProcDataLocal_c& ac_processData, Proc_c::measurementCommand_t ren_type, Proc_c::doSend_t ren_doSend);
 
   /**
     send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
@@ -126,17 +117,6 @@ public:
   void sendRegisteredVals( ProcDataLocal_c& ac_processData, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
-    init the element vals
-    @param ai32_val initial measure val
-  */
-  void initVal(int32_t ai32_val);
-  /**
-    reset the local value
-    @param ai32_val reset measure value to this value
-  */
-  void resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_val = 0);
-
-  /**
     periodic events (e.g. send value for time proportional progs)
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
@@ -150,12 +130,13 @@ public:
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal...)
     @return always true; only relevant for overoaded methods in derived classes
   */
-  bool addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+  void addSubprog(Proc_c::measurementCommand_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
     set active flag
     @param ab_active
   */
+  // @TODO remove ? Check if necessary ?
   void setActive(bool ab_active) { mb_active = ab_active; }
 
   /**
@@ -201,7 +182,7 @@ private: // Private methods
     process a message with an increment for a measuring program
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal...)
   */
-  void processIncrementMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+  void processIncrementMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg);
 
 private: // Private attributes
 
@@ -216,6 +197,7 @@ private: // Private attributes
 
   /** dynamic array for subprogs */
   Vec_MeasureSubprog mvec_measureSubprog;
+
   /** specifies which value types should be sent if one subprog triggers */
   Proc_c::doSend_t men_doSend;
 

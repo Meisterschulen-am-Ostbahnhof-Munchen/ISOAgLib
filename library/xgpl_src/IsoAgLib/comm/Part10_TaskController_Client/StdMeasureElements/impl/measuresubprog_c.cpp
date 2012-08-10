@@ -23,7 +23,7 @@
 
 namespace __IsoAgLib {
 
-MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+MeasureSubprog_c::MeasureSubprog_c(Proc_c::measurementCommand_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
 : ClientBase( MULTITON_INST_PARAMETER_USE ),
   mi32_lastVal( 0 ),
   mi32_increment( ai32_increment ),
@@ -65,7 +65,7 @@ void MeasureSubprog_c::start(int32_t ai32_lastVal, int32_t ai32_increment){
 }
 
 bool MeasureSubprog_c::updateTrigger(int32_t ai32_val){
-  if ( ( type() == Proc_c::OnChange ) && ( mi32_increment == 0 ) )
+  if ( ( type() == Proc_c::MeasurementCommandOnChange ) && ( mi32_increment == 0 ) )
   { // special case: OnChange with value 0 means: SEND NO value; 1 meanse: send any change; ...
     return false;
   }
@@ -84,9 +84,9 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
 {
   switch (type())
   {
-    case Proc_c::TimeProp:
+    case Proc_c::MeasurementCommandTimeProp:
       return (mi32_lastVal + mi32_increment - ai32_val);
-    case Proc_c::DistProp:
+    case Proc_c::MeasurementCommandDistProp:
     {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;

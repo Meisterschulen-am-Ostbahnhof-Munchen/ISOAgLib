@@ -37,7 +37,7 @@ public:
     @param ab_started optional running state (default off)
     @param ai32_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment  MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
+  MeasureSubprog_c(Proc_c::measurementCommand_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment  MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
 
   /**
     operator= for Subprogs
@@ -58,13 +58,13 @@ public:
     deliver subprog type
     @return type of this measure subprogram increment
   */
-  Proc_c::type_t type() const { return men_type; }
+  Proc_c::measurementCommand_t type() const { return men_type; }
 
   /**
     set subprog type
     @param ren_type wanted increment type of this subprogram
   */
-  void setType(Proc_c::type_t ren_type) { men_type = ren_type; }
+  void setType(Proc_c::measurementCommand_t ren_type) { men_type = ren_type; }
 
   /**
     deliver subprog data send type
@@ -110,7 +110,7 @@ private: // Private attributes
   /** states if this subprog is started */
   bool mb_started;
   /** type of this subprog instance */
-  Proc_c::type_t men_type;
+  Proc_c::measurementCommand_t men_type;
   Proc_c::doSend_t men_doSend;
 };
 

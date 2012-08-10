@@ -26,14 +26,12 @@ class Proc_c {
 public:
 
 /** enum type definition as part of class */
-  enum type_t { NullType = 0,
-                DistProp = 1,
-                TimeProp = 4,
-                ValIncr = 8, 
-                MaximumThreshold = 0x10,
-                MinimumThreshold = 0x20,
-                OnChange = 0x40,
-                Counter };
+  enum measurementCommand_t { MeasurementCommandNullType = 0,
+                              MeasurementCommandDistProp = 1,
+                              MeasurementCommandTimeProp = 4,
+                              MeasurementCommandMaximumThreshold = 0x10,
+                              MeasurementCommandMinimumThreshold = 0x20,
+                              MeasurementCommandOnChange = 0x40 };
 
   enum triggerMethod_t { MethodTimeInterval = 0,
                          MethodDistInterval = 1,
