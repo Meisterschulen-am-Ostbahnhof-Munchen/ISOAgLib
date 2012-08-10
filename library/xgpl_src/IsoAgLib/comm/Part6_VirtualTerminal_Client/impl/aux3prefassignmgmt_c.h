@@ -106,7 +106,7 @@ public:
   /** constructor
      @param reference to VT object pool data for direct initialization of mvec_aux3FunctionObject
   */
-  Aux3PrefAssignMgmt_c(IsoAgLib::iIsoTerminalObjectPool_c& arc_pool);
+  Aux3PrefAssignMgmt_c(IsoAgLib::iVtClientObjectPool_c& arc_pool);
 
   /** initialize manufacturer hard coded pref assign
       and parse EEPROM stored pref assign data sets.

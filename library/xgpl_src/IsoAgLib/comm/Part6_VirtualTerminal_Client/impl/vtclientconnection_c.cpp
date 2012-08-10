@@ -268,7 +268,7 @@ VtClientConnection_c::VtClientConnection_c(
   , mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , mb_checkSameCommand (true)
   , mrc_wsMasterIdentItem (r_wsMasterIdentItem)
-  , mrc_vtclient (r_vtclient)
+  , mrc_vtClient (r_vtclient)
   , mpc_vtServerInstance (NULL)
   , mb_usingVersionLabel (false)
   //marrp7c_versionLabel [7] will be initialized below

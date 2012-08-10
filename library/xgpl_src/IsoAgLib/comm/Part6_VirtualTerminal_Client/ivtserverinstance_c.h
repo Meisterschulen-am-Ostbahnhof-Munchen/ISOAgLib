@@ -48,7 +48,7 @@ private:
     */
   iVtServerInstance_c ();
 
-  friend class iIsoTerminal_c;
+  friend class iVtClient_c;
   friend class __IsoAgLib::VtServerInstance_c;
 };
 

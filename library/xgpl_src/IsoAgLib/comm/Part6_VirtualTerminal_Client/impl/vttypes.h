@@ -91,10 +91,10 @@ typedef uint16_t objRange_t;
     uint16_t curBytes=0;
 
 #define MACRO_scaleLocalVarVtDimension \
-    int32_t vtDimension=__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtHardwareDimension();
+    int32_t vtDimension=__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtHardwareDimension();
 
 #define MACRO_scaleLocalVarOpDimension \
-    int32_t opDimension=__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolDimension();
+    int32_t opDimension=__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolDimension();
 
 #ifdef PROPRIETARY_NO_POOL_SCALING
   #define MACRO_scaleLocalVars \
@@ -110,17 +110,17 @@ typedef uint16_t objRange_t;
 
 #ifdef PROPRIETARY_NO_POOL_SCALING
   #define MACRO_getSkDimension \
-      opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
-      opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
+      opSoftKeyWidth  = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
+      opSoftKeyHeight = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
       /* prevent scaling by setting the vtDimension equal to opDimension */ \
       vtSoftKeyWidth  = opSoftKeyWidth; \
       vtSoftKeyHeight = opSoftKeyHeight; 
 #else
   #define MACRO_getSkDimension \
-      opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
-      opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
-      vtSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skWidth; \
-      vtSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skHeight;
+      opSoftKeyWidth  = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
+      opSoftKeyHeight = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
+      vtSoftKeyWidth  = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skWidth; \
+      vtSoftKeyHeight = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skHeight;
 #endif
 
 #define MACRO_scaleSKLocalVars \

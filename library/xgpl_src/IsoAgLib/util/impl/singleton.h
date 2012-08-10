@@ -58,7 +58,7 @@
 #define getTcClientInstance4Comm()         getTcClientInstance( getMultitonInst() )
 #define getMultiSendInstance4Comm()       getMultiSendInstance( getMultitonInst() )
 #define getMultiReceiveInstance4Comm()    getMultiReceiveInstance( getMultitonInst() )
-#define getIsoTerminalInstance4Comm()     getIsoTerminalInstance( getMultitonInst() )
+#define getVtClientInstance4Comm()        getVtClientInstance( getMultitonInst() )
 #define getIsoRequestPgnInstance4Comm()   getIsoRequestPgnInstance( getMultitonInst() )
 #define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance( getMultitonInst() )
 #define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance( getMultitonInst() )

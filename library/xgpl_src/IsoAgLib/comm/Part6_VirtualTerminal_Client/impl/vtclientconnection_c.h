@@ -354,7 +354,7 @@ private: // attributes
   bool mb_checkSameCommand;
 
   IdentItem_c& mrc_wsMasterIdentItem;
-  VtClient_c& mrc_isoTerminal; // back ref.
+  VtClient_c& mrc_vtClient; // back ref.
   VtServerInstance_c* mpc_vtServerInstance;
 
   bool mb_usingVersionLabel; // if NOT using version label, "marrp7c_versionLabel" has random values!
