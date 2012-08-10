@@ -258,9 +258,12 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
       if (men_uploadState == StatePresettings && men_uploadStep == UploadWaitForStructureLabelResponse)
       {
         //store structureLabel for later compare in StateUploadInit
-        for (i=1; i<8; i++) marrpch_structureLabel[i-1] = char(arc_data.getUint8Data(i));
-        mb_receivedStructureLabel = true;
-
+        for (i=1; i<8; i++)
+        {
+          // if structureLabel consist on only 0xFF this means no structureLabel
+          if (arc_data.getUint8Data(i) != 0xFF) mb_receivedStructureLabel = true;
+          marrpch_structureLabel[i-1] = char(arc_data.getUint8Data(i));
+        }
         // send Request Localization Label message
         mc_data.setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                           procCmdPar_RequestLocalizationLabelMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
@@ -278,8 +281,12 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
       if (men_uploadState == StatePresettings && men_uploadStep == UploadWaitForLocalizationLabelResponse)
       {
         //store localizationLabel for later compare in StateUploadInit
-        for (i=1; i<8; i++) marrpch_localizationLabel[i-1] = char(arc_data.getUint8Data(i));
-        mb_receivedLocalizationLabel = true;
+        for (i=1; i<8; i++)
+        {
+          // if localizationLabel consist on only 0xFF this means no localizationLabel
+          if (arc_data.getUint8Data(i) != 0xFF) mb_receivedLocalizationLabel = true;
+          marrpch_localizationLabel[i-1] = char(arc_data.getUint8Data(i));
+        }
         men_uploadStep = UploadWaitForUploadInit;
         #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Received localization response..." << INTERNAL_DEBUG_DEVICE_ENDL;
