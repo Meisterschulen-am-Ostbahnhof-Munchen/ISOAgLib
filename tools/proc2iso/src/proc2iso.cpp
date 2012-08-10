@@ -82,7 +82,7 @@ unsigned int objCount;
 
 std::vector<std::string> vecstr_attrString (maxAttributeNames);
 std::vector<std::string> vecstr_objtableIDTable;
-std::vector<std::string> vecstr_constructor (4);
+std::vector<std::string> vecstr_constructor (5);
 std::vector<std::string> vecstr_dataForCombination;
 std::vector<std::string> vecstr_dataFromDPD (4);
 std::stringstream buffer;
@@ -1255,6 +1255,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         vecstr_constructor[1] = vecstr_attrString[attrCumulative_value].c_str();
         vecstr_constructor[2] = vecstr_attrString[attrProcProgVarName].c_str();
         vecstr_constructor[3] = vecstr_attrString[attrDdi].c_str();
+        vecstr_constructor[4] = vecstr_attrString[attrProperties].c_str();
 
         uint8_t cntChildWithProcDataCombination = cntNodeChild(node, otDeviceProcessDataCombination);
 
@@ -1281,7 +1282,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
               clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= AND is_setpoint= ATTRIBUTES FOR THE <deviceprocessdatacombination> OBJECT! STOPPING PARSER! bye.\n\n");
             }
 
-            b_dpdCombination = true;
+            b_dpdCombination = false;
             // kill previous buffer, filled above
             buffer.str("");
             buf_length_dpd = 0;
@@ -1364,7 +1365,17 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
             vecstr_dataForCombination.pop_back();
         }
 
-        fprintf(partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[0].c_str(), vecstr_constructor[2].c_str());
+        //for (int mycounter = 0; mycounter < vecstr_constructor.size(); ++mycounter)
+        //  std::cout << vecstr_constructor[mycounter] << std::endl;
+
+        int dpd_property = propertytoi(vecstr_constructor[4].c_str());
+        bool issetpoint = (( propertytoi(vecstr_constructor[4].c_str()) & 0x2 ) != 0);
+        std::cout << vecstr_constructor[1] << " " << vecstr_constructor[4] << " " << dpd_property << std::endl;
+
+        //if (issetpoint)
+        //  fprintf(partFileB, "IsoAgLib::iProcDataSetPoint%s_c c_%s(", vecstr_constructor[0].c_str(), vecstr_constructor[2].c_str());
+        //else
+        fprintf(partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[0].c_str(), vecstr_constructor[2].c_str() );
         if (b_dpdCombination)
           fprintf(partFileB, "s_%sElementDDI,\nscui16_%sElementNumber, ", vecstr_constructor[2].c_str(), vecstr_dataForCombination[1].c_str());
         else
@@ -1372,7 +1383,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
 
         b_dpdCombination = false;
 
-        fprintf(partFileB, "c_myIsoName, &c_myIsoName, %s", vecstr_constructor[1].c_str());
+        fprintf(partFileB, "c_myIsoName, %s, %d, %s", (issetpoint ? "true" : "false"), triggermethodtoi(vecstr_dataFromDPD[1].c_str()), vecstr_constructor[1].c_str());
 #if 0
         fprintf(partFileB, "\n#ifdef USE_EEPROM_IO\n");
         fprintf(partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
