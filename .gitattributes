@@ -622,6 +622,7 @@ tutorial/compiler_projects/conf_ecu_data_source_c2c -text
 tutorial/compiler_projects/conf_ecu_data_source_win32 -text
 tutorial/compiler_projects/conf_ecu_simple_section_control_dynamic_win32 -text
 tutorial/compiler_projects/conf_ecu_simple_section_control_static_win32 -text
+tutorial/compiler_projects/conf_ecu_test_part10_win32 -text
 tutorial/src/common/component_internal_can_protocol.h -text
 tutorial/src/common/component_vtclient_clientsideskmpaging_c.h -text
 tutorial/src/common/ecu_main.cpp -text
@@ -654,3 +655,14 @@ tutorial/src/ecu_simple_section_control_dynamic/component_tcclient.h -text
 tutorial/src/ecu_simple_section_control_dynamic/ecu_simple_section_control.cpp -text
 tutorial/src/ecu_simple_section_control_dynamic/tcclientdynamic_c.cpp -text
 tutorial/src/ecu_simple_section_control_dynamic/tcclientdynamic_c.h -text
+tutorial/src/ecu_test_part10/_generate_tcclient_pool.bat -text
+tutorial/src/ecu_test_part10/_generate_tcclient_pool.sh -text
+tutorial/src/ecu_test_part10/component_simulatedsource.cpp -text
+tutorial/src/ecu_test_part10/component_simulatedsource.h -text
+tutorial/src/ecu_test_part10/component_tcclient.cpp -text
+tutorial/src/ecu_test_part10/component_tcclient.h -text
+tutorial/src/ecu_test_part10/component_tcclient_pool/test_part10-bytestream.inc -text
+tutorial/src/ecu_test_part10/component_tcclient_pool/test_part10-func.h -text
+tutorial/src/ecu_test_part10/component_tcclient_pool/test_part10.xml -text
+tutorial/src/ecu_test_part10/config_ecuDataSource.h -text
+tutorial/src/ecu_test_part10/ecu_data_source.cpp -text
