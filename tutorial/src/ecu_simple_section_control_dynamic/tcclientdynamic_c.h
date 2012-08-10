@@ -115,24 +115,6 @@ private:
 
 	const static uint32_t c_schedulerPeriod = 200;
 
-	//DPD definitions
-  IsoAgLib::iProcDataLocal_c c_xOffset;
-  IsoAgLib::iProcDataLocal_c c_actualWidth;
-  IsoAgLib::iProcDataLocal_c c_maxWidth;
-  IsoAgLib::iProcDataLocal_c c_setpointVolumeRate;
-  IsoAgLib::iProcDataLocal_c c_actualVolumeRate;
-  IsoAgLib::iProcDataLocal_c c_workState;
-  IsoAgLib::iProcDataLocal_c c_sectionControlState;
-  IsoAgLib::iProcDataLocal_c c_condensedWorkState;
-  IsoAgLib::iProcDataLocal_c c_workStateSection01;
-  IsoAgLib::iProcDataLocal_c c_workStateSection02;
-  IsoAgLib::iProcDataLocal_c c_workStateSection03;
-  IsoAgLib::iProcDataLocal_c c_workStateSection04;
-  IsoAgLib::iProcDataLocal_c c_workStateSection05;
-  IsoAgLib::iProcDataLocal_c c_workStateSection06;
-  IsoAgLib::iProcDataLocal_c c_workStateSection07;
-  IsoAgLib::iProcDataLocal_c c_workStateSection08;
-
 	//@todo: if 3 sections are configured, work states needs to be defined and initialized
 	//		 for left and right section too
 	

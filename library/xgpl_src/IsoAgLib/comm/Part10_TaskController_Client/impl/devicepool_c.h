@@ -248,7 +248,7 @@ public:
 
 	bool	init(const HUGE_MEM uint8_t* bytestream, size_t count);
 
-	bool	Add(const DeviceObject_c& devObj);
+	uint16_t	Add(const DeviceObject_c& devObj);
 
 	const std::vector<uint8_t>&	getBytestream();
 	bool getDirtyBytestream(std::vector<uint8_t>& byteStream);
@@ -270,7 +270,7 @@ public:
 	void setUploaded();
 
 protected:
-	bool Add(DeviceObject_c* devObj);
+	uint16_t Add(DeviceObject_c* devObj);
 	DeviceObject_c*	createDeviceObject(const HUGE_MEM uint8_t* bp, size_t cnt);
 	DeviceObject_c*	getObject(uint16_t objId, const std::string& objectType) const;
 

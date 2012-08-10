@@ -29,7 +29,7 @@ static const uint8_t scui8_devClass = 6;
 static const uint8_t scui8_devClassInst = 0;
 static const uint8_t scui8_ecuInst = 0;
 static const uint8_t scui8_func = 0x80;
-static const uint8_t scui8_funcInst = 0;
+static const uint8_t scui8_funcInst = 1;
 static const uint8_t scui8_indGroup = 2;
 static const uint8_t scui8_selfConf = 1;
 

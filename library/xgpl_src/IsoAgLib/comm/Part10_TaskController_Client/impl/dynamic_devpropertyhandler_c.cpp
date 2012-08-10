@@ -111,6 +111,7 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
 #ifdef DEBUG
 			INTERNAL_DEBUG_DEVICE << "Received NACK for structure label..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
+        requestVersion();
 			break;
 		case 0x2:	//NACK Request LocalizationLabel
 			en_uploadState = StateIdle;
@@ -120,6 +121,7 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
 #ifdef DEBUG
 			INTERNAL_DEBUG_DEVICE << "Received NACK for localization label..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
+        requestVersion();
 			break;
 		default:
 			b_rc = false;
@@ -282,6 +284,8 @@ DevPropertyHandler_c::timeEvent( void )
 	bool tcAliveOld = b_tcAliveNew;
 	b_tcAliveNew = isTcAlive(i32_currentTime);
 
+  static int32_t mi32_timeWsAnnounceKey = -1;
+
 // If there was a state change in TC alive
 	if (tcAliveOld != b_tcAliveNew)
 	{
@@ -294,12 +298,17 @@ DevPropertyHandler_c::timeEvent( void )
 			if (en_poolState != OPNotRegistered)
 				en_poolState = OPRegistered;
 			en_uploadState = StateIdle;
-		}
+
+      #ifndef USE_WORKING_SET
+      #error "Need to define USE_WORKING_SET when utilizing a TaskController-Client."
+      #endif
+      mi32_timeWsAnnounceKey = pc_wsMasterIdentItem->getIsoItem()->startWsAnnounce();
+    }
 
 	// Notify all pool handlers of the change in TC alive state
-		STL_NAMESPACE::vector<DevicePoolHandler_c*>::iterator it;
-		for (it = m_PoolHandlerList.begin(); it != m_PoolHandlerList.end(); it++)
-			(*it)->eventTcAlive(b_tcAliveNew);
+		//STL_NAMESPACE::vector<DevicePoolHandler_c*>::iterator it;
+		//for (it = m_PoolHandlerList.begin(); it != m_PoolHandlerList.end(); it++)
+		//	(*it)->eventTcAlive(b_tcAliveNew);
 	}
 
 // ### Do nothing if there's no TC alive ###
@@ -309,6 +318,20 @@ DevPropertyHandler_c::timeEvent( void )
 // If our address claim is not complete, do nothing
 	if (!getIsoMonitorInstance4Comm().existActiveLocalIsoMember())
 		return true;
+
+  /// Wait until 6.4.2.d) has finished (WS is completely announced)
+  if (!pc_wsMasterIdentItem->getIsoItem()->isWsAnnounced (mi32_timeWsAnnounceKey)) return true;
+
+  // @TODO improve this part ...
+  static bool temp = false;
+  if (!temp && isTcAlive(i32_currentTime))
+  {
+	  // Notify all pool handlers of the change in TC alive state
+		STL_NAMESPACE::vector<DevicePoolHandler_c*>::iterator it;
+		for (it = m_PoolHandlerList.begin(); it != m_PoolHandlerList.end(); it++)
+			(*it)->eventTcAlive(b_tcAliveNew);
+    temp = true;
+  }
 
 // Send the WS task message to maintain connection with the TC
 	sendWorkingSetTaskMsg(i32_currentTime);

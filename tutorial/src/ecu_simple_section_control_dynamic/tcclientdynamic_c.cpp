@@ -16,6 +16,24 @@
 // Object and element ID for device pool defintion
 // The object IDs are arbitrary with the exception of the DVC (objectID = 0)
 
+//DPD definitions
+IsoAgLib::iProcDataLocal_c c_xOffset;
+IsoAgLib::iProcDataLocal_c c_actualWidth;
+IsoAgLib::iProcDataLocal_c c_maxWidth;
+IsoAgLib::iProcDataLocal_c c_setpointVolumeRate;
+IsoAgLib::iProcDataLocal_c c_actualVolumeRate;
+IsoAgLib::iProcDataLocal_c c_workState;
+IsoAgLib::iProcDataLocal_c c_sectionControlState;
+IsoAgLib::iProcDataLocal_c c_condensedWorkState;
+IsoAgLib::iProcDataLocal_c c_workStateSection01;
+IsoAgLib::iProcDataLocal_c c_workStateSection02;
+IsoAgLib::iProcDataLocal_c c_workStateSection03;
+IsoAgLib::iProcDataLocal_c c_workStateSection04;
+IsoAgLib::iProcDataLocal_c c_workStateSection05;
+IsoAgLib::iProcDataLocal_c c_workStateSection06;
+IsoAgLib::iProcDataLocal_c c_workStateSection07;
+IsoAgLib::iProcDataLocal_c c_workStateSection08;
+
 tcClientDynamic_c::tcClientDynamic_c() 
 : mi32_effectiveTimeMs(0)
 , m_sections(8)
@@ -146,6 +164,7 @@ tcClientDynamic_c::initDevicePool()
 	  pMiddleSectionDetObj->AddChild(m_DevicePool.Add(DeviceObjectDpt_c(0xffdf - 7*counter, 70,  3000,                       "maximal width")));
     pMiddleSectionDetObj->AddChild(m_DevicePool.Add(DeviceObjectDpd_c(0xffdd - 7*counter, 141,	2,  9,                     "WorkState")));
   }
+  std::cout << "end of device description construction" << std::endl;
 }
 
 void 

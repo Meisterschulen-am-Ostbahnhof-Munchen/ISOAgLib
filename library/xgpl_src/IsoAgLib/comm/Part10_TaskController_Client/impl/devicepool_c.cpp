@@ -131,25 +131,25 @@ DevicePool_c::getObject(uint16_t objId, const std::string& objectType) const
 
 // Add()
 //	insert a new object into the pool
-bool
+uint16_t
 DevicePool_c::Add(const DeviceObject_c& devObj)
 {
 	return Add(devObj.clone());
 }
 
-bool
+uint16_t
 DevicePool_c::Add(DeviceObject_c* devObj)
 {
 	if (devObj == 0)
-		return false;
+		return 0xFFFF;
 
 	if (!m_DevicePool.insert(std::pair<uint16_t, DeviceObject_c*>(devObj->getObjectId(), devObj)).second)
 	{
 	// must delete the object since it was created using clone() above.
 		delete devObj;
-		return false;
+		return 0xFFFF;
 	}
-	return true;
+	return devObj->getObjectId();
 }
 
 //

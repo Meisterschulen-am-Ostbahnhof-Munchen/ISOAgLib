@@ -99,13 +99,13 @@ public:
     * this function is called within construction of new local process data instance
     */
   bool registerLocalProcessData( ProcDataLocal_c* pc_localClient)
-  { return registerC1( pc_localClient );}
+  { bool b_result = registerC1( pc_localClient ); mpc_iter = c_arrClientC1.begin(); return b_result;}
 
   /** unregister pointer to a already registered local process data instance
     * this function is called within destruction of local process data instance
     */
   void unregisterLocalProcessData( ProcDataLocal_c* pc_localClient)
-  { unregisterC1( pc_localClient );}
+  { unregisterC1( pc_localClient ); mpc_iter = c_arrClientC1.begin();}
 
   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
@@ -274,6 +274,7 @@ private: // Private attributes
   Handler_t mt_handler;
   Customer_t mt_customer;
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcDataLocal_c);
+  cacheTypeC1_t mpc_iter;
 
   friend Process_c &getProcessInstance( uint8_t aui8_instance );
 };

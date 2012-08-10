@@ -396,17 +396,14 @@ void MeasureProgLocal_c::resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_
 
 bool MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t *pui16_nextTimePeriod )
 {
-  if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
-  bool b_singleTest;
   int32_t i32_nextTimePeriod;
   int32_t i32_distTheor;
 
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {
     bool triggeredIncrement = false;
-    b_singleTest = false;
     i32_nextTimePeriod = 0;
     switch (pc_iter->type())
     {
@@ -414,7 +411,6 @@ bool MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t *p
         triggeredIncrement = pc_iter->updateTrigger(i32_time);
         // calculate next timer period
         i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_time);
-
         break;
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
@@ -423,14 +419,11 @@ bool MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t *p
         #else
         i32_distTheor = 0;
         #endif
-
         // calculate next timer period
         i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_distTheor);
-
         break;
       case Proc_c::OnChange:
-        b_singleTest = pc_iter->updateTrigger(val());
-        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
+        triggeredIncrement = pc_iter->updateTrigger(val());
         break;
       default:
         break;
