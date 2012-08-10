@@ -30,9 +30,9 @@ ProcDataLocal_c::ProcDataLocal_c( uint16_t aui16_ddi, uint16_t aui16_element,
                                   int ai_multitonInst
                                   )
     : ClientBase( ai_multitonInst ),
-      mc_isoName(IsoName_c::IsoNameUnspecified())
-    , mc_measureprog( *this )
-    , mc_setpoint( *this )
+      mc_isoName(IsoName_c::IsoNameUnspecified()),
+      mc_measureprog(),
+      mc_setpoint()
 {
       init( aui16_ddi, aui16_element, acrc_isoName, ab_isSetpoint, aui8_triggerMethod, ab_cumulativeValue
           , apc_processDataChangeHandler
@@ -61,8 +61,8 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
 
   getProcessInstance4Comm().registerLocalProcessData( this );
 
-  mc_setpoint.init( *this );
-  mc_measureprog.init( *this );
+  mc_setpoint.init();
+  mc_measureprog.init();
 
   mb_isSetpoint = ab_isSetpoint;
   mui8_triggerMethod = aui8_triggerMethod;
@@ -129,18 +129,18 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
 
 void ProcDataLocal_c::setMasterMeasurementVal(int32_t ai32_val){
   mi32_masterVal = ai32_val;
-  mc_measureprog.setGlobalVal( ai32_val );
+  mc_measureprog.setGlobalVal( *this, ai32_val );
 }
 
 void ProcDataLocal_c::incrMasterMeasurementVal(int32_t ai32_val){
   mi32_masterVal += ai32_val;
-  mc_measureprog.setGlobalVal( masterMeasurementVal() );
+  mc_measureprog.setGlobalVal( *this, masterMeasurementVal() );
 }
 
 bool ProcDataLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
 
-  if ( ! mc_measureprog.timeEvent(pui16_nextTimePeriod) ) return false;
+  if ( ! mc_measureprog.timeEvent( *this, pui16_nextTimePeriod) ) return false;
   return true;
 }
 
@@ -148,16 +148,16 @@ void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& pkg ){
   switch ( pkg.mc_processCmd.getCommand())
   {
     case ProcessCmd_c::setValue:
-      mc_setpoint.processMsg( pkg );
+      mc_setpoint.processMsg( *this, pkg );
       break;
     default:
       // process measurement commands even if this DDI is defined as a setpoint
-      mc_measureprog.processProg( pkg );
+      mc_measureprog.processProg( *this, pkg );
   }
 }
 
 void ProcDataLocal_c::processProg( const ProcessPkg_c& pkg ){
-  mc_measureprog.processProg( pkg );
+  mc_measureprog.processProg( *this, pkg );
 }
 #if 0
 void ProcDataLocal_c::processProg( const ProcessPkg_c& pkg )
@@ -203,12 +203,12 @@ bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimePr
     apc_receiverDevice = &(c_tcISOItem.isoName());
   }
 
-  return mc_measureprog.startDataLogging(ren_type, ai32_increment, apc_receiverDevice);
+  return mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, apc_receiverDevice);
 }
 
 void ProcDataLocal_c::stopRunningMeasurement(const IsoName_c& rc_isoName)
 {
-  mc_measureprog.stopRunningMeasurement(rc_isoName);
+  mc_measureprog.stopRunningMeasurement(*this, rc_isoName);
 }
 
 bool ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const

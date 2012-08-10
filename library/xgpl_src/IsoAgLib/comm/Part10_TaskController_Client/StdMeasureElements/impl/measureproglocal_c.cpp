@@ -23,14 +23,21 @@
 
 namespace __IsoAgLib {
 
+MeasureProgLocal_c::MeasureProgLocal_c()
+  : ClientBase(),
+    mvec_measureSubprog(),
+    m_ecuType(IsoName_c::ecuTypeANYOTHER)
+{
+  init( 0, 0 );
+}
+
 void MeasureProgLocal_c::init(
-  ProcDataLocal_c& ac_processData,
   int32_t ai32_masterVal,
   int32_t ai32_initialVal)
 {
   mvec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
-  set(&ac_processData);
+  //set(&ac_processData);
   // store the parameter init vals
   m_ecuType = IsoName_c::ecuTypeANYOTHER;
   //mc_isoName = ac_callerISOName;
@@ -78,7 +85,7 @@ void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& acrc_src )
 MeasureProgLocal_c::~MeasureProgLocal_c(){
 }
 
-bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
+bool MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type,
                         Proc_c::doSend_t ren_doSend, int32_t ai32_masterVal){
   // call start function of base class
   men_doSend = (ren_doSend != Proc_c::DoNone)?ren_doSend : men_doSend;
@@ -130,7 +137,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
   // send first values: if now without success mark for later resend with true
   bool triggeredIncrement = false;
   if (b_sendVal)
-    triggeredIncrement = !sendRegisteredVals(ren_doSend);
+    triggeredIncrement = !sendRegisteredVals(ac_processData, ren_doSend);
 
   // set the timer period for process_c to a low value (maybe the new programm triggers soon)
   getProcessInstance4Comm().resetTimerPeriod();
@@ -139,18 +146,18 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
   return triggeredIncrement;
 }
 
-bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
+bool MeasureProgLocal_c::start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
 {
-  return start(ren_type, ren_doSend, mi32_lastMasterVal);
+  return start(ac_processData, ren_type, ren_doSend, mi32_lastMasterVal);
 }
 
-bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
+bool MeasureProgLocal_c::stop(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend){
   // send the registered values
   bool b_sendResult = true;
   if ((Proc_c::MinimumThreshold != ren_type) && (Proc_c::MaximumThreshold != ren_type)
       && (Proc_c::NullType != ren_type) ) // do not send values for threshold resets and NullType
   {
-    b_sendResult = sendRegisteredVals();
+    b_sendResult = sendRegisteredVals(ac_processData);
   }
 
   if (Proc_c::NullType == ren_type)
@@ -186,15 +193,15 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
   return b_sendResult;
 }
 
-bool MeasureProgLocal_c::sendVal( const IsoName_c& ac_targetISOName) const
+bool MeasureProgLocal_c::sendVal( ProcDataLocal_c& ac_processData, const IsoName_c& ac_targetISOName) const
 {
   ProcessPkg_c pkg;
   // prepare general command in process pkg
   pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
-  return processDataConst().sendValISOName( pkg, ac_targetISOName, val());
+  return ac_processData.sendValISOName( pkg, ac_targetISOName, val());
 }
 
-bool MeasureProgLocal_c::processMsgHelper( const ProcessPkg_c& pkg ){
+bool MeasureProgLocal_c::processMsgHelper( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg ){
   ProcessCmd_c::CommandType_t en_command = pkg.mc_processCmd.getCommand();
   bool b_edited = false;
 
@@ -223,10 +230,10 @@ bool MeasureProgLocal_c::processMsgHelper( const ProcessPkg_c& pkg ){
         en_command == ProcessCmd_c::measurementMinimumThresholdValueStart ||
         en_command == ProcessCmd_c::measurementMaximumThresholdValueStart)
       // increment
-      processIncrementMsg( pkg, en_doSendPkg);
+      processIncrementMsg( ac_processData, pkg, en_doSendPkg);
 
     if (en_command == ProcessCmd_c::measurementStop)
-       stop();
+       stop(ac_processData);
 
     // ISO, local
     if (en_command == ProcessCmd_c::measurementDistanceValueStart ||
@@ -266,21 +273,21 @@ bool MeasureProgLocal_c::processMsgHelper( const ProcessPkg_c& pkg ){
       if (i32_dataLong != 0)
       {
         if (en_typePkg != Proc_c::NullType)
-          start(en_typePkg, en_doSendPkg);
+          start(ac_processData, en_typePkg, en_doSendPkg);
       }
       else
        // call MeasureProgLocal_c::stop() with TRUE and en_typePkg != Proc_c::NullType
        // => only the appropriate MeasureSubprog_c is deleted (selective stop)
-       stop(TRUE /* b_deleteSubProgs */, en_typePkg, en_doSendPkg);
+       stop(ac_processData, en_typePkg, en_doSendPkg);
     }
   }
 
   return b_edited;
 }
 
-bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
+bool MeasureProgLocal_c::processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data )
 {
-  bool b_result = processMsgHelper( arc_data );
+  bool b_result = processMsgHelper( ac_processData, arc_data );
 
   // call base function - if base function returns true, nothing else must be done
   if (!b_result)
@@ -301,7 +308,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
     if ( arc_data.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
 
-      resetVal(ci32_val);
+      resetVal(ac_processData, ci32_val);
 
       if (Proc_c::defaultDataLoggingDDI == arc_data.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
@@ -309,35 +316,24 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
       }
 
       // call handler function if handler class is registered
-      if ( processDataConst().getProcessDataChangeHandler() != NULL )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c());
+      if ( ac_processData.getProcessDataChangeHandler() != NULL )
+        ac_processData.getProcessDataChangeHandler()->processMeasurementReset( &ac_processData, cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c());
     } // write
     else
     { // read -> answer wanted value
-      sendVal( c_senderIsoNameOrig );
+      sendVal( ac_processData, c_senderIsoNameOrig );
 
       if ((Proc_c::defaultDataLoggingDDI == arc_data.DDI()) &&
-          (processDataConst().getProcessDataChangeHandler() != NULL ))
+          (ac_processData.getProcessDataChangeHandler() != NULL ))
         // call handler function if handler class is registered
-        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c() );
+        ac_processData.getProcessDataChangeHandler()->processDefaultLoggingStart( &ac_processData, cui32_ddi, ci32_val, c_senderIsoNameOrig.toConstIisoName_c() );
     } // read
   }
 
   return true;
 }
 
-MeasureProgLocal_c::MeasureProgLocal_c(
-  ProcDataLocal_c& ac_processData,
-  int32_t ai32_masterVal,
-  int32_t ai32_initialVal)
-  : ProcessElementBase_c(&ac_processData),
-    mvec_measureSubprog(),
-    m_ecuType(IsoName_c::ecuTypeANYOTHER)
-{
-  init( ac_processData, ai32_masterVal, ai32_initialVal );
-}
-
-void MeasureProgLocal_c::setVal(int32_t ai32_val){
+void MeasureProgLocal_c::setVal(ProcDataLocal_c& ac_processData, int32_t ai32_val){
   int32_t i32_incr =  ai32_val - mi32_lastMasterVal;
   int32_t i32_time =  System_c::getTime();
   mi32_lastTime = i32_time;
@@ -346,7 +342,7 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
   // for cumulative values -> update mi32_val by increment
   // else take the actual given master value
   mi32_lastMasterVal = ai32_val;
-  if ( processData().mb_cumulativeValue )
+  if ( ac_processData.mb_cumulativeValue )
     mi32_val += i32_incr;
   else
     mi32_val = ai32_val;
@@ -386,17 +382,17 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
         continue;
       }
       // if at least one send try had success reset triggeredIncrement
-      sendRegisteredVals();
+      sendRegisteredVals(ac_processData);
     }
   } // for
 }
 
-bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
+bool MeasureProgLocal_c::sendRegisteredVals(ProcDataLocal_c& ac_processData, Proc_c::doSend_t ren_doSend){
   bool b_success = false;
 
   // normal measurement (no measurement on setpoint DDI)
   if (Proc_c::DoVal == ren_doSend)
-    b_success = (sendVal( getProcessInstance4Comm().getISONameFromType( m_ecuType ) ))? true : b_success;
+    b_success = (sendVal( ac_processData, getProcessInstance4Comm().getISONameFromType( m_ecuType ) ))? true : b_success;
 
   return b_success;
 }
@@ -406,7 +402,7 @@ void MeasureProgLocal_c::initVal(int32_t ai32_val){
   mi32_val = ai32_val;
 }
 
-bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
+bool MeasureProgLocal_c::resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_val){
   // send resetted val
   bool b_sendSuccess;
 
@@ -418,12 +414,12 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   //mi32_val = 0;
   mi32_val = ai32_val;
 
-  b_sendSuccess = processData().sendValISOName( pkg, getProcessInstance4Comm().getISONameFromType( m_ecuType ), val());
+  b_sendSuccess = ac_processData.sendValISOName( pkg, getProcessInstance4Comm().getISONameFromType( m_ecuType ), val());
 
   return b_sendSuccess;
 }
 
-bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
+bool MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t *pui16_nextTimePeriod )
 {
   if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
@@ -485,7 +481,7 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
         // omit this value send
         continue;
       }
-      sendRegisteredVals(pc_iter->doSend());
+      sendRegisteredVals(ac_processData, pc_iter->doSend());
     }
   }
 
@@ -544,20 +540,7 @@ bool MeasureProgLocal_c::addSubprog(Proc_c::type_t ren_type, int32_t ai32_increm
   return true;
 }
 
-int32_t MeasureProgLocal_c::val(bool ab_sendRequest) const
-{
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    ProcessPkg_c pkg;
-    pkg.mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */, ProcessCmd_c::requestValue);
-
-    processData().sendValISOName(pkg, getProcessInstance4Comm().getISONameFromType( m_ecuType ), int32_t(0));
-  }
-
-  return mi32_val;
-}
-
-void MeasureProgLocal_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend)
+void MeasureProgLocal_c::processIncrementMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend)
 {
   if (pkg.senderItem() == NULL)
   { // don't care for packets from SA 0xFE
@@ -571,14 +554,14 @@ void MeasureProgLocal_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::d
 
   if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementTimeValueStart)
   { // time proportional
-    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodTimeInterval)) != 0 )
+    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodTimeInterval)) != 0 )
       addSubprog(Proc_c::TimeProp, __IsoAgLib::abs(ci32_val), ren_doSend);
     //else
     //  responseNACK();
   }
   else if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementDistanceValueStart)
   {    // distance proportional
-    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodDistInterval)) != 0 )
+    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodDistInterval)) != 0 )
       addSubprog(Proc_c::DistProp, ci32_val, ren_doSend);
     //else
     //  responseNACK();
@@ -586,7 +569,7 @@ void MeasureProgLocal_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::d
   else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementChangeThresholdValueStart)
   {
     // change threshold proportional
-    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodOnChange)) != 0 )
+    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodOnChange)) != 0 )
       addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
     //else
     //  responseNACK();
@@ -594,7 +577,7 @@ void MeasureProgLocal_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::d
   else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMaximumThresholdValueStart)
   {
     // change threshold proportional
-    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
+    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
       addSubprog(Proc_c::MaximumThreshold, ci32_val, ren_doSend);
     //else
     //  responseNACK();
@@ -602,7 +585,7 @@ void MeasureProgLocal_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::d
   else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMinimumThresholdValueStart)
   {
     // change threshold proportional
-    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
+    if ( (ac_processData.triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
       addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
     //else
     //  responseNACK();

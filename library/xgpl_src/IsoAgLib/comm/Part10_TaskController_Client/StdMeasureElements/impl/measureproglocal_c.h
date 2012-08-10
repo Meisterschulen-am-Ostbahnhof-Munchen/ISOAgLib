@@ -14,7 +14,9 @@
 #define MEASUREPROG_LOCAL_H
 
 #include "measuresubprog_c.h"
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processelementbase_c.h>
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 
 // Begin Namespace __IsoAgLib
@@ -30,7 +32,7 @@ class ProcDataLocal_c;
   @see MeasureProgRemote
   @author Dipl.-Inform. Achim Spangler
 */
-class MeasureProgLocal_c : public ProcessElementBase_c  {
+class MeasureProgLocal_c : public ClientBase  {
 private:
 
   struct ThresholdInfo_s
@@ -66,10 +68,7 @@ public:
     @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
     @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
   */
-  MeasureProgLocal_c(
-    ProcDataLocal_c& ac_processData,
-    int32_t ai32_masterVal = 0,
-    int32_t ai32_initialVal = 0);
+  MeasureProgLocal_c();
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
@@ -78,7 +77,6 @@ public:
     @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
-    ProcDataLocal_c& ac_processData,
     int32_t ai32_masterVal = 0,
     int32_t ai32_initialVal = 0);
 
@@ -107,7 +105,7 @@ public:
     @param ai32_masterVal actual master value to start with
     @return true -> starting values sent with success
   */
-  bool start(Proc_c::type_t ren_type,
+  bool start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type,
              Proc_c::doSend_t ren_doSend, int32_t ai32_masterVal);
 
   /**
@@ -121,7 +119,7 @@ public:
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @return true -> starting values sent with success
   */
-  bool start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
+  bool start(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
   /**
     stop local measuring programs -> send actual values
 
@@ -133,7 +131,7 @@ public:
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @return true -> stop values sent with success
   */
-  bool stop(bool b_deleteSubProgs = true, Proc_c::type_t ren_type = Proc_c::NullType,
+  bool stop(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type = Proc_c::NullType,
                     Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
@@ -142,7 +140,7 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendVal( const IsoName_c& ac_targetISOName) const;
+  bool sendVal( ProcDataLocal_c& ac_processData, const IsoName_c& ac_targetISOName) const;
 
   /**
     process a message: reset command or value requests
@@ -152,8 +150,8 @@ public:
       * dependant error in CanIo_c on send problems
     @return true -> received msg processed by this instance
   */
-  bool processMsg( const ProcessPkg_c& arc_data );
-  bool processMsgHelper( const ProcessPkg_c& pkg );
+  bool processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data );
+  bool processMsgHelper( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg );
 
   /**
     set the measure prog value and send values if triggered to do
@@ -163,7 +161,7 @@ public:
       * dependant error in CanIo_c on send problems
     @param ai32_val new measure value
   */
-  void setVal(int32_t ai32_val);
+  void setVal(ProcDataLocal_c& ac_processData, int32_t ai32_val);
 
   /**
     send the values which are registered by a running mesuring program
@@ -174,7 +172,7 @@ public:
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @return true -> value send triggered and performed with success
   */
-  bool sendRegisteredVals(Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+  bool sendRegisteredVals( ProcDataLocal_c& ac_processData, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
     init the element vals
@@ -190,7 +188,7 @@ public:
     @param ai32_val reset measure value to this value
     @return true -> reseted measure val sent with success
   */
-  bool resetVal(int32_t ai32_val = 0);
+  bool resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_val = 0);
 
   /**
     periodic events
@@ -202,7 +200,7 @@ public:
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
   */
-  bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
+  bool timeEvent( ProcDataLocal_c& ac_processData, uint16_t *pui16_nextTimePeriod = NULL );
 
   /**
     add an aditional subprog or update if one with same kind exist already
@@ -231,7 +229,7 @@ public:
         sent (default false == send no request)
     @return measure val for this prog (can differ from master measure val)
   */
-  int32_t val(bool ab_sendRequest = false) const;
+  int32_t val() const { return mi32_val; }
 
   /**
     return the ecuType_t code for this measureprog
@@ -265,7 +263,7 @@ private: // Private methods
     process a message with an increment for a measuring program
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal...)
   */
-  void processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+  void processIncrementMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
 private: // Private attributes
 

@@ -13,7 +13,9 @@
 #ifndef SETPOINT_LOCAL_H
 #define SETPOINT_LOCAL_H
 
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processelementbase_c.h>
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointregister_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 
@@ -32,20 +34,20 @@ class SetpointRegister_c;
   semi automatic and manual handling of received values
   @author Dipl.-Inform. Achim Spangler
 */
-class SetpointLocal_c : public ProcessElementBase_c  {
+class SetpointLocal_c : public ClientBase  {
 public:
   /**
     default constructor which can set needed pointers to containing objects
     @param apc_processData pointer to containing ProcessData instance
   */
-  SetpointLocal_c( ProcDataLocal_c& ac_processData ) : ProcessElementBase_c( &ac_processData)
-    {init( ac_processData );};
+  SetpointLocal_c( ) : ClientBase()
+    {init();};
 
   /**
     initialise this SetpointLocal_c to a well defined starting condition
     @param apc_processData pointer to containing ProcessData instance
   */
-  void init( ProcDataLocal_c& ac_processData );
+  void init();
   /**
     assginment from another object
     @param acrc_src source SetpointLocal_c instance
@@ -90,7 +92,7 @@ public:
   const SetpointRegister_c& masterConst() const {return *mpc_master;};
   
   /**  process a setpoint message */
-  void processMsg( const ProcessPkg_c& pkg );
+  void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg );
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
@@ -98,7 +100,7 @@ private: // Private methods
   /**
     process a setpoint set for local process data
   */
-  virtual void processSet( const ProcessPkg_c& pkg );
+  virtual void processSet( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg );
 
 private: // Private attributes
   /** container of registered setpoint values */

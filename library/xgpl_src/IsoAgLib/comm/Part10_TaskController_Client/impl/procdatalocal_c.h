@@ -149,15 +149,6 @@ public:
   const SetpointLocal_c& setpointConst( void ) const { return mc_setpoint; }
 
   /**
-    check if specific measureprog exist
-
-    @param acrc_isoName DEVCLASS code of searched measure program
-    @return true -> found item
-  */
-  bool existProg(const IsoName_c& acrc_isoName)
-      {return mc_measureprog.existProg(acrc_isoName);};
-
-  /**
     search for suiting measureprog, if not found AND if ab_doCreate == true
     create copy from first element at end of vector
     @param acrc_isoName DEVCLASS code of searched measure program

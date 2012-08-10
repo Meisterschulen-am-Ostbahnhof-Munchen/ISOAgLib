@@ -16,7 +16,9 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processelementbase_c.h>
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include "measureproglocal_c.h"
 
 #include <list>
@@ -31,14 +33,14 @@ namespace __IsoAgLib {
   where other systems can be interested in MIN/MAX/AVG
   with/without measure programs.
   */
-class ManageMeasureProgLocal_c : public ProcessElementBase_c
+class ManageMeasureProgLocal_c : public ClientBase
 {
  public:
   /**
     constructor which initialse both pointers if given
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  ManageMeasureProgLocal_c( ProcDataLocal_c& ac_processData );
+  ManageMeasureProgLocal_c( );
   
   /** destructor */
   virtual ~ManageMeasureProgLocal_c();
@@ -47,7 +49,7 @@ class ManageMeasureProgLocal_c : public ProcessElementBase_c
     initialise this ManageMeasureProgLocal_c instance to a well defined initial state
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  void init( ProcDataLocal_c& ac_processData );
+  void init( );
 
   /** copy constructor */
   ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& acrc_src );
@@ -62,18 +64,10 @@ class ManageMeasureProgLocal_c : public ProcessElementBase_c
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned executions performed
   */
-  bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
+  bool timeEvent( ProcDataLocal_c& ac_processData, uint16_t *pui16_nextTimePeriod = NULL );
 
   /** process a measure prog message for local process data */
-  void processProg( const ProcessPkg_c& arc_data );
-
-  /**
-    check if specific measureprog exist
-    @param acrc_isoName DEVCLASS code of searched measure program
-    @return true -> found item
-  */
-  bool existProg(const IsoName_c& acrc_isoName)
-      {return updateProgCache(acrc_isoName, false);}
+  void processProg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data );
 
   /**
     search for suiting measureprog, if not found AND if ab_doCreate == true
@@ -83,11 +77,8 @@ class ManageMeasureProgLocal_c : public ProcessElementBase_c
   */
   MeasureProgLocal_c& prog(const IsoName_c& acrc_isoName, bool ab_doCreate);
 
-  /** initialise value for all registered Measure Progs */
-  void initGlobalVal( int32_t ai32_val );
-
   /** set value for all registered Measure Progs */
-  void setGlobalVal( int32_t ai32_val );
+  void setGlobalVal( ProcDataLocal_c& ac_processData, int32_t ai32_val );
 
   /**
     allow local client to actively start a measurement program
@@ -97,13 +88,13 @@ class ManageMeasureProgLocal_c : public ProcessElementBase_c
     @param apc_receiverDevice commanding ISOName
     @return true -> apc_receiverDevice is set
   */
-  bool startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
+  bool startDataLogging(ProcDataLocal_c& ac_processData, Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                         int32_t ai32_increment, const IsoName_c* apc_receiverDevice );
   /**
     stop all measurement progs in all local process instances, started with given isoName
     @param rc_isoName
   */
-  void stopRunningMeasurement(const IsoName_c& rc_isoName);
+  void stopRunningMeasurement(ProcDataLocal_c& ac_processData, const IsoName_c& rc_isoName);
 
 
  protected:
