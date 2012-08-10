@@ -289,7 +289,7 @@ private: // Private methods
 
   /**
     deliver a reference to ProcDataLocal_c
-    (the base function only delivers ProcDataBase_c)
+    (the base function only delivers ProcDataLocal_c)
     @return reference to containing ProcDataLocal_c
   */
   ProcDataLocal_c& processData()
@@ -298,7 +298,7 @@ private: // Private methods
   };
   /**
     deliver a pointer to ProcDataLocal_c
-      (the base function only delivers ProcDataBase_c)
+      (the base function only delivers ProcDataLocal_c)
     @return pointer to containing ProcDataLocal_c
   */
   ProcDataLocal_c * pprocessData()const

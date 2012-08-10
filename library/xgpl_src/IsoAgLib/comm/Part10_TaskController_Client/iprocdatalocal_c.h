@@ -135,6 +135,9 @@ public:
   */
   const iIsoName_c& isoName() const {return ProcDataLocal_c::isoName().toConstIisoName_c();}
 
+  /** check if this ProcIdent_c has the given DDI as element */
+  bool hasDDI( uint16_t aui16_checkDDI ) const { return ProcDataLocal_c::hasDDI( aui16_checkDDI );}
+
   /**
     deliver value DDI (only possible if only one elementDDI in list)
     @return DDI

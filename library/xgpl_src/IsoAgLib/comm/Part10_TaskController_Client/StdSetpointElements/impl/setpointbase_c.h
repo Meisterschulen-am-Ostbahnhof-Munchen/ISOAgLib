@@ -73,7 +73,7 @@ protected: // Protected methods
     the values can be overridden with a special value
   
     possible errors:
-        * dependant error in ProcDataBase_c commander of this setpoint isn't found in Monitor List
+        * dependant error in ProcDataLocal_c commander of this setpoint isn't found in Monitor List
         * dependant error in CanIo_c on CAN send problems
     @param acrc_src reference to SetpointRegister_c with registered setpoints
     @param ab_override true -> override registered setpoint with ai32_overrideVal

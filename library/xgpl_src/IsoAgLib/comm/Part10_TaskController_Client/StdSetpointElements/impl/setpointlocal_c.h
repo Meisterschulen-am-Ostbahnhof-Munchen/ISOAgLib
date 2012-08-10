@@ -248,7 +248,7 @@ private: // Private methods
 
   /**
     deliver a reference to ProcDataLocal_c
-    (the base function only delivers ProcDataBase_c )
+    (the base function only delivers ProcDataLocal_c )
     @return reference to containing ProcDataLocal_c instance
   */
   ProcDataLocal_c& processData()
@@ -257,8 +257,8 @@ private: // Private methods
   };
   /**
     deliver a reference to ProcDataLocal_c
-    (the base function only delivers ProcDataBase_c )
-    @return reference to containing ProcDataLocalBase_c instance
+    (the base function only delivers ProcDataLocal_c )
+    @return reference to containing ProcDataLocal_c instance
   */
   const ProcDataLocal_c& processDataConst() const
   {
@@ -266,8 +266,8 @@ private: // Private methods
   };
   /**
     deliver a pointer to ProcDataLocal_c
-    (the base function only delivers ProcDataBase_c )
-    @return pointer to containing ProcDataLocalBase_c instance
+    (the base function only delivers ProcDataLocal_c )
+    @return pointer to containing ProcDataLocal_c instance
   */
   ProcDataLocal_c* pprocessData()
   {

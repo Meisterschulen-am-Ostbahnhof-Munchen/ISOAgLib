@@ -247,13 +247,11 @@ bool ProcessPkg_c::resolveCommandTypeForISO(uint16_t aui16_ddi)
     }
   }
 
-#if CHECK_IF_REMOVE_NECESSARY
   if ( aui16_ddi == DDI() )
   {
-    b_isSetpoint = rl_elementDDI.b_isSetpoint;
-    en_valueGroup = rl_elementDDI.en_valueGroup;
+    //b_isSetpoint = rl_elementDDI.b_isSetpoint;
+    en_valueGroup = ProcessCmd_c::exactValue;
   }
-#endif
 
   if (en_command != ProcessCmd_c::noCommand)
   {

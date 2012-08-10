@@ -29,13 +29,13 @@ ProcDataLocal_c::ProcDataLocal_c( uint16_t aui16_ddi, uint16_t aui16_element,
                                   )
     : ClientBase( ai_multitonInst ),
       mpc_externalOverridingIsoName(NULL),
-		  mc_isoName(IsoName_c::IsoNameUnspecified())
+      mc_isoName(IsoName_c::IsoNameUnspecified())
     , mc_measureprog( this )
     , mc_setpoint( this )
 {
-    init( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue
-        , apc_processDataChangeHandler
-        , ai_multitonInst);
+      init( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue
+          , apc_processDataChangeHandler
+          , ai_multitonInst);
 }
 
 void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
@@ -58,27 +58,44 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
   setMultitonInst(ai_multitonInst);
   mpc_processDataChangeHandler = apc_processDataChangeHandler;
 
-  mc_setpoint.init( this );
-  mc_measureprog.init( this );
-
   mb_cumulativeValue = ab_cumulativeValue;
   mi32_masterVal = 0;
 
   getProcessInstance4Comm().registerLocalProcessData( this );
+
+  mc_setpoint.init( this );
+  mc_measureprog.init( this );
 }
 
 ProcDataLocal_c::~ProcDataLocal_c(){
+  // now unregister the pointer to this instance in Process_c
   getProcessInstance4Comm().unregisterLocalProcessData( this );
 }
 
 const ProcDataLocal_c& ProcDataLocal_c::operator=(const ProcDataLocal_c& acrc_src)
 { // call base class operator
   ClientBase::operator=(acrc_src);
+  // now assign flags of this class
   assignFromSource(acrc_src);
 
   // NOT COMPLETE ?
   // return source reference
   return *this;
+}
+
+void ProcDataLocal_c::assignFromSource( const ProcDataLocal_c& acrc_src )
+{ // copy element vars
+  // NOT COMPLETE ?
+  mc_isoName = acrc_src.mc_isoName;
+  mpc_externalOverridingIsoName = acrc_src.mpc_externalOverridingIsoName;
+  // elementDDI() returns list reference, setElementDDI() expects pointer to list
+  setElementDDI(acrc_src.DDI());
+
+  mpc_processDataChangeHandler = acrc_src.mpc_processDataChangeHandler;
+
+  mi32_masterVal = acrc_src.mi32_masterVal;
+  mb_cumulativeValue = acrc_src.mb_cumulativeValue;
+
 }
 
 ProcDataLocal_c::ProcDataLocal_c(const ProcDataLocal_c& acrc_src)
@@ -92,19 +109,18 @@ ProcDataLocal_c::ProcDataLocal_c(const ProcDataLocal_c& acrc_src)
   getProcessInstance4Comm().registerLocalProcessData( this );
 }
 
-void ProcDataLocal_c::assignFromSource( const ProcDataLocal_c& acrc_src )
-{ // copy element vars
-  mpc_processDataChangeHandler = acrc_src.mpc_processDataChangeHandler;
-  // NOT COMPLETE ?
-  mc_isoName = acrc_src.mc_isoName;
-  mpc_externalOverridingIsoName = acrc_src.mpc_externalOverridingIsoName;
+void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
+{
+  isoaglib_assert( DDI() == pkg.DDI() );
 
-  setElementDDI(acrc_src.DDI());
+  pkg.resolveCommandTypeForISO( DDI() );
 
-  mi32_masterVal = acrc_src.mi32_masterVal;
-  mb_cumulativeValue = acrc_src.mb_cumulativeValue;
-
+  if (pkg.mc_processCmd.checkIsSetpoint())
+    processSetpoint( pkg );
+  else
+    processProg(pkg);
 }
+
 
 void ProcDataLocal_c::setMasterMeasurementVal(int32_t ai32_val){
   mi32_masterVal = ai32_val;
@@ -137,6 +153,39 @@ void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& pkg ){
   }
 }
 
+void ProcDataLocal_c::processProg( const ProcessPkg_c& pkg ){
+  mc_measureprog.processProg( pkg );
+}
+#if 0
+void ProcDataLocal_c::processProg( const ProcessPkg_c& pkg )
+{
+  if (pkg.senderItem() == NULL)
+  { // sender with SA 0xFE is not of interest
+    return;
+  }
+
+  // handle for simple measurement value
+  if (pkg.mc_processCmd.checkIsRequest() &&
+      // pkg.mc_processCmd.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
+      pkg.mc_processCmd.getValueGroup() == ProcessCmd_c::exactValue)
+  { // request for measurement value
+    sendMasterMeasurementVal( pkg.senderItem()->isoName() );
+  }
+}
+
+void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& pkg )
+{
+  #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
+  if (pkg.dataRawCmdLong() == 0)
+  { // let processProg process measurement value reset -> change PD to use std. reset
+    pkg.setPd(1);
+    processProg(pkg);
+  }
+  #else
+  (void)pkg;
+  #endif
+}
+#endif
 bool ProcDataLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_c::TimeProp, Proc_c::DistProp, ... */,
                                        int32_t ai32_increment, const IsoName_c* apc_receiverDevice )
 {
@@ -159,45 +208,18 @@ void ProcDataLocal_c::stopRunningMeasurement(const IsoName_c& rc_isoName)
   mc_measureprog.stopRunningMeasurement(rc_isoName);
 }
 
-bool ProcDataLocal_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {
-
-  ProcessPkg_c pkg;
-  // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                           ProcessCmd_c::exactValue,
-                                                           ProcessCmd_c::setValue);
-
-  return sendValISOName( pkg, ac_targetISOName, masterMeasurementVal());
-}
-
-void ProcDataLocal_c::processProg( const ProcessPkg_c& pkg )
+bool ProcDataLocal_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const
 {
-  if (pkg.senderItem() == NULL)
-  { // sender with SA 0xFE is not of interest
-    return;
-  }
+  pkg.setISONameForDA(ac_varISOName);
+  pkg.setISONameForSA(isoName());
 
-  // handle for simple measurement value
-  if (pkg.mc_processCmd.checkIsRequest() &&
-      // pkg.mc_processCmd.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
-      pkg.mc_processCmd.getValueGroup() == ProcessCmd_c::exactValue)
-  { // request for measurement value
-    sendMasterMeasurementVal( pkg.senderItem()->isoName() );
-  }
-}
+  setBasicSendFlags( pkg );
 
-bool ProcDataLocal_c::sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const
-{
-  arc_pkg.setISONameForDA(ac_varISOName);
-  arc_pkg.setISONameForSA(isoName());
-
-  setBasicSendFlags( arc_pkg );
-
-  arc_pkg.setData( ai32_val );
+  pkg.setData( ai32_val );
 
   // send the msg
-  arc_pkg.flags2String();
-  getIsoBusInstance4Comm() << arc_pkg;
+  pkg.flags2String();
+  getIsoBusInstance4Comm() << pkg;
   // check for any error during send resolve, ...
   if ( getILibErrInstance().good(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can) )
   { // good
@@ -205,38 +227,6 @@ bool ProcDataLocal_c::sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac
   }
   else
     return false;
-  //return ProcDataBase_c::sendValISOName (arc_pkg, ac_varISOName, ai32_val);
-}
-
-// FROM FORMER BASE CLASS - functions already exist and were not calling base class functions
-
-//void ProcDataLocal_c::processProg( const ProcessPkg_c& pkg ){
-//  mc_measureprog.processProg( pkg );
-//}
-
-//void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& pkg )
-//{
-//  #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
-//  if (pkg.dataRawCmdLong() == 0)
-//  { // let processProg process measurement value reset -> change PD to use std. reset
-//    pkg.setPd(1);
-//    processProg(pkg);
-//  }
-//  #else
-//  (void)pkg;
-//  #endif
-//}
-
-void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
-{
-  isoaglib_assert( DDI() == pkg.DDI() );
-
-  pkg.resolveCommandTypeForISO( DDI() );
-
-  if (pkg.mc_processCmd.checkIsSetpoint())
-    processSetpoint( pkg );
-  else
-    processProg(pkg);
 }
 
 void ProcDataLocal_c::setBasicSendFlags( ProcessPkg_c& pkg ) const
@@ -250,13 +240,6 @@ void ProcDataLocal_c::setBasicSendFlags( ProcessPkg_c& pkg ) const
   const ProcessCmd_c::ValueGroup_t men_valueGroup = pkg.mc_processCmd.getValueGroup();
   const bool mb_isSetpoint = pkg.mc_processCmd.checkIsSetpoint();
 
-  pkg.set_Element(0xFFFF);
-  pkg.set_DDI(0);
-
-  // we have only one DDI/element pair
-  // interface process data init was possibly called with parameter DDI and element and not with ElementDdi_s
-  // => we don't have reliable infos about men_valueGroup and mb_isSetpoint
-  // => don't check for men_valueGroup and mb_isSetpoint but use this single entry in list
   pkg.set_Element(element());
   pkg.set_DDI(DDI());
 }
@@ -290,5 +273,20 @@ bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameSender,
   return true;
 }
 
+bool ProcDataLocal_c::hasDDI( uint16_t aui16_checkDDI ) const
+{
+  return ( aui16_checkDDI == DDI() );
+}
+
+bool ProcDataLocal_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {
+
+  ProcessPkg_c pkg;
+  // prepare general command in process pkg
+  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                           ProcessCmd_c::exactValue,
+                                                           ProcessCmd_c::setValue);
+
+  return sendValISOName( pkg, ac_targetISOName, masterMeasurementVal());
+}
 
 } // end of namespace __IsoAgLib

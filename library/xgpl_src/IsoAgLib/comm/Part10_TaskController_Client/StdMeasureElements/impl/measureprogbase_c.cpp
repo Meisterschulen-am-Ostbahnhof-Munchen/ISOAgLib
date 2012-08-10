@@ -16,6 +16,7 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <algorithm>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocal_c.h>
 
 #if DEBUG_HEAP_USEAGE
   #ifdef SYSTEM_PC
@@ -36,7 +37,7 @@ static uint16_t sui16_printedDeconstructMeasureProgBaseTotal = 0;
 namespace __IsoAgLib {
 
 /** initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param apc_processData optional reference to containing ProcDataLocal_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param acrc_isoName optional ISOName of partner member for this measure program
   */

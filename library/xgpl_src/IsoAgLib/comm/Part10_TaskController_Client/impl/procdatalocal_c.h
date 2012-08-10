@@ -94,17 +94,6 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
 */
 class ProcDataLocal_c : public ClientBase  {
-public:
-  /** allow explicit SetpointBase_c the access to private elements */
-  friend class SetpointBase_c;
-
-  /** allow explicit MeasureProgBase_c the access to private elements */
-  friend class MeasureProgBase_c;
-
-  /** allow explicit MeasureProgLocal_c the access to private elements */
-  friend class MeasureProgLocal_c;
-
-  friend class SetpointLocal_c;
 
 public:
   /**
@@ -196,7 +185,7 @@ public:
   */
   const ProcDataLocal_c& operator=(const ProcDataLocal_c& acrc_src);
 
-  /** copy constructor for ProcDataBase_c
+  /** copy constructor for ProcDataLocal_c
     @param acrc_src source instance
   */
   ProcDataLocal_c(const ProcDataLocal_c& acrc_src);
@@ -228,6 +217,25 @@ public:
   MeasureProgLocal_c& prog(const IsoName_c& acrc_isoName, bool ab_doCreate)
     { return mc_measureprog.prog(acrc_isoName, ab_doCreate);};
 
+  virtual const IsoName_c& commanderISOName() const { return IsoName_c::IsoNameUnspecified(); }
+
+  /** set the pointer to the handler class
+    * @param apc_processDataChangeHandler pointer to handler class of application
+    */
+  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
+   { mpc_processDataChangeHandler = apc_processDataChangeHandler; }
+
+  /** deliver the poitner to the handler class
+    * @return pointer to handler class of application (or NULL if not defined by application)
+    */
+  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return mpc_processDataChangeHandler; }
+
+  /** deliver the master value (central measure value of this process data;
+    can differ from measure vals of measure progs, as these can be reseted
+    independent)
+    @return actual master value
+  */
+  const int32_t& masterMeasurementVal() const {return mi32_masterVal;}
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
@@ -241,6 +249,15 @@ public:
   */
   virtual void incrMasterMeasurementVal(int32_t ai32_val);
 
+  /** process a message, which is adressed for this process data item;
+    ProcDataLocal_c::processMsg() is responsible to delegate the
+    processing of setpoint and measurement messages to the appripriate
+    functions processSetpoint and processProg;
+    both functions are virtual, so that depending on loacl or remote
+    process data the suitable reaction can be implemented
+  */
+  void processMsg( ProcessPkg_c& pkg );
+
   /**
     perform periodic actions
     delete all running measure programs of members which are >3sec inactive;
@@ -249,6 +266,12 @@ public:
     @return true -> all planned executions performed
   */
   virtual bool timeEvent(  uint16_t *pui16_nextTimePeriod = NULL );
+
+  /** send a min-information (selected by value group) to a specified target (selected by ISOName)
+    @param ac_targetISOName ISOName of target
+    @return true -> successful sent
+  */
+  bool sendMasterMeasurementVal( const IsoName_c& ac_targetISOName ) const;
 
   /**
     check if a setpoint master exists
@@ -298,64 +321,11 @@ public:
   */
   virtual void stopRunningMeasurement(const IsoName_c& rc_isoName);
 
-public: // FROM FORMER BASE CLASS
+public: // from former base class
 
-  /** copy constructor */
-  //ProcDataLocal_c( const ProcDataLocal_c& acrc_src );
-
-  /** assignment operator */
-  //const ProcDataLocal_c& operator=( const ProcDataLocal_c& acrc_src );
-
-  /** deliver the master value (central measure value of this process data;
-    can differ from measure vals of measure progs, as these can be reseted
-    independent)
-    @return actual master value
-  */
-  const int32_t& masterMeasurementVal() const {return mi32_masterVal;}
-
-  /** send a min-information (selected by value group) to a specified target (selected by ISOName)
-    @param ac_targetISOName ISOName of target
-    @return true -> successful sent
-  */
-  bool sendMasterMeasurementVal( const IsoName_c& ac_targetISOName ) const;
-
-  /** send the given int32_t value with variable ISOName ac_varISOName;
-      set the int32_t value with conversion (according to central data type) in message
-      string and set data format flags corresponding to central data type of this process data
-      (other parameter fixed by ident of process data)
-        possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CanIo_c on CAN send problems
-
-      @param ac_varISOName variable ISOName
-      @param ai32_val int32_t value to send
-      @return true -> sendIntern set successful EMPF and SEND
-  */
-  bool sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
-
-  void setBasicSendFlags( ProcessPkg_c& pkg ) const;
-
-  /** set the pointer to the handler class
-    * @param apc_processDataChangeHandler pointer to handler class of application
-    */
-  void setProcessDataChangeHandler( IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler )
-   { mpc_processDataChangeHandler = apc_processDataChangeHandler; }
-
-  /** deliver the poitner to the handler class
-    * @return pointer to handler class of application (or NULL if not defined by application)
-    */
-  IsoAgLib::ProcessDataChangeHandler_c* getProcessDataChangeHandler( void ) const { return mpc_processDataChangeHandler; }
-
-  /** process a message, which is adressed for this process data item;
-    ProcDataBase_c::processMsg() is responsible to delegate the
-    processing of setpoint and measurement messages to the appripriate
-    functions processSetpoint and processProg;
-    both functions are virtual, so that depending on loacl or remote
-    process data the suitable reaction can be implemented
-  */
-  void processMsg( ProcessPkg_c& pkg );
-
-  virtual const IsoName_c& commanderISOName() const { return IsoName_c::IsoNameUnspecified(); }
+  /** check if this ProcIdent_c has the given DDI as element */
+  bool hasDDI( uint16_t aui16_checkDDI ) const;
+  bool hasType(bool ab_isSetpoint, ProcessCmd_c::ValueGroup_t t_ddiType) const;
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
@@ -421,7 +391,29 @@ public: // FROM FORMER BASE CLASS
                  uint16_t aui16_element
                ) const;
 
+protected: // Protected methods
+  /** send the given int32_t value with variable ISOName ac_varISOName;
+      set the int32_t value with conversion (according to central data type) in message
+      string and set data format flags corresponding to central data type of this process data
+      (local: receiver; remote: sender)
+      (other paramter fixed by ident of process data)
+      set general command before sendValISOName !
+
+        possible errors:
+      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
+      * dependant error in CanIo_c on CAN send problems
+
+      @param ac_varISOName variable ISOName
+      @param ai32_val int32_t value to send
+      @return true -> sendIntern set successful EMPF and SEND
+  */
+  virtual bool sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
+
+  void setBasicSendFlags( ProcessPkg_c& pkg ) const;
+
 private: // Private methods
+  /** base function for assignment of element vars for copy constructor and operator= */
+  void assignFromSource( const ProcDataLocal_c& acrc_src );
 
   /** processing of a setpoint message */
   virtual void processSetpoint( const ProcessPkg_c& pkg );
@@ -432,27 +424,7 @@ private: // Private methods
   /** deliver reference to ManageMeasureProgLocal_c */
   ManageMeasureProgLocal_c& getManageProg( void ) { return mc_measureprog;}
 
-  /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ProcDataLocal_c& acrc_src );
-
-private:
-
-  /** flaxible management of measure progs */
-  ManageMeasureProgLocal_c mc_measureprog;
-
-  /** flaxible management of setpoint */
-  SetpointLocal_c mc_setpoint;
-
- private:
-   /** allow explicit MeasureProgLocal_c the access to private elements */
-  friend class MeasureProgLocal_c;
-  friend class ManageMeasureProgLocal_c; /** allow access to eepromVal() and resetEeprom() */
-
-  /** store the master value of the main programm */
-  int32_t mi32_masterVal;
-
-  /** register if this data is a cumulative type like distance, time, area */
-  bool mb_cumulativeValue;
+private: // Private attributes
 
   /** pointer to applications handler class, with handler functions
       which shall be called on correltating change events.
@@ -460,6 +432,21 @@ private:
        or new received measurement value for remote process data)
     */
   IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
+
+private:
+  friend class ManageMeasureProgLocal_c; /** allow access to eepromVal() and resetEeprom() */
+  friend class MeasureProgBase_c;
+  friend class MeasureProgLocal_c;
+  friend class SetpointBase_c;
+  friend class SetpointLocal_c;
+
+  /** store the master value of the main programm */
+  int32_t mi32_masterVal;
+
+  /** register if this data is a cumulative type like distance, time, area */
+  bool mb_cumulativeValue;
+
+private: // Private attributes
 
   /** DEVCLASS code of process data identity */
   const IsoName_c* mpc_externalOverridingIsoName; // only defined for own local data, otherwise NULL
@@ -469,6 +456,14 @@ private:
 
   uint16_t mui16_ddi;
   uint16_t mui16_element;
+
+private:
+
+  /** flaxible management of measure progs */
+  ManageMeasureProgLocal_c mc_measureprog;
+
+  /** flaxible management of setpoint */
+  SetpointLocal_c mc_setpoint;
 };
 
 

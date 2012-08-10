@@ -44,7 +44,7 @@ public:
 
   /**
     constructor which can optional set most element vars
-    @param apc_processData optional pointer to containing ProcDataBase_c instance (default NULL)
+    @param apc_processData optional pointer to containing ProcDataLocal_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param acrc_isoName optional ISOName of partner member for this measure program
   */
@@ -56,7 +56,7 @@ public:
 
   /**
     constructor which can optional set most element vars
-    @param acrc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param acrc_processData optional reference to containing ProcDataLocal_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param acrc_isoName optional ISOName of partner member for this measure program
   */
@@ -68,7 +68,7 @@ public:
 
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param apc_processData optional reference to containing ProcDataLocal_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param acrc_isoName optional ISOName of partner member for this measure program
   */

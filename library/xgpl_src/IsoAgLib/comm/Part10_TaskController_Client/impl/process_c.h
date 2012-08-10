@@ -26,7 +26,7 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocal_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/ProcDataLocal_c.h>
 #include "processpkg_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processwsmtaskmsghandler_c.h>
@@ -77,18 +77,6 @@ public:
     @return true -> suitable instance found
   */
   bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
-
-  /**
-    checks if a suitable ProcDataRemoteBase_c item exist
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameSender isoName of the sender (used for check against ownerISOName())
-    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
-    @return true -> suitable instance found
-  */
-  bool existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                            const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
 
   /**
     search for suitable ProcDataLocal_c item; create on if not found AND if wanted

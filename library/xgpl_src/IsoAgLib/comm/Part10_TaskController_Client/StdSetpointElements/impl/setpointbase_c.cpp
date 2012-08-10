@@ -15,6 +15,7 @@
 #include "setpointregister_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocal_c.h>
 
 namespace __IsoAgLib {
 
@@ -97,7 +98,7 @@ void SetpointBase_c::processMsg( const ProcessPkg_c& pkg ){
   the values can be overridden with a special value
 
   possible errors:
-      * dependant error in ProcDataBase_c commander of this setpoint isn't found in Monitor List
+      * dependant error in ProcDataLocal_c commander of this setpoint isn't found in Monitor List
       * dependant error in CanIo_c on CAN send problems
   @param acrc_src reference to SetpointRegister_c with registered setpoints
   @param ab_override true -> override registered setpoint with ai32_overrideVal

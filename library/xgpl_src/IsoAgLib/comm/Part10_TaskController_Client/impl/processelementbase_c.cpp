@@ -15,7 +15,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "processelementbase_c.h"
-#include "procdatalocal_c.h"
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocal_c.h>
 
 namespace __IsoAgLib {
 

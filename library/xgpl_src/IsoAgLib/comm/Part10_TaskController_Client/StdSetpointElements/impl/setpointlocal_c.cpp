@@ -19,6 +19,7 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocal_c.h>
 
 #if DEBUG_HEAP_USEAGE
   #ifdef SYSTEM_PC
