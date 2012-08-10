@@ -57,50 +57,19 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  iProcDataLocal_c( const ElementDdi_s* ps_elementDDI,
+  iProcDataLocal_c( uint16_t aui16_ddi,
                     uint16_t aui16_element,
                     const iIsoName_c& acrc_isoName,
                     const iIsoName_c *apc_externalOverridingIsoName = NULL,
                     bool ab_cumulativeValue = false,
                   ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                   int ai_multitonInst = 0)
-    : ProcDataLocal_c( ps_elementDDI, aui16_element,
+    : ProcDataLocal_c( aui16_ddi, aui16_element,
                        acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
                        apc_processDataChangeHandler,
                        ai_multitonInst
                       )
 {}
-
-  /**
-    constructor whith alternative parameter list
-    @param aui16_DDI
-    @param aui16_element
-    ...
-  */
-  iProcDataLocal_c( uint16_t aui16_DDI, uint16_t aui16_element,
-                    const iIsoName_c& acrc_isoName,
-                    const iIsoName_c *apc_externalOverridingIsoName = NULL,
-                    bool ab_cumulativeValue = false,
-                   ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-                   int ai_multitonInst = 0)
-    : ProcDataLocal_c( NULL, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-                      apc_processDataChangeHandler,
-                      ai_multitonInst
-                      )
-  {
-    const ElementDdi_s s_tmpElementDDI[2] =
-    {
-      // if this constructor is used => only exact measurement possible
-      {aui16_DDI, false, ProcessCmd_c::exactValue},
-      {0xFFFF, false, ProcessCmd_c::noValue}
-    };
-
-    ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
-                      acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-                      apc_processDataChangeHandler,
-                      ai_multitonInst
-                      );
-   }
 
   /**
     initialise this ProcDataLocal_c
@@ -134,69 +103,17 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void init( const ElementDdi_s* ps_elementDDI,
+  void init( uint16_t aui16_ddi,
              uint16_t aui16_element,
              const iIsoName_c& acrc_isoName,
              const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_multitonInst = 0
             )
-  {ProcDataLocal_c::init( ps_elementDDI, aui16_element,
+  {ProcDataLocal_c::init( aui16_ddi, aui16_element,
                          acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
                          apc_processDataChangeHandler,
                          ai_multitonInst);
-  }
-
-  /**
-    <!--ISO only: -->Initialise this ProcDataLocal_c instance to a well defined initial state
-              this alternative uses DDI and element number as parameter and not pointer to list of ElementDdi_s
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-
-    @param acrc_isoName optional ISOName code of Process-Data
-    @param apc_externalOverridingIsoName pointer to updated ISOName variable
-    @param ab_cumulativeValue
-             -# for process data like distance, time, area
-                 the value of the measure prog data sets is updated
-                 on master value update dependent on the value increment
-                 since the last master value update
-                 -> if a remote member resets his data set copy, datas of
-                    other members aren't changed
-                 -> if this data is saved in EEPROM, the main application
-                    needn't take into account the initial EEPROM value, as
-                     setting of the master val is independent from EEPROM
-             -#  for values like speed, state, rpm aren't updated by increment,
-                  -> the given master value is propagated equally to all
-                      measure prog data sets
-                  -> if this data is saved in EEPROM, the stored value is loaded
-                     as initial master value, and is initially propagated to all
-                     measure prog data sets
-    @param aui16_eepromAdr optional adress where value is stored in EEPROM
-    @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
-  */
-  void init( uint16_t aui16_DDI, uint16_t aui16_element,
-             const iIsoName_c& acrc_isoName,
-             const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
-            ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-            int ai_multitonInst = 0
-            )
-  {
-     const ElementDdi_s s_tmpElementDDI[2] =
-     {
-       // if this init is used => only exact measurement possible
-       {aui16_DDI, false, ProcessCmd_c::exactValue},
-       {0xFFFF, false, ProcessCmd_c::noValue}
-     };
-
-     ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
-                            acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-                            apc_processDataChangeHandler,
-                            ai_multitonInst);
   }
 
   /** set the poitner to the handler class
@@ -212,26 +129,11 @@ public:
    { return ProcDataLocal_c::getProcessDataChangeHandler(); }
 
   /**
-    deliver value DEVCLASS (machine type specific table of process data types)
-    @return DEVCLASS
-  */
-  uint8_t devClass() const{return ProcDataLocal_c::devClass();}
-
-  /**
     deliver value ISOName (machine type specific table of process data types)
     use everytime the _device_class_ from the ident part, and take the _instance_ from the owner
     @return ISOName
   */
   const iIsoName_c& isoName() const {return ProcDataLocal_c::isoName().toConstIisoName_c();}
-
-  /**
-    deliver value _instance_ (important if more than one machine with equal _device_class_ are active)
-    @return POS
-  */
-  uint8_t devClassInst() const{return ProcDataLocal_c::devClassInst();}
-
-  /** check if this ProcIdent_c has the given DDI as element */
-  bool hasDDI( uint16_t aui16_checkDDI ) const { return ProcIdent_c::hasDDI( aui16_checkDDI );}
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)

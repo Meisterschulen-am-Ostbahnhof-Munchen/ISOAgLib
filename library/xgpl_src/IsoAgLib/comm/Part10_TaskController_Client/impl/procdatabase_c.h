@@ -45,17 +45,10 @@ public:
   /** allow explicit MeasureProgBase_c the access to private elements */
   friend class MeasureProgBase_c;
 
-  /** allow explicit MeasureProgRemote_c the access to private elements */
-  friend class MeasureProgRemote_c;
-
   /** allow explicit MeasureProgLocal_c the access to private elements */
   friend class MeasureProgLocal_c;
 
-  friend class SimpleManageSetpointRemote_c;
-  friend class SimpleManageMeasureProgRemote_c;
-  friend class SimpleManageSetpointLocal_c;
   friend class SetpointLocal_c;
-  friend class SetpointRemote_c;
 
   /** constructor which can set all element vars
     ISO parameters:
@@ -68,15 +61,15 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataBase_c( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
+  ProcDataBase_c( uint16_t aui16_ddi, uint16_t aui16_element,
                  const IsoName_c& acrc_isoName,
                  const IsoName_c *apc_externalOverridingIsoName = NULL,
                  IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                  int ai_multitonInst = 0)
 
-    : ProcIdent_c( aps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ai_multitonInst)
+    : ProcIdent_c( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ai_multitonInst)
     {
-      init( aps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName,
+      init( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName,
             apc_processDataChangeHandler, ai_multitonInst );
     }
 
@@ -92,7 +85,7 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
     */
-  void init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
+  void init(uint16_t aui16_ddi, uint16_t aui16_element,
             const IsoName_c& acrc_isoName,
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -172,9 +165,6 @@ private: // Private methods
   virtual void processSetpoint( const ProcessPkg_c& pkg );
 
 private: // Private attributes
-
-  friend class IsoAgLib::EventSource_c;
-
   /** pointer to applications handler class, with handler functions
       which shall be called on correltating change events.
       (e.g. new received setpoint for local process data

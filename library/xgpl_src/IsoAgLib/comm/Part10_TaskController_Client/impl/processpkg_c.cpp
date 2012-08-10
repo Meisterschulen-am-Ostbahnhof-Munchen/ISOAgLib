@@ -197,7 +197,7 @@ void ProcessPkg_c::flags2String()
   extract data from ISO commands and save it to member class
   @param rl_elementDDI
 */
-bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_elementDDI)
+bool ProcessPkg_c::resolveCommandTypeForISO(uint16_t aui16_ddi)
 {
   bool b_isSetpoint = false;
   bool b_isRequest = false;
@@ -247,11 +247,13 @@ bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_ele
     }
   }
 
-  if ( rl_elementDDI.ui16_DDI == DDI() )
+#if CHECK_IF_REMOVE_NECESSARY
+  if ( aui16_ddi == DDI() )
   {
     b_isSetpoint = rl_elementDDI.b_isSetpoint;
     en_valueGroup = rl_elementDDI.en_valueGroup;
   }
+#endif
 
   if (en_command != ProcessCmd_c::noCommand)
   {

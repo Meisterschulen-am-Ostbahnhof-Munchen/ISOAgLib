@@ -18,7 +18,6 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/elementddi_s.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 
 namespace __IsoAgLib {
@@ -126,7 +125,7 @@ public:
     extract data from ISO commands and save it to member class
     @param rl_elementDDI
   */
-  bool resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_elementDDI);
+  bool resolveCommandTypeForISO(uint16_t aui16_ddi);
 
   /**
     function to translate the string data into flag values;

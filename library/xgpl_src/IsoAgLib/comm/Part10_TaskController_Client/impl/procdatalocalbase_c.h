@@ -57,19 +57,19 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataLocalBase_c( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
+  ProcDataLocalBase_c( uint16_t aui16_ddi, uint16_t aui16_element,
                        const IsoName_c& acrc_isoName,
                        const IsoName_c *apc_externalOverridingIsoName = NULL,
                        bool ab_cumulativeValue = false,
                        IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                        int ai_multitonInst = 0
                        )
-    : ProcDataBase_c( aps_elementDDI, aui16_element,
+    : ProcDataBase_c( aui16_ddi, aui16_element,
                       acrc_isoName, apc_externalOverridingIsoName, apc_processDataChangeHandler, ai_multitonInst
                      )
 
     {
-      init( aps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue
+      init( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue
           , apc_processDataChangeHandler
           , ai_multitonInst);
     }
@@ -103,7 +103,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
+  void init(uint16_t aui16_ddi, uint16_t aui16_element,
             const IsoName_c& acrc_isoName,
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
@@ -214,7 +214,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
 private:
   friend class ManageMeasureProgLocal_c; /** allow access to eepromVal() and resetEeprom() */
   friend class ProcDataLocal_c; /** allow access to eepromVal() and resetEeprom() */
-  friend class ProcDataLocalSimpleSetpoint_c; /** allow access to eepromVal() and resetEeprom() */
 
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ProcDataLocalBase_c& acrc_src );

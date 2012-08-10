@@ -160,9 +160,6 @@ public:
     {return SetpointLocal_c::checkMeasurement(ai32_val, ab_sendIfError);};
  private:
   friend class iProcDataLocal_c;
-  friend class iProcDataLocalSimpleMeasure_c;
-  friend class iProcDataLocalSimpleSetpoint_c;
-  friend class iProcDataLocalSimpleSetpointSimpleMeasure_c;
 };
 
 }

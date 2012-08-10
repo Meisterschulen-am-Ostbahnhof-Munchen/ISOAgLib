@@ -27,14 +27,6 @@ namespace __IsoAgLib {
 namespace IsoAgLib {
   // predeclare the possible event source classes
   class iProcDataLocal_c;
-  class iProcDataLocalSimpleMeasure_c;
-  class iProcDataLocalSimpleSetpoint_c;
-  class iProcDataLocalSimpleSetpointSimpleMeasure_c;
-  class iProcDataRemote_c;
-  class iProcDataRemoteSimpleMeasure_c;
-  class iProcDataRemoteSimpleSetpoint_c;
-  class iProcDataRemoteSimpleSetpointSimpleMeasure_c;
-  class iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c;
 
 /** as the handler functions are called by classes of different types, the functions
     deliver a pointer to the calling instance as variable of type EventSource_c.
@@ -46,21 +38,7 @@ class EventSource_c {
   EventSource_c( __IsoAgLib::ProcDataBase_c* apc_src ) : pc_src(apc_src) {};
   iProcDataLocal_c* makeIProcDataLocal( void );
 
-  iProcDataLocalSimpleMeasure_c* makeIProcDataLocalSimpleMeasure( void );
 
-  iProcDataLocalSimpleSetpoint_c* makeIProcDataLocalSimpleSetpoint( void );
-
-  iProcDataLocalSimpleSetpointSimpleMeasure_c* makeIProcDataLocalSimpleSetpointSimpleMeasure( void );
-
-  iProcDataRemote_c* makeIProcDataRemote( void );
-
-  iProcDataRemoteSimpleMeasure_c* makeIProcDataRemoteSimpleMeasure( void );
-
-  iProcDataRemoteSimpleSetpoint_c* makeIProcDataRemoteSimpleSetpoint( void );
-
-  iProcDataRemoteSimpleSetpointSimpleMeasure_c* makeIProcDataRemoteSimpleSetpointSimpleMeasure( void );
-
-  iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c* makeIProcDataRemoteSimpleSetpointSimpleMeasureCombined( void );
  private:
   __IsoAgLib::ProcDataBase_c* pc_src;
 };

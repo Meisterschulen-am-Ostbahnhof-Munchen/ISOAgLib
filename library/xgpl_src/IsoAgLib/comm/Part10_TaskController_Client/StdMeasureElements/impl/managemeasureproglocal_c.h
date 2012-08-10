@@ -120,7 +120,6 @@ private:
 
  protected:
   friend class ProcDataLocal_c;
-  friend class ProcDataLocalSimpleSetpoint_c;
   /**
     deliver a reference to the list of measure prog objects
     @return reference to list of measure prog entries

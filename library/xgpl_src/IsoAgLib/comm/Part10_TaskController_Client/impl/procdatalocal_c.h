@@ -116,7 +116,7 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataLocal_c(const IsoAgLib::ElementDdi_s* ps_elementDDI,
+  ProcDataLocal_c(uint16_t aui16_ddi,
                   uint16_t aui16_element,
                   const IsoName_c& acrc_isoName,
                   const IsoName_c *apc_externalOverridingIsoName = NULL,
@@ -156,7 +156,7 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
+  void init(uint16_t aui16_ddi,
             uint16_t aui16_element,
             const IsoName_c& acrc_isoName,
             const IsoName_c *apc_externalOverridingIsoName = NULL,

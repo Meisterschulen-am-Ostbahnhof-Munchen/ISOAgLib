@@ -98,9 +98,6 @@ public:
     {return MeasureProgLocal_c::checkDoSend(ren_doSend);};
  private:
   friend class iProcDataLocal_c;
-  friend class iProcDataLocalSimpleMeasure_c;
-  friend class iProcDataLocalSimpleSetpoint_c;
-  friend class iProcDataLocalSimpleSetpointSimpleMeasure_c;
 };
 
 }

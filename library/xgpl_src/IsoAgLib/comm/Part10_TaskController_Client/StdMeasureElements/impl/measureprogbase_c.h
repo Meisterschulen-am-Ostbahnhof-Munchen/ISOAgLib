@@ -41,8 +41,6 @@ private:
 public:
   /** allow explicit MeasureProgLocal_c the access to private elements */
   friend class MeasureProgLocal_c;
-  /** allow explicit MeasureProgRemote_c the access to private elements */
-  friend class MeasureProgRemote_c;
 
   /**
     constructor which can optional set most element vars

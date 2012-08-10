@@ -258,17 +258,8 @@ private:
   friend class IsoName_c;
   friend class iProcess_c;
   friend class iProcDataLocal_c;
-  friend class iProcDataRemote_c;
-  friend class iProcDataLocalSimpleMeasure_c;
-  friend class iProcDataRemoteSimpleMeasure_c;
   friend class iMeasureProgLocal_c;
   friend class iSetpointRegister_c;
-  friend class iProcDataLocalSimpleSetpoint_c;
-  friend class iProcDataRemoteSimpleSetpoint_c;
-  friend class iProcDataLocalSimpleSetpointSimpleMeasure_c;
-  friend class iProcDataRemoteSimpleSetpointSimpleMeasure_c;
-  friend class iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c;
-  friend class iMeasureProgRemote_c;
   friend class iVtObjectAuxiliaryFunction2_c;
   friend iEepromIo_c& operator<<(iEepromIo_c& rc_stream, const iIsoName_c& rc_data );
   friend iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data );
