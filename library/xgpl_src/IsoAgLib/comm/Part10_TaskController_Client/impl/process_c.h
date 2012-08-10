@@ -321,10 +321,7 @@ private: // Private attributes
   */
   DevPropertyHandler_c mc_devPropertyHandler;
 
-  /** last timestamp with FilterBox_c check */
-  int32_t mi32_lastFilterBoxTime;
-
-  STL_NAMESPACE::list<IsoName_c> ml_filtersToDeleteISO;
+  //STL_NAMESPACE::list<IsoName_c> ml_filtersToDeleteISO;
   const IsoName_c* mpc_tcISOName;
   uint8_t mui8_lastTcStatus;
 

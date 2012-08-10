@@ -192,6 +192,9 @@ void SetpointLocal_c::acceptNewMaster( bool ab_accept){
 
 void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
 {
+#ifdef USE_ANALYSE_PROCDATA_IMPL
+  std::cout << __FUNCTION__ << std::endl;
+#endif
   if (!existMaster())
   { // create register entry for master value
     mvec_register.push_front(SetpointRegister_c());
@@ -266,6 +269,9 @@ void SetpointLocal_c::respondAckNack(){
          )
       { // item is no master and is not sent from actual master
         // send ignore msg
+#ifdef USE_ANALYSE_PROCDATA_IMPL
+        std::cout << __FUNCTION__ << "#1" << std::endl;
+#endif
         sendSetpointVals(*pc_iter, true, NO_VAL_32S);
       }
       else
@@ -273,6 +279,9 @@ void SetpointLocal_c::respondAckNack(){
         // set iterator for actual master to actual list item
         if (pc_iter->master()) mpc_master = pc_iter;
         // send the newly accepted values as positive response
+#ifdef USE_ANALYSE_PROCDATA_IMPL
+        std::cout << __FUNCTION__ << "#2" << std::endl;
+#endif
         sendSetpointVals( master());
       } // else item is master
     }

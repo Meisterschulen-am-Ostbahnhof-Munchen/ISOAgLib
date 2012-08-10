@@ -64,7 +64,6 @@ MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& acrc_src)
 
 void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& acrc_src )
 { // copy element vars
-  mb_triggeredIncrement = acrc_src.mb_triggeredIncrement;
   mi32_lastMasterVal = acrc_src.mi32_lastMasterVal;
   mi32_medCnt = acrc_src.mi32_medCnt;
   mi32_medSum = acrc_src.mi32_medSum;
@@ -124,14 +123,15 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
   } // for
 
   // send first values: if now without success mark for later resend with true
+  bool triggeredIncrement = false;
   if (b_sendVal)
-    mb_triggeredIncrement = !sendRegisteredVals(ren_doSend);
+    triggeredIncrement = !sendRegisteredVals(ren_doSend);
 
   // set the timer period for process_c to a low value (maybe the new programm triggers soon)
   getProcessInstance4Comm().resetTimerPeriod();
 
   // return if successful sent starting values
-  return mb_triggeredIncrement;
+  return triggeredIncrement;
 }
 
 bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
@@ -310,42 +310,41 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin();
        pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {
-    mb_triggeredIncrement = false;
+    bool triggeredIncrement = false;
     switch (pc_iter->type())
     {
       case Proc_c::TimeProp:
-        b_singleTest = pc_iter->updateTrigger(i32_time);
-        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
+        triggeredIncrement = pc_iter->updateTrigger(i32_time);
+        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
         // update med/integ
         updatePropDepVals();
         break;
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        b_singleTest = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
+        triggeredIncrement = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
         #endif
-        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
+        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
         // update med/integ
         updatePropDepVals();
         break;
       case Proc_c::OnChange:
-        b_singleTest = pc_iter->updateTrigger(val());
-        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
+        triggeredIncrement = pc_iter->updateTrigger(val());
+        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
         break;
       case Proc_c::NullType: break; // just to make compiler happy
       default: ;
     } // switch
 
-    // if mb_triggeredIncrement == true the registered values should be sent
-    if (mb_triggeredIncrement)
+    // if triggeredIncrement == true the registered values should be sent
+    if (triggeredIncrement)
     { // send the registered values
       if (!minMaxLimitsPassed(pc_iter->doSend()))
       {
         // omit this value send
-        mb_triggeredIncrement = false;
         continue;
       }
-      // if at least one send try had success reset mb_triggeredIncrement
-      if (sendRegisteredVals()) mb_triggeredIncrement = false;
+      // if at least one send try had success reset triggeredIncrement
+      sendRegisteredVals();
     }
   } // for
 }
@@ -451,18 +450,18 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {
-    mb_triggeredIncrement = false;
+    bool triggeredIncrement = false;
     b_singleTest = false;
     i32_nextTimePeriod = 0;
     switch (pc_iter->type())
     {
       case Proc_c::TimeProp:
-        b_singleTest = pc_iter->updateTrigger(i32_time);
-        // if b_singleTest is true set mb_triggeredIncrement to true,
+        triggeredIncrement = pc_iter->updateTrigger(i32_time);
+        // if b_singleTest is true set triggeredIncrement to true,
         // otherwise let it unchanged
-        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
+        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
         // update med/integ
-        if ((b_singleTest)&&(men_accumProp == Proc_c::AccumTime))updatePropDepVals();
+        if ((triggeredIncrement)&&(men_accumProp == Proc_c::AccumTime))updatePropDepVals();
 
         // calculate next timer period
         i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_time);
@@ -471,13 +470,13 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
       case Proc_c::DistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         i32_distTheor = getTracMoveInstance4Comm().distTheor();
-        b_singleTest = pc_iter->updateTrigger(i32_distTheor);
+        triggeredIncrement = pc_iter->updateTrigger(i32_distTheor);
         #else
         i32_distTheor = 0;
         #endif
-        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
+        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
         // update med/integ
-        if ((b_singleTest)&&(men_accumProp == Proc_c::AccumTime))updatePropDepVals();
+        if ((triggeredIncrement)&&(men_accumProp == Proc_c::AccumTime))updatePropDepVals();
 
         // calculate next timer period
         i32_nextTimePeriod = pc_iter->nextTriggerTime(i32_distTheor);
@@ -485,7 +484,7 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
         break;
       case Proc_c::OnChange:
         b_singleTest = pc_iter->updateTrigger(val());
-        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
+        //triggeredIncrement = (b_singleTest)? true : triggeredIncrement;
         break;
       default:
         break;
@@ -502,19 +501,16 @@ bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
       }
     }
 
-    // if mb_triggeredIncrement == true the registered values should be sent
+    // if triggeredIncrement == true the registered values should be sent
     // if needed an old unsuccessfull send try is redone (deactivated!)
-    if (mb_triggeredIncrement)
+    if (triggeredIncrement)
     {
       if (!minMaxLimitsPassed(pc_iter->doSend()))
       {
         // omit this value send
-        mb_triggeredIncrement = false;
         continue;
       }
-      // send the registered values
-      // if at least one send try had success reset mb_triggeredIncrement
-      if (sendRegisteredVals(pc_iter->doSend())) mb_triggeredIncrement = false;
+      sendRegisteredVals(pc_iter->doSend());
     }
   }
 

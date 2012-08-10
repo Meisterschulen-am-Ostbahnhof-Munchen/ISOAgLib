@@ -52,7 +52,6 @@ Process_c::init()
   isoaglib_assert (!initialized());
 
   getSchedulerInstance().registerClient( this );
-  mi32_lastFilterBoxTime = 0;
   __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
   mpc_tcISOName = NULL;
   mui8_lastTcStatus = 0;
@@ -100,21 +99,6 @@ void Process_c::close()
 */
 bool Process_c::timeEvent( void ){
   bool b_result = true;
-  int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
-
-  if ( ml_filtersToDeleteISO.size() > 0)
-  {
-    for (STL_NAMESPACE::list<IsoName_c>::const_iterator iter = ml_filtersToDeleteISO.begin();
-         iter != ml_filtersToDeleteISO.end();
-         iter++)
-    {
-      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FFLU, (PROCESS_DATA_PGN << 8) ), NULL, &(*iter), 8)))
-      { // corresponding FilterBox_c exist -> delete it
-        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FFLU, (PROCESS_DATA_PGN << 8) ), NULL, &(*iter), 8));
-      }
-    }
-    ml_filtersToDeleteISO.clear();
-  }
 
   //call DevPropertyHandler_c timeEvent
   mc_devPropertyHandler.timeEvent();
@@ -141,11 +125,7 @@ bool Process_c::timeEvent( void ){
     }
     Scheduler_Task_c::setTimePeriod(ui16_nextTimePeriod); // + Scheduler_Task_c::getEarlierInterval());
   }
-  // if local active member exist - check every second if
-  // filters for targeted or partner process data should be created
-  if ((i32_time - mi32_lastFilterBoxTime) > 1000)  {
-    mi32_lastFilterBoxTime = i32_time;
-  }
+
   // the other list elements doesn't need periodic actions
   return b_result;
 };
