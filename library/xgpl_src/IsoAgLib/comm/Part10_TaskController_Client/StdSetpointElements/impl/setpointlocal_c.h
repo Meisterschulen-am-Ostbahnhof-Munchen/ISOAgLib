@@ -13,7 +13,7 @@
 #ifndef SETPOINT_LOCAL_H
 #define SETPOINT_LOCAL_H
 
-#include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointbase_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processelementbase_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointregister_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 
@@ -22,6 +22,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class ProcDataLocal_c;
+class SetpointRegister_c;
 
 /**
   object for managing setpoints commanded from remote to local process data objects;
@@ -31,7 +32,7 @@ class ProcDataLocal_c;
   semi automatic and manual handling of received values
   @author Dipl.-Inform. Achim Spangler
 */
-class SetpointLocal_c : public SetpointBase_c  {
+class SetpointLocal_c : public ProcessElementBase_c  {
 private:
   typedef STL_NAMESPACE::list<SetpointRegister_c> Vec_SetpointRegister;
   typedef STL_NAMESPACE::list<SetpointRegister_c>::iterator Vec_SetpointRegisterIterator;
@@ -42,8 +43,7 @@ public:
     default constructor which can set needed pointers to containing objects
     @param apc_processData pointer to containing ProcessData instance
   */
-  SetpointLocal_c(
-    ProcDataLocal_c *const apc_processData = NULL ) : SetpointBase_c( apc_processData )
+  SetpointLocal_c( ProcDataLocal_c *const apc_processData = NULL ) : ProcessElementBase_c( apc_processData)
     {init( apc_processData );};
 
   /**
@@ -64,6 +64,9 @@ public:
    SetpointLocal_c( const SetpointLocal_c& acrc_src );
   /** default destructor which has nothing to do */
   ~SetpointLocal_c();
+
+  SetpointLocal_c( ProcDataLocal_c &arc_processData );
+
 
   /**
     retreive simple master setpoint
@@ -213,7 +216,9 @@ public:
     @return true -> all planned activities performed in allowed time
   */
   virtual bool timeEvent( void );
-
+  
+  /**  process a setpoint message */
+  void processMsg( const ProcessPkg_c& pkg );
 
   /**
      send a sub-setpoint (selected by value group) to a specified target (selected by GPT)
@@ -233,6 +238,21 @@ public:
   */
   bool sendMasterSetpointVal( const IsoName_c& ac_targetISOName) const
    { return sendSetpointForGroup(ac_targetISOName, ProcessCmd_c::exactValue, ProcessCmd_c::setValue );};
+
+protected: // Protected methods
+  /**
+    send the values of an setpoint entry; if wanted 
+    the values can be overridden with a special value
+  
+    possible errors:
+        * dependant error in ProcDataLocal_c commander of this setpoint isn't found in Monitor List
+        * dependant error in CanIo_c on CAN send problems
+    @param acrc_src reference to SetpointRegister_c with registered setpoints
+    @param ab_override true -> override registered setpoint with ai32_overrideVal
+    @param ai32_overrideVal value which can override registered setpoint on ab_override == true
+  */
+  void sendSetpointVals( const SetpointRegister_c& acrc_src,
+                          bool ab_override = false, int32_t ai32_overrideVal = 0)const;
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
@@ -269,7 +289,7 @@ private: // Private methods
     (the base function only delivers ProcDataLocal_c )
     @return pointer to containing ProcDataLocal_c instance
   */
-  ProcDataLocal_c* pprocessData()
+  ProcDataLocal_c* pprocessData() const
   {
     return ((ProcDataLocal_c*)((void*)ProcessElementBase_c::pprocessData()));
   };

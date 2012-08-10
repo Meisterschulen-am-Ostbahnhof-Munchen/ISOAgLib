@@ -15,11 +15,13 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "setpointlocal_c.h"
+#include "setpointregister_c.h"
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocal_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocal_c.h>
 
 #if DEBUG_HEAP_USEAGE
   #ifdef SYSTEM_PC
@@ -35,13 +37,10 @@ static uint16_t sui16_setpointLocalTotal = 0;
 #endif
 
 namespace __IsoAgLib {
-/**
-  initialise this SetpointLocal_c to a well defined starting condition
-  @param apc_processData pointer to containing ProcessData instance
-*/
+
 void SetpointLocal_c::init( ProcDataLocal_c *const apc_processData )
 {
-  SetpointBase_c::init( apc_processData );
+  set( apc_processData );
   // set mpc_registerCache to a well defined value
   mpc_registerCache = mvec_register.begin();
   #if DEBUG_HEAP_USEAGE
@@ -61,14 +60,9 @@ void SetpointLocal_c::init( ProcDataLocal_c *const apc_processData )
 
 }
 
-/**
-  assginment from another object
-  @param acrc_src source SetpointLocal_c instance
-  @return reference to source for cmd like "setp1 = setp2 = setp3;"
-*/
 const SetpointLocal_c& SetpointLocal_c::operator=( const SetpointLocal_c& acrc_src ){
   // first call base assignment operator
-  SetpointBase_c::operator=(acrc_src);
+  ProcessElementBase_c::operator=(acrc_src);
 
   assignFromSource( acrc_src );
 
@@ -76,15 +70,11 @@ const SetpointLocal_c& SetpointLocal_c::operator=( const SetpointLocal_c& acrc_s
   return *this;
 }
 
-/**
-  copy constructor for SetpointLocal
-  @param acrc_src source SetpointLocal_c instance
-*/
 SetpointLocal_c::SetpointLocal_c( const SetpointLocal_c& acrc_src )
-  : SetpointBase_c( acrc_src){
+  : ProcessElementBase_c( acrc_src){
   assignFromSource( acrc_src );
 }
-/** base function for assignment of element vars for copy constructor and operator= */
+
 void SetpointLocal_c::assignFromSource( const SetpointLocal_c& acrc_src )
 {
   // now copy element vars
@@ -109,7 +99,6 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& acrc_src )
   mb_allowedDeltaPercent = acrc_src.mb_allowedDeltaPercent;
 }
 
-/** default destructor which has nothing to do */
 SetpointLocal_c::~SetpointLocal_c(){
   #if DEBUG_HEAP_USEAGE
   sui16_setpointLocalTotal -= ( mvec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
@@ -119,13 +108,6 @@ SetpointLocal_c::~SetpointLocal_c(){
   #endif
 }
 
-/**
-  check if unhandled new setpoint from actual master was received
-  -> check the actual master first before answering the other unhandled
-  @see unhandledMaster
-  @see acceptNewMaster
-  @return true -> master setpoint comanding member sent new setpoint
-*/
 bool SetpointLocal_c::existUnhandledMaster() {
   int8_t i8_result = -1;
 
@@ -156,16 +138,6 @@ bool SetpointLocal_c::existUnhandledMaster() {
   return ( i8_result > 0 );
 }
 
-/**
-  deliver the new sent setpoint values from the actual master;
-  if no unhandled setpoint of the master exist, return the actual accepted value
-
-  possible errors:
-      * Err_c::elNonexistent no master setpoint found
-  @see existUnhandledMaster
-  @see acceptNewMaster
-  @return reference to master setpoint register
-*/
 SetpointRegister_c& SetpointLocal_c::unhandledMaster(){
   if (existUnhandledMaster())
   { // no unhandled master found
@@ -174,17 +146,6 @@ SetpointRegister_c& SetpointLocal_c::unhandledMaster(){
   return *mpc_registerCache;
 }
 
-/**
-  if there exist a new unhandled setpoint from the master setpoint sender;
-  accept the new value with this command
-  otherwise the old value is still used and answered
-
-  possible errors:
-      * Err_c::elNonexistent no master setpoint found
-  @see existUnhandledMaster
-  @see unhandledMaster
-  @param ab_accept true -> new setpoint of master is accepted -> send positive notify
-*/
 void SetpointLocal_c::acceptNewMaster( bool ab_accept){
   if (existMaster())
   { // a master setpoint exist
@@ -229,12 +190,6 @@ void SetpointLocal_c::acceptNewMaster( bool ab_accept){
   }
 }
 
-/**
-  set the master setpoint manually
-  (in some cases remote systems request informations
-   through process data setpoints)
-  @param ai32_val wanted setpoint value
-*/
 void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
 {
   if (!existMaster())
@@ -253,11 +208,6 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
   master().setISOName(IsoName_c::IsoNameUnspecified());
 }
 
-/**
-  deliver the count of unhandled setpoints
-  @see unhandledInd
-  @return count of unhandled received setpoints
-*/
 uint8_t SetpointLocal_c::unhandledCnt()const{
   uint8_t b_result = 0;
   for (Vec_SetpointRegisterConstIterator pc_iter = mvec_register.begin();
@@ -272,16 +222,6 @@ uint8_t SetpointLocal_c::unhandledCnt()const{
   return b_result;
 }
 
-/**
-  deliver the aui8_ind of the unhandled setpoints
-  @param aui8_ind position of the wanted setpoint entry in list of unhandled setpoints
-    (first entry: aui8_ind == 0!!)
-
-  possible errors:
-      * Err_c::range there are less than aui8_ind unhandled setpoints found
-  @see unhandledCnt
-  @return wanted unhandled setpoint
-*/
 SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t aui8_ind){
   uint8_t b_counter = 0;
   for (mpc_registerCache = mvec_register.begin();
@@ -306,29 +246,11 @@ SetpointRegister_c& SetpointLocal_c::unhandledInd( uint8_t aui8_ind){
   return *mpc_registerCache;
 }
 
-/**
-  deliver the first unhandled entry
-
-  possible errors:
-      * Err_c::elNonexistent no unhandled stepoint exist
-  @see unhandledCnt
-  @return reference to first unhandled new received setpoint entry
-*/
 SetpointRegister_c& SetpointLocal_c::unhandledFirst(){
   // set result value to alowed val
   return unhandledInd( 0);
 }
 
-/**
-  answer all unhandled setpoint enties;
-  if new master setpoint was set, send the master
-  the new accepted setpoint value;
-  send all others NO_VAL_32S
-
-  possible errors:
-      * dependant error in ProcDataLocal_c commander of some setpoint isn't found in Monitor List
-      * dependant error in CanIo_c on CAN send problems
-*/
 void SetpointLocal_c::respondAckNack(){
   // now send NO_VAL_32S for all other unhandled setpoints
   for (Vec_SetpointRegisterIterator pc_iter = mvec_register.begin();
@@ -357,15 +279,6 @@ void SetpointLocal_c::respondAckNack(){
   }
 }
 
-/**
-  check if the given measuremet value is correct for the actual
-  master setpoint;
-  @param ai32_val measured value
-  @param ab_sendIfError true -> if actual value exceeds setpoint limits
-         the actual value is sent as notification (default true)
-  @return 0 -> correct; (n<0) -> measurement is delta n to low;
-          (n>0) -> measurement is delta n to high
-*/
 int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError) {
   int32_t i32_delta = 0;
 
@@ -424,12 +337,6 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError
   return i32_delta;
 }
 
-/**
-  perform periodic actions
-  (here: check if measure val is in limits; delete old handled not master setpoints and
-          delete master entry if it's isoName isn't registered active any more)
-  @return true -> all planned activities performed in allowed time
-*/
 bool SetpointLocal_c::timeEvent( void ){
   if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
   int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
@@ -486,13 +393,19 @@ bool SetpointLocal_c::timeEvent( void ){
 
   return true;
 }
-/**
-  send a sub-setpoint (selected by value group) to a specified target (selected by GPT)
-  @param ac_targetISOName ISOName of target
-  @param en_valueGroup: min/max/exact/default
-  @param en_command
-  @return true -> successful sent
-*/
+
+void SetpointLocal_c::processMsg( const ProcessPkg_c& pkg ){
+  // check if its a request for actual setpoint
+  if (pkg.mc_processCmd.checkIsRequest())
+  {
+    processRequest(pkg);
+  }
+  else
+  { // set setpoint value
+    processSet(pkg);
+  }
+}
+
 bool SetpointLocal_c::sendSetpointForGroup(const IsoName_c& ac_targetISOName,
                                            ProcessCmd_c::ValueGroup_t en_valueGroup,
                                            ProcessCmd_c::CommandType_t en_command) const
@@ -504,10 +417,6 @@ bool SetpointLocal_c::sendSetpointForGroup(const IsoName_c& ac_targetISOName,
   return processDataConst().sendValISOName( pkg, ac_targetISOName, masterConst().valForGroup(en_valueGroup));
 }
 
-
-/**
-  process a setpoint request for local process data
-*/
 void SetpointLocal_c::processRequest( const ProcessPkg_c& pkg ) const
 {
   // check if master setpoint is defined
@@ -522,9 +431,6 @@ void SetpointLocal_c::processRequest( const ProcessPkg_c& pkg ) const
   }
 }
 
-/**
-  process a setpoint set for local process data
-*/
 void SetpointLocal_c::processSet( const ProcessPkg_c& pkg )
 {
   Vec_SetpointRegisterIterator pc_callerIter = mvec_register.begin();
@@ -609,6 +515,50 @@ void SetpointLocal_c::processSet( const ProcessPkg_c& pkg )
   // call handler function if handler class is registered
   if ( processDataConst().getProcessDataChangeHandler() != NULL )
     processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), cui32_ddi, i32_val, c_callerISOName.toConstIisoName_c(), b_change );
+}
+
+void SetpointLocal_c::sendSetpointVals( const SetpointRegister_c& acrc_src,
+                                       bool ab_override, int32_t ai32_overrideVal) const
+{
+  int32_t i32_value = 0;
+//currently b_isCmd is set, but not used anywhere - just left there for reference...
+//bool b_isCmd = false;
+  ProcessCmd_c::ValueGroup_t en_valueGroup = ProcessCmd_c::noValue;
+
+//if ((ai32_overrideVal == SETPOINT_RELEASE_COMMAND)
+// || (ai32_overrideVal == SETPOINT_ERROR_COMMAND)
+//    ) b_isCmd = true;
+
+  if (acrc_src.existExact())
+  { // exact setpoint exist
+    en_valueGroup = ProcessCmd_c::exactValue;
+    i32_value = (ab_override) ? ai32_overrideVal : acrc_src.exact();
+  }
+  else if (acrc_src.existMin())
+  { // min setpoint exist
+    en_valueGroup = ProcessCmd_c::minValue;
+    i32_value = (ab_override) ? ai32_overrideVal : acrc_src.min();
+  }
+  else if (acrc_src.existMax())
+  { // max setpoint exist
+     en_valueGroup = ProcessCmd_c::maxValue;
+     i32_value = (ab_override) ? ai32_overrideVal : acrc_src.max();
+  }
+  else if (acrc_src.existDefault())
+  { // default setpoint exist
+     en_valueGroup = ProcessCmd_c::defaultValue;
+     i32_value = (ab_override) ? ai32_overrideVal : acrc_src.getDefault();
+  }
+
+  if (en_valueGroup != ProcessCmd_c::noValue)
+  {
+     ProcessPkg_c pkg;
+     // prepare general command in process pkg
+     pkg.mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                              en_valueGroup, ProcessCmd_c::setValue);
+
+     pprocessData()->sendValISOName( pkg, acrc_src.isoName(), i32_value);
+  }
 }
 
 } // end of namespace __IsoAgLib
