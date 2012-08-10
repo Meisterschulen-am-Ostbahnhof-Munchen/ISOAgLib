@@ -82,16 +82,15 @@ DevicePool_c::isDirty() const
 void
 DevicePool_c::updateLocale()
 {
-	const std::string dvpLabel("DVP");
 	deviceMap_t::iterator it;
 	for (it = m_DevicePool.begin(); it != m_DevicePool.end(); it++)
 	{
-		if (it->second && it->second->getObjectType() == dvpLabel)
+    if (it->second && it->second->getObjectType() == DeviceObject_c::DeviceValuePresentationObject)
 			it->second->setDirty(true);
 	}
 
-	if (getObject(0, "DVC"))
-		getObject(0, "DVC")->setDirty(true);
+	if (getObject(0, DeviceObject_c::DeviceObject))
+		getObject(0, DeviceObject_c::DeviceObject)->setDirty(true);
 }
 
 //
@@ -114,7 +113,7 @@ DevicePool_c::setUploaded()
 // getObject(objId, objectType)
 //	retrieve an object from the pool based on object ID and type ("DET", "DVC"...)
 DeviceObject_c*
-DevicePool_c::getObject(uint16_t objId, const std::string& objectType) const
+DevicePool_c::getObject(uint16_t objId, DeviceObject_c::ObjectType_e objectType) const
 {
 // retreive the object based on ID
 	deviceMap_t::const_iterator it = m_DevicePool.find(objId);
@@ -152,6 +151,7 @@ DevicePool_c::Add(DeviceObject_c* devObj)
 	return devObj->getObjectId();
 }
 
+#if 0
 //
 //	init(bytestream, count)
 //	initialize the object pool from buffer.  This is useful when creating
@@ -182,6 +182,7 @@ DevicePool_c::init(const HUGE_MEM uint8_t* bytestream, size_t count)
 	m_isDirty = false;
 	return true;
 }
+#endif
 
 //
 // createDeviceObject()
@@ -209,54 +210,89 @@ DevicePool_c::createDeviceObject(const HUGE_MEM uint8_t* bp, size_t cnt)
 	return 0;
 }
 
-//
-// getBytestream()
-//	retrieve the device pool as a stream of bytes suitable for upload to the TC
-const std::vector<uint8_t>&
-DevicePool_c::getBytestream()
+uint16_t
+DevicePool_c::getByteStreamSize() const
 {
-	m_Bytestream.clear();
-
 	DeviceObject_c* devObject;
-	
-	deviceMap_t::iterator it;
+	deviceMap_t::const_iterator it;
+  uint16_t size_total = 0;
 	for (it = m_DevicePool.begin(); it != m_DevicePool.end(); it++)
 	{
 		devObject = it->second;
-		if (!devObject->formatBytestream(m_Bytestream))
+    size_total += devObject->getSizeInBytes();
+	}
+
+	return size_total;
+}
+
+//
+// getByteStream()
+//	retrieve the device pool as a stream of bytes suitable for upload to the TC
+bool
+DevicePool_c::getByteStream(uint8_t* destMemory) const
+{
+	DeviceObject_c* devObject;
+	
+	deviceMap_t::const_iterator it;
+  uint16_t current_position = 0;
+	for (it = m_DevicePool.begin(); it != m_DevicePool.end(); it++)
+	{
+		devObject = it->second;
+		if (!devObject->formatBytestream(destMemory, current_position))
 		{
-			m_Bytestream.clear();
-			break;
+      return false;
 		}
 	}
 
-	return m_Bytestream;
+	return true;
+}
+
+uint16_t
+DevicePool_c::getDirtyByteStreamSize() const
+{
+	if (m_isDirty)
+	{
+		return getByteStreamSize();
+	}
+
+	DeviceObject_c* devObject;
+	deviceMap_t::const_iterator it;
+  uint16_t size_total = 0;
+  for (it = m_DevicePool.begin(); it != m_DevicePool.end(); it++)
+	{
+		devObject = it->second;
+		if (devObject->isDirty())
+		{
+      size_total += devObject->getSizeInBytes();
+		}
+	}
+	return size_total;
+
 }
 
 //
 // getDirtyBytestream()
 //	retrieve the bytes of changed (dirty) objects
 bool
-DevicePool_c::getDirtyBytestream(std::vector<uint8_t>& byteStream)
+DevicePool_c::getDirtyByteStream(uint8_t* destMemory) const
 {
 	if (m_isDirty)
 	{
-		byteStream = getBytestream();
-		return true;
+		return getByteStream(destMemory);
 	}
 
 	DeviceObject_c* devObject;
 	bool retval = false;
 
-	byteStream.clear();
-	deviceMap_t::iterator it;
+	deviceMap_t::const_iterator it;
+  uint16_t current_position = 0;
 	for (it = m_DevicePool.begin(); it != m_DevicePool.end(); it++)
 	{
 		devObject = it->second;
 		if (devObject->isDirty())
 		{
 			retval = true;
-			devObject->formatBytestream(byteStream);
+			devObject->formatBytestream(destMemory, current_position);
 		}
 	}
 	return retval;
@@ -289,69 +325,101 @@ DevicePool_c::updateDvpObject(uint16_t objId, float scale, int32_t offset, uint8
 /////////////////////////////////////////////////////////////////////
 // DeviceObject_c
 /////////////////////////////////////////////////////////////////////
-bool
-DeviceObject_c::formatBytestream(std::vector<uint8_t>& byteStream)
+
+const char* getObjectTypeString(DeviceObject_c::ObjectType_e objecttype)
+{
+  switch (objecttype)
+  {
+  case DeviceObject_c::DeviceObject: return "DVC";
+  case DeviceObject_c::DeviceElementObject: return "DET";
+  case DeviceObject_c::DeviceProcessDataObject: return "DPD";
+  case DeviceObject_c::DevicePropertyObject: return "DPT";
+  case DeviceObject_c::DeviceValuePresentationObject: return "DVP";
+  case DeviceObject_c::ObjectTypeUndefined: break;
+  }
+  isoaglib_assert(false);
+  return "NOT"; 
+}
+
+uint16_t
+DeviceObject_c::getSizeInBytes() const
 {
 	if (m_ObjectId == 65535)	// NULL object ID
-		return false;
+		return 0;
 
-	format(byteStream, m_ObjectType.c_str());
-	format(byteStream, m_ObjectId);
+  // object type (3 bytes) + object id (2 bytes)
+  return 5;
+}
+
+bool
+DeviceObject_c::formatBytestream(uint8_t* destMemory, uint16_t& position) const
+{
+  std::cout << (uint32_t)destMemory << " ID = " << m_ObjectId << std::endl;
+
+	if (m_ObjectId == 65535)	// NULL object ID
+  {
+    std::cout << "m_ObjectId = " << m_ObjectId << std::endl;
+		return false;
+  }
+
+	format(destMemory, getObjectTypeString(m_ObjectType), position);
+	format(destMemory, m_ObjectId, position);
 
 	return true;
 }
 
 void
-DeviceObject_c::validateSize(std::string& str, size_t len)
+DeviceObject_c::validateSize(std::string& str, size_t len) const
 {
 	if (str.size() > len)
 		str.resize(len);
 }
 
 void
-DeviceObject_c::format(std::vector<uint8_t>& byteStream, uint8_t val)
+DeviceObject_c::format(uint8_t* byteStream, uint8_t val, uint16_t& position) const
 {
-	byteStream.push_back(val);
+  byteStream[position] = val;
+  ++position;
 }
 
 void
-DeviceObject_c::format(std::vector<uint8_t>& byteStream, uint16_t val)
+DeviceObject_c::format(uint8_t* byteStream, uint16_t val, uint16_t& position) const
 {
-	byteStream.push_back((uint8_t)(val & 0xff));
-	byteStream.push_back((uint8_t)((val >> 8) & 0xff));
+  byteStream[position] = (uint8_t)(val & 0xff);
+  byteStream[position + 1] = (uint8_t)((val >> 8) & 0xff);
+  position += 2;
 }
 
 void
-DeviceObject_c::format(std::vector<uint8_t>& byteStream, uint32_t val)
+DeviceObject_c::format(uint8_t* byteStream, uint32_t val, uint16_t& position) const
 {
-	format(byteStream, (uint16_t)(val & 0xffff));
-	format(byteStream, (uint16_t)((val >> 16) & 0xffff));
+	format(byteStream, (uint16_t)(val & 0xffff), position);
+	format(byteStream, (uint16_t)((val >> 16) & 0xffff), position);
 }
 
 void
-DeviceObject_c::format(std::vector<uint8_t>& byteStream, const std::string& str)
+DeviceObject_c::format(uint8_t* byteStream, const std::string& str, uint16_t& position) const
 {
-	format(byteStream, (uint8_t)str.size());
-	format(byteStream, str.c_str());
+	format(byteStream, (uint8_t)str.size(), position);
+	format(byteStream, str.c_str(), position);
 }
 
 void
-DeviceObject_c::format(std::vector<uint8_t>& byteStream, const uint8_t* bp, size_t len)
+DeviceObject_c::format(uint8_t* byteStream, const uint8_t* bp, size_t len, uint16_t& position) const
 {
-	while (len--)
-		byteStream.push_back(*bp++);
-
+  memcpy(byteStream + position,bp,len);
+  position += len;
 }
 
 void
-DeviceObject_c::format(std::vector<uint8_t>& byteStream, float val)
+DeviceObject_c::format(uint8_t* byteStream, float val, uint16_t& position) const
 {
 	uint32_t iVal = *((uint32_t*)&val);
 #if defined(__TSW_CPP__)	// Tasking uses mixed endian
 	uint16_t lo = iVal >> 16;
 	iVal = (iVal << 16) | lo;
 #endif
-	format(byteStream, iVal);
+	format(byteStream, iVal, position);
 }
 
 void
@@ -373,7 +441,7 @@ DeviceObject_c::storeString(std::string& /*toString*/, const std::string& /*from
 /////////////////////////////////////////////////////////////////////
 // DeviceObjectDvc_c
 /////////////////////////////////////////////////////////////////////
-DeviceObjectDvc_c::DeviceObjectDvc_c(uint16_t objId) : DeviceObject_c("DVC", objId)
+DeviceObjectDvc_c::DeviceObjectDvc_c(uint16_t objId) : DeviceObject_c(DeviceObject_c::DeviceObject, objId)
 {
 	std::memset((void*)&m_Localization, 0, sizeof(m_Localization));
 	m_Localization.reserved = 0xff;	// Reserved field
@@ -427,7 +495,7 @@ DeviceObjectDvc_c::Version(const std::string& str)
 {
 	checkDirty(m_Version, str);
 	m_Version = str;
-	validateSize(m_Version, 32);
+  isoaglib_assert(m_Version.size() <= 32);
 }
 
 void
@@ -441,7 +509,7 @@ DeviceObjectDvc_c::SerialNumber(const std::string& str)
 {
 	checkDirty(m_SerialNumber.c_str(), str.c_str());
 	m_SerialNumber = str;
-	validateSize(m_SerialNumber, 32);
+  isoaglib_assert(m_SerialNumber.size() <= 32);
 }
 
 void
@@ -451,6 +519,7 @@ DeviceObjectDvc_c::WsmName(const IsoAgLib::iIsoName_c& name)
 	m_WsmName = name;
 }
 
+#if 0
 // init()
 //	Created a DeviceObjectDvc_c from a byte array
 //	@ returns	number of bytes used to create object
@@ -537,31 +606,36 @@ DeviceObjectDvc_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
 
 	return total;
 }
+#endif
+
+uint16_t
+DeviceObjectDvc_c::getSizeInBytes() const
+{
+  return (30 + m_Designator.size() + m_Version.size() + m_SerialNumber.size());
+}
 
 bool
-DeviceObjectDvc_c::formatBytestream(std::vector<uint8_t>& byteStream)
+DeviceObjectDvc_c::formatBytestream(uint8_t* byteStream, uint16_t& position) const
 {
-	if (!DeviceObject_c::formatBytestream(byteStream))
+	if (!DeviceObject_c::formatBytestream(byteStream, position))
 		return false;
 
-	format(byteStream, m_Designator);
-	format(byteStream, m_Version);
-	format(byteStream, m_WsmName.outputString(), 8);
-	format(byteStream, m_SerialNumber);
+	format(byteStream, m_Designator, position);
+	format(byteStream, m_Version, position);
+	format(byteStream, m_WsmName.outputString(), 8, position);
+	format(byteStream, m_SerialNumber, position);
 
 // blank pad the stucture label to 7 characters
-	validateSize(m_StructLabel, 7);
-	while (m_StructLabel.size() < 7)
-		m_StructLabel.push_back(' ');
-	format(byteStream, (uint8_t*)m_StructLabel.c_str(), 7);
-	format(byteStream, (uint8_t*)&m_Localization, 7);
+  isoaglib_assert(m_StructLabel.size() == 7);
+	format(byteStream, (uint8_t*)m_StructLabel.c_str(), 7, position);
+	format(byteStream, (uint8_t*)&m_Localization, 7, position);
 
 	return true;
 }
 /////////////////////////////////////////////////////////////////////
 // DeviceObjectDet_c
 /////////////////////////////////////////////////////////////////////
-DeviceObjectDet_c::DeviceObjectDet_c(uint16_t objId) : DeviceObject_c("DET", objId)
+DeviceObjectDet_c::DeviceObjectDet_c(uint16_t objId) : DeviceObject_c(DeviceObject_c::DeviceElementObject, objId)
 {
 	m_Type = 255;
 	m_ElementNumber = 4095;
@@ -569,7 +643,7 @@ DeviceObjectDet_c::DeviceObjectDet_c(uint16_t objId) : DeviceObject_c("DET", obj
 }
 
 DeviceObjectDet_c::DeviceObjectDet_c(uint16_t objId, uint16_t parentObjId, 
-				  uint16_t element, uint8_t type, const std::string& desig) : DeviceObject_c("DET", objId)
+				  uint16_t element, uint8_t type, const std::string& desig) : DeviceObject_c(DeviceObject_c::DeviceElementObject, objId)
 {
 	m_Type = type;
 	m_ElementNumber = element;
@@ -586,6 +660,7 @@ DeviceObjectDet_c::isValid() const
 	return m_ElementNumber != 4095 && m_ParentId != 65535;
 }
 
+#if 0
 size_t
 DeviceObjectDet_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
 {
@@ -657,22 +732,30 @@ DeviceObjectDet_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
 
 	return total;
 }
+#endif
+
+uint16_t
+DeviceObjectDet_c::getSizeInBytes() const
+{
+  return 13 + m_Designator.size() + m_ChildList.size() * 2;
+}
 
 bool
-DeviceObjectDet_c::formatBytestream(std::vector<uint8_t>& byteStream)
+DeviceObjectDet_c::formatBytestream(uint8_t* byteStream, uint16_t& position) const
 {
-	if (!DeviceObject_c::formatBytestream(byteStream))
+	if (!DeviceObject_c::formatBytestream(byteStream, position))
 		return false;
 
-	byteStream.push_back(m_Type);
-	format(byteStream, m_Designator);
-	format(byteStream, m_ElementNumber);
-	format(byteStream, m_ParentId);
-	format(byteStream, (uint16_t)m_ChildList.size());
+	byteStream[position] = m_Type;
+  ++position;
+	format(byteStream, m_Designator, position);
+	format(byteStream, m_ElementNumber, position);
+	format(byteStream, m_ParentId, position);
+	format(byteStream, (uint16_t)m_ChildList.size(), position);
 
-	std::vector<uint16_t>::iterator it;
+	std::vector<uint16_t>::const_iterator it;
 	for (it = m_ChildList.begin(); it != m_ChildList.end(); it++)
-		format(byteStream, *it);
+		format(byteStream, *it, position);
 
 	return true;
 }
@@ -698,7 +781,7 @@ DeviceObjectDet_c::AddChild(uint16_t objId)
 //	wrapper for Device Process Data (DPD) object
 /////////////////////////////////////////////////////////////////////
 DeviceObjectDpd_c::DeviceObjectDpd_c(uint16_t objId)
-	: DeviceObject_c("DPD", objId)
+	: DeviceObject_c(DeviceObject_c::DeviceProcessDataObject, objId)
 	, m_Ddi(65535)
 	, m_Properties(0)
 	, m_Method(0)
@@ -708,7 +791,7 @@ DeviceObjectDpd_c::DeviceObjectDpd_c(uint16_t objId)
 
 DeviceObjectDpd_c::DeviceObjectDpd_c(uint16_t objId, uint16_t ddi, uint8_t props, uint8_t method, 
 									 const std::string& desig, uint16_t dvpRef)
-	: DeviceObject_c("DPD", objId)
+                   : DeviceObject_c(DeviceObject_c::DeviceProcessDataObject, objId)
 	, m_Ddi(ddi)
 	, m_Properties(props)
 	, m_Method(method)
@@ -717,6 +800,7 @@ DeviceObjectDpd_c::DeviceObjectDpd_c(uint16_t objId, uint16_t ddi, uint8_t props
 	Designator(desig);
 }
 
+#if 0
 size_t
 DeviceObjectDpd_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
 {
@@ -772,18 +856,25 @@ DeviceObjectDpd_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
 
 	return total;
 }
+#endif
+
+uint16_t
+DeviceObjectDpd_c::getSizeInBytes() const
+{
+  return 12 + m_Designator.size();
+}
 
 bool
-DeviceObjectDpd_c::formatBytestream(std::vector<uint8_t>& byteStream)
+DeviceObjectDpd_c::formatBytestream(uint8_t* byteStream, uint16_t& position) const
 {
-	if (!DeviceObject_c::formatBytestream(byteStream))
+	if (!DeviceObject_c::formatBytestream(byteStream, position))
 		return false;
 
-	format(byteStream, m_Ddi);
-	format(byteStream, m_Properties);
-	format(byteStream, m_Method);
-	format(byteStream, m_Designator);
-	format(byteStream, m_DvpObjectId);
+	format(byteStream, m_Ddi, position);
+	format(byteStream, m_Properties, position);
+	format(byteStream, m_Method, position);
+	format(byteStream, m_Designator, position);
+	format(byteStream, m_DvpObjectId, position);
 
 	return true;
 }
@@ -793,7 +884,7 @@ DeviceObjectDpd_c::formatBytestream(std::vector<uint8_t>& byteStream)
 // DeviceObjectDpt_c
 //	wrapper for Device Property (DPT) object
 /////////////////////////////////////////////////////////////////////
-DeviceObjectDpt_c::DeviceObjectDpt_c(uint16_t objId) : DeviceObject_c("DPT", objId)
+DeviceObjectDpt_c::DeviceObjectDpt_c(uint16_t objId) : DeviceObject_c(DeviceObject_c::DevicePropertyObject, objId)
 {
 	m_Ddi = 65535;
 	m_Value = 0;
@@ -801,7 +892,7 @@ DeviceObjectDpt_c::DeviceObjectDpt_c(uint16_t objId) : DeviceObject_c("DPT", obj
 }
 
 DeviceObjectDpt_c::DeviceObjectDpt_c(uint16_t objId, uint16_t ddi, int32_t value, 
-									 const std::string& desig, uint16_t dvpRef) : DeviceObject_c("DPT", objId)
+									 const std::string& desig, uint16_t dvpRef) : DeviceObject_c(DeviceObject_c::DevicePropertyObject, objId)
 {
 	m_Ddi = ddi;
 	m_Value = value;
@@ -809,6 +900,7 @@ DeviceObjectDpt_c::DeviceObjectDpt_c(uint16_t objId, uint16_t ddi, int32_t value
 	m_Designator = desig;
 }
 
+#if 0
 size_t
 DeviceObjectDpt_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
 {
@@ -862,17 +954,24 @@ DeviceObjectDpt_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
 
 	return total;
 }
+#endif
+
+uint16_t
+DeviceObjectDpt_c::getSizeInBytes() const
+{
+  return 14 + m_Designator.size();
+}
 
 bool
-DeviceObjectDpt_c::formatBytestream(std::vector<uint8_t>& byteStream)
+DeviceObjectDpt_c::formatBytestream(uint8_t* byteStream, uint16_t& position) const
 {
-	if (!DeviceObject_c::formatBytestream(byteStream))
+	if (!DeviceObject_c::formatBytestream(byteStream, position))
 		return false;
 
-	format(byteStream, m_Ddi);
-	format(byteStream, m_Value);
-	format(byteStream, m_Designator);
-	format(byteStream, m_DvpObjectId);
+	format(byteStream, m_Ddi, position);
+	format(byteStream, m_Value, position);
+	format(byteStream, m_Designator, position);
+	format(byteStream, m_DvpObjectId, position);
 
 	return true;
 }
@@ -882,7 +981,7 @@ DeviceObjectDpt_c::formatBytestream(std::vector<uint8_t>& byteStream)
 //	wrapper for Device Value Presentation (DVP) object
 /////////////////////////////////////////////////////////////////////
 DeviceObjectDvp_c::DeviceObjectDvp_c(uint16_t objId)
-	: DeviceObject_c("DVP", objId)
+	: DeviceObject_c(DeviceObject_c::DeviceValuePresentationObject, objId)
 	, m_Offset(0)
 	, m_Scale(1.0)
 	, m_Decimals(0)
@@ -894,7 +993,7 @@ DeviceObjectDvp_c::DeviceObjectDvp_c(uint16_t objId,
 									 int32_t offset,
 									 uint8_t decimals,
 									 const std::string& desig)
-	: DeviceObject_c("DVP", objId)
+	: DeviceObject_c(DeviceObject_c::DeviceValuePresentationObject, objId)
 	, m_Offset(offset)
 	, m_Scale(scale)
 	, m_Decimals(decimals)
@@ -902,6 +1001,7 @@ DeviceObjectDvp_c::DeviceObjectDvp_c(uint16_t objId,
 	Designator(desig);
 }
 
+#if 0
 size_t
 DeviceObjectDvp_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
 {
@@ -961,17 +1061,24 @@ DeviceObjectDvp_c::init(const HUGE_MEM uint8_t* bytestream, size_t cnt)
 
 	return total;
 }
+#endif
+
+uint16_t
+DeviceObjectDvp_c::getSizeInBytes() const
+{
+  return 15 + m_Designator.size();
+}
 
 bool
-DeviceObjectDvp_c::formatBytestream(std::vector<uint8_t>& byteStream)
+DeviceObjectDvp_c::formatBytestream(uint8_t* byteStream, uint16_t& position) const
 {
-	if (!DeviceObject_c::formatBytestream(byteStream))
+	if (!DeviceObject_c::formatBytestream(byteStream, position))
 		return false;
 
-	format(byteStream, m_Offset);
-	format(byteStream, m_Scale);
-	format(byteStream, m_Decimals);
-	format(byteStream, m_Designator);
+	format(byteStream, m_Offset, position);
+	format(byteStream, m_Scale, position);
+	format(byteStream, m_Decimals, position);
+	format(byteStream, m_Designator, position);
 
 	return true;
 }

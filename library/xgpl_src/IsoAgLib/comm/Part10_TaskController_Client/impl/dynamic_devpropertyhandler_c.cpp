@@ -22,6 +22,8 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 
+#include <fstream>
+
 #ifdef USE_DYNAMIC_PART10
 
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/dynamic_devpropertyhandler_c.h>
@@ -34,6 +36,9 @@
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
 #endif
+
+#define ISO_VT_UPLOAD_BUFFER_SIZE 16384
+uint8_t marr_uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
 
 //define length of every attribute in deviceObject
 #define DEF_Transfer_Code 1
@@ -50,7 +55,8 @@ namespace __IsoAgLib {
 DevPropertyHandler_c::DevPropertyHandler_c() :  MultiSendEventHandler_c( *this ),
 												ui16_currentSendPosition(0), 
 												ui16_storedSendPosition(0), 
-												pc_wsMasterIdentItem(0)
+												pc_wsMasterIdentItem(0),
+                        m_DevicePoolToUploadSize(0)
 {
 	i32_tcStateLastReceived = i32_timeStartWaitAfterAddrClaim = i32_timeWsTaskMsgSent = -1;
 	ui8_lastTcState = 0;
@@ -176,7 +182,7 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
 			getMultiSendInstance4Comm().sendIsoTarget(pc_wsMasterIdentItem->isoName(),
 #endif
 				getIsoMonitorInstance4Comm().isoMemberNr(tcSourceAddress).isoName(),
-				&m_DevicePoolToUpload[0],(uint32_t)m_DevicePoolToUpload.size(), PROCESS_DATA_PGN, this);
+				&marr_uploadBuffer[0],(uint32_t)m_DevicePoolToUploadSize, PROCESS_DATA_PGN, this);
 
 			en_uploadState = StateBusy;
 			en_uploadStep = UploadUploading;
@@ -252,14 +258,42 @@ DevPropertyHandler_c::doCommand(int32_t opcode, int32_t timeout)
 }
 
 int32_t
-DevPropertyHandler_c::requestPoolTransfer(const STL_NAMESPACE::vector<uint8_t>& vecPool)
+DevPropertyHandler_c::requestPoolTransfer(const DevicePool_c& devicePool)
 {
-	if (vecPool.empty())
+  // get check length
+  m_DevicePoolToUploadSize = devicePool.getByteStreamSize() + 1; 
+  isoaglib_assert(m_DevicePoolToUploadSize < ISO_VT_UPLOAD_BUFFER_SIZE);
+
+  // The pool will be sent in a multipacket.  Insert the upload command byte (061) at the head of buffer
+  marr_uploadBuffer[0] = (uint8_t)procCmdPar_OPTransferMsg;
+
+	if (!devicePool.getByteStream(marr_uploadBuffer + 1))
 		return StatusCannotProcess;
 
-	m_DevicePoolToUpload = vecPool;
-// The pool will be sent in a multipacket.  Insert the upload command byte (061) at the head of buffer
-	m_DevicePoolToUpload.insert(m_DevicePoolToUpload.begin(), (uint8_t)procCmdPar_OPTransferMsg);	// Upload command
+#ifdef SYSTEM_PC
+  // save DDD in file for DEBUG
+  std::fstream ofs("devicedescription.bin", std::ios::out | std::ios::binary);
+  ofs.write((char*)marr_uploadBuffer,m_DevicePoolToUploadSize);
+#endif
+
+	startUpload();
+
+	return StatusNoError;
+}
+
+int32_t
+DevPropertyHandler_c::requestPoolPartielTransfer(const DevicePool_c& devicePool)
+{
+  // get check length
+  m_DevicePoolToUploadSize = devicePool.getDirtyByteStreamSize(); 
+  isoaglib_assert(m_DevicePoolToUploadSize < ISO_VT_UPLOAD_BUFFER_SIZE);
+
+  // The pool will be sent in a multipacket.  Insert the upload command byte (061) at the head of buffer
+  marr_uploadBuffer[0] = (uint8_t)procCmdPar_OPTransferMsg;
+
+	if (!devicePool.getDirtyByteStream(marr_uploadBuffer + 1))
+		return StatusCannotProcess;
+
 	startUpload();
 
 	return StatusNoError;
@@ -447,7 +481,7 @@ void
 DevPropertyHandler_c::startUpload()
 {
 //estimate size of bytestream
-	uint32_t ui32_byteStreamLength = (uint32_t)m_DevicePoolToUpload.size() - 1;		// -1 to remove 0x61 opcode
+	uint32_t ui32_byteStreamLength = (uint32_t)marr_uploadBuffer - 1;		// -1 to remove 0x61 opcode
 
 	mc_data.setExtCanPkg8 (3, 0, 203, tcSourceAddress, pc_wsMasterIdentItem->getIsoItem()->nr(),
 		procCmdPar_RequestOPTransferMsg,
@@ -502,7 +536,7 @@ DevPropertyHandler_c::sendCommandChangeDesignator(uint16_t /*rui16_objectID*/, c
 void
 DevPropertyHandler_c::setDataNextStreamPart(MultiSendPkg_c* mspData, uint8_t bytes)
 {
-	mspData->setDataPart (m_DevicePoolToUpload, ui16_currentSendPosition, bytes);
+	mspData->setDataPart (marr_uploadBuffer, ui16_currentSendPosition, bytes);
 	ui16_currentSendPosition += bytes;
 }
 
@@ -531,14 +565,14 @@ DevPropertyHandler_c::restoreDataNextStreamPart()
 uint32_t
 DevPropertyHandler_c::getStreamSize()
 {
-	return (uint32_t)m_DevicePoolToUpload.size();
+	return m_DevicePoolToUploadSize;
 }
 
 
 uint8_t
 DevPropertyHandler_c::getFirstByte()
 {
-  return m_DevicePoolToUpload[0];
+  return marr_uploadBuffer[0];
 }
 
 void DevPropertyHandler_c::reactOnStateChange(const SendStream_c& sendStream)

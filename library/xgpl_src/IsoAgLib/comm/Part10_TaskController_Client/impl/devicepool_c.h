@@ -42,23 +42,35 @@ typedef struct
 class DeviceObject_c
 {
 public:
-	DeviceObject_c(const std::string& type, uint16_t objId = 0xffff) : m_ObjectType(type), m_ObjectId(objId), m_isDirty(true) {}
+  enum ObjectType_e
+  {
+    DeviceObject = 0,
+    DeviceElementObject,
+    DeviceProcessDataObject,
+    DevicePropertyObject,
+    DeviceValuePresentationObject,
+    ObjectTypeUndefined
+  };
+public:
+	DeviceObject_c(ObjectType_e type, uint16_t objId = 0xffff) : m_ObjectType(type), m_ObjectId(objId), m_isDirty(true) {}
 	virtual ~DeviceObject_c()	{}
 
 	virtual DeviceObject_c*	clone() const = 0;		// virtual copy constructor
 	virtual DeviceObject_c* create() const = 0;		// virtual constructor
 
 	uint16_t			getObjectId() const		{ return m_ObjectId; }
-	const std::string&	getObjectType() const	{ return m_ObjectType; }
+	ObjectType_e	getObjectType() const	{ return m_ObjectType; }
 
 	void Designator(const char* str, uint8_t encoding = 0)	{ Designator(std::string(str), encoding); }
 	void Designator(const std::string& str, uint8_t encoding = 0);
 	const std::string& Designator() const { return m_Designator; }
 
-	virtual bool isValid() const			{ return !m_ObjectType.empty() && m_ObjectId != 65535; }
+	virtual bool isValid() const			{ return ((m_ObjectType != ObjectTypeUndefined) && (m_ObjectId != 65535)); }
 
-	virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt) = 0;
-	virtual bool formatBytestream(std::vector<uint8_t>& byteStream);
+	//virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt) = 0;
+
+  virtual uint16_t getSizeInBytes() const;
+	virtual bool formatBytestream(uint8_t* byteStream, uint16_t& position) const;
 
 	virtual bool isDirty() const	{ return m_isDirty; }
 
@@ -66,18 +78,18 @@ protected:
 	template<typename T> inline bool checkDirty(T lhs, T rhs) {	 setDirty(lhs != rhs); return isDirty(); }
 
 	void setObjectId(uint16_t objId)		{ m_ObjectId = objId; }
-	void validateSize(std::string& str, size_t len);
+	void validateSize(std::string& str, size_t len) const;
 
-	virtual void format(std::vector<uint8_t>& byteStream, const std::string& str);
-	virtual void format(std::vector<uint8_t>& byteStream, const char* str)			
-		{ format(byteStream, (const uint8_t*)str, std::strlen(str)); }
-	virtual void format(std::vector<uint8_t>& byteStream, const uint8_t* val, size_t len);
-	virtual void format(std::vector<uint8_t>& byteStream, uint8_t val);
-	virtual void format(std::vector<uint8_t>& byteStream, uint16_t val);
-	virtual void format(std::vector<uint8_t>& byteStream, uint32_t val);
-	virtual void format(std::vector<uint8_t>& byteStream, int32_t val)	
-		{ format(byteStream, (uint32_t)val); }
-	virtual void format(std::vector<uint8_t>& byteStream, float val);
+	virtual void format(uint8_t* byteStream, const std::string& str, uint16_t& position) const;
+	virtual void format(uint8_t* byteStream, const char* str, uint16_t& position) const			
+		{ format(byteStream, (const uint8_t*)str, std::strlen(str), position); }
+	virtual void format(uint8_t* byteStream, const uint8_t* val, size_t len, uint16_t& position) const;
+	virtual void format(uint8_t* byteStream, uint8_t val, uint16_t& position) const;
+	virtual void format(uint8_t* byteStream, uint16_t val, uint16_t& position) const;
+	virtual void format(uint8_t* byteStream, uint32_t val, uint16_t& position) const;
+	virtual void format(uint8_t* byteStream, int32_t val, uint16_t& position)	 const
+		{ format(byteStream, (uint32_t)val, position); }
+	virtual void format(uint8_t* byteStream, float val, uint16_t& position) const;
 
 	void setDirty(bool flag)		{ if (flag) m_isDirty = true; }
 	void clearDirty()				{ m_isDirty = false; }
@@ -86,7 +98,7 @@ protected:
 
 protected:
 	std::string		m_Designator;
-	const std::string	m_ObjectType;
+	ObjectType_e m_ObjectType;
 	uint16_t		m_ObjectId;
 	bool			m_isDirty;
 
@@ -106,8 +118,9 @@ public:
 	DeviceObjectDvc_c* create() const	{ return new DeviceObjectDvc_c(); }
 
 	virtual bool isValid() const	{ return true; }
-	virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
-	virtual bool formatBytestream(std::vector<uint8_t>& byteStream);
+	//virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
+  virtual uint16_t getSizeInBytes() const;
+	virtual bool formatBytestream(uint8_t* byteStream, uint16_t& position) const;
 
 	void Version(const char* str);
 	void Version(const std::string& str);
@@ -145,8 +158,9 @@ public:
 	DeviceObjectDet_c* create() const	{ return new DeviceObjectDet_c(); }
 
 	virtual bool isValid() const;
-	virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
-	virtual bool formatBytestream(std::vector<uint8_t>& byteStream);
+	//virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
+  virtual uint16_t getSizeInBytes() const;
+	virtual bool formatBytestream(uint8_t* byteStream, uint16_t& position) const;
 
 	size_t	numberOfChildren() const	{ return m_ChildList.size(); }
 	bool	AddChild(uint16_t objId);
@@ -173,8 +187,9 @@ public:
 	DeviceObjectDpd_c* create() const	{ return new DeviceObjectDpd_c(); }
 
 	virtual bool isValid() const	{ return true; }
-	virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
-	virtual bool formatBytestream(std::vector<uint8_t>& byteStream);
+	//virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
+  virtual uint16_t getSizeInBytes() const;
+	virtual bool formatBytestream(uint8_t* byteStream, uint16_t& position) const;
 
 	void Ddi(uint16_t ddi)				{ if (checkDirty(m_Ddi, ddi)) m_Ddi = ddi; }
 	void Properties(uint8_t properties)	{ if (checkDirty(m_Properties, properties)) m_Properties = properties; }
@@ -199,8 +214,9 @@ public:
 	DeviceObjectDpt_c* create() const	{ return new DeviceObjectDpt_c(); }
 
 	virtual bool isValid() const	{ return true; }
-	virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
-	virtual bool formatBytestream(std::vector<uint8_t>& byteStream);
+	//virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
+  virtual uint16_t getSizeInBytes() const;
+	virtual bool formatBytestream(uint8_t* byteStream, uint16_t& position) const;
 
 	void Value(int32_t val)		{ if (checkDirty(m_Value, val)) m_Value = val; }
 	int32_t Value() const		{ return m_Value; }
@@ -222,8 +238,9 @@ public:
 	DeviceObjectDvp_c* create() const	{ return new DeviceObjectDvp_c(); }
 
 	virtual bool isValid() const	{ return true; }
-	virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
-	virtual bool formatBytestream(std::vector<uint8_t>& byteStream);
+	//virtual size_t init(const HUGE_MEM uint8_t* bytestream, size_t cnt);
+  virtual uint16_t getSizeInBytes() const;
+	virtual bool formatBytestream(uint8_t* byteStream, uint16_t& position) const;
 
 	void Offset(int32_t offset)			{ if (checkDirty(m_Offset, offset)) m_Offset = offset; }
 	void Decimals(uint8_t decimals)		{ if (checkDirty(m_Decimals, decimals)) m_Decimals = decimals; }
@@ -250,15 +267,18 @@ public:
 
 	uint16_t	Add(const DeviceObject_c& devObj);
 
-	const std::vector<uint8_t>&	getBytestream();
-	bool getDirtyBytestream(std::vector<uint8_t>& byteStream);
+  uint16_t getByteStreamSize() const;
+	bool getByteStream(uint8_t* destMemory) const;
+
+  uint16_t getDirtyByteStreamSize() const;
+  bool getDirtyByteStream(uint8_t* destMemory) const;
 
 // Object getter methods
-	DeviceObjectDet_c* getDetObject(uint16_t objId) const		{ return (DeviceObjectDet_c*)getObject(objId, "DET"); }
-	DeviceObjectDpd_c* getDpdObject(uint16_t objId) const		{ return (DeviceObjectDpd_c*)getObject(objId, "DPD"); }
-	DeviceObjectDpt_c* getDptObject(uint16_t objId) const		{ return (DeviceObjectDpt_c*)getObject(objId, "DPT"); }
-	DeviceObjectDvc_c* getDvcObject(uint16_t objId) const		{ return (DeviceObjectDvc_c*)getObject(objId, "DVC"); }
-	DeviceObjectDvp_c* getDvpObject(uint16_t objId) const		{ return (DeviceObjectDvp_c*)getObject(objId, "DVP"); }
+  DeviceObjectDet_c* getDetObject(uint16_t objId) const		{ return (DeviceObjectDet_c*)getObject(objId, DeviceObject_c::DeviceElementObject); }
+  DeviceObjectDpd_c* getDpdObject(uint16_t objId) const		{ return (DeviceObjectDpd_c*)getObject(objId, DeviceObject_c::DeviceProcessDataObject); }
+	DeviceObjectDpt_c* getDptObject(uint16_t objId) const		{ return (DeviceObjectDpt_c*)getObject(objId, DeviceObject_c::DevicePropertyObject); }
+	DeviceObjectDvc_c* getDvcObject(uint16_t objId) const		{ return (DeviceObjectDvc_c*)getObject(objId, DeviceObject_c::DeviceObject); }
+	DeviceObjectDvp_c* getDvpObject(uint16_t objId) const		{ return (DeviceObjectDvp_c*)getObject(objId, DeviceObject_c::DeviceValuePresentationObject); }
 
 	uint16_t updateDvpObject(uint16_t objId, float scale, int32_t offset, uint8_t decimals, const std::string& desig);
 
@@ -272,7 +292,7 @@ public:
 protected:
 	uint16_t Add(DeviceObject_c* devObj);
 	DeviceObject_c*	createDeviceObject(const HUGE_MEM uint8_t* bp, size_t cnt);
-	DeviceObject_c*	getObject(uint16_t objId, const std::string& objectType) const;
+  DeviceObject_c*	getObject(uint16_t objId, DeviceObject_c::ObjectType_e objectType) const;
 
 protected:
 	deviceMap_t		m_DevicePool;

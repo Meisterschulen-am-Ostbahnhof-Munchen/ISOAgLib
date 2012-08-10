@@ -27,6 +27,7 @@
 #ifdef USE_DYNAMIC_PART10
 
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepoolhandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h>
 
 #include <map>
 #include <list>
@@ -92,7 +93,9 @@ public:
 	int32_t requestLocalizationLabel()	{ return doCommand(procCmdPar_RequestLocalizationLabelMsg); }
 	int32_t requestPoolActivate()		{ return doCommand(procCmdPar_OPActivateMsg); }
 	int32_t requestPoolDelete()			{ return doCommand(procCmdPar_OPDeleteMsg); }
-	int32_t requestPoolTransfer(const STL_NAMESPACE::vector<uint8_t>& vecPool);
+	int32_t requestPoolTransfer(const DevicePool_c& devicePool);
+	int32_t requestPoolPartielTransfer(const DevicePool_c& devicePool);
+  
 
 // start processing of a process msg
     bool processMsg( ProcessPkg_c& arc_data );
@@ -207,7 +210,9 @@ private:
 
 // list of all device pool handlers registered to receive events
 	STL_NAMESPACE::vector<DevicePoolHandler_c*> m_PoolHandlerList;
-	STL_NAMESPACE::vector<uint8_t> m_DevicePoolToUpload;
+	//STL_NAMESPACE::vector<uint8_t> m_DevicePoolToUpload;
+
+  uint16_t m_DevicePoolToUploadSize;
 };
 
 }

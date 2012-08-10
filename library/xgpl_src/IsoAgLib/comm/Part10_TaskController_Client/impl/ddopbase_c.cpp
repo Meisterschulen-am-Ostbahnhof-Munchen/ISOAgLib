@@ -1,5 +1,6 @@
 #include "ddopbase_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocess_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/dynamic_devpropertyhandler_c.h>
 
 #ifdef USE_DYNAMIC_PART10
 
@@ -58,16 +59,14 @@ DdopBase_c::timeEventDevicePool()
 			// No device pool present - upload it
 				if (m_DevicePool.isEmpty())
 					break;
-				IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().requestPoolTransfer(m_DevicePool.getBytestream());
+				IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().requestPoolTransfer(m_DevicePool);
 				m_PoolAction = PoolActionWaiting;
 				break;
 
 			case PoolStateStale:	// Upload changed descriptions
 				{
-					std::vector<uint8_t> newBytes;
-					if (m_DevicePool.getDirtyBytestream(newBytes))
+          if (__IsoAgLib::DevPropertyHandler_c::StatusNoError == IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().requestPoolPartielTransfer(m_DevicePool))
 					{
-						IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().requestPoolTransfer(newBytes);
 						m_PoolAction = PoolActionWaiting;
 					}
 					else
