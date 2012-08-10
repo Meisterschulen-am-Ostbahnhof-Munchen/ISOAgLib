@@ -43,9 +43,9 @@ namespace IsoAgLibTutorialSectionControl {
       void init( IsoAgLib::iIdentItem_c &arc_identItem );
       
       /* IsoAgLib::ProcessDataChangeHandler_c */
-      virtual bool processSetpointSet( IsoAgLib::EventSource_c, uint16_t, int32_t, const IsoAgLib::iIsoName_c&, bool );
-      virtual bool processDefaultLoggingStart( IsoAgLib::EventSource_c, uint16_t, int32_t, const IsoAgLib::iIsoName_c& ) { return false; }
-      virtual bool processTcStatusMessage( bool, const IsoAgLib::iIsoName_c& ) { return false; }
+      virtual void processSetpointSet( IsoAgLib::EventSource_c, int32_t, const IsoAgLib::iIsoName_c&, bool );
+      virtual void processDefaultLoggingStart( const IsoAgLib::iIsoName_c& ) {}
+      virtual void processTcStatusMessage( bool, const IsoAgLib::iIsoName_c& ) {}
 
     private:
       void resetSectionStatus();

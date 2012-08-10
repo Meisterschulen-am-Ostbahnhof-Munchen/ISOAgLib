@@ -4,123 +4,91 @@
 
   <deviceelement designator="Sprayer Interface" element_type="device" element_number="0" parent_name="OSBSprayer">
 
-    <deviceprocessdata designator="X Offset" ddi="134" trigger_methods="onchange" proc_program_name="xOffset" cumulative_value="false">
-      <deviceprocessdatacombination ddi="134" command_type="exact" is_setpoint="false"/>
-    </deviceprocessdata>
-    <deviceprocessdata designator="Actual Width" ddi="67" trigger_methods="onchange" proc_program_name="actualWidth" cumulative_value="false">
-      <deviceprocessdatacombination ddi="67" command_type="exact" is_setpoint="false"/>
-    </deviceprocessdata>
-    <deviceprocessdata designator="Max Width" ddi="70" trigger_methods="onchange" proc_program_name="maxWidth" cumulative_value="false">
-      <deviceprocessdatacombination ddi="70" command_type="exact" is_setpoint="false"/>
-    </deviceprocessdata>
-   <deviceproperty designator="Y Offset" ddi="135" property_value="0" />
-   <deviceproperty designator="Z Offset" ddi="136" property_value="0" />
-	
-    <deviceprocessdata designator="Setpoint Volume Rate" ddi="1" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="setpointVolumeRate" cumulative_value="false">
-        <deviceprocessdatacombination ddi="1" command_type="default" is_setpoint="true" />
-    </deviceprocessdata>
-    <deviceprocessdata designator="Actual Volume Rate" ddi="2" properties="defaultset" trigger_methods="timeinterval+onchange" proc_program_name="actualVolumeRate" cumulative_value="false">
-        <deviceprocessdatacombination ddi="2" command_type="exact" is_setpoint="false" />
-    </deviceprocessdata>
+    <deviceprocessdata designator="X Offset" ddi="134" trigger_methods="onchange" proc_program_name="xOffset"/>
+    <deviceprocessdata designator="Actual Width" ddi="67" trigger_methods="onchange" proc_program_name="actualWidth"/>
+    <deviceprocessdata designator="Max Width" ddi="70" trigger_methods="onchange" proc_program_name="maxWidth"/>
+    <deviceproperty designator="Y Offset" ddi="135" property_value="0" />
+    <deviceproperty designator="Z Offset" ddi="136" property_value="0" />
+  
+    <deviceprocessdata designator="Setpoint Volume Rate" ddi="1" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="setpointVolumeRate"/>
+    <deviceprocessdata designator="Actual Volume Rate" ddi="2" properties="defaultset" trigger_methods="timeinterval+onchange" proc_program_name="actualVolumeRate"/>
 
-    <deviceprocessdata designator="Work State" ddi="141" trigger_methods="timeinterval+onchange" proc_program_name="workState" cumulative_value="false">
-      <deviceprocessdatacombination ddi="141" command_type="exact" is_setpoint="false"/>
-    </deviceprocessdata>
-    <deviceprocessdata designator="Section Control State" ddi="160" properties="setable" trigger_methods="onchange" proc_program_name="sectionControlState" cumulative_value="false">
-        <deviceprocessdatacombination ddi="160" command_type="default" is_setpoint="true"/>
-    </deviceprocessdata>
-    <deviceprocessdata designator="Condensed Work State" ddi="161" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="condensedWorkState" cumulative_value="false">
-        <deviceprocessdatacombination ddi="161" command_type="default" is_setpoint="true"/>
-    </deviceprocessdata>	
+    <deviceprocessdata designator="Work State" ddi="141" trigger_methods="timeinterval+onchange" proc_program_name="workState"/>
+    <deviceprocessdata designator="Section Control State" ddi="160" properties="setable" trigger_methods="onchange" proc_program_name="sectionControlState"/>
+    <deviceprocessdata designator="Condensed Work State" ddi="161" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="condensedWorkState"/>
 
   </deviceelement>
 
-	<!-- DET Section 1 -->
+  <!-- DET Section 1 -->
   <deviceelement designator="Section 01" element_type="section" element_number="1" parent_name="Sprayer Interface">
-		<deviceproperty designator="X Offset 01" ddi="134" property_value="0" />
-		<deviceproperty designator="Y Offset 01" ddi="135" property_value="-12000" />
-		<deviceproperty designator="Z Offset 01" ddi="136" property_value="0" />
-		<deviceproperty designator="Actual Width 01" ddi="67" property_value="3000" />
-		<deviceproperty designator="Max Width 01" ddi="70" property_value="3000" />
-    <deviceprocessdata designator="WS Section 01" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection01" cumulative_value="false">
-		  <deviceprocessdatacombination ddi="141" command_type="default" is_setpoint="true"/>
-		</deviceprocessdata>
-	</deviceelement>
-	<!-- DET Section 2 -->
-	<deviceelement designator="Section 02" element_type="section" element_number="2" parent_name="Sprayer Interface">
-		<deviceproperty designator="X Offset 02" ddi="134" property_value="0" />
-		<deviceproperty designator="Y Offset 02" ddi="135" property_value="-9000" />
-		<deviceproperty designator="Z Offset 02" ddi="136" property_value="0" />
-		<deviceproperty designator="Actual Width 02" ddi="67" property_value="3000" />
-		<deviceproperty designator="Max Width 02" ddi="70" property_value="3000" />
-    <deviceprocessdata designator="WS Section 02" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection02" cumulative_value="false">
-		  <deviceprocessdatacombination ddi="141" command_type="default" is_setpoint="true"/>
-		</deviceprocessdata>
-	</deviceelement>
-	<!-- DET Section 3 -->
-	<deviceelement designator="Section 03" element_type="section" element_number="3" parent_name="Sprayer Interface">
-		<deviceproperty designator="X Offset 03" ddi="134" property_value="0" />
-		<deviceproperty designator="Y Offset 03" ddi="135" property_value="-6000" />
-		<deviceproperty designator="Z Offset 03" ddi="136" property_value="0" />
-		<deviceproperty designator="Actual Width 03" ddi="67" property_value="3000" />
-		<deviceproperty designator="Max Width 03" ddi="70" property_value="3000" />
-    <deviceprocessdata designator="WS Section 03" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection03" cumulative_value="false">
-		  <deviceprocessdatacombination ddi="141" command_type="default" is_setpoint="true"/>
-		</deviceprocessdata>
-	</deviceelement>
-	<!-- DET Section 4 -->
-	<deviceelement designator="Section 04" element_type="section" element_number="4" parent_name="Sprayer Interface">
-		<deviceproperty designator="X Offset 04" ddi="134" property_value="0" />
-		<deviceproperty designator="Y Offset 04" ddi="135" property_value="-3000" />
-		<deviceproperty designator="Z Offset 04" ddi="136" property_value="0" />
-		<deviceproperty designator="Actual Width 04" ddi="67" property_value="3000" />
-		<deviceproperty designator="Max Width 04" ddi="70" property_value="3000" />
-    <deviceprocessdata designator="WS Section 04" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection04" cumulative_value="false">
-		  <deviceprocessdatacombination ddi="141" command_type="default" is_setpoint="true"/>
-		</deviceprocessdata>
-	</deviceelement>
-	<!-- DET Section 5 -->
-	<deviceelement designator="Section 05" element_type="section" element_number="5" parent_name="Sprayer Interface">
-		<deviceproperty designator="X Offset 05" ddi="134" property_value="0" />
-		<deviceproperty designator="Y Offset 05" ddi="135" property_value="0" />
-		<deviceproperty designator="Z Offset 05" ddi="136" property_value="0" />
-		<deviceproperty designator="Actual Width 05" ddi="67" property_value="3000" />
-		<deviceproperty designator="Max Width 05" ddi="70" property_value="3000" />
-    <deviceprocessdata designator="WS Section 05" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection05" cumulative_value="false">
-		  <deviceprocessdatacombination ddi="141" command_type="default" is_setpoint="true"/>
-		</deviceprocessdata>
-	</deviceelement>
-	<!-- DET Section 6 -->
-	<deviceelement designator="Section 06" element_type="section" element_number="6" parent_name="Sprayer Interface">
-		<deviceproperty designator="X Offset 06" ddi="134" property_value="0" />
-		<deviceproperty designator="Y Offset 06" ddi="135" property_value="3000" />
-		<deviceproperty designator="Z Offset 06" ddi="136" property_value="0" />
-		<deviceproperty designator="Actual Width 06" ddi="67" property_value="3000" />
-		<deviceproperty designator="Max Width 06" ddi="70" property_value="3000" />
-    <deviceprocessdata designator="WS Section 06" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection06" cumulative_value="false">
-		  <deviceprocessdatacombination ddi="141" command_type="default" is_setpoint="true"/>
-		</deviceprocessdata>
-	</deviceelement>
-	<!-- DET Section 7 -->
-	<deviceelement designator="Section 07" element_type="section" element_number="7" parent_name="Sprayer Interface">
-		<deviceproperty designator="X Offset 07" ddi="134" property_value="0" />
-		<deviceproperty designator="Y Offset 07" ddi="135" property_value="6000" />
-		<deviceproperty designator="Z Offset 07" ddi="136" property_value="0" />
-		<deviceproperty designator="Actual Width 07" ddi="67" property_value="3000" />
-		<deviceproperty designator="Max Width 07" ddi="70" property_value="3000" />
-    <deviceprocessdata designator="WS Section 07" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection07" cumulative_value="false">
-		  <deviceprocessdatacombination ddi="141" command_type="default" is_setpoint="true"/>
-		</deviceprocessdata>
-	</deviceelement>
-	<!-- DET Section 8 -->
-	<deviceelement designator="Section 08" element_type="section" element_number="8" parent_name="Sprayer Interface">
-		<deviceproperty designator="X Offset 08" ddi="134" property_value="0" />
-		<deviceproperty designator="Y Offset 08" ddi="135" property_value="9000" />
-		<deviceproperty designator="Z Offset 08" ddi="136" property_value="0" />
-		<deviceproperty designator="Actual Width 08" ddi="67" property_value="3000" />
-		<deviceproperty designator="Max Width 08" ddi="70" property_value="3000" />
-    <deviceprocessdata designator="WS Section 08" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection08" cumulative_value="false">
-		  <deviceprocessdatacombination ddi="141" command_type="default" is_setpoint="true"/>
-		</deviceprocessdata>
-	</deviceelement>
+    <deviceproperty designator="X Offset 01" ddi="134" property_value="0" />
+    <deviceproperty designator="Y Offset 01" ddi="135" property_value="-12000" />
+    <deviceproperty designator="Z Offset 01" ddi="136" property_value="0" />
+    <deviceproperty designator="Actual Width 01" ddi="67" property_value="3000" />
+    <deviceproperty designator="Max Width 01" ddi="70" property_value="3000" />
+    <deviceprocessdata designator="WS Section 01" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection01"/>
+  </deviceelement>
+  <!-- DET Section 2 -->
+  <deviceelement designator="Section 02" element_type="section" element_number="2" parent_name="Sprayer Interface">
+    <deviceproperty designator="X Offset 02" ddi="134" property_value="0" />
+    <deviceproperty designator="Y Offset 02" ddi="135" property_value="-9000" />
+    <deviceproperty designator="Z Offset 02" ddi="136" property_value="0" />
+    <deviceproperty designator="Actual Width 02" ddi="67" property_value="3000" />
+    <deviceproperty designator="Max Width 02" ddi="70" property_value="3000" />
+    <deviceprocessdata designator="WS Section 02" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection02"/>
+  </deviceelement>
+  <!-- DET Section 3 -->
+  <deviceelement designator="Section 03" element_type="section" element_number="3" parent_name="Sprayer Interface">
+    <deviceproperty designator="X Offset 03" ddi="134" property_value="0" />
+    <deviceproperty designator="Y Offset 03" ddi="135" property_value="-6000" />
+    <deviceproperty designator="Z Offset 03" ddi="136" property_value="0" />
+    <deviceproperty designator="Actual Width 03" ddi="67" property_value="3000" />
+    <deviceproperty designator="Max Width 03" ddi="70" property_value="3000" />
+    <deviceprocessdata designator="WS Section 03" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection03"/>
+  </deviceelement>
+  <!-- DET Section 4 -->
+  <deviceelement designator="Section 04" element_type="section" element_number="4" parent_name="Sprayer Interface">
+    <deviceproperty designator="X Offset 04" ddi="134" property_value="0" />
+    <deviceproperty designator="Y Offset 04" ddi="135" property_value="-3000" />
+    <deviceproperty designator="Z Offset 04" ddi="136" property_value="0" />
+    <deviceproperty designator="Actual Width 04" ddi="67" property_value="3000" />
+    <deviceproperty designator="Max Width 04" ddi="70" property_value="3000" />
+    <deviceprocessdata designator="WS Section 04" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection04"/>
+  </deviceelement>
+  <!-- DET Section 5 -->
+  <deviceelement designator="Section 05" element_type="section" element_number="5" parent_name="Sprayer Interface">
+    <deviceproperty designator="X Offset 05" ddi="134" property_value="0" />
+    <deviceproperty designator="Y Offset 05" ddi="135" property_value="0" />
+    <deviceproperty designator="Z Offset 05" ddi="136" property_value="0" />
+    <deviceproperty designator="Actual Width 05" ddi="67" property_value="3000" />
+    <deviceproperty designator="Max Width 05" ddi="70" property_value="3000" />
+    <deviceprocessdata designator="WS Section 05" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection05"/>
+  </deviceelement>
+  <!-- DET Section 6 -->
+  <deviceelement designator="Section 06" element_type="section" element_number="6" parent_name="Sprayer Interface">
+    <deviceproperty designator="X Offset 06" ddi="134" property_value="0" />
+    <deviceproperty designator="Y Offset 06" ddi="135" property_value="3000" />
+    <deviceproperty designator="Z Offset 06" ddi="136" property_value="0" />
+    <deviceproperty designator="Actual Width 06" ddi="67" property_value="3000" />
+    <deviceproperty designator="Max Width 06" ddi="70" property_value="3000" />
+    <deviceprocessdata designator="WS Section 06" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection06"/>
+  </deviceelement>
+  <!-- DET Section 7 -->
+  <deviceelement designator="Section 07" element_type="section" element_number="7" parent_name="Sprayer Interface">
+    <deviceproperty designator="X Offset 07" ddi="134" property_value="0" />
+    <deviceproperty designator="Y Offset 07" ddi="135" property_value="6000" />
+    <deviceproperty designator="Z Offset 07" ddi="136" property_value="0" />
+    <deviceproperty designator="Actual Width 07" ddi="67" property_value="3000" />
+    <deviceproperty designator="Max Width 07" ddi="70" property_value="3000" />
+    <deviceprocessdata designator="WS Section 07" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection07"/>
+  </deviceelement>
+  <!-- DET Section 8 -->
+  <deviceelement designator="Section 08" element_type="section" element_number="8" parent_name="Sprayer Interface">
+    <deviceproperty designator="X Offset 08" ddi="134" property_value="0" />
+    <deviceproperty designator="Y Offset 08" ddi="135" property_value="9000" />
+    <deviceproperty designator="Z Offset 08" ddi="136" property_value="0" />
+    <deviceproperty designator="Actual Width 08" ddi="67" property_value="3000" />
+    <deviceproperty designator="Max Width 08" ddi="70" property_value="3000" />
+    <deviceprocessdata designator="WS Section 08" ddi="141" properties="setable" trigger_methods="timeinterval+onchange" proc_program_name="workStateSection08"/>
+  </deviceelement>
 </device>

@@ -109,14 +109,10 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::updateSectionStatus(
   //c_condensedWorkState.setSetpointVal(static_cast<int32_t>(vec_condensedWorkStateCurrent.to_ulong()));
 }
 
-bool
+void
 IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::processSetpointSet(
-  IsoAgLib::EventSource_c ac_src, uint16_t ddi, int32_t ai32_val, const IsoAgLib::iIsoName_c& ac_callerISOName, bool /* ab_change*/ )
+  IsoAgLib::EventSource_c ac_src, int32_t ai32_val, const IsoAgLib::iIsoName_c& ac_callerISOName, bool /* ab_change*/ )
 {
-  //if (!ab_change) return false;
-#ifdef SYSTEM_PC
-  std::cout << ac_src.makeIProcDataLocal()->DDI() << " " << ddi << std::endl;
-#endif
   IterProcDataLocal iter = m_mapProcDataSetPoint.find(ac_src.makeIProcDataLocal());
   if (iter != m_mapProcDataSetPoint.end())
   {
@@ -171,7 +167,6 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::processSetpointSet(
 
     }
   }
-  return false;
 }
 
 
