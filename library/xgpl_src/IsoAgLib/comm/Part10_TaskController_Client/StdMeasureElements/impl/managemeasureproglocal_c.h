@@ -13,9 +13,6 @@
 #ifndef MANAGE_MEASUREPROG_LOCAL_H
 #define MANAGE_MEASUREPROG_LOCAL_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
@@ -44,7 +41,7 @@ class ManageMeasureProgLocal_c : public ClientBase
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned executions performed
   */
-  bool timeEvent( ProcDataLocal_c& ac_processData, uint16_t *pui16_nextTimePeriod = NULL );
+  void timeEvent( ProcDataLocal_c& ac_processData, uint16_t& rui16_nextTimePeriod );
 
   /** process a measure prog message for local process data */
   void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& arc_data );

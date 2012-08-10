@@ -1,5 +1,5 @@
-/***************************************************************************
-                          setpointlocal_c.h - object for managing setpoints
+/*
+  setpointlocal_c.h - object for managing setpoints
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 

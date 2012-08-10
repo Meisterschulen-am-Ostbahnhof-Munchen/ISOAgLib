@@ -1,5 +1,5 @@
-/***************************************************************************
-                          iprocdatalocal_c.h  - managing of local
+/*
+  iprocdatalocal_c.h: managing of local
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -20,8 +20,6 @@
 namespace IsoAgLib {
   
 class iProcDataLocal_c : private __IsoAgLib::ProcDataLocal_c  {
-private:
-  friend class EventSource_c;
 public:
   /**
     default constructor. init() mathod shall be called manually

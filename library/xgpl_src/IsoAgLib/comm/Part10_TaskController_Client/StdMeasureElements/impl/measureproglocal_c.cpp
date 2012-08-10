@@ -10,10 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "measureproglocal_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
@@ -313,7 +309,7 @@ void MeasureProgLocal_c::resetVal(ProcDataLocal_c& ac_processData, int32_t ai32_
   ac_processData.sendValISOName( pkg, getProcessInstance4Comm().getISONameFromType( m_ecuType ), val());
 }
 
-bool MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t *pui16_nextTimePeriod )
+void MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t& rui16_nextTimePeriod )
 {
   int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
@@ -348,14 +344,14 @@ bool MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t *p
         break;
     } // switch
 
-    if (i32_nextTimePeriod && pui16_nextTimePeriod)
+    if (i32_nextTimePeriod )
     {
       if ( (i32_nextTimePeriod > 0) // something valid to set
             // *pui16_nextTimePeriod not yet set or i32_nextTimePeriod smaller => set
-            && ((0 == *pui16_nextTimePeriod) || (i32_nextTimePeriod < *pui16_nextTimePeriod))
+            && ((0 == rui16_nextTimePeriod) || (i32_nextTimePeriod < rui16_nextTimePeriod))
           )
       {
-        *pui16_nextTimePeriod = i32_nextTimePeriod;
+        rui16_nextTimePeriod = i32_nextTimePeriod;
       }
     }
 
@@ -371,8 +367,6 @@ bool MeasureProgLocal_c::timeEvent( ProcDataLocal_c& ac_processData, uint16_t *p
       sendRegisteredVals(ac_processData, pc_iter->doSend());
     }
   }
-
-  return true;
 }
 
 bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const

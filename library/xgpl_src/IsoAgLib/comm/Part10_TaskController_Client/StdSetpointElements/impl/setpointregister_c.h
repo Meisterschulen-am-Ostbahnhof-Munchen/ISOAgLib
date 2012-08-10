@@ -1,6 +1,5 @@
 /*
-  setpointregister_c.h: stores one setpoint with management
-    informations
+  setpointregister_c.h: stores one setpoint with management informations
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 

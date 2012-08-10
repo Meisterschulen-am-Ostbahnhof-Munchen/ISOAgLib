@@ -1,5 +1,5 @@
 /*
-  measuresubprog_c.cpp: Every increment type of a measure prog is
+  measuresubprog_c.cpp - Every increment type of a measure prog is
     managed by a MeasureSubprog_c instance
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners

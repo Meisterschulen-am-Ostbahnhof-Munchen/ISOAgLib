@@ -1,5 +1,5 @@
-/***************************************************************************
-                          procdatalocal_c.h - managing of local
+/*
+  procdatalocal_c.h: managing of local
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -13,14 +13,10 @@
 #ifndef PROCDATA_LOCAL_H
 #define PROCDATA_LOCAL_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/StdMeasureElements/impl/managemeasureproglocal_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointlocal_c.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include "processpkg_c.h"
@@ -28,31 +24,14 @@
 
 namespace IsoAgLib {
   class ProcessDataChangeHandler_c;
-  class EventSource_c;
 }
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
-// ****************************************************************************************
-// ********************************* ProcDataLocal_c *********************************
-// ****************************************************************************************
-
 
 /**
   @brief Internal implementation for managing of local process data object with standard
   ( %i.e. no restrictions ) feature set.
-
-  Has __IsoAgLib::SetpointLocal_c / IsoAgLib::iSetpointLocal_c and __IsoAgLib::ManageMeasureProgLocal_c / IsoAgLib::iManageMeasureProgLocal_c
-  as member for doing setpoint and measurement specific jobs.
-  \n
-  Projects which use this class, must include the files and succeding subdirectories
-  of the following subdirectories of xgpl_src/IsoAgLib/Process:
-  - \e Local/StdMeasureElements,
-  - \e Local/StdSetpointElements,
-  - \e StdMeasureElements,
-  - \e StdSetpointElements and
-  - \e impl
-  @author Dipl.-Inform. Achim Spangler
 */
 class ProcDataLocal_c : public ClientBase  {
 
@@ -119,13 +98,13 @@ public:
     set the value independent from any measure progs
     @param ai32_val new measure value
   */
-  virtual void setMeasurementVal(int32_t ai32_val);
+  void setMeasurementVal(int32_t ai32_val);
 
   /**
     increment the value -> update the measuring programs values
     @param ai32_val size of increment of master value
   */
-  virtual void incrMeasurementVal(int32_t ai32_val);
+  void incrMeasurementVal(int32_t ai32_val);
 
   /** process a message, which is adressed for this process data item */
   void processMsg( ProcessPkg_c& pkg );
@@ -137,7 +116,7 @@ public:
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned executions performed
   */
-  virtual bool timeEvent(  uint16_t *pui16_nextTimePeriod = NULL );
+  void timeEvent(  uint16_t& rui16_nextTimePeriod );
 
   /** send the value to a specified target (selected by ISOName)
     @param ac_targetISOName ISOName of target
@@ -149,7 +128,7 @@ public:
     Get setpoint value as received from remote system
     @return exact value of master setpoint
   */
-  virtual int32_t setpointValue() const { return mc_setpoint.setpointVal(); }
+  int32_t setpointValue() const { return mc_setpoint.setpointVal(); }
 
   /**
     allow local client to actively start a measurement program
@@ -166,7 +145,7 @@ public:
     stop all measurement progs in all local process instances, started with given isoName
     @param rc_isoName
   */
-  virtual void stopRunningMeasurement(const IsoName_c& rc_isoName);
+  void stopRunningMeasurement(const IsoName_c& rc_isoName);
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
@@ -223,15 +202,8 @@ protected: // Protected methods
   */
   void sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
-private: // Private methods
-  /** processing of a setpoint message */
-  //virtual void processSetpoint( const ProcessPkg_c& pkg );
-
-  /** process a measure prog message for local process data */
-  //virtual void processProg( const ProcessPkg_c& pkg );
-
 private: // Private attributes
-  /** IsoName_c information for this instance */
+  /** IsoName_c used for this instance */
   IsoName_c mc_isoName;
 
   /** ProcessData ddi */

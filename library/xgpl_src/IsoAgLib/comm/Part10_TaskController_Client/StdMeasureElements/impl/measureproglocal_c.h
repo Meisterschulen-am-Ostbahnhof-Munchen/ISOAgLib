@@ -141,7 +141,7 @@ public:
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
   */
-  bool timeEvent( ProcDataLocal_c& ac_processData, uint16_t *pui16_nextTimePeriod = NULL );
+  void timeEvent( ProcDataLocal_c& ac_processData, uint16_t& rui16_nextTimePeriod );
 
   /**
     add an aditional subprog or update if one with same kind exist already

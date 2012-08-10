@@ -1,6 +1,5 @@
 /*
-  setpointregister_c.cpp: stores one setpoint with management
-    informations
+  setpointregister_c.cpp: stores one setpoint with management informations
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -11,10 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "setpointregister_c.h"
 
 namespace __IsoAgLib {

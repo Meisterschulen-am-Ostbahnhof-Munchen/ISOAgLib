@@ -77,11 +77,8 @@ void ProcDataLocal_c::incrMeasurementVal(int32_t ai32_val){
   mc_measureprog.setGlobalVal( *this, measurementVal() );
 }
 
-bool ProcDataLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
-  if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
-
-  if ( ! mc_measureprog.timeEvent( *this, pui16_nextTimePeriod) ) return false;
-  return true;
+void ProcDataLocal_c::timeEvent( uint16_t& rui16_nextTimePeriod ){
+  mc_measureprog.timeEvent( *this, rui16_nextTimePeriod);
 }
 
 void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
