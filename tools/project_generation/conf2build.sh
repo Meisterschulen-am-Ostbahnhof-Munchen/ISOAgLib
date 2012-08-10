@@ -478,6 +478,10 @@ comm_features()
         printf '%s' " -o -path '*/Part13_FileServer_Client/*'" >&3
     fi
 
+    if [ "$PRJ_ISO_TASKCONTROLLER_CLIENT" -gt 0 ]; then
+        printf '%s' " -o -path '*/Part10_TaskController_Client/*'" >&3
+    fi
+    
     if [ "$PRJ_ISO_TERMINAL" -gt 0 ]; then
         if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" -eq 0 ]; then
             # exclude graphicscontext_c
@@ -658,21 +662,6 @@ driver_and_hal_features()
     fi
 }
 
-
-#Write to FD3 what's needed for finding COMM PROC features.
-comm_proc_features()
-{
-    if [ "$PRJ_ISO_TASKCONTROLLER_CLIENT" -gt 0 ]; then
-        if [ -n "${COMM_PROC_FEATURES:-}" ]; then
-            printf '%s' " -o " >&3
-        fi
-        printf '%s' " -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part10_TaskController_Client/impl/proc*' -o -path '*/Part10_TaskController_Client/iprocesscmd*' -o -path '*/Part10_TaskController_Client/impl/processcmd*' -o -path '*/Part10_TaskController_Client/*procdata*base_c.h'" >&3
-        printf '%s' " -o -path '*/Part10_TaskController_Client/i*devproperty*'" >&3
-        printf '%s' " -o -path '*/Part10_TaskController_Client/StdMeasureElements/*'" >&3
-        printf '%s' " -o -path '*/Part10_TaskController_Client/StdSetpointElements/*'" >&3
-    fi
-}
-
 # Split given string by delimiting whitespace and print parts with
 # given format.
 # Parameters: input string, first format, continuation format
@@ -727,7 +716,6 @@ create_filelist( )
     cd $PROJECT
 
     {
-        local COMM_PROC_FEATURES="$(comm_proc_features 3>&1 1>&9)"
         local COMM_FEATURES="$(comm_features 3>&1 1>&9)"
         TMP_HAL_FEATURES="${TEMPFILE_PREFIX}hal_features"
         local DRIVER_FEATURES="$(driver_and_hal_features 3>&1 4>"$TMP_HAL_FEATURES" 1>&9)"
@@ -752,7 +740,6 @@ create_filelist( )
         " -o -path '*/Part5_NetworkManagement/*'" \
         " -o -path '*/Part12_DiagnosticsServices/*' " \
         " -o -path '*/Part3_DataLink/i*can*' " \
-        "${COMM_PROC_FEATURES:+ -o ${COMM_PROC_FEATURES}}" \
         "${COMM_FEATURES:+ -o ${COMM_FEATURES}}" \
         "${DRIVER_FEATURES:+ -o ${DRIVER_FEATURES}}")"
     { local EXCLUDE_PATH_PART1="$(find_part '-and -not' "-path '%s'" "$APP_PATH_EXCLUDE" 3>&1 1>&9)"; } 9>&1
