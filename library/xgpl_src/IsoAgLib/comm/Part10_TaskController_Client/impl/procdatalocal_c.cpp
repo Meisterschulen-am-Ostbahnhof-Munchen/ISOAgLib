@@ -22,24 +22,23 @@
 namespace __IsoAgLib {
 
 ProcDataLocal_c::ProcDataLocal_c( uint16_t aui16_ddi, uint16_t aui16_element,
-                                  const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName,
+                                  const IsoName_c& acrc_isoName,
                                   bool ab_cumulativeValue,
                                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                   int ai_multitonInst
                                   )
     : ClientBase( ai_multitonInst ),
-      mpc_externalOverridingIsoName(NULL),
       mc_isoName(IsoName_c::IsoNameUnspecified())
     , mc_measureprog( this )
     , mc_setpoint( this )
 {
-      init( aui16_ddi, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue
+      init( aui16_ddi, aui16_element, acrc_isoName, ab_cumulativeValue
           , apc_processDataChangeHandler
           , ai_multitonInst);
 }
 
 void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
-                            const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName,
+                            const IsoName_c& acrc_isoName,
                             bool ab_cumulativeValue,
                            IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                            int ai_multitonInst
@@ -48,12 +47,7 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
   setElementDDI(aui16_ddi);
   setElementNumber(aui16_element);
 
-  mpc_externalOverridingIsoName = apc_externalOverridingIsoName;
-
-  // the ISOName of ident is best defined by pointed value of apc_externalOverridingIsoName
-  if ( apc_externalOverridingIsoName != 0 ) mc_isoName = *apc_externalOverridingIsoName;
-  // last choice is definition of mc_isoName by process data identiy
-  else mc_isoName = acrc_isoName;
+  mc_isoName = acrc_isoName;
 
   setMultitonInst(ai_multitonInst);
   mpc_processDataChangeHandler = apc_processDataChangeHandler;
@@ -87,7 +81,6 @@ void ProcDataLocal_c::assignFromSource( const ProcDataLocal_c& acrc_src )
 { // copy element vars
   // NOT COMPLETE ?
   mc_isoName = acrc_src.mc_isoName;
-  mpc_externalOverridingIsoName = acrc_src.mpc_externalOverridingIsoName;
   // elementDDI() returns list reference, setElementDDI() expects pointer to list
   setElementDDI(acrc_src.DDI());
 
@@ -100,7 +93,6 @@ void ProcDataLocal_c::assignFromSource( const ProcDataLocal_c& acrc_src )
 
 ProcDataLocal_c::ProcDataLocal_c(const ProcDataLocal_c& acrc_src)
    : ClientBase( acrc_src ),
-	  mpc_externalOverridingIsoName( acrc_src.mpc_externalOverridingIsoName ),
 		mc_isoName( acrc_src.mc_isoName )
 {
   // NOT COMPLETE ?
@@ -242,12 +234,6 @@ void ProcDataLocal_c::setBasicSendFlags( ProcessPkg_c& pkg ) const
 
   pkg.set_Element(element());
   pkg.set_DDI(DDI());
-}
-
-void ProcDataLocal_c::setExternalOverridingIsoName(const IsoName_c* apc_val)
-{
-  mpc_externalOverridingIsoName = apc_val;
-  mc_isoName = *apc_val;
 }
 
 bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameSender,

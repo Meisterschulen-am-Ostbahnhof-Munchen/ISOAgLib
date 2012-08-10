@@ -130,7 +130,6 @@ public:
   ProcDataLocal_c(uint16_t aui16_ddi,
                   uint16_t aui16_element,
                   const IsoName_c& acrc_isoName,
-                  const IsoName_c *apc_externalOverridingIsoName = NULL,
                   bool ab_cumulativeValue = false,
                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                   int ai_multitonInst = 0
@@ -170,7 +169,6 @@ public:
   void init(uint16_t aui16_ddi,
             uint16_t aui16_element,
             const IsoName_c& acrc_isoName,
-            const IsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_multitonInst = 0
@@ -343,8 +341,7 @@ public: // from former base class
     deliver the isoName (retrieved from pointed isoName value, if valid pointer)
     @return actual ISOName
   */
-  const IsoName_c& isoName() const
-    { return ((mpc_externalOverridingIsoName != 0)?(*mpc_externalOverridingIsoName):(mc_isoName));}
+  const IsoName_c& isoName() const { return mc_isoName; }
 
   /**
     set DDI, value group and setpoint/measure type of process msg
@@ -361,12 +358,6 @@ public: // from former base class
     @param ac_val new ISOName val
   */
   void setISOName(const IsoName_c& ac_val){mc_isoName = ac_val;}
-
-  /**
-    set pointer to external isoName instances (used by isoName())
-    @param apc_val pointer to ISOName
-  */
-  void setExternalOverridingIsoName(const IsoName_c* apc_val);
 
   /**
     check if this item has the same identity as defined by the parameters,
@@ -447,9 +438,6 @@ private:
   bool mb_cumulativeValue;
 
 private: // Private attributes
-
-  /** DEVCLASS code of process data identity */
-  const IsoName_c* mpc_externalOverridingIsoName; // only defined for own local data, otherwise NULL
 
   /** IsoName_c information for this instance */
   IsoName_c mc_isoName;
