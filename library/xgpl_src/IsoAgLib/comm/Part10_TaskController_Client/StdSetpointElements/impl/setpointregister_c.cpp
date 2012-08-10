@@ -19,14 +19,15 @@
 
 namespace __IsoAgLib {
 
-void SetpointRegister_c::init(const IsoName_c& acrc_isoName, int32_t ai32_value, bool ab_valid)
+void SetpointRegister_c::init(IsoName_c::ecuType_t ecuType, int32_t ai32_value, bool ab_valid)
 { // direct value set to avoid special functions of equivalent set functions
   setValue(ai32_value);
 
-  setISOName(acrc_isoName);
+  setISONameType(ecuType);
   setValid(ab_valid);
 }
 
+#if 0
 const SetpointRegister_c& SetpointRegister_c::operator=(const SetpointRegister_c& acrc_src){
   assignFromSource(acrc_src);
   return *this;
@@ -43,19 +44,14 @@ void SetpointRegister_c::assignFromSource( const SetpointRegister_c& acrc_src )
   setISOName(acrc_src.isoName());
   setValid(acrc_src.valid());
 }
+#endif
 
 SetpointRegister_c::~SetpointRegister_c(){
 }
 
-bool SetpointRegister_c::operator==(const SetpointRegister_c& acrc_src)const{
-  return ((mi32_value == acrc_src.mi32_value)
-        && (isoName() == acrc_src.isoName()))
-;
-}
-
 void SetpointRegister_c::setValue(int32_t ai32_val)
 {
-  if (ai32_val != NO_VAL_32S)
+  if (ai32_val != NO_VAL_32S) // @TODO remove
   {
     mi32_value = ai32_val;
   }

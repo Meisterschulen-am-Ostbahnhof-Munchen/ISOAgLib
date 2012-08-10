@@ -121,7 +121,7 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
   pkg.resolveCommandTypeForISO( DDI(), mb_isSetpoint );
 
   if (pkg.mc_processCmd.checkIsSetpoint())
-    processSetpoint( pkg );
+    processSetpoint(pkg);
   else
     processProg(pkg);
 }
@@ -141,7 +141,6 @@ bool ProcDataLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
 
   if ( ! mc_measureprog.timeEvent(pui16_nextTimePeriod) ) return false;
-  if ( ! mc_setpoint.timeEvent() ) return false;
   return true;
 }
 
@@ -149,7 +148,6 @@ void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& pkg ){
   switch ( pkg.mc_processCmd.getCommand())
   {
     case ProcessCmd_c::setValue:
-    case ProcessCmd_c::requestValue:
       mc_setpoint.processMsg( pkg );
       break;
     default:

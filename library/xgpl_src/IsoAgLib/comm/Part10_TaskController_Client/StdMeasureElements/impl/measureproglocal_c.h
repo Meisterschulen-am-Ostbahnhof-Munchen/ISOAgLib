@@ -103,7 +103,7 @@ public:
       * dependant error in CanIo_c on send problems
 
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @param ai32_masterVal actual master value to start with
     @return true -> starting values sent with success
   */
@@ -118,10 +118,10 @@ public:
       * dependant error in CanIo_c on send problems
 
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @return true -> starting values sent with success
   */
-  virtual bool start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
+  bool start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend);
   /**
     stop local measuring programs -> send actual values
 
@@ -130,10 +130,10 @@ public:
       * dependant error in CanIo_c on send problems
     @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
     @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @return true -> stop values sent with success
   */
-  virtual bool stop(bool b_deleteSubProgs = true, Proc_c::type_t ren_type = Proc_c::NullType,
+  bool stop(bool b_deleteSubProgs = true, Proc_c::type_t ren_type = Proc_c::NullType,
                     Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
@@ -142,21 +142,7 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendValForGroup( const IsoName_c& ac_targetISOName) const;
-
-  /**
-    send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
-    @param en_valueGroup value group to send
-    @param ac_targetISOName ISOName of target
-    @return true -> successful sent
-  */
-  bool sendSetpointValForGroup( const IsoName_c& ac_targetISOName) const;
-  /**
-    deliver to en_valueGroup according setpoint from a master setpoint
-    @param en_valueGroup of wanted subtype
-    @return value of specified subtype
-  */
-  int32_t setpointValForGroup() const;
+  bool sendVal( const IsoName_c& ac_targetISOName) const;
 
   /**
     process a message: reset command or value requests
@@ -177,7 +163,7 @@ public:
       * dependant error in CanIo_c on send problems
     @param ai32_val new measure value
   */
-  virtual void setVal(int32_t ai32_val);
+  void setVal(int32_t ai32_val);
 
   /**
     send the values which are registered by a running mesuring program
@@ -185,7 +171,7 @@ public:
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CanIo_c on send problems
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
+    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal...
     @return true -> value send triggered and performed with success
   */
   bool sendRegisteredVals(Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
@@ -194,7 +180,7 @@ public:
     init the element vals
     @param ai32_val initial measure val
   */
-  virtual void initVal(int32_t ai32_val);
+  void initVal(int32_t ai32_val);
   /**
     reset the local value
 
@@ -204,7 +190,7 @@ public:
     @param ai32_val reset measure value to this value
     @return true -> reseted measure val sent with success
   */
-  virtual bool resetVal(int32_t ai32_val = 0);
+  bool resetVal(int32_t ai32_val = 0);
 
   /**
     periodic events
@@ -216,13 +202,13 @@ public:
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
     @return true -> all planned activities performed in available time
   */
-  virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
+  bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
   /**
     add an aditional subprog or update if one with same kind exist already
     @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ai32_increment increment value
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal...)
     @return always true; only relevant for overoaded methods in derived classes
   */
   bool addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
@@ -253,7 +239,6 @@ public:
   */
   IsoName_c::ecuType_t isoNameType () const { return m_ecuType; }
 
-
   /**
     return the program active flag
     @return true -> is active
@@ -278,15 +263,9 @@ private: // Private methods
 
   /**
     process a message with an increment for a measuring program
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal...)
   */
   void processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
-
-  /**
-    internal increment the value
-    @param ai32_val increment for internal measure val
-  */
-  void incrVal(int32_t ai32_val){mi32_val += ai32_val;}
 
 private: // Private attributes
 

@@ -36,7 +36,7 @@ public:
                          MethodTotal = 4 };
 
   /** enum type for to sending values */
-  enum doSend_t {DoNone = 0, DoVal = 1, DoValForExactSetpoint = 0x80};
+  enum doSend_t {DoNone = 0, DoVal = 1};
 
   /** enum type for special DDIs */
   enum specialDDI_t {defaultDataLoggingDDI = 0xDFFF};

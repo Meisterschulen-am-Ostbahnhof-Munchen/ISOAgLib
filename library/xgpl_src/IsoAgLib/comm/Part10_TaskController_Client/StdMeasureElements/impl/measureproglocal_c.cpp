@@ -186,29 +186,12 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
   return b_sendResult;
 }
 
-bool MeasureProgLocal_c::sendValForGroup( const IsoName_c& ac_targetISOName) const
+bool MeasureProgLocal_c::sendVal( const IsoName_c& ac_targetISOName) const
 {
   ProcessPkg_c pkg;
   // prepare general command in process pkg
   pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
   return processDataConst().sendValISOName( pkg, ac_targetISOName, val());
-}
-
-bool MeasureProgLocal_c::sendSetpointValForGroup( const IsoName_c& ac_targetISOName) const {
-  ProcessPkg_c pkg;
-  // prepare general command in process pkg
-  pkg.mc_processCmd.setValues(TRUE /* isSetpoint */, false /* isRequest */, ProcessCmd_c::setValue);
-  return processDataConst().sendValISOName( pkg, ac_targetISOName, setpointValForGroup());
-}
-
-int32_t MeasureProgLocal_c::setpointValForGroup() const {
-  int32_t i32_value = 0;
-  ProcDataLocal_c* pc_procdata = pprocessData();
-  if (pc_procdata->setpointExistMaster())
-  {
-    i32_value = pc_procdata->setpointValue();
-  }
-  return i32_value;
 }
 
 bool MeasureProgLocal_c::processMsgHelper( const ProcessPkg_c& pkg ){
@@ -231,8 +214,6 @@ bool MeasureProgLocal_c::processMsgHelper( const ProcessPkg_c& pkg ){
 
     // set en_doSendPkg (for ISO)
     Proc_c::doSend_t en_doSendPkg = Proc_c::DoVal;  //default send data mode
-    if (pkg.mc_processCmd.checkIsSetpoint())
-      en_doSendPkg = Proc_c::DoValForExactSetpoint; // measurement for exact value setpoint
 
     // programm controlling command
     if (// ISO
@@ -309,7 +290,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
       return true;
     }
 
-    // backup sender isoname before answering with resetValForGroup() or sendValForGroup() (modification during send in c_pkg !)
+    // backup sender isoname before answering with resetValForGroup() or sendVal() (modification during send in c_pkg !)
     const IsoName_c c_senderIsoNameOrig = arc_data.senderItem()->isoName();
 
     // ISO: value in message contains reset value
@@ -333,7 +314,7 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
     } // write
     else
     { // read -> answer wanted value
-      sendValForGroup( c_senderIsoNameOrig );
+      sendVal( c_senderIsoNameOrig );
 
       if ((Proc_c::defaultDataLoggingDDI == arc_data.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
@@ -413,13 +394,9 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
 bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   bool b_success = false;
 
-  if (Proc_c::DoValForExactSetpoint == ren_doSend)
-    // get value from corresponding setpoint and send it
-    b_success = (sendSetpointValForGroup( getProcessInstance4Comm().getISONameFromType( m_ecuType ) ))? true : b_success;
-
   // normal measurement (no measurement on setpoint DDI)
   if (Proc_c::DoVal == ren_doSend)
-    b_success = (sendValForGroup( getProcessInstance4Comm().getISONameFromType( m_ecuType ) ))? true : b_success;
+    b_success = (sendVal( getProcessInstance4Comm().getISONameFromType( m_ecuType ) ))? true : b_success;
 
   return b_success;
 }

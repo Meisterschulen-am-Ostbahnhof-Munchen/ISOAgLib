@@ -35,13 +35,6 @@ public:
   /* ************************************ */
   /* ***reading member variable access*** */
   /* ************************************ */
-
-  /**
-    deliver isoName of commanding member
-    @return ISOName of setpoint commander
-  */
-  const iIsoName_c& isoName()const
-  {return SetpointRegister_c::isoName().toConstIisoName_c();};
   /**
     deliver the exact setpoint
     @return exact setpoint value

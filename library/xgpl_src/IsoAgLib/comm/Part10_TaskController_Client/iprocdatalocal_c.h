@@ -165,25 +165,6 @@ public:
     { return ProcDataLocal_c::sendMasterMeasurementVal( ac_targetISOName );}
 
   /**
-    send a exact-setpoint to a specified target (selected by GPT)
-    @param ac_targetISOName ISOName of target
-    @return true -> successful sent
-  */
-  bool sendMasterSetpointVal( const iIsoName_c& ac_targetISOName ) const
-   { return setpointConst().sendMasterSetpointVal( ac_targetISOName );}
-
-  /**
-    send a sub-setpoint (selected by value group) to a specified target (selected by GPT)
-    @param en_valueGroup select sub-type of setpoint
-    @param ac_targetISOName ISOName of target
-    @return true -> successful sent
-  */
-  bool sendSetpointForGroup( const iIsoName_c& ac_targetISOName ) const
-  {
-    return setpointConst().sendSetpointForGroup( ac_targetISOName, __IsoAgLib::ProcessCmd_c::setValue );
-  }
-
-  /**
     deliver the master value (central measure value of this process data;
     can differ from measure vals of measure progs, as these can be reseted
     independent)
@@ -225,13 +206,6 @@ public:
   */
   int32_t setpointVal() const
     { return ProcDataLocal_c::setpointConst().setpointVal();}
-
-  /**
-    set the setpoint value
-    @param ai32_val new setpoint value
-  */
-  void setSetpointVal(int32_t ai32_val)
-    { ProcDataLocal_c::setpoint().setSetpointVal(ai32_val);}
 
    /**
     check if specific measureprog exist

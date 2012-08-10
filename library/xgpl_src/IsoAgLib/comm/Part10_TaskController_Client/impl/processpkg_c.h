@@ -62,14 +62,6 @@ public:
   uint16_t DDI()const{return bit_data.ui16_DDI;}
 
   /**
-    check if the 4byte value of the message has a special command of type
-    proc_specCmd_t: setpointReleaseCmd, setpointErrCmd, noVal_32s, errVal_32s
-    @param ren_checkCmd special command to check for
-    @return true -> the given cmd was received
-  */
-  bool isSpecCmd(proc_specCmd_t ren_checkCmd)const;
-
-  /**
     deliver data value as int32_t
     @return data value of message
   */
@@ -112,14 +104,6 @@ public:
     @param ai32_val new data value for message
   */
   void setData(int32_t ai32_val) { mi32_pdValue = ai32_val; }
-
-  /**
-    set one of the special commands of type proc_specCmd_t:
-    setpointReleaseCmd, setpointErrCmd, noVal_32s, errVal_32s
-    with specified data type specifying flag in CAN data string
-    @param ren_procSpecCmd special command to send
-  */
-  void setData(proc_specCmd_t ren_procSpecCmd);
 
   /**
     extract data from ISO commands and save it to member class

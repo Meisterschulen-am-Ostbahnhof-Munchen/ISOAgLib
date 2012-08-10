@@ -32,12 +32,12 @@ public:
   /**
     default constructor which can optionally set increment type, increment and running state
     @param ren_type optional increment type (default time proportional)
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
+    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal...)
     @param ai32_increment optional increment value of ren_type (default 0)
     @param ab_started optional running state (default off)
     @param ai32_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, Proc_c::doSend_t ren_doSend = Proc_c::DoVal, int32_t ai32_increment = 0  MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
+  MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment  MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
 
   /**
     operator= for Subprogs
@@ -71,11 +71,6 @@ public:
     @return data send type of this measure subprogram increment
   */
   Proc_c::doSend_t doSend(){return men_doSend;};
-  /**
-    set subprog data send type
-    @param ren_doSend wanted data send type of this measure subprogram
-  */
-  void setDoSend_t(Proc_c::doSend_t ren_doSend){men_doSend = ren_doSend;};
 
   /**
     deliver the increment value of this subprog
@@ -106,80 +101,6 @@ public:
   /** stop a measuring subprogram  */
   void stop(){mb_started = false;};
 
-  /**
-    compare two Subprogs with ==
-    @param acrc_right compared MeasureSubprog_c instance
-    @return true -> this instance is equal to the other
-  */
-  bool operator==(const MeasureSubprog_c& acrc_right)const;
-  /**
-    compare two Subprogs with !=
-    @param acrc_right compared MeasureSubprog_c instance
-    @return true -> this instance is different to the other
-  */
-  bool operator!=(const MeasureSubprog_c& acrc_right)const;
-  /**
-    compare two Subprogs with <
-    @param acrc_right compared MeasureSubprog_c instance
-    @return true -> this instance is < than the other
-  */
-  bool operator<(const MeasureSubprog_c& acrc_right)const;
-  /**
-    compare two Subprogs with <=
-    @param acrc_right compared MeasureSubprog_c instance
-    @return true -> this instance is <= than the other
-  */
-  bool operator<=(const MeasureSubprog_c& acrc_right)const;
-  /**
-    compare two Subprogs with >
-    @param acrc_right compared MeasureSubprog_c instance
-    @return true -> this instance is > than the other
-  */
-  bool operator>(const MeasureSubprog_c& acrc_right)const;
-  /**
-    compare two Subprogs with >=
-    @param acrc_right compared MeasureSubprog_c instance
-    @return true -> this instance is >= than the other
-  */
-  bool operator>=(const MeasureSubprog_c& acrc_right)const;
-
-  /**
-    compare two Subprogs with ==
-    @param ren_type compared increment type
-    @return true -> this instance is equal to the compared increment type
-  */
-  bool operator==(Proc_c::type_t ren_type)const;
-  /**
-    compare two Subprogs with !=
-    @param ren_type compared increment type
-    @return true -> this instance is different to the compared increment type
-  */
-  bool operator!=(Proc_c::type_t ren_type)const;
-  /**
-    compare two Subprogs with <
-    @param ren_type compared increment type
-    @return true -> this instance is < than the compared increment type
-  */
-  bool operator<(Proc_c::type_t ren_type)const;
-  /**
-    compare two Subprogs with <=
-    @param ren_type compared increment type
-    @return true -> this instance is <= than the compared increment type
-  */
-  bool operator<=(Proc_c::type_t ren_type)const;
-  /**
-    compare two Subprogs with >
-    @param ren_type compared increment type
-    @return true -> this instance is > than the compared increment type
-  */
-  bool operator>(Proc_c::type_t ren_type)const;
-  /**
-    compare two Subprogs with >=
-    @param ren_type compared increment type
-    @return true -> this instance is >= than the compared increment type
-  */
-  bool operator>=(Proc_c::type_t ren_type)const;
-
 private: // Private attributes
   /** last value for the increment test of this instance */
   int32_t mi32_lastVal;
@@ -188,18 +109,9 @@ private: // Private attributes
 
   /** states if this subprog is started */
   bool mb_started;
-  /** type of this subprog instance
-    (the managed increment type)
-  */
+  /** type of this subprog instance */
   Proc_c::type_t men_type;
   Proc_c::doSend_t men_doSend;
-
-private: // Private methods
-  /**
-    calculate a single identifying value for easier compare of Subprogs
-    @return single value for comparison of Subprogs
-  */
-  int32_t calcCompVal() const;
 };
 
 }

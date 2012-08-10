@@ -35,16 +35,16 @@ public:
     @param ai32_value setpoint value
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_value = NO_VAL_32S,
+  SetpointRegister_c(IsoName_c::ecuType_t ecuType = IsoName_c::ecuTypeANYOTHER, int32_t ai32_value = NO_VAL_32S,
      bool ab_valid = true)
-      {  init(acrc_isoName, ai32_value, ab_valid);}
+      {  init(ecuType, ai32_value, ab_valid);}
   /**
     initialise this SetpointRegister_c to a well defined starting condition
     @param acrc_isoName device key of commander of this setpoint register set
     @param ai32_value setpoint value
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_value = NO_VAL_32S,
+  void init(IsoName_c::ecuType_t ecuType = IsoName_c::ecuTypeANYOTHER, int32_t ai32_value = NO_VAL_32S,
       bool ab_valid = true);
 
   /**
@@ -77,7 +77,8 @@ public:
     deliver isoName of commanding member
     @return ISOName of setpoint commander
   */
-  const IsoName_c& isoName()const{return mc_requestISOName;}
+  IsoName_c::ecuType_t isoNameType () const { return m_requestEcuType; }
+
   /**
     deliver the exact setpoint
     @return exact setpoint value
@@ -98,7 +99,7 @@ public:
     set isoName of cammanding member
     @param ac_val ISOName of commanding member
   */
-  void setISOName(const IsoName_c& ac_val){mc_requestISOName = ac_val;}
+  void setISONameType( IsoName_c::ecuType_t ecuType ) {m_requestEcuType = ecuType;}
   /**
     set the exact setpoint value
     @param ai32_val new exact setpoint value
@@ -120,8 +121,8 @@ private: // Private attributes
   int32_t mi32_value;
 
   /** isoName code of requester */
-  IsoName_c mc_requestISOName;
-  
+  IsoName_c::ecuType_t m_requestEcuType;
+
   /** valid state == the setpoint value is actually valid - it is conformant with the master setpoint */
   bool b_valid;
 };
