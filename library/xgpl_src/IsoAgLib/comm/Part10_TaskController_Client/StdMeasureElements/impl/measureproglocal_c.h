@@ -67,7 +67,7 @@ public:
     @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c(
-    ProcDataLocal_c *const apc_processData = NULL,
+    ProcDataLocal_c& ac_processData,
     int32_t ai32_masterVal = 0,
     int32_t ai32_initialVal = 0);
   /**
@@ -78,7 +78,7 @@ public:
     @param ecuType optional ecuType_t of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
-    ProcDataLocal_c *const apc_processData,
+    ProcDataLocal_c& ac_processData,
     int32_t ai32_masterVal = 0,
     int32_t ai32_initialVal = 0);
 

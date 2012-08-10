@@ -24,13 +24,13 @@
 namespace __IsoAgLib {
 
 void MeasureProgLocal_c::init(
-  ProcDataLocal_c *const apc_processData,
+  ProcDataLocal_c& ac_processData,
   int32_t ai32_masterVal,
   int32_t ai32_initialVal)
 {
   mvec_measureSubprog.clear();
   // set the pointers in the baseClass ProcessElementBase
-  set(apc_processData);
+  set(&ac_processData);
   // store the parameter init vals
   m_ecuType = IsoName_c::ecuTypeANYOTHER;
   //mc_isoName = ac_callerISOName;
@@ -346,14 +346,14 @@ bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
 }
 
 MeasureProgLocal_c::MeasureProgLocal_c(
-  ProcDataLocal_c *const apc_processData,
+  ProcDataLocal_c& ac_processData,
   int32_t ai32_masterVal,
   int32_t ai32_initialVal)
-  : ProcessElementBase_c(apc_processData),
+  : ProcessElementBase_c(&ac_processData),
     mvec_measureSubprog(),
     m_ecuType(IsoName_c::ecuTypeANYOTHER)
 {
-  init( apc_processData, ai32_masterVal, ai32_initialVal );
+  init( ac_processData, ai32_masterVal, ai32_initialVal );
 }
 
 void MeasureProgLocal_c::setVal(int32_t ai32_val){

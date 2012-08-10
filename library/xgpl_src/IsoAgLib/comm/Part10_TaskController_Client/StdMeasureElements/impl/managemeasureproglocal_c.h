@@ -38,7 +38,7 @@ class ManageMeasureProgLocal_c : public ProcessElementBase_c
     constructor which initialse both pointers if given
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  ManageMeasureProgLocal_c( ProcDataLocal_c *const apc_processData );
+  ManageMeasureProgLocal_c( ProcDataLocal_c& ac_processData );
   
   /** destructor */
   virtual ~ManageMeasureProgLocal_c();
@@ -47,7 +47,7 @@ class ManageMeasureProgLocal_c : public ProcessElementBase_c
     initialise this ManageMeasureProgLocal_c instance to a well defined initial state
     @param apc_processData optional pointer to containing ProcessData instance
   */
-  void init( ProcDataLocal_c *const apc_processData = NULL );
+  void init( ProcDataLocal_c& ac_processData );
 
   /** copy constructor */
   ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& acrc_src );

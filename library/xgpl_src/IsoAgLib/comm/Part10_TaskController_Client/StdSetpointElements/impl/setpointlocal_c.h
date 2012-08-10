@@ -43,14 +43,14 @@ public:
     default constructor which can set needed pointers to containing objects
     @param apc_processData pointer to containing ProcessData instance
   */
-  SetpointLocal_c( ProcDataLocal_c *const apc_processData = NULL ) : ProcessElementBase_c( apc_processData)
-    {init( apc_processData );};
+  SetpointLocal_c( ProcDataLocal_c& ac_processData ) : ProcessElementBase_c( &ac_processData)
+    {init( ac_processData );};
 
   /**
     initialise this SetpointLocal_c to a well defined starting condition
     @param apc_processData pointer to containing ProcessData instance
   */
-  void init( ProcDataLocal_c *const apc_processData );
+  void init( ProcDataLocal_c& ac_processData );
   /**
     assginment from another object
     @param acrc_src source SetpointLocal_c instance
@@ -64,9 +64,6 @@ public:
    SetpointLocal_c( const SetpointLocal_c& acrc_src );
   /** default destructor which has nothing to do */
   ~SetpointLocal_c();
-
-  SetpointLocal_c( ProcDataLocal_c &arc_processData );
-
 
   /**
     retreive simple master setpoint

@@ -31,8 +31,8 @@ ProcDataLocal_c::ProcDataLocal_c( uint16_t aui16_ddi, uint16_t aui16_element,
                                   )
     : ClientBase( ai_multitonInst ),
       mc_isoName(IsoName_c::IsoNameUnspecified())
-    , mc_measureprog( this )
-    , mc_setpoint( this )
+    , mc_measureprog( *this )
+    , mc_setpoint( *this )
 {
       init( aui16_ddi, aui16_element, acrc_isoName, ab_isSetpoint, aui8_triggerMethod, ab_cumulativeValue
           , apc_processDataChangeHandler
@@ -61,8 +61,8 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
 
   getProcessInstance4Comm().registerLocalProcessData( this );
 
-  mc_setpoint.init( this );
-  mc_measureprog.init( this );
+  mc_setpoint.init( *this );
+  mc_measureprog.init( *this );
 
   mb_isSetpoint = ab_isSetpoint;
   mui8_triggerMethod = aui8_triggerMethod;
