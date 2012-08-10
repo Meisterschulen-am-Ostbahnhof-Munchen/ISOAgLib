@@ -46,31 +46,7 @@ public:
     deliver the exact setpoint
     @return exact setpoint value
   */
-  int32_t exact()const{return SetpointRegister_c::exact();};
-  /**
-    deliver the minimum limit; if no min is given (~0) return i32_exact
-    @return minimum setpoint value
-  */
-  int32_t min()const{return SetpointRegister_c::min();};
-  /**
-    deliver the maximum limit; if no max is given (~0) return i32_exact
-    @return maximum setpoint value
-  */
-  int32_t max()const{return SetpointRegister_c::max();};
-  /**
-    deliver the default setpoint value; if no default is given (~0) return i32_exact
-    @return default setpoint value
-  */
-  int32_t getDefault()const{return SetpointRegister_c::getDefault();};
-  /**
-    deliver the setpoint according to the value group
-    @param en_valueGroup of wanted setpoint (exact 0, min 2, max 3, default)
-    @return setpoint selected by value group
-  */
-  int32_t valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup)const
-  {
-    return SetpointRegister_c::valForGroup(en_valueGroup);
-  };
+  int32_t value()const{return SetpointRegister_c::value();};
 
   /**
     check if setpoint value was already handled
@@ -87,35 +63,6 @@ public:
     @return true -> the application set this setpoint as valid (accepted)
   */
   bool valid()const {return SetpointRegister_c::valid();};
-  /**
-    check if valid exact limit is set
-    @return true -> this setpoint register instance has an exact setpoint value
-  */
-  bool existExact()const {return SetpointRegister_c::existExact();};
-  /**
-    check if valid minimum limit is set
-    @return true -> this setpoint register instance has an minimum setpoint value
-  */
-  bool existMin()const {return SetpointRegister_c::existMin();};
-  /**
-    check if valid maximum limit is set
-    @return true -> this setpoint register instance has an maximum setpoint value
-  */
-  bool existMax()const {return SetpointRegister_c::existMax();};
-  /**
-    check if valid default value is set
-    @return true -> this setpoint register instance has an default setpoint value
-  */
-  bool existDefault()const {return SetpointRegister_c::existDefault();};
-  /**
-    checks if setpoint with value group en_valueGroup exists
-    @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
-    @return true -> a setpoint for this valueGroup exists
-  */
-  bool valueGroupExists(ProcessCmd_c::ValueGroup_t en_valueGroup) const {
-    return SetpointRegister_c::valueGroupExists(en_valueGroup);
-  };
-
 
   /* ************************************ */
   /* ***writing member variable access*** */
@@ -125,22 +72,8 @@ public:
     set the exact setpoint value
     @param ai32_val new exact setpoint value
   */
-  void setExact(int32_t ai32_val){SetpointRegister_c::setExact(ai32_val);};
-  /**
-    set the minimum setpoint value
-    @param ai32_val new minimum setpoint value
-  */
-  void setMin(int32_t ai32_val){SetpointRegister_c::setMin(ai32_val);};
-  /**
-    set the maximum setpoint value
-    @param ai32_val new maximum setpoint value
-  */
-  void setMax(int32_t ai32_val){SetpointRegister_c::setMax(ai32_val);};
-  /**
-    set the default setpoint value
-    @param ai32_val new default setpoint value
-  */
-  void setDefault(int32_t ai32_val){SetpointRegister_c::setDefault(ai32_val);};
+  void setValue(int32_t ai32_val){SetpointRegister_c::setValue(ai32_val);};
+
 
   /**
     set the handled state; return if state was changed

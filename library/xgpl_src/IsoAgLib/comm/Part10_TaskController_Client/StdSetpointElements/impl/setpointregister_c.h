@@ -47,23 +47,18 @@ public:
     @param ab_master true -> this setpoint register instance represents the actual master setpoint
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_exact = NO_VAL_32S,
-      int32_t ai32_min = NO_VAL_32S, int32_t ai32_max = NO_VAL_32S, int32_t ai32_default = NO_VAL_32S,
+  SetpointRegister_c(const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_value = NO_VAL_32S,
       bool ab_handled = false, bool ab_master = false, bool ab_valid = true)
-      {  init(acrc_isoName, ai32_exact, ai32_min, ai32_max, ai32_default, ab_handled, ab_master, ab_valid);}
+      {  init(acrc_isoName, ai32_value, ab_handled, ab_master, ab_valid);}
   /**
     initialise this SetpointRegister_c to a well defined starting condition
     @param acrc_isoName device key of commander of this setpoint register set
-    @param ai32_exact exact setpoint value
-    @param ai32_min minimum setpoint value
-    @param ai32_max maximum setpoint value
-    @param ai32_default default setpoint value
+    @param ai32_value exact setpoint value
     @param ab_handled true -> this setpoint register nistance was handled by main application
     @param ab_master true -> this setpoint register instance represents the actual master setpoint
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_exact = NO_VAL_32S,
-      int32_t ai32_min = NO_VAL_32S, int32_t ai32_max = NO_VAL_32S, int32_t ai32_default = NO_VAL_32S,
+  void init(const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_value = NO_VAL_32S,
       bool ab_handled = false, bool ab_master = false, bool ab_valid = true);
 
   /**
@@ -101,31 +96,8 @@ public:
     deliver the exact setpoint
     @return exact setpoint value
   */
-  int32_t exact()const{return mi32_exactOrMin;}
-
-  /**
-    deliver the minimum limit; if no min is given (~0) return mi32_exactOrMin
-    @return minimum setpoint value
-  */
-  int32_t min()const{return mi32_exactOrMin;}
-  /**
-    deliver the maximum limit ; if no max is given (~0) return mi32_exactOrMin
-    @return maximum setpoint value
-  */
-  int32_t max()const{return (existMax())?(mi32_max):(mi32_exactOrMin);}
-  /**
-    deliver the default limit ; if no default is given (~0) return mi32_exactOrMin
-    name: getDefault() because default() doesn't compile
-    @return default setpoint value
-  */
-  int32_t getDefault()const{return (existDefault())?(mi32_default):(mi32_exactOrMin);}
-  /**
-    deliver the setpoint according to the value group
-    @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
-    @return setpoint selected by value group
-  */
-  int32_t valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup)const;
-
+  int32_t value()const{return mi32_exactOrMin;}
+ 
   /**
     check if setpoint value was already handled
     @return true -> this setpoint was handled by the application
@@ -146,33 +118,6 @@ public:
     @return true -> the application set this setpoint as valid (accepted)
   */
   bool valid()const{return (data.b_valid == 1);}
-  /**
-    check if valid exact limit is set
-    @return true -> this setpoint register instance has an exact setpoint value
-  */
-  bool existExact()const{return ((data.en_definedSetpoints & exactType) != 0);}
-  /**
-    check if valid minimum limit is set
-    @return true -> this setpoint register instance has an minimum setpoint value
-  */
-  bool existMin()const{return ((data.en_definedSetpoints & minType) != 0);}
-  /**
-    check if valid maximum limit is set
-    @return true -> this setpoint register instance has an maximum setpoint value
-  */
-  bool existMax()const{return ((data.en_definedSetpoints & maxType) != 0);}
-  /**
-    check if valid default value is set
-    @return true -> this setpoint register instance has a default setpoint value
-  */
-  bool existDefault()const{return ((data.en_definedSetpoints & defaultType) != 0);}
-  /**
-    checks if setpoint with value group en_valueGroup exists
-    @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
-    @return true -> a setpoint for this valueGroup exists
-  */
-  bool valueGroupExists(ProcessCmd_c::ValueGroup_t en_valueGroup)const;
-
 
   /* ************************************ */
   /* ***writing member variable access*** */
@@ -187,22 +132,7 @@ public:
     set the exact setpoint value
     @param ai32_val new exact setpoint value
   */
-  void setExact(int32_t ai32_val);
-  /**
-    set the minimum setpoint value
-    @param ai32_val new minimum setpoint value
-  */
-  void setMin(int32_t ai32_val);
-  /**
-    set the maximum setpoint value
-    @param ai32_val new maximum setpoint value
-  */
-  void setMax(int32_t ai32_val);
-  /**
-    set the default setpoint value
-    @param ai32_val new default setpoint value
-  */
-  void setDefault(int32_t ai32_val);
+  void setValue(int32_t ai32_val);
 
   /**
     set the handled state; return if state was changed

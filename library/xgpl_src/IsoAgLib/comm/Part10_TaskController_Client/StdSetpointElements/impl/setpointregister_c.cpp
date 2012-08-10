@@ -19,13 +19,10 @@
 
 namespace __IsoAgLib {
 
-void SetpointRegister_c::init(const IsoName_c& acrc_isoName, int32_t ai32_exact, int32_t ai32_min, int32_t ai32_max, int32_t ai32_default,
+void SetpointRegister_c::init(const IsoName_c& acrc_isoName, int32_t ai32_value,
         bool ab_handled, bool ab_master, bool ab_valid)
 { // direct value set to avoid special functions of equivalent set functions
-  setExact(ai32_exact);
-  setMin(ai32_min);
-  setMax(ai32_max);
-  setDefault(ai32_default);
+  setValue(ai32_value);
 
   setISOName(acrc_isoName);
   setHandled(ab_handled, 0);
@@ -68,38 +65,7 @@ bool SetpointRegister_c::operator==(const SetpointRegister_c& acrc_src)const{
 ;
 }
 
-int32_t SetpointRegister_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const{
-  switch (en_valueGroup)
-  {
-    case ProcessCmd_c::exactValue:
-      return exact();
-    case ProcessCmd_c::minValue:
-      return min();
-    case ProcessCmd_c::defaultValue:
-      return getDefault();
-    case ProcessCmd_c::maxValue:
-    default:
-      return max();
-  }
-}
-
-bool SetpointRegister_c::valueGroupExists(ProcessCmd_c::ValueGroup_t en_valueGroup) const{
-  switch (en_valueGroup)
-  {
-    case ProcessCmd_c::exactValue:
-      return ((data.en_definedSetpoints & exactType) != 0);
-    case ProcessCmd_c::minValue:
-      return ((data.en_definedSetpoints & minType) != 0);
-    case ProcessCmd_c::defaultValue:
-      return ((data.en_definedSetpoints & defaultType) != 0);
-    case ProcessCmd_c::maxValue:
-      return ((data.en_definedSetpoints & maxType) != 0);
-    default:
-      return false;
-  }
-}
-
-void SetpointRegister_c::setExact(int32_t ai32_val)
+void SetpointRegister_c::setValue(int32_t ai32_val)
 {
   if (ai32_val != NO_VAL_32S)
   {
@@ -119,83 +85,8 @@ void SetpointRegister_c::setExact(int32_t ai32_val)
   setHandled(false);
 };
 
-void SetpointRegister_c::setMin(int32_t ai32_val)
-{
-  if (ai32_val != NO_VAL_32S)
-  {
-    mi32_exactOrMin = ai32_val;
-    // clear exactType
-    // don't change maxType and defaultType
-    // set minType
-    data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(minType | (data.en_definedSetpoints & maxDefaultType));
-  }
-  else
-  { // clear minType -> mask with exactMaxDefaultType
-    data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMaxDefaultType);
-  }
-
-  // set the entry to unhandled
-  setHandled(false);
-};
-
-void SetpointRegister_c::setMax(int32_t ai32_val)
-{
-  if (ai32_val != NO_VAL_32S)
-  {
-    mi32_max = ai32_val;
-    // set exact to empty
-    // don't change minType and defaultType
-    // set maxType
-    data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(maxType | (data.en_definedSetpoints & minDefaultType));
-  }
-  else
-  { // clear maxType -> mask with exactMinDefaultType
-    data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMinDefaultType);
-  }
-  // set the entry to unhandled
-  setHandled(false);
-};
-
-void SetpointRegister_c::setDefault(int32_t ai32_val)
-{
-  if (ai32_val != NO_VAL_32S)
-  {
-    mi32_default = ai32_val;
-    // set defaultType
-    // don't change minType, maxType, exactType
-    data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(defaultType | (data.en_definedSetpoints & exactMinMaxType));
-  }
-  else
-  { // clear defaultType -> mask with exactMinMaxType
-    data.en_definedSetpoints
-      = static_cast<definedSetpoints_t>(data.en_definedSetpoints & exactMinMaxType);
-  }
-  // set the entry to unhandled
-  setHandled(false);
-};
-
 void SetpointRegister_c::setValForGroup(int32_t ai32_val, ProcessCmd_c::ValueGroup_t en_valueGroup){
-  switch (en_valueGroup)
-  {
-    case ProcessCmd_c::exactValue:
-      setExact(ai32_val);
-      break;
-    case ProcessCmd_c::minValue:
-      setMin(ai32_val);
-      break;
-    case ProcessCmd_c::maxValue:
-      setMax(ai32_val);
-      break;
-    case ProcessCmd_c::defaultValue:
-      setDefault(ai32_val);
-      break;
-    default: ;
-  }
+  setValue(ai32_val);
 }
 
 bool SetpointRegister_c::setHandled(bool ab_state, int32_t ai32_handledTime)

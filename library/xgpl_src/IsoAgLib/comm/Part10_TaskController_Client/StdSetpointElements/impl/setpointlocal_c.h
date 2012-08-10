@@ -72,12 +72,12 @@ public:
     retreive simple master setpoint
     @return actual received setpoint value (calculated with setpoint )
   */
-  int32_t setpointMasterVal() const {return mpc_master->exact();};
+  int32_t setpointVal() const {return mpc_master->value();};
   /**
     set the setpoint value
     @param ai32_val new setpoint value
   */
-  void setSetpointMasterVal( int32_t ai32_val )
+  void setSetpointVal( int32_t ai32_val )
     { if (!existMaster()) setStaticMaster();
       setMasterMeasurementVal( ai32_val );
     };
@@ -188,18 +188,6 @@ public:
   */
   void respondAckNack();
   /**
-    set the allowed percentual deviation between actual measurement and
-    existing master setpoint
-    @param ab_percent allowed percantual deviation
-  */
-  void setAllowedDeltaPercent( uint8_t ab_percent){mb_allowedDeltaPercent = ab_percent;};
-  /**
-    get the allowed percentual deviation between actual measurement and
-    existing master setpoint
-    @return allowed percantual deviation
-  */
-  uint8_t allowedDeltaPercent()const{return mb_allowedDeltaPercent;};
-  /**
     check if the given measuremet value is correct for the actual
     master setpoint;
     @param ai32_val measured value
@@ -301,18 +289,7 @@ private: // Private attributes
   mutable Vec_SetpointRegisterIterator mpc_registerCache;
   /** SetpointRegister_c entry, which represents the actual used setpoint value */
   Vec_SetpointRegisterIterator mpc_master;
-  /**
-    maximal allowed setpoint (updated according to system state by main application )
-    --> incoming setpoints can be handled automatic
-  */
-  int32_t mi32_setpointMaxAllowed;
-  /**
-    minimum allowed setpoint (updated according to system state by main application )
-    --> incoming setpoints can be handled automatic
-  */
-  int32_t mi32_setpointMinAllowed;
-  /* allowed variation between setpoint and measurement */
-  uint8_t mb_allowedDeltaPercent;
+
   /**
     set if master setpoint should be preserved even if caller
     isoName is no more active (default false )

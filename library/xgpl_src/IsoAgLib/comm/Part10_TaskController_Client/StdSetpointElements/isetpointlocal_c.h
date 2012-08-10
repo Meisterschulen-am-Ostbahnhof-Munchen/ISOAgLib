@@ -134,20 +134,6 @@ public:
   */
   void respondAckNack() {SetpointLocal_c::respondAckNack();};
   /**
-    set the allowed percentual deviation between actual measurement and
-    existing master setpoint
-    @param ab_percent allowed percantual deviation
-  */
-  void setAllowedDeltaPercent(uint8_t ab_percent)
-    {SetpointLocal_c::setAllowedDeltaPercent(ab_percent);};
-  /**
-    get the allowed percentual deviation between actual measurement and
-    existing master setpoint
-    @return allowed percantual deviation
-  */
-  uint8_t allowedDeltaPercent()const
-    {return SetpointLocal_c::allowedDeltaPercent();};
-  /**
     check if the given measuremet value is correct for the actual
     master setpoint;
     @param ai32_val measured value
