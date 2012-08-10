@@ -82,7 +82,7 @@ public:
     deliver the exact setpoint
     @return exact setpoint value
   */
-  int32_t value() const {return mi32_exactOrMin;}
+  int32_t value() const {return mi32_value;}
  
   /**
     check if setpoint is conformant with actual (!!) master setpoint
@@ -116,12 +116,8 @@ private: // Private methods
   void assignFromSource( const SetpointRegister_c& acrc_src );
 
 private: // Private attributes
-  /** minimum limit setpoint */
-  int32_t mi32_exactOrMin;
-  /** maximum limit setpoint */
-  int32_t mi32_max;
-  /** default setpoint */
-  int32_t mi32_default;
+  /** setpoint value */
+  int32_t mi32_value;
 
   /** isoName code of requester */
   IsoName_c mc_requestISOName;

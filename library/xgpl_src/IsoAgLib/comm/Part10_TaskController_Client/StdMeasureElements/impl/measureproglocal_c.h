@@ -243,13 +243,6 @@ private: // Private attributes
   /** last master (eg. main prog or sensor) val  */
   int32_t mi32_lastMasterVal;
 
-  /**
-    stores if one subprog triggered,
-    if sent wasn't possible within one call, this could be retried
-    in later calls; a true val is only reseted to false, if sending was possible
-  */
-  //bool mb_triggeredIncrement;
-
   /** gathered information about currently running threshold sub progs */
   List_ThresholdInfo mlist_thresholdInfo;
 };

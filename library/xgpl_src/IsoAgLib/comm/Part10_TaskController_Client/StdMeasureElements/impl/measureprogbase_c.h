@@ -307,11 +307,6 @@ private: // Private methods
 
 private: // Private attributes
 
-  /** minimum value (only defined if one proportional prog is active) */
-  int32_t mi32_min;
-  /** maximum value (only defined if one proportional prog is active) */
-  int32_t mi32_max;
-
   /** dynamic array for subprogs */
   Vec_MeasureSubprog mvec_measureSubprog;
   /** specifies which value types should be sent if one subprog triggers */

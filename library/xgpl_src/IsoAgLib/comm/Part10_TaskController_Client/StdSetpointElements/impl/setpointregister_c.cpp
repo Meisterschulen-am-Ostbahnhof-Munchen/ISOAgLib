@@ -38,9 +38,7 @@ SetpointRegister_c::SetpointRegister_c(const SetpointRegister_c& acrc_src){
 /** base function for assignment of element vars for copy constructor and operator= */
 void SetpointRegister_c::assignFromSource( const SetpointRegister_c& acrc_src )
 { // direct value set to avoid special functions of equivalent set functions
-  mi32_exactOrMin = acrc_src.mi32_exactOrMin;
-  mi32_max = acrc_src.mi32_max;
-  mi32_default = acrc_src.mi32_default;
+  mi32_value = acrc_src.mi32_value;
 
   setISOName(acrc_src.isoName());
   setValid(acrc_src.valid());
@@ -50,9 +48,7 @@ SetpointRegister_c::~SetpointRegister_c(){
 }
 
 bool SetpointRegister_c::operator==(const SetpointRegister_c& acrc_src)const{
-  return ((mi32_exactOrMin == acrc_src.mi32_exactOrMin)
-        && (mi32_max == acrc_src.mi32_max)
-        && (mi32_default == acrc_src.mi32_default)
+  return ((mi32_value == acrc_src.mi32_value)
         && (isoName() == acrc_src.isoName()))
 ;
 }
@@ -61,7 +57,7 @@ void SetpointRegister_c::setValue(int32_t ai32_val)
 {
   if (ai32_val != NO_VAL_32S)
   {
-    mi32_exactOrMin = ai32_val;
+    mi32_value = ai32_val;
   }
 };
 

@@ -38,7 +38,7 @@ void MeasureProgBase_c::init( ProcDataLocal_c *const apc_processData,
   men_doSend = Proc_c::DoNone;
   //men_type = Proc_c::DistProp;
 
-  mi32_accel = mi32_delta = mi32_lastTime = mi32_max = mi32_min = 0;
+  mi32_accel = mi32_delta = mi32_lastTime = 0;
 
   // setting of isoName in MeasureProg is normally done via ProcDataRemote_c::timeEvent( void )
   // if start follows immedeately addSubprog, timeEvent is not called yet => do it here
@@ -72,8 +72,6 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& acrc_src )
   mi32_accel = acrc_src.mi32_accel;
   mi32_delta = acrc_src.mi32_delta;
   mi32_lastTime = acrc_src.mi32_lastTime;
-  mi32_max = acrc_src.mi32_max;
-  mi32_min = acrc_src.mi32_min;
   mi32_val = acrc_src.mi32_val;
   mvec_measureSubprog = acrc_src.mvec_measureSubprog;
 }
@@ -134,7 +132,7 @@ int32_t MeasureProgBase_c::val(bool ab_sendRequest) const
 }
 
 void MeasureProgBase_c::initVal(int32_t ai32_val){
-  mi32_val = mi32_min = mi32_max = ai32_val;
+  mi32_val = ai32_val;
 }
 
 bool MeasureProgBase_c::processMsg( const ProcessPkg_c& pkg ){
