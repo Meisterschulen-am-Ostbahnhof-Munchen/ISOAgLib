@@ -10,14 +10,16 @@ namespace IsoAgLib
 
 // IsoAgLib
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatahandler_c.h>
 
 #include <map>
 #include <bitset>
 
 namespace IsoAgLibTutorialSectionControl {
 
-  class TutorialSectionControlTc_c : public IsoAgLib::ProcessDataChangeHandler_c {
+  class TutorialSectionControlTc_c : public IsoAgLib::iProcDataHandler_c
+  {
 
     private:
       static const uint8_t scui8_numberOfSection = 8;
@@ -42,19 +44,24 @@ namespace IsoAgLibTutorialSectionControl {
 
       void init( IsoAgLib::iIdentItem_c &arc_identItem );
       
-      /* IsoAgLib::ProcessDataChangeHandler_c */
-      virtual void processSetpointSet( IsoAgLib::EventSource_c, int32_t, const IsoAgLib::iIsoName_c&, bool );
-      virtual void processDefaultLoggingStart( const IsoAgLib::iIsoName_c& ) {}
-      virtual void processTcStatusMessage( bool, const IsoAgLib::iIsoName_c& ) {}
+      /* IsoAgLib::iProcDataHandler_c */
+      /* IsoAgLib::iProcDataHandler_c */
+      virtual void processSetpointSet( IsoAgLib::iProcData_c& procdata, int32_t, IsoAgLib::ProcData::remoteType_t, bool );
+      virtual void processDefaultLoggingStart( IsoAgLib::ProcData::remoteType_t ecuType ) {}
+      virtual void processTcConnected( IsoAgLib::ProcData::remoteType_t a_ecuType, const IsoAgLib::iIsoName_c& tcname) {}
+
+      virtual void processTaskStarted( IsoAgLib::ProcData::remoteType_t ecuType ) {}
+      virtual void processTaskStopped( IsoAgLib::ProcData::remoteType_t ecuType ) {}
+
 
     private:
       void resetSectionStatus();
       void updateSectionStatus( );
 
     private:
-      typedef std::map<IsoAgLib::iProcDataLocal_c*,SetPointIndex>   MapProcDataLocal;
-      typedef std::pair<IsoAgLib::iProcDataLocal_c*,SetPointIndex>  PairProcDataLocal;
-      typedef MapProcDataLocal::iterator                            IterProcDataLocal;
+      typedef std::map<IsoAgLib::iProcData_c*,SetPointIndex>   MapProcDataLocal;
+      typedef std::pair<IsoAgLib::iProcData_c*,SetPointIndex>  PairProcDataLocal;
+      typedef MapProcDataLocal::iterator                       IterProcDataLocal;
      
       MapProcDataLocal m_mapProcDataSetPoint;
 

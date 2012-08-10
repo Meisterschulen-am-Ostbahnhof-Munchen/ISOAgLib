@@ -10,7 +10,7 @@ namespace IsoAgLib
 #include <IsoAgLib/isoaglib_config.h>
 
 // IsoAgLib
-#include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatahandler_c.h>
 
 
 namespace IsoAgLibTutorialDataSource {
@@ -24,7 +24,7 @@ namespace IsoAgLibTutorialDataSource {
   };
 
   // DFFF-specific: also derive from ProcessDataChangeHandler_c to receive DFFF-requests
-  class TutorialDataSource_c : public iDataSource_c, public IsoAgLib::ProcessDataChangeHandler_c {
+  class TutorialDataSource_c : public iDataSource_c, public IsoAgLib::iProcDataHandler_c {
     public:
       TutorialDataSource_c();
       ~TutorialDataSource_c();
@@ -37,9 +37,9 @@ namespace IsoAgLibTutorialDataSource {
       virtual void handleNewSensorBData( int32_t ai32_newData );
 
       /* IsoAgLib::ProcessDataChangeHandler_c */
-      virtual void processDefaultLoggingStart( const IsoAgLib::iIsoName_c& ac_callerIsoName );
-      virtual void processSetpointSet( IsoAgLib::EventSource_c, int32_t, const IsoAgLib::iIsoName_c&, bool ) {}
-      virtual void processTcStatusMessage( bool, const IsoAgLib::iIsoName_c& ) {}
+      virtual void processDefaultLoggingStart( IsoAgLib::ProcData::remoteType_t a_ecuType );
+      virtual void processSetpointSet( IsoAgLib::iProcData_c&, int32_t, IsoAgLib::ProcData::remoteType_t a_ecuType, bool ) {}
+      virtual void processTcStatusMessage( bool, IsoAgLib::ProcData::remoteType_t a_ecuType ) {}
   };
 
 } /* namespace IsoAgLibTutorialDataSource */

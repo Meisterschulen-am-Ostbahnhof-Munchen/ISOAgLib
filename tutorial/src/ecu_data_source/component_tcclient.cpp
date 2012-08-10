@@ -3,15 +3,16 @@
 
 // IsoAgLib
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocess_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatalocal_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 // device description object pool
-#include "component_tcclient_pool/tutorialDataSource-func.h"
+#include "component_tcclient_pool/tutorialDataSource-cpp.h"
 
 // debug
 #include <IsoAgLib/util/iassert.h>
 
+using namespace tutorialDataSource;
 
 /*
  * Tutorial DataSource implementation
@@ -31,8 +32,10 @@ IsoAgLibTutorialDataSource::TutorialDataSource_c::~TutorialDataSource_c()
 void
 IsoAgLibTutorialDataSource::TutorialDataSource_c::init( IsoAgLib::iIdentItem_c &arc_identItem )
 {
+  initProcData(arc_identItem);
+
   // Enable Default-Data-Logging
-  c_defaultLogging.setProcessDataChangeHandler( this );
+  c_defaultLogging.setProcDataHandler( this );
 
   const bool cb_registerSuccess =
     IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(
@@ -77,9 +80,8 @@ IsoAgLibTutorialDataSource::TutorialDataSource_c::handleNewSensorBData( int32_t 
 
 
 void
-IsoAgLibTutorialDataSource::TutorialDataSource_c::processDefaultLoggingStart(
-  const IsoAgLib::iIsoName_c& ac_callerIsoName)
+IsoAgLibTutorialDataSource::TutorialDataSource_c::processDefaultLoggingStart(IsoAgLib::ProcData::remoteType_t a_ecuType)
 {
-  c_setpointVolumeRate.startDataLogging( IsoAgLib::Proc_c::MeasurementCommandTimeProp, 1000, ac_callerIsoName );
-  c_actualVolumeRate.startDataLogging( IsoAgLib::Proc_c::MeasurementCommandTimeProp, 2000, ac_callerIsoName );
+  c_setpointVolumeRate.startDataLogging( IsoAgLib::ProcData::MeasurementCommandTimeProp, 1000, a_ecuType );
+  c_actualVolumeRate.startDataLogging( IsoAgLib::ProcData::MeasurementCommandTimeProp, 2000, a_ecuType );
 }

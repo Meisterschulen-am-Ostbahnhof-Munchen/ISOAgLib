@@ -655,7 +655,6 @@ tutorial/src/ecu_simple_section_control/_generate_tcclient_pool.sh -text
 tutorial/src/ecu_simple_section_control/component_tcclient.cpp -text
 tutorial/src/ecu_simple_section_control/component_tcclient.h -text
 tutorial/src/ecu_simple_section_control/component_tcclient_pool/tutorialSimpleSectionControl-bytestream.inc -text
-tutorial/src/ecu_simple_section_control/component_tcclient_pool/tutorialSimpleSectionControl-func.h -text
 tutorial/src/ecu_simple_section_control/component_tcclient_pool/tutorialSimpleSectionControl.xml -text
 tutorial/src/ecu_simple_section_control/config_ecuSimpleSectionControl.h -text
 tutorial/src/ecu_simple_section_control/ecu_simple_section_control.cpp -text

@@ -5,18 +5,20 @@
 
 // IsoAgLib
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocess_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatalocal_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 // device description object pool
-#include "component_tcclient_pool/tutorialSimpleSectionControl-func.h"
+#include "component_tcclient_pool/tutorialSimpleSectionControl-cpp.h"
 
 // debug
 #include <IsoAgLib/util/iassert.h>
 
+using namespace tutorialSimpleSectionControl;
+
 namespace {
 
-static IsoAgLib::iProcDataLocal_c* arr_workStateProcData[] = {
+static IsoAgLib::iProcData_c* arr_workStateProcData[] = {
   &c_workStateSection01,
   &c_workStateSection02,
   &c_workStateSection03,
@@ -60,6 +62,8 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::~TutorialSectionCont
 void
 IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::init( IsoAgLib::iIdentItem_c &arc_identItem )
 {
+  initProcData(arc_identItem);
+
   const bool cb_registerSuccess =
     IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(
       &arc_identItem, deviceDescription_en, ui32_arrayLength_en, true);
@@ -69,7 +73,7 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::init( IsoAgLib::iIde
 
   // register all setpoints
   for (IterProcDataLocal iter = m_mapProcDataSetPoint.begin(); iter != m_mapProcDataSetPoint.end();++iter) {
-    iter->first->setProcessDataChangeHandler(this);
+    iter->first->setProcDataHandler(this);
   }
 
   // setup init value
@@ -111,9 +115,9 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::updateSectionStatus(
 
 void
 IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::processSetpointSet(
-  IsoAgLib::EventSource_c ac_src, int32_t ai32_val, const IsoAgLib::iIsoName_c& ac_callerISOName, bool /* ab_change*/ )
+  IsoAgLib::iProcData_c& procdata, int32_t ai32_val, IsoAgLib::ProcData::remoteType_t, bool /* ab_change*/ )
 {
-  IterProcDataLocal iter = m_mapProcDataSetPoint.find(ac_src.makeIProcDataLocal());
+  IterProcDataLocal iter = m_mapProcDataSetPoint.find(&procdata);
   if (iter != m_mapProcDataSetPoint.end())
   {
     switch (iter->second)
@@ -122,7 +126,7 @@ IsoAgLibTutorialSectionControl::TutorialSectionControlTc_c::processSetpointSet(
     {
       // send response to TC
       c_sectionControlState.setMeasurementVal(ai32_val);
-      c_sectionControlState.sendMeasurementVal(ac_callerISOName); // force sending the message (see ISOBUS-11)
+      //c_sectionControlState.sendMeasurementVal(ac_callerISOName); // force sending the message (see ISOBUS-11)
 #ifdef SYSTEM_PC
       std::cout << "IndexSectionControlState " << ai32_val << std::endl;
 #endif
