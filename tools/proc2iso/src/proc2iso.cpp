@@ -82,7 +82,7 @@ unsigned int objCount;
 
 std::vector<std::string> vecstr_attrString (maxAttributeNames);
 std::vector<std::string> vecstr_objtableIDTable;
-std::vector<std::string> vecstr_constructor (5);
+std::vector<std::string> vecstr_constructor (4);
 std::vector<std::string> vecstr_dataForCombination;
 std::vector<std::string> vecstr_dataFromDPD (4);
 std::stringstream buffer;
@@ -433,11 +433,6 @@ void defaultAttributes ()
   {
     vecstr_attrString [attrDevice_value_presentation_name] = "65535";
     attrIsGiven [attrDevice_value_presentation_name] = true;
-  }
-  if (!attrIsGiven [attrCumulative_value])
-  {
-    vecstr_attrString [attrCumulative_value] = "false";
-    attrIsGiven [attrCumulative_value] = true;
   }
   if (!attrIsGiven [attrCommand_type])
   {
@@ -1252,10 +1247,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         vecstr_dataFromDPD[3] = vecstr_attrString[attrDesignator];
 
         vecstr_constructor[0] = vecstr_attrString[attrFeature_set].c_str();
-        vecstr_constructor[1] = vecstr_attrString[attrCumulative_value].c_str();
-        vecstr_constructor[2] = vecstr_attrString[attrProcProgVarName].c_str();
-        vecstr_constructor[3] = vecstr_attrString[attrDdi].c_str();
-        vecstr_constructor[4] = vecstr_attrString[attrProperties].c_str();
+        vecstr_constructor[1] = vecstr_attrString[attrProcProgVarName].c_str();
+        vecstr_constructor[2] = vecstr_attrString[attrDdi].c_str();
+        vecstr_constructor[3] = vecstr_attrString[attrProperties].c_str();
 
         uint8_t cntChildWithProcDataCombination = cntNodeChild(node, otDeviceProcessDataCombination);
 
@@ -1368,18 +1362,17 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         //for (int mycounter = 0; mycounter < vecstr_constructor.size(); ++mycounter)
         //  std::cout << vecstr_constructor[mycounter] << std::endl;
 
-        int dpd_property = propertytoi(vecstr_constructor[4].c_str());
-        bool issetpoint = (( propertytoi(vecstr_constructor[4].c_str()) & 0x2 ) != 0);
-        std::cout << vecstr_constructor[1] << " " << vecstr_constructor[4] << " " << dpd_property << std::endl;
+        int dpd_property = propertytoi(vecstr_constructor[3].c_str());
+        bool issetpoint = (( propertytoi(vecstr_constructor[3].c_str()) & 0x2 ) != 0);
 
         //if (issetpoint)
         //  fprintf(partFileB, "IsoAgLib::iProcDataSetPoint%s_c c_%s(", vecstr_constructor[0].c_str(), vecstr_constructor[2].c_str());
         //else
-        fprintf(partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[0].c_str(), vecstr_constructor[2].c_str() );
+        fprintf(partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[0].c_str(), vecstr_constructor[1].c_str() );
         if (b_dpdCombination)
-          fprintf(partFileB, "s_%sElementDDI,\nscui16_%sElementNumber, ", vecstr_constructor[2].c_str(), vecstr_dataForCombination[1].c_str());
+          fprintf(partFileB, "s_%sElementDDI,\nscui16_%sElementNumber, ", vecstr_constructor[1].c_str(), vecstr_dataForCombination[1].c_str());
         else
-          fprintf(partFileB, "0x%x, %i, ", stringtonumber(vecstr_constructor[3].c_str(), 0, -1), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
+          fprintf(partFileB, "0x%x, %i, ", stringtonumber(vecstr_constructor[2].c_str(), 0, -1), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
 
         b_dpdCombination = false;
 

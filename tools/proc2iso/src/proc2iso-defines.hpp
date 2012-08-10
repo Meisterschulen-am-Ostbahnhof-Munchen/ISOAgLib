@@ -79,7 +79,6 @@ typedef long int long int64_t;
 #define attrPriority (30)
 #define attrDevProgVarName (31)
 #define attrProcProgVarName (32)
-#define attrCumulative_value (33)
 #define attrCommand_type (34)
 #define attrSetpoint (35)
 
@@ -149,7 +148,6 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
       "priority",
       "device_program_name",
       "proc_program_name",
-      "cumulative_value",
       "command_type",
       "is_setpoint"
 };
