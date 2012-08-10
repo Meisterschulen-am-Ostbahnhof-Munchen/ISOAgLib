@@ -15,47 +15,32 @@
 
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointregister_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
-
-#include <list>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class ProcDataLocal_c;
-class SetpointRegister_c;
 
 /**
   object for managing setpoints commanded from remote to local process data objects;
   handling of received setpoints;
-  managing the master setpoint, which is used for controlling;
-  help for sending correct notify;
-  semi automatic and manual handling of received values
-  @author Dipl.-Inform. Achim Spangler
 */
 class SetpointLocal_c : public ClientBase  {
 public:
-  /**
-    default constructor which can set needed pointers to containing objects
-    @param apc_processData pointer to containing ProcessData instance
-  */
-  SetpointLocal_c( ) : ClientBase() {}
-
-  /** default destructor which has nothing to do */
-   ~SetpointLocal_c() {}
+  SetpointLocal_c( ) : ClientBase(), mi32_value(NO_VAL_32S) {}
+  ~SetpointLocal_c() {}
 
   /**
-    retreive simple master setpoint
-    @return actual received setpoint value (calculated with setpoint )
+    retreive setpoint
+    @return actual received setpoint value
   */
-  int32_t setpointVal() const {return m_tcRegister.value();}
+  int32_t setpointValue() const { return mi32_value; }
   
   /**  process a setpoint message */
   void processMsg( ProcDataLocal_c& ac_processData, const ProcessPkg_c& pkg );
 
 private: // Private attributes
-  /** container of registered setpoint values */
-  SetpointRegister_c m_tcRegister;
+  /** setpoint value */
+  int32_t mi32_value;
 
 private:
   /** not copyable : copy constructor is only declared, never defined */

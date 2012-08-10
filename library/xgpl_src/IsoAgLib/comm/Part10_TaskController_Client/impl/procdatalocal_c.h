@@ -90,7 +90,13 @@ public:
     can differ from measure vals of measure progs, as these can be reseted
     @return actual value
   */
-  const int32_t& measurementVal() const {return mi32_value;}
+  const int32_t& measurementVal() const { return mi32_value; }
+
+  /**
+    Get setpoint value as received from remote system
+    @return exact value of master setpoint
+  */
+  int32_t setpointValue() const { return mc_setpoint.setpointValue(); }
 
   /**
     set the value independent from any measure progs
@@ -119,12 +125,6 @@ public:
     @return true -> successful sent
   */
   void sendMeasurementVal( const IsoName_c& ac_targetISOName ) const;
-
-  /**
-    Get setpoint value as received from remote system
-    @return exact value of master setpoint
-  */
-  int32_t setpointValue() const { return mc_setpoint.setpointVal(); }
 
   /**
     allow local client to actively start a measurement program
