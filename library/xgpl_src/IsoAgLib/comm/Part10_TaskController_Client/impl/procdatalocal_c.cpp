@@ -240,24 +240,15 @@ void ProcDataLocal_c::setBasicSendFlags( ProcessPkg_c& pkg ) const
   pkg.set_DDI(DDI());
 }
 
-bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameSender,
-                            const IsoName_c& acrc_isoNameReceiver,
-                            uint16_t aui16_DDI,
-                            uint16_t aui16_element
-                          ) const
+bool ProcDataLocal_c::matchISO( const IsoName_c& acrc_isoNameReceiver,
+                                uint16_t aui16_DDI,
+                                uint16_t aui16_element
+                                ) const
 {
   // check wether current element/DDI combination matches one list element in process data element/DDI list
   if (aui16_element != element()) return false;
   if (aui16_DDI != DDI()) return false;
-
-  if (acrc_isoNameSender.isSpecified())
-  { // check in remote case: check if devClass of ownerISOName in procident matches devClass of sender
-    if (isoName() != acrc_isoNameSender) return false;
-  }
-  else
-  { // check in local case: check if procident devClass matches devClass of empf
-    if (isoName() != acrc_isoNameReceiver) return false;
-  }
+  if (isoName() != acrc_isoNameReceiver) return false;
 
   // all previous tests are positive -> answer positive match
   return true;

@@ -29,6 +29,12 @@ public:
   enum type_t {NullType = 0, DistProp = 1, TimeProp = 4, ValIncr = 8, 
                MaximumThreshold = 0x10, MinimumThreshold = 0x20, OnChange = 0x40, Counter };
 
+  enum triggerMethod_t { MethodTimeInterval = 0,
+                         MethodDistInterval = 1,
+                         MethodThresholdLimit = 2, 
+                         MethodOnChange = 3,
+                         MethodTotal = 4 };
+
   /** enum type for to sending values */
   enum doSend_t {DoNone = 0, DoVal = 1, DoValForExactSetpoint = 0x80};
 

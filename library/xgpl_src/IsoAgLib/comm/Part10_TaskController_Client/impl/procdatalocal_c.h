@@ -266,6 +266,9 @@ public:
   */
   virtual void stopRunningMeasurement(const IsoName_c& rc_isoName);
 
+  bool isSetPoint() const { return mb_isSetpoint; }
+  uint8_t triggerMethod() const { return mui8_triggerMethod; } 
+
 public: // from former base class
 
   /** check if this ProcIdent_c has the given DDI as element */
@@ -322,8 +325,7 @@ public: // from former base class
 
     @return true -> this instance has same Process-Data identity
   */
-  bool matchISO( const IsoName_c& acrc_isoNameSender,
-                 const IsoName_c& acrc_isoNameReceiver,
+  bool matchISO( const IsoName_c& acrc_isoNameReceiver,
                  uint16_t aui16_DDI,
                  uint16_t aui16_element
                ) const;

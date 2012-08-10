@@ -597,24 +597,43 @@ void MeasureProgLocal_c::processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::d
   const int32_t ci32_val = pkg.getValue();
 
   if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementTimeValueStart)
-    // time proportional
-    addSubprog(Proc_c::TimeProp, __IsoAgLib::abs(ci32_val), ren_doSend);
-
-  if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementDistanceValueStart)
-    // distance proportional
-    addSubprog(Proc_c::DistProp, ci32_val, ren_doSend);
-
-  if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementChangeThresholdValueStart)
+  { // time proportional
+    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodTimeInterval)) != 0 )
+      addSubprog(Proc_c::TimeProp, __IsoAgLib::abs(ci32_val), ren_doSend);
+    //else
+    //  responseNACK();
+  }
+  else if ( pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementDistanceValueStart)
+  {    // distance proportional
+    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodDistInterval)) != 0 )
+      addSubprog(Proc_c::DistProp, ci32_val, ren_doSend);
+    //else
+    //  responseNACK();
+  }
+  else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementChangeThresholdValueStart)
+  {
     // change threshold proportional
-    addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
-
-  if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMaximumThresholdValueStart)
+    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodOnChange)) != 0 )
+      addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
+    //else
+    //  responseNACK();
+  }
+  else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMaximumThresholdValueStart)
+  {
     // change threshold proportional
-    addSubprog(Proc_c::MaximumThreshold, ci32_val, ren_doSend);
-
-  if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMinimumThresholdValueStart)
+    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
+      addSubprog(Proc_c::MaximumThreshold, ci32_val, ren_doSend);
+    //else
+    //  responseNACK();
+  }
+  else if (pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMinimumThresholdValueStart)
+  {
     // change threshold proportional
-    addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
+    if ( (pprocessData()->triggerMethod() & (0x1 << Proc_c::MethodThresholdLimit)) != 0 )
+      addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
+    //else
+    //  responseNACK();
+  }
 }
 
 } // end of namespace __IsoAgLib

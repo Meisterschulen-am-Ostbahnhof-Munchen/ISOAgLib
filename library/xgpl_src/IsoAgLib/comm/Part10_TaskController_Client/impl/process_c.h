@@ -29,12 +29,14 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/ProcDataLocal_c.h>
 #include "processpkg_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processwsmtaskmsghandler_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 
 #include <list>
 
-namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
+namespace IsoAgLib {
+  class iProcess_c;
+  class iDevPropertyHandler_c;
+}
 
 
 #if defined(_MSC_VER)
@@ -50,18 +52,15 @@ class Process_c : public Scheduler_Task_c
 {
   MACRO_MULTITON_CONTRIBUTION();
 public:
-  /** initialisation for Process_c
-  */
+  /** initialisation for Process_c */
   void init( void );
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    */
+  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
 
   virtual ~Process_c() {}
 
   /**
-    start processing of a process msg
-    ignore all invalid messages where sender has no address (0xFE)
+    process msg
     @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
   */
   bool processMsg( const CanPkg_c& arc_data );
@@ -79,23 +78,20 @@ public:
   bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
 
   /**
-    search for suitable ProcDataLocal_c item; create on if not found AND if wanted
+    search for suitable ProcDataLocal_c item
 
     possible errors:
-        * Err_c::badAlloc not enough memory to add new ProcDataLocal_c
-          (can cause badAlloc exception)
-        * Err_c::elNonexistent if element not found and ab_doCreate == false
+        * Err_c::elNonexistent if element not found
     ISO parameter
     @param aui16_DDI
     @param aui16_element
     @param acrc_isoNameReceiver isoName code of searched local Process Data instance
-    @return reference to searched/created ProcDataLocal_c instance
+    @return reference to searched ProcDataLocal_c instance
   */
   ProcDataLocal_c& procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
 
   /**
     performs periodically actions
-
     @return true -> all planned activities performed in allowed time
   */
   bool timeEvent( void );
@@ -115,19 +111,11 @@ public:
   void unregisterLocalProcessData( ProcDataLocal_c* pc_localClient)
   { unregisterC1( pc_localClient );}
 
-  void registerWsmTaskMsgHandler(ProcessWsmTaskMsgHandler_c* apc_processWsmTaskMsgHandler)
-  { mpc_processWsmTaskMsgHandler = apc_processWsmTaskMsgHandler; }
-
-  /**
-    delete FilterBox_c for receive from remote isoName if needed
-    (important to delete old Filter Boxes after deletion of
-    of remote device from monitor list or after re-adressclaim with different SA)
-    @param acrc_isoName ISOName code of remote owner who sent the message
-    @return true -> member exist and Filter Box deleted
-  */
-  bool deleteRemoteFilter(const IsoName_c& acrc_isoName);
-
-  void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+  /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
+   * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
+   * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+   */
+  void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   /**
     process TC status messages:
@@ -143,14 +131,6 @@ public:
     @return isoName, saved from TC status messages
   */
   const IsoName_c* getTcISOName() { return mpc_tcISOName; };
-
-  /**
-    process working set task messages
-    @param ui8_tcStatus
-    @param rc_isoName         device key of working set
-    @return true
-  */
-  bool processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const IsoName_c& /* rc_isoName */);
 
 #if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
@@ -170,48 +150,6 @@ protected:
   virtual void updateEarlierAndLatestInterval();
 
 private: // Private methods
-  /**
-    update the cache with search for according ProcDataLocal_c item
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameReceiver isoName code of created local Process Data instance
-  */
-  bool updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
-
-  virtual bool reactOnStreamStart(
-      ReceiveStreamIdentifier_c const &ac_ident,
-      uint32_t aui32_totalLen)
-  {
-    return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
-  }
-
-  virtual void reactOnAbort(Stream_c &arc_stream)
-  {
-    mt_customer.reactOnAbortDefault(arc_stream);
-  }
-
-  virtual bool processPartStreamDataChunk(
-      Stream_c &apc_stream,
-      bool ab_isFirstChunk,
-      bool ab_isLastChunk)
-  {
-    return mt_customer.processPartStreamDataChunkDefault(
-        apc_stream,
-        ab_isFirstChunk,
-        ab_isLastChunk);
-  }
-
-  virtual void notificationOnMultiReceiveError(
-      ReceiveStreamIdentifier_c const &ac_streamIdent,
-      uint8_t aui8_multiReceiveError,
-      bool ab_isGlobal)
-  {
-    mt_customer.notificationOnMultiReceiveErrorDefault(
-        ac_streamIdent,
-        aui8_multiReceiveError,
-        ab_isGlobal);
-  }
 
   virtual uint16_t getForcedMinExecTime() const
   {
@@ -237,12 +175,12 @@ private: // Private attributes
         ReceiveStreamIdentifier_c const &ac_ident,
         uint32_t aui32_totalLen)
     {
-      return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
+      return reactOnStreamStartDefault(ac_ident, aui32_totalLen);
     }
 
     virtual void reactOnAbort(Stream_c &arc_stream)
     {
-      mrt_owner.reactOnAbort(arc_stream);
+      reactOnAbortDefault(arc_stream);
     }
 
     virtual bool processPartStreamDataChunk(
@@ -250,10 +188,7 @@ private: // Private attributes
         bool ab_isFirstChunk,
         bool ab_isLastChunk)
     {
-      return mrt_owner.processPartStreamDataChunk(
-          apc_stream,
-          ab_isFirstChunk,
-          ab_isLastChunk);
+      return processPartStreamDataChunkDefault(apc_stream,ab_isFirstChunk,ab_isLastChunk);
     }
 
     virtual void notificationOnMultiReceiveError(
@@ -261,19 +196,16 @@ private: // Private attributes
         uint8_t aui8_multiReceiveError,
         bool ab_isGlobal)
     {
-      mrt_owner.notificationOnMultiReceiveError(
-          ac_streamIdent,
-          aui8_multiReceiveError,
-          ab_isGlobal);
+      notificationOnMultiReceiveErrorDefault(ac_streamIdent,aui8_multiReceiveError,ab_isGlobal);
     }
 
-    // CanCustomerProxy_c shall not be copyable. Otherwise the
-    // reference to the containing object would become invalid.
-    CanCustomerProxy_c(CanCustomerProxy_c const &);
+    Owner_t &mrt_owner;
 
+  private:
+    // not copyable
+    CanCustomerProxy_c(CanCustomerProxy_c const &);
     CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
 
-    Owner_t &mrt_owner;
   };
   typedef CanCustomerProxy_c Customer_t;
   class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
@@ -292,18 +224,15 @@ private: // Private attributes
       mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
     }
 
-    // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
-    // reference to the containing object would become invalid.
-    ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
-
-    ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
-
     Owner_t &mrt_owner;
+
+  private:
+    // not copyable
+    ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
+    ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
-  friend class IsoAgLib::iProcess_c;
-  friend class IsoAgLib::iDevPropertyHandler_c;
   /**
     HIDDEN constructor for a Process_c object instance
     NEVER instantiate a variable of type Process_c within application
@@ -325,23 +254,23 @@ private: // Private attributes
   const IsoName_c* mpc_tcISOName;
   uint8_t mui8_lastTcStatus;
 
-  ProcessWsmTaskMsgHandler_c* mpc_processWsmTaskMsgHandler;
-
   /** pointer to applications handler class, with handler functions
       which shall be called when a TC status message arrives
   */
   IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
+
   Handler_t mt_handler;
   Customer_t mt_customer;
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcDataLocal_c);
+
   friend Process_c &getProcessInstance( uint8_t aui8_instance );
 };
 
 
-  /** C-style function, to get access to the unique Process_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  Process_c &getProcessInstance( uint8_t aui8_instance = 0 );
+/** C-style function, to get access to the unique Process_c singleton instance
+  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+  */
+Process_c &getProcessInstance( uint8_t aui8_instance = 0 );
 }
 
 #if defined(_MSC_VER)

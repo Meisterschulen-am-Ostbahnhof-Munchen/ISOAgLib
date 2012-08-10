@@ -30,9 +30,6 @@ public:
   {return static_cast<iDevPropertyHandler_c&>(Process_c::getDevPropertyHandlerInstance());};
 #endif
 
-  void registerWsmTaskMsgHandler(__IsoAgLib::ProcessWsmTaskMsgHandler_c* apc_processWsmTaskMsgHandler)
-  { Process_c::registerWsmTaskMsgHandler(apc_processWsmTaskMsgHandler); }
-
   /** set the pointer to the handler class (used for callback when TC status message is processed)
     * @param apc_processDataChangeHandler pointer to handler class of application
     */
