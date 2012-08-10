@@ -59,7 +59,8 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
   getProcessInstance4Comm().registerLocalProcessData( this );
 
   // "Device process data objects with a data log trigger method of type total shall be settable."
-  isoaglib_assert( Proc_c::isMethodSet(aui8_triggerMethod, Proc_c::MethodTotal) ? ab_isSetpoint : true );
+  isoaglib_assert( ( Proc_c::isMethodSet(aui8_triggerMethod, Proc_c::MethodTotal)
+                          && (aui16_ddi != Proc_c::defaultDataLoggingDDI) ) ? ab_isSetpoint : true );
 }
 
 ProcDataLocal_c::~ProcDataLocal_c(){
