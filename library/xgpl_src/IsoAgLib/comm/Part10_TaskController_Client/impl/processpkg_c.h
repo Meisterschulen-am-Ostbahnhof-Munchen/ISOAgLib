@@ -125,7 +125,7 @@ public:
     extract data from ISO commands and save it to member class
     @param rl_elementDDI
   */
-  bool resolveCommandTypeForISO(uint16_t aui16_ddi);
+  bool resolveCommandTypeForISO(uint16_t aui16_ddi, bool b_isSetpoint);
 
   /**
     function to translate the string data into flag values;

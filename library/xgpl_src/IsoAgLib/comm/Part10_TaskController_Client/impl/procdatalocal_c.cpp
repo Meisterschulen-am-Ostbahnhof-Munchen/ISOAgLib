@@ -23,6 +23,8 @@ namespace __IsoAgLib {
 
 ProcDataLocal_c::ProcDataLocal_c( uint16_t aui16_ddi, uint16_t aui16_element,
                                   const IsoName_c& acrc_isoName,
+                                  bool ab_isSetpoint,
+                                  uint8_t aui8_triggerMethod,
                                   bool ab_cumulativeValue,
                                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                   int ai_multitonInst
@@ -32,16 +34,18 @@ ProcDataLocal_c::ProcDataLocal_c( uint16_t aui16_ddi, uint16_t aui16_element,
     , mc_measureprog( this )
     , mc_setpoint( this )
 {
-      init( aui16_ddi, aui16_element, acrc_isoName, ab_cumulativeValue
+      init( aui16_ddi, aui16_element, acrc_isoName, ab_isSetpoint, aui8_triggerMethod, ab_cumulativeValue
           , apc_processDataChangeHandler
           , ai_multitonInst);
 }
 
 void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
                             const IsoName_c& acrc_isoName,
+                            bool ab_isSetpoint,
+                            uint8_t aui8_triggerMethod,
                             bool ab_cumulativeValue,
-                           IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
-                           int ai_multitonInst
+                            IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
+                            int ai_multitonInst
                            )
 {
   setElementDDI(aui16_ddi);
@@ -59,6 +63,9 @@ void ProcDataLocal_c::init( uint16_t aui16_ddi, uint16_t aui16_element,
 
   mc_setpoint.init( this );
   mc_measureprog.init( this );
+
+  mb_isSetpoint = ab_isSetpoint;
+  mui8_triggerMethod = aui8_triggerMethod;
 }
 
 ProcDataLocal_c::~ProcDataLocal_c(){
@@ -89,6 +96,8 @@ void ProcDataLocal_c::assignFromSource( const ProcDataLocal_c& acrc_src )
   mi32_masterVal = acrc_src.mi32_masterVal;
   mb_cumulativeValue = acrc_src.mb_cumulativeValue;
 
+  mb_isSetpoint = acrc_src.mb_cumulativeValue;
+  mui8_triggerMethod = acrc_src.mui8_triggerMethod;
 }
 
 ProcDataLocal_c::ProcDataLocal_c(const ProcDataLocal_c& acrc_src)
@@ -105,7 +114,7 @@ void ProcDataLocal_c::processMsg( ProcessPkg_c& pkg )
 {
   isoaglib_assert( DDI() == pkg.DDI() );
 
-  pkg.resolveCommandTypeForISO( DDI() );
+  pkg.resolveCommandTypeForISO( DDI(), mb_isSetpoint );
 
   if (pkg.mc_processCmd.checkIsSetpoint())
     processSetpoint( pkg );

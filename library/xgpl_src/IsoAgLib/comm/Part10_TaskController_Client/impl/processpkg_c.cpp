@@ -197,9 +197,8 @@ void ProcessPkg_c::flags2String()
   extract data from ISO commands and save it to member class
   @param rl_elementDDI
 */
-bool ProcessPkg_c::resolveCommandTypeForISO(uint16_t aui16_ddi)
+bool ProcessPkg_c::resolveCommandTypeForISO(uint16_t aui16_ddi, bool b_isSetpoint)
 {
-  bool b_isSetpoint = false;
   bool b_isRequest = false;
   ProcessCmd_c::CommandType_t en_command = ProcessCmd_c::noCommand;
 

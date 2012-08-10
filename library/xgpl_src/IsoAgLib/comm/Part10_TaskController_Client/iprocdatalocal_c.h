@@ -60,11 +60,14 @@ public:
   iProcDataLocal_c( uint16_t aui16_ddi,
                     uint16_t aui16_element,
                     const iIsoName_c& acrc_isoName,
+                    bool ab_isSetpoint,
+                    uint8_t aui8_triggerMethod,
                     bool ab_cumulativeValue = false,
                     ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                     int ai_multitonInst = 0)
     : ProcDataLocal_c( aui16_ddi, aui16_element,
-                       acrc_isoName, ab_cumulativeValue,
+                       acrc_isoName, ab_isSetpoint,
+                       aui8_triggerMethod, ab_cumulativeValue,
                        apc_processDataChangeHandler,
                        ai_multitonInst
                       )
@@ -105,12 +108,15 @@ public:
   void init( uint16_t aui16_ddi,
              uint16_t aui16_element,
              const iIsoName_c& acrc_isoName,
+             bool ab_isSetpoint,
+             uint8_t aui8_triggerMethod,
              bool ab_cumulativeValue = false,
-            ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-            int ai_multitonInst = 0
+             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
+             int ai_multitonInst = 0
             )
   {ProcDataLocal_c::init( aui16_ddi, aui16_element,
-                         acrc_isoName, ab_cumulativeValue,
+                         acrc_isoName, ab_isSetpoint,
+                         aui8_triggerMethod, ab_cumulativeValue,
                          apc_processDataChangeHandler,
                          ai_multitonInst);
   }

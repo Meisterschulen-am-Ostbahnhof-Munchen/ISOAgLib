@@ -91,6 +91,8 @@ public:
   ProcDataLocal_c(uint16_t aui16_ddi,
                   uint16_t aui16_element,
                   const IsoName_c& acrc_isoName,
+                  bool ab_isSetpoint,
+                  uint8_t aui8_triggerMethod,
                   bool ab_cumulativeValue = false,
                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                   int ai_multitonInst = 0
@@ -130,6 +132,8 @@ public:
   void init(uint16_t aui16_ddi,
             uint16_t aui16_element,
             const IsoName_c& acrc_isoName,
+            bool ab_isSetpoint,
+            uint8_t aui8_triggerMethod,
             bool ab_cumulativeValue = false,
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_multitonInst = 0
@@ -378,6 +382,10 @@ private:
 
   /** register if this data is a cumulative type like distance, time, area */
   bool mb_cumulativeValue;
+
+  bool mb_isSetpoint;
+
+  uint8_t mui8_triggerMethod;
 
 private: // Private attributes
 
