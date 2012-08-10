@@ -218,15 +218,15 @@ public:
     retreive simple master setpoint
     @return actual received setpoint value
   */
-  int32_t setpointMasterVal() const
-    { return ProcDataLocal_c::setpointConst().setpointMasterVal();}
+  int32_t setpointVal() const
+    { return ProcDataLocal_c::setpointConst().setpointVal();}
 
   /**
     set the setpoint value
     @param ai32_val new setpoint value
   */
-  void setSetpointMasterVal(int32_t ai32_val)
-    { ProcDataLocal_c::setpoint().setSetpointMasterVal(ai32_val);}
+  void setSetpointVal(int32_t ai32_val)
+    { ProcDataLocal_c::setpoint().setSetpointVal(ai32_val);}
 
    /**
     check if specific measureprog exist

@@ -282,25 +282,7 @@ public:
     (used for accessing setpoint values from measure progs)
     @return exact value of master setpoint
   */
-  virtual int32_t setpointExactValue() const { return setpointConst().masterConst().exact();}
-
-  /**
-    (used for accessing setpoint values from measure progs)
-    @return default value of master setpoint
-  */
-  virtual int32_t setpointDefaultValue() const { return setpointConst().masterConst().getDefault();}
-
-  /**
-    (used for accessing setpoint values from measure progs)
-    @return min value of master setpoint
-  */
-  virtual int32_t setpointMinValue() const { return setpointConst().masterConst().min();}
-
-  /**
-    (used for accessing setpoint values from measure progs)
-    @return max value of master setpoint
-  */
-  virtual int32_t setpointMaxValue() const { return setpointConst().masterConst().max();}
+  virtual int32_t setpointValue() const { return setpointConst().masterConst().value();}
 
   /**
     allow local client to actively start a measurement program

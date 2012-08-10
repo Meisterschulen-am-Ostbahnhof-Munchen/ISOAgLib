@@ -200,23 +200,7 @@ int32_t MeasureProgLocal_c::setpointValForGroup(ProcessCmd_c::ValueGroup_t en_va
   ProcDataLocal_c* pc_procdata = pprocessData();
   if (pc_procdata->setpointExistMaster())
   {
-    switch (en_valueGroup)
-    {
-      case ProcessCmd_c::exactValue:
-        i32_value = pc_procdata->setpointExactValue();
-        break;
-      case ProcessCmd_c::defaultValue:
-        i32_value = pc_procdata->setpointDefaultValue();
-        break;
-      case ProcessCmd_c::minValue:
-        i32_value = pc_procdata->setpointMinValue();
-        break;
-      case ProcessCmd_c::maxValue:
-        i32_value = pc_procdata->setpointMaxValue();
-        break;
-      default:
-        IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::ProcData, getMultitonInst() );
-    }
+    i32_value = pc_procdata->setpointValue();
   }
   return i32_value;
 }
