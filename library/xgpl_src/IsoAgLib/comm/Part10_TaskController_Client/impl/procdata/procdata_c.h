@@ -97,9 +97,7 @@ private:
   Setpoint_c mc_setpoint;
 
 private:
-  friend class ManageMeasureProg_c;
   friend class MeasureProg_c;
-  friend class Setpoint_c;
 
 private:
   /** not copyable : copy constructor/operator only declared, not defined */

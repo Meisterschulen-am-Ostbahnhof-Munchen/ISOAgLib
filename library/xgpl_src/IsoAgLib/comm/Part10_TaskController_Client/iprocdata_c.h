@@ -18,6 +18,9 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
+namespace __IsoAgLib {
+  class Setpoint_c;
+}
 
 namespace IsoAgLib {
   
@@ -71,6 +74,8 @@ public:
     int32_t ai32_increment,
 	IsoAgLib::ProcData::remoteType_t a_ecuType )
   { ProcData_c::startDataLogging(ren_type, ai32_increment, a_ecuType ); }
+
+  friend class __IsoAgLib::Setpoint_c;
 };
 
 }
