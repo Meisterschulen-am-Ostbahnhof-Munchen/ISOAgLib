@@ -28,8 +28,8 @@ namespace IsoAgLib {
 
 namespace __IsoAgLib {
 
-class ProcData_c  {
-
+class ProcData_c
+{
 public:
   ProcData_c();
   ~ProcData_c();
@@ -44,7 +44,7 @@ public:
 
   IsoAgLib::iProcDataHandler_c* getProcDataHandler( ) const { return mpc_procDataHandler; }
   void setProcDataHandler( IsoAgLib::iProcDataHandler_c *apc_procDataHandler )
-    { mpc_procDataHandler = apc_procDataHandler; }
+  { mpc_procDataHandler = apc_procDataHandler; }
 
   int32_t measurementVal() const { return mc_measureprog.measurementValue(); }
   int32_t setpointVal() const { return mc_setpoint.setpointValue(); }
@@ -71,14 +71,12 @@ public:
   uint8_t triggerMethod() const { return configuration.mui8_triggerMethod; } 
 
   const IsoName_c& isoName() const
-  {
-    isoaglib_assert(mc_myIdentItem != NULL);
-    return mc_myIdentItem->isoName();
-  }
+  { isoaglib_assert(mc_myIdentItem != NULL); return mc_myIdentItem->isoName(); }
+
   int getMultitonInst() const { isoaglib_assert(mc_myIdentItem != NULL); return mc_myIdentItem->getMultitonInst(); }
 
 private:
-  void sendValue( IsoAgLib::ProcData::remoteType_t a_remoteType, int32_t ai32_val) const;
+  void sendValue( IsoAgLib::ProcData::remoteType_t a_remoteType, int32_t ai32_val ) const;
 
 private:
   IdentItem_c* mc_myIdentItem;
