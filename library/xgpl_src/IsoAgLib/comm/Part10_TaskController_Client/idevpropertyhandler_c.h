@@ -1,6 +1,5 @@
 /*
-  idevpropertyhandler_c.h: central managing instance for all process
-    data informations in the system
+  idevpropertyhandler_c.h - 
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -14,23 +13,14 @@
 #ifndef IDEVPROPERTYHANDLER_C_H
 #define IDEVPROPERTYHANDLER_C_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "impl/devpropertyhandler_c.h"
 
 
-// Begin Namespace IsoAgLib::iDevPropertyHandler_c
 namespace IsoAgLib {
 
-/**
-*/
-class iDevPropertyHandler_c : public __IsoAgLib::DevPropertyHandler_c  {
+class iDevPropertyHandler_c : public __IsoAgLib::DevPropertyHandler_c
+{
 public:
-
-  /**
-  Receive pointer to byte array, create LanguageLabel, replace old one in Map or create a new one
-  */
   bool registerDevicePool (const IsoAgLib::iIdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamLength, bool ab_setToDefault)
     { return DevPropertyHandler_c::registerDevicePool (static_cast<const __IsoAgLib::IdentItem_c*>(apc_wsMasterIdentItem), apc_devicePoolByteArray, aui32_bytestreamLength, ab_setToDefault); }
 
@@ -41,5 +31,6 @@ private:
   friend class iTcClient_c;
 };
 
-} // end of namespace IsoAgLib::iDevPropertyHandler_c
+} // IsoAgLib
+
 #endif

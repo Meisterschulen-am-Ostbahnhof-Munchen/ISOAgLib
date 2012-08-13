@@ -23,58 +23,73 @@
 namespace __IsoAgLib {
 
 ProcData_c::ProcData_c( )
-    : mc_myIdentItem( NULL ),
-      mui16_ddi( 0xFFFF ),
-      mui16_element( 0xFFFF ),
-      mpc_procDataHandler( NULL ),
-      mc_measureprog(),
-      mc_setpoint()
+    : mc_myIdentItem( NULL )
+    , mui16_ddi( 0xFFFF )
+    , mui16_element( 0xFFFF )
+    , mpc_procDataHandler( NULL )
+    , mc_measureprog()
+    , mc_setpoint()
 {
-  procdataconfiguration.mb_isSetpoint = false;
-  procdataconfiguration.mui8_triggerMethod = 0;
+  configuration.mb_isSetpoint = false;
+  configuration.mui8_triggerMethod = 0;
 }
 
-void ProcData_c::init( IdentItem_c& acrc_identItem,
-                       uint16_t aui16_ddi,
-                       uint16_t aui16_element,
-                       bool ab_isSetpoint,
-                       uint8_t aui8_triggerMethod,
-                       IsoAgLib::iProcDataHandler_c *apc_procDataHandler)
+
+void
+ProcData_c::init(
+  IdentItem_c& acrc_identItem,
+  uint16_t aui16_ddi,
+  uint16_t aui16_element,
+  bool ab_isSetpoint,
+  uint8_t aui8_triggerMethod,
+  IsoAgLib::iProcDataHandler_c *apc_procDataHandler )
 {
   mc_myIdentItem = &acrc_identItem;
-
   mui16_ddi = aui16_ddi;
   mui16_element = aui16_element;
-  procdataconfiguration.mb_isSetpoint = ab_isSetpoint;
-  procdataconfiguration.mui8_triggerMethod = aui8_triggerMethod & 0x3F; // 6 bits
-
+  configuration.mb_isSetpoint = ab_isSetpoint;
+  configuration.mui8_triggerMethod = aui8_triggerMethod & 0x3F; // 6 bits
   mpc_procDataHandler = apc_procDataHandler;
 
   getTcClientInstance4Comm( ).registerLocalProcessData( this );
 
   // "Device process data objects with a data log trigger method of type total shall be settable."
-  isoaglib_assert( ( IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTotal)
-                          && (aui16_ddi != IsoAgLib::ProcData::defaultDataLoggingDDI) ) ? ab_isSetpoint : true );
+  isoaglib_assert(
+    ( IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTotal)
+    && (aui16_ddi != IsoAgLib::ProcData::defaultDataLoggingDDI) ) ? ab_isSetpoint : true );
 }
 
-ProcData_c::~ProcData_c() {
+
+ProcData_c::~ProcData_c()
+{
   getTcClientInstance4Comm().unregisterLocalProcessData( this );
 }
 
-void ProcData_c::setMeasurementVal(int32_t ai32_val) {
+
+void
+ProcData_c::setMeasurementVal(int32_t ai32_val)
+{
   mc_measureprog.setVal( *this, ai32_val );
 }
 
-void ProcData_c::incrMeasurementVal(int32_t ai32_val){
+
+void
+ProcData_c::incrMeasurementVal(int32_t ai32_val)
+{
   int32_t i32_value = mc_measureprog.measurementValue() + ai32_val;
   mc_measureprog.setVal( *this, i32_value );
 }
 
-void ProcData_c::timeEvent( uint16_t& rui16_nextTimePeriod ){
+
+void
+ProcData_c::timeEvent( uint16_t& rui16_nextTimePeriod )
+{
   mc_measureprog.timeEvent( *this, rui16_nextTimePeriod);
 }
 
-void ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType )
+
+void
+ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
   isoaglib_assert( DDI() == pkg.mui16_DDI );
   
@@ -112,24 +127,33 @@ void ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t
   }
 }
 
-void ProcData_c::startDataLogging(IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::TimeProp, IsoAgLib::ProcData::DistProp, ... */,
-                                  int32_t ai32_increment, IsoAgLib::ProcData::remoteType_t a_ecuType )
+
+void
+ProcData_c::startDataLogging(
+  IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::TimeProp, IsoAgLib::ProcData::DistProp, ... */,
+  int32_t ai32_increment,
+  IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
   isoaglib_assert( IsoAgLib::ProcData::remoteTypeUndefined != a_ecuType );
 
   mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, a_ecuType);
 }
 
-void ProcData_c::stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t a_ecuType)
+
+void
+ProcData_c::stopRunningMeasurement( IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
-  mc_measureprog.stopRunningMeasurement(*this, a_ecuType);
+  mc_measureprog.stopRunningMeasurement( a_ecuType );
 }
 
-void ProcData_c::sendValue( IsoAgLib::ProcData::remoteType_t a_ecuType, int32_t ai32_val) const
+
+void
+ProcData_c::sendValue( IsoAgLib::ProcData::remoteType_t a_ecuType, int32_t ai32_val) const
 {
   const IsoName_c& c_destinationISOName = getTcClientInstance4Comm().getISONameFromType( a_ecuType );
 
-  if (!c_destinationISOName.isSpecified()) return;
+  if (!c_destinationISOName.isSpecified())
+    return;
   
   ProcessPkg_c pkg;
   pkg.men_command = ProcessPkg_c::setValue;
@@ -168,8 +192,11 @@ void ProcData_c::sendValue( IsoAgLib::ProcData::remoteType_t a_ecuType, int32_t 
   getIsoBusInstance4Comm() << pkg;
 }
 
-void ProcData_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) const {
-  sendValue( getTcClientInstance4Comm().getTypeFromISOName( ac_targetISOName ), measurementVal());
+
+void
+ProcData_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) const
+{
+  sendValue( getTcClientInstance4Comm().getTypeFromISOName( ac_targetISOName ), measurementVal() );
 }
 
 }

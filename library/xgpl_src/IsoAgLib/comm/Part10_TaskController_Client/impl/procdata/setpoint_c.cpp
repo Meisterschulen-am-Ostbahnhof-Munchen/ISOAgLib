@@ -15,9 +15,11 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/itcclient_c.h>
 
+
 namespace __IsoAgLib {
 
-void Setpoint_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType )
+void
+Setpoint_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
   isoaglib_assert(ProcessPkg_c::setValue == pkg.men_command);
   isoaglib_assert(pkg.getISONameForSA().isSpecified()); // already tested before in TcClient_c::processMsg
@@ -27,10 +29,9 @@ void Setpoint_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg
 
   // call handler function if handler class is registered
   if ( ac_processData.getProcDataHandler() != NULL )
-    ac_processData.getProcDataHandler()->processSetpointSet( static_cast<IsoAgLib::iProcData_c&>(ac_processData),
-                                                             pkg.mi32_pdValue,
-                                                             a_ecuType,
-                                                             b_change );
+    ac_processData.getProcDataHandler()->processSetpointSet(
+	  static_cast<IsoAgLib::iProcData_c&>(ac_processData),
+      pkg.mi32_pdValue, a_ecuType, b_change );
 }
 
 }

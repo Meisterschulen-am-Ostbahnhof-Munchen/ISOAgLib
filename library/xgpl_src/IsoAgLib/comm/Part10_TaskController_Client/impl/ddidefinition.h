@@ -1,18 +1,17 @@
-////////////////////////////////////////////////////////////////////////////////
-//
-//  Copyright (C) 2009,2010 AGCO Corporation. All Rights Reserved.
-//
-//  THIS SOFTWARE AND/OR MATERIAL IS THE PROPERTY OF AGCO Corporation.
-//  ALL USE, DISCLOSURE, AND/OR REPRODUCTION NOT SPECIFICALLY AUTHORIZED
-//  BY AGCO Corporation IS PROHIBITED.
-//
-////////////////////////////////////////////////////////////////////////////////
+/*
+  ddidefinition.h
 
-//
-// File: ddidef.h
-//  Definition of DDI values from 11783-11 Data Dictionary
-#ifndef  _DDIDEFINITION_H_
-#define  _DDIDEFINITION_H_
+  (C) Copyright 2012 - 2012 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+#ifndef  DDIDEFINITION_H
+#define  DDIDEFINITION_H
 
 #define  DDI_DATA_DICTIONARY_VERSION              0
 
@@ -230,4 +229,4 @@
 
 #define  DDI_INVALID_DDI                          0xFFFF
 
-#endif  // _DDIDEFINITION_H_
+#endif

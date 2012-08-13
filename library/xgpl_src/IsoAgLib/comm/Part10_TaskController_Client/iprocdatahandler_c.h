@@ -1,7 +1,5 @@
 /*
-  iprocessdatahandler_c.h: base class for application handler
-    classes, with handler methods which are called after each change
-    access on process data from external systems
+  iprocdatahandler_c.h: base class for application handler
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -12,17 +10,19 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef IPROCESSDATAHANDLER_H
-#define IPROCESSDATAHANDLER_H
+#ifndef IPROCDATAHANDLER_C_H
+#define IPROCDATAHANDLER_C_H
 
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
+
 
 namespace IsoAgLib {
 
 class iProcData_c;
 
-class iProcDataHandler_c {
+class iProcDataHandler_c
+{
 public:
   virtual ~iProcDataHandler_c() {}
 

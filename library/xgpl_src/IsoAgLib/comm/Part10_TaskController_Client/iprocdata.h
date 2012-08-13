@@ -1,5 +1,5 @@
 /*
-  proc_c.h: class with special (enum) types for ProcessData management
+  proc_c.h - class with special (enum) types for ProcessData management
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,10 +10,11 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef IPROCDATA_N_H
-#define IPROCDATA_N_H
+#ifndef IPROCDATA_H
+#define IPROCDATA_H
 
 #include <IsoAgLib/hal/hal_typedef.h>
+
 
 namespace IsoAgLib {
 
@@ -51,8 +52,8 @@ namespace ProcData {
 
   /** enum type for special DDIs */
   enum specialDDI_t {defaultDataLoggingDDI = 0xDFFF};
-
 }
 
 }
+
 #endif

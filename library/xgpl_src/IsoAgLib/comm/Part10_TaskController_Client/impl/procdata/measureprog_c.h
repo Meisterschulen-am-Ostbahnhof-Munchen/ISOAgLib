@@ -1,5 +1,5 @@
 /*
-  measureproglocal_c.h
+  measureprog_c.h
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef MEASUREPROG_H
-#define MEASUREPROG_H
+#ifndef MEASUREPROG_C_H
+#define MEASUREPROG_C_H
 
 #include "measuresubprog_c.h"
 #include <IsoAgLib/isoaglib_config.h>
@@ -19,6 +19,7 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
 #include <list>
+
 
 namespace __IsoAgLib {
 
@@ -32,6 +33,7 @@ private:
     IsoAgLib::ProcData::measurementCommand_t en_type;
     int32_t i32_threshold;
   };
+
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   typedef STL_NAMESPACE::list<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s) > List_ThresholdInfo;
   typedef STL_NAMESPACE::list<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s) >::iterator List_ThresholdInfoIterator;
@@ -51,12 +53,11 @@ private:
   #endif
 
 public:
-  MeasureProg_c(IsoAgLib::ProcData::remoteType_t ecutype);
-
+  MeasureProg_c( IsoAgLib::ProcData::remoteType_t ecutype );
   virtual ~MeasureProg_c() {}
 
-  bool startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment, int32_t value);
-  void stopMeasurement(ProcData_c& ac_processData);
+  bool startMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment, int32_t value );
+  void stopMeasurement();
 
   bool processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, int32_t value );
   void timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod, int32_t value );
@@ -75,11 +76,11 @@ private:
   IsoAgLib::ProcData::remoteType_t m_ecuType;
   
 private:
-  /** not copyable : copy constructor is only declared, never defined */
-  MeasureProg_c(const MeasureProg_c&);
-  /** not copyable : copy operator is only declared, never defined */
-  MeasureProg_c& operator=(const MeasureProg_c&); 
+  /** not copyable : copy constructor/operators only declared, not defined */
+  MeasureProg_c( const MeasureProg_c& );
+  MeasureProg_c& operator=( const MeasureProg_c& );
 };
 
 }
+
 #endif

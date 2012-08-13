@@ -1,5 +1,5 @@
 /*
-  measureproglocal_c.cpp: object for managing local
+  measureprog_c.cpp: object for managing local measure programs
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -18,19 +18,23 @@
 #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
 #endif
 
+
 namespace __IsoAgLib {
 
-MeasureProg_c::MeasureProg_c(IsoAgLib::ProcData::remoteType_t ecutype)
-  : mlist_thresholdInfo(),
-    mvec_measureSubprog(),
-    m_ecuType(ecutype)
-{}
+MeasureProg_c::MeasureProg_c( IsoAgLib::ProcData::remoteType_t ecutype )
+  : mlist_thresholdInfo()
+  , mvec_measureSubprog()
+  , m_ecuType(ecutype)
+{
+}
 
-bool MeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, int32_t value )
+
+bool
+MeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, int32_t value )
 {
   ProcessPkg_c::CommandType_t en_command = pkg.men_command;
 
-  isoaglib_assert(pkg.getMonitorItemForSA() != NULL); // should have been filtered earlier !
+  isoaglib_assert( pkg.getMonitorItemForSA() != NULL ); // should have been filtered earlier!
 
   switch (en_command)
   {
@@ -43,16 +47,18 @@ bool MeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& 
       if (!startMeasurement(ac_processData, static_cast<IsoAgLib::ProcData::measurementCommand_t>(en_command), pkg.mi32_pdValue, value))
       {
         getTcClientInstance( ac_processData.getMultitonInst() ).sendNack(
-                                            pkg.getMonitorItemForSA()->isoName(),
-                                            ac_processData.isoName(),
-                                            ac_processData.DDI(),
-                                            ac_processData.element(),
-                                            IsoAgLib::ProcData::NackTriggerMethodNotSupported);
+          pkg.getMonitorItemForSA()->isoName(),
+          ac_processData.isoName(),
+          ac_processData.DDI(),
+          ac_processData.element(),
+          IsoAgLib::ProcData::NackTriggerMethodNotSupported);
       }
       break;
+	  
     case ProcessPkg_c::requestValue:
       ac_processData.sendValue( m_ecuType, value);
       break;
+	  
     default:
       isoaglib_assert( !"Method shall not be called for this Process command" );
       break;
@@ -61,7 +67,9 @@ bool MeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& 
   return true;
 }
 
-void MeasureProg_c::setVal(ProcData_c& ac_processData, int32_t ai32_val)
+
+void
+MeasureProg_c::setVal( ProcData_c& ac_processData, int32_t ai32_val )
 {
   const int32_t i32_time =  System_c::getTime();
 
@@ -75,14 +83,17 @@ void MeasureProg_c::setVal(ProcData_c& ac_processData, int32_t ai32_val)
       case IsoAgLib::ProcData::MeasurementCommandTimeProp:
         triggeredIncrement = pc_iter->updateTrigger(i32_time);
         break;
+
       case IsoAgLib::ProcData::MeasurementCommandDistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
         triggeredIncrement = pc_iter->updateTrigger(int32_t(getTracMoveInstance( ac_processData.getMultitonInst() ).distTheor()));
         #endif
         break;
+
       case IsoAgLib::ProcData::MeasurementCommandOnChange:
         triggeredIncrement = pc_iter->updateTrigger(ai32_val);
         break;
+
       case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold: break;
       case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold: break;
     }
@@ -101,7 +112,9 @@ void MeasureProg_c::setVal(ProcData_c& ac_processData, int32_t ai32_val)
   }
 }
 
-void MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod, int32_t value )
+
+void
+MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod, int32_t value )
 {
   const int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
@@ -115,6 +128,7 @@ void MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextT
         triggeredIncrement = pc_iter->updateTrigger(i32_time);
         i32_nextTimePeriod = pc_iter->nextTriggerTime(ac_processData, i32_time);
         break;
+
       case IsoAgLib::ProcData::MeasurementCommandDistProp:
         {
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
@@ -126,6 +140,7 @@ void MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextT
         i32_nextTimePeriod = pc_iter->nextTriggerTime(ac_processData, i32_distTheor);
         }
         break;
+
       case IsoAgLib::ProcData::MeasurementCommandOnChange:
         triggeredIncrement = pc_iter->updateTrigger(value);
         break;
@@ -133,7 +148,7 @@ void MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextT
         break;
     } // switch
 
-    if (i32_nextTimePeriod )
+    if( i32_nextTimePeriod )
     {
       if ( (i32_nextTimePeriod > 0) // something valid to set
             // rui16_nextTimePeriod not yet set or i32_nextTimePeriod smaller => set
@@ -157,7 +172,9 @@ void MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextT
   }
 }
 
-bool MeasureProg_c::minMaxLimitsPassed( int32_t value ) const
+
+bool
+MeasureProg_c::minMaxLimitsPassed( int32_t value ) const
 {
   // no threshold -> skip
   if (mlist_thresholdInfo.empty())
@@ -176,10 +193,12 @@ bool MeasureProg_c::minMaxLimitsPassed( int32_t value ) const
         b_checkMax = true;
         i32_maxVal = ps_iterThreshold->i32_threshold;
         break;
+		
       case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold:
         b_checkMin = true;
         i32_minVal = ps_iterThreshold->i32_threshold;
         break;
+		
       default: ;
     }
   }
@@ -194,7 +213,9 @@ bool MeasureProg_c::minMaxLimitsPassed( int32_t value ) const
   return true;
 }
 
-MeasureSubprog_c& MeasureProg_c::addSubprog(IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment)
+
+MeasureSubprog_c&
+MeasureProg_c::addSubprog( IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment )
 {
   // if subprog with this type exist, update only value
   Vec_MeasureSubprog::iterator pc_subprog = mvec_measureSubprog.end();
@@ -212,7 +233,9 @@ MeasureSubprog_c& MeasureProg_c::addSubprog(IsoAgLib::ProcData::measurementComma
   return *(mvec_measureSubprog.begin());
 }
 
-bool MeasureProg_c::startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment, int32_t value)
+
+bool
+MeasureProg_c::startMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment, int32_t value )
 {
   bool b_validTriggerMethod = false;
 
@@ -227,6 +250,7 @@ bool MeasureProg_c::startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcD
       b_validTriggerMethod = true;
     }
     break;
+
   case IsoAgLib::ProcData::MeasurementCommandDistProp: // distance proportional
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE) // if no distance available, NACK will be sent
     if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodDistInterval) )
@@ -238,6 +262,7 @@ bool MeasureProg_c::startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcD
     }
 #endif
     break;
+
   case IsoAgLib::ProcData::MeasurementCommandOnChange: // change threshold proportional
     if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodOnChange) )
     {
@@ -247,6 +272,7 @@ bool MeasureProg_c::startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcD
       b_validTriggerMethod = true;
     }
     break;
+
   case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold: // change threshold proportional
     if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodThresholdLimit) )
     {
@@ -258,6 +284,7 @@ bool MeasureProg_c::startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcD
       b_validTriggerMethod = true;
     }
     break;
+
   case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold: // change threshold proportional
     if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodThresholdLimit) )
     {
@@ -269,6 +296,7 @@ bool MeasureProg_c::startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcD
       b_validTriggerMethod = true;
     }
     break;
+
   default:
     isoaglib_assert(!"method should not be called with this command");
     break;
@@ -281,7 +309,9 @@ bool MeasureProg_c::startMeasurement(ProcData_c& ac_processData, IsoAgLib::ProcD
   return b_validTriggerMethod;
 }
 
-void MeasureProg_c::stopMeasurement(ProcData_c& ac_processData)
+
+void
+MeasureProg_c::stopMeasurement()
 {
   mvec_measureSubprog.clear();
   mlist_thresholdInfo.clear();

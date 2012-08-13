@@ -1,6 +1,5 @@
 /*
-  process_c.h: central managing instance for all process data
-    informations in the system
+  tcclient_c.h: central managing instance for all Task Controller-Clients
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -11,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef TCCLIENT_H
-#define TCCLIENT_H
+#ifndef TCCLIENT_C_H
+#define TCCLIENT_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <functional>
@@ -39,27 +38,27 @@ namespace IsoAgLib {
 #pragma warning( disable : 4355 )
 #endif
 
+
 namespace __IsoAgLib {
 
 class TcClient_c : public Scheduler_Task_c
 {
   MACRO_MULTITON_CONTRIBUTION();
+private:
+  TcClient_c();
+  virtual ~TcClient_c() {}
+
 public:
   void init( void );
   void close( void );
 
-  virtual ~TcClient_c() {}
-
+  bool timeEvent();
   bool processMsg( const CanPkg_c& arc_data );
 
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
-
   ProcData_c* procData( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver, bool& elementFound);
 
-  bool timeEvent();
-
   void resetTimerPeriod();
-
   void registerAccessFlt() {}
 
   bool registerLocalProcessData( ProcData_c* pc_localClient)
@@ -78,42 +77,31 @@ public:
   virtual const char* getTaskName() const;
 #endif
 
-  /** set the pointer to the handler class (used for callback when TC status message is processed)
-    * @param apc_processDataChangeHandler pointer to handler class of application
-    */
   void setProcDataHandler( IsoAgLib::iProcDataHandler_c *apc_procDataHandler )
-   { mpc_procDataHandler = apc_procDataHandler; }
+  { mpc_procDataHandler = apc_procDataHandler; }
 
-  /** send NACK */
-  void sendNack( const IsoName_c& ac_da,
-                 const IsoName_c& ac_sa,
-                 int16_t ddi,
-                 int16_t element,
-                 IsoAgLib::ProcData::nackResponse_t a_errorcodes) const;
+  void sendNack( const IsoName_c& ac_da, const IsoName_c& ac_sa, int16_t ddi, int16_t element,
+                 IsoAgLib::ProcData::nackResponse_t a_errorcodes ) const;
 
 private:
   virtual void updateEarlierAndLatestInterval();
   virtual uint16_t getForcedMinExecTime() const
-  {
-    return getForcedMinExecTimeDefault();
-  }
+  { return getForcedMinExecTimeDefault(); }
 
-  void stopRunningMeasurement(IsoAgLib::ProcData::remoteType_t ecuType);
+  void stopRunningMeasurement( IsoAgLib::ProcData::remoteType_t ecuType );
 
+  /// PROXY-CLASSES
 private:
-
   class CanCustomerProxy_c : public CanCustomer_c {
   public:
     typedef TcClient_c Owner_t;
 
     CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
-
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual bool processMsg( const CanPkg_c& arc_data ) {
-      return mrt_owner.processMsg( arc_data );
-    }
+    virtual bool processMsg( const CanPkg_c& arc_data )
+    { return mrt_owner.processMsg( arc_data ); }
 
     Owner_t &mrt_owner;
 
@@ -123,21 +111,19 @@ private:
     CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
   };
   typedef CanCustomerProxy_c Customer_t;
+  
   class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
   public:
     typedef TcClient_c Owner_t;
 
     ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
-
     virtual ~ControlFunctionStateHandlerProxy_c() {}
 
   private:
     virtual void reactOnIsoItemModification(
         iIsoItemAction_e at_action,
         IsoItem_c const &acrc_isoItem)
-    {
-      mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
-    }
+    { mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem); }
 
     Owner_t &mrt_owner;
 
@@ -148,21 +134,7 @@ private:
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
-  /**
-    HIDDEN constructor for a TcClient_c object instance
-    NEVER instantiate a variable of type TcClient_c within application
-    only access TcClient_c via getTcClientInstance() or getTcClientInstance( int riLbsBusNr ) in case more than one ISO11783 BUS is used for IsoAgLib
-    */
-  TcClient_c() :
-    mt_handler(*this),
-    mt_customer(*this),
-    mc_isoNameTC(IsoName_c::IsoNameUnspecified()),
-#ifdef USE_DATALOGGER
-    mc_isoNameLogger(IsoName_c::IsoNameUnspecified()),
-#endif
-    CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
-  {}
-
+private:
   DevPropertyHandler_c mc_devPropertyHandler;
 
   bool m_lastActiveTaskTC;

@@ -1,6 +1,5 @@
 /*
-  measuresubprog_c.h - Every increment type of a measure prog is
-    managed by a MeasureSubprog_c instance
+  measuresubprog_c.h
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -11,21 +10,23 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef MEASURE_SUBPROG_H
-#define MEASURE_SUBPROG_H
+#ifndef MEASURESUBPROG_C_H
+#define MEASURESUBPROG_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
+
 
 namespace __IsoAgLib {
 
 class ProcData_c;
 
-class MeasureSubprog_c {
+class MeasureSubprog_c
+{
 public:
   MeasureSubprog_c( IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment);
   MeasureSubprog_c( const MeasureSubprog_c& acrc_src );
-  ~MeasureSubprog_c();
+  ~MeasureSubprog_c() {}
 
   IsoAgLib::ProcData::measurementCommand_t type() const { return men_type; }
 
@@ -44,9 +45,10 @@ private:
   const IsoAgLib::ProcData::measurementCommand_t men_type;
 
 private:
-  /** not copyable : copy operator is only declared, never defined */
+  /** not assignable: assign operator only declared, not defined */
   MeasureSubprog_c& operator=(const MeasureSubprog_c&); 
 };
 
 }
+
 #endif

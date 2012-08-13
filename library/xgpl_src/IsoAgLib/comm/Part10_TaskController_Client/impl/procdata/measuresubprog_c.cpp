@@ -1,6 +1,5 @@
 /*
-  measuresubprog_c.cpp - Every increment type of a measure prog is
-    managed by a MeasureSubprog_c instance
+  measuresubprog_c.cpp
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -11,7 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "measuresubprog_c.h"
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <cstdlib>
@@ -22,32 +20,40 @@
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
 #endif
 
+
 namespace __IsoAgLib {
 
-MeasureSubprog_c::MeasureSubprog_c(IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment)
-: mi32_lastVal( 0 ),
-  mi32_increment( ai32_increment ),
-  men_type( ren_type )
+MeasureSubprog_c::MeasureSubprog_c( IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment )
+  : mi32_lastVal( 0 )
+  , mi32_increment( ai32_increment )
+  , men_type( ren_type )
 {
 }
 
-MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& acrc_src)
-: mi32_lastVal(acrc_src.mi32_lastVal),
-  mi32_increment(acrc_src.mi32_increment),
-  men_type(acrc_src.men_type)
+
+MeasureSubprog_c::MeasureSubprog_c( const MeasureSubprog_c& acrc_src )
+  : mi32_lastVal( acrc_src.mi32_lastVal )
+  , mi32_increment( acrc_src.mi32_increment )
+  , men_type( acrc_src.men_type )
 {
 }
 
-MeasureSubprog_c::~MeasureSubprog_c(){
-}
 
-void MeasureSubprog_c::start(int32_t ai32_lastVal, int32_t ai32_increment){
+void
+MeasureSubprog_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
+{
   // if wanted store given values (in both cases 0 is interpreted as not wanted)
-  if (ai32_increment != 0) mi32_increment = ai32_increment;
-  if (ai32_lastVal != 0) mi32_lastVal = ai32_lastVal;
+  if (ai32_increment != 0)
+    mi32_increment = ai32_increment;
+
+  if (ai32_lastVal != 0)
+    mi32_lastVal = ai32_lastVal;
 }
 
-bool MeasureSubprog_c::updateTrigger(int32_t ai32_val){
+
+bool
+MeasureSubprog_c::updateTrigger( int32_t ai32_val )
+{
   if ( ( type() == IsoAgLib::ProcData::MeasurementCommandOnChange ) && ( mi32_increment == 0 ) )
   { // special case: OnChange with value 0 means: SEND NO value; 1 meanse: send any change; ...
     return false;
@@ -63,12 +69,15 @@ bool MeasureSubprog_c::updateTrigger(int32_t ai32_val){
   }
 }
 
-int32_t MeasureSubprog_c::nextTriggerTime(ProcData_c& ac_processData, int32_t ai32_val)
+
+int32_t
+MeasureSubprog_c::nextTriggerTime( ProcData_c& ac_processData, int32_t ai32_val )
 {
-  switch (type())
+  switch( type() )
   {
     case IsoAgLib::ProcData::MeasurementCommandTimeProp:
       return (mi32_lastVal + mi32_increment - ai32_val);
+	  
     case IsoAgLib::ProcData::MeasurementCommandDistProp:
     {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
@@ -101,6 +110,7 @@ int32_t MeasureSubprog_c::nextTriggerTime(ProcData_c& ac_processData, int32_t ai
       return 200; // 200 msec
 #endif
     }
+
     default:
       return 0;
   }

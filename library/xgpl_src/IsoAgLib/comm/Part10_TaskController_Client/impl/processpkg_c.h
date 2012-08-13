@@ -10,15 +10,17 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef PROCESS_PKG_H
-#define PROCESS_PKG_H
+#ifndef PROCESSPKG_C_H
+#define PROCESSPKG_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 
+
 namespace __IsoAgLib {
 
-class ProcessPkg_c : public CanPkgExt_c  {
+class ProcessPkg_c : public CanPkgExt_c
+{
 public:
   enum CommandType_t {
     requestConfiguration                  = 0x0,
@@ -40,13 +42,12 @@ public:
 
     CommandUndefined                      = 0x10
   };
-public:
+
   ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst = 0 );
   ProcessPkg_c();
   ~ProcessPkg_c() {}
 
 public:
-
   int32_t mi32_pdValue;
 
   CommandType_t men_command;
@@ -54,10 +55,9 @@ public:
   uint16_t mui16_DDI;
 
 private:
-  /** not copyable : copy constructor is only declared, never defined */
-  ProcessPkg_c(const ProcessPkg_c&);
-  /** not copyable : copy operator is only declared, never defined */
-  ProcessPkg_c& operator=(const ProcessPkg_c&); 
+  /** not copyable : copy constructor/operator only declared, not defined */
+  ProcessPkg_c( const ProcessPkg_c& );
+  ProcessPkg_c& operator=( const ProcessPkg_c& );
 };
 
 }
