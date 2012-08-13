@@ -31,10 +31,8 @@
 #define KEY_IS_STILL_HELD 2
 
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-// Forward declarations
 class iVtObject_c;
 class iVtObjectWorkingSet_c;
 class iVtObjectDataMask_c;
@@ -125,7 +123,7 @@ typedef struct vtState_s {
   uint8_t  functionBusy;
 } vtState_s;
 
-} // namespace IsoAgLib
+} // IsoAgLib
 
-#endif // IVTTYPES_H
+#endif
 

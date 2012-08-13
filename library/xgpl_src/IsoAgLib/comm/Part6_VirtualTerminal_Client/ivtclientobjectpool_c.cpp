@@ -1,5 +1,5 @@
 /*
-  iisoterminalobjectpool.cpp: class for managing an object pool with
+  ivtclientobjectpool_c.cpp: Class for managing an object pool with
     softkey/button activation event handling
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -11,12 +11,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-
 #include "ivtclientobjectpool_c.h"
 #include <IsoAgLib/util/iassert.h>
 
@@ -31,6 +25,7 @@ inline uint8_t normalizeDepth2Color(uint8_t ui8_color) {
 }
 
 }
+
 
 namespace IsoAgLib
 {

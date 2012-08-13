@@ -1,5 +1,5 @@
 /*
-  ivtincludes.h:  includes all neccessary headers
+  ivtincludes.h: Includes all neccessary headers
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,6 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+#ifndef IVTINCLUDES
+#define IVTINCLUDES
 
 #include "ivttypes.h"
 
@@ -101,6 +103,7 @@
   #include "ivtobjectauxiliarypointer_c.h"
 #endif
 
-
 #include "ivtclientobjectpool_c.h"
 #include "ivtclient_c.h"
+
+#endif

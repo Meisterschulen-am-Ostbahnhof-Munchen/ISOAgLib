@@ -18,13 +18,10 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/iassert.h>
 
-
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
-// Class : iVtObject_c
+
 class iVtObject_c : public ClientBase
 {
-// STRUCTURES
 public:
   typedef struct iVtObject_s {
     uint16_t ID;
@@ -523,7 +520,6 @@ iVtObject_c::setClientID( uint8_t ui8_clientID )
 }
 
 
+} // IsoAgLib
 
-} // end of namespace IsoAgLib
-
-#endif // IVTOBJECT_C_H
+#endif

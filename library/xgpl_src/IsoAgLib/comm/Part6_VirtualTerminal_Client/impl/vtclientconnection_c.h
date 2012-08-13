@@ -34,6 +34,7 @@
   #include <queue>
 #endif
 
+
 namespace IsoAgLib {
   class iVtObjectString_c;
   class iVtClientConnection_c;

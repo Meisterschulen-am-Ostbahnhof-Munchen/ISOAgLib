@@ -1,5 +1,5 @@
 /*
-  iisoterminal_c.h: central ISO terminal management
+  ivtclient_c.h: central Virtual Terminal-Client management
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef IISO_TERMINAL_H
-#define IISO_TERMINAL_H
+#ifndef IVTCLIENT_H
+#define IVTCLIENT_H
 
 #include "impl/vtclient_c.h"
 #include "ivttypes.h"
@@ -19,6 +19,7 @@
 namespace IsoAgLib {
 
 class iScheduler_c;
+
 
 /**
   class to define an interface class for the storage of Preferred ISOVT. Users can derive from
@@ -39,6 +40,7 @@ class iVtClientDataStorage_c {
     virtual void storePreferredVt( const IsoAgLib::iIsoName_c &arc_isoname, uint8_t aui8_bootTime) = 0;
 };
 
+
 /**
   central ISO11783 terminal management object
 
@@ -46,15 +48,14 @@ class iVtClientDataStorage_c {
   */
 class iVtClient_c : private __IsoAgLib::VtClient_c {
 public:
-
   /**
     register given object pool for uploading when possible.
   */
-  iVtClientConnection_c* initAndRegisterIsoObjectPool (iIdentItem_c& arc_identItem, iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, iVtClientObjectPool_c::RegisterPoolMode_en aen_mode)
-  { return VtClient_c::initAndRegisterIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(arc_identItem), arc_pool, apc_versionLabel, apc_claimDataStorage, aen_mode)->toInterfacePointer(); }
+  iVtClientConnection_c* initAndRegisterObjectPool (iIdentItem_c& arc_identItem, iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, iVtClientObjectPool_c::RegisterPoolMode_en aen_mode)
+  { return VtClient_c::initAndRegisterObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(arc_identItem), arc_pool, apc_versionLabel, apc_claimDataStorage, aen_mode)->toInterfacePointer(); }
 
-  bool deregisterIsoObjectPool (iIdentItem_c& arc_wsMasterIdentItem)
-  { return VtClient_c::deregisterIsoObjectPool (arc_wsMasterIdentItem); }
+  bool deregisterObjectPool (iIdentItem_c& arc_wsMasterIdentItem)
+  { return VtClient_c::deregisterObjectPool (arc_wsMasterIdentItem); }
 
   iVtClientConnection_c& getClientByID (uint8_t ui8_clientIndex)
   { return VtClient_c::getClientByID (ui8_clientIndex).toInterfaceReference(); }
@@ -71,13 +72,13 @@ public:
 #endif
 
  private:
-  /** allow getIisoTerminalInstance() access to shielded base class.
-      otherwise __IsoAgLib::getIsoTerminalInstance() wouldn't be accepted by compiler
+  /** allow getIvtClientInstance() access to shielded base class.
+      otherwise __IsoAgLib::getVtClientInstance() wouldn't be accepted by compiler
     */
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  friend iVtClient_c& getIisoTerminalInstance (uint8_t aui8_instance);
+  friend iVtClient_c& getIvtClientInstance (uint8_t aui8_instance);
   #else
-  friend iVtClient_c& getIisoTerminalInstance (void);
+  friend iVtClient_c& getIvtClientInstance (void);
   #endif
   friend class iVtClientConnection_c;
 };
@@ -94,6 +95,6 @@ public:
   { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance()); }
 #endif
 
-
 }
+
 #endif

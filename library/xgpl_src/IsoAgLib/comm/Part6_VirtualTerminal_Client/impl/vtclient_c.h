@@ -32,7 +32,7 @@ namespace __IsoAgLib {
 class VtClientConnection_c;
 class iIdentItem_c;
 
-/** central IsoAgLib terminal management object */
+/** central IsoAgLib Virtual Terminal-Client management object */
 class VtClient_c : public Scheduler_Task_c {
   MACRO_MULTITON_CONTRIBUTION();
 public:
@@ -41,14 +41,14 @@ public:
   void init();
   void close();
 
-  VtClientConnection_c* initAndRegisterIsoObjectPool(
+  VtClientConnection_c* initAndRegisterObjectPool(
     IdentItem_c& apc_wsMasterIdentItem, 
     IsoAgLib::iVtClientObjectPool_c& arc_pool, 
     const char* apc_versionLabel, 
     IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, 
     IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode );
 
-  bool deregisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem);
+  bool deregisterObjectPool (IdentItem_c& apc_wsMasterIdentItem);
 
   bool timeEvent(void);
 
@@ -64,10 +64,8 @@ public:
 
   bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& apc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size);
 
-
-  VtClientConnection_c& getClientByID (uint8_t ui8_clientIndex) { return *mvec_vtClientServerComm[ui8_clientIndex]; }
-
-  VtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!mvec_vtClientServerComm.empty()) ? mvec_vtClientServerComm[ui8_clientIndex] : NULL; }
+  VtClientConnection_c& getClientByID (uint8_t ui8_clientIndex) { return *m_vtConnections[ui8_clientIndex]; }
+  VtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!m_vtConnections.empty()) ? m_vtConnections[ui8_clientIndex] : NULL; }
 
   bool isAnyVtAvailable() const { return !ml_vtServerInst.empty(); }
   // is any claimed VT sending VT status
@@ -229,7 +227,7 @@ private:
     return getForcedMinExecTimeDefault();
   }
 
-  VtClientConnection_c* initAndRegisterIsoObjectPoolCommon(
+  VtClientConnection_c* initAndRegisterObjectPoolCommon(
     IdentItem_c& rc_identItem, 
     IsoAgLib::iVtClientObjectPool_c& arc_pool, 
     const char* apc_versionLabel, 
@@ -242,11 +240,12 @@ private: // attributes
 
   STL_NAMESPACE::vector<VtServerInstance_c*> ml_vtServerInst;
 
-  STL_NAMESPACE::vector<VtClientConnection_c*> mvec_vtClientServerComm;
+  STL_NAMESPACE::vector<VtClientConnection_c*> m_vtConnections;
   Handler_t mt_handler;
   Customer_t mt_customer;
   friend VtClient_c &getVtClientInstance(uint8_t aui8_instance);
 };
+
 
 /** C-style function, to get access to the unique Scheduler_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS

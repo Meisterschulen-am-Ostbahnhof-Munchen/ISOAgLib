@@ -1,5 +1,5 @@
 /*
-  ivtclientobjectpool.h: class for managing an object pool with
+  ivtclientobjectpool.h: Class for managing an object pool with
     softkey/button activation event handling
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners

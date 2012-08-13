@@ -1,6 +1,5 @@
 /*
-  ivtclientservercommunication.h: Interface class for vt-client-server
-    communication
+  ivtclientconnection.h: Class for managing a connection
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 

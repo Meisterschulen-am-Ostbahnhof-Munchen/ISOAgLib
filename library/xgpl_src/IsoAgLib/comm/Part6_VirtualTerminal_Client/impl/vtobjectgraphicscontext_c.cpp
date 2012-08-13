@@ -19,7 +19,7 @@
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
-#include "isoterminal_c.h"
+#include "vtclient_c.h"
 #include <IsoAgLib/util/convert.h>
 #include <IsoAgLib/util/iassert.h>
 
@@ -27,10 +27,9 @@
 #undef MACRO_vtObjectTypeA
 #undef MACRO_vtObjectTypeS
 
+
 namespace __IsoAgLib {
-//! @param destMemory:
-//! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-//! @param sourceOffset:
+
 int16_t
 vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
@@ -55,9 +54,9 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 
     number2LittleEndianString( uint16_t(pc_vtOGC_a->cursorX), p ); p += sizeof(uint16_t);
     number2LittleEndianString( uint16_t(pc_vtOGC_a->cursorY), p ); p += sizeof(uint16_t);
-    *(p++) = getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
+    *(p++) = getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
                                     pc_vtOGC_a->foregroundColour, this, IsoAgLib::Colour);
-    *(p++) = getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
+    *(p++) = getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
                                     pc_vtOGC_a->backgroundColour, this, IsoAgLib::BackgroundColour);
 
     if (pc_vtOGC_a->fontAttributes)
@@ -80,7 +79,7 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 
     number2LittleEndianString( uint8_t(pc_vtOGC_a->format), p ); p += sizeof(uint8_t);
     number2LittleEndianString( uint8_t(pc_vtOGC_a->options), p ); p += sizeof(uint8_t);
-    *(p++) = getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
+    *(p++) = getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
                                     pc_vtOGC_a->transparencyColour, this, IsoAgLib::TransparencyColour );
 
     // Check postcondition
@@ -104,7 +103,7 @@ vtObjectGraphicsContext_c::setGraphicsCursor( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGraphicsCursor(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGraphicsCursor(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -117,7 +116,7 @@ vtObjectGraphicsContext_c::setForegroundColour( uint8_t newValue,
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetForegroundColour(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetForegroundColour(
               this, newValue, b_enableReplaceOfCmd);
 }
 
@@ -130,7 +129,7 @@ vtObjectGraphicsContext_c::setBackgroundColour( uint8_t newValue,
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetBackgroundColour(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetBackgroundColour(
               this, newValue, b_enableReplaceOfCmd);
 }
 
@@ -143,7 +142,7 @@ vtObjectGraphicsContext_c::setLineAttributes( const IsoAgLib::iVtObjectLineAttri
       sizeof(iVtObjectGraphicsContext_s), newLineAttributes);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGCLineAttributes(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGCLineAttributes(
               this, newLineAttributes, b_enableReplaceOfCmd);
 }
 
@@ -156,7 +155,7 @@ vtObjectGraphicsContext_c::setFillAttributes( const IsoAgLib::iVtObjectFillAttri
       sizeof(iVtObjectGraphicsContext_s), newFillAttributes);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGCFillAttributes(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGCFillAttributes(
               this, newFillAttributes, b_enableReplaceOfCmd);
 }
 
@@ -169,7 +168,7 @@ vtObjectGraphicsContext_c::setFontAttributes( const IsoAgLib::iVtObjectFontAttri
       sizeof(iVtObjectGraphicsContext_s), newFontAttributes);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGCFontAttributes(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGCFontAttributes(
               this, newFontAttributes, b_enableReplaceOfCmd);
 }
 
@@ -184,7 +183,7 @@ vtObjectGraphicsContext_c::eraseRectangle( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandEraseRectangle(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandEraseRectangle(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -193,7 +192,7 @@ vtObjectGraphicsContext_c::drawPoint( bool /*b_updateObject*/, bool b_enableRepl
 {
   // No change of object => b_updateObject ignored.
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawPoint(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawPoint(
               this, b_enableReplaceOfCmd);
 }
 
@@ -208,7 +207,7 @@ vtObjectGraphicsContext_c::drawLine( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawLine(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawLine(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -223,7 +222,7 @@ vtObjectGraphicsContext_c::drawRectangle( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawRectangle(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawRectangle(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -238,7 +237,7 @@ vtObjectGraphicsContext_c::drawClosedEllipse( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawClosedEllipse(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawClosedEllipse(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -254,7 +253,7 @@ vtObjectGraphicsContext_c::drawPolygon( uint16_t cnt, const int16_t* api16_x, co
       sizeof(iVtObjectGraphicsContext_s), api16_y[cnt-1] );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawPolygon(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawPolygon(
               this, cnt, api16_x, api16_y, b_enableReplaceOfCmd);
 }
 
@@ -276,7 +275,7 @@ vtObjectGraphicsContext_c::drawText( uint8_t type, uint8_t cnt, const char* apc_
       sizeof(iVtObjectGraphicsContext_s), i16_y );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawText(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawText(
               this, type, cnt, apc_string, b_enableReplaceOfCmd);
 }
 
@@ -291,7 +290,7 @@ vtObjectGraphicsContext_c::panViewport( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanViewport(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanViewport(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -307,7 +306,7 @@ vtObjectGraphicsContext_c::zoomViewport( int8_t newValue,
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandZoomViewport(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandZoomViewport(
               this, newValue, b_enableReplaceOfCmd);
 }
 
@@ -327,7 +326,7 @@ vtObjectGraphicsContext_c::panAndZoomViewport( int16_t ai16_x, int16_t ai16_y, i
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanAndZoomViewport(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanAndZoomViewport(
               this, ai16_x, ai16_y, newValue, b_enableReplaceOfCmd);
 }
 
@@ -342,7 +341,7 @@ vtObjectGraphicsContext_c::changeViewportSize( uint16_t newWidth, uint16_t newHe
       sizeof(iVtObjectGraphicsContext_s), newHeight);
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandChangeViewportSize(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandChangeViewportSize(
               this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
@@ -364,7 +363,7 @@ vtObjectGraphicsContext_c::drawVtObject( const iVtObject_c* const newVtObject,
       sizeof(iVtObjectGraphicsContext_s), i16_y );
   }
 
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawVtObject(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawVtObject(
               this, newVtObject, b_enableReplaceOfCmd);
 }
 
@@ -372,7 +371,7 @@ void
 vtObjectGraphicsContext_c::copyCanvas2PictureGraphic( const IsoAgLib::iVtObjectPictureGraphic_c* const pc_iVtObjectPictureGraphic,
                                                       bool /*b_updateObject*/, bool b_enableReplaceOfCmd)
 {
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandCopyCanvas2PictureGraphic(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandCopyCanvas2PictureGraphic(
               this, pc_iVtObjectPictureGraphic, b_enableReplaceOfCmd);
 }
 
@@ -380,7 +379,7 @@ void
 vtObjectGraphicsContext_c::copyViewport2PictureGraphic( const IsoAgLib::iVtObjectPictureGraphic_c* const pc_iVtObjectPictureGraphic,
                                                         bool /*b_updateObject*/, bool b_enableReplaceOfCmd)
 {
-  getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandCopyViewport2PictureGraphic(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandCopyViewport2PictureGraphic(
               this, pc_iVtObjectPictureGraphic, b_enableReplaceOfCmd);
 }
 
@@ -542,5 +541,7 @@ vtObjectGraphicsContext_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_a
     default: break;
   }
 }
+
 #endif
-} // namespace __IsoAgLib
+
+} // __IsoAgLib

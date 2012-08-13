@@ -33,16 +33,12 @@ namespace __IsoAgLib {
   }
 
 
-
-/** default constructor
- */
 VtClient_c::VtClient_c() :
   ml_vtServerInst(),
-  mvec_vtClientServerComm(),
+  m_vtConnections(),
   mt_handler(*this),
   mt_customer(*this)
 {
-  /// all variable initialization moved to singletonInit!
 }
 
 
@@ -54,7 +50,6 @@ VtClient_c::init()
   getSchedulerInstance().registerClient(this);
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
-  // register ISO Filters
   bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VT_TO_GLOBAL_PGN<<8) ), 8, false);
   bool const cb_set1 = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (LANGUAGE_PGN<<8) ), 8, false);
   bool const cb_set2 = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ECU_TO_GLOBAL_PGN<<8) ), 8, false);
@@ -73,8 +68,6 @@ void
 VtClient_c::close()
 {
   isoaglib_assert (initialized());
-
-  // Detect still registered IsoObjectPools at least in DEBUG mode!
   isoaglib_assert (getClientCount() == 0);
 
   while (!ml_vtServerInst.empty())
@@ -82,8 +75,10 @@ VtClient_c::close()
     delete ml_vtServerInst.back();
     ml_vtServerInst.pop_back();
   }
+  
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_GLOBAL_PGN << 8)));
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (LANGUAGE_PGN << 8)));
+  
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
   getSchedulerInstance().unregisterClient(this);
 
@@ -92,7 +87,7 @@ VtClient_c::close()
 
 
 VtClientConnection_c*
-VtClient_c::initAndRegisterIsoObjectPool(
+VtClient_c::initAndRegisterObjectPool(
   IdentItem_c& arc_identItem,
   IsoAgLib::iVtClientObjectPool_c& arc_pool, 
   const char* apc_versionLabel, 
@@ -113,32 +108,24 @@ VtClient_c::initAndRegisterIsoObjectPool(
       break;
   }
 
-  return initAndRegisterIsoObjectPoolCommon(arc_identItem, arc_pool, apc_versionLabel, apc_claimDataStorage, aen_mode);
+  return initAndRegisterObjectPoolCommon(arc_identItem, arc_pool, apc_versionLabel, apc_claimDataStorage, aen_mode);
 }
 
-/** Register the given object pool
-  It will automatically be uploaded as soon as ISO_Terminal_c is connected to the VT
-  and all initialization stuff has been done (Get VT Capabilities, Memory, etc.)
-  @return NULL if new vtClientServerCommunication_c instance could be created.
-          This could be the case because you have passed a versionLabel
-          - longer than 7 characters for a non-multilanguage object-pool
-          - longer than 5 characters for a multilanguage object-pool
-          or if you already registered an object-pool for this IdentItem
- */
+
 VtClientConnection_c*
-VtClient_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode)
+VtClient_c::initAndRegisterObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode)
 {
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
-  for (; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  for (; ui8_index < m_vtConnections.size(); ui8_index++)
   {
-    if (mvec_vtClientServerComm[ui8_index] == NULL)
+    if (m_vtConnections[ui8_index] == NULL)
     { // found one emtpy entry
       break;
     }
     else
     {
-      if (mvec_vtClientServerComm[ui8_index]->getIdentItem() == rc_identItem)
+      if (m_vtConnections[ui8_index]->getIdentItem() == rc_identItem)
       { // this IdentItem has already one pool registered - use multiple
         // IdentItems if you want to use multiple pools!
         return NULL;
@@ -156,40 +143,42 @@ VtClient_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAg
   }
 
   // add new instance to vector
-  if (ui8_index < mvec_vtClientServerComm.size())
-    mvec_vtClientServerComm[ui8_index] = pc_vtCSC;
+  if (ui8_index < m_vtConnections.size())
+    m_vtConnections[ui8_index] = pc_vtCSC;
   else
-    mvec_vtClientServerComm.push_back(pc_vtCSC);
+    m_vtConnections.push_back(pc_vtCSC);
 
   return pc_vtCSC;
 }
 
+
 bool
-VtClient_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
+VtClient_c::deregisterObjectPool (IdentItem_c& r_identItem)
 {
   /* what states the IdentItem could have we have to interrupt???
   * - IState_c::ClaimedAddress -> that item is Active and Member on ISOBUS
   * - !UploadType::UploadIdle -> interrupt any upload
   */
   uint8_t ui8_index = 0;
-  for (; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  for (; ui8_index < m_vtConnections.size(); ui8_index++)
   {
-    if (mvec_vtClientServerComm[ui8_index])
+    if (m_vtConnections[ui8_index])
     {
-      if (&r_identItem == &mvec_vtClientServerComm[ui8_index]->getIdentItem())
+      if (&r_identItem == &m_vtConnections[ui8_index]->getIdentItem())
       {
-        delete mvec_vtClientServerComm[ui8_index];
-        mvec_vtClientServerComm[ui8_index] = NULL;
+        delete m_vtConnections[ui8_index];
+        m_vtConnections[ui8_index] = NULL;
         break;
       }
     }
   }
 
-  if (ui8_index == mvec_vtClientServerComm.size())
+  if (ui8_index == m_vtConnections.size())
     return false; // appropriate IdentItem could not be found, so nothing was deleted
   else
     return true; // IdentItem was found and deleted
 }
+
 
 VtServerInstance_c* VtClient_c::getFirstActiveVtServer( bool mustBePrimary ) const
 {
@@ -209,6 +198,7 @@ VtServerInstance_c* VtClient_c::getFirstActiveVtServer( bool mustBePrimary ) con
   return NULL;
 }
 
+
 VtServerInstance_c* VtClient_c::getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const
 {
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
@@ -220,31 +210,29 @@ VtServerInstance_c* VtClient_c::getPreferredVtServer(const IsoName_c& aref_preff
   return NULL;
 }
 
+
 uint16_t
 VtClient_c::getClientCount() const
 {
   uint16_t ui16_count = 0;
-  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ++ui8_index)
+  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ++ui8_index)
   {
-    if (mvec_vtClientServerComm[ui8_index])
+    if (m_vtConnections[ui8_index])
       ++ui16_count;
   }
   return ui16_count;
 }
 
 
-/** periodically event
-  @return true -> all planned activities from all vtClientServerCommuniactions were performed in allowed time
- */
 bool
 VtClient_c::timeEvent(void)
 {
   bool b_allActivitiesPerformed = true;
 
-  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
   {
-    bool const cb_clear = mvec_vtClientServerComm[ui8_index] &&
-      !mvec_vtClientServerComm[ui8_index]->timeEvent();
+    bool const cb_clear = m_vtConnections[ui8_index] &&
+      !m_vtConnections[ui8_index]->timeEvent();
     if (cb_clear)
         b_allActivitiesPerformed = false;
   }
@@ -258,9 +246,6 @@ VtClient_c::timeEvent(void)
 }
 
 
-/** process received can messages
-  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
- */
 bool
 VtClient_c::processMsg( const CanPkg_c& arc_data )
 {
@@ -285,13 +270,13 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
           (*lit_vtServerInst)->setLatestVtStatusData( c_data );
 
           // iterate through all registered VtClientServerCommunication and notify their pools with "eventVtStatusMsg"
-          for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+          for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
           {
-            if (mvec_vtClientServerComm[ui8_index])
+            if (m_vtConnections[ui8_index])
             {
-              if (mvec_vtClientServerComm[ui8_index]->getVtServerInstPtr() == (*lit_vtServerInst))
+              if (m_vtConnections[ui8_index]->getVtServerInstPtr() == (*lit_vtServerInst))
               { // this vtClientServerComm is connected to this VT, so notify the objectpool!!
-                mvec_vtClientServerComm[ui8_index]->notifyOnVtStatusMessage();
+                m_vtConnections[ui8_index]->notifyOnVtStatusMessage();
               }
             }
           }
@@ -301,11 +286,11 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
     }
     else if (cui8_cmdByte == 0x21) // Command: "Auxiliary Control", Parameter: "Auxiliary Input Status"
     { // iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that input status!
-      for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+      for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
       {
-        if (mvec_vtClientServerComm[ui8_index])
+        if (m_vtConnections[ui8_index])
         {
-          mvec_vtClientServerComm[ui8_index]->notifyOnAuxInputStatus( c_data );
+          m_vtConnections[ui8_index]->notifyOnAuxInputStatus( c_data );
         }
       }
     }
@@ -346,15 +331,15 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
       pc_server->setLocalSettings( c_data );
 
       // notify all connected vtCSCs
-      for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+      for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
       {
-        if (mvec_vtClientServerComm[ui8_index]
+        if (m_vtConnections[ui8_index]
             &&
-            mvec_vtClientServerComm[ui8_index]->connectedToVtServer()
+            m_vtConnections[ui8_index]->connectedToVtServer()
             &&
-            (mvec_vtClientServerComm[ui8_index]->getVtServerInstPtr() == pc_server)
+            (m_vtConnections[ui8_index]->getVtServerInstPtr() == pc_server)
           )
-          mvec_vtClientServerComm[ui8_index]->notifyOnVtsLanguagePgn();
+          m_vtConnections[ui8_index]->notifyOnVtsLanguagePgn();
       }
     }
     // else: Language PGN from non-VtServerInstance - ignore
@@ -368,10 +353,10 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
 bool
 VtClient_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size)
 {
-  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
   {
-    if (static_cast<__IsoAgLib::IdentItem_c&>(mrc_wsMasterIdentItem) == mvec_vtClientServerComm[ui8_index]->getIdentItem())
-      return mvec_vtClientServerComm[ui8_index]->sendCommand(apui8_buffer, ui32_size);
+    if (static_cast<__IsoAgLib::IdentItem_c&>(mrc_wsMasterIdentItem) == m_vtConnections[ui8_index]->getIdentItem())
+      return m_vtConnections[ui8_index]->sendCommand(apui8_buffer, ui32_size);
   }
   return false;
 }
@@ -415,11 +400,11 @@ VtClient_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemA
           if (acrc_isoItem.isoName() == (*lit_vtServerInst)->getIsoItem()->isoName())
           { // the VtServerInstance is already known and in our list, so it could be deleted
             // notify all clients on early loss of that VtServerInstance
-            for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+            for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
             {
-              if (mvec_vtClientServerComm[ui8_index])
+              if (m_vtConnections[ui8_index])
               {
-                mvec_vtClientServerComm[ui8_index]->notifyOnVtServerInstanceLoss(*(*lit_vtServerInst));
+                m_vtConnections[ui8_index]->notifyOnVtServerInstanceLoss(*(*lit_vtServerInst));
               }
             }
 
@@ -441,11 +426,11 @@ VtClient_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemA
 void
 VtClient_c::notifyAllVtClientsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const
 {
-  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
   {
-    if (mvec_vtClientServerComm[ui8_index])
+    if (m_vtConnections[ui8_index])
     {
-      mvec_vtClientServerComm[ui8_index]->notifyOnAux2InputStatus( refc_data );
+      m_vtConnections[ui8_index]->notifyOnAux2InputStatus( refc_data );
     }
   }
 }
@@ -453,17 +438,16 @@ VtClient_c::notifyAllVtClientsOnAux2InputStatus( const CanPkgExt_c& refc_data ) 
 void
 VtClient_c::notifyAllVtClientsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const
 {
-  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
   {
-    if (mvec_vtClientServerComm[ui8_index])
+    if (m_vtConnections[ui8_index])
     {
-      mvec_vtClientServerComm[ui8_index]->notifyOnAux2InputMaintenance( refc_data );
+      m_vtConnections[ui8_index]->notifyOnAux2InputMaintenance( refc_data );
     }
   }
 }
 
-/// INTERFACE FUNTIONS ///
-// the following define should be globally defined in the project settings...
+
 #ifdef USE_IOP_GENERATOR_FAKE_VT_PROPERTIES
 void
 VtClient_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes)
@@ -474,13 +458,14 @@ VtClient_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, 
   VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
   r_vtServerInst.fakeVtProperties (aui16_dimension, aui16_skWidth, aui16_skHeight, aui16_colorDepth, aui16_fontSizes);
     // ... and notify all vtClientServerComm instances
-  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
   {
-    if (mvec_vtClientServerComm[ui8_index])
-      mvec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance(r_vtServerInst);
+    if (m_vtConnections[ui8_index])
+      m_vtConnections[ui8_index]->notifyOnNewVtServerInstance(r_vtServerInst);
   }
 }
 #endif
+
 
 #if DEBUG_SCHEDULER
 const char*
@@ -489,4 +474,4 @@ VtClient_c::getTaskName() const
 #endif
 
 
-} // end namespace __IsoAgLib
+} // __IsoAgLib
