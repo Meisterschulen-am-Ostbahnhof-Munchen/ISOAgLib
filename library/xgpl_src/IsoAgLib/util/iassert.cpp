@@ -15,7 +15,7 @@
 
 #if defined(__GNUC__) || defined(WIN32)
 // nothing to do: provided by standard libraries
-#elif !defined(NEBUG)
+#elif !defined(NDEBUG)
 
 #include "iassert.h"
 #include <cstdlib>
