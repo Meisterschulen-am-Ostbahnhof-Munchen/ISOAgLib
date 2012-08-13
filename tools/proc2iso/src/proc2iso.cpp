@@ -84,9 +84,9 @@ unsigned int objCount;
 
 std::vector<std::string> vecstr_attrString (maxAttributeNames);
 std::vector<std::string> vecstr_objtableIDTable;
-std::vector<std::string> vecstr_constructor (4);
+std::vector<std::string> vecstr_constructor( 3 );
 std::string str_deviceelement_elementID;
-std::vector<std::string> vecstr_dataFromDPD (4);
+std::vector<std::string> vecstr_dataFromDPD( 4 );
 std::stringstream buffer;
 bool attrIsGiven [maxAttributeNames];
 static bool b_isFirstDevice = true;
@@ -1220,10 +1220,8 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         vecstr_constructor[0] = vecstr_attrString[attrFeature_set].c_str();
         vecstr_constructor[1] = vecstr_attrString[attrProcProgVarName].c_str();
         vecstr_constructor[2] = vecstr_attrString[attrDdi].c_str();
-        vecstr_constructor[3] = vecstr_attrString[attrProperties].c_str();
 
-        int dpd_property = propertytoi(vecstr_constructor[3].c_str());
-        bool issetpoint = (( propertytoi(vecstr_constructor[3].c_str()) & 0x2 ) != 0);
+        bool issetpoint = (( propertytoi(vecstr_attrString[attrProperties].c_str()) & 0x2 ) != 0);
 
         fprintf(partFileB, "IsoAgLib::iProcData%s_c c_%s;\n", vecstr_constructor[0].c_str(), vecstr_constructor[1].c_str());
         fprintf(partFileC, "extern IsoAgLib::iProcData%s_c c_%s;\n", vecstr_constructor[0].c_str(), vecstr_constructor[1].c_str());
