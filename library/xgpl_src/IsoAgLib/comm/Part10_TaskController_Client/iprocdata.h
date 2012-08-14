@@ -48,7 +48,7 @@ namespace ProcData {
                         NackReserved2 = 0x80,
                         NackUndefined };
 
-  bool isMethodSet( uint8_t value, triggerMethod_t method ) { return ((value & (0x1 << method)) != 0 ); }
+  inline bool isMethodSet( uint8_t value, triggerMethod_t method ) { return ((value & (0x1 << method)) != 0 ); }
 
   /** enum type for special DDIs */
   enum specialDDI_t {defaultDataLoggingDDI = 0xDFFF};
