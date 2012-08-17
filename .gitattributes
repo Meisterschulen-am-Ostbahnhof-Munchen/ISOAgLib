@@ -229,6 +229,8 @@ library/xgpl_src/IsoAgLib/util/iassert.cpp -text
 library/xgpl_src/IsoAgLib/util/iassert.h -text
 library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h -text
 library/xgpl_src/IsoAgLib/util/impl/container.h -text
+library/xgpl_src/IsoAgLib/util/impl/flexiblebytestrings.cpp -text
+library/xgpl_src/IsoAgLib/util/impl/flexiblebytestrings.h -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememorywithsize_c.cpp -text

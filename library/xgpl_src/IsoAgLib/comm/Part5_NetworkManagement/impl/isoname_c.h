@@ -14,7 +14,7 @@
 #define ISO_NAME_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/impl/util_funcs.h>
+#include <IsoAgLib/util/impl/flexiblebytestrings.h>
 #include <IsoAgLib/util/iassert.h>
 
 
