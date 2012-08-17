@@ -44,7 +44,7 @@ MeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, 
     case ProcessPkg_c::measurementMinimumThresholdValueStart:
     case ProcessPkg_c::measurementMaximumThresholdValueStart:
       // measurementCommand_t and CommandType_t are unified for all measurement types
-      if (!startMeasurement(ac_processData, static_cast<IsoAgLib::ProcData::measurementCommand_t>(en_command), pkg.mi32_pdValue, value))
+      if( !startMeasurement( ac_processData, IsoAgLib::ProcData::measurementCommand_t( en_command ), pkg.mi32_pdValue, value ) )
       {
         getTcClientInstance( ac_processData.getMultitonInst() ).sendNack(
           pkg.getMonitorItemForSA()->isoName(),
