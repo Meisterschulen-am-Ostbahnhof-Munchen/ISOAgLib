@@ -3,7 +3,7 @@
 ISOAGLIB := ../..
 ISOAGLIBRARY := $(ISOAGLIB)/library
 TARGET := proc2iso
-SRCS := src/proc2iso.cpp $(ISOAGLIBRARY)/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp $(ISOAGLIBRARY)/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+SRCS := src/proc2iso.cpp $(ISOAGLIBRARY)/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp $(ISOAGLIBRARY)/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp $(ISOAGLIBRARY)/xgpl_src/IsoAgLib/util/impl/flexiblebytestrings.cpp
 OBJS := ${SRCS:.cpp=.o} 
 DEPS := ${SRCS:.cpp=.dep} 
 XDEPS := $(wildcard ${DEPS}) 

@@ -35,6 +35,7 @@ add_executable(
   proc2iso
 	../src/proc2iso.cpp
 	../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp
-	../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp)
+	../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+	../../../library/xgpl_src/IsoAgLib/util/impl/flexiblebytestrings.cpp)
 
 target_link_libraries(proc2iso ${ISOAGLIB_ADDITIONAL_LIBRARIES})
