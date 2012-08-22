@@ -523,6 +523,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       return MessageNotSent;
 
     CanPkgExt_c pkg;
+    prepareSending( pkg );
     pkg.setIsoPgn(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
 
     // TODO unimplemented Engine Torque mode
