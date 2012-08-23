@@ -13,30 +13,20 @@
 #ifndef IVTOBJECTAUXILIARYCONTROLDESIGNATOROBJECTPOINTER_C_H
 #define IVTOBJECTAUXILIARYCONTROLDESIGNATOROBJECTPOINTER_C_H
 
-// +X2C includes
 #include "impl/vtobjectauxiliarypointer_c.h"
-// ~X2C
+
+
 #ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-
-//  +X2C Class 179 : iVtObjectAuxiliaryControlDesignatorObjectPointer_c
-//!  Stereotype: Klasse
 class iVtObjectAuxiliaryControlDesignatorObjectPointer_c : public __IsoAgLib::vtObjectAuxiliaryControlDesignatorObjectPointer_c
 {
-
 public:
   ~iVtObjectAuxiliaryControlDesignatorObjectPointer_c(){};
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectAuxiliaryControlDesignatorObjectPointerSROM:
-  //! @param b_initPointer:
+
   void init(const iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryControlDesignatorObjectPointerSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); };
 
-
-  //  Operation: get_vtObjectAuxiliaryControlDesignatorObjectPointer_a
   const iVtObjectAuxiliaryControlDesignatorObjectPointer_s& get_vtObjectAuxiliaryControlDesignatorObjectPointer_a() { return *vtObjectAuxiliaryControlDesignatorObjectPointer_c::get_vtObjectAuxiliaryControlDesignatorObjectPointer_a(); }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -50,7 +40,8 @@ public:
 #endif
 };
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
 #endif
+
 #endif

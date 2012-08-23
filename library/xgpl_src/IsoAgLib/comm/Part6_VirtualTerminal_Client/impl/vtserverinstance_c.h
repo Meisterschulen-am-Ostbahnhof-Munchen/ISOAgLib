@@ -10,12 +10,9 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef VT_SERVER_INSTANCE_H
-#define VT_SERVER_INSTANCE_H
+#ifndef VTSERVERINSTANCE_C_H
+#define VTSERVERINSTANCE_C_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include "../ivttypes.h"
 
@@ -58,7 +55,7 @@ namespace __IsoAgLib
 {
 
 /** class for wrapping one vtserver instance */
-class VtServerInstance_c : public ClientBase
+class VtServerInstance_c
 {
 public:
   /** struct that stores the "Get Number Of Soft Keys Response",
@@ -98,10 +95,6 @@ public:
 
   } vtCapabilities_s;
 
-
-  /** default destructor, which initiate sending address release for all own identities
-  @see VtServerInstance_c::VtServerInstance_c
-  */
   virtual ~VtServerInstance_c();
 
   /** check if there's already been at least one vt_statusMessage in the last 3 seconds
@@ -118,8 +111,8 @@ public:
   void setHardwareData( const CanPkgExt_c& arc_data );
 
   /** getter */
-  const IsoName_c&           getIsoName()             const { return mc_isoName; }
-  uint8_t                    getVtSourceAddress()     const { return (mcpc_isoItem != NULL)? mcpc_isoItem->nr() : 0xfe; }
+  const IsoName_c&           getIsoName()             const { return m_isoItem.isoName(); }
+  uint8_t                    getVtSourceAddress()     const { return m_isoItem.nr(); }
   uint32_t                   getVtHardwareDimension() const;
   uint16_t                   getVtFontSizes()         const;
   uint8_t                    getVtIsoVersion()        const ;
@@ -127,7 +120,7 @@ public:
   const vtCapabilities_s*    getConstVtCapabilities() const  { return &ms_vtCapabilitiesA; }
   const IsoAgLib::vtState_s* getVtState()             const  { return &ms_vtStateA; }
   localSettings_s*           getLocalSettings()       { return &ms_localSettingsA; }
-  const IsoItem_c*           getIsoItem()             const { return mcpc_isoItem; }
+  const IsoItem_c&           getIsoItem()             const { return m_isoItem; }
   bool                       isPrimaryVt()            const { return (getIsoName().funcInst() == 0); }
 
 // the following define should be globally defined in the project settings...
@@ -153,12 +146,10 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of VtClient_c within application
     */
-  VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, VtClient_c& r_isoTerminal MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
+  VtServerInstance_c( const IsoItem_c& r_newItem, VtClient_c& r_isoTerminal );
 
-private: // attributes
-  const IsoItem_c* mcpc_isoItem;
-
-  IsoName_c mc_isoName;
+private:
+  const IsoItem_c& m_isoItem;
 
   VtClient_c& mrc_isoTerminal; // back ref.
 

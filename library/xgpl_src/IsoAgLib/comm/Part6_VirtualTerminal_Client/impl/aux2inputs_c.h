@@ -11,8 +11,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef AUX2INPUTS_H
-#define AUX2INPUTS_H
+#ifndef AUX2INPUTS_C_H
+#define AUX2INPUTS_C_H
 
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
@@ -20,17 +20,14 @@
 
 #include "../ivtobjectauxiliaryinput2_c.h"
 
+
 namespace __IsoAgLib {
 
 class VtClientConnection_c;
 
 class Aux2Inputs_c : public Scheduler_Task_c
 {
-  // @todo: check correct singleton instantiation!
-  MACRO_MULTITON_CONTRIBUTION();
-
 public:
-
   enum Aux2InputsState_en 
   {
     Aux2InputsState_Initializing = 0,
@@ -39,14 +36,11 @@ public:
   };
 
   Aux2Inputs_c(const IdentItem_c& arc_wsMasterIdentItem);
-
   virtual ~Aux2Inputs_c(void);
 
   void init(VtClientConnection_c* a_vtClientServerCommunication);
 
-  /**
-    send AUX2 input maintenance message (100msec) and call timeEventInputStateMsg(NULL) (1sec)
-  */
+  /** send AUX2 input maintenance message (100msec) and call timeEventInputStateMsg(NULL) (1sec) */
   bool timeEvent(void);
 
   virtual void updateEarlierAndLatestInterval() {
@@ -79,7 +73,6 @@ public:
   void setLearnMode(bool a_learnMode) { mb_learnMode = a_learnMode; }
 
 private:
-
   const IdentItem_c& mrc_wsMasterIdentItem;
 
   Aux2InputsState_en m_state;
@@ -98,12 +91,11 @@ private:
   VtClientConnection_c* mp_vtClientServerCommunication;
 
 private:
-  /** not copyable : copy constructor is only declared, never defined */
-  Aux2Inputs_c(const Aux2Inputs_c&);
-  /** not copyable : copy operator is only declared, never defined */
-  Aux2Inputs_c& operator=(const Aux2Inputs_c&); 
+  /** not copyable : copy constructor/operator only declared, not defined */
+  Aux2Inputs_c( const Aux2Inputs_c& );
+  Aux2Inputs_c& operator=( const Aux2Inputs_c& );
 };
 
-
 }
+
 #endif

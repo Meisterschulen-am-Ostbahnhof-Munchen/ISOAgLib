@@ -1,5 +1,5 @@
 /*
-  aux2functions_c.h:
+  aux2functions_c.h - 
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,7 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "aux2functions_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -20,40 +19,41 @@
 
 namespace __IsoAgLib {
 
-  // this structure is used as map key for collecting all preferred AUX2 assignments
-  // (sorted by isoname and model identification of the preferred AUX2 input device)
-  struct Aux2PreferredAssignmentInputDevice_s
-  { // operator< is necessary for using it as map key
-    bool operator<(const Aux2PreferredAssignmentInputDevice_s& ref) const
-    { 
-      if (ui16_model == ref.ui16_model)
-        return (isoName < ref.isoName);
-      else
-        return (ui16_model < ref.ui16_model);
-    }
+// this structure is used as map key for collecting all preferred AUX2 assignments
+// (sorted by isoname and model identification of the preferred AUX2 input device)
+struct Aux2PreferredAssignmentInputDevice_s
+{ // operator< is necessary for using it as map key
+  bool operator<(const Aux2PreferredAssignmentInputDevice_s& ref) const
+  { 
+    if (ui16_model == ref.ui16_model)
+      return (isoName < ref.isoName);
+    else
+      return (ui16_model < ref.ui16_model);
+  }
 
-    IsoName_c isoName;
-    uint16_t ui16_model;
-  };
+  IsoName_c isoName;
+  uint16_t ui16_model;
+};
 
-  struct Aux2PreferredAssignmentObjects_s
-  {
-    uint16_t ui16_input;
-    uint16_t ui16_function;
-  };
+
+struct Aux2PreferredAssignmentObjects_s
+{
+  uint16_t ui16_input;
+  uint16_t ui16_function;
+};
 
 
 Aux2Functions_c::Aux2Functions_c(VtClientConnection_c* a_vtClientServerCommunication)
-  : m_vtClientServerCommunication(a_vtClientServerCommunication),
-    m_state(State_WaitForPoolUploadSuccessfully),
-    m_timeStampWaitForSendingPreferredAssignment(0),
-    m_deltaWaitForSendingPreferredAssignment(0),
-    mb_learnMode(false)
+  : m_vtClientServerCommunication(a_vtClientServerCommunication)
+  , m_state(State_WaitForPoolUploadSuccessfully)
+  , m_timeStampWaitForSendingPreferredAssignment(0)
+  , m_deltaWaitForSendingPreferredAssignment(0)
+  , mb_learnMode(false)
 {
 }
 
 
-Aux2Functions_c::~Aux2Functions_c(void)
+Aux2Functions_c::~Aux2Functions_c()
 {
 }
 
@@ -95,7 +95,7 @@ Aux2Functions_c::notifyOnAux2InputStatus(
 }
 
 void
-Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data)
+Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   bool b_sendPreferredAssignments = false;
@@ -338,7 +338,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
     msgSize += iter->second.size() * 2 * sizeof(uint16_t);
   }
 
-  msc_tempSendUpload.vec_uploadBuffer.reserve (msgSize);
+  msc_tempSendUpload.vec_uploadBuffer.reserve( (msgSize < 8) ? 8 : msgSize );
 
   msc_tempSendUpload.vec_uploadBuffer.push_back (0x22);
   msc_tempSendUpload.vec_uploadBuffer.push_back (noInputUnits);
@@ -369,10 +369,8 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   }
 
   // pad with 0xFF in case there is only a 8 byte message
-  for (uint8_t ui8_i = msgSize; ui8_i < 8; ui8_i++)
-  {
-    msc_tempSendUpload.vec_uploadBuffer.push_back(0xFF);
-  }
+  for (uint16_t i = msgSize; i < 8; i++)
+    msc_tempSendUpload.vec_uploadBuffer.push_back( 0xFF );
   
   return m_vtClientServerCommunication->queueOrReplace (msc_tempSendUpload, true /* b_enableReplaceOfCmd */);
 #else

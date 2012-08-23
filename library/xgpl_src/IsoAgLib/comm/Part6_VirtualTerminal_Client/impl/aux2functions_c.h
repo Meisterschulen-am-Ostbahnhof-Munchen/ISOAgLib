@@ -1,5 +1,5 @@
 /*
-  aux2functions_c.h:
+  aux2functions_c.h - 
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef AUX2FUNCTIONS_H
-#define AUX2FUNCTIONS_H
+#ifndef AUX2FUNCTIONS_C_H
+#define AUX2FUNCTIONS_C_H
 
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
@@ -22,17 +22,14 @@
 #include <list>
 #include <map>
 
+
 namespace __IsoAgLib {
 
 class VtClientConnection_c;
 
 class Aux2Functions_c
 {
-  // @todo: check correct singleton instantiation!
-  MACRO_MULTITON_CONTRIBUTION();
-
 public:
-
   enum Aux2FunctionsState_en
   {
     State_WaitForPoolUploadSuccessfully,
@@ -118,9 +115,8 @@ private:
   uint32_t m_deltaWaitForSendingPreferredAssignment;
 
   bool mb_learnMode;
-
 };
 
-
 }
+
 #endif

@@ -22,14 +22,12 @@
 
 namespace __IsoAgLib {
 
-/** default constructor, which can optional set the pointer to the containing
-  Scheduler_c object instance
-*/
-VtServerInstance_c::VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_newISOName, VtClient_c& r_isoTerminal MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
-  : ClientBase(MULTITON_INST_PARAMETER_USE)
-  , mcpc_isoItem (&r_newItem)
-  , mc_isoName (c_newISOName)
-  , mrc_isoTerminal (r_isoTerminal)
+VtServerInstance_c::VtServerInstance_c( const IsoItem_c& isoItem, VtClient_c& client )
+  : m_isoItem( isoItem )
+  , mrc_isoTerminal( client )
+  , ms_vtStateA()
+  , ms_vtCapabilitiesA()
+  , ms_localSettingsA()
 {
   /// init all variables to an initial upload state (Upload will not start before ws-announcing is due
   ms_vtCapabilitiesA.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
@@ -45,27 +43,18 @@ VtServerInstance_c::VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_n
 }
 
 
-/** default destructor, which initiate sending address release for all own identities
-  @see VtServerInstance_c::~VtServerInstance_c
-*/
 VtServerInstance_c::~VtServerInstance_c()
 {
 }
 
 
-/** call to check if at least one vt_statusMessage has arrived so we know if the terminal is there.
-  @return true -> >= 1 vt_statusMessages have arrived -> terminal is there.
-*/
 bool
-VtServerInstance_c::isVtActive () const
+VtServerInstance_c::isVtActive() const
 {
   if (ms_vtStateA.lastReceived)
   {
     // Using the current time for comparison checks currently, because we don't have the information
     // about the time when the last can-msg was processed or checked for (in case there's none).
-    // Note: Formerly here was a check using "getIsoBusInstance4Comm().getLastProcessedCanPkgTime()",
-    //       but that is only the time when a msg was really processed - so in bus of e.g. a bus
-    //       disconnection a VT-off wouldn't be detected, which is a safety issue of course!
     if ((System_c::getTime() - (int32_t)ms_vtStateA.lastReceived) <= 3000)
     { // comparing as int, so that in case "NOW-time > CAN-time" NO client-reload happens
       return true;
@@ -75,9 +64,6 @@ VtServerInstance_c::isVtActive () const
 }
 
 
-/** process received vt status message
-  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-*/
 void
 VtServerInstance_c::setLatestVtStatusData( const CanPkgExt_c& arc_data )
 {
@@ -90,9 +76,6 @@ VtServerInstance_c::setLatestVtStatusData( const CanPkgExt_c& arc_data )
 }
 
 
-/** process received language messages
-  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
- */
 void
 VtServerInstance_c::setLocalSettings( const CanPkgExt_c& arc_data )
 {
@@ -160,6 +143,7 @@ VtServerInstance_c::getVtHardwareDimension() const
   return (uint32_t) (ms_vtCapabilitiesA.hwWidth);
 }
 
+
 uint16_t
 VtServerInstance_c::getVtFontSizes() const
 {
@@ -186,5 +170,6 @@ VtServerInstance_c::toIvtServerInstance_c()
 {
   return static_cast<IsoAgLib::iVtServerInstance_c&>(*this);
 }
+
 
 } // __IsoAgLib

@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef VTCLIENT_H
-#define VTCLIENT_H
+#ifndef VTCLIENT_C_H
+#define VTCLIENT_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/singleton.h>
@@ -41,6 +41,9 @@ public:
   void init();
   void close();
 
+  bool timeEvent();
+  virtual bool processMsg( const CanPkg_c& arc_data );
+
   VtClientConnection_c* initAndRegisterObjectPool(
     IdentItem_c& apc_wsMasterIdentItem, 
     IsoAgLib::iVtClientObjectPool_c& arc_pool, 
@@ -50,17 +53,12 @@ public:
 
   bool deregisterObjectPool (IdentItem_c& apc_wsMasterIdentItem);
 
-  bool timeEvent(void);
-
   virtual void updateEarlierAndLatestInterval() {
     updateEarlierAndLatestIntervalDefault();
   }
 
   /** @todo SOON-241 Remove this - this should only be temporary and a good solution needs to be implemented! */
   void TEMPORARYSOLUTION_setTimePeriod(uint16_t aui16_timePeriod) { setTimePeriod (aui16_timePeriod); }
-
-  /** function that handles incoming can messages */
-  virtual bool processMsg( const CanPkg_c& arc_data );
 
   bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& apc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size);
 
@@ -71,15 +69,8 @@ public:
   // is any claimed VT sending VT status
   bool isAnyVtActive( bool mustBePrimary ) const { return (getFirstActiveVtServer( mustBePrimary ) != NULL); }
 
-  /**
-   * iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that AUX2 input status!
-   */
-  void notifyAllVtClientsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const;
-
-  /**
-   * iterate through all registered VtClientServerCommunication and notify them, maybe they need to process that AUX2 input maintenance message!
-   */
-  void notifyAllVtClientsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const;
+  void notifyAllConnectionsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const;
+  void notifyAllConnectionsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const;
 
   VtServerInstance_c* getFirstActiveVtServer( bool mustBePrimary ) const;
   VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const;
@@ -234,23 +225,20 @@ private:
     IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, 
     IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode );
 
-protected:
-
-private: // attributes
-
+private:
   STL_NAMESPACE::vector<VtServerInstance_c*> ml_vtServerInst;
-
   STL_NAMESPACE::vector<VtClientConnection_c*> m_vtConnections;
+
   Handler_t mt_handler;
   Customer_t mt_customer;
+
   friend VtClient_c &getVtClientInstance(uint8_t aui8_instance);
 };
 
 
-/** C-style function, to get access to the unique Scheduler_c singleton instance
- * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
- */
-VtClient_c &getVtClientInstance(uint8_t aui8_instance = 0);
+/** C-style function, to get access to the unique multiton instance */
+VtClient_c &getVtClientInstance( uint8_t instance = 0 );
 
 }
+
 #endif

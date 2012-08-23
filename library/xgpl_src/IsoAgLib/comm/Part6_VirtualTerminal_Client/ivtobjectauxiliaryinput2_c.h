@@ -13,16 +13,12 @@
 #ifndef IVTOBJECTAUXILIARYINPUT2_C_H
 #define IVTOBJECTAUXILIARYINPUT2_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectauxiliaryinput2_c.h"
-// ~X2C
+
 
 #ifdef USE_VTOBJECT_auxiliaryinput2
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
-
 
 class iVtObjectAuxiliaryInput2_c : public __IsoAgLib::vtObjectAuxiliaryInput2_c
 {
@@ -31,30 +27,14 @@ public:
 
   typedef  __IsoAgLib::vtObjectAuxiliaryInput2_c::StateForLearnMode_en StateForLearnMode_en;
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectAuxiliaryInput2SROM:
-  //! @param b_initPointer:
   void init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
-
-  //  Operation: get_vtObjectAuxiliaryInput2_a
   const iVtObjectAuxiliaryInput2_s& get_vtObjectAuxiliaryInput2_a() { return *vtObjectAuxiliaryInput2_c::get_vtObjectAuxiliaryInput2_a(); }
 
-  //  Operation: moveChildLocation
-  //! Parameter:
-  //! @param apc_childObject:
-  //! @param dx:
-  //! @param dy:
-  //! @param b_updateObject:
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
     return vtObjectAuxiliaryInput2_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject);
   }
 
-  //  Operation: setChildPosition
-  //! @param apc_childObject:
-  //! @param dx:
-  //! @param dy:
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     return vtObjectAuxiliaryInput2_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -80,7 +60,8 @@ public:
   virtual uint16_t getObjectType() { return objectType(); }
 };
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
 #endif
+
 #endif

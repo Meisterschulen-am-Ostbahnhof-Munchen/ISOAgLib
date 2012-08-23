@@ -126,13 +126,14 @@ public:
 
   /** constructor of VtClientConnection_c
    */
-  VtClientConnection_c (IdentItem_c& mrc_wsMasterIdentItem,
-                                 VtClient_c &r_isoTerminal,
-                                 IsoAgLib::iVtClientObjectPool_c& arc_pool,
-                                 const char* apc_versionLabel,
-                                 IsoAgLib::iVtClientDataStorage_c& arc_claimDataStorage,
-                                 uint8_t aui8_clientId,
-                                 IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
+  VtClientConnection_c(
+    IdentItem_c& wsMasterIdentItem,
+    VtClient_c& isoTerminal,
+    IsoAgLib::iVtClientObjectPool_c& pool,
+    const char* versionLabel,
+    IsoAgLib::iVtClientDataStorage_c& claimDataStorage,
+    uint8_t clientId,
+    IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en mode);
 
   virtual ~VtClientConnection_c();
 
@@ -338,7 +339,7 @@ private:
     */
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
 
-  int getMultitonInst() { return mi_multitonInst; };
+  int getMultitonInst() { return mrc_wsMasterIdentItem.getMultitonInst(); }
 
   bool isPreferredVTTimeOut() const;
 
@@ -440,8 +441,6 @@ private:
   int32_t mi32_fakeVtOffUntil;
 
   IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en men_registerPoolMode;
-
-  int mi_multitonInst;
 
   bool mb_commandsToBus;
 

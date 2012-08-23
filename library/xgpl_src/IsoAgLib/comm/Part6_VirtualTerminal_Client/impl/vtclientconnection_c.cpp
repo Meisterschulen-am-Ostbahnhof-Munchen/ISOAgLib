@@ -256,7 +256,7 @@ VtClientConnection_c::VtClientConnection_c(
   const char* apc_versionLabel,
   IsoAgLib::iVtClientDataStorage_c& arc_claimDataStorage,
   uint8_t aui8_clientId,
-  IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode )
   : mt_multiSendEventHandler(*this)
   , mrc_pool (arc_pool)
   , mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
@@ -299,7 +299,6 @@ VtClientConnection_c::VtClientConnection_c(
   , mi32_timeWsAnnounceKey (-1) // no announce tries started yet...
   , mi32_fakeVtOffUntil (-1) // no faking initially
   , men_registerPoolMode(aen_mode)
-  , mi_multitonInst( MULTITON_INST_PARAMETER_USE )
   , mb_commandsToBus( true )
   , mc_preferredVt(IsoName_c::IsoNameUnspecified())
   , mi32_bootTime_ms(0)
@@ -335,13 +334,13 @@ VtClientConnection_c::VtClientConnection_c(
   {
     IsoAgLib::iVtObject_c* p_obj = mrc_pool.getIVtObjects()[0][ui16_objIndex];
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-    if (p_obj->getObjectType() == iVtObjectAuxiliaryFunction2_c::objectType())
+    if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryFunction2_c::objectType())
     { // collect all available AUX 2 function objects in list
       m_aux2Functions.getObjectList().push_back(static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>(p_obj));
     }
 #endif
 #ifdef USE_VTOBJECT_auxiliaryinput2
-    if (p_obj->getObjectType() == iVtObjectAuxiliaryInput2_c::objectType())
+    if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryInput2_c::objectType())
     { // collect all available AUX 2 input objects in list
       m_aux2Inputs.getObjectList().push_back(static_cast<IsoAgLib::iVtObjectAuxiliaryInput2_c*>(p_obj));
     }

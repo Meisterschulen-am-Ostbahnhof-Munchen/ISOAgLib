@@ -40,7 +40,7 @@ public:
   uint8_t           getSkVirtual() const { return getConstVtCapabilities()->skVirtual; }
   uint8_t           getVtColorDepth() const { return getConstVtCapabilities()->hwGraphicType; }
   const vtState_s*  getVtState() const { return VtServerInstance_c::getVtState(); }
-  const iIsoItem_c* getIsoItem() const { return (VtServerInstance_c::getIsoItem() != NULL) ? &(VtServerInstance_c::getIsoItem()->toConstIisoItem_c()) : NULL; }
+  const iIsoItem_c& getIsoItem() const { return VtServerInstance_c::getIsoItem().toConstIisoItem_c(); }
 
 private:
   /** PRIVATE constructor to forbid instantiation of this interface class.

@@ -1,6 +1,5 @@
 /*
-  aux2inputs_c.h:
-  - send Auxiliary Input Type 2 Maintenance message
+  aux2inputs_c.h - send Auxiliary Input Type 2 Maintenance message
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -11,7 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "aux2inputs_c.h"
 #include "vtclient_c.h"
 
@@ -20,15 +18,18 @@
 #include <IsoAgLib/driver/system/isystem_c.h>
 
 
-
 namespace __IsoAgLib {
 
-  Aux2Inputs_c::Aux2Inputs_c(const IdentItem_c& arc_wsMasterIdentItem)
-  : mrc_wsMasterIdentItem(arc_wsMasterIdentItem),
-    m_state(Aux2InputsState_NoAuxInputAvailable),
-    m_modelIdentificationCode(0),
-    mui32_timeStampLastMaintenance(0),
-    mb_learnMode(false)
+Aux2Inputs_c::Aux2Inputs_c( const IdentItem_c& arc_wsMasterIdentItem )
+  : mrc_wsMasterIdentItem( arc_wsMasterIdentItem )
+  , m_state(Aux2InputsState_NoAuxInputAvailable)
+  , m_modelIdentificationCode( 0 )
+#ifdef USE_VTOBJECT_auxiliaryinput2
+  , mlist_auxInput2()
+#endif
+  , mui32_timeStampLastMaintenance( 0 )
+  , mb_learnMode(false)
+  , mp_vtClientServerCommunication( NULL )
 {
 }
 
@@ -74,27 +75,27 @@ bool Aux2Inputs_c::timeEvent(void)
         if (ui32_currentTime - mui32_timeStampLastMaintenance > 100)
         {
           CanPkgExt_c sendData;
-          sendData.setExtCanPkg8 (
-                                  7, 0, ECU_TO_VT_PGN>>8,
-                                  0xFF, mrc_wsMasterIdentItem.getIsoItem()->nr(),
-                                  0x23, // auxiliary input maintenance command
-                                  (m_modelIdentificationCode & 0xFF),
-                                  (m_modelIdentificationCode >> 8),
-                                  m_state,
-                                  0xFF, 0xFF, 0xFF, 0xFF);
+          sendData.setExtCanPkg8(
+            7, 0, ECU_TO_VT_PGN>>8,
+            0xFF, mrc_wsMasterIdentItem.getIsoItem()->nr(),
+            0x23, // auxiliary input maintenance command
+            (m_modelIdentificationCode & 0xFF),
+            (m_modelIdentificationCode >> 8),
+            m_state,
+            0xFF, 0xFF, 0xFF, 0xFF);
           
           // additionally set IsoName for SA
           // => IsoName can be extracted from sendData in notifyAllVtClientsOnAux2InputMaintenance()
           sendData.setISONameForSA(mrc_wsMasterIdentItem.isoName());
 
-          getIsoBusInstance4Comm() << sendData;
+          getIsoBusInstance( mrc_wsMasterIdentItem.getMultitonInst() ) << sendData;
 
           mui32_timeStampLastMaintenance = ui32_currentTime;
 
           // if this application has also AUX2 functions which handle the AUX2 inputs
           // => notify them directly (sender won't get his own CAN message!)
-          getVtClientInstance4Comm().notifyAllVtClientsOnAux2InputMaintenance( sendData );
-
+          for( unsigned i=0; i<PRT_INSTANCE_CNT; ++i )
+            getVtClientInstance( i ).notifyAllConnectionsOnAux2InputMaintenance( sendData );
         }
       }
 
@@ -176,7 +177,7 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
           // => IsoName can be extracted from sendData in notifyAllVtClientsOnAux2InputStatus()
           sendData.setISONameForSA(mrc_wsMasterIdentItem.isoName());
 
-          getIsoBusInstance4Comm() << sendData;
+          getIsoBusInstance( mrc_wsMasterIdentItem.getMultitonInst() ) << sendData;
 
           (*iter)->setTimeStampLastStateMsg();
 
@@ -185,7 +186,8 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
           if (!mb_learnMode)
           { // if this application has also AUX2 functions which handle the AUX2 inputs
             // => notify them directly (sender won't get his own CAN message!)
-            getVtClientInstance4Comm().notifyAllVtClientsOnAux2InputStatus( sendData );
+            for( unsigned i=0; i<PRT_INSTANCE_CNT; ++i )
+              getVtClientInstance( i ).notifyAllConnectionsOnAux2InputStatus( sendData );
           }
           else
           {

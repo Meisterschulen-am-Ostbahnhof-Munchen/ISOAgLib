@@ -10,7 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "vtclient_c.h"
 
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
@@ -23,21 +22,21 @@
 #pragma warning( disable : 4355 )
 #endif
 
+
 namespace __IsoAgLib {
-  /** C-style function, to get access to the unique VtClient_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  VtClient_c &getVtClientInstance(uint8_t aui8_instance)
-  { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(VtClient_c, PRT_INSTANCE_CNT, aui8_instance);
-  }
+
+/** C-style function, to get access to the unique multiton instance */
+VtClient_c &getVtClientInstance( uint8_t instance )
+{ // if > 1 singleton instance is used, no static reference can be used
+  MACRO_MULTITON_GET_INSTANCE_BODY(VtClient_c, PRT_INSTANCE_CNT, instance);
+}
 
 
-VtClient_c::VtClient_c() :
-  ml_vtServerInst(),
-  m_vtConnections(),
-  mt_handler(*this),
-  mt_customer(*this)
+VtClient_c::VtClient_c()
+  : ml_vtServerInst()
+  , m_vtConnections()
+  , mt_handler( *this )
+  , mt_customer( *this )
 {
 }
 
@@ -133,8 +132,9 @@ VtClient_c::initAndRegisterObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib
     }
   }
   // create new instance
-  VtClientConnection_c* pc_vtCSC = new VtClientConnection_c (rc_identItem, *this, arc_pool, apc_versionLabel, apc_claimDataStorage, ui8_index,
-                                                                               aen_mode MULTITON_INST_WITH_COMMA);
+  VtClientConnection_c* pc_vtCSC = new VtClientConnection_c(
+    rc_identItem, *this, arc_pool, apc_versionLabel, apc_claimDataStorage, ui8_index, aen_mode );
+
   if (pc_vtCSC->men_objectPoolState == VtClientConnection_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
   { // most likely due to wrong version label
     /// Error already registered in the VtClientConnection_c(..) constructor!
@@ -297,7 +297,7 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
     else if (cui8_cmdByte == 0x26) // Command: "Auxiliary Control Type 2", Parameter: "Auxiliary Input Status"
     { 
       // iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that input status!
-      notifyAllVtClientsOnAux2InputStatus( c_data );
+      notifyAllConnectionsOnAux2InputStatus( c_data );
     }
     return true;
   }
@@ -307,7 +307,7 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
     uint8_t const cui8_cmdByte = c_data.getUint8Data (1-1);
     if (cui8_cmdByte == 0x23) // Command: "Auxiliary Control", Parameter: "input maintenance message"
     { // iterate through all registered VtClientServerCommunication and notify them
-      notifyAllVtClientsOnAux2InputMaintenance(c_data);
+      notifyAllConnectionsOnAux2InputMaintenance(c_data);
     }
   }
 
@@ -363,87 +363,72 @@ VtClient_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, u
 
 
 void
-VtClient_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
+VtClient_c::reactOnIsoItemModification(
+  ControlFunctionStateHandler_c::iIsoItemAction_e action,
+  IsoItem_c const& isoItem )
 {
   // we only care for the VTs
-  if (acrc_isoItem.isoName().getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
+  if( isoItem.isoName().getEcuType() != IsoName_c::ecuTypeVirtualTerminal )
+    return;
 
-  STL_NAMESPACE::vector<VtServerInstance_c*>::iterator lit_vtServerInst;
-
-  switch (at_action)
+  switch( action )
   {
     case ControlFunctionStateHandler_c::AddToMonitorList:
       { ///! Attention: This function is also called from "init()", not only from ISOMonitor!
-        for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+        for( STL_NAMESPACE::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
+             iter != ml_vtServerInst.end(); ++iter )
         { // check if newly added VtServerInstance is already in our list
-          if ((*lit_vtServerInst)->getIsoItem())
-          {
-            if (acrc_isoItem.isoName() == (*lit_vtServerInst)->getIsoItem()->isoName())
-            { // the VtServerInstance is already known and in our list, so update the source address in case it has changed now
-              return;
-            }
-          }
+          if (&isoItem == &(*iter)->getIsoItem())
+            return;
         }
 
-        // VtServerInstance not yet in list, so add it ...
-        /// @todo SOON-79: It should be enough if we store the IsoItem*, we don't need both the IsoItem AND IsoName...
-        VtServerInstance_c* vtserver = new VtServerInstance_c(acrc_isoItem, acrc_isoItem.isoName(), *this MULTITON_INST_WITH_COMMA);
-        ml_vtServerInst.push_back (vtserver);
-
+        ml_vtServerInst.push_back(
+          new VtServerInstance_c( isoItem, *this ) );
       } break;
 
     case ControlFunctionStateHandler_c::RemoveFromMonitorList:
-      for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+      for( STL_NAMESPACE::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
+           iter != ml_vtServerInst.end(); ++iter )
       { // check if lost VtServerInstance is in our list
-        if ((*lit_vtServerInst)->getIsoItem())
-        {
-          if (acrc_isoItem.isoName() == (*lit_vtServerInst)->getIsoItem()->isoName())
-          { // the VtServerInstance is already known and in our list, so it could be deleted
-            // notify all clients on early loss of that VtServerInstance
-            for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
-            {
-              if (m_vtConnections[ui8_index])
-              {
-                m_vtConnections[ui8_index]->notifyOnVtServerInstanceLoss(*(*lit_vtServerInst));
-              }
-            }
-
-            delete (*lit_vtServerInst);
-            (void)ml_vtServerInst.erase (lit_vtServerInst);
-            break;
+        if (&isoItem == &(*iter)->getIsoItem())
+        { // the VtServerInstance is already known and in our list,
+          // delete it and notify all clients on early loss of that VtServerInstance
+          for (unsigned index = 0; index < m_vtConnections.size(); ++index)
+          {
+            if( m_vtConnections[ index ] )
+              m_vtConnections[ index ]->notifyOnVtServerInstanceLoss( *(*iter) );
           }
+
+          delete *iter;
+          ( void )ml_vtServerInst.erase( iter );
+          break;
         }
       }
       break;
 
     default:
-      // for right now, don't care if VT changes its SourceAddress.
       break;
   }
 }
 
 
 void
-VtClient_c::notifyAllVtClientsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const
+VtClient_c::notifyAllConnectionsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const
 {
-  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
+  for( unsigned index = 0; index < m_vtConnections.size(); ++index )
   {
-    if (m_vtConnections[ui8_index])
-    {
-      m_vtConnections[ui8_index]->notifyOnAux2InputStatus( refc_data );
-    }
+    if( m_vtConnections[ index ] )
+      m_vtConnections[ index ]->notifyOnAux2InputStatus( refc_data );
   }
 }
 
 void
-VtClient_c::notifyAllVtClientsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const
+VtClient_c::notifyAllConnectionsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const
 {
-  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
+  for( unsigned index = 0; index < m_vtConnections.size(); ++index )
   {
-    if (m_vtConnections[ui8_index])
-    {
-      m_vtConnections[ui8_index]->notifyOnAux2InputMaintenance( refc_data );
-    }
+    if( m_vtConnections[ index ] )
+      m_vtConnections[ index ]->notifyOnAux2InputMaintenance( refc_data );
   }
 }
 

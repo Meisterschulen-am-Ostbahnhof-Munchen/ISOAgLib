@@ -12,13 +12,11 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "vtobjectauxiliarypointer_c.h"
-
-#ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
-
 #include "vtclient_c.h"
 
+
+#ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
 namespace __IsoAgLib {
 
@@ -87,4 +85,5 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::saveReceivedAttribute(uint8_t
 #endif
 
 } // __IsoAgLib
+
 #endif
