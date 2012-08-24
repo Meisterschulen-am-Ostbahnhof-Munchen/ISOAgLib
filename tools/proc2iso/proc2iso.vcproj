@@ -205,6 +205,10 @@
 				RelativePath="..\..\library\xgpl_src\IsoAgLib\util\impl\util_funcs.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\library\xgpl_src\IsoAgLib\util\impl\flexiblebytestrings.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
