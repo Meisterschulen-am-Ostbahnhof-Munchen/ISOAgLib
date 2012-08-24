@@ -142,8 +142,9 @@ class BitFieldWrapper_c
   public:
     /** Constructor */
     BitFieldWrapper_c ():
-      m_bitField(sizeInBytes, 0x00)
+      m_bitField() // intentionally not put here due to IAR compiler problem!
     {
+      m_bitField.resize( sizeInBytes, 0x00 );
     }
 
     /** Destructor */
@@ -163,7 +164,7 @@ class BitFieldWrapper_c
     }
 
     /** do bitwise AND assignment */
-    virtual void operator &= ( const BitFieldWrapper_c& c_refBitField )
+    void operator &= ( const BitFieldWrapper_c& c_refBitField )
     {
       STL_NAMESPACE::vector<uint8_t>::iterator i = m_bitField.begin();
       STL_NAMESPACE::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
