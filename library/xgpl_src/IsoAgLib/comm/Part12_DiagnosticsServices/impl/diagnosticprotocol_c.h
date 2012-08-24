@@ -42,10 +42,10 @@ public:
     uint8_t number_of_option_bytes;                // TBD : replace with vector<uint8_t> ?
     uint8_t options_bytes[MAX_OPTION_BYTES];  // TBD : replace with vector<uint8_t> ?
   };
-  typedef std::map<FunctionalitiesCharacteristics_t,Functionality_s> FunctionitiesArr;
-  typedef std::map<FunctionalitiesCharacteristics_t,Functionality_s>::iterator FunctionitiesArrIter;
-  typedef std::map<FunctionalitiesCharacteristics_t,Functionality_s>::const_iterator FunctionitiesArrCIter;
-  typedef std::pair<FunctionalitiesCharacteristics_t,Functionality_s> FunctionitiesArrPair;
+  typedef STL_NAMESPACE::map<FunctionalitiesCharacteristics_t,Functionality_s> FunctionitiesArr;
+  typedef STL_NAMESPACE::map<FunctionalitiesCharacteristics_t,Functionality_s>::iterator FunctionitiesArrIter;
+  typedef STL_NAMESPACE::map<FunctionalitiesCharacteristics_t,Functionality_s>::const_iterator FunctionitiesArrCIter;
+  typedef STL_NAMESPACE::pair<FunctionalitiesCharacteristics_t,Functionality_s> FunctionitiesArrPair;
 
 public:
   DiagnosticProtocol_c (IdentItem_c&, const EcuDiagnosticProtocolIdentificationBitMask_t& protocol);

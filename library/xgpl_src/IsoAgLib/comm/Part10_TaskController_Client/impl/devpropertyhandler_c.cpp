@@ -42,7 +42,7 @@
 
 #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclient_c.h>
-  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.h>
 #endif
 
 #if DEBUG_DEVPROPERTYHANDLER
