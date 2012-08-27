@@ -1812,6 +1812,23 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
 #endif
 }
 
+std::string
+formatAsFloat( const std::string& in )
+{
+  bool dotFound=false;
+  for( int i=0; i<in.length(); ++i )
+    if( in[ i ] == '.' )
+	  dotFound = true;
+
+  std::string out( in );
+
+  if( !dotFound )
+    out += ".";
+
+  out += "f";
+
+  return out;
+}
 
 
 // ---------------------------------------------------------------------------
@@ -3037,7 +3054,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
 
-          fprintf (partFile_attributes, ", %sf, %s, %d, %d, %d", arrc_attributes [attrScale].get().c_str(), arrc_attributes [attrNumber_of_decimals].get().c_str(), (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retInputOption);
+          fprintf (partFile_attributes, ", %s, %s, %d, %d, %d", formatAsFloat(arrc_attributes [attrScale].get()).c_str(), arrc_attributes [attrNumber_of_decimals].get().c_str(), (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retInputOption);
           break;
         }
 
@@ -3186,7 +3203,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           signed int retJust = retHorJust;
           retJust |= retVertJust << 2;
-          fprintf (partFile_attributes, ", %sf, %s, %d, %d", arrc_attributes [attrScale].get().c_str(), arrc_attributes [attrNumber_of_decimals].get().c_str(), (unsigned int)retFormat, (unsigned int)retJust);
+          fprintf (partFile_attributes, ", %s, %s, %d, %d", formatAsFloat(arrc_attributes [attrScale].get()).c_str(), arrc_attributes [attrNumber_of_decimals].get().c_str(), (unsigned int)retFormat, (unsigned int)retJust);
           break;
         }
 
