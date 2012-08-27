@@ -623,11 +623,17 @@ driver_and_hal_features()
                     printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_rte*'" >&4
                     ;;
                 (sys)
-                    if [ "$USE_TARGET_SYSTEM" = "pc_win32" ]; then
-                        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_w32_sys*'" >&4
-                    else
-                        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_linux_sys*'" >&4
-                    fi
+                    case "$USE_TARGET_SYSTEM" in
+					    (pc_win32)
+                            printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_w32_sys*'" >&4
+					        ;;
+                        (pc_linux)
+                            printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_linux_sys*'" >&4
+                            ;;
+                        (*)
+                            printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_sys*'" >&4
+                            ;;
+                    esac
                     ;;
                 (*)
                     echo_ 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"hal_simulator"'
