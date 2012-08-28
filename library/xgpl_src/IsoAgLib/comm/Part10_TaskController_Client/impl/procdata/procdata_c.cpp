@@ -57,6 +57,13 @@ ProcData_c::init(
   isoaglib_assert(
     ( IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTotal)
     && (aui16_ddi != IsoAgLib::ProcData::defaultDataLoggingDDI) ) ? ab_isSetpoint : true );
+  isoaglib_assert(
+    (aui16_ddi != IsoAgLib::ProcData::defaultDataLoggingDDI) ? true : 
+    IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTimeInterval) & 
+    IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodDistInterval) &
+    IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodThresholdLimit) &
+    IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodOnChange) &
+    IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTotal) );
 }
 
 

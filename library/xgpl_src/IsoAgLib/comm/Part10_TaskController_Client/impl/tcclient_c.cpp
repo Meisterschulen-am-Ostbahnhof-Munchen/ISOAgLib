@@ -19,6 +19,9 @@
 // @TODO : check if TCisAlive ? if TC status not sent for 6 seconds, stop sending measurment (call stopMeasurement)
 // @TODO : manage TOTALS
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
 
 namespace __IsoAgLib {
 

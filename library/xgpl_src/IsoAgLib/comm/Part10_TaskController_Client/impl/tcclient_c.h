@@ -46,9 +46,9 @@ class TcClient_c : public Scheduler_Task_c
   MACRO_MULTITON_CONTRIBUTION();
 private:
   TcClient_c();
-  virtual ~TcClient_c() {}
 
 public:
+  virtual ~TcClient_c() {}
   void init( void );
   void close( void );
 
