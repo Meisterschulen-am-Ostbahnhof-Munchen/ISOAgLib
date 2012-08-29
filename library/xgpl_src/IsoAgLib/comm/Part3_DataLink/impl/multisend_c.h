@@ -14,9 +14,6 @@
 #define MULTI_SEND_H
 
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
@@ -93,41 +90,23 @@ public: // methods
 
   /**
     Send an ISO 11738 (E)TP targeted multipacket message using a given MultiSendStreamer
-    @param acrc_isoNameSender ISOName of sender
-    @param acrc_isoNameReceiver ISOName of receiver
     @param apc_mss Allow active build of data stream parts for upload by deriving data source class
                    from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                    retrieve of data to send. This is especially important for the VT-Client,
                    which assembles the data pool dependent on the terminal capabilities during upload
                    (e.g. bitmap variants, color-depth, positions, etc.)
-    @param ai32_pgn PGN of the data
-    @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
-    @param apc_multiSendEventHandler Pointer to senderfor callback handling
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler);
 
   /**
     Send an ISO 11738 (E)TP targeted multipacket message using a given data-buffer
-    @param acrc_isoNameSender ISOName of sender
-    @param acrc_isoNameReceiver ISOName of receiver
-    @param rhpb_data HUGE_MEM pointer to the data
-    @param aui32_dataSize size of the complete data (should be >= 9 of course)
-    @param ai32_pgn PGN of the data
-    @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
-    @param apc_multiSendEventHandler Pointer to senderfor callback handling
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler);
 
   /**
     Send an ISO 11783 (E)TP broadcast multipacket message using a given data-buffer
-    @param acrc_isoNameSender ISOName of sender
-    @param rhpb_data HUGE_MEM pointer to the data
-    @param aui16_dataSize Size of the complete buffer (should be in the range of [9..1785])
-    @param ai32_pgn PGN of the data
-    @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
-    @param apc_multiSendEventHandler Pointer to senderfor callback handling
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoBroadcast (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
@@ -135,13 +114,9 @@ public: // methods
 
   /**
     send an ISO 11783 (E)TP broadcast multipacket message using a given MultiSendStreamer
-    @param acrc_isoNameSender ISOName of sender
     @param apc_mss Allow active build of data stream parts for upload by deriving data source class
                    from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                    retrieve of data to send.
-    @param ai32_pgn PGN of the data
-    @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
-    @param apc_multiSendEventHandler Pointer to senderfor callback handling
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoBroadcast(const IsoName_c& acrc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
@@ -151,14 +126,9 @@ public: // methods
 #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   /**
     send a FastPacket targeted multipacket message using a given uint8_t* buffer
-    @param acrc_isoNameSender ISOName of sender
-    @param acrc_isoNameReceiver ISOName of receiver
     @param apc_mss Allow active build of data stream parts for upload by deriving data source class
                    from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                    retrieve of data to send.
-    @param ai32_pgn PGN of the data
-    @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
-    @param apc_multiSendEventHandler Pointer to senderfor callback handling
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoFastPacket (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
@@ -166,13 +136,6 @@ public: // methods
 
   /**
     Send a FastPacket targeted multipacket message using a given MultiSendStreamer
-    @param acrc_isoNameSender ISOName of sender
-    @param acrc_isoNameReceiver ISOName of receiver
-    @param rhpb_data HUGE_MEM pointer to the data
-    @param aui32_dataSize size of the complete data (should be >= 9 of course)
-    @param ai32_pgn PGN of the data
-    @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
-    @param apc_multiSendEventHandler Pointer to senderfor callback handling
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoFastPacket (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
@@ -180,12 +143,6 @@ public: // methods
 
   /**
     Send a FastPacket broadcast multipacket message using a given data-buffer
-    @param acrc_isoNameSender ISOName of sender
-    @param rhpb_data HUGE_MEM pointer to the data
-    @param aui16_dataSize Size of the complete buffer (should be >= 9 of course)
-    @param ai32_pgn PGN of the data
-    @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
-    @param apc_multiSendEventHandler Pointer to senderfor callback handling
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
@@ -193,13 +150,9 @@ public: // methods
 
   /**
     Send a FastPacket broadcast multipacket message using a given MultiSendStreamer
-    @param acrc_isoNameSender ISOName of sender
     @param apc_mss Allow active build of data stream parts for upload by deriving data source class
                    from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                    retrieve of data to send.
-    @param ai32_pgn PGN of the data
-    @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
-    @param apc_multiSendEventHandler Pointer to senderfor callback handling
     @return true -> MultiSend_c was ready -> Transfer was started
   */
   bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
@@ -347,24 +300,14 @@ private:
   */
   void calcAndSetNextTriggerTime();
 
-  /**
-    internal function to send a ISO target multipacket message
-    @param acrc_isoNameSender
-    @param acrc_isoNameReceiver
-    @param rhpb_data HUGE_MEM pointer to the data
-    @param ai32_dataSize size of the complete mask
-    @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
-            is written by MultiSend_c
-    @param ai32_pgn PGN to use for the upload
-    @param apc_mss allow active build of data stream parts for upload by deriving data source class
-                  from IsoAgLib::MultiSendStreamer_c, which defines virtual functions to control the
-                  retrieve of data to send. This is especially important for ISO_Terminal,
-                  which assembles the data pool dependent on the terminal capabilities during upload
-                  ( e.g. bitmap variants )
-    @param apc_multiSendEventHandler Pointer to senderfor callback handling
-    @return true -> MultiSend_c was ready -> mask is spooled to target
-  */
-  bool sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, SendStream_c::msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler);
+  bool sendIntern (const IsoName_c& acrc_isoNameSender,
+                   const IsoName_c& acrc_isoNameReceiver,
+                   const HUGE_MEM uint8_t* rhpb_data,
+                   uint32_t aui32_dataSize,
+                   int32_t ai32_pgn,
+                   IsoAgLib::iMultiSendStreamer_c* apc_mss,
+                   SendStream_c::msgType_t ren_msgType,
+                   MultiSendEventHandler_c* apc_multiSendEventHandler);
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   uint8_t allocFpSequenceCounter() { const uint8_t cui8_returnVal = mui8_nextFpSequenceCounter;
