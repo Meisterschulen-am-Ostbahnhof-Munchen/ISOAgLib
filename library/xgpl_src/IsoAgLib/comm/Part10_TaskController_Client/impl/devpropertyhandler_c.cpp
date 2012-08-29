@@ -197,6 +197,9 @@ DevPropertyHandler_c::DevPropertyHandler_c()
 bool
 DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
 {
+  if( ( mpc_wsMasterIdentItem == NULL ) || ( arc_data.getMonitorItemForDA() != mpc_wsMasterIdentItem->getIsoItem() ) )
+    return true;
+
   if ((arc_data.isoPgn() & 0x3FF00LU) != PROCESS_DATA_PGN)
     //should never be the case
     return false;

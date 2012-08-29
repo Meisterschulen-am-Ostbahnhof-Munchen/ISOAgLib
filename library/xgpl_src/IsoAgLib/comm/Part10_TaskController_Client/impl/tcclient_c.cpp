@@ -149,8 +149,9 @@ TcClient_c::processMsg( const CanPkg_c& arc_data )
 {
   ProcessPkg_c pkg( arc_data, getMultitonInst() );
 
+  // isValid => also mean bradcast or to us
   // SA = 0xFE ? => don't handle such messages, we need to have a sender
-  if (pkg.getMonitorItemForSA() == NULL)
+  if (!pkg.isValid() || (pkg.getMonitorItemForSA() == NULL))
     return true;
 
   // check for sender isoName
@@ -161,63 +162,62 @@ TcClient_c::processMsg( const CanPkg_c& arc_data )
       return true;
   }
 
-  // process TC status message (for local instances)
-  if ( pkg.men_command == ProcessPkg_c::taskControllerStatus )
-  {
-    processTcStatusMsg(pkg[4], c_isoNameSender);
-
-    mc_devPropertyHandler.updateTcStateReceived(pkg[4]);
-    mc_devPropertyHandler.setTcSourceAddress(pkg.isoSa());
-
-    return true;
-  }
-
-  // use remoteType_t for the remote item
-  const IsoAgLib::ProcData::remoteType_t ecuType = getTcClientInstance4Comm().getTypeFromISOName( pkg.getMonitorItemForSA()->isoName() );
-
-  // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
-  if ( ( pkg.men_command == ProcessPkg_c::requestConfiguration )
-    || ( pkg.men_command == ProcessPkg_c::configurationResponse )
-    || ( pkg.men_command == ProcessPkg_c::nack ) )
-  {
-    if (mc_devPropertyHandler.processMsg( pkg ))
-      return true;
-  }
-
-  // no forther processing of NACK messages
-  if ( pkg.men_command == ProcessPkg_c::nack )
-    return true;
-
-  // ignore other working set task message
-  if ( pkg.men_command == ProcessPkg_c::workingsetMasterMaintenance )
-  {
-    // @TODO probably respond with NACK if it is addressed to us, otherwise just ignore
-    return true;
-  }
-
-  // ignore broadcast message
   if (pkg.getMonitorItemForDA() == NULL)
   {
-    return false;
-  }
+    // process TC status message (for local instances)
+    if ( pkg.men_command == ProcessPkg_c::taskControllerStatus )
+    {
+      processTcStatusMsg(pkg[4], c_isoNameSender);
 
-  // use isoName from corresponding monitor item for checks
-  const IsoName_c& c_isoNameReceiver = pkg.getMonitorItemForDA()->isoName();
+      mc_devPropertyHandler.updateTcStateReceived(pkg[4]);
+      mc_devPropertyHandler.setTcSourceAddress(pkg.isoSa());
 
-  bool b_elementFound = false;
-  ProcData_c* pd = procData( pkg.mui16_DDI, pkg.mui16_element, c_isoNameReceiver, b_elementFound);
-  if ( pd != NULL )
-  { // there exists an appropriate process data item -> let the item process the msg
-    pd->processMsg( pkg, ecuType );
+      return true;
+    }
   }
   else
   {
-    // element exists but DDI not present -> DDI not supported by element
-    sendNack( pkg.getMonitorItemForSA()->isoName(),
-              pkg.getMonitorItemForDA()->isoName(),
-              pkg.mui16_DDI,
-              pkg.mui16_element,
-              b_elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
+    // use remoteType_t for the remote item
+    const IsoAgLib::ProcData::remoteType_t ecuType = getTcClientInstance4Comm().getTypeFromISOName( pkg.getMonitorItemForSA()->isoName() );
+
+    // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
+    if ( ( pkg.men_command == ProcessPkg_c::requestConfiguration )
+      || ( pkg.men_command == ProcessPkg_c::configurationResponse )
+      || ( pkg.men_command == ProcessPkg_c::nack ) )
+    {
+      if (mc_devPropertyHandler.processMsg( pkg ))
+        return true;
+    }
+
+    // no forther processing of NACK messages
+    if ( pkg.men_command == ProcessPkg_c::nack )
+      return true;
+
+    // ignore other working set task message
+    if ( pkg.men_command == ProcessPkg_c::workingsetMasterMaintenance )
+    {
+      // @TODO probably respond with NACK if it is addressed to us, otherwise just ignore
+      return true;
+    }
+
+    // use isoName from corresponding monitor item for checks
+    const IsoName_c& c_isoNameReceiver = pkg.getMonitorItemForDA()->isoName();
+
+    bool b_elementFound = false;
+    ProcData_c* pd = procData( pkg.mui16_DDI, pkg.mui16_element, c_isoNameReceiver, b_elementFound);
+    if ( pd != NULL )
+    { // there exists an appropriate process data item -> let the item process the msg
+      pd->processMsg( pkg, ecuType );
+    }
+    else
+    {
+      // element exists but DDI not present -> DDI not supported by element
+      sendNack( pkg.getMonitorItemForSA()->isoName(),
+                pkg.getMonitorItemForDA()->isoName(),
+                pkg.mui16_DDI,
+                pkg.mui16_element,
+                b_elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
+    }
   }
 
   return true;
