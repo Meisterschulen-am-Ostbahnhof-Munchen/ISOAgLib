@@ -1,6 +1,5 @@
 /*
-  digitalo_c.cpp:
-    implementation for DigitalO_c, an object for digital output
+  digitalo_c.cpp - implementation for DigitalO_c, an object for digital output
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -30,8 +29,6 @@ DigitalO_c::DigitalO_c(uint8_t aui8_channel)
 }
 
 
-// Default constructor for use in arrays
-// Must call setChannel after using this constructor!
 DigitalO_c::DigitalO_c()
   : OutputBase_c(0xFF) // uninitialized
   , ui16_value( 0 )
@@ -58,10 +55,10 @@ void
 DigitalO_c::setFreq(uint32_t aui32_val)
 {
   // set output PWM frequency with BIOS call
-  if (HAL::setPwmFreq(channelNr(), aui32_val) == HAL_RANGE_ERR)
+  if (HAL::setPwmFreq(channelNr(), aui32_val) != HAL_NO_ERR)
   { // wrong channel number or wrong frequency
     ui16_maxOutputPwmFreq = 0xFFFF;
-    isoaglib_assert( !"setFreq range error" );
+    isoaglib_assert( !"setFreq error" );
   }
   else
   {
@@ -75,9 +72,9 @@ void
 DigitalO_c::set(uint16_t aui16_val)
 {
   // set output PWM signal with BIOS call
-  if (HAL::setDigout(channelNr(), aui16_val) == HAL_RANGE_ERR)
+  if (HAL::setDigout(channelNr(), aui16_val) != HAL_NO_ERR)
   { // wrong channel number
-    isoaglib_assert( !"set range error" );
+    isoaglib_assert( !"set error" );
   }
   else
   { // correct channel number
@@ -95,7 +92,7 @@ DigitalO_c::set(bool ab_state)
 
 
 bool
-DigitalO_c::good( void ) const
+DigitalO_c::good() const
 {
   if ( get() == 0 )
     return true;
@@ -108,7 +105,7 @@ DigitalO_c::good( void ) const
 
 
 DigitalO_c::dout_err_t
-DigitalO_c::getState( void ) const
+DigitalO_c::getState() const
 {
   int16_t i16_stateHal;
   if ( get() == 0 )
@@ -123,4 +120,4 @@ DigitalO_c::getState( void ) const
   }
 }
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib

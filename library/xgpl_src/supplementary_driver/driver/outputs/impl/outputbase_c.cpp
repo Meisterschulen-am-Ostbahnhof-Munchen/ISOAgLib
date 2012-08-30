@@ -1,6 +1,5 @@
 /*
-  outputbase_c.cpp:
-    implementation file for OutputBase_c, a base class for DigitalO_c
+  outputbase_c.cpp: implementation file for OutputBase_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -15,11 +14,10 @@
 #include "outputbase_c.h"
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 
 // no implementation at the moment.
 
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib

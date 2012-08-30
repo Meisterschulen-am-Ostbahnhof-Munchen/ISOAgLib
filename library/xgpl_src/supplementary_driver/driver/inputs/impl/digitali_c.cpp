@@ -1,6 +1,5 @@
 /*
-  digitali_c.cpp:
-    implementation file for DigitalI_c, an object for digital input
+  digitali_c.cpp: - implementation file for DigitalI_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -23,6 +22,7 @@
 
 
 namespace IsoAgLib {
+
 /** function to handle a DigitalI_c event from HAL
   * @param aui8_channel channel of the input object, which received the IRQ
   *        from HAL
@@ -34,7 +34,7 @@ void iInputEventHandler::handleDigitalEvent( uint8_t )
 
 };
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 void digitalInputIrqFunc_0(IRQ_FUNC_PAR){DigitalI_c::handleHalIrqEvent(0);}
@@ -70,7 +70,8 @@ IsoAgLib::iInputEventHandler* DigitalI_c::ppc_handler[16];
 
 
 void
-DigitalI_c::handleHalIrqEvent( uint8_t aui8_channel ) {
+DigitalI_c::handleHalIrqEvent( uint8_t aui8_channel )
+{
   if ( ppc_handler[aui8_channel] != NULL )
   {
     ppc_handler[aui8_channel]->handleDigitalEvent( aui8_channel );
@@ -78,15 +79,19 @@ DigitalI_c::handleHalIrqEvent( uint8_t aui8_channel ) {
 }
 
 
-DigitalI_c::DigitalI_c(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff, bool ab_static, IsoAgLib::iInputEventHandler* apc_handler)
-  : InputBase_c(ab_channel, IsoAgLib::iInput_c::digital), b_static(ab_static), en_onoff(ren_onoff) {
-  if ( ab_channel != 0xFF )init( ab_channel, ren_onoff, ab_static, apc_handler );
+DigitalI_c::DigitalI_c( uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff, bool ab_static, IsoAgLib::iInputEventHandler* apc_handler )
+  : InputBase_c(ab_channel, IsoAgLib::iInput_c::digital)
+  , b_static(ab_static)
+  , en_onoff(ren_onoff)
+{
+  if ( ab_channel != 0xFF )
+    init( ab_channel, ren_onoff, ab_static, apc_handler );
 }
 
 
 void
 DigitalI_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff, bool ab_static, IsoAgLib::iInputEventHandler* apc_handler)
-{ // now init the digital input
+{
   InputBase_c::init(ab_channel, IsoAgLib::iInput_c::digital);
 
   if ( ( apc_handler != NULL ) && ( ab_channel < 16 ) ) {
@@ -111,7 +116,8 @@ DigitalI_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff, bool
 }
 
 
-void DigitalI_c::setOnHigh( void )
+void
+DigitalI_c::setOnHigh( void )
 {
   if ( channelNr() < 16 ) {
     // register pointer to IRQ handler
@@ -126,7 +132,8 @@ void DigitalI_c::setOnHigh( void )
 }
 
 
-void DigitalI_c::setOnLow( void )
+void
+DigitalI_c::setOnLow( void )
 {
   if ( channelNr() < 16 ) {
     // register pointer to IRQ handler
@@ -143,7 +150,6 @@ void DigitalI_c::setOnLow( void )
 
 DigitalI_c::~DigitalI_c()
 {
-  // unregister element from Inputs_c
   getInputsInstance().unregisterClient( this );
 }
 
@@ -161,7 +167,7 @@ DigitalI_c::active() const
 
 
 uint16_t
-DigitalI_c::val()const
+DigitalI_c::val() const
 {
   int16_t i16_val;
   if (b_static)
@@ -182,4 +188,4 @@ DigitalI_c::val()const
   }
 }
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib

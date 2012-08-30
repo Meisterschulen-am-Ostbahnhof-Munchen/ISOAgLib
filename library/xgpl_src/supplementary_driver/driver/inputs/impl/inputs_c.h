@@ -1,5 +1,5 @@
 /*
-  inputs_c.h: header for the inputs management object
+  inputs_c.h - header for the inputs management object
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -13,9 +13,6 @@
 #ifndef INPUTS_C_H
 #define INPUTS_C_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/container.h>
 #include <IsoAgLib/util/iliberr_c.h>
@@ -24,7 +21,7 @@
 #include "digitali_c.h"
 #include "counteri_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 /**
@@ -43,9 +40,6 @@ public:
   /**
     initialisation for the inputs management which sets the allowed number
     ranges for analog, digital, counter input channels.
-
-    possible errors:
-        * iLibErr_c::Range given limits are not possible
     @param ab_digitalFirst smallest allowed digital input channel number (DIGITAL_INPUT_MIN)
     @param ab_digitalLast greatest allowed digital input channel number (DIGITAL_INPUT_MAX)
     @param ab_analogFirst smallest allowed analog input channel number (ANALOG_INPUT_MIN)
@@ -57,19 +51,12 @@ public:
   void init(uint8_t ab_digitalFirst = DIGITAL_INPUT_MIN, uint8_t ab_digitalLast = DIGITAL_INPUT_MAX,
             uint8_t ab_analogFirst = ANALOG_INPUT_MIN,   uint8_t ab_analogLast = ANALOG_INPUT_MAX,
             uint8_t ab_counterFirst = COUNTER_INPUT_MIN, uint8_t ab_counterLast = COUNTER_INPUT_MAX);
-
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    */
   void close( void ){}
 
-  /** destructor for the sensor input manager object */
   ~Inputs_c();
 
   /**
     set the limits for digital input channels (first setting can be done by constructor parameters)
-
-    possible errors:
-        * iLibErr_c::Range given limits are not possible
     @param ab_digitalFirst number of the smallest allowed digital input channel
     @param ab_digitalLast number of the greatest allowed digital input channel
   */
@@ -77,9 +64,6 @@ public:
 
   /**
     set the limits for analog input channels (first setting can be done by constructor parameters)
-
-    possible errors:
-        * iLibErr_c::Range given limits are not possible
     @param ab_analogFirst number of the smallest allowed analog input channel
     @param ab_analogLast number of the greatest allowed analog input channel
   */
@@ -87,9 +71,6 @@ public:
 
   /**
     set the limits for counter input channels (first setting can be done by constructor parameters)
-
-    possible errors:
-        * iLibErr_c::Range given limits are not possible
     @param ab_counterFirst number of the smallest allowed counter input channel
     @param ab_counterLast number of the greatest allowed counter input channel
   */
@@ -97,10 +78,6 @@ public:
 
   /**
     check if analog input object to given ab_channel exist
-    @see Inputs_c::createAnalog
-    @see Inputs_c::deleteAnalog
-    @see Inputs_c::existDigital
-    @see Inputs_c::existCounter
     @param ab_channel number of the tested input channel
     @return true -> searched input object exist
   */
@@ -108,10 +85,6 @@ public:
 
   /**
     check if digital input object to given ab_channel exist
-    @see Inputs_c::createDigital
-    @see Inputs_c::deleteDigital
-    @see Inputs_c::existAnalog
-    @see Inputs_c::existCounter
     @param ab_channel number of the tested input channel
     @return true -> searched input object exist
   */
@@ -119,10 +92,6 @@ public:
 
   /**
     check if counter input object to given ab_channel exist
-    @see Inputs_c::createCounter
-    @see Inputs_c::deleteCounter
-    @see Inputs_c::existDigital
-    @see Inputs_c::existAnalog
     @param ab_channel number of the tested input channel
     @return true -> searched input object exist
   */
@@ -133,17 +102,8 @@ public:
     IMPORTANT: an analog input channel object with the wanted number  must exist
                -> creating with createAnalog and checking with existAnalog
                (throw exception if exceptions are activated on compile time)
-
-    possible errors:
-        * iLibErr_c::elNonexistant wanted analog input with given channel no does not exist
-    @see Inputs_c::createAnalog
-    @see Inputs_c::existAnalog
-    @see Inputs_c::digital
-    @see Inputs_c::counter
-    @see AnalogI_c::Analog_I
     @param ab_channel channel of the analog input
     @return reference to the wanted analog input channel
-    @exception containerElementNonexistant
   */
   AnalogI_c& analog(uint8_t ab_channel) { return getC1( ab_channel ); }
 
@@ -152,17 +112,8 @@ public:
     IMPORTANT: an digital input channel object with the wanted number must exist
                -> creating with createDigital and checking with existDigital
                (throw exception if exceptions are activated on compile time)
-
-    possible errors:
-        * iLibErr_c::elNonexistant wanted digital input with given channel no does not exist
-    @see Inputs_c::createDigital
-    @see Inputs_c::existDigital
-    @see DigitalI_c::Digital_I
-    @see Inputs_c::analog
-    @see Inputs_c::counter
     @param ab_channel channel of the digital input
     @return reference to the wanted digital input channel
-    @exception containerElementNonexistant
   */
   DigitalI_c& digital(uint8_t ab_channel) { return getC2( ab_channel ); }
 
@@ -171,17 +122,8 @@ public:
     IMPORTANT: an counter input channel object with the wanted number must exist
                -> creating with createCounter and checking with existCounter
                (throw exception if exceptions are activated on compile time)
-
-    possible errors:
-        * iLibErr_c::elNonexistant wanted counter input with given channel no does not exist
-    @see Inputs_c::createCounter
-    @see Inputs_c::existCounter
-    @see CounterI_c::Counter_I
-    @see Inputs_c::digital
-    @see Inputs_c::analog
     @param ab_channel channel of the counter input
     @return reference to the wanted counter input channel
-    @exception containerElementNonexistant
   */
   CounterI_c& counter(uint8_t ab_channel) { return getC3( ab_channel ); }
 

@@ -16,7 +16,7 @@
 
 #include "impl/digitalo_c.h"
 
-// Begin Namespace IsoAgLib
+
 namespace IsoAgLib {
 
 /**
@@ -32,7 +32,6 @@ public:
     *         dout_overvoltErr, dout_untervoltErr
     */
   typedef enum { noDoutErr, dout_openErr, dout_shortcutErr } dout_err_t;
-  //typedef __IsoAgLib::DigitalO_c::dout_err_t dout_err_t;
 
   iDigitalO_c(uint8_t aui8_channel)
     : DigitalO_c(aui8_channel)
@@ -51,29 +50,18 @@ public:
 
   /**
     set the output PWM frequency
-    (uses BIOS function)
-
-    possible errors:
-       * Err_c::range wrong output channel number or wrong frequency
     @param aui32_val value to use as PWM frequency in [mHz]
   */
   void setFreq(uint32_t aui32_val){ DigitalO_c::setFreq(aui32_val); }
 
   /**
     set the output PWM value
-
-    possible errors:
-        * Err_c::range wrong output channel number
     @param aui16_val value to set for the output channel
   */
   void set(uint16_t aui16_val) { DigitalO_c::set(aui16_val); }
 
   /**
     switch PWM to total OFF or ON (simple switch function)
-    (uses BIOS function)
-
-    possible errors:
-       * Err_c::range wrong output channel number
     @param ab_state
   */
   void set(bool ab_state) { DigitalO_c::set(ab_state); }

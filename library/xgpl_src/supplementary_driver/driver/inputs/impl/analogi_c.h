@@ -1,6 +1,5 @@
 /*
-  analogi_c.h:
-    header file for AnalogI_c, an object for analog input
+  analogi_c.h - header file for AnalogI_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -17,7 +16,6 @@
 #include "inputbase_c.h"
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /**
   Input object for analog sensors;
@@ -35,13 +33,6 @@ class AnalogI_c : public InputBase_c
 public:
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
-    (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
-        * iLibErr_c::Precondition wrong input type
-    @see SensorI_c::createAnalog
-    @see t_analogType
     @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing voltage(default) or current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
@@ -52,13 +43,6 @@ public:
 
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
-    (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
-        * iLibErr_c::Precondition wrong input type
-    @see SensorI_c::createAnalog
-    @see t_analogType
     @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing voltage(default) or current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
@@ -72,25 +56,18 @@ public:
 
   /**
     get the actual sensor value with the configured linear conversion (use the configured ADC method)
-    (uses BIOS function)
-
     @return sensor value: A) Volt [mV], or B) Ampere [mA]
   */
   uint16_t val() const;
 
   /**
     check if value is greater than 0
-    (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
     @return true if sensor value is different from 0, otherwise 0
   */
   bool active() const;
 
   /**
     configure fast ADC gathering
-    (uses BIOS function)
     @param ab_useFast default-argument for setting fast ADC (true as default)
   */
   void setFastAdc(bool ab_useFast=true);
@@ -132,4 +109,5 @@ private: // Private attributes
 };
 
 } // __IsoAgLib
+
 #endif

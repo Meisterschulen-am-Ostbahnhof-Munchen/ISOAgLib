@@ -1,6 +1,5 @@
 /*
-  outputs_c.h:
-    header for the outputs management object
+  outputs_c.h - header for the outputs management object
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -41,24 +40,15 @@ public:
     As the constructor is often not called for static instances, the init function
     is used by the Singleton base class, to set the unique instance in a well defined
     initial state
-
-    possible errors:
-        * Err_c::range given limits are not possible
     @param ab_digitalFirst smallest allowed digital output channel number (DIGITAL_OUTPUT_MIN)
     @param ab_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
     @see masterHeader
   */
   void init(uint8_t ab_digitalFirst = DIGITAL_OUTPUT_MIN, uint8_t ab_digitalLast = DIGITAL_OUTPUT_MAX);
-
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    */
   void close() {}
   
   /**
     set the limits for digital output channels (first setting can be done by constructor parameters)
-
-    possible errors:
-        * Err_c::range given limits are not possible
     @param ab_digitalFirst number of the smallest allowed digital output channel
     @param ab_digitalLast number of the greatest allowed digital output channel
   */
@@ -105,4 +95,5 @@ private: // Private attributes
 Outputs_c &getOutputsInstance();
 
 }
+
 #endif

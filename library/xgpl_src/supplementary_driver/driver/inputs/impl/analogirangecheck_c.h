@@ -1,6 +1,5 @@
 /*
-  analogirangecheck_c.h:
-    header file for AnalogIRangeCheck_c, an object for analog input
+  analogirangecheck_c.h - header file for AnalogIRangeCheck_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -17,7 +16,6 @@
 #include "analogi_c.h"
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /**
   Extend AnalogI_c by range check for input signal
@@ -34,13 +32,6 @@ class AnalogIRangeCheck_c : public AnalogI_c
 public:
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
-    (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
-        * iLibErr_c::Precondition wrong input type
-    @see Inputs_c::createAnalog
-    @see t_analogType
     @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing voltage(default) or current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
@@ -53,13 +44,6 @@ public:
 
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
-    (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
-        * iLibErr_c::Precondition wrong input type
-    @see Inputs_c::createAnalog
-    @see t_analogType
     @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing voltage(default) or current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
@@ -131,12 +115,10 @@ protected:
   AnalogIRangeCheck_c& operator=(const AnalogIRangeCheck_c&);
 
 private:
-  /** min range limit */
   uint16_t ui16_minValid;
-
-  /** max range limit */
   uint16_t ui16_maxValid;
 };
 
 } // __IsoAgLib
+
 #endif

@@ -1,6 +1,5 @@
 /*
-  counteri_c.h:
-    header file for CounterI_c, an object for digital input
+  counteri_c.h - header file for CounterI_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -21,7 +20,7 @@ namespace IsoAgLib {
 class iCounterI_c;
 };
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 /**
   Input object for counting of digital impulses
@@ -36,11 +35,6 @@ class CounterI_c : public InputBase_c
 public:
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
-    (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
-    @see Inputs_c::createCounter
     @param ab_channel default-argument for setting hardware channel for this input
     @param aui16_timebase default-argument for setting the timebase which should be
             greater than max time distance between signals and should be small
@@ -53,11 +47,6 @@ public:
 
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
-    (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
-    @see Inputs_c::createCounter
     @param ab_channel default-argument for setting hardware channel for this input
     @param aui16_timebase default-argument for setting the timebase which should be
             greater than max time distance between signals and should be small
@@ -72,14 +61,9 @@ public:
   virtual ~CounterI_c();
 
   /**
-    check for the input value (uses BIOS function)
+    check for the input value
   */
-  uint32_t valLong();
-
-  /**
-    check for the input value (uses BIOS function)
-  */
-  uint16_t val() const;
+  uint32_t val() const;
 
   /**
     check for the input value (uses BIOS function)
@@ -89,9 +73,6 @@ public:
 
   /**
     reset the given counter
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
   */
   void reset();
 
@@ -139,4 +120,5 @@ private:
 };
 
 } // __IsoAgLib
+
 #endif

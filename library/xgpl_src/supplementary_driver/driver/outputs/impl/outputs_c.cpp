@@ -11,7 +11,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "outputs_c.h"
 
 #include <IsoAgLib/util/iliberr_c.h>
@@ -20,7 +19,6 @@
 #include <supplementary_driver/hal/hal_outputs.h>
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 /** C-style function, to get access to the unique Outputs_c singleton instance */

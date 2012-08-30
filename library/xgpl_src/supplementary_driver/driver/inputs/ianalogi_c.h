@@ -17,23 +17,17 @@
 #include "impl/analogi_c.h"
 
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-/**Interface class for Analog input objects
-  *@author Dipl.-Inform. Achim Spangler
-  */
+/**
+  Interface class for Analog input objects
+  @author Dipl.-Inform. Achim Spangler
+*/
 class iAnalogI_c : private __IsoAgLib::AnalogI_c
 {
 public:
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
-
-    possible errors:
-        * Err_c::range wrong input number
-        * Err_c::precondition wrong input type
-    @see iInputs_c::createAnalog
-    @see t_analogType
     @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing voltage(default) or current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
@@ -44,12 +38,6 @@ public:
 
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
-
-    possible errors:
-        * Err_c::range wrong input number
-        * Err_c::precondition wrong input type
-    @see iInputs_c::createAnalog
-    @see t_analogType
     @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing voltage(default) or current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
@@ -63,17 +51,12 @@ public:
 
   /**
     get the actual input value with the configured linear conversion (use the configured ADC method)
-    (uses BIOS function)
-
     @return input value: A) Volt [mV], or B) Ampere [mA]
   */
   uint16_t val() const {return AnalogI_c::val();}
 
   /**
     check if value is greater than 0
-
-    possible errors:
-        * Err_c::range wrong input number
     @return true if input value is different from 0, otherwise 0
   */
   bool active() const {return AnalogI_c::active();}
@@ -112,4 +95,5 @@ private:
 };
 
 } // IsoAgLib
+
 #endif

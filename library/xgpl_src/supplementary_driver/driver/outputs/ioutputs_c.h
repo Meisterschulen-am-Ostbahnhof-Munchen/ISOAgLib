@@ -1,6 +1,5 @@
 /*
-  ioutputs.h:
-    header for the outputs management object
+  ioutputs.h - header for the outputs management object
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -18,8 +17,8 @@
 #include "idigitalo_c.h"
 
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
+
 /**
   Hardware dependent object for hardware independent controling of outputs.
   @see iDigital_O
@@ -30,9 +29,6 @@ public:
   /**
     initialisation for the outputs management which sets the allowed number
     ranges for digital ouptut channels.
-
-    possible errors:
-        * Err_c::range given limits are not possible
     @param ab_digitalFirst smallest allowed digital output channel number (DIGITAL_OUTPUT_MIN)
     @param ab_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
     @see masterHeader
@@ -55,9 +51,6 @@ public:
 
   /**
     set the limits for digital output channels (first setting can be done by constructor parameters)
-
-    possible errors:
-        * Err_c::range given limits are not possible
     @param ab_digitalFirst number of the smallest allowed digital input channel
     @param ab_digitalLast number of the greatest allowed digital input channel
   */
@@ -80,4 +73,5 @@ private:
 inline iOutputs_c& getIoutputsInstance( void ) { return static_cast<iOutputs_c&>(__IsoAgLib::getOutputsInstance());};
 
 }
+
 #endif

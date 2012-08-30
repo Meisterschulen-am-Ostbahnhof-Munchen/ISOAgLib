@@ -1,7 +1,5 @@
 /*
-  ianalogirangecheck_c.h:
-    interface header file for iAnalogIRangeCheck_c, an object for
-    analog range checked input
+  ianalogirangecheck_c.h - interface header file for iAnalogIRangeCheck_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -19,8 +17,8 @@
 #include "impl/analogirangecheck_c.h"
 
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
+
 /**Interface class for Analog input objects
   *@author Dipl.-Inform. Achim Spangler
   */
@@ -30,11 +28,6 @@ private:
 public:
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
-
-    possible errors:
-        * Err_c::range wrong input number
-        * Err_c::precondition wrong input type
-    @see iInputs_c::createAnalog
     @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing voltage(default) or current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
@@ -48,11 +41,6 @@ public:
 
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
-
-    possible errors:
-        * Err_c::range wrong input number
-        * Err_c::precondition wrong input type
-    @see iInputs_c::createAnalog
     @param ab_channel default-argument for the hardware channel of the input
     @param ren_analogType default-argument for choosing voltage(default) or current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
@@ -64,13 +52,11 @@ public:
     uint16_t aui16_minValid = 0, uint16_t aui16_maxValid = 0xFFFF )
     { AnalogIRangeCheck_c::init(ab_channel, ren_analogType, ab_useMean, ab_fastAdc, aui16_minValid, aui16_maxValid );}
 
-  /** destructor which can close the hardware input channel */
+  /** destructor */
   virtual ~iAnalogIRangeCheck_c() {}
 
   /**
     get the actual input value with the configured linear conversion (use the configured ADC method)
-    (uses BIOS function)
-
     @return input value: A) Volt [mV], or B) Ampere [mA]
   */
   uint16_t val() const {return AnalogIRangeCheck_c::val();}
@@ -85,9 +71,6 @@ public:
 
   /**
     check if value is greater than 0
-
-    possible errors:
-        * Err_c::range wrong input number
     @return true if input value is different from 0, otherwise 0
   */
   bool active() const {return AnalogIRangeCheck_c::active();}
@@ -157,4 +140,5 @@ private:
 };
 
 } // IsoAgLib
+
 #endif

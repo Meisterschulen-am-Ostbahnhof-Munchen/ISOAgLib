@@ -1,5 +1,5 @@
 /*
-  iinputs_c.h: header for the inputs management object
+  iinputs_c.h - header for the inputs management object
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -19,7 +19,6 @@
 #include "icounteri_c.h"
 
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
 /**
@@ -34,10 +33,7 @@ class iInputs_c : private __IsoAgLib::Inputs_c
 public:
   /**
     initialisation for the sensor input management which sets the allowed number
-    ranges for analog,digital,counter input channels.
-
-    possible errors:
-        * Err_c::range given limits are not possible
+    ranges for analog, digital, counter input channels.
     @param ab_digitalFirst smallest allowed digital input channel number (DIGITAL_INPUT_MIN)
     @param ab_digitalLast greatest allowed digital input channel number (DIGITAL_INPUT_MAX)
     @param ab_analogFirst smallest allowed analog input channel number (ANALOG_INPUT_MIN)
@@ -59,9 +55,6 @@ public:
 
   /**
     set the limits for digital input channels (first setting can be done by constructor parameters)
-
-    possible errors:
-        * Err_c::range given limits are not possible
     @param ab_digitalFirst number of the smallest allowed digital input channel
     @param ab_digitalLast number of the greatest allowed digital input channel
   */
@@ -70,9 +63,6 @@ public:
 
   /**
     set the limits for analog input channels (first setting can be done by constructor parameters)
-
-    possible errors:
-        * Err_c::range given limits are not possible
     @param ab_analogFirst number of the smallest allowed analog input channel
     @param ab_analogLast number of the greatest allowed analog input channel
   */
@@ -81,9 +71,6 @@ public:
 
   /**
     set the limits for counter input channels (first setting can be done by constructor parameters)
-
-    possible errors:
-        * Err_c::range given limits are not possible
     @param ab_counterFirst number of the smallest allowed counter input channel
     @param ab_counterLast number of the greatest allowed counter input channel
   */
@@ -92,10 +79,6 @@ public:
 
   /**
     check if digital input object to given ab_channel exist
-    @see iSensorI_c::createDigital
-    @see iSensorI_c::deleteDigital
-    @see iSensorI_c::existAnalog
-    @see iSensorI_c::existCounter
     @param ab_channel number of the tested input channel
     @return true -> searched input object exist
   */
@@ -103,10 +86,6 @@ public:
 
   /**
     check if analog input object to given ab_channel exist
-    @see iSensorI_c::createAnalog
-    @see iSensorI_c::deleteAnalog
-    @see iSensorI_c::existDigital
-    @see iSensorI_c::existCounter
     @param ab_channel number of the tested input channel
     @return true -> searched input object exist
   */
@@ -114,10 +93,6 @@ public:
 
   /**
     check if counter input object to given ab_channel exist
-    @see iSensorI_c::createCounter
-    @see iSensorI_c::deleteCounter
-    @see iSensorI_c::existAnalog
-    @see iSensorI_c::existDigital
     @param ab_channel number of the tested input channel
     @return true -> searched input object exist
   */
@@ -128,17 +103,8 @@ public:
     IMPORTANT: an analog input channel object with the wanted number  must exist
                -> creating with createAnalog and checking with existAnalog
                (throw exception if exceptions are activated on compile time)
-
-    possible errors:
-        * Err_c::elNonexistant wanted analog input with given channel no does not exist
-    @see iSensorI_c::createAnalog
-    @see iSensorI_c::existAnalog
-    @see iAnalogI_c::Analog_I
-    @see iSensorI_c::counter
-    @see iSensorI_c::digital
     @param ab_channel channel of the analog sensor input
     @return reference to the wanted analog sensor input channel
-    @exception containerElementNonexistant
   */
   iAnalogI_c& analog(uint8_t ab_channel) {return (iAnalogI_c&)(Inputs_c::analog(ab_channel)); }
 
@@ -147,14 +113,6 @@ public:
     IMPORTANT: an digital input channel object with the wanted number must exist
                -> creating with createDigital and checking with existDigital
                (throw exception if exceptions are activated on compile time)
-
-    possible errors:
-        * Err_c::elNonexistant wanted digital input with given channel no does not exist
-    @see iSensorI_c::createDigital
-    @see iSensorI_c::existDigital
-    @see iDigitalI_c::iDigital_I
-    @see iSensorI_c::analog
-    @see iSensorI_c::counter
     @param ab_channel channel of the digital sensor input
     @return reference to the wanted digital sensor input channel
     @exception containerElementNonexistant
@@ -166,14 +124,6 @@ public:
     IMPORTANT: an counter input channel object with the wanted number  must exist
                -> creating with createCounter and checking with existCounter
                (throw exception if exceptions are activated on compile time)
-
-    possible errors:
-        * Err_c::elNonexistant wanted counter input with given channel no does not exist
-    @see iSensorI_c::createCounter
-    @see iSensorI_c::existCounter
-    @see iCounterI_c::Counter_I
-    @see iSensorI_c::analog
-    @see iSensorI_c::digital
     @param ab_channel channel of the counter sensor input
     @return reference to the wanted counter sensor input channel
     @exception containerElementNonexistant

@@ -1,6 +1,5 @@
 /*
-  analogirangecheck_c.cpp:
-    implementation file for AnalogIRangeCheck_c, an object for analog input
+  analogirangecheck_c.cpp - implementation file for AnalogIRangeCheck_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -15,12 +14,12 @@
 #include "analogirangecheck_c.h"
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 AnalogIRangeCheck_c::AnalogIRangeCheck_c(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc,
   uint16_t aui16_minValid, uint16_t aui16_maxValid )
-  : AnalogI_c( ab_channel, ren_analogType, ab_useMean, ab_fastAdc ) {
+  : AnalogI_c( ab_channel, ren_analogType, ab_useMean, ab_fastAdc )
+{
   setRange( aui16_minValid, aui16_maxValid );
 }
 
@@ -42,7 +41,6 @@ AnalogIRangeCheck_c::~AnalogIRangeCheck_c()
 void
 AnalogIRangeCheck_c::setRange( uint16_t aui16_minValid, uint16_t aui16_maxValid )
 {
-  // store given values
   ui16_minValid = aui16_minValid;
   ui16_maxValid = aui16_maxValid;
 }
@@ -106,7 +104,8 @@ AnalogIRangeCheck_c::checkTooHigh( void ) const
 }
 
 
-bool AnalogIRangeCheck_c::checkTooLow( void ) const
+bool
+AnalogIRangeCheck_c::checkTooLow( void ) const
 {
   const uint16_t ui16_tempVal = val();
   if ( ui16_tempVal < ui16_minValid ) {
@@ -117,4 +116,4 @@ bool AnalogIRangeCheck_c::checkTooLow( void ) const
   }
 }
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib

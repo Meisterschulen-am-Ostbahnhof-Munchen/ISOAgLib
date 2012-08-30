@@ -1,5 +1,5 @@
 /*
-  inputs_c.cpp: implmentation for the inputs management
+  inputs_c.cpp - implmentation for the inputs management
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -17,7 +17,6 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 /** C-style function, to get access to the unique Inputs_c singleton instance */
@@ -88,4 +87,4 @@ Inputs_c::setCounterLimits(uint8_t ab_counterFirst, uint8_t ab_counterLast){
 }
 
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib

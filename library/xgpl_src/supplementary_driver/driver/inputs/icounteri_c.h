@@ -1,6 +1,5 @@
 /*
-  icounter_i.h:
-    header file for iCounterI_c, an object for counter input
+  icounter_i.h - header file for iCounterI_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -17,7 +16,6 @@
 #include "impl/counteri_c.h"
 
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
 /**
@@ -31,11 +29,6 @@ class iCounterI_c : private __IsoAgLib::CounterI_c {
 public:
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
-    (uses BIOS function)
-
-    possible errors:
-        * Err_c::range wrong input number
-    @see Inputs_c::createCounter
     @param ab_channel default-argument for setting hardware channel for this input
     @param aui16_timebase default-argument for setting the timebase which should be
             greater than max time distance between signals and should be small
@@ -48,11 +41,6 @@ public:
 
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
-    (uses BIOS function)
-
-    possible errors:
-        * Err_c::range wrong input number
-    @see Inputs_c::createCounter
     @param ab_channel default-argument for setting hardware channel for this input
     @param aui16_timebase default-argument for setting the timebase which should be
             greater than max time distance between signals and should be small
@@ -84,9 +72,6 @@ public:
 
   /**
     reset the given counter
-
-    possible errors:
-        * Err_c::range wrong input number
   */
   void reset(){CounterI_c::reset();}
 
@@ -105,8 +90,8 @@ public:
   uint32_t frequency(){return CounterI_c::frequency();}
 
   /**
-   get time since last signal
-   @return time since last signal [msec.]
+    get time since last signal
+    @return time since last signal [msec.]
   */
   uint32_t lastSignalAge(){return CounterI_c::lastSignalAge();}
 
@@ -118,4 +103,5 @@ public:
 };
 
 } // IsoAgLib
+
 #endif

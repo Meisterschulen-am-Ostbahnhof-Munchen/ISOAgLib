@@ -1,6 +1,5 @@
 /*
-  outputbase_c.h:
-    header file for OutputBase_c, a base class for DigitalO_c
+  outputbase_c.h - header file for OutputBase_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 

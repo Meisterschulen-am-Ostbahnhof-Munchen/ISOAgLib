@@ -19,12 +19,13 @@
 #include <IsoAgLib/util/iliberr_c.h>
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 AnalogI_c::AnalogI_c(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc )
-  : InputBase_c(ab_channel, IsoAgLib::iInput_c::analog) {
-  if ( ab_channel != 0xFF ) init( ab_channel, ren_analogType, ab_useMean, ab_fastAdc );
+  : InputBase_c(ab_channel, IsoAgLib::iInput_c::analog)
+{
+  if ( ab_channel != 0xFF )
+    init( ab_channel, ren_analogType, ab_useMean, ab_fastAdc );
 }
 
 
@@ -32,12 +33,11 @@ void
 AnalogI_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc)
 {
   InputBase_c::init(ab_channel, IsoAgLib::iInput_c::analog);
-  // store given values
+
   en_analogType = ren_analogType;
   b_useMean = ab_useMean;
   b_fastAdc = ab_fastAdc;
 
-  // now configure the input with BIOS call
   int16_t iResult = ( ren_analogType == IsoAgLib::iInput_c::voltage )
                  ?HAL::init_analoginVolt(channelNr()):HAL::init_analoginCurrent(channelNr());
   switch (iResult)
@@ -58,13 +58,12 @@ AnalogI_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogT
 
 AnalogI_c::~AnalogI_c()
 {
-  // unregister element from Inputs_c
   getInputsInstance().unregisterClient( this );
 }
 
 
 uint16_t
-AnalogI_c::val()const
+AnalogI_c::val() const
 {
   int16_t i16_sensor;
   if (b_useMean)
@@ -86,7 +85,7 @@ void
 AnalogI_c::setFastAdc(bool ab_useFast)
 {
   b_fastAdc = ab_useFast;
-  // configure the BIOS
+
   HAL::setFastAnalogin(ab_useFast);
 }
 
@@ -102,4 +101,4 @@ AnalogI_c::active() const
   return false;
 }
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib

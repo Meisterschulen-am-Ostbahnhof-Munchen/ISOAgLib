@@ -1,6 +1,5 @@
 /*
-  counteri_c.cpp:
-    implementation file for CounterI_c, an object for counter input
+  counteri_c.cpp - implementation file for CounterI_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -18,42 +17,18 @@
 #include <IsoAgLib/util/iliberr_c.h>
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-/**
-  internal called constructor for a new digital input channel which performs configuration of hardware
-  (uses BIOS function)
-
-  possible errors:
-      * iLibErr_c::Range wrong input number
-  @see Inputs_c::createCounter
-  @param ab_channel default-argument for setting hardware channel for this input
-  @param aui16_timebase default-argument for setting the timebase which should be
-          greater than max time distance between signals and should be small
-          enough to avoid overflow of signals in one timebase
-  @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
-*/
 CounterI_c::CounterI_c(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge)
-  : InputBase_c(ab_channel, IsoAgLib::iInput_c::counter){
-  if ( ab_channel != 0xFF ) init(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge);
+  : InputBase_c(ab_channel, IsoAgLib::iInput_c::counter)
+{
+  if ( ab_channel != 0xFF )
+    init(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge);
 }
-/**
-  internal called constructor for a new digital input channel which performs configuration of hardware
-  (uses BIOS function)
 
-  possible errors:
-      * iLibErr_c::Range wrong input number
-  @see Inputs_c::createCounter
-  @param ab_channel default-argument for setting hardware channel for this input
-  @param aui16_timebase default-argument for setting the timebase which should be
-          greater than max time distance between signals and should be small
-          enough to avoid overflow of signals in one timebase
-  @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
-*/
-void CounterI_c::init(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge )
+
+void
+CounterI_c::init(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh, bool ab_risingEdge )
 {
   InputBase_c::init(ab_channel, IsoAgLib::iInput_c::counter);
   // now init the digital input
@@ -62,60 +37,54 @@ void CounterI_c::init(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activ
 
   getInputsInstance().registerClient( this );
 }
-/**  destructor of the input object which can close explicit the hardware input */
-CounterI_c::~CounterI_c(){
-  // unregister element from Inputs_c
+
+
+CounterI_c::~CounterI_c()
+{
   getInputsInstance().unregisterClient( this );
 }
-/**
-  check for the input value (uses BIOS function)
-  @return true for counter > 0
-*/
-bool CounterI_c::active() const {
+
+
+bool
+CounterI_c::active() const
+{
   return (val() > 0);
 }
 
-uint16_t CounterI_c::val() const {
-  return uint16_t(HAL::getCounter(channelNr()));
-}
 
-uint32_t CounterI_c::valLong(){
+uint32_t
+CounterI_c::val() const
+{
   return HAL::getCounter(channelNr());
 }
 
-/** reset the given counter */
-void CounterI_c::reset()
+
+void
+CounterI_c::reset()
 {
   HAL::resetCounter(channelNr());
 }
 
-/**
-  get period of counter channel
-  @return time between last two signals or 0xFFFF if time is longer than initially
-           given timebase
-*/
-uint16_t CounterI_c::period()
+
+uint16_t
+CounterI_c::period()
 {
   return HAL::getCounterPeriod(channelNr());
 }
 
-/**
-  get frequency of counter channel
-  @return frequency calculated from time between last two signals
-          or 0 if time is longer than initially given timebase
-*/
-uint32_t CounterI_c::frequency()
+
+uint32_t
+CounterI_c::frequency()
 {
   return HAL::getCounterFrequency(channelNr());
 }
 
-/**
- get time since last signal
- @return time since last signal [msec.]
-*/
-uint32_t CounterI_c::lastSignalAge()
+
+uint32_t
+CounterI_c::lastSignalAge()
 {
   return HAL::getCounterLastSignalAge(channelNr());
 }
 
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib

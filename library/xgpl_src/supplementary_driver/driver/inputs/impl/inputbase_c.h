@@ -1,7 +1,5 @@
 /*
-  inputbase_c.h:
-    header file for InputBase_c, a base class for AnalogI_c,
-    DigitalI_c and CounterI_c
+  inputbase_c.h- header file for InputBase_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -19,7 +17,6 @@
 #include <supplementary_driver/driver/inputs/iinput_c.h>
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 /**
@@ -93,7 +90,7 @@ protected:
   uint8_t ui8_channelNr;
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif
 

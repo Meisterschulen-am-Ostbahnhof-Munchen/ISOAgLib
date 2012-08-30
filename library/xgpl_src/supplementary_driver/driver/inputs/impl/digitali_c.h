@@ -17,7 +17,6 @@
 #include "inputbase_c.h"
 
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /**
   Input object for simple digital input;
@@ -30,12 +29,6 @@ class DigitalI_c : public InputBase_c {
 public:
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
-    (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
-    @see SensorI_c::createDigital
-    @see t_onoff
     @param ab_channel default-argument for setting hardware channel for this input
     @param ren_onoff default-argument for setting whether 1 should be returned on High(Default: OnHigh) or Low signal
     @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
@@ -46,12 +39,6 @@ public:
 
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
-    (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
-    @see SensorI_c::createDigital
-    @see t_onoff
     @param ab_channel default-argument for setting hardware channel for this input
     @param ren_onoff default-argument for setting whether 1 should be returned on High(Default: OnHigh) or Low signal
     @param ab_static default-argument for setting if hardware input should be gathered static (default false with no static)
@@ -70,19 +57,13 @@ public:
   virtual ~DigitalI_c();
 
   /**
-    check for the input value (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
+    check for the input value
     @return 1 for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise 0
   */
   uint16_t val() const;
 
   /**
-    check for the input value (uses BIOS function)
-
-    possible errors:
-        * iLibErr_c::Range wrong input number
+    check for the input value
     @return true for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise false
   */
   bool active() const;
@@ -128,4 +109,5 @@ private:
 };
 
 } // __IsoAgLib
+
 #endif
