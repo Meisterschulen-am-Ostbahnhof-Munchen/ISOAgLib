@@ -1,5 +1,5 @@
 /*
-  inputbase_c.h- header file for InputBase_c
+  inputbase_c.h - header file for InputBase_c
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -31,11 +31,9 @@ namespace __IsoAgLib {
 class InputBase_c {
 public:
   /**
-    Basic constructor for an input channel object (only internal accessed)
     @param aui8_channelNr hardware channel of this input object
     @param ren_inputType input type, which is needed because of the relation
            of config number and gathering number which vary dependent on input type
-    @see input_type
   */
   InputBase_c(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType = IsoAgLib::iInput_c::undef_input);
 
@@ -44,36 +42,10 @@ public:
     @param aui8_channelNr hardware channel of this input object
     @param ren_inputType input type, which is needed because of the relation
            of config number and gathering number which vary dependent on input type
-    @see input_type
   */
   void init(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType = IsoAgLib::iInput_c::undef_input);
 
-  /** basic destructor of sensor input object with no function at the moment (only internal accessed) */
-  virtual ~InputBase_c();
-
-  /**
-    deliver the value from the sensor (for digital input: active->1; else->0)
-    @return value of the input channel (can be raw sensor value or calculated as configured on creation)
-    @see AnalogI_c::val
-    @see DigitalI_c::val
-  */
-  virtual uint16_t val() const  = 0;
-
-  /**
-    deliver the value from the sensor (for digital input: active->1; else->0)
-    @return value of the input channel (can be raw sensor value or calculated as configured on creation)
-    @see AnalogI_c::val
-    @see DigitalI_c::val
-  */
-  virtual uint32_t valLong();
-
-  /**
-    check if the input channel is active (for analog input true if |value| > 0)
-    @return true if the active assertion on the input channel is true (dependent on configurationHigh or Low)
-    @see AnalogI_c::active
-    @see DigitalI_c::active
-  */
-  virtual bool active() const  = 0;
+  ~InputBase_c() {}
 
   /**
     deliver the channel number of the output object

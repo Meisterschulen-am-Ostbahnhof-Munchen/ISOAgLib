@@ -47,10 +47,8 @@ public:
            uint8_t ab_counterFirst = COUNTER_INPUT_MIN, uint8_t ab_counterLast = COUNTER_INPUT_MAX)
   { Inputs_c::init(ab_digitalFirst, ab_digitalLast, ab_analogFirst, ab_analogLast,ab_counterFirst, ab_counterLast); }
 
-  /** close sub-system */
   void close() {}
 
-  /** destructor for the sensor input manager object */
   ~iInputs_c() {}
 
   /**

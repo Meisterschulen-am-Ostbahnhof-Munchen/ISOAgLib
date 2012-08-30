@@ -53,8 +53,7 @@ public:
   /** change detection mode of activity to OnLow */
   void setOnLow( void );
 
-  /**  destructor of the input object which can close explicit the hardware input */
-  virtual ~DigitalI_c();
+  ~DigitalI_c();
 
   /**
     check for the input value

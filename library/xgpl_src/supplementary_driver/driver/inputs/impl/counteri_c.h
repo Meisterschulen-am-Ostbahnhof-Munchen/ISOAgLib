@@ -57,8 +57,7 @@ public:
   void init(uint8_t ab_channel, uint16_t aui16_timebase = 0, bool ab_activHigh = true,
               bool ab_risingEdge = true);
 
-  /**  destructor of the input object which can close explicit the hardware input */
-  virtual ~CounterI_c();
+  ~CounterI_c();
 
   /**
     check for the input value

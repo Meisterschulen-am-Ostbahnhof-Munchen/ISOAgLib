@@ -47,8 +47,7 @@ public:
               bool ab_static = false, iInputEventHandler* apc_handler = NULL )
     { DigitalI_c::init(ab_channel, ren_onoff, ab_static, apc_handler);}
 
-  /**  destructor */
-  virtual ~iDigitalI_c(){}
+  ~iDigitalI_c(){}
 
   /** change detection mode of activity to OnHigh */
   void setOnHigh( void ) { DigitalI_c::setOnHigh(); }

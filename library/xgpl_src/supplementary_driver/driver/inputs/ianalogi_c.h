@@ -46,8 +46,7 @@ public:
   void init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false, bool ab_fastAdc = false )
     { AnalogI_c::init(ab_channel, ren_analogType, ab_useMean, ab_fastAdc );}
 
-  /** destructor which can close the hardware input channel */
-  virtual ~iAnalogI_c() {}
+  ~iAnalogI_c() {}
 
   /**
     get the actual input value with the configured linear conversion (use the configured ADC method)

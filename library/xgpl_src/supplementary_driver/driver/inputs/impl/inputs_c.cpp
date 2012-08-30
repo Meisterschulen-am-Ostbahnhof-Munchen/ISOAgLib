@@ -31,7 +31,7 @@ Inputs_c::init(
   uint8_t ab_digitalFirst, uint8_t ab_digitalLast,
   uint8_t ab_analogFirst,  uint8_t ab_analogLast,
   uint8_t ab_counterFirst, uint8_t ab_counterLast)
-{ // store the channel limits for dig and analog
+{
   setDigitalLimits(ab_digitalFirst, ab_digitalLast);
   setAnalogLimits(ab_analogFirst, ab_analogLast);
   setCounterLimits(ab_counterFirst, ab_counterLast);

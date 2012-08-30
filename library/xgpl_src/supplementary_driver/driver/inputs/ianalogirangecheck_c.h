@@ -52,8 +52,7 @@ public:
     uint16_t aui16_minValid = 0, uint16_t aui16_maxValid = 0xFFFF )
     { AnalogIRangeCheck_c::init(ab_channel, ren_analogType, ab_useMean, ab_fastAdc, aui16_minValid, aui16_maxValid );}
 
-  /** destructor */
-  virtual ~iAnalogIRangeCheck_c() {}
+  ~iAnalogIRangeCheck_c() {}
 
   /**
     get the actual input value with the configured linear conversion (use the configured ADC method)
@@ -88,10 +87,10 @@ public:
   uint8_t channelNr() const { return AnalogIRangeCheck_c::channelNr();}
 
   /** check if input value is valid */
-  virtual bool good( void ) const { return AnalogIRangeCheck_c::good(); }
+  bool good( void ) const { return AnalogIRangeCheck_c::good(); }
 
   /** check if input value is in error state */
-  virtual bool error( void ) const { return AnalogIRangeCheck_c::error(); }
+  bool error( void ) const { return AnalogIRangeCheck_c::error(); }
 
   /** check if input value is out of range */
   bool checkRangeError( void ) const { return AnalogIRangeCheck_c::checkRangeError(); }

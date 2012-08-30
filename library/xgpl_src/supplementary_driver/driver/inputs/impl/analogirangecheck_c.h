@@ -54,6 +54,8 @@ public:
   void init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false,
              bool ab_fastAdc = false, uint16_t aui16_minValid = 0, uint16_t aui16_maxValid = 0xFFFF);
 
+  ~AnalogIRangeCheck_c();
+
   /** get validate val
     @param rb_tooLow  reference to bool value which is set dependent on ( value < minLimit )
     @param rb_tooHigh reference to bool value which is set dependent on ( value > maxLimit )
@@ -62,10 +64,10 @@ public:
   int16_t validatedVal( bool &rb_tooLow, bool &rb_tooHigh ) const;
 
   /** check if input value is valid */
-  virtual bool good( void ) const;
+  bool good( void ) const;
 
   /** check if input value is in error state */
-  virtual bool error( void ) const;
+  bool error( void ) const;
 
   /** check if input value is out of range */
   bool checkRangeError( void ) const;
@@ -90,9 +92,6 @@ public:
 
   /** deliver max Limit */
   uint16_t getMaxValid( void ) const { return ui16_maxValid; }
-
-  /** destructor which can close the hardware input channel */
-  virtual ~AnalogIRangeCheck_c();
 
 protected:
   /**

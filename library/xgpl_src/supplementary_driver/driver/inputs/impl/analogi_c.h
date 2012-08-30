@@ -52,7 +52,7 @@ public:
              bool ab_fastAdc = false);
 
   /** destructor which can close the hardware input channel */
-  virtual ~AnalogI_c();
+  ~AnalogI_c();
 
   /**
     get the actual sensor value with the configured linear conversion (use the configured ADC method)

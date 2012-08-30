@@ -31,16 +31,4 @@ InputBase_c::init( uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_i
 }
 
 
-InputBase_c::~InputBase_c()
-{
-}
-
-
-uint32_t
-InputBase_c::valLong()
-{ // as far as not overloaded otherwise answer simply val()
-  return val();
-}
-
-
 } // __IsoAgLib

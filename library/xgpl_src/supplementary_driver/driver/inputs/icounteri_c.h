@@ -51,18 +51,12 @@ public:
   void init(uint8_t ab_channel, uint16_t aui16_timebase = 0, bool ab_activHigh = true, bool ab_risingEdge = true)
     { CounterI_c::init(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge); }
 
-  /**  destructor of the input object which can close explicit the hardware input */
-  virtual ~iCounterI_c(){}
+  ~iCounterI_c(){}
 
   /**
     check for the input value (uses BIOS function)
   */
-  uint16_t val() const {return CounterI_c::val();}
-
-  /**
-    check for the input value (uses BIOS function)
-  */
-  uint32_t valLong(){return CounterI_c::valLong();}
+  uint32_t val() const {return CounterI_c::val();}
 
   /**
     check for the input value (uses BIOS function)
@@ -73,27 +67,27 @@ public:
   /**
     reset the given counter
   */
-  void reset(){CounterI_c::reset();}
+  void reset() {CounterI_c::reset();}
 
   /**
     get period of counter channel
     @return time between last two signals or 0xFFFF if time is longer than initially
              given timebase
   */
-  uint16_t period(){return CounterI_c::period();}
+  uint16_t period() {return CounterI_c::period();}
 
   /**
     get frequency of counter channel
     @return frequency calculated from time between last two signals
             or 0 if time is longer than initially given timebase
   */
-  uint32_t frequency(){return CounterI_c::frequency();}
+  uint32_t frequency() {return CounterI_c::frequency();}
 
   /**
     get time since last signal
     @return time since last signal [msec.]
   */
-  uint32_t lastSignalAge(){return CounterI_c::lastSignalAge();}
+  uint32_t lastSignalAge() {return CounterI_c::lastSignalAge();}
 
   /**
     deliver the channel number of the output object
