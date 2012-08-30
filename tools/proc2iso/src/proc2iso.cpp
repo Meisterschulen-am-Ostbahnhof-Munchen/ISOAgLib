@@ -385,7 +385,7 @@ void init (const char* xmlFile)
 
   fprintf (partFileD, "#include \"%s\"\n\n", definition_file.c_str());
   fprintf (partFileD, "namespace %s {\n\n", xmlFile);
-  fprintf (partFileD, "void initProcData( IsoAgLib::iIdentItem_c& myident ) {\n\n");
+  fprintf (partFileD, "void initProcData( IsoAgLib::iIdentItem_c& myident, IsoAgLib::iProcDataHandler_c *handler = NULL ) {\n\n");
   
   for (int j=0; j<maxAttributeNames; j++) vecstr_attrString[j].clear();
 };
@@ -1229,7 +1229,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         fprintf(partFileD, "  c_%s.init( myident, ", vecstr_constructor[1].c_str() );
         fprintf(partFileD, "0x%x, %i, ", stringtonumber(vecstr_constructor[2].c_str(), 0, -1), stringtonumber(str_deviceelement_elementID.c_str(), 0, -1));
         fprintf(partFileD, "%s, %d", (issetpoint ? "true" : "false"), triggermethodtoi(vecstr_dataFromDPD[1].c_str()));
-        fprintf(partFileD, ");\n");
+        fprintf(partFileD, ", handler );\n");
 
         buf_length += buf_length_dpd;
 
