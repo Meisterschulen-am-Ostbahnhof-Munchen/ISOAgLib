@@ -10,11 +10,12 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include <logenvirons.h>
 #include <transfercollection.h>
 
-TransferCollection_c::PtrConnection_t TransferCollection_c::newConnection(
+
+TransferCollection_c::PtrConnection_t
+TransferCollection_c::newConnection(
     Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress,
@@ -30,7 +31,9 @@ TransferCollection_c::PtrConnection_t TransferCollection_c::newConnection(
   return t_ptrConnection;
 }
 
-TransferCollection_c::PtrConnection_t TransferCollection_c::getConnection(
+
+TransferCollection_c::PtrConnection_t
+TransferCollection_c::getConnection(
     Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress)
@@ -47,7 +50,9 @@ TransferCollection_c::PtrConnection_t TransferCollection_c::getConnection(
     it_transfer->second;
 }
 
-void TransferCollection_c::deleteConnection(
+
+void
+TransferCollection_c::deleteConnection(
     Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress)
@@ -59,7 +64,9 @@ void TransferCollection_c::deleteConnection(
           aui8_transferDestinationAddress) );
 }
 
-bool operator<(
+
+bool
+operator<(
     TransferCollection_c::Key_s const &arcs_left,
     TransferCollection_c::Key_s const &arcs_right)
 {

@@ -10,9 +10,9 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #ifndef ADDRESSTRACKER_H
 #define ADDRESSTRACKER_H
+
 #include <logenvirons.h>
 #include <dataframe.h>
 #include <vector>
@@ -21,9 +21,9 @@
 class AddressTracker_c {
 public:
   AddressTracker_c();
-  void requestForAddressClaimed(PtrDataFrame_t at_ptrFrame);
-  void addressClaimed(PtrDataFrame_t at_ptrFrame);
-  void checkTimeouts(uint64_t aui64_time);
+  std::string requestForAddressClaimed(PtrDataFrame_t at_ptrFrame);
+  std::string addressClaimed(PtrDataFrame_t at_ptrFrame);
+  void checkTimeouts(std::ostream& out, uint64_t aui64_time);
 
 private:
   class IsoName_c {
@@ -59,24 +59,31 @@ private:
   Attributes_t t_attributes;
 };
 
-/** Inline definitions. */
 
-inline AddressTracker_c::AddressTracker_c() :
+inline
+AddressTracker_c::AddressTracker_c() :
   t_attributes(254)
 {
 }
 
-inline AddressTracker_c::IsoName_c::IsoName_c() :
+
+inline
+AddressTracker_c::IsoName_c::IsoName_c() :
   mvec_data() // empty vector means: no ISO name at all
 {
 }
 
-inline bool AddressTracker_c::IsoName_c::isEmpty() const
+
+inline
+bool
+AddressTracker_c::IsoName_c::isEmpty() const
 {
   return 0 == mvec_data.size();
 }
 
-inline AddressTracker_c::AddressAttributes_s::AddressAttributes_s() :
+
+inline
+AddressTracker_c::AddressAttributes_s::AddressAttributes_s() :
   e_addressState(addressState_idle),
   mc_isoName(),
   mc_lastWonIsoName(),
@@ -84,11 +91,15 @@ inline AddressTracker_c::AddressAttributes_s::AddressAttributes_s() :
 {
 }
 
-inline bool operator<(
+
+inline
+bool
+operator<(
     AddressTracker_c::IsoName_c const &arcs_left,
     AddressTracker_c::IsoName_c const &arcs_right)
 {
   return arcs_left.mvec_data < arcs_right.mvec_data;
 }
 
-#endif//ndef ADDRESSTRACKER_H
+
+#endif

@@ -572,10 +572,16 @@ tools/logalizer/src/addresstracker.cpp -text
 tools/logalizer/src/addresstracker.h -text
 tools/logalizer/src/alivecollection.cpp -text
 tools/logalizer/src/alivecollection.h -text
+tools/logalizer/src/checks.inc -text
 tools/logalizer/src/dataframe.h -text
+tools/logalizer/src/functionality_fs.inc -text
+tools/logalizer/src/functionality_tc.inc -text
+tools/logalizer/src/functionality_tecu.inc -text
+tools/logalizer/src/functionality_vt.inc -text
 tools/logalizer/src/inputstream.h -text
 tools/logalizer/src/logalizer.cpp -text
 tools/logalizer/src/logenvirons.h -text
+tools/logalizer/src/parsers.inc -text
 tools/logalizer/src/transfercollection.cpp -text
 tools/logalizer/src/transfercollection.h -text
 tools/proc2iso/COPYING -text

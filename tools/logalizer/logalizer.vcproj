@@ -194,6 +194,30 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\src\addresstracker.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\alivecollection.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\dataframe.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\inputstream.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\logenvirons.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\transfercollection.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"

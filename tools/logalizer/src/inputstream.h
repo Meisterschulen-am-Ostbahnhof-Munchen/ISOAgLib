@@ -10,7 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #ifndef INPUTSTREAM_H
 #define INPUTSTREAM_H
 
@@ -19,6 +18,7 @@
 #include <fstream>
 #include <yasper.h>
 #include <inputstream.h>
+
 
 class InputStream_c {
 // RAII Programming Idiom for file being the resource
@@ -36,17 +36,20 @@ private:
   std::istream *mpis_in;
 };
 
+
 typedef yasper::ptr< InputStream_c > PtrInputStream_t;
 
 
-/** Inline definitions. */
-
-inline bool InputStream_c::isFile()
+inline
+bool
+InputStream_c::isFile()
 {
   return mpis_in != &std::cin;
 }
 
-inline InputStream_c::InputStream_c(std::string str_filename) :
+
+inline
+InputStream_c::InputStream_c( std::string str_filename ) :
   mifs_in(),
   mpis_in( (str_filename == "-")? &std::cin : &mifs_in )
 {
@@ -55,18 +58,29 @@ inline InputStream_c::InputStream_c(std::string str_filename) :
   }
 }
 
-inline InputStream_c::~InputStream_c()
+
+inline
+InputStream_c::~InputStream_c()
 {
   if (isFile())
     mifs_in.close();
 }
 
-inline std::istream &InputStream_c::raw() {
+
+inline
+std::istream &
+InputStream_c::raw()
+{
   return *mpis_in;
 }
 
-inline bool InputStream_c::isOpen() {
+
+inline
+bool
+InputStream_c::isOpen()
+{
   return !isFile() || mifs_in.is_open();
 }
 
-#endif//ndef INPUTSTREAM_H
+
+#endif

@@ -10,13 +10,14 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #ifndef TRANSFERCOLLECTION_H
 #define TRANSFERCOLLECTION_H
+
 #include <logenvirons.h>
 #include <yasper.h>
 #include <vector>
 #include <map>
+
 
 class TransferCollection_c {
 public:
@@ -70,16 +71,18 @@ private:
 };
 
 
-/** Inline definitions. */
 
-inline TransferCollection_c::Connection_s::Connection_s(size_t at_sizeTransferData) :
+inline
+TransferCollection_c::Connection_s::Connection_s( size_t at_sizeTransferData ) :
   mvec_data(at_sizeTransferData, 0),
   mui32_embeddedPgn(0),
   mui32_packetOffSet(0)
-{}
+{
+}
 
 
-inline TransferCollection_c::Key_s::Key_s(
+inline
+TransferCollection_c::Key_s::Key_s(
     Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress) :
@@ -88,4 +91,5 @@ inline TransferCollection_c::Key_s::Key_s(
   mui8_transferDestinationAddress(aui8_transferDestinationAddress)
 {}
 
-#endif//ndef TRANSFERCOLLECTION_H
+
+#endif
