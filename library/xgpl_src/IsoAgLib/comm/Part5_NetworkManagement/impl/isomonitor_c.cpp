@@ -301,7 +301,7 @@ IsoMonitor_c::isoMemberEcuTypeCnt (IsoName_c::ecuType_t a_ecuType, bool ab_force
   uint8_t b_result = 0;
   for (Vec_ISOIterator pc_iter = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
   {
-    if ( ((pc_iter->isoName(). getEcuType() == a_ecuType))
+    if ( ((pc_iter->isoName().getEcuType() == a_ecuType))
       && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       b_result++;
@@ -318,7 +318,7 @@ IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, uint8_t aui8_
   int8_t c_cnt = -1;
   for (Vec_ISOIterator pc_iter  = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
   {
-    if ( ((pc_iter->isoName(). getEcuType()) == a_ecuType)
+    if ( ((pc_iter->isoName().getEcuType()) == a_ecuType)
       && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
       c_cnt++;
@@ -330,7 +330,7 @@ IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, uint8_t aui8_
     }
   }
 
-  isoaglib_assert( aui8_ind != c_cnt );
+  isoaglib_assert( aui8_ind == c_cnt );
 
   return *mpc_isoMemberCache;
 }
@@ -389,7 +389,7 @@ IsoMonitor_c::isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui8_ind, bool
     }
   }
 
-  isoaglib_assert( aui8_ind != c_cnt );
+  isoaglib_assert( aui8_ind == c_cnt );
 
   return *mpc_isoMemberCache;
 }
@@ -710,16 +710,8 @@ IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
 }
 
 
-#if 0
 bool
-IsoMonitor_c::deleteIsoMemberNr(uint8_t aui8_nr)
-{
-  isoaglib_assert( existIsoMemberNr( aui8_nr ) )
-  return deleteIsoMemberISOName( mpc_isoMemberCache->isoName() );
-}
-#endif
-
-bool isAddressFree( const IsoItem_c* apc_isoItem, const STL_NAMESPACE::list<IsoItem_c>& vec_isoMember, uint8_t address, bool ab_resolveConflict )
+isAddressFree( const IsoItem_c* apc_isoItem, const STL_NAMESPACE::list<IsoItem_c>& vec_isoMember, uint8_t address, bool ab_resolveConflict )
 {
   for (STL_NAMESPACE::list<IsoItem_c>::const_iterator pc_iterItem = vec_isoMember.begin();
         pc_iterItem != vec_isoMember.end(); pc_iterItem++)
