@@ -102,7 +102,7 @@ HALs:
 - Bugfix:
   - PC: getAdc fixed: Now checking for ANALOG_INPUT_MAX instead of DIGITAL_INPUT_MAX.
   - STW-HALs: Rx path fix - copy data immediately at beginning of IRQ handler to secure it against overwriting
-- -leanup:
+- Cleanup:
   - Removed T_TASK_BASIC, should be needed only for STW platform an set in BIOS headers.
   - Removed GET_U_THRESHOLD from all HALs. Is defined for ESX and should only be used in ESX HAL.
   - Removed getLokalId from Dj1 and ESX Micro HAL.
