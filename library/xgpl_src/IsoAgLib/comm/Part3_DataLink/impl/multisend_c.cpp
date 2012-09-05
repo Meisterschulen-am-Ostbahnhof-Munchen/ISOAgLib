@@ -10,10 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "multisend_c.h"
 
 #include <IsoAgLib/driver/system/impl/system_c.h>
@@ -68,10 +64,8 @@ void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)
 }
 
 
-/**
-  Constructor used for "normal" 8-byte CAN-Pkgs!
-*/
-void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8)
+void
+SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8)
 {
   vec_uploadBuffer.clear();
   vec_uploadBuffer.reserve (8);
@@ -86,12 +80,9 @@ void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   vec_uploadBuffer.push_back (byte8);
 }
 
-/**
-  Constructor used for "ChangeChildPosition" >> 9 <<-byte CAN-Pkgs!
-  -- Parameter "timeOut" only there as else the signature would be the same compared to 8byte+timeOut constructor!
-  -- simply always pass "DEF_TimeOut_ChangeChildPosition"
-*/
-void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9)
+
+void
+SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9)
 {
   /// Use BUFFER - NOT MultiSendStreamer!
   vec_uploadBuffer.clear();
@@ -108,7 +99,9 @@ void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   vec_uploadBuffer.push_back (byte9);
 }
 
-const SendUploadBase_c& SendUploadBase_c::operator= (const SendUploadBase_c& r_source)
+
+const
+SendUploadBase_c& SendUploadBase_c::operator= (const SendUploadBase_c& r_source)
 {
   vec_uploadBuffer = r_source.vec_uploadBuffer;
   return r_source;
@@ -117,7 +110,8 @@ const SendUploadBase_c& SendUploadBase_c::operator= (const SendUploadBase_c& r_s
 
 SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& r_source)
   : vec_uploadBuffer (r_source.vec_uploadBuffer)
-{}
+{
+}
 
 
 
@@ -126,8 +120,17 @@ SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& r_source)
  /**** MultiSend_c Implementation ****/
 /************************************/
 
-// SendStream subclass implementation
-/////////////////////////////////////
+
+MultiSend_c::MultiSend_c() :
+  #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
+    mui8_nextFpSequenceCounter(0),
+  #endif
+    mlist_sendStream()
+  , mt_handler(*this)
+  , mt_customer(*this)
+{
+}
+
 
 void
 MultiSend_c::init()
@@ -168,14 +171,13 @@ MultiSend_c::close()
 }
 
 
-/**
-  @return an "in-progress" stream or NULL if none active for this sa/da-key
-*/
 SendStream_c*
-MultiSend_c::getSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
+MultiSend_c::getRunningStream(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
   for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); pc_iter++)
   {
+    if (pc_iter->isFinished())
+      continue;
     if (pc_iter->matchSaDa(acrc_isoNameSender, acrc_isoNameReceiver))
       return &*pc_iter;
   }
@@ -183,34 +185,16 @@ MultiSend_c::getSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
 }
 
 
-
-/**
-  use this function to add a new SendStream.
-  IMPORTANT: Assure that the added SendStream is initialized right after this call!!
-  @return reference to added SendStream ==> HAS TO BE INITIALIZED, because it may be a copy of the first (to avoid stack creation of new object)
-*/
 SendStream_c*
 MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
-  SendStream_c* const pc_foundStream = getSendStream(acrc_isoNameSender, acrc_isoNameReceiver);
+  SendStream_c* const pc_foundStream = getRunningStream(acrc_isoNameSender, acrc_isoNameReceiver);
   if (pc_foundStream)
-  {
-    if (!pc_foundStream->isFinished())
-    {
-      return NULL; // can't start a sendStream, one already active for this one..
-    }
-    else // use this finished one because it would be deleted anyway...
-    {
-      #if DEBUG_MULTISEND
-      INTERNAL_DEBUG_DEVICE << "Using Stream from list which is already finished but not yet kicked from MultiSend_c::timeEvent()."<< INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-      return pc_foundStream;
-    }
-  }
+    return NULL; // can't start a sendStream, one already active for this one..
+
   mlist_sendStream.push_back (SendStream_c(*this MULTITON_INST_WITH_COMMA ));
   return &mlist_sendStream.back();
 }
-
 
 
 bool
@@ -242,11 +226,12 @@ MultiSend_c::sendIntern (const IsoName_c& isoNameSender, const IsoName_c& isoNam
     if( !getIsoMonitorInstance4Comm().existIsoMemberISOName( isoNameReceiver ) )
       return false;
   }
-  /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
-  /// - if not NULL is returned, it points to the newly generated stream.
+  
   SendStream_c * const cpc_newSendStream = addSendStream( isoNameSender, isoNameReceiver );
   if (!cpc_newSendStream)
+  { // couldn't create one, because one still running...
     return false;
+  }
 
   cpc_newSendStream->init( isoNameSender, isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, apc_mss, ren_msgType, apc_multiSendEventHandler );
 
@@ -254,18 +239,6 @@ MultiSend_c::sendIntern (const IsoName_c& isoNameSender, const IsoName_c& isoNam
   calcAndSetNextTriggerTime();
   return true;
 }
-
-/**
-  HIDDEN constructor for a MultiSend_c object instance
-  NEVER instantiate a variable of type MultiSend_c within application
-  only access MultiSend_c via getMultiSendInstance() or
-  getMultiSendInstance (protocolInstanceNr) in case more than one
-  ISO11783 BUS is used for IsoAgLib
-  */
-MultiSend_c::MultiSend_c() :
-  mt_handler(*this),
-  mt_customer(*this)
-{}
 
 
 /**
@@ -372,16 +345,15 @@ MultiSend_c::processMsg( const CanPkg_c& arc_data )
   if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
     return true;
 
-  SendStream_c* pc_sendStreamFound = getSendStream (pkg.getISONameForDA(), pkg.getISONameForSA()); // sa/da swapped, of course ;-) !
-  if (pc_sendStreamFound)
-  { // found a matching SendStream, so call its processMsg()
-    const bool cb_success = pc_sendStreamFound->processMsg( pkg );
+  SendStream_c* runningStream = getRunningStream (pkg.getISONameForDA(), pkg.getISONameForSA()); // sa/da swapped, of course ;-) !
+  if( runningStream )
+  {
+    const bool cb_success = runningStream->processMsg( pkg );
     calcAndSetNextTriggerTime();
     return cb_success;
   }
   else
-  { // no matching SendStream found
-    // keep next trigger time
+  { // keep next trigger time
     return false;
   }
 }
@@ -441,20 +413,17 @@ MultiSend_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItem
   }
 }
 
-/** user function for explicit abort of any running matching stream. */
+
 void
 MultiSend_c::abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
-  SendStream_c* pc_sendStream = getSendStream (acrc_isoNameSender, acrc_isoNameReceiver);
-  if (pc_sendStream)
-  {
-    if (!pc_sendStream->isFinished()) // check added by JVB 20090916
-      pc_sendStream->abortSend();
-  }
-  /// let timeEvent do the erasing from the list.
-  /// reason: if someone starts a new send directly after aborting the current,
-  /// we can use the same place in the stl-list without remove/insert!
+  SendStream_c* runningStream = getRunningStream (acrc_isoNameSender, acrc_isoNameReceiver);
+  if( runningStream )
+    runningStream->abortSend();
+
+  // let timeEvent do the erasing from the list, keep it marked finished/aborted
 }
+
 
 void
 MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler)
@@ -469,6 +438,7 @@ MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler
   }
 }
 
+
 #if DEBUG_SCHEDULER
 const char*
 MultiSend_c::getTaskName() const
@@ -476,4 +446,4 @@ MultiSend_c::getTaskName() const
 #endif
 
 
-} // end namespace __IsoAgLib
+} // __IsoAgLib

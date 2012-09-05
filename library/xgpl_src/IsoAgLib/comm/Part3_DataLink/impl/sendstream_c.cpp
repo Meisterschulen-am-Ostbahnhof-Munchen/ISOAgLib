@@ -10,10 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "sendstream_c.h"
 
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
@@ -41,6 +37,7 @@ static const uint8_t scui8_eCM_CTS = 21;
 static const uint8_t scui8_eCM_DPO = 22;
 static const uint8_t scui8_eCM_EndofMsgACK = 23;
 static const uint8_t scui8_CM_ConnAbort = 255;
+
 
 namespace __IsoAgLib {
 
@@ -126,6 +123,7 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
   notifySender(Running);
 }
 
+
 void
 SendStream_c::notifySender(sendSuccess_t ae_newStatus)
 {
@@ -134,9 +132,7 @@ SendStream_c::notifySender(sendSuccess_t ae_newStatus)
     mpc_multiSendEventHandler->reactOnStateChange(*this);
 }
 
-/**
-  @return true: stream finished, it'll be erased then!
-*/
+
 bool
 SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
 {
@@ -274,10 +270,10 @@ SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
   return false; // stream not yet finished!
 }
 
+
 bool
 SendStream_c::processMsg( const CanPkgExt_c& arc_data )
 {
-
   if (isFinished() || (men_msgType == NmeaFastPacket) || (men_msgType == IsoTPbroadcast))
   { // nothing to come in for us when we're broadcasting or already done (succeeded or aborted)
     return false; // anyway, return with false here for "safety"
@@ -397,14 +393,7 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
         break;
       }
       // else: handle the same as ConnAbort (EoMACK was sent unsolicited)
-#if 0
-/// @todo SOON-178 reactivate as it should work now with the new iLibeErr. Please test on ESX as it made problems there.
-      else
-      {  // not awaiting end of message ack, no action taken for this error-case in normal operation.
-        getILibErrInstance().registerError( iLibErr_c::MultiSendWarn, iLibErr_c::MultiSend );
-      }
-#endif
-      // break left out intentionally (see "// else:" right above
+      // break left out intentionally
     case scui8_CM_ConnAbort:
       #if DEBUG_MULTISEND
       INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- ConnAbort received!" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -419,13 +408,6 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
 }
 
 
-
-
-/**
-  abort the multipacket send stream
-  (important if original target isn't active any more)
-  IMPORTANT: After calling abortSend() please exit timeEvent() with true, so the SendStream gets deleted!!
-*/
 void
 SendStream_c::abortSend()
 {
@@ -451,6 +433,7 @@ SendStream_c::abortSend()
 
   notifySender(SendAborted); // will cause isFinished() to report true!
 }
+
 
 void
 SendStream_c::sendPacketIso (bool ab_data, MultiSendPkg_c& arc_data )
@@ -508,11 +491,6 @@ SendStream_c::sendPacketFp()
 #endif
 
 
-/**
-  calculate the actual sequence number and
-  calculate the amount of data bytes which must be placed in new CAN pkg
-  @param ui8_nettoDataCnt amount of data which should be sent within this msg
-*/
 void
 SendStream_c::prepareSendMsg (uint8_t &ui8_nettoDataCnt)
 {
@@ -526,4 +504,5 @@ SendStream_c::prepareSendMsg (uint8_t &ui8_nettoDataCnt)
   }
 }
 
-} // end namespace __IsoAgLib
+
+} // __IsoAgLib

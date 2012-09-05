@@ -10,9 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef MULTI_SEND_H
-#define MULTI_SEND_H
-
+#ifndef MULTISEND_C_H
+#define MULTISEND_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/config.h>
@@ -75,18 +74,17 @@ public:
 */
 class MultiSend_c : public Scheduler_Task_c
 {
+private:
   MACRO_MULTITON_CONTRIBUTION();
-public: // methods
+  MultiSend_c();
 
-  /** initialisation for MultiSend_c */
+public:
   void init();
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close();
 
   virtual ~MultiSend_c() {}
 
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
-
 
   /**
     Send an ISO 11738 (E)TP targeted multipacket message using a given MultiSendStreamer
@@ -200,114 +198,64 @@ private:
   class CanCustomerProxy_c : public CanCustomer_c {
   public:
     typedef MultiSend_c Owner_t;
-
     CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
-
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual bool processMsg( const CanPkg_c& arc_data ) {
-      return mrt_owner.processMsg( arc_data );
-    }
-
-
-    virtual bool reactOnStreamStart(
-        ReceiveStreamIdentifier_c const &ac_ident,
-        uint32_t aui32_totalLen)
-    {
-      return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
-    }
-
-    virtual void reactOnAbort(Stream_c &arc_stream)
-    {
-      mrt_owner.reactOnAbort(arc_stream);
-    }
-
-    virtual bool processPartStreamDataChunk(
-        Stream_c &apc_stream,
-        bool ab_isFirstChunk,
-        bool ab_isLastChunk)
-    {
-      return mrt_owner.processPartStreamDataChunk(
-          apc_stream,
-          ab_isFirstChunk,
-          ab_isLastChunk);
-    }
-
-    virtual void notificationOnMultiReceiveError(
-        ReceiveStreamIdentifier_c const &ac_streamIdent,
-        uint8_t aui8_multiReceiveError,
-        bool ab_isGlobal)
-    {
-      mrt_owner.notificationOnMultiReceiveError(
-          ac_streamIdent,
-          aui8_multiReceiveError,
-          ab_isGlobal);
-    }
+    virtual bool processMsg( const CanPkg_c& data )
+    { return mrt_owner.processMsg( data ); }
 
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
     CanCustomerProxy_c(CanCustomerProxy_c const &);
-
     CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
 
     Owner_t &mrt_owner;
   };
   typedef CanCustomerProxy_c Customer_t;
+
   class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
   public:
     typedef MultiSend_c Owner_t;
-
     ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
-
     virtual ~ControlFunctionStateHandlerProxy_c() {}
 
   private:
-    virtual void reactOnIsoItemModification(
-        iIsoItemAction_e at_action,
-        IsoItem_c const &acrc_isoItem)
-    {
-      mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
-    }
+    virtual void reactOnIsoItemModification( iIsoItemAction_e action, IsoItem_c const &isoItem )
+    { mrt_owner.reactOnIsoItemModification( action, isoItem ); }
 
     // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
     ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
-
     ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
 
     Owner_t &mrt_owner;
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
-  // Private methods
-  friend class iMultiSend_c;
-  friend class SendStream_c;
-
   /**
-    HIDDEN constructor for a MultiSend_c object instance
-    NEVER instantiate a variable of type MultiSend_c within application
-    only access MultiSend_c via getMultiSendInstance() or getMultiSendInstance( int riLbsBusNr )
-    in case more than one ISO11783 BUS is used for IsoAgLib
-    */
-  MultiSend_c();
+    use this function to add a new SendStream. (doesn't use existing-finished ones anymore!)
+    IMPORTANT: Assure that the added SendStream is initialized right after this call!!
+    @return reference to added SendStream ==> HAS TO BE INITIALIZED
+  */
+  SendStream_c* addSendStream( const IsoName_c& sender, const IsoName_c& receiver );
 
-  SendStream_c* addSendStream (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
-  SendStream_c* getSendStream (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
+  /** @return "Running" stream or NULL if none active for this sa/da-key (skips finished streams!) */
+  SendStream_c* getRunningStream (const IsoName_c& sender, const IsoName_c& receiver );
 
   /** this function should NOT be called from INSIDE of timeEvent !
       ==> Only call it from OUTSIDE functions like init(), processMsg(), addSendStream, etc.
   */
   void calcAndSetNextTriggerTime();
 
-  bool sendIntern (const IsoName_c& acrc_isoNameSender,
-                   const IsoName_c& acrc_isoNameReceiver,
-                   const HUGE_MEM uint8_t* rhpb_data,
-                   uint32_t aui32_dataSize,
-                   int32_t ai32_pgn,
-                   IsoAgLib::iMultiSendStreamer_c* apc_mss,
-                   SendStream_c::msgType_t ren_msgType,
-                   MultiSendEventHandler_c* apc_multiSendEventHandler);
+  bool sendIntern (const IsoName_c& sender,
+                   const IsoName_c& receiver,
+                   const HUGE_MEM uint8_t* data,
+                   uint32_t dataSize,
+                   int32_t pgn,
+                   IsoAgLib::iMultiSendStreamer_c* mss,
+                   SendStream_c::msgType_t msgType,
+                   MultiSendEventHandler_c* multiSendEventHandler);
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   uint8_t allocFpSequenceCounter() { const uint8_t cui8_returnVal = mui8_nextFpSequenceCounter;
@@ -315,44 +263,8 @@ private:
                                      return cui8_returnVal; }
   #endif
 
-  virtual bool processPartStreamDataChunk(
-      Stream_c &apc_stream,
-      bool ab_isFirstChunk,
-      bool ab_isLastChunk)
-  {
-    return mt_customer.processPartStreamDataChunkDefault(
-        apc_stream,
-        ab_isFirstChunk,
-        ab_isLastChunk);
-  }
-
-  virtual void reactOnAbort(Stream_c &arc_stream)
-  {
-    mt_customer.reactOnAbortDefault(arc_stream);
-  }
-
-  virtual bool reactOnStreamStart(
-      ReceiveStreamIdentifier_c const &ac_ident,
-      uint32_t aui32_totalLen)
-  {
-    return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
-  }
-
-  virtual void notificationOnMultiReceiveError(
-      ReceiveStreamIdentifier_c const &ac_streamIdent,
-      uint8_t aui8_multiReceiveError,
-      bool ab_isGlobal)
-  {
-    mt_customer.notificationOnMultiReceiveErrorDefault(
-        ac_streamIdent,
-        aui8_multiReceiveError,
-        ab_isGlobal);
-  }
-
   virtual uint16_t getForcedMinExecTime() const
-  {
-    return getForcedMinExecTimeDefault();
-  }
+  { return getForcedMinExecTimeDefault(); }
 
   static SendStream_c::msgType_t protocolTypeByPacketSize(uint32_t ui32_size);
 
@@ -373,28 +285,40 @@ private:
   STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
   Handler_t mt_handler;
   Customer_t mt_customer;
+
   friend MultiSend_c &getMultiSendInstance( uint8_t aui8_instance );
+  friend class SendStream_c;
 };
 
-inline SendStream_c::msgType_t MultiSend_c::protocolTypeByPacketSize(uint32_t ui32_size)
+
+inline
+SendStream_c::msgType_t
+MultiSend_c::protocolTypeByPacketSize(uint32_t ui32_size)
 {
   return ui32_size >= beginEtpPacketSize ? SendStream_c::IsoETP : SendStream_c::IsoTP;
 }
 
-inline bool MultiSend_c::sendIsoTarget(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
+
+inline
+bool
+MultiSend_c::sendIsoTarget(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
   return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, NULL, apc_mss->getStreamSize(), ai32_pgn, apc_mss, protocolTypeByPacketSize(apc_mss->getStreamSize()),apc_multiSendEventHandler);
 }
 
-inline bool MultiSend_c::sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
+
+inline
+bool 
+MultiSend_c::sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
   return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, NULL, protocolTypeByPacketSize(aui32_dataSize),apc_multiSendEventHandler);
 }
 
-/** C-style function, to get access to the unique MultiSend_c singleton instance
- * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
- */
-MultiSend_c &getMultiSendInstance( uint8_t aui8_instance = 0 );
 
-} // End Namespace __IsoAgLib
+MultiSend_c &
+getMultiSendInstance( uint8_t instance = 0 );
+
+
+} // __IsoAgLib
+
 #endif

@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef SEND_STREAM_H
-#define SEND_STREAM_H
+#ifndef SENDSTREAM_C_H
+#define SENDSTREAM_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/config.h>
@@ -77,8 +77,7 @@ public:
              MultiSendEventHandler_c* apc_multiSendEventHandler);
 
   /**
-    perform periodical actions
-    @return true -> remove me, I'm finished!
+    @return true: stream finished, it'll be erased then!
   */
   bool timeEvent (uint8_t aui8_pkgCnt);
 
@@ -116,10 +115,7 @@ public:
 
   sendSuccess_t getSendSuccess() const { return men_sendSuccess; }
 
-  /**
-    abort the multipacket send stream
-  */
-  void abortSend ();
+  void abortSend();
 
   bool matchSaDa (const IsoName_c& acrc_sa, const IsoName_c& acrc_da) const { return (acrc_sa == mc_isoNameSender) && (acrc_da == mc_isoNameReceiver); }
 
@@ -129,13 +125,7 @@ public:
   const IsoName_c& receiver() const { return mc_isoNameReceiver; }
   const IsoName_c& sender() const { return mc_isoNameSender; }
 
-private: // methods
-  /**
-    send an ISO message -> set the ident (depending on ab_data) and initiate sending to CAN
-    @param ab_data true -> use the (E)TP_DATA_TRANSFER_PGN
-                   false-> use the (E)TP_CONN_MANAGE_PGN
-                   --Value is not of interest in Fast-Packet sending!--
-  */
+private:
   void sendPacketIso( bool ab_data, MultiSendPkg_c& arc_data );
 
 #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
@@ -158,10 +148,9 @@ private: // methods
 
   const SendStream_c& operator= (const SendStream_c&); // Only private declaration, no implementation: Forbid assignment of SendStream_c instances.
 
-  void notifySender(sendSuccess_t );
+  void notifySender( sendSuccess_t );
 
-private: // attributes
-/// Initialized on init(...)
+private:
   uint32_t mui32_pgn;
   IsoName_c mc_isoNameReceiver;
   IsoName_c mc_isoNameSender;
@@ -181,10 +170,6 @@ private: // attributes
 
   /** size of the data complete */
   uint32_t mui32_dataSize;
-
-  /** standard delay between two sent packets (between 50 and 200)
-  uint16_t ui16_delay;
-  __-> now using maxDelay from MultiSend, because not everybody can have its own delay, we'll have to take the max. */
 
   /** pointer to the data */
   const HUGE_MEM uint8_t* mhpbui8_data;
@@ -208,9 +193,9 @@ private: // attributes
   /** cnt of pkg sent since the last DPO (ETP) - now also used to TP */
   uint8_t mui8_packetsSentInThisBurst;
 
-/// Back reference to MultiSend_c for setting the MAX of all delays, this can only be managed here...
   MultiSend_c& mrc_multiSend;
-}; // end class SendStream_c
+};
 
-} // End Namespace __IsoAgLib
+} // __IsoAgLib
+
 #endif
