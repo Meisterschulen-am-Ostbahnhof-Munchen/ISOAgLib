@@ -22,21 +22,6 @@
     All members of the internal HAL namespace are only for internal use inside of IsoAgLib. Applications are not allowed to directly use this namespace. All code using this namespace is treated as an extension of IsoAgLib and hence needs to be given back to the IsoAgLib project.
 */
 
-/*! \namespace convert_n
-    \brief Common convert helpers
-
-    Common convert helpers (like endianess/sign conversion) are grouped into this namespace.
-*/
-
-/*! \namespace IsoAgLibTutorial
-    \brief General Namespace for the Tutorial Network
-*/
-
-/*! \namespace IsoAgLibTutorialDisplay
-    \brief Namespace for the Display ECU of the Tutorial Network
-*/
-
-
 /*! \mainpage
 
 <table class="infoboxLinks" border="0">
@@ -56,6 +41,186 @@ Please use the upper navigation bar to browse the documentation.
 To get more information about ISOAgLib in general, please visit <a href="http://www.isoaglib.com">www.isoaglib.com</a> where you can find information about licensing, ISOAgLib as product, ISOAgLib's functions, principles and toolchain, the Tutorial Network, download and commercial services.
 
 \section Changes Changes
+
+\subsection Change_U 2.4.0 to 2.5.0
+
+General:
+- Compilefixes:
+  * Visual Studio 10
+  * Qt pathlength: Shortened file names to get it compile with Qt
+  * IAR: Bitfieldwrapped fixed to work with IAR now.
+- Cleanup:
+  * Removed all (known) warnings on all platforms once again.
+  * Removed default parameters, replaced many checks overall with proper isoaglib_assert(..) calls.
+  * Removed EXTERNAL_DEBUG_DEVICE - ISOAgLib doesn't tell you anymore how to debug your application, also the name was confusing. Only INTERNAL_DEBUG_DEVICE left for use within the library!
+  * Removed USE_FLOAT_DATA_TYPE - float-code is now always enabled
+  * Removed executable flag from source files
+  * Several defines cleaned up (removed DEBUG_TIME_EVENTS, DEBUG_HEAP_USEAGE) and debug-code removed
+  * Removed IStateExt_c
+  * Removed NO_CAN_EN_CHECK / CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC: This functionaliy can easily be implemented in the application. Removed to avoid confusion due to defines declared in isoaglib_config.h
+  * Replaced CanIo_c::init's default paramter 13 with (CONFIG_CAN_OBJ_CNT-1)
+  * Removed YES/NO and _YN defines
+  * Fixed HANDLE_FAST_DATATYPE_AS_STRICT
+  * Removed CONFIG_PWM_DEFAULT_FREQUENCY/CONFIG_RS232_DEFAULT_xx/CONFIG_CAN_DEFAULT_xxx/DEFAULT_BITRATE. Use Parameters of init-calls instead.
+  * Removed debug-statements in USE_RS232_FOR_DEBUG
+  * Removed RS232_1 up to RS232_4
+  * Removed HEAP debug statements
+  * Removed PREPARE_VTGB/NO_BITMAP_SCALING/gluetoks/gluemacs as it's obsolete
+  * Removed Shorten Symbol Names. Not needed for Tasking compilers anymore.
+  * Renamed SIZEOF_INT to HAL_SIZEOF_INT because it's set by the HAL.
+  * Renamed TIMEOUT_TRACTOR_DATA to CONFIG_TIMEOUT_TRACTOR_DATA
+  * Renamed OBJECT_CONFIG to DEBUG_CONFIG
+  * Replaced TRUE/FALSE to true/false, except for WinApi calls.
+- Restructuring:
+  * Use isoaglib_config.h for accessing hal header now - this is the only file you need to include (to get the typedefs, etc.)
+
+Singleton:
+- Fix: Corrected Alignment (now second, thire, etc. instances are properly aligned) and init-bool (Pointer-Array of instances wasn't initialized with 0; now done with a single static bool)
+- Cleanup:
+  * Multitons now ALWAYS have an instance member, even if only
+    one instance is created, hence being a "singleton"-kind...
+  * Classes like System_c and EepromIo_c are now explicit "Singletons",
+    they use their own macro for creation and do not store any "instance" member variable at all.
+
+iLibErr_c:
+- Redesigned error handling. Most errors are now handled via assertions. Only few runtime-errors left.
+- Added non fatal faults on SA and NAME conflicts
+
+Diagnostics:
+- Bugfix: Didn't answer dest-spec. requests to ECU_ID/SW_ID anymore.
+
+System_c:
+- Cleanup:
+  * Removed error check during system init (all platforms). Init must succeed.
+  * Change getOnOffSwitch's return type to bool
+  * PowerHold settings on init and close: When the system is initialized then the self holding power function is requested from the HAL. On shutdown it gets turned off to allow the controller to shut down.
+  * canEn() is deprecated and replaced by switchedOn.
+- Enhancement:
+  * System init/shutdown: User application has to call system init and close. This is not down anymore by Scheduler_c::init. Furthermore the shutdown strategy is implemented by the different HALs.
+
+HALs:
+- Bugfix:
+  * PC: getAdc fixed: Now checking for ANALOG_INPUT_MAX instead of DIGITAL_INPUT_MAX.
+  * STW-HALs: Rx path fix - copy data immediately at beginning of IRQ handler to secure it against overwriting
+- Cleanup:
+  * Removed T_TASK_BASIC, should be needed only for STW platform an set in BIOS headers.
+  * Removed GET_U_THRESHOLD from all HALs. Is defined for ESX and should only be used in ESX HAL.
+  * Removed getLokalId from Dj1 and ESX Micro HAL.
+  * Replaced CONFIG_EEPROM_PADDING_BYTE with hardcoded 0xFF. Shouldn't be used/received anyhow!
+  * C2C: MAX_ADC_V changed to CONFIG_HAL_C2C_MAX_ADC_V
+  * ESX: CALC_PERDIOD_FROM_FREQ changed to CONFIG_HAL_ESX_CALC_PERDIOD_FROM_FREQ
+  * PC: WRITE_LOG_FILE -> CONFIG_HAL_PC_RS232_WRITE_LOG_FILE
+  * PC: HAL_PC_RTE_DEFAULT_SERVER changed to CONFIG_HAL_PC_RTE_DEFAULT_SERVER
+  * CAN fifo access cleaned up.
+  * STW ESX specific functions and interface definitions removed. (startTaskTimer and init_task_call are specific for STW controllers and should not be decleared in IsoAgLibs HAL interface.)
+  * ESX: Fixed double watchdog init
+  * Obsolete HAL return types that are unused within IsoAgLib removed. (iSystem_c::init, iSystem_c::close, HAL::openSystem, HAL::closeSystem)
+  * Renamed HAL::open_system to openSystem
+  * Replaced EE_READY with HAL_NO_ERR in HAL inteface (EEPROM)
+  * PC:
+    - No more endianess/float-word-order defaults for obsolete platforms.
+    - Needs to be specified explicitly and config.h will bail out if not set.
+    - Shutting system down restructuted.
+
+(E)TP:
+- Improvement:
+  * Proper timing for CTS sending/timeout detection, send CTS right away. Speeds up multi-packet reception.
+  * Made it possible to start new (E)TP from Success/Abort-callback
+
+Network-Management:
+- Cleanup:
+  * Renamed saclaimhandler_c.h -> cfstatehandler_c.h and removed SaClaimHandler_c typedef.
+  * IsoItemModification_t replaced with iIsoItemAction_e
+- Bugfix: Fixed possible crash with strange loop condition in IsoItem (r5390)
+           
+conf2build.sh:
+- Fix:
+  * Removed problematic usage of the tee-command
+  * Lineending changed to LF instead of native
+- Cleanup:
+  * Removed --report option and feature_partition_rule.
+  * Removed unused USE_MSVC_EXTERNAL_LIBRARIES
+  * Removed unused PRJ_DO_NOT_START_RELAIS_ON_STARTUP
+  * Removed unused USE_STLPORT_HEADER
+  * Following conf_-settings need to be put into the PRJ_DEFINES list now: USE_PCAN_LIB, USE_VT_UNICODE_SUPPORT
+  * Adapted for simpler TC-Client
+  * Removed obsolete/unused PROJECT_AUTHOR / PROJECT_AUTHOR_NAME
+- Enhancement: Added USE_EEPROM_DRIVER to be used by the configuration files.
+
+TC-Client:
+- Fix: Now properly checking invalid/uninteresting SA/DA.
+- Optimization: Usage of IdentItem in part 7 for address claim state checks
+- Cleanup:
+  * Do not check for local member before adding filter: There's no need for a local iso member for track move to add the PG filters.
+  * Removed "optimized" code in TracLight
+  * Renamed Process_c -> TcClient.
+  * Removed all obsolete code regarding the "old" process data. Only left what's needed for communication with a TC/DataLogger, etc.
+
+proc2iso:
+- Cleanup:
+  * Replaced old not maintained makefile with cleaned up one.
+  * Removed ProcessDataCombination.
+- Output files changed:
+  * Created an initProcData() function optionally sets the handler on all ProcData-instances.
+
+VT-Client:
+- Certification:
+  * Reversed GET_VERSIONS to NO_GET_VERSIONS, so retrieving the versions from the VT is default now (as needed for certification!)
+- Enhancement:
+  * Added v4 features in iVtObjectButton_c (v4select, v4setOptions, v4enable, v4disable)
+  * Added Delete Version command sendNonVolatileDeleteVersion(..);
+  * Added possibility to omit objects from upload. Caution: Use at your own risk.
+  * Done some TODOs regarding Multitons in AuxType2 classes, also fixed distribution of input values to own entities.
+- Cleanup:
+  * VT-Client split into files, removed obsolete "aux3" files.
+  * NO_STORE_VERSION changed to DEBUG_VTCOMM_NO_STORE_VERSION
+  * Renamed FAKE_VT_PROPERTIES -> IOP_GENERATOR_FAKE_VT_PROPERTIES
+  * Renamed PRJ_ISO_TERMINAL -> PRJ_VIRTUALTERMINAL_CLIENT
+  * Renamed USE_ISO_TERMINAL -> USE_VIRTUALTERMINAL_CLIENT
+  * Renamed IsoTerminal -> VtClient
+  * Renamed VtClientServerCommunication_c -> VtClientConnection_c
+  * Renamed iIsoTerminalObjectPool_c -> iVtClientObjectPool_c
+  * Renamed initAndRegisterIsoObjectPool -> initAndRegisterObjectPool
+
+vt2iso:
+- Cleanup:
+  * Removed USE_FREE_IMAGE_LIB
+  * Removed obsolete (unmaintained) Paintlib support.
+
+Inputs/Outputs
+- Interfacefix:
+  * Put enums into iInput_c
+  * Added new file "supplementary_driver/driver/inputs/iinput_c.h"
+  * Catching all errors in DigitalO_c now.
+- Enhancement:
+  * Counter extended to 32 bit.
+- Cleanup:
+  * Removed all "virtual" from the I/O classes, except the destructor.
+  * Removed valLong().
+
+TC-Server:
+- Bugfix: The bits 7-3 of byte 7 ground based speed and distance are reserved and hence now set to 1.
+          Note: This is not done for the other PGNs yet.
+
+GPS:
+- Cleanup: Assertion in tractor mode: An ident must be given as argument.
+
+HAL-Simulator:
+- Enhancement: Added "GetEEPROM_FileName()" and added hal_simulator EEPROM Target Extension.
+
+CAN-Server:
+- Filtering: Bugfix: Fixed input format for DA
+- Restructuring: Separated can_server.h out of ISOAgLib-usage: can_server.h only needs
+  PC-HAL now, no more isoaglib_config.h or other ISOAgLib sources.
+
+CAN:
+- Bugfix: Fixed endless loop in processMsg() which occured at system shutdown when
+  a message with a higher msgobj-number is in the queue and then filters got remove in between.
+- Corrected functions to get bus-load. (Note: This is only the sending load!)
+
+Util:
+- Separated Flexible8ByteString_c/Flexible4ByteString_c into dedicated file.
+
 
 \subsection Change_T 2.3.0 to 2.4.0
 

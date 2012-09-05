@@ -2,6 +2,7 @@
 /CONTRIBUTIONS.txt -text
 /LICENSE.txt -text
 bin/README.txt -text
+doc/Doxyfile-docu -text
 doc/DoxyfileAll -text
 doc/DoxyfileApi -text
 doc/doxylog_categorizer.pl -text
