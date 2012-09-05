@@ -53,7 +53,7 @@ public:
   /** change detection mode of activity to OnLow */
   void setOnLow( void );
 
-  ~DigitalI_c();
+  virtual ~DigitalI_c();
 
   /**
     check for the input value

@@ -41,7 +41,7 @@ public:
     : DigitalO_c()
   {}
 
-  ~iDigitalO_c() {}
+  virtual ~iDigitalO_c() {}
 
   /** set a new channel
     @param aui8_channel channel number

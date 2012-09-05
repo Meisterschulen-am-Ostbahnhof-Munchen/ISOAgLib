@@ -57,7 +57,7 @@ public:
   void init(uint8_t ab_channel, uint16_t aui16_timebase = 0, bool ab_activHigh = true,
               bool ab_risingEdge = true);
 
-  ~CounterI_c();
+  virtual ~CounterI_c();
 
   /**
     check for the input value

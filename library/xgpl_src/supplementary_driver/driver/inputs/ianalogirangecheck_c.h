@@ -52,7 +52,7 @@ public:
     uint16_t aui16_minValid = 0, uint16_t aui16_maxValid = 0xFFFF )
     { AnalogIRangeCheck_c::init(ab_channel, ren_analogType, ab_useMean, ab_fastAdc, aui16_minValid, aui16_maxValid );}
 
-  ~iAnalogIRangeCheck_c() {}
+  virtual ~iAnalogIRangeCheck_c() {}
 
   /**
     get the actual input value with the configured linear conversion (use the configured ADC method)

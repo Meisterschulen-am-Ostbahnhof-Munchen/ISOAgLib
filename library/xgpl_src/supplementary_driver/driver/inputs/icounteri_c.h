@@ -51,7 +51,7 @@ public:
   void init(uint8_t ab_channel, uint16_t aui16_timebase = 0, bool ab_activHigh = true, bool ab_risingEdge = true)
     { CounterI_c::init(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge); }
 
-  ~iCounterI_c(){}
+  virtual ~iCounterI_c(){}
 
   /**
     check for the input value (uses BIOS function)

@@ -45,7 +45,7 @@ public:
   */
   void init(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType = IsoAgLib::iInput_c::undef_input);
 
-  ~InputBase_c() {}
+  virtual ~InputBase_c() {}
 
   /**
     deliver the channel number of the output object

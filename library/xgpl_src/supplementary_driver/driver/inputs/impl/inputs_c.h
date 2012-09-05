@@ -53,7 +53,7 @@ public:
             uint8_t ab_counterFirst = COUNTER_INPUT_MIN, uint8_t ab_counterLast = COUNTER_INPUT_MAX);
   void close( void ){}
 
-  ~Inputs_c();
+  virtual ~Inputs_c();
 
   /**
     set the limits for digital input channels (first setting can be done by constructor parameters)

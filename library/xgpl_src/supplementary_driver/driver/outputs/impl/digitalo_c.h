@@ -32,7 +32,7 @@ public:
 
   DigitalO_c(uint8_t aui8_channel);
   DigitalO_c();
-  ~DigitalO_c();
+  virtual ~DigitalO_c();
 
   /** set to a new channel
   */
