@@ -614,7 +614,9 @@ int16_t can_useMsgobjGet(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::
 */
 void can_useMsgobjPopFront(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  if ( ( aui8_busNr < cui32_maxCanBusCnt ) && ( aui8_msgobjNr < arrHalCan[aui8_busNr].size() ) )
+  // Fix for an endless loop while processing messages that seem to be received with
+  // an higher msgobj-index than is available now (due to an intermediate filter-removal)
+  //if ( ( aui8_busNr < cui32_maxCanBusCnt ) && ( aui8_msgobjNr < arrHalCan[aui8_busNr].size() ) )
   { // valid parameters
     b_cinterfBufferedReceivedMsg = false;
   }
