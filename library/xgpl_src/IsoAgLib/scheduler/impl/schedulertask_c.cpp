@@ -19,12 +19,13 @@
 namespace __IsoAgLib {
 
   SchedulerTask_c::SchedulerTask_c( int32_t nextTriggerTime, int32_t period, bool hardTiming )
-    : Subsystem_c(),
-      m_hardTiming( hardTiming ),
-      m_nextTriggerTime( nextTriggerTime ),
-      m_nextTriggerTimeSet( false ),
-      m_period( period ),
-      m_registered( false ) {}
+    : Subsystem_c()
+    , m_hardTiming( hardTiming )
+    , m_nextTriggerTimeSet( false )
+    , m_registered( false )
+    , m_nextTriggerTime( nextTriggerTime )
+    , m_period( period )
+  {}
 
 
   void SchedulerTask_c::setPeriod( int32_t a_period ) {

@@ -51,14 +51,14 @@ namespace __IsoAgLib
 
     /** constructor */
     BaseCommon_c() :
+      mt_task(*this),
+      mt_handler(*this),
       mui16_suppressMask(0),
       mt_identMode(IsoAgLib::IdentModeImplement),
       mb_filterCreated(false),
       mi32_lastMsgReceived(0),
       mpc_ident(NULL),
       mc_selectedDataSourceISOName(),
-      mt_task(*this),
-      mt_handler(*this),
       mui16_timeOut(TIMEOUT_SENDING_NODE_NMEA)
     {}
 
@@ -149,8 +149,6 @@ namespace __IsoAgLib
     static const uint16_t TIMEOUT_SENDING_NODE_NMEA = 3000;
     static const uint16_t TIMEOUT_SENDING_NODE_J1939 = 5000;
 
-    //int getMultitonInst() { return mi_multitonInst; }
-
   protected:
     void setTimeOut( uint16_t aui16_timeout) { mui16_timeOut = aui16_timeout; }
     uint16_t getTimeOut( ) { return mui16_timeOut; }
@@ -174,9 +172,6 @@ namespace __IsoAgLib
     void setClosed() {
       mt_task.setClosed();
     }
-
-    /** flags that disable PGNs individually */
-    uint16_t mui16_suppressMask;
 
   private:
     // BaseCommon_c shall not be copyable.
@@ -253,7 +248,14 @@ namespace __IsoAgLib
         IsoItem_c *apc_isoItemReceiver,
         int32_t ai_time ) = 0;
 
-    // private attributes
+  protected:
+    Task_t mt_task;
+    Handler_t mt_handler;
+
+    /** flags that disable PGNs individually */
+    uint16_t mui16_suppressMask;
+
+  private:
     /** can be implement mode or tractor mode */
     IsoAgLib::IdentMode_t mt_identMode;
 
@@ -275,11 +277,6 @@ namespace __IsoAgLib
       * So make timeout configurable.
       */
     uint16_t mui16_timeOut;
-
-  protected:
-    Task_t mt_task;
-    Handler_t mt_handler;
-
   };
 
 }// end namespace __IsoAgLib

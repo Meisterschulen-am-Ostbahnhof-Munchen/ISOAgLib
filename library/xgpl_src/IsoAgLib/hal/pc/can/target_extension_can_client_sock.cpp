@@ -601,7 +601,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 #endif
 
   // return true, when data is pending on data socket
-  return ( FD_ISSET( i32_dataSocket, &rfds ) );
+  return ( FD_ISSET( i32_dataSocket, &rfds ) != 0 );
 };
 
 

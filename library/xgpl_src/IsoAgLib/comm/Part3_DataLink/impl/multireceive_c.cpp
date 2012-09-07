@@ -976,7 +976,6 @@ MultiReceive_c::timeEvent()
     newPeriod = 1;
   
   setPeriod( newPeriod );
-  return true;
 }
 
 

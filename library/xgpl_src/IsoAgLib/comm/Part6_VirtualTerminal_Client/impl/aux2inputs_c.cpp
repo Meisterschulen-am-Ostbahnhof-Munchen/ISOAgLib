@@ -37,9 +37,9 @@ Aux2Inputs_c::Aux2Inputs_c( const IdentItem_c& arc_wsMasterIdentItem )
 void Aux2Inputs_c::init(VtClientConnection_c* ap_vtClientServerCommunication)
 {
 #ifdef USE_VTOBJECT_auxiliaryinput2
-  getSchedulerInstance().registerClient( this );
+  getSchedulerInstance().registerTask( *this );
 
-  setTimePeriod( 10 );
+  setPeriod( 10 );
 
   setState(Aux2InputsState_Initializing);
 
@@ -54,7 +54,7 @@ Aux2Inputs_c::~Aux2Inputs_c(void)
 #ifdef USE_VTOBJECT_auxiliaryinput2
   if (Aux2InputsState_NoAuxInputAvailable != m_state)
   { // m_state is different from initial state => was registered in scheduler 
-    getSchedulerInstance().unregisterClient( this );
+    getSchedulerInstance().deregisterTask( *this );
   }
 #endif
 }

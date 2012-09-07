@@ -385,3 +385,5 @@ private:
   MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance = 0 );
 
 } // __IsoAgLib
+
+#endif

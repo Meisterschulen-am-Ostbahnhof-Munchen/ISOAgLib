@@ -266,7 +266,7 @@ IsoItem_c::timeEvent()
     if (lastAdrRequestTime != -1)
     {
       int32_t i32_wait = 1250 + calc_randomWait();
-      if ((i32_time - lastAdrRequestTime) > i32_wait)
+      if ((System_c::getTime() - lastAdrRequestTime) > i32_wait)
       { // last iso adress claim request is still valid and should have been answered till now
         // check if this item is self conf
         // unifyIsoSa delivers actual SA of this item if free
