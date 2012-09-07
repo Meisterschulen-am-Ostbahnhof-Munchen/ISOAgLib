@@ -32,8 +32,10 @@ VtClient_c &getVtClientInstance( uint8_t instance )
 }
 
 
+
 VtClient_c::VtClient_c()
-  : ml_vtServerInst()
+  : SchedulerTask_c( 0, 100, true )
+  , ml_vtServerInst()
   , m_vtConnections()
   , mt_handler( *this )
   , mt_customer( *this )
@@ -46,7 +48,7 @@ VtClient_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerClient(this);
+  getSchedulerInstance().registerTask(*this);
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
   bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VT_TO_GLOBAL_PGN<<8) ), 8, false);
@@ -79,7 +81,7 @@ VtClient_c::close()
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (LANGUAGE_PGN << 8)));
   
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
-  getSchedulerInstance().unregisterClient(this);
+  getSchedulerInstance().deregisterTask(*this);
 
   setClosed();
 }
@@ -224,25 +226,15 @@ VtClient_c::getClientCount() const
 }
 
 
-bool
+void 
 VtClient_c::timeEvent(void)
 {
-  bool b_allActivitiesPerformed = true;
-
   for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
-  {
-    bool const cb_clear = m_vtConnections[ui8_index] &&
-      !m_vtConnections[ui8_index]->timeEvent();
-    if (cb_clear)
-        b_allActivitiesPerformed = false;
-  }
-  /** @todo SOON-241: maybe store the one that was out of time if not all could perform their actions? - by member variable of VtClient_c
-                      Update: They all need to be scheduled on their own, so then it's okay with this point. */
+    m_vtConnections[ui8_index]->timeEvent();
 
   // set back the scheduler period to 100msec, as any waiting command has been set
-  if (getTimePeriod() != 100) setTimePeriod( 100 );
-
-  return b_allActivitiesPerformed;
+  if (getPeriod() != 100)
+    setPeriod( 100 );
 }
 
 
@@ -450,13 +442,5 @@ VtClient_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, 
   }
 }
 #endif
-
-
-#if DEBUG_SCHEDULER
-const char*
-VtClient_c::getTaskName() const
-{ return "VtClient_c()"; }
-#endif
-
 
 } // __IsoAgLib

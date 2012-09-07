@@ -210,11 +210,4 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   }
 #endif
 
-#if DEBUG_SCHEDULER
-const char*
-TracCert_c::getTaskName() const
-{ return "TracCert_c"; }
-#endif
-
-
 }// End Namespace __IsoAglib

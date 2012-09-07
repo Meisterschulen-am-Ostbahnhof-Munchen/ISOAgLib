@@ -200,7 +200,7 @@ public:
       * send adress claim
     @return true -> all planned time event activitie performed
   */
-  bool timeEvent( void );
+  void timeEvent();
 
   /** process received ADDRESS_CLAIMED message to update data and react
       if needed and (e.g. change of SA, reclaim current address)

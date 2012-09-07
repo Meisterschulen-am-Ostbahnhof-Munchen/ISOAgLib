@@ -50,12 +50,12 @@ namespace __IsoAgLib {
     if ( at_identMode == IsoAgLib::IdentModeImplement )
     {
       // set Time Period in ms for Scheduler_c
-      setTimePeriod( (uint16_t) 100 );
+      mt_task.setPeriod( 100 );
     }
     else
     { //IdentModeTractor
       // set Time Period in ms for Scheduler_c
-      setTimePeriod( (uint16_t) 1000 );
+      mt_task.setPeriod( 1000 );
     }
 
     // un-/register to PGN
@@ -265,14 +265,10 @@ namespace __IsoAgLib {
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TracAux_c::timeEventTracMode( )
+  void TracAux_c::timeEventTracMode( )
   {
     ///Timeperiod of 1000ms is set in ::config for TracMode
     isoSendEstimatedMeasured();
-
-    if ( getAvailableExecTime() == 0 ) return false;
-
-    return true;
   }
 
   /** send a ISO11783 marr_valve information PGN in implement mode
@@ -280,14 +276,10 @@ namespace __IsoAgLib {
       @pre  function is only called in implement mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TracAux_c::timeEventImplMode( )
+  void TracAux_c::timeEventImplMode( )
   {
     ///Timeperiod of 100ms is set in ::config for ImplMode
     isoSendCommand();
-
-    if ( getAvailableExecTime() == 0 ) return false;
-
-    return true;
   }
 
   void TracAux_c::prepareSendingEstimatedMeasured( CanPkgExt_c& pkg )
@@ -782,13 +774,6 @@ namespace __IsoAgLib {
     }
     return true;
   }
-
-#if DEBUG_SCHEDULER
-const char*
-TracAux_c::getTaskName() const
-{ return "TracAux_c"; }
-#endif
-
 
 bool TracAux_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
 {

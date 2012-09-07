@@ -24,6 +24,10 @@
 #ifndef _HAL_PC_CAN_INTERFACE_H_
 #define _HAL_PC_CAN_INTERFACE_H_
 
+#ifdef USE_MUTUAL_EXCLUSION
+#include <sys/types.h>
+#endif
+
 #include <IsoAgLib/isoaglib_config.h>
 #include "../typedef.h"
 #include "../errcodes.h"
@@ -147,7 +151,7 @@ int16_t can_configGlobalClose(uint8_t aui8_busNr);
 /** wait until specified timeout or until next CAN message receive
  *  @return true -> there are CAN messages waiting for process. else: return due to timeout
  */
-bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval );
+bool can_waitUntilCanReceiveOrTimeout( int32_t timeoutInterval );
 /*@}*/
 
 
@@ -276,6 +280,14 @@ int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
 
 #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
 int32_t can_getMaxSendDelay(uint8_t aui8_busNr);
+#endif
+
+#ifdef USE_MUTUAL_EXCLUSION
+void can_breakWaitUntilCanReceiveOrTimeout();
+void initBreakWait();
+void closeBreakWait();
+void setBreakWaitFd( fd_set& rfds );
+void clearBreakWaitFd( fd_set& rfds );
 #endif
 
 /*@}*/

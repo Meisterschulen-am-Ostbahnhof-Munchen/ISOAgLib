@@ -110,7 +110,7 @@ MultiReceiveClientWrapper_s::doesAcceptStream (const ReceiveStreamIdentifier_c &
 
 
 
-class MultiReceive_c : public Scheduler_Task_c
+class MultiReceive_c : public SchedulerTask_c
 {
   MACRO_MULTITON_CONTRIBUTION();
 public:
@@ -177,12 +177,7 @@ public:
   void removeKeptStream (Stream_c* apc_keptStream);
 
   //  Operation: timeEvent
-  bool timeEvent( void );
-
-  virtual void updateEarlierAndLatestInterval() {
-    mui16_earlierInterval = 0;
-    mui16_latestInterval  = 5;
-  }
+  void timeEvent( void );
 
   //  Operation: init
   void init();
@@ -203,9 +198,7 @@ public:
 
   Stream_c* getFinishedJustKeptStream (Stream_c* apc_lastKeptStream);
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
+
 
 private:
   class CanCustomerProxy_c : public CanCustomer_c {
@@ -361,10 +354,6 @@ private:
         ab_isGlobal);
   }
 
-  virtual uint16_t getForcedMinExecTime() const
-  {
-    return getForcedMinExecTimeDefault();
-  }
 
 private:
   static void notifyCanCustomerOfTransferError(
@@ -396,4 +385,3 @@ private:
   MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance = 0 );
 
 } // __IsoAgLib
-#endif

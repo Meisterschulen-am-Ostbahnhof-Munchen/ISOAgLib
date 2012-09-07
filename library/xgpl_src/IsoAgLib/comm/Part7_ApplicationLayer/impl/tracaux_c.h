@@ -1,7 +1,7 @@
 /*
   tracaux_c.h: working on Base Data Msg Type 1; stores, updates and
     delivers all base data informations from CanCustomer_c derived for
-    CAN sending and receiving interaction; from Scheduler_Task_c
+    CAN sending and receiving interaction; from SchedulerTask_c
     derived for interaction with other IsoAgLib objects
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -93,7 +93,7 @@ namespace __IsoAgLib {
 
   /** stores, updates  and delivers all auxiliary data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
-      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+      Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
@@ -354,10 +354,6 @@ namespace __IsoAgLib {
     {return IsoAgLib::IsoLimitFlag_t (marr_valve[valveNumber].ui8_measuredValveLimitStatus);}
     /*@}*/
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
-
   virtual bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver, int32_t );
 
   private:
@@ -380,14 +376,14 @@ namespace __IsoAgLib {
         @pre  function is only called in tractor mode
         @see  BaseCommon_c::timeEvent()
       */
-    virtual bool timeEventTracMode( );
+    virtual void timeEventTracMode( );
 
     /** send a ISO11783 marr_valve information PGN in implement mode
       * this is only called when sending ident is configured and it has already claimed an address
         @pre  function is only called in implement mode
         @see  BaseCommon_c::timeEvent()
       */
-    virtual bool timeEventImplMode( );
+    virtual void timeEventImplMode( );
 
     /** process a ISO11783 base information PGN
         @pre  sender of message is existent in monitor list

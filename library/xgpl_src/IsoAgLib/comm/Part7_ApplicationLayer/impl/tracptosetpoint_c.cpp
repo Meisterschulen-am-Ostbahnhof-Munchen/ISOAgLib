@@ -2,7 +2,7 @@
   tracptosetpoint_c.cpp: working on pto set point data; stores,
     updates and delivers all pto set point data informations from
     CanCustomer_c derived for CAN sending and receiving interaction;
-    from Scheduler_Task_c derived for interaction with other IsoAgLib
+    from SchedulerTask_c derived for interaction with other IsoAgLib
     objects
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -166,12 +166,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // settings are now done by the scheduler
   }
 
-
-#if DEBUG_SCHEDULER
-const char*
-TracPTOSetPoint_c::getTaskName() const
-{ return "TracPTOSetPoint_c"; }
-#endif
 
 /** dummy implementation
     @todo SOON-824: add answering of requestPGN in case this object is configured for sending of these information

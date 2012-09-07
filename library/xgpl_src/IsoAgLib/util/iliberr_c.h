@@ -36,7 +36,6 @@ namespace IsoAgLib {
   @author Dipl.-Inform. Martin Wodok
 */
 class iLibErr_c {
-  MACRO_MULTITON_CONTRIBUTION();
 public:
   void init();
   void close();

@@ -47,7 +47,7 @@ typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::const_iterator Co
   @see ISOItem
   @author Dipl.-Inform. Achim Spangler
 */
-class IsoMonitor_c : public Scheduler_Task_c
+class IsoMonitor_c : public SchedulerTask_c
 {
   MACRO_MULTITON_CONTRIBUTION();
 private:
@@ -81,9 +81,8 @@ public:
   /** performs periodically actions,
     possible errors:
       * partial error caused by one of the memberItems
-    @return true -> all planned activities performed in allowed time
   */
-  bool timeEvent( void );
+  void timeEvent( void );
 
   virtual ~IsoMonitor_c() {}
 
@@ -341,15 +340,6 @@ public:
 
   virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver, int32_t ai_requestTimestamp );
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
-
-  /// Function notify Scheduler_c to set new retriggerTime
-  /// will be called from IdentItem_c and registerClient
-  /// IsoMonitor_c.timeEvent() should be called in 50 ms
-  void changeRetriggerTime() { getSchedulerInstance().changeRetriggerTimeAndResort(this,System_c::getTime() + 50 );};
-
 #if DEBUG_ISOMONITOR
   void debugPrintNameTable();
 #endif
@@ -362,12 +352,6 @@ protected: // Protected methods
     @return true -> message processed by IsoMonitor_c; false -> process msg by ServiceMonitor
   */
   bool processMsg( const CanPkg_c& arc_data );
-
-  //! Function set ui16_earlierInterval and
-  //! ui16_laterInterval that will be used by
-  //! getTimeToNextTrigger(retriggerType_t)
-  //! can be overloaded by Childclass for special condition
-  virtual void updateEarlierAndLatestInterval();
 
 private:
   /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
@@ -408,11 +392,6 @@ private:
       uint32_t aui32_totalLen)
   {
     return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
-  }
-
-  virtual uint16_t getForcedMinExecTime() const
-  {
-    return getForcedMinExecTimeDefault();
   }
 
   class CanCustomerProxy_c : public CanCustomer_c {

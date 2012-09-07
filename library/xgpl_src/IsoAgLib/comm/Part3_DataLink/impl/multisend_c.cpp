@@ -121,11 +121,12 @@ SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& r_source)
 /************************************/
 
 
-MultiSend_c::MultiSend_c() :
+MultiSend_c::MultiSend_c()
+  : SchedulerTask_c( 0, 100, true )
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
-    mui8_nextFpSequenceCounter(0),
+  , mui8_nextFpSequenceCounter(0)
   #endif
-    mlist_sendStream()
+  , mlist_sendStream()
   , mt_handler(*this)
   , mt_customer(*this)
 {
@@ -137,7 +138,7 @@ MultiSend_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerClient( this );
+  getSchedulerInstance().registerTask( *this );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
@@ -157,7 +158,7 @@ MultiSend_c::close()
   isoaglib_assert (initialized());
 
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
-  getSchedulerInstance().unregisterClient( this );
+  getSchedulerInstance().deregisterTask( *this );
 
   /// For right now, we do gracefully kill all interrupted stream,
   /// but normally the modules should abort thier own sending when they
@@ -241,24 +242,20 @@ MultiSend_c::sendIntern (const IsoName_c& isoNameSender, const IsoName_c& isoNam
 }
 
 
-/**
-  perform periodical actions
-  @return true -> all planned activities performed in allowed time
-*/
-bool
+void 
 MultiSend_c::timeEvent()
 {
   if (mlist_sendStream.empty())
   { // nothing to do if no transfer is Running
-    setTimePeriod (5000); // actually we could use "infinite here"
-    return true;
+    setPeriod (5000); // actually we could use "infinite here"
+    return;
   }
 
   /** @todo SOON-178 Check how we want to calculate the max nr. of packets to send
             ==> Best would be to know when the next comes.
             clip that value as we may expect incoming can-pkgs, too - so be a little polite!
   */
-  const int32_t ci32_time = Scheduler_Task_c::getLastRetriggerTime();
+  const int32_t ci32_time = System_c::getTime();
   // store time of last call, to get time interval between execution
   static int32_t si32_lastCall = 0;
   // only send max 1 package for first call, when execution period can't be derived
@@ -294,40 +291,17 @@ MultiSend_c::timeEvent()
   }
 
   // ALWAYS calculate when we want to be triggered again!
-  uint16_t ui16_newTimePeriod = 5000; // default: no SendStream running, idle around with 10 secs.. (actually "unlimited" would be correct - we can sleep!
+  int32_t newTimePeriod = 5000; // default: no SendStream running, idle around with 10 secs.. (actually "unlimited" would be correct - we can sleep!
 
   if (i32_nextRetriggerNeeded > -1) // "!= -1"
   { // HARD-timing, we need to come to action then!
     int32_t i32_delta = i32_nextRetriggerNeeded-System_c::getTime();
     if (i32_delta < 0) i32_delta = 0;
-    ui16_newTimePeriod = i32_delta;
+    newTimePeriod = i32_delta;
   }
-  setTimePeriod (ui16_newTimePeriod);
-
-  return true;
+  setPeriod(newTimePeriod);
 };
 
-
-//! Function set ui16_earlierInterval and
-//! ui16_laterInterval that will be used by
-//! getTimeToNextTrigger(retriggerType_t)
-//! can be overloaded by Childclass for special condition
-void
-MultiSend_c::updateEarlierAndLatestInterval()
-{ /** @todo OPTIMIZE-178 improve with a flag for HARD/SOFT timing, but it's okay for right now... */
-  if (getTimePeriod() <= 1250)
-  { // use HARD-Timing
-    mui16_earlierInterval = 0;
-    mui16_latestInterval  = getTimePeriod()/2; //50; // be polite and let other tasks do their job, we can wait a little bit
-    // ==> this is better than always interrupting important big tasks as WE can wait and slicing is NOT nice to handle for the big task.
-    if (mui16_latestInterval > 100) mui16_latestInterval = 100;
-  }
-  else
-  { // use SOFT-Timing (using jitter for earlier/after)
-    mui16_earlierInterval = ( (getTimePeriod() * 1) / 4);
-    mui16_latestInterval =     getTimePeriod();
-  }
-}
 
 /**
   start processing of a process msg
@@ -380,7 +354,7 @@ MultiSend_c::calcAndSetNextTriggerTime()
   { // no SendStreams needs to come to action, so idle around
     i32_nextRetriggerNeeded = System_c::getTime() + 5000;
   }
-  getSchedulerInstance().changeRetriggerTimeAndResort (this, i32_nextRetriggerNeeded); // no need to change the period, as we don't use it - we always calculate the next trigger time!
+  setNextTriggerTime( i32_nextRetriggerNeeded );
 }
 
 
@@ -437,13 +411,6 @@ MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler
     }
   }
 }
-
-
-#if DEBUG_SCHEDULER
-const char*
-MultiSend_c::getTaskName() const
-{ return "MultiSend_c()"; }
-#endif
 
 
 } // __IsoAgLib

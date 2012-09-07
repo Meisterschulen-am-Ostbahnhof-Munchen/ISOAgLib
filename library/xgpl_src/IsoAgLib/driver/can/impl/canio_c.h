@@ -124,13 +124,6 @@ class CanIo_c : public Subsystem_c
 
   ~CanIo_c() {}
 
-  /** periodically called function which does
-    periodically needed actions; f.e. trigger watch
-    dog and start processing of received messages
-    @return true -> time events was performed
-  */
-  bool timeEvent( void );
-
   /** provide BUS number */
   uint8_t getBusNumber( void ) const { return mui8_busNumber; }
 
@@ -142,8 +135,8 @@ class CanIo_c : public Subsystem_c
   /** wait until specified timeout or until next CAN message receive
    *  @return true -> there are CAN messages waiting for process. else: return due to timeout
    */
-  static bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
-  { return HAL::can_waitUntilCanReceiveOrTimeout( aui16_timeoutInterval );}
+  static bool waitUntilCanReceiveOrTimeout( int32_t timeoutInterval )
+  { return HAL::can_waitUntilCanReceiveOrTimeout( timeoutInterval );}
 
   /** deliver the numbers which can be placed at the moment in the send buffer
     @return number of msgs which fit into send buffer
@@ -229,11 +222,8 @@ class CanIo_c : public Subsystem_c
     initiate processing of all received msg
     check all active MsgObj_c for received CAN msg and
     initiate their processing
-    @return <0 --> not enough time to process all messages.
-           ==0 --> no messages were received.
-           >0  --> all messages are processed, number of messages
   */
-  int16_t processMsg();
+  void processMsg( bool& stopCanProcessing );
 
   /** deliver count of CAN messages which were processed during last timeEvent() / processMsg() call
     * this helps Scheduler_c to decide about needed double retrigger of CanIo_c::processMsg()

@@ -93,7 +93,7 @@ public:
     @param ai32_time optional time to store as last update time (default retreive actual time from central SystemMgmt_c instance)
   */
   void updateTime( int32_t ai32_time = -1 )
-    {if ( ai32_time < 0 ) mi32_lastTime = Scheduler_Task_c::getLastRetriggerTime();
+    {if ( ai32_time < 0 ) mi32_lastTime = System_c::getTime();
      else mi32_lastTime = ai32_time;
     }
 
@@ -105,11 +105,7 @@ public:
   */
   bool checkTime(uint16_t aui16_timeInterval) const;
 
-protected:
 private:
-// Private methods
-
-// Private attributes
   /** last system time of access or alive or received message in [250ms]*/
   int32_t mi32_lastTime;
 };

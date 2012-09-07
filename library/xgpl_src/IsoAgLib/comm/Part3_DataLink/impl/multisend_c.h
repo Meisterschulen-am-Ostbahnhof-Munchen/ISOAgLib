@@ -72,7 +72,7 @@ public:
   @author Dipl.-Inform. Achim Spangler
   @author Dipl.-Inf. Martin Wodok
 */
-class MultiSend_c : public Scheduler_Task_c
+class MultiSend_c : public SchedulerTask_c
 {
 private:
   MACRO_MULTITON_CONTRIBUTION();
@@ -173,7 +173,7 @@ public:
     perform periodical actions
     @return true -> all planned activities performed in allowed time
   */
-  bool timeEvent();
+  void timeEvent();
 
   /** user function for explicit abort of any running matching stream. */
   void abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
@@ -182,16 +182,7 @@ public:
   /** check if at least one multisend stream is running */
   bool isMultiSendRunning() const { return (!mlist_sendStream.empty()); }
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
-
-protected: // methods
-  //! Function set ui16_earlierInterval and
-  //! ui16_laterInterval that will be used by
-  //! getTimeToNextTrigger(retriggerType_t)
-  //! can be overloaded by Childclass for special condition
-  virtual void updateEarlierAndLatestInterval();
+protected:
 
 
 private:
@@ -263,8 +254,6 @@ private:
                                      return cui8_returnVal; }
   #endif
 
-  virtual uint16_t getForcedMinExecTime() const
-  { return getForcedMinExecTimeDefault(); }
 
   static SendStream_c::msgType_t protocolTypeByPacketSize(uint32_t ui32_size);
 

@@ -55,7 +55,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     ///Set time Period for Scheduler_c
     if (at_identMode == IsoAgLib::IdentModeTractor)
     { // SEND facilities at start
-      setTimePeriod( (uint16_t) 100);
+      mt_task.setPeriod( 100 );
     }
 
     if (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
@@ -191,24 +191,17 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   @pre  function is only called in tractor mode
   @see  BaseCommon_c::timeEvent()
    */
-  bool TracFacilities_c::timeEventTracMode( )
+  void TracFacilities_c::timeEventTracMode( )
   {
     if (!mb_facilitiesOnInitSent)
     {
       // send Tractor Facility PGN once at start
       sendFacilities();
       // scheduler not needed anymore -> set period to big value
-      setTimePeriod (0x7F00);
+      mt_task.setPeriod ( 3600000 );
 
       mb_facilitiesOnInitSent = true;
     }
-    return true;
   }
-
-#if DEBUG_SCHEDULER
-const char*
-TracFacilities_c::getTaskName() const
-{ return "TracFacilities_c"; }
-#endif
 
 }// End Namespace __IsoAglib

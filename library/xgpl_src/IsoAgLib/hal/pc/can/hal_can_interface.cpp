@@ -20,6 +20,11 @@
  * directories xgpl_src/IsoAgLib/hal/can/ .
  * ********************************************************** */
 
+#ifdef USE_MUTUAL_EXCLUSION
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+
 #include "hal_can_interface.h"
 #include "../config.h"
 #include "../errcodes.h"
@@ -90,6 +95,44 @@ uint8_t ui8_cinterfBufSize;
 bool b_canObjConfigured; // only used in ENHANCED_CAN_HAL case
 
 } tHalCan;
+
+
+
+#ifdef USE_MUTUAL_EXCLUSION
+static int breakWaitPipeFd[2] = { -1, -1 };
+
+void can_breakWaitUntilCanReceiveOrTimeout() {
+  if( write( breakWaitPipeFd[1], "\0", 1 ) != 1 ) {
+    perror("write");
+  }
+}
+
+void initBreakWait() {
+  /* open break waitUntilCanReceiveOrTimeout socket */
+  if( pipe2( breakWaitPipeFd, O_NONBLOCK ) != 0 ) {
+    perror("pipe");
+  }
+}
+
+void closeBreakWait() {
+  (void)close(breakWaitPipeFd[0]);
+  (void)close(breakWaitPipeFd[1]);
+}
+
+void setBreakWaitFd( fd_set& rfds ) {
+  FD_ISSET( breakWaitPipeFd[0], &rfds );
+}
+
+void clearBreakWaitFd( fd_set& rfds ) {
+  if( FD_ISSET( breakWaitPipeFd[0], &rfds ) ) {
+    static char buff[256];
+    while( 0 < read( breakWaitPipeFd[0], buff, 256 ) ) { }
+  }
+}
+#endif
+
+
+
 
 //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
 //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
@@ -433,9 +476,9 @@ int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 /** wait until specified timeout or until next CAN message receive
  *  @return true -> there are CAN messages waiting for process. else: return due to timeout
   */
-bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
+bool can_waitUntilCanReceiveOrTimeout( int32_t timeoutInterval )
 {
-  return waitUntilCanReceiveOrTimeout( aui16_timeoutInterval );
+  return waitUntilCanReceiveOrTimeout( timeoutInterval );
 }
 
 /* ***************************************************** */

@@ -41,7 +41,7 @@ namespace IsoAgLib {
 
 namespace __IsoAgLib {
 
-class TcClient_c : public Scheduler_Task_c
+class TcClient_c : public SchedulerTask_c
 {
   MACRO_MULTITON_CONTRIBUTION();
 private:
@@ -52,7 +52,7 @@ public:
   void init( void );
   void close( void );
 
-  bool timeEvent();
+  void timeEvent();
   bool processMsg( const CanPkg_c& arc_data );
 
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
@@ -84,10 +84,6 @@ public:
                  IsoAgLib::ProcData::nackResponse_t a_errorcodes ) const;
 
 private:
-  virtual void updateEarlierAndLatestInterval();
-  virtual uint16_t getForcedMinExecTime() const
-  { return getForcedMinExecTimeDefault(); }
-
   void stopRunningMeasurement( IsoAgLib::ProcData::remoteType_t ecuType );
 
   /// PROXY-CLASSES

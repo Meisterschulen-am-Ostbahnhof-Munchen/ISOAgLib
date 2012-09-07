@@ -168,19 +168,6 @@
  * All defines of this block can be overridden by project specific config file.
  */
 /*@{*/
-/** default maximum time to perform the function iScheduler_c::timeEvent
-    if this function isn't called with a defined termination timestamp.
-    This is needed to avoid a deadlock which could happen if processing
-    and reaction on received CAN messages causes a never endling loop of
-    new received messages - or in other words: if the CAN message queues
-    don't ever get empty during the processing.
-    If this time limit is reached, then something is probably quite broken
-    on CAN BUS.
-  */
-#ifndef CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME
-  /// default max execution time of iScheduler_c::timeEvent - can be manually overridden in project config file
-#  define CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME 500
-#endif
 
 /** time to delete inactive ISO items in monitor list [msec]
     - if CONFIG_ISO_ITEM_MAX_AGE is not defined, no items are deleted

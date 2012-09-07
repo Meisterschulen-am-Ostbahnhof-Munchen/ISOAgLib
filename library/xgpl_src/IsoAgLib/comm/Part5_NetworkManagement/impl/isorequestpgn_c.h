@@ -133,11 +133,6 @@ public:
   /** Only call sendCannotRespondNow(..) when you're about to respond to a requested PGN */
   void answerRequestPGNwithACK (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackCode) { sendAcknowledgePGN (arc_isoItemSender, aui8_ackCode); }
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
-
-
 protected: // Protected methods
   /** process system msg
     * @return true -> message (Request for PGN) processed by IsoRequestPgn_c; false -> let others process */

@@ -34,7 +34,7 @@
 namespace __IsoAgLib {
 
 /** central IsoAgLib terminal management object */
-class FsManager_c : public Scheduler_Task_c
+class FsManager_c : public SchedulerTask_c
 {
   MACRO_MULTITON_CONTRIBUTION();
 public:
@@ -78,14 +78,8 @@ public:
   * delete inactive fileservers and notify clientservercoms that have not been notified on fileservers yet.
   * Once a fileserver's properties have been requested, the fscommand object, taking care of the request
   * is deleted.
-  * @return true if all tasks where performed correctly
   */
-  bool timeEvent(void);
-  void updateEarlierAndLatestInterval() { updateEarlierAndLatestIntervalDefault(); }
-
-#if DEBUG_SCHEDULER
-  const char* getTaskName() const;
-#endif
+  void timeEvent(void);
 
 /**
   * initFsClient registers a new fileserver client. If the client has already been registered, it does not re-register

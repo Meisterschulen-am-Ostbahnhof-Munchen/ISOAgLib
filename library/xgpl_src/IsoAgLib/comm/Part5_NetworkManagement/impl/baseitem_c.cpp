@@ -73,16 +73,6 @@ BaseItem_c& BaseItem_c::operator=(const BaseItem_c& src){
 }
 
 /**
-  calculates time between now and last set of mi32_lastTime;
-  if called with time parameter, the difference to this is calculated,
-  otherwise the system time is retreived and used
-  @return lasted time between last update and the compare time [msec.]
-*/
-int32_t BaseItem_c::lastedTime( void ) const {
-  return ( Scheduler_Task_c::getLastRetriggerTime() - mi32_lastTime );
-}
-
-/**
   check if given time intervall is lasted
   INFO: Interval is only an uint16. That's because of SPEED reasons
         for 16-bit platforms and of the not existing need to check
@@ -91,7 +81,7 @@ int32_t BaseItem_c::lastedTime( void ) const {
   @return true -> time last timestamp older than intervall
 */
 bool BaseItem_c::checkTime(uint16_t aui16_timeInterval) const  {
-  return ( lastedTime() >= aui16_timeInterval );
+  return ( ( System_c::getTime() - mi32_lastTime ) >= aui16_timeInterval );
 }
 
 } // end of namespace __IsoAgLib

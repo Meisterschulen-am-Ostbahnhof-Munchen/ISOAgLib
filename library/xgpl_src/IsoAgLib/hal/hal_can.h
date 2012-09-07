@@ -148,7 +148,7 @@ namespace HAL
   /** wait until specified timeout or until next CAN message receive
    *  @return true -> there are CAN messages waiting for process. else: return due to timeout
    */
-  bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval );
+  bool can_waitUntilCanReceiveOrTimeout( int32_t timeoutInterval );
 
   /**
     config a MsgObj
@@ -237,6 +237,11 @@ namespace HAL
 #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
   int32_t can_getMaxSendDelay(uint8_t aui8_busNr);
 #endif
+
+#ifdef USE_MUTUAL_EXCLUSION
+  void can_breakWaitUntilCanReceiveOrTimeout();
+#endif
+
 } // HAL
 
 

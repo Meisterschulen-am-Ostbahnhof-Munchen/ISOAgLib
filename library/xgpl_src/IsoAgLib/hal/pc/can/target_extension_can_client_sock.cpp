@@ -248,6 +248,10 @@ int16_t can_startDriver()
 # endif
 #endif
 
+#ifdef USE_MUTUAL_EXCLUSION
+  initBreakWait();
+#endif
+
   i32_commandSocket = call_socket(COMMAND_TRANSFER_PORT);
   if (i32_commandSocket == INVALID_SOCKET) {
     return HAL_UNKNOWN_ERR;
@@ -310,6 +314,9 @@ int16_t can_stopDriver()
 #else
   (void)close(i32_commandSocket);
   (void)close(i32_dataSocket);
+#ifdef USE_MUTUAL_EXCLUSION
+  closeBreakWait();
+#endif
 #endif
   
   return retVal;
@@ -580,15 +587,23 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 
   FD_ZERO(&rfds);
   FD_SET(i32_dataSocket, &rfds);
+#ifdef USE_MUTUAL_EXCLUSION
+  setBreakWaitFd( rfds );
+#endif
 
   s_timeout.tv_sec = 0;
   s_timeout.tv_usec = rui16_timeoutInterval * 1000;
 
   i16_rc = select(FD_SETSIZE, &rfds, NULL, NULL, &s_timeout);
 
-  // return true, when the timeout was NOT the trigger for coming back from select
-  return ( i16_rc > 0 );
+#ifdef USE_MUTUAL_EXCLUSION
+  clearBreakWaitFd( rfds );
+#endif
+
+  // return true, when data is pending on data socket
+  return ( FD_ISSET( i32_dataSocket, &rfds ) );
 };
+
 
 // MDS NOTE: This is code is highly inefficient and needs to be optimized!
 //  The receive structure should be changed so that it does not need to be copied from

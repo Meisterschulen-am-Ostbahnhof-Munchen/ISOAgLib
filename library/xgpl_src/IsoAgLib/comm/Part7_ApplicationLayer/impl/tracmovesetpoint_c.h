@@ -2,7 +2,7 @@
   tracmovesetpoint_c.h: working on Base Data moving set point; stores,
     updates and delivers all base data informations from CanCustomer_c
     derived for CAN sending and receiving interaction; from
-    Scheduler_Task_c derived for interaction with other IsoAgLib
+    SchedulerTask_c derived for interaction with other IsoAgLib
     objects
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -26,7 +26,7 @@ namespace __IsoAgLib {
  /** working on Base Data Msg;
       stores, updates  and delivers all base data informations;
       Derive from BaseCommon_c some fundamental funktionality for all base data
-      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+      Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
@@ -76,10 +76,6 @@ namespace __IsoAgLib {
       */
     uint16_t selectedSpeedSetPointLimit() const {return mi16_selectedSpeedSetPointLimit;}
 
-#if DEBUG_SCHEDULER
-    virtual const char* getTaskName() const;
-#endif
-
   virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
   private:
@@ -103,7 +99,7 @@ namespace __IsoAgLib {
         @see  BaseCommon_c::timeEvent()
         @see  CanIo_c::operator<<
       */
-    virtual bool timeEventImplMode( );
+    virtual void timeEventImplMode( );
 
     /** process a ISO11783 base information PGN
         @pre  sender of message is existent in monitor list

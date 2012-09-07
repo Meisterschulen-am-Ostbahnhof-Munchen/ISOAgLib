@@ -124,7 +124,8 @@ MultiReceiveClientWrapper_s::stop (CanCustomer_c& apc_fpCustomer)
 
 // c'tor
 MultiReceive_c::MultiReceive_c()
-  : mlist_streams()
+  : SchedulerTask_c( 0, 100, true )
+  , mlist_streams()
   , mlist_clients()
   , mt_handler(*this)
   , mt_customer(*this)
@@ -237,13 +238,7 @@ MultiReceive_c::processMsg( const CanPkg_c& arc_data )
   // to just ignore that here....
   if( result )
   {
-    int32_t nextTime = nextTimeEvent();
-    const int32_t now = System_c::getTime();
-
-    if( nextTime <= now )
-      nextTime = now;
-
-    __IsoAgLib::getSchedulerInstance().changeRetriggerTimeAndResort( this, nextTime, 123 ); // 123 = dummy!
+    setNextTriggerTime( nextTimeEvent() );
   }
 
   return result;
@@ -924,7 +919,7 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& arc_stream)
 }
 
 
-bool
+void
 MultiReceive_c::timeEvent()
 {
   STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = mlist_streams.begin();
@@ -980,7 +975,7 @@ MultiReceive_c::timeEvent()
   if( newPeriod < 1 )
     newPeriod = 1;
   
-  setTimePeriod( newPeriod );
+  setPeriod( newPeriod );
   return true;
 }
 
@@ -1189,7 +1184,7 @@ MultiReceive_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerClient( this );
+  getSchedulerInstance().registerTask( *this );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
   // insert receive filters for broadcasted TP
@@ -1199,7 +1194,7 @@ MultiReceive_c::init()
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ), 8, false);
   getIsoBusInstance4Comm().reconfigureMsgObj();
 
-  setTimePeriod (5000); // nothing to do per default!
+  setPeriod (5000); // nothing to do per default!
 
   setInitialized();
 }
@@ -1210,7 +1205,7 @@ MultiReceive_c::close( void )
 {
   isoaglib_assert (initialized());
 
-  getSchedulerInstance().unregisterClient( this );
+  getSchedulerInstance().deregisterTask( *this );
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
 
   // remove receive filters for broadcasted TP
@@ -1402,13 +1397,6 @@ MultiReceive_c::nextTimeEvent() const
   }
   return nextTrigger;
 }
-
-
-#if DEBUG_SCHEDULER
-const char*
-MultiReceive_c::getTaskName() const
-{ return "MultiReceive_c"; }
-#endif
 
 
 } // end namespace __IsoAgLib

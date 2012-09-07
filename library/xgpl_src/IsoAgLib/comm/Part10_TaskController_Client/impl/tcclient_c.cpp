@@ -40,7 +40,8 @@ TcClient_c::getDevPropertyHandlerInstance( void )
 
 
 TcClient_c::TcClient_c()
-  : mc_devPropertyHandler()
+  : SchedulerTask_c( 0, 200, true )
+  , mc_devPropertyHandler()
   , m_lastActiveTaskTC( false )
   , mc_isoNameTC( IsoName_c::IsoNameUnspecified() )
 #ifdef USE_DATALOGGER
@@ -61,7 +62,7 @@ TcClient_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerClient( this );
+  getSchedulerInstance().registerTask( *this );
   __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
   m_lastActiveTaskTC = false;
 
@@ -74,8 +75,6 @@ TcClient_c::init()
   if (!getIsoBusInstance4Comm().existFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter) ) )
     getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter ), 8, true);
 
-  setTimePeriod(200);
-
   mpc_iter = c_arrClientC1.begin();
 
   setInitialized();
@@ -87,14 +86,14 @@ TcClient_c::close()
 {
   isoaglib_assert (initialized());
 
-  getSchedulerInstance().unregisterClient( this );
+  getSchedulerInstance().deregisterTask( *this );
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
 
   setClosed();
 };
 
 
-bool
+void
 TcClient_c::timeEvent()
 {
   mc_devPropertyHandler.timeEvent();
@@ -107,12 +106,6 @@ TcClient_c::timeEvent()
   // call the time event for all local data
   for ( ;( mpc_iter != c_arrClientC1.end() ); mpc_iter++ )
   {
-    if ( Scheduler_Task_c::getAvailableExecTime() == 0 )
-    { // no time left, stop loop
-      ui16_nextTimePeriod = 20;
-      break;
-    }
-
     // process next ProcData_c
     (*mpc_iter)->timeEvent( ui16_nextTimePeriod );
   }
@@ -130,17 +123,15 @@ TcClient_c::timeEvent()
     { // limit large values (for Alive sending)
       ui16_nextTimePeriod = 200;
     }
-    Scheduler_Task_c::setTimePeriod(ui16_nextTimePeriod); // + Scheduler_Task_c::getEarlierInterval());
+    SchedulerTask_c::setPeriod(ui16_nextTimePeriod); // + Scheduler_Task_c::getEarlierInterval());
   }
-
-  return true;
 }
 
 
 void
 TcClient_c::resetTimerPeriod()
 {
-  getSchedulerInstance().changeTimePeriodAndResortTask(this, 100);
+  setPeriod( 100 );
 }
 
 
@@ -354,20 +345,6 @@ TcClient_c::processTcStatusMsg( uint8_t ui8_tcStatus, const __IsoAgLib::IsoName_
   return true;
 }
 
-
-#if DEBUG_SCHEDULER
-const char*
-TcClient_c::getTaskName() const
-{ return "TcClient_c"; }
-#endif
-
-
-void
-TcClient_c::updateEarlierAndLatestInterval()
-{
-  mui16_earlierInterval = 0;  // to be removed with the new Scheduler anyhow...
-  mui16_latestInterval  = 10; // to be removed with the new Scheduler anyhow...
-}
 
 const IsoName_c&
 TcClient_c::getISONameFromType( IsoAgLib::ProcData::remoteType_t ecuType ) const

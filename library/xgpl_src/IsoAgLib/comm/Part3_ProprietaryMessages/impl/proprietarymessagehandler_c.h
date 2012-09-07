@@ -34,7 +34,7 @@ namespace __IsoAgLib
   /** initialization parameter for IsoName */
   static const IsoName_c& screfc_noIsoName = IsoName_c::IsoNameUnspecified();
 
-  class ProprietaryMessageHandler_c : public Scheduler_Task_c
+  class ProprietaryMessageHandler_c : public SchedulerTask_c
   {
     MACRO_MULTITON_CONTRIBUTION();
   public:
@@ -61,9 +61,8 @@ namespace __IsoAgLib
     /** performs periodically actions,
       possible errors:
         * partial error caused by one of the memberItems
-      @return true -> all planned activities performed in allowed time
     */
-    virtual bool timeEvent( void );
+    virtual void timeEvent( void );
 
     /** register the proprietary message client pointer in an interanl list of all clients.
         Derive and register from the member attributes:
@@ -80,10 +79,6 @@ namespace __IsoAgLib
     void deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient);
 
     void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
-
-#if DEBUG_SCHEDULER
-    virtual const char* getTaskName() const;
-#endif
 
     /** force an update of the CAN receive filter (if possible), as initial or
         new data has been set in an already registered client.
@@ -121,13 +116,6 @@ namespace __IsoAgLib
 
     /** Call updateSchedulingInformation() if client's nextTriggering has been changed */
     void updateSchedulingInformation();
-
-  protected:
-    //! Function set ui16_earlierInterval and
-    //! ui16_laterInterval that will be used by
-    //! getTimeToNextTrigger(retriggerType_t)
-    //! can be overloaded by Childclass for special condition
-    virtual void updateEarlierAndLatestInterval();
 
   private:
     void updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool ab_fromTimeEvent);
@@ -223,8 +211,6 @@ namespace __IsoAgLib
         of single member informations
     */
     ProprietaryMessageClientVector_t mvec_proprietaryclient;
-
-    bool mb_hardTiming;
 
     ControlFunctionStateHandlerProxy_c mt_handler;
     CanCustomerProxy_c mt_customer;

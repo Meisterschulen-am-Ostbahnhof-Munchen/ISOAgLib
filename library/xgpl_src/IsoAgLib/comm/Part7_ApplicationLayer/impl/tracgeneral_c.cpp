@@ -1,7 +1,7 @@
 /*
   tracgeneral_c.cpp: stores, updates and delivers all base data
     informations from CanCustomer_c derived for CAN sending and
-    receiving interaction; from Scheduler_Task_c derived for
+    receiving interaction; from SchedulerTask_c derived for
     interaction with other IsoAgLib objects
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -63,11 +63,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     ///Set time Period for Scheduler_c
     if (at_identMode == IsoAgLib::IdentModeTractor)
     { // SEND data with short period
-      setTimePeriod( (uint16_t) 100);
+      mt_task.setPeriod( 100);
     }
     else
     { // check with long period for timeout after loss of sending node
-      setTimePeriod( (uint16_t) 1000 );
+      mt_task.setPeriod( 1000 );
     }
 
     // set the member base msg value vars to NO_VAL codes
@@ -141,7 +141,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TracGeneral_c::timeEventTracMode( )
+  void TracGeneral_c::timeEventTracMode( )
   { ///Timeperiod of 100ms is set in ::config
     sendMessage();
 
@@ -152,8 +152,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       sendLanguage();
       mb_languagePgnChanged = false;
     }
-
-    return true;
   }
 
   /** process a ISO11783 base information PGN
@@ -702,12 +700,6 @@ TracGeneral_c::updateUnitSystem(uint8_t aui8_unitSystem)
   mb_languagePgnChanged = true;
 }
 
-
-#if DEBUG_SCHEDULER
-const char*
-TracGeneral_c::getTaskName() const
-{ return "TracGeneral_c"; }
-#endif
 
 
 } // End Namespace __IsoAgLib

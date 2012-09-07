@@ -25,7 +25,7 @@ namespace __IsoAgLib {
 
 class VtClientConnection_c;
 
-class Aux2Inputs_c : public Scheduler_Task_c
+class Aux2Inputs_c : public SchedulerTask_c
 {
 public:
   enum Aux2InputsState_en 
@@ -41,12 +41,7 @@ public:
   void init(VtClientConnection_c* a_vtClientServerCommunication);
 
   /** send AUX2 input maintenance message (100msec) and call timeEventInputStateMsg(NULL) (1sec) */
-  bool timeEvent(void);
-
-  virtual void updateEarlierAndLatestInterval() {
-    mui16_earlierInterval = 0;
-    mui16_latestInterval  = 5;
-  }
+  void timeEvent(void);
 
   inline void setState(Aux2InputsState_en a_state) { m_state = a_state; }
 

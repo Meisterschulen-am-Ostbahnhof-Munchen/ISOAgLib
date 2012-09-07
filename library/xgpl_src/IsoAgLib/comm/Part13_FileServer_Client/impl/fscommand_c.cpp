@@ -101,7 +101,7 @@ FsCommand_c::FsCommand_c(
   , mb_retryMultiPacketSend( false)
 {
   // Scheduler
-  getSchedulerInstance().registerClient (&mc_schedulerTask);
+  getSchedulerInstance().registerTask(mc_schedulerTask);
 
 #if DEBUG_FILESERVER
   INTERNAL_DEBUG_DEVICE << "FsCommand created!" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -132,7 +132,7 @@ FsCommand_c::~FsCommand_c()
   }
 
   // Scheduler
-  getSchedulerInstance().unregisterClient (&mc_schedulerTask);
+  getSchedulerInstance().deregisterTask(mc_schedulerTask);
 
 #if DEBUG_FILESERVER
   INTERNAL_DEBUG_DEVICE << "FsCommand destroyed!" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -140,11 +140,11 @@ FsCommand_c::~FsCommand_c()
 }
 
 
-bool
+void
 FsCommand_c::timeEvent(void)
 {
   if (!rc_csCom.getClientIdentItem().isClaimedAddress())
-    return true;
+    return;
 
   if (!b_receiveFilterCreated)
   {
@@ -230,7 +230,7 @@ FsCommand_c::timeEvent(void)
         getFileserver().setState (FsServerInstance_c::unusable);
         // nothing more to do, this instance needs to be removed
         // (will be done in timeEvent) because the FS failed.
-        return true;
+        return;
       }
       else
       {
@@ -327,7 +327,6 @@ FsCommand_c::timeEvent(void)
       i32_lastAliveSent = -1;
     }
   }
-  return true;
 }
 
 

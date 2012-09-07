@@ -35,7 +35,8 @@
 namespace __IsoAgLib
 {
   ProprietaryMessageHandler_c::ProprietaryMessageHandler_c()
-    : mt_handler(*this)
+    : SchedulerTask_c( 0, 3600000, true )
+    , mt_handler(*this)
     , mt_customer(*this)
   { // nop
   }
@@ -46,12 +47,7 @@ namespace __IsoAgLib
   {
     isoaglib_assert (!initialized());
 
-
-    getSchedulerInstance().registerClient( this );
     getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
-
-    mb_hardTiming = false;
-    setTimePeriod (27012); // wait some silly large time as we have really NOTHING to do scheduled!
 
     setInitialized();
   }
@@ -63,7 +59,7 @@ namespace __IsoAgLib
     isoaglib_assert (initialized());
 
     getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
-    getSchedulerInstance().unregisterClient( this );
+    getSchedulerInstance().deregisterTask( *this );
 
     setClosed();
   }
@@ -273,23 +269,10 @@ namespace __IsoAgLib
   {
     if (pc_nextClient != NULL)
     { // we have a client requesting to send up next...
-      mb_hardTiming = true;
-      if (ab_fromTimeEvent)
-      { // can't set fix retrigger time, so setting the timePeriod
-        // (Note: retrigger isn't needed/allowed from timeEvent)
-        int32_t i32_idleTimeSpread = pc_nextClient->mui32_nextSendTimeStamp - HAL::getTime();
-        if (i32_idleTimeSpread < 0) i32_idleTimeSpread = 0;
-        setTimePeriod (i32_idleTimeSpread);
-      }
-      else
-      { // from outside, so set the nextSendTimeStamp needs to be retriggered
-        getSchedulerInstance().changeRetriggerTimeAndResort (this, pc_nextClient->mui32_nextSendTimeStamp);
-      }
-    }
-    else
-    {
-      mb_hardTiming = false;
-      setTimePeriod (27012); // wait some silly large time as we have really NOTHING to do scheduled!
+      setNextTriggerTime( pc_nextClient->mui32_nextSendTimeStamp );
+      getSchedulerInstance().registerTask( *this );
+    } else {
+      getSchedulerInstance().deregisterTask( *this );
     }
   }
 
@@ -414,12 +397,6 @@ namespace __IsoAgLib
   }
 
 
-#if DEBUG_SCHEDULER
-  const char* ProprietaryMessageHandler_c::getTaskName() const
-  { return "ProprietaryMessageHandler_c()"; }
-#endif
-
-
   bool
   ProprietaryMessageHandler_c::processMsg( const CanPkg_c& arc_data )
   {
@@ -464,24 +441,7 @@ namespace __IsoAgLib
   }
 
 
-  void
-  ProprietaryMessageHandler_c::updateEarlierAndLatestInterval()
-  {
-    if (mb_hardTiming)
-    {
-      mui16_earlierInterval = 0; //( ( getTimePeriod() * 3) / 4);
-      mui16_latestInterval = ( getTimePeriod() / 2);
-      if (mui16_latestInterval > 20) mui16_latestInterval = 20; // allow max. 20ms latest-jitter if we have hard-timing enabled!
-    }
-    else
-    {
-      mui16_earlierInterval = ( ( getTimePeriod() * 3) / 4);
-      mui16_latestInterval = ( getTimePeriod() / 2);
-    }
-  }
-
-
-  bool
+  void 
   ProprietaryMessageHandler_c::timeEvent()
   {
     ProprietaryMessageClient_c* pc_nextClient = NULL;
@@ -491,7 +451,7 @@ namespace __IsoAgLib
       // don't care for right now if client has a localIdent set or is claimed...
       if ( (*client_iterator).pc_client->mui32_sendPeriodicMsec != 0)
       { // yes, the client wants periodic sending
-        const uint32_t cui32_timestamp = HAL::getTime();
+        const uint32_t cui32_timestamp = System_c::getTime();
         // has its time come?
         if (cui32_timestamp >= (*client_iterator).pc_client->mui32_nextSendTimeStamp)
         { // send the data out!
@@ -514,8 +474,6 @@ namespace __IsoAgLib
     }
 
     updateTimePeriod (pc_nextClient, true);
-
-    return (true);
   }
 
   ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance)

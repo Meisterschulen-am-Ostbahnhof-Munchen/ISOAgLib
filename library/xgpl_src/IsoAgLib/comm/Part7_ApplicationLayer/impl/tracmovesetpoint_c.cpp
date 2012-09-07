@@ -2,7 +2,7 @@
   tracmovesetpoint_c.cpp: working on Base Data Msg Type 1; stores,
     updates and delivers all base data informations from CanCustomer_c
     derived for CAN sending and receiving interaction; from
-    Scheduler_Task_c derived for interaction with other IsoAgLib
+    SchedulerTask_c derived for interaction with other IsoAgLib
     objects
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -100,12 +100,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @see  BaseCommon_c::timeEvent()
       @see  CanIo_c::operator<<
   */
-  bool TracMoveSetPoint_c::timeEventImplMode( )
+  void TracMoveSetPoint_c::timeEventImplMode( )
   {
-
-    ///Timeperiod of 100ms is set in ::config
-    if ( getAvailableExecTime() == 0 ) return false;
-
     #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
     TracMove_c& c_tracmove = getTracMoveInstance4Comm();
     #endif
@@ -117,7 +113,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
        )
     {
       if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) ) {
-        return false;
+        return;
       }
 
       IsoBus_c& c_can = getIsoBusInstance4Comm();
@@ -139,18 +135,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
       c_can << pkg;
     }
-
-    if ( getAvailableExecTime() == 0 ) return false;
-
-    return true;
   }
 
-
-#if DEBUG_SCHEDULER
-const char*
-TracMoveSetPoint_c::getTaskName() const
-{ return "TracMoveSetPoint_c"; }
-#endif
 
 /** dummy implementation
     @todo SOON-824: add answering of requestPGN in case this object is configured for sending of these information

@@ -83,9 +83,8 @@ namespace __IsoAgLib
         @see CanPkg_c::getData
         @see CanPkgExt_c::getData
         @see CanIo_c::operator<<
-        @return true -> all planned activities performed in allowed time
       */
-    virtual bool timeEvent();
+    virtual void timeEvent();
 
     /** send a PGN request */
     bool sendPgnRequest(uint32_t ui32_requestedPGN);
@@ -98,12 +97,12 @@ namespace __IsoAgLib
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    virtual bool timeEventTracMode();
+    virtual void timeEventTracMode();
 
     /** send a ISO11783 base information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
       */
-    virtual bool timeEventImplMode();
+    virtual void timeEventImplMode();
 
     /** Retrieve the last update time of the specified information type*/
     int32_t lastedTimeSinceUpdate() const { return (System_c::getTime() - mi32_lastMsgReceived);}
@@ -164,35 +163,8 @@ namespace __IsoAgLib
       return UnregisterPgn_s(&mt_handler, 0 ); // XXX TODO
     }
 
-    void setTimePeriod(uint16_t aui16_timePeriod) {
-      return mt_task.setTimePeriod(aui16_timePeriod);
-    }
-
     bool initialized() const {
       return mt_task.initialized();
-    }
-
-    bool changeTimePeriodAndResortTask(uint16_t aui16_newTimePeriod ) {
-      return getSchedulerInstance().changeTimePeriodAndResortTask(
-          &mt_task,
-          aui16_newTimePeriod);
-    }
-
-    bool changeRetriggerTimeAndResort(
-        int32_t ai32_newRetriggerTime,
-        int16_t ai16_newTimePeriod = -1) {
-      return getSchedulerInstance().changeRetriggerTimeAndResort(
-          &mt_task,
-          ai32_newRetriggerTime,
-          ai16_newTimePeriod);
-    }
-
-    int16_t getAvailableExecTime() {
-      return mt_task.getAvailableExecTime();
-    }
-
-    int32_t getLastRetriggerTime() const {
-      return mt_task.getLastRetriggerTime();
     }
 
     void setInitialized() {
@@ -211,37 +183,17 @@ namespace __IsoAgLib
     BaseCommon_c(BaseCommon_c const &arc_from);
     BaseCommon_c &operator=(BaseCommon_c const &arc_from);
 
-    class SchedulerTaskProxy_c : public Scheduler_Task_c {
+    class SchedulerTaskProxy_c : public SchedulerTask_c {
     public:
       typedef BaseCommon_c Owner_t;
 
-      SchedulerTaskProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+      SchedulerTaskProxy_c(Owner_t &art_owner) : SchedulerTask_c( 0, 100, true ), mrt_owner(art_owner) {}
 
       virtual ~SchedulerTaskProxy_c() {}
 
-      using Scheduler_Task_c::setTimePeriod;
-
     private:
-      virtual bool timeEvent() {
+      virtual void timeEvent() {
         return mrt_owner.timeEvent();
-      }
-
-      virtual int32_t getTimeToNextTrigger(retriggerType_en e_retriggerType = StandardRetrigger) const {
-        return mrt_owner.getTimeToNextTrigger(e_retriggerType);
-      }
-
-#if DEBUG_SCHEDULER
-      virtual const char *getTaskName() const {
-        return mrt_owner.getTaskName();
-      }
-#endif
-
-      virtual void updateEarlierAndLatestInterval() {
-        mrt_owner.updateEarlierAndLatestInterval();
-      }
-
-      virtual uint16_t getForcedMinExecTime() const {
-        return mrt_owner.getForcedMinExecTime();
       }
 
       // SchedulerTaskProxy_c shall not be copyable. Otherwise the
@@ -252,6 +204,9 @@ namespace __IsoAgLib
 
       Owner_t &mrt_owner;
     };
+
+
+
     typedef SchedulerTaskProxy_c Task_t;
     class IsoRequestPgnHandlerProxy_c : public IsoRequestPgnHandler_c {
     public:
@@ -292,22 +247,6 @@ namespace __IsoAgLib
     */
     virtual void checkCreateReceiveFilter() = 0;
 
-    virtual void updateEarlierAndLatestInterval() {
-      mt_task.updateEarlierAndLatestIntervalDefault();
-    }
-
-    virtual uint16_t getForcedMinExecTime() const {
-      return mt_task.getForcedMinExecTimeDefault();
-    }
-
-    virtual int32_t getTimeToNextTrigger(retriggerType_en e_retriggerType = StandardRetrigger) const {
-      return mt_task.getTimeToNextTriggerDefault(e_retriggerType);
-    }
-
-#if DEBUG_SCHEDULER
-    virtual char const *getTaskName() const = 0;
-#endif
-
     virtual bool processMsgRequestPGN(
         uint32_t aui32_pgn,
         IsoItem_c *apc_isoItemSender,
@@ -330,15 +269,17 @@ namespace __IsoAgLib
     /** IsoName of data source (e.g. tractor, terminal) from which commands are send exclusively */
     IsoName_c mc_selectedDataSourceISOName;
 
-    Task_t mt_task;
-    Handler_t mt_handler;
-
     /**
       * There are two timeout times for GPS-Positions and Speed
       * NMEA is 3 seconds, J1939 is 5 seconds.
       * So make timeout configurable.
       */
     uint16_t mui16_timeOut;
+
+  protected:
+    Task_t mt_task;
+    Handler_t mt_handler;
+
   };
 
 }// end namespace __IsoAgLib

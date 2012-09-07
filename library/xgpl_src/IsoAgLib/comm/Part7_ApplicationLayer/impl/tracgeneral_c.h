@@ -52,7 +52,7 @@ typedef struct
 
 /** stores, updates  and delivers all base data informations;
     Derive from BaseCommon_c some fundamental funktionality for all base data
-    Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+    Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
     Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
     Derive from SINGLETON to create a Singleton which manages one global accessible singleton
     per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
@@ -259,11 +259,6 @@ public:
     */
   enum SendLanguage_e sendLanguage();
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
-
-
   /** force maintain power from tractor
       @see  CanIo_c::operator<<
       @param ab_ecuPower true -> maintain ECU power
@@ -294,7 +289,7 @@ private:
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  virtual bool timeEventTracMode();
+  virtual void timeEventTracMode();
 
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list

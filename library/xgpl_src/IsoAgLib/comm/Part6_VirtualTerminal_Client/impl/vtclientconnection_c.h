@@ -145,7 +145,7 @@ public:
   /** periodically event -> call timeEvent for all  identities and parent objects
     @return true -> all planned activities performed in allowed time
   */
-  bool timeEvent();
+  void timeEvent();
   /** timeEvent sub-functions to get a better overview of the timeEvent main-function */
   void timeEventSendLanguagePGN();
   void timeEventUploadPoolTimeoutCheck();
@@ -326,7 +326,7 @@ private:
   void finalizeUploading();
 
   bool startUploadCommand();
-  void finishUploadCommand(bool ab_TEMPORARYSOLUTION_fromTimeEvent);
+  void finishUploadCommand();
   /** sets state to "OPCannotUpload"... */
   void vtOutOfMemory();
   void setObjectPoolUploadingLanguage();

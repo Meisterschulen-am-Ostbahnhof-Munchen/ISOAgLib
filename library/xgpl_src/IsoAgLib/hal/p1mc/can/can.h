@@ -73,8 +73,8 @@ namespace HAL
   inline int16_t can_configGlobalClose(uint8_t rui8_busNr)
     {return __HAL::can_configGlobalClose(rui8_busNr);}
 
-  inline bool can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
-    { return __HAL::can_waitUntilCanReceiveOrTimeout( rui16_timeoutInterval );}
+  inline bool can_waitUntilCanReceiveOrTimeout( int32_t timeoutInterval )
+    { return __HAL::can_waitUntilCanReceiveOrTimeout( timeoutInterval );}
 
   inline int16_t can_configMsgobjInit(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident, uint8_t rb_rxtx)
     {return __HAL::can_configMsgobjInit(rui8_busNr, rui8_msgobjNr, rrefc_ident, rb_rxtx);}

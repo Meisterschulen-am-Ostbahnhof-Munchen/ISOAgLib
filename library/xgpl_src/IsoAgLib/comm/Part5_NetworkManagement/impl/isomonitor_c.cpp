@@ -51,6 +51,7 @@ IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance )
 
 
 IsoMonitor_c::IsoMonitor_c() :
+  SchedulerTask_c( 0, 125, true ),
   mvec_isoMember(),
   mt_handler(*this),
   mt_customer(*this),
@@ -70,11 +71,8 @@ IsoMonitor_c::init()
   mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
   mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getMultitonInst() );
 
-  /// Set Period for Scheduler_c Start Period is 125
-  /// timeEvent will change to longer Period after Start
-  setTimePeriod( (uint16_t) 125   );
-  // register in Scheduler_c to be triggered fopr timeEvent
-  getSchedulerInstance().registerClient( this );
+  setPeriod( 125 );
+  getSchedulerInstance().registerTask( *this );
 
   mpc_activeLocalMember = NULL;
 
@@ -114,7 +112,7 @@ IsoMonitor_c::close()
   // Every SaClaimHandler must have deregistered properly already.
   isoaglib_assert( mvec_saClaimHandler.empty() );
 
-  getSchedulerInstance().unregisterClient( this );
+  getSchedulerInstance().deregisterTask( *this );
 
   // We can clear the list of remote nodes.
   /// NOTE: We do currently NOT call "internalIsoItemErase",
@@ -149,7 +147,7 @@ IsoMonitor_c::registerIdentItem( IdentItem_c& arc_item )
   if (cb_activationSuccess)
   { // Could activate it, so register it!
     /// IsoMonitor_c.timeEvent() should be called from Scheduler_c in 50 ms
-    changeRetriggerTime();
+    setNextTriggerTime( System_c::getTime() + 50 );
     (void) registerC1 (&arc_item);
     return true;
   }
@@ -169,7 +167,7 @@ IsoMonitor_c::deregisterIdentItem( IdentItem_c& arc_item )
 }
 
 
-bool
+void 
 IsoMonitor_c::timeEvent()
 {
   int32_t i32_checkPeriod = 3000;
@@ -180,7 +178,7 @@ IsoMonitor_c::timeEvent()
   #endif
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
-    if ( !(*pc_iter)->timeEvent() ) return false;
+    (*pc_iter)->timeEvent();
     /// @todo SOON-240 Adapt the check on itemState. Check if 0x7C is correct...
     switch( (*pc_iter)->itemState() & 0x7C )
     {
@@ -210,7 +208,8 @@ IsoMonitor_c::timeEvent()
 
   }
   // new TimePeriod is necessary - change it
-  if (i32_checkPeriod != getTimePeriod()) setTimePeriod(i32_checkPeriod);
+  if (i32_checkPeriod != getPeriod())
+    setPeriod(i32_checkPeriod);
 
   /// We have now: (HT=HardTiming, ST=SoftTiming)
   /// At least one IdentItem
@@ -222,13 +221,9 @@ IsoMonitor_c::timeEvent()
   ///       if not so, use soft-timing and idle around...
 
 #if CONFIG_ISO_ITEM_MAX_AGE > 0
-  // the following activities are optional for cleanup
-  // --> do NOT execute them, if execution time is limited
-  if ( getAvailableExecTime() == 0 )
-	return false;
 
   if ( lastIsoSaRequest() == -1)
-	return true;
+    return;
   
   IsoItem_c *someActiveLocalMember = NULL;
   if ( existActiveLocalIsoMember() )
@@ -250,8 +245,7 @@ IsoMonitor_c::timeEvent()
     }
   }
 
-  int32_t i32_now = getLastRetriggerTime();
-  const int32_t ci32_timeSinceLastAdrClaimRequest = (i32_now - lastIsoSaRequest());
+  const int32_t ci32_timeSinceLastAdrClaimRequest = ( System_c::getTime() - lastIsoSaRequest());
   bool b_requestAdrClaim = false;
   if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
   { // the last request is more than CONFIG_ISO_ITEM_MAX_AGE ago
@@ -290,8 +284,6 @@ IsoMonitor_c::timeEvent()
     }
   } // if
   #endif
-
-  return true;
 }
 
 
@@ -1103,13 +1095,6 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSe
 }
 
 
-#if DEBUG_SCHEDULER
-const char*
-IsoMonitor_c::getTaskName() const
-{ return "IsoMonitor_c"; }
-#endif
-
-
 IsoMonitor_c::Vec_ISOIterator
 IsoMonitor_c::internalIsoItemErase( Vec_ISOIterator aiter_toErase )
 {
@@ -1118,22 +1103,6 @@ IsoMonitor_c::internalIsoItemErase( Vec_ISOIterator aiter_toErase )
   broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::RemoveFromMonitorList, *aiter_toErase);
 
   return mvec_isoMember.erase( aiter_toErase );
-}
-
-
-void
-IsoMonitor_c::updateEarlierAndLatestInterval()
-{
-  if (getTimePeriod() <= 250)
-  { // use HARD-Timing
-    mui16_earlierInterval = 0;
-    mui16_latestInterval  = (getTimePeriod() / 2);
-  }
-  else
-  { // use SOFT-Timing (using jitter for earlier/after
-    mui16_earlierInterval = ( (getTimePeriod() * 3) / 4);
-    mui16_latestInterval  =    getTimePeriod();
-  }
 }
 
 

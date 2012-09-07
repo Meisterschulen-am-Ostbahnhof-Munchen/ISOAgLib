@@ -1,7 +1,7 @@
 /*
   itracfacilities_c.h: stores, updates and delivers all facilities
     data information from CanCustomer_c derived for CAN sending and
-    receiving interaction; from Scheduler_Task_c derived for.
+    receiving interaction; from SchedulerTask_c derived for.
     interaction with other IsoAgLib objects This class handles Part 7
     - B.25.3 Tractor facilities response message 0xFE09 in both
     directions (configurable)
@@ -30,7 +30,7 @@ namespace IsoAgLib {
 
   /** stores, updates  and delivers all facilities data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
-      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+      Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).

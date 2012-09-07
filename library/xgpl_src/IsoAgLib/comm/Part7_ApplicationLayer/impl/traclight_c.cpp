@@ -63,7 +63,7 @@ namespace __IsoAgLib {
     if ( checkMode(IsoAgLib::IdentModeTractor))
     {
       // set Time Period in ms for Scheduler_c
-      setTimePeriod( (uint16_t) 1000   );
+      mt_task.setPeriod( 1000 );
     }
 
     // un-/register to PGN
@@ -600,14 +600,11 @@ namespace __IsoAgLib {
         * dependant error in CanIo_c on CAN send problems
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
-      @return true -> all planned activities performed in allowed time
     */
-  bool TracLight_c::timeEventTracMode( )
+  void TracLight_c::timeEventTracMode( )
   {
     // directly call sendMessage() as this function performs the needed pre checks
     sendMessage();
-
-    return true;
   }
 
   /** functions with actions, which must be performed periodically
@@ -617,14 +614,11 @@ namespace __IsoAgLib {
         * dependant error in CanIo_c on CAN send problems
       @pre  function is only called in implement mode
       @see  BaseCommon_c::timeEvent()
-      @return true -> all planned activities performed in allowed time
     */
-  bool TracLight_c::timeEventImplMode( )
+  void TracLight_c::timeEventImplMode( )
   {
     // directly call sendMessage() as this function performs the needed pre checks
     sendMessage();
-
-    return true;
   }
 
   TracLight_c::SendMessage_e TracLight_c::helpSendMessage( CanPkgExt_c& pkg )
@@ -710,7 +704,7 @@ namespace __IsoAgLib {
 
   TracLight_c::SendMessage_e TracLight_c::sendLightingCommand()
   {
-    int32_t const ci32_now = getLastRetriggerTime();
+    int32_t const ci32_now = System_c::getTime();
 
     CanPkgExt_c pkg;
 
@@ -759,11 +753,5 @@ namespace __IsoAgLib {
     return (void)(b_isTractor ? sendLightingCommand() : sendLightingData());
   }
 
-
-#if DEBUG_SCHEDULER
-const char*
-TracLight_c::getTaskName() const
-{ return "TracLight_c"; }
-#endif
 
 } // end of namespace __IsoAgLib

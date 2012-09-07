@@ -250,11 +250,6 @@ IsoRequestPgn_c::IsoRequestPgn_c ()
 {
 }
 
-#if DEBUG_SCHEDULER
-const char*
-IsoRequestPgn_c::getTaskName() const
-{ return "IsoRequestPgn_c"; }
-#endif
 
 /** C-style function, to get access to the unique IsoRequestPgn_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */

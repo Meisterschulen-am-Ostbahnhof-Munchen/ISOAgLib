@@ -38,8 +38,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     if ( ! BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask) ) return false;
 
     ///Set time Period for Scheduler_c
-    if (at_identMode == IsoAgLib::IdentModeTractor) setTimePeriod( (uint16_t) 100);
-    else  setTimePeriod( (uint16_t) CONFIG_TIMEOUT_TRACTOR_DATA   );
+    if (at_identMode == IsoAgLib::IdentModeTractor) mt_task.setPeriod( 100 );
+    else  mt_task.setPeriod( CONFIG_TIMEOUT_TRACTOR_DATA );
 
     mui16_estCurvature = 32128;
     mt_requestResetCmdStatus = IsoAgLib::IsoNotAvailableReset ;
@@ -84,11 +84,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TracGuidance_c::timeEventTracMode( )
+  void TracGuidance_c::timeEventTracMode( )
   { ///Timeperiod of 100ms is set in ::config
     isoSendMessageTracMode();
-
-    return true;
   }
 
   /** process a ISO11783 base information PGN
@@ -160,12 +158,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     c_can << pkg;
   }
-
-#if DEBUG_SCHEDULER
-const char*
-TracGuidance_c::getTaskName() const
-{ return "TracGuidance_c"; }
-#endif
 
 bool TracGuidance_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
 {

@@ -147,16 +147,9 @@ IsoAgLibThread_c::thread_core (void* thread_param)
 
   while (!thisThread.mb_requestThreadToStop)
   {
-    int32_t i32_sleepTime = IsoAgLib::getISchedulerInstance().timeEventWithWaitMutex( (HAL::getTime()+3) );
+    const int32_t i32_sleepTime = IsoAgLib::getISchedulerInstance().timeEventWithWaitMutex();
 
-    if (i32_sleepTime > 0)
-    { // We can sleep...
-      if (i32_sleepTime > 3)
-      { /// @todo TIMING As long as the GUI thread won't wake up the "waitUntilCanReceiveOrTimeout()"-call below, lets simply limit the sleep time
-        i32_sleepTime = 3;
-      }
-
-      // Now do sleep...
+    if (i32_sleepTime > 0) {
       IsoAgLib::getISchedulerInstance().waitUntilCanReceiveOrTimeout (i32_sleepTime);
     }
   }

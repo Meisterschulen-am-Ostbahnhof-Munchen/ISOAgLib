@@ -178,11 +178,11 @@ namespace __IsoAgLib {
       @see CanIo_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
-  bool TimePosGps_c::timeEvent(  )
+  void TimePosGps_c::timeEvent(  )
   {
     checkCreateReceiveFilter();
 
-    const int32_t ci32_now = getLastRetriggerTime();
+    const int32_t ci32_now = System_c::getTime();
 
     // check for different base data types whether the previously
     if ( ( checkMode(IsoAgLib::IdentModeImplement)      )
@@ -253,9 +253,8 @@ namespace __IsoAgLib {
     if ( ( getIdentItem() && getIdentItem()->isClaimedAddress() && checkMode(IsoAgLib::IdentModeTractor ) )
       || ( mpc_identGps && mpc_identGps->isClaimedAddress() && checkModeGps( IsoAgLib::IdentModeTractor ) ) )
     { // there is at least something configured for send where the time sending or GPS sending is activated
-      return timeEventTracMode();
+      timeEventTracMode();
     }
-    return true;
   }
 
   /** check if filter boxes shall be created - create only filters based
@@ -317,11 +316,11 @@ namespace __IsoAgLib {
     if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
     { // we are in sending state for at least one type
       ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodule up to now
-      setTimePeriod( (uint16_t) 100 );
+      mt_task.setPeriod( 100 );
     }
     else
     { // we are only in receiving mode for all types
-      setTimePeriod( 1000 );
+      mt_task.setPeriod( 1000 );
     }
 
 
@@ -418,11 +417,11 @@ namespace __IsoAgLib {
     if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
     { // we are in sending state for at least one type
       ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodul up to now
-      setTimePeriod( (uint16_t) 100 );
+      mt_task.setPeriod( 100 );
     }
     else
     { // we are only in receiving mode for all types
-      setTimePeriod( 1000 );
+      mt_task.setPeriod( 1000 );
     }
 
     return true;
@@ -432,7 +431,7 @@ namespace __IsoAgLib {
     */
   int32_t TimePosGps_c::lastedTimeSinceUpdateGps() const
   {
-    const int32_t ci32_now = getLastRetriggerTime();
+    const int32_t ci32_now = System_c::getTime();
     #ifdef ENABLE_NMEA_2000_MULTI_PACKET
     if ( mi32_lastIsoPositionStream > mi32_lastIsoPositionSimple ) return ( ci32_now - mi32_lastIsoPositionStream);
     else return ( ci32_now - mi32_lastIsoPositionSimple);
@@ -455,7 +454,7 @@ namespace __IsoAgLib {
     */
   int32_t TimePosGps_c::lastedTimeSinceUpdateDirection() const
   {
-    const int32_t ci32_now = getLastRetriggerTime();
+    const int32_t ci32_now = System_c::getTime();
     return ( ci32_now - mi32_lastIsoDirection);
   }
   /** Retrieve the time of last update */
@@ -1042,9 +1041,9 @@ namespace __IsoAgLib {
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TimePosGps_c::timeEventTracMode()
+  void TimePosGps_c::timeEventTracMode()
   {
-    const int32_t ci32_now = getLastRetriggerTime();
+    const int32_t ci32_now = System_c::getTime();
 
     // time/date is only sent on request
 
@@ -1065,12 +1064,10 @@ namespace __IsoAgLib {
         && ( ( ci32_now - mi32_lastIsoPositionStream ) >= 1000 )
         && ( mt_multiSendSuccessState != SendStream_c::Running  ) )
       {
-        if ( getAvailableExecTime() == 0 ) return false;
         isoSendPositionStream();
       }
       #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
     }
-    return true;
   }
 
   /** send position rapid update message */
@@ -1088,7 +1085,7 @@ namespace __IsoAgLib {
     getIsoBusInstance4Comm() << pkg;
 
     // update time
-    mi32_lastIsoPositionSimple = getLastRetriggerTime();
+    mi32_lastIsoPositionSimple = System_c::getTime();
   }
 
 /* send COG and SOG as 250ms rapid update, but with single packet only */
@@ -1149,7 +1146,7 @@ void TimePosGps_c::isoSendDirection( void )
   getIsoBusInstance4Comm() << pkg;
 
   // update time
-  mi32_lastIsoDirection = getSchedulerInstance().getLastTimeEventTrigger();
+  mi32_lastIsoDirection = System_c::getTime();
 }
 
 
@@ -1194,7 +1191,7 @@ void TimePosGps_c::isoSendDirection( void )
     // little pre-Setup
     mui8_positionSequenceID = 0xFF; // not using tied-together-packaging right now
 
-    const int32_t ci32_now = getLastRetriggerTime();
+    const int32_t ci32_now = System_c::getTime();
     // set data in Nmea2000SendStreamer_c
     mc_nmea2000Streamer.reset();
     STL_NAMESPACE::vector<uint8_t>& writeRef = mc_nmea2000Streamer.vec_data;
@@ -1319,7 +1316,7 @@ void TimePosGps_c::isoSendDirection( void )
       getIsoBusInstance4Comm() << pkg;
 
       // update time
-      setUpdateTime(getLastRetriggerTime() );
+      setUpdateTime( System_c::getTime() );
     }
   }
 
@@ -1609,13 +1606,6 @@ void TimePosGps_c::isoSendDirection( void )
     // compensate system time zone setting (part 2)
     return CNAMESPACE::localtime( &t_secondsSince1970 );
   }
-
-#if DEBUG_SCHEDULER
-const char*
-TimePosGps_c::getTaskName() const
-{ return "TimePosGps_c"; }
-#endif
-
 
 void
 TimePosGps_c::notifyOnEvent(uint32_t aui32_pgn)

@@ -91,7 +91,7 @@ class TimePosGps_c;
 
 /** working on GPS data and Calendar;
   stores, updates  and delivers all base data informations;
-  Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+  Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
   Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
   Derive from SINGLETON to create a Singleton which manages one global accessible singleton
   per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
@@ -114,9 +114,8 @@ public:
       @see CanPkg_c::getData
       @see CanPkgExt_c::getData
       @see CanIo_c::operator<<
-      @return true -> all planned activities performed in allowed time
     */
-  virtual bool timeEvent(  );
+  virtual void timeEvent();
 
   // from BaseCommon_c
   virtual void init_specialized();
@@ -551,10 +550,6 @@ public:
                                  handler class of type MsgEventHandler_c */
   void deregisterMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler);
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
-
 private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
   public:
@@ -611,7 +606,7 @@ private:
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  virtual bool timeEventTracMode();
+  virtual void timeEventTracMode();
 
   /** send position rapid update message */
   void sendPositionRapidUpdate( void );

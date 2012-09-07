@@ -188,7 +188,7 @@ IdentItem_c::goOffline (bool ab_explicitlyOffByUser)
 }
 
 
-bool
+void 
 IdentItem_c::timeEvent( void )
 {
   if (NULL != getIsoItem())
@@ -209,7 +209,6 @@ IdentItem_c::timeEvent( void )
     else
       timeEventActive();
   }
-  return true;
 }
 
 

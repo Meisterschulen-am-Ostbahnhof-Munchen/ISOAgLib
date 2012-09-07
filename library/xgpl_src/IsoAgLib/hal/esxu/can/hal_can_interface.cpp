@@ -362,9 +362,9 @@ int16_t can_configGlobalClose(uint8_t aui8_busNr)
  *  NOTE: This was using 100% CPU even in the old version with "delay_us",
  *        because "delay_us" is also busy-looping.
  */
-bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
+bool can_waitUntilCanReceiveOrTimeout( int32_t timeoutInterval )
 {
-  const int32_t ci32_endWait = __IsoAgLib::System_c::getTime() + aui16_timeoutInterval;
+  const int32_t ci32_endWait = __IsoAgLib::System_c::getTime() + timeoutInterval;
 
   while ( __IsoAgLib::System_c::getTime() < ci32_endWait )
   {

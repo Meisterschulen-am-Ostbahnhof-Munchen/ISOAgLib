@@ -35,7 +35,7 @@ BaseCommon_c::init()
   isoaglib_assert (!initialized());
 
 
-  getSchedulerInstance().registerClient(&mt_task);
+  getSchedulerInstance().registerTask(mt_task);
   // set configure values with call for config
   config_base (NULL, IsoAgLib::IdentModeImplement, 0 /* No individual PGN disabling */);
   // now let concrete specialized classes init their part...
@@ -50,7 +50,7 @@ BaseCommon_c::close( )
   isoaglib_assert (initialized());
 
   close_specialized();
-  getSchedulerInstance().unregisterClient(&mt_task);
+  getSchedulerInstance().deregisterTask(mt_task);
 
   setClosed();
 };
@@ -101,9 +101,8 @@ bool BaseCommon_c::checkParseReceived(const IsoName_c& acrc_currentSender) const
     @see CanPkg_c::getData
     @see CanPkgExt_c::getData
     @see CanIo_c::operator<<
-    @return true -> all planned activities performed in allowed time
   */
-bool BaseCommon_c::timeEvent()
+void BaseCommon_c::timeEvent()
 {
   checkCreateReceiveFilter();
 
@@ -120,7 +119,7 @@ bool BaseCommon_c::timeEvent()
   if ( mpc_ident && ( ! mpc_ident->isClaimedAddress() ) )
   { // local isoname for sending is registrated, but it is not yet fully claimed
     // --> nothing to do
-    return true;
+    return;
   }
 
   // check if we are in tractor mode and have a pointer to the sending isoname
@@ -131,12 +130,14 @@ bool BaseCommon_c::timeEvent()
     // 2) getSystemMgmtInstance4Comm().existLocalMemberISOName(*getISOName(), true) indicates, that a corresponding
     //    item has already performed its address claim
     // ==> we can directly call sending time event in this case
-    return timeEventTracMode();
+    timeEventTracMode();
+    return;
   }
   else
   { // we are in implement mode
     // call this function also if isoName == NULL, because some functions do settings which are independent from isoName
-    return timeEventImplMode();
+    timeEventImplMode();
+    return;
   }
 }
 
@@ -144,15 +145,13 @@ bool BaseCommon_c::timeEvent()
 /** send a ISO11783 base information PGN.
   * this is only called when sending ident is configured and it has already claimed an address
   */
-bool BaseCommon_c::timeEventTracMode()
-{ return true;}
+void BaseCommon_c::timeEventTracMode() {}
 
 
 /** send a ISO11783 base information PGN.
   * this is only called when sending ident is configured and it has already claimed an address
   */
-bool BaseCommon_c::timeEventImplMode()
-{ return true;}
+void BaseCommon_c::timeEventImplMode() {}
 
 
 /** send a PGN request */

@@ -38,8 +38,8 @@ bool TracGuidanceCommand_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib
   if ( !BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask) ) return false;
 
   ///Set time Period for Scheduler_c --> periodic action only if in IMPLEMENT MODE!!
-  if (at_identMode == IsoAgLib::IdentModeImplement) setTimePeriod( (uint16_t) 100);
-  else  setTimePeriod( (uint16_t) 1000   );
+  if (at_identMode == IsoAgLib::IdentModeImplement) mt_task.setPeriod( 100);
+  else  mt_task.setPeriod( 1000 );
 
   mui8_commanderSa = 0xFF;
 
@@ -68,11 +68,9 @@ void TracGuidanceCommand_c::checkCreateReceiveFilter( )
     @pre  function is only called in implement mode
     @see  BaseCommon_c::timeEvent()
   */
-bool TracGuidanceCommand_c::timeEventImplMode( )
+void TracGuidanceCommand_c::timeEventImplMode( )
 { ///Timeperiod of 100ms is set in ::config
   isoSendMessageImplMode();
-
-  return true;
 }
 
 /** HIDDEN constructor for a TracGuidance_c object instance which can optional
@@ -195,12 +193,6 @@ CurvatureCommander_s* TracGuidanceCommand_c::getCommanderDataByIndex( uint8_t ui
 
   return ps_commander;
 }
-
-#if DEBUG_SCHEDULER
-const char*
-TracGuidanceCommand_c::getTaskName() const
-{ return "TracGuidanceCommand_c"; }
-#endif
 
 /** dummy implementation
     @todo SOON-824: add answering of requestPGN in case this object is configured for sending of these information

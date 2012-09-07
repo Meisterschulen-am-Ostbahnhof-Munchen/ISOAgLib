@@ -32,9 +32,8 @@ namespace __IsoAgLib {
 /**
   * performe periodic tasks:
   * delete inactive fileservers and notify clientservercoms that have not been notified on fileservers yet.
-  * @return true if all tasks where performed correctly
   */
-bool
+void
 FsManager_c::timeEvent(void)
 {
   STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_end = v_serverInstances.end();
@@ -65,8 +64,6 @@ FsManager_c::timeEvent(void)
         break;
     }
   }
-
-  return true;
 }
 
 
@@ -126,21 +123,15 @@ FsManager_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerClient(this);
+  getSchedulerInstance().registerTask(*this);
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mc_saClaimHandler);
 
   setInitialized();
 }
 
 
-#if DEBUG_SCHEDULER
-const char* FsManager_c::getTaskName() const
-{ return "FsManager_c\n"; }
-#endif
-
-
 FsManager_c::FsManager_c()
-  : Scheduler_Task_c()
+  : SchedulerTask_c( 0, 100, true )
   , mc_saClaimHandler(*this)
   , v_communications()
   , v_serverInstances()
@@ -194,7 +185,7 @@ FsManager_c::close()
   isoaglib_assert (initialized());
 
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
-  getSchedulerInstance().unregisterClient(this);
+  getSchedulerInstance().deregisterTask(*this);
 
   STL_NAMESPACE::for_each( l_initializingCommands.begin(), l_initializingCommands.end(), delete_object());
   STL_NAMESPACE::for_each( v_communications.begin(), v_communications.end(), delete_object());

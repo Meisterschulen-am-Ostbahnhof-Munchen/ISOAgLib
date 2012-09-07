@@ -119,9 +119,8 @@ public: // methods
           * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
       @see Scheduler_c::timeEvent
       @see System_c::getTime
-      @return true -> all planned activities performed
     */
-  bool timeEvent( void );
+  void timeEvent( void );
 
   /** check for equality with another item
       @param acrc_src compared IdentItem_c element

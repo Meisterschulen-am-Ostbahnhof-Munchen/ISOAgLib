@@ -688,11 +688,12 @@ VtClientConnection_c::startLoadVersion()
 }
 
 
-bool
+void 
 VtClientConnection_c::timeEvent(void)
 {
   // do further activities only if registered ident is initialised as ISO and already successfully address-claimed...
-  if (!mrc_wsMasterIdentItem.isClaimedAddress()) return true;
+  if (!mrc_wsMasterIdentItem.isClaimedAddress())
+    return;
 
   if (!mb_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
@@ -719,7 +720,7 @@ VtClientConnection_c::timeEvent(void)
   if (!isVtActive())
   {
     timeEventSearchForNewVt();
-    return true;
+    return;
   }
 
   if (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave == men_registerPoolMode)
@@ -733,7 +734,8 @@ VtClientConnection_c::timeEvent(void)
   else
   {
     // Check if the working-set is completely announced
-    if (!mrc_wsMasterIdentItem.getIsoItem()->isWsAnnounced (mi32_timeWsAnnounceKey)) return true;
+    if (!mrc_wsMasterIdentItem.getIsoItem()->isWsAnnounced (mi32_timeWsAnnounceKey))
+      return;
 
     // Check if WS-Maintenance is needed
     if ((mi32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= mi32_nextWsMaintenanceMsg))
@@ -778,17 +780,12 @@ VtClientConnection_c::timeEvent(void)
 
     // lastReceived will be set if vtserverinstance processes the language pgn
     if (!mpc_vtServerInstance->getLocalSettings()->lastReceived)
-      return true; // do not proceed if LANGUAGE not yet received!
+      return; // do not proceed if LANGUAGE not yet received!
 
     if (men_objectPoolState == OPCannotBeUploaded)
       /** @todo SOON-258 is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! Should be able to be uploaded anyway... */
-      return true;
+      return;
   }
-  // from HERE ON potential longer command sequences might be started
-  // which include sending or starting of TP sessions and the like
-  // - and the most time critical ALIVE has already been sent
-  // ---> stop continuation, if execution time end is reached
-  if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
 
 
   /// Now from here on the Pool's state is: "OPInitial" or "OPUploadedSuccessfully"
@@ -811,13 +808,15 @@ VtClientConnection_c::timeEvent(void)
       // - if (UploadPoolFailed)
       // - if (UploadPoolInit)
       /// Pool-Upload: MAIN Phase (Try2Load / Upload / Try2Save)
-      if (timeEventPoolUpload()) return true;
+      if (timeEventPoolUpload())
+        return;
     }
   }
 
   /// UPLOADING --> COMMAND <-- ///
   // Can only be done if the objectpool is successfully uploaded!
-  if (men_objectPoolState != OPUploadedSuccessfully) return true;
+  if (men_objectPoolState != OPUploadedSuccessfully)
+    return;
 
   /// FROM HERE ON THE OBJECT-POOL >>IS<< UPLOADED SUCCESSFULLY
   /// HANDLE CASE A) AND B) FROM HERE NOW
@@ -870,7 +869,7 @@ VtClientConnection_c::timeEvent(void)
           // It's the safest thing to just reconnect to the VT.
           // So let's get disconnected (can't do this actively)
           fakeVtOffPeriod (6000); // fake the VT 6 seconds off!
-          return true; // quit, as we're probably not anymore in the connected state!
+          return; // quit, as we're probably not anymore in the connected state!
         } // else: no time-out, wait on...
         break;
       } // switch send success
@@ -882,7 +881,6 @@ VtClientConnection_c::timeEvent(void)
   { // Start Uploading
     startUploadCommand();
   }
-  return true;
 }
 
 
@@ -1535,7 +1533,7 @@ VtClientConnection_c::processMsg( const CanPkg_c& arc_data )
             ui8_uploadCommandError = arc_data.getUint8Data( ui8_errByte-1 );
           /// Inform user on success/error of this command
           mrc_pool.eventCommandResponse (ui8_uploadCommandError, arc_data.getUint8DataConstPointer( 0 )); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "arc_data.name()"
-          finishUploadCommand(false); // finish command no matter if "okay" or "error"...
+          finishUploadCommand(); // finish command no matter if "okay" or "error"...
         }
       }
       else
@@ -2668,7 +2666,7 @@ VtClientConnection_c::indicateUploadCompletion()
       break;
 
     case UploadCommand: // user / language updates are being sent as "command"
-      finishUploadCommand(true);
+      finishUploadCommand();
       break;
   }
 }
@@ -2778,7 +2776,7 @@ VtClientConnection_c::startUploadCommand()
 
 
 void
-VtClientConnection_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fromTimeEvent)
+VtClientConnection_c::finishUploadCommand()
 {
   men_uploadType = UploadIdle;
 
@@ -2802,23 +2800,9 @@ VtClientConnection_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fromTimeEven
     #endif
 
     // trigger fast reschedule if more messages are waiting
-    if ( ( getUploadBufferSize() > 0 ) && ( getVtClientInstance4Comm().getTimePeriod() != 4 ) )
+    if ( ( getUploadBufferSize() > 0 ) && ( getVtClientInstance4Comm().getPeriod() != 4 ) )
     { // there is a command waiting
-      if (ab_TEMPORARYSOLUTION_fromTimeEvent)
-      { // from timeEvent we can just call
-        // VtClient's setTimePeriod() is protected, so we need a wrapper for it.
-        // this is all just a bad hack and should really be TEMPORARY
-        // Make a mechanismn where all vtCSCs are asked for the state and the
-        // VtClient calculates the appropriate period from
-        // - timeEvent
-        // - processMsg
-        // This needs to be replaced by new scheduling architecture: every vtCSC should be an own SchedulerTask_c.
-        getVtClientInstance4Comm().TEMPORARYSOLUTION_setTimePeriod (4);
-      }
-      else
-      { // from processMsg or elsewhere we call
-        getSchedulerInstance().changeTimePeriodAndResortTask(&(getVtClientInstance4Comm()), 4);
-      }
+      getVtClientInstance4Comm().setPeriod (4);
     }
   }
 #if DEBUG_VTCOMM

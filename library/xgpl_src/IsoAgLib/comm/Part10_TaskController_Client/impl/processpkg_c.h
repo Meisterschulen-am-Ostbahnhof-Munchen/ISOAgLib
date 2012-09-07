@@ -16,7 +16,6 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 
-
 namespace __IsoAgLib {
 
 class ProcessPkg_c : public CanPkgExt_c

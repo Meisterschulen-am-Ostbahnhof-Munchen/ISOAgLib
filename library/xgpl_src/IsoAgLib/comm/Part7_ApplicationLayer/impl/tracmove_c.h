@@ -30,7 +30,7 @@ namespace __IsoAgLib {
 
   /** stores, updates  and delivers all moving data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
-      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+      Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
@@ -245,10 +245,6 @@ namespace __IsoAgLib {
     IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return mt_selectedSpeedSource;}
 
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
-
   virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
   private:
@@ -271,14 +267,14 @@ namespace __IsoAgLib {
         @pre  function is only called in tractor mode
         @see  BaseCommon_c::timeEvent()
       */
-    virtual bool timeEventTracMode();
+    virtual void timeEventTracMode();
 
     /** send a ISO11783 moving information PGN.
       * this is only called when sending ident is configured and it has already claimed an address
         @pre  function is only called in implement mode
         @see  BaseCommon_c::timeEvent()
       */
-    virtual bool timeEventImplMode();
+    virtual void timeEventImplMode();
 
     /** process a ISO11783 base information PGN
         @pre  sender of message is existent in monitor list

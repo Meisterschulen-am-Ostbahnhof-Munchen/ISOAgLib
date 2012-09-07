@@ -53,11 +53,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     ///Set time Period for Scheduler_c
     if (at_identMode == IsoAgLib::IdentModeTractor)
     { // SEND data with short period
-      setTimePeriod( (uint16_t) 100);
+      mt_task.setPeriod(100);
     }
     else
     { // check with long period for timeout after loss of sending node
-      setTimePeriod( (uint16_t) 1000 );
+      mt_task.setPeriod( 1000 );
     }
 
     // un-/register to PGN
@@ -398,9 +398,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** Detect stop of Speed update from tractor
       @see  BaseCommon_c::timeEvent()
     */
-  bool TracMove_c::timeEventImplMode()
+  void TracMove_c::timeEventImplMode()
   {
-    const int32_t ci32_now = getLastRetriggerTime();
+    const int32_t ci32_now = System_c::getTime();
     // checking for timeout of speed update
     if ( ( (ci32_now - mui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isSelectedSpeedMissing() ) )
@@ -423,7 +423,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       mi32_speedTheor = NO_VAL_32S;
       setSpeedTheor( mi32_speedTheor );
     }
-    return true;
   }
 
   /** send a ISO11783 moving information PGN.
@@ -431,10 +430,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TracMove_c::timeEventTracMode( )
+  void TracMove_c::timeEventTracMode( )
   { ///Timeperiod of 100ms is set in ::config
     sendMovingTracMode();
-    return true;
   }
 
   void TracMove_c::prepareSending( CanPkgExt_c& pkg )
@@ -557,12 +555,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     (void)sendEngineSpeed();
   }
 
-
-#if DEBUG_SCHEDULER
-const char*
-TracMove_c::getTaskName() const
-{ return "TracMove_c"; }
-#endif
 
 bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
 {

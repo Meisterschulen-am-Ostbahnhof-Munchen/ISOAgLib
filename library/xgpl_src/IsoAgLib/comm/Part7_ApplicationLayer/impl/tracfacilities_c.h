@@ -25,7 +25,7 @@ namespace __IsoAgLib {
 
   /** stores, updates  and delivers all Facilities data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
-      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+      Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
@@ -74,10 +74,6 @@ public:// Public methods
     */
   IsoAgLib::IsoFacilityFlag_t getFacitity(const IsoAgLib::IsoFacility_t at_facility) const;
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
-
  private:
   // Private methods
   /** HIDDEN constructor for a TracFacilities_c object instance which can optional
@@ -97,7 +93,7 @@ public:// Public methods
   @pre  function is only called in tractor mode
   @see  BaseCommon_c::timeEvent()
      */
-  virtual bool timeEventTracMode();
+  virtual void timeEventTracMode();
 
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list

@@ -33,7 +33,7 @@ class VtClientConnection_c;
 class iIdentItem_c;
 
 /** central IsoAgLib Virtual Terminal-Client management object */
-class VtClient_c : public Scheduler_Task_c {
+class VtClient_c : public SchedulerTask_c {
   MACRO_MULTITON_CONTRIBUTION();
 public:
   virtual ~VtClient_c() {}
@@ -41,7 +41,7 @@ public:
   void init();
   void close();
 
-  bool timeEvent();
+  void timeEvent();
   virtual bool processMsg( const CanPkg_c& arc_data );
 
   VtClientConnection_c* initAndRegisterObjectPool(
@@ -52,13 +52,6 @@ public:
     IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode );
 
   bool deregisterObjectPool (IdentItem_c& apc_wsMasterIdentItem);
-
-  virtual void updateEarlierAndLatestInterval() {
-    updateEarlierAndLatestIntervalDefault();
-  }
-
-  /** @todo SOON-241 Remove this - this should only be temporary and a good solution needs to be implemented! */
-  void TEMPORARYSOLUTION_setTimePeriod(uint16_t aui16_timePeriod) { setTimePeriod (aui16_timePeriod); }
 
   bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& apc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size);
 
@@ -81,10 +74,6 @@ public:
 // the following define should be globally defined in the project settings...
 #ifdef USE_IOP_GENERATOR_FAKE_VT_PROPERTIES
   void fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes);
-#endif
-
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
 #endif
 
 private:
@@ -213,10 +202,6 @@ private:
         ab_isGlobal);
   }
 
-  virtual uint16_t getForcedMinExecTime() const
-  {
-    return getForcedMinExecTimeDefault();
-  }
 
   VtClientConnection_c* initAndRegisterObjectPoolCommon(
     IdentItem_c& rc_identItem, 

@@ -21,6 +21,7 @@
 
 #include <map>
 
+#include "hal_can_interface.h"
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <IsoAgLib/util/iassert.h>
 
@@ -91,25 +92,6 @@ namespace __HAL {
   static int32_t g_lastReceiveTime = 0;
   /** information about each channel available */
   static canBus_s g_bus[ HAL_CAN_MAX_BUS_NR + 1 ];
-  /** maximum fd */
-  static int g_fdMax = 0;
-  /** fd set with opened fd for receive path */
-  static fd_set g_rfds;
-
-
-  /** recalculate maximum fd and set fd mask for select call */
-  void recalcFd() {
-    FD_ZERO(&g_rfds);
-    for (uint8_t i = 0; i < HAL_CAN_MAX_BUS_NR; ++i) {
-      if (g_bus[ i ].mb_initialized) {
-        FD_SET(g_bus[ i ].mi_fd, &g_rfds);
-        if (g_fdMax < g_bus[ i ].mi_fd) {
-          g_fdMax = g_bus[ i ].mi_fd;
-        }
-      }
-    }
-  }
-
 
   /** check bus number for range */
   bool checkBusNumber(uint8_t ui8_bus) {
@@ -233,8 +215,9 @@ namespace __HAL {
       return HAL_CONFIG_ERR;
     }
 
-    /* check for a possible new maximum fd */
-    recalcFd();
+#ifdef USE_MUTUAL_EXCLUSION
+    initBreakWait();
+#endif
 
     g_bus[ ui8_bus ].mi_fd = fd;
     g_bus[ ui8_bus ].mb_initialized = true;
@@ -262,7 +245,9 @@ namespace __HAL {
     g_bus[ ui8_bus ].mc_txMsgObj.clear();
     g_bus[ ui8_bus ].mi_fd = -1;
 
-    recalcFd();
+#ifdef USE_MUTUAL_EXCLUSION
+    closeBreakWait();
+#endif
 
     return HAL_NO_ERR;
   };
@@ -455,10 +440,24 @@ namespace __HAL {
     timeout.tv_sec = 0;
     timeout.tv_usec = ui16_timeout * 1000;
 
-    fd_set rfds = g_rfds;
-    /* result written to rfds is ignored! */
-    int rc = select(g_fdMax + 1, &rfds, 0, 0, &timeout);
+    fd_set rfds;
+    FD_ZERO( &rfds );
+    for (uint8_t i = 0; i < HAL_CAN_MAX_BUS_NR; ++i) {
+      if (g_bus[ i ].mb_initialized) {
+        FD_SET(g_bus[ i ].mi_fd, &rfds);
+      }
+    }
 
+#ifdef USE_MUTUAL_EXCLUSION
+    setBreakWaitFd( rfds );
+#endif
+
+    /* result written to rfds is ignored! */
+    int rc = select(FD_SETSIZE, &rfds, 0, 0, &timeout);
+
+#ifdef USE_MUTUAL_EXCLUSION
+    clearBreakWaitFd( rfds );
+#endif
     return (rc > 0);
   };
 

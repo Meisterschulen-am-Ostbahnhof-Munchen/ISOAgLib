@@ -2,7 +2,7 @@
   itracmove_c.h: working on Base Data Msg Type NMEA 200 GPS and
     Calendar; stores, updates and delivers all base data informations
     from CanCustomer_c derived for CAN sending and receiving
-    interaction; from Scheduler_Task_c derived for interaction with
+    interaction; from SchedulerTask_c derived for interaction with
     other IsoAgLib objects
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -30,7 +30,7 @@ namespace IsoAgLib {
 
   /** working on Base Data Msg Type 1;
       stores, updates  and delivers all base data informations;
-      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+      Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).

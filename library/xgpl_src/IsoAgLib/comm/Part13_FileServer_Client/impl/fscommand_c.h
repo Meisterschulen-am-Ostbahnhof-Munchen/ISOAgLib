@@ -43,25 +43,16 @@ class FsCommand_c : CanCustomer_c
 
     ~FsCommand_c();
 
-  class SchedulerTaskProxy_c : public Scheduler_Task_c {
+  class SchedulerTaskProxy_c : public SchedulerTask_c {
   public:
     typedef FsCommand_c Owner_t;
 
-    SchedulerTaskProxy_c(Owner_t &art_owner) : mrt_owner(art_owner)
-    {
-      // explicitly set the time-period
-      setTimePeriod (100); // currently use Scheduler_Task's default
-    }
+    SchedulerTaskProxy_c(Owner_t &art_owner) : mrt_owner(art_owner), SchedulerTask_c( 0, 100, true ) {}
 
     virtual ~SchedulerTaskProxy_c() {}
 
   private:
-    virtual bool timeEvent() { return mrt_owner.timeEvent(); }
-    void updateEarlierAndLatestInterval() { updateEarlierAndLatestIntervalDefault(); }
-
-#if DEBUG_SCHEDULER
-    virtual const char *getTaskName() const { return "FsCommand_c\n"; }
-#endif
+    virtual void timeEvent() { mrt_owner.timeEvent(); }
 
     // SchedulerTaskProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
@@ -150,7 +141,7 @@ class FsCommand_c : CanCustomer_c
     bool isBusy() { return !b_receivedResponse; }
 
     /** time event function. If no response received, resend request periodically. **/
-    bool timeEvent(void);
+    void timeEvent(void);
 
     /** send the current command out via 8 Byte CAN */
     void sendSinglePacket();

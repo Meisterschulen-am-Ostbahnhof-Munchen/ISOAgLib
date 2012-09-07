@@ -21,7 +21,8 @@
 namespace __IsoAgLib {
 
 Aux2Inputs_c::Aux2Inputs_c( const IdentItem_c& arc_wsMasterIdentItem )
-  : mrc_wsMasterIdentItem( arc_wsMasterIdentItem )
+  : SchedulerTask_c( 0, 10, true )
+  , mrc_wsMasterIdentItem( arc_wsMasterIdentItem )
   , m_state(Aux2InputsState_NoAuxInputAvailable)
   , m_modelIdentificationCode( 0 )
 #ifdef USE_VTOBJECT_auxiliaryinput2
@@ -59,7 +60,7 @@ Aux2Inputs_c::~Aux2Inputs_c(void)
 }
 
 
-bool Aux2Inputs_c::timeEvent(void)
+void Aux2Inputs_c::timeEvent(void)
 {
 #ifdef USE_VTOBJECT_auxiliaryinput2
   switch (m_state)
@@ -108,8 +109,6 @@ bool Aux2Inputs_c::timeEvent(void)
 
   timeEventInputStateMsg(NULL);
 #endif
-
-  return true;
 }
 
 

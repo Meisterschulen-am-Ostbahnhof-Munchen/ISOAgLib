@@ -116,7 +116,7 @@ MeasureProg_c::setVal( ProcData_c& ac_processData, int32_t ai32_val )
 void
 MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod, int32_t value )
 {
-  const int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
+  const int32_t i32_time = System_c::getTime();
 
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
   {

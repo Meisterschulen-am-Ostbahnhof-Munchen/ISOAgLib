@@ -151,17 +151,6 @@ CanIo_c::close()
 }
 
 
-bool
-CanIo_c::timeEvent( void )
-{
-  // if not ready, CanIo_c is not yet initialised complete -> do nothing
-  if ( (mui16_bitrate == 0) || ( mui8_busNumber > HAL_CAN_MAX_BUS_NR ) ) return false;
-
-  // start process of all received msg
-  return (processMsg() >= 0);
-}
-
-
 #ifdef USE_CAN_MEASURE_BUSLOAD
 /** deliver actual BUS load in baud */
 uint32_t CanIo_c::getProcessedThroughput() const
@@ -496,14 +485,14 @@ CanIo_c::deleteAllFiltersForCustomer(
 }
 
 
-int16_t
-CanIo_c::processMsg()
+void
+CanIo_c::processMsg( bool& stopCanProcessing )
 {
-  if (mui8_busNumber == 0xFF)
-    return -1;
+  if( ! initialized() )
+    return;
   // --> detect and avoid CAN message processing loops
   if ( mb_runningCanProcess )
-    return -1;
+    return;
   mb_runningCanProcess = true;
   mui8_processedMsgCnt = 0;
 
@@ -708,20 +697,19 @@ uint32_t ui32_msgNbr = 0;
     if((i32_retVal == HAL_RANGE_ERR) || (i32_retVal == HAL_CONFIG_ERR) || (i32_retVal == HAL_NOACT_ERR))
     {
       mb_runningCanProcess = false;
-      return mui8_processedMsgCnt;
+      return;
     }
 
-    if (( Scheduler_Task_c::getAvailableExecTime() == 0 ) && (!b_forceProcessAll))
-    { // switch the flag back, so that further processings are enabled
-      mb_runningCanProcess = false;
-      return -1;
+    if( stopCanProcessing ) {
+      break;
     }
+
   }//while
 
   // switch the flag back, so that further processings are enabled
   mb_runningCanProcess = false;
   // return the number of received telegrams
-  return mui8_processedMsgCnt;
+  return;
 }
 
 
@@ -1081,8 +1069,10 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERN
     if (cntMsgObj() <= ui8_allowedSize) b_continueMerging = false;
 
 		//process the message arrived during the reconfiguration
-    if(HAL::isFifoCriticalFilled(mui8_busNumber))
-  	processMsg();
+    if(HAL::isFifoCriticalFilled(mui8_busNumber)) {
+	  bool stopCanProcessing = false;
+  	  processMsg(stopCanProcessing);
+    }
 
     // start a comparison(left_ind, right_ind) loop for all elements
     for (ArrMsgObj::iterator pc_leftInd = marr_msgObj.begin(); pc_leftInd != marr_msgObj.end(); pc_leftInd++)
@@ -1239,8 +1229,10 @@ CanIo_c::reconfigureMsgObj()
   isoaglib_assert( mui8_busNumber <= HAL_CAN_MAX_BUS_NR );
 
   //process the message arrived during the reconfiguration
-  if(HAL::isFifoCriticalFilled(mui8_busNumber))
-    processMsg();
+  if(HAL::isFifoCriticalFilled(mui8_busNumber)) {
+    bool stopCanProcessing = false;
+    processMsg(stopCanProcessing);
+  }
 
   bool b_result = true;
   // store old mask to check if global CAN BIOS mask must be changed
@@ -1276,8 +1268,10 @@ CanIo_c::reconfigureMsgObj()
     CheckSetCntMsgObj();
 
     //process the message arrived during the reconfiguration
-    if(HAL::isFifoCriticalFilled(mui8_busNumber))
-      processMsg();
+    if(HAL::isFifoCriticalFilled(mui8_busNumber)) {
+      bool stopCanProcessing = false;
+      processMsg(stopCanProcessing);
+    }
 
   // check and correct global masks after merge in CheckSetCntMsgObj()
   getCommonFilterMaskAfterMerge();

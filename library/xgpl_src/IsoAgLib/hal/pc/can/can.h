@@ -65,8 +65,8 @@ namespace HAL
   inline int16_t can_configGlobalClose(uint8_t aui8_busNr)
     {return __HAL::can_configGlobalClose(aui8_busNr);}
 
-  inline bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
-    { return __HAL::can_waitUntilCanReceiveOrTimeout( aui16_timeoutInterval );}
+  inline bool can_waitUntilCanReceiveOrTimeout( int32_t timeoutInterval )
+    { return __HAL::can_waitUntilCanReceiveOrTimeout( timeoutInterval );}
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   inline int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx)
@@ -102,6 +102,12 @@ namespace HAL
 #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
   inline int32_t can_getMaxSendDelay(uint8_t aui8_busNr)
     {return __HAL::can_getMaxSendDelay(aui8_busNr); }
+#endif
+
+
+#ifdef USE_MUTUAL_EXCLUSION
+   inline void can_breakWaitUntilCanReceiveOrTimeout()
+   {return __HAL::can_breakWaitUntilCanReceiveOrTimeout(); }
 #endif
 }
 #endif

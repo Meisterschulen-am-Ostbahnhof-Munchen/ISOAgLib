@@ -39,7 +39,7 @@ class IdentItem_c;
   This class implements the ISO 11783 Diagnostics Services DM1/DM2/DM3
   @author Antoine Kandera, reviewed by Martin Wodok
 */
-class DiagnosticsServices_c : public Scheduler_Task_c
+class DiagnosticsServices_c : public SchedulerTask_c
 {
 private:
   // helper structure for describing the status of a TP buffer
@@ -96,8 +96,7 @@ public:
   const DtcContainer_c& getDtcContainer() const {return mc_dtcs;}
 
   /** perform periodical actions */
-  bool timeEvent();
-  virtual void updateEarlierAndLatestInterval();
+  void timeEvent();
 
   /** initialisation for DiagnosticsServices_c */
   void init();
@@ -109,9 +108,6 @@ public:
 
   bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t ai_time );
 
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
 #if DEBUG_DIAGNOSTICPGN
   bool isAtLeastOneDTCInCurrent() const { return m_dm1CurrentAtLeastOneDTC; }
 #endif

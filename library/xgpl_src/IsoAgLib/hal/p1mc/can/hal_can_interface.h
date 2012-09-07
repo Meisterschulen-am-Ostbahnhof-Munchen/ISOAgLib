@@ -196,7 +196,7 @@ int16_t can_configGlobalClose(uint8_t rui8_busNr);
 /** wait until specified timeout or until next CAN message receive
  *  @return true -> there are CAN messages waiting for process. else: return due to timeout
  */
-bool can_waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval );
+bool can_waitUntilCanReceiveOrTimeout( int32_t timeoutInterval );
 /*@}*/
 
 

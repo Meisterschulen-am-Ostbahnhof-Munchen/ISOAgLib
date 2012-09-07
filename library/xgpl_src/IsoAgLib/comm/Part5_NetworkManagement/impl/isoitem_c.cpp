@@ -252,13 +252,12 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
 }
 
 
-bool
+
+void
 IsoItem_c::timeEvent()
 {
   isoaglib_assert( itemState( IState_c::Local ) );
   isoaglib_assert( mpc_identItem != NULL );
-  
-  int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
   if (itemState(IState_c::PreAddressClaim))
   { // this item is in prepare address claim state -> wait for sending first adress claim
@@ -373,9 +372,6 @@ IsoItem_c::timeEvent()
     }
   }
   #endif
-
-  // nothing to be done
-  return true;
 }
 
 
@@ -384,10 +380,7 @@ IsoItem_c::processAddressClaimed(
   int32_t ai32_pkgTime,
   uint8_t aui8_pkgSa)
 {
-  int32_t i32_now = Scheduler_Task_c::getLastRetriggerTime();
-  /// @todo SOON-240 what is the sense of the check below?
-  if ((i32_now - ai32_pkgTime) > 100) updateTime(i32_now);
-  else updateTime(ai32_pkgTime);
+  updateTime(ai32_pkgTime);
 
   // check if this item is local
   if ( itemState(IState_c::Local ) )

@@ -14,6 +14,7 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 #include "can_target_extensions.h"
+#include "hal_can_interface.h"
 #include "../system/system.h"
 #include "../system/system_target_extensions.h"
 #include <cstring>
@@ -107,6 +108,10 @@ int16_t can_startDriver()
     // O_NONBLOCK because open in read only mode blocks!
     if ((msqDataClient.i32_pipeHandle = open(pipe_name, O_NONBLOCK | O_RDONLY)) == -1)
       return HAL_UNKNOWN_ERR;
+
+#ifdef USE_MUTUAL_EXCLUSION
+    initBreakWait();
+#endif
   }
 
   return i16_rc;
@@ -124,6 +129,10 @@ int16_t can_stopDriver()
 
   s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
   s_transferBuf.ui16_command = COMMAND_DEREGISTER;
+
+#ifdef USE_MUTUAL_EXCLUSION
+  closeBreakWait();
+#endif
 
   return send_command(&s_transferBuf, &msqDataClient);
 
@@ -428,11 +437,18 @@ bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
 
   FD_ZERO(&rfds);
   FD_SET(msqDataClient.i32_pipeHandle, &rfds);
+#ifdef USE_MUTUAL_EXCLUSION
+  setBreakWaitFd( rfds );
+#endif
 
   s_timeout.tv_sec = 0;
   s_timeout.tv_usec = aui16_timeoutInterval * 1000;
 
-  i16_rc = select(msqDataClient.i32_pipeHandle+1, &rfds, NULL, NULL, &s_timeout);
+  i16_rc = select(FD_SETSIZE, &rfds, NULL, NULL, &s_timeout);
+
+#ifdef USE_MUTUAL_EXCLUSION
+  clearBreakWaitFd( rfds );
+#endif
 
   // return true, when the timeout was NOT the trigger for coming back from select
   const bool cb_result = ( i16_rc > 0 );

@@ -1,7 +1,7 @@
 /*
   tracpto_c.h: working on pto data; stores, updates and delivers all
     base data informations from CanCustomer_c derived for CAN sending
-    and receiving interaction; from Scheduler_Task_c derived for
+    and receiving interaction; from SchedulerTask_c derived for
     interaction with other IsoAgLib objects
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -55,7 +55,7 @@ typedef struct
 
   /** working on Base Data Msg;
       stores, updates and delivers all base data informations;
-      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+      Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
@@ -347,11 +347,6 @@ typedef struct
       */
     IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return static_cast<IsoAgLib::IsoLimitFlag_t>(mt_ptoRear.t_ptoShaftSpeedLimitStatus);}
 
-#if DEBUG_SCHEDULER
-    virtual const char* getTaskName() const;
-#endif
- /*@}*/
-
   private:
     // Private methods
     /**
@@ -374,10 +369,10 @@ typedef struct
         @pre  function is only called in tractor mode
         @see  BaseCommon_c::timeEvent()
       */
-    virtual bool timeEventTracMode( );
+    virtual void timeEventTracMode( );
 
     /** Detect stop of PTO update from tractor -> indication for stopped PTO */
-    virtual bool timeEventImplMode();
+    virtual void timeEventImplMode();
 
     /** process a ISO11783 base information PGN
         @pre  sender of message is existent in monitor list

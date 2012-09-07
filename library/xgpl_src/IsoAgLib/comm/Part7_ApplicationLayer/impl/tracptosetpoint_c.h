@@ -2,7 +2,7 @@
   tracptosetpoint_c.h: working on pto set point data; stores, updates
     and delivers all pto set point data informations from
     CanCustomer_c derived for CAN sending and receiving interaction;
-    from Scheduler_Task_c derived for interaction with other IsoAgLib
+    from SchedulerTask_c derived for interaction with other IsoAgLib
     objects
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
@@ -25,7 +25,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** working on pto set point data Type;
       stores, updates and delivers all base data informations;
       Derive from BaseCommon_c some fundamental funktionality for all base data
-      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
+      Derive from SchedulerTask_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
@@ -152,10 +152,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** get rear power take-off (PTO) economy mode
         @return  IsoActive -> pto economy mode is engaged
       */
-
-#if DEBUG_SCHEDULER
-    virtual const char* getTaskName() const;
-#endif
 
     virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
