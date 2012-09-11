@@ -522,28 +522,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\system\isoaglibthread_c.cpp"
 				>
 				<FileConfiguration
@@ -831,28 +809,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulerentry_c.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
