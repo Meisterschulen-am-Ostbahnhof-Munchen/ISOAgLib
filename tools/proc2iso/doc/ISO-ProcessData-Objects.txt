@@ -219,7 +219,7 @@ alternatively you can use one of the following 5 trigger method constants:<p>
 <tr><td> (2) distanceinterval</td></tr>
 <tr><td> (4) threshold limits</td></tr>
 <tr><td> (8) onchange</td></tr>
-<tr><td>(16) counter</td></tr>
+<tr><td>(16) total</td></tr>
 </table>
 
 \section XMLFeatureSet Feature Set

@@ -72,7 +72,7 @@
 
   <xs:simpleType name="attrTrigger_methods">
     <xs:restriction base="xs:string">
-      <xs:pattern value="(timeinterval|distanceinterval|thresholdlimits|onchange|counter)?(\+(timeinterval|distanceinterval|thresholdlimits|onchange|counter))*|[1-2]?[0-9]|3[0-1]"/>
+      <xs:pattern value="(timeinterval|distanceinterval|thresholdlimits|onchange|total)?(\+(timeinterval|distanceinterval|thresholdlimits|onchange|total))*|[1-2]?[0-9]|3[0-1]"/>
     </xs:restriction>
   </xs:simpleType>
 
