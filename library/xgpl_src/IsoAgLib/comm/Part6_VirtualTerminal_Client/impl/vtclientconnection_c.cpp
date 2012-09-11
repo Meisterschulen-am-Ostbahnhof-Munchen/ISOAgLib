@@ -147,10 +147,16 @@ VtClientConnection_c::reactOnAbort (Stream_c& /*arc_stream*/)
 bool
 VtClientConnection_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen)
 {
+  // not connected to a VT (no Alive), but there
+  // could still come messages in from that SA
+  if( !isVtActive() )
+    return false;
+
   // if SA is not the address from the vt -> don't react on stream
-  if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName())) return false;
-  //handling string value >= 9 Bytes
-  if (aui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
+  if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName()))
+    return false;
+
+  if (aui32_totalLen > (2+(255*32)) ) // Annex E.11 is the current max to receive!
     /** @todo SOON-258 Should we really ConnAbort such a stream in advance? For now don't care too much, as it shouldn't happen! */
     return false;
   return true;
@@ -160,7 +166,18 @@ VtClientConnection_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_id
 bool
 VtClientConnection_c::processPartStreamDataChunk (Stream_c& arc_stream, bool ab_isFirstChunk, bool ab_isLastChunk)
 {
-  if (arc_stream.getStreamInvalid()) return false;
+  if (arc_stream.getStreamInvalid())
+    return false;
+
+  // not connected to a VT (no Alive), but there
+  // could still come messages in from that SA
+  if( !isVtActive() )
+  {
+    arc_stream.setStreamInvalid();
+    return false;
+  }
+
+  // don't need the SA checks here, because these were done in reactOnStreamStart() already!
 
   uint8_t ui8_streamFirstByte = arc_stream.getFirstByte();
   switch ( ui8_streamFirstByte )
@@ -930,13 +947,8 @@ VtClientConnection_c::timeEventSearchForNewVt()
 bool
 VtClientConnection_c::processMsgAck( const CanPkgExt_c& arc_data )
 {
-  // shouldn't be possible, but check anyway to get sure.
-  if (!mpc_vtServerInstance) return false;
-
-  // don't react on NACKs from other VTs than the one we're communicating with!
-  if (mpc_vtServerInstance->getVtSourceAddress() != arc_data.isoSa()) return false;
-
-  if (arc_data.getUint8Data (0) != 0x01) return true; // Only react if "NOT ACKNOWLEDGE"!
+  if (arc_data.getUint8Data (0) != 0x01)
+    return true; // Only react if "NOT ACKNOWLEDGE"!
 
 #if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
   // check if we have Agrocom/Mller with Version < 3, so we IGNORE this NACK BEFORE the pool is finally uploaded.
@@ -1112,14 +1124,21 @@ VtClientConnection_c::storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_
 bool
 VtClientConnection_c::processMsg( const CanPkg_c& arc_data )
 {
+  // not connected to a VT (no Alive), but there
+  // could still come messages in from that SA
+  if( !isVtActive() )
+    return false;
+
   CanPkgExt_c c_data( arc_data, getMultitonInst() );
 
-  if ((c_data.isoPgn() & 0x3FF00LU) == ACKNOWLEDGEMENT_PGN)
-  { // Pass on to ACK-Processing!
-    return processMsgAck( c_data );
-  }
+  // if SA is not the address from the vt -> don't react on stream
+  if( c_data.getMonitorItemForSA() != &mpc_vtServerInstance->getIsoItem() )
+    return false;
 
-  // for right now, if it's NOT an ACKNOWLEDGE_PGN,
+  if ((c_data.isoPgn() & 0x3FF00LU) == ACKNOWLEDGEMENT_PGN)
+    return processMsgAck( c_data );
+  
+  // for right now, if it's NOT an ACKNOWLEDGEMENT_PGN,
   // it must be VT_TO_ECU addressed to us as defined by the IsoFilter
 
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
@@ -1127,9 +1146,6 @@ VtClientConnection_c::processMsg( const CanPkg_c& arc_data )
 
 #define MACRO_setStateDependantOnError(errByte) \
   ui8_errByte = errByte;
-
-  // If VT is not active, don't react on PKGs addressed to us, as VT's not active ;)
-  if (!isVtActive()) return true;
 
   /// process all VT_TO_ECU addressed to us
   switch (arc_data.getUint8Data (0))
