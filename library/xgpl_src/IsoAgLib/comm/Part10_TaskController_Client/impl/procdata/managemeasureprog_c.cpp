@@ -82,7 +82,7 @@ ManageMeasureProg_c::startDataLogging(
   // for MeasurementCommandTimeProp no negative value allowed
   isoaglib_assert( (IsoAgLib::ProcData::MeasurementCommandTimeProp != ren_type) || (ai32_increment > 0) );
 
-  const bool started = progCache.startMeasurement( ac_processData, ren_type, ai32_increment, measurementValue() );
+  const bool started = progCache.handleMeasurement( ac_processData, ren_type, ai32_increment, measurementValue() );
   isoaglib_assert(started); ( void )started;
 }
 
@@ -91,10 +91,10 @@ void
 ManageMeasureProg_c::stopRunningMeasurement( IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
   if ((mc_measureprogTC.isoNameType() == a_ecuType))
-    mc_measureprogTC.stopMeasurement();
+    mc_measureprogTC.stopAllMeasurements();
 #ifdef USE_DATALOGGER
   else if ((mc_measureprogLogger.isoNameType() == a_ecuType))
-    mc_measureprogLogger.stopMeasurement();
+    mc_measureprogLogger.stopAllMeasurements();
 #endif
 }
 

@@ -56,8 +56,8 @@ public:
   MeasureProg_c( IsoAgLib::ProcData::remoteType_t ecutype );
   virtual ~MeasureProg_c() {}
 
-  bool startMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment, int32_t value );
-  void stopMeasurement();
+  bool handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment, int32_t value );
+  void stopAllMeasurements();
 
   bool processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, int32_t value );
   void timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod, int32_t value );
@@ -69,6 +69,7 @@ public:
 private:
   MeasureSubprog_c& addSubprog(IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment);
   bool minMaxLimitsPassed(int32_t value) const;
+  void stopMeasurement(IsoAgLib::ProcData::measurementCommand_t ren_type);
 
 private:
   List_ThresholdInfo mlist_thresholdInfo;
