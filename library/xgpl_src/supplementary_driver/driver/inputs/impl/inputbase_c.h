@@ -53,13 +53,13 @@ public:
   */
   uint8_t channelNr() const { return ui8_channelNr;}
 
-private:
-  /** input type of this channel */
-  IsoAgLib::iInput_c::inputType_t en_inputType;
-
 protected:
   /** channel number of this input */
   uint8_t ui8_channelNr;
+
+private:
+  /** input type of this channel */
+  IsoAgLib::iInput_c::inputType_t en_inputType;
 };
 
 } // __IsoAgLib

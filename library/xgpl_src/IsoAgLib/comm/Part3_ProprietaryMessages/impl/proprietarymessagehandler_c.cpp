@@ -265,7 +265,7 @@ namespace __IsoAgLib
 
 
   void
-  ProprietaryMessageHandler_c::updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool ab_fromTimeEvent)
+  ProprietaryMessageHandler_c::updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool )
   {
     if (pc_nextClient != NULL)
     { // we have a client requesting to send up next...

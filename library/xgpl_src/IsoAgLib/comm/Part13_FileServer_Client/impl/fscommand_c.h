@@ -47,7 +47,9 @@ class FsCommand_c : CanCustomer_c
   public:
     typedef FsCommand_c Owner_t;
 
-    SchedulerTaskProxy_c(Owner_t &art_owner) : mrt_owner(art_owner), SchedulerTask_c( 0, 100, true ) {}
+    SchedulerTaskProxy_c(Owner_t &art_owner)
+      : SchedulerTask_c( 0, 100, true )
+      , mrt_owner(art_owner) {}
 
     virtual ~SchedulerTaskProxy_c() {}
 
