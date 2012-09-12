@@ -351,7 +351,7 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
 
     if( valueAndMeasurementCommand )
     {
-      uint16_t element = (uint16_t(at_ptrFrame->dataOctet(0) >> 4)) | (uint16_t(at_ptrFrame->dataOctet(1)) << 4);
+      uint16_t element = (uint16_t(at_ptrFrame->dataOctet(0) >> 4)) | uint16_t(uint16_t(at_ptrFrame->dataOctet(1)) << 4);
       uint32_t ddi = uint16_t(at_ptrFrame->dataOctet(2)) | (uint16_t(at_ptrFrame->dataOctet(3)) << 8);
       int32_t value = int32_t( uint32_t(at_ptrFrame->dataOctet(4)) | uint32_t(at_ptrFrame->dataOctet(5))<<8 | uint32_t(at_ptrFrame->dataOctet(6))<<16 | uint32_t(at_ptrFrame->dataOctet(7))<<24 );
 
