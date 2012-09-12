@@ -1816,7 +1816,7 @@ std::string
 formatAsFloat( const std::string& in )
 {
   bool dotFound=false;
-  for( int i=0; i<in.length(); ++i )
+  for( std::size_t i=0; i<in.length(); ++i )
     if( in[ i ] == '.' )
 	  dotFound = true;
 

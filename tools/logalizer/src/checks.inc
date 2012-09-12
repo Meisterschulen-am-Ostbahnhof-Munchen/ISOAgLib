@@ -58,10 +58,11 @@ checkHandshakingsVtCommands( PtrDataFrame_t at_ptrFrame )
 void
 checkHandshakingTP( PtrDataFrame_t at_ptrFrame )
 {
-  msgType_e mtype;
+  msgType_e mtype = msgTypeDATA; // default to avoid compiler warning. The code below should make sure that it is always initialized properly!
   uint8_t ui8_saClient=0xFE; // default to avoid compiler warning. The code below should make sure that it is always initialized properly!
-  switch (at_ptrFrame->pgn()) {
 
+  switch (at_ptrFrame->pgn())
+  {
   case ETP_DATA_TRANSFER_PGN:
   case TP_DATA_TRANSFER_PGN:
     ui8_saClient = at_ptrFrame->sourceAddress();
