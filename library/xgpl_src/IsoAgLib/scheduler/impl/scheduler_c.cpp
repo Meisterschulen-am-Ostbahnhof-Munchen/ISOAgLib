@@ -106,7 +106,7 @@ namespace __IsoAgLib {
       // we have to return some amount of mss that we have nothing todo
       // but we cannot return any usefull value. Thus 1h is used what won't
       // hurt.
-      return 3600 * 1000;
+      return 3600000L;
     }
 
 

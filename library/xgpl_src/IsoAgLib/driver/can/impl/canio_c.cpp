@@ -512,8 +512,6 @@ uint32_t ui32_msgNbr = 0;
   int32_t i32_retVal = HAL_NO_ERR;
   bool b_processed = false;
   bool to_be_processed = false;
-  bool b_forceProcessAll= false;
-
 
   while(i32_retVal != HAL_UNKNOWN_ERR ) // something has been received from CAN
   {
@@ -568,7 +566,6 @@ uint32_t ui32_msgNbr = 0;
             b_detectedOverflow = true;
             #endif
           #endif
-          b_forceProcessAll = true;
           break;
         case HAL_UNKNOWN_ERR:
         // no message to read
