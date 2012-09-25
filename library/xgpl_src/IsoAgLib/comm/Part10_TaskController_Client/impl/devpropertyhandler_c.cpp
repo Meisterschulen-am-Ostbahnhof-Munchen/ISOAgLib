@@ -857,7 +857,7 @@ DevPropertyHandler_c::sendWorkingSetTaskMsg(int32_t i32_currentTime)
   {
     mi32_timeWsTaskMsgSent = i32_currentTime;
     mc_data.setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
-                            0x0F, 0x00, 0x00, 0x00, mui8_lastTcState, 0x00, 0x00, 0x00);
+                            0xFF, 0xFF, 0xFF, 0xFF, (mui8_lastTcState & 0x01), 0x00, 0x00, 0x00);
     getIsoBusInstance4Comm() << mc_data;
   }
 }
