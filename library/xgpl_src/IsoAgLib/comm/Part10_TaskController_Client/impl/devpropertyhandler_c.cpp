@@ -300,9 +300,11 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
         if (arc_data.getUint8Data(1) == 0)
         {
           men_uploadStep = UploadUploading;
-          getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
-            getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
-            this, PROCESS_DATA_PGN, &mt_multiSendEventHandler);
+          if( getIsoMonitorInstance4Comm().existIsoMemberNr(mui8_tcSourceAddress) )
+            getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
+              getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
+              this, PROCESS_DATA_PGN, &mt_multiSendEventHandler);
+          // else: not handled, this will all be rewritten...
         }
         else
         {
@@ -1091,10 +1093,12 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
   else
   {
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
-      getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
-      &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(),
-      PROCESS_DATA_PGN, &mt_multiSendEventHandler);
+    if( getIsoMonitorInstance4Comm().existIsoMemberNr(mui8_tcSourceAddress) )
+      getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
+        getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
+        &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(),
+        PROCESS_DATA_PGN, &mt_multiSendEventHandler);
+    // else this is not handled here, will be rewritten...
     men_uploadCommand = UploadMultiSendCommandWaitingForCommandResponse;
   }
 }
