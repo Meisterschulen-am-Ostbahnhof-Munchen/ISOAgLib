@@ -191,14 +191,6 @@ public:
   */
   bool existIsoMemberNr(uint8_t aui8_nr);
 
-  /**
-    check if member is in member list with wanted ISOName,
-    adapt instance if member with claimed address with other device class inst exist
-    @param rc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
-    @return true -> member with claimed address with given DEVCLASS found (and rc_isoName has now its ISOName)
-  */
-  bool isoDevClass2ISONameClaimedAddress(IsoName_c &rc_isoName);
-
   /** insert a new IsoItem_c in the list
     @return pointer to new IsoItem_c or NULL if not succeeded
   */
@@ -238,12 +230,6 @@ public:
       @exception preconditionViolation
      */
   IsoItem_c& getActiveLocalIsoMember();
-
-  /** check for own ident with given member no
-      @param aui8_nr member no to search for
-      @return true -> one of the own identities has the wanted member no
-     */
-  bool existLocalIsoMemberNr (uint8_t aui8_nr);
 
   /** check for own ident with given ISOName
       @param acrc_isoName              ISOName to search for

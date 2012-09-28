@@ -130,14 +130,6 @@ public:
   bool existIsoMemberNr(uint8_t aui8_nr)
   { return IsoMonitor_c::existIsoMemberNr( aui8_nr );}
 
-  /** check if member is in member list with wanted ISOName,
-    adapt instance if member with claimed address with other device class inst exist
-    @param rc_isoName ISOName to search (-> it's updated if member with claimed address with other dev class inst is found)
-    @return true -> member with claimed address with given DEVCLASS found (and rc_isoName has now its ISOName)
-  */
-  bool isoDevClass2ISONameClaimedAddress(iIsoName_c &rc_isoName)
-	{ return IsoMonitor_c::isoDevClass2ISONameClaimedAddress( rc_isoName);}
-
   /** deliver member item with given isoName
     (check with existIsoMemberISOName before access to not defined item)
     possible errors:

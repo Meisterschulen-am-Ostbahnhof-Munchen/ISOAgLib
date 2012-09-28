@@ -229,10 +229,8 @@ IsoMonitor_c::timeEvent()
   if ( existActiveLocalIsoMember() )
   { // store some active local member for later use below...
     someActiveLocalMember = &getActiveLocalIsoMember();
-  }
 
-  if (someActiveLocalMember)
-  { // we could send the next SA request
+    // we could send the next SA request
     const int32_t ci32_timePeriod = SA_REQUEST_PERIOD_MSEC
         + ( ( getActiveLocalIsoMember().nr() % 0x80 ) * 1000 );
     // the request interval takes the number of the SA into account, so that nodes with higher
@@ -426,35 +424,6 @@ IsoMonitor_c::existIsoMemberNr(uint8_t aui8_nr)
 }
 
 
-bool
-IsoMonitor_c::isoDevClass2ISONameClaimedAddress(IsoName_c &rc_isoName)
-{
-  if (existIsoMemberISOName(rc_isoName, true))
-  { // there exists a device with exact NAME in claimed address state
-    return true;
-  }
-  else
-  { // no item with ISOName found -> adapt DevClassInd
-    // search for member with claimed address with same DEVCLASS
-    if (isoMemberDevClassCnt(rc_isoName.devClass(), true) > 0)
-    { // member with wanted device class exists -> store the ISOName
-      rc_isoName = isoMemberDevClassInd(rc_isoName.devClass(), 0, true).isoName();
-      return true;
-    }
-    else if (isoMemberDevClassCnt(rc_isoName.devClass(), false) > 0)
-    { // member with wanted device class exists -> store the ISOName
-      rc_isoName = isoMemberDevClassInd(rc_isoName.devClass(), 0, false).isoName();
-      // even if a device with wanted ISOName exist - it is not claimed
-      return false;
-    }
-    else
-    {
-      return false;
-    }
-  }
-}
-
-
 IsoItem_c*
 IsoMonitor_c::insertIsoMember(
   const IsoName_c& acrc_isoName,
@@ -577,28 +546,6 @@ IsoMonitor_c::getActiveLocalIsoMember()
 {
   isoaglib_assert( existActiveLocalIsoMember() );
   return *mpc_activeLocalMember;
-}
-
-
-bool
-IsoMonitor_c::existLocalIsoMemberNr(uint8_t aui8_nr)
-{
-  if ( !c_arrClientC1.empty()
-        && ( pc_searchCacheC1 != c_arrClientC1.end() )
-        && (*pc_searchCacheC1)->equalNr(aui8_nr )
-     )
-  {
-    return true;
-  }
-  else
-  {
-    for (pc_searchCacheC1 = c_arrClientC1.begin(); pc_searchCacheC1 != c_arrClientC1.end(); pc_searchCacheC1++)
-    {
-      if ( (*pc_searchCacheC1)->equalNr(aui8_nr) )
-        break;
-    }
-    return (pc_searchCacheC1 != c_arrClientC1.end());
-  }
 }
 
 
