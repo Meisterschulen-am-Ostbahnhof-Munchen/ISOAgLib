@@ -106,8 +106,8 @@ namespace IsoAgLib {
 
 #endif
 
-      void registerTask( iSchedulerTask_c& task ) {
-        Scheduler_c::registerTask( task );
+      void registerTask( iSchedulerTask_c& task, int32_t delay ) {
+        Scheduler_c::registerTask( task, delay );
       }
 
       void deregisterTask( iSchedulerTask_c& task ) {

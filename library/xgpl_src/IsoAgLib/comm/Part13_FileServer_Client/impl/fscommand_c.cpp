@@ -100,8 +100,7 @@ FsCommand_c::FsCommand_c(
   , mb_waitForMultiSendFinish( false )
   , mb_retryMultiPacketSend( false)
 {
-  // Scheduler
-  getSchedulerInstance().registerTask(mc_schedulerTask);
+  getSchedulerInstance().registerTask( mc_schedulerTask, 0 );
 
 #if DEBUG_FILESERVER
   INTERNAL_DEBUG_DEVICE << "FsCommand created!" << INTERNAL_DEBUG_DEVICE_ENDL;

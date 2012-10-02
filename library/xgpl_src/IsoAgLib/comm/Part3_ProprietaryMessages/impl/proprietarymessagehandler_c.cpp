@@ -35,7 +35,7 @@
 namespace __IsoAgLib
 {
   ProprietaryMessageHandler_c::ProprietaryMessageHandler_c()
-    : SchedulerTask_c( 0, 3600000, true )
+    : SchedulerTask_c( 3600000, true )
     , mt_handler(*this)
     , mt_customer(*this)
   { // nop
@@ -270,7 +270,7 @@ namespace __IsoAgLib
     if (pc_nextClient != NULL)
     { // we have a client requesting to send up next...
       setNextTriggerTime( pc_nextClient->mui32_nextSendTimeStamp );
-      getSchedulerInstance().registerTask( *this );
+      getSchedulerInstance().registerTask( *this, 0 );
     } else {
       getSchedulerInstance().deregisterTask( *this );
     }

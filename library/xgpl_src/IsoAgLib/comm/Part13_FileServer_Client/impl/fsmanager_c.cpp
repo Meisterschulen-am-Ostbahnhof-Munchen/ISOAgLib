@@ -123,7 +123,7 @@ FsManager_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerTask(*this);
+  getSchedulerInstance().registerTask( *this, 0 );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mc_saClaimHandler);
 
   setInitialized();
@@ -131,7 +131,7 @@ FsManager_c::init()
 
 
 FsManager_c::FsManager_c()
-  : SchedulerTask_c( 0, 100, true )
+  : SchedulerTask_c( 100, true )
   , mc_saClaimHandler(*this)
   , v_communications()
   , v_serverInstances()

@@ -21,7 +21,7 @@
 namespace __IsoAgLib {
 
 Aux2Inputs_c::Aux2Inputs_c( const IdentItem_c& arc_wsMasterIdentItem )
-  : SchedulerTask_c( 0, 10, true )
+  : SchedulerTask_c( 10, true )
   , mrc_wsMasterIdentItem( arc_wsMasterIdentItem )
   , m_state(Aux2InputsState_NoAuxInputAvailable)
   , m_modelIdentificationCode( 0 )
@@ -37,9 +37,9 @@ Aux2Inputs_c::Aux2Inputs_c( const IdentItem_c& arc_wsMasterIdentItem )
 void Aux2Inputs_c::init(VtClientConnection_c* ap_vtClientServerCommunication)
 {
 #ifdef USE_VTOBJECT_auxiliaryinput2
-  getSchedulerInstance().registerTask( *this );
+  getSchedulerInstance().registerTask( *this, 0 );
 
-  setPeriod( 10 );
+  setPeriod( 10, false );
 
   setState(Aux2InputsState_Initializing);
 

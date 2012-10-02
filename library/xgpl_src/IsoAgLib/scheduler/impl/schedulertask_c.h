@@ -20,29 +20,22 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 
-
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
   // All Scheduler-Tasks are subsystems, because of
   // the not-possible multiple-inheritance right now
   class SchedulerTask_c : public Subsystem_c {
     public:
-      SchedulerTask_c( int32_t nextTriggerTime, int32_t period, bool hardTiming );
+      SchedulerTask_c( int32_t period, bool hardTiming );
       virtual ~SchedulerTask_c() {}
 
-
-      /** this function is used by IsoAgLib components
-        * to perform periodic timed tasks.  */
       virtual void timeEvent() = 0;
 
       int32_t getPeriod() const {
         return m_period;
       }
 
-      /** sets a new period for this task
-       * Note, that the task get scheduled from now + period */
-      void setPeriod( int32_t a_period );
+      void setPeriod( int32_t period, bool retrigger );
 
       int32_t getTimeToNextTrigger() const {
         return getNextTriggerTime() - System_c::getTime();
@@ -99,5 +92,6 @@ namespace __IsoAgLib {
       Owner_t &mrt_owner;
   };
 
-} // end namespace __IsoAgLib
+} // __IsoAgLib
+
 #endif

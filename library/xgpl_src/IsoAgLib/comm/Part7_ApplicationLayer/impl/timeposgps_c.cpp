@@ -316,11 +316,11 @@ namespace __IsoAgLib {
     if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
     { // we are in sending state for at least one type
       ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodule up to now
-      mt_task.setPeriod( 100 );
+      mt_task.setPeriod( 100, false );
     }
     else
     { // we are only in receiving mode for all types
-      mt_task.setPeriod( 1000 );
+      mt_task.setPeriod( 1000, false );
     }
 
 
@@ -417,11 +417,11 @@ namespace __IsoAgLib {
     if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
     { // we are in sending state for at least one type
       ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodul up to now
-      mt_task.setPeriod( 100 );
+      mt_task.setPeriod( 100, false );
     }
     else
     { // we are only in receiving mode for all types
-      mt_task.setPeriod( 1000 );
+      mt_task.setPeriod( 1000, false );
     }
 
     return true;

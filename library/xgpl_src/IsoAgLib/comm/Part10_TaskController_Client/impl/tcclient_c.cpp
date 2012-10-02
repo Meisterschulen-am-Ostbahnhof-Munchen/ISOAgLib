@@ -40,7 +40,7 @@ TcClient_c::getDevPropertyHandlerInstance( void )
 
 
 TcClient_c::TcClient_c()
-  : SchedulerTask_c( 0, 200, true )
+  : SchedulerTask_c( 200, true )
   , mc_devPropertyHandler()
   , m_lastActiveTaskTC( false )
   , mc_isoNameTC( IsoName_c::IsoNameUnspecified() )
@@ -62,7 +62,7 @@ TcClient_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerTask( *this );
+  getSchedulerInstance().registerTask( *this, 0 );
   __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
   m_lastActiveTaskTC = false;
 
@@ -123,7 +123,7 @@ TcClient_c::timeEvent()
     { // limit large values (for Alive sending)
       ui16_nextTimePeriod = 200;
     }
-    SchedulerTask_c::setPeriod(ui16_nextTimePeriod); // + Scheduler_Task_c::getEarlierInterval());
+    SchedulerTask_c::setPeriod( ui16_nextTimePeriod, false ); 
   }
 }
 
@@ -131,7 +131,7 @@ TcClient_c::timeEvent()
 void
 TcClient_c::resetTimerPeriod()
 {
-  setPeriod( 100 );
+  setPeriod( 100, false );
 }
 
 

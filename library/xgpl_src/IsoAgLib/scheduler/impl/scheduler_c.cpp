@@ -71,17 +71,19 @@ namespace __IsoAgLib {
   }
 
 
-  void Scheduler_c::registerTask( SchedulerTask_c& task ) {
-    isoaglib_assert( task.getPeriod() > 0 );
+  void Scheduler_c::registerTask( SchedulerTask_c& task, int32_t delay ) {
+    isoaglib_assert( (task.getPeriod() > 0) && (delay >= 0) );
     isoaglib_assert( ! task.isRegistered() );
 
     m_taskQueue.push_front( &task );
     task.setRegistered( true );
-    rescheduleTask( task );
+    task.setNextTriggerTime( System_c::getTime() + delay );
   }
 
 
   void Scheduler_c::deregisterTask( SchedulerTask_c& task ) {
+    isoaglib_assert( task.isRegistered() );
+
     m_taskQueue.remove( &task );
     task.setRegistered( false );
   }

@@ -34,7 +34,7 @@ VtClient_c &getVtClientInstance( uint8_t instance )
 
 
 VtClient_c::VtClient_c()
-  : SchedulerTask_c( 0, 100, true )
+  : SchedulerTask_c( 100, true )
   , ml_vtServerInst()
   , m_vtConnections()
   , mt_handler( *this )
@@ -48,7 +48,7 @@ VtClient_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerTask(*this);
+  getSchedulerInstance().registerTask( *this, 0 );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
   bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VT_TO_GLOBAL_PGN<<8) ), 8, false);
@@ -234,7 +234,7 @@ VtClient_c::timeEvent(void)
 
   // set back the scheduler period to 100msec, as any waiting command has been set
   if (getPeriod() != 100)
-    setPeriod( 100 );
+    setPeriod( 100, false );
 }
 
 

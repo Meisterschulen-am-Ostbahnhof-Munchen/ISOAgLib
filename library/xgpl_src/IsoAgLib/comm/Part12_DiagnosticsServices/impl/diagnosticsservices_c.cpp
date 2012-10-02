@@ -34,7 +34,7 @@ static const int32_t sci32_periodDM1noDTC = 0x7FFF; // arbitrary never timeevent
 static const int32_t sci32_periodDM1waitForTP = 0x7FFF; // arbitrary never timeevent call
 
 DiagnosticsServices_c::DiagnosticsServices_c( IdentItem_c& arc_identItem ) :
-  SchedulerTask_c( 0, 100, true ),
+  SchedulerTask_c( 100, true ),
   mrc_identItem ( arc_identItem ),
   mpc_serviceToolVerifier(NULL),
   mc_dtcs(),
@@ -70,7 +70,7 @@ int DiagnosticsServices_c::getMultitonInst() const
 void
 DiagnosticsServices_c::init()
 {
-  getSchedulerInstance().registerTask( *this );
+  getSchedulerInstance().registerTask( *this, 0 );
 
   getIsoRequestPgnInstance4Comm().registerPGN ( mt_isoRequestPgnHandler, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( mt_isoRequestPgnHandler, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN );
@@ -93,7 +93,7 @@ void DiagnosticsServices_c::timeEvent()
 {
   if ( !mrc_identItem.isClaimedAddress() )
   {
-    setPeriod(50); // check every 50 ms if we can operate again
+    setPeriod( 50, false ); // check every 50 ms if we can operate again
     return;
   }
 
@@ -107,7 +107,7 @@ void DiagnosticsServices_c::timeEvent()
     }
     else
     { // no need for any action, simply retrigger when needed
-      setPeriod (nextActionTime);
+      setPeriod( nextActionTime, false );
     }
   }
 
@@ -117,7 +117,7 @@ void DiagnosticsServices_c::timeEvent()
     // check that currently dm1Sending is not being sent right now.
     if (ms_dm1SendingBroadcast.mb_bufferUsedForTP)
     {
-      setPeriod (10); // retrigger in 10ms to check if it could be sent then.
+      setPeriod( 10, false ); // retrigger in 10ms to check if it could be sent then.
       return;
     }
 
@@ -135,7 +135,7 @@ void DiagnosticsServices_c::timeEvent()
       mi32_dm1LastSentTime = HAL::getTime();
       sendSingleDM1DM2(ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,marr_dm1SendingBroadcast);
  
-      setPeriod ( m_dm1CurrentAtLeastOneDTC ? sci32_periodDM1 : sci32_periodDM1noDTC );
+      setPeriod ( m_dm1CurrentAtLeastOneDTC ? sci32_periodDM1 : sci32_periodDM1noDTC, false );
 
       mb_dm1CurrentNeedsToBeSent = false;
 
@@ -158,14 +158,14 @@ void DiagnosticsServices_c::timeEvent()
         // indicate that TP (BAM) is sending now.
         ms_dm1SendingBroadcast.mb_bufferUsedForTP = true;
 
-        setPeriod (sci32_periodDM1waitForTP); // wait for multisend to call back reactOnFinished()
+        setPeriod( sci32_periodDM1waitForTP, false ); // wait for multisend to call back reactOnFinished()
         
         mi32_dm1LastSentTime = HAL::getTime();
         mb_dm1CurrentNeedsToBeSent = false;
       }
       else
       {
-        setPeriod (10); // retrigger in 10ms to check if it could be sent then.
+        setPeriod( 10, false ); // retrigger in 10ms to check if it could be sent then.
       }
     }
   }

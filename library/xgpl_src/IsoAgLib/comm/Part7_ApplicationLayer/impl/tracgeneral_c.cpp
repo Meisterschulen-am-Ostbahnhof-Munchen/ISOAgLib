@@ -63,11 +63,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     ///Set time Period for Scheduler_c
     if (at_identMode == IsoAgLib::IdentModeTractor)
     { // SEND data with short period
-      mt_task.setPeriod( 100);
+      mt_task.setPeriod( 100, false );
     }
     else
     { // check with long period for timeout after loss of sending node
-      mt_task.setPeriod( 1000 );
+      mt_task.setPeriod( 1000, false );
     }
 
     // set the member base msg value vars to NO_VAL codes

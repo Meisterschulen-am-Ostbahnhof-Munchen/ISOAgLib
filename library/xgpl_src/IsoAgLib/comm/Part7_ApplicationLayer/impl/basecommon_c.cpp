@@ -34,8 +34,7 @@ BaseCommon_c::init()
 {
   isoaglib_assert (!initialized());
 
-
-  getSchedulerInstance().registerTask(mt_task);
+  getSchedulerInstance().registerTask(mt_task, 0);
   // set configure values with call for config
   config_base (NULL, IsoAgLib::IdentModeImplement, 0 /* No individual PGN disabling */);
   // now let concrete specialized classes init their part...

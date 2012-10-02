@@ -48,8 +48,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ! BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask) ) return false;
 
     ///Set time Period for Scheduler_c
-    if (at_identMode == IsoAgLib::IdentModeTractor) mt_task.setPeriod( 100 );
-    else  mt_task.setPeriod( CONFIG_TIMEOUT_TRACTOR_DATA );
+    if (at_identMode == IsoAgLib::IdentModeTractor) mt_task.setPeriod( 100, false );
+    else  mt_task.setPeriod( CONFIG_TIMEOUT_TRACTOR_DATA, false );
 
     // set the member base msg value vars to NO_VAL codes
     mt_ptoFront.ui16_pto8DigitPerRpm = mt_ptoRear.ui16_pto8DigitPerRpm = NO_VAL_16;

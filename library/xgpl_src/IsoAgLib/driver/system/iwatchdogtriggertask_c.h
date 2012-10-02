@@ -18,7 +18,7 @@ namespace IsoAgLib {
 
   class iWatchdogTriggerTask_c : public iSchedulerTask_c {
     public:
-      iWatchdogTriggerTask_c( int32_t period ) : iSchedulerTask_c( 0, period, true ) {}
+      iWatchdogTriggerTask_c( int32_t period ) : iSchedulerTask_c( period, true ) {}
     private:
       virtual void timeEvent();
   };

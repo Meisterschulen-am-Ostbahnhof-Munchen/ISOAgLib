@@ -18,27 +18,35 @@
 
 namespace __IsoAgLib {
 
-  SchedulerTask_c::SchedulerTask_c( int32_t nextTriggerTime, int32_t period, bool hardTiming )
+  SchedulerTask_c::SchedulerTask_c( int32_t period, bool hardTiming )
     : Subsystem_c()
     , m_hardTiming( hardTiming )
     , m_nextTriggerTimeSet( false )
     , m_registered( false )
-    , m_nextTriggerTime( nextTriggerTime )
+    , m_nextTriggerTime( -1 )
     , m_period( period )
-  {}
+  {
+    isoaglib_assert( period != 0 );
+  }
 
 
-  void SchedulerTask_c::setPeriod( int32_t a_period ) {
-    m_period = a_period;
-    setNextTriggerTime( System_c::getTime() + getPeriod() );
+  void SchedulerTask_c::setPeriod( int32_t period, bool retrigger ) {
+    isoaglib_assert( period != 0 );
+    isoaglib_assert( !retrigger || isRegistered() );
+    isoaglib_assert( !(period < 0) || !retrigger );
+
+    m_period = period;
+
+    if( retrigger )
+      setNextTriggerTime( System_c::getTime() + getPeriod() );
   }
 
 
   void SchedulerTask_c::setNextTriggerTime( int32_t time ) {
+    isoaglib_assert( isRegistered() );
+
     m_nextTriggerTime = time;
-    if( isRegistered() ) {
-      getSchedulerInstance().rescheduleTask( *this );
-    }
+    getSchedulerInstance().rescheduleTask( *this );
     m_nextTriggerTimeSet = true;
   }
 
@@ -58,21 +66,27 @@ namespace __IsoAgLib {
       // call
       m_nextTriggerTimeSet = false;
     } else {
-      // relax timing if not set to hard timing: calculate
-      // the next trigger time from now and not from the time
-      // we would have been theoretically called
-      if( ! m_hardTiming ) {
-        m_nextTriggerTime = System_c::getTime();
-      }
+      if( getPeriod() > 0 )
+      {
+        // task could've been legally deregistered in timeEvent.
+        if( isRegistered() ) {
+          // relax timing if not set to hard timing: calculate
+          // the next trigger time from now and not from the time
+          // we would have been theoretically called
+          if( ! m_hardTiming ) {
+            m_nextTriggerTime = System_c::getTime();
+          }
 
-      m_nextTriggerTime += getPeriod();
-      while( m_nextTriggerTime < System_c::getTime() ) {
-        isoaglib_assert( ! "we or someone else spent too much time that we would miss one call" );
-        m_nextTriggerTime += getPeriod();
-      }
+          m_nextTriggerTime += getPeriod();
+          while( m_nextTriggerTime < System_c::getTime() )
+            m_nextTriggerTime += getPeriod();
 
-      if( isRegistered() ) {
-        getSchedulerInstance().rescheduleTask( *this );
+          getSchedulerInstance().rescheduleTask( *this );
+        }
+      }
+      else
+      {
+        getSchedulerInstance().deregisterTask( *this );
       }
     }
   }

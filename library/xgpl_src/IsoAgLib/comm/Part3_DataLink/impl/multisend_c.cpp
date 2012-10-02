@@ -122,7 +122,7 @@ SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& r_source)
 
 
 MultiSend_c::MultiSend_c()
-  : SchedulerTask_c( 0, 100, true )
+  : SchedulerTask_c( 100, true )
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   , mui8_nextFpSequenceCounter(0)
   #endif
@@ -138,7 +138,7 @@ MultiSend_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerTask( *this );
+  getSchedulerInstance().registerTask( *this, false );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
@@ -247,7 +247,7 @@ MultiSend_c::timeEvent()
 {
   if (mlist_sendStream.empty())
   { // nothing to do if no transfer is Running
-    setPeriod (5000); // actually we could use "infinite here"
+    setPeriod( 5000, false ); // actually we could use "infinite here"
     return;
   }
 
@@ -299,7 +299,7 @@ MultiSend_c::timeEvent()
     if (i32_delta < 0) i32_delta = 0;
     newTimePeriod = i32_delta;
   }
-  setPeriod(newTimePeriod);
+  setPeriod( newTimePeriod, false );
 };
 
 

@@ -124,7 +124,7 @@ MultiReceiveClientWrapper_s::stop (CanCustomer_c& apc_fpCustomer)
 
 // c'tor
 MultiReceive_c::MultiReceive_c()
-  : SchedulerTask_c( 0, 100, true )
+  : SchedulerTask_c( 100, true )
   , mlist_streams()
   , mlist_clients()
   , mt_handler(*this)
@@ -975,7 +975,7 @@ MultiReceive_c::timeEvent()
   if( newPeriod < 1 )
     newPeriod = 1;
   
-  setPeriod( newPeriod );
+  setPeriod( newPeriod, false );
 }
 
 
@@ -1183,7 +1183,7 @@ MultiReceive_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerTask( *this );
+  getSchedulerInstance().registerTask( *this, 0 );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
   // insert receive filters for broadcasted TP
@@ -1193,7 +1193,7 @@ MultiReceive_c::init()
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ), 8, false);
   getIsoBusInstance4Comm().reconfigureMsgObj();
 
-  setPeriod (5000); // nothing to do per default!
+  setPeriod( 5000, false ); // nothing to do per default!
 
   setInitialized();
 }

@@ -182,7 +182,7 @@ namespace __IsoAgLib
     public:
       typedef BaseCommon_c Owner_t;
 
-      SchedulerTaskProxy_c(Owner_t &art_owner) : SchedulerTask_c( 0, 100, true ), mrt_owner(art_owner) {}
+      SchedulerTaskProxy_c(Owner_t &art_owner) : SchedulerTask_c( 100, true ), mrt_owner(art_owner) {}
 
       virtual ~SchedulerTaskProxy_c() {}
 

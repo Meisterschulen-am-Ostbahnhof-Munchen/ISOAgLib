@@ -61,7 +61,7 @@ namespace __IsoAgLib {
         return CanIo_c::waitUntilCanReceiveOrTimeout( timeoutInterval );
       }
 
-      void registerTask( SchedulerTask_c& task );
+      void registerTask( SchedulerTask_c& task, int32_t delay );
       void deregisterTask( SchedulerTask_c& task );
 
 #ifdef USE_MUTUAL_EXCLUSION

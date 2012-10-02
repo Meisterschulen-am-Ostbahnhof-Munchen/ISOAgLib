@@ -51,7 +51,7 @@ IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance )
 
 
 IsoMonitor_c::IsoMonitor_c() :
-  SchedulerTask_c( 0, 125, true ),
+  SchedulerTask_c( 125, true ),
   mvec_isoMember(),
   mt_handler(*this),
   mt_customer(*this),
@@ -71,8 +71,8 @@ IsoMonitor_c::init()
   mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
   mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getMultitonInst() );
 
-  setPeriod( 125 );
-  getSchedulerInstance().registerTask( *this );
+  setPeriod( 125, false );
+  getSchedulerInstance().registerTask( *this, 0 );
 
   mpc_activeLocalMember = NULL;
 
@@ -209,7 +209,7 @@ IsoMonitor_c::timeEvent()
   }
   // new TimePeriod is necessary - change it
   if (i32_checkPeriod != getPeriod())
-    setPeriod(i32_checkPeriod);
+    setPeriod(i32_checkPeriod, false);
 
   /// We have now: (HT=HardTiming, ST=SoftTiming)
   /// At least one IdentItem
