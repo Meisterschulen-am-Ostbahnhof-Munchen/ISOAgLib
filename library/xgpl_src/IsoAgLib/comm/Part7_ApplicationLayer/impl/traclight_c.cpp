@@ -63,7 +63,7 @@ namespace __IsoAgLib {
     if ( checkMode(IsoAgLib::IdentModeTractor))
     {
       // set Time Period in ms for Scheduler_c
-      mt_task.setPeriod( 1000 );
+      mt_task.setPeriod( 1000, false );
     }
 
     // un-/register to PGN

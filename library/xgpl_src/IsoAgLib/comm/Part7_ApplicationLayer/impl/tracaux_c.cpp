@@ -50,12 +50,12 @@ namespace __IsoAgLib {
     if ( at_identMode == IsoAgLib::IdentModeImplement )
     {
       // set Time Period in ms for Scheduler_c
-      mt_task.setPeriod( 100 );
+      mt_task.setPeriod( 100, false );
     }
     else
     { //IdentModeTractor
       // set Time Period in ms for Scheduler_c
-      mt_task.setPeriod( 1000 );
+      mt_task.setPeriod( 1000, false );
     }
 
     // un-/register to PGN

@@ -55,7 +55,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     ///Set time Period for Scheduler_c
     if (at_identMode == IsoAgLib::IdentModeTractor)
     { // SEND facilities at start
-      mt_task.setPeriod( 100 );
+      mt_task.setPeriod( 100, false );
     }
 
     if (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
@@ -198,7 +198,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       // send Tractor Facility PGN once at start
       sendFacilities();
       // scheduler not needed anymore -> set period to big value
-      mt_task.setPeriod ( 3600000 );
+      mt_task.setPeriod ( 3600000, false );
 
       mb_facilitiesOnInitSent = true;
     }

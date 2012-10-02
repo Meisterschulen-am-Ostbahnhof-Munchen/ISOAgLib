@@ -38,8 +38,8 @@ bool TracGuidanceCommand_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib
   if ( !BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask) ) return false;
 
   ///Set time Period for Scheduler_c --> periodic action only if in IMPLEMENT MODE!!
-  if (at_identMode == IsoAgLib::IdentModeImplement) mt_task.setPeriod( 100);
-  else  mt_task.setPeriod( 1000 );
+  if (at_identMode == IsoAgLib::IdentModeImplement) mt_task.setPeriod( 100, false );
+  else  mt_task.setPeriod( 1000, false );
 
   mui8_commanderSa = 0xFF;
 
