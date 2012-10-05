@@ -269,10 +269,12 @@ namespace __IsoAgLib
   {
     if (pc_nextClient != NULL)
     { // we have a client requesting to send up next...
+      if (!isRegistered())
+        getSchedulerInstance().registerTask( *this, 0 );
       setNextTriggerTime( pc_nextClient->mui32_nextSendTimeStamp );
-      getSchedulerInstance().registerTask( *this, 0 );
     } else {
-      getSchedulerInstance().deregisterTask( *this );
+      if (isRegistered())
+        getSchedulerInstance().deregisterTask( *this );
     }
   }
 

@@ -22,12 +22,15 @@ namespace __IsoAgLib
   /** default constructor
       initializes the parameter for filter and mask to "novalue"
     */
-  ProprietaryMessageClient_c::ProprietaryMessageClient_c(): mui32_canMask(MASK_INVALID), mui32_canFilter(MASK_INVALID),
-                                                            mc_isonameRemoteECU(screfc_noIsoName), mpc_localIdent(spc_nolocalIdent),
-                                                            men_sendSuccess(SendStream_c::SendSuccess)
+  ProprietaryMessageClient_c::ProprietaryMessageClient_c()
+    : mui32_canMask(MASK_INVALID),
+      mui32_canFilter(MASK_INVALID),                                                
+      mc_isonameRemoteECU(screfc_noIsoName), 
+      mpc_localIdent(spc_nolocalIdent),                                             
+      mui32_sendPeriodicMsec(0),
+      mui32_nextSendTimeStamp(0),
+      men_sendSuccess(SendStream_c::SendSuccess)
   {
-    setSendPeriodMsec(0);
-    mui32_nextSendTimeStamp = 0;
     /* register the client */
     getProprietaryMessageHandlerInstance4Comm().registerProprietaryMessageClient(this);
   }
@@ -39,11 +42,11 @@ namespace __IsoAgLib
   ProprietaryMessageClient_c::ProprietaryMessageClient_c( const IsoAgLib::iMaskFilter_c& acrc_maskFilter,
                                                           const IsoName_c& acrc_rremoteECU,
                                                           const IdentItem_c& apc_localIdent)
-                                                          : mpc_localIdent(NULL),
-                                                            men_sendSuccess(SendStream_c::SendSuccess)
+    : mpc_localIdent(NULL),
+      mui32_sendPeriodicMsec(0),
+      mui32_nextSendTimeStamp(0),
+      men_sendSuccess(SendStream_c::SendSuccess)
   {
-    setSendPeriodMsec(0);
-    mui32_nextSendTimeStamp = 0;
     /* register the client */
     getProprietaryMessageHandlerInstance4Comm().registerProprietaryMessageClient(this);
     /* define receive filter */
