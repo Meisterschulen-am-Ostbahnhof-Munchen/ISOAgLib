@@ -2818,7 +2818,7 @@ VtClientConnection_c::finishUploadCommand()
     // trigger fast reschedule if more messages are waiting
     if ( ( getUploadBufferSize() > 0 ) && ( getVtClientInstance4Comm().getPeriod() != 4 ) )
     { // there is a command waiting
-      getVtClientInstance4Comm().setPeriod( 4, false );
+      getVtClientInstance4Comm().setPeriod( 4, true );
     }
   }
 #if DEBUG_VTCOMM
