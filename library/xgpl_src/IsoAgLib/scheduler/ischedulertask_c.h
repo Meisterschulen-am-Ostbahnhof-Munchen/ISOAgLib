@@ -44,6 +44,10 @@ namespace IsoAgLib {
         SchedulerTask_c::setNextTriggerTime( time );
       }
 
+      bool isRegistered() const {
+        return SchedulerTask_c::isRegistered();
+      }
+
     private:
       friend class iScheduler_c;
   };
