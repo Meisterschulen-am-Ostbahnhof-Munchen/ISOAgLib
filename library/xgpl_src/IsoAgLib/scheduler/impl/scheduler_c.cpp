@@ -72,7 +72,7 @@ namespace __IsoAgLib {
 
 
   void Scheduler_c::registerTask( SchedulerTask_c& task, int32_t delay ) {
-    isoaglib_assert( (task.getPeriod() > 0) && (delay >= 0) );
+    isoaglib_assert( delay >= 0) ;
     isoaglib_assert( ! task.isRegistered() );
 
     m_taskQueue.push_front( &task );

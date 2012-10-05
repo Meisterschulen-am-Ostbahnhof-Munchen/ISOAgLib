@@ -138,7 +138,7 @@ MultiSend_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerTask( *this, false );
+  getSchedulerInstance().registerTask( *this, 0 );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
