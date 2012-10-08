@@ -189,7 +189,8 @@ public:
   //! return 0x100: first byte not yet known!
   //! return 0x101: not a valid index!
   uint16_t getStreamFirstByte (uint32_t ui32_index) const;
-  uint32_t getStreamCount() const { return mlist_streams.size(); };
+  //! ATTENTION: The meaning changed! Now only the non-kept (i.e. active) streams are counted!
+  uint32_t getStreamCount() const;
 
   uint32_t getStreamCompletion1000 (uint32_t ui32_index, bool b_checkFirstByte=false, uint8_t ui8_returnNullIfThisIsFirstByte=0x00 /*don't care if check=false*/) const;
   uint32_t getMaxStreamCompletion1000 (bool b_checkFirstByte=false, uint8_t ui8_returnNullIfThisIsFirstByte=0x00 /*don't care if check=false*/) const;

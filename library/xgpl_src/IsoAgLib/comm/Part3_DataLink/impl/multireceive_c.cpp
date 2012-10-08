@@ -1019,6 +1019,21 @@ MultiReceive_c::removeKeptStream (Stream_c* apc_keptStream)
 }
 
 
+uint32_t
+MultiReceive_c::getStreamCount() const
+{
+  uint32_t streamCount = 0;
+
+  for( STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator iter = mlist_streams.begin();
+    iter != mlist_streams.end(); ++iter )
+  {
+    if( iter->getStreamingState() != StreamFinishedJustKept )
+      ++streamCount;
+  }
+
+  return streamCount;
+}
+
 
 void
 MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
