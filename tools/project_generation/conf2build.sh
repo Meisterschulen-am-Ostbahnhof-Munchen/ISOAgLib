@@ -1901,7 +1901,9 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
 --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
 --with-makefile-skeleton=filename define project specific MakefileSkeleton text file which is used as base for
-                                  Makefiles (default: MakefileSkeleton.txt in the same directory as this script)
+                                  Makefiles (default: conf2build_MakefileSkeleton.txt in the same directory as this script)
+--with-cmake-skeleton=filename    define project specific CMakeLists skeleton file which is used for CMakeLists.txt
+                                  generation (default: conf2build_CMakeLists.txt in the same directory as this script)
 --debugdefgroup=GROUPNUMBER       Use group of debug defines, only use for autobuilds.
                                   GROUPNUMBER can be 0, 1 or 2;
                                   when 0: only NDEBUG is set (release build, default);
@@ -2015,6 +2017,10 @@ check_before_user_configuration()
             ('--with-makefile-app-skeleton='*)
                 RootDir=$PWD
                 MAKEFILE_APP_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-app-skeleton=//')
+                ;;
+            ('--with-cmake-skeleton='*)
+                RootDir=$PWD
+                CMAKE_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-cmake-skeleton=//')
                 ;;
             ('--debugdefgroup=0')
                 # Keep default for release build.
