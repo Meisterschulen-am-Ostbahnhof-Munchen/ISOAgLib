@@ -581,7 +581,6 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 
 bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 {
-  int16_t i16_rc;
   fd_set rfds;
   struct timeval s_timeout;
 
@@ -594,7 +593,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   s_timeout.tv_sec = 0;
   s_timeout.tv_usec = rui16_timeoutInterval * 1000;
 
-  i16_rc = select(FD_SETSIZE, &rfds, NULL, NULL, &s_timeout);
+  ( void ) select(FD_SETSIZE, &rfds, NULL, NULL, &s_timeout);
 
 #ifdef USE_MUTUAL_EXCLUSION
   clearBreakWaitFd( rfds );

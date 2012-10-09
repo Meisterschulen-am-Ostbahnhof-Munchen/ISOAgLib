@@ -367,7 +367,8 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_act
   uint8_t b_codeEdge = (ab_risingEdge)?RISING_EDGE:FALLING_EDGE;
 
 //  int32_t ui16_prescale = ((aui16_timebase * getCpuFreq() * 1000) / 65534);
-  uint8_t ui8_prescaleIndex, b_pow;
+//  uint8_t ui8_prescaleIndex
+  uint8_t b_pow;
   int16_t i16_errorState;
   i32_prescale *= (getCpuFreq() * 1000);
   i32_prescale /= 65534;
@@ -377,7 +378,7 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_act
   init_digin(ab_channel, b_codeEdge, b_codeActiv, irqFuncArr[ab_channel]);
   if (ab_channel < 5)
   { /* standard BIOS supports two prescaler parts */
-    ui8_prescaleIndex = _b_prescale_1_4Index;
+//    ui8_prescaleIndex = _b_prescale_1_4Index;
     for (b_pow = 9; b_pow > 1; b_pow--)
     { /* the prescaler must be configured by (2 << pow) values */
       if ((i32_prescale > (2 << b_pow)) || (b_pow == 2))
@@ -392,7 +393,7 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_act
   }
   else
   { /* same for other prescaler part */
-    ui8_prescaleIndex = _b_prescale_5_16Index;
+//    ui8_prescaleIndex = _b_prescale_5_16Index;
     for (b_pow = 9; b_pow > 1; b_pow--)
     {
       if ((i32_prescale > (2 << b_pow)) || (b_pow == 2))
