@@ -1,0 +1,13 @@
+<device designator="Device1" software_version="0.1" workingset_mastername="Ma00a1900ffe0001b" serialnumber="WXYZ999" structure_label="STRUCT4" localization_label="de50015A56FF" device_program_name="myDevice">
+  <deviceelement designator="DeviceElement1" element_type="device" element_number="0" parent_name="Device1">
+    <deviceprocessdata designator="On Off" ddi="0x008D" properties="defaultset" trigger_methods="timeinterval" proc_program_name="workState" cumulative_value="false" feature_set="SimpleMeasure" >
+      <deviceprocessdatacombination ddi="0x008D" command_type="exact" is_setpoint="true" />
+      <devicedinprocessdata lis="0" wert_inst="0x1" />
+    </deviceprocessdata>
+    <deviceprocessdata designator="Application Rate" ddi="0x0001" properties="defaultset" trigger_methods="timeinterval" proc_program_name="applicationRate" cumulative_value="false" feature_set="SimpleMeasure" >
+      <deviceprocessdatacombination ddi="0x0001" command_type="exact" is_setpoint="true" combination_element_number="2" />
+      <deviceprocessdatacombination ddi="0x0002" command_type="exact" is_setpoint="false" combination_element_number="4" />
+      <devicedinprocessdata lis="0" wert_inst="0x5" />
+    </deviceprocessdata>
+  </deviceelement>
+</device>
