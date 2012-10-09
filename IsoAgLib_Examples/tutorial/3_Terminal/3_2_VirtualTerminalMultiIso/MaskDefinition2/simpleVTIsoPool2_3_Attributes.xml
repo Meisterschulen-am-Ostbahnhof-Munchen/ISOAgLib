@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<objectpool>
+
+  <!-- All  Attributes -->
+  <!-- NOTE: With IsoAgLib's approach, you can exchange whole objects, which is helpful if not only the  -->
+  <!--  value should be exchanged, but also other atrtibutes or complete objects.    -->
+  <!--   See this example with the font_type and font_colour! -->
+  <!-- ==========================================================================================================-->
+
+  <!-- Normal Attributes for all graphical Elements of the Working Set exept Buttons and Softkeys   -->
+  <fontattributes name='FontAttributesNormal6x8_2' font_colour='black' font_size='6x8' font_type="latin1"/>
+
+  <fontattributes name='FontAttributes_2_Normal6x8LangDep' language="en" font_colour='black' font_size='6x8' font_type="latin1"/>
+  <fontattributes name='FontAttributes_2_Normal6x8LangDep' language="de" font_colour='red' font_size='6x8' font_type="latin9"/>
+  <fontattributes name='FontAttributes_2_Normal6x8LangDep' language="it" font_colour='blue' font_size='6x8' font_type="latin9"/>
+
+  <fillattributes name='FillAttrib' fill_type='2' fill_colour='34' />
+  <fillattributes name="FillAttributes_2" fill_type="2" fill_colour="2" />
+
+  <fontattributes name='FontAttributesNormal8x12_2' font_colour='black' font_size='8x12' font_type="latin1"/>
+  <fontattributes name='FontAttributesNormal6x8R_2' font_colour='red' font_size='6x8' font_type="latin1"/>
+  <fontattributes name='FontAttributesNormal6x8B_2' font_colour='blue' font_size='6x8' font_type="latin1" font_style='bold+underlined+italic' />
+  <fontattributes name='FontAttributesNormal8x8_2' font_colour='black' font_size='8x8' font_type="latin1" />
+  <fontattributes name='FontAttributesNormal12x16_2' font_colour='black' font_size='12x16' font_type="latin1" />
+  <fontattributes name='FontAttributesNormal16x16_2' font_colour='black' font_size='16x16' font_type="latin1" />
+  <fontattributes name='FontAttributesNormal16x24_2' font_colour='black' font_size='16x24' font_type="latin1" />
+  <fontattributes name='FontAttributesNormal24x32_2' font_colour='black' font_size='24x32' font_type="latin1" />
+
+  <lineattributes name="LineAttributes_Normal_2" line_colour="0" line_width="1" line_art="1111111111111111" />
+  <lineattributes name='LineAttributesNormal_2' line_colour='black' line_width='2' line_art='1111111111111111'/>
+  <lineattributes name='LineAttributesDotted_2' line_colour='black' line_width='1' line_art='1010101010101010'/>
+
+  <!-- =====================================================================================================-->
+
+  <!-- Attributes for the Softkey Mask because of different Scaling  than other graphical Elements   -->
+
+  <fontattributes name='FontAttributesSKM6x8_2' font_colour='black' font_size='6x8' font_type="latin1" />
+  <fontattributes name='FontAttributesSKM8x8_2' font_colour='black' font_size='8x8' font_type="latin1" />
+  <fontattributes name='FontAttributesSKM12x16_2' font_colour='black' font_size='12x16' font_type="latin1" />
+  <lineattributes name='LineAttributesSKM_2' line_colour='black' line_width='1' line_art='1111111111111111'/>
+  <!-- ==========================================================================================================-->
+
+  <!-- buttons: use separate font to allow different scaling apart from FontAttributesNormal6x8 -->
+  <!-- button border is not rescaled => fonts inside buttons will have different scaling factor,  -->
+  <!--       depending on the available size -->
+
+  <fontattributes name='FontAttributesNormal6x8_Button60x30_2' font_colour='black' font_size='6x8' font_type="latin1"/>
+  <!-- ==========================================================================================================-->
+</objectpool>
