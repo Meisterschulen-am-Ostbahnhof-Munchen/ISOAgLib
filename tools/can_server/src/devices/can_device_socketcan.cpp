@@ -136,7 +136,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         if (ret < 0)
         {
             perror( "SIOCGIFINDEX" );
-            pc_serverData->canBus(ui8_bus).mi32_can_device = NULL;
+            pc_serverData->canBus(ui8_bus).mi32_can_device = 0;
             return false;
         }
 
@@ -171,7 +171,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         if (result < 0)
         {
             perror( "bind" );
-            pc_serverData->canBus(ui8_bus).mi32_can_device = NULL;
+            pc_serverData->canBus(ui8_bus).mi32_can_device = 0;
             return false;
         }
 

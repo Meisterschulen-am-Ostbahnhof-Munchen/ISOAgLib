@@ -1337,8 +1337,6 @@ yasper::ptr< AOption_c > const *const gp_optionsEnd = ga_options +
 
 int main(int argc, char *argv[])
 {
-  pthread_t thread_registerClient, thread_canWrite;
-  int i_registerClientThreadHandle, i_canWriteThreadHandle;
   __HAL::server_c c_serverData;
 
   checkAndHandleOptionsAndStartup( argc, argv, c_serverData );
@@ -1362,17 +1360,21 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  i_registerClientThreadHandle = pthread_create( &thread_registerClient, NULL, &command_thread_func, &c_serverData);
-  i_canWriteThreadHandle = pthread_create( &thread_canWrite, NULL, &can_write_thread_func, &c_serverData);
+  pthread_t thread_registerClient, thread_canWrite;
+  int threadError = 0;
+
+  threadError |= pthread_create( &thread_registerClient, NULL, &command_thread_func, &c_serverData);
+  threadError |= pthread_create( &thread_canWrite, NULL, &can_write_thread_func, &c_serverData);
   
   if (c_serverData.mb_interactive) {
     pthread_t thread_readUserInput;
-    int i_status = pthread_create( &thread_readUserInput, NULL, &readUserInput, &c_serverData );
-    if (i_status)
-    {
-      std::cerr << "error creating user-input-read thread\n" << std::endl;
-      exit( i_status ); // thread could not be createdi
-    }
+    threadError |= pthread_create( &thread_readUserInput, NULL, &readUserInput, &c_serverData );
+  }
+
+  if( threadError != 0 )
+  {
+    std::cerr << "Error creating thread(s).\n" << std::endl;
+    exit( threadError );
   }
 
 #ifndef WIN32

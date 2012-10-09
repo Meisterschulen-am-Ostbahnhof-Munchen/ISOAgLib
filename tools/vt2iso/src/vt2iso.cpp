@@ -2575,8 +2575,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       // ###################################################
       // ### Print out definition, values and init-calls ###
       // ###################################################
-      FILE* fileList;
-      bool *pb_firstLine;
       std::string pc_postfix;
       /// MultiLanguage-Support: See which -list.inc file to write object to!
       if (arrc_attributes [attrLanguage].isGiven() && (arrc_attributes [attrLanguage].getLength() > 0))
@@ -2593,8 +2591,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           std::cerr << "\n\nYOU NEED TO SPECIFY A VALID LANGUAGE which you have also defined in the <workingset> object ("<<arrc_attributes [attrLanguage].get()<<" is not!)! STOPPING PARSER! bye."<<std::endl<<std::endl;
           return false;
         }
-        fileList = arrs_language[curLang].partFile;
-        pb_firstLine = &arrs_language[curLang].firstLine;
+        //FILE *fileList = arrs_language[curLang].partFile;
+        //bool *pb_firstLine = &arrs_language[curLang].firstLine;
 
         arrs_language[curLang].count++; // and do NOT count the normal list up!
         if (curLang > 0)
@@ -3759,7 +3757,6 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
   DOMNamedNodeMap *pAttributes;
 
   bool firstElement = true;
-  bool is_objChildName = false;
   std::string objChildName;
   r_objChildPoints = 0;
   for (child = r_n->getFirstChild(); child != 0; child=child->getNextSibling())
@@ -3774,7 +3771,6 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
         int nSize = pAttributes->getLength();
         arrc_attributes [attrPos_x].clear();
         arrc_attributes [attrPos_y].clear();
-        is_objChildName = false;
         for(int i=0;i<nSize;++i)
         {
           DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
@@ -3842,8 +3838,6 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
   DOMNamedNodeMap *pAttributes;
   std::string objChildName;
   bool is_objChildName=false;
-  bool is_objChildID=false;
-  signed long int objChildID=0;
   bool firstElement = true;
   r_objMacros = 0;
 
@@ -3863,8 +3857,7 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
         arrc_attributes [attrEvent].clear();
 
         is_objChildName = false;
-        is_objChildID = false;
-
+        
         for(int i=0;i<nSize;++i)
         {
           DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
@@ -3879,11 +3872,6 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
           {
             objChildName = str(format("%s%s") % mstr_poolIdent % attr_value);
             is_objChildName = true;
-          }
-          if (attr_name.compare("id") == 0)
-          {
-            objChildID = StringToInt(attr_value);
-            is_objChildID = true;
           }
         }
       }
@@ -6073,10 +6061,10 @@ void vt2iso_c::diffFileSave( const std::string &destFileName, const std::string 
 
     if ( destFile && srcFile )
     {
-      fseek( destFile, 0, SEEK_END );
+      ( void ) fseek( destFile, 0, SEEK_END );
       long destLen = ftell( destFile );
 
-      fseek( srcFile, 0, SEEK_END );
+      ( void ) fseek( srcFile, 0, SEEK_END );
       long srcLen = ftell( srcFile );
 
       char *destBuf = new char[destLen + 2];
@@ -6084,13 +6072,13 @@ void vt2iso_c::diffFileSave( const std::string &destFileName, const std::string 
 
       if ( destBuf && srcBuf )
       {
-        fseek( destFile, 0, SEEK_SET );
-        int r = fread( destBuf, 1, destLen, destFile);
+        ( void ) fseek( destFile, 0, SEEK_SET );
+        ( void ) fread( destBuf, 1, destLen, destFile);
         destBuf[destLen++] = '\n';
         destBuf[destLen] = '\0';
 
-        fseek( srcFile, 0, SEEK_SET );
-        r = fread( srcBuf, 1, srcLen, srcFile);
+        ( void ) fseek( srcFile, 0, SEEK_SET );
+        ( void ) fread( srcBuf, 1, srcLen, srcFile);
         srcBuf[srcLen++] = '\n';
         srcBuf[srcLen] = '\0';
 
