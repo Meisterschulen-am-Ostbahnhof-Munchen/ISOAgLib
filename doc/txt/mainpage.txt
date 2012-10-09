@@ -42,6 +42,39 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
+\subsection Change_V 2.5.0 to 2.5.1
+
+Scheduler/CAN-HAL:
+- Restructuring: 
+  - Simplified Scheduler. All runnings tasks must be run-to-completion and short, hence no more getForcedMinExecTimeDefault().
+  - Extended can_waitUntilCanReceiveOrTimeout() to take a 32bit value as paramter instead of 16bit.
+  - Introducing iWatchdogTriggerTask_c and removed many of the internal triggerWd-calls (except for filter-reconfiguration)
+  - CanIo_c's processMsg got a new parameter: processMsg( bool& stopCanProcessing ).
+  - Removed updateEarlierAndLatestInterval()-calls, also getTaskName().
+  - Removed return-type from timeEvent()-call.
+  - Allow task-triggering based on fixed or flexible timestamps.
+  - Renamed registering/deregistering.
+  - Introduced OneShot-Timer and a register-delay.
+  
+proc2iso:
+- Cleanup: "counter" changed to "total".
+
+VT-Client:
+- Making more robust if other VTs would send to us, which is a theoretical case only.
+
+TC-Client:
+- Compatibility: Improved by sending correct IS reserved fields.
+
+IsoMonitor:
+- Cleanup: Removed obsolete functions.
+
+(Extended) Transport Protocol:
+- Receiving-speed now up to speed again when multiple (E)TPs are being received and kept for later processing (was only the case in VT-/TC-/FS-Servers.
+
+conf2build.sh:
+- Enhancement: Supply CMake template as parameter.
+
+
 \subsection Change_U 2.4.0 to 2.5.0
 
 General:
@@ -68,8 +101,8 @@ General:
   - Removed PREPARE_VTGB/NO_BITMAP_SCALING/gluetoks/gluemacs as it's obsolete
   - Removed Shorten Symbol Names. Not needed for Tasking compilers anymore.
   - Renamed SIZEOF_INT to HAL_SIZEOF_INT because it's set by the HAL.
-  * Renamed TIMEOUT_TRACTOR_DATA to CONFIG_TIMEOUT_TRACTOR_DATA
-  - Renamed OBJECT_CONFIG to DEBUG_CONFIG
+  - Renamed TIMEOUT_TRACTOR_DATA to CONFIG_TIMEOUT_TRACTOR_DATA.
+  - Renamed OBJECT_CONFIG to DEBUG_CONFIG.
   - Replaced TRUE/FALSE to true/false, except for WinApi calls.
 - Restructuring:
   - Use isoaglib_config.h for accessing hal header now - this is the only file you need to include (to get the typedefs, etc.)
