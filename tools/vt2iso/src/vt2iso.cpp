@@ -6073,12 +6073,12 @@ void vt2iso_c::diffFileSave( const std::string &destFileName, const std::string 
       if ( destBuf && srcBuf )
       {
         ( void ) fseek( destFile, 0, SEEK_SET );
-        ( void ) fread( destBuf, 1, destLen, destFile);
+        size_t r1 = fread( destBuf, 1, destLen, destFile); ( void ) r1;
         destBuf[destLen++] = '\n';
         destBuf[destLen] = '\0';
 
         ( void ) fseek( srcFile, 0, SEEK_SET );
-        ( void ) fread( srcBuf, 1, srcLen, srcFile);
+        size_t r2 = fread( srcBuf, 1, srcLen, srcFile); ( void ) r2;
         srcBuf[srcLen++] = '\n';
         srcBuf[srcLen] = '\0';
 
