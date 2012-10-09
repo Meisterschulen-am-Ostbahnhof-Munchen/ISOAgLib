@@ -1,0 +1,20 @@
+/*! TODO List for the Open Source Project LBS-Lib:
+
+    \todo Verify and test with the help of extending the test cases
+         controlled by simulated CAN I/O.
+
+    \todo Adopt Hardware-Adaption-Layer to new targets
+
+	\todo Adopt possible changes between ISO 11783 draft and final release
+         after publishing of ISO 11783 (final)
+
+	\todo Integrate manager for ISO 11783 virtual terminal with intelligent
+         choose of terminal property specific variants from object pool
+	       and with auto zoom.
+
+	\todo Insert handling of more basic information PGN for lightning, etc.
+         in LBS_Base.
+
+	\todo Design strategies for automatic handling of conflicting setpoints.
+
+*/

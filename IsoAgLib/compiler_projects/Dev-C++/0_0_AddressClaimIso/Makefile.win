@@ -1,0 +1,95 @@
+# Project: 0_0_AddressClaimIso
+# Makefile created by Dev-C++ 4.9.9.0
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = objects/istate_c.o objects/identitem_c.o objects/monitoritem_c.o objects/baseitem_c.o objects/systemmgmt_c.o objects/isoitem_c.o objects/isomonitor_c.o objects/isoname_c.o objects/isosystempkg_c.o objects/scheduler_c.o objects/util_funcs.o objects/canpkg_c.o objects/canpkgext_c.o objects/liberr_c.o objects/hal_can_interface.o objects/target_extension_can_w32_vector_canlib.o objects/system_target_extensions.o objects/msgobj_c.o objects/filterbox_c.o objects/ident_c.o objects/canio_c.o objects/system_c.o objects/0_0_AddressClaimIso.o $(RES)
+LINKOBJ  = objects/istate_c.o objects/identitem_c.o objects/monitoritem_c.o objects/baseitem_c.o objects/systemmgmt_c.o objects/isoitem_c.o objects/isomonitor_c.o objects/isoname_c.o objects/isosystempkg_c.o objects/scheduler_c.o objects/util_funcs.o objects/canpkg_c.o objects/canpkgext_c.o objects/liberr_c.o objects/hal_can_interface.o objects/target_extension_can_w32_vector_canlib.o objects/system_target_extensions.o objects/msgobj_c.o objects/filterbox_c.o objects/ident_c.o objects/canio_c.o objects/system_c.o objects/0_0_AddressClaimIso.o $(RES)
+LIBS =  -L"D:/Development/Dev-Cpp/lib" -L"D:/Development/VectorInformatik/CANLIB/dll" -lvcand32  
+INCS =  -I"D:/Development/Dev-Cpp/include"  -I"../../.."  -I"../../../xgpl_src"  -I"D:/Development/VectorInformatik/CANLIB/dll" 
+CXXINCS =  -I"D:/Development/Dev-Cpp/include/c++"  -I"D:/Development/Dev-Cpp/include/c++/mingw32"  -I"D:/Development/Dev-Cpp/include/c++/backward"  -I"D:/Development/Dev-Cpp/include"  -I"../../.."  -I"../../../xgpl_src"  -I"D:/Development/VectorInformatik/CANLIB/dll" 
+BIN  = 0_0_AddressClaimIso__vector_canlib__simulating.exe
+CXXFLAGS = $(CXXINCS) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_0_0_AddressClaimIso.h -D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS -D_Windows  -DUSE_CAN_CARD_TYPE=HWTYPE_CANCARDXL  
+CFLAGS = $(INCS) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_0_0_AddressClaimIso.h -D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS -D_Windows  -DUSE_CAN_CARD_TYPE=HWTYPE_CANCARDXL  
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before 0_0_AddressClaimIso__vector_canlib__simulating.exe all-after
+
+
+clean: clean-custom
+	rm -f $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "0_0_AddressClaimIso__vector_canlib__simulating.exe" $(LIBS)
+
+objects/istate_c.o: ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp -o objects/istate_c.o $(CXXFLAGS)
+
+objects/identitem_c.o: ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp -o objects/identitem_c.o $(CXXFLAGS)
+
+objects/monitoritem_c.o: ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp -o objects/monitoritem_c.o $(CXXFLAGS)
+
+objects/baseitem_c.o: ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp -o objects/baseitem_c.o $(CXXFLAGS)
+
+objects/systemmgmt_c.o: ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp -o objects/systemmgmt_c.o $(CXXFLAGS)
+
+objects/isoitem_c.o: ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp -o objects/isoitem_c.o $(CXXFLAGS)
+
+objects/isomonitor_c.o: ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp -o objects/isomonitor_c.o $(CXXFLAGS)
+
+objects/isoname_c.o: ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp -o objects/isoname_c.o $(CXXFLAGS)
+
+objects/isosystempkg_c.o: ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp -o objects/isosystempkg_c.o $(CXXFLAGS)
+
+objects/scheduler_c.o: ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp -o objects/scheduler_c.o $(CXXFLAGS)
+
+objects/util_funcs.o: ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp -o objects/util_funcs.o $(CXXFLAGS)
+
+objects/canpkg_c.o: ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp -o objects/canpkg_c.o $(CXXFLAGS)
+
+objects/canpkgext_c.o: ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp -o objects/canpkgext_c.o $(CXXFLAGS)
+
+objects/liberr_c.o: ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp -o objects/liberr_c.o $(CXXFLAGS)
+
+objects/hal_can_interface.o: ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp -o objects/hal_can_interface.o $(CXXFLAGS)
+
+objects/target_extension_can_w32_vector_canlib.o: ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_canlib.cpp -o objects/target_extension_can_w32_vector_canlib.o $(CXXFLAGS)
+
+objects/system_target_extensions.o: ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp -o objects/system_target_extensions.o $(CXXFLAGS)
+
+objects/msgobj_c.o: ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp -o objects/msgobj_c.o $(CXXFLAGS)
+
+objects/filterbox_c.o: ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp -o objects/filterbox_c.o $(CXXFLAGS)
+
+objects/ident_c.o: ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp -o objects/ident_c.o $(CXXFLAGS)
+
+objects/canio_c.o: ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp -o objects/canio_c.o $(CXXFLAGS)
+
+objects/system_c.o: ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
+	$(CPP) -c ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp -o objects/system_c.o $(CXXFLAGS)
+
+objects/0_0_AddressClaimIso.o: ../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/0_0_AddressClaimIso.cpp
+	$(CPP) -c ../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/0_0_AddressClaimIso.cpp -o objects/0_0_AddressClaimIso.o $(CXXFLAGS)

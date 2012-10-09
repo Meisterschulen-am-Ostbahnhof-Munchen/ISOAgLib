@@ -1,0 +1,24 @@
+FINE: c_pwmCurrentDiagnose is in good state with current: 0, current state: 65535 and PWM output voltage: 1000[mV]
+c_pwmCurrentSimple is currently set to: 1024, has PWM output voltage: 1000[mV]
+FINE - c_pwmCurrentSimple is in good state
+FINE: c_pwmCurrentDiagnose is in good state with current: 0, current state: 0 and PWM output voltage: 1000[mV]
+c_pwmCurrentSimple is currently set to: 2048, has PWM output voltage: 1000[mV]
+FINE - c_pwmCurrentSimple is in good state
+FINE: c_pwmCurrentDiagnose is in good state with current: 0, current state: 0 and PWM output voltage: 1000[mV]
+c_pwmCurrentSimple is currently set to: 0, has PWM output voltage: 1000[mV]
+FINE - c_pwmCurrentSimple is in good state
+FINE: c_pwmCurrentDiagnose is in good state with current: 0, current state: 65535 and PWM output voltage: 1000[mV]
+c_pwmCurrentSimple is currently set to: 0, has PWM output voltage: 1000[mV]
+FINE - c_pwmCurrentSimple is in good state
+FINE: c_pwmCurrentDiagnose is in good state with current: 0, current state: 65535 and PWM output voltage: 1000[mV]
+c_pwmCurrentSimple is currently set to: 1024, has PWM output voltage: 1000[mV]
+FINE - c_pwmCurrentSimple is in good state
+FINE: c_pwmCurrentDiagnose is in good state with current: 0, current state: 0 and PWM output voltage: 1000[mV]
+c_pwmCurrentSimple is currently set to: 2048, has PWM output voltage: 1000[mV]
+FINE - c_pwmCurrentSimple is in good state
+FINE: c_pwmCurrentDiagnose is in good state with current: 0, current state: 0 and PWM output voltage: 1000[mV]
+c_pwmCurrentSimple is currently set to: 0, has PWM output voltage: 1000[mV]
+FINE - c_pwmCurrentSimple is in good state
+FINE: c_pwmCurrentDiagnose is in good state with current: 0, current state: 65535 and PWM output voltage: 1000[mV]
+c_pwmCurrentSimple is currently set to: 0, has PWM output voltage: 1000[mV]
+FINE - c_pwmCurrentSimple is in good state
