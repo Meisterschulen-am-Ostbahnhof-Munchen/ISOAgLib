@@ -290,16 +290,10 @@ MultiSend_c::timeEvent()
     }
   }
 
-  // ALWAYS calculate when we want to be triggered again!
-  int32_t newTimePeriod = 5000; // default: no SendStream running, idle around with 10 secs.. (actually "unlimited" would be correct - we can sleep!
-
-  if (i32_nextRetriggerNeeded > -1) // "!= -1"
-  { // HARD-timing, we need to come to action then!
-    int32_t i32_delta = i32_nextRetriggerNeeded-System_c::getTime();
-    if (i32_delta < 0) i32_delta = 0;
-    newTimePeriod = i32_delta;
-  }
-  setPeriod( newTimePeriod, false );
+  if (i32_nextRetriggerNeeded > -1)
+    setNextTriggerTime( i32_nextRetriggerNeeded );
+  else
+    setPeriod( 5000, false );
 };
 
 
