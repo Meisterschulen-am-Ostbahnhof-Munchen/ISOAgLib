@@ -457,13 +457,11 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
 
 static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, __HAL::server_c* pc_serverData)
 {
-  std::list<__HAL::client_c>::iterator iter, iter_delete = pc_serverData->mlist_clients.end();
-
   const uint8_t ui8_bus = p_sockBuf->s_data.ui8_bus;
 
   // mutex to prevent client list modification already got in calling function
 
-  for (iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++) {
+  for (std::list<__HAL::client_c>::iterator iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++) {
 
     if (!iter->canBus(ui8_bus).mb_busUsed)
       continue;
@@ -802,7 +800,6 @@ void readWrite(__HAL::server_c* pc_serverData)
 {
   fd_set rfds;
   __HAL::transferBuf_s s_transferBuf;
-  uint16_t ui16_bytesRead;
   int i_selectResult;
   struct timeval t_timeout;
   bool b_deviceHandleFound;
@@ -932,7 +929,7 @@ void readWrite(__HAL::server_c* pc_serverData)
           continue;
         }
 
-        ui16_bytesRead = read_data(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(s_transferBuf));
+        read_data(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(s_transferBuf));
 
         if (s_transferBuf.ui16_command != COMMAND_DATA)
         {
@@ -971,7 +968,7 @@ void readWrite(__HAL::server_c* pc_serverData)
           continue;
         }
 
-        ui16_bytesRead = read_data(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(s_transferBuf));
+        read_data(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(s_transferBuf));
 
         if (s_transferBuf.ui16_command == COMMAND_DATA)
         {
@@ -1130,7 +1127,6 @@ yasper::ptr< AOption_c > const *const gp_optionsEnd = ga_options +
 int main(int argc, char *argv[])
 {
   pthread_t threadCollectClient;
-  int i_collectClientThreadHandle;
   __HAL::server_c c_serverData;
 
   checkAndHandleOptionsAndStartup( argc, argv, c_serverData );
@@ -1145,7 +1141,7 @@ int main(int argc, char *argv[])
   }
 #endif
 
-  i_collectClientThreadHandle = pthread_create( &threadCollectClient, NULL, &collectClient, &c_serverData);
+  (void)pthread_create( &threadCollectClient, NULL, &collectClient, &c_serverData);
 
   if (c_serverData.mb_interactive) {
     pthread_t thread_readUserInput;
