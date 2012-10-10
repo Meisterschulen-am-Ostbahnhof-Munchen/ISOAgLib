@@ -14,7 +14,6 @@
 
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/util/iassert.h>
 
 #include "multisend_c.h"
@@ -134,11 +133,11 @@ SendStream_c::notifySender(sendSuccess_t ae_newStatus)
 
 
 bool
-SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
+SendStream_c::timeEvent ( unsigned pkgCnt )
 {
+  isoaglib_assert( pkgCnt > 0 );
   MultiSendPkg_c c_multiSendPkg;
   uint8_t ui8_nettoDataCnt;
-  uint8_t ui8_pkgInd;
 
   switch (men_sendState)
   {
@@ -162,20 +161,7 @@ SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
 #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
       if (men_msgType == NmeaFastPacket)
       {
-        uint8_t ui8_freeCnt = getIsoBusInstance4Comm().sendCanFreecnt();
-
-        // send only as much pkg as fits in send buffer (with spare of 2 for other use)
-        if (ui8_freeCnt < 2)
-           aui8_pkgCnt = 0;
-        else if (aui8_pkgCnt > (ui8_freeCnt - 2))
-           aui8_pkgCnt = (ui8_freeCnt - 2);
-
-        if (aui8_pkgCnt == 0)        {
-            #if DEBUG_MULTISEND
-            INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- pkgCnt == 0;" << INTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
-        }
-        for (ui8_pkgInd = 0; ui8_pkgInd < aui8_pkgCnt; ui8_pkgInd++)
+        for ( unsigned pkgInd = 0; pkgInd < pkgCnt; pkgInd++)
         {
           prepareSendMsg (ui8_nettoDataCnt);
           c_multiSendPkg.setUint8Data(0, static_cast<uint8_t>(((mui8_FpSequenceCounter << 5) |(mui8_packetsSentInThisBurst & 0x1F)) ) );
@@ -202,20 +188,10 @@ SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
       { // NOT NmeaFastPacket - some ISO protocol!
         if (men_msgType == IsoTPbroadcast)
         { // IsoTPbroadcast forces 50ms between all packets!!
-          aui8_pkgCnt = 1; // only send 1 packet at a time, then wait 50ms.
-        }
-        else
-        { // IsoTP || IsoETP
-          const uint8_t cui8_freeCnt = getIsoBusInstance4Comm().sendCanFreecnt();
-          if (aui8_pkgCnt == 0) aui8_pkgCnt = 1;
-          // send only as much pkg as fits in send buffer (with spare of 2 for other use)
-          if (cui8_freeCnt < 2)
-            aui8_pkgCnt = 0;
-          else if (aui8_pkgCnt > (cui8_freeCnt - 2))
-            aui8_pkgCnt = (cui8_freeCnt - 2);
+          pkgCnt = 1; // only send 1 packet at a time, then wait 50ms.
         }
 
-        for (ui8_pkgInd = 0; ui8_pkgInd < aui8_pkgCnt; ui8_pkgInd++)
+        for ( unsigned pkgInd = 0; pkgInd < pkgCnt; pkgInd++)
         {
           prepareSendMsg (ui8_nettoDataCnt);
           const uint8_t cui8_pkgNumberToSend = mui8_packetsSentInThisBurst + ((men_msgType == IsoETP) ? 0 : uint8_t(mui32_packetNrRequestedInLastCts-1));

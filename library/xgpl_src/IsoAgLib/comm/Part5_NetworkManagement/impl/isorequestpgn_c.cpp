@@ -15,7 +15,6 @@
 #include "isomonitor_c.h"
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/util/iassert.h>
 #include <algorithm>
 
@@ -28,7 +27,7 @@ IsoRequestPgn_c::init()
 {
   isoaglib_assert (!mc_subsystemState.initialized());
 
-  getIsoBusInstance4Comm().insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (REQUEST_PGN_MSG_PGN | 0xFF)<<8 ), 3, true);
+  getIsoBusInstance4Comm().insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FF0000UL, REQUEST_PGN_MSG_PGN  << 8 ), 3 );
 
   mc_subsystemState.setInitialized();
 }
@@ -39,7 +38,7 @@ IsoRequestPgn_c::close()
 {
   isoaglib_assert (mc_subsystemState.initialized());
 
-  getIsoBusInstance4Comm().deleteFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ( REQUEST_PGN_MSG_PGN | 0xFF ) << 8 ) );
+  getIsoBusInstance4Comm().deleteFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FF0000UL, REQUEST_PGN_MSG_PGN << 8 ) );
 
   mc_subsystemState.setClosed();
 }
@@ -154,6 +153,10 @@ IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
   /// Store incoming information for possible later user-triggered "sendAcknowledgePGN()"
   mpc_isoItemSA = pkg.getMonitorItemForSA();
   mpc_isoItemDA = pkg.getMonitorItemForDA();
+
+  if( ( mpc_isoItemDA != NULL ) && ( ! mpc_isoItemDA->itemState( IState_c::Local ) ) ) // omit DA specific for non local receivers
+    return true;
+
   mui32_requestedPGN = ( (static_cast<uint32_t>(pkg.operator[](0)))
                       | (static_cast<uint32_t>(pkg.operator[](1)) << 8)
                       | (static_cast<uint32_t>(pkg.operator[](2)) << 16) );
@@ -216,30 +219,6 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_
 }
 
 
-/** register an IsoName_c of a local device, so that RequestPGN messages that are directed to this
-    IsoName_c are received and handled.
-    This function has to be called during initialisation of a local IsoItem_c / IdentItem_c
-  */
-void IsoRequestPgn_c::registerLocalDevice( const __IsoAgLib::IsoName_c& rc_isoName )
-{
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
-  { // local IsoItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, REQUEST_PGN_MSG_PGN << 8 ), &rc_isoName, NULL, 3));
-  }
-}
-/** unregister an IsoName_c of a local device, so that IsoFilterManager_c stops receiving
-    messages for the corresponding IsoName_c.
-    This function has to be called during destruction of a local IsoItem_c / IdentItem_c
-  */
-void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_isoName )
-{
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
-  { // local IsoItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, REQUEST_PGN_MSG_PGN << 8 ), &rc_isoName, NULL, 3));
-  }
-}
-
-/** constructor for IsoRequestPgn_c */
 IsoRequestPgn_c::IsoRequestPgn_c ()
   : mc_subsystemState()
   , m_registeredClientsWithPGN ()

@@ -77,7 +77,7 @@ namespace __IsoAgLib {
       //! the calling threads is in blocking state until the unlock.
       int waitAcquireResource( bool isoaglibTimeEventThread ) {
         if( ! isoaglibTimeEventThread ) {
-          HAL::can_breakWaitUntilCanReceiveOrTimeout();
+          HAL::canRxWaitBreak();
           m_breakTimeEvent = true;
         }
         return mc_protectAccess.waitAcquireAccess();

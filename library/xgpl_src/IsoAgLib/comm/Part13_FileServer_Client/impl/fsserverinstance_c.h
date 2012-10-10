@@ -20,7 +20,6 @@
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h>
 #include <IsoAgLib/util/iassert.h>
 
 
@@ -36,7 +35,7 @@ namespace __IsoAgLib
 // forward declarations
 class FsManager_c;
 
-class FsServerInstance_c : public CanCustomer_c
+class FsServerInstance_c
 {
   public:
     // c'tor
@@ -95,12 +94,7 @@ class FsServerInstance_c : public CanCustomer_c
     /** initialization state of the fileserver, as described at the enum */
     FsState_en men_state;
 
-    /** Initialization-Filter stored for proper destruction */
-    IsoFilter_s ms_receiveFilter;
-
   public:
-    FsManager_c& getFsManager() { return c_fsManager; }
-
     /**
       * Get the fileserver's state. The values are described in the corresponding enum.
       */
@@ -174,7 +168,7 @@ class FsServerInstance_c : public CanCustomer_c
       */
    FsBusy_en getBusy() { return en_busy; }
 
-   bool processMsg( const CanPkg_c& arc_data );
+   void processFsToGlobal( const CanPkgExt_c& arc_data );
 
    /** time-triggered operations */
    void timeEvent();

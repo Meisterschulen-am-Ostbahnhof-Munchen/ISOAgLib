@@ -266,8 +266,6 @@ class CanPkgExt_c : public CanPkg_c
     */
   void setISONameForDA( const IsoName_c& acrc_isoName );
 
-  uint8_t checkMonitorItemISOName( const AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance ) const;
-
   /** short inline function for setting the Destination address (PS) to global (0xFF)
     */
   void setGlobalDA() { setIsoPs (0xFF); }

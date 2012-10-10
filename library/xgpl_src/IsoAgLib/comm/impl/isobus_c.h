@@ -53,9 +53,7 @@ public:
   uint16_t getProcessedThroughput() const { return getCanInstance4Comm().getProcessedThroughput(); }
   #endif
 
-  uint8_t sendCanFreecnt() { return getCanInstance4Comm().sendCanFreecnt(); }
-
-  bool stopSendRetryOnErr() { return getCanInstance4Comm().stopSendRetryOnErr(); }
+  int sendCanFreecnt() { return getCanInstance4Comm().sendCanFreecnt(); }
 
   // @todo to be changed to return the FilterBox instead of a boolean.
   bool existFilter(const __IsoAgLib::CanCustomer_c& ar_customer, const IsoAgLib::iMaskFilter_c& arc_maskFilter ) {
@@ -64,26 +62,22 @@ public:
 
   FilterBox_c* insertFilter( CanCustomer_c& ar_customer,
                              const IsoAgLib::iMaskFilter_c& arc_maskFilter,
-                             int ai_dlcForce,
-                             bool ab_reconfigImmediate)
+                             int ai_dlcForce )
   {
     return getCanInstance4Comm().insertFilter(
       ar_customer,
       IsoAgLib::iMaskFilterType_c( arc_maskFilter, IsoAgLib::iIdent_c::ExtendedIdent ),
-      ai_dlcForce,
-      ab_reconfigImmediate);
+      ai_dlcForce );
   }
 
   bool insertStdFilter( CanCustomer_c& ar_customer,
                         const IsoAgLib::iMaskFilter_c& arc_maskFilter,
-                        int ai_dlcForce,
-                        bool ab_reconfigImmediate )
+                        int ai_dlcForce )
   {
     return ( getCanInstance4Comm().insertFilter(
         ar_customer,
         IsoAgLib::iMaskFilterType_c(  arc_maskFilter, IsoAgLib::iIdent_c::StandardIdent ),
-        ai_dlcForce,
-        ab_reconfigImmediate) != NULL );
+        ai_dlcForce ) != NULL );
   }
 
 
@@ -98,7 +92,6 @@ public:
     return getCanInstance4Comm().existFilter (ar_customer, IsoAgLib::iMaskFilterType_c( arc_maskFilter, IsoAgLib::iIdent_c::StandardIdent), NULL);
   }
 
-  bool reconfigureMsgObj() { return getCanInstance4Comm().reconfigureMsgObj(); }
 
   bool deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer, const IsoAgLib::iMaskFilter_c& arc_maskFilter )
   { return getCanInstance4Comm().deleteFilter (ar_customer, IsoAgLib::iMaskFilterType_c( arc_maskFilter, IsoAgLib::iIdent_c::ExtendedIdent ) ); }

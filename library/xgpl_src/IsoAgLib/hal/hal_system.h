@@ -38,18 +38,15 @@ namespace HAL
   bool isSystemOpened();
 
   /** configure the watchdog of the system */
-  void configWatchdog();
+  void initWatchdog( void* config );
 
-  /** reset the watchdog to use new configured watchdog settings */
-  void wdReset();
+  /** close the watchdog of the system */
+  void closeWatchdog();
 
   /** trigger the watchdog */
-  void wdTriggern();
+  void triggerWatchdog();
 
-  /**
-    get the system time in [ms]
-    @return [ms] since start of the system
-  */
+  /** get the system time in [ms] */
   int32_t getTime(void);
 
   int16_t getSnr(uint8_t *snrDat);

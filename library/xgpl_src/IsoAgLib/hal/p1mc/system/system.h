@@ -44,11 +44,11 @@ namespace HAL
 
   inline void closeSystem() { __HAL::closeSystem(); }
 
-  inline configWatchdog() { __HAL::configWatchdog(); }
+  inline void initWatchdog( void* ) {}
 
-  inline void wdReset() {}
+  inline void closeWatchdog() {}
 
-  inline void wdTriggern() {}
+  inline void triggerWatchdog() {}
 
   inline int32_t getTime() {return __HAL::getTime();}
 

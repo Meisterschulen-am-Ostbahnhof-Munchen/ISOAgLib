@@ -33,31 +33,15 @@ class iProprietaryBus_c {
   MACRO_MULTITON_CONTRIBUTION();
  public:
   /**
-    Initialize the CAN hardware, and instantiate one msg object for
-     sending of messages. Do configuration for BUS number, sending bitrate,
-    CAN ident length, min/max hardware/BIOS Msg Obj numbers by parameters;
-    called by specified constructor or external functions;
-    wrong BUS and msg obj numbers are rejected and cause set of Err_c:range
-
-    possible errors:
-        * Err_c::range on undefined BUS,  msgOb_nr or sendBufferSize,
-        * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
-        * Err_c::busy on already used sending Msg-Obj
+    Initialize the CAN hardware
     @param aui8_busNumber number of the CAN bus
-    @param aui16_bitrate bitrate (default by define in isoaglib_config.h)
-    @param aui8_minObjNr optional minimum number for hardware CAN
-           message object (important for sharing CAN controller with
-         other tasks) (default by define in isoaglib_config.h)
-    @param aui8_maxObjNr optional maximum number for hardware CAN
-           message object (default by define in isoaglib_config.h)
+    @param aui16_bitrate bitrate
     @return true -> correct initialisation without errors
   */
   inline bool init(
     uint8_t aui8_busNumber,
-    uint16_t aui16_bitrate,
-    uint8_t aui8_minObjNr = 0,
-    uint8_t aui8_maxObjNr = (CONFIG_CAN_OBJ_CNT-1))
-  { return __IsoAgLib::getCanInstance4Prop().init (aui8_busNumber, aui16_bitrate, aui8_minObjNr, aui8_maxObjNr); }
+    uint16_t aui16_bitrate )
+  { return __IsoAgLib::getCanInstance4Prop().init (aui8_busNumber, aui16_bitrate ); }
 
   /** Close the opened Proprietary CAN-bus */
   inline void close() { return __IsoAgLib::getCanInstance4Prop().close(); }
@@ -75,20 +59,8 @@ class iProprietaryBus_c {
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
     @return number of msgs which fit into send buffer
   */
-  uint8_t sendCanFreecnt()
+  int sendCanFreecnt()
   { return __IsoAgLib::getCanInstance4Prop().sendCanFreecnt(); }
-
-  /**
-    clear the send buffer
-    @param ren_identType type of searched ident: standard 11bit or extended 29bit
-  */
-  void sendCanClearbuf() { __IsoAgLib::getCanInstance4Prop().sendCanClearbuf(); }
-
-  /** set the new maximum send delay
-      @param ai32_maxSendDelay new maximum send delay in milli-seconds
-   */
-  void setMaxSendDelay (int32_t ai32_maxSendDelay)
-  { __IsoAgLib::getCanInstance4Prop().setMaxSendDelay (ai32_maxSendDelay); }
 
   /**
     test if a FilterBox_c definition already exist
@@ -132,14 +104,8 @@ class iProprietaryBus_c {
     return ( __IsoAgLib::getCanInstance4Prop().insertFilter(
         ar_customer,
         acrc_filterMask,
-        ai_dlcForce,
-        ab_reconfigImmediate) != NULL);
+        ai_dlcForce ) != NULL);
   }
-
-  /**
-    reconfigure the MsgObj after insert/delete of FilterBox
-  */
-  bool reconfigureMsgObj() {return __IsoAgLib::getCanInstance4Prop().reconfigureMsgObj(); }
 
   /**
     delete a FilerBox definition

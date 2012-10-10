@@ -52,7 +52,7 @@ public:
   void setMeasurementVal(int32_t ai32_val);
   void incrMeasurementVal(int32_t ai32_val);
 
-  void processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType );
+  void processMsg( const ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType );
   void timeEvent( uint16_t& rui16_nextTimePeriod );
 
   void sendMeasurementVal( const IsoName_c& ac_targetISOName ) const;

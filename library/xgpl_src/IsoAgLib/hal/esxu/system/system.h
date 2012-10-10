@@ -39,11 +39,11 @@ namespace HAL
 
   inline bool isSystemOpened() { return __HAL::isSystemOpened(); }
 
-  inline void configWatchdog() { __HAL::configWatchdog(); }
+  inline void initWatchdog( void* config ) { __HAL::configWatchdog( config ); }
 
-  inline void wdReset() {__HAL::reset_wd(); }
+  inline void closeWatchdog() {}
 
-  inline void wdTriggern() { __HAL::trigger_wd(); }
+  inline void triggerWatchdog() { __HAL::trigger_wd(); }
 
   inline int32_t getTime() { return __HAL::get_time(); }
 

@@ -42,21 +42,11 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
 */
 
-typedef enum filterBoxState_en
-{
-  IdleState = 0xff,
-  InactiveState = 0xfe,
-  InvalidIdx = -1
-} filterBoxState_t;
-
 class FilterBox_c {
 public:
   struct CustomerLen_s
   {
-
     CustomerLen_s (CanCustomer_c* apc_customer, int8_t ai8_dlcForce) : pc_customer(apc_customer), i8_dlcForce (ai8_dlcForce) {}
-
-
     CanCustomer_c * pc_customer;
     int8_t i8_dlcForce; // 0..8: DLC must exactly be 0..8.   < 0 (-1): DLC doesn't care! (default!)
   };
@@ -74,9 +64,6 @@ public:
   */
   FilterBox_c(const FilterBox_c& acrc_src);
 
-  /** destructor of this FilterBox_c instance */
-  ~FilterBox_c();
-
   /** copy values of acrc_src FilterBox_c object to this instance
     possible errors:
         * Err_c::badAlloc on not enough memory for copying puffed CAN msg from source
@@ -90,36 +77,9 @@ public:
   void clearData();
 
 
-  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  /** close the BIOS filterbox object of this instance and close hardware CAN filterbox object */
-  void closeHAL();
-  #endif
-  /** check if this filterBox_c instance is really in use
-      @return true -> filterBox is not in use
-  */
-  bool isIdle() {return (mui8_busNumber == IdleState && mui8_filterBoxNr == IdleState && mvec_customer.empty());}
-
   /** store new can customer with same filter and mask
-      @param pc_cancustomer  new can customer
-    */
-
+      @param pc_cancustomer  new can customer */
    void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {mvec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
-
-
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  /** configures the CAN hardware of given FilterBox (uses BIOS function with EXTENDED_HAL)
-
-    possible errors:
-        * hwConfig used CAN BUS wans't configured properly
-        * range given BUS or FilterBox number not in allowed area
-        * hwBusy wanted FilterBox already in use
-        * unspecified some other error
-    @param aui8_busNumber BUS number, where this instance should act
-    @param aui8_FilterBoxNr CAN hardware msg number for BIOS interaction
-    @return true -> BIOS CAN object without errors configured
-  */
-  bool configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr);
-#endif
 
   /* *************************************** */
   /* ******* filter/mask managing ********** */
@@ -147,7 +107,7 @@ public:
       @param ar_customer  customer to compare
       @return               true -> customer already stored
     */
-      bool equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const;
+  bool equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const;
 
 
   /** delete CanCustomer_c  instance from array
@@ -160,11 +120,6 @@ public:
   const IsoAgLib::iMaskFilterType_c& maskFilterPair() const {
     return mc_maskFilterPair;
   }
-
-  #if DEBUG_CAN_BUFFER_FILLING
-  /** some debug messages */
-  void doDebug(uint8_t aui8_busNumber);
-  #endif
 
   /* ************************************************** */
   /* ***** insert/get/process buffered CanPkg_c ******* */
@@ -179,14 +134,7 @@ public:
         * Err_c::precondition no valid CanCustomer_c  (or derived) is registered
     @return true -> FilterBox_c was able to inform registered CANCustomer
   */
-  bool processMsg();
-
-
-  int32_t getFbVecIdx(){return mi32_fbVecIdx;};
-  void setFbVecIdx(int32_t ri32_fbIdx){mi32_fbVecIdx = ri32_fbIdx;};
-  
-  void setBusNumber(uint8_t aui8_busNumber) { mui8_busNumber = aui8_busNumber; }
-  void setFilterBoxNr(uint8_t aui8_filterBoxNr) { mui8_filterBoxNr = aui8_filterBoxNr; }
+  bool processMsg( CanPkg_c& pkg );
 
 private:
 // Private attributes
@@ -194,14 +142,6 @@ private:
 
   /**vector of pointer to pc_customer CanCustomer_c  which works with the received CAN data */
   STL_NAMESPACE::vector<CustomerLen_s> mvec_customer;
-
-  /** number of message object */
-  uint8_t mui8_filterBoxNr; //use like ui8_msgObjNr from msgobj_c class
-
-  /** BUS Number for systems with more than one BUS */
-  uint8_t mui8_busNumber;
-
-  int32_t mi32_fbVecIdx;
 
   /** Indicate if FilterBox is iterating through the customers in "processMsg" */
   static FilterBox_c* mspc_currentlyProcessedFilterBox;

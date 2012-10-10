@@ -146,9 +146,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       setFilterCreated();
 
       IsoBus_c &c_can = getIsoBusInstance4Comm();
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (GROUND_BASED_SPEED_DIST_PGN<<8) ), 8, false);
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WHEEL_BASED_SPEED_DIST_PGN<<8) ), 8, false);
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (SELECTED_SPEED_MESSAGE<<8) ), 8, true);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (GROUND_BASED_SPEED_DIST_PGN<<8) ), 8 );
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WHEEL_BASED_SPEED_DIST_PGN<<8) ), 8 );
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (SELECTED_SPEED_MESSAGE<<8) ), 8 );
     }
   }
 

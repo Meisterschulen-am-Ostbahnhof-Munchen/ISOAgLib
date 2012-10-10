@@ -261,7 +261,8 @@ private:
   friend iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data );
   friend struct iIsoFilter_s;
   friend class iProprietaryMessageHandler_c;
-  friend class iProprietaryMessageClient_c;
+  friend class iProprietaryMessageA_c;
+  friend class iProprietaryMessageB_c;
   friend class __IsoAgLib::ProprietaryMessageClient_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class __IsoAgLib::TimePosGps_c;

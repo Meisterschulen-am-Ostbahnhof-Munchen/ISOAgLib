@@ -17,85 +17,47 @@
 
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
-#include <IsoAgLib/driver/can/imaskfilter_c.h>
 
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib
 {
-  /** initialization parameter for local ident */
-  static const iIdentItem_c* spc_nolocalIdent = NULL;
+  class iProprietaryMessageA_c : private __IsoAgLib::ProprietaryMessageA_c {
+    public:
+      iProprietaryMessageA_c( const iIdentItem_c& ident, const iIsoName_c& remote, uint8_t dp ) :
+        __IsoAgLib::ProprietaryMessageA_c( static_cast<const __IsoAgLib::IdentItem_c&>( ident ), static_cast<const __IsoAgLib::IsoName_c&>( remote ), dp ) {}
+      virtual ~iProprietaryMessageA_c() {}
 
-  /** initialization parameter for IsoName */
-  static const iIsoName_c& srcc_noIsoName = iIsoName_c::iIsoNameUnspecified();
+      virtual void processA( const iIsoItem_c& ) {}
 
-  /** Handler for a specific registered proprietary PGN */
-  class iProprietaryMessageClient_c : private __IsoAgLib::ProprietaryMessageClient_c
-  {
-  public:
-    /** Constructor of the API class registers the new instance immediatly at ProprietaryMessageHandler_c
-        so that each succeeding setup call will be reflected there by call of
-    */
-    iProprietaryMessageClient_c()
-    : ProprietaryMessageClient_c()
-    {
-      (void)srcc_noIsoName;
-      (void)spc_nolocalIdent;
-    }
+      void init() { __IsoAgLib::ProprietaryMessageA_c::init(); }
+      void close() { __IsoAgLib::ProprietaryMessageA_c::close(); }
 
-    /** Constructor of the API class registers the new instance immediatly at ProprietaryMessageHandler_c
-        so that each succeeding setup call will be reflected there by call of processProprietaryMsg */
-    iProprietaryMessageClient_c(const IsoAgLib::iMaskFilter_c& acrc_maskFilter,
-                                const IsoAgLib::iIsoName_c& acrc_rremoteECU,
-                                const IsoAgLib::iIdentItem_c& apc_localIdent)
-    : ProprietaryMessageClient_c( acrc_maskFilter,
-                                  static_cast<const __IsoAgLib::IsoName_c&>(acrc_rremoteECU),
-                                  static_cast<const __IsoAgLib::IdentItem_c&>(apc_localIdent)) {}
+      IsoAgLib::iGenericData_c& getDataReceive() { return __IsoAgLib::ProprietaryMessageA_c::getDataReceive(); }
+      IsoAgLib::iGenericData_c& getDataSend() { return __IsoAgLib::ProprietaryMessageA_c::getDataSend(); }
 
-    virtual ~iProprietaryMessageClient_c() {}
+      bool send() { return __IsoAgLib::ProprietaryMessageA_c::send(); }
+      bool isSending() const { return __IsoAgLib::ProprietaryMessageA_c::isSending(); }
+  };
 
-    /** receives the messages
-        has to be overloaded by the Application
-    */
-    virtual void process( const iIsoName_c &sender ) = 0;
 
-    /** define receive filter which will be used by ProprietaryMessageHandler for definition of CAN filter.
-        trigger an update of CAN receive filters with call of ProprietaryMessageHandler::tiggerClientDataUpdate()
-        @return true, when wanted PGN is from allowed range
-    */
-    bool defineReceiveFilter( const IsoAgLib::iMaskFilter_c& acrc_maskFilter,
-                              const IsoAgLib::iIsoName_c& acrc_rremoteECU,
-                              const IsoAgLib::iIdentItem_c* apc_localIdent)
-    { return ProprietaryMessageClient_c::defineReceiveFilter ( acrc_maskFilter,
-                                                               static_cast<const __IsoAgLib::IsoName_c&>(acrc_rremoteECU),
-                                                               static_cast<const __IsoAgLib::IdentItem_c*>(apc_localIdent)); }
+  class iProprietaryMessageB_c : private __IsoAgLib::ProprietaryMessageB_c {
+    public:
+      iProprietaryMessageB_c( const iIdentItem_c& ident, const iIsoName_c& remote, uint8_t dp ) :
+        __IsoAgLib::ProprietaryMessageB_c( static_cast<const __IsoAgLib::IdentItem_c&>( ident ), static_cast<const __IsoAgLib::IsoName_c&>( remote ), dp ) {}
+      virtual ~iProprietaryMessageB_c() {}
 
-    /** function to tell "i will send data" to the handler */
-    void sendDataToHandler() { ProprietaryMessageClient_c::sendDataToHandler(); }
+      virtual void processB( const iIsoItem_c& ) {}
 
-    /** User can check if the sendData is currently being used because MultiSend_c
-        is streaming out right now. In this case DO NOT MODIFY the
-        GenericData_c SendData via getDataSend() !!!
-    */
-    bool isSending() { return ProprietaryMessageClient_c::isSending(); }
+      void init() { __IsoAgLib::ProprietaryMessageB_c::init(); }
+      void close() { __IsoAgLib::ProprietaryMessageB_c::close(); }
 
-    /** the application shall only get a constant reference to the received data is only set by the friend class
-        __IsoAgLib::ProprietaryMessageHandler_c
-    */
-    const iGenericData_c& getDataReceive() const { return ProprietaryMessageClient_c::getDataReceive(); }
+      IsoAgLib::iGenericData_c& getDataReceive() { return __IsoAgLib::ProprietaryMessageB_c::getDataReceive(); }
+      IsoAgLib::iGenericData_c& getDataSend() { return __IsoAgLib::ProprietaryMessageB_c::getDataSend(); }
 
-    /** the application should be able to set the data for send
-    */
-    iGenericData_c& getDataSend() { return ProprietaryMessageClient_c::getDataSend(); }
-
-    /** set time period on millisec for repeated send of the data that has been stored in c_sendData.
-        period = 0 means: send only one message for each call of iProprietaryMessageHandler::sendData()
-    */
-    void setSendPeriodMsec (uint32_t aui32_sendPeriodMsec) { ProprietaryMessageClient_c::setSendPeriodMsec(aui32_sendPeriodMsec); }
+      bool send() { return __IsoAgLib::ProprietaryMessageB_c::send(); }
+      bool isSending() const { return __IsoAgLib::ProprietaryMessageB_c::isSending(); }
   };
 };
 
 #endif
-
-
-

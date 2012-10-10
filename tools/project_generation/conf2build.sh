@@ -202,28 +202,6 @@ set_default_values()
     COMBINED_DEFINES="$NDEBUG_DEFINE $DEBUG_DEFINES"
 }
 
-# update PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL unless contradiction with
-# user configuration
-update_prj_system_with_enhanced_can_hal()
-{
-    local SETPOINT="$1"
-    local MESSAGE="$2"
-    if [ -n "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL_ORIG" ]; then
-        # user has configured PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL
-        if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL_ORIG" -ne "$SETPOINT" ]; then
-            # contradiction
-            printf 'ERROR: try PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=%s\n' "$SETPOINT" >&2
-            exit 2
-        fi
-    elif [ "${PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL:-}" = "$SETPOINT" ]; then
-        : # omit redundant update
-    else
-        # actually update
-        printf '%b' "$MESSAGE" >&2
-        PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL="$SETPOINT"
-    fi
-}
-
 check_set_correct_variables()
 {
     local CONF_DIR="$1"
@@ -397,13 +375,10 @@ check_set_correct_variables()
 
     case "$USE_CAN_DRIVER" in
         (simulating)
-            update_prj_system_with_enhanced_can_hal 0 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.\n'
             ;;
         (msq_server|socket_server|socket_server_hal_simulator)
             ;;
         (sys)
-            # Allow any setting of Enhanced CAN HAL, because we do not want to limit Proprietary HALs by that.
-            #update_prj_system_with_enhanced_can_hal 0 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.\n\n'
             ;;
         (*)
             echo_ 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator"'
@@ -517,8 +492,6 @@ driver_and_hal_features()
     # as it doesn't matter as it's just about headers...
 
     printf '%s' \
-      " -path '*${HAL_PATH_ISOAGLIB_CAN}/can*.h'  -o " \
-      " -path '*${HAL_PATH_ISOAGLIB_CAN}/hal_can*' -o " \
       " -path '*${HAL_PATH_ISOAGLIB}/system*' -o " \
       " -path '*${HAL_PATH_ISOAGLIB}/errcodes.h' -o " \
       " -path '*${HAL_PATH_ISOAGLIB}/config.h' -o " \
@@ -527,29 +500,24 @@ driver_and_hal_features()
     echo_ "CAN driver:    $USE_CAN_DRIVER"
     case "$USE_CAN_DRIVER" in
         (simulating)
-            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_simulating*'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/can_driver_simulating.*'" >&4
             ;;
         (msq_server)
-            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_msq.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface_client.cpp' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface.h'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/can_driver_canserver_msq.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface_client.cpp' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface.h'" >&4
             ;;
         (socket_server)
-            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface_client.cpp' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface.h'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/can_driver_canserver_socket.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface.h'" >&4
             ;;
         (socket_server_hal_simulator)
-            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock_hal_simulator.*'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/can_driver_canserver_socket_hal_simulator.*'" >&4
             ;;
         (sys)
-            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_socketcan.*'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/can_driver_sys.*'" >&4
             ;;
     esac
 
     # add the standard driver directory sources for CAN
-    if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
-        # no msgobjs in enh. can hal
-        printf '%s' " -o \( -path '*/driver/can/*' -a -not -name 'msgobj*' \)" >&3
-    else
-        printf '%s' " -o -path '*/driver/can/*'" >&3
-    fi
+    printf '%s' " -o -path '*/driver/can/*'" >&3
 
     if [ "$PRJ_DATASTREAMS" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/datastreams/*' -o -path '*/hal/hal_datastreams.h'" >&3
@@ -1123,9 +1091,6 @@ print_cmake_definitions()
 {
     omit_or_printf '\n  -D%s' $(
         echo_ PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES
-        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
-             echo_ SYSTEM_WITH_ENHANCED_CAN_HAL
-        fi
         case "$USE_CAN_DRIVER" in
             (msq_server)
                 echo_ CAN_DRIVER_MESSAGE_QUEUE
@@ -1240,9 +1205,6 @@ create_standard_makefile()
         fi
         local RULE_PROJ_DEFINES="\$(\$F VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h${PRJ_DEFINES:+$(printf -- " -D'%s'" $PRJ_DEFINES)}${COMBINED_DEFINES:+$(printf -- " -D'%s'" $COMBINED_DEFINES)}"
 
-        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
-            append RULE_PROJ_DEFINES ' -DSYSTEM_WITH_ENHANCED_CAN_HAL'
-        fi
         case "$USE_CAN_DRIVER" in
             (msq_server)
                 append RULE_PROJ_DEFINES ' -DCAN_DRIVER_MESSAGE_QUEUE'
@@ -1383,9 +1345,6 @@ create_pure_application_makefile()
         for SinglePrjDefine in $PRJ_DEFINES ; do
             echo_n " -D$SinglePrjDefine" >&3
         done
-        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-            echo_n " -DSYSTEM_WITH_ENHANCED_CAN_HAL" >&3
-        fi
         
         echo_e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >&3
         echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >&3
@@ -1772,10 +1731,6 @@ create_library_makefile()
             printf -- ' -D%s' "$PRJ_DEFINES"
         fi
 
-        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
-            printf -- ' -DSYSTEM_WITH_ENHANCED_CAN_HAL'
-        fi
-        
         case "$USE_CAN_DRIVER" in
             (msq_server)
                 printf -- ' -DCAN_DRIVER_MESSAGE_QUEUE'
@@ -1932,18 +1887,13 @@ assignments()
 DEBUG_DEF_NAMES='DEBUG_ADDRESS_CLAIM
 DEBUG_CAN
 DEBUG_CANSERVER
-DEBUG_CAN_BUFFER_FILLING
-DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
 DEBUG_DEVPROPERTYHANDLER
 DEBUG_DIAGNOSTICPGN
 DEBUG_EEPROM
 DEBUG_ELEMENTBASE
-DEBUG_FIFO_CAN
-DEBUG_FIFO_WRITE
 DEBUG_FILESERVER
 DEBUG_FILESTREAMINPUT
 DEBUG_FILESTREAMOUTPUT
-DEBUG_FILTERBOX
 DEBUG_HAL
 DEBUG_HEAP_USEAGE
 DEBUG_ISOMONITOR
@@ -2067,7 +2017,6 @@ check_after_user_configuration()
 {
     # perform some checks based on user input
     # check for correct target system setting
-    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL_ORIG="${PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL:-}"
     if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
@@ -2092,8 +2041,6 @@ check_after_user_configuration()
         (simulating)
             case "$USE_TARGET_SYSTEM" in
                 (pc_linux | pc_win32)
-                    # enhanced CAN HAL is not yet supported for simulating CAN HAL
-                    update_prj_system_with_enhanced_can_hal 0 ''
                     ;;
                 (*)
                     printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=sys instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM" >&2
@@ -2113,13 +2060,10 @@ check_after_user_configuration()
             esac
             # enhanced CAN HAL is not yet supported for the known embedded targets
             # but it may be supported on a proprietary HAL
-            #update_prj_system_with_enhanced_can_hal 0 ''
             ;;
         (msq_server)
             case "$USE_TARGET_SYSTEM" in
                 (pc_linux)
-                    # enhanced CAN HAL IS supported for the Linux can_server
-                    update_prj_system_with_enhanced_can_hal 1 ''
                     ;;
                 (pc_win32)
                     printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=socket_server instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM" >&2
@@ -2132,8 +2076,6 @@ check_after_user_configuration()
             esac
             ;;
         (socket_server | socket_server_hal_simulator)
-            # enhanced CAN HAL IS supported for the socket based can_server
-            update_prj_system_with_enhanced_can_hal 1 ''
             ;;
         (*)
             echo_ "Unknown CAN driver $USE_CAN_DRIVER" 1>&2

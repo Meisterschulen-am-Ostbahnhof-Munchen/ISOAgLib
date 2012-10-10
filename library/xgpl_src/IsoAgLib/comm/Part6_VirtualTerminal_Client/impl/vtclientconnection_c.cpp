@@ -17,7 +17,6 @@
 #include "../ivtclientconnection_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/util/iassert.h>
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 #include "../ivtobjectpicturegraphic_c.h"
@@ -402,8 +401,6 @@ VtClientConnection_c::VtClientConnection_c(
 VtClientConnection_c::~VtClientConnection_c()
 {
   getMultiReceiveInstance4Comm().deregisterClient (*this);
-  getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_ECU_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
-  getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
 }
 
 
@@ -715,15 +712,12 @@ VtClientConnection_c::timeEvent(void)
   if (!mb_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
     getMultiReceiveInstance4Comm().registerClientIso (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VT_TO_ECU_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ACKNOWLEDGEMENT_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
 
     mb_receiveFilterCreated = true;
   }
 
   /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
   /*******************************************************************************************************/
-  System_c::triggerWd();
 
   // VT Alive checks
   // Will trigger "doStart" / "doStop"
@@ -944,11 +938,18 @@ VtClientConnection_c::timeEventSearchForNewVt()
 }
 
 
-bool
+void
 VtClientConnection_c::processMsgAck( const CanPkgExt_c& arc_data )
 {
-  if (arc_data.getUint8Data (0) != 0x01)
-    return true; // Only react if "NOT ACKNOWLEDGE"!
+  isoaglib_assert( mpc_vtServerInstance );
+
+  // shouldn't be possible, but check anyway to get sure.
+  if (!mpc_vtServerInstance) return;
+
+  // don't react on NACKs from other VTs than the one we're communicating with!
+  if (mpc_vtServerInstance->getVtSourceAddress() != arc_data.isoSa()) return;
+
+  if (arc_data.getUint8Data (0) != 0x01) return; // Only react if "NOT ACKNOWLEDGE"!
 
 #if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
   // check if we have Agrocom/Mller with Version < 3, so we IGNORE this NACK BEFORE the pool is finally uploaded.
@@ -992,8 +993,6 @@ VtClientConnection_c::processMsgAck( const CanPkgExt_c& arc_data )
     } // switch
   }
 #endif
-
-  return true; // (N)ACK for our SA will NOT be of interest for anyone else...
 }
 
 
@@ -1121,31 +1120,17 @@ VtClientConnection_c::storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_
 }
 
 
-bool
-VtClientConnection_c::processMsg( const CanPkg_c& arc_data )
+void
+VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
 {
-  // not connected to a VT (no Alive), but there
-  // could still come messages in from that SA
-  if( !isVtActive() )
-    return false;
-
-  CanPkgExt_c c_data( arc_data, getMultitonInst() );
-
-  // if SA is not the address from the vt -> don't react on stream
-  if( c_data.getMonitorItemForSA() != &mpc_vtServerInstance->getIsoItem() )
-    return false;
-
-  if ((c_data.isoPgn() & 0x3FF00LU) == ACKNOWLEDGEMENT_PGN)
-    return processMsgAck( c_data );
-  
-  // for right now, if it's NOT an ACKNOWLEDGEMENT_PGN,
-  // it must be VT_TO_ECU addressed to us as defined by the IsoFilter
-
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
   uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
 
 #define MACRO_setStateDependantOnError(errByte) \
   ui8_errByte = errByte;
+
+  // If VT is not active, don't react on PKGs addressed to us, as VT's not active ;)
+  if (!isVtActive()) return;
 
   /// process all VT_TO_ECU addressed to us
   switch (arc_data.getUint8Data (0))
@@ -1262,7 +1247,7 @@ VtClientConnection_c::processMsg( const CanPkg_c& arc_data )
       /** @todo SOON-258 If we can't assign because WE don't know this SA, should we anyway answer the assignment?
        * for now we don't answer if we can't take the assignment - VTs have to handle this anyway...
        * Update on 22.11.2007: Should be okay so far, as written, VT has to handle, and we can't NACK the assignment! */
-      bool const cb_assignmentOkay = storeAuxAssignment( c_data );
+      bool const cb_assignmentOkay = storeAuxAssignment( arc_data );
 
       if (cb_assignmentOkay)
       { // respond if it was a valid assignment...
@@ -1425,7 +1410,7 @@ VtClientConnection_c::processMsg( const CanPkg_c& arc_data )
       MACRO_setStateDependantOnError (3)
       break;
     case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
-      mpc_vtServerInstance->setVersion( c_data );
+      mpc_vtServerInstance->setVersion( arc_data );
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForMemoryResponse))
       {
         // check for matching VT version and object pool version
@@ -1444,13 +1429,13 @@ VtClientConnection_c::processMsg( const CanPkg_c& arc_data )
       }
       break;
     case 0xC2: // Command: "Get Technical Data", parameter "Get Number Of Soft Keys Response"
-      mpc_vtServerInstance->setSoftKeyData( c_data );
+      mpc_vtServerInstance->setSoftKeyData( arc_data );
       break;
     case 0xC3: // Command: "Get Technical Data", parameter "Get Text Font Data Response"
-      mpc_vtServerInstance->setTextFontData( c_data );
+      mpc_vtServerInstance->setTextFontData( arc_data );
       break;
     case 0xC7: // Command: "Get Technical Data", parameter "Get Hardware Response"
-      mpc_vtServerInstance->setHardwareData( c_data );
+      mpc_vtServerInstance->setHardwareData( arc_data );
       break;
     case 0xD0: // Command: "Non Volatile Memory", parameter "Store Version Response"
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForStoreVersionResponse))
@@ -1558,7 +1543,6 @@ VtClientConnection_c::processMsg( const CanPkg_c& arc_data )
       }
     }
   } // VT to this ECU
-  return true;
 }
 
 

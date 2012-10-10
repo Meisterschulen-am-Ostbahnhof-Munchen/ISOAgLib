@@ -176,9 +176,7 @@ IdentItem_c::goOffline (bool ab_explicitlyOffByUser)
 {
   if (mpc_isoItem != NULL)
   { // item is online
-    // -> send unregister cmd
     // ->delete item from memberList
-    getIsoRequestPgnInstance4Comm().unregisterLocalDevice( isoName() );
     // IMPORTANT: we do need to query "exist" just in order to get the cache updated that is needed for "delete"!!!
     const bool exists = getIsoMonitorInstance4Comm().existIsoMemberISOName( isoName() );
     isoaglib_assert( exists ); ( void )exists;
@@ -232,9 +230,6 @@ IdentItem_c::timeEventPreAddressClaim( void )
       bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( false, NULL );
       if (cb_sent)
         updateLastIsoSaRequestForThisItem();
-
-      // register the new item for ISORequestPGN
-      getIsoRequestPgnInstance4Comm().registerLocalDevice( isoName() );
 
       #ifdef USE_WORKING_SET
       mpc_isoItem->setMasterSlaves (mpvec_slaveIsoNames);

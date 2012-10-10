@@ -17,8 +17,13 @@
 
 #include <pthread.h>
 #include <stdio.h>
+#include <string>
+#include <list>
 
 #include <../../tools/libs/misc/yasper.h>
+#include <IsoAgLib/hal/pc/errcodes.h>
+
+#define HAL_CAN_MAX_BUS_NR 16
 
 namespace __HAL {
 

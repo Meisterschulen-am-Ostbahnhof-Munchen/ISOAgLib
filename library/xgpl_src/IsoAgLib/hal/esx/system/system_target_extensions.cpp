@@ -91,10 +91,7 @@ bool isSystemOpened( void )
 /** max amount of task triggered WD resets */
 static const uint16_t cui16_maxTaskTriggeredWdResets = 40;
 
-//TEST static const uint16_t cui16_maxTaskTriggeredWdResets = 400;
 /** counter for task triggered WD events
-    --> the application called function triggerWd()
-		    resets this count to 0;
 	  --> if the WD trigger task is activated it checks for this counter
 		  ==> on < cui16_maxTaskTriggeredWdResets -> trigger BIOS wd
 			==> else -> do nothing so that WD resets the system
@@ -115,7 +112,7 @@ void taskTriggerWatchdog()
 }
 
 /** trigger the watchdog */
-void wdTriggern(void)
+void triggerWatchdog()
 {
 	sui16_watchdogCounter = 0;
 }
@@ -123,7 +120,7 @@ void wdTriggern(void)
 /** flag to control if WD-Task is started already */
 static bool sb_isWdTriggerTaskRunning = false;
 
-void configWatchdog()
+void initWatchdog( void* config )
 {
   tWDConfig t_watchdogConf = {
       WD_MAX_TIME,
@@ -133,6 +130,10 @@ void configWatchdog()
       CONFIG_RELAIS,
       CONFIG_RESET
   };
+
+  if( config ) {
+    t_watchdogConf = *static_cast<tWDConfig*>( config );
+  }
 
   switch( config_wd( &t_watchdogConf ) ) {
     case DATA_CHANGED:

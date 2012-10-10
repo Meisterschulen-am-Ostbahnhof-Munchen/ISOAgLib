@@ -21,8 +21,6 @@
  * ********************************************************** */
 
 #include "system_target_extensions.h"
-#include <IsoAgLib/hal/pc/can/can.h>
-#include <IsoAgLib/hal/pc/can/can_target_extensions.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/iassert.h>
 #include <cstdio>
@@ -153,7 +151,7 @@ openSystem()
   DEBUG_PRINT("DEBUG: openSystem called.\n");
   DEBUG_PRINT("DEBUG: PRESS RETURN TO STOP PROGRAM!!!\n\n");
 
-  const int16_t canStarted = can_startDriver();
+  const int16_t canStarted =  HAL_NO_ERR; //can_startDriver();
   t_biosextSysdata.started = (canStarted == HAL_NO_ERR);
   if( ! t_biosextSysdata.started ) {
     abort();
@@ -164,7 +162,7 @@ openSystem()
 void 
 closeSystem()
 {
-  can_stopDriver();
+  //can_stopDriver();
   t_biosextSysdata.started = false;
 }
 
@@ -173,12 +171,6 @@ bool
 isSystemOpened()
 {
   return t_biosextSysdata.started;
-}
-
-
-void 
-configWatchdog()
-{
 }
 
 
@@ -214,18 +206,6 @@ getSnr(uint8_t *snrDat)
   snrDat[5] = 0x01;
 
   return HAL_NO_ERR;
-}
-
-
-void
-wdTriggern()
-{
-}
-
-
-void
-wdReset()
-{
 }
 
 

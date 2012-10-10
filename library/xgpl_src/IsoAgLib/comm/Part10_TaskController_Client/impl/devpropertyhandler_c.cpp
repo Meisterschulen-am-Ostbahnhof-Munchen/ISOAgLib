@@ -195,14 +195,11 @@ DevPropertyHandler_c::DevPropertyHandler_c()
     @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
   */
 bool
-DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
+DevPropertyHandler_c::processMsg( const ProcessPkg_c& arc_data )
 {
+
   if( ( mpc_wsMasterIdentItem == NULL ) || ( arc_data.getMonitorItemForDA() != mpc_wsMasterIdentItem->getIsoItem() ) )
     return true;
-
-  if ((arc_data.isoPgn() & 0x3FF00LU) != PROCESS_DATA_PGN)
-    //should never be the case
-    return false;
 
   // set false if "default" is selected in switch case
   bool b_rc = true;
@@ -817,9 +814,8 @@ DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* apc_devicePoolByte
 bool
 DevPropertyHandler_c::registerDevicePool(const IdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamlength, bool ab_setToDefault)
 {
-  if (apc_wsMasterIdentItem == NULL) return false;
-
-  if (!apc_wsMasterIdentItem->isMaster()) return false;
+  isoaglib_assert( apc_wsMasterIdentItem );
+  isoaglib_assert( !apc_wsMasterIdentItem->isMaster() );
 
   //no double registration for one device description
   if (men_poolState != OPNotRegistered) return false;

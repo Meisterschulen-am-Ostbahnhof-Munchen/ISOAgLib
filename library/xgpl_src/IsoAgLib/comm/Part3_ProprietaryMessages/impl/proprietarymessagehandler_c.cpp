@@ -12,43 +12,20 @@
 */
 
 #include "proprietarymessagehandler_c.h"
+#include "proprietarymessageclient_c.h"
 #include <IsoAgLib/util/iassert.h>
-
-#include <list>
-
-#if defined(_MSC_VER)
-#pragma warning( disable : 4355 )
-#endif
-
-/**
-  ISO 11783 proprietary message
-  61184 = EF00 hex Prop A
-
-  65280 = FF00 hex Prop B_00
-
-  65535 = FFFF hex Prop B_255
-
-  126720 = 1EF00 hex Prop A2
-*/
-
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
 
 namespace __IsoAgLib
 {
   ProprietaryMessageHandler_c::ProprietaryMessageHandler_c()
-    : SchedulerTask_c( 3600000, true )
-    , mt_handler(*this)
-    , mt_customer(*this)
-  { // nop
-  }
+    : m_customerA( *this ), m_customerB( *this ) { }
 
 
   void
   ProprietaryMessageHandler_c::init()
   {
     isoaglib_assert (!initialized());
-
-    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
-
     setInitialized();
   }
 
@@ -57,426 +34,281 @@ namespace __IsoAgLib
   ProprietaryMessageHandler_c::close()
   {
     isoaglib_assert (initialized());
-
-    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
-    getSchedulerInstance().deregisterTask( *this );
-
     setClosed();
   }
 
 
-  void
-  ProprietaryMessageHandler_c::registerProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
-  {
-    // look in the whole list
-    for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
-    { // client is registered
-      if ( (*client_iterator).pc_client ==  apc_proprietaryclient )
-        return;
+  void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageA_c& msg ) {
+
+    if( m_customerA.m_msgs.empty() ) {
+      getCanInstance4Comm().insertFilter( m_customerA, m_customerA.m_filter, -1 );
+
+      getMultiReceiveInstance4Comm().registerClientIso ( m_customerA,
+                                                         msg.m_ident.isoName(),
+                                                         m_customerA.m_filter.getFilter() >> 8,
+                                                         m_customerA.m_filter.getMask() >> 8,
+                                                         true /* also Broadcast */ );
     }
-    /* define receive filter with "no"-values
-    scui32_noFilter marks the whole filter as "not set"*/
-    IsoFilter_s s_tempIsoFilter(mt_customer, IsoAgLib::iMaskFilter_c(), NULL, NULL);
-    ClientNode_t t_tempClientNode (apc_proprietaryclient, s_tempIsoFilter);
-    // push back new client
-    mvec_proprietaryclient.push_back (t_tempClientNode);
+    m_customerA.m_msgs.push_front( &msg );
   }
 
 
-  void
-  ProprietaryMessageHandler_c::deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
-  {
-    /* define receive filter with "no"-values*/
-    apc_proprietaryclient->defineReceiveFilter ( IsoAgLib::iMaskFilter_c(), screfc_noIsoName, spc_nolocalIdent);
-    // look in the whole list
-    for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
-    {
-      // same Client -> erase client from list
-      if ( (*client_iterator).pc_client == apc_proprietaryclient )
-      {
-        mvec_proprietaryclient.erase (client_iterator);
+  void ProprietaryMessageHandler_c::deregisterProprietaryMessage( ProprietaryMessageA_c& msg ) {
+
+    for ( CanCustomerA_c::ProprietaryMessageAVectorIterator_t it = m_customerA.m_msgs.begin(); it != m_customerA.m_msgs.end(); ++it ) {
+      if( *it == &msg ) {
+        m_customerA.m_msgs.erase( it );
         break;
       }
     }
-  }
 
-
-  void
-  ProprietaryMessageHandler_c::triggerClientDataUpdate(
-    ProprietaryMessageClient_c &arc_proprietaryclient,
-    bool ab_forceFilterRemoval)
-  {
-    // default for "ab_forceFilterRemoval"
-    IsoFilter_s s_newIsoFilter (mt_customer, IsoAgLib::iMaskFilter_c(), NULL, NULL);
-
-    if (ab_forceFilterRemoval)
-    { // keep default "s_newIsoFilter" from above.
-    }
-    else
-    { // check if client's filter is valid and can be retrieved
-      if ( (arc_proprietaryclient.mpc_localIdent != NULL ) && (!arc_proprietaryclient.mpc_localIdent->isClaimedAddress()) )
-      { // client not yet ready
-        // don't need to reconfigure, will be configured at
-        // the next action anyway (like AddToMonitorList/ReclaimedAddress)
-        return;
-      }
-      else
-      { // client has a valid filter, so use it!
-        s_newIsoFilter = arc_proprietaryclient.getCurrentFilter (mt_customer);
-      }
-    }
-
-    // look in the whole list
-    for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin();
-          client_iterator != mvec_proprietaryclient.end();
-          ++client_iterator )
-    {
-      // if client is found in the list
-      if ( (*client_iterator).pc_client == &arc_proprietaryclient )
-      {
-        // Have the filter settings changed?
-        if ( (*client_iterator).s_isoFilter != s_newIsoFilter)
-        {
-          /// ## if old filter is not equal to "no filter"
-          if ((*client_iterator).s_isoFilter.getFilter() != MASK_INVALID)
-          {
-            /** delete filter */
-            __IsoAgLib::getIsoFilterManagerInstance4Comm().removeIsoFilter ((*client_iterator).s_isoFilter);
-            /** deregister at multi-receive */
-            getMultiReceiveInstance4Comm().deregisterClient (mt_customer,
-                                                             (*client_iterator).s_isoFilter.getIsoNameDa(),
-                                                             (*client_iterator).s_isoFilter.getFilter() >> 8,
-                                                             (*client_iterator).s_isoFilter.getMask() >> 8);
-          }
-
-          /// ## if new filter is not equal to "no filter"
-          if (s_newIsoFilter.getFilter() != MASK_INVALID)
-          {
-            //  insert new filter
-            __IsoAgLib::getIsoFilterManagerInstance4Comm().insertIsoFilter (s_newIsoFilter);
-            /** register for multi-receive */
-            getMultiReceiveInstance4Comm().registerClientIso (mt_customer,
-                                                              s_newIsoFilter.getIsoNameDa(),
-                                                              s_newIsoFilter.getFilter() >> 8,
-                                                              s_newIsoFilter.getMask() >> 8,
-                                                              true /* also Broadcast */);
-          }
-          // update filter and mask
-          (*client_iterator).s_isoFilter = s_newIsoFilter;
-          // update was performed
-          return;
-        }
-        // else: filters are equal, no need to update.
-      } // if (client found)
-    } // for
-  }
-
-
-  void
-  ProprietaryMessageHandler_c::reactOnIsoItemModification(
-    ControlFunctionStateHandler_c::iIsoItemAction_e at_action,
-    IsoItem_c const& acrc_isoItem)
-  {
-    switch (at_action)
-    {
-    case ControlFunctionStateHandler_c::AddToMonitorList: // a "defineReceiveFilter" could have occurred after RemoveFromMonitorList, so re-check!
-    case ControlFunctionStateHandler_c::ReclaimedAddress: // a "defineReceiveFilter" could have occurred after LostAddress, so re-check!
-    case ControlFunctionStateHandler_c::RemoveFromMonitorList:  // when removed, force filters to "NoFilter" in "triggerClientDataUpdate
-      for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = mvec_proprietaryclient.begin();
-            client_iterator != mvec_proprietaryclient.end();
-            ++client_iterator )
-      {
-        // look for the ident (if Proprietary B messages no ident is there)
-        if ( (*client_iterator).pc_client->mpc_localIdent)
-        {
-          // address has claimed -> isoItem
-          if ( (*client_iterator).pc_client->mpc_localIdent->getIsoItem() == &acrc_isoItem )
-          {
-            // insert/update filter now
-            triggerClientDataUpdate(
-              *((*client_iterator).pc_client),
-              (at_action == ControlFunctionStateHandler_c::RemoveFromMonitorList)); // Remove? -> true (=forceFilterRemoval)
-          }
-        }
-      }
-      break;
-
-    case ControlFunctionStateHandler_c::ChangedAddress: // nothing could have happened in between
-    case ControlFunctionStateHandler_c::LostAddress: // nothing to be done, filters anyway not active.
-      // nothing to do, because the filters are registered with ISONAME anyway.
-      break;
-    } // switch
-  }
-
-
-  void
-  ProprietaryMessageHandler_c::sendData(ProprietaryMessageClient_c& client)
-  {
-    /** get data from client */
-    IsoAgLib::iGenericData_c& rc_sendData = client.getDataSend();
-
-    /** length <= 8 Bytes */
-    if (rc_sendData.getLen() <= 8)
-    { /** single packet */
-      IsoBus_c& c_isobus = getIsoBusInstance4Comm();
-
-    
-      CanPkgExt_c pkg;
-      /** sets the saved ident */
-      pkg.setIdent (rc_sendData.getIdent(), Ident_c::ExtendedIdent);
-
-      /** if PGN is proprietary A1/A2 PGN then add destination address */
-      if ( ( ( pkg.isoPgn()) & 0x2FF00 ) == PROPRIETARY_A_PGN)
-      { /** add destination address */
-        pkg.setISONameForDA( client.mc_isonameRemoteECU );
-      }
-      if (client.mpc_localIdent == NULL)
-      { /** Sending with 0xFE as SA */
-        pkg.setISONameForSA (screfc_noIsoName);
-      }
-      else
-      { /** Sending with LocalIdent as SA */
-        /* The localIdent will always have an ISOName - if it's not yet unified,
-            then the sending will not find it in the IsoMonitor_c-list so simply no
-            packet is being sent */
-        pkg.setISONameForSA (client.mpc_localIdent->isoName());
-      }
-
-      /** default priority for Proprietary PGN as stated in PGN's definition in ISO 11783-3 */
-      pkg.setIsoPri(6);
-      /** set data */
-      pkg.setDataFromString (rc_sendData.getDataStream(), static_cast<uint8_t>(rc_sendData.getLen()));
-      /** sending */
-      c_isobus << pkg;
-    }
-    else
-    { /** multi-packet */
-      /** variable should be evaluated */
-      // const bool cb_couldStartMultiSend =
-      // we could catch the information if the sending succeeded, but what to do with it anyway?
-      getMultiSendInstance4Comm().sendIsoTarget (client.mpc_localIdent->isoName(),
-                                                  client.mc_isonameRemoteECU,
-                                                  rc_sendData.getDataStream(0),
-                                                  rc_sendData.getLen(),
-                                                  rc_sendData.getIdent() >> 8,
-                                                  &client);
+    if( m_customerA.m_msgs.empty() ) {
+      getCanInstance4Comm().deleteFilter( m_customerA, m_customerA.m_filter );
+      getMultiReceiveInstance4Comm().deregisterClient ( m_customerA,
+                                                        msg.m_ident.isoName(),
+                                                        m_customerA.m_filter.getFilter() >> 8,
+                                                        m_customerA.m_filter.getMask() >> 8 );
     }
   }
 
 
-  void
-  ProprietaryMessageHandler_c::updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool )
-  {
-    if (pc_nextClient != NULL)
-    { // we have a client requesting to send up next...
-      if (!isRegistered())
-        getSchedulerInstance().registerTask( *this, 0 );
-      setNextTriggerTime( pc_nextClient->mui32_nextSendTimeStamp );
-    } else {
-      if (isRegistered())
-        getSchedulerInstance().deregisterTask( *this );
+  void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageB_c& msg ) {
+
+    if( m_customerB.m_msgs.empty() ) {
+      getCanInstance4Comm().insertFilter( m_customerB, m_customerA.m_filter, -1 );
+
+      getMultiReceiveInstance4Comm().registerClientIso ( m_customerB,
+                                                         msg.m_ident.isoName(),
+                                                         m_customerB.m_filter.getFilter() >> 8,
+                                                         m_customerB.m_filter.getMask() >> 8,
+                                                         true /* also Broadcast */ );
     }
+    m_customerB.m_msgs.push_front( &msg );
   }
 
 
-  void
-  ProprietaryMessageHandler_c::updateSchedulingInformation()
-  {
-    ProprietaryMessageClient_c* pc_nextClient = NULL;
+  void ProprietaryMessageHandler_c::deregisterProprietaryMessage( ProprietaryMessageB_c& msg ) {
 
-    for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
-    {
-      if ( (*client_iterator).pc_client->mui32_sendPeriodicMsec != 0)
-      { // yes, the client wants periodic sending
-        if ( pc_nextClient == NULL )
-        { // not yet a next client found, so simply take this one
-          pc_nextClient = (*client_iterator).pc_client;
-        }
-        else
-        { // there was already a next client, so see if this one has to be on time earlier?
-          if ( ((*client_iterator).pc_client->mui32_nextSendTimeStamp) < (pc_nextClient->mui32_nextSendTimeStamp) )
-          { // yes, this one is next (so far)
-            pc_nextClient = (*client_iterator).pc_client;
-          }
-        }
+    for ( CanCustomerB_c::ProprietaryMessageBVectorIterator_t it = m_customerB.m_msgs.begin(); it != m_customerB.m_msgs.end(); ++it ) {
+      if( *it == &msg ) {
+        m_customerB.m_msgs.erase( it );
+        break;
       }
     }
-    updateTimePeriod (pc_nextClient, false);
+
+    if( m_customerB.m_msgs.empty() ) {
+      getCanInstance4Comm().deleteFilter( m_customerB, m_customerB.m_filter );
+      getMultiReceiveInstance4Comm().deregisterClient ( m_customerB,
+                                                        msg.m_ident.isoName(),
+                                                        m_customerB.m_filter.getFilter() >> 8,
+                                                        m_customerB.m_filter.getMask() >> 8 );
+    }
   }
 
 
   bool
-  ProprietaryMessageHandler_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t /** aui32_totalLen */)
+  ProprietaryMessageHandler_c::CanCustomerA_c::processMsg( const CanPkg_c& data )
   {
-    // if remote_ECU is specified and not the ident's SA is the remote_ECU -> don't react on stream
-    // look in the whole list
-    for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
-    {
-      if ( ( (ac_ident.getPgn() << 8) & (*client_iterator).pc_client->mui32_canMask) ==  (*client_iterator).pc_client->mui32_canFilter )
-      { // PGN check okay, if unspecified there is no special request
-        if ( ( (*client_iterator).pc_client->mc_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->mc_isonameRemoteECU == ac_ident.getSaIsoName() )))
-        { // SA check okay
-          if ( (ac_ident.getDaIsoName() == screfc_noIsoName.toConstIisoName_c()) /* msg addressed to global => OKAY */
-                ||
-                ( (*client_iterator).pc_client->mpc_localIdent == NULL) /* we have no identity => OKAY */
-                ||
-                ( (*client_iterator).pc_client->mpc_localIdent->isoName() == ac_ident.getDaIsoName() ) /* we have an identity and it's addressed to us => OAKY */
-              )
-          { // DA check okay
-            return true; // accept this stream!
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-
-  bool
-  ProprietaryMessageHandler_c::processPartStreamDataChunk (Stream_c& arc_stream, bool, bool ab_isLastChunk)
-  {
-    // if last byte is received
-    if (ab_isLastChunk)
-    {
-      // get the ident from the stream
-      const ReceiveStreamIdentifier_c& ac_ident = arc_stream.getIdent();
-      STL_NAMESPACE::vector<ProprietaryMessageClientVectorIterator_t> vec_consumers;
-
-      // look for the right sender
-      for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); ++client_iterator )
-      {
-        // check to process the information
-        if ( ( (ac_ident.getPgn() << 8) & (*client_iterator).pc_client->mui32_canMask) ==  (*client_iterator).pc_client->mui32_canFilter )
-        { // PGN check okay, if unspecified there is no special request
-          if ( ( (*client_iterator).pc_client->mc_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->mc_isonameRemoteECU == ac_ident.getSaIsoName())))
-          { // SA check okay
-            if ( (ac_ident.getDaIsoName() == screfc_noIsoName.toConstIisoName_c()) /* msg addressed to global => OKAY */
-                ||
-                ((*client_iterator).pc_client->mpc_localIdent == NULL) /* we have no identity => OKAY */
-                ||
-                ((*client_iterator).pc_client->mpc_localIdent->isoName() == ac_ident.getDaIsoName() ) /* we have an identity and it's addressed to us => OAKY */
-              )
-            { // DA check okay
-              if ( ( (ac_ident.getPgn() >> 8 ) & 0x00FF ) < 0xF0 )
-              {
-                /** Proprietary_A_PGN and Proprietary_A2_PGN depends on destination address */
-                (*client_iterator).pc_client->ms_receivedData.setIdent( (ac_ident.getPgn() << 8) | (ac_ident.getDa() << 8) | ac_ident.getSa() );
-              }
-              else
-              {
-                /** Proprietary_B_PGN --> no destination address */
-                (*client_iterator).pc_client->ms_receivedData.setIdent( (ac_ident.getPgn() << 8) | ac_ident.getSa() );
-              }
-
-              (*client_iterator).pc_client->ms_receivedData.clearVector();
-              vec_consumers.push_back(client_iterator);
-            }
-          }
-        }
-      }
-      if ( !vec_consumers.empty() )
-      { // now feed data in all detected and already prepared consumers
-        /** get first data byte */
-        uint8_t ui8_databyte =arc_stream.getFirstByte();
-        /** loop to the last data byte */
-        for (uint32_t ui32_cnt = 0; ui32_cnt < arc_stream.getByteTotalSize(); ui32_cnt++)
-        {
-          /** extract data bytes from string and store data in receive buffer */
-          for ( STL_NAMESPACE::vector<ProprietaryMessageClientVectorIterator_t>::iterator iter_consumer = vec_consumers.begin(); iter_consumer != vec_consumers.end(); ++iter_consumer)
-          { // feed data in all clients
-            (*iter_consumer)->pc_client->ms_receivedData.setDataUi8( ui32_cnt,ui8_databyte );
-          }
-          ui8_databyte = arc_stream.getNextNotParsed();
-        }
-        for ( STL_NAMESPACE::vector<ProprietaryMessageClientVectorIterator_t>::iterator iter_consumer = vec_consumers.begin(); iter_consumer != vec_consumers.end(); ++iter_consumer)
-        { /** call process message from client to evaluate the stored data */
-          (*iter_consumer)->pc_client->processProprietaryMsg( ac_ident.getSaIsoName() );
-        }
-      }
-    }
-    // don't keep the stream - we processed it right now!
-    return false;
-  }
-
-
-  bool
-  ProprietaryMessageHandler_c::processMsg( const CanPkg_c& arc_data )
-  {
-    CanPkgExt_c pkg( arc_data, getMultitonInst() );
-    if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
+    CanPkgExt_c pkg( data, m_handler.getMultitonInst() );
+    if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
       return true;
 
-    // look in the whole list
-    for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
+    for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
-      if ( ( (pkg.isoPgn() << 8) & (*client_iterator).pc_client->mui32_canMask) == (*client_iterator).pc_client->mui32_canFilter )
-      { // PGN check okay
-        if ( ( (*client_iterator).pc_client->mc_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->mc_isonameRemoteECU == pkg.getISONameForSA())))
-        { // SA check okay
-          // following check checks for PROPRIETARY_A_PGN and PROPRIETARY_A2_PGN at once!
-          if ( (pkg.isoPgn() & 0x2FF00) == PROPRIETARY_A_PGN)
-          { // DA check
-            if ( ! ( (pkg.getISONameForDA() == screfc_noIsoName) /* msg addressed to global => OKAY */
-                    ||
-                    ((*client_iterator).pc_client->mpc_localIdent == NULL) /* we have no identity => OKAY */
-                    ||
-                    ((*client_iterator).pc_client->mpc_localIdent->isoName() == pkg.getISONameForDA()) /* we have an identity and it's addressed to us => OAKY */
-               )   )
-            { // DA did NOT match
-              continue;
-            }
-          }
-          /** reset vector */
-          (*client_iterator).pc_client->ms_receivedData.clearVector();
-          // Destination Address matched
-          (*client_iterator).pc_client->ms_receivedData.setIdent( pkg.ident() );
-          /** set data bytes along with len */
-          (*client_iterator).pc_client->ms_receivedData.setDataStream(0, pkg.getUint8DataConstPointer(), pkg.getLen());
-          /** process message from client */
-          (*client_iterator).pc_client->processProprietaryMsg( pkg.getISONameForSA() );
-          /** ms_receivedData will NOT be cleared here in case the client
-              wants the data to remain. it can clear it itself in processProprietaryMsg() */
-        }
-      }
+
+      if ( ( pkg.getMonitorItemForDA() != NULL ) && ( pkg.getMonitorItemForDA() != (*it)->m_ident.getIsoItem() ) )
+        continue;
+
+      if ( pkg.isoDp() != (*it)->m_dp )
+        continue;
+
+      if ( (*it)->m_remote.isSpecified() && ( pkg.getISONameForSA() != (*it)->m_remote ) )
+        continue;
+
+      (*it)->getDataReceive().clearVector();
+      (*it)->getDataReceive().setDataStream( 0, pkg.getUint8DataConstPointer(), pkg.getLen() );
+      // the static cast is prettier that a old C cast, but the Hightec GCC 3.4.6 is quite picky
+      //(*it)->processA( *static_cast<IsoAgLib::iIsoItem_c*>( pkg.getMonitorItemForSA() ) );
+      (*it)->processA( *( (IsoAgLib::iIsoItem_c*)( pkg.getMonitorItemForSA() ) ) );
     }
+
     return true;
   }
 
 
-  void 
-  ProprietaryMessageHandler_c::timeEvent()
+  bool
+  ProprietaryMessageHandler_c::CanCustomerA_c::reactOnStreamStart( const ReceiveStreamIdentifier_c &ident, uint32_t )
   {
-    ProprietaryMessageClient_c* pc_nextClient = NULL;
 
-    for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
+    for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
-      // don't care for right now if client has a localIdent set or is claimed...
-      if ( (*client_iterator).pc_client->mui32_sendPeriodicMsec != 0)
-      { // yes, the client wants periodic sending
-        const uint32_t cui32_timestamp = System_c::getTime();
-        // has its time come?
-        if (cui32_timestamp >= (*client_iterator).pc_client->mui32_nextSendTimeStamp)
-        { // send the data out!
-          (*client_iterator).pc_client->mui32_nextSendTimeStamp = cui32_timestamp + (*client_iterator).pc_client->mui32_sendPeriodicMsec;
-          sendData(*(*client_iterator).pc_client);
-        }
-        // go for it, send it
-        if ( pc_nextClient == NULL )
-        { // not yet a next client found, so simply take this one
-          pc_nextClient = (*client_iterator).pc_client;
-        }
-        else
-        { // there was already a next client, so see if this one has to be on time earlier?
-          if ( ((*client_iterator).pc_client->mui32_nextSendTimeStamp) < (pc_nextClient->mui32_nextSendTimeStamp) )
-          { // yes, this one is next (so far)
-            pc_nextClient = (*client_iterator).pc_client;
-          }
-        }
-      }
+
+      if ( ( ident.getDaIsoName().isSpecified() ) && ( ident.getDaIsoName() != (*it)->m_ident.isoName() ) )
+        continue;
+
+      if ( ( ident.getPgn() >> 16 ) != (*it)->m_dp ) // DP
+        continue;
+
+      if ( (*it)->m_remote.isSpecified() && ( ident.getSaIsoName() != (*it)->m_remote ) )
+        continue;
+
+      return true;
     }
 
-    updateTimePeriod (pc_nextClient, true);
+    return false;
   }
+
+
+  bool
+  ProprietaryMessageHandler_c::CanCustomerA_c::processPartStreamDataChunk( Stream_c &apc_stream, bool, bool last )
+  {
+    if( ! last ) {
+      return false;
+    }
+
+    // get the ident from the stream
+    const ReceiveStreamIdentifier_c& ident = apc_stream.getIdent();
+
+
+    ProprietaryMessageAVector_t msgs;
+
+    for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
+    {
+      if ( ( ident.getDaIsoName().isSpecified() ) && ( ident.getDaIsoName() != (*it)->m_ident.isoName() ) )
+        continue;
+
+      if ( ( ident.getPgn() >> 16 ) != (*it)->m_dp ) // DP
+        continue;
+
+      if ( (*it)->m_remote.isSpecified() && ( ident.getSaIsoName() != (*it)->m_remote ) )
+        continue;
+
+      (*it)->getDataReceive().setIdent( (ident.getPgn() << 8) | ( ident.getDa() << 8) | ident.getSa() );
+      (*it)->getDataReceive().clearVector();
+      msgs.push_front( *it );
+    }
+
+
+    if( ! msgs.empty() ) {
+
+      uint8_t db = apc_stream.getFirstByte();
+      for ( unsigned cnt = 0; cnt < apc_stream.getByteTotalSize(); cnt++)
+      {
+
+        for( ProprietaryMessageAVectorIterator_t it = msgs.begin(); it != msgs.end(); ++it ) {
+          (*it)->getDataReceive().setDataUi8( cnt, db );
+        }
+        db = apc_stream.getNextNotParsed();
+      }
+
+      for( ProprietaryMessageAVectorIterator_t it = msgs.begin(); it != msgs.end(); ++it ) {
+        // the static cast is prettier that a old C cast, but the Hightec GCC 3.4.6 is quite picky
+        //(*it)->processA( *static_cast<IsoAgLib::iIsoItem_c*>( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ) );
+        (*it)->processA( * ( IsoAgLib::iIsoItem_c*)( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ) );
+      }
+    }
+    // don't keep the stream - we processed it right now!
+    return false;
+
+  }
+
+
+  bool
+  ProprietaryMessageHandler_c::CanCustomerB_c::processMsg( const CanPkg_c& data )
+  {
+    CanPkgExt_c pkg( data, m_handler.getMultitonInst() );
+    if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
+      return true;
+
+    for ( ProprietaryMessageBVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
+    {
+      if ( pkg.isoDp() != (*it)->m_dp )
+        continue;
+
+      if ( (*it)->m_remote.isSpecified() && ( pkg.getISONameForSA() != (*it)->m_remote ) )
+        continue;
+
+      (*it)->getDataReceive().clearVector();
+      (*it)->getDataReceive().setDataStream( 0, pkg.getUint8DataConstPointer(), pkg.getLen() );
+
+      // the static cast is prettier that a old C cast, but the Hightec GCC 3.4.6 is quite picky
+      //(*it)->processB( *static_cast<IsoAgLib::iIsoItem_c*>( pkg.getMonitorItemForSA() ) );
+      (*it)->processB( *( ( IsoAgLib::iIsoItem_c*)( pkg.getMonitorItemForSA() ) ) );
+    }
+
+    return true;
+  }
+
+
+  bool
+  ProprietaryMessageHandler_c::CanCustomerB_c::reactOnStreamStart( const ReceiveStreamIdentifier_c &ident, uint32_t )
+  {
+
+    for ( ProprietaryMessageBVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
+    {
+      if ( ( ident.getPgn() >> 16 ) != (*it)->m_dp ) // DP
+        continue;
+
+      if ( (*it)->m_remote.isSpecified() && ( ident.getSaIsoName() != (*it)->m_remote ) )
+        continue;
+
+      return true;
+    }
+
+    return false;
+  }
+
+
+  bool
+  ProprietaryMessageHandler_c::CanCustomerB_c::processPartStreamDataChunk( Stream_c &apc_stream, bool, bool last )
+  {
+    if( ! last ) {
+      return false;
+    }
+
+    // get the ident from the stream
+    const ReceiveStreamIdentifier_c& ident = apc_stream.getIdent();
+
+
+    ProprietaryMessageBVector_t msgs;
+
+    for ( ProprietaryMessageBVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
+    {
+      if ( ( ident.getPgn() >> 16 ) != (*it)->m_dp ) // DP
+        continue;
+
+      if ( (*it)->m_remote.isSpecified() && ( ident.getSaIsoName() != (*it)->m_remote ) )
+        continue;
+
+      (*it)->getDataReceive().setIdent( (ident.getPgn() << 8) | ( ident.getDa() << 8) | ident.getSa() );
+      (*it)->getDataReceive().clearVector();
+      msgs.push_front( *it );
+    }
+
+
+    if( ! msgs.empty() ) {
+
+      uint8_t db = apc_stream.getFirstByte();
+      for ( unsigned cnt = 0; cnt < apc_stream.getByteTotalSize(); cnt++)
+      {
+
+        for( ProprietaryMessageBVectorIterator_t it = msgs.begin(); it != msgs.end(); ++it ) {
+          (*it)->getDataReceive().setDataUi8( cnt, db );
+        }
+        db = apc_stream.getNextNotParsed();
+      }
+
+      for( ProprietaryMessageBVectorIterator_t it = msgs.begin(); it != msgs.end(); ++it ) {
+        // the static cast is prettier that a old C cast, but the Hightec GCC 3.4.6 is quite picky
+        //(*it)->processB( *static_cast<IsoAgLib::iIsoItem_c*>( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ) );
+        (*it)->processB( *( IsoAgLib::iIsoItem_c*)( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ) );
+      }
+    }
+    // don't keep the stream - we processed it right now!
+    return false;
+
+  }
+
 
   ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance)
   {

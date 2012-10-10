@@ -74,9 +74,10 @@ IsoMonitor_c::init()
   setPeriod( 125, false );
   getSchedulerInstance().registerTask( *this, 0 );
 
-  mpc_activeLocalMember = NULL;
+  CNAMESPACE::memset( &m_isoItems, 0x0, sizeof( m_isoItems ) );
 
-  bool b_configure = false;
+
+  mpc_activeLocalMember = NULL;
 
   // add filter REQUEST_PGN_MSG_PGN via IsoRequestPgn_c
   getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, ADDRESS_CLAIM_PGN);
@@ -85,18 +86,11 @@ IsoMonitor_c::init()
   getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, WORKING_SET_MEMBER_PGN);
 #endif
 
-  if( getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN)+0xFF)<<8 ), 8, false))
-    b_configure = true;
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN)+0xFF)<<8 ), 8 );
 #ifdef USE_WORKING_SET
-  if (getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WORKING_SET_MASTER_PGN<<8) ), 8, false))
-    b_configure = true;
-  if (getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WORKING_SET_MEMBER_PGN<<8) ), 8, false))
-    b_configure = true;
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WORKING_SET_MASTER_PGN<<8) ), 8 );
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WORKING_SET_MEMBER_PGN<<8) ), 8 );
 #endif
-
-  if (b_configure) {
-    getIsoBusInstance4Comm().reconfigureMsgObj();
-  }
 
   setInitialized();
 }
@@ -449,6 +443,12 @@ IsoMonitor_c::insertIsoMember(
   mpc_isoMemberCache = mvec_isoMember.begin();
   // item was inserted
   pc_result = &(*mpc_isoMemberCache);
+
+  if( ren_state & ( IState_c::AddressClaim | IState_c::ClaimedAddress ) ) {
+    // update lookup
+    updateSaItemTable( *pc_result, true );
+  }
+
   if (ab_announceAddition)
   { // immediately announce addition.
     // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
@@ -834,6 +834,8 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
               { // as it should be! as it's local!
                 pc_itemSameSa->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
               }
+            } else {
+              updateSaItemTable( *pc_itemSameSa, true );
             }
             insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
           }
@@ -870,7 +872,9 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
         /// Change SA of existing remote node. Just check before if it steals a SA from someone
         if (NULL == pc_itemSameSa)
         { // (A9) Existing remote node took a fresh SA. The way it should be. Just change its address.
+          updateSaItemTable( *pc_itemSameISOName, false );
           pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa);
+          updateSaItemTable( *pc_itemSameISOName, true );
         }
         else
         { // Existing remote node took an already existing SA.
@@ -901,13 +905,18 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
                 { // as it should be! as it's local!
                   pc_itemSameSa->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
                 }
+              } else {
+                /* we could change our SA -> update */
+                updateSaItemTable( *pc_itemSameSa, true );
               }
               pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa);
+              updateSaItemTable( *pc_itemSameISOName, true );
             }
             else
             { // let local IsoItem_c process the conflicting adr claim
               // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
               pc_itemSameSa->processAddressClaimed (ci32_time, cui8_sa);
+              updateSaItemTable( *pc_itemSameISOName, false ); // update table before item get FE
               pc_itemSameISOName->giveUpAddressAndBroadcast();
             }
           }
@@ -915,6 +924,7 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
           { // (A3) Existing remote node steals other remote node's SA
             pc_itemSameSa->giveUpAddressAndBroadcast();
             pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa); // will set the new SA and do broadcasting
+            updateSaItemTable( *pc_itemSameISOName, true );
           }
         }
       }
@@ -1049,7 +1059,16 @@ IsoMonitor_c::internalIsoItemErase( Vec_ISOIterator aiter_toErase )
   /// @todo SOON-240 We need to get sure that the IdentItem doesn't have a dangling reference to this IsoItem!
   broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::RemoveFromMonitorList, *aiter_toErase);
 
+  m_isoItems[ aiter_toErase->nr() ] = 0x0;
   return mvec_isoMember.erase( aiter_toErase );
+}
+
+
+void
+IsoMonitor_c::updateSaItemTable( IsoItem_c& item, bool add ) {
+  if( item.nr() < 0xFE ) {
+    m_isoItems[ item.nr() ] = add ? &item : 0x0;
+  }
 }
 
 

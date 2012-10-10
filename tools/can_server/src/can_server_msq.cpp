@@ -371,15 +371,9 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list< __HAL::client_c >:
 
   for (uint8_t i=0; i < iter_delete->nCanBusses(); i++)
   {
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     for (uint8_t j=0; j<iter_delete->canBus(i).mvec_msgObj.size(); j++) {
       __HAL::clearReadQueue (i, j, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_delete->ui16_pid);
-//      clearWriteQueue(i, j, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_delete->ui16_pid);
     }
-#else
-    __HAL::clearReadQueue (i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_rdHandle,iter_delete->ui16_pid);
-//  clearWriteQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_wrHandle,iter_delete->ui16_pid);
-#endif
 
     if (iter_delete->canBus(i).mb_initReceived && (pc_serverData->canBus(i).mui16_busRefCnt > 0))
       pc_serverData->canBus(i).mui16_busRefCnt--; // decrement bus ref count when client dropped off
@@ -388,10 +382,8 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list< __HAL::client_c >:
   if (iter_delete->i32_pipeHandle)
     close(iter_delete->i32_pipeHandle);
 
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   for (uint8_t k=0; k < iter_delete->nCanBusses(); k++)
     iter_delete->canBus(k).mvec_msgObj.clear();
-#endif
 
   // erase sets iterator to next client
   iter_delete = pc_serverData->mlist_clients.erase(iter_delete);
@@ -456,39 +448,6 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
       }
 
       // compare received msg with filter
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-      if
-        (
-         (
-          ( i32_obj < cui8_maxCanObj - 1 )
-          && (
-               ( (iter->canBus(b_bus).mvec_msgObj[i32_obj].ui8_bufXtd == 1)
-                  && (b_xtd == 1)
-                  && ( (ui32_id & iter->canBus(b_bus).mui32_globalMask) == ((iter->canBus(b_bus).mvec_msgObj[i32_obj].ui32_filter) & iter->canBus(b_bus).mui32_globalMask) )
-               )
-               ||
-               ( (iter->canBus(b_bus).mvec_msgObj[i32_obj].ui8_bufXtd == 0)
-                  && (b_xtd == 0)
-                  && ( (ui32_id & iter->canBus(b_bus).mui16_globalMask) == (iter->canBus(b_bus).mvec_msgObj[i32_obj].ui32_filter & iter->canBus(b_bus).mui16_globalMask) )
-                 )
-               )
-          )
-         || (
-             ( i32_obj == cui8_maxCanObj - 1)
-             && (
-                  ( (iter->canBus(b_bus).mvec_msgObj[i32_obj].ui8_bufXtd == 1)
-                    && (b_xtd == 1)
-                    && ( (ui32_id & iter->canBus(b_bus).mui32_globalMask & iter->canBus(b_bus).mui32_lastMask) ==  ((iter->canBus(b_bus).mvec_msgObj[i32_obj].ui32_filter) & iter->canBus(b_bus).mui32_globalMask & iter->canBus(b_bus).mui32_lastMask) )
-                    )
-                  ||
-                  ( (iter->canBus(b_bus).mvec_msgObj[i32_obj].ui8_bufXtd == 0)
-                     && (b_xtd == 0)
-                     && ( (ui32_id & iter->canBus(b_bus).mui16_globalMask & iter->canBus(b_bus).mui32_lastMask) ==  (iter->canBus(b_bus).mvec_msgObj[i32_obj].ui32_filter & iter->canBus(b_bus).mui16_globalMask & iter->canBus(b_bus).mui32_lastMask) )
-                  )
-                )
-             )
-         )
-#else
          if (
              ( (iter->canBus(b_bus).mvec_msgObj[i32_obj].ui8_bufXtd == 1)
                    && (b_xtd == 1)
@@ -500,19 +459,13 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
                    && ( (ui32_id & iter->canBus(b_bus).mvec_msgObj[i32_obj].ui16_mask_std) == (iter->canBus(b_bus).mvec_msgObj[i32_obj].ui32_filter & iter->canBus(b_bus).mvec_msgObj[i32_obj].ui16_mask_std) )
                  )
             )
-#endif
         { // received msg fits actual filter
           DEBUG_PRINT("queueing message\n");
 
           pc_data->i32_time = getClientTime(*iter);
 
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-          DEBUG_PRINT1("mtype: 0x%08x\n", __HAL::assembleRead_mtype(iter->ui16_pid, b_bus, i32_obj));
-          msqReadBuf.i32_mtypePidBusObj = __HAL::assembleRead_mtype(iter->ui16_pid, b_bus, i32_obj);
-#else
           msqReadBuf.i32_mtypePidBusObj = __HAL::assembleRead_mtype(iter->ui16_pid, b_bus, COMMON_MSGOBJ_IN_QUEUE);
           msqReadBuf.s_canData.bMsgObj = i32_obj;
-#endif
 
           int i_rcSnd=msgsnd(pc_serverData->ms_msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(__HAL::msqRead_s) - sizeof(long), IPC_NOWAIT);
           if (i_rcSnd == -1)
@@ -526,13 +479,8 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
             if (error == EAGAIN)
             { // queue is full => remove oldest msg and try again
               __HAL::msqWrite_s msqWriteBuf;
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-              DEBUG_PRINT4("message queue for CAN Ident: %x with Filter: %x, global Mask: %x for MsgObj: %d is full => try to remove oldest msg and send again!!\n",
-                           ui32_id, iter->canBus(b_bus).mvec_msgObj[i32_obj].ui32_filter, iter->canBus(b_bus).mui32_globalMask, i32_obj );
-#else
               DEBUG_PRINT4("message queue for CAN Ident: %x with Filter: %x, Mask: %x for MsgObj: %d is full => try to remove oldest msg and send again!!\n",
                            ui32_id, iter->canBus(b_bus).mvec_msgObj[i32_obj].ui32_filter, iter->canBus(b_bus).mvec_msgObj[i32_obj].ui32_mask_xtd, i32_obj );
-#endif
               #ifdef CAN_SERVER_LOG_PATH
               logging << "message queue for CAN Ident: " << ui32_id << " with Filter: "
                 << iter->canBus(b_bus).mvec_msgObj[i32_obj].ui32_filter << ", global Mask: " << iter->canBus(b_bus).mui32_globalMask
@@ -1003,12 +951,6 @@ static void* command_thread_func(void* ptr)
           if ((s_tmpClient.i32_pipeHandle = open(pipe_name, O_NONBLOCK | O_RDWR, 0)) == -1)
             i32_error = HAL_UNKNOWN_ERR;
 
-  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-          // used cui8_maxCanObj MsgObj
-          for (uint8_t j=0; j < s_tmpClient.nCanBusses(); j++)
-            s_tmpClient.canBus(j).mvec_msgObj.resize(cui8_maxCanObj);
-  #endif
-
           if (!i32_error)
           { // no error
             pc_serverData->mlist_clients.push_back(s_tmpClient);
@@ -1102,30 +1044,20 @@ static void* command_thread_func(void* ptr)
               pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).mi_pendingMsgs = 0;
             }
 
-  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-            for (uint8_t j=0; j<iter_client->canBus(s_transferBuf.s_init.ui8_bus).mvec_msgObj.size(); j++) {
-              __HAL::clearReadQueue (s_transferBuf.s_init.ui8_bus, j, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
-//            clearWriteQueue(s_transferBuf.s_init.ui8_bus, j, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
-            }
-  #else
             __HAL::clearReadQueue (s_transferBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //          clearWriteQueue(s_transferBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
-  #endif
 
             if (!pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).mui16_busRefCnt && pc_serverData->mb_logMode) {
               closeFileLog(pc_serverData, s_transferBuf.s_init.ui8_bus);
             }
 
-  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
             iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj.clear();
-  #endif
             // i32_error will stay at 0 for "no error"
           }
         } break;
 
 
         case COMMAND_CONFIG:
-  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
           if (s_transferBuf.s_config.ui8_obj >= iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj.size()) {
             // add new elements in the vector with resize
             iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj.resize(s_transferBuf.s_config.ui8_obj+1);
@@ -1133,7 +1065,6 @@ static void* command_thread_func(void* ptr)
             // reconfigure element
           }
           // break left out intentionally
-  #endif
 
         case COMMAND_CHG_CONFIG:
 
@@ -1146,12 +1077,10 @@ static void* command_thread_func(void* ptr)
             iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].ui8_bufXtd = s_transferBuf.s_config.ui8_bXtd;
             iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].ui32_filter = s_transferBuf.s_config.ui32_dwId;
 
-    #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
             if (s_transferBuf.s_config.ui8_bXtd)
                 iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].ui32_mask_xtd = s_transferBuf.s_config.ui32_mask;
             else
                 iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj[s_transferBuf.s_config.ui8_obj].ui16_mask_std = s_transferBuf.s_config.ui32_mask;
-    #endif
 
             if (s_transferBuf.ui16_command == COMMAND_CONFIG) {
               __HAL::clearReadQueue (s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
@@ -1205,11 +1134,9 @@ static void* command_thread_func(void* ptr)
             __HAL::clearReadQueue (s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //          clearWriteQueue(s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
 
-  #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
             // erase element if it is the last in the vector, otherwise it can stay there
             while (iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj.back().b_canObjConfigured == false)
                 iter_client->canBus(s_transferBuf.s_config.ui8_bus).mvec_msgObj.pop_back();
-  #endif
           }
           break;
 

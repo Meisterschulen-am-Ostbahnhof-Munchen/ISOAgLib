@@ -155,7 +155,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         if (baud_ret < 0)
         {
             perror( "SIOCSCANBAUDRATE" );
-            pc_serverData->canBus(ui8_bus).mi32_can_device = NULL;
+            pc_serverData->canBus(ui8_bus).mi32_can_device = 0;
             return false;
         }
 #endif

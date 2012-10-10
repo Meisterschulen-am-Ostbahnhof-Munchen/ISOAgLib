@@ -33,15 +33,9 @@
 
 namespace __HAL {
 
-/* ******************************************** */
-/** \name General BIOS Extenders                */
-/*@{*/
-
 void openSystem();
-void closeSystem();
-int16_t configWatchdog();
 
-/*@}*/
+void closeSystem();
 
 int32_t getTime(void);
 

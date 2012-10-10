@@ -36,8 +36,8 @@ namespace __HAL {
 void openSystem();
 void closeSystem();
 bool isSystemOpened();
-void wdTriggern();
-void configWatchdog();
+void initWatchdog( void* config );
+void triggerWatchdog();
 
 /*@}*/
 }

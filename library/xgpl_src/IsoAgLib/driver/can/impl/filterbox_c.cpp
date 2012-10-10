@@ -15,18 +15,7 @@
 #include "filterbox_c.h"
 #include "canio_c.h"
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
-#include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
 #include <IsoAgLib/util/iassert.h>
-
-#if DEBUG_FILTERBOX || DEBUG_CAN_BUFFER_FILLING
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
-#endif
-
 
 namespace __IsoAgLib {
 
@@ -37,9 +26,6 @@ int FilterBox_c::msi_processMsgLoopSize = -1; // not used if "mspc_currentlyProc
 FilterBox_c::FilterBox_c()
   : mc_maskFilterPair()
   , mvec_customer()
-  , mui8_filterBoxNr(IdleState)
-  , mui8_busNumber(IdleState)
-  , mi32_fbVecIdx(-1)
 {}
 
 /**
@@ -51,18 +37,7 @@ FilterBox_c::FilterBox_c()
 FilterBox_c::FilterBox_c(const FilterBox_c& acrc_src)
   : mc_maskFilterPair(acrc_src.mc_maskFilterPair)
   , mvec_customer(acrc_src.mvec_customer)
-  , mui8_filterBoxNr(acrc_src.mui8_filterBoxNr)
-  , mui8_busNumber(acrc_src.mui8_busNumber)
-  , mi32_fbVecIdx(acrc_src.mi32_fbVecIdx)
 {}
-
-/**
-  destructor of this FilterBox_c instance
-*/
-FilterBox_c::~FilterBox_c()
-{
-  clearData();
-}
 
 /**
   copy values of acrc_src FilterBox_c object to this instance
@@ -79,10 +54,6 @@ FilterBox_c& FilterBox_c::operator=(const FilterBox_c& acrc_src){
   {
     mc_maskFilterPair = acrc_src.mc_maskFilterPair;
     mvec_customer = acrc_src.mvec_customer;
-
-    mui8_busNumber = acrc_src.mui8_busNumber;
-    mui8_filterBoxNr = acrc_src.mui8_filterBoxNr;
-    mi32_fbVecIdx = acrc_src.mi32_fbVecIdx;
   }
   return *this;
 }
@@ -93,44 +64,7 @@ void FilterBox_c::clearData()
 {
   mvec_customer.clear();
   mc_maskFilterPair.setEmpty();
-
-  mui8_busNumber = IdleState;
-  mui8_filterBoxNr = IdleState;
-  mi32_fbVecIdx = InvalidIdx;
 }
-
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
-{
-  // store mui8_busNumber for later close of can
-  mui8_busNumber = aui8_busNumber;
-  mui8_filterBoxNr = aui8_FilterBoxNr;
-
-  isoaglib_assert( ! mc_maskFilterPair.empty() );
-  Ident_c c_mask = mc_maskFilterPair.getMaskIdent();
-  Ident_c c_filter = mc_maskFilterPair.getFilterIdent();
-  if( HAL::can_configMsgobjInit(aui8_busNumber, aui8_FilterBoxNr, c_filter, c_mask, 0) != HAL_NO_ERR ) {
-    IsoAgLib::getILibErrInstance().registerFatal( IsoAgLib::iLibErr_c::HalCanConfig, aui8_busNumber );
-    return false;
-  }
-  return true;
-}
-#endif
-
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-/**   close the BIOS filterbox object of this instance and close hardware CAN filterbox object */
-void FilterBox_c::closeHAL()
-{
-  if ( mui8_busNumber != IdleState && mui8_filterBoxNr != IdleState )
-  {
-    if (HAL::can_configMsgobjClose(mui8_busNumber, mui8_filterBoxNr ) == HAL_RANGE_ERR)
-    { // given BUS or filterBox number is wrong
-      IsoAgLib::getILibErrInstance().registerFatal( IsoAgLib::iLibErr_c::HalCanConfig, 0 );
-    }
-    mui8_busNumber = mui8_filterBoxNr = IdleState;
-  }
-}
-#endif
 
 /* *************************************** */
 /* ******* filter/mask managing ********** */
@@ -212,13 +146,7 @@ FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 
   if ( mvec_customer.empty() )
   { // the last customer has been removed
-    #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-    closeHAL();
-    //if the connection to the HAL is disconnected clear all data of the now idle filterbox
-    #endif
-
     clearData();
-
     return true;
   }
   else
@@ -241,7 +169,7 @@ FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
       * precondition no valid CanCustomer_c  (or derived) is registered
   @return true -> FilterBox_c was able to inform registered CANCustomer
 */
-bool FilterBox_c::processMsg()
+bool FilterBox_c::processMsg( CanPkg_c& pkg )
 {
   bool b_result = false;
 
@@ -258,99 +186,16 @@ bool FilterBox_c::processMsg()
     CanCustomer_c* pc_customer = mvec_customer[msi_processMsgLoopIndex].pc_customer;
     isoaglib_assert( pc_customer );
 
-    // dont construct a new pkg for each iteration - thus it's "yet" static TODO
-    CanPkg_c c_pkg;
-
-#if defined SYSTEM_WITH_ENHANCED_CAN_HAL
-    HAL::can_useMsgobjGet( mui8_busNumber, 0xFF, &c_pkg );
-#else
-    const int32_t ci32_fifoRet = HAL::fifo_useMsgObjGet( mui8_busNumber, &c_pkg );
-    if ( ci32_fifoRet != HAL_NO_ERR )
-    {
-#if DEBUG_FILTERBOX
-      INTERNAL_DEBUG_DEVICE
-      << "Central Fifo - Reading problem on bus : " << int( mui8_busNumber ) << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusWarn, mui8_busNumber );
-      break; // so that "msi_processMsgLoopIndex = -1" will be done before returning.
-    }
-#if DEBUG_FILTERBOX
-    INTERNAL_DEBUG_DEVICE
-    << "FilterBox is consuming the message " << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-#endif // SYSTEM_WITH_ENHANCED_CAN_HAL
-
-
     /// Check DataLengthCode (DLC) if required
-    if (( ci8_vecCustomerDlcForce < 0 ) || ( ci8_vecCustomerDlcForce == c_pkg.getLen() ) )
+    if (( ci8_vecCustomerDlcForce < 0 ) || ( ci8_vecCustomerDlcForce == pkg.getLen() ) )
     {
       // either no dlc-check requested or dlc matches the check!
-      b_result |= pc_customer->processMsg( c_pkg );
+      b_result |= pc_customer->processMsg( pkg );
     }
-    else
-    { // dlc-check was requested but failed
-#if DEBUG_FILTERBOX
-      INTERNAL_DEBUG_DEVICE
-      << "DLC_ERROR on identifier : " << c_pkg.ident()
-      << " dlc: " << static_cast<int>( c_pkg.getLen() )
-      << " expected: " <<  static_cast<int>( ci8_vecCustomerDlcForce )
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-    }
-
   }
-
 
   mspc_currentlyProcessedFilterBox = NULL; // indicate that we're not anymore in the loop!
   return b_result;
 }
-
-#if DEBUG_CAN_BUFFER_FILLING
-/** some debug messages */
-void FilterBox_c::doDebug(uint8_t aui8_busNumber)
-{
-  #if CAN_INSTANCE_CNT == 1
-  static uint16_t sui16_maxBufferUseage = 0;
-  uint16_t &r_maxCnt = sui16_maxBufferUseage;
-
-  static uint16_t sui16_minBufferFree = 0xFFFF;
-  uint16_t &r_minFree = sui16_minBufferFree;
-  #elif CAN_INSTANCE_CNT == 2
-  static uint16_t sui16_maxBufferUseage[2] = {0, 0};
-  uint16_t &r_maxCnt = sui16_maxBufferUseage[aui8_busNumber];
-
-  static uint16_t sui16_minBufferFree[2] = {0xFFFF,0xFFFF};
-  uint16_t &r_minFree = sui16_minBufferFree[aui8_busNumber];
-  #else
-  static uint16_t sui16_maxBufferUseage[CAN_INSTANCE_CNT];
-  uint16_t &r_maxCnt = sui16_maxBufferUseage[aui8_busNumber];
-
-  static uint16_t sui16_minBufferFree[CAN_INSTANCE_CNT];
-  uint16_t &r_minFree = sui16_minBufferFree[aui8_busNumber];
-  if ( ( sui16_maxBufferUseage[0] == 0 ) && ( sui16_maxBufferUseage[1] == 0 ) )
-  {
-    for ( uint16_t ind = 0; ind < CAN_INSTANCE_CNT; ind++) sui16_minBufferFree[ind] = 0xFFFF;
-  }
-  #endif
-  if ( HAL::can_stateMsgobjBuffercnt(aui8_busNumber, mui8_filterBoxNr) > r_maxCnt )
-  { // new MAX detected -> update and print
-    r_maxCnt = HAL::can_stateMsgobjBuffercnt(aui8_busNumber, mui8_filterBoxNr);
-    INTERNAL_DEBUG_DEVICE << "\r\nNew Max buffer filling: " << r_maxCnt
-      << " at Filterbox Nr: " << uint16_t(mui8_filterBoxNr)
-      << " with Filter: " << mc_maskFilterPair.getFilter()
-      << " at BUS: " << uint16_t(aui8_busNumber)
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  if ( HAL::can_stateMsgobjFreecnt(aui8_busNumber, mui8_filterBoxNr) < r_minFree )
-  { // new MIN detected -> update and print
-    r_minFree = HAL::can_stateMsgobjFreecnt(aui8_busNumber, mui8_filterBoxNr);
-    INTERNAL_DEBUG_DEVICE << "\r\nNew Min buffer free: " << r_minFree
-      << " at Filterbox Nr: " << uint16_t(mui8_filterBoxNr)
-      << " with Filter: " << mc_maskFilterPair.getFilter()
-      << " at BUS: " << uint16_t(aui8_busNumber)
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-}
-#endif
 
 } // End namespace __IsoAgLib

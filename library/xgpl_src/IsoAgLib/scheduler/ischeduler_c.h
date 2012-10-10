@@ -89,9 +89,6 @@ namespace IsoAgLib {
         return i32_idleTimeSpread;
       }
 
-
-
-
       int releaseResource() {
         return Scheduler_c::releaseResource();
       }
@@ -103,7 +100,6 @@ namespace IsoAgLib {
       int waitAcquireResource() {
         return Scheduler_c::waitAcquireResource( false );
       }
-
 #endif
 
       void registerTask( iSchedulerTask_c& task, int32_t delay ) {

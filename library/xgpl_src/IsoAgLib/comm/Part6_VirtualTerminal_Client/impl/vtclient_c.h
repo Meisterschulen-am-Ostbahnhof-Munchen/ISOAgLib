@@ -42,7 +42,6 @@ public:
   void close();
 
   void timeEvent();
-  virtual bool processMsg( const CanPkg_c& arc_data );
 
   VtClientConnection_c* initAndRegisterObjectPool(
     IdentItem_c& apc_wsMasterIdentItem, 
@@ -52,6 +51,11 @@ public:
     IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode );
 
   bool deregisterObjectPool (IdentItem_c& apc_wsMasterIdentItem);
+
+  /** function that handles incoming can messages */
+  virtual bool processMsg( const CanPkg_c& arc_data );
+  void processMsgNonGlobal( const CanPkgExt_c& arc_data );
+  void processMsgGlobal( const CanPkgExt_c& arc_data );
 
   bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& apc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size);
 

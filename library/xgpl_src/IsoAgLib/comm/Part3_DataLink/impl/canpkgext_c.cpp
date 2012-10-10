@@ -103,31 +103,18 @@ CanPkgExt_c::setIsoPgn(uint32_t aui32_val)
 
 
 bool
-CanPkgExt_c::resolveAddress( AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance )
+CanPkgExt_c::resolveAddress( AddressResolveResults_c& result, int ai_multitonInstance )
 {
-  if (   ( arc_addressResolveResults.getAddress() <= 0xFD )
-      && ( getIsoMonitorInstance( ai_multitonInstance ).existIsoMemberNr( arc_addressResolveResults.getAddress() ) )
-     )
-  { // there exists an item with the given address
-    arc_addressResolveResults.mpc_monitorItem = &(getIsoMonitorInstance( ai_multitonInstance ).isoMemberNr( arc_addressResolveResults.getAddress() ));
+  // TODO: possible optimization: remove isoname setting in CAN rx
+  result.mpc_monitorItem = getIsoMonitorInstance( ai_multitonInstance ).isoMemberNrFast( result.getAddress() );
 
-    if ( arc_addressResolveResults.mpc_monitorItem->itemState( IState_c::ClaimedAddress ) )
-    { // the existing item has already claimed its address - is fully functional on the BUS
-      arc_addressResolveResults.mc_isoName = arc_addressResolveResults.mpc_monitorItem->isoName();
-
-      #if DEBUG_CAN
-        INTERNAL_DEBUG_DEVICE << "Member is known with given address." << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-      return true;
-    }
+  if( result.mpc_monitorItem && result.mpc_monitorItem->itemState( IState_c::ClaimedAddress ) ) {
+    result.mc_isoName = result.mpc_monitorItem->isoName();
+    return true;
+  } else {
+    result.mc_isoName.setUnspecified();
+    return false;
   }
-  // when we reach this position, the address could not resolve to an already claimed item
-  arc_addressResolveResults.mpc_monitorItem = NULL;
-  arc_addressResolveResults.mc_isoName.setUnspecified();
-  #if DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Member is not known with given address. Set monitorItem and isoName to NULL/unspecified." << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
-  return false;
 }
 
 
@@ -496,25 +483,6 @@ CanPkgExt_c::setISONameForDA( const IsoName_c& acrc_isoName )
   // mpc_monitorItem will be set over mc_isoName -> reset mpc_monitorItem
   mc_addrResolveResDA.mpc_monitorItem = NULL;
   mc_addrResolveResDA.setAddress(0xFF);
-}
-
-
-uint8_t
-CanPkgExt_c::checkMonitorItemISOName( const AddressResolveResults_c& acrc_addressResolveResults, int ai_multitonInstance ) const
-{
-  // check if monitoritem exist and if not resolve it with isoName
-  if ( acrc_addressResolveResults.mpc_monitorItem == NULL )
-  { // get mpc_monitorItem if exist in systemmgmt_c
-    if (     acrc_addressResolveResults.mc_isoName.isUnspecified()
-        || !getIsoMonitorInstance( ai_multitonInstance ).existIsoMemberISOName( acrc_addressResolveResults.mc_isoName, false )
-       )
-    { // there exist no iso member with given isoName
-      return (acrc_addressResolveResults.getAddress());
-    }
-    return getIsoMonitorInstance( ai_multitonInstance ).isoMemberISOName( acrc_addressResolveResults.mc_isoName, false ).nr();
-  }
-  // know we can be shure that an monitorItem exists
-  return acrc_addressResolveResults.mpc_monitorItem->nr();
 }
 
 

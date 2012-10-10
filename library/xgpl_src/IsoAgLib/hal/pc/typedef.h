@@ -32,11 +32,13 @@
   typedef unsigned long long int uint64_t;
   typedef long int long int64_t;
 
+  #if ( _MSC_VER < 1600 )
   typedef int           int_fast8_t;
+  typedef unsigned int           uint_fast8_t;
+  #endif
   typedef int           int_fast16_t;
   typedef int           int_fast32_t;
   typedef long long int int_fast64_t;
-  typedef unsigned int           uint_fast8_t;
   typedef unsigned int           uint_fast16_t;
   typedef unsigned int           uint_fast32_t;
   typedef unsigned long long int uint_fast64_t;

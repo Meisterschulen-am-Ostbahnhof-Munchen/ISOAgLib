@@ -37,38 +37,63 @@ namespace __IsoAgLib {
 class FsManager_c : public SchedulerTask_c
 {
   MACRO_MULTITON_CONTRIBUTION();
-public:
+  private:
+    FsManager_c();
+
+  public:
 
   class SaClaimHandlerProxy_c : public ControlFunctionStateHandler_c {
-  public:
-    typedef FsManager_c Owner_t;
+    public:
+      typedef FsManager_c Owner_t;
 
-    SaClaimHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+      SaClaimHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
-    virtual ~SaClaimHandlerProxy_c() {}
+      virtual ~SaClaimHandlerProxy_c() {}
 
-  private:
-    virtual void reactOnIsoItemModification(
-        iIsoItemAction_e at_action,
-        IsoItem_c const &acrc_isoItem)
-    {
-      mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
-    }
+    private:
+      virtual void reactOnIsoItemModification(
+          iIsoItemAction_e at_action,
+          IsoItem_c const &acrc_isoItem)
+      {
+        mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
+      }
 
-    // SaClaimHandlerProxy_c shall not be copyable. Otherwise the
-    // reference to the containing object would become invalid.
-    SaClaimHandlerProxy_c(SaClaimHandlerProxy_c const &);
+      // SaClaimHandlerProxy_c shall not be copyable. Otherwise the
+      // reference to the containing object would become invalid.
+      SaClaimHandlerProxy_c(SaClaimHandlerProxy_c const &);
 
-    SaClaimHandlerProxy_c &operator=(SaClaimHandlerProxy_c const &);
+      SaClaimHandlerProxy_c &operator=(SaClaimHandlerProxy_c const &);
 
-    Owner_t &mrt_owner;
+      Owner_t &mrt_owner;
   };
   typedef SaClaimHandlerProxy_c Handler_t;
 
-  /** initialisation for FsManager_c */
-  void init();
 
-  /** function used to close the FsManager_c object */
+  class FsServerManager_c {
+    public:
+      FsServerManager_c( FsManager_c& fsManager ) : m_serverInstances(), m_fsManager( fsManager ) {}
+
+      bool processFsToGlobal( const CanPkgExt_c& pkg );
+
+      STL_NAMESPACE::vector<FsServerInstance_c *> m_serverInstances;
+      FsManager_c& m_fsManager;
+  };
+
+  class FsCommandManager_c : public CanCustomer_c {
+    public:
+      FsCommandManager_c( FsManager_c& fsManager ) : l_initializingCommands(), m_fsManager( fsManager ) {}
+      void init();
+      void close();
+
+      virtual bool processMsg( const CanPkg_c& arc_data );
+
+      STL_NAMESPACE::list<FsCommand_c*> l_initializingCommands;
+
+      FsManager_c& m_fsManager;
+  };
+
+
+  void init();
   void close();
 
   virtual ~FsManager_c() {}
@@ -95,10 +120,6 @@ public:
 
    virtual void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
-  private:
-    /** constructor is private, so singleton has to be used */
-    FsManager_c();
-
   public:
     /**
       * A FsServerInstance_c will notify the Manager
@@ -109,23 +130,12 @@ public:
       FsServerInstance_c::FsState_en aen_oldState);
 
   private:
-    // member variable instead of multiple inheritance
     Handler_t mc_saClaimHandler;
+    FsServerManager_c m_servers;
+    FsCommandManager_c m_commands;
 
-    /**
-     * Vector of registered FsClientServerCommunication_c
-     */
     STL_NAMESPACE::vector<FsClientServerCommunication_c *> v_communications;
 
-    /**
-     * Vector of known FsServerInstance_c
-     */
-    STL_NAMESPACE::vector<FsServerInstance_c *> v_serverInstances;
-
-    /**
-     * Vector of FsCommand_c* requesting properties for not-online FsServerInstance_cS
-     */
-    STL_NAMESPACE::list<FsCommand_c *> l_initializingCommands;
     friend FsManager_c &getFsManagerInstance(uint8_t rui8_instance);
 };
 

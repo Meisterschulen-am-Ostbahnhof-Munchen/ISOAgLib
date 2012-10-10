@@ -222,8 +222,6 @@ EepromIo_c::wait_eepromReady( void )
   { // call BIOS function and exit loop if EEPROM is ready
     i16_result = HAL::eepromReady();
     if( i16_result == HAL_NO_ERR ) break;
-    // trigger watchdog
-    HAL::wdTriggern();
   }
   return i16_result;
 }

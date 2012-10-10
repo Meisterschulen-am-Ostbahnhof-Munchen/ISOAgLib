@@ -17,7 +17,8 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4996 )

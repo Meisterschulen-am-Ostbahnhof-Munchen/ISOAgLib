@@ -205,25 +205,6 @@ private:
   };
   typedef CanCustomerProxy_c Customer_t;
 
-  class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
-  public:
-    typedef MultiSend_c Owner_t;
-    ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
-    virtual ~ControlFunctionStateHandlerProxy_c() {}
-
-  private:
-    virtual void reactOnIsoItemModification( iIsoItemAction_e action, IsoItem_c const &isoItem )
-    { mrt_owner.reactOnIsoItemModification( action, isoItem ); }
-
-    // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
-    // reference to the containing object would become invalid.
-    ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
-    ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
-
-    Owner_t &mrt_owner;
-  };
-  typedef ControlFunctionStateHandlerProxy_c Handler_t;
-
   /**
     use this function to add a new SendStream. (doesn't use existing-finished ones anymore!)
     IMPORTANT: Assure that the added SendStream is initialized right after this call!!
@@ -272,7 +253,6 @@ private:
   #endif
 
   STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
-  Handler_t mt_handler;
   Customer_t mt_customer;
 
   friend MultiSend_c &getMultiSendInstance( uint8_t aui8_instance );

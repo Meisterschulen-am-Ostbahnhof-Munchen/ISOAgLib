@@ -152,8 +152,8 @@ public:
   void timeEventPrePoolUpload();
   bool timeEventPoolUpload();
 
-  virtual bool processMsg( const CanPkg_c& arc_data );
-  bool processMsgAck( const CanPkgExt_c& arc_data );
+  void processMsgVtToEcu( const CanPkgExt_c& c_data );
+  void processMsgAck( const CanPkgExt_c& arc_data );
 
   void notifyOnVtsLanguagePgn();
   void notifyOnVtStatusMessage();

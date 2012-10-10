@@ -79,7 +79,7 @@ public:
   /**
     @return true: stream finished, it'll be erased then!
   */
-  bool timeEvent (uint8_t aui8_pkgCnt);
+  bool timeEvent (unsigned pkgCnt);
 
   /**
     start processing of a process msg
@@ -124,6 +124,11 @@ public:
   uint32_t pgn() const { return mui32_pgn;}
   const IsoName_c& receiver() const { return mc_isoNameReceiver; }
   const IsoName_c& sender() const { return mc_isoNameSender; }
+  
+  bool isBurstStream() const {
+    return ( men_msgType != IsoTPbroadcast );
+  }
+
 
 private:
   void sendPacketIso( bool ab_data, MultiSendPkg_c& arc_data );

@@ -41,16 +41,11 @@ namespace __HAL {
 
 namespace __HAL {
 
-/* ******************************************** */
-/** \name General BIOS Extenders                */
-/*@{*/
-
 void openSystem();
 void closeSystem();
 bool isSystemOpened();
 
-void configWatchdog();
-/*@}*/
+void initWatchdog( void* config );
 }
 
 #endif

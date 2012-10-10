@@ -13,6 +13,11 @@
 #ifndef _PC_HAL_CAN_CAN_SERVER_H_
 #define _PC_HAL_CAN_CAN_SERVER_H_
 
+#include <cstring>
+#include <string.h>
+#include <vector>
+#include <stdint.h>
+
 //#define DEBUG_CAN 1
 
 #if DEBUG_CAN
@@ -76,7 +81,6 @@
 #define DATA_TRANSFER_PORT    (36799 + (CAN_SERVER_CHANNEL)*2)
 
 
-#include "can_target_extensions.h"
 
 // USE_UNIX_SOCKET to use /tmp/can_server.sock.<command_port> and /tmp/can_server.sock.<data_port> instead of real sockets 
 // => no loopback network configuration necessary
@@ -88,6 +92,7 @@
     #include <winsock2.h> //needed for canserver
     #include <windows.h>  //also needed!
   #endif
+  #include <ctime>
 #else
   #include <sys/time.h>
   #include <sys/types.h>
@@ -114,7 +119,10 @@
   #define INVALID_SOCKET -1
 #endif
 
+#define  RX 0
+#define  TX 1
 
+#define COMMON_MSGOBJ_IN_QUEUE  0xFF
 
 struct canMsg_s {
   uint32_t        ui32_id;
@@ -124,11 +132,6 @@ struct canMsg_s {
 };
 
 namespace __HAL {
-
-// IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
-// -> all needed offsets shall be added at the lowest possible layer
-//    ( i.e. direct in the BIOS/OS call)
-static const uint8_t cui8_maxCanObj = 15;
 
 struct tMsgObj {
   bool     b_canBufferLock;
@@ -149,11 +152,7 @@ struct can_data {
   uint8_t b_dlc;
   uint8_t b_xtd;
   uint8_t pb_data[8];
-
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   uint8_t bMsgObj;
-#endif
-
 };
 
 struct can_recv_data {
@@ -245,7 +244,7 @@ struct transferBuf_s {
 #endif
   };
   transferBuf_s() {
-    CNAMESPACE::memset(this, 0, sizeof *this);
+    memset(this, 0, sizeof *this);
   }
 };
 

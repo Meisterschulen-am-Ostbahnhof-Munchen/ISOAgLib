@@ -35,6 +35,7 @@ public:
 
   CanPkg_c();
   CanPkg_c( const CanPkg_c& arc_src );
+  CanPkg_c( uint32_t id, bool ext, uint8_t len, int32_t time );
   CanPkg_c &operator=( const CanPkg_c & );
 
   bool operator==(const CanPkg_c &) const;

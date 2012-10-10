@@ -270,13 +270,13 @@ namespace __IsoAgLib {
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (TIME_DATE_PGN<<8) ), 8, false);
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (NMEA_GPS_POSITION_RAPID_UPDATE_PGN<<8) ), 8, false);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (TIME_DATE_PGN<<8) ), 8 );
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (NMEA_GPS_POSITION_RAPID_UPDATE_PGN<<8) ), 8 );
 #ifdef USE_J1939_VEHICLE_PGNS
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VEHICLE_POSITION<<8) ), 8, false);
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VEHICLE_DIRECTION_SPEED<<8) ), 8, false);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VEHICLE_POSITION<<8) ), 8 );
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VEHICLE_DIRECTION_SPEED<<8) ), 8 );
 #endif
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN<<8) ), 8, true);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN<<8) ), 8 );
 
     }
   }

@@ -66,16 +66,13 @@ namespace HAL
   };
 
 
-  inline void configWatchdog() {}
+  inline void initWatchdog( void* ) {}
 
 
-  inline void wdReset()
-  {
-//jtm    (void)__HAL::reset_wd();
-  };
+  inline void closeWatchdog() {}
 
 
-  inline void wdTriggern()
+  inline void triggerWatchdog()
   {
     __HAL::DjBios_TaskWDSysService();
   };

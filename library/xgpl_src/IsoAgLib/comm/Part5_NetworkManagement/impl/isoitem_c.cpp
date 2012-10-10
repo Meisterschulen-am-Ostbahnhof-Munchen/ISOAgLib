@@ -280,6 +280,7 @@ IsoItem_c::timeEvent()
         // we may be "Off" here now but can't delete ourself,
         // so we check IsoItems for Off after we called their timeEvent.
         // => This way we can remove it immediately after detecting that we couldn't exist (anymore)
+        getIsoMonitorInstance4Comm().updateSaItemTable( *this, true );
       }
     }
     else
@@ -293,7 +294,7 @@ IsoItem_c::timeEvent()
   { // item in address claim mode (time between send of claim and
     // check if there is a CAN send conflict during send of adress claim
     // final acceptance of adr claim (wait for possible contention)
-    if (getIsoBusInstance4Comm().stopSendRetryOnErr())
+    if ( false )
     { // item was in address claim state and send of claim caused error
       setItemState(IState_c::PreAddressClaim);
     }

@@ -40,6 +40,15 @@ CanPkg_c::CanPkg_c( const CanPkg_c& arc_src )
 }
 
 
+CanPkg_c::CanPkg_c( uint32_t id, bool ext, uint8_t len, int32_t tm )
+  : mc_data(),
+    mi32_time( tm ),
+    mc_ident( id, ext ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent ),
+    mui8_len( len )
+{
+}
+
+
 CanPkg_c &CanPkg_c::operator=(const CanPkg_c& acrc_right)
 {
   mc_data = acrc_right.mc_data;

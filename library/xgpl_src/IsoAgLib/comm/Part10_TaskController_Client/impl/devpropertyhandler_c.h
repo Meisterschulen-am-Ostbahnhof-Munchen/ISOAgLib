@@ -81,7 +81,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     void init();
 
     /** start processing of a process msg */
-    bool processMsg( ProcessPkg_c& arc_data );
+    bool processMsg( const ProcessPkg_c& arc_data );
 
     bool timeEvent( void );
 

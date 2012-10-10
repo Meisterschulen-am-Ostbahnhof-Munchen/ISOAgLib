@@ -23,7 +23,6 @@
   #include <IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessagehandler_c.h>
 #endif
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclient_c.h>
@@ -75,7 +74,6 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   /// Part 5 - Network Management
   getIsoRequestPgnInstance4Comm().init();
   getIsoMonitorInstance4Comm().init();
-  getIsoFilterManagerInstance4Comm().init();
 
   /// Part 3 - Data Link
   #ifdef DEF_Stream_IMPL
@@ -179,7 +177,6 @@ IsoBus_c::close()
     getMultiReceiveInstance4Comm().close();
   #endif
   /// Part 5 - Network Management
-  getIsoFilterManagerInstance4Comm().close();
   getIsoMonitorInstance4Comm().close();
   getIsoRequestPgnInstance4Comm().close();
 
@@ -193,10 +190,6 @@ IsoBus_c::close()
 IsoBus_c&
 IsoBus_c::operator<<(CanPkgExt_c& acrc_src)
 {
-  isoaglib_assert (getCanInstance4Comm().isReady2Send());
-  if ( ! getCanInstance4Comm().isReady2Send() )
-    return *this;
-
   isoaglib_assert( acrc_src.identType() == Ident_c::ExtendedIdent );
 
   // check if source and destination address are valid
@@ -216,10 +209,6 @@ IsoBus_c::operator<<(CanPkgExt_c& acrc_src)
 IsoBus_c&
 IsoBus_c::operator<<(CanPkg_c& acrc_src)
 {
-  isoaglib_assert (getCanInstance4Comm().isReady2Send());
-  if ( ! getCanInstance4Comm().isReady2Send() )
-    return *this;
-
   if( acrc_src.identType() != Ident_c::StandardIdent )
   {
     return *this;

@@ -36,8 +36,6 @@ public:
          // only one state of following Line possible
          PreAddressClaim = 0x10, AddressClaim = 0x20, ClaimedAddress = 0x40, AddressLost = 0x80,
          // states of following Line independent parallel possible
-         CausedConflict = 0x200,
-         AffectedConflict = 0x400,
          Error = 0x800,
          Local = 0x4000,   ///< This flag identifies local items
          PossiblyOffline = 0x8000 ///< This flag indicates, that the node missed to anwer at least one AdrClaim request -> upon next miss it should be deleted from monitor list

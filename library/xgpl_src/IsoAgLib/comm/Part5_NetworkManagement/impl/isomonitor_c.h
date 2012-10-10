@@ -266,6 +266,10 @@ public:
   */
   IsoItem_c& isoMemberNr(uint8_t aui8_nr);
 
+  IsoItem_c* isoMemberNrFast( uint8_t aui8_nr ) {
+    return m_isoItems[ aui8_nr ];
+  }
+
   /**
     delete item with specified isoName
     possible errors:
@@ -330,6 +334,7 @@ public:
   void debugPrintNameTable();
 #endif
 
+  void updateSaItemTable( IsoItem_c& item, bool add );
 
 protected: // Protected methods
   /** process system msg with informations which are
@@ -480,6 +485,9 @@ private:
       of single member informations
   */
   Vec_ISO mvec_isoMember;
+
+  // SA IsoItem resolving
+  IsoItem_c* m_isoItems[256];
 
   /** last time of request for adress claim */
   int32_t mi32_lastSaRequest;

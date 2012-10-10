@@ -79,14 +79,6 @@ void checkAndHandleOptionsAndStartup(int argc, char *argv[], __HAL::server_c &ar
     printSettings (ar_server);
   }
 
-#if DEBUG_CANSERVER
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
-#else
-  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
-#endif
-#endif
-
   // explicitly call getTime to initialize the time to 0.
   (void) __HAL::getTime();
 

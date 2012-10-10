@@ -16,25 +16,20 @@
 
 #include "proprietarymessageclient_c.h"
 
+#include <IsoAgLib/isoaglib_config.h>
+
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/cfstatehandler_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 
-#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
-#include <vector>
+#include <list>
 
 
 namespace __IsoAgLib
 {
-  /** initialization parameter for local ident */
-  const IdentItem_c* const spc_nolocalIdent = NULL;
 
-  /** initialization parameter for IsoName */
-  static const IsoName_c& screfc_noIsoName = IsoName_c::IsoNameUnspecified();
 
-  class ProprietaryMessageHandler_c : public SchedulerTask_c
+  class ProprietaryMessageHandler_c : public Subsystem_c
   {
     MACRO_MULTITON_CONTRIBUTION();
   public:
@@ -42,178 +37,73 @@ namespace __IsoAgLib
 
     virtual ~ProprietaryMessageHandler_c() {}
 
-    /** initialisation */
-    void init( void );
+    void init();
+    void close();
 
-    /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-    void close( void );
+    void registerProprietaryMessage( ProprietaryMessageA_c& msg );
+    void registerProprietaryMessage( ProprietaryMessageB_c& msg );
 
-    /** overloading processMsg() to get can-messages
-      */
-    virtual bool processMsg( const CanPkg_c& arc_data );
-
-    /** overloading reactOnStreamStart to get (E)TP-messages */
-    virtual bool reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen);
-
-    /** implementing processPartStreamDataChunk to process (E)TP-messages */
-    virtual bool processPartStreamDataChunk (Stream_c& apc_stream, bool ab_isFirstChunk, bool ab_isLastChunk);
-
-    /** performs periodically actions,
-      possible errors:
-        * partial error caused by one of the memberItems
-    */
-    virtual void timeEvent( void );
-
-    /** register the proprietary message client pointer in an interanl list of all clients.
-        Derive and register from the member attributes:
-
-            mui32_canMask, mui32_canFilter, mc_isonameRemoteECU, mpc_localIdent
-
-        the suitable CAN message receive filters.
-        The internal implementation will take care to adapt the receive filter as soon as
-        the SA of the remote or local is changed.
-    */
-    void registerProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient);
-
-    /** deregister ProprietaryMessageClient */
-    void deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient);
-
-    void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
-
-    /** force an update of the CAN receive filter (if possible), as initial or
-        new data has been set in an already registered client.
-        @param arc_proprietaryclient the registered client.
-        @param ab_forceFilterRemoval true => force removal of the filter for now
-                                     (without changing it to "NoFilter" in the client!)
-    */
-    void triggerClientDataUpdate(
-      ProprietaryMessageClient_c &arc_proprietaryclient,
-      bool ab_forceFilterRemoval);
-
-    /** send the data in
-            ProprietaryMessageClient_c::ms_sendData
-        the data can be accessed directly by
-           iProprietaryMessageHandler_c as its a friend of ProprietaryMessageClient_c
-        Repeated sending will NOT be handled here (anymore)
-     */
-    void sendData(ProprietaryMessageClient_c& client);
-
-    /** struct to store proprietary message clients with filter and mask
-      */
-    struct ClientNode_t
-    {
-      ClientNode_t (ProprietaryMessageClient_c* apc_client,
-                    const IsoFilter_s& rrefcs_isoFilter) : pc_client(apc_client), s_isoFilter (rrefcs_isoFilter) {}
-
-      ProprietaryMessageClient_c* pc_client;
-      IsoFilter_s s_isoFilter;
-    };
-
-    /** type of map which is used to store proprietary clients */
-    typedef STL_NAMESPACE::vector<ClientNode_t> ProprietaryMessageClientVector_t;
-    typedef STL_NAMESPACE::vector<ClientNode_t>::iterator ProprietaryMessageClientVectorIterator_t;
-    typedef STL_NAMESPACE::vector<ClientNode_t>::const_iterator ProprietaryMessageClientVectorConstIterator_t;
-
-    /** Call updateSchedulingInformation() if client's nextTriggering has been changed */
-    void updateSchedulingInformation();
+    void deregisterProprietaryMessage( ProprietaryMessageA_c& msg );
+    void deregisterProprietaryMessage( ProprietaryMessageB_c& msg );
 
   private:
-    void updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool ab_fromTimeEvent);
 
-  private:
-    class CanCustomerProxy_c : public CanCustomer_c {
-    public:
-      typedef ProprietaryMessageHandler_c Owner_t;
 
-      CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+    class CanCustomerA_c : public CanCustomer_c {
+      public:
+        CanCustomerA_c( ProprietaryMessageHandler_c& handler ) : m_filter( 0x00FF0000, PROPRIETARY_A_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ), m_handler( handler )  {}
+        virtual ~CanCustomerA_c() {}
 
-      virtual ~CanCustomerProxy_c() {}
 
-    private:
-      virtual bool processMsg( const CanPkg_c& arc_data ) {
-        return mrt_owner.processMsg( arc_data );
-      }
+        typedef STL_NAMESPACE::list<ProprietaryMessageA_c*> ProprietaryMessageAVector_t;
+        typedef STL_NAMESPACE::list<ProprietaryMessageA_c*>::iterator ProprietaryMessageAVectorIterator_t;
+        typedef STL_NAMESPACE::list<ProprietaryMessageA_c*>::const_iterator ProprietaryMessageAVectorConstIterator_t;
 
-      virtual bool reactOnStreamStart(
-          ReceiveStreamIdentifier_c const &ac_ident,
-          uint32_t aui32_totalLen)
-      {
-        return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
-      }
+        ProprietaryMessageAVector_t m_msgs;
 
-      virtual void reactOnAbort(Stream_c &arc_stream)
-      {
-        (void)arc_stream;
-        // nop - mrt_owner.reactOnAbort(arc_stream);
-      }
+        const IsoAgLib::iMaskFilterType_c m_filter; // A1 and A2
 
-      virtual bool processPartStreamDataChunk(
-          Stream_c &apc_stream,
-          bool ab_isFirstChunk,
-          bool ab_isLastChunk)
-      {
-        return mrt_owner.processPartStreamDataChunk(
-            apc_stream,
-            ab_isFirstChunk,
-            ab_isLastChunk);
-      }
+      private:
+        virtual bool processMsg( const CanPkg_c& arc_data );
 
-      virtual void notificationOnMultiReceiveError(
-          ReceiveStreamIdentifier_c const &ac_streamIdent,
-          uint8_t aui8_multiReceiveError,
-          bool ab_isGlobal)
-      {
-        (void)ac_streamIdent;
-        (void)aui8_multiReceiveError;
-        (void)ab_isGlobal;
-        // nop - mrt_owner.notificationOnMultiReceiveError(
-        //     ac_streamIdent,
-        //     aui8_multiReceiveError,
-        //     ab_isGlobal);
-      }
+        virtual bool reactOnStreamStart( const ReceiveStreamIdentifier_c& ident, uint32_t len );
+        virtual void reactOnAbort( Stream_c & ) { }
+        virtual bool processPartStreamDataChunk( Stream_c &apc_stream, bool first, bool last );
+        virtual void notificationOnMultiReceiveError( ReceiveStreamIdentifier_c const &, uint8_t, bool ) { }
 
-      // CanCustomerProxy_c shall not be copyable. Otherwise the
-      // reference to the containing object would become invalid.
-      CanCustomerProxy_c(CanCustomerProxy_c const &);
-
-      CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
-
-      Owner_t &mrt_owner;
+        ProprietaryMessageHandler_c& m_handler;
     };
 
-    class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
-    public:
-      typedef ProprietaryMessageHandler_c Owner_t;
 
-      ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+    class CanCustomerB_c : public CanCustomer_c {
+      public:
+        CanCustomerB_c( ProprietaryMessageHandler_c& handler ) : m_filter( 0x00FF0000, PROPRIETARY_B_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ), m_handler( handler )  {}
+        virtual ~CanCustomerB_c() {}
 
-      virtual ~ControlFunctionStateHandlerProxy_c() {}
 
-    private:
-      virtual void reactOnIsoItemModification(
-          iIsoItemAction_e action,
-          IsoItem_c const &isoItem)
-      {
-        mrt_owner.reactOnIsoItemModification(action, isoItem);
-      }
+        typedef STL_NAMESPACE::list<ProprietaryMessageB_c*> ProprietaryMessageBVector_t;
+        typedef STL_NAMESPACE::list<ProprietaryMessageB_c*>::iterator ProprietaryMessageBVectorIterator_t;
+        typedef STL_NAMESPACE::list<ProprietaryMessageB_c*>::const_iterator ProprietaryMessageBVectorConstIterator_t;
 
-      // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
-      // reference to the containing object would become invalid.
-      ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
+        ProprietaryMessageBVector_t m_msgs;
 
-      ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
+        const IsoAgLib::iMaskFilterType_c m_filter; // A1 and A2
 
-      Owner_t &mrt_owner;
+      private:
+        virtual bool processMsg( const CanPkg_c& arc_data );
+
+        virtual bool reactOnStreamStart( const ReceiveStreamIdentifier_c& ident, uint32_t len );
+        virtual void reactOnAbort( Stream_c & ) { }
+        virtual bool processPartStreamDataChunk( Stream_c &apc_stream, bool first, bool last );
+        virtual void notificationOnMultiReceiveError( ReceiveStreamIdentifier_c const &, uint8_t, bool ) { }
+
+        ProprietaryMessageHandler_c& m_handler;
     };
 
-  private:
-    /** dynamic array of memberItems for handling
-        of single member informations
-    */
-    ProprietaryMessageClientVector_t mvec_proprietaryclient;
 
-    ControlFunctionStateHandlerProxy_c mt_handler;
-    CanCustomerProxy_c mt_customer;
+  private:
+    CanCustomerA_c m_customerA;
+    CanCustomerB_c m_customerB;
 
     friend ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance);
   };

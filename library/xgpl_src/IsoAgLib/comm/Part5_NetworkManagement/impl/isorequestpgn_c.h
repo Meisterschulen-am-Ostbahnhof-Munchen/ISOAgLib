@@ -74,20 +74,7 @@ public:
       uint32_t aui32_pgnB,
       uint32_t aui32_pgnMask = mscui32_pgnDefaultMask);
 
-  /** register an IsoName_c of a local device, so that RequestPGN messages that are directed to this
-      IsoName_c are received and handled.
-      This function has to be called during initialisation of a local IsoItem_c / IdentItem_c
-    */
-  void registerLocalDevice( const __IsoAgLib::IsoName_c& rc_isoName );
-  /** unregister an IsoName_c of a local device, so that IsoFilterManager_c stops receiving
-      messages for the corresponding IsoName_c.
-      This function has to be called during destruction of a local IsoItem_c / IdentItem_c
-    */
-  void unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_isoName );
-
-  /** initialisation for IsoRequestPgn_c */
   void init (void);
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close (void);
 
   virtual ~IsoRequestPgn_c () {}

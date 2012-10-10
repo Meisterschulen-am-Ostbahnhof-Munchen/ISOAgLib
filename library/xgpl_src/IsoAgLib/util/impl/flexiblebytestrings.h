@@ -70,7 +70,10 @@ namespace __IsoAgLib {
           if ( uint8[index] != cmp.uint8[index] )
             return true;
         return false;
+<<<<<<< HEAD
       }
+=======
+>>>>>>> ce75f5a... Squashed commit of isofilter
 #else
       const Flexible4ByteString_c& operator=( const Flexible4ByteString_c& src ) {
         uint32[0] = src.uint32[0];

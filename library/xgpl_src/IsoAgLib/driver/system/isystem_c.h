@@ -32,10 +32,13 @@ public:
   void close() { System_c::close(); }
 
   /** init the hardware watchdog */
-  static void initWd () { System_c::initWd(); }
+  static void initWatchdog( void* config ) { System_c::initWatchdog( config ); }
+
+  /** init the hardware watchdog */
+  static void closeWatchdog() { System_c::closeWatchdog(); }
 
   /** trigger the watchdog */
-  static void triggerWd() { System_c::triggerWd(); }
+  static void triggerWatchdog() { System_c::triggerWatchdog(); }
 
   /**
     deliver lasted time from start of system in msec.

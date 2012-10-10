@@ -15,7 +15,6 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/util/iassert.h>
 
 #include "../imultisendstreamer_c.h"
@@ -31,9 +30,6 @@
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
 #endif
-
-/** @todo SOON-178 figure that one out... new ISO says we can put out head2head messages! */
-static const uint8_t scui8_isoCanPkgDelay = 4;
 
 
 
@@ -127,7 +123,6 @@ MultiSend_c::MultiSend_c()
   , mui8_nextFpSequenceCounter(0)
   #endif
   , mlist_sendStream()
-  , mt_handler(*this)
   , mt_customer(*this)
 {
 }
@@ -139,14 +134,13 @@ MultiSend_c::init()
   isoaglib_assert (!initialized());
 
   getSchedulerInstance().registerTask( *this, 0 );
-  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   mui8_nextFpSequenceCounter = 0;
   #endif
 
-  // Receive filters for ISO 11783 are created selectively in the SA claim handler,
-  // so that only messages that are directed to a local SA are received
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( (0x3FF0000UL), (TP_CONN_MANAGE_PGN << 8), Ident_c::ExtendedIdent ), 8 );
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( (0x3FF0000UL), (ETP_CONN_MANAGE_PGN << 8), Ident_c::ExtendedIdent ), 8 );
 
   setInitialized();
 }
@@ -157,8 +151,10 @@ MultiSend_c::close()
 {
   isoaglib_assert (initialized());
 
-  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( (0x3FF0000UL), (TP_CONN_MANAGE_PGN << 8), Ident_c::ExtendedIdent ) );
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( (0x3FF0000UL), (ETP_CONN_MANAGE_PGN << 8), Ident_c::ExtendedIdent ) );
   getSchedulerInstance().deregisterTask( *this );
+
 
   /// For right now, we do gracefully kill all interrupted stream,
   /// but normally the modules should abort thier own sending when they
@@ -251,42 +247,60 @@ MultiSend_c::timeEvent()
     return;
   }
 
-  /** @todo SOON-178 Check how we want to calculate the max nr. of packets to send
-            ==> Best would be to know when the next comes.
-            clip that value as we may expect incoming can-pkgs, too - so be a little polite!
-  */
-  const int32_t ci32_time = System_c::getTime();
-  // store time of last call, to get time interval between execution
-  static int32_t si32_lastCall = 0;
-  // only send max 1 package for first call, when execution period can't be derived
-  uint8_t ui8_pkgCnt = (si32_lastCall > 0 ) ? ((ci32_time - si32_lastCall)/scui8_isoCanPkgDelay) : 1;
-  // update last call time
-  si32_lastCall = ci32_time;
-
-  const uint8_t cui8_pkgCntForEach = ui8_pkgCnt / mlist_sendStream.size(); // in case it gets 0 after division, it is set to 1 inside of SendStream's timeEvent().
-
   int32_t i32_nextRetriggerNeeded = -1; // default to: "no retriggering needed"
 
-  // Call each SendStream_c's timeEvent()
-  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end();)
-  { // only call a SendStream when its time has come!
-    if ( pc_iter->isFinished () ||
-        (pc_iter->timeHasCome() && (pc_iter->timeEvent (cui8_pkgCntForEach))) )
-    { // SendStream finished
-      pc_iter = mlist_sendStream.erase (pc_iter);
-      #if DEBUG_MULTISEND
-      INTERNAL_DEBUG_DEVICE << "Kicked SendStream because it finished (abort or success)!" << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
+  int pkgCnt = getIsoBusInstance4Comm().sendCanFreecnt();
+  if( -1 == pkgCnt ) {
+    pkgCnt = CONFIG_CAN_NO_SEND_BUFFER_INFO_FALLBACK_MULTISEND;
+  }
+
+  if( CONFIG_MULTI_SEND_MAX_PKG_PER_TIMEEVENT < pkgCnt ) {
+    pkgCnt = CONFIG_MULTI_SEND_MAX_PKG_PER_TIMEEVENT;
+  }
+
+   /* do not use the whole send buffer to give other modules a chance 
+      to send in parallel */
+  pkgCnt -= 5;
+
+  if( pkgCnt < 0 ) {
+    i32_nextRetriggerNeeded = System_c::getTime() + 5;
+  } else {
+
+    unsigned numBurstTp = 0;
+    for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter = mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); ++pc_iter ) {
+      numBurstTp += pc_iter->isBurstStream() ? 1 : 0;
     }
-    else
-    { // SendStream not yet finished
-      const int32_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
-      // needs to be triggered at the following time
-      if ((i32_nextRetriggerNeeded == -1) || (ci32_nextTriggerTime < i32_nextRetriggerNeeded))
-      { // no trigger yet set or this SendStream needs to come earlier!
-        i32_nextRetriggerNeeded = ci32_nextTriggerTime;
+
+    if( numBurstTp != 0 ) {
+      pkgCnt /= numBurstTp;
+      if( 0 == pkgCnt ) {
+        pkgCnt = 1;
       }
-      pc_iter++;
+    } else {
+      pkgCnt = 1; // pkg count is ignored in non burst streams
+    }
+
+    // Call each SendStream_c's timeEvent()
+    for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end();)
+    { // only call a SendStream when its time has come!
+      if ( pc_iter->isFinished () ||
+           (pc_iter->timeHasCome() && (pc_iter->timeEvent( unsigned ( pkgCnt ) ))) )
+      { // SendStream finished
+        pc_iter = mlist_sendStream.erase (pc_iter);
+        #if DEBUG_MULTISEND
+        INTERNAL_DEBUG_DEVICE << "Kicked SendStream because it finished (abort or success)!" << INTERNAL_DEBUG_DEVICE_ENDL;
+        #endif
+      }
+      else
+      { // SendStream not yet finished
+        const int32_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
+        // needs to be triggered at the following time
+        if ((i32_nextRetriggerNeeded == -1) || (ci32_nextTriggerTime < i32_nextRetriggerNeeded))
+        { // no trigger yet set or this SendStream needs to come earlier!
+          i32_nextRetriggerNeeded = ci32_nextTriggerTime;
+        }
+        pc_iter++;
+      }
     }
   }
 
@@ -349,36 +363,6 @@ MultiSend_c::calcAndSetNextTriggerTime()
     i32_nextRetriggerNeeded = System_c::getTime() + 5000;
   }
   setNextTriggerTime( i32_nextRetriggerNeeded );
-}
-
-
-void
-MultiSend_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
-{
-  switch (at_action)
-  {
-    case ControlFunctionStateHandler_c::AddToMonitorList:
-      if (acrc_isoItem.itemState (IState_c::Local))
-      { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8), true);
-      }
-      break;
-
-    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
-      if (acrc_isoItem.itemState (IState_c::Local))
-      { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
-        /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
-        /// @todo SOON-178 Maybe clean up some streams and clients?
-        /// Shouldn't appear normally anyway, so don't care for right now...
-      }
-      break;
-
-    default:
-      break;
-  }
 }
 
 

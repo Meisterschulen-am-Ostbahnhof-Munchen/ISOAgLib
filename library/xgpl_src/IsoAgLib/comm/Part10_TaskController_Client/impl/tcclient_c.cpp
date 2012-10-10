@@ -12,7 +12,6 @@
 */
 #include "tcclient_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 #include <IsoAgLib/util/iassert.h>
 
@@ -70,10 +69,7 @@ TcClient_c::init()
 
   mpc_procDataHandler = NULL;
 
-  // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
-  const uint32_t cui32_filter = (((PROCESS_DATA_PGN) | 0xFF) << 8);
-  if (!getIsoBusInstance4Comm().existFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter) ) )
-    getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter ), 8, true);
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FF0000UL), PROCESS_DATA_PGN << 8 ), 8 );
 
   mpc_iter = c_arrClientC1.begin();
 
@@ -85,6 +81,8 @@ void
 TcClient_c::close()
 {
   isoaglib_assert (initialized());
+
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FF0000UL), PROCESS_DATA_PGN << 8 ) );
 
   getSchedulerInstance().deregisterTask( *this );
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
@@ -140,59 +138,69 @@ TcClient_c::processMsg( const CanPkg_c& arc_data )
 {
   ProcessPkg_c pkg( arc_data, getMultitonInst() );
 
-  // isValid => also mean bradcast or to us
-  // SA = 0xFE ? => don't handle such messages, we need to have a sender
-  if (!pkg.isValid() || (pkg.getMonitorItemForSA() == NULL))
+  if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
     return true;
 
   // check for sender isoName
-  const IsoName_c& c_isoNameSender = pkg.getMonitorItemForSA()->isoName();
-  if ( mc_isoNameTC.isSpecified() )
+  if ( mc_isoNameTC.isSpecified()  && ( mc_isoNameTC != pkg.getMonitorItemForSA()->isoName() ) )
   {
-    if ( mc_isoNameTC != c_isoNameSender ) // this is not the TC we are talking with !
-      return true;
+    // this is not the TC we are talking with !
+    return true;
   }
 
-  if (pkg.getMonitorItemForDA() == NULL)
+  if( pkg.getMonitorItemForDA() != NULL )
+    processMsgNonGlobal( pkg );
+  else
+    processMsgGlobal( pkg );
+
+  return true;
+}
+
+
+void TcClient_c::processMsgGlobal( const ProcessPkg_c& arc_data ) {
+
+  // process TC status message (for local instances)
+  if ( arc_data.men_command == ProcessPkg_c::taskControllerStatus )
   {
-    // process TC status message (for local instances)
-    if ( pkg.men_command == ProcessPkg_c::taskControllerStatus )
-    {
-      processTcStatusMsg(pkg[4], c_isoNameSender);
+    processTcStatusMsg(arc_data[4], arc_data.getMonitorItemForSA()->isoName() );
 
-      mc_devPropertyHandler.updateTcStateReceived(pkg[4]);
-      mc_devPropertyHandler.setTcSourceAddress(pkg.isoSa());
+    mc_devPropertyHandler.updateTcStateReceived( arc_data[4] );
+    mc_devPropertyHandler.setTcSourceAddress( arc_data.isoSa() );
+  }
+  
+}
 
-      return true;
-    }
+
+void TcClient_c::processMsgNonGlobal( const ProcessPkg_c& pkg ) {
+  // use remoteType_t for the remote item
+  const IsoAgLib::ProcData::remoteType_t ecuType = getTcClientInstance4Comm().getTypeFromISOName( pkg.getMonitorItemForSA()->isoName() );
+
+  // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
+  if ( ( pkg.men_command == ProcessPkg_c::requestConfiguration )
+    || ( pkg.men_command == ProcessPkg_c::configurationResponse )
+    || ( pkg.men_command == ProcessPkg_c::nack ) )
+  {
+    if (mc_devPropertyHandler.processMsg( pkg ))
+      return;
   }
   else
   {
     // use remoteType_t for the remote item
     const IsoAgLib::ProcData::remoteType_t ecuType = getTcClientInstance4Comm().getTypeFromISOName( pkg.getMonitorItemForSA()->isoName() );
 
-    // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
-    if ( ( pkg.men_command == ProcessPkg_c::requestConfiguration )
-      || ( pkg.men_command == ProcessPkg_c::configurationResponse )
-      || ( pkg.men_command == ProcessPkg_c::nack ) )
-    {
-      if (mc_devPropertyHandler.processMsg( pkg ))
-        return true;
-    }
-
     // no forther processing of NACK messages
     if ( pkg.men_command == ProcessPkg_c::nack )
-      return true;
+      return;
 
     // ignore other working set task message
     if ( pkg.men_command == ProcessPkg_c::workingsetMasterMaintenance )
     {
       // @TODO probably respond with NACK if it is addressed to us, otherwise just ignore
-      return true;
+      return;
     }
 
-    // use isoName from corresponding monitor item for checks
-    const IsoName_c& c_isoNameReceiver = pkg.getMonitorItemForDA()->isoName();
+  // use isoName from corresponding monitor item for checks
+  const IsoName_c& c_isoNameReceiver = pkg.getMonitorItemForDA()->isoName();
 
     bool b_elementFound = false;
     ProcData_c* pd = procData( pkg.mui16_DDI, pkg.mui16_element, c_isoNameReceiver, b_elementFound);
@@ -211,7 +219,6 @@ TcClient_c::processMsg( const CanPkg_c& arc_data )
     }
   }
 
-  return true;
 }
 
 
@@ -279,34 +286,14 @@ TcClient_c::procData(
 void
 TcClient_c::reactOnIsoItemModification( ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem )
 {
-  switch (at_action)
+  if( ( at_action == ControlFunctionStateHandler_c::RemoveFromMonitorList ) &&( ! acrc_isoItem.itemState( IState_c::Local ) ) )
   {
-    case ControlFunctionStateHandler_c::AddToMonitorList:
-      if (acrc_isoItem.itemState (IState_c::Local))
-      { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8) ), &acrc_isoItem.isoName(), NULL, 8 ), true);
-      }
-      // else: don't care for remote IsoItem_c
-      break;
-
-    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
-      if (acrc_isoItem.itemState (IState_c::Local))
-      { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
-        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8) ), &acrc_isoItem.isoName(), NULL, 8 ));
-      }
-      else
-      {
-        IsoAgLib::ProcData::remoteType_t ecuType = getTypeFromISOName(acrc_isoItem.isoName());
-        if ( ecuType != IsoAgLib::ProcData::remoteTypeUndefined )
-          stopRunningMeasurement( ecuType );
-      }
-      // else: don't care for other remote IsoItem_c
-      break;
-
-    default:
-      break;
+    IsoAgLib::ProcData::remoteType_t ecuType = getTypeFromISOName(acrc_isoItem.isoName());
+    if ( ecuType != IsoAgLib::ProcData::remoteTypeUndefined )
+      stopRunningMeasurement( ecuType );
   }
 }
+
 
 bool
 TcClient_c::processTcStatusMsg( uint8_t ui8_tcStatus, const __IsoAgLib::IsoName_c& sender )

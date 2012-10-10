@@ -19,7 +19,6 @@
 // ISOAgLib
 #include <IsoAgLib/comm/Part13_FileServer_Client/impl/fsmanager_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/util/iassert.h>
 
 // debug
@@ -114,18 +113,6 @@ FsCommand_c::~FsCommand_c()
 
   if (b_receiveFilterCreated)
   {
-    // Single-Packet
-    IsoFilter_s tempIsoFilter (*this, IsoAgLib::iMaskFilter_c( 0x3FFFFFFUL, (FS_TO_CLIENT_PGN << 8) ),
-                               &rc_csCom.getClientIdentItem().getIsoItem()->isoName(),
-                               &rc_fileserver.getIsoName(),
-                               8 );
-
-    const bool cb_isoFilterRemoved
-      = getIsoFilterManagerInstance4Comm().removeIsoFilter( tempIsoFilter );
-
-    (void) cb_isoFilterRemoved;
-    isoaglib_assert (cb_isoFilterRemoved == true);
-
     // Multi-Packet
     getMultiReceiveInstance4Comm().deregisterClient(*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN, 0x3FFFFLU, &getFileserver().getIsoName());
   }
@@ -149,15 +136,6 @@ FsCommand_c::timeEvent(void)
   {
     // Multi-Packet (completely SA->DA specific!)
     getMultiReceiveInstance4Comm().registerClientIso (*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN, 0x3FFFFLU, false, false, &getFileserver().getIsoName());
-
-    // Single-Packet (completely SA->DA specific!)
-    IsoFilter_s tempIsoFilter (*this, IsoAgLib::iMaskFilter_c( 0x3FFFFFFUL, (FS_TO_CLIENT_PGN << 8) ),
-                               &rc_csCom.getClientIdentItem().getIsoItem()->isoName(),
-                               &getFileserver().getIsoName(),
-                               8 );
-
-    isoaglib_assert (!getIsoFilterManagerInstance4Comm().existIsoFilter( tempIsoFilter ));
-    getIsoFilterManagerInstance4Comm().insertIsoFilter( tempIsoFilter, true );
 
     b_receiveFilterCreated = true;
   }
@@ -439,9 +417,15 @@ FsCommand_c::reactOnStreamStart(const ReceiveStreamIdentifier_c& /*refc_ident*/,
 
 
 bool
-FsCommand_c::processMsg( const CanPkg_c& arc_data )
+FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
 {
-  CanPkgExt_c pkg( arc_data, getMultitonInst() );
+  if( pkg.getMonitorItemForSA() != &rc_csCom.getFileserver().getIsoItem() )
+    return false;
+
+  if( pkg.getMonitorItemForDA() != rc_csCom.getClientIdentItem().getIsoItem() )
+    return false;
+
+
   if (pkg.getUint8Data(1) != ui8_tan && pkg.getUint8Data(0) != en_requestProperties)
   {
 #if DEBUG_FILESERVER

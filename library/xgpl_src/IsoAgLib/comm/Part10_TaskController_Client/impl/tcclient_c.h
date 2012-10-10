@@ -48,12 +48,13 @@ private:
   TcClient_c();
 
 public:
-  virtual ~TcClient_c() {}
-  void init( void );
-  void close( void );
+  void init();
+  void close();
 
   void timeEvent();
   bool processMsg( const CanPkg_c& arc_data );
+  void processMsgGlobal( const ProcessPkg_c& arc_data );
+  void processMsgNonGlobal( const ProcessPkg_c& arc_data );
 
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
   ProcData_c* procData( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver, bool& elementFound);
@@ -72,10 +73,6 @@ public:
 
   const IsoName_c& getISONameFromType( IsoAgLib::ProcData::remoteType_t ecuType ) const;
   IsoAgLib::ProcData::remoteType_t getTypeFromISOName( const IsoName_c& isoName ) const;
-
-#if DEBUG_SCHEDULER
-  virtual const char* getTaskName() const;
-#endif
 
   void setProcDataHandler( IsoAgLib::iProcDataHandler_c *apc_procDataHandler )
   { mpc_procDataHandler = apc_procDataHandler; }

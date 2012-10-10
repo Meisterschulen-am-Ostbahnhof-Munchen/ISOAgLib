@@ -42,8 +42,6 @@ void openSystem()
 }
 void closeSystem() {}
 
-void configWatchdog() {}
-
 int32_t getTime(void)
 {
   return os_gulGetTimeMs();

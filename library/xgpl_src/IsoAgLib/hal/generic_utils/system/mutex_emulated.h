@@ -37,10 +37,7 @@ public:
                             }
 
   int  waitAcquireAccess() {
-                              while(mi_exclusiveAccess == 1) //if locked, wait until unlocked
-                              {
-                                wdTriggern();
-                               }
+                              while(mi_exclusiveAccess == 1); //if locked, wait until unlocked
                               // we reachonly here, if unlocked
                               mi_exclusiveAccess = 1;
 

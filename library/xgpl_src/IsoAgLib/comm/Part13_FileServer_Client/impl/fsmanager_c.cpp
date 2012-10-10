@@ -17,6 +17,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iassert.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 
 // STL
 #include <iterator>
@@ -36,16 +37,16 @@ namespace __IsoAgLib {
 void
 FsManager_c::timeEvent(void)
 {
-  STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_end = v_serverInstances.end();
-  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
+  STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_end = m_servers.m_serverInstances.end();
+  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = m_servers.m_serverInstances.begin();
        it_serverInstance != it_end;
        ++it_serverInstance)
   {
     (*it_serverInstance)->timeEvent();
   }
 
-  for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = l_initializingCommands.begin();
-       it_command != l_initializingCommands.end(); )
+  for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.l_initializingCommands.begin();
+       it_command != m_commands.l_initializingCommands.end(); )
   {
     isoaglib_assert (*it_command);
     switch ((*it_command)->getFileserver().getState())
@@ -60,7 +61,7 @@ FsManager_c::timeEvent(void)
       case FsServerInstance_c::unusable:
         // Finished the initialization one way or another
         delete (*it_command);
-        it_command = l_initializingCommands.erase(it_command);
+        it_command = m_commands.l_initializingCommands.erase(it_command);
         break;
     }
   }
@@ -77,25 +78,25 @@ FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItem
   if (at_action == ControlFunctionStateHandler_c::AddToMonitorList)
   {
     FsServerInstance_c *pc_fsInstance = new FsServerInstance_c (acrc_isoItem, *this);
-    v_serverInstances.push_back (pc_fsInstance);
+    m_servers.m_serverInstances.push_back (pc_fsInstance);
   }
   else if (at_action == ControlFunctionStateHandler_c::RemoveFromMonitorList)
   {
-    for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
-         it_serverInstance != v_serverInstances.end();
+    for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = m_servers.m_serverInstances.begin();
+         it_serverInstance != m_servers.m_serverInstances.end();
          ++it_serverInstance)
     {
       // check if FsServerInstance to delete is in list
       if (acrc_isoItem.isoName() == (*it_serverInstance)->getIsoItem().isoName())
       { // There should only be one instance for an IsoName!
         // In all cases simply remove associated entries from l_initializingCommands
-        for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = l_initializingCommands.begin();
-             it_command != l_initializingCommands.end(); )
+        for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.l_initializingCommands.begin();
+             it_command != m_commands.l_initializingCommands.end(); )
         {
           if (&(*it_command)->getFileserver() == (*it_serverInstance))
           { // yep, command is connected to this FileServer.
             delete (*it_command);
-            it_command = l_initializingCommands.erase(it_command);
+            it_command = m_commands.l_initializingCommands.erase(it_command);
             // normally we could break the for loop here, too.
           }
           else
@@ -110,7 +111,7 @@ FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItem
         // now delete the instance
         delete (*it_serverInstance);
         // and remove it from the list of instances.
-        (void) v_serverInstances.erase (it_serverInstance);
+        (void) m_servers.m_serverInstances.erase (it_serverInstance);
         break;
       }
     }
@@ -123,6 +124,8 @@ FsManager_c::init()
 {
   isoaglib_assert (!initialized());
 
+  m_commands.init();
+
   getSchedulerInstance().registerTask( *this, 0 );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mc_saClaimHandler);
 
@@ -133,9 +136,9 @@ FsManager_c::init()
 FsManager_c::FsManager_c()
   : SchedulerTask_c( 100, true )
   , mc_saClaimHandler(*this)
+  , m_servers( *this )
+  , m_commands( *this )
   , v_communications()
-  , v_serverInstances()
-  , l_initializingCommands()
 {
 }
 
@@ -184,12 +187,14 @@ FsManager_c::close()
 {
   isoaglib_assert (initialized());
 
+  m_commands.close();
+
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
   getSchedulerInstance().deregisterTask(*this);
 
-  STL_NAMESPACE::for_each( l_initializingCommands.begin(), l_initializingCommands.end(), delete_object());
+  STL_NAMESPACE::for_each( m_commands.l_initializingCommands.begin(), m_commands.l_initializingCommands.end(), delete_object());
   STL_NAMESPACE::for_each( v_communications.begin(), v_communications.end(), delete_object());
-  STL_NAMESPACE::for_each( v_serverInstances.begin(), v_serverInstances.end(), delete_object());
+  STL_NAMESPACE::for_each( m_servers.m_serverInstances.begin(), m_servers.m_serverInstances.end(), delete_object());
 
   setClosed();
 }
@@ -220,7 +225,7 @@ FsManager_c::notifyOnFileserverStateChange(
       if ( !v_communications.empty() )
       {
         FsCommand_c *pc_command = new FsCommand_c(*v_communications.front(), rc_fileserver);
-        l_initializingCommands.push_back(pc_command);
+        m_commands.l_initializingCommands.push_back(pc_command);
       }
       break;
 
@@ -240,6 +245,42 @@ FsManager_c::notifyOnFileserverStateChange(
   }
 }
 
+
+bool FsManager_c::FsServerManager_c::processFsToGlobal( const CanPkgExt_c& pkg ) {
+  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it = m_serverInstances.begin(); it != m_serverInstances.end(); ++it) {
+    if( pkg.getMonitorItemForSA() == &(*it)->getIsoItem() ) {
+      (*it)->processFsToGlobal( pkg ); 
+    }
+  }
+  return true;
+}
+
+
+void FsManager_c::FsCommandManager_c::init() {
+  getIsoBusInstance( m_fsManager.getMultitonInst() ).insertFilter( *this, IsoAgLib::iMaskFilterType_c( 0x3FF0000, FS_TO_CLIENT_PGN, Ident_c::ExtendedIdent ), 8 ); 
+}
+
+
+void FsManager_c::FsCommandManager_c::close() {
+  getIsoBusInstance( m_fsManager.getMultitonInst() ).deleteFilter( *this, IsoAgLib::iMaskFilterType_c( 0x3FF0000, FS_TO_CLIENT_PGN, Ident_c::ExtendedIdent ) );
+}
+
+
+bool FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& arc_data ) {
+  CanPkgExt_c pkg( arc_data, m_fsManager.getMultitonInst() );
+  if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
+    return false;
+
+
+  if( pkg.getMonitorItemForDA() == NULL ) {
+    return m_fsManager.m_servers.processFsToGlobal( pkg );
+  }
+
+  for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = l_initializingCommands.begin(); it != l_initializingCommands.end(); ++it ) {
+    (*it)->processMsgIso( pkg );
+  }
+  return true;
+}
 
 /** C-style function, to get access to the unique FsManager_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS

@@ -54,12 +54,14 @@ bool isSystemOpened()
   return system_is_opened;
 }
 
-void configWatchdog()
+void initWatchdog( void* config )
 {
-  byte bTime = WD_MAX_TIME;
-  if( C_NO_ERR != config_wd(bTime) ) {
-    abort();
+  byte bTime = WD_OFF;
+  if( config ) {
+    bTime = *( static_cast<byte*>( config ) );
   }
+  if( C_NO_ERR != config_wd(bTime) )
+    abort();
 }
 
 } // end namespace __HAL

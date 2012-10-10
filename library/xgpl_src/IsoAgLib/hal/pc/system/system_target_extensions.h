@@ -85,14 +85,10 @@ void setHalSimulator( HALSimulator_c *sim );
 void openSystem();
 void closeSystem();
 bool isSystemOpened();
-void configWatchdog();
 
 int32_t getTime();
 int32_t getStartupTime();
 int16_t getSnr(uint8_t *snrDat);               /* serial number of target */
-
-void wdTriggern(void);
-void wdReset();
 
 int16_t  getCpuFreq(void);                 /* get the cpu frequency*/
 

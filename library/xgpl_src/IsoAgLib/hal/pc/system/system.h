@@ -30,10 +30,8 @@
 #include "isoaglibthread_c.h"
 
 #include <IsoAgLib/util/impl/util_funcs.h>
-#include "../can/can_typedef.h"
 
 #include <cstdio>
-
 
 namespace HAL
 {
@@ -43,11 +41,11 @@ namespace HAL
 
   inline bool isSystemOpened() { return __HAL::isSystemOpened(); }
 
-  inline void configWatchdog() { __HAL::configWatchdog(); }
+  inline void initWatchdog( void* ) {}
 
-  inline void wdReset() { __HAL::wdReset(); }
+  inline void closeWatchdog() {}
 
-  inline void wdTriggern() { __HAL::wdTriggern(); }
+  inline void triggerWatchdog() {}
 
   inline int32_t getTime() { return __HAL::getTime(); }
 

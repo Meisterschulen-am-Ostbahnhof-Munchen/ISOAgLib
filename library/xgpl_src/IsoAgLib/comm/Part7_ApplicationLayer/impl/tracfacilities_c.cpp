@@ -88,7 +88,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setFilterCreated();
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (TRACTOR_FACILITIES_PGN<<8) ), 8, true);
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (TRACTOR_FACILITIES_PGN<<8) ), 8 );
     }
   }
 

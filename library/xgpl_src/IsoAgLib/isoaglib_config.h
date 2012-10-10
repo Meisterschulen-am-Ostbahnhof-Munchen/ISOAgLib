@@ -55,13 +55,9 @@
 /**
  * \name Set buffer sizes for CAN handling
  */
-/*@{*/
-#ifndef CONFIG_CAN_OBJ_CNT
-#  define CONFIG_CAN_OBJ_CNT 14
-#endif
 
-#ifndef CONFIG_CAN_SEND_BUFFER_SIZE
-#  define CONFIG_CAN_SEND_BUFFER_SIZE 20
+#ifndef CONFIG_CAN_NO_SEND_BUFFER_INFO_FALLBACK_MULTISEND
+#  define CONFIG_CAN_NO_SEND_BUFFER_INFO_FALLBACK_MULTISEND 20
 #endif
 
 /** configure the MULTI-PACKET parameters (TP/ETP/FP/Chunks)
@@ -72,6 +68,13 @@
 #  define CONFIG_MULTI_RECEIVE_CHUNK_SIZE_IN_PACKETS 16
 #endif
 
+
+/** uppper limit for multisend to calculate the amount of frames 
+ * to send
+ */
+#ifndef CONFIG_MULTI_SEND_MAX_PKG_PER_TIMEEVENT 
+#  define CONFIG_MULTI_SEND_MAX_PKG_PER_TIMEEVENT 20
+#endif
 /** configures the maximum amount of packets to be allowed by all "CTS" messages.
     So you need to have at least a CAN-buffer for this many packets,
     because the clients will burst them and you cannot guarantee to handle
@@ -131,34 +134,6 @@
 #ifndef CAN_FIFO_EXPONENT_BUFFER_SIZE
 #  define CAN_FIFO_EXPONENT_BUFFER_SIZE 8
 #endif
-
-/** When during the reconfiguration only a number of place less than CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL
-* are free in the CAN FIFO BUFFER, we are in  critical Filled level and also during the reconfiguration
-* the Canio_c::processMsg it is called
-*/
-
-#ifndef CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL
-#  define CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL 9
-#endif
-
-/** The Variable is the extimated time occurring to the productor for writing one buffer element.
-* NOTE: the measuring unit of this element is microsecond for the target ESX and millisend for the PC
-* Please refers to the measurement unit returned by the function getCurrentTime()
-*/
-
-#ifndef CAN_FIFO_WRITING_TIME
-#  define CAN_FIFO_WRITING_TIME 100
-#endif
-
-
-/** In the CAN FIFO reading, if we detect that the buffer element,  where we want to read, has been writing
-* right now, if the CAN_FIFO_READ_WAITING is defined, we wait a time= CAN_FIFO_WRITING_TIME and then read again.
-*/
-
-#ifdef CONFIG_CAN_FIFO_READ_WAITING
-#   define CAN_FIFO_READ_WAITING
-#endif
-
 
 /* ******************************************************** */
 /**

@@ -158,7 +158,7 @@ class FsCommand_c : CanCustomer_c
       * process received messages. decodes the received responses and forwards it by calling the XXXResponse methods of the
       * FsClientServerCommunication_c.
       */
-    bool processMsg( const CanPkg_c& arc_data );
+    bool processMsgIso( const CanPkgExt_c& pkg );
 
     /**
       * Method called by FsClientServerCommunciation_c. After the response of get current directory, the fileserver is considered to

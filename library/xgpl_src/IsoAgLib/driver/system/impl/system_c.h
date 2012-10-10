@@ -37,12 +37,17 @@ namespace __IsoAgLib {
       void close();
 
       /** init the hardware watchdog */
-      static void initWd() {
-        HAL::configWatchdog();
+      static void initWatchdog( void* config) {
+        HAL::initWatchdog( config );
+      }
+
+      /** init the hardware watchdog */
+      static void closeWatchdog() {
+        HAL::closeWatchdog();
       }
 
       /** trigger the watchdog */
-      static void triggerWd() { HAL::wdTriggern(); }
+      static void triggerWatchdog() { HAL::triggerWatchdog(); }
 
       /** deliver lasted time from start of system in msec.
         (use BIOS function)

@@ -56,13 +56,18 @@ bool isSystemOpened( void )
   return system_is_opened;
 }
 
-void configWatchdog()
+void initWatchdog( void* config ) 
 {
   tWDConfig t_watchdogConf = {
       WD_MAX_TIME,
       UD_MIN,
       UD_MAX
   };
+
+  if( config ) {
+    t_watchdogConf = *static_cast<tWDConfig*>( config );
+
+  }
 
   const int16_t retval = config_wd( &t_watchdogConf );
 

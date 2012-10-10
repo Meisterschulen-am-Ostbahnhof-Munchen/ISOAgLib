@@ -51,15 +51,9 @@ VtClient_c::init()
   getSchedulerInstance().registerTask( *this, 0 );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
-  bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VT_TO_GLOBAL_PGN<<8) ), 8, false);
-  bool const cb_set1 = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (LANGUAGE_PGN<<8) ), 8, false);
-  bool const cb_set2 = NULL != getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ECU_TO_GLOBAL_PGN<<8) ), 8, false);
-
-  if (cb_set1 || cb_set2)
-    b_atLeastOneFilterAdded = true;
-
-  if (b_atLeastOneFilterAdded)
-    getIsoBusInstance4Comm().reconfigureMsgObj();
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, LANGUAGE_PGN<<8, Ident_c::ExtendedIdent ), 8 );
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, VT_TO_ECU_PGN << 8, Ident_c::ExtendedIdent ), 8 );
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ACKNOWLEDGEMENT_PGN << 8, Ident_c::ExtendedIdent ), 8 );
 
   setInitialized();
 }
@@ -76,10 +70,11 @@ VtClient_c::close()
     delete ml_vtServerInst.back();
     ml_vtServerInst.pop_back();
   }
-  
-  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_GLOBAL_PGN << 8)));
-  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (LANGUAGE_PGN << 8)));
-  
+
+  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, LANGUAGE_PGN << 8, Ident_c::ExtendedIdent ) );
+  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, VT_TO_ECU_PGN << 8, Ident_c::ExtendedIdent  ) );
+  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ACKNOWLEDGEMENT_PGN << 8, Ident_c::ExtendedIdent ) );
+
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
   getSchedulerInstance().deregisterTask(*this);
 
@@ -241,25 +236,52 @@ VtClient_c::timeEvent(void)
 bool
 VtClient_c::processMsg( const CanPkg_c& arc_data )
 {
-
   CanPkgExt_c c_data( arc_data, getMultitonInst() );
+  if( ( ! c_data.isValid() ) || ( c_data.getMonitorItemForSA() == NULL ) )
+    return false;
 
+  if( c_data.getMonitorItemForDA() != NULL ) {
+    processMsgNonGlobal( c_data );
+  } else {
+    processMsgGlobal( c_data );
+  }
+  return true;
+}
+
+void VtClient_c::processMsgNonGlobal( const CanPkgExt_c& arc_data ) {
+
+  isoaglib_assert( ( arc_data.isoPurePgn() == VT_TO_ECU_PGN ) || ( arc_data.isoPurePgn() == ACKNOWLEDGEMENT_PGN ) );
+
+  for ( STL_NAMESPACE::vector<VtClientConnection_c*>::iterator it = m_vtConnections.begin(); it != m_vtConnections.end(); ++it ) {
+    if( ( arc_data.getMonitorItemForDA() == (*it)->getIdentItem().getIsoItem() )  &&
+        ( arc_data.getMonitorItemForSA() == &(*it)->getVtServerInst().getIsoItem() ) )
+      switch( arc_data.isoPurePgn() ) {
+        case ACKNOWLEDGEMENT_PGN:
+          (*it)->processMsgAck( arc_data );
+        case VT_TO_ECU_PGN:
+          (*it)->processMsgVtToEcu( arc_data );
+      }
+  }
+}
+
+
+void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
   // VT_TO_GLOBAL is the only PGN we accept without VT being active, because it marks the VT active!!
   STL_NAMESPACE::vector<VtServerInstance_c*>::iterator lit_vtServerInst;
   uint8_t ui8_index;
 
   /// -->VT_TO_GLOBAL_PGN<-- ///
-  if ((c_data.isoPgn() & 0x3FFFFLU) == VT_TO_GLOBAL_PGN)
+  if ((arc_data.isoPgn() & 0x3FFFFLU) == VT_TO_GLOBAL_PGN)
   { // iterate through all registered VtServerInstances and process msg if vtSourceAddress == isoSa
-    uint8_t const cui8_cmdByte = c_data.getUint8Data (1-1);
+    uint8_t const cui8_cmdByte = arc_data.getUint8Data (1-1);
 
     if (cui8_cmdByte == 0xFE) // Command: "Status", Parameter: "VT Status Message"
     {
       for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
       {
-        if ((*lit_vtServerInst)->getVtSourceAddress() == c_data.isoSa()) // getVtSourceAddress gets the SA from the IsoItem, so it's the current one...
+        if ((*lit_vtServerInst)->getVtSourceAddress() == arc_data.isoSa()) // getVtSourceAddress gets the SA from the IsoItem, so it's the current one...
         {
-          (*lit_vtServerInst)->setLatestVtStatusData( c_data );
+          (*lit_vtServerInst)->setLatestVtStatusData( arc_data );
 
           // iterate through all registered VtClientServerCommunication and notify their pools with "eventVtStatusMsg"
           for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
@@ -272,7 +294,7 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
               }
             }
           }
-          return true; // VT Status Message is NOT of interest for anyone else!
+          return;
         }
       }
     }
@@ -282,36 +304,37 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
       {
         if (m_vtConnections[ui8_index])
         {
-          m_vtConnections[ui8_index]->notifyOnAuxInputStatus( c_data );
+          m_vtConnections[ui8_index]->notifyOnAuxInputStatus( arc_data );
         }
       }
     }
     else if (cui8_cmdByte == 0x26) // Command: "Auxiliary Control Type 2", Parameter: "Auxiliary Input Status"
     { 
       // iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that input status!
-      notifyAllConnectionsOnAux2InputStatus( c_data );
+      notifyAllConnectionsOnAux2InputStatus( arc_data );
+
     }
-    return true;
+    return;
   }
 
-  if ((c_data.isoPgn() & 0x3FFFFLU) == ECU_TO_GLOBAL_PGN)
+  if ((arc_data.isoPgn() & 0x3FFFFLU) == ECU_TO_GLOBAL_PGN)
   {
-    uint8_t const cui8_cmdByte = c_data.getUint8Data (1-1);
+    uint8_t const cui8_cmdByte = arc_data.getUint8Data (1-1);
     if (cui8_cmdByte == 0x23) // Command: "Auxiliary Control", Parameter: "input maintenance message"
     { // iterate through all registered VtClientServerCommunication and notify them
-      notifyAllConnectionsOnAux2InputMaintenance(c_data);
+      notifyAllConnectionsOnAux2InputMaintenance( arc_data );
     }
   }
 
 
   /// -->LANGUAGE_PGN<-- ///
-  if ((c_data.isoPgn() & 0x3FFFFLU) == LANGUAGE_PGN)
+  if ((arc_data.isoPgn() & 0x3FFFFLU) == LANGUAGE_PGN)
   {
     VtServerInstance_c* pc_server = NULL;
     // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
     for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
     {
-      if ((*lit_vtServerInst)->getVtSourceAddress() == c_data.isoSa())
+      if ((*lit_vtServerInst)->getVtSourceAddress() == arc_data.isoSa())
       {
         pc_server = *lit_vtServerInst;
         break;
@@ -320,7 +343,7 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
 
     if (pc_server != NULL)
     {
-      pc_server->setLocalSettings( c_data );
+      pc_server->setLocalSettings( arc_data );
 
       // notify all connected vtCSCs
       for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
@@ -335,10 +358,7 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
       }
     }
     // else: Language PGN from non-VtServerInstance - ignore
-    return true;
   }
-
-  return false; /** shouldn't reach here as all filters are handled and returned above */
 }
 
 

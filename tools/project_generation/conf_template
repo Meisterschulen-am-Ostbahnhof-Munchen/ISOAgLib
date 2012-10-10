@@ -79,8 +79,6 @@ APP_SRC_FILE="ecu_main.cpp"
 # Optionally set individual DEFINES
 # Examplary IsoAgLib debugging defines include
 # - DEBUG for different internal IsoAgLib information
-# - DEBUG_CAN_BUFFER_FILLING for RS232 output of MAX amount of buffered CAN messages
-#   (important to decide on amount of items in the BIOS/OS CAN receive buffer)
 # Also available to be used:
 # - ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
 # - ENABLE_NMEA_2000_MULTI_PACKET
@@ -124,13 +122,6 @@ USE_TARGET_SYSTEM="pc_win32"
 # default is for most targets: LITTLE -> USE_LITTLE_ENDIAN_CPU=1
 # typical cases for BIG ENDIAN are some ARM and mostly all Motorola 68k and PowerPC CPUs
 # USE_LITTLE_ENDIAN_CPU=1
-
-# Select enhanced CAN processing which is only available for some
-# CAN architectures, where the OS/BIOS does already provide selective
-# receive with individual <filters, mask> combinations
-# (Note: This setting will be moved to the HAL soon
-#  because it's actually dependent on the used platform)
-PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
 # Select wanted type of CAN driver connection:
 # embedded targets: "sys"

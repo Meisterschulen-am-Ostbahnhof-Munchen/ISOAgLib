@@ -28,7 +28,6 @@ System_c::init()
   isoaglib_assert( ! HAL::isSystemOpened() );
   HAL::openSystem();
   HAL::powerHold( true );
-  initWd();
 }
 
 void

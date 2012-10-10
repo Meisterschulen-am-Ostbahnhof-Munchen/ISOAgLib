@@ -225,8 +225,6 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
       ui16_restLen -= ui16_maxSendItemSize;
       // update start send pos
       ui16_startSendPos += ui16_maxSendItemSize;
-      // triger watchdog
-      HAL::wdTriggern();
     }
   }
 

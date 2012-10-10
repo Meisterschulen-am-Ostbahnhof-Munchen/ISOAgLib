@@ -198,17 +198,17 @@ public:
   MULTITON_PAR_BASE_DEF(IdentItem_c)
 
 private:
-  friend class iIsoMonitor_c;
-  friend class iProcData_c;
-  friend class iFsManager_c;
-  friend class iVtClient_c;
-  friend class iVtClientConnection_c;
-  friend class iDevPropertyHandler_c;
-  friend class __IsoAgLib::VtClient_c;
-  friend class iProprietaryMessageHandler_c;
-  friend class iProprietaryMessageClient_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
-  friend class __IsoAgLib::ProprietaryMessageClient_c;
+  friend class __IsoAgLib::VtClient_c;
+  friend class iDevPropertyHandler_c;
+  friend class iFsManager_c;
+  friend class iIsoMonitor_c;
+  friend class iIsoTerminal_c;
+  friend class iProcData_c;
+  friend class iProprietaryMessageA_c;
+  friend class iProprietaryMessageB_c;
+  friend class iProprietaryMessageClient_c;
+  friend class iProprietaryMessageHandler_c;
   friend class iTimePosGps_c;
   friend class iTracAux_c;
   friend class iTracCert_c;
@@ -221,6 +221,8 @@ private:
   friend class iTracMove_c;
   friend class iTracPTOSetPoint_c;
   friend class iTracPTO_c;
+  friend class iVtClientConnection_c;
+  friend class iVtClient_c;
 };
 
 } // IsoAgLib

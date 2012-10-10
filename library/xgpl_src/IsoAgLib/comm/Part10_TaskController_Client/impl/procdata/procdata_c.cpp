@@ -96,7 +96,7 @@ ProcData_c::timeEvent( uint16_t& rui16_nextTimePeriod )
 
 
 void
-ProcData_c::processMsg( ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType )
+ProcData_c::processMsg( const ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType )
 {
   isoaglib_assert( DDI() == pkg.mui16_DDI );
   

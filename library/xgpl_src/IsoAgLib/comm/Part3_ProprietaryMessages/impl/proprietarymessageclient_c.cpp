@@ -14,145 +14,86 @@
 #include "proprietarymessageclient_c.h"
 #include "proprietarymessagehandler_c.h"
 
-#include <IsoAgLib/driver/can/imaskfilter_c.h>
 
 namespace __IsoAgLib
 {
+  bool ProprietaryMessageA_c::send() {
 
-  /** default constructor
-      initializes the parameter for filter and mask to "novalue"
-    */
-  ProprietaryMessageClient_c::ProprietaryMessageClient_c()
-    : mui32_canMask(MASK_INVALID),
-      mui32_canFilter(MASK_INVALID),                                                
-      mc_isonameRemoteECU(screfc_noIsoName), 
-      mpc_localIdent(spc_nolocalIdent),                                             
-      mui32_sendPeriodicMsec(0),
-      mui32_nextSendTimeStamp(0),
-      men_sendSuccess(SendStream_c::SendSuccess)
-  {
-    /* register the client */
-    getProprietaryMessageHandlerInstance4Comm().registerProprietaryMessageClient(this);
-  }
-
-
-  /** second constructor
-      initializes the parameter to actual values
-    */
-  ProprietaryMessageClient_c::ProprietaryMessageClient_c( const IsoAgLib::iMaskFilter_c& acrc_maskFilter,
-                                                          const IsoName_c& acrc_rremoteECU,
-                                                          const IdentItem_c& apc_localIdent)
-    : mpc_localIdent(NULL),
-      mui32_sendPeriodicMsec(0),
-      mui32_nextSendTimeStamp(0),
-      men_sendSuccess(SendStream_c::SendSuccess)
-  {
-    /* register the client */
-    getProprietaryMessageHandlerInstance4Comm().registerProprietaryMessageClient(this);
-    /* define receive filter */
-    defineReceiveFilter( acrc_maskFilter, acrc_rremoteECU, &apc_localIdent);
-  }
-
-  ProprietaryMessageClient_c::~ProprietaryMessageClient_c()
-  {
-    /* deregister the client */
-    getProprietaryMessageHandlerInstance4Comm().deregisterProprietaryMessageClient(this);
-  }
-
-  /** will be used by ProprietaryMessageHandler_c for definition of CAN-Filter
-      trigger an update of CAN receive filters with call of
-        - ProprietaryMessageHandler_c::triggerClientDataUpdate()
-      @return true when wanted PGN is in allowed range
-    */
-  bool ProprietaryMessageClient_c::defineReceiveFilter( const IsoAgLib::iMaskFilter_c& acrc_maskFilter, const IsoName_c& acrc_rremoteECU, const IdentItem_c* apc_localIdent)
-  {
-    // require a minimum mask, so that no other messages could be retrieved, but only PROP A/A2/B
-    if ( ( acrc_maskFilter.empty() &&
-           (acrc_rremoteECU == screfc_noIsoName) &&
-           (apc_localIdent == spc_nolocalIdent)
-         )
-         ||
-         ( ( ((acrc_maskFilter.getMask() & 0x2FF0000LU) == 0x2FF0000LU) && ((acrc_maskFilter.getFilter() & 0x2FF0000LU) == 0x0EF0000LU) ) || /** Proprietary A/A2 may be receivable with one filter/mask combination! */
-           ( ((acrc_maskFilter.getMask() & 0x3FF0000LU) == 0x3FF0000LU) && ((acrc_maskFilter.getFilter() & 0x3FF0000LU) == 0x0FF0000LU) )    /** Proprietary B */
-         )
-       )
+    if (getDataSend().getLen() <= 8)
     {
-      /** set actual values for filter, mask, remote and local ident */
-      mui32_canMask = acrc_maskFilter.getMask();
-      mui32_canFilter = acrc_maskFilter.getFilter();
-      mc_isonameRemoteECU = acrc_rremoteECU;
-      mpc_localIdent = apc_localIdent;
+      CanPkgExt_c pkg;
 
-      /** force an update */
-      getProprietaryMessageHandlerInstance4Comm().triggerClientDataUpdate (*this, false);
-      return(true);
+      pkg.setIsoPri( 6 );
+      pkg.setIsoDp( m_dp );
+      pkg.setIsoPgn( PROPRIETARY_A_PGN );
+      pkg.setISONameForDA( m_remote );
+      pkg.setMonitorItemForSA( m_ident.getIsoItem() );
+      pkg.setDataFromString ( getDataSend().getDataStream(), static_cast<uint8_t>( getDataSend().getLen() ) );
+      getIsoBusInstance( m_ident.getMultitonInst() ) << pkg;
+      return true;
     }
-    return(false);
-  }
-
-  /** function to tell "i will send data" to the handler */
-  void ProprietaryMessageClient_c::sendDataToHandler()
-  {
-    getProprietaryMessageHandlerInstance4Comm().sendData(*this);
-    // See if we have to repeat the send somewhen, if so, let the
-    // Handler know it so it can adjust its timeInterval accordingly.
-    if (mui32_sendPeriodicMsec != 0)
-    { // periodic sending is requested
-      mui32_nextSendTimeStamp = HAL::getTime() + mui32_sendPeriodicMsec;
-      getProprietaryMessageHandlerInstance4Comm().updateSchedulingInformation();
+    else
+    { /** multi-packet */
+      /** variable should be evaluated */
+      // const bool cb_couldStartMultiSend =
+      // we could catch the information if the sending succeeded, but what to do with it anyway?
+      return getMultiSendInstance( m_ident.getMultitonInst() ).sendIsoTarget(
+         m_ident.isoName(),
+         m_remote,
+         getDataSend().getDataStream(0),
+         getDataSend().getLen(),
+         getDataSend().getIdent() >> 8,
+         this );
     }
   }
 
-  /** set time period in milliseconds for repeated send of the data that has been stored in c_sendData()
-      only one message is sent when period == 0
-    */
-  void ProprietaryMessageClient_c::setSendPeriodMsec(uint32_t aui32_sendPeriodMsec)
-  {
-    // notify Handler because we may be next that need sending, so it may has to reschedule!
-    /** see if we have to repeat the send somewhen and have to adjust our timeInterval accordingly? */
-    if (aui32_sendPeriodMsec != 0)
-    { // periodic sending is requested
-      if (mui32_sendPeriodicMsec != 0)
-      { // periodic sending was already activated
-        mui32_nextSendTimeStamp -= mui32_sendPeriodicMsec;
-        mui32_nextSendTimeStamp += aui32_sendPeriodMsec;
-      }
-      else
-      { // no periodic sending was activated before, so just set the time to the next one!
-        /// Currently the next message is not being sent out immediately,
-        /// an explicit call to "sendDataToHandler" would be needed.
-        mui32_nextSendTimeStamp = HAL::getTime() + mui32_sendPeriodicMsec;
-      }
+  void ProprietaryMessageA_c::init() {
+    getProprietaryMessageHandlerInstance( m_ident.getMultitonInst() ).registerProprietaryMessage( *this );
+  }
+
+
+  void ProprietaryMessageA_c::close() {
+    getProprietaryMessageHandlerInstance( m_ident.getMultitonInst() ).deregisterProprietaryMessage( *this );
+  }
+
+
+  bool ProprietaryMessageB_c::send() {
+
+    if (getDataSend().getLen() <= 8)
+    {
+      CanPkgExt_c pkg;
+
+      pkg.setIsoPri( 6 );
+      pkg.setIsoDp( m_dp );
+      pkg.setIsoPgn( ( getDataSend().getIdent() << 8 ) & 0x00FFFF00  );
+      pkg.setISONameForDA( m_remote );
+      pkg.setMonitorItemForSA( m_ident.getIsoItem() );
+      pkg.setDataFromString ( getDataSend().getDataStream(), static_cast<uint8_t>( getDataSend().getLen() ) );
+      getIsoBusInstance( m_ident.getMultitonInst() ) << pkg;
+      return true;
     }
-    // set time period in msec
-    mui32_sendPeriodicMsec = aui32_sendPeriodMsec;
-    // notify scheduler to re-thing his scheduling after we've changed something now
-    getProprietaryMessageHandlerInstance4Comm().updateSchedulingInformation();
+    else
+    { /** multi-packet */
+      /** variable should be evaluated */
+      // const bool cb_couldStartMultiSend =
+      // we could catch the information if the sending succeeded, but what to do with it anyway?
+      return getMultiSendInstance( m_ident.getMultitonInst() ).sendIsoTarget(
+         m_ident.isoName(),
+         m_remote,
+         getDataSend().getDataStream(0),
+         getDataSend().getLen(),
+         getDataSend().getIdent() >> 8,
+         this );
+    }
+  }
+
+  void ProprietaryMessageB_c::init() {
+    getProprietaryMessageHandlerInstance( m_ident.getMultitonInst() ).registerProprietaryMessage( *this );
   }
 
 
-  IsoFilter_s
-  ProprietaryMessageClient_c::getCurrentFilter (CanCustomer_c &arc_customer)
-  {
-    const IsoName_c* localIsoName = (
-                                        (mpc_localIdent == NULL)
-                                        ||
-                                        (((mui32_canFilter & 0x3FF0000LU) >> 8) == PROPRIETARY_B_PGN)
-                                       )
-                                        ? NULL // if we have no IdentItem, we have no IsoName
-                                        : &(mpc_localIdent->isoName());
-
-    // create new IsoFilter
-    return IsoFilter_s (arc_customer,
-                        IsoAgLib::iMaskFilter_c( mui32_canMask, mui32_canFilter ),
-                        localIsoName,
-                        &mc_isonameRemoteECU);
-  }
-
-  void
-  ProprietaryMessageClient_c::reactOnStateChange(const SendStream_c& sendStream)
-  {
-    men_sendSuccess = sendStream.getSendSuccess();
+  void ProprietaryMessageB_c::close() {
+    getProprietaryMessageHandlerInstance( m_ident.getMultitonInst() ).deregisterProprietaryMessage( *this );
   }
 
 };
