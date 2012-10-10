@@ -12,7 +12,6 @@ find_program(CTAGS ctags)
 project(${INSERT_CMAKE_PROJECT})
 
 add_definitions(${INSERT_CMAKE_DEFINITIONS})
-set( CMAKE_CXX_FLAGS "-fno-exceptions -fno-rtti -Wall -Wextra -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wpointer-arith" )
 
 source_group(app_source FILES ${INSERT_CMAKE_APP_SOURCE_GROUP})
 source_group(app_header FILES ${INSERT_CMAKE_APP_HEADER_GROUP})
