@@ -74,23 +74,13 @@ class iProprietaryBus_c {
   { return __IsoAgLib::getCanInstance4Prop().existFilter(ar_customer, acrc_filterMask, NULL); }
 
   /**
-    create a Filter Box with specified at_mask/at_filter
-    on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
-    ab_reconfigImmediate == true -> useful for
-    avoiding unneeded reconfiguration during
-    sequence of FilterBox_c insertions;
-    uses BIOS functions
+    create a Filter Box with specified at_mask/at_filter on ui8_busNr
 
-    possible errors:
-        * Err_c::badAlloc on not enough memory for new FilterBox
-          instance or for new configured MsgObj_c's
     @see IsoAgLib::iCANCustomer
     @param ar_customer reference to IsoAgLib::iCanCustomer_c  which needs
            filtered messages (-> on received msg call
            ar_customer.processMsg())
     @param acrc_filterMask individual filter mask set
-    @param ab_reconfigImmediate true -> all Filter objects are reconfigured
-           to according CAN hardware MsgObj after creating this filter
     @return true -> inserting and if wanted reconfiguration are
           performed without errors
     @exception badAlloc
@@ -98,8 +88,7 @@ class iProprietaryBus_c {
   bool insertFilter(
     IsoAgLib::iCanCustomer_c& ar_customer,
     IsoAgLib::iMaskFilterType_c acrc_filterMask,
-    int ai_dlcForce,
-    bool ab_reconfigImmediate)
+    int ai_dlcForce )
   {
     return ( __IsoAgLib::getCanInstance4Prop().insertFilter(
         ar_customer,

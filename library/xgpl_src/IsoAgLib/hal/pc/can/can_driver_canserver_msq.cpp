@@ -192,7 +192,7 @@ namespace HAL {
   }
 
 
-  bool canState( unsigned channel, canState_t& state ) {
+  bool canState( unsigned /* channel */, canState_t& state ) {
     state = e_canNoError;
     return true;
   }
@@ -283,17 +283,17 @@ namespace HAL {
 #endif
 
 
-  int canTxQueueFree( unsigned channel ) {
+  int canTxQueueFree( unsigned /* channel */ ) {
     return -1; // unsupported
   }
 
 
-  bool defineRxFilter( uint32_t id, uint32_t mask ) {
+  bool defineRxFilter( uint32_t /* id */, uint32_t /* mask */ ) {
     return false;
   }
 
 
-  bool deleteRxFilter( uint32_t id, uint32_t mask ) {
+  bool deleteRxFilter( uint32_t /* id */, uint32_t /* mask */ ) {
     return false;
   }
 

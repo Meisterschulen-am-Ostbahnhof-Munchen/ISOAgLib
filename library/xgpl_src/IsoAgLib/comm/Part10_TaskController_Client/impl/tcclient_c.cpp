@@ -172,8 +172,6 @@ void TcClient_c::processMsgGlobal( const ProcessPkg_c& arc_data ) {
 
 
 void TcClient_c::processMsgNonGlobal( const ProcessPkg_c& pkg ) {
-  // use remoteType_t for the remote item
-  const IsoAgLib::ProcData::remoteType_t ecuType = getTcClientInstance4Comm().getTypeFromISOName( pkg.getMonitorItemForSA()->isoName() );
 
   // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
   if ( ( pkg.men_command == ProcessPkg_c::requestConfiguration )
