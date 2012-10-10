@@ -39,7 +39,7 @@ namespace HAL
 
   inline bool isSystemOpened() { return __HAL::isSystemOpened(); }
 
-  inline void initWatchdog( void* config ) { __HAL::configWatchdog( config ); }
+  inline void initWatchdog( void* config ) { __HAL::initWatchdog( config ); }
 
   inline void closeWatchdog() {}
 
