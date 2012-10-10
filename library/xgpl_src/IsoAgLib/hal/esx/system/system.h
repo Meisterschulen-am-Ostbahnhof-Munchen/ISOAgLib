@@ -48,7 +48,7 @@ namespace HAL
 
   inline void closeWatchdog() {}
 
-  inline void triggerWatchdog() { __HAL::triggerWatchdog() }
+  inline void triggerWatchdog() { __HAL::triggerWatchdog(); }
 
   inline bool isSystemOpened() { return __HAL::isSystemOpened(); }
 
