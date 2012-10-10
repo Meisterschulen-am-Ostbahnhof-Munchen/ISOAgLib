@@ -177,7 +177,7 @@ int main( int argc, char *argv[] )
   getISchedulerInstance().init();
 
   // Initialize CAN-Bus
-  getCanInstance().init (params.i_channel, 250, Ident_c::ExtendedIdent); // CAN-Bus (with defaulting 250 kbit)
+  getCanInstance().init (params.i_channel, 250 ); // CAN-Bus (with defaulting 250 kbit)
 
   CanPkg_c pkg;
 
