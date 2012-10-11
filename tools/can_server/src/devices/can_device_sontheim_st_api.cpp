@@ -43,7 +43,6 @@ typedef int HINSTANCE;
 
 #include "wrapper_for_can_server_interface.h"
 #include "can_server_common.h"
-#include "can_target_extensions.h"
 #include <assert.h>
 
 using namespace __HAL;
