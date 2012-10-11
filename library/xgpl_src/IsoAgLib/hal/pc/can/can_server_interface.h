@@ -16,7 +16,8 @@
 #include <cstring>
 #include <string.h>
 #include <vector>
-#include <stdint.h>
+#include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 //#define DEBUG_CAN 1
 
