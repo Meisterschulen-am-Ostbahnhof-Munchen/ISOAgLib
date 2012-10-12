@@ -62,7 +62,6 @@ public:
 
 
   enum TypeFatal_en {
-    HalCanConfig,
     TypeFatalSize
   };
 
