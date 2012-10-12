@@ -74,6 +74,9 @@ namespace __IsoAgLib {
 
   void
   Flexible4ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len ) {
+    if( aui8_len == 0 )
+      return;
+
     isoaglib_assert ( ( apui8_srcStream != NULL ) && ( ( aui8_len+aui8_offset )<=4 ) );
     CNAMESPACE::memcpy ( uint8+aui8_offset, apui8_srcStream, aui8_len );
   }
@@ -88,6 +91,9 @@ namespace __IsoAgLib {
 
   void
   Flexible8ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len ) {
+    if( aui8_len == 0 )
+      return;
+
     isoaglib_assert ( ( apui8_srcStream != NULL ) && ( ( aui8_len+aui8_offset )<=8 ) );
     CNAMESPACE::memcpy ( uint8+aui8_offset, apui8_srcStream, aui8_len );
   }
