@@ -278,8 +278,9 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   RS232IO_c& RS232IO_c::operator<<(uint32_t aui32_data)
   {
     char pc_data[20];
+    const long unsigned int t = aui32_data;
     // sprintf print value as text to uint8_t string and terminate it with '\0'
-    CNAMESPACE::sprintf(pc_data, "%lu", aui32_data);
+    CNAMESPACE::sprintf(pc_data, "%lu", t );
 
     return operator<<(pc_data);
   }
