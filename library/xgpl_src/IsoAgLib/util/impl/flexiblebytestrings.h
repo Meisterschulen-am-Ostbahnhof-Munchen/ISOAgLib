@@ -38,14 +38,16 @@ namespace __IsoAgLib {
 
       Flexible4ByteString_c( const uint8_t* src = NULL );
       void setDataFromString( const uint8_t* src, uint8_t aui8_len = 4 ) {
+        if( aui8_len == 0 )
+          return;
         isoaglib_assert( src );
         CNAMESPACE::memcpy( uint8, src, aui8_len );
-      };
+      }
 
       void getDataToString( uint8_t* dest, uint8_t aui8_len = 4 ) const {
         isoaglib_assert( dest );
         CNAMESPACE::memcpy( dest, uint8, aui8_len );
-      };
+      }
 
       void setDataFromString( uint8_t aui8_offset, const uint8_t* src, uint8_t aui8_len = 4 );
       void getDataToString( uint8_t aui8_offset, uint8_t* dest, uint8_t aui8_len = 4 ) const;
@@ -190,13 +192,17 @@ namespace __IsoAgLib {
       Flexible8ByteString_c( const uint8_t* src = NULL );
 
       void setDataFromString( const uint8_t* src, uint8_t aui8_len = 8 ) {
+        if( aui8_len == 0 )
+          return;
+
         isoaglib_assert( src );
         CNAMESPACE::memcpy( uint8, src, aui8_len );
-      };
+      }
+
       void getDataToString( uint8_t* dest, uint8_t aui8_len = 8 ) const {
         isoaglib_assert( dest );
         CNAMESPACE::memcpy( dest, uint8, aui8_len );
-      };
+      }
 
       void setDataFromString( uint8_t aui8_offset, const uint8_t* src, uint8_t aui8_len = 8 );
       void getDataToString( uint8_t aui8_offset, uint8_t* dest, uint8_t aui8_len = 8 ) const;

@@ -102,10 +102,10 @@ CanPkg_c::set(
   int32_t ai32_time,
   Ident_c::identType_t at_type)
 {
+  mui8_len = (aui8_len<9)?aui8_len:8;
   mc_data.setDataFromString( apb_data, mui8_len );
   mi32_time = ai32_time;
   mc_ident.set(at_ident, at_type);
-  mui8_len = (aui8_len<9)?aui8_len:8;
 }
 
 
@@ -114,12 +114,8 @@ CanPkg_c::setDataFromString(
   const uint8_t* apb_data, 
   uint8_t aui8_len)
 {
-  if ( aui8_len > 0 )
-  { // there is something to set - this function might be called from some generic algorithms which rely
-    // on the underlying functions to handle zero-lenght properly
-    mui8_len = (aui8_len<9)?aui8_len:8;
-    mc_data.setDataFromString( apb_data, mui8_len);
-  }
+  mui8_len = (aui8_len<9)?aui8_len:8;
+  mc_data.setDataFromString( apb_data, mui8_len);
 }
 
 
@@ -129,13 +125,9 @@ CanPkg_c::setDataFromString(
   const uint8_t* apb_data, 
   uint8_t aui8_len)
 {
-  if ( aui8_len > 0 )
-  { // there is something to set - this function might be called from some generic algorithms which rely
-    // on the underlying functions to handle zero-lenght properly
-    const unsigned int cui_copyByteCnt = (aui8_len+aui8_targetPositionOffset <= 8)?aui8_len:(8-aui8_targetPositionOffset);
-    mui8_len = aui8_targetPositionOffset + cui_copyByteCnt;
-    mc_data.setDataFromString( aui8_targetPositionOffset, apb_data, cui_copyByteCnt);
-  }
+  const unsigned int cui_copyByteCnt = (aui8_len+aui8_targetPositionOffset <= 8)?aui8_len:(8-aui8_targetPositionOffset);
+  mui8_len = aui8_targetPositionOffset + cui_copyByteCnt;
+  mc_data.setDataFromString( aui8_targetPositionOffset, apb_data, cui_copyByteCnt);
 }
 
 
