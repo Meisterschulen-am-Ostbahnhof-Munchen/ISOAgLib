@@ -42,6 +42,35 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
+\subsection Change_W 2.5.1 to 2.5.2
+
+CAN-HAL/Processing
+- Redesign:
+  - Unified the CAN-HAL: Removed SYSTEM_WITH_ENHANCED_CAN_HAL. Now there's only one simple HAL.
+  - Incoming packets are simply enqueued, no hardware filtering used.
+  - No more need for dynamic reconfiguration of hardware-filters, hence no more runtime-blocks (for worst case several hundreds milliseconds) during reconfiguration.
+  - Watchdog-triggering can now finally be done completely in the application. ISOAgLib's System does not care for the watchdog anymore!
+  - Removed the watchdog-trigger-task.
+  - CAN HAL always needs to work properly, no more Fatal Errors registered in iLibErr_c.
+
+IsoMonitor:
+- Optimization: Fast lookup for CAN-reception in CanPkgExt_c-constructor via IsoItem_c* array.
+
+Proprietary bus:
+- Bugfix: iCanPkg_c::set now handles data bytes correctly
+
+Proprietary PGN:
+- Rewritten due to change in CAN-processing.
+
+Error Management:
+- Cleanup:
+  - Finally (currently) no more Fatal Errors (from setup/init/close/etc.), will all be handled via assertions!
+  - Only Non-Fatal Errors (occuring during runtime) will be registered for applications information.
+  
+Tools:
+- Removed deprecated old "Makefile"s as everything is to be compiled via CMake/make now.
+
+
 \subsection Change_V 2.5.0 to 2.5.1
 
 Scheduler/CAN-HAL:
