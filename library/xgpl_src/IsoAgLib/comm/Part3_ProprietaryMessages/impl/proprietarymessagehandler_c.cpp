@@ -16,10 +16,17 @@
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
+
 namespace __IsoAgLib
 {
   ProprietaryMessageHandler_c::ProprietaryMessageHandler_c()
-    : m_customerA( *this ), m_customerB( *this ) { }
+    : m_customerA( *this )
+    , m_customerB( *this )
+  {
+  }
 
 
   void
