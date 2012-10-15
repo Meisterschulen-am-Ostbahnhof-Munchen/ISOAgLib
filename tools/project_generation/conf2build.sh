@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 # conf2build.sh: Script to create file list, configuration
 #   headers and project files for applications based on a feature set
 #   specifying conf(ig) file
@@ -34,6 +35,11 @@ TEMPFILE_PREFIX="/tmp/conf2build$$"
 
 main()
 {
+    case `uname -s` in
+        *CYGWIN*|*MINGW*) SYSTEM='WINDOWS' ;;
+        *)                SYSTEM='LINUX' ;;
+    esac
+    
     set_default_values
     check_before_user_configuration "$@"
     
@@ -186,12 +192,10 @@ set_default_values()
     PRJ_ISO_TERMINAL_OBJECT_SELECTION4=''
     PRJ_DEFINES=''
     PRJ_INCLUDE_PATH=''
-    USE_LINUX_EXTERNAL_INCLUDE_PATH=''
-    USE_LINUX_EXTERNAL_LIBRARIES=''
-    USE_LINUX_EXTERNAL_LIBRARY_PATH=''
+    USE_EXTERNAL_INCLUDE_PATH=''
+    USE_EXTERNAL_LIBRARIES=''
+    USE_EXTERNAL_LIBRARY_PATH=''
     PRJ_COMPILER_BINARY_PRE=''
-    USE_WIN32_EXTERNAL_INCLUDE_PATH=''
-    USE_WIN32_EXTERNAL_LIBRARY_PATH=''
     APP_SRC_FILE=''
     USE_RS232_DRIVER='none'
 	USE_EEPROM_DRIVER='none'
@@ -1123,12 +1127,10 @@ create_cmake_winlin()
 
     local INSERT_CMAKE_PROJECT="$PROJECT"
     local INSERT_CMAKE_DEFINITIONS="$(print_cmake_definitions)"
-    local INSERT_CMAKE_INCLUDE_DIRECTORIES_LINUX="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${BIOS_INC:-})"
-    local INSERT_CMAKE_INCLUDE_DIRECTORIES_WIN32="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${USE_WIN32_EXTERNAL_INCLUDE_PATH:-} ${BIOS_INC:-})"
-    local INSERT_CMAKE_LINK_DIRECTORIES_LINUX="${USE_LINUX_EXTERNAL_LIBRARY_PATH:-}"
-    local INSERT_CMAKE_LINK_DIRECTORIES_WIN32="${USE_WIN32_EXTERNAL_LIBRARY_PATH:-}"
-    local INSERT_CMAKE_TARGET_LINK_LIBRARIES_LINUX="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_LINUX_EXTERNAL_LIBRARIES)"
-    local INSERT_CMAKE_TARGET_LINK_LIBRARIES_WIN32="$(omit_or_printf '\n  %s' "$PROJECT" odbc32 odbccp32 winmm ws2_32)"
+    local INSERT_CMAKE_INCLUDE_DIRECTORIES="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${USE_EXTERNAL_INCLUDE_PATH:-} ${BIOS_INC:-})"
+    local INSERT_CMAKE_LINK_DIRECTORIES="${USE_EXTERNAL_LIBRARY_PATH:-}"
+    local INSERT_CMAKE_TARGET_LINK_LIBRARIES_LINUX="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_EXTERNAL_LIBRARIES)"
+    local INSERT_CMAKE_TARGET_LINK_LIBRARIES_WIN32="$(omit_or_printf '\n  %s' "$PROJECT" odbc32 odbccp32 winmm ws2_32 $USE_EXTERNAL_LIBRARIES)"
     local INSERT_CMAKE_SOURCE_FILES="$(omit_or_printf '\n  %s' "$(cat filelist__$PROJECT.txt)" )"
     local INSERT_CMAKE_ADD_EXECUTABLE="$(
         omit_or_printf '\n  %s' "$PROJECT" $(
@@ -1180,16 +1182,16 @@ create_standard_makefile()
         echo_ "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >&3
 
         local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
-        local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_LINUX_EXTERNAL_INCLUDE_PATH)"
+        local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_EXTERNAL_INCLUDE_PATH)"
 
         local REPORT_APP_INC="$(echo_ ${ALL_INC_PATHS:+$(printf -- '-I%s\n' $ALL_INC_PATHS)})"
         printf "APP_INC = %s\n" "$REPORT_APP_INC" >&3
         KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;${ALL_INC_PATHS:+$(printf '%s;' $ALL_INC_PATHS)}"
         
-        local RULE_LIBPATH="$(map join_space prefix_library_path ${USE_LINUX_EXTERNAL_LIBRARY_PATH:-})"
+        local RULE_LIBPATH="$(map join_space prefix_library_path ${USE_EXTERNAL_LIBRARY_PATH:-})"
         define_insert LIBPATH "$RULE_LIBPATH"
         printf 'LIBPATH = %s\n' "$INSERT_LIBPATH" >&3
-        local REPORT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
+        local REPORT_EXTERNAL_LIBS="$USE_EXTERNAL_LIBRARIES"
         printf 'EXTERNAL_LIBS = %s\n' "$REPORT_EXTERNAL_LIBS" >&3
         
         echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >&3
@@ -1321,19 +1323,19 @@ create_pure_application_makefile()
             echo_n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >&3
             append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$SingleInclPath;"
         done
-        for SingleInclPath in $USE_LINUX_EXTERNAL_INCLUDE_PATH ; do
+        for SingleInclPath in $USE_EXTERNAL_INCLUDE_PATH ; do
             echo_n " -I$SingleInclPath" >&3
             append KDEVELOP_INCLUDE_PATH " $SingleInclPath;"
         done
         echo_ "" >&3
         echo_n "LIBPATH = " >&3
-        for SingleLibPath in $USE_LINUX_EXTERNAL_LIBRARY_PATH ; do
+        for SingleLibPath in $USE_EXTERNAL_LIBRARY_PATH ; do
             echo_n " -L$SingleLibPath" >&3
         done
         echo_ "" >&3
         
         echo_n "EXTERNAL_LIBS = " >&3
-        for SingleLibItem in $USE_LINUX_EXTERNAL_LIBRARIES ; do
+        for SingleLibItem in $USE_EXTERNAL_LIBRARIES ; do
             echo_n " $SingleLibItem" >&3
         done
         echo_ "" >&3
@@ -1720,10 +1722,10 @@ create_library_makefile()
     local INSERT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
     local INSERT_ISOAGLIB_INSTALL_PATH="$ISOAGLIB_INSTALL_PATH"
     local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
-    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_LINUX_EXTERNAL_INCLUDE_PATH)"
+    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_EXTERNAL_INCLUDE_PATH)"
     local INSERT_APP_INCS="$(echo_ ${ALL_INC_PATHS:+$(printf -- '-I%s\n' $ALL_INC_PATHS)})"
-    local INSERT_LIBPATH="${USE_LINUX_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_LINUX_EXTERNAL_LIBRARY_PATH)}"
-    local INSERT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
+    local INSERT_LIBPATH="${USE_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_EXTERNAL_LIBRARY_PATH)}"
+    local INSERT_EXTERNAL_LIBS="$USE_EXTERNAL_LIBRARIES"
     local INSERT_PROJ_DEFINES="$(
         printf -- '$(VERSION_DEFINES)'
         printf -- ' -DPRJ_USE_AUTOGEN_CONFIG=config_%s.h' "$PROJECT"
@@ -1760,7 +1762,7 @@ create_library_makefile()
     if [ "$USE_RS232_DRIVER" = "rte" ] ; then
         define_insert BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
     fi
-    local INSERT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
+    local INSERT_EXTERNAL_LIBS="$USE_EXTERNAL_LIBRARIES"
     define_insert LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
     local INSERT_PROJECT_CONFIG="$CONFIG_NAME"
 
@@ -2058,8 +2060,6 @@ check_after_user_configuration()
                 (*)
                     ;;
             esac
-            # enhanced CAN HAL is not yet supported for the known embedded targets
-            # but it may be supported on a proprietary HAL
             ;;
         (msq_server)
             case "$USE_TARGET_SYSTEM" in
