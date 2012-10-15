@@ -82,6 +82,9 @@ namespace __IsoAgLib {
 
 
   void Scheduler_c::deregisterTask( SchedulerTask_c& task ) {
+    if( task.isRegistered() ) {
+      printf("%s: %p\n", __PRETTY_FUNCTION__, &task );
+    }
     isoaglib_assert( task.isRegistered() );
 
     m_taskQueue.remove( &task );
