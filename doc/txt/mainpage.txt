@@ -53,6 +53,9 @@ CAN-HAL/Processing
   - Removed the watchdog-trigger-task.
   - CAN HAL always needs to work properly, no more Fatal Errors registered in iLibErr_c.
 
+(Extended) Transport Protocol:
+- Sending timing improved and is now actually faster.
+
 IsoMonitor:
 - Optimization: Fast lookup for CAN-reception in CanPkgExt_c-constructor via IsoItem_c* array.
 
@@ -98,7 +101,7 @@ IsoMonitor:
 - Cleanup: Removed obsolete functions.
 
 (Extended) Transport Protocol:
-- Receiving-speed now up to speed again when multiple (E)TPs are being received and kept for later processing (was only the case in VT-/TC-/FS-Servers.
+- Receiving-speed now up to speed again when multiple (E)TPs are being received and kept for later processing (was only the case in VT-/TC-/FS-Servers).
 
 conf2build.sh:
 - Enhancement: Supply CMake template as parameter.
