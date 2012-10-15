@@ -246,6 +246,7 @@ library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232_over_can/rs232.h 
 tools/LICENSE.txt -text
 tools/README.txt -text
 tools/can_messenger/README.txt -text
+tools/can_messenger/cmake/can_messenger/can_messenger__socket_server__simulating.vcproj -text
 tools/can_messenger/conf_can_messenger_msq_x86linux -text
 tools/can_messenger/conf_can_messenger_socket_win32 -text
 tools/can_messenger/conf_can_messenger_socket_x86linux -text
