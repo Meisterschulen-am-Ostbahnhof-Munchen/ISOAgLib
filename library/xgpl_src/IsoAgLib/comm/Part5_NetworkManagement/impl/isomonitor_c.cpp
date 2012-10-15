@@ -426,11 +426,8 @@ IsoMonitor_c::insertIsoMember(
   IdentItem_c* apc_identItemForLocalItems,
   bool ab_announceAddition )
 {
-  IsoItem_c* pc_result = NULL;
-
   isoaglib_assert( ! existIsoMemberISOName(acrc_isoName) );
 
-  // FROM NOW ON WE DECIDE TO (TRY TO) CREATE A NEW IsoItem_c
   // prepare temp item with wanted data
   mc_tempIsoMemberItem.set (System_c::getTime(), // Actually this value/time can be anything. The time is NOT used in PreAddressClaim and when entering AddressClaim it is being set correctly!
     acrc_isoName, aui8_nr, IState_c::itemState_t(ren_state | IState_c::Active), getMultitonInst() );
@@ -441,8 +438,10 @@ IsoMonitor_c::insertIsoMember(
   // now insert element
   mvec_isoMember.push_front(mc_tempIsoMemberItem);
   mpc_isoMemberCache = mvec_isoMember.begin();
+  
   // item was inserted
-  pc_result = &(*mpc_isoMemberCache);
+  IsoItem_c* result = &(*mpc_isoMemberCache);
+
 
   if( ren_state & ( IState_c::AddressClaim | IState_c::ClaimedAddress ) ) {
     // update lookup
@@ -452,10 +451,10 @@ IsoMonitor_c::insertIsoMember(
   if (ab_announceAddition)
   { // immediately announce addition.
     // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
-    broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::AddToMonitorList, *pc_result);
+    broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::AddToMonitorList, *result);
   }
 
-  return pc_result;
+  return result;
 }
 
 
@@ -678,7 +677,7 @@ IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveConflict)
     return ui8_wishSa;
   }
   //else: address not available
-  const bool cb_selfConf = apc_isoItem->selfConf();
+  const bool cb_selfConf = apc_isoItem->isoName().selfConf();
   if (!cb_selfConf)
   { // not configurable -> no need to loop free address
     return scui8_noAddressFound;
@@ -941,25 +940,14 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
     switch ((pkg.isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
     {
       case WORKING_SET_MASTER_PGN:
-      { // working set master
         b_processed = true;
-        // in Record Byte 1 (i.e. offset-byte 0) stands the number of TOTAL MEMBERS of this Working-Set.
-        // Note that this includes the Master, too - So we need to substract the master
-        pkg.getMonitorItemForSA()->setMaster (pkg.getUint8Data (1-1)-1, pkg.time() );
-        /** @todo SOON-240: WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
-         * for now the slaves' isonames are just initialized with IsoNameUnspecified until the WORKING_SET_SLAVE message arrives...
-         * AND: Check what happens if the WS-sequence arrives a further time?
-         * --> for timings see Iso11783-Part1
-         */
-      } break;
+        pkg.getMonitorItemForSA()->processMsgWsMaster (pkg.getUint8Data (1-1)-1, pkg.time() );
+      break;
 
       case WORKING_SET_MEMBER_PGN:
-      { // working set member
         b_processed = true;
-        // the working set master places the NAME field of each children
-        // in the data part of this message type
-        pkg.getMonitorItemForSA()->addSlave (cc_dataIsoName);
-      } break;
+        pkg.getMonitorItemForSA()->processMsgWsMember (cc_dataIsoName, pkg.time());
+      break;
 
       default:
         break;

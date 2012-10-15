@@ -11,7 +11,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include <IsoAgLib/isoaglib_config.h>
 #include <cstdio>
 
@@ -37,12 +36,13 @@ namespace __IsoAgLib {
 IsoItem_c::IsoItem_c()
   : BaseItem_c(0, IState_c::IstateNull, 0)
   #ifdef USE_WORKING_SET
-  , mpvec_slaveIsoNames (NULL)
-  , mi8_slavesToClaimAddress (0) // idle around
-  , mi32_timeLastCompletedAnnounceStarted (-1)
-  , mi32_timeCurrentAnnounceStarted (-1)
-  , mi32_timeAnnounceForRemoteItem (-1)
-  , mb_repeatAnnounce (false)
+  , m_wsSlavesAnnounced (NULL)
+  , m_wsSlavesAnnouncing (NULL)
+  , m_wsLocalSlavesToClaimAddress (0) // idle around
+  , m_wsLocalLastCompletedAnnounceStartedTime (-1)
+  , m_wsLocalCurrentAnnounceStartedTime (-1)
+  , m_wsLocalRepeatAnnounce (false)
+  , m_wsRemoteAnnounceTime (-1)
   #endif
   , mui8_nr(0xFE)
   , mb_repeatClaim (false) // wouldn't be needed to be set here as it's set when entering AddressClaim
@@ -50,6 +50,7 @@ IsoItem_c::IsoItem_c()
   , mc_isoName()
 {
 }
+
 
 /** copy constructor for IsoItem
   All members are simply copied.
@@ -60,11 +61,13 @@ IsoItem_c::IsoItem_c()
 IsoItem_c::IsoItem_c(const IsoItem_c& acrc_src)
   : BaseItem_c (acrc_src)
 #ifdef USE_WORKING_SET
-  //, mpvec_slaveIsoNames (...) // handled in code below!
-  , mi8_slavesToClaimAddress (acrc_src.mi8_slavesToClaimAddress)
-  , mi32_timeLastCompletedAnnounceStarted (acrc_src.mi32_timeLastCompletedAnnounceStarted)
-  , mi32_timeCurrentAnnounceStarted (acrc_src.mi32_timeCurrentAnnounceStarted)
-  , mb_repeatAnnounce (acrc_src.mb_repeatAnnounce)
+  , m_wsSlavesAnnounced (NULL)
+  , m_wsSlavesAnnouncing (NULL)
+  , m_wsLocalSlavesToClaimAddress (acrc_src.m_wsLocalSlavesToClaimAddress)
+  , m_wsLocalLastCompletedAnnounceStartedTime (acrc_src.m_wsLocalLastCompletedAnnounceStartedTime)
+  , m_wsLocalCurrentAnnounceStartedTime (acrc_src.m_wsLocalCurrentAnnounceStartedTime)
+  , m_wsLocalRepeatAnnounce (acrc_src.m_wsLocalRepeatAnnounce)
+  , m_wsRemoteAnnounceTime (acrc_src.m_wsRemoteAnnounceTime)
 #endif
   , mui8_nr (acrc_src.mui8_nr)
   , mb_repeatClaim (acrc_src.mb_repeatClaim)
@@ -73,53 +76,17 @@ IsoItem_c::IsoItem_c(const IsoItem_c& acrc_src)
 
 {
   #ifdef USE_WORKING_SET
-  if ( acrc_src.mpvec_slaveIsoNames == NULL)
-  { // source is not a master, so simply copy the NULL
-    mpvec_slaveIsoNames = NULL;
-  }
-  else
-  { // source is a master, so create a copy of the pointed list (stl::vector)
-    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(acrc_src.mpvec_slaveIsoNames));
-  }
+  isoaglib_assert( acrc_src.m_wsSlavesAnnounced == NULL );
+  isoaglib_assert( acrc_src.m_wsSlavesAnnouncing == NULL );
   #endif
 }
 
 
-/** assignment operator for IsoItem_c
-  @param acrc_src source IsoItem_c object
-*/
-IsoItem_c& IsoItem_c::operator=(const IsoItem_c& acrc_src)
-{
-  BaseItem_c::operator= (acrc_src);
-  mc_isoName = acrc_src.mc_isoName;
-  mpc_identItem = acrc_src.mpc_identItem;
-  mui8_nr = acrc_src.mui8_nr;
-  mb_repeatClaim = acrc_src.mb_repeatClaim;
-
-  #ifdef USE_WORKING_SET
-  if ( acrc_src.mpvec_slaveIsoNames == NULL)
-  { // source is not a master, so simply copy the NULL
-    mpvec_slaveIsoNames = NULL;
-  }
-  else
-  { // source is a master, so create a copy of the pointed list (stl::vector)
-    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(acrc_src.mpvec_slaveIsoNames));
-  }
-  mi8_slavesToClaimAddress = acrc_src.mi8_slavesToClaimAddress;
-  mi32_timeLastCompletedAnnounceStarted = acrc_src.mi32_timeLastCompletedAnnounceStarted;
-  mi32_timeCurrentAnnounceStarted = acrc_src.mi32_timeCurrentAnnounceStarted;
-  mb_repeatAnnounce = acrc_src.mb_repeatAnnounce;
-  #endif
-  return *this;
-}
-
-
-/** default destructor */
 IsoItem_c::~IsoItem_c()
 {
 #ifdef USE_WORKING_SET
-  if (mpvec_slaveIsoNames)
-    delete mpvec_slaveIsoNames;
+  delete m_wsSlavesAnnounced;
+  delete m_wsSlavesAnnouncing;
 #endif
 }
 
@@ -169,48 +136,15 @@ bool operator<(const IsoName_c& acrc_left, const IsoItem_c& acrc_right)
 }
 
 
-/** deliver name
-  @return pointer to the name uint8_t string (8byte)
-*/
-const uint8_t* IsoItem_c::name() const
-{
-  return isoName().outputString();
-}
-
-
-/** deliver name as pure ASCII string
-  @param pc_asciiName string where ASCII string is inserted
-  @param aui8_maxLen max length for name
-*/
-void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen)
-{
-  char c_temp[30];
-  const uint8_t* pb_src = name();
-  CNAMESPACE::sprintf(c_temp, "0x%02x%02x%02x%02x%02x%02x%02x%02x", pb_src[0],pb_src[1],pb_src[2],pb_src[3],
-      pb_src[4],pb_src[5],pb_src[6],pb_src[7]);
-
-  uint8_t ui8_len = CNAMESPACE::strlen(c_temp);
-  if (aui8_maxLen < ui8_len) ui8_len = aui8_maxLen;
-  CNAMESPACE::memcpy(pc_asciiName, c_temp, ui8_len );
-  pc_asciiName[ui8_len-1] = '\0';
-}
-
-
-/** set all element data with one call
-  @param ai32_time creation time of this item instance
-  @param acrc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
-  @param aui8_nr number of this item
-  @param aren_status state of this ident (off, claimed address, ...)
-  @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
-*/
-void IsoItem_c::set(int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
-        itemState_t aren_status, int ai_multitonInst )
+void 
+IsoItem_c::set(
+    int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
+    itemState_t aren_status, int ai_multitonInst )
 {
   BaseItem_c::set( ai32_time, aren_status, ai_multitonInst );
-  setISOName(acrc_isoName);
-  setNr(aui8_nr);
+  mc_isoName = acrc_isoName;
+  mui8_nr = aui8_nr;
 }
-
 
 
 /// @param ab_fromConflict false => Initial Address-Claim, so we need to go to "AddressClaim"-phase!
@@ -243,7 +177,7 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
   c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
   c_pkg.setIsoPs( 0xFF );
   c_pkg.setIsoSa( nr() );
-  c_pkg.setDataUnion( outputNameUnion() );
+  c_pkg.setDataUnion(  mc_isoName.outputUnion() );
   getIsoBusInstance4Comm() << c_pkg;
 
   updateTime();
@@ -320,7 +254,7 @@ IsoItem_c::timeEvent()
   { // do workingset-stuff if completely announced only
     if (isMaster())
     { // We're master, so check if something has to be done..
-      if ( mi8_slavesToClaimAddress == 0 )
+      if ( m_wsLocalSlavesToClaimAddress == 0 )
       { // 0 means successfully sent out the ws-announce.
         // So Wait. Nothing to be done here...
       }
@@ -330,23 +264,23 @@ IsoItem_c::timeEvent()
 
         CanPkgExt_c c_pkg;
 
-        if ( mi8_slavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
+        if ( m_wsLocalSlavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
         { // Announce WS-Master
-          mi8_slavesToClaimAddress = mpvec_slaveIsoNames->size();
+          m_wsLocalSlavesToClaimAddress = m_wsSlavesAnnounced->size();
 
           c_pkg.setIsoPgn (WORKING_SET_MASTER_PGN);
-          c_pkg.setUint8Data (0, (mi8_slavesToClaimAddress+1));
+          c_pkg.setUint8Data (0, (m_wsLocalSlavesToClaimAddress+1));
           c_pkg.setLen8FillUpWithReserved (1);
         }
-        else // it must be > 0 here now, so omit: if (mi8_slavesToClaimAddress > 0)
+        else // it must be > 0 here now, so omit: if (m_wsLocalSlavesToClaimAddress > 0)
         { // Slave announcing needs 100ms interspace!
           if (!checkTime(100))
             b_sendOutWsMessage = false;
           else
           { // Announce WS-Slave(s)
             c_pkg.setIsoPgn (WORKING_SET_MEMBER_PGN);
-            c_pkg.setDataUnion ((*mpvec_slaveIsoNames) [mpvec_slaveIsoNames->size()-mi8_slavesToClaimAddress].outputUnion());
-            mi8_slavesToClaimAddress--; // claimed address for one...
+            c_pkg.setDataUnion ((*m_wsSlavesAnnounced) [m_wsSlavesAnnounced->size()-m_wsLocalSlavesToClaimAddress].outputUnion());
+            m_wsLocalSlavesToClaimAddress--; // claimed address for one...
           }
         }
         if (b_sendOutWsMessage)
@@ -357,14 +291,14 @@ IsoItem_c::timeEvent()
           updateTime();
 
           // did we send the last message of the announce sequence?
-          if (mi8_slavesToClaimAddress == 0)
+          if (m_wsLocalSlavesToClaimAddress == 0)
           { // yes, announcing finished!
-            mi32_timeLastCompletedAnnounceStarted = mi32_timeCurrentAnnounceStarted;
-            mi32_timeCurrentAnnounceStarted = -1; // no announce running right now.
+            m_wsLocalLastCompletedAnnounceStartedTime = m_wsLocalCurrentAnnounceStartedTime;
+            m_wsLocalCurrentAnnounceStartedTime = -1; // no announce running right now.
             // now see if we have to repeat the sequence because it was requested while it was sent...
-            if (mb_repeatAnnounce)
+            if (m_wsLocalRepeatAnnounce)
             { // repeat the announce-sequence
-              mb_repeatAnnounce = false;
+              m_wsLocalRepeatAnnounce = false;
               (void) startWsAnnounce();
             }
           }
@@ -394,7 +328,7 @@ IsoItem_c::processAddressClaimed(
     c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
     c_pkg.setIsoPs(255); // global information
       // set NAME to CANPkg
-    c_pkg.setDataUnion(outputNameUnion());
+    c_pkg.setDataUnion( mc_isoName.outputUnion() );
       // now IsoSystemPkg_c has right data -> send
     getIsoBusInstance4Comm() << c_pkg;
   }
@@ -423,7 +357,7 @@ bool IsoItem_c::sendSaClaim()
   c_pkg.setIsoPs(255); // global information
   c_pkg.setIsoSa( nr() );
   // set NAME to CANPkg
-  c_pkg.setDataUnion(outputNameUnion());
+  c_pkg.setDataUnion( mc_isoName.outputUnion() );
   // now IsoSystemPkg_c has right data -> send
   getIsoBusInstance4Comm() << c_pkg;
   return true;
@@ -435,23 +369,23 @@ bool IsoItem_c::sendSaClaim()
 */
 uint8_t IsoItem_c::calc_randomWait()
 { // perform some calculation from NAME
-  uint16_t ui16_result = outputNameUnion()->getUint8Data(0) * outputNameUnion()->getUint8Data(1);
-  if ( ( (outputNameUnion()->getUint8Data(2) +1) != 0 )
+  uint16_t ui16_result =  mc_isoName.outputUnion()->getUint8Data(0) *  mc_isoName.outputUnion()->getUint8Data(1);
+  if ( ( (mc_isoName.outputUnion()->getUint8Data(2) +1) != 0 )
     && ( System_c::getTime() != 0 )
-    && ( (System_c::getTime() / (outputNameUnion()->getUint8Data(2) +1)) != 0 ) )
-    ui16_result /= (System_c::getTime() / (outputNameUnion()->getUint8Data(2) +1));
-  ui16_result += outputNameUnion()->getUint8Data(3);
-  ui16_result %= (outputNameUnion()->getUint8Data(4) + 1);
-  ui16_result -= outputNameUnion()->getUint8Data(5);
-  ui16_result *= ((outputNameUnion()->getUint8Data(6) + 1) / (outputNameUnion()->getUint8Data(7) + 1));
+    && ( (System_c::getTime() / (mc_isoName.outputUnion()->getUint8Data(2) +1)) != 0 ) )
+    ui16_result /= (System_c::getTime() / (mc_isoName.outputUnion()->getUint8Data(2) +1));
+  ui16_result += mc_isoName.outputUnion()->getUint8Data(3);
+  ui16_result %= (mc_isoName.outputUnion()->getUint8Data(4) + 1);
+  ui16_result -= mc_isoName.outputUnion()->getUint8Data(5);
+  ui16_result *= ((mc_isoName.outputUnion()->getUint8Data(6) + 1) / (mc_isoName.outputUnion()->getUint8Data(7) + 1));
 
   // divide by last uint8_t of name till offset in limit
-  uint8_t ui8_divisor = outputNameUnion()->getUint8Data(7) + 1;
+  uint8_t ui8_divisor = mc_isoName.outputUnion()->getUint8Data(7) + 1;
 
   for (; ui16_result > 153; ui16_result /= ui8_divisor)
   {
     // Get around potential div0 errors
-    ui8_divisor = outputNameUnion()->getUint8Data(7) + 1;
+    ui8_divisor = mc_isoName.outputUnion()->getUint8Data(7) + 1;
 
     // Get around potential div1 eternal loop
     if (ui8_divisor == 1)
@@ -478,78 +412,89 @@ bool lessThan(const IsoItem_c& acrc_left, const IsoName_c& acrc_right)
 #ifdef USE_WORKING_SET
 /// This is for IdentItem's setting of WS-master/slave
 void
-IsoItem_c::setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames)
+IsoItem_c::setLocalMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames)
 {
-  if (mpvec_slaveIsoNames)
-  { // already registered as working-set master.
-    /** @todo SOON-240 How to handle changing Workingset-State when it's already set? Maybe that's simply not allowed at all... */
-  }
+  // ISOAgLib doesn't allow changing the WS-definition during runtime!
+  isoaglib_assert( m_wsSlavesAnnounced == NULL );
+
+  if (apvec_slaveIsoNames)
+    m_wsSlavesAnnounced = new STL_NAMESPACE::vector<IsoName_c> (*apvec_slaveIsoNames);
   else
-  { // create a copy of the vector. (if it's set...)
-    if (apvec_slaveIsoNames)
-      mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*apvec_slaveIsoNames);
-    else
-      mpvec_slaveIsoNames = NULL;
-  }
+    m_wsSlavesAnnounced = NULL;
 }
 
 
-/// This is for incoming WORKING_SET_MASTER_PGN
 void
-IsoItem_c::setMaster (uint8_t aui8_slaveCount, int32_t ai_time )
+IsoItem_c::processMsgWsMaster (uint8_t slaveCount, int32_t time )
 {
-  if (mpvec_slaveIsoNames)
-  { // already registered as working-set master.
-    /** @todo SOON-240 How to handle an UPDATE of the working-set definition? First keep it parallel until it finishes successful or fails? Maybe also check if this is a remote item?? */
-  }
-  else
-  { // by creating the vector and setting the pointer, we're master now and have "aui8_slaveCount" slaves.
-    // in case an entry is IsoNameUnspecified, it's definition has not yet arrived...
-    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (aui8_slaveCount, IsoName_c::IsoNameUnspecified());
-  }
-
-  mi32_timeAnnounceForRemoteItem = ai_time;
-}
-
-
-/// This is for incoming WORKING_SET_SLAVE_PGN
-void
-IsoItem_c::addSlave (IsoName_c const& rcc_slaveName)
-{
-  /// @todo SOON-240 We currently IGNORE any subsequent working-set announces! If the list is full, it stays full and no nothing is overwritten or alike...
-  if (mpvec_slaveIsoNames)
+  if (m_wsSlavesAnnouncing)
   {
-    const STL_NAMESPACE::vector<IsoName_c>::iterator end = mpvec_slaveIsoNames->end();
-    for (STL_NAMESPACE::vector<IsoName_c>::iterator iter = mpvec_slaveIsoNames->begin();
-         iter != end;
-         ++iter)
-    {
-      if (iter->isUnspecified())
-      { // found a free slave-entry!
-        (*iter) = rcc_slaveName;
-        // added the slave, so exit function successfully.
-        return; // don't run into possible error-handling below.
-      }
-      // else: skip as this slave entry is already set/specified.
+    m_wsSlavesAnnouncing->clear();
+    m_wsSlavesAnnouncing->resize( slaveCount, IsoName_c::IsoNameUnspecified() );
+  }
+  else
+  {
+    m_wsSlavesAnnouncing = new STL_NAMESPACE::vector<IsoName_c>( slaveCount, IsoName_c::IsoNameUnspecified() );
+  }
+
+  checkWsRemoteAnnouncingFinished( time );
+}
+
+
+void
+IsoItem_c::processMsgWsMember( IsoName_c const& slaveName, int32_t time )
+{
+  // @todo Should we check the timestamps on receive? --> Clarify via ISO!
+
+  // ignore WsMembers if no WsMaster sent before
+  if( m_wsSlavesAnnouncing == NULL )
+    return;
+
+  for( STL_NAMESPACE::vector<IsoName_c>::iterator iter = m_wsSlavesAnnouncing->begin();
+        iter != m_wsSlavesAnnouncing->end(); ++iter )
+  {
+    if( iter->isUnspecified() )
+    { // found the next free slave-entry!
+      (*iter) = slaveName;
+      checkWsRemoteAnnouncingFinished( time );
+      return;
     }
   }
-  // else: someone sent a WORKING_SET_SLAVE_PGN seemingly without sending a WORKING_SET_MASTER_PGN message first..
-  // possible error handling for that case here.
+
+  isoaglib_assert( !"Can't reach here. If the list was full, it should've been copied over already!" );
 }
 
 
-int32_t IsoItem_c::startWsAnnounce()
+void
+IsoItem_c::checkWsRemoteAnnouncingFinished( int32_t time )
+{
+  isoaglib_assert( m_wsSlavesAnnouncing );
+
+  int index = m_wsSlavesAnnouncing->size()-1;
+  if( ( index < 0 ) || ( m_wsSlavesAnnouncing->operator[]( index ).isSpecified() ) )
+  {
+    delete m_wsSlavesAnnounced;
+    m_wsSlavesAnnounced = m_wsSlavesAnnouncing;
+    m_wsSlavesAnnouncing = NULL;
+    /// @todo Notify on changed/updated WS via CF-state handler?? maybe only if changed!
+    m_wsRemoteAnnounceTime = time;
+  }
+}
+
+
+int32_t
+IsoItem_c::startWsAnnounce()
 {
   int32_t const ci32_timeNow = HAL::getTime();
 
-  if (mi32_timeCurrentAnnounceStarted < 0)
+  if (m_wsLocalCurrentAnnounceStartedTime < 0)
   { // no announce currently running, so start it!
-    mi32_timeCurrentAnnounceStarted = ci32_timeNow;
-    mi8_slavesToClaimAddress = -1; // start with announcing the master!
+    m_wsLocalCurrentAnnounceStartedTime = ci32_timeNow;
+    m_wsLocalSlavesToClaimAddress = -1; // start with announcing the master!
   }
   else
   { // we're right in announcing, so delay a second one till after this one ran through
-    mb_repeatAnnounce = true;
+    m_wsLocalRepeatAnnounce = true;
   }
 
   // return the Announce-Key
@@ -569,12 +514,12 @@ IsoItem_c::getMaster()
     IsoItem_c& refc_isoItem = getIsoMonitorInstance4Comm().isoMemberInd(ui8_index, true);
     if ( refc_isoItem.isMaster() )
     {
-      STL_NAMESPACE::vector<IsoName_c>* mpvec_slaveIsoNamesTmp = refc_isoItem.getVectorOfClients();
-      if (mpvec_slaveIsoNamesTmp == NULL)
+      STL_NAMESPACE::vector<IsoName_c>* wsSlaves = refc_isoItem.getVectorOfClients();
+      if (wsSlaves == NULL)
         continue;
 
-      for (STL_NAMESPACE::vector<IsoName_c>::iterator iter = mpvec_slaveIsoNamesTmp->begin();
-           iter != mpvec_slaveIsoNamesTmp->end();
+      for (STL_NAMESPACE::vector<IsoName_c>::iterator iter = wsSlaves->begin();
+           iter != wsSlaves->end();
            ++iter)
       {
         if ( *iter == isoName() )
@@ -599,7 +544,7 @@ IsoItem_c::isWsAnnounced (int32_t ai32_timeAnnounceStarted)
   if (ai32_timeAnnounceStarted < 0)
     return false;
   else
-    return (mi32_timeLastCompletedAnnounceStarted >= ai32_timeAnnounceStarted);
+    return (m_wsLocalLastCompletedAnnounceStartedTime >= ai32_timeAnnounceStarted);
 }
 #endif
 

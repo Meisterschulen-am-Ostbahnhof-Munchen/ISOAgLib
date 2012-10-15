@@ -232,7 +232,7 @@ IdentItem_c::timeEventPreAddressClaim( void )
         updateLastIsoSaRequestForThisItem();
 
       #ifdef USE_WORKING_SET
-      mpc_isoItem->setMasterSlaves (mpvec_slaveIsoNames);
+      mpc_isoItem->setLocalMasterSlaves( mpvec_slaveIsoNames );
       #endif
 
       mpc_isoItem->timeEvent();
