@@ -445,7 +445,7 @@ IsoMonitor_c::insertIsoMember(
 
   if( ren_state & ( IState_c::AddressClaim | IState_c::ClaimedAddress ) ) {
     // update lookup
-    updateSaItemTable( *pc_result, true );
+    updateSaItemTable( *result, true );
   }
 
   if (ab_announceAddition)
