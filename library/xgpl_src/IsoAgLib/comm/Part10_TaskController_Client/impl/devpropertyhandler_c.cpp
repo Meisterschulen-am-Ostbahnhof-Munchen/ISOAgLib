@@ -1131,7 +1131,7 @@ DevPropertyHandler_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t by
       p14ui8_overlayBuffer[index] = mpc_devPoolForUpload->p_DevicePool[arr_index];
     // overwrite isoName
     const uint16_t ui16_tmpOffset = ui16_isoNameOffset%7;
-    static_cast<const IdentItem_c*>(mpc_wsMasterIdentItem)->getIsoItem()->outputNameUnion()->getDataToString(
+    static_cast<const IdentItem_c*>(mpc_wsMasterIdentItem)->getIsoItem()->isoName().outputUnion()->getDataToString(
       p14ui8_overlayBuffer+ui16_tmpOffset );
     // send from overlayed buffer
     mspData->setDataPart (p14ui8_overlayBuffer, cb_left ? 0 : 7, bytes);
