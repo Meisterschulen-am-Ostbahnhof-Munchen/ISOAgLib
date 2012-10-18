@@ -237,9 +237,13 @@ namespace __HAL {
     }
 
 #ifdef USE_MUTUAL_EXCLUSION
+#ifdef WIN32
+ // @todo implement
+#else
     if( pipe2( breakWaitPipeFd, O_NONBLOCK ) != 0 ) {
       perror("pipe");
     }
+#endif
 #endif
 
 #ifdef WIN32
@@ -268,15 +272,17 @@ namespace __HAL {
     s_transferBuf.ui16_command = COMMAND_DEREGISTER;
     bool r = sendCommand( &s_transferBuf, i32_commandSocket );
 
+#ifdef WIN32
+#ifdef USE_MUTUAL_EXCLUSION
+    // @todo implement
+#endif
+    ( void )closesocket ( i32_commandSocket );
+    ( void )closesocket ( i32_dataSocket );
+#else
 #ifdef USE_MUTUAL_EXCLUSION
     ( void )close(breakWaitPipeFd[0]);
     ( void )close(breakWaitPipeFd[1]);
 #endif
-
-#ifdef WIN32
-    ( void )closesocket ( i32_commandSocket );
-    ( void )closesocket ( i32_dataSocket );
-#else
     ( void )close( i32_commandSocket );
     ( void )close( i32_dataSocket );
 #endif
@@ -458,10 +464,14 @@ namespace HAL {
     int rc = select( FD_SETSIZE, &rfds, NULL, NULL, &s_timeout );
 
 #ifdef USE_MUTUAL_EXCLUSION
+#ifdef WIN32
+  // @todo implement
+#else
     if( FD_ISSET( __HAL::breakWaitPipeFd[0], &rfds ) ) {
       static char buff[256];
       while( 0 < read( __HAL::breakWaitPipeFd[0], buff, 256 ) ) { }
     }
+#endif
 #endif
 
     // return true, when the timeout was NOT the trigger for coming back from select
@@ -470,11 +480,17 @@ namespace HAL {
 
 
 #ifdef USE_MUTUAL_EXCLUSION
+#ifdef WIN32
+  void canRxWaitBreak() {
+    // @todo implement
+  }
+#else
   void canRxWaitBreak() {
     if( write( __HAL::breakWaitPipeFd[1], "\0", 1 ) != 1 ) {
       perror("write");
     }
   }
+#endif
 #endif
 
 
