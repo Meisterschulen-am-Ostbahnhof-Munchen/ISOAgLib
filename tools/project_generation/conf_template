@@ -76,14 +76,17 @@ APP_SRC_FILE="ecu_main.cpp"
 # Selection of Basic Project Settings
 # ###############################################################
 
-# Optionally set individual DEFINES
-# Examplary IsoAgLib debugging defines include
+# Optionally set individual PROJECT-DEFINES
+# PRJ_DEFINES=""
+# (separate multiple defines by whitespace)
+
+# Optionally set individual ISOAgLib switches
 # - DEBUG for different internal IsoAgLib information
 # Also available to be used:
 # - ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
 # - ENABLE_NMEA_2000_MULTI_PACKET
+# - and so on...
 # (separate multiple defines by whitespace)
-# PRJ_DEFINES=""
 
 # Optionally replace the compiler flag default values by configured ones.
 # Only valid for Linux Makefile generation currently.

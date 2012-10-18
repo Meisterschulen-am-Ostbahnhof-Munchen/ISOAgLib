@@ -146,9 +146,6 @@ set_default_values()
     # option to not switch the system relais to ON, on startup
     # (default: set relais to ON on startup):
     USE_VT_UNICODE_SUPPORT=0
-    # no reasonable default for all targets (will be set later
-    # conditionally):
-    unset PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL || :
     CAN_INSTANCE_CNT=1
     PRT_INSTANCE_CNT=1
     RS232_CHANNEL_CNT=1
@@ -323,39 +320,14 @@ check_set_correct_variables()
     HAL_PATH_SUPPLEMENTARY_DATASTREAMS="$HAL_PREFIX_SUPPLEMENTARY/datastreams"
 
     case "$USE_TARGET_SYSTEM" in
-        (pc_win32)
+        (pc_win32|pc_linux|ees)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/cmake"
             IDE_NAME="CMake"
             ;;
-        (pc_linux)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/cmake_make"
-            IDE_NAME="CMake, make"
-            ;;
-        (esx|esxu|c2c)
+        (esx|esxu|c2c|Dj1)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
             ;;
-        (Dj1)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
-            IDE_NAME="Tasking EDE"
-            ;;
-        (p1mc)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/CCS"
-            IDE_NAME="Code Composer Studio"
-            ;;
-        (ees)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/cmake_make/"
-            IDE_NAME="CMake, make"
-            ;;
-        (src9)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
-            IDE_NAME="KDevelop, make"
-            ;;
-# AMS5 generation needs to be taken out into the proprietary HAL's project generation, which is TBD
-#        (ams5)
-#            GENERATE_FILES_ROOT_DIR="$CONF_DIR/ams5"
-#            IDE_NAME="IAR Embedded Workbench IDE"
-#            ;;
         (*)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/proprietary_hal"
             IDE_NAME="Proprietary - Filelist only"
@@ -379,11 +351,7 @@ check_set_correct_variables()
     fi
 
     case "$USE_CAN_DRIVER" in
-        (simulating)
-            ;;
-        (msq_server|socket_server|socket_server_hal_simulator)
-            ;;
-        (sys)
+        (simulating|msq_server|socket_server|socket_server_hal_simulator|sys)
             ;;
         (*)
             echo_ 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator"'
@@ -1005,62 +973,6 @@ list_source_files()
     done
 }
 
-generate_interface_filelist()
-{
-    TMP_INTERFACE_FILELIST="${TEMPFILE_PREFIX}interface_filelist"
-    TMP_INTERNAL_FILELIST="${TEMPFILE_PREFIX}internal_filelist"
-    grep    "/impl/" <"$MakefileFilelistLibraryHdr" > "$TMP_INTERNAL_FILELIST"
-    grep    "/hal/"  <"$MakefileFilelistLibraryHdr" >> "$TMP_INTERNAL_FILELIST"
-
-    grep -v "/impl/" <"$MakefileFilelistLibraryHdr" | grep -v ".cpp" > "$TMP_INTERFACE_FILELIST"
-    grep -E "driver/*/i*.h" < "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST" || status_le1
-    
-    # special exceptions to enable ISO-Request-PGN/MultiReceive/DiagnosticsProtocol implementation in app scope
-    grep -E "isorequestpgn_c.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
-    grep -E "multireceive_c.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
-    grep -E "diagnosticprotocol_c.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
-
-    local INTERFACE_FILE
-    while read -r INTERFACE_FILE; do
-        local BASE_NAME
-        sed -e '/#include/!d' \
-            -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g' \
-            -e 's|.*xgpl_src/IsoAgLib/\(.*\)|\1|g' \
-            -e 's|\.\./||g' < "$INTERFACE_FILE" |
-        while read -r BASE_NAME; do
-          ## Filter out non-ISOAgLib includes (like pthread, ...)
-          if [ "$BASE_NAME" != "pthread.h" ]; then
-            expr \( "$BASE_NAME" : '.*\.h' \) >/dev/null &&
-                ! grep -q -F "/$BASE_NAME" <"$TMP_INTERFACE_FILELIST" &&
-                grep -F "$BASE_NAME" <"$TMP_INTERNAL_FILELIST" >>"$TMP_INTERFACE_FILELIST" ||
-                status_le1
-          fi
-        done
-    done <"$TMP_INTERFACE_FILELIST"
-}
-
-
-# Create a makefile including another one. Typically the including
-# makefile serves as shortcut, because it has a shorter name than the
-# included makefile.
-shortcut_makefile()
-{
-    local TARGET="$1"
-    local SHORTCUT="$2"
-
-#### By default, the long version is moved to the shortcut version now.
-    rm -f "$SHORTCUT"
-    mv "$TARGET" "$SHORTCUT"
-
-#### This is the shortcut version (currently with "include Makefile__x__y")
-#### which is currently not used anymore. It could be reactivated, but then
-#### optional with some cmdline-parameter to enable it.
-###########################################################################
-#    cat <<END_OF_MAKEFILE >"$SHORTCUT"
-#include $TARGET
-#END_OF_MAKEFILE
-}
-
 omit_or_printf()
 {
     [ 1 -lt $# ] || return
@@ -1121,138 +1033,6 @@ create_cmake_winlin()
     expand_template "$CMAKE_SKELETON_FILE" >"CMakeLists.txt"
 }
 
-# for information! (from the windows version)
-#    cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
-#    cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
-#    cat $FILELIST_COMBINED_HDR >> $FILELIST_COMBINED_PURE
-#
-#old linux version which did not include the headers:
-#LIN local INSERT_CMAKE_ADD_EXECUTABLE="$(
-#LIN     omit_or_printf '\n  %s' "$PROJECT" $(
-#LIN         cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" | grep -E '\.cc|\.cpp|\.c|\.h' || status_le1))"
-
-
-create_standard_makefile()
-{
-    MakefileName="Makefile"
-    MakefileNameLong="Makefile__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}"
-
-    : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_MakefileSkeleton.txt}
-    {
-        # create Makefile Header
-        echo_ "#############################################################################" >&3
-        echo_ "# Makefile for building: $PROJECT" >&3
-        echo_ "# Project:               $PROJECT" >&3
-        echo_ "#############################################################################" >&3
-        echo_ ""  >&3
-        echo_ "####### Project specific variables" >&3
-        echo_ "TARGET = $PROJECT" >&3
-        echo_ "ISOAGLIB_PATH = $ISO_AG_LIB_INSIDE" >&3
-        echo_ "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >&3
-
-        local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
-        local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_EXTERNAL_INCLUDE_PATH)"
-
-        local REPORT_APP_INC="$(echo_ ${ALL_INC_PATHS:+$(printf -- '-I%s\n' $ALL_INC_PATHS)})"
-        printf "APP_INC = %s\n" "$REPORT_APP_INC" >&3
-        KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;${ALL_INC_PATHS:+$(printf '%s;' $ALL_INC_PATHS)}"
-        
-        local RULE_LIBPATH="$(map join_space prefix_library_path ${USE_EXTERNAL_LIBRARY_PATH:-})"
-        define_insert LIBPATH "$RULE_LIBPATH"
-        printf 'LIBPATH = %s\n' "$INSERT_LIBPATH" >&3
-        local REPORT_EXTERNAL_LIBS="$USE_EXTERNAL_LIBRARIES"
-        printf 'EXTERNAL_LIBS = %s\n' "$REPORT_EXTERNAL_LIBS" >&3
-        
-        echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >&3
-        printf -- '-include versions.mk\n\n\n' >&3
-        
-        define_insert BIOS_INC ''
-        define_insert BIOS_LIB ''
-        if [ "$USE_RS232_DRIVER" = "rte" ] ; then
-            define_insert BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
-            echo_ "BIOS_LIB = $INSERT_BIOS_LIB" >&3
-            # the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
-            echo_n "BIOS_INC =" >&3
-        fi
-        local RULE_PROJ_DEFINES="\$(\$F VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h${PRJ_DEFINES:+$(printf -- " -D'%s'" $PRJ_DEFINES)}${COMBINED_DEFINES:+$(printf -- " -D'%s'" $COMBINED_DEFINES)}"
-
-        case "$USE_CAN_DRIVER" in
-            (msq_server)
-                append RULE_PROJ_DEFINES ' -DCAN_DRIVER_MESSAGE_QUEUE'
-                ;;
-            (socket_server|socket_server_hal_simulator)
-                append RULE_PROJ_DEFINES ' -DCAN_DRIVER_SOCKET'
-                ;;
-        esac
-
-        define_insert PROJ_DEFINES "$RULE_PROJ_DEFINES"
-        printf 'PROJ_DEFINES = %s\n' "$INSERT_PROJ_DEFINES" >&3
-
-        define_insert COMPILER_BINARY_PRE "$PRJ_COMPILER_BINARY_PRE"
-        printf "\n####### Definition of compiler binary prefix corresponding to selected target\n" >&3
-        printf 'COMPILER_BINARY_PRE = %s\n' "$INSERT_COMPILER_BINARY_PRE" >&3
-        
-        echo_e "\n\nfirst: all\n" >&3
-        echo_ "####### Files" >&3
-        printf 'SOURCES_LIBRARY =' >&3
-        list_source_files ' %s' ' \\\n\t\t%s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" >&3
-        printf '\n\nSOURCES_APP =' >&3
-        list_source_files ' %s' ' \\\n\t\t%s' '\.cc|\.cpp' "$MakefileFilelistApp" >&3
-        printf '\n\nSOURCES_APP_C =' >&3
-        list_source_files ' %s' ' \\\n\t\t%s' '\.c |\.c$' "$MakefileFilelistApp" >&3
-        printf '\n\nHEADERS_APP =' >&3
-        list_source_files ' %s' ' \\\n\t\t%s' '\.h|\.hpp|\.hh' "$MakefileFilelistAppHdr" >&3
-        printf '\n\n' >&3
-
-        define_insert EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
-        define_insert CFLAGS "${RULE_CFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Wpointer-arith \$(\$F PROJ_DEFINES)}"
-        define_insert CXXFLAGS "${RULE_CXXFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith \$(\$F PROJ_DEFINES)}"
-        define_insert INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
-        define_insert CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
-        define_insert C_PARAMETERS '$($F CFLAGS) $($F INCPATH)'
-        local RULE_LFLAGS=$(
-            case "$USE_CAN_DRIVER" in
-                (msq_server|socket_server|socket_server_hal_simulator)
-                    printf -- '-pthread'
-                    ;;
-            esac;)' $($F LIBPATH)'
-        define_insert LFLAGS "$RULE_LFLAGS"
-        define_insert SUBLIBS '-lrt'
-        define_insert LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
-        define_insert LINKER_PARAMETERS_1 '$($F LFLAGS)'
-        define_insert LINKER_PARAMETERS_2 '$($F LIBS)'
-
-        ##### Library install header file gathering BEGIN
-        
-        generate_interface_filelist
-        printf 'INSTALL_FILES_LIBRARY =' >&3
-        list_source_files ' %s' ' \\\n\t\t%s' '.' "$TMP_INTERFACE_FILELIST" >&3
-        printf '\n\n' >&3
-        
-        ##### Library install header file gathering END
-        expand_template "$MAKEFILE_SKELETON_FILE" >&3
-        echo_ >&3
-    } 3>"$MakefileNameLong"
-
-    TMP_MAKEFILE="${TEMPFILE_PREFIX}makefile"
-
-    rm -f $TMP_MAKEFILE
-
-    # replace the install rules for the app config file
-    sed -e "s#_PROJECT_CONFIG_REPLACE_#$CONFIG_NAME#g"  $MakefileNameLong > $TMP_MAKEFILE
-    cp "$TMP_MAKEFILE" "$MakefileNameLong"
-
-    # replace any path items like "Bla/foo/../Blu" --> "Bla/Blu"
-    while [ $(grep -c -e '/[0-9a-zA-Z_+\-]\+/\.\./' $MakefileNameLong) -gt 0 ] ; do
-        sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $TMP_MAKEFILE
-        cp $TMP_MAKEFILE $MakefileNameLong
-    done
-
-    shortcut_makefile "$MakefileNameLong" "Makefile"
-
-    # In addition generate a CMakeLists.txt file:
-	create_cmake_winlin "$1"
-}
 
 create_CMake()
 {
@@ -1263,116 +1043,6 @@ create_CMake()
 	create_cmake_winlin "$1"
 }
 
-
-create_pure_application_makefile()
-{
-    # now create pure application makefile which is based upon an installed library
-    MakefileName="MakefileApp"
-    MakefileNameLong="MakefileApp__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}"
-
-    : ${MAKEFILE_APP_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_MakefileAppSkeleton.txt}
-
-    {
-        # create Makefile Header
-        echo_ "#############################################################################" >&3
-        echo_ "# Makefile for building: $PROJECT" >&3
-        echo_ "# Project:               $PROJECT" >&3
-        echo_ "#############################################################################" >&3
-        echo_ ""  >&3
-        echo_ "####### Project specific variables" >&3
-        echo_ "TARGET = $PROJECT" >&3
-        echo_ "ISOAGLIB_INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >&3
-        echo_n "APP_INC = " >&3
-        KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;"
-        for EACH_REL_APP_PATH in ${REL_APP_PATH:-}; do
-            echo_n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >&3
-            append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
-        done
-        for SingleInclPath in $PRJ_INCLUDE_PATH ; do
-            echo_n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >&3
-            append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$SingleInclPath;"
-        done
-        for SingleInclPath in $USE_EXTERNAL_INCLUDE_PATH ; do
-            echo_n " -I$SingleInclPath" >&3
-            append KDEVELOP_INCLUDE_PATH " $SingleInclPath;"
-        done
-        echo_ "" >&3
-        echo_n "LIBPATH = " >&3
-        for SingleLibPath in $USE_EXTERNAL_LIBRARY_PATH ; do
-            echo_n " -L$SingleLibPath" >&3
-        done
-        echo_ "" >&3
-        
-        echo_n "EXTERNAL_LIBS = " >&3
-        for SingleLibItem in $USE_EXTERNAL_LIBRARIES ; do
-            echo_n " $SingleLibItem" >&3
-        done
-        echo_ "" >&3
-        
-        echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >&3
-        printf -- '-include versions.mk\n\n\n' >&3
-        
-        echo_e_n "PROJ_DEFINES = \$(VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >&3
-        for SinglePrjDefine in $PRJ_DEFINES ; do
-            echo_n " -D$SinglePrjDefine" >&3
-        done
-        
-        echo_e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >&3
-        echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >&3
-        
-        echo_e "\n\nfirst: all\n" >&3
-        echo_ "####### Files" >&3
-        echo_n "SOURCES_APP = " >&3
-        FIRST_LOOP="YES"
-        while read -r CcFile; do
-            if [ $FIRST_LOOP != "YES" ] ; then
-                echo_e_n '\\' >&3
-                echo_e_n "\n\t\t" >&3
-            else
-                FIRST_LOOP="NO"
-            fi
-            echo_e_n "$CcFile  " >&3
-        done <<END_OF_MODULE_LINES
-$(grep -E "\.cc|\.cpp|\.c" < "$MakefileFilelistApp")
-END_OF_MODULE_LINES
-        echo_e "\n" >&3
-        
-        cat $MAKEFILE_APP_SKELETON_FILE >&3
-    } 3>"$MakefileNameLong"
-
-    # add can_server creation to target "all"
-    if [ $USE_CAN_DRIVER = "msq_server" ] ; then
-        cp $MakefileNameLong $TMP_MAKEFILE
-        sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $TMP_MAKEFILE > $MakefileNameLong
-    fi
-
-    # replace any path items like "Bla/foo/../Blu" --> "Bla/Blu"
-    while [ $(grep -c -e '/[0-9a-zA-Z_+\-]\+/\.\./' $MakefileNameLong) -gt 0 ] ; do
-        sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $TMP_MAKEFILE
-        cp $TMP_MAKEFILE $MakefileNameLong
-    done
-
-    shortcut_makefile "$MakefileNameLong" "MakefileApp"
-}
-
-create_makefile()
-{
-    # go to project dir - below config dir
-    DEV_PRJ_DIR="$1/$PROJECT"
-    cd $DEV_PRJ_DIR
-    MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
-    MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
-
-    MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
-    MakefileFilelistAppHdr="$1/$PROJECT/$FILELIST_APP_HDR"
-
-    create_standard_makefile $1
-    create_pure_application_makefile
-
-    cd $1
-
-    return
-}
 
 mangle_path1()
 {
@@ -1566,180 +1236,6 @@ $(cat "$PROJECT_FILE_NAME")
 EOF
 }
 
-create_CcsPrj()
-{
-    cd "$1/$PROJECT"
-    CCS_PROJECT_NAME="$PROJECT"
-    CCS_PROJECT_DIR="$1/$PROJECT"
-    CCS_PROJECT_FILE_NAME="$PROJECT"'_'"$USE_TARGET_SYSTEM.pjt"
-    CCS_PROJECT_FILE_LIST="$1/$PROJECT/$FILELIST_COMBINED_PURE"
-    CCS_CONFIG_HDR_NAME="config_""$PROJECT.h"
-    CCS_PROJECT_TEMPLATE=$CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_CCSSkeleton.pjt
-    CCS_COMMERCIAL_BIOS_PATH="library/commercial_BIOS/bios_$USE_TARGET_SYSTEM"
-    CCS_PROJECT_FILE_NAME_PATH="$CCS_PROJECT_DIR/$CCS_PROJECT_FILE_NAME"
-
-    if [ "M$ISOAGLIB_INSTALL_PATH" = "M" ] ; then
-        CCS_LIB_INSTALL_DIR="./install/lib"
-    else
-        CCS_LIB_INSTALL_DIR=$ISOAGLIB_INSTALL_PATH
-    fi
-    CCS_LIB_INSTALL_HEADER_DIR="$CCS_LIB_INSTALL_DIR/include"
-    CCS_LIB_INSTALL_LIB_DIR="$CCS_LIB_INSTALL_DIR/lib"
-
-    # check platform specific settings
-    if [ $PRJ_OUTPUTS -gt 0 -o $PRJ_INPUTS_DIGITAL -gt 0 -o $PRJ_INPUTS_ANALOG -gt 0 -o $PRJ_INPUTS_COUNTER -gt 0 ]; then
-        echo_
-        echo_ "Misconfigured config file: P1MC has no inputs/outputs capabilities!"
-        exit 0
-    fi
-
-    if [ $RS232_INSTANCE_CNT -gt 0 -a $PRJ_RS232_OVER_CAN -eq 0 ]; then
-        echo_
-        echo_ "Misconfigured config file: P1MC has no native rs232. Please enable PRJ_RS232_OVER_CAN or disable RS232_INSTANCE_CNT"
-        exit 0
-    fi
-
-    for EACH_REL_APP_PATH in ${REL_APP_PATH:-}; do
-        local PART="$(echo_ "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's|/[0-9a-zA-Z_+\-]+/\.\.||g' -e 's|/[0-9a-zA-Z_+\-]+\\\.\.||g')"
-        if [ -z "${USE_APP_PATH:-}" ]; then
-            USE_APP_PATH="$PART"
-        else
-            append USE_APP_PATH ";$PART"
-        fi
-    done
-
-    # project defines
-    CCS_PROJECT_DEFINES=
-
-    #include pathes
-    CCS_INCLUDE_PATH=""
-    append CCS_INCLUDE_PATH " -i\"\$(Proj_dir)/$ISO_AG_LIB_INSIDE/$CCS_COMMERCIAL_BIOS_PATH\""
-    append CCS_INCLUDE_PATH " -i\"\$(Proj_dir)/\""
-    append CCS_INCLUDE_PATH " -i\"\$(Proj_dir)/$ISO_AG_LIB_INSIDE/library\""
-    append CCS_INCLUDE_PATH " -i\"\$(Proj_dir)/$ISO_AG_LIB_INSIDE/library/xgpl_src\""
-
-    for EACH_EMBED_HEADER_DIR in $USE_EMBED_HEADER_DIRECTORY; do
-        append CCS_INCLUDE_PATH " -i\"$EACH_EMBED_HEADER_DIR\""
-    done
-
-    append CCS_INCLUDE_PATH " -i\"\$(Proj_dir)/$CCS_LIB_INSTALL_HEADER_DIR\""
-
-    # source files
-    CCS_SOURCE_FILE_LIST="$(
-        while read -r EACH_SOURCE_FILE; do
-            printf 'Source="%s"\n' "$EACH_SOURCE_FILE"
-        done <<END_OF_FILELIST
-$(grep '.*cpp$' <$1/$PROJECT/$FILELIST_COMBINED_PURE)
-END_OF_FILELIST
-        )"
-    local INSERT_PROJECT_DIR="$CCS_PROJECT_DIR"
-    local INSERT_ISOAGLIB_DIR="$ISO_AG_LIB_INSIDE"
-    local INSERT_SOURCE_FILE_LIST="$CCS_SOURCE_FILE_LIST"
-    local INSERT_HEADER_SEARCH_PATH="$CCS_INCLUDE_PATH"
-    local INSERT_CONFIG_HEADER_NAME="$CCS_CONFIG_HDR_NAME"
-    local INSERT_PROJECT_DEFINES="$CCS_PROJECT_DEFINES"
-    local INSERT_PROJECT_NAME="$CCS_PROJECT_NAME"
-    local INSERT_LIB_INSTALL_DIR="$CCS_LIB_INSTALL_LIB_DIR"
-    expand_template "$CCS_PROJECT_TEMPLATE" > "$CCS_PROJECT_FILE_NAME_PATH"
-
-    # create output
-    mkdir -p $CCS_LIB_INSTALL_DIR
-    mkdir -p $CCS_LIB_INSTALL_HEADER_DIR
-    mkdir -p $CCS_LIB_INSTALL_LIB_DIR
-
-    for FIRST_REL_APP_PATH in ${REL_APP_PATH:-}; do
-        mv $CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/config_$PROJECT.h $CCS_LIB_INSTALL_HEADER_DIR
-        break;
-    done
-
-    while read -r EACH_INSTALL_HEADER; do
-        install -D $EACH_INSTALL_HEADER $CCS_LIB_INSTALL_HEADER_DIR/$(echo_ $EACH_INSTALL_HEADER | sed -e 's|.*xgpl_src/||')
-    done <<END_OF_HEADER_LIST
-$(grep -v ".cpp" < "$1/$PROJECT/$FILELIST_LIBRARY_HDR")
-END_OF_HEADER_LIST
-}
-
-# print source paths in DSP format to FD3 and user information to FD1.
-format_sources_for_dsp()
-{
-    for i in "$@"; do
-        if [ -z "$i" ] ; then
-            continue
-        fi
-        echo_ "# Begin Source File" >&3
-        filename=$(echo_ "$i" |sed 's|/|\\|g')
-        echo_ "SOURCE=$filename" >&3
-        printf '\n    %s' "$filename"
-        echo_ "# End Source File" >&3
-        echo_ "" >&3
-    done
-}
-
-create_library_makefile()
-{
-    local DEV_PRJ_DIR="$1/$PROJECT"
-    cd "$DEV_PRJ_DIR"
-    MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
-    MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
-    local MAKEFILE_NAME="Makefile"
-    local MAKEFILE_LONG_NAME="Makefile__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}"
-
-    : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_MakefileLibSkeleton.txt}
-
-    local INSERT_APPLICATION_NAME="$PROJECT"
-    local INSERT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
-    local INSERT_ISOAGLIB_INSTALL_PATH="$ISOAGLIB_INSTALL_PATH"
-    local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
-    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_EXTERNAL_INCLUDE_PATH)"
-    local INSERT_APP_INCS="$(echo_ ${ALL_INC_PATHS:+$(printf -- '-I%s\n' $ALL_INC_PATHS)})"
-    local INSERT_LIBPATH="${USE_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_EXTERNAL_LIBRARY_PATH)}"
-    local INSERT_EXTERNAL_LIBS="$USE_EXTERNAL_LIBRARIES"
-    local INSERT_PROJ_DEFINES="$(
-        printf -- '$(VERSION_DEFINES)'
-        printf -- ' -DPRJ_USE_AUTOGEN_CONFIG=config_%s.h' "$PROJECT"
-        if [ -n "${PRJ_DEFINES:-}" ]; then
-            printf -- ' -D%s' "$PRJ_DEFINES"
-        fi
-
-        case "$USE_CAN_DRIVER" in
-            (msq_server)
-                printf -- ' -DCAN_DRIVER_MESSAGE_QUEUE'
-                ;;
-            (socket_server|socket_server_hal_simulator)
-                printf -- ' -DCAN_DRIVER_SOCKET'
-                ;;
-        esac;)"
-    local INSERT_SOURCES_LIBRARY="$(
-        list_source_files '%s' ' \\\n\t%s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary")"
-    generate_interface_filelist
-    local INSERT_INSTALL_FILES_LIBRARY="$(
-        list_source_files '%s' ' \\\n\t%s' '.' "$TMP_INTERFACE_FILELIST")"
-    define_insert SUBLIBS '-lrt'
-    define_insert EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
-    define_insert CXXFLAGS "${RULE_CXXFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith \$(\$F PROJ_DEFINES)}"
-    define_insert BIOS_INC ''
-    define_insert INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
-    local RULE_LFLAGS=$(
-        case "$USE_CAN_DRIVER" in
-            (msq_server|socket_server|socket_server_hal_simulator)
-                printf -- '-pthread'
-                ;;
-        esac;)' $($F LIBPATH)'
-    define_insert LFLAGS "$RULE_LFLAGS"
-    define_insert BIOS_LIB ''
-    if [ "$USE_RS232_DRIVER" = "rte" ] ; then
-        define_insert BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
-    fi
-    local INSERT_EXTERNAL_LIBS="$USE_EXTERNAL_LIBRARIES"
-    define_insert LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
-    local INSERT_PROJECT_CONFIG="$CONFIG_NAME"
-
-    expand_template "$MAKEFILE_SKELETON_FILE" |
-    sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' >"$MAKEFILE_LONG_NAME"
-    shortcut_makefile "$MAKEFILE_LONG_NAME" "$MAKEFILE_NAME"
-    cd "$1"
-}
-
 
 create_buildfiles()
 {
@@ -1763,28 +1259,11 @@ create_buildfiles()
     # call function to create project specific config file
     create_autogen_project_config $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
     case "$USE_TARGET_SYSTEM" in
-        (pc_linux)
-           # call function to create the Makefile in the project dir
-            create_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
-            ;;
-        (ees)
-            create_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
-            ;;
         # check if a win32 project file whould be created
-        (pc_win32)
+        (ees|pc_linux|pc_win32)
             create_CMake $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
-        (p1mc)
-            create_CcsPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
-            ;;
-        (src9)
-            create_library_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
-            ;;
-# AMS5 generation needs to be taken out into the proprietary HAL's project generation, which is TBD
-#        (ams5)
-#            create_ams5_workspace $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
-#            ;;
-        (esx | esxu | c2c | Dj1)
+        (esx|esxu|c2c|Dj1)
             create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
         (*)
@@ -1854,29 +1333,23 @@ assignments()
     printf -- "$FORMAT" "$@"
 }
 
-DEBUG_DEF_NAMES='DEBUG_ADDRESS_CLAIM
-DEBUG_CAN
+DEBUG_DEF_NAMES='DEBUG_CAN
 DEBUG_CANSERVER
 DEBUG_DEVPROPERTYHANDLER
 DEBUG_DIAGNOSTICPGN
 DEBUG_EEPROM
-DEBUG_ELEMENTBASE
 DEBUG_FILESERVER
 DEBUG_FILESTREAMINPUT
 DEBUG_FILESTREAMOUTPUT
 DEBUG_HAL
-DEBUG_HEAP_USEAGE
 DEBUG_ISOMONITOR
 DEBUG_LANGUAGE_AUTO_DETECT
-DEBUG_MSGOBJ
 DEBUG_MULTIRECEIVE
 DEBUG_MULTISEND
 DEBUG_MUTEX
 DEBUG_NETWORK_MANAGEMENT
 DEBUG_NMEA
-DEBUG_OUTPUTS
 DEBUG_RECEIVE
-DEBUG_REGISTERERROR
 DEBUG_SENDING
 DEBUG_INPUTS
 DEBUG_SYSTEM
@@ -1929,14 +1402,6 @@ check_before_user_configuration()
             (--big-endian-cpu)
                 PARAMETER_LITTLE_ENDIAN_CPU=0
                 USE_BIG_ENDIAN_CPU=1
-                ;;
-            ('--with-makefile-skeleton='*)
-                RootDir=$PWD
-                MAKEFILE_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-skeleton=//')
-                ;;
-            ('--with-makefile-app-skeleton='*)
-                RootDir=$PWD
-                MAKEFILE_APP_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-app-skeleton=//')
                 ;;
             ('--with-cmake-skeleton='*)
                 RootDir=$PWD
@@ -2006,178 +1471,13 @@ check_after_user_configuration()
     if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
         USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
     fi
-    
-    case "$USE_CAN_DRIVER" in
-        (simulating)
-            case "$USE_TARGET_SYSTEM" in
-                (pc_linux | pc_win32)
-                    ;;
-                (*)
-                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=sys instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                    exit 2
-                    ;;
-            esac
-            ;;
-        (sys)
-            case "$USE_TARGET_SYSTEM" in
-                (pc_win32 )
-                    echo_ "The sys CAN_DRIVER is not available for the Windows target." 1>&2
-                    usage
-                    exit 1
-                    ;;
-                (*)
-                    ;;
-            esac
-            ;;
-        (msq_server)
-            case "$USE_TARGET_SYSTEM" in
-                (pc_linux)
-                    ;;
-                (pc_win32)
-                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=socket_server instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                    exit 2
-                    ;;
-                (*)
-                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=sys instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                    exit 2
-                    ;;
-            esac
-            ;;
-        (socket_server | socket_server_hal_simulator)
-            ;;
-        (*)
-            echo_ "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
-            usage
-            exit 1
-            ;;
-    esac
-    
+
     if [ $PARAMETER_EEPROM_DRIVER != "UseConfigFile" ] ; then
         USE_EEPROM_DRIVER=$PARAMETER_EEPROM_DRIVER
-    fi
-    if [ $PRJ_EEPROM -gt 0 ]; then
-      case "$USE_EEPROM_DRIVER" in
-          (simulating | hal_simulator)
-              case "$USE_TARGET_SYSTEM" in
-                  (pc_linux | pc_win32)
-                      ;;
-                  (*)
-                      printf 'ERROR: USE_EEPROM_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_EEPROM_DRIVER=sys instead.\n' "$USE_EEPROM_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                      exit 2
-                      ;;
-              esac
-              ;;
-          (sys)
-              case "$USE_TARGET_SYSTEM" in
-                  (pc_linux | pc_win32)
-                      printf 'ERROR: USE_EEPROM_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_EEPROM_DRIVER=simulating/hal_simulator instead.\n' "$USE_EEPROM_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                      exit 2
-                      ;;
-                  (*)
-                      ;;
-              esac
-              ;;
-          (*)
-              echo_ "Unknown EEPROM driver $USE_EEPROM_DRIVER" 1>&2
-              usage
-              exit 1
-              ;;
-      esac
     fi
 
     if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
         USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
-    fi
-    if [ $PRJ_RS232 -gt 0 ]; then
-      case "$USE_RS232_DRIVER" in
-          (simulating | hal_simulator)
-              case "$USE_TARGET_SYSTEM" in
-                  (pc_linux | pc_win32)
-                      ;;
-                  (*)
-                      printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                      exit 2
-                      ;;
-              esac
-              ;;
-          (sys)
-              ;;
-          (rte)
-              case "$USE_TARGET_SYSTEM" in
-                  (pc_linux)
-                      ;;
-                  (pc_win32 | *)
-                      printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                      exit 2
-                      ;;
-              esac
-              ;;
-          (*)
-              echo_ "Unknown RS232 driver $USE_RS232_DRIVER" 1>&2
-              usage
-              exit 1
-              ;;
-      esac
-    fi
-
-    if [ $PRJ_OUTPUTS -gt 0 ]; then
-      case "$USE_OUTPUTS_DRIVER" in
-          (simulating | hal_simulator)
-              case "$USE_TARGET_SYSTEM" in
-                  (pc_linux | pc_win32)
-                      ;;
-                  (*)
-                      printf 'ERROR: USE_OUTPUTS_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". ' "$USE_OUTPUTS_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                      exit 2
-                      ;;
-              esac
-              ;;
-          (sys)
-              case "$USE_TARGET_SYSTEM" in
-                  (pc_linux | pc_win32)
-                      printf 'ERROR: USE_OUTPUTS_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". ' "$USE_OUTPUTS_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                      exit 2
-                      ;;
-                  (*)
-                      ;;
-              esac
-              ;;
-          (*)
-              echo_ "Unknown OUTPUTS driver $USE_OUTPUTS_DRIVER" 1>&2
-              usage
-              exit 1
-              ;;
-      esac
-    fi
-
-    if [ "$PRJ_INPUTS_DIGITAL" -gt 0 -o "$PRJ_INPUTS_ANALOG" -gt 0 -o "$PRJ_INPUTS_COUNTER" -gt 0 ]; then
-      case "$USE_INPUTS_DRIVER" in
-          (simulating | hal_simulator)
-              case "$USE_TARGET_SYSTEM" in
-                  (pc_linux | pc_win32)
-                      ;;
-                  (*)
-                      printf 'ERROR: USE_INPUTS_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". ' "$USE_INPUTS_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                      exit 2
-                      ;;
-              esac
-              ;;
-          (sys)
-              case "$USE_TARGET_SYSTEM" in
-                  (pc_linux | pc_win32)
-                      printf 'ERROR: USE_INPUTS_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". ' "$USE_INPUTS_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                      exit 2
-                      ;;
-                  (*)
-                      ;;
-              esac
-              ;;
-          (*)
-              echo_ "Unknown INPUTS driver $USE_INPUTS_DRIVER" 1>&2
-              usage
-              exit 1
-              ;;
-      esac
     fi
 
     : ${USE_EMBED_LIB_DIRECTORY:="library/commercial_BIOS/bios_${USE_TARGET_SYSTEM}"}
