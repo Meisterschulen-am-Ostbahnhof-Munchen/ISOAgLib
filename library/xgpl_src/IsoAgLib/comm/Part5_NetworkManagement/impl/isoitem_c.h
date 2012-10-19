@@ -92,7 +92,7 @@ public:
   /// @todo SOON-240 Merge with sendSaClaim - create an enum for the three cases!
   void sendAddressClaim (bool ab_fromConflict);
 
-  void setNr( uint8_t nr ) { mui8_nr = nr; }
+  void setNr( uint8_t aui8_nr ) { mui8_nr = aui8_nr; }
   uint8_t nr() const { return mui8_nr; }
 
   /**

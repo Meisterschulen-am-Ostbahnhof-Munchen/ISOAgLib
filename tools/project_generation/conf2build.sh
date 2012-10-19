@@ -831,7 +831,7 @@ END_OF_PATH
             echo_e "#define USE_TRACTOR_GENERAL" >&3
         fi
         if [ "$PRJ_TRACTOR_MOVE" -gt 0 ]; then
-            echo_e "define USE_TRACTOR_MOVE" >&3
+            echo_e "#define USE_TRACTOR_MOVE" >&3
         fi
         if [ "$PRJ_TRACTOR_PTO" -gt 0 ]; then
             echo_e "#define USE_TRACTOR_PTO" >&3
