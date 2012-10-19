@@ -563,6 +563,7 @@ tools/proc2iso/bin/proc2iso.cmd -text
 tools/proc2iso/bin/proc2iso.xsd -text
 tools/proc2iso/cmake/CMakeLists.txt -text
 tools/proc2iso/doc/ISO-ProcessData-Objects.txt -text
+tools/proc2iso/src/isoaglib_project_config.h -text
 tools/proc2iso/src/proc2iso-defines.hpp -text
 tools/proc2iso/src/proc2iso.cpp -text
 tools/proc2iso/src/proc2iso.hpp -text
