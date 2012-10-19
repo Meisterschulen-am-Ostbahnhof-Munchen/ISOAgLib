@@ -13,14 +13,10 @@ project(VT2ISO)
 add_definitions(
   -DAPP_NO_THREADS
   -DXML_USE_NO_THREADS
-  -DHAL_PATH_ISOAGLIB=IsoAgLib/hal/pc
-  -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   -D_CRT_SECURE_NO_WARNINGS
-  -D_SCL_SECURE_NO_WARNINGS
-  -DHAL_PATH_ISOAGLIB_SYSTEM=IsoAgLib/hal/pc/system)
+  -D_SCL_SECURE_NO_WARNINGS)
 
 include_directories(
-  ../../../library/xgpl_src
   ../src
   ../../libs/freeimage)
 

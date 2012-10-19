@@ -1,1 +1,4 @@
-// not used in here. need this dummy file to work with isoaglib_config.!
+#define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
+#define HAL_PATH_ISOAGLIB_SYSTEM IsoAgLib/hal/pc/system
+#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#define CAN_INSTANCE_CNT

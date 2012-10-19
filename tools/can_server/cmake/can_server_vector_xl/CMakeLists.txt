@@ -10,9 +10,6 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 project(CAN_SERVER_VECTOR_XL)
 
-add_definitions(
-  -DCAN_DRIVER_SOCKET)
-
 if(WIN32)
   add_definitions(-DSYSTEM_PC_VC)
 endif(WIN32)
