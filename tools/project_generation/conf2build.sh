@@ -1204,7 +1204,7 @@ create_EdePrj()
 
     with_ede_includes()
     {
-        "$1" 'C:\C166\include.cpp' "${INSERT_EMBED_COMPILER_DIR}\\include.cpp" "${INSERT_APP_PATH}" "${INSERT_ISO_AG_LIB_PATH}/library" "${INSERT_ISO_AG_LIB_PATH}/library/xgpl_src" "${INSERT_TARGET_HEADER_DIRECTORY}"
+        "$1" 'C:\C166\include.cpp' '.' "${INSERT_EMBED_COMPILER_DIR}\\include.cpp" "${INSERT_APP_PATH}" "${INSERT_ISO_AG_LIB_PATH}/library" "${INSERT_ISO_AG_LIB_PATH}/library/xgpl_src" "${INSERT_TARGET_HEADER_DIRECTORY}"
     }
 
     with_ede_libraries()
