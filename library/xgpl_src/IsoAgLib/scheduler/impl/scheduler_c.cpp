@@ -104,16 +104,16 @@ namespace __IsoAgLib {
 #endif
     }
 
-    if( m_taskQueue.empty() ) {
-      // we have to return some amount of mss that we have nothing todo
-      // but we cannot return any usefull value. Thus 1h is used what won't
-      // hurt.
-      return 3600000L;
-    }
-
 
     int32_t timeToNextTrigger;
     for( ;; ) {
+
+      if( m_taskQueue.empty() ) {
+        // we have to return some amount of mss that we have nothing todo
+        // but we cannot return any usefull value. Thus 1h is used what won't
+        // hurt.
+        return 3600000L;
+      }
 
       SchedulerTask_c& task = *( m_taskQueue.front() );
 
