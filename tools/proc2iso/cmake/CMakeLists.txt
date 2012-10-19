@@ -16,6 +16,7 @@ add_definitions(
   -DXML_USE_NO_THREADS)
 
 include_directories(
+  ../src
   ../../../library/xgpl_src)
 
 if(WIN32)
