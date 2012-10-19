@@ -1,1 +1,0 @@
-#define CAN_DRIVER_MESSAGE_QUEUE
