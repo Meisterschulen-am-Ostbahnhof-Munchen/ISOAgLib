@@ -47,9 +47,6 @@
 #define COMMAND_SEND_DELAY      60
 #define COMMAND_DATA            70
 
-#define MSGTYPE_EXTENDED        0x02            /* extended frame */
-#define MSGTYPE_STANDARD        0x00            /* standard frame */
-
 #define ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE 0
 #define ACKNOWLEDGE_DATA_CONTENT_PIPE_ID     1
 #define ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY  2

@@ -384,7 +384,7 @@ namespace HAL {
     s_transferBuf.s_data.ui8_bus = channel;
     s_transferBuf.s_data.ui8_obj = 0;
     s_transferBuf.s_data.s_canMsg.ui32_id = msg.ident();
-    s_transferBuf.s_data.s_canMsg.i32_msgType = ( msg.identType() == __IsoAgLib::Ident_c::ExtendedIdent ) ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD;
+    s_transferBuf.s_data.s_canMsg.i32_msgType = ( msg.identType() == __IsoAgLib::Ident_c::ExtendedIdent ) ? 1 : 0;// ==0 and !=0 will be checked from can-server, but legacy ISOAgLib implementations expect 0 and 1 only.
     s_transferBuf.s_data.s_canMsg.i32_len = msg.getLen();
     memcpy( s_transferBuf.s_data.s_canMsg.ui8_data, msg.getUint8DataConstPointer(), msg.getLen() );
 
@@ -430,7 +430,10 @@ namespace HAL {
         __HAL::readData( __HAL::i32_dataSocket, ( char* )&s_transferBuf, sizeof( __HAL::transferBuf_s ) );
 
         const int32_t now = getTime();
-        const __IsoAgLib::Ident_c::identType_t type = s_transferBuf.s_data.s_canMsg.i32_msgType ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent;
+        const __IsoAgLib::Ident_c::identType_t type =
+          (s_transferBuf.s_data.s_canMsg.i32_msgType != 0)
+            ? __IsoAgLib::Ident_c::ExtendedIdent
+            : __IsoAgLib::Ident_c::StandardIdent;
 
         static __IsoAgLib::CanPkg_c msg;
         msg.setIdent( s_transferBuf.s_data.s_canMsg.ui32_id, type );
