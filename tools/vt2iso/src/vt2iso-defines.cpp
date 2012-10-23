@@ -82,8 +82,8 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
   /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombGraphicsContext | ombContainer | ombObjectpointer,
-  /* "datamask", */       ombMacro | ombOutputfield | ombInputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombButton | ombContainer | ombObjectpointer | ombGraphicsContext,
-  /* "alarmmask", */      ombMacro | ombOutputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
+  /* "datamask", */       ombMacro | ombOutputfield | ombInputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombButton | ombContainer | ombObjectpointer | ombGraphicsContext | ombAuxiliaryControlDesignatorObjectPointer,
+  /* "alarmmask", */      ombMacro | ombOutputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext | ombAuxiliaryControlDesignatorObjectPointer,
   /* "container", */      0, // same as the object that included the container
   /* "softkeymask", */    ombMacro | ombKey | ombObjectpointer,
   /* "key", */            ombMacro | ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,

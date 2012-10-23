@@ -246,8 +246,11 @@
 #  ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION1
 #    define USE_VTOBJECT_alarmmask
 #    define USE_VTOBJECT_archedbargraph
+#    define USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 #    define USE_VTOBJECT_auxiliaryfunction
+#    define USE_VTOBJECT_auxiliaryfunction2
 #    define USE_VTOBJECT_auxiliaryinput
+#    define USE_VTOBJECT_auxiliaryinput2
 #    define USE_VTOBJECT_button
 #    define USE_VTOBJECT_container
 #    define USE_VTOBJECT_ellipse
@@ -261,11 +264,11 @@
 #    define USE_VTOBJECT_meter
 #    define USE_VTOBJECT_objectpointer
 #    define USE_VTOBJECT_outputnumber
-#    define USE_VTOBJECT_stringvariable
 #    define USE_VTOBJECT_outputstring
 #    define USE_VTOBJECT_outputlist
 #    define USE_VTOBJECT_polygon
 #    define USE_VTOBJECT_rectangle
+#    define USE_VTOBJECT_stringvariable
 #  endif
 
 #  ifndef USE_VTOBJECT_numbervariable
