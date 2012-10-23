@@ -108,7 +108,7 @@ public:
   //! Parameter:
   //! @param newMin:
   //! @param b_updateObject:
-  void setMin(uint32_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+  void setMin(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setMin (newMin, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -116,7 +116,7 @@ public:
   //! Parameter:
   //! @param newMax:
   //! @param b_updateObject:
-  void setMax(uint32_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+  void setMax(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setMax (newMax, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -124,7 +124,7 @@ public:
   //! Parameter:
   //! @param newValue:
   //! @param b_updateObject:
-  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     vtObjectMeter_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
