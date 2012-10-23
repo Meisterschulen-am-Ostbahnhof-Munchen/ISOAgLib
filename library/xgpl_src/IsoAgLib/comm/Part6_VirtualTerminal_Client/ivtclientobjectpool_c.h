@@ -197,7 +197,7 @@ public:
   /**
      Gets called after recognizing an incoming VT proprietary message.
    */
-  uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname) { return doEventProprietaryCommand(acr_isoname); };
+  uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname, const uint8_t* data_8bytes) { return doEventProprietaryCommand(acr_isoname, data_8bytes); };
 
   /**
   Gets called after recognizing an incoming VT proprietary message.
@@ -310,11 +310,11 @@ private:
      hook function that gets called after recognizing an incoming
      VT proprietary message.
    */
-  virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/) { return 0; }
+  virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/, const uint8_t* /*data_8bytes*/) { return 0; }
   /**
     hook function that gets called after recognizing an incoming VT proprietary message.
    */
-  virtual uint8_t doEventProprietaryCommand (iIsoName_c const &/*acr_isoname*/, uint8_t /*aui8_commandByte*/, __IsoAgLib::Stream_c& /*arc_stream*/)  { return 0; };
+  virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/, uint8_t /*aui8_commandByte*/, __IsoAgLib::Stream_c& /*arc_stream*/)  { return 0; }
 
 protected:
   iVtObject_c*HUGE_MEM** iVtObjects;

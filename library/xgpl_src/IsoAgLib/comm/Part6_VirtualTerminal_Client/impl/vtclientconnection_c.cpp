@@ -1512,7 +1512,7 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
            && arc_data.getUint8Data( 0 ) <= 0x7F
          )
       {
-        MACRO_setStateDependantOnError( mrc_pool.eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
+        MACRO_setStateDependantOnError( mrc_pool.eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c(), arc_data.getUint8DataConstPointer() ) )
       }
       break;
 
