@@ -253,7 +253,8 @@ void VtClient_c::processMsgNonGlobal( const CanPkgExt_c& arc_data ) {
   isoaglib_assert( ( arc_data.isoPurePgn() == VT_TO_ECU_PGN ) || ( arc_data.isoPurePgn() == ACKNOWLEDGEMENT_PGN ) );
 
   for ( STL_NAMESPACE::vector<VtClientConnection_c*>::iterator it = m_vtConnections.begin(); it != m_vtConnections.end(); ++it ) {
-    if( ( arc_data.getMonitorItemForDA() == (*it)->getIdentItem().getIsoItem() )  &&
+    if( (*it)->connectedToVtServer() &&
+        ( arc_data.getMonitorItemForDA() == (*it)->getIdentItem().getIsoItem() ) &&
         ( arc_data.getMonitorItemForSA() == &(*it)->getVtServerInst().getIsoItem() ) )
       switch( arc_data.isoPurePgn() ) {
         case ACKNOWLEDGEMENT_PGN:
