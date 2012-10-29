@@ -42,8 +42,8 @@ public:
   bool operator!=(const CanPkg_c &) const;
   uint8_t operator[](uint8_t aui8_pos) const {return mc_data[aui8_pos];}
 
-  void setIdent( uint32_t ident, __IsoAgLib::Ident_c::identType_t type )
-    { mc_ident.set( ident, type ); }
+  void setIdent( uint32_t a_ident, __IsoAgLib::Ident_c::identType_t type )
+    { mc_ident.set( a_ident, type ); }
 
   /**
     set specific uint8_t of ident for the telegram
