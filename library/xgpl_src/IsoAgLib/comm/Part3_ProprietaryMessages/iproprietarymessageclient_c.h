@@ -19,19 +19,20 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib
 {
   class iProprietaryMessageA_c : private __IsoAgLib::ProprietaryMessageA_c {
     public:
-      iProprietaryMessageA_c( const iIdentItem_c& ident, const iIsoName_c& remote, uint8_t dp ) :
-        __IsoAgLib::ProprietaryMessageA_c( static_cast<const __IsoAgLib::IdentItem_c&>( ident ), static_cast<const __IsoAgLib::IsoName_c&>( remote ), dp ) {}
+      iProprietaryMessageA_c() : ProprietaryMessageA_c() {}
       virtual ~iProprietaryMessageA_c() {}
 
       virtual void processA( const iIsoItem_c& ) {}
 
-      void init() { __IsoAgLib::ProprietaryMessageA_c::init(); }
+      void init(const iIdentItem_c& ident, const iIsoName_c& remote, uint8_t dp) { __IsoAgLib::ProprietaryMessageA_c::init(ident, remote, dp); }
       void close() { __IsoAgLib::ProprietaryMessageA_c::close(); }
+
+      void enableReception() { __IsoAgLib::ProprietaryMessageA_c::enableReception(); }
+      void disableReception() { __IsoAgLib::ProprietaryMessageA_c::disableReception(); }
 
       IsoAgLib::iGenericData_c& getDataReceive() { return __IsoAgLib::ProprietaryMessageA_c::getDataReceive(); }
       IsoAgLib::iGenericData_c& getDataSend() { return __IsoAgLib::ProprietaryMessageA_c::getDataSend(); }
@@ -43,14 +44,16 @@ namespace IsoAgLib
 
   class iProprietaryMessageB_c : private __IsoAgLib::ProprietaryMessageB_c {
     public:
-      iProprietaryMessageB_c( const iIdentItem_c& ident, const iIsoName_c& remote, uint8_t dp ) :
-        __IsoAgLib::ProprietaryMessageB_c( static_cast<const __IsoAgLib::IdentItem_c&>( ident ), static_cast<const __IsoAgLib::IsoName_c&>( remote ), dp ) {}
+      iProprietaryMessageB_c() : ProprietaryMessageB_c() {}
       virtual ~iProprietaryMessageB_c() {}
 
       virtual void processB( const iIsoItem_c& ) {}
 
-      void init() { __IsoAgLib::ProprietaryMessageB_c::init(); }
+      void init(const iIdentItem_c& ident, const iIsoName_c& remote, uint8_t dp) { __IsoAgLib::ProprietaryMessageB_c::init(ident, remote, dp); }
       void close() { __IsoAgLib::ProprietaryMessageB_c::close(); }
+
+      void enableReception() { __IsoAgLib::ProprietaryMessageB_c::enableReception(); }
+      void disableReception() { __IsoAgLib::ProprietaryMessageB_c::disableReception(); }
 
       IsoAgLib::iGenericData_c& getDataReceive() { return __IsoAgLib::ProprietaryMessageB_c::getDataReceive(); }
       IsoAgLib::iGenericData_c& getDataSend() { return __IsoAgLib::ProprietaryMessageB_c::getDataSend(); }

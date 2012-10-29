@@ -34,7 +34,7 @@ namespace __IsoAgLib
   class ProprietaryMessage_c : public MultiSendEventHandler_c
   {
     public:
-      ProprietaryMessage_c() : m_sendSuccess( SendStream_c::SendSuccess ), ms_receivedData(), ms_sendData() {}
+      ProprietaryMessage_c() : m_sendSuccess( SendStream_c::SendSuccess ), ms_receivedData(), ms_sendData(), m_isRegistered( false ) {}
       virtual ~ProprietaryMessage_c() {}
 
       IsoAgLib::iGenericData_c& getDataReceive() { return ms_receivedData; }
@@ -46,6 +46,9 @@ namespace __IsoAgLib
         */
       bool isSending() const { return ( m_sendSuccess == SendStream_c::Running ); }
 
+
+    protected:
+      bool m_isRegistered;
 
     private:
       void reactOnStateChange( const SendStream_c& sendStream ) {
@@ -66,17 +69,20 @@ namespace __IsoAgLib
 
   class ProprietaryMessageA_c : public ProprietaryMessage_c {
     public:
-      ProprietaryMessageA_c( const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp ) : m_ident( ident ), m_remote( remote ), m_dp( dp ) {}
+      ProprietaryMessageA_c() : m_ident( NULL ), m_remote( IsoName_c::IsoNameUnspecified() ), m_dp( 0 ) {}
       virtual ~ProprietaryMessageA_c() {}
 
-      void init();
+      void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
       virtual void processA( const IsoAgLib::iIsoItem_c& ) {}
 
+      void enableReception();
+      void disableReception();
+
       bool send();
 
-      const IdentItem_c& m_ident;
+      const IdentItem_c* m_ident;
       IsoName_c m_remote;
       uint8_t m_dp;
   };
@@ -84,17 +90,20 @@ namespace __IsoAgLib
 
   class ProprietaryMessageB_c : public ProprietaryMessage_c {
     public:
-      ProprietaryMessageB_c( const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp ) : m_ident( ident ), m_remote( remote ), m_dp( dp ) {}
+      ProprietaryMessageB_c() : m_ident( NULL ), m_remote( IsoName_c::IsoNameUnspecified() ), m_dp( 0 ) {}
       virtual ~ProprietaryMessageB_c() {}
 
-      void init();
+      void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
       virtual void processB( const IsoAgLib::iIsoItem_c& ) {}
 
+      void enableReception();
+      void disableReception();
+
       bool send();
 
-      const IdentItem_c& m_ident;
+      const IdentItem_c* m_ident;
       IsoName_c m_remote;
       uint8_t m_dp;
   };
