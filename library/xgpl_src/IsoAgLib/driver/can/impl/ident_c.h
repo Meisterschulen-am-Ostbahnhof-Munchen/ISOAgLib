@@ -23,32 +23,15 @@ namespace __IsoAgLib {
 
 /** class for management of CAN ident with
   ident type dpendent compare and setting operations
-  @see CAN_IO
-  @see FilterBox
-  @see MSgObj
+  @author Martin Wodok
   @author Dipl.-Inform. Achim Spangler
   */
 class Ident_c {
 public:
-  /** enum type for defining the CAN ident length to S (11Bit)
-    or extended (29Bit)
-  */
+  enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
 
-enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
-
-  /** constructor which can set the values
-    @param at_ident new ident setting
-    @param ren_identType new ident type
-        (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
-  */
-  Ident_c(MASK_TYPE at_ident, identType_t ren_identType);
-
-  /** constructor which gets its values from other instance
-    @param acrc_src source Ident_c instance
-  */
+  Ident_c( uint32_t at_ident, identType_t ren_identType );
   Ident_c(const Ident_c& acrc_src);
-
-  /** destructor which has nothing to do */
   ~Ident_c();
 
   /** compare this ident setting with another
@@ -71,76 +54,30 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
     @param ren_identType type of compared ident
     @return true -> given setting and type are equal
   */
-  bool equal(const MASK_TYPE at_ident, identType_t ren_identType) const
-    {return ((mt_ident == at_ident)&&(mt_type == ren_identType));}
+  bool equal(const uint32_t at_ident, identType_t ren_identType) const
+    { return( (mt_ident == at_ident) && (mt_type == ren_identType) ); }
 
   /** deliver ident value masked by given ident
     @param at_mask mask value
     @return ident setting masked by at_mask (only '1' where mask and ident has '1')
   */
-  MASK_TYPE masked(MASK_TYPE at_mask = ~0) const
-    {return (mt_type == StandardIdent)?(at_mask & mt_ident & 0x7FF):(at_mask & mt_ident);}
+  uint32_t masked( uint32_t at_mask = ~0 ) const
+    { return (mt_type == StandardIdent) ? (at_mask & mt_ident & 0x7FF) : (at_mask & mt_ident); }
 
   /** deliver ident value masked by given ident
     @param acrc_mask mask value
     @return ident setting masked by at_mask (only '1' where mask and ident has '1')
   */
-  MASK_TYPE masked(const Ident_c& acrc_mask) const
-    {return (mt_type == StandardIdent) ?(acrc_mask.mt_ident & mt_ident & 0x7FF):(acrc_mask.mt_ident & mt_ident);}
+  uint32_t masked( const Ident_c& acrc_mask ) const
+    { return (mt_type == StandardIdent) ? (acrc_mask.mt_ident & mt_ident & 0x7FF) : (acrc_mask.mt_ident & mt_ident); }
 
-  /** update the ident with bitwise AND with given ident setting
-    @param rc_bitAnd Ident_c variable with ident to bit_AND
-  */
-  void ident_bitAnd(const Ident_c& rc_bitAnd)
-    {if (rc_bitAnd.mt_type == mt_type) mt_ident &= rc_bitAnd.mt_ident;}
-
-  /** deliver amount of different bits from own ident to compared ident
-    @param acrc_ident reference to compared ident
-    @return amount of different bits
-  */
-  uint8_t bit_diff(const Ident_c& acrc_ident) const;
-  /**
-    deliver amount of different bits from own ident to compared ident
-    @param acrc_ident reference to compared ident
-    @param at_mask
-    @return amount of different bits
-  */
-  uint8_t bitDiffWithMask(const Ident_c& acrc_ident, MASK_TYPE at_mask, unsigned int& ui_lsbFromDiff) const;
-  /**
-    deliver amount of different bits from own ident to compared ident
-    @param acrc_ident reference to compared ident
-    @return amount of different bits
-  */
-  uint8_t bitDiff(const Ident_c& acrc_ident, unsigned int& ui_lsbFromDiff) const;
-  /** update the ident value with the given mask --> clear any bit in ident, which are not set in given mask.
-      Update the mask only, when the ident type of the referenced mask is the same.
-    */
-  void updateWithMask( const Ident_c& acrc_mask )
-    { if ( mt_type == acrc_mask.mt_type ) mt_ident &= acrc_mask.mt_ident;}
-  /**
-    deliver the ident type
-    @return Ident_c::S for 11bit ident or Ident_c::E for 29bit
-  */
   identType_t identType() const {return mt_type;}
 
-  /** deliver the ident setting
-    @return ident value
-  */
-  MASK_TYPE ident() const {return mt_ident;}
+  uint32_t ident() const {return mt_ident;}
 
-  /** deliver the uint8_t value of ident at wanted position
-    (position 0 is least significant position -> nearest to DLC field of
-    CAN frame)
-    @param ab_pos
-    @return ident value
-  */
   uint8_t ident(uint8_t ab_pos) const {return static_cast<uint8_t>((mt_ident >> (ab_pos*8)) & 0xFF);}
 
-  /** set this ident
-    @param at_ident new ident setting
-    @param ren_identType new ident type (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
-  */
-  void set(MASK_TYPE at_ident, identType_t ren_identType);
+  void set( uint32_t at_ident, identType_t ren_identType );
 
   /** set this ident with access to single unsigned char
     (position 0 is least significant position -> nearest to DLC field of
@@ -175,7 +112,7 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
   }
 
 private:
-  MASK_TYPE mt_ident;
+  uint32_t    mt_ident;
   identType_t mt_type;
 };
 }

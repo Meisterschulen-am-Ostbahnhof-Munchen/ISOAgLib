@@ -36,12 +36,7 @@ class iCanPkg_c : public __IsoAgLib::CanPkg_c
 {
 public:
 
-  /**
-    set ident for the telegram
-    @param at_ident ident for the telegram
-    @param at_type type of iIdent_c: 11bit iIdent_c::S or 29bit iIdent_c::E
-  */
-  void setIdent (MASK_TYPE at_ident, iIdent_c::identType_t at_type)
+  void setIdent( uint32_t at_ident, iIdent_c::identType_t at_type )
     { CanPkg_c::setIdent (at_ident, at_type); }
 
   /**
@@ -60,27 +55,11 @@ public:
   */
   void setIdentType(iIdent_c::identType_t at_type) { CanPkg_c::setIdentType (at_type); }
 
-
-  /**
-    deliver type of Ident_c: 11bit standard or 29bit extended
-    @return: Ident_c::S or Ident_c::E
-  */
   iIdent_c::identType_t identType() const { return CanPkg_c::identType(); }
 
-  /**
-    deliver the ident
-    @return ident setting as MASK_TYPE
-  */
-  MASK_TYPE ident() const { return CanPkg_c::ident(); }
+  uint32_t ident() const { return CanPkg_c::ident(); }
 
-  /**
-    deliver the uint8_t value of ident at wanted position
-    (position 0 is least significant position -> nearest to DLC field of
-    CAN frame)
-    @param ab_pos
-    @return ident value
-  */
-  MASK_TYPE ident(uint8_t ab_pos) const { return CanPkg_c::ident(ab_pos); }
+  uint32_t ident( uint8_t ab_pos ) const { return CanPkg_c::ident(ab_pos); }
 
   /** retrieve CAN data bytes represented by pointer to Union8ByteString_u */
   __IsoAgLib::Flexible8ByteString_c* getDataUnion() { return CanPkg_c::getDataUnion(); }
@@ -159,28 +138,12 @@ public:
   */
   int32_t time() const { return CanPkg_c::time(); }
 
-  /**
-    set complete CAN msg with one function call
-    (if aui8_len is greater than 8, than max 8 is used)
-    @param at_ident ident of the CAN telegram
-    @param apb_data pointer to the source data uint8_t string
-    @param aui8_len amount of bytes in the data string
-    @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
-  */
-  void set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time,
-    iIdent_c::identType_t at_type)
+   void set( uint32_t at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time,
+    iIdent_c::identType_t at_type )
     { CanPkg_c::set (at_ident, apb_data, aui8_len, ai32_time, at_type); }
 
-  /**
-    set complete CAN msg with one function call
-    where exactly 8 data bytes are retrieved from pointer to Union8ByteString_u.
-    As the union represents exactly 8-Data Byte, the message length is set to 8.
-    @param at_ident ident of the CAN telegram
-    @param apc_data pointer to the source data Flexible8ByteString_c string
-    @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
-  */
-  void set(MASK_TYPE at_ident, const __IsoAgLib::Flexible8ByteString_c* apc_data, int32_t ai32_time,
-    iIdent_c::identType_t at_type)
+  void set( uint32_t at_ident, const __IsoAgLib::Flexible8ByteString_c* apc_data, int32_t ai32_time,
+    iIdent_c::identType_t at_type )
     { CanPkg_c::set(at_ident, apc_data, ai32_time, at_type); }
 
 

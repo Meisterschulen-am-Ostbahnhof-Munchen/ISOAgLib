@@ -42,13 +42,8 @@ public:
   bool operator!=(const CanPkg_c &) const;
   uint8_t operator[](uint8_t aui8_pos) const {return mc_data[aui8_pos];}
 
-  /**
-    set ident for the telegram
-    @param at_ident ident for the telegram
-    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
-  */
-  void setIdent(MASK_TYPE at_ident, __IsoAgLib::Ident_c::identType_t at_type)
-    {mc_ident.set(at_ident, at_type);}
+  void setIdent( uint32_t ident, __IsoAgLib::Ident_c::identType_t type )
+    { mc_ident.set( ident, type ); }
 
   /**
     set specific uint8_t of ident for the telegram
@@ -78,18 +73,9 @@ public:
   */
   void setIdentType(__IsoAgLib::Ident_c::identType_t at_type){mc_ident.setIdentType(at_type);}
 
+  __IsoAgLib::Ident_c::identType_t identType() const { return mc_ident.identType(); }
 
-  /**
-    deliver type of Ident_c: 11bit standard or 29bit extended
-    @return: Ident_c::S or Ident_c::E
-  */
-  __IsoAgLib::Ident_c::identType_t identType() const {return mc_ident.identType();}
-
-  /**
-    deliver the ident
-    @return ident setting as MASK_TYPE
-  */
-  MASK_TYPE ident() const {return mc_ident.ident();}
+  uint32_t ident() const { return mc_ident.ident(); }
 
   /**
     deliver the uint8_t value of ident at wanted position
@@ -183,7 +169,7 @@ public:
     @param aui8_len amount of bytes in the data string
     @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
-  void set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time,
+  void set( uint32_t at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time,
     __IsoAgLib::Ident_c::identType_t at_type );
 
   /**
@@ -194,8 +180,8 @@ public:
     @param apc_data pointer to the source data Flexible8ByteString_c string
     @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
-  void set(MASK_TYPE at_ident, const Flexible8ByteString_c* apc_data, int32_t ai32_time,
-    __IsoAgLib::Ident_c::identType_t at_type);
+  void set( uint32_t at_ident, const Flexible8ByteString_c* apc_data, int32_t ai32_time,
+    __IsoAgLib::Ident_c::identType_t at_type );
 
 
   /**

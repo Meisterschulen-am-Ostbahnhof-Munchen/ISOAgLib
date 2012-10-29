@@ -235,25 +235,6 @@ namespace __IsoAgLib {
   }
 
 
-  void
-  CanIo_c::getCommonFilterMask() {
-    // preset all bits with "1"
-    mc_maskStd.set( ~0, Ident_c::StandardIdent );
-    mc_maskExt.set( ~0, Ident_c::ExtendedIdent );
-
-    // combine masks of all m_arrFilterBox with AND
-    for ( ArrFilterBox::iterator pc_iter = m_arrFilterBox.begin();
-          pc_iter != m_arrFilterBox.end();
-          ++pc_iter ) {
-      if ( pc_iter->maskFilterPair().getType() == Ident_c::StandardIdent ) {
-        mc_maskStd.ident_bitAnd( Ident_c( pc_iter->maskFilterPair().getMask(), pc_iter->maskFilterPair().getType() ) );
-      } else {
-        mc_maskExt.ident_bitAnd( Ident_c( pc_iter->maskFilterPair().getMask(), pc_iter->maskFilterPair().getType() ) );
-      }
-    }
-  }
-
-
   bool
   CanIo_c::canMsg2FilterBox(
     uint32_t aui32_ident,

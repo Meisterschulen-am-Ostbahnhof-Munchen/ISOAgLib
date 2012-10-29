@@ -96,7 +96,7 @@ CanPkg_c::getData(
 
 void
 CanPkg_c::set(
-  MASK_TYPE at_ident, 
+  uint32_t at_ident, 
   const uint8_t* apb_data, 
   uint8_t aui8_len, 
   int32_t ai32_time,

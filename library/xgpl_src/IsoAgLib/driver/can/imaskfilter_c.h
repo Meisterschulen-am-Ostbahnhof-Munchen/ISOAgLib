@@ -20,9 +20,10 @@ namespace IsoAgLib {
 
   //! CAN mask and filter pair for saver interface access
   class iMaskFilter_c {
+    static const uint32_t s_maskInvalid = 0xC0000000UL;
     public:
       iMaskFilter_c()
-          : mt_identMask( MASK_INVALID ), mt_identFilter( 0 ) {}
+          : mt_identMask( s_maskInvalid ), mt_identFilter( 0 ) {}
 
 
       iMaskFilter_c( const iMaskFilter_c& arc_hs ) {
@@ -31,8 +32,8 @@ namespace IsoAgLib {
       }
 
 
-      iMaskFilter_c( MASK_TYPE aui32_mask, MASK_TYPE aui32_filter ) :
-          mt_identMask( aui32_mask ), mt_identFilter( aui32_filter ) {}
+      iMaskFilter_c( uint32_t aui32_mask, uint32_t aui32_filter )
+        : mt_identMask( aui32_mask ), mt_identFilter( aui32_filter ) {}
 
 
       bool operator==( const iMaskFilter_c& rhs ) const {
@@ -50,38 +51,38 @@ namespace IsoAgLib {
 
 
       bool empty() const {
-        return ( MASK_INVALID == getMask() );
+        return( getMask() == s_maskInvalid );
       }
 
 
       void setEmpty() {
-        setMask( MASK_INVALID );
+        setMask( s_maskInvalid );
       }
 
 
-      void setMask( MASK_TYPE aui32_mask ) {
+      void setMask( uint32_t aui32_mask ) {
         mt_identMask = aui32_mask;
       }
 
 
-      MASK_TYPE getMask() const {
+      uint32_t getMask() const {
         return mt_identMask;
       }
 
 
-      void setFilter( MASK_TYPE aui32_filter ) {
+      void setFilter( uint32_t aui32_filter ) {
         mt_identFilter = aui32_filter;
       }
 
 
-      MASK_TYPE getFilter() const {
+      uint32_t getFilter() const {
         return mt_identFilter;
       }
 
 
     private:
-      MASK_TYPE mt_identMask;
-      MASK_TYPE mt_identFilter;
+      uint32_t mt_identMask;
+      uint32_t mt_identFilter;
   };
 
 
@@ -99,7 +100,7 @@ namespace IsoAgLib {
           : iMaskFilter_c( arc_mf ), mt_type( at_type ) {}
 
 
-      iMaskFilterType_c( MASK_TYPE aui32_mask, MASK_TYPE aui32_filter, iIdent_c::identType_t at_type )
+      iMaskFilterType_c( uint32_t aui32_mask, uint32_t aui32_filter, iIdent_c::identType_t at_type )
           : iMaskFilter_c( aui32_mask, aui32_filter ), mt_type( at_type ) {}
 
 

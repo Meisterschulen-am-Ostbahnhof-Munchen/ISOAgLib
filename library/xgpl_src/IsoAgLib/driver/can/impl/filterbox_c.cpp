@@ -19,37 +19,26 @@
 
 namespace __IsoAgLib {
 
+
 FilterBox_c* FilterBox_c::mspc_currentlyProcessedFilterBox = NULL;
 int FilterBox_c::msi_processMsgLoopIndex = -1; // not used if "mspc_currentlyProcessedFilterBox==NULL" though.
 int FilterBox_c::msi_processMsgLoopSize = -1; // not used if "mspc_currentlyProcessedFilterBox==NULL" though.
+
 
 FilterBox_c::FilterBox_c()
   : mc_maskFilterPair()
   , mvec_customer()
 {}
 
-/**
-  copy constructor which uses data of another FilterBox_c instance
 
-  @param acrc_src reference to the source FilterBox_c instance for copying
-   @exception badAlloc
-*/
 FilterBox_c::FilterBox_c(const FilterBox_c& acrc_src)
   : mc_maskFilterPair(acrc_src.mc_maskFilterPair)
   , mvec_customer(acrc_src.mvec_customer)
 {}
 
-/**
-  copy values of acrc_src FilterBox_c object to this instance
 
-  possible errors:
-      * badAlloc on not enough memory for copying buffed CAN msg from source
-
-  @param acrc_src FilterBox_c instance with data to assign to this instance
-  @return reference to this instance for chains like "box_1 = box_2 = ... = box_n;"
-*/
-
-FilterBox_c& FilterBox_c::operator=(const FilterBox_c& acrc_src){
+FilterBox_c&
+FilterBox_c::operator=(const FilterBox_c& acrc_src){
   if ( this != &acrc_src)
   {
     mc_maskFilterPair = acrc_src.mc_maskFilterPair;
@@ -59,27 +48,18 @@ FilterBox_c& FilterBox_c::operator=(const FilterBox_c& acrc_src){
 }
 
 
-/** clear the data of this instance */
-void FilterBox_c::clearData()
+void
+FilterBox_c::clearData()
 {
   mvec_customer.clear();
   mc_maskFilterPair.setEmpty();
 }
 
-/* *************************************** */
-/* ******* filter/mask managing ********** */
-/* *************************************** */
 
-/**
-  set the mask (t_mask) and filter (t_filter) of this FilterBox
- @param acrc_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-  @param arc_maskFilterPair mask filter combination
-  @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-  @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
-*/
-void FilterBox_c::set (const IsoAgLib::iMaskFilterType_c& arc_maskFilterPair,
-                       CanCustomer_c* apc_customer,
-                       int8_t ai8_dlcForce)
+void
+FilterBox_c::set (const IsoAgLib::iMaskFilterType_c& arc_maskFilterPair,
+                  CanCustomer_c* apc_customer,
+                  int8_t ai8_dlcForce)
 {
   // actually "apc_customer" should've rather been a reference!
   isoaglib_assert (apc_customer);
@@ -105,7 +85,9 @@ void FilterBox_c::set (const IsoAgLib::iMaskFilterType_c& arc_maskFilterPair,
   }
 };
 
-bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const
+
+bool
+FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const
 
 {
   STL_NAMESPACE::vector<CustomerLen_s>::const_iterator pc_iter;
@@ -116,11 +98,7 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) 
   return false;
 }
 
-/** delete CanCustomer_c  instance from array or set FilterBox_c to idle
-    if CanCustomer_c  is the only customer for this FilterBox_c instance
-    @param  ar_customer  CANCustomer to delete
-    @return                true -> no more cancustomers exist, whole filterbox can be deleted
-  */
+
 bool
 FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 {
@@ -155,21 +133,9 @@ FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
   }
 }
 
-/* ************************************************** */
-/* ***** insert/get/process buffered CanPkg_c ******** */
-/* ************************************************** */
 
-/**
-  control the processing of a received message
-  (MsgObj_c::processMsg inserted data directly in CANCustomer
-   -> FilterBox_c::processMsg() initiates conversion of CAN string
-      to data flags and starts processing in CanCustomer_c )
-
-  possible errors:
-      * precondition no valid CanCustomer_c  (or derived) is registered
-  @return true -> FilterBox_c was able to inform registered CANCustomer
-*/
-bool FilterBox_c::processMsg( CanPkg_c& pkg )
+bool
+FilterBox_c::processMsg( CanPkg_c& pkg )
 {
   bool b_result = false;
 
@@ -198,4 +164,4 @@ bool FilterBox_c::processMsg( CanPkg_c& pkg )
   return b_result;
 }
 
-} // End namespace __IsoAgLib
+} // __IsoAgLib

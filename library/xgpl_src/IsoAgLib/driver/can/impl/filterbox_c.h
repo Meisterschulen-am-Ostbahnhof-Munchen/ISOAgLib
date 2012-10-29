@@ -87,7 +87,6 @@ public:
 
   /** set the mask (t_mask) and filter (t_filter) of this FilterBox
     @param arc_maskFilter filter mask pair combination
-    @param acrc_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
     @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
   */

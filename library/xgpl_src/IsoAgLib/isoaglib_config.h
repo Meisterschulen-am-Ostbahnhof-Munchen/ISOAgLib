@@ -189,20 +189,6 @@
 #endif
 /*@}*/
 
-/* ******************************************************** */
-/**
- * \name Config basic properties of process data handling
- * Choose basic properties for process data handling
- @todo TaskControllerClient cleanup!
- */
-/*@{*/
-/// define special command value for release of setpoint
-#define SETPOINT_RELEASE_COMMAND  NO_VAL_32S
-/// define special command value for signaling setpoint error
-#define SETPOINT_ERROR_COMMAND  ERROR_VAL_32S
-
-/*@}*/
-
 
 /* ***** Auto-set dependant defines ***** */
 
@@ -211,15 +197,6 @@
 #  if defined (USE_ISO_VIRTUALTERMINAL_CLIENT) || defined (USE_ISO_TASKCONTROLLER_CLIENT)
 #    define USE_WORKING_SET
 #  endif
-#endif
-
-
-#ifdef USE_ISO_11783
-#  define MASK_TYPE uint32_t
-#  define MASK_INVALID 0xC0000000L
-#else
-#  define MASK_TYPE uint16_t
-#  define MASK_INVALID 0xF800
 #endif
 
 
