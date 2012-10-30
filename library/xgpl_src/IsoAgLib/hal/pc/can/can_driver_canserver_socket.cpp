@@ -267,7 +267,8 @@ namespace __HAL {
   bool canStopDriver() {
     transferBuf_s s_transferBuf;
     s_transferBuf.ui16_command = COMMAND_DEREGISTER;
-    bool r = sendCommand( &s_transferBuf, i32_commandSocket );
+    // can_server_sock does not acknowledge COMMAND_DEREGISTER, socket read returns 0 => sendCommand() returns false
+    (void)sendCommand( &s_transferBuf, i32_commandSocket );
 
 #ifdef WIN32
 #ifdef USE_MUTUAL_EXCLUSION
@@ -283,7 +284,7 @@ namespace __HAL {
     ( void )close( i32_commandSocket );
     ( void )close( i32_dataSocket );
 #endif
-    return r;
+    return true;
   }
 
 
