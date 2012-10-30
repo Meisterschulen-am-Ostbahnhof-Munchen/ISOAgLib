@@ -1818,11 +1818,16 @@ formatAsFloat( const std::string& in )
   bool dotFound=false;
   for( std::size_t i=0; i<in.length(); ++i )
     if( in[ i ] == '.' )
-	  dotFound = true;
+      dotFound = true;
+
+  bool eFound=false;
+  for( std::size_t i=0; i<in.length(); ++i )
+    if( ( in[ i ] == 'e' ) || ( in[ i ] == 'E' ) )
+      eFound = true;
 
   std::string out( in );
 
-  if( !dotFound )
+  if( !dotFound && !eFound )
     out += ".";
 
   out += "f";
