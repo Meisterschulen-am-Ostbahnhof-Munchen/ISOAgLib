@@ -27,11 +27,22 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-namespace HAL {
-  bool canInit( unsigned channel, unsigned baudrate ) {
+namespace __HAL {
+  bool canStartDriver() {
     return true;
   }
 
+  bool canStopDriver() {
+    return true;
+  }
+}
+
+
+namespace HAL {
+
+  bool canInit( unsigned channel, unsigned baudrate ) {
+    return true;
+  }
 
   bool canClose( unsigned channel ) {
     return true;

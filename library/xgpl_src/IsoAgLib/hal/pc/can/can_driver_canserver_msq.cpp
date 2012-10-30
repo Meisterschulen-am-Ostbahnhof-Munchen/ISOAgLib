@@ -34,12 +34,10 @@
 
 #include "can_server_interface.h"
 
-#define TRACE(); printf("%s (%d)\n", __FUNCTION__, __LINE__ );
 
 namespace __HAL {
   static msqData_s msqDataClient = { -1, -1, -1, -1, -1, -1 };
-  static unsigned numInitialized = 0;
-  static bool b_driverInitialized = false;
+
 #ifdef USE_MUTUAL_EXCLUSION
   static int breakWaitPipeFd[2] = { -1, -1 };
 #endif
@@ -90,8 +88,6 @@ namespace __HAL {
   int16_t canStopDriver() {
     transferBuf_s s_transferBuf;
 
-    DEBUG_PRINT( "can_stopDriver called\n" );
-
     if ( msqDataClient.i32_pipeHandle )
       close( msqDataClient.i32_pipeHandle );
 
@@ -125,10 +121,6 @@ namespace HAL {
 
   bool canInit( unsigned channel, unsigned baudrate ) {
     bool r = true;
-
-    if( ! __HAL::b_driverInitialized ) {
-      r = __HAL::canStartDriver();
-    }
 
     __HAL::transferBuf_s b;
     b.i32_mtypePid = __HAL::msqDataClient.i32_pid;
@@ -167,8 +159,6 @@ namespace HAL {
     b.s_config.ui16_wNumberMsgs = 0x20;
     r &= ( HAL_NO_ERR == __HAL::send_command( &b, &__HAL::msqDataClient ) );
 
-    __HAL::numInitialized += r ? 1 : 0;
-
     return r;
   }
 
@@ -179,16 +169,7 @@ namespace HAL {
     s_transferBuf.i32_mtypePid = __HAL::msqDataClient.i32_pid;
     s_transferBuf.ui16_command = COMMAND_CLOSE;
     s_transferBuf.s_init.ui8_bus = channel;
-    bool r = ( __HAL::send_command( &s_transferBuf, &__HAL::msqDataClient ) == HAL_NO_ERR );
-
-    if( r ) {
-      __HAL::numInitialized--;
-    }
-
-    if( __HAL::numInitialized <= 0 ) {
-      r &= __HAL::canStopDriver();
-    }
-    return r;
+    return( __HAL::send_command( &s_transferBuf, &__HAL::msqDataClient ) == HAL_NO_ERR );
   }
 
 
@@ -298,4 +279,4 @@ namespace HAL {
   }
 
 
-}; // end namespace __HAL
+} // __HAL

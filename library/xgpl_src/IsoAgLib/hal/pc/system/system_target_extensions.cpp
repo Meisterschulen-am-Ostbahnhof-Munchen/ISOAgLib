@@ -43,22 +43,9 @@
   #include <linux/version.h>
 #endif
 
-#if DEBUG_HAL
-#define DEBUG_PRINT(str) printf(str); fflush(0)
-#define DEBUG_PRINT1(str,a) printf(str,a); fflush(0)
-#define DEBUG_PRINT2(str,a,b) printf(str,a,b); fflush(0)
-#define DEBUG_PRINT3(str,a,b,c) printf(str,a,b,c); fflush(0)
-#define DEBUG_PRINT4(str,a,b,c,d) printf(str,a,b,c,d); fflush(0)
-#else
-#define DEBUG_PRINT(str)
-#define DEBUG_PRINT1(str,a)
-#define DEBUG_PRINT2(str,a,b)
-#define DEBUG_PRINT3(str,a,b,c)
-#define DEBUG_PRINT4(str,a,b,c,d)
-#endif
 
-
-bool HALSimulator_c::getOn_offSwitch()
+bool
+HALSimulator_c::getOn_offSwitch()
 {
   #if 0
     // old style execution stop detection when
@@ -79,13 +66,19 @@ bool HALSimulator_c::getOn_offSwitch()
 
 namespace __HAL {
 
+
+extern bool canStartDriver();
+extern bool canStopDriver();
+
+
+static bool s_systemStarted = false;
+
 static HALSimulator_c* g_halSimulator = NULL;
 
 HALSimulator_c &halSimulator() { isoaglib_assert( g_halSimulator ); return *g_halSimulator; }
 void setHalSimulator( HALSimulator_c* sim ) { g_halSimulator = sim; }
 
 
-static tSystem t_biosextSysdata = { false };
 
 #ifndef WIN32
 /** define the amount of MSec per Clock_t, in case the project config didn't this before */
@@ -148,29 +141,25 @@ openSystem()
   // init system start time (first call sets the start-time-base)
   (void)getTime();
 
-  DEBUG_PRINT("DEBUG: openSystem called.\n");
-  DEBUG_PRINT("DEBUG: PRESS RETURN TO STOP PROGRAM!!!\n\n");
-
-  const int16_t canStarted =  HAL_NO_ERR; //can_startDriver();
-  t_biosextSysdata.started = (canStarted == HAL_NO_ERR);
-  if( ! t_biosextSysdata.started ) {
+  s_systemStarted = canStartDriver();
+  if( !s_systemStarted )
     abort();
-  }
 }
 
 
 void 
 closeSystem()
 {
-  //can_stopDriver();
-  t_biosextSysdata.started = false;
+  s_systemStarted = !canStopDriver();
+  if( s_systemStarted )
+    abort();
 }
 
 
 bool
 isSystemOpened()
 {
-  return t_biosextSysdata.started;
+  return s_systemStarted;
 }
 
 
@@ -212,22 +201,26 @@ getSnr(uint8_t *snrDat)
 int16_t
 getCpuFreq()
 {
-  DEBUG_PRINT("DEBUG: getCpuFreq called\n");
   return 20;
 }
 
 
-void powerHold( bool ab_on ) {
+void
+powerHold( bool ab_on )
+{
   halSimulator().powerHold( ab_on );
 }
 
-bool getOn_offSwitch(void)
+
+bool
+getOn_offSwitch()
 {
 	return halSimulator().getOn_offSwitch();
 }
 
 
-int16_t KeyGetByte(uint8_t *p)
+int16_t
+KeyGetByte(uint8_t *p)
 {
   #ifndef WIN32
     // fcntl( 0,
@@ -244,12 +237,13 @@ int16_t KeyGetByte(uint8_t *p)
 }
 
 
-void sleep_max_ms( uint32_t ms )
+void
+sleep_max_ms( uint32_t ms )
 {
 #ifdef WIN32
- Sleep( ms );
+  Sleep( ms );
 #else
- usleep ( ms * 1000 );
+  usleep ( ms * 1000 );
 #endif
 }
 

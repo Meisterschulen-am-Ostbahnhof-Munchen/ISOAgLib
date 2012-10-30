@@ -67,8 +67,6 @@ namespace __HAL {
 
   static SOCKET_TYPE i32_commandSocket = 0;
   static SOCKET_TYPE i32_dataSocket = 0;
-  static bool b_driverInitialized = false;
-  static unsigned numInitialized = 0;
 
 #ifdef USE_MUTUAL_EXCLUSION
   static int breakWaitPipeFd[2] = { -1, -1 };
@@ -262,8 +260,7 @@ namespace __HAL {
     s_transferBuf.ui16_command = COMMAND_REGISTER;
     s_transferBuf.s_startTimeClock.t_clock = getStartupTime();
 
-    b_driverInitialized = sendCommand( &s_transferBuf, i32_commandSocket );
-    return b_driverInitialized;
+    return sendCommand( &s_transferBuf, i32_commandSocket );
   }
 
 
@@ -300,10 +297,6 @@ namespace HAL {
   bool canInit( unsigned channel, unsigned baudrate ) {
 
     bool r = true;
-
-    if( ! __HAL::b_driverInitialized ) {
-      r &= __HAL::canStartDriver();
-    }
 
     __HAL::transferBuf_s s_transferBuf[4];
 
@@ -345,27 +338,16 @@ namespace HAL {
     s_transferBuf[3].s_config.ui16_wNumberMsgs = 1;
     r &= sendCommand( &s_transferBuf[3], __HAL::i32_commandSocket );
 
-    __HAL::numInitialized += r ? 1 : 0;
-
     return r;
   }
 
 
   bool canClose( unsigned channel ) {
-    bool r = false;
     __HAL::transferBuf_s s_transferBuf;
     s_transferBuf.ui16_command = COMMAND_CLOSE;
     s_transferBuf.s_init.ui8_bus = channel;
-    if( sendCommand( &s_transferBuf, __HAL::i32_commandSocket ) ) {
-      --__HAL::numInitialized;
-      r = true;
-    }
 
-    if( __HAL::numInitialized <= 0 ) {
-      __HAL::canStopDriver();
-    }
-
-    return r;
+    return sendCommand( &s_transferBuf, __HAL::i32_commandSocket );
   }
 
 
