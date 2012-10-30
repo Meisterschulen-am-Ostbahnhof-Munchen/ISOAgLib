@@ -1,5 +1,5 @@
 std::string
-partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame )
+partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
 {
   if (at_ptrFrame->dataSize() < 8)
     return "*** ILLEGAL - THIS PGN *MUST* HAVE AT LEAST 8 DATABYTES ***";
@@ -59,7 +59,7 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame )
     case 0xB0: out << "Change Priority"; i8_uidBytePos = 2; break;
     case 0xB1: out << "Change List Item"; i8_uidBytePos = 2; break;
     case 0xB2: out << "Delete Object Pool"; break;
-    case 0xB3: out << "Change String Value"; i8_uidBytePos = 2; break;
+    case 0xB3: out << "Change String Value"; i8_uidBytePos = response ? 4 : 2; break;
     case 0xB4: out << "Change Child Position"; i8_uidBytePos = 4; break;
 
     case 0xFE: out << "VT Status Message: Active WS-Master's SA: $"; out << std::hex << uint16_t(at_ptrFrame->dataOctet(1)); break;
@@ -76,7 +76,7 @@ std::string
 interpretePgnsVtFromEcu( PtrDataFrame_t at_ptrFrame )
 {
   std::string result(
-    partiallyInterpretePgnsVtEcu(at_ptrFrame) );
+    partiallyInterpretePgnsVtEcu(at_ptrFrame, false) );
 
   bool const cb_response = at_ptrFrame->dataOctet(0) < 0x10;
   if (cb_response)
@@ -89,12 +89,13 @@ interpretePgnsVtFromEcu( PtrDataFrame_t at_ptrFrame )
 std::string
 interpretePgnsVtToEcu( PtrDataFrame_t at_ptrFrame )
 {
-  std::string result(
-    partiallyInterpretePgnsVtEcu(at_ptrFrame) );
-
   bool const cb_response =
     (at_ptrFrame->dataOctet(0) >=0x10) &&
     (at_ptrFrame->dataOctet(0) < 0xF0);
+
+  std::string result(
+    partiallyInterpretePgnsVtEcu(at_ptrFrame, cb_response) );
+
   if (cb_response)
     result += " Response";
 
