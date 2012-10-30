@@ -17,6 +17,7 @@
 
 #ifdef USE_MUTUAL_EXCLUSION
 #include <pthread.h>
+#include <assert.h>
 
 
 namespace HAL
@@ -33,7 +34,7 @@ public:
 
   ExclusiveAccess_c() {
                         const int i_retV = pthread_mutex_init( &m_exclusiveAccess, NULL );
-                        ( void )i_retV; isoaglib_assert( i_retV == 0 );
+                        ( void )i_retV; assert( i_retV == 0 );
                       }
 
   ~ExclusiveAccess_c() { pthread_mutex_destroy( &m_exclusiveAccess ); }
