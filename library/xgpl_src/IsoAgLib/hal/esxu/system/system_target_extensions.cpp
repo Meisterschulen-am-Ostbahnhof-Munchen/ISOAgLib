@@ -71,32 +71,9 @@ void initWatchdog( void* config )
 
   const int16_t retval = config_wd( &t_watchdogConf );
 
-#if DEBUG_HAL
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< "config_wd( &t_watchdogConf( "
-//<< t_watchdogConf.wWDTime_ms << ", "
-//<< t_watchdogConf.wUEmin_mV << ", "
-//<< t_watchdogConf.wUEmax_mV
-//<< " ) ) returns " << retval << "\r";
-
-#if 0
-// don't use CNAMESPACE in header, doesn't always work properly
-// maybe reactivate the statement above using getIrs232Instance(..)
-uint8_t buf[128];
-sprintf( (char*)buf, "%u ms - config_wd( &t_watchdogConf( %u, %u, %u ) returns %i\r"
-, (uint16_t)__HAL::get_time()
-, (uint16_t)t_watchdogConf.wWDTime_ms
-, (uint16_t)t_watchdogConf.wUEmin_mV
-, (uint16_t)t_watchdogConf.wUEmax_mV
-, (int16_t) retval
-);
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-#endif
-#endif
-
   if( retval != C_NO_ERR ) {
     abort();
   }
 }
 
-} // end namespace __HAL
+} // __HAL

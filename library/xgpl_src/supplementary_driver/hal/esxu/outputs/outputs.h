@@ -84,19 +84,7 @@ namespace HAL
   */
   inline int16_t setPwmFreq(uint8_t bOutput, uint32_t dwFrequency)
   // ESXu BIOS lets PWM channels OUT1, OUT2 configure individual PWM FREQ
-    {
-    int16_t retval = __HAL::set_pwm_freq(bOutput, dwFrequency);
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
-<< "set_pwm_freq( "
-<< (uint16_t)bOutput << ", "
-<< (uint16_t)dwFrequency
-<< " ) returns " << retval << "\r";
-#endif
-
-    return retval;};
-
+    { return __HAL::set_pwm_freq(bOutput, dwFrequency); }
 
   /**
     retrieve maximal PWM frequency -> setting to this value results in maximal output
@@ -105,18 +93,10 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
   */
   inline uint16_t getMaxPwmDigout(uint8_t aui8_channel)
   {
-  __HAL::tOutput tOutputstatus;
-  int16_t retval = __HAL::get_digout_status(aui8_channel,&tOutputstatus);
+    __HAL::tOutput tOutputstatus;
+    int16_t retval = __HAL::get_digout_status(aui8_channel,&tOutputstatus);
 
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
-<< "get_digout_status( "
-<< (uint16_t)aui8_channel << ", "
-<< "&tOutputstatus"
-<< " ) returns " << retval << "\r";
-#endif
-
-   return tOutputstatus.wMaxOutput;
+    return tOutputstatus.wMaxOutput;
   }
 
   /**
@@ -126,19 +106,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
   inline int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
-    {
-    int16_t retval = __HAL::set_digout(aui8_channel, wPWMValue);
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
-<< "set_digout( "
-<< (uint16_t)aui8_channel << ", "
-<< (uint16_t)wPWMValue
-<< " ) returns " << retval << "\r";
-#endif
-
-    return retval;
-    };
+    { return __HAL::set_digout(aui8_channel, wPWMValue); }
 
   /**
 	This function sets the digital Output over mask.
@@ -150,43 +118,14 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t setDigoutMask(uint16_t wOutputMask, uint16_t wDigitalValue)
-    {
-    int16_t retval = __HAL::set_digout_mask(wOutputMask, wDigitalValue);
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
-<< "set_digout_mask( "
-<< (uint16_t)wOutputMask << ", "
-<< (uint16_t)wDigitalValue
-<< " ) returns " << retval << "\r";
-#endif
-
-    return retval;
-    };
+    { return __HAL::set_digout_mask(wOutputMask, wDigitalValue); }
 
   /** deliver the actual current of the digital output
     * @param aui8_channel channel to check
     * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
     */
   inline int16_t getDigoutCurrent( uint8_t aui8_channel )
-  {
-//    return (aui8_channel <= OUT4) ? __HAL::get_adc( __HAL::getPwmCurrentCheckNr(aui8_channel) ) : -1;
-	if( aui8_channel <= OUT4 )
-		{
-		int16_t retval = __HAL::get_adc( __HAL::getPwmCurrentCheckNr(aui8_channel) );
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
-<< "get_adc( "
-<< (uint16_t)__HAL::getPwmCurrentCheckNr(aui8_channel)
-<< " ) returns " << retval << "\r";
-#endif
-
-		return retval;
-		}
-	else
-		return -1;
-  }
+    { return (aui8_channel <= OUT4) ? __HAL::get_adc( __HAL::getPwmCurrentCheckNr(aui8_channel) ) : -1; }
 
   /** deliver the state of a digital output
 	* This function evaluates the current where possible, otherwise it evaluates
@@ -202,12 +141,12 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
     */
   int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent);
 
-	/** deliver the measure voltage at the PWM output.
-		Use this for application specific state evaluation for cases, where the standard
-		getDigoutDiagnose function can go wrong.
-		@return voltage at PWM channel [mV]
+  /** deliver the measure voltage at the PWM output.
+    * Use this for application specific state evaluation for cases, where the standard
+    * getDigoutDiagnose function can go wrong.
+    * @return voltage at PWM channel [mV]
 	*/
-	int16_t getDigoutAdc( uint8_t aui8_channel );
+  int16_t getDigoutAdc( uint8_t aui8_channel );
 
   /*@}*/
 }

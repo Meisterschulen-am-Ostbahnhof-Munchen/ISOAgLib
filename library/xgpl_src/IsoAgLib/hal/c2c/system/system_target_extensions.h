@@ -35,9 +35,6 @@ namespace __HAL {
 #include "../typedef.h"
 #include "../errcodes.h"
 
-#if DEBUG_HAL
-#  include <supplementary_driver/driver/rs232/irs232io_c.h>
-#endif
 
 namespace __HAL {
 

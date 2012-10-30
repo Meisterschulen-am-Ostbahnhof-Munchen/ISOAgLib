@@ -16,10 +16,6 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/iliberr_c.h>
 
-#if DEBUG_INPUTS
-#  include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-#endif
-
 
 namespace IsoAgLib {
 
@@ -109,10 +105,6 @@ DigitalI_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff, bool
   getInputsInstance().registerClient( this );
   // register optional pointer to handler
   if ( ab_channel < 16 ) ppc_handler[ab_channel] = apc_handler;
-  #if DEBUG_INPUTS
-  if ( apc_handler != NULL )
-   INTERNAL_DEBUG_DEVICE << "DigitalI_c::init() zu Channel: " << uint16_t(ab_channel) << " mit IRQ Handler" << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
 }
 
 

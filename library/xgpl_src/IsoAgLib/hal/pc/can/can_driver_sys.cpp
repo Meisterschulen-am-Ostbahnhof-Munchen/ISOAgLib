@@ -40,16 +40,6 @@
 #define DEF_CAN_NETDEV_PREFIX "can"
 #endif
 
-#if DEBUG_CAN
-#define DEBUG_PRINT(...) \
-  fprintf(stderr, "%s(%d): ", __FUNCTION__, __LINE__ ); \
-  fprintf(stderr, __VA_ARGS__)
-#else
-#  define DEBUG_PRINT(...)
-#endif
-
-/* use this define to get a very verbose output */
-//#define DEBUG_CAN_VERBOSE 1
 
 namespace __HAL {
   /** representation of a single can bus instance */

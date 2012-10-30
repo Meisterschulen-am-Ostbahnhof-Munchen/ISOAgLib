@@ -19,7 +19,7 @@
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/iassert.h>
 
-#if DEBUG_ISOMONITOR || DEBUG_HEAP_USEAGE
+#if DEBUG_ISOMONITOR
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>

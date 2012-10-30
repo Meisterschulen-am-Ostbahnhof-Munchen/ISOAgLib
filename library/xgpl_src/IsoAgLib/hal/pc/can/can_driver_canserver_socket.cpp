@@ -131,7 +131,6 @@ namespace __HAL {
     // incoming connection requests
     connectSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
     if ( connectSocket == INVALID_SOCKET ) {
-      DEBUG_PRINT1( "Error at socket(): %i\n", WSAGetLastError() );
       WSACleanup();
       return INVALID_SOCKET;
     }

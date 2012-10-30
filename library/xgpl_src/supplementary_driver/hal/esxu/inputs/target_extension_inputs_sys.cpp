@@ -131,15 +131,6 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
   /* configure init channel */
   int16_t ret = init_digin(ab_channel, b_codeEdge, b_codeActiv, NULL);
 
-#if DEBUG_HAL
-  INTERNAL_DEBUG_DEVICE <<
-    __HAL::get_time() << " ms - " <<
-    "init_digin( " << (uint16_t)ab_channel << ", " <<
-    (uint16_t)b_codeEdge << ", " <<
-    (uint16_t)b_codeActiv <<
-    ", NULL ) returns " << ret << "\r";
-#endif
-
 // NOTE: On ESXu, The prescaler applies to both RPM inputs DIN9 and DIN10
 // So, try to find the best prescaler for both inputs based on the maximum time per pulse in ms given by aui16_timebase
 // The best (highest precision) prescaler is RPM_PRESCALER_MIN
@@ -154,12 +145,6 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
   }
   /* set prescaler */
   i16_errorState = set_digin_prescaler(_b_prescale_1_Index);
-
-#if DEBUG_HAL
-  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
-    "set_digin_prescaler( " << (uint16_t)_b_prescale_1_Index <<
-    " ) returns " << i16_errorState << "\r";
-#endif
 
   /* clear counter value
    */
@@ -177,19 +162,10 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
   }
 #endif
 
-// Really need to call this for each input when the prescaler changes
-uint16_t wTime = (uint32_t)aui16_timebase * 1000 * get_cpu_freq() >> (_b_prescale_1_Index+3);
-uint16_t numPulsesToAvg = 1;
-int16_t configretval = config_digin_freq( ab_channel, wTime, numPulsesToAvg );
-
-#if DEBUG_HAL
-  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
-    "config_digin_freq( " <<
-    (uint16_t) ab_channel << ", " <<
-    (uint16_t) wTime << ", " <<
-    (uint16_t) numPulsesToAvg <<
-    " ) returns  " << configretval << "\r";
-#endif
+  // Really need to call this for each input when the prescaler changes
+  uint16_t wTime = (uint32_t)aui16_timebase * 1000 * get_cpu_freq() >> (_b_prescale_1_Index+3);
+  uint16_t numPulsesToAvg = 1;
+  int16_t configretval = config_digin_freq( ab_channel, wTime, numPulsesToAvg );
 
   return i16_errorState;
 }
@@ -202,14 +178,6 @@ uint32_t getCounter(uint8_t ab_channel)
 	uint16_t ui16_result = 0xFFFF, ui16_counter;
 
 	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
-
-#if DEBUG_HAL
-  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
-    "get_digin_period( " << unsigned(ab_channel) << ", " <<
-    unsigned(ui16_result) << ", " <<
-    unsigned(ui16_counter) <<
-    " ) returns " << unsigned(retval) << "\r";
-#endif
 
 	_pulDiginCounter[ab_channel] += ( ui16_counter - _prevCounter[ab_channel] );
 	_prevCounter[ab_channel] = ui16_counter;
@@ -224,14 +192,6 @@ int16_t resetCounter(uint8_t ab_channel)
 {
 	uint16_t ui16_result = 0xFFFF, ui16_counter;
 	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
-
-#if DEBUG_HAL
-  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
-    "get_digin_period( " << unsigned(ab_channel) << ", " <<
-    unsigned(ui16_result) << ", " <<
-    unsigned(ui16_counter) <<
-    " ) returns " << unsigned(retval) << "\r";
-#endif
 
 	_pulDiginCounter[ab_channel] = 0;
 	_prevCounter[ab_channel] = ui16_counter;
@@ -248,14 +208,6 @@ uint16_t getCounterPeriod(uint8_t ab_channel)
 	uint16_t ui16_result = 0xFFFF, ui16_counter;
 
 	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
-
-#if DEBUG_HAL
-  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
-    "get_digin_period( " << unsigned(ab_channel) << ", " <<
-    unsigned(ui16_result) << ", " <<
-    unsigned(ui16_counter) <<
-    " ) returns " << unsigned(retval) << "\r";
-#endif
 
 	_pulDiginCounter[ab_channel] += ( ui16_counter - _prevCounter[ab_channel] );
 	_prevCounter[ab_channel] = ui16_counter;
@@ -296,13 +248,6 @@ uint32_t getCounterFrequency(uint8_t ab_channel)
 #endif
 
     int16_t retval = get_digin_freq((byte)ab_channel, &ui16_result);
-
-#if DEBUG_HAL
-  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
-    "get_digin_freq( " << unsigned(ab_channel) << ", " <<
-    unsigned(ui16_result) << ", " <<
-    " ) returns " << unsigned(retval) << "\r";
-#endif
 
 #if 0
   if (ui16_timebase == 0) ui16_result = 0;

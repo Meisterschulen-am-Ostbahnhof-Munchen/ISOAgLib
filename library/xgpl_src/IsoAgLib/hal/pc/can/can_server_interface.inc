@@ -69,7 +69,6 @@ int16_t createMsqs(msqData_s& msqData)
 {
   key_t  msgkey;
 
-  DEBUG_PRINT("createMsqs called\n");
   msqData.i32_pid = getpid();
   bool b_useFallback = false;
 
@@ -96,8 +95,6 @@ int16_t createMsqs(msqData_s& msqData)
   msgkey = ftok((b_useFallback ? MSQ_KEY_PATH_FALLBACK : MSQ_KEY_PATH), MSQ_CLIENT_WRITE);
   if ((msqData.i32_wrHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
     return HAL_UNKNOWN_ERR;
-  
-  //DEBUG_PRINT4("queues: cmd %d, ack %d, rd %d, wr %d\n", msqData.i32_cmdHandle, msqData.i32_cmdAckHandle, msqData.i32_rdHandle, msqData.i32_wrHandle);
   
   return 0;
 }

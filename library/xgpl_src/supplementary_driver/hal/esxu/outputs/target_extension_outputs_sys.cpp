@@ -66,13 +66,6 @@ static const int16_t cui16_openLow  = ( 170000L / 4000L ); // 1700mV * 100 / 40m
 
 		int16_t ci16_result = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(aui8_channel));
 
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
-<< "get_adc( "
-<< (uint16_t)__HAL::getPwmoutAdcCheckNr(aui8_channel)
-<< " ) returns " << ci16_result << "\r";
-#endif
-
 		if ( ci16_result != HAL_NO_ERR ) return ci16_result;
 		return __IsoAgLib::mul1Div1Mul2Div2(ci16_result, 3743, 1, 100);
 	}

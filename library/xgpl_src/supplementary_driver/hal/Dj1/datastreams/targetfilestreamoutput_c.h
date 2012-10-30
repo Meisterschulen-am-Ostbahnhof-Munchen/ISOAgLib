@@ -54,12 +54,6 @@ public:
 
 private:
 
-  #if DEBUG_FILESTREAMOUTPUT
-  uint32_t mui32_byteCount;
-  uint8_t debugData[DEBUG_ARRAY_SIZE];
-  #endif
-
-  
   void *file_handle_;
   bool is_failed_;
 

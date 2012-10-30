@@ -15,16 +15,7 @@
 #include "stdio.h"
 #include <string>
 
-#if DEBUG_FILESTREAMOUTPUT
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
-#endif
 
-//  Operation: open
 bool
 FileStreamOutput_c::open (STD_TSTRING& filename, FileMode_t at_mode)
 {
@@ -34,8 +25,6 @@ FileStreamOutput_c::open (STD_TSTRING& filename, FileMode_t at_mode)
 }
 
 
-
-//  Operation: open
 bool
 FileStreamOutput_c::open (const TCHAR* filename, FileMode_t at_mode)
 {
@@ -45,8 +34,6 @@ FileStreamOutput_c::open (const TCHAR* filename, FileMode_t at_mode)
 }
 
 
-
-//  Operation: close
 bool
 FileStreamOutput_c::close (bool b_deleteFile, bool b_sync)
 {
@@ -67,9 +54,6 @@ FileStreamOutput_c::close (bool b_deleteFile, bool b_sync)
     c_targetHandle.close(NULL);
   
   if (b_deleteFile) {
-    #if DEBUG_FILESTREAMOUTPUT
-    INTERNAL_DEBUG_DEVICE << TEXT("Removing file ") << str_openedFile << TEXT(".") << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
 #if (defined(WIN32) && defined(UNICODE)) || defined(WINCE)
     WCHAR tmpFileName[MAX_PATH];
     mb2wc( (LPSTR)str_openedFile.c_str(), tmpFileName, MAX_PATH );
@@ -81,8 +65,6 @@ FileStreamOutput_c::close (bool b_deleteFile, bool b_sync)
   return true; // success
 }
 
-
-//  Operation: operator<<
 StreamOutput_c&
 FileStreamOutput_c::operator<<(uint8_t ui8_data)
 {

@@ -13,17 +13,7 @@
 
 #include "filestreaminput_c.h"
 
-#if DEBUG_FILESTREAMINPUT
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
-#endif
 
-
-//  Operation: open
 bool
 FileStreamInput_c::open ( STD_TSTRING& filename, FileMode_t at_mode )
 {
@@ -33,8 +23,6 @@ FileStreamInput_c::open ( STD_TSTRING& filename, FileMode_t at_mode )
 };
 
 
-
-//  Operation: open
 bool
 FileStreamInput_c::open( const TCHAR* filename, FileMode_t at_mode )
 {
@@ -44,16 +32,11 @@ FileStreamInput_c::open( const TCHAR* filename, FileMode_t at_mode )
 };
 
 
-
-//  Operation: close
 bool
 FileStreamInput_c::close(bool b_deleteFile)
 {
   c_targetHandle.close();
   if (b_deleteFile) {
-    #if DEBUG_FILESTREAMINPUT
-	  INTERNAL_DEBUG_DEVICE << TEXT("Removing file ") << str_openedFile << TEXT(".") << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
     #if defined(WINCE) //use this only for CE!
       return DeleteFile( str_openedFile.c_str() );
     #else
@@ -64,8 +47,6 @@ FileStreamInput_c::close(bool b_deleteFile)
 };
 
 
-
-//  Operation: operator>>
 StreamInput_c&
 FileStreamInput_c::operator>>(uint8_t& ui8_data)
 {

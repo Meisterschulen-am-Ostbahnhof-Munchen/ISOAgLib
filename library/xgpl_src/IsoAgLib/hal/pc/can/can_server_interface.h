@@ -26,11 +26,13 @@
 #else
 #  define DEBUG_PRINT_(args)
 #endif
+// NOTE: Usage of DEBUG_PRINT **ONLY** in CAN-Server!
 #define DEBUG_PRINT(str) DEBUG_PRINT_((str))
 #define DEBUG_PRINT1(str,a) DEBUG_PRINT_((str,a))
 #define DEBUG_PRINT2(str,a,b) DEBUG_PRINT_((str,a,b))
 #define DEBUG_PRINT3(str,a,b,c) DEBUG_PRINT_((str,a,b,c))
 #define DEBUG_PRINT4(str,a,b,c,d) DEBUG_PRINT_((str,a,b,c,d))
+// NOTE: Usage of DEBUG_PRINT **ONLY** in CAN-Server!
 
 #define COMMAND_ACKNOWLEDGE     1
 #define COMMAND_REGISTER        10

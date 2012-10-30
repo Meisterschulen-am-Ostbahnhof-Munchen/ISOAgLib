@@ -96,16 +96,7 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_analoginVolt(uint8_t bNumber)
-    {
-    int16_t retval = __HAL::init_analogin(bNumber, VOLTAGE_IN);
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_analogin( "
-<< (uint16_t)bNumber << ", "
-<< (uint16_t)VOLTAGE_IN << ") returns " << retval << "\r";
-#endif
-
-    return retval;}
+    { return __HAL::init_analogin(bNumber, VOLTAGE_IN); }
 
   /**
     initialize one of the [0..7] analog input channels to CURRENT input
@@ -113,16 +104,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_analogin( "
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_analoginCurrent(uint8_t bNumber)
-    {
-    int16_t retval = __HAL::init_analogin(bNumber, CURRENT_IN);
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_analogin( "
-<< (uint16_t)bNumber << ", "
-<< (uint16_t)CURRENT_IN << ") returns " << retval << "\r";
-#endif
-
-    return retval;}
+    { return __HAL::init_analogin(bNumber, CURRENT_IN); }
 
   /**
     initialize one of the [0..7] digital input channels
@@ -133,18 +115,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_analogin( "
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t  init_digin(uint8_t ab_channel,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)())
-    {
-  	int16_t retval = __HAL::init_digin(ab_channel, bMode, bAktivhighlow, pfFunctionName);
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_digin( "
-<< (uint16_t)ab_channel << ", "
-<< (uint16_t)bMode << ", "
-<< (uint16_t)bAktivhighlow << ", "
-<< (pfFunctionName?"pfFunctionName":"NULL") << ") returns " << retval << "\r";
-#endif
-
-    return retval;}
+    { return __HAL::init_digin(ab_channel, bMode, bAktivhighlow, pfFunctionName); }
 
   /**
     init counter for trigger events on digital inoput;
@@ -218,11 +189,6 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_digin( "
   inline int16_t  getAdcVoltage(uint8_t ab_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getAnaloginCheckNr(ab_channel));
 
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
-<< (uint16_t)__HAL::getAnaloginCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
-#endif
-
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 10);}
 
@@ -233,11 +199,6 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
   */
   inline int16_t  getAdcMeanVoltage(uint8_t ab_channel)
     {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getAnaloginCheckNr(ab_channel));
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc_mean( "
-<< (uint16_t)__HAL::getAnaloginCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
-#endif
 
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 10);}
@@ -250,11 +211,6 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc_mean( "
   inline int16_t  getAdcCurrent(uint8_t ab_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getDiginAdcCheckNr(ab_channel));
 
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
-<< (uint16_t)__HAL::getDiginAdcCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
-#endif
-
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 25);}
 
@@ -266,11 +222,6 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
   inline int16_t  getAdcMeanCurrent(uint8_t ab_channel)
     {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getDiginAdcCheckNr(ab_channel));
 
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc_mean( "
-<< (uint16_t)__HAL::getDiginAdcCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
-#endif
-
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 25);}
 
@@ -281,11 +232,6 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc_mean( "
   */
   inline int16_t  getDiginDiagnoseAdc(uint8_t ab_channel)
     {int16_t i16_temp = __HAL::get_adc(__HAL::getDiginAdcCheckNr(ab_channel));
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
-<< (uint16_t)__HAL::getDiginAdcCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
-#endif
 
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return (i16_temp * 10);}
@@ -299,11 +245,6 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
 	__HAL::t_Sys_AnalogData t_Sys_AnalogData;
 	__HAL::get_system_analogdata(&t_Sys_AnalogData);
 
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
-<< "get_system_analogdata( &t_Sys_AnalogData ) " << ", iTemperatur = " << t_Sys_AnalogData.iTemperatur << "\r";
-#endif
-
     return t_Sys_AnalogData.iTemperatur;
     }
 
@@ -314,14 +255,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
     @return ON, OFF or C_RANGE
   */
   inline int16_t  getDiginOnoff(uint8_t ab_channelNumber)
-    { int16_t retval = __HAL::get_digin_onoff(ab_channelNumber);
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_onoff( "
-<< (uint16_t)ab_channelNumber << ") returns " << retval << "\r";
-#endif
-
-  return retval;}
+    { return __HAL::get_digin_onoff(ab_channelNumber); }
 
   /**
     deliver debounced state of digital input based on Activ-High/Low setting
@@ -330,15 +264,7 @@ INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_onoff( "
     @return ON, OFF or C_RANGE
   */
   inline int16_t  getDiginOnoffStatic(uint8_t ab_channelNumber)
-    {
-    int16_t retval = __HAL::get_digin_onoff_static(ab_channelNumber);
-
-#if DEBUG_HAL
-INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_onoff_static( "
-<< (uint16_t)ab_channelNumber << ") returns " << retval << "\r";
-#endif
-
-    return retval;
-  }
+    { return __HAL::get_digin_onoff_static(ab_channelNumber); }
 }
+
 #endif
