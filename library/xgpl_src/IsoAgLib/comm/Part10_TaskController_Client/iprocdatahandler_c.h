@@ -26,7 +26,7 @@ class iProcDataHandler_c
 public:
   virtual ~iProcDataHandler_c() {}
 
-  virtual void processSetpointSet( iProcData_c& procdata, int32_t value, IsoAgLib::ProcData::remoteType_t a_ecuType, bool change ) = 0;
+  virtual void processSetpointSet( IsoAgLib::iProcData_c& procdata, int32_t value, IsoAgLib::ProcData::remoteType_t a_ecuType, bool change ) = 0;
   virtual void processDefaultLoggingStart( IsoAgLib::ProcData::remoteType_t ecuType ) = 0;
   virtual void processTcConnected( IsoAgLib::ProcData::remoteType_t ecuType, const IsoAgLib::iIsoName_c& tcname) = 0;
 
