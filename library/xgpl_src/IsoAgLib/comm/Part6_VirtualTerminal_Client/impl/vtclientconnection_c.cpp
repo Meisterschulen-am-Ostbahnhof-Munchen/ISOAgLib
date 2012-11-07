@@ -898,42 +898,52 @@ VtClientConnection_c::timeEvent(void)
 void
 VtClientConnection_c::timeEventSearchForNewVt()
 {
-  if( IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave == men_registerPoolMode )
-    return; // Slave needs to get the Master's VT-ISONAME told proprietarily!
+  switch (men_registerPoolMode)
+  {
+    case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave:
+      return; // Slave needs to get the Master's VT-ISONAME told proprietarily!
 
-  // check if initial timeout is done
-  if (isPreferredVTTimeOut())
-  {
-    // check if other VT is available
-    mpc_vtServerInstance = getVtClientInstance4Comm().getFirstActiveVtServer(
-        (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt == men_registerPoolMode) );
+    case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToSpecificVt:
+      mpc_vtServerInstance = getVtClientInstance4Comm().getSpecificVtServer(mrc_pool);
+      return;
+
+    case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToAnyVt:
+    case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt:
+      // check if initial timeout is done
+      if (isPreferredVTTimeOut())
+      {
+        // check if other VT is available
+        mpc_vtServerInstance = getVtClientInstance4Comm().getFirstActiveVtServer(
+            (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt == men_registerPoolMode) );
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
-    static bool sb_foundNewVt = false;
-    if (mpc_vtServerInstance && !sb_foundNewVt)
-    {
-      sb_foundNewVt = true;
-      INTERNAL_DEBUG_DEVICE << "VT not active and PreferredVTTimeOut is out -> FOUND NEW VT" << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
-    else if (!mpc_vtServerInstance && sb_foundNewVt)
-    {
-      sb_foundNewVt = false;
-      INTERNAL_DEBUG_DEVICE << "VT not active and PreferredVTTimeOut is out -> NO NEW VT FOUND" << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
+        static bool sb_foundNewVt = false;
+        if (mpc_vtServerInstance && !sb_foundNewVt)
+        {
+          sb_foundNewVt = true;
+          INTERNAL_DEBUG_DEVICE << "VT not active and PreferredVTTimeOut is out -> FOUND NEW VT" << INTERNAL_DEBUG_DEVICE_ENDL;
+        }
+        else if (!mpc_vtServerInstance && sb_foundNewVt)
+        {
+          sb_foundNewVt = false;
+          INTERNAL_DEBUG_DEVICE << "VT not active and PreferredVTTimeOut is out -> NO NEW VT FOUND" << INTERNAL_DEBUG_DEVICE_ENDL;
+        }
 #endif
-  }
-  else
-  {
-    mpc_vtServerInstance = getVtClientInstance4Comm().getPreferredVtServer(mc_preferredVt);
-    if (mpc_vtServerInstance != NULL)
-      mi32_bootTime_ms = 0;
+      }
+      else
+      {
+        mpc_vtServerInstance = getVtClientInstance4Comm().getPreferredVtServer(mc_preferredVt);
+        if (mpc_vtServerInstance != NULL)
+          mi32_bootTime_ms = 0;
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
-    static bool sb_foundNewVt = false;
-    if (mpc_vtServerInstance && !sb_foundNewVt)
-    {
-      sb_foundNewVt = true;
-      INTERNAL_DEBUG_DEVICE << "take PreferredVT" << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
+        static bool sb_foundNewVt = false;
+        if (mpc_vtServerInstance && !sb_foundNewVt)
+        {
+          sb_foundNewVt = true;
+          INTERNAL_DEBUG_DEVICE << "take PreferredVT" << INTERNAL_DEBUG_DEVICE_ENDL;
+        }
 #endif
+      }
+      break;
   }
 }
 

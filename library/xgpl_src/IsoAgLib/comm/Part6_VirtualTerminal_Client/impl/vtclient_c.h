@@ -71,6 +71,7 @@ public:
 
   VtServerInstance_c* getFirstActiveVtServer( bool mustBePrimary ) const;
   VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const;
+  VtServerInstance_c* getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const;
 
   ////////////////////////
   // INTERFACE FUNTIONS //

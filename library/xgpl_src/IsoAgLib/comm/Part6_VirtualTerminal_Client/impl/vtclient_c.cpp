@@ -94,6 +94,7 @@ VtClient_c::initAndRegisterObjectPool(
   {
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt:
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToAnyVt:
+    case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToSpecificVt:
       if (!arc_identItem.isMaster())
       {
         /// IdentItem must be a Master
@@ -201,7 +202,19 @@ VtServerInstance_c* VtClient_c::getPreferredVtServer(const IsoName_c& aref_preff
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
   {
-    if (((*lit_vtServerInst)->getIsoName() == aref_prefferedVTIsoName) && (*lit_vtServerInst)->isVtActive())
+    if ((*lit_vtServerInst)->isVtActive() && ((*lit_vtServerInst)->getIsoName() == aref_prefferedVTIsoName))
+      return (*lit_vtServerInst);
+  }
+  return NULL;
+}
+
+
+VtServerInstance_c* VtClient_c::getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const
+{
+  STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
+  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+  {
+    if ((*lit_vtServerInst)->isVtActive() && arc_pool.selectVtServer((*lit_vtServerInst)->getIsoName().toConstIisoName_c()))
       return (*lit_vtServerInst);
   }
   return NULL;
