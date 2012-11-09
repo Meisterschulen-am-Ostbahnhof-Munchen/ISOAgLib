@@ -126,7 +126,7 @@ public:
   virtual ~CanCustomerProxy_c() {}
 
 private:
-  virtual bool processMsg( const CanPkg_c& arc_data ) {
+  virtual void processMsg( const CanPkg_c& arc_data ) {
     return mrt_owner.processMsg( arc_data );
   }
 
