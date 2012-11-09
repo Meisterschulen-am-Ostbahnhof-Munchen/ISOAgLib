@@ -26,6 +26,7 @@
 
 // forward declaration of iIdentDataStorage_c - no internal definition
 namespace IsoAgLib {
+  class iIdentItem_c;
   class iIdentDataStorage_c;
 };
 
@@ -81,6 +82,7 @@ public: // methods
   */
   void deactivate();
 
+  IsoAgLib::iIdentItem_c& toIidentItem_c();
 
   /** deliver pointer to IsoItem_c in IsoMonitor_c
       @return NULL -> either no ISO item or not yet registered in IsoMonitor_c

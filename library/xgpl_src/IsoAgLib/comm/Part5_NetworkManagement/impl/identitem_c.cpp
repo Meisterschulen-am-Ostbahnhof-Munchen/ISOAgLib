@@ -107,6 +107,14 @@ IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
   }
 }
 
+
+/** convert function - avoids lots of explicit static_casts */
+IsoAgLib::iIdentItem_c& IdentItem_c::toIidentItem_c()
+{
+  return (IsoAgLib::iIdentItem_c&)(*this);
+}
+
+
 bool
 IdentItem_c::activate (int ai_multitonInst)
 {
