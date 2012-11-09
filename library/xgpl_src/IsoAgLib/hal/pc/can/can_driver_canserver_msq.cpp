@@ -212,7 +212,7 @@ namespace HAL {
 
   void canRxPoll( unsigned channel ) {
     __HAL::msqRead_s msqReadBuf;
-    if( msgrcv( __HAL::msqDataClient.i32_rdHandle,
+    while( msgrcv( __HAL::msqDataClient.i32_rdHandle,
                 &msqReadBuf,
                 sizeof( __HAL::msqRead_s ) - sizeof( long ),
                 __HAL::assembleRead_mtype( __HAL::msqDataClient.i32_pid, channel, COMMON_MSGOBJ_IN_QUEUE ), IPC_NOWAIT ) > 0 ) {
