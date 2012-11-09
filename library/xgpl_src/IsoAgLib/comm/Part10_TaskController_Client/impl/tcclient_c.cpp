@@ -133,27 +133,25 @@ TcClient_c::resetTimerPeriod()
 }
 
 
-bool
+void
 TcClient_c::processMsg( const CanPkg_c& arc_data )
 {
   ProcessPkg_c pkg( arc_data, getMultitonInst() );
 
   if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
-    return true;
+    return;
 
   // check for sender isoName
   if ( mc_isoNameTC.isSpecified()  && ( mc_isoNameTC != pkg.getMonitorItemForSA()->isoName() ) )
   {
     // this is not the TC we are talking with !
-    return true;
+    return;
   }
 
   if( pkg.getMonitorItemForDA() != NULL )
     processMsgNonGlobal( pkg );
   else
     processMsgGlobal( pkg );
-
-  return true;
 }
 
 
@@ -178,8 +176,7 @@ void TcClient_c::processMsgNonGlobal( const ProcessPkg_c& pkg ) {
     || ( pkg.men_command == ProcessPkg_c::configurationResponse )
     || ( pkg.men_command == ProcessPkg_c::nack ) )
   {
-    if (mc_devPropertyHandler.processMsg( pkg ))
-      return;
+    mc_devPropertyHandler.processMsg( pkg );
   }
   else
   {

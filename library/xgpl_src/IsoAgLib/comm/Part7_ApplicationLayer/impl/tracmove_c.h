@@ -280,7 +280,7 @@ namespace __IsoAgLib {
         @pre  sender of message is existent in monitor list
         @see  CanPkgExt_c::resolveSendingInformation()
       */
-    virtual bool processMsg( const CanPkg_c& arc_data );
+    virtual void processMsg( const CanPkg_c& arc_data );
 
     /** send moving data with ground&theor speed&dist
         @see  CanIo_c::operator<<

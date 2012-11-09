@@ -141,21 +141,20 @@ IsoRequestPgn_c::checkIfAlreadyRegistered(
 
 /** process REQUEST_PGN_MSG_PGN message
     Since we only insertFilter for REQUEST_PGN_MSG_PGN we don't need further checking
-    a la "if ((data().isoPgn() & 0x3FF00) == REQUEST_PGN_MSG_PGN)"
-  * @return true -> message processed by IsoRequestPgn_c (also possible is NACK); false -> let others process */
-bool
+    a la "if ((data().isoPgn() & 0x3FF00) == REQUEST_PGN_MSG_PGN)" */
+void
 IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
 {
   CanPkgExt_c pkg( arc_data, getMultitonInst() );
   if( !pkg.isValid() ) // allow packets with "(pkg.getMonitorItemForSA() == NULL)"
-    return true;
+    return;
 
   /// Store incoming information for possible later user-triggered "sendAcknowledgePGN()"
   mpc_isoItemSA = pkg.getMonitorItemForSA();
   mpc_isoItemDA = pkg.getMonitorItemForDA();
 
   if( ( mpc_isoItemDA != NULL ) && ( ! mpc_isoItemDA->itemState( IState_c::Local ) ) ) // omit DA specific for non local receivers
-    return true;
+    return;
 
   mui32_requestedPGN = ( (static_cast<uint32_t>(pkg.operator[](0)))
                       | (static_cast<uint32_t>(pkg.operator[](1)) << 8)
@@ -186,8 +185,6 @@ IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
     }
     // else: Don't NACK if it was requested to global!
   }
-
-  return true;
 }
 
 

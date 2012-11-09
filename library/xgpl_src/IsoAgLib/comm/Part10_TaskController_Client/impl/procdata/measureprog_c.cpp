@@ -35,7 +35,7 @@ MeasureProg_c::MeasureProg_c( IsoAgLib::ProcData::remoteType_t ecutype )
 }
 
 
-bool
+void
 MeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, int32_t value )
 {
   ProcessPkg_c::CommandType_t en_command = pkg.men_command;
@@ -69,8 +69,6 @@ MeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, 
       isoaglib_assert( !"Method shall not be called for this Process command" );
       break;
   }
-
-  return true;
 }
 
 

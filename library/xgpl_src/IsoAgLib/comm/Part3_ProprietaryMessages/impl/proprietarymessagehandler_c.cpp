@@ -114,12 +114,12 @@ namespace __IsoAgLib
   }
 
 
-  bool
+  void 
   ProprietaryMessageHandler_c::CanCustomerA_c::processMsg( const CanPkg_c& data )
   {
     CanPkgExt_c pkg( data, m_handler.getMultitonInst() );
     if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
-      return true;
+      return;
 
     for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
@@ -138,8 +138,6 @@ namespace __IsoAgLib
       //(*it)->processA( *static_cast<IsoAgLib::iIsoItem_c*>( pkg.getMonitorItemForSA() ) );
       (*it)->processA( *( (IsoAgLib::iIsoItem_c*)( pkg.getMonitorItemForSA() ) ) );
     }
-
-    return true;
   }
 
 
@@ -220,12 +218,12 @@ namespace __IsoAgLib
   }
 
 
-  bool
+  void 
   ProprietaryMessageHandler_c::CanCustomerB_c::processMsg( const CanPkg_c& data )
   {
     CanPkgExt_c pkg( data, m_handler.getMultitonInst() );
     if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
-      return true;
+      return;
 
     for ( ProprietaryMessageBVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
@@ -242,8 +240,6 @@ namespace __IsoAgLib
       //(*it)->processB( *static_cast<IsoAgLib::iIsoItem_c*>( pkg.getMonitorItemForSA() ) );
       (*it)->processB( *( ( IsoAgLib::iIsoItem_c*)( pkg.getMonitorItemForSA() ) ) );
     }
-
-    return true;
   }
 
 

@@ -122,15 +122,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return true;
   }
 
-  /** process a ISO11783 base information PGN
-      @pre  sender of message is existent in monitor list
-      @see  CanPkgExt_c::resolveSendingInformation()
-    */
-  bool TracPTO_c::processMsg( const CanPkg_c& arc_data )
+
+  void TracPTO_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
@@ -176,10 +173,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       else
       { // there is a sender conflict
         IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
-        return false;
       }
     }
-    return false;
   }
 
   /** send a ISO11783 base information PGN.

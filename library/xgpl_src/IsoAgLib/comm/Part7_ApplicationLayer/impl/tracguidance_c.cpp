@@ -89,39 +89,31 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     isoSendMessageTracMode();
   }
 
-  /** process a ISO11783 base information PGN
-      @pre  sender of message is existent in monitor list
-      @see  CanPkgExt_c::resolveSendingInformation()
-    */
-  bool TracGuidance_c::processMsg( const CanPkg_c& arc_data )
+  void TracGuidance_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
-    switch (pkg.isoPgn() & 0x3FF00LU)
+    if( ( pkg.isoPgn() & 0x3FF00LU ) ==  GUIDANCE_MACHINE_STATUS )
     {
-      case GUIDANCE_MACHINE_STATUS:
-        IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
-        if ( checkParseReceived( rcc_tempISOName ) )
-        {
-          mui16_estCurvature = pkg.getUint16Data(0);
-          mt_requestResetCmdStatus = IsoAgLib::IsoResetFlag_t           ( (pkg.getUint16Data(2) >> 6) & 0x3);
-          mt_steeringInputPosStatus = IsoAgLib::IsoSteerPosFlag_t       ( (pkg.getUint8Data(2) >> 4) & 0x3);
-          mt_steeringSystemReadiness = IsoAgLib::IsoSteerReadinessFlag_t( (pkg.getUint8Data(2) >> 2) & 0x3);
-          mt_mechanicalSystemLogout = IsoAgLib::IsoActiveFlag_t         ( (pkg.getUint8Data(2) >> 0) & 0x3);
+      IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
+      if ( checkParseReceived( rcc_tempISOName ) )
+      {
+        mui16_estCurvature = pkg.getUint16Data(0);
+        mt_requestResetCmdStatus = IsoAgLib::IsoResetFlag_t           ( (pkg.getUint16Data(2) >> 6) & 0x3);
+        mt_steeringInputPosStatus = IsoAgLib::IsoSteerPosFlag_t       ( (pkg.getUint8Data(2) >> 4) & 0x3);
+        mt_steeringSystemReadiness = IsoAgLib::IsoSteerReadinessFlag_t( (pkg.getUint8Data(2) >> 2) & 0x3);
+        mt_mechanicalSystemLogout = IsoAgLib::IsoActiveFlag_t         ( (pkg.getUint8Data(2) >> 0) & 0x3);
 
-          setSelectedDataSourceISOName (rcc_tempISOName);
-          setUpdateTime( pkg.time() );
-        }
-        else
-        { // there is a sender conflict
-          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
-          return false;
-        }
-        break;
+        setSelectedDataSourceISOName (rcc_tempISOName);
+        setUpdateTime( pkg.time() );
+      }
+      else
+      { // there is a sender conflict
+        IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
+      }
     }
-    return true;
   }
 
   /** send guidance data

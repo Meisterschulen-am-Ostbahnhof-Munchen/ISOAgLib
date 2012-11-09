@@ -158,13 +158,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @pre  sender of message is existent in monitor list
       @see  CANPkgExt_c::resolveSendingInformation()
     */
-  bool TracGeneral_c::processMsg( const CanPkg_c& arc_data )
+  void TracGeneral_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
-    bool b_result = false;
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
     switch (pkg.isoPgn() /* & 0x3FFFF */) // don't need to &0x3FFFF, as this is the whole PGN...
@@ -214,7 +213,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         { // there is a sender conflict
           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
         }
-        b_result = true;
         break;
 
       case MAINTAIN_POWER_REQUEST_PGN: // maintain power request
@@ -238,8 +236,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         mi32_lastMaintainPowerRequest = pkg.time();
 
         updateMaintainPowerRequest();
-
-        b_result = true;
         break;
       }
 
@@ -252,10 +248,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
             mp8ui8_languageTecu[i] = pkg.getUint8Data(i);
           }
         }
-        b_result = true;
         break;
     }
-    return b_result;
   }
 
   bool TracGeneral_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )

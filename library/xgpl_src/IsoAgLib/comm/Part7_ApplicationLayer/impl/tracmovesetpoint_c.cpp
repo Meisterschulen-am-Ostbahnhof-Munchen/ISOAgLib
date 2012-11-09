@@ -70,15 +70,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     }
   }
 
-  /** process a ISO11783 base information PGN
-      @pre  sender of message is existent in monitor list
-      @see  CanPkgExt_c::resolveSendingInformation()
-    */
-  bool TracMoveSetPoint_c::processMsg( const CanPkg_c& arc_data )
+  void TracMoveSetPoint_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
     switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN
     {
@@ -91,7 +87,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         }
         break;
     }
-    return true;
   }
 
   /** send a ISO11783 base information PGN.

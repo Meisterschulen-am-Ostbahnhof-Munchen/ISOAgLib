@@ -81,15 +81,11 @@ void TracGuidanceCommand_c::timeEventImplMode( )
 TracGuidanceCommand_c::TracGuidanceCommand_c() {}
 
 
-/** process a ISO11783 base information PGN
-    @pre  sender of message is existent in monitor list
-    @see  CanPkgExt_c::resolveSendingInformation()
-  */
-bool TracGuidanceCommand_c::processMsg( const CanPkg_c& arc_data )
+void TracGuidanceCommand_c::processMsg( const CanPkg_c& arc_data )
 {
   CanPkgExt_c pkg( arc_data, getMultitonInst() );
   if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-    return true;
+    return;
 
   switch (pkg.isoPgn() & 0x3FF00LU)
   {
@@ -103,7 +99,6 @@ bool TracGuidanceCommand_c::processMsg( const CanPkg_c& arc_data )
       }
       break;
   }
-  return true;
 }
 
 /** send guidance command data

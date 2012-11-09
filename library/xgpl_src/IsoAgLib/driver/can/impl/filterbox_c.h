@@ -120,20 +120,8 @@ public:
     return mc_maskFilterPair;
   }
 
-  /* ************************************************** */
-  /* ***** insert/get/process buffered CanPkg_c ******* */
-  /* ************************************************** */
 
-  /** control the processing of a received message
-    (MsgObj_c::processMsg inserted data directly in CANCustomer
-     -> FilterBox_c::processMsg() initiates conversion of CAN string
-        to data flags and starts processing in CanCustomer_c )
-
-    possible errors:
-        * Err_c::precondition no valid CanCustomer_c  (or derived) is registered
-    @return true -> FilterBox_c was able to inform registered CANCustomer
-  */
-  bool processMsg( CanPkg_c& pkg );
+  void processMsg( CanPkg_c& pkg );
 
 private:
 // Private attributes

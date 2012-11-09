@@ -342,7 +342,7 @@ protected: // Protected methods
     (this function is only called if NO conflict is detected)
     @return true -> message processed by IsoMonitor_c; false -> process msg by ServiceMonitor
   */
-  bool processMsg( const CanPkg_c& arc_data );
+  void processMsg( const CanPkg_c& arc_data );
 
 private:
   /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
@@ -394,8 +394,8 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual bool processMsg( const CanPkg_c& arc_data ) {
-      return mrt_owner.processMsg( arc_data );
+    virtual void processMsg( const CanPkg_c& arc_data ) {
+      mrt_owner.processMsg( arc_data );
     }
 
     virtual bool reactOnStreamStart(

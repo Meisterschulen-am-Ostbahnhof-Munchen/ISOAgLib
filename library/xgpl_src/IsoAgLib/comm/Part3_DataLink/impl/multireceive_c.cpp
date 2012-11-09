@@ -189,12 +189,12 @@ MultiReceive_c::notifyErrorConnAbort(
 }
 
 
-bool
+void
 MultiReceive_c::processMsg( const CanPkg_c& arc_data )
 {
   CanPkgExt_c pkg( arc_data, getMultitonInst() );
   if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-    return true;
+    return;
 
   const uint8_t cui8_pgnFormat = pkg.isoPf();
 
@@ -214,11 +214,11 @@ MultiReceive_c::processMsg( const CanPkg_c& arc_data )
   {
     case StreamTP:
     case StreamETP:
-      result = processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
-
+      processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
+      break;
     case StreamFastPacket:
       processMsgNmea( pkg );
-      result = true; // unidirectional PGN, so always not of interest for others (as far as currently known)
+      break;
   }
 #else
   /// Setup TP/ETP identification
@@ -227,20 +227,10 @@ MultiReceive_c::processMsg( const CanPkg_c& arc_data )
                                      ? StreamETP
                                      : StreamTP;
 
-  result = processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
+  processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
 #endif
 
-  // only if it was processed.
-  // NOTE: ConnAbort is treated as not processed, so that
-  // MultiSend can process it, too. We don't necessarily
-  // need to adjust our next timeEvent-call, so it's fine
-  // to just ignore that here....
-  if( result )
-  {
-    setNextTriggerTime( nextTimeEvent() );
-  }
-
-  return result;
+  setNextTriggerTime( nextTimeEvent() );
 }
 
 

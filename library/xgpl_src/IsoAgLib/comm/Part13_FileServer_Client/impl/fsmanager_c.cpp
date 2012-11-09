@@ -246,13 +246,12 @@ FsManager_c::notifyOnFileserverStateChange(
 }
 
 
-bool FsManager_c::FsServerManager_c::processFsToGlobal( const CanPkgExt_c& pkg ) {
+void FsManager_c::FsServerManager_c::processFsToGlobal( const CanPkgExt_c& pkg ) {
   for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it = m_serverInstances.begin(); it != m_serverInstances.end(); ++it) {
     if( pkg.getMonitorItemForSA() == &(*it)->getIsoItem() ) {
       (*it)->processFsToGlobal( pkg ); 
     }
   }
-  return true;
 }
 
 
@@ -266,20 +265,21 @@ void FsManager_c::FsCommandManager_c::close() {
 }
 
 
-bool FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& arc_data ) {
+void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& arc_data ) {
   CanPkgExt_c pkg( arc_data, m_fsManager.getMultitonInst() );
   if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
-    return false;
+    return;
 
 
   if( pkg.getMonitorItemForDA() == NULL ) {
-    return m_fsManager.m_servers.processFsToGlobal( pkg );
+    m_fsManager.m_servers.processFsToGlobal( pkg );
+    return;
   }
 
   for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = l_initializingCommands.begin(); it != l_initializingCommands.end(); ++it ) {
     (*it)->processMsgIso( pkg );
   }
-  return true;
+  return;
 }
 
 /** C-style function, to get access to the unique FsManager_c singleton instance

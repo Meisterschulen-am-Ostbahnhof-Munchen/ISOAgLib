@@ -297,11 +297,7 @@ public:
     */
   virtual void checkCreateReceiveFilter( );
 
-  /** process a ISO11783 base information PGN
-      @pre  sender of message is existent in monitor list
-      @see  CanPkgExt_c::resolveSendingInformation()
-    */
-  virtual bool processMsg( const CanPkg_c& arc_data );
+  virtual void processMsg( const CanPkg_c& arc_data );
 
   /** Do not longer want to process a request for
     * ISOBUS_CERTIFICATION_PGN, because this functionality is moved to

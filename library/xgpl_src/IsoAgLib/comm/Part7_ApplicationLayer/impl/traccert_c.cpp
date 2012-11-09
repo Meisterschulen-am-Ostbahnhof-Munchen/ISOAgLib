@@ -109,11 +109,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracCert_c::processMsg( const CanPkg_c& arc_data )
+  void TracCert_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
@@ -151,7 +151,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         }
       break;
     }
-    return true;
   }
 
 #if 0

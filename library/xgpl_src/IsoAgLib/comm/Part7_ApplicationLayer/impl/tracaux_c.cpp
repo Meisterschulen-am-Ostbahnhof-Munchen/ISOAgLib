@@ -102,15 +102,12 @@ namespace __IsoAgLib {
     return true;
   }
 
-  /** process a ISO11783 base information PGN
-      @pre  sender of message is existent in monitor list
-      @see  CanPkgExt_c::resolveSendingInformation()
-    */
-  bool TracAux_c::processMsg( const CanPkg_c& arc_data )
+
+  void TracAux_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
@@ -164,7 +161,6 @@ namespace __IsoAgLib {
         else
         { // there is a sender conflict
           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
-          return false;
         }
         break;
       case AUX_VALVE_0_MEASURED_FLOW:
@@ -215,7 +211,6 @@ namespace __IsoAgLib {
         else
         { // there is a sender conflict
           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
-          return false;
         }
         break;
       case AUX_VALVE_0_COMMAND:
@@ -257,7 +252,6 @@ namespace __IsoAgLib {
         }
         break;
     }
-    return true;
   }
 
   /** send a ISO11783 marr_valve information PGN in tractor mode

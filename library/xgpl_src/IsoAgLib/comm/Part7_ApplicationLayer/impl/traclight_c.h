@@ -211,18 +211,7 @@ typedef struct {
       */
     virtual void timeEventImplMode();
 
-    /** process received msg and store updated value for later reading access;
-        called by FilterBox_c::processMsg after receiving a msg
-        possible errors:
-          * iLibErr_c::BaseSenderConflict msg received from different member than before
-
-        @pre  sender of message is existent in monitor list
-        @see  CanPkgExt_c::resolveSendingInformation()
-        @see FilterBox_c::processMsg
-        @see CanIo_c::processMsg
-        @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-      */
-    virtual bool processMsg( const CanPkg_c& arc_data );
+    virtual void processMsg( const CanPkg_c& arc_data );
 
     /** send light update; there is a difference between implement and tractor mode
         @see  TracLight_c::processMsgRequestPGN

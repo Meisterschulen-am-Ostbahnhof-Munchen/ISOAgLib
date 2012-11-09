@@ -134,11 +134,9 @@ FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 }
 
 
-bool
+void
 FilterBox_c::processMsg( CanPkg_c& pkg )
 {
-  bool b_result = false;
-
   //! We need to FIRST get the number of entries and then DON'T USE iterators,
   //! because the number may increase and the iterators may get invalid in case
   //! a Filter is inserted IN THIS filterbox (pushed back!)
@@ -152,16 +150,13 @@ FilterBox_c::processMsg( CanPkg_c& pkg )
     CanCustomer_c* pc_customer = mvec_customer[msi_processMsgLoopIndex].pc_customer;
     isoaglib_assert( pc_customer );
 
-    /// Check DataLengthCode (DLC) if required
     if (( ci8_vecCustomerDlcForce < 0 ) || ( ci8_vecCustomerDlcForce == pkg.getLen() ) )
     {
-      // either no dlc-check requested or dlc matches the check!
-      b_result |= pc_customer->processMsg( pkg );
+      pc_customer->process( static_cast<const IsoAgLib::iCanPkg_c&>( pkg ) );
     }
   }
 
   mspc_currentlyProcessedFilterBox = NULL; // indicate that we're not anymore in the loop!
-  return b_result;
 }
 
 } // __IsoAgLib

@@ -123,7 +123,7 @@ public:
 protected: // Protected methods
   /** process system msg
     * @return true -> message (Request for PGN) processed by IsoRequestPgn_c; false -> let others process */
-  bool processMsg ( const CanPkg_c& arc_data );
+  void processMsg ( const CanPkg_c& arc_data );
 
 private: // Private methods
   /** constructor for IsoRequestPgn_c */

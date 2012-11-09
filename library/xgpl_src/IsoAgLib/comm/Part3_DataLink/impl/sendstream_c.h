@@ -81,11 +81,7 @@ public:
   */
   bool timeEvent (unsigned pkgCnt);
 
-  /**
-    start processing of a process msg
-    that matches this SendStream
-  */
-  bool processMsg( const CanPkgExt_c& arc_data );
+  void processMsg( const CanPkgExt_c& arc_data );
 
   int32_t getNextTriggerTime() const { return mi32_timestampToWaitTo; }
 

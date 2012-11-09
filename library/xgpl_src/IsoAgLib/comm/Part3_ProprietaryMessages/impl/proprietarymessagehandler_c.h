@@ -64,7 +64,7 @@ namespace __IsoAgLib
         const IsoAgLib::iMaskFilterType_c m_filter; // A1 and A2
 
       private:
-        virtual bool processMsg( const CanPkg_c& arc_data );
+        virtual void processMsg( const CanPkg_c& arc_data );
 
         virtual bool reactOnStreamStart( const ReceiveStreamIdentifier_c& ident, uint32_t len );
         virtual void reactOnAbort( Stream_c & ) { }
@@ -90,7 +90,7 @@ namespace __IsoAgLib
         const IsoAgLib::iMaskFilterType_c m_filter; // A1 and A2
 
       private:
-        virtual bool processMsg( const CanPkg_c& arc_data );
+        virtual void processMsg( const CanPkg_c& arc_data );
 
         virtual bool reactOnStreamStart( const ReceiveStreamIdentifier_c& ident, uint32_t len );
         virtual void reactOnAbort( Stream_c & ) { }

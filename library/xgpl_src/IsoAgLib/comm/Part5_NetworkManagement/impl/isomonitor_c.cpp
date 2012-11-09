@@ -750,11 +750,9 @@ IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender )
 }
 
 
-bool
+void
 IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
 {
-  bool b_processed = false;
-
   IsoItem_c *pc_itemSameSa = NULL,
             *pc_itemSameISOName = NULL;
 
@@ -771,7 +769,6 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
   // don't do the generic "valid-resolving" check here!
   if( (pkg.isoPgn() & 0x3FF00LU) == ADDRESS_CLAIM_PGN )
   {
-    b_processed = true;
     const uint8_t cui8_sa = pkg.isoSa();
     const int32_t ci32_time = pkg.time();
 
@@ -933,19 +930,17 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
   {
     // for all following modules, we do the "typical" "valid-resolving"-check!
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
 #ifdef USE_WORKING_SET
     // Handle NON-DESTINATION PGNs
     switch ((pkg.isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
     {
       case WORKING_SET_MASTER_PGN:
-        b_processed = true;
         pkg.getMonitorItemForSA()->processMsgWsMaster (pkg.getUint8Data (1-1)-1, pkg.time() );
       break;
 
       case WORKING_SET_MEMBER_PGN:
-        b_processed = true;
         pkg.getMonitorItemForSA()->processMsgWsMember (cc_dataIsoName, pkg.time());
       break;
 
@@ -959,8 +954,6 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
   INTERNAL_DEBUG_DEVICE << "IsoMonitor_c::processMsg()-END" << INTERNAL_DEBUG_DEVICE_ENDL;
   debugPrintNameTable();
 #endif
-
-  return b_processed; // return if msg was processed by IsoMonitor_c
 }
 
 

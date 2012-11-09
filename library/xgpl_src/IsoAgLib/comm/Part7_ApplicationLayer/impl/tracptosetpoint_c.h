@@ -183,11 +183,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     /** send Base2 Group data with hitch and PTO state */
     void isoSendBase2Update( void );
 
-    /** process a ISO11783 base information PGN
-        @pre  sender of message is existent in monitor list
-        @see  CanPkgExt_c::resolveSendingInformation()
-      */
-    virtual bool processMsg( const CanPkg_c& arc_data );
+    virtual void processMsg( const CanPkg_c& arc_data );
 
     /** send hitch and pto command
         @see  CanIo_c::operator<<

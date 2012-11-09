@@ -482,15 +482,12 @@ namespace __IsoAgLib {
            );
   }
 
-  /** process a ISO11783 base information PGN
-      @pre  sender of message is existent in monitor list
-      @see  CanPkgExt_c::resolveSendingInformation()
-    */
-  bool TimePosGps_c::processMsg( const CanPkg_c& arc_data )
+
+  void TimePosGps_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
@@ -527,7 +524,7 @@ namespace __IsoAgLib {
         { // there is a sender conflict
           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
         }
-        return true;
+        return;
 
       case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:
 #ifdef USE_J1939_VEHICLE_PGNS
@@ -602,7 +599,7 @@ namespace __IsoAgLib {
         { // there is a sender conflict
           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
         }
-        return true;
+        return;
 
 #ifdef USE_J1939_VEHICLE_PGNS
       case SAE_J1939_71_VEHICLE_DIRECTION_SPEED:
@@ -640,7 +637,7 @@ namespace __IsoAgLib {
         { // there is a sender conflict
           getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
         }
-        return true;
+        return;
 #endif
 
       case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:
@@ -674,10 +671,8 @@ namespace __IsoAgLib {
         { // there is a sender conflict
           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
         }
-        return true;
-
+        return;
     }
-    return false;
   }
 
   bool TimePosGps_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )

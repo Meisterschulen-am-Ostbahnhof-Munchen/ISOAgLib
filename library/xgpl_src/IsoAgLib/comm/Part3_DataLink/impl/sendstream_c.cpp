@@ -247,12 +247,12 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
 }
 
 
-bool
+void 
 SendStream_c::processMsg( const CanPkgExt_c& arc_data )
 {
   if (isFinished() || (men_msgType == NmeaFastPacket) || (men_msgType == IsoTPbroadcast))
   { // nothing to come in for us when we're broadcasting or already done (succeeded or aborted)
-    return false; // anyway, return with false here for "safety"
+    return; // anyway, return with false here for "safety"
   }
 
   switch (arc_data.getUint8Data (0))
@@ -376,11 +376,9 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
       #endif
       notifySender(SendAborted);  // will be kicked out after next timeEvent!
       retriggerIn (1500);
-      return false; // in case a MultiSend & MultiReceive are running parallel, then this ConnAbort should be for both!
     default:
-      return false;
+      break;
   }
-  return true;
 }
 
 

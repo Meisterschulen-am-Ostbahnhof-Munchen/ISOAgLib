@@ -79,11 +79,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracPTOSetPoint_c::processMsg( const CanPkg_c& arc_data )
+  void TracPTOSetPoint_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
     switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, as we're interested in the whole PGN
     {
@@ -106,7 +106,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         }
         break;
     }
-    return true;
   }
 
   /** send a ISO11783 pto information PGN.

@@ -104,15 +104,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     return true;
   };
 
-  /** process a ISO11783 base information PGN
-      @pre  sender of message is existent in monitor list
-      @see  CanPkgExt_c::resolveSendingInformation()
-    */
-  bool TracFacilities_c::processMsg( const CanPkg_c& arc_data )
+  void TracFacilities_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
@@ -133,7 +129,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         }
       break;
     }
-    return true;
   }
 
   /** send facilities data

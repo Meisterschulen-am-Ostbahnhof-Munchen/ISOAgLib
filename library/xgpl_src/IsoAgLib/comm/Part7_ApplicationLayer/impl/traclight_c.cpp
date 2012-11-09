@@ -491,22 +491,11 @@ namespace __IsoAgLib {
   TracLight_c::TracLight_c() {}
 
 
-  /** process received msg and store updated value for later reading access;
-      called by FilterBox_c::processMsg after receiving a msg
-      possible errors:
-        * iLibErr_c::BaseSenderConflict msg received from different member than before
-
-      @pre  sender of message is existent in monitor list
-      @see  CanPkgExt_c::resolveSendingInformation()
-      @see FilterBox_c::processMsg
-      @see CanIo_c::processMsg
-      @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-    */
-  bool TracLight_c::processMsg( const CanPkg_c& arc_data )
+  void TracLight_c::processMsg( const CanPkg_c& arc_data )
   {    
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
@@ -545,7 +534,7 @@ namespace __IsoAgLib {
 
     if ( pt_data == NULL )
     { // preconditions for parsing of this message are NOT fullfilled --> exit function with false
-      return false;
+      return;
     }
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // from here on, we can safely process the message as all preconditions are fullfilled
@@ -589,8 +578,6 @@ namespace __IsoAgLib {
 
     if ( mb_cmdWait4Response )
       sendMessage();
-
-    return true;
   }
 
   /** functions with actions, which must be performed periodically

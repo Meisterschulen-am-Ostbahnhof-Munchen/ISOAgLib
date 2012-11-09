@@ -191,18 +191,12 @@ DevPropertyHandler_c::DevPropertyHandler_c()
 {}
 
 
-/** process received can messages
-    @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-  */
-bool
+void 
 DevPropertyHandler_c::processMsg( const ProcessPkg_c& arc_data )
 {
 
   if( ( mpc_wsMasterIdentItem == NULL ) || ( arc_data.getMonitorItemForDA() != mpc_wsMasterIdentItem->getIsoItem() ) )
-    return true;
-
-  // set false if "default" is selected in switch case
-  bool b_rc = true;
+    return;
 
   //handling of nack
   //-> means that no device description is uploaded before
@@ -235,7 +229,7 @@ DevPropertyHandler_c::processMsg( const ProcessPkg_c& arc_data )
         }
         break;
       default:
-        b_rc = false;
+        break;
     }
   }
 
@@ -407,10 +401,8 @@ DevPropertyHandler_c::processMsg( const ProcessPkg_c& arc_data )
       }
       break;
     default:
-      b_rc = false;
+      break;
   }
-
-  return b_rc;
 }
 
 

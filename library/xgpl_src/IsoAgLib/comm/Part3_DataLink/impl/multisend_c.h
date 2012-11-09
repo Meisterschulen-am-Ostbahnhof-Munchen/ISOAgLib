@@ -167,7 +167,7 @@ public:
   /**
     start processing of a process msg: delegate to specific SendStream_c instance
   */
-  bool processMsg( const CanPkg_c& arc_data );
+  void processMsg( const CanPkg_c& arc_data );
 
   /**
     perform periodical actions
@@ -193,8 +193,8 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual bool processMsg( const CanPkg_c& data )
-    { return mrt_owner.processMsg( data ); }
+    virtual void processMsg( const CanPkg_c& data )
+    { mrt_owner.processMsg( data ); }
 
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
@@ -215,9 +215,6 @@ private:
   /** @return "Running" stream or NULL if none active for this sa/da-key (skips finished streams!) */
   SendStream_c* getRunningStream (const IsoName_c& sender, const IsoName_c& receiver );
 
-  /** this function should NOT be called from INSIDE of timeEvent !
-      ==> Only call it from OUTSIDE functions like init(), processMsg(), addSendStream, etc.
-  */
   void calcAndSetNextTriggerTime();
 
   bool sendIntern (const IsoName_c& sender,

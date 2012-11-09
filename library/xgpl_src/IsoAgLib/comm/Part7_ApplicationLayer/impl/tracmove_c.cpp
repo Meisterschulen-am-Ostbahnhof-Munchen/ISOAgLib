@@ -156,11 +156,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracMove_c::processMsg( const CanPkg_c& arc_data )
+  void TracMove_c::processMsg( const CanPkg_c& arc_data )
   {
     CanPkgExt_c pkg( arc_data, getMultitonInst() );
     if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return true;
+      return;
 
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
@@ -277,7 +277,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         else
         { // there is a sender conflict
           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
-          return false;
+          return;
         }
         break;
       case SELECTED_SPEED_MESSAGE:
@@ -325,12 +325,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           } else
           { // there is a sender conflict
             IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
-            return false;
+            return;
           }
         }
         break;
     }
-    return true;
   }
 
   void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, int32_t ai_time )

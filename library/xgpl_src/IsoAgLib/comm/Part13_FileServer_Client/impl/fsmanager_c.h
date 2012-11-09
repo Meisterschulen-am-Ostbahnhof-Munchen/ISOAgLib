@@ -73,7 +73,7 @@ class FsManager_c : public SchedulerTask_c
     public:
       FsServerManager_c( FsManager_c& fsManager ) : m_serverInstances(), m_fsManager( fsManager ) {}
 
-      bool processFsToGlobal( const CanPkgExt_c& pkg );
+      void processFsToGlobal( const CanPkgExt_c& pkg );
 
       STL_NAMESPACE::vector<FsServerInstance_c *> m_serverInstances;
       FsManager_c& m_fsManager;
@@ -85,7 +85,7 @@ class FsManager_c : public SchedulerTask_c
       void init();
       void close();
 
-      virtual bool processMsg( const CanPkg_c& arc_data );
+      virtual void processMsg( const CanPkg_c& arc_data );
 
       STL_NAMESPACE::list<FsCommand_c*> l_initializingCommands;
 

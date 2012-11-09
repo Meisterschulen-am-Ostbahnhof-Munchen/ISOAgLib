@@ -295,7 +295,7 @@ private:
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool processMsg( const CanPkg_c& arc_data );
+  void processMsg( const CanPkg_c& arc_data );
 
   /** send front hitch and rear hitch data msg
       @see  CanIo_c::operator<<

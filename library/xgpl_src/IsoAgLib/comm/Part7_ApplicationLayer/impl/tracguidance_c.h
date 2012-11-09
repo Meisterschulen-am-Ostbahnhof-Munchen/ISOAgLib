@@ -128,7 +128,7 @@ namespace __IsoAgLib {
         @pre  sender of message is existent in monitor list
         @see  CanPkgExt_c::resolveSendingInformation()
       */
-    virtual bool processMsg( const CanPkg_c& arc_data );
+    virtual void processMsg( const CanPkg_c& arc_data );
 
     /** send guidance data
         @see  CanIo_c::operator<<

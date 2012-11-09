@@ -615,7 +615,7 @@ private:
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool processMsg( const CanPkg_c& arc_data );
+  void processMsg( const CanPkg_c& arc_data );
 
   /** Calls all the registered handlers with the given PGN,
       so they can get the current values via the normal getters. */

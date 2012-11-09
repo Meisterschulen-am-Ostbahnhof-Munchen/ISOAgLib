@@ -246,19 +246,18 @@ VtClient_c::timeEvent(void)
 }
 
 
-bool
+void 
 VtClient_c::processMsg( const CanPkg_c& arc_data )
 {
   CanPkgExt_c c_data( arc_data, getMultitonInst() );
   if( ( ! c_data.isValid() ) || ( c_data.getMonitorItemForSA() == NULL ) )
-    return false;
+    return;
 
   if( c_data.getMonitorItemForDA() != NULL ) {
     processMsgNonGlobal( c_data );
   } else {
     processMsgGlobal( c_data );
   }
-  return true;
 }
 
 void VtClient_c::processMsgNonGlobal( const CanPkgExt_c& arc_data ) {

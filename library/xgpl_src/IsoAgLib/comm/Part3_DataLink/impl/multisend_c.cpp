@@ -311,32 +311,18 @@ MultiSend_c::timeEvent()
 };
 
 
-/**
-  start processing of a process msg
-  ignore all invalid messages where SEND is not of a member with claimed address,
-  or where EMPF isn't valid
-
-  possible errors:
-    * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
-  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-*/
-bool
+void
 MultiSend_c::processMsg( const CanPkg_c& arc_data )
 {
   CanPkgExt_c pkg( arc_data, getMultitonInst() );
   if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-    return true;
+    return;
 
   SendStream_c* runningStream = getRunningStream (pkg.getISONameForDA(), pkg.getISONameForSA()); // sa/da swapped, of course ;-) !
   if( runningStream )
   {
-    const bool cb_success = runningStream->processMsg( pkg );
+    (void)runningStream->processMsg( pkg );
     calcAndSetNextTriggerTime();
-    return cb_success;
-  }
-  else
-  { // keep next trigger time
-    return false;
   }
 }
 

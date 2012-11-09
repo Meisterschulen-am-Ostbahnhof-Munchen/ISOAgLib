@@ -43,7 +43,7 @@ public:
     function is called during processing of received CAN telegrams in CanIo_c::processMsg
     @see __IsoAgLib::CanIo_c::processMsg
   */
-  virtual bool process( const iCanPkg_c& arc_data ) = 0;
+  virtual void process( const iCanPkg_c& arc_data ) = 0;
 
 private:
   friend class iIsoBus_c;

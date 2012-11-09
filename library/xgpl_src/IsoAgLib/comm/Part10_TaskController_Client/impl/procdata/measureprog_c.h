@@ -59,7 +59,7 @@ public:
   bool handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment, int32_t value );
   void stopAllMeasurements();
 
-  bool processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, int32_t value );
+  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, int32_t value );
   void timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod, int32_t value );
 
   void setVal(ProcData_c& ac_processData, int32_t ai32_val);

@@ -52,7 +52,7 @@ public:
   void close();
 
   void timeEvent();
-  bool processMsg( const CanPkg_c& arc_data );
+  void processMsg( const CanPkg_c& arc_data );
   void processMsgGlobal( const ProcessPkg_c& arc_data );
   void processMsgNonGlobal( const ProcessPkg_c& arc_data );
 
@@ -93,7 +93,7 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual bool processMsg( const CanPkg_c& arc_data )
+    virtual void processMsg( const CanPkg_c& arc_data )
     { return mrt_owner.processMsg( arc_data ); }
 
     Owner_t &mrt_owner;

@@ -138,8 +138,7 @@ public:
 
   ~MultiReceive_c() {}
 
-  //  Operation: processMsg
-  virtual bool processMsg( const CanPkg_c& arc_data );
+  virtual void processMsg( const CanPkg_c& arc_data );
 
   /// @pre Only to be called with StreamType TP/ETP!
   bool processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& arc_pkg );
@@ -211,8 +210,8 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual bool processMsg( const CanPkg_c& arc_data ) {
-      return mrt_owner.processMsg( arc_data );
+    virtual void processMsg( const CanPkg_c& arc_data ) {
+      mrt_owner.processMsg( arc_data );
     }
 
     virtual bool reactOnStreamStart(
