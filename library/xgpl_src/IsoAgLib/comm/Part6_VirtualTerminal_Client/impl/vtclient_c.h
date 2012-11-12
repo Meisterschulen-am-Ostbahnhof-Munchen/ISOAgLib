@@ -53,7 +53,7 @@ public:
   bool deregisterObjectPool (IdentItem_c& apc_wsMasterIdentItem);
 
   /** function that handles incoming can messages */
-  virtual void processMsg( const CanPkg_c& arc_data );
+  virtual void process( const IsoAgLib::iCanPkg_c& arc_data );
   void processMsgNonGlobal( const CanPkgExt_c& arc_data );
   void processMsgGlobal( const CanPkgExt_c& arc_data );
 
@@ -93,8 +93,8 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual void processMsg( const CanPkg_c& arc_data ) {
-      mrt_owner.processMsg( arc_data );
+    virtual void process( const IsoAgLib::iCanPkg_c& arc_data ) {
+      mrt_owner.process( arc_data );
     }
 
     virtual bool reactOnStreamStart(

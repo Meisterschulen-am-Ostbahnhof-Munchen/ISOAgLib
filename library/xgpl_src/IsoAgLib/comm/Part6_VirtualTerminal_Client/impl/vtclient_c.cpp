@@ -247,7 +247,7 @@ VtClient_c::timeEvent(void)
 
 
 void 
-VtClient_c::processMsg( const CanPkg_c& arc_data )
+VtClient_c::process( const IsoAgLib::iCanPkg_c& arc_data )
 {
   CanPkgExt_c c_data( arc_data, getMultitonInst() );
   if( ( ! c_data.isValid() ) || ( c_data.getMonitorItemForSA() == NULL ) )
