@@ -198,8 +198,6 @@ MultiReceive_c::processMsg( const CanPkg_c& arc_data )
 
   const uint8_t cui8_pgnFormat = pkg.isoPf();
 
-  bool result = false;
-
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   /// Setup TP/ETP/FP identification
   const StreamType_t ct_streamType = (  (cui8_pgnFormat == MACRO_pgnFormatOfPGN(ETP_CONN_MANAGE_PGN))
