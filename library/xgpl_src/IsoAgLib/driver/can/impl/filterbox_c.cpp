@@ -151,9 +151,7 @@ FilterBox_c::processMsg( CanPkg_c& pkg )
     isoaglib_assert( pc_customer );
 
     if (( ci8_vecCustomerDlcForce < 0 ) || ( ci8_vecCustomerDlcForce == pkg.getLen() ) )
-    {
-      pc_customer->process( static_cast<const IsoAgLib::iCanPkg_c&>( pkg ) );
-    }
+      pc_customer->processMsg( pkg );
   }
 
   mspc_currentlyProcessedFilterBox = NULL; // indicate that we're not anymore in the loop!
