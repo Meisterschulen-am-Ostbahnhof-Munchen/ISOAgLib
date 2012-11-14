@@ -220,7 +220,7 @@ static void usage()
     " -p     Output ISO11783-VT Palette to act-file.\n"
     " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n"
     " -m     More informative output (verbose mode). Will also print out warnings on overridden values with language-files.\n"
-    " -i=xxx Specify a unique identfication which will be used as prefix for every object in the pool. (max. 8 char)\n"
+    " -r=pre Do not use iVtObjectID as id prefix, use pre instead.\n"
     " -g=ns  Group the generated structures into the given namespace. if only -g is passed, the Project-Name will be used.\n"
     " -u     User defined attributes accepted\n"
     " -l     Running in silent mode\n"
@@ -441,20 +441,6 @@ std::string OneAttribute_c::getObjectReference()
 }
 
 
-std::string OneAttribute_c::getObjectReferencePrefixed (const std::string& arstr_prefix)
-{
-  if (isNull())
-    return "NULL";
-
-  if ( (get().find (arstr_prefix) > 0)
-    || (get().find (arstr_prefix) == std::string::npos)) // don't know if this case is really desired... -wodokm
-    return std::string ("&iVtObject") + arstr_prefix + get();
-  else
-    return std::string ("&iVtObject") + get();
-}
-
-
-
 FILE& vt2iso_c::save_fopen (const std::string& arcstr_fileName, const char* apcc_mode)
 {
   FILE* handle = fopen (arcstr_fileName.c_str(), apcc_mode);
@@ -576,10 +562,10 @@ void vt2iso_c::clean_exit (const char* error_message)
     // write implementation of handler class constructor into list
     // as there the list must be known
     // -> the handler decleration can be included from everywhere
-    fprintf (partFile_list, "\nIsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists%s [] = {", mstr_poolIdent.c_str());
-    fprintf (partFile_list, "\n  all_iVtObjects%s,", mstr_poolIdent.c_str());
+    fprintf (partFile_list, "\nIsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [] = {" );
+    fprintf (partFile_list, "\n  all_iVtObjects," );
     for (unsigned int i=0; i<ui_languages; i++)
-      fprintf (partFile_list, "\n  all_iVtObjects%s%d,", mstr_poolIdent.c_str(), i);
+      fprintf (partFile_list, "\n  all_iVtObjects%d,", i);
     fprintf (partFile_list, "\n  NULL // indicate end of list");
     fprintf (partFile_list, "\n};\n");
     fprintf ( partFile_list, "%s", mstr_namespaceDeclarationEnd.c_str());
@@ -619,14 +605,14 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_derived, "\n#define DECL_derived_iObjectPool_%s_c", mstr_className.c_str() );
     fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationBegin.c_str());
     fprintf (partFile_handler_derived, "\n// forward declaration");
-    fprintf (partFile_handler_derived, "\nextern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists%s [];", mstr_poolIdent.c_str());
+    fprintf (partFile_handler_derived, "\nextern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];");
     fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationEnd.c_str());
     fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iVtClientObjectPool_c {", mstr_className.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
     fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF);");
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
-    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iVtClientObjectPool_c (%sall_iVtObjectLists%s, %d, %d,  ObjectPoolSettings_s(iVtClientObjectPool_c::ObjectPoolVersion%d, %d, %d, %d) ) {}\n",
-             mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, mi_objectPoolVersion, opDimension, skWidth, skHeight);
+    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iVtClientObjectPool_c (%sall_iVtObjectLists, %d, %d,  ObjectPoolSettings_s(iVtClientObjectPool_c::ObjectPoolVersion%d, %d, %d, %d) ) {}\n",
+             mstr_className.c_str(), mstr_namespacePrefix.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, mi_objectPoolVersion, opDimension, skWidth, skHeight);
     fprintf (partFile_handler_derived, "\n};\n");
     fprintf (partFile_handler_derived, "\n#endif\n" );
     fclose (partFile_handler_derived);
@@ -957,15 +943,7 @@ signed long int vt2iso_c::idOrName_toi(const char* apc_string, bool ab_isMacro)
     return atoi (apc_string);
   }
 
-  if (strstr (apc_string, mstr_poolIdent.c_str()) != apc_string)
-  {
-    // add the pool_ident to the name
-    std::string fullName = mstr_poolIdent + std::string(apc_string);
-    // Starting with a letter, so look up id!
-    return getID (fullName.c_str(), ab_isMacro, false, 0);
-  }
-  else
-    return getID (apc_string, ab_isMacro, false, 0);
+  return getID (apc_string, ab_isMacro, false, 0);
 }
 
 
@@ -991,7 +969,8 @@ vt2iso_c::init (
   bool ab_pedanticMode,
   const std::string& arcstr_outFileName,
   const std::string& arcstr_searchPath,
-  const std::string& arcstr_langPrefix)
+  const std::string& arcstr_langPrefix,
+  const std::string& arcstr_definesPrefix)
 {
   parser = ap_parser;
   mb_verbose = ab_verbose;
@@ -1001,6 +980,7 @@ vt2iso_c::init (
   mstr_outDirName = arcstr_outDirName; // overriding parameters!
   mstr_outFileName = arcstr_outFileName; // overriding parameters!
   mstr_langPrefix = arcstr_langPrefix;
+  mstr_definesPrefix = arcstr_definesPrefix;
 
   // pass verbose-level on to vt2isoimagebase_c
   if (!mb_verbose)
@@ -1110,18 +1090,19 @@ vt2iso_c::init (
   partFileName = mstr_destinDirAndProjectPrefix + "-list.inc";
   partFile_list = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_list, "%s", mstr_namespaceDeclarationBegin.c_str());
-  fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s [] = {", mstr_poolIdent.c_str());
+  fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects [] = {");
 
   partFileName = mstr_destinDirAndProjectPrefix + "-list_attributes.inc";
   partFile_listAttributes = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_listAttributes, "%s", mstr_namespaceDeclarationBegin.c_str());
-  fprintf (partFile_listAttributes, "IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs%s [] = {", mstr_poolIdent.c_str());
+  fprintf (partFile_listAttributes, "IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [] = {");
 
   partFileName = mstr_destinDirAndProjectPrefix + "-handler-derived.inc";
   partFile_handler_derived = &save_fopen (partFileName.c_str(),"wt");
 
 #ifdef USE_SPECIAL_PARSING_PROP
   pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (arcstr_cmdlineName,
+      arcstr_definesPrefix,
       partFile_variables,
       partFile_variables_extern,
       partFile_attributes,
@@ -1133,7 +1114,7 @@ vt2iso_c::init (
 #endif
 
 #ifdef USE_SPECIAL_PARSING
-  pc_specialParsing = new SpecialParsingUse_c (arcstr_cmdlineName, mstr_sourceDir, dictionary, mstr_poolIdent.c_str());
+  pc_specialParsing = new SpecialParsingUse_c (arcstr_cmdlineName, mstr_sourceDir, dictionary, ""); // "" was the PoolIdent before
 #else
   pc_specialParsing = NULL;
 #endif
@@ -1419,7 +1400,7 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
       { // get 'name=', 'id=' and all other possible attributes
         if (attr_name.compare("name") == 0)
         {
-          m_objName = str(format("%s%s") % mstr_poolIdent % attr_value);
+          m_objName = attr_value;
           is_objName = true;
           continue;
         }
@@ -1436,12 +1417,12 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
       {
         if (attr_name.compare("soft_key_mask") == 0)
         {
-          arrc_attributes [attrSoft_key_mask].set (mstr_poolIdent + attr_value);
+          arrc_attributes [attrSoft_key_mask].set (attr_value);
           break;
         }
         else if (attr_name.compare("active_mask") == 0)
         {
-          arrc_attributes [attrActive_mask].set (mstr_poolIdent + attr_value);
+          arrc_attributes [attrActive_mask].set (attr_value);
           break;
         }
 
@@ -1491,7 +1472,7 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
     // If no 'name=' given, add 'name=Unnamed%d' attribute
     if (is_objName == false)
     {
-      m_objName = str(format("%sUnnamed%d") % mstr_poolIdent % objNextUnnamedName);
+      m_objName = str(format("Unnamed%d") % objNextUnnamedName);
       ((DOMElement *)n)->setAttribute (X("name"), X(m_objName.c_str()));
       objNextUnnamedName++;
       is_objName = true;
@@ -2014,7 +1995,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
     if (pc_specialParsing && (objType == otIncludeobject))
     {
-      m_objName = str(format("%s%s") % mstr_poolIdent % (getAttributeValue (n, "name")));
+      m_objName = str(format("%s") % (getAttributeValue (n, "name")));
       if (!pc_specialParsing->parseKnownTag(n, objType, m_objName.c_str(), &objID, &is_objID))
         return false;
     }
@@ -2355,7 +2336,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::string langFileName;
             langFileName = str(format("%s-list%02d.inc") % mstr_destinDirAndProjectPrefix % ui_languages);
             arrs_language [ui_languages].partFile = &save_fopen (langFileName.c_str(), "wt");
-            langFileName = str(format("%sIsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s%d [] = {") % mstr_namespaceDeclarationBegin % mstr_poolIdent % ui_languages);
+            langFileName = str(format("%sIsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%d [] = {") % mstr_namespaceDeclarationBegin % ui_languages);
             fputs (langFileName.c_str(), arrs_language [ui_languages].partFile);
             arrs_language [ui_languages].code[0] = languageCode[0];
             arrs_language [ui_languages].code[1] = languageCode[1];
@@ -2693,7 +2674,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   return false;
                 }
                 /// BREAK HERE TO WATCH GOTTEN IN THE DIFFERENT CASES!
-                if ((mstr_poolIdent+pc_id).compare(m_objName) == 0)
+                if (pc_id.compare(m_objName) == 0)
                 { // set value and break
                   //std::cout << "found language value for [" << objName << "]."<<std::endl;
                   b_foundLanguageValue= true;
@@ -2770,7 +2751,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         fprintf (partFile_attributes_extern, "extern const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM;\n", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str());
 
-        fprintf (partFile_defines, "static const unsigned int iVtObjectID%s%s = %d;\n", m_objName.c_str(), pc_postfix.c_str(), objID);
+        fprintf (partFile_defines, "static const unsigned int %s%s%s = %d;\n", mstr_definesPrefix.c_str(), m_objName.c_str(), pc_postfix.c_str(), objID);
       }
 
       /// Add explicit Button/Key includement
@@ -2790,11 +2771,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       }
       if ((arrc_attributes [attrVariable_reference].get().compare("NULL") != 0) && (strncmp (arrc_attributes [attrVariable_reference].get().c_str(), "&iVtObject", strlen ("&iVtObject")) != 0))
       { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-        arrc_attributes [attrVariable_reference].set( getObjectReferencePrefixed(attrVariable_reference) );
+        arrc_attributes [attrVariable_reference].set( getObjectReference(attrVariable_reference) );
       }
       if ((arrc_attributes [attrTarget_value_variable_reference].get().compare("NULL") != 0) && (strncmp (arrc_attributes [attrTarget_value_variable_reference].get().c_str(), "&iVtObject", strlen ("&iVtObject")) != 0))
       { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
-        arrc_attributes [attrTarget_value_variable_reference].set ( getObjectReferencePrefixed(attrTarget_value_variable_reference) );
+        arrc_attributes [attrTarget_value_variable_reference].set ( getObjectReference(attrTarget_value_variable_reference) );
       }
 
       //! @todo ON REQUEST To be enabled when handling cases where only IDs are used in XMLs. Not 100% supported now, even if the
@@ -2834,7 +2815,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (colourtoi (arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
 
-          fprintf (partFile_attributes, ", %d, %s", colourtoi (arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed(attrSoft_key_mask).c_str());
+          fprintf (partFile_attributes, ", %d, %s", colourtoi (arrc_attributes [attrBackground_colour].get().c_str()), getObjectReference(attrSoft_key_mask).c_str());
           break;
 
         case otAlarmmask:
@@ -2853,7 +2834,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
 
-          fprintf (partFile_attributes, ", %d, %s, %d, %d", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed(attrSoft_key_mask).c_str(), (unsigned int)retPrio, (unsigned int)retSignal);
+          fprintf (partFile_attributes, ", %d, %s, %d, %d", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReference(attrSoft_key_mask).c_str(), (unsigned int)retPrio, (unsigned int)retSignal);
           break;
         }
 
@@ -2936,7 +2917,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
 
-          fprintf (partFile_attributes, ", %d, %s, %s, %s, %s, %d", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), arrc_attributes [attrWidth].get().c_str(), getObjectReferencePrefixed (attrForeground_colour).c_str(), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), (unsigned int)retEnabled);
+          fprintf (partFile_attributes, ", %d, %s, %s, %s, %s, %d", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), arrc_attributes [attrWidth].get().c_str(), getObjectReference (attrForeground_colour).c_str(), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), (unsigned int)retEnabled);
           break;
         }
 
@@ -3003,7 +2984,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion) == -1)
             return false;
 
-          fprintf (partFile_attributes, ", %s, %s, %d, %s, %s, %d, %s, %d, %s, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), getObjectReferencePrefixed (attrInput_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJustification, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str(), (unsigned int)retEnabled );
+          fprintf (partFile_attributes, ", %s, %s, %d, %s, %s, %d, %s, %d, %s, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReference (attrFont_attributes).c_str(), getObjectReference (attrInput_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJustification, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str(), (unsigned int)retEnabled );
           break;
         }
 
@@ -3023,7 +3004,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion) == -1)
             return false;
 
-          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL, %sUL, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrMin_value].get().c_str(), arrc_attributes [attrMax_value].get().c_str());
+          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL, %sUL, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReference (attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrMin_value].get().c_str(), arrc_attributes [attrMax_value].get().c_str());
 
           if ( arrc_attributes [attrOffset].get().find("L") != std::string::npos ) // != NULL
           { // contains already a number type specifier
@@ -3157,7 +3138,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion) == -1)
             return false;
 
-          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %d, %s, %s", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJust, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str());
+          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %d, %s, %s", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReference (attrFont_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJust, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str());
           break;
         }
 
@@ -3174,7 +3155,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           if (inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion) == -1)
             return false;
-          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed(attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str());
+          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReference(attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mi_objectPoolVersion), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str());
           if (arrc_attributes [attrOffset].get().find("L") != std::string::npos ) // not found
           { // offset has already type indication -> don't add additional "L"
             fprintf (partFile_attributes, ", %s", arrc_attributes [attrOffset].get().c_str());
@@ -3219,7 +3200,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           if (linedirectiontoi (arrc_attributes [attrLine_direction].get().c_str()) == -1)
             return false;
-          fprintf (partFile_attributes, ", %s, %s, %s, %d", getObjectReferencePrefixed(attrLine_attributes).c_str(), arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), linedirectiontoi (arrc_attributes [attrLine_direction].get().c_str()));
+          fprintf (partFile_attributes, ", %s, %s, %s, %d", getObjectReference(attrLine_attributes).c_str(), arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), linedirectiontoi (arrc_attributes [attrLine_direction].get().c_str()));
           break;
 
         case otRectangle:
@@ -3232,7 +3213,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           if (linesuppressiontoi (arrc_attributes [attrLine_suppression].get().c_str()) == -1)
             return false;
-          fprintf (partFile_attributes, ", %s, %s, %s, %d, %s", getObjectReferencePrefixed (attrLine_attributes).c_str(), arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), linesuppressiontoi (arrc_attributes [attrLine_suppression].get().c_str()), getObjectReferencePrefixed (attrFill_attributes).c_str());
+          fprintf (partFile_attributes, ", %s, %s, %s, %d, %s", getObjectReference (attrLine_attributes).c_str(), arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), linesuppressiontoi (arrc_attributes [attrLine_suppression].get().c_str()), getObjectReference (attrFill_attributes).c_str());
           break;
 
         case otEllipse:
@@ -3250,7 +3231,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           if (ellipsetypetoi (arrc_attributes [attrEllipse_type].get().c_str()) == -1)
             return false;
-          fprintf (partFile_attributes, ", %s, %s, %s, %d, %s, %s, %s", getObjectReferencePrefixed(attrLine_attributes).c_str(), arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), ellipsetypetoi (arrc_attributes [attrEllipse_type].get().c_str()), arrc_attributes [attrStart_angle].get().c_str(), arrc_attributes [attrEnd_angle].get().c_str(), getObjectReferencePrefixed (attrFill_attributes).c_str());
+          fprintf (partFile_attributes, ", %s, %s, %s, %d, %s, %s, %s", getObjectReference(attrLine_attributes).c_str(), arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), ellipsetypetoi (arrc_attributes [attrEllipse_type].get().c_str()), arrc_attributes [attrStart_angle].get().c_str(), arrc_attributes [attrEnd_angle].get().c_str(), getObjectReference (attrFill_attributes).c_str());
           break;
 
         case otPolygon:
@@ -3263,7 +3244,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           if (polygontypetoi (arrc_attributes [attrPolygon_type].get().c_str()) == -1)
             return false;
-          fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), getObjectReferencePrefixed (attrLine_attributes).c_str(), getObjectReferencePrefixed (attrFill_attributes).c_str(),
+          fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), getObjectReference (attrLine_attributes).c_str(), getObjectReference (attrFill_attributes).c_str(),
                    polygontypetoi (arrc_attributes [attrPolygon_type].get().c_str()));
           break;
 
@@ -3450,7 +3431,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (filltypetoi (arrc_attributes [attrFill_type].get().c_str()) == -1)
             return false;
 
-          fprintf (partFile_attributes, ",%d, %d, %s", filltypetoi (arrc_attributes [attrFill_type].get().c_str()), colourtoi ( arrc_attributes [attrFill_colour].get().c_str()), getObjectReferencePrefixed (attrFill_pattern).c_str());
+          fprintf (partFile_attributes, ",%d, %d, %s", filltypetoi (arrc_attributes [attrFill_type].get().c_str()), colourtoi ( arrc_attributes [attrFill_colour].get().c_str()), getObjectReference (attrFill_pattern).c_str());
           break;
 
         case otInputattributes:
@@ -3488,7 +3469,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           break;
 
         case otObjectpointer:
-          fprintf (partFile_attributes, ", %s", getObjectReferencePrefixed(attrValue).c_str());
+          fprintf (partFile_attributes, ", %s", getObjectReference(attrValue).c_str());
           break;
 
         case otMacro:
@@ -3567,7 +3548,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (auxcondesignobjptrtypetoi(arrc_attributes [attrPointer_type].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %d, %s", auxcondesignobjptrtypetoi(arrc_attributes [attrPointer_type].get().c_str()),
-                   getObjectReferencePrefixed(attrValue).c_str());
+                   getObjectReference(attrValue).c_str());
           break;
 
         case otGraphicsContext:
@@ -3617,9 +3598,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                    colourtoi ( arrc_attributes [attrForeground_colour].get().c_str()),
                    colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()));
 
-          fprintf (partFile_attributes, ", %s", getObjectReferencePrefixed(attrFont_attributes).c_str());
-          fprintf (partFile_attributes, ", %s", getObjectReferencePrefixed(attrLine_attributes).c_str());
-          fprintf (partFile_attributes, ", %s", getObjectReferencePrefixed(attrFill_attributes).c_str());
+          fprintf (partFile_attributes, ", %s", getObjectReference(attrFont_attributes).c_str());
+          fprintf (partFile_attributes, ", %s", getObjectReference(attrLine_attributes).c_str());
+          fprintf (partFile_attributes, ", %s", getObjectReference(attrFill_attributes).c_str());
 
           if (colourdepthtoi (arrc_attributes [attrFormat].get().c_str()) == -1)
             return false;
@@ -3875,7 +3856,7 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
           }
           if (attr_name.compare("name") == 0)
           {
-            objChildName = str(format("%s%s") % mstr_poolIdent % attr_value);
+            objChildName = attr_value;
             is_objChildName = true;
           }
         }
@@ -3887,7 +3868,7 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
 
         ((DOMElement *)child)->setAttribute (X("name"), X(objChildName.c_str()));
               // add pool_ident to the name for getting an ID -> if child gets processed, its name gets the pool_ident added
-        objChildName = str(format("%sUnnamed%d") % mstr_poolIdent % objNextUnnamedName);
+        objChildName = str(format("Unnamed%d") % objNextUnnamedName);
         objNextUnnamedName++;
         is_objChildName = true;
       }
@@ -4048,7 +4029,6 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
         }
         if (b_addAsChild)
         {
-          std::string objNameWithoutPoolIdent;
           // get NAME and POS_X and POS_Y attributes out of child
           if(child->hasAttributes())
           { // parse through all attributes
@@ -4072,8 +4052,7 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
               // Get NAME and POS_X and POS_Y directly
               if (attr_name.compare("name") == 0)
               {
-                objNameWithoutPoolIdent = attr_value.c_str();
-                objChildName = str(format("%s%s") % mstr_poolIdent % attr_value.c_str());
+                objChildName = attr_value;
                 is_objChildName = true;
                 continue;
               }
@@ -4097,11 +4076,7 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
               }
               if (attr_name.compare("block_font") == 0)
               {
-                objBlockFont = std::string("&iVtObject") + mstr_poolIdent;
-                //attr_value.resize(stringLength-9);
-                // -- was formerly: strncat (objBlockFont, attr_value.c_str(), stringLength-9);
-                // -- but as I don't know why -9, we left it out now with the switch to std::strings. -wodokm
-                objBlockFont += attr_value;
+                objBlockFont = std::string("&iVtObject") + attr_value;
                 continue;
               }
               if (attr_name.compare("block_row") == 0)
@@ -4155,7 +4130,7 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
               objChildName = str(format("Unnamed%d") % objNextUnnamedName);
               ((DOMElement *)child)->setAttribute (X("name"), X(objChildName.c_str()));
               // add pool_ident to the name for getting an ID -> if child gets processed, its name gets the pool_ident added
-              objChildName = str(format("%sUnnamed%d") % mstr_poolIdent % objNextUnnamedName);
+              objChildName = str(format("Unnamed%d") % objNextUnnamedName);
               objNextUnnamedName++;
               is_objChildName = true;
             }
@@ -4277,12 +4252,11 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
   return true;
 }
 
-vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
+vt2iso_c::vt2iso_c()
   : firstLineFileE(true)
   , partFile_split_function( NULL )
   , ui_languages(0)
   , mb_projectFile (false) // default to no project file
-  , mstr_poolIdent(arstr_poolIdent)
   , mbitset_objIdUsed()
   , map_objNameIdTable()
   , objNextAutoID(65534)
@@ -5074,6 +5048,7 @@ int main(int argC, char* argV[])
   bool b_pedanticMode = false;
   bool b_disableContainmentRules = false;
   std::string str_outFileName;
+  std::string str_definesPrefix = "iVtObjectID";
   std::string poolIdentStr;
   std::string localeStr;
   std::string str_outDir;
@@ -5162,10 +5137,12 @@ int main(int argC, char* argV[])
       if (!b_silentMode)
         verbose = true;
     }
-    else if (!strncmp(argV[argInd], "-i=", 3)
-         ||  !strncmp(argV[argInd], "-I=", 3))
+    else if (!strncmp(argV[argInd], "-i", 2)
+         ||  !strncmp(argV[argInd], "-I", 2))
     {
-      poolIdentStr.assign (&argV[argInd][3]);
+      usage();
+      std::cerr << "vt2iso: Error: Option -i not supported anymore, try to rewrite to use -g." << std::endl;
+      return 5;
     }
     else if (!strncmp(argV[argInd], "-o=", 3)
          ||  !strncmp(argV[argInd], "-O=", 3))
@@ -5203,6 +5180,16 @@ int main(int argC, char* argV[])
          ||  !strncmp(argV[argInd], "-X=", 3))
     {
       str_langPrefix = &argV[argInd][3];
+    }
+    else if (!strncmp(argV[argInd], "-r=", 3)
+         ||  !strncmp(argV[argInd], "-R=", 3))
+    {
+      str_definesPrefix.assign (&argV[argInd][3]);
+    }
+    else if (!strcmp(argV[argInd], "-r")
+         ||  !strcmp(argV[argInd], "-R"))
+    {
+      str_definesPrefix.assign ("");
     }
     else if (!strncmp(argV[argInd], "-d=", 3)
          ||  !strncmp(argV[argInd], "-D=", 3))
@@ -5275,7 +5262,7 @@ int main(int argC, char* argV[])
   std::string str_cmdlineName( argV [filenameInd] );
 
   // Do INITIALIZATION STUFF
-  vt2iso_c* pc_vt2iso = new vt2iso_c(poolIdentStr);
+  vt2iso_c* pc_vt2iso = new vt2iso_c();
 
   // Instantiate the DOM parser.
   static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
@@ -5304,7 +5291,7 @@ int main(int argC, char* argV[])
   // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, b_pedanticMode, str_outFileName, str_searchPath, str_langPrefix );
+  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, b_pedanticMode, str_outFileName, str_searchPath, str_langPrefix, str_definesPrefix );
 
   if (cb_initSuccess)
   {
@@ -5515,7 +5502,7 @@ void vt2iso_c::markIds (DOMNode *n)
       }
       if (local_attrName.compare("name") == 0)
       {
-        name = str(format("%s%s") % mstr_poolIdent % local_attrValue);
+        name = local_attrValue;
         continue;
       }
     }

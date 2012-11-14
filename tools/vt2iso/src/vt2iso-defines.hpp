@@ -196,7 +196,6 @@ typedef struct {
 #define ombPicturegraphic                          (uint64_t(1)<<20)
 #define ombNumbervariable                          (uint64_t(1)<<21)
 #define ombStringvariable                          (uint64_t(1)<<22)
-#define ombVariables                               (ombNumberveriable | ombStringvariable)
 #define ombFontattributes                          (uint64_t(1)<<23)
 #define ombLineattributes                          (uint64_t(1)<<24)
 #define ombFillattributes                          (uint64_t(1)<<25)

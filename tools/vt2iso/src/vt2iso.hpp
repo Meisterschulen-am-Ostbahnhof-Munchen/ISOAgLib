@@ -161,8 +161,7 @@ private:
 class vt2iso_c : public DOMCountErrorHandler
 {
 public:
-  vt2iso_c (const std::string &poolIdent);
-
+  vt2iso_c();
   ~vt2iso_c();
 
   struct Path_s
@@ -240,7 +239,8 @@ public:
     bool ab_pedanticMode,
     const std::string& str_outFileName,
     const std::string& arcstr_searchPath,
-    const std::string& arcstr_langPrefix);
+    const std::string& arcstr_langPrefix,
+    const std::string& str_definesPrefix);
 
   void parse();
 
@@ -283,7 +283,7 @@ private:
 
   bool checkForAllowedExecution() const;
 
-  std::string getObjectReferencePrefixed (int ai_attributeIndex) { return arrc_attributes [ai_attributeIndex].getObjectReferencePrefixed (mstr_poolIdent); }
+  std::string getObjectReference (int ai_attributeIndex) { return arrc_attributes [ai_attributeIndex].getObjectReference(); }
 
   void autoDetectLanguage (DOMNode *n);
 
@@ -344,7 +344,6 @@ private:
 
   bool mb_projectFile;
   std::vector<Path_s> vec_xmlFiles;
-  std::string mstr_poolIdent;
 
   // search path
   std::vector<std::string> mvec_searchPath;
@@ -395,6 +394,7 @@ private:
   std::string mstr_namespaceDeclarationEnd;         // }
   std::string mstr_namespacePrefix;                 // BLA::
   std::string mstr_langPrefix;
+  std::string mstr_definesPrefix;
 
   std::string attr_name;
   std::string attr_value;
