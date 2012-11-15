@@ -15,6 +15,7 @@
 // necessary for interface convert operators ("up"-cast)
 #include "../ivtserverinstance_c.h"
 
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "vtclient_c.h"
@@ -169,6 +170,32 @@ IsoAgLib::iVtServerInstance_c&
 VtServerInstance_c::toIvtServerInstance_c()
 {
   return static_cast<IsoAgLib::iVtServerInstance_c&>(*this);
+}
+
+
+void
+VtServerInstance_c::requestLocalSettings( IdentItem_c& identItem )
+{
+  // If our IsoItem has claimed address, immediately try to get the LANGUAGE_PGN from VT/anyone ;-) (regardless of pool-upload!)
+  if ( (getLocalSettings()->lastRequested == 0) ||
+       ((HAL::getTime()-getLocalSettings()->lastRequested) > 2000) 
+     )
+  { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
+    /** @todo SOON-258 Give up somewhen?? Or retry really every 2 seconds? Don't care too much for now, shouldn't happen in real systems... */
+    // Get Local Settings (may not be reached, when terminal is switched on after ECU, as VT sends LNAGUAGE Info on startup!
+    CanPkgExt_c mc_sendData;
+    mc_sendData.setIsoPri( 6 );
+    mc_sendData.setIsoPgn( REQUEST_PGN_MSG_PGN );
+    mc_sendData.setIsoPs( getIsoItem().nr() ); // due to const-ness problem use SA here!
+    mc_sendData.setMonitorItemForSA( identItem.getIsoItem() );
+    mc_sendData.setUint8Data( 0,  (LANGUAGE_PGN        & 0xFF) );
+    mc_sendData.setUint8Data( 1, ((LANGUAGE_PGN >> 8)  & 0xFF) );
+    mc_sendData.setUint8Data( 2, ((LANGUAGE_PGN >> 16) & 0xFF) );
+    mc_sendData.setLen( 3 );
+    getIsoBusInstance( mrc_isoTerminal.getMultitonInst() ) << mc_sendData;
+
+    getLocalSettings()->lastRequested = HAL::getTime();
+  }
 }
 
 

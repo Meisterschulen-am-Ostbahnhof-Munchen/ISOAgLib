@@ -19,7 +19,7 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 class IsoItem_c;
@@ -188,27 +188,6 @@ class CanPkgExt_c : public CanPkg_c
   */
   void setIsoPri(uint8_t aui8_val){setIdentByte( uint8_t((ident(3)&3) | (aui8_val << 2)), 3 );}
 
-  void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
-    setIsoPri(pri);
-    setIsoDp(dp);
-    setIsoPf(pf);
-    setIsoPs(ps);
-    setIsoSa(sa);
-    setLen (len);
-  }
-
-  void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2) {
-    setIsoPri(pri);
-    setIsoDp(dp);
-    setIsoPf(pf);
-    setIsoPs(ps);
-    setIsoSa(sa);
-    setUint8Data (0, d0);
-    setUint8Data (1, d1);
-    setUint8Data (2, d2);
-    setLen (3);
-  }
-
   // This function sets the DLC to 8 and fills up
   // the databytes AFTER lenActualData with 0xFF
   // Example: WS-Master has only first databyte used, rest is filled with 0xFFs
@@ -327,5 +306,6 @@ private:
   MessageState_t mt_msgState;
 };
 
-}
+} // __IsoAgLib
+
 #endif

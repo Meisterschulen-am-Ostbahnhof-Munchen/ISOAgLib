@@ -147,7 +147,6 @@ public:
   */
   void timeEvent();
   /** timeEvent sub-functions to get a better overview of the timeEvent main-function */
-  void timeEventSendLanguagePGN();
   void timeEventUploadPoolTimeoutCheck();
   void timeEventPrePoolUpload();
   bool timeEventPoolUpload();
@@ -331,6 +330,8 @@ private:
   void vtOutOfMemory();
   void setObjectPoolUploadingLanguage();
 
+  void sendMessage( uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7 );
+
   /** set display state of vt client
     @param b_isVtStatusMsg true: set display state from VT Status Msg
                            false: set display state from Display Activation Msg
@@ -366,6 +367,7 @@ private: // attributes
   objectPoolState_t men_objectPoolState;
 
   /// the following languages are
+  /// -2: need to lookup language from VtServerInstance's language, if available
   /// -1: not supported language (==> so using default language for upload, but important to differentiate for the application!)
   ///  0: default language (first in \<workingset\>-object)
   ///  1: second language

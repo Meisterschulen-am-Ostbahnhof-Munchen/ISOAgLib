@@ -57,7 +57,14 @@ namespace __IsoAgLib
 /** class for wrapping one vtserver instance */
 class VtServerInstance_c
 {
+private:
+  /** class not copyable */
+  VtServerInstance_c(const VtServerInstance_c&);
+  VtServerInstance_c& operator=(const VtServerInstance_c&); 
+
 public:
+  VtServerInstance_c( const IsoItem_c& r_newItem, VtClient_c& r_isoTerminal );
+
   /** struct that stores the "Get Number Of Soft Keys Response",
     "Get Text Font Data Response" and "Get Hardware Response"
   */
@@ -92,7 +99,6 @@ public:
     uint8_t  skHeight;
 
     uint8_t  bootTime;
-
   } vtCapabilities_s;
 
   virtual ~VtServerInstance_c();
@@ -115,13 +121,16 @@ public:
   uint8_t                    getVtSourceAddress()     const { return m_isoItem.nr(); }
   uint32_t                   getVtHardwareDimension() const;
   uint16_t                   getVtFontSizes()         const;
-  uint8_t                    getVtIsoVersion()        const ;
+  uint8_t                    getVtIsoVersion()        const;
   vtCapabilities_s*          getVtCapabilities()      { return &ms_vtCapabilitiesA; }
   const vtCapabilities_s*    getConstVtCapabilities() const  { return &ms_vtCapabilitiesA; }
   const IsoAgLib::vtState_s* getVtState()             const  { return &ms_vtStateA; }
   localSettings_s*           getLocalSettings()       { return &ms_localSettingsA; }
   const IsoItem_c&           getIsoItem()             const { return m_isoItem; }
   bool                       isPrimaryVt()            const { return (getIsoName().funcInst() == 0); }
+  
+  bool receivedLocalSettings() const { return( ms_localSettingsA.lastReceived != 0 ); }
+  void requestLocalSettings( IdentItem_c& identItem );
 
 // the following define should be globally defined in the project settings...
 #ifdef USE_IOP_GENERATOR_FAKE_VT_PROPERTIES
@@ -142,31 +151,13 @@ public:
   IsoAgLib::iVtServerInstance_c& toIvtServerInstance_c();
 
 private:
-  friend class VtClient_c;
-  /** private constructor which prevents direct instantiation in user application
-    * NEVER define instance of VtClient_c within application
-    */
-  VtServerInstance_c( const IsoItem_c& r_newItem, VtClient_c& r_isoTerminal );
-
-private:
   const IsoItem_c& m_isoItem;
 
   VtClient_c& mrc_isoTerminal; // back ref.
 
-  /** stores the last "VT Status Message" */
-  IsoAgLib::vtState_s ms_vtStateA;
-
-  /** gets set as soon as the responses for the requests arrive */
-  vtCapabilities_s ms_vtCapabilitiesA;
-
-  /** stores the Local Settings like Language, Units, Date Format */
-  localSettings_s ms_localSettingsA;
-
-private:
-  /** copy constructor not declared and not defined -> implicit copy constructor */
-  VtServerInstance_c(const VtServerInstance_c&);
-  /** not copyable : copy operator is only declared, never defined */
-  VtServerInstance_c& operator=(const VtServerInstance_c&); 
+  IsoAgLib::vtState_s ms_vtStateA; /** last "VT Status Message" */
+  vtCapabilities_s ms_vtCapabilitiesA; /** color-depth, #SKs, etc. */
+  localSettings_s ms_localSettingsA; /** Language, Units, Date Format */
 };
 
 } // __IsoAgLib

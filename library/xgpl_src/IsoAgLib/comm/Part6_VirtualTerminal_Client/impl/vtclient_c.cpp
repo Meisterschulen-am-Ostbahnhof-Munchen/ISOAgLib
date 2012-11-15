@@ -284,7 +284,7 @@ void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
   uint8_t ui8_index;
 
   /// -->VT_TO_GLOBAL_PGN<-- ///
-  if ((arc_data.isoPgn() & 0x3FFFFLU) == VT_TO_GLOBAL_PGN)
+  if (arc_data.isoPgn() == VT_TO_GLOBAL_PGN)
   { // iterate through all registered VtServerInstances and process msg if vtSourceAddress == isoSa
     uint8_t const cui8_cmdByte = arc_data.getUint8Data (1-1);
 
@@ -292,7 +292,7 @@ void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
     {
       for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
       {
-        if ((*lit_vtServerInst)->getVtSourceAddress() == arc_data.isoSa()) // getVtSourceAddress gets the SA from the IsoItem, so it's the current one...
+        if (&(*lit_vtServerInst)->getIsoItem() == arc_data.getMonitorItemForSA())
         {
           (*lit_vtServerInst)->setLatestVtStatusData( arc_data );
 
@@ -341,13 +341,13 @@ void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
 
 
   /// -->LANGUAGE_PGN<-- ///
-  if ((arc_data.isoPgn() & 0x3FFFFLU) == LANGUAGE_PGN)
+  if (arc_data.isoPgn() == LANGUAGE_PGN)
   {
     VtServerInstance_c* pc_server = NULL;
     // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
     for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
     {
-      if ((*lit_vtServerInst)->getVtSourceAddress() == arc_data.isoSa())
+      if (&(*lit_vtServerInst)->getIsoItem() == arc_data.getMonitorItemForSA())
       {
         pc_server = *lit_vtServerInst;
         break;
@@ -361,12 +361,8 @@ void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
       // notify all connected vtCSCs
       for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
       {
-        if (m_vtConnections[ui8_index]
-            &&
-            m_vtConnections[ui8_index]->connectedToVtServer()
-            &&
-            (m_vtConnections[ui8_index]->getVtServerInstPtr() == pc_server)
-          )
+        if ( m_vtConnections[ui8_index] &&
+            (m_vtConnections[ui8_index]->getVtServerInstPtr() == pc_server) )
           m_vtConnections[ui8_index]->notifyOnVtsLanguagePgn();
       }
     }
