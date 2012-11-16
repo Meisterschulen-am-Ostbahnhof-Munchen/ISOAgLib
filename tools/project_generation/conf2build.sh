@@ -47,11 +47,7 @@ main()
     . ./$CONF_FILE
 
     check_after_user_configuration
-    
-    # Create files to be used to build according to the users's
-    # configuration settings
     create_buildfiles "$CONF_DIR" "$SCRIPT_DIR"
-    
     report_summary
 }
 
@@ -130,6 +126,10 @@ set_default_values()
     APP_SEARCH_SRC_CONDITION="*.C *.cc *.c *.cpp *.cxx"
     APP_SEARCH_HDR_CONDITION="*.h *.hpp"
 
+    APP_PATH="UseIsoAgLibPath"
+    ISO_AG_LIB_PATH=""
+    APP_SRC_FILE=""
+    REL_APP_PATH=""
     APP_PATH_EXCLUDE=""
     APP_SRC_EXCLUDE=""
     ISOAGLIB_INSTALL_PATH="/usr/local"
@@ -193,8 +193,6 @@ set_default_values()
     USE_EXTERNAL_INCLUDE_PATH=''
     USE_EXTERNAL_LIBRARIES=''
     USE_EXTERNAL_LIBRARY_PATH=''
-    PRJ_COMPILER_BINARY_PRE=''
-    APP_SRC_FILE=''
     USE_RS232_DRIVER='none'
 	USE_EEPROM_DRIVER='none'
 	USE_INPUTS_DRIVER='none'
@@ -209,9 +207,8 @@ check_set_correct_variables()
     local CONF_DIR="$1"
 
     : ${ISO_AG_LIB_PATH:?"ERROR! Please specify the path to the root directory of IsoAgLib - i.e. where xgpl_src is located"}
-    ISO_AG_LIB_INSIDE="../../$ISO_AG_LIB_PATH"
+    : ${PROJECT:?"ERROR! Please set the variable PROJECT to the build sub-directory and executable filename"}
 
-    # check if ISO_AG_LIB_PATH valid
     if [ ! -d "$ISO_AG_LIB_PATH" ]; then
         echo_ "ERROR! ISO_AG_LIB_PATH is not a directory"
     else
@@ -228,8 +225,6 @@ check_set_correct_variables()
         echo_ "ERROR! There must be at least one protocol instance"
         exit 2
     fi
-
-    : ${PROJECT:?"ERROR! Please set the variable PROJECT to the build sub-directory and executable filename"}
 
     if [ "$PRJ_ISO11783" -lt 1 -a "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 ]; then
         echo_ "ERROR! Can't utilize PRJ_ISO_VIRTUALTERMINAL_CLIENT as ISO11783 is not activated"
@@ -248,6 +243,12 @@ check_set_correct_variables()
         echo_ "Set PRJ_RS232 to 1 to enable RS232 support."
         exit 2
     fi
+
+    if [ $APP_PATH == "UseIsoAgLibPath" ] ; then
+        APP_PATH="$ISO_AG_LIB_PATH"
+    fi
+    APP_INSIDE="../../$APP_PATH"
+    ISO_AG_LIB_INSIDE="../../$ISO_AG_LIB_PATH"
 
     if [ "$PRJ_BASE" -gt 0 ]; then
         # activate all base data sub-features, when PRJ_BASE is activated
@@ -272,21 +273,15 @@ check_set_correct_variables()
     # overwrite settings from config file with command line parameter settings
     if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
-        # echo_ "Use Parameter value for target system: $USE_TARGET_SYSTEM"
-        # else
-        # echo_ "Use Target System from config file: $USE_TARGET_SYSTEM"
     fi
     if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
         USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
-        #echo_ "Use Parameter value for can driver: $PARAMETER_CAN_DRIVER"
     fi
     if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
         USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
-        #echo_ "Use Parameter value for rs232 driver: $PARAMETER_RS232_DRIVER"
     fi
     if [ $PARAMETER_EEPROM_DRIVER != "UseConfigFile" ] ; then
         USE_EEPROM_DRIVER=$PARAMETER_EEPROM_DRIVER
-        #echo_ "Use Parameter value for eeprom driver: $PARAMETER_EEPROM_DRIVER"
     fi
 
     # workaround as long as we don't have separate HALs
@@ -714,8 +709,8 @@ create_filelist( )
     } 9>&1
     
     for EACH_REL_APP_PATH in ${REL_APP_PATH:-}; do
-        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&3"
-        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&4"
+        eval "find $APP_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&3"
+        eval "find $APP_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&4"
     done 3>"$FILELIST_APP_PURE" 4>"$FILELIST_APP_HDR"
 
 
@@ -1003,7 +998,7 @@ create_cmake_winlin()
     AppPrjSourceFilelist="$1/$PROJECT/$FILELIST_APP_PURE"    
         
     local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
-    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)})"
+    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$APP_INSIDE")/%s\n" $RELATIVE_INC_PATHS)})"
 
     local INSERT_CMAKE_PROJECT="$PROJECT"
     local INSERT_CMAKE_DEFINITIONS="$(print_cmake_definitions)"
@@ -1476,7 +1471,7 @@ report_summary()
     echo_  "Switches:      $ISOAGLIB_SWITCHES (set in the generated isoaglib_project_config.h)"
     echo_n "Include Path:  "
     for EACH_REL_APP_PATH in ${REL_APP_PATH:-} ; do
-        echo_n "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH ";
+        echo_n "$APP_INSIDE/$EACH_REL_APP_PATH ";
     done
     echo_
     echo_
