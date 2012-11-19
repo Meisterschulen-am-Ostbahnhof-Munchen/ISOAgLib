@@ -126,7 +126,7 @@ set_default_values()
     APP_SEARCH_SRC_CONDITION="*.C *.cc *.c *.cpp *.cxx"
     APP_SEARCH_HDR_CONDITION="*.h *.hpp"
 
-    APP_PATH="UseIsoAgLibPath"
+    APP_PATH=""
     ISO_AG_LIB_PATH=""
     APP_SRC_FILE=""
     REL_APP_PATH=""
@@ -244,7 +244,7 @@ check_set_correct_variables()
         exit 2
     fi
 
-    if [ $APP_PATH == "UseIsoAgLibPath" ] ; then
+    if [ $APP_PATH -eq ] ; then
         APP_PATH="$ISO_AG_LIB_PATH"
     fi
     APP_INSIDE="../../$APP_PATH"
