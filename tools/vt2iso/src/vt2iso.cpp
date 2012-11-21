@@ -212,24 +212,29 @@ static void usage()
     " - auto_language=\"..\" attribute\n"
     " - support for auto-detecting language=\"..\" attribute if the value is given in the .values.xx.txt files."<<std::endl<<std::endl<<
     "Options:\n"
+    "[Basic:]\n"
+    " -o=dir Use the given Outputdirectory for the generated files instead of the directory where the XML/VTP-files are located.\n"
+    " -a=pre Use the given Prefix instead of the Projectname as a prefix for the generated files.\n"
+    " -a     (Not specifying a value for -a lets vt2iso use the name of the XML/VTP - think of it as Legacy-Mode!)\n"
+    " -g=ns  Group the generated structures into the given namespace. if only -g is passed, the Project-Name will be used.\n"
+    "[Extended:]\n"
+    " -p     Output ISO11783-VT Palette to act-file.\n"
+    " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n"
+    " -m     More informative output (verbose mode). Will also print out warnings on overridden values with language-files.\n"
+    " -r=pre Do not use iVtObjectID as id prefix, use pre instead.\n"
+    " -u     User defined attributes accepted\n"
+    " -l     Running in silent mode\n"
+    " -c=xxx Specify a VT preset which contains proprietary colours (important for images with poprietary colours)\n"
+    " -x=pre Use the given Prefix for Multilanguage objects. Will generate iVtObjectX_pre1 instead of iVtObjectX_1.\n"
+    " -k     Pedantic mode during resolving values from translation files for inputstring, stringvariable and outputstring.\n"
+    " -b=cl  Derive the object pool from the given base class. Defaults to IsoAgLib::iVtClientObjectPool_c.\n"
+    " -bh=h  Specify the header file to include for the base class which was specified with the -b option. Defaults to none.\n"
+    "[XML-Parser:]\n"
     " -v=xxx Validation scheme [always | never | auto]. Defaults to auto\n"
     " -n     Enable namespace processing. Defaults to off.\n"
     " -s     Enable schema processing. Defaults to off.\n"
     " -f     Enable full schema constraint checking. Defaults to off.\n"
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
-    " -p     Output ISO11783-VT Palette to act-file.\n"
-    " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n"
-    " -m     More informative output (verbose mode). Will also print out warnings on overridden values with language-files.\n"
-    " -r=pre Do not use iVtObjectID as id prefix, use pre instead.\n"
-    " -g=ns  Group the generated structures into the given namespace. if only -g is passed, the Project-Name will be used.\n"
-    " -u     User defined attributes accepted\n"
-    " -l     Running in silent mode\n"
-    " -o=dir Use the given Outputdirectory for the generated files instead of the directory where the XML/VTP-files are located.\n"
-    " -a=pre Use the given Prefix instead of the Projectname as a prefix for the generated files.\n"
-    " -a     (Not specifying a value for -a lets vt2iso use the name of the XML/VTP - think of it as Legacy-Mode!)\n"
-    " -c=xxx Specify a VT preset which contains proprietary colours (important for images with poprietary colours)\n"
-    " -x=pre Use the given Prefix for Multilanguage objects. Will generate iVtObjectX_pre1 instead of iVtObjectX_1.\n"
-    " -k     Pedantic mode during resolving values from translation files for inputstring, stringvariable and outputstring.\n"
 #if 0
     /*  This feature is not shown up in the help here in order to avoid confusion about. Furthermore it is not
      *  yet extensively testd FOB 06/19/2009
@@ -603,16 +608,18 @@ void vt2iso_c::clean_exit (const char* error_message)
   // NEW:
     fprintf (partFile_handler_derived, "#ifndef DECL_derived_iObjectPool_%s_c", mstr_className.c_str() );
     fprintf (partFile_handler_derived, "\n#define DECL_derived_iObjectPool_%s_c", mstr_className.c_str() );
+    if( !mstr_baseClassHdr.empty() )
+      fprintf (partFile_handler_derived, "\n\n#include \"%s\"\n", mstr_baseClassHdr.c_str() );
     fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationBegin.c_str());
     fprintf (partFile_handler_derived, "\n// forward declaration");
     fprintf (partFile_handler_derived, "\nextern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];");
     fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationEnd.c_str());
-    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iVtClientObjectPool_c {", mstr_className.c_str());
+    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public %s {", mstr_className.c_str(), mstr_baseClass.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
     fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF);");
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
-    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iVtClientObjectPool_c (%sall_iVtObjectLists, %d, %d,  ObjectPoolSettings_s(iVtClientObjectPool_c::ObjectPoolVersion%d, %d, %d, %d) ) {}\n",
-             mstr_className.c_str(), mstr_namespacePrefix.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, mi_objectPoolVersion, opDimension, skWidth, skHeight);
+    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : %s (%sall_iVtObjectLists, %d, %d,  ObjectPoolSettings_s(iVtClientObjectPool_c::ObjectPoolVersion%d, %d, %d, %d) ) {}\n",
+             mstr_className.c_str(), mstr_baseClass.c_str(), mstr_namespacePrefix.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, mi_objectPoolVersion, opDimension, skWidth, skHeight);
     fprintf (partFile_handler_derived, "\n};\n");
     fprintf (partFile_handler_derived, "\n#endif\n" );
     fclose (partFile_handler_derived);
@@ -955,7 +962,7 @@ void vt2iso_c::getKeyCode()
 
 
 bool
-vt2iso_c::init (
+vt2iso_c::init(
   const string& arcstr_cmdlineName,
   std::string* dictionary,
   bool ab_externalize,
@@ -970,7 +977,9 @@ vt2iso_c::init (
   const std::string& arcstr_outFileName,
   const std::string& arcstr_searchPath,
   const std::string& arcstr_langPrefix,
-  const std::string& arcstr_definesPrefix)
+  const std::string& arcstr_definesPrefix,
+  const std::string& arcstr_baseClass,
+  const std::string& arcstr_baseClassHdr )
 {
   parser = ap_parser;
   mb_verbose = ab_verbose;
@@ -981,6 +990,8 @@ vt2iso_c::init (
   mstr_outFileName = arcstr_outFileName; // overriding parameters!
   mstr_langPrefix = arcstr_langPrefix;
   mstr_definesPrefix = arcstr_definesPrefix;
+  mstr_baseClass = arcstr_baseClass;
+  mstr_baseClassHdr = arcstr_baseClassHdr;
 
   // pass verbose-level on to vt2isoimagebase_c
   if (!mb_verbose)
@@ -5056,6 +5067,8 @@ int main(int argC, char* argV[])
   std::string str_searchPath;
   std::string str_vtPresetFile;
   std::string str_langPrefix;
+  std::string str_baseClass = "IsoAgLib::iVtClientObjectPool_c"; // default value if -b commandline parameter is not specified
+  std::string str_baseClassHdr; // empty so no '#include "..."' directive is written on default. Use -bh to set it and generate that directive
 
   int filenameInd = -1; // defaults to: no filename specified.
   for (int argInd = 1; argInd < argC; argInd++)
@@ -5100,18 +5113,15 @@ int main(int argC, char* argV[])
         return 2;
       }
     }
-    else if (!strcmp(argV[argInd], "-n")
-         ||  !strcmp(argV[argInd], "-N"))
+    else if (!strcmp(argV[argInd], "-n"))
     {
       doNamespaces = true;
     }
-    else if (!strcmp(argV[argInd], "-s")
-         ||  !strcmp(argV[argInd], "-S"))
+    else if (!strcmp(argV[argInd], "-s"))
     {
       doSchema = true;
     }
-    else if (!strcmp(argV[argInd], "-f")
-         ||  !strcmp(argV[argInd], "-F"))
+    else if (!strcmp(argV[argInd], "-f"))
     {
       schemaFullChecking = true;
     }
@@ -5120,79 +5130,65 @@ int main(int argC, char* argV[])
       // Get out the end of line
       localeStr.assign (&argV[argInd][8]);
     }
-    else if (!strcmp(argV[argInd], "-p")
-         ||  !strcmp(argV[argInd], "-P"))
+    else if (!strcmp(argV[argInd], "-p"))
     {
       generatePalette = true;
     }
-    else if (!strcmp(argV[argInd], "-e")
-         ||  !strcmp(argV[argInd], "-E"))
+    else if (!strcmp(argV[argInd], "-e"))
     {
       externalize = true;
     }
-    else if (!strcmp(argV[argInd], "-m")
-         ||  !strcmp(argV[argInd], "-M"))
+    else if (!strcmp(argV[argInd], "-m"))
     {
       // only set to verbose if not in silentMode!
       if (!b_silentMode)
         verbose = true;
     }
-    else if (!strncmp(argV[argInd], "-i", 2)
-         ||  !strncmp(argV[argInd], "-I", 2))
+    else if (!strncmp(argV[argInd], "-i", 2))
     {
       usage();
       std::cerr << "vt2iso: Error: Option -i not supported anymore, try to rewrite to use -g." << std::endl;
       return 5;
     }
-    else if (!strncmp(argV[argInd], "-o=", 3)
-         ||  !strncmp(argV[argInd], "-O=", 3))
+    else if (!strncmp(argV[argInd], "-o=", 3))
     {
       str_outDir.assign (&argV[argInd][3]);
     }
-    else if (!strncmp(argV[argInd], "-c=", 3)
-         ||  !strncmp(argV[argInd], "-C=", 3))
+    else if (!strncmp(argV[argInd], "-c=", 3))
     {
       str_vtPresetFile.assign (&argV[argInd][3]);
     }
-    else if (!strncmp(argV[argInd], "-a=", 3)
-         ||  !strncmp(argV[argInd], "-A=", 3))
+    else if (!strncmp(argV[argInd], "-a=", 3))
     {
       str_outFileName.assign (&argV[argInd][3]);
       if (str_outFileName.length() == 0)
         str_outFileName.assign (":filename:");
     }
-    else if (!strcmp(argV[argInd], "-a")
-         ||  !strcmp(argV[argInd], "-A"))
+    else if (!strcmp(argV[argInd], "-a"))
     {
       str_outFileName.assign (":filename:");
     }
-    else if (!strncmp(argV[argInd], "-g=", 3)
-         ||  !strncmp(argV[argInd], "-G=", 3))
+    else if (!strncmp(argV[argInd], "-g=", 3))
     {
       str_namespace.assign (&argV[argInd][3]);
     }
-    else if (!strcmp(argV[argInd], "-g")
-         ||  !strcmp(argV[argInd], "-G"))
+    else if (!strcmp(argV[argInd], "-g"))
     {
       str_namespace.assign (":projectname:"); // special key for projectname-use!
     }
-    else if (!strncmp(argV[argInd], "-x=", 3)
-         ||  !strncmp(argV[argInd], "-X=", 3))
+    else if (!strncmp(argV[argInd], "-x=", 3))
     {
       str_langPrefix = &argV[argInd][3];
     }
-    else if (!strncmp(argV[argInd], "-r=", 3)
-         ||  !strncmp(argV[argInd], "-R=", 3))
+    else if (!strncmp(argV[argInd], "-r=", 3))
     {
       str_definesPrefix.assign (&argV[argInd][3]);
     }
-    else if (!strcmp(argV[argInd], "-r")
-         ||  !strcmp(argV[argInd], "-R"))
+    else if (!strcmp(argV[argInd], "-r"))
     {
       str_definesPrefix.assign ("");
     }
-    else if (!strncmp(argV[argInd], "-d=", 3)
-         ||  !strncmp(argV[argInd], "-D=", 3))
+    else if (!strncmp(argV[argInd], "-d=", 3))
     {
       str_searchPath = &argV[argInd][3];
     }
@@ -5214,6 +5210,14 @@ int main(int argC, char* argV[])
     }
     else if(!strcmp(argV[argInd], "-k")){
       b_pedanticMode = true;
+    }
+    else if (!strncmp(argV[argInd], "-b=", 3))
+    {
+      str_baseClass = &argV[argInd][3];
+    }
+    else if (!strncmp(argV[argInd], "-bh=", 4))
+    {
+      str_baseClassHdr = &argV[argInd][4];
     }
     else
     {
@@ -5291,7 +5295,7 @@ int main(int argC, char* argV[])
   // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, b_pedanticMode, str_outFileName, str_searchPath, str_langPrefix, str_definesPrefix );
+  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, b_pedanticMode, str_outFileName, str_searchPath, str_langPrefix, str_definesPrefix, str_baseClass, str_baseClassHdr );
 
   if (cb_initSuccess)
   {

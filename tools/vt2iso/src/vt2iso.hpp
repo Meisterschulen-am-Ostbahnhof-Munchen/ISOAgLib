@@ -225,7 +225,7 @@ public:
 
   void getKeyCode();
 
-  bool init (
+  bool init(
     const std::string& xmlFile,
     std::string* dictionary,
     bool ab_externalize,
@@ -240,7 +240,9 @@ public:
     const std::string& str_outFileName,
     const std::string& arcstr_searchPath,
     const std::string& arcstr_langPrefix,
-    const std::string& str_definesPrefix);
+    const std::string& str_definesPrefix,
+    const std::string& arcstr_baseClass,
+    const std::string& arcstr_baseClassHdr );
 
   void parse();
 
@@ -395,6 +397,8 @@ private:
   std::string mstr_namespacePrefix;                 // BLA::
   std::string mstr_langPrefix;
   std::string mstr_definesPrefix;
+  std::string mstr_baseClass;
+  std::string mstr_baseClassHdr;
 
   std::string attr_name;
   std::string attr_value;
