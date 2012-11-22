@@ -32,11 +32,16 @@ ISO_AG_LIB_PATH="../.."
 # Selection of Application Sources
 # ###############################################################
 #
-# NOTE: If building IsoAgLib purely as a library (currently only existing for Linux)
+# NOTE: If building IsoAgLib purely as a library
 #       then you'll have to leave out all of the following settings in this part 
 
+# Base Path(es) to the application's sources.
+# Defaults to ISO_AG_LIB_PATH if it is not set!
+# (separate multiple directories by whitespace)
+APP_PATH="../../project1/src"
+
 # Path(es) to the application files
-# relative to the IsoAgLib-path (as specified right above here)
+# relative to APP_PATH
 # (separate multiple directories by whitespace)
 REL_APP_PATH="../src"
 
