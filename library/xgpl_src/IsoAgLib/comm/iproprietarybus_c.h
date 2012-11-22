@@ -78,12 +78,10 @@ class iProprietaryBus_c {
 
     @see IsoAgLib::iCANCustomer
     @param ar_customer reference to IsoAgLib::iCanCustomer_c  which needs
-           filtered messages (-> on received msg call
-           ar_customer.processMsg())
+           filtered messages (-> on received msg call ar_customer.processMsg())
     @param acrc_filterMask individual filter mask set
     @return true -> inserting and if wanted reconfiguration are
           performed without errors
-    @exception badAlloc
   */
   bool insertFilter(
     IsoAgLib::iCanCustomer_c& ar_customer,
