@@ -246,10 +246,9 @@ EepromIo_c::setState4BiosReturn(int16_t ai16_biosReturn)
 
 EepromIo_c&
 EepromIo_c::writeIntern(const uint8_t* apb_data, uint8_t aui8_len)
-{ // check if enough space for type T is after actual write position
-  // second parameter true -> set Err_c::range if end is reached
+{
   if ( ! eofp( aui8_len ) )
-  { // use private write function to read in correct number of bytes into data string
+  {
     write (mui16_wPosition, aui8_len, apb_data);
     mui16_wPosition += aui8_len; //inkrement position
   }
@@ -258,12 +257,10 @@ EepromIo_c::writeIntern(const uint8_t* apb_data, uint8_t aui8_len)
 
 
 EepromIo_c&
-EepromIo_c::readIntern(uint8_t* apb_data, uint8_t aui8_len) {
-  // check if enough space for string is after actual read position
-  // second parameter true -> set Err_c::range if end is reached
+EepromIo_c::readIntern(uint8_t* apb_data, uint8_t aui8_len)
+{
   if ( ! eofg( aui8_len ) )
-  { // use private eepromRead function to read in correct number of bytes into data string
-    // call BIOS function to check that EEPROM is ready
+  {
     setState4BiosReturn(wait_eepromReady());
     HAL::eepromRead(mui16_rPosition, aui8_len, apb_data);
     mui16_rPosition += aui8_len; //inkrement position

@@ -118,14 +118,6 @@ class iProprietaryBus_c {
   /**
     function for sending data out of iCANPkg
     if send buffer is full a local loop waits till buffer has enough space
-    (every 100ms the watchdog is triggered, to avoid watchdog reset)
-
-    possible errors:
-        * Err_c::hwConfig on wrong configured CAN obj,
-          not init BUS or no configured send obj
-        * Err_c::range on undef BUS or BIOS send obj nr
-        * Err_c::can_warn on physical CAN-BUS problems
-        * Err_c::can_off on physical CAN-BUS off state
     @see iCanPkg_c
     @param acrc_src iCanPkg_c which holds the to be sent data
     @return reference to this iProprietaryBus_c instance

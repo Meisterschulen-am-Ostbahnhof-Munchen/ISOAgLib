@@ -57,29 +57,12 @@ public:
      @exception badAlloc
   */
   FilterBox_c();
-
-  /** copy constructor which uses data of another FilterBox_c instance
-    @param acrc_src reference to the source FilterBox_c instance for copying
-     @exception badAlloc
-  */
   FilterBox_c(const FilterBox_c& acrc_src);
-
-  /** copy values of acrc_src FilterBox_c object to this instance
-    possible errors:
-        * Err_c::badAlloc on not enough memory for copying puffed CAN msg from source
-
-    @param acrc_src FilterBox_c instance with data to assign to this instance
-    @return reference to this instance for chains like "box_1 = box_2 = ... = box_n;"
-  */
   FilterBox_c& operator=(const FilterBox_c& acrc_src);
 
-  /** clear the data of this instance */
   void clearData();
 
-
-  /** store new can customer with same filter and mask
-      @param pc_cancustomer  new can customer */
-   void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {mvec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
+  void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {mvec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
 
   /* *************************************** */
   /* ******* filter/mask managing ********** */

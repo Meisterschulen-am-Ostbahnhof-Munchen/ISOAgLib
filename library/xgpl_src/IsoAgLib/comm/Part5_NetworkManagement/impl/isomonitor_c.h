@@ -96,95 +96,81 @@ public:
   uint8_t isoMemberCnt(bool ab_forceClaimedAddress = false)
     {return isoMemberDevClassCnt(0xFF, ab_forceClaimedAddress);}
 
-  /** deliver the n'th ISO member in monitor list which optional (!!)
+  /** deliver the n'th ISO member in monitor list which optionally
     match the condition of address claim state
-    check first with isoMemberCnt if enough members are registered
-    in Monitor-List
+    check first with isoMemberCnt if enough members are registered in Monitor-List
     @see isoMemberCnt
-    possible errors:
-      * Err_c::range there exist less than aui8_ind members with claimed address
-    @param aui8_ind position of the wanted member in the
-                 sublist of members (first item has aui8_ind == 0 !!)
+    @param aui8_ind index of the wanted member in the
+                 sublist of members (first index == 0)
                  with the wanted property
     @param ab_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return reference to searched element
   */
   IsoItem_c& isoMemberInd(uint8_t aui8_ind, bool ab_forceClaimedAddress = false)
     {return isoMemberDevClassInd(0xFF, aui8_ind, ab_forceClaimedAddress);}
 
   /** deliver the count of members in the Monitor-List with given ECU-Type (which is an own IsoAgLib-definition!)
-    which optional (!!) match the condition of address claim state
+    which optionally match the condition of address claim state
     @param a_ecuType searched ECU-Type code
     @param ab_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return count of members in Monitor-List with ECU-Type == a_ecuType
   */
   uint8_t isoMemberEcuTypeCnt (IsoName_c::ecuType_t a_ecuType, bool ab_forceClaimedAddress = false);
 
   /** deliver one of the members with specific ECU_Type (which is an own IsoAgLib-definition!)
-    which optional (!!) match the condition of address claim state
+    which optionally match the condition of address claim state
     check first with isoMemberEcuTypeCnt if enough members with wanted ECU-Type and
-    optional (!!) property are registered in Monitor-List
+    optional property are registered in Monitor-List
     @see isoMemberEcuTypeCnt
-    possible errors:
-      * Err_c::range there exist less than aui8_ind members with ECU-Type a_ecuType
     @param a_ecuType searched ECU-Type code
-    @param aui8_ind position of the wanted member in the
-                  sublist of member with given ECU-Type (first item has aui8_ind == 0 !!)
+    @param aui8_ind index of the wanted member in the
+                  sublist of member with given ECU-Type (first index == 0)
     @param ab_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return reference to searched element
   */
   IsoItem_c& isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, uint8_t aui8_ind, bool ab_forceClaimedAddress = false);
 
   /** deliver the count of members in the Monitor-List with given DEVCLASS
-    which optional (!!) match the condition of address claim state
+    which optionally match the condition of address claim state
     @param aui8_devClass searched DEVCLASS code
     @param ab_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return count of members in Monitor-List with DEVCLASS == aui8_devClass
   */
   uint8_t isoMemberDevClassCnt(uint8_t aui8_devClass, bool ab_forceClaimedAddress = false);
 
   /** deliver the count of members in the Monitor-List with given FUNCTION
-    and device classe which optional (!!) match the condition of address claim state
+    and device classe which optionally match the condition of address claim state
     @param aui8_function searched FUNCTION code
     @param aui8_devClass searched DEVCLASS code
     @param ab_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return count of members in Monitor-List with FUNCTION == aui8_function and DEVCLASS == aui8_devClass
   */
   uint8_t isoMemberDevClassFuncCnt(uint8_t aui8_devClass, uint8_t aui8_function, bool ab_forceClaimedAddress);
 
   /** deliver one of the members with specific DEVCLASS
-    which optional (!!) match the condition of address claim state
+    which optionally match the condition of address claim state
     check first with isoMemberDevClassCnt if enough members with wanted DEVCLASS and
-    optional (!!) property are registered in Monitor-List
+    optional property are registered in Monitor-List
     @see isoMemberDevClassCnt
-    possible errors:
-      * Err_c::range there exist less than aui8_ind members with DEVCLASS aui8_devClass
-   @param aui8_devClass searched DEVCLASS
-   @param aui8_ind position of the wanted member in the
-                 sublist of member with given DEVCLASS (first item has aui8_ind == 0 !!)
-   @param ab_forceClaimedAddress true -> only members with claimed address are used
-         (optional, default false)
-   @return reference to searched element
+    @param aui8_devClass searched DEVCLASS
+    @param aui8_ind index of the wanted member in the
+                    sublist of member with given DEVCLASS (first index == 0)
+    @param ab_forceClaimedAddress true -> only members with claimed address are used
+    @return reference to searched element
   */
   IsoItem_c& isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui8_ind, bool ab_forceClaimedAddress = false);
 
   /** check if a memberItem with given ISOName exist
-    which optional (!!) match the condition of address claim state
+    which optionally match the condition of address claim state
     and update local mpc_isoMemberCache
     @param acrc_isoName searched ISOName
     @param ab_forceClaimedAddress true -> only members with claimed address are used
-          (optional, default false)
     @return true -> searched member exist
   */
   bool existIsoMemberISOName(const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress = false);
 
   /** check if a member with given number exist
-    which optional (!!) match the condition of address claim state
+    which optionally match the condition of address claim state
     and update local mpc_isoMemberCache
     @param aui8_nr searched member number
     @return true -> item found
@@ -219,30 +205,18 @@ public:
   bool existActiveLocalIsoMember();
 
   /** delivers reference to the first active local member;
-      send of ISO11783 system msg demands telling a sender ident member no
-      -> using the number of the first active member serves as default (f.e. for requesting other member names)
-      can throw an preconditionViolation error, if none of the own identities is active/claimed address yet
-          possible errors:
-      * Err_c::lbsSysNoActiveLocalMember on missing own active ident
       @return reference to the MonitorItem_c of the first active local member
-      (MonitorItem_c is baes class of IsoItem_c which serves
-      adress, isoName, itemState)
-      @exception preconditionViolation
      */
   IsoItem_c& getActiveLocalIsoMember();
 
   /** check for own ident with given ISOName
-      @param acrc_isoName              ISOName to search for
+      @param acrc_isoName ISOName to search for
       @param ab_forceClaimedAddress true -> only members with claimed address are used
-      (optional, default false)
       @return true -> one of the own identities has the wanted ISOName
      */
   bool existLocalIsoMemberISOName (const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress = false);
 
-  /** register a ControlFunctionStateHandler_c */
   void registerControlFunctionStateHandler (ControlFunctionStateHandler_c & arc_client);
-
-  /** deregister a ControlFunctionStateHandler */
   void deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c & arc_client);
 
   void broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::iIsoItemAction_e action, IsoItem_c const& acrc_isoItem ) const;
@@ -250,11 +224,8 @@ public:
   /**
     deliver member item with given isoName
     (check with existIsoMemberISOName before access to not defined item)
-    possible errors:
-      * Err_c::elNonexistent on failed search
     @param acrc_isoName searched ISOName
     @return reference to searched ISOItem
-     @exception containerElementNonexistant
   */
   IsoItem_c& isoMemberISOName(const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress = false);
 
@@ -262,7 +233,6 @@ public:
     (check with existIsoMemberNr before access to not defined item)
     @param aui8_nr searched number
     @return reference to searched ISOItem
-     @exception containerElementNonexistant
   */
   IsoItem_c& isoMemberNr(uint8_t aui8_nr);
 
@@ -272,8 +242,6 @@ public:
 
   /**
     delete item with specified isoName
-    possible errors:
-      * Err_c::elNonexistent no member with given ISOName exists
     @param acrc_isoName ISOName of to be deleted member
   */
   bool deleteIsoMemberISOName(const IsoName_c& acrc_isoName);

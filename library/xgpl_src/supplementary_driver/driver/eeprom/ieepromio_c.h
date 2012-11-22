@@ -50,66 +50,48 @@ public:
   static uint16_t eepromSize(){return EepromIo_c::eepromSize();};
 
   /**
-    set the write position in EEPROM (in Byte); answer if possible
-    if aui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
-
-    possible errors:
-        * Err_c::range aui16_adress outer the limits of EEPROM memory
-
+    set the write position in EEPROM (in Byte);
     @param aui16_adress position of write mark [uint8_t]
     @return true -> setting of write mark without errors
   */
-  bool setp(uint16_t aui16_adress) {return EepromIo_c::setp(aui16_adress);};
+  bool setp( uint16_t address ) { return EepromIo_c::setp( address ); }
 
   /**
     set the read position in EEPROM (in Byte); answer if possible
-    if aui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
-
-    possible errors:
-        * Err_c::range aui16_adress outer the limits of EEPROM memory
-
     @param aui16_adress position of read mark [uint8_t]
     @return true -> setting of read mark without errors
   */
-  bool setg(uint16_t aui16_adress) {return EepromIo_c::setg(aui16_adress);};
+  bool setg(uint16_t address) { return EepromIo_c::setg( address ); }
 
   /**
     get the write position in EEPROM (in Byte)
     @return position of write mark [uint8_t]
   */
-  uint16_t tellp(){return EepromIo_c::tellp();};
+  uint16_t tellp(){return EepromIo_c::tellp();}
 
   /**
     get the read position in EEPROM (in Byte)
     @return position of read mark [uint8_t]
   */
-  uint16_t tellg(){return EepromIo_c::tellg();};
+  uint16_t tellg(){return EepromIo_c::tellg();}
 
   /**
     check if write position is at end of EEPROM
     (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
-
-    possible errors:
-        * range if current read position + lookahead is out of EEPROM range
-
     @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current write mark position tested)
     @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
   */
   bool eofp(uint16_t aui16_lookahead = 0 )
-   { return EepromIo_c::eofp( aui16_lookahead ); };
+   { return EepromIo_c::eofp( aui16_lookahead ); }
 
   /**
     check if read position is at end of EEPROM
     (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
-
-    possible errors:
-        * range if (ab_setState == true) and (current read position + lookahead) is out of EEPROM range
-
     @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current read mark position tested)
     @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
   */
   bool eofg(uint16_t aui16_lookahead = 0 )
-    { return EepromIo_c::eofg(aui16_lookahead); };
+    { return EepromIo_c::eofg(aui16_lookahead); }
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */
@@ -117,15 +99,9 @@ public:
   /* *************************************** */
 
   /**
-    write a value to EEPROM from actual write position on (tellp() )
-    by use of template mechanism the correct write implementation is generted
+    write a value to EEPROM from actual write position on (tellp())
+    by use of template mechanism the correct write implementation is generated
     for the given parameter type
-
-    possible errors:
-        * Err_c::range writing position exceeds end of EEPROM
-        * Err_c::hwBusy the EEPROM was busy with another action
-        * Err_c::eepromSegment low level writing caused segment error
-
     @see iEepromIo_c::tellp
     @see iEepromIo_c::setp
     @param rTemplateVal value of any type to write into EEPROM from actual write position on
@@ -136,13 +112,7 @@ public:
     {return static_cast<iEepromIo_c&>(EepromIo_c::operator<<(rTemplateVal));}
 
   /**
-    write a uint8_t string value to EEPROM from actual write position on (tellp() )
-
-    possible errors:
-        * Err_c::range writing position exceeds end of EEPROM
-        * Err_c::busy the EEPROM was busy with another action
-        * Err_c::eepromSegment low level writing caused segment error
-
+    write a uint8_t string value to EEPROM from actual write position on (tellp())
     @see EepromIo_c::tellp
     @see EepromIo_c::setp
     @param apb_string string to write into EEPROM
@@ -150,22 +120,16 @@ public:
     @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
   inline iEepromIo_c& writeString(const uint8_t *const apb_string, uint16_t aui16_number)
-    {return static_cast<iEepromIo_c&>(EepromIo_c::writeString(apb_string, aui16_number));};
+    {return static_cast<iEepromIo_c&>(EepromIo_c::writeString(apb_string, aui16_number));}
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */
   /* ************** reading **************** */
   /* *************************************** */
   /**
-    read a value to EEPROM from actual write position on (tellg() )
+    read a value to EEPROM from actual write position on (tellg())
     by use of template mechanism the correct read implementation is generted
     for the given parameter type
-
-    possible errors:
-        * Err_c::range reading position exceeds end of EEPROM
-        * Err_c::hwBusy the EEPROM was busy with another action
-        * Err_c::eepromSegment low level reading caused segment error
-
     @see iEepromIo_c::tellg
     @see iEepromIo_c::setg
     @param rTemplateVal EERPOM data is read into rTemplateVal from actual read position on
@@ -177,12 +141,6 @@ public:
 
   /**
     read operator for strings with given length; uses BIOS function
-
-    possible errors:
-        * Err_c::range reading position exceeds end of EEPROM
-        * Err_c::hwBusy the EEPROM was busy with another reading action
-        * Err_c::eepromSegment low level reading caused segment error
-
     @see iEepromIo_c::tellg
     @see iEepromIo_c::setg
     @param apb_string pointer to uint8_t string, which should be read from actual EEPROM read position on
@@ -190,7 +148,8 @@ public:
     @return true -> read with success
   */
   bool readString(uint8_t *const apb_string, uint16_t aui16_number)
-    {return EepromIo_c::readString(apb_string, aui16_number);};
+    {return EepromIo_c::readString(apb_string, aui16_number);}
+
 private:
   /** allow getIeepromInstance() access to shielded base class.
       otherwise __IsoAgLib::getEepromInstance() wouldn't be accepted by compiler

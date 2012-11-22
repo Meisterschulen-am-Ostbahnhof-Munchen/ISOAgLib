@@ -76,37 +76,12 @@ namespace __IsoAgLib {
                         const IsoAgLib::iMaskFilterType_c& arc_filterpair,
                         ArrFilterBox::iterator* apc_iter = NULL );
 
-      /** create a Filter Box with specified aui32_mask/aui32_filter
-        on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
-        ab_reconfigImmediate == true -> useful for
-        avoiding unneeded reconfiguration during
-        sequence of FilterBox_c insertions;
-        by ar_customer CanIo_c (FilterBox_c) can start direct processing
-        of received data in dedicated customer object (no search);
-        uses BIOS functions
-
-        possible errors:
-            * Err_c::badAlloc on not enough memory for new FilterBox
-            instance or for new configured MsgObj_c's
-        @see __IsoAgLib::CANCustomer
-        @param ar_customer reference to __IsoAgLib::CanCustomer_c  which needs
-             filtered messages (-> on received msg call ar_customer.processMsg())
-        @param arc_filterpair mask filter combination
-        @return != NULL -> if inserting and wanted reconfiguration are performed without errors,
-          a reference to the created FilterBox is returned
-       @exception badAlloc
-      */
-
       FilterBox_c* insertFilter( __IsoAgLib::CanCustomer_c& ar_customer,
                                  const IsoAgLib::iMaskFilterType_c& arc_filterpair,
                                  int ai_dlcForce );
 
       /** helper function to search all FilterBoxes for matching
         instance which maps to received CAN messages
-        ( needed if the coordinated FilterBoxes don't match,
-          especially important to process messages from global
-          CAN MsgObj which doesn't have explicit connected FilterBox
-          instances )
         @param aui32_ident Ident of received CAN message
         @return is another filterbox found?
       */
