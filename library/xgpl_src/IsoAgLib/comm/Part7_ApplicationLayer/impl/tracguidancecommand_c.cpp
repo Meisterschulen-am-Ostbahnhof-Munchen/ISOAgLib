@@ -52,13 +52,11 @@ bool TracGuidanceCommand_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib
   */
 void TracGuidanceCommand_c::checkCreateReceiveFilter( )
 {
-  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  IsoBus_c &c_can = getIsoBusInstance4Comm();
-
-  if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
-  { // check if needed receive filters for ISO are active
+  if( !checkFilterCreated() )
+  {
     setFilterCreated();
 
+    IsoBus_c &c_can = getIsoBusInstance4Comm();
     c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FF00LU << 8, GUIDANCE_SYSTEM_CMD << 8), 8 );
   }
 }

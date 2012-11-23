@@ -82,12 +82,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   void TracFacilities_c::checkCreateReceiveFilter( )
   {
-    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    IsoBus_c &c_can = getIsoBusInstance4Comm();
-
-    if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
-    { // check if needed receive filters for ISO are active
+    if( !checkFilterCreated() )
+    {
       setFilterCreated();
+
+      IsoBus_c &c_can = getIsoBusInstance4Comm();
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (TRACTOR_FACILITIES_PGN<<8) ), 8 );
     }
   }

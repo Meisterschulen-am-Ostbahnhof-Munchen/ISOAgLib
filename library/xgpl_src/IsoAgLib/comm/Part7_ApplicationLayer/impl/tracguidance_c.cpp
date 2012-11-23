@@ -66,15 +66,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   void TracGuidance_c::checkCreateReceiveFilter( )
   {
-    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    IsoBus_c &c_can = getIsoBusInstance4Comm();
-
-    if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
-    { // check if needed receive filters for ISO are active
+    if( !checkFilterCreated() )
+    {
       setFilterCreated();
 
-      // create FilterBox_c for PGN GUIDANCE_MACHINE_STATUS, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FF00 << 8) filter: (GUIDANCE_MACHINE_STATUS << 8)
+      IsoBus_c &c_can = getIsoBusInstance4Comm();
       c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FF00LU << 8, GUIDANCE_MACHINE_STATUS << 8), 8 );
     }
   }
@@ -121,34 +117,25 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   void TracGuidance_c::isoSendMessageTracMode( )
   {
-    IsoBus_c& c_can = getIsoBusInstance4Comm();
-
     setSelectedDataSourceISOName( getIdentItem()->isoName() );
 
     CanPkgExt_c pkg;
-    // retrieve the actual dynamic sender no of the member with the registered isoName
     pkg.setIsoPri(3);
-    pkg.setLen(8);
-
-    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
-    if ( getIsoMonitorInstance4Comm().existIsoMemberNr( getTracGuidanceCommandInstance4Comm().getCommander() ) )
-      pkg.setISONameForDA( getIsoMonitorInstance4Comm().isoMemberNr( getTracGuidanceCommandInstance4Comm().getCommander() ).isoName() );
-    else
-      pkg.setISONameForDA( IsoName_c::IsoNameUnspecified() );
-
     pkg.setIsoPgn(GUIDANCE_MACHINE_STATUS);
-    uint8_t ui8_temp = 0;
+    pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
+    pkg.setMonitorItemForDA( getIsoMonitorInstance4Comm().item( getTracGuidanceCommandInstance4Comm().getCommander() ) );
+    pkg.setLen(8);
     pkg.setUint16Data(0, mui16_estCurvature);
+    uint8_t ui8_temp = 0;
     ui8_temp |= (mt_requestResetCmdStatus   << 6);
     ui8_temp |= (mt_steeringInputPosStatus  << 4);
     ui8_temp |= (mt_steeringSystemReadiness << 2);
     ui8_temp |= (mt_mechanicalSystemLogout  << 0);
     pkg.setUint8Data(2, ui8_temp);
-    //reserved fields
     pkg.setUint32Data(3, 0xFFFFFFFFUL);
     pkg.setUint8Data(7, 0xFF);
 
-    c_can << pkg;
+    getIsoBusInstance4Comm() << pkg;
   }
 
 bool TracGuidance_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )

@@ -97,16 +97,13 @@ namespace __IsoAgLib {
     */
   void TracLight_c::checkCreateReceiveFilter()
   {
-    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    IsoBus_c &c_can = getIsoBusInstance4Comm();
-
-    if ((!checkFilterCreated()) && (c_isoMonitor.existActiveLocalIsoMember()))
-    { // check if needed receive filters for ISO are active
+    if( !checkFilterCreated() )
+    {
       setFilterCreated();
 
+      IsoBus_c &c_can = getIsoBusInstance4Comm();
       c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFFFLU << 8, LIGHTING_DATA_PGN << 8), 8 );
       c_can.insertFilter(*this,IsoAgLib::iMaskFilter_c( 0x3FFFFLU << 8, LIGHTING_COMMAND_PGN << 8), 8 );
-
     }
   }
 

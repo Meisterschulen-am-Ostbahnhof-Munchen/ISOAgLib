@@ -425,13 +425,11 @@ namespace __IsoAgLib {
     */
   void TracAux_c::checkCreateReceiveFilter()
   {
-    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    IsoBus_c &c_can = getIsoBusInstance4Comm();
-
-    if ((!checkFilterCreated()) && (c_isoMonitor.existActiveLocalIsoMember()))
-    { // check if needed receive filters for ISO are active
+    if( !checkFilterCreated() )
+    {
       setFilterCreated();
-      // insert Filter now with 0x3FFF0 so that all 16 AUX_VALVEs are registered at once!
+
+      IsoBus_c &c_can = getIsoBusInstance4Comm();
       c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFF0 << 8, AUX_VALVE_0_ESTIMATED_FLOW << 8), 8 );
       c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFF0 << 8, AUX_VALVE_0_MEASURED_FLOW << 8), 8 );
       c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFF0 << 8, AUX_VALVE_0_COMMAND << 8 ), 8 );
