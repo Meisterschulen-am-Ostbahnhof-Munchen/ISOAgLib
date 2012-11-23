@@ -90,7 +90,7 @@ public:
   /**
     updates mi32_lastTime to ai32_time or actual
     system time if no time is given
-    @param ai32_time optional time to store as last update time (default retreive actual time from central SystemMgmt_c instance)
+    @param ai32_time optional time to store as last update time
   */
   void updateTime( int32_t ai32_time = -1 )
     {if ( ai32_time < 0 ) mi32_lastTime = System_c::getTime();

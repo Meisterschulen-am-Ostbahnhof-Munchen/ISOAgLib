@@ -57,18 +57,15 @@ namespace __IsoAgLib {
   */
 class IdentItem_c : public BaseItem_c
 {
+public:
+  IdentItem_c();
+  ~IdentItem_c();
 
-public: // methods
-  /** default constructor */
-  IdentItem_c ();
-
-  // see interface
-  void init ( const IsoName_c& arc_isoNameParam,
-              IsoAgLib::iIdentDataStorage_c& arc_dataStorage,
-              int8_t ai8_slaveCount,
-              const IsoName_c* apc_slaveIsoNameList,
-              bool ab_enablediagnosticsServices);
-
+  void init( const IsoName_c& arc_isoNameParam,
+             IsoAgLib::iIdentDataStorage_c& arc_dataStorage,
+             int8_t ai8_slaveCount,
+             const IsoName_c* apc_slaveIsoNameList,
+             bool ab_enablediagnosticsServices);
 
   /** IsoMonitor uses this function to activate/start this Item
     @param ai_multitonInst Activate this Item on the given IsoBus
@@ -84,12 +81,8 @@ public: // methods
 
   IsoAgLib::iIdentItem_c& toIidentItem_c();
 
-  /** deliver pointer to IsoItem_c in IsoMonitor_c
-      @return NULL -> either no ISO item or not yet registered in IsoMonitor_c
-    */
-  IsoItem_c* getIsoItem( void ) const { return mpc_isoItem; }
+  IsoItem_c* getIsoItem() const { return mpc_isoItem; }
 
-  /** deliver const reference to contained IsoName_c of this IdentItem_c */
   const IsoName_c& isoName() const { return mc_isoName; }
 
   /** deliver reference to contained IsoName_c of this IdentItem_c
@@ -111,60 +104,8 @@ public: // methods
     */
   void goOffline (bool ab_explicitlyOffByUser);
 
-  // d'tor
-  ~IdentItem_c();
-
-  /** periodically called functions do perform
-      time dependent actions
-
-      possible errors:
-          * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
-      @see Scheduler_c::timeEvent
-      @see System_c::getTime
-    */
-  void timeEvent( void );
-
-  /** check for equality with another item
-      @param acrc_src compared IdentItem_c element
-      @return true -> other item has same ISOName
-    */
-  bool operator==(IdentItem_c& acrc_src) const {return (mc_isoName == acrc_src.mc_isoName); }
-
-  /** check for equality with given ISOName
-      @param acrc_isoName compared ISOName
-      @return true -> item has same ISOName
-    */
-  bool operator==(const IsoName_c& acrc_isoName) const {return (mc_isoName == acrc_isoName); }
-
-  /** check for difference to another item
-      @param acrc_src compared IdentItem_c element
-      @return true -> other item has different ISOName
-    */
-  bool operator!=(IdentItem_c& acrc_src) const {return (mc_isoName != acrc_src.mc_isoName); }
-
-  /** check for difference to given ISOName
-      @param acrc_isoName compared ISOName
-      @return true -> other item has different ISOName
-    */
-  bool operator!=(const IsoName_c& acrc_isoName) const {return (mc_isoName != acrc_isoName); }
-
-  /** check if this item has lower ISOName than another one
-      @param acrc_src compared IdentItem_c element
-      @return true -> this item has lower ISOName than compared one
-    */
-  bool operator<(IdentItem_c& acrc_src) const {return (mc_isoName < acrc_src.mc_isoName); }
-
-  /** check if this item has lower ISOName than given ISOName
-      @param acrc_isoName compared ISOName
-      @return true -> this item has lower ISOName than compared one
-    */
-  bool operator<(const IsoName_c& acrc_isoName) const {return (mc_isoName < acrc_isoName); }
-
-  /** check if given number is equal to member number of this item
-      @param aui8_nr compared number
-      @return true -> this item has same number
-    */
-  bool equalNr(uint8_t aui8_nr);
+  /** NOTE: This timeEvent is not SchedulerTask_c's! */
+  void timeEvent();
 
   /** check if the ident has claimed address */
   bool isClaimedAddress( void ) const { return (getIsoItem() != NULL) ? (getIsoItem()->itemState (IState_c::ClaimedAddress)) : (itemState (IState_c::ClaimedAddress)); }
@@ -173,7 +114,6 @@ public: // methods
   bool isMaster() const { return (mpvec_slaveIsoNames != NULL); }
 #endif
 
-  /** Set ECU Identification fields, needed during the diagnostic procedure */
   bool setEcuIdentification(
       const char *acstr_partNr,
       const char *acstr_serialNr,
@@ -181,34 +121,23 @@ public: // methods
       const char *acstr_type,
       const char *acstr_manufacturerName);
 
-  /** Set SW Identification fields, needed during the diagnostic procedure */
   bool setSwIdentification( const char *acstr_partNbr );
 
   DiagnosticsServices_c* getDiagnosticsServices() { return mpc_diagnosticsServices; }
   DiagnosticProtocol_c& getDiagnosticProtocol();
 
-  //! Setter for the different certification message fields
-  //! Parameter:
-  //! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061
-  //! @param a_revision Certification revision as in ISO 11783-7 A.29.2
-  //! @param a_laboratoryType Certification laboratory type as in ISO 11783-7 A.29.3
-  //! @param aui16_laboratoryId Certification laboratory ID (11 bits wide) as in ISO 11783-7 A.29.4
-  //! @param acrc_certificationBitMask Compliance certification type bitfield (  as in ISO 11783-7 A.29.5 till A.29.17 )
-  //! @param aui16_referenceNumber Compliance certification reference number  as in ISO 11783-7 A.29.18
   bool setCertificationData(
-    uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision, IsoAgLib::CertificationLabType_t a_laboratoryType,
-    uint16_t aui16_laboratoryId, const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
+    uint16_t ui16_year,
+    IsoAgLib::CertificationRevision_t a_revision,
+    IsoAgLib::CertificationLabType_t a_laboratoryType,
+    uint16_t aui16_laboratoryId,
+    const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask,
+    uint16_t aui16_referenceNumber );
 
   void updateLastIsoSaRequestForThisItem() { i32_lastIsoSaRequestForThisItem = HAL::getTime(); }
   int32_t getLastIsoSaRequestForThisItem() const { return i32_lastIsoSaRequestForThisItem; }
 
-protected: // methods
-
-  /** calculate an individual number between [0,1000] to get an individual wait time before first
-      address claim -> chance to avoid conflict with other system with same default ISOName
-    */
-  void setIndividualWait();
-
+protected:
   /** periodically called functions do perform
       time dependent actions in prepare address claim state
       -> insert item in appropriate monitor lists and initiate address claim
@@ -222,40 +151,18 @@ protected: // methods
     */
   void timeEventActive( void );
 
-
-private: // methods
-
-  /** HIDDEN! copy constructor for IdentItem_c
-      NEVER copy a IdentItem_c around!!!!
-      ONLY copy pointers to the wanted instance!!!
-      ==> the copy constructor is defined as private, so that compiler
-          detects this fault, and shows you this WARNING!!
-      @param acrc_src source
-    */
+private:
+  // not copyable!
   IdentItem_c(const IdentItem_c& acrc_src);
-
-  /** HIDDEN! assignment for IdentItem_c
-      NEVER assign a IdentItem_c to another instance!!!!
-      ==> the asignment is defined as private, so that compiler
-          detects this fault, and shows you this WARNING!!
-      <!--@param acrc_src source-->
-    */
   IdentItem_c& operator=(const IdentItem_c& /* acrc_src */);
 
 
-private: // attributes
-
-  /** pointer to associated IsoItem */
+private:
   IsoItem_c* mpc_isoItem;
 
+  IsoAgLib::iIdentDataStorage_c* mpc_dataStorageHandler; // not used if == NULL
 
-  /** pointer to a valid claim data Storage handler. If 0 not used. */
-  IsoAgLib::iIdentDataStorage_c* mpc_dataStorageHandler; 
-
-  /** configured/retrived SA of this identity */
   uint8_t mui8_sa;
-
-  /** IsoName code of this identity */
   IsoName_c mc_isoName;
 
   DiagnosticPgnHandler_c* mpc_diagnosticPgnHandler;
@@ -273,9 +180,9 @@ private: // attributes
 
   int32_t i32_lastIsoSaRequestForThisItem;
 
-  // protect this ident from beeing initialized more than once
-  bool mb_readyForActivation;
+  bool mb_readyForActivation; // protect this ident from beeing initialized more than once
 };
 
 }
+
 #endif

@@ -44,9 +44,8 @@ namespace __IsoAgLib {
 
     IsoAgLib::getILibErrInstance().init();
     if ( apc_observer != NULL ) {
-      if( IsoAgLib::getILibErrInstance().registerObserver ( *apc_observer ) ) {
-        mpc_registeredErrorObserver = apc_observer;
-      }
+      IsoAgLib::getILibErrInstance().registerObserver ( *apc_observer );
+      mpc_registeredErrorObserver = apc_observer;
     }
 
     // either way regardless of result avoid double init!

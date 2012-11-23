@@ -125,17 +125,6 @@ IsoItem_c::changeAddressAndBroadcast (uint8_t aui8_newAddress)
 }
 
 
-/**
-  lower comparison between left ISOName uint8_t and right MonitorItem
-  @param acrc_left ISOName uint8_t left parameter
-  @param acrc_right rigth ServiceItem_c parameter
- */
-bool operator<(const IsoName_c& acrc_left, const IsoItem_c& acrc_right)
-{
-  return (acrc_left < acrc_right.isoName());
-}
-
-
 void 
 IsoItem_c::set(
     int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
@@ -219,8 +208,8 @@ IsoItem_c::timeEvent()
     }
     else
     { // no adress claim request sent till now
-      getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true, NULL );
-
+      ( void )getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true, NULL );
+      // we're forcing, so always update, no need for the return value then!
       mpc_identItem->updateLastIsoSaRequestForThisItem();
     }
   }
@@ -398,17 +387,6 @@ uint8_t IsoItem_c::calc_randomWait()
 }
 
 
-/**
-  lower comparison between left IsoItem_c and right ISOName uint8_t
-  @param acrc_left left ServiceItem_c parameter
-  @param acrc_right ISOName uint8_t right parameter
-*/
-bool lessThan(const IsoItem_c& acrc_left, const IsoName_c& acrc_right)
-{
-  return (acrc_left.isoName() < acrc_right);
-}
-
-
 #ifdef USE_WORKING_SET
 /// This is for IdentItem's setting of WS-master/slave
 void
@@ -502,38 +480,6 @@ IsoItem_c::startWsAnnounce()
 }
 
 
-IsoItem_c*
-IsoItem_c::getMaster()
-{
-  if ( isMaster() )
-    return this;
-
-  uint8_t ui8_numberOfMembers = getIsoMonitorInstance4Comm().isoMemberCnt(true);
-  for ( uint8_t ui8_index = 0; ui8_index < ui8_numberOfMembers; ui8_index++)
-  {
-    IsoItem_c& refc_isoItem = getIsoMonitorInstance4Comm().isoMemberInd(ui8_index, true);
-    if ( refc_isoItem.isMaster() )
-    {
-      STL_NAMESPACE::vector<IsoName_c>* wsSlaves = refc_isoItem.getVectorOfClients();
-      if (wsSlaves == NULL)
-        continue;
-
-      for (STL_NAMESPACE::vector<IsoName_c>::iterator iter = wsSlaves->begin();
-           iter != wsSlaves->end();
-           ++iter)
-      {
-        if ( *iter == isoName() )
-        { // found master to this
-          return &refc_isoItem;
-        }
-      }
-    }
-  }
-  // master of client cannot be found -> standalone client
-  return NULL;
-}
-
-
 
 /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
 /// Only check for valid announce keys (i.e. ai32_timeAnnounceStarted).
@@ -548,7 +494,7 @@ IsoItem_c::isWsAnnounced (int32_t ai32_timeAnnounceStarted)
 }
 #endif
 
-/** convert function - avoids lots of explicit static_casts */
+
 IsoAgLib::iIsoItem_c& IsoItem_c::toIisoItem_c()
 {
   // typically would be: static_cast<IsoAgLib::iIsoItem_c&>(*this);
@@ -556,7 +502,7 @@ IsoAgLib::iIsoItem_c& IsoItem_c::toIisoItem_c()
   return (IsoAgLib::iIsoItem_c&)(*this);
 }
 
-/** convert function - avoids lots of explicit static_casts */
+
 const IsoAgLib::iIsoItem_c& IsoItem_c::toConstIisoItem_c() const
 {
   // typically would be: static_cast<const IsoAgLib::iIsoItem_c&>(*this);
@@ -564,4 +510,5 @@ const IsoAgLib::iIsoItem_c& IsoItem_c::toConstIisoItem_c() const
   return (const IsoAgLib::iIsoItem_c&)(*this);
 }
 
-} // end of namespace __IsoAgLib
+
+} // __IsoAgLib

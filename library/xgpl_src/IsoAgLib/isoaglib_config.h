@@ -149,6 +149,14 @@
   /// erase ISO 11783 items after time (>0), on missing address claim after request - can be manually overridden in project config file
 #  define CONFIG_ISO_ITEM_MAX_AGE 3000
 #endif
+
+/** this define controls the time interval between regular SA requests on the bus
+  * NOTE: Only used if CONFIG_ISO_ITEM_MAX_AGE is set!
+  */
+#ifndef SA_REQUEST_PERIOD_MSEC
+#  define SA_REQUEST_PERIOD_MSEC 60000
+#endif
+
 /*@}*/
 
 /**

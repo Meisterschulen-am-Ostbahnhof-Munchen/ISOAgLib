@@ -99,7 +99,7 @@ public:
   }
 
 
-  bool registerObserver( iErrorObserver_c &arc_observer );
+  void registerObserver( iErrorObserver_c &arc_observer );
   void deregisterObserver( iErrorObserver_c &arc_observer );
 
 private:
@@ -132,9 +132,9 @@ private:
 };
 
 
-inline bool iLibErr_c::registerObserver( iErrorObserver_c &arc_observer )
+inline void iLibErr_c::registerObserver( iErrorObserver_c &arc_observer )
 {
-  return registerC1( &arc_observer );
+  registerC1( &arc_observer );
 }
 
 
@@ -144,6 +144,6 @@ inline void iLibErr_c::deregisterObserver( iErrorObserver_c &arc_observer )
 }
 
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
 #endif

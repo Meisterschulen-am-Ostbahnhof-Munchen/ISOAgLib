@@ -13,9 +13,6 @@
 #ifndef IIDENT_ITEM_H
 #define IIDENT_ITEM_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "impl/identitem_c.h"
 #include "iisoitem_c.h"
 #include "iisoname_c.h"
@@ -29,10 +26,7 @@ namespace __IsoAgLib {
   class ProprietaryMessageClient_c;
 }
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
-// predeclare iVtClient_c, as this class is allowed to access private ( hidden )
-// elements of this class exclusively ( see friend declaration at end of this file )
 class iVtClient_c;
 class iProprietaryMessageHandler_c;
 class iProprietaryMessageClient_c;
@@ -103,16 +97,14 @@ public:
              iIdentDataStorage_c& arc_storageHandler,
              int8_t ai8_slaveCount,
              const iIsoName_c* apc_slaveIsoNameList,
-             bool ab_enablediagnosticsServices
-    )
+             bool ab_enablediagnosticsServices )
   {
-    IdentItem_c::init ( arc_isoname,
-                        arc_storageHandler,
-                        ai8_slaveCount,
-                        apc_slaveIsoNameList,
-                        ab_enablediagnosticsServices);
+    IdentItem_c::init( arc_isoname,
+                       arc_storageHandler,
+                       ai8_slaveCount,
+                       apc_slaveIsoNameList,
+                       ab_enablediagnosticsServices );
   }
-
 
   /** deliver pointer to IsoItem_c in IsoMonitor_c
       @return NULL -> either no ISO item or not yet registered in IsoMonitor_c
@@ -203,7 +195,6 @@ private:
   friend class iDevPropertyHandler_c;
   friend class iFsManager_c;
   friend class iIsoMonitor_c;
-  friend class iIsoTerminal_c;
   friend class iProcData_c;
   friend class iProprietaryMessageA_c;
   friend class iProprietaryMessageB_c;
@@ -226,4 +217,5 @@ private:
 };
 
 } // IsoAgLib
+
 #endif

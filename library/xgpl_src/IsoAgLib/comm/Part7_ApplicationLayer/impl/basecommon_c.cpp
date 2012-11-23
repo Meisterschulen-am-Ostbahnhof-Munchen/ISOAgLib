@@ -159,28 +159,17 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   if( ( ! getIdentItem() ) || ( ! getIdentItem()->getIsoItem() ) )
     return false;
 
+  IsoItem_c *dest = getSelectedDataSourceISONameConst().isSpecified()
+    ? getIsoMonitorInstance( getIdentItem()->getMultitonInst() ).item( getSelectedDataSourceISONameConst(), true )
+    : NULL; // --> ask to global
+
   CanPkgExt_c pkg;
   pkg.setIsoPri(6);
-  // set PGN first, as this might overwrite the PS field
   pkg.setIsoPgn(REQUEST_PGN_MSG_PGN);
-
   pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
-
-  // now check and retrieve the target
-  if ( ( getSelectedDataSourceISONameConst().isSpecified() )
-    && ( getIsoMonitorInstance( getIdentItem()->getMultitonInst() ).existIsoMemberISOName( getSelectedDataSourceISONameConst(), true ) ) )
-  { // we have a valid tractor data source, that can be asked directly
-    pkg.setISONameForDA( getSelectedDataSourceISONameConst() );
-  }
-  else
-  { // there is no selected tractor registered --> ask to global
-    pkg.setIsoPs(255); // global request
-  }
-
-  // built request data string
-  pkg.setUint32Data( 0 , ui32_requestedPGN );
+  pkg.setMonitorItemForDA( dest );
   pkg.setLen( 3 );
-  // now CanPkgExt_c has right data -> send
+  pkg.setUint32Data( 0 , ui32_requestedPGN );
   getIsoBusInstance( getIdentItem()->getMultitonInst() ) << pkg;
   return true;
 }

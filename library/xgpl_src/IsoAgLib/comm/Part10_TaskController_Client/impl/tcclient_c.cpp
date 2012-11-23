@@ -51,7 +51,7 @@ TcClient_c::TcClient_c()
   , mt_handler( *this )
   , mt_customer( *this )
   , CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
-  , mpc_iter( c_arrClientC1.begin() )
+  , mpc_iter( m_arrClientC1.begin() )
 {
 }
   
@@ -71,7 +71,7 @@ TcClient_c::init()
 
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FF0000UL), PROCESS_DATA_PGN << 8 ), 8 );
 
-  mpc_iter = c_arrClientC1.begin();
+  mpc_iter = m_arrClientC1.begin();
 
   setInitialized();
 }
@@ -98,18 +98,18 @@ TcClient_c::timeEvent()
 
   uint16_t ui16_nextTimePeriod = 0;
 
-  if ( mpc_iter != c_arrClientC1.begin() )
+  if ( mpc_iter != m_arrClientC1.begin() )
     ui16_nextTimePeriod = 20;
 
   // call the time event for all local data
-  for ( ;( mpc_iter != c_arrClientC1.end() ); mpc_iter++ )
+  for ( ;( mpc_iter != m_arrClientC1.end() ); mpc_iter++ )
   {
     // process next ProcData_c
     (*mpc_iter)->timeEvent( ui16_nextTimePeriod );
   }
 
-  if ( mpc_iter == c_arrClientC1.end() )
-    mpc_iter = c_arrClientC1.begin();
+  if ( mpc_iter == m_arrClientC1.end() )
+    mpc_iter = m_arrClientC1.begin();
 
   if (ui16_nextTimePeriod)
   {
@@ -255,11 +255,11 @@ TcClient_c::procData(
   uint16_t aui16_DDI, 
   uint16_t aui16_element, 
   const IsoName_c& acrc_isoNameReceiver, 
-  bool& elementFound )
+  bool& elementFound ) const
 {
   elementFound = false;
-  for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
-        pc_iter != c_arrClientC1.end();
+  for ( const_iterC1_t pc_iter = m_arrClientC1.begin();
+        pc_iter != m_arrClientC1.end();
         pc_iter++ )
   {
     if ( (*pc_iter)->isoName() != acrc_isoNameReceiver )
@@ -359,7 +359,7 @@ TcClient_c::getTypeFromISOName( const IsoName_c& isoName ) const
 void
 TcClient_c::stopRunningMeasurement( IsoAgLib::ProcData::remoteType_t ecuType )
 {
-  for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin(); pc_iter != c_arrClientC1.end(); pc_iter++ )
+  for ( iterC1_t pc_iter = m_arrClientC1.begin(); pc_iter != m_arrClientC1.end(); pc_iter++ )
     (*pc_iter)->stopRunningMeasurement(ecuType);
 }
 

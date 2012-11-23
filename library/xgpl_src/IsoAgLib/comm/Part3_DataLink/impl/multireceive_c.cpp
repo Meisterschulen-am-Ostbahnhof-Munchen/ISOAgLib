@@ -91,8 +91,9 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s(
 void
 MultiReceiveClientWrapper_s::start (CanCustomer_c& apc_fpCustomer)
 {
-  if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberISOName (mc_isoName, true)) // it needs to have claimed an address
-    mui8_cachedClientAddress = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberISOName (mc_isoName).nr();
+  IsoItem_c *item = __IsoAgLib::getIsoMonitorInstance4Comm().item( mc_isoName, true ); // it needs to have claimed an address
+  if( item != NULL )
+    mui8_cachedClientAddress = item->nr();
   // else: With the ControlFunctionStateHandler, it's fine if the address is set/changed later
 
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET

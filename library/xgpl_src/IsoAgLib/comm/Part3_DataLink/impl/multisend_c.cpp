@@ -206,7 +206,7 @@ MultiSend_c::sendIntern (const IsoName_c& isoNameSender, const IsoName_c& isoNam
 
   /// first check if new transfer can be started
   /// - is the sender correct?
-  if( !getIsoMonitorInstance4Comm().existIsoMemberISOName( isoNameSender ) )
+  if( getIsoMonitorInstance4Comm().item( isoNameSender ) == NULL )
     return false;
 
   // - is the receiver correct?:
@@ -220,7 +220,7 @@ MultiSend_c::sendIntern (const IsoName_c& isoNameSender, const IsoName_c& isoNam
     break;
   default:
     // destination specific - so the receiver must be registered!
-    if( !getIsoMonitorInstance4Comm().existIsoMemberISOName( isoNameReceiver ) )
+    if( getIsoMonitorInstance4Comm().item( isoNameReceiver ) == NULL )
       return false;
   }
   

@@ -122,7 +122,7 @@ VtClient_c::initAndRegisterObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib
     }
     else
     {
-      if (m_vtConnections[ui8_index]->getIdentItem() == rc_identItem)
+      if (&m_vtConnections[ui8_index]->getIdentItem() == &rc_identItem)
       { // this IdentItem has already one pool registered - use multiple
         // IdentItems if you want to use multiple pools!
         return NULL;
@@ -376,7 +376,7 @@ VtClient_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, u
 {
   for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
   {
-    if (static_cast<__IsoAgLib::IdentItem_c&>(mrc_wsMasterIdentItem) == m_vtConnections[ui8_index]->getIdentItem())
+    if (&static_cast<__IsoAgLib::IdentItem_c&>(mrc_wsMasterIdentItem) == &m_vtConnections[ui8_index]->getIdentItem())
       return m_vtConnections[ui8_index]->sendCommand(apui8_buffer, ui32_size);
   }
   return false;

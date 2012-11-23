@@ -34,19 +34,13 @@
 #pragma warning( disable : 4355 )
 #endif
 
-/** this define controls the time interval between regular SA requests on the bus
- *  (set to 0 to stop any periodic SA requests)
- */
-#define SA_REQUEST_PERIOD_MSEC 60000
-
 
 namespace __IsoAgLib {
-/** C-style function, to get access to the unique IsoMonitor_c singleton instance
- * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
- */
-IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance )
-{ // if > 1 singleton instance is used, no static reference can be used
-  MACRO_MULTITON_GET_INSTANCE_BODY(IsoMonitor_c, PRT_INSTANCE_CNT, aui8_instance);
+
+IsoMonitor_c &
+getIsoMonitorInstance( uint8_t instance )
+{
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoMonitor_c, PRT_INSTANCE_CNT, instance);
 }
 
 
@@ -57,7 +51,6 @@ IsoMonitor_c::IsoMonitor_c() :
   mt_customer(*this),
   CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
 {
-  // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
 
 
@@ -65,9 +58,8 @@ void
 IsoMonitor_c::init()
 {
   isoaglib_assert (!initialized());
-
   isoaglib_assert (mvec_isoMember.empty());
-  mpc_isoMemberCache = mvec_isoMember.end();
+
   mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
   mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getMultitonInst() );
 
@@ -75,9 +67,6 @@ IsoMonitor_c::init()
   getSchedulerInstance().registerTask( *this, 0 );
 
   CNAMESPACE::memset( &m_isoItems, 0x0, sizeof( m_isoItems ) );
-
-
-  mpc_activeLocalMember = NULL;
 
   // add filter REQUEST_PGN_MSG_PGN via IsoRequestPgn_c
   getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, ADDRESS_CLAIM_PGN);
@@ -101,9 +90,7 @@ IsoMonitor_c::close()
 {
   isoaglib_assert (initialized());
 
-  // Every (i)IdentItem_c must have close()d before the IsoMonitor_c is close()d.
-  isoaglib_assert( c_arrClientC1.empty() );
-  // Every SaClaimHandler must have deregistered properly already.
+  isoaglib_assert( m_arrClientC1.empty() );
   isoaglib_assert( mvec_saClaimHandler.empty() );
 
   getSchedulerInstance().deregisterTask( *this );
@@ -156,7 +143,6 @@ void
 IsoMonitor_c::deregisterIdentItem( IdentItem_c& arc_item )
 {
   arc_item.deactivate();
-  mpc_activeLocalMember = NULL;
   unregisterC1 (&arc_item);
 }
 
@@ -166,9 +152,9 @@ IsoMonitor_c::timeEvent()
 {
   int32_t i32_checkPeriod = 3000;
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*,MALLOC_TEMPLATE(__IsoAgLib::IdentItem_c*)>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
+  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*,MALLOC_TEMPLATE(__IsoAgLib::IdentItem_c*)>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); pc_iter++ )
   #else
-  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = c_arrClientC1.begin(); ( pc_iter != c_arrClientC1.end() ); pc_iter++ )
+  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); pc_iter++ )
   #endif
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
@@ -215,210 +201,124 @@ IsoMonitor_c::timeEvent()
   ///       if not so, use soft-timing and idle around...
 
 #if CONFIG_ISO_ITEM_MAX_AGE > 0
+  if ( lastIsoSaRequest() != -1)
+  {  
+    IsoItem_c *someActiveLocalMember = anyActiveLocalItem();
+    if( ( ( HAL::getTime() - lastIsoSaRequest() ) > SA_REQUEST_PERIOD_MSEC ) && someActiveLocalMember )
+      ( void ) sendRequestForClaimedAddress( true, someActiveLocalMember );
 
-  if ( lastIsoSaRequest() == -1)
-    return;
-  
-  IsoItem_c *someActiveLocalMember = NULL;
-  if ( existActiveLocalIsoMember() )
-  { // store some active local member for later use below...
-    someActiveLocalMember = &getActiveLocalIsoMember();
-
-    // we could send the next SA request
-    const int32_t ci32_timePeriod = SA_REQUEST_PERIOD_MSEC
-        + ( ( getActiveLocalIsoMember().nr() % 0x80 ) * 1000 );
-    // the request interval takes the number of the SA into account, so that nodes with higher
-    // SA should receive the request of this node before they decide to send a request on their own
-    // ==> MIN INTERVAL is SA_REQUEST_PERIOD_MSEC
-    // ==> MAX INTERVAL is (SA_REQUEST_PERIOD_MSEC + (0xFF % 0x80) ) == ( SA_REQUEST_PERIOD_MSEC + 0x7F )
-    if ( ( HAL::getTime() - lastIsoSaRequest() ) > ci32_timePeriod )
-    { // it's time for the next SA request in case we have already one
-      sendRequestForClaimedAddress( true, someActiveLocalMember );
-    }
-  }
-
-  const int32_t ci32_timeSinceLastAdrClaimRequest = ( System_c::getTime() - lastIsoSaRequest());
-  bool b_requestAdrClaim = false;
-  if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
-  { // the last request is more than CONFIG_ISO_ITEM_MAX_AGE ago
-    // --> each client MUST have answered until now if it's still alive
-    for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end();)
-    { // delete item, if it didn't answer longer than CONFIG_ISO_ITEM_MAX_AGE since last adress claim request
-      if ( ( (pc_iter->lastTime()+CONFIG_ISO_ITEM_MAX_AGE) < lastIsoSaRequest() )
-        && ( !(pc_iter->itemState(IState_c::Local))   ) )
-      { // its last AdrClaim is too old - it didn't react on the last request
-        // was it too late for the first time??
-        // special case: when the rate of ReqForAdrClaimed is at about CONFIG_ISO_ITEM_MAX_AGE
-        // a node migth answer just in time to the _previous_ request, which is in turn _before_ the last
-        // detected request on BUS
-        // -->> regard the client only as stale, when the last AdrClaim was longer than CONFIG_ISO_ITEM_MAX_AGE
-        //      before the newest ReqForAdrClaimed on BUS
-        if ( pc_iter->itemState( IState_c::PossiblyOffline) )
-        { // it's too late the second time -> remove it
-          Vec_ISOIterator pc_iterDelete = pc_iter;
-          pc_iter = internalIsoItemErase (pc_iterDelete); // erase returns iterator to next element after the erased one
-          // immediately reset cache, because it may have gotten invalid due to the erase!!
-          mpc_isoMemberCache = mvec_isoMember.begin();
+    const int32_t ci32_timeSinceLastAdrClaimRequest = ( System_c::getTime() - lastIsoSaRequest());
+    bool b_requestAdrClaim = false;
+    if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
+    { // the last request is more than CONFIG_ISO_ITEM_MAX_AGE ago
+      // --> each client MUST have answered until now if it's still alive
+      for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end();)
+      { // delete item, if it didn't answer longer than CONFIG_ISO_ITEM_MAX_AGE since last adress claim request
+        if ( ( (pc_iter->lastTime()+CONFIG_ISO_ITEM_MAX_AGE) < lastIsoSaRequest() )
+          && ( !(pc_iter->itemState(IState_c::Local))   ) )
+        { // its last AdrClaim is too old - it didn't react on the last request
+          // was it too late for the first time??
+          // special case: when the rate of ReqForAdrClaimed is at about CONFIG_ISO_ITEM_MAX_AGE
+          // a node migth answer just in time to the _previous_ request, which is in turn _before_ the last
+          // detected request on BUS
+          // -->> regard the client only as stale, when the last AdrClaim was longer than CONFIG_ISO_ITEM_MAX_AGE
+          //      before the newest ReqForAdrClaimed on BUS
+          if ( pc_iter->itemState( IState_c::PossiblyOffline) )
+          { // it's too late the second time -> remove it
+            Vec_ISOIterator pc_iterDelete = pc_iter;
+            pc_iter = internalIsoItemErase (pc_iterDelete); // erase returns iterator to next element after the erased one
+          }
+          else
+          { // give it another chance
+            pc_iter->setItemState( IState_c::PossiblyOffline );
+            ++pc_iter;
+            b_requestAdrClaim = true;
+          }
+        } else {
+          ++pc_iter;
         }
-        else
-        { // give it another chance
-          pc_iter->setItemState( IState_c::PossiblyOffline );
-          pc_iter++;
-          b_requestAdrClaim = true;
-        }
-      } else {
-        pc_iter++;
+      } // for
+      if ( b_requestAdrClaim )
+      { // at least one node needs an additional adr claim
+        ( void )sendRequestForClaimedAddress( true, someActiveLocalMember );
+        // we're forcing, so no need for the return value
       }
-    } // for
-    if ( b_requestAdrClaim )
-    { // at least one node needs an additional adr claim
-      sendRequestForClaimedAddress( true, someActiveLocalMember );
-    }
-  } // if
+    } // if
+  }
   #endif
 }
 
 
-uint8_t
-IsoMonitor_c::isoMemberEcuTypeCnt (IsoName_c::ecuType_t a_ecuType, bool ab_forceClaimedAddress)
-{
-  uint8_t b_result = 0;
-  for (Vec_ISOIterator pc_iter = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
-  {
-    if ( ((pc_iter->isoName().getEcuType() == a_ecuType))
-      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
-    {
-      b_result++;
-      mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
-    }
-  }
-  return b_result;
-}
-
-
-IsoItem_c&
-IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, uint8_t aui8_ind, bool ab_forceClaimedAddress)
-{
-  int8_t c_cnt = -1;
-  for (Vec_ISOIterator pc_iter  = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
-  {
-    if ( ((pc_iter->isoName().getEcuType()) == a_ecuType)
-      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
-    {
-      c_cnt++;
-      if (c_cnt == aui8_ind)
-      {
-        mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
-        break; //searched Item found (first element has 0)break; //searched Item found (first element has 0)
-      }
-    }
-  }
-
-  isoaglib_assert( aui8_ind == c_cnt );
-
-  return *mpc_isoMemberCache;
-}
-
-
-uint8_t
-IsoMonitor_c::isoMemberDevClassFuncCnt(uint8_t aui8_devClass, uint8_t aui8_function, bool ab_forceClaimedAddress)
-{
-  uint8_t b_result = 0;
-  for (Vec_ISOIterator pc_iter = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
-  {
-    if ( ( (pc_iter->isoName().func()) == aui8_function)
-      && ( ((pc_iter->isoName().devClass()) == aui8_devClass) )
-      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
-    {
-      b_result++;
-      mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
-    }
-  }
-  return b_result;
-}
-
-
-uint8_t
-IsoMonitor_c::isoMemberDevClassCnt(uint8_t aui8_devClass, bool ab_forceClaimedAddress)
-{
-  uint8_t b_result = 0;
-  for (Vec_ISOIterator pc_iter = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
-  {
-    if ( ( ((pc_iter->isoName().devClass()) == aui8_devClass) || (aui8_devClass == 0xFF))
-      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
-    {
-      b_result++;
-      mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
-    }
-  }
-  return b_result;
-}
-
-
-IsoItem_c&
-IsoMonitor_c::isoMemberDevClassInd(uint8_t aui8_devClass, uint8_t aui8_ind, bool ab_forceClaimedAddress)
-{
-  int8_t c_cnt = -1;
-  for (Vec_ISOIterator pc_iter  = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
-  {
-    if ( ( ((pc_iter->isoName().devClass()) == aui8_devClass) || (aui8_devClass == 0xFF))
-      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
-    {
-      c_cnt++;
-      if (c_cnt == aui8_ind)
-      {
-        mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
-        break; //searched Item found (first element has 0)break; //searched Item found (first element has 0)
-      }
-    }
-  }
-
-  isoaglib_assert( aui8_ind == c_cnt );
-
-  return *mpc_isoMemberCache;
-}
-
-
-bool
-IsoMonitor_c::existIsoMemberISOName(const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress)
-{
-  if (!mvec_isoMember.empty() && (mpc_isoMemberCache != mvec_isoMember.end()))
-  {
-    if ( (mpc_isoMemberCache->isoName() == acrc_isoName )
-      && (!ab_forceClaimedAddress || mpc_isoMemberCache->itemState(IState_c::ClaimedAddress))
-        )  return true;
-  }
-  for (mpc_isoMemberCache = mvec_isoMember.begin();
-       mpc_isoMemberCache != mvec_isoMember.end();
-       mpc_isoMemberCache++)
-  {
-    if ( (mpc_isoMemberCache->isoName() == acrc_isoName )
-      && (!ab_forceClaimedAddress || mpc_isoMemberCache->itemState(IState_c::ClaimedAddress))
-        )  return true;
-  }
-  // if reaching here -> nothing found
-  return false;
-}
-
-
-bool
-IsoMonitor_c::existIsoMemberNr(uint8_t aui8_nr)
-{
-  if (!mvec_isoMember.empty() && (mpc_isoMemberCache != mvec_isoMember.end()))
-  {
-    if ( mpc_isoMemberCache->nr() == aui8_nr ) return true;
-  }
-  for (mpc_isoMemberCache = mvec_isoMember.begin();
-       mpc_isoMemberCache != mvec_isoMember.end();
-       mpc_isoMemberCache++)
-  {
-    if (mpc_isoMemberCache->equalNr(aui8_nr)) return true;
-  }
-  return false;
-}
-
-
 IsoItem_c*
+IsoMonitor_c::getMaster( IsoItem_c &member )
+{
+  // quick check
+  if ( member.isMaster() )
+    return &member;
+
+  for( Vec_ISOIterator iter = mvec_isoMember.begin();
+       iter != mvec_isoMember.end();
+       ++iter )
+  {
+    if( (*iter).isMaster() )
+    {
+      STL_NAMESPACE::vector<IsoName_c>* wsSlaves = (*iter).getVectorOfClients();
+      if (wsSlaves == NULL)
+        continue;
+
+      for( STL_NAMESPACE::vector<IsoName_c>::iterator memberIter = wsSlaves->begin();
+           memberIter != wsSlaves->end();
+           ++memberIter )
+      {
+        if ( *memberIter == member.isoName() )
+        { // found master to this
+          return &( *iter );
+        }
+      }
+    }
+  }
+  // master of client cannot be found -> standalone client
+  return NULL;
+}
+
+
+uint8_t
+IsoMonitor_c::isoMemberCnt( bool forceClaimedAddress )
+{
+  uint8_t result = 0;
+  for( Vec_ISOIterator iter = mvec_isoMember.begin();
+       iter != mvec_isoMember.end();
+       ++iter)
+  {
+    if ( !forceClaimedAddress || iter->itemState( IState_c::ClaimedAddress ) )
+      ++result;
+  }
+  return result;
+}
+
+
+IsoItem_c&
+IsoMonitor_c::isoMemberInd( uint8_t index, bool forceClaimedAddress )
+{
+  int8_t c_cnt = -1;
+  for( Vec_ISOIterator iter = mvec_isoMember.begin();
+       iter != mvec_isoMember.end();
+       ++iter )
+  {
+    if( !forceClaimedAddress || iter->itemState( IState_c::ClaimedAddress ) )
+    {
+      ++c_cnt;
+      if( c_cnt == index )
+        return *iter;
+    }
+  }
+
+  isoaglib_assert( !"IsoMonitor_c::isoMemberInd called with out of bound index!" );
+  return mvec_isoMember.front();
+}
+
+
+IsoItem_c &
 IsoMonitor_c::insertIsoMember(
   const IsoName_c& acrc_isoName,
   uint8_t aui8_nr,
@@ -426,7 +326,7 @@ IsoMonitor_c::insertIsoMember(
   IdentItem_c* apc_identItemForLocalItems,
   bool ab_announceAddition )
 {
-  isoaglib_assert( ! existIsoMemberISOName(acrc_isoName) );
+  isoaglib_assert( item( acrc_isoName ) == NULL );
 
   // prepare temp item with wanted data
   mc_tempIsoMemberItem.set (System_c::getTime(), // Actually this value/time can be anything. The time is NOT used in PreAddressClaim and when entering AddressClaim it is being set correctly!
@@ -437,136 +337,41 @@ IsoMonitor_c::insertIsoMember(
 
   // now insert element
   mvec_isoMember.push_front(mc_tempIsoMemberItem);
-  mpc_isoMemberCache = mvec_isoMember.begin();
-  
-  // item was inserted
-  IsoItem_c* result = &(*mpc_isoMemberCache);
-
+  IsoItem_c &insertedItem = *mvec_isoMember.begin();
 
   if( ren_state & ( IState_c::AddressClaim | IState_c::ClaimedAddress ) ) {
     // update lookup
-    updateSaItemTable( *result, true );
+    updateSaItemTable( insertedItem, true );
   }
 
   if (ab_announceAddition)
   { // immediately announce addition.
     // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
-    broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::AddToMonitorList, *result);
+    broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::AddToMonitorList, insertedItem );
   }
 
-  return result;
+  return insertedItem;
 }
 
 
-uint8_t
-IsoMonitor_c::localIsoMemberCnt()
+IsoItem_c *
+IsoMonitor_c::anyActiveLocalItem() const
 {
-  uint8_t b_count = 0;
-  for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
-  {  // increase reult count if local ident is already registered in MemberList
-    if ( existIsoMemberISOName( (*pc_searchCacheC1)->isoName(), false ) ) b_count++;
-  }
-  return b_count;
-}
+  const IsoName_c *pc_useISOName = NULL;
+  IsoItem_c* pc_monitorItem = NULL;
 
-
-IsoItem_c&
-IsoMonitor_c::localIsoMemberInd(uint8_t aui8_ind)
-{
-  IsoItem_c* pc_result = NULL;
-  uint8_t b_count = 0;
-  for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
-  {  // increase reult count if local ident is already registered in MemberList
-    if ( existIsoMemberISOName( (*pc_searchCacheC1)->isoName(), false ) )
-    {
-      if (b_count == aui8_ind)
-      { // wanted item found
-        pc_result = &( isoMemberISOName( (*pc_searchCacheC1)->isoName(), false ) );
-        break;
-      }
-      b_count++;
-    }
-  } // for
-
-
-  isoaglib_assert( pc_result );
-
-  return *pc_result;
-}
-
-
-bool
-IsoMonitor_c::existActiveLocalIsoMember()
-{
-  bool b_result = false; // set default to no success
-
-  // check if actual cache pointer points to active ident
-  if ((mpc_activeLocalMember == NULL)
-       || (!mpc_activeLocalMember->itemState(IState_c::ClaimedAddress)))
-  { // the actual cache pointer isn't correct -> search new one
-    const IsoName_c *pc_useISOName = NULL;
-    IsoItem_c* pc_monitorItem = NULL;
-
-    for ( pc_searchCacheC1 = c_arrClientC1.begin(); ( pc_searchCacheC1 != c_arrClientC1.end() ); pc_searchCacheC1++ )
-    {
-      if ((*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
-      {
-        if (existIsoMemberISOName((*pc_searchCacheC1)->isoName(), true ))
-        {
-          pc_monitorItem = &(isoMemberISOName((*pc_searchCacheC1)->isoName(), true));
-          if (pc_monitorItem->itemState(IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::Local)))
-          {
-            pc_useISOName = &((*pc_searchCacheC1)->isoName());
-            break;
-          } // end if claimed address and local
-        } // end if existMemberISOName
-      } // end if ident_item has claimed address
-    } // searching for loop
-    if (pc_useISOName != NULL)
-    { // active own identity found
-      b_result = true;
-      mpc_activeLocalMember = pc_monitorItem;
-    }
-    else
-    { // no active ident found -> set cache to NULL
-      mpc_activeLocalMember = NULL;
-    }
-  }
-  else
-  { // cache pointer correct
-    b_result = true;
-  }
-  return b_result;
-}
-
-
-IsoItem_c&
-IsoMonitor_c::getActiveLocalIsoMember()
-{
-  isoaglib_assert( existActiveLocalIsoMember() );
-  return *mpc_activeLocalMember;
-}
-
-
-bool
-IsoMonitor_c::existLocalIsoMemberISOName (const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress)
-{
-  if ( (!c_arrClientC1.empty()) && (pc_searchCacheC1 != c_arrClientC1.end()) )
-  { // try to use current cache as it points to valid entry
-    if ( ((*pc_searchCacheC1)->isoName() == acrc_isoName )
-            && (!ab_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
-       )  return true;
-  }
-  // if last cache is still vald the function is exited -> start new search
-  for (pc_searchCacheC1 = c_arrClientC1.begin();
-       pc_searchCacheC1 != c_arrClientC1.end(); pc_searchCacheC1++)
+  for( const_iterC1_t iter = m_arrClientC1.begin();
+       iter != m_arrClientC1.end();
+       ++iter )
   {
-    if ( ((*pc_searchCacheC1)->isoName() == acrc_isoName )
-            && (!ab_forceClaimedAddress || (*pc_searchCacheC1)->itemState(IState_c::ClaimedAddress))
-       )  return true;
+    if ((*iter)->itemState(IState_c::ClaimedAddress))
+    {
+      pc_monitorItem = (*iter)->getIsoItem();
+      if( pc_monitorItem )
+        return pc_monitorItem;
+    }
   }
-  // if reaching here -> nothing found
-  return false;
+  return NULL;
 }
 
 
@@ -575,9 +380,10 @@ IsoMonitor_c::registerControlFunctionStateHandler( ControlFunctionStateHandler_c
 {
   for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
-    if ( *iter == &arc_client ) return; // already in multimap -> don't insert again
+    if ( *iter == &arc_client )
+      return; // already in multimap -> don't insert again
   }
-  // if this position is reached, a new item must be inserted
+
   mvec_saClaimHandler.push_back( &arc_client );
 
   // now: trigger suitable ControlFunctionStateHandler_c calls for all already known IsoNames in the list
@@ -612,39 +418,49 @@ IsoMonitor_c::broadcastIsoItemModification2Clients( ControlFunctionStateHandler_
 }
 
 
-IsoItem_c&
-IsoMonitor_c::isoMemberISOName(const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress)
+IsoItem_c *
+IsoMonitor_c::item( const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress ) const
 {
-  isoaglib_assert( existIsoMemberISOName( acrc_isoName, ab_forceClaimedAddress ) );
-  (void)acrc_isoName;
-  (void)ab_forceClaimedAddress;
-  return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
-}
-
-
-IsoItem_c&
-IsoMonitor_c::isoMemberNr(uint8_t aui8_nr)
-{
-  isoaglib_assert( existIsoMemberNr( aui8_nr ) );
-  (void)aui8_nr;
-  return static_cast<IsoItem_c&>(*mpc_isoMemberCache);
-}
-
-
-bool
-IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
-{
-  isoaglib_assert( existIsoMemberISOName( acrc_isoName) ); (void)acrc_isoName;
-  // check if "mpc_activeLocalMember" will be invalidated by this deletion
-  if (mpc_activeLocalMember == &(*mpc_isoMemberCache))
-  { // clear cached active local item - it points to the to be deleted one
-    mpc_activeLocalMember = NULL;
+  for( Vec_ISOIteratorConst iter = mvec_isoMember.begin();
+       iter != mvec_isoMember.end();
+       ++iter )
+  {
+    if( ( iter->isoName() == acrc_isoName )
+     && ( !ab_forceClaimedAddress || iter->itemState( IState_c::ClaimedAddress ) )
+      )
+      return const_cast<IsoItem_c*>( &( *iter ) );
   }
-  // erase it from list (existIsoMemberISOName sets mpc_isoMemberCache to the wanted item)
-  internalIsoItemErase (mpc_isoMemberCache);
-  // immediately reset cache, because it may have gotten invalid due to the erase!!
-  mpc_isoMemberCache = mvec_isoMember.begin();
-  return true;
+  return NULL;
+}
+
+
+IsoItem_c*
+IsoMonitor_c::item( uint8_t sa ) const
+{
+  for( Vec_ISOIteratorConst iter = mvec_isoMember.begin();
+       iter != mvec_isoMember.end();
+       ++iter )
+  {
+    if( iter->nr() == sa )
+      return const_cast<IsoItem_c*>( &( *iter ) );
+  }
+  return NULL;
+}
+
+
+void
+IsoMonitor_c::deleteItem( const IsoItem_c& isoitem )
+{
+  for( Vec_ISOIterator iter = mvec_isoMember.begin();
+       iter != mvec_isoMember.end();
+       ++iter )
+  {
+    if( &(*iter) == &isoitem )
+    {
+      ( void )internalIsoItemErase( iter );
+      return;
+    }
+  }
 }
 
 
@@ -737,14 +553,12 @@ IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender )
 
   setLastIsoSaRequest( HAL::getTime() );
 
-  // now send own local SAs in case at least one local ident has claimed adress
-  if ( existActiveLocalIsoMember() )
+  // let local items answer, too!
+  for( const_iterC1_t iter = m_arrClientC1.begin(); 
+       iter != m_arrClientC1.end();
+       ++iter )
   {
-    const uint8_t cui8_localCnt = localIsoMemberCnt();
-    for ( uint8_t ui8_ind = 0; ui8_ind < cui8_localCnt; ++ui8_ind )
-    { // the function IsoItem_c::sendSaClaim() checks if this item is local and has already claimed a SA
-      localIsoMemberInd( ui8_ind ).sendSaClaim();
-    }
+    (*iter)->getIsoItem()->sendSaClaim();
   }
   return true;
 }
@@ -753,9 +567,6 @@ IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender )
 void
 IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
 {
-  IsoItem_c *pc_itemSameSa = NULL,
-            *pc_itemSameISOName = NULL;
-
 #if DEBUG_ISOMONITOR
   INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL << "IsoMonitor_c::processMsg()-BEGIN" << INTERNAL_DEBUG_DEVICE_ENDL;
   debugPrintNameTable();
@@ -769,12 +580,12 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
   // don't do the generic "valid-resolving" check here!
   if( (pkg.isoPgn() & 0x3FF00LU) == ADDRESS_CLAIM_PGN )
   {
-    const uint8_t cui8_sa = pkg.isoSa();
     const int32_t ci32_time = pkg.time();
+    const uint8_t cui8_sa = pkg.isoSa();
 
-    if ( existIsoMemberISOName (cc_dataIsoName) )
+    IsoItem_c *pc_itemSameISOName = item( cc_dataIsoName );
+    if( pc_itemSameISOName != NULL )
     {
-      pc_itemSameISOName = &(isoMemberISOName (cc_dataIsoName));
       if (pc_itemSameISOName->itemState(IState_c::PreAddressClaim))
         // no need to check here for LostAddress, as it's only about the ISOName,
         // and that's correct in all other cases!
@@ -784,9 +595,10 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
         pc_itemSameISOName = NULL;
       }
     }
-    if ( existIsoMemberNr (cui8_sa) )
+
+    IsoItem_c *pc_itemSameSa = item( cui8_sa );
+    if( pc_itemSameSa != NULL )
     {
-      pc_itemSameSa = &(isoMemberNr (cui8_sa));
       if (pc_itemSameSa->itemState(IState_c::PreAddressClaim)
        || pc_itemSameSa->itemState(IState_c::AddressLost) )
       { // this item has no valid address, as it's not (anymore) active.
@@ -1093,5 +905,4 @@ IsoMonitor_c::debugPrintNameTable()
 }
 #endif
 
-
-} // end of namespace __IsoAgLib
+} // __IsoAgLib

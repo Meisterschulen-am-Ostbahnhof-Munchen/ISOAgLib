@@ -13,18 +13,16 @@
 #ifndef IISO_ITEM_H
 #define IISO_ITEM_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "impl/isoitem_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
+
 
 namespace __IsoAgLib
 { // forward declarations (for friends)
   class ProprietaryMessageHandler_c;
 }
 
-// Begin Namespace IsoAgLib
+
 namespace IsoAgLib {
 
 /** item class for ISO 11783 members monitor list to manage
@@ -38,7 +36,6 @@ namespace IsoAgLib {
 class iIsoItem_c : private __IsoAgLib::IsoItem_c {
 private:
   friend class iIdentItem_c;
-  friend class iSystemMgmt_c;
   friend class iIsoMonitor_c;
   friend class iCanPkgExt_c;
   friend class IsoItem_c;
@@ -49,8 +46,8 @@ public:
   /** deliver the ISOName code of this item */
   const iIsoName_c& isoName() const { return IsoItem_c::isoName().toConstIisoName_c(); }
 
-  /** deliver the address of this item */
-  uint8_t nr() const {return IsoItem_c::nr();}
+  // get the Source Address - NOTE: Only for diagnostic purposes, not real use!
+  uint8_t nr() const { return IsoItem_c::nr(); }
 
   /** check if specific state is set
     @param ren_itemState state information to check
@@ -62,17 +59,6 @@ public:
     @return state information of type itemState_t (with state informations coded by OR in enum)
   */
   itemState_t itemState() const {return IsoItem_c::itemState();}
-
-  itemState_t setItemState(itemState_t ren_itemState) {return IsoItem_c::setItemState(ren_itemState, false);}
-
-#ifdef USE_WORKING_SET
-  /// For checking if the WS-Announce is completed use the
-  bool isWsAnnounced (int32_t ai32_timeAnnounceStarted) { return IsoItem_c::isWsAnnounced (ai32_timeAnnounceStarted); }
-  /** get master of this isoItem
-      @return  this if master himself; get master if client; NULL if standalone
-    */
-  iIsoItem_c* getMaster() { return ( IsoItem_c::getMaster() == NULL)? NULL : &IsoItem_c::getMaster()->toIisoItem_c();}
-#endif
 };
 
 }

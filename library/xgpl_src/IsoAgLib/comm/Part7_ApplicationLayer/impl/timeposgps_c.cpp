@@ -178,7 +178,7 @@ namespace __IsoAgLib {
       @see CanIo_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
-  void TimePosGps_c::timeEvent(  )
+  void TimePosGps_c::timeEvent()
   {
     checkCreateReceiveFilter();
 
@@ -257,19 +257,13 @@ namespace __IsoAgLib {
     }
   }
 
-  /** check if filter boxes shall be created - create only filters based
-      on active local idents which has already claimed an address
-      --> avoid to much Filter Boxes
-    */
   void TimePosGps_c::checkCreateReceiveFilter( )
   {
-    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    IsoBus_c &c_can = getIsoBusInstance4Comm();
-
-    if ( ( ! checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
-    { // check if needed receive filters for ISO are active
+    if ( !checkFilterCreated() )
+    {
       setFilterCreated();
 
+      IsoBus_c &c_can = getIsoBusInstance4Comm();
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (TIME_DATE_PGN<<8) ), 8 );
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (NMEA_GPS_POSITION_RAPID_UPDATE_PGN<<8) ), 8 );
 #ifdef USE_J1939_VEHICLE_PGNS

@@ -160,7 +160,7 @@ FsManager_c::initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_C
        it_communications != v_communications.end();
        ++it_communications)
   {
-    if ((*it_communications)->getClientIdentItem() == rc_identItem)
+    if (&(*it_communications)->getClientIdentItem() == &rc_identItem)
     {
       return (*it_communications);
     }

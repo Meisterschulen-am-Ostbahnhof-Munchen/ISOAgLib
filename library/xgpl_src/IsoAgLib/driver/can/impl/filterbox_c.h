@@ -51,11 +51,6 @@ public:
     int8_t i8_dlcForce; // 0..8: DLC must exactly be 0..8.   < 0 (-1): DLC doesn't care! (default!)
   };
 
-  /** default constructor without parameter values for creating an instance
-    with default start state (init variables)
-
-     @exception badAlloc
-  */
   FilterBox_c();
   FilterBox_c(const FilterBox_c& acrc_src);
   FilterBox_c& operator=(const FilterBox_c& acrc_src);

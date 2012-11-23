@@ -57,15 +57,15 @@ public:
   void processMsgNonGlobal( const ProcessPkg_c& arc_data );
 
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
-  ProcData_c* procData( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver, bool& elementFound);
+  ProcData_c* procData( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver, bool& elementFound) const;
 
   void resetTimerPeriod();
   void registerAccessFlt() {}
 
-  bool registerLocalProcessData( ProcData_c* pc_localClient)
-  { bool b_result = registerC1( pc_localClient ); mpc_iter = c_arrClientC1.begin(); return b_result;}
+  void registerLocalProcessData( ProcData_c* pc_localClient)
+  { registerC1( pc_localClient ); mpc_iter = m_arrClientC1.begin(); }
   void unregisterLocalProcessData( ProcData_c* pc_localClient)
-  { unregisterC1( pc_localClient ); mpc_iter = c_arrClientC1.begin();}
+  { unregisterC1( pc_localClient ); mpc_iter = m_arrClientC1.begin(); }
 
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
@@ -143,7 +143,7 @@ private:
   Handler_t mt_handler;
   Customer_t mt_customer;
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcData_c);
-  cacheTypeC1_t mpc_iter;
+  iterC1_t mpc_iter;
 
   friend TcClient_c &getTcClientInstance( uint8_t aui8_instance );
 };

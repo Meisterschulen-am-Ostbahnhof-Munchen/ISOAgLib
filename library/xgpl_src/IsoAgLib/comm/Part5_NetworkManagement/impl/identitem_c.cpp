@@ -168,11 +168,7 @@ IdentItem_c::restartWithPreAddressClaim( void )
 {
   if (mpc_isoItem != NULL)
   { // item is online
-    // ->delete item from memberList
-    // IMPORTANT: we do need to query "exist" just in order to get the cache updated that is needed for "delete"!!!
-    const bool exists = getIsoMonitorInstance4Comm().existIsoMemberISOName( isoName() );
-    isoaglib_assert( exists ); ( void )exists;
-    getIsoMonitorInstance4Comm().deleteIsoMemberISOName (isoName());
+    getIsoMonitorInstance4Comm().deleteItem( *mpc_isoItem );
     mpc_isoItem = NULL;
   }
   setItemState( IState_c::PreAddressClaim );
@@ -184,14 +180,12 @@ IdentItem_c::goOffline (bool ab_explicitlyOffByUser)
 {
   if (mpc_isoItem != NULL)
   { // item is online
-    // ->delete item from memberList
-    // IMPORTANT: we do need to query "exist" just in order to get the cache updated that is needed for "delete"!!!
-    const bool exists = getIsoMonitorInstance4Comm().existIsoMemberISOName( isoName() );
-    isoaglib_assert( exists ); ( void )exists;
-    getIsoMonitorInstance4Comm().deleteIsoMemberISOName (isoName());
+    getIsoMonitorInstance4Comm().deleteItem( *mpc_isoItem );
     mpc_isoItem = NULL;
   }
+
   clearItemState( IState_c::ClaimedAddress );
+
   if (ab_explicitlyOffByUser) {
     setItemState( IState_c::OffExplicitly );
   } else {
@@ -227,24 +221,21 @@ IdentItem_c::timeEvent( void )
 void
 IdentItem_c::timeEventPreAddressClaim( void )
 {
-  if( !getIsoMonitorInstance4Comm().existIsoMemberISOName( mc_isoName, true ) ) 
+  if( getIsoMonitorInstance4Comm().item( isoName(), true ) == NULL )
   {
-    // insert element in list
-    mpc_isoItem = getIsoMonitorInstance4Comm().insertIsoMember (isoName(), mui8_sa,
-      IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false);
+    mpc_isoItem = &getIsoMonitorInstance4Comm().insertIsoMember(
+      isoName(), mui8_sa, IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false);
 
-    if (mpc_isoItem != NULL)
-    {
-      bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( false, NULL );
-      if (cb_sent)
-        updateLastIsoSaRequestForThisItem();
+    bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( false, NULL );
+    if (cb_sent)
+      updateLastIsoSaRequestForThisItem();
 
-      #ifdef USE_WORKING_SET
-      mpc_isoItem->setLocalMasterSlaves( mpvec_slaveIsoNames );
-      #endif
+    #ifdef USE_WORKING_SET
+    mpc_isoItem->setLocalMasterSlaves( mpvec_slaveIsoNames );
+    #endif
 
-      mpc_isoItem->timeEvent();
-    }
+    mpc_isoItem->timeEvent();
+
     setItemState(IState_c::AddressClaim);
   }
 }
@@ -286,16 +277,7 @@ IdentItem_c::timeEventActive( void )
 
 
 bool
-IdentItem_c::equalNr(uint8_t aui8_nr)
-{
-  bool b_result = false;
-
-  if (mpc_isoItem != NULL) b_result = (mpc_isoItem->nr() == aui8_nr);
-
-  return b_result;
-}
-
-bool IdentItem_c::setEcuIdentification(
+IdentItem_c::setEcuIdentification(
     const char *acstr_partNr,
     const char *acstr_serialNr,
     const char *acstr_location,

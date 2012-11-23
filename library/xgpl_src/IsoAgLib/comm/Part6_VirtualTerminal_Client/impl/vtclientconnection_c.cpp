@@ -938,9 +938,10 @@ VtClientConnection_c::processMsgAck( const CanPkgExt_c& arc_data )
 #if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
   // check if we have Agrocom/Mller with Version < 3, so we IGNORE this NACK BEFORE the pool is finally uploaded.
   bool b_ignoreNack = false; // normally DO NOT ignore NACK
-  if (getIsoMonitorInstance4Comm().existIsoMemberNr (arc_data.isoSa()))
+  IsoItem_c *item = getIsoMonitorInstance4Comm().item( arc_data.isoSa() );
+  if( item )
   { // sender exists in isomonitor, so query its Manufacturer Code
-    const uint16_t cui16_manufCode = getIsoMonitorInstance4Comm().isoMemberNr (arc_data.isoSa()).isoName().manufCode();
+    const uint16_t cui16_manufCode = item->isoName().manufCode();
     if (((cui16_manufCode == 98) /*Mller Elektronik*/ || (cui16_manufCode == 103) /*Agrocom*/) &&
           ((mpc_vtServerInstance->getVtCapabilities()->lastReceivedVersion == 0) ||
           (mpc_vtServerInstance->getVtCapabilities()->iso11783version < 3)))
@@ -1040,7 +1041,8 @@ VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
   uint8_t const cui8_inputSaNew = arc_data.getUint8Data (2-1);
   uint8_t const cui8_inputNrNew = arc_data.getUint8Data (3-1); /// 0xFF means unassign!
   uint16_t const cui16_functionUidNew = arc_data.getUint16Data (4-1);
-  if (!getIsoMonitorInstance4Comm().existIsoMemberNr (cui8_inputSaNew) && (cui8_inputNrNew != 0xFF))
+  IsoItem_c *inputIsoNameNew = getIsoMonitorInstance4Comm().item( cui8_inputSaNew );
+  if ( (inputIsoNameNew == NULL) && (cui8_inputNrNew != 0xFF))
     return false;
 
   for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); )
@@ -1055,7 +1057,8 @@ VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
       }
       else
       { /// Reassign
-        const IsoName_c& ac_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
+        isoaglib_assert( inputIsoNameNew != NULL ); // else the check above would've "return false;"
+        const IsoName_c& ac_inputIsoNameNew = inputIsoNameNew->isoName();
         it->mc_inputIsoName = ac_inputIsoNameNew;
         it->mui8_inputNumber = cui8_inputNrNew;
         return true;
@@ -1069,7 +1072,8 @@ VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
     return true; // unassignment is always okay!
 
   AuxAssignment_s s_newAuxAssignment;
-  const IsoName_c& ac_inputIsoNameNew = getIsoMonitorInstance4Comm().isoMemberNr (cui8_inputSaNew).isoName();
+  isoaglib_assert( inputIsoNameNew != NULL ); // else the check above would've "return true;"
+  const IsoName_c& ac_inputIsoNameNew = inputIsoNameNew->isoName();
   s_newAuxAssignment.mc_inputIsoName = ac_inputIsoNameNew;
   s_newAuxAssignment.mui8_inputNumber = cui8_inputNrNew;
   s_newAuxAssignment.mui16_functionUid = cui16_functionUidNew;

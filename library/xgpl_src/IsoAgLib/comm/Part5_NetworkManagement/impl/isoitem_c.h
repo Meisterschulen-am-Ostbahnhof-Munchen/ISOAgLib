@@ -46,6 +46,8 @@ public:
   IsoItem_c();
   virtual ~IsoItem_c();
 
+  const IsoName_c& isoName() const { return mc_isoName; }
+
   /** set all element data with one call
     @param ai32_time creation time of this item instance
     @param acrc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
@@ -61,12 +63,9 @@ public:
       should be set at creation of the IsoItem. */
   void setIdentItem (IdentItem_c& acrc_identItem) { mpc_identItem = &acrc_identItem; }
 
-  const IsoName_c& isoName() const { return mc_isoName; }
-
-  /** periodically time evented actions:
+  /** NOTE: Not a SchedulerTask's timeEvent!
       * find free SA or check if last SA is available
       * send adress claim
-    @return true -> all planned time event activitie performed
   */
   void timeEvent();
 
@@ -105,52 +104,6 @@ public:
    */
   void giveUpAddressAndBroadcast() { changeAddressAndBroadcast (0xFE); }
 
-  /**
-    lower comparison with another IsoItem_c on the rigth (compare the ISOName)
-    @param acrc_right rigth parameter for lower compare
-  */
-  bool operator<(const IsoItem_c& acrc_right) const
-    {return (isoName() < acrc_right.isoName());}
-
-  /**
-    lower comparison with ISOName uint8_t on the rigth
-    @param acrc_isoName rigth parameter for lower compare
-  */
-  bool operator<(const IsoName_c& acrc_isoName)const{return (isoName() < acrc_isoName);}
-
-  /**
-    lower comparison between left ISOName uint8_t and right MonitorItem
-    @param acrc_left ISOName uint8_t left parameter
-    @param acrc_right rigth ServiceItem_c parameter
-  */
-  friend bool operator<(const IsoName_c& acrc_left, const IsoItem_c& acrc_right);
-
-  /**
-    lower comparison between left IsoItem_c and right ISOName uint8_t
-    @param acrc_left left ServiceItem_c parameter
-    @param acrc_right ISOName uint8_t right parameter
-  */
-  friend bool lessThan(const IsoItem_c& acrc_left, const IsoName_c& acrc_right);
-
-  /**
-    equality comparison with ISOName uint8_t on the rigth
-    @param acrc_right rigth parameter for lower compare
-  */
-  bool operator==(const IsoName_c& acrc_right)const { return (isoName() == acrc_right);}
-
-  /**
-    difference comparison with ISOName uint8_t on the rigth
-    @param acrc_right rigth parameter for lower compare
-  */
-  bool operator!=(const IsoName_c& acrc_right) const{ return (isoName() != acrc_right);}
-
-  /**
-    compare given number to nr of this item and return result
-    @param aui8_nr compared number
-    @return true -> given number equal to nr of this item
-  */
-  bool equalNr(const uint8_t aui8_nr)const{return (nr() == aui8_nr);}
-
   IdentItem_c* getIdentItem() { return mpc_identItem; }
 
   IsoAgLib::iIsoItem_c& toIisoItem_c();
@@ -158,15 +111,7 @@ public:
 
 #ifdef USE_WORKING_SET
   // @todo move into own subclass????
-  public:
-  /** take away master state of this item -> is than standalone
-      BE CAREFUL: you should know what you are doing!!!
-    */
-  void removeMasterState() {
-    delete m_wsSlavesAnnounced; m_wsSlavesAnnounced = NULL; 
-    delete m_wsSlavesAnnouncing; m_wsSlavesAnnouncing = NULL; 
-  }
-
+public:
   int32_t announceTimeStamp() { return m_wsRemoteAnnounceTime; }
 
   /** (Re-)Start sending the Working-Set Announce sequence
@@ -178,13 +123,6 @@ public:
   // NOTE: this function need NOT to be used in combination with function getMaster()
   //       as it already checks isMaster()
   bool isMaster () const { return (m_wsSlavesAnnounced != NULL); }
-  // check if this item belong to a working set -> either master or client
-  // NOTE: only to be used for checking -> if master IsoItem_c is need use function getMaster()
-  bool isWsmMember () { return (getMaster() != NULL); }
-  /** get master of this isoItem
-      @return  this if master himself; get master if client; NULL if standalone
-    */
-  IsoItem_c* getMaster();
 
   void setLocalMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames);
 
@@ -207,11 +145,12 @@ private: // methods
   */
   uint8_t calc_randomWait();
 
-private: // members
 #ifdef USE_WORKING_SET
+public:
   // return pointer to vector of clients
   STL_NAMESPACE::vector<IsoName_c>* getVectorOfClients() const { return m_wsSlavesAnnounced;}
 
+private:
   /** Used for both Local and Remote items!
    * if this pointer is != NULL, this item IS a master and the list's size is the number of associated slaves.
    * if this pointer is == NULL, this item is NOT a master.
@@ -236,26 +175,13 @@ private: // members
   int32_t m_wsRemoteAnnounceTime;
 #endif
 
-  /** Source Address */
-  uint8_t mui8_nr;
-
+private:
+  uint8_t mui8_nr; // SA
   bool mb_repeatClaim;
-
-  /** If the IsoItem is LOCAL, you'll find a back-reference to the IdentItem here. */
-  IdentItem_c* mpc_identItem;
-
+  IdentItem_c* mpc_identItem; // set for local items
   IsoName_c mc_isoName;
 };
 
-
-/**
-  lower comparison between left IsoItem_c and right ISOName uint8_t
-  @param acrc_left left IsoItem_c parameter
-  @param acrc_right right IsoName_c parameter
-*/
-bool 
-lessThan(const IsoItem_c& acrc_left, const IsoName_c& acrc_right);
-
-
 }
+
 #endif

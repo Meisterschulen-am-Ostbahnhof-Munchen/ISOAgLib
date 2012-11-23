@@ -291,10 +291,10 @@ DevPropertyHandler_c::processMsg( const ProcessPkg_c& arc_data )
         if (arc_data.getUint8Data(1) == 0)
         {
           men_uploadStep = UploadUploading;
-          if( getIsoMonitorInstance4Comm().existIsoMemberNr(mui8_tcSourceAddress) )
+          IsoItem_c* item = getIsoMonitorInstance4Comm().item( mui8_tcSourceAddress );
+          if( item )
             getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
-              getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
-              this, PROCESS_DATA_PGN, &mt_multiSendEventHandler);
+              item->isoName(), this, PROCESS_DATA_PGN, &mt_multiSendEventHandler);
           // else: not handled, this will all be rewritten...
         }
         else
@@ -1081,9 +1081,10 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
   else
   {
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    if( getIsoMonitorInstance4Comm().existIsoMemberNr(mui8_tcSourceAddress) )
+    IsoItem_c* item = getIsoMonitorInstance4Comm().item( mui8_tcSourceAddress );
+    if( item )
       getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
-        getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
+        item->isoName(),
         &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(),
         PROCESS_DATA_PGN, &mt_multiSendEventHandler);
     // else this is not handled here, will be rewritten...
