@@ -206,7 +206,7 @@ namespace __IsoAgLib {
 
     isoaglib_assert ( initialized() );
 
-    const int fc = sendCanFreecnt();
+    int fc = sendCanFreecnt();
 
     /*  -1 indicates that the used CAN HAL implementation does not support 
      *  a send queue and no information about the possible about of frames 
@@ -224,6 +224,7 @@ namespace __IsoAgLib {
           IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusOverflow, getMultitonInst() );
           break;
         }
+        fc = sendCanFreecnt();
       }
     }
 
