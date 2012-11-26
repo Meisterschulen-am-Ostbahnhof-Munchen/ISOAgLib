@@ -248,7 +248,7 @@ IsoMonitor_c::timeEvent()
   #endif
 }
 
-
+#ifdef USE_WORKING_SET
 IsoItem_c*
 IsoMonitor_c::getMaster( IsoItem_c &member )
 {
@@ -280,6 +280,7 @@ IsoMonitor_c::getMaster( IsoItem_c &member )
   // master of client cannot be found -> standalone client
   return NULL;
 }
+#endif
 
 
 uint8_t

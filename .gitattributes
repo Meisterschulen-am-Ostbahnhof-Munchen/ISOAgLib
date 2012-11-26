@@ -204,7 +204,6 @@ library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp -text
 library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.h -text
 library/xgpl_src/IsoAgLib/util/compiler_adaptation.h -text
 library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h -text
-library/xgpl_src/IsoAgLib/util/config.h -text
 library/xgpl_src/IsoAgLib/util/convert.h -text
 library/xgpl_src/IsoAgLib/util/iassert.cpp -text
 library/xgpl_src/IsoAgLib/util/iassert.h -text

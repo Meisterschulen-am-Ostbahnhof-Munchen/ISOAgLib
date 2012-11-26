@@ -37,6 +37,8 @@ public:
   DigitalI_c(uint8_t ab_channel = 0xFF, IsoAgLib::iInput_c::onoff_t ren_onoff = IsoAgLib::iInput_c::OnHigh,
               bool ab_static = false, IsoAgLib::iInputEventHandler* apc_handler = NULL );
 
+  ~DigitalI_c() {}
+
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
     @param ab_channel default-argument for setting hardware channel for this input
@@ -53,8 +55,6 @@ public:
   /** change detection mode of activity to OnLow */
   void setOnLow( void );
 
-  virtual ~DigitalI_c();
-
   /**
     check for the input value
     @return 1 for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise 0
@@ -70,26 +70,9 @@ public:
   /** handler function which is called from HAL */
   static void handleHalIrqEvent( uint8_t aui8_channel );
 
-  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() );};
-
 private:
-  /**
-    HIDDEN! copy constructor for DigitalI_c
-    NEVER copy a DigitalI_c around!!!!
-    ONLY copy pointers to the wanted instance!!!
-    ==> the copy constructor is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    <!--@param acrc_src source-->
-  */
+  // unimplemented, not copyable
   DigitalI_c(const DigitalI_c&);
-
-  /**
-    HIDDEN! assignment for DigitalI_c
-    NEVER assign a DigitalI_c to another instance!!!!
-    ==> the asignment is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    <!--@param acrc_src source-->
-  */
   DigitalI_c& operator=(const DigitalI_c&);
 
   /** true if the digit input should be gathered static */

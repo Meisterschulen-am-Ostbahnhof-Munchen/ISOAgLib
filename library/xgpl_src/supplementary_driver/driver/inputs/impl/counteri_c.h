@@ -45,6 +45,8 @@ public:
   CounterI_c(uint8_t ab_channel = 0xFF, uint16_t aui16_timebase = 0, bool ab_activHigh = true,
               bool ab_risingEdge = true);
 
+  ~CounterI_c() {}
+
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
     @param ab_channel default-argument for setting hardware channel for this input
@@ -56,8 +58,6 @@ public:
   */
   void init(uint8_t ab_channel, uint16_t aui16_timebase = 0, bool ab_activHigh = true,
               bool ab_risingEdge = true);
-
-  virtual ~CounterI_c();
 
   /**
     check for the input value
@@ -95,27 +95,10 @@ public:
   */
   uint32_t lastSignalAge();
 
-  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() );}
-
 private:
-  /**
-    HIDDEN! copy constructor for CounterI_c
-    NEVER copy a CounterI_c around!!!!
-    ONLY copy pointers to the wanted instance!!!
-    ==> the copy constructor is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    <!--@param acrc_src source-->
-  */
-  CounterI_c(const CounterI_c& /*acrc_src*/);
-
-  /**
-    HIDDEN! assignment for CounterI_c
-    NEVER assign a CounterI_c to another instance!!!!
-    ==> the asignment is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    <!-- @param acrc_src source -->
-  */
-  CounterI_c& operator=(const CounterI_c& /*acrc_src*/){ return *this;}
+  // unimplemented, not copyable
+  CounterI_c(const CounterI_c&);
+  CounterI_c& operator=(const CounterI_c&);
 };
 
 } // __IsoAgLib

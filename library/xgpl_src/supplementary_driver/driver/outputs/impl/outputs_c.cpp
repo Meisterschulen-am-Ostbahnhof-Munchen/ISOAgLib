@@ -14,7 +14,6 @@
 #include "outputs_c.h"
 
 #include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <supplementary_driver/hal/hal_outputs.h>
 

@@ -14,17 +14,14 @@
 #define TCCLIENT_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <functional>
-
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/util/impl/container.h>
-#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
+#include "procdata/procdata_c.h"
 #include "processpkg_c.h"
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatahandler_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
+#include "../iprocdatahandler_c.h"
+#include "devpropertyhandler_c.h"
 
 #include <list>
 

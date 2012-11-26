@@ -15,7 +15,7 @@
 #ifndef STREAM_C_H
 #define STREAM_C_H
 
-// IsoAgLib
+#include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
@@ -187,15 +187,15 @@ public:
   virtual ~Stream_c();
 
 
-    /// Former iStream_c functions!
-    virtual uint32_t getNotParsedSize()=0;
+  /// Former iStream_c functions!
+  virtual uint32_t getNotParsedSize()=0;
 
-    virtual uint8_t getNextNotParsed()=0;
+  virtual uint8_t getNextNotParsed()=0;
 
-    virtual uint8_t getNotParsed(uint32_t ui32_notParsedRelativeOffset)=0;
+  virtual uint8_t getNotParsed(uint32_t ui32_notParsedRelativeOffset)=0;
 
-    void setStreamInvalid()       { mb_streamInvalid = true; };
-    bool getStreamInvalid() const { return mb_streamInvalid; };
+  void setStreamInvalid()       { mb_streamInvalid = true; };
+  bool getStreamInvalid() const { return mb_streamInvalid; };
 
 
   bool timedOut();

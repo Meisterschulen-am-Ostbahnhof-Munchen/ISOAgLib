@@ -11,10 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "digitali_c.h"
-#include "inputs_c.h"
-
-#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/iliberr_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 
 namespace IsoAgLib {
@@ -102,7 +99,6 @@ DigitalI_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::onoff_t ren_onoff, bool
 
   b_static = ab_static;
 
-  getInputsInstance().registerClient( this );
   // register optional pointer to handler
   if ( ab_channel < 16 ) ppc_handler[ab_channel] = apc_handler;
 }
@@ -137,12 +133,6 @@ DigitalI_c::setOnLow( void )
     const int16_t i16_initResult = HAL::init_digin(channelNr(), DIGIN, IsoAgLib::iInput_c::OnLow, NULL);
     isoaglib_assert( ! i16_initResult ); (void)i16_initResult;
   }
-}
-
-
-DigitalI_c::~DigitalI_c()
-{
-  getInputsInstance().unregisterClient( this );
 }
 
 

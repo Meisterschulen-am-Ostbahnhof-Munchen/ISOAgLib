@@ -15,6 +15,8 @@
 #define __IMASK_FILTER_C
 
 #include <IsoAgLib/driver/can/iident_c.h>
+#include <IsoAgLib/util/iassert.h>
+
 
 namespace IsoAgLib {
 

@@ -24,24 +24,10 @@
  */
 /*@{*/
 #define ANALOG_INPUT_MIN AIN1
-// only uncomment following line if  ANALOG_INPUT_MIN > 0
-#if (ANALOG_INPUT_MIN > 0)
-#  define ANALOG_INPUT_MIN_GREATER_ZERO
-#endif
 #define ANALOG_INPUT_MAX AIN8
-
 #define DIGITAL_INPUT_MIN DIN1
-// only uncomment following line if  DIGITAL_INPUT_MIN > 0
-#if (DIGITAL_INPUT_MIN > 0)
-#  define DIGITAL_INPUT_MIN_GREATER_ZERO
-#endif
 #define DIGITAL_INPUT_MAX DIN10
-
 #define COUNTER_INPUT_MIN DIN1
-// only uncomment following line if  COUNTER_INPUT_MIN > 0
-#if (COUNTER_INPUT_MIN > 0)
-#  define COUNTER_INPUT_MIN_GREATER_ZERO
-#endif
 #define COUNTER_INPUT_MAX DIN10
 
 /// set maximal voltage input for analog input set to voltage in [mV]

@@ -13,10 +13,7 @@
 */
 
 #include "analogi_c.h"
-#include "inputs_c.h"
-#include <IsoAgLib/util/impl/util_funcs.h>
-#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/iliberr_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 
 namespace __IsoAgLib {
@@ -45,20 +42,12 @@ AnalogI_c::init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogT
     case HAL_NO_ERR:
       // everything o.k. -> set fast analogin if wanted
       if (ab_fastAdc) HAL::setFastAnalogin(true);
-      // now register the valid new analog input into Inputs_c
-      getInputsInstance().registerClient( this );
       break;
     case HAL_RANGE_ERR:
     case HAL_CONFIG_ERR:
       isoaglib_assert( !"init error" );
       break;
   }
-}
-
-
-AnalogI_c::~AnalogI_c()
-{
-  getInputsInstance().unregisterClient( this );
 }
 
 

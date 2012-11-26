@@ -28,17 +28,10 @@
  */
 /*@{*/
 #define ANALOG_INPUT_MIN 0
-// only uncomment following line if  ANALOG_INPUT_MIN > 0
-//#define ANALOG_INPUT_MIN_GREATER_ZERO
 #define ANALOG_INPUT_MAX 7
 #define DIGITAL_INPUT_MIN 0
-// only uncomment following line if  DIGITAL_INPUT_MIN > 0
-//#define DIGITAL_INPUT_MIN_GREATER_ZERO
 #define DIGITAL_INPUT_MAX 15
-
 #define COUNTER_INPUT_MIN 0
-// only uncomment following line if  COUNTER_INPUT_MIN > 0
-//#define COUNTER_INPUT_MIN_GREATER_ZERO
 #define COUNTER_INPUT_MAX 15
 
 /// set maximal voltage input for analog input set to voltage in [mV]

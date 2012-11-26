@@ -21,7 +21,6 @@
  * ********************************************************** */
 
 #include "system_target_extensions.h"
-#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/iassert.h>
 #include <cstdio>
 #include <stdlib.h>

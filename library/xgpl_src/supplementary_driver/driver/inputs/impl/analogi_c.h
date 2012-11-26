@@ -22,9 +22,6 @@ namespace __IsoAgLib {
   has options like automatic calculation of linear
   y = (mMult/mDiv*x+t) for easy evaluating the sensor values;
   can use fast or slow ADC method by config setting
-  @see SensorI_c
-  @see DigitalI_c
-  @see SensorBase_c
   @short AnalogI_c serves an easy interface to sensor signals with linear transformation.
   @author Dipl.-Inform. Achim Spangler
   */
@@ -41,6 +38,8 @@ public:
   AnalogI_c(uint8_t ab_channel = 0xFF, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false,
              bool ab_fastAdc = false);
 
+  ~AnalogI_c() {}
+
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
     @param ab_channel default-argument for the hardware channel of the input
@@ -50,9 +49,6 @@ public:
   */
   void init(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false,
              bool ab_fastAdc = false);
-
-  /** destructor which can close the hardware input channel */
-  virtual ~AnalogI_c();
 
   /**
     get the actual sensor value with the configured linear conversion (use the configured ADC method)
@@ -72,26 +68,9 @@ public:
   */
   void setFastAdc(bool ab_useFast=true);
 
-  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() ); }
-
 protected:
-  /**
-    HIDDEN! copy constructor for AnalogI_c
-    NEVER copy a AnalogI_c around!!!!
-    ONLY copy pointers to the wanted instance!!!
-    ==> the copy constructor is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    @param acrc_src source
-  */
+  // unimplemented, not copyabled
   AnalogI_c(const AnalogI_c&);
-
-  /**
-    HIDDEN! assignment for AnalogI_c
-    NEVER assign a AnalogI_c to another instance!!!!
-    ==> the asignment is defined as private, so that compiler
-        detects this fault, and shows you this WARNING!!
-    <!--@param acrc_src source-->
-  */
   AnalogI_c& operator=(const AnalogI_c&);
 
 private: // Private attributes

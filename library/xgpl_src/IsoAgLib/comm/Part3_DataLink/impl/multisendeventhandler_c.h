@@ -14,7 +14,7 @@
 #define MULTI_SEND_EVENT_HANDLER_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/config.h>
+
 
 namespace __IsoAgLib {
 

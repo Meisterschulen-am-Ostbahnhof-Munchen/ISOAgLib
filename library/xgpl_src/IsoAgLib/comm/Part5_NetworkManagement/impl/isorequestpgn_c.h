@@ -13,26 +13,18 @@
 #ifndef ISO_REQUESTPGN_C_H
 #define ISO_REQUESTPGN_C_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/config.h>
-
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-//#include "isoitem_c.h"
 
-#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
-#include <vector>
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 // forward declaration
 class IsoRequestPgnHandler_c;
+
 
 /** this object manages a list of all ISO members to react on Request for PGN
     @short Manager for handling of Requests for PGN

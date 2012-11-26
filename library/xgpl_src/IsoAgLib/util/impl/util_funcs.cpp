@@ -12,7 +12,6 @@
 */
 
 #include "util_funcs.h"
-#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/iassert.h>
 #include <cstdio>
 #include <string.h>

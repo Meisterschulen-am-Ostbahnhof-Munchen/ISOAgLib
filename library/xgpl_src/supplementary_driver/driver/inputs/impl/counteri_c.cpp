@@ -10,11 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "counteri_c.h"
-#include "inputs_c.h"
-
-#include <IsoAgLib/util/iliberr_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 
 namespace __IsoAgLib {
@@ -34,14 +31,6 @@ CounterI_c::init(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh,
   // now init the digital input
   const bool r = ( HAL::init_counter(channelNr(), aui16_timebase, ab_activHigh, ab_risingEdge) != HAL_RANGE_ERR);
   isoaglib_assert( r ); (void)r;
-
-  getInputsInstance().registerClient( this );
-}
-
-
-CounterI_c::~CounterI_c()
-{
-  getInputsInstance().unregisterClient( this );
 }
 
 

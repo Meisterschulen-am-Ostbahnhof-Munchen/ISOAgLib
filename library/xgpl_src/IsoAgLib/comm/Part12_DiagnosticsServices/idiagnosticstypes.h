@@ -14,6 +14,7 @@
 #define IDIAGNOSTICS_TYPES_H
 
 #include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
 namespace IsoAgLib {
 
@@ -86,7 +87,7 @@ struct Certification_s
 
 typedef BitFieldWrapperLeft_c<Certification_s> CertificationBitMask_t;
 
-} // end namespace IsoAgLib
+} // IsoAgLib
 
 
 #endif

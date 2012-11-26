@@ -17,7 +17,6 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/managemeasureprog_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/setpoint_c.h>
-#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include "../processpkg_c.h"
 

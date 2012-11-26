@@ -13,12 +13,7 @@
 #ifndef MULTI_SEND_PKG_H
 #define MULTI_SEND_PKG_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 
 #ifdef USE_ISO_11783

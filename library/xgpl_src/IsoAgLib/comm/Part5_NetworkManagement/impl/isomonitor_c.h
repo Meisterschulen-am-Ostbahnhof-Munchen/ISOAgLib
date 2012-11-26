@@ -14,8 +14,6 @@
 #define ISO_MONITOR_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/config.h>
-
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>

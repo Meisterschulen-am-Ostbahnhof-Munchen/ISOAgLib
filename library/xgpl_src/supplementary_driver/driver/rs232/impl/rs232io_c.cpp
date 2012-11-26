@@ -15,9 +15,6 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <stdio.h>
 #include <ctype.h>
-
-// ISOAgLib
-#include <IsoAgLib/util/config.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
