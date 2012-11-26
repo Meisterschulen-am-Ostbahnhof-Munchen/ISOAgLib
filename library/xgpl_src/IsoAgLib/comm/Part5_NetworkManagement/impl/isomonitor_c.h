@@ -301,7 +301,7 @@ private:
   Handler_t mt_handler;
   Customer_t mt_customer;
 
-  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(IdentItem_c);
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(IdentItem_c)
   friend IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance );
   friend class IsoAgLib::iIsoMonitor_c;
 };

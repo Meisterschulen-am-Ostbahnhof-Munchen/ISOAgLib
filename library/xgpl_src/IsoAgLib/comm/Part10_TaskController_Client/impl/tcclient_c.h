@@ -139,7 +139,7 @@ private:
 
   Handler_t mt_handler;
   Customer_t mt_customer;
-  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcData_c);
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcData_c)
   iterC1_t mpc_iter;
 
   friend TcClient_c &getTcClientInstance( uint8_t aui8_instance );

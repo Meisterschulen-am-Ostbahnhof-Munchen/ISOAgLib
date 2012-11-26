@@ -108,7 +108,7 @@ private:
   uint16_t m_nonFatal[ TypeNonFatalSize ];
   uint16_t m_fatal[ TypeNonFatalSize ];
 
-  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(iErrorObserver_c);
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(iErrorObserver_c)
   friend iLibErr_c &getILibErrInstance();
 };
 
