@@ -558,7 +558,9 @@ IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender )
        iter != m_arrClientC1.end();
        ++iter )
   {
-    (*iter)->getIsoItem()->sendSaClaim();
+    IsoItem_c *localItem = (*iter)->getIsoItem();
+    if( localItem )
+      localItem->sendSaClaim();
   }
   return true;
 }
