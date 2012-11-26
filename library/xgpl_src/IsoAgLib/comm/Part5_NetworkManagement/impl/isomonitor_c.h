@@ -99,7 +99,7 @@ public:
 
   IsoItem_c* item( uint8_t sa ) const;
   IsoItem_c* item( const IsoName_c& name, bool forceClaimedAddress = false ) const;
-  void deleteItem( const IsoItem_c& item );
+  void deleteItem( const IsoItem_c& );
 
   IsoItem_c* isoMemberNrFast( uint8_t aui8_nr ) { return m_isoItems[ aui8_nr ]; }
 
