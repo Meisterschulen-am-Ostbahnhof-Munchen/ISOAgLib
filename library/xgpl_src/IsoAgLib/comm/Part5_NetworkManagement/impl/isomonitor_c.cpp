@@ -10,7 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "isomonitor_c.h"
 #include "isorequestpgn_c.h"
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
@@ -871,35 +870,35 @@ void
 IsoMonitor_c::debugPrintNameTable()
 {
   INTERNAL_DEBUG_DEVICE << "IsoMonitor-NAME/SA-Table - Time:" << HAL::getTime() << INTERNAL_DEBUG_DEVICE_ENDL;
-  for (mpc_isoMemberCache = mvec_isoMember.begin();
-       mpc_isoMemberCache != mvec_isoMember.end();
-       mpc_isoMemberCache++)
+  for (Vec_ISOIterator iter = mvec_isoMember.begin();
+       iter != mvec_isoMember.end();
+       ++iter)
   {
     INTERNAL_DEBUG_DEVICE << "   NAME (LE as on CAN): " 
 #ifdef SYSTEM_PC
         << std::hex << std::setfill('0')
-        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[0]) << " "
-        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[1]) << " "
-        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[2]) << " "
-        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[3]) << " "
-        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[4]) << " "
-        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[5]) << " "
-        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[6]) << " "
-        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[7]) << " "
+        << std::setw(2) << int(iter->isoName().outputString()[0]) << " "
+        << std::setw(2) << int(iter->isoName().outputString()[1]) << " "
+        << std::setw(2) << int(iter->isoName().outputString()[2]) << " "
+        << std::setw(2) << int(iter->isoName().outputString()[3]) << " "
+        << std::setw(2) << int(iter->isoName().outputString()[4]) << " "
+        << std::setw(2) << int(iter->isoName().outputString()[5]) << " "
+        << std::setw(2) << int(iter->isoName().outputString()[6]) << " "
+        << std::setw(2) << int(iter->isoName().outputString()[7]) << " "
         << " --> SA: "
-        << std::setw(2) << int (mpc_isoMemberCache->nr())
+        << std::setw(2) << int (iter->nr())
         << std::dec << std::endl;
 #else
-        << int(mpc_isoMemberCache->isoName().outputString()[0]) << " "
-        << int(mpc_isoMemberCache->isoName().outputString()[1]) << " "
-        << int(mpc_isoMemberCache->isoName().outputString()[2]) << " "
-        << int(mpc_isoMemberCache->isoName().outputString()[3]) << " "
-        << int(mpc_isoMemberCache->isoName().outputString()[4]) << " "
-        << int(mpc_isoMemberCache->isoName().outputString()[5]) << " "
-        << int(mpc_isoMemberCache->isoName().outputString()[6]) << " "
-        << int(mpc_isoMemberCache->isoName().outputString()[7]) << " "
+        << int(iter->isoName().outputString()[0]) << " "
+        << int(iter->isoName().outputString()[1]) << " "
+        << int(iter->isoName().outputString()[2]) << " "
+        << int(iter->isoName().outputString()[3]) << " "
+        << int(iter->isoName().outputString()[4]) << " "
+        << int(iter->isoName().outputString()[5]) << " "
+        << int(iter->isoName().outputString()[6]) << " "
+        << int(iter->isoName().outputString()[7]) << " "
         << " --> SA: "
-        << int (mpc_isoMemberCache->nr())
+        << int (iter->nr())
         << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
