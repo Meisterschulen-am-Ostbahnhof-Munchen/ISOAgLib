@@ -5923,6 +5923,8 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
     unsigned int j=0; // counters set/used below for different reasons
     unsigned int lastWrapCharI[NUM_WRAP_CHARS]; // initialization follows right below
     unsigned int wrapCharI[NUM_WRAP_CHARS]; // initialization follows right below
+    bool inStringContext = false; // add additional quote at line end and at line start if in string context
+    
     for ( i = 0; i < NUM_WRAP_CHARS; ++i )
     {
       lastWrapCharI[i] = maxLineLen;
@@ -5935,6 +5937,9 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
       {
         char charVal = strBuf[strBufI];
 
+        if('"' == charVal)
+          inStringContext = !inStringContext;
+        
         /* look for places to break the line */
         i = 0;
         for ( ; i < NUM_WRAP_CHARS; ++i )
@@ -6030,7 +6035,12 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
       writeToI = 0;
 
       if ( addLineFeed )
-        fwrite( "\n", 1, 1, destFile );
+      {
+        if(inStringContext)
+          fwrite( "\"\n\"", 1, 3, destFile );
+        else
+          fwrite( "\n", 1, 1, destFile );            
+      }
     }
 
     delete [] strBuf;
