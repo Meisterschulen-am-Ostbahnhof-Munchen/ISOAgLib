@@ -807,7 +807,7 @@ bool
 DevPropertyHandler_c::registerDevicePool(const IdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamlength, bool ab_setToDefault)
 {
   isoaglib_assert( apc_wsMasterIdentItem );
-  isoaglib_assert( !apc_wsMasterIdentItem->isMaster() );
+  isoaglib_assert( apc_wsMasterIdentItem->isMaster() );
 
   //no double registration for one device description
   if (men_poolState != OPNotRegistered) return false;
