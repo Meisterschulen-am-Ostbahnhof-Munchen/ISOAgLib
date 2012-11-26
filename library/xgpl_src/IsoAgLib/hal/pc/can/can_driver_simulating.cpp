@@ -10,7 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
@@ -25,6 +24,7 @@
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/hal/hal_can.h>
 
 
 namespace __HAL {

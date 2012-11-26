@@ -11,8 +11,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
-
 #include "../typedef.h"
 #include "../config.h"
 #include "../errcodes.h"
@@ -23,6 +21,7 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
 #include <IsoAgLib/hal/generic_utils/can/canutils.h>
+#include <IsoAgLib/hal/hal_can.h>
 
 namespace __HAL {
 

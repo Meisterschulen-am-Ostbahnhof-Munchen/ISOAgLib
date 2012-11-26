@@ -23,6 +23,8 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
 #include <IsoAgLib/hal/generic_utils/can/canutils.h>
+#include <IsoAgLib/hal/hal_can.h>
+
 
 namespace __HAL {
 

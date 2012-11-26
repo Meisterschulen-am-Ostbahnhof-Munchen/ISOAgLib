@@ -22,6 +22,7 @@
 #include <linux/can/raw.h>
 #include <linux/version.h>
 #include "IsoAgLib/hal/generic_utils/can/canfifo_c.h"
+#include <IsoAgLib/hal/hal_can.h>
 
 #include <map>
 

@@ -20,21 +20,10 @@
 
 namespace __IsoAgLib {
 
-/** C-style function, to get access to the unique Outputs_c singleton instance */
-Outputs_c &getOutputsInstance()
+Outputs_c &
+getOutputsInstance()
 {
   MACRO_SINGLETON_GET_INSTANCE_BODY(Outputs_c);
-}
-
-
-Outputs_c::~Outputs_c(){
-}
-
-
-void
-Outputs_c::init (uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
-{ // store the channel limits for dig and analog
-  setDigitalLimits(ab_digitalFirst, ab_digitalLast);
 }
 
 
@@ -42,21 +31,6 @@ void
 Outputs_c::setMainRelais( bool ab_active )
 {
   HAL::setMainRelais( ab_active );
-}
-
-
-void
-Outputs_c::setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast){
-  // check if output values are correct
-  isoaglib_assert( ab_digitalFirst <= DIGITAL_OUTPUT_MAX ); 
-#ifdef DIGITAL_OUTPUT_MIN_GREATER_ZERO
-  isoaglib_assert( ab_digitalFirst >= DIGITAL_OUTPUT_MIN );
-  isoaglib_assert( ab_digitalLast >= DIGITAL_OUTPUT_MIN );
-#endif
-  isoaglib_assert( ab_digitalLast <= DIGITAL_OUTPUT_MAX );
-
-  setMinDigitalLimit(ab_digitalFirst);
-  setMaxDigitalLimit(ab_digitalLast);
 }
 
 
