@@ -223,11 +223,7 @@ public:
     */
   BitFieldWrapperLeft_c& setBit( typename T::enum_type a_bitsFromTheLeft )
   {
-    if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
-    {
-      m_bitField[a_bitsFromTheLeft>>3] |= (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07)));
-    }
-    // else: Out of Range - nothing done.
+    m_bitField[a_bitsFromTheLeft>>3] |= (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07)));
     return *this;
   }
   /** Checks wheether the given bit is set to 1. Bits are counted from the left
@@ -237,12 +233,7 @@ public:
   */
   bool isBitSet( typename T::enum_type a_bitsFromTheLeft )
   {
-    if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
-    {
-      return ((m_bitField[a_bitsFromTheLeft>>3] & (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07))))>0);
-    }
-    // else: Out of Range handling: return false.
-    return false;
+    return ((m_bitField[a_bitsFromTheLeft>>3] & (uint8_t(1)<<(7-(a_bitsFromTheLeft&0x07))))>0);
   }
 };
 
@@ -259,11 +250,7 @@ public:
     */
   BitFieldWrapperRight_c& setBit( typename T::enum_type a_bitsFromTheRight )
   {
-    if ( static_cast<unsigned int>(a_bitsFromTheRight) < static_cast<unsigned int>(sizeInBits) )
-    {
-      m_bitField[m_bitField.size() - (a_bitsFromTheRight>>3) - 1] |= (uint8_t(1)<<(a_bitsFromTheRight&0x07));
-    }
-    // else: Out of Range - nothing done.
+    m_bitField[m_bitField.size() - (a_bitsFromTheRight>>3) - 1] |= (uint8_t(1)<<(a_bitsFromTheRight&0x07));
     return *this;
   }
   /** Checks wheether the given bit is set to 1. Bits are counted from the right
@@ -273,12 +260,7 @@ public:
   */
   bool isBitSet( typename T::enum_type a_bitsFromTheRight )
   {
-    if ( static_cast<unsigned int>(a_bitsFromTheRight) < static_cast<unsigned int>(sizeInBits) )
-    {
-      return ((m_bitField[m_bitField.size() - (a_bitsFromTheRight>>3) - 1] & (uint8_t(1)<<(a_bitsFromTheRight&0x07)))>0);
-    }
-    // else: Out of Range handling: return false.
-    return false;
+    return ((m_bitField[m_bitField.size() - (a_bitsFromTheRight>>3) - 1] & (uint8_t(1)<<(a_bitsFromTheRight&0x07)))>0);
   }
 };
 
