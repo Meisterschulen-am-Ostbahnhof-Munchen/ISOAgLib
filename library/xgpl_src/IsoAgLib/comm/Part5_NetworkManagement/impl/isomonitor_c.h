@@ -103,7 +103,7 @@ public:
 
   IsoItem_c* isoMemberNrFast( uint8_t aui8_nr ) { return m_isoItems[ aui8_nr ]; }
 
-  bool isWsmMember( IsoItem_c &item ) { return (getMaster( item ) != NULL); }
+  bool isWsmMember( IsoItem_c &isoItem ) { return (getMaster( isoItem ) != NULL); }
   IsoItem_c* getMaster( IsoItem_c &member );
 
 public:
