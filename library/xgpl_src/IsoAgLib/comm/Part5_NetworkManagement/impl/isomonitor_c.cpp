@@ -357,16 +357,13 @@ IsoMonitor_c::insertIsoMember(
 IsoItem_c *
 IsoMonitor_c::anyActiveLocalItem() const
 {
-  const IsoName_c *pc_useISOName = NULL;
-  IsoItem_c* pc_monitorItem = NULL;
-
   for( const_iterC1_t iter = m_arrClientC1.begin();
        iter != m_arrClientC1.end();
        ++iter )
   {
     if ((*iter)->itemState(IState_c::ClaimedAddress))
     {
-      pc_monitorItem = (*iter)->getIsoItem();
+      IsoItem_c* pc_monitorItem = (*iter)->getIsoItem();
       if( pc_monitorItem )
         return pc_monitorItem;
     }
@@ -860,9 +857,9 @@ IsoMonitor_c::internalIsoItemErase( Vec_ISOIterator aiter_toErase )
 
 
 void
-IsoMonitor_c::updateSaItemTable( IsoItem_c& item, bool add ) {
-  if( item.nr() < 0xFE ) {
-    m_isoItems[ item.nr() ] = add ? &item : 0x0;
+IsoMonitor_c::updateSaItemTable( IsoItem_c& isoItem, bool add ) {
+  if( isoItem.nr() < 0xFE ) {
+    m_isoItems[ isoItem.nr() ] = add ? &isoItem : 0x0;
   }
 }
 
