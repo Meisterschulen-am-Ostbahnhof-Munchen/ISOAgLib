@@ -114,12 +114,9 @@ inline void bigEndianHexNumberText2CanStringUint16( const char* ac_src, uint8_t*
 inline void bigEndianHexNumberText2CanStringUint32( const char* ac_src, uint8_t* pui8_target )
 { __IsoAgLib::bigEndianHexNumberText2CanStringUint32( ac_src, pui8_target );}
 
-#if 0
-Currently disabled. See implementation for more information.
 /** convert big endian textual unsigned int 64Bit number representation into little endian uint8_t string of specified size */
 inline void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_target )
 { __IsoAgLib::bigEndianHexNumberText2CanStringUint64( ac_src, pui8_target );}
-#endif
 
 /** convert big endian textual unsigned int up to 16Bit number representation into little endian uint8_t string of specified size */
 inline void bigEndianDecNumberText2CanStringUint( const char* ac_src, uint8_t* pui8_target )

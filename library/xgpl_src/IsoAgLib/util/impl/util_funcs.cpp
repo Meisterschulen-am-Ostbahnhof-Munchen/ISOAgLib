@@ -397,10 +397,6 @@ void bigEndianHexNumberText2CanStringUint32( const char* ac_src, uint8_t* pui8_t
   #endif
 }
 
-#if 0
-This function is currently commented out because there was a SYSTEM_PC_VC define which
-was removed and hence the function needs to be checked before it is being reactivated again!
-
 /** convert big endian textual unsigned int 64Bit number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_target )
 {
@@ -409,7 +405,23 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
     CNAMESPACE::memset( pui8_target, 0, 8 );
     return;
   }
-#if HAL_SIZEOF_INT <= 2
+#if (HAL_SIZEOF_INT == 8)
+  unsigned int temp;
+  CNAMESPACE::sscanf( ac_src, "%16x", &temp );
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
+  CNAMESPACE::memcpy( pui8_target, &temp, 8 );
+  #else
+  for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
+  #endif
+#elif defined( SUPPORTS_64BIT )
+  uint64_t temp;
+  CNAMESPACE::sscanf( ac_src, "%16llx", &temp );
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
+  CNAMESPACE::memcpy( pui8_target, &temp, 8 );
+  #else
+  for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
+  #endif
+#else
   uint32_t temp[2] = {0UL, 0UL};
   const unsigned int len = strlen( ac_src );
   const int lowerPartValStart = len - 8;
@@ -445,25 +457,8 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
     pui8_target[(ind*4)+3] = ( ( temp[ind] >> 24 ) & 0xFF );
   }
   #endif
-#elif defined( SUPPORTS_64BIT )
-  uint64_t temp;
-  CNAMESPACE::sscanf( ac_src, "%16llx", &temp );
-  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
-  CNAMESPACE::memcpy( pui8_target, &temp, 8 );
-  #else
-  for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
-  #endif
-#else
-  unsigned int temp;
-  CNAMESPACE::sscanf( ac_src, "%16x", &temp );
-  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
-  CNAMESPACE::memcpy( pui8_target, &temp, 8 );
-  #else
-  for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
-  #endif
 #endif
 }
-#endif
 
 
 #if HAL_SIZEOF_INT <= 2
