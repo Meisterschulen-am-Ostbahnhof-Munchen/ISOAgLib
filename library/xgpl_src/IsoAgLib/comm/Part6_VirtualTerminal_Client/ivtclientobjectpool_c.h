@@ -339,6 +339,8 @@ public:
   uint16_t              getNumObjects()     const { return numObjects; }
   uint16_t              getNumObjectsLang() const { return numObjectsLang; }
   ObjectPoolVersion_en  getVersion()        const { return version; }
+  // method overrideVersion is only for special proprietary use.
+  void overrideVersion(ObjectPoolVersion_en override) { version = override; }
   uint16_t              getDimension()      const { return dimension; }
   uint16_t              getSkWidth()        const { return skWidth; }
   uint16_t              getSkHeight()       const { return skHeight; }
