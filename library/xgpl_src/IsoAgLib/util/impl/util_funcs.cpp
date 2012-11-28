@@ -405,24 +405,21 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
     CNAMESPACE::memset( pui8_target, 0, 8 );
     return;
   }
-#if (HAL_SIZEOF_INT == 8)
-  unsigned int temp;
-  CNAMESPACE::sscanf( ac_src, "%16x", &temp );
-  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
-  CNAMESPACE::memcpy( pui8_target, &temp, 8 );
-  #else
-  for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
-  #endif
-#elif defined( SUPPORTS_64BIT )
+
+#ifdef HAS_64BIT_INT_TYPE
   uint64_t temp;
+  #if (HAL_SIZEOF_INT == 8)
+  CNAMESPACE::sscanf( ac_src, "%16x", &temp );
+  #else
   CNAMESPACE::sscanf( ac_src, "%16llx", &temp );
+  #endif
   #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target, &temp, 8 );
   #else
   for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
   #endif
 #else
-  uint32_t temp[2] = {0UL, 0UL};
+  long unsigned int temp[2] = {0UL, 0UL};
   const unsigned int len = strlen( ac_src );
   const int lowerPartValStart = len - 8;
   if ( lowerPartValStart >= 0 )

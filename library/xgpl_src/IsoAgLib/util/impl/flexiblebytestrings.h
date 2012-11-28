@@ -288,7 +288,7 @@ namespace __IsoAgLib {
         int16_t int16[4];
         uint32_t uint32[2];
         int32_t int32[2];
-#if defined( SUPPORTS_64BIT )
+#ifdef HAS_64BIT_INT_TYPE
         uint64_t uint64[1];
         int64_t int64[1];
 #endif

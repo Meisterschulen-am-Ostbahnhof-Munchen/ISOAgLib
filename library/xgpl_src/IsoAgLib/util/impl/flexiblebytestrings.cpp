@@ -62,10 +62,10 @@ namespace __IsoAgLib {
       for ( uint8_t index = 0; index < 8; index++ )
         uint8[index] = ~uint8_t( 0U );
 #else
-#if !defined( SUPPORTS_64BIT )
-      uint32[0] = uint32[1] = ~0UL;
-#else
+#ifdef HAS_64BIT_INT_TYPE
       uint64[0] = ~0ULL;
+#else
+      uint32[0] = uint32[1] = ~0UL;
 #endif
 #endif
     }
@@ -111,7 +111,7 @@ namespace __IsoAgLib {
 #if defined ( NO_8BIT_CHAR_TYPE )
     for ( uint8_t index = 0; index < 8; index++ )
       uint8[index] = acrc_src.uint8[index];
-#elif defined ( SUPPORTS_64BIT )
+#elif defined ( HAS_64BIT_INT_TYPE )
     uint64[0] = acrc_src.uint64[0];
 #else
     uint32[1] = acrc_src.uint32[1];
@@ -129,7 +129,7 @@ namespace __IsoAgLib {
         return false;
 
     return true;
-#elif defined ( SUPPORTS_64BIT )
+#elif defined ( HAS_64BIT_INT_TYPE )
     return ( uint64[0] == acrc_cmp.uint64[0] );
 #else
     return ( ( uint32[1] == acrc_cmp.uint32[1] )
@@ -145,7 +145,7 @@ namespace __IsoAgLib {
       if ( uint8[index] != acrc_cmp.uint8[index] )
         return true;
     return false;
-#elif defined ( SUPPORTS_64BIT )
+#elif defined ( HAS_64BIT_INT_TYPE )
     return ( uint64[0] != acrc_cmp.uint64[0] );
 #else
     return ( ( uint32[1] != acrc_cmp.uint32[1] ) || ( uint32[0] != acrc_cmp.uint32[0] ) );
@@ -195,7 +195,7 @@ namespace __IsoAgLib {
         return ( uint8[ind] < acrc_cmp.uint8[ind] );
     }
     return false;
-#elif defined ( SUPPORTS_64BIT )
+#elif defined ( HAS_64BIT_INT_TYPE )
     return uint64[0] < acrc_cmp.uint64[0];
 #else
     if ( uint32[1] != acrc_cmp.uint32[1] )
@@ -214,7 +214,7 @@ namespace __IsoAgLib {
         return ( uint8[ind] > acrc_cmp.uint8[ind] );
     }
     return false;
-#elif defined ( SUPPORTS_64BIT )
+#elif defined ( HAS_64BIT_INT_TYPE )
     return ( uint64[0] > acrc_cmp.uint64[0] );
 #else
     if ( uint32[1] != acrc_cmp.uint32[1] )
@@ -232,7 +232,7 @@ namespace __IsoAgLib {
       if      ( uint8[ind] < acrc_cmp.uint8[ind] ) return -1;
       else if ( uint8[ind] > acrc_cmp.uint8[ind] ) return +1;
     }
-#elif defined ( SUPPORTS_64BIT )
+#elif defined ( HAS_64BIT_INT_TYPE )
     if      ( uint64[0] < acrc_cmp.uint64[0] ) return -1;
     else if ( uint64[0] > acrc_cmp.uint64[0] ) return +1;
 #else

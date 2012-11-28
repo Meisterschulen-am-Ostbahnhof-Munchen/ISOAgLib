@@ -20,6 +20,8 @@
 #define ON                1
 #define OFF               0
 
+#define HAS_64BIT_INT_TYPE
+
 #if !defined(_MSC_VER) && !defined(WINCE)
   #include <stdint.h>
 #else
