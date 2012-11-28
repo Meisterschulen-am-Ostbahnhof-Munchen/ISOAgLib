@@ -68,8 +68,8 @@ public:
   }
 
 #ifdef USE_WORKING_SET
-  iIsoItem_c* getMaster( iIsoItem_c& item )
-  { return static_cast<iIsoItem_c *>( IsoMonitor_c::getMaster( item ) ); }
+  iIsoItem_c* getMaster( iIsoItem_c& isoitem )
+  { return static_cast<iIsoItem_c *>( IsoMonitor_c::getMaster( isoitem ) ); }
 #endif
 
 private:
