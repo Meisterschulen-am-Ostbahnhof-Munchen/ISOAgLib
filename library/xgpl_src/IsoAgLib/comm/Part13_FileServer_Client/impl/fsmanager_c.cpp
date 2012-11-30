@@ -256,12 +256,12 @@ void FsManager_c::FsServerManager_c::processFsToGlobal( const CanPkgExt_c& pkg )
 
 
 void FsManager_c::FsCommandManager_c::init() {
-  getIsoBusInstance( m_fsManager.getMultitonInst() ).insertFilter( *this, IsoAgLib::iMaskFilterType_c( 0x3FF0000, FS_TO_CLIENT_PGN, Ident_c::ExtendedIdent ), 8 ); 
+  getIsoBusInstance( m_fsManager.getMultitonInst() ).insertFilter( *this, IsoAgLib::iMaskFilterType_c( 0x3FF0000, FS_TO_CLIENT_PGN<<8, Ident_c::ExtendedIdent ), 8 ); 
 }
 
 
 void FsManager_c::FsCommandManager_c::close() {
-  getIsoBusInstance( m_fsManager.getMultitonInst() ).deleteFilter( *this, IsoAgLib::iMaskFilterType_c( 0x3FF0000, FS_TO_CLIENT_PGN, Ident_c::ExtendedIdent ) );
+  getIsoBusInstance( m_fsManager.getMultitonInst() ).deleteFilter( *this, IsoAgLib::iMaskFilterType_c( 0x3FF0000, FS_TO_CLIENT_PGN<<8, Ident_c::ExtendedIdent ) );
 }
 
 
