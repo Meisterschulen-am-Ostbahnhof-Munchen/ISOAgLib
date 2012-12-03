@@ -251,7 +251,7 @@ private:
   STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
   Customer_t mt_customer;
 
-  friend MultiSend_c &getMultiSendInstance( uint8_t aui8_instance );
+  friend MultiSend_c &getMultiSendInstance( unsigned int instance );
   friend class SendStream_c;
 };
 
@@ -281,7 +281,7 @@ MultiSend_c::sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c
 
 
 MultiSend_c &
-getMultiSendInstance( uint8_t instance = 0 );
+getMultiSendInstance( unsigned int instance = 0 );
 
 
 } // __IsoAgLib

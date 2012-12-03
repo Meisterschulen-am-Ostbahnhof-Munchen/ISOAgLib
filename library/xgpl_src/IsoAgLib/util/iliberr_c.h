@@ -91,11 +91,11 @@ public:
   }
 
   void clear( TypeNonFatal_en type, int instance ) { 
-    m_nonFatal[ type ] &= ~( 1 << instance );
+    m_nonFatal[ type ] &= uint16_t(~( 1 << instance ));
   }
 
   void clear( TypeFatal_en type, int instance ) { 
-    m_fatal[ type ] &= ~( 1 << instance );
+    m_fatal[ type ] &= uint16_t(~( 1 << instance ));
   }
 
 

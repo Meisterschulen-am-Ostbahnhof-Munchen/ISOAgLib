@@ -142,7 +142,7 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
             if ( getMultiSendInstance4Comm().sendIsoBroadcast(
                   mrc_identItem.isoName(),
                   (uint8_t *) mcstr_SwIdentification,
-                  getCStringLength (mcstr_SwIdentification),
+                  uint16_t(getCStringLength (mcstr_SwIdentification)),
                   SOFTWARE_IDENTIFICATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
@@ -181,7 +181,7 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
             if ( getMultiSendInstance4Comm().sendIsoBroadcast(
                   mrc_identItem.isoName(),
                   (uint8_t *) mcstr_EcuIdentification,
-                  getCStringLength (mcstr_EcuIdentification),
+                  uint16_t(getCStringLength (mcstr_EcuIdentification)),
                   ECU_IDENTIFICATION_INFORMATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
@@ -356,14 +356,14 @@ DiagnosticPgnHandler_c::setCertificationData(
   if ( aui16_laboratoryId > 2047 ) // Lab ID is only 11 bits wide
     return false;
 
-  m_certification[0] = 0x00 | ( ( a_revision & 0x03 ) << 6 ) | ( ( ui16_year - 2000 ) & 0x3F );
-  m_certification[1] = 0x00 | ( ( aui16_laboratoryId & 0x07 ) << 5 ) | ( ( a_laboratoryType & 0x07 ) << 1 ) | ( ( a_revision & 0x04 ) >> 2 );
-  m_certification[2] = 0x00 | ( ( aui16_laboratoryId >> 3 ) & 0xFF );
+  m_certification[0] = uint8_t( ( ( a_revision & 0x03 ) << 6 ) | ( ( ui16_year - 2000 ) & 0x3F ) );
+  m_certification[1] = uint8_t( ( ( aui16_laboratoryId & 0x07 ) << 5 ) | ( ( a_laboratoryType & 0x07 ) << 1 ) | ( ( a_revision & 0x04 ) >> 2 ) );
+  m_certification[2] = uint8_t( ( aui16_laboratoryId >> 3 ) & 0xFF );
   m_certification[3] = acrc_certificationBitMask.getByte ( 0 );
   m_certification[4] = acrc_certificationBitMask.getByte ( 1 );
   m_certification[5] = acrc_certificationBitMask.getByte ( 2 );
-  m_certification[6] = ( aui16_referenceNumber & 0xFF );
-  m_certification[7] = ( aui16_referenceNumber >> 8 ) & 0xFF ;
+  m_certification[6] = ( aui16_referenceNumber & 0xFFu );
+  m_certification[7] = uint8_t(( aui16_referenceNumber >> 8 ) & 0xFF);
 
   mb_certificationIsSet = true;
   return true;
@@ -378,7 +378,7 @@ DiagnosticPgnHandler_c::sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,
   pkg.setMonitorItemForSA (mrc_identItem.getIsoItem());
   pkg.setLen (8);
   pkg.setIsoPgn(ai32_pgn);
-  for (unsigned ui = 0 ; ui < 8; ++ui)
+  for (uint8_t ui = 0 ; ui < 8; ++ui)
     pkg.setUint8Data (ui, rhpb_data[ui]);
 
   getIsoBusInstance4Comm() << pkg;

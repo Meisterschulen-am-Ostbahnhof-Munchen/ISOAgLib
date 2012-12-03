@@ -312,7 +312,7 @@ inline
 uint8_t
 IsoName_c::devClass() const
 {
-  return (mu_data[6] >> 1);
+  return uint8_t(mu_data[6] >> 1);
 }
 
 
@@ -328,7 +328,7 @@ inline
 uint8_t
 IsoName_c::funcInst() const
 {
-  return (mu_data[4] >> 3);
+  return uint8_t(mu_data[4] >> 3);
 }
 
 
@@ -344,7 +344,7 @@ inline
 uint16_t
 IsoName_c::manufCode() const
 {
-  return ((mu_data[3] << 3) | (mu_data[2] >> 5));
+  return uint16_t((mu_data[3] << 3) | (mu_data[2] >> 5));
 }
 
 
@@ -378,7 +378,7 @@ inline
 void
 IsoName_c::setSelfConf (bool ab_selfConf)
 {
-  mu_data.setUint8Data( 7, ((mu_data[7] & 0x7F) | (ab_selfConf << 7)) );
+  mu_data.setUint8Data( 7, uint8_t((mu_data[7] & 0x7F) | (ab_selfConf << 7)) );
 }
 
 
@@ -386,7 +386,7 @@ inline
 void
 IsoName_c::setIndGroup (uint8_t aui8_indGroup)
 {
-  mu_data.setUint8Data( 7, ((mu_data[7] & 0x8F) | ((aui8_indGroup & 0x7) << 4)) );
+  mu_data.setUint8Data( 7, uint8_t((mu_data[7] & 0x8F) | ((aui8_indGroup & 0x7) << 4)) );
 }
 
 
@@ -394,7 +394,7 @@ inline
 void
 IsoName_c::setDevClassInst (uint8_t aui8_devClassInst)
 {
-  mu_data.setUint8Data( 7, ((mu_data[7] & 0xF0) | (aui8_devClassInst)) );
+  mu_data.setUint8Data( 7, uint8_t((mu_data[7] & 0xF0) | (aui8_devClassInst)) );
 }
 
 
@@ -402,7 +402,7 @@ inline
 void
 IsoName_c::setDevClass (uint8_t aui8_devClass)
 {
-  mu_data.setUint8Data( 6, ((0 /* reserved bit set to zero!*/) | (aui8_devClass << 1)) );
+  mu_data.setUint8Data( 6, uint8_t((0 /* reserved bit set to zero!*/) | (aui8_devClass << 1)) );
 /* old version, which would be right if the reserved bit would have been set somewhere else.
   pb_data[6] = ((pb_data[6] & 0x1) | (aui8_devClass << 1));
 */
@@ -421,7 +421,7 @@ inline
 void
 IsoName_c::setFuncInst (uint8_t ab_funcInst)
 {
-  mu_data.setUint8Data( 4, ((mu_data[4] & 0x7) | (ab_funcInst << 3)) );
+  mu_data.setUint8Data( 4, uint8_t((mu_data[4] & 0x7) | (ab_funcInst << 3)) );
 }
 
 
@@ -429,7 +429,7 @@ inline
 void
 IsoName_c::setEcuInst (uint8_t ab_ecuInst)
 {
-  mu_data.setUint8Data( 4, ((mu_data[4] & 0xF8) | (ab_ecuInst & 0x7)) );
+  mu_data.setUint8Data( 4, uint8_t((mu_data[4] & 0xF8) | (ab_ecuInst & 0x7)) );
 }
 
 
@@ -437,8 +437,8 @@ inline
 void
 IsoName_c::setManufCode (uint16_t aui16_manufCode)
 {
-  mu_data.setUint8Data( 3, (aui16_manufCode >> 3) );
-  mu_data.setUint8Data( 2, ((mu_data[2] & 0x1F) | ((aui16_manufCode & 0x7) << 5)) );
+  mu_data.setUint8Data( 3, uint8_t(aui16_manufCode >> 3) );
+  mu_data.setUint8Data( 2, uint8_t((mu_data[2] & 0x1F) | ((aui16_manufCode & 0x7) << 5)) );
 }
 
 
@@ -447,7 +447,7 @@ void
 IsoName_c::setSerNo (uint32_t aui32_serNo)
 {
   mu_data.setUint16Data( 0, uint16_t(aui32_serNo & 0xFFFFU) );
-  mu_data.setUint8Data( 2, ( (mu_data[2] & 0xE0) | ((aui32_serNo >> 16) & 0x1F) ) );
+  mu_data.setUint8Data( 2, uint8_t( (mu_data[2] & 0xE0) | ((aui32_serNo >> 16) & 0x1F) ) );
 }
 
 

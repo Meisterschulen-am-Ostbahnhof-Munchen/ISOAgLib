@@ -34,7 +34,7 @@ namespace __IsoAgLib {
 
     public:
 
-      bool init( uint8_t bus, uint16_t bitrate );
+      bool init( uint8_t bus, unsigned int bitrate );
 
       /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
       void close( void );
@@ -54,8 +54,8 @@ namespace __IsoAgLib {
       /** wait until specified timeout or until next CAN message receive
        *  @return true -> there are CAN messages waiting for process. else: return due to timeout
        */
-      static bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval ) {
-        return HAL::canRxWait( aui16_timeoutInterval );
+      static bool waitUntilCanReceiveOrTimeout( int32_t ai32_timeoutInterval ) {
+        return HAL::canRxWait( ai32_timeoutInterval );
       }
 
       /** deliver the numbers which can be placed at the moment in the send buffer
@@ -135,7 +135,7 @@ namespace __IsoAgLib {
       int32_t mi32_lastProcessedCanPkgTime;
 
       /** configured bitrate */
-      uint16_t mui16_bitrate;
+      unsigned int mui_bitrate;
 
       /** global mask with standard 11bit type */
       Ident_c mc_maskStd;
@@ -149,14 +149,14 @@ namespace __IsoAgLib {
        */
       bool mb_runningCanProcess;
 
-      friend CanIo_c &getCanInstance( uint8_t aui8_instance );
+      friend CanIo_c &getCanInstance( unsigned int aui_instance );
   };
 
 
   /** C-style function, to get access to the unique CanIo_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  CanIo_c &getCanInstance( uint8_t aui8_instance = 0 );
+  CanIo_c &getCanInstance( unsigned int aui_instance = 0 );
 
 }
 

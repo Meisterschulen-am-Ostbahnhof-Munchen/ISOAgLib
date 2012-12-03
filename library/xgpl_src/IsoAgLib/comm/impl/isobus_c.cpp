@@ -219,9 +219,9 @@ IsoBus_c::operator<<(CanPkg_c& acrc_src)
 }
 
 
-IsoBus_c &getIsoBusInstance( uint8_t aui8_instance)
+IsoBus_c &getIsoBusInstance( unsigned int instance)
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(IsoBus_c, PRT_INSTANCE_CNT, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoBus_c, PRT_INSTANCE_CNT, instance);
 }
 
 

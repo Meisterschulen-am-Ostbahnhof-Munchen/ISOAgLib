@@ -40,8 +40,8 @@ class iProprietaryBus_c {
   */
   inline bool init(
     uint8_t aui8_busNumber,
-    uint16_t aui16_bitrate )
-  { return __IsoAgLib::getCanInstance4Prop().init (aui8_busNumber, aui16_bitrate ); }
+    unsigned int bitrate )
+  { return __IsoAgLib::getCanInstance4Prop().init (aui8_busNumber, bitrate ); }
 
   /** Close the opened Proprietary CAN-bus */
   inline void close() { return __IsoAgLib::getCanInstance4Prop().close(); }

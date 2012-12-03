@@ -25,8 +25,8 @@
 
 namespace __IsoAgLib {
 
-  CanIo_c &getCanInstance( uint8_t aui8_instance ) {
-    MACRO_MULTITON_GET_INSTANCE_BODY( CanIo_c, CAN_INSTANCE_CNT, aui8_instance );
+  CanIo_c &getCanInstance( unsigned int aui_instance ) {
+    MACRO_MULTITON_GET_INSTANCE_BODY( CanIo_c, CAN_INSTANCE_CNT, aui_instance );
   }
 
 
@@ -36,7 +36,7 @@ namespace __IsoAgLib {
       mc_tempFilterBox(),
       mi32_maxSendDelay( -1 ),
       mi32_lastProcessedCanPkgTime( 0 ),
-      mui16_bitrate( 0 ),
+      mui_bitrate( 0 ),
       mc_maskStd( 0, Ident_c::StandardIdent ),
       mc_maskExt( 0, Ident_c::ExtendedIdent ),
       mui8_busNumber( 0xFF )
@@ -44,13 +44,13 @@ namespace __IsoAgLib {
 
 
   bool
-  CanIo_c::init( uint8_t aui8_busNumber, uint16_t aui16_bitrate ) {
+  CanIo_c::init( uint8_t aui8_busNumber, unsigned int bitrate ) {
     isoaglib_assert( ! initialized() );
     mui8_busNumber = aui8_busNumber;
-    mui16_bitrate = aui16_bitrate;
+    mui_bitrate = bitrate;
     mi32_lastProcessedCanPkgTime = 0;
 
-    const bool r = HAL::canInit( mui8_busNumber, mui16_bitrate );
+    const bool r = HAL::canInit( mui8_busNumber, mui_bitrate );
     isoaglib_assert( r );
 
     if( r ) {

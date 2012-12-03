@@ -137,12 +137,12 @@ private: // Private attributes
   uint32_t mui32_requestedPGN;
 
   bool mb_alreadyClosed;
-  friend IsoRequestPgn_c &getIsoRequestPgnInstance(uint8_t aui8_instance);
+  friend IsoRequestPgn_c &getIsoRequestPgnInstance(unsigned int instance);
 };
 
 /** C-style function, to get access to the unique IsoRequestPgn_c singleton instance
     if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-IsoRequestPgn_c& getIsoRequestPgnInstance (uint8_t aui8_instance = 0);
+IsoRequestPgn_c& getIsoRequestPgnInstance (unsigned int instance = 0);
 
 /** Convenience functor to register PGN. */
 struct RegisterPgn_s : public STL_NAMESPACE::binary_function< uint32_t, uint32_t, void > {

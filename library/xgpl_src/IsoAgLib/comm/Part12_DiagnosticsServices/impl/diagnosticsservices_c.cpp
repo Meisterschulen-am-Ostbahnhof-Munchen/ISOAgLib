@@ -148,7 +148,7 @@ void DiagnosticsServices_c::timeEvent()
       if (getMultiSendInstance4Comm().sendIsoBroadcast(
             mrc_identItem.isoName(),
             (uint8_t *) marr_dm1SendingBroadcast,
-            ms_dm1SendingBroadcast.marr_bufferSize,
+            uint16_t(ms_dm1SendingBroadcast.marr_bufferSize),
             ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
             &mt_multiSendEventHandler ) )
       { // Message successfully transmitted to multisend
@@ -402,9 +402,9 @@ uint16_t DiagnosticsServices_c::assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_
     {
       arr_send8bytes[temp_size++] = static_cast<uint8_t>(c_dtc.ui32_spn);
       arr_send8bytes[temp_size++] = static_cast<uint8_t>(c_dtc.ui32_spn >> 8);
-      arr_send8bytes[temp_size++] = ((c_dtc.ui32_spn >> 11) & 0xE0) // 3 MSB in bits 8-6
-                                       | static_cast<uint8_t>(c_dtc.en_fmi);
-      arr_send8bytes[temp_size++] = (c_dtc.ui16_occurrenceCount < 0x7F)?c_dtc.ui16_occurrenceCount:0x7F;
+      arr_send8bytes[temp_size++] = static_cast<uint8_t>(((c_dtc.ui32_spn >> 11) & 0xE0) // 3 MSB in bits 8-6
+                                                         | (c_dtc.en_fmi));
+      arr_send8bytes[temp_size++] = static_cast<uint8_t>((c_dtc.ui16_occurrenceCount < 0x7F)?c_dtc.ui16_occurrenceCount:0x7F);
     }
   }
 

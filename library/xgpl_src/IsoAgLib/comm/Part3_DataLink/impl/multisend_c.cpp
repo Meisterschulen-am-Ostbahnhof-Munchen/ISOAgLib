@@ -37,9 +37,9 @@ namespace __IsoAgLib {
 /** C-style function, to get access to the unique MultiSend_c singleton instance
   * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
   */
-MultiSend_c &getMultiSendInstance( uint8_t aui8_instance )
+MultiSend_c &getMultiSendInstance( unsigned int instance )
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(MultiSend_c, PRT_INSTANCE_CNT, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(MultiSend_c, PRT_INSTANCE_CNT, instance);
 }
 
 /** This is mostly used for debugging now... */

@@ -76,7 +76,7 @@ class iIsoBus_c : private __IsoAgLib::IsoBus_c {
       otherwise __IsoAgLib::getIsoBusInstance() wouldn't be accepted by compiler
     */
   #if (PRT_INSTANCE_CNT > 1)
-  friend iIsoBus_c& getIIsoBusInstance( uint8_t aui8_instance );
+  friend iIsoBus_c& getIIsoBusInstance( unsigned int instance );
   #else
   friend iIsoBus_c& getIIsoBusInstance( void );
   #endif
@@ -85,8 +85,8 @@ class iIsoBus_c : private __IsoAgLib::IsoBus_c {
 
 /** C-style function, to get access to the unique singleton instance(s) */
 #if (PRT_INSTANCE_CNT > 1)
-  inline iIsoBus_c& getIIsoBusInstance( uint8_t aui8_instance = 0 )
-  { return static_cast<iIsoBus_c&>(__IsoAgLib::getIsoBusInstance(aui8_instance)); }
+  inline iIsoBus_c& getIIsoBusInstance( unsigned int instance = 0 )
+  { return static_cast<iIsoBus_c&>(__IsoAgLib::getIsoBusInstance(instance)); }
 #else
   inline iIsoBus_c& getIIsoBusInstance( void )
   { return static_cast<iIsoBus_c&>(__IsoAgLib::getIsoBusInstance()); }

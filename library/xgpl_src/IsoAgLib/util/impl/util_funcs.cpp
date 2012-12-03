@@ -36,7 +36,7 @@ uint8_t convertLittleEndianStringUi8( const uint8_t* apui8_src )
 
 uint8_t bcd2dec(uint8_t ab_bcd)
 {
- return ((ab_bcd >> 4) * 10) + (ab_bcd & 0xF);
+ return uint8_t(((ab_bcd >> 4) * 10) + (ab_bcd & 0xF));
 }
 
 
@@ -44,7 +44,7 @@ uint8_t dec2bcd(uint8_t ab_dec)
 {
   const uint8_t ui8_v10 = ab_dec / 10;
   const uint8_t ui8_v0  = ab_dec % 10;
-  const uint8_t ui8_result = ( ui8_v10 << 4 ) + ui8_v0;
+  const uint8_t ui8_result = uint8_t(( ui8_v10 << 4 ) + ui8_v0);
   return ui8_result;
 }
 
@@ -743,13 +743,13 @@ VtFontScaling::getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension
   int i, j;
   for (i=14; i>=0; i--) {
     if (((uint32_t (marr_font2PixelDimensionTableW [i])) << 10) <= ui32_width) {
-      ui8_wIndex = i;
+      ui8_wIndex = uint8_t(i);
       break;
     }
   }
   for (j=14; j>=0; j--) {
     if (((uint32_t (marr_font2PixelDimensionTableH [j])) << 10) <= ui32_height) {
-      ui8_hIndex = j;
+      ui8_hIndex = uint8_t(j);
       break;
     }
   }

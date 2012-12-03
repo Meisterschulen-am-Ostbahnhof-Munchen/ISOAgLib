@@ -37,7 +37,7 @@
 namespace __IsoAgLib {
 
 IsoMonitor_c &
-getIsoMonitorInstance( uint8_t instance )
+getIsoMonitorInstance( unsigned int instance )
 {
   MACRO_MULTITON_GET_INSTANCE_BODY(IsoMonitor_c, PRT_INSTANCE_CNT, instance);
 }
@@ -748,7 +748,7 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
     switch ((pkg.isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
     {
       case WORKING_SET_MASTER_PGN:
-        pkg.getMonitorItemForSA()->processMsgWsMaster (pkg.getUint8Data (1-1)-1, pkg.time() );
+        pkg.getMonitorItemForSA()->processMsgWsMaster (uint8_t(pkg.getUint8Data(1-1) - 1), pkg.time() );
       break;
 
       case WORKING_SET_MEMBER_PGN:

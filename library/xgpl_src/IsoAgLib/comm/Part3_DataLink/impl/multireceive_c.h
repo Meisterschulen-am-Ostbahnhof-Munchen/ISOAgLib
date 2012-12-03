@@ -376,13 +376,13 @@ private:
   Customer_t mt_customer;
 private:
   MultiReceive_c();
-  friend MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance );
+  friend MultiReceive_c &getMultiReceiveInstance( unsigned int instance );
 };
 
   /** C-style function, to get access to the unique MultiReceive_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance = 0 );
+  MultiReceive_c &getMultiReceiveInstance( unsigned int instance = 0 );
 
 } // __IsoAgLib
 

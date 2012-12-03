@@ -49,7 +49,7 @@ public:
   //! Stream input of uint16_t
   StreamInput_c& operator>>(uint16_t& ui16_data) {
     uint8_t l,h; *this >> l >> h;
-    ui16_data = (uint16_t(h) << 8) | uint16_t(l);
+    ui16_data = uint16_t((uint16_t(h) << 8) | uint16_t(l));
     return *this;
   }
 

@@ -46,9 +46,9 @@ class FilterBox_c {
 public:
   struct CustomerLen_s
   {
-    CustomerLen_s (CanCustomer_c* apc_customer, int8_t ai8_dlcForce) : pc_customer(apc_customer), i8_dlcForce (ai8_dlcForce) {}
+    CustomerLen_s (CanCustomer_c* apc_customer, int a_dlcForce) : pc_customer(apc_customer), dlcForce (a_dlcForce) {}
     CanCustomer_c * pc_customer;
-    int8_t i8_dlcForce; // 0..8: DLC must exactly be 0..8.   < 0 (-1): DLC doesn't care! (default!)
+    int dlcForce; // 0..8: DLC must exactly be 0..8.   < 0 (-1): DLC doesn't care! (default!)
   };
 
   FilterBox_c();
@@ -57,7 +57,7 @@ public:
 
   void clearData();
 
-  void insertCustomer(CanCustomer_c* pc_cancustomer, int8_t ai8_len) {mvec_customer.push_back(CustomerLen_s(pc_cancustomer, ai8_len));}
+  void insertCustomer(CanCustomer_c* pc_cancustomer, int len) {mvec_customer.push_back(CustomerLen_s(pc_cancustomer, len));}
 
   /* *************************************** */
   /* ******* filter/mask managing ********** */
@@ -66,11 +66,11 @@ public:
   /** set the mask (t_mask) and filter (t_filter) of this FilterBox
     @param arc_maskFilter filter mask pair combination
     @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-    @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
+    @param a_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
   */
    void set (const IsoAgLib::iMaskFilterType_c& arc_maskFilter, 
             CanCustomer_c *apc_customer = NULL,
-            int8_t ai8_dlcForce = -1);
+            int a_dlcForce = -1);
 
   /** checks, if FilterBox_c definition given by ac_mask and ac_filter is the same
     @param ac_mask mask to use for comparison

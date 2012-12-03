@@ -88,7 +88,7 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
     if (men_msgType == IsoETP)
     {
       r_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_eCM_RTS));              // Byte 1
-      r_multiSendPkg.setUint16Data(3, getDataSize() >> 16);                              // Byte 4+5
+      r_multiSendPkg.setUint16Data(3, static_cast<uint16_t>(getDataSize() >> 16));       // Byte 4+5
       switchToState (AwaitCts, 1250);
     }
     else if (men_msgType == IsoTP)
@@ -100,10 +100,10 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
     }
     else if (men_msgType == IsoTPbroadcast)
     {
+      mui8_packetsLeftToSendInBurst = static_cast<uint8_t>((mui32_dataSize + 6) / 7);
       r_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_BAM));               // Byte 1
-      r_multiSendPkg.setUint8Data (3, static_cast<uint8_t>((mui32_dataSize + 6) / 7));    // Byte 4
+      r_multiSendPkg.setUint8Data (3, mui8_packetsLeftToSendInBurst);                    // Byte 4
       r_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
-      mui8_packetsLeftToSendInBurst = (mui32_dataSize + 6) / 7;
       switchToState (AwaitCts, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
     }
 #if 0
@@ -194,7 +194,7 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
         for ( unsigned pkgInd = 0; pkgInd < pkgCnt; pkgInd++)
         {
           prepareSendMsg (ui8_nettoDataCnt);
-          const uint8_t cui8_pkgNumberToSend = mui8_packetsSentInThisBurst + ((men_msgType == IsoETP) ? 0 : uint8_t(mui32_packetNrRequestedInLastCts-1));
+          const uint8_t cui8_pkgNumberToSend = uint8_t(mui8_packetsSentInThisBurst + ((men_msgType == IsoETP) ? 0 : uint8_t(mui32_packetNrRequestedInLastCts-1)));
           c_multiSendPkg.setUint8Data (0, cui8_pkgNumberToSend);
           if (mhpbui8_data != NULL) {
             c_multiSendPkg.setDataPart (mhpbui8_data, mui32_dataBufferOffset, ui8_nettoDataCnt);
@@ -474,7 +474,7 @@ SendStream_c::prepareSendMsg (uint8_t &ui8_nettoDataCnt)
 
   if (mui32_dataBufferOffset + ui8_nettoDataCnt > mui32_dataSize)
   {
-    ui8_nettoDataCnt = mui32_dataSize - mui32_dataBufferOffset;
+    ui8_nettoDataCnt = uint8_t(mui32_dataSize - mui32_dataBufferOffset);
   }
 }
 

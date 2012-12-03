@@ -255,10 +255,10 @@ IsoItem_c::timeEvent()
 
         if ( m_wsLocalSlavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
         { // Announce WS-Master
-          m_wsLocalSlavesToClaimAddress = m_wsSlavesAnnounced->size();
+          m_wsLocalSlavesToClaimAddress = int8_t(m_wsSlavesAnnounced->size());
 
           c_pkg.setIsoPgn (WORKING_SET_MASTER_PGN);
-          c_pkg.setUint8Data (0, (m_wsLocalSlavesToClaimAddress+1));
+          c_pkg.setUint8Data (0, uint8_t(m_wsLocalSlavesToClaimAddress+1));
           c_pkg.setLen8FillUpWithReserved (1);
         }
         else // it must be > 0 here now, so omit: if (m_wsLocalSlavesToClaimAddress > 0)
@@ -358,23 +358,23 @@ bool IsoItem_c::sendSaClaim()
 */
 uint8_t IsoItem_c::calc_randomWait()
 { // perform some calculation from NAME
-  uint16_t ui16_result =  mc_isoName.outputUnion()->getUint8Data(0) *  mc_isoName.outputUnion()->getUint8Data(1);
+  uint16_t ui16_result = uint16_t(uint16_t(mc_isoName.outputUnion()->getUint8Data(0)) * uint16_t(mc_isoName.outputUnion()->getUint8Data(1)));
   if ( ( (mc_isoName.outputUnion()->getUint8Data(2) +1) != 0 )
     && ( System_c::getTime() != 0 )
     && ( (System_c::getTime() / (mc_isoName.outputUnion()->getUint8Data(2) +1)) != 0 ) )
-    ui16_result /= (System_c::getTime() / (mc_isoName.outputUnion()->getUint8Data(2) +1));
-  ui16_result += mc_isoName.outputUnion()->getUint8Data(3);
-  ui16_result %= (mc_isoName.outputUnion()->getUint8Data(4) + 1);
-  ui16_result -= mc_isoName.outputUnion()->getUint8Data(5);
-  ui16_result *= ((mc_isoName.outputUnion()->getUint8Data(6) + 1) / (mc_isoName.outputUnion()->getUint8Data(7) + 1));
+    ui16_result = ui16_result / uint16_t(System_c::getTime() / (mc_isoName.outputUnion()->getUint8Data(2) +1));
+  ui16_result = uint16_t( ui16_result + uint16_t(mc_isoName.outputUnion()->getUint8Data(3)) );
+  ui16_result = uint16_t( ui16_result % uint16_t(mc_isoName.outputUnion()->getUint8Data(4) + 1) );
+  ui16_result = uint16_t( ui16_result - mc_isoName.outputUnion()->getUint8Data(5) );
+  ui16_result = uint16_t( ui16_result * uint16_t((mc_isoName.outputUnion()->getUint8Data(6) + 1) / (mc_isoName.outputUnion()->getUint8Data(7) + 1)) );
 
   // divide by last uint8_t of name till offset in limit
-  uint8_t ui8_divisor = mc_isoName.outputUnion()->getUint8Data(7) + 1;
+  uint8_t ui8_divisor = uint8_t(mc_isoName.outputUnion()->getUint8Data(7) + 1);
 
-  for (; ui16_result > 153; ui16_result /= ui8_divisor)
+  for (; ui16_result > 153; ui16_result = uint16_t(ui16_result/ui8_divisor) )
   {
     // Get around potential div0 errors
-    ui8_divisor = mc_isoName.outputUnion()->getUint8Data(7) + 1;
+    ui8_divisor = uint8_t(mc_isoName.outputUnion()->getUint8Data(7) + 1);
 
     // Get around potential div1 eternal loop
     if (ui8_divisor == 1)

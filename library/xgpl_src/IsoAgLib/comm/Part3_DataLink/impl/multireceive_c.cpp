@@ -34,9 +34,9 @@
 
 // helper macros
 #define MACRO_pgnFormatOfPGN(mpPgn)     ((mpPgn>>8) & 0xFF)
-#define MACRO_BYTEORDER_toLoMidHi(a)    ((a) & 0xFF), (((a) >> 8) & 0xFF), (((a) >> 16) & 0xFF)
-#define MACRO_BYTEORDER_toLoMidMidHi(a) ((a) & 0xFF), (((a) >> 8) & 0xFF), (((a) >> 16) & 0xFF), (((a) >> 24) & 0xFF)
-#define MACRO_BYTEORDER_toLoHi(a)       ((a) & 0xFF), (((a) >> 8) & 0xFF)
+#define MACRO_BYTEORDER_toLoMidHi(a)    uint8_t((a) & 0xFF), uint8_t(((a) >> 8) & 0xFF), uint8_t(((a) >> 16) & 0xFF)
+#define MACRO_BYTEORDER_toLoMidMidHi(a) uint8_t((a) & 0xFF), uint8_t(((a) >> 8) & 0xFF), uint8_t(((a) >> 16) & 0xFF), uint8_t(((a) >> 24) & 0xFF)
+#define MACRO_BYTEORDER_toLoHi(a)       uint8_t((a) & 0xFF), uint8_t(((a) >> 8) & 0xFF)
 
 
 
@@ -52,9 +52,9 @@ static const uint8_t scui8_tpPriority=6;
   /** C-style function, to get access to the unique MultiReceive_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance )
+  MultiReceive_c &getMultiReceiveInstance( unsigned int instance )
   {
-    MACRO_MULTITON_GET_INSTANCE_BODY(MultiReceive_c, PRT_INSTANCE_CNT, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(MultiReceive_c, PRT_INSTANCE_CNT, instance);
   }
 
 
@@ -1032,21 +1032,21 @@ MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
      and we don't want to hold connections open that are very short, so well........... */
 
   // the following "> 0" check shouldn't be needed because if we reach here, we shouldn't
-  uint32_t ui32_allowPackets = (getStreamCount() > 0)
-    ? ((CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS) / getStreamCount())
-    : 1;
+  uint8_t ui8_allowPackets = (getStreamCount() > 0)
+    ? uint8_t((CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS) / getStreamCount())
+    : uint8_t(1);
 
-  if (ui32_allowPackets == 0)
+  if (ui8_allowPackets == 0)
   { // Don't allow 0 packets here as this would mean HOLD-CONNECTION OPEN and
     // we'd have to take action and cannot wait for the sender sending...
-    ui32_allowPackets = 1;
+    ui8_allowPackets = 1;
   }
-  if (ui32_allowPackets > CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS)
+  if (ui8_allowPackets > CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS)
   { // limit the number of packets a single sender can send even if we could handle all those packets!
-    ui32_allowPackets = CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS;
+    ui8_allowPackets = CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS;
   }
 
-  uint8_t ui8_pkgsToExpect = arc_stream.expectBurst (ui32_allowPackets); // we wish e.g. 20 pkgs (as always), but there're only 6 more missing to complete the stream!
+  uint8_t ui8_pkgsToExpect = arc_stream.expectBurst (ui8_allowPackets); // we wish e.g. 20 pkgs (as always), but there're only 6 more missing to complete the stream!
 
   CanPkgExt_c pkg;
   switch (arc_stream.getStreamType())
@@ -1160,7 +1160,7 @@ MultiReceive_c::sendEndOfMessageAck (DEF_Stream_c_IMPL &arc_stream)
                              arc_stream.getIdent().getDa(), /* src */
                              0x13 /* decimal: 19 */,
                              MACRO_BYTEORDER_toLoHi(arc_stream.getByteTotalSize()),
-                             arc_stream.getPkgTotalSize(),
+                             uint8_t(arc_stream.getPkgTotalSize()),
                              0xFF /* reserved */,
                              MACRO_BYTEORDER_toLoMidHi(arc_stream.getIdent().getPgn()));
       break;

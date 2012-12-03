@@ -229,9 +229,9 @@ IsoRequestPgn_c::IsoRequestPgn_c ()
 
 /** C-style function, to get access to the unique IsoRequestPgn_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-IsoRequestPgn_c &getIsoRequestPgnInstance(uint8_t aui8_instance)
+IsoRequestPgn_c &getIsoRequestPgnInstance(unsigned int instance)
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(IsoRequestPgn_c, PRT_INSTANCE_CNT, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoRequestPgn_c, PRT_INSTANCE_CNT, instance);
 }
 
 } // end of namespace __IsoAgLib

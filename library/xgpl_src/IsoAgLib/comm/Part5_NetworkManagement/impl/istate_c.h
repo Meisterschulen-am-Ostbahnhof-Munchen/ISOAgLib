@@ -102,9 +102,11 @@ public:
     clear whole state or some specific flags
     @param ren_itemState optional flags to clear (default clear all)
   */
-  void clearItemState(itemState_t ren_itemState = itemState_t(~IstateNull))
+  void clearItemState(itemState_t ren_itemState)
     {en_itemState = itemState_t(en_itemState & ~ren_itemState);}
 
+  void clearItemState()
+    {en_itemState = IstateNull;}
 
 private:
   /** state of this monitor item */

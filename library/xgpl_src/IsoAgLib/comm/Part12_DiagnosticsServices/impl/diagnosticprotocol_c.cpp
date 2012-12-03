@@ -92,10 +92,11 @@ void DiagnosticProtocol_c::updatePackage()
          ++iter )
     {
       // Functionality - generation - number_of_option_bytes - option_1 - ... - option_n
-      mui16_arrayLenght += (3 + iter->second.number_of_option_bytes);
+      mui16_arrayLenght = uint16_t(mui16_arrayLenght + 3 + iter->second.number_of_option_bytes);
     }
   }
-  if (mui16_arrayLenght < 8) mui16_arrayLenght = 8;
+  if (mui16_arrayLenght < 8)
+    mui16_arrayLenght = 8;
 
   // create array for the message
   m_currentFunctionalities = (uint8_t *) CNAMESPACE::malloc (sizeof (uint8_t) * mui16_arrayLenght);
@@ -212,7 +213,7 @@ DiagnosticProtocol_c::sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data, int32
   pkg.setMonitorItemForSA (mrc_identItem.getIsoItem());
   pkg.setLen (8);
   pkg.setIsoPgn(ai32_pgn);
-  for (unsigned ui = 0 ; ui < 8; ++ui)
+  for (uint8_t ui = 0 ; ui < 8; ++ui)
     pkg.setUint8Data (ui, rhpb_data[ui]);
 
   getIsoBusInstance4Comm() << pkg;

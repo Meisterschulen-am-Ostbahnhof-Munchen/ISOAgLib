@@ -46,7 +46,7 @@ void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* apb_source, int32_t ai3
   #endif
   if ( ab_partSize < 7 )
   { // only pad when less than 7 data byte
-    setDataFromString( 1+ab_partSize, paddingDataArr, (7-ab_partSize) );
+    setDataFromString( uint8_t(1+ab_partSize), paddingDataArr, uint8_t(7-ab_partSize) );
   }
 }
 
@@ -72,7 +72,7 @@ void MultiSendPkg_c::setDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSou
   }
   if ( ab_partSize < 7 )
   { // only pad when less than 7 data byte
-    setDataFromString( 1+ab_partSize, paddingDataArr, (7-ab_partSize) );
+    setDataFromString( uint8_t(1+ab_partSize), paddingDataArr, uint8_t(7-ab_partSize) );
   }
 }
 

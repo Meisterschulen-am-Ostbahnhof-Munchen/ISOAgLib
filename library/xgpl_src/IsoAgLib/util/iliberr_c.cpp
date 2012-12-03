@@ -45,12 +45,12 @@ iLibErr_c::iLibErr_c() :
 
 
 void iLibErr_c::registerNonFatal( TypeNonFatal_en at_errType, int instance ) {
-  m_nonFatal[ at_errType ] |= ( 1 << instance );
+  m_nonFatal[ at_errType ] |= uint16_t( 1 << instance );
 }
 
 
 void iLibErr_c::registerFatal( TypeFatal_en at_errType, int instance ) {
-  m_fatal[ at_errType ] |= ( 1 << instance );
+  m_fatal[ at_errType ] |= uint16_t( 1 << instance );
 }
 
 } // end of namespace IsoAgLib

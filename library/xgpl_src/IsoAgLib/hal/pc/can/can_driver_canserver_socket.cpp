@@ -301,15 +301,15 @@ namespace HAL {
     __HAL::transferBuf_s s_transferBuf[4];
 
     s_transferBuf[0].ui16_command = COMMAND_INIT;
-    s_transferBuf[0].s_init.ui8_bus = channel;
+    s_transferBuf[0].s_init.ui8_bus = uint8_t(channel);
     s_transferBuf[0].s_init.ui16_wGlobMask = 0x0;
     s_transferBuf[0].s_init.ui32_dwGlobMask = 0x0;
     s_transferBuf[0].s_init.ui32_dwGlobMaskLastmsg = 0x0;
-    s_transferBuf[0].s_init.ui16_wBitrate = baudrate;
+    s_transferBuf[0].s_init.ui16_wBitrate = uint16_t(baudrate);
     r = __HAL::sendCommand( &s_transferBuf[0], __HAL::i32_commandSocket );
 
     s_transferBuf[1].ui16_command = COMMAND_CONFIG;
-    s_transferBuf[1].s_config.ui8_bus = channel;
+    s_transferBuf[1].s_config.ui8_bus = uint8_t(channel);
     s_transferBuf[1].s_config.ui8_obj = 0;
     s_transferBuf[1].s_config.ui8_bXtd = 0;
     s_transferBuf[1].s_config.ui32_mask = 0;
@@ -319,7 +319,7 @@ namespace HAL {
     r &= sendCommand( &s_transferBuf[1], __HAL::i32_commandSocket );
 
     s_transferBuf[2].ui16_command = COMMAND_CONFIG;
-    s_transferBuf[2].s_config.ui8_bus = channel;
+    s_transferBuf[2].s_config.ui8_bus = uint8_t(channel);
     s_transferBuf[2].s_config.ui8_obj = 1;
     s_transferBuf[2].s_config.ui8_bXtd = 0;
     s_transferBuf[2].s_config.ui32_mask = 0x0;
@@ -329,7 +329,7 @@ namespace HAL {
     r &= sendCommand( &s_transferBuf[2], __HAL::i32_commandSocket );
 
     s_transferBuf[3].ui16_command = COMMAND_CONFIG;
-    s_transferBuf[3].s_config.ui8_bus = channel;
+    s_transferBuf[3].s_config.ui8_bus = uint8_t(channel);
     s_transferBuf[3].s_config.ui8_obj = 2;
     s_transferBuf[3].s_config.ui8_bXtd = 1;
     s_transferBuf[3].s_config.ui32_mask = 0x0;
@@ -345,7 +345,7 @@ namespace HAL {
   bool canClose( unsigned channel ) {
     __HAL::transferBuf_s s_transferBuf;
     s_transferBuf.ui16_command = COMMAND_CLOSE;
-    s_transferBuf.s_init.ui8_bus = channel;
+    s_transferBuf.s_init.ui8_bus = uint8_t(channel);
 
     return sendCommand( &s_transferBuf, __HAL::i32_commandSocket );
   }
@@ -363,7 +363,7 @@ namespace HAL {
     memset( &s_transferBuf, 0, sizeof( __HAL::transferBuf_s ) );
 
     s_transferBuf.ui16_command = COMMAND_DATA;
-    s_transferBuf.s_data.ui8_bus = channel;
+    s_transferBuf.s_data.ui8_bus = uint8_t(channel);
     s_transferBuf.s_data.ui8_obj = 0;
     s_transferBuf.s_data.s_canMsg.ui32_id = msg.ident();
     s_transferBuf.s_data.s_canMsg.i32_msgType = ( msg.identType() == __IsoAgLib::Ident_c::ExtendedIdent ) ? 1 : 0;// ==0 and !=0 will be checked from can-server, but legacy ISOAgLib implementations expect 0 and 1 only.
@@ -419,7 +419,7 @@ namespace HAL {
 
         static __IsoAgLib::CanPkg_c msg;
         msg.setIdent( s_transferBuf.s_data.s_canMsg.ui32_id, type );
-        msg.setLen( s_transferBuf.s_data.s_canMsg.i32_len );
+        msg.setLen( uint8_t(s_transferBuf.s_data.s_canMsg.i32_len) );
         msg.setTime( ( now > s_transferBuf.s_data.i32_sendTimeStamp ) ? s_transferBuf.s_data.i32_sendTimeStamp : now );
         memcpy( msg.getUint8DataPointer(), s_transferBuf.s_data.s_canMsg.ui8_data, s_transferBuf.s_data.s_canMsg.i32_len );
 

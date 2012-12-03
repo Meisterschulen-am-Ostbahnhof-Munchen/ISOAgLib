@@ -59,7 +59,7 @@ FilterBox_c::clearData()
 void
 FilterBox_c::set (const IsoAgLib::iMaskFilterType_c& arc_maskFilterPair,
                   CanCustomer_c* apc_customer,
-                  int8_t ai8_dlcForce)
+                  int a_dlcForce)
 {
   // actually "apc_customer" should've rather been a reference!
   isoaglib_assert (apc_customer);
@@ -71,13 +71,13 @@ FilterBox_c::set (const IsoAgLib::iMaskFilterType_c& arc_maskFilterPair,
   {
     if (apc_customer == pc_iter->pc_customer)
     { // overwrite the DLC of the one found!
-      pc_iter->i8_dlcForce = ai8_dlcForce;
+      pc_iter->dlcForce = a_dlcForce;
       break;
     }
   }
   if (pc_iter == mvec_customer.end())
   { // push back new
-    mvec_customer.push_back (CustomerLen_s (apc_customer, ai8_dlcForce));
+    mvec_customer.push_back (CustomerLen_s (apc_customer, a_dlcForce));
     /// Currently "msi_processMsgLoopIndex" is not being adapted,
     /// because if a Message triggers Customer A and B, and Customer A
     /// inserts a filter for that same message for Customer C,
@@ -146,11 +146,11 @@ FilterBox_c::processMsg( CanPkg_c& pkg )
         msi_processMsgLoopIndex < msi_processMsgLoopSize;
         ++msi_processMsgLoopIndex )
   {
-    const int8_t ci8_vecCustomerDlcForce = mvec_customer[msi_processMsgLoopIndex].i8_dlcForce;
+    const int vecCustomerDlcForce = mvec_customer[msi_processMsgLoopIndex].dlcForce;
     CanCustomer_c* pc_customer = mvec_customer[msi_processMsgLoopIndex].pc_customer;
     isoaglib_assert( pc_customer );
 
-    if (( ci8_vecCustomerDlcForce < 0 ) || ( ci8_vecCustomerDlcForce == pkg.getLen() ) )
+    if (( vecCustomerDlcForce < 0 ) || ( vecCustomerDlcForce == pkg.getLen() ) )
       pc_customer->processMsg( pkg );
   }
 

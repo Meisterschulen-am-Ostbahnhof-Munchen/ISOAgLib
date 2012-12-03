@@ -302,13 +302,13 @@ private:
   Customer_t mt_customer;
 
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(IdentItem_c)
-  friend IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance );
+  friend IsoMonitor_c &getIsoMonitorInstance( unsigned int instance );
   friend class IsoAgLib::iIsoMonitor_c;
 };
 
 
 IsoMonitor_c &
-getIsoMonitorInstance( uint8_t aui8_instance = 0 );
+getIsoMonitorInstance( unsigned int instance = 0 );
 
 
 }

@@ -138,7 +138,7 @@ bool DiagnosticProtocol_c::fillStructure(FunctionalitiesCharacteristics_t functi
     functionality_description.options_bytes[counter] = options.getByte(counter);
   }
   // if no option is set, omit transmitting option bytes and set # of bytes 0
-  functionality_description.number_of_option_bytes = ( empty ? 0 : options.getSizeInBytes());
+  functionality_description.number_of_option_bytes = uint8_t( empty ? 0 : options.getSizeInBytes());
 
   // add functionality
   return addFunctionality(functionality, functionality_description);
