@@ -420,27 +420,27 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
   #endif
 #else
   long unsigned int temp[2] = {0UL, 0UL};
-  const unsigned int len = strlen( ac_src );
+  const unsigned int len = CNAMESPACE::strlen( ac_src );
   const int lowerPartValStart = len - 8;
   if ( lowerPartValStart >= 0 )
   {
-    sscanf( ac_src+lowerPartValStart, "%8lx", &(temp[0]) );
+    CNAMESPACE::sscanf( ac_src+lowerPartValStart, "%8lx", &(temp[0]) );
     switch ( lowerPartValStart )
     {
       case 0: break;
-      case 1: sscanf( ac_src, "%1lx", &(temp[1]) ); break;
-      case 2: sscanf( ac_src, "%2lx", &(temp[1]) ); break;
-      case 3: sscanf( ac_src, "%3lx", &(temp[1]) ); break;
-      case 4: sscanf( ac_src, "%4lx", &(temp[1]) ); break;
-      case 5: sscanf( ac_src, "%5lx", &(temp[1]) ); break;
-      case 6: sscanf( ac_src, "%6lx", &(temp[1]) ); break;
-      case 7: sscanf( ac_src, "%7lx", &(temp[1]) ); break;
-      case 8: sscanf( ac_src, "%8lx", &(temp[1]) ); break;
+      case 1: CNAMESPACE::sscanf( ac_src, "%1lx", &(temp[1]) ); break;
+      case 2: CNAMESPACE::sscanf( ac_src, "%2lx", &(temp[1]) ); break;
+      case 3: CNAMESPACE::sscanf( ac_src, "%3lx", &(temp[1]) ); break;
+      case 4: CNAMESPACE::sscanf( ac_src, "%4lx", &(temp[1]) ); break;
+      case 5: CNAMESPACE::sscanf( ac_src, "%5lx", &(temp[1]) ); break;
+      case 6: CNAMESPACE::sscanf( ac_src, "%6lx", &(temp[1]) ); break;
+      case 7: CNAMESPACE::sscanf( ac_src, "%7lx", &(temp[1]) ); break;
+      case 8: CNAMESPACE::sscanf( ac_src, "%8lx", &(temp[1]) ); break;
     }
   }
   else
   { // source string contains only digits for lower 4-byte value
-    sscanf( ac_src, "%8lx", &(temp[0]) );
+    CNAMESPACE::sscanf( ac_src, "%8lx", &(temp[0]) );
   }
   #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target,   &(temp[0]), 4 );
