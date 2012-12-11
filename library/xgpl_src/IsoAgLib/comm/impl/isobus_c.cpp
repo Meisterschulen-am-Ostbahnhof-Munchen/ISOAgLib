@@ -49,6 +49,10 @@
 #ifdef USE_TRACTOR_AUX
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracaux_c.h>
 #endif
+#ifdef USE_TRACTOR_GUIDANCE
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracguidance_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracguidancecommand_c.h>
+#endif
 #ifdef USE_TIME_GPS
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
 #endif
@@ -109,6 +113,10 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   #ifdef USE_TRACTOR_AUX
     getTracAuxInstance4Comm().init();
   #endif
+  #ifdef USE_TRACTOR_GUIDANCE
+    getTracGuidanceInstance4Comm().init();
+    getTracGuidanceCommandInstance4Comm().init();
+  #endif
   #ifdef USE_TIME_GPS
     getTimePosGpsInstance4Comm().init();
   #endif
@@ -146,6 +154,10 @@ IsoBus_c::close()
   /// Part 7 - Application (Tractor-Client)
   #ifdef USE_TIME_GPS
     getTimePosGpsInstance4Comm().close();
+  #endif
+  #ifdef USE_TRACTOR_GUIDANCE
+    getTracGuidanceCommandInstance4Comm().close();
+    getTracGuidanceInstance4Comm().close();
   #endif
   #ifdef USE_TRACTOR_AUX
     getTracAuxInstance4Comm().close();
