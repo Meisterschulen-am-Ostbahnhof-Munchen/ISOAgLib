@@ -82,8 +82,8 @@ APP_SRC_FILE="ecu_main.cpp"
 # ###############################################################
 
 # Optionally set individual PROJECT-DEFINES
-# PRJ_DEFINES=""
 # (separate multiple defines by whitespace)
+# PRJ_DEFINES=""
 
 # Optionally set individual ISOAgLib switches
 # - DEBUG for different internal IsoAgLib information
@@ -92,6 +92,7 @@ APP_SRC_FILE="ecu_main.cpp"
 # - ENABLE_NMEA_2000_MULTI_PACKET
 # - and so on...
 # (separate multiple defines by whitespace)
+# ISOAGLIB_SWITCHES=""
 
 # Optionally replace the compiler flag default values by configured ones.
 # Only valid for Linux Makefile generation currently.
