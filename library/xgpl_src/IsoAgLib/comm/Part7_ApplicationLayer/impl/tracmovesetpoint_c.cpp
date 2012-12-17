@@ -42,8 +42,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     if ( !BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask) ) return false;
 
     ///Set time Period for Scheduler_c --> periodic action only if in IMPLEMENT MODE!!
-    if (at_identMode == IsoAgLib::IdentModeImplement) setTimePeriod( (uint16_t) 100);
-    else  setTimePeriod( (uint16_t) 1000   );
+    if (at_identMode == IsoAgLib::IdentModeImplement) mt_task.setPeriod( 100, false );
+    else  mt_task.setPeriod( 1000, false );
 
     // set configure values
     mi16_selectedSpeedSetPointLimit = 0;
@@ -66,7 +66,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
-      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFFFLU << 8, SELECTED_SPEED_CMD << 8), 8, false);
+      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFFFLU << 8, SELECTED_SPEED_CMD << 8), 8);
     }
   }
 

@@ -40,8 +40,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ! BaseCommon_c::config_base ( apc_ident, at_identMode, aui16_suppressMask) ) return false;
 
     ///Set time Period for Scheduler_c --> periodic action only if in IMPLEMENT MODE!!
-    if (at_identMode == IsoAgLib::IdentModeImplement) setTimePeriod( (uint16_t) 100);
-    else  setTimePeriod( (uint16_t) 1000   );
+    if (at_identMode == IsoAgLib::IdentModeImplement) mt_task.setPeriod( 100, false );
+    else  mt_task.setPeriod( 1000, false );
 
     //set default values
     mui8_frontHitchPosCmd     = 0;
@@ -71,7 +71,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
-      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFFFLU << 8, HITCH_PTO_COMMANDS << 8), 8, true);
+      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFFFLU << 8, HITCH_PTO_COMMANDS << 8), 8);
     }
   }
 
@@ -113,13 +113,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @pre  function is only called in implement mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TracPTOSetPoint_c::timeEventImplMode( )
+  void TracPTOSetPoint_c::timeEventImplMode( )
   {
     /// check if we are in implement mode and have a pointer to the sending isoname
     /// stored Pto information sending ISO member has claimed address
     sendPtoMsg();
-
-    return true;
   }
 
   /** send hitch and pto command
