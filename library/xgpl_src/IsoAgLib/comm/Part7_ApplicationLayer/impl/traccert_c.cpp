@@ -86,7 +86,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       setFilterCreated();
       // create FilterBox_c for PGN ISOBUS_CERTIFICATION_PGN, PF 254 - mask for DP, PF and PS
       // mask: (0x3FF00 << 8) filter: (ISOBUS_CERTIFICATION_PGN << 8)
-      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FF00LU << 8, ISOBUS_CERTIFICATION_PGN << 8), 8, true);
+      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FF00LU << 8, ISOBUS_CERTIFICATION_PGN << 8), 8);
     }
   }
 

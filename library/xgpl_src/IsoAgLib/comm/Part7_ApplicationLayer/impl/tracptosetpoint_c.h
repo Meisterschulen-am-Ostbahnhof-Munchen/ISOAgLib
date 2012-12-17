@@ -17,7 +17,7 @@
 #ifndef TRACPTOSETPOINT_C_H
 #define TRACPTOSETPOINT_C_H
 
-#include "basecommon_c.h"
+#include <IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h>
 
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
@@ -178,7 +178,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         @pre  function is only called in implement mode
         @see  BaseCommon_c::timeEvent()
       */
-    virtual bool timeEventImplMode();
+    virtual void timeEventImplMode();
 
     /** send Base2 Group data with hitch and PTO state */
     void isoSendBase2Update( void );

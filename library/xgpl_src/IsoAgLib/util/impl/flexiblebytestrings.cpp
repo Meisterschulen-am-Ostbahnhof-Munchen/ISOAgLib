@@ -45,7 +45,7 @@ namespace __IsoAgLib {
     if ( apui8_srcStream != NULL )
       CNAMESPACE::memcpy( uint8, apui8_srcStream, 4 );
 #ifndef NO_8BIT_CHAR_TYPE
-    else uint32[0] = ~0UL;
+    else uint32[0] = ~uint32_t( 0UL );
 #else
     else
       for ( uint8_t index = 0; index < 4; index++ )
@@ -63,7 +63,7 @@ namespace __IsoAgLib {
         uint8[index] = ~uint8_t( 0U );
 #else
 #if !defined( SUPPORTS_64BIT )
-      uint32[0] = uint32[1] = ~0UL;
+      uint32[0] = uint32[1] = ~uint32_t( 0UL );
 #else
       uint64[0] = ~0ULL;
 #endif
