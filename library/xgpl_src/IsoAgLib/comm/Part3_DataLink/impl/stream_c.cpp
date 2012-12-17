@@ -179,7 +179,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     case StreamFastPacket:
       awaitNextStep (AwaitData, msci32_timeOutFP);
-      mui8_pkgRemainingInBurst = mui32_pkgTotalSize; // for Fast-Packet there's only one burst!
+      mui8_pkgRemainingInBurst = uint8_t(mui32_pkgTotalSize); // for Fast-Packet there's only one burst!
       break;
 #endif
   }

@@ -104,7 +104,7 @@ void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* apb_source, i
 #else
   setDataFromString (aui8_offset, apb_source + ai32_pos, ab_partSize);
 #endif
-  setDataFromString (aui8_offset+ab_partSize, paddingDataArr, (8-aui8_offset-ab_partSize));
+  setDataFromString (uint8_t(aui8_offset+ab_partSize), paddingDataArr, uint8_t(8-aui8_offset-ab_partSize));
 }
 
 
@@ -122,7 +122,7 @@ void MultiSendPkg_c::setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>&
   // ab_partSize:=7, aui8_offset:=1 ==> cui8_endCondition:=8
   // ==> first assign should match target byte index aui8_offset:=1
   //     and last index should be <8 -> i.e. index:=7
-  const uint8_t cui8_endCondition = ab_partSize + aui8_offset;
+  const uint8_t cui8_endCondition = uint8_t(ab_partSize + aui8_offset);
   for ( uint8_t ind = aui8_offset; ind < cui8_endCondition; ind++ )
   { // the ind matches already to the appropriate CanPkg_c data string position,
     // while the iter iterator is also set to the start of the source data
@@ -130,7 +130,7 @@ void MultiSendPkg_c::setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>&
     // now increment the iterator for next access
     iter++;
   }
-  setDataFromString (aui8_offset+ab_partSize, paddingDataArr, (8-aui8_offset-ab_partSize));
+  setDataFromString (uint8_t(aui8_offset+ab_partSize), paddingDataArr, uint8_t(8-aui8_offset-ab_partSize));
 }
 #endif
 

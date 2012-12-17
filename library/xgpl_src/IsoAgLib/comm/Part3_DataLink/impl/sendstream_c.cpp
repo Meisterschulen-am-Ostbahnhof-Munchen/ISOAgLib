@@ -67,7 +67,7 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
     r_multiSendPkg.setUint8Data(1, static_cast<uint8_t>(getDataSize() & 0xFF));
 
     uint8_t ui8_nettoCnt = 6;
-    if (ui8_nettoCnt > getDataSize()) ui8_nettoCnt = getDataSize();
+    if (ui8_nettoCnt > getDataSize()) ui8_nettoCnt = uint8_t(getDataSize());
     if (mhpbui8_data != NULL) {
       r_multiSendPkg.setFastPacketDataPart(mhpbui8_data, 0, ui8_nettoCnt, 2);
     } else {

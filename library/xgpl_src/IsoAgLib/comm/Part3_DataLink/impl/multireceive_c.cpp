@@ -572,7 +572,7 @@ MultiReceive_c::processMsgNmea( const CanPkgExt_c& pkg )
   ReceiveStreamIdentifier_c c_fpRSI(
     StreamFastPacket,
     pkg.isoPurePgn(),
-    pkg.hasDa() ? pkg.isoPs()           : 0xFF,
+    pkg.hasDa() ? pkg.isoPs()           : uint8_t(0xFFu),
     pkg.hasDa() ? pkg.getISONameForDA() : IsoName_c::IsoNameUnspecified(),
     pkg.isoSa(),
     pkg.getISONameForSA());
