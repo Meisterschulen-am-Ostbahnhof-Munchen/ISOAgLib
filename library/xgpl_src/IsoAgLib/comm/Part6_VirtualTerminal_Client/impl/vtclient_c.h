@@ -16,7 +16,6 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
-#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
@@ -33,15 +32,13 @@ class VtClientConnection_c;
 class iIdentItem_c;
 
 /** central IsoAgLib Virtual Terminal-Client management object */
-class VtClient_c : public SchedulerTask_c {
+class VtClient_c : private Subsystem_c {
   MACRO_MULTITON_CONTRIBUTION();
 public:
   virtual ~VtClient_c() {}
 
   void init();
   void close();
-
-  void timeEvent();
 
   VtClientConnection_c* initAndRegisterObjectPool(
     IdentItem_c& apc_wsMasterIdentItem, 

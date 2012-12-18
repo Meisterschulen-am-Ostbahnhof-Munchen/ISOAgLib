@@ -44,6 +44,10 @@ namespace IsoAgLib {
         SchedulerTask_c::setNextTriggerTime( time );
       }
 
+      void retriggerNow() {
+        SchedulerTask_c::retriggerNow();
+      }
+
       bool isRegistered() const {
         return SchedulerTask_c::isRegistered();
       }

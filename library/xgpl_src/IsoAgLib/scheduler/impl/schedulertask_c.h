@@ -47,6 +47,10 @@ namespace __IsoAgLib {
 
       void setNextTriggerTime( int32_t time );
 
+      void retriggerNow() {
+        setNextTriggerTime( System_c::getTime() );
+      }
+
       bool isRegistered() const {
         return m_registered;
       }
@@ -74,7 +78,7 @@ namespace __IsoAgLib {
     public:
       typedef OWNER_T Owner_t;
 
-      SchedulerTaskProxy_c( Owner_t &art_owner ) : mrt_owner( art_owner ) {}
+      SchedulerTaskProxy_c( Owner_t &art_owner, int32_t period, bool hardTiminig ) : SchedulerTask_c( period, hardTiminig ), mrt_owner( art_owner ) {}
 
       virtual ~SchedulerTaskProxy_c() {}
 

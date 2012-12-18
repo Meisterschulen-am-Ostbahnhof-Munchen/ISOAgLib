@@ -142,11 +142,7 @@ public:
   /** explicit conversion to reference of interface class type */
   IsoAgLib::iVtClientConnection_c* toInterfacePointer();
 
-  /** periodically event -> call timeEvent for all  identities and parent objects
-    @return true -> all planned activities performed in allowed time
-  */
   void timeEvent();
-  /** timeEvent sub-functions to get a better overview of the timeEvent main-function */
   void timeEventUploadPoolTimeoutCheck();
   void timeEventPrePoolUpload();
   bool timeEventPoolUpload();
@@ -451,6 +447,10 @@ private:
 
   /** pointer to a valid claim data Storage handler. If 0 not used. */
   IsoAgLib::iVtClientDataStorage_c& m_dataStorageHandler; 
+
+
+  SchedulerTaskProxy_c<VtClientConnection_c> m_schedulerTaskProxy;
+
 };
 
 

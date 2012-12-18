@@ -34,8 +34,7 @@ VtClient_c &getVtClientInstance( uint8_t instance )
 
 
 VtClient_c::VtClient_c()
-  : SchedulerTask_c( 100, true )
-  , ml_vtServerInst()
+  : ml_vtServerInst()
   , m_vtConnections()
   , mt_handler( *this )
   , mt_customer( *this )
@@ -48,7 +47,6 @@ VtClient_c::init()
 {
   isoaglib_assert (!initialized());
 
-  getSchedulerInstance().registerTask( *this, 0 );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, LANGUAGE_PGN<<8, Ident_c::ExtendedIdent ), 8 );
@@ -76,7 +74,6 @@ VtClient_c::close()
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ACKNOWLEDGEMENT_PGN << 8, Ident_c::ExtendedIdent ) );
 
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
-  getSchedulerInstance().deregisterTask(*this);
 
   setClosed();
 }
@@ -231,18 +228,6 @@ VtClient_c::getClientCount() const
       ++ui16_count;
   }
   return ui16_count;
-}
-
-
-void 
-VtClient_c::timeEvent(void)
-{
-  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
-    m_vtConnections[ui8_index]->timeEvent();
-
-  // set back the scheduler period to 100msec, as any waiting command has been set
-  if (getPeriod() != 100)
-    setPeriod( 100, false );
 }
 
 

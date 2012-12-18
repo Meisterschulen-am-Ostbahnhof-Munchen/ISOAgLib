@@ -312,6 +312,7 @@ VtClientConnection_c::VtClientConnection_c(
   , mc_preferredVt(IsoName_c::IsoNameUnspecified())
   , mi32_bootTime_ms(0)
   , m_dataStorageHandler(arc_claimDataStorage)
+  , m_schedulerTaskProxy( *this, 100, false )
 {
   r_wsMasterIdentItem.getDiagnosticProtocol().addAefFunctionalitiesVirtualTerminal(true, static_cast<uint8_t>(mrc_pool.getVersion()), VirtualTerminalOptionsBitMask_t());
 
@@ -388,12 +389,15 @@ VtClientConnection_c::VtClientConnection_c(
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
   INTERNAL_DEBUG_DEVICE << "LOAD PreferredVt with timeout " << mi32_bootTime_ms << " and NAME = " << mc_preferredVt << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
+
+  getSchedulerInstance().registerTask( m_schedulerTaskProxy, 0 );
 }
 
 
 VtClientConnection_c::~VtClientConnection_c()
 {
   getMultiReceiveInstance4Comm().deregisterClient (*this);
+  getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
 }
 
 
@@ -669,7 +673,7 @@ VtClientConnection_c::timeEvent(void)
     return;
 
   if (!mb_receiveFilterCreated)
-  { /*** MultiReceive/IsoFilterManager Registration ***/
+  {
     getMultiReceiveInstance4Comm().registerClientIso (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
 
     mb_receiveFilterCreated = true;
@@ -2274,8 +2278,12 @@ VtClientConnection_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enable
       }
     } // for
   }
+
   if (p_queue == NULL)
   {
+    if( mq_sendUpload.empty() ) {
+      m_schedulerTaskProxy.retriggerNow();
+    }
   /* The SendUpload_c constructor only takes a reference, so don't change the string in the meantime!!! */
 #ifdef USE_LIST_FOR_FIFO
     // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
@@ -2739,39 +2747,28 @@ VtClientConnection_c::startUploadCommand()
 void
 VtClientConnection_c::finishUploadCommand()
 {
+  isoaglib_assert( ! mq_sendUpload.empty() );
+
   men_uploadType = UploadIdle;
 
-  if ( !mq_sendUpload.empty() )
-  {
+  //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
+  #if DEBUG_VTCOMM
+  INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << mq_sendUpload.size() <<" -> ";
+  #endif
 
-    //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
-    #if DEBUG_VTCOMM
-    INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << mq_sendUpload.size() <<" -> ";
-    #endif
+  #ifdef USE_LIST_FOR_FIFO
+  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
+  mq_sendUpload.pop_front();
+  #else
+  mq_sendUpload.pop();
+  #endif
 
-    #ifdef USE_LIST_FOR_FIFO
-    // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-    mq_sendUpload.pop_front();
-    #else
-    mq_sendUpload.pop();
-    #endif
+  #if DEBUG_VTCOMM
+  INTERNAL_DEBUG_DEVICE << mq_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
 
-    #if DEBUG_VTCOMM
-    INTERNAL_DEBUG_DEVICE << mq_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
-
-    // trigger fast reschedule if more messages are waiting
-    if ( ( getUploadBufferSize() > 0 ) && ( getVtClientInstance4Comm().getPeriod() != 4 ) )
-    { // there is a command waiting
-      getVtClientInstance4Comm().setPeriod( 4, true );
-    }
-  }
-#if DEBUG_VTCOMM
-  else
-  {
-    INTERNAL_DEBUG_DEVICE << "Attempt to Dequeue while empty!" << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-#endif
+  if ( ! mq_sendUpload.empty() )
+    m_schedulerTaskProxy.retriggerNow();
 }
 
 
