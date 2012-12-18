@@ -1505,7 +1505,7 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
 }
 
 
-uint32_t
+unsigned
 VtClientConnection_c::getUploadBufferSize() const
 {
   return mq_sendUpload.size();

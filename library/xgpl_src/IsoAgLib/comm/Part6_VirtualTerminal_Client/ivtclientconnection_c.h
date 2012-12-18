@@ -66,6 +66,9 @@ public:
   bool sendCommandEsc (bool b_enableReplaceOfCmd=true)
     {return VtClientConnection_c::sendCommandEsc(b_enableReplaceOfCmd);}
 
+  unsigned getCommandQueueSize() const
+    { return VtClientConnection_c::getUploadBufferSize(); }
+
   //! @param versionLabel7chars == NULL: Use VersionLabel used for Uploading/Loading (must be given at init!)
   //!                                    This includes the language-code for multi-language pools!
   //!        versionLabel7chars != NULL: Use VersionLabel given. Must be 7 characters!
