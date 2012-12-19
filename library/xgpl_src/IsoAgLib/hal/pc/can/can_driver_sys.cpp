@@ -111,12 +111,14 @@ namespace __HAL {
 #ifdef USE_MUTUAL_EXCLUSION
     __HAL::canInitBreakWait();
 #endif
+    return true;
   }
 
   bool canStopDriver() {
 #ifdef USE_MUTUAL_EXCLUSION
     __HAL::canCloseBreakWait();
 #endif
+    return true;
   }
 
 
@@ -281,11 +283,11 @@ namespace HAL {
       return false;
     }
 
-    /* check for a possible new maximum fd */
-    __HAL::recalcFd();
-
     __HAL::g_bus[ channel ].mi_fd = fd;
     __HAL::g_bus[ channel ].mb_initialized = true;
+
+    /* check for a possible new maximum fd */
+    __HAL::recalcFd();
 
     return true;
   };
