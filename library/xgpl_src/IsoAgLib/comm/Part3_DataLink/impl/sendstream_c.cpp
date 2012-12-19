@@ -74,9 +74,7 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
       mpc_mss->setDataNextFastPacketStreamPart (&r_multiSendPkg, ui8_nettoCnt, 2);
     }
     mui32_dataBufferOffset += ui8_nettoCnt; // already sent out the first 6 bytes along with the first FP message.
-    switchToState (SendData, 2); // go, send the rest!
-    /** @todo SOON-178 maybe send out more packets right now if it's just about some.
-              Why wait? If we wait, it's probably not a "FAST Packet" anymore...*/
+    switchToState (SendData, 0);
     sendPacketFp();
   }
   else
@@ -158,6 +156,7 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
 
     case SendData:
     {
+      const int32_t before = System_c::getTime();
 #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
       if (men_msgType == NmeaFastPacket)
       {
@@ -180,8 +179,11 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
             return true; // FINISHED SendStream, remove it from list please!
           }
         } // for
-        /** @todo SOON-178 how fast must fast-packet be? send all right now? set retriggerIn to (0) or (1) ?? */
-        retriggerIn (2); // if we couldn't finish now, retrigger right soon! we're FAST-PACKET!
+
+        const int32_t timeToNextTrigger = ( pkgCnt / 3 ) - ( System_c::getTime() - before );
+        // sending frames takes us at least 1 ms per 3 frames
+        // retrigger first possible time we can continue sending.
+        retriggerIn ( timeToNextTrigger < 0 ? 0 : timeToNextTrigger ); 
       }
       else
 #endif
@@ -237,8 +239,11 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
           retriggerIn (50); // same state - but the time stamp gets updated, so we'll wait on for 50ms...
         }
         else
-        { // IsoTP || IsoETP can send on "immediately"
-          retriggerIn (3);
+        { // IsoTP || IsoETP can send on immediately
+          const int32_t timeToNextTrigger = ( pkgCnt / 3 ) - ( System_c::getTime() - before );
+          // sending frames takes us at least 1 ms per 3 frames
+          // retrigger first possible time we can continue sending.
+          retriggerIn ( timeToNextTrigger < 0 ? 0 : timeToNextTrigger ); 
         }
       } // Not Nmea- some ISO protocol
     } break; // case SendData
@@ -346,7 +351,7 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
           #if DEBUG_MULTISEND
           INTERNAL_DEBUG_DEVICE << "Start To Send Next Data Block" << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
-          switchToState (SendData, 5); // we'll have to trigger that we want to
+          switchToState (SendData, 0);
         } // end request to send
       } // awaited (or resent-) CTS received
       // else: nothing to do on "SendRts"
