@@ -54,17 +54,28 @@
 namespace __HAL {
 #ifdef USE_MUTUAL_EXCLUSION
   static int breakWaitPipeFd[2] = { -1, -1 };
+  static int breakWaitPipeInitCounter = 0;
 
   void canInitBreakWait() {
-    /* open break waitUntilCanReceiveOrTimeout socket */
-    if( pipe2( breakWaitPipeFd, O_NONBLOCK ) != 0 ) {
-      perror("pipe");
+    if( breakWaitPipeInitCounter == 0 )
+    {
+      /* open break waitUntilCanReceiveOrTimeout socket */
+      if( pipe2( breakWaitPipeFd, O_NONBLOCK ) != 0 ) {
+        perror("pipe");
+      }
     }
+    ++breakWaitPipeInitCounter;
   }
 
   void canCloseBreakWait() {
-    (void)close(breakWaitPipeFd[0]);
-    (void)close(breakWaitPipeFd[1]);
+    isoaglib_assert( breakWaitPipeInitCounter >	0 );
+
+    --breakWaitPipeInitCounter;
+    if( breakWaitPipeInitCounter == 0 )
+    {
+      (void)close(breakWaitPipeFd[0]);
+      (void)close(breakWaitPipeFd[1]);
+    }
   }
 
   void canClearBreakWaitFd( fd_set& rfds ) {
@@ -185,16 +196,14 @@ namespace HAL {
       return false;
     }
 
+    g_bus[ channel ].mi_fd = fd;
+    g_bus[ channel ].mb_initialized = true;
+
 #ifdef USE_MUTUAL_EXCLUSION
     __HAL::canInitBreakWait();
 #endif
 
-    /* check for a possible new maximum fd */
     recalcFd();
-
-
-    g_bus[ channel ].mi_fd = fd;
-    g_bus[ channel ].mb_initialized = true;
 
     return true;
   };
@@ -212,12 +221,12 @@ namespace HAL {
       return false;
     }
 
+    g_bus[ channel ].mb_initialized = false;
+    g_bus[ channel ].mi_fd = -1;
+
 #ifdef USE_MUTUAL_EXCLUSION
     __HAL::canCloseBreakWait();
 #endif
-
-    g_bus[ channel ].mb_initialized = false;
-    g_bus[ channel ].mi_fd = -1;
 
     recalcFd();
 
