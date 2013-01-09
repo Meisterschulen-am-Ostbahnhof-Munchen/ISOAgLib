@@ -633,7 +633,16 @@ MultiReceive_c::processMsgNmea( const CanPkgExt_c& pkg )
     INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** FastPacket sequence error - removing stream! ***" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
-  // else: Packet was handled okay, so we're done with processing...
+  else
+  {
+    if (pc_streamFound->getStreamingState() == StreamFinished)
+    {
+      const bool keepStream = finishStream ((DEF_Stream_c_IMPL&)*pc_streamFound);
+      if (!keepStream)
+        removeStream (*pc_streamFound);
+    }
+    // else: Stream not yet finished, set wait on for more fast packets...
+  }
 }
 #endif
 
