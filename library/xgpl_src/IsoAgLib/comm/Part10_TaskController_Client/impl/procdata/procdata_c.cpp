@@ -53,10 +53,6 @@ ProcData_c::init(
 
   getTcClientInstance4Comm( ).registerLocalProcessData( this );
 
-  // "Device process data objects with a data log trigger method of type total shall be settable."
-  isoaglib_assert(
-    ( IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTotal)
-    && (aui16_ddi != IsoAgLib::ProcData::defaultDataLoggingDDI) ) ? ab_isSetpoint : true );
   isoaglib_assert(
     (aui16_ddi != IsoAgLib::ProcData::defaultDataLoggingDDI) ? true : 
     IsoAgLib::ProcData::isMethodSet(aui8_triggerMethod, IsoAgLib::ProcData::MethodTimeInterval) & 
