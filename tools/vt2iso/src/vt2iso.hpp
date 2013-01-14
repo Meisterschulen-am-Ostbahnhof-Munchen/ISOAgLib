@@ -29,6 +29,9 @@
 #include "vt2iso-defines.hpp"
 #include "vt2iso-globals.hpp"
 
+// Would like to use wchar_t but C standard does not guarantee that wchar_t has at least
+//  16 bits, so lets be most portable definition with unsigned short for the incoming UCS-2
+typedef unsigned short UCS2; /* fixed 16 bits */
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -306,7 +309,7 @@ private:
 
   void diffFileSave( const std::string &destFileName, const std::string &tempFileName );
 
-  std::list<std::string> scanLanguageFilesOS( const language_s& a_lang );
+  std::list<std::string> scanLanguageFilesOS( language_s& a_lang );
 
 public:
   bool isVerbose() { return mb_verbose; }
@@ -344,7 +347,6 @@ private:
   std::string mstr_projectName;
   std::string spc_autoLanguage;
 
-  bool mb_projectFile;
   std::vector<Path_s> vec_xmlFiles;
 
   // search path
@@ -439,9 +441,11 @@ private:
 
   std::list<Path_s> l_dictionaryPath;
 
-  std::list<std::string> scanLanguageFiles( const language_s& a_lang );
+  std::list<std::string> scanLanguageFiles( language_s& a_lang );
   void readLanguageFilesToBuffer( std::list<std::string> a_languageFiles, language_s& a_lang );
   static bool isEol( const char c );
+  static UCS2* findWideChar(const UCS2 *s, UCS2 wc, size_t n);
+
 
 };
 

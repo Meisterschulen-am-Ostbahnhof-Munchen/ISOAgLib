@@ -11,6 +11,29 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+// Headers are order dependant  
+#include <sstream>
+#include <vector>
+#include <algorithm>
+#include <fstream>
+#include <sys/stat.h>
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+
+#if defined WIN32 && !defined cygwin
+  #include <windows.h>
+  #include <ostream>
+  static const char scc_dirSeparatorWrong = '/';
+  static const char scc_dirSeparatorCorrect = '\\';
+  #include "WinDirent.h"   // Gives me a POSIX API for Windows
+#else
+  #include <dirent.h>
+  static const char scc_dirSeparatorWrong = '\\';
+  static const char scc_dirSeparatorCorrect = '/';
+#endif
+
 #include <xercesc/parsers/AbstractDOMParser.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMImplementationLS.hpp>
@@ -21,35 +44,9 @@
 #include <xercesc/dom/DOMAttr.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 
-#include <algorithm>
-// Includes (findfirst, findnext)
-#include <fstream>
-#include <iterator>
-#include <vector>
-
-#include <sys/stat.h>
-
-#include <stdio.h>
-#include <ctype.h>
-
-#ifdef WIN32
-  #include <windows.h>
-  #include <ostream>
-  static const char scc_dirSeparatorWrong = '/';
-  static const char scc_dirSeparatorCorrect = '\\';
-#else
-  #include <dirent.h>
-  static const char scc_dirSeparatorWrong = '\\';
-  static const char scc_dirSeparatorCorrect = '/';
-#endif
-
-
 #include "vt2isoimagefreeimage_c.h"
 #include "vt2iso.hpp"
 #include "boost/format.hpp"
-#include <sstream>
-#include <vector>
-#include <algorithm>
 
 #ifdef USE_SPECIAL_PARSING_PROP
  #include <specialparsinguseproptag_c.h>
@@ -80,6 +77,12 @@ extern BGR_s vtColourTable[256];
 // ### GLOBALS ###
 char iso639table [DEF_iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
 
+//! for right now (legacy-XMLs, but vt-designer still writes this out!!)
+//! special sequences in the XML's value= tag are:
+//! \n
+//! \r
+//! length-wise they count as 1 character and are "converted" in the output to \n and \r, which is one "char".
+//! other characters need to be escaped for c-string printout like " and \ ...
 std::string escapedString (const std::string &instr)
 {
   std::string outstr;
@@ -87,8 +90,26 @@ std::string escapedString (const std::string &instr)
   {
     switch (instr[i])
     {
-    case '"':
-    case '\\': outstr += '\\'; outstr += instr[i]; break;
+    case '\\':
+      if( (i+1) < instr.length() )
+      { 
+        switch( instr[i+1] )
+        {
+        case 'n': // support for \n and \r is subject to change. currently:
+        case 'r': // let \n and \r simply pass, vt-designer correctly calculated the length already, too!
+          outstr += instr[i]; // copy \ ...
+          break;
+        default:
+          outstr += "\\\\";
+          break;
+        }
+      }
+      else
+      { // single \ at the end of string
+        outstr += "\\\\";
+      }
+      break;
+    case '"':  outstr += "\\\""; break;
     case '\n': outstr += "\\n"; break;
     case '\r': outstr += "\\r"; break;
     default: outstr += instr[i]; break;
@@ -202,12 +223,9 @@ static void usage()
 {
   std::cout << "\nvt2iso BUILD DATE: " << __DATE__ <<std::endl<<std::endl<<
     "Usage:\n"
-    " vt2iso [options] <XML file> [options]\n"
     " vt2iso [options] <VTP file> [options]"<<std::endl<<std::endl<<
-    "This program converts the input-files into ISOAgLib VT-Client Code-files."<<std::endl<<std::endl<<
-    "In Legacy-Mode input files are all files starting with <XML file>,\nsorted by alphabetical order.\n"
-    "This has been done to give the possibility to split \nlarge XML files into several ones."<<std::endl<<std::endl<<
-    "In Project-File-Mode input files are processed in the order\ngiven in the project-file."<<std::endl<<std::endl<<
+    "This program converts the input-files into ISOAgLib VT-Client Code-files."<<std::endl<<
+    "Input files are processed in the order given in the VTP project-file."<<std::endl<<std::endl<<
     "Features:\n"
     " - auto_language=\"..\" attribute\n"
     " - support for auto-detecting language=\"..\" attribute if the value is given in the .values.xx.txt files."<<std::endl<<std::endl<<
@@ -759,7 +777,8 @@ signed int vt2iso_c::strlenUnescaped (const std::string& pcc_string)
   int i_unescapedLength=0;
   char c_current;
   bool b_lastWasEscapeChar=false;
-  int orig_len = pcc_string.length();
+  const int c_orig_len = pcc_string.length();
+  int orig_len = c_orig_len;
   int src_index=0;
   while (orig_len-- > 0)
   {
@@ -772,6 +791,11 @@ signed int vt2iso_c::strlenUnescaped (const std::string& pcc_string)
     else
     { // count as normal character
       i_unescapedLength++;
+      if (b_lastWasEscapeChar &&(c_current == 'x'))
+      { // That was an escaped number, with 2 digits
+        src_index = src_index+2; // skip up to next
+        orig_len = orig_len-2;
+      }
       b_lastWasEscapeChar=false;
     }
   }
@@ -779,7 +803,18 @@ signed int vt2iso_c::strlenUnescaped (const std::string& pcc_string)
   if (b_lastWasEscapeChar)
     return -1;
   else
+  {
+    if( (c_orig_len >= 1) && ((0xff==pcc_string[0]) && (0xfe==pcc_string[1])) ) // BOM check, UniCode encoding, LE
+    {
+      if (i_unescapedLength & 0x01)   // thats odd, it should always be a pair for UCS-2
+      {
+        printf ("Odd countOf chars: %d in UnicodeString!\n", i_unescapedLength);
+        return -1;
+      }
+    }
+
     return i_unescapedLength;
+  }
 }
 
 bool vt2iso_c::copyWithQuoteAndLength (std::string &dest, const std::string& src, unsigned int len)
@@ -792,25 +827,47 @@ bool vt2iso_c::copyWithQuoteAndLength (std::string &dest, const std::string& src
     printf ("Error in copyWithQuoteAndLength()! STOP PARSER! bye.\n\n");
     return false;
   }
-  unsigned int take = ( (unsigned int)ret <= len) ? ret : len;
+
   unsigned int i=0;
   int srcIndex = 0;
   bool b_lastWasEscapeChar=false;
-  for (; i<take;)
+
+  const bool unicode = ( ( ret >= 1 ) && ((0xff==src[0]) && (0xfe==src[1])) ); // BOM check, UniCode encoding, LE
+  unsigned int take = ( (unsigned int)ret <= len) ? ret : len;
+  for (; i<take; ++i)
   { // copy probably escaped string
-    if ((src[srcIndex] == '\\') && (!b_lastWasEscapeChar))
+    if ((src[srcIndex] == 'x') && (b_lastWasEscapeChar))
+    {
+      // \xAB (four input chars) -> one 8bit-char
+      i -= 2; // one substracted below already on \ detection!
+    }
+    else if ((src[srcIndex] == '\\') && (!b_lastWasEscapeChar))
     {
       b_lastWasEscapeChar=true;
-      // do NOT increment i!
+      // \A (two input chars) -> one 8bit-char
+      --i;
     }
     else
     {
       b_lastWasEscapeChar=false;
-      i++;
     }
     dest.push_back(src[srcIndex++]);
   }
-  for (; i<len; i++) dest.push_back(' '); // fill with spaces if necessary
+  
+  // fill with spaces if necessary
+  if( unicode )
+  {
+    for (; i<len; i+=2)
+    {
+      dest.push_back(' ');
+      dest.push_back(0x00); // LE UCS-2 Space
+    }
+  }
+  else
+  {
+    for (; i<len; i++)
+      dest.push_back(' ');
+  }
   dest.push_back ('\"');
   dest.push_back (')');
   return true;
@@ -998,7 +1055,11 @@ vt2iso_c::init(
     c_Bitmap.resetOstream();
 
   /// Are we running in project-file mode? (check extension for .VTP/.vtp)
-  mb_projectFile = isProjectFileMode(arcstr_cmdlineName);
+  if( !isProjectFileMode(arcstr_cmdlineName) )
+  {
+    std::cerr << "Not specifying a vt-designer project file (.vtp), but this legacy-mode is no longer supported. Please create a proper project-file for your project."<<std::endl;
+    return false;
+  }
 
   // Parse xml file search path if given
   mvec_searchPath = getSearchPath( arcstr_searchPath );
@@ -1050,15 +1111,13 @@ vt2iso_c::init(
   if(!mb_silentMode)
   {
     std::cout << std::endl
-        << (mb_projectFile ? "Running in Project-File Mode"
-                           : "Running in Legacy Mode") << std::endl
+        << "Generation Settings:" << std::endl
         << "--> Project's Dir: " << mstr_sourceDir << std::endl
         << "--> Project-Name:  " << mstr_projectName << std::endl
         << "--> Class-Name:    " << mstr_className << std::endl
         << "--> Namespace:     " << ((mstr_namespacePrefix.empty()) ? std::string("[--NONE--]") : mstr_namespacePrefix) << std::endl
         << "--> Output Files:  " << mstr_destinDirAndProjectPrefix << "[...]" << std::endl
-        << (mb_projectFile ? "--> Given Filelist:"
-                           : "--> Sorted Filelist:") << std::endl;
+        << "--> Filelist:" << std::endl;
 
     for (size_t dex=0; dex < vec_xmlFiles.size(); ++dex)
       std::cout << "    - " << vec_xmlFiles[dex].str_pathName << std::endl;
@@ -1161,6 +1220,9 @@ void vt2iso_c::defaultAndConvertAttributes (unsigned int a_objType)
 
   case otInputnumber:
     arrc_attributes[attrOptions].setIfNotGiven("none");
+    //if (AGCO) // @todo AGCO
+    //  break;
+
     /// Convert (old v2) attrEnabled to attrInputObjectOptions (in case someone is still
     /// using enabled="..")
     if (!arrc_attributes[attrEnabled].isGiven() && !arrc_attributes[attrInputObjectOptions].isGiven())
@@ -1196,6 +1258,9 @@ void vt2iso_c::defaultAndConvertAttributes (unsigned int a_objType)
     break;
 
   case otInputlist:
+    //if (AGCO) // @todo AGCO
+    //  break;
+
     /// Convert (old v2) attrEnabled to attrOptions (as vt-designer always
     /// writes out options=".." regardless of version 2 or 4).
     if (!arrc_attributes[attrEnabled].isGiven() && !arrc_attributes[attrOptions].isGiven())
@@ -1750,6 +1815,8 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
     return;
   }
 
+   char MBBuffer[ maxTagLength ];
+
 // #if DEBUG_LANGUAGE_AUTO_DETECT
 //   std::cout << "AUTO-DETECT-LANGUAGE: searching language file for ["<<searchName<<"]... ";
 // #endif
@@ -1764,14 +1831,32 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
       while (bufferCur < bufferEnd)
       { // check this line (\n and \r has been previously converted to 0x00
         std::string pc_id;
-        char* firstChar=bufferCur;
-        while (*firstChar == ' ') firstChar++;
-        if ( (*firstChar == 0x00)
-              || (strstr (bufferCur, "//") && (strstr (bufferCur, "//") == firstChar))
-          )
-        { // ignore line
+        int numWideChars;
+
+        if (arrs_language[curLang].unicode)
+        {
+          bufferCur += 2;  // start me at the beginning of the tag 
+          numWideChars = (bufferEnd - bufferCur) / 2;
+          UCS2* commaLoc = findWideChar ((const UCS2*)bufferCur, 0x2C, numWideChars );
+          if (commaLoc)   // if not valid, we are done looking..
+          {
+            int charCnt = ((char*)commaLoc - bufferCur)/2;
+            wcstombs(MBBuffer, (const wchar_t*)bufferCur, charCnt );
+            MBBuffer[charCnt] = 0;  // theres our identifier..
+            pc_id = MBBuffer;
+            if (pc_id.compare(searchName) == 0)
+            { /// add this language to the language=".." attribute!
+              newLanguageValue += arrs_language [curLang].code;
+              break;
+            }
+          }
+          else
+          { // no comma found, although it was not a commentary line :(
+            std::cout << "No COMMA in a non-comment line in the " << arrs_language [curLang].code << ".vtu language file!"<<std::endl;
+            return;
+          }
         }
-        else
+        else //  This is good ol null terminated strings, so can use those standard i/o calls ------------
         {
           char* comma = strchr (bufferCur, ',');
           if (comma)
@@ -1786,14 +1871,32 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
             }
           }
           else
-          { // no comma found, although it was not a commentary line :(
-            std::cout << "No COMMA in a non-comment line in the language file!"<<std::endl;
+          { // no comma found, although it was not a commentary line :(  - or we could have been at the end...
+            if ((bufferEnd-bufferCur) > 5) {   // There really should be a comma
+              std::cout << "No COMMA in a non-comment line in the " << arrs_language [curLang].code << ".vtl language file!"<<std::endl;
+            }
             return;
           }
         }
-          // advance to next line
-        int lineLen = strlen (bufferCur)+1; // include terminating 0x00
-        bufferCur += lineLen;
+        // advance to next line --  of-course a wideChar and the byteSize is available
+        if (arrs_language[curLang].unicode)
+        {
+          UCS2* newStart = findWideChar ((const UCS2*)bufferCur, 0x00, numWideChars );
+          if (newStart) 
+          {
+            newStart++;  // theres another 0x0000 out there...
+            bufferCur = (char*)newStart;
+          } 
+          else
+          {
+            bufferCur = bufferEnd + 1;   // Jane, stop this crazy thing
+          }
+        }
+        else  // - Yup good ol strlen employed here  ---------
+        {
+          int lineLen = strlen (bufferCur)+1; // include terminating 0x00
+          bufferCur += lineLen;
+        }
       }
     }
   }
@@ -1857,18 +1960,15 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   int commandType = commandIsType (m_nodeName); // returns 0..(maxCommandsToCompare-1)
 
   // only parse WorkingSet (and objectpool) when in "mb_parseOnlyWorkingSet"
-  if (mb_projectFile)
+  if (mb_parseOnlyWorkingSet)
   {
-    if (mb_parseOnlyWorkingSet)
-    {
-      if ((objType != otObjectpool) && (objType != otWorkingset))
-       return true;
-    }
-    else
-    { // !mb_parseOnlyWorkingSet
-      if (objType == otWorkingset)
-        return true; // has already been parsed!
-    }
+    if ((objType != otObjectpool) && (objType != otWorkingset))
+     return true;
+  }
+  else
+  { // !mb_parseOnlyWorkingSet
+    if (objType == otWorkingset)
+      return true; // has already been parsed!
   }
 
   if (isVerbose())
@@ -1903,105 +2003,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       if (n->hasAttributes())
       { // parse through all attributes
         /// ATTRIBUTES IN THIS ELEMENT GOT >>obsolete<< WHEN USING WITH A PROJECT FILE!!!
-        if (mb_projectFile)
-        {
-          clean_exit ("You're running in project-mode but are using an XML-file that has values in the <objectpool> tag (e.g. \"dimension\"). Remove all attributes please! STOPPING PARSER! bye.\n\n");
-          exit(-1);
-        }
-
-        pAttributes = patched_getAttributes(n);
-        int nSize = pAttributes->getLength();
-
-        // now get all attributes listed in the <tag ...> element
-        for (int i=0;i<nSize;++i)
-        {
-          DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-          utf16convert (pAttributeNode->getName(), attr_name);
-          utf16convert (pAttributeNode->getValue(), attr_value);
-
-          // get 'name=', 'id=' and all other possible attributes
-          if (attr_name.compare("dimension") == 0)
-          {
-            if (is_opDimension)
-            {
-              std::cerr << "\n\nYOU MUSTN'T SPECIFY THE dimension= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye."<<std::endl<<std::endl;
-              return false;
-            }
-
-            opDimension = StringToInt(attr_value);
-            is_opDimension = true;
-            continue;
-          }
-
-          if (attr_name.compare("additionally_required_objects") == 0)
-          {
-            if (is_opAdditionallyRequiredObjects)
-            {
-              std::cerr << "\n\nYOU MUSTN'T SPECIFY THE additionally_required_objects= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye."<<std::endl<<std::endl;
-              return false;
-            }
-            opAdditionallyRequiredObjects = attr_value;
-            is_opAdditionallyRequiredObjects = true;
-            continue;
-          }
-          if (attr_name.compare("sk_width") == 0)
-          {
-            if (is_skWidth)
-            {
-              std::cerr << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye."<<std::endl<<std::endl;
-              return false;
-            }
-            skWidth = StringToInt (attr_value);
-            is_skWidth = true;
-            continue;
-          }
-          if (attr_name.compare("sk_height") == 0)
-          {
-            if (is_skHeight)
-            {
-              std::cerr << "\n\nYOU MUSTN'T SPECIFY THE sk_height= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye."<<std::endl<<std::endl;
-              return false;
-            }
-            skHeight = StringToInt (attr_value);
-            is_skHeight = true;
-            continue;
-          }
-          if (attr_name.compare("std_bitmap_path") == 0)
-          {
-            Path_s s_bitmapPath;
-            s_bitmapPath.str_pathName = attr_value;
-            s_bitmapPath.b_relativePath = true;
-
-            // convert directory separators
-            (void) std::replace (s_bitmapPath.str_pathName.begin(),
-                                 s_bitmapPath.str_pathName.end(),
-                                 scc_dirSeparatorWrong,
-                                 scc_dirSeparatorCorrect);
-
-            l_stdBitmapPath.push_back(s_bitmapPath);
-            continue;
-          }
-          if (attr_name.compare("fix_bitmap_path") == 0)
-          {
-            Path_s s_bitmapPath;
-            s_bitmapPath.str_pathName = attr_value;
-            s_bitmapPath.b_relativePath = true;
-
-            // convert directory separators
-            (void) std::replace (s_bitmapPath.str_pathName.begin(),
-                                 s_bitmapPath.str_pathName.end(),
-                                 scc_dirSeparatorWrong,
-                                 scc_dirSeparatorCorrect);
-
-            l_fixedBitmapPath.push_back(s_bitmapPath);
-            continue;
-          }
-          if (attr_name.compare("auto_language") == 0)
-          {
-            spc_autoLanguage = attr_value;
-            continue;
-          }
-        }
+        clean_exit ("You're running in project-mode but are using an XML-file that has values in the <objectpool> tag (e.g. \"dimension\"). Remove all attributes please and make sure the values in your project-file are set up correctly! STOPPING PARSER! bye.\n\n");
+        exit(-1);
       }
     }
     if (pc_specialParsing && (objType == otIncludeobject))
@@ -2595,6 +2598,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         if (curLang > 0)
         {
           pc_postfix = str(format("_%s%d") % mstr_langPrefix % curLang);
+          // Note: Someone said the langPrefix is wrong here, but this probably is just a merge error (where langPrefix was set to the defines-prefix!)
         }
         if ( checkForAllowedExecution() )
         {
@@ -2640,6 +2644,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           char* bufferCur = arrs_language[curLang].valueBuffer;
           char* bufferEnd = bufferCur + arrs_language[curLang].valueBufferLen;
           std::string pc_foundValue;
+          int numWideChars;
+          char MBBuffer[ maxTagLength ];
+
+          if (arrs_language[curLang].unicode)  // The first read of a UCS-2 has a BOM there
+            bufferCur += 2;  // move me forward, start me at the beginning of the tag 
+
           while (bufferCur < bufferEnd)
           {
             // check this line (\n and \r has been previously converted to 0x00
@@ -2654,54 +2664,142 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             }
             else
             {
-              char* comma = strchr (bufferCur, ',');
-              if (comma)
+              if (arrs_language[curLang].unicode)  // This is the UCS-2   vtu file -  Unicode version
               {
-                *comma = 0x00;
-                pc_id = bufferCur;
-                *comma = ','; // revert comma-separator
-                comma++; // goto next character following the comma
-                char* firstQuote = strchr (comma, '"');
-                if (firstQuote)
+                numWideChars = (bufferEnd - bufferCur) / 2;
+                UCS2* commaLoc = findWideChar ((const UCS2*)bufferCur, 0x2C, numWideChars );
+                if (commaLoc)   // if not valid, we are done looking..
                 {
-                  char* nextQuote = strrchr (firstQuote+1, '"');
-                  if (nextQuote)
-                  { // extract text from inbetween
-                    pc_foundValue.clear();
-                    for (char* it=firstQuote+1; it < nextQuote; it++)
-                    { // extract byte by byte
-                      pc_foundValue.push_back (*it);
+                  int charCnt = ((char*)commaLoc - bufferCur)/2;
+                  wcstombs(MBBuffer, (const wchar_t*)bufferCur, charCnt );
+                  MBBuffer[charCnt] = 0;  // theres our identifier..
+                  pc_id = MBBuffer;
+                  UCS2* firstQuote = findWideChar ((const UCS2*)commaLoc, 0x0022, numWideChars );
+                  if (firstQuote)
+                  {
+                    UCS2* nextQuote = findWideChar ((const UCS2*)(firstQuote+1), 0x0022, numWideChars );
+                    if (nextQuote)
+                    { // extract text from in between
+
+                      pc_foundValue.clear();
+
+                      pc_foundValue.push_back((char)0xff); // Prepend the char string with the BOM
+                      pc_foundValue.push_back((char)0xfe);
+
+                      for (char* it=(char*)(firstQuote+1); it < (char*)nextQuote; it++)
+                      {   
+                        // We MUST handle a NULL (zero, 0) with a   '\x00' 
+                        //   in addition, we may be considered paranoid, but that doesn't mean 
+                        //      these "special" control chars are NOT out to get us!  ;-)
+
+                        int incoming = *it & 0xff; // mask sign extension
+                        int upDgt, lowDgt;
+                        char pushChar;
+                        pc_foundValue.push_back(0x5c);	// Prepend with '\x'  
+                        pc_foundValue.push_back('x');
+
+                        upDgt = incoming/16;
+                        lowDgt = incoming%16;
+
+                        // need chars 0 to 9 (0x30 to 0x39)  OR   a to f (0x61 to 0x66)
+                        pushChar = (upDgt < 10) ? (upDgt+'0') : (upDgt-10+'a');
+                        pc_foundValue.push_back(pushChar);
+                        pushChar = (lowDgt < 10) ? (lowDgt+'0') : (lowDgt-10+'a');
+                        pc_foundValue.push_back(pushChar);
+                      } //  The for loop of all the chars
+                    }
+                    else
+                    { // no closing quote
+                      std::cerr << "No CLOSING quote in the " << arrs_language [curLang].code << ".vtu language file!"<<std::endl;
+                      return false;
                     }
                   }
                   else
-                  { // no closing quote
-                    std::cerr << "No CLOSING quote in the language file!"<<std::endl;
+                  { // no opening quote
+                    std::cerr << "No OPENING quote in the " << arrs_language [curLang].code << ".vtu language file!"<<std::endl;
                     return false;
+                  }
+                  /// Is this the tag we are looking for?   If so, we can break here
+                  if ((pc_id).compare(m_objName) == 0)
+                  { // set value and break
+                    b_foundLanguageValue= true;
+                    break;
                   }
                 }
                 else
-                { // no opening quote
-                  std::cerr << "No OPENING quote in the language file!"<<std::endl;
+                { // no comma found, although it was not a commentary line :(
+                  std::cerr << "No COMMA in a non-comment line in the " << arrs_language [curLang].code << ".vtu language file!";
                   return false;
                 }
-                /// BREAK HERE TO WATCH GOTTEN IN THE DIFFERENT CASES!
-                if (pc_id.compare(m_objName) == 0)
-                { // set value and break
-                  //std::cout << "found language value for [" << objName << "]."<<std::endl;
-                  b_foundLanguageValue= true;
-                  break;
+              }  // end of working on the UCS-2  vtu file tag/string
+              else  
+              {  //  For *.vtl files we can use those standard i/o calls ------------ 
+                char* comma = strchr (bufferCur, ',');
+                if (comma)
+                {
+                  *comma = 0x00;
+                  pc_id = bufferCur;
+                  *comma = ','; // revert comma-separator
+                  comma++; // goto next character following the comma
+                  char* firstQuote = strchr (comma, '"');
+                  if (firstQuote)
+                  {
+                    char* nextQuote = strrchr (firstQuote+1, '"');
+                    if (nextQuote)
+                    { // extract text from in between
+                      pc_foundValue.clear();
+                      for (char* it=firstQuote+1; it < nextQuote; it++)
+                      { // extract byte by byte
+                        pc_foundValue.push_back (*it);
+                      }
+                    }
+                    else
+                    { // no closing quote
+                      std::cerr << "No CLOSING quote in the " << arrs_language [curLang].code << ".vtl language file!"<<std::endl;
+                      return false;
+                    }
+                  }
+                  else
+                  { // no opening quote
+                    std::cerr << "No OPENING quote in the " << arrs_language [curLang].code << ".vtl language file!"<<std::endl;
+                    return false;
+                  }
+                  /// BREAK HERE TO WATCH GOTTEN IN THE DIFFERENT CASES!
+                  if ((pc_id).compare(m_objName) == 0)
+                  { // set value and break
+                    //std::cout << "found language value for [" << objName << "]."<<std::endl;
+                    b_foundLanguageValue= true;
+                    break;
+                  }
                 }
-              }
+                else
+                { // no comma found, although it was not a commentary line :(
+                  std::cerr << "No COMMA in a non-comment line in the " << arrs_language [curLang].code << ".vtl language file!";
+                  return false;
+                }
+              }   // END OF  - 8bit wide character manipulation
+            }
+
+            // advance to next line --  of-course a wideChar and the byteSize is available
+            if (arrs_language[curLang].unicode)
+            {
+              UCS2* newStart = findWideChar ((const UCS2*)bufferCur, 0x0000, numWideChars );
+              if (newStart) 
+              {
+                newStart += 2;  // theres another 0x0000 out there...
+                bufferCur = (char*)newStart;
+              } 
               else
-              { // no comma found, although it was not a commentary line :(
-                std::cerr << "No COMMA in a non-comment line in the language file!";
-                return false;
+              {
+                bufferCur = bufferEnd + 1;
               }
             }
-            // advance to next line
-            int lineLen = strlen (bufferCur)+1; // include terminating 0x00
-            bufferCur += lineLen;
-          }
+            else
+            {
+              int lineLen = strlen (bufferCur)+1; // include terminating 0x00
+              bufferCur += lineLen;
+            } 
+          }  // END OF -    while (bufferCur < bufferEnd)
 
           if (b_foundLanguageValue)
           {
@@ -4267,7 +4365,6 @@ vt2iso_c::vt2iso_c()
   : firstLineFileE(true)
   , partFile_split_function( NULL )
   , ui_languages(0)
-  , mb_projectFile (false) // default to no project file
   , mbitset_objIdUsed()
   , map_objNameIdTable()
   , objNextAutoID(65534)
@@ -4457,133 +4554,12 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
   /// Extract Project (File w/o .ext) Name as default for LEGACY MODE or PROJECT-MODE w/o Project="..."
   std::string str_fileName = mstr_sourceDirAndProjectPrefix.substr( lastDirPos+1 );
 
-  // set "mstr_className", either from project-file or from mstr_projectName.
-  if (mb_projectFile)
-  { /// *** PROJECT-FILE MODE ***
-    // will normally override "mstr_projectName" if given in VTP's Project="..."
-    if (!processProjectFile (astr_fileName))
-      return false;
-    // Check for Fallback ProjectName in case none given!
-    if (mstr_projectName.length() == 0)
-      mstr_projectName = str_fileName;
-  }
-  else
-  { /// LEGACY MODE
-    // Project-Name is the FileName in Legacy-mode!
+  if (!processProjectFile (astr_fileName))
+    return false;
+
+  // Check for Fallback ProjectName in case none given!
+  if (mstr_projectName.length() == 0)
     mstr_projectName = str_fileName;
-
-    std::string c_unwantedType = ".inc";
-    std::string c_unwantedType2 = ".h";
-    std::string c_unwantedType3 = ".inc-template";
-    std::string c_unwantedType4 = ".iop";
-    std::string c_unwantedType5 = ".txt";
-    std::string c_unwantedType6 = ".csv";
-    std::string c_unwantedType7 = ".cpp";
-    std::string c_unwantedType8 = ".bak";
-
-  #ifdef WIN32
-    HANDLE hList;
-    TCHAR  szDir[255];
-    //TCHAR  szSubDir[255];
-    TCHAR  szCurDir[255];
-    WIN32_FIND_DATA FileData;
-
-    // save current directory
-    GetCurrentDirectory(255, szCurDir);
-    if(!mb_silentMode){
-      std::cout << "CurDir: " << szCurDir << std::endl;
-    }
-
-      // go to new working directory
-    if (SetCurrentDirectory(mstr_sourceDir.c_str()) == 0)
-    {
-      std::cerr <<  "vt2iso: Couldn't open the directory."<< std::endl;
-
-      CHAR szBuf[80];
-      DWORD dw = GetLastError();
-      sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
-      printf(szBuf);
-      HRESULT_FROM_WIN32(dw);
-      return false;
-    }
-
-    // Get the proper directory path
-    wsprintf(szDir, TEXT("*") );
-    hList = FindFirstFile(szDir, &FileData);
-    if (hList != INVALID_HANDLE_VALUE)
-    { // Traverse through the directory structure
-      do
-      { // Check the object is a directory or not
-        if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-        { //if ((strcmp(FileData.cFileName, ".") != 0) && (strcmp(FileData.cFileName, "..") != 0))
-          std::string c_directoryCompareItem (FileData.cFileName);
-          if ( c_directoryCompareItem[0] == '.' ) continue;
-          if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2 ) == c_unwantedType2 ) continue;
-          if ( (c_directoryCompareItem.length() > 13) && (c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3) ) continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType4 ) continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType5 ) continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType6 ) continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType7 ) continue;
-          if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType8 ) continue;
-
-          if ( c_directoryCompareItem.find( mstr_projectName ) != std::string::npos ) {
-            c_directoryCompareItem.insert(0, mstr_sourceDir );
-            Path_s s_path;
-            s_path.str_pathName = c_directoryCompareItem;
-            s_path.b_relativePath = true;
-            vec_xmlFiles.push_back(s_path);
-            //std::cout << "found: " << c_directoryCompareItem << ""<<std::endl;
-          }
-        }
-      } while (FindNextFile(hList, &FileData));
-      FindClose(hList);
-    }
-    else
-    {
-      std::cerr <<  "vt2iso: Couldn't open the directory.";
-      return false;
-    }
-    SetCurrentDirectory(szCurDir);
-  #else
-    // LINUX -> POSIX method for directory traversal
-    DIR *dp;
-    dp = opendir (mstr_sourceDir.c_str());
-    if (dp != NULL)
-    {
-      dirent *ep;
-      while ((ep = readdir (dp))) {
-        std::string c_directoryCompareItem (ep->d_name);
-        if ( c_directoryCompareItem[0] == '.' ) continue;
-        if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
-        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
-        if ( (c_directoryCompareItem.length() > 2  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-2  ) == c_unwantedType2 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 13 ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-13 ) == c_unwantedType3 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType4 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType5 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType6 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType7 ) ) continue;
-        if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType8 ) ) continue;
-
-        if ( c_directoryCompareItem.find( mstr_projectName ) != std::string::npos ) {
-          c_directoryCompareItem.insert(0, mstr_sourceDir );
-          Path_s s_path;
-          s_path.str_pathName = c_directoryCompareItem;
-          s_path.b_relativePath = true;
-          vec_xmlFiles.push_back(s_path);
-     //     std::cout << "found: " << ep->d_name << ""<<std::endl;
-        }
-      }
-      closedir(dp);
-    }
-    else
-    {
-      std::cerr <<  "vt2iso: Couldn't open the directory '" << mstr_sourceDir.c_str() << "'." << std::endl;
-      return false;
-    }
-  #endif
-  }
 
   /// Generate ClassName from ProjectName" (remove Space and other non-C++-identifier-chars)
   mstr_className = mstr_projectName;
@@ -4593,27 +4569,6 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
     { // replace non-alphanumeric character by underscore character
       *iter = '_';
     }
-  }
-
-  uint16_t ui16t_xmlFileCnt = vec_xmlFiles.size();
-  if (!mb_projectFile)
-  { // sorting needed in legacy mode
-    Path_s s_tmpPath;
-    // now sort this list
-    bool stillSorting;
-    do {
-      stillSorting=false;
-      for (int a=1; a < ui16t_xmlFileCnt; a++)
-      {
-        if (vec_xmlFiles[a-1].str_pathName.compare(vec_xmlFiles[a].str_pathName) > 0)
-        {
-          s_tmpPath = vec_xmlFiles[a];
-          vec_xmlFiles[a] = vec_xmlFiles[a-1];
-          vec_xmlFiles[a-1] = s_tmpPath;
-          stillSorting=true;
-        }
-      }
-    } while (stillSorting);
   }
 
   /// Override destination-directory with given outDir-parameter?
@@ -5351,15 +5306,13 @@ void vt2iso_c::parse()
 
   if(!mb_silentMode) std::cout << "** Pass 2 **"<<std::endl;
 
-  if (mb_projectFile)
-  {
-    setParseModeWorkingSet (true); // only parse for the workingset-object!
-    if (!doAllFiles (actionProcessElement)) return;
+  setParseModeWorkingSet (true); // only parse for the workingset-object!
+  if (!doAllFiles (actionProcessElement)) return;
 
-    if(!mb_silentMode) std::cout << "** Pass 3 **"<<std::endl;
+  if(!mb_silentMode) std::cout << "** Pass 3 **"<<std::endl;
 
-    setParseModeWorkingSet (false); // parse all objects other than workingset!
-  }
+  setParseModeWorkingSet (false); // parse all objects other than workingset!
+
   if (!doAllFiles (actionProcessElement)) return;
 
   skRelatedFileOutput();
@@ -6160,93 +6113,46 @@ void vt2iso_c::diffFileSave( const std::string &destFileName, const std::string 
 
 
 bool
-isLanguageFile( const char *name, const char *langCode )
+checkForLanguageFile( const char *name, const char *langCode )
 {
-  // check filename length
-  if ( strlen( name ) < ( 2 + 1 + 3 ) ) { // code + dot + vtl
+  // check filename length is exactly the right size
+  if ( strlen( name ) != ( 2 + 1 + 3 ) ) { // code + dot + vtx
     return false;
   }
 
-  // check first two chars
+  // check first two chars for our language code
   if ( 0 != strncmp( name, langCode, 2 ) ) {
     return false;
   }
 
-  // check postfix
-  if ( 0 != strncmp( ".vtl", name + strlen( name ) - 4,  4 ) ) {
+  return true;  // That is the one we want
+}
+
+bool
+isThisMyLanguageFile( const char *name, language_s& a_lang )
+{
+  // Simple validation first
+  if (!checkForLanguageFile(name, a_lang.code)) {
     return false;
   }
 
-  return true;
-}
-
-
-#ifdef WIN32
-std::list<std::string>
-vt2iso_c::scanLanguageFilesOS( const language_s& a_lang )
-{
-  std::list<std::string> files;
-
-  for ( std::list<Path_s>::iterator p = l_dictionaryPath.begin(); p != l_dictionaryPath.end(); ++p ) {
-
-    std::string str_tmpWorkDir = p->b_relativePath ? mstr_sourceDir : "";
-
-    HANDLE hList;
-    TCHAR  szDir[255];
-    TCHAR  szCurDir[255];
-    WIN32_FIND_DATA FileData;
-
-    // save current directory
-    GetCurrentDirectory(255, szCurDir);
-
-    // go to new working directory
-    if (SetCurrentDirectory( ( str_tmpWorkDir + scc_dirSeparatorCorrect + p->str_pathName ).c_str() ) != 0)
-    {
-      // Get the proper directory path
-      wsprintf(szDir, TEXT("*") );
-      hList = FindFirstFile(szDir, &FileData);
-      if (hList != INVALID_HANDLE_VALUE)
-      { // Traverse through the directory structure
-        do
-        { // Check the object is a directory or not
-          if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-          { // it's a file
-            std::string c_directoryCompareItem (FileData.cFileName);
-
-            if ( isLanguageFile( FileData.cFileName, a_lang.code ) )
-            {
-              std::string langFileName = str_tmpWorkDir + p->str_pathName + scc_dirSeparatorCorrect + std::string( FileData.cFileName );
-              files.push_front( langFileName );
-            }
-          }
-        } while (FindNextFile(hList, &FileData));
-        FindClose(hList);
-      }
-      else
-      {
-        clean_exit( "vt2iso: Couldn't open the directory." );
-        exit( -1 );
-      }
-      // get back to old directory
-      SetCurrentDirectory(szCurDir);
-    }
-    else
-    { /* could not open directory */
-/*    CHAR szBuf[80];
-      DWORD dw = GetLastError();
-      sprintf(szBuf, "Open %s failed: GetLastError returned %u\n", szCurDir, dw);
-      printf(szBuf);
-      HRESULT_FROM_WIN32(dw); */
-      perror( "" );
-      files.clear(); // this is an error - we should not use partial results from file search
-      break;
-    }
+  // check postfix for vtl  - most our languages
+  if ( 0 == strncmp( ".vtl", name + strlen( name ) - 4,  4 ) ) {
+    a_lang.unicode = false;
+    return true;
   }
-  return files;
+
+  // check postfix for vtu - for CJKV - Multibyte languages
+  if ( 0 == strncmp( ".vtu", name + strlen( name ) - 4,  4 ) ) {
+    a_lang.unicode = true;
+    return true;
+  }
+
+  return false;
 }
-#else
+
 std::list<std::string>
-vt2iso_c::scanLanguageFilesOS( const language_s& a_lang )
+vt2iso_c::scanLanguageFilesOS( language_s& a_lang )
 {
   std::list<std::string> files;
 
@@ -6261,11 +6167,12 @@ vt2iso_c::scanLanguageFilesOS( const language_s& a_lang )
 
       while (( ent = readdir( dir ) ) != NULL ) {
 
-        if ( !isLanguageFile( ent->d_name, a_lang.code ) )
+        if ( !isThisMyLanguageFile( ent->d_name, a_lang ) )
           continue;
 
         std::string langFileName = str_tmpWorkDir + p->str_pathName + scc_dirSeparatorCorrect + std::string( ent->d_name );
         files.push_front( langFileName );
+        break;   // found the desired language, lets get on with it 
       }
 
       closedir( dir );
@@ -6279,28 +6186,16 @@ vt2iso_c::scanLanguageFilesOS( const language_s& a_lang )
   }
   return files;
 }
-#endif
 
 
 std::list<std::string>
-vt2iso_c::scanLanguageFiles( const language_s& a_lang )
+vt2iso_c::scanLanguageFiles( language_s& a_lang )
 {
-  if ( mb_projectFile ) {
-
-    if ( l_dictionaryPath.empty() ) {
-      std::cerr << "Warning: empty dictionary path!";
-      return std::list<std::string>();
-    }
-    return scanLanguageFilesOS( a_lang );
+  if ( l_dictionaryPath.empty() ) {
+    std::cerr << "Warning: empty dictionary path!";
+    return std::list<std::string>();
   }
-  else
-  {
-    // old style without world class ISO11783 mask editor format
-    std::string langFileName = str( format( "%s.values.%s.txt" ) % mstr_sourceDirAndProjectPrefix % a_lang.code );
-    std::list<std::string> files;
-    files.push_front( langFileName );
-    return files;
-  }
+  return scanLanguageFilesOS( a_lang );
 }
 
 
@@ -6354,4 +6249,22 @@ bool vt2iso_c::isEol( const char c ) {
 }
 
 
+/*
+This function finds the first occurrence of the wide character wc in the 
+initial size wide characters of the object beginning at block. The return 
+value is a pointer to the located wide character, or a null pointer if 
+no match was found. 
+*/
+UCS2* vt2iso_c::findWideChar(const UCS2 *s, UCS2 wc, size_t n)
+{
+  size_t i;
+
+  for (i = 0; i < n; i++) {
+    if (*s == wc) {
+      return (UCS2 *)s;
+    }
+    s++;
+  }
+  return NULL;
+}
 

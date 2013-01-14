@@ -50,6 +50,7 @@ typedef struct {
   FILE* partFile;
   char code [2+1]; // NULL terminated, so it gets comparable by "strcmp", etc.
   unsigned int count;
+  bool unicode;  // Flag to indicate if we are doing MultiByte, with a BOM 
   bool firstLine;
   char* valueBuffer;
   unsigned int valueBufferLen;
@@ -58,6 +59,7 @@ typedef struct {
 #define DEF_iso639entries 136
 
 #define stringLength 1024
+#define maxTagLength 128   // arbitrary length - the tag associated with the char string
 
 // Object Types
 #define otWorkingset                              (0)
