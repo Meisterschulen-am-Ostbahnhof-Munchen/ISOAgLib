@@ -5924,6 +5924,7 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
     unsigned int lastWrapCharI[NUM_WRAP_CHARS]; // initialization follows right below
     unsigned int wrapCharI[NUM_WRAP_CHARS]; // initialization follows right below
     bool inStringContext = false; // add additional quote at line end and at line start if in string context
+    bool lastWasBackslash = false; // for detecting \" and alike...
     
     for ( i = 0; i < NUM_WRAP_CHARS; ++i )
     {
@@ -5937,8 +5938,10 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
       {
         char charVal = strBuf[strBufI];
 
-        if('"' == charVal)
+        if( ('"' == charVal) && (!lastWasBackslash) )
           inStringContext = !inStringContext;
+        
+        lastWasBackslash = ('\\' == charVal); 
         
         /* look for places to break the line */
         i = 0;
