@@ -15,6 +15,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 #include <fstream>
 #include <sys/stat.h>
 
