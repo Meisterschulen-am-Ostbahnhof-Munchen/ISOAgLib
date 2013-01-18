@@ -58,9 +58,9 @@ public:
   virtual int16_t getRs232Char( uint8_t /*aui8_channel*/, uint8_t * /*pbRead*/ ) { return 0; }
 
   // CAN
-  virtual void SendCanMsg( uint8_t /*bBusNumber*/, uint32_t /*dwTimeStamp*/, uint8_t /*bXtd*/, uint32_t /*dwId*/, uint8_t /*bDlc*/, uint8_t /*abData*/[8] )	{}
+  virtual void SendCanMsg( uint8_t /*bBusNumber*/, uint32_t /*dwTimeStamp*/, uint8_t /*bXtd*/, uint32_t /*dwId*/, uint8_t /*bDlc*/, const uint8_t /*abData*/[8] ) {}
   virtual void ReceiveCanMsg( uint8_t /*bBusNumber*/, uint32_t /*dwTimeStamp*/, uint8_t /*bXtd*/, uint32_t /*dwId*/, uint8_t /*bDlc*/, uint8_t /*abData*/[8] ) {}
-  virtual bool InsertReceiveCanMsg( uint8_t /*bBusNumber*/, uint8_t* /*bMsgObj*/, uint8_t* /*bXtd*/, uint32_t* /*dwId*/, uint8_t* /*bDlc*/, uint8_t* /*abData*/ ) { return false; }
+  virtual bool InsertReceiveCanMsg( uint8_t /*bBusNumber*/, uint8_t* /*bXtd*/, uint32_t* /*dwId*/, uint8_t* /*bDlc*/, uint8_t* /*abData*/ ) { return false; }
 
   // EEPROM
   virtual const char* GetEEPROM_FileName()  { return "eeprom.dat"; }

@@ -390,9 +390,10 @@ namespace HAL {
   }
 
 
-  void canRxPoll( unsigned ) {
+  void canRxPoll( unsigned channel ) {
 
     ENTRY_POINT_FOR_INSERT_RECEIVE_CAN_MSG
+    ( void )channel; // in case not used in the Macro above!
 
     __HAL::transferBuf_s s_transferBuf;
 
