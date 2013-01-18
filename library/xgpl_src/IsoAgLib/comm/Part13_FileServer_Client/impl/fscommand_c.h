@@ -22,6 +22,7 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
 
 namespace __IsoAgLib
@@ -33,7 +34,7 @@ class FsClientServerCommunication_c;
   * Class responsible to send and receive commands to and from a fileserver. It also takes care about the commands used by
   * the fileserver as they can differ according to the version of the standard implemented by the fileserver.
   */
-class FsCommand_c
+class FsCommand_c : CanCustomer_c
 {
   public:
     FsCommand_c(
