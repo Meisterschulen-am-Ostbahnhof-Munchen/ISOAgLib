@@ -419,7 +419,7 @@ FsCommand_c::reactOnStreamStart(const ReceiveStreamIdentifier_c& /*refc_ident*/,
 bool
 FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
 {
-  if( pkg.getMonitorItemForSA() != &rc_csCom.getFileserver().getIsoItem() )
+  if( pkg.getMonitorItemForSA() != &getFileserver().getIsoItem() )
     return false;
 
   if( pkg.getMonitorItemForDA() != rc_csCom.getClientIdentItem().getIsoItem() )
