@@ -63,7 +63,8 @@ ProcData_c::init(
 }
 
 
-ProcData_c::~ProcData_c()
+void
+ProcData_c::close()
 {
   getTcClientInstance4Comm().unregisterLocalProcessData( this );
 }

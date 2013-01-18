@@ -85,6 +85,8 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     bool timeEvent( void );
 
     bool registerDevicePool (const IdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamLength, bool mb_setToDefault);
+    /** @todo add deregisterDevicePool */
+
     bool sendCommandChangeDesignator(uint16_t apui16_objectID, const char* apc_newString, uint8_t stringLength);
 
     /** place next data to send direct into send buffer of pointed

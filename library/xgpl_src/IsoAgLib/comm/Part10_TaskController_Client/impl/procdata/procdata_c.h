@@ -31,7 +31,6 @@ class ProcData_c
 {
 public:
   ProcData_c();
-  ~ProcData_c();
 
   void init(
     IdentItem_c& acrc_identItem,
@@ -40,6 +39,8 @@ public:
     bool ab_isSetpoint,
     uint8_t aui8_triggerMethod,
     IsoAgLib::iProcDataHandler_c *apc_procDataHandler = NULL );
+  /** @todo call close() from generated proc2iso code (closeAll())!!! */
+  void close();
 
   IsoAgLib::iProcDataHandler_c* getProcDataHandler( ) const { return mpc_procDataHandler; }
   void setProcDataHandler( IsoAgLib::iProcDataHandler_c *apc_procDataHandler )
