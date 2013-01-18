@@ -48,7 +48,7 @@ uint8_t FsCommand_c::pui8_maintenanceBuffer[8] = {0x00, 0xff, 0xff, 0xff, 0xff, 
 FsCommand_c::FsCommand_c(
     FsClientServerCommunication_c &rc_inCsCom,
     FsServerInstance_c &rc_inFileserver)
-  : mc_schedulerTask(*this)
+  : mc_schedulerTask(*this, 100, true)
   , mt_multiSendEventHandler(*this)
   , ui8_tan( 0 )
   , rc_csCom( rc_inCsCom )

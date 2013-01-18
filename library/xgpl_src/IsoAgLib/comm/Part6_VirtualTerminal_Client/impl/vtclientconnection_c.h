@@ -448,9 +448,9 @@ private:
   /** pointer to a valid claim data Storage handler. If 0 not used. */
   IsoAgLib::iVtClientDataStorage_c& m_dataStorageHandler; 
 
+  CLASS_SCHEDULER_TASK_PROXY(VtClientConnection_c)
 
-  SchedulerTaskProxy_c<VtClientConnection_c> m_schedulerTaskProxy;
-
+  SchedulerTaskProxy_c m_schedulerTaskProxy;
 };
 
 

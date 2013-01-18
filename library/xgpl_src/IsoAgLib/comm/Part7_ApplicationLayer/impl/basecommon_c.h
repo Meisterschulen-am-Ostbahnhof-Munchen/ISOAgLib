@@ -51,7 +51,7 @@ namespace __IsoAgLib
 
     /** constructor */
     BaseCommon_c() :
-      mt_task(*this),
+      mt_task(*this, 100, true),
       mt_handler(*this),
       mui16_suppressMask(0),
       mt_identMode(IsoAgLib::IdentModeImplement),
@@ -178,31 +178,9 @@ namespace __IsoAgLib
     BaseCommon_c(BaseCommon_c const &arc_from);
     BaseCommon_c &operator=(BaseCommon_c const &arc_from);
 
-    class SchedulerTaskProxy_c : public SchedulerTask_c {
-    public:
-      typedef BaseCommon_c Owner_t;
-
-      SchedulerTaskProxy_c(Owner_t &art_owner) : SchedulerTask_c( 100, true ), mrt_owner(art_owner) {}
-
-      virtual ~SchedulerTaskProxy_c() {}
-
-    private:
-      virtual void timeEvent() {
-        return mrt_owner.timeEvent();
-      }
-
-      // SchedulerTaskProxy_c shall not be copyable. Otherwise the
-      // reference to the containing object would become invalid.
-      SchedulerTaskProxy_c(SchedulerTaskProxy_c const &);
-
-      SchedulerTaskProxy_c &operator=(SchedulerTaskProxy_c const &);
-
-      Owner_t &mrt_owner;
-    };
-
-
-
+    CLASS_SCHEDULER_TASK_PROXY(BaseCommon_c)
     typedef SchedulerTaskProxy_c Task_t;
+
     class IsoRequestPgnHandlerProxy_c : public IsoRequestPgnHandler_c {
     public:
       typedef BaseCommon_c Owner_t;

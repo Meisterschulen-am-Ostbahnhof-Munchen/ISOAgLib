@@ -43,27 +43,7 @@ class FsCommand_c : CanCustomer_c
 
     ~FsCommand_c();
 
-  class SchedulerTaskProxy_c : public SchedulerTask_c {
-  public:
-    typedef FsCommand_c Owner_t;
-
-    SchedulerTaskProxy_c(Owner_t &art_owner)
-      : SchedulerTask_c( 100, true )
-      , mrt_owner(art_owner) {}
-
-    virtual ~SchedulerTaskProxy_c() {}
-
-  private:
-    virtual void timeEvent() { mrt_owner.timeEvent(); }
-
-    // SchedulerTaskProxy_c shall not be copyable. Otherwise the
-    // reference to the containing object would become invalid.
-    SchedulerTaskProxy_c(SchedulerTaskProxy_c const &);
-
-    SchedulerTaskProxy_c &operator=(SchedulerTaskProxy_c const &);
-
-    Owner_t &mrt_owner;
-  }; // SchedulerTaskProxy_c
+    CLASS_SCHEDULER_TASK_PROXY(FsCommand_c)
 
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
   public:

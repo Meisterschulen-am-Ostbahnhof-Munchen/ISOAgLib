@@ -68,34 +68,40 @@ namespace __IsoAgLib {
       int32_t m_period;
   };
 
+} // __IsoAgLib
+
 
   /** Proxy for SchedulerTask_c.
     * Having such a proxy as component is an alternative to subclassing
-    * SchedulerTask_c directly.
+    * SchedulerTask_c directly. OWNER_T simply needs timeEvent implemented
+    * NOTE: This is not done as template because of the Tasking compiler
+    *       had problems with the template.
     */
-  template < typename OWNER_T >
-  class SchedulerTaskProxy_c : public SchedulerTask_c {
-    public:
-      typedef OWNER_T Owner_t;
+#define CLASS_SCHEDULER_TASK_PROXY(OWNER_T)                            \
+  class SchedulerTaskProxy_c : public SchedulerTask_c {                \
+    public:                                                            \
+      SchedulerTaskProxy_c(                                            \
+          OWNER_T &art_owner,                                          \
+          int32_t period,                                              \
+          bool hardTiminig )                                           \
+        : SchedulerTask_c( period, hardTiminig )                       \
+        , mrt_owner( art_owner )                                       \
+      {}                                                               \
+                                                                       \
+      virtual ~SchedulerTaskProxy_c() {}                               \
+                                                                       \
+    private:                                                           \
+      virtual void timeEvent() {                                       \
+        mrt_owner.timeEvent();                                         \
+      }                                                                \
+                                                                       \
+      /* SchedulerTaskProxy_c shall not be copyable. Otherwise the */  \
+      /* reference to the containing object would become invalid. */   \
+      SchedulerTaskProxy_c( SchedulerTaskProxy_c const & );            \
+      SchedulerTaskProxy_c &operator=( SchedulerTaskProxy_c const & ); \
+                                                                       \
+      OWNER_T &mrt_owner;                                              \
+  };                                                                   \
 
-      SchedulerTaskProxy_c( Owner_t &art_owner, int32_t period, bool hardTiminig ) : SchedulerTask_c( period, hardTiminig ), mrt_owner( art_owner ) {}
-
-      virtual ~SchedulerTaskProxy_c() {}
-
-    private:
-      virtual void timeEvent() {
-        mrt_owner.timeEvent();
-      }
-
-      // SchedulerTaskProxy_c shall not be copyable. Otherwise the
-      // reference to the containing object would become invalid.
-      SchedulerTaskProxy_c( SchedulerTaskProxy_c const & );
-
-      SchedulerTaskProxy_c &operator=( SchedulerTaskProxy_c const & );
-
-      Owner_t &mrt_owner;
-  };
-
-} // __IsoAgLib
 
 #endif
