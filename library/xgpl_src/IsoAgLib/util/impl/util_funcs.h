@@ -145,9 +145,7 @@ template<class T> void number2LittleEndianString( const T at_src, uint8_t* pui8_
 }
 
 
-/** convert number reference variable to little endian byte string
- * @return iterator so that write can be continued directly after last written position
-*/
+/** convert number reference variable to little endian byte string */
 template<class T> void numberRef2LittleEndianString( const T& acrc_src, STL_NAMESPACE::vector<uint8_t>& acrc_target )
 {
 #if defined(NO_8BIT_CHAR_TYPE)
@@ -157,7 +155,7 @@ template<class T> void numberRef2LittleEndianString( const T& acrc_src, STL_NAME
     acrc_target.push_back((acrc_src >> ind) & 0xFF);
   }
 #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
-  const uint8_t* pui8_src = &acrc_src;
+  const uint8_t* pui8_src = (const uint8_t*)(&acrc_src);
   const unsigned int size = sizeof(T);
   for ( unsigned int ind = 0; ind < size; ind++ )
   {
@@ -171,9 +169,7 @@ template<class T> void numberRef2LittleEndianString( const T& acrc_src, STL_NAME
   }
 #endif
 }
-/** convert number call-by-val variable to little endian byte string
- * @return iterator so that write can be continued directly after last written position
-*/
+/** convert number call-by-val variable to little endian byte string */
 template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE::vector<uint8_t>& rc_target )
 {
 #if defined(NO_8BIT_CHAR_TYPE)
@@ -198,9 +194,7 @@ template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE:
 #endif
 }
 
-/** convert number call-by-val variable to little endian byte string
- * @return iterator so that write can be continued directly after last written position
-*/
+/** convert number call-by-val variable to little endian byte string */
 template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE::vector<uint8_t>& rc_target, uint16_t aui16_bytePos)
 {
 #if defined(NO_8BIT_CHAR_TYPE)
