@@ -217,7 +217,6 @@ struct transferBuf_s {
       uint16_t ui16_wNumberMsgs;
       uint16_t ui16_queryLockResult;
       // byte 12-15
-      // always ui32_mask even if it is only used with SYSTEM_WITH_ENHANCED_CAN_HAL -> avoid preprocessor
       uint32_t ui32_mask;
     } s_config;
     struct {

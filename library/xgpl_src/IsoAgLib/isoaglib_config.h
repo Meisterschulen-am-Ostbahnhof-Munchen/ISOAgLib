@@ -149,12 +149,13 @@
 
 /* ******************************************************** */
 /**
- * \name Set configuration parameter for CAN FIFO handling. Valid only in case that not defined SYSTEM_WITH_ENHANCED_CAN_HAL
+ * \name Set configuration parameter for CAN FIFO handling. 
+ * Please note that the CAN-FIFO is now in use regardless of the used HAL!
+ *
+ * Exponent of the 2^N operation, used to determine the BufferSize of s_canFifoInstance
+ * NOTE : The CAN_FIFO_EXPONENT_BUFFER_SIZE must be less than  TARGET_WORDSIZE -1,
+ * otherwise the overflow of the UC and AC counter can lead to loss of CAN message.
  */
-/** Exponent of the 2^N operation,used  to determine the BufferSize of s_canFifoInstance
-* NOTE : The CAN_FIFO_EXPONENT_BUFFER_SIZE must be less than  TARGET_WORDSIZE -1,
-* otherwise the overflow of the UC and AC counter can lead to loss of CAN message. */
-
 #ifndef CAN_FIFO_EXPONENT_BUFFER_SIZE
 #  define CAN_FIFO_EXPONENT_BUFFER_SIZE 8
 #endif
