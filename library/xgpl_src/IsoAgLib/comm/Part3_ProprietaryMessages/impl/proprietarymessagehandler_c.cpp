@@ -82,7 +82,7 @@ namespace __IsoAgLib
   void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageB_c& msg ) {
 
     if( m_customerB.m_msgs.empty() ) {
-      getCanInstance4Comm().insertFilter( m_customerB, m_customerA.m_filter, -1 );
+      getCanInstance4Comm().insertFilter( m_customerB, m_customerB.m_filter, -1 );
       isoaglib_assert(msg.m_ident);
       getMultiReceiveInstance4Comm().registerClientIso ( m_customerB,
                                                          msg.m_ident->isoName(),
