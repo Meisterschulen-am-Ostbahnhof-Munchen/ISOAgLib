@@ -243,7 +243,7 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
           const int32_t timeToNextTrigger = ( pkgCnt / 3 ) - ( System_c::getTime() - before );
           // sending frames takes us at least 1 ms per 3 frames
           // retrigger first possible time we can continue sending.
-          retriggerIn ( timeToNextTrigger < 0 ? 0 : timeToNextTrigger ); 
+          retriggerIn ( timeToNextTrigger <= 0 ? 1 : timeToNextTrigger ); 
         }
       } // Not Nmea- some ISO protocol
     } break; // case SendData
