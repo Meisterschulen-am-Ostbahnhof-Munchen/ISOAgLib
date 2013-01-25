@@ -208,7 +208,7 @@ public:
   /**
     Select this VtServer. This function is called when OP is of type RegisterPoolMode_MasterToSpecificVt. It is attempted to be used for proprietary matter only.
    */
-  virtual bool selectVtServer(iIsoName_c const &acr_isoname) const { return true; }
+  virtual bool selectVtServer(iIsoName_c const &) const { return true; }
 
   /** 
    * this enumeration is used as parameter for initAndRegisterIsoObjectPool (no member of this type exists in this class!)
