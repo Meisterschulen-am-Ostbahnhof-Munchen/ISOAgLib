@@ -65,7 +65,7 @@ namespace __IsoAgLib
       IsoName_c m_remote;
       uint8_t m_dp;
 
-      friend ProprietaryMessageHandler_c;
+      friend class ProprietaryMessageHandler_c;
   };
 
 
