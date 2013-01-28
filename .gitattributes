@@ -575,6 +575,7 @@ tools/project_generation/conf_template -text
 tools/vt2iso/cmake/CMakeLists.txt -text
 tools/vt2iso/doc/ISO-VirtualTerminal-Objects.txt -text
 tools/vt2iso/doc/vt2iso.xsd -text
+tools/vt2iso/src/WinDirent.h -text
 tools/vt2iso/src/specialparsingbase_c.h -text
 tools/vt2iso/src/specialparsingbaseproptag_c.h -text
 tools/vt2iso/src/vt2iso-defines.cpp -text
