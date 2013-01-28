@@ -21,13 +21,13 @@ namespace __IsoAgLib
 
     isoaglib_assert(m_ident);
 
+    const uint32_t pgn = (m_dp << 16) | PROPRIETARY_A_PGN;
     if (getDataSend().getLen() <= 8)
     {
       CanPkgExt_c pkg;
 
       pkg.setIsoPri( 6 );
-      pkg.setIsoDp( m_dp );
-      pkg.setIsoPgn( PROPRIETARY_A_PGN );
+      pkg.setIsoPgn( pgn );
       pkg.setISONameForDA( m_remote );
       pkg.setMonitorItemForSA( m_ident->getIsoItem() );
       pkg.setDataFromString ( getDataSend().getDataStream(), static_cast<uint8_t>( getDataSend().getLen() ) );
@@ -44,7 +44,7 @@ namespace __IsoAgLib
          m_remote,
          getDataSend().getDataStream(0),
          getDataSend().getLen(),
-         getDataSend().getIdent() >> 8,
+         pgn,
          this );
     }
   }
@@ -83,18 +83,17 @@ namespace __IsoAgLib
   }
 
 
-  bool ProprietaryMessageB_c::send() {
+  bool ProprietaryMessageB_c::send( uint8_t ps ) {
 
     isoaglib_assert(m_ident);
 
+    const uint32_t pgn = (m_dp << 16) | PROPRIETARY_B_PGN | ps;
     if (getDataSend().getLen() <= 8)
     {
       CanPkgExt_c pkg;
 
       pkg.setIsoPri( 6 );
-      pkg.setIsoDp( m_dp );
-      pkg.setIsoPgn( ( getDataSend().getIdent() << 8 ) & 0x00FFFF00  );
-      pkg.setISONameForDA( m_remote );
+      pkg.setIsoPgn( pgn );
       pkg.setMonitorItemForSA( m_ident->getIsoItem() );
       pkg.setDataFromString ( getDataSend().getDataStream(), static_cast<uint8_t>( getDataSend().getLen() ) );
       getIsoBusInstance( m_ident->getMultitonInst() ) << pkg;
@@ -110,7 +109,7 @@ namespace __IsoAgLib
          m_remote,
          getDataSend().getDataStream(0),
          getDataSend().getLen(),
-         getDataSend().getIdent() >> 8,
+         pgn,
          this );
     }
   }
@@ -131,21 +130,17 @@ namespace __IsoAgLib
   }
 
 
-  void ProprietaryMessageB_c::enableReception()
+  void ProprietaryMessageB_c::enableReception( uint8_t ps )
   {
     isoaglib_assert(NULL != m_ident);
-    isoaglib_assert( ! m_isRegistered );
-    getProprietaryMessageHandlerInstance( m_ident->getMultitonInst() ).registerProprietaryMessage( *this );
-    m_isRegistered = true;
+    getProprietaryMessageHandlerInstance( m_ident->getMultitonInst() ).registerProprietaryMessage( *this, ps );
   }
 
 
-  void ProprietaryMessageB_c::disableReception()
+  void ProprietaryMessageB_c::disableReception( uint8_t ps )
   {
     isoaglib_assert(NULL != m_ident);
-    isoaglib_assert( m_isRegistered );
-    getProprietaryMessageHandlerInstance( m_ident->getMultitonInst() ).deregisterProprietaryMessage( *this );
-    m_isRegistered = false;
+    getProprietaryMessageHandlerInstance( m_ident->getMultitonInst() ).deregisterProprietaryMessage( *this, ps );
   }
 
 };

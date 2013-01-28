@@ -1,6 +1,6 @@
 /*
   igenericdata_c.h: Class to independently handle any length of
-    data-message (along with CAN-identifier)
+    data-message
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -17,26 +17,8 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib
 {
-  /** Constructor which has nothing to do */
-  iGenericData_c::iGenericData_c()
-    : vec_data(), ui32_ident(0)
-  { // nothing to do.
-  }
-
-  /** Destructor is clearing the vector */
-  iGenericData_c::~iGenericData_c()
-  { // explicitly clear the vector, although it should be done
-    // by the default-called destructor of the stl-vector
-    clearVector();
-  }
-
-  /** storing data
-    @param aui16_pos position to store data in vector
-    @param aui8_data data byte
-  */
   void iGenericData_c::setDataUi8( uint16_t aui16_pos, uint8_t aui8_data)
   {
     /** first check size of vector */
@@ -45,10 +27,6 @@ namespace IsoAgLib
     __IsoAgLib::number2LittleEndianString( aui8_data, vec_data, aui16_pos);
   }
 
-  /** storing data
-    @param aui16_pos position to store data in vector
-    @param ai8_data data byte
-  */
   void iGenericData_c::setDataI8( uint16_t aui16_pos, int8_t ai8_data)
   {
       /** first check size of vector */
@@ -57,10 +35,6 @@ namespace IsoAgLib
     __IsoAgLib::number2LittleEndianString( ai8_data, vec_data, aui16_pos);
   }
 
-  /** storing data
-    @param aui16_pos position to store data in vector
-    @param aui16_data data bytes
-  */
   void iGenericData_c::setDataUi16( uint16_t aui16_pos, uint16_t aui16_data)
   {
     /** first check size of vector */
@@ -69,10 +43,6 @@ namespace IsoAgLib
     __IsoAgLib::number2LittleEndianString( aui16_data, vec_data, aui16_pos);
   }
 
-  /** storing data
-    @param aui16_pos position to store data in vector
-    @param ai16_data data bytes
-  */
   void iGenericData_c::setDataI16( uint16_t aui16_pos, int16_t ai16_data)
   {
     /** first check size of vector */
@@ -81,10 +51,6 @@ namespace IsoAgLib
     __IsoAgLib::number2LittleEndianString( ai16_data, vec_data, aui16_pos);
   }
 
-  /** storing data
-    @param aui16_pos position to store data in vector
-    @param aui32_data data bytes
-  */
   void iGenericData_c::setDataUi32( uint16_t aui16_pos, uint32_t aui32_data)
   {
     /** first check size of vector */
@@ -93,10 +59,6 @@ namespace IsoAgLib
     __IsoAgLib::number2LittleEndianString( aui32_data, vec_data, aui16_pos);
   }
 
-  /** storing data
-    @param aui16_pos position to store data in vector
-    @param ai32_data data bytes
-  */
   void iGenericData_c::setDataI32( uint16_t aui16_pos, int32_t ai32_data)
   {
     /** first check size of vector */
@@ -106,71 +68,42 @@ namespace IsoAgLib
   }
 
 
-  /** deliver data from vector
-    @param  aui16_pos position of byte in vector
-    @return unsigned data byte at position aui16_pos
-  */
   uint8_t iGenericData_c::getDataUi8( uint16_t aui16_pos) const
   {
     isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(uint8_t) ) );
     return __IsoAgLib::convertLittleEndianStringUi8 (&vec_data[ aui16_pos ]);
   }
 
-  /** deliver data from vector
-    @param  aui16_pos position of byte in vector
-    @return signed data byte at position aui16_pos
-  */
   int8_t iGenericData_c::getDataI8( uint16_t aui16_pos) const
   {
     isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(int8_t) ) );
     return __IsoAgLib::convertLittleEndianStringI8 (&vec_data[ aui16_pos ]);
   }
 
-  /** deliver data from vector
-    @param  aui16_pos position of byte in vector
-    @return unsigned data bytes at position aui16_pos
-  */
   uint16_t iGenericData_c::getDataUi16( uint16_t aui16_pos) const
   {
     isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(uint16_t) ) );
     return __IsoAgLib::convertLittleEndianStringUi16 (&vec_data[ aui16_pos ]);
   }
 
-  /** deliver data from vector
-    @param  aui16_pos position of byte in vector
-    @return signed data bytes at position aui16_pos
-  */
   int16_t iGenericData_c::getDataI16( uint16_t aui16_pos) const
   {
     isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(int16_t) ) );
     return __IsoAgLib::convertLittleEndianStringI16 (&vec_data[ aui16_pos ]);
   }
 
-  /** deliver data from vector
-    @param  aui16_pos position of byte in vector
-    @return unsigned data bytes at position aui16_pos
-  */
   uint32_t iGenericData_c::getDataUi32( uint16_t aui16_pos) const
   {
     isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(uint32_t) ) );
     return __IsoAgLib::convertLittleEndianStringUi32 (&vec_data[ aui16_pos ]);
   }
 
-  /** deliver data from vector
-    @param  aui16_pos position of byte in vector
-    @return signed data bytes at position aui16_pos
-  */
   int32_t iGenericData_c::getDataI32( uint16_t aui16_pos) const
   {
     isoaglib_assert( CheckSizeOfVectorForRead( aui16_pos, sizeof(int32_t) ) );
     return __IsoAgLib::convertLittleEndianStringI32 (&vec_data[ aui16_pos ]);
   }
 
-  /** set data stream to vector vec_data
-    @param aui16_pos position of byte in vector
-    @param arui8_data reference to data for read
-    @param aui16_dataLength num of data bytes at position aui16_pos
-  */
   void iGenericData_c::setDataStream(uint16_t aui16_pos, const uint8_t& arui8_data, uint16_t aui16_dataLength)
   {
     /** first check size of vector */
@@ -179,32 +112,17 @@ namespace IsoAgLib
     CNAMESPACE::memcpy (&vec_data[ aui16_pos ], &arui8_data, aui16_dataLength);
   }
 
-  /** set data stream to vector vec_data
-      Convenience function for those who find a POINTER more intuitive than a reference!
-    @param aui16_pos position of byte in vector
-    @param apui8_data pointer to data for read
-    @param aui16_dataLength num of data bytes at position aui16_pos
-  */
   void iGenericData_c::setDataStream(uint16_t aui16_pos, const uint8_t* apui8_data, uint16_t aui16_dataLength)
   { 
     isoaglib_assert( apui8_data );
     setDataStream (aui16_pos, *apui8_data, aui16_dataLength);
   }
 
-  /** deliver a pointer to the wanted data
-    NO boundary-check is performed here assuming you know what you access!
-    @param aui16_bytePos position of data
-    @return uint8_t* pointer to data - will NEVER be NULL
-  */
   const uint8_t* iGenericData_c::getDataStream(uint16_t aui16_bytePos) const
   {
     return( &(vec_data[ aui16_bytePos ]) );
   }
 
-  /** check whether the write position is out of range
-      @param aui16_pos position in vector to write
-      @param aui16_size size of data
-  */
   void iGenericData_c::CheckSizeOfVectorForWrite( uint16_t aui16_pos, uint16_t aui16_size )
   {
     const STL_NAMESPACE::vector<uint8_t>::size_type csize_vector = vec_data.size();
@@ -217,17 +135,11 @@ namespace IsoAgLib
     }
   }
 
-  /** check whether the read position is out of range
-      @param aui16_pos position in vector to read
-      @param aui16_size size of data
-      @return false if data does'nt exist otherwise true
-   */
   bool iGenericData_c::CheckSizeOfVectorForRead( uint16_t aui16_pos, uint16_t aui16_size ) const
   {
     return ( static_cast<uint32_t>(aui16_pos + aui16_size) <= vec_data.size() );
   }
 
-  /** return the length of the data vector */
   uint16_t iGenericData_c::getLen() const
   {
     return vec_data.size();

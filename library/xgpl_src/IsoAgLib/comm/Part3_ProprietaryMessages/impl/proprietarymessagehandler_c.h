@@ -22,6 +22,7 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 
+#include <cstring>
 #include <list>
 
 
@@ -41,10 +42,10 @@ namespace __IsoAgLib
     void close();
 
     void registerProprietaryMessage( ProprietaryMessageA_c& msg );
-    void registerProprietaryMessage( ProprietaryMessageB_c& msg );
+    void registerProprietaryMessage( ProprietaryMessageB_c& msg, uint8_t ps );
 
     void deregisterProprietaryMessage( ProprietaryMessageA_c& msg );
-    void deregisterProprietaryMessage( ProprietaryMessageB_c& msg );
+    void deregisterProprietaryMessage( ProprietaryMessageB_c& msg, uint8_t ps );
 
   private:
 
@@ -77,7 +78,9 @@ namespace __IsoAgLib
 
     class CanCustomerB_c : public CanCustomer_c {
       public:
-        CanCustomerB_c( ProprietaryMessageHandler_c& handler ) : m_filter( 0x00FF0000, PROPRIETARY_B_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ), m_handler( handler )  {}
+        CanCustomerB_c( ProprietaryMessageHandler_c& handler ) : m_filter( 0x00FF0000, PROPRIETARY_B_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ), m_handler( handler )
+        { CNAMESPACE::memset( m_msgs, 0x00, sizeof( m_msgs ) ); }
+
         virtual ~CanCustomerB_c() {}
 
 
@@ -85,9 +88,9 @@ namespace __IsoAgLib
         typedef STL_NAMESPACE::list<ProprietaryMessageB_c*>::iterator ProprietaryMessageBVectorIterator_t;
         typedef STL_NAMESPACE::list<ProprietaryMessageB_c*>::const_iterator ProprietaryMessageBVectorConstIterator_t;
 
-        ProprietaryMessageBVector_t m_msgs;
+        ProprietaryMessageBVector_t* m_msgs[256];
 
-        const IsoAgLib::iMaskFilterType_c m_filter; // A1 and A2
+        const IsoAgLib::iMaskFilterType_c m_filter; // B1 and B2
 
       private:
         virtual void processMsg( const CanPkg_c& arc_data );

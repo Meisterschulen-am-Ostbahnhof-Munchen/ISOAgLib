@@ -28,28 +28,10 @@ namespace IsoAgLib
   class iGenericData_c
   {
   public:
-    /** Constructor */
-    iGenericData_c();
+    iGenericData_c() : vec_data() {}
+    ~iGenericData_c() {}
 
-    /** Destructor */
-    ~iGenericData_c();
-
-    /**
-      set ident for the telegram
-      @param aui32_ident ident for the telegram
-    */
-    void setIdent(uint32_t aui32_ident)
-    {
-      ui32_ident = aui32_ident;
-    }
-
-    /**
-      @return uint32_t ident
-    */
-    uint32_t getIdent() const
-    {
-      return (ui32_ident);
-    }
+    // using implicit copy/assgn c'tors for now
 
     /** storing data
       @param aui16_pos position to store data in vector
@@ -146,13 +128,8 @@ namespace IsoAgLib
     */
     const uint8_t* getDataStream(uint16_t aui16_bytePos=0) const;
 
-    /** this method is clearing the vector
-    */
-    void clearVector()
-    {
-      /* clearing the vector */
-      vec_data.clear();
-    }
+    /** this method is clearing the vector */
+    void clearVector() { vec_data.clear(); }
 
     /** this method is checking the size of the vector for writing data */
     void CheckSizeOfVectorForWrite(uint16_t aui16_pos, uint16_t aui16_size );
@@ -172,9 +149,6 @@ namespace IsoAgLib
   private:
     /** vector to store the data */
     vec_data_t vec_data;
-
-    /** ident of the message */
-    uint32_t ui32_ident;
   };
 };
 #endif

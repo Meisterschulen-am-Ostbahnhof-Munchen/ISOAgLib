@@ -34,7 +34,7 @@ namespace __IsoAgLib
   class ProprietaryMessage_c : public MultiSendEventHandler_c
   {
     public:
-      ProprietaryMessage_c() : m_sendSuccess( SendStream_c::SendSuccess ), ms_receivedData(), ms_sendData(), m_isRegistered( false ) {}
+      ProprietaryMessage_c() : m_sendSuccess( SendStream_c::SendSuccess ), ms_receivedData(), ms_sendData(), m_ident( NULL ), m_remote( IsoName_c::IsoNameUnspecified() ), m_dp( 0 ) {}
       virtual ~ProprietaryMessage_c() {}
 
       IsoAgLib::iGenericData_c& getDataReceive() { return ms_receivedData; }
@@ -46,11 +46,12 @@ namespace __IsoAgLib
         */
       bool isSending() const { return ( m_sendSuccess == SendStream_c::Running ); }
 
-
-    protected:
-      bool m_isRegistered;
-
     private:
+      /** forbid copy construction / assignment as it would
+          perform too many client-/filter-/mr-/ms-(de)registrations */
+      ProprietaryMessage_c(const ProprietaryMessage_c& );
+      ProprietaryMessage_c& operator= ( const ProprietaryMessage_c& );
+
       void reactOnStateChange( const SendStream_c& sendStream ) {
         m_sendSuccess = sendStream.getSendSuccess();
       }
@@ -59,53 +60,49 @@ namespace __IsoAgLib
       IsoAgLib::iGenericData_c ms_receivedData;
       IsoAgLib::iGenericData_c ms_sendData;
 
+    protected:
+      const IdentItem_c* m_ident;
+      IsoName_c m_remote;
+      uint8_t m_dp;
 
-      /** forbid copy construction / assignment as it would
-          perform too many client-/filter-/mr-/ms-(de)registrations */
-      ProprietaryMessage_c(const ProprietaryMessage_c& );
-      ProprietaryMessage_c& operator= ( const ProprietaryMessage_c& );
+      friend ProprietaryMessageHandler_c;
   };
 
 
   class ProprietaryMessageA_c : public ProprietaryMessage_c {
     public:
-      ProprietaryMessageA_c() : m_ident( NULL ), m_remote( IsoName_c::IsoNameUnspecified() ), m_dp( 0 ) {}
+      ProprietaryMessageA_c() : m_isRegistered( false ) {}
       virtual ~ProprietaryMessageA_c() {}
 
       void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
-      virtual void processA( const IsoAgLib::iIsoItem_c& ) {}
+      virtual void processA( const IsoAgLib::iIsoItem_c& ) = 0; // NOTE: Signature changed, this is now abstract!
 
       void enableReception();
       void disableReception();
 
       bool send();
 
-      const IdentItem_c* m_ident;
-      IsoName_c m_remote;
-      uint8_t m_dp;
+    private:
+      bool m_isRegistered;
   };
 
 
   class ProprietaryMessageB_c : public ProprietaryMessage_c {
     public:
-      ProprietaryMessageB_c() : m_ident( NULL ), m_remote( IsoName_c::IsoNameUnspecified() ), m_dp( 0 ) {}
+      ProprietaryMessageB_c() {}
       virtual ~ProprietaryMessageB_c() {}
 
       void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
-      virtual void processB( const IsoAgLib::iIsoItem_c& ) {}
+      virtual void processB( const IsoAgLib::iIsoItem_c&, uint8_t ps ) = 0; // NOTE: Signature changed, this is now abstract and "ps" was added!
 
-      void enableReception();
-      void disableReception();
+      void enableReception( uint8_t ps );
+      void disableReception( uint8_t ps );
 
-      bool send();
-
-      const IdentItem_c* m_ident;
-      IsoName_c m_remote;
-      uint8_t m_dp;
+      bool send( uint8_t ps );
   };
 
 };
