@@ -44,9 +44,15 @@ public:
 
   void init (iVtObject_s* aps_vtObject_a MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   {
-    // Only init once, don't overwrite the ptr when it's been set (probably to RAM) already
-    isoaglib_assert( vtObject_a == NULL );
+    // typical double init is caught in objectpool-class's init-call!
     vtObject_a = aps_vtObject_a;
+    s_properties.flags &= ~FLAG_IN_RAM;
+    s_properties.flags &= ~FLAG_STRING_IN_RAM;
+    s_properties.flags &= ~FLAG_OBJECTS2FOLLOW_IN_RAM;
+    // NOTE: If objects were modified using b_updateObject==true,
+    // then these modifications are GONE and result in a MEMORY LEAK
+    // This is subject to be correctly fixed in some later version, if needed!
+
     MULTITON_INST_INIT_CALL
   }
 
