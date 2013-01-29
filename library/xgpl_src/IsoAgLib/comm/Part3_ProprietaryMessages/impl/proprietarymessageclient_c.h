@@ -77,7 +77,7 @@ namespace __IsoAgLib
       void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
-      virtual void processA( const IsoAgLib::iIsoItem_c& ) = 0; // NOTE: Signature changed, this is now abstract!
+      virtual void processA( const IsoAgLib::iIsoItem_c& ) {}
 
       void enableReception();
       void disableReception();
@@ -97,7 +97,7 @@ namespace __IsoAgLib
       void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
-      virtual void processB( const IsoAgLib::iIsoItem_c&, uint8_t ps ) = 0; // NOTE: Signature changed, this is now abstract and "ps" was added!
+      virtual void processB( const IsoAgLib::iIsoItem_c&, uint8_t ps ) {}
 
       void enableReception( uint8_t ps );
       void disableReception( uint8_t ps );
