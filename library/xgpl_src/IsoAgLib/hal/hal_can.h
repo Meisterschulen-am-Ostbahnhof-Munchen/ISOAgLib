@@ -44,6 +44,8 @@ namespace HAL {
   void canRxWaitBreak();
 #endif
 
+  //! Returning -1 means that the queue can't be queried,
+  //! but it definitely has enough space to put messages in!
   int canTxQueueFree( unsigned channel );
 
   bool defineRxFilter( uint32_t id, uint32_t mask ); // maybe empty
