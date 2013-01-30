@@ -46,11 +46,11 @@ namespace __IsoAgLib
 
 
   void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageA_c& msg ) {
-    isoaglib_assert(msg.m_ident);
+    isoaglib_assert(msg.ident());
     if( m_customerA.m_msgs.empty() ) {
       getCanInstance4Comm().insertFilter( m_customerA, m_customerA.m_filter, -1 );
       getMultiReceiveInstance4Comm().registerClientIso ( m_customerA,
-                                                         msg.m_ident->isoName(),
+                                                         msg.ident()->isoName(),
                                                          m_customerA.m_filter.getFilter() >> 8,
                                                          m_customerA.m_filter.getMask() >> 8,
                                                          true /* also Broadcast */ );
@@ -70,9 +70,9 @@ namespace __IsoAgLib
 
     if( m_customerA.m_msgs.empty() ) {
       getCanInstance4Comm().deleteFilter( m_customerA, m_customerA.m_filter );
-      isoaglib_assert(msg.m_ident);
+      isoaglib_assert(msg.ident());
       getMultiReceiveInstance4Comm().deregisterClient ( m_customerA,
-                                                        msg.m_ident->isoName(),
+                                                        msg.ident()->isoName(),
                                                         m_customerA.m_filter.getFilter() >> 8,
                                                         m_customerA.m_filter.getMask() >> 8 );
     }
@@ -85,9 +85,9 @@ namespace __IsoAgLib
       m_customerB.m_msgs[ ps ] = new CanCustomerB_c::ProprietaryMessageBVector_t();
 
       getCanInstance4Comm().insertFilter( m_customerB, m_customerB.m_filter, -1 );
-      isoaglib_assert(msg.m_ident);
+      isoaglib_assert(msg.ident());
       getMultiReceiveInstance4Comm().registerClientIso ( m_customerB,
-                                                         msg.m_ident->isoName(),
+                                                         msg.ident()->isoName(),
                                                          m_customerB.m_filter.getFilter() >> 8,
                                                          m_customerB.m_filter.getMask() >> 8,
                                                          true /* also Broadcast */ );
@@ -111,9 +111,9 @@ namespace __IsoAgLib
           m_customerB.m_msgs[ ps ] = NULL;
 
           getCanInstance4Comm().deleteFilter( m_customerB, m_customerB.m_filter );
-          isoaglib_assert(msg.m_ident);
+          isoaglib_assert(msg.ident());
           getMultiReceiveInstance4Comm().deregisterClient ( m_customerB,
-                                                            msg.m_ident->isoName(),
+                                                            msg.ident()->isoName(),
                                                             m_customerB.m_filter.getFilter() >> 8,
                                                             m_customerB.m_filter.getMask() >> 8 );
         }
@@ -132,13 +132,13 @@ namespace __IsoAgLib
 
     for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
-      if ( ( pkg.getMonitorItemForDA() != NULL ) && ( pkg.getMonitorItemForDA() != (*it)->m_ident->getIsoItem() ) )
+      if ( ( pkg.getMonitorItemForDA() != NULL ) && ( pkg.getMonitorItemForDA() != (*it)->ident()->getIsoItem() ) )
         continue;
 
-      if ( pkg.isoDp() != (*it)->m_dp )
+      if ( pkg.isoDp() != (*it)->dp() )
         continue;
 
-      if ( (*it)->m_remote.isSpecified() && ( pkg.getISONameForSA() != (*it)->m_remote ) )
+      if ( (*it)->remote().isSpecified() && ( pkg.getISONameForSA() != (*it)->remote() ) )
         continue;
 
       (*it)->getDataReceive().clearVector();
@@ -157,13 +157,13 @@ namespace __IsoAgLib
     for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
 
-      if ( ( ident.getDaIsoName().isSpecified() ) && ( ident.getDaIsoName() != (*it)->m_ident->isoName() ) )
+      if ( ( ident.getDaIsoName().isSpecified() ) && ( ident.getDaIsoName() != (*it)->ident()->isoName() ) )
         continue;
 
-      if ( ( ident.getPgn() >> 16 ) != (*it)->m_dp ) // DP
+      if ( ( ident.getPgn() >> 16 ) != (*it)->dp() )
         continue;
 
-      if ( (*it)->m_remote.isSpecified() && ( ident.getSaIsoName() != (*it)->m_remote ) )
+      if ( (*it)->remote().isSpecified() && ( ident.getSaIsoName() != (*it)->remote() ) )
         continue;
 
       return true;
@@ -188,13 +188,13 @@ namespace __IsoAgLib
 
     for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
-      if ( ( ident.getDaIsoName().isSpecified() ) && ( ident.getDaIsoName() != (*it)->m_ident->isoName() ) )
+      if ( ( ident.getDaIsoName().isSpecified() ) && ( ident.getDaIsoName() != (*it)->ident()->isoName() ) )
         continue;
 
-      if ( ( ident.getPgn() >> 16 ) != (*it)->m_dp ) // DP
+      if ( ( ident.getPgn() >> 16 ) != (*it)->dp() )
         continue;
 
-      if ( (*it)->m_remote.isSpecified() && ( ident.getSaIsoName() != (*it)->m_remote ) )
+      if ( (*it)->remote().isSpecified() && ( ident.getSaIsoName() != (*it)->remote() ) )
         continue;
 
       (*it)->getDataReceive().clearVector();
@@ -239,10 +239,10 @@ namespace __IsoAgLib
 
     for ( ProprietaryMessageBVectorIterator_t it = m_msgs[ ps ]->begin(); it != m_msgs[ ps ]->end(); ++it )
     {
-      if ( pkg.isoDp() != (*it)->m_dp )
+      if ( pkg.isoDp() != (*it)->dp() )
         continue;
 
-      if ( (*it)->m_remote.isSpecified() && ( pkg.getISONameForSA() != (*it)->m_remote ) )
+      if ( (*it)->remote().isSpecified() && ( pkg.getISONameForSA() != (*it)->remote() ) )
         continue;
 
       (*it)->getDataReceive().clearVector();
@@ -266,10 +266,10 @@ namespace __IsoAgLib
 
     for ( ProprietaryMessageBVectorIterator_t it = m_msgs[ ps ]->begin(); it != m_msgs[ ps ]->end(); ++it )
     {
-      if ( dp != (*it)->m_dp )
+      if ( dp != (*it)->dp() )
         continue;
 
-      if ( (*it)->m_remote.isSpecified() && ( ident.getSaIsoName() != (*it)->m_remote ) )
+      if ( (*it)->remote().isSpecified() && ( ident.getSaIsoName() != (*it)->remote() ) )
         continue;
 
       return true;
@@ -296,10 +296,10 @@ namespace __IsoAgLib
 
     for ( ProprietaryMessageBVectorIterator_t it = m_msgs[ ps ]->begin(); it != m_msgs[ ps ]->end(); ++it )
     {
-      if ( dp != (*it)->m_dp )
+      if ( dp != (*it)->dp() )
         continue;
 
-      if ( (*it)->m_remote.isSpecified() && ( ident.getSaIsoName() != (*it)->m_remote ) )
+      if ( (*it)->remote().isSpecified() && ( ident.getSaIsoName() != (*it)->remote() ) )
         continue;
 
       (*it)->getDataReceive().clearVector();

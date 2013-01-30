@@ -46,6 +46,16 @@ namespace __IsoAgLib
         */
       bool isSending() const { return ( m_sendSuccess == SendStream_c::Running ); }
 
+      // Note on the following three public getters:
+      // Only for use by ProprietaryMessageHandler_c and its classes.
+      // Not protected/private because the Tricore compiler doesn't
+      // handle the "friend ProprietaryMessageHandler_c;" declaration
+      // well, probably because it doesn't recognize
+      // ProprietaryMessageHandler_c::CanCustomerA_c as friend, too.
+      const IdentItem_c* ident() const { return m_ident; }
+      const IsoName_c &remote() const { return m_remote; }
+      uint8_t dp() const { return m_dp; }
+
     private:
       /** forbid copy construction / assignment as it would
           perform too many client-/filter-/mr-/ms-(de)registrations */
@@ -64,8 +74,6 @@ namespace __IsoAgLib
       const IdentItem_c* m_ident;
       IsoName_c m_remote;
       uint8_t m_dp;
-
-      friend class ProprietaryMessageHandler_c;
   };
 
 
@@ -77,7 +85,7 @@ namespace __IsoAgLib
       void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
-      virtual void processA( const IsoAgLib::iIsoItem_c& sender ) { (void)sender; }
+      virtual void processA( const IsoAgLib::iIsoItem_c& /* sender */ ) {}
 
       void enableReception();
       void disableReception();
@@ -97,7 +105,7 @@ namespace __IsoAgLib
       void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
-      virtual void processB( const IsoAgLib::iIsoItem_c& sender, uint8_t ps ) { (void)sender; (void)ps; }
+      virtual void processB( const IsoAgLib::iIsoItem_c& /* sender */, uint8_t /* ps */ ) {}
 
       void enableReception( uint8_t ps );
       void disableReception( uint8_t ps );
