@@ -26,7 +26,7 @@ namespace IsoAgLib
       iProprietaryMessageA_c() : ProprietaryMessageA_c() {}
       virtual ~iProprietaryMessageA_c() {}
 
-      virtual void processA( const iIsoItem_c& ) {}
+      virtual void processA( const iIsoItem_c& sender ) { (void)sender; }
 
       void init(const iIdentItem_c& ident, const iIsoName_c& remote, uint8_t dp) { __IsoAgLib::ProprietaryMessageA_c::init(ident, remote, dp); }
       void close() { __IsoAgLib::ProprietaryMessageA_c::close(); }
@@ -47,7 +47,7 @@ namespace IsoAgLib
       iProprietaryMessageB_c() : ProprietaryMessageB_c() {}
       virtual ~iProprietaryMessageB_c() {}
 
-      virtual void processB( const iIsoItem_c&, uint8_t ps ) {}
+      virtual void processB( const iIsoItem_c& sender, uint8_t ps ) { (void)sender; (void)ps; }
 
       void init(const iIdentItem_c& ident, const iIsoName_c& remote, uint8_t dp) { __IsoAgLib::ProprietaryMessageB_c::init(ident, remote, dp); }
       void close() { __IsoAgLib::ProprietaryMessageB_c::close(); }

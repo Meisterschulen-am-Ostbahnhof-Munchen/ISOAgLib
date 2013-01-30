@@ -77,7 +77,7 @@ namespace __IsoAgLib
       void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
-      virtual void processA( const IsoAgLib::iIsoItem_c& ) {}
+      virtual void processA( const IsoAgLib::iIsoItem_c& sender ) { (void)sender; }
 
       void enableReception();
       void disableReception();
@@ -97,7 +97,7 @@ namespace __IsoAgLib
       void init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp);
       void close();
 
-      virtual void processB( const IsoAgLib::iIsoItem_c&, uint8_t ps ) {}
+      virtual void processB( const IsoAgLib::iIsoItem_c& sender, uint8_t ps ) { (void)sender; (void)ps; }
 
       void enableReception( uint8_t ps );
       void disableReception( uint8_t ps );
