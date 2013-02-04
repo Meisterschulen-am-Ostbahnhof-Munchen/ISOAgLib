@@ -25,6 +25,7 @@ struct localSettings_s;
 
 namespace IsoAgLib
 {
+  class iVtObjectAuxiliaryFunction2_c;
   class iMultiSendStreamer_c;
 /**
   @brief This class is needed to handle Terminal KeyCodes (SoftKey or Button) and Numeric Value Changes and also
@@ -180,13 +181,7 @@ public:
     - VT changes one or more assigned AUX2 input in the AUX2 functions
     - an AUX2 input maintenance timeout is detected by the client
    */
-  virtual void aux2AssignmentChanged () {}
-
-  /**
-    gets called after
-    - VT changes one or more preferred AUX2 input assignments in the AUX2 functions
-   */
-  virtual void aux2PreferredAssignmentChanged () {}
+  virtual void aux2AssignmentChanged ( iVtObjectAuxiliaryFunction2_c& ) {}
 
   /**
     hook function that gets called immediately after recognizing an incoming

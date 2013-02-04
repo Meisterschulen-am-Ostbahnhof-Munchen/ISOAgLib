@@ -20,6 +20,7 @@ namespace __IsoAgLib
   class ProprietaryMessageHandler_c;
   class ProprietaryMessageClient_c;
   class TimePosGps_c;
+  class Aux2Functions_c;
 }
 
 
@@ -264,6 +265,7 @@ private:
   friend class __IsoAgLib::ProprietaryMessageClient_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class __IsoAgLib::TimePosGps_c;
+  friend class __IsoAgLib::Aux2Functions_c;
 };
 
 

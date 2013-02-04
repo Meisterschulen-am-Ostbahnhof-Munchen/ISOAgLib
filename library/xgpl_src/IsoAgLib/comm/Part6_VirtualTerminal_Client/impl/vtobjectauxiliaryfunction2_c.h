@@ -1,7 +1,7 @@
 /*
   vtobjectauxiliaryfunction2_c.h
 
-  (C) Copyright 2009 - 2012 by OSB AG and developing partners
+  (C) Copyright 2009 - 2013 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -15,16 +15,40 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-// includes
 #include "vtobject_c.h"
 #include "vttypes.h"
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
+class Aux2Functions_c;
+
 // Class : vtObjectAuxiliaryFunction2_c
 class vtObjectAuxiliaryFunction2_c : public vtObject_c
 {
 public:
+  vtObjectAuxiliaryFunction2_c();
+
+  void init(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  {vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunction2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
+
+  int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
+
+  iVtObjectAuxiliaryFunction2_s* get_vtObjectAuxiliaryFunction2_a() {return (iVtObjectAuxiliaryFunction2_s *)&(get_vtObject_a());}
+
+  uint32_t fitTerminal() const;
+  void setOriginSKM(bool b_SKM);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool isAssigned() const;
+
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+  /** that attribute is in parentheses in the spec, so commented out here
+  uint8_t updateObjectType() const { return 31; }
+  */
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+#endif
+
+private:
 
   // store assigned AUX inputs and preferred assigned AUX inputs in this structure
   struct AssignedInput_s
@@ -70,80 +94,24 @@ public:
     uint16_t mui16_inputUid;
   };
 
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
-  int16_t stream(uint8_t* destMemory,
-                 uint16_t maxBytes,
-                 objRange_t sourceOffset);
-
-  //  Operation: init
-  //! @param vtObjectAuxiliaryFunction2SROM:
-  //! @param b_initPointer:
-  void init(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
-  {vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunction2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
-
-  //  Operation: get_vtObjectAuxiliaryFunction2_a
-  iVtObjectAuxiliaryFunction2_s* get_vtObjectAuxiliaryFunction2_a() {return (iVtObjectAuxiliaryFunction2_s *)&(get_vtObject_a());}
-
-  //  Operation: vtObjectAuxiliaryFunction2_c
-  vtObjectAuxiliaryFunction2_c();
-
-  ~vtObjectAuxiliaryFunction2_c() {}
-
-  //  Operation: size
-  uint32_t fitTerminal() const;
-
-  //  Operation: setOriginSKM
-  //! @param b_SKM:
-  void setOriginSKM(bool b_SKM);
-
-  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
-  /** that attribute is in parentheses in the spec, so commented out here
-  uint8_t updateObjectType() const { return 31; }
-  */
-
-  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
-#endif
-
   void getAssignedInput(IsoName_c& arc_isoName, uint16_t& arui16_inputUid) const;
-
   void getPreferredAssignedInput(IsoName_c& arc_isoName, uint16_t& arui16_inputModelIdentificationCode, uint16_t& arui16_inputUid) const;
-
-  //! @return true, if values are changed
   bool setAssignedInput(const IsoName_c& arc_isoName, uint16_t aui16_inputUid);
-
-  //! @return true, if values are changed
   bool unassignInputIfIsoNameMatches(const IsoName_c& arc_isoName);
-
-  //! @return true, if values are changed
   bool setPreferredAssignedInput(const IsoName_c& arc_isoName, uint16_t aui16_inputModelIdentificationCode, uint16_t aui16_inputUid);
-
-  //! @return true, if AUX2 input is assigned
-  bool isAssigned() const;
-
-  //! @return true, if preferred assignment available
   bool hasPreferredAssigment() const;
-
   void setMatchingPreferredAssignedInputReady(bool a_isReady) { m_matchingPreferredAssignedInputReady = a_isReady; }
   bool getMatchingPreferredAssignedInputReady() { return m_matchingPreferredAssignedInputReady; }
 
-private:
-
   AssignedInput_s ms_assignedInput;
-
   PreferredAssignedInput_s ms_preferredAssignedInput;
 
   bool m_matchingPreferredAssignedInputReady;
 
+  friend class Aux2Functions_c;
 };
 
-} // end of namespace __IsoAgLib
+}
 
 #endif
 #endif

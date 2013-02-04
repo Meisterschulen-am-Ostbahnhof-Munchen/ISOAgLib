@@ -131,7 +131,7 @@ public:
     VtClient_c& isoTerminal,
     IsoAgLib::iVtClientObjectPool_c& pool,
     const char* versionLabel,
-    IsoAgLib::iVtClientDataStorage_c& claimDataStorage,
+    IsoAgLib::iVtClientDataStorage_c& dataStorage,
     uint8_t clientId,
     IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en mode);
 
@@ -159,10 +159,6 @@ public:
 #ifdef USE_VTOBJECT_auxiliaryinput2
   void triggerAux2InputStatusMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj) { m_aux2Inputs.timeEventInputStateMsg(a_aux2InputObj); }
 #endif
-
-  void setAux2ModelIdentificationCodeForInputDevice(uint16_t a_model) { m_aux2Inputs.setModelIdentificationCode(a_model); }
-
-  void setAux2WaitTimeForSendingPreferredAssignment(uint32_t a_waitTime)  { m_aux2Functions.setWaitTimeForSendingPreferredAssignment(a_waitTime); }
 
   uint16_t getVtObjectPoolDimension() const;
   uint16_t getVtObjectPoolSoftKeyWidth() const;
@@ -265,6 +261,13 @@ public:
   bool isVtActive() const;
   vtClientDisplayState_t getVtDisplayState() const { return men_displayState; }
 
+
+  IsoAgLib::iVtClientDataStorage_c& getVtClientDataStorage() const {
+    return m_dataStorageHandler;
+  }
+
+  int getMultitonInst() { return mrc_wsMasterIdentItem.getMultitonInst(); }
+
 private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c 
   {
@@ -335,8 +338,6 @@ private:
                                 if b_isVtStatusMsg == false, it is the display state of the Display Activation Msg
     */
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
-
-  int getMultitonInst() { return mrc_wsMasterIdentItem.getMultitonInst(); }
 
   bool isPreferredVTTimeOut() const;
 
@@ -445,7 +446,6 @@ private:
   IsoName_c mc_preferredVt;
   int32_t mi32_bootTime_ms;
 
-  /** pointer to a valid claim data Storage handler. If 0 not used. */
   IsoAgLib::iVtClientDataStorage_c& m_dataStorageHandler; 
 
   CLASS_SCHEDULER_TASK_PROXY(VtClientConnection_c)

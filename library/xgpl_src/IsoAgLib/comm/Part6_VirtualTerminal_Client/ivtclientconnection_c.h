@@ -81,12 +81,6 @@ public:
   bool isClientActive()
     { return VtClientConnection_c::isClientActive(); }
 
-  void setAux2ModelIdentificationCodeForInputDevice(uint16_t a_model)
-    { VtClientConnection_c::setAux2ModelIdentificationCodeForInputDevice(a_model); }
-
-  void setAux2WaitTimeForSendingPreferredAssignment(uint32_t a_waitTime)
-    { VtClientConnection_c::setAux2WaitTimeForSendingPreferredAssignment(a_waitTime); }
-
   iIdentItem_c& getIdentItem() const { return static_cast<IsoAgLib::iIdentItem_c&>(VtClientConnection_c::getIdentItem()); }
   bool connectedToVtServer() const   { return VtClientConnection_c::connectedToVtServer(); }
   /** ATTENTION: Please assure "connectedToVtServer()" before getting this reference */

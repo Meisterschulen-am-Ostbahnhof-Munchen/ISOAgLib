@@ -263,7 +263,7 @@ VtClientConnection_c::VtClientConnection_c(
   VtClient_c &r_vtclient,
   IsoAgLib::iVtClientObjectPool_c& arc_pool,
   const char* apc_versionLabel,
-  IsoAgLib::iVtClientDataStorage_c& arc_claimDataStorage,
+  IsoAgLib::iVtClientDataStorage_c& arc_dataStorage,
   uint8_t aui8_clientId,
   IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode )
   : mt_multiSendEventHandler(*this)
@@ -303,7 +303,7 @@ VtClientConnection_c::VtClientConnection_c(
   , mq_sendUpload()
   , mlist_auxAssignments()
   , m_aux2Inputs(r_wsMasterIdentItem)
-  , m_aux2Functions(this)
+  , m_aux2Functions(*this)
   , mc_iVtObjectStreamer (*this)
   , mi32_timeWsAnnounceKey (-1) // no announce tries started yet...
   , mi32_fakeVtOffUntil (-1) // no faking initially
@@ -311,7 +311,7 @@ VtClientConnection_c::VtClientConnection_c(
   , mb_commandsToBus( true )
   , mc_preferredVt(IsoName_c::IsoNameUnspecified())
   , mi32_bootTime_ms(0)
-  , m_dataStorageHandler(arc_claimDataStorage)
+  , m_dataStorageHandler(arc_dataStorage)
   , m_schedulerTaskProxy( *this, 100, false )
 {
   r_wsMasterIdentItem.getDiagnosticProtocol().addAefFunctionalitiesVirtualTerminal(true, static_cast<uint8_t>(mrc_pool.getVersion()), VirtualTerminalOptionsBitMask_t());
@@ -346,7 +346,7 @@ VtClientConnection_c::VtClientConnection_c(
 #ifdef USE_VTOBJECT_auxiliaryfunction2
     if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryFunction2_c::objectType())
     { // collect all available AUX 2 function objects in list
-      m_aux2Functions.getObjectList().push_back(static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>(p_obj));
+      m_aux2Functions.getObjects()[ p_obj->getID() ] = static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>(p_obj);
     }
 #endif
 #ifdef USE_VTOBJECT_auxiliaryinput2
@@ -358,10 +358,15 @@ VtClientConnection_c::VtClientConnection_c(
   }
 #endif
 
+#ifdef USE_VTOBJECT_auxiliaryfunction2
+  if (!m_aux2Functions.getObjects().empty())
+  {
+    m_aux2Functions.loadAssignment();
+  }
+#endif
 #ifdef USE_VTOBJECT_auxiliaryinput2
   if (!m_aux2Inputs.getObjectList().empty())
   {
-    // register in scheduler client
     m_aux2Inputs.init(this);
   }
 #endif

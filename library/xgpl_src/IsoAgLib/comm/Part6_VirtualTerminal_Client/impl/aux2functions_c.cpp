@@ -14,6 +14,7 @@
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
 
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclient_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 
 
@@ -43,11 +44,10 @@ struct Aux2PreferredAssignmentObjects_s
 };
 
 
-Aux2Functions_c::Aux2Functions_c(VtClientConnection_c* a_vtClientServerCommunication)
-  : m_vtClientServerCommunication(a_vtClientServerCommunication)
+Aux2Functions_c::Aux2Functions_c(VtClientConnection_c& vtClientConnection )
+  : m_vtConnection( vtClientConnection )
   , m_state(State_WaitForPoolUploadSuccessfully)
   , m_timeStampWaitForSendingPreferredAssignment(0)
-  , m_deltaWaitForSendingPreferredAssignment(0)
   , mb_learnMode(false)
 {
 }
@@ -57,6 +57,21 @@ Aux2Functions_c::~Aux2Functions_c()
 {
 }
 
+
+void Aux2Functions_c::loadAssignment() {
+#ifdef USE_VTOBJECT_auxiliaryfunction2
+  IsoAgLib::iAux2Assignment_c assigment;
+  m_vtConnection.getVtClientDataStorage().loadPreferredAux2Assignment( assigment );
+  if( ! assigment.empty() ) { 
+    for( IsoAgLib::iAux2AssignmentIterator_c i = assigment.begin(); i != assigment.end(); ++i ) {
+      STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
+      if( iter != m_aux2Function.end() ) {
+        iter->second->setPreferredAssignedInput( i->input.name, i->input.modelIdentificationCode, i->input.uid );
+      }
+    }
+  }
+#endif
+}
 
 void
 Aux2Functions_c::notifyOnAux2InputStatus(
@@ -73,9 +88,9 @@ Aux2Functions_c::notifyOnAux2InputStatus(
   IsoName_c c_assignedIsoName;
   uint16_t ui16_assignedInputUid = 0xFFFF;
 
-  for (STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>::iterator iter = mlist_aux2Function.begin(); iter != mlist_aux2Function.end(); ++iter)
+  for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
   {
-    (*iter)->getAssignedInput(c_assignedIsoName, ui16_assignedInputUid);
+    iter->second->getAssignedInput(c_assignedIsoName, ui16_assignedInputUid);
 
     if ( (0xFFFF != ui16_assignedInputUid) &&
          (IsoName_c::IsoNameUnspecified() != c_assignedIsoName) &&
@@ -85,7 +100,7 @@ Aux2Functions_c::notifyOnAux2InputStatus(
       const uint16_t cui16_value1 = arc_data.getUint16Data (4-1);
       const uint16_t cui16_value2 = arc_data.getUint16Data (6-1);
       const uint8_t cui8_operatingState = arc_data.getUint8Data (8-1);
-      arc_pool.eventAuxFunction2Value ((*iter)->getID(), cui16_value1, cui16_value2, cui8_operatingState);
+      arc_pool.eventAuxFunction2Value (iter->first, cui16_value1, cui16_value2, cui8_operatingState);
     }
   }
 #else
@@ -140,20 +155,18 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
       break; // handled above
 
     case State_CollectInputMaintenanceMessage:
-      for (STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>::iterator iter = mlist_aux2Function.begin(); iter != mlist_aux2Function.end(); ++iter)
+      for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
       {
-        if ((*iter)->getMatchingPreferredAssignedInputReady())
+        if(iter->second->getMatchingPreferredAssignedInputReady())
           continue; // this input device was already found in our preferred assignments => skip it
         
-        (*iter)->getPreferredAssignedInput(c_prefAssignedIsoName, ui16_prefAssignedModelIdentificationCode, ui16_prefAssignedInputUid);
-        if ( (ui16_prefAssignedModelIdentificationCode == ui16_modelIdentificationCode) &&
-             (c_prefAssignedIsoName == c_inputIsoName) )
-        { 
-          (*iter)->setMatchingPreferredAssignedInputReady(true);
+        iter->second->getPreferredAssignedInput(c_prefAssignedIsoName, ui16_prefAssignedModelIdentificationCode, ui16_prefAssignedInputUid);
+        if ( (ui16_prefAssignedModelIdentificationCode == ui16_modelIdentificationCode) && (c_prefAssignedIsoName == c_inputIsoName) ) { 
+          iter->second->setMatchingPreferredAssignedInputReady(true);
         }
       }
 
-      if (m_timeStampWaitForSendingPreferredAssignment + (int32_t)m_deltaWaitForSendingPreferredAssignment < HAL::getTime())
+      if ( ( m_timeStampWaitForSendingPreferredAssignment + m_vtConnection.getVtClientDataStorage().getAux2DeltaWaitBeforeSendingPreferredAssigment() ) < HAL::getTime())
       { // we waited long enough
         b_sendPreferredAssignments = true;
       }
@@ -176,9 +189,12 @@ Aux2Functions_c::objectPoolUploadedSuccessfully()
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   // if we don't have any preferred assignments => send empty preferred assignment msg
   bool b_preferredAssignmentFound = false;
-  for (STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>::iterator iter = mlist_aux2Function.begin(); iter != mlist_aux2Function.end(); ++iter)
+  for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
   {
-    b_preferredAssignmentFound |= (*iter)->hasPreferredAssigment();
+    if( iter->second->hasPreferredAssigment() ) {
+      b_preferredAssignmentFound = true;
+      break;
+    }
   }
 
   if (!b_preferredAssignmentFound)
@@ -215,7 +231,6 @@ Aux2Functions_c::storeAux2Assignment(
   const bool b_preferredAssignment = !(c_buffer[10-2] & (1 << 7));
   uint16_t const cui16_inputObjId = (c_buffer[11-2] | (c_buffer[12-2] << 8));
 
-  bool b_assignedInputsChanged = false;
   bool b_preferredAssignedInputsChanged = false;
 
   // set reference of function object ID (is needed for response in caller)
@@ -224,39 +239,52 @@ Aux2Functions_c::storeAux2Assignment(
   if (mmap_receivedInputMaintenanceData.find(c_inputIsoName) == mmap_receivedInputMaintenanceData.end())
     return false; // we did not yet receive a input maintenance message for this isoname => unknown
 
-  for (STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>::iterator iter = mlist_aux2Function.begin(); iter != mlist_aux2Function.end(); ++iter)
-  {
-    if ((*iter)->getID() == rui16_functionObjId)
-    { // matching iVtObjectAuxiliaryFunction2_c found 
+  if (0xFFFF == rui16_functionObjId)
+  { // unassign
+    for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter) {
+      if( iter->second->setAssignedInput(IsoName_c::IsoNameUnspecified(), 0xFFFF) ) {
+        arc_pool.aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter->second ) ) );
+      }
+      if( b_preferredAssignment )
+        b_preferredAssignedInputsChanged |= iter->second->setPreferredAssignedInput(IsoName_c::IsoNameUnspecified(), 0xFFFF /* default value */, 0xFFFF);
+    }
+  } else {
+    STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( rui16_functionObjId );
+    if( iter != m_aux2Function.end() ) {
       // store / remove assignment in setAssignedInput (according to value of cui16_inputObjId)
-      b_assignedInputsChanged |= (*iter)->setAssignedInput(c_inputIsoName, cui16_inputObjId);
+      if( iter->second->setAssignedInput(c_inputIsoName, cui16_inputObjId) ) {
+        arc_pool.aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter->second ) ) );
+      }
 
       if (b_preferredAssignment)
       { // additionally store this assignement as preferred
-
         // try to get model identification code from mmap_receivedInputMaintenanceData (sort of a "backdoor" method because we do not get the code in the message!)
         STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::const_iterator iter_map = mmap_receivedInputMaintenanceData.find(c_inputIsoName);
-        uint16_t ui16_modelIdentificationCode = (mmap_receivedInputMaintenanceData.end() != iter_map)
+        const uint16_t ui16_modelIdentificationCode = (mmap_receivedInputMaintenanceData.end() != iter_map)
           ? iter_map->second.mui16_inputModelIdentificationCode : 0xFFFF;
 
-        b_preferredAssignedInputsChanged |= (*iter)->setPreferredAssignedInput(c_inputIsoName, ui16_modelIdentificationCode, cui16_inputObjId);
+        b_preferredAssignedInputsChanged |= iter->second->setPreferredAssignedInput(c_inputIsoName, ui16_modelIdentificationCode, cui16_inputObjId);
       }
-    }
-
-    if (0xFFFF == rui16_functionObjId)
-    { // remove all assignments
-      b_assignedInputsChanged |= (*iter)->setAssignedInput(IsoName_c::IsoNameUnspecified(), 0xFFFF);
-
-      if (b_preferredAssignment)
-        b_preferredAssignedInputsChanged |= (*iter)->setPreferredAssignedInput(IsoName_c::IsoNameUnspecified(), 0xFFFF /* default value */, 0xFFFF);
     }
   }
 
-  if (b_assignedInputsChanged)
-    arc_pool.aux2AssignmentChanged();
 
-  if (b_preferredAssignedInputsChanged)
-    arc_pool.aux2PreferredAssignmentChanged();
+  if (b_preferredAssignedInputsChanged) {
+    IsoAgLib::iAux2Assignment_c assignment;
+
+    for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter) {
+      if( iter->second->hasPreferredAssigment() ) {
+        IsoAgLib::iAux2FunctionInputAssignment_t a;
+        a.functionUid = iter->first;
+        iter->second->getPreferredAssignedInput( a.input.name, a.input.modelIdentificationCode, a.input.uid );
+        assignment.push_front( a );
+      }
+    }
+    if( ! assignment.empty() ) {
+      m_vtConnection.getVtClientDataStorage().storePreferredAux2Assignment( assignment );
+    }
+  }
+
 #else
   (void)arc_stream;
   (void)rui16_functionObjId;
@@ -278,18 +306,17 @@ Aux2Functions_c::checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iVtClientObjectP
          (i32_now > iter_map->second.mi32_timeLastAux2Maintenance + 300) )
     {
       // timeout => unassign all functions with matching isoname
-      for (STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>::const_iterator iter_function = mlist_aux2Function.begin(); iter_function != mlist_aux2Function.end(); ++iter_function)
+      for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter_function = m_aux2Function.begin(); iter_function != m_aux2Function.end(); ++iter_function)
       {
-        b_assignedInputsChanged |= (*iter_function)->unassignInputIfIsoNameMatches(iter_map->first);
+        if( iter_function->second->unassignInputIfIsoNameMatches(iter_map->first) ) {
+          arc_pool.aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter_function->second ) ) );
+        }
       }
 
       mmap_receivedInputMaintenanceData.erase(iter_map);
       break; // do not continue in map iteration after erase (other elements are checked soon in next call)
     }
   }
-
-  if (b_assignedInputsChanged)
-    arc_pool.aux2AssignmentChanged();
 #else
   (void)arc_pool;
 #endif
@@ -302,7 +329,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   m_state = State_Ready;
 
-  if (mlist_aux2Function.size() == 0)
+  if( m_aux2Function.empty() )
     return true;
 
   static SendUpload_c msc_tempSendUpload;
@@ -310,16 +337,17 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   Aux2PreferredAssignmentObjects_s objIds;
   STL_NAMESPACE::map<Aux2PreferredAssignmentInputDevice_s, STL_NAMESPACE::list<Aux2PreferredAssignmentObjects_s> > map_Inputs;
 
-  for (STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>::const_iterator iter = mlist_aux2Function.begin(); iter != mlist_aux2Function.end(); ++iter)
+  for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
   {
-    if (!(*iter)->getMatchingPreferredAssignedInputReady())
+    if (! iter->second->getMatchingPreferredAssignedInputReady())
       continue; // skip preferred assignments for which we didn't detect a input maintenance message with ready state
 
-    objIds.ui16_function = (*iter)->getID();
+    objIds.ui16_function = iter->first;
 
-    (*iter)->getPreferredAssignedInput(key.isoName, key.ui16_model, objIds.ui16_input);
+    iter->second->getPreferredAssignedInput(key.isoName, key.ui16_model, objIds.ui16_input);
       
-    if (key.isoName.isSpecified())
+    // only send preferred assignments for inputs that are valid/claimed
+    if (key.isoName.isSpecified() && getIsoMonitorInstance( m_vtConnection.getMultitonInst() ).item( key.isoName, true ) )
     {
       map_Inputs[key].push_back(objIds);
     }
@@ -345,10 +373,6 @@ Aux2Functions_c::sendPreferredAux2Assignments()
 
   for (STL_NAMESPACE::map<Aux2PreferredAssignmentInputDevice_s, STL_NAMESPACE::list<Aux2PreferredAssignmentObjects_s> >::const_iterator iter = map_Inputs.begin(); iter != map_Inputs.end(); ++iter)
   {
-    // !!!!!!!!!!!!!!!!!!!!!!!!
-    // @todo: check endianess ?
-    // !!!!!!!!!!!!!!!!!!!!!!!!
-    
     const uint8_t* pui8_isoName = iter->first.isoName.outputString(); 
     for (uint8_t ui8_i = 0; ui8_i < 8; ui8_i++)
     {
@@ -372,7 +396,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   for (uint16_t i = msgSize; i < 8; i++)
     msc_tempSendUpload.vec_uploadBuffer.push_back( 0xFF );
   
-  return m_vtClientServerCommunication->queueOrReplace (msc_tempSendUpload, true /* b_enableReplaceOfCmd */);
+  return m_vtConnection.queueOrReplace (msc_tempSendUpload, true /* b_enableReplaceOfCmd */);
 #else
   return true;
 #endif

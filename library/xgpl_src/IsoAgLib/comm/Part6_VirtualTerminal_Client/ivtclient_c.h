@@ -20,6 +20,21 @@ namespace IsoAgLib {
 
 class iScheduler_c;
 
+/**
+ * AUX2 assigment storage 
+ */
+struct iAux2FunctionInputAssignment_t{
+  uint16_t functionUid;
+  struct {
+    IsoAgLib::iIsoName_c name;
+    uint16_t modelIdentificationCode;
+    uint16_t uid;
+  } input;
+};
+
+typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t> iAux2Assignment_c; 
+typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::iterator iAux2AssignmentIterator_c; 
+typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::const_iterator iAux2AssignmentConstIterator_c;
 
 /**
   class to define an interface class for the storage of Preferred ISOVT. Users can derive from
@@ -38,6 +53,11 @@ class iVtClientDataStorage_c {
         @param arui8_boottime_s boottime to be saved, in second
       */
     virtual void storePreferredVt( const IsoAgLib::iIsoName_c &arc_isoname, uint8_t aui8_bootTime) = 0;
+
+    virtual void loadPreferredAux2Assignment( iAux2Assignment_c& assignment ) { (void)assignment; }
+    virtual void storePreferredAux2Assignment( const iAux2Assignment_c& assignment ) { (void)assignment; }
+    virtual int32_t getAux2DeltaWaitBeforeSendingPreferredAssigment() { return 2000; };
+    virtual uint16_t getAux2ModelIdentificationCode() { return 0; }
 };
 
 

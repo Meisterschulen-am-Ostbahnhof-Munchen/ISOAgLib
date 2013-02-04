@@ -14,12 +14,12 @@
 #define AUX2FUNCTIONS_C_H
 
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
 #include "../ivtobjectauxiliaryfunction2_c.h"
 
-#include <list>
 #include <map>
 
 
@@ -38,12 +38,14 @@ public:
     State_Ready
   };
 
-  Aux2Functions_c(VtClientConnection_c* a_vtClientServerCommunication);
+  Aux2Functions_c( VtClientConnection_c& vtConnection );
 
   virtual ~Aux2Functions_c(void);
 
+  void loadAssignment();
+
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-  STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>& getObjectList() { return mlist_aux2Function; }
+  STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>& getObjects() { return m_aux2Function; }
 #endif
 
   void notifyOnAux2InputStatus( const CanPkgExt_c& arc_data, IsoAgLib::iVtClientObjectPool_c& arc_pool);
@@ -67,12 +69,8 @@ public:
 
   void setState(Aux2FunctionsState_en a_state) { m_state = a_state; }
 
-  /**
-   * set internal state and send empty preferred AUX2 assignment message (if we don't have any preferred assignments)
-   */
+  /** set internal state and send empty preferred AUX2 assignment message (if we don't have any preferred assignments) */
   void objectPoolUploadedSuccessfully();
-
-  void setWaitTimeForSendingPreferredAssignment(uint32_t a_waitTime) { m_deltaWaitForSendingPreferredAssignment = a_waitTime; }
 
   void setLearnMode(bool a_learnMode) { mb_learnMode = a_learnMode; }
 
@@ -101,18 +99,15 @@ private:
   STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s> mmap_receivedInputMaintenanceData;
 
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-  STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryFunction2_c*> mlist_aux2Function;
+  STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*> m_aux2Function;
 #endif
 
   // back reference for accessing functions in parent
-  VtClientConnection_c* m_vtClientServerCommunication;
+  VtClientConnection_c& m_vtConnection;
 
   Aux2FunctionsState_en m_state;
 
   int32_t m_timeStampWaitForSendingPreferredAssignment;
-
-  // set by application to delay sending of preferred assignment message to collect more input maintenance messages
-  uint32_t m_deltaWaitForSendingPreferredAssignment;
 
   bool mb_learnMode;
 };
