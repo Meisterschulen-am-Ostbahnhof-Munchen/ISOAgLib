@@ -43,6 +43,9 @@ class iTracPTOSetPoint_c;
 class iTracPTO_c;
 class iTracAux_c;
 
+
+typedef __IsoAgLib::DtcContainer_c iDtcContainer_c;
+
 /**
   class to define an interface class for the storage a retrieved SA. Users can derive from
   and implement the load and store functions to their needs.
@@ -63,13 +66,13 @@ class iIdentDataStorage_c {
         default, so only fields with registered DTCs need to be filled in.
         @param arr_dtc
       */
-    virtual void loadDtcs( __IsoAgLib::DtcContainer_c &arc_dtcContainer ) = 0;
+    virtual void loadDtcs( IsoAgLib::iDtcContainer_c &arc_dtcContainer ) = 0;
 
     /** Application needs to store all registered DTCs from the list.
         All entries with "ui32_spn == spiNone" can be omitted.
         @param arr_dtc
       */
-    virtual void storeDtcs( const __IsoAgLib::DtcContainer_c &arc_dtcContainer ) = 0;
+    virtual void storeDtcs( const IsoAgLib::iDtcContainer_c &arc_dtcContainer ) = 0;
 };
 
 /**
