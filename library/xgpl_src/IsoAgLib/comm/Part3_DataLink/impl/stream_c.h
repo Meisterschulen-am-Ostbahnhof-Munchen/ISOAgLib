@@ -228,7 +228,7 @@ public:
 
   bool setDataPageOffset(uint32_t aui32_dataPageOffset);
 
-  const ReceiveStreamIdentifier_c& getIdent()   { return mc_ident; }
+  const ReceiveStreamIdentifier_c& getIdent() const { return mc_ident; }
   StreamType_t     getStreamType()        const { return mc_ident.getStreamType(); };
   StreamingState_t getStreamingState ()   const { return mt_streamState; };
   NextComing_t     getNextComing ()       const { return mt_awaitStep; };
