@@ -297,7 +297,6 @@ void
 Aux2Functions_c::checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iVtClientObjectPool_c& arc_pool)
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-  bool b_assignedInputsChanged = false;
   int32_t i32_now = HAL::getTime();
 
   for (STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::iterator iter_map = mmap_receivedInputMaintenanceData.begin(); iter_map != mmap_receivedInputMaintenanceData.end(); ++iter_map)
