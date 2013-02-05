@@ -49,11 +49,11 @@ namespace __IsoAgLib
     }
   }
 
-  void ProprietaryMessageA_c::init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp) {
+  void ProprietaryMessageA_c::init(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp) {
     isoaglib_assert(NULL == m_ident);
-    m_ident = &ident;
-    m_remote = remote;
-    m_dp = dp;
+    m_ident = &a_ident;
+    m_remote = a_remote;
+    m_dp = a_dp;
   }
 
 
@@ -114,11 +114,11 @@ namespace __IsoAgLib
     }
   }
 
-  void ProprietaryMessageB_c::init(const IdentItem_c& ident, const IsoName_c& remote, uint8_t dp) {
+  void ProprietaryMessageB_c::init(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp) {
     isoaglib_assert(NULL == m_ident);
-    m_ident = &ident;
-    m_remote = remote;
-    m_dp = dp;
+    m_ident = &a_ident;
+    m_remote = a_remote;
+    m_dp = a_dp;
   }
 
 
