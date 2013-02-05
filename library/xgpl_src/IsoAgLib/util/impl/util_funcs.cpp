@@ -259,6 +259,41 @@ int32_t convertLittleEndianStringI32( const uint8_t* apui8_src )
 }
 
 
+#ifdef HAS_64BIT_INT_TYPE
+
+uint64_t convertLittleEndianStringUi64( const uint8_t* apui8_src )
+{
+  uint64_t ui64_temp;
+#if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
+  CNAMESPACE::memcpy( &ui64_temp, apui8_src, sizeof(uint64_t) );
+#else
+  ui64_temp = uint64_t(apui8_src[0]);
+  for ( unsigned int ind = 1; ( ind < sizeof(uint64_t) ); ind++ )
+  {
+    ui64_temp |= (uint64_t(apui8_src[ind]) << (8*ind));
+  }
+#endif
+  return ui64_temp;
+}
+
+
+int64_t convertLittleEndianStringI64( const uint8_t* apui8_src )
+{
+  int64_t i64_temp;
+#if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
+  CNAMESPACE::memcpy( &i64_temp, apui8_src, sizeof(int64_t) );
+#else
+  i64_temp = int64_t(apui8_src[0]);
+  for ( unsigned int ind = 1; ( ind < sizeof(int64_t) ); ind++ )
+  {
+    i64_temp |= (int64_t(apui8_src[ind]) << (8*ind));
+  }
+#endif
+  return i64_temp;
+}
+
+#endif
+
 float convertLittleEndianStringFloat( const uint8_t* apui8_src )
 {
   float f_temp;

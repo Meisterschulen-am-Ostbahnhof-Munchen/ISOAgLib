@@ -247,6 +247,23 @@ namespace __IsoAgLib {
       void setInt32Data( uint8_t aui8_pos, int32_t ai32_val );
       uint32_t getUint32Data( uint8_t aui8_pos ) const;
       int32_t getInt32Data( uint8_t aui8_pos ) const;
+
+#ifdef HAS_64BIT_INT_TYPE
+      /* 64 */
+      void setUint64Data( uint64_t aui64_val ) {
+        uint64[0] = aui64_val;
+      };
+      void setInt64Data( int64_t ai64_val ) {
+        int64[0] = ai64_val;
+      };
+      uint64_t getUint64Data() const {
+        return uint64[0];
+      };
+      int64_t getInt64Data() const {
+        return int64[0];
+      };
+#endif
+
 #else
       /* 16 */
       void setUint16Data( uint8_t aui8_pos, uint16_t aui16_val ) {
@@ -275,6 +292,23 @@ namespace __IsoAgLib {
       int32_t getInt32Data( uint8_t aui8_pos ) const {
         return convertLittleEndianStringI32( uint8+aui8_pos );
       };
+
+#ifdef HAS_64BIT_INT_TYPE
+      /* 64 */
+      void setUint64Data( uint64_t aui64_val ) {
+        numberRef2LittleEndianString( aui64_val, uint8 );
+      };
+      void setInt64Data( int64_t ai64_val ) {
+        numberRef2LittleEndianString( ai64_val, uint8 );
+      };
+      uint64_t getUint64Data() const {
+        return convertLittleEndianStringUi64( uint8 );
+      };
+      int64_t getInt64Data() const {
+        return convertLittleEndianStringI64( uint8 );
+      };
+#endif
+      
 #endif
 
       union {

@@ -98,6 +98,12 @@ int16_t convertLittleEndianStringI16( const uint8_t* apui8_src );
 uint32_t convertLittleEndianStringUi32( const uint8_t* apui8_src );
 /** convert receive multistream into an unsigned variable */
 int32_t convertLittleEndianStringI32( const uint8_t* apui8_src );
+
+#ifdef HAS_64BIT_INT_TYPE
+uint64_t convertLittleEndianStringUi64( const uint8_t* apui8_src );
+int64_t convertLittleEndianStringI64( const uint8_t* apui8_src );
+#endif
+
 /** convert receive multistream into a float variable */
 float convertLittleEndianStringFloat( const uint8_t* apui8_src );
 
