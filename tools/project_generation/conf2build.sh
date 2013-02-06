@@ -899,10 +899,10 @@ END_OF_PATH
                 echo_e "#define USE_ISO_FILESERVER_CLIENT" >&3
             fi
             if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ] ; then
-                echo_e "#define DEF_Stream_IMPL   StreamChunk" >&3
+                echo_e "#define DEF_Stream_h_IMPL streamchunk_c.h" >&3
                 echo_e "#define DEF_Stream_c_IMPL StreamChunk_c" >&3
             else
-                echo_e "#define DEF_Stream_IMPL   StreamLinear" >&3
+                echo_e "#define DEF_Stream_h_IMPL streamlinear_c.h" >&3
                 echo_e "#define DEF_Stream_c_IMPL StreamLinear_c" >&3
             fi
         fi
