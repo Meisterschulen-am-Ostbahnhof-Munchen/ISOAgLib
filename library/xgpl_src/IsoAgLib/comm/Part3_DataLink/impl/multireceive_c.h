@@ -13,9 +13,6 @@
 #ifndef MULTIRECEIVE_C_H
 #define MULTIRECEIVE_C_H
 
-#define StreamLinear 0
-#define StreamChunk 1
-
 namespace IsoAgLib {
   class ReceiveStreamIdentifier_c;
 }
@@ -30,26 +27,11 @@ namespace IsoAgLib {
 
 #include <list>
 
-// first line is for the include directive
-// following line is for class definitions
-#ifndef DEF_Stream_IMPL
-  #define DEF_Stream_IMPL   StreamChunk
-#endif
-#ifndef DEF_Stream_c_IMPL
-  #define DEF_Stream_c_IMPL StreamChunk_c
-#endif
-
-// include/define wanted Stream-Implementation
-#if DEF_Stream_IMPL == StreamLinear
-  #include "streamlinear_c.h"
-#else
-  #include "streamchunk_c.h"
-#endif
-
+#define STREAM_IMPLEMENTATION_HEADER <IsoAgLib/comm/Part3_DataLink/impl/DEF_Stream_h_IMPL>
+#include STREAM_IMPLEMENTATION_HEADER
 
 
 namespace __IsoAgLib {
-
 
 
 /** struct for client definition */

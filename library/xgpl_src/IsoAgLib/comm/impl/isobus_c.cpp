@@ -15,10 +15,9 @@
 
 #include <IsoAgLib/util/iassert.h>
 
-#ifdef DEF_Stream_IMPL
-  #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-  #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
-#endif
+// (E)TP is always included when ISO11783 support is enabled!
+#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #ifdef USE_ISO_PROPRIETARY_PGN
   #include <IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessagehandler_c.h>
 #endif
@@ -80,18 +79,19 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   getIsoMonitorInstance4Comm().init();
 
   /// Part 3 - Data Link
-  #ifdef DEF_Stream_IMPL
-    getMultiReceiveInstance4Comm().init();
-    getMultiSendInstance4Comm().init();
-  #endif
+  getMultiReceiveInstance4Comm().init();
+  getMultiSendInstance4Comm().init();
+
   /// Part 3 - Proprietary PGNs
   #ifdef USE_ISO_PROPRIETARY_PGN
   getProprietaryMessageHandlerInstance4Comm().init();
   #endif
+
   /// Part 6 - Virtual Terminal (Client)
   #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
     getVtClientInstance4Comm().init();
   #endif
+
   /// Part 7 - Application (Tractor-Client)
   #ifdef USE_TRACTOR_GENERAL
     getTracGeneralInstance4Comm().init();
@@ -118,12 +118,15 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   #ifdef USE_TIME_GPS
     getTimePosGpsInstance4Comm().init();
   #endif
+
   /// Part 10 - Task Controller (Client)
   #ifdef USE_ISO_TASKCONTROLLER_CLIENT
     getTcClientInstance4Comm().init();
   #endif
+
   /// Part 12 - Diagnostics Services
   // nop - only additional items for Part 5 currently
+
   /// Part 13 - File Server (Client)
   #ifdef USE_ISO_FILESERVER_CLIENT
     getFsManagerInstance4Comm().init();
@@ -143,12 +146,15 @@ IsoBus_c::close()
   #ifdef USE_ISO_FILESERVER_CLIENT
     getFsManagerInstance4Comm().close();
   #endif
+
   /// Part 12 - Diagnostics Services
   // nop - only additional items for Part 5 currently
+
   /// Part 10 - Task Controller (Client)
   #ifdef USE_ISO_TASKCONTROLLER_CLIENT
     getTcClientInstance4Comm().close();
   #endif
+
   /// Part 7 - Application (Tractor-Client)
   #ifdef USE_TIME_GPS
     getTimePosGpsInstance4Comm().close();
@@ -175,19 +181,21 @@ IsoBus_c::close()
   #ifdef USE_TRACTOR_GENERAL
     getTracGeneralInstance4Comm().close();
   #endif
+
   /// Part 6 - Virtual Terminal (Client)
   #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
     getVtClientInstance4Comm().close();
   #endif
+
   /// Part 3 - Proprietary PGNs
   #ifdef USE_ISO_PROPRIETARY_PGN
   getProprietaryMessageHandlerInstance4Comm().close();
   #endif
+
   /// Part 3 - Data Link
-  #ifdef DEF_Stream_IMPL
-    getMultiSendInstance4Comm().close();
-    getMultiReceiveInstance4Comm().close();
-  #endif
+  getMultiSendInstance4Comm().close();
+  getMultiReceiveInstance4Comm().close();
+
   /// Part 5 - Network Management
   getIsoMonitorInstance4Comm().close();
   getIsoRequestPgnInstance4Comm().close();

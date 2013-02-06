@@ -20,7 +20,7 @@
 #include <IsoAgLib/util/compiler_adaptation.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/hal/hal_config.h>
-// Note: "hal_config.h" needs the path-defines from PRJ_USE_AUTOGEN_CONFIG
+// Note: "hal_config.h" needs the path-defines from isoaglib_project_config.h
 
 
 /***************************************/
@@ -32,6 +32,12 @@
 #endif
 
 #if defined(USE_ISO_11783)
+#  if !defined(DEF_Stream_h_IMPL)
+#    error "DEF_Stream_h_IMPL is not set. Re-run of a current conf2build.sh seems to be necessary."
+#  endif
+#  if !defined(DEF_Stream_c_IMPL)
+#    error "DEF_Stream_c_IMPL is not set. Re-run of a current conf2build.sh seems to be necessary."
+#  endif
 #  if !defined(PRT_INSTANCE_CNT)
 #    error "USE_ISO_11783 set but PRT_INSTANCE_CNT not set."
 #  endif
