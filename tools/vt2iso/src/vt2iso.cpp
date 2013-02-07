@@ -1221,8 +1221,6 @@ void vt2iso_c::defaultAndConvertAttributes (unsigned int a_objType)
 
   case otInputnumber:
     arrc_attributes[attrOptions].setIfNotGiven("none");
-    //if (AGCO) // @todo AGCO
-    //  break;
 
     /// Convert (old v2) attrEnabled to attrInputObjectOptions (in case someone is still
     /// using enabled="..")
@@ -1259,9 +1257,6 @@ void vt2iso_c::defaultAndConvertAttributes (unsigned int a_objType)
     break;
 
   case otInputlist:
-    //if (AGCO) // @todo AGCO
-    //  break;
-
     /// Convert (old v2) attrEnabled to attrOptions (as vt-designer always
     /// writes out options=".." regardless of version 2 or 4).
     if (!arrc_attributes[attrEnabled].isGiven() && !arrc_attributes[attrOptions].isGiven())

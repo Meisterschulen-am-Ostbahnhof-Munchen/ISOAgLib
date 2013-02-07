@@ -1179,7 +1179,7 @@ signed int inputobjectoptiontoi (const char *text_inputobjectoptions, unsigned i
     {
       if (iter->compare(inputobjectOptionsTable [l]) == 0)
       {
-        retval += (uint64_t(1)<<l);
+        retval |= (uint64_t(1)<<l);
         break;
       }
     }
