@@ -48,7 +48,7 @@ namespace __HAL {
 
     int16_t rc = createMsqs( msqDataClient );
 
-    if ( rc )
+    if ( rc != HAL_NO_ERR )
       return false;
 
     s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
@@ -85,7 +85,7 @@ namespace __HAL {
   }
 
 
-  int16_t canStopDriver() {
+  bool canStopDriver() {
     transferBuf_s s_transferBuf;
 
     if ( msqDataClient.i32_pipeHandle )
@@ -99,8 +99,7 @@ namespace __HAL {
     ( void )close(breakWaitPipeFd[1]);
 #endif
 
-    return send_command( &s_transferBuf, &msqDataClient );
-
+    return ( HAL_NO_ERR == send_command( &s_transferBuf, &msqDataClient ) );
   }
 
 
