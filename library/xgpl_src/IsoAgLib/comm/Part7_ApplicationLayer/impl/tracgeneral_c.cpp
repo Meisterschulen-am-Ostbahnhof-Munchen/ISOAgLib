@@ -512,6 +512,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         val2 |= ( IsoAgLib::IsoNotAvailableTransport << 6);
         val2 |= ( mt_implState.inPark                   << 4);
         val2 |= ( IsoAgLib::IsoNotAvailableWork      << 2);
+		break;
       case IsoAgLib::implInWork:
         val2 |= ( IsoAgLib::IsoNotAvailableTransport << 6);
         val2 |= ( IsoAgLib::IsoNotAvailablePark      << 4);
