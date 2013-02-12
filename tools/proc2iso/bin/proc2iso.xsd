@@ -10,6 +10,13 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="attrMax32">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="32"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:simpleType name="attrNameRestricted">
     <xs:restriction base="xs:string">
       <xs:minLength value="0"/>
@@ -222,7 +229,7 @@
 
   <xs:complexType name="elemDeviceValuePresentation">
     <xs:attribute use="required" name="designator"         type="attrName"/>
-    <xs:attribute use="optional" name="unit_designator"    type="attrName"/>
+    <xs:attribute use="optional" name="unit_designator"    type="attrMax32"/>
     <xs:attribute use="optional" name="offset"             type="attrOffset"/>
     <xs:attribute use="required" name="scale"              type="attrScale"/>
     <xs:attribute use="required" name="number_of_decimals" type="attrNumber_of_decimals"/>
