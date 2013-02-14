@@ -180,8 +180,8 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
           }
         } // for
 
-        const int32_t timeToNextTrigger = ( pkgCnt / 3 ) - ( System_c::getTime() - before );
-        // sending frames takes us at least 1 ms per 3 frames
+        const int32_t timeToNextTrigger = ( pkgCnt / 2 ) - ( System_c::getTime() - before );
+        // sending frames takes us at least 1 ms per 2 frames
         // retrigger first possible time we can continue sending.
         retriggerIn ( timeToNextTrigger < 0 ? 0 : timeToNextTrigger ); 
       }
