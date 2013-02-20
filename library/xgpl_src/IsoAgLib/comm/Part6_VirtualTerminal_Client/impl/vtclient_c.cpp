@@ -256,8 +256,10 @@ void VtClient_c::processMsgNonGlobal( const CanPkgExt_c& arc_data ) {
       switch( arc_data.isoPurePgn() ) {
         case ACKNOWLEDGEMENT_PGN:
           (*it)->processMsgAck( arc_data );
+          break;
         case VT_TO_ECU_PGN:
           (*it)->processMsgVtToEcu( arc_data );
+          break;
       }
   }
 }
