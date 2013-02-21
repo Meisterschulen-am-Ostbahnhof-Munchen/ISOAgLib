@@ -185,7 +185,9 @@ public:
 
   /**
     hook function that gets called immediately after recognizing an incoming
-    Display Activation Msg or Vt Status Msg with display state change.
+    Vt Status Msg with display state change (Active <-> Hidden)
+    Please note that there's no Inactive state until Version 4
+    is completely implemented.
    */
   virtual void eventDisplayActivation() {}
 

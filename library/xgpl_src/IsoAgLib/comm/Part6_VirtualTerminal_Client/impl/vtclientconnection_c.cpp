@@ -1001,7 +1001,7 @@ VtClientConnection_c::notifyOnVtStatusMessage()
   mrc_pool.eventVtStatusMsg();
 
   // set client display state appropriately
-  setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
+  setVtDisplayState( getVtServerInst().getVtState()->saOfActiveWorkingSetMaster );
 
   if (mrc_pool.getVersion() != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
   {
@@ -1161,11 +1161,14 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
             arc_data.getUint8Data( 3 ) /* total number of bytes */, true, true);
       }
       break;
-    case 0x09:  // Command: "Command", parameter "Display Activation"
+    // Version 4 feature that was "Display Activation" in some draft
+    // but is now "VT On User-Layout Hide/Show message"
+    case 0x09:  // Command: "Control Element Function", parameter "VT On User-Layout Hide/Show message"
     {
-      setVtDisplayState (false, arc_data.getUint8Data( 1 ));
+      // Command: "Control Element Function"
+      // Parameter "VT On User-Layout Hide/Show message Response"
+      // @todo Version 4 Handling of that message needs to be redone when adding Version 4 properly.
 
-      // Command: "Command", parameter "Display Activation Response"
       sendMessage(
         arc_data.getUint8Data( 0 ), arc_data.getUint8Data( 1 ),
         arc_data.getUint8Data( 2 ), arc_data.getUint8Data( 3 ),
@@ -2787,44 +2790,17 @@ VtClientConnection_c::vtOutOfMemory()
 
 
 void
-VtClientConnection_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState)
+VtClientConnection_c::setVtDisplayState (uint8_t ui8_sa)
 {
   if (men_objectPoolState != OPUploadedSuccessfully) return;
   // as we don't properly seem to reset "men_objectPoolState" at doStop(), we'll for now add the extra
   // isAddress-Claimed-check here for safety:
   if (!getIdentItem().isClaimedAddress()) return;
 
-  vtClientDisplayState_t newDisplayState;
-  if (b_isVtStatusMsg) // state change triggered from VT Status Msg
-  {
-    if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
-      newDisplayState = VtClientDisplayStateActive;
-    else
-    {
-      if (getVtDisplayState() == VtClientDisplayStateActive)
-        // only cause state change if currently displayed is active
-        newDisplayState = VtClientDisplayStateInactive;
-      else
-        newDisplayState = getVtDisplayState();
-    }
-  }
-  else // state change triggered from Display Activation Msg
-  {
-    if (ui8_saOrDisplayState) // display client but no input focus
-    {
-      if (getVtDisplayState() == VtClientDisplayStateHidden)
-        newDisplayState = VtClientDisplayStateInactive;
-      else
-        newDisplayState = getVtDisplayState(); // if already in state inactive or active, nothing to do
-    }
-    else // client is no longer displayed
-    {
-      if (getVtDisplayState() == VtClientDisplayStateInactive)
-        newDisplayState = VtClientDisplayStateHidden;
-      else
-        newDisplayState = getVtDisplayState(); // if already in state hidden or active, nothing to do
-    }
-  }
+  vtClientDisplayState_t newDisplayState = 
+    (ui8_sa == getIdentItem().getIsoItem()->nr())
+      ? VtClientDisplayStateActive
+      : VtClientDisplayStateHidden;
 
   if (newDisplayState != getVtDisplayState())
   {
