@@ -331,7 +331,8 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "abs_path1", //proprietary
   "abs_path4", //proprietary
   "abs_path8", //proprietary
-  "auto_set_length" //proprietary
+  "auto_set_length", //proprietary
+  "auxiliary_object_id" // for AuxConDesignOP
 };
 
 // Table of possible Macro Commands

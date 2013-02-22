@@ -1296,6 +1296,15 @@ void vt2iso_c::defaultAndConvertAttributes (unsigned int a_objType)
     break;
   }
 
+  if (a_objType == otAuxiliaryControlDesignatorObjectPointer)
+  {
+    if( arrc_attributes[attrValue].isGiven() )
+      {
+      std::cerr << "Invalid (obsolete) attribute 'value=\"..\"' given in Auxiliary Control Designator Object Poiniter. Please use the correct 'auxiliary_object_id=\"..\"' instead!" << std::endl;
+      exit (-1);
+    }
+  }
+
   if (a_objType == otButton)
   {
       arrc_attributes[attrOptions].setIfNotGiven("0");
@@ -3645,15 +3654,15 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           break;
 
         case otAuxiliaryControlDesignatorObjectPointer:
-          if (!arrc_attributes [attrPointer_type].isGiven() && arrc_attributes [attrValue].isNull() )
+          if (!arrc_attributes [attrPointer_type].isGiven() && arrc_attributes [attrAuxiliaryObjectID].isNull() )
           {
-            std::cout << "YOU NEED TO SPECIFY THE pointer_type= and value= ATTRIBUTE FOR THE <auxiliarycontroldesignatorobjectpointer> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE pointer_type= and auxiliary_object_id= ATTRIBUTE FOR THE <auxiliarycontroldesignatorobjectpointer> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (auxcondesignobjptrtypetoi(arrc_attributes [attrPointer_type].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %d, %s", auxcondesignobjptrtypetoi(arrc_attributes [attrPointer_type].get().c_str()),
-                   getObjectReference(attrValue).c_str());
+                   getObjectReference(attrAuxiliaryObjectID).c_str());
           break;
 
         case otGraphicsContext:
