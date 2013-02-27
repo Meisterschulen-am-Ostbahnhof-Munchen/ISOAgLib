@@ -229,7 +229,7 @@ Aux2Functions_c::storeAux2Assignment(
 
   const bool b_preferredAssignment = !(c_buffer[10-2] & (1 << 7));
   uint8_t funcType = (c_buffer[10-2] & 0x1F);
-  const cui16_inputObjId = (c_buffer[11-2] | (c_buffer[12-2] << 8));
+  uint16_t inputObjId = (c_buffer[11-2] | (c_buffer[12-2] << 8));
   // set reference of function object ID (is needed for response in caller)
   rui16_functionObjId = (c_buffer[13-2] | (c_buffer[14-2] << 8));
 
@@ -261,7 +261,7 @@ Aux2Functions_c::storeAux2Assignment(
         }
       }
 
-      const bool assign = (funcType != 0x1F) && (cui16_inputObjId != 0xFFFF) && (!unassignName);
+      const bool assign = (funcType != 0x1F) && (inputObjId != 0xFFFF) && (!unassignName);
       
       IsoName_c c_inputIsoName; // defaults to unspecified
       uint16_t ui16_modelIdentificationCode = 0xFFFF;
@@ -270,7 +270,7 @@ Aux2Functions_c::storeAux2Assignment(
       {
         c_inputIsoName = IsoName_c( &c_buffer[2-2] );
         STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::const_iterator iter_map = mmap_receivedInputMaintenanceData.find(c_inputIsoName);
-        if( iter_map == == mmap_receivedInputMaintenanceData.end() )
+        if( iter_map == mmap_receivedInputMaintenanceData.end() )
           // @todo also check for READY?
           return false; // we did not yet receive an input maintenance message for this isoname => unknown
         // get model identification code from mmap_receivedInputMaintenanceData
@@ -281,16 +281,16 @@ Aux2Functions_c::storeAux2Assignment(
       { // unassign
         // make sure to set all values to the "unassign"-values, even if only one was set so.
         funcType = 0x1F;
-        ui16_inputObjId = 0xFFFF;
+        inputObjId = 0xFFFF;
         //c_inputIsoName is still unspecified!
       }
 
       /// @todo We'd need to check if the Input is existing!!!      
-      if( iter->second->setAssignedInput( c_inputIsoName, cui16_inputObjId ) )
+      if( iter->second->setAssignedInput( c_inputIsoName, inputObjId ) )
         arc_pool.aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter->second ) ) );
 
       if (b_preferredAssignment)
-        b_preferredAssignedInputsChanged |= iter->second->setPreferredAssignedInput(c_inputIsoName, ui16_modelIdentificationCode, cui16_inputObjId);
+        b_preferredAssignedInputsChanged |= iter->second->setPreferredAssignedInput(c_inputIsoName, ui16_modelIdentificationCode, inputObjId);
     }
     else
     {
