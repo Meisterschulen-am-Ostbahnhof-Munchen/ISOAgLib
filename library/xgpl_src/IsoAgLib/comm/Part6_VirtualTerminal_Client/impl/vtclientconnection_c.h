@@ -298,9 +298,9 @@ private:
   //! @return true for successful assignment, false if SA couldn't be found.
   bool storeAuxAssignment( const CanPkgExt_c& arc_data );
 
-  //! @return true for successful assignment, false if aux function2 object ID couldn't be found.
+  //! @return error-code from
   //! @return rui16_functionObjId
-  bool storeAux2Assignment( Stream_c& arc_stream, uint16_t& rui16_functionObjId );
+  uint8_t storeAux2Assignment( Stream_c& arc_stream, uint16_t& rui16_functionObjId );
 
   void doStart();
   void doStop();

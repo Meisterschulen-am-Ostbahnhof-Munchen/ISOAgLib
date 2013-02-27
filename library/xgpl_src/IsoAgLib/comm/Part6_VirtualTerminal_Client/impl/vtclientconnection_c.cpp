@@ -212,11 +212,11 @@ VtClientConnection_c::processPartStreamDataChunk (Stream_c& arc_stream, bool ab_
       if (ab_isLastChunk)
       {
         uint16_t ui16_functionObjId = 0xFFFF;
-        const bool b_result = storeAux2Assignment(arc_stream, ui16_functionObjId);
+        const uint8_t errorCode = storeAux2Assignment(arc_stream, ui16_functionObjId);
 
         sendMessage( 0x24, //command
                     ui16_functionObjId & 0xFF, ui16_functionObjId >> 8, // object ID of aux function
-                    !b_result, // error code
+                    errorCode,
                     0xFF, 0xFF, 0xFF, 0xFF );
       }
       break;
@@ -1091,7 +1091,7 @@ VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
   return true;
 }
 
-bool
+uint8_t
 VtClientConnection_c::storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId)
 {
   return m_aux2Functions.storeAux2Assignment(arc_stream, rui16_functionObjId, mrc_pool);

@@ -61,7 +61,8 @@ public:
    */
   void notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data);
 
-  bool storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId, IsoAgLib::iVtClientObjectPool_c& arc_pool);
+  // @return error-code as in J.7.6
+  uint8_t storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId, IsoAgLib::iVtClientObjectPool_c& arc_pool);
 
   void checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iVtClientObjectPool_c& arc_pool);
 

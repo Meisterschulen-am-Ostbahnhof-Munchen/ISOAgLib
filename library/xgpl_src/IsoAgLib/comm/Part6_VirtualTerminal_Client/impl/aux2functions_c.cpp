@@ -208,7 +208,7 @@ Aux2Functions_c::objectPoolUploadedSuccessfully()
 #endif
 }
 
-bool
+uint8_t
 Aux2Functions_c::storeAux2Assignment(
   Stream_c& arc_stream, 
   uint16_t& rui16_functionObjId, 
@@ -218,7 +218,7 @@ Aux2Functions_c::storeAux2Assignment(
   const uint16_t ui16_totalstreamsize = arc_stream.getByteTotalSize();
   
   if (ui16_totalstreamsize != 14)
-    return false; // message should always have 14 bytes
+    return (1<<0); // message should always have 14 bytes
 
   // first byte already consumed from stream! --> Byte-offset -2 instead of -1!
   STL_NAMESPACE::vector<uint8_t> c_buffer;
@@ -272,7 +272,7 @@ Aux2Functions_c::storeAux2Assignment(
         STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::const_iterator iter_map = mmap_receivedInputMaintenanceData.find(c_inputIsoName);
         if( iter_map == mmap_receivedInputMaintenanceData.end() )
           // @todo also check for READY?
-          return false; // we did not yet receive an input maintenance message for this isoname => unknown
+          return (1<<0); // we did not yet receive an input maintenance message for this isoname => unknown
         // get model identification code from mmap_receivedInputMaintenanceData
         // (sort of a "backdoor" method because we do not get the code in the message!)
         ui16_modelIdentificationCode = iter_map->second.mui16_inputModelIdentificationCode;
@@ -294,7 +294,7 @@ Aux2Functions_c::storeAux2Assignment(
     }
     else
     {
-      return false; // function object not found.
+      return (1<<0); // function object not found.
     }
   }
 
@@ -322,7 +322,7 @@ Aux2Functions_c::storeAux2Assignment(
   (void)arc_pool;
 #endif
 
-  return true;
+  return 0x00;
 }
 
 void
