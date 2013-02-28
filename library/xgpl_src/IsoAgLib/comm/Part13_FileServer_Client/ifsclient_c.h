@@ -13,8 +13,6 @@
 #ifndef IFSCLIENT_C_H
 #define IFSCLIENT_C_H
 
-#include <vector>
-
 /* FileServer interfaces includes */
 #include "ifsserverinstance_c.h"
 #include "ifsstructs.h"
