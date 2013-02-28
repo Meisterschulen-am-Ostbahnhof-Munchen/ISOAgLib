@@ -126,11 +126,7 @@ class FsCommand_c : CanCustomer_c
         will retry until it could be started... */
     void sendMultiPacketTry();
 
-    /**
-      * process received messages. decodes the received responses and forwards it by calling the XXXResponse methods of the
-      * FsClientServerCommunication_c.
-      */
-    bool processMsgIso( const CanPkgExt_c& pkg );
+    void processMsgIso( const CanPkgExt_c& pkg );
 
     /**
       * Method called by FsClientServerCommunciation_c. After the response of get current directory, the fileserver is considered to

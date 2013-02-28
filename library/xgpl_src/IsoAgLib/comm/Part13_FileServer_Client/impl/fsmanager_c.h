@@ -77,18 +77,16 @@ class FsManager_c : public SchedulerTask_c
       FsManager_c& m_fsManager;
   };
 
-  void setCommand(FsCommand_c* pc_command);
 
   class FsCommandManager_c : public CanCustomer_c {
     public:
-      FsCommandManager_c( FsManager_c& fsManager ) : ml_initializingCommands(), ml_Commands(), m_fsManager( fsManager ) {}
+      FsCommandManager_c( FsManager_c& fsManager ) : ml_initializingCommands(), m_fsManager( fsManager ) {}
       void init();
       void close();
 
       virtual void processMsg( const CanPkg_c& data );
 
       STL_NAMESPACE::list<FsCommand_c*> ml_initializingCommands;
-      STL_NAMESPACE::list<FsCommand_c*> ml_Commands;
 
       FsManager_c& m_fsManager;
   };

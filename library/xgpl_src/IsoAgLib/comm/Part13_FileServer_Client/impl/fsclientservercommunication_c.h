@@ -37,6 +37,8 @@ namespace __IsoAgLib {
 class FsClientServerCommunication_c
 {
   public:
+    void processMsgIso( const CanPkgExt_c& pkg );
+
     /** getFileserver()
       * @pre There's a Fileserver/FsCommand set. (pc_commandHandler != NULL)
       *      (This is done when the Application is connecting to a FileServer)

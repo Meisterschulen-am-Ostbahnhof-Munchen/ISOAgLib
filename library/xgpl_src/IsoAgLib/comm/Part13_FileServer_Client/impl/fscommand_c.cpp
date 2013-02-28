@@ -405,22 +405,21 @@ FsCommand_c::reactOnStreamStart(const ReceiveStreamIdentifier_c& /*streamIdent*/
 }
 
 
-bool
+void
 FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
 {
   if( pkg.getMonitorItemForSA() != &getFileserver().getIsoItem() )
-    return false;
+    return;
 
   if( pkg.getMonitorItemForDA() != m_FSCSComm.getClientIdentItem().getIsoItem() )
-    return false;
-
+    return;
 
   if (pkg.getUint8Data(1) != m_tan && pkg.getUint8Data(0) != en_requestProperties)
   {
 #if DEBUG_FILESERVER
       INTERNAL_DEBUG_DEVICE << "TAN does not match expected one!" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-    return true;
+    return;
   }
 
   switch (pkg.getUint8Data(0))
@@ -439,7 +438,7 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
           m_receivedResponse = true;
           ++m_tan;
           openFile((uint8_t *)"\\\\", false, false, false, true, false, true);
-          return true;
+          return;
         }
         else
         { // Unsupported old version of the FileServer.
@@ -447,14 +446,14 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
         }
       }
       // else: not initializing, ignore such a message
-      return true;
+      return;
 
     case en_changeCurrentDirectory:
       m_receivedResponse = true;
       ++m_tan;
       m_FSCSComm.changeCurrentDirectoryResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), m_fileName);
       en_lastCommand = en_noCommand;
-      return true;
+      return;
 
     case en_openFile:
       decodeOpenFileResponse( pkg );
@@ -465,12 +464,12 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       if (m_initializingFileserver)
       {
         seekFile(m_fileHandle, 2, 0);
-        return true;
+        return;
       }
 
       m_FSCSComm.openFileResponse(IsoAgLib::iFsError(m_errorCode), m_fileHandle, m_attrCaseSensitive, m_attrRemovable, m_attrLongFilenames, m_attrIsDirectory,  m_attrIsVolume, m_attrHidden, m_attrReadOnly);
       en_lastCommand = en_noCommand;
-      return true;
+      return;
 
     case en_seekFile:
       // in case of "isBeingInitialized" two Seek commands are being executed!
@@ -489,7 +488,7 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
      	  else
           readDirectory(m_fileHandle, m_position, true);
 
-        return true;
+        return;
       }
 
       decodeSeekFileResponse( pkg );
@@ -505,7 +504,7 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
         en_lastCommand = en_noCommand;
       }
 
-      return true;
+      return;
 
     case en_readFile:
       if (6 > m_multireceiveMsgBufAllocSize)
@@ -538,14 +537,14 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
         decodeReadFileResponse();
         m_FSCSComm.readFileResponse(IsoAgLib::iFsError(m_errorCode), m_count, m_data);
       }
-      return true;
+      return;
 
     case en_writeFile:
       m_receivedResponse = true;
       ++m_tan;
       m_FSCSComm.writeFileResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), (pkg.getUint8Data(3) | pkg.getUint8Data(4) << 0x08));
       en_lastCommand = en_noCommand;
-      return true;
+      return;
 
     case en_closeFile:
       m_errorCode = pkg.getUint8Data(2);
@@ -560,26 +559,26 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       {
         getFileserver().setVolumes(m_dirData);
         getFileserver().setState (FsServerInstance_c::usable);
-        return true;
+        return;
       }
 
       m_FSCSComm.closeFileResponse(IsoAgLib::iFsError(m_errorCode));
       en_lastCommand = en_noCommand;
-      return true;
+      return;
 
     case en_moveFile:
       m_receivedResponse = true;
       ++m_tan;
       m_FSCSComm.moveFileResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)));
       en_lastCommand = en_noCommand;
-      return true;
+      return;
 
     case en_deleteFile:
       ++m_tan;
       m_receivedResponse = true;
       en_lastCommand = en_noCommand;
       m_FSCSComm.deleteFileResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)));
-      return true;
+      return;
 
     case en_getFileAttributes:
       ++m_tan;
@@ -587,14 +586,14 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       decodeAttributes(pkg.getUint8Data(3));
       m_FSCSComm.getFileAttributesResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), m_attrCaseSensitive, m_attrRemovable, m_attrLongFilenames, m_attrIsDirectory,  m_attrIsVolume, m_attrHidden, m_attrReadOnly);
       en_lastCommand = en_noCommand;
-      return true;
+      return;
 
     case en_setFileAttributes:
       ++m_tan;
       m_receivedResponse = true;
       m_FSCSComm.setFileAttributesResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)));
       en_lastCommand = en_noCommand;
-      return true;
+      return;
 
     case en_getFileDateTime:
       {
@@ -606,7 +605,7 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
 
         m_FSCSComm.getFileDateTimeResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), (uint16_t)(1980 + ((date >> 9) & 0x7F)), (date >> 5) & 0xF, (date) & 0x1F, (time >> 11) & 0x1F, (time >> 5) & 0x3F, 2 * ((time) & 0x1F));
         en_lastCommand = en_noCommand;
-        return true;
+        return;
       }
 
     case en_initializeVolume:
@@ -617,12 +616,12 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
 
       m_FSCSComm.initializeVolumeResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), m_attrCaseSensitive, m_attrRemovable, m_attrLongFilenames, m_attrIsDirectory,  m_attrIsVolume, m_attrHidden, m_attrReadOnly);
       en_lastCommand = en_noCommand;
-      return true;
+      return;
     default:
 #if DEBUG_FILESERVER
       INTERNAL_DEBUG_DEVICE << "got message with content (decimal): " << (uint32_t)pkg.getUint8Data(0) << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-      return true;
+      return;
   }
 }
 
@@ -651,21 +650,17 @@ FsCommand_c::sendRequest (RequestType_en requestType)
   if (m_packetLength <= 8)
   {
     sendSinglePacket();
-
-    // timestamp time of sending.
     m_lastrequestAttemptTime = HAL::getTime();
-    m_receivedResponse = false;
   }
   else
   {
-    /// initially try to start MultiPacket sending
     sendMultiPacketTry();
-
     m_waitForMultiSendFinish = true;
-      // -1: Don't check timeout, wait for completion of MultiPacket first...
+    // -1: Don't check timeout, wait for completion of MultiPacket first...
     m_lastrequestAttemptTime = -1;
-    m_receivedResponse = false;
   }
+
+  m_receivedResponse = false;
 }
 
 

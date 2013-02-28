@@ -52,6 +52,7 @@ FsManager_c::timeEvent(void)
     switch ((*it_command)->getFileserver().getState())
     {
       case FsServerInstance_c::offline:
+        // @todo in case of going offline delete command?
       case FsServerInstance_c::online:
         // In these cases wait until initialization is complete
         ++it_command;
@@ -67,10 +68,6 @@ FsManager_c::timeEvent(void)
   }
 }
 
-void
-FsManager_c::setCommand(FsCommand_c* pc_command){  //New!!!!
-  m_commands.ml_Commands.push_back(pc_command);
-}
 
 void
 FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
@@ -282,19 +279,23 @@ void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& data ) {
     return;
 
 
-  if( pkg.getMonitorItemForDA() == NULL ) {
+  if( pkg.getMonitorItemForDA() == NULL )
+  { // global
     m_fsManager.m_servers.processFsToGlobal( pkg );
-    return;
   }
-
-  for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); ++it ) {
-    (*it)->processMsgIso( pkg );
-  }
+  else
+  { // destination-specific
+    for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); ++it )
+    {
+      (*it)->processMsgIso( pkg );
+    }
   
-  for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_Commands.begin(); it != ml_Commands.end(); ++it ) { //New!!!!
-    (*it)->processMsgIso( pkg );
+    for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = m_fsManager.mv_communications.begin();
+             iter != m_fsManager.mv_communications.end(); ++iter)
+    {
+      (*iter)->processMsgIso( pkg );
+    }
   }
-  return;
 }
 
 /** C-style function, to get access to the unique FsManager_c singleton instance

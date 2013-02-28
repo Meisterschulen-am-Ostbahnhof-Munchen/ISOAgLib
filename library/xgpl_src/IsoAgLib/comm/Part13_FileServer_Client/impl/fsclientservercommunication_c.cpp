@@ -56,6 +56,14 @@ FsClientServerCommunication_c::toInterfacePointer()
   return static_cast<IsoAgLib::iFsClientServerCommunication_c*>(this);
 }
 
+void
+FsClientServerCommunication_c::processMsgIso( const CanPkgExt_c& pkg )
+{
+  if( pc_commandHandler == NULL )
+    return;
+
+  pc_commandHandler->processMsgIso( pkg );
+}
 
 void
 FsClientServerCommunication_c::notifyOnUsableFileServer(FsServerInstance_c &rc_fsServerInstance)
@@ -119,8 +127,6 @@ FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_fileSe
 
   // "connect" to the given FsServerInstance_c
   pc_commandHandler = new FsCommand_c(*this, rc_fileServer);
-
-  getFsManagerInstance().setCommand(pc_commandHandler); 
 
   /// (currently only Get Current Directory is performed)
   pc_commandHandler->getCurrentDirectory();
