@@ -13,10 +13,6 @@
 #ifndef FSMANAGER_C_H
 #define FSMANAGER_C_H
 
-// STL
-#include <vector>
-#include <list>
-
 // ISOAgLib
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
@@ -28,6 +24,10 @@
 #include "fsclientservercommunication_c.h"
 #include "fscommand_c.h"
 #include "../ifsclient_c.h"
+
+// STL (include at end due to Tasking-compiler!
+#include <vector>
+#include <list>
 
 
 // Begin Namespace __IsoAgLib
