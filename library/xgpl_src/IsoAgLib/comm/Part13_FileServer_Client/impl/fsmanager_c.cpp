@@ -45,8 +45,8 @@ FsManager_c::timeEvent(void)
     (*it_serverInstance)->timeEvent();
   }
 
-  for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.l_initializingCommands.begin();
-       it_command != m_commands.l_initializingCommands.end(); )
+  for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.ml_initializingCommands.begin();
+       it_command != m_commands.ml_initializingCommands.end(); )
   {
     isoaglib_assert (*it_command);
     switch ((*it_command)->getFileserver().getState())
@@ -61,12 +61,16 @@ FsManager_c::timeEvent(void)
       case FsServerInstance_c::unusable:
         // Finished the initialization one way or another
         delete (*it_command);
-        it_command = m_commands.l_initializingCommands.erase(it_command);
+        it_command = m_commands.ml_initializingCommands.erase(it_command);
         break;
     }
   }
 }
 
+void
+FsManager_c::setCommand(FsCommand_c* pc_command){  //New!!!!
+  m_commands.ml_Commands.push_back(pc_command);
+}
 
 void
 FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
@@ -90,13 +94,13 @@ FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItem
       if (acrc_isoItem.isoName() == (*it_serverInstance)->getIsoItem().isoName())
       { // There should only be one instance for an IsoName!
         // In all cases simply remove associated entries from l_initializingCommands
-        for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.l_initializingCommands.begin();
-             it_command != m_commands.l_initializingCommands.end(); )
+        for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.ml_initializingCommands.begin();
+             it_command != m_commands.ml_initializingCommands.end(); )
         {
           if (&(*it_command)->getFileserver() == (*it_serverInstance))
           { // yep, command is connected to this FileServer.
             delete (*it_command);
-            it_command = m_commands.l_initializingCommands.erase(it_command);
+            it_command = m_commands.ml_initializingCommands.erase(it_command);
             // normally we could break the for loop here, too.
           }
           else
@@ -138,39 +142,48 @@ FsManager_c::FsManager_c()
   , mc_saClaimHandler(*this)
   , m_servers( *this )
   , m_commands( *this )
-  , v_communications()
+  , mv_communications()
 {
 }
 
 
-/**
-  * initFsClient registers a new fileserver client. If the client has already been registered, it does not re-register
-  * the client, but returnes the already created client-server-communication object.
-  * @param rc_identItem the IdentItem_c of the new fileserver client.
-  * @param rc_Client the new fileserver client.
-  * @return a new FsClientServerCommunication_c* if the client has not been registered yet. If the fileserver has been registered,
-  * the original FsClientServerCommunication_c is returned.
-  */
+
 FsClientServerCommunication_c *
-FsManager_c::initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, const IsoAgLib::iFsWhitelistList &v_fsWhitelist)
+FsManager_c::registerFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, const IsoAgLib::iFsWhitelistList &v_fsWhitelist)
 {
   FsClientServerCommunication_c *c_fscscClient = NULL;
 
-  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
-       it_communications != v_communications.end();
-       ++it_communications)
+#ifndef NDEBUG
+  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = mv_communications.begin();
+       it_communications != mv_communications.end(); ++it_communications)
   {
     if (&(*it_communications)->getClientIdentItem() == &rc_identItem)
-    {
-      return (*it_communications);
-    }
+      isoaglib_assert( !"Double register of FS-Client detected!" );
   }
+#endif
 
   c_fscscClient = new FsClientServerCommunication_c(rc_identItem, rc_Client, v_fsWhitelist);
 
-  v_communications.push_back(c_fscscClient);
+  mv_communications.push_back(c_fscscClient);
 
   return c_fscscClient;
+}
+
+void 
+FsManager_c::deregisterFsClient(IdentItem_c &identItem)
+{
+  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
+       iter != mv_communications.end(); ++iter)
+  {
+    if (&((*iter)->getClientIdentItem()) == &identItem)
+    {
+      delete *iter;
+      mv_communications.erase(iter);
+      return;
+    }
+  }
+
+  isoaglib_assert( !"deregister of FS-Client for unregistered instance found!" );
 }
 
 
@@ -192,8 +205,8 @@ FsManager_c::close()
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
   getSchedulerInstance().deregisterTask(*this);
 
-  STL_NAMESPACE::for_each( m_commands.l_initializingCommands.begin(), m_commands.l_initializingCommands.end(), delete_object());
-  STL_NAMESPACE::for_each( v_communications.begin(), v_communications.end(), delete_object());
+  STL_NAMESPACE::for_each( m_commands.ml_initializingCommands.begin(), m_commands.ml_initializingCommands.end(), delete_object());
+  STL_NAMESPACE::for_each( mv_communications.begin(), mv_communications.end(), delete_object());
   STL_NAMESPACE::for_each( m_servers.m_serverInstances.begin(), m_servers.m_serverInstances.end(), delete_object());
 
   setClosed();
@@ -201,40 +214,38 @@ FsManager_c::close()
 
 
 void
-FsManager_c::notifyOnFileserverStateChange(
-  FsServerInstance_c &rc_fileserver,
-  FsServerInstance_c::FsState_en aen_oldState)
+FsManager_c::notifyOnFileserverStateChange(FsServerInstance_c &fileserver, FsServerInstance_c::FsState_en oldState)
 {
-  switch (rc_fileserver.getState())
+  switch (fileserver.getState())
   {
     case FsServerInstance_c::offline:
-      if (aen_oldState != FsServerInstance_c::usable)
+      if (oldState != FsServerInstance_c::usable)
         // don't care about offline-dropping if the FS wasn't
         // announced as usable before at all..
         break;
 
-      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
-          it_communications != v_communications.end();
-          ++it_communications)
+      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
+          iter != mv_communications.end();
+          ++iter)
       {
-        (*it_communications)->notifyOnOfflineFileServer (rc_fileserver);
+        (*iter)->notifyOnOfflineFileServer (fileserver);
       }
       break;
 
     case FsServerInstance_c::online:
-      if ( !v_communications.empty() )
+      if ( !mv_communications.empty() )
       {
-        FsCommand_c *pc_command = new FsCommand_c(*v_communications.front(), rc_fileserver);
-        m_commands.l_initializingCommands.push_back(pc_command);
+        FsCommand_c *pc_command = new FsCommand_c(*mv_communications.front(), fileserver);
+        m_commands.ml_initializingCommands.push_back(pc_command);
       }
       break;
 
     case FsServerInstance_c::usable:
-      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
-           it_communications != v_communications.end();
-           ++it_communications)
+      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
+           iter != mv_communications.end();
+           ++iter)
       {
-        (*it_communications)->notifyOnUsableFileServer (rc_fileserver);
+        (*iter)->notifyOnUsableFileServer (fileserver);
       }
       // now possibly some FsCSC(s) have connected itself to this FS
       break;
@@ -265,8 +276,8 @@ void FsManager_c::FsCommandManager_c::close() {
 }
 
 
-void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& arc_data ) {
-  CanPkgExt_c pkg( arc_data, m_fsManager.getMultitonInst() );
+void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& data ) {
+  CanPkgExt_c pkg( data, m_fsManager.getMultitonInst() );
   if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
     return;
 
@@ -276,7 +287,11 @@ void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& arc_data ) {
     return;
   }
 
-  for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = l_initializingCommands.begin(); it != l_initializingCommands.end(); ++it ) {
+  for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); ++it ) {
+    (*it)->processMsgIso( pkg );
+  }
+  
+  for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_Commands.begin(); it != ml_Commands.end(); ++it ) { //New!!!!
     (*it)->processMsgIso( pkg );
   }
   return;
@@ -285,9 +300,9 @@ void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& arc_data ) {
 /** C-style function, to get access to the unique FsManager_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
  */
-FsManager_c &getFsManagerInstance(uint8_t aui8_instance)
+FsManager_c &getFsManagerInstance(uint8_t instance)
 { // if > 1 singleton instance is used, no static reference can be used
-  MACRO_MULTITON_GET_INSTANCE_BODY(FsManager_c, PRT_INSTANCE_CNT, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(FsManager_c, PRT_INSTANCE_CNT, instance);
 }
 
 //End namespace

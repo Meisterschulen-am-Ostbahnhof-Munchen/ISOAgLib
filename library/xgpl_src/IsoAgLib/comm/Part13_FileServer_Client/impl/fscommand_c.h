@@ -13,8 +13,6 @@
 #ifndef FSCOMMAND_C_H
 #define FSCOMMAND_C_H
 
-#include <IsoAgLib/isoaglib_config.h>
-
 #include "fsserverinstance_c.h"
 
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
@@ -37,10 +35,7 @@ class FsClientServerCommunication_c;
 class FsCommand_c : CanCustomer_c
 {
   public:
-    FsCommand_c(
-      FsClientServerCommunication_c &rc_inCsCom,
-      FsServerInstance_c &rc_inFilerserver);
-
+    FsCommand_c(FsClientServerCommunication_c &FSCSComm, FsServerInstance_c &fileServerInst);
     ~FsCommand_c();
 
     CLASS_SCHEDULER_TASK_PROXY(FsCommand_c)
@@ -49,9 +44,7 @@ class FsCommand_c : CanCustomer_c
   public:
     typedef FsCommand_c Owner_t;
 
-    MultiSendEventHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
-
-    ~MultiSendEventHandlerProxy_c() {}
+    MultiSendEventHandlerProxy_c(Owner_t &owner) : mrt_owner(owner) {}    ~MultiSendEventHandlerProxy_c() {}
 
   private:
     void reactOnStateChange(const SendStream_c& sendStream)
@@ -62,7 +55,6 @@ class FsCommand_c : CanCustomer_c
     // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
     // the reference to the containing object would become invalid.
     MultiSendEventHandlerProxy_c(MultiSendEventHandlerProxy_c const &);
-
     MultiSendEventHandlerProxy_c &operator=(MultiSendEventHandlerProxy_c const &);
 
     Owner_t &mrt_owner;
@@ -72,19 +64,19 @@ class FsCommand_c : CanCustomer_c
 
   private:
     // forbid copy construction
-    FsCommand_c(const FsCommand_c& );
+    FsCommand_c( const FsCommand_c& );
 
     /** function used to send a request. depending on the size of the request single of multi packet send is selected. **/
     enum RequestType_en { RequestInitial, RequestRetry };
     void sendRequest (RequestType_en);
 
     /** decodes a given attribute and saves the decoded values in the corresponding member variables **/
-    void decodeAttributes(uint8_t ui8_attributes);
+    void decodeAttributes(uint8_t attributes);
 
     /** functions to decode fileserver repsonses. **/
     void decodeGetCurrentDirectoryResponse();
-    void decodeOpenFileResponse( const CanPkg_c& arc_data );
-    void decodeSeekFileResponse( const CanPkg_c& arc_data );
+    void decodeOpenFileResponse( const CanPkg_c& );
+    void decodeSeekFileResponse( const CanPkg_c& );
     void decodeSeekFileResponse();
     void decodeReadFileResponse();
     void decodeReadDirectoryResponse();
@@ -94,7 +86,7 @@ class FsCommand_c : CanCustomer_c
     void doCleanUp();
 
     /** internal read file use for read file and read directory **/
-    IsoAgLib::iFsCommandErrors readFile(uint8_t ui8_inFileHandle, uint16_t ui16_count, bool b_reportHiddenFiles);
+    IsoAgLib::iFsCommandErrors readFile(uint8_t fileHandle, uint16_t count, bool b_reportHiddenFiles);
 
     /** which command are we sending? **/
     enum commandtype_en
@@ -120,7 +112,7 @@ class FsCommand_c : CanCustomer_c
   public:
 
     /** is the command busy, meaning waiting for a response? **/
-    bool isBusy() { return !b_receivedResponse; }
+    bool isBusy() { return !m_receivedResponse; }
 
     /** time event function. If no response received, resend request periodically. **/
     void timeEvent(void);
@@ -148,109 +140,109 @@ class FsCommand_c : CanCustomer_c
     /**
       * Method to change the fileserver's current directory. The response-method returns the new current directory to the
       * FsClientServerCommunication_c, as this information is saved there.
-      * @param pui8_newDirectory the new current directory of the fileserver.
+      * @param newDirectory the new current directory of the fileserver.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors changeCurrentDirectory(uint8_t *pui8_newDirectory);
+    IsoAgLib::iFsCommandErrors changeCurrentDirectory(uint8_t *newDirectory);
 
     /**
       * Method to open a file and request a filehandle for the opened file.
       * @param pui8_fileName the name of the file to be openend.
-      * @param b_openExclusive open file with exclusive access?
-      * @param bool b_openForAppend open writeable file for append at the end, or allow random access.
-      * @param bool b_createNewFile create not existing file?
-      * @param bool b_openForReading open for reading?
-      * @param bool b_openForWriting open for writing?
-      * @param bool b_openDirectory open directory?
+      * @param openExclusive open file with exclusive access?
+      * @param openForAppend open writeable file for append at the end, or allow random access.
+      * @param createNewFile create not existing file?
+      * @param openForReading open for reading?
+      * @param openForWriting open for writing?
+      * @param openDirectory open directory?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors openFile(uint8_t *pui8_fileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory);
+    IsoAgLib::iFsCommandErrors openFile(uint8_t *fileName, bool openExclusive, bool openForAppend, bool createNewFile, bool openForReading, bool openForWriting, bool openDirectory);
     /**
       * Change the position pointer of a file.
-      * @param ui8_fileHandle filehandle of the file to be seeked in.
-      * @param ui8_possitionMode position mode of the file, 0 from beginning of file, 1 from current position, 2 from end.
-      * @param i32_offset offset from position given in ui8_possitionMode
+      * @param fileHandle filehandle of the file to be seeked in.
+      * @param positionMode position mode of the file, 0 from beginning of file, 1 from current position, 2 from end.
+      * @param offset offset from position given in positionMode
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors seekFile(uint8_t ui8_fileHandle, uint8_t ui8_possitionMode, int32_t i32_offset);
+    IsoAgLib::iFsCommandErrors seekFile(uint8_t fileHandle, uint8_t positionMode, int32_t offset);
     /**
       * read content of a file
-      * @param ui8_fileHandle filehandle of the file to be read.
-      * @param ui16_count number of bytes to be read.
+      * @param fileHandle filehandle of the file to be read.
+      * @param count number of bytes to be read.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors readFile(uint8_t ui8_fileHandle, uint16_t ui16_count);
+    IsoAgLib::iFsCommandErrors readFile(uint8_t fileHandle, uint16_t count);
     /**
       * read content of a directory
-      * @param ui8_fileHandle directoryhandle of the directory to be read.
-      * @param ui16_count number of entries to be read.
-      * @param b_reportHiddenFiles shall hidden files of a directory be reported?
+      * @param fileHandle directoryhandle of the directory to be read.
+      * @param count number of entries to be read.
+      * @param reportHiddenFiles shall hidden files of a directory be reported?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors readDirectory(uint8_t ui8_fileHandle, uint16_t ui16_count, bool b_reportHiddenFiles);
+    IsoAgLib::iFsCommandErrors readDirectory(uint8_t fileHandle, uint16_t count, bool reportHiddenFiles);
     /**
       * write data to a file
-      * @param ui8_fileHandle filehandle of the file to be written.
-      * @param ui16_count number of bytes to be written.
-      * @param pui8_data data that shall be written
+      * @param fileHandle filehandle of the file to be written.
+      * @param count number of bytes to be written.
+      * @param data data that shall be written
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, uint8_t *pui8_data);
+    IsoAgLib::iFsCommandErrors writeFile(uint8_t fileHandle, uint16_t count, uint8_t *data);
     /**
       * close a file
-      * @param ui8_fileHandle filehandle of the file to be closed.
+      * @param fileHandle filehandle of the file to be closed.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors closeFile(uint8_t ui8_fileHandle);
+    IsoAgLib::iFsCommandErrors closeFile(uint8_t fileHandle);
 
     /**
       * move/copy a file.
-      * @param pui8_sourceName source name of the file to be moved/copied
-      * @param pui8_destName destination for the file
-      * @param b_recursive shall a directory be moved/copied recoursivly?
-      * @param b_force override existing/protected files?
-      * @param b_copy shall the file be moved or copied?
+      * @param sourceName source name of the file to be moved/copied
+      * @param destName destination for the file
+      * @param recursive shall a directory be moved/copied recoursivly?
+      * @param force override existing/protected files?
+      * @param copy shall the file be moved or copied?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_recursive, bool b_force, bool b_copy);
+    IsoAgLib::iFsCommandErrors moveFile(uint8_t *sourceName, uint8_t *destName, bool recursive, bool force, bool copy);
     /**
       * delete a file.
-      * @param pui8_fileName name of the file to be deleted.
-      * @param b_recursive shall content of a directory be deleted as well?
-      * @param b_force shall write-protected files be deleted?
+      * @param fileName name of the file to be deleted.
+      * @param recursive shall content of a directory be deleted as well?
+      * @param force shall write-protected files be deleted?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors deleteFile(uint8_t *pui8_fileName, bool b_recursive, bool b_force);
+    IsoAgLib::iFsCommandErrors deleteFile(uint8_t *fileName, bool recursive, bool force);
     /**
       * get Attributes of a file.
-      * @param pui8_fileName name of the requested file.
+      * @param fileName name of the requested file.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors getFileAttributes(uint8_t *pui8_fileName);
+    IsoAgLib::iFsCommandErrors getFileAttributes(uint8_t *fileName);
     /**
       * change attributed for a file.
-      * @param pui8_fileName name of the file that's attributes have to be changed.
-      * @param ui8_hiddenAtt change hidden attribute command: 0 clear, 1 set abd 3 leave as is.
-      * @param ui8_readOnlyAtt change read only attribute command: 0 clear, 1 set abd 3 leave as is.
+      * @param fileName name of the file that's attributes have to be changed.
+      * @param hiddenAttr change hidden attribute command: 0 clear, 1 set abd 3 leave as is.
+      * @param readOnlyAttr change read only attribute command: 0 clear, 1 set abd 3 leave as is.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors setFileAttributes(uint8_t *pui8_fileName, uint8_t ui8_hiddenAtt, uint8_t ui8_readOnlyAtt);
+    IsoAgLib::iFsCommandErrors setFileAttributes(uint8_t *fileName, uint8_t hiddenAttr, uint8_t readOnlyAttr);
     /**
       * get date and time of last change of file.
-      * @param pui8_fileName name of the reqeusted file.
+      * @param fileName name of the reqeusted file.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors getFileDateTime(uint8_t *pui8_fileName);
+    IsoAgLib::iFsCommandErrors getFileDateTime(uint8_t *fileName);
 
     /**
       * initialize volume
-      * @param pui8_pathName pathname for the directory.
-      * @param ui32_space space to be used.
-      * @param b_createVolumeUsingSpace does all space have to be used?
-      * @param b_createNewVolume shall a new volum be created?
+      * @param pathName pathname for the directory.
+      * @param space space to be used.
+      * @param createVolumeUsingSpace does all space have to be used?
+      * @param createNewVolume shall a new volum be created?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors initializeVolume(uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume);
+    IsoAgLib::iFsCommandErrors initializeVolume(uint8_t *pathName, uint32_t space, bool createVolumeUsingSpace, bool createNewVolume);
 
     /**
       * Starts the initialisation process for a fileserver.
@@ -260,133 +252,108 @@ class FsCommand_c : CanCustomer_c
     /**
       * returns the fileserver of the FsCommand_c.
       */
-    FsServerInstance_c &getFileserver() { return rc_fileserver; }
+    FsServerInstance_c &getFileserver() { return mc_fileserver; }
 
     /**
       * set connection state to keep open even after all files have been closed
-      * @param b_keepOpen connection state.
-      * @param b_forceClose force the connection to close even if files are open.
+      * @param keepOpen connection state.
+      * @param forceClose force the connection to close even if files are open.
       */
-    void setKeepConnectionOpen( bool b_keepOpen, bool b_forceClose=false );
+    void setKeepConnectionOpen( bool keepOpen, bool forceClose=false );
     /**
-      * get conneciton state
+      * get connection state
       * @return true if the keep connection open is current set else false is returned.
       */
-    bool getKeepConnectionOpen() const { return b_keepConnectionOpen; }
+    bool getKeepConnectionOpen() const { return m_keepConnectionOpen; }
 
     /** MultiReceiveClient functions BEGIN **/
-    bool processPartStreamDataChunk (Stream_c& refc_stream, bool rb_isFirstChunk, bool rb_isLastChunkAndACKd);
-    void reactOnAbort(Stream_c& refc_stream);
-    bool reactOnStreamStart(const ReceiveStreamIdentifier_c& refc_ident, uint32_t rui32_totalLen);
+    bool processPartStreamDataChunk (Stream_c& stream, bool isFirstChunk, bool isLastChunkAndACKd);
+    void reactOnAbort(Stream_c& stream);
+    bool reactOnStreamStart(const ReceiveStreamIdentifier_c& streamIdent, uint32_t totalLen);
     /** MultiReceiveClient functions END **/
 
     int getMultitonInst() const { return 0; }
 
   private:
     // member variable instead of multiple inheritance
-    SchedulerTaskProxy_c mc_schedulerTask;
-    MultiSendEventHandlerProxy_c mt_multiSendEventHandler;
+    SchedulerTaskProxy_c m_schedulerTask;
+    MultiSendEventHandlerProxy_c m_multiSendEventHandler;
+    FsClientServerCommunication_c &m_FSCSComm;
+    FsServerInstance_c &mc_fileserver;
 
-    /** the TAN counter for the fileserver communication. **/
-    uint8_t ui8_tan;
-    /** the reference to the fsclientservercommunication. responses will be directed to this. **/
-    FsClientServerCommunication_c &rc_csCom;
-    /** the reference to the used fileserver **/
-    FsServerInstance_c &rc_fileserver;
+    uint8_t m_tan;
 
     /** open file maintenance message **/
-    /** number of opened files **/
-    uint8_t ui8_nrOpenFiles;
-    /** keep connection open even after all files are closed **/
-    bool b_keepConnectionOpen;
-    /** when has the last alive been sent? **/
-    int32_t i32_lastAliveSent;
-    /** buffer containing the standard maintenance message, content equal for all clients! **/
-    static uint8_t pui8_maintenanceBuffer[8];
+    uint8_t m_nrOpenFiles;
+    bool m_keepConnectionOpen;
+    int32_t m_lastAliveSentTime;
+    static uint8_t m_maintenanceMsgBuf[8];
 
-    /** send package length **/
-    uint8_t ui8_packetLength;
-    /** buffer containing the sent message. **/
-    uint8_t pui8_sendBuffer[256];
-    /** buffer used for multi-receive messages **/
-    uint8_t *pui8_receiveBuffer;
-    uint32_t ui32_recBufAllocSize;
-    uint8_t ui8_recTan;
-    /** has a response for the sent message been received? **/
-    bool b_receivedResponse;
-    /** when has the last request been sent? time to resend? **/
-    int32_t i32_lastrequestAttempt;
-    /** how many times has the request been sent? **/
-    uint8_t ui8_requestAttempts;
-    /** status of a sent multi-message **/
-    SendStream_c::sendSuccess_t en_sendSuccessNotify;
+    uint8_t m_packetLength;
+    uint8_t m_sendMsgBuf[256];
+    uint8_t *m_multireceiveMsgBuf;
+    uint32_t m_multireceiveMsgBufAllocSize;
 
-    /** recieve information **/
-    uint8_t ui8_errorCode;
+    bool m_receivedResponse;
+    int32_t m_lastrequestAttemptTime;
+    uint8_t m_requestAttempts;
+
+    SendStream_c::sendSuccess_t m_sendSuccessNotify;
+
+    /** receive information **/
+    uint8_t m_errorCode;
 
     /** currentDirectory information **/
-    uint8_t *pui8_currentDirectory;
-    uint16_t ui16_curDirAllocSize;
+    uint8_t *m_currentDirectory;
+    uint16_t m_currentDirectoryAllocSize;
 
     /** file handle information **/
-    uint8_t ui8_fileHandle;
+    uint8_t m_fileHandle;
 
     /** open file information **/
-    /** file to be opend. important as return for change current directory **/
-    uint8_t *pui8_fileName;
-    uint16_t ui16_fileNameAllocSize;
-    /** flags used to open file **/
-    uint8_t ui8_flags;
-    /** attributes of opend file returned after open. **/
-    bool b_archive;
-    bool b_system;
-    bool b_caseSensitive;
-    bool b_removable;
-    bool b_longFilenames;
-    bool b_isDirectory;
-    bool b_isVolume;
-    bool b_hidden;
-    bool b_readOnly;
+    uint8_t *m_fileName;
+    uint16_t m_fileNameAllocSize;
+
+    /** open file or directory flags */
+    bool m_attrCaseSensitive;
+    bool m_attrRemovable;
+    bool m_attrLongFilenames;
+    bool m_attrIsDirectory;
+    bool m_attrIsVolume;
+    bool m_attrHidden;
+    bool m_attrReadOnly;
 
     /** seek file information **/
-    uint8_t ui8_possitionMode;
-    int32_t i32_offset;
-    uint32_t ui32_possition;
+    uint8_t m_positionMode;
+    int32_t m_offset;
+    uint32_t m_position;
 
     /** read file information */
-    uint16_t ui16_count;
-    bool b_reportHiddenFiles;
-    uint8_t *pui8_data;
-    uint16_t ui16_dataAllocSize;
-    IsoAgLib::iFsDirList v_dirData;
-    bool b_readDirectory;
+    uint16_t m_count;
+    uint8_t *m_data;
+    uint16_t m_dataAllocSize;
+    IsoAgLib::iFsDirList m_dirData;
+    bool m_readDirectory;
 
-    /** set file attributes commands **/
-    uint8_t ui8_hiddenAtt;
-    uint8_t ui8_readOnlyAtt;
-
-    /** file date time information **/
-    uint16_t ui16_date;
-    uint16_t ui16_time;
 
     /** filter information **/
-    bool b_receiveFilterCreated;
+    bool m_receiveFilterCreated;
 
     /// FS Initial Query Part (Properties/Volumes)
-    bool mb_initialQueryStarted;
+    bool m_initialQueryStarted;
 
     /// Is this instance for Initializing the FsInstance_c
     /// (call callbacks and do initialization procedure then)
     /// or is it for normal Application-triggered operation?
-    bool mb_initializingFileserver;
+    bool m_initializingFileserver;
 
     /// Indicate if a MultiSend was started and it
     /// needs to be waited for the Success/Abort.
-    bool mb_waitForMultiSendFinish;
+    bool m_waitForMultiSendFinish;
 
     /// If the MultiPacketSend couldn't be started
     /// it needs to be retried in the timeEvent()
-    bool mb_retryMultiPacketSend;
+    bool m_retryMultiPacketSend;
 };
 
 } // __IsoAgLib

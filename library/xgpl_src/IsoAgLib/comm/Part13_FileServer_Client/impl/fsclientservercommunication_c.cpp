@@ -120,6 +120,8 @@ FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_fileSe
   // "connect" to the given FsServerInstance_c
   pc_commandHandler = new FsCommand_c(*this, rc_fileServer);
 
+  getFsManagerInstance().setCommand(pc_commandHandler); 
+
   /// (currently only Get Current Directory is performed)
   pc_commandHandler->getCurrentDirectory();
 }
