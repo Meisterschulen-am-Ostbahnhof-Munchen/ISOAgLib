@@ -45,9 +45,9 @@ struct Aux2PreferredAssignmentObjects_s
 
 
 Aux2Functions_c::Aux2Functions_c(VtClientConnection_c& vtClientConnection )
-  : m_vtConnection( vtClientConnection )
+  : SchedulerTask_c( -1, false )
+  , m_vtConnection( vtClientConnection )
   , m_state(State_WaitForPoolUploadSuccessfully)
-  , m_timeStampWaitForSendingPreferredAssignment(0)
   , mb_learnMode(false)
 {
 }
@@ -119,13 +119,22 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
   const IsoName_c c_inputIsoName = arc_data.getISONameForSA();
   const uint16_t ui16_modelIdentificationCode = arc_data.getUint16Data(2-1);
 
-  if (c_inputIsoName.isSpecified())
-    mmap_receivedInputMaintenanceData[c_inputIsoName] = InputMaintenanceDataForIsoName_s(ui16_modelIdentificationCode, i32_now);
 
   const uint8_t ui8_status = arc_data.getUint8Data(4-1);
   if (1 != ui8_status)
     return; // inputs with status not "ready" should not trigger sendPreferredAux2Assignments()
 
+
+  bool initializingToReady = false;
+  if (c_inputIsoName.isSpecified()) {
+    initializingToReady = ( mmap_receivedInputMaintenanceData.find( c_inputIsoName ) == mmap_receivedInputMaintenanceData.end() );
+    mmap_receivedInputMaintenanceData[c_inputIsoName] = InputMaintenanceDataForIsoName_s(ui16_modelIdentificationCode, i32_now );
+  }
+
+  // first one or we removed the last one
+  if( initializingToReady && ( mmap_receivedInputMaintenanceData.size() == 1 ) ) {
+    getSchedulerInstance().registerTask( *this, m_vtConnection.getVtClientDataStorage().getAux2DeltaWaitBeforeSendingPreferredAssigment() );
+  }
 
   switch (m_state)
   {
@@ -136,7 +145,6 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
       // we have some preferred assignments (otherwise this state would not be set in objectPoolUploadedSuccessfully
       // => let's wait for some time to receive input maintenance messages from different devices to send a more complete preferred assignment message
       m_state = State_CollectInputMaintenanceMessage;
-      m_timeStampWaitForSendingPreferredAssignment = HAL::getTime();
       break;
 
     case State_CollectInputMaintenanceMessage:
@@ -155,28 +163,24 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
       break; // handled above
 
     case State_CollectInputMaintenanceMessage:
-      for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
-      {
-        if(iter->second->getMatchingPreferredAssignedInputReady())
-          continue; // this input device was already found in our preferred assignments => skip it
-        
-        iter->second->getPreferredAssignedInput(c_prefAssignedIsoName, ui16_prefAssignedModelIdentificationCode, ui16_prefAssignedInputUid);
-        if ( (ui16_prefAssignedModelIdentificationCode == ui16_modelIdentificationCode) && (c_prefAssignedIsoName == c_inputIsoName) ) { 
-          iter->second->setMatchingPreferredAssignedInputReady(true);
+    case State_Ready:
+      if( initializingToReady ) {
+        for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
+        {
+          if(iter->second->getMatchingPreferredAssignedInputReady())
+            continue; // this input device was already found in our preferred assignments => skip it
+          
+          iter->second->getPreferredAssignedInput(c_prefAssignedIsoName, ui16_prefAssignedModelIdentificationCode, ui16_prefAssignedInputUid);
+          if ( (ui16_prefAssignedModelIdentificationCode == ui16_modelIdentificationCode) && (c_prefAssignedIsoName == c_inputIsoName) ) { 
+            iter->second->setMatchingPreferredAssignedInputReady(true);
+            b_sendPreferredAssignments = true;
+          }
         }
       }
-
-      if ( ( m_timeStampWaitForSendingPreferredAssignment + m_vtConnection.getVtClientDataStorage().getAux2DeltaWaitBeforeSendingPreferredAssigment() ) < HAL::getTime())
-      { // we waited long enough
-        b_sendPreferredAssignments = true;
-      }
       break;
-
-    case State_Ready:
-      break; // nothing to do
   }
 
-  if (b_sendPreferredAssignments)
+  if ( ( m_state == State_Ready ) && b_sendPreferredAssignments )
     sendPreferredAux2Assignments();
 #else
   (void)arc_data;
@@ -325,31 +329,46 @@ Aux2Functions_c::storeAux2Assignment(
   return 0x00;
 }
 
+
 void
-Aux2Functions_c::checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iVtClientObjectPool_c& arc_pool)
+Aux2Functions_c::timeEvent()
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-  int32_t i32_now = HAL::getTime();
+  const int32_t i32_now = HAL::getTime();
+  int32_t next = i32_now + 300;
 
-  for (STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::iterator iter_map = mmap_receivedInputMaintenanceData.begin(); iter_map != mmap_receivedInputMaintenanceData.end(); ++iter_map)
+  // 1. check for timed out inputs
+  for (STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::iterator iter_map = mmap_receivedInputMaintenanceData.begin();
+      iter_map != mmap_receivedInputMaintenanceData.end();)
   {
-    if ( (iter_map->second.mi32_timeLastAux2Maintenance != 0) &&
-         (i32_now > iter_map->second.mi32_timeLastAux2Maintenance + 300) )
+    const int32_t timeout = iter_map->second.mi32_timeLastAux2Maintenance + 300;
+    if ( i32_now > timeout )
     {
       // timeout => unassign all functions with matching isoname
-      for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter_function = m_aux2Function.begin(); iter_function != m_aux2Function.end(); ++iter_function)
+      for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter_function = m_aux2Function.begin();
+          iter_function != m_aux2Function.end(); ++iter_function)
       {
         if( iter_function->second->unassignInputIfIsoNameMatches(iter_map->first) ) {
-          arc_pool.aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter_function->second ) ) );
+          m_vtConnection.getPool().aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter_function->second ) ) );
         }
       }
-
-      mmap_receivedInputMaintenanceData.erase(iter_map);
-      break; // do not continue in map iteration after erase (other elements are checked soon in next call)
+      mmap_receivedInputMaintenanceData.erase(iter_map++);
+    } else {
+      if( timeout < next ) {
+        next = timeout;
+      }
+      ++iter_map;
     }
   }
-#else
-  (void)arc_pool;
+  if( ! mmap_receivedInputMaintenanceData.empty() ) {
+    setNextTriggerTime( next );
+  } // else the task is deregistered cause of a period < 0. see scheduler
+
+  // 2. send preferred assignment
+  if( ! mmap_receivedInputMaintenanceData.empty() && ( m_state == State_CollectInputMaintenanceMessage ) ) {
+    sendPreferredAux2Assignments();
+    m_state = State_Ready;
+  }
 #endif
 }
 
@@ -358,8 +377,6 @@ bool
 Aux2Functions_c::sendPreferredAux2Assignments()
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-  m_state = State_Ready;
-
   if( m_aux2Function.empty() )
     return true;
 

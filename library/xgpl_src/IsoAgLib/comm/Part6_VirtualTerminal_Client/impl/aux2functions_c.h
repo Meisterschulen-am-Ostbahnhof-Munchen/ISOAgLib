@@ -17,6 +17,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 
 #include "../ivtobjectauxiliaryfunction2_c.h"
 
@@ -27,7 +28,7 @@ namespace __IsoAgLib {
 
 class VtClientConnection_c;
 
-class Aux2Functions_c
+class Aux2Functions_c : public SchedulerTask_c
 {
 public:
   enum Aux2FunctionsState_en
@@ -64,7 +65,8 @@ public:
   // @return error-code as in J.7.6
   uint8_t storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId, IsoAgLib::iVtClientObjectPool_c& arc_pool);
 
-  void checkAndHandleAux2MaintenanceTimeout(IsoAgLib::iVtClientObjectPool_c& arc_pool);
+  void timeEvent();
+
 
   bool sendPreferredAux2Assignments();
 
@@ -85,7 +87,7 @@ private:
         mi32_timeLastAux2Maintenance(0)
     {}
 
-    InputMaintenanceDataForIsoName_s(uint16_t a_inputModelIdentificationCode, int32_t a_timeLastAux2Maintenance)
+    InputMaintenanceDataForIsoName_s(uint16_t a_inputModelIdentificationCode, int32_t a_timeLastAux2Maintenance )
       : mui16_inputModelIdentificationCode(a_inputModelIdentificationCode),
         mi32_timeLastAux2Maintenance(a_timeLastAux2Maintenance)
     {}
@@ -107,8 +109,6 @@ private:
   VtClientConnection_c& m_vtConnection;
 
   Aux2FunctionsState_en m_state;
-
-  int32_t m_timeStampWaitForSendingPreferredAssignment;
 
   bool mb_learnMode;
 };

@@ -692,9 +692,6 @@ VtClientConnection_c::timeEvent(void)
   // doStart will also take care for announcing the working-set
   checkAndHandleVtStateChange();
 
-  // detect 300ms timeout (a more precise timeEvent() could be needed)
-  m_aux2Functions.checkAndHandleAux2MaintenanceTimeout(mrc_pool);
-
   // Do nothing if there's no VT active
   if (!isVtActive())
   {

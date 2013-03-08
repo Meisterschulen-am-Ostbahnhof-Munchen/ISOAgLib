@@ -261,7 +261,9 @@ public:
   bool isVtActive() const;
   vtClientDisplayState_t getVtDisplayState() const { return men_displayState; }
 
-
+  IsoAgLib::iVtClientObjectPool_c& getPool() const {
+    return mrc_pool;
+  }
   IsoAgLib::iVtClientDataStorage_c& getVtClientDataStorage() const {
     return m_dataStorageHandler;
   }
