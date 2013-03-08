@@ -21,7 +21,7 @@ namespace __IsoAgLib
 
     isoaglib_assert(m_ident);
 
-    const uint32_t pgn = (m_dp << 16) | PROPRIETARY_A_PGN;
+    const uint32_t pgn = ( uint32_t( m_dp ) << 16) | PROPRIETARY_A_PGN;
     if (getDataSend().getLen() <= 8)
     {
       CanPkgExt_c pkg;
@@ -87,7 +87,7 @@ namespace __IsoAgLib
 
     isoaglib_assert(m_ident);
 
-    const uint32_t pgn = (m_dp << 16) | PROPRIETARY_B_PGN | ps;
+    const uint32_t pgn = ( uint32_t( m_dp ) << 16) | PROPRIETARY_B_PGN | ps;
     if (getDataSend().getLen() <= 8)
     {
       CanPkgExt_c pkg;
