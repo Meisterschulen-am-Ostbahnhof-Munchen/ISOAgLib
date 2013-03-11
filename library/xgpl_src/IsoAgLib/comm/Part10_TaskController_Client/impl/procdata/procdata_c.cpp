@@ -48,7 +48,7 @@ ProcData_c::init(
   mui16_ddi = aui16_ddi;
   mui16_element = aui16_element;
   configuration.mb_isSetpoint = ab_isSetpoint;
-  configuration.mui8_triggerMethod = aui8_triggerMethod & 0x3F; // 6 bits
+  configuration.mui8_triggerMethod = aui8_triggerMethod & 0x1F; // 5 bits
   mpc_procDataHandler = apc_procDataHandler;
 
   getTcClientInstance4Comm( ).registerLocalProcessData( this );
