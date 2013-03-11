@@ -19,37 +19,38 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
-
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
-
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticsservices_c.h>
-#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h>
+
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
 
 namespace __IsoAgLib {
 
 
 IdentItem_c::~IdentItem_c()
 {
-  delete mpc_diagnosticPgnHandler;
-  if (mpc_diagnosticsServices) delete mpc_diagnosticsServices;
+  if (mpc_diagnosticsServices)
+    delete mpc_diagnosticsServices;
 }
 
 
 IdentItem_c::IdentItem_c ()
-  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, -1) // using an INVALID SingletonVecKey as it will be initialized later!
-  , mpc_isoItem(NULL)
-  , mpc_dataStorageHandler(NULL)
-  , mui8_sa(0x0)
-  , mpc_diagnosticPgnHandler (NULL)
-  , mpc_diagnosticsServices (NULL)
+  : BaseItem_c( System_c::getTime(), IState_c::IstateNull, -1 ) // using an INVALID SingletonVecKey as it will be initialized later!
+  , mpc_isoItem( NULL )
+  , mpc_dataStorageHandler( NULL )
+  , mui8_sa( 0x00 )
+  , mc_isoName()
+  , m_diagnosticPgnHandler( *this )
+  , mpc_diagnosticsServices( NULL )
 #ifdef USE_WORKING_SET
-  , mpvec_slaveIsoNames (NULL)
+  , mpvec_slaveIsoNames( NULL )
 #endif
-  , i32_lastIsoSaRequestForThisItem(-1)
+  , i32_lastIsoSaRequestForThisItem( -1 )
   , mb_readyForActivation( false )
 
 {
-  mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
 }
 
 
@@ -127,8 +128,7 @@ IdentItem_c::activate (int ai_multitonInst)
                               IState_c::Local)),
       ai_multitonInst);
 
-    // The Diagnostics Handler needs to be created on Construction!
-    mpc_diagnosticPgnHandler->init();
+    m_diagnosticPgnHandler.init();
     if (mpc_diagnosticsServices) mpc_diagnosticsServices->init();
     return true;
   }
@@ -145,7 +145,7 @@ IdentItem_c::deactivate()
   // and set state to Off (explicitly requested)
   goOffline (true);
 
-  mpc_diagnosticPgnHandler->close();
+  m_diagnosticPgnHandler.close();
   if (mpc_diagnosticsServices)
   {
     mpc_dataStorageHandler->storeDtcs(mpc_diagnosticsServices->getDtcContainer());
@@ -278,38 +278,33 @@ IdentItem_c::timeEventActive( void )
 
 bool
 IdentItem_c::setEcuIdentification(
-    const char *acstr_partNr,
-    const char *acstr_serialNr,
-    const char *acstr_location,
-    const char *acstr_type,
-    const char *acstr_manufacturerName)
-{ // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
-  return mpc_diagnosticPgnHandler->setEcuIdentification(
-      acstr_partNr,
-      acstr_serialNr,
-      acstr_location,
-      acstr_type,
-      acstr_manufacturerName);
+    const char *partNr,
+    const char *serialNr,
+    const char *location,
+    const char *type,
+    const char *manufacturerName,
+    const char *hardwareVer )
+{
+  return m_diagnosticPgnHandler.setEcuIdentification( partNr, serialNr, location, type, manufacturerName, hardwareVer);
 }
 
 bool IdentItem_c::setSwIdentification( const char *acstr_partNbr )
-{ // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
-  return mpc_diagnosticPgnHandler->setSwIdentification( acstr_partNbr );
+{
+  return m_diagnosticPgnHandler.setSwIdentification( acstr_partNbr );
 }
 
 bool IdentItem_c::setCertificationData(
   uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision, IsoAgLib::CertificationLabType_t a_laboratoryType,
   uint16_t aui16_laboratoryId, const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
 {
-  // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
-  return mpc_diagnosticPgnHandler->setCertificationData(
+  return m_diagnosticPgnHandler.setCertificationData(
     ui16_year , a_revision, a_laboratoryType, aui16_laboratoryId,
     acrc_certificationBitMask, aui16_referenceNumber );
 }
 
-DiagnosticProtocol_c& IdentItem_c::getDiagnosticProtocol()
+DiagnosticFunctionalities_c& IdentItem_c::getDiagnosticFunctionalities()
 {
-  return mpc_diagnosticPgnHandler->getDiagnosticProtocol();
+  return m_diagnosticPgnHandler.getDiagnosticFunctionalities();
 }
 
 } // end of namespace __IsoAgLib

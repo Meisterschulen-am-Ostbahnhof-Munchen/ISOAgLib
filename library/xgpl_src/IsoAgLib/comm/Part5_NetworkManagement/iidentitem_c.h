@@ -129,18 +129,14 @@ public:
             false if one field was too long (> 200 chars) or had '*' in it.
   */
   bool setEcuIdentification(
-      const char *acstr_partNbr,
-      const char *acstr_serialNbr,
-      const char *acstr_location,
-      const char *acstr_type,
-      const char *acstr_manufacturerName)
+      const char *partNbr,
+      const char *serialNbr,
+      const char *location,
+      const char *type,
+      const char *manufacturerName,
+      const char *hardwareVer)
   {
-    return IdentItem_c::setEcuIdentification(
-        acstr_partNbr,
-        acstr_serialNbr,
-        acstr_location,
-        acstr_type,
-        acstr_manufacturerName);
+    return IdentItem_c::setEcuIdentification( partNbr, serialNbr, location, type, manufacturerName, hardwareVer );
   }
 
   /** Set SW Identification fields, needed during the diagnostic procedure
@@ -149,9 +145,9 @@ public:
       @return true if the SW Identification was okay
               false if it was too long (> 200 chars) or empty
    */
-  bool setSwIdentification( const char *acstr_swId )
+  bool setSwIdentification( const char *swId )
   {
-    return IdentItem_c::setSwIdentification( acstr_swId );
+    return IdentItem_c::setSwIdentification( swId );
   }
 
   //! Setter for the different certification message fields

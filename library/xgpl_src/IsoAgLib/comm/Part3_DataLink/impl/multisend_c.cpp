@@ -353,25 +353,25 @@ MultiSend_c::calcAndSetNextTriggerTime()
 
 
 void
-MultiSend_c::abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
+MultiSend_c::abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, ConnectionAbortReason_t reason)
 {
   SendStream_c* runningStream = getRunningStream (acrc_isoNameSender, acrc_isoNameReceiver);
   if( runningStream )
-    runningStream->abortSend();
+    runningStream->abortSend( reason );
 
   // let timeEvent do the erasing from the list, keep it marked finished/aborted
 }
 
 
 void
-MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler)
+MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler, ConnectionAbortReason_t reason)
 {
   for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); pc_iter++)
   {
     if (pc_iter->getMultiSendEventHandler() == &apc_multiSendEventHandler)
     {
       if (!pc_iter->isFinished())
-        pc_iter->abortSend();
+        pc_iter->abortSend( reason );
     }
   }
 }

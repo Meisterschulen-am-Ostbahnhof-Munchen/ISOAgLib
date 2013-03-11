@@ -29,13 +29,13 @@ library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.cpp 
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/iprocdatahandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticstypes.h -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticfunctionalities_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticfunctionalities_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.cpp -text
-library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocoltypes.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticsservices_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticsservices_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticstypes.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/ifsclient_c.h -text

@@ -1,5 +1,5 @@
 /*
-  idiagnosticprotocoltypes.h: types for Diagnostic Protocol Message
+  diagnosticfunctionalitiestypes.h: types for CF Functionalities
 
   (C) Copyright 2009 - 2012 by OSB AG and developing partners
 
@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef DIAGNOSTICPROTOCOL_TYPES_H
-#define DIAGNOSTICPROTOCOL_TYPES_H
+#ifndef DIAGNOSTIC_FUNCTIONALITIES_TYPES_H
+#define DIAGNOSTIC_FUNCTIONALITIES_TYPES_H
 
 #include <IsoAgLib/isoaglib_config.h>
 
@@ -22,7 +22,6 @@ enum EcuDiagnosticProtocolIdentification_t
   ProtocolId_J1939_73 = 0,
   ProtocolId_ISO14230,
   ProtocolId_ISO15765_3,
-  ProtocolId_ISO11783Level2,
   ProtocolId_BITSIZE = 8
 };
 
@@ -33,15 +32,16 @@ struct EcuDiagnosticProtocolIdentification_s
 };
 typedef BitFieldWrapperRight_c<EcuDiagnosticProtocolIdentification_s> EcuDiagnosticProtocolIdentificationBitMask_t;
 
+
 enum FunctionalitiesCharacteristics_t
 {
-  //NoFunctionalitiesReported = 0,
-  VirtualTerminal = 1,
-  VirtualTerminalWorkingSet,
-  AuxiliaryControlType1Inputs,
-  AuxiliaryControlType1Functions,
-  AuxiliaryControlType2Inputs,
-  AuxiliaryControlType2Functions,
+  MinimumControlFunction = 0,
+  UniversalTerminal,
+  UniversalTerminalWorkingSet,
+  AuxOInputs,
+  AuxOFunctions,
+  AuxNInputs,
+  AuxNFunctions,
   TaskControllerBasic,
   TaskControllerBasicWorkingSet,
   TaskControllerGeo,
@@ -50,79 +50,82 @@ enum FunctionalitiesCharacteristics_t
   TaskControllerSectionControlWorkingSet,
   BasicTractorECU,
   BasicTractorECUImplementSet,
-  AdvanceTractorECU,
-  AdvanceTractorECUImplementSet,
-  FileServer,
-  FileServerClient,
-  SequenceControlServer,
-  SequenceControlClient,
-  StopAllImplementOperationsInput,
-  StopAllImplementOperationsImplementSet,
-  DiagnosticTool,
-  DiagnosticECU,
   Functionality_ReservedForISO = 0xFF
 };
 
-// VT
-enum VirtualTerminalOptions_t
+// Min CF
+enum MinimumControlFunctionOptions_t
 {
-  VirtualTerminal_ProportionalFonts = 0,
-  VirtualTerminal_UserLayoutScreens,
-  VirtualTerminal_ColourMap,
-  VirtualTerminal_GraphicsContext,
-  VirtualTerminal_BITSIZE = 8
+  MinimumControlFunction_BITSIZE = 0
 };
 
-struct VirtualTerminalOptions_s
+struct MinimumControlFunctionOptions_s
 {
-  typedef VirtualTerminalOptions_t enum_type;
-  enum { number_of_bits = VirtualTerminal_BITSIZE };
+  typedef MinimumControlFunctionOptions_t enum_type;
+  enum { number_of_bits = MinimumControlFunction_BITSIZE };
 };
-typedef BitFieldWrapperRight_c<VirtualTerminalOptions_s> VirtualTerminalOptionsBitMask_t;
+typedef BitFieldWrapperRight_c<MinimumControlFunctionOptions_s> MinimumControlFunctionOptionsBitMask_t;
 
-// Aux 1
-enum AuxControlType1Options_t
+// UT
+enum UniversalTerminalOptions_t
 {
-  AuxControlType1_SupportsType0Function = 0,
-  AuxControlType1_SupportsType1Function,
-  AuxControlType1_SupportsType2Function,
-  AuxControlType1_BITSIZE = 8
-};
-
-struct AuxControlType1Options_s
-{
-  typedef AuxControlType1Options_t enum_type;
-  enum { number_of_bits = AuxControlType1_BITSIZE };
-};
-typedef BitFieldWrapperRight_c<AuxControlType1Options_s> AuxControlType1OptionsBitMask_t;
-
-// Aux 2
-enum AuxControlType2Options_t
-{
-  AuxControlType2_SupportsType0Function = 0,
-  AuxControlType2_SupportsType1Function,
-  AuxControlType2_SupportsType2Function,
-  AuxControlType2_SupportsType3Function,
-  AuxControlType2_SupportsType4Function,
-  AuxControlType2_SupportsType5Function,
-  AuxControlType2_SupportsType6Function,
-  AuxControlType2_SupportsType7Function,
-  AuxControlType2_SupportsType8Function,
-  AuxControlType2_SupportsType9Function,
-  AuxControlType2_SupportsType10Function,
-  AuxControlType2_SupportsType11Function,
-  AuxControlType2_SupportsType12Function,
-  AuxControlType2_SupportsType13Function,
-  AuxControlType2_SupportsType14Function,
-  AuxControlType2_BITSIZE = 16
+  UniversalTerminal_ProportionalFonts = 0,
+  UniversalTerminal_UserLayoutScreens,
+  UniversalTerminal_ColourMap,
+  UniversalTerminal_GraphicsContext,
+  UniversalTerminal_BITSIZE = 8
 };
 
-struct AuxControlType2Options_s
+struct UniversalTerminalOptions_s
 {
-  typedef AuxControlType2Options_t enum_type;
-  enum { number_of_bits = AuxControlType2_BITSIZE };
+  typedef UniversalTerminalOptions_t enum_type;
+  enum { number_of_bits = UniversalTerminal_BITSIZE };
 };
-typedef BitFieldWrapperRight_c<AuxControlType2Options_s> AuxControlType2OptionsBitMask_t;
+typedef BitFieldWrapperRight_c<UniversalTerminalOptions_s> UniversalTerminalOptionsBitMask_t;
+
+// Aux O
+enum AuxOOptions_t
+{
+  AuxO_SupportsType0Function = 0,
+  AuxO_SupportsType1Function,
+  AuxO_SupportsType2Function,
+  AuxO_BITSIZE = 8
+};
+
+struct AuxOOptions_s
+{
+  typedef AuxOOptions_t enum_type;
+  enum { number_of_bits = AuxO_BITSIZE };
+};
+typedef BitFieldWrapperRight_c<AuxOOptions_s> AuxOOptionsBitMask_t;
+
+// Aux N
+enum AuxNOptions_t
+{
+  AuxN_SupportsType0Function = 0,
+  AuxN_SupportsType1Function,
+  AuxN_SupportsType2Function,
+  AuxN_SupportsType3Function,
+  AuxN_SupportsType4Function,
+  AuxN_SupportsType5Function,
+  AuxN_SupportsType6Function,
+  AuxN_SupportsType7Function,
+  AuxN_SupportsType8Function,
+  AuxN_SupportsType9Function,
+  AuxN_SupportsType10Function,
+  AuxN_SupportsType11Function,
+  AuxN_SupportsType12Function,
+  AuxN_SupportsType13Function,
+  AuxN_SupportsType14Function,
+  AuxN_BITSIZE = 16
+};
+
+struct AuxNOptions_s
+{
+  typedef AuxNOptions_t enum_type;
+  enum { number_of_bits = AuxN_BITSIZE };
+};
+typedef BitFieldWrapperRight_c<AuxNOptions_s> AuxNOptionsBitMask_t;
 
 // TC Basic
 enum TaskControllerBasicOptions_t
@@ -169,6 +172,8 @@ struct BasicTractorECUOptions_s
 };
 typedef BitFieldWrapperRight_c<BasicTractorECUOptions_s> BasicTractorECUOptionsBitMask_t;
 
+#if 0
+// not specified in ISO yet...
 // Advance TECU
 enum AdvanceTractorECUOptions_t
 {
@@ -227,6 +232,7 @@ struct FileServerOptions_s
   enum { number_of_bits = FileServer_BITSIZE };
 };
 typedef BitFieldWrapperRight_c<FileServerOptions_s> FileServerOptionsBitMask_t;
+#endif
 
 } // end namespace IsoAgLib
 

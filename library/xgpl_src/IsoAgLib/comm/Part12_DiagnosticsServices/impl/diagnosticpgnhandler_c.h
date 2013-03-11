@@ -16,6 +16,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticfunctionalities_c.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
 #include "../idiagnosticstypes.h"
@@ -25,7 +26,6 @@ namespace __IsoAgLib {
 
 // forward declarations
 class IdentItem_c;
-class DiagnosticProtocol_c;
 
 /**
   This class implements the handling of Diagnostic
@@ -43,7 +43,13 @@ public:
   void init();
   void close();
 
-  bool setEcuIdentification( const char *acstr_partNr, const char *acstr_serialNr, const char *acstr_location, const char *acstr_type, const char *acstr_manufacturerName );
+  bool setEcuIdentification(
+    const char *partNr,
+    const char *serialNr,
+    const char *location,
+    const char *type,
+    const char *manufacturerName,
+    const char *hardwareVer );
 
   bool setSwIdentification( const char *acstr_swIdentification );
 
@@ -60,7 +66,7 @@ public:
     IsoAgLib::CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
     const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
 
-  DiagnosticProtocol_c& getDiagnosticProtocol();
+  DiagnosticFunctionalities_c& getDiagnosticFunctionalities();
 
   virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t );
 
@@ -76,19 +82,21 @@ private:
 
   MultiSendEventHandlerProxy_c m_mrEventProxy;
   IdentItem_c& mrc_identItem;
-  DiagnosticProtocol_c* mpc_diagnosticProtocol;
+  DiagnosticFunctionalities_c m_diagnosticFunctionalities;
 
   char *mcstr_EcuIdentification;
   char *mcstr_SwIdentification;
   bool mb_certificationIsSet;
   uint8_t m_certification[8];
 
+  uint8_t m_protocol[8];
+
 private:
-  /** not copyable : copy constructor is only declared, never defined */
+  // not copyable
   DiagnosticPgnHandler_c(const DiagnosticPgnHandler_c&);
-  /** not copyable : copy operator is only declared, never defined */
   DiagnosticPgnHandler_c& operator=(const DiagnosticPgnHandler_c&); 
 };
 
 } // namespace __IsoAgLib
+
 #endif

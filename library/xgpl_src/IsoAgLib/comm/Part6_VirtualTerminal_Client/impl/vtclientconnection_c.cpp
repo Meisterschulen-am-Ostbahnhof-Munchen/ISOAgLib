@@ -15,10 +15,6 @@
 
 #include "vtclientconnection_c.h"
 #include "../ivtclientconnection_c.h"
-#include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-#include <IsoAgLib/util/iassert.h>
-#include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectgraphicscontext_c.h"
 #include "../ivtobjectlineattributes_c.h"
@@ -28,11 +24,15 @@
 #include "../ivtobjectworkingset_c.h"
 #include "../ivtobject_c.h"
 #include "../ivtclientobjectpool_c.h"
-
 #include "../ivtobjectauxiliaryfunction2_c.h"
 #include "../ivtobjectauxiliaryinput2_c.h"
 
-#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.h>
+#include <supplementary_driver/driver/datastreams/volatilememory_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticfunctionalities_c.h>
+#include <IsoAgLib/util/iassert.h>
+
 
 #if DEBUG_VTCOMM
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -314,7 +314,10 @@ VtClientConnection_c::VtClientConnection_c(
   , m_dataStorageHandler(arc_dataStorage)
   , m_schedulerTaskProxy( *this, 100, false )
 {
-  r_wsMasterIdentItem.getDiagnosticProtocol().addAefFunctionalitiesVirtualTerminal(true, static_cast<uint8_t>(mrc_pool.getVersion()), VirtualTerminalOptionsBitMask_t());
+  r_wsMasterIdentItem.getDiagnosticFunctionalities().addFunctionalitiesUniversalTerminal(
+    true,
+    static_cast<uint8_t>(mrc_pool.getVersion()),
+    UniversalTerminalOptionsBitMask_t() );
 
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   mrc_pool.initAllObjectsOnce (MULTITON_INST);

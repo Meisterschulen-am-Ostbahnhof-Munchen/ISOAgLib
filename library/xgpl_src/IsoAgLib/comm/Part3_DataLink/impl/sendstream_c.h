@@ -28,6 +28,24 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
+
+enum ConnectionAbortReason_t
+{
+  ConnectionAbortReasonCannotSupportAnother = 1,
+  ConnectionAbortReasonSystemBusy = 2,
+  ConnectionAbortReasonTimeOut = 3,
+  ConnectionAbortReasonUnexpectedCts = 4,
+  ConnectionAbortReasonMaximumRetransmitRequestLimitReached = 5,
+  ConnectionAbortReasonUnexpectedDataPacket = 6,
+  ConnectionAbortReasonBadSequenceNumber= 7,
+  ConnectionAbortReasonDuplicateSequenceNumber= 8,
+  ConnectionAbortReasonUnexpectedEdpo = 9,
+  ConnectionAbortReasonUnexpectedEdpoPgn = 10,
+  ConnectionAbortReasonEdpoNumberOfPacketsIsGreaterThanCts = 11,
+  ConnectionAbortReasonBadEdpoOffset = 12,
+  ConnectionAbortReasonAnyOtherError = 13
+};
+
 // forward declarations
 class MultiSend_c;
 
@@ -110,7 +128,7 @@ public:
 
   sendSuccess_t getSendSuccess() const { return men_sendSuccess; }
 
-  void abortSend();
+  void abortSend( ConnectionAbortReason_t reason );
 
   bool matchSaDa (const IsoName_c& acrc_sa, const IsoName_c& acrc_da) const { return (acrc_sa == mc_isoNameSender) && (acrc_da == mc_isoNameReceiver); }
 

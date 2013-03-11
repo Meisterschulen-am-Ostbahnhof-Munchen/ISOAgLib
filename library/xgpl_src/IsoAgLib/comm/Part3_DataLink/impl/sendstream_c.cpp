@@ -149,7 +149,7 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
           break;
         case IsoTP: // break left out intentionally
         case IsoETP:
-          abortSend();
+          abortSend( ConnectionAbortReasonTimeOut );
           return true; // FINISHED SendStream, remove it from list please!
       }
       break;
@@ -291,7 +291,7 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
           // Can we deliver all the requested packets?
           if ((mui32_dataBufferOffset + (uint32_t(mui8_packetsLeftToSendInBurst-1)*7)) >= mui32_dataSize)
           { // request will be out of buffer, either already at the start or later during sending
-            abortSend();
+            abortSend( ConnectionAbortReasonUnexpectedDataPacket );
             break;
           }
 
@@ -321,7 +321,7 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
               }
               else
               { // requesting some other packets (earlier than the last burst or after the current position (jump forward))
-                abortSend();
+                abortSend( ConnectionAbortReasonBadSequenceNumber );
                 break; // break out of big switch to reach "return true" for deletion of this stream.
               }
             }
@@ -388,7 +388,7 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
 
 
 void
-SendStream_c::abortSend()
+SendStream_c::abortSend( ConnectionAbortReason_t reason )
 {
   switch (men_msgType)
   {
@@ -398,7 +398,9 @@ SendStream_c::abortSend()
     MultiSendPkg_c c_multiSendPkg;
 
     c_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_ConnAbort));
-    c_multiSendPkg.setUint32Data(1, uint32_t(0xFFFFFFFFUL));
+    c_multiSendPkg.setUint8Data (1, static_cast<uint8_t>(reason));
+    c_multiSendPkg.setUint8Data (2, uint8_t(0xFF));
+    c_multiSendPkg.setUint16Data(3, uint16_t(0xFFFF));
     c_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(mui32_pgn & 0xFF));
     c_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(mui32_pgn >> 8));
 

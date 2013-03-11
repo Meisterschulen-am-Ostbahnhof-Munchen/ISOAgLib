@@ -21,8 +21,6 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <stdlib.h>
 
-#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticprotocol_c.h>
-
 #if DEBUG_DIAGNOSTICPGN
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -42,23 +40,25 @@
 namespace __IsoAgLib
 {
 
-DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_identItem ) :
+DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& identItem ) :
     m_mrEventProxy(),
-    mrc_identItem ( arc_identItem ),
-    mpc_diagnosticProtocol(NULL),
+    mrc_identItem ( identItem ),
+    m_diagnosticFunctionalities( identItem ),
     mcstr_EcuIdentification ( NULL ),
     mcstr_SwIdentification ( NULL),
     mb_certificationIsSet ( false )
 {
-  mpc_diagnosticProtocol = new DiagnosticProtocol_c(arc_identItem, EcuDiagnosticProtocolIdentificationBitMask_t());
   // m_certification is not set as mb_certificationIsSet indicates it not being used!
+
+  // protocol is currently hard-coded.
+  m_protocol[ 0 ] = 0x00;
+  for( uint8_t ui = 1 ; ui < 8; ++ui )
+    m_protocol[ ui ] = 0xFF;
 }
 
 
 DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
 {
-  delete mpc_diagnosticProtocol;
-
   if (mcstr_EcuIdentification)
     CNAMESPACE::free (mcstr_EcuIdentification);
 
@@ -73,21 +73,23 @@ DiagnosticPgnHandler_c::init()
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
+  getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
 
-  mpc_diagnosticProtocol->init();
+  m_diagnosticFunctionalities.init();
 }
 
 
 void
 DiagnosticPgnHandler_c::close()
 {
-  mpc_diagnosticProtocol->close();
+  m_diagnosticFunctionalities.close();
 
   getMultiSendInstance4Comm().abortSend( m_mrEventProxy );
 
-  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
-  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
+  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );
+  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
+  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
 }
 
 
@@ -192,9 +194,13 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
       }
       break;
 
-  default:
-    isoaglib_assert(!"Not registered for this PGN.");
-    break;
+    case ECU_DIAGNOSTIC_PROTOCOL_PGN:
+      sendSinglePacket(m_protocol, ECU_DIAGNOSTIC_PROTOCOL_PGN);
+      return true;
+ 
+    default:
+      isoaglib_assert(!"Not registered for this PGN.");
+      break;
   }
 
 #if DEBUG_DIAGNOSTICPGN
@@ -250,47 +256,52 @@ int getLengthIfValid (const char *acstr_text)
 
 bool
 DiagnosticPgnHandler_c::setEcuIdentification(
-  const char *acstr_partNr,
-  const char *acstr_serialNr,
-  const char *acstr_location,
-  const char *acstr_type,
-  const char *acstr_manufacturerName)
+  const char *partNr,
+  const char *serialNr,
+  const char *location,
+  const char *type,
+  const char *manufacturerName,
+  const char *hardwareVer)
 {
-  isoaglib_assert (acstr_partNr);
-  isoaglib_assert (acstr_serialNr);
-  isoaglib_assert (acstr_location);
-  isoaglib_assert (acstr_type);
-  isoaglib_assert (acstr_manufacturerName);
+  isoaglib_assert (partNr);
+  isoaglib_assert (serialNr);
+  isoaglib_assert (location);
+  isoaglib_assert (type);
+  isoaglib_assert (manufacturerName);
+  isoaglib_assert (hardwareVer);
 
   // currently a once set identification can't be changed.
   // this is due to not having separate send-buffers!
   if (mcstr_EcuIdentification)
     return false;
 
-  int len1 = getLengthIfValid (acstr_partNr);
-  int len2 = getLengthIfValid (acstr_serialNr);
-  int len3 = getLengthIfValid (acstr_location);
-  int len4 = getLengthIfValid (acstr_type);
-  int len5 = getLengthIfValid (acstr_manufacturerName);
+  int len1 = getLengthIfValid (partNr);
+  int len2 = getLengthIfValid (serialNr);
+  int len3 = getLengthIfValid (location);
+  int len4 = getLengthIfValid (type);
+  int len5 = getLengthIfValid (manufacturerName);
+  int len6 = getLengthIfValid (hardwareVer);
 
-  if ( (len1 < 0) || (len2 < 0) || (len3 < 0) || (len4 < 0) || (len5 < 0) )
+  if ( (len1 < 0) || (len2 < 0) || (len3 < 0) || (len4 < 0) || (len5 < 0) || (len6 < 0) )
     return false; // wrong sublength(s) or * in substring(s)
 
   // string separated by * and terminated by 0x00
-  int newLen = len1 + 1 + len2 + 1 + len3 + 1 + len4 + 1 + len5 + 1 + 1;
+  int newLen = len1 + 1 + len2 + 1 + len3 + 1 + len4 + 1 + len5 + 1 + len6 + 1 + 1;
 
   mcstr_EcuIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
 
   char *destPtr = mcstr_EcuIdentification;
-  addCStringWithoutTermination (&destPtr, acstr_partNr);
+  addCStringWithoutTermination (&destPtr, partNr);
   addCStringWithoutTermination (&destPtr, "*");
-  addCStringWithoutTermination (&destPtr, acstr_serialNr);
+  addCStringWithoutTermination (&destPtr, serialNr);
   addCStringWithoutTermination (&destPtr, "*");
-  addCStringWithoutTermination (&destPtr, acstr_location);
+  addCStringWithoutTermination (&destPtr, location);
   addCStringWithoutTermination (&destPtr, "*");
-  addCStringWithoutTermination (&destPtr, acstr_type);
+  addCStringWithoutTermination (&destPtr, type);
   addCStringWithoutTermination (&destPtr, "*");
-  addCStringWithoutTermination (&destPtr, acstr_manufacturerName);
+  addCStringWithoutTermination (&destPtr, manufacturerName);
+  addCStringWithoutTermination (&destPtr, "*");
+  addCStringWithoutTermination (&destPtr, hardwareVer);
   addCStringWithoutTermination (&destPtr, "*");
   *destPtr++ = 0x00;
 
@@ -384,9 +395,10 @@ DiagnosticPgnHandler_c::sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,
   getIsoBusInstance4Comm() << pkg;
 }
 
-DiagnosticProtocol_c& DiagnosticPgnHandler_c::getDiagnosticProtocol()
+DiagnosticFunctionalities_c &
+DiagnosticPgnHandler_c::getDiagnosticFunctionalities()
 {
-  return *mpc_diagnosticProtocol;
+  return m_diagnosticFunctionalities;
 }
 
 }

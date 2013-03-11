@@ -13,14 +13,12 @@
 #ifndef IDENT_ITEM_H
 #define IDENT_ITEM_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "baseitem_c.h"
 #include "isoname_c.h"
 #include "isoitem_c.h"
 
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticstypes.h>
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h>
 
 #include <IsoAgLib/driver/system/isystem_c.h>
 
@@ -34,8 +32,7 @@ namespace IsoAgLib {
 namespace __IsoAgLib {
 
   class DiagnosticsServices_c;
-  class DiagnosticPgnHandler_c;
-  class DiagnosticProtocol_c;
+  class DiagnosticFunctionalities_c;
 
 /**
   class for identity/ies (Control Function(s)) which are managed by the actual ECU;
@@ -115,16 +112,17 @@ public:
 #endif
 
   bool setEcuIdentification(
-      const char *acstr_partNr,
-      const char *acstr_serialNr,
-      const char *acstr_location,
-      const char *acstr_type,
-      const char *acstr_manufacturerName);
+      const char *partNr,
+      const char *serialNr,
+      const char *location,
+      const char *type,
+      const char *manufacturerName,
+      const char *hardwareVer );
 
-  bool setSwIdentification( const char *acstr_partNbr );
+  bool setSwIdentification( const char *partNbr );
 
   DiagnosticsServices_c* getDiagnosticsServices() { return mpc_diagnosticsServices; }
-  DiagnosticProtocol_c& getDiagnosticProtocol();
+  DiagnosticFunctionalities_c& getDiagnosticFunctionalities();
 
   bool setCertificationData(
     uint16_t ui16_year,
@@ -165,7 +163,7 @@ private:
   uint8_t mui8_sa;
   IsoName_c mc_isoName;
 
-  DiagnosticPgnHandler_c* mpc_diagnosticPgnHandler;
+  DiagnosticPgnHandler_c m_diagnosticPgnHandler;
   DiagnosticsServices_c* mpc_diagnosticsServices;
 
   #ifdef USE_WORKING_SET
