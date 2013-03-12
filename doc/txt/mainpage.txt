@@ -42,6 +42,98 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
+\subsection Change_X 2.5.2 to 2.5.3
+
+General:
+ - Cleanup, Commentaryfixes
+
+Project-Generation:
+ - Enhancement: conf2build.sh: Add new variable APP_PATH for conf_-files.
+   Application files/paths can now be relative to APP_PATH instead of ISO_AG_LIB_PATH
+
+CAN-I/O:
+ - Cleanup return type of processMsg to void.
+ - Bugfix: CAN-Send: Don't delay complete 10ms when sendCanFreecnt < 1, recheck the sendCanFreecnt after 1ms as designed.
+ - NOTE: The CanFifo is now always used. This is not unlimited as was the CAN-Server's system pipe, so be sure to definitely not delay ISOAgLib's (CAN-)processing!
+ 
+vt2iso:
+ - Removed -i=, added -r for changed Define-Prefix
+ - Added -b/-bh parameters for specifying a base-class for the objectpool.
+ - Support wrapping of long text-string.
+ - Enhancement: Added support for VTU Unicode files.
+ - Cleanup: Removed Legacy project ability, you need a VTP file now.
+ - Bugfix: Line-Wrapping now works correctly even if \" present in string
+ - Adapted to new attribute naming in XML to match vt-designer output:
+   Auxiliary Control Designator Object Pointer's attribute "value" is named "auxiliary_object_id" in vt-designer output and the standard, so it's renamed now in vt2iso, too.
+ - Version 4: Fixed Cmd-Byte 09 from VT_TO_ECU. Was implemented as an old pre-DIS version.
+ - Added forgotten break; - was introduced in ISOAgLib 2.5.2
+
+VT-Client:
+ - Fixed wrong double EoOP in upload-sequence] - Index to VT's language wasn't set properly if an unsolicited LANGUAGE_PGN comes in too early.
+ - Enhancement:
+   - Add method for overriding OP version, only for special proprietary use.
+   - Speedup: Move task functionality to connection
+   - Add getter for current command send queue size
+   - Aux2:
+     - Added load and store for preferred assignments
+     - Added missing ECU_TO_VT filter
+     - Added proper input status maintenance msg timeout checks
+     - Handling/Responding NULL/Un-Assignment now correctly, was checking for Input's Maintenance Status even if Input's NAME was not given in Un-Assign case.
+
+Network-Management:
+ - Cleanup:
+   - Rewrite IsoItem Management, replace exist/get with all-in-one functions, no more exist/get-function mechanism or search caches.
+ - AEF-ConformanceTest: 
+   - ECU Identification added.
+   - MinCF functionality added, set per default
+   
+Inputs/Outputs:
+ - Removed limits handling in Outputs_c
+ - Removed management of AnalogI/DigitalI/CounterI, merged util/config.h -> isoaglib_config.h
+ 
+HALs/Utils:
+ - Enhancements for 64 bit CPUs in IsoName_c, etc.
+ - Renamed SUPPORTS_64BIT -> HAS_64BIT_INT_TYPE: All HALs supporting 64bit HAVE TO DEFINE "HAS_64BIT_INT_TYPE"!
+ - HAL-PC:
+   - Added missing return values, fixed select call argument
+   - Fixed shutdown of msq driver
+ 
+FS-Client:
+ - Bugfix: Working again, compared to 2.5.1/2.5.2
+ - Interface-Cleanup:
+   - initFsClient -> registerFsClient
+   - introduced deregisterFsClient
+ 
+(Extended) Transport Protocol:
+ - MultiSend: Revised timing for TP; slow down when only sending few packets]
+ - MultiReceive: Bugfix: Correct cast to uint8_t of mui8_pkgRemainingInBurst
+ - FastPacket Bugfix: Processing of FP-bursts works again
+ - AEF-ConformanceTest: Added Connection Abort reason codes.
+ - Adjusted timing to real CAN conditions (assuming not 3 but 2 packets per ms, so don't be too fast with sending!)
+ - Now always part (without any define) of ISOAgLib
+
+TC-Client:
+ - Removed assertion, since Lifetime totals are not setable
+ - Bugfix: On program-end wrong ~ProcData did something which is now moved to close().
+ - Fix: Trigger methods are only 5 bits instead of 6 now.
+ 
+proc2iso:
+ - Fix: Allowing all characters in DVP's Unit Designator
+
+Tractor:
+ - Fix: TracGuidance's init wasn't called from IsoBus_c::init, was forgotten and hence had to be called manually.
+ - Fix: Added forgotten break; in switch() regarding Maintain Power Message.
+
+Proprietary PGN:
+ - Bugfixes compared to 2.5.1/2.5.2:
+   - Prop B's filter was set up with Prop A filter.
+   - Fixed DP setting and sending of PropB. Interface changed
+ 
+Diagnostics Services:
+ - Added interface for DtcContainer: iDtcContainer.
+ - AEF-ConformanceTest: Own PGN for Control Function Functionalities
+
+ 
 \subsection Change_W 2.5.1 to 2.5.2
 
 CAN-HAL/Processing
