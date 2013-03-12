@@ -166,7 +166,7 @@ uint8_t
 StreamChunk_c::getNextNotParsed()
 { // ~X2C
   const uint16_t chunkLen = Chunk_c::mscui16_chunkSize;
-  uint16_t chunkCnt = mui32_parsedCnt % chunkLen;
+  uint16_t chunkCnt = uint16_t(mui32_parsedCnt % chunkLen);
   uint8_t  chunkVal;
 
   if (mui32_parsedCnt >= mui32_writeCnt) return 0xff;
@@ -203,8 +203,8 @@ StreamChunk_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
 {
   STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk = mpc_iterParsedChunk;
   const uint16_t chunkLen = Chunk_c::mscui16_chunkSize;
-  uint16_t chunkCnt = mui32_parsedCnt % chunkLen;
-  uint16_t chunkCntReq = chunkCnt + ui32_notParsedRelativeOffset;
+  uint16_t chunkCnt = uint16_t(mui32_parsedCnt % chunkLen);
+  uint32_t chunkCntReq = chunkCnt + ui32_notParsedRelativeOffset;
 
   if ((mui32_parsedCnt + ui32_notParsedRelativeOffset) >= mui32_writeCnt) return 0xff;
 
@@ -237,44 +237,5 @@ StreamChunk_c::eof() const
     return false;
 } // -X2C
 
-
-
-#if 0
-// for reactivation put this into the header!
-  void testDisplay();
-  bool testInsert(uint8_t ui8_data);
-
-void
-StreamChunk_c::testDisplay()
-{
-  uint16_t nbr, idx, iter=1;
-  STL_NAMESPACE::list<Chunk_c>::iterator pc_iterTmpChunk;
-
-  printf( "-------------\n" );
-  printf( "Write-Cnt: %d \n", mui32_writeCnt );
-  printf( "Parse-Cnt: %d \n", mui32_parsedCnt );
-  for (pc_iterTmpChunk=mlist_chunks.begin(); pc_iterTmpChunk != mlist_chunks.end(); pc_iterTmpChunk++)
-  {
-    printf( "%c ", ((pc_iterTmpChunk==mpc_iterWriteChunk)?'W':' '));
-    printf( "%c ", ((pc_iterTmpChunk==mpc_iterParsedChunk)?'P':' '));
-    printf( "Chunk %0.2d (%0.2d elements): ", iter++,
-              Chunk_c::mscui16_chunkSize - pc_iterTmpChunk->getFreeCnt() );
-    idx=0;
-    while ((nbr=pc_iterTmpChunk->getData(idx++)) != 0xffff)
-      printf( "%d, ", nbr );
-    printf( "\n" );
-  }
-}
-
-// //////////////////////////////// +X2C Operation 772 : insert
-bool
-StreamChunk_c::testInsert(uint8_t ui8_data)
-{
-    if (mpc_iterWriteChunk->insert( ui8_data ))
-      mui32_writeCnt++;
-    return true;
-}
-
-#endif
 
 } // end namespace __IsoAgLib
