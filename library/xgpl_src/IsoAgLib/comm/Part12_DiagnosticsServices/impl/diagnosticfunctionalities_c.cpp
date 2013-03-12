@@ -90,7 +90,7 @@ DiagnosticFunctionalities_c::updatePackageIfNeeded()
        iter != m_functionalities.end(); ++iter )
   {
     // Functionality - generation - number_of_option_bytes - option_1 - ... - option_n
-    mui16_arrayLength += uint16_t(3 + iter->second.number_of_option_bytes);
+    mui16_arrayLength = uint16_t(mui16_arrayLength + 3 + iter->second.number_of_option_bytes);
   }
   if (mui16_arrayLength < 8)
     mui16_arrayLength = 8;

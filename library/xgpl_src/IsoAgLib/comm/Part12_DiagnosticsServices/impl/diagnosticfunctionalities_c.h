@@ -103,8 +103,6 @@ private:
                                         uint8_t generation,
                                         const T& options);
 
-  void setDiagnosticData( const EcuDiagnosticProtocolIdentificationBitMask_t& protocol );
-
 private: // attributes
   IdentItem_c& mrc_identItem;
 
