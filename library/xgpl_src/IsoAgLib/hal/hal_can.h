@@ -48,8 +48,8 @@ namespace HAL {
   //! but it definitely has enough space to put messages in!
   int canTxQueueFree( unsigned channel );
 
-  bool defineRxFilter( uint32_t id, uint32_t mask ); // maybe empty
-  bool deleteRxFilter( uint32_t id, uint32_t mask );
+  void defineRxFilter( unsigned channel, bool xtd, uint32_t filter, uint32_t mask );
+  void deleteRxFilter( unsigned channel, bool xtd, uint32_t filter, uint32_t mask );
 
 
 } // HAL

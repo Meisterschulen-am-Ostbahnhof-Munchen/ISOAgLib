@@ -134,6 +134,8 @@ namespace __IsoAgLib {
 
     mc_tempFilterBox.clearData();
     mc_tempFilterBox.set( arc_filterpair, &ar_customer, ai_dlcForce );
+    HAL::defineRxFilter( getBusNumber(), arc_filterpair.getType() == IsoAgLib::iIdent_c::ExtendedIdent,
+        arc_filterpair.getFilter(), arc_filterpair.getMask() );
     m_arrFilterBox.push_back( mc_tempFilterBox );
     return &m_arrFilterBox.back();
   }
@@ -154,6 +156,8 @@ namespace __IsoAgLib {
       if ( pc_iter->deleteFilter( ar_customer ) ) {
         //no more cancustomer exist for the filterbox -> delete
         m_arrFilterBox.erase( pc_iter );
+        HAL::deleteRxFilter( getBusNumber(), arc_filterpair.getType() == IsoAgLib::iIdent_c::ExtendedIdent,
+            arc_filterpair.getFilter(), arc_filterpair.getMask() );
        }
       b_result = true;
     }

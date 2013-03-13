@@ -25,6 +25,8 @@
 #include <sys/msg.h>
 #include <sys/time.h>
 
+#include <set>
+
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
@@ -42,6 +44,18 @@ namespace __HAL {
   static int breakWaitPipeFd[2] = { -1, -1 };
 #endif
 
+  struct idFilter_s {
+    bool operator<(const struct idFilter_s& r ) const {
+      return idx < r.idx;
+    }
+    unsigned idx;
+    struct {
+      bool xtd;
+      uint32_t mask;
+      uint32_t filter;
+    } filter;
+  };
+  static std::set<idFilter_s> filterIdx[HAL_CAN_MAX_BUS_NR];
 
   bool canStartDriver() {
     transferBuf_s s_transferBuf;
@@ -132,6 +146,7 @@ namespace HAL {
     r &= ( HAL_NO_ERR == __HAL::send_command( &b, &__HAL::msqDataClient ) );
 
     b.ui16_command = COMMAND_CONFIG;
+    b.s_config.ui8_bus = channel;
     b.s_config.ui8_obj = 0;
     b.s_config.ui8_bXtd = 0;
     b.s_config.ui32_mask = 0;
@@ -139,24 +154,7 @@ namespace HAL {
     b.s_config.ui32_dwId = 0x0;
     b.s_config.ui16_wNumberMsgs = 0x20;
     r &= ( HAL_NO_ERR == __HAL::send_command( &b, &__HAL::msqDataClient ) );
-
-    b.ui16_command = COMMAND_CONFIG;
-    b.s_config.ui8_obj = 1;
-    b.s_config.ui8_bXtd = 0;
-    b.s_config.ui32_mask = 0;
-    b.s_config.ui8_bMsgType = RX;
-    b.s_config.ui32_dwId = 0x0;
-    b.s_config.ui16_wNumberMsgs = 0x20;
-    r &= ( HAL_NO_ERR == __HAL::send_command( &b, &__HAL::msqDataClient ) );
-
-    b.ui16_command = COMMAND_CONFIG;
-    b.s_config.ui8_obj = 2;
-    b.s_config.ui8_bXtd = 1;
-    b.s_config.ui32_mask = 0;
-    b.s_config.ui8_bMsgType = RX;
-    b.s_config.ui32_dwId = 0x0;
-    b.s_config.ui16_wNumberMsgs = 0x20;
-    r &= ( HAL_NO_ERR == __HAL::send_command( &b, &__HAL::msqDataClient ) );
+    isoaglib_assert( r );
 
     return r;
   }
@@ -268,13 +266,53 @@ namespace HAL {
   }
 
 
-  bool defineRxFilter( uint32_t /* id */, uint32_t /* mask */ ) {
-    return false;
+  void defineRxFilter( unsigned channel, bool xtd, uint32_t filter, uint32_t mask ) {
+
+    unsigned idx = 1;
+    for( std::set<__HAL::idFilter_s>::const_iterator i = __HAL::filterIdx[channel].begin(); i != __HAL::filterIdx[channel].end(); ++i ) {
+      if( ( i->idx - idx ) > 0 )
+        break;
+      idx++;
+    }
+
+    __HAL::transferBuf_s b;
+    b.i32_mtypePid = __HAL::msqDataClient.i32_pid;
+    b.ui16_command = COMMAND_CONFIG;
+    b.s_config.ui8_bus = channel;
+    b.s_config.ui8_obj = idx;
+    b.s_config.ui8_bXtd = xtd ? 1 : 0;
+    b.s_config.ui32_mask = mask;
+    b.s_config.ui8_bMsgType = RX;
+    b.s_config.ui32_dwId = filter;
+    b.s_config.ui16_wNumberMsgs = 0x20;
+    const bool r = ( HAL_NO_ERR == __HAL::send_command( &b, &__HAL::msqDataClient ) );
+
+    isoaglib_assert( r ); (void)r;
+    struct __HAL::idFilter_s f;
+    f.idx = idx;
+    f.filter.xtd = xtd;
+    f.filter.mask = mask;
+    f.filter.filter = filter;
+    __HAL::filterIdx[channel].insert( f );
   }
 
+  void deleteRxFilter( unsigned channel, bool xtd, uint32_t filter, uint32_t mask ) {
+    for( std::set<__HAL::idFilter_s>::const_iterator i = __HAL::filterIdx[channel].begin(); i != __HAL::filterIdx[channel].end(); ++i ) {
 
-  bool deleteRxFilter( uint32_t /* id */, uint32_t /* mask */ ) {
-    return false;
+      if( ( i->filter.xtd == xtd ) &&
+          ( i->filter.mask == mask ) &&
+          ( i->filter.filter == filter ) ) {
+        __HAL::transferBuf_s b;
+        b.i32_mtypePid = __HAL::msqDataClient.i32_pid;
+        b.ui16_command = COMMAND_CLOSEOBJ;
+        b.s_config.ui8_bus = channel;
+        b.s_config.ui8_obj = i->idx;
+        const bool r = ( HAL_NO_ERR == __HAL::send_command( &b, &__HAL::msqDataClient ) );
+        isoaglib_assert( r ); (void)r;
+        __HAL::filterIdx[channel].erase( i );
+        break;
+      }
+    }
   }
 
 

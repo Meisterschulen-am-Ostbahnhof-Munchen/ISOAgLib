@@ -43,6 +43,7 @@
 #include <signal.h>
 #endif
 #include <list>
+#include <set>
 
 #ifndef ENTRY_POINT_FOR_INSERT_RECEIVE_CAN_MSG
 #define ENTRY_POINT_FOR_INSERT_RECEIVE_CAN_MSG
@@ -71,6 +72,19 @@ namespace __HAL {
 #ifdef USE_MUTUAL_EXCLUSION
   static int breakWaitPipeFd[2] = { -1, -1 };
 #endif
+
+  struct idFilter_s {
+    bool operator<(const struct idFilter_s& r ) const {
+      return idx < r.idx;
+    }
+    unsigned idx;
+    struct {
+      bool xtd;
+      uint32_t mask;
+      uint32_t filter;
+    } filter;
+  };
+  static std::set<idFilter_s> filterIdx[HAL_CAN_MAX_BUS_NR];
 
 
   int readData( SOCKET_TYPE s, char *buf, int n ) {
@@ -307,6 +321,7 @@ namespace HAL {
     s_transferBuf[0].s_init.ui32_dwGlobMaskLastmsg = 0x0;
     s_transferBuf[0].s_init.ui16_wBitrate = uint16_t(baudrate);
     r = __HAL::sendCommand( &s_transferBuf[0], __HAL::i32_commandSocket );
+    isoaglib_assert( r ); (void)r;
 
     s_transferBuf[1].ui16_command = COMMAND_CONFIG;
     s_transferBuf[1].s_config.ui8_bus = uint8_t(channel);
@@ -317,27 +332,7 @@ namespace HAL {
     s_transferBuf[1].s_config.ui32_dwId = 0x0;
     s_transferBuf[1].s_config.ui16_wNumberMsgs = 20;
     r &= sendCommand( &s_transferBuf[1], __HAL::i32_commandSocket );
-
-    s_transferBuf[2].ui16_command = COMMAND_CONFIG;
-    s_transferBuf[2].s_config.ui8_bus = uint8_t(channel);
-    s_transferBuf[2].s_config.ui8_obj = 1;
-    s_transferBuf[2].s_config.ui8_bXtd = 0;
-    s_transferBuf[2].s_config.ui32_mask = 0x0;
-    s_transferBuf[2].s_config.ui8_bMsgType = RX;
-    s_transferBuf[2].s_config.ui32_dwId = 0x0;
-    s_transferBuf[2].s_config.ui16_wNumberMsgs = 1;
-    r &= sendCommand( &s_transferBuf[2], __HAL::i32_commandSocket );
-
-    s_transferBuf[3].ui16_command = COMMAND_CONFIG;
-    s_transferBuf[3].s_config.ui8_bus = uint8_t(channel);
-    s_transferBuf[3].s_config.ui8_obj = 2;
-    s_transferBuf[3].s_config.ui8_bXtd = 1;
-    s_transferBuf[3].s_config.ui32_mask = 0x0;
-    s_transferBuf[3].s_config.ui8_bMsgType = RX;
-    s_transferBuf[3].s_config.ui32_dwId = 0x0;
-    s_transferBuf[3].s_config.ui16_wNumberMsgs = 1;
-    r &= sendCommand( &s_transferBuf[3], __HAL::i32_commandSocket );
-
+    isoaglib_assert( r ); (void)r;
     return r;
   }
 
@@ -482,6 +477,54 @@ namespace HAL {
 
   int canTxQueueFree( unsigned ) {
     return -1;
+  }
+
+
+  void defineRxFilter( unsigned channel, bool xtd, uint32_t filter, uint32_t mask ) {
+
+    unsigned idx = 1;
+    for( std::set<__HAL::idFilter_s>::const_iterator i = __HAL::filterIdx[channel].begin(); i != __HAL::filterIdx[channel].end(); ++i ) {
+      if( ( i->idx - idx ) > 0 )
+        break;
+      idx++;
+    }
+
+    __HAL::transferBuf_s b;
+    b.ui16_command = COMMAND_CONFIG;
+    b.s_config.ui8_bus = channel;
+    b.s_config.ui8_obj = idx;
+    b.s_config.ui8_bXtd = xtd ? 1 : 0;
+    b.s_config.ui32_mask = mask;
+    b.s_config.ui8_bMsgType = RX;
+    b.s_config.ui32_dwId = filter;
+    b.s_config.ui16_wNumberMsgs = 0x20;
+    const bool r = sendCommand( &b, __HAL::i32_commandSocket );
+
+    isoaglib_assert( r ); (void)r;
+    struct __HAL::idFilter_s f;
+    f.idx = idx;
+    f.filter.xtd = xtd;
+    f.filter.mask = mask;
+    f.filter.filter = filter;
+    __HAL::filterIdx[channel].insert( f );
+  }
+
+  void deleteRxFilter( unsigned channel, bool xtd, uint32_t filter, uint32_t mask ) {
+    for( std::set<__HAL::idFilter_s>::const_iterator i = __HAL::filterIdx[channel].begin(); i != __HAL::filterIdx[channel].end(); ++i ) {
+
+      if( ( i->filter.xtd == xtd ) &&
+          ( i->filter.mask == mask ) &&
+          ( i->filter.filter == filter ) ) {
+        __HAL::transferBuf_s b;
+        b.ui16_command = COMMAND_CLOSEOBJ;
+        b.s_config.ui8_bus = channel;
+        b.s_config.ui8_obj = i->idx;
+        const bool r = sendCommand( &b, __HAL::i32_commandSocket  );
+        isoaglib_assert( r ); (void)r;
+        __HAL::filterIdx[channel].erase( i );
+        break;
+      }
+    }
   }
 }
 

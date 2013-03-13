@@ -162,6 +162,9 @@ namespace HAL {
     return -1;
   }
 
+  void defineRxFilter( unsigned, bool, uint32_t, uint32_t ) {}
+  void deleteRxFilter( unsigned, bool, uint32_t, uint32_t ) {}
+
 }
 
 
