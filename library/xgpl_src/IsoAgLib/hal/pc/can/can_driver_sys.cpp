@@ -25,6 +25,7 @@
 #include <IsoAgLib/hal/hal_can.h>
 
 #include <map>
+#include <list>
 
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <IsoAgLib/util/iassert.h>
@@ -50,6 +51,7 @@ namespace __HAL {
       mi_fd( -1 ) {}
     bool mb_initialized;   /* initialization flag */
     int mi_fd;            /* socket fd */
+    std::list<struct can_filter> m_filter;
   };
 
   /** information about each channel available */
@@ -220,6 +222,23 @@ namespace __HAL {
     }
 
     return HAL_UNKNOWN_ERR;
+  }
+
+
+  void setFilter( unsigned channel ) {
+    isoaglib_assert( channel <= HAL_CAN_MAX_BUS_NR );
+    isoaglib_assert( __HAL::g_bus[ channel ].mb_initialized );
+
+    struct can_filter f[ g_bus[channel].m_filter.size() ];
+
+    unsigned s = 0;
+    for( std::list<struct can_filter>::const_iterator i = g_bus[channel].m_filter.begin(); i != g_bus[channel].m_filter.end(); ++i ) {
+      f[s++] = *i;
+    }
+
+    if ( -1 == setsockopt(g_bus[channel].mi_fd, SOL_CAN_RAW, CAN_RAW_FILTER, &f, sizeof(f)) ) {
+      perror( "setting filter" );
+    }
   }
 
 
@@ -406,8 +425,29 @@ namespace HAL {
     return -1;
   }
 
-  void defineRxFilter( unsigned, bool, uint32_t, uint32_t ) {}
-  void deleteRxFilter( unsigned, bool, uint32_t, uint32_t ) {}
+
+  void defineRxFilter( unsigned channel, bool, uint32_t id, uint32_t mask ) {
+
+    struct can_filter f;
+    f.can_id = id;
+    f.can_mask = mask;
+    __HAL::g_bus[channel].m_filter.push_front( f );
+    __HAL::setFilter( channel );
+  }
+
+
+  void deleteRxFilter( unsigned channel, bool, uint32_t id, uint32_t mask ) {
+    struct can_filter f;
+    f.can_id = id;
+    f.can_mask = mask;
+    for( std::list<struct can_filter>::iterator i = __HAL::g_bus[channel].m_filter.begin(); i != __HAL::g_bus[channel].m_filter.end(); ++i ) {
+      if( i->can_id == id && i->can_mask == mask ) {
+        __HAL::g_bus[channel].m_filter.erase( i );
+        __HAL::setFilter( channel );
+        break;
+      }
+    }
+  }
 
 } // __HAL
 
