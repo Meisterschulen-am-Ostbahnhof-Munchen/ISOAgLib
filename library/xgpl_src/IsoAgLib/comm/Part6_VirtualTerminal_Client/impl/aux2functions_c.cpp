@@ -203,8 +203,9 @@ Aux2Functions_c::objectPoolUploadedSuccessfully()
   }
 
   if (!b_preferredAssignmentFound)
-  { // set State_Ready
+  {
     sendPreferredAux2Assignments();
+    m_state = State_Ready;    
   }
   else
   { // we have preferred assignments => wait for first input maintenance message
