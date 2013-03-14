@@ -122,9 +122,26 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
 
   const uint8_t ui8_status = arc_data.getUint8Data(4-1);
   if (1 != ui8_status)
+  {
+    // @todo: maintenance with initializing should not cause a timeout
     return; // inputs with status not "ready" should not trigger sendPreferredAux2Assignments()
+  }
 
+  switch (m_state)
+  {
+    case State_WaitForPoolUploadSuccessfully:
+      return; // nothing to do
 
+    case State_WaitForFirstInputMaintenanceMessage:
+      // we have some preferred assignments (otherwise this state would not be set in objectPoolUploadedSuccessfully
+      // => let's wait for some time to receive input maintenance messages from different devices to send a more complete preferred assignment message
+      m_state = State_CollectInputMaintenanceMessage;
+      break;
+    case State_CollectInputMaintenanceMessage:
+    case State_Ready:
+      break; // handle these cases in next switch, because m_state might have been modified in the above cases.
+  }
+    
   bool initializingToReady = false;
   if (c_inputIsoName.isSpecified()) {
     initializingToReady = ( mmap_receivedInputMaintenanceData.find( c_inputIsoName ) == mmap_receivedInputMaintenanceData.end() );
@@ -134,22 +151,6 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
   // first one or we removed the last one
   if( initializingToReady && ( mmap_receivedInputMaintenanceData.size() == 1 ) ) {
     getSchedulerInstance().registerTask( *this, m_vtConnection.getVtClientDataStorage().getAux2DeltaWaitBeforeSendingPreferredAssigment() );
-  }
-
-  switch (m_state)
-  {
-    case State_WaitForPoolUploadSuccessfully:
-      break; // nothing to do
-
-    case State_WaitForFirstInputMaintenanceMessage:
-      // we have some preferred assignments (otherwise this state would not be set in objectPoolUploadedSuccessfully
-      // => let's wait for some time to receive input maintenance messages from different devices to send a more complete preferred assignment message
-      m_state = State_CollectInputMaintenanceMessage;
-      break;
-
-    case State_CollectInputMaintenanceMessage:
-    case State_Ready:
-      break; // handle these cases in next switch, because m_state might have been modified in the above cases.
   }
 
   IsoName_c c_prefAssignedIsoName;
@@ -349,6 +350,9 @@ Aux2Functions_c::timeEvent()
           iter_function != m_aux2Function.end(); ++iter_function)
       {
         if( iter_function->second->unassignInputIfIsoNameMatches(iter_map->first) ) {
+          // allow sending of preferred assignment if matching input appears again
+          iter_function->second->setMatchingPreferredAssignedInputReady(false);
+            
           m_vtConnection.getPool().aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter_function->second ) ) );
         }
       }
