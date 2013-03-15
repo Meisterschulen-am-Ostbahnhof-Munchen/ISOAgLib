@@ -30,6 +30,9 @@
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
+#ifdef HAL_USE_SPECIFIC_FILTERS
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#endif
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticfunctionalities_c.h>
 #include <IsoAgLib/util/iassert.h>
 
@@ -404,6 +407,10 @@ VtClientConnection_c::VtClientConnection_c(
 
 VtClientConnection_c::~VtClientConnection_c()
 {
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_ECU_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
+  getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
+#endif
   getMultiReceiveInstance4Comm().deregisterClient (*this);
   getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
 }
@@ -683,6 +690,10 @@ VtClientConnection_c::timeEvent(void)
   if (!mb_receiveFilterCreated)
   {
     getMultiReceiveInstance4Comm().registerClientIso (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
+#ifdef HAL_USE_SPECIFIC_FILTERS
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VT_TO_ECU_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ACKNOWLEDGEMENT_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
+#endif
 
     mb_receiveFilterCreated = true;
   }

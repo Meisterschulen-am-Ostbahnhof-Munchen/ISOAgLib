@@ -217,6 +217,9 @@ private:
   STL_NAMESPACE::vector<VtClientConnection_c*> m_vtConnections;
 
   Handler_t mt_handler;
+
+public:
+  // so that VtClientConnection can insert filters to us.
   Customer_t mt_customer;
 
   friend VtClient_c &getVtClientInstance(uint8_t aui8_instance);

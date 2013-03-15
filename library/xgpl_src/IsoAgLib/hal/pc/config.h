@@ -15,6 +15,7 @@
 
 
 #define SYSTEM_PC
+#define HAL_USE_SPECIFIC_FILTERS
 
 
 #define HAL_CAN_BITRATE_LIST {10, 20, 40, 50, 100, 125, 250, 500, 1000}

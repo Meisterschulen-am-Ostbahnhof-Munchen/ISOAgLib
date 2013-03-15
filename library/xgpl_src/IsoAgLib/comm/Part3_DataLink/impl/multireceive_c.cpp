@@ -18,6 +18,9 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
+#ifdef HAL_USE_SPECIFIC_FILTERS
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#endif
 #include <IsoAgLib/util/iassert.h>
 
 #if DEBUG_MULTIRECEIVE
@@ -1198,11 +1201,18 @@ MultiReceive_c::init()
   getSchedulerInstance().registerTask( *this, 0 );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
+#ifdef HAL_USE_SPECIFIC_FILTERS
   // insert receive filters for broadcasted TP
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, ( TP_CONN_MANAGE_PGN  |0xFF)<<8, Ident_c::ExtendedIdent ), 8);
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, ( TP_DATA_TRANSFER_PGN|0xFF)<<8, Ident_c::ExtendedIdent ), 8);
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, (ETP_CONN_MANAGE_PGN  |0xFF)<<8, Ident_c::ExtendedIdent ), 8);
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, (ETP_DATA_TRANSFER_PGN|0xFF)<<8, Ident_c::ExtendedIdent ), 8);
+#else
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, TP_CONN_MANAGE_PGN << 8, Ident_c::ExtendedIdent ), 8 );
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, TP_DATA_TRANSFER_PGN << 8, Ident_c::ExtendedIdent ), 8 );
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ETP_CONN_MANAGE_PGN << 8, Ident_c::ExtendedIdent ), 8 );
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ETP_DATA_TRANSFER_PGN << 8, Ident_c::ExtendedIdent ), 8 );
+#endif
 
   setPeriod( 5000, false ); // nothing to do per default!
 
@@ -1218,11 +1228,19 @@ MultiReceive_c::close( void )
   getSchedulerInstance().deregisterTask( *this );
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
 
+
+#ifdef HAL_USE_SPECIFIC_FILTERS
   // remove receive filters for broadcasted TP
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, ( TP_CONN_MANAGE_PGN  |0xFF)<<8, Ident_c::ExtendedIdent ) );
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, ( TP_DATA_TRANSFER_PGN|0xFF)<<8, Ident_c::ExtendedIdent ) );
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, (ETP_CONN_MANAGE_PGN  |0xFF)<<8, Ident_c::ExtendedIdent ) );
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, (ETP_DATA_TRANSFER_PGN|0xFF)<<8, Ident_c::ExtendedIdent ) );
+#else
   getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, TP_CONN_MANAGE_PGN << 8, Ident_c::ExtendedIdent ) );
   getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, TP_DATA_TRANSFER_PGN << 8, Ident_c::ExtendedIdent ) );
   getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ETP_CONN_MANAGE_PGN << 8, Ident_c::ExtendedIdent ) );
   getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ETP_DATA_TRANSFER_PGN << 8, Ident_c::ExtendedIdent ) );
+#endif
 
   mlist_streams.clear();
   mlist_clients.clear();
@@ -1333,6 +1351,37 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
 void
 MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
 {
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  switch (at_action)
+  {
+    case ControlFunctionStateHandler_c::AddToMonitorList:
+      if (acrc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has finished adr claim
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8) ), &acrc_isoItem.isoName(), NULL, 8) );
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8) );
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8) ), &acrc_isoItem.isoName(), NULL, 8) );
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8) );
+      }
+      break;
+
+    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
+      if (acrc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has gone (i.e. IdentItem has gone, too.)
+        /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        /// @todo SOON-178 Maybe clean up some streams and clients?
+        /// Shouldn't appear normally anyway, so don't care for right now...
+      }
+      break;
+
+    default:
+      break;
+  }
+#endif
+
   if ((at_action == ControlFunctionStateHandler_c::AddToMonitorList) || (at_action == ControlFunctionStateHandler_c::ChangedAddress) || (at_action == ControlFunctionStateHandler_c::LostAddress) || (at_action == ControlFunctionStateHandler_c::ReclaimedAddress))
   {
     /// If we're LostAddress, then we automatically have 0xFE now as SA...

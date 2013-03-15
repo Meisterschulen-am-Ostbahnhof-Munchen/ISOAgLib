@@ -50,10 +50,14 @@ VtClient_c::init()
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, LANGUAGE_PGN<<8, Ident_c::ExtendedIdent ), 8 );
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, VT_TO_GLOBAL_PGN << 8, Ident_c::ExtendedIdent ), 8 );
+#else
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, VT_TO_ECU_PGN << 8, Ident_c::ExtendedIdent ), 8 );
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ACKNOWLEDGEMENT_PGN << 8, Ident_c::ExtendedIdent ), 8 );
+#endif
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ECU_TO_VT_PGN << 8, Ident_c::ExtendedIdent ), 8 );
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, ECU_TO_GLOBAL_PGN << 8, Ident_c::ExtendedIdent ), 8 );
 #endif
 
   setInitialized();
@@ -73,10 +77,14 @@ VtClient_c::close()
   }
 
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, LANGUAGE_PGN << 8, Ident_c::ExtendedIdent ) );
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, VT_TO_GLOBAL_PGN << 8, Ident_c::ExtendedIdent  ) );
+#else
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, VT_TO_ECU_PGN << 8, Ident_c::ExtendedIdent  ) );
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ACKNOWLEDGEMENT_PGN << 8, Ident_c::ExtendedIdent ) );
+#endif
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ECU_TO_VT_PGN << 8, Ident_c::ExtendedIdent ) );
+  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, ECU_TO_GLOBAL_PGN << 8, Ident_c::ExtendedIdent ) );
 #endif
 
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);

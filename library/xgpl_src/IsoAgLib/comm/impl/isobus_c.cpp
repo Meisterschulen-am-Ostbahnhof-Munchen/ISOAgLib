@@ -23,6 +23,9 @@
 #endif
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
+#ifdef HAL_USE_SPECIFIC_FILTERS
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#endif
 #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclient_c.h>
 #endif
@@ -77,6 +80,9 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   /// Part 5 - Network Management
   getIsoRequestPgnInstance4Comm().init();
   getIsoMonitorInstance4Comm().init();
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoFilterManager4Comm().init();
+#endif
 
   /// Part 3 - Data Link
   getMultiReceiveInstance4Comm().init();
@@ -197,6 +203,9 @@ IsoBus_c::close()
   getMultiReceiveInstance4Comm().close();
 
   /// Part 5 - Network Management
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoFilterManager4Comm().close();
+#endif
   getIsoMonitorInstance4Comm().close();
   getIsoRequestPgnInstance4Comm().close();
 

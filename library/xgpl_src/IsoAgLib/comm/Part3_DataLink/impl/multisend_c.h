@@ -83,7 +83,9 @@ public:
 
   virtual ~MultiSend_c() {}
 
+#ifdef HAL_USE_SPECIFIC_FILTERS
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+#endif
 
   /**
     Send an ISO 11738 (E)TP targeted multipacket message using a given MultiSendStreamer
@@ -210,6 +212,27 @@ private:
   };
   typedef CanCustomerProxy_c Customer_t;
 
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
+  public:
+    typedef MultiSend_c Owner_t;
+    ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+    virtual ~ControlFunctionStateHandlerProxy_c() {}
+
+  private:
+    virtual void reactOnIsoItemModification( iIsoItemAction_e action, IsoItem_c const &isoItem )
+    { mrt_owner.reactOnIsoItemModification( action, isoItem ); }
+
+    // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
+    // reference to the containing object would become invalid.
+    ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
+    ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  };
+  typedef ControlFunctionStateHandlerProxy_c Handler_t;
+#endif
+
   /**
     use this function to add a new SendStream. (doesn't use existing-finished ones anymore!)
     IMPORTANT: Assure that the added SendStream is initialized right after this call!!
@@ -256,6 +279,9 @@ private:
 
   STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
   Customer_t mt_customer;
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  Handler_t mt_handler;
+#endif
 
   friend MultiSend_c &getMultiSendInstance( unsigned int instance );
   friend class SendStream_c;

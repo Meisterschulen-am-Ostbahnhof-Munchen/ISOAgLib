@@ -16,6 +16,9 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/util/iassert.h>
+#ifdef HAL_USE_SPECIFIC_FILTERS
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#endif
 
 #include "../imultisendstreamer_c.h"
 
@@ -124,6 +127,9 @@ MultiSend_c::MultiSend_c()
   #endif
   , mlist_sendStream()
   , mt_customer(*this)
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  , mt_handler(*this)
+#endif
 {
 }
 
@@ -134,13 +140,18 @@ MultiSend_c::init()
   isoaglib_assert (!initialized());
 
   getSchedulerInstance().registerTask( *this, 0 );
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+#endif
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   mui8_nextFpSequenceCounter = 0;
   #endif
 
+#ifndef HAL_USE_SPECIFIC_FILTERS
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( (0x3FF0000UL), (TP_CONN_MANAGE_PGN << 8), Ident_c::ExtendedIdent ), 8 );
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( (0x3FF0000UL), (ETP_CONN_MANAGE_PGN << 8), Ident_c::ExtendedIdent ), 8 );
+#endif
 
   setInitialized();
 }
@@ -151,8 +162,14 @@ MultiSend_c::close()
 {
   isoaglib_assert (initialized());
 
+#ifndef HAL_USE_SPECIFIC_FILTERS
   getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( (0x3FF0000UL), (TP_CONN_MANAGE_PGN << 8), Ident_c::ExtendedIdent ) );
   getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilterType_c( (0x3FF0000UL), (ETP_CONN_MANAGE_PGN << 8), Ident_c::ExtendedIdent ) );
+#endif
+
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+#endif
   getSchedulerInstance().deregisterTask( *this );
 
 
@@ -376,5 +393,34 @@ MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler
   }
 }
 
+#ifdef HAL_USE_SPECIFIC_FILTERS
+void
+MultiSend_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
+{
+  switch (at_action)
+  {
+    case ControlFunctionStateHandler_c::AddToMonitorList:
+      if (acrc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has finished adr claim
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8) );
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8) );
+      }
+      break;
+
+    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
+      if (acrc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        /// @todo SOON-178 Maybe clean up some streams and clients?
+        /// Shouldn't appear normally anyway, so don't care for right now...
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+#endif
 
 } // __IsoAgLib
