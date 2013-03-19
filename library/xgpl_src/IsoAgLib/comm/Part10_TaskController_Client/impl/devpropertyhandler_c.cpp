@@ -11,6 +11,8 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#include <IsoAgLib/isoaglib_config.h>
+
 // Note: The define PROPRIETARY_DEVPROPERTYHANDLER_CPP is just a temporary solution
 //       and may be removed as soon as IsoAgLib's own DPH is able to handle the
 //       complete feature-set. If you're don't know what this is for, don't use it!
@@ -21,7 +23,6 @@
 #else
 
 
-#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>

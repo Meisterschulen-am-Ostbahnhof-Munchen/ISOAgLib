@@ -10,6 +10,9 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+
+#include <IsoAgLib/isoaglib_config.h>
+
 #ifdef PROPRIETARY_DEVPROPERTYHANDLER_H
   #define _devproperty_handler_header <PROPRIETARY_DEVPROPERTYHANDLER_H>
   #include _devproperty_handler_header
