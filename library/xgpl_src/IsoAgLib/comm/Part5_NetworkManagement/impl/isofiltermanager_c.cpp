@@ -118,7 +118,6 @@ IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::i
 {
   if ((at_action == ControlFunctionStateHandler_c::AddToMonitorList) || (at_action == ControlFunctionStateHandler_c::ReclaimedAddress))
   {
-    bool b_reconfig = false;
     for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
         it_isoFilterBox != mvec_isoFilterBox.end();
         it_isoFilterBox++)
@@ -128,7 +127,6 @@ IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::i
   }
   else if (at_action == ControlFunctionStateHandler_c::ChangedAddress)
   {
-    bool b_reconfig = false;
     for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
         it_isoFilterBox != mvec_isoFilterBox.end();
         it_isoFilterBox++)
