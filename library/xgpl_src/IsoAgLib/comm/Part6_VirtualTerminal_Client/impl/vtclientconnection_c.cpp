@@ -1332,8 +1332,8 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
         if (ui16_objID == mrc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
           mrc_pool.eventAttributeValue(
               mrc_pool.getIVtObjects()[ui8_arrIndex][0],
-              arrui8_canData[3],
-              &(arrui8_canData[4]));
+              arc_data.getUint8Data( 3 ),
+              (uint8_t *)arc_data.getUint8DataConstPointer( 4 ) ); // bad cast, actually the interface should be changed!
         else
         {
           // if last item of the list was reached or the requested object was found
@@ -1366,8 +1366,8 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
                 b_objectFound = true;
                 mrc_pool.eventAttributeValue(
                     mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
-                    arrui8_canData[3],
-                    &(arrui8_canData[4]));
+                    arc_data.getUint8Data( 3 ),
+                    (uint8_t *)arc_data.getUint8DataConstPointer( 4 ) ); // bad cast, actually the interface should be changed!
                 break;
               }
               else
