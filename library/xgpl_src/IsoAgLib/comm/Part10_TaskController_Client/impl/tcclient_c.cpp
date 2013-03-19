@@ -13,6 +13,9 @@
 #include "tcclient_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
+#ifdef HAL_USE_SPECIFIC_FILTERS
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#endif
 #include <IsoAgLib/util/iassert.h>
 
 // @TODO : check if TCisAlive ? if TC status not sent for 6 seconds, stop sending measurment (call stopMeasurement)
@@ -68,9 +71,11 @@ TcClient_c::init()
   mc_devPropertyHandler.init();
 
   mpc_procDataHandler = NULL;
-
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (PROCESS_DATA_PGN | 0xFF) << 8 ), 8 );
+#else
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FF0000UL), PROCESS_DATA_PGN << 8 ), 8 );
-
+#endif
   mpc_iter = m_arrClientC1.begin();
 
   setInitialized();
@@ -82,7 +87,11 @@ TcClient_c::close()
 {
   isoaglib_assert (initialized());
 
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (PROCESS_DATA_PGN | 0xFF) << 8 ) );
+#else
   getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FF0000UL), PROCESS_DATA_PGN << 8 ) );
+#endif
 
   getSchedulerInstance().deregisterTask( *this );
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
@@ -287,6 +296,28 @@ TcClient_c::reactOnIsoItemModification( ControlFunctionStateHandler_c::iIsoItemA
     if ( ecuType != IsoAgLib::ProcData::remoteTypeUndefined )
       stopRunningMeasurement( ecuType );
   }
+
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  // This is just a simple implementation until the Dynamic TC-Client is ready!
+  // Note that the filter wouldn't be remove if the IdentItem is closed AFTER the TcClient.
+  // This will be redone for 2.5.4 anyway. It's fine if the application is completely closed/restarted,
+  // but may result in problems if only the TC-Client would be stopped without the rest...
+  // But nowone does that in 2.5.3.........
+  if( acrc_isoItem.itemState( IState_c::Local ) )
+  {
+    switch( at_action )
+    {
+    case ControlFunctionStateHandler_c::AddToMonitorList:
+      getIsoFilterManagerInstance4Comm().insertIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (PROCESS_DATA_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8) );
+      break;
+    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
+      getIsoFilterManagerInstance4Comm().removeIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (PROCESS_DATA_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8) );
+      break;
+    default:
+      break;
+    }
+  }
+#endif
 }
 
 
