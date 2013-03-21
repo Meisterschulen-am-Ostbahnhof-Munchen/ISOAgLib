@@ -75,7 +75,7 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
     }
     mui32_dataBufferOffset += ui8_nettoCnt; // already sent out the first 6 bytes along with the first FP message.
     switchToState (SendData, 0);
-    sendPacketFp();
+    sendPacketFp( r_multiSendPkg );
   }
   else
 #endif
@@ -104,10 +104,6 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
       r_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
       switchToState (AwaitCts, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
     }
-#if 0
-/// Disabled as long as getILibErrInstance().registerError() makes problems on the ESX
-    else getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::MultiSend );
-#endif
 
     mui32_packetNrRequestedInLastCts = 1;
     if (mpc_mss) mpc_mss->resetDataNextStreamPart();
@@ -170,7 +166,7 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
           } else {
             mpc_mss->setDataNextFastPacketStreamPart (&c_multiSendPkg, ui8_nettoDataCnt, 1);
           }
-          sendPacketFp();
+          sendPacketFp( c_multiSendPkg );
           mui32_dataBufferOffset += ui8_nettoDataCnt;
           // break if this message part is finished
           if (isCompleteData())
@@ -447,27 +443,25 @@ SendStream_c::sendPacketIso (bool ab_data, MultiSendPkg_c& arc_data )
 
 #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
 void
-SendStream_c::sendPacketFp()
+SendStream_c::sendPacketFp( MultiSendPkg_c& pkg )
 {
   // no-one should call this when the Stream is not set to FP-mode.
   isoaglib_assert (men_msgType == NmeaFastPacket);
 
-  MultiSendPkg_c c_multiSendPkg;
-
   // For fast packet, the PGN itself tells us that the message is a fast packet message.
   /// Since we currently only need/support broadcast FP-PGNs, we do NOT need to "setIsoPs(...)" !
-  c_multiSendPkg.setIsoPgn (mui32_pgn);
+  pkg.setIsoPgn (mui32_pgn);
   /// @todo ON REQUEST-690 The FP-Messages can have different priorities,
   /// so the calling code must be able to specify the priority.
   /// Now setting the Priority to 3 as it's the default priority
   /// for the currently only NMEA message being sent out, so regard
   /// this is hard-coded workaround for the current situation.
   /// (This PGN is NMEA_GPS_POSITION_DATA_PGN)
-  c_multiSendPkg.setIsoPri (3);
-  c_multiSendPkg.setISONameForSA (mc_isoNameSender);
-  c_multiSendPkg.setLen (8);
+  pkg.setIsoPri (3);
+  pkg.setISONameForSA (mc_isoNameSender);
+  pkg.setLen (8);
 
-  getIsoBusInstance4Comm() << c_multiSendPkg;
+  getIsoBusInstance4Comm() << pkg;
 }
 #endif
 

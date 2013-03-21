@@ -150,7 +150,7 @@ private:
   /**
     send a FP message -> set the ident and initiate sending to CAN
   */
-  void sendPacketFp();
+  void sendPacketFp( MultiSendPkg_c& );
 #endif
 
   /**
