@@ -26,6 +26,10 @@
 #include <cstring>
 #include <deque>
 
+#ifndef RS232_SERIAL_DEV
+#define RS232_SERIAL_DEV "/dev/ttyS"
+#endif
+
 namespace __HAL {
 struct T_BAUD { uint32_t rate; uint32_t flag; } t_baud[] = {
   {    600L, B600    }, {   1200L, B1200   }, {   2400L, B2400   },
@@ -118,7 +122,8 @@ int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
 {
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
 
-  static char com[] = "/dev/ttySx";
+  char com[ strlen( RS232_SERIAL_DEV ) + 3 ];
+
   struct termios tty_options;
   struct T_BAUD *b;
   uint32_t  baudflag;
@@ -132,7 +137,8 @@ int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
     if (b->rate >= baudrate) break;
   } while (++b < t_baud + sizeof t_baud/sizeof *t_baud);
 
-  com[9] = aui8_channel+'0';
+  sprintf( com, "%s%d", RS232_SERIAL_DEV, aui8_channel );
+
   if ((f_com[aui8_channel] = open(com, O_RDWR|O_NOCTTY|O_NDELAY)) < 0) return HAL_CONFIG_ERR;
   if (tcgetattr(f_com[aui8_channel], &(t_com[aui8_channel]))) return HAL_CONFIG_ERR;
 
@@ -211,6 +217,13 @@ int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
 
   /* Enable data to be processed as raw input */
   tty_options.c_lflag &= ~(ICANON | ECHO | ISIG);
+
+  // No wait time for reading, return 0 if no data available 
+  tty_options.c_cc[VTIME] = 0;
+  tty_options.c_cc[VMIN] = 0;
+
+  // flush all i/o garbage data if present
+  tcflush(f_com[aui8_channel],TCIOFLUSH);
 
   /* Set the new options for the port */
   tcsetattr(f_com[aui8_channel], TCSANOW, &tty_options);
