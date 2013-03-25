@@ -2608,7 +2608,7 @@ VtClientConnection_c::finalizeUploading() //bool ab_wasLanguageUpdate)
     mc_preferredVt = mpc_vtServerInstance->getIsoName();
     m_dataStorageHandler.storePreferredVt(mc_preferredVt.toConstIisoName_c(), mpc_vtServerInstance->getConstVtCapabilities()->bootTime );
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
-    INTERNAL_DEBUG_DEVICE << "SAVE prefferedVT with current address " << (uint16_t)mpc_vtServerInstance->getIsoItem()->nr()
+    INTERNAL_DEBUG_DEVICE << "SAVE prefferedVT with current address " << (uint16_t)mpc_vtServerInstance->getIsoItem().nr()
                           << " NAME = " << mpc_vtServerInstance->getIsoName()
                           << " Boottime = " << (uint16_t)mpc_vtServerInstance->getConstVtCapabilities()->bootTime
                           << INTERNAL_DEBUG_DEVICE_ENDL;
