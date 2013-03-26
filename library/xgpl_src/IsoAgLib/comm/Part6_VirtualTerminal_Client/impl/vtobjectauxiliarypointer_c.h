@@ -42,6 +42,12 @@ public:
 
   uint32_t fitTerminal() const;
 
+  void setAuxiliaryObjectId(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false)
+  {
+    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAuxiliaryControlDesignatorObjectPointer_a(), value) : 0, sizeof(iVtObjectAuxiliaryControlDesignatorObjectPointer_s), 2 /* "auxiliary object ID Attribute" */, apc_newObject, b_enableReplaceOfCmd);
+  }
+
+
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 33; }
