@@ -68,7 +68,6 @@ namespace __HAL {
     s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
     s_transferBuf.ui16_command = COMMAND_REGISTER;
     s_transferBuf.s_startTimeClock.t_clock = getStartupTime();
-    s_transferBuf.s_startTimeClock.t_clock = 0;
 
     rc = send_command( &s_transferBuf, &msqDataClient );
 
