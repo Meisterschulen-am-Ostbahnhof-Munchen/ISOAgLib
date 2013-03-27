@@ -45,6 +45,11 @@
 
 
 namespace __HAL {
+
+#ifdef USE_MUTUAL_EXCLUSION
+  static int breakWaitPipeFd[2] = { -1, -1 };
+#endif
+
   /** representation of a single can bus instance */
   struct canBus_s {
     canBus_s() :
@@ -83,7 +88,6 @@ namespace __HAL {
 
 
 #ifdef USE_MUTUAL_EXCLUSION
-  static int breakWaitPipeFd[2] = { -1, -1 };
 
   void canInitBreakWait() {
     /* open break waitUntilCanReceiveOrTimeout socket */
@@ -346,7 +350,7 @@ namespace HAL {
     const int rc = select( __HAL::g_fdMax + 1, &rfds, 0, 0, &timeout );
 
 #ifdef USE_MUTUAL_EXCLUSION
-    __HAL::canClearBreakWaitFd( __HAL::rfds );
+    __HAL::canClearBreakWaitFd( rfds );
 #endif
 
     return ( rc > 0 );
@@ -438,9 +442,6 @@ namespace HAL {
 
 
   void deleteRxFilter( unsigned channel, bool, uint32_t id, uint32_t mask ) {
-    struct can_filter f;
-    f.can_id = id;
-    f.can_mask = mask;
     for( std::list<struct can_filter>::iterator i = __HAL::g_bus[channel].m_filter.begin(); i != __HAL::g_bus[channel].m_filter.end(); ++i ) {
       if( i->can_id == id && i->can_mask == mask ) {
         __HAL::g_bus[channel].m_filter.erase( i );
