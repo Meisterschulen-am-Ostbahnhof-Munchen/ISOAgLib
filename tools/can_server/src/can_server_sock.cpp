@@ -421,10 +421,8 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
     }
   }
 
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   for (uint8_t k=0; k < iter_delete->nCanBusses(); k++)
     iter_delete->canBus(k).mvec_msgObj.clear();
-#endif
 
   if (
 #ifdef WIN32
