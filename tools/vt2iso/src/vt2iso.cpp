@@ -1837,52 +1837,63 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
       { // check this line (\n and \r has been previously converted to 0x00
         std::string pc_id;
         int numWideChars;
+        char* firstChar=bufferCur;
+        while (*firstChar == ' ')
+          firstChar++;
+        if ( (*firstChar == 0x00)
+             || (strstr (bufferCur, "//") && (strstr (bufferCur, "//") == firstChar))
+           )
+        { // ignore line
+        }
+        else
+        {
+          if (arrs_language[curLang].unicode)
+          {
+            bufferCur += 2;  // start me at the beginning of the tag 
+            numWideChars = (bufferEnd - bufferCur) / 2;
+            UCS2* commaLoc = findWideChar ((const UCS2*)bufferCur, 0x2C, numWideChars );
+            if (commaLoc)   // if not valid, we are done looking..
+            {
+              int charCnt = ((char*)commaLoc - bufferCur)/2;
+              wcstombs(MBBuffer, (const wchar_t*)bufferCur, charCnt );
+              MBBuffer[charCnt] = 0;  // theres our identifier..
+              pc_id = MBBuffer;
+              if (pc_id.compare(searchName) == 0)
+              { /// add this language to the language=".." attribute!
+                newLanguageValue += arrs_language [curLang].code;
+                break;
+              }
+            }
+            else
+            { // no comma found, although it was not a commentary line :(
+              std::cout << "No COMMA in a non-comment line in the " << arrs_language [curLang].code << ".vtu language file!"<<std::endl;
+              return;
+            }
+          }
+          else //  This is good ol null terminated strings, so can use those standard i/o calls ------------
+          {
+            char* comma = strchr (bufferCur, ',');
+            if (comma)
+            {
+              *comma = 0x00;
+              pc_id = bufferCur;
+              *comma = ','; // revert comma-separator
+              if (pc_id.compare(searchName) == 0)
+              { /// add this language to the language=".." attribute!
+                newLanguageValue += arrs_language [curLang].code;
+                break;
+              }
+            }
+            else
+            { // no comma found, although it was not a commentary line :(  - or we could have been at the end...
+              if ((bufferEnd-bufferCur) > 5) {   // There really should be a comma
+                std::cout << "No COMMA in a non-comment line in the " << arrs_language [curLang].code << ".vtl language file!"<<std::endl;
+                return;
+              }
+            }
+          }
+        }
 
-        if (arrs_language[curLang].unicode)
-        {
-          bufferCur += 2;  // start me at the beginning of the tag 
-          numWideChars = (bufferEnd - bufferCur) / 2;
-          UCS2* commaLoc = findWideChar ((const UCS2*)bufferCur, 0x2C, numWideChars );
-          if (commaLoc)   // if not valid, we are done looking..
-          {
-            int charCnt = ((char*)commaLoc - bufferCur)/2;
-            wcstombs(MBBuffer, (const wchar_t*)bufferCur, charCnt );
-            MBBuffer[charCnt] = 0;  // theres our identifier..
-            pc_id = MBBuffer;
-            if (pc_id.compare(searchName) == 0)
-            { /// add this language to the language=".." attribute!
-              newLanguageValue += arrs_language [curLang].code;
-              break;
-            }
-          }
-          else
-          { // no comma found, although it was not a commentary line :(
-            std::cout << "No COMMA in a non-comment line in the " << arrs_language [curLang].code << ".vtu language file!"<<std::endl;
-            return;
-          }
-        }
-        else //  This is good ol null terminated strings, so can use those standard i/o calls ------------
-        {
-          char* comma = strchr (bufferCur, ',');
-          if (comma)
-          {
-            *comma = 0x00;
-            pc_id = bufferCur;
-            *comma = ','; // revert comma-separator
-            if (pc_id.compare(searchName) == 0)
-            { /// add this language to the language=".." attribute!
-              newLanguageValue += arrs_language [curLang].code;
-              break;
-            }
-          }
-          else
-          { // no comma found, although it was not a commentary line :(  - or we could have been at the end...
-            if ((bufferEnd-bufferCur) > 5) {   // There really should be a comma
-              std::cout << "No COMMA in a non-comment line in the " << arrs_language [curLang].code << ".vtl language file!"<<std::endl;
-            }
-            return;
-          }
-        }
         // advance to next line --  of-course a wideChar and the byteSize is available
         if (arrs_language[curLang].unicode)
         {
