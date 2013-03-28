@@ -22,7 +22,8 @@
 
 #define HAS_64BIT_INT_TYPE
 
-#if !defined(_MSC_VER) && !defined(WINCE)
+// 1600 == Visual Studion 2010
+#if (!defined(_MSC_VER) || (_MSC_VER >= 1600)) && !defined(WINCE)
   #include <stdint.h>
 #else
   typedef unsigned char uint8_t;
