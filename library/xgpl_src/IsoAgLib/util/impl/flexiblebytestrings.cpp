@@ -31,11 +31,11 @@ namespace __IsoAgLib {
     for ( uint8_t index = 0; index < 8; index++ )
       uint8[index] = acrc_src.uint8[index];
 #else
-#if !defined( SUPPORTS_64BIT )
+#ifdef HAS_64BIT_INT_TYPE
+    uint64[0] = acrc_src.uint64[0];
+#else
     uint32[1] = acrc_src.uint32[1];
     uint32[0] = acrc_src.uint32[0];
-#else
-    uint64[0] = acrc_src.uint64[0];
 #endif
 #endif
   };
