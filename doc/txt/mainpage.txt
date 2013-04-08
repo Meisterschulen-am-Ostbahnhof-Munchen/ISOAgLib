@@ -45,7 +45,7 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 \subsection Change_X 2.5.2 to 2.5.3
 
 General:
- - Cleanup, Commentaryfixes
+ - Cleanup, Commentaryfixes, compiles now properly with VS >= 2010 (include stdint.h in VS >= 2010 now to avoid conflicts)
 
 Project-Generation:
  - Enhancement: conf2build.sh: Add new variable APP_PATH for conf_-files.
@@ -54,8 +54,11 @@ Project-Generation:
 CAN-I/O:
  - Cleanup return type of processMsg to void.
  - Bugfix: CAN-Send: Don't delay complete 10ms when sendCanFreecnt < 1, recheck the sendCanFreecnt after 1ms as designed.
+ - Bugfix: CAN-Server-Msq-Client: Correctly initialize startUpTime.
  - NOTE: The CanFifo is now always used. This is not unlimited as was the CAN-Server's system pipe, so be sure to definitely not delay ISOAgLib's (CAN-)processing!
- 
+ - Enable the HALs to be able to configure the filters to hardware (Full-CAN, e.g. CAN-Server, SocketCAN)
+ - Reintroduced IsoFilterManager to be able to used filtering of the HAL (e.g. CAN-Server) to keep cpu-load down. Needs to be enable per HAL itself using HAL_USE_SPECIFIC_FILTERS
+
 vt2iso:
  - Removed -i=, added -r for changed Define-Prefix
  - Added -b/-bh parameters for specifying a base-class for the objectpool.
@@ -63,26 +66,30 @@ vt2iso:
  - Enhancement: Added support for VTU Unicode files.
  - Cleanup: Removed Legacy project ability, you need a VTP file now.
  - Bugfix: Line-Wrapping now works correctly even if \" present in string
+ - Again allow empty/commentary lines in the language-file
  - Adapted to new attribute naming in XML to match vt-designer output:
    Auxiliary Control Designator Object Pointer's attribute "value" is named "auxiliary_object_id" in vt-designer output and the standard, so it's renamed now in vt2iso, too.
  - Version 4: Fixed Cmd-Byte 09 from VT_TO_ECU. Was implemented as an old pre-DIS version.
  - Added forgotten break; - was introduced in ISOAgLib 2.5.2
 
 VT-Client:
- - Fixed wrong double EoOP in upload-sequence] - Index to VT's language wasn't set properly if an unsolicited LANGUAGE_PGN comes in too early.
+ - Fixed wrong double EoOP in upload-sequence. Index to VT's language wasn't set properly if an unsolicited LANGUAGE_PGN comes in too early.
  - Enhancement:
    - Add method for overriding OP version, only for special proprietary use.
    - Speedup: Move task functionality to connection
    - Add getter for current command send queue size
    - Aux2:
+     - Bugfixes in messaging
+	 - Added workaround for GS2 to handle wrong response (DLC=2) on GetVersions simply after a time-out and upload the pool.
+	 - Added setAuxiliaryObjectId method to AuxiliaryControlDesignatorObjectPointer
      - Added load and store for preferred assignments
      - Added missing ECU_TO_VT filter
      - Added proper input status maintenance msg timeout checks
      - Handling/Responding NULL/Un-Assignment now correctly, was checking for Input's Maintenance Status even if Input's NAME was not given in Un-Assign case.
 
 Network-Management:
- - Cleanup:
-   - Rewrite IsoItem Management, replace exist/get with all-in-one functions, no more exist/get-function mechanism or search caches.
+ - Cleanup: Rewrite IsoItem Management, replace exist/get with all-in-one functions, no more exist/get-function mechanism or search caches.
+ - Bugfix: IsoRequestPgn_c: unregisterPGN fixed for case when all PGNs should be removed.
  - AEF-ConformanceTest: 
    - ECU Identification added.
    - MinCF functionality added, set per default
@@ -94,10 +101,14 @@ Inputs/Outputs:
 HALs/Utils:
  - Enhancements for 64 bit CPUs in IsoName_c, etc.
  - Renamed SUPPORTS_64BIT -> HAS_64BIT_INT_TYPE: All HALs supporting 64bit HAVE TO DEFINE "HAS_64BIT_INT_TYPE"!
+ - Set RS232_SERIAL_DEV in the config file if something else than /dev/ttySx is needed.
  - HAL-PC:
    - Added missing return values, fixed select call argument
    - Fixed shutdown of msq driver
- 
+
+Logalizer:
+ - Fixed Crash with DLC=0.
+
 FS-Client:
  - Bugfix: Working again, compared to 2.5.1/2.5.2
  - Interface-Cleanup:
@@ -107,7 +118,9 @@ FS-Client:
 (Extended) Transport Protocol:
  - MultiSend: Revised timing for TP; slow down when only sending few packets]
  - MultiReceive: Bugfix: Correct cast to uint8_t of mui8_pkgRemainingInBurst
- - FastPacket Bugfix: Processing of FP-bursts works again
+ - FastPacket Bugfix:
+   - Processing of FP-bursts works again
+   - Sending works again, was broken in 2.5.1/2.5.2
  - AEF-ConformanceTest: Added Connection Abort reason codes.
  - Adjusted timing to real CAN conditions (assuming not 3 but 2 packets per ms, so don't be too fast with sending!)
  - Now always part (without any define) of ISOAgLib
