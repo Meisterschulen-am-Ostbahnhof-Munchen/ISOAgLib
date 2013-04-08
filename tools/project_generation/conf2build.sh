@@ -143,8 +143,6 @@ set_default_values()
     # set default USE_BIG_ENDIAN_CPU, so that quick number variable to
     # CAN string conversions are possible:
     USE_BIG_ENDIAN_CPU=0
-    # option to not switch the system relais to ON, on startup
-    # (default: set relais to ON on startup):
     USE_VT_UNICODE_SUPPORT=0
     CAN_INSTANCE_CNT=1
     PRT_INSTANCE_CNT=1
