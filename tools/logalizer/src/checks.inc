@@ -29,35 +29,39 @@ checkSingles( PtrDataFrame_t at_ptrFrame )
 void
 checkHandshakingsVtCommands( PtrDataFrame_t at_ptrFrame )
 {
-  AliveCollection_c::Category_e e_category; // no need to initialize.
-
-  if ((at_ptrFrame->dataOctet(0) >= 0x60) && (at_ptrFrame->dataOctet(0) < 0xF0))
-  { // not a maintenance command!
-    msgType_e msgType_direction;
-    uint8_t ui8_saClient;
-    if (at_ptrFrame->pgn() == VT_TO_ECU_PGN)
-    {
-      e_category = AliveCollection_c::categoryVtCommandResponse;
-      msgType_direction = msgTypeResponse;
-      ui8_saClient = at_ptrFrame->ps();
-    }
-    else if (at_ptrFrame->pgn() == ECU_TO_VT_PGN)
-    {
-      e_category = AliveCollection_c::categoryVtCommandResponse;
-      msgType_direction = msgTypeCommand;
-      ui8_saClient = at_ptrFrame->sourceAddress();
-    }
-    else return;
-    gs_main.m_alive.response(e_category, ui8_saClient).push_back (std::make_pair< msgType_e, std::string >(msgType_direction, "")); // @todo VT commands
-    gs_main.m_alive.alives(e_category, ui8_saClient).push_back (at_ptrFrame->time());
+  if( at_ptrFrame->dataSize() == 0 )
     return;
+  if( (at_ptrFrame->dataOctet(0) < 0x60) || (at_ptrFrame->dataOctet(0) >= 0xF0) )
+    return; // some non-cmd
+
+  AliveCollection_c::Category_e e_category; // no need to initialize.
+  msgType_e msgType_direction;
+  uint8_t ui8_saClient;
+  if (at_ptrFrame->pgn() == VT_TO_ECU_PGN)
+  {
+    e_category = AliveCollection_c::categoryVtCommandResponse;
+    msgType_direction = msgTypeResponse;
+    ui8_saClient = at_ptrFrame->ps();
   }
+  else if (at_ptrFrame->pgn() == ECU_TO_VT_PGN)
+  {
+    e_category = AliveCollection_c::categoryVtCommandResponse;
+    msgType_direction = msgTypeCommand;
+    ui8_saClient = at_ptrFrame->sourceAddress();
+  }
+  else return;
+
+  gs_main.m_alive.response(e_category, ui8_saClient).push_back (std::make_pair< msgType_e, std::string >(msgType_direction, "")); // @todo VT commands
+  gs_main.m_alive.alives(e_category, ui8_saClient).push_back (at_ptrFrame->time());
 }
 
 
 void
 checkHandshakingTP( PtrDataFrame_t at_ptrFrame )
 {
+  if( at_ptrFrame->dataSize() == 0 )
+    return;
+
   msgType_e mtype = msgTypeDATA; // default to avoid compiler warning. The code below should make sure that it is always initialized properly!
   uint8_t ui8_saClient=0xFE; // default to avoid compiler warning. The code below should make sure that it is always initialized properly!
 
@@ -114,6 +118,8 @@ void
 checkHandshakingsProcData( PtrDataFrame_t at_ptrFrame )
 {
   if (at_ptrFrame->pgn() != PROCESS_DATA_PGN)
+    return;
+  if( at_ptrFrame->dataSize() == 0 )
     return;
 
   AliveCollection_c::Category_e e_category( AliveCollection_c::categoryProcessData );
