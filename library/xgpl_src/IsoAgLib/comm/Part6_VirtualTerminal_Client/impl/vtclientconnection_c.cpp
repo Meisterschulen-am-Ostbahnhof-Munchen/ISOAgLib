@@ -131,7 +131,9 @@ namespace __IsoAgLib {
 #define DEF_TimeOut_GetMemory 10000
 #define DEF_TimeOut_EndOfObjectPool 60000
 #define DEF_TimeOut_VersionLabel 60000
-#define DEF_TimeOut_GetVersions 60000
+// set the Get Versions timeout from 60s to 6s, because the GS2 will run into that
+// as it's sending the Get Versions Response with DLC 2 in case of no stored pools!
+#define DEF_TimeOut_GetVersions 6000
 #define DEF_WaitFor_Reupload 5000
 
 
@@ -422,22 +424,35 @@ VtClientConnection_c::timeEventUploadPoolTimeoutCheck()
   /// Do TIME-OUT Checks ALWAYS!
   if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
   {
-    if ((men_uploadPoolState == UploadPoolWaitingForGetVersionsResponse)
-     || (men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)
-     || (men_uploadPoolState == UploadPoolWaitingForMemoryResponse)
-     || (men_uploadPoolState == UploadPoolWaitingForEOOResponse))
-    { // waiting for initial stuff was timed out
+    switch( men_uploadPoolState )
+    {
+    case UploadPoolWaitingForLoadVersionResponse:
+    case UploadPoolWaitingForMemoryResponse:
+    case UploadPoolWaitingForEOOResponse:
       men_uploadPoolState = UploadPoolFailed;
       mui32_uploadTimestamp = HAL::getTime();
       mui32_uploadTimeout = DEF_WaitFor_Reupload; // wait X secs for possible reuploading...
-    }
-    if (men_uploadPoolState == UploadPoolWaitingForStoreVersionResponse)
-    { // store version was timed out
+      break;
+
+    case UploadPoolWaitingForGetVersionsResponse:
+  #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
+      INTERNAL_DEBUG_DEVICE << "Version couldn't be checked (GVResp missing) -> Upload pool" << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
+      startUploadVersion(); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
+      break;
+
+    case UploadPoolWaitingForStoreVersionResponse:
       // we couldn't store for some reason, but don't care, finalize anyway...
   #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
       INTERNAL_DEBUG_DEVICE << "StoreVersion TimedOut!" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
       finalizeUploading();
+      break;
+
+    case UploadPoolInit:
+    case UploadPoolUploading:
+    case UploadPoolFailed:
+      break;
     }
   }
 
