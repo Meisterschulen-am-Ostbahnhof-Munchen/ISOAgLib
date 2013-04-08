@@ -57,7 +57,7 @@ IsoRequestPgn_c::registerPGN(
   m_registeredClientsWithPGN.push_back (s_pgnToRegister);
 
   return true; // PGN - client pair didn't exist, so it was added
-};
+}
 
 
 /** adds n PGN for the client to the list */
@@ -75,7 +75,7 @@ IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint8_
     pcui32_pgnToRegister++;
   }
   return b_msgProcessed;
-};
+}
 
 
 /** remove PGN from the list */
@@ -93,7 +93,7 @@ IsoRequestPgn_c::unregisterPGN(
     if (cui32_pgnToRegister == 0)
     { // every registered PGN will be deleted
       if (regPGN_it->p_handler == &r_PGNHandler)
-        m_registeredClientsWithPGN.erase (regPGN_it); // after erase, the iterator points to the next (if available) vector item
+        regPGN_it = m_registeredClientsWithPGN.erase (regPGN_it);
       else
         regPGN_it++;
     }
@@ -101,14 +101,14 @@ IsoRequestPgn_c::unregisterPGN(
     { // only the cui32_pgnToRegister will be deleted
       if (cs_lookFor == *regPGN_it)
       {
-        m_registeredClientsWithPGN.erase (regPGN_it); // after erase, the iterator points to the next (if available) vector item
+        m_registeredClientsWithPGN.erase (regPGN_it);
         break; // the PGN is unique for the RequestPGNHandler, so we can leave the loop
       }
       else
         regPGN_it++;
     }
   }
-};
+}
 
 
 /** removes n PGN for the client from the list */
@@ -120,7 +120,7 @@ IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint
   uint8_t ui8_index = 0;
   for (; ui8_index < cui8_pgnCount; ui8_index++, pcui32_pgnToUnregister++)
     unregisterPGN (r_PGNHandler, *pcui32_pgnToUnregister);
-};
+}
 
 
 /** before adding any further PGN - RequestPGNHandler pair, check if not already existing */
@@ -136,7 +136,7 @@ IsoRequestPgn_c::checkIfAlreadyRegistered(
       m_registeredClientsWithPGN.end(),
       cs_lookFor);
   return bc_found;
-};
+}
 
 
 /** process REQUEST_PGN_MSG_PGN message
@@ -186,7 +186,6 @@ IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
     // else: Don't NACK if it was requested to global!
   }
 }
-
 
 
 void
