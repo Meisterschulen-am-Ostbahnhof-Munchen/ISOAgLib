@@ -1,7 +1,7 @@
 /*
   logalizer.cpp
 
-  (C) Copyright 2009 - 2012 by OSB AG and developing partners
+  (C) Copyright 2009 - 2013 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -815,7 +815,7 @@ parseLogLine( std::ostream& out, std::string const &acr_line )
 
 int main (int argc, char** argv)
 {
-  std::cerr << "ISOBUS-Logalizer (c) 2007-2012 OSB AG." << std::endl << std::endl;
+  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2013 OSB AG." << std::endl << std::endl;
 
   if (argc < 2)
     exit_with_usage(argv[0]);

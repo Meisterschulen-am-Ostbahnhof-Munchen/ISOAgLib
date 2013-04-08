@@ -2,7 +2,7 @@
   iinput_c.h:
     header file for common input enums.
 
-  (C) Copyright 2012 - 2012 by OSB AG and developing partners
+  (C) Copyright 2012 - 2013 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
