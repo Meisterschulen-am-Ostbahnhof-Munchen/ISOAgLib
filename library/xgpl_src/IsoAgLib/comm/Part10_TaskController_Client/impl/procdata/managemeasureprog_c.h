@@ -41,7 +41,11 @@ class ManageMeasureProg_c
 
   void stopRunningMeasurement( IsoAgLib::ProcData::remoteType_t a_ecuType );
 
-  int32_t measurementValue() const { return mi32_value; }
+  int32_t measurementValue() const {
+#ifndef NDEBUG
+    isoaglib_assert( m_valueSet );
+#endif
+    return mi32_value; }
 
 private:
   MeasureProg_c& getMeasureProg( IsoAgLib::ProcData::remoteType_t a_ecuType );
@@ -53,6 +57,9 @@ private:
 #endif
 
   int32_t mi32_value;
+#ifndef NDEBUG
+  bool m_valueSet;
+#endif
 
 private:
   /** not copyable : copy constructor/operator only declared, not defined */

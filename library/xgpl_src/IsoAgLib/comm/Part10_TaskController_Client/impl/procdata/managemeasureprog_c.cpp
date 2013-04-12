@@ -20,6 +20,10 @@ ManageMeasureProg_c::ManageMeasureProg_c()
 #ifdef USE_DATALOGGER
   , mc_measureprogLogger( IsoAgLib::ProcData::remoteTypeLogger )
 #endif
+  , mi32_value( 0 )
+#ifndef NDEBUG
+  , m_valueSet( false )
+#endif
 {
 }
 
@@ -48,6 +52,10 @@ ManageMeasureProg_c::setVal( ProcData_c& ac_processData, int32_t ai32_val )
 {
   mi32_value = ai32_val;
   
+#ifndef NDEBUG
+  m_valueSet = true;
+#endif
+
   mc_measureprogTC.setVal( ac_processData, ai32_val );
 #ifdef USE_DATALOGGER
   mc_measureprogLogger.setVal( ac_processData, ai32_val );
