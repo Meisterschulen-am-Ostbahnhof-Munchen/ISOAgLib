@@ -45,6 +45,7 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& identItem ) :
     mrc_identItem ( identItem ),
     m_diagnosticFunctionalities( identItem ),
     mcstr_EcuIdentification ( NULL ),
+    mcstr_ProductIdentification( NULL ),
     mcstr_SwIdentification ( NULL),
     mb_certificationIsSet ( false )
 {
@@ -62,6 +63,9 @@ DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
   if (mcstr_EcuIdentification)
     CNAMESPACE::free (mcstr_EcuIdentification);
 
+  if (mcstr_ProductIdentification)
+    CNAMESPACE::free (mcstr_ProductIdentification);
+
   if (mcstr_SwIdentification)
     CNAMESPACE::free (mcstr_SwIdentification);
 }
@@ -74,6 +78,7 @@ DiagnosticPgnHandler_c::init()
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
+  getIsoRequestPgnInstance4Comm().registerPGN ( *this, PRODUCT_IDENTIFICATION_INFORMATION_PGN );
 
   m_diagnosticFunctionalities.init();
 }
@@ -86,6 +91,7 @@ DiagnosticPgnHandler_c::close()
 
   getMultiSendInstance4Comm().abortSend( m_mrEventProxy );
 
+  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, PRODUCT_IDENTIFICATION_INFORMATION_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
@@ -185,6 +191,45 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
                   (uint8_t *) mcstr_EcuIdentification,
                   uint16_t(getCStringLength (mcstr_EcuIdentification)),
                   ECU_IDENTIFICATION_INFORMATION_PGN,
+                  &m_mrEventProxy) )
+            { // Message successfully started with multisend
+              return true;
+            }
+          }
+        }
+      }
+      break;
+
+    case PRODUCT_IDENTIFICATION_INFORMATION_PGN:
+      if (mcstr_ProductIdentification != NULL)
+      {
+        if (getCStringLength (mcstr_ProductIdentification) < 9)
+        {
+          sendSinglePacket((uint8_t *) mcstr_ProductIdentification, PRODUCT_IDENTIFICATION_INFORMATION_PGN);
+          return true;
+        }
+        else
+        {
+          if( isoItemReceiver != NULL )
+          { // dest-spec. request -> answer TP
+            if( getMultiSendInstance4Comm().sendIsoTarget(
+                  mrc_identItem.isoName(),
+                  isoItemSender->isoName(),
+                  (uint8_t *) mcstr_ProductIdentification,
+                  getCStringLength (mcstr_ProductIdentification),
+                  PRODUCT_IDENTIFICATION_INFORMATION_PGN,
+                  &m_mrEventProxy) )
+            { // Message successfully started with multisend
+              return true;
+            }
+          }
+          else
+          { // broadcast request -> answer broadcast
+            if ( getMultiSendInstance4Comm().sendIsoBroadcast(
+                  mrc_identItem.isoName(),
+                  (uint8_t *) mcstr_ProductIdentification,
+                  uint16_t(getCStringLength (mcstr_ProductIdentification)),
+                  PRODUCT_IDENTIFICATION_INFORMATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
               return true;
@@ -307,6 +352,49 @@ DiagnosticPgnHandler_c::setEcuIdentification(
 
   // detect buffer-overruns!
   isoaglib_assert (newLen == (destPtr - mcstr_EcuIdentification));
+
+  return true;
+}
+
+
+bool
+DiagnosticPgnHandler_c::setProductIdentification(
+  const char *code,
+  const char *brand,
+  const char *model)
+{
+  isoaglib_assert (code);
+  isoaglib_assert (brand);
+  isoaglib_assert (model);
+
+  // currently a once set identification can't be changed.
+  // this is due to not having separate send-buffers!
+  if (mcstr_ProductIdentification)
+    return false;
+
+  int len1 = getLengthIfValid (code);
+  int len2 = getLengthIfValid (brand);
+  int len3 = getLengthIfValid (model);
+
+  if ( (len1 < 0) || (len2 < 0) || (len3 < 0) )
+    return false; // wrong sublength(s) or * in substring(s)
+
+  // string separated by * and terminated by 0x00
+  int newLen = len1 + 1 + len2 + 1 + len3 + 1 + 1;
+
+  mcstr_ProductIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
+
+  char *destPtr = mcstr_ProductIdentification;
+  addCStringWithoutTermination (&destPtr, code);
+  addCStringWithoutTermination (&destPtr, "*");
+  addCStringWithoutTermination (&destPtr, brand);
+  addCStringWithoutTermination (&destPtr, "*");
+  addCStringWithoutTermination (&destPtr, model);
+  addCStringWithoutTermination (&destPtr, "*");
+  *destPtr++ = 0x00;
+
+  // detect buffer-overruns!
+  isoaglib_assert (newLen == (destPtr - mcstr_ProductIdentification));
 
   return true;
 }

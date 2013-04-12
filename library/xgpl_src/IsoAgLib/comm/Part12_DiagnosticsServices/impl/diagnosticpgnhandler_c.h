@@ -51,6 +51,11 @@ public:
     const char *manufacturerName,
     const char *hardwareVer );
 
+  bool setProductIdentification(
+    const char *code,
+    const char *brand,
+    const char *model );
+
   bool setSwIdentification( const char *acstr_swIdentification );
 
   //! Setter for the different certification message fields
@@ -85,6 +90,7 @@ private:
   DiagnosticFunctionalities_c m_diagnosticFunctionalities;
 
   char *mcstr_EcuIdentification;
+  char *mcstr_ProductIdentification;
   char *mcstr_SwIdentification;
   bool mb_certificationIsSet;
   uint8_t m_certification[8];

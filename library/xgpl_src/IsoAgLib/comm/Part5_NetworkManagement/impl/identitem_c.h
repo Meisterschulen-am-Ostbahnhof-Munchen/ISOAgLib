@@ -119,6 +119,11 @@ public:
       const char *manufacturerName,
       const char *hardwareVer );
 
+  bool setProductIdentification(
+      const char *code,
+      const char *brand,
+      const char *model );
+
   bool setSwIdentification( const char *partNbr );
 
   DiagnosticsServices_c* getDiagnosticsServices() { return mpc_diagnosticsServices; }

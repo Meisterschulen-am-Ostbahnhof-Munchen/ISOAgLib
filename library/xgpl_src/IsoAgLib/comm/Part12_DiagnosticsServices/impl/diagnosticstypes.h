@@ -69,11 +69,14 @@ typedef BitFieldWrapperRight_c<MinimumControlFunctionOptions_s> MinimumControlFu
 // UT
 enum UniversalTerminalOptions_t
 {
-  UniversalTerminal_ProportionalFonts = 0,
+#if 0
+  // not yet defined, but sure to come...
   UniversalTerminal_UserLayoutScreens,
   UniversalTerminal_ColourMap,
   UniversalTerminal_GraphicsContext,
   UniversalTerminal_BITSIZE = 8
+#endif
+  UniversalTerminal_BITSIZE = 0
 };
 
 struct UniversalTerminalOptions_s

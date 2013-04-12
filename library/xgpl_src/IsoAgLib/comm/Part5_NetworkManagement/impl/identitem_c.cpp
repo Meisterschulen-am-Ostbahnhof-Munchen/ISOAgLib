@@ -288,6 +288,15 @@ IdentItem_c::setEcuIdentification(
   return m_diagnosticPgnHandler.setEcuIdentification( partNr, serialNr, location, type, manufacturerName, hardwareVer);
 }
 
+bool
+IdentItem_c::setProductIdentification(
+    const char *code,
+    const char *brand,
+    const char *model )
+{
+  return m_diagnosticPgnHandler.setProductIdentification( code, brand, model );
+}
+
 bool IdentItem_c::setSwIdentification( const char *acstr_partNbr )
 {
   return m_diagnosticPgnHandler.setSwIdentification( acstr_partNbr );
