@@ -29,17 +29,17 @@ class ManageMeasureProg_c
   virtual ~ManageMeasureProg_c() {}
 
   void timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod );
-  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, IsoAgLib::ProcData::remoteType_t a_ecuType );
+  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, IsoAgLib::ProcData::RemoteType_t a_ecuType );
 
   void setVal( ProcData_c& ac_processData, int32_t ai32_val );
 
   void startDataLogging(
     ProcData_c& ac_processData,
-	IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::TimeProp, IsoAgLib::ProcData::DistProp, ... */,
+	  IsoAgLib::ProcData::MeasurementCommand_t ren_type /* IsoAgLib::ProcData::TimeProp, IsoAgLib::ProcData::DistProp, ... */,
     int32_t ai32_increment,
-	IsoAgLib::ProcData::remoteType_t a_ecuType );
+	  IsoAgLib::ProcData::RemoteType_t a_ecuType );
 
-  void stopRunningMeasurement( IsoAgLib::ProcData::remoteType_t a_ecuType );
+  void stopRunningMeasurement( IsoAgLib::ProcData::RemoteType_t a_ecuType );
 
   int32_t measurementValue() const {
 #ifndef NDEBUG
@@ -48,7 +48,7 @@ class ManageMeasureProg_c
     return mi32_value; }
 
 private:
-  MeasureProg_c& getMeasureProg( IsoAgLib::ProcData::remoteType_t a_ecuType );
+  MeasureProg_c& getMeasureProg( IsoAgLib::ProcData::RemoteType_t a_ecuType );
 
 private:
   MeasureProg_c mc_measureprogTC;

@@ -27,7 +27,7 @@ static const int32_t sci32_stopValOnChange = 0;
 static const int32_t sci32_stopValThresholdMaximum = -2147483647L; // Standard specifies (-2^31+1) instead of (-2^31)
 static const int32_t sci32_stopValThresholdMinimum = 2147483647L;
 
-MeasureProg_c::MeasureProg_c( IsoAgLib::ProcData::remoteType_t ecutype )
+MeasureProg_c::MeasureProg_c( IsoAgLib::ProcData::RemoteType_t ecutype )
   : mlist_thresholdInfo()
   , mvec_measureSubprog()
   , m_ecuType(ecutype)
@@ -50,14 +50,13 @@ MeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, 
     case ProcessPkg_c::measurementMinimumThresholdValueStart:
     case ProcessPkg_c::measurementMaximumThresholdValueStart:
       // measurementCommand_t and CommandType_t are unified for all measurement types
-      if( !handleMeasurement( ac_processData, IsoAgLib::ProcData::measurementCommand_t( en_command ), pkg.mi32_pdValue, value ) )
+      if( !handleMeasurement( ac_processData, IsoAgLib::ProcData::MeasurementCommand_t( en_command ), pkg.mi32_pdValue, value ) )
       {
-        getTcClientInstance( ac_processData.getMultitonInst() ).sendNack(
-          pkg.getMonitorItemForSA()->isoName(),
-          ac_processData.isoName(),
-          ac_processData.DDI(),
-          ac_processData.element(),
-          IsoAgLib::ProcData::NackTriggerMethodNotSupported);
+        ac_processData.m_tcCC->sendNack(pkg.getMonitorItemForSA()->isoName(),
+                                        ac_processData.isoName(),
+                                        ac_processData.DDI(),
+                                        ac_processData.element(),
+                                        IsoAgLib::ProcData::NackTriggerMethodNotSupported);
       }
       break;
 	  
@@ -90,7 +89,7 @@ MeasureProg_c::setVal( ProcData_c& ac_processData, int32_t ai32_val )
 
       case IsoAgLib::ProcData::MeasurementCommandDistProp:
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        triggeredIncrement = pc_iter->updateTrigger(int32_t(getTracMoveInstance( ac_processData.getMultitonInst() ).distTheor()));
+        triggeredIncrement = pc_iter->updateTrigger(int32_t(getTracMoveInstance( ac_processData.getTcClientConnection().getIdentItem().getMultitonInst() ).distTheor()));
         #endif
         break;
 
@@ -136,7 +135,7 @@ MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePe
       case IsoAgLib::ProcData::MeasurementCommandDistProp:
         {
         #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        int32_t i32_distTheor = getTracMoveInstance(ac_processData.getMultitonInst()).distTheor();
+        int32_t i32_distTheor = getTracMoveInstance(ac_processData.getTcClientConnection().getIdentItem().getMultitonInst()).distTheor();
         triggeredIncrement = pc_iter->updateTrigger(i32_distTheor);
         #else
         int32_t i32_distTheor = 0;
@@ -152,15 +151,11 @@ MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePe
         break;
     } // switch
 
-    if( i32_nextTimePeriod )
+    if ( (i32_nextTimePeriod > 0) // something valid to set
+          && (i32_nextTimePeriod < rui16_nextTimePeriod)
+        )
     {
-      if ( (i32_nextTimePeriod > 0) // something valid to set
-            // rui16_nextTimePeriod not yet set or i32_nextTimePeriod smaller => set
-            && ((0 == rui16_nextTimePeriod) || (i32_nextTimePeriod < rui16_nextTimePeriod))
-          )
-      {
-        rui16_nextTimePeriod = i32_nextTimePeriod;
-      }
+      rui16_nextTimePeriod = i32_nextTimePeriod;
     }
 
     // if triggeredIncrement == true the registered values should be sent
@@ -219,7 +214,7 @@ MeasureProg_c::minMaxLimitsPassed( int32_t value ) const
 
 
 MeasureSubprog_c&
-MeasureProg_c::addSubprog( IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment )
+MeasureProg_c::addSubprog( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment )
 {
   // if subprog with this type exist, update only value
   Vec_MeasureSubprog::iterator pc_subprog = mvec_measureSubprog.end();
@@ -238,14 +233,14 @@ MeasureProg_c::addSubprog( IsoAgLib::ProcData::measurementCommand_t ren_type, in
 }
 
 bool
-MeasureProg_c::handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment, int32_t value )
+MeasureProg_c::handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment, int32_t value )
 {
   bool b_validTriggerMethod = false;
 
   switch (ren_type)
   {
   case IsoAgLib::ProcData::MeasurementCommandTimeProp: // time proportional
-    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodTimeInterval) )
+    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::TimeInterval) )
     {
       if (ai32_increment == sci32_stopValTimeInterval)
       {
@@ -263,7 +258,7 @@ MeasureProg_c::handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData
 
   case IsoAgLib::ProcData::MeasurementCommandDistProp: // distance proportional
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE) // if no distance available, NACK will be sent
-    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodDistInterval) )
+    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::DistInterval) )
     {
       if (ai32_increment == sci32_stopValDistanceInterval)
       {
@@ -272,7 +267,7 @@ MeasureProg_c::handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData
       else
       {
         MeasureSubprog_c& subprog = addSubprog(ren_type, ai32_increment);
-        subprog.start(int32_t(getTracMoveInstance(ac_processData.getMultitonInst()).distTheor()));
+        subprog.start(int32_t(getTracMoveInstance(ac_processData.getTcClientConnection().getIdentItem().getMultitonInst()).distTheor()));
       }
       ac_processData.sendValue( m_ecuType, value);
       b_validTriggerMethod = true;
@@ -281,7 +276,7 @@ MeasureProg_c::handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData
     break;
 
   case IsoAgLib::ProcData::MeasurementCommandOnChange: // change threshold proportional
-    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodOnChange) )
+    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::OnChange) )
     {
       if (ai32_increment == sci32_stopValOnChange)
       {
@@ -298,7 +293,7 @@ MeasureProg_c::handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData
     break;
 
   case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold: // change threshold proportional
-    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodThresholdLimit) )
+    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::ThresholdLimit) )
     {
       if (ai32_increment == sci32_stopValThresholdMaximum)
       {
@@ -317,7 +312,7 @@ MeasureProg_c::handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData
     break;
 
   case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold: // change threshold proportional
-    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::MethodThresholdLimit) )
+    if ( IsoAgLib::ProcData::isMethodSet(ac_processData.triggerMethod(), IsoAgLib::ProcData::ThresholdLimit) )
     {
       if (ai32_increment == sci32_stopValThresholdMinimum)
       {
@@ -342,13 +337,13 @@ MeasureProg_c::handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData
 
   // set the timer period for process_c to a low value (maybe the new programm triggers soon)
   if (b_validTriggerMethod)
-    getTcClientInstance( ac_processData.getMultitonInst() ).resetTimerPeriod();
+    ac_processData.m_tcCC->resetTimerPeriod();
 
   return b_validTriggerMethod;
 }
 
 void
-MeasureProg_c::stopMeasurement(IsoAgLib::ProcData::measurementCommand_t ren_type)
+MeasureProg_c::stopMeasurement(IsoAgLib::ProcData::MeasurementCommand_t ren_type)
 {
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end();)
   {

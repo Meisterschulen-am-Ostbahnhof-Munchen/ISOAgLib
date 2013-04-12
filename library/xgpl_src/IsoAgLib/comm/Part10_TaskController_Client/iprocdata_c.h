@@ -15,7 +15,7 @@
 
 #include "impl/procdata/procdata_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
 namespace __IsoAgLib {
@@ -29,19 +29,9 @@ class iProcData_c : private __IsoAgLib::ProcData_c
 public:
   iProcData_c() : ProcData_c() {}
   
-  void init(
-    iIdentItem_c& acrc_identItem,
-    uint16_t aui16_ddi,
-    uint16_t aui16_element,
-    bool ab_isSetpoint,
-    uint8_t aui8_triggerMethod,
-    iProcDataHandler_c *apc_procDataHandler = NULL )
+  void init( iTcClientConnection_c& tcCC, iDeviceObjectDpd_c& dpd, iDeviceObjectDet_c& det, iProcDataHandler_c *apc_procDataHandler = NULL )
   {
-    ProcData_c::init(
-	  acrc_identItem,
-      aui16_ddi, aui16_element,
-      ab_isSetpoint, aui8_triggerMethod,
-      apc_procDataHandler );
+    ProcData_c::init( tcCC, dpd, det, apc_procDataHandler );
   }
 
   void setProcDataHandler( iProcDataHandler_c *apc_procDataHandler )
@@ -70,9 +60,9 @@ public:
   { return ProcData_c::setpointVal(); }
 
   void startDataLogging(
-    ProcData::measurementCommand_t ren_type /* ProcData::TimeProp, ProcData::DistProp, ... */,
+    ProcData::MeasurementCommand_t ren_type /* ProcData::TimeProp, ProcData::DistProp, ... */,
     int32_t ai32_increment,
-	IsoAgLib::ProcData::remoteType_t a_ecuType )
+	IsoAgLib::ProcData::RemoteType_t a_ecuType )
   { ProcData_c::startDataLogging(ren_type, ai32_increment, a_ecuType ); }
 
   friend class __IsoAgLib::Setpoint_c;

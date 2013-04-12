@@ -24,11 +24,11 @@ class ProcData_c;
 class MeasureSubprog_c
 {
 public:
-  MeasureSubprog_c( IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment);
+  MeasureSubprog_c( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment);
   MeasureSubprog_c( const MeasureSubprog_c& acrc_src );
   ~MeasureSubprog_c() {}
 
-  IsoAgLib::ProcData::measurementCommand_t type() const { return men_type; }
+  IsoAgLib::ProcData::MeasurementCommand_t type() const { return men_type; }
 
   int32_t increment() const { return mi32_increment; }
   void setIncrement(int32_t ai32_val) { mi32_increment = ai32_val; }
@@ -42,7 +42,7 @@ private:
   int32_t mi32_lastVal;
   int32_t mi32_increment;
 
-  const IsoAgLib::ProcData::measurementCommand_t men_type;
+  const IsoAgLib::ProcData::MeasurementCommand_t men_type;
 
 private:
   /** not assignable: assign operator only declared, not defined */

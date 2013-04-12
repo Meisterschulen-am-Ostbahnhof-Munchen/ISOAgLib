@@ -30,7 +30,7 @@ class MeasureProg_c
 private:
   struct ThresholdInfo_s
   {
-    IsoAgLib::ProcData::measurementCommand_t en_type;
+    IsoAgLib::ProcData::MeasurementCommand_t en_type;
     int32_t i32_threshold;
   };
 
@@ -53,10 +53,10 @@ private:
   #endif
 
 public:
-  MeasureProg_c( IsoAgLib::ProcData::remoteType_t ecutype );
+  MeasureProg_c( IsoAgLib::ProcData::RemoteType_t ecutype );
   virtual ~MeasureProg_c() {}
 
-  bool handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment, int32_t value );
+  bool handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment, int32_t value );
   void stopAllMeasurements();
 
   void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, int32_t value );
@@ -64,17 +64,17 @@ public:
 
   void setVal(ProcData_c& ac_processData, int32_t ai32_val);
 
-  IsoAgLib::ProcData::remoteType_t isoNameType() const { return m_ecuType; }
+  IsoAgLib::ProcData::RemoteType_t isoNameType() const { return m_ecuType; }
 
 private:
-  MeasureSubprog_c& addSubprog(IsoAgLib::ProcData::measurementCommand_t ren_type, int32_t ai32_increment);
+  MeasureSubprog_c& addSubprog(IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment);
   bool minMaxLimitsPassed(int32_t value) const;
-  void stopMeasurement(IsoAgLib::ProcData::measurementCommand_t ren_type);
+  void stopMeasurement(IsoAgLib::ProcData::MeasurementCommand_t ren_type);
 
 private:
   List_ThresholdInfo mlist_thresholdInfo;
   Vec_MeasureSubprog mvec_measureSubprog;
-  IsoAgLib::ProcData::remoteType_t m_ecuType;
+  IsoAgLib::ProcData::RemoteType_t m_ecuType;
   
 private:
   /** not copyable : copy constructor/operators only declared, not defined */

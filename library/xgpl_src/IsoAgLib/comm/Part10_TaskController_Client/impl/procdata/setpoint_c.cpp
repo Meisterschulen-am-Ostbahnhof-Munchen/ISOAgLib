@@ -13,13 +13,14 @@
 #include "setpoint_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatahandler_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/itcclient_c.h>
 
 
 namespace __IsoAgLib {
 
 void
-Setpoint_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType )
+Setpoint_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::RemoteType_t a_ecuType )
 {
   isoaglib_assert(ProcessPkg_c::setValue == pkg.men_command);
   isoaglib_assert(pkg.getISONameForSA().isSpecified()); // already tested before in TcClient_c::processMsg

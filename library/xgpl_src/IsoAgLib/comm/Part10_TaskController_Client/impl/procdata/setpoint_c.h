@@ -30,7 +30,7 @@ public:
 
   int32_t setpointValue() const { return mi32_value; }
   
-  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::remoteType_t a_ecuType );
+  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::RemoteType_t a_ecuType );
 
 private:
   int32_t mi32_value;

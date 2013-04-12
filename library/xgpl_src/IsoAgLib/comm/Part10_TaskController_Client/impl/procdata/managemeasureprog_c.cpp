@@ -16,9 +16,9 @@
 namespace __IsoAgLib {
 
 ManageMeasureProg_c::ManageMeasureProg_c()
-  : mc_measureprogTC( IsoAgLib::ProcData::remoteTypeTaskControl )
+  : mc_measureprogTC( IsoAgLib::ProcData::RemoteTypeTaskControl )
 #ifdef USE_DATALOGGER
-  , mc_measureprogLogger( IsoAgLib::ProcData::remoteTypeLogger )
+  , mc_measureprogLogger( IsoAgLib::ProcData::RemoteTypeLogger )
 #endif
   , mi32_value( 0 )
 #ifndef NDEBUG
@@ -39,7 +39,7 @@ ManageMeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_next
 
 
 void
-ManageMeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, IsoAgLib::ProcData::remoteType_t a_ecuType )
+ManageMeasureProg_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, IsoAgLib::ProcData::RemoteType_t a_ecuType )
 {
   isoaglib_assert( arc_data.getMonitorItemForSA() != NULL ); // should have been filtered earlier !
   
@@ -64,13 +64,13 @@ ManageMeasureProg_c::setVal( ProcData_c& ac_processData, int32_t ai32_val )
 
 
 MeasureProg_c&
-ManageMeasureProg_c::getMeasureProg( IsoAgLib::ProcData::remoteType_t a_ecuType )
+ManageMeasureProg_c::getMeasureProg( IsoAgLib::ProcData::RemoteType_t a_ecuType )
 {
   switch (a_ecuType)
   {
-  case IsoAgLib::ProcData::remoteTypeTaskControl: return mc_measureprogTC;
+  case IsoAgLib::ProcData::RemoteTypeTaskControl: return mc_measureprogTC;
 #ifdef USE_DATALOGGER
-  case IsoAgLib::ProcData::remoteTypeLogger: return mc_measureprogLogger;
+  case IsoAgLib::ProcData::RemoteTypeLogger: return mc_measureprogLogger;
 #endif
   default:
     isoaglib_assert(!"TaskController-Client : invalid ECU type");
@@ -81,9 +81,9 @@ ManageMeasureProg_c::getMeasureProg( IsoAgLib::ProcData::remoteType_t a_ecuType 
 void
 ManageMeasureProg_c::startDataLogging(
   ProcData_c& ac_processData,
-  IsoAgLib::ProcData::measurementCommand_t ren_type /* IsoAgLib::ProcData::MeasurementCommandTimeProp, IsoAgLib::ProcData::DistProp, ... */,
+  IsoAgLib::ProcData::MeasurementCommand_t ren_type /* IsoAgLib::ProcData::MeasurementCommandTimeProp, IsoAgLib::ProcData::DistProp, ... */,
   int32_t ai32_increment,
-  IsoAgLib::ProcData::remoteType_t a_ecuType )
+  IsoAgLib::ProcData::RemoteType_t a_ecuType )
 {
   MeasureProg_c& progCache = getMeasureProg( a_ecuType );
 
@@ -96,7 +96,7 @@ ManageMeasureProg_c::startDataLogging(
 
 
 void
-ManageMeasureProg_c::stopRunningMeasurement( IsoAgLib::ProcData::remoteType_t a_ecuType )
+ManageMeasureProg_c::stopRunningMeasurement( IsoAgLib::ProcData::RemoteType_t a_ecuType )
 {
   if ((mc_measureprogTC.isoNameType() == a_ecuType))
     mc_measureprogTC.stopAllMeasurements();
