@@ -221,6 +221,8 @@ private:
   friend class iTracPTO_c;
   friend class iVtClientConnection_c;
   friend class iVtClient_c;
+  friend class iTcClientConnection_c;
+  friend class iTcClient_c;
 };
 
 } // IsoAgLib

@@ -308,7 +308,7 @@ TcClient_c::reactOnIsoItemModification( ControlFunctionStateHandler_c::iIsoItemA
   // But nowone does that in 2.5.3.........
   if( isoItem.itemState( IState_c::Local ) )
   {
-    switch( at_action )
+    switch( action )
     {
     case ControlFunctionStateHandler_c::AddToMonitorList:
       getIsoFilterManagerInstance4Comm().insertIsoFilter( IsoFilter_s (m_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (PROCESS_DATA_PGN << 8) ), &isoItem.isoName(), NULL, 8) );

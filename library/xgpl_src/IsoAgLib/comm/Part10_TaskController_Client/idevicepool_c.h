@@ -31,6 +31,7 @@ using namespace IsoAgLib::ProcData;
 
 namespace __IsoAgLib {
   class ProcData_c;
+  class TcClientConnection_c;
 }
 
 //static helper
