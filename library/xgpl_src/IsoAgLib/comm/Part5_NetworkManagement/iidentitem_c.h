@@ -24,6 +24,7 @@ namespace __IsoAgLib {
   class DevPropertyHandler_c;
   class ProprietaryMessageHandler_c;
   class ProprietaryMessageClient_c;
+  class TcClientConnection_c;
 }
 
 namespace IsoAgLib {
@@ -199,6 +200,7 @@ public:
 private:
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class __IsoAgLib::VtClient_c;
+  friend class __IsoAgLib::TcClientConnection_c;
   friend class iDevPropertyHandler_c;
   friend class iFsManager_c;
   friend class iIsoMonitor_c;
