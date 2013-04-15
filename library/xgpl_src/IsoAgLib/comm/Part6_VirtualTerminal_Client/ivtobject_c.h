@@ -485,12 +485,10 @@ public:
 
   void setClientID (uint8_t ui8_clientID);
 
-  /** return object type
-      !!! BE AWARE that this function is currently NOT overloaded by the standard vt-objects
-      !!! It is until now only intended to be used by own proprietary objects
-      @return  object type ( default 0xEF -> one below the proprietary object_type_range as long as this type is not used)
+  /** return object type as described in the standard.
+      please note that the upper byte may be used for proprietary objects.
    */
-  virtual uint16_t getObjectType() { return 0xEF; }
+  virtual uint16_t getObjectType() = 0;
 
 protected: // Attributes
   iVtObject_s* vtObject_a;
