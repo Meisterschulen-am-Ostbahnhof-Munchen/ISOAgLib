@@ -28,6 +28,7 @@ class iVtObjectInputBoolean_c : public __IsoAgLib::vtObjectInputBoolean_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_BOOLEAN; }
 
   //  Operation: init
   //! Parameter:
@@ -125,6 +126,8 @@ public:
   }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // ~X2C
 
 } // end of namespace IsoAgLib

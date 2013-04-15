@@ -29,6 +29,7 @@ class iVtObjectWorkingSet_c : public __IsoAgLib::vtObjectWorkingSet_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_WORKING_SET; }
 
   //  Operation: init
   //! Parameter:
@@ -109,6 +110,8 @@ public:
     return vtObjectWorkingSet_c::updateActiveMask(b_SendRequest);
   }
   */
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

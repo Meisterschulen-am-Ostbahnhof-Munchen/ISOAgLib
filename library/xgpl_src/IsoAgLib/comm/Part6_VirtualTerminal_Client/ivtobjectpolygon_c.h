@@ -30,6 +30,7 @@ class iVtObjectPolygon_c : public __IsoAgLib::vtObjectPolygon_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_POLYGON; }
 
   //  Operation: init
   //! Parameter:
@@ -116,6 +117,8 @@ public:
     return vtObjectPolygon_c::updatePolygonType(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end namepsace IsoAgLibb

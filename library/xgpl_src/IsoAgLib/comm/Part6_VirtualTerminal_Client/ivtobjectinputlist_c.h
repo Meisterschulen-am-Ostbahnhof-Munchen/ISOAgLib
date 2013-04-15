@@ -28,6 +28,7 @@ class iVtObjectInputList_c : public __IsoAgLib::vtObjectInputList_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_LIST; }
 
   //  Operation: init
   //! Parameter:
@@ -138,6 +139,8 @@ public:
   }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // ~X2C
 
 } // end of namespace IsoAgLib

@@ -28,6 +28,7 @@ class iVtObjectAlarmMask_c : public __IsoAgLib::vtObjectAlarmMask_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_ALARM_MASK; }
 
   //  Operation: init
   //! Parameter:
@@ -116,6 +117,8 @@ public:
     return vtObjectAlarmMask_c::updateAcousticSignal(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

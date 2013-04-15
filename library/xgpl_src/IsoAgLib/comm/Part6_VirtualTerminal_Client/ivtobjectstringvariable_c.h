@@ -27,6 +27,8 @@ namespace IsoAgLib {
 class iVtObjectStringVariable_c : public __IsoAgLib::vtObjectStringVariable_c
 {
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_STRING_VARIABLE; }
+
   iVtObjectStringVariable_c();
   //  Operation: init
   //! @param vtObjectStringVariableSROM:
@@ -77,6 +79,8 @@ public:
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectStringVariable_c::updateObjectType(); }
   */
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

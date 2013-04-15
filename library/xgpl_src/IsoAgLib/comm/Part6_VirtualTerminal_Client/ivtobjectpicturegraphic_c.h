@@ -24,6 +24,7 @@ class iVtObjectPictureGraphic_c : public __IsoAgLib::vtObjectPictureGraphic_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_PICTURE_GRAPHIC; }
 
   //  Operation: init
   //! Parameter:
@@ -101,6 +102,8 @@ public:
   }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

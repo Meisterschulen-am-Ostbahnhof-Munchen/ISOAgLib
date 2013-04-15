@@ -29,7 +29,10 @@ class iVtObjectAuxiliaryFunction_c : public __IsoAgLib::vtObjectAuxiliaryFunctio
 {
 
 public:
-  ~iVtObjectAuxiliaryFunction_c(){};
+  ~iVtObjectAuxiliaryFunction_c(){}
+
+  static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_FUNCTION_1; }
+
   //  Operation: init
   //! Parameter:
   //! @param vtObjectAuxiliaryFunctionSROM:
@@ -62,6 +65,8 @@ public:
   uint8_t updateObjectType() const { return vtObjectAuxiliaryFunction_c::updateObjectType(); }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

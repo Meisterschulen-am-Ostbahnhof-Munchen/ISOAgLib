@@ -32,6 +32,8 @@ public:
   iVtObjectContainer_c();
   ~iVtObjectContainer_c();
 
+  static uint16_t objectType() { return VT_OBJECT_TYPE_CONTAINER; }
+
   //  Operation: init
   //! Parameter:
   //! @param vtObjectContainer_sROM:
@@ -99,6 +101,8 @@ public:
   }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

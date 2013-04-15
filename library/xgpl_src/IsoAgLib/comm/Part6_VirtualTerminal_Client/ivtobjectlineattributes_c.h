@@ -27,6 +27,7 @@ class iVtObjectLineAttributes_c : public __IsoAgLib::vtObjectLineAttributes_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_LINE_ATTRIBUTES; }
 
   /// Operation: init
   ///
@@ -89,6 +90,8 @@ public:
     return vtObjectLineAttributes_c::updateLineArt(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // ~X2C
 
 } // end of namespace IsoAgLib

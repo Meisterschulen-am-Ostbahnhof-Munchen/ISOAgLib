@@ -28,6 +28,7 @@ class iVtObjectMeter_c : public __IsoAgLib::vtObjectMeter_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_METER; }
 
   //  Operation: init
   //! Parameter:
@@ -192,6 +193,8 @@ public:
   }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // ~X2C
 
 } // end namespace IsoAgLib

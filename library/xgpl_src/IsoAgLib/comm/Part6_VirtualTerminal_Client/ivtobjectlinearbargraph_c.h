@@ -28,6 +28,7 @@ class iVtObjectLinearBarGraph_c : public __IsoAgLib::vtObjectLinearBarGraph_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_LINEAR_BAR_GRAPH; }
 
   //  Operation: init
   //! Parameter:
@@ -200,6 +201,8 @@ public:
   }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

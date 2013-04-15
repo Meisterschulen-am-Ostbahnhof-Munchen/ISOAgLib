@@ -28,6 +28,7 @@ class iVtObjectButton_c : public __IsoAgLib::vtObjectButton_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_BUTTON; }
 
   /// Operation: init
   /// 
@@ -125,6 +126,8 @@ public:
     return vtObjectButton_c::updateOptions(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

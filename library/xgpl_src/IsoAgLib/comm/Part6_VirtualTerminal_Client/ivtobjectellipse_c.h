@@ -28,6 +28,7 @@ class iVtObjectEllipse_c : public __IsoAgLib::vtObjectEllipse_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_ELLIPSE; }
 
   //  Operation: init
   //! Parameter:
@@ -138,6 +139,8 @@ public:
     return vtObjectEllipse_c::updateFillAttributes(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // ~X2C
 
 } // end namespace IsoAgLib

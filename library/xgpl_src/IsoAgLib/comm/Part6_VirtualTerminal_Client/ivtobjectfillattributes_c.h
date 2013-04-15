@@ -29,6 +29,7 @@ class iVtObjectFillAttributes_c : public __IsoAgLib::vtObjectFillAttributes_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_FILL_ATTRIBUTES; }
 
   /// Operation: init
   ///
@@ -92,6 +93,8 @@ public:
     return vtObjectFillAttributes_c::updateFillPattern(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end namespace IsoAgLib

@@ -23,7 +23,7 @@ namespace IsoAgLib {
 class iVtObjectAuxiliaryFunction2_c : public __IsoAgLib::vtObjectAuxiliaryFunction2_c
 {
 public:
-  static uint16_t objectType() { return 31; }
+  static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2; }
 
   ~iVtObjectAuxiliaryFunction2_c(){};
 

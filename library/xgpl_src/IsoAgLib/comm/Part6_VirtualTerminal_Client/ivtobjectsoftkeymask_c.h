@@ -28,6 +28,8 @@ class iVtObjectSoftKeyMask_c : public __IsoAgLib::vtObjectSoftKeyMask_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_SOFT_KEY_MASK; }
+
   virtual ~iVtObjectSoftKeyMask_c(){}
   //  Operation: init
   //! Parameter:
@@ -60,6 +62,8 @@ public:
     return vtObjectSoftKeyMask_c::updateBackgroundColour(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // ~X2C
 
 } // end of namespace IsoAgLib

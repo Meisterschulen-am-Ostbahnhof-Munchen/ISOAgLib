@@ -28,6 +28,7 @@ class iVtObjectLine_c : public __IsoAgLib::vtObjectLine_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_LINE; }
 
   //  Operation: init
   //! Parameter:
@@ -108,6 +109,8 @@ public:
     return vtObjectLine_c::updateLineDirection(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

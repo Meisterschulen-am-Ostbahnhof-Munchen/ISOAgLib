@@ -28,6 +28,8 @@ public:
   iVtObjectOutputString_c();
   ~iVtObjectOutputString_c();
 
+  static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
+
   void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
     vtObjectOutputString_c::init (vtObjectOutputStringSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
@@ -121,6 +123,8 @@ public:
     return vtObjectOutputString_c::updateJustification(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // IsoAgLib

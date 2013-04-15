@@ -23,7 +23,7 @@ namespace IsoAgLib {
 class iVtObjectAuxiliaryInput2_c : public __IsoAgLib::vtObjectAuxiliaryInput2_c
 {
 public:
-  static uint16_t objectType() { return 32; }
+  static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_INPUT_2; }
 
   typedef  __IsoAgLib::vtObjectAuxiliaryInput2_c::StateForLearnMode_en StateForLearnMode_en;
 

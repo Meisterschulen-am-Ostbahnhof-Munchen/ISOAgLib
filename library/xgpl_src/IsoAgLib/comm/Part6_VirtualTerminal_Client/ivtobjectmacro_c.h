@@ -29,6 +29,7 @@ class iVtObjectMacro_c : public __IsoAgLib::vtObjectMacro_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_MACRO; }
 
   //  Operation: init
   //! Parameter:
@@ -46,6 +47,8 @@ public:
   uint8_t updateObjectType() const { return vtObjectMacro_c::updateObjectType(); }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // ~X2C
 
 } // end namespace IsoAgLib

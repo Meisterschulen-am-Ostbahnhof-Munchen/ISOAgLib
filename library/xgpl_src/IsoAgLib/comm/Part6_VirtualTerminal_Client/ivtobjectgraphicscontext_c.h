@@ -20,6 +20,8 @@ namespace IsoAgLib {
 class iVtObjectGraphicsContext_c : public __IsoAgLib::vtObjectGraphicsContext_c
 {
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_GRAPHICS_CONTEXT; }
+
   /// Operation: init
   ///
   /// @param vtObjectGraphicsContextSROM
@@ -367,6 +369,8 @@ public:
     return vtObjectGraphicsContext_c::updateTransparencyColour(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // class iVtObjectGraphicsContext_c
 
 } // namespace IsoAgLib

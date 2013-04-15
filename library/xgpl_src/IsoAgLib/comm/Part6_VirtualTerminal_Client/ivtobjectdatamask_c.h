@@ -28,6 +28,7 @@ class iVtObjectDataMask_c : public __IsoAgLib::vtObjectDataMask_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
 
   /// Operation: init
   ///
@@ -89,6 +90,8 @@ public:
     return vtObjectDataMask_c::updateSoftKeyMask(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

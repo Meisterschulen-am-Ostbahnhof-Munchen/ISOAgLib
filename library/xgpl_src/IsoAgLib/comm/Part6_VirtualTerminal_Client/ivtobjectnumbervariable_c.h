@@ -29,6 +29,7 @@ class iVtObjectNumberVariable_c : public __IsoAgLib::vtObjectNumberVariable_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_NUMBER_VARIABLE; }
 
   //  Operation: init
   //! Parameter:
@@ -59,6 +60,8 @@ public:
   }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // ~X2C
 
 } // end of namespace IsoAgLib

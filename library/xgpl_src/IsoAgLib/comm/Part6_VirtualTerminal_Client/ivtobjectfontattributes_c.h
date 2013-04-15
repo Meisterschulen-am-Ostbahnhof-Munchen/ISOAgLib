@@ -30,6 +30,8 @@ class iVtObjectFontAttributes_c : public __IsoAgLib::vtObjectFontAttributes_c
 public:
   iVtObjectFontAttributes_c();
 
+  static uint16_t objectType() { return VT_OBJECT_TYPE_FONT_ATTRIBUTES; }
+
   virtual ~iVtObjectFontAttributes_c();
   /// Operation: init
   ///
@@ -108,6 +110,8 @@ public:
     return vtObjectFontAttributes_c::updateFontStyle(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

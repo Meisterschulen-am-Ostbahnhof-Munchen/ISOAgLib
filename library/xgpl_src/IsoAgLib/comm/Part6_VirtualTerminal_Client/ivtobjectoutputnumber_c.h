@@ -31,6 +31,7 @@ class iVtObjectOutputNumber_c : public __IsoAgLib::vtObjectOutputNumber_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_NUMBER; }
 
   //  Operation: init
   //! Parameter:
@@ -205,6 +206,8 @@ public:
   }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // ~X2C
 
 } // end of namespace IsoAgLib

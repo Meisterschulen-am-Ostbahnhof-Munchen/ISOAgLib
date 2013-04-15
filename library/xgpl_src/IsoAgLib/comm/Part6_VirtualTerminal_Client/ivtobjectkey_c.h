@@ -28,6 +28,7 @@ class iVtObjectKey_c : public __IsoAgLib::vtObjectKey_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_KEY; }
 
   //  Operation: init
   //! Parameter:
@@ -89,6 +90,8 @@ public:
     return vtObjectKey_c::updateKeyCode(b_SendRequest);
   }
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

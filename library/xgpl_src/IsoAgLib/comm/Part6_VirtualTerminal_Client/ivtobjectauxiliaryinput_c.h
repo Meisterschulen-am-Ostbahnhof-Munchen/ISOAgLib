@@ -29,6 +29,7 @@ class iVtObjectAuxiliaryInput_c : public __IsoAgLib::vtObjectAuxiliaryInput_c
 {
 
 public:
+  static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_INPUT_1; }
 
   //  Operation: init
   //! Parameter:
@@ -62,6 +63,8 @@ public:
   uint8_t updateObjectType() const { return vtObjectAuxiliaryInput_c::updateObjectType(); }
   */
 #endif
+
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib
