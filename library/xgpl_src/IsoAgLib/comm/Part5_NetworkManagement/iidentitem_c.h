@@ -150,6 +150,14 @@ public:
     return IdentItem_c::setSwIdentification( swId );
   }
 
+  bool setProductIdentification(
+      const char *code,
+      const char *brand,
+      const char *model )
+  {
+    return IdentItem_c::setProductIdentification( code, brand, model );
+  }
+
   //! Setter for the different certification message fields
   //! Parameter:
   //! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061
