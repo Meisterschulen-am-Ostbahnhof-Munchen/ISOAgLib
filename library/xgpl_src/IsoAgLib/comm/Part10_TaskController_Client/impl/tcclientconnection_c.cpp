@@ -408,8 +408,10 @@ TcClientConnection_c::processMsgTc( const ProcessPkg_c& data )
   case procCmdPar_RequestOPTransferRespMsg:
     if (data.getUint8Data(1) == 0) // on success, send the object pool
     {
+      if( m_isoItemTC == NULL ) // @TODO AKA how to handle NULL response ? --> MWD: Better check if we actually sent the request message!!
+        break;
+
       m_sendSuccess = SendStream_c::SendSuccess;
-      assert( m_isoItemTC != NULL ); // @TODO AKA how to handle NULL response ?
       getMultiSendInstance4Comm().sendIsoTarget( m_identItem->isoName(), m_isoItemTC->isoName(), &m_devicePoolToUpload[0], 
                                                  (uint32_t)m_devicePoolToUpload.size(), PROCESS_DATA_PGN, &m_multiSendEventHandler);
 
