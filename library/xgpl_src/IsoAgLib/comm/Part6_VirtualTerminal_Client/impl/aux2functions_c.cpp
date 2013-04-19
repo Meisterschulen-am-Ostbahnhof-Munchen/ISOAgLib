@@ -317,9 +317,7 @@ Aux2Functions_c::storeAux2Assignment(
       }
     }
  
-    if( ! assignment.empty() ) {
-      m_vtConnection.getVtClientDataStorage().storePreferredAux2Assignment( assignment );
-    }
+    m_vtConnection.getVtClientDataStorage().storePreferredAux2Assignment( assignment );
   }
 
 #else
