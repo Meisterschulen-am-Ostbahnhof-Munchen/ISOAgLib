@@ -29,7 +29,7 @@ class iProcData_c : private __IsoAgLib::ProcData_c
 public:
   iProcData_c() : ProcData_c() {}
   
-  void init( iTcClientConnection_c& tcCC, iDeviceObjectDpd_c& dpd, iDeviceObjectDet_c& det, iProcDataHandler_c *apc_procDataHandler = NULL )
+  void init( iTcClientConnection_c& tcCC, const iDeviceObjectDpd_c& dpd, const iDeviceObjectDet_c& det, iProcDataHandler_c *apc_procDataHandler = NULL )
   {
     ProcData_c::init( tcCC, dpd, det, apc_procDataHandler );
   }

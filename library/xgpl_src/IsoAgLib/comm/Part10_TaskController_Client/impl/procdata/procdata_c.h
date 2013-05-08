@@ -33,7 +33,7 @@ class ProcData_c
 {
 public:
   ProcData_c();
-  void init( TcClientConnection_c& tcCC, IsoAgLib::iDeviceObjectDpd_c& dpd, IsoAgLib::iDeviceObjectDet_c& det, IsoAgLib::iProcDataHandler_c *apc_procDataHandler = NULL );
+  void init( TcClientConnection_c& tcCC, const IsoAgLib::iDeviceObjectDpd_c& dpd, const IsoAgLib::iDeviceObjectDet_c& det, IsoAgLib::iProcDataHandler_c *apc_procDataHandler = NULL );
 
   /** @todo call close() from generated proc2iso code (closeAll())!!! */
   void close();
@@ -75,8 +75,8 @@ private:
 
 private:
   TcClientConnection_c* m_tcCC; // back ref.
-  IsoAgLib::iDeviceObjectDpd_c* m_dpd;
-  IsoAgLib::iDeviceObjectDet_c* m_det;
+  const IsoAgLib::iDeviceObjectDpd_c* m_dpd;
+  const IsoAgLib::iDeviceObjectDet_c* m_det;
   IsoAgLib::iProcDataHandler_c* mpc_procDataHandler;
 
   ManageMeasureProg_c mc_measureprog;

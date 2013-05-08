@@ -34,7 +34,7 @@ ProcData_c::ProcData_c( )
 
 
 void
-ProcData_c::init( TcClientConnection_c& tcCC, IsoAgLib::iDeviceObjectDpd_c& dpd, IsoAgLib::iDeviceObjectDet_c& det, IsoAgLib::iProcDataHandler_c *procDataHandler )
+ProcData_c::init( TcClientConnection_c& tcCC, const IsoAgLib::iDeviceObjectDpd_c& dpd, const IsoAgLib::iDeviceObjectDet_c& det, IsoAgLib::iProcDataHandler_c *procDataHandler )
 {
   m_tcCC = &tcCC;
   m_dpd = &dpd;
