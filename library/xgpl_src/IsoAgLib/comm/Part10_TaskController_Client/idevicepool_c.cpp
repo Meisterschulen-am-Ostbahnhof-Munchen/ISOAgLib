@@ -203,24 +203,39 @@ iDevicePool_c::getDirtyBytestream( std::vector<uint8_t>& byteStream )
 iDeviceObject_c::iDeviceObject_c( const DeviceObjectType_t type, const char* desig )
   : m_objectType(type)
   , m_objectId((type == ObjectTypeDVC)? 0 : m_objIdCounter)
+  , mcstr_designator(NULL)
 {
-  isoaglib_assert( desig != NULL );
-
-  m_designator = STL_NAMESPACE::string(desig);
-
   isoaglib_assert( m_objectId != 0xFFFF );
+
+  setDesignator(desig);
 
   if ( m_objectType != ObjectTypeDVC )
     m_objIdCounter++;
 }
 
+iDeviceObject_c::~iDeviceObject_c()
+{
+  if (mcstr_designator)
+    CNAMESPACE::free (mcstr_designator);
+}
 
 void
 iDeviceObject_c::setDesignator( const char* desig )
 {
   isoaglib_assert( desig != NULL );
 
-  m_designator = STL_NAMESPACE::string(desig);
+  if (mcstr_designator)
+    CNAMESPACE::free (mcstr_designator);
+
+  int newLen = __IsoAgLib::getCStringLength (desig);
+  isoaglib_assert(newLen <= 32);
+  mcstr_designator = (char *) CNAMESPACE::malloc (sizeof (char) * (newLen + 1));
+
+  char *destPtr = mcstr_designator;
+  __IsoAgLib::addCStringWithoutTermination (&destPtr, desig);
+  *destPtr++ = 0x00;
+
+  isoaglib_assert ((newLen + 1) == (destPtr - mcstr_designator));
 }
 
 
@@ -239,10 +254,31 @@ iDeviceObject_c::formatBytestream( std::vector<uint8_t>& byteStream )
 /////////////////////////////////////////////////////////////////////
 iDeviceObjectDvc_c::iDeviceObjectDvc_c( const char* version, const char* desig )
   : iDeviceObject_c( ObjectTypeDVC, desig )
-  , m_version(version)
+  , mcstr_version(NULL)
+  , mcstr_serialNumber(NULL)
 {
   std::memset( (void*)&m_localization, 0, sizeof(m_localization) );
   m_localization.reserved = 0xff; // Reserved field
+
+  // copy version
+  int newLen = __IsoAgLib::getCStringLength (version);
+  isoaglib_assert(newLen <= 32);
+  mcstr_version = (char *) CNAMESPACE::malloc (sizeof (char) * (newLen + 1));
+
+  char *destPtr = mcstr_version;
+  __IsoAgLib::addCStringWithoutTermination (&destPtr, version);
+  *destPtr++ = 0x00;
+
+  isoaglib_assert ((newLen + 1) == (destPtr - mcstr_version));
+}
+
+iDeviceObjectDvc_c::~iDeviceObjectDvc_c()
+{
+  if (mcstr_version)
+    CNAMESPACE::free (mcstr_version);
+
+  if (mcstr_serialNumber)
+    CNAMESPACE::free (mcstr_serialNumber);
 }
 
 void
@@ -320,10 +356,10 @@ iDeviceObjectDvc_c::formatBytestream( std::vector<uint8_t>& byteStream )
   if ( ! iDeviceObject_c::formatBytestream( byteStream ) )
     return false;
 
-  format( byteStream, m_designator.c_str() );
-  format( byteStream, m_version.c_str() );
+  format( byteStream, mcstr_designator );
+  format( byteStream, mcstr_version );
   format( byteStream, m_wsmName.outputString(), 8 );
-  format( byteStream, m_serialNumber.c_str() );
+  format( byteStream, mcstr_serialNumber );
 
   format( byteStream, (uint8_t*)&m_structLabel, 7 );
   format( byteStream, (uint8_t*)&m_localization, 7 );
@@ -350,7 +386,7 @@ iDeviceObjectDet_c::formatBytestream( std::vector<uint8_t>& byteStream )
     return false;
 
   byteStream.push_back( m_type );
-  format( byteStream, m_designator.c_str() );
+  format( byteStream, mcstr_designator );
   format( byteStream, m_elementNumber );
   format( byteStream, m_parentId );
   format( byteStream, (uint16_t)m_childList.size() );
@@ -400,7 +436,7 @@ iDeviceObjectDpd_c::formatBytestream( std::vector<uint8_t>& byteStream )
   format( byteStream, m_ddi );
   format( byteStream, m_properties );
   format( byteStream, m_method );
-  format( byteStream, m_designator.c_str() );
+  format( byteStream, mcstr_designator );
   format( byteStream, m_dvpObjectId );
 
   return true;
@@ -426,7 +462,7 @@ iDeviceObjectDpt_c::formatBytestream( std::vector<uint8_t>& byteStream )
 
   format( byteStream, m_ddi );
   format( byteStream, m_value );
-  format( byteStream, m_designator.c_str() );
+  format( byteStream, mcstr_designator );
   format( byteStream, m_dvpObjectId );
 
   return true;
@@ -454,7 +490,7 @@ iDeviceObjectDvp_c::formatBytestream( std::vector<uint8_t>& byteStream )
   format( byteStream, m_offset );
   format( byteStream, m_scale );
   format( byteStream, m_decimals );
-  format( byteStream, m_designator.c_str() );
+  format( byteStream, mcstr_designator );
 
   return true;
 }

@@ -25,7 +25,6 @@
 
 #include <map>
 #include <vector>
-#include <string>
 
 using namespace IsoAgLib::ProcData;
 
@@ -70,11 +69,11 @@ class iDeviceObject_c
 {
 public:
   iDeviceObject_c( const DeviceObjectType_t type, const char* desig );
-  virtual ~iDeviceObject_c() {}
+  virtual ~iDeviceObject_c();
 
   uint16_t getObjectId() const { return m_objectId; }
   DeviceObjectType_t getObjectType() const { return m_objectType; }
-  const char* getDesignator() const { return m_designator.c_str(); }
+  const char* getDesignator() const { return mcstr_designator; }
 
   virtual bool formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream );
   virtual void setDesignator( const char* );
@@ -82,7 +81,7 @@ public:
 protected:
   const DeviceObjectType_t m_objectType;
   const uint16_t m_objectId;
-  STL_NAMESPACE::string m_designator;
+  char *mcstr_designator;
 
   static uint16_t m_objIdCounter;
 };
@@ -92,14 +91,14 @@ class iDeviceObjectDvc_c : public iDeviceObject_c
 {
 public:
   iDeviceObjectDvc_c( const char* version, const char* desig );
-  virtual ~iDeviceObjectDvc_c() {}
+  virtual ~iDeviceObjectDvc_c();
 
   virtual bool formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream );
 
   const iIsoName_c& getWsmName() const { return m_wsmName; }
   const Localization_s& getLocalization() const { return m_localization; }
   const StructureLabel_s& getStructureLabel() const { return m_structLabel; }
-  const char* getSerialNumber() const { return m_serialNumber.c_str(); }
+  const char* getSerialNumber() const { return mcstr_serialNumber; }
 
   void setLocalization( const localSettings_s& );
   void setLocalization( const Localization_s& );
@@ -113,8 +112,8 @@ private:
   void init( const iIdentItem_c& ident ) { m_wsmName = ident.isoName(); }
 
 protected:
-  const STL_NAMESPACE::string m_version;
-  const STL_NAMESPACE::string m_serialNumber;
+  char *mcstr_version;
+  char *mcstr_serialNumber;
   StructureLabel_s m_structLabel;
   iIsoName_c m_wsmName;
   Localization_s m_localization;
