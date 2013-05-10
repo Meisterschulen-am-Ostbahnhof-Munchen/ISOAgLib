@@ -86,7 +86,7 @@ void
 iDevicePool_c::setLocalization( const localSettings_s& settings )
 {
   getDvcObject()->setLocalization( settings );
-  // @todo: Aufruf von Funktion im TcClient_c (partieller Pool-Upload wird getriggert)
+  // @todo: call TcClient_c function (partial Pool-Upload will be triggered)
 }
 
 
@@ -155,11 +155,7 @@ iDevicePool_c::getBytestream()
   for ( it = m_devicePool.begin(); it != m_devicePool.end(); it++ )
   {
     devObject = it->second;
-    if ( ! devObject->formatBytestream( m_bytestream ) )
-    {
-      m_bytestream.clear();
-      break;
-    }
+    devObject->formatBytestream( m_bytestream );
   }
 
   return m_bytestream;
@@ -239,13 +235,11 @@ iDeviceObject_c::setDesignator( const char* desig )
 }
 
 
-bool
-iDeviceObject_c::formatBytestream( std::vector<uint8_t>& byteStream )
+void
+iDeviceObject_c::formatBytestream( std::vector<uint8_t>& byteStream ) const
 {
   format( byteStream, (const uint8_t*)deviceLabels[m_objectType], 3 );
   format( byteStream, m_objectId );
-
-  return true;
 }
 
 
@@ -270,6 +264,11 @@ iDeviceObjectDvc_c::iDeviceObjectDvc_c( const char* version, const char* desig )
   *destPtr++ = 0x00;
 
   isoaglib_assert ((newLen + 1) == (destPtr - mcstr_version));
+
+  // serial number -> empty ("") for now
+  mcstr_serialNumber = (char *) CNAMESPACE::malloc (sizeof (char) * 1);
+  destPtr = mcstr_serialNumber;
+  *destPtr = 0x00;
 }
 
 iDeviceObjectDvc_c::~iDeviceObjectDvc_c()
@@ -350,11 +349,10 @@ iDeviceObjectDvc_c::setStructureLabel( const char* label )
 }
 
 
-bool
-iDeviceObjectDvc_c::formatBytestream( std::vector<uint8_t>& byteStream )
+void
+iDeviceObjectDvc_c::formatBytestream( std::vector<uint8_t>& byteStream ) const
 {
-  if ( ! iDeviceObject_c::formatBytestream( byteStream ) )
-    return false;
+  iDeviceObject_c::formatBytestream( byteStream );
 
   format( byteStream, mcstr_designator );
   format( byteStream, mcstr_version );
@@ -363,8 +361,6 @@ iDeviceObjectDvc_c::formatBytestream( std::vector<uint8_t>& byteStream )
 
   format( byteStream, (uint8_t*)&m_structLabel, 7 );
   format( byteStream, (uint8_t*)&m_localization, 7 );
-
-  return true;
 }
 
 
@@ -379,11 +375,10 @@ iDeviceObjectDet_c::iDeviceObjectDet_c( const iDeviceObject_c& parentObj, uint16
 {}
 
 
-bool
-iDeviceObjectDet_c::formatBytestream( std::vector<uint8_t>& byteStream )
+void
+iDeviceObjectDet_c::formatBytestream( std::vector<uint8_t>& byteStream ) const
 {
-  if ( ! iDeviceObject_c::formatBytestream( byteStream ) )
-    return false;
+  iDeviceObject_c::formatBytestream( byteStream );
 
   byteStream.push_back( m_type );
   format( byteStream, mcstr_designator );
@@ -391,11 +386,9 @@ iDeviceObjectDet_c::formatBytestream( std::vector<uint8_t>& byteStream )
   format( byteStream, m_parentId );
   format( byteStream, (uint16_t)m_childList.size() );
 
-  std::vector<uint16_t>::iterator it;
+  std::vector<uint16_t>::const_iterator it;
   for ( it = m_childList.begin(); it != m_childList.end(); it++ )
     format( byteStream, *it );
-
-  return true;
 }
 
 bool
@@ -427,19 +420,16 @@ iDeviceObjectDpd_c::iDeviceObjectDpd_c( uint16_t ddi, const Properties_t& bitmas
 }
 
 
-bool
-iDeviceObjectDpd_c::formatBytestream( std::vector<uint8_t>& byteStream )
+void
+iDeviceObjectDpd_c::formatBytestream( std::vector<uint8_t>& byteStream ) const
 {
-  if ( ! iDeviceObject_c::formatBytestream( byteStream ) )
-    return false;
+  iDeviceObject_c::formatBytestream( byteStream );
 
   format( byteStream, m_ddi );
   format( byteStream, m_properties );
   format( byteStream, m_method );
   format( byteStream, mcstr_designator );
   format( byteStream, m_dvpObjectId );
-
-  return true;
 }
 
 
@@ -454,18 +444,15 @@ iDeviceObjectDpt_c::iDeviceObjectDpt_c( uint16_t ddi, int32_t value, const char*
 {}
 
 
-bool
-iDeviceObjectDpt_c::formatBytestream( std::vector<uint8_t>& byteStream )
+void
+iDeviceObjectDpt_c::formatBytestream( std::vector<uint8_t>& byteStream ) const
 {
-  if ( ! iDeviceObject_c::formatBytestream( byteStream ) )
-    return false;
+  iDeviceObject_c::formatBytestream( byteStream );
 
   format( byteStream, m_ddi );
   format( byteStream, m_value );
   format( byteStream, mcstr_designator );
   format( byteStream, m_dvpObjectId );
-
-  return true;
 }
 
 
@@ -481,18 +468,15 @@ iDeviceObjectDvp_c::iDeviceObjectDvp_c( float scale, int32_t offset, uint8_t dec
 {}
 
 
-bool
-iDeviceObjectDvp_c::formatBytestream( std::vector<uint8_t>& byteStream )
+void
+iDeviceObjectDvp_c::formatBytestream( std::vector<uint8_t>& byteStream ) const
 {
-  if ( ! iDeviceObject_c::formatBytestream( byteStream ) )
-    return false;
+  iDeviceObject_c::formatBytestream( byteStream );
 
   format( byteStream, m_offset );
   format( byteStream, m_scale );
   format( byteStream, m_decimals );
   format( byteStream, mcstr_designator );
-
-  return true;
 }
 
 } // IsoAgLib

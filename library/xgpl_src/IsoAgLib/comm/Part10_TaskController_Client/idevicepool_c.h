@@ -75,7 +75,7 @@ public:
   DeviceObjectType_t getObjectType() const { return m_objectType; }
   const char* getDesignator() const { return mcstr_designator; }
 
-  virtual bool formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream );
+  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
   virtual void setDesignator( const char* );
 
 protected:
@@ -93,18 +93,18 @@ public:
   iDeviceObjectDvc_c( const char* version, const char* desig );
   virtual ~iDeviceObjectDvc_c();
 
-  virtual bool formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream );
+  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
 
   const iIsoName_c& getWsmName() const { return m_wsmName; }
   const Localization_s& getLocalization() const { return m_localization; }
   const StructureLabel_s& getStructureLabel() const { return m_structLabel; }
+  const char* getVersion() const { return mcstr_version; }
   const char* getSerialNumber() const { return mcstr_serialNumber; }
 
   void setLocalization( const localSettings_s& );
   void setLocalization( const Localization_s& );
   void setStructureLabel( const uint8_t* );
   void setStructureLabel( const char* );
-  void setWsmName( const iIsoName_c& name );
 
 private:
   friend class iDevicePool_c;
@@ -125,7 +125,7 @@ public:
   iDeviceObjectDet_c( const iDeviceObject_c& , uint16_t element, uint8_t type, const char* desig );
   virtual ~iDeviceObjectDet_c() {}
 
-  virtual bool formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream );
+  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
 
   size_t numberOfChildren() const { return m_childList.size(); }
   bool addChild( const iDeviceObject_c& );
@@ -149,7 +149,7 @@ public:
   iDeviceObjectDpd_c( uint16_t ddi, const Properties_t&, const Methods_t&, const char* desig, const iDeviceObjectDvp_c* );
   virtual ~iDeviceObjectDpd_c() {}
 
-  virtual bool formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream );
+  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
 
 protected:
   uint16_t ddi() const {
@@ -175,9 +175,9 @@ public:
   iDeviceObjectDpt_c( uint16_t ddi, int32_t value, const char* desig, const iDeviceObjectDvp_c* );
   virtual ~iDeviceObjectDpt_c() {}
 
-  virtual bool formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream );
+  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
 
-	int32_t getValue() const { return m_value; }
+  int32_t getValue() const { return m_value; }
 
 protected:
   const uint16_t m_ddi;
@@ -192,11 +192,11 @@ public:
   iDeviceObjectDvp_c( float scale, int32_t offset, uint8_t decimals, const char* desig );
   virtual ~iDeviceObjectDvp_c() {}
 
-  virtual bool formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream );
+  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
 
-	void setOffset( int32_t offset ) { if ( checkDirty( m_offset, offset ) ) m_offset = offset; }
-	void setDecimals( uint8_t decimals ) { if ( checkDirty( m_decimals, decimals ) ) m_decimals = decimals; }
-	void setScale( float scale ) { if ( checkDirty( m_scale, scale ) ) m_scale = scale; }
+  void setOffset( int32_t offset ) { if ( checkDirty( m_offset, offset ) ) m_offset = offset; }
+  void setDecimals( uint8_t decimals ) { if ( checkDirty( m_decimals, decimals ) ) m_decimals = decimals; }
+  void setScale( float scale ) { if ( checkDirty( m_scale, scale ) ) m_scale = scale; }
 
   void setUnitDesignator( const char* desig ) { setDesignator( desig ); }
 
@@ -242,13 +242,12 @@ public:
 
   void updateLocale();
 
-	//bool isDirty() const { return m_isDirty; }
-	//void setDirty() { m_isDirty = true; }
+  //bool isDirty() const { return m_isDirty; }
+  //void setDirty() { m_isDirty = true; }
 
   void setUploaded();
 
 protected:
-  bool add( iDeviceObject_c* devObj );
   iDeviceObject_c* getObject( const uint16_t objId, const DeviceObjectType_t ) const;
 
 private:
