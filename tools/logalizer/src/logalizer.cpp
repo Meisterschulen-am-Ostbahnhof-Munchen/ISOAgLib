@@ -226,10 +226,8 @@ exit_with_usage(const char* progname)
 
 
 std::string
-multiPacket_dump( PtrDataFrame_t at_ptrFrame )
+multiPacket_dump( std::ostringstream& out, PtrDataFrame_t at_ptrFrame )
 {
-  std::ostringstream out;
-
   size_t local_multipacketWrap = gs_main.mt_sizeMultipacketWrap;
   if (local_multipacketWrap > at_ptrFrame->dataSize())
     local_multipacketWrap = at_ptrFrame->dataSize();
@@ -716,7 +714,7 @@ endOfTransfer( std::ostringstream& out, PtrDataFrame_t at_ptrFrame, TransferColl
         at_ptrFrame->sourceAddress());
 
     // output in both ways, dump (raw) and interprete:
-    multiPacket_dump(t_ptrArtificialFrame);
+    multiPacket_dump( out, t_ptrArtificialFrame);
     out << interpretePgnData(t_ptrArtificialFrame);
 
     gs_main.mc_trans.deleteConnection(
