@@ -82,6 +82,10 @@ interpretePgnsVtFromEcu( PtrDataFrame_t at_ptrFrame )
   if (cb_response)
     result += " Response";
 
+  if( gs_main.mb_storeIop && ( at_ptrFrame->data()[0] == 0x12 ) ) {
+    iopStore( at_ptrFrame->sourceAddress() );
+  }
+
   return result;
 }
 

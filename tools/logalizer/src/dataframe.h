@@ -35,10 +35,11 @@ public:
   DataFrame_c( // artificial frame for frame data and addresses only!
       std::vector< uint8_t > const &acrvec_data,
       uint8_t aui8_sourceAddress,
-      uint8_t aui8_destinationAddress
+      uint8_t aui8_destinationAddress,
+      uint32_t pgn
     ) :
     mui64_time(0),
-    mui64_identifier(uint32_t(aui8_destinationAddress) << 8 | aui8_sourceAddress),
+    mui64_identifier( uint32_t( ( pgn | aui8_destinationAddress) ) << 8 | aui8_sourceAddress),
     mvec_data(acrvec_data),
     mb_canExt(true)
   {}
