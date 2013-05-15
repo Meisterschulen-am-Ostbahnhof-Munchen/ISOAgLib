@@ -515,6 +515,8 @@ tools/libs/freeimage/license-gpl.txt -text
 tools/libs/freeimage/mingw/FreeImage.h -text
 tools/libs/freeimage/mingw/libfreeimage.a -text
 tools/libs/misc/00README.txt -text
+tools/libs/misc/SimpleGlob.h -text
+tools/libs/misc/SimpleOpt.h -text
 tools/libs/misc/yasper.h -text
 tools/libs/pcan/README.txt -text
 tools/libs/pthread/00README.txt -text

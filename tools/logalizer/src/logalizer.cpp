@@ -24,6 +24,8 @@
 #include <iterator>
 #include <sstream>
 
+#include <SimpleOpt.h>
+
 #include "functionality_vt.inc"
 #include "functionality_tc.inc"
 #include "functionality_fs.inc"
@@ -153,6 +155,7 @@ typedef std::string Interprete_t(PtrDataFrame_t);
 
 struct Main_s {
   size_t mt_sizeMultipacketWrap; // default will be set when parsing parameters
+  bool mb_storeTp;
   TransferCollection_c mc_trans;
   ParseLogLine_t *pt_parseLogLine;
   AliveCollection_c m_alive;
@@ -162,6 +165,7 @@ struct Main_s {
 
 inline Main_s::Main_s() :
   mt_sizeMultipacketWrap(0),
+  mb_storeTp( false ),
   mc_trans(),
   pt_parseLogLine(0),
   m_alive(),
@@ -173,54 +177,59 @@ struct Main_s gs_main;
 } //namespace
 
 
+enum { OPT_TYPE, OPT_WRAP, OPT_STORE, OPT_HELP };
+
+CSimpleOpt::SOption g_rgOptions[] = {
+    { OPT_TYPE, "-t", SO_REQ_SEP },  // canlog format type
+    { OPT_WRAP, "-w", SO_REQ_SEP },  // wrap num
+    { OPT_STORE, "-s", SO_NONE },   // store tp
+    { OPT_HELP, "--help", SO_NONE }, // helptext
+    SO_END_OF_OPTIONS
+};
+
 
 void
 exit_with_usage(const char* progname)
 {
-  std::cout << "Usage: (1) " << progname << " <logFile> [logType] [wrapMultipacket]" << std::endl << std::endl;
-  std::cout << "logFile:  filepath or - (dash, means standard input rather than a real file)"<<std::endl;
-  std::cout << "logTypes: 0 -> can_server [DEFAULT]"<<std::endl;
-  std::cout << "          1 -> rte"<<std::endl;
-  std::cout << "          2 -> CANMon"<<std::endl;
-  std::cout << "          3 -> CANoe ASCII (.asc)"<<std::endl;
-  std::cout << "          4 -> A1ASCII"<<std::endl;
-  std::cout << "          5 -> PCANView"<<std::endl;
-  std::cout << "          6 -> JohnDeere"<<std::endl;
-  std::cout << "          7 -> rte2"<<std::endl;
-  std::cout << "          8 -> JRF (.jrf)"<<std::endl;
-  std::cout << "          9 -> PCANExplorer"<<std::endl;
-  std::cout << "         10 -> SocketCAN candump -l"<<std::endl;
-  std::cout << std::endl;
-  std::cout << "wrapMultipacket: Number of data-bytes to display per line. Defaults to 32." << std::endl;
-  std::cout << std::endl;
-#ifdef WIN32
-  std::cout << "can_server:  '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
-  std::cout << "rte:         '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
-  std::cout << "              (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
-  std::cout << "CANMon:      'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
-  std::cout << "CANoe:       '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
-  std::cout << "A1ASCII:     'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff    '..."<<std::endl;
-  std::cout << "             ...'   446270'"<<std::endl;
-  std::cout << "PCANView:    '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
-  std::cout << "JohnDeere:   'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<std::endl;
-  std::cout << "             ...'    17920  ....... '"<<std::endl;
-  std::cout << "JRF:         '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
-  std::cout << "PCANExplorer:'    13)       116.6 1  Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
-  std::cout << "SocketCAN:  '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
-#else
-  std::cout << "can_server:   '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
-  std::cout << "rte:          '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
-  std::cout << "               (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
-  std::cout << "CANMon:       'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
-  std::cout << "CANoe:        '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
-  std::cout << "A1ASCII:      'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<std::endl;
-  std::cout << "PCANView:     '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
-  std::cout << "JohnDeere:    'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<std::endl;
-  std::cout << "JRF:          '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
-  std::cout << "PCANExplorer: '    13)       116.6 1 Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
-  std::cout << "SocketCAN:  '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
-#endif
+  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2013 OSB AG." << std::endl << std::endl;
+  std::cerr << "Usage: " << progname << " [-t logType] [-w num] [-s] logFile" << std::endl << std::endl;
+  std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
+  std::cerr << "         1 -> rte"<<std::endl;
+  std::cerr << "         2 -> CANMon"<<std::endl;
+  std::cerr << "         3 -> CANoe ASCII (.asc)"<<std::endl;
+  std::cerr << "         4 -> A1ASCII"<<std::endl;
+  std::cerr << "         5 -> PCANView"<<std::endl;
+  std::cerr << "         6 -> JohnDeere"<<std::endl;
+  std::cerr << "         7 -> rte2"<<std::endl;
+  std::cerr << "         8 -> JRF (.jrf)"<<std::endl;
+  std::cerr << "         9 -> PCANExplorer"<<std::endl;
+  std::cerr << "        10 -> SocketCAN candump -l"<<std::endl;
+  std::cerr << std::endl;
+  std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
+  std::cerr << "-s:      Store TP session to files with format: tp-<number>-<SA>_to_<DA>_<size>b.dat. Default: do not store" << std::endl;
+  std::cerr << "logFile: filepath or - (dash, means standard input rather than a real file)"<<std::endl;
+  std::cerr << std::endl;
 
+  std::cerr << "can_server:  '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
+  std::cerr << "rte:         '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
+  std::cerr << "              (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
+  std::cerr << "CANMon:      'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
+  std::cerr << "CANoe:       '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
+#ifdef WIN32
+  std::cerr << "A1ASCII:     'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff    '..." <<std::endl  << "             ...'   446270'"<<std::endl;
+#else
+  std::cerr << "A1ASCII:     'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<std::endl;
+#endif
+  std::cerr << "PCANView:    '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
+#ifdef WIN32
+  std::cerr << "JohnDeere:   'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<std::endl;
+  std::cerr << "             ...'    17920  ....... '"<<std::endl;
+#else
+  std::cout << "JohnDeere:    'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<std::endl;
+#endif
+  std::cerr << "JRF:         '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
+  std::cerr << "PCANExplorer:'    13)       116.6 1  Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
+  std::cerr << "SocketCAN:   '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
   exit(0);
 }
 
@@ -261,6 +270,21 @@ multiPacket_dump( std::ostringstream& out, PtrDataFrame_t at_ptrFrame )
   return out.str();
 }
 
+void
+multiPacket_store( PtrDataFrame_t at_ptrFrame ) {
+  static unsigned n = 0;
+  char fn[512];
+  sprintf( fn, "tp-%03d-0x%02x_to_0x%02x_%db.dat", n++, at_ptrFrame->sourceAddress(), at_ptrFrame->destinationAddress(), at_ptrFrame->data().size() );
+  std::ofstream f( fn, std::ios::binary );
+  if( f.is_open() ) {
+    std::ostream_iterator<unsigned char> i(f, "");
+    std::copy( at_ptrFrame->data().begin(), at_ptrFrame->data().end(), i );
+  } else {
+    std::cerr << "Could not open " << fn << " for writing...sorry." << std::endl;
+    gs_main.mb_storeTp = false;
+  }
+  f.close();
+}
 
 
 TransferCollection_c::PtrConnection_t
@@ -713,9 +737,10 @@ endOfTransfer( std::ostringstream& out, PtrDataFrame_t at_ptrFrame, TransferColl
         at_ptrFrame->destinationAddress(),
         at_ptrFrame->sourceAddress());
 
-    // output in both ways, dump (raw) and interprete:
+    // output in some ways, dump (raw), interprete and maybe store to a file
     multiPacket_dump( out, t_ptrArtificialFrame);
     out << interpretePgnData(t_ptrArtificialFrame);
+    if( gs_main.mb_storeTp ) multiPacket_store(t_ptrArtificialFrame);
 
     gs_main.mc_trans.deleteConnection(
         ae_variant,
@@ -813,30 +838,48 @@ parseLogLine( std::ostream& out, std::string const &acr_line )
 
 int main (int argc, char** argv)
 {
-  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2013 OSB AG." << std::endl << std::endl;
+  gs_main.pt_parseLogLine = parseLogLineCanServer;
+  gs_main.mt_sizeMultipacketWrap = 32; // CAN server default
 
-  if (argc < 2)
-    exit_with_usage(argv[0]);
+  CSimpleOpt args(argc, argv, g_rgOptions);
+  // while there are arguments left to process
+  while (args.Next()) {
+    if(args.LastError() == SO_SUCCESS) {
+        switch ( args.OptionId() ) {
+          case OPT_TYPE:
+            gs_main.pt_parseLogLine = getLogLineParser( atoi( args.OptionArg() ) );
+            break;
+          case OPT_WRAP:
+            gs_main.mt_sizeMultipacketWrap = atoi( args.OptionArg() );
+            break;
+          case OPT_STORE:
+            gs_main.mb_storeTp = true;
+            break;
+          case OPT_HELP:
+            exit_with_usage( argv[0] );
+            return 0;
+        }
+    } else {
+      printf( "Invalid argument: %s\n", args.OptionText());
+      return 1;
+    }
+  }
 
-  std::string str_filename = argv[1];
-  PtrInputStream_t t_ptrIn = PtrInputStream_t( new InputStream_c(str_filename) );
+  if( args.FileCount() != 1 ) {
+    exit_with_usage( argv[0] );
+  }
 
-  if (!t_ptrIn->isOpen()) exit_with_error("Couldn't open file");
+  PtrInputStream_t t_ptrIn = PtrInputStream_t( new InputStream_c( args.Files()[0] ) );
 
-  gs_main.pt_parseLogLine = argc >= 3 ?
-    getLogLineParser(atoi(argv[2])) : // follow user's suggestion
-    parseLogLineCanServer; // default to can_server
+  if (!t_ptrIn->isOpen())
+    exit_with_error( ( std::string( "Couldn't open file: " ) + std::string( args.Files()[0] ) ).c_str() );
 
-  gs_main.mt_sizeMultipacketWrap = argc >= 4 ?
-    atoi(argv[3]) : // follow user's suggestion
-    32; // default to can_server
-
+  std::string str_line;
   for (;;) {
-    std::string str_line;
     getline(t_ptrIn->raw(), str_line);
-    bool const cb_failReading = t_ptrIn->raw().fail();
-    if (cb_failReading)
+    if( t_ptrIn->raw().eof() || t_ptrIn->raw().fail() ) {
       break;
+    }
     std::pair< int, PtrDataFrame_t > parse_result = parseLogLine(std::cout, str_line);
     if (0 == parse_result.first)
     {
