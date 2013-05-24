@@ -95,7 +95,7 @@ IsoRequestPgn_c::unregisterPGN(
       if (regPGN_it->p_handler == &r_PGNHandler)
         regPGN_it = m_registeredClientsWithPGN.erase (regPGN_it);
       else
-        regPGN_it++;
+        ++regPGN_it;
     }
     else
     { // only the cui32_pgnToRegister will be deleted
@@ -105,7 +105,7 @@ IsoRequestPgn_c::unregisterPGN(
         break; // the PGN is unique for the RequestPGNHandler, so we can leave the loop
       }
       else
-        regPGN_it++;
+        ++regPGN_it;
     }
   }
 }

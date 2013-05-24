@@ -152,7 +152,7 @@ MultiReceive_c::notifyErrorConnAbort(
   /// Handle Notification
   if (acrc_streamIdent.getDa() == 0xFF)
   { // BAM
-    for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin(); i_list_clients != mlist_clients.end(); i_list_clients++)
+    for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin(); i_list_clients != mlist_clients.end(); ++i_list_clients)
     { // // inform all clients that want Broadcast-TP-Messages
       MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
       if (curClientWrapper.mb_alsoBroadcast) {
@@ -177,7 +177,7 @@ MultiReceive_c::notifyErrorConnAbort(
     else
     {
       // global notify for clients who want notification on global errors (which noone else can take ;-))
-      for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin(); i_list_clients != mlist_clients.end(); i_list_clients++)
+      for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin(); i_list_clients != mlist_clients.end(); ++i_list_clients)
       { // // inform all clients that want Broadcast-TP-Messages
         MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
         if (curClientWrapper.mb_alsoGlobalErrors) {
@@ -985,7 +985,7 @@ MultiReceive_c::getFinishedJustKeptStream (Stream_c* apc_lastKeptStream)
   // If "last==NULL", take the first to get, else wait for last to occur and take next!
   bool b_takeIt = (apc_lastKeptStream == NULL);
 
-  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = mlist_streams.begin(); i_list_streams != mlist_streams.end(); i_list_streams++)
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = mlist_streams.begin(); i_list_streams != mlist_streams.end(); ++i_list_streams)
   {
     DEF_Stream_c_IMPL* pc_stream = &*i_list_streams;
     if (pc_stream->getStreamingState() == StreamFinishedJustKept)
@@ -1254,7 +1254,7 @@ MultiReceive_c::getClient (ReceiveStreamIdentifier_c ac_streamIdent)
 {
   for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin();
        i_list_clients != mlist_clients.end();
-       i_list_clients++)
+       ++i_list_clients)
   {
     if (i_list_clients->doesAcceptStream (ac_streamIdent))
       return i_list_clients->mpc_client;
@@ -1271,7 +1271,7 @@ MultiReceive_c::getStreamFirstByte (uint32_t ui32_index) const
 {
   uint32_t ui32_curIndex=0;
   if (ui32_index < mlist_streams.size()) {
-    for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = mlist_streams.begin(); pc_iter != mlist_streams.end(); pc_iter++)
+    for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = mlist_streams.begin(); pc_iter != mlist_streams.end(); ++pc_iter)
     {
       if (ui32_curIndex == ui32_index) {
         if ((*pc_iter).getByteAlreadyReceived() > 0)
@@ -1289,7 +1289,7 @@ MultiReceive_c::getStreamFirstByte (uint32_t ui32_index) const
 bool
 MultiReceive_c::isAtLeastOneWithFirstByte(uint8_t firstByte)
 {
-  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = mlist_streams.begin(); pc_iter != mlist_streams.end(); pc_iter++) {
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = mlist_streams.begin(); pc_iter != mlist_streams.end(); ++pc_iter) {
     if ((*pc_iter).getByteAlreadyReceived() > 0)  {
       if ((*pc_iter).getFirstByte() == firstByte) {
         return true;
@@ -1307,7 +1307,7 @@ MultiReceive_c::getStreamCompletion1000 (uint32_t ui32_index, bool b_checkFirstB
   uint32_t ui32_curIndex=0;
   if (ui32_index < mlist_streams.size()) {
     // retrieve completion in 1/10..100%
-    for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = mlist_streams.begin(); pc_iter != mlist_streams.end(); pc_iter++)
+    for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = mlist_streams.begin(); pc_iter != mlist_streams.end(); ++pc_iter)
     {
       if (ui32_curIndex == ui32_index) {
         if ((b_checkFirstByte) && ((*pc_iter).getFirstByte() != ui8_returnNullIfThisIsFirstByte))
@@ -1332,7 +1332,7 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
   uint32_t ui32_maxStreamCompletion1000=0;
   uint32_t ui32_currentCompletion1000;
   // retrieve completion in 1/10..100%
-  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = mlist_streams.begin(); pc_iter != mlist_streams.end(); pc_iter++)
+  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator pc_iter = mlist_streams.begin(); pc_iter != mlist_streams.end(); ++pc_iter)
   {
     if ((b_checkFirstByte) && ((*pc_iter).getFirstByte() != ui8_returnNullIfThisIsFirstByte))
       ui32_currentCompletion1000=0; // don't care for this stream
@@ -1399,7 +1399,7 @@ MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoI
     }
     // Notify all running streams
     for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = mlist_streams.begin();
-         i_list_streams != mlist_streams.end(); i_list_streams++)
+         i_list_streams != mlist_streams.end(); ++i_list_streams)
     { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
       const ReceiveStreamIdentifier_c& rc_rsi = i_list_streams->getIdent();
     // re-vitalize the Addresses, so that following packets using this address will get processed again...

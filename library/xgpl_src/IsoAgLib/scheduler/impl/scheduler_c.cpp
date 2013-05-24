@@ -155,7 +155,7 @@ namespace __IsoAgLib {
     }
 
     // find position to insert, otherwise push to the end
-    for( i = m_taskQueue.begin(); i != m_taskQueue.end(); i++ ) {
+    for( i = m_taskQueue.begin(); i != m_taskQueue.end(); ++i ) {
       if( ( *i )->getNextTriggerTime() > ( *p )->getNextTriggerTime() ) {
         break;
       }

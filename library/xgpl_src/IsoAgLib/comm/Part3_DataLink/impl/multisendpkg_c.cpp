@@ -68,7 +68,7 @@ void MultiSendPkg_c::setDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSou
     // while the iter iterator is also set to the start of the source data
     setUint8Data( ind, *iter );
     // now increment the iterator for next access
-    iter++;
+    ++iter;
   }
   if ( ab_partSize < 7 )
   { // only pad when less than 7 data byte
@@ -128,7 +128,7 @@ void MultiSendPkg_c::setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>&
     // while the iter iterator is also set to the start of the source data
     setUint8Data( ind, *iter );
     // now increment the iterator for next access
-    iter++;
+    ++iter;
   }
   setDataFromString (uint8_t(aui8_offset+ab_partSize), paddingDataArr, uint8_t(8-aui8_offset-ab_partSize));
 }

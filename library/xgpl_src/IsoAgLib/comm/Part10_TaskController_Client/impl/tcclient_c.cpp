@@ -59,7 +59,7 @@ TcClient_c::getTcClientConnection( const IdentItem_c& identItem ) const
     { 
       return **it;
     }
-    it++;
+    ++it;
   }
   isoaglib_assert(!"No matching TcClientConnection found!!!");
   return *m_tcConnections.front();
@@ -135,7 +135,7 @@ TcClient_c::deregister( IdentItem_c& identItem )
       m_tcConnections.erase(it);
       break;
     }
-    it++;
+    ++it;
   }
 
   if (it == m_tcConnections.end())
@@ -181,7 +181,7 @@ TcClient_c::processMsgGlobal( const ProcessPkg_c& data )
     {
       (*it)->updateTcStateReceived( data[4] );
       (*it)->setTcIsoItem( *data.getMonitorItemForSA() );
-      it++;
+      ++it;
     }
   }
 }
@@ -199,7 +199,7 @@ TcClient_c::processMsgNonGlobal( const ProcessPkg_c& pkg )
     while (it != m_tcConnections.end())
     {
       (*it)->processMsgTc( pkg );
-      it++;
+      ++it;
     }
   }
   else
@@ -242,7 +242,7 @@ TcClient_c::processMsgNonGlobal( const ProcessPkg_c& pkg )
                            b_elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
         }
       }
-      it++;
+      ++it;
     }
   }
 }
@@ -294,7 +294,7 @@ TcClient_c::reactOnIsoItemModification( ControlFunctionStateHandler_c::iIsoItemA
       while (it != m_tcConnections.end())
       {
         (*it)->stopRunningMeasurement( ecuType );
-        it++;
+        ++it;
       }
     }
   }
@@ -336,7 +336,7 @@ TcClient_c::processTcStatusMsg( uint8_t tcStatus, const __IsoAgLib::IsoName_c& s
     while (it != m_tcConnections.end())
     {
       (*it)->processTcConnected( IsoAgLib::ProcData::RemoteTypeTaskControl, m_isoNameTC.toConstIisoName_c() );
-      it++;
+      ++it;
     }
   }
 
@@ -351,7 +351,7 @@ TcClient_c::processTcStatusMsg( uint8_t tcStatus, const __IsoAgLib::IsoName_c& s
       while ( it != m_tcConnections.end() )
       {
         (*it)->processTaskStarted( ecuType );
-        it++;
+        ++it;
       }
     }
     else
@@ -361,7 +361,7 @@ TcClient_c::processTcStatusMsg( uint8_t tcStatus, const __IsoAgLib::IsoName_c& s
       {
         (*it)->stopRunningMeasurement( ecuType );
         (*it)->processTaskStopped( ecuType );
-        it++;
+        ++it;
       }
     }
   }
@@ -380,7 +380,7 @@ TcClient_c::processChangeDesignator( IdentItem_c& ident, uint16_t objID, const c
   {
     if ( &ident == &((*it)->getIdentItem()) )
       (*it)->sendCommandChangeDesignator( objID, newDesig, CNAMESPACE::strlen(newDesig) );
-    it++;
+    ++it;
   }
 }
 

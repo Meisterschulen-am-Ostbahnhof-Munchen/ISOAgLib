@@ -363,7 +363,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
   getRs232RxBufCount(aui8_channel);
   if (! deq_readBuff[aui8_channel].empty())
   {
-    for ( STL_NAMESPACE::deque<int8_t>::iterator iter = deq_readBuff[aui8_channel].begin(); iter != deq_readBuff[aui8_channel].end(); iter++ )
+    for ( STL_NAMESPACE::deque<int8_t>::iterator iter = deq_readBuff[aui8_channel].begin(); iter != deq_readBuff[aui8_channel].end(); ++iter )
     { // check if terminating char is found
       if ( *iter == bLastChar )
       { // found -> copy area from begin to iterator

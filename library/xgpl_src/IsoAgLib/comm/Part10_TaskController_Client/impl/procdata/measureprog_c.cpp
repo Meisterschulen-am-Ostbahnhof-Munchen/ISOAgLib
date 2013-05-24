@@ -78,7 +78,7 @@ MeasureProg_c::setVal( ProcData_c& ac_processData, int32_t ai32_val )
 
   // now check if one subprog triggers
   for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin();
-       pc_iter != mvec_measureSubprog.end(); pc_iter++)
+       pc_iter != mvec_measureSubprog.end(); ++pc_iter)
   {
     bool triggeredIncrement = false;
     switch (pc_iter->type())
@@ -121,7 +121,7 @@ MeasureProg_c::timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePe
 {
   const int32_t i32_time = System_c::getTime();
 
-  for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
+  for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); ++pc_iter)
   {
     bool triggeredIncrement = false;
     int32_t i32_nextTimePeriod = 0;
@@ -184,7 +184,7 @@ MeasureProg_c::minMaxLimitsPassed( int32_t value ) const
   int32_t i32_maxVal = 0;
   int32_t i32_minVal = 0;
 
-  for (List_ThresholdInfoConstIterator ps_iterThreshold = mlist_thresholdInfo.begin(); ps_iterThreshold != mlist_thresholdInfo.end(); ps_iterThreshold++)
+  for (List_ThresholdInfoConstIterator ps_iterThreshold = mlist_thresholdInfo.begin(); ps_iterThreshold != mlist_thresholdInfo.end(); ++ps_iterThreshold)
   {
     switch (ps_iterThreshold->en_type)
     {
@@ -219,7 +219,7 @@ MeasureProg_c::addSubprog( IsoAgLib::ProcData::MeasurementCommand_t ren_type, in
   // if subprog with this type exist, update only value
   Vec_MeasureSubprog::iterator pc_subprog = mvec_measureSubprog.end();
   for (pc_subprog = mvec_measureSubprog.begin();
-       pc_subprog != mvec_measureSubprog.end(); pc_subprog++)
+       pc_subprog != mvec_measureSubprog.end(); ++pc_subprog)
   {
     if (pc_subprog->type() == ren_type)
     {

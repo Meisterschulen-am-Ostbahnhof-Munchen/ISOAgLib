@@ -96,7 +96,7 @@ namespace __IsoAgLib {
     ArrFilterBox::iterator pc_iter = m_arrFilterBox.begin();
 
     // check if given FilterBox_c definition is not yet in array
-    for ( ; pc_iter != m_arrFilterBox.end(); pc_iter++ ) {
+    for ( ; pc_iter != m_arrFilterBox.end(); ++pc_iter ) {
       if ( ( pc_iter->equalFilterMask( arc_filterpair ) )
            && ( pc_iter->equalCustomer( ar_customer )               ) ) {
         // FilterBox_c with equal def found
@@ -176,7 +176,7 @@ namespace __IsoAgLib {
         b_result = true;
         pc_iter = m_arrFilterBox.erase( pc_iter );
       } else {
-        pc_iter++;
+        ++pc_iter;
       }
     }
 
@@ -250,7 +250,7 @@ namespace __IsoAgLib {
       // init
       ar_arrFilterBoxIter = m_arrFilterBox.begin();
     } else {
-      ar_arrFilterBoxIter++;
+      ++ar_arrFilterBoxIter;
     }
 
     while ( ar_arrFilterBoxIter != m_arrFilterBox.end() ) {
@@ -258,7 +258,7 @@ namespace __IsoAgLib {
         // matching FilterBox_c found
         return true;
       }
-      ar_arrFilterBoxIter++;
+      ++ar_arrFilterBoxIter;
     }
     // if execution reaches this point, no matching FilterBox_c found
     return false;

@@ -1044,7 +1044,7 @@ VtClientConnection_c::notifyOnAuxInputStatus( const CanPkgExt_c& arc_data)
   uint8_t const cui8_inputNumber = arc_data.getUint8Data(2-1);
 
   // Look for all Functions that are controlled by this Input right now!
-  for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); it++)
+  for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); ++it)
   {
     if ( (it->mui8_inputNumber == cui8_inputNumber)
       && (it->mc_inputIsoName == ac_inputIsoName) )
@@ -2351,7 +2351,7 @@ VtClientConnection_c::dumpQueue()
   STL_NAMESPACE::queue<SendUpload_c>::iterator i_sendUpload;
 #endif
 
-  for (i_sendUpload = mq_sendUpload.begin(); i_sendUpload != mq_sendUpload.end(); i_sendUpload++)
+  for (i_sendUpload = mq_sendUpload.begin(); i_sendUpload != mq_sendUpload.end(); ++i_sendUpload)
   {
     if (i_sendUpload->mssObjectString == NULL)
     {

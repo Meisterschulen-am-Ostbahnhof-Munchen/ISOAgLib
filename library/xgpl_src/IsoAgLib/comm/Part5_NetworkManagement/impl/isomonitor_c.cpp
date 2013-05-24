@@ -151,9 +151,9 @@ IsoMonitor_c::timeEvent()
 {
   int32_t i32_checkPeriod = 3000;
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*,MALLOC_TEMPLATE(__IsoAgLib::IdentItem_c*)>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); pc_iter++ )
+  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*,MALLOC_TEMPLATE(__IsoAgLib::IdentItem_c*)>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
   #else
-  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); pc_iter++ )
+  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
   #endif
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
@@ -375,7 +375,7 @@ IsoMonitor_c::anyActiveLocalItem() const
 void
 IsoMonitor_c::registerControlFunctionStateHandler( ControlFunctionStateHandler_c & arc_client )
 {
-  for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
+  for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); ++iter )
   { // check if it points to the same client
     if ( *iter == &arc_client )
       return; // already in multimap -> don't insert again
@@ -384,7 +384,7 @@ IsoMonitor_c::registerControlFunctionStateHandler( ControlFunctionStateHandler_c
   mvec_saClaimHandler.push_back( &arc_client );
 
   // now: trigger suitable ControlFunctionStateHandler_c calls for all already known IsoNames in the list
-  for ( Vec_ISOIteratorConst iter = mvec_isoMember.begin(); iter != mvec_isoMember.end(); iter++)
+  for ( Vec_ISOIteratorConst iter = mvec_isoMember.begin(); iter != mvec_isoMember.end(); ++iter)
   { // inform this ControlFunctionStateHandler_c on existance of the ISONAME node at iter
     arc_client.reactOnIsoItemModification (ControlFunctionStateHandler_c::AddToMonitorList, *iter);
   }
@@ -394,7 +394,7 @@ IsoMonitor_c::registerControlFunctionStateHandler( ControlFunctionStateHandler_c
 void
 IsoMonitor_c::deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c & arc_client)
 {
-  for ( ControlFunctionStateHandlerVectorIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
+  for ( ControlFunctionStateHandlerVectorIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); ++iter )
   { // check if it points to the same client
     if ( *iter == &arc_client )
     {
@@ -408,7 +408,7 @@ IsoMonitor_c::deregisterControlFunctionStateHandler (ControlFunctionStateHandler
 void
 IsoMonitor_c::broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::iIsoItemAction_e at_isoItemModification, IsoItem_c const& acrc_isoItem ) const
 {
-  for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
+  for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); ++iter )
   { // call the handler function of the client
     (*iter)->reactOnIsoItemModification (at_isoItemModification, acrc_isoItem);
   }
@@ -465,7 +465,7 @@ bool
 isAddressFree( const IsoItem_c* apc_isoItem, const STL_NAMESPACE::list<IsoItem_c>& vec_isoMember, uint8_t address, bool ab_resolveConflict )
 {
   for (STL_NAMESPACE::list<IsoItem_c>::const_iterator pc_iterItem = vec_isoMember.begin();
-        pc_iterItem != vec_isoMember.end(); pc_iterItem++)
+        pc_iterItem != vec_isoMember.end(); ++pc_iterItem)
   {
     if ((pc_iterItem->nr() == address)
          && (ab_resolveConflict || (&(*pc_iterItem) != apc_isoItem))
@@ -781,7 +781,7 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSe
 
       bool b_processedRequestPGN = false;
       for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
-        pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
+        pc_iterItem != mvec_isoMember.end(); ++pc_iterItem)
       { // let all local pc_iterItem process this request
         bool const cb_set = pc_iterItem->itemState (IState_c::Local) &&
         pc_iterItem->sendSaClaim();
@@ -808,7 +808,7 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSe
       if (apc_isoItemReceiver == NULL)
       { // No specific destination so it's broadcast: Let all local item answer!
         for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
-              pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
+              pc_iterItem != mvec_isoMember.end(); ++pc_iterItem)
         { // let all local pc_iterItem process process this request
           if (pc_iterItem->itemState (IState_c::Local))
           {

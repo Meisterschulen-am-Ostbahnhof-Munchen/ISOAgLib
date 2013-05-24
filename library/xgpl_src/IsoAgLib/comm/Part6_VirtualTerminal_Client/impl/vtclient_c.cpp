@@ -194,13 +194,13 @@ VtServerInstance_c* VtClient_c::getFirstActiveVtServer( bool mustBePrimary ) con
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   if( mustBePrimary )
   {
-    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
       if ( (*lit_vtServerInst)->isVtActive() && (*lit_vtServerInst)->isPrimaryVt() )
         return (*lit_vtServerInst);
   }
   else
   {
-    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
       if ( (*lit_vtServerInst)->isVtActive() )
         return (*lit_vtServerInst);
   }
@@ -211,7 +211,7 @@ VtServerInstance_c* VtClient_c::getFirstActiveVtServer( bool mustBePrimary ) con
 VtServerInstance_c* VtClient_c::getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const
 {
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
-  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
   {
     if ((*lit_vtServerInst)->isVtActive() && ((*lit_vtServerInst)->getIsoName() == aref_prefferedVTIsoName))
       return (*lit_vtServerInst);
@@ -223,7 +223,7 @@ VtServerInstance_c* VtClient_c::getPreferredVtServer(const IsoName_c& aref_preff
 VtServerInstance_c* VtClient_c::getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const
 {
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
-  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
   {
     if ((*lit_vtServerInst)->isVtActive() && arc_pool.selectVtServer((*lit_vtServerInst)->getIsoName().toConstIisoName_c()))
       return (*lit_vtServerInst);
@@ -291,7 +291,7 @@ void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
 
     if (cui8_cmdByte == 0xFE) // Command: "Status", Parameter: "VT Status Message"
     {
-      for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+      for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
       {
         if (&(*lit_vtServerInst)->getIsoItem() == arc_data.getMonitorItemForSA())
         {
@@ -346,7 +346,7 @@ void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
   {
     VtServerInstance_c* pc_server = NULL;
     // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
-    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
     {
       if (&(*lit_vtServerInst)->getIsoItem() == arc_data.getMonitorItemForSA())
       {

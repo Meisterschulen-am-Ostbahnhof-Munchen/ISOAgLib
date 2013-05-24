@@ -115,7 +115,7 @@ StreamChunk_c::insert7Bytes(const uint8_t* pui8_data)
   //    otherwise insert a new Chunk after the current writeChunk
   if (mpc_iterWriteChunk->full())
   {
-    pc_iterTmpChunk++;
+    ++pc_iterTmpChunk;
     if (pc_iterTmpChunk == mlist_chunks.end())
       pc_iterTmpChunk = mlist_chunks.begin();
 
@@ -125,7 +125,7 @@ StreamChunk_c::insert7Bytes(const uint8_t* pui8_data)
     }
     else
     {
-      mpc_iterWriteChunk++;
+      ++mpc_iterWriteChunk;
       mpc_iterWriteChunk = mlist_chunks.insert( mpc_iterWriteChunk, Chunk_c() );
       mpc_iterWriteChunk->init();
     }
@@ -181,7 +181,7 @@ StreamChunk_c::getNextNotParsed()
   if (chunkCnt >= chunkLen)
   {
     mpc_iterParsedChunk->setFree();
-    mpc_iterParsedChunk++;;
+    ++mpc_iterParsedChunk;
     if (mpc_iterParsedChunk == mlist_chunks.end())
       mpc_iterParsedChunk = mlist_chunks.begin();
   }
@@ -213,7 +213,7 @@ StreamChunk_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
     do
     {
       chunkCntReq -= chunkLen;
-      pc_iterTmpChunk++;
+      ++pc_iterTmpChunk;
       if (pc_iterTmpChunk == mlist_chunks.end())
         pc_iterTmpChunk = mlist_chunks.begin();
     } while (chunkCntReq >= chunkLen);

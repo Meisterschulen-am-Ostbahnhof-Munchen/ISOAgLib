@@ -67,7 +67,7 @@ IsoFilterManager_c::existIsoFilter (const IsoFilter_s& arcs_isoFilter)
 {
   for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
        it_isoFilterBox != mvec_isoFilterBox.end();
-       it_isoFilterBox++)
+       ++it_isoFilterBox)
   { // Search for existing IsoFilterBox
     if (it_isoFilterBox->hasIsoFilter (arcs_isoFilter))
     { // This IsoFilterBox already has such a filter
@@ -97,7 +97,7 @@ IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& arcs_isoFilter)
 {
   for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
        it_isoFilterBox != mvec_isoFilterBox.end();
-       it_isoFilterBox++)
+       ++it_isoFilterBox)
   { // Search for existing IsoFilterBox
     if (it_isoFilterBox->hasIsoFilter (arcs_isoFilter))
     {
@@ -120,7 +120,7 @@ IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::i
   {
     for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
         it_isoFilterBox != mvec_isoFilterBox.end();
-        it_isoFilterBox++)
+        ++it_isoFilterBox)
     { // the ISOFilterBoxes will take care if they have to do anything at all or not...
       it_isoFilterBox->updateOnAdd();
     }
@@ -129,7 +129,7 @@ IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::i
   {
     for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
         it_isoFilterBox != mvec_isoFilterBox.end();
-        it_isoFilterBox++)
+        ++it_isoFilterBox)
     { // the ISOFilterBoxes will take care if they have to do anything at all or not...
       it_isoFilterBox->updateOnRemove(&acrc_isoItem.isoName());
       it_isoFilterBox->updateOnAdd();
@@ -139,7 +139,7 @@ IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::i
   { // ((at_action == RemoveFromMonitorList) || (at_action == LostAddress))
     for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
          it_isoFilterBox != mvec_isoFilterBox.end();
-         it_isoFilterBox++)
+         ++it_isoFilterBox)
     { // the ISOFilterBoxes will take care if they have to do anything at all or not...
       it_isoFilterBox->updateOnRemove (&acrc_isoItem.isoName());
     }
