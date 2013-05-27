@@ -73,6 +73,12 @@ namespace __IsoAgLib
         virtual void notificationOnMultiReceiveError( ReceiveStreamIdentifier_c const &, uint8_t, bool ) { }
 
         ProprietaryMessageHandler_c& m_handler;
+
+      private:
+        /** not copyable : copy constructor is only declared, never defined */
+        CanCustomerA_c(const CanCustomerA_c&);
+        /** not copyable : copy operator is only declared, never defined */
+        CanCustomerA_c& operator=(const CanCustomerA_c&);
     };
 
 
@@ -101,6 +107,12 @@ namespace __IsoAgLib
         virtual void notificationOnMultiReceiveError( ReceiveStreamIdentifier_c const &, uint8_t, bool ) { }
 
         ProprietaryMessageHandler_c& m_handler;
+
+      private:
+        /** not copyable : copy constructor is only declared, never defined */
+        CanCustomerB_c(const CanCustomerB_c&);
+        /** not copyable : copy operator is only declared, never defined */
+        CanCustomerB_c& operator=(const CanCustomerB_c&);
     };
 
 

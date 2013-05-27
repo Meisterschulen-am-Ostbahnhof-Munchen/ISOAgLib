@@ -111,6 +111,12 @@ private:
   Aux2FunctionsState_en m_state;
 
   bool mb_learnMode;
+
+private:
+  /** not copyable : copy constructor is only declared, never defined */
+  Aux2Functions_c(const Aux2Functions_c&);
+  /** not copyable : copy operator is only declared, never defined */
+  Aux2Functions_c& operator=(const Aux2Functions_c&);
 };
 
 }

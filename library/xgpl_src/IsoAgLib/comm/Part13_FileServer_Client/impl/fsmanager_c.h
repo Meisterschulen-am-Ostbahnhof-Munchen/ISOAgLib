@@ -75,6 +75,12 @@ class FsManager_c : public SchedulerTask_c
 
       STL_NAMESPACE::vector<FsServerInstance_c *> m_serverInstances;
       FsManager_c& m_fsManager;
+
+    private:
+      /** not copyable : copy constructor is only declared, never defined */
+      FsServerManager_c(const FsServerManager_c&);
+      /** not copyable : copy operator is only declared, never defined */
+      FsServerManager_c& operator=(const FsServerManager_c&);
   };
 
 
@@ -89,6 +95,12 @@ class FsManager_c : public SchedulerTask_c
       STL_NAMESPACE::list<FsCommand_c*> ml_initializingCommands;
 
       FsManager_c& m_fsManager;
+
+    private:
+      /** not copyable : copy constructor is only declared, never defined */
+      FsCommandManager_c(const FsCommandManager_c&);
+      /** not copyable : copy operator is only declared, never defined */
+      FsCommandManager_c& operator=(const FsCommandManager_c&);
   };
 
 
