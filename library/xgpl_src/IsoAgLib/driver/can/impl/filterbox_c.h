@@ -101,6 +101,16 @@ public:
 
   void processMsg( CanPkg_c& pkg );
 
+#ifndef NO_FILTERBOX_LIST_ORDER_SWAP
+  unsigned int getMatchCount() const {
+    return m_matchCnt;
+  }
+
+  void resetMatchCount() {
+    m_matchCnt = 0;
+  }
+#endif
+
 private:
 // Private attributes
   IsoAgLib::iMaskFilterType_c mc_maskFilterPair;
@@ -113,6 +123,9 @@ private:
   static int msi_processMsgLoopIndex; /// "< 0" indicates Loop ==> need to adapt at delete operations
   static int msi_processMsgLoopSize;  /// used if in Loop mode, need to be adapted at remove/add, too.
 
+#ifndef NO_FILTERBOX_LIST_ORDER_SWAP
+  unsigned int m_matchCnt;
+#endif
 };
 }
 #endif

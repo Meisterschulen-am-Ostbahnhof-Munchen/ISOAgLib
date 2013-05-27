@@ -30,7 +30,7 @@ namespace __IsoAgLib {
   class CanIo_c : public Subsystem_c {
       MACRO_MULTITON_CONTRIBUTION();
     protected:
-      typedef STL_NAMESPACE::list<FilterBox_c> ArrFilterBox;
+      typedef STL_NAMESPACE::list<FilterBox_c*> ArrFilterBox;
 
     public:
 
@@ -85,7 +85,7 @@ namespace __IsoAgLib {
         @param aui32_ident Ident of received CAN message
         @return is another filterbox found?
       */
-      bool canMsg2FilterBox( uint32_t aui32_ident, Ident_c::identType_t at_type, ArrFilterBox::iterator& ar_arrFilterBoxIter, bool ab_start );
+      bool canMsg2FilterBox( uint32_t aui32_ident, Ident_c::identType_t at_type, ArrFilterBox::iterator& ar_arrFilterBoxIter );
 
       /** delete a FilerBox definition
         @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )

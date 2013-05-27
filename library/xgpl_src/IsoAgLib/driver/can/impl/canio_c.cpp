@@ -25,6 +25,8 @@
 
 namespace __IsoAgLib {
 
+  static const uint32_t scui8_filter_box_list_update_rate = 100;
+
   CanIo_c &getCanInstance( unsigned int aui_instance ) {
     MACRO_MULTITON_GET_INSTANCE_BODY( CanIo_c, CAN_INSTANCE_CNT, aui_instance );
   }
@@ -97,8 +99,8 @@ namespace __IsoAgLib {
 
     // check if given FilterBox_c definition is not yet in array
     for ( ; pc_iter != m_arrFilterBox.end(); ++pc_iter ) {
-      if ( ( pc_iter->equalFilterMask( arc_filterpair ) )
-           && ( pc_iter->equalCustomer( ar_customer )               ) ) {
+      if ( ( (*pc_iter)->equalFilterMask( arc_filterpair ) )
+           && ( (*pc_iter)->equalCustomer( ar_customer ) ) ) {
         // FilterBox_c with equal def found
         //-> don't insert complete ident def two times
         b_identDefFound = true;
@@ -132,12 +134,12 @@ namespace __IsoAgLib {
       return tempFilterBox_c;
     }
 
-    mc_tempFilterBox.clearData();
-    mc_tempFilterBox.set( arc_filterpair, &ar_customer, ai_dlcForce );
+    FilterBox_c* newFb = new FilterBox_c();
+    newFb->set( arc_filterpair, &ar_customer, ai_dlcForce );
     HAL::defineRxFilter( getBusNumber(), arc_filterpair.getType() == IsoAgLib::iIdent_c::ExtendedIdent,
         arc_filterpair.getFilter(), arc_filterpair.getMask() );
-    m_arrFilterBox.push_back( mc_tempFilterBox );
-    return &m_arrFilterBox.back();
+    m_arrFilterBox.push_back( newFb );
+    return m_arrFilterBox.back();
   }
 
 
@@ -153,8 +155,9 @@ namespace __IsoAgLib {
 
     if( existFilter( ar_customer, arc_filterpair, &pc_iter ) ) {
       // filter found -> delete element where pc_iter points to
-      if ( pc_iter->deleteFilter( ar_customer ) ) {
+      if ( (*pc_iter)->deleteFilter( ar_customer ) ) {
         //no more cancustomer exist for the filterbox -> delete
+        delete *pc_iter;
         m_arrFilterBox.erase( pc_iter );
         HAL::deleteRxFilter( getBusNumber(), arc_filterpair.getType() == IsoAgLib::iIdent_c::ExtendedIdent,
             arc_filterpair.getFilter(), arc_filterpair.getMask() );
@@ -171,9 +174,10 @@ namespace __IsoAgLib {
     bool b_result = false;
 
     for ( ArrFilterBox::iterator pc_iter = m_arrFilterBox.begin(); pc_iter != m_arrFilterBox.end(); ) {
-      if( pc_iter->deleteFilter( ar_customer ) ) {
+      if( (*pc_iter)->deleteFilter( ar_customer ) ) {
         //no more cancustomer exist for the filterbox -> delete
         b_result = true;
+        delete *pc_iter;
         pc_iter = m_arrFilterBox.erase( pc_iter );
       } else {
         ++pc_iter;
@@ -195,8 +199,20 @@ namespace __IsoAgLib {
         CanPkg_c& pkg = HAL::CanFifos_c::get( mui8_busNumber).front();
 
         CanIo_c::ArrFilterBox::iterator pc_iFilterBox;
-        if( canMsg2FilterBox( pkg.ident(), pkg.identType(), pc_iFilterBox, true ) ) {
-          pc_iFilterBox->processMsg( pkg );
+        if( canMsg2FilterBox( pkg.ident(), pkg.identType(), pc_iFilterBox ) ) {
+          (*pc_iFilterBox)->processMsg( pkg );
+#ifndef NO_FILTERBOX_LIST_ORDER_SWAP
+          if( (*pc_iFilterBox)->getMatchCount() > scui8_filter_box_list_update_rate ) {
+            // reorder Filter box
+            (*pc_iFilterBox)->resetMatchCount();
+
+            if( pc_iFilterBox != m_arrFilterBox.begin() ) {
+              CanIo_c::ArrFilterBox::iterator pc_iFilterBoxPrev = pc_iFilterBox;
+              --pc_iFilterBoxPrev;
+              STL_NAMESPACE::iter_swap( pc_iFilterBoxPrev, pc_iFilterBox );
+            }
+          }
+#endif
         }
 
         HAL::CanFifos_c::get( mui8_busNumber).pop();
@@ -244,17 +260,13 @@ namespace __IsoAgLib {
   CanIo_c::canMsg2FilterBox(
     uint32_t aui32_ident,
     Ident_c::identType_t at_type,
-    ArrFilterBox::iterator& ar_arrFilterBoxIter,
-    bool ab_start ) {
-    if ( ab_start ) {
-      // init
-      ar_arrFilterBoxIter = m_arrFilterBox.begin();
-    } else {
-      ++ar_arrFilterBoxIter;
-    }
+    ArrFilterBox::iterator& ar_arrFilterBoxIter ) {
 
+    ar_arrFilterBoxIter = m_arrFilterBox.begin();
+    
+    const IsoAgLib::iIdent_c ident(aui32_ident, at_type);
     while ( ar_arrFilterBoxIter != m_arrFilterBox.end() ) {
-      if ( ar_arrFilterBoxIter->maskFilterPair().matchMsgId( Ident_c( aui32_ident, at_type ) ) ) {
+      if ( (*ar_arrFilterBoxIter)->maskFilterPair().matchMsgId( ident ) ) {
         // matching FilterBox_c found
         return true;
       }
@@ -268,8 +280,8 @@ namespace __IsoAgLib {
   FilterBox_c*
   CanIo_c::getFilterBox( const IsoAgLib::iMaskFilterType_c& arc_maskFilter ) const {
     for( ArrFilterBox::const_iterator i = m_arrFilterBox.begin(); i != m_arrFilterBox.end(); ++i ) {
-      if( i->equalFilterMask( arc_maskFilter ) )
-        return const_cast<FilterBox_c*>( &( *i ) );
+      if( (*i)->equalFilterMask( arc_maskFilter ) )
+        return *i;
     }
     return NULL;
   }

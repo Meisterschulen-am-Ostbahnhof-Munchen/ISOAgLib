@@ -28,24 +28,10 @@ int FilterBox_c::msi_processMsgLoopSize = -1; // not used if "mspc_currentlyProc
 FilterBox_c::FilterBox_c()
   : mc_maskFilterPair()
   , mvec_customer()
+#ifndef NO_FILTERBOX_LIST_ORDER_SWAP
+  , m_matchCnt( 0 )
+#endif
 {}
-
-
-FilterBox_c::FilterBox_c(const FilterBox_c& acrc_src)
-  : mc_maskFilterPair(acrc_src.mc_maskFilterPair)
-  , mvec_customer(acrc_src.mvec_customer)
-{}
-
-
-FilterBox_c&
-FilterBox_c::operator=(const FilterBox_c& acrc_src){
-  if ( this != &acrc_src)
-  {
-    mc_maskFilterPair = acrc_src.mc_maskFilterPair;
-    mvec_customer = acrc_src.mvec_customer;
-  }
-  return *this;
-}
 
 
 void
@@ -155,6 +141,10 @@ FilterBox_c::processMsg( CanPkg_c& pkg )
   }
 
   mspc_currentlyProcessedFilterBox = NULL; // indicate that we're not anymore in the loop!
+
+#ifndef NO_FILTERBOX_LIST_ORDER_SWAP
+  ++m_matchCnt;
+#endif
 }
 
 } // __IsoAgLib
