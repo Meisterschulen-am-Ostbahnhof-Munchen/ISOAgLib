@@ -1,5 +1,5 @@
 /*
-  canpkgext_c.cpp: header for an ISO-supported CanPkg_c object
+  canpkgext_c.cpp: class for an ISO-supported CanPkg_c object
 
   (C) Copyright 2009 - 2013 by OSB AG and developing partners
 
@@ -14,22 +14,10 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
-
 #include <IsoAgLib/util/iassert.h>
 
-#if DEBUG_CAN
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/irs232io_c.h>
-  #endif
-#endif
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-
-
 
 AddressResolveResults_c::AddressResolveResults_c( Ident_c& arc_ident, uint8_t aui8_position )
   : mc_isoName()
@@ -39,13 +27,6 @@ AddressResolveResults_c::AddressResolveResults_c( Ident_c& arc_ident, uint8_t au
 {}
 
 AddressResolveResults_c::~AddressResolveResults_c()
-{}
-
-AddressResolveResults_c::AddressResolveResults_c(const AddressResolveResults_c& acrc_src)
-  : mc_isoName( acrc_src.mc_isoName ),
-    mpc_monitorItem( acrc_src.mpc_monitorItem ),
-    mrc_ident( acrc_src.mrc_ident ),
-    mui8_position( acrc_src.mui8_position )
 {}
 
 
@@ -61,15 +42,6 @@ CanPkgExt_c::CanPkgExt_c()
 
 CanPkgExt_c::~CanPkgExt_c()
 {}
-
-
-CanPkgExt_c::CanPkgExt_c( const CanPkgExt_c& arc_src )
-  : CanPkg_c( arc_src ),
-    mc_addrResolveResSA( arc_src.mc_addrResolveResSA ),
-    mc_addrResolveResDA( arc_src.mc_addrResolveResDA ),
-    mt_msgState( arc_src.mt_msgState )
-{
-}
 
 
 CanPkgExt_c::CanPkgExt_c( const CanPkg_c& arc_src, int ai_multitonInst )
@@ -121,31 +93,6 @@ CanPkgExt_c::resolveAddress( AddressResolveResults_c& result, int ai_multitonIns
 MessageState_t
 CanPkgExt_c::resolveReceivingInformation( int ai_multitonInstance )
 {
-  #if DEBUG_CAN
-  INTERNAL_DEBUG_DEVICE <<
-    "*-*-*-* PROCESS MESSAGE *-*-*-*--> " <<
-#ifdef SYSTEM_PC
-    STL_NAMESPACE::hex <<
-#endif
-      ident() <<
-#ifdef SYSTEM_PC
-    STL_NAMESPACE::dec <<
-#endif
-    uint16_t(getLen()) << " " <<
-#ifdef SYSTEM_PC
-    STL_NAMESPACE::hex <<
-#endif
-    " " << uint16_t(getUint8Data(0)) <<
-    " " << uint16_t(getUint8Data(1)) <<
-    " " << uint16_t(getUint8Data(2)) <<
-    " " << uint16_t(getUint8Data(3)) <<
-    " " << uint16_t(getUint8Data(4)) <<
-    " " << uint16_t(getUint8Data(5)) <<
-    " " << uint16_t(getUint8Data(6)) <<
-    " " << uint16_t(getUint8Data(7)) <<
-    INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
-
   // resolve source address
   // in context of receiving SA is remote
   MessageState_t messageStateSA = address2IdentRemoteSa( ai_multitonInstance );
@@ -156,9 +103,6 @@ CanPkgExt_c::resolveReceivingInformation( int ai_multitonInstance )
   { // PDU2 format -> no destination address
     // isoName and monitoritem are unspecified
     // we have no explicit address, but PDU2 implies GLOBAL (0xFF)
-    #if DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We have PDU2 format -> no destination address." << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
     mc_addrResolveResDA.mc_isoName.setUnspecified();
     mc_addrResolveResDA.mpc_monitorItem = NULL;
 
@@ -166,15 +110,9 @@ CanPkgExt_c::resolveReceivingInformation( int ai_multitonInstance )
   }
   else
   { // for receive, the remote item is the sender --> SA is interpreted
-    #if DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We have PDU1 format -> destination address." << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
     messageStateDA = address2IdentLocalDa( ai_multitonInstance );
   }
-  #if DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Return value is " << (messageStateSA | messageStateDA) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "(0) Valid, (1) OnlyNetworkMgmt, (3) Invalid. " << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+
   //only valid if both messageStates are valid
   return static_cast<MessageState_t>(messageStateSA | messageStateDA);
 }
@@ -270,18 +208,10 @@ CanPkgExt_c::resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResu
   if ( arc_addressResolveResults.mpc_monitorItem->itemState(IState_c::ClaimedAddress) )
   { // if claimed address, sending is allowed under all conditions
     arc_addressResolveResults.setAddress(arc_addressResolveResults.mpc_monitorItem->nr());
-    #if DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "ClaimedAddress state: " << arc_addressResolveResults.mpc_monitorItem->itemState(IState_c::ClaimedAddress) << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "AddressClaim state:   " << arc_addressResolveResults.mpc_monitorItem->itemState(IState_c::AddressClaim) << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "address =             " << int(arc_addressResolveResults.getAddress()) << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
     return true;
   }
   else
   { // sending is not valid
-  #if DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "ItemState is neither ClaimedAddress nor AddressClaim." << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
     return false;
   }
 }

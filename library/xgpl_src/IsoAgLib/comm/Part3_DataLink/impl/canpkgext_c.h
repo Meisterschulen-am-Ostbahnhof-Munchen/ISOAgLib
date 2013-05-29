@@ -1,6 +1,5 @@
 /*
-  canpkgext_c.h: header for extended CanPkg_c object, which calls data
-    flag converting functions on assign operations
+  canpkgext_c.h: class for an ISO-supported CanPkg_c object
 
   (C) Copyright 2009 - 2013 by OSB AG and developing partners
 
@@ -28,25 +27,23 @@ class IsoItem_c;
 /** structure which will be filled when an address is resolved */
 class AddressResolveResults_c
 {
-  public:
-    AddressResolveResults_c(Ident_c& arc_ident, uint8_t aui8_position);
-    ~AddressResolveResults_c();
-    AddressResolveResults_c(const AddressResolveResults_c&);
+private:
+  /** not copyable (due to Ident_c& and no need to be copyable! */
+  AddressResolveResults_c& operator=(const AddressResolveResults_c&); 
+  AddressResolveResults_c(const AddressResolveResults_c&);
 
-    uint8_t getAddress() const {return mrc_ident.ident(mui8_position);}
-    void setAddress(uint8_t aui8_newAddress) { mrc_ident.setByte(aui8_newAddress,mui8_position); }
+public:
+  AddressResolveResults_c(Ident_c& arc_ident, uint8_t aui8_position);
+  ~AddressResolveResults_c();
 
-    IsoName_c mc_isoName;
-    IsoItem_c* mpc_monitorItem;
+  uint8_t getAddress() const {return mrc_ident.ident(mui8_position);}
+  void setAddress(uint8_t aui8_newAddress) { mrc_ident.setByte(aui8_newAddress,mui8_position); }
 
-    //can be source or destination address
-    Ident_c& mrc_ident;
-    //can be source or destination address
-    uint8_t mui8_position;
+  IsoName_c mc_isoName;
+  IsoItem_c* mpc_monitorItem;
 
-  private:
-    /** not copyable : copy operator is only declared, never defined */
-    AddressResolveResults_c& operator=(const AddressResolveResults_c&); 
+  Ident_c& mrc_ident;
+  uint8_t mui8_position; //can be source or destination address
 };
 
 
@@ -85,22 +82,18 @@ typedef enum MessageState_en {
   DaInvalidRemote     = (0x3<<6),
 } MessageState_t;
 
-/** extended version of CanPkg_c which overwrites the
-    assign and getData functions
-    with call for data flag converting functions
-  *@author Dipl.-Inform. Achim Spangler
-  */
+
+/** class for an ISO-supported CanPkg_c object */
 class CanPkgExt_c : public CanPkg_c
 {
- public:
-  /** default constructor, which has nothing to do */
+private:
+  /** not copyable (due to AddressResolveResults_c and no need to be copyable! */
+  CanPkgExt_c(const CanPkgExt_c&);
+  CanPkgExt_c& operator=(const CanPkgExt_c&); 
+
+public:
   CanPkgExt_c();
-
-  /** more constructors.... */
   CanPkgExt_c( const CanPkg_c&, int ai_multitonInst );
-  CanPkgExt_c( const CanPkgExt_c&);
-
-  /** virtual default destructor, which has nothing to do */
   virtual ~CanPkgExt_c();
 
   // Note: FE is considered here a VALID SA!
@@ -296,13 +289,9 @@ private:
   bool resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance  );
 
 private:
-  /** variable which holds the results for a resolved source address */
   AddressResolveResults_c mc_addrResolveResSA;
-
-  /** variable which holds the results for a resolved destination address */
   AddressResolveResults_c mc_addrResolveResDA;
 
-  /** Address-resolve-state */
   MessageState_t mt_msgState;
 };
 
