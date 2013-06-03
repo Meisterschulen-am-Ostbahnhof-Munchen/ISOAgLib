@@ -119,6 +119,7 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
   {
     CanPkgExt_c sendData;
     uint8_t ui8_destinationAddress = 0xFF; // default: broadcast this message
+    uint8_t ui8_pduFormat = VT_TO_ECU_PGN>>8;
 
     if (mb_learnMode)
     { // send message only to VT with function instance 0
@@ -127,6 +128,7 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
       if (mp_vtClientServerCommunication->getVtServerInstPtr())
       {
         ui8_destinationAddress = mp_vtClientServerCommunication->getVtServerInstPtr()->getVtSourceAddress();
+        ui8_pduFormat = ECU_TO_VT_PGN>>8;
       }
     }
 
@@ -161,7 +163,7 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
             ui8_byte8 |= ((*iter)->getInputActivatedInLearnMode() ? (1<<1) : 0);
           }
 
-          sendData.setExtCanPkg8 ( 7, 0, VT_TO_ECU_PGN>>8,
+          sendData.setExtCanPkg8 ( 7, 0, ui8_pduFormat,
                                    ui8_destinationAddress, mrc_wsMasterIdentItem.getIsoItem()->nr(),
                                    0x26, // auxiliary input type 2 status message
                                    ((*iter)->getID() & 0xFF),
