@@ -74,8 +74,8 @@ namespace IsoAgLib {
   void setMaxPowerTime(uint8_t aui8_val) { TracGeneral_c::setMaxPowerTime(aui8_val);}
 
   /** force maintain power from tractor */
-  void forceMaintainPower(bool ab_ecuPower, bool ab_actuatorPower, IsoAgLib::IsoMaintainPower_t at_implState)
-  { TracGeneral_c::forceMaintainPower(ab_ecuPower, ab_actuatorPower, at_implState);}
+  void forceMaintainPower(IsoActiveFlag_t at_ecuPower, IsoActiveFlag_t at_actuatorPower)
+  { TracGeneral_c::forceMaintainPower(at_ecuPower, at_actuatorPower);}
 
   /** set present limit status of the front hitch position
         @param at_val  limit status of the front hitch position

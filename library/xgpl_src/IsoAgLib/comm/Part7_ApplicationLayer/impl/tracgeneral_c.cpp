@@ -108,8 +108,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     mt_implState.i32_lastMaintainPowerRequest = -1;
     mt_implState.b_maintainEcuPower = mt_implState.b_maintainActuatorPower = false;
     mt_implState.inPark =      IsoAgLib::IsoNotAvailablePark;
-    mt_implState.inTransport = IsoAgLib::IsoNotTransported;
-    mt_implState.inWork =      IsoAgLib::IsoDisconnect;
+    mt_implState.inTransport = IsoAgLib::IsoNotAvailableTransport;
+    mt_implState.inWork =      IsoAgLib::IsoNotAvailableWork;
     mt_frontHitchPosLimitStatus = mt_rearHitchPosLimitStatus = IsoAgLib::IsoNotAvailableLimit;
 
     return true;
@@ -213,14 +213,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       {
         indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[pkg.getISONameForSA()];
 
-        if ( ( (pkg.getUint8Data( 0 ) >> 6) & 3) == 1)
-          rt_indicateData.b_maintainEcuPower = true;
-        else
-          rt_indicateData.b_maintainEcuPower = false;
-        if ( ( (pkg.getUint8Data( 0 ) >> 4) & 3) == 1)
-          rt_indicateData.b_maintainActuatorPower = true;
-        else
-          rt_indicateData.b_maintainActuatorPower = false;
+        rt_indicateData.b_maintainEcuPower =      ( ( (pkg.getUint8Data( 0 ) >> 6) & 3) == 1);
+        rt_indicateData.b_maintainActuatorPower = ( ( (pkg.getUint8Data( 0 ) >> 4) & 3) == 1);
 
         rt_indicateData.inTransport = ( (pkg.getUint8Data( 1 ) >> 6) & 3 );
         rt_indicateData.inPark =      ( (pkg.getUint8Data( 1 ) >> 4) & 3 );
@@ -478,60 +472,30 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
  /** force maintain power from tractor
      @see  CanIo_c::operator<<
-     @param ab_ecuPower true -> maintain ECU power
-     @param ab_actuatorPower true-> maintain actuator power
-     @param at_implState in which state is the implement (transport, park, work)
+     @param at_ecuPower IsoActive -> maintain ECU power
+     @param at_actuatorPower IsoActive-> maintain actuator power
    */
-  void TracGeneral_c::forceMaintainPower( bool ab_ecuPower, bool ab_actuatorPower, IsoAgLib::IsoMaintainPower_t at_implState)
+  void TracGeneral_c::forceMaintainPower( IsoAgLib::IsoActiveFlag_t at_ecuPower, IsoAgLib::IsoActiveFlag_t at_actuatorPower )
   {
-    if ( (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK) != 0) return;
+    if ( (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK) != 0)
+      return;
 
     isoaglib_assert( getIdentItem() );
     if ( ! getIdentItem()->isClaimedAddress() )
       return;
 
-     uint8_t val1 = IsoAgLib::IsoInactive,
-            val2 = IsoAgLib::IsoInactive;
-    if (ab_ecuPower)
-      val1 |= ( IsoAgLib::IsoActive   << 6);
-    else
-      val1 |= ( IsoAgLib::IsoInactive << 6);
-    if (ab_actuatorPower)
-      val1 |= ( IsoAgLib::IsoActive   << 4);
-    else
-      val1 |= ( IsoAgLib::IsoInactive << 4);
-
-    switch(at_implState)
-    {
-      case IsoAgLib::implInTransport:
-        val2 |= ( mt_implState.inTransport         << 6);
-        val2 |= ( IsoAgLib::IsoNotAvailablePark << 4);
-        val2 |= ( IsoAgLib::IsoNotAvailableWork << 2);
-        break;
-      case IsoAgLib::implInPark:
-        val2 |= ( IsoAgLib::IsoNotAvailableTransport << 6);
-        val2 |= ( mt_implState.inPark                   << 4);
-        val2 |= ( IsoAgLib::IsoNotAvailableWork      << 2);
-		break;
-      case IsoAgLib::implInWork:
-        val2 |= ( IsoAgLib::IsoNotAvailableTransport << 6);
-        val2 |= ( IsoAgLib::IsoNotAvailablePark      << 4);
-        val2 |= ( mt_implState.inWork                   << 2);
-    }
     CanPkgExt_c pkg;
     pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(6);
-
     pkg.setIsoPgn(MAINTAIN_POWER_REQUEST_PGN);
-    pkg.setUint8Data(0, val1);
-    pkg.setUint8Data(1, val2);
-    //reserved fields
+    pkg.setUint8Data(0, ( at_ecuPower      << 6) |
+                        ( at_actuatorPower << 4) );
+    pkg.setUint8Data(1, ( mt_implState.inTransport << 6) |
+                        ( mt_implState.inPark      << 4) |
+                        ( mt_implState.inWork      << 2) );
     pkg.setUint16Data(2, 0xFFFFU);
     pkg.setUint32Data(4, 0xFFFFFFFFUL);
     pkg.setLen(8);
-
-    // CanIo_c::operator<< retrieves the information with the help of CanPkg_c::getData
-    // then it sends the data
     getIsoBusInstance4Comm() << pkg;
   }
 
@@ -550,9 +514,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     mb_maintainEcuPower = false;
     mb_maintainActuatorPower = false;
 
-    if (mmap_indicatedState.empty()) return;
-
-    int32_t i32_now = HAL::getTime();
+    const int32_t i32_now = HAL::getTime();
     for (STL_NAMESPACE::map< IsoName_c, indicatedStateImpl_t >::iterator iter = mmap_indicatedState.begin();
          iter != mmap_indicatedState.end();
         )

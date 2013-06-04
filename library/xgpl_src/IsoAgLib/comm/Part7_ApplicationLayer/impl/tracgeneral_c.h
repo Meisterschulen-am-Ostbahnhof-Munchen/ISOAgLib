@@ -236,16 +236,15 @@ public:
 
   /** check whether maintenance of power
     * for implement in transport state was requested */
-  IsoAgLib::IsoImplTransportFlag_t maintainPowerForImplInTransport() const
-  { return IsoAgLib::IsoImplTransportFlag_t(mt_implState.inTransport); }
+  IsoAgLib::IsoImplTransportFlag_t maintainPowerForImplInTransport() const { return IsoAgLib::IsoImplTransportFlag_t(mt_implState.inTransport); }
 
   /** check whether maintenance of power
     * for implement in park state was requested */
-  IsoAgLib::IsoImplParkFlag_t maintainPowerForImplInPark() const {return IsoAgLib::IsoImplParkFlag_t(mt_implState.inPark);}
+  IsoAgLib::IsoImplParkFlag_t maintainPowerForImplInPark() const { return IsoAgLib::IsoImplParkFlag_t(mt_implState.inPark); }
 
   /** check whether maintenance of power
     * for implement in work state was requested */
-  IsoAgLib::IsoImplWorkFlag_t maintainPowerForImplInWork() const {return IsoAgLib::IsoImplWorkFlag_t(mt_implState.inWork);}
+  IsoAgLib::IsoImplWorkFlag_t maintainPowerForImplInWork() const { return IsoAgLib::IsoImplWorkFlag_t(mt_implState.inWork); }
 
   bool isTecuLanguageReceived() const { return mb_languageTecuReceived; }
 
@@ -259,13 +258,11 @@ public:
     */
   enum SendLanguage_e sendLanguage();
 
-  /** force maintain power from tractor
-      @see  CanIo_c::operator<<
-      @param ab_ecuPower true -> maintain ECU power
-      @param ab_actuatorPower true-> maintain actuator power
-      @param at_implState in which state is the implement (transport, park, work)
+  /** Client function: force maintain power from tractor (sends once per call)
+      @param at_ecuPower IsoActive -> maintain ECU power
+      @param at_actuatorPower IsoActive-> maintain actuator power
     */
-  void forceMaintainPower( bool ab_ecuPower, bool ab_actuatorPower, IsoAgLib::IsoMaintainPower_t at_implState);
+  void forceMaintainPower( IsoAgLib::IsoActiveFlag_t at_ecuPower, IsoAgLib::IsoActiveFlag_t at_actuatorPower );
   /*@}*/
 
 private:
