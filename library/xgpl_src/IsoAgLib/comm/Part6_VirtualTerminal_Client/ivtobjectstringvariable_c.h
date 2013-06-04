@@ -80,7 +80,7 @@ public:
   uint8_t updateObjectType() const { return vtObjectStringVariable_c::updateObjectType(); }
   */
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

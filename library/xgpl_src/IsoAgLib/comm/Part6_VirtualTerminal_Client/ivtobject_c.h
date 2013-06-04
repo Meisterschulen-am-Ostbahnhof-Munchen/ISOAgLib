@@ -488,7 +488,7 @@ public:
   /** return object type as described in the standard.
       please note that the upper byte may be used for proprietary objects.
    */
-  virtual uint16_t getObjectType() const = 0;
+  virtual uint16_t getObjectType() = 0;
 
 protected: // Attributes
   iVtObject_s* vtObject_a;

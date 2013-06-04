@@ -370,7 +370,7 @@ public:
   }
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() { return objectType(); }
 }; // class iVtObjectGraphicsContext_c
 
 } // namespace IsoAgLib
