@@ -297,6 +297,8 @@ private:
 
   void timeEventSearchForNewVt();
 
+  uint32_t fitTerminalWrapper( const vtObject_c& object );
+
   //! @return true for successful assignment, false if SA couldn't be found.
   bool storeAuxAssignment( const CanPkgExt_c& arc_data );
 
@@ -404,6 +406,7 @@ private:
 
   bool mb_receiveFilterCreated;
 
+  uint8_t m_uploadingVersion; // if uploading a v3 client to a v2 VT (without Aux2), uploadingVersion will be v2
   uint8_t mui8_clientId;
 
   vtClientDisplayState_t men_displayState;

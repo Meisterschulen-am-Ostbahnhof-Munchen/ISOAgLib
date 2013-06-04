@@ -97,12 +97,6 @@ enum IsoCommandFlag_t {
   implRearWork =         32,
 };
 
-enum IsoMaintainPower_t {
-  implInTransport = 1,
-  implInPark =      2,
-  implInWork =      3,
-};
-
 /** different lighting types; implements and tractor*/
 enum IsoFacility_t {
 // Byte 1
