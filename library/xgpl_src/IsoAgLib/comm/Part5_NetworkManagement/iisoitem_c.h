@@ -20,6 +20,9 @@
 namespace __IsoAgLib
 { // forward declarations (for friends)
   class ProprietaryMessageHandler_c;
+  class TcClientConnection_c;
+  class Setpoint_c;
+  class TcClient_c;
 }
 
 
@@ -41,6 +44,10 @@ private:
   friend class IsoItem_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class iControlFunctionStateHandler_c;
+  friend class iTcClient_c;
+  friend class __IsoAgLib::TcClient_c;
+  friend class __IsoAgLib::TcClientConnection_c;
+  friend class __IsoAgLib::Setpoint_c;
 
 public:
   /** deliver the ISOName code of this item */

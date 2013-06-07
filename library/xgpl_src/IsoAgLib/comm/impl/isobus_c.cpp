@@ -125,11 +125,6 @@ IsoBus_c::init (uint8_t aui8_busNumber)
     getTimePosGpsInstance4Comm().init();
   #endif
 
-  /// Part 10 - Task Controller (Client)
-  #ifdef USE_ISO_TASKCONTROLLER_CLIENT
-    getTcClientInstance4Comm().init();
-  #endif
-
   /// Part 12 - Diagnostics Services
   // nop - only additional items for Part 5 currently
 

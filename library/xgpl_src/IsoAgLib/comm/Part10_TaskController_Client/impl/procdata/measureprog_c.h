@@ -15,6 +15,7 @@
 
 #include "measuresubprog_c.h"
 #include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
@@ -23,64 +24,57 @@
 
 namespace __IsoAgLib {
 
-class ProcData_c;
+  class ProcData_c;
+  class TcClientConnection_c;
 
-class MeasureProg_c
-{
-private:
-  struct ThresholdInfo_s
-  {
-    IsoAgLib::ProcData::MeasurementCommand_t en_type;
-    int32_t i32_threshold;
+  class MeasureProg_c : public SchedulerTask_c {
+    private:
+      struct ThresholdInfo_s {
+        IsoAgLib::ProcData::MeasurementCommand_t en_type;
+        int32_t i32_threshold;
+      };
+
+      typedef STL_NAMESPACE::list<ThresholdInfo_s> ThresholdInfoContainer_t;
+      typedef STL_NAMESPACE::list<ThresholdInfo_s>::iterator ThresholdInfoContainerIterator_t;
+      typedef STL_NAMESPACE::list<ThresholdInfo_s>::const_iterator ThresholdInfoContainerConstIterator_t;
+
+      typedef STL_NAMESPACE::list<MeasureSubprog_c> MeasureSubprogContainer_t;
+      typedef STL_NAMESPACE::list<MeasureSubprog_c>::iterator MeasureSubprogContainerIterator_t;
+
+    public:
+      MeasureProg_c( TcClientConnection_c* c );
+
+      bool handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment, int32_t value );
+      void stopAllMeasurements();
+
+      void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, int32_t value );
+
+      void timeEvent();
+      void timeEvent( ProcData_c& ac_processData, int32_t value );
+
+      void setValue( ProcData_c& ac_processData, int32_t ai32_val );
+
+      int32_t getValue() const {
+        return m_value;
+      }
+
+    private:
+      MeasureSubprog_c& addSubprog( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment );
+      bool minMaxLimitsPassed( int32_t value ) const;
+      void stopMeasurement( IsoAgLib::ProcData::MeasurementCommand_t ren_type );
+
+      ThresholdInfoContainer_t m_thresholdInfo;
+      MeasureSubprogContainer_t m_measureSubprog;
+
+      /** not copyable : copy constructor/operators only declared, not defined */
+      MeasureProg_c( const MeasureProg_c& );
+      MeasureProg_c& operator=( const MeasureProg_c& );
+
+      int32_t m_value;
+
+      TcClientConnection_c* m_connection;
+
   };
-
-  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::list<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s) > List_ThresholdInfo;
-  typedef STL_NAMESPACE::list<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s) >::iterator List_ThresholdInfoIterator;
-  typedef STL_NAMESPACE::list<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s)>::const_iterator List_ThresholdInfoConstIterator;
-  #else
-  typedef STL_NAMESPACE::list<ThresholdInfo_s> List_ThresholdInfo;
-  typedef STL_NAMESPACE::list<ThresholdInfo_s>::iterator List_ThresholdInfoIterator;
-  typedef STL_NAMESPACE::list<ThresholdInfo_s>::const_iterator List_ThresholdInfoConstIterator;
-  #endif
-
-  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::list<MeasureSubprog_c,MALLOC_TEMPLATE(MeasureSubprog_c) > Vec_MeasureSubprog;
-  typedef STL_NAMESPACE::list<MeasureSubprog_c,MALLOC_TEMPLATE(MeasureSubprog_c)>::iterator Vec_MeasureSubprogIterator;
-  #else
-  typedef STL_NAMESPACE::list<MeasureSubprog_c> Vec_MeasureSubprog;
-  typedef STL_NAMESPACE::list<MeasureSubprog_c>::iterator Vec_MeasureSubprogIterator;
-  #endif
-
-public:
-  MeasureProg_c( IsoAgLib::ProcData::RemoteType_t ecutype );
-  virtual ~MeasureProg_c() {}
-
-  bool handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment, int32_t value );
-  void stopAllMeasurements();
-
-  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, int32_t value );
-  void timeEvent( ProcData_c& ac_processData, uint16_t& rui16_nextTimePeriod, int32_t value );
-
-  void setVal(ProcData_c& ac_processData, int32_t ai32_val);
-
-  IsoAgLib::ProcData::RemoteType_t isoNameType() const { return m_ecuType; }
-
-private:
-  MeasureSubprog_c& addSubprog(IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment);
-  bool minMaxLimitsPassed(int32_t value) const;
-  void stopMeasurement(IsoAgLib::ProcData::MeasurementCommand_t ren_type);
-
-private:
-  List_ThresholdInfo mlist_thresholdInfo;
-  Vec_MeasureSubprog mvec_measureSubprog;
-  IsoAgLib::ProcData::RemoteType_t m_ecuType;
-  
-private:
-  /** not copyable : copy constructor/operators only declared, not defined */
-  MeasureProg_c( const MeasureProg_c& );
-  MeasureProg_c& operator=( const MeasureProg_c& );
-};
 
 }
 

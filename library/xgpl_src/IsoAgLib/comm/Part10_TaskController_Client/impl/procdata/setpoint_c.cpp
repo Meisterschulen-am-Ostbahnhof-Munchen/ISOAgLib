@@ -13,26 +13,24 @@
 #include "setpoint_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatahandler_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/itcclient_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatasetpointhandler_c.h>
 
 
 namespace __IsoAgLib {
 
-void
-Setpoint_c::processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::RemoteType_t a_ecuType )
-{
-  isoaglib_assert(ProcessPkg_c::setValue == pkg.men_command);
-  isoaglib_assert(pkg.getISONameForSA().isSpecified()); // already tested before in TcClient_c::processMsg
- 
-  const bool b_change = ( mi32_value != pkg.mi32_pdValue );
-  mi32_value = pkg.mi32_pdValue;
+  void Setpoint_c::processMsg( ProcData_c& pd, const ProcessPkg_c& pkg ) {
+    isoaglib_assert( ProcessPkg_c::setValue == pkg.men_command );
+    isoaglib_assert( pkg.getISONameForSA().isSpecified() ); // already tested before in TcClient_c::processMsg
 
-  // call handler function if handler class is registered
-  if ( ac_processData.getProcDataHandler() != NULL )
-    ac_processData.getProcDataHandler()->processSetpointSet(
-	  static_cast<IsoAgLib::iProcData_c&>(ac_processData),
-      pkg.mi32_pdValue, a_ecuType, b_change );
-}
+    const bool b_change = ( mi32_value != pkg.mi32_pdValue );
+    mi32_value = pkg.mi32_pdValue;
+
+    // call handler function if handler class is registered
+    if ( pd.getSetpointHandler() ) {
+      pd.getSetpointHandler()->processSetpointSet( static_cast<IsoAgLib::iProcData_c&>(pd),
+          pkg.mi32_pdValue, static_cast<IsoAgLib::iIsoItem_c&>( *pkg.getMonitorItemForSA() ), b_change );
+    }
+  }
 
 }

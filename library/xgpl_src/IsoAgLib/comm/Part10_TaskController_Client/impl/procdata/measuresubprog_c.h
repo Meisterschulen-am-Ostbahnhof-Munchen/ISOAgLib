@@ -44,9 +44,6 @@ private:
 
   const IsoAgLib::ProcData::MeasurementCommand_t men_type;
 
-private:
-  /** not assignable: assign operator only declared, not defined */
-  MeasureSubprog_c& operator=(const MeasureSubprog_c&); 
 };
 
 }

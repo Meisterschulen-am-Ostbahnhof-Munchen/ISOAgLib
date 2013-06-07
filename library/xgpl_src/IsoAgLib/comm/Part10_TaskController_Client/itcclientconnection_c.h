@@ -1,5 +1,5 @@
 /*
-  itcclientconnection_c.h: Class for managing a connection 
+  itcclientconnection_c.h: Class for managing a connection
 
   (C) Copyright 2009 - 2013 by OSB AG and developing partners
 
@@ -17,28 +17,31 @@
 #include "itcclient_c.h"
 
 namespace IsoAgLib {
-class iProcDataHandler_c;
+  class iProcDataHandler_c;
 
-class iTcClientConnection_c : public __IsoAgLib::TcClientConnection_c
-{
-public:
-  bool sendCommandChangeDesignator(uint16_t objectID, const char* newString, uint8_t stringLength)
-    { return TcClientConnection_c::sendCommandChangeDesignator(objectID, newString, stringLength); }
+  class iTcClientConnection_c : public __IsoAgLib::TcClientConnection_c {
+    public:
+      bool sendCommandChangeDesignator( uint16_t objectID, const char* newString, uint8_t stringLength ) {
+        return TcClientConnection_c::sendCommandChangeDesignator( objectID, newString, stringLength );
+      }
 
-  iIdentItem_c& getIdentItem() const { return static_cast<IsoAgLib::iIdentItem_c&>(TcClientConnection_c::getIdentItem()); }
+      iIdentItem_c& getIdentItem() const {
+        return static_cast<IsoAgLib::iIdentItem_c&>( TcClientConnection_c::getIdentItem() );
+      }
 
-  void setProcDataHandler( iProcDataHandler_c *procDataHandler )
-  { TcClientConnection_c::setProcDataHandler( procDataHandler ); }
+      void enable( bool a ) {
+        __IsoAgLib::TcClientConnection_c::enable( a );
+      }
 
-private:
-  /** PRIVATE constructor to forbid instantiation of this interface class.
-    * it can only be static_cast'ed to this class, not constructed!
-    */
-  iTcClientConnection_c();
+    private:
+      /** PRIVATE constructor to forbid instantiation of this interface class.
+        * it can only be static_cast'ed to this class, not constructed!
+        */
+      iTcClientConnection_c();
 
-  friend class iTcClient_c;
-  friend class __IsoAgLib::TcClientConnection_c;
-};
+      friend class iTcClient_c;
+      friend class __IsoAgLib::TcClientConnection_c;
+  };
 
 } // IsoAgLib
 

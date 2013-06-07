@@ -14,82 +14,93 @@
 #define PROCDATA_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/managemeasureprog_c.h>
+
+#include <list>
+
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measurement_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/setpoint_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
-#include "../processpkg_c.h"
 
 namespace IsoAgLib {
-  class iProcDataHandler_c;
+  class iProcDataSetpointHandler_c;
 }
 
 
 namespace __IsoAgLib {
   class TcClientConnection_c;
+  class DeviceObjectDpd_c;
+  class DeviceObjectDet_c;
 
-class ProcData_c
-{
-public:
-  ProcData_c();
-  void init( TcClientConnection_c& tcCC, const IsoAgLib::iDeviceObjectDpd_c& dpd, const IsoAgLib::iDeviceObjectDet_c& det, IsoAgLib::iProcDataHandler_c *apc_procDataHandler = NULL );
+  class ProcData_c {
+    public:
+      ProcData_c();
+      void init( IdentItem_c& ident, const DeviceObjectDpd_c& dpd, const DeviceObjectDet_c& det, IsoAgLib::iProcDataSetpointHandler_c* setpointhandler = NULL );
 
-  /** @todo call close() from generated proc2iso code (closeAll())!!! */
-  void close();
+      void close();
 
-  IsoAgLib::iProcDataHandler_c* getProcDataHandler( ) const { return mpc_procDataHandler; }
-  void setProcDataHandler( IsoAgLib::iProcDataHandler_c *apc_procDataHandler )
-  { mpc_procDataHandler = apc_procDataHandler; }
+      int32_t setpointValue() const {
+        return m_setpoint.setpointValue();
+      }
 
-  int32_t measurementVal() const { return mc_measureprog.measurementValue(); }
-  int32_t setpointVal() const { return mc_setpoint.setpointValue(); }
+      IsoAgLib::iProcDataSetpointHandler_c* getSetpointHandler() {
+        return m_setpointhandler;
+      }
 
-  void setMeasurementVal(int32_t ai32_val);
-  void incrMeasurementVal(int32_t ai32_val);
+      void setMeasurementValue( int32_t ai32_val );
+      void incrMeasurementValue( int32_t ai32_val );
 
-  void processMsg( const ProcessPkg_c& pkg, IsoAgLib::ProcData::RemoteType_t a_ecuType );
-  void timeEvent( uint16_t& rui16_nextTimePeriod );
 
-  void sendMeasurementVal( const IsoName_c& ac_targetISOName ) const;
+      int32_t measurementValue() const {
+        return m_measurement.getValue();
+      }
+      void sendMeasurementVal() const;
+      void startDataLogging( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment );
+      void stopRunningMeasurement();
 
-  void startDataLogging( IsoAgLib::ProcData::MeasurementCommand_t, int32_t increment, IsoAgLib::ProcData::RemoteType_t );
+      void addMeasureProg( MeasureProg_c* m ) {
+        m_measurement.addMeasureProg( m );
+      }
 
-  void stopRunningMeasurement( IsoAgLib::ProcData::RemoteType_t a_ecuType );
+      void removeMeasureProg( MeasureProg_c* m ) {
+        m_measurement.removeMeasureProg( m );
+      }
 
-  uint16_t DDI() const{ return m_dpd->ddi(); }
-  uint16_t element() const{ return m_det->elementNumber(); }
 
-  bool isSetPoint() const { return m_dpd->propertySetpoint(); }
-  uint8_t triggerMethod() const { return m_dpd->method(); } 
+      const IsoName_c& isoName() const {
+        return identItem().isoName();
+      }
+      const IdentItem_c& identItem() const {
+        isoaglib_assert( m_ident );
+        return *m_ident;
+      }
 
-  const IsoName_c& isoName() const
-  { isoaglib_assert(m_tcCC != NULL); return m_tcCC->getIdentItem().isoName(); }
+      const DeviceObjectDpd_c* getDpd() const {
+        return m_dpd;
+      }
+      const DeviceObjectDet_c* getDet() const {
+        return m_det;
+      }
 
-  const TcClientConnection_c& getTcClientConnection() const {
-    return *m_tcCC;
-  }
+      uint16_t DDI() const;
+      uint16_t element() const;
+      uint8_t triggerMethod() const;
 
-private:
-  void sendValue( IsoAgLib::ProcData::RemoteType_t a_remoteType, int32_t ai32_val ) const;
+      void processMsg( const ProcessPkg_c& pkg );
+    private:
+      IdentItem_c* m_ident;
+      const DeviceObjectDpd_c* m_dpd;
+      const DeviceObjectDet_c* m_det;
+      IsoAgLib::iProcDataSetpointHandler_c* m_setpointhandler;
 
-private:
-  TcClientConnection_c* m_tcCC; // back ref.
-  const IsoAgLib::iDeviceObjectDpd_c* m_dpd;
-  const IsoAgLib::iDeviceObjectDet_c* m_det;
-  IsoAgLib::iProcDataHandler_c* mpc_procDataHandler;
+      Setpoint_c m_setpoint;
+      Measurement_c m_measurement;
 
-  ManageMeasureProg_c mc_measureprog;
-  Setpoint_c mc_setpoint;
-
-private:
-  friend class MeasureProg_c;
-
-private:
-  /** not copyable : copy constructor/operator only declared, not defined */
-  ProcData_c( const ProcData_c& );
-  ProcData_c& operator=( const ProcData_c& );
-};
+    private:
+      /** not copyable : copy constructor/operator only declared, not defined */
+      ProcData_c( const ProcData_c& );
+      ProcData_c& operator=( const ProcData_c& );
+  };
 
 }
 

@@ -11,8 +11,9 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "procdata_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatahandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h>
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
 
@@ -23,139 +24,141 @@
 
 namespace __IsoAgLib {
 
-ProcData_c::ProcData_c( )
-    : m_tcCC( NULL )
+  ProcData_c::ProcData_c( )
+    : m_ident( NULL )
     , m_dpd( NULL )
     , m_det( NULL )
-    , mpc_procDataHandler( NULL )
-    , mc_measureprog()
-    , mc_setpoint()
-{}
+    , m_setpointhandler( NULL )
+  {}
 
 
-void
-ProcData_c::init( TcClientConnection_c& tcCC, const IsoAgLib::iDeviceObjectDpd_c& dpd, const IsoAgLib::iDeviceObjectDet_c& det, IsoAgLib::iProcDataHandler_c *procDataHandler )
-{
-  m_tcCC = &tcCC;
-  m_dpd = &dpd;
-  m_det = &det;
-  mpc_procDataHandler = procDataHandler;
+  void ProcData_c::init( IdentItem_c& ident, const DeviceObjectDpd_c& dpd, const DeviceObjectDet_c& det, IsoAgLib::iProcDataSetpointHandler_c* setpointhandler ) {
+    m_ident = &ident;
+    m_dpd = &dpd;
+    m_det = &det;
+    m_setpointhandler = setpointhandler;
 
-  m_tcCC->registerLocalProcessData( this );
-
-  isoaglib_assert(
-    (DDI() != IsoAgLib::ProcData::DefaultDataLoggingDDI) ? true : 
-    IsoAgLib::ProcData::isMethodSet(triggerMethod(), IsoAgLib::ProcData::TimeInterval) & 
-    IsoAgLib::ProcData::isMethodSet(triggerMethod(), IsoAgLib::ProcData::DistInterval) &
-    IsoAgLib::ProcData::isMethodSet(triggerMethod(), IsoAgLib::ProcData::ThresholdLimit) &
-    IsoAgLib::ProcData::isMethodSet(triggerMethod(), IsoAgLib::ProcData::OnChange) &
-    IsoAgLib::ProcData::isMethodSet(triggerMethod(), IsoAgLib::ProcData::Total) );
-}
-
-
-void
-ProcData_c::close()
-{
-  m_tcCC->unregisterLocalProcessData( this );
-}
-
-
-void
-ProcData_c::setMeasurementVal(int32_t ai32_val)
-{
-  mc_measureprog.setVal( *this, ai32_val );
-}
-
-
-void
-ProcData_c::incrMeasurementVal(int32_t ai32_val)
-{
-  int32_t i32_value = mc_measureprog.measurementValue() + ai32_val;
-  mc_measureprog.setVal( *this, i32_value );
-}
-
-
-void
-ProcData_c::timeEvent( uint16_t& rui16_nextTimePeriod )
-{
-  mc_measureprog.timeEvent( *this, rui16_nextTimePeriod);
-}
-
-
-void
-ProcData_c::processMsg( const ProcessPkg_c& pkg, IsoAgLib::ProcData::RemoteType_t a_ecuType )
-{
-  isoaglib_assert( DDI() == pkg.mui16_DDI );
-  
-  if ( IsoAgLib::ProcData::DefaultDataLoggingDDI == pkg.mui16_DDI ) 
-  {
-    isoaglib_assert( getProcDataHandler() != NULL );
-    
-    // if method is request, notify the application and later respond to the request
-    if ( pkg.men_command == ProcessPkg_c::requestValue)
-      getProcDataHandler()->processDefaultLoggingStart(a_ecuType );
-    //else // command not supported for default DDI
-    //@TODO NACK ? Bit 0 = 1 = Process Data Command not supported
-    //return;
+    isoaglib_assert(
+      ( DDI() != IsoAgLib::ProcData::DefaultDataLoggingDDI ) ? true :
+      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::TimeInterval ) &
+      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::DistInterval ) &
+      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::ThresholdLimit ) &
+      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::OnChange ) &
+      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::Total ) );
   }
-  
-  if ( pkg.men_command == ProcessPkg_c::setValue )
-  { // process setpoint command
-    if (isSetPoint())
-    {
-      mc_setpoint.processMsg( *this, pkg, a_ecuType );
-    }
-    else
-    { // set value but DPD is not settable
-      m_tcCC->sendNack( pkg.getMonitorItemForSA()->isoName(),
-                        isoName(),
-                        DDI(),
-                        element(),
-                        IsoAgLib::ProcData::NackProcessDataNotSetable);
+
+
+  void ProcData_c::close() {}
+
+
+  void ProcData_c::setMeasurementValue( int32_t v ) {
+    m_measurement.setMeasurementValue( *this, v );
+  }
+
+
+  void ProcData_c::incrMeasurementValue( int32_t v ) {
+    m_measurement.setMeasurementValue( *this, m_measurement.getValue() + v );
+  }
+
+
+  void ProcData_c::processMsg( const ProcessPkg_c& pkg ) {
+    isoaglib_assert( DDI() == pkg.mui16_DDI );
+
+    if ( pkg.men_command == ProcessPkg_c::setValue ) {
+      // process setpoint command
+      if ( m_dpd->propertySetpoint() ) {
+        m_setpoint.processMsg( *this, pkg );
+      } else {
+        // set value but DPD is not settable -> NACK
+        ProcessPkg_c pkg;
+
+        const uint8_t ui8_cmd = 0xd;
+        pkg.setMonitorItemForDA( pkg.getMonitorItemForSA() );
+        pkg.setMonitorItemForSA( m_ident->getIsoItem() );
+        pkg.setIsoPri( 3 );
+        pkg.setIsoPgn( PROCESS_DATA_PGN );
+        pkg.setUint8Data( 0, ( uint8_t )( ( ui8_cmd & 0xf ) | ( ( element() & 0xf ) << 4 ) ) );
+        pkg.setUint8Data( 1, ( uint8_t )( element() >> 4 ) );
+        pkg.setUint8Data( 2, ( uint8_t )( DDI() & 0x00FF ) );
+        pkg.setUint8Data( 3, ( uint8_t )( ( DDI() & 0xFF00 ) >> 8 ) );
+        pkg.setUint8Data( 4, ( uint8_t )IsoAgLib::ProcData::NackProcessDataNotSetable );
+        pkg.setUint8Data( 5, 0xFF );
+        pkg.setUint8Data( 6, 0xFF );
+        pkg.setUint8Data( 7, 0xFF );
+        pkg.setLen( 8 );
+
+        getIsoBusInstance( m_ident->getMultitonInst() ) << pkg;
+      }
+    } else {
+      m_measurement.processMsg( *this, pkg );
     }
   }
-  else
-  { // process measurement commands
-    mc_measureprog.processMsg( *this, pkg, a_ecuType );
+
+
+  void ProcData_c::startDataLogging( IsoAgLib::ProcData::MeasurementCommand_t type, int32_t inc ) {
+    m_measurement.startDataLogging( *this, type, inc );
   }
-}
 
 
-void
-ProcData_c::startDataLogging(
-  IsoAgLib::ProcData::MeasurementCommand_t ren_type /* IsoAgLib::ProcData::TimeProp, IsoAgLib::ProcData::DistProp, ... */,
-  int32_t ai32_increment,
-  IsoAgLib::ProcData::RemoteType_t a_ecuType )
-{
-  isoaglib_assert( IsoAgLib::ProcData::RemoteTypeUndefined != a_ecuType );
-
-  mc_measureprog.startDataLogging(*this, ren_type, ai32_increment, a_ecuType);
-}
+  void ProcData_c::stopRunningMeasurement() {
+    m_measurement.stopRunningMeasurement();
+  }
 
 
-void
-ProcData_c::stopRunningMeasurement( IsoAgLib::ProcData::RemoteType_t a_ecuType )
-{
-  mc_measureprog.stopRunningMeasurement( a_ecuType );
-}
+  void ProcData_c::sendMeasurementVal() const {
+
+    TcClient_c::identData_t* d = getTcClientInstance( m_ident->getMultitonInst() ).getDataFor( *m_ident );
+
+    isoaglib_assert( d );
+
+    ProcessPkg_c pkg;
+
+    pkg.men_command = ProcessPkg_c::setValue;
+    pkg.setMonitorItemForSA( m_ident->getIsoItem() );
+    pkg.setIsoPri( 3 );
+    pkg.setIsoPgn( PROCESS_DATA_PGN );
+    pkg.mui16_element = element();
+    pkg.mui16_DDI = DDI();
+    pkg.mi32_pdValue = measurementValue();
+
+    // check if command is valid
+    isoaglib_assert( pkg.men_command != ProcessPkg_c::commandReserved1 );
+    isoaglib_assert( pkg.men_command != ProcessPkg_c::commandReserved2 );
+    isoaglib_assert( pkg.men_command != ProcessPkg_c::commandReserved3 );
+    isoaglib_assert( pkg.men_command != ProcessPkg_c::commandReserved4 );
+    isoaglib_assert( pkg.men_command != ProcessPkg_c::CommandUndefined );
+
+    uint8_t ui8_cmd = static_cast<uint8_t>( pkg.men_command );
+    pkg.setUint8Data( 0, ( ui8_cmd & 0xf ) | ( ( pkg.mui16_element & 0xf ) << 4 ) );
+    pkg.setUint8Data( 1, pkg.mui16_element >> 4 );
+    pkg.setUint8Data( 2, pkg.mui16_DDI & 0x00FF );
+    pkg.setUint8Data( 3, ( pkg.mui16_DDI& 0xFF00 ) >> 8 );
+    // for ISO the ident is directly read and written
+    pkg.setInt32Data( 4, pkg.mi32_pdValue );
+    pkg.setLen( 8 );
 
 
-void
-ProcData_c::sendValue( IsoAgLib::ProcData::RemoteType_t a_ecuType, int32_t ai32_val) const
-{
-  const IsoName_c& c_destinationISOName = m_tcCC->getTcClient().getISONameFromType( a_ecuType );
-
-  if (!c_destinationISOName.isSpecified())
-    return;
-
-  m_tcCC->sendProcMsg( c_destinationISOName, isoName(), DDI(), element(), ai32_val );
-}
+    STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = d->connections.begin();
+    while ( it != d->connections.end() ) {
+      pkg.setMonitorItemForDA( ( *it )->getIdentItem().getIsoItem() );
+      getIsoBusInstance( m_ident->getMultitonInst() ) << pkg;
+      ++it;
+    }
+  }
 
 
-void
-ProcData_c::sendMeasurementVal( const IsoName_c& ac_targetISOName) const
-{
-  sendValue( m_tcCC->getTcClient().getTypeFromISOName( ac_targetISOName ), measurementVal() );
-}
+  uint16_t ProcData_c::DDI() const {
+    return m_dpd->ddi();
+  }
+
+
+  uint16_t ProcData_c::element() const {
+    return m_det->elementNumber();
+  }
+
+
+  uint8_t ProcData_c::triggerMethod() const {
+    return m_dpd->method();
+  }
 
 }

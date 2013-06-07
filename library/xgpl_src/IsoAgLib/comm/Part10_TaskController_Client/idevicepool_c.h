@@ -17,250 +17,123 @@
 #ifndef _IDEVICEPOOL_C_H_
 #define _IDEVICEPOOL_C_H_
 
-#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/ddidefinition.h>
-
-#include <map>
-#include <vector>
-
-using namespace IsoAgLib::ProcData;
-
-namespace __IsoAgLib {
-  class ProcData_c;
-  class TcClientConnection_c;
-}
-
-//static helper
-void format( STL_NAMESPACE::vector<uint8_t>& byteStream, const char* str );
-void format( STL_NAMESPACE::vector<uint8_t>& byteStream, const uint8_t* val, size_t len );
-void format( STL_NAMESPACE::vector<uint8_t>& byteStream, uint8_t val );
-void format( STL_NAMESPACE::vector<uint8_t>& byteStream, uint16_t val );
-void format( STL_NAMESPACE::vector<uint8_t>& byteStream, uint32_t val );
-void format( STL_NAMESPACE::vector<uint8_t>& byteStream, int32_t val );
-void format( STL_NAMESPACE::vector<uint8_t>& byteStream, float val );
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h>
 
 namespace IsoAgLib {
+  class iProcData_c;
 
-typedef struct
-{
-  uint8_t language[2];
-  uint8_t numberFormat;
-  uint8_t dateFormat;
-  uint8_t unitsFormatLow;
-  uint8_t unitsFormatHigh;
-  uint8_t reserved;
-} Localization_s;
+  typedef __IsoAgLib::Localization_s Localization_s;
+  typedef __IsoAgLib::StructureLabel_s StructureLabel_s;
 
-typedef struct
-{
-  uint8_t Byte1;
-  uint8_t Byte2;
-  uint8_t Byte3;
-  uint8_t Byte4;
-  uint8_t Byte5;
-  uint8_t Byte6;
-  uint8_t Byte7;
-} StructureLabel_s;
+  /* Dvc */
 
-class iDeviceObject_c
-{
-public:
-  iDeviceObject_c( const DeviceObjectType_t type, const char* desig );
-  virtual ~iDeviceObject_c();
-
-  uint16_t getObjectId() const { return m_objectId; }
-  DeviceObjectType_t getObjectType() const { return m_objectType; }
-  const char* getDesignator() const { return mcstr_designator; }
-
-  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
-  virtual void setDesignator( const char* );
-
-protected:
-  const DeviceObjectType_t m_objectType;
-  const uint16_t m_objectId;
-  char *mcstr_designator;
-
-  static uint16_t m_objIdCounter;
-};
-
-class iDevicePool_c;
-class iDeviceObjectDvc_c : public iDeviceObject_c
-{
-public:
-  iDeviceObjectDvc_c( const char* version, const char* desig );
-  virtual ~iDeviceObjectDvc_c();
-
-  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
-
-  const iIsoName_c& getWsmName() const { return m_wsmName; }
-  const Localization_s& getLocalization() const { return m_localization; }
-  const StructureLabel_s& getStructureLabel() const { return m_structLabel; }
-  const char* getVersion() const { return mcstr_version; }
-  const char* getSerialNumber() const { return mcstr_serialNumber; }
-
-  void setLocalization( const localSettings_s& );
-  void setLocalization( const Localization_s& );
-  void setStructureLabel( const uint8_t* );
-  void setStructureLabel( const char* );
-
-private:
-  friend class iDevicePool_c;
-
-  void init( const iIdentItem_c& ident ) { m_wsmName = ident.isoName(); }
-
-protected:
-  char *mcstr_version;
-  char *mcstr_serialNumber;
-  StructureLabel_s m_structLabel;
-  iIsoName_c m_wsmName;
-  Localization_s m_localization;
-};
-
-class iDeviceObjectDet_c : public iDeviceObject_c
-{
-public:
-  iDeviceObjectDet_c( const iDeviceObject_c& , uint16_t element, uint8_t type, const char* desig );
-  virtual ~iDeviceObjectDet_c() {}
-
-  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
-
-  size_t numberOfChildren() const { return m_childList.size(); }
-  bool addChild( const iDeviceObject_c& );
-
-protected:
-  uint16_t elementNumber() const {
-    return m_elementNumber;
-  }
-  const uint8_t m_type;
-  const uint16_t m_elementNumber;
-  const uint16_t m_parentId;
-  STL_NAMESPACE::vector<uint16_t> m_childList;
-  friend class __IsoAgLib::ProcData_c;
-};
+  class iDeviceObjectDvc_c : public __IsoAgLib::DeviceObjectDvc_c {
+    public:
+      iDeviceObjectDvc_c( const char* version, const char* desig ) : __IsoAgLib::DeviceObjectDvc_c( version, desig ) {}
+      void setLocalization( const localSettings_s& s ) {
+        __IsoAgLib::DeviceObjectDvc_c::setLocalSettings( s );
+      }
+      void setLocalization( const Localization_s& s ) {
+        __IsoAgLib::DeviceObjectDvc_c::setLocalization( s );
+      }
+      void setStructureLabel( const char* s ) {
+        __IsoAgLib::DeviceObjectDvc_c::setStructureLabel( s );
+      }
+  };
 
 
-class iDeviceObjectDvp_c;
-class iDeviceObjectDpd_c : public iDeviceObject_c
-{
-public:
-  iDeviceObjectDpd_c( uint16_t ddi, const Properties_t&, const Methods_t&, const char* desig, const iDeviceObjectDvp_c* );
-  virtual ~iDeviceObjectDpd_c() {}
+  /* Dvp */
 
-  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
-
-protected:
-  uint16_t ddi() const {
-    return m_ddi;
-  }
-  uint8_t method() const {
-    return m_method;
-  }
-  bool propertySetpoint() const {
-    return ( m_properties & ( 1 << 1 ) ) != 0;
-  }
-  const uint16_t m_ddi;
-  const uint8_t m_properties;
-  const uint8_t m_method;
-  const uint16_t m_dvpObjectId;
-  friend class __IsoAgLib::ProcData_c;
-};
+  class iDeviceObjectDvp_c : public __IsoAgLib::DeviceObjectDvp_c {
+    public:
+      iDeviceObjectDvp_c( float scale, int32_t offset, uint8_t decimals, const char* desig ) : __IsoAgLib::DeviceObjectDvp_c( scale, offset, decimals, desig ) {}
+      void setOffset( int32_t offset ) {
+        __IsoAgLib::DeviceObjectDvp_c::setOffset( offset );
+      }
+      void setDecimals( uint8_t decimals ) {
+        __IsoAgLib::DeviceObjectDvp_c::setDecimals( decimals );
+      }
+      void setScale( float scale ) {
+        __IsoAgLib::DeviceObjectDvp_c::setScale( scale );
+      }
+      void setUnitDesignator( const char* desig ) {
+        __IsoAgLib::DeviceObjectDvp_c::setDesignator( desig );
+      }
+  };
 
 
-class iDeviceObjectDpt_c : public iDeviceObject_c
-{
-public:
-  iDeviceObjectDpt_c( uint16_t ddi, int32_t value, const char* desig, const iDeviceObjectDvp_c* );
-  virtual ~iDeviceObjectDpt_c() {}
+  /* Dpd */
 
-  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
-
-  int32_t getValue() const { return m_value; }
-
-protected:
-  const uint16_t m_ddi;
-  const int32_t m_value;
-  const uint16_t m_dvpObjectId;
-};
+  class iDeviceObjectDpd_c : public __IsoAgLib::DeviceObjectDpd_c {
+    public:
+      iDeviceObjectDpd_c( uint16_t ddi, const ProcData::Properties_t& p, const ProcData::Methods_t& m, const char* desig, const iDeviceObjectDvp_c* dvp ) :
+        DeviceObjectDpd_c( ddi, p, m, desig, dvp ) {}
+  };
 
 
-class iDeviceObjectDvp_c : public iDeviceObject_c
-{
-public:
-  iDeviceObjectDvp_c( float scale, int32_t offset, uint8_t decimals, const char* desig );
-  virtual ~iDeviceObjectDvp_c() {}
+  /* Dpt */
 
-  virtual void formatBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream ) const;
+  class iDeviceObjectDpt_c : public __IsoAgLib::DeviceObjectDpt_c {
+    public:
+      iDeviceObjectDpt_c( uint16_t ddi, int32_t value, const char* desig, const iDeviceObjectDvp_c* dvp ) : __IsoAgLib::DeviceObjectDpt_c( ddi, value, desig, dvp ) {}
+      int32_t getValue() const {
+        return __IsoAgLib::DeviceObjectDpt_c::getValue();
+      }
+  };
 
-  void setOffset( int32_t offset ) { if ( checkDirty( m_offset, offset ) ) m_offset = offset; }
-  void setDecimals( uint8_t decimals ) { if ( checkDirty( m_decimals, decimals ) ) m_decimals = decimals; }
-  void setScale( float scale ) { if ( checkDirty( m_scale, scale ) ) m_scale = scale; }
+  /* Det */
 
-  void setUnitDesignator( const char* desig ) { setDesignator( desig ); }
-
-protected:
-  template<typename T> inline bool checkDirty(T lhs, T rhs) {	setDirty(lhs != rhs); return isDirty(); }
-
-private:
-  void setDirty( bool flag ) { if (flag) m_isDirty = true; }
-  bool isDirty() const { return m_isDirty; }
-  void clearDirty() { m_isDirty = false; }
-
-protected:
-  int32_t m_offset;
-  float m_scale;
-  uint8_t m_decimals;
-  bool m_isDirty;
-
-  friend class iDevicePool_c;
-};
+  class iDeviceObjectDet_c : public __IsoAgLib::DeviceObjectDet_c {
+    public:
+      iDeviceObjectDet_c( const iDeviceObjectDet_c& obj, uint16_t element, uint8_t type, const char* desig ) : DeviceObjectDet_c( obj.getObjectId(), element, type, desig ) {}
+      iDeviceObjectDet_c( const iDeviceObjectDvc_c& obj, uint16_t element, uint8_t type, const char* desig ) : DeviceObjectDet_c( obj.getObjectId(), element, type, desig ) {}
+      bool addChild( const iDeviceObjectDpt_c& c ) {
+        return __IsoAgLib::DeviceObjectDet_c::addChild( c.getObjectId() );
+      }
+      bool addChild( const iDeviceObjectDpd_c& c ) {
+        return __IsoAgLib::DeviceObjectDet_c::addChild( c.getObjectId() );
+      }
+      uint16_t elementNumber() const {
+        return __IsoAgLib::DeviceObjectDet_c::elementNumber();
+      };
+  };
 
 
-class iDevicePool_c
-{
-  typedef STL_NAMESPACE::map<uint16_t, iDeviceObject_c*> deviceMap_t;
-public:
-  iDevicePool_c();
-  virtual ~iDevicePool_c() {}
 
-  bool isEmpty() const { return m_devicePool.empty(); }
+  /* iDevicePool_c */
 
-  bool add( iDeviceObject_c& devObj );
+  class iDevicePool_c : public __IsoAgLib::DevicePool_c {
+    public:
+      virtual ~iDevicePool_c() {}
 
-  const STL_NAMESPACE::vector<uint8_t>& getBytestream();
-  bool getDirtyBytestream( STL_NAMESPACE::vector<uint8_t>& byteStream );
+      virtual uint8_t* allocByteStreamBuffer( uint32_t size ) {
+        return static_cast<uint8_t*>( CNAMESPACE::malloc( size ) );
+      }
+      virtual void freeByteStreamBuffer( uint8_t* buffer ) {
+        CNAMESPACE::free( buffer );
+      }
 
-  // Object getter methods
-  iDeviceObjectDvc_c* getDvcObject() const { return static_cast<iDeviceObjectDvc_c*>(getObject( 0, ObjectTypeDVC )); }
+      template<class T>
+      bool add( T& devObj ) {
+        return __IsoAgLib::DevicePool_c::add( devObj );
+      }
+      bool add( iProcData_c& pd );
 
-  // sendCommand ChangeDesignator
-  void changeDesignator( iDeviceObject_c&, const char* );
+      template<class T>
+      void changeDesignator( T& obj, const char* str ) {
+        __IsoAgLib::DevicePool_c::changeDesignator( obj, str );
+      }
 
-  void setLocalization( const localSettings_s& );
-
-  void updateLocale();
-
-  //bool isDirty() const { return m_isDirty; }
-  //void setDirty() { m_isDirty = true; }
-
-  void setUploaded();
-
-protected:
-  iDeviceObject_c* getObject( const uint16_t objId, const DeviceObjectType_t ) const;
-
-private:
-  friend class __IsoAgLib::TcClientConnection_c;
-
-  void init( iIdentItem_c& ident ) { getDvcObject()->init( ident ); m_identItem = &ident; }
-
-protected:
-  deviceMap_t m_devicePool;
-  STL_NAMESPACE::vector<uint8_t> m_bytestream;
-  iIdentItem_c* m_identItem;
-  //bool m_isDirty;
-};
+      void setLocalSettings( const localSettings_s& l ) {
+        __IsoAgLib::DevicePool_c::setLocalSettings( l );
+      }
+      void updateLocale() {
+        __IsoAgLib::DevicePool_c::updateLocale();
+      }
+    private:
+      friend class iTcClient_c;
+  };
 
 } // IsoAgLib
 

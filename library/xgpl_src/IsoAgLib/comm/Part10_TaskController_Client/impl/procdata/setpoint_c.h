@@ -20,26 +20,27 @@
 
 namespace __IsoAgLib {
 
-class ProcData_c;
+  class ProcData_c;
 
-class Setpoint_c
-{
-public:
-  Setpoint_c() : mi32_value( 0 ) {}
-  ~Setpoint_c() {}
+  class Setpoint_c {
+    public:
+      Setpoint_c() : mi32_value( 0 ) {}
+      ~Setpoint_c() {}
 
-  int32_t setpointValue() const { return mi32_value; }
-  
-  void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg, IsoAgLib::ProcData::RemoteType_t a_ecuType );
+      int32_t setpointValue() const {
+        return mi32_value;
+      }
 
-private:
-  int32_t mi32_value;
+      void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg );
 
-private:
-  /** not copyable : copy constructor/operator only declared, not defined */
-  Setpoint_c( const Setpoint_c& );
-  Setpoint_c& operator=( const Setpoint_c& );
-};
+    private:
+      int32_t mi32_value;
+
+    private:
+      /** not copyable : copy constructor/operator only declared, not defined */
+      Setpoint_c( const Setpoint_c& );
+      Setpoint_c& operator=( const Setpoint_c& );
+  };
 
 }
 

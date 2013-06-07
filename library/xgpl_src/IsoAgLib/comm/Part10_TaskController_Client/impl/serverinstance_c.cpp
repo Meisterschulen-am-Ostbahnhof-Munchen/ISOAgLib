@@ -1,0 +1,92 @@
+/*
+  serverinstance_c.cpp:
+
+  (C) Copyright 2013 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
+#include "serverinstance_c.h"
+
+namespace __IsoAgLib {
+
+  ServerInstance_c::ServerInstance_c() :
+    m_isoItem( 0 ),
+    m_lastActiveTaskTC( false ),
+    m_type( IsoAgLib::ProcData::RemoteTypeUndefined ),
+    m_lastTcStateReceivedTime( 0 ),
+    m_lastTcState( 0 ) {}
+
+
+  ServerInstance_c::ServerInstance_c( IsoItem_c& it, IsoAgLib::ProcData::RemoteType_t type ) : m_isoItem( &it ), m_type( type ) {}
+
+  void ServerInstance_c::close() {
+    STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
+    while ( it != m_connections.end() ) {
+      ( *it )->stopRunningMeasurement();
+      ++it;
+    }
+  }
+
+
+  bool ServerInstance_c::isAlive() const {
+    return ( getLastStatusTime() != -1 ) && ( ( HAL::getTime() - getLastStatusTime() <= 6000 ) );
+  }
+
+
+  bool ServerInstance_c::addConnection( TcClientConnection_c& c ) {
+    STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
+    while ( it != m_connections.end() ) {
+      if( *it == &c ) return false;
+      ++it;
+    }
+    m_connections.push_back( &c );
+    return true;
+  }
+
+
+  void ServerInstance_c::removeConnection( TcClientConnection_c& c ) {
+    STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
+    while ( it != m_connections.end() ) {
+      if( *it == &c ) {
+        m_connections.erase( it );
+        break;
+      }
+      ++it;
+    }
+  }
+
+
+  void ServerInstance_c::processStatus( uint8_t status ) {
+
+    m_lastTcState = status;
+    m_lastTcStateReceivedTime = HAL::getTime();
+
+    const bool activeTask = status & 0x1;
+
+    if ( activeTask != m_lastActiveTaskTC ) {
+      if ( activeTask ) {
+        STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
+        while ( it != m_connections.end() ) {
+          ( *it )->processTaskStarted( *m_isoItem );
+          ++it;
+        }
+      } else {
+        STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
+        while ( it != m_connections.end() ) {
+          ( *it )->stopRunningMeasurement();
+          ( *it )->processTaskStopped( *m_isoItem );
+          ++it;
+        }
+      }
+    }
+
+    m_lastActiveTaskTC = activeTask;
+  }
+
+}

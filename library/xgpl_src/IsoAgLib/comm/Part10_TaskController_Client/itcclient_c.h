@@ -17,59 +17,57 @@
 #include "iprocdata.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnectionstatehandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
 
-
-namespace __IsoAgLib {
-  class DevicePool_c;
-}
 
 namespace IsoAgLib {
 
-class iTcClient_c : private __IsoAgLib::TcClient_c
-{
-public:
-//#if defined(USE_ISO_TASKCONTROLLER_CLIENT)
-//  iTcClientConnection_c& getTcClientConnection( iIdentItem_c& identItem )
-//  {return static_cast<iTcClientConnection_c&>(TcClient_c::getTcClientConnection( static_cast<__IsoAgLib::IdentItem_c&>(identItem) )); }
-//#endif
+  class iTcDlStateHandler_c {
+    public:
+      virtual void eventTcDlAvailable( const iIsoItem_c&, ProcData::RemoteType_t ) = 0;
+  };
 
-  /** register given object pool for uploading when possible. */
-  iTcClientConnection_c* initAndRegister( iIdentItem_c& identItem, iProcDataHandler_c& procdata, iDevicePool_c& pool )
-  { 
-    return TcClient_c::initAndRegister( static_cast<__IsoAgLib::IdentItem_c&>(identItem), procdata, pool )->toInterfacePointer();
-  }
 
-  bool deregister( iIdentItem_c& identItem )
-  { 
-    return TcClient_c::deregister( static_cast<__IsoAgLib::IdentItem_c&>(identItem) );
-  }
+  class iTcClient_c : private __IsoAgLib::TcClient_c {
+    public:
+      void init( iTcDlStateHandler_c& hdl ) {
+        TcClient_c::init( hdl );
+      }
 
-  bool isTcAvailable() const { return TcClient_c::isTcAvailable(); }
+      void close() {
+        TcClient_c::close();
+      }
 
-  void processChangeDesignator( iIdentItem_c& identItem, uint16_t objID, const char* newDesignator )
-  {
-    return TcClient_c::processChangeDesignator( static_cast<__IsoAgLib::IdentItem_c&>(identItem), objID, newDesignator );
-  }
+      iTcClientConnection_c* connect( iIdentItem_c& identItem, iTcClientConnectionStateHandler_c& sh, const iIsoItem_c& tcdl, iDevicePool_c& pool ) {
+        return TcClient_c::connect( static_cast<__IsoAgLib::IdentItem_c&>( identItem ), sh, static_cast<const __IsoAgLib::IsoItem_c&>( tcdl ), static_cast<__IsoAgLib::DevicePool_c&>( pool ) )->toInterfacePointer();
+      }
 
-#ifdef USE_DATALOGGER
-  bool isLoggerAvailable() const { return TcClient_c::isLoggerAvailable(); }
+      bool disconnect( iIdentItem_c& identItem ) {
+        return TcClient_c::disconnect( static_cast<__IsoAgLib::IdentItem_c&>( identItem ) );
+      }
+
+      void processChangeDesignator( iIdentItem_c& identItem, uint16_t objID, const char* newDesignator ) {
+        return TcClient_c::processChangeDesignator( static_cast<__IsoAgLib::IdentItem_c&>( identItem ), objID, newDesignator );
+      }
+
+    private:
+#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
+      friend iTcClient_c& getItcClientInstance( uint8_t instance );
+#else
+      friend iTcClient_c& getItcClientInstance( void );
 #endif
-
- private:
-  #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iTcClient_c& getItcClientInstance( uint8_t instance );
-  #else
-  friend iTcClient_c& getItcClientInstance( void );
-  #endif
-  friend class iTcClientConnection_c;
-};
+      friend class iTcClientConnection_c;
+  };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  inline iTcClient_c& getItcClientInstance( uint8_t instance = 0 )
-  { return static_cast<iTcClient_c&>(__IsoAgLib::getTcClientInstance(instance)); }
+  inline iTcClient_c& getItcClientInstance( uint8_t instance = 0 ) {
+    return static_cast<iTcClient_c&>( __IsoAgLib::getTcClientInstance( instance ) );
+  }
 #else
-  inline iTcClient_c& getItcClientInstance( void )
-  { return static_cast<iTcClient_c&>(__IsoAgLib::getTcClientInstance()); }
+  inline iTcClient_c& getItcClientInstance( void ) {
+    return static_cast<iTcClient_c&>( __IsoAgLib::getTcClientInstance() );
+  }
 #endif
 
 }
