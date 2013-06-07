@@ -66,7 +66,7 @@ WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = NO
 WARN_FORMAT            = "$file:$line: $text "
 WARN_LOGFILE           = doxywarnings.txt
-INPUT                  = txt ../library ../tutorial ../tools/vt2iso/doc ../tools/proc2iso/doc
+INPUT                  = txt ../library ../tutorial ../tools/vt2iso/doc
 INPUT_ENCODING         = ISO-8859-15
 FILE_PATTERNS          = i*_c.h \
                          *.txt \

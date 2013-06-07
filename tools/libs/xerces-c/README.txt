@@ -3,7 +3,6 @@ Xerces-C++ XML Parser
 
 This library is used in IsoAgLib at least for
   tools/vt2iso
-  tools/proc2iso
 .
 
 = MS Windows =

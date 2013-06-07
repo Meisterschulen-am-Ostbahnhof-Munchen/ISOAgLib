@@ -303,13 +303,6 @@ tools/logalizer/src/functionality_tc.inc -text
 tools/logalizer/src/functionality_tecu.inc -text
 tools/logalizer/src/functionality_vt.inc -text
 tools/logalizer/src/parsers.inc -text
-tools/proc2iso/COPYING -text
-tools/proc2iso/bin/proc2iso.cmd -text
-tools/proc2iso/bin/proc2iso.xsd -text
-tools/proc2iso/cmake/CMakeLists.txt -text
-tools/proc2iso/doc/ISO-ProcessData-Objects.txt -text
-tools/proc2iso/src/proc2iso-defines.hpp -text
-tools/proc2iso/src/proc2iso.hpp -text
 tools/project_generation/conf2build.sh eol=lf
 tools/project_generation/conf2build_CMakeLists.txt -text
 tools/project_generation/conf2build_EDE.part1.pjt -text
