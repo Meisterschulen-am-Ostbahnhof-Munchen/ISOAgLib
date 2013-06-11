@@ -147,7 +147,7 @@ namespace __IsoAgLib {
       void sendWorkingSetTaskMsg();
       void startUpload();
 
-      void processMsg( const ProcessPkg_c& );
+      void processMsgEntry( const ProcessPkg_c& );
       void processMsgTc( const ProcessPkg_c& );
       void processMsgProcData( const ProcessPkg_c& );
 

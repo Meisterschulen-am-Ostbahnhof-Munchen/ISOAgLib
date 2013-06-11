@@ -376,7 +376,7 @@ namespace __IsoAgLib {
   }
 
 
-  void TcClientConnection_c::processMsg( const ProcessPkg_c& pkg ) {
+  void TcClientConnection_c::processMsgEntry( const ProcessPkg_c& pkg ) {
 
     if( pkg.getMonitorItemForDA() != m_identItem->getIsoItem() ) {
       return;
@@ -764,7 +764,7 @@ namespace __IsoAgLib {
       uint8_t methods = pd->triggerMethod();
       const uint16_t ddi = pd->DDI();
       if( methods ) {
-        uint32_t key = ( uint32_t( ddi << 16 ) ) | pd->element();
+        uint32_t key = ( uint32_t( uint32_t( ddi ) << 16 ) ) | pd->element();
         MeasureProg_c* mp = new MeasureProg_c( this );
         m_measureProg[ key ] = mp;
         pd->addMeasureProg( mp );

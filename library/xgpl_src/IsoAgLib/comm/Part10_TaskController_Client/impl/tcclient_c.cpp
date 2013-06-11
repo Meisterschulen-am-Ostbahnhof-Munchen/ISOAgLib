@@ -185,7 +185,7 @@ namespace __IsoAgLib {
 
     STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = identData->connections.begin();
     while ( it != identData->connections.end() ) {
-      ( *it )->processMsg( pkg );
+      ( *it )->processMsgEntry( pkg );
       ++it;
     }
   }
