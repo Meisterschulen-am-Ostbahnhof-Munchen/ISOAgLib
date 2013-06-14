@@ -45,10 +45,16 @@ namespace __IsoAgLib {
     public:
       virtual ~TcClient_c() {}
 
-      void init( IsoAgLib::iTcDlStateHandler_c& hdl );
+      class ServerStateHandler_c {
+        public:
+          virtual void _eventServerAvailable( const IsoItem_c&, IsoAgLib::ProcData::RemoteType_t ) = 0;
+      };
+
+
+      void init( ServerStateHandler_c& hdl );
       void close();
 
-      TcClientConnection_c* connect( IdentItem_c&, IsoAgLib::iTcClientConnectionStateHandler_c&, const IsoItem_c& tcdl, DevicePool_c& );
+      TcClientConnection_c* connect( IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcdl, DevicePool_c& );
       bool disconnect( IdentItem_c& );
 
       bool isTcAvailable() const {
@@ -123,7 +129,7 @@ namespace __IsoAgLib {
     private:
       Handler_t m_handler;
       Customer_t m_customer;
-      IsoAgLib::iTcDlStateHandler_c* m_stateHandler;
+      ServerStateHandler_c* m_stateHandler;
 
       typedef struct {
         IdentItem_c* ident;

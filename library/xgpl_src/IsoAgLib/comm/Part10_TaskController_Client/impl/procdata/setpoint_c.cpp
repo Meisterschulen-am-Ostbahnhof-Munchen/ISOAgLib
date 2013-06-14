@@ -14,7 +14,6 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/itcclient_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdatasetpointhandler_c.h>
 
 
 namespace __IsoAgLib {
@@ -28,8 +27,7 @@ namespace __IsoAgLib {
 
     // call handler function if handler class is registered
     if ( pd.getSetpointHandler() ) {
-      pd.getSetpointHandler()->processSetpointSet( static_cast<IsoAgLib::iProcData_c&>(pd),
-          pkg.mi32_pdValue, static_cast<IsoAgLib::iIsoItem_c&>( *pkg.getMonitorItemForSA() ), b_change );
+      pd.getSetpointHandler()->_processSetpointSet( pd, pkg.mi32_pdValue, b_change );
     }
   }
 

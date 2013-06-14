@@ -121,13 +121,16 @@ namespace __IsoAgLib {
         DDOPCannotBeUploaded
       };
 
-      TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, IsoAgLib::iTcClientConnectionStateHandler_c& sh, const IsoName_c& serverName, DevicePool_c& pool );
-      virtual ~TcClientConnection_c();
 
-      /** explicit conversion to reference of interface class type */
-      IsoAgLib::iTcClientConnection_c& toInterfaceReference();
-      /** explicit conversion to reference of interface class type */
-      IsoAgLib::iTcClientConnection_c* toInterfacePointer();
+      class StateHandler_c {
+        public:
+          virtual void _eventDefaultLoggingStarted( TcClientConnection_c& ecu ) = 0;
+          virtual void _eventTaskStarted( TcClientConnection_c& ecu ) = 0;
+          virtual void _eventTaskStopped( TcClientConnection_c& ecu ) = 0;
+      };
+
+      TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, StateHandler_c& sh, const IsoName_c& serverName, DevicePool_c& pool );
+      virtual ~TcClientConnection_c();
 
       IdentItem_c& getIdentItem() const {
         return *m_identItem;
@@ -176,8 +179,8 @@ namespace __IsoAgLib {
 
       // ProcData_c handling
       ProcData_c* procData( uint16_t DDI, uint16_t element, bool& elementFound ) const;
-      void processTaskStarted( IsoItem_c& ecu );
-      void processTaskStopped( IsoItem_c& ecu );
+      void eventTaskStarted();
+      void eventTaskStopped();
 
       void stopRunningMeasurement();
       void sendNack( int16_t ddi, int16_t element, IsoAgLib::ProcData::NackResponse_t errorcodes ) const;
@@ -327,7 +330,7 @@ namespace __IsoAgLib {
       IdentItem_c* m_identItem;
       int32_t m_timeWsAnnounceKey;
       TcClient_c* m_tcClient; // back ref.
-      IsoAgLib::iTcClientConnectionStateHandler_c* m_stateHandler;
+      StateHandler_c* m_stateHandler;
 
       IsoName_c m_serverName;
 

@@ -18,7 +18,7 @@ namespace __IsoAgLib {
   ServerInstance_c::ServerInstance_c() :
     m_isoItem( 0 ),
     m_lastActiveTaskTC( false ),
-    m_type( IsoAgLib::ProcData::RemoteTypeUndefined ),
+    m_type( IsoAgLib::ProcData::RemoteTypeTaskController ),
     m_lastTcStateReceivedTime( 0 ),
     m_lastTcState( 0 ) {}
 
@@ -73,14 +73,14 @@ namespace __IsoAgLib {
       if ( activeTask ) {
         STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
         while ( it != m_connections.end() ) {
-          ( *it )->processTaskStarted( *m_isoItem );
+          ( *it )->eventTaskStarted();
           ++it;
         }
       } else {
         STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
         while ( it != m_connections.end() ) {
           ( *it )->stopRunningMeasurement();
-          ( *it )->processTaskStopped( *m_isoItem );
+          ( *it )->eventTaskStopped();
           ++it;
         }
       }

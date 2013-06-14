@@ -23,9 +23,8 @@ namespace IsoAgLib {
 namespace ProcData {
 
   enum RemoteType_t {
-    RemoteTypeTaskControl,
-    RemoteTypeLogger,
-    RemoteTypeUndefined };
+    RemoteTypeTaskController,
+    RemoteTypeDataLogger };
 
   enum MeasurementCommand_t { 
     MeasurementCommandTimeProp =          0x4,

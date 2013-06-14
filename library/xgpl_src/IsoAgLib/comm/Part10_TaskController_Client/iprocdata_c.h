@@ -16,7 +16,6 @@
 #include "impl/procdata/procdata_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
 namespace __IsoAgLib {
@@ -25,12 +24,24 @@ namespace __IsoAgLib {
 
 namespace IsoAgLib {
 
-  class iProcData_c : public __IsoAgLib::ProcData_c {
+  class iProcData_c : private __IsoAgLib::ProcData_c {
     public:
+
       iProcData_c() : ProcData_c() {}
 
-      void init( iIdentItem_c& ident, const iDeviceObjectDpd_c& dpd, const iDeviceObjectDet_c& det, iProcDataSetpointHandler_c* setpointhandler = NULL ) {
-        ProcData_c::init( ident, dpd, det, setpointhandler );
+      class iSetpointHandler_c : private __IsoAgLib::ProcData_c::SetpointHandler_c {
+        public:
+          virtual ~iSetpointHandler_c() {}
+          virtual void processSetpointSet( iProcData_c& procdata, int32_t value, bool change ) = 0;
+
+          virtual void _processSetpointSet( __IsoAgLib::ProcData_c& procdata, int32_t value, bool change ) {
+            processSetpointSet( static_cast<iProcData_c&>( procdata ), value, change );
+          }
+          friend class IsoAgLib::iProcData_c;
+      };
+
+      void init( iIdentItem_c& ident, const iDeviceObjectDpd_c& dpd, const iDeviceObjectDet_c& det, iSetpointHandler_c* setpointhandler = NULL ) {
+        ProcData_c::init( ident, dpd, det, static_cast<ProcData_c::SetpointHandler_c*>( setpointhandler ) );
       }
 
       const iIsoName_c& isoName() const {

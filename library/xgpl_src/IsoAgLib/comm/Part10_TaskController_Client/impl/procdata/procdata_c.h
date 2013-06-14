@@ -22,11 +22,6 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
 
-namespace IsoAgLib {
-  class iProcDataSetpointHandler_c;
-}
-
-
 namespace __IsoAgLib {
   class TcClientConnection_c;
   class DeviceObjectDpd_c;
@@ -34,8 +29,15 @@ namespace __IsoAgLib {
 
   class ProcData_c {
     public:
+      class SetpointHandler_c {
+        public:
+          virtual ~SetpointHandler_c() {}
+          virtual void _processSetpointSet( ProcData_c& procdata, int32_t value, bool change ) = 0;
+      };
+
+
       ProcData_c();
-      void init( IdentItem_c& ident, const DeviceObjectDpd_c& dpd, const DeviceObjectDet_c& det, IsoAgLib::iProcDataSetpointHandler_c* setpointhandler = NULL );
+      void init( IdentItem_c& ident, const DeviceObjectDpd_c& dpd, const DeviceObjectDet_c& det, SetpointHandler_c* setpointhandler = NULL );
 
       void close();
 
@@ -43,7 +45,7 @@ namespace __IsoAgLib {
         return m_setpoint.setpointValue();
       }
 
-      IsoAgLib::iProcDataSetpointHandler_c* getSetpointHandler() {
+      SetpointHandler_c* getSetpointHandler() {
         return m_setpointhandler;
       }
 
@@ -91,7 +93,7 @@ namespace __IsoAgLib {
       IdentItem_c* m_ident;
       const DeviceObjectDpd_c* m_dpd;
       const DeviceObjectDet_c* m_det;
-      IsoAgLib::iProcDataSetpointHandler_c* m_setpointhandler;
+      SetpointHandler_c* m_setpointhandler;
 
       Setpoint_c m_setpoint;
       Measurement_c m_measurement;

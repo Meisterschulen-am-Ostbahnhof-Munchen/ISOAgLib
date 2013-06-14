@@ -22,6 +22,7 @@
 
 namespace IsoAgLib {
   class iProcData_c;
+  class iTcClient_c;
 
   typedef __IsoAgLib::Localization_s Localization_s;
   typedef __IsoAgLib::StructureLabel_s StructureLabel_s;

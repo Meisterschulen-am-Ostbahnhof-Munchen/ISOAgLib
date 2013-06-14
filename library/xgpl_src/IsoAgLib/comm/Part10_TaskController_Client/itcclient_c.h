@@ -17,21 +17,25 @@
 #include "iprocdata.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnectionstatehandler_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
 
 
 namespace IsoAgLib {
 
-  class iTcDlStateHandler_c {
-    public:
-      virtual void eventTcDlAvailable( const iIsoItem_c&, ProcData::RemoteType_t ) = 0;
-  };
+  class iDevicePool_c;
 
 
   class iTcClient_c : private __IsoAgLib::TcClient_c {
     public:
-      void init( iTcDlStateHandler_c& hdl ) {
+      class iServerStateHandler_c : public __IsoAgLib::TcClient_c::ServerStateHandler_c {
+        public:
+          virtual void eventServerAvailable( const iIsoItem_c&, ProcData::RemoteType_t ) = 0;
+
+          virtual void _eventServerAvailable( const __IsoAgLib::IsoItem_c& item, IsoAgLib::ProcData::RemoteType_t type ) {
+            eventServerAvailable( static_cast<const iIsoItem_c&>( item ), type );
+          }
+      };
+
+      void init( iServerStateHandler_c& hdl ) {
         TcClient_c::init( hdl );
       }
 
@@ -39,8 +43,12 @@ namespace IsoAgLib {
         TcClient_c::close();
       }
 
-      iTcClientConnection_c* connect( iIdentItem_c& identItem, iTcClientConnectionStateHandler_c& sh, const iIsoItem_c& tcdl, iDevicePool_c& pool ) {
-        return TcClient_c::connect( static_cast<__IsoAgLib::IdentItem_c&>( identItem ), sh, static_cast<const __IsoAgLib::IsoItem_c&>( tcdl ), static_cast<__IsoAgLib::DevicePool_c&>( pool ) )->toInterfacePointer();
+      iTcClientConnection_c* connect( iIdentItem_c& identItem, iTcClientConnection_c::iStateHandler_c& statehandler, const iIsoItem_c& server, iDevicePool_c& pool ) {
+        return static_cast<iTcClientConnection_c*>( TcClient_c::connect(
+            static_cast<__IsoAgLib::IdentItem_c&>( identItem ),
+            static_cast<__IsoAgLib::TcClientConnection_c::StateHandler_c&>( statehandler ),
+            static_cast<const __IsoAgLib::IsoItem_c&>( server ),
+            static_cast<__IsoAgLib::DevicePool_c&>( pool ) ) );
       }
 
       bool disconnect( iIdentItem_c& identItem ) {

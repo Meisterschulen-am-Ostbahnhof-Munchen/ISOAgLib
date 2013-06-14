@@ -17,10 +17,26 @@
 #include "itcclient_c.h"
 
 namespace IsoAgLib {
-  class iProcDataHandler_c;
 
-  class iTcClientConnection_c : public __IsoAgLib::TcClientConnection_c {
+  class iTcClientConnection_c : private __IsoAgLib::TcClientConnection_c {
     public:
+      class iStateHandler_c : public __IsoAgLib::TcClientConnection_c::StateHandler_c {
+        public:
+          virtual void eventDefaultLoggingStarted( iTcClientConnection_c& ecu ) = 0;
+          virtual void eventTaskStarted( iTcClientConnection_c& ecu ) = 0;
+          virtual void eventTaskStopped( iTcClientConnection_c& ecu ) = 0;
+
+          virtual void _eventDefaultLoggingStarted( TcClientConnection_c& ecu ) {
+            eventDefaultLoggingStarted( static_cast<iTcClientConnection_c&>( ecu ) );
+          }
+          virtual void _eventTaskStarted( TcClientConnection_c& ecu ) {
+            eventTaskStarted( static_cast<iTcClientConnection_c&>( ecu ) );
+          }
+          virtual void _eventTaskStopped( TcClientConnection_c& ecu ) {
+            eventTaskStopped( static_cast<iTcClientConnection_c&>( ecu ) );
+          }
+      };
+
       bool sendCommandChangeDesignator( uint16_t objectID, const char* newString, uint8_t stringLength ) {
         return TcClientConnection_c::sendCommandChangeDesignator( objectID, newString, stringLength );
       }
@@ -34,9 +50,6 @@ namespace IsoAgLib {
       }
 
     private:
-      /** PRIVATE constructor to forbid instantiation of this interface class.
-        * it can only be static_cast'ed to this class, not constructed!
-        */
       iTcClientConnection_c();
 
       friend class iTcClient_c;

@@ -55,7 +55,7 @@ namespace __IsoAgLib {
 
 
   void
-  TcClient_c::init( IsoAgLib::iTcDlStateHandler_c& hdl ) {
+  TcClient_c::init( ServerStateHandler_c& hdl ) {
     isoaglib_assert ( !initialized() );
 
     m_stateHandler = &hdl;
@@ -88,7 +88,7 @@ namespace __IsoAgLib {
 
 
   TcClientConnection_c*
-  TcClient_c::connect( IdentItem_c& identItem, IsoAgLib::iTcClientConnectionStateHandler_c& sh, const IsoItem_c& tcdl, DevicePool_c& pool ) {
+  TcClient_c::connect( IdentItem_c& identItem, TcClientConnection_c::StateHandler_c& sh, const IsoItem_c& tcdl, DevicePool_c& pool ) {
     STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c>::iterator server = m_server.find( &tcdl );
     isoaglib_assert( server != m_server.end() );
 
@@ -209,7 +209,8 @@ namespace __IsoAgLib {
         return i->second.getEcuType();
       }
     }
-    return IsoAgLib::ProcData::RemoteTypeUndefined;
+    isoaglib_assert( !"someone is sending tc status with a stupid ecu type" );
+    return IsoAgLib::ProcData::RemoteTypeTaskController;
   }
 
 
@@ -255,13 +256,13 @@ namespace __IsoAgLib {
 
     if( server == m_server.end() ) {
       const IsoAgLib::ProcData::RemoteType_t ecuType = sender.getEcuType() == IsoName_c::ecuTypeTaskControl ?
-          IsoAgLib::ProcData::RemoteTypeTaskControl : IsoAgLib::ProcData::RemoteTypeUndefined;
+          IsoAgLib::ProcData::RemoteTypeTaskController : IsoAgLib::ProcData::RemoteTypeDataLogger;
 
       m_server[ s ] = ServerInstance_c( *s, ecuType );
       server = m_server.find( s );
-      m_stateHandler->eventTcDlAvailable( static_cast<const IsoAgLib::iIsoItem_c&>( *s ), ecuType );
+      m_stateHandler->_eventServerAvailable( *s, ecuType );
 
-      // check for connections that useed this server. Readd those connections to that server
+      // check for connections that used this server. Readd those connections to that server
       // and set to inital state
       for( STL_NAMESPACE::list<identData_t>::iterator i = m_identdata.begin(); i != m_identdata.end(); ++i ) {
         for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator c = i->connections.begin(); c != i->connections.end(); ++c ) {

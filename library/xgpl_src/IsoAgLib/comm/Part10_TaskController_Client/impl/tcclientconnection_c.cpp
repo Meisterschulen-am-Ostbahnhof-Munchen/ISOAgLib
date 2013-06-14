@@ -21,7 +21,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h>
+//#include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
 
@@ -81,7 +81,7 @@ namespace __IsoAgLib {
     format( iVal );
   }
 
-  TcClientConnection_c::TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, IsoAgLib::iTcClientConnectionStateHandler_c& sh, const IsoName_c& serverName, DevicePool_c& pool )
+  TcClientConnection_c::TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, StateHandler_c& sh, const IsoName_c& serverName, DevicePool_c& pool )
     : m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )
     , m_identItem( &identItem )
@@ -124,6 +124,7 @@ namespace __IsoAgLib {
   }
 
 
+#if 0
   IsoAgLib::iTcClientConnection_c&
   TcClientConnection_c::toInterfaceReference() {
     return static_cast<IsoAgLib::iTcClientConnection_c&>( *this );
@@ -133,6 +134,7 @@ namespace __IsoAgLib {
   TcClientConnection_c::toInterfacePointer() {
     return static_cast<IsoAgLib::iTcClientConnection_c*>( this );
   }
+#endif
 
 
   void TcClientConnection_c::enable( bool a ) {
@@ -395,7 +397,7 @@ namespace __IsoAgLib {
 
   void TcClientConnection_c::processMsgProcData( const ProcessPkg_c& data ) {
     if( ( data.mui16_DDI == IsoAgLib::ProcData::DefaultDataLoggingDDI ) && ( data.men_command == ProcessPkg_c::requestValue ) ) {
-      m_stateHandler->processDefaultLoggingStart( static_cast<IsoAgLib::iIsoItem_c&>( *data.getMonitorItemForSA() ) );
+      m_stateHandler->_eventDefaultLoggingStarted( *this );
     } else {
       bool elementFound = false;
       ProcData_c* pd = procData( data.mui16_DDI, data.mui16_element, elementFound );
@@ -547,15 +549,15 @@ namespace __IsoAgLib {
   }
 
 
-  void TcClientConnection_c::processTaskStarted( IsoItem_c& ecu ) {
+  void TcClientConnection_c::eventTaskStarted() {
     isoaglib_assert( m_stateHandler );
-    m_stateHandler->processTaskStarted( static_cast<IsoAgLib::iIsoItem_c&>( ecu ) );
+    m_stateHandler->_eventTaskStarted( *this );
   }
 
 
-  void TcClientConnection_c::processTaskStopped( IsoItem_c& ecu ) {
+  void TcClientConnection_c::eventTaskStopped() {
     isoaglib_assert( m_stateHandler );
-    m_stateHandler->processTaskStopped( static_cast<IsoAgLib::iIsoItem_c&>( ecu ) );
+    m_stateHandler->_eventTaskStopped( *this );
   }
 
 

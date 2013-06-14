@@ -32,7 +32,7 @@ namespace __IsoAgLib {
   {}
 
 
-  void ProcData_c::init( IdentItem_c& ident, const DeviceObjectDpd_c& dpd, const DeviceObjectDet_c& det, IsoAgLib::iProcDataSetpointHandler_c* setpointhandler ) {
+  void ProcData_c::init( IdentItem_c& ident, const DeviceObjectDpd_c& dpd, const DeviceObjectDet_c& det, SetpointHandler_c* setpointhandler ) {
     m_ident = &ident;
     m_dpd = &dpd;
     m_det = &det;
