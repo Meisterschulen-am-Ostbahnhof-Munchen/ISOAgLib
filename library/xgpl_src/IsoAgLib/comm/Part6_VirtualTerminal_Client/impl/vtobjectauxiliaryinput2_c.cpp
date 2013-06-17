@@ -205,6 +205,17 @@ vtObjectAuxiliaryInput2_c::setValue(uint16_t aui16_value1, uint16_t aui16_value2
   {
     case FunctionType_LatchingBoolean:
     case FunctionType_NonLatchingBoolean:
+      if ((oldValue1 != 0) && (aui16_value1 == 0))
+      { // on -> off ==> fine, it's a change!
+        break;
+      }
+      if ((oldValue1 == 0) && (aui16_value1 == 1))
+      { // off -> on ==> fine, it's a change!
+        mui16_value2++; // and count the transition
+        break;
+      }
+      // no real change, do not trigger any (unneeded) updates!
+      return true; 
     case FunctionType_BothLatchingDualBoolean:
     case FunctionType_BothNonLatchingDualBoolean:
     case FunctionType_LatchingDualBooleanUp:
@@ -212,6 +223,9 @@ vtObjectAuxiliaryInput2_c::setValue(uint16_t aui16_value1, uint16_t aui16_value2
     case FunctionType_CombinedAnalogReturnTo50DualLatchingBoolean:
     case FunctionType_CombinedAnalogDualLatchingBoolean:
     case FunctionType_NonLatchingQuadBoolean:
+      // @todo the following is maybe not correct for all of these types
+      // but it's not very precisely specified in the standard, so we
+      // don't care to much right now until someone uses these...
       if (oldValue1 != aui16_value1)
         mui16_value2++; // increase transition counter
       break;
