@@ -30,7 +30,6 @@ namespace __IsoAgLib {
 
       void setMeasurementValue( ProcData_c& pd, int32_t v );
 
-      void removeMeasureProg( MeasureProg_c* m );
       void addMeasureProg( MeasureProg_c* m );
 
       void processMsg( ProcData_c& pd, const ProcessPkg_c& pkg );

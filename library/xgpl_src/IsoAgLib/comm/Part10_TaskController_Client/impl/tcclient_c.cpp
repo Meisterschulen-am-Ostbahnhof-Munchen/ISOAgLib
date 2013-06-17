@@ -41,19 +41,6 @@ namespace __IsoAgLib {
   }
 
 
-  const TcClientConnection_c&
-  TcClient_c::getTcClientConnection( const IdentItem_c& identItem ) const {
-    STL_NAMESPACE::list<identData_t>::const_iterator i = m_identdata.begin();
-    for( ; i != m_identdata.end(); ++i ) {
-      if( i->ident == &identItem ) {
-        break;
-      }
-    }
-    isoaglib_assert( !"No matching TcClientConnection found!!!" );
-    return *( i->connections.front() );
-  }
-
-
   void
   TcClient_c::init( ServerStateHandler_c& hdl ) {
     isoaglib_assert ( !initialized() );
@@ -89,7 +76,8 @@ namespace __IsoAgLib {
 
   TcClientConnection_c*
   TcClient_c::connect( IdentItem_c& identItem, TcClientConnection_c::StateHandler_c& sh, const IsoItem_c& tcdl, DevicePool_c& pool ) {
-    STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c>::iterator server = m_server.find( &tcdl );
+    isoaglib_assert( m_stateHandler );
+    STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( &tcdl );
     isoaglib_assert( server != m_server.end() );
 
     identData_t* d = getDataFor( identItem );
@@ -98,7 +86,7 @@ namespace __IsoAgLib {
       d = &( m_identdata.back() );
       d->ident = &identItem;
     } else {
-      // check for connections between this ident and the give server
+      // check for connections between this ident and the given server
       for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator c = d->connections.begin(); c != d->connections.end(); ++c ) {
         if( ( *c )->getServerName() == tcdl.isoName() ) {
           isoaglib_assert( !"Double connect between one IdentItem_c and server detected!" );
@@ -108,11 +96,11 @@ namespace __IsoAgLib {
     }
 
     // setup connection
-    TcClientConnection_c* c = new TcClientConnection_c( identItem, *this, sh, tcdl.isoName(), pool );
+    TcClientConnection_c* c = new TcClientConnection_c( identItem, *this, sh, server->second, pool );
     d->connections.push_back( c );
 
     // assign connection to server
-    server->second.addConnection( *c );
+    server->second->addConnection( *c );
 
     return c;
   }
@@ -130,8 +118,8 @@ namespace __IsoAgLib {
 
     STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = ( *i ).connections.begin();
     while ( it != ( *i ).connections.end() ) {
-      for( STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c>::iterator ic = m_server.begin(); ic != m_server.end(); ++ic ) {
-        ic->second.removeConnection( **it );
+      for( STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator ic = m_server.begin(); ic != m_server.end(); ++ic ) {
+        ic->second->removeConnection( **it );
       }
       delete( *it );
       ++it;
@@ -161,7 +149,7 @@ namespace __IsoAgLib {
   TcClient_c::processMsgGlobal( const ProcessPkg_c& data ) {
     // process TC status message (for local instances)
     if ( data.men_command == ProcessPkg_c::taskControllerStatus ) {
-      processTcStatusMsg( data[4], data.getMonitorItemForSA()->isoName() );
+      processTcStatusMsg( data[4], *data.getMonitorItemForSA() );
     }
   }
 
@@ -174,52 +162,31 @@ namespace __IsoAgLib {
       return;
     }
 
-    // no forther processing of NACK messages
-    if ( pkg.men_command == ProcessPkg_c::nack )
-      return;
 
-    // ignore other working set task message
-    // @TODO probably respond with NACK if it is addressed to us, otherwise just ignore
-    if ( pkg.men_command == ProcessPkg_c::workingsetMasterMaintenance )
-      return;
-
-    STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = identData->connections.begin();
-    while ( it != identData->connections.end() ) {
-      ( *it )->processMsgEntry( pkg );
-      ++it;
+    switch( pkg.men_command ) {
+      case ProcessPkg_c::nack:
+        // no further processing of NACK messages TODO AKA?
+        break;
+      case ProcessPkg_c::workingsetMasterMaintenance:
+        // ignore other working set task message
+        // @TODO probably respond with NACK if it is addressed to us, otherwise just ignore
+        break;
+      default:
+        STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = identData->connections.begin();
+        while ( it != identData->connections.end() ) {
+          ( *it )->processMsgEntry( pkg );
+          ++it;
+        }
     }
-  }
-
-
-  const IsoName_c&
-  TcClient_c::getISONameFromType( IsoAgLib::ProcData::RemoteType_t ecuType ) const {
-    for( STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c>::const_iterator i = m_server.begin(); i != m_server.end(); ++i ) {
-      if( ecuType == i->second.getEcuType() ) {
-        return i->first->isoName();
-      }
-    }
-    return IsoName_c::IsoNameUnspecified();
-  }
-
-
-  IsoAgLib::ProcData::RemoteType_t
-  TcClient_c::getTypeFromISOName( const IsoName_c& isoName ) const {
-    for( STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c>::const_iterator i = m_server.begin(); i != m_server.end(); ++i ) {
-      if( isoName == i->first->isoName() ) {
-        return i->second.getEcuType();
-      }
-    }
-    isoaglib_assert( !"someone is sending tc status with a stupid ecu type" );
-    return IsoAgLib::ProcData::RemoteTypeTaskController;
   }
 
 
   void
   TcClient_c::reactOnIsoItemModification( ControlFunctionStateHandler_c::iIsoItemAction_e action, IsoItem_c const& isoItem ) {
     if( ( action == ControlFunctionStateHandler_c::RemoveFromMonitorList ) &&( ! isoItem.itemState( IState_c::Local ) ) ) {
-      STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c>::iterator i = m_server.find( &isoItem );
+      STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator i = m_server.find( &isoItem );
       if( i != m_server.end() ) {
-        i->second.close();
+        delete i->second;
         m_server.erase( i );
       }
     }
@@ -248,34 +215,32 @@ namespace __IsoAgLib {
 
 
   void
-  TcClient_c::processTcStatusMsg( uint8_t tcStatus, const __IsoAgLib::IsoName_c& sender ) {
-    IsoItem_c* s = __IsoAgLib::getIsoMonitorInstance4Comm().item( sender );
-    isoaglib_assert( s );
-
-    STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c>::iterator server = m_server.find( s );
+  TcClient_c::processTcStatusMsg( uint8_t tcStatus, const __IsoAgLib::IsoItem_c& sender ) {
+    STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( &sender );
 
     if( server == m_server.end() ) {
-      const IsoAgLib::ProcData::RemoteType_t ecuType = sender.getEcuType() == IsoName_c::ecuTypeTaskControl ?
+      // TODO check for type in NAME other than DL/TC
+      const IsoAgLib::ProcData::RemoteType_t ecuType = sender.isoName().getEcuType() == IsoName_c::ecuTypeTaskControl ?
           IsoAgLib::ProcData::RemoteTypeTaskController : IsoAgLib::ProcData::RemoteTypeDataLogger;
 
-      m_server[ s ] = ServerInstance_c( *s, ecuType );
-      server = m_server.find( s );
-      m_stateHandler->_eventServerAvailable( *s, ecuType );
+      m_server[ &sender ] = new ServerInstance_c( sender, ecuType );
+      server = m_server.find( &sender );
+      m_stateHandler->_eventServerAvailable( sender, ecuType );
 
-      // check for connections that used this server. Readd those connections to that server
+      // check for connections that used this server. Re add those connections to that server
       // and set to inital state
       for( STL_NAMESPACE::list<identData_t>::iterator i = m_identdata.begin(); i != m_identdata.end(); ++i ) {
         for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator c = i->connections.begin(); c != i->connections.end(); ++c ) {
-          if( ( *c )->getServerName() == sender ) {
-            if( server->second.addConnection( **c ) ) {
-              ( *c )->setDevPoolState( TcClientConnection_c::PoolStateInit );
-            }
+          if( ( *c )->getServerName() == sender.isoName() ) {
+            server->second->addConnection( **c );
+            (*c)->setServer( server->second );
+            (*c)->setDevPoolState( TcClientConnection_c::PoolStateInit );
           }
         }
       }
     }
 
-    server->second.processStatus( tcStatus );
+    server->second->processStatus( tcStatus );
   }
 
 
@@ -294,12 +259,6 @@ namespace __IsoAgLib {
 
 
   TcClient_c::identData_t*
-  TcClient_c::getDataFor( IdentItem_c& ident ) {
-    return getDataFor( *ident.getIsoItem() );
-  }
-
-
-  TcClient_c::identData_t*
   TcClient_c::getDataFor( IsoItem_c& item ) {
     STL_NAMESPACE::list<identData_t>::iterator i = m_identdata.begin();
     for( ; i != m_identdata.end(); ++i ) {
@@ -309,14 +268,6 @@ namespace __IsoAgLib {
     }
     return 0;
   }
-
-
-  ServerInstance_c* TcClient_c::getServer( const IsoName_c& name ) {
-    STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c>::iterator server = m_server.find( __IsoAgLib::getIsoMonitorInstance4Comm().item( name ) );
-    return ( server == m_server.end() ) ? 0 : &( server->second );
-  }
-
-
 
 
 } // __IsoAgLib

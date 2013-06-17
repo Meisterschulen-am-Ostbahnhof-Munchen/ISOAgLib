@@ -27,7 +27,6 @@
 namespace IsoAgLib {
   class iTcClient_c;
   class iTcClientConnection_c;
-  class iTcDlStateHandler_c;
 }
 
 #if defined(_MSC_VER)
@@ -50,35 +49,17 @@ namespace __IsoAgLib {
           virtual void _eventServerAvailable( const IsoItem_c&, IsoAgLib::ProcData::RemoteType_t ) = 0;
       };
 
-
       void init( ServerStateHandler_c& hdl );
       void close();
 
       TcClientConnection_c* connect( IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcdl, DevicePool_c& );
       bool disconnect( IdentItem_c& );
 
-      bool isTcAvailable() const {
-        return ! m_server.empty();
-      }
-
       void processMsg( const CanPkg_c& );
-      void processMsgGlobal( const ProcessPkg_c& );
-      void processMsgNonGlobal( const ProcessPkg_c& );
-
-      const TcClientConnection_c& getTcClientConnection( const IdentItem_c& ) const;
-
-      const IsoName_c& getISONameFromType( IsoAgLib::ProcData::RemoteType_t ) const;
-      IsoAgLib::ProcData::RemoteType_t getTypeFromISOName( const IsoName_c& ) const;
 
       void reactOnIsoItemModification ( ControlFunctionStateHandler_c::iIsoItemAction_e, IsoItem_c const& );
 
-      void processTcStatusMsg( uint8_t ui8_tcStatus, const __IsoAgLib::IsoName_c& sender );
-
       void processChangeDesignator( IdentItem_c&, uint16_t, const char* );
-
-      ServerInstance_c* getServer( const IsoName_c& name );
-
-
 
     private:
       TcClient_c();
@@ -131,6 +112,10 @@ namespace __IsoAgLib {
       Customer_t m_customer;
       ServerStateHandler_c* m_stateHandler;
 
+      void processMsgGlobal( const ProcessPkg_c& );
+      void processMsgNonGlobal( const ProcessPkg_c& );
+      void processTcStatusMsg( uint8_t ui8_tcStatus, const __IsoAgLib::IsoItem_c& sender );
+
       typedef struct {
         IdentItem_c* ident;
         STL_NAMESPACE::list<ProcData_c*> procData;
@@ -139,19 +124,18 @@ namespace __IsoAgLib {
 
       STL_NAMESPACE::list<identData_t> m_identdata;
 
-      STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c> m_server;
+      STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*> m_server;
 
-      identData_t* getDataFor( IdentItem_c& ident );
       identData_t* getDataFor( IsoItem_c& ident );
+      identData_t* getDataFor( IdentItem_c& ident ) {
+        return getDataFor( *ident.getIsoItem() );
+      }
+
 
       friend TcClient_c &getTcClientInstance( uint8_t instance );
       friend class ProcData_c;
   };
 
-
-  /** C-style function, to get access to the unique TcClient_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
   TcClient_c &getTcClientInstance( uint8_t instance = 0 );
 }
 

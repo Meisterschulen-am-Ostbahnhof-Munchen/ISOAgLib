@@ -50,8 +50,6 @@ namespace __IsoAgLib {
       }
 
       void setMeasurementValue( int32_t ai32_val );
-      void incrMeasurementValue( int32_t ai32_val );
-
 
       int32_t measurementValue() const {
         return m_measurement.getValue();
@@ -63,11 +61,6 @@ namespace __IsoAgLib {
       void addMeasureProg( MeasureProg_c* m ) {
         m_measurement.addMeasureProg( m );
       }
-
-      void removeMeasureProg( MeasureProg_c* m ) {
-        m_measurement.removeMeasureProg( m );
-      }
-
 
       const IsoName_c& isoName() const {
         return identItem().isoName();

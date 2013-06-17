@@ -56,11 +56,6 @@ namespace __IsoAgLib {
   }
 
 
-  void ProcData_c::incrMeasurementValue( int32_t v ) {
-    m_measurement.setMeasurementValue( *this, m_measurement.getValue() + v );
-  }
-
-
   void ProcData_c::processMsg( const ProcessPkg_c& pkg ) {
     isoaglib_assert( DDI() == pkg.mui16_DDI );
 

@@ -34,6 +34,7 @@ namespace IsoAgLib {
           virtual ~iSetpointHandler_c() {}
           virtual void processSetpointSet( iProcData_c& procdata, int32_t value, bool change ) = 0;
 
+        private:
           virtual void _processSetpointSet( __IsoAgLib::ProcData_c& procdata, int32_t value, bool change ) {
             processSetpointSet( static_cast<iProcData_c&>( procdata ), value, change );
           }
@@ -55,6 +56,7 @@ namespace IsoAgLib {
         return ProcData_c::element();
       }
 
+      /* explicit send command of current value */
       void sendMeasurementVal() const {
         ProcData_c::sendMeasurementVal();
       }
@@ -63,12 +65,9 @@ namespace IsoAgLib {
         return ProcData_c::measurementValue();
       }
 
+      /* sets and send value (according to running programs */
       void setMeasurementValue( int32_t ai32_val ) {
         ProcData_c::setMeasurementValue( ai32_val );
-      }
-
-      void incrMeasurementValue( int32_t ai32_val ) {
-        ProcData_c::incrMeasurementValue( ai32_val );
       }
 
       int32_t setpointValue() const {

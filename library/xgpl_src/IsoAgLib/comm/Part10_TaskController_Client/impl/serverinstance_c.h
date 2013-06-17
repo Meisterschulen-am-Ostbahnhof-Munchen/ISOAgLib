@@ -21,18 +21,20 @@ namespace __IsoAgLib {
 
   class ServerInstance_c {
     public:
-      ServerInstance_c();
-      ServerInstance_c( IsoItem_c& it, IsoAgLib::ProcData::RemoteType_t type );
-      void close();
+      ServerInstance_c( const IsoItem_c& it, IsoAgLib::ProcData::RemoteType_t type );
+      ~ServerInstance_c();
+
       void processStatus( uint8_t status );
 
       bool isAlive() const;
 
       const IsoItem_c& getIsoItem() const {
-        return *m_isoItem;
+        return m_isoItem;
       }
 
-      bool addConnection( TcClientConnection_c& c );
+      void addConnection( TcClientConnection_c& c ) {
+        m_connections.push_back( &c );
+      }
       void removeConnection( TcClientConnection_c& c );
 
       int32_t getLastStatusTime() const {
@@ -46,13 +48,12 @@ namespace __IsoAgLib {
         return m_type;
       }
     private:
-      IsoItem_c* m_isoItem;
+      const IsoItem_c& m_isoItem;
 
       bool m_lastActiveTaskTC;
-      IsoAgLib::ProcData::RemoteType_t m_type;
-
-      int32_t m_lastTcStateReceivedTime;
       uint8_t m_lastTcState;
+      int32_t m_lastTcStateReceivedTime;
+      IsoAgLib::ProcData::RemoteType_t m_type;
 
       STL_NAMESPACE::list<TcClientConnection_c*> m_connections;
 

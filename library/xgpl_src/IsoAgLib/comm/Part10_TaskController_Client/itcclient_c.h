@@ -26,13 +26,15 @@ namespace IsoAgLib {
 
   class iTcClient_c : private __IsoAgLib::TcClient_c {
     public:
-      class iServerStateHandler_c : public __IsoAgLib::TcClient_c::ServerStateHandler_c {
+      class iServerStateHandler_c : private __IsoAgLib::TcClient_c::ServerStateHandler_c {
         public:
           virtual void eventServerAvailable( const iIsoItem_c&, ProcData::RemoteType_t ) = 0;
 
+        private:
           virtual void _eventServerAvailable( const __IsoAgLib::IsoItem_c& item, IsoAgLib::ProcData::RemoteType_t type ) {
             eventServerAvailable( static_cast<const iIsoItem_c&>( item ), type );
           }
+          friend class iTcClient_c;
       };
 
       void init( iServerStateHandler_c& hdl ) {
@@ -55,28 +57,18 @@ namespace IsoAgLib {
         return TcClient_c::disconnect( static_cast<__IsoAgLib::IdentItem_c&>( identItem ) );
       }
 
+      /* changing designators is not yet supported */
       void processChangeDesignator( iIdentItem_c& identItem, uint16_t objID, const char* newDesignator ) {
         return TcClient_c::processChangeDesignator( static_cast<__IsoAgLib::IdentItem_c&>( identItem ), objID, newDesignator );
       }
 
     private:
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
       friend iTcClient_c& getItcClientInstance( uint8_t instance );
-#else
-      friend iTcClient_c& getItcClientInstance( void );
-#endif
-      friend class iTcClientConnection_c;
   };
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   inline iTcClient_c& getItcClientInstance( uint8_t instance = 0 ) {
     return static_cast<iTcClient_c&>( __IsoAgLib::getTcClientInstance( instance ) );
   }
-#else
-  inline iTcClient_c& getItcClientInstance( void ) {
-    return static_cast<iTcClient_c&>( __IsoAgLib::getTcClientInstance() );
-  }
-#endif
 
 }
 

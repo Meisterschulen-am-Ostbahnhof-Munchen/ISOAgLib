@@ -26,16 +26,6 @@ namespace __IsoAgLib {
   }
 
 
-  void Measurement_c::removeMeasureProg( MeasureProg_c* m ) {
-    for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {
-      if( ( *i ) == m ) {
-        m_measureProgs.erase( i );
-        break;
-      }
-    }
-  }
-
-
   void Measurement_c::setMeasurementValue( ProcData_c& pd, int32_t v ) {
     m_value = v;
     for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {

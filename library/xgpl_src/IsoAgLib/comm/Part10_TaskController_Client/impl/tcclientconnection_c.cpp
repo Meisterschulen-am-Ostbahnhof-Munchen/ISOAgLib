@@ -36,42 +36,42 @@
 
 namespace __IsoAgLib {
 
-  void ByteStreamBuffer_c::format( uint8_t val ) {
+  void TcClientConnection_c::ByteStreamBuffer_c::format( uint8_t val ) {
     push_back( val );
   }
 
 
-  void ByteStreamBuffer_c::format( uint16_t val ) {
+  void TcClientConnection_c::ByteStreamBuffer_c::format( uint16_t val ) {
     push_back( ( uint8_t )( val & 0xff ) );
     push_back( ( uint8_t )( ( val >> 8 ) & 0xff ) );
   }
 
 
-  void ByteStreamBuffer_c::format( uint32_t val ) {
+  void TcClientConnection_c::ByteStreamBuffer_c::format( uint32_t val ) {
     format( ( uint16_t )( val & 0xffff ) );
     format( ( uint16_t )( ( val >> 16 ) & 0xffff ) );
   }
 
 
-  void ByteStreamBuffer_c::format( const uint8_t* bp, size_t len ) {
+  void TcClientConnection_c::ByteStreamBuffer_c::format( const uint8_t* bp, size_t len ) {
     while ( len-- )
       push_back( *bp++ );
   }
 
 
-  void ByteStreamBuffer_c::format( const char* str ) {
+  void TcClientConnection_c::ByteStreamBuffer_c::format( const char* str ) {
     const size_t l = CNAMESPACE::strlen( str );
     push_back( uint8_t( l ) );
     format( ( const uint8_t* )str, l );
   }
 
 
-  void ByteStreamBuffer_c::format( int32_t val ) {
+  void TcClientConnection_c::ByteStreamBuffer_c::format( int32_t val ) {
     format( ( uint32_t )val );
   }
 
 
-  void ByteStreamBuffer_c::format( float val ) {
+  void TcClientConnection_c::ByteStreamBuffer_c::format( float val ) {
     uint32_t iVal = 0;
     CNAMESPACE::memcpy( &iVal, &val, sizeof( float ) );
 #if defined(__TSW_CPP__) // Tasking uses mixed endian
@@ -81,14 +81,15 @@ namespace __IsoAgLib {
     format( iVal );
   }
 
-  TcClientConnection_c::TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, StateHandler_c& sh, const IsoName_c& serverName, DevicePool_c& pool )
+  TcClientConnection_c::TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, StateHandler_c& sh, ServerInstance_c* server, DevicePool_c& pool )
     : m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )
     , m_identItem( &identItem )
     , m_timeWsAnnounceKey( -1 )
     , m_tcClient( &tcClient )
     , m_stateHandler( &sh )
-    , m_serverName( serverName )
+    , m_serverName( server->getIsoItem().isoName() )
+    , m_server( server )
     , m_receiveFilterCreated( false )
     , m_currentSendPosition( 0 )
     , m_storedSendPosition( 0 )
@@ -116,35 +117,11 @@ namespace __IsoAgLib {
   TcClientConnection_c::~TcClientConnection_c() {
     getMultiReceiveInstance4Comm().deregisterClient ( *this );
     getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
+
     // TODO: send deacticate msg
-    //
+
     for( STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator i = m_measureProg.begin(); i != m_measureProg.end(); ++i ) {
       delete i->second;
-    }
-  }
-
-
-#if 0
-  IsoAgLib::iTcClientConnection_c&
-  TcClientConnection_c::toInterfaceReference() {
-    return static_cast<IsoAgLib::iTcClientConnection_c&>( *this );
-  }
-
-  IsoAgLib::iTcClientConnection_c*
-  TcClientConnection_c::toInterfacePointer() {
-    return static_cast<IsoAgLib::iTcClientConnection_c*>( this );
-  }
-#endif
-
-
-  void TcClientConnection_c::enable( bool a ) {
-    if( a ) {
-      if( getDevPoolState() == PoolSateDisabled ) {
-        setDevPoolState( PoolStateInit );
-      }
-    } else {
-      // TODO verify this works! Maybe something else need to be done....
-      setDevPoolState( PoolSateDisabled );
     }
   }
 
@@ -152,21 +129,18 @@ namespace __IsoAgLib {
   void
   TcClientConnection_c::timeEvent( void ) {
     // do further activities only if registered ident is initialized as ISO and already successfully address-claimed...
-    if ( !m_identItem->isClaimedAddress() )
+    if ( ! m_identItem->isClaimedAddress() )
       return;
 
 
     // reset connection if the server is away
-    ServerInstance_c* server = m_tcClient->getServer( m_serverName );
-    if( ! server ) {
-      m_initDone = false;
+    if( ! m_server ) {
       return;
     }
 
 
     if ( ! m_receiveFilterCreated ) {
       getMultiReceiveInstance4Comm().registerClientIso ( *this, getIdentItem().isoName(), VT_TO_ECU_PGN );
-
       m_receiveFilterCreated = true;
     }
 
@@ -180,17 +154,17 @@ namespace __IsoAgLib {
       }
 
       // init is finished when more then 6sec after addr claim and at least one TC status message was received
-      if ( ( HAL::getTime() - m_timeStartWaitAfterAddrClaim >= 6000 ) && ( server->getLastStatusTime() != -1 ) )
+      if ( ( HAL::getTime() - m_timeStartWaitAfterAddrClaim >= 6000 ) && ( m_server->getLastStatusTime() != -1 ) )
         m_initDone = true;
       return;
     }
 
     checkAndHandleTcStateChange();
 
-    if( getDevPoolState() == PoolSateDisabled ) return;
+    if( getDevPoolState() == PoolSateDisabled )
+      return;
 
-    // ### Do nothing if there's no TC alive ###
-    if ( !isTcAlive() )
+    if ( ! isTcAlive() )
       return;
 
     // Check if the working-set is completely announced
@@ -198,7 +172,11 @@ namespace __IsoAgLib {
       return;
 
     // Send the WS task message to maintain connection with the TC
-    sendWorkingSetTaskMsg();
+    const int32_t now = HAL::getTime();
+    if ( now - m_timeWsTaskMsgSent >= 2000 ) {
+      m_timeWsTaskMsgSent = now;
+      sendMsg( 0xff, 0xff, 0xff, 0xff, m_server->getLastServerState(), 0x00, 0x00, 0x00 );
+    }
 
 
     timeEventDevicePool();
@@ -219,7 +197,12 @@ namespace __IsoAgLib {
         m_timeWsAnnounceKey = -1;
       }
 
-      eventTcAlive( m_tcAliveNew );
+      setDevPoolAction( PoolActionIdle );
+      if( m_tcAliveNew ) {
+        if( getDevPoolState() == PoolSateDisabled ) {
+          setDevPoolState( PoolStateInit );
+        }
+      }
     }
   }
 
@@ -305,7 +288,7 @@ namespace __IsoAgLib {
             if ( m_pool->isEmpty() )
               break;
 
-            requestPoolTransfer( m_pool->getBytestream() );
+            requestPoolTransfer( m_pool->getBytestream( procCmdPar_OPTransferMsg ) );
             setDevPoolAction( PoolActionWaiting );
             break;
 
@@ -339,28 +322,9 @@ namespace __IsoAgLib {
 
   bool
   TcClientConnection_c::isTcAlive() {
-    ServerInstance_c* server = m_tcClient->getServer( m_serverName );
-    return server ? server->isAlive() : false;
+    return m_server ? m_server->isAlive() : false;
   }
 
-
-  void
-  TcClientConnection_c::sendWorkingSetTaskMsg() {
-    // Ensure that we and the server are on the bus...
-    ServerInstance_c* server = m_tcClient->getServer( m_serverName );
-    if ( m_identItem == 0 || ! m_identItem->isClaimedAddress() || ! server )
-      return;
-
-    if ( ! isTcAlive() )
-      return;
-
-    // Send the WS task message every two seconds
-    const int32_t now = HAL::getTime();
-    if ( now - m_timeWsTaskMsgSent >= 2000 ) {
-      m_timeWsTaskMsgSent = now;
-      sendMsg( 0xff, 0xff, 0xff, 0xff, server->getLastServerState(), 0x00, 0x00, 0x00 );
-    }
-  }
 
   void
   TcClientConnection_c::startUpload() {
@@ -441,7 +405,6 @@ namespace __IsoAgLib {
 
     switch ( data.getUint8Data ( 0 ) ) {
       case procCmdPar_VersionMsg:
-        m_versionLabel = data.getUint8Data( 1 );
         m_uploadState = StateIdle;
         break;
 
@@ -520,14 +483,8 @@ namespace __IsoAgLib {
 
   int32_t
   TcClientConnection_c::requestPoolTransfer( ByteStreamBuffer_c pool ) {
-    if ( pool.getEnd() <= 1 )
-      return StatusCannotProcess;
-
     m_devicePoolToUpload = pool;
-    // The pool will be sent in a multipacket. Insert the upload command byte (061) at the head of buffer
-    m_devicePoolToUpload[0] = uint8_t( procCmdPar_OPTransferMsg );
     startUpload();
-
     return StatusNoError;
   }
 
@@ -601,14 +558,6 @@ namespace __IsoAgLib {
     pkg.setLen( 8 );
 
     getIsoBusInstance4Comm() << pkg;
-  }
-
-  void
-  TcClientConnection_c::eventTcAlive( bool isAlive ) {
-    setDevPoolAction( PoolActionIdle );
-    if( isAlive ) {
-      enable( true ); // TODO call app handler
-    }
   }
 
 
@@ -691,7 +640,7 @@ namespace __IsoAgLib {
     ProcessPkg_c pkg;
 
     pkg.men_command = ProcessPkg_c::setValue;
-    pkg.setISONameForDA( m_serverName );
+    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &m_server->getIsoItem() ) );
     pkg.setMonitorItemForSA( m_identItem->getIsoItem() );
     pkg.setIsoPri( 3 );
     pkg.setIsoPgn( PROCESS_DATA_PGN );
@@ -723,8 +672,7 @@ namespace __IsoAgLib {
   int32_t
   TcClientConnection_c::doCommand( int32_t opcode, int32_t timeout ) {
 
-    ServerInstance_c* server = m_tcClient->getServer( m_serverName );
-    if ( ( ! m_identItem ) || ( ! m_identItem->getIsoItem() ) || ( ! server ) )
+    if ( ( ! m_identItem ) || ( ! m_identItem->getIsoItem() ) || ( ! m_server ) )
       return StatusNotInitted;
 
     if ( m_uploadState == StateBusy )
@@ -736,7 +684,7 @@ namespace __IsoAgLib {
 
     pkg.setIsoPri( 3 );
     pkg.setIsoPgn( PROCESS_DATA_PGN );
-    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &server->getIsoItem() ) );
+    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &m_server->getIsoItem() ) );
     pkg.setMonitorItemForSA( m_identItem->getIsoItem() );
     pkg.setUint8Data ( 0, opcode );
     pkg.setUint8Data ( 1, 0xff );

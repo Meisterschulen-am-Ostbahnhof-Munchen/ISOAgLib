@@ -37,56 +37,6 @@ namespace __IsoAgLib {
   class ServerInstance_c;
 
 
-  class ByteStreamBuffer_c {
-    public:
-      void setBuffer( uint8_t* b ) {
-        m_buffer = b;
-      }
-      uint8_t* getBuffer() {
-        return m_buffer;
-      }
-
-      void setEnd( uint32_t e ) {
-        m_end = e;
-      }
-      uint32_t getEnd() const {
-        return m_end;
-      }
-
-      void setSize( uint32_t s ) {
-        m_size = s;
-      }
-      uint32_t getSize() const {
-        return m_size;
-      }
-
-      uint8_t& operator[]( uint32_t p ) {
-        return m_buffer[ p ];
-      }
-      void reset() {
-        setBuffer( 0 );
-        setEnd( 0 );
-        setSize( 0 );
-      }
-      void format( uint8_t val );
-      void format( uint16_t val );
-      void format( uint32_t val );
-      void format( const uint8_t* bp, size_t len );
-      void format( const char* str );
-      void format( int32_t val );
-      void format( float val );
-    private:
-      uint32_t m_end;
-      uint8_t* m_buffer;
-      uint32_t m_size;
-
-      void push_back( uint8_t b ) {
-        isoaglib_assert( ( m_end + 1 ) <= getSize() );
-        m_buffer[ m_end++ ] = b;
-      }
-  };
-
-
   class TcClientConnection_c : public CanCustomer_c {
 #define DEF_TimeOut_GetVersion            5000
 #define DEF_TimeOut_OPTransfer            20000
@@ -129,7 +79,58 @@ namespace __IsoAgLib {
           virtual void _eventTaskStopped( TcClientConnection_c& ecu ) = 0;
       };
 
-      TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, StateHandler_c& sh, const IsoName_c& serverName, DevicePool_c& pool );
+
+      class ByteStreamBuffer_c {
+        public:
+          void setBuffer( uint8_t* b ) {
+            m_buffer = b;
+          }
+          uint8_t* getBuffer() {
+            return m_buffer;
+          }
+
+          void setEnd( uint32_t e ) {
+            m_offset = e;
+          }
+          uint32_t getEnd() const {
+            return m_offset;
+          }
+
+          void setSize( uint32_t s ) {
+            m_size = s;
+          }
+          uint32_t getSize() const {
+            return m_size;
+          }
+
+          uint8_t& operator[]( uint32_t p ) {
+            return m_buffer[ p ];
+          }
+          void reset() {
+            setBuffer( 0 );
+            setEnd( 0 );
+            setSize( 0 );
+          }
+          void format( uint8_t val );
+          void format( uint16_t val );
+          void format( uint32_t val );
+          void format( const uint8_t* bp, size_t len );
+          void format( const char* str );
+          void format( int32_t val );
+          void format( float val );
+        private:
+          uint32_t m_offset;
+          uint8_t* m_buffer;
+          uint32_t m_size;
+
+          void push_back( uint8_t b ) {
+            isoaglib_assert( ( m_offset + 1 ) <= getSize() );
+            m_buffer[ m_offset++ ] = b;
+          }
+      };
+
+
+      TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, StateHandler_c& sh, ServerInstance_c* server, DevicePool_c& pool );
       virtual ~TcClientConnection_c();
 
       IdentItem_c& getIdentItem() const {
@@ -139,15 +140,12 @@ namespace __IsoAgLib {
         return *m_tcClient;
       }
 
-      void enable( bool a );
 
       void timeEvent();
       void checkAndHandleTcStateChange();
       void timeEventDevicePool();
-      void resetTimerPeriod();
 
       bool isTcAlive();
-      void sendWorkingSetTaskMsg();
       void startUpload();
 
       void processMsgEntry( const ProcessPkg_c& );
@@ -177,22 +175,17 @@ namespace __IsoAgLib {
       }
       int32_t requestPoolTransfer( ByteStreamBuffer_c pool );
 
-      // ProcData_c handling
-      ProcData_c* procData( uint16_t DDI, uint16_t element, bool& elementFound ) const;
-      void eventTaskStarted();
-      void eventTaskStopped();
-
-      void stopRunningMeasurement();
-      void sendNack( int16_t ddi, int16_t element, IsoAgLib::ProcData::NackResponse_t errorcodes ) const;
-      void sendProcMsg( uint16_t ddi, uint16_t element, int32_t pdValue ) const;
-
-      /** device pool handling */
-      void eventTcAlive( bool isAlive );
       void eventStructureLabelResponse( uint8_t result, const STL_NAMESPACE::vector<uint8_t>& label );
       void eventLocalizationLabelResponse( uint8_t result, const STL_NAMESPACE::vector<uint8_t>& label );
       void eventPoolUploadResponse( uint8_t result );
       void eventPoolActivateResponse( uint8_t result );
       void eventPoolDeleteResponse( uint8_t result );
+
+      ProcData_c* procData( uint16_t DDI, uint16_t element, bool& elementFound ) const;
+
+      void eventTaskStarted();
+      void eventTaskStopped();
+      void stopRunningMeasurement();
 
       void setDevPoolState( DevPoolState_t newState ) {
         m_devPoolState = newState;
@@ -209,8 +202,15 @@ namespace __IsoAgLib {
         return m_serverName;
       }
 
-    protected:
-      int32_t doCommand( int32_t opcode, int32_t timeout = DEF_TimeOut_NormalCommand );
+
+      void sendNack( int16_t ddi, int16_t element, IsoAgLib::ProcData::NackResponse_t errorcodes ) const;
+      void sendProcMsg( uint16_t ddi, uint16_t element, int32_t pdValue ) const;
+
+      void setServer( ServerInstance_c* server ) {
+        m_initDone = false;
+        m_server = server;
+      }
+
 
     private:
       class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
@@ -285,8 +285,6 @@ namespace __IsoAgLib {
         return m_identItem->getMultitonInst();
       }
 
-      void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
-
     private:
       enum PoolAction_t {
         PoolActionIdle = 0,
@@ -327,13 +325,20 @@ namespace __IsoAgLib {
         procCmdPar_ChangeDesignatorRespMsg = 0xD1
       };
 
+
+      int32_t doCommand( int32_t opcode, int32_t timeout = DEF_TimeOut_NormalCommand );
+      void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
+
+
       IdentItem_c* m_identItem;
       int32_t m_timeWsAnnounceKey;
-      TcClient_c* m_tcClient; // back ref.
+      TcClient_c* m_tcClient;
       StateHandler_c* m_stateHandler;
 
       IsoName_c m_serverName;
+      ServerInstance_c* m_server;
 
+      // TODO MWD
       bool m_receiveFilterCreated;
 
       // MultiSendStreamer_c variables
@@ -358,7 +363,6 @@ namespace __IsoAgLib {
       bool m_receivedStructureLabel;
       bool m_receivedLocalizationLabel;
 
-      uint8_t m_versionLabel;
       STL_NAMESPACE::vector<uint8_t> m_structureLabel;
       STL_NAMESPACE::vector<uint8_t> m_localizationLabel;
 

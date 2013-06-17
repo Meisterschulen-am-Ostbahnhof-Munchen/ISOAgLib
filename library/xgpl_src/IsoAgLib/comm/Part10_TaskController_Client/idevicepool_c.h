@@ -32,6 +32,7 @@ namespace IsoAgLib {
   class iDeviceObjectDvc_c : public __IsoAgLib::DeviceObjectDvc_c {
     public:
       iDeviceObjectDvc_c( const char* version, const char* desig ) : __IsoAgLib::DeviceObjectDvc_c( version, desig ) {}
+      // TODO
       void setLocalization( const localSettings_s& s ) {
         __IsoAgLib::DeviceObjectDvc_c::setLocalSettings( s );
       }
@@ -87,8 +88,8 @@ namespace IsoAgLib {
 
   class iDeviceObjectDet_c : public __IsoAgLib::DeviceObjectDet_c {
     public:
-      iDeviceObjectDet_c( const iDeviceObjectDet_c& obj, uint16_t element, uint8_t type, const char* desig ) : DeviceObjectDet_c( obj.getObjectId(), element, type, desig ) {}
-      iDeviceObjectDet_c( const iDeviceObjectDvc_c& obj, uint16_t element, uint8_t type, const char* desig ) : DeviceObjectDet_c( obj.getObjectId(), element, type, desig ) {}
+      iDeviceObjectDet_c( const iDeviceObjectDet_c& parent, uint16_t element, uint8_t type, const char* desig ) : DeviceObjectDet_c( parent.getObjectId(), element, type, desig ) {}
+      iDeviceObjectDet_c( const iDeviceObjectDvc_c& parent, uint16_t element, uint8_t type, const char* desig ) : DeviceObjectDet_c( parent.getObjectId(), element, type, desig ) {}
       bool addChild( const iDeviceObjectDpt_c& c ) {
         return __IsoAgLib::DeviceObjectDet_c::addChild( c.getObjectId() );
       }
@@ -104,7 +105,7 @@ namespace IsoAgLib {
 
   /* iDevicePool_c */
 
-  class iDevicePool_c : public __IsoAgLib::DevicePool_c {
+  class iDevicePool_c : private __IsoAgLib::DevicePool_c {
     public:
       virtual ~iDevicePool_c() {}
 
@@ -121,6 +122,7 @@ namespace IsoAgLib {
       }
       bool add( iProcData_c& pd );
 
+      /* changing designators is not yet supported */
       template<class T>
       void changeDesignator( T& obj, const char* str ) {
         __IsoAgLib::DevicePool_c::changeDesignator( obj, str );

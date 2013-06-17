@@ -78,8 +78,6 @@ namespace ProcData {
 
   typedef BitFieldWrapperRight_c<TriggerMethod_s> Methods_t;
 
-  //inline bool isMethodSet( Methods_t bitmask, TriggerMethod_t method ) { return bitmask.isBitSet( method ); }
-
   inline bool isMethodSet( uint8_t value, TriggerMethod_t method ) { return ((value & (0x1 << method)) != 0 ); }
 
   enum Property_t {
@@ -93,8 +91,6 @@ namespace ProcData {
   };
 
   typedef BitFieldWrapperRight_c<Property_s> Properties_t;
-
-  //inline bool isPropertySet( Properties_t bitmask, Property_t prop ) { return bitmask.isBitSet( prop ); }
 }
 
 }

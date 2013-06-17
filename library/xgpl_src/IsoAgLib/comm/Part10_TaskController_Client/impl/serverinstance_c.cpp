@@ -15,38 +15,28 @@
 
 namespace __IsoAgLib {
 
-  ServerInstance_c::ServerInstance_c() :
-    m_isoItem( 0 ),
+
+  ServerInstance_c::ServerInstance_c( const IsoItem_c& it, IsoAgLib::ProcData::RemoteType_t type ) :
+    m_isoItem( it ),
     m_lastActiveTaskTC( false ),
-    m_type( IsoAgLib::ProcData::RemoteTypeTaskController ),
-    m_lastTcStateReceivedTime( 0 ),
-    m_lastTcState( 0 ) {}
+    m_lastTcState( 0 ),
+    m_lastTcStateReceivedTime( -1 ),
+    m_type( type )
+  {}
 
 
-  ServerInstance_c::ServerInstance_c( IsoItem_c& it, IsoAgLib::ProcData::RemoteType_t type ) : m_isoItem( &it ), m_type( type ) {}
-
-  void ServerInstance_c::close() {
+  ServerInstance_c::~ServerInstance_c() {
     STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
     while ( it != m_connections.end() ) {
       ( *it )->stopRunningMeasurement();
+      ( *it )->setServer( 0 );
       ++it;
     }
   }
 
 
   bool ServerInstance_c::isAlive() const {
-    return ( getLastStatusTime() != -1 ) && ( ( HAL::getTime() - getLastStatusTime() <= 6000 ) );
-  }
-
-
-  bool ServerInstance_c::addConnection( TcClientConnection_c& c ) {
-    STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
-    while ( it != m_connections.end() ) {
-      if( *it == &c ) return false;
-      ++it;
-    }
-    m_connections.push_back( &c );
-    return true;
+    return ( getLastStatusTime() != -1 ) && ( HAL::getTime() - getLastStatusTime() <= 6000 );
   }
 
 
