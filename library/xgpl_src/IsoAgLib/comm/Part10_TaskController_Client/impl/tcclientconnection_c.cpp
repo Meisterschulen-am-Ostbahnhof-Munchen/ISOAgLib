@@ -16,12 +16,10 @@
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
-//#include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
 
@@ -90,7 +88,6 @@ namespace __IsoAgLib {
     , m_stateHandler( &sh )
     , m_serverName( server->getIsoItem().isoName() )
     , m_server( server )
-    , m_receiveFilterCreated( false )
     , m_currentSendPosition( 0 )
     , m_storedSendPosition( 0 )
     , m_uploadPoolState( DDOPRegistered )
@@ -115,7 +112,6 @@ namespace __IsoAgLib {
 
 
   TcClientConnection_c::~TcClientConnection_c() {
-    getMultiReceiveInstance4Comm().deregisterClient ( *this );
     getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
 
     // TODO: send deacticate msg
@@ -136,12 +132,6 @@ namespace __IsoAgLib {
     // reset connection if the server is away
     if( ! m_server ) {
       return;
-    }
-
-
-    if ( ! m_receiveFilterCreated ) {
-      getMultiReceiveInstance4Comm().registerClientIso ( *this, getIdentItem().isoName(), VT_TO_ECU_PGN );
-      m_receiveFilterCreated = true;
     }
 
     // Wait until we are properly initialized before doing anything else

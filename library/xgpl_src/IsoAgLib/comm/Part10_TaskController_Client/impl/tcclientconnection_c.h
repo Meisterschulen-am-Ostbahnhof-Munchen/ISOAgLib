@@ -338,9 +338,6 @@ namespace __IsoAgLib {
       IsoName_c m_serverName;
       ServerInstance_c* m_server;
 
-      // TODO MWD
-      bool m_receiveFilterCreated;
-
       // MultiSendStreamer_c variables
       uint16_t m_currentSendPosition;
       uint16_t m_storedSendPosition;
