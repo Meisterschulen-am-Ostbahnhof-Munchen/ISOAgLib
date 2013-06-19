@@ -182,12 +182,10 @@ vtObjectAuxiliaryInput2_c::setValue(uint16_t aui16_value1, uint16_t aui16_value2
 
 #endif
 
-  mui16_value1 = aui16_value1;
-
   switch (aen_stateForLearnMode)
   {
     case StateForLearnMode_CalculateInternally:
-      if (0 != mui16_value1)
+      if (0 != aui16_value1)
         mb_inputActivatedInLearnMode = true;
       else
         mb_inputActivatedInLearnMode = false;
@@ -240,6 +238,8 @@ vtObjectAuxiliaryInput2_c::setValue(uint16_t aui16_value1, uint16_t aui16_value2
     case FunctionType_AnalogReturnTo0:
       break;
   }
+
+  mui16_value1 = aui16_value1;
 
   // special handling for non latched boolean
   switch (getFunctionType())
