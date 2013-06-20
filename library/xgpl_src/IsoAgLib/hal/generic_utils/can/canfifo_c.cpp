@@ -9,7 +9,8 @@ namespace HAL {
 
 
   void CanFifo_c::push( __IsoAgLib::CanPkg_c& pkg  ) {
-    if( m_wIdx == m_rIdx + ( m_bufferSize * 2 ) ) {
+    const unsigned w = m_wIdx;
+    if( w == ( m_rIdx + ( m_bufferSize * 2 ) ) ) {
       isoaglib_assert( !"buffer full" );
     }
 
@@ -31,7 +32,8 @@ namespace HAL {
 
 
   bool CanFifo_c::empty() const {
-    return( ( m_wIdx == m_rIdx ) || ( m_wIdx - m_rIdx == 1 ) );
+    const unsigned w = m_wIdx;
+    return( ( w == m_rIdx ) || ( ( w - m_rIdx ) == 1 ) );
   }
 
 
