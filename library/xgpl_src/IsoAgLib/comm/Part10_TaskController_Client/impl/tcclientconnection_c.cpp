@@ -491,8 +491,6 @@ namespace __IsoAgLib {
 
       case procCmdPar_RequestOPTransferRespMsg:
         if ( data.getUint8Data( 1 ) == 0 ) { // on success, send the object pool
-          // @TODO AKA how to handle NULL response ? --> MWD: Better check if we actually sent the request message!!
-
           m_sendSuccess = SendStream_c::SendSuccess;
           getMultiSendInstance4Comm().sendIsoTarget( m_identItem->isoName(), m_serverName, m_devicePoolToUpload.getBuffer(),
               m_devicePoolToUpload.getEnd(), PROCESS_DATA_PGN, &m_multiSendEventHandler );

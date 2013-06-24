@@ -84,21 +84,12 @@ namespace __IsoAgLib {
       bool triggeredIncrement = false;
 
       switch ( pc_iter->type() ) {
-        case IsoAgLib::ProcData::MeasurementCommandTimeProp:
-          triggeredIncrement = pc_iter->updateTrigger( i32_time );
-          break;
-
-        case IsoAgLib::ProcData::MeasurementCommandDistProp:
-#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-          triggeredIncrement = pc_iter->updateTrigger(int32_t(getTracMoveInstance( ac_processData.identItem().getMultitonInst() ).distTheor()));
-#endif
-          break;
         case IsoAgLib::ProcData::MeasurementCommandOnChange:
           triggeredIncrement = pc_iter->updateTrigger( ai32_val );
           break;
-
+        case IsoAgLib::ProcData::MeasurementCommandTimeProp:
         case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold:
-          break;
+        case IsoAgLib::ProcData::MeasurementCommandDistProp:
         case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold:
           break;
       }
@@ -113,7 +104,6 @@ namespace __IsoAgLib {
         }
         // if at least one send try had success reset triggeredIncrement
         isoaglib_assert( m_connection );
-        // TODO only send once per setValue
         m_connection->sendProcMsg( m_procdata.DDI(), m_procdata.element(), ai32_val );
       }
     }
@@ -131,7 +121,6 @@ namespace __IsoAgLib {
           triggeredIncrement = pc_iter->updateTrigger( i32_time );
           i32_nextTimePeriod = pc_iter->nextTriggerTime( m_procdata, i32_time );
           break;
-
         case IsoAgLib::ProcData::MeasurementCommandDistProp: {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
             int32_t i32_distTheor = getTracMoveInstance(m_procdata.identItem().getMultitonInst()).distTheor();
@@ -142,11 +131,9 @@ namespace __IsoAgLib {
             i32_nextTimePeriod = pc_iter->nextTriggerTime( m_procdata, i32_distTheor );
           }
           break;
-
         case IsoAgLib::ProcData::MeasurementCommandOnChange:
-          triggeredIncrement = pc_iter->updateTrigger( m_value );
-          break;
-        default:
+        case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold:
+        case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold:
           break;
       } // switch
 
@@ -211,7 +198,6 @@ namespace __IsoAgLib {
     for ( pc_subprog = m_measureSubprog.begin(); pc_subprog != m_measureSubprog.end(); ++pc_subprog ) {
       if ( pc_subprog->type() == ren_type ) {
         // TODO improve set of period: search period in list of subprog (time interval or 50ms if distance found)
-        // TODO check how ai32_increment 0 is handled
         pc_subprog->setIncrement( ai32_increment );
         return *pc_subprog;
       }
@@ -225,7 +211,6 @@ namespace __IsoAgLib {
           case IsoAgLib::ProcData::MeasurementCommandDistProp:
             getSchedulerInstance().registerTask( *this, 0 );
             // TODO improve set of period: search period in list of subprog (time interval or 50ms if distance found)
-            // TODO check how ai32_increment 0 is handled
             setPeriod(50,true);
             break;
           default:
