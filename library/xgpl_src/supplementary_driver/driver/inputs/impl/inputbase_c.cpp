@@ -10,25 +10,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#include "inputbase_c.h"
-#include "inputs_c.h"
+//#include "inputbase_c.h"
 
-
-namespace __IsoAgLib {
-
-InputBase_c::InputBase_c( uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType )
-  : ui8_channelNr( aui8_channelNr )
-  , en_inputType( ren_inputType )
-{ 
-}
-
-
-void
-InputBase_c::init( uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType )
-{
-  ui8_channelNr = aui8_channelNr;
-  en_inputType = ren_inputType;
-}
-
-
-} // __IsoAgLib
+//currently empty.

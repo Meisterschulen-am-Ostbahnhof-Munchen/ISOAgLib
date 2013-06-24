@@ -35,7 +35,7 @@ public:
     @param ren_inputType input type, which is needed because of the relation
            of config number and gathering number which vary dependent on input type
   */
-  InputBase_c(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType = IsoAgLib::iInput_c::undef_input);
+  inline InputBase_c(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType = IsoAgLib::iInput_c::undef_input);
 
   /**
     Basic constructor for an input channel object (only internal accessed)
@@ -43,7 +43,7 @@ public:
     @param ren_inputType input type, which is needed because of the relation
            of config number and gathering number which vary dependent on input type
   */
-  void init(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType = IsoAgLib::iInput_c::undef_input);
+  inline void init(uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType = IsoAgLib::iInput_c::undef_input);
 
   virtual ~InputBase_c() {}
 
@@ -61,6 +61,25 @@ private:
   /** input type of this channel */
   IsoAgLib::iInput_c::inputType_t en_inputType;
 };
+
+
+inline
+InputBase_c::InputBase_c( uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType )
+  : ui8_channelNr( aui8_channelNr )
+  , en_inputType( ren_inputType )
+{ 
+}
+
+
+inline
+void
+InputBase_c::init( uint8_t aui8_channelNr, IsoAgLib::iInput_c::inputType_t ren_inputType )
+{
+  ui8_channelNr = aui8_channelNr;
+  en_inputType = ren_inputType;
+}
+
+
 
 } // __IsoAgLib
 
