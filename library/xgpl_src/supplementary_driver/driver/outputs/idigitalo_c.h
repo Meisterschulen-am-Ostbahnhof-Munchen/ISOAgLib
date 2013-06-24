@@ -43,10 +43,9 @@ public:
 
   virtual ~iDigitalO_c() {}
 
-  /** set a new channel
-    @param aui8_channel channel number
-  */
+  /** Channel-management */
   void setChannel(uint8_t aui8_channel) { DigitalO_c::setChannel( aui8_channel ); }
+  uint8_t channelNr() const { return DigitalO_c::channelNr(); }
 
   /**
     set the output PWM frequency

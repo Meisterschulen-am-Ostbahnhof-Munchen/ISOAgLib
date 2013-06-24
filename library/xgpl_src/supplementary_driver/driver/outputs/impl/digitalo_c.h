@@ -34,10 +34,6 @@ public:
   DigitalO_c();
   virtual ~DigitalO_c();
 
-  /** set to a new channel
-  */
-  void setChannel(uint8_t aui8_channel);
-
   /** compare this channel to an uint8_t value representing a dout channel
     * this function is used by the base Singleton to find a specific item
     */

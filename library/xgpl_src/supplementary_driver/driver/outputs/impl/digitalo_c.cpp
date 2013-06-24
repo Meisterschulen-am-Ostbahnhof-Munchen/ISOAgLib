@@ -39,13 +39,6 @@ DigitalO_c::DigitalO_c()
 }
 
 
-void
-DigitalO_c::setChannel(uint8_t aui8_channel)
-{
-  OutputBase_c::setChannel( aui8_channel );
-}
-
-
 DigitalO_c::~DigitalO_c()
 {
 }
