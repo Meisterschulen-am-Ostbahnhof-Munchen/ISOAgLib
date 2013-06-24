@@ -241,15 +241,15 @@ namespace __IsoAgLib {
 
       case IsoAgLib::ProcData::MeasurementCommandDistProp: // distance proportional
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE) // if no distance available, NACK will be sent
-        if ( IsoAgLib::ProcData::isMethodSet( ac_processData.triggerMethod(), IsoAgLib::ProcData::DistInterval ) ) {
+        if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::DistInterval ) ) {
           if ( ai32_increment == sci32_stopValDistanceInterval ) {
             stopMeasurement( ren_type );
           } else {
             MeasureSubprog_c& subprog = addSubprog(ren_type, ai32_increment);
-            subprog.start(int32_t(getTracMoveInstance(ac_processData.identItem().getMultitonInst()).distTheor()));
+            subprog.start(int32_t(getTracMoveInstance(m_procdata.identItem().getMultitonInst()).distTheor()));
           }
           isoaglib_assert( m_connection );
-          m_connection->sendProcMsg( ac_processData.DDI(), ac_processData.element(), value );
+          m_connection->sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
           b_validTriggerMethod = true;
         }
 #endif
