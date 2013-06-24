@@ -208,9 +208,17 @@ namespace __IsoAgLib {
     STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( &sender );
 
     if( server == m_server.end() ) {
-      // TODO check for type in NAME other than DL/TC
-      const IsoAgLib::ProcData::RemoteType_t ecuType = sender.isoName().getEcuType() == IsoName_c::ecuTypeTaskControl ?
-          IsoAgLib::ProcData::RemoteTypeTaskController : IsoAgLib::ProcData::RemoteTypeDataLogger;
+      IsoAgLib::ProcData::RemoteType_t ecuType; 
+      switch (sender.isoName().getEcuType()) {
+        case IsoName_c::ecuTypeTaskControl:
+          ecuType = IsoAgLib::ProcData::RemoteTypeTaskController;
+          break;
+        case IsoName_c::ecuTypeDataLogger:
+          ecuType = IsoAgLib::ProcData::RemoteTypeDataLogger;
+          break;
+        default:
+          return;
+      }
 
       m_server[ &sender ] = new ServerInstance_c( sender, ecuType );
       server = m_server.find( &sender );
