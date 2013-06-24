@@ -82,16 +82,15 @@ MeasureSubprog_c::nextTriggerTime( const ProcData_c& ac_processData, int32_t ai3
 	  
     case IsoAgLib::ProcData::MeasurementCommandDistProp:
     {
-#if 0
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;
-      const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance(ac_processData.getTcClientConnection().getIdentItem().getMultitonInst()).selectedSpeed());  // speed can be negative
+      const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance(ac_processData.identItem().getMultitonInst()).selectedSpeed());  // speed can be negative
 
       if (0 == ci32_speed)
         // speed == 0
         return 500;
 
-      if ( ! getTracMoveInstance(ac_processData.getTcClientConnection().getIdentItem().getMultitonInst()).isSelectedSpeedUsable() )
+      if ( ! getTracMoveInstance(ac_processData.identItem().getMultitonInst()).isSelectedSpeedUsable() )
       { // invalid speed, no tractor available
         return 200;
       }
@@ -111,7 +110,6 @@ MeasureSubprog_c::nextTriggerTime( const ProcData_c& ac_processData, int32_t ai3
 #else
       (void)ac_processData;
       return 200; // 200 msec
-#endif
 #endif
     }
 

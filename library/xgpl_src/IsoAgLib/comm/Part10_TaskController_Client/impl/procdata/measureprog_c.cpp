@@ -197,7 +197,6 @@ namespace __IsoAgLib {
     MeasureSubprogContainerIterator_t pc_subprog = m_measureSubprog.end();
     for ( pc_subprog = m_measureSubprog.begin(); pc_subprog != m_measureSubprog.end(); ++pc_subprog ) {
       if ( pc_subprog->type() == ren_type ) {
-        // TODO improve set of period: search period in list of subprog (time interval or 50ms if distance found)
         pc_subprog->setIncrement( ai32_increment );
         return *pc_subprog;
       }
@@ -210,7 +209,7 @@ namespace __IsoAgLib {
           case IsoAgLib::ProcData::MeasurementCommandTimeProp:
           case IsoAgLib::ProcData::MeasurementCommandDistProp:
             getSchedulerInstance().registerTask( *this, 0 );
-            // TODO improve set of period: search period in list of subprog (time interval or 50ms if distance found)
+            // set 50 ms as default, proper period will be set in timeEvent
             setPeriod(50,true);
             break;
           default:
@@ -330,7 +329,6 @@ namespace __IsoAgLib {
         for (MeasureSubprogContainerIterator_t pc_iter = m_measureSubprog.begin(); pc_iter != m_measureSubprog.end(); ++pc_iter) {
           if ( pc_iter->type() == IsoAgLib::ProcData::MeasurementCommandTimeProp || IsoAgLib::ProcData::MeasurementCommandDistProp )
           {
-            // TODO improve set of period: search period in list of subprog (time interval or 50ms if distance found)
             return;
           }
         }
