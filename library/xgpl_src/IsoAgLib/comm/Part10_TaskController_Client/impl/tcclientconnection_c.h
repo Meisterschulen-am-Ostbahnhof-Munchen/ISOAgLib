@@ -18,8 +18,8 @@
 #include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
+#include <map>
 
 namespace IsoAgLib {
   class iDevicePool_c;
@@ -82,6 +82,7 @@ namespace __IsoAgLib {
 
       class ByteStreamBuffer_c {
         public:
+          ByteStreamBuffer_c() {reset();}
           void setBuffer( uint8_t* b ) {
             m_buffer = b;
           }
@@ -150,7 +151,10 @@ namespace __IsoAgLib {
 
       void processMsgEntry( const ProcessPkg_c& );
       void processMsgTc( const ProcessPkg_c& );
-      void processMsgProcData( const ProcessPkg_c& );
+
+      void processMeasurementMsg( const ProcessPkg_c& );
+      void processRequestMsg( const ProcessPkg_c& );
+      void processSetMsg( const ProcessPkg_c& );
 
       void outOfMemory();
 
@@ -285,6 +289,8 @@ namespace __IsoAgLib {
         return m_identItem->getMultitonInst();
       }
 
+      static uint32_t getMapKey(uint16_t ddi, uint16_t element) { return ( uint32_t( uint32_t( ddi ) << 16 ) ) | uint32_t(element); }
+
     private:
       enum PoolAction_t {
         PoolActionIdle = 0,
@@ -365,6 +371,7 @@ namespace __IsoAgLib {
 
       // Measure progs presorted for DDIs
       void createMeasureProgs();
+      void destroyMeasureProgs();
       STL_NAMESPACE::map<uint32_t, MeasureProg_c*> m_measureProg;
 
       SendStream_c::sendSuccess_t m_sendSuccess;

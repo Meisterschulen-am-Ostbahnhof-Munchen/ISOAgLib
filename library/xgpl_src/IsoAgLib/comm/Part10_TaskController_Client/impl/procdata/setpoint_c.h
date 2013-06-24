@@ -14,27 +14,32 @@
 #define SETPOINT_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
 
 namespace __IsoAgLib {
 
+  class TcClientConnection_c;
   class ProcData_c;
+  class SetpointHandler_c;
 
   class Setpoint_c {
     public:
-      Setpoint_c() : mi32_value( 0 ) {}
+      Setpoint_c();
       ~Setpoint_c() {}
+
+      void init(SetpointHandler_c* setpointhandler);
 
       int32_t setpointValue() const {
         return mi32_value;
       }
 
-      void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& pkg );
+      void processMsg( ProcData_c& ac_processData, TcClientConnection_c& ecu, int32_t pdValue );
 
     private:
       int32_t mi32_value;
+
+      SetpointHandler_c* m_setpointhandler;
 
     private:
       /** not copyable : copy constructor/operator only declared, not defined */

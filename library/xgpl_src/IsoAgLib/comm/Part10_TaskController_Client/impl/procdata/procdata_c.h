@@ -15,52 +15,30 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
-#include <list>
-
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measurement_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/setpoint_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
+
+#include <list>
 
 namespace __IsoAgLib {
   class TcClientConnection_c;
   class DeviceObjectDpd_c;
   class DeviceObjectDet_c;
 
+  class SetpointHandler_c {
+    public:
+      virtual ~SetpointHandler_c() {}
+      virtual void _processSetpointSet( ProcData_c& procdata, int32_t value, bool change ) = 0;
+  };
+
   class ProcData_c {
     public:
-      class SetpointHandler_c {
-        public:
-          virtual ~SetpointHandler_c() {}
-          virtual void _processSetpointSet( ProcData_c& procdata, int32_t value, bool change ) = 0;
-      };
-
-
       ProcData_c();
       void init( IdentItem_c& ident, const DeviceObjectDpd_c& dpd, const DeviceObjectDet_c& det, SetpointHandler_c* setpointhandler = NULL );
 
       void close();
-
-      int32_t setpointValue() const {
-        return m_setpoint.setpointValue();
-      }
-
-      SetpointHandler_c* getSetpointHandler() {
-        return m_setpointhandler;
-      }
-
-      void setMeasurementValue( int32_t ai32_val );
-
-      int32_t measurementValue() const {
-        return m_measurement.getValue();
-      }
-      void sendMeasurementVal() const;
-      void startDataLogging( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment );
-      void stopRunningMeasurement();
-
-      void addMeasureProg( MeasureProg_c* m ) {
-        m_measurement.addMeasureProg( m );
-      }
 
       const IsoName_c& isoName() const {
         return identItem().isoName();
@@ -81,12 +59,15 @@ namespace __IsoAgLib {
       uint16_t element() const;
       uint8_t triggerMethod() const;
 
-      void processMsg( const ProcessPkg_c& pkg );
+      const Setpoint_c& getSetpoint() const { return m_setpoint; }
+      const Measurement_c& getMeasurement() const { return m_measurement; }
+      Setpoint_c& getSetpoint() { return m_setpoint; }
+      Measurement_c& getMeasurement() { return m_measurement; }
+
     private:
       IdentItem_c* m_ident;
       const DeviceObjectDpd_c* m_dpd;
       const DeviceObjectDet_c* m_det;
-      SetpointHandler_c* m_setpointhandler;
 
       Setpoint_c m_setpoint;
       Measurement_c m_measurement;

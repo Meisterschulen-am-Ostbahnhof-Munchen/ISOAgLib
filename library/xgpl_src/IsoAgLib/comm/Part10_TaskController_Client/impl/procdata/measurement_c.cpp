@@ -20,38 +20,37 @@ namespace __IsoAgLib {
   Measurement_c::Measurement_c() : m_value( 0 ), m_measureProgs() {}
 
 
-  void Measurement_c::addMeasureProg( MeasureProg_c* m ) {
-    isoaglib_assert( m );
-    m_measureProgs.push_front( m );
-  }
-
-
-  void Measurement_c::setMeasurementValue( ProcData_c& pd, int32_t v ) {
+  void Measurement_c::setMeasurementValue( int32_t v ) {
     m_value = v;
     for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {
-      ( *i )->setValue( pd, v );
+      ( *i )->setValue( v );
     }
   }
 
 
-  void Measurement_c::processMsg( ProcData_c& pd, const ProcessPkg_c& pkg ) {
+  void Measurement_c::startMeasurement( TcClientConnection_c& ecu, IsoAgLib::ProcData::MeasurementCommand_t type, int32_t inc ) {
     for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {
-      (*i)->processMsg( pd, pkg, getValue() );
+      if ( (*i)->GetConnection() == &ecu ) {
+        (*i)->startMeasurement( type, inc );
+        break;
+      }
     }
   }
 
 
-  void Measurement_c::startDataLogging( ProcData_c& pd, IsoAgLib::ProcData::MeasurementCommand_t type, int32_t inc ) {
-    for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {
-      (*i)->handleMeasurement( pd, type, inc, getValue() );
-    }
+  void Measurement_c::addMeasureProgRef( MeasureProg_c& m ) {
+    m_measureProgs.push_front( &m );
+    m_measureProgs.front()->setValue( m_value );
   }
 
 
-  void Measurement_c::stopRunningMeasurement() {
+  void Measurement_c::removeMeasureProgRef( MeasureProg_c& m ) {
     for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {
-      (*i)->stopAllMeasurements();
-    }
+      if ( (*i) == &m ) {
+        m_measureProgs.erase(i);
+        break;
+      }
+    } 
   }
 
 }

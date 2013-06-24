@@ -42,21 +42,25 @@ namespace __IsoAgLib {
       typedef STL_NAMESPACE::list<MeasureSubprog_c>::iterator MeasureSubprogContainerIterator_t;
 
     public:
-      MeasureProg_c( TcClientConnection_c* c );
+      MeasureProg_c( TcClientConnection_c* c, ProcData_c& procdata);
+      ~MeasureProg_c();
 
-      bool handleMeasurement( ProcData_c& ac_processData, IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment, int32_t value );
+      bool startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment );
       void stopAllMeasurements();
 
-      void processMsg( ProcData_c& ac_processData, const ProcessPkg_c& arc_data, int32_t value );
+      void processMeasurementMsg( ProcessPkg_c::CommandType_t command, int32_t pdValue );
+      void processRequestMsg();
+      void processSetMsg( int32_t pdValue );
 
       void timeEvent();
-      void timeEvent( ProcData_c& ac_processData, int32_t value );
 
-      void setValue( ProcData_c& ac_processData, int32_t ai32_val );
+      void setValue( int32_t ai32_val );
 
       int32_t getValue() const {
         return m_value;
       }
+
+      TcClientConnection_c* const GetConnection() const { return m_connection; }
 
     private:
       MeasureSubprog_c& addSubprog( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment );
@@ -73,6 +77,7 @@ namespace __IsoAgLib {
       int32_t m_value;
 
       TcClientConnection_c* m_connection;
+      ProcData_c& m_procdata;
 
   };
 

@@ -71,7 +71,7 @@ MeasureSubprog_c::updateTrigger( int32_t ai32_val )
 
 
 int32_t
-MeasureSubprog_c::nextTriggerTime( ProcData_c& ac_processData, int32_t ai32_val )
+MeasureSubprog_c::nextTriggerTime( const ProcData_c& ac_processData, int32_t ai32_val )
 {
   (void)ac_processData;
   (void)ai32_val;

@@ -308,7 +308,7 @@ namespace __IsoAgLib {
 
 
   bool DevicePool_c::add( ProcData_c& pd ) {
-
+    isoaglib_assert(pd.getDpd());
     const bool foundDpd = m_devicePool.find( pd.getDpd()->getObjectId() ) != m_devicePool.end();
     isoaglib_assert( foundDpd );
     const bool foundDet = m_devicePool.find( pd.getDet()->getObjectId() ) != m_devicePool.end();

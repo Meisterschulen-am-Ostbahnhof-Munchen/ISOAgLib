@@ -19,6 +19,7 @@
 namespace __IsoAgLib {
 
   class ProcData_c;
+  class TcClientConnection_c;
 
   class Measurement_c {
     public:
@@ -28,17 +29,15 @@ namespace __IsoAgLib {
         return m_value;
       }
 
-      void setMeasurementValue( ProcData_c& pd, int32_t v );
+      void setMeasurementValue( int32_t v );
+      void startMeasurement( TcClientConnection_c& ecu, IsoAgLib::ProcData::MeasurementCommand_t type, int32_t inc );
 
-      void addMeasureProg( MeasureProg_c* m );
-
-      void processMsg( ProcData_c& pd, const ProcessPkg_c& pkg );
-      void startDataLogging( ProcData_c& pd, IsoAgLib::ProcData::MeasurementCommand_t type, int32_t inc );
-      void stopRunningMeasurement();
+      void addMeasureProgRef( MeasureProg_c& m );
+      void removeMeasureProgRef( MeasureProg_c& m );
 
     private:
       int32_t m_value;
-      STL_NAMESPACE::list<MeasureProg_c*> m_measureProgs;
+      STL_NAMESPACE::list<MeasureProg_c*> m_measureProgs; // only cached, do not 'own' the instances
   };
 }
 

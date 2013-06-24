@@ -162,21 +162,10 @@ namespace __IsoAgLib {
       return;
     }
 
-
-    switch( pkg.men_command ) {
-      case ProcessPkg_c::nack:
-        // no further processing of NACK messages TODO AKA?
-        break;
-      case ProcessPkg_c::workingsetMasterMaintenance:
-        // ignore other working set task message
-        // @TODO probably respond with NACK if it is addressed to us, otherwise just ignore
-        break;
-      default:
-        STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = identData->connections.begin();
-        while ( it != identData->connections.end() ) {
-          ( *it )->processMsgEntry( pkg );
-          ++it;
-        }
+    STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = identData->connections.begin();
+    while ( it != identData->connections.end() ) {
+        ( *it )->processMsgEntry( pkg );
+        ++it;
     }
   }
 

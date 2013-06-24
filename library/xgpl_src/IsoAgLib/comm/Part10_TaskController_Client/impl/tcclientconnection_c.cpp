@@ -28,8 +28,6 @@
 #endif
 
 
-// @TODO : check if TCisAlive ? if TC status not sent for 6 seconds, stop sending measurment (call stopMeasurement)
-// @TODO : manage TOTALS
 
 
 namespace __IsoAgLib {
@@ -116,9 +114,7 @@ namespace __IsoAgLib {
 
     // TODO: send deacticate msg
 
-    for( STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator i = m_measureProg.begin(); i != m_measureProg.end(); ++i ) {
-      delete i->second;
-    }
+    destroyMeasureProgs();
   }
 
 
@@ -334,33 +330,105 @@ namespace __IsoAgLib {
 
   void TcClientConnection_c::processMsgEntry( const ProcessPkg_c& pkg ) {
 
-    if( pkg.getMonitorItemForDA() != m_identItem->getIsoItem() ) {
+    if ( (m_server == NULL) || (pkg.getMonitorItemForSA() != &m_server->getIsoItem()) )
       return;
-    }
 
-    // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
-    if ( ( pkg.men_command == ProcessPkg_c::requestConfiguration )
-        || ( pkg.men_command == ProcessPkg_c::configurationResponse )
-        || ( pkg.men_command == ProcessPkg_c::nack ) ) {
-       processMsgTc( pkg );
-    } else if ( ( pkg.isoPgn() & 0x3FF00 ) == PROCESS_DATA_PGN ) {
-      processMsgProcData( pkg );
+    switch (pkg.men_command)
+    {
+      case ProcessPkg_c::requestConfiguration:
+      case ProcessPkg_c::configurationResponse:
+      case ProcessPkg_c::nack:
+        processMsgTc( pkg );
+        break;
+      case ProcessPkg_c::requestValue:
+        if( pkg.mui16_DDI == IsoAgLib::ProcData::DefaultDataLoggingDDI )
+          m_stateHandler->_eventDefaultLoggingStarted( *this );
+        else
+          processRequestMsg( pkg );
+        break;
+      case ProcessPkg_c::setValue:
+        processSetMsg( pkg );
+        break;
+      case ProcessPkg_c::measurementTimeValueStart:
+      case ProcessPkg_c::measurementDistanceValueStart:
+      case ProcessPkg_c::measurementMinimumThresholdValueStart:
+      case ProcessPkg_c::measurementMaximumThresholdValueStart:
+      case ProcessPkg_c::measurementChangeThresholdValueStart:
+        processMeasurementMsg( pkg );
+        break;
+      case ProcessPkg_c::commandReserved1:
+      case ProcessPkg_c::commandReserved2:
+      case ProcessPkg_c::commandReserved3:
+      case ProcessPkg_c::commandReserved4:
+      case ProcessPkg_c::taskControllerStatus:
+      case ProcessPkg_c::workingsetMasterMaintenance:
+      case ProcessPkg_c::CommandUndefined:
+        break;
     }
   }
 
 
-  void TcClientConnection_c::processMsgProcData( const ProcessPkg_c& data ) {
-    if( ( data.mui16_DDI == IsoAgLib::ProcData::DefaultDataLoggingDDI ) && ( data.men_command == ProcessPkg_c::requestValue ) ) {
-      m_stateHandler->_eventDefaultLoggingStarted( *this );
-    } else {
-      bool elementFound = false;
-      ProcData_c* pd = procData( data.mui16_DDI, data.mui16_element, elementFound );
-      if ( pd ) {
-        pd->processMsg( data );
-      } else {
-        // element exists but DDI not present -> DDI not supported by element
-        sendNack( data.mui16_DDI, data.mui16_element, elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
-      }
+  void TcClientConnection_c::processRequestMsg( const ProcessPkg_c& data ) {
+    const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
+    STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator iter = m_measureProg.find(key);
+
+    if ( iter != m_measureProg.end()) {
+      iter->second->processRequestMsg();
+    }
+    else
+    {
+    //  @TODO NACK
+    //bool elementFound = false;
+    //ProcData_c* pd = procData( data.mui16_DDI, data.mui16_element, elementFound );
+    //if ( pd ) {
+    //  //pd->processRequestMsg( data, *this );
+    //} else {
+    //  // element exists but DDI not present -> DDI not supported by element
+    //  sendNack( data.mui16_DDI, data.mui16_element, elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
+    //}
+    }
+  }
+
+
+  void TcClientConnection_c::processSetMsg( const ProcessPkg_c& data ) {
+    const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
+    STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator iter = m_measureProg.find(key);
+
+    if ( iter != m_measureProg.end()) {
+      iter->second->processSetMsg( data.mi32_pdValue );
+    }
+    else
+    {
+    //  @TODO NACK
+    //bool elementFound = false;
+    //ProcData_c* pd = procData( data.mui16_DDI, data.mui16_element, elementFound );
+    //if ( pd ) {
+    //  //pd->processSetMsg( data, *this );
+    //} else {
+    //  // element exists but DDI not present -> DDI not supported by element
+    //  sendNack( data.mui16_DDI, data.mui16_element, elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
+    //}
+    }
+  }
+
+  void TcClientConnection_c::processMeasurementMsg( const ProcessPkg_c& data ) {
+    const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
+    STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator iter = m_measureProg.find(key);
+
+    if ( iter != m_measureProg.end()) {
+      iter->second->processMeasurementMsg( data.men_command, data.mi32_pdValue );
+    }
+    else
+    {
+    //  @TODO NACK
+    //bool elementFound = false;
+    //ProcData_c* pd = procData( data.mui16_DDI, data.mui16_element, elementFound );
+    //if ( pd ) {
+    //  //pd->processMeasurementMsg( data, *this );
+    //} else {
+    //  // element exists but DDI not present -> DDI not supported by element
+    //  sendNack( data.mui16_DDI, data.mui16_element, elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
+    //}
     }
   }
 
@@ -510,8 +578,8 @@ namespace __IsoAgLib {
 
   void
   TcClientConnection_c::stopRunningMeasurement() {
-    for( DevicePool_c::procDataList_t::iterator i = m_pool->m_procDatas.begin(); i != m_pool->m_procDatas.end(); ++i ) {
-      ( *i )->stopRunningMeasurement();
+    for( STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator i = m_measureProg.begin(); i != m_measureProg.end(); ++i ) {
+      i->second->stopAllMeasurements();
     }
   }
 
@@ -533,7 +601,7 @@ namespace __IsoAgLib {
                                  uint8_t b5, uint8_t b6, uint8_t b7 ) const {
     ProcessPkg_c pkg;
 
-    pkg.setISONameForDA( m_serverName ); // TODO isoitem
+    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>(&m_server->getIsoItem()) );
     pkg.setMonitorItemForSA( m_identItem->getIsoItem() );
     pkg.setIsoPri( 3 );
     pkg.setIsoPgn( PROCESS_DATA_PGN );
@@ -701,16 +769,20 @@ namespace __IsoAgLib {
   void TcClientConnection_c::createMeasureProgs() {
     for( DevicePool_c::procDataList_t::iterator i = m_pool->m_procDatas.begin(); i != m_pool->m_procDatas.end(); ++i ) {
       ProcData_c* pd = ( *i );
-      uint8_t methods = pd->triggerMethod();
-      const uint16_t ddi = pd->DDI();
-      if( methods ) {
-        uint32_t key = ( uint32_t( uint32_t( ddi ) << 16 ) ) | pd->element();
-        MeasureProg_c* mp = new MeasureProg_c( this );
-        m_measureProg[ key ] = mp;
-        pd->addMeasureProg( mp );
-      }
+      const uint32_t key = getMapKey( pd->DDI(), pd->element());
+
+      MeasureProg_c* mp = new MeasureProg_c( this, *pd );
+      m_measureProg[ key ] = mp;
     }
   }
+
+
+  void TcClientConnection_c::destroyMeasureProgs() {
+    for( STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator i = m_measureProg.begin(); i != m_measureProg.end(); ++i ) {
+      delete i->second;
+    }
+  }
+
 
 // MultiSendEventHandler_c implementation
   void

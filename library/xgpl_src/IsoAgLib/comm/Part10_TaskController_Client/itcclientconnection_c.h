@@ -14,9 +14,11 @@
 #define ITCCLIENTCONNECTION_C_H
 
 #include "impl/tcclientconnection_c.h"
-#include "itcclient_c.h"
 
 namespace IsoAgLib {
+
+  class iTcClient_c;
+  class iProcData_c;
 
   class iTcClientConnection_c : private __IsoAgLib::TcClientConnection_c {
     public:
@@ -48,6 +50,7 @@ namespace IsoAgLib {
       iTcClientConnection_c();
 
       friend class iTcClient_c;
+      friend class iProcData_c;
   };
 
 } // IsoAgLib

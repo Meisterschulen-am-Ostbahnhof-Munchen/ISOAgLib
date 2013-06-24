@@ -13,13 +13,13 @@
 #ifndef TCCLIENT_C_H
 #define TCCLIENT_C_H
 
+#include "tcclientconnection_c.h"
+#include "serverinstance_c.h"
+
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
-
-#include "tcclientconnection_c.h"
-#include "serverinstance_c.h"
 
 #include <list>
 #include <map>

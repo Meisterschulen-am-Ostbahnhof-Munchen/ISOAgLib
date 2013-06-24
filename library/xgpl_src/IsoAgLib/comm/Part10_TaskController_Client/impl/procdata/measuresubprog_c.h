@@ -36,7 +36,7 @@ public:
   void start(int32_t ai32_increment = 0, int32_t ai32_lastVal = 0);
 
   bool updateTrigger(int32_t ai32_val);
-  int32_t nextTriggerTime(ProcData_c& ac_processData, int32_t ai32_val);
+  int32_t nextTriggerTime(const ProcData_c& ac_processData, int32_t ai32_val);
 
 private:
   int32_t mi32_lastVal;
