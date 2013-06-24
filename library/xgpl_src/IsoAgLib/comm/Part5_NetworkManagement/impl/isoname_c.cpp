@@ -74,6 +74,7 @@ IsoName_c::getEcuType() const
             {
               case 130: return ecuTypeTaskControl;
               case 134: return ecuTypeTractorECU;
+              case 139: return ecuTypeDataLogger;
               default:  break;
             }
           }
