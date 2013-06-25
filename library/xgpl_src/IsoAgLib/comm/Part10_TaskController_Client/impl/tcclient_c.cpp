@@ -42,10 +42,8 @@ namespace __IsoAgLib {
 
 
   void
-  TcClient_c::init( ServerStateHandler_c& hdl ) {
+  TcClient_c::init() {
     isoaglib_assert ( !initialized() );
-
-    m_stateHandler = &hdl;
 
     __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( m_handler );
 #ifdef HAL_USE_SPECIFIC_FILTERS
@@ -74,9 +72,16 @@ namespace __IsoAgLib {
   }
 
 
+  void
+  TcClient_c::setServerStateHandler( ServerStateHandler_c& hdl ) {
+    isoaglib_assert ( m_stateHandler == NULL );
+
+    m_stateHandler = &hdl;
+  }
+
+
   TcClientConnection_c*
   TcClient_c::connect( IdentItem_c& identItem, TcClientConnection_c::StateHandler_c& sh, const IsoItem_c& tcdl, DevicePool_c& pool ) {
-    isoaglib_assert( m_stateHandler );
     STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( &tcdl );
     isoaglib_assert( server != m_server.end() );
 
@@ -222,7 +227,8 @@ namespace __IsoAgLib {
 
       m_server[ &sender ] = new ServerInstance_c( sender, ecuType );
       server = m_server.find( &sender );
-      m_stateHandler->_eventServerAvailable( sender, ecuType );
+      if (m_stateHandler)
+        m_stateHandler->_eventServerAvailable( sender, ecuType );
 
       // check for connections that used this server. Re add those connections to that server
       // and set to inital state

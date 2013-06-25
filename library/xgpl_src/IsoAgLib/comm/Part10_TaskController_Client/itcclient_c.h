@@ -37,8 +37,13 @@ namespace IsoAgLib {
           friend class iTcClient_c;
       };
 
-      void init( iServerStateHandler_c& hdl ) {
-        TcClient_c::init( hdl );
+      void init() {
+        TcClient_c::init();
+      }
+
+      void setServerStateHandler( iServerStateHandler_c& hdl )
+      {
+        TcClient_c::setServerStateHandler( hdl );
       }
 
       void close() {

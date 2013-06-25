@@ -49,8 +49,10 @@ namespace __IsoAgLib {
           virtual void _eventServerAvailable( const IsoItem_c&, IsoAgLib::ProcData::RemoteType_t ) = 0;
       };
 
-      void init( ServerStateHandler_c& hdl );
+      void init();
       void close();
+
+      void setServerStateHandler( ServerStateHandler_c& hdl );
 
       TcClientConnection_c* connect( IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcdl, DevicePool_c& );
       bool disconnect( IdentItem_c& );
