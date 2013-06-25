@@ -512,11 +512,16 @@ static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketS
 #ifdef WIN32
               0
 #else
-              MSG_DONTWAIT
+              MSG_DONTWAIT | MSG_NOSIGNAL
 #endif
              ) < 0)
           {
             perror("send");
+            if(EPIPE == errno)
+            {
+                DEBUG_PRINT("pipe error\n");
+                // connection will be closed in next read from socket
+            }                
           }
 
           // don't check following objects if message is already enqueued for this client
@@ -544,12 +549,15 @@ void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, 
 #ifdef WIN32
            0
 #else
-           MSG_DONTWAIT
+           MSG_DONTWAIT | MSG_NOSIGNAL
 #endif
           ) < 0)
   {
-    if (ar_server.mb_interactive) {
-      perror("send");
+    perror("send");
+    if(EPIPE == errno)
+    {
+      DEBUG_PRINT("pipe error\n");
+      // connection will be closed in next read from socket
     }
   }
 }
