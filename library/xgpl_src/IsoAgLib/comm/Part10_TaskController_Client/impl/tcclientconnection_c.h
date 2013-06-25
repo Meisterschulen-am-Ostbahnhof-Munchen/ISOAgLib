@@ -185,8 +185,6 @@ namespace __IsoAgLib {
       void eventPoolActivateResponse( uint8_t result );
       void eventPoolDeleteResponse( uint8_t result );
 
-      ProcData_c* procData( uint16_t DDI, uint16_t element, bool& elementFound ) const;
-
       void eventTaskStarted();
       void eventTaskStopped();
       void stopRunningMeasurement();
@@ -289,6 +287,7 @@ namespace __IsoAgLib {
         return m_identItem->getMultitonInst();
       }
 
+      void handleNack( int16_t ddi, int16_t element );
       static uint32_t getMapKey(uint16_t ddi, uint16_t element) { return ( uint32_t( uint32_t( ddi ) << 16 ) ) | uint32_t(element); }
 
     private:

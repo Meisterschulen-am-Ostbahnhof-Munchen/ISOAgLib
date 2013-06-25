@@ -367,6 +367,19 @@ namespace __IsoAgLib {
     }
   }
 
+  
+  void TcClientConnection_c::handleNack( int16_t ddi, int16_t element ) {
+    // Note: element without DPD will not be processed properly.
+    // Response will be NackInvalidElementNumber instead of NackDDINoSupportedByElement
+    for( DevicePool_c::procDataList_t::iterator i = m_pool->m_procDatas.begin(); i != m_pool->m_procDatas.end(); ++i ) {
+      if ( ( *i )->element() == element ) {
+        sendNack( ddi, element, IsoAgLib::ProcData::NackDDINoSupportedByElement );
+        return;
+      }
+    }
+    sendNack( ddi, element, IsoAgLib::ProcData::NackInvalidElementNumber );
+  }
+
 
   void TcClientConnection_c::processRequestMsg( const ProcessPkg_c& data ) {
     const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
@@ -377,15 +390,7 @@ namespace __IsoAgLib {
     }
     else
     {
-    //  @TODO NACK
-    //bool elementFound = false;
-    //ProcData_c* pd = procData( data.mui16_DDI, data.mui16_element, elementFound );
-    //if ( pd ) {
-    //  //pd->processRequestMsg( data, *this );
-    //} else {
-    //  // element exists but DDI not present -> DDI not supported by element
-    //  sendNack( data.mui16_DDI, data.mui16_element, elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
-    //}
+      handleNack( data.mui16_DDI, data.mui16_element );
     }
   }
 
@@ -399,15 +404,7 @@ namespace __IsoAgLib {
     }
     else
     {
-    //  @TODO NACK
-    //bool elementFound = false;
-    //ProcData_c* pd = procData( data.mui16_DDI, data.mui16_element, elementFound );
-    //if ( pd ) {
-    //  //pd->processSetMsg( data, *this );
-    //} else {
-    //  // element exists but DDI not present -> DDI not supported by element
-    //  sendNack( data.mui16_DDI, data.mui16_element, elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
-    //}
+      handleNack( data.mui16_DDI, data.mui16_element );
     }
   }
 
@@ -420,15 +417,7 @@ namespace __IsoAgLib {
     }
     else
     {
-    //  @TODO NACK
-    //bool elementFound = false;
-    //ProcData_c* pd = procData( data.mui16_DDI, data.mui16_element, elementFound );
-    //if ( pd ) {
-    //  //pd->processMeasurementMsg( data, *this );
-    //} else {
-    //  // element exists but DDI not present -> DDI not supported by element
-    //  sendNack( data.mui16_DDI, data.mui16_element, elementFound ? IsoAgLib::ProcData::NackDDINoSupportedByElement : IsoAgLib::ProcData::NackInvalidElementNumber );
-    //}
+      handleNack( data.mui16_DDI, data.mui16_element );
     }
   }
 
@@ -542,23 +531,6 @@ namespace __IsoAgLib {
     m_devicePoolToUpload = pool;
     startUpload();
     return StatusNoError;
-  }
-
-
-  ProcData_c*
-  TcClientConnection_c::procData( uint16_t DDI, uint16_t element, bool& elementFound ) const {
-    isoaglib_assert( m_pool );
-    elementFound = false;
-    for( DevicePool_c::procDataList_t::iterator i = m_pool->m_procDatas.begin(); i != m_pool->m_procDatas.end(); ++i ) {
-      if ( ( *i )->element() == element ) {
-        elementFound = true;
-        if ( ( *i )->DDI() == DDI ) {
-          return *i;
-        }
-      }
-    }
-
-    return NULL;
   }
 
 
