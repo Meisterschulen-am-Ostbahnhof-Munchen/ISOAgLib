@@ -11,11 +11,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#include <IsoAgLib/isoaglib_config.h>
-
 #include "outputs_target_extensions.h"
 
-#include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/hal/pc/errcodes.h>
 
 #include <cstdio>

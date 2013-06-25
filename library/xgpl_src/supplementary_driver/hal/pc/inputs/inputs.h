@@ -28,22 +28,44 @@
  * \name Basic BIOS limit constants
  */
 /*@{*/
+#ifndef ANALOG_INPUT_MIN
 #define ANALOG_INPUT_MIN 0
+#endif
+#ifndef ANALOG_INPUT_MAX
 #define ANALOG_INPUT_MAX 7
-#define DIGITAL_INPUT_MIN 0
-#define DIGITAL_INPUT_MAX 15
+#endif
 
+#ifndef DIGITAL_INPUT_MIN
+#define DIGITAL_INPUT_MIN 0
+#endif
+#ifndef DIGITAL_INPUT_MAX
+#define DIGITAL_INPUT_MAX 15
+#endif
+
+#ifndef COUNTER_INPUT_MIN
 #define COUNTER_INPUT_MIN 0
+#endif
+#ifndef COUNTER_INPUT_MAX
 #define COUNTER_INPUT_MAX 15
+#endif
+
 
 /// set maximal voltage input for analog input set to voltage in [mV]
+#ifndef MAX_ANALOG_MV
 #define MAX_ANALOG_MV 8500
+#endif
 ///set max digital BIOS function return value corresponding to MAX_ANALOG_MV
+#ifndef MAX_ANALOG_MV_DIGIT
 #define MAX_ANALOG_MV_DIGIT 907
+#endif
 /// set maximal current input for analog input set [mA]
+#ifndef MAX_ANALOG_MA
 #define MAX_ANALOG_MA 20
+#endif
 ///set max digital BIOS function return value corresponding to MAX_ANALOG_MA
+#ifndef MAX_ANALOG_MA_DIGIT
 #define MAX_ANALOG_MA_DIGIT 833
+#endif
 /*@}*/
 
 namespace HAL
