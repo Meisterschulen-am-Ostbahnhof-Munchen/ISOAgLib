@@ -232,15 +232,6 @@ setDiginPrescaler(uint8_t bGroup, uint8_t bMode)
 
 
 int16_t
-getDiginPeriod(uint8_t bInput, uint16_t *pwPeriod, uint16_t *pwImpulse)
-{
-  *pwPeriod = ((getTime()%10000 +bInput)) / 3;
-  *pwImpulse = ((getTime()%1000 +bInput)) / 3;
-  return HAL_NO_ERR;
-}
-
-
-int16_t
 getDiginFreq (uint8_t bInputNumber, uint32_t *pwFrequency)
 {
   if ( ! sensorDigitalInputOpen[bInputNumber] ) return HAL_CONFIG_ERR;
@@ -342,24 +333,13 @@ static uint8_t _b_prescale_5_16Index;
 /**
   configured timebase for counter channels;
   if time between two events is longer than given
-  timebase, getCounterPeriod answers 0;
+  timebase, getCounterPeriod_us answers 0;
   important for timebases which are not supported by standard BIOS
 */
 static uint16_t *_puiDiginTimebase[4];
 
 
 
-/**
-  init counter for trigger events on digital inoput;
-  rising edges are counted;
-  @param ab_channel input channel to use [0..15]
-  @param aui16_timebase timebase to calculate periods, frequency
-                     should be at least longer than longest
-                     awaited signal period [msec.]
-  @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
-  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
-  @return HAL_NO_ERR if no error occured
-*/
 int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_activHigh, boolean ab_risingEdge)
 {
   int32_t i32_prescale = aui16_timebase;
@@ -444,11 +424,7 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_act
 
   return i16_errorState;
 }
-/**
-  get counter value of an digital counter input
-  @param ab_channel channel of counter
-  @return counter events since init or last reset
-*/
+
 uint32_t getCounter(uint8_t ab_channel)
 {
   /* check if ab_channel is allowed and var array is allocated */
@@ -458,11 +434,7 @@ uint32_t getCounter(uint8_t ab_channel)
   }
   else return 0;
 }
-/**
-  reset the given counter
-  @param ab_channel channel of counter
-  @return HAL_NO_ERR ; HAL_RANGE_ERR if counter for ab_channel isn�t configured properly
-*/
+
 int16_t resetCounter(uint8_t ab_channel)
 {
   /* check if ab_channel is allowed and var array is allocated */
@@ -473,31 +445,28 @@ int16_t resetCounter(uint8_t ab_channel)
   }
   else return HAL_RANGE_ERR;
 }
-/**
-  get period of counter channel
-  @param ab_channel channel of counter
-  @return time between last two signals or 0xFFFF if time is longer than initially
-           given timebase [msec.]
-*/
-uint16_t getCounterPeriod(uint8_t ab_channel)
+
+uint32_t getCounterPeriod_us(uint8_t ab_channel)
 {
-  uint16_t ui16_timebase, ui16_result = 0xFFFF, ui16_counter;
+  uint16_t ui16_timebase;
+  uint32_t ui32_result = 0xFFFFFFFFUL;
   /* check if ab_channel is allowed and var array is allocated */
-  if (ab_channel > 15) return 0xFFFF;
+  if (ab_channel > 15) return 0xFFFFFFFFUL;
   if (_puiDiginTimebase[(ab_channel / 4)] != NULL)
   {
     ui16_timebase = _puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)];
-    if (ui16_timebase == 0) ui16_result = 0xFFFF;
+    if (ui16_timebase == 0) ui32_result = 0xFFFFFFFFUL;
     else if (ui16_timebase < (1024 * 65534 / (getCpuFreq() * 1000)))
     { /* use standard BIOS method because timebase is short enough */
-      getDiginPeriod(ab_channel, &ui16_result, &ui16_counter);
+      ui32_result = ((getTime()%10000 +ab_channel)) / 3;
+
       if (ab_channel < 5)
       {
-        ui16_result = (((2 << (_b_prescale_1_4Index + 2)) * ui16_result )/ (getCpuFreq() * 1000));
+        ui32_result = __IsoAgLib::mul1Div1Mul2Div2((2 << (_b_prescale_1_4Index + 2)), getCpuFreq(), ui32_result, 1 );
       }
       else
       {
-        ui16_result = (((2 << (_b_prescale_5_16Index + 2)) * ui16_result )/ (getCpuFreq() * 1000));
+        ui32_result = __IsoAgLib::mul1Div1Mul2Div2((2 << (_b_prescale_5_16Index + 2)), getCpuFreq(), ui32_result, 1 );
       }
     }
     else
@@ -506,20 +475,15 @@ uint16_t getCounterPeriod(uint8_t ab_channel)
       { /* vars are accessible */
         if (getCounterLastSignalAge(ab_channel) < ui16_timebase)
         { // handle overflow between uiLast and uiAct
-          ui16_result = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod;
-          if (ui16_result == 0) ui16_result = 1;
+          ui32_result = _pt_diginTriggerTime[(ab_channel / 4)][(ab_channel % 4)].uiPeriod;
+          if (ui32_result == 0) ui32_result = 1;
         }
       }
     }
   }
-  return ui16_result;
+  return ui32_result;
 }
-/**
-  get frequency of counter channel
-  @param ab_channel channel of counter
-  @return frequency calculated from time between last two signals
-          or 0 if time is longer than initially given timebase [100mHz]
-*/
+
 uint32_t getCounterFrequency(uint8_t ab_channel)
 {
   uint16_t ui16_timebase, ui16_result = 0;
@@ -532,9 +496,9 @@ uint32_t getCounterFrequency(uint8_t ab_channel)
     if (ui16_timebase == 0) ui16_result = 0;
     else if (ui16_timebase < (1024 * 65534 / (getCpuFreq() * 1000)))
     { /* use standard BIOS method because timebase is short enough */
-	  uint32_t ui32_result = 0;
+      uint32_t ui32_result = 0;
       getDiginFreq(ab_channel, &ui32_result);
-	  ui16_result = (uint16_t)ui32_result; // for now okay.
+      ui16_result = (uint16_t)ui32_result; // for now okay.
     }
     else
     { /* use extension method */
@@ -557,12 +521,6 @@ uint32_t getCounterFrequency(uint8_t ab_channel)
   return ui16_result;
 }
 
-/**
- get time since last signal and reset according trigger timers
- if timebase is exceeded -> avoid overflow problems if timer floated around 0xFFFF
- @param ab_channel channel of counter
- @return time since last signal [msec.]
-*/
 uint16_t getCounterLastSignalAge(uint8_t ab_channel)
 {
   uint16_t uiResult = 0xFFFF, uiTime = (getTime() & 0xFFFF);
@@ -583,4 +541,4 @@ uint16_t getCounterLastSignalAge(uint8_t ab_channel)
   return uiResult;
 }
 
-} // end namespace __HAL
+} // __HAL

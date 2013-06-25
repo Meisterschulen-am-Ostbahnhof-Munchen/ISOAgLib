@@ -13,28 +13,6 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/* ************************************************************ */
-/** \file
- *
- * include dependent on used target (defined in
-   IsoAgLib/isoaglib_config.h) the suitable HAL
-   specific header for data input.
- */
-/* ************************************************************ */
-
-/** \file
- *
- * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
-   mapping between platform specific BIOS / OS function names
-   and the function names, the IsoAgLib uses for hardware access.
-   In this header only the groups for error codes, global system
-   functions and CAN must be adapted to a new platform.
-   If a simple name mapping is not possible for a specific
-   function, the module targetExtensions can be used to implement
-   the needed activity. The implementation of the ESX version
-   can be used to derive the meaning of the specific function.
-  */
-
 #ifndef _HAL_INDEPENDENT_INPUTS_H_
 #define _HAL_INDEPENDENT_INPUTS_H_
 
@@ -83,29 +61,29 @@ namespace HAL
 
   /**
     get counter value of an digital counter input
-   @param ab_channel channel of counter [0..15]
+    @param ab_channel channel of counter [0..15]
     @return counter events since init or last reset
   */
   uint32_t getCounter(uint8_t ab_channel);
 
   /**
     reset the given counter
-   @param ab_channel channel of counter [0..15]
-    @return C_NO_ERR ; C_RANGE if counter for ab_channel isn?t configured properly
+    @param ab_channel channel of counter [0..15]
+    @return C_NO_ERR ; C_RANGE if counter for ab_channel isn't configured properly
   */
   int16_t resetCounter(uint8_t ab_channel);
 
   /**
     get period of counter channel
     @param ab_channel channel of counter [0..15]
-    @return time between last two signals or 0xFFFF if time is longer than initially
-             given timebase
+    @return time between last two signals in microseconds
+            or 0xFFFFFFFF if time is longer than initially given timebase
   */
-  uint16_t getCounterPeriod(uint8_t ab_channel);
+  uint32_t getCounterPeriod_us(uint8_t ab_channel);
 
   /**
     get frequency of counter channel
-   @param ab_channel channel of counter [0..15]
+    @param ab_channel channel of counter [0..15]
     @return frequency calculated from time between last two signals
             or 0 if time is longer than initially given timebase
   */

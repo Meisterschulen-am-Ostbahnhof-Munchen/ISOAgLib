@@ -13,14 +13,6 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/** \file hal/pc/system/system_target_extensions.cpp
- * A module targetExtensions should be used
- * for all methods, which can't be simply
- * mapped from ECU standard BIOS to the needs of
- * IsoAgLib by mostly renaming and reordering of functions, parameters
- * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
- * ********************************************************** */
-
 #include "inputs_target_extensions.h"
 #include <IsoAgLib/hal/c2c/config.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
@@ -71,7 +63,7 @@ t_triggerNode *_put_temp;
 /**
   configured timebase for counter channels;
   if time between two events is longer than given
-  timebase, getCounterPeriod answers 0;
+  timebase, getCounterPeriod_us answers 0;
   important for timebases which are not supported by standard BIOS
 */
 static uint16_t _puiDiginTimebase;
@@ -97,17 +89,6 @@ void counterIrqFlex()
 
 void counterIrq_0(){counterIrqFlex();}
 
-//static counterIrqFunction irqFuncArr = &counterIrq_0;
-
-/**
-  init counter for trigger events on digital input;
-  rising edges are counted;
-  @param aui16_timebase timebase to calculate periods, frequency
-                     should be at least longer than longest
-                     awaited signal period [msec.]
-  @param ab_risingEdge true -> counter triggers on rising edge; else on falling edge
-  @return C_NO_ERR if no error occured
-*/
 int16_t init_counter(uint16_t aui16_timebase, bool ab_risingEdge)
 {
   int32_t i32_prescale = aui16_timebase;
@@ -151,24 +132,18 @@ int16_t init_counter(uint16_t aui16_timebase, bool ab_risingEdge)
 
   return i16_errorState;
 }
-/**
-  get counter value of an digital counter input
-  @return counter events since init or last reset
-*/
+
 uint32_t getCounter()
 {
- uint16_t ui16_result = 0xFFFF, ui16_counter;
+  uint16_t ui16_result = 0xFFFF, ui16_counter;
 
-get_digin_period(&ui16_result, &ui16_counter);
-_pulDiginCounter += ( ui16_counter - _prevCounter );
-_prevCounter = ui16_counter;
+  get_digin_period(&ui16_result, &ui16_counter);
+  _pulDiginCounter += ( ui16_counter - _prevCounter );
+  _prevCounter = ui16_counter;
 
-    return _pulDiginCounter;
+  return _pulDiginCounter;
 }
-/**
-  reset the given counter
-  @return C_NO_ERR ; C_RANGE if counter if it isn�t configured properly
-*/
+
 int16_t resetCounter()
 {
   uint16_t ui16_result = 0xFFFF, ui16_counter;
@@ -178,45 +153,41 @@ int16_t resetCounter()
 
   return C_NO_ERR;
 }
-/**
-  get period of counter channel
-  @return time between last two signals or 0xFFFF if time is longer than initially
-           given timebase [msec.]
-*/
-uint16_t getCounterPeriod()
+
+uint32_t getCounterPeriod_us()
 {
   uint16_t ui16_result = 0xFFFF, ui16_counter;
+  uint32_t ui32_result = 0xFFFFFFFFUL;
 
-get_digin_period(&ui16_result, &ui16_counter);
-_pulDiginCounter += ( ui16_counter - _prevCounter );
-_prevCounter = ui16_counter;
+  get_digin_period(&ui16_result, &ui16_counter);
+  _pulDiginCounter += ( ui16_counter - _prevCounter );
+  _prevCounter = ui16_counter;
 
-    ui16_result = (((2 << (_b_prescale_1_Index + 2)) * ui16_result )/ (get_cpu_freq() * 1000));
+  // use util helper function to avoid overflow
+  ui32_result	= __IsoAgLib::mul1Div1Mul2Div2((2 << (_b_prescale_1_Index + 2)), get_cpu_freq(), ui16_result, 1 );
 #if 0
   uint16_t ui16_timebase = _puiDiginTimebase;
   if (ui16_timebase == 0) ui16_result = 0xFFFF;
   else if (ui16_timebase < (1024 * 65534 / (get_cpu_freq() * 1000)))
   { /* use standard BIOS method because timebase is short enough */
     get_digin_period(&ui16_result, &ui16_counter);
-    ui16_result = (((2 << (_b_prescale_1_Index + 2)) * ui16_result )/ (get_cpu_freq() * 1000));
+
+    // use util helper function to avoid overflow
+    ui32_result = __IsoAgLib::mul1Div1Mul2Div2((2 << (_b_prescale_1_Index + 2)), get_cpu_freq(), ui16_result, 1 );
   }
   else
   { /* use extension method */
     /* vars are accessible */
     if (getCounterLastSignalAge() < ui16_timebase)
     { // handle overflow between uiLast and uiAct
-      ui16_result = _pt_diginTriggerTime.uiPeriod;
-      if (ui16_result == 0) ui16_result = 1;
+      ui32_result = _pt_diginTriggerTime.uiPeriod * 1000;
+      if (ui32_result == 0) ui32_result = 1;
     }
   }
 #endif
-  return ui16_result;
+  return ui32_result;
 }
-/**
-  get frequency of counter channel
-  @return frequency calculated from time between last two signals
-          or 0 if time is longer than initially given timebase [100mHz]
-*/
+
 uint32_t getCounterFrequency()
 {
   uint16_t ui16_result = 0;
@@ -225,7 +196,7 @@ uint32_t getCounterFrequency()
   uint16_t ui16_timebase = _puiDiginTimebase;
 #endif
 
-    get_digin_freq(&ui16_result);
+  get_digin_freq(&ui16_result);
 
 #if 0
   if (ui16_timebase == 0) ui16_result = 0;
@@ -253,11 +224,6 @@ uint32_t getCounterFrequency()
   return ui16_result;
 }
 
-/**
- get time since last signal and reset according trigger timers
- if timebase is exceeded -> avoid overflow problems if timer floated around 0xFFFF
- @return time since last signal [msec.]
-*/
 uint16_t getCounterLastSignalAge()
 {
   uint16_t uiResult = 0xFFFF, uiTime = (get_time() & 0xFFFF);
@@ -274,4 +240,4 @@ uint16_t getCounterLastSignalAge()
   return uiResult;
 }
 
-} // end of namespace __HAL
+} // __HAL

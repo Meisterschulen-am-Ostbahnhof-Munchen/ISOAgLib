@@ -75,10 +75,10 @@ public:
 
   /**
     get period of counter channel
-    @return time between last two signals or 0xFFFF if time is longer than initially
-             given timebase
+    @return time between last two signals in microseconds
+            or 0xFFFFFFFF if time is longer than initially given timebase
   */
-  inline uint16_t period();
+  inline uint32_t period_us();
 
   /**
     get frequency of counter channel
@@ -148,10 +148,10 @@ CounterI_c::reset()
 
 
 inline
-uint16_t
-CounterI_c::period()
+uint32_t
+CounterI_c::period_us()
 {
-  return HAL::getCounterPeriod(channelNr());
+  return HAL::getCounterPeriod_us(channelNr());
 }
 
 

@@ -43,8 +43,9 @@ public:
   // Inputs
   virtual void init_digin( uint8_t /*bInput*/, uint8_t /*bMode*/, uint8_t /*bAktivhighlow*/, void (*pfFunctionName)(...) ) { (void)pfFunctionName; }
   virtual void init_analogin( uint8_t /*bNumber*/, uint8_t /*bType*/ ) {}
+  virtual void init_counter(uint8_t /*bInput*/, uint16_t /*aui16_timebase*/, boolean /*ab_activHigh*/, boolean /*ab_risingEdge*/) {}
   virtual int16_t getDiginOnoff( uint8_t /*bInputNumber*/ ) { return false; }
-  virtual void getDiginPeriod( uint8_t /*bInput*/, uint16_t * /*pwPeriod*/, uint16_t * /*pwImpulse*/ ) {}
+  virtual uint32_t getCounterPeriod_us( uint8_t /*bInput*/ ) { return 0xFFFFFFFFUL; }
   virtual void getDiginFreq( uint8_t /*bInput*/, uint32_t * /*pwFrequency*/ ) {}
   virtual int16_t getAdc( uint8_t /*bKanalnummer*/ ) { return 0; }
   virtual uint32_t getCounter( uint8_t /*bInput*/ ) { return 0; }

@@ -28,9 +28,9 @@ namespace IsoAgLib {
 class iCounterI_c : private __IsoAgLib::CounterI_c {
 public:
   /**
-    internal called constructor for a new digital input channel which performs configuration of hardware
-    @param ab_channel default-argument for setting hardware channel for this input
-    @param aui16_timebase default-argument for setting the timebase which should be
+    constructor for a new digital input channel set up as counter.
+    @param ab_channel hardware channel for this input
+    @param aui16_timebase timebase which should be
             greater than max time distance between signals and should be small
             enough to avoid overflow of signals in one timebase
     @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
@@ -40,9 +40,9 @@ public:
     : CounterI_c(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge) {}
 
   /**
-    internal called constructor for a new digital input channel which performs configuration of hardware
-    @param ab_channel default-argument for setting hardware channel for this input
-    @param aui16_timebase default-argument for setting the timebase which should be
+    init a new digital input channel set up as counter
+    @param ab_channel hardware channel for this input
+    @param aui16_timebase timebase which should be
             greater than max time distance between signals and should be small
             enough to avoid overflow of signals in one timebase
     @param ab_activHigh true -> counter input is configured fo ACTIV_HIGH; else ACTIV_LOW
@@ -71,10 +71,10 @@ public:
 
   /**
     get period of counter channel
-    @return time between last two signals or 0xFFFF if time is longer than initially
-             given timebase
+    @return time between last two signals in microseconds
+            or 0xFFFFFFFF if time is longer than initially given timebase
   */
-  uint16_t period() {return CounterI_c::period();}
+  uint32_t period_us() {return CounterI_c::period_us();}
 
   /**
     get frequency of counter channel
