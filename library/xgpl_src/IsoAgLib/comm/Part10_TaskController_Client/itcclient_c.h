@@ -58,8 +58,8 @@ namespace IsoAgLib {
             static_cast<__IsoAgLib::DevicePool_c&>( pool ) ) );
       }
 
-      bool disconnect( iIdentItem_c& identItem ) {
-        return TcClient_c::disconnect( static_cast<__IsoAgLib::IdentItem_c&>( identItem ) );
+      void disconnect( iIdentItem_c& identItem ) {
+        TcClient_c::disconnect( static_cast<__IsoAgLib::IdentItem_c&>( identItem ) );
       }
 
       /* changing designators is not yet supported */

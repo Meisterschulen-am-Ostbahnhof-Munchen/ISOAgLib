@@ -110,10 +110,14 @@ namespace __IsoAgLib {
 
 
   TcClientConnection_c::~TcClientConnection_c() {
+    if (m_server)
+      m_server->removeConnection( *this );
+      
     getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
 
     // TODO: send deacticate msg
 
+    stopRunningMeasurement();
     destroyMeasureProgs();
   }
 

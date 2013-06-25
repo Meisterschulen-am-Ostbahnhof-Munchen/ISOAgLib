@@ -111,7 +111,7 @@ namespace __IsoAgLib {
   }
 
 
-  bool
+  void
   TcClient_c::disconnect( IdentItem_c& identItem ) {
     STL_NAMESPACE::list<identData_t>::iterator i = m_identdata.begin();
     for( ; i != m_identdata.end(); ++i ) {
@@ -121,18 +121,12 @@ namespace __IsoAgLib {
     }
     isoaglib_assert( i != m_identdata.end() );
 
-    STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = ( *i ).connections.begin();
-    while ( it != ( *i ).connections.end() ) {
-      for( STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator ic = m_server.begin(); ic != m_server.end(); ++ic ) {
-        ic->second->removeConnection( **it );
-      }
+    for ( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = ( *i ).connections.begin();
+        it != ( *i ).connections.end(); ++it ) {
       delete( *it );
-      ++it;
     }
 
     m_identdata.erase( i );
-
-    return true;
   }
 
 
