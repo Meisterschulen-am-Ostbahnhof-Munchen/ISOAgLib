@@ -211,7 +211,7 @@ VtClientConnection_c::processPartStreamDataChunk (Stream_c& arc_stream, bool ab_
 
     case 0x24:
       // Command: "Auxiliary Control", parameter "Auxiliary Assignment type 2 response"
-      if (mrc_pool.getVersion() == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
+      if (m_uploadingVersion == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
         break;
 
       if (ab_isLastChunk)
@@ -303,6 +303,7 @@ VtClientConnection_c::VtClientConnection_c(
   , mui8_inputStringLength (0) // will be set when first chunk is received
   , mi32_nextWsMaintenanceMsg (-1)
   , mb_receiveFilterCreated (false)
+  , m_uploadingVersion (0)
   , mui8_clientId (aui8_clientId)
   , men_displayState (VtClientDisplayStateHidden)
   , mq_sendUpload()
@@ -1029,10 +1030,14 @@ VtClientConnection_c::notifyOnVtStatusMessage()
   // set client display state appropriately
   setVtDisplayState( getVtServerInst().getVtState()->saOfActiveWorkingSetMaster );
 
-  if (mrc_pool.getVersion() != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
+  // only do Aux if we already determined which aux we're uploading...
+  if( m_uploadingVersion != 0 )
   {
-    m_aux2Inputs.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
-    m_aux2Functions.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
+    if (m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
+    {
+      m_aux2Inputs.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
+      m_aux2Functions.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
+    }
   }
 }
 
@@ -1268,7 +1273,7 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
 
     case 0x25:
     { // Command: "Auxiliary Control type 2", parameter "input status enable"
-      if (mrc_pool.getVersion() == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
+      if (m_uploadingVersion == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
         break;
 
       const uint16_t ui16_inputObjId = (arc_data.getUint8Data( 1 ) | (arc_data.getUint8Data( 2 ) << 8));
@@ -1410,8 +1415,12 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
       mpc_vtServerInstance->setVersion( arc_data );
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForMemoryResponse))
       {
+        // Special case when adapting a v3 pool to upload to v2 VTs, omitting all the new aux...
+        m_uploadingVersion = (mpc_vtServerInstance->getVtIsoVersion() == 2) && (mrc_pool.getVersion() == 3)
+                               ? 2 : mrc_pool.getVersion();
+
         // check for matching VT version and object pool version
-        if (mpc_vtServerInstance->getVtIsoVersion() < (uint8_t)mrc_pool.getVersion())
+        if (mpc_vtServerInstance->getVtIsoVersion() < m_uploadingVersion)
         {
           vtOutOfMemory();
         }
@@ -2422,15 +2431,18 @@ VtClientConnection_c::doStop()
     // that case should be handles by the multisend itself
   }
 
-  if (mrc_pool.getVersion() != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
+  if( m_uploadingVersion != 0 )
   {
-    m_aux2Functions.setState(Aux2Functions_c::State_WaitForPoolUploadSuccessfully);
-#ifdef USE_VTOBJECT_auxiliaryinput2
-    if (!m_aux2Inputs.getObjectList().empty())
+    if (m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
     {
-      m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Initializing);
-    }
+      m_aux2Functions.setState(Aux2Functions_c::State_WaitForPoolUploadSuccessfully);
+#ifdef USE_VTOBJECT_auxiliaryinput2
+      if (!m_aux2Inputs.getObjectList().empty())
+      {
+        m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Initializing);
+      }
 #endif
+    }
   }
 
   mrc_pool.eventEnterSafeState();
@@ -2493,9 +2505,10 @@ VtClientConnection_c::isVtActive() const
 
 // helper-function for "initObjectPoolUploadingPhases" below
 uint32_t
-fitTerminalWrapper( const vtObject_c& object )
+VtClientConnection_c::fitTerminalWrapper( const vtObject_c& object )
 {
-  return( object.isOmittedFromUpload() )
+  return( object.isOmittedFromUpload()
+       || ((m_uploadingVersion == 2) && (object.getObjectType() >= VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2) && (object.getObjectType() <= VT_OBJECT_TYPE_AUXILIARY_POINTER) ) )
     ? 0
     : object.fitTerminal();
 }
@@ -2630,7 +2643,7 @@ VtClientConnection_c::finalizeUploading() //bool ab_wasLanguageUpdate)
 #endif
     mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mi8_objectPoolUploadedLanguage, mui16_objectPoolUploadedLanguageCode);
 
-    if (mrc_pool.getVersion() != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
+    if (m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
     {
       // set internal state and send empty preferred AUX2 assignment message, if we don't have any preferred assignments
       m_aux2Functions.objectPoolUploadedSuccessfully();

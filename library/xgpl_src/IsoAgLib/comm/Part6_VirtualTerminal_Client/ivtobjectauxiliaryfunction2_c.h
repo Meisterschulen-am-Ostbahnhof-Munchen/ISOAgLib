@@ -48,7 +48,7 @@ public:
   bool isAssigned() const
   { return __IsoAgLib::vtObjectAuxiliaryFunction2_c::isAssigned(); }
 
-  virtual uint16_t getObjectType() { return objectType(); }
+  virtual uint16_t getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib

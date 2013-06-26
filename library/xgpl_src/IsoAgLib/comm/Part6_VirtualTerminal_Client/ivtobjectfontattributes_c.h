@@ -111,7 +111,7 @@ public:
   }
 #endif
 
-  virtual uint16_t getObjectType() { return objectType(); }
+  virtual uint16_t getObjectType() const { return objectType(); }
 };
 
 } // end of namespace IsoAgLib

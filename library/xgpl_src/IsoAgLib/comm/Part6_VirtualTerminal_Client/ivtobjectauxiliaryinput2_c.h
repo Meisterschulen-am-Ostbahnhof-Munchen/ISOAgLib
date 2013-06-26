@@ -57,7 +57,7 @@ public:
     return vtObjectAuxiliaryInput2_c::setValue(aui16_value1, aui16_value2, aen_stateForLearnMode);
   }
 
-  virtual uint16_t getObjectType() { return objectType(); }
+  virtual uint16_t getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib
