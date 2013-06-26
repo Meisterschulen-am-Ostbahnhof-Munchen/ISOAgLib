@@ -38,6 +38,7 @@ namespace __IsoAgLib {
 
 
   class TcClientConnection_c : public CanCustomer_c {
+// @todo Convert to static const...
 #define DEF_TimeOut_GetVersion            5000
 #define DEF_TimeOut_OPTransfer            20000
 #define DEF_TimeOut_EndOfDevicePool       10000
@@ -131,11 +132,17 @@ namespace __IsoAgLib {
       };
 
 
-      TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, StateHandler_c& sh, ServerInstance_c* server, DevicePool_c& pool );
+      TcClientConnection_c(
+        IdentItem_c& identItem,
+        TcClient_c& tcClient,
+        StateHandler_c& sh,
+        ServerInstance_c& server,
+        DevicePool_c& pool );
+
       virtual ~TcClientConnection_c();
 
       IdentItem_c& getIdentItem() const {
-        return *m_identItem;
+        return m_identItem;
       }
       TcClient_c& getTcClient() const {
         return *m_tcClient;
@@ -149,7 +156,9 @@ namespace __IsoAgLib {
       bool isTcAlive();
       void startUpload();
 
-      void processMsgEntry( const ProcessPkg_c& );
+      virtual void processMsg( const CanPkg_c& data );
+
+      void processProcMsg( const ProcessPkg_c& );
       void processMsgTc( const ProcessPkg_c& );
 
       void processMeasurementMsg( const ProcessPkg_c& );
@@ -204,6 +213,9 @@ namespace __IsoAgLib {
         return m_serverName;
       }
 
+      ServerInstance_c* getServer() const {
+        return m_server;
+      }
 
       void sendNack( int16_t ddi, int16_t element, IsoAgLib::ProcData::NackResponse_t errorcodes ) const;
       void sendProcMsg( uint16_t ddi, uint16_t element, int32_t pdValue ) const;
@@ -244,29 +256,13 @@ namespace __IsoAgLib {
           ~MultiSendStreamerProxy_c() {}
 
         private:
+          virtual uint8_t getFirstByte() { return m_owner.getFirstByte(); }
+          virtual void resetDataNextStreamPart() { m_owner.resetDataNextStreamPart(); }
+          virtual void saveDataNextStreamPart() { m_owner.saveDataNextStreamPart(); }
+          virtual void restoreDataNextStreamPart() { m_owner.restoreDataNextStreamPart(); }
+          virtual uint32_t getStreamSize() { return m_owner.getStreamSize(); }
           virtual void setDataNextStreamPart ( __IsoAgLib::MultiSendPkg_c* data, uint8_t bytes ) {
-            m_owner.setDataNextStreamPart( data, bytes );
-          }
-
-          virtual void resetDataNextStreamPart() {
-            m_owner.resetDataNextStreamPart();
-          }
-
-          virtual void saveDataNextStreamPart() {
-            m_owner.saveDataNextStreamPart();
-          }
-
-          virtual void restoreDataNextStreamPart() {
-            m_owner.restoreDataNextStreamPart();
-          }
-
-          virtual uint32_t getStreamSize() {
-            return m_owner.getStreamSize();
-          }
-
-          virtual uint8_t getFirstByte() {
-            return m_owner.getFirstByte();
-          }
+            m_owner.setDataNextStreamPart( data, bytes ); }
 
           MultiSendStreamerProxy_c( MultiSendStreamerProxy_c const & ); // make class non-copyable
           MultiSendStreamerProxy_c &operator=( MultiSendStreamerProxy_c const & ); // make class non-copyable
@@ -284,7 +280,7 @@ namespace __IsoAgLib {
       uint8_t getFirstByte();
 
       int getMultitonInst() const {
-        return m_identItem->getMultitonInst();
+        return m_identItem.getMultitonInst();
       }
 
       void handleNack( int16_t ddi, int16_t element );
@@ -335,7 +331,7 @@ namespace __IsoAgLib {
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
 
 
-      IdentItem_c* m_identItem;
+      IdentItem_c& m_identItem;
       int32_t m_timeWsAnnounceKey;
       TcClient_c* m_tcClient;
       StateHandler_c* m_stateHandler;
@@ -362,9 +358,6 @@ namespace __IsoAgLib {
       int32_t m_timeStartWaitAfterAddrClaim;
       int32_t m_timeWsTaskMsgSent;
 
-      bool m_receivedStructureLabel;
-      bool m_receivedLocalizationLabel;
-
       STL_NAMESPACE::vector<uint8_t> m_structureLabel;
       STL_NAMESPACE::vector<uint8_t> m_localizationLabel;
 
@@ -376,7 +369,7 @@ namespace __IsoAgLib {
       SendStream_c::sendSuccess_t m_sendSuccess;
 
       // device pool
-      DevicePool_c* m_pool;
+      DevicePool_c& m_pool;
       DevPoolState_t m_devPoolState;
       PoolAction_t m_devPoolAction;
       void setDevPoolAction( PoolAction_t action ) {
@@ -389,4 +382,5 @@ namespace __IsoAgLib {
   }; // TcClientConnection_c
 
 } // __IsoAgLib
+
 #endif

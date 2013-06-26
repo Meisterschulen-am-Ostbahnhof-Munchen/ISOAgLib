@@ -29,7 +29,7 @@ namespace __IsoAgLib {
     STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
     while ( it != m_connections.end() ) {
       ( *it )->stopRunningMeasurement();
-      ( *it )->setServer( 0 );
+      ( *it )->setServer( NULL );
       ++it;
     }
   }

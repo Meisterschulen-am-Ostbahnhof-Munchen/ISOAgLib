@@ -14,9 +14,6 @@
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
-#ifdef HAL_USE_SPECIFIC_FILTERS
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
-#endif
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/itcclient_c.h>
@@ -37,10 +34,14 @@ namespace __IsoAgLib {
 
   TcClient_c::TcClient_c()
     : m_handler( *this )
-    , m_customer( *this ) {
+    , m_customer( *this )
+    , m_stateHandler( NULL )
+    , m_identdata()
+    , m_server()
+  {
   }
 
-
+        
   void
   TcClient_c::init() {
     isoaglib_assert ( !initialized() );
@@ -85,14 +86,14 @@ namespace __IsoAgLib {
     STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( &tcdl );
     isoaglib_assert( server != m_server.end() );
 
-    identData_t* d = getDataFor( identItem );
-    if( ! d ) {
+    identData_t* data = getDataFor( identItem );
+    if( ! data ) {
       m_identdata.push_back( identData_t() );
-      d = &( m_identdata.back() );
-      d->ident = &identItem;
+      data = &( m_identdata.back() );
+      data->ident = &identItem;
     } else {
       // check for connections between this ident and the given server
-      for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator c = d->connections.begin(); c != d->connections.end(); ++c ) {
+      for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator c = data->connections.begin(); c != data->connections.end(); ++c ) {
         if( ( *c )->getServerName() == tcdl.isoName() ) {
           isoaglib_assert( !"Double connect between one IdentItem_c and server detected!" );
           return 0;
@@ -101,11 +102,8 @@ namespace __IsoAgLib {
     }
 
     // setup connection
-    TcClientConnection_c* c = new TcClientConnection_c( identItem, *this, sh, server->second, pool );
-    d->connections.push_back( c );
-
-    // assign connection to server
-    server->second->addConnection( *c );
+    TcClientConnection_c* c = new TcClientConnection_c( identItem, *this, sh, *(server->second), pool );
+    data->connections.push_back( c );
 
     return c;
   }
@@ -146,7 +144,6 @@ namespace __IsoAgLib {
 
   void
   TcClient_c::processMsgGlobal( const ProcessPkg_c& data ) {
-    // process TC status message (for local instances)
     if ( data.men_command == ProcessPkg_c::taskControllerStatus ) {
       processTcStatusMsg( data[4], *data.getMonitorItemForSA() );
     }
@@ -161,10 +158,13 @@ namespace __IsoAgLib {
       return;
     }
 
-    STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = identData->connections.begin();
-    while ( it != identData->connections.end() ) {
-        ( *it )->processMsgEntry( pkg );
-        ++it;
+    for( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = identData->connections.begin();
+         it != identData->connections.end(); ++it )
+    {
+      if( ( ( *it )->getServer() == NULL) || (pkg.getMonitorItemForSA() != &( *it )->getServer()->getIsoItem()) )
+        continue;
+
+      ( *it )->processProcMsg( pkg );
     }
   }
 
@@ -178,27 +178,6 @@ namespace __IsoAgLib {
         m_server.erase( i );
       }
     }
-
-#ifdef HAL_USE_SPECIFIC_FILTERS
-    // @todo Clean that up properly, move it to TC-Client connection!!!
-    // This is just a simple implementation until the Dynamic TC-Client is ready!
-    // Note that the filter wouldn't be remove if the IdentItem is closed AFTER the TcClient.
-    // This will be redone for 2.5.4 anyway. It's fine if the application is completely closed/restarted,
-    // but may result in problems if only the TC-Client would be stopped without the rest...
-    // But nowone does that in 2.5.3.........
-    if( isoItem.itemState( IState_c::Local ) ) {
-      switch( action ) {
-        case ControlFunctionStateHandler_c::AddToMonitorList:
-          getIsoFilterManagerInstance4Comm().insertIsoFilter( IsoFilter_s ( m_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ( PROCESS_DATA_PGN << 8 ) ), &isoItem.isoName(), NULL, 8 ) );
-          break;
-        case ControlFunctionStateHandler_c::RemoveFromMonitorList:
-          getIsoFilterManagerInstance4Comm().removeIsoFilter( IsoFilter_s ( m_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ( PROCESS_DATA_PGN << 8 ) ), &isoItem.isoName(), NULL, 8 ) );
-          break;
-        default:
-          break;
-      }
-    }
-#endif
   }
 
 
@@ -225,7 +204,7 @@ namespace __IsoAgLib {
         m_stateHandler->_eventServerAvailable( sender, ecuType );
 
       // check for connections that used this server. Re add those connections to that server
-      // and set to inital state
+      // and set to initial state
       for( STL_NAMESPACE::list<identData_t>::iterator i = m_identdata.begin(); i != m_identdata.end(); ++i ) {
         for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator c = i->connections.begin(); c != i->connections.end(); ++c ) {
           if( ( *c )->getServerName() == sender.isoName() ) {
