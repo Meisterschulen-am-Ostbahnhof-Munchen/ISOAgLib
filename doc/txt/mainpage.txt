@@ -42,6 +42,67 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
+
+
+\subsection Change_Y 2.5.3 to 2.6.0
+
+General:
+ - Enhancement: Use pre-increment on STL-Iterators instead of post-increment for all STL iterators
+ - Cleanup: Added eol-style native / Flipped some files to have consistent line endings
+
+Project-Generation:
+ - Enhancement: Allow multiple conf files as arguments for one generation run.
+ - Cleanup: Removed obsolete DEBUG_ defines
+
+VT-Client:
+ - Enhancement:
+   - Added virtual getObjectType to all objects
+   - Upload a v3 pool without Aux2 object to a v2 VT
+ - Aux2-Bugfixes:
+   - storeAux2Assignment now also called for empty list
+   - Inputs' state is now sent with correct ECU_TO_VT_PGN in learn-mode
+   - Still allow STILL_HELD to be sent for Inputs
+   - Correct Transition-Count for (Non)LatchingBoolean Inputs
+
+Tractor-ECU:
+ - Enhancement: TracGeneral: Widened the interface for MaintainPower/Implement States
+   (Not longer this restricted, application has the possibility now to set the fields completely individually.)
+
+Outputs:
+ - Enhancement: DigitalO-Interface extended with getter for channelNr()
+
+Inputs:
+ - Enhancement: Period changed from ms -> us
+ - Cleanup: Duplicate comments/tabulators removed
+
+HAL:
+ - PC: Enhancement: Allow defines like ANALOG_INPUT_MIN to be defined by Application
+
+Diagnostics:
+ - Enhancement: Added Product Identification Information PGN
+
+TC-Client:
+ - Debug: Detect if measure-value was not yet set, but sent to TC already
+ - Redesign: 
+
+proc2iso: 
+ - Removed, because it is now obsolete with the new dynamic TC-Client approach.
+
+Logalizer:
+ - Bugfix: Fixed dump of TP raw data
+ - Enhancement: Store TP/IOP data on filesystem.
+ - Cleanup: Command line parsinig
+
+CAN-I/O:
+ - Optimization: Simple runtime ordering of Filterbox depending of process frequency
+ - Bugfix:
+   - Removed buggy copy constructor in CanPkgExt_c. (Now properly not-copyable)
+   - deleteAllFiltersForCustomer() didn't forward the delection to the HAL
+
+CAN-Server:
+ - Bugfix Socket Variant: Disable SIGPIPE during send, if connection is broken
+
+
 \subsection Change_X 2.5.2 to 2.5.3
 
 General:
