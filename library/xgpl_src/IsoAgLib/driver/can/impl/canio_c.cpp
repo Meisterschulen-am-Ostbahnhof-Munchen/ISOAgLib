@@ -162,7 +162,7 @@ namespace __IsoAgLib {
         HAL::deleteRxFilter( getBusNumber(), arc_filterpair.getType() == IsoAgLib::iIdent_c::ExtendedIdent,
             arc_filterpair.getFilter(), arc_filterpair.getMask() );
        }
-      b_result = true;
+       b_result = true;
     }
 
     return b_result;
@@ -174,11 +174,15 @@ namespace __IsoAgLib {
     bool b_result = false;
 
     for ( ArrFilterBox::iterator pc_iter = m_arrFilterBox.begin(); pc_iter != m_arrFilterBox.end(); ) {
+      // make copy of filter pair because deleteFilter may clear FilterBox_c::mc_maskFilterPair
+      const IsoAgLib::iMaskFilterType_c filterpair = (*pc_iter)->maskFilterPair();
       if( (*pc_iter)->deleteFilter( ar_customer ) ) {
         //no more cancustomer exist for the filterbox -> delete
-        b_result = true;
         delete *pc_iter;
         pc_iter = m_arrFilterBox.erase( pc_iter );
+        HAL::deleteRxFilter( getBusNumber(), filterpair.getType() == IsoAgLib::iIdent_c::ExtendedIdent,
+            filterpair.getFilter(), filterpair.getMask() );
+        b_result = true;
       } else {
         ++pc_iter;
       }
