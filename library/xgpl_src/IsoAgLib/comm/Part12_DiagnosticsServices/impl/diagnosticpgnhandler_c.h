@@ -21,10 +21,9 @@
 
 #include "../idiagnosticstypes.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
-// forward declarations
 class IdentItem_c;
 
 /**
@@ -56,7 +55,8 @@ public:
     const char *brand,
     const char *model );
 
-  bool setSwIdentification( const char *acstr_swIdentification );
+  bool setSwIdentification(
+    const char *swIdentification );
 
   //! Setter for the different certification message fields
   //! Parameter:
@@ -67,16 +67,19 @@ public:
   //! @param acrc_certificationBitMask Compliance certification type bitfield ( as in ISO 11783-7 A.29.5 till A.29.17 )
   //! @param aui16_referenceNumber Compliance certification reference number ( as in ISO 11783-7 A.29.18 )
   bool setCertificationData(
-    uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision,
-    IsoAgLib::CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
-    const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
+    uint16_t ui16_year,
+    IsoAgLib::CertificationRevision_t,
+    IsoAgLib::CertificationLabType_t,
+    uint16_t aui16_laboratoryId,
+    const IsoAgLib::CertificationBitMask_t& ,
+    uint16_t aui16_referenceNumber );
 
   DiagnosticFunctionalities_c& getDiagnosticFunctionalities();
 
-  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t );
+  virtual bool processMsgRequestPGN (uint32_t, IsoItem_c*, IsoItem_c*, int32_t );
 
 private:
-  void sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,int32_t ai32_pgn);
+  void sendSinglePacket (const HUGE_MEM uint8_t* data, int32_t pgn);
 
 private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c
@@ -89,9 +92,9 @@ private:
   IdentItem_c& mrc_identItem;
   DiagnosticFunctionalities_c m_diagnosticFunctionalities;
 
-  char *mcstr_EcuIdentification;
-  char *mcstr_ProductIdentification;
-  char *mcstr_SwIdentification;
+  char *mcstr_ecuIdentification;
+  char *mcstr_productIdentification;
+  char *mcstr_swIdentification;
   bool mb_certificationIsSet;
   uint8_t m_certification[8];
 
@@ -103,6 +106,6 @@ private:
   DiagnosticPgnHandler_c& operator=(const DiagnosticPgnHandler_c&); 
 };
 
-} // namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif

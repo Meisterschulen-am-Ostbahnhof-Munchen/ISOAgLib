@@ -21,21 +21,6 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <stdlib.h>
 
-#if DEBUG_DIAGNOSTICPGN
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-#endif
-
-// not done as private member function because of recursive-include problems.
-// IdentItem_c needs DiagnosticPgnHandler_c because of the enums.
-// Actually those enums should then just be moved out into its own file
-// then the problems would vanish and it would be clean. But the define is
-// okay for this case here, as the singletons are currently all done by define.
-#define getMultitonInst() mrc_identItem.getMultitonInst()
-
 
 namespace __IsoAgLib
 {
@@ -44,9 +29,9 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& identItem ) :
     m_mrEventProxy(),
     mrc_identItem ( identItem ),
     m_diagnosticFunctionalities( identItem ),
-    mcstr_EcuIdentification ( NULL ),
-    mcstr_ProductIdentification( NULL ),
-    mcstr_SwIdentification ( NULL),
+    mcstr_ecuIdentification ( NULL ),
+    mcstr_productIdentification( NULL ),
+    mcstr_swIdentification ( NULL),
     mb_certificationIsSet ( false )
 {
   // m_certification is not set as mb_certificationIsSet indicates it not being used!
@@ -60,25 +45,25 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& identItem ) :
 
 DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
 {
-  if (mcstr_EcuIdentification)
-    CNAMESPACE::free (mcstr_EcuIdentification);
+  if (mcstr_ecuIdentification)
+    CNAMESPACE::free (mcstr_ecuIdentification);
 
-  if (mcstr_ProductIdentification)
-    CNAMESPACE::free (mcstr_ProductIdentification);
+  if (mcstr_productIdentification)
+    CNAMESPACE::free (mcstr_productIdentification);
 
-  if (mcstr_SwIdentification)
-    CNAMESPACE::free (mcstr_SwIdentification);
+  if (mcstr_swIdentification)
+    CNAMESPACE::free (mcstr_swIdentification);
 }
 
 
 void
 DiagnosticPgnHandler_c::init()
 {
-  getIsoRequestPgnInstance4Comm().registerPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
-  getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
-  getIsoRequestPgnInstance4Comm().registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
-  getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
-  getIsoRequestPgnInstance4Comm().registerPGN ( *this, PRODUCT_IDENTIFICATION_INFORMATION_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).registerPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).registerPGN ( *this, PRODUCT_IDENTIFICATION_PGN );
 
   m_diagnosticFunctionalities.init();
 }
@@ -89,18 +74,18 @@ DiagnosticPgnHandler_c::close()
 {
   m_diagnosticFunctionalities.close();
 
-  getMultiSendInstance4Comm().abortSend( m_mrEventProxy );
+  getMultiSendInstance( mrc_identItem.getMultitonInst() ).abortSend( m_mrEventProxy );
 
-  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, PRODUCT_IDENTIFICATION_INFORMATION_PGN );
-  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
-  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );
-  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
-  getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).unregisterPGN ( *this, PRODUCT_IDENTIFICATION_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).unregisterPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
 }
 
 
 bool
-DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* isoItemSender, IsoItem_c* isoItemReceiver, int32_t )
+DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t pgn, IsoItem_c* isoItemSender, IsoItem_c* isoItemReceiver, int32_t )
 {
   if ( !mrc_identItem.isClaimedAddress() )
     return false;
@@ -112,7 +97,7 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
   if ( ( isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != isoItemReceiver ) )
     return false; // request not adressed to us!
 
-  switch ( rui32_pgn )
+  switch ( pgn )
   {
     case ISOBUS_CERTIFICATION_PGN:
       if (mb_certificationIsSet)
@@ -123,22 +108,22 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
       break;
 
     case SOFTWARE_IDENTIFICATION_PGN:
-      if (mcstr_SwIdentification != NULL)
+      if (mcstr_swIdentification != NULL)
       {
-        if (getCStringLength (mcstr_SwIdentification) < 9)
+        if (getCStringLength (mcstr_swIdentification) < 9)
         {
-          sendSinglePacket((uint8_t *) mcstr_SwIdentification,SOFTWARE_IDENTIFICATION_PGN);
+          sendSinglePacket((uint8_t *) mcstr_swIdentification, SOFTWARE_IDENTIFICATION_PGN);
           return true;
         }
         else
         {
           if( isoItemReceiver != NULL )
           { // dest-spec. request -> answer TP
-            if ( getMultiSendInstance4Comm().sendIsoTarget(
+            if ( getMultiSendInstance( mrc_identItem.getMultitonInst() ).sendIsoTarget(
                   mrc_identItem.isoName(),
                   isoItemSender->isoName(),
-                  (uint8_t *) mcstr_SwIdentification,
-                  getCStringLength (mcstr_SwIdentification),
+                  (uint8_t *) mcstr_swIdentification,
+                  getCStringLength (mcstr_swIdentification),
                   SOFTWARE_IDENTIFICATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
@@ -147,10 +132,10 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
           }
           else
           { // broadcast request -> answer broadcast
-            if ( getMultiSendInstance4Comm().sendIsoBroadcast(
+            if ( getMultiSendInstance( mrc_identItem.getMultitonInst() ).sendIsoBroadcast(
                   mrc_identItem.isoName(),
-                  (uint8_t *) mcstr_SwIdentification,
-                  uint16_t(getCStringLength (mcstr_SwIdentification)),
+                  (uint8_t *) mcstr_swIdentification,
+                  uint16_t(getCStringLength (mcstr_swIdentification)),
                   SOFTWARE_IDENTIFICATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
@@ -162,22 +147,22 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
       break;
 
     case ECU_IDENTIFICATION_INFORMATION_PGN:
-      if (mcstr_EcuIdentification != NULL)
+      if (mcstr_ecuIdentification != NULL)
       {
-        if (getCStringLength (mcstr_EcuIdentification) < 9)
+        if (getCStringLength (mcstr_ecuIdentification) < 9)
         {
-          sendSinglePacket((uint8_t *) mcstr_EcuIdentification,ECU_IDENTIFICATION_INFORMATION_PGN);
+          sendSinglePacket((uint8_t *) mcstr_ecuIdentification, ECU_IDENTIFICATION_INFORMATION_PGN);
           return true;
         }
         else
         {
           if( isoItemReceiver != NULL )
           { // dest-spec. request -> answer TP
-            if( getMultiSendInstance4Comm().sendIsoTarget(
+            if( getMultiSendInstance( mrc_identItem.getMultitonInst() ).sendIsoTarget(
                   mrc_identItem.isoName(),
                   isoItemSender->isoName(),
-                  (uint8_t *) mcstr_EcuIdentification,
-                  getCStringLength (mcstr_EcuIdentification),
+                  (uint8_t *) mcstr_ecuIdentification,
+                  getCStringLength (mcstr_ecuIdentification),
                   ECU_IDENTIFICATION_INFORMATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
@@ -186,10 +171,10 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
           }
           else
           { // broadcast request -> answer broadcast
-            if ( getMultiSendInstance4Comm().sendIsoBroadcast(
+            if ( getMultiSendInstance( mrc_identItem.getMultitonInst() ).sendIsoBroadcast(
                   mrc_identItem.isoName(),
-                  (uint8_t *) mcstr_EcuIdentification,
-                  uint16_t(getCStringLength (mcstr_EcuIdentification)),
+                  (uint8_t *) mcstr_ecuIdentification,
+                  uint16_t(getCStringLength (mcstr_ecuIdentification)),
                   ECU_IDENTIFICATION_INFORMATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
@@ -200,24 +185,24 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
       }
       break;
 
-    case PRODUCT_IDENTIFICATION_INFORMATION_PGN:
-      if (mcstr_ProductIdentification != NULL)
+    case PRODUCT_IDENTIFICATION_PGN:
+      if (mcstr_productIdentification != NULL)
       {
-        if (getCStringLength (mcstr_ProductIdentification) < 9)
+        if (getCStringLength (mcstr_productIdentification) < 9)
         {
-          sendSinglePacket((uint8_t *) mcstr_ProductIdentification, PRODUCT_IDENTIFICATION_INFORMATION_PGN);
+          sendSinglePacket((uint8_t *) mcstr_productIdentification, PRODUCT_IDENTIFICATION_PGN);
           return true;
         }
         else
         {
           if( isoItemReceiver != NULL )
           { // dest-spec. request -> answer TP
-            if( getMultiSendInstance4Comm().sendIsoTarget(
+            if( getMultiSendInstance( mrc_identItem.getMultitonInst() ).sendIsoTarget(
                   mrc_identItem.isoName(),
                   isoItemSender->isoName(),
-                  (uint8_t *) mcstr_ProductIdentification,
-                  getCStringLength (mcstr_ProductIdentification),
-                  PRODUCT_IDENTIFICATION_INFORMATION_PGN,
+                  (uint8_t *) mcstr_productIdentification,
+                  getCStringLength (mcstr_productIdentification),
+                  PRODUCT_IDENTIFICATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
               return true;
@@ -225,11 +210,11 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
           }
           else
           { // broadcast request -> answer broadcast
-            if ( getMultiSendInstance4Comm().sendIsoBroadcast(
+            if ( getMultiSendInstance( mrc_identItem.getMultitonInst() ).sendIsoBroadcast(
                   mrc_identItem.isoName(),
-                  (uint8_t *) mcstr_ProductIdentification,
-                  uint16_t(getCStringLength (mcstr_ProductIdentification)),
-                  PRODUCT_IDENTIFICATION_INFORMATION_PGN,
+                  (uint8_t *) mcstr_productIdentification,
+                  uint16_t(getCStringLength (mcstr_productIdentification)),
+                  PRODUCT_IDENTIFICATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
               return true;
@@ -248,13 +233,9 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* is
       break;
   }
 
-#if DEBUG_DIAGNOSTICPGN
-  INTERNAL_DEBUG_DEVICE << "Couldn't response to RequestPGN with PGN=" << rui32_pgn << ". " << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-
   // something wrong happend - answer with CannotRespondNow
   //  (couldn't multisend or Identification not yet ready)
-  getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), 0x03 ); // CannotRespondNow ACKNOWLEDGE
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), 0x03 ); // CannotRespondNow ACKNOWLEDGE
   return true;
 }
 
@@ -275,15 +256,15 @@ DiagnosticPgnHandler_c::MultiSendEventHandlerProxy_c::reactOnStateChange(const S
 /// The given strings should not have more than 200 characters and
 /// can't contain '*' characters as these are used as field delimiters
 /// @return length of the string (0..x) if valid, <0 if not valid!
-int getLengthIfValid (const char *acstr_text)
+int getLengthIfValid (const char *text)
 {
-  isoaglib_assert (acstr_text);
+  isoaglib_assert (text);
 
   int len = 0;
-  while (acstr_text[len] != 0x00)
+  while (text[len] != 0x00)
   {
     // check current...
-    if (acstr_text[len] == '*')
+    if (text[len] == '*')
     { // string contains forbidden '*'
       return -1;
     }
@@ -317,7 +298,7 @@ DiagnosticPgnHandler_c::setEcuIdentification(
 
   // currently a once set identification can't be changed.
   // this is due to not having separate send-buffers!
-  if (mcstr_EcuIdentification)
+  if (mcstr_ecuIdentification)
     return false;
 
   int len1 = getLengthIfValid (partNr);
@@ -333,9 +314,9 @@ DiagnosticPgnHandler_c::setEcuIdentification(
   // string separated by * and terminated by 0x00
   int newLen = len1 + 1 + len2 + 1 + len3 + 1 + len4 + 1 + len5 + 1 + len6 + 1 + 1;
 
-  mcstr_EcuIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
+  mcstr_ecuIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
 
-  char *destPtr = mcstr_EcuIdentification;
+  char *destPtr = mcstr_ecuIdentification;
   addCStringWithoutTermination (&destPtr, partNr);
   addCStringWithoutTermination (&destPtr, "*");
   addCStringWithoutTermination (&destPtr, serialNr);
@@ -351,7 +332,7 @@ DiagnosticPgnHandler_c::setEcuIdentification(
   *destPtr++ = 0x00;
 
   // detect buffer-overruns!
-  isoaglib_assert (newLen == (destPtr - mcstr_EcuIdentification));
+  isoaglib_assert (newLen == (destPtr - mcstr_ecuIdentification));
 
   return true;
 }
@@ -369,7 +350,7 @@ DiagnosticPgnHandler_c::setProductIdentification(
 
   // currently a once set identification can't be changed.
   // this is due to not having separate send-buffers!
-  if (mcstr_ProductIdentification)
+  if (mcstr_productIdentification)
     return false;
 
   int len1 = getLengthIfValid (code);
@@ -382,9 +363,9 @@ DiagnosticPgnHandler_c::setProductIdentification(
   // string separated by * and terminated by 0x00
   int newLen = len1 + 1 + len2 + 1 + len3 + 1 + 1;
 
-  mcstr_ProductIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
+  mcstr_productIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
 
-  char *destPtr = mcstr_ProductIdentification;
+  char *destPtr = mcstr_productIdentification;
   addCStringWithoutTermination (&destPtr, code);
   addCStringWithoutTermination (&destPtr, "*");
   addCStringWithoutTermination (&destPtr, brand);
@@ -394,42 +375,42 @@ DiagnosticPgnHandler_c::setProductIdentification(
   *destPtr++ = 0x00;
 
   // detect buffer-overruns!
-  isoaglib_assert (newLen == (destPtr - mcstr_ProductIdentification));
+  isoaglib_assert (newLen == (destPtr - mcstr_productIdentification));
 
   return true;
 }
 
 
 bool
-DiagnosticPgnHandler_c::setSwIdentification ( const char *acstr_SwId )
+DiagnosticPgnHandler_c::setSwIdentification ( const char *swId )
 {
-  isoaglib_assert( acstr_SwId );
+  isoaglib_assert( swId );
 
   // currently a once set identification can't be changed.
   // this is due to not having separate send-buffers!
-  if (mcstr_SwIdentification)
+  if (mcstr_swIdentification)
     return false;
 
-  int swIdLen = getCStringLength (acstr_SwId);
+  int swIdLen = getCStringLength (swId);
 
   if ( (swIdLen > 200 ) || (swIdLen < 1 ) )
     return false;
 
-  if (acstr_SwId [swIdLen-1] != '*')
+  if (swId [swIdLen-1] != '*')
     return false; // last character must be '*'
 
-  int numStars = getCStringCount (acstr_SwId, '*');
+  int numStars = getCStringCount (swId, '*');
 
   int newLen = 1+swIdLen+1; // // uint8,swid,0x00
-  mcstr_SwIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
+  mcstr_swIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
 
-  char *destPtr = mcstr_SwIdentification;
+  char *destPtr = mcstr_swIdentification;
   *destPtr++ = uint8_t (numStars); // number of fields
-  addCStringWithoutTermination (&destPtr, acstr_SwId);
+  addCStringWithoutTermination (&destPtr, swId);
   *destPtr++ = 0x00;
 
   // detect buffer-overruns!
-  isoaglib_assert (newLen == (destPtr - mcstr_SwIdentification));
+  isoaglib_assert (newLen == (destPtr - mcstr_swIdentification));
 
   return true;
 }
@@ -441,7 +422,7 @@ DiagnosticPgnHandler_c::setCertificationData(
   IsoAgLib::CertificationRevision_t a_revision,
   IsoAgLib::CertificationLabType_t a_laboratoryType,
   uint16_t aui16_laboratoryId,
-  const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask,
+  const IsoAgLib::CertificationBitMask_t& certificationBitMask,
   uint16_t aui16_referenceNumber)
 {
   // currently a once set identification can't be changed.
@@ -458,9 +439,9 @@ DiagnosticPgnHandler_c::setCertificationData(
   m_certification[0] = uint8_t( ( ( a_revision & 0x03 ) << 6 ) | ( ( ui16_year - 2000 ) & 0x3F ) );
   m_certification[1] = uint8_t( ( ( aui16_laboratoryId & 0x07 ) << 5 ) | ( ( a_laboratoryType & 0x07 ) << 1 ) | ( ( a_revision & 0x04 ) >> 2 ) );
   m_certification[2] = uint8_t( ( aui16_laboratoryId >> 3 ) & 0xFF );
-  m_certification[3] = acrc_certificationBitMask.getByte ( 0 );
-  m_certification[4] = acrc_certificationBitMask.getByte ( 1 );
-  m_certification[5] = acrc_certificationBitMask.getByte ( 2 );
+  m_certification[3] = certificationBitMask.getByte ( 0 );
+  m_certification[4] = certificationBitMask.getByte ( 1 );
+  m_certification[5] = certificationBitMask.getByte ( 2 );
   m_certification[6] = ( aui16_referenceNumber & 0xFFu );
   m_certification[7] = uint8_t(( aui16_referenceNumber >> 8 ) & 0xFF);
 
@@ -469,18 +450,17 @@ DiagnosticPgnHandler_c::setCertificationData(
 }
 
 void
-DiagnosticPgnHandler_c::sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,
-                                          int32_t ai32_pgn)
+DiagnosticPgnHandler_c::sendSinglePacket (const HUGE_MEM uint8_t* data, int32_t pgn)
 {
   CanPkgExt_c pkg;
-  pkg.setIsoPri (6);
-  pkg.setMonitorItemForSA (mrc_identItem.getIsoItem());
-  pkg.setLen (8);
-  pkg.setIsoPgn(ai32_pgn);
-  for (uint8_t ui = 0 ; ui < 8; ++ui)
-    pkg.setUint8Data (ui, rhpb_data[ui]);
+  pkg.setIsoPri( 6 );
+  pkg.setMonitorItemForSA( mrc_identItem.getIsoItem() );
+  pkg.setLen( 8 );
+  pkg.setIsoPgn( pgn );
+  for( uint8_t ui = 0 ; ui < 8; ++ui )
+    pkg.setUint8Data( ui, data[ui] );
 
-  getIsoBusInstance4Comm() << pkg;
+  getIsoBusInstance( mrc_identItem.getMultitonInst() ) << pkg;
 }
 
 DiagnosticFunctionalities_c &
