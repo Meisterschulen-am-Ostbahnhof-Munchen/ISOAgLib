@@ -76,7 +76,6 @@ namespace __IsoAgLib {
   void MeasureProg_c::setValue( int32_t ai32_val ) {
 
     m_value = ai32_val;
-    const int32_t i32_time = System_c::getTime();
 
     // now check if one subprog triggers
     for ( MeasureSubprogContainerIterator_t pc_iter = m_measureSubprog.begin(); pc_iter != m_measureSubprog.end(); ++pc_iter ) {
@@ -327,7 +326,7 @@ namespace __IsoAgLib {
 
     if( isRegistered() ) {
         for (MeasureSubprogContainerIterator_t pc_iter = m_measureSubprog.begin(); pc_iter != m_measureSubprog.end(); ++pc_iter) {
-          if ( pc_iter->type() == IsoAgLib::ProcData::MeasurementCommandTimeProp || IsoAgLib::ProcData::MeasurementCommandDistProp )
+          if ( (pc_iter->type() == IsoAgLib::ProcData::MeasurementCommandTimeProp) || (pc_iter->type() == IsoAgLib::ProcData::MeasurementCommandDistProp) )
           {
             return;
           }

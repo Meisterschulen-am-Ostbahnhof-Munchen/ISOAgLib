@@ -57,6 +57,9 @@ namespace __IsoAgLib {
 
       STL_NAMESPACE::list<TcClientConnection_c*> m_connections;
 
+    private:
+      ServerInstance_c(ServerInstance_c const &);
+      ServerInstance_c &operator=(ServerInstance_c const &);
   };
 
 }

@@ -75,6 +75,10 @@ namespace __IsoAgLib {
 
     private:
       static uint16_t m_objIdCounter;
+
+    private:
+      DeviceObject_c(DeviceObject_c const &);
+      DeviceObject_c &operator=(DeviceObject_c const &);
   };
 
   /* Dvc */

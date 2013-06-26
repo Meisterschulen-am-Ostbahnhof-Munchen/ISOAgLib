@@ -44,6 +44,8 @@ private:
 
   const IsoAgLib::ProcData::MeasurementCommand_t men_type;
 
+private:
+  MeasureSubprog_c &operator=(MeasureSubprog_c const &);
 };
 
 }
