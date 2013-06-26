@@ -170,12 +170,21 @@ namespace __IsoAgLib {
   CanIo_c::deleteAllFiltersForCustomer( const __IsoAgLib::CanCustomer_c & ar_customer ) {
     bool b_result = false;
 
-    for ( ArrFilterBox::iterator pc_iter = m_arrFilterBox.begin(); pc_iter != m_arrFilterBox.end(); ) {
-      if( pc_iter->deleteFilter( ar_customer ) ) {
+    for ( ArrFilterBox::iterator pc_iter = m_arrFilterBox.begin(); pc_iter != m_arrFilterBox.end(); )
+    {
+      // make copy of filter pair because deleteFilter may clear FilterBox_c::mc_maskFilterPair
+      const IsoAgLib::iMaskFilterType_c filterpair = pc_iter->maskFilterPair();
+      if ( pc_iter->deleteFilter( ar_customer ) )
+      {
         //no more cancustomer exist for the filterbox -> delete
-        b_result = true;
+        HAL::deleteRxFilter(getBusNumber(), filterpair.getType() == IsoAgLib::iIdent_c::ExtendedIdent,
+                            filterpair.getFilter(), filterpair.getMask() );
+
         pc_iter = m_arrFilterBox.erase( pc_iter );
-      } else {
+        b_result = true;
+      }
+      else
+      {
         pc_iter++;
       }
     }
