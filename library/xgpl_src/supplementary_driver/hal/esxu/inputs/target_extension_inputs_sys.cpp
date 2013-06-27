@@ -13,9 +13,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
-#include <IsoAgLib/isoaglib_config.h>
 #include "inputs_target_extensions.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 using namespace std; // simple version to avoid problems with using CNAMESPACE
 
