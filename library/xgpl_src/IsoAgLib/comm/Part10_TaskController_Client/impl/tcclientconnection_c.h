@@ -146,7 +146,7 @@ namespace __IsoAgLib {
       void timeEventDevicePool();
 
       bool isTcAlive();
-      void startUpload( ByteStreamBuffer_c *pool = NULL );
+      void startUpload();
 
       virtual void processMsg( const CanPkg_c& data );
 

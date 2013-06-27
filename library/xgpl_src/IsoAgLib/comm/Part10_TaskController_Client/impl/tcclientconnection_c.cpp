@@ -291,7 +291,8 @@ namespace __IsoAgLib {
             if ( m_pool.isEmpty() )
               break;
 
-            startUpload( &(m_pool.getBytestream( procCmdPar_OPTransferMsg )) );
+            m_devicePoolToUpload = m_pool.getBytestream( procCmdPar_OPTransferMsg );
+            startUpload();
             setDevPoolAction( PoolActionWaiting );
             break;
 
@@ -300,7 +301,8 @@ namespace __IsoAgLib {
               /*std::vector<uint8_t> newBytes;
               if (m_pool.getDirtyBytestream(newBytes))
               {
-                startUpload( &newBytes );
+                m_devicePoolToUpload = newBytes
+                startUpload();
                 setDevPoolAction( PoolActionWaiting );
               }
               else
@@ -329,10 +331,7 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::startUpload( ByteStreamBuffer_c *pool ) {
-    if( pool )
-      m_devicePoolToUpload = *pool;
-
+  TcClientConnection_c::startUpload() {
     const uint32_t byteStreamLength = m_devicePoolToUpload.getEnd() - 1; // -1 to remove 0x61 opcode
 
     sendMsg( procCmdPar_RequestOPTransferMsg, ( uint8_t )( ( byteStreamLength ) & 0xff ),
