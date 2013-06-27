@@ -14,9 +14,8 @@
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/itcclient_c.h>
 #include <IsoAgLib/util/iassert.h>
 
 #include <list>

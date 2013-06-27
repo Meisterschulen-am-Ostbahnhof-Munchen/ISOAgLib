@@ -1,7 +1,7 @@
 /*
-  serverinstance_c.h:
+  serverinstance_c.h: Instance of a TC or DL
 
-  (C) Copyright 2013 by OSB AG and developing partners
+  (C) Copyright 2013 - 2013 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -10,12 +10,11 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
 
 #include <list>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
+
 
 namespace __IsoAgLib {
 
@@ -47,6 +46,7 @@ namespace __IsoAgLib {
       IsoAgLib::ProcData::RemoteType_t getEcuType() const {
         return m_type;
       }
+
     private:
       const IsoItem_c& m_isoItem;
 
@@ -56,7 +56,6 @@ namespace __IsoAgLib {
       IsoAgLib::ProcData::RemoteType_t m_type;
 
       STL_NAMESPACE::list<TcClientConnection_c*> m_connections;
-
     private:
       ServerInstance_c(ServerInstance_c const &);
       ServerInstance_c &operator=(ServerInstance_c const &);

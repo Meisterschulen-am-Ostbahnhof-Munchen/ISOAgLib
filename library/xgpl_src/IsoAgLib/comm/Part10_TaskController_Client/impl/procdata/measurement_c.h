@@ -10,15 +10,18 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #ifndef __MEASUREMENT_C_H
 #define __MEASUREMENT_C_H
 
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
+
+#include <list>
+
 
 namespace __IsoAgLib {
 
   class ProcData_c;
+  class MeasureProg_c;
   class TcClientConnection_c;
 
   class Measurement_c {

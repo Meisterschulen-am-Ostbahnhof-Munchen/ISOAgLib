@@ -1,7 +1,7 @@
 /*
-  devicepool_c.h:
+  devicepool_c.h: Device Description Object Pool with its Objects
 
-  (C) Copyright 2013 by OSB AG and developing partners
+  (C) Copyright 2013 - 2013 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -10,17 +10,17 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #ifndef _DEVICEPOOL_C_H_
 #define _DEVICEPOOL_C_H_
 
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 
 
 namespace __IsoAgLib {
+
+  class DevicePool_c;
+
 
   typedef struct {
     uint8_t language[2];
@@ -66,8 +66,6 @@ namespace __IsoAgLib {
       const uint16_t m_objectId;
       const char* m_designator;
 
-
-      friend class __IsoAgLib::DevicePool_c;
       virtual uint32_t getSize() const;
 
       virtual void format( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const;
@@ -75,13 +73,11 @@ namespace __IsoAgLib {
 
     private:
       static uint16_t m_objIdCounter;
-
-    private:
-      DeviceObject_c(DeviceObject_c const &);
-      DeviceObject_c &operator=(DeviceObject_c const &);
+      friend class DevicePool_c;
   };
 
-  /* Dvc */
+
+  /* DVC */
   class DeviceObjectDvc_c : public DeviceObject_c {
     public:
       DeviceObjectDvc_c( const char* version, const char* desig );
@@ -122,7 +118,7 @@ namespace __IsoAgLib {
   };
 
 
-  /* Det */
+  /* DET */
 
   class DeviceObjectDet_c : public DeviceObject_c {
     public:
@@ -150,7 +146,8 @@ namespace __IsoAgLib {
       bool addChild( uint16_t id );
   };
 
-  /* Dpd */
+
+  /* DPD */
 
   class DeviceObjectDvp_c;
   class DeviceObjectDpd_c : public DeviceObject_c {
@@ -180,7 +177,7 @@ namespace __IsoAgLib {
 
 
 
-  /* Dpt */
+  /* DPT */
   class DeviceObjectDpt_c : public DeviceObject_c {
     public:
       DeviceObjectDpt_c( uint16_t ddi, int32_t value, const char* desig, const DeviceObjectDvp_c* );
@@ -197,7 +194,8 @@ namespace __IsoAgLib {
       const uint16_t m_dvpObjectId;
   };
 
-  /* Dvp */
+
+  /* DVP */
 
   class DeviceObjectDvp_c : public DeviceObject_c {
     public:
@@ -228,8 +226,7 @@ namespace __IsoAgLib {
   };
 
 
-
-  /*  Pool  */
+  /*  DDOP  */
 
   class DevicePool_c {
     public:
@@ -265,8 +262,8 @@ namespace __IsoAgLib {
       procDataList_t m_procDatas;
       IdentItem_c* m_identItem;
       TcClientConnection_c* m_connection;
-
   };
 
 }
+
 #endif

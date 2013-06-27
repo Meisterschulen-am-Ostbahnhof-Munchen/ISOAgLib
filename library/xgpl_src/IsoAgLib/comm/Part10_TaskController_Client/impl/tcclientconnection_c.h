@@ -47,13 +47,6 @@ namespace __IsoAgLib {
 #define DEF_TimeOut_NormalCommand         1500
 
     public:
-      enum DevPropertyStatus_t {
-        StatusNoError = 0,
-        StatusBusy,
-        StatusNotInitted,
-        StatusCannotProcess
-      };
-
       enum DevPoolState_t {
         PoolSateDisabled = 0,
         PoolStateInit,
@@ -68,7 +61,6 @@ namespace __IsoAgLib {
 
       enum UploadPoolState_t {
         DDOPRegistered,
-        DDOPSuccessfullyUploaded,
         DDOPCannotBeUploaded
       };
 
@@ -154,7 +146,7 @@ namespace __IsoAgLib {
       void timeEventDevicePool();
 
       bool isTcAlive();
-      void startUpload();
+      void startUpload( ByteStreamBuffer_c *pool = NULL );
 
       virtual void processMsg( const CanPkg_c& data );
 
@@ -171,21 +163,10 @@ namespace __IsoAgLib {
         return false; /* @todo: send msg */
       }
 
-      int32_t requestVersion() {
-        return doCommand( procCmdPar_RequestVersionMsg, DEF_TimeOut_GetVersion );
-      }
-      int32_t requestStructureLabel() {
-        return doCommand( procCmdPar_RequestStructureLabelMsg );
-      }
-      int32_t requestLocalizationLabel() {
-        return doCommand( procCmdPar_RequestLocalizationLabelMsg );
-      }
-      int32_t requestPoolActivate() {
-        return doCommand( procCmdPar_OPActivateMsg );
-      }
-      int32_t requestPoolDelete() {
-        return doCommand( procCmdPar_OPDeleteMsg );
-      }
+// @todo Send this?
+#if 0
+      void requestVersion() { doCommand( procCmdPar_RequestVersionMsg, DEF_TimeOut_GetVersion ); }
+#endif
       int32_t requestPoolTransfer( ByteStreamBuffer_c pool );
 
       void eventStructureLabelResponse( uint8_t result, const STL_NAMESPACE::vector<uint8_t>& label );
@@ -302,15 +283,14 @@ namespace __IsoAgLib {
       enum UploadSteps_t {
         UploadNone,
         UploadUploading,
-        UploadWaitForRequestOPTransferResponse,
         UploadWaitForOPTransferResponse,
         UploadFailed
       };
 
       enum ProcessDataMsg_t {
-        procCmdPar_RequestVersionMsg = 0x0,
+        procCmdPar_RequestVersionMsg = 0x00,
         procCmdPar_VersionMsg = 0x10,
-        procCmdPar_RequestStructureLabelMsg = 0x1,
+        procCmdPar_RequestStructureLabelMsg = 0x01,
         procCmdPar_StructureLabelMsg = 0x11,
         procCmdPar_RequestLocalizationLabelMsg = 0x21,
         procCmdPar_LocalizationLabelMsg = 0x31,
@@ -327,7 +307,7 @@ namespace __IsoAgLib {
       };
 
 
-      int32_t doCommand( int32_t opcode, int32_t timeout = DEF_TimeOut_NormalCommand );
+      void doCommand( int32_t opcode, int32_t timeout = DEF_TimeOut_NormalCommand );
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
 
 

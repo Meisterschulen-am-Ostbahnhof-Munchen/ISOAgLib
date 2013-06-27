@@ -43,7 +43,9 @@ public:
   };
 
   ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst = 0 );
-  ProcessPkg_c();
+  ProcessPkg_c( CommandType_t, uint16_t element, uint16_t ddi, int32_t value );
+  ProcessPkg_c( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t );
+
   ~ProcessPkg_c() {}
 
 public:
@@ -60,4 +62,5 @@ private:
 };
 
 }
+
 #endif

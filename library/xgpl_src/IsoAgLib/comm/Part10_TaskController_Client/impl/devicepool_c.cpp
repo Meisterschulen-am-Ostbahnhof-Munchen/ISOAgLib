@@ -1,7 +1,7 @@
 /*
-  devicepool_c.cpp:
+  devicepool_c.cpp: Device Description Object Pool with its Objects
 
-  (C) Copyright 2013 by OSB AG and developing partners
+  (C) Copyright 2013 - 2013 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -10,8 +10,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "devicepool_c.h"
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 
 
@@ -30,7 +30,7 @@ namespace __IsoAgLib {
     isoaglib_assert( m_objectId != 0xFFFF );
     setDesignator( desig );
     if ( m_objectType != IsoAgLib::ProcData::ObjectTypeDVC )
-      m_objIdCounter++;
+      ++m_objIdCounter;
   }
 
 
@@ -53,11 +53,17 @@ namespace __IsoAgLib {
     return ( sizeof( m_objectId ) + 3 /* label */ );
   }
 
-  /* --- Dvc -------------------------------------------------------------*/
+
+
+  /* --- DVC -------------------------------------------------------------*/
   DeviceObjectDvc_c::DeviceObjectDvc_c( const char* version, const char* desig )
     : __IsoAgLib::DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDVC, desig )
     , m_version( version )
-    , m_serialNumber( "" ) {
+    , m_serialNumber( "" )
+    , m_structLabel()
+    , m_wsmName()
+    , m_localization()
+  {
     isoaglib_assert( CNAMESPACE::strlen( version ) <= 32 );
     std::memset( ( void* )&m_localization, 0, sizeof( m_localization ) );
     m_localization.reserved = 0xff; // Reserved field
@@ -146,13 +152,16 @@ namespace __IsoAgLib {
     return size;
   }
 
-  /* --- Det -------------------------------------------------------------*/
+
+
+  /* --- DET -------------------------------------------------------------*/
 
   DeviceObjectDet_c::DeviceObjectDet_c( uint16_t pid, uint16_t element, uint8_t type, const char* desig )
     : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDET, desig )
     , m_type( type )
     , m_elementNumber( element )
     , m_parentId( pid )
+    , m_childList()
   {}
 
 
@@ -166,14 +175,14 @@ namespace __IsoAgLib {
     byteStream.format( ( uint16_t )m_childList.size() );
 
     std::vector<uint16_t>::const_iterator it;
-    for ( it = m_childList.begin(); it != m_childList.end(); it++ )
+    for ( it = m_childList.begin(); it != m_childList.end(); ++it )
       byteStream.format( *it );
   }
 
 
   bool DeviceObjectDet_c::addChild( uint16_t childId ) {
     std::vector<uint16_t>::iterator it;
-    for ( it = m_childList.begin(); it != m_childList.end(); it++ ) {
+    for ( it = m_childList.begin(); it != m_childList.end(); ++it ) {
       if ( *it == childId )
         return true;
     }
@@ -195,7 +204,7 @@ namespace __IsoAgLib {
   }
 
 
-  /* --- Dpd -------------------------------------------------------------*/
+  /* --- DPD -------------------------------------------------------------*/
 
   DeviceObjectDpd_c::DeviceObjectDpd_c( uint16_t ddi, const IsoAgLib::ProcData::Properties_t& bitmaskProps,
                                         const IsoAgLib::ProcData::Methods_t& bitmaskMethods, const char* desig, const DeviceObjectDvp_c* dvp )
@@ -203,7 +212,8 @@ namespace __IsoAgLib {
     , m_ddi( ddi )
     , m_properties( bitmaskProps.getByte( 0 ) )
     , m_method( bitmaskMethods.getByte( 0 ) )
-    , m_dvpObjectId( ( dvp ) ? dvp->getObjectId() : 0xFFFF ) {}
+    , m_dvpObjectId( ( dvp ) ? dvp->getObjectId() : 0xFFFF )
+  {}
 
 
   void DeviceObjectDpd_c::formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {
@@ -224,7 +234,7 @@ namespace __IsoAgLib {
   }
 
 
-  /* --- Dpt -------------------------------------------------------------*/
+  /* --- DPT -------------------------------------------------------------*/
 
   DeviceObjectDpt_c::DeviceObjectDpt_c( uint16_t ddi, int32_t value, const char* desig, const DeviceObjectDvp_c* dvpRef )
     : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDPT, desig )
@@ -243,6 +253,7 @@ namespace __IsoAgLib {
     byteStream.format( m_dvpObjectId );
   }
 
+
   uint32_t DeviceObjectDpt_c::getSize() const {
     return ( DeviceObject_c::getSize() + sizeof( m_ddi ) + sizeof( m_value )
              + sizeof( uint8_t ) + CNAMESPACE::strlen( m_designator )
@@ -250,7 +261,7 @@ namespace __IsoAgLib {
   }
 
 
-  /* --- Dvp -------------------------------------------------------------*/
+  /* --- DVP -------------------------------------------------------------*/
 
   DeviceObjectDvp_c::DeviceObjectDvp_c( float scale, int32_t offset, uint8_t decimals, const char* desig )
     : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDVP, desig )
@@ -275,11 +286,15 @@ namespace __IsoAgLib {
     return ( DeviceObject_c::getSize() + sizeof( m_offset ) + sizeof( m_scale ) + sizeof( m_decimals ) + sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() ) ) ;
   }
 
-  /* --- DevicePool_c --------------------------------------------------- */
 
-  DevicePool_c::DevicePool_c() : m_identItem( 0 ) {
-    m_devicePool.clear();
-  }
+  /* --- DDOP --------------------------------------------------- */
+
+  DevicePool_c::DevicePool_c()
+    : m_devicePool()
+    , m_procDatas()
+    , m_identItem( NULL )
+    , m_connection( NULL )
+  {}
 
 
   void DevicePool_c::init( IdentItem_c& ident ) {
@@ -337,7 +352,7 @@ namespace __IsoAgLib {
   void DevicePool_c::updateLocale() {
 #if 0
     deviceMap_t::iterator it;
-    for ( it = m_devicePool.begin(); it != m_devicePool.end(); it++ ) {
+    for ( it = m_devicePool.begin(); it != m_devicePool.end(); ++it ) {
       if ( it->second && it->second->getObjectType() == IsoAgLib::ProcData::ObjectTypeDVP )
         static_cast<IsoAgLib::iDeviceObjectDvp_c*>( it->second )->setDirty( true );
     }
@@ -352,7 +367,7 @@ namespace __IsoAgLib {
     buffer.setSize( size );
     buffer.format( cmd );
 
-    for ( deviceMap_t::iterator it = m_devicePool.begin(); it != m_devicePool.end(); it++ ) {
+    for ( deviceMap_t::iterator it = m_devicePool.begin(); it != m_devicePool.end(); ++it ) {
       DeviceObject_c* devObject = it->second;
       devObject->formatBytestream( buffer );
     }
@@ -363,10 +378,11 @@ namespace __IsoAgLib {
 
   uint32_t DevicePool_c::getBytestreamSize() const {
     uint32_t size = 0;
-    for ( deviceMap_t::const_iterator it = m_devicePool.begin(); it != m_devicePool.end(); it++ ) {
+    for ( deviceMap_t::const_iterator it = m_devicePool.begin(); it != m_devicePool.end(); ++it ) {
       DeviceObject_c* devObject = it->second;
       size += devObject->getSize();
     }
     return size;
   }
-}
+
+} // __IsoAgLib

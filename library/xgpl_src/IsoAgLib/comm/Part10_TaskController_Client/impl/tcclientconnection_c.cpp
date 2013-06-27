@@ -22,6 +22,7 @@
 #ifdef HAL_USE_SPECIFIC_FILTERS
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #endif
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
@@ -146,15 +147,8 @@ namespace __IsoAgLib {
 
   void
   TcClientConnection_c::timeEvent( void ) {
-    // do further activities only if registered ident is initialized as ISO and already successfully address-claimed...
-    if ( ! m_identItem.isClaimedAddress() )
+    if ( !m_identItem.isClaimedAddress() || !m_server )
       return;
-
-
-    // reset connection if the server is away
-    if( ! m_server ) {
-      return;
-    }
 
     // Wait until we are properly initialized before doing anything else
     if ( ! m_initDone ) {
@@ -176,7 +170,7 @@ namespace __IsoAgLib {
     if( getDevPoolState() == PoolSateDisabled )
       return;
 
-    if ( ! isTcAlive() )
+    if ( !isTcAlive() )
       return;
 
     // Check if the working-set is completely announced
@@ -189,7 +183,6 @@ namespace __IsoAgLib {
       m_timeWsTaskMsgSent = now;
       sendMsg( 0xff, 0xff, 0xff, 0xff, m_server->getLastServerState(), 0x00, 0x00, 0x00 );
     }
-
 
     timeEventDevicePool();
   }
@@ -221,11 +214,9 @@ namespace __IsoAgLib {
 
   void
   TcClientConnection_c::timeEventDevicePool() {
-    // If there is no device pool or the pool cannot be uploaded, do nothing
     if ( m_uploadPoolState == DDOPCannotBeUploaded )
       return;
 
-    // device pool is registered, continue with upload
     switch( m_uploadStep ) {
       case UploadUploading:
         if ( ( ( uint32_t ) HAL::getTime() ) > ( m_uploadTimeout + m_uploadTimestamp ) ) {
@@ -280,7 +271,7 @@ namespace __IsoAgLib {
               break;
 
             setDevPoolState( PoolStatePresetting );
-            requestStructureLabel();
+            doCommand( procCmdPar_RequestStructureLabelMsg );
             setDevPoolAction( PoolActionWaiting );
             break;
 
@@ -290,8 +281,8 @@ namespace __IsoAgLib {
 //        break;
 
           case PoolStateInvalid:
-            // Pool is present, but it is the wrong version -- delete it
-            requestPoolDelete();
+            // Pool is present, but it is the wrong version
+            doCommand( procCmdPar_OPDeleteMsg );
             setDevPoolAction( PoolActionWaiting );
             break;
 
@@ -300,7 +291,7 @@ namespace __IsoAgLib {
             if ( m_pool.isEmpty() )
               break;
 
-            requestPoolTransfer( m_pool.getBytestream( procCmdPar_OPTransferMsg ) );
+            startUpload( &(m_pool.getBytestream( procCmdPar_OPTransferMsg )) );
             setDevPoolAction( PoolActionWaiting );
             break;
 
@@ -309,7 +300,7 @@ namespace __IsoAgLib {
               /*std::vector<uint8_t> newBytes;
               if (m_pool.getDirtyBytestream(newBytes))
               {
-                requestPoolTransfer(newBytes);
+                startUpload( &newBytes );
                 setDevPoolAction( PoolActionWaiting );
               }
               else
@@ -319,8 +310,7 @@ namespace __IsoAgLib {
             break;
 
           case PoolStateUploaded:
-            // Pool has been uploaded - activate it
-            requestPoolActivate();
+            doCommand( procCmdPar_OPActivateMsg );
             setDevPoolAction( PoolActionWaiting );
             break;
 
@@ -339,8 +329,11 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::startUpload() {
-    const uint32_t byteStreamLength = m_devicePoolToUpload.getEnd() - 1;		// -1 to remove 0x61 opcode
+  TcClientConnection_c::startUpload( ByteStreamBuffer_c *pool ) {
+    if( pool )
+      m_devicePoolToUpload = *pool;
+
+    const uint32_t byteStreamLength = m_devicePoolToUpload.getEnd() - 1; // -1 to remove 0x61 opcode
 
     sendMsg( procCmdPar_RequestOPTransferMsg, ( uint8_t )( ( byteStreamLength ) & 0xff ),
              ( uint8_t )( ( byteStreamLength >> 8 ) & 0xff ), ( uint8_t )( ( byteStreamLength >> 16 ) & 0xff ),
@@ -417,13 +410,10 @@ namespace __IsoAgLib {
     const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
     STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator iter = m_measureProg.find(key);
 
-    if ( iter != m_measureProg.end()) {
+    if ( iter != m_measureProg.end())
       iter->second->processRequestMsg();
-    }
     else
-    {
       handleNack( data.mui16_DDI, data.mui16_element );
-    }
   }
 
 
@@ -431,33 +421,43 @@ namespace __IsoAgLib {
     const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
     STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator iter = m_measureProg.find(key);
 
-    if ( iter != m_measureProg.end()) {
+    if ( iter != m_measureProg.end())
       iter->second->processSetMsg( data.mi32_pdValue );
-    }
     else
-    {
       handleNack( data.mui16_DDI, data.mui16_element );
-    }
   }
 
   void TcClientConnection_c::processMeasurementMsg( const ProcessPkg_c& data ) {
     const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
     STL_NAMESPACE::map<uint32_t, MeasureProg_c*>::iterator iter = m_measureProg.find(key);
 
-    if ( iter != m_measureProg.end()) {
-      iter->second->processMeasurementMsg( data.men_command, data.mi32_pdValue );
+    if ( iter != m_measureProg.end())
+    {
+      switch ( data.men_command ) {
+        case ProcessPkg_c::measurementDistanceValueStart:
+        case ProcessPkg_c::measurementTimeValueStart:
+        case ProcessPkg_c::measurementChangeThresholdValueStart:
+        case ProcessPkg_c::measurementMinimumThresholdValueStart:
+        case ProcessPkg_c::measurementMaximumThresholdValueStart:
+          // measurementCommand_t and CommandType_t are unified for all measurement types
+          iter->second->processMeasurementMsg(
+            IsoAgLib::ProcData::MeasurementCommand_t( data.men_command ),
+            data.mi32_pdValue );
+          break;
+
+        default:
+          isoaglib_assert( !"Method shall not be called for this Process command" );
+          break;
+      }
     }
     else
-    {
       handleNack( data.mui16_DDI, data.mui16_element );
-    }
   }
 
 
   void TcClientConnection_c::processMsgTc( const ProcessPkg_c& data ) {
-    if( getDevPoolState() == PoolSateDisabled ) {
+    if( getDevPoolState() == PoolSateDisabled )
       return;
-    }
 
     // handling of NACK
     //  means that no device description is uploaded before
@@ -552,17 +552,8 @@ namespace __IsoAgLib {
 
   void
   TcClientConnection_c::outOfMemory() {
-    // can't (up)load the pool.
     m_uploadStep = UploadFailed;
     m_uploadPoolState = DDOPCannotBeUploaded;
-  }
-
-
-  int32_t
-  TcClientConnection_c::requestPoolTransfer( ByteStreamBuffer_c pool ) {
-    m_devicePoolToUpload = pool;
-    startUpload();
-    return StatusNoError;
   }
 
 
@@ -601,21 +592,10 @@ namespace __IsoAgLib {
   void
   TcClientConnection_c::sendMsg( uint8_t b0, uint8_t b1, uint8_t b2, uint8_t b3, uint8_t b4,
                                  uint8_t b5, uint8_t b6, uint8_t b7 ) const {
-    ProcessPkg_c pkg;
+    ProcessPkg_c pkg( b0, b1, b2, b3, b4, b5, b6, b7);
 
     pkg.setMonitorItemForDA( const_cast<IsoItem_c*>(&m_server->getIsoItem()) );
     pkg.setMonitorItemForSA( m_identItem.getIsoItem() );
-    pkg.setIsoPri( 3 );
-    pkg.setIsoPgn( PROCESS_DATA_PGN );
-    pkg.setUint8Data( 0, b0 );
-    pkg.setUint8Data( 1, b1 );
-    pkg.setUint8Data( 2, b2 );
-    pkg.setUint8Data( 3, b3 );
-    pkg.setUint8Data( 4, b4 );
-    pkg.setUint8Data( 5, b5 );
-    pkg.setUint8Data( 6, b6 );
-    pkg.setUint8Data( 7, b7 );
-    pkg.setLen( 8 );
 
     getIsoBusInstance4Comm() << pkg;
   }
@@ -637,7 +617,7 @@ namespace __IsoAgLib {
     }
 
     if ( getDevPoolState() == PoolStatePresetting ) {
-      requestLocalizationLabel();
+      doCommand( procCmdPar_RequestLocalizationLabelMsg );
       setDevPoolAction( PoolActionWaiting );
     } else
       setDevPoolAction( PoolActionIdle );
@@ -697,63 +677,26 @@ namespace __IsoAgLib {
 
 
   void TcClientConnection_c::sendProcMsg( uint16_t ddi, uint16_t element, int32_t pdValue ) const {
-    ProcessPkg_c pkg;
+    ProcessPkg_c pkg( ProcessPkg_c::setValue, element, ddi, pdValue );
 
-    pkg.men_command = ProcessPkg_c::setValue;
     pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &m_server->getIsoItem() ) );
     pkg.setMonitorItemForSA( m_identItem.getIsoItem() );
-    pkg.setIsoPri( 3 );
-    pkg.setIsoPgn( PROCESS_DATA_PGN );
-    pkg.mui16_element = element;
-    pkg.mui16_DDI = ddi;
-    pkg.mi32_pdValue = pdValue;
-
-    // check if command is valid
-    isoaglib_assert( pkg.men_command != ProcessPkg_c::commandReserved1 );
-    isoaglib_assert( pkg.men_command != ProcessPkg_c::commandReserved2 );
-    isoaglib_assert( pkg.men_command != ProcessPkg_c::commandReserved3 );
-    isoaglib_assert( pkg.men_command != ProcessPkg_c::commandReserved4 );
-    isoaglib_assert( pkg.men_command != ProcessPkg_c::CommandUndefined );
-
-    uint8_t ui8_cmd = static_cast<uint8_t>( pkg.men_command );
-    pkg.setUint8Data( 0, ( ui8_cmd & 0xf ) | ( ( pkg.mui16_element & 0xf ) << 4 ) );
-    pkg.setUint8Data( 1, pkg.mui16_element >> 4 );
-    pkg.setUint8Data( 2, pkg.mui16_DDI & 0x00FF );
-    pkg.setUint8Data( 3, ( pkg.mui16_DDI& 0xFF00 ) >> 8 );
-    // for ISO the ident is directly read and written
-    pkg.setInt32Data( 4, pkg.mi32_pdValue );
-    pkg.setLen( 8 );
-
 
     getIsoBusInstance4Comm() << pkg;
   }
 
 
-  int32_t
+  void
   TcClientConnection_c::doCommand( int32_t opcode, int32_t timeout ) {
-    if ( ( ! m_identItem.getIsoItem() ) || ( ! m_server ) )
-      return StatusNotInitted;
-
     if ( m_uploadState == StateBusy )
-      return StatusBusy;
+      return; // StatusBusy
     if ( m_uploadState == StateTimeout )
-      return StatusCannotProcess;
+      return; // StatusCannotProcess
 
-    ProcessPkg_c pkg;
+    ProcessPkg_c pkg( opcode, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
 
-    pkg.setIsoPri( 3 );
-    pkg.setIsoPgn( PROCESS_DATA_PGN );
     pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &m_server->getIsoItem() ) );
     pkg.setMonitorItemForSA( m_identItem.getIsoItem() );
-    pkg.setUint8Data ( 0, opcode );
-    pkg.setUint8Data ( 1, 0xff );
-    pkg.setUint8Data ( 2, 0xff );
-    pkg.setUint8Data ( 3, 0xff );
-    pkg.setUint8Data ( 4, 0xff );
-    pkg.setUint8Data ( 5, 0xff );
-    pkg.setUint8Data ( 6, 0xff );
-    pkg.setUint8Data ( 7, 0xff );
-    pkg.setLen ( 8 );
 
     getIsoBusInstance4Comm() << pkg;
 
@@ -762,8 +705,6 @@ namespace __IsoAgLib {
     m_uploadStep = UploadNone;
     m_commandParameter = opcode;
     m_uploadState = StateBusy;
-
-    return StatusNoError;
   }
 
 
@@ -772,7 +713,7 @@ namespace __IsoAgLib {
       ProcData_c* pd = ( *i );
       const uint32_t key = getMapKey( pd->DDI(), pd->element());
 
-      MeasureProg_c* mp = new MeasureProg_c( this, *pd );
+      MeasureProg_c* mp = new MeasureProg_c( *this, *pd );
       m_measureProg[ key ] = mp;
     }
   }
@@ -823,4 +764,4 @@ namespace __IsoAgLib {
     return m_devicePoolToUpload[0];
   }
 
-}; // namespace __IsoAgLib
+}; // __IsoAgLib

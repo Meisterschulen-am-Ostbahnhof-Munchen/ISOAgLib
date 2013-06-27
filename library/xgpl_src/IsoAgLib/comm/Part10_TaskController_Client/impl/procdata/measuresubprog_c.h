@@ -15,37 +15,82 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 
 
 namespace __IsoAgLib {
 
 class ProcData_c;
+class MeasureProg_c;
 
-class MeasureSubprog_c
+class MeasureDistProp_c : public SchedulerTask_c 
 {
+private: // non-copyable
+  MeasureDistProp_c( const MeasureDistProp_c& );
+
 public:
-  MeasureSubprog_c( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment);
-  MeasureSubprog_c( const MeasureSubprog_c& acrc_src );
-  ~MeasureSubprog_c() {}
+  MeasureDistProp_c( MeasureProg_c& measureProg );
+  virtual ~MeasureDistProp_c();
 
-  IsoAgLib::ProcData::MeasurementCommand_t type() const { return men_type; }
+  void start( int32_t ai32_lastVal, int32_t ai32_increment );
 
-  int32_t increment() const { return mi32_increment; }
-  void setIncrement(int32_t ai32_val) { mi32_increment = ai32_val; }
-
-  void start(int32_t ai32_increment = 0, int32_t ai32_lastVal = 0);
-
+private:
   bool updateTrigger(int32_t ai32_val);
   int32_t nextTriggerTime(const ProcData_c& ac_processData, int32_t ai32_val);
 
+  virtual void timeEvent();
+
 private:
+  MeasureProg_c &m_measureProg;
   int32_t mi32_lastVal;
   int32_t mi32_increment;
+};
 
-  const IsoAgLib::ProcData::MeasurementCommand_t men_type;
+
+class MeasureTimeProp_c : public SchedulerTask_c 
+{
+private: // non-copyable
+  MeasureTimeProp_c( const MeasureTimeProp_c& );
+
+public:
+  MeasureTimeProp_c( MeasureProg_c& measureProg );
+  virtual ~MeasureTimeProp_c();
+
+  void start( int32_t ai32_lastVal, int32_t ai32_increment );
 
 private:
-  MeasureSubprog_c &operator=(MeasureSubprog_c const &);
+  bool updateTrigger(int32_t ai32_val);
+  int32_t nextTriggerTime(const ProcData_c& ac_processData, int32_t ai32_val);
+
+  virtual void timeEvent();
+
+private:
+  MeasureProg_c &m_measureProg;
+  int32_t mi32_lastVal;
+  int32_t mi32_increment;
+};
+
+
+class MeasureOnChange_c
+{
+private: // non-copyable
+  MeasureOnChange_c( const MeasureOnChange_c& );
+
+public:
+  MeasureOnChange_c( MeasureProg_c& measureProg );
+  virtual ~MeasureOnChange_c() {}
+
+  void start( int32_t ai32_lastVal, int32_t ai32_increment );
+
+  void setValue( int32_t value );
+
+private:
+  bool updateTrigger(int32_t ai32_val);
+
+private:
+  MeasureProg_c &m_measureProg;
+  int32_t mi32_lastVal;
+  int32_t mi32_increment;
 };
 
 }

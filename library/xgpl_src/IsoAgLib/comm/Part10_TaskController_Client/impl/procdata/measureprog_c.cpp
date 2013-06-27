@@ -13,6 +13,7 @@
 #include "measureprog_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measuresubprog_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
 
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
@@ -28,8 +29,15 @@ namespace __IsoAgLib {
   static const int32_t sci32_stopValThresholdMaximum = -2147483647L; // Standard specifies (-2^31+1) instead of (-2^31)
   static const int32_t sci32_stopValThresholdMinimum = 2147483647L;
 
-  MeasureProg_c::MeasureProg_c( TcClientConnection_c* c, ProcData_c& procdata )
-      : SchedulerTask_c( 100, false ), m_value( 0 ), m_connection( c ), m_procdata(procdata) {
+  MeasureProg_c::MeasureProg_c( TcClientConnection_c& connection, ProcData_c& procdata )
+    : m_subProgOnChange( NULL )
+    , m_subProgTimeProp( NULL )
+    , m_subProgDistProp( NULL )
+    , m_value( 0 )
+    , m_minThreshold( sci32_stopValThresholdMinimum )
+    , m_maxThreshold( sci32_stopValThresholdMaximum )
+    , m_connection( connection )
+    , m_procdata( procdata ) {
     m_procdata.getMeasurement().addMeasureProgRef( *this );
   }
 
@@ -39,183 +47,64 @@ namespace __IsoAgLib {
   }
 
 
-  void MeasureProg_c::processMeasurementMsg( ProcessPkg_c::CommandType_t command, int32_t pdValue ) {
-
-    switch ( command ) {
-      case ProcessPkg_c::measurementDistanceValueStart:
-      case ProcessPkg_c::measurementTimeValueStart:
-      case ProcessPkg_c::measurementChangeThresholdValueStart:
-      case ProcessPkg_c::measurementMinimumThresholdValueStart:
-      case ProcessPkg_c::measurementMaximumThresholdValueStart:
-        // measurementCommand_t and CommandType_t are unified for all measurement types
-        if( !startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t( command ), pdValue ) ) {
-          isoaglib_assert( m_connection );
-          m_connection->sendNack( m_procdata.DDI(), m_procdata.element(), IsoAgLib::ProcData::NackTriggerMethodNotSupported );
-        }
-        break;
-
-      default:
-        isoaglib_assert( !"Method shall not be called for this Process command" );
-        break;
+  void MeasureProg_c::processMeasurementMsg( IsoAgLib::ProcData::MeasurementCommand_t command, int32_t pdValue ) {
+    if( !startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t( command ), pdValue ) ) {
+      m_connection.sendNack( m_procdata.DDI(), m_procdata.element(), IsoAgLib::ProcData::NackTriggerMethodNotSupported );
     }
   }
 
 
   void MeasureProg_c::processRequestMsg() {
-    isoaglib_assert( m_connection );
-    m_connection->sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
+    m_connection.sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
   }
 
 
   void MeasureProg_c::processSetMsg( int32_t pdValue ) {
-    isoaglib_assert( m_connection );
-    m_procdata.getSetpoint().processMsg(m_procdata, *m_connection, pdValue);
+    m_procdata.getSetpoint().processMsg( m_procdata, m_connection, pdValue );
   }
 
 
-  void MeasureProg_c::setValue( int32_t ai32_val ) {
+  void MeasureProg_c::setValue( int32_t value ) {
+    m_value = value;
 
-    m_value = ai32_val;
-
-    // now check if one subprog triggers
-    for ( MeasureSubprogContainerIterator_t pc_iter = m_measureSubprog.begin(); pc_iter != m_measureSubprog.end(); ++pc_iter ) {
-
-      bool triggeredIncrement = false;
-
-      switch ( pc_iter->type() ) {
-        case IsoAgLib::ProcData::MeasurementCommandOnChange:
-          triggeredIncrement = pc_iter->updateTrigger( ai32_val );
-          break;
-        case IsoAgLib::ProcData::MeasurementCommandTimeProp:
-        case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold:
-        case IsoAgLib::ProcData::MeasurementCommandDistProp:
-        case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold:
-          break;
-      }
+    if( m_subProgOnChange )
+        m_subProgOnChange->setValue( value );
+  }
 
 
-      // if triggeredIncrement == true the registered values should be sent
-      if ( triggeredIncrement ) {
-        // send the registered values
-        if ( !minMaxLimitsPassed( ai32_val ) ) {
-          // omit this value send
-          continue;
+  bool MeasureProg_c::minMaxLimitsPassed() const {
+    const bool checkMin = m_minThreshold != sci32_stopValThresholdMinimum;
+    const bool checkMax = m_maxThreshold != sci32_stopValThresholdMaximum;
+
+    if( checkMin )
+    {
+      if( checkMax )
+      { // both given
+        if ( m_maxThreshold < m_minThreshold )
+        { // outside range
+          return( ( m_value <= m_maxThreshold ) || ( m_value >= m_minThreshold ) );
         }
-        // if at least one send try had success reset triggeredIncrement
-        isoaglib_assert( m_connection );
-        m_connection->sendProcMsg( m_procdata.DDI(), m_procdata.element(), ai32_val );
-      }
-    }
-  }
-
-
-  void MeasureProg_c::timeEvent() {
-    const int32_t i32_time = System_c::getTime();
-
-    for ( MeasureSubprogContainerIterator_t pc_iter = m_measureSubprog.begin(); pc_iter != m_measureSubprog.end(); ++pc_iter ) {
-      bool triggeredIncrement = false;
-      int32_t i32_nextTimePeriod = 0;
-      switch ( pc_iter->type() ) {
-        case IsoAgLib::ProcData::MeasurementCommandTimeProp:
-          triggeredIncrement = pc_iter->updateTrigger( i32_time );
-          i32_nextTimePeriod = pc_iter->nextTriggerTime( m_procdata, i32_time );
-          break;
-        case IsoAgLib::ProcData::MeasurementCommandDistProp: {
-#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-            int32_t i32_distTheor = getTracMoveInstance(m_procdata.identItem().getMultitonInst()).distTheor();
-            triggeredIncrement = pc_iter->updateTrigger(i32_distTheor);
-#else
-            int32_t i32_distTheor = 0;
-#endif
-            i32_nextTimePeriod = pc_iter->nextTriggerTime( m_procdata, i32_distTheor );
-          }
-          break;
-        case IsoAgLib::ProcData::MeasurementCommandOnChange:
-        case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold:
-        case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold:
-          break;
-      } // switch
-
-      if ( i32_nextTimePeriod > 0 ) {
-        setPeriod( i32_nextTimePeriod, false );
-      }
-
-      // if triggeredIncrement == true the registered values should be sent
-      if ( triggeredIncrement ) {
-        if ( !minMaxLimitsPassed( m_value ) ) {
-          // omit this value send
-          continue;
+        else
+        { // inside range
+          return( ( m_value >= m_minThreshold ) && ( m_value <= m_maxThreshold ) );
         }
-        isoaglib_assert( m_connection );
-        m_connection->sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
+      }
+      else
+      { // only min
+        return( m_value >= m_minThreshold );
       }
     }
-  }
-
-
-  bool MeasureProg_c::minMaxLimitsPassed( int32_t value ) const {
-    // no threshold -> skip
-    if ( m_thresholdInfo.empty() )
-      return true;
-
-    bool b_checkMin = false;
-    bool b_checkMax = false;
-    int32_t i32_maxVal = 0;
-    int32_t i32_minVal = 0;
-
-    for ( ThresholdInfoContainerConstIterator_t iterThreshold = m_thresholdInfo.begin(); iterThreshold != m_thresholdInfo.end(); ++iterThreshold ) {
-      switch ( iterThreshold->en_type ) {
-        case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold:
-          b_checkMax = true;
-          i32_maxVal = iterThreshold->i32_threshold;
-          break;
-
-        case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold:
-          b_checkMin = true;
-          i32_minVal = iterThreshold->i32_threshold;
-          break;
-
-        default:
-          ;
+    else
+    {
+      if( checkMax )
+      { // only max
+        return( m_value <= m_maxThreshold );
+      }
+      else
+      { // no min, no max
+        return true;
       }
     }
-
-    if ( b_checkMin && b_checkMax && ( i32_maxVal < i32_minVal ) && ( ( i32_maxVal >= value ) || ( i32_minVal <= value ) ) )
-      return true;
-
-    if ( ( b_checkMin && i32_minVal > value ) ||
-         ( b_checkMax && i32_maxVal < value ) )
-      return false;
-
-    return true;
-  }
-
-
-  MeasureSubprog_c& MeasureProg_c::addSubprog( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment ) {
-    // if subprog with this type exist, update only value
-    MeasureSubprogContainerIterator_t pc_subprog = m_measureSubprog.end();
-    for ( pc_subprog = m_measureSubprog.begin(); pc_subprog != m_measureSubprog.end(); ++pc_subprog ) {
-      if ( pc_subprog->type() == ren_type ) {
-        pc_subprog->setIncrement( ai32_increment );
-        return *pc_subprog;
-      }
-    }
-
-    m_measureSubprog.push_front( MeasureSubprog_c( ren_type, ai32_increment ) );
-
-    if( ! isRegistered() ) {
-      switch( ren_type ) {
-          case IsoAgLib::ProcData::MeasurementCommandTimeProp:
-          case IsoAgLib::ProcData::MeasurementCommandDistProp:
-            getSchedulerInstance().registerTask( *this, 0 );
-            // set 50 ms as default, proper period will be set in timeEvent
-            setPeriod(50,true);
-            break;
-          default:
-            break;
-      }
-    }
-    return *( m_measureSubprog.begin() );
   }
 
 
@@ -226,13 +115,17 @@ namespace __IsoAgLib {
       case IsoAgLib::ProcData::MeasurementCommandTimeProp: // time proportional
         if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::TimeInterval ) ) {
           if ( ai32_increment == sci32_stopValTimeInterval ) {
-            stopMeasurement( ren_type );
+            delete m_subProgTimeProp;
+            m_subProgTimeProp = NULL;
           } else {
-            MeasureSubprog_c& subprog = addSubprog( ren_type, __IsoAgLib::abs( ai32_increment ) );
-            subprog.start( System_c::getTime() );
+            if( m_subProgTimeProp == NULL )
+              m_subProgTimeProp = new MeasureTimeProp_c( *this );
+            // 0, 100..60000 allowed per standard
+            if( ai32_increment < 100 )
+              ai32_increment = 100;
+            m_subProgTimeProp->start( System_c::getTime(), ai32_increment );
           }
-          isoaglib_assert( m_connection );
-          m_connection->sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
+          m_connection.sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
           b_validTriggerMethod = true;
         }
         break;
@@ -241,13 +134,16 @@ namespace __IsoAgLib {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE) // if no distance available, NACK will be sent
         if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::DistInterval ) ) {
           if ( ai32_increment == sci32_stopValDistanceInterval ) {
-            stopMeasurement( ren_type );
+            delete m_subProgDistProp;
+            m_subProgDistProp = NULL;
           } else {
-            MeasureSubprog_c& subprog = addSubprog(ren_type, ai32_increment);
-            subprog.start(int32_t(getTracMoveInstance(m_procdata.identItem().getMultitonInst()).distTheor()));
+            if( m_subProgDistProp == NULL )
+              m_subProgDistProp = new MeasureDistProp_c( *this );
+            if( ai32_increment < 0 )
+              ai32_increment = -ai32_increment;
+            m_subProgDistProp->start(int32_t(getTracMoveInstance(m_procdata.identItem().getMultitonInst()).distTheor()), ai32_increment);
           }
-          isoaglib_assert( m_connection );
-          m_connection->sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
+          m_connection.sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
           b_validTriggerMethod = true;
         }
 #endif
@@ -256,49 +152,32 @@ namespace __IsoAgLib {
       case IsoAgLib::ProcData::MeasurementCommandOnChange: // change threshold proportional
         if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::OnChange ) ) {
           if ( ai32_increment == sci32_stopValOnChange ) {
-            stopMeasurement( ren_type );
+            delete m_subProgOnChange;
+            m_subProgOnChange = NULL;
           } else {
-            MeasureSubprog_c& subprog = addSubprog( ren_type, ai32_increment );
-            subprog.start( m_value );
+            if( m_subProgOnChange == NULL )
+              m_subProgOnChange = new MeasureOnChange_c( *this );
+            if( ai32_increment < 0 )
+              ai32_increment = -ai32_increment;
+            m_subProgOnChange->start( m_value, ai32_increment );
           }
-          isoaglib_assert( m_connection );
-          m_connection->sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
+          m_connection.sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
           b_validTriggerMethod = true;
         }
         break;
 
       case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold: // change threshold proportional
         if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::ThresholdLimit ) ) {
-          if ( ai32_increment == sci32_stopValThresholdMaximum ) {
-            stopMeasurement( ren_type );
-          } else {
-            MeasureSubprog_c& subprog = addSubprog( ren_type, ai32_increment );
-            subprog.start();
-            const ThresholdInfo_s s_thresholdInfo = {ren_type, subprog.increment()};
-            m_thresholdInfo.push_front( s_thresholdInfo );
-          }
-          // Note : do not send value when a threshold is set
+          m_maxThreshold = ai32_increment;
           b_validTriggerMethod = true;
         }
         break;
 
       case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold: // change threshold proportional
         if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::ThresholdLimit ) ) {
-          if ( ai32_increment == sci32_stopValThresholdMinimum ) {
-            stopMeasurement( ren_type );
-          } else {
-            MeasureSubprog_c& subprog = addSubprog( ren_type, ai32_increment );
-            subprog.start();
-            const ThresholdInfo_s s_thresholdInfo = {ren_type, subprog.increment()};
-            m_thresholdInfo.push_front( s_thresholdInfo );
-          }
-          // Note : do not send value when a threshold is set
+          m_minThreshold = ai32_increment;
           b_validTriggerMethod = true;
         }
-        break;
-
-      default:
-        isoaglib_assert( !"method should not be called with this command" );
         break;
     }
 
@@ -306,43 +185,18 @@ namespace __IsoAgLib {
   }
 
 
-  void MeasureProg_c::stopMeasurement( IsoAgLib::ProcData::MeasurementCommand_t ren_type ) {
-    for ( MeasureSubprogContainerIterator_t pc_iter = m_measureSubprog.begin(); pc_iter != m_measureSubprog.end(); ) {
-      if ( pc_iter->type() == ren_type )
-        pc_iter = m_measureSubprog.erase( pc_iter );
-      else
-        ++pc_iter;
-    }
-
-    // additionally cleanup corresponding threshold info
-    if ( ( IsoAgLib::ProcData::MeasurementCommandMinimumThreshold == ren_type ) || ( IsoAgLib::ProcData::MeasurementCommandMaximumThreshold == ren_type ) ) {
-      for ( ThresholdInfoContainerIterator_t iterThreshold = m_thresholdInfo.begin(); iterThreshold != m_thresholdInfo.end(); ) {
-        if ( iterThreshold->en_type == ren_type )
-          iterThreshold = m_thresholdInfo.erase( iterThreshold );
-        else
-          ++iterThreshold;
-      }
-    }
-
-    if( isRegistered() ) {
-        for (MeasureSubprogContainerIterator_t pc_iter = m_measureSubprog.begin(); pc_iter != m_measureSubprog.end(); ++pc_iter) {
-          if ( (pc_iter->type() == IsoAgLib::ProcData::MeasurementCommandTimeProp) || (pc_iter->type() == IsoAgLib::ProcData::MeasurementCommandDistProp) )
-          {
-            return;
-          }
-        }
-        getSchedulerInstance().deregisterTask(*this);
-    }
-  }
-
-
   void MeasureProg_c::stopAllMeasurements() {
-    m_measureSubprog.clear();
-    m_thresholdInfo.clear();
+    delete m_subProgDistProp;
+    m_subProgDistProp = NULL;
 
-    if( isRegistered() ) {
-        getSchedulerInstance().deregisterTask(*this);
-    }
+    delete m_subProgOnChange;
+    m_subProgOnChange = NULL;
+
+    delete m_subProgTimeProp;
+    m_subProgTimeProp = NULL;
+
+    m_minThreshold = sci32_stopValThresholdMinimum;
+    m_maxThreshold = sci32_stopValThresholdMaximum;
   }
 
 }

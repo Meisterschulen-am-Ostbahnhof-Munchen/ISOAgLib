@@ -10,12 +10,12 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+#include "measurement_c.h"
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
 
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measurement_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 
 namespace __IsoAgLib {
-
 
   Measurement_c::Measurement_c() : m_value( 0 ), m_measureProgs() {}
 
@@ -30,7 +30,7 @@ namespace __IsoAgLib {
 
   void Measurement_c::startMeasurement( TcClientConnection_c& ecu, IsoAgLib::ProcData::MeasurementCommand_t type, int32_t inc ) {
     for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {
-      if ( (*i)->GetConnection() == &ecu ) {
+      if ( &(*i)->connection() == &ecu ) {
         (*i)->startMeasurement( type, inc );
         break;
       }

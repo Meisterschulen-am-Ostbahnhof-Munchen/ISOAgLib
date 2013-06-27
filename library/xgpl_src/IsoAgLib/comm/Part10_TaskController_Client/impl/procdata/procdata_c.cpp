@@ -1,5 +1,5 @@
 /*
-  procdata_c.cpp
+  procdata_c.cpp: Class for handling Process Data
 
   (C) Copyright 2009 - 2013 by OSB AG and developing partners
 
@@ -11,11 +11,8 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "procdata_c.h"
-#include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h>
-
-#include <IsoAgLib/comm/impl/isobus_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
@@ -28,6 +25,8 @@ namespace __IsoAgLib {
     : m_ident( NULL )
     , m_dpd( NULL )
     , m_det( NULL )
+    , m_setpoint()
+    , m_measurement()
   {}
 
 

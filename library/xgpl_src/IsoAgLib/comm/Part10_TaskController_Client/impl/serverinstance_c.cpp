@@ -1,7 +1,7 @@
 /*
-  serverinstance_c.cpp:
+  serverinstance_c.cpp: Instance of a TC or DL
 
-  (C) Copyright 2013 by OSB AG and developing partners
+  (C) Copyright 2013 - 2013 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -10,8 +10,9 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "serverinstance_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
+
 
 namespace __IsoAgLib {
 
@@ -21,7 +22,8 @@ namespace __IsoAgLib {
     m_lastActiveTaskTC( false ),
     m_lastTcState( 0 ),
     m_lastTcStateReceivedTime( -1 ),
-    m_type( type )
+    m_type( type ),
+    m_connections()
   {}
 
 
@@ -41,13 +43,13 @@ namespace __IsoAgLib {
 
 
   void ServerInstance_c::removeConnection( TcClientConnection_c& c ) {
-    STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
-    while ( it != m_connections.end() ) {
+    for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
+         it != m_connections.end(); ++it )
+    {
       if( *it == &c ) {
         m_connections.erase( it );
         break;
       }
-      ++it;
     }
   }
 
@@ -57,21 +59,21 @@ namespace __IsoAgLib {
     m_lastTcState = status;
     m_lastTcStateReceivedTime = HAL::getTime();
 
-    const bool activeTask = status & 0x1;
+    const bool activeTask = status & 0x01;
 
     if ( activeTask != m_lastActiveTaskTC ) {
       if ( activeTask ) {
-        STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
-        while ( it != m_connections.end() ) {
-          ( *it )->eventTaskStarted();
-          ++it;
+        for( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
+             it != m_connections.end(); ++it )
+        {
+          ( *it )->eventTaskStarted(); 
         }
       } else {
-        STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
-        while ( it != m_connections.end() ) {
+        for( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
+             it != m_connections.end(); ++it )
+        {
           ( *it )->stopRunningMeasurement();
           ( *it )->eventTaskStopped();
-          ++it;
         }
       }
     }

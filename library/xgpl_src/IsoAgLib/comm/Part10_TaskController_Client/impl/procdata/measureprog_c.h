@@ -13,10 +13,7 @@
 #ifndef MEASUREPROG_C_H
 #define MEASUREPROG_C_H
 
-#include "measuresubprog_c.h"
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
 #include <list>
@@ -26,59 +23,46 @@ namespace __IsoAgLib {
 
   class ProcData_c;
   class TcClientConnection_c;
+  class MeasureOnChange_c;
+  class MeasureTimeProp_c;
+  class MeasureDistProp_c;
 
-  class MeasureProg_c : public SchedulerTask_c {
+  class MeasureProg_c{
     private:
-      struct ThresholdInfo_s {
-        IsoAgLib::ProcData::MeasurementCommand_t en_type;
-        int32_t i32_threshold;
-      };
-
-      typedef STL_NAMESPACE::list<ThresholdInfo_s> ThresholdInfoContainer_t;
-      typedef STL_NAMESPACE::list<ThresholdInfo_s>::iterator ThresholdInfoContainerIterator_t;
-      typedef STL_NAMESPACE::list<ThresholdInfo_s>::const_iterator ThresholdInfoContainerConstIterator_t;
-
-      typedef STL_NAMESPACE::list<MeasureSubprog_c> MeasureSubprogContainer_t;
-      typedef STL_NAMESPACE::list<MeasureSubprog_c>::iterator MeasureSubprogContainerIterator_t;
+      /** not copyable */
+      MeasureProg_c( const MeasureProg_c& );
+      MeasureProg_c& operator=( const MeasureProg_c& );
 
     public:
-      MeasureProg_c( TcClientConnection_c* c, ProcData_c& procdata);
-      ~MeasureProg_c();
+      MeasureProg_c( TcClientConnection_c& c, ProcData_c& procdata);
+      virtual ~MeasureProg_c();
 
       bool startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment );
       void stopAllMeasurements();
 
-      void processMeasurementMsg( ProcessPkg_c::CommandType_t command, int32_t pdValue );
+      void processMeasurementMsg( IsoAgLib::ProcData::MeasurementCommand_t command, int32_t pdValue );
       void processRequestMsg();
       void processSetMsg( int32_t pdValue );
 
-      void timeEvent();
+      bool minMaxLimitsPassed() const;
 
+      int32_t getValue() const { return m_value; }
       void setValue( int32_t ai32_val );
 
-      int32_t getValue() const {
-        return m_value;
-      }
-
-      TcClientConnection_c* const GetConnection() const { return m_connection; }
+      const TcClientConnection_c& connection() const { return m_connection; }
+      const ProcData_c &procData() const { return m_procdata; }
 
     private:
-      MeasureSubprog_c& addSubprog( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment );
-      bool minMaxLimitsPassed( int32_t value ) const;
-      void stopMeasurement( IsoAgLib::ProcData::MeasurementCommand_t ren_type );
-
-      ThresholdInfoContainer_t m_thresholdInfo;
-      MeasureSubprogContainer_t m_measureSubprog;
-
-      /** not copyable : copy constructor/operators only declared, not defined */
-      MeasureProg_c( const MeasureProg_c& );
-      MeasureProg_c& operator=( const MeasureProg_c& );
+      MeasureOnChange_c *m_subProgOnChange;
+      MeasureTimeProp_c *m_subProgTimeProp;
+      MeasureDistProp_c *m_subProgDistProp;
 
       int32_t m_value;
+      int32_t m_minThreshold;
+      int32_t m_maxThreshold;
 
-      TcClientConnection_c* m_connection;
+      TcClientConnection_c& m_connection;
       ProcData_c& m_procdata;
-
   };
 
 }

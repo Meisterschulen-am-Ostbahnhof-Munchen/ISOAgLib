@@ -24,11 +24,6 @@
 #include <list>
 #include <map>
 
-namespace IsoAgLib {
-  class iTcClient_c;
-  class iTcClientConnection_c;
-}
-
 #if defined(_MSC_VER)
 #pragma warning( push )
 #pragma warning( disable : 4355 )
@@ -36,7 +31,6 @@ namespace IsoAgLib {
 
 
 namespace __IsoAgLib {
-  class iIdentItem_c;
   class ProcData_c;
 
   class TcClient_c : public Subsystem_c {

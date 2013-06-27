@@ -11,8 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "measuresubprog_c.h"
-#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include <cstdlib>
+#include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 
@@ -23,42 +22,40 @@
 
 namespace __IsoAgLib {
 
-MeasureSubprog_c::MeasureSubprog_c( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment )
-  : mi32_lastVal( 0 )
-  , mi32_increment( ai32_increment )
-  , men_type( ren_type )
+
+
+/// ------------- MeasureDistProp_c -------------
+
+
+
+MeasureDistProp_c::MeasureDistProp_c( MeasureProg_c& measureProg )
+  : SchedulerTask_c( 50, false )
+  , m_measureProg( measureProg )
+  , mi32_lastVal( 0 )
+  , mi32_increment( 0 )
 {
+  getSchedulerInstance().registerTask( *this, 0 );
 }
 
 
-MeasureSubprog_c::MeasureSubprog_c( const MeasureSubprog_c& acrc_src )
-  : mi32_lastVal( acrc_src.mi32_lastVal )
-  , mi32_increment( acrc_src.mi32_increment )
-  , men_type( acrc_src.men_type )
+MeasureDistProp_c::~MeasureDistProp_c()
 {
+  getSchedulerInstance().deregisterTask( *this );
 }
 
 
 void
-MeasureSubprog_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
+MeasureDistProp_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
 {
-  // if wanted store given values (in both cases 0 is interpreted as not wanted)
-  if (ai32_increment != 0)
-    mi32_increment = ai32_increment;
-
-  if (ai32_lastVal != 0)
-    mi32_lastVal = ai32_lastVal;
+  mi32_increment = ai32_increment;
+  mi32_lastVal = ai32_lastVal;
 }
 
 
 bool
-MeasureSubprog_c::updateTrigger( int32_t ai32_val )
+MeasureDistProp_c::updateTrigger( int32_t ai32_val )
 {
-  if ( ( type() == IsoAgLib::ProcData::MeasurementCommandOnChange ) && ( mi32_increment == 0 ) )
-  { // special case: OnChange with value 0 means: SEND NO value; 1 meanse: send any change; ...
-    return false;
-  }
-  else if (__IsoAgLib::abs(ai32_val - mi32_lastVal) >= mi32_increment)
+  if (__IsoAgLib::abs(ai32_val - mi32_lastVal) >= mi32_increment)
   {
     mi32_lastVal = ai32_val;
     return true;
@@ -71,51 +68,172 @@ MeasureSubprog_c::updateTrigger( int32_t ai32_val )
 
 
 int32_t
-MeasureSubprog_c::nextTriggerTime( const ProcData_c& ac_processData, int32_t ai32_val )
+MeasureDistProp_c::nextTriggerTime( const ProcData_c& ac_processData, int32_t ai32_val )
 {
-  (void)ac_processData;
-  (void)ai32_val;
-  switch( type() )
-  {
-    case IsoAgLib::ProcData::MeasurementCommandTimeProp:
-      return (mi32_lastVal + mi32_increment - ai32_val);
-	  
-    case IsoAgLib::ProcData::MeasurementCommandDistProp:
-    {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-      const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;
-      const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance(ac_processData.identItem().getMultitonInst()).selectedSpeed());  // speed can be negative
+  const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;
+  const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance(ac_processData.identItem().getMultitonInst()).selectedSpeed());  // speed can be negative
 
-      if (0 == ci32_speed)
-        // speed == 0
-        return 500;
+  if (0 == ci32_speed)
+    // speed == 0
+    return 500;
 
-      if ( ! getTracMoveInstance(ac_processData.identItem().getMultitonInst()).isSelectedSpeedUsable() )
-      { // invalid speed, no tractor available
-        return 200;
-      }
+  if ( ! getTracMoveInstance(ac_processData.identItem().getMultitonInst()).isSelectedSpeedUsable() )
+  { // invalid speed, no tractor available
+    return 200;
+  }
 
-      if (ci32_restDistance < 0)
-        // should not happen if distance does only grow
-        return 100;
+  if (ci32_restDistance < 0)
+    // should not happen if distance does only grow
+    return 100;
 
-      int32_t i32_nextTriggerTime = (ci32_restDistance * 1000 ) / ci32_speed; // distance in mm, div speed in mm/sec, result in msec
+  int32_t i32_nextTriggerTime = (ci32_restDistance * 1000 ) / ci32_speed; // distance in mm, div speed in mm/sec, result in msec
 
-      if (i32_nextTriggerTime > 500)
-      {
-        i32_nextTriggerTime = 500;
-      }
+  if (i32_nextTriggerTime > 500)
+  {
+    i32_nextTriggerTime = 500;
+  }
 
-      return i32_nextTriggerTime;  // distance (in mm) div speed (in mm/sec) => time in msec
+  return i32_nextTriggerTime;  // distance (in mm) div speed (in mm/sec) => time in msec
 #else
-      (void)ac_processData;
-      return 200; // 200 msec
+  (void)ac_processData;
+  return 200; // 200 msec
 #endif
-    }
+}
 
-    default:
-      return 0;
+
+void MeasureDistProp_c::timeEvent() {
+#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+    const int32_t distTheor = getTracMoveInstance(m_measureProg.procData().identItem().getMultitonInst()).distTheor();
+    const bool sendProcMsg = updateTrigger( distTheor );
+#else
+    const int32_t distTheor = 0;
+    const bool sendProcMsg = false;
+#endif
+    const int32_t nextTimePeriod = nextTriggerTime( m_measureProg.procData(), distTheor );
+
+  if( nextTimePeriod > 0 )
+    setPeriod( nextTimePeriod, false );
+  else
+    setPeriod( 10, false ); // fallback, TODO later...
+
+  if( sendProcMsg && m_measureProg.minMaxLimitsPassed() )
+    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
+}
+
+
+
+/// ------------- MeasureTimeProp_c -------------
+
+
+
+MeasureTimeProp_c::MeasureTimeProp_c( MeasureProg_c& measureProg )
+  : SchedulerTask_c( 50, false )
+  , m_measureProg( measureProg )
+  , mi32_lastVal( 0 )
+  , mi32_increment( 0 )
+{
+  getSchedulerInstance().registerTask( *this, 0 );
+}
+
+
+MeasureTimeProp_c::~MeasureTimeProp_c()
+{
+  getSchedulerInstance().deregisterTask( *this );
+}
+
+
+void
+MeasureTimeProp_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
+{
+  mi32_increment = ai32_increment;
+  mi32_lastVal = ai32_lastVal;
+}
+
+
+bool
+MeasureTimeProp_c::updateTrigger( int32_t ai32_val )
+{
+  if (__IsoAgLib::abs(ai32_val - mi32_lastVal) >= mi32_increment)
+  {
+    mi32_lastVal = ai32_val;
+    return true;
+  }
+  else
+  {
+    return false;
   }
 }
+
+
+int32_t
+MeasureTimeProp_c::nextTriggerTime( const ProcData_c& ac_processData, int32_t ai32_val )
+{
+  return (mi32_lastVal + mi32_increment - ai32_val);
+}
+
+
+void MeasureTimeProp_c::timeEvent()
+{
+  const int32_t now = System_c::getTime();
+  const bool sendProcMsg = updateTrigger( now );
+  const int32_t nextTimePeriod = nextTriggerTime( m_measureProg.procData(), now );
+
+  if( nextTimePeriod > 0 )
+    setPeriod( nextTimePeriod, false );
+  else
+    setPeriod( 10, false ); // fallback, TODO later...
+
+  if( sendProcMsg && m_measureProg.minMaxLimitsPassed() )
+    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
+}
+
+
+
+/// ------------- MeasureOnChange_c -------------
+
+
+
+MeasureOnChange_c::MeasureOnChange_c( MeasureProg_c& measureProg )
+  : m_measureProg( measureProg )
+  , mi32_lastVal( 0 )
+  , mi32_increment( 0 )
+{
+}
+
+
+void
+MeasureOnChange_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
+{
+  mi32_increment = ai32_increment;
+  mi32_lastVal = ai32_lastVal;
+}
+
+
+bool
+MeasureOnChange_c::updateTrigger( int32_t ai32_val )
+{
+  if (__IsoAgLib::abs(ai32_val - mi32_lastVal) >= mi32_increment)
+  {
+    mi32_lastVal = ai32_val;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+
+void
+MeasureOnChange_c::setValue( int32_t value )
+{
+  const bool sendProcMsg = updateTrigger( value );
+
+  if( sendProcMsg && m_measureProg.minMaxLimitsPassed() )
+    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
+}
+
+
 
 }
