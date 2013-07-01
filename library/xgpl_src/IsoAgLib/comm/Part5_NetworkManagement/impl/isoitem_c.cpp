@@ -359,10 +359,13 @@ bool IsoItem_c::sendSaClaim()
 uint8_t IsoItem_c::calc_randomWait()
 { // perform some calculation from NAME
   uint16_t ui16_result = uint16_t(uint16_t(mc_isoName.outputUnion()->getUint8Data(0)) * uint16_t(mc_isoName.outputUnion()->getUint8Data(1)));
-  if ( ( (mc_isoName.outputUnion()->getUint8Data(2) +1) != 0 )
-    && ( System_c::getTime() != 0 )
-    && ( (System_c::getTime() / (mc_isoName.outputUnion()->getUint8Data(2) +1)) != 0 ) )
-    ui16_result = ui16_result / uint16_t(System_c::getTime() / (mc_isoName.outputUnion()->getUint8Data(2) +1));
+  const uint16_t data2part = mc_isoName.outputUnion()->getUint8Data(2) +1;
+  if( data2part != 0 )
+  {
+    const uint16_t divisor = uint16_t(System_c::getTime() / data2part);
+    if( divisor != 0 )
+      ui16_result = ui16_result / divisor;
+  }
   ui16_result = uint16_t( ui16_result + uint16_t(mc_isoName.outputUnion()->getUint8Data(3)) );
   ui16_result = uint16_t( ui16_result % uint16_t(mc_isoName.outputUnion()->getUint8Data(4) + 1) );
   ui16_result = uint16_t( ui16_result - mc_isoName.outputUnion()->getUint8Data(5) );
