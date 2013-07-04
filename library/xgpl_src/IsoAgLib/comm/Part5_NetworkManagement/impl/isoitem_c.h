@@ -104,7 +104,7 @@ public:
    */
   void giveUpAddressAndBroadcast() { changeAddressAndBroadcast (0xFE); }
 
-  IdentItem_c* getIdentItem() { return mpc_identItem; }
+  IdentItem_c* getIdentItem() const { return mpc_identItem; }
 
   IsoAgLib::iIsoItem_c& toIisoItem_c();
   const IsoAgLib::iIsoItem_c& toConstIisoItem_c() const;
@@ -112,7 +112,7 @@ public:
 #ifdef USE_WORKING_SET
   // @todo move into own subclass????
 public:
-  int32_t announceTimeStamp() { return m_wsRemoteAnnounceTime; }
+  int32_t announceTimeStamp() const { return m_wsRemoteAnnounceTime; }
 
   /** (Re-)Start sending the Working-Set Announce sequence
    * @return time-announce-started (=announce_key). You need this key to check for "isAnnounced(announce_key)".
@@ -127,9 +127,9 @@ public:
   void setLocalMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames);
 
   /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
-  bool isWsAnnounced (int32_t ai32_timeAnnounceStarted);
+  bool isWsAnnounced const (int32_t ai32_timeAnnounceStarted);
 
-  bool isWsAnnouncing() { return (m_wsLocalSlavesToClaimAddress != 0); }
+  bool isWsAnnouncing() const { return (m_wsLocalSlavesToClaimAddress != 0); }
 
   // Remote WS-handling
 public:

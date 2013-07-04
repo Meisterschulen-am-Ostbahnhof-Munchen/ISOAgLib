@@ -488,7 +488,7 @@ IsoItem_c::startWsAnnounce()
 /// Only check for valid announce keys (i.e. ai32_timeAnnounceStarted).
 /// Init your announce key to -1, then you're always fine with calling this function!
 bool
-IsoItem_c::isWsAnnounced (int32_t ai32_timeAnnounceStarted)
+IsoItem_c::isWsAnnounced const (int32_t ai32_timeAnnounceStarted)
 {
   if (ai32_timeAnnounceStarted < 0)
     return false;
