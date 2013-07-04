@@ -294,10 +294,13 @@ private:
 
 private:
   friend class VtClient_c;
+  friend class ObjectPoolStreamer_c;
 
   void timeEventSearchForNewVt();
 
-  uint32_t fitTerminalWrapper( const vtObject_c& object );
+  bool dontUpload( const vtObject_c& object ) const;
+
+  uint32_t fitTerminalWrapper( const vtObject_c& object ) const;
 
   //! @return true for successful assignment, false if SA couldn't be found.
   bool storeAuxAssignment( const CanPkgExt_c& arc_data );
@@ -321,7 +324,7 @@ private:
   void checkPoolPhaseRunningMultiSend(); // check for abort/retry when upload a partial object pool
 
   // Send out Get Memory command and move on state engine to expect a Get Memory Response
-  void sendGetMemory();
+  void sendGetMemory( bool onlyRequestVersion );
 
   void initObjectPoolUploadingPhases (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects=NULL, uint16_t aui16_numOfUserPoolUpdateObjects=0);
   /** sets all states to successfull uploading and call the hook function! */
@@ -452,6 +455,20 @@ private:
 
   SchedulerTaskProxy_c m_schedulerTaskProxy;
 };
+
+
+inline bool
+VtClientConnection_c::dontUpload( const vtObject_c& object ) const
+{
+  return( object.isOmittedFromUpload()
+       || ((m_uploadingVersion == 2) && (object.getObjectType() >= VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2) && (object.getObjectType() <= VT_OBJECT_TYPE_AUXILIARY_POINTER) ) );
+}
+
+inline uint32_t
+VtClientConnection_c::fitTerminalWrapper( const vtObject_c& object ) const
+{
+  return dontUpload( object ) ? 0 : object.fitTerminal();
+}
 
 
 inline bool VtClientConnection_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)

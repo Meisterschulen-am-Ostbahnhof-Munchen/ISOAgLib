@@ -14,6 +14,7 @@
 #include "objectpoolstreamer_c.h"
 
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.h>
 #include "vtobject_c.h"
 
 
@@ -38,7 +39,7 @@ ObjectPoolStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t by
     {
       vtObject_c &object = *((vtObject_c*)(*mpc_iterObjects));
       
-      const uint16_t bytes2Buffer = object.isOmittedFromUpload()
+      const uint16_t bytes2Buffer = mrc_vtCSCbackRef.dontUpload( object )
         ? 0
         : object.stream( marr_uploadBuffer+m_uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-m_uploadBufferFilled, mui32_objectStreamPosition );
 

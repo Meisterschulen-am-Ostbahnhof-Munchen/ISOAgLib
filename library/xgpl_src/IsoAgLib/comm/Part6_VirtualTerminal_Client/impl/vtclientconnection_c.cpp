@@ -675,8 +675,7 @@ bool VtClientConnection_c::isVersionFound(Stream_c& arc_stream) const
 void
 VtClientConnection_c::startUploadVersion()
 {
-  initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially);
-  sendGetMemory();
+  sendGetMemory( true );
 }
 
 
@@ -1412,26 +1411,35 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
       MACRO_setStateDependantOnError (3)
       break;
     case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
-      mpc_vtServerInstance->setVersion( arc_data );
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForMemoryResponse))
       {
-        // Special case when adapting a v3 pool to upload to v2 VTs, omitting all the new aux...
-        m_uploadingVersion = (mpc_vtServerInstance->getVtIsoVersion() == 2) && (mrc_pool.getVersion() == 3)
-                               ? 2 : mrc_pool.getVersion();
-
-        // check for matching VT version and object pool version
-        if (mpc_vtServerInstance->getVtIsoVersion() < m_uploadingVersion)
+        if( m_uploadingVersion == 0 )
         {
-          vtOutOfMemory();
-        }
-        else if (arc_data.getUint8Data( 2 ) == 0)
-        { // start uploading with all partial OPs (as init'd before Get Memory!), there MAY BE enough memory
-          men_uploadPoolState = UploadPoolUploading;
-        //men_uploadPhaseAutomatic [already initialized in "initObjectPoolUploadingPhases" to the correct starting phase]
-          startCurrentUploadPhase();
+          mpc_vtServerInstance->setVersion( arc_data );
+ 
+          // Special case when adapting a v3 pool to upload to v2 VTs, omitting all the new aux...
+          m_uploadingVersion = (mpc_vtServerInstance->getVtIsoVersion() == 2) && (mrc_pool.getVersion() == 3)
+                                 ? 2 : mrc_pool.getVersion();
+
+          initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially);
+          sendGetMemory( false );
         }
         else
-          vtOutOfMemory();
+        {
+          // check for matching VT version and object pool version
+          if (mpc_vtServerInstance->getVtIsoVersion() < m_uploadingVersion)
+          {
+            vtOutOfMemory();
+          }
+          else if (arc_data.getUint8Data( 2 ) == 0)
+          { // start uploading with all partial OPs (as init'd before Get Memory!), there MAY BE enough memory
+            men_uploadPoolState = UploadPoolUploading;
+          //men_uploadPhaseAutomatic [already initialized in "initObjectPoolUploadingPhases" to the correct starting phase]
+            startCurrentUploadPhase();
+          }
+          else
+            vtOutOfMemory();
+        }
       }
       break;
     case 0xC2: // Command: "Get Technical Data", parameter "Get Number Of Soft Keys Response"
@@ -2404,6 +2412,7 @@ VtClientConnection_c::doStart()
   men_uploadType = UploadPool;          // Start Pool Uploading sequence!!
   men_uploadPoolState = UploadPoolInit; // with "UploadInit
   mi8_vtLanguage = -2; // (re-)query LANGUAGE_PGN
+  m_uploadingVersion = 0; // re-query version (needed for pool adaptation, e.g. omit Aux2 for v2 VTs)
 }
 
 
@@ -2503,20 +2512,12 @@ VtClientConnection_c::isVtActive() const
 }
 
 
-// helper-function for "initObjectPoolUploadingPhases" below
-uint32_t
-VtClientConnection_c::fitTerminalWrapper( const vtObject_c& object )
-{
-  return( object.isOmittedFromUpload()
-       || ((m_uploadingVersion == 2) && (object.getObjectType() >= VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2) && (object.getObjectType() <= VT_OBJECT_TYPE_AUXILIARY_POINTER) ) )
-    ? 0
-    : object.fitTerminal();
-}
-
 
 void
 VtClientConnection_c::initObjectPoolUploadingPhases (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, uint16_t aui16_numOfUserPoolUpdateObjects)
 {
+  isoaglib_assert( m_uploadingVersion != 0 );
+
   if (ren_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { // Activate User triggered Partial Pool Update
     // check params first
@@ -2580,12 +2581,15 @@ VtClientConnection_c::initObjectPoolUploadingPhases (uploadPoolType_t ren_upload
 
 
 void
-VtClientConnection_c::sendGetMemory()
+VtClientConnection_c::sendGetMemory( bool onlyRequestVersion )
 { // Issue GetMemory-Command (don't care if several 0x11s are counted from each partial object pool...)
   uint32_t ui32_size = 0;
-  for (int i=0; i <= UploadPhaseLAST; ++i)
+  if( !onlyRequestVersion )
   {
-    ui32_size += ms_uploadPhasesAutomatic[i].ui32_size;
+    for (int i=0; i <= UploadPhaseLAST; ++i)
+    {
+      ui32_size += ms_uploadPhasesAutomatic[i].ui32_size;
+    }
   }
 
   // Command: Get Technical Data --- Parameter: Get Memory Size
