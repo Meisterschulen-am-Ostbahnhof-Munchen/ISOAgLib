@@ -14,7 +14,7 @@
 #define VTCLIENTCONNECTION_H
 
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobject_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
