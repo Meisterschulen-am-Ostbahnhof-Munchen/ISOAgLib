@@ -83,7 +83,8 @@ Diagnostics:
 
 TC-Client:
  - Debug: Detect if measure-value was not yet set, but sent to TC already
- - Redesign: 
+ - Redesign: DDOP is not defined in XML anymore but in code. This allows more dynamic adaptation of the DDOP for
+             different servers and also will help with language/unit changes in some later version of ISOAgLib.
 
 proc2iso: 
  - Removed, because it is now obsolete with the new dynamic TC-Client approach.
