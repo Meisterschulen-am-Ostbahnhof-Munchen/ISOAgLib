@@ -127,7 +127,7 @@ public:
   void setLocalMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames);
 
   /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
-  bool isWsAnnounced const (int32_t ai32_timeAnnounceStarted);
+  bool isWsAnnounced (int32_t ai32_timeAnnounceStarted) const;
 
   bool isWsAnnouncing() const { return (m_wsLocalSlavesToClaimAddress != 0); }
 
