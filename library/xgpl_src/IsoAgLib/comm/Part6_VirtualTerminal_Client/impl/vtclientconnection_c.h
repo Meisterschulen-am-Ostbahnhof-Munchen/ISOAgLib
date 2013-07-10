@@ -91,6 +91,7 @@ public:
 
   enum uploadPoolState_t {
     UploadPoolInit,
+    UploadPoolWaitingForVtVersionResponse,
     UploadPoolWaitingForGetVersionsResponse,
     UploadPoolWaitingForLoadVersionResponse,
     UploadPoolWaitingForMemoryResponse,
@@ -346,6 +347,7 @@ private:
   bool isVersionFound(Stream_c& arc_stream) const;
   void startUploadVersion();
   void startLoadVersion();
+  void startGetVersions();
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */
