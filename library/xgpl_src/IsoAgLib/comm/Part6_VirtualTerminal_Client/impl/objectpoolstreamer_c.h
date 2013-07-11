@@ -25,7 +25,7 @@ namespace IsoAgLib {
 namespace __IsoAgLib {
 
 
-class VtClientConnection_c;
+class UploadPoolState_c;
 
 
 /** helper class for low level streaming.
@@ -36,8 +36,8 @@ class VtClientConnection_c;
 class ObjectPoolStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
 public:
-  ObjectPoolStreamer_c (VtClientConnection_c& arc_vtCSCbackRef)
-    : mrc_vtCSCbackRef (arc_vtCSCbackRef)
+  ObjectPoolStreamer_c( UploadPoolState_c& uploadPoolState )
+    : m_uploadPoolState( uploadPoolState )
   {}
 
   virtual ~ObjectPoolStreamer_c() {}
@@ -61,7 +61,8 @@ public:
   IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjects;
   IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjectsStored;
 
-  VtClientConnection_c& mrc_vtCSCbackRef;
+  UploadPoolState_c& m_uploadPoolState;
+
 #define ISO_VT_UPLOAD_BUFFER_SIZE 128
   uint8_t marr_uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
   uint8_t m_uploadBufferFilled;

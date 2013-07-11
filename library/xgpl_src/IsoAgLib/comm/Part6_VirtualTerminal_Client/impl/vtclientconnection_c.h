@@ -13,7 +13,6 @@
 #ifndef VTCLIENTCONNECTION_H
 #define VTCLIENTCONNECTION_H
 
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobject_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
@@ -23,8 +22,8 @@
 #include "vtobjectauxiliaryinput2_c.h"
 #include "aux2inputs_c.h"
 #include "aux2functions_c.h"
-#include "objectpoolstreamer_c.h"
 #include "sendupload_c.h"
+#include "uploadpoolstate_c.h"
 
 #define USE_LIST_FOR_FIFO
 
@@ -57,59 +56,16 @@ private:
     uint16_t mui16_functionUid;
   };
 
-  struct UploadPhase_s
-  {
-    UploadPhase_s() : pc_streamer (NULL), ui32_size (0) {}
-    UploadPhase_s (IsoAgLib::iMultiSendStreamer_c* apc_streamer, uint32_t aui32_size) : pc_streamer (apc_streamer), ui32_size(aui32_size) {}
-
-    IsoAgLib::iMultiSendStreamer_c* pc_streamer;
-    uint32_t ui32_size;
-  };
-
-  enum UploadPhase_t {
-    UploadPhaseFIRSTfix = 0,
-    UploadPhaseFIRSTlang = 1,
-    UploadPhaseIVtObjectsFix = 0,
-    UploadPhaseIVtObjectsLang = 1,
-    UploadPhaseAppSpecificFix = 2,
-    UploadPhaseAppSpecificLang = 3,
-    UploadPhaseLAST = 3
-  };
-
 public:
-  enum objectPoolState_t {
-    OPInitial,
-    OPUploadedSuccessfully,
-    OPCannotBeUploaded
-  };
-
   enum uploadType_t {
     UploadIdle,
     UploadPool,
     UploadCommand
   };
 
-  enum uploadPoolState_t {
-    UploadPoolInit,
-    UploadPoolWaitingForVtVersionResponse,
-    UploadPoolWaitingForGetVersionsResponse,
-    UploadPoolWaitingForLoadVersionResponse,
-    UploadPoolWaitingForMemoryResponse,
-    UploadPoolUploading,
-    UploadPoolWaitingForEOOResponse,
-    UploadPoolWaitingForStoreVersionResponse,
-    UploadPoolFailed
-  }; /* completely uploaded is now detected by "OPUploadedSuccessfully" */
-
   enum uploadCommandState_t {
     UploadCommandWithAwaitingResponse,
     UploadCommandPartialPoolUpdate // for e.g. user/language reasons
-  };
-
-  enum uploadPoolType_t {
-    UploadPoolTypeCompleteInitially,
-    UploadPoolTypeLanguageUpdate,
-    UploadPoolTypeUserPoolUpdate
   };
 
   enum vtClientDisplayState_t {
@@ -121,7 +77,7 @@ public:
   // UploadCommandFailed is obsolete, as we're not retrying and error-responses any more.
   // UploadCommandResponseless is used for cmd:0x11 Object Pool Transfer, as there's NO response sent from the VT and it's a "special" upload...
 
-  virtual void reactOnAbort (Stream_c& apc_stream);
+  virtual void reactOnAbort (Stream_c& apc_stream) { /* no (more) on-the-fly parsing */ }
   virtual bool reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen);
   virtual bool processPartStreamDataChunk (Stream_c& apc_stream, bool ab_isFirstChunk, bool ab_isLastChunk);
 
@@ -144,9 +100,6 @@ public:
   IsoAgLib::iVtClientConnection_c* toInterfacePointer();
 
   void timeEvent();
-  void timeEventUploadPoolTimeoutCheck();
-  void timeEventPrePoolUpload();
-  bool timeEventPoolUpload();
 
   void processMsgVtToEcu( const CanPkgExt_c& c_data );
   void processMsgAck( const CanPkgExt_c& arc_data );
@@ -263,7 +216,7 @@ public:
   vtClientDisplayState_t getVtDisplayState() const { return men_displayState; }
 
   IsoAgLib::iVtClientObjectPool_c& getPool() const {
-    return mrc_pool;
+    return m_uploadPoolState.getPool();
   }
   IsoAgLib::iVtClientDataStorage_c& getVtClientDataStorage() const {
     return m_dataStorageHandler;
@@ -271,37 +224,27 @@ public:
 
   int getMultitonInst() { return mrc_wsMasterIdentItem.getMultitonInst(); }
 
+  void sendMessage( uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7 );
+  void notifyOnFinishedNonUserPoolUpload( bool initialUpload );
+
+  void startUploadCommand();
+  void finishUploadCommand();
+
 private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c 
   {
   public:
-    typedef VtClientConnection_c Owner_t;
-
-    MultiSendEventHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
-    ~MultiSendEventHandlerProxy_c() {}
-
+    MultiSendEventHandlerProxy_c(VtClientConnection_c &owner) : m_owner( owner ) {}
   private:
-    void reactOnStateChange(const SendStream_c& sendStream)
-      { mrt_owner.reactOnStateChange(sendStream); }
-
-    MultiSendEventHandlerProxy_c(MultiSendEventHandlerProxy_c const &); // make class non-copyable
-    MultiSendEventHandlerProxy_c &operator=(MultiSendEventHandlerProxy_c const &); // make class non-copyable
-
-    Owner_t &mrt_owner;
-  }; // MultiSendEventHandlerProxy_c
-  MultiSendEventHandlerProxy_c mt_multiSendEventHandler;
+    void reactOnStateChange(const SendStream_c& sendStream) { m_owner.reactOnStateChange( sendStream ); }
+    VtClientConnection_c &m_owner;
+  } mt_multiSendEventHandler;
 
   void reactOnStateChange(const SendStream_c& sendStream);
 
 private:
-  friend class VtClient_c;
-  friend class ObjectPoolStreamer_c;
-
   void timeEventSearchForNewVt();
-
-  bool dontUpload( const vtObject_c& object ) const;
-
-  uint32_t fitTerminalWrapper( const vtObject_c& object ) const;
+  void timeEventCommandTimeoutCheck();
 
   //! @return true for successful assignment, false if SA couldn't be found.
   bool storeAuxAssignment( const CanPkgExt_c& arc_data );
@@ -319,40 +262,14 @@ private:
   void fakeVtOffStop() { mi32_fakeVtOffUntil = -1; }
   void checkAndHandleVtStateChange();
 
-  void startCurrentUploadPhase();
-  void indicateUploadPhaseCompletion();
-  void indicateUploadCompletion(); // all phases completed.
-  void checkPoolPhaseRunningMultiSend(); // check for abort/retry when upload a partial object pool
-
-  // Send out Get Memory command and move on state engine to expect a Get Memory Response
-  void sendGetMemory( bool onlyRequestVersion );
-
-  void initObjectPoolUploadingPhases (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects=NULL, uint16_t aui16_numOfUserPoolUpdateObjects=0);
-  /** sets all states to successfull uploading and call the hook function! */
-  void finalizeUploading();
-
-  bool startUploadCommand();
-  void finishUploadCommand();
-  /** sets state to "OPCannotUpload"... */
-  void vtOutOfMemory();
-  void setObjectPoolUploadingLanguage();
-
-  void sendMessage( uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7 );
-
   /** set display state of vt client (from VT Status Message) */
   void setVtDisplayState( uint8_t ui8_sa );
 
   bool isPreferredVTTimeOut() const;
 
-  bool isVersionFound(Stream_c& arc_stream) const;
-  void startUploadVersion();
-  void startLoadVersion();
-  void startGetVersions();
-
 private: // attributes
   /** static instance to store temporarily before push_back into list */
   static SendUpload_c msc_tempSendUpload;
-  IsoAgLib::iVtClientObjectPool_c& mrc_pool;
 
   bool mb_vtAliveCurrent;
   bool mb_checkSameCommand;
@@ -361,49 +278,12 @@ private: // attributes
   VtClient_c& mrc_vtClient; // back ref.
   VtServerInstance_c* mpc_vtServerInstance;
 
-  bool mb_usingVersionLabel; // if NOT using version label, "marrp7c_versionLabel" has random values!
-  char marrp7c_versionLabel[ 7 ];
-
-  /// General Object-Pool state (empty, loaded, etc.)
-  objectPoolState_t men_objectPoolState;
-
-  /// the following languages are
-  /// -2: need to lookup language from VtServerInstance's language, if available
-  /// -1: not supported language (==> so using default language for upload, but important to differentiate for the application!)
-  ///  0: default language (first in \<workingset\>-object)
-  ///  1: second language
-  ///  2: third language
-  int8_t mi8_vtLanguage; // always valid, as we're waiting for a VT's language first before starting anything...
-
   /** Upload-State & Variables */
   uploadType_t men_uploadType;
   uploadCommandState_t men_uploadCommandState; // state only used if men_uploadType == "UploadCommand"
-  uploadPoolState_t men_uploadPoolState;       // state only used if men_uploadType == "UploadPool"
-  uploadPoolType_t men_uploadPoolType;
-
-  UploadPhase_s ms_uploadPhasesAutomatic [UploadPhaseLAST+1]; // automatic pool upload with all needed parts (lang indep, lang dep)
-  unsigned int mui_uploadPhaseAutomatic; // not of type "UploadPhase_t",
-  // because we're doing arithmetics with it and can go out-of-bounds,
-  // which results in undefined behavior (mostly only in -O2, so beware)
-
-  UploadPhase_s ms_uploadPhaseUser; // user triggered upload phase...
-  IsoAgLib::iVtObject_c** mppc_uploadPhaseUserObjects;
-
-public: // for iVtObjectStreamer - quick hack due to no multiple-inheritance (IAR-compiler)
-  int8_t mi8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
-  int8_t mi8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"
-
-  uint16_t mui16_objectPoolUploadingLanguageCode;
-  uint16_t mui16_objectPoolUploadedLanguageCode;
 
 private:
-  uint32_t mui32_uploadTimestamp;
-  uint32_t mui32_uploadTimeout;
-
   uint8_t mui8_commandParameter; // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
-  uint8_t mui8_uploadError;
-
-  SendStream_c::sendSuccess_t men_sendSuccess;
 
   uint16_t mui16_inputStringId;
   uint8_t mui8_inputStringLength;
@@ -411,7 +291,6 @@ private:
 
   bool mb_receiveFilterCreated;
 
-  uint8_t m_uploadingVersion; // if uploading a v3 client to a v2 VT (without Aux2), uploadingVersion will be v2
   uint8_t mui8_clientId;
 
   vtClientDisplayState_t men_displayState;
@@ -439,7 +318,10 @@ private:
   Aux2Inputs_c m_aux2Inputs;
   Aux2Functions_c m_aux2Functions;
 
-  ObjectPoolStreamer_c mc_iVtObjectStreamer;
+  UploadPoolState_c m_uploadPoolState;
+
+  int32_t mi32_commandTimestamp;
+  int32_t mi32_commandTimeout;
 
   int32_t mi32_timeWsAnnounceKey;
   int32_t mi32_fakeVtOffUntil;
@@ -457,20 +339,6 @@ private:
 
   SchedulerTaskProxy_c m_schedulerTaskProxy;
 };
-
-
-inline bool
-VtClientConnection_c::dontUpload( const vtObject_c& object ) const
-{
-  return( object.isOmittedFromUpload()
-       || ((m_uploadingVersion == 2) && (object.getObjectType() >= VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2) && (object.getObjectType() <= VT_OBJECT_TYPE_AUXILIARY_POINTER) ) );
-}
-
-inline uint32_t
-VtClientConnection_c::fitTerminalWrapper( const vtObject_c& object ) const
-{
-  return dontUpload( object ) ? 0 : object.fitTerminal();
-}
 
 
 inline bool VtClientConnection_c::sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)

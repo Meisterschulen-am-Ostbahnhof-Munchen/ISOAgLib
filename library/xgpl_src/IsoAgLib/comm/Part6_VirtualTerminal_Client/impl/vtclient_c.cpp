@@ -144,13 +144,6 @@ VtClient_c::initAndRegisterObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib
   VtClientConnection_c* pc_vtCSC = new VtClientConnection_c(
     rc_identItem, *this, arc_pool, apc_versionLabel, apc_claimDataStorage, ui8_index, aen_mode );
 
-  if (pc_vtCSC->men_objectPoolState == VtClientConnection_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
-  { // most likely due to wrong version label
-    /// Error already registered in the VtClientConnection_c(..) constructor!
-    delete pc_vtCSC;
-    return NULL;
-  }
-
   // add new instance to vector
   if (ui8_index < m_vtConnections.size())
     m_vtConnections[ui8_index] = pc_vtCSC;

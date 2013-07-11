@@ -22,6 +22,8 @@ library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.cp
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/impl/fsclientservercommunication_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/aux2inputs_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/uploadpoolstate_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/uploadpoolstate_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliarypointer_c.h -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.inc -text
