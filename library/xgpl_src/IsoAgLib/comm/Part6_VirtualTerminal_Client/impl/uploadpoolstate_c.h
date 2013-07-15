@@ -69,7 +69,7 @@ namespace __IsoAgLib
     };
 
   public: // functions
-    UploadPoolState_c::UploadPoolState_c(
+    UploadPoolState_c(
       VtClientConnection_c &,
       IsoAgLib::iVtClientObjectPool_c& ,
       const char *versionLabel,
