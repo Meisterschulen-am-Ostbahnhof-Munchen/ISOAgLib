@@ -431,7 +431,10 @@ namespace HAL {
   }
 
 
-  void defineRxFilter( unsigned channel, bool, uint32_t id, uint32_t mask ) {
+  void defineRxFilter( unsigned channel, bool xtd, uint32_t id, uint32_t mask ) {
+
+    id |= xtd ? CAN_EFF_FLAG : 0; 
+    mask |= CAN_EFF_FLAG;
 
     struct can_filter f;
     f.can_id = id;
@@ -441,7 +444,11 @@ namespace HAL {
   }
 
 
-  void deleteRxFilter( unsigned channel, bool, uint32_t id, uint32_t mask ) {
+  void deleteRxFilter( unsigned channel, bool xtd, uint32_t id, uint32_t mask ) {
+
+    id |= xtd ? CAN_EFF_FLAG : 0; 
+    mask |= CAN_EFF_FLAG;
+
     for( std::list<struct can_filter>::iterator i = __HAL::g_bus[channel].m_filter.begin(); i != __HAL::g_bus[channel].m_filter.end(); ++i ) {
       if( i->can_id == id && i->can_mask == mask ) {
         __HAL::g_bus[channel].m_filter.erase( i );
