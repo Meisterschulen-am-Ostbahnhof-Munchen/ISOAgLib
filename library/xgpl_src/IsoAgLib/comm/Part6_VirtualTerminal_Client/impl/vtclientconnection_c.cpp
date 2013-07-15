@@ -211,7 +211,8 @@ VtClientConnection_c::processPartStreamDataChunk (Stream_c& arc_stream, bool ab_
 
     case 0x24:
       // Command: "Auxiliary Control", parameter "Auxiliary Assignment type 2 response"
-      if (m_uploadingVersion == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
+      if( ( m_uploadingVersion == 0 ) ||
+          ( m_uploadingVersion == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 ) )
         break;
 
       if (ab_isLastChunk)
@@ -429,6 +430,7 @@ VtClientConnection_c::timeEventUploadPoolTimeoutCheck()
     {
     case UploadPoolWaitingForLoadVersionResponse:
     case UploadPoolWaitingForMemoryResponse:
+    case UploadPoolWaitingForVtVersionResponse:
     case UploadPoolWaitingForEOOResponse:
       men_uploadPoolState = UploadPoolFailed;
       mui32_uploadTimestamp = HAL::getTime();
@@ -613,29 +615,8 @@ VtClientConnection_c::timeEventPoolUpload()
   if (((men_uploadPoolState == UploadPoolFailed) && (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp)))
     || (men_uploadPoolState == UploadPoolInit))
   {
-    // Take the version that's been set up NOW and try to load/upload it.
-    setObjectPoolUploadingLanguage();
-    // Do we have to try to "get Versions / Load Version" or go directly to uploading?
-    if (mb_usingVersionLabel)
-    {
-#ifndef NO_GET_VERSIONS
-      // GetVersions first!
-      sendMessage( 223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
-
-      men_uploadPoolState = UploadPoolWaitingForGetVersionsResponse;
-      mui32_uploadTimeout = DEF_TimeOut_GetVersions;
-      mui32_uploadTimestamp = HAL::getTime();
-#else
-      startLoadVersion();
-#endif
-    }
-    else
-    {
-#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
-      INTERNAL_DEBUG_DEVICE << "No Version Label : start uploading" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-      startUploadVersion();
-    }
+    // 1. Step
+    sendGetMemory( true );
   }
   return false;
 }
@@ -675,7 +656,18 @@ bool VtClientConnection_c::isVersionFound(Stream_c& arc_stream) const
 void
 VtClientConnection_c::startUploadVersion()
 {
-  sendGetMemory( true );
+  sendGetMemory( false );
+}
+
+
+void
+VtClientConnection_c::startGetVersions()
+{
+  sendMessage( 223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
+
+  men_uploadPoolState = UploadPoolWaitingForGetVersionsResponse;
+  mui32_uploadTimeout = DEF_TimeOut_GetVersions;
+  mui32_uploadTimestamp = HAL::getTime();
 }
 
 
@@ -1030,13 +1022,11 @@ VtClientConnection_c::notifyOnVtStatusMessage()
   setVtDisplayState( getVtServerInst().getVtState()->saOfActiveWorkingSetMaster );
 
   // only do Aux if we already determined which aux we're uploading...
-  if( m_uploadingVersion != 0 )
+  if( ( m_uploadingVersion != 0 ) &&
+      ( m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 ) )
   {
-    if (m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
-    {
-      m_aux2Inputs.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
-      m_aux2Functions.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
-    }
+    m_aux2Inputs.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
+    m_aux2Functions.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
   }
 }
 
@@ -1249,7 +1239,10 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
     /***************************************/
     /*** ### AUX Assignment Messages ### ***/
     case 0x20:
-    { // Command: "Auxiliary Control", parameter "Auxiliary Assignment"
+    { // Command: "Auxiliary Control type 1", parameter "Auxiliary Assignment"
+      if( m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 )
+        break;
+
       /** @todo SOON-258 If we can't assign because WE don't know this SA, should we anyway answer the assignment?
        * for now we don't answer if we can't take the assignment - VTs have to handle this anyway...
        * Update on 22.11.2007: Should be okay so far, as written, VT has to handle, and we can't NACK the assignment! */
@@ -1272,7 +1265,8 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
 
     case 0x25:
     { // Command: "Auxiliary Control type 2", parameter "input status enable"
-      if (m_uploadingVersion == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
+      if( ( m_uploadingVersion == 0 ) || 
+          ( m_uploadingVersion == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 ) )
         break;
 
       const uint16_t ui16_inputObjId = (arc_data.getUint8Data( 1 ) | (arc_data.getUint8Data( 2 ) << 8));
@@ -1410,38 +1404,62 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
     case 0xBD: // Command: "Command", parameter "Lock/Unlock Mask Response"
       MACRO_setStateDependantOnError (3)
       break;
-    case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
-      if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForMemoryResponse))
-      {
-        if( m_uploadingVersion == 0 )
-        {
-          mpc_vtServerInstance->setVersion( arc_data );
- 
-          // Special case when adapting a v3 pool to upload to v2 VTs, omitting all the new aux...
-          m_uploadingVersion = (mpc_vtServerInstance->getVtIsoVersion() == 2) && (mrc_pool.getVersion() == 3)
-                                 ? 2 : mrc_pool.getVersion();
 
-          initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially);
-          sendGetMemory( false );
-        }
+    case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
+      if( men_uploadType != UploadPool )
+        break;
+      
+      // This command is used for both: Getting VT's version and checking for available memory
+      switch( men_uploadPoolState )
+      {
+      case UploadPoolWaitingForVtVersionResponse:
+        mpc_vtServerInstance->setVersion( arc_data );
+
+        // Special case when adapting a v3 pool to upload to v2 VTs, omitting all the new aux...
+        m_uploadingVersion = (mpc_vtServerInstance->getVtIsoVersion() == 2) && (mrc_pool.getVersion() == 3)
+                               ? 2 : mrc_pool.getVersion();
+
+        // check for matching VT version and object pool version
+        if (mpc_vtServerInstance->getVtIsoVersion() < m_uploadingVersion)
+          vtOutOfMemory();
         else
         {
-          // check for matching VT version and object pool version
-          if (mpc_vtServerInstance->getVtIsoVersion() < m_uploadingVersion)
+          initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially);
+
+          // Take the language-version that's been set up NOW and try to load/upload it.
+          setObjectPoolUploadingLanguage();
+          // Do we have to try to "get Versions / Load Version" or go directly to uploading?
+          if (mb_usingVersionLabel)
           {
-            vtOutOfMemory();
-          }
-          else if (arc_data.getUint8Data( 2 ) == 0)
-          { // start uploading with all partial OPs (as init'd before Get Memory!), there MAY BE enough memory
-            men_uploadPoolState = UploadPoolUploading;
-          //men_uploadPhaseAutomatic [already initialized in "initObjectPoolUploadingPhases" to the correct starting phase]
-            startCurrentUploadPhase();
+#ifndef NO_GET_VERSIONS
+            startGetVersions();
+#else
+            startLoadVersion();
+#endif
           }
           else
-            vtOutOfMemory();
+          {
+#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
+            INTERNAL_DEBUG_DEVICE << "No Version Label : start uploading" << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+            startUploadVersion();
+          }
         }
+        break;
+
+      case UploadPoolWaitingForMemoryResponse:
+        if (arc_data.getUint8Data( 2 ) == 0)
+        { // start uploading with all partial OPs (as init'd before Get Memory!), there MAY BE enough memory
+          men_uploadPoolState = UploadPoolUploading;
+        //men_uploadPhaseAutomatic [already initialized in "initObjectPoolUploadingPhases" to the correct starting phase]
+          startCurrentUploadPhase();
+        }
+        else
+          vtOutOfMemory();
+        break;
       }
       break;
+
     case 0xC2: // Command: "Get Technical Data", parameter "Get Number Of Soft Keys Response"
       mpc_vtServerInstance->setSoftKeyData( arc_data );
       break;
@@ -2440,18 +2458,16 @@ VtClientConnection_c::doStop()
     // that case should be handles by the multisend itself
   }
 
-  if( m_uploadingVersion != 0 )
+  if( ( m_uploadingVersion != 0 ) &&
+      ( m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 ) )
   {
-    if (m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2)
-    {
-      m_aux2Functions.setState(Aux2Functions_c::State_WaitForPoolUploadSuccessfully);
+    m_aux2Functions.setState(Aux2Functions_c::State_WaitForPoolUploadSuccessfully);
 #ifdef USE_VTOBJECT_auxiliaryinput2
-      if (!m_aux2Inputs.getObjectList().empty())
-      {
-        m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Initializing);
-      }
-#endif
+    if (!m_aux2Inputs.getObjectList().empty())
+    {
+      m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Initializing);
     }
+#endif
   }
 
   mrc_pool.eventEnterSafeState();
@@ -2581,27 +2597,31 @@ VtClientConnection_c::initObjectPoolUploadingPhases (uploadPoolType_t ren_upload
 
 
 void
-VtClientConnection_c::sendGetMemory( bool onlyRequestVersion )
+VtClientConnection_c::sendGetMemory( bool requestVtVersion )
 { // Issue GetMemory-Command (don't care if several 0x11s are counted from each partial object pool...)
   uint32_t ui32_size = 0;
-  if( !onlyRequestVersion )
+  if( requestVtVersion )
   {
+    men_uploadPoolState = UploadPoolWaitingForVtVersionResponse;
+  }
+  else
+  {
+    men_uploadPoolState = UploadPoolWaitingForMemoryResponse;
+
     for (int i=0; i <= UploadPhaseLAST; ++i)
     {
       ui32_size += ms_uploadPhasesAutomatic[i].ui32_size;
     }
   }
 
+  mui32_uploadTimeout = DEF_TimeOut_GetMemory;
+  mui32_uploadTimestamp = HAL::getTime();
+
   // Command: Get Technical Data --- Parameter: Get Memory Size
   sendMessage(
     192 /* 0xC0 */, 0xff,
     (ui32_size) & 0xFF, (ui32_size >>  8) & 0xFF, (ui32_size >> 16) & 0xFF, ui32_size >> 24,
     0xff, 0xff);
-
-  // Now proceed to uploading
-  men_uploadPoolState = UploadPoolWaitingForMemoryResponse;
-  mui32_uploadTimeout = DEF_TimeOut_GetMemory;
-  mui32_uploadTimestamp = HAL::getTime();
 }
 
 
