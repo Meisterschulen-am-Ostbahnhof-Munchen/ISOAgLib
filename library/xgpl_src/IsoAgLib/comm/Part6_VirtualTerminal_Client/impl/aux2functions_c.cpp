@@ -447,7 +447,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   for (uint16_t i = msgSize; i < 8; i++)
     msc_tempSendUpload.vec_uploadBuffer.push_back( 0xFF );
   
-  return m_vtConnection.queueOrReplace (msc_tempSendUpload, true /* b_enableReplaceOfCmd */);
+  return m_vtConnection.commandHandler().queueOrReplace (msc_tempSendUpload, true /* b_enableReplaceOfCmd */);
 #else
   return true;
 #endif
