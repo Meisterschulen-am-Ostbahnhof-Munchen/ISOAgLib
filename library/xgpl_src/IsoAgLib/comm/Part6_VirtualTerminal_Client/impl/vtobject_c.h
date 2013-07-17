@@ -33,11 +33,6 @@ public:
 
   virtual uint32_t fitTerminal() const = 0;
  
-  /** latest version (v3) of VT spec offers to also get the type of an vtObject_c; to realize it anytime this function was introduced
-      here and in all other derived vtObjectXYZ_c classes
-  virtual uint8_t updateObjectType() const = 0;
-  */
-
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   virtual void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) = 0;
 #endif

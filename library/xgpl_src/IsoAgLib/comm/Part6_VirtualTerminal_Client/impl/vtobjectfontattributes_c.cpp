@@ -168,13 +168,9 @@ vtObjectFontAttributes_c::setFontAttributes(uint8_t newFontColour, uint8_t newFo
     saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle),  sizeof(iVtObjectFontAttributes_s), newFontStyle);
   }
   VtClientConnection_c& vtCSC = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId);
-  vtCSC.sendCommandChangeFontAttributes(
-    this,
-    vtCSC.getUserClippedColor (newFontColour, this, IsoAgLib::FontColour),
-    newFontSize,
-    newFontType,
-    newFontStyle,
-    b_enableReplaceOfCmd);
+  vtCSC.commandHandler().sendCommandChangeFontAttributes(
+    this, vtCSC.getUserClippedColor (newFontColour, this, IsoAgLib::FontColour),
+    newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd );
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

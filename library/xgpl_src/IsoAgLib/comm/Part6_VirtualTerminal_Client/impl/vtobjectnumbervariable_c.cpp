@@ -60,7 +60,7 @@ vtObjectNumberVariable_c::setValue(uint32_t newValue,
 {
   if (b_updateObject) saveValue32 (MACRO_getStructOffset(get_vtObjectNumberVariable_a(), value), sizeof(iVtObjectNumberVariable_s), newValue);
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

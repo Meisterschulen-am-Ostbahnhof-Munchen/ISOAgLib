@@ -72,7 +72,8 @@ vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, uint8_t newFill
     saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFillColour, this, IsoAgLib::FillColour));
     saveValueP (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s), newFillPattern);
   }
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor(
+    newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd );
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

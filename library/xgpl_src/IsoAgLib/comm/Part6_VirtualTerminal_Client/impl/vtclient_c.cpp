@@ -252,22 +252,27 @@ VtClient_c::processMsg( const CanPkg_c& arc_data )
   }
 }
 
-void VtClient_c::processMsgNonGlobal( const CanPkgExt_c& arc_data ) {
+void VtClient_c::processMsgNonGlobal( const CanPkgExt_c& pkg ) {
 
-  isoaglib_assert( ( arc_data.isoPurePgn() == VT_TO_ECU_PGN ) || ( arc_data.isoPurePgn() == ACKNOWLEDGEMENT_PGN ) );
+  isoaglib_assert( ( pkg.isoPurePgn() == VT_TO_ECU_PGN ) || ( pkg.isoPurePgn() == ACKNOWLEDGEMENT_PGN ) );
 
-  for ( STL_NAMESPACE::vector<VtClientConnection_c*>::iterator it = m_vtConnections.begin(); it != m_vtConnections.end(); ++it ) {
+  for( STL_NAMESPACE::vector<VtClientConnection_c*>::iterator it = m_vtConnections.begin();
+       it != m_vtConnections.end(); ++it )
+  {
     if( (*it)->connectedToVtServer() &&
-        ( arc_data.getMonitorItemForDA() == (*it)->getIdentItem().getIsoItem() ) &&
-        ( arc_data.getMonitorItemForSA() == &(*it)->getVtServerInst().getIsoItem() ) )
-      switch( arc_data.isoPurePgn() ) {
+        ( pkg.getMonitorItemForDA() == (*it)->getIdentItem().getIsoItem() ) &&
+        ( pkg.getMonitorItemForSA() == &(*it)->getVtServerInst().getIsoItem() ) )
+    {
+      switch( pkg.isoPurePgn() )
+      {
         case ACKNOWLEDGEMENT_PGN:
-          (*it)->processMsgAck( arc_data );
+          (*it)->processMsgAck( pkg );
           break;
         case VT_TO_ECU_PGN:
-          (*it)->processMsgVtToEcu( arc_data );
+          (*it)->processMsgVtToEcu( pkg );
           break;
       }
+    }
   }
 }
 
@@ -371,7 +376,7 @@ VtClient_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, u
   for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
   {
     if (&static_cast<__IsoAgLib::IdentItem_c&>(mrc_wsMasterIdentItem) == &m_vtConnections[ui8_index]->getIdentItem())
-      return m_vtConnections[ui8_index]->sendCommand(apui8_buffer, ui32_size);
+      return m_vtConnections[ui8_index]->commandHandler().sendCommand(apui8_buffer, ui32_size);
   }
   return false;
 }

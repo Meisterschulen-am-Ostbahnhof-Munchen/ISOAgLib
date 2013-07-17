@@ -111,7 +111,7 @@ vtObjectInputNumber_c::setValue(uint32_t newValue,
   if (get_vtObjectInputNumber_a()->variableReference == NULL) {
     if (b_updateObject) saveValue32 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), value),  sizeof(iVtObjectInputNumber_s), newValue);
 
-    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
+    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
   }
 }
 
@@ -123,7 +123,7 @@ vtObjectInputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_upd
     saveValue16 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), height), sizeof(iVtObjectInputNumber_s), newHeight);
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

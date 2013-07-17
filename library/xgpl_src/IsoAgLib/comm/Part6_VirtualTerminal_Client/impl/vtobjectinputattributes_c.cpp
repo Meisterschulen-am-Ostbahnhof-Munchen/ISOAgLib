@@ -91,7 +91,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
 }
 
 
@@ -111,7 +111,7 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
   setStringToStream( newValidationString ); // use MultiSendStreamer with mpc_stringToStream set!
   const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 }
 
 

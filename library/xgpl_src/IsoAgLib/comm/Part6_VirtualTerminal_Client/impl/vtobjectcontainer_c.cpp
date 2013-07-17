@@ -86,7 +86,8 @@ vtObjectContainer_c::hideShow(uint8_t b_hideOrShow, bool b_updateObject, bool b_
 {
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s), (!b_hideOrShow)&0x01);
 
-   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandHideShow (this, b_hideOrShow,b_enableReplaceOfCmd);
+   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandHideShow(
+     this, b_hideOrShow, b_enableReplaceOfCmd );
 }
 
 void
@@ -97,7 +98,8 @@ vtObjectContainer_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectContainer_a(), height), sizeof(iVtObjectContainer_s), newHeight);
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize(
+    this, newWidth, newHeight, b_enableReplaceOfCmd );
 }
 
 bool

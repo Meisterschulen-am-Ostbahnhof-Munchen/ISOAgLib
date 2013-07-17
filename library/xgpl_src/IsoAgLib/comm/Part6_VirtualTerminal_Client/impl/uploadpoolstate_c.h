@@ -18,16 +18,16 @@
 
 namespace IsoAgLib { class iVtObject_c; }
 namespace IsoAgLib { class iVtClientObjectPool_c; }
-namespace __IsoAgLib { class Stream_c; }
-namespace __IsoAgLib { class vtObject_c; }
-namespace __IsoAgLib { class VtClientConnection_c; }
 
-namespace __IsoAgLib
-{
+namespace __IsoAgLib {
+
+  class Stream_c;
+  class vtObject_c;
+  class VtClientConnection_c;
+
 
   class UploadPoolState_c : public MultiSendEventHandler_c
   {
-  
   public:
     enum UploadPoolType_t {
       UploadPoolTypeCompleteInitially,
@@ -73,7 +73,9 @@ namespace __IsoAgLib
       VtClientConnection_c &,
       IsoAgLib::iVtClientObjectPool_c& ,
       const char *versionLabel,
-      bool wsMMaster );
+      bool wsMaster );
+
+    void initPool();
 
     void initObjectPoolUploadingPhases(
       UploadPoolType_t ren_uploadPoolType,
@@ -81,6 +83,7 @@ namespace __IsoAgLib
       uint16_t aui16_numOfUserPoolUpdateObjects = 0);
     void startCurrentUploadPhase();
 
+    void processMsgVtToEcu( const CanPkgExt_c& pkg );
     void handleGetVersionsResponse( Stream_c * );
     void handleEndOfObjectPoolResponse( bool success );
     void handleGetMemoryResponse( const CanPkgExt_c &pkg );
@@ -97,13 +100,12 @@ namespace __IsoAgLib
 
     bool activeAuxN() const;
     bool activeAuxO() const;
-    bool cantBeUploaded() const;
     bool successfullyUploaded() const;
 
     const char *versionLabel() const { return( mb_usingVersionLabel ? marrp7c_versionLabel : NULL ); }
 
     void timeEvent();
-    void timeEventCalculateLanguage();
+    bool timeEventCalculateLanguage();
     void timeEventLanguageUpdate();
 
     void doStart();
@@ -118,7 +120,7 @@ namespace __IsoAgLib
     void sendGetMemory( bool onlyRequestVersion );
 
     void timeEventUploadPoolTimeoutCheck();
-    void timeEventPrePoolUpload();
+    void timeEventRequestProperties();
     void timeEventPoolUpload();
 
     void indicateUploadPhaseCompletion();
@@ -139,7 +141,7 @@ namespace __IsoAgLib
 
     uint8_t m_uploadingVersion; // if uploading a v3 client to a v2 VT (without Aux2), uploadingVersion will be v2
     ObjectPoolStreamer_c mc_iVtObjectStreamer;
-    UploadPoolState_t men_uploadPoolState;       // state only used if men_uploadType == "UploadPool"
+    UploadPoolState_t men_uploadPoolState;
     UploadPoolType_t men_uploadPoolType;
 
     uint32_t mui32_uploadTimestamp;
@@ -153,7 +155,6 @@ namespace __IsoAgLib
     UploadPhase_s ms_uploadPhaseUser; // user triggered upload phase...
     IsoAgLib::iVtObject_c** mppc_uploadPhaseUserObjects;
 
-  public: // for iVtObjectStreamer - quick hack due to no multiple-inheritance (IAR-compiler)
     int8_t mi8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
     int8_t mi8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"
 

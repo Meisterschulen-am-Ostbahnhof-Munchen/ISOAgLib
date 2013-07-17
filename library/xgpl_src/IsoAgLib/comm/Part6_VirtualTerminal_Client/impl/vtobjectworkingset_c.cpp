@@ -76,7 +76,7 @@ vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMa
 {
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), apc_vtObjectMask);
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeActiveMask( this, apc_vtObjectMask, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeActiveMask( this, apc_vtObjectMask, b_enableReplaceOfCmd);
 }
 
 void
@@ -84,7 +84,7 @@ vtObjectWorkingSet_c::changeBackgroundColour(uint8_t newValue, bool b_updateObje
 {
   if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), backgroundColour), sizeof(iVtObjectWorkingSet_s), newValue);
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
 }
 
 bool
@@ -104,13 +104,13 @@ vtObjectWorkingSet_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, i
 bool
 vtObjectWorkingSet_c::controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime)
 {
-  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandControlAudioDevice (aui8_repetitions, aui16_frequency, aui16_onTime, aui16_offTime);
+  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandControlAudioDevice (aui8_repetitions, aui16_frequency, aui16_onTime, aui16_offTime);
 }
 
 bool
 vtObjectWorkingSet_c::setAudioVolume (uint8_t aui8_volume)
 {
-  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandSetAudioVolume (aui8_volume);
+  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSetAudioVolume (aui8_volume);
 }
 
 

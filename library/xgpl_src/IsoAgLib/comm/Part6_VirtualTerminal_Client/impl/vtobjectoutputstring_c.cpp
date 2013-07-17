@@ -172,7 +172,7 @@ vtObjectOutputString_c::setValueCopy(const char* newValue, bool b_updateObject, 
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length, b_enableReplaceOfCmd);
 }
 
 
@@ -199,7 +199,7 @@ vtObjectOutputString_c::setValueRef(const char* newValue, bool b_updateObject, b
   uint16_t ui16_tempLen = 0;
   if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length;
   setStrLenToSend( ui16_tempLen );
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 }
 
 /** obsolete, now no more checking for length != 0, set VaRef anyway!
@@ -227,7 +227,7 @@ vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_up
     saveValue16 (MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s), newHeight);
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 

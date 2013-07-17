@@ -97,7 +97,7 @@ vtObjectInputList_c::setValue(uint8_t newValue, bool b_updateObject, bool b_enab
   if (get_vtObjectInputList_a()->variableReference == NULL) {
     if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s), newValue);
 
-    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
+    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 }
 
@@ -113,16 +113,9 @@ vtObjectInputList_c::setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_obje
     lo = apc_object->getID() & 0xFF;
     hi = apc_object->getID() >> 8;
   }
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommand (177 /* Command: Command --- Parameter: Change List Item */,
-                                                   this->getID() & 0xFF,
-                                                   this->getID() >> 8,
-                                                   aui8_index,
-                                                   lo,
-                                                   hi,
-                                                   0xFF,
-                                                   0xFF,
-                                                   b_enableReplaceOfCmd
-                                                   );
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommand(
+    177 /* Command: Command --- Parameter: Change List Item */,
+    this->getID() & 0xFF, this->getID() >> 8, aui8_index, lo, hi, 0xFF, 0xFF, b_enableReplaceOfCmd );
 }
 
 void
@@ -133,7 +126,7 @@ vtObjectInputList_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectInputList_a(), height), sizeof(iVtObjectInputList_s), newHeight);
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

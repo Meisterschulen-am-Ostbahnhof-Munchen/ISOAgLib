@@ -101,7 +101,7 @@ vtObjectPolygon_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
     saveValue16 (MACRO_getStructOffset(get_vtObjectPolygon_a(), height), sizeof(iVtObjectPolygon_s), newHeight);
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

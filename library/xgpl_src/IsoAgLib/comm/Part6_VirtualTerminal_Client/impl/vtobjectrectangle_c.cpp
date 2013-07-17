@@ -101,7 +101,7 @@ vtObjectRectangle_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
     saveValue16 (MACRO_getStructOffset(get_vtObjectRectangle_a(), width),  sizeof(iVtObjectRectangle_s), newWidth);
     saveValue16 (MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s), newHeight);
   }
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

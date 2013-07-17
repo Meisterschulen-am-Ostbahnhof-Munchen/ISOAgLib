@@ -1,6 +1,6 @@
 /*
-  vtclientservercommunication_c.h: class for managing the
-    communication between vt client and server
+  vtclientconnection_c.cpp: class for managing the
+    connection between vt client and server
 
   (C) Copyright 2009 - 2013 by OSB AG and developing partners
 
@@ -13,26 +13,16 @@
 */
 //#define DEBUG_MULTIPLEVTCOMM 1
 #include "vtclientconnection_c.h"
-#include "../ivtclientconnection_c.h"
-#include "../ivtobjectpicturegraphic_c.h"
-#include "../ivtobjectgraphicscontext_c.h"
-#include "../ivtobjectlineattributes_c.h"
-#include "../ivtobjectfillattributes_c.h"
-#include "../ivtobjectfontattributes_c.h"
-#include "../ivtobjectstring_c.h"
-#include "../ivtobjectworkingset_c.h"
-#include "../ivtobject_c.h"
-#include "../ivtclientobjectpool_c.h"
-#include "../ivtobjectauxiliaryfunction2_c.h"
-#include "../ivtobjectauxiliaryinput2_c.h"
-
-#include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #ifdef HAL_USE_SPECIFIC_FILTERS
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #endif
-#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticfunctionalities_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclient_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientconnection_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliaryfunction2_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliaryinput2_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
 #include <IsoAgLib/util/iassert.h>
 
 #if DEBUG_VTCOMM
@@ -65,81 +55,13 @@ std::ostream& operator<<(std::ostream& os, const __IsoAgLib::IsoName_c& dt)
 }
 #endif
 
-static const uint8_t scui8_cmdCompareTableMin = 0x92;
-static const uint8_t scui8_cmdCompareTableMax = 0xBD;
-
-/// this table is used to identify if a command can override an earlier command of same function
-/// 1<<databyte to indicate which databytes to compaire to decide if command is replaced or not
-static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdCompareTableMin)+1] = {
-/// (1<<0) means DO NOT OVERRIDE THESE COMMANDS AT ALL
-/* 0x92 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND
-/* 0x93 */ 0 , //invalid command
-/* 0x94 */ 0 , //invalid command
-/* 0x95 */ 0 , //invalid command
-/* 0x96 */ 0 , //invalid command
-/* 0x97 */ 0 , //invalid command
-/* 0x98 */ 0 , //invalid command
-/* 0x99 */ 0 , //invalid command
-/* 0x9A */ 0 , //invalid command
-/* 0x9B */ 0 , //invalid command
-/* 0x9C */ 0 , //invalid command
-/* 0x9D */ 0 , //invalid command
-/* 0x9E */ 0 , //invalid command
-/* 0x9F */ 0 , //invalid command
-/* 0xA0 */ (1<<1) | (1<<2) ,
-/* 0xA1 */ (1<<1) | (1<<2) ,
-/* 0xA2 */ (1<<1) | (1<<2) ,
-/* 0xA3 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Control Audio Device)
-/* 0xA4 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Set Audio Volume)
-/* 0xA5 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Change Child Location), as it's relative!!!
-/* 0xA6 */ (1<<1) | (1<<2) ,
-/* 0xA7 */ (1<<1) | (1<<2) ,
-/* 0xA8 */ (1<<1) | (1<<2) , // Change Numeric Value (all has been done for THIS ONE originally ;-)
-/* 0xA9 */ (1<<1) | (1<<2) ,
-/* 0xAA */ (1<<1) | (1<<2) ,
-/* 0xAB */ (1<<1) | (1<<2) ,
-/* 0xAC */ (1<<1) | (1<<2) ,
-/* 0xAD */ (1<<0) , // changed. was "(1<<1) | (1<<2) ," before, but we shouldn't change earlier to a datamask as it's probably not setup correctly at this time.  // (Change Active Mask)
-/* 0xAE */ (1<<1) | (1<<2) | (1<<3) ,
-/* 0xAF */ (1<<1) | (1<<2) | (1<<3) ,
-/* 0xB0 */ (1<<1) | (1<<2) ,
-/* 0xB1 */ (1<<1) | (1<<2) | (1<<3) ,
-/* 0xB2 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Delete Object Pool)
-/* 0xB3 */ (1<<1) | (1<<2) ,
-/* 0xB4 */ (1<<1) | (1<<2) | (1<<3) | (1<<4), // (Change Child Position)
-/* 0xB5 */ 0 , //invalid command
-/* 0xB6 */ 0 , //invalid command
-/* 0xB7 */ 0 , //invalid command
-/* 0xB8 */ (1<<0) ,  //NEVER OVERRIDE THIS COMMAND (Graphics Context)
-/* 0xB9 */ (1<<0) , // changed. was "(1<<1) | (1<<2) | (1<<3) | (1<<4)," before, but I guess no overriding should take place in request commands // (Get Attribute Value)
-/* 0xBA */ 0, //invalid command
-/* 0xBB */ 0, //invalid command
-/* 0xBC */ 0, //invalid command
-/* 0xBD */ (1<<0) //NEVER OVERRIDE THIS COMMAND (Lock/Unlock Mask)
-};
-
 
 namespace __IsoAgLib {
-
-/// The following timeouts are ISOAgLib-proprietary values.
-/// In 11783-6 there are no real timeouts specified, yet
-/// ISOAgLib has to react on the case of a non-responding VT
-/// (either at Upload, Load or normal command)
-#define DEF_TimeOut_NormalCommand   10000
-#define DEF_TimeOut_VersionLabel    60000
-#define DEF_TimeOut_EndOfObjectPool 60000
-
-
-
-/** static instance to store temporarily before push_back into list */
-SendUpload_c VtClientConnection_c::msc_tempSendUpload;
-
 
 bool
 VtClientConnection_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen)
 {
-  // not connected to a VT (no Alive), but there
-  // could still come messages in from that SA
+  // not connected to a VT (no Alive), but there could still come messages in from that SA
   if( !isVtActive() )
     return false;
 
@@ -150,6 +72,7 @@ VtClientConnection_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_id
   if (aui32_totalLen > (2+(255*32)) ) // Annex E.11 is the current max to receive!
     /** @todo SOON-258 Should we really ConnAbort such a stream in advance? For now don't care too much, as it shouldn't happen! */
     return false;
+
   return true;
 }
 
@@ -157,21 +80,7 @@ VtClientConnection_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_id
 bool
 VtClientConnection_c::processPartStreamDataChunk (Stream_c& stream, bool isFirstChunk, bool isLastChunk)
 {
-  if( stream.getStreamInvalid() )
-    return false;
-
-  // not connected to a VT (no Alive), but there
-  // could still come messages in from that SA
-  if( !isVtActive() )
-  {
-    stream.setStreamInvalid();
-    return false;
-  }
-
-  // don't need the SA checks here, because these were done in reactOnStreamStart() already!
-
-  // only handle complete streams completely.
-  if( !isLastChunk )
+  if( !isLastChunk || !isVtActive())
     return false;
 
   uint8_t ui8_streamFirstByte = stream.getFirstByte();
@@ -179,21 +88,21 @@ VtClientConnection_c::processPartStreamDataChunk (Stream_c& stream, bool isFirst
   {
     case 0x08:
     {
-      mui16_inputStringId = stream.getNextNotParsed() | (stream.getNextNotParsed() << 8);
-      mui8_inputStringLength = stream.getNextNotParsed();
+      const uint16_t inputStringId = uint16_t( stream.getNextNotParsed() ) | ( uint16_t( stream.getNextNotParsed() ) << 8 );
+      const unsigned inputStringLength = stream.getNextNotParsed();
 
       const uint16_t ui16_totalstreamsize = stream.getByteTotalSize();
-      if (ui16_totalstreamsize >= (mui8_inputStringLength + 4))
+      if( ui16_totalstreamsize >= (inputStringLength + 4) )
       { /** @todo SOON-258 "if (ui16_totalstreamsize > (mui8_inputStringLength + 4)) registerErronousVtMessage("VT Input String Activation CAN-Message too long.");
 	      This is/was a problem of the John Deere GS2 VT and needs to be registered for any VT.
 	      It will be fixed in the GS2 in 2008, but for now we have relaxed the checking and put this comment in here.
 	    */
         // no on-the-fly parsing anymore
-        getPool().eventStringValue (mui16_inputStringId, mui8_inputStringLength, stream, stream.getNotParsedSize(), true, true);
+        getPool().eventStringValue( inputStringId, inputStringLength, stream, stream.getNotParsedSize(), true, true );
       }
     } break;
 
-    case 0x24: // Command: "Auxiliary Control", parameter "Auxiliary Assignment type 2 response"
+    case 0x24: // Command: "Auxiliary Control", parameter "Auxiliary Assignment type 2"
     {
       if( !m_uploadPoolState.activeAuxN() )
         break;
@@ -201,10 +110,7 @@ VtClientConnection_c::processPartStreamDataChunk (Stream_c& stream, bool isFirst
       uint16_t ui16_functionObjId = 0xFFFF;
       const uint8_t errorCode = storeAux2Assignment( stream, ui16_functionObjId );
 
-      sendMessage( 0x24, //command
-                  ui16_functionObjId & 0xFF, ui16_functionObjId >> 8, // object ID of aux function
-                  errorCode,
-                  0xFF, 0xFF, 0xFF, 0xFF );
+      sendMessage( 0x24, ui16_functionObjId & 0xFF, ui16_functionObjId >> 8, errorCode, 0xFF, 0xFF, 0xFF, 0xFF );
     } break;
 
 #ifndef NO_GET_VERSIONS
@@ -232,65 +138,34 @@ VtClientConnection_c::VtClientConnection_c(
   IsoAgLib::iVtClientDataStorage_c& arc_dataStorage,
   uint8_t aui8_clientId,
   IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode )
-  : mt_multiSendEventHandler(*this)
-  , mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
-  , mb_checkSameCommand (true)
-  , mrc_wsMasterIdentItem (r_wsMasterIdentItem)
-  , mrc_vtClient (r_vtclient)
+  : mb_vtAliveCurrent( false ) // so we detect the rising edge when the VT gets connected!
+  , mrc_wsMasterIdentItem( r_wsMasterIdentItem )
+  , mrc_vtClient( r_vtclient )
   , mpc_vtServerInstance( NULL )
-  , men_uploadType (UploadIdle) // dummy init value
-  , men_uploadCommandState (UploadCommandWithAwaitingResponse) // dummy init value.
-  , mui8_commandParameter (0) // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
-  , mui16_inputStringId (0xFFFF) // will be set when first chunk is received
-  , mui8_inputStringLength (0) // will be set when first chunk is received
-  , mi32_nextWsMaintenanceMsg (-1)
-  , mb_receiveFilterCreated( false )
+  , men_uploadType( UploadIdle )
+  , mi32_nextWsMaintenanceMsg( -1 )
   , mui8_clientId( aui8_clientId )
-  , men_displayState (VtClientDisplayStateHidden)
-  , mq_sendUpload()
+  , men_displayState( VtClientDisplayStateHidden )
   , mlist_auxAssignments()
-  , m_aux2Inputs(r_wsMasterIdentItem)
-  , m_aux2Functions(*this)
+  , m_aux2Inputs( r_wsMasterIdentItem )
+  , m_aux2Functions( *this )
   , m_uploadPoolState( *this, pool, versionLabel, ( aen_mode != IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave ) )
-  , mi32_commandTimestamp( -1 ) // no check initially
-  , mi32_commandTimeout( 0 ) // will be set when needed
+  , m_commandHandler( *this )
   , mi32_timeWsAnnounceKey( -1 ) // no announce tries started yet...
   , mi32_fakeVtOffUntil( -1 ) // no faking initially
-  , men_registerPoolMode(aen_mode)
-  , mb_commandsToBus( true )
-  , mc_preferredVt(IsoName_c::IsoNameUnspecified())
-  , mi32_bootTime_ms(0)
-  , m_dataStorageHandler(arc_dataStorage)
+  , men_registerPoolMode( aen_mode )
+  , mc_preferredVt( IsoName_c::IsoNameUnspecified() )
+  , mi32_bootTime_ms( 0 )
+  , m_dataStorageHandler( arc_dataStorage )
   , m_schedulerTaskProxy( *this, 100, false )
 {
+  // can't be done in c'tor due to back-ref to *this
+  m_uploadPoolState.initPool();
+
   r_wsMasterIdentItem.getDiagnosticFunctionalities().addFunctionalitiesUniversalTerminal(
     true,
     static_cast<uint8_t>(getPool().getVersion()),
     UniversalTerminalOptionsBitMask_t() );
-
-  // @todo see if this can be moved to the sub class..
-  getPool().initAllObjectsOnce( MULTITON_INST );
-
-  // now let all clients know which client they belong to
-  if (mui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
-  {
-    for (uint16_t ui16_objIndex = 0; ui16_objIndex < getPool().getNumObjects(); ui16_objIndex++)
-      getPool().getIVtObjects()[0][ui16_objIndex]->setClientID (mui8_clientId);
-    for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < getPool().getNumLang(); ui8_objLangIndex++)
-    {
-      for (uint16_t ui16_objIndex = 0; ui16_objIndex < getPool().getNumObjectsLang(); ui16_objIndex++)
-      {
-        getPool().getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID (mui8_clientId);
-        // do not allow language dependent AUX2 objects
-#ifdef USE_VTOBJECT_auxiliaryfunction2
-        isoaglib_assert(getPool().getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->getObjectType() != IsoAgLib::iVtObjectAuxiliaryFunction2_c::objectType());
-#endif
-#ifdef USE_VTOBJECT_auxiliaryinput2
-        isoaglib_assert(getPool().getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->getObjectType() != IsoAgLib::iVtObjectAuxiliaryInput2_c::objectType());
-#endif
-      }
-    }
-  }
 
 #if defined(USE_VTOBJECT_auxiliaryfunction2) || defined (USE_VTOBJECT_auxiliaryinput2)
   for (uint16_t ui16_objIndex = 0; ui16_objIndex < getPool().getNumObjects(); ui16_objIndex++)
@@ -333,44 +208,36 @@ VtClientConnection_c::VtClientConnection_c(
 #endif
 
   getSchedulerInstance().registerTask( m_schedulerTaskProxy, 0 );
+
+  getMultiReceiveInstance4Comm().registerClientIso (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VT_TO_ECU_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
+  getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ACKNOWLEDGEMENT_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
+#endif
 }
 
 
 VtClientConnection_c::~VtClientConnection_c()
 {
 #ifdef HAL_USE_SPECIFIC_FILTERS
-  getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_ECU_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
   getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
+  getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_ECU_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
 #endif
   getMultiReceiveInstance4Comm().deregisterClient (*this);
+
   getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
 }
 
 
 void 
-VtClientConnection_c::timeEvent(void)
+VtClientConnection_c::timeEvent()
 {
-  // do further activities only if registered ident is initialised as ISO and already successfully address-claimed...
   if (!mrc_wsMasterIdentItem.isClaimedAddress())
     return;
 
-  if (!mb_receiveFilterCreated)
-  {
-    getMultiReceiveInstance4Comm().registerClientIso (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
-#ifdef HAL_USE_SPECIFIC_FILTERS
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VT_TO_ECU_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mrc_vtClient.mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ACKNOWLEDGEMENT_PGN << 8) ), &getIdentItem().isoName(), NULL, 8));
-#endif
-
-    mb_receiveFilterCreated = true;
-  }
-
-  /*** Regular start is here (the above preconditions should be satisfied if system is finally set up. ***/
-  /*******************************************************************************************************/
-
-  // VT Alive checks
-  // Will trigger "doStart" / "doStop"
-  // doStart will also take care for announcing the working-set
+  // VT Alive checks - Will trigger "doStart" / "doStop"
+  /// @todo in Slave mode, don't call doStart as it sets to UploadPool!
+  /// but for now, Slave mode is not yet really supported, so beware!
   checkAndHandleVtStateChange();
 
   // Do nothing if there's no VT active
@@ -380,90 +247,73 @@ VtClientConnection_c::timeEvent(void)
     return;
   }
 
-  if (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave == men_registerPoolMode)
+  // Only Master needs a proper announce-sequence / pool upload!
+  if (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave != men_registerPoolMode)
   {
-    // nothing to do here for Slave-mode...
-  }
-  else
-  {
-    // Check if the working-set is completely announced
-    if (!mrc_wsMasterIdentItem.getIsoItem()->isWsAnnounced( mi32_timeWsAnnounceKey ))
-      return;
-
-    // Check if WS-Maintenance is needed
-    if ((mi32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= mi32_nextWsMaintenanceMsg))
-    { // Do periodically WS-Maintenance sending (every second)
-
-      uint8_t ui8_sendAtStartup = (mi32_nextWsMaintenanceMsg <= 0) ? 1 : 0;
-
-      uint8_t ui8_version = 0xFF;
-      switch (getPool().getVersion())
-      {
-        case IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2:
-          ui8_version = 0xFF;
-          ui8_sendAtStartup = 0xFF; // "send at startup" is only used for version 3 and later
-          break;
-        case IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion3:
-          ui8_version = 3;
-          break;
-        case IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion4:
-          ui8_version = 4;
-          break;
-      }
-
-      // G.2: Function: 255 / 0xFF Working Set Maintenance Message
-      sendMessage( 0xFF, ui8_sendAtStartup, ui8_version, 0xff, 0xff, 0xff, 0xff, 0xff );
-
-      mi32_nextWsMaintenanceMsg = HAL::getTime() + 1000;
-    }
-
-    m_uploadPoolState.timeEventCalculateLanguage();
-  }
-
-  /// UPLOADING --> OBJECT-POOL<--
-  if (men_uploadType == UploadPool)
-  {
-    m_uploadPoolState.timeEvent();
-
-    if( m_uploadPoolState.cantBeUploaded() )
+    if( !timeEventMaster() )
       return;
   }
-
-  /// UPLOADING --> COMMAND <-- ///
-  // Can only be done if the objectpool is successfully uploaded!
-  if( !m_uploadPoolState.successfullyUploaded() )
-    return;
 
   m_uploadPoolState.timeEventLanguageUpdate();
 
-  // Is a) no Upload running and b) some Upload to do?
-  if ((men_uploadType == UploadIdle) && !mq_sendUpload.empty())
-  { // Start Uploading
-    startUploadCommand();
-  }
+  switch( men_uploadType )
+  {
+  case UploadPool:
+    m_uploadPoolState.timeEvent();
+    break;
 
-  timeEventCommandTimeoutCheck();
+  case UploadIdle:
+    if( commandHandler().tryToStart() )
+      men_uploadType = UploadCommand;
+    break;
+
+  case UploadCommand:
+    if( commandHandler().timeEventCommandTimeoutCheck() )
+    { // It's the safest thing to just reconnect to the VT.
+      // So let's get disconnected (can't do this actively)
+      fakeVtOffPeriod (6000); // fake the VT 6 seconds off!
+    }
+    break;
+  }
 }
 
 
-void
-VtClientConnection_c::timeEventCommandTimeoutCheck()
+bool
+VtClientConnection_c::timeEventMaster()
 {
-  if( men_uploadType != UploadCommand )
-    return;
+  // Check if the working-set is completely announced
+  if( !mrc_wsMasterIdentItem.getIsoItem()->isWsAnnounced( mi32_timeWsAnnounceKey ) )
+    return false;
 
-  // nothing to check (yet)
-  if( mi32_commandTimestamp < 0 )
-    return;
+  // Check if periodic WS-Maintenance is needed
+  if( (mi32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= mi32_nextWsMaintenanceMsg) )
+  {
+    uint8_t ui8_sendAtStartup = (mi32_nextWsMaintenanceMsg <= 0) ? 1 : 0;
 
-  // Waiting for an answer now... Did it time out?
-  if( HAL::getTime() > ( mi32_commandTimestamp + mi32_commandTimeout ) )
-  { // Time-Out! in "Upload Command"-State
-    // No retries, No continue.
-    // It's the safest thing to just reconnect to the VT.
-    // So let's get disconnected (can't do this actively)
-    fakeVtOffPeriod (6000); // fake the VT 6 seconds off!
+    uint8_t ui8_version = 0xFF;
+    switch (getPool().getVersion())
+    {
+      case IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2:
+        ui8_version = 0xFF;
+        ui8_sendAtStartup = 0xFF; // "send at startup" is only used for version 3 and later
+        break;
+      case IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion3:
+        ui8_version = 3;
+        break;
+      case IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion4:
+        ui8_version = 4;
+        break;
+    }
+
+    // G.2: Function: 255 / 0xFF Working Set Maintenance Message
+    sendMessage( 0xFF, ui8_sendAtStartup, ui8_version, 0xff, 0xff, 0xff, 0xff, 0xff );
+    mi32_nextWsMaintenanceMsg = HAL::getTime() + 1000;
   }
+
+  if( !m_uploadPoolState.timeEventCalculateLanguage() )
+    return false;
+
+  return true;
 }
 
 
@@ -525,43 +375,32 @@ VtClientConnection_c::processMsgAck( const CanPkgExt_c& arc_data )
 {
   isoaglib_assert( mpc_vtServerInstance );
 
-  // shouldn't be possible, but check anyway to get sure.
-  if (!mpc_vtServerInstance)
-    return;
-
-  // don't react on NACKs from other VTs than the one we're communicating with!
-  if (&(mpc_vtServerInstance->getIsoItem()) != arc_data.getMonitorItemForSA())
-    return;
-
-  if (arc_data.getUint8Data (0) != 0x01)
+  if( arc_data.getUint8Data( 0 ) != 0x01 )
     return; // Only react if "NOT ACKNOWLEDGE"!
 
 #if !defined(IGNORE_VTSERVER_NACK)  // The NACK must be ignored for the Mueller VT Server
   // check if we have Agrocom/Mller with Version < 3, so we IGNORE this NACK BEFORE the pool is finally uploaded.
   bool b_ignoreNack = false; // normally DO NOT ignore NACK
-  IsoItem_c *item = getIsoMonitorInstance4Comm().item( arc_data.isoSa() );
-  if( item )
-  { // sender exists in isomonitor, so query its Manufacturer Code
-    const uint16_t cui16_manufCode = item->isoName().manufCode();
-    if (((cui16_manufCode == 98) /*Mller Elektronik*/ || (cui16_manufCode == 103) /*Agrocom*/) &&
-          ((mpc_vtServerInstance->getVtCapabilities()->lastReceivedVersion == 0) ||
-          (mpc_vtServerInstance->getVtCapabilities()->iso11783version < 3)))
-    {
-      if( !m_uploadPoolState.successfullyUploaded() )
-      { // mueller/agrocom hack - ignore upload while no objectpool is displayed
-        b_ignoreNack = true;
-      }
+
+  const uint16_t cui16_manufCode = getVtServerInst().getIsoName().manufCode();
+  if (((cui16_manufCode == 98) /*Mueller Elektronik*/ || (cui16_manufCode == 103) /*Agrocom*/) &&
+        ((mpc_vtServerInstance->getVtCapabilities()->lastReceivedVersion == 0) ||
+        (mpc_vtServerInstance->getVtCapabilities()->iso11783version < 3)))
+  {
+    if( !m_uploadPoolState.successfullyUploaded() )
+    { // mueller/agrocom hack - ignore upload while no objectpool is displayed
+      b_ignoreNack = true;
     }
   }
 
-  if (!b_ignoreNack)
+  if( !b_ignoreNack )
   {
     // for now ignore source address which must be VT of course. (but in case a NACK comes in before the first VT Status Message
     // Check if a VT-related message was NACKed. Check embedded PGN for that
     const uint32_t cui32_pgn =  uint32_t (arc_data.getUint8Data (5)) |
                                (uint32_t (arc_data.getUint8Data (6)) << 8) |
                                (uint32_t (arc_data.getUint8Data (7)) << 16);
-    switch (cui32_pgn)
+    switch( cui32_pgn )
     {
       case ECU_TO_VT_PGN:
       case WORKING_SET_MEMBER_PGN:
@@ -572,20 +411,22 @@ VtClientConnection_c::processMsgAck( const CanPkgExt_c& arc_data )
 #endif
         mrc_wsMasterIdentItem.getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
         /// passing "true": fake NOT-alive state of VT for now!
-        fakeVtOffPeriod(1000); // arbitrary time-span > 0 so checkAndHandle..() will call doStop!
+        fakeVtOffPeriod( 1000 ); // arbitrary time-span > 0 so checkAndHandle..() will call doStop!
         checkAndHandleVtStateChange(); // will also notify application via "eventEnterSafeState"
         fakeVtOffStop(); // enough faking, let it get restart asap in the timeEvent!
         break;
-    } // switch
+    }
   }
 #endif
 }
+
 
 void
 VtClientConnection_c::notifyOnVtsLanguagePgn()
 {
   m_uploadPoolState.notifyOnVtsLanguagePgn();
 }
+
 
 void
 VtClientConnection_c::notifyOnVtStatusMessage()
@@ -604,49 +445,44 @@ VtClientConnection_c::notifyOnVtStatusMessage()
 
 
 void
-VtClientConnection_c::notifyOnAuxInputStatus( const CanPkgExt_c& arc_data)
+VtClientConnection_c::notifyOnAuxInputStatus( const CanPkgExt_c& pkg )
 {
-  const IsoName_c& ac_inputIsoName = arc_data.getISONameForSA();
-  uint8_t const cui8_inputNumber = arc_data.getUint8Data(2-1);
+  const IsoName_c& ac_inputIsoName = pkg.getISONameForSA();
+  uint8_t const cui8_inputNumber = pkg.getUint8Data(2-1);
 
   // Look for all Functions that are controlled by this Input right now!
-  for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); ++it)
+  for( STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin();
+       it != mlist_auxAssignments.end(); ++it )
   {
     if ( (it->mui8_inputNumber == cui8_inputNumber)
       && (it->mc_inputIsoName == ac_inputIsoName) )
     { // notify application on this new Input Status!
-      uint16_t const cui16_inputValueAnalog = arc_data.getUint16Data (3-1);
-      uint16_t const cui16_inputValueTransitions = arc_data.getUint16Data (5-1);
-      uint8_t const cui8_inputValueDigital = arc_data.getUint8Data (7-1);
-      getPool().eventAuxFunctionValue (it->mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
+      uint16_t const cui16_inputValueAnalog = pkg.getUint16Data (3-1);
+      uint16_t const cui16_inputValueTransitions = pkg.getUint16Data (5-1);
+      uint8_t const cui8_inputValueDigital = pkg.getUint8Data (7-1);
+      
+      getPool().eventAuxFunctionValue(
+        it->mui16_functionUid, 
+        cui16_inputValueAnalog, 
+        cui16_inputValueTransitions, 
+        cui8_inputValueDigital );
     }
   }
 }
 
-void
-VtClientConnection_c::notifyOnAux2InputStatus( const CanPkgExt_c& pkg )
-{
-  m_aux2Functions.notifyOnAux2InputStatus( pkg, getPool() );
-}
-
-void
-VtClientConnection_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& pkg )
-{
-  m_aux2Functions.notifyOnAux2InputMaintenance( pkg );
-}
-
 
 bool
-VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
+VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& pkg )
 {
-  uint8_t const cui8_inputSaNew = arc_data.getUint8Data (2-1);
-  uint8_t const cui8_inputNrNew = arc_data.getUint8Data (3-1); /// 0xFF means unassign!
-  uint16_t const cui16_functionUidNew = arc_data.getUint16Data (4-1);
+  uint8_t const cui8_inputSaNew = pkg.getUint8Data (2-1);
+  uint8_t const cui8_inputNrNew = pkg.getUint8Data (3-1); /// 0xFF means unassign!
+  uint16_t const cui16_functionUidNew = pkg.getUint16Data (4-1);
   IsoItem_c *inputIsoNameNew = getIsoMonitorInstance4Comm().item( cui8_inputSaNew );
   if ( (inputIsoNameNew == NULL) && (cui8_inputNrNew != 0xFF))
     return false;
 
-  for (STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin(); it != mlist_auxAssignments.end(); )
+  for( STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin();
+       it != mlist_auxAssignments.end(); )
   {
     if (it->mui16_functionUid == cui16_functionUidNew)
     { // we already have an assignment for this function
@@ -669,7 +505,7 @@ VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
   }
 
   // Function not found, so we need to add (in case it was NOT an unassignment)
-  if (cui8_inputNrNew == 0xFF)
+  if( cui8_inputNrNew == 0xFF )
     return true; // unassignment is always okay!
 
   AuxAssignment_s s_newAuxAssignment;
@@ -679,1205 +515,69 @@ VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& arc_data )
   s_newAuxAssignment.mui8_inputNumber = cui8_inputNrNew;
   s_newAuxAssignment.mui16_functionUid = cui16_functionUidNew;
 
-  mlist_auxAssignments.push_back (s_newAuxAssignment);
+  mlist_auxAssignments.push_back( s_newAuxAssignment );
   return true;
 }
 
+
 uint8_t
-VtClientConnection_c::storeAux2Assignment(Stream_c& stream, uint16_t& rui16_functionObjId )
+VtClientConnection_c::storeAux2Assignment( Stream_c& stream, uint16_t& rui16_functionObjId )
 {
   return m_aux2Functions.storeAux2Assignment( stream, rui16_functionObjId, getPool() );
 }
 
 
 void
-VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
+VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& pkg )
 {
-  uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
-  uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
-
-#define MACRO_setStateDependantOnError(errByte) \
-  ui8_errByte = errByte;
-
-  // If VT is not active, don't react on PKGs addressed to us, as VT's not active ;)
-  if (!isVtActive())
+  if( !isVtActive() )
     return;
 
-  /// process all VT_TO_ECU addressed to us
-  switch (arc_data.getUint8Data (0))
+  switch( men_uploadType )
   {
-    /*************************************/
-    /*** ### VT Initiated Messages ### ***/
-    case 0x00: // Command: "Control Element Function", parameter "Soft Key"
-    case 0x01: // Command: "Control Element Function", parameter "Button"
-      getPool().eventKeyCode(
-          arc_data.getUint8Data( 1 ) /* key activation code (pressed, released, held) */,
-          arc_data.getUint8Data( 2 ) | (arc_data.getUint8Data( 3 ) << 8) /* objID of key object */,
-          arc_data.getUint8Data( 4 ) | (arc_data.getUint8Data( 5 ) << 8) /* objID of visible mask */,
-          arc_data.getUint8Data( 6 ) /* key code */,
-          (arc_data.getUint8Data( 0 ) != 0)/* 0 for sk, 1 for button -- matches wasButton? boolean */ );
-      break;
-    case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
-      getPool().eventPointingEvent(
-          arc_data.getUint8Data( 1 ) | (arc_data.getUint8Data( 2 ) << 8) /* X position in pixels */,
-          arc_data.getUint8Data( 3 ) | (arc_data.getUint8Data( 4 ) << 8) /* Y position in pixels */);
-      break;
-
-    case 0x03: // Command: "VT Select Input Object"
-      getPool().eventVtSelectInputObject(
-          uint16_t(arc_data.getUint8Data( 1 )) | (uint16_t(arc_data.getUint8Data( 2 )) << 8) /* objID */,
-          arc_data.getUint8Data( 3 ),
-          arc_data.getUint8Data( 4 ));
-      break;
-
-    case 0x04: // Command: "Control Element Function", parameter "VT ESC"
-        /// if no error occured, that ESC is for an opened input dialog!!! Do not handle here!!!
-        if (arc_data.getUint8Data( 3 ) != 0x0)
-          getPool().eventVtESC(0xFFFF);
-        else
-          getPool().eventVtESC(uint16_t(arc_data.getUint8Data( 1 )) | (uint16_t(arc_data.getUint8Data( 2 )) << 8));
-
-        break;
-    case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
-      getPool().eventNumericValue(
-          uint16_t(arc_data.getUint8Data( 1 )) | (uint16_t(arc_data.getUint8Data( 2 )) << 8) /* objID */,
-          arc_data.getUint8Data( 4 ) /* 1 byte value */,
-          uint32_t(arc_data.getUint8Data( 4 )) | (uint32_t(arc_data.getUint8Data( 5 )) << 8) | (uint32_t(arc_data.getUint8Data( 6 )) << 16)| (uint32_t(arc_data.getUint8Data( 7 )) << 24) /* 4 byte value */);
-      break;
-    case 0x08:  // Command: "Control Element Function", parameter "VT Input String Value"
-      if (arc_data.getUint8Data( 3 ) <= 4) //within a 8 byte long cmd can be only a 4 char long string
-      {
-        VolatileMemory_c c_vmString (arc_data.getUint8DataConstPointer( 4 ));
-        getPool().eventStringValue(
-            uint16_t(arc_data.getUint8Data( 1 )) | (uint16_t(arc_data.getUint8Data( 2 )) << 8) /* objID */,
-            arc_data.getUint8Data( 3 ) /* total number of bytes */, c_vmString,
-            arc_data.getUint8Data( 3 ) /* total number of bytes */, true, true);
-      }
-      break;
-    // Version 4 feature that was "Display Activation" in some draft
-    // but is now "VT On User-Layout Hide/Show message"
-    case 0x09:  // Command: "Control Element Function", parameter "VT On User-Layout Hide/Show message"
-    {
-      // Command: "Control Element Function"
-      // Parameter "VT On User-Layout Hide/Show message Response"
-      // @todo Version 4 Handling of that message needs to be redone when adding Version 4 properly.
-
-      sendMessage(
-        arc_data.getUint8Data( 0 ), arc_data.getUint8Data( 1 ),
-        arc_data.getUint8Data( 2 ), arc_data.getUint8Data( 3 ),
-        arc_data.getUint8Data( 4 ), arc_data.getUint8Data( 5 ),
-        arc_data.getUint8Data( 6 ), arc_data.getUint8Data( 7 ) );
-    }
+  case UploadPool:
+    m_uploadPoolState.processMsgVtToEcu( pkg );
     break;
 
-    /***************************************************/
-    /*** ### ECU Initiated Messages (=Responses) ### ***/
-    case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
-      if( men_uploadType == UploadPool )
-        m_uploadPoolState.handleEndOfObjectPoolResponse( arc_data.getUint8Data( 1 ) == 0 );
-      else if ((men_uploadType == UploadCommand) && (men_uploadCommandState == UploadCommandWithAwaitingResponse))
-      { /// *** LANGUAGE POOL UPDATE ***
-        MACRO_setStateDependantOnError(2)
-        m_uploadPoolState.finalizeUploading(); // indicate that the language specific objects have been updated. also the user will get notified.
-      }
-      break;
+  case UploadIdle:
+    m_commandHandler.processMsgVtToEcuActivations( pkg );
+    break;
 
-    /***************************************/
-    /*** ### AUX Assignment Messages ### ***/
-    case 0x20:
-    { // Command: "Auxiliary Control type 1", parameter "Auxiliary Assignment"
-      if( !m_uploadPoolState.activeAuxO() )
-        break;
-
-      /** @todo SOON-258 If we can't assign because WE don't know this SA, should we anyway answer the assignment?
-       * for now we don't answer if we can't take the assignment - VTs have to handle this anyway...
-       * Update on 22.11.2007: Should be okay so far, as written, VT has to handle, and we can't NACK the assignment! */
-      bool const cb_assignmentOkay = storeAuxAssignment( arc_data );
-
-      if (cb_assignmentOkay)
-      { // respond if it was a valid assignment...
-        sendMessage(
-          arc_data.getUint8Data( 0 ), arc_data.getUint8Data( 1 ),
-          arc_data.getUint8Data( 2 ), arc_data.getUint8Data( 3 ),
-          arc_data.getUint8Data( 4 ), arc_data.getUint8Data( 5 ),
-          arc_data.getUint8Data( 6 ), arc_data.getUint8Data( 7 ) );
-      }
-    } break;
-
-    case 0x22:
-    { // Command: "Auxiliary Control type 2", parameter "preferred assignment"
-      MACRO_setStateDependantOnError (2)
-    } break;
-
-    case 0x25:
-    { // Command: "Auxiliary Control type 2", parameter "input status enable"
-      if( !m_uploadPoolState.activeAuxN() )
-        break;
-
-      const uint16_t ui16_inputObjId = (arc_data.getUint8Data( 1 ) | (arc_data.getUint8Data( 2 ) << 8));
-      const bool b_objFound = m_aux2Inputs.setInputStateEnabledInObjects(ui16_inputObjId, ( 0 != arc_data.getUint8Data( 3 ) ));
-
-      sendMessage(
-        arc_data.getUint8Data( 0 ), arc_data.getUint8Data( 1 ),
-        arc_data.getUint8Data( 2 ), arc_data.getUint8Data( 3 ),
-        !b_objFound, 0xFF, 0xFF, 0xFF );
-    } break;
-
-    /***************************************************/
-    /*** ### ECU Initiated Messages (=Responses) ### ***/
-    // ### Error field is also on byte 2 (index 1)
-    case 0xA3: // Command: "Command", parameter "Control Audio Device Response"
-    case 0xA4: // Command: "Command", parameter "Set Audio Volume Response"
-    case 0xB2: // Command: "Command", parameter "Delete Object Pool Response"
-      MACRO_setStateDependantOnError (2)
-      break;
-
-    // ### Error field is also on byte 4 (index 3)
-    case 0xA6: // Command: "Command", parameter "Change Size Response"
-    case 0xA8: // Command: "Command", parameter "Change Numeric Value Response"
-    case 0xA9: // Command: "Command", parameter "Change End Point Response"
-    case 0xAA: // Command: "Command", parameter "Change Font Attributes Response"
-    case 0xAB: // Command: "Command", parameter "Change Line Attributes Response"
-    case 0xAC: // Command: "Command", parameter "Change Fill Attributes Response"
-    case 0xAD: // Command: "Command", parameter "Change Active Mask Response"
-    case 0x92: // Command: "Command", parameter "ESC Response"
-      MACRO_setStateDependantOnError (4)
-      break;
-
-    // ### Error field is also on byte nr. 5 (index 4)
-    case 0xA0: // Command: "Command", parameter "Hide/Show Object Response" (Container)
-    case 0xA1: // Command: "Command", parameter "Enable/Disable Object Response" (Input Object)
-    case 0xA2: // Command: "Command", parameter "Select Input Object Response"
-    case 0xA7: // Command: "Command", parameter "Change Background Colour Response"
-    case 0xAF: // Command: "Command", parameter "Change Attribute Response"
-    case 0xB0: // Command: "Command", parameter "Change Priority Response"
-    case 0xB8: // Command: "Command", parameter "Graphics Context Command"
-      MACRO_setStateDependantOnError (5)
-      break;
-
-    // ### Error field is also on byte 6 (index 5)
-    case 0xA5: // Command: "Command", parameter "Change Child Location Response"
-    case 0xAE: // Command: "Command", parameter "Change Soft Key Mask Response"
-    case 0xB3: // Command: "Command", parameter "Change String Value Response"
-    case 0xB4: // Command: "Command", parameter "Change Child Position Response"
-      MACRO_setStateDependantOnError (6)
-      break;
-
-    // ### Error field is on byte 7 (index 6)
-    case 0xB1: // Command: "Command", parameter "Change List Item Response"
-      MACRO_setStateDependantOnError (7)
-      break;
-
-    case 0xB9: // Command: "Get Technical Data", parameter "Get Attribute Value"
-      MACRO_setStateDependantOnError (7)
-      #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
-      // client requested any attribute value for an object in the pool -> create ram struct if not yet existing
-      if ((arc_data.getUint8Data( 1 ) == 0xFF) && (arc_data.getUint8Data( 2 ) == 0xFF)) // object id is set to 0xFFFF to indicate error response
-      {
-        /// what to do if attribute value request returns error response???
-      }
-      else
-      {
-        // first store object ID for later use
-        uint16_t ui16_objID = arc_data.getUint8Data( 1 ) | (arc_data.getUint8Data( 2 ) << 8);
-
-        /// search for suitable iVtObject in all object lists of the client (pointer array to all fix and language dependent iVtObjects)
-
-        uint8_t ui8_arrIndex = 0;
-        bool b_objectFound = false;
-
-        // first check if first item is the requested one -> working is the first item list no matter what objectID it has
-        if (ui16_objID == mrc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
-          mrc_pool.eventAttributeValue(
-              mrc_pool.getIVtObjects()[ui8_arrIndex][0],
-              arc_data.getUint8Data( 3 ),
-              (uint8_t *)arc_data.getUint8DataConstPointer( 4 ) ); // bad cast, actually the interface should be changed!
-        else
-        {
-          // if last item of the list was reached or the requested object was found
-          while (mrc_pool.getIVtObjects()[ui8_arrIndex] != NULL)
-          {
-            uint16_t ui16_arrBegin = 1;
-            uint16_t ui16_arrMiddle;
-            uint16_t ui16_arrEnd;
-
-            // first item in list contains all fix objects of the pool (when language changes, these object stay the same)
-            if (ui8_arrIndex == 0)
-              ui16_arrEnd = mrc_pool.getNumObjects() - 1;
-            else
-              ui16_arrEnd = mrc_pool.getNumObjectsLang() - 1;
-
-            // if object is among these we can leave the while-loop
-            if ((ui16_objID < mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrBegin]->getID())
-             || (ui16_objID > mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrEnd]->getID())) // range check
-            {
-              ui8_arrIndex++;
-              continue; // try next object list, the requested object could not be found in the current list
-            }
-
-            while (ui16_arrBegin <= ui16_arrEnd)
-            {
-              ui16_arrMiddle = ui16_arrBegin + ((ui16_arrEnd - ui16_arrBegin) / 2);
-
-              if (mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() == ui16_objID) // objID found?
-              {
-                b_objectFound = true;
-                mrc_pool.eventAttributeValue(
-                    mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
-                    arc_data.getUint8Data( 3 ),
-                    (uint8_t *)arc_data.getUint8DataConstPointer( 4 ) ); // bad cast, actually the interface should be changed!
-                break;
-              }
-              else
-              {
-                if (mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() > ui16_objID)
-                  ui16_arrEnd = ui16_arrMiddle - 1;
-                else
-                  ui16_arrBegin = ui16_arrMiddle + 1;
-              }
-            }
-
-            if ((ui8_arrIndex == 0) && b_objectFound) // an object is either a fix object or a language dependent object (at least once in any language dependent list)
-              break;
-
-            ui8_arrIndex++;
-          }
-        }
-      }
-      #endif
-      break;
-    case 0xBD: // Command: "Command", parameter "Lock/Unlock Mask Response"
-      MACRO_setStateDependantOnError (3)
-      break;
-
-    case 0xC0: // Command: "Get Technical Data", parameter "Get Memory Size Response"
-      if( men_uploadType == UploadPool )
-        m_uploadPoolState.handleGetMemoryResponse( arc_data );
-      break;
-
-    case 0xC2: // Command: "Get Technical Data", parameter "Get Number Of Soft Keys Response"
-      mpc_vtServerInstance->setSoftKeyData( arc_data );
-      break;
-    case 0xC3: // Command: "Get Technical Data", parameter "Get Text Font Data Response"
-      mpc_vtServerInstance->setTextFontData( arc_data );
-      break;
-    case 0xC7: // Command: "Get Technical Data", parameter "Get Hardware Response"
-      mpc_vtServerInstance->setHardwareData( arc_data );
-      break;
-    case 0xD0: // Command: "Non Volatile Memory", parameter "Store Version Response"
-      if( men_uploadType == UploadPool )
-        m_uploadPoolState.handleStoreVersionResponse( arc_data.getUint8Data( 5 ) & 0x0F );
-      else
-      { // in case StoreVersion was triggered by the Application in normal operation
-        MACRO_setStateDependantOnError (6)
-      }
-      break;
-    case 0xD1: // Command: "Non Volatile Memory", parameter "Load Version Response"
-      if( men_uploadType == UploadPool )
-        m_uploadPoolState.handleLoadVersionResponse( arc_data.getUint8Data( 5 ) & 0x0F );
-      break;
-
-    case 0xD2: // Command: "Non Volatile Memory", parameter "Delete Version Response"
-      MACRO_setStateDependantOnError (6)
-      break;
-
-#ifndef NO_GET_VERSIONS
-    case 0xE0: // Command: "Non Volatile Memory", parameter "Get Versions Response"
-      if( men_uploadType == UploadPool )
-        m_uploadPoolState.handleGetVersionsResponse( NULL );
-      break;
-#endif
-
-    default:
-      // handle proprietary messages from VT
-      if (    arc_data.getUint8Data( 0 ) >= 0x60
-           && arc_data.getUint8Data( 0 ) <= 0x7F
-         )
-      {
-        MACRO_setStateDependantOnError( getPool().eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c(), arc_data.getUint8DataConstPointer() ) )
-      }
-      break;
-
-  } // switch
-
-  // Was it some command that requires queue-deletion & error processing?
-  if (ui8_errByte != 0)
-  {
-    if (men_uploadType == UploadCommand)
-    { /* if Waiting or Timedout (or Failed <shouldn't happen>) */
-      if( mi32_commandTimestamp > 0 ) // command completely transferred!!
-      { /// Our command was successfully sent & responded to, so remove it from the queue
-        if (mui8_commandParameter == arc_data.getUint8Data( 0 ))
-        { /* okay, right response for our current command! */
-#if DEBUG_VTCOMM
-          INTERNAL_DEBUG_DEVICE << "Got awaited response for " << unsigned( mui8_commandParameter ) << "... " << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-          // special treatment for Get Attribute Value command -> error byte is also being used as value byte for successful response
-          if ((mui8_commandParameter == 0xB9) && ((uint16_t(arc_data.getUint8Data( 2-1 )) | uint16_t(arc_data.getUint8Data( 2-1+1 ))<<8) != 0xFFFF))
-            ui8_uploadCommandError = 0;
-          else
-            ui8_uploadCommandError = arc_data.getUint8Data( ui8_errByte-1 );
-          /// Inform user on success/error of this command
-          getPool().eventCommandResponse (ui8_uploadCommandError, arc_data.getUint8DataConstPointer( 0 )); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "arc_data.name()"
-          finishUploadCommand(); // finish command no matter if "okay" or "error"...
-        }
-      }
-      else
-      { /// Our command is still running, so do NOT remove from the queue
-        /// wait for stream to finish sending
-      }
-    }
-  } // VT to this ECU
-}
-
-
-unsigned
-VtClientConnection_c::getUploadBufferSize() const
-{
-  return mq_sendUpload.size();
+  case UploadCommand:
+    m_commandHandler.processMsgVtToEcuActivations( pkg );
+    m_commandHandler.processMsgVtToEcuResponses( pkg );
+    break;
+  }
 }
 
 
 uint8_t
 VtClientConnection_c::getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour)
 {
-  if (mpc_vtServerInstance)
-  {
-    uint8_t colorDepth = mpc_vtServerInstance->getVtCapabilities()->hwGraphicType;
-    if (((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16)))
-      return getPool().convertColour (colorValue, colorDepth, obj, whichColour);
-  }
-  return colorValue;
+  if( !poolSuccessfullyUploaded() )
+    return colorValue;
+
+  uint8_t colorDepth = mpc_vtServerInstance->getVtCapabilities()->hwGraphicType;
+  if( ((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16)) )
+    return getPool().convertColour (colorValue, colorDepth, obj, whichColour);
+  else
+    return colorValue;
 }
 
 
 void
 VtClientConnection_c::notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst)
 {
-  if (&r_oldVtServerInst == mpc_vtServerInstance)
+  if( &r_oldVtServerInst == mpc_vtServerInstance )
     mpc_vtServerInstance = NULL;
-}
-
-
-bool
-VtClientConnection_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, bool b_enableReplaceOfCmd)
-{
-  msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9);
-  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
-{
-  msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rppc_vtObjects, aui16_numObjects);
-  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size)
-{
-  msc_tempSendUpload.set (apui8_buffer, ui32_size);
-  return queueOrReplace (msc_tempSendUpload, false);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectString, bool b_enableReplaceOfCmd)
-{
-  msc_tempSendUpload.set (apc_objectString);
-
-  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangePriority (IsoAgLib::iVtObject_c* apc_object, int8_t newPriority, bool b_enableReplaceOfCmd)
-{
-  if(newPriority < 3)
-  {
-    // only bother to send if priority is a legal value
-    return sendCommand (176 /* Command: Command --- Parameter: Change Priority */,
-                        apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                        newPriority, 0xFF, 0xFF, 0xFF, 0xFF,
-                        b_enableReplaceOfCmd);
-  }
-  else
-    return false;
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c* apc_object,uint16_t newWidth, uint16_t newHeight, uint8_t newLineAttributes, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (169 /* Command: Command --- Parameter: Change Size */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      newWidth & 0xFF, newWidth >> 8,
-                      newHeight & 0xFF, newHeight >> 8,
-                      newLineAttributes,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandControlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime)
-{
-  return sendCommand (163 /* Command: Command --- Parameter: Control Audio Device */,
-                      aui8_repetitions,
-                      aui16_frequency & 0xFF, aui16_frequency >> 8,
-                      aui16_onTime & 0xFF, aui16_onTime >> 8,
-                      aui16_offTime & 0xFF, aui16_offTime >> 8,
-                      false); // don't care for enable-same command stuff
-}
-
-
-bool
-VtClientConnection_c::sendCommandSetAudioVolume (uint8_t aui8_volume)
-{
-  return sendCommand (164 /* Command: Command --- Parameter: Set Audio Volume */,
-                      aui8_volume, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false); // don't care for enableReplaceOfCommand parameter actually
-}
-
-
-bool
-VtClientConnection_c::sendCommandDeleteObjectPool()
-{
-  return sendCommand (178 /* Command: Command --- Parameter: Delete Object Pool */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, true); // don't care for enableReplaceOfCommand parameter actually
-}
-
-
-bool
-VtClientConnection_c::sendCommandUpdateLanguagePool()
-{
-  /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
-  return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false) // replaces COULD happen if user-triggered sequences are there.
-      && sendCommand (0x12 /* Command: Object Pool Transfer --- Parameter: Object Pool Ready */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false); // replaces COULD happen if user-triggered sequences are there.
-}
-
-
-bool
-VtClientConnection_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
-{
-  /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
-  return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false, rppc_vtObjects, aui16_numObjects) // replaces COULD happen if user-triggered sequences are there.
-      && sendCommand (0x12 /* Command: Object Pool Transfer --- Parameter: Object Pool Ready */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false); // replaces COULD happen if user-triggered sequences are there.
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeNumericValue (uint16_t aui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      0xFF, byte1, byte2, byte3, byte4,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeAttribute (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      attrId, byte1, byte2, byte3, byte4,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeSoftKeyMask (uint16_t aui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMask, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (174 /* Command: Command --- Parameter: Change Soft Key Mask */,
-                      maskType,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      newSoftKeyMask & 0xFF, newSoftKeyMask >> 8,
-                      0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeActiveMask (uint16_t aui16_objectUid, uint16_t maskId, bool b_enableReplaceOfCmd )
-{
-  return sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      maskId & 0xFF, maskId >> 8,
-                      0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeStringValue (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
-{
-  msc_tempSendUpload.set (aui16_objectUid, apc_newValue, overrideSendLength);
-  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeChildPosition (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (180 /* Command: Command --- Parameter: Change Child Position */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      aui16_childObjectUid & 0xFF, aui16_childObjectUid >> 8,
-                      x & 0xFF, x >> 8,
-                      y & 0xFF, y >> 8,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeChildLocation (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (165 /* Command: Command --- Parameter: Change Child Location */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      aui16_childObjectUid & 0xFF, aui16_childObjectUid >> 8,
-                      dx+127, dy+127, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, uint8_t newColour, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      newColour, 0xFF, 0xFF, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeSize (uint16_t aui16_objectUid,uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (166 /* Command: Command --- Parameter: Change Size */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      newWidth & 0xFF, newWidth >> 8,
-                      newHeight & 0xFF, newHeight >> 8,
-                      0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (172 /* Command: Command --- Parameter: Change FillAttributes */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      newFillType, newFillColour,
-                      (newFillType == 3) ? newFillPatternObject->getID() & 0xFF : 0xFF,
-                      (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
-                      0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      newFontColour, newFontSize, newFontType, newFontStyle, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeLineAttributes (uint16_t aui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      newLineColour, newLineWidth, newLineArt & 0xFF, newLineArt >> 8, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
-bool
-VtClientConnection_c::sendCommandSetGraphicsCursor(
-  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( ai16_x );
-  uint16_t y=convert_n::castUI( ai16_y );
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_setGraphicsCursorCmdID,
-                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      b_enableReplaceOfCmd );
-}
-
-
-bool
-VtClientConnection_c::sendCommandSetForegroundColour(
-  IsoAgLib::iVtObject_c* apc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_setForegroundColourCmdID,
-                      newValue, 0xFF, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandSetBackgroundColour(
-  IsoAgLib::iVtObject_c* apc_object, uint8_t newValue, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_setBackgroundColourCmdID,
-                      newValue, 0xFF, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandSetGCLineAttributes(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_setLineAttributeCmdID,
-                      newLineAttributes->getID() & 0xFF, newLineAttributes->getID() >> 8, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandSetGCFillAttributes(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_setFillAttributeCmdID,
-                      newFillAttributes->getID() & 0xFF, newFillAttributes->getID() >> 8, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandSetGCFontAttributes(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_setFontAttributeCmdID,
-                      newFontAttributes->getID() & 0xFF, newFontAttributes->getID() >> 8, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandEraseRectangle(
-  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( ai16_x );
-  uint16_t y=convert_n::castUI( ai16_y );
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_eraseRectangleCmdID,
-                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandDrawPoint(
-  IsoAgLib::iVtObject_c* apc_object, bool  b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_drawPointCmdID,
-                      0xFF, 0xFF, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandDrawLine(
-  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( ai16_x );
-  uint16_t y=convert_n::castUI( ai16_y );
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_drawLineCmdID,
-                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandDrawRectangle(
-  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( ai16_x );
-  uint16_t y=convert_n::castUI( ai16_y );
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_drawRectangleCmdID,
-                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandDrawClosedEllipse(
-  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
-{
-  uint16_t x=convert_n::castUI( ai16_x );
-  uint16_t y=convert_n::castUI( ai16_y );
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_drawClosedEllipseCmdID,
-                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      b_enableReplaceOfCmd);
-}
-
-
-/// @todo OPTIMIZATION Revision4 Better struct for array of x/y pairs!
-bool
-VtClientConnection_c::sendCommandDrawPolygon(
-  IsoAgLib::iVtObject_c* apc_object, uint16_t ui16_numOfPoints, const int16_t* api16_x, const int16_t* api16_y, bool b_enableReplaceOfCmd)
-{
-  // Prevent from derefernzing NULL pointer.
-  if ((0 == api16_x) || (0 == api16_y)) { ui16_numOfPoints = 0; }
-
-  // Check if valid polgon (at least one point)
-  if (0 == ui16_numOfPoints) { return false; }
-
-  // Trivial case (like draw line) without TP.
-  if (ui16_numOfPoints == 1) {
-    uint16_t x = convert_n::castUI( *api16_x );
-    uint16_t y = convert_n::castUI( *api16_y );
-    return sendCommand( vtObjectGraphicsContext_c::e_commandID,
-                        apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                        vtObjectGraphicsContext_c::e_drawPolygonCmdID,
-                        x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                        b_enableReplaceOfCmd );
-  }
-
-  // send a polygon with more than one point
-  uint16_t ui16_bufferSize = 4+(ui16_numOfPoints*4);
-  uint8_t *pui8_buffer = new uint8_t[ ui16_bufferSize ];
-  pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
-  pui8_buffer[1] = apc_object->getID() & 0xFF;
-  pui8_buffer[2] = apc_object->getID() >> 8;
-  pui8_buffer[3] = vtObjectGraphicsContext_c::e_drawPolygonCmdID;
-
-  // add all points from the list to the buffer
-  uint16_t ui16_index = 4;		/* first 4 bytes are set */
-  for ( uint16_t ui16_currentPoint = 0;
-        ui16_currentPoint < ui16_numOfPoints;
-        ui16_currentPoint++ )
-  {
-    uint16_t x = convert_n::castUI( api16_x[ui16_currentPoint] );
-    pui8_buffer[ui16_index]   = x & 0xFF;
-    pui8_buffer[ui16_index+1] = x >> 8;
-    uint16_t y = convert_n::castUI( api16_y[ui16_currentPoint] );
-    pui8_buffer[ui16_index+2] = y & 0xFF;
-    pui8_buffer[ui16_index+3] = y >> 8;
-    ui16_index+=4;
-  }
-
-  // Send buffer as ISOBUS command.
-  msc_tempSendUpload.set (pui8_buffer, ui16_bufferSize );
-  delete[] pui8_buffer;
-  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandDrawText(
-  IsoAgLib::iVtObject_c* apc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *apc_newValue, bool b_enableReplaceOfCmd)
-{
-  // Non TP case
-  if (ui8_numOfCharacters <= 2) {
-    uint8_t a = (ui8_numOfCharacters >= 1) ? apc_newValue[0] : 0xFF;
-    uint8_t b = (ui8_numOfCharacters >= 2) ? apc_newValue[1] : 0xFF;
-    return sendCommand( vtObjectGraphicsContext_c::e_commandID,
-                        apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                        vtObjectGraphicsContext_c::e_drawTextCmdID,
-                        ui8_textType, ui8_numOfCharacters, a, b,
-                        b_enableReplaceOfCmd );
-  }
-
-  uint8_t *pui8_buffer = new uint8_t[6+ui8_numOfCharacters];
-  pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
-  pui8_buffer[1] = apc_object->getID() & 0xFF;
-  pui8_buffer[2] = apc_object->getID() >> 8;
-  pui8_buffer[3] = vtObjectGraphicsContext_c::e_drawTextCmdID;
-  pui8_buffer[4] = ui8_textType;
-  pui8_buffer[5] = ui8_numOfCharacters;
-
-  for (uint8_t ui8_index = 0; ui8_index < ui8_numOfCharacters; ui8_index++)
-    pui8_buffer[6+ui8_index] = apc_newValue [ui8_index];
-
-  msc_tempSendUpload.set (pui8_buffer, (6+ui8_numOfCharacters));
-  delete[] pui8_buffer;
-
-  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandPanViewport(
-  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
-{
-  uint16_t x = convert_n::castUI( ai16_x );
-  uint16_t y = convert_n::castUI( ai16_y );
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_panViewportCmdID,
-                      x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandZoomViewport(
-  IsoAgLib::iVtObject_c* apc_object, int8_t newValue, bool b_enableReplaceOfCmd)
-{
-  uint8_t zoom = convert_n::castUI( newValue );
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_zoomViewportCmdID,
-                      zoom, 0xFF, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandPanAndZoomViewport(
-  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, int8_t newValue, bool b_enableReplaceOfCmd)
-{
-  uint16_t x = convert_n::castUI( ai16_x );
-  uint16_t y = convert_n::castUI( ai16_y );
-  uint8_t zoom = convert_n::castUI( newValue );
-  uint8_t pui8_buffer[9];
-  pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
-  pui8_buffer[1] = apc_object->getID() & 0xFF;
-  pui8_buffer[2] = apc_object->getID() >> 8;
-  pui8_buffer[3] = vtObjectGraphicsContext_c::e_panAndZoomViewportCmdID;
-  pui8_buffer[4] = x & 0xFF;
-  pui8_buffer[5] = x >> 8;
-  pui8_buffer[6] = y & 0xFF;
-  pui8_buffer[7] = y >> 8;
-  pui8_buffer[8] = zoom;
-
-  // Send buffer as ISOBUS command.
-  msc_tempSendUpload.set( pui8_buffer, sizeof(pui8_buffer)/sizeof(*pui8_buffer) );
-  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandChangeViewportSize(
-IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_changeViewportSizeCmdID,
-                      newWidth & 0xFF, newWidth >> 8, newHeight & 0xFF, newHeight >> 8,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandDrawVtObject(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_drawVTObjectCmdID,
-                      pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandCopyCanvas2PictureGraphic(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_copyCanvasToPictureGraphicCmdID,
-                      pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandCopyViewport2PictureGraphic(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObject, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (vtObjectGraphicsContext_c::e_commandID,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      vtObjectGraphicsContext_c::e_copyViewportToPictureGraphicCmdID,
-                      pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-// ########## END Graphics Context ##########
-#endif
-
-
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
-bool
-VtClientConnection_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* apc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (185 /* Command: Get Technical Data --- Parameter: Get Attribute Value */,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8,
-                      cui8_attrID,
-                      0xFF, 0xFF, 0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-#endif
-
-
-bool
-VtClientConnection_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (189 /* Command: Command --- Parameter: Lock/Undlock Mask */,
-                      b_lockMask,
-                      apc_object->getID() & 0xFF, apc_object->getID() >> 8, /* object id of the data mask to lock */
-                      ui16_lockTimeOut & 0xFF, ui16_lockTimeOut >> 8, /* lock timeout on ms or zero for no timeout */
-                      0xFF, 0xFF,
-                      b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandHideShow (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
-{
-  return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
-                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
-                      b_hideOrShow,
-                      0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendCommandEsc (bool b_enableReplaceOfCmd)
-{
-  return sendCommand (146 /* Command: Command --- Parameter: ESC */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
-}
-
-
-bool
-VtClientConnection_c::sendNonVolatileDeleteVersion( const char* versionLabel7chars )
-{
-  if( versionLabel7chars != NULL )
-  {
-    return sendCommand (210 /* Non-Volatile Memory Operation Delete Version */,
-                        static_cast<uint8_t>( versionLabel7chars[0] ),
-                        static_cast<uint8_t>( versionLabel7chars[1] ),
-                        static_cast<uint8_t>( versionLabel7chars[2] ),
-                        static_cast<uint8_t>( versionLabel7chars[3] ),
-                        static_cast<uint8_t>( versionLabel7chars[4] ),
-                        static_cast<uint8_t>( versionLabel7chars[5] ),
-                        static_cast<uint8_t>( versionLabel7chars[6] ), false );
-  }
-  else
-  {
-    isoaglib_assert( m_uploadPoolState.versionLabel() );
-    return sendCommand (210 /* Non-Volatile Memory Operation Delete Version */,
-                        static_cast<uint8_t>( m_uploadPoolState.versionLabel()[0] ),
-                        static_cast<uint8_t>( m_uploadPoolState.versionLabel()[1] ),
-                        static_cast<uint8_t>( m_uploadPoolState.versionLabel()[2] ),
-                        static_cast<uint8_t>( m_uploadPoolState.versionLabel()[3] ),
-                        static_cast<uint8_t>( m_uploadPoolState.versionLabel()[4] ),
-                        static_cast<uint8_t>( m_uploadPoolState.versionLabel()[5] ),
-                        static_cast<uint8_t>( m_uploadPoolState.versionLabel()[6] ), false );
-  }
-}
-
-
-bool
-VtClientConnection_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd)
-{
-  if (!mb_commandsToBus)
-    return false; // discard SendCommand
-
-  if( !m_uploadPoolState.successfullyUploaded() )
-  {
-#if DEBUG_VTCOMM
-    INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - POOL NO YET COMPLETELY UPLOADED!--" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-    return false;
-  }
-
-  SendUpload_c* p_queue = NULL;
-  uint8_t i = 0;
-#ifdef USE_LIST_FOR_FIFO
-#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >::iterator i_sendUpload;
-#else
-  STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
-#endif
-#else
-  STL_NAMESPACE::queue<SendUpload_c>::iterator i_sendUpload;
-#endif
-  if (mb_checkSameCommand && b_enableReplaceOfCmd && !mq_sendUpload.empty())
-  { //get first equal command in queue
-    i_sendUpload = mq_sendUpload.begin();
-    if ( men_uploadType == UploadCommand )
-    { // the first item in the queue is currently in upload process - so do NOT use this for replacement, as the next action
-      // after receive of the awaited ACK is simple erase of the first command
-      i_sendUpload++;
-    }
-    for (; (p_queue == NULL) && (i_sendUpload != mq_sendUpload.end()); i_sendUpload++)
-    { //first check if multisendstreamer is used!
-      /* four cases:
-      1. both use buffer
-      2. both use mssObjectString
-      3. mss is queued and could be replaced by buffer
-      4. buffer is queued and could be replaced by mssObjectString
-        */
-      if ((i_sendUpload->mssObjectString == NULL) && (ar_sendUpload.mssObjectString == NULL))
-      {
-        if (i_sendUpload->vec_uploadBuffer[0] == ar_sendUpload.vec_uploadBuffer[0])
-        {
-          uint8_t ui8_offset = (ar_sendUpload.vec_uploadBuffer[0]);
-          if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
-          { // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
-            if ((ui8_offset == 0x12) ||
-                ((ui8_offset >= 0x60) && (ui8_offset <= 0x7F)) ) /// no checking for Proprietary commands (we don't need the replace-feature here!)
-              break;
-
-            // the rest is not possible by definition, but for being sure :-)
-#if DEBUG_VTCOMM
-            INTERNAL_DEBUG_DEVICE << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--" << INTERNAL_DEBUG_DEVICE_ENDL;
-            INTERNAL_DEBUG_DEVICE << "commandByte " << (int)ui8_offset << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-            return false;
-          }
-          // get bitmask for the corresponding command
-          uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-scui8_cmdCompareTableMin];
-          if (!(ui8_bitmask & (1<<0)))
-          { // go Check for overwrite...
-            for (i=1;i<=7;i++)
-            {
-              if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == ar_sendUpload.vec_uploadBuffer[i]))
-                break;
-            }
-            if (!(i<=7))
-            { // loop ran through, all to-compare-bytes matched!
-              p_queue = &*i_sendUpload; // so overwrite this SendUpload_c with the new value one
-            }
-          }
-        }
-      }
-      if ((i_sendUpload->mssObjectString != NULL) && (ar_sendUpload.mssObjectString != NULL))
-      {
-        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
-        {
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == ar_sendUpload.mssObjectString->getStreamer()->getID())
-            p_queue = &*i_sendUpload;
-        }
-      }
-      if ((i_sendUpload->mssObjectString != NULL) && (ar_sendUpload.mssObjectString == NULL))
-      {
-        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.vec_uploadBuffer[0])
-        {
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (ar_sendUpload.vec_uploadBuffer[1] | (ar_sendUpload.vec_uploadBuffer[2]<<8)))
-            p_queue = &*i_sendUpload;
-        }
-      }
-      if ((i_sendUpload->mssObjectString == NULL) && (ar_sendUpload.mssObjectString != NULL))
-      {
-        if ((*i_sendUpload).vec_uploadBuffer[0] == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
-        {
-          if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == ar_sendUpload.mssObjectString->getStreamer()->getID())
-            p_queue = &*i_sendUpload;
-        }
-      }
-    } // for
-  }
-
-  if (p_queue == NULL)
-  {
-    if( mq_sendUpload.empty() ) {
-      m_schedulerTaskProxy.retriggerNow();
-    }
-  /* The SendUpload_c constructor only takes a reference, so don't change the string in the meantime!!! */
-#ifdef USE_LIST_FOR_FIFO
-    // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-    mq_sendUpload.push_back (ar_sendUpload);
-#else
-    mq_sendUpload.push (ar_sendUpload);
-#endif
-  }
-  else
-    *p_queue = ar_sendUpload; // overloaded "operator="
-
-#if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << mq_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
-  //dumpQueue(); /* to see all enqueued cmds after every enqueued cmd */
-#endif
-  /** push(...) has no return value */
-  return true;
-}
-
-
-void
-VtClientConnection_c::dumpQueue()
-{
-#ifdef USE_LIST_FOR_FIFO
-#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >::iterator i_sendUpload;
-#else
-  STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
-#endif
-#else
-  STL_NAMESPACE::queue<SendUpload_c>::iterator i_sendUpload;
-#endif
-
-  for (i_sendUpload = mq_sendUpload.begin(); i_sendUpload != mq_sendUpload.end(); ++i_sendUpload)
-  {
-    if (i_sendUpload->mssObjectString == NULL)
-    {
-      for (uint8_t i=0; i<=7; i++)
-      {
-#if DEBUG_VTCOMM
-        INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(i_sendUpload->vec_uploadBuffer[i]);
-#endif
-      }
-    }
-    else
-    {
-      MultiSendPkg_c msp;
-      int i_strSize = i_sendUpload->mssObjectString->getStreamer()->getStreamSize();
-      for (int i=0; i < i_strSize; i+=7) {
-        i_sendUpload->mssObjectString->getStreamer()->setDataNextStreamPart (&msp, (unsigned char) ((i_strSize - i) > 7 ? 7 : (i_strSize-i)));
-        for (uint8_t j=1; j<=7; j++)
-        {
-#if DEBUG_VTCOMM
-          INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(msp[j]);
-#endif
-        }
-      }
-    }
-  }
-#if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
 }
 
 
 void
 VtClientConnection_c::doStart()
 {
-  /// First, trigger sending of WS-Announce
   mi32_timeWsAnnounceKey = mrc_wsMasterIdentItem.getIsoItem()->startWsAnnounce();
-
-  mi32_nextWsMaintenanceMsg = 0; // send out ws maintenance message immediately after ws has been announced.
+  mi32_nextWsMaintenanceMsg = 0;
 
   men_uploadType = UploadPool;
   m_uploadPoolState.doStart();
@@ -1887,26 +587,13 @@ VtClientConnection_c::doStart()
 void
 VtClientConnection_c::doStop()
 {
-  // actually not needed to be reset here, because if VT not active it's not checked and if VT gets active we restart the sending.
-  mi32_timeWsAnnounceKey = -1;
+  m_commandHandler.doStop();
+  m_uploadPoolState.doStop();
 
-  // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
-#ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  mq_sendUpload.clear();
-#else
-  while (!mq_sendUpload.empty()) mq_sendUpload.pop();
-#endif
-  /// if any upload is in progress, abort it
-  if (mpc_vtServerInstance) // no Vt Alives anymore but Vt still announced
-  {
-    getMultiSendInstance4Comm().abortSend (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName());
-  }
-  else
-  {
-    // vt's not announced
-    // that case should be handles by the multisend itself
-  }
+  if( getVtServerInstPtr() )
+    getMultiSendInstance( getMultitonInst() ).abortSend(
+      getIdentItem().isoName(), 
+      getVtServerInst().getIsoName() );
 
   if( m_uploadPoolState.activeAuxN() )
   {
@@ -1929,7 +616,7 @@ VtClientConnection_c::doStop()
 bool
 VtClientConnection_c::isPreferredVTTimeOut() const
 {
-  return ( HAL::getTime() > mi32_bootTime_ms );
+  return( HAL::getTime() > mi32_bootTime_ms );
 }
 
 
@@ -1972,11 +659,11 @@ VtClientConnection_c::checkAndHandleVtStateChange()
 bool
 VtClientConnection_c::isVtActive() const
 {
-  if (!mpc_vtServerInstance) return false;
+  if( mpc_vtServerInstance == NULL )
+    return false;
+
   return mpc_vtServerInstance->isVtActive();
 }
-
-
 
 
 void
@@ -1989,7 +676,7 @@ VtClientConnection_c::notifyOnFinishedNonUserPoolUpload( bool initialUpload )
   mc_preferredVt = mpc_vtServerInstance->getIsoName();
   m_dataStorageHandler.storePreferredVt(mc_preferredVt.toConstIisoName_c(), mpc_vtServerInstance->getConstVtCapabilities()->bootTime );
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
-  INTERNAL_DEBUG_DEVICE << "SAVE prefferedVT with current address " << (uint16_t)mpc_vtServerInstance->getIsoItem().nr()
+  INTERNAL_DEBUG_DEVICE << "SAVE preferredVT with current address " << (uint16_t)mpc_vtServerInstance->getIsoItem().nr()
                         << " NAME = " << mpc_vtServerInstance->getIsoName()
                         << " Boottime = " << (uint16_t)mpc_vtServerInstance->getConstVtCapabilities()->bootTime
                         << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -2010,139 +697,14 @@ VtClientConnection_c::notifyOnFinishedNonUserPoolUpload( bool initialUpload )
 
 
 void
-VtClientConnection_c::startUploadCommand()
-{
-  isoaglib_assert( !mq_sendUpload.empty() );
-
-  men_uploadType = UploadCommand;
-  men_uploadCommandState = UploadCommandWithAwaitingResponse;
-
-  // Get first element from queue
-  SendUpload_c* actSend = &mq_sendUpload.front();
-
-   /// Use Multi or Single CAN-Pkgs?
-  //////////////////////////////////
-
-  if ((actSend->mssObjectString == NULL) && (actSend->vec_uploadBuffer.size() < 9))
-  { /// Fits into a single CAN-Pkg!
-
-    if (actSend->vec_uploadBuffer[0] == 0x11)
-    { /// Handle special case of LanguageUpdate / UserPoolUpdate
-      if (actSend->ppc_vtObjects)
-      { /// User triggered Partial Pool Update
-        m_uploadPoolState.initObjectPoolUploadingPhases(
-          UploadPoolState_c::UploadPoolTypeUserPoolUpdate,
-          actSend->ppc_vtObjects,
-          actSend->ui16_numObjects );
-      }
-      else
-      { /// Language Pool Update
-        m_uploadPoolState.initObjectPoolUploadingPhases(
-          UploadPoolState_c::UploadPoolTypeLanguageUpdate );
-      }
-      m_uploadPoolState.startCurrentUploadPhase();
-
-      men_uploadCommandState = UploadCommandPartialPoolUpdate; // There's NO response for command 0x11! And there may be multiple parts!
-      mi32_commandTimestamp = -1;
-      mi32_commandTimeout = -1;
-      // There's no timeout (hence no valid "mui8_commandParameter")
-      return;
-    }
-    else
-    { /// normal 8 byte package
-      mi32_commandTimestamp = HAL::getTime();
-      mui8_commandParameter = actSend->vec_uploadBuffer [0];
-
-      // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
-      sendMessage(
-        actSend->vec_uploadBuffer [0], actSend->vec_uploadBuffer [1],
-        actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
-        actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
-        actSend->vec_uploadBuffer [6], actSend->vec_uploadBuffer [7]);
-    }
-  }
-  else if ((actSend->mssObjectString != NULL) && (actSend->mssObjectString->getStreamer()->getStreamSize() < 9))
-  { /// Fits into a single CAN-Pkg!
-    mi32_commandTimestamp = HAL::getTime();
-    mui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
-
-    uint8_t ui8_len = actSend->mssObjectString->getStreamer()->getStreamSize();
-
-    uint8_t data[ 8 ];
-    actSend->mssObjectString->getStreamer()->set5ByteCommandHeader( data );
-    int i=5;
-    for (; i < ui8_len; ++i) data[ i ] = actSend->mssObjectString->getStreamer()->getStringToStream() [i-5];
-    for (; i < 8;       ++i) data[ i ] = 0xFF; // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
-    
-    sendCommand( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ], data[ 6 ], data[ 7 ] );   
-  }
-  else if (actSend->mssObjectString == NULL)
-  { /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    mi32_commandTimestamp = -1; // will get set on SendSuccess
-    mui8_commandParameter = actSend->vec_uploadBuffer [0];
-
-    ( void )getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
-      mpc_vtServerInstance->getIsoName(), &actSend->vec_uploadBuffer.front(),
-      actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, &mt_multiSendEventHandler);
-  }
-  else
-  {
-    mi32_commandTimestamp = -1; // will get set on SendSuccess
-    mui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
-
-    ( void )getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
-      mpc_vtServerInstance->getIsoName(), (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),
-      ECU_TO_VT_PGN, &mt_multiSendEventHandler);
-  }
-
-#if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << "Waiting for response to " << unsigned( mui8_commandParameter ) << "... " << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-  mi32_commandTimeout = ((mui8_commandParameter >= 0xD0) && (mui8_commandParameter <= 0xD2))
-                          ? DEF_TimeOut_VersionLabel
-                          : (mui8_commandParameter == 0x12) ? DEF_TimeOut_EndOfObjectPool
-                            /* default: sending Annex F. */ : DEF_TimeOut_NormalCommand;
-}
-
-
-void
-VtClientConnection_c::finishUploadCommand()
-{
-  isoaglib_assert( ! mq_sendUpload.empty() );
-
-  men_uploadType = UploadIdle;
-  mi32_commandTimestamp = -1;
-
-  //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
-  #if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << mq_sendUpload.size() <<" -> ";
-  #endif
-
-  #ifdef USE_LIST_FOR_FIFO
-  // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
-  mq_sendUpload.pop_front();
-  #else
-  mq_sendUpload.pop();
-  #endif
-
-  #if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << mq_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
-
-  if ( ! mq_sendUpload.empty() )
-    m_schedulerTaskProxy.retriggerNow();
-}
-
-
-void
-VtClientConnection_c::setVtDisplayState (uint8_t ui8_sa)
+VtClientConnection_c::setVtDisplayState( uint8_t ui8_sa )
 {
   if( !m_uploadPoolState.successfullyUploaded() )
     return;
 
   // as we don't properly seem to reset "men_objectPoolState" at doStop(), we'll for now add the extra
   // isAddress-Claimed-check here for safety:
-  if (!getIdentItem().isClaimedAddress())
+  if( !getIdentItem().isClaimedAddress() )
     return;
 
   vtClientDisplayState_t newDisplayState = 
@@ -2158,17 +720,41 @@ VtClientConnection_c::setVtDisplayState (uint8_t ui8_sa)
 }
 
 
+void
+VtClientConnection_c::sendMessage(
+  uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7 )
+{
+  CanPkgExt_c sendData;
+  
+  sendData.setIsoPri( 7 );
+  sendData.setIsoPgn( ECU_TO_VT_PGN );
+  sendData.setMonitorItemForDA( &const_cast<IsoItem_c&>( getVtServerInst().getIsoItem() ) );
+  sendData.setMonitorItemForSA( getIdentItem().getIsoItem() );
+  sendData.setUint8Data( 0, d0 );
+  sendData.setUint8Data( 1, d1 );
+  sendData.setUint8Data( 2, d2 );
+  sendData.setUint8Data( 3, d3 );
+  sendData.setUint8Data( 4, d4 );
+  sendData.setUint8Data( 5, d5 );
+  sendData.setUint8Data( 6, d6 );
+  sendData.setUint8Data( 7, d7 );
+  sendData.setLen( 8 );
+  
+  getIsoBusInstance4Comm() << sendData;
+}
+
+
 IsoAgLib::iVtClientConnection_c&
 VtClientConnection_c::toInterfaceReference()
 {
-  return static_cast<IsoAgLib::iVtClientConnection_c&>(*this);
+  return static_cast<IsoAgLib::iVtClientConnection_c&>( *this );
 }
 
 
 IsoAgLib::iVtClientConnection_c*
 VtClientConnection_c::toInterfacePointer()
 {
-  return static_cast<IsoAgLib::iVtClientConnection_c*>(this);
+  return static_cast<IsoAgLib::iVtClientConnection_c*>( this );
 }
 
 
@@ -2190,54 +776,6 @@ uint16_t
 VtClientConnection_c::getVtObjectPoolSoftKeyHeight() const
 {
   return getPool().getSkHeight();
-}
-
-
-void
-VtClientConnection_c::reactOnStateChange( const SendStream_c& sendStream )
-{
-  switch( sendStream.getSendSuccess() )
-  {
-  case __IsoAgLib::SendStream_c::Running:
-    break;
-
-  case __IsoAgLib::SendStream_c::SendAborted:
-    /// Note: The behavior of what to do seems to be not really specified in ISO11783-3.
-    // If aborted, retry regardless of any application-logic-retry, as it was a multisend problem, not a problem of the command itself!
-    startUploadCommand();
-    break;
-
-  case __IsoAgLib::SendStream_c::SendSuccess:
-    mi32_commandTimestamp = HAL::getTime();
-    // now two things can be detected:
-    // 1) time-out
-    // 2) incoming response triggering the next command
-    break;
-  }
-}
-
-
-void
-VtClientConnection_c::sendMessage(
-  uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7 )
-{
-  CanPkgExt_c sendData;
-  
-  sendData.setIsoPri( 7 );
-  sendData.setIsoPgn( ECU_TO_VT_PGN );
-  sendData.setIsoPs( mpc_vtServerInstance->getIsoItem().nr() );
-  sendData.setMonitorItemForSA( mrc_wsMasterIdentItem.getIsoItem() );
-  sendData.setUint8Data( 0, d0 );
-  sendData.setUint8Data( 1, d1 );
-  sendData.setUint8Data( 2, d2 );
-  sendData.setUint8Data( 3, d3 );
-  sendData.setUint8Data( 4, d4 );
-  sendData.setUint8Data( 5, d5 );
-  sendData.setUint8Data( 6, d6 );
-  sendData.setUint8Data( 7, d7 );
-  sendData.setLen( 8 );
-  
-  getIsoBusInstance4Comm() << sendData;
 }
 
 
