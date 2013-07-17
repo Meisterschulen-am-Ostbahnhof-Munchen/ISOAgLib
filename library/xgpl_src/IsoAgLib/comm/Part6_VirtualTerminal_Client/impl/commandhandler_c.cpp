@@ -840,8 +840,7 @@ CommandHandler_c::dumpQueue()
 bool
 CommandHandler_c::tryToStart()
 {
-  if( mq_sendUpload.empty() ||
-      !m_connection.isVtActive() )
+  if( mq_sendUpload.empty() )
     return false;
 
   men_uploadCommandState = UploadCommandWithAwaitingResponse;
@@ -958,6 +957,9 @@ CommandHandler_c::finishUploadCommand()
 void
 CommandHandler_c::reactOnStateChange( const SendStream_c& sendStream )
 {
+  if( !m_connection.isVtActive() )
+    return;
+
   switch( sendStream.getSendSuccess() )
   {
   case __IsoAgLib::SendStream_c::Running:
@@ -965,10 +967,8 @@ CommandHandler_c::reactOnStateChange( const SendStream_c& sendStream )
 
   case __IsoAgLib::SendStream_c::SendAborted:
     {
-      /// Note: The behavior of what to do seems to be not really specified in ISO11783-3.
-      // If aborted, retry regardless of any application-logic-retry, as it was a multisend problem, not a problem of the command itself!
       const bool started = tryToStart();
-      ( void )started; // could be that VT dropped off during MultiSend, etc.
+      isoaglib_assert( started );
     } break;
 
   case __IsoAgLib::SendStream_c::SendSuccess:

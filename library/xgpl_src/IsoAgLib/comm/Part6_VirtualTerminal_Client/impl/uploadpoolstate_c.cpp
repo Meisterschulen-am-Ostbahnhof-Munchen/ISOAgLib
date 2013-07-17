@@ -546,6 +546,9 @@ UploadPoolState_c::timeEventCalculateLanguage()
 void
 UploadPoolState_c::reactOnStateChange( const SendStream_c& stream )
 {
+  if( !m_connection.isVtActive() )
+    return;
+
   switch( stream.getSendSuccess() )
   {
     case __IsoAgLib::SendStream_c::Running:
