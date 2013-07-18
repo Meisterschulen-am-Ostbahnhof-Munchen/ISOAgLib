@@ -50,7 +50,7 @@ namespace __IsoAgLib
   }
 
   void ProprietaryMessageA_c::init(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp) {
-    isoaglib_assert(NULL == m_ident);
+    isoaglib_assert( NULL == m_ident );
     m_ident = &a_ident;
     m_remote = a_remote;
     m_dp = a_dp;
@@ -58,7 +58,8 @@ namespace __IsoAgLib
 
 
   void ProprietaryMessageA_c::close() {
-    isoaglib_assert(NULL != m_ident);
+    isoaglib_assert( NULL != m_ident );
+    isoaglib_assert( !m_isRegistered );
     m_ident = NULL;
     m_remote = IsoName_c::IsoNameUnspecified();
     m_dp = 0;
@@ -67,8 +68,8 @@ namespace __IsoAgLib
 
   void ProprietaryMessageA_c::enableReception()
   {
-    isoaglib_assert(NULL != m_ident);
-    isoaglib_assert( ! m_isRegistered );
+    isoaglib_assert( NULL != m_ident );
+    isoaglib_assert( !m_isRegistered );
     getProprietaryMessageHandlerInstance( m_ident->getMultitonInst() ).registerProprietaryMessage( *this );
     m_isRegistered = true;
   }
@@ -76,7 +77,7 @@ namespace __IsoAgLib
 
   void ProprietaryMessageA_c::disableReception()
   {
-    isoaglib_assert(NULL != m_ident);
+    isoaglib_assert( NULL != m_ident );
     isoaglib_assert( m_isRegistered );
     getProprietaryMessageHandlerInstance( m_ident->getMultitonInst() ).deregisterProprietaryMessage( *this );
     m_isRegistered = false;
