@@ -99,19 +99,16 @@ VtClient_c::initAndRegisterObjectPool(
   IsoAgLib::iVtClientObjectPool_c& arc_pool, 
   const char* apc_versionLabel, 
   IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, 
-  IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode)
+  IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode )
 {
   switch (aen_mode)
   {
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt:
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToAnyVt:
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToSpecificVt:
-      if (!arc_identItem.isMaster())
-      {
-        /// IdentItem must be a Master
-        return NULL;
-      }
+      isoaglib_assert( arc_identItem.isMaster() );
       break;  
+
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave:
       break;
   }
@@ -128,29 +125,21 @@ VtClient_c::initAndRegisterObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib
   for (; ui8_index < m_vtConnections.size(); ui8_index++)
   {
     if (m_vtConnections[ui8_index] == NULL)
-    { // found one emtpy entry
-      break;
-    }
-    else
-    {
-      if (&m_vtConnections[ui8_index]->getIdentItem() == &rc_identItem)
-      { // this IdentItem has already one pool registered - use multiple
-        // IdentItems if you want to use multiple pools!
-        return NULL;
-      }
-    }
+      break; // found one emtpy entry
+
+    isoaglib_assert( &m_vtConnections[ui8_index]->getIdentItem() != &rc_identItem );
   }
-  // create new instance
-  VtClientConnection_c* pc_vtCSC = new VtClientConnection_c(
+
+  VtClientConnection_c* vtCSC = new VtClientConnection_c(
     rc_identItem, *this, arc_pool, apc_versionLabel, apc_claimDataStorage, ui8_index, aen_mode );
 
   // add new instance to vector
   if (ui8_index < m_vtConnections.size())
-    m_vtConnections[ui8_index] = pc_vtCSC;
+    m_vtConnections[ ui8_index ] = vtCSC;
   else
-    m_vtConnections.push_back(pc_vtCSC);
+    m_vtConnections.push_back( vtCSC );
 
-  return pc_vtCSC;
+  return vtCSC;
 }
 
 

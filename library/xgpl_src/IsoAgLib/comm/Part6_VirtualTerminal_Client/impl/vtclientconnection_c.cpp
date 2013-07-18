@@ -566,9 +566,9 @@ VtClientConnection_c::getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObje
 
 
 void
-VtClientConnection_c::notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst)
+VtClientConnection_c::notifyOnVtServerInstanceLoss( VtServerInstance_c& oldVtServerInst )
 {
-  if( &r_oldVtServerInst == mpc_vtServerInstance )
+  if( &oldVtServerInst == mpc_vtServerInstance )
     mpc_vtServerInstance = NULL;
 }
 

@@ -696,13 +696,13 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
   if( !mb_commandsToBus )
     return false;
 
-  if( !m_connection.poolSuccessfullyUploaded() )
-  {
 #if DEBUG_VTCOMM
+  if( !m_connection.poolSuccessfullyUploaded() )
     INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - POOL NO YET COMPLETELY UPLOADED!--" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
+
+  if( !m_connection.poolSuccessfullyUploaded() )
     return false;
-  }
 
   SendUpload_c* p_queue = NULL;
   uint8_t i = 0;
@@ -855,7 +855,6 @@ CommandHandler_c::tryToStart()
     { /// Handle special case of LanguageUpdate / UserPoolUpdate
       if (actSend.ppc_vtObjects)
       { /// User triggered Partial Pool Update
-        /// @todo lo_prio get that separated out of the uploadPoolState if possible???
         m_connection.uploadPoolState().initObjectPoolUploadingPhases(
           UploadPoolState_c::UploadPoolTypeUserPoolUpdate,
           actSend.ppc_vtObjects,
@@ -898,7 +897,8 @@ CommandHandler_c::tryToStart()
     for (; i < ui8_len; ++i) data[ i ] = actSend.mssObjectString->getStreamer()->getStringToStream() [i-5];
     for (; i < 8;       ++i) data[ i ] = 0xFF; // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
     
-    sendCommand( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ], data[ 6 ], data[ 7 ] );   
+    m_connection.sendMessage(
+      data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ], data[ 6 ], data[ 7 ] );   
   }
   else if (actSend.mssObjectString == NULL)
   { /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
