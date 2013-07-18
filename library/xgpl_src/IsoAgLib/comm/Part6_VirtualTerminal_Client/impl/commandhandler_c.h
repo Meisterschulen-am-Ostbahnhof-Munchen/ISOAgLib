@@ -40,6 +40,7 @@ public:
   CommandHandler_c( VtClientConnection_c& );
 
   void processMsgVtToEcuActivations( const CanPkgExt_c& pkg );
+  void processMsgVtToEcuActivations( Stream_c &stream );
   void processMsgVtToEcuResponses( const CanPkgExt_c& pkg );
 
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, bool b_enableReplaceOfCmd=true);

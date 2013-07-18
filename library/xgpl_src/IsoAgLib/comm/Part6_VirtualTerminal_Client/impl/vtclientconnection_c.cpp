@@ -83,47 +83,20 @@ VtClientConnection_c::processPartStreamDataChunk (Stream_c& stream, bool isFirst
   if( !isLastChunk || !isVtActive())
     return false;
 
-  uint8_t ui8_streamFirstByte = stream.getFirstByte();
-  switch( ui8_streamFirstByte )
+  switch( men_uploadType )
   {
-    case 0x08:
-    {
-      const uint16_t inputStringId = uint16_t( stream.getNextNotParsed() ) | ( uint16_t( stream.getNextNotParsed() ) << 8 );
-      const unsigned inputStringLength = stream.getNextNotParsed();
+  case UploadPool:
+    m_uploadPoolState.processMsgVtToEcu( stream );
+    break;
 
-      const uint16_t ui16_totalstreamsize = stream.getByteTotalSize();
-      if( ui16_totalstreamsize >= (inputStringLength + 4) )
-      { /** @todo SOON-258 "if (ui16_totalstreamsize > (mui8_inputStringLength + 4)) registerErronousVtMessage("VT Input String Activation CAN-Message too long.");
-	      This is/was a problem of the John Deere GS2 VT and needs to be registered for any VT.
-	      It will be fixed in the GS2 in 2008, but for now we have relaxed the checking and put this comment in here.
-	    */
-        // no on-the-fly parsing anymore
-        getPool().eventStringValue( inputStringId, inputStringLength, stream, stream.getNotParsedSize(), true, true );
-      }
-    } break;
+  case UploadIdle:
+    m_commandHandler.processMsgVtToEcuActivations( stream );
+    break;
 
-    case 0x24: // Command: "Auxiliary Control", parameter "Auxiliary Assignment type 2"
-    {
-      if( !m_uploadPoolState.activeAuxN() )
-        break;
-
-      uint16_t ui16_functionObjId = 0xFFFF;
-      const uint8_t errorCode = storeAux2Assignment( stream, ui16_functionObjId );
-
-      sendMessage( 0x24, ui16_functionObjId & 0xFF, ui16_functionObjId >> 8, errorCode, 0xFF, 0xFF, 0xFF, 0xFF );
-    } break;
-
-#ifndef NO_GET_VERSIONS
-    case 0xE0:
-      if( men_uploadType == UploadPool )
-        m_uploadPoolState.handleGetVersionsResponse( &stream );
-      break;
-#endif
-
-    default:
-      if( ui8_streamFirstByte >= 0x60 && ui8_streamFirstByte <= 0x7F )
-        getPool().eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c(), ui8_streamFirstByte, stream );
-      break;
+  case UploadCommand:
+    m_commandHandler.processMsgVtToEcuActivations( stream );
+  //m_commandHandler.processMsgVtToEcuResponses( pkg ); // currently no (E)TP-responses
+    break;
   }
 
   return false;

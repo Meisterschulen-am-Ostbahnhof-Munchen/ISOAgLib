@@ -13,7 +13,7 @@
 #include "commandhandler_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
-#include "IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h"
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectstring_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectpicturegraphic_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.h>
@@ -37,9 +37,9 @@ static const uint8_t scui8_cmdCompareTableMin = 0x92;
 static const uint8_t scui8_cmdCompareTableMax = 0xBD;
 
 /// this table is used to identify if a command can override an earlier command of same function
-/// 1<<databyte to indicate which databytes to compaire to decide if command is replaced or not
-static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdCompareTableMin)+1] = {
+/// 1<<databyte to indicate which databytes to compare to decide if command is replaced or not
 /// (1<<0) means DO NOT OVERRIDE THESE COMMANDS AT ALL
+static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdCompareTableMin)+1] = {
 /* 0x92 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND
 /* 0x93 */ 0 , //invalid command
 /* 0x94 */ 0 , //invalid command
@@ -935,10 +935,14 @@ CommandHandler_c::tryToStart()
 }
 
 
+// will be called either from
+// - finished pool-update-(E)TPs...
+// - incoming response
 void
 CommandHandler_c::finishUploadCommand()
 {
   isoaglib_assert( !mq_sendUpload.empty() );
+  isoaglib_assert( men_uploadCommandState != UploadCommandIdle );
 
   mq_sendUpload.pop_front();
 
@@ -950,6 +954,7 @@ CommandHandler_c::finishUploadCommand()
   #endif
 
   mi32_commandTimestamp = -1;
+  men_uploadCommandState = UploadCommandIdle;
   m_connection.notifyOnFinishedCommand( !mq_sendUpload.empty() );
 }
 
@@ -1067,7 +1072,7 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
       }
     } break;
 
-  case 0x25: // Command: "Auxiliary Control type 2", parameter "input status enable"
+  case 0x25: // Command: "Auxiliary Control type 2", parameter "Input Status Enable"
     {
       if( !m_connection.uploadPoolState().activeAuxN() )
         break;
@@ -1082,6 +1087,49 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
   }
 }
 
+void
+CommandHandler_c::processMsgVtToEcuActivations( Stream_c &stream )
+{
+  const uint8_t command = stream.getFirstByte();
+
+  switch( command )
+  {
+    case 0x08:
+    {
+      const uint16_t inputStringId = uint16_t( stream.getNextNotParsed() ) | ( uint16_t( stream.getNextNotParsed() ) << 8 );
+      const unsigned inputStringLength = stream.getNextNotParsed();
+
+      const uint16_t ui16_totalstreamsize = stream.getByteTotalSize();
+      if( ui16_totalstreamsize >= (inputStringLength + 4) )
+      { /** @todo SOON-258 "if (ui16_totalstreamsize > (mui8_inputStringLength + 4)) registerErronousVtMessage("VT Input String Activation CAN-Message too long.");
+	      This is/was a problem of the John Deere GS2 VT and needs to be registered for any VT.
+	      It will be fixed in the GS2 in 2008, but for now we have relaxed the checking and put this comment in here.
+	    */
+        // no on-the-fly parsing anymore
+        m_connection.getPool().eventStringValue( inputStringId, inputStringLength, stream, stream.getNotParsedSize(), true, true );
+      }
+    } break;
+
+    case 0x24: // Command: "Auxiliary Control", parameter "Auxiliary Assignment type 2"
+    {
+      if( !m_connection.uploadPoolState().activeAuxN() )
+        break;
+
+      uint16_t ui16_functionObjId = 0xFFFF;
+      const uint8_t errorCode = m_connection.storeAux2Assignment( stream, ui16_functionObjId );
+
+      m_connection.sendMessage( 0x24, ui16_functionObjId & 0xFF, ui16_functionObjId >> 8, errorCode, 0xFF, 0xFF, 0xFF, 0xFF );
+    } break;
+
+    default:
+      if( command >= 0x60 && command <= 0x7F )
+        m_connection.getPool().eventProprietaryCommand(
+          m_connection.getVtServerInst().getIsoName().toConstIisoName_c(),
+          command,
+          stream );
+      break;
+  }
+}
 
 void
 CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
@@ -1093,9 +1141,7 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
   switch( pkg.getUint8Data( 0 ) )
   {
   case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
-    if( men_uploadCommandState == UploadCommandWithAwaitingResponse )
-      m_connection.uploadPoolState().finalizeUploading(); // indicate that the language specific objects have been updated. also the user will get notified.
-
+    m_connection.uploadPoolState().finalizeUploading(); // indicate that the language specific objects have been updated. also the user will get notified.
     errByte = 2;
     break;
 

@@ -75,6 +75,20 @@ UploadPoolState_c::UploadPoolState_c(
 
 
 void
+UploadPoolState_c::processMsgVtToEcu( Stream_c &stream )
+{
+#ifndef NO_GET_VERSIONS
+  switch( stream.getFirstByte() )
+  {
+    case 0xE0:
+      handleGetVersionsResponse( &stream );
+      break;
+  }
+#endif
+}
+
+
+void
 UploadPoolState_c::processMsgVtToEcu( const CanPkgExt_c& pkg )
 {
   switch( pkg.getUint8Data( 0 ) )
@@ -235,6 +249,9 @@ UploadPoolState_c::handleGetMemoryResponse( const CanPkgExt_c &pkg )
     else
       vtOutOfMemory();
     break;
+
+  default:
+    ; // unsolicited msg.
   }
 }
 
@@ -281,7 +298,7 @@ UploadPoolState_c::handleLoadVersionResponse( unsigned errorNibble )
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
       INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-      vtOutOfMemory(); // Insufficient memory available
+      vtOutOfMemory();
     }
     else
     { // Not used
@@ -396,20 +413,6 @@ uint32_t
 UploadPoolState_c::fitTerminalWrapper( const vtObject_c& object ) const
 {
   return dontUpload( object ) ? 0 : object.fitTerminal();
-}
-
-
-bool
-UploadPoolState_c::activeAuxO() const
-{
-  return( m_uploadingVersion == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 );
-}
-
-bool
-UploadPoolState_c::activeAuxN() const
-{
-  return( ( m_uploadingVersion != 0 ) &&
-          ( m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 ) );
 }
 
 
@@ -667,35 +670,6 @@ UploadPoolState_c::startCurrentUploadPhase()
 
 
 void
-UploadPoolState_c::doStart()
-{
-  mi8_vtLanguage = -2; // (re-)query LANGUAGE_PGN
-  m_uploadingVersion = 0; // re-query version (needed for pool adaptation, e.g. omit Aux2 for v2 VTs)
-}
-
-
-void
-UploadPoolState_c::doStop()
-{
-  men_uploadPoolState = UploadPoolInit;
-}
-
-
-void
-UploadPoolState_c::notifyOnVtsLanguagePgn()
-{
-  mi8_vtLanguage = -2;
-}
-
-
-bool
-UploadPoolState_c::successfullyUploaded() const
-{
-  return( men_uploadPoolState == UploadPoolEndSuccess );
-}
-
-
-void
 UploadPoolState_c::setObjectPoolUploadingLanguage()
 {
   mi8_objectPoolUploadingLanguage = mi8_vtLanguage;
@@ -822,6 +796,22 @@ UploadPoolState_c::initObjectPoolUploadingPhases(
 
   men_uploadPoolType = ren_uploadPoolType;
 }
+
+
+bool
+UploadPoolState_c::activeAuxO() const
+{
+  return( m_uploadingVersion == IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 );
+}
+
+
+bool
+UploadPoolState_c::activeAuxN() const
+{
+  return( ( m_uploadingVersion != 0 ) &&
+          ( m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 ) );
+}
+
 
 
 } // __IsoAgLib

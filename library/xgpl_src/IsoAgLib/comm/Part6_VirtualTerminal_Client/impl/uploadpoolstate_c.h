@@ -84,11 +84,7 @@ namespace __IsoAgLib {
     void startCurrentUploadPhase();
 
     void processMsgVtToEcu( const CanPkgExt_c& pkg );
-    void handleGetVersionsResponse( Stream_c * );
-    void handleEndOfObjectPoolResponse( bool success );
-    void handleGetMemoryResponse( const CanPkgExt_c &pkg );
-    void handleStoreVersionResponse( unsigned errorNibble );
-    void handleLoadVersionResponse( unsigned errorNibble );
+    void processMsgVtToEcu( Stream_c &stream );
 
     IsoAgLib::iVtClientObjectPool_c& getPool() const { return m_pool; }
 
@@ -113,6 +109,12 @@ namespace __IsoAgLib {
 
   private:
     bool isVersionFound( Stream_c& ) const;
+
+    void handleGetVersionsResponse( Stream_c * );
+    void handleEndOfObjectPoolResponse( bool success );
+    void handleGetMemoryResponse( const CanPkgExt_c &pkg );
+    void handleStoreVersionResponse( unsigned errorNibble );
+    void handleLoadVersionResponse( unsigned errorNibble );
 
     void startUploadVersion();
     void startLoadVersion();
@@ -170,7 +172,36 @@ namespace __IsoAgLib {
     int8_t mi8_vtLanguage; // always valid, as we're waiting for a VT's language first before starting anything...
   };
 
-}
 
+  inline void
+  UploadPoolState_c::doStart()
+  {
+    mi8_vtLanguage = -2; // (re-)query LANGUAGE_PGN
+    m_uploadingVersion = 0; // re-query version (needed for pool adaptation, e.g. omit Aux2 for v2 VTs)
+  }
+
+
+  inline void
+  UploadPoolState_c::doStop()
+  {
+    men_uploadPoolState = UploadPoolInit;
+  }
+
+
+  inline void
+  UploadPoolState_c::notifyOnVtsLanguagePgn()
+  {
+    mi8_vtLanguage = -2;
+  }
+
+
+  inline bool
+  UploadPoolState_c::successfullyUploaded() const
+  {
+    return( men_uploadPoolState == UploadPoolEndSuccess );
+  }
+
+
+} // __IsoAgLib
 
 #endif
