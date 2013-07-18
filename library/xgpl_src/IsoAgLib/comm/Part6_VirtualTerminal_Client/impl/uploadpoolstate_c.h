@@ -28,6 +28,10 @@ namespace __IsoAgLib {
 
   class UploadPoolState_c : public MultiSendEventHandler_c
   {
+    // not copyable
+    UploadPoolState_c &operator=( const UploadPoolState_c & );
+    UploadPoolState_c( const UploadPoolState_c & );
+
   public:
     enum UploadPoolType_t {
       UploadPoolTypeCompleteInitially,

@@ -145,7 +145,7 @@ private:
   bool isPreferredVTTimeOut() const;
 
   // CanCustomer_c
-  virtual void reactOnAbort (Stream_c& apc_stream) { /* no (more) on-the-fly parsing */ }
+  virtual void reactOnAbort( Stream_c& ) {}
   virtual bool reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen);
   virtual bool processPartStreamDataChunk (Stream_c& apc_stream, bool ab_isFirstChunk, bool ab_isLastChunk);
 

@@ -30,6 +30,10 @@ class VtClientConnection_c;
 
 class CommandHandler_c : public MultiSendEventHandler_c
 {
+  // not copyable
+  CommandHandler_c &operator=( const CommandHandler_c & );
+  CommandHandler_c( const CommandHandler_c & );
+
   enum UploadCommandState_t {
     UploadCommandIdle,
     UploadCommandWithAwaitingResponse,

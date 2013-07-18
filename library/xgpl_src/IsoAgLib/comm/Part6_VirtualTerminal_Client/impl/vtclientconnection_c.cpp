@@ -80,6 +80,8 @@ VtClientConnection_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_id
 bool
 VtClientConnection_c::processPartStreamDataChunk (Stream_c& stream, bool isFirstChunk, bool isLastChunk)
 {
+  ( void )isFirstChunk;
+
   if( !isLastChunk || !isVtActive())
     return false;
 
