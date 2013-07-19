@@ -475,12 +475,7 @@ public:
   //! objects that should not be available due to configuration.
   void omitFromUpload();
 
-  //  Operation: setOriginSKM
-  //! @param b_SKM:
   virtual void setOriginSKM(bool b_SKM);
-
-  //  Operation: setOriginBTN
-  //! @param p_btn:
   virtual void setOriginBTN(iVtObjectButton_c* p_btn);
 
   void setClientID (uint8_t ui8_clientID);
@@ -490,7 +485,7 @@ public:
    */
   virtual uint16_t getObjectType() const = 0;
 
-protected: // Attributes
+protected: 
   iVtObject_s* vtObject_a;
 
   iVtObjectButton_c* p_parentButtonObject;

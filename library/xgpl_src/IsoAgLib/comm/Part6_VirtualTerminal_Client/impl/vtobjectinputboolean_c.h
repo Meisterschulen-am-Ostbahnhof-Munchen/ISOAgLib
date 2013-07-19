@@ -15,7 +15,9 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
+
 #ifdef USE_VTOBJECT_inputboolean
+
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 

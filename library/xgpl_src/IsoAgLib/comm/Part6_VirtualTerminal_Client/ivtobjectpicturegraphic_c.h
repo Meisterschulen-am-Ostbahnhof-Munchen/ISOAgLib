@@ -15,48 +15,29 @@
 
 #include "impl/vtobjectpicturegraphic_c.h"
 
-// Begin Namespace IsoAgLib
+
 namespace IsoAgLib {
 
 
-//!  Stereotype: Klasse
 class iVtObjectPictureGraphic_c : public __IsoAgLib::vtObjectPictureGraphic_c
 {
-
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_PICTURE_GRAPHIC; }
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectPictureGraphicSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
     vtObjectPictureGraphic_c::init (vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
-  //  Operation: get_vtObjectPictureGraphic_a
   const iVtObjectPictureGraphic_s& get_vtObjectPictureGraphic_a() { return *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a(); }
 
-  //  Operation: setWidth
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setOptions
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setTransparencyColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setTransparencyColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setTransparencyColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -106,6 +87,6 @@ public:
   virtual uint16_t getObjectType() const { return objectType(); }
 };
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
 #endif

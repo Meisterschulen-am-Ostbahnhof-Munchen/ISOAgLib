@@ -13,64 +13,34 @@
 #ifndef IVTOBJECTDATAMASK_C_H
 #define IVTOBJECTDATAMASK_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectdatamask_c.h"
-// ~X2C
 
-// Begin Namespace IsoAgLib
+
 namespace IsoAgLib {
 
-
-//  +X2C Class 71 : iVtObjectDataMask_c
-//!  Stereotype: Klasse
 class iVtObjectDataMask_c : public __IsoAgLib::vtObjectDataMask_c
 {
-
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
 
-  /// Operation: init
-  ///
-  /// @param vtObjectDataMaskSROM
-  /// @param b_initPointer
   void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
     vtObjectDataMask_c::init (vtObjectDataMaskSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
-  //  Operation: get_vtObjectDataMask_a
   const iVtObjectDataMask_s& get_vtObjectDataMask_a() { return *vtObjectDataMask_c::get_vtObjectDataMask_a(); }
 
-  /// Operation: setSoftKeyMask
-  ///
-  /// @param newSoftKeyMask
-  /// @param b_updateObject
   void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectDataMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  /// Operation: setBackgroundColour
-  ///
-  /// @param newValue
-  /// @param b_updateObject
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectDataMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  /// Operation: moveChildLocation
-  ///
-  /// @param apc_childObject
-  /// @param b_updateObject (default:false)
-  /// @param dx
-  /// @param dy
   bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
     return vtObjectDataMask_c::moveChildLocation (apc_childObject, dx, dy, b_updateObject);
   }
 
-  //  Operation: setChildPosition
-  //! @param apc_childObject:
-  //! @param dx:
-  //! @param dy:
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     return vtObjectDataMask_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -94,6 +64,6 @@ public:
   virtual uint16_t getObjectType() const { return objectType(); }
 };
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
 #endif

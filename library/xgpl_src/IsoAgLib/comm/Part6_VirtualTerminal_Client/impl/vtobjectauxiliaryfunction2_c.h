@@ -12,9 +12,12 @@
 */
 #ifndef VTOBJECTAUXILIARYFUNCTION2_C_H
 #define VTOBJECTAUXILIARYFUNCTION2_C_H
+
 #include <IsoAgLib/isoaglib_config.h>
 
+
 #ifdef USE_VTOBJECT_auxiliaryfunction2
+
 #include "vtobject_c.h"
 #include "vttypes.h"
 
@@ -22,7 +25,6 @@ namespace __IsoAgLib {
 
 class Aux2Functions_c;
 
-// Class : vtObjectAuxiliaryFunction2_c
 class vtObjectAuxiliaryFunction2_c : public vtObject_c
 {
 public:
@@ -114,4 +116,5 @@ private:
 }
 
 #endif
+
 #endif

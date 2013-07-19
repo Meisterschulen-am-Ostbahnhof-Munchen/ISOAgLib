@@ -31,10 +31,6 @@ public:
 
   const iVtObjectAuxiliaryControlDesignatorObjectPointer_s& get_vtObjectAuxiliaryControlDesignatorObjectPointer_a() { return *vtObjectAuxiliaryControlDesignatorObjectPointer_c::get_vtObjectAuxiliaryControlDesignatorObjectPointer_a(); }
 
-  //  Operation: setAuxiliaryObjectId
-  //! Parameter:
-  //! @param apc_newObject:
-  //! @param b_updateObject:
   void setAuxiliaryObjectId(iVtObject_c* apc_newObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId (apc_newObject, b_updateObject, b_enableReplaceOfCmd);
   }

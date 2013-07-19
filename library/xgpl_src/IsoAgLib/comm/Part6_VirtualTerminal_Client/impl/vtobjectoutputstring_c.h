@@ -15,7 +15,9 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
+
 #ifdef USE_VTOBJECT_outputstring
+
 #include "../ivtobjectstring_c.h"
 #include "vtclientconnection_c.h"
 #include "vtclient_c.h"
@@ -86,17 +88,11 @@ public:
   */
 
   uint16_t updateWidth(bool b_SendRequest=false);
-
   uint16_t updateHeight(bool b_SendRequest=false);
-
   uint8_t updateBackgroundColour(bool b_SendRequest=false);
-
   uint16_t updateFontAttributes(bool b_SendRequest=false);
-
   uint8_t updateOptions(bool b_SendRequest=false);
-
   uint16_t updateVariableReference(bool b_SendRequest=false);
-
   uint8_t updateJustification(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);

@@ -13,88 +13,48 @@
 #ifndef IVTOBJECTOUTPUTLIST_C_H
 #define IVTOBJECTOUTPUTLIST_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectoutputlist_c.h"
-// ~X2C
+
+
 #ifdef USE_VTOBJECT_outputlist
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-
-//  +X2C Class 93 : iVtObjectOutputList_c
-//!  Stereotype: Klasse
 class iVtObjectOutputList_c : public __IsoAgLib::vtObjectOutputList_c
 {
-
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_LIST; }
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectOutputListSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectOutputList_s* vtObjectOutputListSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
     vtObjectOutputList_c::init (vtObjectOutputListSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
-  //  Operation: get_vtObjectOutputList_a
   const iVtObjectOutputList_s& get_vtObjectOutputList_a() { return *vtObjectOutputList_c::get_vtObjectOutputList_a(); }
 
-  //  Operation: getListItem
-  //! Parameter:
-  //! @param xth:
   iVtObject_c* getListItem(uint8_t xth) { return vtObjectOutputList_c::getListItem (xth); }
 
-  //  Operation: getNumberOfListItems
   uint8_t getNumberOfListItems() { return vtObjectOutputList_c::getNumberOfListItems(); }
 
-  //  Operation: setValue
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValue(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
     vtObjectOutputList_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setItem
-  //! Parameter:
-  //! @param aui8_index:
-  //! @param apc_object:
   void setItem(uint8_t aui8_index, iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputList_c::setItem (aui8_index, apc_object, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setWidth
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputList_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setHeight
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputList_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setVariableReference
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputList_c::setVariableReference(newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setSize
-  //! Parameter:
-  //! @param newWidth:
-  //! @param newHeight:
-  //! @param b_updateObject:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputList_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -128,9 +88,10 @@ public:
   */
 
   virtual uint16_t getObjectType() const { return objectType(); }
-}; // ~X2C
+};
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
-#endif // -X2C
+#endif
+
 #endif

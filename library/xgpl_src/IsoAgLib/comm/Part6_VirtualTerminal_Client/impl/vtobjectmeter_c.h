@@ -15,7 +15,9 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
+
 #ifdef USE_VTOBJECT_meter
+
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -92,25 +94,15 @@ public:
   */
 
   uint16_t updateWidth(bool b_SendRequest=false);
-
   uint8_t updateNeedleColour(bool b_SendRequest=false);
-
   uint8_t updateBorderColour(bool b_SendRequest=false);
-
   uint8_t updateArcAndTickColour(bool b_SendRequest=false);
-
   uint8_t updateOptions(bool b_SendRequest=false);
-
   uint8_t updateNumberOfTicks(bool b_SendRequest=false);
-
   uint8_t updateStartAngle(bool b_SendRequest=false);
-
   uint8_t updateEndAngle(bool b_SendRequest=false);
-
   uint16_t updateMinValue(bool b_SendRequest=false);
-
   uint16_t updateMaxValue(bool b_SendRequest=false);
-
   uint16_t updateVariableReference(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
@@ -124,4 +116,5 @@ public:
 } // __IsoAgLib
 
 #endif
+
 #endif

@@ -15,7 +15,7 @@
 
 #include "impl/vtobjectstring_c.h"
 
-// Begin Namespace IsoAgLib
+
 namespace IsoAgLib {
 
 class iVtObjectString_c : public __IsoAgLib::vtObjectString_c
@@ -23,10 +23,10 @@ class iVtObjectString_c : public __IsoAgLib::vtObjectString_c
 public:
   iVtObjectString_c();
   ~iVtObjectString_c();
-  //  Operation: getString
+
   virtual const char* getString() = 0;
 };
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
 #endif

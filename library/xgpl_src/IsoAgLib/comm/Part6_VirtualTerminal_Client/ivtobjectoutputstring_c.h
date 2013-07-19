@@ -15,15 +15,15 @@
 
 #include "impl/vtobjectoutputstring_c.h"
 
+
 #ifdef USE_VTOBJECT_outputstring
+
 #include "ivtclient_c.h"
 
 namespace IsoAgLib {
 
-
 class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 {
-
 public:
   iVtObjectOutputString_c();
   ~iVtObjectOutputString_c();
@@ -41,10 +41,6 @@ public:
   }
 
 #ifdef USE_VT_UNICODE_SUPPORT
-  //  Operation: setValueCopyUTF8
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValueCopyUTF8(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setValueCopyUTF8 (newValue, b_updateObject, b_enableReplaceOfCmd);
   }

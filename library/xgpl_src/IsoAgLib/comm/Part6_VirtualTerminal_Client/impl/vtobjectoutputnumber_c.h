@@ -15,7 +15,9 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
+
 #ifdef USE_VTOBJECT_outputnumber
+
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -90,25 +92,15 @@ public:
    */
 
   uint16_t updateWidth(bool b_SendRequest=false);
-
   uint16_t updateHeight(bool b_SendRequest=false);
-
   uint8_t updateBackgroundColour(bool b_SendRequest=false);
-
   uint16_t updateFontAttributes(bool b_SendRequest=false);
-
   uint8_t updateOptions(bool b_SendRequest=false);
-
   uint16_t updateVariableReference(bool b_SendRequest=false);
-
   int32_t updateOffset(bool b_SendRequest=false);
-
   float updateScale(bool b_SendRequest=false);
-
   uint8_t updateNumberOfDecimals(bool b_SendRequest=false);
-
   uint8_t updateFormat(bool b_SendRequest=false);
-
   uint8_t updateJustification(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here

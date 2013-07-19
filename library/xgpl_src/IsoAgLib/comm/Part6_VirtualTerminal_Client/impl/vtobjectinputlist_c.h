@@ -15,7 +15,9 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
+
 #ifdef USE_VTOBJECT_inputlist
+
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
 
@@ -83,8 +85,6 @@ public:
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 private:
-  //  Operation: updateEnable
-  //! @param b_enableOrDisable:
   void updateEnable(uint8_t aui8_enOrDis);
 };
 

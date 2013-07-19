@@ -13,33 +13,20 @@
 #ifndef IVTOBJECTMACRO_C_H
 #define IVTOBJECTMACRO_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectmacro_c.h"
-// ~X2C
 
-// Begin Namespace IsoAgLib
+
 namespace IsoAgLib {
 
-
-
-//  +X2C Class 179 : iVtObjectMacro_c
-//!  Stereotype: Klasse
 class iVtObjectMacro_c : public __IsoAgLib::vtObjectMacro_c
 {
-
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_MACRO; }
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectMacroSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectMacro_s* vtObjectMacroSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
     vtObjectMacro_c::init (vtObjectMacroSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
-  //  Operation: get_vtObjectMacro_a
   const iVtObjectMacro_s& get_vtObjectMacro_a() { return *vtObjectMacro_c::get_vtObjectMacro_a(); }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES  
@@ -49,8 +36,8 @@ public:
 #endif
 
   virtual uint16_t getObjectType() const { return objectType(); }
-}; // ~X2C
+};
 
-} // end namespace IsoAgLib
+} // IsoAgLib
 
-#endif // -X2C
+#endif

@@ -15,17 +15,17 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
+
 #ifdef USE_VTOBJECT_auxiliaryinput2
+
 #include "vtobject_c.h"
 #include "vttypes.h"
 
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-// Class : vtObjectAuxiliaryInput2_c
+
 class vtObjectAuxiliaryInput2_c : public vtObject_c
 {
 public:
-
   enum StateForLearnMode_en
   {
     StateForLearnMode_CalculateInternally,
@@ -44,34 +44,21 @@ public:
     uint32_t mui32_timeStampLastStateMsg;
   };
 
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectAuxiliaryInput2SROM:
-  //! @param b_initPointer:
   void init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
 
-  //  Operation: get_vtObjectAuxiliaryInput2_a
   iVtObjectAuxiliaryInput2_s* get_vtObjectAuxiliaryInput2_a() { return (iVtObjectAuxiliaryInput2_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectAuxiliaryInput2_c
   vtObjectAuxiliaryInput2_c();
 
-  //  Operation: size
   uint32_t fitTerminal() const;
 
-  //  Operation: setOriginSKM
-  //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -153,7 +140,8 @@ private:
 
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif
+
 #endif

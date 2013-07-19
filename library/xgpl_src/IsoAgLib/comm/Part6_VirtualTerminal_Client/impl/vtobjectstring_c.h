@@ -16,7 +16,9 @@
 #include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include "vtobject_c.h"
 
+
 namespace __IsoAgLib {
+
 class MultiSendPkg_c;
 
 /** helper class to avoid multiple inheritance by vtObjectString_c */
@@ -33,24 +35,14 @@ class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
     , mui32_streamPositionStored (0)
   {}
   
-  //  Operation: setDataNextStreamPart
-  //! @param mspData:
-  //! @param bytes:
   void setDataNextStreamPart(MultiSendPkg_c* mspData,
                              uint8_t bytes);
 
-  //  Operation: resetDataNextStreamPart
   void resetDataNextStreamPart();
-
-  //  Operation: saveDataNextStreamPart
   void saveDataNextStreamPart();
-
-  //  Operation: restoreDataNextStreamPart
   void restoreDataNextStreamPart();
 
-  //  Operation: getStreamSize
   uint32_t getStreamSize();
-
   uint8_t getFirstByte () { return 179; /* Command: "Command" --- Parameter: "Change String Value"; */ }
 
   const char* getStringToStream() { return mpc_stringToStream; }
@@ -60,9 +52,7 @@ class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
   void setStringToStream( const char* apc_stringToStream ) { mpc_stringToStream = apc_stringToStream;}
   void setStrLenToSend( uint16_t aui16_strLenToSend ) { mui16_strLenToSend = aui16_strLenToSend;}
 
-  //  Operation: getID
   uint16_t getID() { return mui16_vtObjectAId; }
-  //  Operation: setID
   void setID( uint16_t aui16_id ) { mui16_vtObjectAId = aui16_id; }
 
 private:
@@ -72,15 +62,11 @@ private:
   const char* mpc_stringToStream;
   uint16_t mui16_strLenToSend;
 
-  //  Attribute: mui32_streamPosition
   uint32_t mui32_streamPosition;
-
-  //  Attribute: marr_uploadBuffer [7+1]
   uint8_t marr_uploadBuffer [7+1]; /* "+1" for safety only */
-
-  //  Attribute: mui32_streamPositionStored
   uint32_t mui32_streamPositionStored;
 };
+
 
 class vtObjectString_c : public vtObject_c
 {
@@ -95,10 +81,9 @@ class vtObjectString_c : public vtObject_c
   void setStrLenToSend( uint16_t aui16_strLenToSend );
 
  private:
-  // streaming helper class which is called by the sending class
   vtObjectStringStreamer_c mc_streamer;
 };
 
-} // end namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif

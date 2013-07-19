@@ -13,126 +13,68 @@
 #ifndef IVTOBJECTMETER_C_H
 #define IVTOBJECTMETER_C_H
 
-// +X2C includes
 #include "impl/vtobjectmeter_c.h"
-// ~X2C
+
+
 #ifdef USE_VTOBJECT_meter
 
-// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-
-//  +X2C Class 119 : iVtObjectmeter_c
-//!  Stereotype: Klasse
 class iVtObjectMeter_c : public __IsoAgLib::vtObjectMeter_c
 {
-
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_METER; }
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectmeterSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectMeter_s* vtObjectMeterSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
     vtObjectMeter_c::init (vtObjectMeterSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
-  //  Operation: get_vtObjectMeter_a
   const iVtObjectMeter_s& get_vtObjectMeter_a() { return *vtObjectMeter_c::get_vtObjectMeter_a(); }
 
-  //  Operation: setWidth
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setNeedleColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setNeedleColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setNeedleColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setBorderColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setBorderColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setBorderColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setArcAndTickColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setArcAndTickColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setArcAndTickColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setOptions
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setOptions(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setNumberOfTicks
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setNumberOfTicks (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setStartAngle
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setStartAngle (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setEndAngle
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setEndAngle (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setMin
-  //! Parameter:
-  //! @param newMin:
-  //! @param b_updateObject:
   void setMin(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setMin (newMin, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setMax
-  //! Parameter:
-  //! @param newMax:
-  //! @param b_updateObject:
   void setMax(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setMax (newMax, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setValue
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     vtObjectMeter_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setVariableReference
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setVariableReference(iVtObject_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -195,9 +137,10 @@ public:
 #endif
 
   virtual uint16_t getObjectType() const { return objectType(); }
-}; // ~X2C
+};
 
-} // end namespace IsoAgLib
+} // IsoAgLib
 
-#endif // -X2C
+#endif
+
 #endif

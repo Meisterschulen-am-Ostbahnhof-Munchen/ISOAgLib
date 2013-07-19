@@ -39,7 +39,7 @@ public:
 
   uint32_t fitTerminal() const;
 
-  void setValue(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setValue(const IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   void setOriginSKM(bool b_SKM);
 

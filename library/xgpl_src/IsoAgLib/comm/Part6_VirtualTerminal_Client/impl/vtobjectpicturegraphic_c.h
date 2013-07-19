@@ -89,16 +89,11 @@ public:
   */
 
   uint16_t updateWidth(bool b_SendRequest=false);
-
   uint8_t updateOptions(bool b_SendRequest=false);
-
   uint8_t updateTransparencyColour(bool b_SendRequest=false);
-
   /** these attributes are in parentheses in the spec, so commented out here
   uint16_t updateActualWidth(bool b_SendRequest=false);
-
   uint16_t updateActualHeight(bool b_SendRequest=false);
-
   uint8_t updateFormat(bool b_SendRequest=false);
   */
 

@@ -13,138 +13,74 @@
 #ifndef IVTOBJECTOUTPUTNUMBER_C_H
 #define IVTOBJECTOUTPUTNUMBER_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectoutputnumber_c.h"
 
-#ifdef USE_VTOBJECT_outputnumber
-#include "ivtobjectfontattributes_c.h"
-// ~X2C
 
-// Begin Namespace IsoAgLib
+#ifdef USE_VTOBJECT_outputnumber
+
+#include "ivtobjectfontattributes_c.h"
+
 namespace IsoAgLib {
 
-
-//  +X2C Class 124 : iVtObjectOutputNumber_c
-//!  Stereotype: Klasse
 class iVtObjectOutputNumber_c : public __IsoAgLib::vtObjectOutputNumber_c
 {
-
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_NUMBER; }
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectOutputNumberSROM:
-  //! @param b_initPointer:
   void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
     vtObjectOutputNumber_c::init (vtObjectOutputNumberSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
-  //  Operation: get_vtObjectOutputNumber_a
   const iVtObjectOutputNumber_s& get_vtObjectOutputNumber_a() { return *vtObjectOutputNumber_c::get_vtObjectOutputNumber_a(); }
 
-  //  Operation: setValue
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     vtObjectOutputNumber_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setWidth
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setHeight
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setBackgroundColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setFontAttributes
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setOptions
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setVariableReference
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setOffset
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setOffset (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setScale
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setScale (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setNumberOfDecimals
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setNumberOfDecimals (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setFormat
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setFormat (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setHorizontalJustification
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setSize
-  //! Parameter:
-  //! @param newWidth:
-  //! @param newHeight:
-  //! @param b_updateObject:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputNumber_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -208,9 +144,10 @@ public:
 #endif
 
   virtual uint16_t getObjectType() const { return objectType(); }
-}; // ~X2C
+};
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
-#endif // -X2C
+#endif
+
 #endif

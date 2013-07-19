@@ -52,5 +52,6 @@ private:
   friend class __IsoAgLib::VtServerInstance_c;
 };
 
-} // namespace IsoAgLib
+} // IsoAgLib
+
 #endif

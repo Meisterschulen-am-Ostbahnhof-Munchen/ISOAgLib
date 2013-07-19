@@ -56,7 +56,7 @@ vtObjectObjectPointer_c::fitTerminal() const
 
 
 void
-vtObjectObjectPointer_c::setValue(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectObjectPointer_c::setValue(const IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectObjectPointer_a(), value),  sizeof(iVtObjectObjectPointer_s), apc_newObject);
 

@@ -15,7 +15,9 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
+
 #ifdef USE_VTOBJECT_container
+
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 
@@ -44,7 +46,6 @@ public:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -62,13 +63,11 @@ public:
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 protected:
-  //  Operation: hideShow
-  //! @param b_hideOrShow:
-  //! @param b_updateObject:
   void hideShow(uint8_t b_hideOrShow, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 };
 
 } // __IsoAgLib
 
 #endif
+
 #endif

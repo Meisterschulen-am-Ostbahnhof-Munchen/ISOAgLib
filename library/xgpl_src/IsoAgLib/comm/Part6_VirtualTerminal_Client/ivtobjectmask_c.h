@@ -15,21 +15,18 @@
 
 #include "impl/vtobject_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace IsoAgLib {
 
 class iVtObjectMask_c : public __IsoAgLib::vtObject_c
 {
 public:
-  //  Operation: setSoftKeyMask
-  //! @param newSoftKeyMask:
-  //! @param b_updateObject:
   virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask,
                               bool b_updateObject= false, bool b_enableReplaceOfCmd=false) = 0;
 
   virtual ~iVtObjectMask_c() {}
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif

@@ -58,9 +58,7 @@ public:
   */
 
   uint8_t updateLineColour(bool b_SendRequest=false);
-
   uint8_t updateLineWidth(bool b_SendRequest=false);
-
   uint16_t updateLineArt(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);

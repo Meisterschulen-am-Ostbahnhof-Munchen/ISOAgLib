@@ -16,47 +16,31 @@
 #include "vtobject_c.h"
 #include "../ivtobjectmask_c.h"
 
-// Begin Namespace __IsoAgLib
+
 namespace __IsoAgLib {
 
 class vtObjectWorkingSet_c : public vtObject_c
 {
 public:
-  /// Operation: stream
-  /// @param destMemory
-  /// @param maxBytes don't stream out more than that or you'll overrun the internal upload-buffer
-  /// @param sourceOffset
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  /// Operation: init
-  /// @param vtObjectWorkingSetSROM
-  /// @param b_initPointer
   void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectWorkingSetSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); };
 
-  //  Operation: get_vtObjectWorkingSet_a
   iVtObjectWorkingSet_s* get_vtObjectWorkingSet_a() { return (iVtObjectWorkingSet_s *)&(get_vtObject_a()); }
 
-  //  Operation: vtObjectWorkingSet_c
   vtObjectWorkingSet_c();
 
-  //  Operation: size
   uint32_t fitTerminal() const;
 
-  /// Operation: changeActiveMask
-  /// @param apc_vtObjectMask
-  /// @param b_updateObject
   void changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   void changeBackgroundColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-//  Operation: setOriginSKM
-  //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
@@ -75,6 +59,6 @@ public:
 #endif
 };
 
-} // end of namespace __IsoAgLib
+} // __IsoAgLib
 
 #endif

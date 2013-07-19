@@ -13,39 +13,24 @@
 #ifndef IVTOBJECTSOFTKEYMASK_C_H
 #define IVTOBJECTSOFTKEYMASK_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectsoftkeymask_c.h"
-// ~X2C
 
-// Begin Namespace IsoAgLib
+
 namespace IsoAgLib {
 
-
-//  +X2C Class 81 : iVtObjectSoftKeyMask_c
-//!  Stereotype: Klasse
 class iVtObjectSoftKeyMask_c : public __IsoAgLib::vtObjectSoftKeyMask_c
 {
-
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_SOFT_KEY_MASK; }
 
   virtual ~iVtObjectSoftKeyMask_c(){}
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectSoftKeyMaskSROM:
-  //! @param b_initPointer:
+
   void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
     vtObjectSoftKeyMask_c::init (vtObjectSoftKeyMaskSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
-  //  Operation: get_vtObjectSoftKeyMask_a
   const iVtObjectSoftKeyMask_s& get_vtObjectSoftKeyMask_a() { return *vtObjectSoftKeyMask_c::get_vtObjectSoftKeyMask_a(); }
 
-  //  Operation: setBackgroundColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
   void setBackgroundColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectSoftKeyMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -64,8 +49,8 @@ public:
 #endif
 
   virtual uint16_t getObjectType() const { return objectType(); }
-}; // ~X2C
+};
 
-} // end of namespace IsoAgLib
+} // IsoAgLib
 
-#endif // -X2C
+#endif
