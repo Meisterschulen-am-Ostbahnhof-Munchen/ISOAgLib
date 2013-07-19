@@ -320,8 +320,6 @@ UploadPoolState_c::handleEndOfObjectPoolResponse( bool success )
 
   if( success )
   {
-// Added this preprocessor so storing of object pools can be prevented for development purposes
-#ifndef DEBUG_VTCOMM_NO_STORE_VERSION
     if( mb_usingVersionLabel )
     {
       men_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
@@ -331,7 +329,6 @@ UploadPoolState_c::handleEndOfObjectPoolResponse( bool success )
         marrp7c_versionLabel [4], marrp7c_versionLabel [5], marrp7c_versionLabel [6] );
     }
     else
-#endif // DEBUG_VTCOMM_NO_STORE_VERSION
       finalizeUploading();
   }
   else
