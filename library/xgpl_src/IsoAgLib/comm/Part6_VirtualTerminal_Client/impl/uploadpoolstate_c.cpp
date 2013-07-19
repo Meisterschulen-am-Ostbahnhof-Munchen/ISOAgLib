@@ -77,14 +77,12 @@ UploadPoolState_c::UploadPoolState_c(
 void
 UploadPoolState_c::processMsgVtToEcu( Stream_c &stream )
 {
-#ifndef NO_GET_VERSIONS
   switch( stream.getFirstByte() )
   {
     case 0xE0:
       handleGetVersionsResponse( &stream );
       break;
   }
-#endif
 }
 
 
@@ -121,11 +119,9 @@ UploadPoolState_c::processMsgVtToEcu( const CanPkgExt_c& pkg )
       handleLoadVersionResponse( pkg.getUint8Data( 5 ) & 0x0F );
       break;
 
-#ifndef NO_GET_VERSIONS
     case 0xE0: // Command: "Non Volatile Memory", parameter "Get Versions Response"
       handleGetVersionsResponse( NULL );
       break;
-#endif
   }
 }
 
@@ -222,20 +218,9 @@ UploadPoolState_c::handleGetMemoryResponse( const CanPkgExt_c &pkg )
       setObjectPoolUploadingLanguage();
 
       if( mb_usingVersionLabel )
-      {
-#ifndef NO_GET_VERSIONS
         startGetVersions();
-#else
-        startLoadVersion();
-#endif
-      }
       else
-      {
-#if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
-        INTERNAL_DEBUG_DEVICE << "No Version Label : start uploading" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
         startUploadVersion();
-      }
     }
     break;
 
