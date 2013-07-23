@@ -1424,10 +1424,11 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& arc_data )
           vtOutOfMemory();
         else
         {
-          initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially);
-
           // Take the language-version that's been set up NOW and try to load/upload it.
           setObjectPoolUploadingLanguage();
+
+          initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially);
+
           // Do we have to try to "get Versions / Load Version" or go directly to uploading?
           if (mb_usingVersionLabel)
           {
