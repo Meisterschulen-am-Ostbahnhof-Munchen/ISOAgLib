@@ -15,14 +15,12 @@
 
 #include "impl/tcclient_c.h"
 #include "iprocdata.h"
+#include "idevicepool_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h>
 
 
 namespace IsoAgLib {
-
-  class iDevicePool_c;
-
 
   class iTcClient_c : private __IsoAgLib::TcClient_c {
     public:
