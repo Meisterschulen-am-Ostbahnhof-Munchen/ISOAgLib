@@ -298,7 +298,7 @@ namespace __IsoAgLib {
 
           case PoolStateStale: {
               // Upload changed descriptions
-              /*std::vector<uint8_t> newBytes;
+              /*STL_NAMESPACE::vector<uint8_t> newBytes;
               if (m_pool.getDirtyBytestream(newBytes))
               {
                 m_devicePoolToUpload = newBytes
@@ -601,12 +601,12 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::eventStructureLabelResponse( uint8_t result, const std::vector<uint8_t>& label ) {
+  TcClientConnection_c::eventStructureLabelResponse( uint8_t result, const STL_NAMESPACE::vector<uint8_t>& label ) {
     if ( result == 0 && !label.empty() ) {
       DeviceObjectDvc_c* dvc = m_pool.getDvcObject();
       if ( dvc ) {
         const IsoAgLib::StructureLabel_s& strLbl = dvc->getStructureLabel();
-        if ( std::memcmp( ( void * )&strLbl, ( void * )&label[0], 7 ) != 0 ) {
+        if ( STL_NAMESPACE::memcmp( ( void * )&strLbl, ( void * )&label[0], 7 ) != 0 ) {
           setDevPoolState( PoolStateInvalid );
         }
       }
@@ -624,12 +624,12 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::eventLocalizationLabelResponse( uint8_t result, const std::vector<uint8_t>& label ) {
+  TcClientConnection_c::eventLocalizationLabelResponse( uint8_t result, const STL_NAMESPACE::vector<uint8_t>& label ) {
     if ( result == 0 && !label.empty() ) {
       DeviceObjectDvc_c* dvc = m_pool.getDvcObject();
       if ( dvc ) {
         const IsoAgLib::Localization_s& locale = dvc->getLocalization();
-        if ( std::memcmp( ( void* )&locale, ( void * )&label[0], 7 ) != 0 ) {
+        if ( STL_NAMESPACE::memcmp( ( void* )&locale, ( void * )&label[0], 7 ) != 0 ) {
           m_pool.updateLocale();
         }
         setDevPoolState( PoolStateUploaded );
