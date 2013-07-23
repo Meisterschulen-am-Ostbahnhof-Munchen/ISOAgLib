@@ -84,6 +84,8 @@ public:
   void processMsgVtToEcu( const CanPkgExt_c& c_data );
   void processMsgAck( const CanPkgExt_c& arc_data );
 
+  void restart();
+
   void notifyOnVtsLanguagePgn();
   void notifyOnVtStatusMessage();
   void notifyOnAuxInputStatus( const CanPkgExt_c& arc_data );

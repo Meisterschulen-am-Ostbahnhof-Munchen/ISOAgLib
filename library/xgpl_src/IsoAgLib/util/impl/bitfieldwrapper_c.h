@@ -115,6 +115,61 @@ template <unsigned N> class IsoaglibBitset {
 };
 
 
+template <unsigned N> class IsoaglibArrayBitset {
+  private:
+    uint8_t arr[ (N+7)>>3 ];
+  public:
+    IsoaglibArrayBitset() { reset(); }
+    IsoaglibArrayBitset( const IsoaglibArrayBitset& rhd ) {
+      for( unsigned i=0; i<((N+7)>>3); ++i)
+        arr[ i ] = rhs.arr[ i ];
+    }
+
+    unsigned bits() const { return N; }
+
+    IsoaglibArrayBitset<N>& set() {
+      for( unsigned i=0; i<((N+7)>>3); ++i)
+        arr[ i ] = 0xFFu;
+      return *this;
+    }
+
+    IsoaglibArrayBitset<N>& reset( void ) {
+      for( unsigned i=0; i<((N+7)>>3); ++i)
+        arr[ i ] = 0x00u;
+      return *this;
+    }
+
+    bool isBitSet(unsigned n) const {
+      return ((arr[n>>3] & (uint8_t(1)<<(7-(n&0x07))))>0);
+    }
+
+    IsoaglibArrayBitset<N>& setBit( unsigned n, int val = 1 ) {
+      if (0 == val)
+        arr[n>>3] &= ~(uint8_t(1)<<(7-(n&0x07)));
+      else
+        arr[n>>3] |=  (uint8_t(1)<<(7-(n&0x07)));
+      return *this;
+    }
+
+    IsoaglibArrayBitset<N>& reset( unsigned n ) {
+      return setBit(n, 0);
+    }
+
+    unsigned count( void ) const {
+      unsigned n,c=0;
+      for (n=0; n<N; ++n)
+        if (isBitSet(n))
+          ++c;
+      return c;
+    }
+
+    uint8_t getByte(unsigned n) const {
+      isoaglib_assert (n < ((N+7)>>3));
+      return arr[n];
+    }
+};
+
+
 
 //! Example:
 //! 11 bit

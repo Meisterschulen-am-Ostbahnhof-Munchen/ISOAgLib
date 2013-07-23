@@ -192,24 +192,19 @@ public:
   virtual void eventDisplayActivation() {}
 
   /**
-     Gets called after recognizing an incoming VT proprietary message.
+     Gets called after recognizing an incoming VT proprietary message (SP/(E)TP)
    */
-  uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname, const uint8_t* data_8bytes) { return doEventProprietaryCommand(acr_isoname, data_8bytes); };
-
-  /**
-    Gets called after recognizing an incoming VT proprietary message.
-   */
+  uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname, const uint8_t* data_8bytes)
+  { return doEventProprietaryCommand(acr_isoname, data_8bytes); };
   uint8_t eventProprietaryCommand (iIsoName_c const &acr_isoname, uint8_t aui8_commandByte, __IsoAgLib::Stream_c& arc_stream)
   { return doEventProprietaryCommand(acr_isoname, aui8_commandByte, arc_stream); };
 
   /**
-    Select this VtServer. This function is called when OP is of type RegisterPoolMode_MasterToSpecificVt. It is attempted to be used for proprietary matter only.
+    Select this VtServer. This function is called when OP is of type RegisterPoolMode_MasterToSpecificVt.
+    It is attempted to be used for proprietary matter only.
    */
   virtual bool selectVtServer(iIsoName_c const &) const { return true; }
 
-  /** 
-   * this enumeration is used as parameter for initAndRegisterIsoObjectPool (no member of this type exists in this class!)
-   */
   enum RegisterPoolMode_en
   {
     RegisterPoolMode_MasterToAnyVt,
@@ -251,10 +246,11 @@ public:
     , skWidth (a_objectPoolSettings.skWidth)
     , skHeight (a_objectPoolSettings.skHeight)
     , b_initAllObjects (false)
+    , numLang( 0 )
   {
-    numLang=0;
-    iVtObject_c*HUGE_MEM** iter = a_iVtObjects+1; // first entry should be the general object pool part!
-    while (*iter++ != NULL) numLang++;
+    iVtObject_c*HUGE_MEM** iter = a_iVtObjects+1; // skip first entry (should be the general object pool part!)
+    while (*iter++ != NULL)
+      ++numLang;
   };
 
    virtual ~iVtClientObjectPool_c() {}
@@ -310,13 +306,10 @@ public:
 
 private:
   /**
-     hook function that gets called after recognizing an incoming
-     VT proprietary message.
+     hook functions that get called after recognizing
+     an incoming VT proprietary message (SP/(E)TP)
    */
   virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/, const uint8_t* /*data_8bytes*/) { return 0; }
-  /**
-    hook function that gets called after recognizing an incoming VT proprietary message.
-   */
   virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/, uint8_t /*aui8_commandByte*/, __IsoAgLib::Stream_c& /*arc_stream*/)  { return 0; }
 
 protected:
@@ -342,10 +335,12 @@ public:
   uint16_t              getSkWidth()        const { return skWidth; }
   uint16_t              getSkHeight()       const { return skHeight; }
   uint8_t               getNumLang()        const { return numLang; }
+  bool                  multiLanguage()     const { return getNumLang() > 0; }
 
   iVtObjectWorkingSet_c&
   getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects); }
 };
 
-} // end namespace IsoAgLib
+} // IsoAgLib
+
 #endif

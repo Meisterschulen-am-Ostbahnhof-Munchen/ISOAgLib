@@ -38,16 +38,16 @@ UploadPoolState_c::UploadPoolState_c(
   : m_connection( connection )
   , m_pool( pool )
   , mb_usingVersionLabel( versionLabel != NULL )
-  //marrp7c_versionLabel[ 7 ] will be initialized below
+  //marrp7c_versionLabel[ 7 ] body!
   , m_uploadingVersion( 0 )
   , mc_iVtObjectStreamer( *this )
   , men_uploadPoolState( UploadPoolEndSuccess ) // default for Slaves!
   , men_uploadPoolType( UploadPoolTypeCompleteInitially ) // dummy
   , mui32_uploadTimestamp( 0 )
   , mui32_uploadTimeout( 0 ) // will be set when needed
-  //ms_uploadPhasesAutomatic[..] // will be corrently initialized in the body!
+  //ms_uploadPhasesAutomatic[..] // body!
   , mui_uploadPhaseAutomatic( UploadPhaseIVtObjectsFix )
-  , ms_uploadPhaseUser() // will be corrently initialized in the body!
+  , ms_uploadPhaseUser() // body!
   , mppc_uploadPhaseUserObjects( NULL )
   , mi8_objectPoolUploadingLanguage( 0 )
   , mi8_objectPoolUploadedLanguage( 0 )
@@ -58,10 +58,12 @@ UploadPoolState_c::UploadPoolState_c(
   if( versionLabel )
   {
     const uint32_t cui_len = CNAMESPACE::strlen( versionLabel );
-    isoaglib_assert( ! ( ( (m_pool.getNumLang() == 0) && (cui_len > 7) ) || ( (m_pool.getNumLang()  > 0) && (cui_len > 5) ) ) ); 
+    isoaglib_assert( ! ( ( (m_pool.getNumLang() == 0) && (cui_len > 7) ) || ( (m_pool.getNumLang() > 0) && (cui_len > 5) ) ) ); 
     unsigned int i=0;
     for( ; i<cui_len; ++i ) marrp7c_versionLabel[ i ] = versionLabel[ i ];
     for( ; i<7;       ++i ) marrp7c_versionLabel[ i ] = ' '; // ASCII: Space
+
+    isoaglib_assert( m_langRejectedUseDefaultAsFallback.bits() >= m_pool.getNumLang() );
   }
 
   if( wsMaster )
@@ -154,25 +156,52 @@ UploadPoolState_c::initPool()
   }
 }
 
-
+// 1.) Search for version-label
+// 2.) Mark all rejected languages
 bool
-UploadPoolState_c::isVersionFound( Stream_c& stream ) const
+UploadPoolState_c::searchVersionsAndMarkRejected( Stream_c& stream, uint8_t numVersions )
 {
-  const uint8_t number_of_versions = stream.get();
- 
-  if( uint32_t(stream.getByteTotalSize()) != uint32_t(2 + 7*uint16_t(number_of_versions)) )
-    return false; // malformed message
+  bool versionFound = false;
 
-  for( uint8_t counter = 0; counter < number_of_versions; ++counter )
+  // don't break on this search, because still all need to be marked!
+  for( uint8_t counter = 0; counter < numVersions; ++counter )
   {
     char c_nextversion[ 7 ];
     for( uint16_t i = 0; i < 7; ++i )
       c_nextversion[i] = stream.get();
 
-    if( 0 == CNAMESPACE::memcmp( c_nextversion, marrp7c_versionLabel, 7 ) )
-      return true;
+    // check if this is a rejected language
+    if( m_pool.multiLanguage() &&
+        ( 0 == CNAMESPACE::memcmp( c_nextversion, marrp7c_versionLabel, 5 ) ) )
+    {
+      if( ( c_nextversion[ 5 ] >= 'A' ) && ( c_nextversion[ 5 ] <= 'Z' ) &&
+          ( c_nextversion[ 6 ] >= 'A' ) && ( c_nextversion[ 6 ] <= 'Z' ) )
+      { // "rejected" pool
+        const int8_t langIndex = getLanguageIndex(
+          c_nextversion[ 5 ]+('a'-'A'),
+          c_nextversion[ 6 ]+('a'-'A') );
+        
+        if( langIndex >= 0 )
+        {
+          m_langRejectedUseDefaultAsFallback.setBit( unsigned( langIndex ) );
+          versionFound = true; // Pool-name (without language extension) matches!
+        }
+        // else: Some version with a language not used in this pool (maybe some old pool that had this version)
+      }
+      else
+      { // "normal" pool
+        const int8_t langIndex = getLanguageIndex(
+          c_nextversion[ 5 ],
+          c_nextversion[ 6 ] );
+        
+        if( langIndex >= 0 )
+          versionFound = true; // Pool-name (without language extension) matches!
+        // else: Some version with a language not used in this pool (maybe some old pool that had this version)
+      }
+    }
   }
-  return false;
+
+  return versionFound;
 }
 
 
@@ -182,10 +211,21 @@ UploadPoolState_c::handleGetVersionsResponse( Stream_c *stream )
   if( men_uploadPoolState != UploadPoolWaitingForGetVersionsResponse )
     return;
 
-  if( ( stream != NULL ) && isVersionFound( *stream ) )
-    startLoadVersion();
-  else
-    startUploadVersion();
+  uint8_t number_of_versions = 0;
+  if( stream != NULL )
+  {
+    number_of_versions = stream->get();
+    if( uint32_t(stream->getByteTotalSize()) != uint32_t(2 + 7*uint16_t(number_of_versions)) )
+      return; // malformed message
+
+    if( searchVersionsAndMarkRejected( *stream, number_of_versions ) )
+    {
+      startLoadVersion();
+      return;
+    }
+  }
+
+  startUploadVersion();
 }
 
 
@@ -209,12 +249,10 @@ UploadPoolState_c::handleGetMemoryResponse( const CanPkgExt_c &pkg )
     
     // check for matching VT version and object pool version
     if( m_connection.getVtServerInst().getVtIsoVersion() < m_uploadingVersion )
-      vtOutOfMemory();
+      uploadFailed( false );
     else
     {
-      initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially);
-
-      // Take the language-version that's been set up NOW and try to load/upload it.
+      // Take the language that's been set in the VT right NOW
       setObjectPoolUploadingLanguage();
 
       if( mb_usingVersionLabel )
@@ -232,7 +270,7 @@ UploadPoolState_c::handleGetMemoryResponse( const CanPkgExt_c &pkg )
       startCurrentUploadPhase();
     }
     else
-      vtOutOfMemory();
+    uploadFailed( true );
     break;
 
   default:
@@ -283,7 +321,7 @@ UploadPoolState_c::handleLoadVersionResponse( unsigned errorNibble )
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
       INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-      vtOutOfMemory();
+      uploadFailed( true );
     }
     else
     { // Not used
@@ -298,9 +336,11 @@ UploadPoolState_c::handleLoadVersionResponse( unsigned errorNibble )
 }
 
 void
-UploadPoolState_c::vtOutOfMemory()
+UploadPoolState_c::uploadFailed( bool vtOutOfMemory )
 {
-  IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::VtOutOfMemory, m_connection.getMultitonInst() );
+  if( vtOutOfMemory )
+    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::VtOutOfMemory, m_connection.getMultitonInst() );
+
   men_uploadPoolState = UploadPoolEndFailed;
 }
 
@@ -308,6 +348,8 @@ UploadPoolState_c::vtOutOfMemory()
 void
 UploadPoolState_c::startUploadVersion()
 {
+  initObjectPoolUploadingPhases( UploadPoolTypeCompleteInitially );
+
   sendGetMemory( false );
 }
 
@@ -322,17 +364,59 @@ UploadPoolState_c::handleEndOfObjectPoolResponse( bool success )
   {
     if( mb_usingVersionLabel )
     {
+      const uint8_t rejectOff = rejectOffset( marrp7c_versionLabel[ 5 ], marrp7c_versionLabel[ 6 ] );
+
       men_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
       m_connection.sendMessage( // Command: Non Volatile Memory --- Parameter: Store Version
-        208, marrp7c_versionLabel [0],
-        marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3],
-        marrp7c_versionLabel [4], marrp7c_versionLabel [5], marrp7c_versionLabel [6] );
+        208, marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4],
+        marrp7c_versionLabel [5]-rejectOff,
+        marrp7c_versionLabel [6]-rejectOff );
     }
     else
       finalizeUploading();
   }
   else
-    men_uploadPoolState = UploadPoolEndFailed;
+  {
+    const int8_t langIndex = getLanguageIndex(
+      mui16_objectPoolUploadingLanguageCode >> 8,
+      mui16_objectPoolUploadingLanguageCode & 0xFF );
+      
+    isoaglib_assert( langIndex >= 0 );
+
+    const bool retry = !m_langRejectedUseDefaultAsFallback.isBitSet( unsigned( langIndex ) );
+    m_langRejectedUseDefaultAsFallback.setBit( unsigned( langIndex ) );
+    if( retry )
+      m_connection.restart(); // with fallback language
+    else
+      uploadFailed( false );
+  }
+}
+
+
+bool
+UploadPoolState_c::handleEndOfObjectPoolResponseOnLanguageUpdate( bool success )
+{
+  if( success )
+  {
+    // do not StoreVersion, only do this on INITIAL
+    // Upload where objects are yet unmodified.
+    finalizeUploading();
+    return false;
+  }
+  else
+  {
+    const int8_t langIndex = getLanguageIndex(
+      mui16_objectPoolUploadingLanguageCode >> 8,
+      mui16_objectPoolUploadingLanguageCode & 0xFF );
+      
+    isoaglib_assert( langIndex >= 0 );
+
+    m_langRejectedUseDefaultAsFallback.setBit( unsigned( langIndex ) );
+    // we can't do anything other than fallback to the
+    // default-language. It will stall when reuploading completely
+    // but we can't stall in upload-command mode right now...
+    return true; // need restart (with fallback language)
+  }
 }
 
 
@@ -368,17 +452,35 @@ UploadPoolState_c::startGetVersions()
 }
 
 
+// Given Language must exist in Objectpool!
+uint8_t
+UploadPoolState_c::rejectOffset( uint8_t langCode0, uint8_t langCode1 ) const
+{
+  if( !m_pool.multiLanguage() )
+    return 0;
+
+  const int8_t langIndex = getLanguageIndex( langCode0, langCode1 );
+  isoaglib_assert( langIndex >= 0 );
+
+  return m_langRejectedUseDefaultAsFallback.isBitSet( unsigned( langIndex ) )
+    ? 'a'-'A' : 0;
+}
+
+
 void
 UploadPoolState_c::startLoadVersion()
 {
+  const uint8_t rejectOff = rejectOffset( marrp7c_versionLabel[ 5 ], marrp7c_versionLabel[ 6 ] );
+                           
   m_connection.sendMessage( 209,
-    marrp7c_versionLabel[ 0 ], marrp7c_versionLabel[ 1 ], marrp7c_versionLabel[ 2 ],
-    marrp7c_versionLabel[ 3 ], marrp7c_versionLabel[ 4 ], marrp7c_versionLabel[ 5 ], marrp7c_versionLabel[ 6 ] );
+    marrp7c_versionLabel[ 0 ], marrp7c_versionLabel[ 1 ], marrp7c_versionLabel[ 2 ], marrp7c_versionLabel[ 3 ], marrp7c_versionLabel[ 4 ],
+    marrp7c_versionLabel[ 5 ]-rejectOff,
+    marrp7c_versionLabel[ 6 ]-rejectOff );
 
   men_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
   men_uploadPoolType = UploadPoolTypeCompleteInitially; // need to set this, so that eventObjectPoolUploadedSucessfully is getting called (also after load, not only after upload)
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
-  INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<marrp7c_versionLabel [0]<< marrp7c_versionLabel [1]<< marrp7c_versionLabel [2]<< marrp7c_versionLabel [3]<< marrp7c_versionLabel [4]<< marrp7c_versionLabel [5]<< marrp7c_versionLabel [6]<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<marrp7c_versionLabel [0]<< marrp7c_versionLabel [1]<< marrp7c_versionLabel [2]<< marrp7c_versionLabel [3]<< marrp7c_versionLabel [4]<< marrp7c_versionLabel [5]<< marrp7c_versionLabel [6]<<"] with rejectOffset=" << unsigned(rejectOff) << "..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 }
 
@@ -486,7 +588,7 @@ UploadPoolState_c::timeEventLanguageUpdate()
     setObjectPoolUploadingLanguage();
     /// NOTIFY THE APPLICATION so it can enqueue some commands that are processed BEFORE the update is done
     /// e.g. switch to a "Wait while changing language..." datamask.
-    m_pool.eventPrepareForLanguageChange (mi8_objectPoolUploadingLanguage, mui16_objectPoolUploadingLanguageCode);
+    m_pool.eventPrepareForLanguageChange( calcAppUploadingLanguage(), mui16_objectPoolUploadingLanguageCode );
 
     m_connection.commandHandler().sendCommandUpdateLanguagePool();
     // we keep (mi8_objectPoolUploadingLanguage != -2), so a change in between doesn't care and won't happen!!
@@ -503,18 +605,9 @@ UploadPoolState_c::timeEventCalculateLanguage()
   // Try to calculate VT's language
   if( m_connection.getVtServerInst().receivedLocalSettings() )
   { // can calculate the language
-    mi8_vtLanguage = -1; // indicate that VT's language is not supported by this WS, so the default language should be used
-
-    const uint8_t cui8_languages = m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
-    for( int i=0; i<cui8_languages; ++i )
-    {
-      const uint8_t* lang = m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
-      if( m_connection.getVtServerInst().getLocalSettings()->languageCode == ((lang[0] << 8) | lang[1]) )
-      {
-        mi8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
-        break;
-      }
-    }
+    mi8_vtLanguage = getLanguageIndex(
+      m_connection.getVtServerInst().getLocalSettings()->languageCode >> 8,
+      m_connection.getVtServerInst().getLocalSettings()->languageCode & 0xFF);
     m_pool.eventLanguagePgn( *m_connection.getVtServerInst().getLocalSettings() );
     return true;
   }
@@ -526,6 +619,20 @@ UploadPoolState_c::timeEventCalculateLanguage()
   }
 }
 
+int8_t
+UploadPoolState_c::getLanguageIndex( uint8_t langCode0, uint8_t langCode1 ) const
+{
+  for( int i=0; i<m_pool.getNumLang(); ++i )
+  {
+    const uint8_t* lang = m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ i ].language;
+    if(  ( langCode0 == lang[ 0 ] )
+      && ( langCode1 == lang[ 1 ] ) )
+      return i;
+  }
+
+  // indicate that the given language is not supported by this WS, so the default language should be used
+  return -1;
+}
 
 
 void
@@ -630,8 +737,8 @@ UploadPoolState_c::startCurrentUploadPhase()
 
       case UploadPhaseIVtObjectsLang:
       { // phase 0 & 1 use iVtObjectStreamer, so prepare for that!
-        const int8_t ci8_realUploadingLanguage = ((mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage) + 1;
-        mc_iVtObjectStreamer.mpc_objectsToUpload = m_pool.getIVtObjects()[ci8_realUploadingLanguage];
+        const int8_t realUploadingLanguageAsIndex = calcRealUploadingLanguage( true ) + 1; // skip language-independent objects.
+        mc_iVtObjectStreamer.mpc_objectsToUpload = m_pool.getIVtObjects()[ realUploadingLanguageAsIndex ];
         mc_iVtObjectStreamer.setStreamSize (ms_uploadPhasesAutomatic [mui_uploadPhaseAutomatic].ui32_size);
       } break;
 
@@ -656,10 +763,10 @@ UploadPoolState_c::setObjectPoolUploadingLanguage()
 {
   mi8_objectPoolUploadingLanguage = mi8_vtLanguage;
   mui16_objectPoolUploadingLanguageCode = 0x0000;
-  if (m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
-  { // only if the objectpool has 1 or more languages, it makes sense to add the language code to the version-name
-    const int8_t ci8_realUploadingLanguage = (mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage;
-    const uint8_t* lang = m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
+  if( m_pool.multiLanguage() )
+  {
+    const int8_t realUploadingLanguage = calcRealUploadingLanguage( false );
+    const uint8_t* lang = m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ realUploadingLanguage ].language;
     mui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
     marrp7c_versionLabel[ 5 ] = lang[ 0 ];
     marrp7c_versionLabel[ 6 ] = lang[ 1 ];
@@ -758,25 +865,55 @@ UploadPoolState_c::initObjectPoolUploadingPhases(
     /// Phase 1
     ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].pc_streamer = &mc_iVtObjectStreamer;
     ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size = 0; // there may not always be a language part.
-    if( m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0 ) // supporting multilanguage.
+    if( m_pool.multiLanguage() )
     {
-      const int8_t ci8_realUploadingLanguage = ((mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage) + 1;
+      // check if we need to fallback to the default-language
+      const int8_t realUploadingLanguageAsIndex = calcRealUploadingLanguage( true ) + 1; // skip language-independent objects.
 
       for (uint32_t curObject=0; curObject < m_pool.getNumObjectsLang(); ++curObject)
-        ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size += fitTerminalWrapper( *static_cast<vtObject_c*>( m_pool.getIVtObjects()[ci8_realUploadingLanguage][curObject] ) );
-      if (ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size > 0)
+        ms_uploadPhasesAutomatic[ UploadPhaseIVtObjectsLang ].ui32_size
+          += fitTerminalWrapper( *static_cast<vtObject_c*>( m_pool.getIVtObjects()[ realUploadingLanguageAsIndex ][ curObject ] ) );
+      if (ms_uploadPhasesAutomatic[ UploadPhaseIVtObjectsLang ].ui32_size > 0)
       { // only if there's at least one object being streamed up as user-partial-objectpool-update add the CMD byte for size calculation...
-        ++ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size; // add the 0x11 byte!
+        ++ms_uploadPhasesAutomatic[ UploadPhaseIVtObjectsLang ].ui32_size; // add the 0x11 byte!
       }
     } // else: no LANGUAGE SPECIFIC objectpool, so keep this at 0 to indicate this!
 
     /// Phase 3
-    const STL_NAMESPACE::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = m_pool.getAppSpecificLangPoolData(mi8_objectPoolUploadingLanguage, mui16_objectPoolUploadingLanguageCode);
+    const STL_NAMESPACE::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval
+      = m_pool.getAppSpecificLangPoolData( calcAppUploadingLanguage(), mui16_objectPoolUploadingLanguageCode );
+
     ms_uploadPhasesAutomatic [UploadPhaseAppSpecificLang].pc_streamer = cpair_retval.second;
     ms_uploadPhasesAutomatic [UploadPhaseAppSpecificLang].ui32_size = cpair_retval.first;
   }
 
   men_uploadPoolType = ren_uploadPoolType;
+}
+
+
+unsigned
+UploadPoolState_c::calcRealUploadingLanguage( bool considerReject ) const
+{
+  if( mi8_objectPoolUploadingLanguage < 0 )
+    return 0;
+
+  if( considerReject && ( m_langRejectedUseDefaultAsFallback.isBitSet( mi8_objectPoolUploadingLanguage ) ) )
+    return 0;
+
+  return unsigned( mi8_objectPoolUploadingLanguage );
+}
+
+
+int8_t
+UploadPoolState_c::calcAppUploadingLanguage() const
+{
+  if( mi8_objectPoolUploadingLanguage < 0 )
+    return mi8_objectPoolUploadingLanguage;
+
+  if( m_langRejectedUseDefaultAsFallback.isBitSet( mi8_objectPoolUploadingLanguage ) )
+    return -1;
+
+  return mi8_objectPoolUploadingLanguage;
 }
 
 

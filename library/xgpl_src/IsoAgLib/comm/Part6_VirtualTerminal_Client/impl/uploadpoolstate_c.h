@@ -15,6 +15,7 @@
 
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/objectpoolstreamer_c.h>
+#include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
 namespace IsoAgLib { class iVtObject_c; }
 namespace IsoAgLib { class iVtClientObjectPool_c; }
@@ -111,8 +112,14 @@ namespace __IsoAgLib {
     void doStart();
     void doStop();
 
+    // @return needRestart?
+    bool handleEndOfObjectPoolResponseOnLanguageUpdate( bool success );
+
   private:
-    bool isVersionFound( Stream_c& ) const;
+    bool searchVersionsAndMarkRejected( Stream_c&, uint8_t numVersions );
+    unsigned calcRealUploadingLanguage( bool considerReject ) const;
+    int8_t calcAppUploadingLanguage() const;
+    uint8_t rejectOffset( uint8_t langCode0, uint8_t langCode1 ) const;
 
     void handleGetVersionsResponse( Stream_c * );
     void handleEndOfObjectPoolResponse( bool success );
@@ -133,7 +140,9 @@ namespace __IsoAgLib {
     void indicateUploadCompletion(); // all phases completed.
     void setObjectPoolUploadingLanguage();
 
-    void vtOutOfMemory();
+    int8_t getLanguageIndex( uint8_t langCode0, uint8_t langCode1 ) const;
+
+    void uploadFailed( bool vtOutOfMemory );
 
     // MultiSendEventHandler_c
     virtual void reactOnStateChange( const SendStream_c& );
@@ -174,6 +183,8 @@ namespace __IsoAgLib {
     ///  1: second language
     ///  2: third language
     int8_t mi8_vtLanguage; // always valid, as we're waiting for a VT's language first before starting anything...
+
+    IsoaglibArrayBitset<64> m_langRejectedUseDefaultAsFallback; // 64 languages should be enough for everybody :)
   };
 
 

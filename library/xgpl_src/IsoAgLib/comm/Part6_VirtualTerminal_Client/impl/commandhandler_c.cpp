@@ -1134,14 +1134,15 @@ CommandHandler_c::processMsgVtToEcuActivations( Stream_c &stream )
 void
 CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
 {
-  unsigned errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
+  unsigned errByte = 0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
+  bool needRestart = false;
 
   IsoAgLib::iVtClientObjectPool_c& pool = m_connection.getPool();
 
   switch( pkg.getUint8Data( 0 ) )
   {
   case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
-    m_connection.uploadPoolState().finalizeUploading(); // indicate that the language specific objects have been updated. also the user will get notified.
+    needRestart = m_connection.uploadPoolState().handleEndOfObjectPoolResponseOnLanguageUpdate( pkg.getUint8Data( 1 ) == 0 );
     errByte = 2;
     break;
 
@@ -1294,6 +1295,9 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
   // Was it some command that requires queue-deletion & error processing?
   if( errByte != 0 )
     finalizeCommand( errByte, pkg.getUint8DataConstPointer( 0 ) );
+
+  if( needRestart )
+    m_connection.restart();
 }
 
 

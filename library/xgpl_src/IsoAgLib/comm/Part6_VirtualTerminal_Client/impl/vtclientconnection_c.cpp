@@ -384,15 +384,22 @@ VtClientConnection_c::processMsgAck( const CanPkgExt_c& arc_data )
         INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
                               << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
 #endif
-        mrc_wsMasterIdentItem.getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
-        /// passing "true": fake NOT-alive state of VT for now!
-        fakeVtOffPeriod( 1000 ); // arbitrary time-span > 0 so checkAndHandle..() will call doStop!
-        checkAndHandleVtStateChange(); // will also notify application via "eventEnterSafeState"
-        fakeVtOffStop(); // enough faking, let it get restart asap in the timeEvent!
+        restart();
         break;
     }
   }
 #endif
+}
+
+
+void
+VtClientConnection_c::restart()
+{
+  mrc_wsMasterIdentItem.getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
+  /// passing "true": fake NOT-alive state of VT for now!
+  fakeVtOffPeriod( 1000 ); // arbitrary time-span > 0 so checkAndHandle..() will call doStop!
+  checkAndHandleVtStateChange(); // will also notify application via "eventEnterSafeState"
+  fakeVtOffStop(); // enough faking, let it get restart asap in the timeEvent!
 }
 
 
