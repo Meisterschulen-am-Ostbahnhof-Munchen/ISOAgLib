@@ -120,7 +120,7 @@ template <unsigned N> class IsoaglibArrayBitset {
     uint8_t arr[ (N+7)>>3 ];
   public:
     IsoaglibArrayBitset() { reset(); }
-    IsoaglibArrayBitset( const IsoaglibArrayBitset& rhd ) {
+    IsoaglibArrayBitset( const IsoaglibArrayBitset& rhs ) {
       for( unsigned i=0; i<((N+7)>>3); ++i)
         arr[ i ] = rhs.arr[ i ];
     }
