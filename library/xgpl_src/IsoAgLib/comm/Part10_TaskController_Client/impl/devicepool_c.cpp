@@ -65,7 +65,7 @@ namespace __IsoAgLib {
     , m_localization()
   {
     isoaglib_assert( CNAMESPACE::strlen( version ) <= 32 );
-    std::memset( ( void* )&m_localization, 0, sizeof( m_localization ) );
+    STL_NAMESPACE::memset( ( void* )&m_localization, 0, sizeof( m_localization ) );
     m_localization.reserved = 0xff; // Reserved field
   }
 
@@ -98,7 +98,7 @@ namespace __IsoAgLib {
 
 
   void DeviceObjectDvc_c::setLocalization( const Localization_s& local ) {
-    //if (std::memcmp((void*)&local, (void*)&m_Localization, sizeof(Localization_s)) != 0)
+    //if (STL_NAMESPACE::memcmp((void*)&local, (void*)&m_Localization, sizeof(Localization_s)) != 0)
     // setDirty(true);
     m_localization = local;
   }
@@ -174,14 +174,14 @@ namespace __IsoAgLib {
     byteStream.format( m_parentId );
     byteStream.format( ( uint16_t )m_childList.size() );
 
-    std::vector<uint16_t>::const_iterator it;
+    STL_NAMESPACE::vector<uint16_t>::const_iterator it;
     for ( it = m_childList.begin(); it != m_childList.end(); ++it )
       byteStream.format( *it );
   }
 
 
   bool DeviceObjectDet_c::addChild( uint16_t childId ) {
-    std::vector<uint16_t>::iterator it;
+    STL_NAMESPACE::vector<uint16_t>::iterator it;
     for ( it = m_childList.begin(); it != m_childList.end(); ++it ) {
       if ( *it == childId )
         return true;
