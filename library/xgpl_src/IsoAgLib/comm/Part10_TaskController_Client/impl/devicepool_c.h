@@ -153,6 +153,7 @@ namespace __IsoAgLib {
   class DeviceObjectDpd_c : public DeviceObject_c {
     public:
       DeviceObjectDpd_c( uint16_t ddi, const IsoAgLib::ProcData::Properties_t&, const IsoAgLib::ProcData::Methods_t&, const char* desig, const DeviceObjectDvp_c* );
+      DeviceObjectDpd_c( uint16_t ddi, uint8_t properties, uint8_t triggerMethods, const char* desig, const DeviceObjectDvp_c* dvp );
 
       uint16_t ddi() const {
         return m_ddi;

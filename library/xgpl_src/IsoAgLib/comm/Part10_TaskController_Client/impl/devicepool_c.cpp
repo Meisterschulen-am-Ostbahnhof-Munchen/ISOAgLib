@@ -216,6 +216,19 @@ namespace __IsoAgLib {
   {}
 
 
+  DeviceObjectDpd_c::DeviceObjectDpd_c( uint16_t ddi, uint8_t properties, uint8_t triggerMethods,
+                                        const char* desig, const DeviceObjectDvp_c* dvp )
+    : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDPD, desig )
+    , m_ddi( ddi )
+    , m_properties( properties )
+    , m_method( triggerMethods )
+    , m_dvpObjectId( ( dvp ) ? dvp->getObjectId() : 0xFFFF )
+  {
+    isoaglib_assert( properties < (1<<3) );
+    isoaglib_assert( triggerMethods < (1<<5) );
+  }
+
+
   void DeviceObjectDpd_c::formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {
     DeviceObject_c::format( byteStream );
 

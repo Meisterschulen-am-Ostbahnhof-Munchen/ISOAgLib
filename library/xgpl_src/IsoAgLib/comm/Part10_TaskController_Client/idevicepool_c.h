@@ -69,8 +69,13 @@ namespace IsoAgLib {
 
   class iDeviceObjectDpd_c : public __IsoAgLib::DeviceObjectDpd_c {
     public:
-      iDeviceObjectDpd_c( uint16_t ddi, const ProcData::Properties_t& p, const ProcData::Methods_t& m, const char* desig, const iDeviceObjectDvp_c* dvp ) :
-        DeviceObjectDpd_c( ddi, p, m, desig, dvp ) {}
+      iDeviceObjectDpd_c( uint16_t ddi, const ProcData::Properties_t& p, const ProcData::Methods_t& m, const char* desig, const iDeviceObjectDvp_c* dvp )
+        : DeviceObjectDpd_c( ddi, p, m, desig, dvp ) {}
+
+      //! Caution: Only use this c'tor for porting legacy-DDOPs.
+      //! For normal, new applications use the type-safe version above!
+      iDeviceObjectDpd_c( uint16_t ddi, uint8_t properties, uint8_t triggerMethods, const char* desig, const iDeviceObjectDvp_c* dvp )
+        : DeviceObjectDpd_c( ddi, properties, triggerMethods, desig, dvp ) {}
   };
 
 
