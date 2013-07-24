@@ -142,6 +142,8 @@ namespace __IsoAgLib {
 
     stopRunningMeasurement();
     destroyMeasureProgs();
+
+    m_pool.close();
   }
 
 

@@ -122,6 +122,11 @@ namespace IsoAgLib {
       }
       void add( iProcData_c& pd );
 
+      //! Caution: Be sure to only clear if not connected to any server!
+      void clear() {
+        __IsoAgLib::DevicePool_c::clear();
+      }
+
       /* changing designators is not yet supported */
       template<class T>
       void changeDesignator( T& obj, const char* str ) {

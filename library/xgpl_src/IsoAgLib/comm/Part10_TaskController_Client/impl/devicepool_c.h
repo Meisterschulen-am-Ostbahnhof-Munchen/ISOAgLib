@@ -14,7 +14,7 @@
 #define _DEVICEPOOL_C_H_
 
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 
 
 namespace __IsoAgLib {
@@ -242,6 +242,9 @@ namespace __IsoAgLib {
     protected:
       void add( DeviceObject_c& devObj );
       void add( ProcData_c& pd );
+
+      void clear();
+
       void changeDesignator( DeviceObject_c&, const char* );
       void setLocalSettings( const localSettings_s& );
       void updateLocale();
@@ -249,6 +252,7 @@ namespace __IsoAgLib {
     private:
       friend class TcClientConnection_c;
       void init( IdentItem_c& ident );
+      void close();
 
       DeviceObjectDvc_c* getDvcObject() const;
       DeviceObject_c* getObject( const uint16_t objId, const IsoAgLib::ProcData::DeviceObjectType_t ) const;
@@ -261,7 +265,6 @@ namespace __IsoAgLib {
       deviceMap_t m_devicePool;
       procDataList_t m_procDatas;
       IdentItem_c* m_identItem;
-      TcClientConnection_c* m_connection;
   };
 
 }

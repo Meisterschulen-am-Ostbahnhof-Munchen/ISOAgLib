@@ -39,9 +39,12 @@ namespace IsoAgLib {
         TcClient_c::init();
       }
 
-      void setServerStateHandler( iServerStateHandler_c& hdl )
-      {
+      void setServerStateHandler( iServerStateHandler_c& hdl ) {
         TcClient_c::setServerStateHandler( hdl );
+      }
+
+      void clearServerStateHandler() {
+        TcClient_c::clearServerStateHandler();
       }
 
       void close() {

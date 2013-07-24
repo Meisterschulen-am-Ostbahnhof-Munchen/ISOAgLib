@@ -47,6 +47,7 @@ namespace __IsoAgLib {
       void close();
 
       void setServerStateHandler( ServerStateHandler_c& hdl );
+      void clearServerStateHandler();
 
       TcClientConnection_c* connect( IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcdl, DevicePool_c& );
       void disconnect( IdentItem_c& );

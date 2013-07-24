@@ -80,6 +80,15 @@ namespace __IsoAgLib {
   }
 
 
+  void
+  TcClient_c::clearServerStateHandler()
+  {
+    isoaglib_assert( m_stateHandler != NULL );
+
+    m_stateHandler = NULL;
+  }
+
+
   TcClientConnection_c*
   TcClient_c::connect( IdentItem_c& identItem, TcClientConnection_c::StateHandler_c& sh, const IsoItem_c& tcdl, DevicePool_c& pool ) {
     STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( &tcdl );

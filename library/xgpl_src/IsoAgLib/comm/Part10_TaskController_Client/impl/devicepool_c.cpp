@@ -293,7 +293,6 @@ namespace __IsoAgLib {
     : m_devicePool()
     , m_procDatas()
     , m_identItem( NULL )
-    , m_connection( NULL )
   {}
 
 
@@ -301,6 +300,12 @@ namespace __IsoAgLib {
     getDvcObject()->init( ident );
     m_identItem = &ident;
   }
+
+  void DevicePool_c::close() {
+    //getDvcObject()->init( unspecified );
+    m_identItem = NULL;
+  }
+
 
 
   DeviceObjectDvc_c* DevicePool_c::getDvcObject() const {
@@ -333,6 +338,16 @@ namespace __IsoAgLib {
 
     m_procDatas.push_back( &pd );
   }
+
+
+  void DevicePool_c::clear()
+  {
+    isoaglib_assert( m_identItem == NULL );
+
+    m_devicePool.clear();
+    m_procDatas.clear();
+  }
+
 
   void DevicePool_c::changeDesignator( DeviceObject_c& obj, const char* str ) {
     obj.setDesignator( str );
