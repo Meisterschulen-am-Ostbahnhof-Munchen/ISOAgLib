@@ -20,8 +20,8 @@
 
 namespace IsoAgLib {
 
-  bool iDevicePool_c::add( iProcData_c& pd ) {
-    return __IsoAgLib::DevicePool_c::add( pd );
+  void iDevicePool_c::add( iProcData_c& pd ) {
+    __IsoAgLib::DevicePool_c::add( pd );
   }
 
 }

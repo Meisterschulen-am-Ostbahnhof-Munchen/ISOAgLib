@@ -240,8 +240,8 @@ namespace __IsoAgLib {
       }
 
     protected:
-      bool add( DeviceObject_c& devObj );
-      bool add( ProcData_c& pd );
+      void add( DeviceObject_c& devObj );
+      void add( ProcData_c& pd );
       void changeDesignator( DeviceObject_c&, const char* );
       void setLocalSettings( const localSettings_s& );
       void updateLocale();

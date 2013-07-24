@@ -317,24 +317,21 @@ namespace __IsoAgLib {
   }
 
 
-  bool DevicePool_c::add( DeviceObject_c& devObj ) {
-    return( ! m_devicePool.insert( STL_NAMESPACE::pair<uint16_t, DeviceObject_c*>( devObj.getObjectId(), &devObj ) ).second );
+  void DevicePool_c::add( DeviceObject_c& devObj ) {
+    const bool inserted = m_devicePool.insert(
+      STL_NAMESPACE::pair<uint16_t, DeviceObject_c*>( devObj.getObjectId(), &devObj ) ).second;
+    
+    isoaglib_assert( inserted ); ( void )inserted;
   }
 
 
-  bool DevicePool_c::add( ProcData_c& pd ) {
-    isoaglib_assert(pd.getDpd());
-    const bool foundDpd = m_devicePool.find( pd.getDpd()->getObjectId() ) != m_devicePool.end();
-    isoaglib_assert( foundDpd );
-    const bool foundDet = m_devicePool.find( pd.getDet()->getObjectId() ) != m_devicePool.end();
-    isoaglib_assert( foundDet );
+  void DevicePool_c::add( ProcData_c& pd )
+  {
+    isoaglib_assert( pd.getDpd() );
+    isoaglib_assert( m_devicePool.find( pd.getDpd()->getObjectId() ) != m_devicePool.end() );
+    isoaglib_assert( m_devicePool.find( pd.getDet()->getObjectId() ) != m_devicePool.end() );
 
-    const bool foundObj = foundDet && foundDpd;
-
-    if( foundObj ) {
-      m_procDatas.push_back( &pd );
-    }
-    return foundObj;
+    m_procDatas.push_back( &pd );
   }
 
   void DevicePool_c::changeDesignator( DeviceObject_c& obj, const char* str ) {

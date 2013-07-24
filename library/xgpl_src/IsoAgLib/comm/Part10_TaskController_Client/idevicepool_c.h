@@ -117,10 +117,10 @@ namespace IsoAgLib {
       }
 
       template<class T>
-      bool add( T& devObj ) {
-        return __IsoAgLib::DevicePool_c::add( devObj );
+      void add( T& devObj ) {
+        __IsoAgLib::DevicePool_c::add( devObj );
       }
-      bool add( iProcData_c& pd );
+      void add( iProcData_c& pd );
 
       /* changing designators is not yet supported */
       template<class T>
