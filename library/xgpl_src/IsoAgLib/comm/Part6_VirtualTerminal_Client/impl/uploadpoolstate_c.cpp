@@ -171,32 +171,43 @@ UploadPoolState_c::searchVersionsAndMarkRejected( Stream_c& stream, uint8_t numV
       c_nextversion[i] = stream.get();
 
     // check if this is a rejected language
-    if( m_pool.multiLanguage() &&
-        ( 0 == CNAMESPACE::memcmp( c_nextversion, marrp7c_versionLabel, 5 ) ) )
+    if( m_pool.multiLanguage() )
     {
-      if( ( c_nextversion[ 5 ] >= 'A' ) && ( c_nextversion[ 5 ] <= 'Z' ) &&
-          ( c_nextversion[ 6 ] >= 'A' ) && ( c_nextversion[ 6 ] <= 'Z' ) )
-      { // "rejected" pool
-        const int8_t langIndex = getLanguageIndex(
-          c_nextversion[ 5 ]+('a'-'A'),
-          c_nextversion[ 6 ]+('a'-'A') );
-        
-        if( langIndex >= 0 )
-        {
-          m_langRejectedUseDefaultAsFallback.setBit( unsigned( langIndex ) );
-          versionFound = true; // Pool-name (without language extension) matches!
+      if( 0 == CNAMESPACE::memcmp( c_nextversion, marrp7c_versionLabel, 5 ) )
+      {
+        if( ( c_nextversion[ 5 ] >= 'A' ) && ( c_nextversion[ 5 ] <= 'Z' ) &&
+            ( c_nextversion[ 6 ] >= 'A' ) && ( c_nextversion[ 6 ] <= 'Z' ) )
+        { // "rejected" pool
+          const int8_t langIndex = getLanguageIndex(
+            c_nextversion[ 5 ]+('a'-'A'),
+            c_nextversion[ 6 ]+('a'-'A') );
+          
+          if( langIndex >= 0 )
+          {
+            m_langRejectedUseDefaultAsFallback.setBit( unsigned( langIndex ) );
+            versionFound = true; // Pool-name (without language extension) matches!
+          }
+          // else: Some version with a language not used in this pool (maybe some old pool that had this version)
         }
-        // else: Some version with a language not used in this pool (maybe some old pool that had this version)
+        else
+        { // "normal" pool
+          const int8_t langIndex = getLanguageIndex(
+            c_nextversion[ 5 ],
+            c_nextversion[ 6 ] );
+          
+          if( langIndex >= 0 )
+            versionFound = true; // Pool-name (without language extension) matches!
+          // else: Some version with a language not used in this pool (maybe some old pool that had this version)
+        }
       }
-      else
-      { // "normal" pool
-        const int8_t langIndex = getLanguageIndex(
-          c_nextversion[ 5 ],
-          c_nextversion[ 6 ] );
-        
-        if( langIndex >= 0 )
-          versionFound = true; // Pool-name (without language extension) matches!
-        // else: Some version with a language not used in this pool (maybe some old pool that had this version)
+      // else: some other version, don't care.
+    }
+    else // no multilanguage
+    {
+      if( 0 == CNAMESPACE::memcmp( c_nextversion, marrp7c_versionLabel, 7 ) )
+      {
+        versionFound = true; 
+        break;
       }
     }
   }
@@ -270,7 +281,7 @@ UploadPoolState_c::handleGetMemoryResponse( const CanPkgExt_c &pkg )
       startCurrentUploadPhase();
     }
     else
-    uploadFailed( true );
+      uploadFailed( true );
     break;
 
   default:
@@ -377,16 +388,21 @@ UploadPoolState_c::handleEndOfObjectPoolResponse( bool success )
   }
   else
   {
-    const int8_t langIndex = getLanguageIndex(
-      mui16_objectPoolUploadingLanguageCode >> 8,
-      mui16_objectPoolUploadingLanguageCode & 0xFF );
-      
-    isoaglib_assert( langIndex >= 0 );
+    if( m_pool.multiLanguage() )
+    {
+      const int8_t langIndex = getLanguageIndex(
+        mui16_objectPoolUploadingLanguageCode >> 8,
+        mui16_objectPoolUploadingLanguageCode & 0xFF );
+        
+      isoaglib_assert( langIndex >= 0 );
 
-    const bool retry = !m_langRejectedUseDefaultAsFallback.isBitSet( unsigned( langIndex ) );
-    m_langRejectedUseDefaultAsFallback.setBit( unsigned( langIndex ) );
-    if( retry )
-      m_connection.restart(); // with fallback language
+      const bool retry = !m_langRejectedUseDefaultAsFallback.isBitSet( unsigned( langIndex ) );
+      m_langRejectedUseDefaultAsFallback.setBit( unsigned( langIndex ) );
+      if( retry )
+        m_connection.restart(); // with fallback language
+      else
+        uploadFailed( false );
+    }
     else
       uploadFailed( false );
   }
@@ -405,17 +421,20 @@ UploadPoolState_c::handleEndOfObjectPoolResponseOnLanguageUpdate( bool success )
   }
   else
   {
-    const int8_t langIndex = getLanguageIndex(
-      mui16_objectPoolUploadingLanguageCode >> 8,
-      mui16_objectPoolUploadingLanguageCode & 0xFF );
-      
-    isoaglib_assert( langIndex >= 0 );
+    if( men_uploadPoolType == UploadPoolTypeLanguageUpdate )
+    {
+      const int8_t langIndex = getLanguageIndex(
+        mui16_objectPoolUploadingLanguageCode >> 8,
+        mui16_objectPoolUploadingLanguageCode & 0xFF );
+        
+      isoaglib_assert( langIndex >= 0 );
 
-    m_langRejectedUseDefaultAsFallback.setBit( unsigned( langIndex ) );
-    // we can't do anything other than fallback to the
-    // default-language. It will stall when reuploading completely
+      // We can't do anything other than fallback to the default-language.
+      m_langRejectedUseDefaultAsFallback.setBit( unsigned( langIndex ) );
+    }
+    // It will stall when reuploading completely
     // but we can't stall in upload-command mode right now...
-    return true; // need restart (with fallback language)
+    return true; // need restart
   }
 }
 
