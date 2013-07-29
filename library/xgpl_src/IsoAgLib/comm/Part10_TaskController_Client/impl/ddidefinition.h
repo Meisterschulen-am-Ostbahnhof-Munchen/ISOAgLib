@@ -203,6 +203,7 @@
  
 #define DDI_AREA_PER_TIME_CAPACITY               151 // mm2/s
 
+#define DDI_CONNECTOR_TYPE                       157 // 0 - unknown (default), 1 - ISO 6489-3 Tractor drawbar, 2 - ISO 730 Three-point-hitch semi-mounted, 3 - ISO 730 Three-point-hitch mounted, 4 - ISO 6489-1 Hitch-hook, 5 - ISO 6489-2 Clevis coupling 40, 6 - ISO 6489-4 Piton type coupling, 7 - ISO 6489-5 CUNA hitch, or ISO 5692-2 Pivot wagon hitch, 8 - ISO 24347 Ball type hitch, all other values are reserved for future assignments
 #define DDI_PRESCRIPTION_CONTROL_STATE           158 // 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
 #define DDI_SECTION_CONTROL_STATE                160 // 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
 #define DDI_CONDENSED_WORK_STATE1_16             161 // sections 1-16 bit fields 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
