@@ -142,7 +142,7 @@ openSystem()
 
   s_systemStarted = canStartDriver();
   if( !s_systemStarted )
-    abort();
+    MACRO_ISOAGLIB_ABORT();
 }
 
 
@@ -151,7 +151,7 @@ closeSystem()
 {
   s_systemStarted = !canStopDriver();
   if( s_systemStarted )
-    abort();
+    MACRO_ISOAGLIB_ABORT();
 }
 
 
