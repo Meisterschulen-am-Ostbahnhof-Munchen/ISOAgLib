@@ -252,7 +252,7 @@ namespace __HAL {
  // @todo implement
 #else
     if( pipe2( breakWaitPipeFd, O_NONBLOCK ) != 0 ) {
-      perror("pipe");
+      MACRO_ISOAGLIB_PERROR("pipe");
     }
 #endif
 #endif
@@ -377,7 +377,7 @@ namespace HAL {
 #endif
              ) == -1 ) {
       // TODO
-      perror( "send" );
+      MACRO_ISOAGLIB_PERROR( "send" );
       return false;
     }
 
@@ -468,7 +468,7 @@ namespace HAL {
 #else
   void canRxWaitBreak() {
     if( write( __HAL::breakWaitPipeFd[1], "\0", 1 ) != 1 ) {
-      perror("write");
+      MACRO_ISOAGLIB_PERROR("write");
     }
   }
 #endif
