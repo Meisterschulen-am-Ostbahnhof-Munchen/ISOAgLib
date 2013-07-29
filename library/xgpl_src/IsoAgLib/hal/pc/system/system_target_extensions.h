@@ -22,6 +22,7 @@
 #if !defined( WIN32 ) && !defined( __IAR_SYSTEMS_ICC__ )
 #include <sys/time.h>
 #include <time.h>
+#include <stdlib.h>
 #endif
 
 
