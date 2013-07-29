@@ -417,8 +417,8 @@
 #define SOFTWARE_IDENTIFICATION_PGN            0x00FEDALU
 
 #define TIME_DATE_PGN                          0x00FEE6LU
-#define VEHICLE_DIRECTION_SPEED                0x00FEE8LU
-#define VEHICLE_POSITION                       0x00FEF3LU
+#define VEHICLE_DIRECTION_SPEED_PGN            0x00FEE8LU
+#define VEHICLE_POSITION_PGN                   0x00FEF3LU
 // PROPRIETARY_B_PGN ranges from 0x00FF00 to 0x00FFFF !
 #define PROPRIETARY_B_PGN                      0x00FF00LU
 

@@ -267,8 +267,8 @@ namespace __IsoAgLib {
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (TIME_DATE_PGN<<8) ), 8 );
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (NMEA_GPS_POSITION_RAPID_UPDATE_PGN<<8) ), 8 );
 #ifdef USE_J1939_VEHICLE_PGNS
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VEHICLE_POSITION<<8) ), 8 );
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VEHICLE_DIRECTION_SPEED<<8) ), 8 );
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VEHICLE_POSITION_PGN<<8) ), 8 );
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (VEHICLE_DIRECTION_SPEED_PGN<<8) ), 8 );
 #endif
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN<<8) ), 8 );
 
@@ -522,12 +522,12 @@ namespace __IsoAgLib {
 
       case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:
 #ifdef USE_J1939_VEHICLE_PGNS
-      case VEHICLE_POSITION:
+      case VEHICLE_POSITION_PGN:
 #endif
         if ( checkParseReceivedGps( rcc_tempISOName ) )
         { // sender is allowed to send
 #ifdef USE_J1939_VEHICLE_PGNS
-          if (pkg.isoPgn() == SAE_J1939_71_VEHICLE_POSITION)
+          if (pkg.isoPgn() == VEHICLE_POSITION_PGN)
           {
             mi32_latitudeDegree10Minus7  = pkg.getUint32Data( 0 ) - 2100000000; // 210 / 0.0000001
             mi32_longitudeDegree10Minus7 = pkg.getUint32Data( 4 ) - 2100000000; // 210 / 0.0000001
@@ -596,7 +596,7 @@ namespace __IsoAgLib {
         return;
 
 #ifdef USE_J1939_VEHICLE_PGNS
-      case SAE_J1939_71_VEHICLE_DIRECTION_SPEED:
+      case VEHICLE_DIRECTION_SPEED_PGN:
         if ( checkParseReceivedGps( rcc_tempISOName ) )
         { // sender is allowed to send
           // Here we get degrees as fraction of 128, and have to change to rad 10^-4
@@ -623,13 +623,13 @@ namespace __IsoAgLib {
 #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
             getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed, pkg.time() );
 #endif
-            notifyOnEvent (SAE_J1939_71_VEHECLE_DIRECTION_SPEED);
+            notifyOnEvent (VEHICLE_DIRECTION_SPEED_PGN);
           }
           // else: Regard this as NO (valid) COG/SOG, so it's just like nothing meaningful got received!
         }
         else
         { // there is a sender conflict
-          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
         }
         return;
 #endif
