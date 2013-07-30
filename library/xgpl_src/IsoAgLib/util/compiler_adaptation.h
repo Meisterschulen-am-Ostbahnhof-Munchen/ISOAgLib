@@ -107,11 +107,13 @@
   #define MACRO_ISOAGLIB_PERROR(x) printf("error: %s\n",x)
   #define MACRO_ISOAGLIB_MKTIME(x) mktime_ce(x)
   #define MACRO_ISOAGLIB_LOCALTIME(x) localtime_ce(x)
+  #define MACRO_ISOAGLIB_TIMEGETTIME() GetTickCount()
 #else
   #define MACRO_ISOAGLIB_ABORT() CNAMESPACE::abort()
   #define MACRO_ISOAGLIB_PERROR(x) CNAMESPACE::perror(x)
   #define MACRO_ISOAGLIB_MKTIME(x) CNAMESPACE::mktime(x)
   #define MACRO_ISOAGLIB_LOCALTIME(x) CNAMESPACE::localtime(x)
+  #define MACRO_ISOAGLIB_TIMEGETTIME() timeGetTime()
 #endif
 
 #ifdef WINCE

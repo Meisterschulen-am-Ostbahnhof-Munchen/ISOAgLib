@@ -121,7 +121,7 @@ int32_t getStartupTime()
     // VC++ and mingw with native Win32 API provides very accurate
     // msec timer - use that
     // in case of mingw compiler error link winmm.lib (add -lwinmm).
-    static int32_t st_startup4Times = timeGetTime();
+    static int32_t st_startup4Times = MACRO_ISOAGLIB_TIMEGETTIME();
     return st_startup4Times;
   }
 #endif
@@ -168,7 +168,7 @@ isSystemOpened()
   int32_t getTime()
   { // returns time in msec
     // in case of mingw compiler error link winmm.lib (add -lwinmm).
-    return timeGetTime() - getStartupTime();
+    return MACRO_ISOAGLIB_TIMEGETTIME() - getStartupTime();
   }
 #else
  // use gettimeofday for native LINUX system
