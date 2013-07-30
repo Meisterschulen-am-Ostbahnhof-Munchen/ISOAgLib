@@ -14,7 +14,6 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "timeposgps_c.h"
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
@@ -28,6 +27,10 @@
 #include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
+
+#ifdef WINCE
+#include <time_CE.h>
+#endif
 
 #if DEBUG_NMEA
   #ifdef SYSTEM_PC
@@ -290,7 +293,7 @@ namespace __IsoAgLib {
                             #endif
                           };
 
-    mt_tzOffset = - mktime(&t_testTime);
+    mt_tzOffset = - MACRO_ISOAGLIB_MKTIME(&t_testTime);
     if (1 == mt_tzOffset)
     { // mktime returned -1 => error
       mt_tzOffset = 0;
@@ -923,7 +926,12 @@ namespace __IsoAgLib {
         mi32_lastMillisecondUpdate = mi32_lastIsoPositionStream;
 
         const CNAMESPACE::time_t t_tempUnixTime = ( CNAMESPACE::time_t(ui16_daysSince1970) * CNAMESPACE::time_t(60L * 60L * 24L) ) + (ui32_milliseconds/1000);
+#ifdef WINCE
+        time_t_ce ceTime = (time_t_ce)t_tempUnixTime;
+        tm* UtcNow = gmtime_ce(&ceTime);
+#else
         CNAMESPACE::tm* UtcNow = CNAMESPACE::gmtime( &t_tempUnixTime );
+#endif
         if ( UtcNow != NULL )
         {
           if ( checkMode(IsoAgLib::IdentModeTractor) || getSelectedDataSourceISOName().isUnspecified())
@@ -1199,7 +1207,7 @@ void TimePosGps_c::isoSendDirection( void )
                             #endif
                             };
       // compensate mktime() time zone influence:
-      const CNAMESPACE::time_t secondsSince1970 = mktime( &testTime ) + mt_tzOffset;
+      const CNAMESPACE::time_t secondsSince1970 = MACRO_ISOAGLIB_MKTIME( &testTime ) + mt_tzOffset;
       // calculate the days
       ui16_daysSince1970 = static_cast<uint16_t>(secondsSince1970 / ( 60L * 60L *24L ));
     }
@@ -1372,9 +1380,9 @@ void TimePosGps_c::isoSendDirection( void )
                             #endif
                             };
     // argument of mktime is interpreted as local time (system time zone influence!)
-    const CNAMESPACE::time_t middle = mktime( &testTime );
+    const CNAMESPACE::time_t middle = MACRO_ISOAGLIB_MKTIME( &testTime );
     // compensate system time zone setting: call localtime() and not gmtime()
-    const struct CNAMESPACE::tm* normalizedTime = CNAMESPACE::localtime( &middle );
+    const struct CNAMESPACE::tm* normalizedTime = MACRO_ISOAGLIB_LOCALTIME( &middle );
 
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -1399,8 +1407,8 @@ void TimePosGps_c::isoSendDirection( void )
                             #endif
                           };
 
-    const CNAMESPACE::time_t middle = mktime( &testTime );
-    const struct CNAMESPACE::tm* normalizedTime = CNAMESPACE::localtime( &middle );
+    const CNAMESPACE::time_t middle = MACRO_ISOAGLIB_MKTIME( &testTime );
+    const struct CNAMESPACE::tm* normalizedTime = MACRO_ISOAGLIB_LOCALTIME( &middle );
 
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -1433,9 +1441,9 @@ void TimePosGps_c::isoSendDirection( void )
                           };
 
     // argument of mktime is interpreted as local time (system time zone influence!)
-    const CNAMESPACE::time_t middle = mktime( &testTime );
+    const CNAMESPACE::time_t middle = MACRO_ISOAGLIB_MKTIME( &testTime );
     // compensate system time zone setting: call localtime() and not gmtime()
-    const struct CNAMESPACE::tm* normalizedTime = CNAMESPACE::localtime( &middle );
+    const struct CNAMESPACE::tm* normalizedTime = MACRO_ISOAGLIB_LOCALTIME( &middle );
 
     bit_calendar.hour   = normalizedTime->tm_hour;
     bit_calendar.minute = normalizedTime->tm_min;
@@ -1480,7 +1488,7 @@ void TimePosGps_c::isoSendDirection( void )
 
     for (;;){
       // compensate system time zone setting: call localtime() and not gmtime()
-      struct CNAMESPACE::tm *p_ret = CNAMESPACE::localtime( &t_secondsSince1970Local );
+      struct CNAMESPACE::tm *p_ret = MACRO_ISOAGLIB_LOCALTIME( &t_secondsSince1970Local );
       if (p_ret)
         return p_ret;
       // non-negative, because otherwise localtime(..) would return NULL!
@@ -1579,7 +1587,7 @@ void TimePosGps_c::isoSendDirection( void )
                                , 0, NULL
                                #endif
                              };
-        mt_cachedLocalSeconds1970AtLastSet = mktime( &testTime );
+        mt_cachedLocalSeconds1970AtLastSet = MACRO_ISOAGLIB_MKTIME( &testTime );
         if ((CNAMESPACE::time_t)-1 == mt_cachedLocalSeconds1970AtLastSet)
         { // this shouldn't happen anymore, but in case it does, reset the cachedSeconds to 0
           // because -1 will make localtime(..) return NULL!
@@ -1593,7 +1601,7 @@ void TimePosGps_c::isoSendDirection( void )
     const CNAMESPACE::time_t t_secondsSince1970 = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000;
 
     // compensate system time zone setting (part 2)
-    return CNAMESPACE::localtime( &t_secondsSince1970 );
+    return MACRO_ISOAGLIB_LOCALTIME( &t_secondsSince1970 );
   }
 
 void

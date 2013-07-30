@@ -105,9 +105,13 @@
 #if defined(WINCE)
   #define MACRO_ISOAGLIB_ABORT() TerminateProcess(GetCurrentProcess(), 0)
   #define MACRO_ISOAGLIB_PERROR(x) printf("error: %s\n",x)
+  #define MACRO_ISOAGLIB_MKTIME(x) mktime_ce(x)
+  #define MACRO_ISOAGLIB_LOCALTIME(x) localtime_ce(x)
 #else
   #define MACRO_ISOAGLIB_ABORT() CNAMESPACE::abort()
-  #define MACRO_ISOAGLIB_PERROR(x) perror(x)
+  #define MACRO_ISOAGLIB_PERROR(x) CNAMESPACE::perror(x)
+  #define MACRO_ISOAGLIB_MKTIME(x) CNAMESPACE::mktime(x)
+  #define MACRO_ISOAGLIB_LOCALTIME(x) CNAMESPACE::localtime(x)
 #endif
 
 #ifdef WINCE
