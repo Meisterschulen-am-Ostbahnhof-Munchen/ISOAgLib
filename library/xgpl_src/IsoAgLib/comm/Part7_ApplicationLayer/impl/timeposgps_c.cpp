@@ -502,12 +502,12 @@ namespace __IsoAgLib {
           if ( mc_sendGpsISOName.isUnspecified()  )
           { // neither this item nor another item is sending GPS data -> this is the best time source
             setCalendarUtc(
-            (pkg.getUint8Data(5) + 1985), pkg.getUint8Data(3), (pkg.getUint8Data(4) / 4), (pkg.getUint8Data(2)),
+            (pkg.getUint8Data(5) + 1985), pkg.getUint8Data(3), ((pkg.getUint8Data(4)+3) / 4), (pkg.getUint8Data(2)),
             (pkg.getUint8Data(1)), (pkg.getUint8Data(0) / 4));
           }
           else
           { // only fetch the date, as this information might not be defined by GPS
-            setDateUtc((pkg.getUint8Data(5) + 1985), pkg.getUint8Data(3), (pkg.getUint8Data(4) / 4));
+            setDateUtc((pkg.getUint8Data(5) + 1985), pkg.getUint8Data(3), ((pkg.getUint8Data(4)+3) / 4));
           }
           setTimeOut( TIMEOUT_SENDING_NODE_NMEA );
           // take local timezone offset in all cases
@@ -1294,7 +1294,7 @@ void TimePosGps_c::isoSendDirection( void )
         pkg.setUint8Data(1, p_tm->tm_min);
         pkg.setUint8Data(2, p_tm->tm_hour);
         pkg.setUint8Data(3, p_tm->tm_mon + 1);
-        pkg.setUint8Data(4, p_tm->tm_mday * 4);
+        pkg.setUint8Data(4, p_tm->tm_mday * 4 + (p_tm->tm_hour/6) - 3);
         pkg.setUint8Data(5, p_tm->tm_year + 1900 - 1985);
       }
       else
@@ -1302,7 +1302,7 @@ void TimePosGps_c::isoSendDirection( void )
         pkg.setUint16Data( 0, 0U );
         pkg.setUint8Data(2, 0U);
         pkg.setUint8Data(3, 1U);
-        pkg.setUint8Data(4, 4U);
+        pkg.setUint8Data(4, 1U);
         pkg.setUint8Data(5, 0U);
       }
       pkg.setUint8Data(6, bit_calendar.timezoneMinuteOffset );
