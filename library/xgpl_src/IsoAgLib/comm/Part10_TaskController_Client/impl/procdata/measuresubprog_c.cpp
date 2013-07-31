@@ -167,7 +167,7 @@ MeasureTimeProp_c::updateTrigger( int32_t ai32_val )
 
 
 int32_t
-MeasureTimeProp_c::nextTriggerTime( const ProcData_c& ac_processData, int32_t ai32_val )
+MeasureTimeProp_c::nextTriggerTime( int32_t ai32_val )
 {
   return (mi32_lastVal + mi32_increment - ai32_val);
 }
@@ -177,7 +177,7 @@ void MeasureTimeProp_c::timeEvent()
 {
   const int32_t now = System_c::getTime();
   const bool sendProcMsg = updateTrigger( now );
-  const int32_t nextTimePeriod = nextTriggerTime( m_measureProg.procData(), now );
+  const int32_t nextTimePeriod = nextTriggerTime( now );
 
   if( nextTimePeriod > 0 )
     setPeriod( nextTimePeriod, false );

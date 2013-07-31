@@ -60,7 +60,7 @@ public:
 
 private:
   bool updateTrigger(int32_t ai32_val);
-  int32_t nextTriggerTime(const ProcData_c& ac_processData, int32_t ai32_val);
+  int32_t nextTriggerTime(int32_t ai32_val);
 
   virtual void timeEvent();
 
