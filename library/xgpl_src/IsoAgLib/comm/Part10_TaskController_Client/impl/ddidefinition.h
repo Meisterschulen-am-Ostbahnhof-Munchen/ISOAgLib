@@ -128,11 +128,11 @@
 #define DDI_CROP_LOSS_VOLUME_PER_AREA             92 // ml/m2
 #define DDI_CROP_LOSS_MASS_PER_AREA               93 // mg/m2
 #define DDI_CROP_LOSS_COUNT_PER_AREA              94 // 0.001 count/m2
- 
+
 #define DDI_CROP_LOSS_VOLUME_PER_TIME             95 // ml/s
 #define DDI_CROP_LOSS_MASS_PER_TIME               96 // mg/s
 #define DDI_CROP_LOSS_COUNT_PER_TIME              97 // 0.001 count/s
- 
+
 #define DDI_PERCENTAGE_CROP_LOSS                  98 // ppm
 #define DDI_CROP_MOISTURE                         99 // ppm
 #define DDI_CROP_CONTAMINATION                   100 // ppm
@@ -160,7 +160,7 @@
 #define DDI_TOTAL_INEFFECTIVE_DISTANCE           118 // m
 #define DDI_TOTAL_EFFECTIVE_TIME                 119 // s
 #define DDI_TOTAL_INEFFECTIVE_TIME               120 // s
- 
+
 #define DDI_PRODUCT_DENSITY_MASS_PER_VOLUME      121 // g/l
 #define DDI_PRODUCT_DENSITY_MASS_PER_COUNT       122 // mg/1000
 #define DDI_PRODUCT_DENSITY_VOLUME_PER_COUNT     123 // ml/1000
@@ -194,7 +194,7 @@
 #define DDI_YAW_ANGLE                            144 // 0.001 degree
 #define DDI_ROLL_ANGLE                           145 // 0.001 degree
 #define DDI_PITCH_ANGLE                          146 // 0.001 degree
- 
+
 #define DDI_LOG_COUNT                            147
 
 #define DDI_FUEL_CONSUMPTION_TOTAL               148 // ml
@@ -203,8 +203,14 @@
  
 #define DDI_AREA_PER_TIME_CAPACITY               151 // mm2/s
 
+#define DDI_ACTUAL_NORMALIZED_DIFFERENCE_VEGETATIVE_INDEX  153 // unit not defined
+#define DDI_PHYSICAL_OBJECT_LENGTH               154 // mm
+#define DDI_PHYSICAL_OBJECT_WIDTH                155 // mm
+#define DDI_PHYSICAL_OBJECT_HEIGHT               156 // mm
+
 #define DDI_CONNECTOR_TYPE                       157 // 0 - unknown (default), 1 - ISO 6489-3 Tractor drawbar, 2 - ISO 730 Three-point-hitch semi-mounted, 3 - ISO 730 Three-point-hitch mounted, 4 - ISO 6489-1 Hitch-hook, 5 - ISO 6489-2 Clevis coupling 40, 6 - ISO 6489-4 Piton type coupling, 7 - ISO 6489-5 CUNA hitch, or ISO 5692-2 Pivot wagon hitch, 8 - ISO 24347 Ball type hitch, all other values are reserved for future assignments
 #define DDI_PRESCRIPTION_CONTROL_STATE           158 // 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
+#define DDI_NUMBER_OF_SUBUNITS_PER_SECTION       159 // count
 #define DDI_SECTION_CONTROL_STATE                160 // 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
 #define DDI_CONDENSED_WORK_STATE1_16             161 // sections 1-16 bit fields 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
 #define DDI_CONDENSED_WORK_STATE17_32            162 // sections 17-32 bit fields 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
@@ -223,8 +229,155 @@
 #define DDI_CONDENSED_WORK_STATE225_240          175 // sections 225-240 bit fields 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
 #define DDI_CONDENSED_WORK_STATE241_256          176 // sections241-256 bit fields 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
 
+#define DDI_ACTUAL_LENGTH_OF_CUT                 177 // mm
+
+#define DDI_ELEMENT_TYPE_INSTANCE                178
+#define DDI_ACTUAL_CULTURAL_PRACTICE             179 // 0=Unknown, 1=Fertilizing, 2=Sowing and Planting, 3=Crop Protection, 4=Tillage
+                                                     // 5=Baling, 6=Mowing, 7=Wrapping, 8=Harvesting, 9=Forage Harvesting, 10=Transport,
+                                                     // 11-255=Reserved
+                                                     
+#define DDI_DEVICE_REFERENCE_POINT_TO_GROUND_DISTANCE  180 // mm
+
+#define DDI_DRY_MASS_PER_AREA_YIELD              181 // mg/m2
+#define DDI_DRY_MASS_PER_TIME_YIELD              182 // mg/s
+#define DDI_YIELD_TOTAL_DRY_MASS                 183 // kg
+#define DDI_REFERENCE_MOISTURE_FOR_DRY_MASS      184 // ppm
+
+#define DDI_SEED_COTTON_MASS_PER_AREA_YIELD      185 // mg/m2
+#define DDI_LINT_COTTON_MASS_PER_AREA_YIELD      186 // mg/m2
+#define DDI_SEED_COTTON_MASS_PER_TIME_YIELD      187 // mg/s
+#define DDI_LINT_COTTON_MASS_PER_TIME_YIELD      188 // mg/s
+
+#define DDI_YIELD_TOTAL_SEED_COTTON_MASS         189 // kg
+#define DDI_YIELD_TOTAL_LINT_COTTON_MASS         190 // kg
+
+#define DDI_LINT_TURNOUT_PERCENTAGE              191 // ppm
+
+#define DDI_AMBIENT_TEMPERATURE                  192 // mK
+
+#define DDI_SETPOINT_PRODUCT_PRESSURE            193 // Units are Pa
+#define DDI_ACTUAL_PRODUCT_PRESSURE              194
+#define DDI_MINIMUM_PRODUCT_PRESSURE             195
+#define DDI_MAXIMUM_PRODUCT_PRESSURE             196
+
+#define DDI_SETPOINT_PUMP_OUTPUT_PRESSURE        197 // Units are Pa
+#define DDI_ACTUAL_PUMP_OUTPUT_PRESSURE          198
+#define DDI_MINIMUM_PUMP_OUTPUT_PRESSURE         199
+#define DDI_MAXIMUM_PUMP_OUTPUT_PRESSURE         200
+
+#define DDI_SETPOINT_TANK_AGITATION_PRESSURE     201 // Units are Pa
+#define DDI_ACTUAL_TANK_AGITATION_PRESSURE       202
+#define DDI_MINIMUM_TANK_AGITATION_PRESSURE      203
+#define DDI_MAXIMUM_TANK_AGITATION_PRESSURE      204
+
 #define DDI_SC_TURN_ON_TIME                      205 // ms
 #define DDI_SC_TURN_OFF_TIME                     206 // ms
+
+#define DDI_WIND_SPEED                           207 // mm/s
+#define DDI_WIND_DIRECTION                       208 // degree
+#define DDI_AIR_HUMIDITY                         209 // percent
+#define DDI_SKY_CONDITIONS                       210
+
+#define DDI_LAST_BALE_FLAKES_PER_BALE            211
+#define DDI_LAST_BALE_AVERAGE_MOISTURE           212
+#define DDI_LAST_BALE_AVERAGE_STROKES_PER_FLAKE  213
+#define DDI_LIFETIME_BALE_COUNT                  214
+
+#define DDI_LIFETIME_WORKING_HOURS               215
+
+#define DDI_ACTUAL_BALE_HYDRAULIC_PRESSURE                       216
+#define DDI_LAST_BALE_AVERAGE_HYDRAULIC_PRESSURE                 217
+
+#define DDI_SETPOINT_BALE_COMPRESSION_PLUNGER_LOAD               218
+#define DDI_ACTUAL_BALE_COMPRESSION_PLUNGER_LOAD                 219
+
+#define DDI_LAST_BALE_AVERAGE_BALE_COMPRESSION_PLUNGER_LOAD      220
+#define DDI_LAST_BALE_APPLIED_PRESERVATIVE       221
+#define DDI_LAST_BALE_TAG_NUMBER                 222
+#define DDI_LAST_BALE_MASS                       223
+
+#define DDI_DELTA_T                              224
+
+#define DDI_SETPOINT_WORKING_LENGTH              225
+#define DDI_ACTUAL_WORKING_LENGTH                226
+#define DDI_MINIMUM_WORKING_LENGTH               227
+#define DDI_MAXIMUM_WORKING_LENGTH               228
+
+#define DDI_ACTUAL_NET_WEIGHT                    229
+#define DDI_NET_WEIGHT_STATE                     230
+
+#define DDI_SETPOINT_NET_WEIGHT                  231
+#define DDI_ACTUAL_GROSS_WEIGHT                  232
+#define DDI_GROSS_WEIGHT_STATE                   233
+#define DDI_MINIMUM_GROSS_WEIGHT                 234
+#define DDI_MAXIMUM_GROSS_WEIGHT                 235
+
+#define DDI_THRESHER_ENGAGEMENT_TOTAL_TIME       236
+#define DDI_ACTUAL_HEADER_WORKING_HEIGHT_STATUS      237
+#define DDI_ACTUAL_HEADER_ROTATIONAL_SPEED_STATUS    238
+#define DDI_YIELD_HOLD_STATUS                    239
+#define DDI_ACTUAL__UN_LOADING_SYSTEM_STATUS     240
+#define DDI_CROP_TEMPERATURE                     241
+
+#define DDI_SETPOINT_SIEVE_CLEARANCE             242
+#define DDI_ACTUAL_SIEVE_CLEARANCE               243
+#define DDI_MINIMUM_SIEVE_CLEARANCE              244
+#define DDI_MAXIMUM_SIEVE_CLEARANCE              245
+
+#define DDI_SETPOINT_CHAFFER_CLEARANCE           246
+#define DDI_ACTUAL_CHAFFER_CLEARANCE             247
+#define DDI_MINIMUM_CHAFFER_CLEARANCE            248
+#define DDI_MAXIMUM_CHAFFER_CLEARANCE            249
+
+#define DDI_SETPOINT_CONCAVE_CLEARANCE           250
+#define DDI_ACTUAL_CONCAVE_CLEARANCE             251
+#define DDI_MINIMUM_CONCAVE_CLEARANCE            252
+#define DDI_MAXIMUM_CONCAVE_CLEARANCE            253
+
+#define DDI_SETPOINT_SEPARATION_FAN_ROTATIONAL_SPEED     254
+#define DDI_ACTUAL_SEPARATION_FAN_ROTATIONAL_SPEED       255
+#define DDI_MINIMUM_SEPARATION_FAN_ROTATIONAL_SPEED      256
+#define DDI_MAXIMUM_SEPARATION_FAN_ROTATIONAL_SPEED      257
+
+#define DDI_HYDRAULIC_OIL_TEMPERATURE            258
+#define DDI_YIELD_LAG_IGNORE_TIME                259
+#define DDI_YIELD_LEAD_IGNORE_TIME               260
+#define DDI_AVERAGE_YIELD_MASS_PER_TIME          261
+#define DDI_AVERAGE_CROP_MOISTURE                262
+#define DDI_AVERAGE_YIELD_MASS_PER_AREA          263
+#define DDI_CONNECTOR_PIVOT_X                    264
+#define DDI_REMAINING_AREA                       265
+
+#define DDI_LIFETIME_APPLICATION_TOTAL_MASS      266
+#define DDI_LIFETIME_APPLICATION_TOTAL_COUNT     267
+
+#define DDI_LIFETIME_YIELD_TOTAL_VOLUME          268
+#define DDI_LIFETIME_YIELD_TOTAL_MASS            269
+#define DDI_LIFETIME_YIELD_TOTAL_COUNT           270
+
+#define DDI_LIFETIME_TOTAL_AREA                  271
+#define DDI_LIFETIME_TOTAL_DISTANCE              272
+
+#define DDI_LIFETIME_INEFFECTIVE_TOTAL_DISTANCE  273
+#define DDI_LIFETIME_EFFECTIVE_TOTAL_TIME        274
+#define DDI_LIFETIME_INEFFECTIVE_TOTAL_TIME      275
+
+#define DDI_LIFETIME_FUEL_CONSUMPTION            276
+
+#define DDI_LIFETIME_AVERAGE_FUEL_CONSUMPTION_PER_TIME  277
+#define DDI_LIFETIME_AVERAGE_FUEL_CONSUMPTION_PER_AREA  278
+
+#define DDI_LIFETIME_YIELD_TOTAL_DRY_MASS               279
+#define DDI_LIFETIME_YIELD_TOTAL_SEED_COTTON_MASS       280
+#define DDI_LIFETIME_YIELD_TOTAL_LINT_COTTON_MASS       281
+
+#define DDI_LIFETIME_THRESHING_ENGAGEMENT_TOTAL_TIME    282
+
+#define DDI_PRECUT_TOTAL_COUNT                   283
+#define DDI_UNCUT_TOTAL_COUNT                    284
+
+#define DDI_LIFETIME_PRECUT_TOTAL_COUNT          285
+#define DDI_LIFETIME_UNCUT_TOTAL_COUNT           286
 
 #define DDI_SETPOINT_WORK_STATE                  289 // 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
 #define DDI_SETPOINT_CONDENSED_WORK_STATE1_16    290 // sections 1-16 bit fields 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
@@ -243,6 +396,33 @@
 #define DDI_SETPOINT_CONDENSED_WORK_STATE209_224 303 // sections 209-224 bit fields 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
 #define DDI_SETPOINT_CONDENSED_WORK_STATE225_240 304 // sections 225-240 bit fields 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
 #define DDI_SETPOINT_CONDENSED_WORK_STATE241_256 305 // sections 241-256 bit fields 00 - disabled, 01 - enabled, 10 - error, 11 - not installed
+
+#define DDI_TRUE_ROTATION_POINT_X                306
+#define DDI_TRUE_ROTATION_POINT_Y                307
+
+#define DDI_ACTUAL_PERCENTAGE_APPLICATION_RATE   308
+#define DDI_MINIMUM_PERCENTAGE_APPLICATION_RATE  309
+#define DDI_MAXIMUM_PERCENTAGE_APPLICATION_RATE  310
+
+#define DDI_RELATIVE_YIELD_POTENTIAL             311
+#define DDI_MINIMUM_RELATIVE_YIELD_POTENTIAL     312
+#define DDI_MAXIMUM_RELATIVE_YIELD_POTENTIAL     313
+
+#define DDI_ACTUAL_PERCENTAGE_CROP_DRY_MATTER    314
+#define DDI_AVERAGE_PERCENTAGE_CROP_DRY_MATTER_  315
+
+#define DDI_EFFECTIVE_TOTAL_FUEL_CONSUMPTION     316
+#define DDI_INEFFECTIVE_TOTAL_FUEL_CONSUMPTION   317
+
+#define DDI_EFFECTIVE_TOTAL_DIESEL_EXHAUST_FLUID_CONSUMPTION    318
+#define DDI_INEFFECTIVE_TOTAL_DIESEL_EXHAUST_FLUID_CONSUMPTION  319
+
+#define DDI_LAST_LOADED_WEIGHT                   320
+#define DDI_LAST_UNLOADED_WEIGHT                 321
+#define DDI_LOAD_IDENTIFICATION_NUMBER           322
+#define DDI_UNLOAD_IDENTIFICATION_NUMBER         323
+
+#define DDI_CHOPPER_ENGAGEMENT_TOTAL_TIME        324
 
 #define DDI_PGN_BASED_LOGGING                    0xDFFE
 #define DDI_DEFAULT_PROCESS_DATA                 0xDFFF
