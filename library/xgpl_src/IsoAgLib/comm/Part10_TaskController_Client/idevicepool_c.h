@@ -17,7 +17,7 @@
 #ifndef _IDEVICEPOOL_C_H_
 #define _IDEVICEPOOL_C_H_
 
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/ddidefinition.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iddidefinition.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h>
 
 namespace IsoAgLib {

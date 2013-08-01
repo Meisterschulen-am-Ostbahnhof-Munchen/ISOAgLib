@@ -8,8 +8,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef _DDIDEFINITION_H_
-#define _DDIDEFINITION_H_
+#ifndef _IDDIDEFINITION_H_
+#define _IDDIDEFINITION_H_
 
 #define DDI_DATA_DICTIONARY_VERSION                0
 
@@ -429,4 +429,4 @@
 
 #define DDI_INVALID_DDI                          0xFFFF
 
-#endif // _DDIDEFINITION_H_
+#endif // _IDDIDEFINITION_H_
