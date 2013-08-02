@@ -36,7 +36,7 @@ if(WIN32)
     "C:/Programme/Sontheim/MT_Api/Library")
   set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32 SIECA132)
 else()
-  set(ISOAGLIB_ADDITIONAL_LIBRARIES rt)
+  message( FATAL_ERROR "This can server variant can't be build on non Windows systems.")
 endif(WIN32)
 
 add_executable(

@@ -32,7 +32,7 @@ if(WIN32)
   link_directories("../../../../tools/libs/pthread/lib")
   set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32)
 else()
-  set(ISOAGLIB_ADDITIONAL_LIBRARIES rt)
+  set(ISOAGLIB_ADDITIONAL_LIBRARIES rt pthread)
 endif(WIN32)
 
 add_executable(

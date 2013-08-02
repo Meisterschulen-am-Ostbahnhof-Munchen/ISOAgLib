@@ -34,7 +34,7 @@ endif( WIN32)
 
 
 if( UNIX )
-target_link_libraries(${INSERT_CMAKE_TARGET_LINK_LIBRARIES_LINUX})
+target_link_libraries(${INSERT_CMAKE_TARGET_LINK_LIBRARIES_LINUX} pthread)
 
 add_custom_target(tags COMMAND \${CSCOPE} -b ${INSERT_CMAKE_SOURCE_FILES}
                          COMMAND \${CTAGS}     ${INSERT_CMAKE_SOURCE_FILES} )
