@@ -1799,6 +1799,10 @@ bool vt2iso_c::checkForAllowedExecution() const
 
 void vt2iso_c::autoDetectLanguage (DOMNode *n)
 {
+  if( ((DOMElement*)n)->hasAttribute( X("__vt2iso_lang_detection_done") ) ) {
+    return;
+  }
+
   std::string newLanguageValue;
   std::string searchName;
   searchName = getAttributeValue (n, "name");
@@ -1809,6 +1813,7 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
 
   if (searchName[0] == 0x00)
   { // no id, so we can't search for the value...
+    ((DOMElement *)n)->setAttribute (X("__vt2iso_lang_detection_done"), X(""));
     return;
   }
 
@@ -1817,6 +1822,7 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
 #if DEBUG_LANGUAGE_AUTO_DETECT
     std::cout << "AUTO-DETECT-LANGUAGE: language=\""<< getAttributeValue (n, "language") << "\" directly specified for ["<< searchName <<"]."<<std::endl;
 #endif
+    ((DOMElement *)n)->setAttribute (X("__vt2iso_lang_detection_done"), X(""));
     return;
   }
 
@@ -1921,6 +1927,7 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
   if (newLanguageValue[0] != 0x00)
     std::cout << "AUTO-DETECT-LANGUAGE: FOUND: ["<<newLanguageValue <<"] for "<<searchName<<"."<<std::endl;
 #endif
+  ((DOMElement *)n)->setAttribute (X("__vt2iso_lang_detection_done"), X(""));
 }
 
 std::string
