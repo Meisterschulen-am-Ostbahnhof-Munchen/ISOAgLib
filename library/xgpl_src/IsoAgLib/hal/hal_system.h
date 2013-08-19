@@ -28,29 +28,19 @@
 
 namespace HAL
 {
-  /** open the system with system specific function call */
   void openSystem();
-
-  /** close the system with system specific function call */
   void closeSystem();
 
-  /** check if open_System() has already been called */
   bool isSystemOpened();
 
-  /** configure the watchdog of the system */
   void initWatchdog( void* config );
-
-  /** close the watchdog of the system */
   void closeWatchdog();
 
-  /** trigger the watchdog */
   void triggerWatchdog();
 
-  /** get the system time in [ms] */
-  int32_t getTime(void);
+  int32_t getTime(); // in [ms]
 
   int16_t getSnr(uint8_t *snrDat);
-
   int32_t getSerialNr(int16_t* pi16_errCode = NULL);
 
   /**

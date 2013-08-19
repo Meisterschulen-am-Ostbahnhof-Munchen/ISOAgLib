@@ -22,7 +22,7 @@
 
 #define HAS_64BIT_INT_TYPE
 
-// 1600 == Visual Studion 2010
+// 1600 == Visual Studio 2010
 #if (!defined(_MSC_VER) || (_MSC_VER >= 1600)) && !defined(WINCE)
   #include <stdint.h>
 #else
@@ -49,6 +49,7 @@
 
 typedef uint8_t boolean;
 
+
 namespace __HAL {
 
 typedef struct
@@ -56,7 +57,7 @@ typedef struct
   bool started;
 } tSystem;
 
-} // End of namespace __HAL
+} // __HAL
 
 
 #endif

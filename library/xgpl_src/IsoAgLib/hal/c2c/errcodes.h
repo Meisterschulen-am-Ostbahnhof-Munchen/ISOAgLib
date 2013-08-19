@@ -14,31 +14,25 @@
 #define __C2C_ERRCODES_H__
 
 namespace HAL {
-  /* include BIOS errcode definition */
   extern "C" {
     #include <commercial_BIOS/bios_c2c/c2c10err.h>
   }
-  /* --- map BIOS error codes to target independend HAL codes --- */
-  #define HAL_NO_ERR            C_NO_ERR
-  #define HAL_BUSY_ERR          C_BUSY
-  #define HAL_CONFIG_ERR        C_CONFIG
-  #define HAL_RANGE_ERR         C_RANGE
-  #define HAL_NOACT_ERR         C_NOACT
-  #define HAL_WARN_ERR          C_WARN
-  #define HAL_OVERFLOW_ERR      C_OVERFLOW
-  #define HAL_UNKNOWN_ERR       C_UNKNOWN_ERR
+} // __HAL
 
-  #define HAL_DIGOUT_OPEN        (int16_t)(-(20 * 0x0001))
-  #define HAL_DIGOUT_SHORTCUT    (int16_t)(-(21 * 0x0001))
-  #define HAL_DIGOUT_OVERTEMP    (int16_t)(-(22 * 0x0001))
-  #define HAL_DIGOUT_UNDERVOLT   (int16_t)(-(23 * 0x0001))
-  #define HAL_DIGOUT_OVERVOLT    (int16_t)(-(24 * 0x0001))
+/* --- map BIOS error codes to target independend HAL codes --- */
+#define HAL_NO_ERR            C_NO_ERR
+#define HAL_BUSY_ERR          C_BUSY
+#define HAL_CONFIG_ERR        C_CONFIG
+#define HAL_RANGE_ERR         C_RANGE
+#define HAL_NOACT_ERR         C_NOACT
+#define HAL_WARN_ERR          C_WARN
+#define HAL_OVERFLOW_ERR      C_OVERFLOW
+#define HAL_UNKNOWN_ERR       C_UNKNOWN_ERR
 
-  #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
-  #define HAL_NEW_SEND_DELAY    (int16_t)(-(25 * 0x0001))
-  #endif
+#define HAL_DIGOUT_OPEN        (int16_t)(-(20 * 0x0001))
+#define HAL_DIGOUT_SHORTCUT    (int16_t)(-(21 * 0x0001))
+#define HAL_DIGOUT_OVERTEMP    (int16_t)(-(22 * 0x0001))
+#define HAL_DIGOUT_UNDERVOLT   (int16_t)(-(23 * 0x0001))
+#define HAL_DIGOUT_OVERVOLT    (int16_t)(-(24 * 0x0001))
 
-
-} // end namespace __HAL
 #endif
-
