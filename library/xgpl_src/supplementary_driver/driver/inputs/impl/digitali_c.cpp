@@ -160,14 +160,9 @@ DigitalI_c::val() const
   { // normal
      i16_val = HAL::getDiginOnoff(channelNr());
   }
-  if (i16_val == HAL_RANGE_ERR)
-  { // wrong input channel
-    return uint16_t( ERROR_VAL_16S ); // needs to be fixed!
-  }
-  else
-  { // correct input channel
-    return (i16_val == ON)?1:0;
-  }
+  isoaglib_assert (i16_val != HAL_RANGE_ERR);
+
+  return (i16_val == ON)?1:0;
 }
 
 } // __IsoAgLib

@@ -82,12 +82,7 @@ AnalogI_c::setFastAdc(bool ab_useFast)
 bool
 AnalogI_c::active() const
 {
-  int16_t i16_val = val();
-  if (i16_val != ERROR_VAL_16S)
-  { // no range error
-    return (i16_val > 0);
-  }
-  return false;
+  return (val() > 0);
 }
 
 } // __IsoAgLib
