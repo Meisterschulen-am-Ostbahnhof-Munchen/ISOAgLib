@@ -330,5 +330,22 @@ enum IdentMode_t {
 } // end namespace IsoAgLib
 
 
+// formerly defined in isoaglib_config.h - but only used in Part 7
+// subject to be changed/revised later on. please don't use!
+#define NO_VAL_32S ((int32_t)0x80000000l)
+#define NO_VAL_16S ((int16_t)0x8000)
+#define NO_VAL_8S ((int8_t)0x80)
+#define NO_VAL_32 ((uint32_t)0xFFFFFFFFUL)
+#define NO_VAL_16 ((uint16_t)0xFFFFu)
+#define NO_VAL_8 ((uint8_t)0xFFu)
+
+#define ERROR_VAL_32S ((int32_t)0x80000001l)
+#define ERROR_VAL_16S ((int16_t)0x8001)
+#define ERROR_VAL_8S ((int8_t)0x81)
+#define ERROR_VAL_32 0xFFFFFFFEUL
+#define ERROR_VAL_16 0xFFFEu
+#define ERROR_VAL_8 0xFEu
+
+
 #endif
 
