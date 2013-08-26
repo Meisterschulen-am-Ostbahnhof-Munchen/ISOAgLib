@@ -14,6 +14,8 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 
+#pragma warning( disable : 4996 )
+
 
 namespace __IsoAgLib {
 
@@ -59,12 +61,13 @@ namespace __IsoAgLib {
   DeviceObjectDvc_c::DeviceObjectDvc_c( const char* version, const char* desig )
     : __IsoAgLib::DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDVC, desig )
     , m_version( version )
-    , m_serialNumber( "" )
+  //, m_serialNumber()
     , m_structLabel()
     , m_wsmName()
     , m_localization()
   {
     isoaglib_assert( CNAMESPACE::strlen( version ) <= 32 );
+    m_serialNumber[ 0 ] = 0x00;
     STL_NAMESPACE::memset( ( void* )&m_localization, 0, sizeof( m_localization ) );
     m_localization.reserved = 0xff; // Reserved field
   }
@@ -128,6 +131,12 @@ namespace __IsoAgLib {
   }
 
 
+  void DeviceObjectDvc_c::setSerialNumber( const char* s ) {
+    isoaglib_assert( CNAMESPACE::strlen( s ) <= 32 );
+    CNAMESPACE::strcpy( m_serialNumber, s );
+  }
+
+
   void
   DeviceObjectDvc_c::formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {
     DeviceObject_c::format( byteStream );
@@ -162,7 +171,9 @@ namespace __IsoAgLib {
     , m_elementNumber( element )
     , m_parentId( pid )
     , m_childList()
-  {}
+  {
+    isoaglib_assert( element <= 4095 );
+  }
 
 
   void DeviceObjectDet_c::formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {

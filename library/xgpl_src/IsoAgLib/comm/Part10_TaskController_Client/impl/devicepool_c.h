@@ -101,6 +101,7 @@ namespace __IsoAgLib {
       void setLocalization( const Localization_s& s );
       void setStructureLabel( const char* s );
       void setStructureLabel( const uint8_t* label );
+      void setSerialNumber( const char* s );
 
     private:
       friend class __IsoAgLib::DevicePool_c;
@@ -108,7 +109,7 @@ namespace __IsoAgLib {
         m_wsmName = ident.isoName();
       }
       const char* m_version;
-      const char* m_serialNumber;
+      char m_serialNumber[ 32+1 ];
       StructureLabel_s m_structLabel;
       IsoName_c m_wsmName;
       Localization_s m_localization;

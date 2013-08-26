@@ -32,7 +32,7 @@ namespace IsoAgLib {
   class iDeviceObjectDvc_c : public __IsoAgLib::DeviceObjectDvc_c {
     public:
       iDeviceObjectDvc_c( const char* version, const char* desig ) : __IsoAgLib::DeviceObjectDvc_c( version, desig ) {}
-      // TODO
+      // TODO currently not updated during run-time.
       void setLocalization( const localSettings_s& s ) {
         __IsoAgLib::DeviceObjectDvc_c::setLocalSettings( s );
       }
@@ -41,6 +41,9 @@ namespace IsoAgLib {
       }
       void setStructureLabel( const char* s ) {
         __IsoAgLib::DeviceObjectDvc_c::setStructureLabel( s );
+      }
+      void setSerialNumber( const char* s ) {
+        __IsoAgLib::DeviceObjectDvc_c::setSerialNumber( s );
       }
   };
 
