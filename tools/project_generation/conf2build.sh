@@ -292,7 +292,7 @@ check_set_correct_variables()
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/pc"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/pc"
         ;;
-       (c2c|Dj1|esx|esxu|p1mc|src9)
+       (c2c|esx|esxu|p1mc|src9)
         HAL_FIND_PATH="$ISO_AG_LIB_PATH/library/xgpl_src"
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/$USE_TARGET_SYSTEM"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/$USE_TARGET_SYSTEM"
@@ -320,7 +320,7 @@ check_set_correct_variables()
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/cmake"
             IDE_NAME="CMake"
             ;;
-        (esx|esxu|c2c|Dj1)
+        (esx|esxu|c2c)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
             ;;
@@ -1099,7 +1099,6 @@ create_EdePrj()
     : ${USE_EMBED_LIBS:=$(
             case "$USE_TARGET_SYSTEM" in
                 (c2c) printf 'c2c10l.lib' ;;
-                (Dj1) printf 'djbiosmvt.lib' ;;
                 (esx) printf 'C756/Xos20l.lib Module/Xma20l.lib' ;;
                 (esxu) printf 'Mos10l.lib' ;;
             esac;)}
@@ -1107,7 +1106,6 @@ create_EdePrj()
     : ${USE_EMBED_BIOS_SRC:=$(
             case "$USE_TARGET_SYSTEM" in
                 (c2c) printf 'c2c10cs.asm c2c10err.c  c2c10err.h c2c10osy.h' ;;
-                (Dj1) printf 'DjBiosMVT.h' ;;
                 (esx) printf 'Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ' ;;
                 (esxu) printf 'MOS10ERR.C  MOS10ERR.H  MOS10GO.ASM MOS10OSY.H' ;;
             esac;)}
@@ -1116,7 +1114,6 @@ create_EdePrj()
     : ${USE_EMBED_ILO:=$(
             case "$USE_TARGET_SYSTEM" in
                 (c2c) printf 'c2c10osy.ilo' ;;
-                (Dj1) printf 'MiniVT.ilo' ;;
                 (esx) printf 'Xos20lcs.ilo' ;;
                 (esxu) printf 'MOS10L.ILO' ;;
             esac;)}
@@ -1174,7 +1171,6 @@ create_EdePrj()
     # now set the target CPU
     local INSERT_TARGET_CPU=$(
         case "$USE_TARGET_SYSTEM" in
-            (Dj1) printf 'CpuC167CR' ;;
             (esxu) printf 'CpuF269' ;;
             (*) printf 'CpuC167CS' ;;
         esac;)
@@ -1240,7 +1236,7 @@ create_buildfiles()
         (ees|pc_linux|pc_win32)
             create_CMake $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
-        (esx|esxu|c2c|Dj1)
+        (esx|esxu|c2c)
             create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
         (*)
@@ -1272,7 +1268,7 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
 --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                   target which is specified in the configuration file
-                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"Dj1")
+                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c")
 --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
                                   --> ("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator")
 --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
@@ -1424,7 +1420,7 @@ check_after_user_configuration()
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
     case "$USE_TARGET_SYSTEM" in
-        (pc_linux | pc_win32 | esx | esxu | c2c | p1mc | Dj1 | src9)
+        (pc_linux | pc_win32 | esx | esxu | c2c | p1mc | src9)
             ;;
         (*)
             if [ -z $USE_HAL_PATH ] ; then 
