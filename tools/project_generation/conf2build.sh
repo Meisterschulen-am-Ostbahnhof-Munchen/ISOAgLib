@@ -138,7 +138,6 @@ set_default_values()
     ISOAGLIB_INSTALL_PATH="/usr/local"
     GENERATE_FILES_ROOT_DIR="$PWD"
 
-    USE_FLOAT_DATA_TYPE=0
     OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
     # set default USE_LITTLE_ENDIAN_CPU, so that quick number variable
     # to CAN string conversions are possible:
@@ -856,10 +855,6 @@ END_OF_PATH
     
         if [ "$OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" -gt 0 ] ; then
             echo_e "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" >&3
-        fi
-    
-        if [ "$USE_FLOAT_DATA_TYPE" -gt 0 ] ; then
-            echo_e "#define USE_FLOAT_DATA_TYPE" >&3
         fi
     
 		if [ "$PRJ_EEPROM" -gt 0 ] ; then

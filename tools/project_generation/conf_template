@@ -98,11 +98,6 @@ APP_SRC_FILE="ecu_main.cpp"
 # Only valid for Linux Makefile generation currently.
 # RULE_CXXFLAGS='-pipe -O -Wall -g -Wextra -Winit-self -Wmissing-include-dirs -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
 
-# Select if the project shall use the float data type
-# default is FALSE as far as possible
-# (this has impact on RS232 output and GPS decode)
-# USE_FLOAT_DATA_TYPE=0
-
 # Select if HEAP usage should reduce size in favour of speed
 # (default: maximize speed, which costs about 10KByte more HEAPSIZE,
 #           but avoids slow memory allocation in too small units)
