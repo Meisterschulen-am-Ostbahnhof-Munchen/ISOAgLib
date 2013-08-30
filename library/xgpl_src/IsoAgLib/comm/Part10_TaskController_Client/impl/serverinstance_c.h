@@ -31,9 +31,7 @@ namespace __IsoAgLib {
         return m_isoItem;
       }
 
-      void addConnection( TcClientConnection_c& c ) {
-        m_connections.push_back( &c );
-      }
+      void addConnection( TcClientConnection_c& c );
       void removeConnection( TcClientConnection_c& c );
 
       int32_t getLastStatusTime() const {

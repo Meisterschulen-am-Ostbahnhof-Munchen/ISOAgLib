@@ -42,6 +42,20 @@ namespace __IsoAgLib {
   }
 
 
+  void  ServerInstance_c::addConnection( TcClientConnection_c& c ) {
+    // avoid double connect
+    // - manual connect from event-callback (probably due to app. only connecting later)
+    // - reconnect inside of ISOAgLib
+    for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
+         it != m_connections.end(); ++it )
+    {
+      if( *it == &c )
+        return;
+    }
+    m_connections.push_back( &c );
+  }
+
+
   void ServerInstance_c::removeConnection( TcClientConnection_c& c ) {
     for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
          it != m_connections.end(); ++it )
