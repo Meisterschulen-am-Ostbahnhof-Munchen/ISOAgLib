@@ -436,11 +436,11 @@ DiagnosticPgnHandler_c::setCertificationData(
     return false;
 
   m_certification[0] = uint8_t( ( ( a_revision & 0x03 ) << 6 ) | ( ( ui16_year - 2000 ) & 0x3F ) );
-  m_certification[1] = uint8_t( ( ( aui16_laboratoryId & 0x07 ) << 5 ) | ( ( a_laboratoryType & 0x03 ) << 1 ) | ( ( a_revision & 0x04 ) >> 2 ) );
+  m_certification[1] = uint8_t( ( ( aui16_laboratoryId & 0x07 ) << 5 ) | ( ( a_laboratoryType & 0x03 ) << 1 ) | ( ( ( a_revision & 0x18 ) >> 3 ) << 3 ) | ( ( a_revision & 0x04 ) >> 2 ) ); // see AEF exception
   m_certification[2] = uint8_t( ( aui16_laboratoryId >> 3 ) & 0xFF );
   m_certification[3] = 0; // reserved for future use
   m_certification[4] = 0; // reserved for future use
-  m_certification[5] = 0x01; // ISOBUS Compliance Certification message revision: Now "Post-3rd ed"
+  m_certification[5] = 0x80; // ISOBUS Compliance Certification message revision: Now "Post-3rd ed", see AEF exception
   m_certification[6] = ( aui16_referenceNumber & 0xFFu );
   m_certification[7] = uint8_t(( aui16_referenceNumber >> 8 ) & 0xFF);
 

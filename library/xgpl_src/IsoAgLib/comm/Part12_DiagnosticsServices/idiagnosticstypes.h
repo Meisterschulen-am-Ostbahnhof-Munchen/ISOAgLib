@@ -47,11 +47,44 @@ enum FailureModeIndicator_en {
 
 enum CertificationRevision_t
 {
-  CertificationRevisionFirstRevision = 0,
-  CertificationRevisionSecondRevision = 1,
-  CertificationRevisionThirdRevision = 2,
-  CertificationRevisionFourthRevision = 3,
-  CertificationRevisionNotAvailable = 7
+  // for backward-compatibilty only (until removed after some time!)
+  CertificationRevisionFirstRevision = 0,  // deprecated enum, use CertificationRevision1stRevision
+  CertificationRevisionSecondRevision = 1, // deprecated enum, use CertificationRevision2ndRevision
+  CertificationRevisionThirdRevision = 2,  // deprecated enum, use CertificationRevision3rdRevision
+  CertificationRevisionFourthRevision = 3, // deprecated enum, use CertificationRevision4thRevision
+
+  CertificationRevision1stRevision = 0,
+  CertificationRevision2ndRevision = 1,
+  CertificationRevision3rdRevision = 2,
+  CertificationRevision4thRevision = 3,
+  CertificationRevision5thRevision = 4,
+  CertificationRevision6thRevision = 5,
+  CertificationRevision7thRevision = 6,
+  CertificationRevision8thRevision = 7,
+  CertificationRevision9thRevision = 8,
+  CertificationRevision10thRevision = 9,
+  CertificationRevision11thRevision = 10,
+  CertificationRevision12thRevision = 11,
+  CertificationRevision13thRevision = 12,
+  CertificationRevision14thRevision = 13,
+  CertificationRevision15thRevision = 14,
+  CertificationRevision16thRevision = 15,
+  CertificationRevision17thRevision = 16,
+  CertificationRevision18thRevision = 17,
+  CertificationRevision19thRevision = 18,
+  CertificationRevision20thRevision = 19,
+  CertificationRevision21stRevision = 20,
+  CertificationRevision22ndRevision = 21,
+  CertificationRevision23rdRevision = 22,
+  CertificationRevision24thRevision = 23,
+  CertificationRevision25thRevision = 24,
+  CertificationRevision26thRevision = 25,
+  CertificationRevision27thRevision = 26,
+  CertificationRevision28thRevision = 27,
+  CertificationRevision29thRevision = 28,
+  CertificationRevision30thRevision = 29,
+  CertificationRevision31stRevision = 30,
+  CertificationRevisionNotAvailable = 31
 };
 
 
