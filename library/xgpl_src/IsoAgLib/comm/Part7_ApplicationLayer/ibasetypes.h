@@ -225,12 +225,6 @@ enum IsoSteerReadinessFlag_t {
   IsoNotAvailableSteerReadiness = 3 ///< corresponding function is not available in service provider
 };
 
-/** use an enum typedef for certification type */
-enum IsoCertTypeFlag_t {
-  IsoNotCert = 0,  ///< certification test is not certified
-  IsoCert = 1      ///< certification test performed
-};
-
 /** use an enum typedef for facilities type */
 enum IsoFacilityFlag_t {
   IsoFacilityNotAvailable = 0,  ///< facility is not available
@@ -243,23 +237,6 @@ enum IsoTecuClassFlag_t {
   IsoTecuClass2 = 1,              ///< TECU class 2
   IsoTecuClass3 = 2,              ///< TECU class 3
   IsoTecuClassNotAvailable = 3,   ///< TECU class is not available
-};
-
-/** use an enum for the different revisions of the certification test*/
-enum IsoCertRevisionFlag_t {
-  IsoFirstRev = 0,        ///< first revision (no suffix)
-  IsoSecondRev = 1,       ///< second revision (suffix A)
-  IsoThirdRev = 2,        ///< third revision (suffix B)
-  IsoFourthRev = 3,       ///< fourth revision (suffix C)
-  IsoNotAvailableRev = 7  ///<corresponding function is not available in service provider
-};
-
-/** use an enum for the different certification laboratory types*/
-enum IsoCertLabTypeFlag_t {
-  IsoNonCert = 0,          ///< non-certified laboratory / self certification
-  IsoEUCert = 1,           ///< EU certified laboratory
-  IsoNaCert = 2,           ///< NA certified laboratory
-  IsoNotAvailableCert = 7  ///< not available (not certified)
 };
 
 /** use an enum for the different states of ISO flags for the direction of travel of the chassis */
