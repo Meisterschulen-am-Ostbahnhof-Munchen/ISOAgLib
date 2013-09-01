@@ -422,11 +422,8 @@ DiagnosticPgnHandler_c::setCertificationData(
   IsoAgLib::CertificationRevision_t a_revision,
   IsoAgLib::CertificationLabType_t a_laboratoryType,
   uint16_t aui16_laboratoryId,
-  const IsoAgLib::CertificationBitMask_t& certificationBitMask,
   uint16_t aui16_referenceNumber)
 {
-  ( void )certificationBitMask; // solution until it gets removed in the API
-
   // currently a once set identification can't be changed.
   // this is to be consistent with SW/ECU-identification
   if (mb_certificationIsSet)

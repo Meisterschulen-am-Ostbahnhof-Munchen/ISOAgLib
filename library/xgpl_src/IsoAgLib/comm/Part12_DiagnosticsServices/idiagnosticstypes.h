@@ -62,31 +62,6 @@ enum CertificationLabType_t
   CertificationLabTypeNotAvailable = 3
 };
 
-enum Certification_t
-{
-  CertificationMinEcu = 0,
-  CertificationTecuClass_1,
-  CertificationTecuClass_2,
-  CertificationTecuClass_3,
-  CertificationClass_3_Ecu,
-  CertificationVirtualTerminal,
-  CertificationVtWsMaster,
-  CertificationVtWsMember,
-  CertificationTaskController,
-  CertificationTcWsMaster,
-  CertificationTcWsMember,
-  CertificationFileServer,
-  CertificationGpsReceiver
-};
-
-struct Certification_s
-{
-  typedef Certification_t enum_type;
-  enum { number_of_bits = 24 };
-};
-
-typedef BitFieldWrapperLeft_c<Certification_s> CertificationBitMask_t;
-
 } // IsoAgLib
 
 

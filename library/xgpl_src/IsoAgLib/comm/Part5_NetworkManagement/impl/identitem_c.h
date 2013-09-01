@@ -134,7 +134,6 @@ public:
     IsoAgLib::CertificationRevision_t a_revision,
     IsoAgLib::CertificationLabType_t a_laboratoryType,
     uint16_t aui16_laboratoryId,
-    const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask,
     uint16_t aui16_referenceNumber );
 
   void updateLastIsoSaRequestForThisItem() { i32_lastIsoSaRequestForThisItem = HAL::getTime(); }

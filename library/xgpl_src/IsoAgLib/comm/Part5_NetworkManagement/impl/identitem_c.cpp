@@ -304,11 +304,10 @@ bool IdentItem_c::setSwIdentification( const char *acstr_partNbr )
 
 bool IdentItem_c::setCertificationData(
   uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision, IsoAgLib::CertificationLabType_t a_laboratoryType,
-  uint16_t aui16_laboratoryId, const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
+  uint16_t aui16_laboratoryId, uint16_t aui16_referenceNumber )
 {
   return m_diagnosticPgnHandler.setCertificationData(
-    ui16_year , a_revision, a_laboratoryType, aui16_laboratoryId,
-    acrc_certificationBitMask, aui16_referenceNumber );
+    ui16_year , a_revision, a_laboratoryType, aui16_laboratoryId, aui16_referenceNumber );
 }
 
 DiagnosticFunctionalities_c& IdentItem_c::getDiagnosticFunctionalities()

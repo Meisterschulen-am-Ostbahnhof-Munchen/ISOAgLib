@@ -64,14 +64,12 @@ public:
   //! @param a_revision Certification revision as in ISO 11783-7 A.29.2
   //! @param a_laboratoryType Certification laboratory type as in ISO 11783-7 A.29.3
   //! @param aui16_laboratoryId Certification laboratory ID (11 bits wide) as in ISO 11783-7 A.29.4
-  //! @param acrc_certificationBitMask Compliance certification type bitfield ( as in ISO 11783-7 A.29.5 till A.29.17 )
   //! @param aui16_referenceNumber Compliance certification reference number ( as in ISO 11783-7 A.29.18 )
   bool setCertificationData(
     uint16_t ui16_year,
     IsoAgLib::CertificationRevision_t,
     IsoAgLib::CertificationLabType_t,
     uint16_t aui16_laboratoryId,
-    const IsoAgLib::CertificationBitMask_t& ,
     uint16_t aui16_referenceNumber );
 
   DiagnosticFunctionalities_c& getDiagnosticFunctionalities();
