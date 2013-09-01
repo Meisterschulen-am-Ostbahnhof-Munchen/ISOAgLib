@@ -569,7 +569,9 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* isoI
         else
           serviceTool_dtcClearPrevious(); // ServiceTool accepted (or no ServiceToolVerifier defined) 
 
-        getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), responsevalue );
+        if(isoItemReceiver)
+          getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), responsevalue );
+        // else: suppress both ACK and NACK when requested to global
         return true;
       }
 
