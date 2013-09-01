@@ -167,7 +167,6 @@ set_default_values()
     PRJ_TRACTOR_FACILITIES=0
     PRJ_TRACTOR_AUX=0
     PRJ_TRACTOR_GUIDANCE=0
-    PRJ_TRACTOR_CERTIFICATION=0
     PRJ_TRACTOR_MOVE_SETPOINT=0
     PRJ_TRACTOR_PTO_SETPOINT=0
     PRJ_EEPROM=0
@@ -260,7 +259,6 @@ check_set_correct_variables()
         PRJ_TRACTOR_FACILITIES=1
         PRJ_TRACTOR_AUX=1
         PRJ_TRACTOR_GUIDANCE=1
-        PRJ_TRACTOR_CERTIFICATION=1
     fi
 
     if [ "$PRJ_TRACTOR_MOVE_SETPOINT" -ne 0 ]; then
@@ -375,7 +373,7 @@ comm_features()
     if [ "$PRJ_BASE" -gt 0 ]; then
         printf '%s' " -o -path '*/Part7_ApplicationLayer/*'" >&3
     else
-        if expr "$PRJ_TRACTOR_GENERAL" \| "$PRJ_TRACTOR_MOVE" \| "$PRJ_TRACTOR_FACILITIES" \| "$PRJ_TRACTOR_PTO" \| "$PRJ_TRACTOR_LIGHT" \| "$PRJ_TRACTOR_AUX" \| "$PRJ_TIME_GPS" \| "$PRJ_TRACTOR_GUIDANCE" \| "$PRJ_TRACTOR_CERTIFICATION" >/dev/null; then
+        if expr "$PRJ_TRACTOR_GENERAL" \| "$PRJ_TRACTOR_MOVE" \| "$PRJ_TRACTOR_FACILITIES" \| "$PRJ_TRACTOR_PTO" \| "$PRJ_TRACTOR_LIGHT" \| "$PRJ_TRACTOR_AUX" \| "$PRJ_TIME_GPS" \| "$PRJ_TRACTOR_GUIDANCE" >/dev/null; then
             printf '%s' " -o -name 'ibasetypes.h' -o -name 'basecommon_c*'" >&3
         fi
         if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
@@ -402,9 +400,6 @@ comm_features()
         fi
         if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)" >&3
-        fi
-        if [ "$PRJ_TRACTOR_CERTIFICATION" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traccert*' \)" >&3
         fi
         if [ "$PRJ_TIME_GPS" -gt 0 ]; then
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)" >&3
@@ -841,9 +836,6 @@ END_OF_PATH
         fi
         if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 ]; then
             echo_e "#define USE_TRACTOR_GUIDANCE" >&3
-        fi
-        if [ "$PRJ_TRACTOR_CERTIFICATION" -gt 0 ]; then
-            echo_e "#define USE_TRACTOR_CERTIFICATION" >&3
         fi
         if [ "$PRJ_TIME_GPS" -gt 0 ]; then
             echo_e "#define USE_TIME_GPS" >&3
