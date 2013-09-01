@@ -45,7 +45,6 @@ IsoItem_c::IsoItem_c()
   , m_wsRemoteAnnounceTime (-1)
   #endif
   , mui8_nr(0xFE)
-  , mb_repeatClaim (false) // wouldn't be needed to be set here as it's set when entering AddressClaim
   , mpc_identItem (NULL) // per default not a local item which has a back-reference to an IdentItem
   , mc_isoName()
 {
@@ -70,7 +69,6 @@ IsoItem_c::IsoItem_c(const IsoItem_c& acrc_src)
   , m_wsRemoteAnnounceTime (acrc_src.m_wsRemoteAnnounceTime)
 #endif
   , mui8_nr (acrc_src.mui8_nr)
-  , mb_repeatClaim (acrc_src.mb_repeatClaim)
   , mpc_identItem (acrc_src.mpc_identItem)
   , mc_isoName (acrc_src.mc_isoName)
 
@@ -170,8 +168,6 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
   getIsoBusInstance4Comm() << c_pkg;
 
   updateTime();
-
-  mb_repeatClaim = false;
 }
 
 
@@ -227,12 +223,6 @@ IsoItem_c::timeEvent()
       {
         // no conflict since sent of adress claim since 250ms
         setItemState(IState_c::ClaimedAddress);
-        // if there has been a REQUEST_PGN:ADDRESS_CLAIMED_PGN while being in the 250ms-AddressClaim-phase, answer it NOW
-        if (mb_repeatClaim)
-        { // note: this HAS to be done AFTER setting to ClaimedAddress!
-          sendSaClaim();
-          mb_repeatClaim = false;
-        }
         // now inform the ISO monitor list change clients on NEW client use
         getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::AddToMonitorList, *this);
       }
@@ -328,27 +318,24 @@ IsoItem_c::processAddressClaimed(
 }
 
 
-/** send an SA claim message
-  * - needed to respond on request for claimed SA fomr other nodes
-  * - also needed when a local ident triggers a periodic request for SA
-  * @return true -> this item has already a claimed SA -> it sent its SA; false -> didn't send SA, as not yet claimed or not local
-  */
-bool IsoItem_c::sendSaClaim()
+bool
+IsoItem_c::sendSaClaim()
 {
-  // If we're still in AddressClaim, delay the saSending until we're ClaimedAddress
-  if (   itemState(IState_c::AddressClaim) ) { mb_repeatClaim = true; return false; }
-  if ( ! itemState(IState_c::ClaimedAddress) ) return false; ///< send no answer, if not yet ready claimed
-  if ( ! itemState(IState_c::Local) ) return false;
-  // now this ISOItem should/can send a SA claim
+  isoaglib_assert( itemState( IState_c::Local ) );
+
+  // See ISO 11783-5 4.5.2d): Also respond in 250ms Address-claim phase
+  // even if not yet actively sending any other packets...
+  if ( itemState(IState_c::PreAddressClaim) )
+    return false;
+
   CanPkgExt_c c_pkg;
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
-  c_pkg.setIsoPs(255); // global information
+  c_pkg.setIsoPs(255);
   c_pkg.setIsoSa( nr() );
-  // set NAME to CANPkg
   c_pkg.setDataUnion( mc_isoName.outputUnion() );
-  // now IsoSystemPkg_c has right data -> send
   getIsoBusInstance4Comm() << c_pkg;
+
   return true;
 }
 

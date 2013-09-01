@@ -784,7 +784,7 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSe
         pc_iterItem != mvec_isoMember.end(); ++pc_iterItem)
       { // let all local pc_iterItem process this request
         bool const cb_set = pc_iterItem->itemState (IState_c::Local) &&
-        pc_iterItem->sendSaClaim();
+          pc_iterItem->sendSaClaim();
         if (cb_set)
           b_processedRequestPGN = true;
       }

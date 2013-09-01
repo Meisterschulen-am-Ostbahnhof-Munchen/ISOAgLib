@@ -31,9 +31,8 @@ class IdentItem_c;
   systems; utilizes BaseItem_c for basic MonitorList
   management and IsoName_c for management of the 64bit NAME field
   @short Item with services needed for ISO11783 monitor lists.
-  @author Dipl.-Inform. Achim Spangler
-  @see BaseItem
-  @see IsoName
+  @author Martin Wodok
+  @author Dipl.-Inform. Achim Spangler (original author)
 */
 class IsoItem_c : public BaseItem_c
 {
@@ -177,7 +176,6 @@ private:
 
 private:
   uint8_t mui8_nr; // SA
-  bool mb_repeatClaim;
   IdentItem_c* mpc_identItem; // set for local items
   IsoName_c mc_isoName;
 };
