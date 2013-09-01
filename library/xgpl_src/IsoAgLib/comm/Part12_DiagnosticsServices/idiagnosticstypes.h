@@ -54,12 +54,12 @@ enum CertificationRevision_t
   CertificationRevisionNotAvailable = 7
 };
 
+
 enum CertificationLabType_t
 {
   CertificationLabTypeNonCertifiedLab = 0,
-  CertificationLabTypeEUCertifiedLab = 1,
-  CertificationLabTypeNACertifiedLab = 2,
-  CertificationLabTypeNotAvailable = 7
+  CertificationLabTypeAEFCertifiedLab = 1,
+  CertificationLabTypeNotAvailable = 3
 };
 
 enum Certification_t

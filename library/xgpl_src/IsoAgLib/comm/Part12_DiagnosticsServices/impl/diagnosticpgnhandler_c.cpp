@@ -425,6 +425,8 @@ DiagnosticPgnHandler_c::setCertificationData(
   const IsoAgLib::CertificationBitMask_t& certificationBitMask,
   uint16_t aui16_referenceNumber)
 {
+  ( void )certificationBitMask; // solution until it gets removed in the API
+
   // currently a once set identification can't be changed.
   // this is to be consistent with SW/ECU-identification
   if (mb_certificationIsSet)
@@ -437,11 +439,11 @@ DiagnosticPgnHandler_c::setCertificationData(
     return false;
 
   m_certification[0] = uint8_t( ( ( a_revision & 0x03 ) << 6 ) | ( ( ui16_year - 2000 ) & 0x3F ) );
-  m_certification[1] = uint8_t( ( ( aui16_laboratoryId & 0x07 ) << 5 ) | ( ( a_laboratoryType & 0x07 ) << 1 ) | ( ( a_revision & 0x04 ) >> 2 ) );
+  m_certification[1] = uint8_t( ( ( aui16_laboratoryId & 0x07 ) << 5 ) | ( ( a_laboratoryType & 0x03 ) << 1 ) | ( ( a_revision & 0x04 ) >> 2 ) );
   m_certification[2] = uint8_t( ( aui16_laboratoryId >> 3 ) & 0xFF );
-  m_certification[3] = certificationBitMask.getByte ( 0 );
-  m_certification[4] = certificationBitMask.getByte ( 1 );
-  m_certification[5] = certificationBitMask.getByte ( 2 );
+  m_certification[3] = 0; // reserved for future use
+  m_certification[4] = 0; // reserved for future use
+  m_certification[5] = 0x01; // ISOBUS Compliance Certification message revision: Now "Post-3rd ed"
   m_certification[6] = ( aui16_referenceNumber & 0xFFu );
   m_certification[7] = uint8_t(( aui16_referenceNumber >> 8 ) & 0xFF);
 
