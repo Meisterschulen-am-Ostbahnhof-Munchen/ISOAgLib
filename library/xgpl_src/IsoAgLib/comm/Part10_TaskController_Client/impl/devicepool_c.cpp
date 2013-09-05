@@ -14,7 +14,9 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 
+#if defined(_MSC_VER)
 #pragma warning( disable : 4996 )
+#endif
 
 
 namespace __IsoAgLib {
