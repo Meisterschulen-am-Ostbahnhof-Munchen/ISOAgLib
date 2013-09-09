@@ -108,7 +108,7 @@ namespace __IsoAgLib {
     , m_measureProg()
     , m_sendSuccess( SendStream_c::SendSuccess )
     , m_pool( pool )
-    , m_devPoolState( PoolSateDisabled )
+    , m_devPoolState( PoolStateDisabled )
     , m_devPoolAction( PoolActionIdle )
     , m_schedulerTaskProxy( *this, 100, false )
   {
@@ -169,7 +169,7 @@ namespace __IsoAgLib {
 
     checkAndHandleTcStateChange();
 
-    if( getDevPoolState() == PoolSateDisabled )
+    if( getDevPoolState() == PoolStateDisabled )
       return;
 
     if ( !isTcAlive() )
@@ -198,18 +198,15 @@ namespace __IsoAgLib {
     if ( tcAliveOld != m_tcAliveNew ) {
       // react on tc alive change "false->true"
       if( m_tcAliveNew ) {
+        setDevPoolState( PoolStateInit );
         m_uploadState = StateIdle;
         m_timeWsAnnounceKey = m_identItem.getIsoItem()->startWsAnnounce();
       } else {
+        setDevPoolState( PoolStateDisabled );
         m_timeWsAnnounceKey = -1;
       }
 
       setDevPoolAction( PoolActionIdle );
-      if( m_tcAliveNew ) {
-        if( getDevPoolState() == PoolSateDisabled ) {
-          setDevPoolState( PoolStateInit );
-        }
-      }
     }
   }
 
@@ -260,12 +257,12 @@ namespace __IsoAgLib {
     }
 
     if ( m_devPoolAction == PoolActionIdle ) {
-      if ( getDevPoolState() == PoolStateActive ) {
-        //if ( m_pool.isDirty() )
-        //  setDevPoolState(PoolStateStale);
-        // @todo trigger re-announce for fresh pool upload with changed objects
-      } else {
         switch ( getDevPoolState() ) {
+          case PoolStateActive:
+            //if ( m_pool.isDirty() )
+            //  setDevPoolState(PoolStateStale);
+            // @todo trigger re-announce for fresh pool upload with changed objects
+            break;
           case PoolStateInit:
             // Initialization state
             //	Retrieve the structure label from the current pool
@@ -322,7 +319,6 @@ namespace __IsoAgLib {
             break;
         }
       }
-    }
   }
 
 
@@ -457,7 +453,7 @@ namespace __IsoAgLib {
 
 
   void TcClientConnection_c::processMsgTc( const ProcessPkg_c& data ) {
-    if( getDevPoolState() == PoolSateDisabled )
+    if( getDevPoolState() == PoolStateDisabled )
       return;
 
     // handling of NACK

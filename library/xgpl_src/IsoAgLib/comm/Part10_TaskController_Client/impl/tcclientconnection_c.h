@@ -48,7 +48,7 @@ namespace __IsoAgLib {
 
     public:
       enum DevPoolState_t {
-        PoolSateDisabled = 0,
+        PoolStateDisabled = 0, // Disabled is when the TC stops sending his alive message or drops off.
         PoolStateInit,
         PoolStatePresetting,
         PoolStateNotPresent,
