@@ -381,7 +381,8 @@ namespace HAL {
       return false;
     }
 
-    return ( s_transferBuf.ui16_command == COMMAND_ACKNOWLEDGE ) && ( s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE );
+
+    return true;
   }
 
 
