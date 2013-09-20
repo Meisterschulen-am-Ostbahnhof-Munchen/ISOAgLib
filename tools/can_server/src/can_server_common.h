@@ -113,13 +113,11 @@ public:
   pthread_mutex_t mt_protectClientList;
   bool     mb_interactive;
   int      mi_canReadNiceValue;
-  int      mi_highPrioModeIfMin;
 
   struct canBus_s {
     uint16_t                 mui16_globalMask;
     int32_t                  mi32_can_device;
     int32_t                  mi32_sendDelay;
-    int                      mi_pendingMsgs;
     bool                     mb_deviceConnected;
     uint16_t                 mui16_busRefCnt;
     yasper::ptr< LogFile_c > m_logFile;
@@ -144,8 +142,6 @@ inline size_t server_c::nCanBusses()
   return mvec_canBus.size();
 }
 
-extern std::list<int32_t> list_sendTimeStamps;
-void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);
 int32_t getTime();
 
 } //namespace __HAL
@@ -169,7 +165,6 @@ private:
 enum OPTION_MONITOR {};
 enum OPTION_LOG {};
 enum OPTION_FILE_INPUT {};
-enum OPTION_HIGH_PRIO_MINIMUM {};
 enum OPTION_REDUCED_LOAD_ISO_BUS_NO {};
 enum OPTION_NICE_CAN_READ {};
 enum OPTION_INTERACTIVE {};

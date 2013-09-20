@@ -311,10 +311,6 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
 }
 
 
-void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */)
-{
-}
-
 // PURPOSE: To send a msg on the specified CAN BUS
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
@@ -376,6 +372,3 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   return true;
 }
 
-void addSendTimeStampToList(client_c * /*ps_client*/, int32_t /*i32_sendTimeStamp*/)
-{
-}

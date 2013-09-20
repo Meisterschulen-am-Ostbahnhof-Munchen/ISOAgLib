@@ -76,7 +76,6 @@ __HAL::server_c::canBus_s::canBus_s() :
   mui16_globalMask(0),
   mi32_can_device(0),
   mi32_sendDelay(0),
-  mi_pendingMsgs(0),
   mb_deviceConnected(false),
   mui16_busRefCnt(0),
   m_logFile(LogFile_c::Null_s()())
@@ -93,7 +92,6 @@ __HAL::server_c::server_c() :
   mi16_reducedLoadOnIsoBus(-1),
   mb_interactive(true),
   mi_canReadNiceValue(0),
-  mi_highPrioModeIfMin(0),
   mvec_canBus()
 {
   memset(marrb_remoteDestinationAddressInUse, 0, sizeof(marrb_remoteDestinationAddressInUse));
@@ -548,50 +546,17 @@ static void* can_write_thread_func(void* ptr)
 
   __HAL::server_c* pc_serverData = static_cast< __HAL::server_c * >(ptr);
 
-  bool b_highPrioMode=false; // default to false until some bus reports >= 5 pending msgs.
   for (;;) {
 
     i32_error = 0;
 
-
-    if (pc_serverData->mi_highPrioModeIfMin > 0)
-    { // only if user requested high-prio mode via program parameter!
-      if (b_highPrioMode)
-      { // we've been in a pending-busy state before, so let's just update our pendingWrites to see if we still are...
-        // otherwise we wouldn't have a chance to recover from highPrio mode. (the only chance is that messages get sent and there're less than 5 pending ones!
-        updatePendingMsgs(pc_serverData, -1); // will get ALL "marri_pendingMsgs" variables updated!
-      }
-
-      b_highPrioMode=false; // default to false until some bus reports >= 5 pending msgs.
-      for (uint8_t ui8_bus = 0; ui8_bus < pc_serverData->nCanBusses(); ui8_bus++)
-      {
-        if (pc_serverData->canBus(ui8_bus).mi_pendingMsgs >= pc_serverData->mi_highPrioModeIfMin)
-        {
-          b_highPrioMode = true;
-          break;
-        }
-      }
-    }
-
-    if (b_highPrioMode)
-    { // at least 5 messages are pending - so check for the prioritized clients first now!
-      // receive for max 10 msec only prioritized messages (listen for prioritized MTYPE msgs only)
-      if (msgrcv(pc_serverData->ms_msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(__HAL::msqWrite_s) - sizeof(long), MTYPE_WRITE_PRIO_HIGH, IPC_NOWAIT) == -1)
-      { // no hi-prio msgs waiting in the queue...
-        usleep(3000); // will probably actually wait for 10ms anyway :-(
-        continue;
-      }
-    }
-    else
+    if (msgrcv(pc_serverData->ms_msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(__HAL::msqWrite_s) - sizeof(long), MTYPE_ANY, 0) == -1)
     {
-      if (msgrcv(pc_serverData->ms_msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(__HAL::msqWrite_s) - sizeof(long), MTYPE_ANY, 0) == -1)
-      {
-        if (pc_serverData->mb_interactive) {
-          perror("msgrcv-all");
-        }
-        usleep(1000);
-        continue;
+      if (pc_serverData->mb_interactive) {
+        perror("msgrcv-all");
       }
+      usleep(1000);
+      continue;
     }
 
 
@@ -641,8 +606,7 @@ static void* can_write_thread_func(void* ptr)
           DEBUG_PRINT1("send: %d\n", i16_sent);
           if (i16_sent) {
             addSendTimeStampToList(ps_client, msqWriteBuf.i32_sendTimeStamp);
-            i16_rc = i16_sent; // interested in the reason (e.g.
-                               // HAL_NEW_SEND_DELAY)
+            i16_rc = i16_sent;
           } // otherwise don't report the error, but just as little
             // add send time stamp to list
         } else {
@@ -667,23 +631,8 @@ static void* can_write_thread_func(void* ptr)
         i32_error = HAL_OVERFLOW_ERR;
       else
       { // i16_rc != 0: send was ok
-        if (i16_rc == HAL_NEW_SEND_DELAY)
-        { // send was okay with "new send delay detected"!
-          for (std::list<__HAL::client_c>::iterator iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++)
-          {
-            iter->canBus(msqWriteBuf.ui8_bus).mi32_sendDelay = pc_serverData->canBus(msqWriteBuf.ui8_bus).mi32_sendDelay;
-          }
-          i32_error = HAL_NEW_SEND_DELAY; // so it will be sent back with the ACK!
-        }
-        // in ANY okay case, do:
-        // message forwarding
         // get clientID from msqWriteBuf.i32_mtype
         enqueue_msg(msqWriteBuf.s_canMsg.i32_len, msqWriteBuf.s_canMsg.ui32_id, msqWriteBuf.ui8_bus, msqWriteBuf.s_canMsg.i32_msgType, &msqWriteBuf.s_canMsg.ui8_data[0], msqWriteBuf.ui16_pid, pc_serverData); // not done any more: disassemble_client_id(msqWriteBuf.i32_mtype)
-      }
-
-      if (ps_client->canBus(msqWriteBuf.ui8_bus).mi32_sendDelay > 0)
-      { // report the send delay back until the client explicitly clears it (sets it to negative!)
-        i32_error = HAL_NEW_SEND_DELAY;
       }
 
       send_command_ack (msqWriteBuf.ui16_pid, &(pc_serverData->ms_msqDataServer), ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE, i32_error); // not used any more, we have now direct fields in: disassemble_client_id(msqWriteBuf.i32_mtype)
@@ -990,9 +939,6 @@ static void* command_thread_func(void* ptr)
               (void)newFileLog( pc_serverData, s_transferBuf.s_init.ui8_bus );
             }
 
-            // just to get sure that we reset the number of pending write-messages
-            pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).mi_pendingMsgs = 0;
-
             int16_t i16_init_rc = openBusOnCard(s_transferBuf.s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
                                                 s_transferBuf.s_init.ui16_wBitrate,  // BTR0BTR1
                                                 pc_serverData);
@@ -1039,10 +985,6 @@ static void* command_thread_func(void* ptr)
 
             iter_client->canBus(s_transferBuf.s_init.ui8_bus).mb_initReceived = false; // reset flag
 
-            if (pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).mui16_busRefCnt == 0)
-            { // last connection on bus closed, so reset pending msgs...
-              pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).mi_pendingMsgs = 0;
-            }
 
             __HAL::clearReadQueue (s_transferBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //          clearWriteQueue(s_transferBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
@@ -1247,7 +1189,6 @@ yasper::ptr< AOption_c > const ga_options[] = {
   Option_c< OPTION_MONITOR >::create(),
   Option_c< OPTION_LOG >::create(),
   Option_c< OPTION_FILE_INPUT >::create(),
-  Option_c< OPTION_HIGH_PRIO_MINIMUM >::create(),
   Option_c< OPTION_REDUCED_LOAD_ISO_BUS_NO >::create(),
   Option_c< OPTION_NICE_CAN_READ >::create(),
   Option_c< OPTION_INTERACTIVE >::create(),

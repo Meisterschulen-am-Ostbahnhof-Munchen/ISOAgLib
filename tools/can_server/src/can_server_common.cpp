@@ -362,44 +362,6 @@ std::string Option_c< OPTION_LOG >::doGetUsage() const
 }
 
 template <>
-int Option_c< OPTION_HIGH_PRIO_MINIMUM >::doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const
-{
- if (!strcmp(argv[ai_pos], "--high-prio-minimum")) {
-   if (ai_pos+1>=argc) {
-     std::cerr << "error: option needs second parameter" << std::endl;
-     exit(1);
-   }
-   ar_server.mi_highPrioModeIfMin = atoi(argv[ai_pos+1]); // 0 for no prio mode!
-   return 2;
- }
- return 0;
-}
-
-template <>
-std::string Option_c< OPTION_HIGH_PRIO_MINIMUM >::doGetSetting(__HAL::server_c &ar_server) const
-{
-  std::ostringstream ostr_setting;
-  if (ar_server.mi_highPrioModeIfMin > 0) {
-    ostr_setting << "High priority handling on, pending writes threshold set to " <<
-      ar_server.mi_highPrioModeIfMin << std::endl;
-  }
-  return ostr_setting.str();
-}
-
-template <>
-std::string Option_c< OPTION_HIGH_PRIO_MINIMUM >::doGetUsage() const
-{
-  return
-    "  --high-prio-minimum NUM_PENDING_WRITES\n"
-    "                             If =0: start normally without priority-handling\n"
-    "                                    (default - used if parameter not given!)\n"
-    "                             If >0: Only clients with activated high-priority-\n"
-    "                                    send-mode can send messages if\n"
-    "                                    can-controller has equal or more than\n"
-    "                                    <NUM_PENDING_WRITES> in its queue.\n";
-}
-
-template <>
 int Option_c< OPTION_REDUCED_LOAD_ISO_BUS_NO >::doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const
 {
   if (!strcmp(argv[ai_pos], "--reduced-load-iso-bus-no")) {

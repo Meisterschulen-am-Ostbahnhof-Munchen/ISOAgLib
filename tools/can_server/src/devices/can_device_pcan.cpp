@@ -173,33 +173,6 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
 
-
-void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
-{
-#ifndef WIN32
-  // get amount of waiting-to-be-sent-out can-msgs in can-controller
-  static TPEXTENDEDSTATUS extstat;
-  if (i8_bus < 0)
-  { // update all buses!
-    for (uint8_t ui8_bus=0; ui8_bus < ss_canDevice.nCanBusses(); ui8_bus++)
-    {
-      if (pc_serverData->canBus(ui8_bus).mi_pendingMsgs >= 5)
-      { // we only need to update those who could change from >= 5 to < 5...
-        if ((ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, PCAN_GET_EXT_STATUS, &extstat)) < 0) continue;
-        pc_serverData->canBus(ui8_bus).mi_pendingMsgs = extstat.nPendingWrites;
-        DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->canBus(ui8_bus).mi_pendingMsgs);
-      }
-    }
-  }
-  else
-  { // update just the given bus!
-    if ((ioctl(pc_serverData->canBus(i8_bus).mi32_can_device, PCAN_GET_EXT_STATUS, &extstat)) < 0) return;
-    pc_serverData->canBus(i8_bus).mi_pendingMsgs = extstat.nPendingWrites;
-    DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->canBus(i8_bus).mi_pendingMsgs);
-  }
-#endif
-}
-
 // PURPOSE: To send a msg on the specified CAN BUS
 // RETURNS: non-zero if msg was sent ok
 //          0 on error
@@ -255,36 +228,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   if (ret < 0)
   {
     perror("sendToBus ioctl");
-    // CAN server depends on that to suppress call of
-    // addSendTimeStampToList:
     return 0;
-  }
-
-  updatePendingMsgs(pc_serverData, ui8_bus);
-  unsigned int i_pendingMsgs = pc_serverData->canBus(ui8_bus).mi_pendingMsgs;
-  if ((i_pendingMsgs > 0) && (list_sendTimeStamps.size() >= (i_pendingMsgs)))
-  { // something pending!
-    std::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();
-    i_pendingMsgs--; // we're >0 at the beginning!
-    while (i_pendingMsgs)
-    {
-      pc_iter++;
-      i_pendingMsgs--;
-    }
-    const int ci_delay = getTime() - (*pc_iter);
-    pc_iter++; // go to the one that's been already sent and remove from list!
-    while (pc_iter != list_sendTimeStamps.end())
-    { // remove all the timestamps of the already sent messages!
-      pc_iter = list_sendTimeStamps.erase (pc_iter);
-    }
-    // do we have a new max for this bus?
-    DEBUG_PRINT3 ("target_extension_can_server_pcan::ca_TransmitCanCard_1: SEND_DELAY WAS: %d    -- max for bus %d is: %d\n", ci_delay, ui8_bus, pc_serverData->canBus(ui8_bus).mi32_sendDelay);
-    if (ci_delay > pc_serverData->canBus(ui8_bus).mi32_sendDelay)
-    { // yes we do, so set it!
-      pc_serverData->canBus(ui8_bus).mi32_sendDelay = ci_delay;
-      DEBUG_PRINT ("target_extension_can_server_pcan::ca_TransmitCanCard_1: reporting back HAL_NEW_SEND_DELAY");
-      return HAL_NEW_SEND_DELAY;
-    }
   }
 
   return 1;

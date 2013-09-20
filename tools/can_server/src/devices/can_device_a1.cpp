@@ -157,11 +157,6 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
 
-void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */)
-{
-/// @todo ON REQUEST: not implemented for right now on A1! - possible due to HW/Driver restrictions
-}
-
 bool doStatusCheck(uint8_t ui8_bus, server_c* pc_serverData)
 {
   static canStatus s_stat;
@@ -248,9 +243,5 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   return false;
 
-}
-
-void addSendTimeStampToList(client_c * /*ps_client*/, int32_t /*i32_sendTimeStamp*/)
-{
 }
 
