@@ -291,10 +291,3 @@ int32_t getServerTimeFromClientTime( client_c& r_receiveClient, int32_t ai32_cli
 {
   return ai32_clientTime + r_receiveClient.i32_msecStartDeltaClientMinusServer;
 }
-
-
-void addSendTimeStampToList(client_c *ps_client, int32_t i32_sendTimeStamp)
-{
-  list_sendTimeStamps.push_front (getServerTimeFromClientTime (*ps_client, i32_sendTimeStamp));
-}
-

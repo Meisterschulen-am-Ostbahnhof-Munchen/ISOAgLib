@@ -534,8 +534,6 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
 }
 
 
-std::list<int32_t> __HAL::list_sendTimeStamps;
-
 // This thread handles the client's writes to the server (us).
 /////////////////////////////////////////////////////////////////////////
 static void* can_write_thread_func(void* ptr)
@@ -602,13 +600,7 @@ static void* can_write_thread_func(void* ptr)
       {
         if (isBusOpen(msqWriteBuf.ui8_bus)) {
           DEBUG_PRINT("+");
-          int16_t const i16_sent = sendToBus(msqWriteBuf.ui8_bus, &(msqWriteBuf.s_canMsg), pc_serverData);
-          DEBUG_PRINT1("send: %d\n", i16_sent);
-          if (i16_sent) {
-            addSendTimeStampToList(ps_client, msqWriteBuf.i32_sendTimeStamp);
-            i16_rc = i16_sent;
-          } // otherwise don't report the error, but just as little
-            // add send time stamp to list
+          i16_rc = sendToBus(msqWriteBuf.ui8_bus, &(msqWriteBuf.s_canMsg), pc_serverData);
         } else {
           i16_rc = 0; // can't longer deny that it's an error
         }

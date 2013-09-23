@@ -65,7 +65,6 @@ __HAL::server_c::canBus_s::canBus_s() :
   mui16_globalMask(0),
   mi32_can_device(0),
   mi32_sendDelay(0),
-  mi_pendingMsgs(0),
   mb_deviceConnected(false),
   mui16_busRefCnt(0),
   m_logFile(LogFile_c::Null_s()())
@@ -83,7 +82,6 @@ __HAL::server_c::server_c() :
   mi16_reducedLoadOnIsoBus(-1),
   mb_interactive(true),
   mi_canReadNiceValue(0),
-  mi_highPrioModeIfMin(0),
   mvec_canBus()
 {
   memset(marrb_remoteDestinationAddressInUse, 0, sizeof(marrb_remoteDestinationAddressInUse));
@@ -534,9 +532,6 @@ static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketS
 }
 
 
-std::list<int32_t> __HAL::list_sendTimeStamps;
-
-
 void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, int32_t ri32_data, __HAL::server_c &ar_server)
 {
   __HAL::transferBuf_s s_transferBuf;
@@ -627,9 +622,6 @@ bool handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
             newFileLog( pc_serverData, p_writeBuf->s_init.ui8_bus);
           }
 
-          // just to get sure that we reset the number of pending write-messages
-          pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mi_pendingMsgs = 0;
-
           if (!openBusOnCard(p_writeBuf->s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
                              p_writeBuf->s_init.ui16_wBitrate,  // BTR0BTR1
                              pc_serverData))
@@ -670,8 +662,7 @@ bool handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           iter_client->canBus(p_writeBuf->s_init.ui8_bus).mb_initReceived = false; // reset flag
 
           if (pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt == 0)
-          { // last connection on bus closed, so reset pending msgs...
-            pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mi_pendingMsgs = 0;
+          {
             // close can device
             closeBusOnCard(p_writeBuf->s_init.ui8_bus, pc_serverData);
           }
@@ -1116,7 +1107,6 @@ static void* collectClient(void* ptr) {
 yasper::ptr< AOption_c > const ga_options[] = {
   Option_c< OPTION_MONITOR >::create(),
   Option_c< OPTION_LOG >::create(),
-  Option_c< OPTION_HIGH_PRIO_MINIMUM >::create(),
   Option_c< OPTION_REDUCED_LOAD_ISO_BUS_NO >::create(),
   Option_c< OPTION_INTERACTIVE >::create(),
   Option_c< OPTION_PRODUCTIVE >::create(),
