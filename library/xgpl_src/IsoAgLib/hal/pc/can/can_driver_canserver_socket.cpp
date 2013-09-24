@@ -251,9 +251,22 @@ namespace __HAL {
 #ifdef WIN32
  // @todo implement
 #else
+#ifdef USE_PIPE_INSTEAD_OF_PIPE2
+    if( pipe( breakWaitPipeFd ) != 0 )
+      perror("pipe");
+
+    int flags;
+    if( -1 == (flags = fcntl( breakWaitPipeFd[0], F_GETFL, 0 ) ) )
+      flags = 0;
+    fcntl( breakWaitPipeFd[0], F_SETFL, flags | O_NONBLOCK );
+    if( -1 == (flags = fcntl( breakWaitPipeFd[1], F_GETFL, 0 ) ) )
+      flags = 0;
+    fcntl( breakWaitPipeFd[1], F_SETFL, flags | O_NONBLOCK );
+#else
     if( pipe2( breakWaitPipeFd, O_NONBLOCK ) != 0 ) {
       MACRO_ISOAGLIB_PERROR("pipe");
     }
+#endif
 #endif
 #endif
 
