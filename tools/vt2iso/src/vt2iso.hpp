@@ -353,6 +353,8 @@ private:
   std::vector<std::string> mvec_searchPath;
   static const char msc_searchPathSeperator = ':';
 
+  static const char* mscp_langDetectionDoneAttributeName;
+  
   std::bitset<65536> mbitset_objIdUsed;
 
   std::map<std::string, uint16_t> map_objNameIdTable;

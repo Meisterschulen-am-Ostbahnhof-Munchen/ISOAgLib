@@ -78,6 +78,9 @@ extern BGR_s vtColourTable[256];
 // ### GLOBALS ###
 char iso639table [DEF_iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
 
+const char* vt2iso_c::mscp_langDetectionDoneAttributeName = "__vt2iso_lang_detection_done";
+
+
 //! for right now (legacy-XMLs, but vt-designer still writes this out!!)
 //! special sequences in the XML's value= tag are:
 //! \n
@@ -1477,6 +1480,11 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
       utf16convert (pAttributeNode->getName(), attr_name);
       utf16convert (pAttributeNode->getValue(), attr_value);
 
+      if (attr_name.compare(mscp_langDetectionDoneAttributeName) == 0)
+      {
+          continue;
+      }
+      
       if (treatSpecial)
       { // get 'name=', 'id=' and all other possible attributes
         if (attr_name.compare("name") == 0)
@@ -1799,7 +1807,7 @@ bool vt2iso_c::checkForAllowedExecution() const
 
 void vt2iso_c::autoDetectLanguage (DOMNode *n)
 {
-  if( ((DOMElement*)n)->hasAttribute( X("__vt2iso_lang_detection_done") ) ) {
+  if( ((DOMElement*)n)->hasAttribute( X(mscp_langDetectionDoneAttributeName) ) ) {
     return;
   }
 
@@ -1813,7 +1821,7 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
 
   if (searchName[0] == 0x00)
   { // no id, so we can't search for the value...
-    ((DOMElement *)n)->setAttribute (X("__vt2iso_lang_detection_done"), X(""));
+    ((DOMElement *)n)->setAttribute (X(mscp_langDetectionDoneAttributeName), X(""));
     return;
   }
 
@@ -1822,7 +1830,7 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
 #if DEBUG_LANGUAGE_AUTO_DETECT
     std::cout << "AUTO-DETECT-LANGUAGE: language=\""<< getAttributeValue (n, "language") << "\" directly specified for ["<< searchName <<"]."<<std::endl;
 #endif
-    ((DOMElement *)n)->setAttribute (X("__vt2iso_lang_detection_done"), X(""));
+    ((DOMElement *)n)->setAttribute (X(mscp_langDetectionDoneAttributeName), X(""));
     return;
   }
 
@@ -1927,7 +1935,7 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
   if (newLanguageValue[0] != 0x00)
     std::cout << "AUTO-DETECT-LANGUAGE: FOUND: ["<<newLanguageValue <<"] for "<<searchName<<"."<<std::endl;
 #endif
-  ((DOMElement *)n)->setAttribute (X("__vt2iso_lang_detection_done"), X(""));
+  ((DOMElement *)n)->setAttribute (X(mscp_langDetectionDoneAttributeName), X(""));
 }
 
 std::string
