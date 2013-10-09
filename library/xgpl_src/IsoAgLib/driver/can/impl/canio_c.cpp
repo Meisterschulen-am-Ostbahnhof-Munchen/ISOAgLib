@@ -204,7 +204,6 @@ namespace __IsoAgLib {
 
         CanIo_c::ArrFilterBox::iterator pc_iFilterBox;
         if( canMsg2FilterBox( pkg.ident(), pkg.identType(), pc_iFilterBox ) ) {
-          (*pc_iFilterBox)->processMsg( pkg );
 #ifndef NO_FILTERBOX_LIST_ORDER_SWAP
           if( (*pc_iFilterBox)->getMatchCount() > scui8_filter_box_list_update_rate ) {
             // reorder Filter box
@@ -217,6 +216,7 @@ namespace __IsoAgLib {
             }
           }
 #endif
+          (*pc_iFilterBox)->processMsg( pkg );
         }
 
         HAL::CanFifos_c::get( mui8_busNumber).pop();
