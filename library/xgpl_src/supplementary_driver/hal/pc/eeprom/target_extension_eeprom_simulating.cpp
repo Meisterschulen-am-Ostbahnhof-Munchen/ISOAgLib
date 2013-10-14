@@ -50,7 +50,7 @@ static FILE* eepromDat;
 /* get the size of the eeprom */
 int16_t getEepromSize(void)
 {
-  return 8*1024;
+  return 32*1024;
 };
 
 /* get the segment size of the eeprom for page write access */
