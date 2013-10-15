@@ -224,7 +224,7 @@ uint32_t
 DiagnosticsServices_c::calculateNextActionTime()
 {
   if (mb_dm1CurrentNeedsToBeSent)
-  { // immediate need of initial DM1 sending
+  { // immediate need of DM1 sending
     return 0;
   }
   else
@@ -234,7 +234,10 @@ DiagnosticsServices_c::calculateNextActionTime()
       return sci32_periodDM1noDTC;
     }
 
-    isoaglib_assert(mi32_dm1LastSentTime >= 0);
+    if(mi32_dm1LastSentTime < 0)
+    { // immediate need of initial DM1 sending
+      return 0;
+    }
 
     // global 1s periodic sending
     int32_t i32_minNextAction = (mi32_dm1LastSentTime + sci32_periodDM1) - HAL::getTime();
