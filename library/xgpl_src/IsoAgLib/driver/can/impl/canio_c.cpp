@@ -210,7 +210,7 @@ namespace __IsoAgLib {
 
             if( pc_iFilterBox != m_arrFilterBox.begin() ) {
               CanIo_c::ArrFilterBox::iterator pc_iFilterBoxPrev = pc_iFilterBox;
-              --pc_iFilterBoxPrev;
+              --pc_iFilterBox;
               STL_NAMESPACE::iter_swap( pc_iFilterBoxPrev, pc_iFilterBox );
             }
           }
