@@ -228,6 +228,11 @@ namespace IsoAgLib {
     */
   IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return TracMove_c::selectedSpeedSource();}
 
+  /** get the value of engine speed
+      @return engine speed -> 1 bit is 0.125 rpm
+    */
+  uint16_t engineSpeed() const { return TracMove_c::engineSpeed();}
+
   private:
     /** allow getITracMoveInstance() access to shielded tracmove class.
       otherwise __IsoAgLib::getTracMoveInstance() wouldn't be accepted by compiler

@@ -73,6 +73,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         s_register(WHEEL_BASED_SPEED_DIST_PGN);
       if (canSendSelectedSpeed())
         s_register(SELECTED_SPEED_MESSAGE);
+      if (canSendEngineSpeed())
+        s_register(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
     } else {
       // a change from Tractor mode to Implement mode occured
       // unregister from request for pgn, because in implement mode no request should be answered
@@ -83,6 +85,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         s_unregister(WHEEL_BASED_SPEED_DIST_PGN);
       if (canSendSelectedSpeed())
         s_unregister(SELECTED_SPEED_MESSAGE);
+      if (canSendEngineSpeed())
+        s_unregister(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
     }
 
     // set distance value to NO_VAL codes
@@ -149,6 +153,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (GROUND_BASED_SPEED_DIST_PGN<<8) ), 8 );
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WHEEL_BASED_SPEED_DIST_PGN<<8) ), 8 );
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (SELECTED_SPEED_MESSAGE<<8) ), 8 );
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE<<8) ), 8 );
     }
   }
 
@@ -281,53 +286,58 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         }
         break;
       case SELECTED_SPEED_MESSAGE:
-        // only take values, if i am not the regular sender
-        // and if actual sender isn't in conflict to previous sender
-
-        // first check whether the received message indicates a valid speed source - and ignore the message totally,
-        // if speedSource == IsoNotAvailableSpeed
-        const IsoAgLib::IsoSpeedSourceFlag_t t_testSpeedSource = IsoAgLib::IsoSpeedSourceFlag_t( ( (pkg.getUint8Data(7) >> 2) & 0x7) );
-
-        if( t_testSpeedSource == IsoAgLib::IsoNotAvailableSpeed )
         {
-          // Not a valid speed source.  Ignore the message totally even if from a valid Source Address
-        }
-        else
-        {
-          if ( checkParseReceived( rcc_tempISOName ) )
+          // only take values, if i am not the regular sender
+          // and if actual sender isn't in conflict to previous sender
+
+          // first check whether the received message indicates a valid speed source - and ignore the message totally,
+          // if speedSource == IsoNotAvailableSpeed
+          const IsoAgLib::IsoSpeedSourceFlag_t t_testSpeedSource = IsoAgLib::IsoSpeedSourceFlag_t( ( (pkg.getUint8Data(7) >> 2) & 0x7) );
+
+          if( t_testSpeedSource == IsoAgLib::IsoNotAvailableSpeed )
           {
-              mt_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (pkg.getUint8Data(7) >> 5) & 0x7) );
-              mt_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( pkg.getUint8Data(7) & 0x3);
+            // Not a valid speed source.  Ignore the message totally even if from a valid Source Address
+          }
+          else
+          {
+            if ( checkParseReceived( rcc_tempISOName ) )
+            {
+                mt_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (pkg.getUint8Data(7) >> 5) & 0x7) );
+                mt_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( pkg.getUint8Data(7) & 0x3);
 
-              setSelectedDataSourceISOName(rcc_tempISOName);
-              setUpdateTime( ci32_now );
+                setSelectedDataSourceISOName(rcc_tempISOName);
+                setUpdateTime( ci32_now );
 
-              if (pkg.getUint16Data(0) <= 0xFAFF) //valid selected speed?
-              {
-                mi32_selectedSpeed = pkg.getUint16Data(0);
-                mt_selectedSpeedSource =  t_testSpeedSource;
-                updateSpeed(IsoAgLib::SelectedSpeed, pkg.time());
-                if (mt_selectedDirection == IsoAgLib::IsoReverse)
-                  mi32_selectedSpeed *= -1; //driving reverse
-              }
-              else //fall back to ground based speed
-                mt_speedSource = IsoAgLib::GroundBasedSpeed;
+                if (pkg.getUint16Data(0) <= 0xFAFF) //valid selected speed?
+                {
+                  mi32_selectedSpeed = pkg.getUint16Data(0);
+                  mt_selectedSpeedSource =  t_testSpeedSource;
+                  updateSpeed(IsoAgLib::SelectedSpeed, pkg.time());
+                  if (mt_selectedDirection == IsoAgLib::IsoReverse)
+                    mi32_selectedSpeed *= -1; //driving reverse
+                }
+                else //fall back to ground based speed
+                  mt_speedSource = IsoAgLib::GroundBasedSpeed;
 
-              if (pkg.getUint32Data(2) <= 0xFAFFFFFF) //valid selected distance?
-              {
-                mui32_selectedDistance = pkg.getUint32Data(2);
-                mt_distDirecSource = IsoAgLib::SelectedDistDirec;
-                mt_selectedDirection = IsoAgLib::IsoDirectionFlag_t(   ( (pkg.getUint8Data(7) >> 0) & 0x3) );
-                updateDistanceDirection(IsoAgLib::SelectedDistDirec);
-              } else //fall back to ground based direction and distance
-                mt_distDirecSource = IsoAgLib::GroundBasedDistDirec;
+                if (pkg.getUint32Data(2) <= 0xFAFFFFFF) //valid selected distance?
+                {
+                  mui32_selectedDistance = pkg.getUint32Data(2);
+                  mt_distDirecSource = IsoAgLib::SelectedDistDirec;
+                  mt_selectedDirection = IsoAgLib::IsoDirectionFlag_t(   ( (pkg.getUint8Data(7) >> 0) & 0x3) );
+                  updateDistanceDirection(IsoAgLib::SelectedDistDirec);
+                } else //fall back to ground based direction and distance
+                  mt_distDirecSource = IsoAgLib::GroundBasedDistDirec;
 
-          } else
-          { // there is a sender conflict
-            IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
-            return;
+            } else
+            { // there is a sender conflict
+              IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
+              return;
+            }
           }
         }
+        break;
+      case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:
+        mui16_engineSpeed = pkg.getUint16Data(3);
         break;
     }
   }
@@ -574,6 +584,9 @@ bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoIte
     break;
   case SELECTED_SPEED_MESSAGE:
     sendSelectedSpeed();
+    break;
+  case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:
+    sendEngineSpeed();
     break;
   }
   return b_processed;

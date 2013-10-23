@@ -244,6 +244,11 @@ namespace __IsoAgLib {
       */
     IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return mt_selectedSpeedSource;}
 
+    /** get the value of engine speed
+        @return engine speed -> 1 bit is 0.125 rpm
+      */
+    uint16_t engineSpeed() const { return mui16_engineSpeed;}
+
 
   virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
