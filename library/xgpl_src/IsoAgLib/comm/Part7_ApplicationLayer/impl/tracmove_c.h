@@ -23,10 +23,10 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-#define GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK             0x0001LU
-#define WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK              0x0002LU
-#define SELECTED_SPEED_MESSAGE_DISABLE_MASK                  0x0004LU
-#define ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE_DISABLE_MASK  0x0008LU 
+#define GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK         0x0001LU
+#define WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK          0x0002LU
+#define SELECTED_SPEED_PGN_DISABLE_MASK                  0x0004LU
+#define ELECTRONIC_ENGINE_CONTROLLER_1_PGN_DISABLE_MASK  0x0008LU 
 
   /** stores, updates  and delivers all moving data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
@@ -409,11 +409,11 @@ namespace __IsoAgLib {
   }
 
   inline bool TracMove_c::canSendSelectedSpeed() {
-    return 0 == (SELECTED_SPEED_MESSAGE_DISABLE_MASK & mui16_suppressMask);
+    return 0 == (SELECTED_SPEED_PGN_DISABLE_MASK & mui16_suppressMask);
   }
 
   inline bool TracMove_c::canSendEngineSpeed() {
-    return 0 == (ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE_DISABLE_MASK & mui16_suppressMask);
+    return 0 == (ELECTRONIC_ENGINE_CONTROLLER_1_PGN_DISABLE_MASK & mui16_suppressMask);
   }
 
   /** C-style function, to get access to the unique Base_c singleton instance

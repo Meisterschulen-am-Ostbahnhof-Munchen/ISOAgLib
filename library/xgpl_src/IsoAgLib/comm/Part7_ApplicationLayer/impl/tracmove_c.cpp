@@ -72,9 +72,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       if (canSendWheelBasedSpeedDist())
         s_register(WHEEL_BASED_SPEED_DIST_PGN);
       if (canSendSelectedSpeed())
-        s_register(SELECTED_SPEED_MESSAGE);
+        s_register(SELECTED_SPEED_PGN);
       if (canSendEngineSpeed())
-        s_register(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
+        s_register(ELECTRONIC_ENGINE_CONTROLLER_1_PGN);
     } else {
       // a change from Tractor mode to Implement mode occured
       // unregister from request for pgn, because in implement mode no request should be answered
@@ -84,9 +84,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       if (canSendWheelBasedSpeedDist())
         s_unregister(WHEEL_BASED_SPEED_DIST_PGN);
       if (canSendSelectedSpeed())
-        s_unregister(SELECTED_SPEED_MESSAGE);
+        s_unregister(SELECTED_SPEED_PGN);
       if (canSendEngineSpeed())
-        s_unregister(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
+        s_unregister(ELECTRONIC_ENGINE_CONTROLLER_1_PGN);
     }
 
     // set distance value to NO_VAL codes
@@ -152,8 +152,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       IsoBus_c &c_can = getIsoBusInstance4Comm();
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (GROUND_BASED_SPEED_DIST_PGN<<8) ), 8 );
       c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (WHEEL_BASED_SPEED_DIST_PGN<<8) ), 8 );
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (SELECTED_SPEED_MESSAGE<<8) ), 8 );
-      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE<<8) ), 8 );
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (SELECTED_SPEED_PGN<<8) ), 8 );
+      c_can.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (ELECTRONIC_ENGINE_CONTROLLER_1_PGN<<8) ), 8 );
     }
   }
 
@@ -285,7 +285,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           return;
         }
         break;
-      case SELECTED_SPEED_MESSAGE:
+      case SELECTED_SPEED_PGN:
         {
           // only take values, if i am not the regular sender
           // and if actual sender isn't in conflict to previous sender
@@ -336,7 +336,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           }
         }
         break;
-      case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:
+      case ELECTRONIC_ENGINE_CONTROLLER_1_PGN:
         mui16_engineSpeed = pkg.getUint16Data(3);
         break;
     }
@@ -508,7 +508,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       return MessageNotSent;
     CanPkgExt_c pkg;
     prepareSending( pkg );
-    pkg.setIsoPgn(SELECTED_SPEED_MESSAGE);
+    pkg.setIsoPgn(SELECTED_SPEED_PGN);
     uint8_t ui8_temp = 0;
 
     pkg.setUint16Data(0, __IsoAgLib::abs(mi32_selectedSpeed));
@@ -531,7 +531,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     CanPkgExt_c pkg;
     prepareSending( pkg );
-    pkg.setIsoPgn(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
+    pkg.setIsoPgn(ELECTRONIC_ENGINE_CONTROLLER_1_PGN);
 
     // TODO unimplemented Engine Torque mode
     pkg.setUint16Data(0, 0xFF);
@@ -582,10 +582,10 @@ bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoIte
   case WHEEL_BASED_SPEED_DIST_PGN:
     sendWheelBasedSpeedDist();
     break;
-  case SELECTED_SPEED_MESSAGE:
+  case SELECTED_SPEED_PGN:
     sendSelectedSpeed();
     break;
-  case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:
+  case ELECTRONIC_ENGINE_CONTROLLER_1_PGN:
     sendEngineSpeed();
     break;
   }
