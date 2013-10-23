@@ -35,7 +35,6 @@ namespace __IsoAgLib {
   CanIo_c::CanIo_c( void )
     : Subsystem_c(),
       m_arrFilterBox(),
-      mc_tempFilterBox(),
       mi32_maxSendDelay( -1 ),
       mi32_lastProcessedCanPkgTime( 0 ),
       mui_bitrate( 0 ),

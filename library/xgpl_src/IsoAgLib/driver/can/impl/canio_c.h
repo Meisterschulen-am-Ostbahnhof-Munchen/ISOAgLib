@@ -125,8 +125,6 @@ namespace __IsoAgLib {
 
       /** Vector of configured filter boxes */
       ArrFilterBox m_arrFilterBox;
-      /** temp filer box to avoid new/delete for each insert of a filterBox */
-      FilterBox_c mc_tempFilterBox;
 
       /** maximum send delay - value of < 0 indicates that no send-delay check is requested*/
       int32_t mi32_maxSendDelay;
