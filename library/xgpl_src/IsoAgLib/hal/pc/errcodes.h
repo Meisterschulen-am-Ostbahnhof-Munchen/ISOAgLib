@@ -17,7 +17,6 @@
 
 #define HAL_NO_ERR         ((int16_t) 0 )
 #define HAL_UNKNOWN_ERR    ((int16_t)-1 )
-#define HAL_WARN_ERR       ((int16_t)-2 )
 #define HAL_BUSY_ERR       ((int16_t)-4 )
 #define HAL_RANGE_ERR      ((int16_t)-5 )
 #define HAL_OVERFLOW_ERR   ((int16_t)-6 )
@@ -26,8 +25,5 @@
 
 #define HAL_DIGOUT_OPEN        ((int16_t)-20 )
 #define HAL_DIGOUT_SHORTCUT    ((int16_t)-21 )
-#define HAL_DIGOUT_OVERTEMP    ((int16_t)-22 )
-#define HAL_DIGOUT_UNDERVOLT   ((int16_t)-23 )
-#define HAL_DIGOUT_OVERVOLT    ((int16_t)-24 )
 
 #endif

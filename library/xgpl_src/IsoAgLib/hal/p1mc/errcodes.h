@@ -20,14 +20,10 @@
 #define HAL_CONFIG_ERR        3
 #define HAL_RANGE_ERR         4
 #define HAL_NOACT_ERR         5
-#define HAL_WARN_ERR          6
 #define HAL_OVERFLOW_ERR      7
 #define HAL_UNKNOWN_ERR       9
 
 #define HAL_DIGOUT_OPEN        (int16_t)(-(20 * 0x0001))
 #define HAL_DIGOUT_SHORTCUT    (int16_t)(-(21 * 0x0001))
-#define HAL_DIGOUT_OVERTEMP    (int16_t)(-(22 * 0x0001))
-#define HAL_DIGOUT_UNDERVOLT   (int16_t)(-(23 * 0x0001))
-#define HAL_DIGOUT_OVERVOLT    (int16_t)(-(24 * 0x0001))
 
 #endif

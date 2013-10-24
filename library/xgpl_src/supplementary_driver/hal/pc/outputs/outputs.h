@@ -32,8 +32,6 @@
 #ifndef DIGITAL_OUTPUT_MIN
 #define DIGITAL_OUTPUT_MIN 0
 #endif
-// only uncomment following line if  DIGITAL_OUTPUT_MIN > 0
-//#define DIGITAL_OUTPUT_MIN_GREATER_ZERO
 #ifndef DIGITAL_OUTPUT_MAX
 #define DIGITAL_OUTPUT_MAX 11
 #endif

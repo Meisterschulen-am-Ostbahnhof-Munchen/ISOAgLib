@@ -67,8 +67,7 @@ namespace HAL
     * @param aui8_channel channel to check [0..11] ([0..15] with babyboard)
     * @param aui16_minCurrent minimal allowed current in [mA]
     * @param aui16_maxCurrent maximum allowed current in [mA]
-    * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
-              HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
+    * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT
     */
   int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent);
 

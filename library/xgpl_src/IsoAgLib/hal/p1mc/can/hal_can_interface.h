@@ -165,7 +165,6 @@ bool can_stateMsgobjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr );
   @param rui32_maskLastmsg mask of last CAN msg
   @return HAL_NO_ERR == no error;
           HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
-          HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
 */
 int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t rb_maskStd, uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg);
 
@@ -293,7 +292,6 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
   HAL_NOACT_ERR == BUS OFF
   HAL_OVERFLOW_ERR == send buffer overflowed
   HAL_RANGE_ERR == wrong BUS or MsgObj number
-  HAL_WARN_ERR == BUS WARN or no received message
 */
 int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, int32_t &reflIdent);
 
@@ -314,7 +312,6 @@ int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, in
           HAL_NOACT_ERR == BUS OFF
           HAL_OVERFLOW_ERR == send buffer overflowed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
-          HAL_WARN_ERR == BUS WARN or no received message
 */
 int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data);
 /**

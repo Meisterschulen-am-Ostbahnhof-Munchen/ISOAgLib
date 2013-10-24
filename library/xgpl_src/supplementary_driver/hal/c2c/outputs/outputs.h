@@ -24,8 +24,6 @@
  */
 /*@{*/
 #define DIGITAL_OUTPUT_MIN 0
-// only uncomment following line if  DIGITAL_OUTPUT_MIN > 0
-//#define DIGITAL_OUTPUT_MIN_GREATER_ZERO
 #define DIGITAL_OUTPUT_MAX 1
 /*@}*/
 

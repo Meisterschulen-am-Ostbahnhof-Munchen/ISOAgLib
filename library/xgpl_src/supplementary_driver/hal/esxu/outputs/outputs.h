@@ -32,10 +32,6 @@ namespace __HAL {
  */
 /*@{*/
 #define DIGITAL_OUTPUT_MIN OUT1
-// only uncomment following line if  DIGITAL_OUTPUT_MIN > 0
-#if (DIGITAL_OUTPUT_MIN > 0)
-#	define DIGITAL_OUTPUT_MIN_GREATER_ZERO
-#endif
 #define DIGITAL_OUTPUT_MAX OUT6
 /*@}*/
 
