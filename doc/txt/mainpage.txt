@@ -43,6 +43,73 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 \section Changes Changes
 
 
+\subsection Change_Z 2.6.0 to 2.6.1
+
+General:
+ - Cleanup:
+   - NO_VAL/ERROR_VAL/MIN/MAX defines moved out of isoaglib_config.h.
+   - conf_template/conf2build: Removed obsolete USE_FLOAT_DATA_TYPE.
+
+CAN-I/O:
+ - Cleanup: Removed mc_tempFilterBox as not being used anymore.
+ - Bugfix: Fixed segfault during CAN processing when deregistering during processMsg.
+
+Network Management:
+ - Bugfix: Also respond in 250ms-phase.
+
+Diagnostics/Certification:
+ - Enhancement: Adapted to latest 3rd Ed DIS / AEF Exceptions.
+ - Bugfix:
+   - Don't (N)ACK when DM3 requested to global.
+   - Crash on DM1 sending fixed.
+ - Cleanup:
+   - Removed TRAC_CERTIFICATION in conf2build.sh.
+   - Removed (i)TracCert_c.
+
+HAL:
+ - PC-EEPROM: Increased PC-EEPROM to be 32kb instead of 8kb.
+ - Older Linux Versions: Introduced USE_PIPE_INSTEAD_OF_PIPE2.
+ - Cleanup:
+   - Removed obsolete HAL_NEW_SEND_DELAY and moved #defines out of namespace.
+   - CAN-Server: HIGH PRIO mode removed
+ - Bugfix: Socket-Server: Return proper value when trasmitting frames
+ - SocketCAN: Fixed insertion of filters to respect std/xtd.
+
+vt2iso:
+ - Optimization: Pools with many multilanguage objects now process faster]
+
+Tractor:
+ - Bugfix: TimePosGps_c - TIME_DATE_PGN parsing/sending fixed.
+
+Platform:
+ - Several Compilefixes for Windows CE.
+
+Tractor-ECU:
+ - Fixes:
+   - Avoid possible double connect.
+   - Client does reconnect on TC restart.
+   - Removed unused ProcData_c-parameter in MeasureSubProg.
+ - Enhancement:
+   - Added setter for SerialNumber.
+   - Move and rename ddidefinition header to IsoAgLib space.
+   - Add all missing DDIs.
+   - DDI_CONNECTOR_TYPE added.
+   - Allow old uint8_t interface for TriggerMethods/Properties.
+   - Clear of DevicePool_c/ServerStateHandler possible now.
+   - Removed return-value for DevicePool_c::add(..).
+
+Proprietary PGN:
+ - Assert-forcing disableReception before close().
+
+VT-Client:
+ - Bugfix: VT-Client did not query VtVersion if LoadVersion was used!
+ - Enhancement: Support language-fallback
+ - Cleanup:
+   - Refactoring: Split vtclientconnection_c.cpp into commandhandler_c.cpp/uploadpoolstate_c.cpp
+   - Removed DEBUG_VTCOMM_NO_STORE_VERSION, not needed.
+   - Removed NO_GET_VERSIONS, from now on always the versions will be queried.
+   - Comments cleaned up
+
 
 \subsection Change_Y 2.5.3 to 2.6.0
 

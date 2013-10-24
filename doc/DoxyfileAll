@@ -1,6 +1,6 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = Complete
-PROJECT_NUMBER         = 2.6.0
+PROJECT_NUMBER         = 2.6.1
 OUTPUT_DIRECTORY       = 
 CREATE_SUBDIRS         = YES
 OUTPUT_LANGUAGE        = English
@@ -178,7 +178,6 @@ PREDEFINED             = ENABLE_MULTIPACKET_VARIANT_FAST_PACKET \
                          USE_TRACTOR_MOVE \
                          USE_TRACTOR_AUX \
                          USE_TRACTOR_PTO \
-                         USE_TRACTOR_CERTIFICATION \
                          USE_TRACTOR_GUIDANCE \
                          USE_TIME_GPS \
                          USE_VTOBJECT_alarmmask \
