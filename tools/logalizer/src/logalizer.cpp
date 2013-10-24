@@ -203,7 +203,7 @@ exit_with_usage(const char* progname)
   std::cerr << "         6 -> JohnDeere"<<std::endl;
   std::cerr << "         7 -> rte2"<<std::endl;
   std::cerr << "         8 -> JRF (.jrf)"<<std::endl;
-  std::cerr << "         9 -> PCANExplorer"<<std::endl;
+  std::cerr << "         9 -> PCANExplorer (.trc)"<<std::endl;
   std::cerr << "        10 -> SocketCAN candump -l"<<std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
@@ -779,7 +779,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineJohnDeere,
     parseLogLineRte2,
     parseLogLineJrf,
-	  parseLogLineTrc2,
+    parseLogLineTrc2,
     parseLogLineSocketCAN,
     defaultParseLogLine
   };
