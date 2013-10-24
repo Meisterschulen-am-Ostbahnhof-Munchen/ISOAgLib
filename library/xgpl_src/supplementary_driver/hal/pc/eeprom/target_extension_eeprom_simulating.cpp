@@ -48,7 +48,7 @@ namespace __HAL {
 static FILE* eepromDat;
 
 /* get the size of the eeprom */
-int16_t getEepromSize(void)
+uint32_t getEepromSize(void)
 {
   return 32*1024;
 };

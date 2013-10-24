@@ -17,22 +17,15 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 namespace __HAL {
-/* ******************************************************** */
-/**
- * \name EEPROM specific functions
- */
-/* ******************************************************** */
 
-/*@{*/
-
-int16_t getEepromSize(void);            /* get the size of the eeprom */
+uint32_t getEepromSize(void);          /* get the size of the eeprom */
 int16_t getEepromSegmentSize(void);    /* get the segment size of the eeprom for page write access*/
-int16_t eepromReady(void);               /* get the status of eeprom*/
-int16_t eepromWp(boolean bitMode);       /* enable or disabel write protection*/
+int16_t eepromReady(void);             /* get the status of eeprom*/
+int16_t eepromWp(boolean bitMode);     /* enable or disabel write protection*/
 int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData); /* write one or more bytes into the eeprom*/
 int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte);           /* write one uint8_t into the eeprom */
 int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte);  /* read one or more uint8_t from the eeprom*/
-/*@}*/
 
-} // End of namespace __HAL
+}
+
 #endif

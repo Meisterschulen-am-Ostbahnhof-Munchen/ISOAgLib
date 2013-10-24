@@ -51,8 +51,6 @@ int16_t  __getAdcUbat();
 
 int16_t  getAdc_u85();
 
-//int16_t getEepromSize(void);
-
 }
 
 #endif
