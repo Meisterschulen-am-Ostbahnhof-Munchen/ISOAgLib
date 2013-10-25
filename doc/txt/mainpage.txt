@@ -84,7 +84,7 @@ Tractor:
 Platform:
  - Several Compilefixes for Windows CE.
 
-Tractor-ECU:
+TC-Client:
  - Fixes:
    - Avoid possible double connect.
    - Client does reconnect on TC restart.
