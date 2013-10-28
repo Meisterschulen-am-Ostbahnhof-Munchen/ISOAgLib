@@ -53,6 +53,10 @@ namespace __IsoAgLib {
       uint16_t element() const;
       uint8_t triggerMethod() const;
 
+      bool isMethodSet( IsoAgLib::ProcData::TriggerMethod_t method ) const {
+          return ((triggerMethod() & (0x1 << method)) != 0 );
+      }
+
       const Setpoint_c& getSetpoint() const { return m_setpoint; }
       const Measurement_c& getMeasurement() const { return m_measurement; }
       Setpoint_c& getSetpoint() { return m_setpoint; }

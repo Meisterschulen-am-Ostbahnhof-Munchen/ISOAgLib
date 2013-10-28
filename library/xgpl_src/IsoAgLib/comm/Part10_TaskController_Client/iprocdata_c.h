@@ -56,6 +56,9 @@ namespace IsoAgLib {
       uint16_t element() const  {
         return ProcData_c::element();
       }
+      bool isMethodSet( ProcData::TriggerMethod_t method ) const {
+        return ProcData_c::isMethodSet( method );
+      }
 
       int32_t measurementValue() const {
         return ProcData_c::getMeasurement().getValue();

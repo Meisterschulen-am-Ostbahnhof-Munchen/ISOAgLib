@@ -39,11 +39,11 @@ namespace __IsoAgLib {
 
     isoaglib_assert(
       ( DDI() != IsoAgLib::ProcData::DefaultDataLoggingDDI ) ? true :
-      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::TimeInterval ) &
-      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::DistInterval ) &
-      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::ThresholdLimit ) &
-      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::OnChange ) &
-      IsoAgLib::ProcData::isMethodSet( triggerMethod(), IsoAgLib::ProcData::Total ) );
+      isMethodSet( IsoAgLib::ProcData::TimeInterval ) &
+      isMethodSet( IsoAgLib::ProcData::DistInterval ) &
+      isMethodSet( IsoAgLib::ProcData::ThresholdLimit ) &
+      isMethodSet( IsoAgLib::ProcData::OnChange ) &
+      isMethodSet( IsoAgLib::ProcData::Total ) );
   }
 
 

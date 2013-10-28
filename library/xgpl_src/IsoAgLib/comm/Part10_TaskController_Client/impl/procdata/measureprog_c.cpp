@@ -113,7 +113,7 @@ namespace __IsoAgLib {
 
     switch ( ren_type ) {
       case IsoAgLib::ProcData::MeasurementCommandTimeProp: // time proportional
-        if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::TimeInterval ) ) {
+        if ( m_procdata.isMethodSet( IsoAgLib::ProcData::TimeInterval ) ) {
           if ( ai32_increment == sci32_stopValTimeInterval ) {
             delete m_subProgTimeProp;
             m_subProgTimeProp = NULL;
@@ -132,7 +132,7 @@ namespace __IsoAgLib {
 
       case IsoAgLib::ProcData::MeasurementCommandDistProp: // distance proportional
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE) // if no distance available, NACK will be sent
-        if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::DistInterval ) ) {
+        if ( m_procdata.isMethodSet( IsoAgLib::ProcData::DistInterval ) ) {
           if ( ai32_increment == sci32_stopValDistanceInterval ) {
             delete m_subProgDistProp;
             m_subProgDistProp = NULL;
@@ -150,7 +150,7 @@ namespace __IsoAgLib {
         break;
 
       case IsoAgLib::ProcData::MeasurementCommandOnChange: // change threshold proportional
-        if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::OnChange ) ) {
+        if ( m_procdata.isMethodSet( IsoAgLib::ProcData::OnChange ) ) {
           if ( ai32_increment == sci32_stopValOnChange ) {
             delete m_subProgOnChange;
             m_subProgOnChange = NULL;
@@ -167,14 +167,14 @@ namespace __IsoAgLib {
         break;
 
       case IsoAgLib::ProcData::MeasurementCommandMaximumThreshold: // change threshold proportional
-        if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::ThresholdLimit ) ) {
+        if ( m_procdata.isMethodSet( IsoAgLib::ProcData::ThresholdLimit ) ) {
           m_maxThreshold = ai32_increment;
           b_validTriggerMethod = true;
         }
         break;
 
       case IsoAgLib::ProcData::MeasurementCommandMinimumThreshold: // change threshold proportional
-        if ( IsoAgLib::ProcData::isMethodSet( m_procdata.triggerMethod(), IsoAgLib::ProcData::ThresholdLimit ) ) {
+        if ( m_procdata.isMethodSet( IsoAgLib::ProcData::ThresholdLimit ) ) {
           m_minThreshold = ai32_increment;
           b_validTriggerMethod = true;
         }

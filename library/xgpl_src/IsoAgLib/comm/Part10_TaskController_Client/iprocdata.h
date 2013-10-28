@@ -78,8 +78,6 @@ namespace ProcData {
 
   typedef BitFieldWrapperRight_c<TriggerMethod_s> Methods_t;
 
-  inline bool isMethodSet( uint8_t value, TriggerMethod_t method ) { return ((value & (0x1 << method)) != 0 ); }
-
   enum Property_t {
     Defaultset = 0,
     Settable = 1,
