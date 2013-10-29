@@ -34,9 +34,9 @@ VtClient_c &getVtClientInstance( uint8_t instance )
 
 
 VtClient_c::VtClient_c()
-  : ml_vtServerInst()
-  , m_vtConnections()
+  : m_vtConnections()
   , mt_handler( *this )
+  , m_serverManager()
   , mt_customer( *this )
 {
 }
@@ -70,11 +70,7 @@ VtClient_c::close()
   isoaglib_assert (initialized());
   isoaglib_assert (getClientCount() == 0);
 
-  while (!ml_vtServerInst.empty())
-  {
-    delete ml_vtServerInst.back();
-    ml_vtServerInst.pop_back();
-  }
+  m_serverManager.close();
 
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, LANGUAGE_PGN << 8, Ident_c::ExtendedIdent ) );
 #ifdef HAL_USE_SPECIFIC_FILTERS
@@ -171,48 +167,6 @@ VtClient_c::deregisterObjectPool (IdentItem_c& r_identItem)
 }
 
 
-VtServerInstance_c* VtClient_c::getFirstActiveVtServer( bool mustBePrimary ) const
-{
-  STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
-  if( mustBePrimary )
-  {
-    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
-      if ( (*lit_vtServerInst)->isVtActive() && (*lit_vtServerInst)->isPrimaryVt() )
-        return (*lit_vtServerInst);
-  }
-  else
-  {
-    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
-      if ( (*lit_vtServerInst)->isVtActive() )
-        return (*lit_vtServerInst);
-  }
-  return NULL;
-}
-
-
-VtServerInstance_c* VtClient_c::getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const
-{
-  STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
-  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
-  {
-    if ((*lit_vtServerInst)->isVtActive() && ((*lit_vtServerInst)->getIsoName() == aref_prefferedVTIsoName))
-      return (*lit_vtServerInst);
-  }
-  return NULL;
-}
-
-
-VtServerInstance_c* VtClient_c::getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const
-{
-  STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
-  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
-  {
-    if ((*lit_vtServerInst)->isVtActive() && arc_pool.selectVtServer((*lit_vtServerInst)->getIsoName().toConstIisoName_c()))
-      return (*lit_vtServerInst);
-  }
-  return NULL;
-}
-
 
 uint16_t
 VtClient_c::getClientCount() const
@@ -268,93 +222,74 @@ void VtClient_c::processMsgNonGlobal( const CanPkgExt_c& pkg ) {
 
 void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
   // VT_TO_GLOBAL is the only PGN we accept without VT being active, because it marks the VT active!!
-  STL_NAMESPACE::vector<VtServerInstance_c*>::iterator lit_vtServerInst;
-  uint8_t ui8_index;
 
-  /// -->VT_TO_GLOBAL_PGN<-- ///
-  if (arc_data.isoPgn() == VT_TO_GLOBAL_PGN)
-  { // iterate through all registered VtServerInstances and process msg if vtSourceAddress == isoSa
-    uint8_t const cui8_cmdByte = arc_data.getUint8Data (1-1);
-
-    if (cui8_cmdByte == 0xFE) // Command: "Status", Parameter: "VT Status Message"
+  uint8_t const cui8_cmdByte = arc_data.getUint8Data (1-1);
+  
+  switch (arc_data.isoPgn())
+  {
+    case VT_TO_GLOBAL_PGN:
     {
-      for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
+      switch(cui8_cmdByte)
+      {
+        case 0xFE:  // Command: "Status", Parameter: "VT Status Message"
+          m_serverManager.processVtStatusMsg(arc_data, m_vtConnections);
+          break;
+
+        case 0x21: // Command: "Auxiliary Control", Parameter: "Auxiliary Input Status"
+          notifyAllConnectionsOnAux1InputStatus( arc_data );
+          break;
+
+        case 0x26: // Command: "Auxiliary Control Type 2", Parameter: "Auxiliary Input Status"
+          notifyAllConnectionsOnAux2InputStatus( arc_data );
+          break;
+      }
+      break;
+    }
+    
+    case ECU_TO_GLOBAL_PGN:
+    {
+      if (cui8_cmdByte == 0x23) // Command: "Auxiliary Control", Parameter: "input maintenance message"
+        notifyAllConnectionsOnAux2InputMaintenance( arc_data );
+
+      break;
+    }
+
+
+    case LANGUAGE_PGN:
+    {
+      STL_NAMESPACE::vector<VtServerInstance_c*>::iterator lit_vtServerInst;
+      VtServerInstance_c* pc_server = NULL;
+      uint8_t ui8_index;
+
+      // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
+      for (lit_vtServerInst = m_serverManager.getRefServerInstanceVec().begin();
+           lit_vtServerInst != m_serverManager.getRefServerInstanceVec().end();
+           ++lit_vtServerInst)
       {
         if (&(*lit_vtServerInst)->getIsoItem() == arc_data.getMonitorItemForSA())
         {
-          (*lit_vtServerInst)->setLatestVtStatusData( arc_data );
-
-          // iterate through all registered VtClientServerCommunication and notify their pools with "eventVtStatusMsg"
-          for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
-          {
-            if (m_vtConnections[ui8_index])
-            {
-              if (m_vtConnections[ui8_index]->getVtServerInstPtr() == (*lit_vtServerInst))
-              { // this vtClientServerComm is connected to this VT, so notify the objectpool!!
-                m_vtConnections[ui8_index]->notifyOnVtStatusMessage();
-              }
-            }
-          }
-          return;
+          pc_server = *lit_vtServerInst;
+          break;
         }
       }
-    }
-    else if (cui8_cmdByte == 0x21) // Command: "Auxiliary Control", Parameter: "Auxiliary Input Status"
-    { // iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that input status!
-      for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
+
+      if (pc_server != NULL)
       {
-        if (m_vtConnections[ui8_index])
+        pc_server->setLocalSettings( arc_data );
+
+        // notify all connected vtCSCs
+        for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
         {
-          m_vtConnections[ui8_index]->notifyOnAuxInputStatus( arc_data );
+          if ( m_vtConnections[ui8_index] &&
+              (m_vtConnections[ui8_index]->getVtServerInstPtr() == pc_server) )
+          m_vtConnections[ui8_index]->notifyOnVtsLanguagePgn();
         }
       }
-    }
-    else if (cui8_cmdByte == 0x26) // Command: "Auxiliary Control Type 2", Parameter: "Auxiliary Input Status"
-    { 
-      // iterate through all registered VtClientServerCommunication and notify them, maybe they have functions that need that input status!
-      notifyAllConnectionsOnAux2InputStatus( arc_data );
-
-    }
-    return;
-  }
-
-  if ((arc_data.isoPgn() & 0x3FFFFLU) == ECU_TO_GLOBAL_PGN)
-  {
-    uint8_t const cui8_cmdByte = arc_data.getUint8Data (1-1);
-    if (cui8_cmdByte == 0x23) // Command: "Auxiliary Control", Parameter: "input maintenance message"
-    { // iterate through all registered VtClientServerCommunication and notify them
-      notifyAllConnectionsOnAux2InputMaintenance( arc_data );
-    }
-  }
-
-
-  /// -->LANGUAGE_PGN<-- ///
-  if (arc_data.isoPgn() == LANGUAGE_PGN)
-  {
-    VtServerInstance_c* pc_server = NULL;
-    // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
-    for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
-    {
-      if (&(*lit_vtServerInst)->getIsoItem() == arc_data.getMonitorItemForSA())
-      {
-        pc_server = *lit_vtServerInst;
-        break;
-      }
+      break;
     }
 
-    if (pc_server != NULL)
-    {
-      pc_server->setLocalSettings( arc_data );
-
-      // notify all connected vtCSCs
-      for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
-      {
-        if ( m_vtConnections[ui8_index] &&
-            (m_vtConnections[ui8_index]->getVtServerInstPtr() == pc_server) )
-          m_vtConnections[ui8_index]->notifyOnVtsLanguagePgn();
-      }
-    }
-    // else: Language PGN from non-VtServerInstance - ignore
+    default:
+        ; // else: Language PGN from non-VtServerInstance - ignore
   }
 }
 
@@ -372,54 +307,14 @@ VtClient_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, u
 
 
 void
-VtClient_c::reactOnIsoItemModification(
-  ControlFunctionStateHandler_c::iIsoItemAction_e action,
-  IsoItem_c const& isoItem )
+VtClient_c::notifyAllConnectionsOnAux1InputStatus( const CanPkgExt_c& refc_data ) const
 {
-  // we only care for the VTs
-  if( isoItem.isoName().getEcuType() != IsoName_c::ecuTypeVirtualTerminal )
-    return;
-
-  switch( action )
+  for (unsigned index = 0; index < m_vtConnections.size(); index++)
   {
-    case ControlFunctionStateHandler_c::AddToMonitorList:
-      { ///! Attention: This function is also called from "init()", not only from ISOMonitor!
-        for( STL_NAMESPACE::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
-             iter != ml_vtServerInst.end(); ++iter )
-        { // check if newly added VtServerInstance is already in our list
-          if (&isoItem == &(*iter)->getIsoItem())
-            return;
-        }
-
-        ml_vtServerInst.push_back(
-          new VtServerInstance_c( isoItem, *this ) );
-      } break;
-
-    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
-      for( STL_NAMESPACE::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
-           iter != ml_vtServerInst.end(); ++iter )
-      { // check if lost VtServerInstance is in our list
-        if (&isoItem == &(*iter)->getIsoItem())
-        { // the VtServerInstance is already known and in our list,
-          // delete it and notify all clients on early loss of that VtServerInstance
-          for (unsigned index = 0; index < m_vtConnections.size(); ++index)
-          {
-            if( m_vtConnections[ index ] )
-              m_vtConnections[ index ]->notifyOnVtServerInstanceLoss( *(*iter) );
-          }
-
-          delete *iter;
-          ( void )ml_vtServerInst.erase( iter );
-          break;
-        }
-      }
-      break;
-
-    default:
-      break;
+    if (m_vtConnections[index])
+      m_vtConnections[index]->notifyOnAuxInputStatus( refc_data );
   }
 }
-
 
 void
 VtClient_c::notifyAllConnectionsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const
@@ -440,24 +335,5 @@ VtClient_c::notifyAllConnectionsOnAux2InputMaintenance( const CanPkgExt_c& refc_
       m_vtConnections[ index ]->notifyOnAux2InputMaintenance( refc_data );
   }
 }
-
-
-#ifdef USE_IOP_GENERATOR_FAKE_VT_PROPERTIES
-void
-VtClient_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes)
-{
-  const IsoItem_c c_dummyIsoItem;
-  // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
-  ml_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, IsoName_c::IsoNameUnspecified(), (*this) MULTITON_INST_WITH_COMMA));
-  VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
-  r_vtServerInst.fakeVtProperties (aui16_dimension, aui16_skWidth, aui16_skHeight, aui16_colorDepth, aui16_fontSizes);
-    // ... and notify all vtClientServerComm instances
-  for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
-  {
-    if (m_vtConnections[ui8_index])
-      m_vtConnections[ui8_index]->notifyOnNewVtServerInstance(r_vtServerInst);
-  }
-}
-#endif
 
 } // __IsoAgLib

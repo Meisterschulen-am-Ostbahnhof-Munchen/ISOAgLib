@@ -37,6 +37,36 @@ namespace IsoAgLib
 class iVtClientObjectPool_c
 {
 public:
+
+  /**
+    data structure for callback after pool upload failure
+  */  
+  enum UploadError
+  {
+    UploadError_NoError,
+    UploadError_OutOfMemoryError,
+    UploadError_VtVersionError,
+    UploadError_InvalidLanguageError,
+    UploadError_EoopError
+  };
+
+  struct UploadErrorData
+  {
+    UploadError error;
+    uint8_t vtFunctionInstance;
+
+    UploadErrorData(UploadError a_error,
+                          uint8_t a_vtFunctionInstance)
+      : error(a_error),
+        vtFunctionInstance(a_vtFunctionInstance)
+    {}
+
+    UploadErrorData()
+      : error(UploadError_NoError),
+        vtFunctionInstance(0xFF)
+    {}
+  };
+    
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Soft Key Activation" / "Button Activation" Message
@@ -205,6 +235,20 @@ public:
    */
   virtual bool selectVtServer(iIsoName_c const &) const { return true; }
 
+  /**
+    Will not be called before eventObjectPoolUploadedSuccessfully:
+    
+    state = TRUE: at least two active VTs are detected on the bus                  
+    state = FALSE: less than two active VTs are detected on the bus
+   */
+  virtual void multipleActiveVts(bool a_state) {}
+
+  /**
+    Gets called after a pool upload failure
+   */
+  virtual void UploadError(UploadErrorData /* a_errorData */) {}
+
+  
   enum RegisterPoolMode_en
   {
     RegisterPoolMode_MasterToAnyVt,

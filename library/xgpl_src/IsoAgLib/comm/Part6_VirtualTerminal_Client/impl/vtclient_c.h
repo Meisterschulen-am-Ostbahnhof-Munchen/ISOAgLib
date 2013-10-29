@@ -21,6 +21,7 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include "vtserverinstance_c.h"
+#include "vtservermanager_c.h"
 #include "vtclientconnection_c.h"
 
 #include <list>
@@ -59,23 +60,34 @@ public:
   VtClientConnection_c& getClientByID (uint8_t ui8_clientIndex) { return *m_vtConnections[ui8_clientIndex]; }
   VtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!m_vtConnections.empty()) ? m_vtConnections[ui8_clientIndex] : NULL; }
 
-  bool isAnyVtAvailable() const { return !ml_vtServerInst.empty(); }
+  bool isAnyVtAvailable() const { return m_serverManager.isAnyVtAvailable(); }
   // is any claimed VT sending VT status
-  bool isAnyVtActive( bool mustBePrimary ) const { return (getFirstActiveVtServer( mustBePrimary ) != NULL); }
+  bool isAnyVtActive( bool mustBePrimary ) const { return (getActiveVtServer( mustBePrimary, NULL ) != NULL); }
+  uint16_t getActiveVtCount() const { return m_serverManager.getActiveVtCount(); }
 
+  void notifyAllConnectionsOnAux1InputStatus( const CanPkgExt_c& refc_data ) const;
   void notifyAllConnectionsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const;
   void notifyAllConnectionsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const;
 
-  VtServerInstance_c* getFirstActiveVtServer( bool mustBePrimary ) const;
-  VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const;
-  VtServerInstance_c* getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const;
+  VtServerInstance_c* getActiveVtServer( bool mustBePrimary, const VtServerInstance_c* ap_searchStart ) const
+  { return m_serverManager.getActiveVtServer(mustBePrimary, ap_searchStart); }
+
+  VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const
+  { return m_serverManager.getPreferredVtServer(aref_prefferedVTIsoName); }
+  
+  VtServerInstance_c* getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const
+  { return m_serverManager.getSpecificVtServer(arc_pool); }
 
   ////////////////////////
   // INTERFACE FUNTIONS //
   ////////////////////////
 // the following define should be globally defined in the project settings...
+// (currently not supported, due to multi VT enhancements)
+#if 0
 #ifdef USE_IOP_GENERATOR_FAKE_VT_PROPERTIES
-  void fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes);
+  void fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes)
+  { m_serverManager.fakeVtProperties(aui16_dimension, aui16_skWidth, aui16_skHeight, aui16_colorDepth, aui16_fontSizes, *this); }
+#endif
 #endif
 
 private:
@@ -168,7 +180,10 @@ private:
     */
   VtClient_c();
 
-  virtual void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem);
+  void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
+  {
+    m_serverManager.reactOnIsoItemModification(at_action, acrc_isoItem, m_vtConnections, *this);
+  }
 
   virtual bool reactOnStreamStart(
       ReceiveStreamIdentifier_c const &ac_ident,
@@ -213,10 +228,11 @@ private:
     IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode );
 
 private:
-  STL_NAMESPACE::vector<VtServerInstance_c*> ml_vtServerInst;
   STL_NAMESPACE::vector<VtClientConnection_c*> m_vtConnections;
 
   Handler_t mt_handler;
+
+  VtServerManager_c m_serverManager;
 
 public:
   // so that VtClientConnection can insert filters to us.

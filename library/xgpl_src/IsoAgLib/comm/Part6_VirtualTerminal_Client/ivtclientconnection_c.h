@@ -51,7 +51,6 @@ public:
   //!                                    This includes the language-code for multi-language pools!
   //!        versionLabel7chars != NULL: Use VersionLabel given. Must be 7 characters!
   bool sendNonVolatileDeleteVersion( const char* versionLabel7chars );
-  bool sendCommandDeleteObjectPool();
   bool sendCommandEsc (bool b_enableReplaceOfCmd=true);
   bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
 
@@ -64,6 +63,16 @@ public:
   iVtServerInstance_c* getVtServerInstPtr() const { return (VtClientConnection_c::getVtServerInstPtr() != NULL) ? VtClientConnection_c::getVtServerInst().toIvtServerInstancePtr_c() : NULL; }
   iVtServerInstance_c& getVtServerInst() const    { return VtClientConnection_c::getVtServerInst().toIvtServerInstance_c(); }
 
+  /**
+   * Start "move to next VT" procedure by sending the "delete object pool"
+   * 
+   * return TRUE:  message sending was successfully
+   * return FALSE: message sending failed
+   *               reasons: a) sendCommandsToBus(false) is active
+   *                        b) no connection to VT server
+   **/
+  bool moveToNextVt() { return VtClientConnection_c::moveToNextVt(); }
+  
 private:
   iVtClientConnection_c();
 
@@ -88,12 +97,6 @@ inline void
 iVtClientConnection_c::sendCommandsToBus( bool commandsToBus ) 
 {
   return commandHandler().sendCommandsToBus( commandsToBus );
-}
-
-inline bool
-iVtClientConnection_c::sendCommandDeleteObjectPool()
-{
-  return commandHandler().sendCommandDeleteObjectPool();
 }
 
 inline bool

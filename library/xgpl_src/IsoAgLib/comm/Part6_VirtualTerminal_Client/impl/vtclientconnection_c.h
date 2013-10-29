@@ -20,7 +20,7 @@
 #include "aux2functions_c.h"
 #include "uploadpoolstate_c.h"
 #include "commandhandler_c.h"
-
+#include "multiplevt_c.h"
 
 namespace IsoAgLib {
   class iVtObjectString_c;
@@ -86,6 +86,8 @@ public:
 
   void restart();
 
+  void restartWithNextVt();
+
   void notifyOnVtsLanguagePgn();
   void notifyOnVtStatusMessage();
   void notifyOnAuxInputStatus( const CanPkgExt_c& arc_data );
@@ -102,12 +104,15 @@ public:
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
   uint8_t  getClientId() const { return mui8_clientId; }
 
-  bool connectedToVtServer() const               { return (mpc_vtServerInstance != NULL); }
+  bool connectedToVtServer() const               { return (mpc_vtServerInstance != NULL); }  
   /** ATTENTION: Please assure "connectedToVtServer()/isVtActive()" before getting this reference */
-  VtServerInstance_c& getVtServerInst() const    { return *mpc_vtServerInstance; }
+  VtServerInstance_c& getVtServerInst() const    { isoaglib_assert(NULL != mpc_vtServerInstance); return *mpc_vtServerInstance; }  
   VtServerInstance_c* getVtServerInstPtr() const { return mpc_vtServerInstance; }
+
   IdentItem_c& getIdentItem() const              { return mrc_wsMasterIdentItem; }
   int getMultitonInst() { return mrc_wsMasterIdentItem.getMultitonInst(); }
+
+  bool moveToNextVt();
 
   void notifyOnVtServerInstanceLoss( VtServerInstance_c& r_oldVtServerInst );
 
@@ -171,6 +176,8 @@ private:
 
   UploadPoolState_c m_uploadPoolState;
   CommandHandler_c m_commandHandler;
+
+  MultipleVt_c m_multipleVt;
 
   int32_t mi32_timeWsAnnounceKey;
   int32_t mi32_fakeVtOffUntil;

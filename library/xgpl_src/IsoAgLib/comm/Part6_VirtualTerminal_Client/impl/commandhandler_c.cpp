@@ -1136,6 +1136,7 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
 {
   unsigned errByte = 0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
   bool needRestart = false;
+  bool checkForVtSwitch = false;
 
   IsoAgLib::iVtClientObjectPool_c& pool = m_connection.getPool();
 
@@ -1152,8 +1153,12 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
 
   case 0xA3: // Command: "Command", parameter "Control Audio Device Response"
   case 0xA4: // Command: "Command", parameter "Set Audio Volume Response"
+    errByte = 2;
+    break;
+
   case 0xB2: // Command: "Command", parameter "Delete Object Pool Response"
     errByte = 2;
+    checkForVtSwitch = true;
     break;
 
   case 0xA6: // Command: "Command", parameter "Change Size Response"
@@ -1298,6 +1303,9 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
 
   if( needRestart )
     m_connection.restart();
+
+  if( checkForVtSwitch )
+    m_connection.restartWithNextVt();
 }
 
 

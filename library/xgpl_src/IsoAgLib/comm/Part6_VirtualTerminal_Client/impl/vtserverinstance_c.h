@@ -133,6 +133,8 @@ public:
   void requestLocalSettings( IdentItem_c& identItem );
 
 // the following define should be globally defined in the project settings...
+// (currently not supported, due to multi VT enhancements)
+#if 0
 #ifdef USE_IOP_GENERATOR_FAKE_VT_PROPERTIES
   void fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes)
   {
@@ -142,6 +144,7 @@ public:
     ms_vtCapabilitiesA.hwGraphicType = aui16_colorDepth;
     ms_vtCapabilitiesA.fontSizes = aui16_fontSizes;
   }
+#endif
 #endif
 
   /** interface convert function - avoids lots of explicit static_casts */

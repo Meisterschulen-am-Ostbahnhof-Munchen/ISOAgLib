@@ -16,6 +16,7 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectworkingset_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 
 #if defined(_MSC_VER)
@@ -260,7 +261,7 @@ UploadPoolState_c::handleGetMemoryResponse( const CanPkgExt_c &pkg )
     
     // check for matching VT version and object pool version
     if( m_connection.getVtServerInst().getVtIsoVersion() < m_uploadingVersion )
-      uploadFailed( false );
+      uploadFailed( UploadError_VtVersionError );
     else
     {
       // Take the language that's been set in the VT right NOW
@@ -281,7 +282,7 @@ UploadPoolState_c::handleGetMemoryResponse( const CanPkgExt_c &pkg )
       startCurrentUploadPhase();
     }
     else
-      uploadFailed( true );
+      uploadFailed( UploadError_OutOfMemoryError );
     break;
 
   default:
@@ -332,7 +333,7 @@ UploadPoolState_c::handleLoadVersionResponse( unsigned errorNibble )
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
       INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-      uploadFailed( true );
+      uploadFailed( UploadError_OutOfMemoryError );
     }
     else
     { // Not used
@@ -347,11 +348,40 @@ UploadPoolState_c::handleLoadVersionResponse( unsigned errorNibble )
 }
 
 void
-UploadPoolState_c::uploadFailed( bool vtOutOfMemory )
+UploadPoolState_c::uploadFailed( UploadError aen_uploadError )
 {
-  if( vtOutOfMemory )
-    IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::VtOutOfMemory, m_connection.getMultitonInst() );
+  IsoAgLib::iVtClientObjectPool_c::UploadErrorData poolUpLoadErrorData(IsoAgLib::iVtClientObjectPool_c::UploadError_NoError,
+                                                                       m_connection.getVtServerInst().getIsoName().funcInst());
+  
+  switch(aen_uploadError)
+  {
+    case UploadError_NoError:
+      break;
+    case UploadError_OutOfMemoryError:
+      poolUpLoadErrorData.error = IsoAgLib::iVtClientObjectPool_c::UploadError_OutOfMemoryError;
+      break;
+    case UploadError_VtVersionError:
+      poolUpLoadErrorData.error = IsoAgLib::iVtClientObjectPool_c::UploadError_VtVersionError;
+      break;
+    case UploadError_InvalidLanguageError:
+      poolUpLoadErrorData.error = IsoAgLib::iVtClientObjectPool_c::UploadError_InvalidLanguageError;
+      break;
+    case UploadError_EoopError:
+      poolUpLoadErrorData.error = IsoAgLib::iVtClientObjectPool_c::UploadError_EoopError;
+      break;
+  }
+  
+  m_connection.getPool().UploadError(poolUpLoadErrorData);
 
+  switch(aen_uploadError)
+  {
+    case UploadError_OutOfMemoryError:
+      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::VtOutOfMemory, m_connection.getMultitonInst() );
+      break;
+    default:
+        ;
+  }
+  
   men_uploadPoolState = UploadPoolEndFailed;
 }
 
@@ -401,10 +431,10 @@ UploadPoolState_c::handleEndOfObjectPoolResponse( bool success )
       if( retry )
         m_connection.restart(); // with fallback language
       else
-        uploadFailed( false );
+        uploadFailed( UploadError_InvalidLanguageError );
     }
     else
-      uploadFailed( false );
+      uploadFailed( UploadError_EoopError );
   }
 }
 
@@ -949,7 +979,5 @@ UploadPoolState_c::activeAuxN() const
   return( ( m_uploadingVersion != 0 ) &&
           ( m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 ) );
 }
-
-
 
 } // __IsoAgLib

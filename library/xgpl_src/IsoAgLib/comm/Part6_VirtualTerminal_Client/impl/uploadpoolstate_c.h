@@ -54,6 +54,16 @@ namespace __IsoAgLib {
       UploadPoolEndSuccess
     };
 
+    // same as iVtClientObjectPool_c::UploadError (ivtclientobjectpool_c.h should not be included here)
+    enum UploadError
+    {
+      UploadError_NoError,
+      UploadError_OutOfMemoryError,
+      UploadError_VtVersionError,
+      UploadError_InvalidLanguageError,
+      UploadError_EoopError
+    };
+
     struct UploadPhase_s
     {
       UploadPhase_s() : pc_streamer (NULL), ui32_size (0) {}
@@ -102,6 +112,7 @@ namespace __IsoAgLib {
     bool activeAuxN() const;
     bool activeAuxO() const;
     bool successfullyUploaded() const;
+    bool unsuccessfullyUploaded() const;
 
     const char *versionLabel() const { return( mb_usingVersionLabel ? marrp7c_versionLabel : NULL ); }
 
@@ -142,7 +153,7 @@ namespace __IsoAgLib {
 
     int8_t getLanguageIndex( uint8_t langCode0, uint8_t langCode1 ) const;
 
-    void uploadFailed( bool vtOutOfMemory );
+    void uploadFailed( UploadError aen_uploadError );
 
     // MultiSendEventHandler_c
     virtual void reactOnStateChange( const SendStream_c& );
@@ -216,6 +227,11 @@ namespace __IsoAgLib {
     return( men_uploadPoolState == UploadPoolEndSuccess );
   }
 
+  inline bool
+  UploadPoolState_c::unsuccessfullyUploaded() const
+  {
+    return( men_uploadPoolState == UploadPoolEndFailed );
+  }
 
 } // __IsoAgLib
 

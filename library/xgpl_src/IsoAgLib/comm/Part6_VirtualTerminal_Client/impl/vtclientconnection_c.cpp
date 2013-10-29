@@ -126,6 +126,7 @@ VtClientConnection_c::VtClientConnection_c(
   , m_aux2Functions( *this )
   , m_uploadPoolState( *this, pool, versionLabel, ( aen_mode != IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_Slave ) )
   , m_commandHandler( *this )
+  , m_multipleVt(m_uploadPoolState, r_vtclient)
   , mi32_timeWsAnnounceKey( -1 ) // no announce tries started yet...
   , mi32_fakeVtOffUntil( -1 ) // no faking initially
   , men_registerPoolMode( aen_mode )
@@ -213,8 +214,23 @@ VtClientConnection_c::timeEvent()
   // VT Alive checks - Will trigger "doStart" / "doStop"
   /// @todo in Slave mode, don't call doStart as it sets to UploadPool!
   /// but for now, Slave mode is not yet really supported, so beware!
-  checkAndHandleVtStateChange();
 
+  // setup all states properly first (for example: UploadState_c::men_uploadPoolState will be used in m_multipleVt.timeEvent())
+  checkAndHandleVtStateChange();
+  
+  if (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToAnyVt == men_registerPoolMode)
+  {
+    switch(m_multipleVt.timeEvent())
+    {
+      case MultipleVt_c::TIME_EVENT_RESULT_TRY_NEXT_VT:
+        restartWithNextVt();
+        break;
+      case MultipleVt_c::TIME_EVENT_RESULT_NO_ACTION:
+        break;
+    }
+  }
+
+  
   // Do nothing if there's no VT active
   if (!isVtActive())
   {
@@ -305,13 +321,32 @@ VtClientConnection_c::timeEventSearchForNewVt()
       return;
 
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToAnyVt:
+        if(m_multipleVt.isSwitching())
+        {
+          mpc_vtServerInstance = getVtClientInstance4Comm().getActiveVtServer(false /* mustBePrimary */,
+                                                                              m_multipleVt.getLastVtServerInstance());
+#if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
+          if (mpc_vtServerInstance)
+          {
+            INTERNAL_DEBUG_DEVICE << "VT not active and searching for next VT -> FOUND NEW VT" << INTERNAL_DEBUG_DEVICE_ENDL;
+          }
+#endif            
+          return;
+        }
+        else
+        {
+          // break intentionally left out
+        }
+        
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt:
       // check if initial timeout is done
       if (isPreferredVTTimeOut())
       {
         // check if other VT is available
-        mpc_vtServerInstance = getVtClientInstance4Comm().getFirstActiveVtServer(
-            (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt == men_registerPoolMode) );
+        mpc_vtServerInstance = getVtClientInstance4Comm().getActiveVtServer(
+            (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt == men_registerPoolMode),
+            NULL );
+        
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
         static bool sb_foundNewVt = false;
         if (mpc_vtServerInstance && !sb_foundNewVt)
@@ -547,11 +582,51 @@ VtClientConnection_c::getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObje
 }
 
 
+bool
+VtClientConnection_c::moveToNextVt()
+{
+  bool result = false;
+  
+  result = m_commandHandler.sendCommandDeleteObjectPool();
+
+  if(result)
+  {
+    m_multipleVt.trySwitchingState();
+  }
+  
+  return result;
+}
+
+void
+VtClientConnection_c::restartWithNextVt()
+{
+  if(m_multipleVt.isSwitching())
+  {
+    // call doStop() and set mb_vtAliveCurrent properly
+    restart(); 
+   
+    m_multipleVt.setLastVtServerInstance(mpc_vtServerInstance);
+    
+    mpc_vtServerInstance = NULL;
+    
+    m_multipleVt.resetInfoShown();
+
+    // call doStart() in next checkAndHandleVtStateChange()
+  }
+}
+
+
 void
 VtClientConnection_c::notifyOnVtServerInstanceLoss( VtServerInstance_c& oldVtServerInst )
 {
   if( &oldVtServerInst == mpc_vtServerInstance )
     mpc_vtServerInstance = NULL;
+
+  if(&oldVtServerInst == m_multipleVt.getLastVtServerInstance())
+  {
+    m_multipleVt.setLastVtServerInstance(NULL);
+    // switching state can continue
+  }
 }
 
 
@@ -675,6 +750,8 @@ VtClientConnection_c::notifyOnFinishedNonUserPoolUpload( bool initialUpload )
     }
 #endif
   }
+
+  m_multipleVt.resetSwitchingData();
 }
 
 
