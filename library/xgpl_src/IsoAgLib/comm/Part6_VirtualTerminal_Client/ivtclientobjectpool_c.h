@@ -241,7 +241,7 @@ public:
     state = TRUE: at least two active VTs are detected on the bus                  
     state = FALSE: less than two active VTs are detected on the bus
    */
-  virtual void multipleActiveVts(bool a_state) {}
+  virtual void multipleActiveVts(bool /* a_state */) {}
 
   /**
     Gets called after a pool upload failure

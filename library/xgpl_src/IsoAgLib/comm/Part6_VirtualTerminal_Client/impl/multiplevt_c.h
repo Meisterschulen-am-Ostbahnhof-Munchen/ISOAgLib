@@ -65,6 +65,8 @@ namespace __IsoAgLib {
       }
 
     private:
+      MultipleVt_c( const MultipleVt_c& ); // non-copyable
+      MultipleVt_c& operator=( const MultipleVt_c& );
 
       enum State
       {
