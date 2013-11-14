@@ -35,9 +35,9 @@ if(WIN32)
   link_directories(
     ../../../../tools/libs/pthread/lib
     ../../../libs/pcan/Win32/VC_LIB)
-  set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32 Pcan_usb)
+  set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32 PCANBasic)
 else()
-  set(ISOAGLIB_ADDITIONAL_LIBRARIES rt pthread)
+  set(ISOAGLIB_ADDITIONAL_LIBRARIES rt)
 endif(WIN32)
 
 add_executable(

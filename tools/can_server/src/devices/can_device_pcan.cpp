@@ -19,7 +19,7 @@
 
 #ifdef WIN32
   #include <windows.h>
-  #include <Pcan_usb.h>
+  #include <PCANBasic.h>
 #else
   #include <sys/types.h>
   #include <sys/stat.h>
@@ -80,6 +80,70 @@ bool resetCard(void)
   return true;
 }
 
+#if WIN32
+TPCANBaudrate extractPcanBaudrate(uint32_t wBitrate)
+{
+  if(wBitrate == 250)
+    return PCAN_BAUD_250K;
+  if(wBitrate == 125)
+    return PCAN_BAUD_125K;
+
+  //default we set the baudrate to 250
+  return PCAN_BAUD_250K;
+}
+
+TPCANHandle extractChannelForUSB(uint8_t ui8_bus)
+{
+  switch(ui8_bus)
+  {
+    case 0:
+      return PCAN_USBBUS1;
+    case 1:
+      return PCAN_USBBUS2;
+    case 2:
+      return PCAN_USBBUS3;
+    case 3:
+      return PCAN_USBBUS4;
+    case 4:
+      return PCAN_USBBUS5;
+    case 5:
+      return PCAN_USBBUS6;
+    case 6:
+      return PCAN_USBBUS7;
+    case 7:
+      return PCAN_USBBUS8;
+    default:
+      return PCAN_USBBUS1;
+  }
+}
+
+TPCANHandle extractChannelForPCI(uint8_t ui8_bus)
+{
+  switch(ui8_bus)
+  {
+    case 0:
+      return PCAN_PCIBUS1;
+    case 1:
+      return PCAN_PCIBUS2;
+    case 2:
+      return PCAN_PCIBUS3;
+    case 3:
+      return PCAN_PCIBUS4;
+    case 4:
+      return PCAN_PCIBUS5;
+    case 5:
+      return PCAN_PCIBUS6;
+    case 6:
+      return PCAN_PCIBUS7;
+    case 7:
+      return PCAN_PCIBUS8;
+    default:
+      return PCAN_PCIBUS1;
+  }
+}
+TPCANHandle m_PeakChannel;
+#endif
+
 // PURPOSE: To initialize the specified CAN BUS to begin sending/receiving msgs
 bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 {
@@ -89,34 +153,35 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
 #if WIN32
-  /* 
-   * ATTENTION!
-   *
-   * the PCAN multi card abilities are currently unused. Working with several (can_server)busses
-   * and less devices plugged causes random distribution of incomming messages.
-   *
-   * This is a temporary workarround!
-   *
-   */
-    if( 0 == ui8_bus ) {
-      DWORD rc;
-      rc = CAN_Init(CAN_BAUD_250K, 1 );  // Baudrate
-      if (CAN_ERR_OK == rc)
-      {
-        ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
-        pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
-        return true;
-      }
-      else {
-        std::cerr << "Open CAN Fault with return-code: " << rc << std::endl;
-        return false;
-      }
-    }
-    else 
+  TPCANStatus status;
+  m_PeakChannel = extractChannelForUSB(ui8_bus);
+  TPCANBaudrate baudrate = extractPcanBaudrate(wBitrate);
+  
+  status = CAN_Initialize(m_PeakChannel, baudrate, 0, 0, 0);
+  if(status == PCAN_ERROR_OK)
+  {
+    ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
+    pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
+    return true;
+  }
+  else
+  {
+    //Try PEAK PCI CARD
+    m_PeakChannel = extractChannelForPCI(ui8_bus);
+    status = CAN_Initialize(m_PeakChannel, baudrate, 0, 0, 0);
+    if(status == PCAN_ERROR_OK)
     {
-      /* wrong bus - but that's ok - see above */
+      DEBUG_PRINT1("Connected to PCI card. %d\n", m_PeakChannel);
+      ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
+      pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
       return true;
     }
+    else
+    {
+      std::cerr << "Open PEAK CAN Fault with return-code: " << status << std::endl;
+      return false;
+    }
+  }
 #else
 
     char fname[32];
@@ -158,12 +223,19 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
 }
 
-void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
+void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
 {
   (void)ui8_bus;
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
-  //ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
-  // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
+#ifdef WIN32
+  TPCANStatus status = CAN_Uninitialize(m_PeakChannel);
+  if(status == PCAN_ERROR_OK)
+  {
+    DEBUG_PRINT("Disonnected peak driver.\n");
+  }
+  ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
+  pc_serverData->canBus(ui8_bus).mb_deviceConnected = false;
+#endif
 }
 
 // PURPOSE: To send a msg on the specified CAN BUS
@@ -172,37 +244,22 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
 #if WIN32
-  /* 
-   * ATTENTION!
-   *
-   * the PCAN multi card abilities are currently unused. Working with several (can_server)busses
-   * and less devices plugged causes random distribution of incomming messages.
-   *
-   * This is a temporary workarround!
-   *
-   */
-  if( 0 == ui8_bus ) {
-    DWORD rc;
+    TPCANStatus status;
     TPCANMsg msg;
 
     msg.ID = ps_canMsg->ui32_id;
-    msg.MSGTYPE = (ps_canMsg->i32_msgType ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD );
+    msg.MSGTYPE = (ps_canMsg->i32_msgType ? PCAN_MESSAGE_EXTENDED : PCAN_MESSAGE_STANDARD );
     msg.LEN = ps_canMsg->i32_len;
 
     for( int i=0; i<msg.LEN; i++ )
       msg.DATA[i] = ps_canMsg->ui8_data[i];
 
     assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
-    rc = CAN_Write(&msg);
-    // printf("CAN_write rc: %x, ID %x, len %d, data %x %x %x %x %x %x %x %x\n", rc, msg.ID, msg.LEN, msg.DATA[0], msg.DATA[1], msg.DATA[2], msg.DATA[3], msg.DATA[4], msg.DATA[5], msg.DATA[6], msg.DATA[7]);
-    if (CAN_ERR_OK == rc)
+    status = CAN_Write(m_PeakChannel, &msg);
+    if (status == PCAN_ERROR_OK)
       return 1;
     else
       return 0;
-  } else {
-    return 1;
-  }
-
 #else
 
   TPCANMsg msg;
@@ -232,27 +289,15 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
 #if WIN32
   TPCANMsg msg;
-  /* 
-   * ATTENTION!
-   *
-   * the PCAN multi card abilities are currently unused. Working with several (can_server)busses
-   * and less devices plugged causes random distribution of incomming messages.
-   *
-   * This is a temporary workarround!
-   *
-   */
-  if( 0 == ui8_bus ) {
-    DWORD rc;
+  TPCANStatus status;
+  TPCANTimestamp timestamp;
 
-    rc = CAN_Read(&msg);
-    if (CAN_ERR_OK != rc) 
-    {
-      return false;
-    }
-  } else {
-    /* bus number not 0 - we can't read anything here */
+  status = CAN_Read(m_PeakChannel, &msg, &timestamp);
+  if (status != PCAN_ERROR_OK) 
+  {
     return false;
   }
+
 #else
   TPCANRdMsg msgRd;
   int ret = ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, PCAN_READ_MSG, &msgRd);
@@ -264,8 +309,8 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   switch (msg.MSGTYPE)
   {
-    case MSGTYPE_STANDARD:
-    case MSGTYPE_EXTENDED:
+    case PCAN_MESSAGE_STANDARD:
+    case PCAN_MESSAGE_EXTENDED:
       break; // process
     default: // don't process status, RTR or other messages
       return false;
