@@ -58,6 +58,10 @@ public:
   bool setSwIdentification(
     const char *swIdentification );
 
+  // only for internal usage when querying from the local application
+  const char* getEcuIdentification() const { return mcstr_EcuIdentification; }
+  const char* getSwIdentification() const { return mcstr_SwIdentification; }
+
   //! Setter for the different certification message fields
   //! Parameter:
   //! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061 
