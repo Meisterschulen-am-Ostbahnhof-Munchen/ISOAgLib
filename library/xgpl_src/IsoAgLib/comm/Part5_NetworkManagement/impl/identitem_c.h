@@ -126,6 +126,7 @@ public:
 
   bool setSwIdentification( const char *partNbr );
 
+  const DiagnosticPgnHandler_c& getDiagnosticPgnHandler() const { return m_diagnosticPgnHandler; }
   DiagnosticsServices_c* getDiagnosticsServices() { return mpc_diagnosticsServices; }
   DiagnosticFunctionalities_c& getDiagnosticFunctionalities();
 
