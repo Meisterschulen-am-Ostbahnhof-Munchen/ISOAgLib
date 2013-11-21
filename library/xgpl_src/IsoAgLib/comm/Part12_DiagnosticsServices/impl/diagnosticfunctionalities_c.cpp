@@ -240,7 +240,7 @@ DiagnosticFunctionalities_c::getGeneration(FunctionalitiesCharacteristics_t func
     case TaskControllerGeoWorkingSet:
     case TaskControllerSectionControl:
     case TaskControllerSectionControlWorkingSet:
-      if (version == 2) return 1;
+      if (version == 3) return 1;
       break;
     case BasicTractorECU:
     case BasicTractorECUImplementSet:
@@ -318,11 +318,25 @@ bool DiagnosticFunctionalities_c::addFunctionalitiesTaskControllerBasic(bool imp
   return fillStructure(functionality, version, options);
 }
 
-bool DiagnosticFunctionalities_c::addFunctionalitiesTaskControllerGeo(bool implement, uint8_t version, const TaskControllerGeoOptionsBitMask_t& options)
+bool DiagnosticFunctionalities_c::addFunctionalitiesTaskControllerGeo(bool implement, uint8_t version, uint8_t numberOfChannels, const TaskControllerGeoOptionsBitMask_t& options)
 {
+  isoaglib_assert( numberOfChannels >= 1 );
+
   FunctionalitiesCharacteristics_t functionality = ( implement ? TaskControllerGeoWorkingSet : TaskControllerGeo );
   
-  return fillStructure(functionality, version, options);
+  // fill structure
+  Functionality_s functionality_description;
+  functionality_description.generation = getGeneration(functionality, version);
+
+  functionality_description.options_bytes[0] = numberOfChannels;
+  functionality_description.number_of_option_bytes = 1;
+  if( options.getByte( 0 ) )
+  {
+    functionality_description.options_bytes[1] = options.getByte( 0 );
+    functionality_description.number_of_option_bytes++;
+  }
+
+  return addFunctionality(functionality, functionality_description);
 }
 
 bool DiagnosticFunctionalities_c::addFunctionalitiesTaskControllerSectionControl(bool implement, uint8_t version, uint8_t numberOfBooms, uint8_t numberOfSections)

@@ -146,7 +146,8 @@ typedef BitFieldWrapperRight_c<TaskControllerBasicOptions_s> TaskControllerBasic
 // TC Geo
 enum TaskControllerGeoOptions_t
 {
-  TaskControllerGeo_BITSIZE = 0
+  TaskControllerGeo_PolygonPrescriptionMaps = 0,
+  TaskControllerGeo_BITSIZE = 8
 };
 
 struct TaskControllerGeoOptions_s

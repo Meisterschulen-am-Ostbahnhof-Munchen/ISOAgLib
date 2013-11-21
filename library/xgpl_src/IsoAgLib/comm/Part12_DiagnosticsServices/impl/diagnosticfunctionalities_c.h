@@ -60,7 +60,7 @@ public:
   bool addFunctionalitiesAuxO                        (bool function,  uint8_t version, const AuxOOptionsBitMask_t& options);
   bool addFunctionalitiesAuxN                        (bool function,  uint8_t version, const AuxNOptionsBitMask_t& options);
   bool addFunctionalitiesTaskControllerBasic         (bool implement, uint8_t version, const TaskControllerBasicOptionsBitMask_t& options);
-  bool addFunctionalitiesTaskControllerGeo           (bool implement, uint8_t version, const TaskControllerGeoOptionsBitMask_t& options);
+  bool addFunctionalitiesTaskControllerGeo           (bool implement, uint8_t version, uint8_t numberOfChannels, const TaskControllerGeoOptionsBitMask_t& options);
   bool addFunctionalitiesTaskControllerSectionControl(bool implement, uint8_t version, uint8_t numberOfBooms, uint8_t numberOfSections);
   bool addFunctionalitiesBasicTractorECU             (bool implement, uint8_t version, const BasicTractorECUOptionsBitMask_t& options);
 #if 0
