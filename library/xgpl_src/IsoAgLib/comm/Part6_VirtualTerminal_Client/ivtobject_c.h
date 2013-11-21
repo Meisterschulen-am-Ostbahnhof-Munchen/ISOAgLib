@@ -508,7 +508,7 @@ inline
 void
 iVtObject_c::setClientID( uint8_t ui8_clientID )
 {
-  isoaglib_assert( ui8_clientID < 8 ); // 3 bits only, see struct s_clientId
+  isoaglib_header_assert( ui8_clientID < 8 ); // 3 bits only, see struct s_clientId
   s_properties.clientId = (ui8_clientID & 0x07); // "&" to avoid -Wconversion warning
 }
 

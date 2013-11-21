@@ -40,12 +40,12 @@ namespace __IsoAgLib {
       void setDataFromString( const uint8_t* src, uint8_t aui8_len = 4 ) {
         if( aui8_len == 0 )
           return;
-        isoaglib_assert( src );
+        isoaglib_header_assert( src );
         CNAMESPACE::memcpy( uint8, src, aui8_len );
       }
 
       void getDataToString( uint8_t* dest, uint8_t aui8_len = 4 ) const {
-        isoaglib_assert( dest );
+        isoaglib_header_assert( dest );
         CNAMESPACE::memcpy( dest, uint8, aui8_len );
       }
 
@@ -192,12 +192,12 @@ namespace __IsoAgLib {
         if( aui8_len == 0 )
           return;
 
-        isoaglib_assert( src );
+        isoaglib_header_assert( src );
         CNAMESPACE::memcpy( uint8, src, aui8_len );
       }
 
       void getDataToString( uint8_t* dest, uint8_t aui8_len = 8 ) const {
-        isoaglib_assert( dest );
+        isoaglib_header_assert( dest );
         CNAMESPACE::memcpy( dest, uint8, aui8_len );
       }
 

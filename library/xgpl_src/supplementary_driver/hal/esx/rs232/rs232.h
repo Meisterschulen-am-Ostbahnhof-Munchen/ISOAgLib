@@ -63,11 +63,11 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else one of settings incorrect
   */
   inline int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::init_rs232(baudrate,bMode,bStoppbits,bitSoftwarehandshake); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::init_rs232(baudrate,bMode,bStoppbits,bitSoftwarehandshake); }
   /** close the RS232 interface. */
   inline int16_t close_rs232(uint8_t aui8_channel)
   {
-    isoaglib_assert(0 == aui8_channel);
+    isoaglib_header_assert(0 == aui8_channel);
     (void)aui8_channel;
     int16_t const cb_rx = __HAL::config_rs232_rx_obj(0, NULL);
     int16_t const cb_tx = __HAL::config_rs232_tx_obj(0, NULL, NULL);
@@ -79,19 +79,19 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
   */
   inline int16_t setRs232Baudrate(uint32_t baudrate, uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::set_rs232_baudrate(baudrate); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::set_rs232_baudrate(baudrate); }
   /**
     get the amount of data [uint8_t] in receive buffer
     @return receive buffer data byte
   */
   inline int16_t getRs232RxBufCount(uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_rx_buf_count(); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_rx_buf_count(); }
   /**
     get the amount of data [uint8_t] in send buffer
     @return send buffer data byte
   */
   inline int16_t getRs232TxBufCount(uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_tx_buf_count(); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_tx_buf_count(); }
   /**
     configure a receive buffer and set optional irq function pointer for receive
     @param wBuffersize wanted buffer size
@@ -102,7 +102,7 @@ namespace HAL
     {return __HAL::config_rs232_rx_obj(wBuffersize,pFunction) ;};
   #else
   inline int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(byte _huge *bByte), uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::config_rs232_rx_obj(wBuffersize,pFunction); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::config_rs232_rx_obj(wBuffersize,pFunction); }
   #endif
   /**
     configure a send buffer and set optional irq function pointer for send
@@ -117,14 +117,14 @@ namespace HAL
   #else
   inline int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(byte _huge *bByte),
                                   void (*funktionBeforTransmit)(byte _huge *bByte), uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::config_rs232_tx_obj(wBuffersize,funktionAfterTransmit,funktionBeforTransmit); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::config_rs232_tx_obj(wBuffersize,funktionAfterTransmit,funktionBeforTransmit); }
   #endif
   /**
     get errr code of BIOS
     @return 0=parity, 1=stopbit framing error, 2=overflow
   */
   inline int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_error(Errorcode); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_error(Errorcode); }
 
   /**
     read single int8_t from receive buffer
@@ -132,7 +132,7 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else buffer underflow
   */
   inline int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_char(pbRead); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_char(pbRead); }
   /**
     read bLastChar terminated string from receive buffer
     @param pbRead pointer to target data
@@ -140,7 +140,7 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else buffer underflow
   */
   inline int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_string(pbRead,bLastChar); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::get_rs232_string(pbRead,bLastChar); }
 
   /**
     send single uint8_t on RS232
@@ -148,7 +148,7 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   inline int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::put_rs232_char(bByte); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::put_rs232_char(bByte); }
   /**
     send string of n uint8_t on RS232
     @param bpWrite pointer to source data string
@@ -156,25 +156,25 @@ namespace HAL
     @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   inline int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::put_rs232_n_char((uint8_t*)bpWrite,wNumber); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::put_rs232_n_char((uint8_t*)bpWrite,wNumber); }
   /**
     send '\\0' terminated string on RS232
     @param pbString pointer to '\\0' terminated (!) source data string
     @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   inline int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::put_rs232_string((uint8_t*)pbString); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::put_rs232_string((uint8_t*)pbString); }
 
   /**
     clear receive buffer
   */
   inline void clearRs232RxBuffer(uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; __HAL::clear_rs232_rx_buffer(); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; __HAL::clear_rs232_rx_buffer(); }
   /**
     clear send buffer
   */
   inline void clearRs232TxBuffer(uint8_t aui8_channel)
-    { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; __HAL::clear_rs232_tx_buffer(); }
+    { isoaglib_header_assert(0 == aui8_channel); (void)aui8_channel; __HAL::clear_rs232_tx_buffer(); }
   /*@}*/
 }
 #endif

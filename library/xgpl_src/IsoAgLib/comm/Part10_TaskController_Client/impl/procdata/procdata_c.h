@@ -88,7 +88,7 @@ namespace __IsoAgLib {
   const IdentItem_c&
   ProcData_c::identItem() const
   {
-    isoaglib_assert( m_ident );
+    isoaglib_header_assert( m_ident );
     return *m_ident;
   }
 

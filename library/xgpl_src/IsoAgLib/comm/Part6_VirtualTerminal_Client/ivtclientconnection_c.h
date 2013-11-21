@@ -86,7 +86,7 @@ iVtClientConnection_c::sendNonVolatileDeleteVersion( const char* versionLabel7ch
 {
   if( versionLabel7chars == NULL )
   {
-    isoaglib_assert( uploadPoolState().versionLabel() );
+    isoaglib_header_assert( uploadPoolState().versionLabel() );
     return commandHandler().sendNonVolatileDeleteVersion( uploadPoolState().versionLabel() );
   }
   else

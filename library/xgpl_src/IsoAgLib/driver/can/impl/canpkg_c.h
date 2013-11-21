@@ -30,7 +30,7 @@ public:
   CanPkg_c( uint32_t id, bool ext, uint8_t len, int32_t time );
   CanPkg_c &operator=( const CanPkg_c & );
 
-  uint8_t operator[](uint8_t pos) const { isoaglib_assert( pos < 8 ); return mc_data[ pos ]; }
+  uint8_t operator[](uint8_t pos) const { isoaglib_header_assert( pos < 8 ); return mc_data[ pos ]; }
 
   void setIdent( uint32_t a_ident, __IsoAgLib::Ident_c::identType_t type ) { mc_ident.set( a_ident, type ); }
   uint32_t ident() const { return mc_ident.ident(); }

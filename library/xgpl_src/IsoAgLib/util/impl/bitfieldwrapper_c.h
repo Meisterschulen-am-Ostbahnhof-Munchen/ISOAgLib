@@ -109,7 +109,7 @@ template <unsigned N> class IsoaglibBitset {
     }
 
     uint8_t getByte(unsigned n) const {
-      isoaglib_assert (n < ((N+7)>>3));
+      isoaglib_header_assert (n < ((N+7)>>3));
       return _v[n];
     }
 };

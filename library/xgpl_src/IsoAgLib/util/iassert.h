@@ -15,6 +15,12 @@
 
 #include "compiler_adaptation.h"
 
+
+// NOTE: isoaglib_assert(..) in HEADER-files is currently DISABLED
+//       and would need to be implemented!!!
+#define isoaglib_header_assert(e)
+
+
 #if defined(NDEBUG)
 #  define isoaglib_assert(e)
 #elif defined(__GNUC__) || defined(WIN32)

@@ -118,7 +118,7 @@ namespace __IsoAgLib {
           uint32_t m_size;
 
           void push_back( uint8_t b ) {
-            isoaglib_assert( ( m_offset + 1 ) <= getSize() );
+            isoaglib_header_assert( ( m_offset + 1 ) <= getSize() );
             m_buffer[ m_offset++ ] = b;
           }
       };

@@ -361,7 +361,7 @@ inline
 void
 IsoName_c::inputString (const uint8_t* apb_src)
 {
-  isoaglib_assert (NULL != apb_src);
+  isoaglib_header_assert (NULL != apb_src);
   mu_data.setDataFromString( apb_src );
 }
 
@@ -370,7 +370,7 @@ inline
 void
 IsoName_c::inputUnion (const Flexible8ByteString_c* apu_src)
 {
-  isoaglib_assert (NULL != apu_src);
+  isoaglib_header_assert (NULL != apu_src);
   mu_data = *apu_src;
 }
 

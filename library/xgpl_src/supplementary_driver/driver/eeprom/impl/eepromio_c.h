@@ -332,7 +332,7 @@ bool EepromIo_c::write(uint16_t aui16_adress, T rTemplateVal)
     T tempVal = rTemplateVal;
     b_result =  write(aui16_adress, sizeof(T), static_cast<uint8_t*>(static_cast<void*>(&tempVal)));
   } else {
-    isoaglib_assert( !"adress + sizeof value exceed eeprom size" );
+    isoaglib_header_assert( !"adress + sizeof value exceed eeprom size" );
   }
   return b_result;
 };

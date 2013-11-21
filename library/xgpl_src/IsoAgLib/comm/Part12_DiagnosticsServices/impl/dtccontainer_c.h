@@ -115,14 +115,14 @@ public:
     @param aui16_index index of delivered DTC [0..scui16_sizeDTCList-1]
     NOTE: no test if the index is valid !
   */
-  Dtc_s& operator[](uint16_t aui16_index) { isoaglib_assert(aui16_index < scui16_sizeDTCList); return marr_dtc[aui16_index];}
+  Dtc_s& operator[](uint16_t aui16_index) { isoaglib_header_assert(aui16_index < scui16_sizeDTCList); return marr_dtc[aui16_index];}
 
   /**
     deliver a Dtc_s const reference from a specific index with operator[]
     @param aui16_index index of delivered DTC [0..scui16_sizeDTCList-1]
     NOTE: no test if the index is valid !
   */
-  const Dtc_s& operator[](uint16_t aui16_index) const { isoaglib_assert(aui16_index < scui16_sizeDTCList); return marr_dtc[aui16_index];}
+  const Dtc_s& operator[](uint16_t aui16_index) const { isoaglib_header_assert(aui16_index < scui16_sizeDTCList); return marr_dtc[aui16_index];}
 
 private:
   /// "List" of all DTCs

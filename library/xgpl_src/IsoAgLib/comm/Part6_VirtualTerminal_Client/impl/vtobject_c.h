@@ -57,7 +57,7 @@ public:
 protected:
   iVtObject_s& get_vtObject_a()
   {
-    isoaglib_assert(vtObject_a);
+    isoaglib_header_assert(vtObject_a);
     return *vtObject_a;
   }
 

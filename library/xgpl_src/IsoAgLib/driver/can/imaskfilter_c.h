@@ -141,7 +141,7 @@ namespace IsoAgLib {
 
       bool matchMsgId( const iIdent_c& arc_ident ) const {
 
-        isoaglib_assert(( getFilter() & ( ~getMask() ) ) == 0 );
+        isoaglib_header_assert(( getFilter() & ( ~getMask() ) ) == 0 );
 
         bool r = ( arc_ident.identType() == mt_type );
         r &= (( getMask() & arc_ident.ident() ) == getFilter() );

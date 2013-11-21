@@ -127,7 +127,7 @@ CounterI_c::init(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activHigh,
 {
   InputBase_c::init(ab_channel, IsoAgLib::iInput_c::counter);
   const bool r = ( HAL::init_counter(channelNr(), aui16_timebase, ab_activHigh, ab_risingEdge) != HAL_RANGE_ERR);
-  isoaglib_assert( r ); ( void )r;
+  isoaglib_header_assert( r ); ( void )r;
 }
 
 

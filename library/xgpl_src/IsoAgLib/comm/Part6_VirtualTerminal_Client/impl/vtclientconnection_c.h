@@ -106,7 +106,7 @@ public:
 
   bool connectedToVtServer() const               { return (mpc_vtServerInstance != NULL); }  
   /** ATTENTION: Please assure "connectedToVtServer()/isVtActive()" before getting this reference */
-  VtServerInstance_c& getVtServerInst() const    { isoaglib_assert(NULL != mpc_vtServerInstance); return *mpc_vtServerInstance; }  
+  VtServerInstance_c& getVtServerInst() const    { isoaglib_header_assert(NULL != mpc_vtServerInstance); return *mpc_vtServerInstance; }  
   VtServerInstance_c* getVtServerInstPtr() const { return mpc_vtServerInstance; }
 
   IdentItem_c& getIdentItem() const              { return mrc_wsMasterIdentItem; }
