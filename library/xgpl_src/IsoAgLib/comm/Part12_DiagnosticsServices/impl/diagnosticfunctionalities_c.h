@@ -63,11 +63,11 @@ public:
   bool addFunctionalitiesTaskControllerGeo           (bool implement, uint8_t version, uint8_t numberOfChannels, const TaskControllerGeoOptionsBitMask_t& options);
   bool addFunctionalitiesTaskControllerSectionControl(bool implement, uint8_t version, uint8_t numberOfBooms, uint8_t numberOfSections);
   bool addFunctionalitiesBasicTractorECU             (bool implement, uint8_t version, const BasicTractorECUOptionsBitMask_t& options);
+  bool addFunctionalitiesStopAllImplementOperations  (bool implement, uint8_t version, const StopAllImplementOperationsOptionsBitMask_t& options);
 #if 0
 // not supported by ISO yet
   bool addFunctionalitiesAdvanceTractorECU           (bool implement, uint8_t version, const AdvanceTractorECUOptionsBitMask_t& options);
   bool addFunctionalitiesSequenceControl             (bool implement, uint8_t version, const SequenceControlOptionsBitMask_t& options);
-  bool addFunctionalitiesStopAllImplement            (bool implement, uint8_t version, const StopAllImplementOptionsBitMask_t& options);
   bool addFunctionalitiesFileServer                  (bool implement, uint8_t version, const FileServerOptionsBitMask_t& options);
 
   bool addFunctionalitiesDiagnosticTool();

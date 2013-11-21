@@ -169,6 +169,7 @@ set_default_values()
     PRJ_TRACTOR_GUIDANCE=0
     PRJ_TRACTOR_MOVE_SETPOINT=0
     PRJ_TRACTOR_PTO_SETPOINT=0
+    PRJ_ISB_CLIENT=0
     PRJ_EEPROM=0
     PRJ_DATASTREAMS=0
     PRJ_OUTPUTS=0
@@ -237,6 +238,12 @@ check_set_correct_variables()
         exit 2
     fi
 
+    if [ "$PRJ_ISO11783" -lt 1 -a "$PRJ_ISB_CLIENT" -gt 0 ]; then
+        echo_ "ERROR! Can't utilize PRJ_ISB_CLIENT as ISO11783 is not activated"
+        echo_ "Set PRJ_ISO11783 to 1 if you want ISO 11783 ISB support."
+        exit 2
+    fi
+
     if [ "$PRJ_RS232" -lt 1 -a "$PRJ_RS232_OVER_CAN" -gt 0 ]; then
         echo_ "ERROR! Can't utilize PRJ_RS232_OVER_CAN as PRJ_RS232 isn't set"
         echo_ "Set PRJ_RS232 to 1 to enable RS232 support."
@@ -259,6 +266,7 @@ check_set_correct_variables()
         PRJ_TRACTOR_FACILITIES=1
         PRJ_TRACTOR_AUX=1
         PRJ_TRACTOR_GUIDANCE=1
+        PRJ_ISB_CLIENT=1
     fi
 
     if [ "$PRJ_TRACTOR_MOVE_SETPOINT" -ne 0 ]; then
@@ -403,6 +411,9 @@ comm_features()
         fi
         if [ "$PRJ_TIME_GPS" -gt 0 ]; then
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)" >&3
+        fi
+        if [ "$PRJ_ISB_CLIENT" -gt 0 ]; then
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*isbclient*' \) -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*isbstatehandler*' \)" >&3
         fi
     fi
 
@@ -813,38 +824,6 @@ END_OF_PATH
             echo_e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN" >&3
         fi
     
-        if [ "$PRJ_BASE" -gt 0 ] ; then
-            echo_e "#define USE_BASE" >&3
-        fi
-        if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
-            echo_e "#define USE_TRACTOR_GENERAL" >&3
-        fi
-        if [ "$PRJ_TRACTOR_MOVE" -gt 0 ]; then
-            echo_e "#define USE_TRACTOR_MOVE" >&3
-        fi
-        if [ "$PRJ_TRACTOR_PTO" -gt 0 ]; then
-            echo_e "#define USE_TRACTOR_PTO" >&3
-        fi
-        if [ "$PRJ_TRACTOR_LIGHT" -gt 0 ]; then
-            echo_e "#define USE_TRACTOR_LIGHT" >&3
-        fi
-        if [ "$PRJ_TRACTOR_FACILITIES" -gt 0 ]; then
-            echo_e "#define USE_TRACTOR_FACILITIES" >&3
-        fi
-        if [ "$PRJ_TRACTOR_AUX" -gt 0 ]; then
-            echo_e "#define USE_TRACTOR_AUX" >&3
-        fi
-        if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 ]; then
-            echo_e "#define USE_TRACTOR_GUIDANCE" >&3
-        fi
-        if [ "$PRJ_TIME_GPS" -gt 0 ]; then
-            echo_e "#define USE_TIME_GPS" >&3
-        fi
-        
-        if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
-            echo_e "#define USE_ISO_PROPRIETARY_PGN" >&3
-        fi
-    
         if [ "$OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" -gt 0 ] ; then
             echo_e "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" >&3
         fi
@@ -859,6 +838,39 @@ END_OF_PATH
     
         if [ "$PRJ_ISO11783" -gt 0 ] ; then
             echo_e "#define USE_ISO_11783" >&3
+            if [ "$PRJ_BASE" -gt 0 ] ; then
+                echo_e "#define USE_BASE" >&3
+            fi
+            if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_GENERAL" >&3
+            fi
+            if [ "$PRJ_TRACTOR_MOVE" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_MOVE" >&3
+            fi
+            if [ "$PRJ_TRACTOR_PTO" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_PTO" >&3
+            fi
+            if [ "$PRJ_TRACTOR_LIGHT" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_LIGHT" >&3
+            fi
+            if [ "$PRJ_TRACTOR_FACILITIES" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_FACILITIES" >&3
+            fi
+            if [ "$PRJ_TRACTOR_AUX" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_AUX" >&3
+            fi
+            if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_GUIDANCE" >&3
+            fi
+            if [ "$PRJ_TIME_GPS" -gt 0 ]; then
+                echo_e "#define USE_TIME_GPS" >&3
+            fi
+            if [ "$PRJ_ISB_CLIENT" -gt 0 ]; then
+                echo_e "#define USE_ISB_CLIENT" >&3
+            fi
+            if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
+                echo_e "#define USE_ISO_PROPRIETARY_PGN" >&3
+            fi
             if [ "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 ] ; then
                 echo_e "#define USE_ISO_VIRTUALTERMINAL_CLIENT" >&3
                 if [ "$USE_ISO_TERMINAL_ATTRIBUTES" -ne 0 ] ; then

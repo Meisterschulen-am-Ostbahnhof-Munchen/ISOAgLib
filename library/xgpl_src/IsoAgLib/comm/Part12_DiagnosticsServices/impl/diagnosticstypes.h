@@ -49,7 +49,9 @@ enum FunctionalitiesCharacteristics_t
   TaskControllerSectionControl,
   TaskControllerSectionControlWorkingSet,
   BasicTractorECU,
-  BasicTractorECUImplementSet,
+  BasicTractorECUImplement,
+  StopAllImplementOperations = 21,
+  StopAllImplementOperationsImplement,
   Functionality_ReservedForISO = 0xFF
 };
 
@@ -176,6 +178,21 @@ struct BasicTractorECUOptions_s
 };
 typedef BitFieldWrapperRight_c<BasicTractorECUOptions_s> BasicTractorECUOptionsBitMask_t;
 
+
+// Stop all implement operations
+enum StopAllImplementOperationsOptions_t
+{
+  StopAllImplementOperations_BITSIZE = 0
+};
+
+struct StopAllImplementOperationsOptions_s
+{
+  typedef StopAllImplementOperationsOptions_t enum_type;
+  enum { number_of_bits = StopAllImplementOperations_BITSIZE };
+};
+typedef BitFieldWrapperRight_c<StopAllImplementOperationsOptions_s> StopAllImplementOperationsOptionsBitMask_t;
+
+
 #if 0
 // not specified in ISO yet...
 // Advance TECU
@@ -210,19 +227,6 @@ struct SequenceControlOptions_s
   enum { number_of_bits = SequenceControl_BITSIZE };
 };
 typedef BitFieldWrapperRight_c<SequenceControlOptions_s> SequenceControlOptionsBitMask_t;
-
-// Stop implements
-enum StopAllImplementOptions_t
-{
-  StopAllImplement_BITSIZE = 0
-};
-
-struct StopAllImplementOptions_s
-{
-  typedef StopAllImplementOptions_t enum_type;
-  enum { number_of_bits = StopAllImplement_BITSIZE };
-};
-typedef BitFieldWrapperRight_c<StopAllImplementOptions_s> StopAllImplementOptionsBitMask_t;
 
 // FS
 enum FileServerOptions_t

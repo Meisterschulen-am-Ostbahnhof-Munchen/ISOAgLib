@@ -54,6 +54,7 @@
 #define getTracPtoInstance4Comm()         getTracPtoInstance( getMultitonInst() )
 #define getTracGuidanceInstance4Comm()    getTracGuidanceInstance( getMultitonInst() )
 #define getTracGuidanceCommandInstance4Comm()  getTracGuidanceCommandInstance( getMultitonInst() )
+#define getIsbClientInstance4Comm()       getIsbClientInstance( getMultitonInst() )
 #define getIsoMonitorInstance4Comm()      getIsoMonitorInstance( getMultitonInst() )
 #define getIsoFilterManager4Comm()        getIsoFilterManagerInstance( getMultitonInst() )
 #define getTcClientInstance4Comm()         getTcClientInstance( getMultitonInst() )

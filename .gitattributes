@@ -32,6 +32,10 @@ library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstanc
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtservermanager_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtservermanager_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliarypointer_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/iisbclient_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/iisbstatehandler_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/isbclient_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/isbclient_c.h -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.inc -text
 library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_simulator.cpp -text
 tools/LICENSE.txt -text

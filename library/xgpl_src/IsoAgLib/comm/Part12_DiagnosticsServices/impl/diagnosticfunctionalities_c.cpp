@@ -243,12 +243,16 @@ DiagnosticFunctionalities_c::getGeneration(FunctionalitiesCharacteristics_t func
       if (version == 3) return 1;
       break;
     case BasicTractorECU:
-    case BasicTractorECUImplementSet:
+    case BasicTractorECUImplement:
+      if (version == 1) return 1;
+      break;
+    case StopAllImplementOperations:
+    case StopAllImplementOperationsImplement:
       if (version == 1) return 1;
       break;
 #if 0
     case AdvanceTractorECU:
-    case AdvanceTractorECUImplementSet:
+    case AdvanceTractorECUImplement:
       if (version == 1) return 1;
       break;
     case FileServer:
@@ -258,10 +262,6 @@ DiagnosticFunctionalities_c::getGeneration(FunctionalitiesCharacteristics_t func
       break;
     case SequenceControlServer:
     case SequenceControlClient:
-      if (version == 1) return 1;
-      break;
-    case StopAllImplementOperationsInput:
-    case StopAllImplementOperationsImplementSet:
       if (version == 1) return 1;
       break;
     case DiagnosticTool:
@@ -355,7 +355,13 @@ bool DiagnosticFunctionalities_c::addFunctionalitiesTaskControllerSectionControl
 
 bool DiagnosticFunctionalities_c::addFunctionalitiesBasicTractorECU(bool implement, uint8_t version, const BasicTractorECUOptionsBitMask_t& options)
 {
-  FunctionalitiesCharacteristics_t functionality = ( implement ? BasicTractorECUImplementSet : BasicTractorECU );
+  FunctionalitiesCharacteristics_t functionality = ( implement ? BasicTractorECUImplement : BasicTractorECU );
+  return fillStructure(functionality, version, options);
+}
+
+bool DiagnosticFunctionalities_c::addFunctionalitiesStopAllImplementOperations(bool implement, uint8_t version, const StopAllImplementOperationsOptionsBitMask_t& options)
+{
+  FunctionalitiesCharacteristics_t functionality = ( implement ? StopAllImplementOperationsImplement : StopAllImplementOperations );
   return fillStructure(functionality, version, options);
 }
 
@@ -369,12 +375,6 @@ bool DiagnosticFunctionalities_c::addFunctionalitiesAdvanceTractorECU(bool imple
 bool DiagnosticFunctionalities_c::addFunctionalitiesSequenceControl(bool implement, uint8_t version, const SequenceControlOptionsBitMask_t& options)
 {
   FunctionalitiesCharacteristics_t functionality = ( implement ? SequenceControlClient : SequenceControlServer );
-  return fillStructure(functionality, version, options);
-}
-
-bool DiagnosticFunctionalities_c::addFunctionalitiesStopAllImplement(bool implement, uint8_t version, const StopAllImplementOptionsBitMask_t& options)
-{
-  FunctionalitiesCharacteristics_t functionality = ( implement ? StopAllImplementOperationsImplementSet : StopAllImplementOperationsInput );
   return fillStructure(functionality, version, options);
 }
 

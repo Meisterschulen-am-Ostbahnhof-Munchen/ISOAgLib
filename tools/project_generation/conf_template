@@ -207,6 +207,8 @@ PRJ_ISO11783=1
 # only incorporate parts from BASE that provide tractor certification information
 # PRJ_TRACTOR_CERTIFICATION=1
 
+# Specify if Part 7 - ISB support is enabled.
+# PRJ_ISB_CLIENT=1
 
 ### Special Setup / Customization / Optimization
 ##############################################

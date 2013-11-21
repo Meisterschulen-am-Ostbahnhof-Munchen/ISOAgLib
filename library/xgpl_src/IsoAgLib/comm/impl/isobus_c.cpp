@@ -57,6 +57,9 @@
 #ifdef USE_TIME_GPS
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
 #endif
+#ifdef USE_ISB_CLIENT
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/isbclient_c.h>
+#endif
 #ifdef USE_ISO_FILESERVER_CLIENT
   #include <IsoAgLib/comm/Part13_FileServer_Client/impl/fsmanager_c.h>
 #endif
@@ -124,6 +127,9 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   #ifdef USE_TIME_GPS
     getTimePosGpsInstance4Comm().init();
   #endif
+  #ifdef USE_ISB_CLIENT
+    getIsbClientInstance4Comm().init();
+  #endif
 
   #ifdef USE_ISO_TASKCONTROLLER_CLIENT
     getTcClientInstance4Comm().init();
@@ -161,6 +167,9 @@ IsoBus_c::close()
   #endif
 
   /// Part 7 - Application (Tractor-Client)
+  #ifdef USE_ISB_CLIENT
+    getIsbClientInstance4Comm().close();
+  #endif
   #ifdef USE_TIME_GPS
     getTimePosGpsInstance4Comm().close();
   #endif

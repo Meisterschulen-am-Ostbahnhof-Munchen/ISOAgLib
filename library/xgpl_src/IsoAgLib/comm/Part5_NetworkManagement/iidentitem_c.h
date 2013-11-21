@@ -218,6 +218,7 @@ private:
   friend class iTracMove_c;
   friend class iTracPTOSetPoint_c;
   friend class iTracPTO_c;
+  friend class iIsbClient_c;
   friend class iVtClientConnection_c;
   friend class iVtClient_c;
   friend class iTcClientConnection_c;
