@@ -977,7 +977,8 @@ bool
 UploadPoolState_c::activeAuxN() const
 {
   return( ( m_uploadingVersion != 0 ) &&
-          ( m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 ) );
+          ( m_uploadingVersion != IsoAgLib::iVtClientObjectPool_c::ObjectPoolVersion2 ) &&
+          m_connection.getVtServerInst().isPrimaryVt() );
 }
 
 } // __IsoAgLib

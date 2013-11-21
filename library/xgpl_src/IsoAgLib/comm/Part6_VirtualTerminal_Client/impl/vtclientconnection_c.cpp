@@ -652,16 +652,17 @@ VtClientConnection_c::doStop()
       getIdentItem().isoName(), 
       getVtServerInst().getIsoName() );
 
-  if( m_uploadPoolState.activeAuxN() )
-  {
-    m_aux2Functions.setState(Aux2Functions_c::State_WaitForPoolUploadSuccessfully);
+  // Do NOT do this only if "m_uploadPoolState.activeAuxN()"
+  // because that would require a valid VtServerInst_c for checking the Function Instance
+  // So we just always re-set the Aux2 states now. This could be done in doStart() maybe
+  // if it doesn't hurt to have some states set in Aux2 while it's stopped.......
+  m_aux2Functions.setState(Aux2Functions_c::State_WaitForPoolUploadSuccessfully);
 #ifdef USE_VTOBJECT_auxiliaryinput2
-    if (!m_aux2Inputs.getObjectList().empty())
-    {
-      m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Initializing);
-    }
-#endif
+  if (!m_aux2Inputs.getObjectList().empty())
+  {
+    m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Initializing);
   }
+#endif
 
   getPool().eventEnterSafeState();
 
