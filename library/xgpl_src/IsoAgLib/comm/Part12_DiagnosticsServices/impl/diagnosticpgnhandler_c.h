@@ -59,8 +59,8 @@ public:
     const char *swIdentification );
 
   // only for internal usage when querying from the local application
-  const char* getEcuIdentification() const { return mcstr_EcuIdentification; }
-  const char* getSwIdentification() const { return mcstr_SwIdentification; }
+  const char* getEcuIdentification() const { return mcstr_ecuIdentification; }
+  const char* getSwIdentification() const { return mcstr_swIdentification; }
 
   //! Setter for the different certification message fields
   //! Parameter:
