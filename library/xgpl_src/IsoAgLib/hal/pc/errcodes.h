@@ -23,7 +23,4 @@
 #define HAL_NOACT_ERR      ((int16_t)-8 )
 #define HAL_CONFIG_ERR     ((int16_t)-10)
 
-#define HAL_DIGOUT_OPEN        ((int16_t)-20 )
-#define HAL_DIGOUT_SHORTCUT    ((int16_t)-21 )
-
 #endif
