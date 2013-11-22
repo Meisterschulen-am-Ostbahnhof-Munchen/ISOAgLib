@@ -681,10 +681,8 @@ VtClientConnection_c::isPreferredVTTimeOut() const
 void
 VtClientConnection_c::checkAndHandleVtStateChange()
 {
-  const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
-
   const bool b_vtAliveOld = mb_vtAliveCurrent;
-  mb_vtAliveCurrent = !cb_fakeVtOff && isVtActive();
+  mb_vtAliveCurrent = isVtActive();
 
   if (!b_vtAliveOld && mb_vtAliveCurrent)
   { /// OFF --> ON  ***  VT has (re-)entered the system
@@ -701,6 +699,7 @@ VtClientConnection_c::checkAndHandleVtStateChange()
   else if (b_vtAliveOld && !mb_vtAliveCurrent)
   { /// ON -> OFF  ***  Connection to VT lost
 #if DEBUG_VTCOMM || DEBUG_MULTIPLEVTCOMM
+    const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
     INTERNAL_DEBUG_DEVICE
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
@@ -720,7 +719,9 @@ VtClientConnection_c::isVtActive() const
   if( mpc_vtServerInstance == NULL )
     return false;
 
-  return mpc_vtServerInstance->isVtActive();
+  const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
+
+  return !cb_fakeVtOff && mpc_vtServerInstance->isVtActive();
 }
 
 
