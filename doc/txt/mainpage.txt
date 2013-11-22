@@ -43,6 +43,35 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 \section Changes Changes
 
 
+\subsection Change_ZA 2.6.1 to 2.6.2
+
+ISB-Client:
+ - Added module to support the ISB-Client functionality
+
+VT-Client:
+ - Enhancement: "Move to next VT" added
+ - Bugfixes:
+   - AuxN: Not sending PA to secondary VTs anymore.
+   - Fixed 10s-response timeout detection (probably introduced in 2.6.1)
+ 
+TC-Client:
+ - Enhancement: Add isMethodSet in procdata
+
+General:
+ - Compilefixes:
+   - Disabled isoaglib_assert(..) in HEADER files for now as this eventually causes
+     conflicts when using as Library with other (Debug/Release) setting as the application
+   - Reintroduced I/O defines (HAL_DIGOUT_OVERTEMP, HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT)
+ - Some internal getters for local Diagnostics.
+
+CAN-Server:
+ - Switched to new PCAN-Driver
+ 
+Certification:
+ - Functionaliy TC-Geo adapted from 2nd Ed DIS to FDIS. Added Options
+  
+
+
 \subsection Change_Z 2.6.0 to 2.6.1
 
 General:
