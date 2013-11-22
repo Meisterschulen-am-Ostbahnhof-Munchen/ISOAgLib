@@ -459,6 +459,7 @@ driver_and_hal_features()
       " -path '*/hal/hal_system.h' -o " \
       " -path '*/hal/hal_can.h' -o " \
       " -path '*/hal/hal_config.h' -o " \
+	  " -path '*/hal/hal_errcodes.h' -o " \
       " -path '*/hal/hal_typedef.h' -o " \
       " -path '*/hal/generic_utils/*' -o " \
       " -path '*/driver/system*' " >&3
