@@ -55,6 +55,8 @@ Aux2Functions_c::Aux2Functions_c(VtClientConnection_c& vtClientConnection )
 
 Aux2Functions_c::~Aux2Functions_c()
 {
+  if( isRegistered() )
+    getSchedulerInstance().deregisterTask( *this );
 }
 
 
