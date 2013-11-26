@@ -71,6 +71,8 @@ namespace HAL
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
     */
   int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent);
+  
+  /**
     deliver the measure voltage at the PWM output.
     Use this for application specific state evaluation for cases, where the standard
     getDigoutDiagnose function can go wrong.
