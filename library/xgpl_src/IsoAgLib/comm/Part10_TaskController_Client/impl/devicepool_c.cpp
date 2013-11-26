@@ -349,18 +349,18 @@ namespace __IsoAgLib {
 
 
   void DevicePool_c::add( DeviceObject_c& devObj ) {
-    const bool inserted = m_devicePool.insert(
+    (void)m_devicePool.insert(
       STL_NAMESPACE::pair<uint16_t, DeviceObject_c*>( devObj.getObjectId(), &devObj ) ).second;
-    
-    isoaglib_assert( inserted ); ( void )inserted;
   }
 
 
   void DevicePool_c::add( ProcData_c& pd )
   {
     isoaglib_assert( pd.getDpd() );
+    isoaglib_assert( pd.getDet() );
     isoaglib_assert( m_devicePool.find( pd.getDpd()->getObjectId() ) != m_devicePool.end() );
     isoaglib_assert( m_devicePool.find( pd.getDet()->getObjectId() ) != m_devicePool.end() );
+    isoaglib_assert( STL_NAMESPACE::find( m_procDatas.begin(), m_procDatas.end(), &pd ) == m_procDatas.end() );
 
     m_procDatas.push_back( &pd );
   }

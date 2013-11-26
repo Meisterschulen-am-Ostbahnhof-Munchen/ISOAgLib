@@ -124,10 +124,14 @@ namespace IsoAgLib {
         CNAMESPACE::free( buffer );
       }
 
+      //! not pedantic: it is safe to insert object multiple time
+      //!   object is then present only once in pool
       template<class T>
       void add( T& devObj ) {
         __IsoAgLib::DevicePool_c::add( devObj );
       }
+      //! Caution: Be sure one iProcData_c is only added once
+      //!   Not safe to insert same iProcData_c multiple time
       void add( iProcData_c& pd );
 
       //! Caution: Be sure to only clear if not connected to any server!
