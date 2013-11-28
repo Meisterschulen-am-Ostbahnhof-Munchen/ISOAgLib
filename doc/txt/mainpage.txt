@@ -51,11 +51,15 @@ ISB-Client:
 VT-Client:
  - Enhancement: "Move to next VT" added
  - Bugfixes:
-   - AuxN: Not sending PA to secondary VTs anymore.
+   - AuxN:
+     - Not sending PA to secondary VTs anymore.
+     - Assertion fixed, now properly deregistering from Scheduler
    - Fixed 10s-response timeout detection (probably introduced in 2.6.1)
  
 TC-Client:
- - Enhancement: Add isMethodSet in procdata
+ - Enhancement:
+   - Add isMethodSet in procdata
+   - Remove assert in add(object)
 
 General:
  - Compilefixes:
@@ -63,13 +67,17 @@ General:
      conflicts when using as Library with other (Debug/Release) setting as the application
    - Reintroduced I/O defines (HAL_DIGOUT_OVERTEMP, HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT)
  - Some internal getters for local Diagnostics.
+ - HAL-Simulator: Added defines for EEPROM (segment) size
 
 CAN-Server:
  - Switched to new PCAN-Driver
  
 Certification:
  - Functionaliy TC-Geo adapted from 2nd Ed DIS to FDIS. Added Options
-  
+
+I/Os:
+ - Reintroduced some I/O defines, although not used in the Driver
+   - HAL_DIGOUT_OVERTEMP, HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
 
 
 \subsection Change_Z 2.6.0 to 2.6.1
