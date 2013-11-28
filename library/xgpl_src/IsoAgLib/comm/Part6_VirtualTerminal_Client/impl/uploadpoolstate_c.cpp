@@ -19,6 +19,10 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 
+#ifndef USE_CCI_ISB_WORKAROUND
+#include <IsoAgLib/comm/impl/isobus_c.h>
+#endif
+
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
 #endif
@@ -403,6 +407,26 @@ UploadPoolState_c::handleEndOfObjectPoolResponse( bool success )
 
   if( success )
   {
+#ifdef USE_CCI_ISB_WORKAROUND
+    CanPkgExt_c sendData;
+    
+    sendData.setIsoPri( 6 );
+    sendData.setIsoPgn( 0x00CC00 );
+    sendData.setMonitorItemForDA( &const_cast<IsoItem_c&>( m_connection.getVtServerInst().getIsoItem() ) );
+    sendData.setMonitorItemForSA( m_connection.getIdentItem().getIsoItem() );
+    sendData.setUint8Data( 0, 0x02 );
+    sendData.setUint8Data( 1, 0xFD );
+    sendData.setUint8Data( 2, 0x00 );
+    sendData.setUint8Data( 3, 0xE8 );
+    sendData.setUint8Data( 4, 0x03 );
+    sendData.setUint8Data( 5, 0xFF );
+    sendData.setUint8Data( 6, 0xFF );
+    sendData.setUint8Data( 7, 0xFF );
+    sendData.setLen( 8 );
+    
+    getIsoBusInstance( m_connection.getMultitonInst() ) << sendData;
+#endif
+
     if( mb_usingVersionLabel )
     {
       const uint8_t rejectOff = rejectOffset( marrp7c_versionLabel[ 5 ], marrp7c_versionLabel[ 6 ] );
