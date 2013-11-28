@@ -38,6 +38,14 @@ namespace __HAL {
 #  define EEPROM_DAT_FILE		halSimulator().GetEEPROM_FileName()
 #endif
 
+#ifndef HAL_SIMULATOR_EEPROM_SIZE
+#  define HAL_SIMULATOR_EEPROM_SIZE   (8*1024)
+#endif
+
+#ifndef HAL_SIMULATOR_EEPROM_SEGMENT_SIZE
+#  define HAL_SIMULATOR_EEPROM_SIZE   (32)
+#endif
+
 
 /* ***************************************** */
 /* ****** EEPROM I/O BIOS functions  ******* */
@@ -47,12 +55,12 @@ static FILE* eepromDat;
 /* get the size of the eeprom */
 uint32_t getEepromSize(void)
 {
-  return 32*1024;
+  return HAL_SIMULATOR_EEPROM_SIZE;
 };
 
 /* get the segment size of the eeprom for page write access */
 int16_t getEepromSegmentSize(void){
-  return 32;
+  return HAL_SIMULATOR_EEPROM_SIZE;
 };
 
 /* get the status of eeprom */
