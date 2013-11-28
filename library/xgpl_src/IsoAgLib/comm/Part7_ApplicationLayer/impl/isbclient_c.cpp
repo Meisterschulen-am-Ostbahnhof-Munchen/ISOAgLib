@@ -154,7 +154,7 @@ IsbClient_c::processMsg( const CanPkg_c& canPkg )
       std::cout << HAL::getTime() << ": timeOut expected at NOW + " << sc_serverTimeOut << "... = " << (HAL::getTime() + sc_serverTimeOut) << std::endl;
 #endif
     }
-    m_servers.insert( std::pair<IsoItem_c*, IsbState_s >( serverItem, newState ) );
+    m_servers.insert( STL_NAMESPACE::pair<IsoItem_c*, IsbState_s >( serverItem, newState ) );
   }
 
   handleChangedState();
