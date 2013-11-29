@@ -203,8 +203,10 @@ IsoMonitor_c::timeEvent()
   if ( lastIsoSaRequest() != -1)
   {  
     IsoItem_c *someActiveLocalMember = anyActiveLocalItem();
+#if SA_REQUEST_PERIOD_MSEC > 0
     if( ( ( HAL::getTime() - lastIsoSaRequest() ) > SA_REQUEST_PERIOD_MSEC ) && someActiveLocalMember )
       ( void ) sendRequestForClaimedAddress( true, someActiveLocalMember );
+#endif
 
     const int32_t ci32_timeSinceLastAdrClaimRequest = ( System_c::getTime() - lastIsoSaRequest());
     bool b_requestAdrClaim = false;
