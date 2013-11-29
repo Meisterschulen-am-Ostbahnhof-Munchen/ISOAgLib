@@ -973,7 +973,7 @@ CommandHandler_c::reactOnStateChange( const SendStream_c& sendStream )
   case __IsoAgLib::SendStream_c::SendAborted:
     {
       const bool started = tryToStart();
-      isoaglib_assert( started );
+      isoaglib_assert( started ); ( void )started;
     } break;
 
   case __IsoAgLib::SendStream_c::SendSuccess:

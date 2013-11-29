@@ -335,6 +335,8 @@ bool DiagnosticFunctionalities_c::addFunctionalitiesTaskControllerGeo(bool imple
     functionality_description.options_bytes[1] = options.getByte( 0 );
     functionality_description.number_of_option_bytes++;
   }
+  else
+    functionality_description.options_bytes[1] = 0xDA; // dummy, just to avoid "may be used uninitialized" warning
 
   return addFunctionality(functionality, functionality_description);
 }
