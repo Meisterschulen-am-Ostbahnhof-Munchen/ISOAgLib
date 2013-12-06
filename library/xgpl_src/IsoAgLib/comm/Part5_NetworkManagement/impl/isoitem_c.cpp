@@ -444,8 +444,9 @@ IsoItem_c::checkWsRemoteAnnouncingFinished( int32_t time )
     delete m_wsSlavesAnnounced;
     m_wsSlavesAnnounced = m_wsSlavesAnnouncing;
     m_wsSlavesAnnouncing = NULL;
-    /// @todo Notify on changed/updated WS via CF-state handler?? maybe only if changed!
     m_wsRemoteAnnounceTime = time;
+
+    getIsoMonitorInstance4Comm().broadcastWsAnnounceFinished2Clients(*this);
   }
 }
 

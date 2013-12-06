@@ -96,7 +96,8 @@ public:
   void deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c & arc_client);
 
   void broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::iIsoItemAction_e action, IsoItem_c const& acrc_isoItem ) const;
-
+  void broadcastWsAnnounceFinished2Clients( IsoItem_c const& acrc_isoItem ) const;
+  
   IsoItem_c* item( uint8_t sa ) const;
   IsoItem_c* item( const IsoName_c& name, bool forceClaimedAddress = false ) const;
   void deleteItem( const IsoItem_c& );

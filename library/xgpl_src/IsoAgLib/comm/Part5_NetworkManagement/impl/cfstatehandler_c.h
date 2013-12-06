@@ -51,6 +51,10 @@ public:
   virtual void reactOnIsoItemModification(
       iIsoItemAction_e ae_action,
       IsoItem_c const &acrc_isoItem) = 0;
+
+  /** this function is called when WS announce is finished (initial and updates) */
+  virtual void reactOnWsAnnounceFinished(const IsoItem_c& /* acrc_isoItem */) {}
+      
 };
 
 /** Proxy for ControlFunctionStateHandler_c.

@@ -416,6 +416,15 @@ IsoMonitor_c::broadcastIsoItemModification2Clients( ControlFunctionStateHandler_
   }
 }
 
+void
+IsoMonitor_c::broadcastWsAnnounceFinished2Clients( IsoItem_c const& acrc_isoItem ) const
+{
+  for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
+  {
+    (*iter)->reactOnWsAnnounceFinished (acrc_isoItem);
+  }    
+}
+
 
 IsoItem_c *
 IsoMonitor_c::item( const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress ) const
