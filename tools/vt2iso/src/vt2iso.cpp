@@ -3599,7 +3599,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             {
               arrc_attributes [attrLength].set( str(format("%d") % ret));
             }
-            tempString = str(format("\"%s\"") % arrc_attributes [attrValidation_string].get());
+
+            if (!copyWithQuoteAndLength (tempString, escapedString(arrc_attributes [attrValidation_string].get()).c_str(), arrc_attributes [attrLength].getIntValue()))
+            {
+              return false;
+            }
             arrc_attributes [attrValidation_string].set( tempString );
           }
           if (validationtypetoi (arrc_attributes [attrValidation_type].get().c_str()) == -1)
