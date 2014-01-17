@@ -15,7 +15,7 @@
 #ifndef __UNICODE_HELPER_H__
 #define __UNICODE_HELPER_H__
 
-#if defined(WIN32)
+#if defined(WIN32) || defined(WINCE)
 #	include <tchar.h>
 #else
 
