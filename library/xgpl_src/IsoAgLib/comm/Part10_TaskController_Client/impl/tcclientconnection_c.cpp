@@ -357,34 +357,34 @@ namespace __IsoAgLib {
 
     switch (pkg.men_command)
     {
-      case ProcessPkg_c::requestConfiguration:
-      case ProcessPkg_c::configurationResponse:
-      case ProcessPkg_c::nack:
+      case IsoAgLib::ProcData::requestConfiguration:
+      case IsoAgLib::ProcData::configurationResponse:
+      case IsoAgLib::ProcData::nack:
         processMsgTc( pkg );
         break;
-      case ProcessPkg_c::requestValue:
+      case IsoAgLib::ProcData::requestValue:
         if( pkg.mui16_DDI == IsoAgLib::ProcData::DefaultDataLoggingDDI )
           m_stateHandler->_eventDefaultLoggingStarted( *this );
         else
           processRequestMsg( pkg );
         break;
-      case ProcessPkg_c::setValue:
+      case IsoAgLib::ProcData::setValue:
         processSetMsg( pkg );
         break;
-      case ProcessPkg_c::measurementTimeValueStart:
-      case ProcessPkg_c::measurementDistanceValueStart:
-      case ProcessPkg_c::measurementMinimumThresholdValueStart:
-      case ProcessPkg_c::measurementMaximumThresholdValueStart:
-      case ProcessPkg_c::measurementChangeThresholdValueStart:
+      case IsoAgLib::ProcData::measurementTimeValueStart:
+      case IsoAgLib::ProcData::measurementDistanceValueStart:
+      case IsoAgLib::ProcData::measurementMinimumThresholdValueStart:
+      case IsoAgLib::ProcData::measurementMaximumThresholdValueStart:
+      case IsoAgLib::ProcData::measurementChangeThresholdValueStart:
         processMeasurementMsg( pkg );
         break;
-      case ProcessPkg_c::commandReserved1:
-      case ProcessPkg_c::commandReserved2:
-      case ProcessPkg_c::commandReserved3:
-      case ProcessPkg_c::commandReserved4:
-      case ProcessPkg_c::taskControllerStatus:
-      case ProcessPkg_c::workingsetMasterMaintenance:
-      case ProcessPkg_c::CommandUndefined:
+      case IsoAgLib::ProcData::commandReserved1:
+      case IsoAgLib::ProcData::commandReserved2:
+      case IsoAgLib::ProcData::commandReserved3:
+      case IsoAgLib::ProcData::commandReserved4:
+      case IsoAgLib::ProcData::taskControllerStatus:
+      case IsoAgLib::ProcData::workingsetMasterMaintenance:
+      case IsoAgLib::ProcData::CommandUndefined:
         break;
     }
   }
@@ -431,11 +431,11 @@ namespace __IsoAgLib {
     if ( iter != m_measureProg.end())
     {
       switch ( data.men_command ) {
-        case ProcessPkg_c::measurementDistanceValueStart:
-        case ProcessPkg_c::measurementTimeValueStart:
-        case ProcessPkg_c::measurementChangeThresholdValueStart:
-        case ProcessPkg_c::measurementMinimumThresholdValueStart:
-        case ProcessPkg_c::measurementMaximumThresholdValueStart:
+        case IsoAgLib::ProcData::measurementDistanceValueStart:
+        case IsoAgLib::ProcData::measurementTimeValueStart:
+        case IsoAgLib::ProcData::measurementChangeThresholdValueStart:
+        case IsoAgLib::ProcData::measurementMinimumThresholdValueStart:
+        case IsoAgLib::ProcData::measurementMaximumThresholdValueStart:
           // measurementCommand_t and CommandType_t are unified for all measurement types
           iter->second->processMeasurementMsg(
             IsoAgLib::ProcData::MeasurementCommand_t( data.men_command ),
@@ -674,7 +674,7 @@ namespace __IsoAgLib {
 
 
   void TcClientConnection_c::sendProcMsg( uint16_t ddi, uint16_t element, int32_t pdValue ) const {
-    ProcessPkg_c pkg( ProcessPkg_c::setValue, element, ddi, pdValue );
+    ProcessPkg_c pkg( IsoAgLib::ProcData::setValue, element, ddi, pdValue );
 
     pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &m_server->getIsoItem() ) );
     pkg.setMonitorItemForSA( m_identItem.getIsoItem() );

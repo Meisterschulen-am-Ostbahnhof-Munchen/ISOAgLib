@@ -18,7 +18,7 @@ namespace __IsoAgLib {
 ProcessPkg_c::ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst )
   : CanPkgExt_c( arc_src, ai_multitonInst )
   , mi32_pdValue( mc_data.getInt32Data(4) )
-  , men_command( CommandType_t(mc_data[0] & 0xf) )
+  , men_command( IsoAgLib::ProcData::CommandType_t(mc_data[0] & 0xf) )
   , mui16_element( 0 )
   , mui16_DDI( 0 )
 {
@@ -30,18 +30,18 @@ ProcessPkg_c::ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst )
 }
 
 
-ProcessPkg_c::ProcessPkg_c( CommandType_t cmd, uint16_t element, uint16_t ddi, int32_t value )
+ProcessPkg_c::ProcessPkg_c( IsoAgLib::ProcData::CommandType_t cmd, uint16_t element, uint16_t ddi, int32_t value )
   : CanPkgExt_c()
   , mi32_pdValue( value )
   , men_command( cmd )
   , mui16_element( element )
   , mui16_DDI( ddi )
 {
-  isoaglib_assert( men_command != ProcessPkg_c::commandReserved1 );
-  isoaglib_assert( men_command != ProcessPkg_c::commandReserved2 );
-  isoaglib_assert( men_command != ProcessPkg_c::commandReserved3 );
-  isoaglib_assert( men_command != ProcessPkg_c::commandReserved4 );
-  isoaglib_assert( men_command != ProcessPkg_c::CommandUndefined );
+  isoaglib_assert( men_command != IsoAgLib::ProcData::commandReserved1 );
+  isoaglib_assert( men_command != IsoAgLib::ProcData::commandReserved2 );
+  isoaglib_assert( men_command != IsoAgLib::ProcData::commandReserved3 );
+  isoaglib_assert( men_command != IsoAgLib::ProcData::commandReserved4 );
+  isoaglib_assert( men_command != IsoAgLib::ProcData::CommandUndefined );
 
   setIsoPgn( PROCESS_DATA_PGN );
   setIsoPri( 3 );
@@ -58,7 +58,7 @@ ProcessPkg_c::ProcessPkg_c( CommandType_t cmd, uint16_t element, uint16_t ddi, i
 ProcessPkg_c::ProcessPkg_c( uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7 )
   : CanPkgExt_c()
   , mi32_pdValue( 0 )
-  , men_command( CommandUndefined )
+  , men_command( IsoAgLib::ProcData::CommandUndefined )
   , mui16_element( 0 )
   , mui16_DDI( 0 )
 {

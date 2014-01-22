@@ -43,11 +43,19 @@ namespace __IsoAgLib {
           virtual void _eventServerAvailable( const IsoItem_c&, IsoAgLib::ProcData::RemoteType_t ) = 0;
       };
 
+      class PdMessageHandler_c {
+        public:
+          virtual void _eventPdMessageReceived( const IsoItem_c&, const IsoItem_c*, IsoAgLib::ProcData::CommandType_t, uint16_t, uint16_t, int32_t) = 0;
+      };
+
       void init();
       void close();
 
       void setServerStateHandler( ServerStateHandler_c& hdl );
       void clearServerStateHandler();
+
+      void setPdMessageHandler( PdMessageHandler_c& hdl );
+      void clearPdMessageHandler();
 
       TcClientConnection_c* connect( IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcdl, DevicePool_c& );
       void disconnect( IdentItem_c& );
@@ -57,6 +65,10 @@ namespace __IsoAgLib {
       void reactOnIsoItemModification ( ControlFunctionStateHandler_c::iIsoItemAction_e, IsoItem_c const& );
 
       void processChangeDesignator( IdentItem_c&, uint16_t, const char* );
+
+      void sendPdMessage( const IsoItem_c& sa_item, 
+                          const IsoItem_c* da_item,
+                          IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value );
 
     private:
       TcClient_c();
@@ -108,6 +120,7 @@ namespace __IsoAgLib {
       Handler_t m_handler;
       Customer_t m_customer;
       ServerStateHandler_c* m_stateHandler;
+      PdMessageHandler_c* m_pdMessageHandler;
 
       void processMsgGlobal( const ProcessPkg_c& );
       void processMsgNonGlobal( const ProcessPkg_c& );

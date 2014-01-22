@@ -35,6 +35,7 @@ namespace __IsoAgLib {
     : m_handler( *this )
     , m_customer( *this )
     , m_stateHandler( NULL )
+    , m_pdMessageHandler( NULL )
     , m_identdata()
     , m_server()
   {
@@ -86,6 +87,23 @@ namespace __IsoAgLib {
     isoaglib_assert( m_stateHandler != NULL );
 
     m_stateHandler = NULL;
+  }
+
+
+  void
+  TcClient_c::setPdMessageHandler( PdMessageHandler_c& hdl ) {
+    isoaglib_assert ( m_pdMessageHandler == NULL );
+
+    m_pdMessageHandler = &hdl;
+  }
+
+
+  void
+  TcClient_c::clearPdMessageHandler()
+  {
+    isoaglib_assert( m_pdMessageHandler != NULL );
+
+    m_pdMessageHandler = NULL;
   }
 
 
@@ -143,6 +161,15 @@ namespace __IsoAgLib {
     if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
       return;
 
+    if (m_pdMessageHandler)
+        m_pdMessageHandler->_eventPdMessageReceived(
+            *pkg.getMonitorItemForSA(),
+            pkg.getMonitorItemForDA(),
+            pkg.men_command,
+            pkg.mui16_DDI,
+            pkg.mui16_element,
+            pkg.mi32_pdValue);
+
     if( pkg.getMonitorItemForDA() != NULL )
       processMsgNonGlobal( pkg );
     else
@@ -152,7 +179,7 @@ namespace __IsoAgLib {
 
   void
   TcClient_c::processMsgGlobal( const ProcessPkg_c& data ) {
-    if ( data.men_command == ProcessPkg_c::taskControllerStatus ) {
+    if ( data.men_command == IsoAgLib::ProcData::taskControllerStatus ) {
       processTcStatusMsg( data[4], *data.getMonitorItemForSA() );
     }
   }
@@ -251,6 +278,19 @@ namespace __IsoAgLib {
       }
     }
     return 0;
+  }
+
+
+  void TcClient_c::sendPdMessage( const IsoItem_c& sa_item, const IsoItem_c* da_item, IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value )
+  {
+    isoaglib_assert(command < IsoAgLib::ProcData::CommandUndefined);
+
+    ProcessPkg_c pkg( command, element, ddi, value );
+
+    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( da_item ));
+    pkg.setMonitorItemForSA( const_cast<IsoItem_c*>( &sa_item ));
+
+    getIsoBusInstance4Comm() << pkg;
   }
 
 

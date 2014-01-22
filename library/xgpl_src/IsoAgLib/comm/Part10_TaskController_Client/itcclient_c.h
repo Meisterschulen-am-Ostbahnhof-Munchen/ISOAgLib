@@ -34,6 +34,26 @@ namespace IsoAgLib {
           }
           friend class iTcClient_c;
       };
+      // Warning: only use if you know what you are doing
+      class iPdMessageHandler_c : private __IsoAgLib::TcClient_c::PdMessageHandler_c {
+        public:
+          virtual void eventPdMessageReceived(
+              const iIsoItem_c& sa_item, 
+              const iIsoItem_c* da_item,
+              IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value) = 0;
+
+        private:
+          virtual void _eventPdMessageReceived(
+              const __IsoAgLib::IsoItem_c& sa_item, 
+              const __IsoAgLib::IsoItem_c* da_item,
+              IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value) {
+            eventPdMessageReceived(
+                static_cast<const iIsoItem_c&>( sa_item ),
+                static_cast<const iIsoItem_c*>( da_item ),
+                command, element, ddi, value );
+          }
+          friend class iTcClient_c;
+      };
 
       void init() {
         TcClient_c::init();
@@ -44,6 +64,15 @@ namespace IsoAgLib {
       }
 
       void clearServerStateHandler() {
+        TcClient_c::clearServerStateHandler();
+      }
+
+      // Warning: only use if you know what you are doing
+      void setPdMessageHandler( iServerStateHandler_c& hdl ) {
+        TcClient_c::setServerStateHandler( hdl );
+      }
+ 
+      void clearPdMessageHandler() {
         TcClient_c::clearServerStateHandler();
       }
 
@@ -66,6 +95,19 @@ namespace IsoAgLib {
       /* changing designators is not yet supported */
       void processChangeDesignator( iIdentItem_c& identItem, uint16_t objID, const char* newDesignator ) {
         return TcClient_c::processChangeDesignator( static_cast<__IsoAgLib::IdentItem_c&>( identItem ), objID, newDesignator );
+      }
+
+      // Warning: only use if you know what you are doing
+      void sendPdMessage( const iIsoItem_c& sa_item, 
+                          const iIsoItem_c* da_item,
+                          IsoAgLib::ProcData::CommandType_t command,
+                          uint16_t element,
+                          uint16_t ddi,
+                          int32_t value ) {
+        return TcClient_c::sendPdMessage(
+            static_cast<const __IsoAgLib::IsoItem_c&>( sa_item ),
+            static_cast<const __IsoAgLib::IsoItem_c*>( da_item ),
+            command, element, ddi, value );
       }
 
     private:

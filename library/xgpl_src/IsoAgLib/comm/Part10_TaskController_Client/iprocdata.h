@@ -44,6 +44,26 @@ namespace ProcData {
     NackReserved2 =                               0x80,
     NackUndefined };
 
+  enum CommandType_t {
+    requestConfiguration                  = 0x0,
+    configurationResponse                 = 0x1,
+    requestValue                          = 0x2,
+    setValue                              = 0x3,
+    measurementTimeValueStart             = 0x4,
+    measurementDistanceValueStart         = 0x5,
+    measurementMinimumThresholdValueStart = 0x6,
+    measurementMaximumThresholdValueStart = 0x7,
+    measurementChangeThresholdValueStart  = 0x8,
+    commandReserved1                      = 0x9,
+    commandReserved2                      = 0xa,
+    commandReserved3                      = 0xb,
+    commandReserved4                      = 0xc,
+    nack                                  = 0xd,
+    taskControllerStatus                  = 0xe,
+    workingsetMasterMaintenance           = 0xf,
+
+    CommandUndefined                      = 0x10
+  };
 
   /** enum type for special DDIs */
   enum SpecialDDI_t {DefaultDataLoggingDDI = 0xDFFF};

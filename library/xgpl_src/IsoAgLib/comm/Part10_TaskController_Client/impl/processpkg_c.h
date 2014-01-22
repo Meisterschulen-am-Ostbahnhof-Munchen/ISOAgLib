@@ -15,35 +15,15 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
 namespace __IsoAgLib {
 
 class ProcessPkg_c : public CanPkgExt_c
 {
 public:
-  enum CommandType_t {
-    requestConfiguration                  = 0x0,
-    configurationResponse                 = 0x1,
-    requestValue                          = 0x2,
-    setValue                              = 0x3,
-    measurementTimeValueStart             = 0x4,
-    measurementDistanceValueStart         = 0x5,
-    measurementMinimumThresholdValueStart = 0x6,
-    measurementMaximumThresholdValueStart = 0x7,
-    measurementChangeThresholdValueStart  = 0x8,
-    commandReserved1                      = 0x9,
-    commandReserved2                      = 0xa,
-    commandReserved3                      = 0xb,
-    commandReserved4                      = 0xc,
-    nack                                  = 0xd,
-    taskControllerStatus                  = 0xe,
-    workingsetMasterMaintenance           = 0xf,
-
-    CommandUndefined                      = 0x10
-  };
-
   ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst = 0 );
-  ProcessPkg_c( CommandType_t, uint16_t element, uint16_t ddi, int32_t value );
+  ProcessPkg_c( IsoAgLib::ProcData::CommandType_t, uint16_t element, uint16_t ddi, int32_t value );
   ProcessPkg_c( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t );
 
   ~ProcessPkg_c() {}
@@ -51,7 +31,7 @@ public:
 public:
   int32_t mi32_pdValue;
 
-  CommandType_t men_command;
+  IsoAgLib::ProcData::CommandType_t men_command;
   uint16_t mui16_element;
   uint16_t mui16_DDI;
 
