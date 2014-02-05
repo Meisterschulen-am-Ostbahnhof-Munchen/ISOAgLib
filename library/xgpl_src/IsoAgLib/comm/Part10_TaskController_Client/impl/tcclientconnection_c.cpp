@@ -204,6 +204,10 @@ namespace __IsoAgLib {
       } else {
         setDevPoolState( PoolStateDisabled );
         m_timeWsAnnounceKey = -1;
+
+        stopRunningMeasurement();
+        if (m_server && m_server->getLastActiveTaskTC())
+          eventTaskStopped();
       }
 
       setDevPoolAction( PoolActionIdle );
