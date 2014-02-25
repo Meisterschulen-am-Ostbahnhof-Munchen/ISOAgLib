@@ -145,6 +145,10 @@ private:
   uint8_t mui8_commandParameter; // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
   int32_t mi32_commandTimestamp;
   int32_t mi32_commandTimeout;
+#ifdef WORKAROUND_PREMATURE_TP_RESPONSES
+  uint8_t m_queuedResponseErrByte; // 1-8 ==> command queued, 0 ==> no cmd queued.
+  uint8_t m_queuedResponsePkg[ 8 ];
+#endif
 
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >  mq_sendUpload;
@@ -165,6 +169,10 @@ CommandHandler_c::CommandHandler_c( VtClientConnection_c &connection )
   , mui8_commandParameter( 0 ) // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
   , mi32_commandTimestamp( -1 ) // no check initially
   , mi32_commandTimeout( 0 ) // will be set when needed
+#ifdef WORKAROUND_PREMATURE_TP_RESPONSES
+  , m_queuedResponseErrByte( 0 )
+//, m_queuedResponsePkg
+#endif
   , mq_sendUpload()
   , mb_checkSameCommand( true )
   , mb_commandsToBus( true )

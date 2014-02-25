@@ -846,6 +846,10 @@ CommandHandler_c::tryToStart()
   men_uploadCommandState = UploadCommandWithAwaitingResponse;
   SendUpload_c &actSend = mq_sendUpload.front();
 
+#ifdef WORKAROUND_PREMATURE_TP_RESPONSES
+  m_queuedResponseErrByte = 0; // no response stored.
+#endif
+
    /// Use Multi or Single CAN-Pkgs?
   //////////////////////////////////
 
@@ -954,6 +958,9 @@ CommandHandler_c::finishUploadCommand()
   #endif
 
   mi32_commandTimestamp = -1;
+#ifdef WORKAROUND_PREMATURE_TP_RESPONSES
+  m_queuedResponseErrByte = 0; // actually not used in UploadCommandIdle, just as the timestamp above!
+#endif
   men_uploadCommandState = UploadCommandIdle;
   m_connection.notifyOnFinishedCommand( !mq_sendUpload.empty() );
 }
@@ -978,6 +985,10 @@ CommandHandler_c::reactOnStateChange( const SendStream_c& sendStream )
 
   case __IsoAgLib::SendStream_c::SendSuccess:
     mi32_commandTimestamp = HAL::getTime();
+#ifdef WORKAROUND_PREMATURE_TP_RESPONSES
+    if( m_queuedResponseErrByte > 0 )
+      finalizeCommand( m_queuedResponseErrByte, m_queuedResponsePkg );
+#endif
     // now two things can be detected:
     // 1) time-out
     // 2) incoming response triggering the next command
@@ -1343,6 +1354,14 @@ CommandHandler_c::finalizeCommand( unsigned errByte, const uint8_t *dataBytes )
   else
   { /// Our command is still running, so do NOT remove from the queue
     /// To early (in case of TP) or unsolicited response from VT!!
+#ifdef WORKAROUND_PREMATURE_TP_RESPONSES
+    if( mui8_commandParameter == cmd )
+    { /* okay, right (but premature) response for our current command! */
+      m_queuedResponseErrByte = errByte;
+      for( int i=0; i<8; ++i )
+        m_queuedResponsePkg[ i ] = dataBytes[ i ];
+    }
+#endif
   }
 }
 
