@@ -2617,7 +2617,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (arrc_attributes [attrLanguage].get().compare(arrs_language[curLang].code) == 0)
             break; // found the language! => index is "curLang"
         }
-        if ((curLang==ui_languages) && (ui_languages>0))
+        if (curLang==ui_languages)
         { // language not found!
           std::cerr << "\n\nYOU NEED TO SPECIFY A VALID LANGUAGE which you have also defined in the <workingset> object ("<<arrc_attributes [attrLanguage].get()<<" is not!)! STOPPING PARSER! bye."<<std::endl<<std::endl;
           return false;
