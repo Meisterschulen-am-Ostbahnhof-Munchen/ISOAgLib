@@ -27,7 +27,6 @@ namespace IsoAgLib {
       class iServerStateHandler_c : private __IsoAgLib::TcClient_c::ServerStateHandler_c {
         public:
           virtual void eventServerAvailable( const iIsoItem_c&, ProcData::RemoteType_t ) = 0;
-
         private:
           virtual void _eventServerAvailable( const __IsoAgLib::IsoItem_c& item, IsoAgLib::ProcData::RemoteType_t type ) {
             eventServerAvailable( static_cast<const iIsoItem_c&>( item ), type );
@@ -68,12 +67,12 @@ namespace IsoAgLib {
       }
 
       // Warning: only use if you know what you are doing
-      void setPdMessageHandler( iServerStateHandler_c& hdl ) {
-        TcClient_c::setServerStateHandler( hdl );
+      void setPdMessageHandler( iPdMessageHandler_c& hdl ) {
+        TcClient_c::setPdMessageHandler( hdl );
       }
  
       void clearPdMessageHandler() {
-        TcClient_c::clearServerStateHandler();
+        TcClient_c::clearPdMessageHandler();
       }
 
       void close() {
