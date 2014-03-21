@@ -37,7 +37,11 @@ namespace __IsoAgLib {
   class ServerInstance_c;
 
 
-  class TcClientConnection_c : public CanCustomer_c {
+  class TcClientConnection_c
+#ifdef HAL_USE_SPECIFIC_FILTERS
+      : public CanCustomer_c
+#endif
+  {
 // @todo Convert to static const...
 #define DEF_TimeOut_GetVersion            5000
 #define DEF_TimeOut_OPTransfer            20000
@@ -147,9 +151,9 @@ namespace __IsoAgLib {
 
       bool isTcAlive();
       void startUpload();
-
+#ifdef HAL_USE_SPECIFIC_FILTERS
       virtual void processMsg( const CanPkg_c& data );
-
+#endif
       void processProcMsg( const ProcessPkg_c& );
       void processMsgTc( const ProcessPkg_c& );
 

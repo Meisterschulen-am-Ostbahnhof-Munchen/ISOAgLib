@@ -166,8 +166,8 @@ namespace __IsoAgLib {
             *pkg.getMonitorItemForSA(),
             pkg.getMonitorItemForDA(),
             pkg.men_command,
-            pkg.mui16_DDI,
             pkg.mui16_element,
+            pkg.mui16_DDI,
             pkg.mi32_pdValue);
 
     if( pkg.getMonitorItemForDA() != NULL )
@@ -293,5 +293,12 @@ namespace __IsoAgLib {
     getIsoBusInstance4Comm() << pkg;
   }
 
+#ifdef HAL_USE_SPECIFIC_FILTERS
+  void TcClient_c::receivePdMessage(const IsoItem_c& sa_item, const IsoItem_c* da_item, IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value)
+  {
+    if (m_pdMessageHandler)
+      m_pdMessageHandler->_eventPdMessageReceived(sa_item, da_item, command, element, ddi, value);
+  }
+#endif
 
 } // __IsoAgLib

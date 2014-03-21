@@ -70,6 +70,10 @@ namespace __IsoAgLib {
                           const IsoItem_c* da_item,
                           IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value );
 
+#ifdef HAL_USE_SPECIFIC_FILTERS
+      void receivePdMessage(const IsoItem_c& sa_item, const IsoItem_c* da_item, IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value);
+#endif
+
     private:
       TcClient_c();
 

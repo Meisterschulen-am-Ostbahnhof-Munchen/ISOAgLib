@@ -347,6 +347,7 @@ namespace __IsoAgLib {
     m_uploadStep = UploadNone;
   }
 
+#ifdef HAL_USE_SPECIFIC_FILTERS
   void
   TcClientConnection_c::processMsg( const CanPkg_c& data ) {
     // NOTE: Convertin to ProcessPkg_c does resolving with CanPkgExt_c
@@ -354,7 +355,16 @@ namespace __IsoAgLib {
     ProcessPkg_c pkg( data, getMultitonInst() );
     // only PROCESS_DATA_PGN with SA/DA from IsoFilterManager, no need to check anything!
     processProcMsg( pkg );
+
+    getTcClientInstance().receivePdMessage(
+            *pkg.getMonitorItemForSA(),
+            pkg.getMonitorItemForDA(),
+            pkg.men_command,
+            pkg.mui16_element,
+            pkg.mui16_DDI,      
+            pkg.mi32_pdValue);
   }
+#endif
 
   void
   TcClientConnection_c::processProcMsg( const ProcessPkg_c& pkg ) {
@@ -764,5 +774,6 @@ namespace __IsoAgLib {
   TcClientConnection_c::getFirstByte() {
     return m_devicePoolToUpload[0];
   }
+
 
 }; // __IsoAgLib
