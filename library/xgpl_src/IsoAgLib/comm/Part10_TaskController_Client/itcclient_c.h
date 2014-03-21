@@ -29,7 +29,7 @@ namespace IsoAgLib {
           virtual void eventServerAvailable( const iIsoItem_c&, ProcData::RemoteType_t ) = 0;
         private:
           virtual void _eventServerAvailable( const __IsoAgLib::IsoItem_c& item, IsoAgLib::ProcData::RemoteType_t type ) {
-            eventServerAvailable( static_cast<const iIsoItem_c&>( item ), type );
+            eventServerAvailable( (const iIsoItem_c&) item , type );
           }
           friend class iTcClient_c;
       };
@@ -47,8 +47,8 @@ namespace IsoAgLib {
               const __IsoAgLib::IsoItem_c* da_item,
               IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value) {
             eventPdMessageReceived(
-                static_cast<const iIsoItem_c&>( sa_item ),
-                static_cast<const iIsoItem_c*>( da_item ),
+                (const iIsoItem_c&) sa_item ,
+                (const iIsoItem_c*) da_item ,
                 command, element, ddi, value );
           }
           friend class iTcClient_c;
