@@ -79,6 +79,10 @@ namespace IsoAgLib {
       //! For normal, new applications use the type-safe version above!
       iDeviceObjectDpd_c( uint16_t dpd_ddi, uint8_t properties, uint8_t triggerMethods, const char* desig, const iDeviceObjectDvp_c* dvp )
         : DeviceObjectDpd_c( dpd_ddi, properties, triggerMethods, desig, dvp ) {}
+
+      bool propertyDefaultSet() const {
+        return __IsoAgLib::DeviceObjectDpd_c::propertyDefaultSet();
+      }
   };
 
 

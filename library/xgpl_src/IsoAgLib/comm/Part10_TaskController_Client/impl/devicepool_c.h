@@ -165,6 +165,9 @@ namespace __IsoAgLib {
       bool propertySetpoint() const {
         return ( m_properties & ( 1 << 1 ) ) != 0;
       }
+      bool propertyDefaultSet() const {
+        return ( m_properties & ( 1 << 0 ) ) != 0;
+      }
 
     private:
       uint32_t getSize() const;
