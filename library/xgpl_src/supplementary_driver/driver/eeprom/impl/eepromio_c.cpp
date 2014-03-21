@@ -58,7 +58,6 @@ EepromIo_c::setg(uint16_t aui16_adress)
 bool
 EepromIo_c::eofp(uint16_t aui16_lookahead )
 { // compare (write position + lookahead) with size of EEPROM memory
-  isoaglib_assert( (uint32_t(mui16_wPosition) + uint32_t(aui16_lookahead)) < eepromSize() );
   return( (uint32_t(mui16_wPosition) + uint32_t(aui16_lookahead)) > eepromSize() );
 };
 
@@ -66,8 +65,6 @@ EepromIo_c::eofp(uint16_t aui16_lookahead )
 bool
 EepromIo_c::eofg(uint16_t aui16_lookahead )
 { // compare (read position + lookahead) with size of EEPROM memory
-
-  isoaglib_assert( (uint32_t(mui16_rPosition) + uint32_t(aui16_lookahead)) < eepromSize());
   return( ( uint32_t(mui16_rPosition) + uint32_t(aui16_lookahead)) > eepromSize() );
 };
 
@@ -77,7 +74,6 @@ EepromIo_c::writeString(const uint8_t *const apb_string, uint16_t aui16_number)
 { // check if enough space for string is after actual write position
   if (aui16_number > 0)
   {
-    isoaglib_assert( ! eofp( aui16_number - 1 ) );
     write (mui16_wPosition, aui16_number, apb_string);
     mui16_wPosition += (aui16_number); //increment position
   }
@@ -120,7 +116,7 @@ EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* a
   const uint8_t* pb_data = apb_data;
   uint8_t pb_compare[MAX_EEPROM_SEGMENT_SIZE];
 
-  isoaglib_assert( ! eofp( aui16_adress + sizeof( uint16_t ) ) );
+  isoaglib_assert( (uint32_t(aui16_adress) + uint32_t(aui16_number)) <= eepromSize() );
 
   while (ui16_restNumber > 0)
   { // if data doesn't fit in one segment write with series of BIOS write calls
