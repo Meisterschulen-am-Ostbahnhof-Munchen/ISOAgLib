@@ -219,20 +219,20 @@ namespace __IsoAgLib {
 
   /* --- DPD -------------------------------------------------------------*/
 
-  DeviceObjectDpd_c::DeviceObjectDpd_c( uint16_t ddi, const IsoAgLib::ProcData::Properties_t& bitmaskProps,
+  DeviceObjectDpd_c::DeviceObjectDpd_c( uint16_t dpd_ddi, const IsoAgLib::ProcData::Properties_t& bitmaskProps,
                                         const IsoAgLib::ProcData::Methods_t& bitmaskMethods, const char* desig, const DeviceObjectDvp_c* dvp )
     : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDPD, desig )
-    , m_ddi( ddi )
+    , m_ddi( dpd_ddi )
     , m_properties( bitmaskProps.getByte( 0 ) )
     , m_method( bitmaskMethods.getByte( 0 ) )
     , m_dvpObjectId( ( dvp ) ? dvp->getObjectId() : 0xFFFF )
   {}
 
 
-  DeviceObjectDpd_c::DeviceObjectDpd_c( uint16_t ddi, uint8_t properties, uint8_t triggerMethods,
+  DeviceObjectDpd_c::DeviceObjectDpd_c( uint16_t dpd_ddi, uint8_t properties, uint8_t triggerMethods,
                                         const char* desig, const DeviceObjectDvp_c* dvp )
     : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDPD, desig )
-    , m_ddi( ddi )
+    , m_ddi( dpd_ddi )
     , m_properties( properties )
     , m_method( triggerMethods )
     , m_dvpObjectId( ( dvp ) ? dvp->getObjectId() : 0xFFFF )
@@ -262,9 +262,9 @@ namespace __IsoAgLib {
 
   /* --- DPT -------------------------------------------------------------*/
 
-  DeviceObjectDpt_c::DeviceObjectDpt_c( uint16_t ddi, int32_t value, const char* desig, const DeviceObjectDvp_c* dvpRef )
+  DeviceObjectDpt_c::DeviceObjectDpt_c( uint16_t dpt_ddi, int32_t value, const char* desig, const DeviceObjectDvp_c* dvpRef )
     : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDPT, desig )
-    , m_ddi( ddi )
+    , m_ddi( dpt_ddi )
     , m_value( value )
     , m_dvpObjectId( ( dvpRef ) ? dvpRef->getObjectId() : 0xFFFF )
   {}

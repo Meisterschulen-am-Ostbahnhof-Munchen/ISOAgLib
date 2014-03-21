@@ -153,8 +153,8 @@ namespace __IsoAgLib {
   class DeviceObjectDvp_c;
   class DeviceObjectDpd_c : public DeviceObject_c {
     public:
-      DeviceObjectDpd_c( uint16_t ddi, const IsoAgLib::ProcData::Properties_t&, const IsoAgLib::ProcData::Methods_t&, const char* desig, const DeviceObjectDvp_c* );
-      DeviceObjectDpd_c( uint16_t ddi, uint8_t properties, uint8_t triggerMethods, const char* desig, const DeviceObjectDvp_c* dvp );
+      DeviceObjectDpd_c( uint16_t dpd_ddi, const IsoAgLib::ProcData::Properties_t&, const IsoAgLib::ProcData::Methods_t&, const char* desig, const DeviceObjectDvp_c* );
+      DeviceObjectDpd_c( uint16_t dpd_ddi, uint8_t properties, uint8_t triggerMethods, const char* desig, const DeviceObjectDvp_c* dvp );
 
       uint16_t ddi() const {
         return m_ddi;
@@ -182,7 +182,7 @@ namespace __IsoAgLib {
   /* DPT */
   class DeviceObjectDpt_c : public DeviceObject_c {
     public:
-      DeviceObjectDpt_c( uint16_t ddi, int32_t value, const char* desig, const DeviceObjectDvp_c* );
+      DeviceObjectDpt_c( uint16_t dpt_ddi, int32_t value, const char* desig, const DeviceObjectDvp_c* );
       int32_t getValue() const {
         return m_value;
       }
@@ -233,6 +233,7 @@ namespace __IsoAgLib {
   class DevicePool_c {
     public:
       DevicePool_c();
+      virtual ~DevicePool_c() {}
 
       virtual uint8_t* allocByteStreamBuffer( uint32_t size ) = 0;
       virtual void freeByteStreamBuffer( uint8_t* buffer ) = 0;
