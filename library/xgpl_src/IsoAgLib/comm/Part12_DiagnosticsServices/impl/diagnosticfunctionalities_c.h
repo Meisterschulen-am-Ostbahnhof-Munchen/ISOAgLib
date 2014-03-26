@@ -76,6 +76,8 @@ public:
     
   bool remFunctionalities(FunctionalitiesCharacteristics_t);
 
+  const FunctionalitiesArr& getRefFunctionalitiesArr() const { return m_functionalities; }
+
 private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
   public:
