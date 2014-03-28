@@ -250,7 +250,7 @@ check_set_correct_variables()
         exit 2
     fi
 
-    if [ $APP_PATH -eq ] ; then
+    if [ -z "$APP_PATH" ] ; then
         APP_PATH="$ISO_AG_LIB_PATH"
     fi
     APP_INSIDE="../../$APP_PATH"
