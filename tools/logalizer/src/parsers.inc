@@ -337,3 +337,26 @@ parseLogLineWTK( std::string const &acr_line ) // "0000.376 can r 18E6FFF1  8  2
   PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
   return std::make_pair( i_result, t_ptrFrame );
 }
+
+std::pair< int, PtrDataFrame_t >
+parseLogLineKvaserMemorator( std::string const &acr_line ) // "0.33198,1,cfffff0,4,8,55,7d,7d,7d,7d,ff,ff,ff,1,2014-05-05 15:01:08"
+{
+  float f1;
+  int iID, inumDb;
+  unsigned arru_d[8];
+  int parsed_count = sscanf(
+      acr_line.c_str(),
+      "%f,%*d,%x,%*d,%d,%x,%x,%x,%x,%x,%x,%x,%x%*s",      
+      &f1,
+      &iID,
+      &inumDb,
+      arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
+  int i_result = parsed_count == (3+inumDb) ? 0 : -1;
+  if (i_result < 0)
+    return std::make_pair( i_result, PtrDataFrame_t(0) );
+  uint64_t const cui64_time = static_cast<uint64_t>(f1*1000);
+  std::vector< uint8_t > vec_data;
+  copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
+  return std::make_pair( i_result, t_ptrFrame );
+}
