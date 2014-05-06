@@ -88,6 +88,45 @@ interpreteGroundBasedSpeedDist( PtrDataFrame_t at_ptrFrame )
   return out.str();
 }
 
+std::string
+interpreteMaintainPower( PtrDataFrame_t at_ptrFrame )
+{
+  if (at_ptrFrame->dataSize() != 8)
+    return "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+  std::ostringstream out;
+  switch ((at_ptrFrame->dataOctet(0) >> 6) & 0x03) {
+      case 0x0: out << " No req for ECU_PWR "; break;
+      case 0x1: out << " 2s more of ECU_PWR "; break;
+      case 0x2: out << " Reserved "; break;
+      case 0x3: out << " Don't care "; break;
+  }
+  switch ((at_ptrFrame->dataOctet(0) >> 4) & 0x03) {
+      case 0x0: out << " No req for ACT_PWR "; break;
+      case 0x1: out << " 2s more of ACT_PWR "; break;
+      case 0x2: out << " Reserved "; break;
+      case 0x3: out << " Don't care "; break;
+  }
+  switch ((at_ptrFrame->dataOctet(1) >> 6) & 0x03) {
+      case 0x0: out << "tp state: Impl may not be transported "; break;
+      case 0x1: out << "tp state: Impl may be transported "; break;
+      case 0x2: out << "tp state: Error "; break;
+      case 0x3: out << "tp state: N/A "; break;
+  }
+  switch ((at_ptrFrame->dataOctet(1) >> 4) & 0x03) {
+      case 0x0: out << "park state: Impl may not be disconnected "; break;
+      case 0x1: out << "park state: Impl may be disconnected "; break;
+      case 0x2: out << "park state: Error "; break;
+      case 0x3: out << "park state: N/A "; break;
+  }
+  switch ((at_ptrFrame->dataOctet(1) >> 2) & 0x03) {
+      case 0x0: out << "work state: Impl is not ready for field work "; break;
+      case 0x1: out << "work state: Impl is ready for field work "; break;
+      case 0x2: out << "work state: Error "; break;
+      case 0x3: out << "work state: N/A "; break;
+  }
+  // Bytes 3 to 8 are reserved
+  return out.str();
+}
 
 std::string
 interpreteRearPTOstate( PtrDataFrame_t at_ptrFrame )

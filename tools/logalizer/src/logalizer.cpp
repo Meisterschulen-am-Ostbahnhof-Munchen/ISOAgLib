@@ -205,6 +205,7 @@ exit_with_usage(const char* progname)
   std::cerr << "         8 -> JRF (.jrf)"<<std::endl;
   std::cerr << "         9 -> PCANExplorer (.trc)"<<std::endl;
   std::cerr << "        10 -> SocketCAN candump -l"<<std::endl;
+  std::cerr << "        11 -> WTK"<<std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "--iop:   Store VT object pool transfers in iop format. Default: do not store" << std::endl;
@@ -231,6 +232,7 @@ exit_with_usage(const char* progname)
   std::cerr << "JRF:         '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
   std::cerr << "PCANExplorer:'    13)       116.6 1  Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
   std::cerr << "SocketCAN:   '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
+  std::cerr << "WTK:         '0000.376 can r 18E6FFF1  8  21 00 FF FF 00 00 00 FF  0'"<<std::endl;
   exit(0);
 }
 
@@ -364,7 +366,7 @@ interpretePgn( uint32_t rui32_pgn )
   case FRONT_PTO_STATE_PGN:                     out << "FRONT_PTO_STATE   "; break;
   case REAR_HITCH_STATE_PGN:                    out << "REAR_HITCH_STATE  "; break;
   case FRONT_HITCH_STATE_PGN:                   out << "FRONT_HITCH_STATE "; break;
-  case MAINTAIN_POWER_REQUEST_PGN:              out << "MAINTAIN_POWER_REQ"; break;
+  case MAINTAIN_POWER_REQUEST_PGN:              out << "MAINTAIN_POWER_REQ "; break;
   case WHEEL_BASED_SPEED_DIST_PGN:              out << "WHEEL_BASED_SPEED_DIST "; break;
   case GROUND_BASED_SPEED_DIST_PGN:             out << "GROUND_BASED_SPEED_DIST "; break;
   case SELECTED_SPEED_CMD:                      out << "SELECTED_SPEED_CMD "; break;
@@ -697,6 +699,7 @@ getPgnDataInterpreter( PtrDataFrame_t at_ptrFrame )
   case REQUEST_PGN_MSG_PGN:                     return interpreteRequestPgnMsg;
   case ADDRESS_CLAIM_PGN:                       return interpreteAddressClaimed;
   case PROCESS_DATA_PGN:                        return interpreteProcessData;
+  case MAINTAIN_POWER_REQUEST_PGN:              return interpreteMaintainPower;
   case GUIDANCE_MACHINE_STATUS:
   case GUIDANCE_SYSTEM_CMD:
   case ISOBUS_CERTIFICATION_PGN:
@@ -708,7 +711,6 @@ getPgnDataInterpreter( PtrDataFrame_t at_ptrFrame )
   case HITCH_PTO_COMMANDS:
   case FRONT_PTO_STATE_PGN:
   case FRONT_HITCH_STATE_PGN:
-  case MAINTAIN_POWER_REQUEST_PGN:
   case SELECTED_SPEED_CMD:
   case SELECTED_SPEED_MESSAGE:
   case SOFTWARE_IDENTIFICATION_PGN:
@@ -781,6 +783,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineJrf,
     parseLogLineTrc2,
     parseLogLineSocketCAN,
+    parseLogLineWTK,
     defaultParseLogLine
   };
 
