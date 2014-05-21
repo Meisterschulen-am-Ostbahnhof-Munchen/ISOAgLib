@@ -606,6 +606,11 @@ interpreteEngineSpeedMsg( PtrDataFrame_t at_ptrFrame )
 }
 
 
+
+void handleVehiclePosition( uint64_t, double, double );
+void handleVehicleSpeed( uint64_t, double, double, double, double );
+
+
 std::string
 interpreteVehicleSpeed( PtrDataFrame_t at_ptrFrame )
 {
@@ -619,10 +624,17 @@ interpreteVehicleSpeed( PtrDataFrame_t at_ptrFrame )
   // 2 bytes pitch 1/128 deg/bit, -200 deg offset, -200 to 301.99 deg
   // 2 bytes altitude 0.125 m/bit, -2500 m offset, -2500 to 5531.875 m
   std::ostringstream out;
-  out << "Compass bearing:" << (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(1)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(0)) ) / 128) << "° "
-       << "Naviagion based vehicle speed:" << static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(3)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(2)) ) / 256 << " km/h "
-       << "pitch:" << (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(5)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(4)) ) / 128) - 200 << "° "
-       << "altitude:" << (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(7)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(6)) ) * 0.125 ) - 2500 << " m ";
+  const double bearing = static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(1)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(0)) ) / 128;
+  const double speed = static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(3)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(2)) ) / 256;
+  const double pitch = (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(5)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(4)) ) / 128) - 200;
+  const double altitude = (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(7)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(6)) ) * 0.125 ) - 2500;
+
+  handleVehicleSpeed( at_ptrFrame->time(), bearing, speed, pitch, altitude );
+
+  out << "Compass bearing:" << bearing << "° "
+       << "Navigation based vehicle speed:" << speed << " km/h "
+       << "Pitch:" << pitch << "° "
+       << "Altitude:" << altitude << " m ";
   
   return out.str();
 }
@@ -639,17 +651,20 @@ interpreteVehiclePosition( PtrDataFrame_t at_ptrFrame )
   // 4 bytes Latitude  10^-7 deg/bit, -210 deg offset range from 10^-7 deg/bit, -210 deg offset
   // 4 bytes Longitude 10^-7 deg/bit, -210 deg offset range from 10^-7 deg/bit, -210 deg offset
   std::ostringstream out;
-  out << "Latitude: " << (static_cast<uint32_t>( (static_cast<uint32_t>(at_ptrFrame->dataOctet(3)) << 24)
-                                                   | (static_cast<uint32_t>(at_ptrFrame->dataOctet(2)) << 16)
-                                                   | (static_cast<uint32_t>(at_ptrFrame->dataOctet(1)) << 8)
-                                                   |  static_cast<uint32_t>(at_ptrFrame->dataOctet(0))
-                                                   ) * 0.0000001) - 210 << "° "
-       << "Longitude: " << (static_cast<uint32_t>( (static_cast<uint32_t>(at_ptrFrame->dataOctet(7)) << 24)
-                                                   | (static_cast<uint32_t>(at_ptrFrame->dataOctet(6)) << 16)
-                                                   | (static_cast<uint32_t>(at_ptrFrame->dataOctet(5)) << 8)
-                                                   |  static_cast<uint32_t>(at_ptrFrame->dataOctet(4))
-                                                   ) * 0.0000001) - 210 << "° ";
+  const double lat = (static_cast<uint32_t>( (static_cast<uint32_t>(at_ptrFrame->dataOctet(3)) << 24)
+                                           | (static_cast<uint32_t>(at_ptrFrame->dataOctet(2)) << 16)
+                                           | (static_cast<uint32_t>(at_ptrFrame->dataOctet(1)) << 8)
+                                           |  static_cast<uint32_t>(at_ptrFrame->dataOctet(0))
+                                           ) * 0.0000001) - 210.;
+  const double lon = (static_cast<uint32_t>( (static_cast<uint32_t>(at_ptrFrame->dataOctet(7)) << 24)
+                                           | (static_cast<uint32_t>(at_ptrFrame->dataOctet(6)) << 16)
+                                           | (static_cast<uint32_t>(at_ptrFrame->dataOctet(5)) << 8)
+                                           |  static_cast<uint32_t>(at_ptrFrame->dataOctet(4))
+                                           ) * 0.0000001) - 210.;
 
+  handleVehiclePosition( at_ptrFrame->time(), lat, lon );
+
+  out << "Latitude: " << lat << "° " << "Longitude: " << lon << "° ";
   return out.str();
 }
 

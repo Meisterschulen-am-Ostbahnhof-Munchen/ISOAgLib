@@ -152,6 +152,7 @@ struct Main_s {
   bool mb_storeIop;
   TransferCollection_c mc_trans;
   ParseLogLine_t *pt_parseLogLine;
+  FILE *m_gpxFile;
   AliveCollection_c m_alive;
   AddressTracker_c mc_tracker;
   std::map< uint8_t, std::vector<uint8_t> > m_vtupl;
@@ -162,6 +163,7 @@ inline Main_s::Main_s() :
   mb_storeIop( false ),
   mc_trans(),
   pt_parseLogLine(0),
+  m_gpxFile( NULL ),
   m_alive(),
   mc_tracker()
 {
@@ -171,9 +173,10 @@ struct Main_s gs_main;
 } //namespace
 
 
-enum { OPT_TYPE, OPT_WRAP, OPT_STORE, OPT_HELP };
+enum { OPT_GPX, OPT_TYPE, OPT_WRAP, OPT_STORE, OPT_HELP };
 
 CSimpleOpt::SOption g_rgOptions[] = {
+    { OPT_GPX, "-gpx", SO_REQ_SEP },
     { OPT_TYPE, "-t", SO_REQ_SEP },
     { OPT_WRAP, "-w", SO_REQ_SEP },
     { OPT_STORE, "--iop", SO_NONE },
@@ -193,7 +196,7 @@ void
 exit_with_usage(const char* progname)
 {
   std::cerr << "ISOBUS-Logalizer (c) 2007 - 2013 OSB AG." << std::endl << std::endl;
-  std::cerr << "Usage: " << progname << " [-t logType] [-w num] [-s] logFile" << std::endl << std::endl;
+  std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [-s] logFile" << std::endl << std::endl;
   std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
   std::cerr << "         1 -> rte"<<std::endl;
   std::cerr << "         2 -> CANMon"<<std::endl;
@@ -856,6 +859,7 @@ parseLogLine( std::ostream& out, std::string const &acr_line )
 
 
 #include "checks.inc"
+#include "gpx_writer.inc"
 
 
 int main (int argc, char** argv)
@@ -870,6 +874,9 @@ int main (int argc, char** argv)
         switch ( args.OptionId() ) {
           case OPT_TYPE:
             gs_main.pt_parseLogLine = getLogLineParser( atoi( args.OptionArg() ) );
+            break;
+          case OPT_GPX:
+            gs_main.m_gpxFile = gpxInit( args.OptionArg() );
             break;
           case OPT_WRAP:
             gs_main.mt_sizeMultipacketWrap = atoi( args.OptionArg() );
@@ -914,5 +921,8 @@ int main (int argc, char** argv)
   }
   t_ptrIn = PtrInputStream_t(0);
 
-  gs_main.m_alive.report( std::cout);
+  gs_main.m_alive.report( std::cout );
+  
+  if( gs_main.m_gpxFile )
+    gpxClose();
 }
