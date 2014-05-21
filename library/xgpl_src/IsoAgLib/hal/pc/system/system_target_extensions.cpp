@@ -27,6 +27,7 @@
 #include <string.h>
 #include <time.h>
 #include <iostream>
+#include <cstdlib>
 
 #ifdef WIN32
   #ifndef WINCE

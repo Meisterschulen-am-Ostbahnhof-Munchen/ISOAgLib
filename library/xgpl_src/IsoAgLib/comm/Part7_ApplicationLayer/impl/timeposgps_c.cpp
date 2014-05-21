@@ -1085,6 +1085,30 @@ namespace __IsoAgLib {
     mi32_lastIsoPositionSimple = System_c::getTime();
   }
 
+#ifdef USE_J1939_VEHICLE_PGNS
+  void TimePosGps_c::sendVehiclePosDirSpd() const
+  {
+    CanPkgExt_c pkg;
+    pkg.setIsoPri(2);
+    pkg.setLen(8);
+    pkg.setMonitorItemForSA( mpc_identGps->getIsoItem() );
+
+    pkg.setIsoPgn(VEHICLE_POSITION_PGN);
+    pkg.setInt32Data(0, mi32_latitudeDegree10Minus7  + 2100000000 ); // 210 / 0.0000001
+    pkg.setInt32Data(4, mi32_longitudeDegree10Minus7 + 2100000000 ); // 210 / 0.0000001);
+
+    getIsoBusInstance4Comm() << pkg;
+
+    pkg.setIsoPgn(VEHICLE_DIRECTION_SPEED_PGN);
+    pkg.setUint16Data(0, static_cast<uint16_t>( double( mui16_courseOverGroundRad10Minus4 ) * 288.0 / 125.0 / MATH_PI ) );
+    pkg.setUint16Data(2, static_cast<uint16_t>( double( mui16_speedOverGroundCmSec ) * static_cast<double>( 128 * 9 ) / 125.0 ) );
+    pkg.setUint16Data(4, 0xFFFF ); // dunno what to send here for N/A
+    pkg.setUint16Data(6, static_cast<uint16_t>( ( ( double( mi32_altitudeCm ) / 100.0 ) + 2500.0 ) / 0.125 ) );
+
+    getIsoBusInstance4Comm() << pkg;
+  }
+#endif
+
 /* send COG and SOG as 250ms rapid update, but with single packet only */
 /*
  * not using anymore as we changed from PGN 130577 to 129026

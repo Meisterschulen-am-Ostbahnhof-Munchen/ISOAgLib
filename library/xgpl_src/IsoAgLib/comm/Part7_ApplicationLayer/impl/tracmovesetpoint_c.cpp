@@ -62,7 +62,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     IsoBus_c &c_can = getIsoBusInstance4Comm();
 
-    if ((!checkFilterCreated()) && (c_isoMonitor.existActiveLocalIsoMember()))
+    if (!checkFilterCreated())
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 

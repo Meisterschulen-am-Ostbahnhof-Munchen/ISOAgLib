@@ -138,7 +138,11 @@ public:
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate();
 
-   /** config the Base_c object after init -> set pointer to isoName and
+#ifdef USE_J1939_VEHICLE_PGNS
+  void sendVehiclePosDirSpd() const;
+#endif
+
+  /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
       @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param at_identModeGps either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
