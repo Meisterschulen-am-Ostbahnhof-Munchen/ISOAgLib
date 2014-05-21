@@ -59,7 +59,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   void TracMoveSetPoint_c::checkCreateReceiveFilter()
   {
-    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     IsoBus_c &c_can = getIsoBusInstance4Comm();
 
     if (!checkFilterCreated())
