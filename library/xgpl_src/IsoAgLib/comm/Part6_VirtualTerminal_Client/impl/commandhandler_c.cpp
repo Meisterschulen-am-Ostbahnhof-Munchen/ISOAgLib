@@ -1320,15 +1320,18 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
 }
 
 
-bool
+// it's safe to answer 0x00 as "no timeout", as we're never sending a "0x00"-command to the VT!
+uint8_t
 CommandHandler_c::timeEventCommandTimeoutCheck() const
 {
   // nothing to check (yet)
   if( mi32_commandTimestamp < 0 )
-    return false;
+    return 0x00;
 
   // Waiting for an answer now... Did it time out?
-  return( HAL::getTime() > ( mi32_commandTimestamp + mi32_commandTimeout ) );
+  return( HAL::getTime() > ( mi32_commandTimestamp + mi32_commandTimeout ) )
+    ? mui8_commandParameter
+    : 0x00;
 }
 
 

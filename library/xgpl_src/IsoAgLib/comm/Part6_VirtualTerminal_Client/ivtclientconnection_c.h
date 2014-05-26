@@ -72,7 +72,12 @@ public:
    *                        b) no connection to VT server
    **/
   bool moveToNextVt() { return VtClientConnection_c::moveToNextVt(); }
-  
+
+  // Note: This function will clear the stored timed out command after returning it!
+  // @return 0x00: No command timed (or already checked and reset)
+  //      != 0x00: The command that timed out and was the reason for a reconnect!
+  uint8_t getAndResetLastTimedOutCommand() { return VtClientConnection_c::getAndResetLastTimedOutCommand(); }
+
 private:
   iVtClientConnection_c();
 

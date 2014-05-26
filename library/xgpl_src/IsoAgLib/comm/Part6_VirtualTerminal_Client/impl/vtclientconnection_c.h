@@ -134,6 +134,12 @@ public:
   // ### from UploadPoolState_c ###
   void notifyOnFinishedNonUserPoolUpload( bool initialUpload );
 
+  // Note: This function will clear the stored timed out command after returning it!
+  //       Typically call this in eventObjectPoolUploadedSuccessfully!
+  // @return 0x00: No command timed out (or already checked and reset)
+  //      != 0x00: The command that timed out and was the reason for a reconnect!
+  inline uint8_t getAndResetLastTimedOutCommand();
+
 private:
   void timeEvent();
   void timeEventSearchForNewVt();
@@ -182,6 +188,8 @@ private:
   int32_t mi32_timeWsAnnounceKey;
   int32_t mi32_fakeVtOffUntil;
 
+  uint8_t m_cmdTimedOut;
+
   IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en men_registerPoolMode;
 
   IsoName_c mc_preferredVt;
@@ -228,6 +236,18 @@ void
 VtClientConnection_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& pkg )
 {
   m_aux2Functions.notifyOnAux2InputMaintenance( pkg );
+}
+
+
+inline
+uint8_t
+VtClientConnection_c::getAndResetLastTimedOutCommand()
+{
+  const uint8_t timedOutCmd = m_cmdTimedOut;
+
+  m_cmdTimedOut = 0x00;
+
+  return timedOutCmd;
 }
 
 

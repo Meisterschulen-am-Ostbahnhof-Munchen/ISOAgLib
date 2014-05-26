@@ -124,7 +124,7 @@ public:
   void doStop();
   bool tryToStart();
   void finishUploadCommand();
-  bool timeEventCommandTimeoutCheck() const;
+  uint8_t timeEventCommandTimeoutCheck() const;
   
   void sendCommandsToBus( bool commandsToBus ) { mb_commandsToBus = commandsToBus; }
   void enableSameCommandCheck() { mb_checkSameCommand = true; }

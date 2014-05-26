@@ -129,6 +129,7 @@ VtClientConnection_c::VtClientConnection_c(
   , m_multipleVt(m_uploadPoolState, r_vtclient)
   , mi32_timeWsAnnounceKey( -1 ) // no announce tries started yet...
   , mi32_fakeVtOffUntil( -1 ) // no faking initially
+  , m_cmdTimedOut( 0x00 ) // nothing failed initially
   , men_registerPoolMode( aen_mode )
   , mc_preferredVt( IsoName_c::IsoNameUnspecified() )
   , mi32_bootTime_ms( 0 )
@@ -259,10 +260,13 @@ VtClientConnection_c::timeEvent()
     break;
 
   case UploadCommand:
-    if( commandHandler().timeEventCommandTimeoutCheck() )
+    const uint8_t cmdTimedOut = commandHandler().timeEventCommandTimeoutCheck();
+    if( cmdTimedOut != 0x00 )
     { // It's the safest thing to just reconnect to the VT.
       // So let's get disconnected (can't do this actively)
       fakeVtOffPeriod (6000); // fake the VT 6 seconds off!
+      // but let the application know of the failed command!
+      m_cmdTimedOut = cmdTimedOut;
     }
     break;
   }
