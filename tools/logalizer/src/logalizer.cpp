@@ -195,7 +195,7 @@ void iopStore( uint8_t sa );
 void
 exit_with_usage(const char* progname)
 {
-  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2013 OSB AG." << std::endl << std::endl;
+  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2014 OSB AG." << std::endl << std::endl;
   std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [-s] logFile" << std::endl << std::endl;
   std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
   std::cerr << "         1 -> rte"<<std::endl;
@@ -210,6 +210,7 @@ exit_with_usage(const char* progname)
   std::cerr << "        10 -> SocketCAN candump -l"<<std::endl;
   std::cerr << "        11 -> WTK"<<std::endl;
   std::cerr << "        12 -> Kvaser Memorator CSV"<<std::endl;
+  std::cerr << "        13 -> ?csv"<<std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "--iop:   Store VT object pool transfers in iop format. Default: do not store" << std::endl;
@@ -238,6 +239,7 @@ exit_with_usage(const char* progname)
   std::cerr << "SocketCAN:   '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
   std::cerr << "WTK:         '0000.376 can r 18E6FFF1  8  21 00 FF FF 00 00 00 FF  0'"<<std::endl;
   std::cerr << "KvaserM.CSV: '0.33198,1,cfffff0,4,3,55,7d,7d,,,,,,1,2014-05-05 15:01:08'"<<std::endl;
+  std::cerr << "?csv:        '0xCFE46F0*,54.6857,FF,FF,FF,FF,00,FF,FF,FF'"<<std::endl;
   exit(0);
 }
 
@@ -790,6 +792,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineSocketCAN,
     parseLogLineWTK,
     parseLogLineKvaserMemorator,
+    parseLogLineCsv,
     defaultParseLogLine
   };
 

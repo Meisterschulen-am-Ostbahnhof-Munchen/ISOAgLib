@@ -625,14 +625,16 @@ interpreteVehicleSpeed( PtrDataFrame_t at_ptrFrame )
   // 2 bytes altitude 0.125 m/bit, -2500 m offset, -2500 to 5531.875 m
   std::ostringstream out;
   const double bearing = static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(1)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(0)) ) / 128;
-  const double speed = static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(3)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(2)) ) / 256;
+  const double speedkmh = static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(3)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(2)) ) / 256;
+  const double speedms = (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(3)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(2)) ) * 10 ) / 9216;
+
   const double pitch = (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(5)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(4)) ) / 128) - 200;
   const double altitude = (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(7)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(6)) ) * 0.125 ) - 2500;
 
-  handleVehicleSpeed( at_ptrFrame->time(), bearing, speed, pitch, altitude );
+  handleVehicleSpeed( at_ptrFrame->time(), bearing, speedms, pitch, altitude );
 
   out << "Compass bearing:" << bearing << "° "
-       << "Navigation based vehicle speed:" << speed << " km/h "
+       << "Navigation based vehicle speed:" << speedkmh << " km/h "
        << "Pitch:" << pitch << "° "
        << "Altitude:" << altitude << " m ";
   

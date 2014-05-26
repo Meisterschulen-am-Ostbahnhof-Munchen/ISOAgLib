@@ -360,3 +360,28 @@ parseLogLineKvaserMemorator( std::string const &acr_line ) // "0.33198,1,cfffff0
   PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
   return std::make_pair( i_result, t_ptrFrame );
 }
+
+
+std::pair< int, PtrDataFrame_t >
+parseLogLineCsv( std::string const &acr_line ) // "0xCFE46F0*,54.6857,FF,FF,FF,FF,00,FF,FF,FF"
+{
+  float f1;
+  int iID;
+  unsigned arru_d[8];
+  int parsed_count = sscanf(
+      acr_line.c_str(),
+      "%x*,%f,%x,%x,%x,%x,%x,%x,%x,%x",
+      &iID,
+      &f1,
+      arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
+  const int inumDb = parsed_count - 2;
+  if( inumDb < 0 )
+    return std::make_pair( -1, PtrDataFrame_t(0) );
+
+  uint64_t const cui64_time = static_cast<uint64_t>(f1*1000);
+  std::vector< uint8_t > vec_data;
+  copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
+  return std::make_pair( 0, t_ptrFrame );
+}
+

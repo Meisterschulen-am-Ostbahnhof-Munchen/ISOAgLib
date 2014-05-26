@@ -13,7 +13,7 @@ gpxInit( const char *filename )
   {
     fputs(
       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n" 
-      "<gpx version=\"1.1\" creator=\"ISOAgLib's Logalizer\">\n"
+      "<gpx version=\"1.0\" creator=\"ISOAgLib's Logalizer\">\n"
       " <trk>\n"
       "  <name>Replay of CAN-log</name>\n"
       "  <trkseg>\n"
@@ -46,7 +46,7 @@ void handleVehiclePosition( uint64_t logTime, double lat, double lon )
   s_vehicleLon = lon;
 }
 
-void handleVehicleSpeed( uint64_t, double bearing, double speed, double pitch, double altitude )
+void handleVehicleSpeed( uint64_t, double bearing, double speedms, double pitch, double altitude )
 {
   if( gs_main.m_gpxFile == NULL )
     return;
@@ -69,8 +69,10 @@ void handleVehicleSpeed( uint64_t, double bearing, double speed, double pitch, d
     "   <trkpt lat=\"%.7f\" lon=\"%.7f\">\n"
     "    <ele>%.3f</ele>\n"
     "    <time>2013-11-%02dT%02d:%02d:%02d.%03dZ</time>\n"
+	"    <speed>%.3f</speed>\n"
+	"    <course>%.4f</course>\n"
     "   </trkpt>\n",
-    s_vehicleLat, s_vehicleLon, altitude, d, h, m, s, ms );
+    s_vehicleLat, s_vehicleLon, altitude, d, h, m, s, ms, speedms, bearing );
 
   s_vehiclePosTime = -1; // wait for next Position
 }
