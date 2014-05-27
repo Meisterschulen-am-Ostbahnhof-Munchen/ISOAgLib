@@ -51,6 +51,7 @@ public:
   void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
   void setValueCopyUTF8(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
   void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

@@ -329,6 +329,7 @@ getCStringCount (const char *src, char countChar);
   void convertString8859ToUnicode (const STL_NAMESPACE::string& rrefstr_iso8859, STL_NAMESPACE::string& rrefstr_unicode, uint8_t aui8_encoding);
   void convertStringUnicodeTo8859 (const char* apui8_stringUnicode, uint16_t aui16_stringUnicodeLength, char* apui8_iso8859buffer, uint8_t aui8_encoding);
   void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t aui16_unicode);
+  void spacePadBomUTF16 (char* utf16Str, uint16_t byteStrLen, uint16_t bytesToPad);
 #endif
 
 class VtFontScaling

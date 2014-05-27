@@ -239,6 +239,16 @@ CommandHandler_c::sendCommandChangeStringValue (uint16_t aui16_objectUid, const 
 }
 
 
+#ifdef USE_VT_UNICODE_SUPPORT
+bool
+CommandHandler_c::sendCommandChangeStringValueUTF16 (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
+{
+  msc_tempSendUpload.set (aui16_objectUid, apc_newValue, overrideSendLength, true);
+  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
+}
+#endif
+
+
 bool
 CommandHandler_c::sendCommandChangeChildPosition (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
 {

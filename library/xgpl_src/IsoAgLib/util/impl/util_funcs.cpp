@@ -704,6 +704,28 @@ void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t aui16_unicod
   }
 }
 
+void spacePadBomUTF16 (char* utf16Str, uint16_t byteStrLen, uint16_t bytesToPad)
+{
+  //Check BOM
+  if( (uint8_t) utf16Str[0] == (uint8_t) 0xFE )
+  {
+    //-1 incase bytesToPad is odd
+    for( int i = byteStrLen; i < ( bytesToPad - 1 ); i+=2 )
+    {
+      utf16Str[ i ] = 0x00;
+      utf16Str[ i + 1 ] = 0x20;
+    }
+  }
+  else
+  {
+    //-1 incase bytesToPad is odd
+    for( int i = byteStrLen; i < ( bytesToPad - 1 ); i+=2 )
+    {
+      utf16Str[ i ] = 0x20;
+      utf16Str[ i + 1 ] = 0x00;
+    }
+  }
+}
 
 #endif
 

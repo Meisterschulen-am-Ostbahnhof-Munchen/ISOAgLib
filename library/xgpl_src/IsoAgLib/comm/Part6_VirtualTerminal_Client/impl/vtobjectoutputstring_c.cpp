@@ -144,6 +144,34 @@ vtObjectOutputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObj
   setValueCopy (pc_iso8859, b_updateObject, b_enableReplaceOfCmd);
   delete[] pc_iso8859;
 }
+
+void
+vtObjectOutputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length, bool b_updateObject, bool b_enableReplaceOfCmd)
+{
+  int copyLen = ( length <= get_vtObjectOutputString_a()->length) ? length : get_vtObjectOutputString_a()->length;
+
+  // UTF-16 string must be a multiple of 2 bytes long.
+  if( copyLen % 2 )
+   copyLen--;
+
+  if (b_updateObject) {
+    // check if not already RAM string buffer?
+    if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
+      s_properties.flags |= FLAG_STRING_IN_RAM;
+      // create new String buffer with same length as original one, as the size can't be changed !!
+      char *newStringBuffer = new (char [get_vtObjectOutputString_a()->length+1]);
+      saveValueP (MACRO_getStructOffset(get_vtObjectOutputString_a(), value), sizeof(iVtObjectOutputString_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
+    }
+    char *dest = get_vtObjectOutputString_a()->value;
+    const char *src = newValue;
+
+    int i=0; for (; i<copyLen; i++) *dest++ = *src++;
+    spacePadBomUTF16( dest, copyLen, get_vtObjectOutputString_a()->length );
+  }
+
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueUTF16 (getID(), newValue, copyLen, b_enableReplaceOfCmd);
+
+}
 #endif
 
 

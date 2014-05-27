@@ -62,7 +62,11 @@ public:
   void set (vtObjectString_c* apc_objectString);
   void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9);
   void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
+#ifdef USE_VT_UNICODE_SUPPORT
+  void set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, bool utf16 = false);
+#else
   void set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength);
+#endif
   void set (uint8_t* apui8_buffer, uint32_t bufferSize);
 
   SendUpload_c (const SendUpload_c& r_source)

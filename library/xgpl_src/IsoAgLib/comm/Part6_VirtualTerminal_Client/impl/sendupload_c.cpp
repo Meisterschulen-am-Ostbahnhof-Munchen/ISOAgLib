@@ -44,12 +44,44 @@ SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, u
   ui16_numObjects = aui16_numObjects;
 }
 
+#ifdef STRIP_TRAILING_SPACES_FROM_STRING_UPLOADS
+uint16_t
+getStringLengthWithoutTrailingSpaces( const char* apc_string, uint16_t overrideSendLength, bool utf16 )
+{
+  uint16_t ret = (CNAMESPACE::strlen(apc_string) < overrideSendLength && !utf16) ? CNAMESPACE::strlen(apc_string) : overrideSendLength;
+
+  if( !utf16 )
+  {
+    while( ( ret >= 1 ) && ( apc_string[ret-1] == ' ' ) )
+      --ret;
+  }
+  else
+  {
+    while( ( ret >= 4 ) &&
+       ( ( (uint8_t)apc_string[0] == (uint8_t)0xff && (uint8_t)apc_string[ret-1] == (uint8_t)0x00 && (uint8_t)apc_string[ret-2] == 0x20 )
+      || ( (uint8_t)apc_string[0] == (uint8_t)0xfe && (uint8_t)apc_string[ret-1] == (uint8_t)0x20 && (uint8_t)apc_string[ret-2] == 0x00 ) ) )
+      ret -= 2;
+  }
+  return ret;
+}
+#endif
+
 
 void
+#ifdef USE_VT_UNICODE_SUPPORT
+SendUpload_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, bool utf16)
+{
+#else
 SendUpload_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength)
 {
-  // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
-  uint16_t strLen = (CNAMESPACE::strlen(apc_string) < overrideSendLength) ? CNAMESPACE::strlen(apc_string) : overrideSendLength;
+  const bool utf16 = false;
+#endif
+
+#ifdef STRIP_TRAILING_SPACES_FROM_STRING_UPLOADS
+  uint16_t strLen = getStringLengthWithoutTrailingSpaces( apc_string, overrideSendLength, utf16 );
+#else
+  uint16_t strLen = (CNAMESPACE::strlen(apc_string) < overrideSendLength && !utf16) ? CNAMESPACE::strlen(apc_string) : overrideSendLength;
+#endif
 
   /// Use BUFFER - NOT MultiSendStreamer!
   vec_uploadBuffer.clear();

@@ -53,6 +53,11 @@ public:
     const uint8_t cui8_fontType = arc_ops.get_vtObjectOutputString_a().fontAttributes->get_vtObjectFontAttributes_a().fontType;
     vtObjectStringVariable_c::setValueCopyUTF8 (newValue, cui8_fontType, b_updateObject, b_enableReplaceOfCmd);
   }
+
+  void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectStringVariable_c::setValueCopyUTF16 (newValue, length, b_updateObject, b_enableReplaceOfCmd);
+  }
+
 #endif
 
   void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
