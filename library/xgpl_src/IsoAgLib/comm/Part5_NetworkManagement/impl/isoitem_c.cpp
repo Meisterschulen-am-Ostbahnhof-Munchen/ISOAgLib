@@ -245,6 +245,10 @@ IsoItem_c::timeEvent()
 
         if ( m_wsLocalSlavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
         { // Announce WS-Master
+#ifdef ISOAGLIB_WORKAROUND_MUELLER_TC
+/// HACK FOR MUELLER TC THAT DOES NOT REQUEST THE ADDRESS CLAIMS WHEN SENDING ITS OWN!
+sendAddressClaim( true );
+#endif
           m_wsLocalSlavesToClaimAddress = int8_t(m_wsSlavesAnnounced->size());
 
           c_pkg.setIsoPgn (WORKING_SET_MASTER_PGN);
