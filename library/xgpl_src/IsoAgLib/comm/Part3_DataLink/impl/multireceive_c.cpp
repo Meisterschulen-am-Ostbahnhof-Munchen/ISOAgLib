@@ -317,6 +317,18 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
               return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
             }
 
+            const uint8_t cui8_maxPktsPerBurst = (c_isoRSI.isIsoEtp())
+                                                   ? 0xFF // not specifyable in ETP
+                                                   : arc_pkg.getUint8Data(4);
+            if( 0 == cui8_maxPktsPerBurst )
+            {
+              notifyErrorConnAbort (c_isoRSI, TransferErrorWrongPackageAmountOrMessageSize, true);
+              #if DEBUG_MULTIRECEIVE
+              INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to invalid max pkt range ***" << INTERNAL_DEBUG_DEVICE_ENDL;
+              #endif
+              return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
+            }
+
             // First of all, is there a client registered that handles those PGNs via (E)TP-Messages?
             CanCustomer_c* pc_clientFound = getClient (c_isoRSI);
             if (pc_clientFound == NULL)
@@ -340,6 +352,8 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
             // else: Client accepts this stream, so create a representation of the stream NOW -
             // - further handling is done in "timeEvent()" now!*/
             Stream_c* newStream = createStream (c_isoRSI, ui32_msgSize, arc_pkg.time() );
+            newStream->setTPBurstLimit( cui8_maxPktsPerBurst );
+
             // the constructor above sets the Stream to "AwaitCtsSend" and "StreamRunning"
             sendCurrentCts ((DEF_Stream_c_IMPL&)*newStream); // send out the initial CTS
             #if DEBUG_MULTIRECEIVE

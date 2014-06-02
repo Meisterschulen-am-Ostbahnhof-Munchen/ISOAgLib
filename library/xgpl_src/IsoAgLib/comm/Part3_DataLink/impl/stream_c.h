@@ -248,6 +248,7 @@ public:
                                      mt_streamState = StreamFinishedJustKept; }; // from now on NOTHING more should be done with this stream!
 
   bool readyToSendCts();
+  void setTPBurstLimit( uint8_t limit ) { mui8_maxPacketInTPBurst = limit; };
 
 private:
   void awaitNextStep (NextComing_t at_awaitStep, int32_t ai32_timeOut);
@@ -284,6 +285,7 @@ private:
   uint32_t mui32_burstCurrent;        // counting the bursts, so we know if it's the first or a following!
   uint8_t   mui8_streamFirstByte;     // will be the command that it's containing. set at the first call to processDataChunk...
   uint32_t mui32_dataPageOffset;      //  Attribute: mui32_dataPageOffset: gets set when a DPO arrives...
+  uint8_t mui8_maxPacketInTPBurst;      // Burst Size limit the RTS controller specified.
 
   int32_t mi32_timeoutLimit;
 

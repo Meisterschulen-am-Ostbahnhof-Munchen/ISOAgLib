@@ -52,6 +52,7 @@ Stream_c::Stream_c(
   , mui32_burstCurrent (0) // so we know that it's the first burst when calling the processBurst from the client
   , mui8_streamFirstByte (0) // meaning: not yet identified!! (when you check it, it's already set!)
   , mui32_dataPageOffset (0) // will be set when needed
+  , mui8_maxPacketInTPBurst( 255 ) //default to 255, set if important later.
   , mi32_timeoutLimit (msci32_timeNever)
   , mi_startTime(ai_time)
   , mi_finishTime(-1)
@@ -89,6 +90,7 @@ Stream_c::Stream_c (const Stream_c &rhs)
   , mui32_burstCurrent (rhs.mui32_burstCurrent)
   , mui8_streamFirstByte (rhs.mui8_streamFirstByte)
   , mui32_dataPageOffset (rhs.mui32_dataPageOffset)
+  , mui8_maxPacketInTPBurst(rhs.mui8_maxPacketInTPBurst)
   , mi32_timeoutLimit (rhs.mi32_timeoutLimit)
   , mi_startTime(rhs.mi_startTime)
   , mi_finishTime(rhs.mi_finishTime)
@@ -120,6 +122,7 @@ Stream_c::operator= (const Stream_c& ref)
   mui32_burstCurrent = ref.mui32_burstCurrent;
   mui8_streamFirstByte = ref.mui8_streamFirstByte;
   mui32_dataPageOffset = ref.mui32_dataPageOffset;
+  mui8_maxPacketInTPBurst = ref.mui8_maxPacketInTPBurst;
 
   mi32_timeoutLimit = ref.mi32_timeoutLimit;
   mi_startTime = ref.mi_startTime;
@@ -174,6 +177,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
                        : msci32_timeOutT2 /* dest-adr. */);
       // how many pkgs are missing at all? is it more than wished?
       mui8_pkgRemainingInBurst = uint8_t(STL_NAMESPACE::min<uint32_t>( (mui32_pkgTotalSize - (mui32_pkgNextToWrite - 1)), wishingPkgs));
+      mui8_pkgRemainingInBurst = STL_NAMESPACE::min<uint8_t>( mui8_maxPacketInTPBurst, mui8_pkgRemainingInBurst );
       break;
 
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
