@@ -24,8 +24,10 @@
 
 
 #ifdef WIN32
+#define ISOAGLIB_CLOSESOCKET closesocket
 #include <stdio.h>
 #else
+#define ISOAGLIB_CLOSESOCKET close
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <arpa/inet.h>
@@ -66,11 +68,12 @@ namespace __IsoAgLib {
 
 namespace __HAL {
 
-  static SOCKET_TYPE i32_commandSocket = 0;
-  static SOCKET_TYPE i32_dataSocket = 0;
+  static SOCKET_TYPE i32_commandSocket = INVALID_SOCKET;
+  static SOCKET_TYPE i32_dataSocket = INVALID_SOCKET;
 
 #ifdef USE_MUTUAL_EXCLUSION
-  static int breakWaitPipeFd[2] = { -1, -1 };
+  static SOCKET_TYPE breakWaitSocket_read = INVALID_SOCKET;
+  static SOCKET_TYPE breakWaitSocket_write = INVALID_SOCKET;
 #endif
 
   struct idFilter_s {
@@ -111,7 +114,7 @@ namespace __HAL {
 #else
                MSG_DONTWAIT
 #endif
-             ) == -1 ) {
+             ) == SOCKET_ERROR ) {
       MACRO_ISOAGLIB_PERROR( "send" );
       return false;
     }
@@ -223,13 +226,28 @@ namespace __HAL {
     return connectSocket;
   }
 
+  void closeAllSockets()
+  {
+      if(INVALID_SOCKET != i32_commandSocket)     (void)ISOAGLIB_CLOSESOCKET ( i32_commandSocket );
+      i32_commandSocket = INVALID_SOCKET;
+
+      if(INVALID_SOCKET != i32_dataSocket)        (void)ISOAGLIB_CLOSESOCKET ( i32_dataSocket );
+      i32_dataSocket = INVALID_SOCKET;
+
+#ifdef USE_MUTUAL_EXCLUSION
+      if(INVALID_SOCKET != breakWaitSocket_read)  (void)ISOAGLIB_CLOSESOCKET ( breakWaitSocket_read );
+      breakWaitSocket_read = INVALID_SOCKET;
+
+      if(INVALID_SOCKET != breakWaitSocket_write) (void)ISOAGLIB_CLOSESOCKET ( breakWaitSocket_write ) ;
+      breakWaitSocket_write = INVALID_SOCKET;
+#endif
+  }
 
   bool canStartDriver() {
 #ifdef WIN32
     // Initialize Winsock
     WSADATA wsaData;
-    int iResult = WSAStartup( MAKEWORD( 2,2 ), &wsaData );
-    ( void )iResult; // return value normally not used - only in debug...
+    (void)WSAStartup( MAKEWORD( 2,2 ), &wsaData );
 #endif
 
     i32_commandSocket = call_socket( COMMAND_TRANSFER_PORT );
@@ -239,35 +257,32 @@ namespace __HAL {
 
     i32_dataSocket = call_socket( DATA_TRANSFER_PORT );
     if ( i32_dataSocket == INVALID_SOCKET ) {
-#ifdef WIN32
-      ( void )closesocket ( i32_commandSocket );
-#else
-      ( void )close ( i32_commandSocket );
-#endif
+      closeAllSockets();
+      return false;
+    }
+    
+#ifdef USE_MUTUAL_EXCLUSION
+    SOCKET_TYPE server_socket = establish(BREAK_WAIT_PORT);
+    if ( server_socket == INVALID_SOCKET ) {
+      MACRO_ISOAGLIB_PERROR("establish");
+      closeAllSockets();
+      return false;
+    }
+    
+    // call_socket will not block (client-role)
+    breakWaitSocket_read = call_socket(BREAK_WAIT_PORT);
+    if ( breakWaitSocket_read == INVALID_SOCKET ) {
+      closeAllSockets();
       return false;
     }
 
-#ifdef USE_MUTUAL_EXCLUSION
-#ifdef WIN32
- // @todo implement
-#else
-#ifdef USE_PIPE_INSTEAD_OF_PIPE2
-    if( pipe( breakWaitPipeFd ) != 0 )
-      perror("pipe");
-
-    int flags;
-    if( -1 == (flags = fcntl( breakWaitPipeFd[0], F_GETFL, 0 ) ) )
-      flags = 0;
-    fcntl( breakWaitPipeFd[0], F_SETFL, flags | O_NONBLOCK );
-    if( -1 == (flags = fcntl( breakWaitPipeFd[1], F_GETFL, 0 ) ) )
-      flags = 0;
-    fcntl( breakWaitPipeFd[1], F_SETFL, flags | O_NONBLOCK );
-#else
-    if( pipe2( breakWaitPipeFd, O_NONBLOCK ) != 0 ) {
-      MACRO_ISOAGLIB_PERROR("pipe");
-    }
-#endif
-#endif
+    // accept would not block because the connection is requested above via call_socket already! (server-role)
+    breakWaitSocket_write = accept(server_socket,NULL,NULL);
+    if ( breakWaitSocket_write == INVALID_SOCKET ) {
+      MACRO_ISOAGLIB_PERROR("accept");
+      closeAllSockets();
+      return false;
+    }    
 #endif
 
 #ifdef WIN32
@@ -280,6 +295,9 @@ namespace __HAL {
 
     // set data socket to nonblocking, because we need MSG_PEEK, but there is no MSG_DONTWAIT in WIN32
     ioctlsocket( i32_dataSocket, FIONBIO, ( unsigned long FAR* ) &iMode );
+#ifdef USE_MUTUAL_EXCLUSION
+    ioctlsocket( breakWaitSocket_read, FIONBIO, ( unsigned long FAR* ) &iMode );
+#endif
 #endif
 
     transferBuf_s s_transferBuf;
@@ -296,20 +314,8 @@ namespace __HAL {
     // can_server_sock does not acknowledge COMMAND_DEREGISTER, socket read returns 0 => sendCommand() returns false
     (void)sendCommand( &s_transferBuf, i32_commandSocket );
 
-#ifdef WIN32
-#ifdef USE_MUTUAL_EXCLUSION
-    // @todo implement
-#endif
-    ( void )closesocket ( i32_commandSocket );
-    ( void )closesocket ( i32_dataSocket );
-#else
-#ifdef USE_MUTUAL_EXCLUSION
-    ( void )close(breakWaitPipeFd[0]);
-    ( void )close(breakWaitPipeFd[1]);
-#endif
-    ( void )close( i32_commandSocket );
-    ( void )close( i32_dataSocket );
-#endif
+    closeAllSockets();
+
     return true;
   }
 
@@ -388,12 +394,10 @@ namespace HAL {
 #else
                MSG_DONTWAIT
 #endif
-             ) == -1 ) {
-      // TODO
-      MACRO_ISOAGLIB_PERROR( "send" );
+             ) == SOCKET_ERROR ) {
+      MACRO_ISOAGLIB_PERROR("send");
       return false;
     }
-
 
     return true;
   }
@@ -450,7 +454,7 @@ namespace HAL {
     FD_ZERO( &rfds );
     FD_SET( __HAL::i32_dataSocket, &rfds );
 #ifdef USE_MUTUAL_EXCLUSION
-    FD_SET( __HAL::breakWaitPipeFd[0], &rfds );
+    FD_SET( __HAL::breakWaitSocket_read, &rfds );
 #endif
 
     s_timeout.tv_sec = 0;
@@ -459,14 +463,18 @@ namespace HAL {
     int rc = select( FD_SETSIZE, &rfds, NULL, NULL, &s_timeout );
 
 #ifdef USE_MUTUAL_EXCLUSION
+    if( FD_ISSET( __HAL::breakWaitSocket_read, &rfds ) ) {
+      static char buf[256];
 #ifdef WIN32
-  // @todo implement
+#ifdef WINCE
+      // @todo: nothing to do here? --> probably also read all bytes (non-blocking)!
 #else
-    if( FD_ISSET( __HAL::breakWaitPipeFd[0], &rfds ) ) {
-      static char buff[256];
-      while( 0 < read( __HAL::breakWaitPipeFd[0], buff, 256 ) ) { }
-    }
+      while( recv( __HAL::breakWaitSocket_read, ( char* )&buf, sizeof(buf), 0) > 0 ) { }
 #endif
+#else
+      while( recv( __HAL::breakWaitSocket_read, ( char* )&buf, sizeof(buf), MSG_DONTWAIT ) > 0 ) { }
+#endif
+    }
 #endif
 
     // return true, when the timeout was NOT the trigger for coming back from select
@@ -475,17 +483,13 @@ namespace HAL {
 
 
 #ifdef USE_MUTUAL_EXCLUSION
-#ifdef WIN32
-  void canRxWaitBreak() {
-    // @todo implement
+  void canRxWaitBreak()
+  {
+     static char buf = { 0 };
+     if ( send( __HAL::breakWaitSocket_write, &buf, 1, 0) == SOCKET_ERROR ) {
+        MACRO_ISOAGLIB_PERROR("send");
+     }
   }
-#else
-  void canRxWaitBreak() {
-    if( write( __HAL::breakWaitPipeFd[1], "\0", 1 ) != 1 ) {
-      MACRO_ISOAGLIB_PERROR("write");
-    }
-  }
-#endif
 #endif
 
 

@@ -76,6 +76,7 @@
 	#define CAN_SERVER_CHANNEL 0
 #endif
 
+#define BREAK_WAIT_PORT       (36797)
 #define COMMAND_TRANSFER_PORT (36798 + (CAN_SERVER_CHANNEL)*2)
 #define DATA_TRANSFER_PORT    (36799 + (CAN_SERVER_CHANNEL)*2)
 
@@ -116,6 +117,7 @@
 #else
   typedef int    SOCKET_TYPE;
   #define INVALID_SOCKET -1
+  #define SOCKET_ERROR   -1
 #endif
 
 #define  RX 0
