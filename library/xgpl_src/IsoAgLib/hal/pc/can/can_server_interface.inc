@@ -144,6 +144,14 @@ void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pid)
 #endif
 
 #ifdef CAN_DRIVER_SOCKET
+
+#ifndef WIN32
+  #include <sys/socket.h>
+  #include <arpa/inet.h>
+  #include <stdio.h>
+#endif
+
+
 namespace __HAL {
   SOCKET_TYPE establish(unsigned short portnum)
   {
@@ -203,12 +211,12 @@ namespace __HAL {
 
     if ((listenSocket= socket(SOCKET_TYPE_INET_OR_UNIX, SOCK_STREAM, 0)) < 0) /* create socket */
     {
-        MACRO_ISOAGLIB_PERROR("socket");
+        printf("socket error");
         return(-1);
     }
 
     if (bind(listenSocket, (struct sockaddr *)&sa, ui32_len) < 0) {
-        MACRO_ISOAGLIB_PERROR("bind");
+        printf("bind error");
         printf("\nmaybe socket is in TIME_WAIT state, check this with the netstat command\n");
         printf("=> please wait one minute (or stop all clients before stopping the can_server)\n\n");
         close(listenSocket);
