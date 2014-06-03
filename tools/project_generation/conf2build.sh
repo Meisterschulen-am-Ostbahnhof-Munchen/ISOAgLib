@@ -481,7 +481,7 @@ driver_and_hal_features()
             printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/can_driver_canserver_msq.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface_client.cpp' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface.h'" >&4
             ;;
         (socket_server)
-            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/can_driver_canserver_socket.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface.h'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/can_driver_canserver_socket.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface_client.cpp' -o -path '*${HAL_PATH_ISOAGLIB}/can/can_server_interface.h'" >&4
             ;;
         (socket_server_hal_simulator)
             printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/can_driver_canserver_socket_hal_simulator.*'" >&4
