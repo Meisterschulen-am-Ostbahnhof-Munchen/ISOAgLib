@@ -164,7 +164,7 @@ namespace __HAL {
     // incoming connection requests
     listenSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (listenSocket == INVALID_SOCKET) {
-        printf("Error at socket(): %ld\n", WSAGetLastError());
+        printf("Error at socket(): %d\n", WSAGetLastError());
         WSACleanup();
         return -1;
     }
@@ -177,7 +177,6 @@ namespace __HAL {
 
     // Bind the socket.
     if (bind( listenSocket, (SOCKADDR*) &service, sizeof(service)) == SOCKET_ERROR) {
-        printf("bind() failed.\n");
         closesocket(listenSocket);
         return -1;
     }
