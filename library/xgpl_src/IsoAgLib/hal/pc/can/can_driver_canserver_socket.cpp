@@ -266,15 +266,19 @@ namespace __HAL {
     }
     
 #ifdef USE_MUTUAL_EXCLUSION
-    SOCKET_TYPE server_socket = establish(BREAK_WAIT_PORT);
-    if ( server_socket == INVALID_SOCKET ) {
-      MACRO_ISOAGLIB_PERROR("establish");
-      closeAllSockets();
-      return false;
+    SOCKET_TYPE server_socket = INVALID_SOCKET;
+    int try_break_wait_port = BREAK_WAIT_PORT;
+    while (( server_socket = establish(try_break_wait_port)) == INVALID_SOCKET) {
+      try_break_wait_port--;
+      if(try_break_wait_port <= 6000) {
+        MACRO_ISOAGLIB_PERROR("establish");
+        closeAllSockets();        
+        return false;
+      }
     }
     
     // call_socket will not block (client-role)
-    breakWaitSocket_read = call_socket(BREAK_WAIT_PORT);
+    breakWaitSocket_read = call_socket(try_break_wait_port);
     if ( breakWaitSocket_read == INVALID_SOCKET ) {
       closeAllSockets();
       return false;
