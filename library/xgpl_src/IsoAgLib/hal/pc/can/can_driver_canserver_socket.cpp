@@ -243,6 +243,10 @@ namespace __HAL {
 #endif
   }
 
+#ifdef USE_MUTUAL_EXCLUSION
+  SOCKET_TYPE establish(unsigned short portnum);
+#endif
+
   bool canStartDriver() {
 #ifdef WIN32
     // Initialize Winsock
