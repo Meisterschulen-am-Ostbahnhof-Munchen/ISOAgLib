@@ -147,6 +147,7 @@ void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pid)
 
 #ifndef WIN32
   #include <sys/socket.h>
+  #include <sys/un.h>
   #include <arpa/inet.h>
   #include <stdio.h>
   #include <linux/version.h>
