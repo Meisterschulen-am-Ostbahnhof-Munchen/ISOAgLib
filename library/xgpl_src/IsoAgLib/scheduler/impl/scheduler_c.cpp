@@ -90,7 +90,16 @@ namespace __IsoAgLib {
 
   int32_t Scheduler_c::timeEvent() {
 
+#if defined( ISOAGLIB_SCHEDULER_MAX_TIMEEVENT ) && ( ISOAGLIB_SCHEDULER_MAX_TIMEEVENT > 0 )
+    const int32_t startTime = System_c::getTime();
+#endif
+
     for ( int ind = 0; ind < CAN_INSTANCE_CNT; ind++ ) {
+#if defined( ISOAGLIB_SCHEDULER_MAX_TIMEEVENT ) && ( ISOAGLIB_SCHEDULER_MAX_TIMEEVENT > 0 )
+      if( (System_c::getTime() - startTime) > ISOAGLIB_SCHEDULER_MAX_TIMEEVENT )
+        return 0; // ran out of time in this timeEvent!  Must exit and try again next time.
+#endif
+
 #ifdef USE_MUTUAL_EXCLUSION
       getCanInstance( ind ).processMsg( m_breakTimeEvent );
       if( m_breakTimeEvent ) {
@@ -113,6 +122,11 @@ namespace __IsoAgLib {
         // hurt.
         return 3600000L;
       }
+
+#if defined( ISOAGLIB_SCHEDULER_MAX_TIMEEVENT ) && ( ISOAGLIB_SCHEDULER_MAX_TIMEEVENT > 0 )
+      if( (System_c::getTime() - startTime) > ISOAGLIB_SCHEDULER_MAX_TIMEEVENT )
+        return 0; // ran out of time in this timeEvent!  Must exit and try again next time.
+#endif
 
       SchedulerTask_c& task = *( m_taskQueue.front() );
 

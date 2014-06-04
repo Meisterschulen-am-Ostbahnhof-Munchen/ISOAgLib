@@ -25,6 +25,11 @@ namespace __IsoAgLib {
     , m_registered( false )
     , m_nextTriggerTime( -1 )
     , m_period( period )
+#if defined( ISOAGLIB_DEBUG_TIMEEVENT ) || defined( ISOAGLIB_TASK_MAX_TIMEEVENT )
+    , m_startTime( -1 )
+    , m_thisTimeEvent( -1 )
+    , m_maxTimeEvent( -1 )
+#endif
   {
     isoaglib_assert( period != 0 );
   }
@@ -53,10 +58,23 @@ namespace __IsoAgLib {
 
   void SchedulerTask_c::timeEventPre() {
     m_nextTriggerTimeSet = false;
+#if defined( ISOAGLIB_DEBUG_TIMEEVENT ) || defined( ISOAGLIB_TASK_MAX_TIMEEVENT )
+    m_startTime = System_c::getTime();
+#endif
   }
 
 
   void SchedulerTask_c::timeEventPost() {
+#if defined( ISOAGLIB_DEBUG_TIMEEVENT ) || defined( ISOAGLIB_TASK_MAX_TIMEEVENT )
+    m_thisTimeEvent = System_c::getTime() - m_startTime;
+
+    if( m_maxTimeEvent < m_thisTimeEvent )
+      m_maxTimeEvent = m_thisTimeEvent;
+
+#if defined( ISOAGLIB_TASK_MAX_TIMEEVENT )
+    isoaglib_assert( m_thisTimeEvent <= ISOAGLIB_TASK_MAX_TIMEEVENT );
+#endif
+#endif
 
     if( m_nextTriggerTimeSet ) {
       // next trigger time is set during time event call

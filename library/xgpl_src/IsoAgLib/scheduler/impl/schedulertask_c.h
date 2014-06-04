@@ -66,6 +66,12 @@ namespace __IsoAgLib {
       bool m_registered;
       int32_t m_nextTriggerTime;
       int32_t m_period;
+
+#if defined( ISOAGLIB_DEBUG_TIMEEVENT ) || defined( ISOAGLIB_TASK_MAX_TIMEEVENT )
+      int32_t m_startTime;
+      int32_t m_thisTimeEvent;
+      int32_t m_maxTimeEvent;
+#endif
   };
 
 } // __IsoAgLib
