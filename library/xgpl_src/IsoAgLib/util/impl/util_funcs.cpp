@@ -730,7 +730,6 @@ void spacePadBomUTF16 (char* utf16Str, uint16_t byteStrLen, uint16_t bytesToPad)
 #endif
 
 
-// Operation : calcScaledFontDimension
 uint8_t
 VtFontScaling::getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension, int32_t ai32_opDimension, uint16_t aui16_vtSupportedFonts,
                              bool ab_buttonParent, bool ab_inSkm,
@@ -746,6 +745,7 @@ VtFontScaling::getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension
   // if it is inside button => first priority
   if (ab_buttonParent)
   {
+#ifdef USE_VT_CLIENT_OLD_INCORRECT_BUTTON_CONTENT_SCALING
     if (ai32_opDimension && (aui16_opButtonWidth > 8) && (aui16_opButtonHeight > 8))
     {
       i32_vtButtonWidth  = (aui16_opButtonWidth * ai32_vtDimension) / ai32_opDimension - 8;
@@ -762,6 +762,25 @@ VtFontScaling::getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension
     }
     else
       ab_buttonParent = false; // forget about it
+#else
+    const int buttonBorderPixel = 8;
+    if (ai32_opDimension && (aui16_opButtonWidth > buttonBorderPixel) && (aui16_opButtonHeight > buttonBorderPixel))
+    {
+        i32_vtButtonWidth  = (aui16_opButtonWidth * ai32_vtDimension) / ai32_opDimension;
+        i32_vtButtonHeight = (aui16_opButtonHeight * ai32_vtDimension) / ai32_opDimension;
+        const int32_t ci_factorX = (((i32_vtButtonWidth - buttonBorderPixel) << 20) / (aui16_opButtonWidth - buttonBorderPixel));
+        const int32_t ci_factorY = (((i32_vtButtonHeight - buttonBorderPixel) << 20) / (aui16_opButtonHeight - buttonBorderPixel));
+        if (ci_factorX < ci_factorY) {
+        i32_factorM = i32_vtButtonWidth - buttonBorderPixel;
+        i32_factorD = aui16_opButtonWidth - buttonBorderPixel;
+        } else {
+        i32_factorM = i32_vtButtonHeight - buttonBorderPixel;
+        i32_factorD = aui16_opButtonHeight - buttonBorderPixel;
+        }
+    }
+    else
+        ab_buttonParent = false; // forget about it
+#endif
   }
   // if it is inside SKM => second priority
   else if (ab_inSkm)
