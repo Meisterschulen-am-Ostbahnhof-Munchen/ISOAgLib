@@ -49,13 +49,22 @@ Stream_c::Stream_c(
   , mui32_pkgNextToWrite (1)                     // DEFAULT FOR ISO-STREAMS
   , mui32_pkgTotalSize ((aui32_msgSize + 6) / 7) // DEFAULT FOR ISO-STREAMS
  // mui8_pkgRemainingInBurst     // will be set in "expectBurst(wishingPkgs)", don't care here as mt_awaitStep == awaitCtsSend!!
+#ifdef ENABLE_MULTIPACKET_RETRY
+  , mui8_pkgsReceivedInBurst( 0 )
+  , mui32_burstCurrent (1) // so we know that it's the first burst when calling the processBurst from the client
+#else
   , mui32_burstCurrent (0) // so we know that it's the first burst when calling the processBurst from the client
+#endif
   , mui8_streamFirstByte (0) // meaning: not yet identified!! (when you check it, it's already set!)
   , mui32_dataPageOffset (0) // will be set when needed
   , mui8_maxPacketInTPBurst( 255 ) //default to 255, set if important later.
   , mi32_timeoutLimit (msci32_timeNever)
   , mi_startTime(ai_time)
   , mi_finishTime(-1)
+#ifdef ENABLE_MULTIPACKET_RETRY
+  , mui32_isoErrorBurstWaitForPkgThenRetry(0)
+  , mui8_isoPkgRetryCountInBurst(0)
+#endif
 {
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (getStreamType() == StreamFastPacket)
@@ -87,6 +96,9 @@ Stream_c::Stream_c (const Stream_c &rhs)
   , mui32_pkgNextToWrite (rhs.mui32_pkgNextToWrite)
   , mui32_pkgTotalSize (rhs.mui32_pkgTotalSize)
   , mui8_pkgRemainingInBurst (rhs.mui8_pkgRemainingInBurst)
+#ifdef ENABLE_MULTIPACKET_RETRY
+  , mui8_pkgsReceivedInBurst (rhs.mui8_pkgsReceivedInBurst)
+#endif
   , mui32_burstCurrent (rhs.mui32_burstCurrent)
   , mui8_streamFirstByte (rhs.mui8_streamFirstByte)
   , mui32_dataPageOffset (rhs.mui32_dataPageOffset)
@@ -94,6 +106,10 @@ Stream_c::Stream_c (const Stream_c &rhs)
   , mi32_timeoutLimit (rhs.mi32_timeoutLimit)
   , mi_startTime(rhs.mi_startTime)
   , mi_finishTime(rhs.mi_finishTime)
+#ifdef ENABLE_MULTIPACKET_RETRY
+  , mui32_isoErrorBurstWaitForPkgThenRetry(rhs.mui32_isoErrorBurstWaitForPkgThenRetry)
+  , mui8_isoPkgRetryCountInBurst(rhs.mui8_isoPkgRetryCountInBurst)
+#endif
 {
 }
 
@@ -119,6 +135,9 @@ Stream_c::operator= (const Stream_c& ref)
   mui32_pkgNextToWrite = ref.mui32_pkgNextToWrite;
   mui32_pkgTotalSize = ref.mui32_pkgTotalSize;
   mui8_pkgRemainingInBurst = ref.mui8_pkgRemainingInBurst;
+#ifdef ENABLE_MULTIPACKET_RETRY
+  mui8_pkgsReceivedInBurst = ref.mui8_pkgsReceivedInBurst;
+#endif
   mui32_burstCurrent = ref.mui32_burstCurrent;
   mui8_streamFirstByte = ref.mui8_streamFirstByte;
   mui32_dataPageOffset = ref.mui32_dataPageOffset;
@@ -128,6 +147,10 @@ Stream_c::operator= (const Stream_c& ref)
   mi_startTime = ref.mi_startTime;
   mi_finishTime = ref.mi_finishTime;
 
+#ifdef ENABLE_MULTIPACKET_RETRY
+  mui32_isoErrorBurstWaitForPkgThenRetry = ref.mui32_isoErrorBurstWaitForPkgThenRetry;
+  mui8_isoPkgRetryCountInBurst = ref.mui8_isoPkgRetryCountInBurst;
+#endif
   return *this;
 }
 
@@ -137,6 +160,9 @@ Stream_c::awaitNextStep (NextComing_t at_awaitStep, int32_t ai32_timeOut)
 {
   mt_awaitStep = at_awaitStep;
   if (at_awaitStep == AwaitCtsSend) {
+#ifdef ENABLE_MULTIPACKET_RETRY
+    mui32_isoErrorBurstWaitForPkgThenRetry = 0;
+#endif
     mi32_delayCtsUntil = HAL::getTime() + ai32_timeOut; // use the timeOut parameter here for the delay!!!!
     mi32_timeoutLimit = msci32_timeNever; // no timeOut on own sending...
   } else {
@@ -188,8 +214,16 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
 #endif
   }
 
+#ifdef ENABLE_MULTIPACKET_RETRY
+  // is the expected Burst a next (new) one or is it a complete retry?
+  if( mui8_pkgsReceivedInBurst > 0 )
+    ++mui32_burstCurrent;
+
+  mui8_pkgsReceivedInBurst = 0;
+#else
   // increase mui32_burstCurrent, the expected Burst is a next new one (of course)...
   ++mui32_burstCurrent;
+#endif
 
   return mui8_pkgRemainingInBurst;
 }
@@ -205,36 +239,68 @@ Stream_c::handleDataPacket (const CanPkg_c& pkg)
     #if DEBUG_MULTIRECEIVE
       INTERNAL_DEBUG_DEVICE << "mt_awaitStep != AwaitData! --- mt_awaitStep ==" << mt_awaitStep << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    return false;
+    return false; // abort stream
   }
 
-  bool b_pkgNumberWrong=false;
+  const uint8_t sequenceNr = apu_data->getUint8Data( 0 );
+
+  uint32_t offset = 0;
   switch (getStreamType())
   {
-    case StreamTP:
-      if ((apu_data->getUint8Data( 0 ) /* no DPO for TP!! */) != mui32_pkgNextToWrite)
-        b_pkgNumberWrong=true;
-      break;
-
     case StreamETP:
-      if ((apu_data->getUint8Data( 0 ) + mui32_dataPageOffset) != mui32_pkgNextToWrite)
-        b_pkgNumberWrong=true;
+      offset = mui32_dataPageOffset;
+      // break left out intentionally
+    case StreamTP:
+      if( sequenceNr == 0 )
+        return false; // abort stream
+
+#ifdef ENABLE_MULTIPACKET_RETRY
+      bool b_isoFirstWrongPktInBurst=false;
+      if ((sequenceNr + offset) != mui32_pkgNextToWrite)
+      { // wrong packet!
+        if( mui32_isoErrorBurstWaitForPkgThenRetry == 0 )
+        {
+            mui32_isoErrorBurstWaitForPkgThenRetry = mui32_pkgNextToWrite + mui8_pkgRemainingInBurst - 1;
+            b_isoFirstWrongPktInBurst=true;
+        }
+      }
+
+      if ((sequenceNr + offset) == mui32_isoErrorBurstWaitForPkgThenRetry)
+      {
+        const int32_t ci32_ctsSendDelay = __IsoAgLib::getMultiReceiveInstance4Comm().getCtsDelay();
+        awaitNextStep (AwaitCtsSend, ci32_ctsSendDelay);
+      }
+      else if( b_isoFirstWrongPktInBurst )
+      {
+        ++mui8_isoPkgRetryCountInBurst;
+        if( mui8_isoPkgRetryCountInBurst == 3 )
+          return false; // abort stream
+      }
+      return true; // don't abort stream
+#else
+      if ((sequenceNr + offset) != mui32_pkgNextToWrite)
+      {
+        #if DEBUG_MULTIRECEIVE
+          INTERNAL_DEBUG_DEVICE << "wrong tp/etp pkg-number! ";
+        #endif
+        return false; // abort stream
+      }
+#endif
       break;
 
     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     case StreamFastPacket:
       if ((apu_data->getUint8Data( 0 ) & (0x1FU)) != mui32_pkgNextToWrite)
-        b_pkgNumberWrong=true;
+      {
+        #if DEBUG_MULTIRECEIVE
+          INTERNAL_DEBUG_DEVICE << "wrong fp pkg-number! ";
+        #endif
+        return false; // No retry on FP, ignore wrong frame. // abort stream
+      }
       break;
     #endif
   }
 
-  if (b_pkgNumberWrong) {
-    #if DEBUG_MULTIRECEIVE
-      INTERNAL_DEBUG_DEVICE << "wrong pkg-number! ";
-    #endif
-    return false;
-  }
 
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if ((getStreamType() == StreamFastPacket) && (mui32_pkgNextToWrite == 0))
@@ -258,8 +324,14 @@ Stream_c::handleDataPacket (const CanPkg_c& pkg)
 /// <<UPDATE_ALL>> Pkg counting stuff
   mui32_pkgNextToWrite++;
   mui8_pkgRemainingInBurst--;
+#ifdef ENABLE_MULTIPACKET_RETRY
+  mui8_pkgsReceivedInBurst++;
+#endif
 
   if (mui8_pkgRemainingInBurst == 0) {
+#ifdef ENABLE_MULTIPACKET_RETRY
+    mui8_isoPkgRetryCountInBurst = 0;
+#endif
     // End? or CTS for more?
     if (
         #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET

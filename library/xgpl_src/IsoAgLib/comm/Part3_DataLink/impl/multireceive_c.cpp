@@ -954,12 +954,14 @@ MultiReceive_c::timeEvent()
         INTERNAL_DEBUG_DEVICE << "Processing Burst" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       // CTS after Burst? -> process last Burst!
-      isoaglib_assert( rc_stream.getBurstNumber() > 0); // 0 would be right after creation.
+#ifdef ENABLE_MULTIPACKET_RETRY
+      if( rc_stream.getPkgsReceivedInBurst() > 0 )
+#endif
       processStreamDataChunk_ofMatchingClient(rc_stream, false);
       #if DEBUG_MULTIRECEIVE
         INTERNAL_DEBUG_DEVICE << "Send CTS to get next burst!" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      sendCurrentCts (rc_stream); // will increase the burstCurrent
+      sendCurrentCts (rc_stream); // will increase the burstCurrent (in ENABLE_MULTIPACKET_RETRY only of ANY packets were in this burst)
     }
 
     /// TimeOut-Checks

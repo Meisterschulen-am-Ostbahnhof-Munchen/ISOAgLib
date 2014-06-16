@@ -237,6 +237,9 @@ public:
   uint32_t getByteTotalSize ()            const { return mui32_byteTotalSize; };
   uint32_t getByteAlreadyReceived()       const { return mui32_byteAlreadyReceived; };
   uint32_t getBurstNumber()               const { return mui32_burstCurrent; };
+#ifdef ENABLE_MULTIPACKET_RETRY
+  uint8_t  getPkgsReceivedInBurst()       const { return mui8_pkgsReceivedInBurst; }
+#endif
   int32_t getStartTime()                  const { return mi_startTime; }
   int32_t getFinishTime()                 const { return mi_finishTime; }
   //! Provide first byte set by first call of processDataChunk... First byte containes command.
@@ -282,6 +285,9 @@ private:
   uint32_t mui32_pkgNextToWrite;      // should be initialized to 1
   uint32_t mui32_pkgTotalSize;        // calculated amount of pkgs to arrive for the given byteTotalSize!
   uint8_t   mui8_pkgRemainingInBurst; // the value requested by CTS
+#ifdef ENABLE_MULTIPACKET_RETRY
+  uint8_t   mui8_pkgsReceivedInBurst;
+#endif
   uint32_t mui32_burstCurrent;        // counting the bursts, so we know if it's the first or a following!
   uint8_t   mui8_streamFirstByte;     // will be the command that it's containing. set at the first call to processDataChunk...
   uint32_t mui32_dataPageOffset;      //  Attribute: mui32_dataPageOffset: gets set when a DPO arrives...
@@ -291,6 +297,11 @@ private:
 
   int32_t mi_startTime;
   int32_t mi_finishTime;
+
+#ifdef ENABLE_MULTIPACKET_RETRY
+  uint32_t mui32_isoErrorBurstWaitForPkgThenRetry; // == 0 ==> normal operation. > 0 ==> missing packet in burst, wait for last packet, then re-CTS
+  uint8_t mui8_isoPkgRetryCountInBurst;
+#endif
 };
 
 
