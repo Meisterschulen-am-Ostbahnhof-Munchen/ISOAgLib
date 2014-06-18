@@ -39,6 +39,7 @@ using namespace __HAL;
 static struct canDevice_s {
   struct canBus_s {
     bool          mb_canBusIsOpen;
+    TPCANHandle   m_channel;
     canBus_s();
   };
   canBus_s &canBus(size_t n_index);
@@ -61,7 +62,8 @@ inline size_t canDevice_s::nCanBusses()
 }
 
 canDevice_s::canBus_s::canBus_s() :
-  mb_canBusIsOpen(false)
+  mb_canBusIsOpen(false),
+  m_channel(PCAN_NONEBUS)
 {
 }
 
@@ -141,7 +143,6 @@ TPCANHandle extractChannelForPCI(uint8_t ui8_bus)
       return PCAN_PCIBUS1;
   }
 }
-TPCANHandle m_PeakChannel;
 #endif
 
 // PURPOSE: To initialize the specified CAN BUS to begin sending/receiving msgs
@@ -154,25 +155,28 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
 #if WIN32
   TPCANStatus status;
-  m_PeakChannel = extractChannelForUSB(ui8_bus);
+  TPCANHandle channel = extractChannelForUSB(ui8_bus);
   TPCANBaudrate baudrate = extractPcanBaudrate(wBitrate);
   
-  status = CAN_Initialize(m_PeakChannel, baudrate, 0, 0, 0);
+  status = CAN_Initialize(channel, baudrate, 0, 0, 0);
   if(status == PCAN_ERROR_OK)
   {
+    DEBUG_PRINT1("Connected to USB dongle. %d\n", channel);
     ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
+    ss_canDevice.canBus(ui8_bus).m_channel = channel;
     pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
     return true;
   }
   else
   {
     //Try PEAK PCI CARD
-    m_PeakChannel = extractChannelForPCI(ui8_bus);
-    status = CAN_Initialize(m_PeakChannel, baudrate, 0, 0, 0);
+    channel = extractChannelForPCI(ui8_bus);
+    status = CAN_Initialize(channel, baudrate, 0, 0, 0);
     if(status == PCAN_ERROR_OK)
     {
-      DEBUG_PRINT1("Connected to PCI card. %d\n", m_PeakChannel);
+      DEBUG_PRINT1("Connected to PCI card. %d\n", channel);
       ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
+      ss_canDevice.canBus(ui8_bus).m_channel = channel;
       pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
       return true;
     }
@@ -228,10 +232,14 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
   (void)ui8_bus;
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
 #ifdef WIN32
-  TPCANStatus status = CAN_Uninitialize(m_PeakChannel);
+  TPCANStatus status = CAN_Uninitialize(ss_canDevice.canBus(ui8_bus).m_channel);
   if(status == PCAN_ERROR_OK)
   {
     DEBUG_PRINT("Disonnected peak driver.\n");
+  }
+  else
+  {
+    std::cerr << "Close PEAK CAN Fault with return-code: " << status << std::endl;
   }
   ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
   pc_serverData->canBus(ui8_bus).mb_deviceConnected = false;
@@ -255,7 +263,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
       msg.DATA[i] = ps_canMsg->ui8_data[i];
 
     assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
-    status = CAN_Write(m_PeakChannel, &msg);
+    status = CAN_Write(ss_canDevice.canBus(ui8_bus).m_channel, &msg);
     if (status == PCAN_ERROR_OK)
       return 1;
     else
@@ -292,7 +300,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   TPCANStatus status;
   TPCANTimestamp timestamp;
 
-  status = CAN_Read(m_PeakChannel, &msg, &timestamp);
+  status = CAN_Read(ss_canDevice.canBus(ui8_bus).m_channel, &msg, &timestamp);
   if (status != PCAN_ERROR_OK) 
   {
     return false;
