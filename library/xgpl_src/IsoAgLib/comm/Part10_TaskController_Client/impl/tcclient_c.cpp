@@ -12,12 +12,16 @@
 */
 #include "tcclient_c.h"
 
+#include "serverinstance_c.h"
+
 #include <IsoAgLib/comm/impl/isobus_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 #include <IsoAgLib/util/iassert.h>
 
+#include <algorithm>
 #include <list>
 
 #if defined(_MSC_VER)
@@ -36,8 +40,8 @@ namespace __IsoAgLib {
     , m_customer( *this )
     , m_stateHandler( NULL )
     , m_pdMessageHandler( NULL )
-    , m_identdata()
     , m_server()
+    , m_connections()
   {
   }
 
@@ -108,49 +112,60 @@ namespace __IsoAgLib {
 
 
   TcClientConnection_c*
-  TcClient_c::connect( IdentItem_c& identItem, TcClientConnection_c::StateHandler_c& sh, const IsoItem_c& tcdl, DevicePool_c& pool ) {
-    STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( &tcdl );
-    isoaglib_assert( server != m_server.end() );
-
-    identData_t* data = getDataFor( identItem );
-    if( ! data ) {
-      m_identdata.push_back( identData_t() );
-      data = &( m_identdata.back() );
-      data->ident = &identItem;
-    } else {
-      // check for connections between this ident and the given server
-      for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator c = data->connections.begin(); c != data->connections.end(); ++c ) {
-        if( ( *c )->getServerName() == tcdl.isoName() ) {
-          isoaglib_assert( !"Double connect between one IdentItem_c and server detected!" );
-          return 0;
+  TcClient_c::connect( const IdentItem_c& identItem, TcClientConnection_c::StateHandler_c& sh, const IsoItem_c& tcdl, DevicePool_c& pool ) {
+    for (STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator connection = m_connections.begin();
+         connection != m_connections.end();
+         ++connection)
+    {
+        if ((&(*connection)->getIdentItem() == &identItem) && ((*connection)->getServerName() == tcdl.isoName()))
+        {
+            isoaglib_assert( !"Double connect between one IdentItem_c and server detected!" );
+            return NULL;
         }
-      }
     }
-
-    // setup connection
+  
+    STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( &tcdl );
     TcClientConnection_c* c = new TcClientConnection_c( identItem, *this, sh, *(server->second), pool );
-    data->connections.push_back( c );
+    m_connections.push_back( c );
 
     return c;
   }
 
 
   void
-  TcClient_c::disconnect( IdentItem_c& identItem ) {
-    STL_NAMESPACE::list<identData_t>::iterator i = m_identdata.begin();
-    for( ; i != m_identdata.end(); ++i ) {
-      if( i->ident == &identItem ) {
-        break;
+  TcClient_c::disconnect( const IdentItem_c& identItem ) {
+    for (STL_NAMESPACE::list<TcClientConnection_c*>::iterator connection = m_connections.begin();
+         connection != m_connections.end();
+         /*++connection*/)
+    {
+        if (&(*connection)->getIdentItem() == &identItem)
+        {
+            delete *connection;
+            connection = m_connections.erase(connection);
+        }
+        else
+            ++connection;
+    }
+  }
+  
+  void
+  TcClient_c::disconnect( const TcClientConnection_c& connection) {
+
+    STL_NAMESPACE::list<TcClientConnection_c*>::iterator iter = STL_NAMESPACE::find(m_connections.begin(),m_connections.end(), &connection);
+    isoaglib_assert(iter != m_connections.end());
+    delete (*iter);
+    m_connections.erase(iter);
+  }
+
+  void
+  TcClient_c::getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill )
+  {
+    for (STL_NAMESPACE::map<const __IsoAgLib::IsoItem_c*,__IsoAgLib::ServerInstance_c*>::iterator iter = m_server.begin(); iter != m_server.end(); ++iter) {
+      if (iter->second->isAlive())
+      {
+        list_to_fill.push_back( STL_NAMESPACE::make_pair(&iter->first->toConstIisoItem_c(), iter->second->getEcuType()) );
       }
     }
-    isoaglib_assert( i != m_identdata.end() );
-
-    for ( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = ( *i ).connections.begin();
-        it != ( *i ).connections.end(); ++it ) {
-      delete( *it );
-    }
-
-    m_identdata.erase( i );
   }
 
 
@@ -187,19 +202,10 @@ namespace __IsoAgLib {
 
   void
   TcClient_c::processMsgNonGlobal( const ProcessPkg_c& pkg ) {
-    identData_t* identData = getDataFor( *pkg.getMonitorItemForDA() );
+    STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( pkg.getMonitorItemForSA() );
 
-    if( ! identData ) {
-      return;
-    }
-
-    for( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = identData->connections.begin();
-         it != identData->connections.end(); ++it )
-    {
-      if( ( ( *it )->getServer() == NULL) || (pkg.getMonitorItemForSA() != &( *it )->getServer()->getIsoItem()) )
-        continue;
-
-      ( *it )->processProcMsg( pkg );
+    if( server != m_server.end() ) {
+      server->second->processMsgNonGlobal( pkg );
     }
   }
 
@@ -209,6 +215,10 @@ namespace __IsoAgLib {
     if( ( action == ControlFunctionStateHandler_c::RemoveFromMonitorList ) &&( ! isoItem.itemState( IState_c::Local ) ) ) {
       STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator i = m_server.find( &isoItem );
       if( i != m_server.end() ) {
+        if (i->second->isAlive())
+        {
+          notifyServerStatusChange(*i->second, false);
+        }
         delete i->second;
         m_server.erase( i );
       }
@@ -220,48 +230,35 @@ namespace __IsoAgLib {
   TcClient_c::processTcStatusMsg( uint8_t tcStatus, const __IsoAgLib::IsoItem_c& sender ) {
     STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*>::iterator server = m_server.find( &sender );
 
-    if( server == m_server.end() ) {
-      IsoAgLib::ProcData::RemoteType_t ecuType; 
-      switch (sender.isoName().getEcuType()) {
-        case IsoName_c::ecuTypeTaskControl:
-          ecuType = IsoAgLib::ProcData::RemoteTypeTaskController;
-          break;
-        case IsoName_c::ecuTypeDataLogger:
-          ecuType = IsoAgLib::ProcData::RemoteTypeDataLogger;
-          break;
-        default:
-          return;
-      }
-
-      m_server[ &sender ] = new ServerInstance_c( sender, ecuType );
-      server = m_server.find( &sender );
-      if (m_stateHandler)
-        m_stateHandler->_eventServerAvailable( sender, ecuType );
-
-      // check for connections that used this server. Re add those connections to that server
-      // and set to initial state
-      for( STL_NAMESPACE::list<identData_t>::iterator i = m_identdata.begin(); i != m_identdata.end(); ++i ) {
-        for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator c = i->connections.begin(); c != i->connections.end(); ++c ) {
-          if( ( *c )->getServerName() == sender.isoName() ) {
-            server->second->addConnection( **c );
-            (*c)->setServer( server->second );
-            (*c)->setDevPoolState( TcClientConnection_c::PoolStateInit );
-          }
-        }
-      }
+    if( server != m_server.end() ) {
+      server->second->processStatus( tcStatus );
+      return;
     }
 
-    server->second->processStatus( tcStatus );
+    IsoAgLib::ProcData::RemoteType_t ecuType; 
+    switch (sender.isoName().getEcuType()) {
+    case IsoName_c::ecuTypeTaskControl:
+      ecuType = IsoAgLib::ProcData::RemoteTypeTaskController;
+      break;
+    case IsoName_c::ecuTypeDataLogger:
+      ecuType = IsoAgLib::ProcData::RemoteTypeDataLogger;
+      break;
+    default:
+      return;
+    }
+
+    ServerInstance_c* new_server = new ServerInstance_c( sender, ecuType );
+    new_server->processStatus( tcStatus );
+
+    m_server[ &sender ] = new_server;
+    // _eventServerAvailable is called by the server itself using notifyServerStatusChange
   }
 
 
   void
-  TcClient_c::processChangeDesignator( IdentItem_c& ident, uint16_t objID, const char* newDesig ) {
-    identData_t* identData = getDataFor( ident );
-    isoaglib_assert( identData );
-
-    STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = identData->connections.begin();
-    while ( it != identData->connections.end() ) {
+  TcClient_c::processChangeDesignator( const IdentItem_c& ident, uint16_t objID, const char* newDesig ) {
+    STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
+    while ( it != m_connections.end() ) {
       if ( &ident == &( ( *it )->getIdentItem() ) )
         ( *it )->sendCommandChangeDesignator( objID, newDesig, CNAMESPACE::strlen( newDesig ) );
       ++it;
@@ -269,15 +266,39 @@ namespace __IsoAgLib {
   }
 
 
-  TcClient_c::identData_t*
-  TcClient_c::getDataFor( IsoItem_c& item ) {
-    STL_NAMESPACE::list<identData_t>::iterator i = m_identdata.begin();
-    for( ; i != m_identdata.end(); ++i ) {
-      if( i->ident->getIsoItem() == &item ) {
-        return &( *i );
+  void
+  TcClient_c::notifyServerStatusChange(ServerInstance_c& server, bool new_status)
+  {
+    if (!new_status)
+    {
+      STL_NAMESPACE::list<TcClientConnection_c*> delete_connections;
+      // first itentify the TcClientConnection_c that are concerned
+      for (STL_NAMESPACE::list<TcClientConnection_c*>::iterator connection = m_connections.begin();
+          connection != m_connections.end();
+          /*++connection*/)
+      {
+        if (&(*connection)->getServer() == &server)
+        {
+          delete_connections.push_back(*connection);
+          connection = m_connections.erase(connection);
+        }
+        else
+          ++connection;
+      }
+      // then report disconnected TcClientConnection_c to application
+      // since we do not loop m_connections, the application can safely connect to an other Server
+      for (STL_NAMESPACE::list<TcClientConnection_c*>::iterator connection = delete_connections.begin();
+          connection != delete_connections.end();
+          ++connection)
+      {
+        if (m_stateHandler)
+        m_stateHandler->_eventDisconnectedOnServerLoss(**connection);
+        delete *connection;      
       }
     }
-    return 0;
+
+    if (m_stateHandler)
+      m_stateHandler->_eventServerAvailable( server.getIsoItem(), server.getEcuType(), new_status );
   }
 
 

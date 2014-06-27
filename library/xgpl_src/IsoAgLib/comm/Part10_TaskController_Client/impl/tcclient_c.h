@@ -14,7 +14,6 @@
 #define TCCLIENT_C_H
 
 #include "tcclientconnection_c.h"
-#include "serverinstance_c.h"
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
@@ -40,7 +39,8 @@ namespace __IsoAgLib {
 
       class ServerStateHandler_c {
         public:
-          virtual void _eventServerAvailable( const IsoItem_c&, IsoAgLib::ProcData::RemoteType_t ) = 0;
+          virtual void _eventServerAvailable( const IsoItem_c&, IsoAgLib::ProcData::RemoteType_t, bool server_status ) = 0;
+          virtual void _eventDisconnectedOnServerLoss( const TcClientConnection_c& client_disconnected) = 0;
       };
 
       class PdMessageHandler_c {
@@ -57,14 +57,13 @@ namespace __IsoAgLib {
       void setPdMessageHandler( PdMessageHandler_c& hdl );
       void clearPdMessageHandler();
 
-      TcClientConnection_c* connect( IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcdl, DevicePool_c& );
-      void disconnect( IdentItem_c& );
+      TcClientConnection_c* connect( const IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcdl, DevicePool_c& );
+      void disconnect( const IdentItem_c& );
+      void disconnect( const TcClientConnection_c& );
 
-      void processMsg( const CanPkg_c& );
+      void getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill );
 
-      void reactOnIsoItemModification ( ControlFunctionStateHandler_c::iIsoItemAction_e, IsoItem_c const& );
-
-      void processChangeDesignator( IdentItem_c&, uint16_t, const char* );
+      void processChangeDesignator( const IdentItem_c&, uint16_t, const char* );
 
       void sendPdMessage( const IsoItem_c& sa_item, 
                           const IsoItem_c* da_item,
@@ -74,8 +73,17 @@ namespace __IsoAgLib {
       void receivePdMessage(const IsoItem_c& sa_item, const IsoItem_c* da_item, IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value);
 #endif
 
+      void notifyServerStatusChange(ServerInstance_c& server, bool new_status);
+
     private:
       TcClient_c();
+
+      void processMsg( const CanPkg_c& );
+      void reactOnIsoItemModification ( ControlFunctionStateHandler_c::iIsoItemAction_e, IsoItem_c const& );
+
+      void processMsgGlobal( const ProcessPkg_c& );
+      void processMsgNonGlobal( const ProcessPkg_c& );
+      void processTcStatusMsg( uint8_t ui8_tcStatus, const __IsoAgLib::IsoItem_c& sender );
 
       /// PROXY-CLASSES
       class CanCustomerProxy_c : public CanCustomer_c {
@@ -126,25 +134,8 @@ namespace __IsoAgLib {
       ServerStateHandler_c* m_stateHandler;
       PdMessageHandler_c* m_pdMessageHandler;
 
-      void processMsgGlobal( const ProcessPkg_c& );
-      void processMsgNonGlobal( const ProcessPkg_c& );
-      void processTcStatusMsg( uint8_t ui8_tcStatus, const __IsoAgLib::IsoItem_c& sender );
-
-      typedef struct {
-        IdentItem_c* ident;
-        STL_NAMESPACE::list<ProcData_c*> procData;
-        STL_NAMESPACE::list<TcClientConnection_c*> connections;
-      } identData_t;
-
-      STL_NAMESPACE::list<identData_t> m_identdata;
-
-      STL_NAMESPACE::map<const IsoItem_c*,ServerInstance_c*> m_server;
-
-      identData_t* getDataFor( IsoItem_c& ident );
-      identData_t* getDataFor( IdentItem_c& ident ) {
-        return getDataFor( *ident.getIsoItem() );
-      }
-
+      STL_NAMESPACE::map<const __IsoAgLib::IsoItem_c*,__IsoAgLib::ServerInstance_c*> m_server;
+      STL_NAMESPACE::list<TcClientConnection_c*> m_connections;
 
       friend TcClient_c &getTcClientInstance( uint8_t instance );
       friend class ProcData_c;

@@ -11,6 +11,8 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "serverinstance_c.h"
+#include "tcclient_c.h"
+#include "processpkg_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 
 
@@ -18,21 +20,44 @@ namespace __IsoAgLib {
 
 
   ServerInstance_c::ServerInstance_c( const IsoItem_c& it, IsoAgLib::ProcData::RemoteType_t type ) :
+    SchedulerTask_c( 100, false ),
     m_isoItem( it ),
+    m_tcAliveCached( false ),
     m_lastActiveTaskTC( false ),
     m_lastTcState( 0 ),
     m_lastTcStateReceivedTime( -1 ),
     m_type( type ),
     m_connections()
-  {}
+  {
+    getSchedulerInstance().registerTask(*this,0);
+  }
 
 
   ServerInstance_c::~ServerInstance_c() {
-    STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
-    while ( it != m_connections.end() ) {
-      ( *it )->stopRunningMeasurement();
-      ( *it )->setServer( NULL );
-      ++it;
+    assert(m_connections.empty());
+    getSchedulerInstance().deregisterTask(*this);
+  }
+
+
+  void
+  ServerInstance_c::processMsgNonGlobal( const ProcessPkg_c& pkg ) {
+    for( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
+         it != m_connections.end(); ++it )
+    {
+      if (&(*it)->getIsoItem() == pkg.getMonitorItemForSA())
+      {
+        ( *it )->processProcMsg( pkg );
+        return;
+      }
+    }
+  }
+
+
+  void ServerInstance_c::timeEvent() {
+    const bool tcStatusOld = m_tcAliveCached;
+    m_tcAliveCached = isAlive();
+    if (m_tcAliveCached != tcStatusOld) {
+      getTcClientInstance(m_isoItem.getMultitonInst()).notifyServerStatusChange(*this, m_tcAliveCached);
     }
   }
 

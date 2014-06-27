@@ -26,10 +26,20 @@ namespace IsoAgLib {
     public:
       class iServerStateHandler_c : private __IsoAgLib::TcClient_c::ServerStateHandler_c {
         public:
-          virtual void eventServerAvailable( const iIsoItem_c&, ProcData::RemoteType_t ) = 0;
-        private:
-          virtual void _eventServerAvailable( const __IsoAgLib::IsoItem_c& item, IsoAgLib::ProcData::RemoteType_t type ) {
-            eventServerAvailable( (const iIsoItem_c&) item , type );
+          // server_status is true: server is now available/online
+          // server_status is false: server is now unavailable/offline
+          virtual void eventServerAvailable( const iIsoItem_c&, ProcData::RemoteType_t, bool server_status ) = 0;
+          // a iTcClientConnection_c is about to get closed/destructed: IsoAgLib will delete
+          // the iTcClientConnection_c after this call. It happens on server alive timeout and if server IsoItem
+          // is removed from the monitor list
+          // Warning: do not "disconnect" any client during this call !
+          virtual void eventDisconnectedOnServerLoss( const iTcClientConnection_c& client_disconnected ) = 0;
+      private:
+          virtual void _eventServerAvailable( const __IsoAgLib::IsoItem_c& item, IsoAgLib::ProcData::RemoteType_t type, bool server_status ) {
+            eventServerAvailable( (const iIsoItem_c&) item , type, server_status );
+          }
+          virtual void _eventDisconnectedOnServerLoss( const __IsoAgLib::TcClientConnection_c& client_disconnected ) {
+            eventDisconnectedOnServerLoss( (const iTcClientConnection_c&)client_disconnected );
           }
           friend class iTcClient_c;
       };
@@ -89,6 +99,14 @@ namespace IsoAgLib {
 
       void disconnect( iIdentItem_c& identItem ) {
         TcClient_c::disconnect( static_cast<__IsoAgLib::IdentItem_c&>( identItem ) );
+      }
+
+      void disconnect( iTcClientConnection_c& connection) {
+        TcClient_c::disconnect( static_cast<__IsoAgLib::TcClientConnection_c&>( connection ) );
+      }
+      
+      void getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill ) {
+        TcClient_c::getAllServers( list_to_fill );
       }
 
       /* changing designators is not yet supported */

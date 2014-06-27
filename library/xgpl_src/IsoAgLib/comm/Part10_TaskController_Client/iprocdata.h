@@ -16,7 +16,9 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
 
+#include <list>
 
 namespace IsoAgLib {
 
@@ -109,6 +111,9 @@ namespace ProcData {
   };
 
   typedef BitFieldWrapperRight_c<Property_s> Properties_t;
+  
+  typedef STL_NAMESPACE::list< STL_NAMESPACE::pair<const IsoAgLib::iIsoItem_c*, RemoteType_t> > ServerList;
+
 }
 
 }

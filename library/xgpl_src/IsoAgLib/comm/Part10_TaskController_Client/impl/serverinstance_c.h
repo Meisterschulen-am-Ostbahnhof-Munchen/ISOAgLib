@@ -18,7 +18,7 @@
 
 namespace __IsoAgLib {
 
-  class ServerInstance_c {
+  class ServerInstance_c: public SchedulerTask_c {
     public:
       ServerInstance_c( const IsoItem_c& it, IsoAgLib::ProcData::RemoteType_t type );
       ~ServerInstance_c();
@@ -30,6 +30,8 @@ namespace __IsoAgLib {
       const IsoItem_c& getIsoItem() const {
         return m_isoItem;
       }
+
+      void processMsgNonGlobal( const ProcessPkg_c& pkg );
 
       void addConnection( TcClientConnection_c& c );
       void removeConnection( TcClientConnection_c& c );
@@ -49,8 +51,13 @@ namespace __IsoAgLib {
       }
 
     private:
+      void timeEvent();
+
+    private:
       const IsoItem_c& m_isoItem;
 
+      bool m_tcAliveCached;
+      
       bool m_lastActiveTaskTC;
       uint8_t m_lastTcState;
       int32_t m_lastTcStateReceivedTime;

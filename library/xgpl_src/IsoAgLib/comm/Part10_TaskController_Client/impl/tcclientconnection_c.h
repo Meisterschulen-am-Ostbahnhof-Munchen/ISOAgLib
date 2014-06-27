@@ -52,8 +52,7 @@ namespace __IsoAgLib {
 
     public:
       enum DevPoolState_t {
-        PoolStateDisabled = 0, // Disabled is when the TC stops sending his alive message or drops off.
-        PoolStateInit,
+        PoolStateInit = 0,
         PoolStatePresetting,
         PoolStateNotPresent,
         PoolStateStale,
@@ -129,7 +128,7 @@ namespace __IsoAgLib {
 
 
       TcClientConnection_c(
-        IdentItem_c& identItem,
+        const IdentItem_c& identItem,
         TcClient_c& tcClient,
         StateHandler_c& sh,
         ServerInstance_c& server,
@@ -137,36 +136,37 @@ namespace __IsoAgLib {
 
       virtual ~TcClientConnection_c();
 
-      IdentItem_c& getIdentItem() const {
+      const IdentItem_c& getIdentItem() const {
         return m_identItem;
       }
       TcClient_c& getTcClient() const {
         return *m_tcClient;
       }
 
+      const IsoName_c& getServerName() const {
+        return m_serverName;
+      }
 
-      void timeEvent();
-      void checkAndHandleTcStateChange();
-      void timeEventDevicePool();
+      const ServerInstance_c& getServer() const {
+        return m_server;
+      }
 
-      bool isTcAlive();
-      void startUpload();
-#ifdef HAL_USE_SPECIFIC_FILTERS
-      virtual void processMsg( const CanPkg_c& data );
-#endif
+      const IsoItem_c& getIsoItem() const;
+
       void processProcMsg( const ProcessPkg_c& );
-      void processMsgTc( const ProcessPkg_c& );
 
-      void processMeasurementMsg( const ProcessPkg_c& );
-      void processRequestMsg( const ProcessPkg_c& );
-      void processSetMsg( const ProcessPkg_c& );
-
-      void outOfMemory();
+      void sendNack( int16_t ddi, int16_t element, IsoAgLib::ProcData::NackResponse_t errorcodes ) const;
+      void sendProcMsg( uint16_t ddi, uint16_t element, int32_t pdValue ) const;
 
       bool sendCommandChangeDesignator( uint16_t /* objID */, const char* /* newString */, uint8_t /* length */ ) {
         return false; /* @todo: send msg */
       }
 
+      void eventTaskStarted();
+      void eventTaskStopped();
+      void stopRunningMeasurement();
+
+    private:
 // @todo Send this?
 #if 0
       void requestVersion() { doCommand( procCmdPar_RequestVersionMsg, DEF_TimeOut_GetVersion ); }
@@ -179,10 +179,6 @@ namespace __IsoAgLib {
       void eventPoolActivateResponse( uint8_t result );
       void eventPoolDeleteResponse( uint8_t result );
 
-      void eventTaskStarted();
-      void eventTaskStopped();
-      void stopRunningMeasurement();
-
       void setDevPoolState( DevPoolState_t newState ) {
         m_devPoolState = newState;
       }
@@ -194,24 +190,21 @@ namespace __IsoAgLib {
         return m_uploadPoolState;
       }
 
-      const IsoName_c& getServerName() const {
-        return m_serverName;
-      }
+      void timeEvent();
+      void timeEventDevicePool();
+      void startUpload();
+#ifdef HAL_USE_SPECIFIC_FILTERS
+      virtual void processMsg( const CanPkg_c& data );
+#endif
 
-      ServerInstance_c* getServer() const {
-        return m_server;
-      }
+      void processMsgTc( const ProcessPkg_c& );
 
-      void sendNack( int16_t ddi, int16_t element, IsoAgLib::ProcData::NackResponse_t errorcodes ) const;
-      void sendProcMsg( uint16_t ddi, uint16_t element, int32_t pdValue ) const;
+      void processMeasurementMsg( const ProcessPkg_c& );
+      void processRequestMsg( const ProcessPkg_c& );
+      void processSetMsg( const ProcessPkg_c& );
 
-      void setServer( ServerInstance_c* server ) {
-        m_initDone = false;
-        m_server = server;
-      }
+      void outOfMemory();
 
-
-    private:
       class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
         public:
           typedef TcClientConnection_c Owner_t;
@@ -314,14 +307,13 @@ namespace __IsoAgLib {
       void doCommand( int32_t opcode, int32_t timeout = DEF_TimeOut_NormalCommand );
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
 
-
-      IdentItem_c& m_identItem;
+      const IdentItem_c& m_identItem;
       int32_t m_timeWsAnnounceKey;
       TcClient_c* m_tcClient;
       StateHandler_c* m_stateHandler;
 
       IsoName_c m_serverName;
-      ServerInstance_c* m_server;
+      ServerInstance_c& m_server;
 
       // MultiSendStreamer_c variables
       uint16_t m_currentSendPosition;

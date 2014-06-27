@@ -322,7 +322,7 @@ namespace __IsoAgLib {
   {}
 
 
-  void DevicePool_c::init( IdentItem_c& ident ) {
+  void DevicePool_c::init( const IdentItem_c& ident ) {
     getDvcObject()->init( ident );
     m_identItem = &ident;
   }

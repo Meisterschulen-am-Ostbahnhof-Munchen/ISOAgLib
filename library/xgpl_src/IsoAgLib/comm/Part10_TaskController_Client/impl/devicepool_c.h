@@ -257,7 +257,7 @@ namespace __IsoAgLib {
 
     private:
       friend class TcClientConnection_c;
-      void init( IdentItem_c& ident );
+      void init( const IdentItem_c& ident );
       void close();
 
       DeviceObjectDvc_c* getDvcObject() const;
@@ -270,7 +270,7 @@ namespace __IsoAgLib {
       typedef STL_NAMESPACE::list<ProcData_c*> procDataList_t;
       deviceMap_t m_devicePool;
       procDataList_t m_procDatas;
-      IdentItem_c* m_identItem;
+      const IdentItem_c* m_identItem;
   };
 
 }

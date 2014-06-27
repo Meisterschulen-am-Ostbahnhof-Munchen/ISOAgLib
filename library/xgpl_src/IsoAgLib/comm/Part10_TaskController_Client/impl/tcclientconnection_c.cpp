@@ -13,6 +13,8 @@
 */
 #include "tcclientconnection_c.h"
 
+#include "serverinstance_c.h"
+
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
@@ -81,7 +83,7 @@ namespace __IsoAgLib {
     format( iVal );
   }
 
-  TcClientConnection_c::TcClientConnection_c( IdentItem_c& identItem, TcClient_c& tcClient, StateHandler_c& sh, ServerInstance_c& server, DevicePool_c& pool )
+  TcClientConnection_c::TcClientConnection_c( const IdentItem_c& identItem, TcClient_c& tcClient, StateHandler_c& sh, ServerInstance_c& server, DevicePool_c& pool )
     : m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )
     , m_identItem( identItem )
@@ -89,7 +91,7 @@ namespace __IsoAgLib {
     , m_tcClient( &tcClient )
     , m_stateHandler( &sh )
     , m_serverName( server.getIsoItem().isoName() )
-    , m_server( &server )
+    , m_server( server )
     , m_currentSendPosition( 0 )
     , m_storedSendPosition( 0 )
     , m_devicePoolToUpload()
@@ -108,7 +110,7 @@ namespace __IsoAgLib {
     , m_measureProg()
     , m_sendSuccess( SendStream_c::SendSuccess )
     , m_pool( pool )
-    , m_devPoolState( PoolStateDisabled )
+    , m_devPoolState( PoolStateInit )
     , m_devPoolAction( PoolActionIdle )
     , m_schedulerTaskProxy( *this, 100, false )
   {
@@ -122,14 +124,13 @@ namespace __IsoAgLib {
         &m_identItem.isoName(), &m_serverName, 8 ) );
 #endif
 
-    m_server->addConnection( *this );
+    m_server.addConnection( *this );
   }
 
 
   TcClientConnection_c::~TcClientConnection_c()
   {
-    if (m_server)
-      m_server->removeConnection( *this );
+    m_server.removeConnection( *this );
       
 #ifdef HAL_USE_SPECIFIC_FILTERS
     getIsoFilterManagerInstance4Comm().removeIsoFilter(
@@ -143,37 +144,42 @@ namespace __IsoAgLib {
     stopRunningMeasurement();
     destroyMeasureProgs();
 
+    if (m_server.getLastActiveTaskTC())
+      eventTaskStopped();
+
     m_pool.close();
   }
 
+  
+  const IsoItem_c&
+  TcClientConnection_c::getIsoItem() const {
+    return m_server.getIsoItem();
+  }
+      
 
   void
   TcClientConnection_c::timeEvent( void ) {
-    if ( !m_identItem.isClaimedAddress() || !m_server )
+    if ( !m_identItem.isClaimedAddress() )
       return;
 
     // Wait until we are properly initialized before doing anything else
     if ( ! m_initDone ) {
       // Address claim is complete. Set time at which our address was claimed if it is
-      // still in an initialized state
+      // still in an initialized state    
+      
       if ( m_timeStartWaitAfterAddrClaim == -1 ) {
         m_timeStartWaitAfterAddrClaim = HAL::getTime();
         return;
       }
 
       // init is finished when more then 6sec after addr claim and at least one TC status message was received
-      if ( ( HAL::getTime() - m_timeStartWaitAfterAddrClaim >= 6000 ) && ( m_server->getLastStatusTime() != -1 ) )
+      if ( ( HAL::getTime() - m_timeStartWaitAfterAddrClaim >= 6000 ) && ( m_server.getLastStatusTime() != -1 ) )
+      {
+        m_timeWsAnnounceKey = m_identItem.getIsoItem()->startWsAnnounce();
         m_initDone = true;
+      }
       return;
     }
-
-    checkAndHandleTcStateChange();
-
-    if( getDevPoolState() == PoolStateDisabled )
-      return;
-
-    if ( !isTcAlive() )
-      return;
 
     // Check if the working-set is completely announced
     if ( !m_identItem.getIsoItem()->isWsAnnounced ( m_timeWsAnnounceKey ) )
@@ -183,35 +189,10 @@ namespace __IsoAgLib {
     const int32_t now = HAL::getTime();
     if ( now - m_timeWsTaskMsgSent >= 2000 ) {
       m_timeWsTaskMsgSent = now;
-      sendMsg( 0xff, 0xff, 0xff, 0xff, m_server->getLastServerState(), 0x00, 0x00, 0x00 );
+      sendMsg( 0xff, 0xff, 0xff, 0xff, m_server.getLastServerState(), 0x00, 0x00, 0x00 );
     }
 
     timeEventDevicePool();
-  }
-
-
-  void
-  TcClientConnection_c::checkAndHandleTcStateChange() {
-    const bool tcAliveOld = m_tcAliveNew;
-    m_tcAliveNew = isTcAlive();
-
-    if ( tcAliveOld != m_tcAliveNew ) {
-      // react on tc alive change "false->true"
-      if( m_tcAliveNew ) {
-        setDevPoolState( PoolStateInit );
-        m_uploadState = StateIdle;
-        m_timeWsAnnounceKey = m_identItem.getIsoItem()->startWsAnnounce();
-      } else {
-        setDevPoolState( PoolStateDisabled );
-        m_timeWsAnnounceKey = -1;
-
-        stopRunningMeasurement();
-        if (m_server && m_server->getLastActiveTaskTC())
-          eventTaskStopped();
-      }
-
-      setDevPoolAction( PoolActionIdle );
-    }
   }
 
 
@@ -323,12 +304,6 @@ namespace __IsoAgLib {
             break;
         }
       }
-  }
-
-
-  bool
-  TcClientConnection_c::isTcAlive() {
-    return m_server ? m_server->isAlive() : false;
   }
 
 
@@ -467,8 +442,6 @@ namespace __IsoAgLib {
 
 
   void TcClientConnection_c::processMsgTc( const ProcessPkg_c& data ) {
-    if( getDevPoolState() == PoolStateDisabled )
-      return;
 
     // handling of NACK
     //  means that no device description is uploaded before
@@ -605,7 +578,7 @@ namespace __IsoAgLib {
                                  uint8_t b5, uint8_t b6, uint8_t b7 ) const {
     ProcessPkg_c pkg( b0, b1, b2, b3, b4, b5, b6, b7);
 
-    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>(&m_server->getIsoItem()) );
+    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>(&m_server.getIsoItem()) );
     pkg.setMonitorItemForSA( m_identItem.getIsoItem() );
 
     getIsoBusInstance4Comm() << pkg;
@@ -690,7 +663,7 @@ namespace __IsoAgLib {
   void TcClientConnection_c::sendProcMsg( uint16_t ddi, uint16_t element, int32_t pdValue ) const {
     ProcessPkg_c pkg( IsoAgLib::ProcData::setValue, element, ddi, pdValue );
 
-    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &m_server->getIsoItem() ) );
+    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &m_server.getIsoItem() ) );
     pkg.setMonitorItemForSA( m_identItem.getIsoItem() );
 
     getIsoBusInstance4Comm() << pkg;
@@ -706,7 +679,7 @@ namespace __IsoAgLib {
 
     ProcessPkg_c pkg( opcode, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
 
-    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &m_server->getIsoItem() ) );
+    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( &m_server.getIsoItem() ) );
     pkg.setMonitorItemForSA( m_identItem.getIsoItem() );
 
     getIsoBusInstance4Comm() << pkg;
