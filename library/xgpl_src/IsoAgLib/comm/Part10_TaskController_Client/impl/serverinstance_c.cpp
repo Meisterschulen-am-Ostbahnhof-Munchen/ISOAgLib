@@ -34,7 +34,7 @@ namespace __IsoAgLib {
 
 
   ServerInstance_c::~ServerInstance_c() {
-    assert(m_connections.empty());
+    isoaglib_assert(m_connections.empty());
     getSchedulerInstance().deregisterTask(*this);
   }
 
