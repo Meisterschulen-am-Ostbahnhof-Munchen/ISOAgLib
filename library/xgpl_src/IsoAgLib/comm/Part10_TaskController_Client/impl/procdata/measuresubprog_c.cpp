@@ -49,6 +49,9 @@ MeasureDistProp_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
 {
   mi32_increment = ai32_increment;
   mi32_lastVal = ai32_lastVal;
+
+  if( m_measureProg.minMaxLimitsPassed() )
+    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
 }
 
 
@@ -148,6 +151,11 @@ MeasureTimeProp_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
 {
   mi32_increment = ai32_increment;
   mi32_lastVal = ai32_lastVal;
+
+  setPeriod( ai32_increment, true );
+
+  if( m_measureProg.minMaxLimitsPassed() )
+    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
 }
 
 
@@ -207,6 +215,9 @@ MeasureOnChange_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
 {
   mi32_increment = ai32_increment;
   mi32_lastVal = ai32_lastVal;
+
+  if( m_measureProg.minMaxLimitsPassed() )
+    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
 }
 
 

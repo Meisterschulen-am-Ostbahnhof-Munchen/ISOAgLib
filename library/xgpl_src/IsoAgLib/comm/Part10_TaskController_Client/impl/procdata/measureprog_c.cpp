@@ -124,8 +124,7 @@ namespace __IsoAgLib {
             if( ai32_increment < 100 )
               ai32_increment = 100;
             m_subProgTimeProp->start( System_c::getTime(), ai32_increment );
-          }
-          m_connection.sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
+          }          
           b_validTriggerMethod = true;
         }
         break;
@@ -142,8 +141,7 @@ namespace __IsoAgLib {
             if( ai32_increment < 0 )
               ai32_increment = -ai32_increment;
             m_subProgDistProp->start(int32_t(getTracMoveInstance(m_procdata.identItem().getMultitonInst()).distTheor()), ai32_increment);
-          }
-          m_connection.sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
+          }       
           b_validTriggerMethod = true;
         }
 #endif
@@ -160,8 +158,7 @@ namespace __IsoAgLib {
             if( ai32_increment < 0 )
               ai32_increment = -ai32_increment;
             m_subProgOnChange->start( m_value, ai32_increment );
-          }
-          m_connection.sendProcMsg( m_procdata.DDI(), m_procdata.element(), m_value );
+          }      
           b_validTriggerMethod = true;
         }
         break;
@@ -170,6 +167,7 @@ namespace __IsoAgLib {
         if ( m_procdata.isMethodSet( IsoAgLib::ProcData::ThresholdLimit ) ) {
           m_maxThreshold = ai32_increment;
           b_validTriggerMethod = true;
+          // TODO send process data value if necessary ?
         }
         break;
 
@@ -177,6 +175,7 @@ namespace __IsoAgLib {
         if ( m_procdata.isMethodSet( IsoAgLib::ProcData::ThresholdLimit ) ) {
           m_minThreshold = ai32_increment;
           b_validTriggerMethod = true;
+          // TODO send process data value if necessary ?
         }
         break;
     }
