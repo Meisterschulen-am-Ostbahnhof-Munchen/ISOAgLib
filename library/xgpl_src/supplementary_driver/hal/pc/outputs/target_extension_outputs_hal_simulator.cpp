@@ -34,9 +34,11 @@ setMainRelais( bool on )
 int16_t
 setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency)
 {
-	// Callback to HAL Event Handler in the application to update the screen (or whatever)
-  halSimulator().eventSetPwmFreq( bOutputGroup, dwFrequency );
+  if( bOutputGroup == 0xFF )
+    return HAL_RANGE_ERR;
 
+  // Callback to HAL Event Handler in the application to update the screen (or whatever)
+  halSimulator().eventSetPwmFreq( bOutputGroup, dwFrequency );
   return HAL_NO_ERR;
 }
 
@@ -44,10 +46,13 @@ setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency)
 int16_t
 setDigout(uint8_t bOutputNo, uint16_t wPWMValue )
 {
-	// Callback to HAL Event Handler in the application to update the screen (or whatever)
-  halSimulator().eventSetDigout( bOutputNo, wPWMValue );
+  if( bOutputNo == 0xFF )
+    return HAL_RANGE_ERR;
 
+  // Callback to HAL Event Handler in the application to update the screen (or whatever)
+  halSimulator().eventSetDigout( bOutputNo, wPWMValue );
   return HAL_NO_ERR;
 }
 
-} // End of name space __HAL
+
+}

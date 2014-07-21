@@ -35,6 +35,9 @@ namespace __HAL {
 int16_t
 init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(...))
 {
+  if( bInput == 0xFF )
+    return HAL_RANGE_ERR;
+
   halSimulator().init_digin( bInput, bMode, bAktivhighlow, pfFunctionName );
   return HAL_NO_ERR;
 }
@@ -43,7 +46,10 @@ init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionN
 int16_t
 getDiginOnoff(uint8_t bInputNumber)
 {
-  return halSimulator().getDiginOnoff( bInputNumber );
+  if( bInputNumber != 0xFF )
+    return halSimulator().getDiginOnoff( bInputNumber );
+  else
+    return HAL_RANGE_ERR;
 }
 
 
@@ -64,6 +70,9 @@ setDiginPrescaler(uint8_t /*bGroup*/, uint8_t /*bMode*/)
 int16_t
 getDiginFreq(uint8_t bInput, uint32_t *pwFrequency)
 {
+  if( bInput == 0xFF )
+    return HAL_RANGE_ERR;
+
   halSimulator().getDiginFreq( bInput, pwFrequency );
   return HAL_NO_ERR;
 }
@@ -72,13 +81,19 @@ getDiginFreq(uint8_t bInput, uint32_t *pwFrequency)
 int16_t
 getAdc(uint8_t bKanalnummer)
 {
-  return halSimulator().getAdc( bKanalnummer );
+  if( bKanalnummer != 0xFF )
+    return halSimulator().getAdc( bKanalnummer );
+  else
+    return HAL_RANGE_ERR;
 }
 
 
 int16_t
 init_analogin(uint8_t bNumber, uint8_t bType)
 {
+  if( bNumber == 0xFF )
+    return HAL_RANGE_ERR;
+
   halSimulator().init_analogin( bNumber, bType );
   return HAL_NO_ERR;
 }
@@ -93,13 +108,19 @@ setFastAnalogin(boolean /*bMode*/)
 int16_t
 getAnaloginMean(uint8_t bInput)
 {
-  return getAdc( bInput );
+  if( bInput != 0xFF )
+    return getAdc( bInput );
+  else
+    return HAL_RANGE_ERR;
 }
 
 
 int16_t
 init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_activHigh, boolean ab_risingEdge)
 {
+  if( ab_channel == 0xFF )
+    return HAL_RANGE_ERR;
+
   halSimulator().init_counter(ab_channel, aui16_timebase, ab_activHigh, ab_risingEdge);
   return HAL_NO_ERR;
 }
@@ -116,7 +137,10 @@ getCounter(uint8_t ab_channel)
 int16_t
 resetCounter(uint8_t ab_channel)
 {
-  return halSimulator().resetCounter( ab_channel );
+  if( ab_channel != 0xFF )
+    return halSimulator().resetCounter( ab_channel );
+  else
+    return HAL_RANGE_ERR;
 }
 
 
