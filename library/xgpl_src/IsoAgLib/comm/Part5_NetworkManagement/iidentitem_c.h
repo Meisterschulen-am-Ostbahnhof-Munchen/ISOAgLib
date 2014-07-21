@@ -124,6 +124,13 @@ public:
   */
   const iIsoName_c& isoName() const {return IdentItem_c::isoName().toConstIisoName_c(); }
 
+  // get the ISOBUS instance
+  // NOTE: Calling this is only valid if this IdentItem is already
+  // registered to an iIsoBus_c instance! Will throw an assertion otherwise!
+  int getIsoBusInstance() const;
+  // OBSOLETE: For backwards compatibility only, don't use in future implementations!
+  int getMultitonInst() const { return getIsoBusInstance(); }
+
   /**
     Set ECU Identification fields, needed during the diagnostic procedure
     @return true if the fields were okay
@@ -191,9 +198,6 @@ public:
     return static_cast<iDiagnosticsServices_c*>(IdentItem_c::getDiagnosticsServices());
   }
 
-  /// Using the singletonVecKey from internal class
-  MULTITON_PAR_BASE_DEF(IdentItem_c)
-
 private:
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class __IsoAgLib::VtClient_c;
@@ -224,6 +228,15 @@ private:
   friend class iTcClientConnection_c;
   friend class iTcClient_c;
 };
+
+
+inline int
+iIdentItem_c::getIsoBusInstance() const
+{
+  int inst = __IsoAgLib::IdentItem_c::getMultitonInst();
+  isoaglib_assert( inst >= 0 );
+  return inst;
+}
 
 } // IsoAgLib
 
