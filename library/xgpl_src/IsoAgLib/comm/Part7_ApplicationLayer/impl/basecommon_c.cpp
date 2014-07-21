@@ -51,6 +51,9 @@ BaseCommon_c::close( )
   close_specialized();
   getSchedulerInstance().deregisterTask(mt_task);
 
+  // actually the filters aren't getting removed, but this is just a quick workaround until the Trac-classes-redesign!
+  clearFilterCreated();
+
   setClosed();
 };
 
