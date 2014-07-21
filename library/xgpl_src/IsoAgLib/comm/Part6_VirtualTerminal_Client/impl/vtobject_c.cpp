@@ -83,7 +83,7 @@ vtObject_c::createRamStructIfNotYet (uint16_t ui16_structLen)
 { // Do we have to generate a RAM copy of our struct (to save the value), or has this already be done?
   if (!(s_properties.flags & FLAG_IN_RAM)) {
     void* old=vtObject_a;
-    vtObject_a = (iVtObject_s*) new (uint8_t [ui16_structLen]);
+    vtObject_a = (iVtObject_s*) new uint8_t [ui16_structLen];
     CNAMESPACE::memcpy (vtObject_a, old, ui16_structLen);
     s_properties.flags |= FLAG_IN_RAM;
   }
@@ -296,7 +296,7 @@ vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iV
         if (!(s_properties.flags & FLAG_OBJECTS2FOLLOW_IN_RAM)) {
           // Copy objectsToFollow structure! and use new pointer afterwards!!
           void* romObjectsToFollow = objectsToFollow;
-          objectsToFollow = new (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s [numObjectsToFollow]);
+          objectsToFollow = new IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s [numObjectsToFollow];
           CNAMESPACE::memcpy (objectsToFollow, romObjectsToFollow, sizeof (IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s) * numObjectsToFollow);
           // saveValue will check itself if general structure is already in RAM and can be altered
           saveValueP(ui16_structOffset, ui16_structLen, (IsoAgLib::iVtObject_c *)objectsToFollow);

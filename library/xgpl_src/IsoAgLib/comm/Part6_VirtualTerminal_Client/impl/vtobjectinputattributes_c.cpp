@@ -80,7 +80,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
     if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
       s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new (char [get_vtObjectInputAttributes_a()->length+1]);
+      char *newStringBuffer = new char [get_vtObjectInputAttributes_a()->length+1];
       saveValueP (MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationString), sizeof(iVtObjectInputAttributes_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
     }
     char *dest = get_vtObjectInputAttributes_a()->validationString;

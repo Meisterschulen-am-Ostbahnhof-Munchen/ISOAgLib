@@ -151,7 +151,7 @@ vtObjectInputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length,
     if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
       s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new (char [get_vtObjectInputString_a()->length+1]);
+      char *newStringBuffer = new char [get_vtObjectInputString_a()->length+1];
       saveValueP (MACRO_getStructOffset(get_vtObjectInputString_a(), value), sizeof(iVtObjectInputString_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
     }
     char *dest = get_vtObjectInputString_a()->value;
@@ -181,7 +181,7 @@ vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject, b
     if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
       s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new (char [get_vtObjectInputString_a()->length+1]);
+      char *newStringBuffer = new char [get_vtObjectInputString_a()->length+1];
       saveValueP (MACRO_getStructOffset(get_vtObjectInputString_a(), value), sizeof(iVtObjectInputString_s), (IsoAgLib::iVtObject_c*)newStringBuffer);
     }
     char *dest = get_vtObjectInputString_a()->value;
