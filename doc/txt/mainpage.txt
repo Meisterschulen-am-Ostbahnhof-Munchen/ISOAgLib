@@ -55,7 +55,9 @@ iLibErr_c:
  - Bugfix: Some Callbacks were not being called
 
 Trac-classes:
- - TimePosGps - Enhancement: Added sending in USE_J1939_VEHICLE_PGNS case
+ - Enhancement: 
+   - TimePosGps: Added sending in USE_J1939_VEHICLE_PGNS case
+   - TracMove: Added specific timestamps/timeouts-detection to WBS/GBS/MSS
  - Workaroundfix: Close/ReInit had a problem with filters
    Small workaround fix to get filters recreated.
    No further change as TracClasses are subject for redesign anyway.
