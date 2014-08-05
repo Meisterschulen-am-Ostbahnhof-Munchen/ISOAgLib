@@ -335,8 +335,9 @@ namespace __IsoAgLib {
     /** actually selected distance and direction source */
     IsoAgLib::DistanceDirectionSource_t mt_distDirecSource;
 
-    /** last time when selected speed data was processed */
-    uint32_t mui32_lastUpdateTimeSpeed;
+    uint32_t mui32_lastUpdateTimeSpeedSelected;
+    uint32_t mui32_lastUpdateTimeSpeedReal;
+    uint32_t mui32_lastUpdateTimeSpeedTheor;
 
     /** last time when direction and distance data was processed */
     uint32_t mui32_lastUpdateTimeDistDirec;

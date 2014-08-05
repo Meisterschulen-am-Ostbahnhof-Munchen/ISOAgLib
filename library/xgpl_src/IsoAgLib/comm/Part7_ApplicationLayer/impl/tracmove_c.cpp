@@ -106,7 +106,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     mt_speedSource = IsoAgLib::NoSpeed;
     mt_distDirecSource = IsoAgLib::NoDistDirec;
-    mui32_lastUpdateTimeSpeed = 3000;
+    // actually the 3000 seem to be a dummy value, but not 100% sure on this!
+    mui32_lastUpdateTimeSpeedSelected = 3000;
+    mui32_lastUpdateTimeSpeedReal = 3000;
+    mui32_lastUpdateTimeSpeedTheor = 3000;
     mui32_lastUpdateTimeDistDirec = 3000;
 
     return true;
@@ -216,12 +219,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             i32_tempSpeed *= -1; //driving reverse;
 
 
-          const uint32_t testTimeOutdatedSpeed = (pkg.time() - mui32_lastUpdateTimeSpeed);
+          const uint32_t testTimeOutdatedSpeed = (pkg.time() - mui32_lastUpdateTimeSpeedSelected);
           const uint32_t testTimeOutdatedDist  = (pkg.time() - mui32_lastUpdateTimeDistDirec);
           if (pkg.isoPgn() == GROUND_BASED_SPEED_DIST_PGN)
-          { // real speed
+          {
+            mui32_lastUpdateTimeSpeedReal = pkg.time();
             setSpeedReal(i32_tempSpeed);
-            // real dist
             setDistReal( ui32_tempDist );
             mt_directionReal = IsoAgLib::IsoDirectionFlag_t(pkg.getUint8Data(7) & 0x3 );
 
@@ -247,9 +250,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
           }
           else
-          { // wheel based speed
+          {
+            mui32_lastUpdateTimeSpeedTheor = pkg.time();
             setSpeedTheor(i32_tempSpeed);
-            // wheel based dist
             setDistTheor( ui32_tempDist );
             #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
             // additionally scan for key switch and maximum power time
@@ -342,6 +345,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     }
   }
 
+  // actually means updateSELECTEDSpeed !!!
   void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, int32_t ai_time )
   {
     #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
@@ -374,8 +378,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         mt_selectedSpeedSource = IsoAgLib::IsoNotAvailableSpeed;
         break;
     }
-    // update time
-    mui32_lastUpdateTimeSpeed = ai_time;
+    mui32_lastUpdateTimeSpeedSelected = ai_time;
   }
 
   void TracMove_c::updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)
@@ -411,26 +414,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     const int32_t ci32_now = System_c::getTime();
     // checking for timeout of speed update
-    if ( ( (ci32_now - mui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
+    if ( ( (ci32_now - mui32_lastUpdateTimeSpeedSelected)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isSelectedSpeedMissing() ) )
     { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
       // --> switch value of selected speed to ZERO
-      mi32_selectedSpeed = NO_VAL_32S;
-      setSelectedSpeed( mi32_selectedSpeed );
+      setSelectedSpeed( NO_VAL_32S );
     }
-    if ( ( (ci32_now - mui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
+    if ( ( (ci32_now - mui32_lastUpdateTimeSpeedReal)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isRealSpeedMissing() ) )
     { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
       // --> switch value of selected speed to ZERO
-      mi32_speedReal = NO_VAL_32S;
-      setSpeedReal( mi32_speedReal );
+      setSpeedReal( NO_VAL_32S );
     }
-    if ( ( (ci32_now - mui32_lastUpdateTimeSpeed)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
+    if ( ( (ci32_now - mui32_lastUpdateTimeSpeedTheor)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isTheorSpeedMissing() ) )
     { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
       // --> switch value of selected speed to ZERO
-      mi32_speedTheor = NO_VAL_32S;
-      setSpeedTheor( mi32_speedTheor );
+      setSpeedTheor( NO_VAL_32S );
     }
   }
 
