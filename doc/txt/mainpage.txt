@@ -43,6 +43,98 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 \section Changes Changes
 
 
+\subsection Change_ZB 2.6.2 to 2.7.0
+
+Scheduler:
+ - Enhancement: Limit scheduler via #define
+   #define ISOAGLIB_SCHEDULER_MAX_TIMEEVENT XX
+   #define ISOAGLIB_TASK_MAX_TIMEEVENT XX
+   #define ISOAGLIB_DEBUG_TIMEEVENT
+
+iLibErr_c:
+ - Bugfix: Some Callbacks were not being called
+
+Trac-classes:
+ - TimePosGps - Enhancement: Added sending in USE_J1939_VEHICLE_PGNS case
+ - Workaroundfix: Close/ReInit had a problem with filters
+   Small workaround fix to get filters recreated.
+   No further change as TracClasses are subject for redesign anyway.
+
+Logalizer:
+ - Added CSV log type
+ - Added WTK log type support and MAINTAIN_POWER_REQUEST_PGN
+ - Added Kvaser Memorator CSV log format
+ - Added gpx-writing
+
+conf2build:
+ - Changed working, but invalid condition
+
+HAL:
+ - EEPROM: Fixed wrong assertions in write/eofp/eofg
+ - Bugfix HAL-Simulator: Range checks in I/O files
+
+Diagnostics:
+ - Enhancement: Added getter into internal interface
+
+IsoMonitor/IdentItem:
+ - Enhancement
+   - Define SA_REQUEST_PERIOD_MSEC to 0 to disable period SA requests when CONFIG_ISO_ITEM_MAX_AGE > 0
+   - Callback reactOnWsAnnounceFinished() added to ControlFunctionStateHandler_c
+   - Added proper getter getIsoBusInstance()
+     - old one was getMultitonInst(), which is still
+       there for backward-compatibility.
+     - This one just adds an assertion!
+
+vt2iso:
+ - Bugfix
+   - Escape quotes correctly in input attributes validation string
+   - Crash if language used that's not specified fixed
+
+TC-Client:
+ - Bugfix: Properly (re)start measurement on TC changes
+ - Change: Refactor connect/disconnect
+ - Enhancement
+   - Stop sending measurement when TC is lost; trigger eventTaskStopped if task was active
+   - Add propertyDefaultSet()-getter
+   - Add possibility to manually manage PD messages for proprietary manner
+   - Warning: only use if you know what you are doing
+     - implement and register iPdMessageHandler_c for receiving PD messages
+     - use iTcClient_c::sendPdMessage for sending PD messages
+ - Workaround: Added temporary #ifdef'd Workaround for Mueller-TC
+   Should not be used and by fixed by Mueller.
+   This needs to be defined to enable it
+   This will be removed in future from ISOAgLib.
+
+VT-Client: (ATTENTION!)
+ - Bugfix: Button-Content Scaling fixed as in vt-designer v1.6
+   New corrected button-content scaling is active by default.
+   Use USE_VT_CLIENT_OLD_INCORRECT_BUTTON_CONTENT_SCALING if your
+   objectpool is not yet adapted and you want the old incorrect scaling.
+ - Enhancement
+   - Response-Timeout-Detection added:
+     This way the cause of a reconnect can be displayed to the operator
+   - UTF-16 support added (VTv4+ only!) and removing spaces on Change String Value
+     Both per defines USE_VT_UNICODE_SUPPORT
+     and STRIP_TRAILING_SPACES_FROM_STRING_UPLOADS
+ - VT-Workaround: Some VTs send responses to TP commands before the EoMAck
+   - Such responses are now buffered.
+   - Use WORKAROUND_PREMATURE_TP_RESPONSES to enable this
+     (until those broken VTs get a firmware update in Nov 2014!)
+   - This should not be enabled forever in production software, the VTs need to be fixed/updated!
+   
+MultiPacket:
+ - Enhancement
+   - Support interpreting new CTS-Limit requested in RTS
+   - Added ENABLE_MULTIPACKET_RETRY
+     Will now retry max. 2 times in a burst.
+     It will wait until the last packet until it re-CTSes.
+ 
+CAN-Server:
+ - Enhancement
+   - Implemented break on Windows in CAN-Server SOCKET
+   - Make WIN PCAN version work with several canbus
+
+
 \subsection Change_ZA 2.6.1 to 2.6.2
 
 ISB-Client:
