@@ -232,7 +232,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
 
 bool
 Stream_c::handleDataPacket (const CanPkg_c& pkg)
-{ // ~X2C
+{
   const Flexible8ByteString_c* apu_data = pkg.getDataUnionConst();
   // expecting data at all?
   if (mt_awaitStep != AwaitData) {
@@ -276,7 +276,6 @@ Stream_c::handleDataPacket (const CanPkg_c& pkg)
         if( mui8_isoPkgRetryCountInBurst == 3 )
           return false; // abort stream
       }
-      return true; // don't abort stream
 #else
       if ((sequenceNr + offset) != mui32_pkgNextToWrite)
       {
@@ -315,7 +314,8 @@ Stream_c::handleDataPacket (const CanPkg_c& pkg)
     mui32_byteAlreadyReceived += 7;
   }
 
-  if (mui32_byteAlreadyReceived > mui32_byteTotalSize) mui32_byteAlreadyReceived = mui32_byteTotalSize; // cut any padded (0xFF) bytes...
+  if (mui32_byteAlreadyReceived > mui32_byteTotalSize)
+    mui32_byteAlreadyReceived = mui32_byteTotalSize; // cut any padded (0xFF) bytes...
 
   #if DEBUG_MULTIRECEIVE
     INTERNAL_DEBUG_DEVICE << "#" << mui32_pkgNextToWrite << " ";
@@ -355,8 +355,7 @@ Stream_c::handleDataPacket (const CanPkg_c& pkg)
   }
 
   return true;
-} // -X2C
-
+}
 
 bool
 Stream_c::setDataPageOffset (uint32_t aui32_dataPageOffset)
