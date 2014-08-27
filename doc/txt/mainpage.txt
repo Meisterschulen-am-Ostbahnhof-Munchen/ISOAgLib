@@ -115,6 +115,15 @@ VT-Client: (ATTENTION!)
  - Enhancement
    - Response-Timeout-Detection added:
      This way the cause of a reconnect can be displayed to the operator
+   - Temporary solution to work around missing responses from the VT.
+     - ENABLE_VTCLIENT_RETRY:
+       Will perform 2 retries when no response is being received
+       ATTENTION: This leads to undefined behavior for "relative"
+                  commands like Change Child Location!!!
+     - CONFIG_VT_CLIENT_ON_MISSING_RESPONSE_CONTINUE
+       Finally, when the response is (even after possible retries) missing,
+       continue (after having called eventAllRetriesFailedNowContinuing())
+       with the next command instead of completely disconnecting and reconnecting!
    - UTF-16 support added (VTv4+ only!) and removing spaces on Change String Value
      Both per defines USE_VT_UNICODE_SUPPORT
      and STRIP_TRAILING_SPACES_FROM_STRING_UPLOADS
