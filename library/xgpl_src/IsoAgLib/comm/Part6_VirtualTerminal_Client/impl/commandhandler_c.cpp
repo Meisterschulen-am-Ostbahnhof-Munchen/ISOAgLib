@@ -29,7 +29,11 @@ SendUpload_c CommandHandler_c::msc_tempSendUpload;
 /// In 11783-6 there are no real timeouts specified, yet
 /// ISOAgLib has to react on the case of a non-responding VT
 /// (either at Upload, Load or normal command)
+#ifdef ENABLE_VTCLIENT_RETRY
+static const int32_t s_timeOutNormalCommand   = 3000; // instead of 10000 due to 3 retries!!!
+#else
 static const int32_t s_timeOutNormalCommand   = 10000;
+#endif
 static const int32_t s_timeOutVersionLabel    = 60000;
 static const int32_t s_timeOutEndOfObjectPool = 60000;
 

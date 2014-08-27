@@ -170,6 +170,9 @@ private:
   VtServerInstance_c* mpc_vtServerInstance;
 
   uploadType_t men_uploadType;
+#ifdef ENABLE_VTCLIENT_RETRY
+  unsigned m_uploadRetry;
+#endif
 
 private:
   int32_t mi32_nextWsMaintenanceMsg;

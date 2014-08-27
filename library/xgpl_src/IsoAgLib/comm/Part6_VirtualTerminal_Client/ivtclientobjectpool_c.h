@@ -160,6 +160,10 @@ public:
   */
   virtual void eventEnterSafeState()=0;
 
+#ifdef CONFIG_VT_CLIENT_ON_MISSING_RESPONSE_CONTINUE
+  virtual void eventAllRetriesFailedNowContinuing()=0;
+#endif
+
   /**
     hook function that gets called immediately after recognizing the success/error
     of a command-response message. please keep the implementation short as

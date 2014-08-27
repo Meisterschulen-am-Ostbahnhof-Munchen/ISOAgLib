@@ -118,6 +118,9 @@ VtClientConnection_c::VtClientConnection_c(
   , mrc_vtClient( r_vtclient )
   , mpc_vtServerInstance( NULL )
   , men_uploadType( UploadIdle )
+#ifdef ENABLE_VTCLIENT_RETRY
+  , m_uploadRetry( 0 )
+#endif
   , mi32_nextWsMaintenanceMsg( -1 )
   , mui8_clientId( aui8_clientId )
   , men_displayState( VtClientDisplayStateHidden )
@@ -256,18 +259,39 @@ VtClientConnection_c::timeEvent()
 
   case UploadIdle:
     if( commandHandler().tryToStart() )
+    {
       men_uploadType = UploadCommand;
+#ifdef ENABLE_VTCLIENT_RETRY
+      m_uploadRetry = 0; // first try
+#endif
+    }
     break;
 
   case UploadCommand:
     const uint8_t cmdTimedOut = commandHandler().timeEventCommandTimeoutCheck();
-    if( cmdTimedOut != 0x00 )
-    { // It's the safest thing to just reconnect to the VT.
-      // So let's get disconnected (can't do this actively)
-      fakeVtOffPeriod (6000); // fake the VT 6 seconds off!
-      // but let the application know of the failed command!
-      m_cmdTimedOut = cmdTimedOut;
+    if( cmdTimedOut == 0x00 )
+      break;
+
+#ifdef ENABLE_VTCLIENT_RETRY
+    if( m_uploadRetry < 2 )
+    {
+      ( void )commandHandler().tryToStart();
+      ++m_uploadRetry;
+      //std::cout << "MISSED RESPONSE - RETRY #" << m_uploadRetry << std::endl;
+      break;
     }
+#endif
+
+    // let the application know of the failed command!
+    m_cmdTimedOut = cmdTimedOut;
+#ifdef CONFIG_VT_CLIENT_ON_MISSING_RESPONSE_CONTINUE
+    commandHandler().finishUploadCommand(); 
+    getPool().eventAllRetriesFailedNowContinuing();
+#else
+    // It's the safest thing to just reconnect to the VT.
+    // So let's get disconnected (can't do this actively)
+    fakeVtOffPeriod (6000); // fake the VT 6 seconds off!
+#endif
     break;
   }
 }
