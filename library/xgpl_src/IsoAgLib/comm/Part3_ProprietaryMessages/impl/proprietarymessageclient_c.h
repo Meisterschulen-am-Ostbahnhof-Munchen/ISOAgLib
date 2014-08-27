@@ -34,6 +34,8 @@ namespace __IsoAgLib
   class ProprietaryMessage_c : public MultiSendEventHandler_c
   {
     public:
+      static const unsigned defaultPriority = 6;
+
       ProprietaryMessage_c() : m_sendSuccess( SendStream_c::SendSuccess ), ms_receivedData(), ms_sendData(), m_ident( NULL ), m_remote( IsoName_c::IsoNameUnspecified() ), m_dp( 0 ) {}
       virtual ~ProprietaryMessage_c() {}
 
@@ -90,7 +92,8 @@ namespace __IsoAgLib
       void enableReception();
       void disableReception();
 
-      bool send();
+      bool send() { return sendWithPrio( defaultPriority ); }
+      bool sendWithPrio( unsigned prio );
 
     private:
       bool m_isRegistered;
@@ -110,7 +113,8 @@ namespace __IsoAgLib
       void enableReception( uint8_t ps );
       void disableReception( uint8_t ps );
 
-      bool send( uint8_t ps );
+      bool send( uint8_t ps ) { return sendWithPrio( ps, defaultPriority ); }
+      bool sendWithPrio( uint8_t ps, unsigned prio );
   };
 
 };

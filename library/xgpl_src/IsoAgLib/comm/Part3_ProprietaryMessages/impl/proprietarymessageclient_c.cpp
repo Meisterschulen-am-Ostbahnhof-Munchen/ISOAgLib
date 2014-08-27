@@ -17,8 +17,9 @@
 
 namespace __IsoAgLib
 {
-  bool ProprietaryMessageA_c::send() {
+  bool ProprietaryMessageA_c::sendWithPrio( unsigned prio ) {
 
+    isoaglib_assert( prio <= 7 );
     isoaglib_assert(m_ident);
 
     const uint32_t pgn = ( uint32_t( m_dp ) << 16) | PROPRIETARY_A_PGN;
@@ -26,7 +27,7 @@ namespace __IsoAgLib
     {
       CanPkgExt_c pkg;
 
-      pkg.setIsoPri( 6 );
+      pkg.setIsoPri( static_cast<uint8_t>( prio ) );
       pkg.setIsoPgn( pgn );
       pkg.setISONameForDA( m_remote );
       pkg.setMonitorItemForSA( m_ident->getIsoItem() );
@@ -84,8 +85,9 @@ namespace __IsoAgLib
   }
 
 
-  bool ProprietaryMessageB_c::send( uint8_t ps ) {
+  bool ProprietaryMessageB_c::sendWithPrio( uint8_t ps, unsigned prio ) {
 
+    isoaglib_assert( prio <= 7 );
     isoaglib_assert(m_ident);
 
     const uint32_t pgn = ( uint32_t( m_dp ) << 16) | PROPRIETARY_B_PGN | ps;
@@ -93,7 +95,7 @@ namespace __IsoAgLib
     {
       CanPkgExt_c pkg;
 
-      pkg.setIsoPri( 6 );
+      pkg.setIsoPri( static_cast<uint8_t>( prio ) );
       pkg.setIsoPgn( pgn );
       pkg.setMonitorItemForSA( m_ident->getIsoItem() );
       pkg.setDataFromString ( getDataSend().getDataStream(), static_cast<uint8_t>( getDataSend().getLen() ) );

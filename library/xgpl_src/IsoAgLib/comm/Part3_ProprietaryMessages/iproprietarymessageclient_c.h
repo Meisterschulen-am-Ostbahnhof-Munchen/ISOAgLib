@@ -38,6 +38,7 @@ namespace IsoAgLib
       IsoAgLib::iGenericData_c& getDataSend() { return __IsoAgLib::ProprietaryMessageA_c::getDataSend(); }
 
       bool send() { return __IsoAgLib::ProprietaryMessageA_c::send(); }
+      bool sendWithPrio( unsigned prio ) { return __IsoAgLib::ProprietaryMessageA_c::sendWithPrio( prio ); }
       bool isSending() const { return __IsoAgLib::ProprietaryMessageA_c::isSending(); }
   };
 
@@ -60,6 +61,7 @@ namespace IsoAgLib
       IsoAgLib::iGenericData_c& getDataSend() { return __IsoAgLib::ProprietaryMessageB_c::getDataSend(); }
 
       bool send( uint8_t ps ) { return __IsoAgLib::ProprietaryMessageB_c::send( ps ); }
+      bool sendWithPrio( uint8_t ps, unsigned prio ) { return __IsoAgLib::ProprietaryMessageB_c::sendWithPrio( ps, prio ); }
       bool isSending() const { return __IsoAgLib::ProprietaryMessageB_c::isSending(); }
   };
 };
