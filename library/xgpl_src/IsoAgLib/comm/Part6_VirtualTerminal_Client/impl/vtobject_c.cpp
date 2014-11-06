@@ -287,6 +287,7 @@ vtObject_c::getValueFloatGetAttribute (uint16_t ui16_structOffset, uint16_t ui16
 bool
 vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)
 {
+  bool foundAtLeastOnce = false;
   // Find the child object in question
   for(int8_t i = 0; i < numObjectsToFollow; i++) {
     if (childObject->getID() == objectsToFollow[i].vtObject->getID()) {
@@ -310,10 +311,10 @@ vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iV
           objectsToFollow[i].y = dy;
         }
       }
-      return true; // Object was child object, so its position could be changed
+      foundAtLeastOnce = true; // Object was child object, so its position could be changed
     }
   }
-  return false; // Object was not child object
+  return foundAtLeastOnce; // Object was not child object
 }
 
 
