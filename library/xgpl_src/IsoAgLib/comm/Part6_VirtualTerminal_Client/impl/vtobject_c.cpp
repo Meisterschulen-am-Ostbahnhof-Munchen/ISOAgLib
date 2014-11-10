@@ -13,6 +13,7 @@
 
 #include "vtobject_c.h"
 #include "../ivtobject_c.h"
+#include "../ivtobjectbutton_c.h"
 
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -318,17 +319,33 @@ vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iV
 }
 
 
-// only using int16_t because ISO's offset is -127 and hence the range is -127..0..+128 :-(((
+// Valid Range for (scaled) dx and dy in the ISO-command: -127..0..+128
+// Function will fail if the SCALED relative movement is out of the -127..+128 range!
+// The application needs to be aware of this and in case of a negative return value this
+// movement is not possible in one command so it's up to the application to divide it into
+// multiple ChangeChildLocation commands - or simply use the ChangeChildPosition instead,
+// which is typically better anyway because it avoids rounding/truncation problems!
 bool
 vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd)
 {
-  if ((dx < -127) || (dx > 128)
-   || (dy < -127) || (dy > 128)) return false;
+  MACRO_scaleLocalVars
+  MACRO_scaleSKLocalVars
+
+  int dx32 = int32_t( dx );
+  int dy32 = int32_t( dy );
+#ifndef USE_VT_CLIENT_OLD_UNSCALED_CHILD_POSITIONING_COMMANDS
+  MACRO_scaleI32(dx32,dy32)
+#endif
+
+  VtClientConnection_c &connection = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId);
+
+  if ((dx32 < -127) || (dx32 > 128)
+   || (dy32 < -127) || (dy32 > 128)) return false;
 
   bool b_result = genericChangeChildLocationPosition (true, childObject, dx, dy, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
   if (b_result)
-    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeChildLocation(
-      this, childObject, dx, dy, b_enableReplaceOfCmd );
+    connection.commandHandler().sendCommandChangeChildLocation(
+      this, childObject, int16_t( dx32 ), int16_t( dy32 ), b_enableReplaceOfCmd );
 
   return b_result;
 }
@@ -337,10 +354,21 @@ vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int1
 bool
 vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t x, int16_t y, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd)
 {
+  MACRO_scaleLocalVars
+  MACRO_scaleSKLocalVars
+
+  int x32 = int32_t( x );
+  int y32 = int32_t( y );
+#ifndef USE_VT_CLIENT_OLD_UNSCALED_CHILD_POSITIONING_COMMANDS
+  MACRO_scaleI32(x32,y32)
+#endif
+
+  VtClientConnection_c &connection = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId);
+
   bool b_result = genericChangeChildLocationPosition (false, childObject, x, y, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
   if (b_result)
-    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeChildPosition(
-      this, childObject, x, y, b_enableReplaceOfCmd );
+    connection.commandHandler().sendCommandChangeChildPosition(
+      this, childObject, int16_t( x32 ), int16_t( y32 ), b_enableReplaceOfCmd );
 
   return b_result;
 }

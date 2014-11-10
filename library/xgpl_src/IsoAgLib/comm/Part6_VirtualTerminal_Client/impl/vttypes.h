@@ -156,7 +156,20 @@ typedef uint16_t objRange_t;
         factorM = vtSoftKeyHeight; \
         factorD = opSoftKeyHeight; \
       } \
-    } \
+    }
+
+#define MACRO_scaleI32(x,y) \
+  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
+    x *= factorM; \
+    x /= factorD; \
+    y *= factorM; \
+    y /= factorD; \
+  } else { \
+    x *= vtDimension; \
+    x /= opDimension; \
+    y *= vtDimension; \
+    y /= opDimension; \
+  }
 
 #define MACRO_getBlockfont(index)  \
     int32_t xBlock, yBlock; \
