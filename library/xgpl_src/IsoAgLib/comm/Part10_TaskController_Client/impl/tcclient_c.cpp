@@ -64,6 +64,13 @@ namespace __IsoAgLib {
   void
   TcClient_c::close() {
     isoaglib_assert ( initialized() );
+    isoaglib_assert( m_connections.empty() );
+
+    for (STL_NAMESPACE::map<const __IsoAgLib::IsoItem_c*,__IsoAgLib::ServerInstance_c*>::iterator iter = m_server.begin(); iter != m_server.end(); ++iter)
+    {
+       delete iter->second;
+    }
+    m_server.clear();
 
 #ifdef HAL_USE_SPECIFIC_FILTERS
     getIsoBusInstance4Comm().deleteFilter( m_customer, IsoAgLib::iMaskFilter_c( ( 0x3FFFF00UL ), ( PROCESS_DATA_PGN | 0xFF ) << 8 ) );
