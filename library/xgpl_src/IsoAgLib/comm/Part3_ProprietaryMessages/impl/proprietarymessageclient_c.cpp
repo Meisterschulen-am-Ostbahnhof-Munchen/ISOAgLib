@@ -17,10 +17,12 @@
 
 namespace __IsoAgLib
 {
-  bool ProprietaryMessageA_c::sendWithPrio( unsigned prio ) {
+  bool ProprietaryMessageA_c::sendWithPrio( unsigned prio, const IsoName_c& a_overwrite_remote ) {
 
     isoaglib_assert( prio <= 7 );
     isoaglib_assert(m_ident);
+    // do not allow overwrite to a different target if m_remote is specified
+    isoaglib_assert(!m_remote.isSpecified() || a_overwrite_remote.isUnspecified() || (a_overwrite_remote == m_remote));
 
     const uint32_t pgn = ( uint32_t( m_dp ) << 16) | PROPRIETARY_A_PGN;
     if (getDataSend().getLen() <= 8)
@@ -29,7 +31,7 @@ namespace __IsoAgLib
 
       pkg.setIsoPri( static_cast<uint8_t>( prio ) );
       pkg.setIsoPgn( pgn );
-      pkg.setISONameForDA( m_remote );
+      pkg.setISONameForDA( a_overwrite_remote.isSpecified() ? a_overwrite_remote : m_remote );
       pkg.setMonitorItemForSA( m_ident->getIsoItem() );
       pkg.setDataFromString ( getDataSend().getDataStream(), static_cast<uint8_t>( getDataSend().getLen() ) );
       getIsoBusInstance( m_ident->getMultitonInst() ) << pkg;
@@ -42,7 +44,7 @@ namespace __IsoAgLib
       // we could catch the information if the sending succeeded, but what to do with it anyway?
       return getMultiSendInstance( m_ident->getMultitonInst() ).sendIsoTarget(
          m_ident->isoName(),
-         m_remote,
+         a_overwrite_remote.isSpecified() ? a_overwrite_remote : m_remote,
          getDataSend().getDataStream(0),
          getDataSend().getLen(),
          pgn,
@@ -85,10 +87,12 @@ namespace __IsoAgLib
   }
 
 
-  bool ProprietaryMessageB_c::sendWithPrio( uint8_t ps, unsigned prio ) {
+  bool ProprietaryMessageB_c::sendWithPrio( uint8_t ps, unsigned prio, const IsoName_c& a_overwrite_remote ) {
 
     isoaglib_assert( prio <= 7 );
     isoaglib_assert(m_ident);
+    // do not allow overwrite to a different target if m_remote is specified
+    isoaglib_assert(!m_remote.isSpecified() || a_overwrite_remote.isUnspecified() || (a_overwrite_remote == m_remote));
 
     const uint32_t pgn = ( uint32_t( m_dp ) << 16) | PROPRIETARY_B_PGN | ps;
     if (getDataSend().getLen() <= 8)
@@ -109,7 +113,7 @@ namespace __IsoAgLib
       // we could catch the information if the sending succeeded, but what to do with it anyway?
       return getMultiSendInstance( m_ident->getMultitonInst() ).sendIsoTarget(
          m_ident->isoName(),
-         m_remote,
+         a_overwrite_remote.isSpecified() ? a_overwrite_remote : m_remote,
          getDataSend().getDataStream(0),
          getDataSend().getLen(),
          pgn,

@@ -92,8 +92,10 @@ namespace __IsoAgLib
       void enableReception();
       void disableReception();
 
-      bool send() { return sendWithPrio( defaultPriority ); }
-      bool sendWithPrio( unsigned prio );
+      bool send(const IsoName_c& a_overwrite_remote = IsoName_c::IsoNameUnspecified())
+      { return sendWithPrio( defaultPriority, a_overwrite_remote); }
+      
+      bool sendWithPrio( unsigned prio, const IsoName_c& a_overwrite_remote = IsoName_c::IsoNameUnspecified() );
 
     private:
       bool m_isRegistered;
@@ -113,8 +115,10 @@ namespace __IsoAgLib
       void enableReception( uint8_t ps );
       void disableReception( uint8_t ps );
 
-      bool send( uint8_t ps ) { return sendWithPrio( ps, defaultPriority ); }
-      bool sendWithPrio( uint8_t ps, unsigned prio );
+      bool send( uint8_t ps, const IsoName_c& a_overwrite_remote = IsoName_c::IsoNameUnspecified() )
+      { return sendWithPrio( ps, defaultPriority, a_overwrite_remote ); }
+      
+      bool sendWithPrio( uint8_t ps, unsigned prio, const IsoName_c& a_overwrite_remote = IsoName_c::IsoNameUnspecified() );
   };
 
 };
