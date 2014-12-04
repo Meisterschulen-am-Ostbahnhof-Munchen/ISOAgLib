@@ -11,8 +11,8 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "procdata_c.h"
+
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
@@ -21,21 +21,33 @@
 
 namespace __IsoAgLib {
 
+
   ProcData_c::ProcData_c( )
-    : m_ident( NULL )
+    : PdLocal_c()
+#ifndef NDEBUG
     , m_dpd( NULL )
     , m_det( NULL )
-    , m_setpoint()
-    , m_measurement()
-  {}
+#endif
+  {
+  }
 
 
-  void ProcData_c::init( IdentItem_c& ident, const DeviceObjectDpd_c& dpd, const DeviceObjectDet_c& det, SetpointHandler_c* setpointhandler ) {
-    m_ident = &ident;
+  void ProcData_c::init(
+    const DeviceObjectDpd_c& dpd,
+    const DeviceObjectDet_c& det,
+    SetpointHandler_c* setpointhandler )
+  {
+    PdLocal_c::init(
+      dpd.ddi(),
+      det.elementNumber(),
+      dpd.method() );
+
+#ifndef NDEBUG
     m_dpd = &dpd;
     m_det = &det;
+#endif
 
-    m_setpoint.init( setpointhandler );
+    m_setpoint.init( setpointhandler, dpd.propertySetpoint() );
 
     isoaglib_assert(
       ( DDI() != IsoAgLib::ProcData::DefaultDataLoggingDDI ) ? true :
@@ -47,21 +59,9 @@ namespace __IsoAgLib {
   }
 
 
-  void ProcData_c::close() {}
-
-
-  uint16_t ProcData_c::DDI() const {
-    return m_dpd->ddi();
-  }
-
-
-  uint16_t ProcData_c::element() const {
-    return m_det->elementNumber();
-  }
-
-
-  uint8_t ProcData_c::triggerMethod() const {
-    return m_dpd->method();
+  void
+  ProcData_c::close()
+  {
   }
 
 }

@@ -14,6 +14,8 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdconnection_c.h>
 
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
@@ -51,7 +53,7 @@ MeasureDistProp_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
   mi32_lastVal = ai32_lastVal;
 
   if( m_measureProg.minMaxLimitsPassed() )
-    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
+    m_measureProg.sendValue();
 }
 
 
@@ -71,17 +73,18 @@ MeasureDistProp_c::updateTrigger( int32_t ai32_val )
 
 
 int32_t
-MeasureDistProp_c::nextTriggerTime( const ProcData_c& ac_processData, int32_t ai32_val )
+MeasureDistProp_c::nextTriggerTime( int32_t ai32_val )
 {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+  const int32_t multitonInst = m_measureProg.connection().getMultitonInst();
   const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;
-  const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance(ac_processData.identItem().getMultitonInst()).selectedSpeed());  // speed can be negative
+  const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance( multitonInst ).selectedSpeed());  // speed can be negative
 
   if (0 == ci32_speed)
     // speed == 0
     return 500;
 
-  if ( ! getTracMoveInstance(ac_processData.identItem().getMultitonInst()).isSelectedSpeedUsable() )
+  if ( ! getTracMoveInstance( multitonInst ).isSelectedSpeedUsable() )
   { // invalid speed, no tractor available
     return 200;
   }
@@ -99,21 +102,22 @@ MeasureDistProp_c::nextTriggerTime( const ProcData_c& ac_processData, int32_t ai
 
   return i32_nextTriggerTime;  // distance (in mm) div speed (in mm/sec) => time in msec
 #else
-  (void)ac_processData;
   return 200; // 200 msec
 #endif
 }
 
 
-void MeasureDistProp_c::timeEvent() {
+void MeasureDistProp_c::timeEvent()
+{
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-    const int32_t distTheor = getTracMoveInstance(m_measureProg.procData().identItem().getMultitonInst()).distTheor();
-    const bool sendProcMsg = updateTrigger( distTheor );
+  const int32_t multitonInst = m_measureProg.connection().getMultitonInst();
+  const int32_t distTheor = getTracMoveInstance( multitonInst ).distTheor();
+  const bool sendProcMsg = updateTrigger( distTheor );
 #else
-    const int32_t distTheor = 0;
-    const bool sendProcMsg = false;
+  const int32_t distTheor = 0;
+  const bool sendProcMsg = false;
 #endif
-    const int32_t nextTimePeriod = nextTriggerTime( m_measureProg.procData(), distTheor );
+  const int32_t nextTimePeriod = nextTriggerTime( distTheor );
 
   if( nextTimePeriod > 0 )
     setPeriod( nextTimePeriod, false );
@@ -121,7 +125,7 @@ void MeasureDistProp_c::timeEvent() {
     setPeriod( 10, false ); // fallback, TODO later...
 
   if( sendProcMsg && m_measureProg.minMaxLimitsPassed() )
-    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
+    m_measureProg.sendValue();
 }
 
 
@@ -155,7 +159,7 @@ MeasureTimeProp_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
   setPeriod( ai32_increment, true );
 
   if( m_measureProg.minMaxLimitsPassed() )
-    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
+    m_measureProg.sendValue();
 }
 
 
@@ -193,7 +197,7 @@ void MeasureTimeProp_c::timeEvent()
     setPeriod( 10, false ); // fallback, TODO later...
 
   if( sendProcMsg && m_measureProg.minMaxLimitsPassed() )
-    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
+    m_measureProg.sendValue();
 }
 
 
@@ -217,7 +221,7 @@ MeasureOnChange_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
   mi32_lastVal = ai32_lastVal;
 
   if( m_measureProg.minMaxLimitsPassed() )
-    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
+    m_measureProg.sendValue();
 }
 
 
@@ -242,7 +246,7 @@ MeasureOnChange_c::setValue( int32_t value )
   const bool sendProcMsg = updateTrigger( value );
 
   if( sendProcMsg && m_measureProg.minMaxLimitsPassed() )
-    m_measureProg.connection().sendProcMsg( m_measureProg.procData().DDI(), m_measureProg.procData().element(), m_measureProg.getValue() );
+    m_measureProg.sendValue();
 }
 
 

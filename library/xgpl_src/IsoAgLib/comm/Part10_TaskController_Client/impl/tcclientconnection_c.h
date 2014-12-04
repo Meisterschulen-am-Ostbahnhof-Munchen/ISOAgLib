@@ -1,11 +1,11 @@
 /*
-  tcclientconnection_c.h: class for managing a connection
+  tcclientconnection_c.h: class for managing a TC-client/server connection 
 
   (C) Copyright 2009 - 2014 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
-
+  
   Use, modification and distribution are subject to the GNU General
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
@@ -13,12 +13,10 @@
 #ifndef TCCLIENTCONNECTION_H
 #define TCCLIENTCONNECTION_H
 
-#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.h>
-
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdconnection_c.h>
 #include <map>
 
 namespace IsoAgLib {
@@ -34,13 +32,11 @@ namespace __IsoAgLib {
   class ProcessPkg_c;
   class ProcData_c;
   class DevicePool_c;
+  class PdRemoteNode_c;
   class ServerInstance_c;
 
 
-  class TcClientConnection_c
-#ifdef HAL_USE_SPECIFIC_FILTERS
-      : public CanCustomer_c
-#endif
+  class TcClientConnection_c : public PdConnection_c
   {
 // @todo Convert to static const...
 #define DEF_TimeOut_GetVersion            5000
@@ -129,34 +125,14 @@ namespace __IsoAgLib {
 
       TcClientConnection_c(
         const IdentItem_c& identItem,
-        TcClient_c& tcClient,
         StateHandler_c& sh,
         ServerInstance_c& server,
-        DevicePool_c& pool );
+        const DevicePool_c& pool );
 
       virtual ~TcClientConnection_c();
 
-      const IdentItem_c& getIdentItem() const {
-        return m_identItem;
-      }
-      TcClient_c& getTcClient() const {
-        return *m_tcClient;
-      }
-
-      const IsoName_c& getServerName() const {
-        return m_serverName;
-      }
-
-      const ServerInstance_c& getServer() const {
-        return m_server;
-      }
-
-      const IsoItem_c& getIsoItem() const;
-
-      void processProcMsg( const ProcessPkg_c& );
-
-      void sendNack( int16_t ddi, int16_t element, IsoAgLib::ProcData::NackResponse_t errorcodes ) const;
-      void sendProcMsg( uint16_t ddi, uint16_t element, int32_t pdValue ) const;
+      const ServerInstance_c& getServer() const { return (ServerInstance_c &)( *getRemoteNode() ); }
+      const IsoName_c &getRemoteName() const { return getRemoteItem()->isoName(); } // no NULL check needed here!
 
       bool sendCommandChangeDesignator( uint16_t /* objID */, const char* /* newString */, uint8_t /* length */ ) {
         return false; /* @todo: send msg */
@@ -179,29 +155,17 @@ namespace __IsoAgLib {
       void eventPoolActivateResponse( uint8_t result );
       void eventPoolDeleteResponse( uint8_t result );
 
-      void setDevPoolState( DevPoolState_t newState ) {
-        m_devPoolState = newState;
-      }
-      DevPoolState_t getDevPoolState() const {
-        return m_devPoolState;
-      }
-
-      UploadPoolState_t getUploadPoolState() {
-        return m_uploadPoolState;
-      }
+      void setDevPoolState( DevPoolState_t newState ) { m_devPoolState = newState; }
+      DevPoolState_t getDevPoolState() const { return m_devPoolState; }
+      UploadPoolState_t getUploadPoolState() { return m_uploadPoolState; }
+      DevicePool_c &getDevicePool() const { return *((DevicePool_c *) &m_pool); }
 
       void timeEvent();
       void timeEventDevicePool();
       void startUpload();
-#ifdef HAL_USE_SPECIFIC_FILTERS
-      virtual void processMsg( const CanPkg_c& data );
-#endif
 
-      void processMsgTc( const ProcessPkg_c& );
-
-      void processMeasurementMsg( const ProcessPkg_c& );
-      void processRequestMsg( const ProcessPkg_c& );
-      void processSetMsg( const ProcessPkg_c& );
+      virtual void processMsgTc( const ProcessPkg_c& );
+      virtual void processRequestDefaultDataLogging();
 
       void outOfMemory();
 
@@ -257,12 +221,7 @@ namespace __IsoAgLib {
       uint32_t getStreamSize();
       uint8_t getFirstByte();
 
-      int getMultitonInst() const {
-        return m_identItem.getMultitonInst();
-      }
-
       void handleNack( int16_t ddi, int16_t element );
-      static uint32_t getMapKey(uint16_t ddi, uint16_t element) { return ( uint32_t( uint32_t( ddi ) << 16 ) ) | uint32_t(element); }
 
     private:
       enum PoolAction_t {
@@ -307,13 +266,8 @@ namespace __IsoAgLib {
       void doCommand( int32_t opcode, int32_t timeout = DEF_TimeOut_NormalCommand );
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
 
-      const IdentItem_c& m_identItem;
       int32_t m_timeWsAnnounceKey;
-      TcClient_c* m_tcClient;
       StateHandler_c* m_stateHandler;
-
-      IsoName_c m_serverName;
-      ServerInstance_c& m_server;
 
       // MultiSendStreamer_c variables
       uint16_t m_currentSendPosition;
@@ -337,15 +291,9 @@ namespace __IsoAgLib {
       STL_NAMESPACE::vector<uint8_t> m_structureLabel;
       STL_NAMESPACE::vector<uint8_t> m_localizationLabel;
 
-      // Measure progs presorted for DDIs
-      void createMeasureProgs();
-      void destroyMeasureProgs();
-      STL_NAMESPACE::map<uint32_t, MeasureProg_c*> m_measureProg;
-
       SendStream_c::sendSuccess_t m_sendSuccess;
 
       // device pool
-      DevicePool_c& m_pool;
       DevPoolState_t m_devPoolState;
       PoolAction_t m_devPoolAction;
       void setDevPoolAction( PoolAction_t action ) {

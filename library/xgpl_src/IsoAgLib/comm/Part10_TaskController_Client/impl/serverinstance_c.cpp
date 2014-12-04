@@ -19,37 +19,22 @@
 namespace __IsoAgLib {
 
 
-  ServerInstance_c::ServerInstance_c( const IsoItem_c& it, IsoAgLib::ProcData::RemoteType_t type ) :
-    SchedulerTask_c( 100, false ),
-    m_isoItem( it ),
-    m_tcAliveCached( false ),
-    m_lastActiveTaskTC( false ),
-    m_lastTcState( 0 ),
-    m_lastTcStateReceivedTime( -1 ),
-    m_type( type ),
-    m_connections()
+  ServerInstance_c::ServerInstance_c( const IsoItem_c& isoItem, IsoAgLib::ProcData::RemoteType_t type )
+    : PdRemoteNode_c( isoItem, true )
+    , m_tcAliveCached( false )
+    , m_lastActiveTaskTC( false )
+    , m_lastTcState( 0 )
+    , m_lastTcStateReceivedTime( -1 )
+    , m_type( type )
   {
+    // assume the SchedulerTask_c is properly c'ted in PdRemoteNode_c
     getSchedulerInstance().registerTask(*this,0);
   }
 
 
-  ServerInstance_c::~ServerInstance_c() {
-    isoaglib_assert(m_connections.empty());
+  ServerInstance_c::~ServerInstance_c()
+  {
     getSchedulerInstance().deregisterTask(*this);
-  }
-
-
-  void
-  ServerInstance_c::processMsgNonGlobal( const ProcessPkg_c& pkg ) {
-    for( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
-         it != m_connections.end(); ++it )
-    {
-      if (&(*it)->getIsoItem() == pkg.getMonitorItemForSA())
-      {
-        ( *it )->processProcMsg( pkg );
-        return;
-      }
-    }
   }
 
 
@@ -67,34 +52,41 @@ namespace __IsoAgLib {
   }
 
 
-  void  ServerInstance_c::addConnection( TcClientConnection_c& c ) {
-    // avoid double connect
-    // - manual connect from event-callback (probably due to app. only connecting later)
-    // - reconnect inside of ISOAgLib
-    for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
-         it != m_connections.end(); ++it )
-    {
-      if( *it == &c )
-        return;
-    }
-    m_connections.push_back( &c );
-  }
+  void
+  ServerInstance_c::processMsg( const ProcessPkg_c& pkg )
+  {
+    PdRemoteNode_c::processMsg( pkg );
 
-
-  void ServerInstance_c::removeConnection( TcClientConnection_c& c ) {
-    for( STL_NAMESPACE::list<TcClientConnection_c*>::iterator it = m_connections.begin();
-         it != m_connections.end(); ++it )
+    switch (pkg.men_command)
     {
-      if( *it == &c ) {
-        m_connections.erase( it );
+      case IsoAgLib::ProcData::taskControllerStatus:
+        processStatus( pkg[4] );
         break;
-      }
+
+      case IsoAgLib::ProcData::requestConfiguration:
+      case IsoAgLib::ProcData::configurationResponse:
+      case IsoAgLib::ProcData::nack:
+      case IsoAgLib::ProcData::requestValue:
+      case IsoAgLib::ProcData::setValue:
+      case IsoAgLib::ProcData::measurementTimeValueStart:
+      case IsoAgLib::ProcData::measurementDistanceValueStart:
+      case IsoAgLib::ProcData::measurementMinimumThresholdValueStart:
+      case IsoAgLib::ProcData::measurementMaximumThresholdValueStart:
+      case IsoAgLib::ProcData::measurementChangeThresholdValueStart:
+      case IsoAgLib::ProcData::commandReserved1:
+      case IsoAgLib::ProcData::commandReserved2:
+      case IsoAgLib::ProcData::commandReserved3:
+      case IsoAgLib::ProcData::commandReserved4:
+      case IsoAgLib::ProcData::workingsetMasterMaintenance:
+      case IsoAgLib::ProcData::CommandUndefined:
+        ; // not handled when global
     }
   }
 
 
-  void ServerInstance_c::processStatus( uint8_t status ) {
-
+  void
+  ServerInstance_c::processStatus( uint8_t status )
+  {
     m_lastTcState = status;
     m_lastTcStateReceivedTime = HAL::getTime();
 
@@ -102,17 +94,17 @@ namespace __IsoAgLib {
 
     if ( activeTask != m_lastActiveTaskTC ) {
       if ( activeTask ) {
-        for( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
+        for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
              it != m_connections.end(); ++it )
         {
-          ( *it )->eventTaskStarted(); 
+          static_cast<TcClientConnection_c*>( *it )->eventTaskStarted(); 
         }
       } else {
-        for( STL_NAMESPACE::list<TcClientConnection_c*>::const_iterator it = m_connections.begin();
+        for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
              it != m_connections.end(); ++it )
         {
-          ( *it )->stopRunningMeasurement();
-          ( *it )->eventTaskStopped();
+          static_cast<TcClientConnection_c*>( *it )->stopRunningMeasurement();
+          static_cast<TcClientConnection_c*>( *it )->eventTaskStopped();
         }
       }
     }

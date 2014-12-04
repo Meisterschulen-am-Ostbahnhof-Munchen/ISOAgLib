@@ -15,11 +15,11 @@
 
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdpool_c.h>
 
 
 namespace __IsoAgLib {
-
-  class DevicePool_c;
 
 
   typedef struct {
@@ -81,21 +81,14 @@ namespace __IsoAgLib {
   class DeviceObjectDvc_c : public DeviceObject_c {
     public:
       DeviceObjectDvc_c( const char* version, const char* desig );
-      const IsoName_c& getWsmName() const {
-        return m_wsmName;
-      }
-      const Localization_s& getLocalization() const {
-        return m_localization;
-      }
-      const StructureLabel_s& getStructureLabel() const {
-        return m_structLabel;
-      }
-      const char* getVersion() const {
-        return m_version;
-      }
-      const char* getSerialNumber() const {
-        return m_serialNumber;
-      }
+
+      const IdentItem_c& getIdentItem()           const { return *m_identItem; }
+      const IsoName_c& getWsmName()               const { return m_identItem->isoName(); }
+      const Localization_s& getLocalization()     const { return m_localization; }
+      const StructureLabel_s& getStructureLabel() const { return m_structLabel; }
+      const char* getVersion()                    const { return m_version; }
+      const char* getSerialNumber()               const { return m_serialNumber; }
+
     protected:
       void setLocalSettings( const localSettings_s& s );
       void setLocalization( const Localization_s& s );
@@ -106,12 +99,12 @@ namespace __IsoAgLib {
     private:
       friend class __IsoAgLib::DevicePool_c;
       void init( const IdentItem_c& ident ) {
-        m_wsmName = ident.isoName();
+        m_identItem = &ident;
       }
       const char* m_version;
       char m_serialNumber[ 32+1 ];
       StructureLabel_s m_structLabel;
-      IsoName_c m_wsmName;
+      const IdentItem_c *m_identItem;
       Localization_s m_localization;
 
       uint32_t getSize() const;
@@ -231,9 +224,11 @@ namespace __IsoAgLib {
   };
 
 
+
   /*  DDOP  */
 
-  class DevicePool_c {
+  class DevicePool_c : PdPool_c
+  {
     public:
       DevicePool_c();
       virtual ~DevicePool_c() {}
@@ -266,11 +261,11 @@ namespace __IsoAgLib {
       TcClientConnection_c::ByteStreamBuffer_c getBytestream( uint8_t cmdByte );
       uint32_t getBytestreamSize() const;
 
+      typedef STL_NAMESPACE::list<ProcData_c*> ProcDataList_t;
+      ProcDataList_t &getProcDataList() { return *reinterpret_cast<ProcDataList_t*>( &m_procDatas ); }
+
       typedef STL_NAMESPACE::map<uint16_t, DeviceObject_c*> deviceMap_t;
-      typedef STL_NAMESPACE::list<ProcData_c*> procDataList_t;
       deviceMap_t m_devicePool;
-      procDataList_t m_procDatas;
-      const IdentItem_c* m_identItem;
   };
 
 }

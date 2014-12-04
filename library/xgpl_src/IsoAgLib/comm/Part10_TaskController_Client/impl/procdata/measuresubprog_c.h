@@ -35,8 +35,8 @@ public:
   void start( int32_t ai32_lastVal, int32_t ai32_increment );
 
 private:
-  bool updateTrigger(int32_t ai32_val);
-  int32_t nextTriggerTime(const ProcData_c& ac_processData, int32_t ai32_val);
+  bool updateTrigger( int32_t );
+  int32_t nextTriggerTime( int32_t );
 
   virtual void timeEvent();
 
@@ -59,8 +59,8 @@ public:
   void start( int32_t ai32_lastVal, int32_t ai32_increment );
 
 private:
-  bool updateTrigger(int32_t ai32_val);
-  int32_t nextTriggerTime(int32_t ai32_val);
+  bool updateTrigger( int32_t );
+  int32_t nextTriggerTime( int32_t );
 
   virtual void timeEvent();
 
@@ -82,10 +82,10 @@ public:
 
   void start( int32_t ai32_lastVal, int32_t ai32_increment );
 
-  void setValue( int32_t value );
+  void setValue( int32_t );
 
 private:
-  bool updateTrigger(int32_t ai32_val);
+  bool updateTrigger( int32_t );
 
 private:
   MeasureProg_c &m_measureProg;

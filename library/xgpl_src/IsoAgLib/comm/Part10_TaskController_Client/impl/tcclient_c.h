@@ -31,6 +31,7 @@
 
 namespace __IsoAgLib {
   class ProcData_c;
+  class PdPool_c;
 
   class TcClient_c : public Subsystem_c {
       MACRO_MULTITON_CONTRIBUTION();
@@ -57,9 +58,13 @@ namespace __IsoAgLib {
       void setPdMessageHandler( PdMessageHandler_c& hdl );
       void clearPdMessageHandler();
 
-      TcClientConnection_c* connect( const IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcdl, DevicePool_c& );
+      // Note: The connections will automatically get disconnected and destructed on RemoteNode-Loss.
+      TcClientConnection_c* connect(          const IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcDlItem, const DevicePool_c& );
+      PdConnection_c*       connect(          const IdentItem_c&, const IsoItem_c& pdItem, const PdPool_c& );
+      PdConnection_c*       connectBroadcast( const IdentItem_c&, const PdPool_c& );
+
       void disconnect( const IdentItem_c& );
-      void disconnect( const TcClientConnection_c& );
+      void disconnect( const PdConnection_c& );
 
       void getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill );
 
@@ -74,16 +79,13 @@ namespace __IsoAgLib {
 #endif
 
       void notifyServerStatusChange(ServerInstance_c& server, bool new_status);
+      void notifyPdNodeDestruction( PdRemoteNode_c& pdRemoteNode );
 
     private:
       TcClient_c();
 
       void processMsg( const CanPkg_c& );
       void reactOnIsoItemModification ( ControlFunctionStateHandler_c::iIsoItemAction_e, IsoItem_c const& );
-
-      void processMsgGlobal( const ProcessPkg_c& );
-      void processMsgNonGlobal( const ProcessPkg_c& );
-      void processTcStatusMsg( uint8_t ui8_tcStatus, const __IsoAgLib::IsoItem_c& sender );
 
       /// PROXY-CLASSES
       class CanCustomerProxy_c : public CanCustomer_c {
@@ -134,8 +136,8 @@ namespace __IsoAgLib {
       ServerStateHandler_c* m_stateHandler;
       PdMessageHandler_c* m_pdMessageHandler;
 
-      STL_NAMESPACE::map<const __IsoAgLib::IsoItem_c*,__IsoAgLib::ServerInstance_c*> m_server;
-      STL_NAMESPACE::list<TcClientConnection_c*> m_connections;
+      STL_NAMESPACE::map<const IsoItem_c*, PdRemoteNode_c*> m_pdRemoteNodes;
+      STL_NAMESPACE::list<PdConnection_c*> m_connections;
 
       friend TcClient_c &getTcClientInstance( uint8_t instance );
       friend class ProcData_c;

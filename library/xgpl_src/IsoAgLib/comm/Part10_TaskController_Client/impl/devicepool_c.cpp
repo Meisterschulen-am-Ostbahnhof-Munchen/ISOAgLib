@@ -65,7 +65,7 @@ namespace __IsoAgLib {
     , m_version( version )
   //, m_serialNumber()
     , m_structLabel()
-    , m_wsmName()
+    , m_identItem( NULL )
     , m_localization()
   {
     isoaglib_assert( CNAMESPACE::strlen( version ) <= 32 );
@@ -145,7 +145,7 @@ namespace __IsoAgLib {
 
     byteStream.format( m_designator );
     byteStream.format( m_version );
-    byteStream.format( m_wsmName.outputString(), 8 );
+    byteStream.format( getWsmName().outputString(), 8 );
     byteStream.format( m_serialNumber );
 
     byteStream.format( ( uint8_t* )&m_structLabel, 7 );
@@ -313,23 +313,24 @@ namespace __IsoAgLib {
   }
 
 
+
+
   /* --- DDOP --------------------------------------------------- */
 
   DevicePool_c::DevicePool_c()
-    : m_devicePool()
-    , m_procDatas()
-    , m_identItem( NULL )
+    : PdPool_c()
+    , m_devicePool()
   {}
 
 
-  void DevicePool_c::init( const IdentItem_c& ident ) {
+  void DevicePool_c::init( const IdentItem_c& ident )
+  {
     getDvcObject()->init( ident );
-    m_identItem = &ident;
   }
 
-  void DevicePool_c::close() {
+  void DevicePool_c::close()
+  {
     //getDvcObject()->init( unspecified );
-    m_identItem = NULL;
   }
 
 
@@ -360,16 +361,12 @@ namespace __IsoAgLib {
     isoaglib_assert( pd.getDet() );
     isoaglib_assert( m_devicePool.find( pd.getDpd()->getObjectId() ) != m_devicePool.end() );
     isoaglib_assert( m_devicePool.find( pd.getDet()->getObjectId() ) != m_devicePool.end() );
-    isoaglib_assert( STL_NAMESPACE::find( m_procDatas.begin(), m_procDatas.end(), &pd ) == m_procDatas.end() );
 
-    m_procDatas.push_back( &pd );
+    addPdBase( pd );
   }
-
 
   void DevicePool_c::clear()
   {
-    isoaglib_assert( m_identItem == NULL );
-
     m_devicePool.clear();
     m_procDatas.clear();
   }
@@ -377,7 +374,8 @@ namespace __IsoAgLib {
 
   void DevicePool_c::changeDesignator( DeviceObject_c& obj, const char* str ) {
     obj.setDesignator( str );
-    getTcClientInstance( m_identItem->getMultitonInst() ).processChangeDesignator( *m_identItem, obj.getObjectId(), str );
+    const IdentItem_c &identItem = getDvcObject()->getIdentItem();
+    getTcClientInstance( identItem.getMultitonInst() ).processChangeDesignator( identItem, obj.getObjectId(), str );
   }
 
 

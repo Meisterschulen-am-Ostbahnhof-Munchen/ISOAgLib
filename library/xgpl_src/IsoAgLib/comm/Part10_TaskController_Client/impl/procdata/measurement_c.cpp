@@ -12,45 +12,37 @@
 */
 #include "measurement_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/pdbase_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
 
 
 namespace __IsoAgLib {
 
-  Measurement_c::Measurement_c() : m_value( 0 ), m_measureProgs() {}
+  Measurement_c::Measurement_c()
+    : m_value( 0 )
+  {
+  }
 
 
-  void Measurement_c::setMeasurementValue( int32_t v ) {
+  void Measurement_c::setMeasurementValue( PdBase_c &pdBase, int32_t v )
+  {
     m_value = v;
-    for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {
-      ( *i )->setValue( v );
-    }
+
+    for( PdBase_c::ConnectedPds_t::iterator iter = pdBase.connectedPds().begin(); iter != pdBase.connectedPds().end(); ++iter )
+      static_cast< MeasureProg_c *>( *iter )->valueUpdated();
   }
 
 
-  void Measurement_c::startMeasurement( TcClientConnection_c& ecu, IsoAgLib::ProcData::MeasurementCommand_t type, int32_t inc ) {
-    for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {
-      if ( &(*i)->connection() == &ecu ) {
-        (*i)->startMeasurement( type, inc );
+  void Measurement_c::startMeasurement( PdBase_c &pdBase, PdConnection_c& connection, IsoAgLib::ProcData::MeasurementCommand_t type, int32_t inc )
+  {
+    for( PdBase_c::ConnectedPds_t::iterator iter = pdBase.connectedPds().begin(); iter != pdBase.connectedPds().end(); ++iter ) 
+    {
+      if ( &( *iter )->connection() == &connection )
+      {
+        ( *iter )->startMeasurement( type, inc );
         break;
       }
     }
-  }
-
-
-  void Measurement_c::addMeasureProgRef( MeasureProg_c& m ) {
-    m_measureProgs.push_front( &m );
-    m_measureProgs.front()->setValue( m_value );
-  }
-
-
-  void Measurement_c::removeMeasureProgRef( MeasureProg_c& m ) {
-    for( STL_NAMESPACE::list<MeasureProg_c*>::iterator i = m_measureProgs.begin(); i != m_measureProgs.end(); ++i ) {
-      if ( (*i) == &m ) {
-        m_measureProgs.erase(i);
-        break;
-      }
-    } 
   }
 
 }

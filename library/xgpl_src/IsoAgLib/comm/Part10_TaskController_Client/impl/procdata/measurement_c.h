@@ -15,32 +15,23 @@
 
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
-#include <list>
-
-
 namespace __IsoAgLib {
 
-  class ProcData_c;
-  class MeasureProg_c;
-  class TcClientConnection_c;
+  class PdBase_c;
+  class PdConnection_c;
+  class ConnectedPd_c;
 
   class Measurement_c {
     public:
       Measurement_c();
 
-      int32_t getValue() const {
-        return m_value;
-      }
+      int32_t getValue() const { return m_value; }
 
-      void setMeasurementValue( int32_t v );
-      void startMeasurement( TcClientConnection_c& ecu, IsoAgLib::ProcData::MeasurementCommand_t type, int32_t inc );
-
-      void addMeasureProgRef( MeasureProg_c& m );
-      void removeMeasureProgRef( MeasureProg_c& m );
+      void setMeasurementValue( PdBase_c &pdBase, int32_t );
+      void startMeasurement( PdBase_c &pdBase, PdConnection_c&, IsoAgLib::ProcData::MeasurementCommand_t, int32_t );
 
     private:
       int32_t m_value;
-      STL_NAMESPACE::list<MeasureProg_c*> m_measureProgs; // only cached, do not 'own' the instances
   };
 }
 
