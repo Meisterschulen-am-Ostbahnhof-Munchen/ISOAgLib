@@ -66,7 +66,7 @@ namespace __IsoAgLib {
     isoaglib_assert( initialized() );
     isoaglib_assert( m_connections.empty() );
 
-    for (STL_NAMESPACE::map<const IsoItem_c*,PdRemoteNode_c*>::iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter)
+    for (ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter)
       delete iter->second;
     m_pdRemoteNodes.clear();
 
@@ -129,7 +129,7 @@ namespace __IsoAgLib {
       }
     }
   
-    STL_NAMESPACE::map<const IsoItem_c*,PdRemoteNode_c*>::iterator iter = m_pdRemoteNodes.find( &tcDlItem );
+    ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.find( &tcDlItem );
     isoaglib_assert( iter != m_pdRemoteNodes.end() );
     isoaglib_assert( iter->second->isServer() );
 
@@ -153,12 +153,20 @@ namespace __IsoAgLib {
       }
     }
   
-    STL_NAMESPACE::map<const IsoItem_c*,PdRemoteNode_c*>::iterator iter = m_pdRemoteNodes.find( &pdItem );
+    PdRemoteNode_c *remoteNode = NULL;
+    
+    ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.find( &pdItem );
     if( iter == m_pdRemoteNodes.end() )
-      m_pdRemoteNodes[ &pdItem ] = new PdRemoteNode_c( pdItem, false );
-    isoaglib_assert( !iter->second->isServer() );
+    {
+      remoteNode = new PdRemoteNode_c( pdItem, false );
+      m_pdRemoteNodes[ &pdItem ] = remoteNode;
+    }
+    else
+      remoteNode = iter->second;
 
-    PdConnection_c* connection = new PdConnection_c( identItem, iter->second, pool );
+    isoaglib_assert( !remoteNode->isServer() );
+
+    PdConnection_c* connection = new PdConnection_c( identItem, remoteNode, pool );
     m_connections.push_back( connection );
 
     return connection;
@@ -213,7 +221,7 @@ namespace __IsoAgLib {
   void
   TcClient_c::getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill )
   {
-    for (STL_NAMESPACE::map<const __IsoAgLib::IsoItem_c*,__IsoAgLib::PdRemoteNode_c*>::iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter)
+    for (ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter)
     {
       if( iter->second->isServer() )
       {
@@ -243,7 +251,7 @@ namespace __IsoAgLib {
             pkg.mui16_DDI,
             pkg.mi32_pdValue);
 
-    STL_NAMESPACE::map<const IsoItem_c*,PdRemoteNode_c*>::iterator iter = m_pdRemoteNodes.find( pkg.getMonitorItemForSA() );
+    ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.find( pkg.getMonitorItemForSA() );
     if( iter == m_pdRemoteNodes.end() )
       return;
 
@@ -274,7 +282,7 @@ namespace __IsoAgLib {
 
     case ControlFunctionStateHandler_c::RemoveFromMonitorList:
       {
-        STL_NAMESPACE::map<const IsoItem_c*,PdRemoteNode_c*>::iterator i = m_pdRemoteNodes.find( &isoItem );
+        ItemToRemoteNodeMap_t::iterator i = m_pdRemoteNodes.find( &isoItem );
         if( i != m_pdRemoteNodes.end() )
         {
           if( i->second->isServer() )

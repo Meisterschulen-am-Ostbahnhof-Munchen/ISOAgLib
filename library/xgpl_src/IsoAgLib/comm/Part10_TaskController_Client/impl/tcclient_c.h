@@ -136,7 +136,8 @@ namespace __IsoAgLib {
       ServerStateHandler_c* m_stateHandler;
       PdMessageHandler_c* m_pdMessageHandler;
 
-      STL_NAMESPACE::map<const IsoItem_c*, PdRemoteNode_c*> m_pdRemoteNodes;
+      typedef STL_NAMESPACE::map<const IsoItem_c*, PdRemoteNode_c*> ItemToRemoteNodeMap_t;
+      ItemToRemoteNodeMap_t m_pdRemoteNodes;
       STL_NAMESPACE::list<PdConnection_c*> m_connections;
 
       friend TcClient_c &getTcClientInstance( uint8_t instance );
