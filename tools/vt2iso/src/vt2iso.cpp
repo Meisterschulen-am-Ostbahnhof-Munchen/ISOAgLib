@@ -493,7 +493,7 @@ void vt2iso_c::clean_exit (const char* error_message)
 
     fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (MULTITON_INST_PARAMETER_DEF)\n{\n", mstr_className.c_str());
     fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
-    fprintf (partFile_functions, "  int i_objCount = %d;\n", map_objNameIdTable.size() - extraLanguageLists);
+    fprintf (partFile_functions, "  int i_objCount = numObjects;\n");
     fprintf (partFile_functions, "  int i_listIndex = 0;\n");
     fprintf (partFile_functions, "  IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM * pps_sROMs = %sall_sROMs;\n", mstr_namespacePrefix.c_str());
     fprintf (partFile_functions, "  do \n");
@@ -506,7 +506,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_functions, "      ++pps_sROMs;\n");
     fprintf (partFile_functions, "      --i_objCount;\n");
     fprintf (partFile_functions, "    }\n");
-    fprintf (partFile_functions, "    i_objCount = %d;\n", extraLanguageLists);
+    fprintf (partFile_functions, "    i_objCount = numObjectsLang;\n");
     fprintf (partFile_functions, "    ++i_listIndex;\n");
     fprintf (partFile_functions, "  } while (%sall_iVtObjectLists[i_listIndex]);\n", mstr_namespacePrefix.c_str());
 
