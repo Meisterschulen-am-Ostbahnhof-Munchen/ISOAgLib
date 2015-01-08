@@ -81,6 +81,8 @@ namespace __IsoAgLib {
     {
       PdBase_c* pd = ( *i );
       const uint32_t key = getMapKey( pd->DDI(), pd->element());
+      isoaglib_assert( m_connectedPds.find( key ) == m_connectedPds.end() );
+
       ConnectedPd_c* cPd = &( pd->createConnectedPd( *this ) );
       m_connectedPds[ key ] = cPd;
     }
