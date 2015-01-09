@@ -15,6 +15,8 @@
 #define UTIL_FUNCS_H
 
 #include <IsoAgLib/isoaglib_config.h>
+#include "../iassert.h"
+
 #ifdef USE_DATASTREAMS_IO
 class StreamInput_c;
 #endif
@@ -359,6 +361,59 @@ public:
 private:
   bool mb_initialized;
 };
+
+
+class ByteStreamBuffer_c
+{
+  public:
+    ByteStreamBuffer_c() {reset();}
+    void setBuffer( uint8_t* b ) {
+      m_buffer = b;
+    }
+    uint8_t* getBuffer() {
+      return m_buffer;
+    }
+
+    void setEnd( uint32_t e ) {
+      m_offset = e;
+    }
+    uint32_t getEnd() const {
+      return m_offset;
+    }
+
+    void setSize( uint32_t s ) {
+      m_size = s;
+    }
+    uint32_t getSize() const {
+      return m_size;
+    }
+
+    uint8_t& operator[]( uint32_t p ) {
+      return m_buffer[ p ];
+    }
+    void reset() {
+      setBuffer( 0 );
+      setEnd( 0 );
+      setSize( 0 );
+    }
+    void format( uint8_t val );
+    void format( uint16_t val );
+    void format( uint32_t val );
+    void format( const uint8_t* bp, size_t len );
+    void format( const char* str );
+    void format( int32_t val );
+    void format( float val );
+  private:
+    uint32_t m_offset;
+    uint8_t* m_buffer;
+    uint32_t m_size;
+
+    void push_back( uint8_t b ) {
+      isoaglib_header_assert( ( m_offset + 1 ) <= getSize() );
+      m_buffer[ m_offset++ ] = b;
+    }
+};
+
 
 } // end of namespace __IsoAgLib
 #endif

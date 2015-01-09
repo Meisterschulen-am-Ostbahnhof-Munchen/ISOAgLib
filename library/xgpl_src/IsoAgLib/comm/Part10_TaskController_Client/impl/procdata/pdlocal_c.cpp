@@ -1,5 +1,5 @@
 /*
-  pdlocal_c.cpp: Class for providing Process Data
+  pdlocal_c.cpp: Class for providing Process Data (without DDOP)
 
   (C) Copyright 2014 - 2014 by OSB AG and developing partners
 
@@ -26,6 +26,22 @@ namespace __IsoAgLib {
     , m_measurement()
     , m_triggerMethod( 0xDA ) // invalid, needs to be init()
   {
+  }
+
+  PdLocal_c::PdLocal_c( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, SetpointHandler_c *handler )
+    : PdBase_c( ddi, element )
+    , m_setpoint( handler, settable )
+    , m_measurement()
+    , m_triggerMethod( triggerMethod )
+  {
+  }
+
+  void
+  PdLocal_c::init( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, SetpointHandler_c *handler )
+  {
+    PdBase_c::init( ddi, element );
+    m_setpoint.init( handler, settable );
+    m_triggerMethod = triggerMethod;
   }
 
   ConnectedPd_c &

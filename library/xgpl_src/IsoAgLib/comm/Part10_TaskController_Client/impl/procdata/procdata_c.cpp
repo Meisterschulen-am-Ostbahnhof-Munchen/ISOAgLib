@@ -1,5 +1,5 @@
 /*
-  procdata_c.cpp: Class for handling Process Data
+  procdata_c.cpp: Class for handling Process Data (from DDOP)
 
   (C) Copyright 2009 - 2014 by OSB AG and developing partners
 
@@ -33,21 +33,21 @@ namespace __IsoAgLib {
 
 
   void ProcData_c::init(
-    const DeviceObjectDpd_c& dpd,
-    const DeviceObjectDet_c& det,
-    SetpointHandler_c* setpointhandler )
+      const DeviceObjectDpd_c& dpd,
+      const DeviceObjectDet_c& det,
+      SetpointHandler_c* setpointhandler )
   {
     PdLocal_c::init(
       dpd.ddi(),
       det.elementNumber(),
-      dpd.method() );
+      dpd.method(),
+      dpd.propertySetpoint(),
+      setpointhandler );
 
 #ifndef NDEBUG
     m_dpd = &dpd;
     m_det = &det;
 #endif
-
-    m_setpoint.init( setpointhandler, dpd.propertySetpoint() );
 
     isoaglib_assert(
       ( DDI() != IsoAgLib::ProcData::DefaultDataLoggingDDI ) ? true :
@@ -59,7 +59,7 @@ namespace __IsoAgLib {
   }
 
 
-  void
+  inline void
   ProcData_c::close()
   {
   }

@@ -33,6 +33,10 @@ library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/pdremo
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/pdremote_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/remotevalue_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/remotevalue_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/ipdconnection_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/ipdlocal_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/ipdpool_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/ipdremote_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.cpp -text

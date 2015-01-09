@@ -1,5 +1,5 @@
 /*
-  pdbase_c.h: Class for handling Process Data
+  pdbase_c.h: Base class for handling Process Data
 
   (C) Copyright 2014 - 2014 by OSB AG and developing partners
 
@@ -18,7 +18,6 @@
 
 namespace __IsoAgLib {
 
-  class PdBase_c;
   class PdConnection_c;
   class ConnectedPd_c;
 
@@ -27,6 +26,7 @@ namespace __IsoAgLib {
   {
   public:
     PdBase_c();
+    PdBase_c( uint16_t ddi, uint16_t element );
 
     uint16_t DDI()     const { return m_ddi; }
     uint16_t element() const { return m_element; }
@@ -40,7 +40,7 @@ namespace __IsoAgLib {
     ConnectedPds_t &connectedPds() { return m_connectedPds; }
 
   protected:
-    inline void init( uint16_t ddi, uint16_t element );
+    void init( uint16_t ddi, uint16_t element );
 
   private:
     uint16_t m_ddi;
@@ -52,6 +52,15 @@ namespace __IsoAgLib {
     PdBase_c( const PdBase_c& );
     PdBase_c& operator=( const PdBase_c& );
   };
+
+
+  inline
+  PdBase_c::PdBase_c( uint16_t ddi, uint16_t element )
+    : m_ddi( ddi )
+    , m_element( element )
+    , m_connectedPds()
+  {
+  }
 
 
   inline void

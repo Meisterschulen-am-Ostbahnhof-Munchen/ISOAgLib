@@ -1,5 +1,5 @@
 /*
-  setpoint_c.cpp
+  setpoint_c.cpp - class for handling the Setpoint of a local PD
 
   (C) Copyright 2009 - 2014 by OSB AG and developing partners
 
@@ -22,6 +22,14 @@ namespace __IsoAgLib {
     : m_value( 0 )
     , m_handler( NULL )
     , m_settable( false )
+  {
+  }
+
+
+  Setpoint_c::Setpoint_c( SetpointHandler_c* handler, bool settable )
+    : m_value( 0 )
+    , m_handler( handler )
+    , m_settable( settable )
   {
   }
 

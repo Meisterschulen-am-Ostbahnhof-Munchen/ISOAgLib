@@ -26,22 +26,23 @@ namespace __IsoAgLib {
   class PdPool_c
   {
   public:
-    PdPool_c();
+    PdPool_c( unsigned int reserveSize );
 
     void addPdBase( PdBase_c& pd );
 
-    typedef STL_NAMESPACE::list<PdBase_c*> PdList_t;
-    const PdList_t &getPdList() const { return m_procDatas; }
+    typedef STL_NAMESPACE::vector<PdBase_c*> PdBases_t;
+    const PdBases_t &getPdList() const { return m_procDatas; }
   
   protected:
-    PdList_t m_procDatas;
+    PdBases_t m_procDatas;
   };
  
 
   inline
-  PdPool_c::PdPool_c()
+  PdPool_c::PdPool_c( unsigned int reserveSize )
     : m_procDatas()
   {
+    m_procDatas.reserve( reserveSize );
   }
 
 
@@ -49,6 +50,8 @@ namespace __IsoAgLib {
   PdPool_c::addPdBase( PdBase_c &pd )
   {
     isoaglib_assert( STL_NAMESPACE::find( m_procDatas.begin(), m_procDatas.end(), &pd ) == m_procDatas.end() );
+    isoaglib_assert( ( m_procDatas.size() < m_procDatas.capacity() ) && "Capacity to small, causes realloc in Release mode!" );
+
     m_procDatas.push_back( &pd );
   }
 

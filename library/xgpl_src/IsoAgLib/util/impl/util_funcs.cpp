@@ -899,5 +899,50 @@ getCStringCount (const char *src, char countChar)
 }
 
 
+void ByteStreamBuffer_c::format( uint8_t val ) {
+  push_back( val );
+}
+
+
+void ByteStreamBuffer_c::format( uint16_t val ) {
+  push_back( ( uint8_t )( val & 0xff ) );
+  push_back( ( uint8_t )( ( val >> 8 ) & 0xff ) );
+}
+
+
+void ByteStreamBuffer_c::format( uint32_t val ) {
+  format( ( uint16_t )( val & 0xffff ) );
+  format( ( uint16_t )( ( val >> 16 ) & 0xffff ) );
+}
+
+
+void ByteStreamBuffer_c::format( const uint8_t* bp, size_t len ) {
+  while ( len-- )
+    push_back( *bp++ );
+}
+
+
+void ByteStreamBuffer_c::format( const char* str ) {
+  const size_t l = CNAMESPACE::strlen( str );
+  push_back( uint8_t( l ) );
+  format( ( const uint8_t* )str, l );
+}
+
+
+void ByteStreamBuffer_c::format( int32_t val ) {
+  format( ( uint32_t )val );
+}
+
+
+void ByteStreamBuffer_c::format( float val ) {
+  uint32_t iVal = 0;
+  CNAMESPACE::memcpy( &iVal, &val, sizeof( float ) );
+#if defined(__TSW_CPP__) // Tasking uses mixed endian
+  uint16_t lo = iVal >> 16;
+  iVal = ( iVal << 16 ) | lo;
+#endif
+  format( iVal );
+}
+
 
 } // end of namespace __IsoAgLib

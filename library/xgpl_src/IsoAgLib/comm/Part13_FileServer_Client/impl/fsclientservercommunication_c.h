@@ -102,8 +102,6 @@ class FsClientServerCommunication_c
     void requestFsConnection (FsServerInstance_c &rc_FileServer);
 
     /// FileServer access functions as defined in iFsClientServerCommunication_c
-    IsoAgLib::iFsCommandErrors getFileServerProperties();
-
     IsoAgLib::iFsCommandErrors changeCurrentDirectory(uint8_t *pui8_newDirectory);
 
     IsoAgLib::iFsCommandErrors openFile(uint8_t *pui8_fileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory);
@@ -126,8 +124,6 @@ class FsClientServerCommunication_c
     /// FileServer access functions END
 
     /// FileServer access response functions as defined in iFsClient_c
-
-    void getFileServerPropertiesResponse(uint8_t ui8_versionNumber, uint8_t ui8_maxNumberOpenFiles, bool b_fsMultiVolumes);
 
     void getCurrentDirectoryResponse(IsoAgLib::iFsError ui8_errorCode, uint8_t *piu8_currentDirectory);
     void changeCurrentDirectoryResponse(IsoAgLib::iFsError ui8_errorCode, uint8_t *piu8_newCurrentDirectory);

@@ -1,5 +1,5 @@
 /*
-  proc_c.h: class with special (enum) types for ProcessData management
+  iprocdata.h: class with special (enum) types for ProcessData management
 
   (C) Copyright 2009 - 2014 by OSB AG and developing partners
 
@@ -13,97 +13,101 @@
 #ifndef IPROCDATA_H
 #define IPROCDATA_H
 
-#include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
-
 #include <list>
 
-namespace IsoAgLib {
 
-namespace ProcData {
+namespace IsoAgLib
+{
+  class iIsoItem_c;
 
-  enum RemoteType_t {
-    RemoteTypeTaskController,
-    RemoteTypeDataLogger };
 
-  enum MeasurementCommand_t { 
-    MeasurementCommandTimeProp =          0x4,
-    MeasurementCommandDistProp =          0x5,
-    MeasurementCommandMinimumThreshold =  0x6,
-    MeasurementCommandMaximumThreshold =  0x7,
-    MeasurementCommandOnChange =          0x8 };
+  namespace ProcData
+  {
+    enum RemoteType_t {
+      RemoteTypeTaskController,
+      RemoteTypeDataLogger };
 
-  enum CommandType_t {
-    requestConfiguration                  = 0x0,
-    configurationResponse                 = 0x1,
-    requestValue                          = 0x2,
-    setValue                              = 0x3,
-    measurementTimeValueStart             = 0x4,
-    measurementDistanceValueStart         = 0x5,
-    measurementMinimumThresholdValueStart = 0x6,
-    measurementMaximumThresholdValueStart = 0x7,
-    measurementChangeThresholdValueStart  = 0x8,
-    commandReserved1                      = 0x9,
-    commandReserved2                      = 0xa,
-    commandReserved3                      = 0xb,
-    commandReserved4                      = 0xc,
-    nack                                  = 0xd,
-    taskControllerStatus                  = 0xe,
-    workingsetMasterMaintenance           = 0xf,
+    enum MeasurementCommand_t { 
+      MeasurementCommandTimeProp =          0x4,
+      MeasurementCommandDistProp =          0x5,
+      MeasurementCommandMinimumThreshold =  0x6,
+      MeasurementCommandMaximumThreshold =  0x7,
+      MeasurementCommandOnChange =          0x8 };
 
-    CommandUndefined                      = 0x10
-  };
+    enum CommandType_t {
+      requestConfiguration                  = 0x0,
+      configurationResponse                 = 0x1,
+      requestValue                          = 0x2,
+      setValue                              = 0x3,
+      measurementTimeValueStart             = 0x4,
+      measurementDistanceValueStart         = 0x5,
+      measurementMinimumThresholdValueStart = 0x6,
+      measurementMaximumThresholdValueStart = 0x7,
+      measurementChangeThresholdValueStart  = 0x8,
+      commandReserved1                      = 0x9,
+      commandReserved2                      = 0xa,
+      commandReserved3                      = 0xb,
+      commandReserved4                      = 0xc,
+      nack                                  = 0xd,
+      taskControllerStatus                  = 0xe,
+      workingsetMasterMaintenance           = 0xf,
 
-  /** enum type for special DDIs */
-  enum SpecialDDI_t {DefaultDataLoggingDDI = 0xDFFF};
+      CommandUndefined                      = 0x10
+    };
 
-  enum DeviceObjectType_t { // exact order as needed in array lookup
-    ObjectTypeDVC,
-    ObjectTypeDET,
-    ObjectTypeDPD,
-    ObjectTypeDPT,
-    ObjectTypeDVP };
+    enum SpecialDDI_t {
+      PgnBasedDataDDI       = 0xDFFE,
+      DefaultDataLoggingDDI = 0xDFFF,
+      ProprietaryDDIfirst   = 0xE000,
+      ProprietaryDDIlast    = 0xFFFE,
+      ReservedDDI           = 0xFFFF };
 
-  enum DeviceElementType_t {
-    ElementTypeDevice = 1,
-    ElementTypeFunction,
-    ElementTypeBin,
-    ElementTypeSection,
-    ElementTypeUnit,
-    ElementTypeConnector,
-    ElementTypeNavigationReference };
+    enum DeviceObjectType_t { // exact order as needed in array lookup
+      ObjectTypeDVC,
+      ObjectTypeDET,
+      ObjectTypeDPD,
+      ObjectTypeDPT,
+      ObjectTypeDVP };
 
-  enum TriggerMethod_t { 
-    TimeInterval = 0,
-    DistInterval = 1,
-    ThresholdLimit = 2, 
-    OnChange = 3,
-    Total = 4 };
+    enum DeviceElementType_t {
+      ElementTypeDevice = 1,
+      ElementTypeFunction,
+      ElementTypeBin,
+      ElementTypeSection,
+      ElementTypeUnit,
+      ElementTypeConnector,
+      ElementTypeNavigationReference };
 
-  struct TriggerMethod_s {
-    typedef TriggerMethod_t enum_type;
-    enum { number_of_bits = 5 };
-  };
+    enum TriggerMethod_t { 
+      TimeInterval = 0,
+      DistInterval = 1,
+      ThresholdLimit = 2, 
+      OnChange = 3,
+      Total = 4 };
 
-  typedef BitFieldWrapperRight_c<TriggerMethod_s> Methods_t;
+    struct TriggerMethod_s {
+      typedef TriggerMethod_t enum_type;
+      enum { number_of_bits = 5 };
+    };
 
-  enum Property_t {
-    Defaultset = 0,
-    Settable = 1,
-    ControlSource = 2 };
+    typedef BitFieldWrapperRight_c<TriggerMethod_s> Methods_t;
 
-  struct Property_s {
-    typedef Property_t enum_type;
-    enum { number_of_bits = 3 };
-  };
+    enum Property_t {
+      Defaultset = 0,
+      Settable = 1,
+      ControlSource = 2 };
 
-  typedef BitFieldWrapperRight_c<Property_s> Properties_t;
+    struct Property_s {
+      typedef Property_t enum_type;
+      enum { number_of_bits = 3 };
+    };
+
+    typedef BitFieldWrapperRight_c<Property_s> Properties_t;
   
-  typedef STL_NAMESPACE::list< STL_NAMESPACE::pair<const IsoAgLib::iIsoItem_c*, RemoteType_t> > ServerList;
+    typedef STL_NAMESPACE::list< STL_NAMESPACE::pair<const IsoAgLib::iIsoItem_c*, RemoteType_t> > ServerList;
 
-}
+  }
 
 }
 

@@ -1,5 +1,5 @@
 /*
-  iprocdata_c.h: managing of local process data
+  iprocdata_c.h: managing of local process data (with DDOP)
 
   (C) Copyright 2009 - 2014 by OSB AG and developing partners
 
@@ -17,11 +17,7 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/idevicepool_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
-namespace __IsoAgLib {
-  class Setpoint_c;
-}
 
 namespace IsoAgLib {
 
@@ -42,8 +38,7 @@ namespace IsoAgLib {
           friend class IsoAgLib::iProcData_c;
       };
 
-      // @todo Remove iIdentItem_c parameter, OBSOLETE!
-      void init( iIdentItem_c& , const iDeviceObjectDpd_c& dpd, const iDeviceObjectDet_c& det, iSetpointHandler_c* setpointhandler = NULL ) {
+      void init( const iDeviceObjectDpd_c& dpd, const iDeviceObjectDet_c& det, iSetpointHandler_c* setpointhandler = NULL ) {
         ProcData_c::init( dpd, det, static_cast<__IsoAgLib::SetpointHandler_c*>( setpointhandler ) );
       }
 
@@ -61,7 +56,7 @@ namespace IsoAgLib {
         return ProcData_c::getMeasurement().getValue();
       }
 
-      /* sets and send value (according to running programs */
+      /* sets and send value (according to running programs) */
       void setMeasurementValue( int32_t ai32_val ) {
         ProcData_c::getMeasurement().setMeasurementValue( *this, ai32_val );
       }

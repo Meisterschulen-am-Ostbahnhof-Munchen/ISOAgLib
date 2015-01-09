@@ -35,7 +35,7 @@ namespace __IsoAgLib {
   PdConnection_c::PdConnection_c(
     const IdentItem_c& identItem,
     PdRemoteNode_c* pdRemoteNode,
-    const PdPool_c &pool )
+    PdPool_c &pool )
     : m_identItem( identItem )
     , m_pdRemoteNode( pdRemoteNode )
     , m_pool( pool )
@@ -77,7 +77,7 @@ namespace __IsoAgLib {
 
   void PdConnection_c::createMeasureProgs()
   {
-    for( PdPool_c::PdList_t::const_iterator i = m_pool.getPdList().begin(); i != m_pool.getPdList().end(); ++i )
+    for( PdPool_c::PdBases_t::const_iterator i = m_pool.getPdList().begin(); i != m_pool.getPdList().end(); ++i )
     {
       PdBase_c* pd = ( *i );
       const uint32_t key = getMapKey( pd->DDI(), pd->element());
@@ -210,7 +210,7 @@ namespace __IsoAgLib {
     // Note: element without DPD will not be processed properly.
     // Response will be NackInvalidElementNumber instead of NackDDINoSupportedByElement
     NackResponse_t reason = NackInvalidElementNumber;
-    for( PdPool_c::PdList_t::const_iterator i = m_pool.getPdList().begin(); i != m_pool.getPdList().end(); ++i )
+    for( PdPool_c::PdBases_t::const_iterator i = m_pool.getPdList().begin(); i != m_pool.getPdList().end(); ++i )
     {
       if ( ( *i )->element() == element )
       {

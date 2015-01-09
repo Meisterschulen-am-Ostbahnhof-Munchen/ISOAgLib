@@ -59,9 +59,9 @@ namespace __IsoAgLib {
       void clearPdMessageHandler();
 
       // Note: The connections will automatically get disconnected and destructed on RemoteNode-Loss.
-      TcClientConnection_c* connect(          const IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcDlItem, const DevicePool_c& );
-      PdConnection_c*       connect(          const IdentItem_c&, const IsoItem_c& pdItem, const PdPool_c& );
-      PdConnection_c*       connectBroadcast( const IdentItem_c&, const PdPool_c& );
+      TcClientConnection_c* connect(          const IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcDlItem, DevicePool_c& );
+      PdConnection_c*       connect(          const IdentItem_c&, const IsoItem_c& pdItem, PdPool_c& );
+      PdConnection_c*       connectBroadcast( const IdentItem_c&, PdPool_c& );
 
       void disconnect( const IdentItem_c& );
       void disconnect( const PdConnection_c& );

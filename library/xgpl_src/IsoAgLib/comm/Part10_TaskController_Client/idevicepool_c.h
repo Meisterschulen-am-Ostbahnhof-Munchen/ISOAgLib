@@ -119,6 +119,7 @@ namespace IsoAgLib {
 
   class iDevicePool_c : private __IsoAgLib::DevicePool_c {
     public:
+      iDevicePool_c( unsigned int reserveSize ) : DevicePool_c( reserveSize ) {}
       virtual ~iDevicePool_c() {}
 
       virtual uint8_t* allocByteStreamBuffer( uint32_t size ) {

@@ -46,7 +46,7 @@ namespace __IsoAgLib
 #endif
   {
   public:
-    PdConnection_c( const IdentItem_c& identItem, PdRemoteNode_c* remoteNode, const PdPool_c &pool );
+    PdConnection_c( const IdentItem_c& identItem, PdRemoteNode_c* remoteNode, PdPool_c &pool );
     ~PdConnection_c();
 
     const IdentItem_c&     getIdentItem() const { return m_identItem; }
@@ -80,7 +80,7 @@ namespace __IsoAgLib
     const IdentItem_c& m_identItem;
     PdRemoteNode_c* m_pdRemoteNode;
 
-    const PdPool_c& m_pool;
+    PdPool_c& m_pool;
 
     // Measure progs presorted for DDIs
     static uint32_t getMapKey(uint16_t ddi, uint16_t element) { return ( uint32_t( uint32_t( ddi ) << 16 ) ) | uint32_t(element); }

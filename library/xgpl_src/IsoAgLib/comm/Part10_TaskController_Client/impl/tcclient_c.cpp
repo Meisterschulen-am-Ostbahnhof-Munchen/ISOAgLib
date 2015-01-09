@@ -117,7 +117,7 @@ namespace __IsoAgLib {
 
 
   TcClientConnection_c*
-  TcClient_c::connect( const IdentItem_c& identItem, TcClientConnection_c::StateHandler_c& sh, const IsoItem_c& tcDlItem, const DevicePool_c& pool )
+  TcClient_c::connect( const IdentItem_c& identItem, TcClientConnection_c::StateHandler_c& sh, const IsoItem_c& tcDlItem, DevicePool_c& pool )
   {
     for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_connections.begin();
          connection != m_connections.end(); ++connection)
@@ -141,7 +141,7 @@ namespace __IsoAgLib {
 
 
   PdConnection_c*
-  TcClient_c::connect( const IdentItem_c& identItem, const IsoItem_c& pdItem, const PdPool_c& pool )
+  TcClient_c::connect( const IdentItem_c& identItem, const IsoItem_c& pdItem, PdPool_c& pool )
   {
     for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_connections.begin();
          connection != m_connections.end(); ++connection)
@@ -174,7 +174,7 @@ namespace __IsoAgLib {
 
 
   PdConnection_c*
-  TcClient_c::connectBroadcast( const IdentItem_c& identItem, const PdPool_c& pool )
+  TcClient_c::connectBroadcast( const IdentItem_c& identItem, PdPool_c& pool )
   {
     for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_connections.begin();
          connection != m_connections.end(); ++connection)

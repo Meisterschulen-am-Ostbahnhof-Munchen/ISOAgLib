@@ -45,7 +45,7 @@ namespace __IsoAgLib {
   }
 
 
-  void DeviceObject_c::format( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {
+  void DeviceObject_c::format( ByteStreamBuffer_c& byteStream ) const {
     static const char* deviceLabels[] = { "DVC", "DET", "DPD", "DPT", "DVP" };
 
     byteStream.format( ( const uint8_t* )deviceLabels[m_objectType], 3 );
@@ -140,7 +140,7 @@ namespace __IsoAgLib {
 
 
   void
-  DeviceObjectDvc_c::formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {
+  DeviceObjectDvc_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
     DeviceObject_c::format( byteStream );
 
     byteStream.format( m_designator );
@@ -178,7 +178,7 @@ namespace __IsoAgLib {
   }
 
 
-  void DeviceObjectDet_c::formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {
+  void DeviceObjectDet_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
     DeviceObject_c::format( byteStream );
 
     byteStream.format( uint8_t( m_type ) );
@@ -242,7 +242,7 @@ namespace __IsoAgLib {
   }
 
 
-  void DeviceObjectDpd_c::formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {
+  void DeviceObjectDpd_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
     DeviceObject_c::format( byteStream );
 
     byteStream.format( m_ddi );
@@ -270,7 +270,7 @@ namespace __IsoAgLib {
   {}
 
 
-  void DeviceObjectDpt_c::formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {
+  void DeviceObjectDpt_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
     DeviceObject_c::format( byteStream );
 
     byteStream.format( m_ddi );
@@ -298,7 +298,7 @@ namespace __IsoAgLib {
   {}
 
 
-  void DeviceObjectDvp_c::formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const {
+  void DeviceObjectDvp_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
     DeviceObject_c::format( byteStream );
 
     byteStream.format( m_offset );
@@ -317,8 +317,8 @@ namespace __IsoAgLib {
 
   /* --- DDOP --------------------------------------------------- */
 
-  DevicePool_c::DevicePool_c()
-    : PdPool_c()
+  DevicePool_c::DevicePool_c( unsigned int reserveSize )
+    : PdPool_c( reserveSize )
     , m_devicePool()
   {}
 
@@ -396,9 +396,9 @@ namespace __IsoAgLib {
   }
 
 
-  TcClientConnection_c::ByteStreamBuffer_c DevicePool_c::getBytestream( uint8_t cmd ) {
+  ByteStreamBuffer_c DevicePool_c::getBytestream( uint8_t cmd ) {
     const uint32_t size = getBytestreamSize() + 1; // one extra byte for command
-    TcClientConnection_c::ByteStreamBuffer_c buffer;
+    ByteStreamBuffer_c buffer;
     buffer.setBuffer( allocByteStreamBuffer( size ) );
     buffer.setSize( size );
     buffer.format( cmd );

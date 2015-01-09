@@ -63,11 +63,6 @@ class iFsClient_c
       */
 
     /**
-      * The registered fileserver's properties as defined in the ISO 11873 standard.
-      */
-    virtual void getFileServerPropertiesResponse(uint8_t /*ui8_versionNumber*/, uint8_t /*ui8_maxNumberOpenFiles*/, bool /*b_fsMultiVolumes*/) = 0;
-
-    /**
       * After the call for a current directory change, this function is used to receive the successstatus of the command.
       */
     virtual void changeCurrentDirectoryResponse(iFsError /*ui8_errorCode*/) = 0;

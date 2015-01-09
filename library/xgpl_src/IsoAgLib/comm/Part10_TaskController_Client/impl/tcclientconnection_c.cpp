@@ -33,53 +33,7 @@
 
 namespace __IsoAgLib {
 
-  void TcClientConnection_c::ByteStreamBuffer_c::format( uint8_t val ) {
-    push_back( val );
-  }
-
-
-  void TcClientConnection_c::ByteStreamBuffer_c::format( uint16_t val ) {
-    push_back( ( uint8_t )( val & 0xff ) );
-    push_back( ( uint8_t )( ( val >> 8 ) & 0xff ) );
-  }
-
-
-  void TcClientConnection_c::ByteStreamBuffer_c::format( uint32_t val ) {
-    format( ( uint16_t )( val & 0xffff ) );
-    format( ( uint16_t )( ( val >> 16 ) & 0xffff ) );
-  }
-
-
-  void TcClientConnection_c::ByteStreamBuffer_c::format( const uint8_t* bp, size_t len ) {
-    while ( len-- )
-      push_back( *bp++ );
-  }
-
-
-  void TcClientConnection_c::ByteStreamBuffer_c::format( const char* str ) {
-    const size_t l = CNAMESPACE::strlen( str );
-    push_back( uint8_t( l ) );
-    format( ( const uint8_t* )str, l );
-  }
-
-
-  void TcClientConnection_c::ByteStreamBuffer_c::format( int32_t val ) {
-    format( ( uint32_t )val );
-  }
-
-
-  void TcClientConnection_c::ByteStreamBuffer_c::format( float val ) {
-    uint32_t iVal = 0;
-    CNAMESPACE::memcpy( &iVal, &val, sizeof( float ) );
-#if defined(__TSW_CPP__) // Tasking uses mixed endian
-    uint16_t lo = iVal >> 16;
-    iVal = ( iVal << 16 ) | lo;
-#endif
-    format( iVal );
-  }
-
-
-  TcClientConnection_c::TcClientConnection_c( const IdentItem_c& identItem, StateHandler_c& sh, ServerInstance_c& server, const DevicePool_c& pool )
+  TcClientConnection_c::TcClientConnection_c( const IdentItem_c& identItem, StateHandler_c& sh, ServerInstance_c& server, DevicePool_c& pool )
     : PdConnection_c( identItem, &server, pool )
     , m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )

@@ -17,6 +17,7 @@
 #include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdconnection_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h>
 #include <map>
 
 namespace IsoAgLib {
@@ -72,62 +73,11 @@ namespace __IsoAgLib {
       };
 
 
-      class ByteStreamBuffer_c {
-        public:
-          ByteStreamBuffer_c() {reset();}
-          void setBuffer( uint8_t* b ) {
-            m_buffer = b;
-          }
-          uint8_t* getBuffer() {
-            return m_buffer;
-          }
-
-          void setEnd( uint32_t e ) {
-            m_offset = e;
-          }
-          uint32_t getEnd() const {
-            return m_offset;
-          }
-
-          void setSize( uint32_t s ) {
-            m_size = s;
-          }
-          uint32_t getSize() const {
-            return m_size;
-          }
-
-          uint8_t& operator[]( uint32_t p ) {
-            return m_buffer[ p ];
-          }
-          void reset() {
-            setBuffer( 0 );
-            setEnd( 0 );
-            setSize( 0 );
-          }
-          void format( uint8_t val );
-          void format( uint16_t val );
-          void format( uint32_t val );
-          void format( const uint8_t* bp, size_t len );
-          void format( const char* str );
-          void format( int32_t val );
-          void format( float val );
-        private:
-          uint32_t m_offset;
-          uint8_t* m_buffer;
-          uint32_t m_size;
-
-          void push_back( uint8_t b ) {
-            isoaglib_header_assert( ( m_offset + 1 ) <= getSize() );
-            m_buffer[ m_offset++ ] = b;
-          }
-      };
-
-
       TcClientConnection_c(
         const IdentItem_c& identItem,
         StateHandler_c& sh,
         ServerInstance_c& server,
-        const DevicePool_c& pool );
+        DevicePool_c& pool );
 
       virtual ~TcClientConnection_c();
 
@@ -158,7 +108,7 @@ namespace __IsoAgLib {
       void setDevPoolState( DevPoolState_t newState ) { m_devPoolState = newState; }
       DevPoolState_t getDevPoolState() const { return m_devPoolState; }
       UploadPoolState_t getUploadPoolState() { return m_uploadPoolState; }
-      DevicePool_c &getDevicePool() const { return *((DevicePool_c *) &m_pool); }
+      DevicePool_c &getDevicePool() { return static_cast<DevicePool_c &>( m_pool ); }
 
       void timeEvent();
       void timeEventDevicePool();

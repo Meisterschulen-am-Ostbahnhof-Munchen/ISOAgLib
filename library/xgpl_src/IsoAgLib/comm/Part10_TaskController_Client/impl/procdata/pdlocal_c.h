@@ -13,6 +13,7 @@
 #ifndef PDLOCAL_C_H
 #define PDLOCAL_C_H
 
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/pdbase_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measurement_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/setpoint_c.h>
 
@@ -26,10 +27,11 @@ namespace __IsoAgLib {
   {
   public:
     PdLocal_c();
+    PdLocal_c( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, SetpointHandler_c * );
 
-    inline void init( uint16_t ddi, uint16_t element, uint8_t triggerMethod );
+    void init( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, SetpointHandler_c * );
 
-    virtual ConnectedPd_c &createConnectedPd( PdConnection_c &connection );
+    virtual ConnectedPd_c &createConnectedPd( PdConnection_c & );
 
     const Setpoint_c &getSetpoint() const { return m_setpoint; }
     Setpoint_c &getSetpoint() { return m_setpoint; }
@@ -50,14 +52,6 @@ namespace __IsoAgLib {
     PdLocal_c( const PdLocal_c& );
     PdLocal_c& operator=( const PdLocal_c& );
   };
-
-  
-  inline void
-  PdLocal_c::init( uint16_t ddi, uint16_t element, uint8_t triggerMethod )
-  {
-    PdBase_c::init( ddi, element );
-    m_triggerMethod = triggerMethod;
-  }
 
 
   inline bool

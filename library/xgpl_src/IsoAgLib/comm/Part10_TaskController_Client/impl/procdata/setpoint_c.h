@@ -14,18 +14,17 @@
 #define SETPOINT_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/pdbase_c.h>
 
-namespace __IsoAgLib {
-
+namespace __IsoAgLib
+{
   class PdLocal_c;
 
   
-  class SetpointHandler_c {
+  class SetpointHandler_c
+  {
     public:
       virtual ~SetpointHandler_c() {}
-      virtual void _processSetpointSet( PdLocal_c& procdata, int32_t value, bool change ) = 0;
+      virtual void _processSetpointSet( PdLocal_c &, int32_t value, bool change ) = 0;
   };
 
 
@@ -33,28 +32,40 @@ namespace __IsoAgLib {
   {
   public:
     Setpoint_c();
+    Setpoint_c( SetpointHandler_c *, bool settable );
     ~Setpoint_c() {}
 
-    void init( SetpointHandler_c* setpointhandler, bool settable );
+    void init( SetpointHandler_c *, bool settable );
 
-    bool isSettable() const { return m_settable; }
+    int32_t setpointValue() const;
+    bool isSettable() const;
 
     void processMsg( PdLocal_c &, int32_t pdValue );
-
-    int32_t setpointValue() const {
-      return m_value;
-    }
 
   private:
     int32_t m_value;
 
-    SetpointHandler_c* m_handler;
+    SetpointHandler_c *m_handler;
     bool m_settable;
 
-    /** not copyable : copy constructor/operator only declared, not defined */
+    // not copyable
     Setpoint_c( const Setpoint_c& );
     Setpoint_c& operator=( const Setpoint_c& );
   };
+
+
+  inline int32_t
+  Setpoint_c::setpointValue() const
+  {
+    return m_value;
+  }
+
+
+  inline bool
+  Setpoint_c::isSettable() const
+  {
+    return m_settable;
+  }
 
 }
 

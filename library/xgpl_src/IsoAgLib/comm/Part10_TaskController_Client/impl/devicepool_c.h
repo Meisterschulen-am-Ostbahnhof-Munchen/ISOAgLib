@@ -15,7 +15,6 @@
 
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclientconnection_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdpool_c.h>
 
 
@@ -68,8 +67,8 @@ namespace __IsoAgLib {
 
       virtual uint32_t getSize() const;
 
-      virtual void format( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const;
-      virtual void formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const = 0;
+      virtual void format( ByteStreamBuffer_c& byteStream ) const;
+      virtual void formatBytestream( ByteStreamBuffer_c& byteStream ) const = 0;
 
     private:
       static uint16_t m_objIdCounter;
@@ -108,7 +107,7 @@ namespace __IsoAgLib {
       Localization_s m_localization;
 
       uint32_t getSize() const;
-      void formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
   };
 
 
@@ -125,7 +124,7 @@ namespace __IsoAgLib {
 
     private:
       uint32_t getSize() const;
-      void formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
 
       size_t numberOfChildren() const {
         return m_childList.size();
@@ -164,7 +163,7 @@ namespace __IsoAgLib {
 
     private:
       uint32_t getSize() const;
-      void formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
 
       const uint16_t m_ddi;
       const uint8_t m_properties;
@@ -185,7 +184,7 @@ namespace __IsoAgLib {
 
     private:
       uint32_t getSize() const;
-      void formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
 
       const uint16_t m_ddi;
       const int32_t m_value;
@@ -215,7 +214,7 @@ namespace __IsoAgLib {
 
     private:
       uint32_t getSize() const;
-      void formatBytestream( TcClientConnection_c::ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
 
       int32_t m_offset;
       float m_scale;
@@ -227,10 +226,10 @@ namespace __IsoAgLib {
 
   /*  DDOP  */
 
-  class DevicePool_c : PdPool_c
+  class DevicePool_c : public PdPool_c
   {
     public:
-      DevicePool_c();
+      DevicePool_c( unsigned int reserveSize );
       virtual ~DevicePool_c() {}
 
       virtual uint8_t* allocByteStreamBuffer( uint32_t size ) = 0;
@@ -258,7 +257,7 @@ namespace __IsoAgLib {
       DeviceObjectDvc_c* getDvcObject() const;
       DeviceObject_c* getObject( const uint16_t objId, const IsoAgLib::ProcData::DeviceObjectType_t ) const;
 
-      TcClientConnection_c::ByteStreamBuffer_c getBytestream( uint8_t cmdByte );
+      ByteStreamBuffer_c getBytestream( uint8_t cmdByte );
       uint32_t getBytestreamSize() const;
 
       typedef STL_NAMESPACE::list<ProcData_c*> ProcDataList_t;

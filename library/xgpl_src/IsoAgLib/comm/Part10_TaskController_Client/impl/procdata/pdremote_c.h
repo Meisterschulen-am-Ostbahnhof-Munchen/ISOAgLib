@@ -48,10 +48,10 @@ namespace __IsoAgLib {
 
 
   inline
-  PdRemote_c::PdRemote_c( uint16_t ddi, uint16_t element, MeasurementHandler_c* setpointhandler )
+  PdRemote_c::PdRemote_c( uint16_t ddi, uint16_t element, MeasurementHandler_c* handler )
     : PdBase_c()
   {
-    init( ddi, element, setpointhandler );
+    init( ddi, element, handler );
   }
 
 }

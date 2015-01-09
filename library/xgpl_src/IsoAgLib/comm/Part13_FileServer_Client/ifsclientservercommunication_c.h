@@ -68,12 +68,6 @@ class iFsClientServerCommunication_c : private __IsoAgLib::FsClientServerCommuni
     /// FileServer access functions
 
     /**
-      * Get the actual fileservers properties. Properties are returned by a call to the clients XXXResponse method.
-      * @return 0 if request was sent without problems, else an errorcode is returned.
-      */
-    uint8_t getFileServerProperties() { return __IsoAgLib::FsClientServerCommunication_c::getFileServerProperties(); }
-
-    /**
       * change the fileservers current directory.
       * @param pui8_newDirectory the new current directory
       * @return 0 if request was sent without problems, else an errorcode is returned.
