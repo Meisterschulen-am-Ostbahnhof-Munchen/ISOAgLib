@@ -36,8 +36,13 @@ namespace IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
   @see iMonitorItem
 */
-class iIsoItem_c : private __IsoAgLib::IsoItem_c {
+class iIsoItem_c : private __IsoAgLib::IsoItem_c
+{
 private:
+  iIsoItem_c(); // not constructable!
+  iIsoItem_c( const iIsoItem_c& ); // not copy-constructable!
+  iIsoItem_c& operator=( const iIsoItem_c& ); // not assignable!
+
   friend class iIdentItem_c;
   friend class iIsoMonitor_c;
   friend class iCanPkgExt_c;
