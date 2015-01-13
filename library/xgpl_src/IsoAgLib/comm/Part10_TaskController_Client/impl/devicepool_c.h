@@ -96,7 +96,7 @@ namespace __IsoAgLib {
       void setSerialNumber( const char* s );
 
     private:
-      friend class __IsoAgLib::DevicePool_c;
+      friend class DevicePool_c;
       void init( const IdentItem_c& ident ) {
         m_identItem = &ident;
       }
