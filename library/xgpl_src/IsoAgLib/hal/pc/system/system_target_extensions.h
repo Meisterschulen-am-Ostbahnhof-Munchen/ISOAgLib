@@ -47,7 +47,7 @@ public:
   virtual void init_counter(uint8_t /*bInput*/, uint16_t /*aui16_timebase*/, boolean /*ab_activHigh*/, boolean /*ab_risingEdge*/) {}
   virtual int16_t getDiginOnoff( uint8_t /*bInputNumber*/ ) { return false; }
   virtual uint32_t getCounterPeriod_us( uint8_t /*bInput*/ ) { return 0xFFFFFFFFUL; }
-  virtual void getDiginFreq( uint8_t /*bInput*/, uint32_t * /*pwFrequency*/ ) {}
+  virtual void getDiginFreq( uint8_t /*bInput*/, uint32_t *pwFrequency ) { pwFrequency = 0; }
   virtual int16_t getAdc( uint8_t /*bKanalnummer*/ ) { return 0; }
   virtual uint32_t getCounter( uint8_t /*bInput*/ ) { return 0; }
   virtual int16_t resetCounter( uint8_t /*bInput*/ ) { return 0; }
