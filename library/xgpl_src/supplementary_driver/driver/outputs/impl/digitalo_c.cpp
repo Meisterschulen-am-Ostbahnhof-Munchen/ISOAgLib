@@ -109,6 +109,8 @@ DigitalO_c::getState() const
   {
     case HAL_DIGOUT_OPEN:       return dout_openErr;
     case HAL_DIGOUT_SHORTCUT:   return dout_shortcutErr;
+    case HAL_DIGOUT_OVERVOLT:   return dout_overvoltErr;
+    case HAL_DIGOUT_UNDERVOLT:  return dout_undervoltErr;
     default: return noDoutErr;
   }
 }

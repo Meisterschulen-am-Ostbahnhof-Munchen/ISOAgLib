@@ -28,7 +28,7 @@ namespace __IsoAgLib {
 class DigitalO_c : public OutputBase_c  {
 public:
   /** enum for error states of digital output */
-  typedef enum { noDoutErr, dout_openErr, dout_shortcutErr } dout_err_t;
+  typedef enum { noDoutErr, dout_openErr, dout_shortcutErr, dout_overvoltErr, dout_undervoltErr } dout_err_t;
 
   DigitalO_c(uint8_t aui8_channel);
   DigitalO_c();
@@ -104,7 +104,7 @@ public:
     * if the PWM setting is >0 but has a very low value, so that even under normal
     * conditions the voltage with connected consuming device is lower than to open
     * connector state at low level.
-    * @return dout_err_t [noDoutErr|dout_openErr|dout_shortcutErr]
+    * @return dout_err_t [noDoutErr|dout_openErr|dout_shortcutErr|dout_overvoltErr|dout_undervoltErr]
     */
   dout_err_t getState( void ) const;
 
