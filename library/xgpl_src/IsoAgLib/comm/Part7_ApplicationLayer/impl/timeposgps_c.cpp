@@ -1642,17 +1642,12 @@ TimePosGps_c::notifyOnEvent(uint32_t aui32_pgn)
 void
 TimePosGps_c::deregisterMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler)
 {
-  STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter_end = mvec_msgEventHandlers.end();
-  for (STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != iter_end;)
+  for (STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != mvec_msgEventHandlers.end();)
   {
     if ((*iter) == &arc_msgEventHandler)
-    { // remove entry
       iter = mvec_msgEventHandlers.erase (iter);
-    }
     else
-    { // keep entry
       ++iter;
-    }
   }
 }
 
