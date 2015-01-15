@@ -48,6 +48,8 @@ class iFsClientServerCommunication_c : private __IsoAgLib::FsClientServerCommuni
     /**
       * get the used fileservers current directory. as iFsClientServerCommunication_c saves the current directory information
       * no XXXResponse method is used to the response, but the infromation is returned by the information.
+      * DO NOT KEEP THIS POINTER, IT MAY CHANGE AFTER
+      * ANOTHER DIRECTORY CHANGE/REQUEST!!
       * @return the fileservers current directory.
       */
     uint8_t *getCurrentDirectory() { return __IsoAgLib::FsClientServerCommunication_c::getCurrentDirectory(); }

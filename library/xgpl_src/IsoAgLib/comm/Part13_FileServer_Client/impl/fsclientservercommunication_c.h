@@ -47,6 +47,8 @@ class FsClientServerCommunication_c
 
     /**
       * Get method to request the current directory of the used fileserver.
+      * DO NOT KEEP THIS POINTER, IT MAY CHANGE AFTER
+      * ANOTHER DIRECTORY CHANGE/REQUEST!!
       * @return the used fileserver's current directory.
       */
     uint8_t *getCurrentDirectory() { return pui8_currentDirectory; }
@@ -67,6 +69,12 @@ class FsClientServerCommunication_c
 
     /** constructor to init client-server communication without fileserver*/
     FsClientServerCommunication_c(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_fsClient, const IsoAgLib::iFsWhitelistList &v_fsWhitelist);
+
+    ~FsClientServerCommunication_c()
+    {
+      delete pui8_currentDirectory;
+      delete pc_commandHandler;
+    }
 
     /** explicit conversion to reference of interface class type*/
     IsoAgLib::iFsClientServerCommunication_c* toInterfacePointer();

@@ -320,13 +320,12 @@ FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_fileSe
       if (!ui8_errorCode)
       {
         uint16_t ui16_length = CNAMESPACE::strlen((char *)piu8_newCurrentDirectory);
+        delete pui8_currentDirectory;
         pui8_currentDirectory = new uint8_t[ui16_length + 1];
         pui8_currentDirectory[ui16_length] = 0;
 
         for (uint16_t i = 0; i < ui16_length; ++i)
-        {
           pui8_currentDirectory[i] = piu8_newCurrentDirectory[i];
-        }
       }
     }
 
@@ -336,13 +335,12 @@ FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_fileSe
       if (!ui8_errorCode)
       {
         uint16_t ui16_length = CNAMESPACE::strlen((char *)piu8_newCurrentDirectory);
+        delete pui8_currentDirectory;
         pui8_currentDirectory = new uint8_t[ui16_length + 1];
         pui8_currentDirectory[ui16_length] = 0;
 
         for (uint16_t i = 0; i < ui16_length; ++i)
-        {
           pui8_currentDirectory[i] = piu8_newCurrentDirectory[i];
-        }
       }
 
       c_fsClient.changeCurrentDirectoryResponse(ui8_errorCode);
