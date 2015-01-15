@@ -35,6 +35,13 @@
 
 namespace __IsoAgLib
 {
+DiagnosticFunctionalities_c::Functionality_s::Functionality_s()
+  : generation( 0 )
+  , number_of_option_bytes( 0 )
+{
+  for( int i = 0; i < MAX_OPTION_BYTES; ++i )
+    options_bytes[ i ] = 0xDA; // uninitialized value
+}
 
 DiagnosticFunctionalities_c::DiagnosticFunctionalities_c( IdentItem_c& arc_identItem )
   : mrc_identItem( arc_identItem )
@@ -335,8 +342,6 @@ bool DiagnosticFunctionalities_c::addFunctionalitiesTaskControllerGeo(bool imple
     functionality_description.options_bytes[1] = options.getByte( 0 );
     functionality_description.number_of_option_bytes++;
   }
-  else
-    functionality_description.options_bytes[1] = 0xDA; // dummy, just to avoid "may be used uninitialized" warning
 
   return addFunctionality(functionality, functionality_description);
 }

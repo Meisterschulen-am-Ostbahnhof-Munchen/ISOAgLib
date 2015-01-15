@@ -42,6 +42,8 @@ public:
     uint8_t generation;
     uint8_t number_of_option_bytes;           // TBD : replace with vector<uint8_t> ?
     uint8_t options_bytes[MAX_OPTION_BYTES];  // TBD : replace with vector<uint8_t> ?
+
+    Functionality_s();
   };
   typedef STL_NAMESPACE::map<FunctionalitiesCharacteristics_t,Functionality_s> FunctionalitiesArr;
   typedef STL_NAMESPACE::map<FunctionalitiesCharacteristics_t,Functionality_s>::iterator FunctionalitiesArrIter;
