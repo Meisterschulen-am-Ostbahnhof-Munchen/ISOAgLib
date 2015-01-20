@@ -384,7 +384,7 @@ private:
   OneAttribute_c arrc_attributes [maxAttributeNames];
   void clearAndSetElements (DOMNode *child, const std::vector <int> &avec);
 
-  typedef std::map<uint16_t, std::string> ObjListEntry;
+  typedef std::multimap<uint16_t, std::string> ObjListEntry;
 
   std::map<int32_t, ObjListEntry> map_objNameAndID;
   static bool sb_WSFound;

@@ -530,7 +530,7 @@ void vt2iso_c::clean_exit (const char* error_message)
   }
 
   std::map<int32_t, ObjListEntry>::iterator mit_lang;
-  std::map<uint16_t, std::string>::iterator mit_obj;
+  ObjListEntry::iterator mit_obj;
 
   FILE* fileList;
   bool *pb_firstLine;
