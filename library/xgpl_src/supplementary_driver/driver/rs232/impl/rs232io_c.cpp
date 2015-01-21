@@ -13,8 +13,6 @@
 */
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <stdio.h>
-#include <ctype.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
@@ -26,6 +24,9 @@
 #else
   #include <cctype>
 #endif
+
+#include <stdio.h>
+#include <ctype.h>
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4996 )
