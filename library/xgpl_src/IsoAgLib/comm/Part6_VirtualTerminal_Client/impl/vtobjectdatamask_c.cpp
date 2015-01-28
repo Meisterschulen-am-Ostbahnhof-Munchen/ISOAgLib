@@ -50,7 +50,7 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
       curBytes += 8;
     }
 
-    MACRO_streamObjectXY(8);
+    MACRO_DAMstreamObjectXY(8);
     MACRO_streamEventMacro(8U+vtObjectDataMask_a->numberOfObjectsToFollow*6U);
 
     return curBytes;

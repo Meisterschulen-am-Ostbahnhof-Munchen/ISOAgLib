@@ -122,10 +122,10 @@ public:
   uint32_t                   getVtHardwareDimension() const;
   uint16_t                   getVtFontSizes()         const;
   uint8_t                    getVtIsoVersion()        const;
-  vtCapabilities_s*          getVtCapabilities()      { return &ms_vtCapabilitiesA; }
-  const vtCapabilities_s*    getConstVtCapabilities() const  { return &ms_vtCapabilitiesA; }
-  const IsoAgLib::vtState_s* getVtState()             const  { return &ms_vtStateA; }
-  localSettings_s*           getLocalSettings()       { return &ms_localSettingsA; }
+  vtCapabilities_s&          getVtCapabilities()            { return ms_vtCapabilitiesA; }
+  const vtCapabilities_s&    getConstVtCapabilities() const { return ms_vtCapabilitiesA; }
+  const IsoAgLib::vtState_s& getVtState()             const { return ms_vtStateA; }
+  localSettings_s*           getLocalSettings()             { return &ms_localSettingsA; }
   const IsoItem_c&           getIsoItem()             const { return m_isoItem; }
   bool                       isPrimaryVt()            const { return (getIsoName().funcInst() == 0); }
   

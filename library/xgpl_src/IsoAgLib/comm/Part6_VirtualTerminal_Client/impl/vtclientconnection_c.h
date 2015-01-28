@@ -98,6 +98,16 @@ public:
   void triggerAux2InputStatusMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj) { m_aux2Inputs.timeEventInputStateMsg(a_aux2InputObj); }
 #endif
 
+  void populateScalingInformation();
+
+  uint16_t getHwDimension() const { return m_hwDimension; }
+  uint16_t getHwOffsetX()   const { return m_hwOffsetX; }
+  uint16_t getHwOffsetY()   const { return m_hwOffsetY; }
+  uint16_t getSkWidth()     const { return m_skWidth; }
+  uint16_t getSkHeight()    const { return m_skHeight; }
+  uint16_t getSkOffsetX()   const { return m_skOffsetX; }
+  uint16_t getSkOffsetY()   const { return m_skOffsetY; }
+
   uint16_t getVtObjectPoolDimension() const;
   uint16_t getVtObjectPoolSoftKeyWidth() const;
   uint16_t getVtObjectPoolSoftKeyHeight() const;
@@ -194,6 +204,15 @@ private:
   uint8_t m_cmdTimedOut;
 
   IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en men_registerPoolMode;
+
+  // Scaling-Overrides
+  uint16_t m_hwDimension;// Use this Dimension instead of the official one from the VT
+  uint16_t m_hwOffsetX;  // Add an X offset to every object on an alarm / data mask
+  uint16_t m_hwOffsetY;  // Add an Y offset to every object on an alarm / data mask
+  uint16_t m_skWidth;    // Use this Width instead of the official one from the VT
+  uint16_t m_skHeight;   // Use this Height instead of the official one from the VT
+  uint16_t m_skOffsetX;  // Add an X offset to every object on an alarm / data mask
+  uint16_t m_skOffsetY;  // Add an Y offset to every object on an alarm / data mask
 
   IsoName_c mc_preferredVt;
   int32_t mi32_bootTime_ms;

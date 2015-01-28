@@ -29,7 +29,7 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
   MACRO_streamLocalVars;
 
   if (__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId)
-      .getVtServerInst().getVtCapabilities()->skVirtual < vtObjectSoftKeyMask_a->numberOfObjectsToFollow)
+      .getVtServerInst().getVtCapabilities().skVirtual < vtObjectSoftKeyMask_a->numberOfObjectsToFollow)
   { // can't upload this SKM because it has more Keys than virtually supported
     return 0;
   }
@@ -63,7 +63,7 @@ vtObjectSoftKeyMask_c::fitTerminal() const
   MACRO_localVars;
 
   if (__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId)
-      .getVtServerInst().getVtCapabilities()->skVirtual < vtObjectSoftKeyMask_a->numberOfObjectsToFollow)
+      .getVtServerInst().getVtCapabilities().skVirtual < vtObjectSoftKeyMask_a->numberOfObjectsToFollow)
   { // can't upload this SKM because it has more Keys than virtually supported
     return 0;
   }

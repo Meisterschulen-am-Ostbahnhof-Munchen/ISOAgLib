@@ -556,9 +556,9 @@ UploadPoolState_c::fitTerminalWrapper( const vtObject_c& object ) const
 void
 UploadPoolState_c::timeEvent()
 {
-  if( !(m_connection.getVtServerInst().getVtCapabilities()->lastReceivedFont
-     && m_connection.getVtServerInst().getVtCapabilities()->lastReceivedHardware
-     && m_connection.getVtServerInst().getVtCapabilities()->lastReceivedSoftkeys) )
+  if( !(m_connection.getVtServerInst().getVtCapabilities().lastReceivedFont
+     && m_connection.getVtServerInst().getVtCapabilities().lastReceivedHardware
+     && m_connection.getVtServerInst().getVtCapabilities().lastReceivedSoftkeys) )
     timeEventRequestProperties();
   else
     timeEventPoolUpload();
@@ -571,30 +571,30 @@ UploadPoolState_c::timeEventRequestProperties()
   VtServerInstance_c &server = m_connection.getVtServerInst();
 
   /// first you have to get number of softkeys, text font data and hardware before you could upload
-  if( !server.getVtCapabilities()->lastReceivedSoftkeys
-      && ((server.getVtCapabilities()->lastRequestedSoftkeys == 0)
-      || ((HAL::getTime() - server.getVtCapabilities()->lastRequestedSoftkeys) > 1000)))
+  if( !server.getVtCapabilities().lastReceivedSoftkeys
+      && ((server.getVtCapabilities().lastRequestedSoftkeys == 0)
+      || ((HAL::getTime() - server.getVtCapabilities().lastRequestedSoftkeys) > 1000)))
   { // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
     m_connection.sendMessage( 194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff );
-    server.getVtCapabilities()->lastRequestedSoftkeys = HAL::getTime();
+    server.getVtCapabilities().lastRequestedSoftkeys = HAL::getTime();
   }
 
-  if (server.getVtCapabilities()->lastReceivedSoftkeys
-      && (!server.getVtCapabilities()->lastReceivedFont)
-      && ((server.getVtCapabilities()->lastRequestedFont == 0) || ((HAL::getTime() - server.getVtCapabilities()->lastRequestedFont) > 1000)))
+  if (server.getVtCapabilities().lastReceivedSoftkeys
+      && (!server.getVtCapabilities().lastReceivedFont)
+      && ((server.getVtCapabilities().lastRequestedFont == 0) || ((HAL::getTime() - server.getVtCapabilities().lastRequestedFont) > 1000)))
   { // Command: Get Technical Data --- Parameter: Get Text Font Data
     m_connection.sendMessage( 195, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff );
-    server.getVtCapabilities()->lastRequestedFont = HAL::getTime();
+    server.getVtCapabilities().lastRequestedFont = HAL::getTime();
   }
 
-  if (server.getVtCapabilities()->lastReceivedSoftkeys
-      && server.getVtCapabilities()->lastReceivedFont
-      && (!server.getVtCapabilities()->lastReceivedHardware)
-      && ((server.getVtCapabilities()->lastRequestedHardware == 0)
-      || ((HAL::getTime() - server.getVtCapabilities()->lastRequestedHardware) > 1000)))
+  if (server.getVtCapabilities().lastReceivedSoftkeys
+      && server.getVtCapabilities().lastReceivedFont
+      && (!server.getVtCapabilities().lastReceivedHardware)
+      && ((server.getVtCapabilities().lastRequestedHardware == 0)
+      || ((HAL::getTime() - server.getVtCapabilities().lastRequestedHardware) > 1000)))
   { // Command: Get Technical Data --- Parameter: Get Hardware
     m_connection.sendMessage( 199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff );
-    server.getVtCapabilities()->lastRequestedHardware = HAL::getTime();
+    server.getVtCapabilities().lastRequestedHardware = HAL::getTime();
   }
 }
 
@@ -606,6 +606,7 @@ UploadPoolState_c::timeEventPoolUpload()
   {
   case UploadPoolInit:
     sendGetMemory( true );
+    m_connection.populateScalingInformation();
     break;
 
   case UploadPoolWaitingForGetVersionsResponse:

@@ -53,7 +53,7 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
       curBytes += 10;
     }
 
-    MACRO_streamObjectXY(10);
+    MACRO_DAMstreamObjectXY(10);
     MACRO_streamEventMacro(10U+vtObjectAlarmMask_a->numberOfObjectsToFollow*6U);
     return curBytes;
 }

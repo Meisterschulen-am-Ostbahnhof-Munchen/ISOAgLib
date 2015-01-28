@@ -66,7 +66,7 @@ VtClientConnection_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_id
     return false;
 
   // if SA is not the address from the vt -> don't react on stream
-  if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName()))
+  if ((ac_ident.getSaIsoName()) != (getVtServerInst().getIsoName()))
     return false;
 
   if (aui32_totalLen > (2+(255*32)) ) // Annex E.11 is the current max to receive!
@@ -134,6 +134,13 @@ VtClientConnection_c::VtClientConnection_c(
   , mi32_fakeVtOffUntil( -1 ) // no faking initially
   , m_cmdTimedOut( 0x00 ) // nothing failed initially
   , men_registerPoolMode( aen_mode )
+  , m_hwDimension( 0 ) // to be retrieved from the VT / APP
+  , m_hwOffsetX( 0 ) // to be retrieved from the APP
+  , m_hwOffsetY( 0 ) // to be retrieved from the APP
+  , m_skWidth( 0 ) // to be retrieved from the VT / APP
+  , m_skHeight( 0 ) // to be retrieved from the VT / APP
+  , m_skOffsetX( 0 ) // to be retrieved from the APP
+  , m_skOffsetY( 0 ) // to be retrieved from the APP
   , mc_preferredVt( IsoName_c::IsoNameUnspecified() )
   , mi32_bootTime_ms( 0 )
   , m_dataStorageHandler( arc_dataStorage )
@@ -422,8 +429,8 @@ VtClientConnection_c::processMsgAck( const CanPkgExt_c& arc_data )
 
   const uint16_t cui16_manufCode = getVtServerInst().getIsoName().manufCode();
   if (((cui16_manufCode == 98) /*Mueller Elektronik*/ || (cui16_manufCode == 103) /*Agrocom*/) &&
-        ((mpc_vtServerInstance->getVtCapabilities()->lastReceivedVersion == 0) ||
-        (mpc_vtServerInstance->getVtCapabilities()->iso11783version < 3)))
+        ((getVtServerInst().getVtCapabilities().lastReceivedVersion == 0) ||
+        (getVtServerInst().getVtCapabilities().iso11783version < 3)))
   {
     if( !m_uploadPoolState.successfullyUploaded() )
     { // mueller/agrocom hack - ignore upload while no objectpool is displayed
@@ -479,12 +486,12 @@ VtClientConnection_c::notifyOnVtStatusMessage()
   getPool().eventVtStatusMsg();
 
   // set client display state appropriately
-  setVtDisplayState( getVtServerInst().getVtState()->saOfActiveWorkingSetMaster );
+  setVtDisplayState( getVtServerInst().getVtState().saOfActiveWorkingSetMaster );
 
   if( m_uploadPoolState.activeAuxN() )
   {
-    m_aux2Inputs.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
-    m_aux2Functions.setLearnMode((getVtServerInst().getVtState()->busyCodes & (1<<6)) != 0);
+    m_aux2Inputs.setLearnMode((getVtServerInst().getVtState().busyCodes & (1<<6)) != 0);
+    m_aux2Functions.setLearnMode((getVtServerInst().getVtState().busyCodes & (1<<6)) != 0);
   }
 }
 
@@ -602,7 +609,7 @@ VtClientConnection_c::getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObje
   if( !poolSuccessfullyUploaded() )
     return colorValue;
 
-  uint8_t colorDepth = mpc_vtServerInstance->getVtCapabilities()->hwGraphicType;
+  uint8_t colorDepth = getVtServerInst().getVtCapabilities().hwGraphicType;
   if( ((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16)) )
     return getPool().convertColour (colorValue, colorDepth, obj, whichColour);
   else
@@ -744,12 +751,12 @@ VtClientConnection_c::checkAndHandleVtStateChange()
 bool
 VtClientConnection_c::isVtActive() const
 {
-  if( mpc_vtServerInstance == NULL )
+  if( !connectedToVtServer() )
     return false;
 
   const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
 
-  return !cb_fakeVtOff && mpc_vtServerInstance->isVtActive();
+  return !cb_fakeVtOff && getVtServerInst().isVtActive();
 }
 
 
@@ -760,12 +767,12 @@ VtClientConnection_c::notifyOnFinishedNonUserPoolUpload( bool initialUpload )
     men_uploadType = UploadIdle;
 
   // save this ISOVT as the preferred one
-  mc_preferredVt = mpc_vtServerInstance->getIsoName();
-  m_dataStorageHandler.storePreferredVt(mc_preferredVt.toConstIisoName_c(), mpc_vtServerInstance->getConstVtCapabilities()->bootTime );
+  mc_preferredVt = getVtServerInst().getIsoName();
+  m_dataStorageHandler.storePreferredVt(mc_preferredVt.toConstIisoName_c(), getVtServerInst().getConstVtCapabilities().bootTime );
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
-  INTERNAL_DEBUG_DEVICE << "SAVE preferredVT with current address " << (uint16_t)mpc_vtServerInstance->getIsoItem().nr()
-                        << " NAME = " << mpc_vtServerInstance->getIsoName()
-                        << " Boottime = " << (uint16_t)mpc_vtServerInstance->getConstVtCapabilities()->bootTime
+  INTERNAL_DEBUG_DEVICE << "SAVE preferredVT with current address " << (uint16_t)getVtServerInst().getIsoItem().nr()
+                        << " NAME = " << getVtServerInst().getIsoName()
+                        << " Boottime = " << (uint16_t)getVtServerInst().getConstVtCapabilities().bootTime
                         << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
@@ -833,6 +840,24 @@ VtClientConnection_c::sendMessage(
 }
 
 
+void
+VtClientConnection_c::populateScalingInformation()
+{
+  m_hwDimension = getVtServerInst().getVtHardwareDimension();
+  m_hwOffsetX = 0;
+  m_hwOffsetY = 0;
+
+  m_skWidth = getVtServerInst().getConstVtCapabilities().skWidth;
+  m_skHeight = getVtServerInst().getConstVtCapabilities().skHeight;
+  m_skOffsetX = 0;
+  m_skOffsetY = 0;
+  getPool().overrideVtProperties(
+    static_cast< const IsoAgLib::iIsoName_c &>( getVtServerInst().getIsoName() ),
+    m_hwDimension,         m_hwOffsetX, m_hwOffsetY,
+    m_skWidth, m_skHeight, m_skOffsetX, m_skOffsetY );
+}
+
+
 IsoAgLib::iVtClientConnection_c&
 VtClientConnection_c::toInterfaceReference()
 {
@@ -848,16 +873,16 @@ VtClientConnection_c::toInterfacePointer()
 
 
 uint16_t
-VtClientConnection_c::getVtObjectPoolSoftKeyWidth() const
+VtClientConnection_c::getVtObjectPoolDimension() const
 {
-  return getPool().getSkWidth();
+  return getPool().getDimension();
 }
 
 
 uint16_t
-VtClientConnection_c::getVtObjectPoolDimension() const
+VtClientConnection_c::getVtObjectPoolSoftKeyWidth() const
 {
-  return getPool().getDimension();
+  return getPool().getSkWidth();
 }
 
 

@@ -233,6 +233,14 @@ public:
   uint8_t eventProprietaryCommand (iIsoName_c const &acr_isoname, uint8_t aui8_commandByte, __IsoAgLib::Stream_c& arc_stream)
   { return doEventProprietaryCommand(acr_isoname, aui8_commandByte, arc_stream); };
 
+  /** If you do not want ISOAgLib's Full-Screen scaling, you can override
+      the VT's properties so a different scaling gets calculated/used.
+      Additionally you can move the content around using the offsets.
+   */
+  virtual void overrideVtProperties( iIsoName_c const &/*vtName*/,
+                                     uint16_t &/*vtDimension*/, uint16_t &/*vtDamOffsetX*/, uint16_t &/*vtDamOffsetY*/,
+                                     uint16_t &/*skWidth*/, uint16_t &/*SkHeight*/, uint16_t &/*skOffsetX*/, uint16_t &/*skOffsetY*/) {}
+
   /**
     Select this VtServer. This function is called when OP is of type RegisterPoolMode_MasterToSpecificVt.
     It is attempted to be used for proprietary matter only.

@@ -74,13 +74,13 @@ namespace __IsoAgLib {
           options = (vtObjectPictureGraphic_a->f & 0x03) + ((vtObjectPictureGraphic_a->f & optionander) ? 0x04 : 0x00); /* get the right RLE 1/4/8 bit to bit 2 when streaming! */
 
 #define MACRO_calculate_ui8_graphicType \
-          ui8_graphicType = ( min (__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities()->hwGraphicType, vtObjectPictureGraphic_a->format) ); \
+          ui8_graphicType = ( min (__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().hwGraphicType, vtObjectPictureGraphic_a->format) ); \
           /* If 16-color bitmap is not specified, take the 2-color version. -That's the only exception! */ \
           if ((ui8_graphicType == 1) && (vtObjectPictureGraphic_a->rawData1 == NULL)) ui8_graphicType = 0;
 
 #define MACRO_CheckFixedBitmapsLoop_start \
     /* See if we have colorDepth of VT */ \
-    uint8_t vtDepth = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities()->hwGraphicType; \
+    uint8_t vtDepth = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().hwGraphicType; \
     /* Check for 100%-matching fixedBitmaps first */ \
     bool b_foundFixedBitmap = false; \
     for (int fixNr=0; fixNr<vtObjectPictureGraphic_a->numberOfFixedBitmapsToFollow; fixNr++) { \
