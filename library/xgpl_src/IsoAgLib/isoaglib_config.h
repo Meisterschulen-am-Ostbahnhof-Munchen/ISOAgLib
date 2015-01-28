@@ -28,9 +28,19 @@
 /* ***** Check mandatory defines ***** */
 /***************************************/
 
+#if (!defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN ) && !defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN ) )
+#  error "Please specify little or big endian!"
+#endif
+
+#if (defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN ) && defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN ) )
+#  error "Please specify EITHER little or big endian, not both!"
+#endif
+
+
 #if !defined(CAN_INSTANCE_CNT)
 #  error "CAN_INSTANCE_CNT not set."
 #endif
+
 
 #if defined(USE_ISO_11783)
 #  if !defined(DEF_Stream_h_IMPL)
@@ -46,6 +56,7 @@
 #else
 #  define PROP_INSTANCE_CNT (CAN_INSTANCE_CNT)
 #endif
+
 
 #if defined(USE_RS232) 
 #  if !defined(RS232_CHANNEL_CNT)

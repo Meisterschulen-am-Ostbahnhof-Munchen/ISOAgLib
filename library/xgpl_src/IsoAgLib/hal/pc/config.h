@@ -34,8 +34,11 @@
 //       Should be really enough for everybody - just like 640kB of RAM on the PC ;-)
 #define HAL_CAN_MAX_BUS_NR 31
 
-#if (!defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN ) && !defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN ) )
-#  error "Please specify little or big endian!"
+// Intel x86 platforms (Windows PCs) are always little endian
+#if defined( WIN32 )
+#  ifndef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#  endif
 #endif
 
 /** define uint16_t order of float: WORD_LO_HI, BYTE_HI_LO, WORD_HI_LO */
