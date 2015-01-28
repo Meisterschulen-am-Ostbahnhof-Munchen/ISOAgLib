@@ -91,10 +91,7 @@ public:
   { VtClient_c::fakeVtProperties (aui16_dimension, aui16_skWidth, aui16_skHeight, aui16_colorDepth, aui16_fontSizes); }
 #endif
 
- private:
-  /** allow getIvtClientInstance() access to shielded base class.
-      otherwise __IsoAgLib::getVtClientInstance() wouldn't be accepted by compiler
-    */
+private:
 #if ( PRT_INSTANCE_CNT == 1 )
   friend iVtClient_c& getIvtClientInstance();
 #endif

@@ -18,6 +18,7 @@
 #ifdef HAL_USE_SPECIFIC_FILTERS
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #endif
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclient_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientconnection_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectauxiliaryfunction2_c.h>
