@@ -238,12 +238,12 @@ public:
   // so that VtClientConnection can insert filters to us.
   Customer_t mt_customer;
 
-  friend VtClient_c &getVtClientInstance(uint8_t aui8_instance);
+  friend VtClient_c &getVtClientInstance( unsigned instance );
 };
 
 
 /** C-style function, to get access to the unique multiton instance */
-VtClient_c &getVtClientInstance( uint8_t instance = 0 );
+VtClient_c &getVtClientInstance( unsigned instance );
 
 }
 

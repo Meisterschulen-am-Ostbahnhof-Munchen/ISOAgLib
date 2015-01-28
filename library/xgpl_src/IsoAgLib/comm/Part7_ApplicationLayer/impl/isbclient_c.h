@@ -127,7 +127,7 @@ private:
 
 
 /** C-style function, to get access to the unique multiton instance */
-IsbClient_c &getIsbClientInstance( unsigned instance = 0 );
+IsbClient_c &getIsbClientInstance( unsigned instance );
 
 }
 

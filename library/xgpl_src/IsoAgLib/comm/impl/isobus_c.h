@@ -100,12 +100,12 @@ public:
   { return getCanInstance4Comm().deleteAllFiltersForCustomer (ar_customer); }
 private:
   IsoBus_c() {}
-  friend IsoBus_c &getIsoBusInstance(unsigned int instance);
+  friend IsoBus_c &getIsoBusInstance( unsigned instance );
 };
 
 
 /** C-style function, to get access to the unique singleton instance(s) */
-IsoBus_c &getIsoBusInstance( unsigned int instance = 0 );
+IsoBus_c &getIsoBusInstance( unsigned instance );
 
 } // __IsoAgLib
 

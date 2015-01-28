@@ -383,7 +383,8 @@ private:
 
   /** should a new language pgn changed command be sent? */
   bool mb_languagePgnChanged;
-  friend TracGeneral_c &getTracGeneralInstance(uint8_t aui8_instance);
+
+  friend TracGeneral_c &getTracGeneralInstance( unsigned instance );
 };
 
 inline bool TracGeneral_c::canSendFrontHitchState() {
@@ -401,6 +402,7 @@ inline bool TracGeneral_c::canSendLanguage() {
 /** C-style function, to get access to the unique TracGeneral_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
  */
-TracGeneral_c &getTracGeneralInstance(uint8_t aui8_instance = 0);
+TracGeneral_c &getTracGeneralInstance( unsigned instance );
+
 } // End Namespace __IsoAgLib
 #endif

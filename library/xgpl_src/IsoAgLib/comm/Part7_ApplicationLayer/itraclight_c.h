@@ -91,27 +91,19 @@ namespace IsoAgLib {
     bool find(const uint8_t sa) const {return TracLight_c::find(sa);}
 
   private:
-    /** allow getITracLightInstance() access to shielded traclight class.
-      otherwise __IsoAgLib::getTracLightInstance() wouldn't be accepted by compiler
-    */
-    #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-    friend iTracLight_c& getITracLightInstance(uint8_t aui8_instance);
-    #else
-    friend iTracLight_c& getITracLightInstance(void);
-    #endif
+#if ( PRT_INSTANCE_CNT == 1 )
+    friend iTracLight_c& getITracLightInstance();
+#endif
+    friend iTracLight_c& getITracLightInstance( unsigned instance );
 
   };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique TracLight_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  inline iTracLight_c& getITracLightInstance(uint8_t aui8_instance = 0)
-  { return static_cast<iTracLight_c&>(__IsoAgLib::getTracLightInstance(aui8_instance));};
-  #else
-  /** C-style function, to get access to the unique TracLight_c singleton instance */
-  inline iTracLight_c& getITracLightInstance(void)
-  { return static_cast<iTracLight_c&>(__IsoAgLib::getTracLightInstance());};
-  #endif
+#if ( PRT_INSTANCE_CNT == 1 )
+  inline iTracLight_c& getITracLightInstance()
+  { return static_cast<iTracLight_c&>(__IsoAgLib::getTracLightInstance( 0 )); }
+#endif
+  inline iTracLight_c& getITracLightInstance( unsigned instance )
+  { return static_cast<iTracLight_c&>(__IsoAgLib::getTracLightInstance( instance )); }
+
 }
 #endif

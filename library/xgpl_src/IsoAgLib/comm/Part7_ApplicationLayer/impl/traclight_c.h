@@ -254,12 +254,13 @@ typedef struct {
 
     /** m_index which stores the position where the eldest marr_timeStamp is stored*/
     unsigned int m_index;
-    friend TracLight_c &getTracLightInstance( uint8_t aui8_instance );
+
+    friend TracLight_c &getTracLightInstance( unsigned instance );
   };
 
   /** C-style function, to get access to the unique TracLight_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
     */
-  TracLight_c &getTracLightInstance( uint8_t aui8_instance = 0 );
+  TracLight_c &getTracLightInstance( unsigned instance );
 }
 #endif

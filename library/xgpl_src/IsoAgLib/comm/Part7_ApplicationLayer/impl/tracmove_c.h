@@ -398,7 +398,8 @@ namespace __IsoAgLib {
     IsoAgLib::IsoSpeedSourceFlag_t mt_selectedSpeedSource;
 
     uint16_t mui16_engineSpeed;
-    friend TracMove_c &getTracMoveInstance(uint8_t aui8_instance);
+
+    friend TracMove_c &getTracMoveInstance( unsigned instance );
   };
 
   inline bool TracMove_c::canSendGroundBasedSpeedDist() {
@@ -420,6 +421,6 @@ namespace __IsoAgLib {
   /** C-style function, to get access to the unique Base_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracMove_c &getTracMoveInstance(uint8_t aui8_instance = 0);
+  TracMove_c &getTracMoveInstance( unsigned instance );
 }
 #endif

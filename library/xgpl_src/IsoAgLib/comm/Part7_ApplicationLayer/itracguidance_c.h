@@ -95,28 +95,19 @@ namespace IsoAgLib {
   IsoAgLib::IsoActiveFlag_t mechanicalSystemLogout() const { return TracGuidance_c::mechanicalSystemLogout();}
   /*@}*/
   private:
-    /** allow getITracGuidanceInstance() access to shielded traccert class.
-      otherwise __IsoAgLib::getTracGuidanceInstance() wouldn't be accepted by compiler
-    */
-    #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-    friend iTracGuidance_c& getITracGuidanceInstance(uint8_t aui8_instance);
-    #else
-    friend iTracGuidance_c& getITracGuidanceInstance(void);
-    #endif
-
+#if ( PRT_INSTANCE_CNT == 1 )
+    friend iTracGuidance_c& getITracGuidanceInstance();
+#endif
+    friend iTracGuidance_c& getITracGuidanceInstance( unsigned instance );
   };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique iTracGuidance_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  inline iTracGuidance_c& getITracGuidanceInstance(uint8_t aui8_instance = 0)
-  { return static_cast<iTracGuidance_c&>(__IsoAgLib::getTracGuidanceInstance(aui8_instance));}
-  #else
-  /** C-style function, to get access to the unique iTracGuidance_c singleton instance */
-  inline iTracGuidance_c& getITracGuidanceInstance(void)
-  { return static_cast<iTracGuidance_c&>(__IsoAgLib::getTracGuidanceInstance());}
-  #endif
+#if ( PRT_INSTANCE_CNT == 1 )
+  inline iTracGuidance_c& getITracGuidanceInstance()
+  { return static_cast<iTracGuidance_c&>(__IsoAgLib::getTracGuidanceInstance( 0 )); }
+#endif
+  inline iTracGuidance_c& getITracGuidanceInstance( unsigned instance )
+  { return static_cast<iTracGuidance_c&>(__IsoAgLib::getTracGuidanceInstance( instance )); }
+
 }
 #endif
 

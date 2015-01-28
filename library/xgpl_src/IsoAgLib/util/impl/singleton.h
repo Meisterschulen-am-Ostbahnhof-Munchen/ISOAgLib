@@ -128,6 +128,8 @@ union MaxAlign_u {
 #endif //DO_PLACEMENT_NEW_ON_STATIC_BUFFER
 
 #define MACRO_MULTITON_GET_INSTANCE_BODY(T, SIZE, instance)  \
+  isoaglib_assert( instance < SIZE ); \
+  \
   static T *sarrpt_instances[SIZE]; \
   static bool isInitialized = false; \
   DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE); \

@@ -770,13 +770,11 @@ private:
 
   STL_NAMESPACE::vector<MsgEventHandler_c*> mvec_msgEventHandlers;
 
-  friend TimePosGps_c &getTimePosGpsInstance( uint8_t aui8_instance );
+  friend TimePosGps_c &getTimePosGpsInstance( unsigned instance );
 };
 
-  /** C-style function, to get access to the unique Base_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  TimePosGps_c &getTimePosGpsInstance( uint8_t aui8_instance = 0 );
+  TimePosGps_c &getTimePosGpsInstance( unsigned instance );
+
 } // END of Namespace __IsoAgLib
 
 #endif // END of TIMEPOSGPS_C_H

@@ -72,25 +72,20 @@ class iIsoBus_c : private __IsoAgLib::IsoBus_c {
   #endif
 
  private:
-  /** allow getIisoBusInstance() access to shielded base class.
-      otherwise __IsoAgLib::getIsoBusInstance() wouldn't be accepted by compiler
-    */
-  #if (PRT_INSTANCE_CNT > 1)
-  friend iIsoBus_c& getIIsoBusInstance( unsigned int instance );
-  #else
-  friend iIsoBus_c& getIIsoBusInstance( void );
+  #if (PRT_INSTANCE_CNT == 1)
+  friend iIsoBus_c& getIIsoBusInstance();
   #endif
+  friend iIsoBus_c& getIIsoBusInstance( unsigned instance );
 };
 
 
 /** C-style function, to get access to the unique singleton instance(s) */
-#if (PRT_INSTANCE_CNT > 1)
-  inline iIsoBus_c& getIIsoBusInstance( unsigned int instance = 0 )
-  { return static_cast<iIsoBus_c&>(__IsoAgLib::getIsoBusInstance(instance)); }
-#else
-  inline iIsoBus_c& getIIsoBusInstance( void )
-  { return static_cast<iIsoBus_c&>(__IsoAgLib::getIsoBusInstance()); }
+#if (PRT_INSTANCE_CNT == 1)
+  inline iIsoBus_c& getIIsoBusInstance()
+  { return static_cast<iIsoBus_c&>(__IsoAgLib::getIsoBusInstance( 0 )); }
 #endif
+  inline iIsoBus_c& getIIsoBusInstance( unsigned instance )
+  { return static_cast<iIsoBus_c&>(__IsoAgLib::getIsoBusInstance( instance )); }
 
 
 } // IsoAgLib

@@ -134,12 +134,18 @@ class iProprietaryBus_c {
   /** allow getIproprietaryBusInstance() access to shielded base class.
       otherwise __IsoAgLib::getProprietaryBusInstance() wouldn't be accepted by compiler
     */
-  friend iProprietaryBus_c& getIProprietaryBusInstance( uint8_t aui8_instance );
+#if ( PROP_INSTANCE_CNT == 1 )
+  friend iProprietaryBus_c& getIProprietaryBusInstance();
+#endif
+  friend iProprietaryBus_c& getIProprietaryBusInstance( unsigned instance );
 };
 
 
 /** C-style function, to get access to the unique singleton instance(s) */
-iProprietaryBus_c &getIProprietaryBusInstance( uint8_t aui8_instance = 0 );
+iProprietaryBus_c &getIProprietaryBusInstance( unsigned instance );
+#if ( PROP_INSTANCE_CNT == 1 )
+inline iProprietaryBus_c &getIProprietaryBusInstance() { return getIProprietaryBusInstance( 0 ); }
+#endif
 
 } // namespace IsoAgLib
 

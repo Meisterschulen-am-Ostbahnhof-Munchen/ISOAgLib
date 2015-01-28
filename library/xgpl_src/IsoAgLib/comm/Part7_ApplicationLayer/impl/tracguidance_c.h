@@ -151,13 +151,14 @@ namespace __IsoAgLib {
 
     /** state of lockout switch that allows operators to disable automatic steering system functions */
     IsoAgLib::IsoActiveFlag_t mt_mechanicalSystemLogout;
-    friend TracGuidance_c &getTracGuidanceInstance(uint8_t aui8_instance);
+
+    friend TracGuidance_c &getTracGuidanceInstance( unsigned instance );
   };
 
   /** C-style function, to get access to the unique TracGuidance_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
     */
-  TracGuidance_c &getTracGuidanceInstance(uint8_t aui8_instance = 0);
+  TracGuidance_c &getTracGuidanceInstance( unsigned instance );
 }
 
 #endif

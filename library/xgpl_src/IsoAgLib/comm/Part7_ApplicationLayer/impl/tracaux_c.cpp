@@ -33,9 +33,9 @@ namespace __IsoAgLib {
   /** C-style function, to get access to the unique TracAux_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
     */
-  TracAux_c &getTracAuxInstance( uint8_t aui8_instance )
+  TracAux_c &getTracAuxInstance( unsigned instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(TracAux_c, PRT_INSTANCE_CNT, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracAux_c, PRT_INSTANCE_CNT, instance);
   }
 
   bool TracAux_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask )

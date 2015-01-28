@@ -453,12 +453,13 @@ namespace __IsoAgLib {
 
     /** last time of command msg [msec] */
     uint32_t mi32_lastMsgReceivedCmd;
-    friend TracAux_c &getTracAuxInstance(uint8_t rui8_instance);
+
+    friend TracAux_c &getTracAuxInstance( unsigned instance );
   };
 
   /** C-style function, to get access to the unique TracAux_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
     */
-  TracAux_c &getTracAuxInstance(uint8_t rui8_instance = 0);
+  TracAux_c &getTracAuxInstance( unsigned instance );
 }
 #endif

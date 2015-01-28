@@ -256,7 +256,7 @@ IsoBus_c::operator<<(CanPkg_c& acrc_src)
 }
 
 
-IsoBus_c &getIsoBusInstance( unsigned int instance)
+IsoBus_c &getIsoBusInstance( unsigned instance )
 {
   MACRO_MULTITON_GET_INSTANCE_BODY(IsoBus_c, PRT_INSTANCE_CNT, instance);
 }

@@ -243,24 +243,18 @@ namespace IsoAgLib {
     /** allow getITracMoveInstance() access to shielded tracgeneral class.
     otherwise __IsoAgLib::getTracMoveInstance4Comm() wouldn't be accepted by compiler
     */
-    #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-    friend iTracPTO_c& getITracPtoInstance(uint8_t aui8_instance);
-    #else
-    friend iTracPTO_c& getITracPtoInstance(void);
-    #endif
-
+#if ( PRT_INSTANCE_CNT == 1 )
+    friend iTracPTO_c& getITracPtoInstance();
+#endif
+    friend iTracPTO_c& getITracPtoInstance( unsigned instance );
   };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique TracMove_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  inline iTracPTO_c& getITracPtoInstance(uint8_t aui8_instance = 0)
-  { return static_cast<iTracPTO_c&>(__IsoAgLib::getTracPtoInstance(aui8_instance));}
-  #else
-  /** C-style function, to get access to the unique TracMove_c singleton instance */
-  inline iTracPTO_c& getITracPtoInstance(void)
-  { return static_cast<iTracPTO_c&>(__IsoAgLib::getTracPtoInstance());}
-  #endif
+#if ( PRT_INSTANCE_CNT == 1 )
+  inline iTracPTO_c& getITracPtoInstance()
+  { return static_cast<iTracPTO_c&>(__IsoAgLib::getTracPtoInstance( 0 )); }
+#endif
+  inline iTracPTO_c& getITracPtoInstance( unsigned instance )
+  { return static_cast<iTracPTO_c&>(__IsoAgLib::getTracPtoInstance( instance )); }
+
 }
 #endif

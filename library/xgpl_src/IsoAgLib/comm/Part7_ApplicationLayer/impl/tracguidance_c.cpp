@@ -25,9 +25,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   /** C-style function, to get access to the unique TracGuidance_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
     */
-  TracGuidance_c &getTracGuidanceInstance( uint8_t aui8_instance )
+  TracGuidance_c &getTracGuidanceInstance( unsigned instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(TracGuidance_c, PRT_INSTANCE_CNT, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracGuidance_c, PRT_INSTANCE_CNT, instance);
   }
 
   bool TracGuidance_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)

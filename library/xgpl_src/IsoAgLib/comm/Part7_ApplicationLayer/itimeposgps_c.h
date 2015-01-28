@@ -388,32 +388,19 @@ public:
   void setLocalTimeOffsets(int16_t ai16_hourOffset, uint16_t aui16_minuteOffset)
   { return TimePosGps_c::setLocalTimeOffsets(ai16_hourOffset, aui16_minuteOffset);}
 
-
-  /* ****************************************************** */
-  /** \name Retrieve Values which are sent from other ECUs  */
-  /*@{*/
- private:
-  /** allow getITimePosGpsInstance() access to shielded TimePosGps_c class.
-    * otherwise __IsoAgLib::getTimePosGpsInstance() wouldn't be accepted by compiler
-    */
-  #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iTimePosGps_c& getITimePosGpsInstance( uint8_t aui8_instance );
-  #else
-  friend iTimePosGps_c& getITimePosGpsInstance( void );
-  #endif
+private:
+#if ( PRT_INSTANCE_CNT == 1 )
+  friend iTimePosGps_c& getITimePosGpsInstance();
+#endif
+  friend iTimePosGps_c& getITimePosGpsInstance( unsigned instance );
 };
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique Base_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  inline iTimePosGps_c& getITimePosGpsInstance( uint8_t aui8_instance = 0 )
-  { return static_cast<iTimePosGps_c&>(__IsoAgLib::getTimePosGpsInstance(aui8_instance));}
-#else
-  /** C-style function, to get access to the unique Base_c singleton instance */
-  inline iTimePosGps_c& getITimePosGpsInstance( void )
-  { return static_cast<iTimePosGps_c&>(__IsoAgLib::getTimePosGpsInstance());}
+#if ( PRT_INSTANCE_CNT == 1 )
+  inline iTimePosGps_c& getITimePosGpsInstance()
+  { return static_cast<iTimePosGps_c&>(__IsoAgLib::getTimePosGpsInstance( 0 )); }
 #endif
+  inline iTimePosGps_c& getITimePosGpsInstance( unsigned instance )
+  { return static_cast<iTimePosGps_c&>(__IsoAgLib::getTimePosGpsInstance( instance )); }
 
 }
 #endif

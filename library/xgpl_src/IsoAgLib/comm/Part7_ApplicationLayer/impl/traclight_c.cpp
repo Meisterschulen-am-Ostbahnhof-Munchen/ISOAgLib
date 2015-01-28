@@ -26,9 +26,9 @@ namespace __IsoAgLib {
   /** C-style function, to get access to the unique TracLight_c singleton instance
    * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
    */
-  TracLight_c& getTracLightInstance( uint8_t aui8_instance )
+  TracLight_c& getTracLightInstance( unsigned instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(TracLight_c, PRT_INSTANCE_CNT, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracLight_c, PRT_INSTANCE_CNT, instance);
   }
 
   void

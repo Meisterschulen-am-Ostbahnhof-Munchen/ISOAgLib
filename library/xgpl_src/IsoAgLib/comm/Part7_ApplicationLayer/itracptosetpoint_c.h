@@ -141,27 +141,18 @@ namespace IsoAgLib {
 
 
   private:
-    /** allow getITracPtoSetPointInstance() access to shielded tracgeneral class.
-      otherwise __IsoAgLib::getTracPtoSetPointInstance() wouldn't be accepted by compiler
-    */
-    #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-    friend iTracPTOSetPoint_c& getITracPtoSetPointInstance(uint8_t aui8_instance);
-    #else
-    friend iTracPTOSetPoint_c& getITracPtoSetPointInstance(void);
-    #endif
-
+#if ( PRT_INSTANCE_CNT == 1 )
+    friend iTracPTOSetPoint_c& getITracPtoSetPointInstance();
+#endif
+    friend iTracPTOSetPoint_c& getITracPtoSetPointInstance( unsigned instance );
   };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique TracPTOSetPoint_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  inline iTracPTOSetPoint_c& getITracPtoSetPointInstance(uint8_t aui8_instance = 0)
-  { return static_cast<iTracPTOSetPoint_c&>(__IsoAgLib::getTracPtoSetPointInstance(aui8_instance));};
-  #else
-  /** C-style function, to get access to the unique TracPTOSetPoint_c singleton instance */
-  inline iTracPTOSetPoint_c& getITracPtoSetPointInstance(void)
-  { return static_cast<iTracPTOSetPoint_c&>(__IsoAgLib::getTracPtoSetPointInstance());};
-  #endif
+#if ( PRT_INSTANCE_CNT == 1 )
+  inline iTracPTOSetPoint_c& getITracPtoSetPointInstance()
+  { return static_cast<iTracPTOSetPoint_c&>(__IsoAgLib::getTracPtoSetPointInstance( 0 ));}
+#endif
+  inline iTracPTOSetPoint_c& getITracPtoSetPointInstance( unsigned instance )
+  { return static_cast<iTracPTOSetPoint_c&>(__IsoAgLib::getTracPtoSetPointInstance( instance )); }
+
 }
 #endif

@@ -110,10 +110,10 @@ public:// Public methods
 
     /** check if facilities already sent after address claim */
     bool mb_facilitiesOnInitSent;
-    friend TracFacilities_c &getTracFacilitiesInstance(uint8_t aui8_instance);
+    friend TracFacilities_c &getTracFacilitiesInstance( unsigned instance );
 };
 
-  TracFacilities_c &getTracFacilitiesInstance(uint8_t aui8_instance = 0);
+  TracFacilities_c &getTracFacilitiesInstance( unsigned instance );
 }
 
 #endif

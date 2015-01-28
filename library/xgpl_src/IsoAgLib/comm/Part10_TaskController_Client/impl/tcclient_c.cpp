@@ -31,7 +31,7 @@
 namespace __IsoAgLib {
 
   TcClient_c&
-  getTcClientInstance( uint8_t instance ) {
+  getTcClientInstance( unsigned instance ) {
     MACRO_MULTITON_GET_INSTANCE_BODY( TcClient_c, PRT_INSTANCE_CNT, instance );
   }
 

@@ -74,27 +74,18 @@ namespace IsoAgLib {
     IsoAgLib::IsoDirectionFlag_t selectedDirectionCmd() const {return TracMoveSetPoint_c::selectedDirectionCmd();}
 
   private:
-    /** allow getITracMoveInstance() access to shielded tracgeneral class.
-    otherwise __IsoAgLib::getTracMoveInstance4Comm() wouldn't be accepted by compiler
-    */
-    #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-    friend iTracMoveSetPoint_c& getITracMoveSetPointInstance(uint8_t aui8_instance);
-    #else
-    friend iTracMoveSetPoint_c& getITracMoveSetPointInstance(void);
-    #endif
-
+#if ( PRT_INSTANCE_CNT == 1 )
+    friend iTracMoveSetPoint_c& getITracMoveSetPointInstance();
+#endif
+    friend iTracMoveSetPoint_c& getITracMoveSetPointInstance( unsigned instance );
   };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique TracMove_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  inline iTracMoveSetPoint_c& getITracMoveSetPointInstance(uint8_t aui8_instance = 0)
-  { return static_cast<iTracMoveSetPoint_c&>(__IsoAgLib::getTracMoveSetPointInstance(aui8_instance));};
-  #else
-  /** C-style function, to get access to the unique TracMove_c singleton instance */
-  inline iTracMoveSetPoint_c& getITracMoveSetPointInstance(void)
-  { return static_cast<iTracMoveSetPoint_c&>(__IsoAgLib::getTracMoveSetPointInstance());};
-  #endif
+#if ( PRT_INSTANCE_CNT == 1 )
+  inline iTracMoveSetPoint_c& getITracMoveSetPointInstance()
+  { return static_cast<iTracMoveSetPoint_c&>(__IsoAgLib::getTracMoveSetPointInstance( 0 )); }
+#endif
+  inline iTracMoveSetPoint_c& getITracMoveSetPointInstance( unsigned instance )
+  { return static_cast<iTracMoveSetPoint_c&>(__IsoAgLib::getTracMoveSetPointInstance( instance )); }
+
 }
 #endif

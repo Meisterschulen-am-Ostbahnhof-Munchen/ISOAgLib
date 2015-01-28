@@ -30,9 +30,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** C-style function, to get access to the unique TracGeneral_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracGeneral_c &getTracGeneralInstance( uint8_t aui8_instance )
+  TracGeneral_c &getTracGeneralInstance( unsigned instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(TracGeneral_c, PRT_INSTANCE_CNT, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracGeneral_c, PRT_INSTANCE_CNT, instance);
   }
 
   TracGeneral_c::TracGeneral_c()

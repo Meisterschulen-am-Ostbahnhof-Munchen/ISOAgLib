@@ -460,12 +460,9 @@ namespace __IsoAgLib {
     return mi32_lastIsoDirection;
   }
 
-  /** C-style function, to get access to the unique Base_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  TimePosGps_c &getTimePosGpsInstance( uint8_t aui8_instance )
+  TimePosGps_c &getTimePosGpsInstance( unsigned instance )
   {
-    MACRO_MULTITON_GET_INSTANCE_BODY(TimePosGps_c, PRT_INSTANCE_CNT, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TimePosGps_c, PRT_INSTANCE_CNT, instance);
   }
 
   /** check if a received GPS message should be parsed */

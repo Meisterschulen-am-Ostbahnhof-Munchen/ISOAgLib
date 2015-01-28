@@ -73,14 +73,10 @@ public:
 #endif
 
 private:
-  /** allow getIisoMonitorInstance() access to shielded base class.
-      otherwise __IsoAgLib::getIsoMonitorInstance() wouldn't be accepted by compiler
-    */
-  #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  friend iIsoMonitor_c& getIisoMonitorInstance( uint8_t aui8_instance );
-  #else
-  friend iIsoMonitor_c& getIisoMonitorInstance( void );
-  #endif
+#if ( PRT_INSTANCE_CNT == 1 )
+  friend iIsoMonitor_c& getIisoMonitorInstance();
+#endif
+  friend iIsoMonitor_c& getIisoMonitorInstance( unsigned instance );
 
   /** HIDDEN constructor for a iIsoMonitor_c object instance
     NEVER instantiate a variable of type iIsoMonitor_c within application
@@ -89,18 +85,12 @@ private:
   iIsoMonitor_c() : IsoMonitor_c() {}
 };
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique IsoMonitor_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  inline iIsoMonitor_c& getIisoMonitorInstance( uint8_t aui8_instance = 0 )
-  { return static_cast<iIsoMonitor_c&>(__IsoAgLib::getIsoMonitorInstance(aui8_instance));}
-#else
-  /** C-style function, to get access to the unique IsoMonitor_c singleton instance */
-  inline iIsoMonitor_c& getIisoMonitorInstance( void )
-  { return static_cast<iIsoMonitor_c&>(__IsoAgLib::getIsoMonitorInstance());}
+#if ( PRT_INSTANCE_CNT == 1 )
+  inline iIsoMonitor_c& getIisoMonitorInstance()
+  { return static_cast<iIsoMonitor_c&>(__IsoAgLib::getIsoMonitorInstance( 0 )); }
 #endif
-
+  inline iIsoMonitor_c& getIisoMonitorInstance( unsigned instance )
+  { return static_cast<iIsoMonitor_c&>(__IsoAgLib::getIsoMonitorInstance( instance )); }
 
 }
 #endif

@@ -145,13 +145,14 @@ public:
 
   /** list of all available clients which sends curvature commands */
   STL_NAMESPACE::map<uint8_t, CurvatureCommander_s> mmap_commanders; // mmap_commanders[sourceAddress]
-  friend TracGuidanceCommand_c &getTracGuidanceCommandInstance(uint8_t aui8_instance);
+
+  friend TracGuidanceCommand_c &getTracGuidanceCommandInstance( unsigned instance );
 };
 
 /** C-style function, to get access to the unique TracGuidanceCommand_c singleton instance
   * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
   */
-TracGuidanceCommand_c &getTracGuidanceCommandInstance(uint8_t aui8_instance = 0);
+TracGuidanceCommand_c &getTracGuidanceCommandInstance( unsigned instance );
 
 }//end namespache __IsoAgLib
 

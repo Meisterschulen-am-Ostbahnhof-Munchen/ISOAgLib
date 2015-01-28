@@ -25,8 +25,7 @@
 
 namespace __IsoAgLib {
 
-/** C-style function, to get access to the unique multiton instance */
-VtClient_c &getVtClientInstance( uint8_t instance )
+VtClient_c &getVtClientInstance( unsigned instance )
 { // if > 1 singleton instance is used, no static reference can be used
   MACRO_MULTITON_GET_INSTANCE_BODY(VtClient_c, PRT_INSTANCE_CNT, instance);
 }

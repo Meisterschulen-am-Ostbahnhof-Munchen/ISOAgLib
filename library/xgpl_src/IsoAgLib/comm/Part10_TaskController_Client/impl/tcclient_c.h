@@ -139,12 +139,13 @@ namespace __IsoAgLib {
       typedef STL_NAMESPACE::map<const IsoItem_c*, PdRemoteNode_c*> ItemToRemoteNodeMap_t;
       ItemToRemoteNodeMap_t m_pdRemoteNodes;
       STL_NAMESPACE::list<PdConnection_c*> m_connections;
-
-      friend TcClient_c &getTcClientInstance( uint8_t instance );
+  
+      friend TcClient_c &getTcClientInstance( unsigned instance );
       friend class ProcData_c;
   };
 
-  TcClient_c &getTcClientInstance( uint8_t instance = 0 );
+  TcClient_c &getTcClientInstance( unsigned instance );
+
 }
 
 #if defined(_MSC_VER)

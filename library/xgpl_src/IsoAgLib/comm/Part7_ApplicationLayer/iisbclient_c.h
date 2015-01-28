@@ -33,22 +33,18 @@ public:
   { __IsoAgLib::IsbClient_c::deregisterStateHandler( static_cast<__IsoAgLib::IdentItem_c&>( identItem ), handler ); }
 
 private:
-  /** allow getIisbClientInstance() access to shielded base class.
-      otherwise __IsoAgLib::getIsbClientInstance() wouldn't be accepted by compiler */
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  friend iIsbClient_c& getIisbClientInstance( unsigned instance );
-  #else
+#if ( PRT_INSTANCE_CNT == 1 )
   friend iIsbClient_c& getIisbClientInstance();
-  #endif
+#endif
+  friend iIsbClient_c& getIisbClientInstance( unsigned instance );
 };
 
-#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  inline iIsbClient_c& getIisbClientInstance( unsigned instance = 0 )
-  { return static_cast<iIsbClient_c&>( __IsoAgLib::getIsbClientInstance( instance ) ); }
-#else
+#if ( PRT_INSTANCE_CNT == 1 )
   inline iIsbClient_c& getIisbClientInstance()
-  { return static_cast<iIsbClient_c&>( __IsoAgLib::getIsbClientInstance() ); }
+  { return static_cast<iIsbClient_c&>( __IsoAgLib::getIsbClientInstance( 0 ) ); }
 #endif
+  inline iIsbClient_c& getIisbClientInstance( unsigned instance )
+  { return static_cast<iIsbClient_c&>( __IsoAgLib::getIsbClientInstance( instance ) ); }
 
 }
 

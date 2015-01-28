@@ -111,13 +111,20 @@ namespace IsoAgLib {
                           uint16_t element, uint16_t ddi, int32_t value );
       // ------------------------------------------------------------------------
 
-
     private:
-      friend iTcClient_c& getItcClientInstance( uint8_t instance );
+#if ( PRT_INSTANCE_CNT == 1 )
+      friend iTcClient_c& getItcClientInstance();
+#endif
+      friend iTcClient_c& getItcClientInstance( unsigned instance );
   };
 
 
-  inline iTcClient_c& getItcClientInstance( uint8_t instance = 0 ) {
+#if ( PRT_INSTANCE_CNT == 1 )
+  inline iTcClient_c& getItcClientInstance() {
+    return static_cast<iTcClient_c&>( __IsoAgLib::getTcClientInstance( 0 ) );
+  }
+#endif
+  inline iTcClient_c& getItcClientInstance( unsigned instance ) {
     return static_cast<iTcClient_c&>( __IsoAgLib::getTcClientInstance( instance ) );
   }
 

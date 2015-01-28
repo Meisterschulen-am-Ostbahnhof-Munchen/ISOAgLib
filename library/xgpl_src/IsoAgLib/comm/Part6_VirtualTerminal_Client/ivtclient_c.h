@@ -95,25 +95,19 @@ public:
   /** allow getIvtClientInstance() access to shielded base class.
       otherwise __IsoAgLib::getVtClientInstance() wouldn't be accepted by compiler
     */
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  friend iVtClient_c& getIvtClientInstance (uint8_t aui8_instance);
-  #else
-  friend iVtClient_c& getIvtClientInstance (void);
-  #endif
+#if ( PRT_INSTANCE_CNT == 1 )
+  friend iVtClient_c& getIvtClientInstance();
+#endif
+  friend iVtClient_c& getIvtClientInstance( unsigned instance );
   friend class iVtClientConnection_c;
 };
 
-#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique VtClient_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  inline iVtClient_c& getIvtClientInstance (uint8_t aui8_instance = 0)
-  { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance(aui8_instance)); }
-#else
-  /** C-style function, to get access to the unique Process_c singleton instance */
-  inline iVtClient_c& getIvtClientInstance (void)
-  { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance()); }
+#if ( PRT_INSTANCE_CNT == 1 )
+  inline iVtClient_c& getIvtClientInstance()
+  { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( 0 )); }
 #endif
+  inline iVtClient_c& getIvtClientInstance( unsigned instance )
+  { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( instance )); }
 
 }
 
