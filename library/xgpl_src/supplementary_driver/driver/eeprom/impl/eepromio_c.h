@@ -15,6 +15,7 @@
 #define EEPROM_IO_H
 
 #include <supplementary_driver/hal/hal_eeprom.h>
+#include <IsoAgLib/util/iassert.h>
 
 
 namespace __IsoAgLib 
