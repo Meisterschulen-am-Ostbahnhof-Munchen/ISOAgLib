@@ -61,6 +61,12 @@ namespace HAL
   */
   int16_t getAdc_u85();
 
+  /**
+    get the voltage of the external reference 5Volt for work of external sensors
+    @return voltage at external reference [mV]
+  */
+  int16_t getAdc_u5();
+
   /** allow the HAL to power down the system (or not) */
   void powerHold( bool ab_on );
 

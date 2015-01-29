@@ -93,6 +93,11 @@ public:
   */
   inline uint32_t lastSignalAge();
 
+  /**
+   @return TRUE if voltage on pin is above limit (digital input functionality)
+  */
+  inline bool isCounterOn();
+
 private:
   // unimplemented, not copyable
   CounterI_c(const CounterI_c&);
@@ -168,6 +173,14 @@ uint32_t
 CounterI_c::lastSignalAge()
 {
   return HAL::getCounterLastSignalAge(channelNr());
+}
+
+
+inline
+bool
+CounterI_c::isCounterOn()
+{
+  return HAL::getCounterOn(channelNr());
 }
 
 

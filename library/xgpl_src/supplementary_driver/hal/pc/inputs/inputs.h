@@ -101,6 +101,12 @@ namespace HAL
   inline uint32_t getCounterLastSignalAge(uint8_t ab_channel)
   { return __HAL::getCounterLastSignalAge(ab_channel); }
 
+  inline bool getCounterOn(uint8_t ab_channel)
+  { return __HAL::getCounterOn(ab_channel); }
+
+  inline uint16_t getDutyCycle(uint8_t ab_channel)
+  { return __HAL::getDutyCycle(ab_channel); }
+
   inline void setFastAnalogin(bool bMode)
   { __HAL::setFastAnalogin(bMode); }
 

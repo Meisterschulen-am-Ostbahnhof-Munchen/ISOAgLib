@@ -53,6 +53,9 @@ public:
   virtual int16_t resetCounter( uint8_t /*bInput*/ ) { return 0; }
   virtual uint32_t getCounterLastSignalAge( uint8_t /*bInput*/ ) { return 0; }
 
+  virtual bool getCounterOn( uint8_t /*ab_channel*/ ) { return false; }
+  virtual uint16_t getDutyCycle( uint8_t /*ab_channel*/ ) { return 0; }
+
   // RS-232
   virtual void init_rs232( uint32_t /*baudrate*/, uint8_t /*bMode*/, uint8_t /*bStoppbits*/, bool /*bitSoftwarehandshake*/, uint8_t /*comport*/ ) {}
   virtual void write_rs232( uint8_t /*aui8_channel*/, const uint8_t * /*lpBuf*/, uint16_t /*dwToWrite*/ )	{}

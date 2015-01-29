@@ -541,4 +541,19 @@ uint16_t getCounterLastSignalAge(uint8_t ab_channel)
   return uiResult;
 }
 
+
+bool
+getCounterOn(uint8_t ab_channel)
+{
+  return false;
+}
+
+
+uint16_t
+getDutyCycle(uint8_t ab_channel)
+{
+  return 0;
+}
+
+
 } // __HAL

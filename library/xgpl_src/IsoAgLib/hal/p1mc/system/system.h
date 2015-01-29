@@ -74,6 +74,8 @@ namespace HAL
 
   inline int16_t getAdc_u85() {return 8500;}
 
+  inline int16_t getAdc_u5() { return 5000; }
+
   inline void sleep_max_ms( uint32_t ms ) { /* no sleep on the p1mc, but we don't need to ;-) */ }
 }
 #endif

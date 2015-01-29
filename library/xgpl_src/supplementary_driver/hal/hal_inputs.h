@@ -184,6 +184,11 @@ namespace HAL
     @return ON, OFF or C_RANGE
   */
   int16_t getDiginOnoffStatic(uint8_t ab_channelNumber);
+ 
+  bool getCounterOn(uint8_t ab_channelNumber);
+  
+  uint16_t getDutyCycle(uint8_t ab_channelNumber);
+
 } // HAL
 
 

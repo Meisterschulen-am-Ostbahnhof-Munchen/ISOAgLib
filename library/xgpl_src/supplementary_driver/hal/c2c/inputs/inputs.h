@@ -108,6 +108,11 @@ namespace HAL
   inline uint32_t getCounterLastSignalAge(uint8_t ab_channel)
   { return (ab_channel == DIN1) ? __HAL::getCounterLastSignalAge() : 0xFFFF; }
 
+  inline bool getCounterOn(uint8_t /*ab_channel*/)
+  { isoaglib_header_assert( !"Not yet implemented for this platform!" ); return false; }
+
+  inline uint16_t getDutyCycle(uint8_t /*ab_channel*/)
+  { isoaglib_header_assert( !"Not yet implemented for this platform!" ); return 0; }
 
   inline void setFastAnalogin(bool bMode)
   { /** !!! the C2C doesn't provide setFastAnalogin !! */ }

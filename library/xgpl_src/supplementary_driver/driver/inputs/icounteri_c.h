@@ -84,6 +84,12 @@ public:
   uint32_t frequency() {return CounterI_c::frequency();}
 
   /**
+    get the ON state (voltage above limit on pin)
+    @return TRUE if voltage above limit
+  */
+  bool isCounterOn() {return CounterI_c::isCounterOn();}
+
+  /**
     get time since last signal
     @return time since last signal [msec.]
   */

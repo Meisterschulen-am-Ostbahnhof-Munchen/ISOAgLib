@@ -69,6 +69,8 @@ int16_t resetCounter(uint8_t ab_channel);
 uint32_t getCounterPeriod_us(uint8_t ab_channel);
 uint32_t getCounterFrequency(uint8_t ab_channel);
 uint16_t getCounterLastSignalAge(uint8_t ab_channel);
+bool     getCounterOn(uint8_t ab_channel);
+uint16_t getDutyCycle(uint8_t ab_channel);
 
 /*@}*/
 

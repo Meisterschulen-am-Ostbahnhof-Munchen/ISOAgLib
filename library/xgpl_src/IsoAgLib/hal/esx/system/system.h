@@ -74,6 +74,8 @@ namespace HAL
     { int16_t i16_temp = __HAL::get_adc(GET_U_EXT_8_5_V);
       return ((i16_temp * 14) + ((i16_temp * 67)/100)); }
 
+  inline int16_t getAdc_u5() { return 5000; }
+
   inline bool getOn_offSwitch() { return ( ON == __HAL::get_on_off_switch() ); }
 
   inline void powerHold( bool ab_on ) { ab_on ? __HAL::staying_alive(): __HAL::power_down(); }

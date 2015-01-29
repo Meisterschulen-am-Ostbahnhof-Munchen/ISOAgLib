@@ -168,4 +168,18 @@ getCounterLastSignalAge(uint8_t ab_channel)
 }
 
 
+bool
+getCounterOn(uint8_t ab_channel)
+{
+  return halSimulator().getCounterOn( ab_channel );
+}
+
+
+uint16_t
+getDutyCycle(uint8_t ab_channel)
+{
+  return halSimulator().getDutyCycle( ab_channel );
+}
+
+
 } // __HAL
