@@ -66,6 +66,9 @@ namespace __IsoAgLib {
       void disconnect( const IdentItem_c& );
       void disconnect( const PdConnection_c& );
 
+      void proprietaryServerRemovedFromMonitorList( const IsoItem_c & );
+      void proprietaryServerAddedToMonitorList( const IsoItem_c & );
+
       void getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill );
 
       void processChangeDesignator( const IdentItem_c&, uint16_t, const char* );
@@ -87,6 +90,9 @@ namespace __IsoAgLib {
       void processMsg( const CanPkg_c& );
       void reactOnIsoItemModification ( ControlFunctionStateHandler_c::iIsoItemAction_e, IsoItem_c const& );
 
+      void removeRemotePd( const IsoItem_c & );
+      void addServer( const IsoItem_c &, IsoAgLib::ProcData::RemoteType_t type );
+  
       /// PROXY-CLASSES
       class CanCustomerProxy_c : public CanCustomer_c {
         public:

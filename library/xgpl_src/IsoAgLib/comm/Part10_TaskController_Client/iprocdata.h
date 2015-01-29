@@ -26,7 +26,8 @@ namespace IsoAgLib
   {
     enum RemoteType_t {
       RemoteTypeTaskController,
-      RemoteTypeDataLogger };
+      RemoteTypeDataLogger,
+      RemoteTypeProprietary };
 
     enum MeasurementCommand_t { 
       MeasurementCommandTimeProp =          0x4,

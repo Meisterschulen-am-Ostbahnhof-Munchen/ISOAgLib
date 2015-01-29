@@ -271,37 +271,68 @@ namespace __IsoAgLib {
       switch( isoItem.isoName().getEcuType() )
       {
       case IsoName_c::ecuTypeTaskControl:
-        m_pdRemoteNodes[ &isoItem ] = new ServerInstance_c( isoItem, IsoAgLib::ProcData::RemoteTypeTaskController );
+        addServer( isoItem, IsoAgLib::ProcData::RemoteTypeTaskController );
         break;
 
       case IsoName_c::ecuTypeDataLogger:
-        m_pdRemoteNodes[ &isoItem ] = new ServerInstance_c( isoItem, IsoAgLib::ProcData::RemoteTypeDataLogger );
+        addServer( isoItem, IsoAgLib::ProcData::RemoteTypeDataLogger );
         break;
       }
       break;
 
     case ControlFunctionStateHandler_c::RemoveFromMonitorList:
-      {
-        ItemToRemoteNodeMap_t::iterator i = m_pdRemoteNodes.find( &isoItem );
-        if( i != m_pdRemoteNodes.end() )
-        {
-          if( i->second->isServer() )
-          {
-            ServerInstance_c* server = static_cast<ServerInstance_c *>( i->second );
-            if( server->isAlive() )
-              notifyServerStatusChange( *server, false );
-          }
-          else
-            notifyPdNodeDestruction( *(i->second) );
-
-          delete i->second;
-          m_pdRemoteNodes.erase( i );
-        }
-      }
+      removeRemotePd( isoItem );
       break;
 
     default:
       ;
+    }
+  }
+
+
+  void
+  TcClient_c::proprietaryServerAddedToMonitorList( const IsoItem_c &isoItem )
+  {
+    addServer( isoItem, IsoAgLib::ProcData::RemoteTypeProprietary );
+  }
+
+
+  void
+  TcClient_c::proprietaryServerRemovedFromMonitorList( const IsoItem_c &isoItem )
+  {
+    isoaglib_assert( m_pdRemoteNodes.find( &isoItem ) != m_pdRemoteNodes.end() );
+    isoaglib_assert( m_pdRemoteNodes.find( &isoItem )->second->isServer() );
+
+    removeRemotePd( isoItem );
+  }
+
+  void
+  TcClient_c::addServer( const IsoItem_c& isoItem, IsoAgLib::ProcData::RemoteType_t type )
+  {
+    isoaglib_assert( m_pdRemoteNodes.find( &isoItem ) == m_pdRemoteNodes.end() );
+    isoaglib_assert( !isoItem.itemState( IState_c::Local ) );
+
+    m_pdRemoteNodes[ &isoItem ] = new ServerInstance_c( isoItem, type );
+  }
+
+
+  void
+  TcClient_c::removeRemotePd( const IsoItem_c& isoItem )
+  {
+    ItemToRemoteNodeMap_t::iterator i = m_pdRemoteNodes.find( &isoItem );
+    if( i != m_pdRemoteNodes.end() )
+    {
+      if( i->second->isServer() )
+      {
+        ServerInstance_c* server = static_cast<ServerInstance_c *>( i->second );
+        if( server->isAlive() )
+          notifyServerStatusChange( *server, false );
+      }
+      else
+        notifyPdNodeDestruction( *(i->second) );
+
+      delete i->second;
+      m_pdRemoteNodes.erase( i );
     }
   }
 

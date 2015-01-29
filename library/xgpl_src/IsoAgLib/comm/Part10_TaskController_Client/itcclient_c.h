@@ -70,9 +70,12 @@ namespace IsoAgLib {
           const iIdentItem_c&,
           iPdPool_c& );
 
-      void disconnect( iIdentItem_c& );
-      void disconnect( iTcClientConnection_c& );
-      void disconnect( iPdConnection_c& );
+      void disconnect( const iIdentItem_c & );
+      void disconnect( const iTcClientConnection_c & );
+      void disconnect( const iPdConnection_c & );
+
+      void proprietaryServerRemovedFromMonitorList( const iIsoItem_c & );
+      void proprietaryServerAddedToMonitorList( const iIsoItem_c & );
 
       void getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill );
 
@@ -186,19 +189,19 @@ namespace IsoAgLib {
         static_cast<__IsoAgLib::PdPool_c&>( pool ) ) );
   }
 
-  inline void iTcClient_c::disconnect( iIdentItem_c& identItem )
+  inline void iTcClient_c::disconnect( const iIdentItem_c & identItem )
   {
-    TcClient_c::disconnect( static_cast<__IsoAgLib::IdentItem_c&>( identItem ) );
+    TcClient_c::disconnect( static_cast<const __IsoAgLib::IdentItem_c&>( identItem ) );
   }
 
-  inline void iTcClient_c::disconnect( iTcClientConnection_c& connection )
+  inline void iTcClient_c::disconnect( const iTcClientConnection_c & connection )
   {
-    TcClient_c::disconnect( static_cast<__IsoAgLib::TcClientConnection_c&>( connection ) );
+    TcClient_c::disconnect( static_cast<const __IsoAgLib::TcClientConnection_c&>( connection ) );
   }
       
-  inline void iTcClient_c::disconnect( iPdConnection_c& connection )
+  inline void iTcClient_c::disconnect( const iPdConnection_c& connection )
   {
-    TcClient_c::disconnect( static_cast<__IsoAgLib::PdConnection_c&>( connection ) );
+    TcClient_c::disconnect( static_cast<const __IsoAgLib::PdConnection_c&>( connection ) );
   }
       
   inline void iTcClient_c::getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill )
