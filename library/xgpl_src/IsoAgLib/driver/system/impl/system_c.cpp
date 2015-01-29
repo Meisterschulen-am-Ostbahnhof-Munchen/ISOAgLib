@@ -10,10 +10,11 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #include "system_c.h"
 
 #include <IsoAgLib/util/iliberr_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
+
 
 namespace __IsoAgLib {
 

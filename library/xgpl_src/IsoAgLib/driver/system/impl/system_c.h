@@ -10,14 +10,10 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include <IsoAgLib/isoaglib_config.h>
-
 #include <IsoAgLib/hal/hal_system.h>
-#include <IsoAgLib/util/impl/singleton.h>
 
 namespace __IsoAgLib {
 

@@ -14,8 +14,6 @@
 #ifndef EEPROM_IO_H
 #define EEPROM_IO_H
 
-#include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/hal/hal_eeprom.h>
 
 

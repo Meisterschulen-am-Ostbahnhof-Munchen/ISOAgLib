@@ -13,9 +13,10 @@
 */
 
 #include "eepromio_c.h"
-#include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/iliberr_c.h>
 
 
 // Begin Namespace __IsoAgLib
@@ -108,15 +109,26 @@ EepromIo_c::readString(uint8_t *const apb_string, uint16_t aui16_number)
 
 
 bool
-EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* apb_data)
+EepromIo_c::write(uint16_t aui16_address, uint16_t aui16_number, const uint8_t* apb_data)
 {
+  isoaglib_assert( (uint32_t(aui16_address) + uint32_t(aui16_number)) <= eepromSize() );
+
+#ifdef HAL_USE_BUFFERED_EEPROM
+  if( aui16_number > 0 )
+  {
+    // if the EEPROM is buffered, we can just pass all the data to it,
+    // no need to compare the EEPROM or wait until it's ready...
+    // set EEPROM to writable
+    setState4BiosReturn( HAL::eepromWp( false ) );
+    setState4BiosReturn( HAL::eepromWrite( aui16_address, aui16_number, apb_data ) );
+  }
+  return true;
+#else
   uint16_t ui16_restNumber = aui16_number,
-       ui16_actualStart = aui16_adress,
+       ui16_actualStart = aui16_address,
        ui16_actualSize;
   const uint8_t* pb_data = apb_data;
   uint8_t pb_compare[MAX_EEPROM_SEGMENT_SIZE];
-
-  isoaglib_assert( (uint32_t(aui16_adress) + uint32_t(aui16_number)) <= eepromSize() );
 
   while (ui16_restNumber > 0)
   { // if data doesn't fit in one segment write with series of BIOS write calls
@@ -175,7 +187,8 @@ EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* a
       }
     } // if write init
   } // while
-  return ( IsoAgLib::getILibErrInstance().good( IsoAgLib::iLibErr_c::HalEpromWriteError, 0 ) );
+  return( IsoAgLib::getILibErrInstance().good( IsoAgLib::iLibErr_c::HalEpromWriteError, 0 ) );
+#endif
 }
 
 
@@ -207,16 +220,23 @@ EepromIo_c::writeInit()
 
 int16_t
 EepromIo_c::wait_eepromReady( void )
-{ // test if EEPROM is ready for up to 1000msec.
+{
+#ifdef HAL_USE_BUFFERED_EEPROM
+  // if it's buffered, it's always ready!
+  return HAL_NO_ERR;
+#endif
+  // test if EEPROM is ready for up to 1000msec.
   // don't builf timestamps, if EEPROM immediately ready
-  if(HAL::eepromReady() == HAL_NO_ERR ) return HAL_NO_ERR;
+  if(HAL::eepromReady() == HAL_NO_ERR )
+    return HAL_NO_ERR;
 
   int16_t i16_result = HAL_BUSY_ERR;
   int32_t i32_startTime = HAL::getTime();
   while ((HAL::getTime() - i32_startTime) < 1000)
   { // call BIOS function and exit loop if EEPROM is ready
     i16_result = HAL::eepromReady();
-    if( i16_result == HAL_NO_ERR ) break;
+    if( i16_result == HAL_NO_ERR )
+      break;
   }
   return i16_result;
 }
