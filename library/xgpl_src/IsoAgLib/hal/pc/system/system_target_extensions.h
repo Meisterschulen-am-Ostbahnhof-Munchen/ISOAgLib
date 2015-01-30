@@ -40,6 +40,7 @@ public:
   virtual void eventMainRelais( bool /*on*/ ) {}
   virtual void eventSetPwmFreq(uint8_t /*bOutputGroup*/, uint32_t /*dwFrequency*/) {}
   virtual void eventSetDigout(uint8_t /*bOutputNo*/, uint16_t /*wPWMValue*/) {}
+  virtual int16_t getDigoutDiagnose(uint8_t /*aui8_channel*/, uint16_t /*aui16_minCurrent*/, uint16_t /*aui16_maxCurrent*/ ) { return 0; }
 
   // Inputs
   virtual void init_digin( uint8_t /*bInput*/, uint8_t /*bMode*/, uint8_t /*bAktivhighlow*/, void (*pfFunctionName)(...) ) { (void)pfFunctionName; }
