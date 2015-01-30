@@ -216,6 +216,16 @@
 #endif
 /*@}*/
 
+// Using 1.5s as stated in Annex F.
+// There should not be a need to change this value.
+#ifndef CONFIG_VT_CLIENT_ANNEX_F_COMMAND_TIMEOUT
+#  define CONFIG_VT_CLIENT_ANNEX_F_COMMAND_TIMEOUT 1500
+#endif
+
+#ifndef CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES
+#  define CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES 2
+#endif
+
 
 /* ***** Auto-set dependant defines ***** */
 

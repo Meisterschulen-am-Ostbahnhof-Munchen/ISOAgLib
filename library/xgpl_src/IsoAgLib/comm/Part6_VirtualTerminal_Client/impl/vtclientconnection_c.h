@@ -180,7 +180,7 @@ private:
   VtServerInstance_c* mpc_vtServerInstance;
 
   uploadType_t men_uploadType;
-#ifdef ENABLE_VTCLIENT_RETRY
+#if CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES > 0
   unsigned m_uploadRetry;
 #endif
 

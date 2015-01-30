@@ -119,7 +119,7 @@ VtClientConnection_c::VtClientConnection_c(
   , mrc_vtClient( r_vtclient )
   , mpc_vtServerInstance( NULL )
   , men_uploadType( UploadIdle )
-#ifdef ENABLE_VTCLIENT_RETRY
+#if CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES > 0
   , m_uploadRetry( 0 )
 #endif
   , mi32_nextWsMaintenanceMsg( -1 )
@@ -269,7 +269,7 @@ VtClientConnection_c::timeEvent()
     if( commandHandler().tryToStart() )
     {
       men_uploadType = UploadCommand;
-#ifdef ENABLE_VTCLIENT_RETRY
+#if CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES > 0
       m_uploadRetry = 0; // first try
 #endif
     }
@@ -280,8 +280,8 @@ VtClientConnection_c::timeEvent()
     if( cmdTimedOut == 0x00 )
       break;
 
-#ifdef ENABLE_VTCLIENT_RETRY
-    if( m_uploadRetry < 2 )
+#if CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES > 0
+    if( m_uploadRetry < CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES )
     {
       ( void )commandHandler().tryToStart();
       ++m_uploadRetry;
