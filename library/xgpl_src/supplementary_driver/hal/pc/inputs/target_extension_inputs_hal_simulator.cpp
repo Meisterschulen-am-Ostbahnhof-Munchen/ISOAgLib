@@ -61,6 +61,13 @@ getDiginOnoffStatic(uint8_t bInputNumber)
 
 
 int16_t
+getDiginDiagState(uint8_t bInputNumber)
+{
+  return halSimulator().getDiginDiagState( bInputNumber );
+}
+ 
+
+int16_t
 setDiginPrescaler(uint8_t /*bGroup*/, uint8_t /*bMode*/)
 {
   return HAL_NO_ERR;
@@ -85,6 +92,13 @@ getAdc(uint8_t bKanalnummer)
     return halSimulator().getAdc( bKanalnummer );
   else
     return HAL_RANGE_ERR;
+}
+
+
+int16_t
+getAnalogInDiagState(uint8_t bInputNumber)
+{
+  return halSimulator().getAnalogInDiagState( bInputNumber );
 }
 
 
@@ -165,6 +179,13 @@ uint16_t
 getCounterLastSignalAge(uint8_t ab_channel)
 {
   return halSimulator().getCounterLastSignalAge( ab_channel );
+}
+
+
+int16_t
+getCounterDiagState(uint8_t ab_channel)
+{
+  return halSimulator().getCounterDiagState( ab_channel );
 }
 
 

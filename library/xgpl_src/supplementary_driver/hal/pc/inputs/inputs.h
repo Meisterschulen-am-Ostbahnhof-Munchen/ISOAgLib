@@ -101,6 +101,9 @@ namespace HAL
   inline uint32_t getCounterLastSignalAge(uint8_t ab_channel)
   { return __HAL::getCounterLastSignalAge(ab_channel); }
 
+  inline int16_t getCounterDiagState(uint8_t ab_channel)
+  { return __HAL::getCounterDiagState(ab_channel); }
+
   inline bool getCounterOn(uint8_t ab_channel)
   { return __HAL::getCounterOn(ab_channel); }
 
@@ -138,6 +141,11 @@ namespace HAL
     // use 1:1 value mappgin for PC test
     // return ((i16_temp * 24) + ((i16_temp * 41)/100));};
     return i16_temp;
+  }
+
+  inline int16_t getAnalogInDiagState(uint8_t bInputNumber)
+  {
+    return __HAL::getAnalogInDiagState(bInputNumber);
   }
 
   inline int16_t  getAdcMeanCurrent(uint8_t ab_channel)
@@ -192,6 +200,9 @@ namespace HAL
 
   inline int16_t  getDiginOnoffStatic(uint8_t bInputNumber)
   { return __HAL::getDiginOnoffStatic(bInputNumber); }
+
+  inline int16_t getDiginDiagState(uint8_t bInputNumber)
+  { return __HAL::getDiginDiagState(bInputNumber); }
 
   inline uint8_t getUbatAdcCheckNr()
   { return GET_U_C; }

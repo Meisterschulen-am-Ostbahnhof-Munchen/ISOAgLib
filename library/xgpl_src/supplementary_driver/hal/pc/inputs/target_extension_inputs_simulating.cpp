@@ -543,16 +543,37 @@ uint16_t getCounterLastSignalAge(uint8_t ab_channel)
 
 
 bool
-getCounterOn(uint8_t ab_channel)
+getCounterOn(uint8_t /*ab_channel*/)
 {
   return false;
 }
 
 
 uint16_t
-getDutyCycle(uint8_t ab_channel)
+getDutyCycle(uint8_t /*ab_channel*/)
 {
   return 0;
+}
+
+
+int16_t
+getDiginDiagState(uint8_t /*bInputNumber*/)
+{
+  return HAL_NO_ERR;
+}
+ 
+
+int16_t
+getAnalogInDiagState(uint8_t /*bInputNumber*/)
+{
+  return HAL_NO_ERR;
+}
+
+
+int16_t
+getCounterDiagState(uint8_t /*ab_channel*/)
+{
+  return HAL_NO_ERR;
 }
 
 

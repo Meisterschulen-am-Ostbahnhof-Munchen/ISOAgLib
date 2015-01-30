@@ -48,11 +48,13 @@ namespace __HAL {
 int16_t  init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(...));
 int16_t  getDiginOnoff(uint8_t bInputNumber);
 int16_t  getDiginOnoffStatic(uint8_t bInputNumber);
+int16_t  getDiginDiagState(uint8_t bInputNumber);
 int16_t  setDiginPrescaler(uint8_t bGroup, uint8_t bMode);
 int16_t  getDiginFreq(uint8_t bInput, uint32_t *pwFrequency);
 
 
 int16_t  getAdc(uint8_t bKanalnummer);              /* evaluation of analog channels */
+int16_t  getAnalogInDiagState(uint8_t bInputNumber);
 int16_t  init_analogin(uint8_t bNumber, uint8_t bType); /* initialisation of analog inputs */
 void setFastAnalogin(boolean bMode);        /* switching between fast and slow input sampling */
 int16_t  getAnaloginMean(uint8_t bInput);          /* evaluation of the mean value of an analog input */
@@ -69,6 +71,7 @@ int16_t resetCounter(uint8_t ab_channel);
 uint32_t getCounterPeriod_us(uint8_t ab_channel);
 uint32_t getCounterFrequency(uint8_t ab_channel);
 uint16_t getCounterLastSignalAge(uint8_t ab_channel);
+int16_t  getCounterDiagState(uint8_t ab_channel);
 bool     getCounterOn(uint8_t ab_channel);
 uint16_t getDutyCycle(uint8_t ab_channel);
 

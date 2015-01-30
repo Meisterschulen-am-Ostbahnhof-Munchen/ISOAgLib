@@ -46,11 +46,14 @@ public:
   virtual void init_analogin( uint8_t /*bNumber*/, uint8_t /*bType*/ ) {}
   virtual void init_counter(uint8_t /*bInput*/, uint16_t /*aui16_timebase*/, boolean /*ab_activHigh*/, boolean /*ab_risingEdge*/) {}
   virtual int16_t getDiginOnoff( uint8_t /*bInputNumber*/ ) { return false; }
+  virtual int16_t getDiginDiagState( uint8_t /*bInputNumber*/ ) { return HAL_NO_ERR; }
   virtual uint32_t getCounterPeriod_us( uint8_t /*bInput*/ ) { return 0xFFFFFFFFUL; }
   virtual void getDiginFreq( uint8_t /*bInput*/, uint32_t *pwFrequency ) { *pwFrequency = 0; }
   virtual int16_t getAdc( uint8_t /*bKanalnummer*/ ) { return 0; }
+  virtual int16_t getAnalogInDiagState( uint8_t /*bKanalnummer*/ ) { return HAL_NO_ERR; }
   virtual uint32_t getCounter( uint8_t /*bInput*/ ) { return 0; }
   virtual int16_t resetCounter( uint8_t /*bInput*/ ) { return 0; }
+  virtual int16_t getCounterDiagState( uint8_t /*bInputNumber*/ ) { return HAL_NO_ERR; }
   virtual uint32_t getCounterLastSignalAge( uint8_t /*bInput*/ ) { return 0; }
 
   virtual bool getCounterOn( uint8_t /*ab_channel*/ ) { return false; }

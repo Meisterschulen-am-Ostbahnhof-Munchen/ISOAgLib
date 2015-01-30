@@ -185,10 +185,12 @@ namespace HAL
   */
   int16_t getDiginOnoffStatic(uint8_t ab_channelNumber);
  
-  bool getCounterOn(uint8_t ab_channelNumber);
-  
-  uint16_t getDutyCycle(uint8_t ab_channelNumber);
+  bool getCounterOn(uint8_t channelNumber);
+  uint16_t getDutyCycle(uint8_t channelNumber);
 
+  int16_t getCounterDiagState(uint8_t channelNumber);
+  int16_t getAnalogInDiagState(uint8_t channelNumber);
+  int16_t getDiginDiagState(uint8_t channelNumber);
 } // HAL
 
 

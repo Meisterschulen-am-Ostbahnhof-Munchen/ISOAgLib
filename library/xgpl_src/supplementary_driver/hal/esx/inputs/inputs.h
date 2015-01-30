@@ -93,6 +93,15 @@ namespace HAL
   inline uint16_t getDutyCycle(uint8_t /*ab_channel*/)
   { isoaglib_header_assert( !"Not yet implemented for this platform!" ); return 0; }
 
+  int16_t getCounterDiagState(uint8_t /*ab_channel*/)
+  { isoaglib_header_assert( !"Not yet implemented for this platform!" ); return HAL_NO_ERR; }
+
+  int16_t getAnalogInDiagState(uint8_t /*ab_channel*/)
+  { isoaglib_header_assert( !"Not yet implemented for this platform!" ); return HAL_NO_ERR; }
+
+  int16_t getDiginDiagState(uint8_t /*ab_channel*/)
+  { isoaglib_header_assert( !"Not yet implemented for this platform!" ); return HAL_NO_ERR; }
+
   inline void setFastAnalogin(bool bMode)
   {__HAL::set_fast_analogin(bMode);}
 
