@@ -24,6 +24,8 @@ namespace __HAL {
 
   void setMainRelais( bool on );
 
+  int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent );
+
 /*@}*/
 
 } // __HAL

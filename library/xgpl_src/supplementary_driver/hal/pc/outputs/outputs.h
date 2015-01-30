@@ -61,8 +61,8 @@ namespace HAL
     else return -1;
   }
 
-  inline int16_t getDigoutDiagnose(uint8_t /* aui8_channel */, uint16_t /* aui16_minCurrent */, uint16_t /* aui16_maxCurrent */)
-  { return HAL_NO_ERR; }
+  inline int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent )
+  { return __HAL::getDigoutDiagnose(aui8_channel, aui16_minCurrent, aui16_maxCurrent ); }
 
   inline int16_t getDigoutAdc( uint8_t /* aui8_channel */ )
   { return 1000; }

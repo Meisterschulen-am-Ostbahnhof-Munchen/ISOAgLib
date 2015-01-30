@@ -55,4 +55,11 @@ setDigout(uint8_t bOutputNo, uint16_t wPWMValue )
 }
 
 
+int16_t
+getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent )
+{ 
+  return halSimulator().getDigoutDiagnose(aui8_channel, aui16_minCurrent, aui16_maxCurrent );
+}
+
+
 }

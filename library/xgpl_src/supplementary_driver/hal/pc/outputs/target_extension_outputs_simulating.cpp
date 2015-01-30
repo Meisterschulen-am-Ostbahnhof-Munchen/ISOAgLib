@@ -43,4 +43,12 @@ setDigout( uint8_t bOutputNo, uint16_t wPWMValue )
   return HAL_NO_ERR;
 }
 
-} // __HAL
+
+int16_t
+getDigoutDiagnose(uint8_t /*aui8_channel*/, uint16_t /*aui16_minCurrent*/, uint16_t /*aui16_maxCurrent*/ )
+{ 
+  return HAL_NO_ERR;
+}
+
+
+}
