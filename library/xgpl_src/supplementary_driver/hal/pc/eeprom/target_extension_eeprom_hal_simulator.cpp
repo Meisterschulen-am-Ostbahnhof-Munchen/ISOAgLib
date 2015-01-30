@@ -43,7 +43,7 @@ namespace __HAL {
 #endif
 
 #ifndef HAL_SIMULATOR_EEPROM_SEGMENT_SIZE
-#  define HAL_SIMULATOR_EEPROM_SIZE   (32)
+#  define HAL_SIMULATOR_EEPROM_SEGMENT_SIZE   (32)
 #endif
 
 
@@ -60,7 +60,7 @@ uint32_t getEepromSize(void)
 
 /* get the segment size of the eeprom for page write access */
 int16_t getEepromSegmentSize(void){
-  return HAL_SIMULATOR_EEPROM_SIZE;
+  return HAL_SIMULATOR_EEPROM_SEGMENT_SIZE;
 };
 
 /* get the status of eeprom */
