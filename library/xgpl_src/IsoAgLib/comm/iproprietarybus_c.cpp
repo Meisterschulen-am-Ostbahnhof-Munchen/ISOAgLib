@@ -19,7 +19,7 @@ namespace IsoAgLib
 
 iProprietaryBus_c &getIProprietaryBusInstance( unsigned instance )
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(iProprietaryBus_c, CAN_INSTANCE_CNT, instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(iProprietaryBus_c, PROP_INSTANCE_CNT, instance);
 }
 
 }
