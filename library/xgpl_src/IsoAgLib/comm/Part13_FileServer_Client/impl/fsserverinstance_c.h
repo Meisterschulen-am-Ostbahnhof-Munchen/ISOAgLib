@@ -57,6 +57,7 @@ class FsServerInstance_c
     {
       offline,  // AC is there, node is known as FileServerOrPrinter
       online,   // FS Status Message is being received => start communication
+      usablePending, // finished querying all properties, go to usable in timeEvent (NOT directly in processMsg!)
       usable,   // FsCSCs now know about this FS and it is free to be used now...
       unusable  // FS did something uncompliant (not answered or wrong answers, etc.)
     };

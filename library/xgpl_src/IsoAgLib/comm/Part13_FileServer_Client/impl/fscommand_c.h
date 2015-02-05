@@ -126,7 +126,11 @@ class FsCommand_c : CanCustomer_c
         will retry until it could be started... */
     void sendMultiPacketTry();
 
-    void processMsgIso( const CanPkgExt_c& pkg );
+    enum ProcessResult_t {
+      CommandFinished,
+      CommandRunning
+    };
+    ProcessResult_t processMsgIso( const CanPkgExt_c& pkg );
 
     /**
       * Method called by FsClientServerCommunciation_c. After the response of get current directory, the fileserver is considered to

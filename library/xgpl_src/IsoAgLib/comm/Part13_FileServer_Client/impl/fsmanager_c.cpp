@@ -44,28 +44,6 @@ FsManager_c::timeEvent(void)
   {
     (*it_serverInstance)->timeEvent();
   }
-
-  for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.ml_initializingCommands.begin();
-       it_command != m_commands.ml_initializingCommands.end(); )
-  {
-    isoaglib_assert (*it_command);
-    switch ((*it_command)->getFileserver().getState())
-    {
-      case FsServerInstance_c::offline:
-        // @todo in case of going offline delete command?
-      case FsServerInstance_c::online:
-        // In these cases wait until initialization is complete
-        ++it_command;
-        break;
-
-      case FsServerInstance_c::usable:
-      case FsServerInstance_c::unusable:
-        // Finished the initialization one way or another
-        delete (*it_command);
-        it_command = m_commands.ml_initializingCommands.erase(it_command);
-        break;
-    }
-  }
 }
 
 
@@ -237,6 +215,10 @@ FsManager_c::notifyOnFileserverStateChange(FsServerInstance_c &fileserver, FsSer
       }
       break;
 
+    case FsServerInstance_c::usablePending:
+      // nothing to do here, FsServer-instance needs to change to usable in its timeEvent
+      break;
+
     case FsServerInstance_c::usable:
       for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
            iter != mv_communications.end();
@@ -285,13 +267,19 @@ void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& data ) {
   }
   else
   { // destination-specific
-    for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); ++it )
+    for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); )
     {
-      (*it)->processMsgIso( pkg );
+      if( (*it)->processMsgIso( pkg ) == FsCommand_c::CommandFinished )
+      {
+        delete *it;
+        it = ml_initializingCommands.erase( it );
+      }
+      else
+        ++it;
     }
   
     for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = m_fsManager.mv_communications.begin();
-             iter != m_fsManager.mv_communications.end(); ++iter)
+         iter != m_fsManager.mv_communications.end(); ++iter )
     {
       (*iter)->processMsgIso( pkg );
     }

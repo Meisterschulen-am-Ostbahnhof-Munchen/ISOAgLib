@@ -62,7 +62,11 @@ FsClientServerCommunication_c::processMsgIso( const CanPkgExt_c& pkg )
   if( pc_commandHandler == NULL )
     return;
 
-  pc_commandHandler->processMsgIso( pkg );
+  if( pc_commandHandler->processMsgIso( pkg ) == FsCommand_c::CommandFinished )
+  {
+    delete pc_commandHandler;
+    pc_commandHandler = NULL;
+  }
 }
 
 void
@@ -99,10 +103,6 @@ FsClientServerCommunication_c::notifyOnOfflineFileServer (FsServerInstance_c &rc
 
   // notify the Application on lost FS
   c_fsClient.notifyOnOfflineFileServer (*(getFileserver().toInterfacePointer()));
-
-  // now delete the FsCommand (incl. the reference to the connected FS)
-  delete pc_commandHandler;
-  pc_commandHandler = NULL;
 }
 
 

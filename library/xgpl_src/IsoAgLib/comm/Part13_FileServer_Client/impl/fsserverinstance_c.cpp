@@ -146,14 +146,17 @@ FsServerInstance_c::timeEvent()
   {
     case offline:    // nothing to do until we're going online (by FS Stat Msg)
     case unusable:   // nothing to do if we're in an error-state. We're just unusable then.
-      return;
+      break;
+
+    case usablePending: // this state was just to decouple the notification-callback from the delete of the FsCommand, which caused MultiReceive problems (two commands with registered MR)
+      setState( usable );
+      break;
 
     case online:
     case usable:
+      // detect time-out
       if (getLastTime() != -1 && (uint32_t)(HAL::getTime () - getLastTime()) > uint32_t(6000))
-      { // FS Status timeout
         setState (offline);
-      }
       break;
   }
 }
@@ -176,6 +179,9 @@ FsServerInstance_c::setState (FsState_en aen_newState)
     case online:
       INTERNAL_DEBUG_DEVICE << "Fileserver was online ==> ";
       break;
+    case usablePending:
+      INTERNAL_DEBUG_DEVICE << "Fileserver was usablePending ==> ";
+      break;
     case usable:
       INTERNAL_DEBUG_DEVICE << "Fileserver was usable ==> ";
       break;
@@ -193,6 +199,9 @@ FsServerInstance_c::setState (FsState_en aen_newState)
       break;
     case online:
       INTERNAL_DEBUG_DEVICE << "Fileserver got online (first reception of FS Status Message)." << INTERNAL_DEBUG_DEVICE_ENDL;
+      break;
+    case usablePending:
+      INTERNAL_DEBUG_DEVICE << "Fileserver got usablePending (initialization complete and about to notify client on this FS)." << INTERNAL_DEBUG_DEVICE_ENDL;
       break;
     case usable:
       INTERNAL_DEBUG_DEVICE << "Fileserver got usable (clients do now know of this FS and can use it)." << INTERNAL_DEBUG_DEVICE_ENDL;

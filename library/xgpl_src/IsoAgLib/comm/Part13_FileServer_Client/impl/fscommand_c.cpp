@@ -39,9 +39,9 @@ namespace __IsoAgLib
 {
 
 const int gci_NR_REQUEST_ATTEMPTS=5;
-const int gci_REQUEST_REPEAT_TIME=6500;
+const int gci_REQUEST_REPEAT_TIME=600; // 11783-13 Chapter 5.3.3
 /* TODO may need to create a timeout based on number of bytes being read */
-const int gci_REQUEST_REPEAT_BUSY_TIME=24000;
+const int gci_REQUEST_REPEAT_BUSY_TIME=5000; // ISOAgLib proprietary value.
 
 uint8_t FsCommand_c::m_maintenanceMsgBuf[8] = {0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 
@@ -185,21 +185,14 @@ FsCommand_c::timeEvent(void)
     && (m_lastrequestAttemptTime >= 0) // command sent out completely (important if TP/ETP)
     && ((HAL::getTime() - m_lastrequestAttemptTime) > i32_requestRepeatTime) )
   { // Time-out
-    if (m_requestAttempts < gci_NR_REQUEST_ATTEMPTS)
+    // Intermediate Change: For now don't give up when trying to initialize the FS.
+    // (We avoid needing to "delete *this" or a delayed version of it...)
+    if ((m_initializingFileserver) || (m_requestAttempts < gci_NR_REQUEST_ATTEMPTS) )
     { // Retry
       sendRequest (RequestRetry);
     }
     else
     { // Give up
-      if (m_initializingFileserver)
-      {
-        getFileserver().setState (FsServerInstance_c::unusable);
-        // nothing more to do, this instance needs to be removed
-        // (will be done in timeEvent) because the FS failed.
-        return;
-      }
-      else
-      {
         switch (en_lastCommand)
         {
           case en_noCommand:
@@ -261,7 +254,6 @@ FsCommand_c::timeEvent(void)
         m_receivedResponse = true;
         en_lastCommand = en_noCommand;
         m_offset = 0;
-      }
     }
   }
 
@@ -310,7 +302,7 @@ FsCommand_c::processPartStreamDataChunk (Stream_c& stream, bool isFirstChunk, bo
     {
       stream.setStreamInvalid();
 #if DEBUG_FILESERVER
-      INTERNAL_DEBUG_DEVICE << "TAN does not match expected one!" << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "TAN " << unsigned(tan) << " does not match expected one " << unsigned(m_tan) << "!" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       return false; // return value won't be interpreted on first chunk, so don't care...
     }
@@ -405,21 +397,21 @@ FsCommand_c::reactOnStreamStart(const ReceiveStreamIdentifier_c& /*streamIdent*/
 }
 
 
-void
+FsCommand_c::ProcessResult_t
 FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
 {
   if( pkg.getMonitorItemForSA() != &getFileserver().getIsoItem() )
-    return;
+    return CommandRunning;
 
   if( pkg.getMonitorItemForDA() != m_FSCSComm.getClientIdentItem().getIsoItem() )
-    return;
+    return CommandRunning;
 
   if (pkg.getUint8Data(1) != m_tan && pkg.getUint8Data(0) != en_requestProperties)
   {
 #if DEBUG_FILESERVER
       INTERNAL_DEBUG_DEVICE << "TAN does not match expected one!" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-    return;
+    return CommandRunning;
   }
 
   switch (pkg.getUint8Data(0))
@@ -438,22 +430,23 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
           m_receivedResponse = true;
           ++m_tan;
           openFile((uint8_t *)"\\\\", false, false, false, true, false, true);
-          return;
+          return CommandRunning;
         }
         else
         { // Unsupported old version of the FileServer.
           getFileserver().setState (FsServerInstance_c::unusable);
+          return CommandFinished;
         }
       }
       // else: not initializing, ignore such a message
-      return;
+      return CommandRunning;
 
     case en_changeCurrentDirectory:
       m_receivedResponse = true;
       ++m_tan;
       m_FSCSComm.changeCurrentDirectoryResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), m_fileName);
       en_lastCommand = en_noCommand;
-      return;
+      return CommandRunning;
 
     case en_openFile:
       decodeOpenFileResponse( pkg );
@@ -464,12 +457,12 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       if (m_initializingFileserver)
       {
         seekFile(m_fileHandle, 2, 0);
-        return;
+        return CommandRunning;
       }
 
       m_FSCSComm.openFileResponse(IsoAgLib::iFsError(m_errorCode), m_fileHandle, m_attrCaseSensitive, m_attrRemovable, m_attrLongFilenames, m_attrIsDirectory,  m_attrIsVolume, m_attrHidden, m_attrReadOnly);
       en_lastCommand = en_noCommand;
-      return;
+      return CommandRunning;
 
     case en_seekFile:
       // in case of "isBeingInitialized" two Seek commands are being executed!
@@ -488,7 +481,7 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
      	  else
           readDirectory(m_fileHandle, m_position, true);
 
-        return;
+        return CommandRunning;
       }
 
       decodeSeekFileResponse( pkg );
@@ -504,7 +497,7 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
         en_lastCommand = en_noCommand;
       }
 
-      return;
+      return CommandRunning;
 
     case en_readFile:
       if (6 > m_multireceiveMsgBufAllocSize)
@@ -537,14 +530,14 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
         decodeReadFileResponse();
         m_FSCSComm.readFileResponse(IsoAgLib::iFsError(m_errorCode), m_count, m_data);
       }
-      return;
+      return CommandRunning;
 
     case en_writeFile:
       m_receivedResponse = true;
       ++m_tan;
       m_FSCSComm.writeFileResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), (pkg.getUint8Data(3) | pkg.getUint8Data(4) << 0x08));
       en_lastCommand = en_noCommand;
-      return;
+      return CommandRunning;
 
     case en_closeFile:
       m_errorCode = pkg.getUint8Data(2);
@@ -558,27 +551,27 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       if (m_initializingFileserver)
       {
         getFileserver().setVolumes(m_dirData);
-        getFileserver().setState (FsServerInstance_c::usable);
-        return;
+        getFileserver().setState (FsServerInstance_c::usablePending);
+        return CommandFinished;
       }
 
       m_FSCSComm.closeFileResponse(IsoAgLib::iFsError(m_errorCode));
       en_lastCommand = en_noCommand;
-      return;
+      return CommandRunning;
 
     case en_moveFile:
       m_receivedResponse = true;
       ++m_tan;
       m_FSCSComm.moveFileResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)));
       en_lastCommand = en_noCommand;
-      return;
+      return CommandRunning;
 
     case en_deleteFile:
       ++m_tan;
       m_receivedResponse = true;
       en_lastCommand = en_noCommand;
       m_FSCSComm.deleteFileResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)));
-      return;
+      return CommandRunning;
 
     case en_getFileAttributes:
       ++m_tan;
@@ -586,14 +579,14 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       decodeAttributes(pkg.getUint8Data(3));
       m_FSCSComm.getFileAttributesResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), m_attrCaseSensitive, m_attrRemovable, m_attrLongFilenames, m_attrIsDirectory,  m_attrIsVolume, m_attrHidden, m_attrReadOnly);
       en_lastCommand = en_noCommand;
-      return;
+      return CommandRunning;
 
     case en_setFileAttributes:
       ++m_tan;
       m_receivedResponse = true;
       m_FSCSComm.setFileAttributesResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)));
       en_lastCommand = en_noCommand;
-      return;
+      return CommandRunning;
 
     case en_getFileDateTime:
       {
@@ -605,7 +598,7 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
 
         m_FSCSComm.getFileDateTimeResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), (uint16_t)(1980 + ((date >> 9) & 0x7F)), (date >> 5) & 0xF, (date) & 0x1F, (time >> 11) & 0x1F, (time >> 5) & 0x3F, 2 * ((time) & 0x1F));
         en_lastCommand = en_noCommand;
-        return;
+        return CommandRunning;
       }
 
     case en_initializeVolume:
@@ -616,12 +609,13 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
 
       m_FSCSComm.initializeVolumeResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), m_attrCaseSensitive, m_attrRemovable, m_attrLongFilenames, m_attrIsDirectory,  m_attrIsVolume, m_attrHidden, m_attrReadOnly);
       en_lastCommand = en_noCommand;
-      return;
+      return CommandRunning;
+
     default:
 #if DEBUG_FILESERVER
       INTERNAL_DEBUG_DEVICE << "got message with content (decimal): " << (uint32_t)pkg.getUint8Data(0) << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-      return;
+      return CommandRunning;
   }
 }
 
@@ -638,9 +632,6 @@ FsCommand_c::sendRequest (RequestType_en requestType)
     case RequestRetry:
       ++m_requestAttempts;
       break;
-
-    default:
-      isoaglib_assert (!"INTERNAL-FAILURE: Wrong RequestType. Shouldn't happen!");
   }
 
 #if DEBUG_FILESERVER
