@@ -71,7 +71,8 @@ namespace __IsoAgLib {
     for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
          it != m_connections.end(); ++it )
     {
-      if( (*it)->getIdentItem().getIsoItem() == pkg.getMonitorItemForDA() )
+      if( ( pkg.getMonitorItemForDA() == NULL ) || 
+          ( pkg.getMonitorItemForDA() == (*it)->getIdentItem().getIsoItem() ) )
       {
         ( *it )->processProcMsg( pkg );
         return;
