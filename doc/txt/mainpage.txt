@@ -45,7 +45,105 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \subsection Change_ZC 2.7.0 to 2.7.1
 
-....TO DO....
+EEPROM-HAL:
+ - Enhancement: Allow HAL to be buffered, so all write-calls are basically just passed through!
+
+General-API:
+ - Cleanup: Multiton: No Instance-Parameter only allowed if 1 instance
+   - If there are more than 1 instances, you need to pass the instance number
+     explicitly now. Only for one instance the call getXyzInstance() is allowed.
+ - Enhancement: Added Version-Defines to isoaglib_config.h
+   - ISOAGLIB_VERSION_MAJOR / ISOAGLIB_VERSION_MINOR / ISOAGLIB_VERSION_PATCH
+
+HAL-Config:
+ - Enhancement: Automatically set Endianess for WIN32 case.
+
+FS-Client:
+ - Bugfix:
+   - Memory-Leak for Current Directory fixed
+     This also avoids Scheduler_c::close()-Assertion as FsCommand_c
+     did not properly deregister from Scheduler as d'tor-call was missing.
+ - Wait-time set from 6500ms to 600ms and fix wrong TAN matching
+   - Standard says to wait only 600ms when no busy bit is set.
+   - response was processed in the wrong FsCommand_c when
+     there was still the initializing-FsCommand_c there!
+
+I/O-Driver/HAL:
+ - Enhancement: Extended dout_err_t:
+   - Some HALs report these errors, so ISOAgLib needs to care, too.
+   - Added dout_overvoltErr and dout_undervoltErr
+   - Added CounterOn and DutyCycle to Inputs, 8.5V ref to System]
+     - Not implemented for all platforms, but added
+       an assertion in case it would be accessed/used.
+   - Added getDiginDiagState/getAnalogInDiagState/getCounterDiagState
+     - Not yet added to Inputs_c though. To be done later on request.
+
+HAL-Simulator:
+ - Enhancement: Added getDigoutDiagnose
+ - Cleanup: Set 0 as default frequency in getDiginFreq()
+ - Bugfix:
+   - Wrong channel used in ENTRY_POINT_FOR_RECEIVE_CAN_MSG / ENTRY_POINT_FOR_SEND_CAN_MSG]
+   - SegmentSize fixed
+
+IsoMonitor:
+ - Enhancement: Forbid iIsoItem_c-construction in Application.
+
+vt2iso:
+ - Output-Cleanup: Use "numObjects" and "numObjectsLang" variables to avoid redundant values
+ - Enhancement: Allow double-IDs
+   - Needed for special case when having multiple objects
+     with same ID and omitting all but one during upload.
+
+ProcessData:
+ - Enhancement:
+   - Reserve-Capacity needs to be provided for PdPools/DevicePools now!
+   - Refactoring/Enhancement for ECU-to_ECU PD-communication
+   - Added important assertion to detect add of PD-Object with same ID.
+ - Cleanup: Move ByteStreamBuffer_c -> util_funcs
+
+TC-Client:
+ - Enhancement: Allow Proprietary Remote Server
+   - Allows uploading a Device Description to a proprietary Server.
+   - Communication is the same as to TC and DL.
+ - Bugfix: Delete ServerInstance_c instances during TcClient_c::close()
+
+TimePosGps:
+ - Crashfix: TimePosGps_c::deregisterMsgEventHandler fixed
+   (Iterator problem caused possible crash.)
+  
+VT-Client:
+ - Change: Defaulting to 2 retries with time-out of 1500ms now
+   - Removed ENABLE_VTCLIENT_RETRY
+   - Added
+     - CONFIG_VT_CLIENT_ANNEX_F_COMMAND_TIMEOUT
+     - CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES
+ - Bugfix:
+   - Picture Graphic Object: Changing Options during runtime fixed
+   - Update all Child-Positions on CCL/CCP in RAM, if b_updateObject==true
+   - Position-changes are now scaled
+     - Disable scaling to get old (wrong, unscaled behavior if you
+       do not (yet) want to adapt your application-code:
+       Define USE_VT_CLIENT_OLD_UNSCALED_CHILD_POSITIONING_COMMANDS
+     - Problem before was also that if the Application passed in scaled
+       values and would update the object, the scaled coords would be
+       saved and on re-upload they would be scaled again!
+       => So definitely better adapt your code than to define the above.
+ - Enhancement:
+   - Allow changing to "NULL" ActiveMask
+     - This is possible in v6+, but other VTs may already
+       support this for non-selectable Working-Sets now.
+   - Allow Application to override VT's properties to influence scaling
+ - Cleanup: Several pointers replaced by references
+
+PropPGN:
+ - Enhancement:
+   - Allow sending with prio other than the default prio (6)
+   - override destination now possible
+ 
+ProprietaryCAN:
+ - Bugfix:
+   - Reservered too many instances
+     PROP_INSTANCE_CNT is now used instead of wrong CAN_INSTANCE_CNT
 
 
 \subsection Change_ZB 2.6.2 to 2.7.0
