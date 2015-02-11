@@ -2,7 +2,7 @@
   igenericdata_c.h: Class to independently handle any length of
     data-message (along with CAN-identifier)
 
-  (C) Copyright 2009 - 2014 by OSB AG and developing partners
+  (C) Copyright 2009 - 2015 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

@@ -1,7 +1,7 @@
 /*
   logalizer.cpp
 
-  (C) Copyright 2009 - 2014 by OSB AG and developing partners
+  (C) Copyright 2009 - 2015 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -195,7 +195,7 @@ void iopStore( uint8_t sa );
 void
 exit_with_usage(const char* progname)
 {
-  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2014 OSB AG." << std::endl << std::endl;
+  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2015 OSB AG." << std::endl << std::endl;
   std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [-s] logFile" << std::endl << std::endl;
   std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
   std::cerr << "         1 -> rte"<<std::endl;
