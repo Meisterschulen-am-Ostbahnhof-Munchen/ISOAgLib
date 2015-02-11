@@ -277,6 +277,9 @@ namespace __IsoAgLib {
       case IsoName_c::ecuTypeDataLogger:
         addServer( isoItem, IsoAgLib::ProcData::RemoteTypeDataLogger );
         break;
+
+      default:
+        ;
       }
       break;
 

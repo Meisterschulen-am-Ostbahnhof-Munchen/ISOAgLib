@@ -94,7 +94,9 @@ typedef uint16_t objRange_t;
     int32_t opDimension = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolDimension(); \
     int32_t vtDimension = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwDimension(); \
     int32_t vtOffsetX   = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetX(); \
-    int32_t vtOffsetY   = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetY();
+    int32_t vtOffsetY   = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetY(); \
+    ( void )vtOffsetX; \
+    ( void )vtOffsetY;
 
 #define MACRO_getSkDimension \
     opSoftKeyWidth  = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \

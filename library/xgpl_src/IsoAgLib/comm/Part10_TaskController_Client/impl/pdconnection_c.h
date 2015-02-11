@@ -47,7 +47,7 @@ namespace __IsoAgLib
   {
   public:
     PdConnection_c( const IdentItem_c& identItem, PdRemoteNode_c* remoteNode, PdPool_c &pool );
-    ~PdConnection_c();
+    virtual ~PdConnection_c();
 
     const IdentItem_c&     getIdentItem() const { return m_identItem; }
     const PdRemoteNode_c* getRemoteNode() const { return m_pdRemoteNode; }
