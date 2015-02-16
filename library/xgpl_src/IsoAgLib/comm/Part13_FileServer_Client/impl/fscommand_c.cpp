@@ -763,6 +763,7 @@ FsCommand_c::changeCurrentDirectory(uint8_t *newDirectory)
   m_sendMsgBuf[ui8_bufferPosition++] = static_cast<uint8_t>(ui16_length);
   m_sendMsgBuf[ui8_bufferPosition++] = static_cast<uint8_t>(ui16_length >> 8);
 
+  isoaglib_assert( ui16_length <= CONFIG_FS_CLIENT_MAX_WRITE_SIZE );
   for (uint16_t i = 0; i < ui16_length; ++i)
     m_sendMsgBuf[ui8_bufferPosition + i] = m_fileName[i];
 
@@ -833,6 +834,7 @@ FsCommand_c::openFile(uint8_t *fileName, bool openExclusive, bool openForAppend,
   m_sendMsgBuf[ui8_bufferPosition++] = (0xFFu & ui16_length);
   m_sendMsgBuf[ui8_bufferPosition++] = ui16_length >> 8;
 
+  isoaglib_assert( ui16_length <= CONFIG_FS_CLIENT_MAX_WRITE_SIZE );
   for (uint16_t i = 0; (i < ui16_length) || (5 + i < 8); ++i)
   {
     if (i < ui16_length)
@@ -908,6 +910,7 @@ FsCommand_c::writeFile(uint8_t fileHandle, uint16_t count, uint8_t *data)
   m_sendMsgBuf[3] = static_cast<uint8_t>(count);
   m_sendMsgBuf[4] = static_cast<uint8_t>(count >> 8);
 
+  isoaglib_assert( count <= CONFIG_FS_CLIENT_MAX_WRITE_SIZE );
   for (uint16_t ui16_writeDataSz = 0; ui16_writeDataSz < count; ++ui16_writeDataSz)
   {
     m_sendMsgBuf[ui16_writeDataSz + 5] = data[ui16_writeDataSz];
@@ -973,6 +976,7 @@ FsCommand_c::moveFile(uint8_t *sourceName, uint8_t *destName, bool recursive, bo
   m_sendMsgBuf[ui8_bufferPosition++] = (0xFFu & ui16_destLength);
   m_sendMsgBuf[ui8_bufferPosition++] = ui16_destLength >> 0x08;
 
+  isoaglib_assert( (ui16_srcLength + ui16_destLength) <= CONFIG_FS_CLIENT_MAX_WRITE_SIZE );
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     m_sendMsgBuf[ui8_bufferPosition + ui16_iSrc] = sourceName[ui16_iSrc];
 
@@ -1010,6 +1014,7 @@ FsCommand_c::deleteFile (uint8_t *sourceName, bool recursive, bool force)
   m_sendMsgBuf[ui8_bufferPosition++] = (0xFFu & ui16_srcLength);
   m_sendMsgBuf[ui8_bufferPosition++] = ui16_srcLength >> 8;
 
+  isoaglib_assert( ui16_srcLength <= CONFIG_FS_CLIENT_MAX_WRITE_SIZE );
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     m_sendMsgBuf[ui8_bufferPosition + ui16_iSrc] = sourceName[ui16_iSrc];
 
@@ -1032,6 +1037,7 @@ FsCommand_c::getFileAttributes(uint8_t *sourceName)
   m_sendMsgBuf[2] = static_cast<uint8_t>(ui16_srcLength);
   m_sendMsgBuf[3] = static_cast<uint8_t>(ui16_srcLength >> 8);
 
+  isoaglib_assert( ui16_srcLength <= CONFIG_FS_CLIENT_MAX_WRITE_SIZE );
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     m_sendMsgBuf[4 + ui16_iSrc] = sourceName[ui16_iSrc];
 
@@ -1056,6 +1062,7 @@ FsCommand_c::setFileAttributes(uint8_t *sourceName, uint8_t hiddenAttr, uint8_t 
   m_sendMsgBuf[3] = static_cast<uint8_t>(ui16_srcLength);
   m_sendMsgBuf[4] = static_cast<uint8_t>(ui16_srcLength >> 8);
 
+  isoaglib_assert( ui16_srcLength <= CONFIG_FS_CLIENT_MAX_WRITE_SIZE );
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     m_sendMsgBuf[5 + ui16_iSrc] = sourceName[ui16_iSrc];
 
@@ -1079,6 +1086,7 @@ FsCommand_c::getFileDateTime(uint8_t *sourceName)
   m_sendMsgBuf[2] = static_cast<uint8_t>(ui16_srcLength);
   m_sendMsgBuf[3] = static_cast<uint8_t>(ui16_srcLength >> 8);
 
+  isoaglib_assert( ui16_srcLength <= CONFIG_FS_CLIENT_MAX_WRITE_SIZE );
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     m_sendMsgBuf[4 + ui16_iSrc] = sourceName[ui16_iSrc];
 

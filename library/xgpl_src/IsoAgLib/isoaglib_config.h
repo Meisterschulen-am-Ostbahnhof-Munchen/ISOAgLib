@@ -228,6 +228,11 @@
 #  define CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES 2
 #endif
 
+// Don't keep this too low, as it will also be used for all other commands!
+#ifndef CONFIG_FS_CLIENT_MAX_WRITE_SIZE
+#  define CONFIG_FS_CLIENT_MAX_WRITE_SIZE 240
+#endif
+
 
 /* ***** Auto-set dependant defines ***** */
 

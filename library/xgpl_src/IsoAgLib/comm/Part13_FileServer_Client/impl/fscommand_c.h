@@ -290,7 +290,7 @@ class FsCommand_c : CanCustomer_c
     static uint8_t m_maintenanceMsgBuf[8];
 
     uint8_t m_packetLength;
-    uint8_t m_sendMsgBuf[256];
+    uint8_t m_sendMsgBuf[CONFIG_FS_CLIENT_MAX_WRITE_SIZE + 16]; // 16 for command bytes overhead in message
     uint8_t *m_multireceiveMsgBuf;
     uint32_t m_multireceiveMsgBufAllocSize;
 
