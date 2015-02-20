@@ -323,7 +323,7 @@ check_set_correct_variables()
     case "$USE_TARGET_SYSTEM" in
         (pc_win32|pc_linux|ees)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/cmake"
-            IDE_NAME="CMake"
+            IDE_NAME="CMake/qmake"
             ;;
         (esx|esxu|c2c)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
@@ -989,6 +989,19 @@ EOF
 }
 
 
+print_qmake_definitions()
+{
+    omit_or_printf '\nDEFINES += %s' $(
+        echo_ $PRJ_DEFINES
+        # NDEBUG and/or DEBUG will be defined later according to CMake
+        # build type, so omit them here:
+        sed 's| \?\<N\?DEBUG\>||g' <<EOF
+$COMBINED_DEFINES
+EOF
+    )
+}
+
+
 create_cmake_winlin()
 {
     CompletePrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
@@ -1029,13 +1042,47 @@ create_cmake_winlin()
 }
 
 
-create_CMake()
+create_qmake_winlin()
+{
+    CompletePrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
+
+    IsoAglibPrjHeaderFilelist="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
+    IsoAglibPrjSourceFilelist="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
+    AppPrjHeaderFilelist="$1/$PROJECT/$FILELIST_APP_HDR"
+    AppPrjSourceFilelist="$1/$PROJECT/$FILELIST_APP_PURE"    
+        
+    local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
+    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$APP_INSIDE")/%s\n" $RELATIVE_INC_PATHS)})"
+
+    local INSERT_QMAKE_PROJECT="$PROJECT"
+    local INSERT_QMAKE_DEFINITIONS="$(print_qmake_definitions)"
+    local INSERT_QMAKE_INCLUDE_DIRECTORIES="$(omit_or_printf ' \\ \n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${USE_EXTERNAL_INCLUDE_PATH:-} ${BIOS_INC:-})"
+   #local INSERT_QMAKE_LINK_DIRECTORIES="${USE_EXTERNAL_LIBRARY_PATH:-}"
+    local INSERT_QMAKE_APP_SOURCE_GROUP="$(
+        omit_or_printf ' \\ \n %s' $(
+            grep -E '\.cc|\.cpp|\.c|\.h' <"$AppPrjSourceFilelist" || status_le1))"
+    local INSERT_QMAKE_APP_HEADER_GROUP="$(
+        omit_or_printf ' \\ \n  %s' $(
+            grep -E '\.cc|\.cpp|\.c|\.h' <"$AppPrjHeaderFilelist" || status_le1))"
+    local INSERT_QMAKE_ISOAGLIB_SOURCE_GROUP="$(
+        omit_or_printf ' \\ \n  %s' $(
+            grep -E '\.cc|\.cpp|\.c|\.h' <"$IsoAglibPrjSourceFilelist" || status_le1))"
+    local INSERT_QMAKE_ISOAGLIB_HEADER_GROUP="$(
+        omit_or_printf ' \\ \n  %s' $(
+            grep -E '\.cc|\.cpp|\.c|\.h' <"$IsoAglibPrjHeaderFilelist" || status_le1))"
+    
+    : ${QMAKE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_qmake.pro}
+    expand_template "$QMAKE_SKELETON_FILE" >"$PROJECT.pro"
+}
+
+
+create_CQMake()
 {
     DEV_PRJ_DIR="$1/$PROJECT"
     mkdir -p $DEV_PRJ_DIR
     cd "$DEV_PRJ_DIR"
-
-	create_cmake_winlin "$1"
+    create_cmake_winlin "$1"
+    create_qmake_winlin "$1"
 }
 
 
@@ -1232,9 +1279,8 @@ create_buildfiles()
     # call function to create project specific config file
     create_autogen_project_config $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
     case "$USE_TARGET_SYSTEM" in
-        # check if a win32 project file whould be created
         (ees|pc_linux|pc_win32)
-            create_CMake $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            create_CQMake $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
         (esx|esxu|c2c)
             create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
@@ -1279,6 +1325,8 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
 --with-cmake-skeleton=filename    define project specific CMakeLists skeleton file which is used for CMakeLists.txt
                                   generation (default: conf2build_CMakeLists.txt in the same directory as this script)
+--with-qmake-skeleton=filename    define project specific qmake skeleton file which is used for PROJECTNAME.pro
+                                  generation (default: conf2build_qmake.pro in the same directory as this script)
 --debugdefgroup=GROUPNUMBER       Use group of debug defines, only use for autobuilds.
                                   GROUPNUMBER can be 0, 1 or 2;
                                   when 0: only NDEBUG is set (release build, default);
@@ -1366,6 +1414,10 @@ check_before_user_configuration()
             ('--with-cmake-skeleton='*)
                 RootDir=$PWD
                 CMAKE_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-cmake-skeleton=//')
+                ;;
+            ('--with-qmake-skeleton='*)
+                RootDir=$PWD
+                QMAKE_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-qmake-skeleton=//')
                 ;;
             ('--debugdefgroup=0')
                 # Keep default for release build.
