@@ -41,7 +41,7 @@ namespace __IsoAgLib {
   }
 
 
-  bool ConnectedPdRemote_c::startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment )
+  bool ConnectedPdRemote_c::startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t, int32_t )
   {
     // we're just listening to a remote (broadcasted) value,
     // so we don't accept getting measurement commands
