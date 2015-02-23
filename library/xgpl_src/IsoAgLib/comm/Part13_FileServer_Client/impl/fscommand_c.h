@@ -187,7 +187,7 @@ class FsCommand_c : CanCustomer_c
       * @param data data that shall be written
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    IsoAgLib::iFsCommandErrors writeFile(uint8_t fileHandle, uint16_t count, uint8_t *data);
+    IsoAgLib::iFsCommandErrors writeFile(uint8_t fileHandle, uint16_t count, const uint8_t *data);
     /**
       * close a file
       * @param fileHandle filehandle of the file to be closed.

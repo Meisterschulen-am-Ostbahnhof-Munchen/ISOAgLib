@@ -201,7 +201,7 @@ FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_fileSe
     }
 
     IsoAgLib::iFsCommandErrors
-    FsClientServerCommunication_c::writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, uint8_t *pui8_data)
+    FsClientServerCommunication_c::writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, const uint8_t *pui8_data)
     {
       if (!pc_commandHandler)
         return IsoAgLib::fsCommandNotPressent;

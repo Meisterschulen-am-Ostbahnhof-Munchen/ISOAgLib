@@ -126,7 +126,7 @@ class iFsClientServerCommunication_c : private __IsoAgLib::FsClientServerCommuni
       * @param pui8_data bytes that shall be written
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    uint8_t writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, uint8_t *pui8_data)
+    uint8_t writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, const uint8_t *pui8_data)
     { return __IsoAgLib::FsClientServerCommunication_c::writeFile(ui8_fileHandle, ui16_count, pui8_data); }
 
     /**

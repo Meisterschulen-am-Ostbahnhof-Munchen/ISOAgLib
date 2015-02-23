@@ -898,7 +898,7 @@ FsCommand_c::readDirectory(uint8_t fileHandle, uint16_t count, bool reportHidden
 
 
 IsoAgLib::iFsCommandErrors
-FsCommand_c::writeFile(uint8_t fileHandle, uint16_t count, uint8_t *data)
+FsCommand_c::writeFile(uint8_t fileHandle, uint16_t count, const uint8_t *data)
 {
   en_lastCommand = en_writeFile;
 
