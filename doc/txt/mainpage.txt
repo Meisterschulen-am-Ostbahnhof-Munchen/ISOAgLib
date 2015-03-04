@@ -45,6 +45,9 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \subsection Change_ZC 2.7.0 to 2.7.1
 
+Project-Generation (conf2build):
+ - Enhancement: Added additional rudimental qmake-output
+
 EEPROM-HAL:
  - Enhancement: Allow HAL to be buffered, so all write-calls are basically just passed through!
 
@@ -63,6 +66,8 @@ FS-Client:
    - Memory-Leak for Current Directory fixed
      This also avoids Scheduler_c::close()-Assertion as FsCommand_c
      did not properly deregister from Scheduler as d'tor-call was missing.
+   - Const-Correctness: Data to write only needs to be const
+ - Enhancement: Introduced CONFIG_FS_CLIENT_MAX_WRITE_SIZE for larger block-writes
  - Wait-time set from 6500ms to 600ms and fix wrong TAN matching
    - Standard says to wait only 600ms when no busy bit is set.
    - response was processed in the wrong FsCommand_c when
