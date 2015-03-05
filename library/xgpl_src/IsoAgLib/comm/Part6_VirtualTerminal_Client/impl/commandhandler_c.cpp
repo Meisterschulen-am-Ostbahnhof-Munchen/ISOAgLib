@@ -733,64 +733,75 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
     { //first check if multisendstreamer is used!
       /* four cases:
       1. both use buffer
-      2. both use mssObjectString
+      2. buffer is queued and could be replaced by mssObjectString
       3. mss is queued and could be replaced by buffer
-      4. buffer is queued and could be replaced by mssObjectString
+      4. both use mssObjectString
         */
-      if ((i_sendUpload->mssObjectString == NULL) && (ar_sendUpload.mssObjectString == NULL))
+      if (i_sendUpload->mssObjectString == NULL)
       {
-        if (i_sendUpload->vec_uploadBuffer[0] == ar_sendUpload.vec_uploadBuffer[0])
+        if (ar_sendUpload.mssObjectString == NULL)
         {
-          uint8_t ui8_offset = (ar_sendUpload.vec_uploadBuffer[0]);
-          if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
-          { // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
-            if ((ui8_offset == 0x11) || (ui8_offset == 0x12) ||
-                ((ui8_offset >= 0x60) && (ui8_offset <= 0x7F)) ) /// no checking for Proprietary commands (we don't need the replace-feature here!)
-              break;
-
-            isoaglib_assert( !"Shouldn't reach here. Check which command it was!" );
-            return false;
-          }
-          // get bitmask for the corresponding command
-          uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-scui8_cmdCompareTableMin];
-          if (!(ui8_bitmask & (1<<0)))
-          { // go Check for overwrite...
-            for (i=1;i<=7;i++)
-            {
-              if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == ar_sendUpload.vec_uploadBuffer[i]))
+           // 1. both use buffer
+          if (i_sendUpload->vec_uploadBuffer[0] == ar_sendUpload.vec_uploadBuffer[0])
+          {
+            uint8_t ui8_offset = (ar_sendUpload.vec_uploadBuffer[0]);
+            if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
+            { // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
+              if ((ui8_offset == 0x11) || (ui8_offset == 0x12) ||
+                  ((ui8_offset >= 0x60) && (ui8_offset <= 0x7F)) ) /// no checking for Proprietary commands (we don't need the replace-feature here!)
                 break;
+
+              isoaglib_assert( !"Shouldn't reach here. Check which command it was!" );
+              return false;
             }
-            if (!(i<=7))
-            { // loop ran through, all to-compare-bytes matched!
-              p_queue = &*i_sendUpload; // so overwrite this SendUpload_c with the new value one
+            // get bitmask for the corresponding command
+            uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-scui8_cmdCompareTableMin];
+            if (!(ui8_bitmask & (1<<0)))
+            { // go Check for overwrite...
+              for (i=1;i<=7;i++)
+              {
+                if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == ar_sendUpload.vec_uploadBuffer[i]))
+                  break;
+              }
+              if (!(i<=7))
+              { // loop ran through, all to-compare-bytes matched!
+                p_queue = &*i_sendUpload; // so overwrite this SendUpload_c with the new value one
+              }
             }
           }
         }
-      }
-      if ((i_sendUpload->mssObjectString != NULL) && (ar_sendUpload.mssObjectString != NULL))
-      {
-        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+        else
         {
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == ar_sendUpload.mssObjectString->getStreamer()->getID())
-            p_queue = &*i_sendUpload;
+          // 2. buffer is queued and could be replaced by mssObjectString
+          if ((*i_sendUpload).vec_uploadBuffer[0] == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+          {
+            if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == ar_sendUpload.mssObjectString->getStreamer()->getID())
+              p_queue = &*i_sendUpload;
+          }
         }
       }
-      if ((i_sendUpload->mssObjectString != NULL) && (ar_sendUpload.mssObjectString == NULL))
+      else
       {
-        if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.vec_uploadBuffer[0])
+        // i_sendUpload->mssObjectString != NULL
+        if (ar_sendUpload.mssObjectString == NULL)
         {
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (ar_sendUpload.vec_uploadBuffer[1] | (ar_sendUpload.vec_uploadBuffer[2]<<8)))
-            p_queue = &*i_sendUpload;
+          // 3. mss is queued and could be replaced by buffer
+          if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.vec_uploadBuffer[0])
+          {
+            if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (ar_sendUpload.vec_uploadBuffer[1] | (ar_sendUpload.vec_uploadBuffer[2]<<8)))
+              p_queue = &*i_sendUpload;
+          }
         }
-      }
-      if ((i_sendUpload->mssObjectString == NULL) && (ar_sendUpload.mssObjectString != NULL))
-      {
-        if ((*i_sendUpload).vec_uploadBuffer[0] == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+        else
         {
-          if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == ar_sendUpload.mssObjectString->getStreamer()->getID())
-            p_queue = &*i_sendUpload;
+          // 4. both use mssObjectString
+          if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+          {
+            if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == ar_sendUpload.mssObjectString->getStreamer()->getID())
+              p_queue = &*i_sendUpload;
+          }
         }
-      }
+      } // if
     } // for
   }
 
