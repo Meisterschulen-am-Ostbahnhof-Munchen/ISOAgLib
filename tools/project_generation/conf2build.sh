@@ -322,7 +322,7 @@ check_set_correct_variables()
 
     case "$USE_TARGET_SYSTEM" in
         (pc_win32|pc_linux|ees)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/cmake"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR"
             IDE_NAME="CMake/qmake"
             ;;
         (esx|esxu|c2c)
