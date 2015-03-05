@@ -1323,6 +1323,7 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
                                   --> ("simulating"|"sys"|"hal_simulator").
 --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
 --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
+--no-endianess                    don't select endianess now, it will be specified via project-defines!
 --with-cmake-skeleton=filename    define project specific CMakeLists skeleton file which is used for CMakeLists.txt
                                   generation (default: conf2build_CMakeLists.txt in the same directory as this script)
 --with-qmake-skeleton=filename    define project specific qmake skeleton file which is used for PROJECTNAME.pro
@@ -1410,6 +1411,10 @@ check_before_user_configuration()
             (--big-endian-cpu)
                 PARAMETER_LITTLE_ENDIAN_CPU=0
                 USE_BIG_ENDIAN_CPU=1
+                ;;
+            (--no-endianess)
+                PARAMETER_LITTLE_ENDIAN_CPU=0
+                PARAMETER_BIG_ENDIAN_CPU=0
                 ;;
             ('--with-cmake-skeleton='*)
                 RootDir=$PWD
@@ -1507,10 +1512,11 @@ check_after_user_configuration()
 
 report_summary()
 {
-    if [ "$USE_LITTLE_ENDIAN_CPU" -lt 1 ] ; then
-        echo_  "Endianess:     Big Endian CPU"
-    else
+    if [ "$USE_LITTLE_ENDIAN_CPU" -eq 1 ] ; then
         echo_  "Endianess:     Little Endian CPU"
+    fi
+    if [ "$USE_BIG_ENDIAN_CPU" -eq 1 ] ; then
+        echo_  "Endianess:     Big Endian CPU"
     fi
     echo_  "Target:        $IDE_NAME - (The settings below are already set up therefore)"
     echo_  "Defines:       $PRJ_DEFINES (set in the project-file)"
