@@ -27,6 +27,7 @@ namespace __IsoAgLib {
   public:
     PdBase_c();
     PdBase_c( uint16_t ddi, uint16_t element );
+    virtual ~PdBase_c() {}
 
     uint16_t DDI()     const { return m_ddi; }
     uint16_t element() const { return m_element; }
