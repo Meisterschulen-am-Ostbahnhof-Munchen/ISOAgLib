@@ -87,7 +87,7 @@ namespace __HAL {
       uint32_t filter;
     } filter;
   };
-  static std::set<idFilter_s> filterIdx[HAL_CAN_MAX_BUS_NR];
+  static std::set<idFilter_s> filterIdx[HAL_CAN_MAX_BUS_NR + 1];
 
 
   int readData( SOCKET_TYPE s, char *buf, int n ) {
