@@ -81,8 +81,6 @@ void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
     pb_to[0] |= uint32_t(pb_from[1]) << 8;
     pb_to[0] |= uint32_t(pb_from[2]) << 16;
     pb_to[0] |= uint32_t(pb_from[3]) << 24;
-  #else
-  #error "PLEASE set either FLOAT_WORD_ORDER with WORD_HI_LO BYTE_HI_LO or WORD_LO_HI in the config-h from your target"
   #endif
 #else
   uint8_t *pb_to = (uint8_t*)pf_to;
@@ -103,8 +101,6 @@ void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
     pb_to[1] = pb_from[1];
     pb_to[2] = pb_from[2];
     pb_to[3] = pb_from[3];
-  #else
-  #error "PLEASE set either FLOAT_WORD_ORDER with WORD_HI_LO BYTE_HI_LO or WORD_LO_HI in the config-h from your target"
   #endif
 #endif // NO_8BIT_CHAR_TYPE
 }
@@ -130,8 +126,6 @@ void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo)
     pb_to[1] = (pb_from[0] >> 16) & 0xFF;
     pb_to[2] = (pb_from[0] >>  8) & 0xFF;
     pb_to[3] = (pb_from[0] >>  0) & 0xFF;
-  #else
-  #error "PLEASE set either FLOAT_WORD_ORDER with WORD_HI_LO BYTE_HI_LO or WORD_LO_HI in the config-h from your target"
   #endif
 #else
   uint8_t *pb_to = (uint8_t*)pvTo;
@@ -152,8 +146,6 @@ void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo)
     pb_to[1] = pb_from[1];
     pb_to[2] = pb_from[2];
     pb_to[3] = pb_from[3];
-  #else
-  #error "PLEASE set either FLOAT_WORD_ORDER with WORD_HI_LO BYTE_HI_LO or WORD_LO_HI in the config-h from your target"
   #endif
 #endif // NO_8BIT_CHAR_TYPE
 }

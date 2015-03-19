@@ -39,12 +39,28 @@
 #  ifndef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 #    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 #  endif
+#  ifndef FLOAT_WORD_ORDER
+#    define FLOAT_WORD_ORDER WORD_LO_HI
+#  endif
+#elif defined( __GNUC__ )
+#  if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#    ifndef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#      define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#    endif
+#    ifndef FLOAT_WORD_ORDER
+#      define FLOAT_WORD_ORDER WORD_LO_HI
+#    endif
+#  endif
+#  if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#    ifndef OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
+#      define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
+#    endif
+#    ifndef FLOAT_WORD_ORDER
+#      define FLOAT_WORD_ORDER BYTE_HI_LO
+#    endif
+#  endif
 #endif
 
-/** define uint16_t order of float: WORD_LO_HI, BYTE_HI_LO, WORD_HI_LO */
-#ifndef FLOAT_WORD_ORDER
-#  define FLOAT_WORD_ORDER WORD_LO_HI
-#endif
 
 #define HAL_SIZEOF_INT 4
 

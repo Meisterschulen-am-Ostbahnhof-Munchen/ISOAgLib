@@ -38,6 +38,13 @@
 #  error "Please specify EITHER little or big endian, not both!"
 #endif
 
+#if FLOAT_WORD_ORDER == WORD_HI_LO
+#elif FLOAT_WORD_ORDER == BYTE_HI_LO
+#elif FLOAT_WORD_ORDER == WORD_LO_HI
+#else
+#  error "PLEASE set FLOAT_WORD_ORDER to either WORD_HI_LO, BYTE_HI_LO or WORD_LO_HI in the config.h from your target"
+#endif
+
 
 #if !defined(CAN_INSTANCE_CNT)
 #  error "CAN_INSTANCE_CNT not set."
@@ -140,6 +147,10 @@
 #define WORD_LO_HI 0
 #define WORD_HI_LO 1
 #define BYTE_HI_LO 2
+
+// WORD_LO_HI (==BYTE_LO_HI) --> typical 32bit LITTLE_ENDIAN
+// WORD_HI_LO                --> typical 16bit LITTLE_ENDIAN
+// BYTE_HI_LO                --> typical 32bit BIG_ENDIAN
 
 /* ******************************************************** */
 /**
