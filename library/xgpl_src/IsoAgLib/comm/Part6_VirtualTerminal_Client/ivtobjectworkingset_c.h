@@ -30,6 +30,10 @@ public:
 
   const iVtObjectWorkingSet_s& get_vtObjectWorkingSet_a() { return *vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); }
 
+  void updateSelectable( uint8_t newSelectable ) {
+    vtObjectWorkingSet_c::updateSelectable( newSelectable );
+  }
+
   void changeActiveMask(iVtObjectMask_c* apc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectWorkingSet_c::changeActiveMask (apc_iVtObjectMask, b_updateObject, b_enableReplaceOfCmd);
   }

@@ -72,6 +72,12 @@ vtObjectWorkingSet_c::fitTerminal() const
 
 
 void
+vtObjectWorkingSet_c::updateSelectable( uint8_t newSelectable )
+{
+  saveValue8 (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), selectable), sizeof(iVtObjectWorkingSet_s), newSelectable);
+}
+
+void
 vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), apc_vtObjectMask);

@@ -34,6 +34,8 @@ public:
 
   uint32_t fitTerminal() const;
 
+  void updateSelectable( uint8_t newSelectable );
+
   void changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   void changeBackgroundColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
