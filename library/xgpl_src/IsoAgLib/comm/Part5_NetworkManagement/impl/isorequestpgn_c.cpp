@@ -191,6 +191,9 @@ IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
 void
 IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackType)
 {
+  // is checked in all the modules!
+  isoaglib_assert( mpc_isoItemSA != NULL );
+
   uint32_t ui32_purePgn = mui32_requestedPGN;
   if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
   { // destination specific, so clear the destSA field as we want the PURE PGN!
@@ -208,7 +211,7 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_
   // set at lowest byte of second uint32_t value the reserved 0xFF
   // and place at the higher bytes of this second uint32_t
   // the ui32_purePgn
-  isoPkg.setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) );
+  isoPkg.setUint32Data ((5-1), ((ui32_purePgn << 8) | uint32_t(mpc_isoItemSA->nr()) ));
   isoPkg.setLen (8);
 
   __IsoAgLib::getIsoBusInstance4Comm() << isoPkg;
