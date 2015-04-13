@@ -198,12 +198,22 @@ namespace IsoAgLib {
   {
     TcClient_c::disconnect( static_cast<const __IsoAgLib::TcClientConnection_c&>( connection ) );
   }
-      
+
   inline void iTcClient_c::disconnect( const iPdConnection_c& connection )
   {
     TcClient_c::disconnect( static_cast<const __IsoAgLib::PdConnection_c&>( connection ) );
   }
-      
+
+  inline void iTcClient_c::proprietaryServerRemovedFromMonitorList( const iIsoItem_c &item )
+  {
+    TcClient_c::proprietaryServerRemovedFromMonitorList( static_cast<const __IsoAgLib::IsoItem_c&>( item ) );
+  }
+
+  inline void iTcClient_c::proprietaryServerAddedToMonitorList( const iIsoItem_c &item )
+  {
+    TcClient_c::proprietaryServerAddedToMonitorList( static_cast<const __IsoAgLib::IsoItem_c&>( item ) );
+  }	
+
   inline void iTcClient_c::getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill )
   {
     TcClient_c::getAllServers( list_to_fill );

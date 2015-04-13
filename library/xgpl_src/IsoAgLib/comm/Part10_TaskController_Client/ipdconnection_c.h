@@ -24,6 +24,11 @@ namespace IsoAgLib {
     
     friend class iTcClient_c;
     friend class iPdLocal_c;
+  
+  private:
+    iPdConnection_c(); // not constructable!
+    iPdConnection_c( const iPdConnection_c& ); // not copy-constructable!
+    iPdConnection_c& operator=( const iPdConnection_c& ); // not assignable!
   };
 
 }
