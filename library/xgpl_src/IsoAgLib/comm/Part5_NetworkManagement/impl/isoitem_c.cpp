@@ -317,6 +317,7 @@ IsoItem_c::processAddressClaimed(
   }
   else
   { // remote item
+    clearItemState( PossiblyOffline );
     changeAddressAndBroadcast (aui8_pkgSa);
   }
 }
