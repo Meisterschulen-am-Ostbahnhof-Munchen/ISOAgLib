@@ -102,10 +102,6 @@ namespace __IsoAgLib {
 
 #ifdef USE_MUTUAL_EXCLUSION
       getCanInstance( ind ).processMsg( m_breakTimeEvent );
-      if( m_breakTimeEvent ) {
-        m_breakTimeEvent = false;
-        return 0;
-      }
 #else
       static bool sb_break = false;
       getCanInstance( ind ).processMsg( sb_break );
@@ -115,6 +111,14 @@ namespace __IsoAgLib {
 
     int32_t timeToNextTrigger;
     for( ;; ) {
+
+#ifdef USE_MUTUAL_EXCLUSION
+      if( m_breakTimeEvent ) {
+        // sleep at least 1 msec in subsequent waitUntilCanReceiveOrTimeout()
+        // (in case there was a context switch befor the main thread could call waitUntilCanReceiveOrTimeout)
+        return 1;
+      }
+#endif
 
       if( m_taskQueue.empty() ) {
         // we have to return some amount of mss that we have nothing todo
@@ -135,20 +139,10 @@ namespace __IsoAgLib {
       if ( timeToNextTrigger > 0 )
         break;
 
-#ifdef USE_MUTUAL_EXCLUSION
-      if( m_breakTimeEvent ) {
-        break;
-      }
-#endif
-
       task.timeEventPre();
       task.timeEvent();
       task.timeEventPost();
     }
-
-#ifdef USE_MUTUAL_EXCLUSION
-    m_breakTimeEvent = false;
-#endif
 
     return timeToNextTrigger;
   }

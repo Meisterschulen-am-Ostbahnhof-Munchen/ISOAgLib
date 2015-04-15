@@ -192,13 +192,17 @@ namespace __IsoAgLib {
 
 
   void 
-  CanIo_c::processMsg( bool ) {
+  CanIo_c::processMsg( bool& br_break) {
 
     if( initialized() ) { 
 
       HAL::canRxPoll( mui8_busNumber );
 
       while( ! HAL::CanFifos_c::get(mui8_busNumber).empty() ) {
+
+        if(br_break)
+          break;
+
         CanPkg_c& pkg = HAL::CanFifos_c::get( mui8_busNumber).front();
 
         CanIo_c::ArrFilterBox::iterator pc_iFilterBox;

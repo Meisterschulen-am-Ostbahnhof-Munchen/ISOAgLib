@@ -97,8 +97,10 @@ namespace __IsoAgLib {
       bool deleteAllFiltersForCustomer ( const __IsoAgLib::CanCustomer_c& ar_customer );
 
 
-      /** initiate processing of all received msg */
-      void processMsg( bool b_break );
+      /** initiate processing of all received msg 
+        @param br_break reference for break flag (can be set in main thread, if USE_MUTUAL_EXCLUSION is used)
+      */
+      void processMsg( bool& br_break );
 
       /** function for sending data out of CanPkg_c */
       CanIo_c& operator<<( CanPkg_c& acrc_src );
