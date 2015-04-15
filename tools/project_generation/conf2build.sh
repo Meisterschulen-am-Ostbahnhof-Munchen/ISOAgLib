@@ -253,8 +253,8 @@ check_set_correct_variables()
     if [ -z "$APP_PATH" ] ; then
         APP_PATH="$ISO_AG_LIB_PATH"
     fi
-    APP_INSIDE="../../$APP_PATH"
-    ISO_AG_LIB_INSIDE="../../$ISO_AG_LIB_PATH"
+    APP_INSIDE="../$APP_PATH"
+    ISO_AG_LIB_INSIDE="../$ISO_AG_LIB_PATH"
 
     if [ "$PRJ_BASE" -gt 0 ]; then
         # activate all base data sub-features, when PRJ_BASE is activated
@@ -691,19 +691,18 @@ create_filelist( )
         "${DRIVER_FEATURES:+ -o ${DRIVER_FEATURES}}")"
     { local EXCLUDE_PATH_PART1="$(find_part '-and -not' "-path '%s'" "$APP_PATH_EXCLUDE" 3>&1 1>&9)"; } 9>&1
     : ${EXCLUDE_PATH_PART1:="-a -not -path '*/xgpl_src/build/*'"}
-    eval "find ../../$ISO_AG_LIB_PATH/library/xgpl_src -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
-    eval "find ../../$ISO_AG_LIB_PATH/library/xgpl_src -follow $HDR_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
+    eval "find ../$ISO_AG_LIB_PATH/library/xgpl_src -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
+    eval "find ../$ISO_AG_LIB_PATH/library/xgpl_src -follow $HDR_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
 
-    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $SRC_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
-    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $HDR_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
+    eval "find ../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $SRC_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
+    eval "find ../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $HDR_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
 
     if [ "$HAL_PREFIX_ISOAGLIB" != "$HAL_PREFIX_SUPPLEMENTARY" ]; then
-      eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $SRC_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
-      eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $HDR_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
+      eval "find ../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $SRC_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
+      eval "find ../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $HDR_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
     fi
     
-    ##############################
-    # find application files
+    ##############################    # find application files
     ##############################
     {
         local APP_SRC_PART="$(find_part -and "-name '%s'" "$APP_SRC_FILE" 3>&1 1>&9)"
