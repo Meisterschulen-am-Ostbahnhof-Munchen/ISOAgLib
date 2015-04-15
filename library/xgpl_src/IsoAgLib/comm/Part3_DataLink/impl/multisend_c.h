@@ -159,13 +159,6 @@ public:
 #endif
 
   /**
-    set the delay between two sent messages, called by SendStream_c's timeEvent() when neccessary
-    @param aui16_delay wanted delay
-  */
-  void setSendStreamDelay(uint16_t aui16_delay);
-
-
-  /**
     start processing of a process msg: delegate to specific SendStream_c instance
   */
   void processMsg( const CanPkg_c& arc_data );
