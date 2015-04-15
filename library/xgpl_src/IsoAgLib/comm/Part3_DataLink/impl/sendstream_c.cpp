@@ -102,17 +102,14 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
       r_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_BAM));               // Byte 1
       r_multiSendPkg.setUint8Data (3, mui8_packetsLeftToSendInBurst);                    // Byte 4
       r_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
-      switchToState (AwaitCts, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
+      switchToState (SendData, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
     }
 
     mui32_packetNrRequestedInLastCts = 1;
     if (mpc_mss) mpc_mss->resetDataNextStreamPart();
     sendPacketIso( false, r_multiSendPkg ); // ISO never starts with data. BAM/RTS
   }
-  if (men_msgType == IsoTPbroadcast)
-  { // now we can switch the state to SendData
-    switchToState (SendData, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
-  }
+
   notifySender(Running);
 }
 
