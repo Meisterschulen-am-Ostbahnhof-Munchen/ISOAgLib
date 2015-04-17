@@ -47,7 +47,7 @@ namespace __IsoAgLib {
     , m_uploadStep( UploadNone )
     , m_uploadTimestamp( 0 )
     , m_uploadTimeout( 0 )
-    , m_commandParameter()
+    //, m_commandParameter()
     , m_initDone( false )
     , m_tcAliveNew( false )
     , m_timeStartWaitAfterAddrClaim( -1 )
@@ -154,7 +154,7 @@ namespace __IsoAgLib {
         break;
 
       case UploadFailed:
-        m_commandParameter = procCmdPar_OPTransferMsg;
+        //m_commandParameter = procCmdPar_OPTransferMsg;
         m_uploadTimestamp = HAL::getTime();
         m_uploadTimeout = DEF_WaitFor_Reupload;
         break;
@@ -369,13 +369,15 @@ namespace __IsoAgLib {
 
   void TcClientConnection_c::eventTaskStarted() {
     isoaglib_assert( m_stateHandler );
-    m_stateHandler->_eventTaskStarted( *this );
+    if( getDevPoolState() == PoolStateActive )
+      m_stateHandler->_eventTaskStarted( *this );
   }
 
 
   void TcClientConnection_c::eventTaskStopped() {
     isoaglib_assert( m_stateHandler );
-    m_stateHandler->_eventTaskStopped( *this );
+    if( getDevPoolState() == PoolStateActive )
+      m_stateHandler->_eventTaskStopped( *this );
   }
 
 
@@ -447,6 +449,8 @@ namespace __IsoAgLib {
   TcClientConnection_c::eventPoolActivateResponse( uint8_t result ) {
     if ( result == 0 ) {
       setDevPoolState( PoolStateActive );
+      if( getServer().getLastActiveTaskTC() )
+        eventTaskStarted();
     } else {
       setDevPoolState( PoolStateError );
     }
@@ -479,7 +483,7 @@ namespace __IsoAgLib {
     m_uploadTimestamp = HAL::getTime();
     m_uploadTimeout = timeout;
     m_uploadStep = UploadNone;
-    m_commandParameter = opcode;
+    //m_commandParameter = opcode;
     m_uploadState = StateBusy;
   }
 

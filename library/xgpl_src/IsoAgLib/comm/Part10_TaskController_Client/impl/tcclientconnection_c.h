@@ -230,7 +230,7 @@ namespace __IsoAgLib {
       UploadSteps_t m_uploadStep;
       uint32_t m_uploadTimestamp; // @todo This should be an int32_t.
       uint32_t m_uploadTimeout;
-      uint8_t m_commandParameter;
+      //uint8_t m_commandParameter; // currently not used - @todo USE IT on processMsgTc!
 
       // timeEvent variables
       bool m_initDone;
