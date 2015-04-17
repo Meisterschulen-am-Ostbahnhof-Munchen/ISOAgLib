@@ -47,6 +47,7 @@ IsoItem_c::IsoItem_c()
   , mui8_nr(0xFE)
   , mpc_identItem (NULL) // per default not a local item which has a back-reference to an IdentItem
   , mc_isoName()
+  , m_timestampLastRequestForAddressClaimed(-1)
 {
 }
 
@@ -204,7 +205,7 @@ IsoItem_c::timeEvent()
     }
     else
     { // no adress claim request sent till now
-      ( void )getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true, NULL );
+      ( void )getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true, NULL, NULL );
       // we're forcing, so always update, no need for the return value then!
       mpc_identItem->updateLastIsoSaRequestForThisItem();
     }

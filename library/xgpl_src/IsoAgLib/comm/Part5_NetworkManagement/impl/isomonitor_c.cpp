@@ -201,50 +201,47 @@ IsoMonitor_c::timeEvent()
 
 #if CONFIG_ISO_ITEM_MAX_AGE > 0
   if ( lastIsoSaRequest() != -1)
-  {  
+  {
+    const int32_t currentTime = HAL::getTime();
+
     IsoItem_c *someActiveLocalMember = anyActiveLocalItem();
 #if SA_REQUEST_PERIOD_MSEC > 0
-    if( ( ( HAL::getTime() - lastIsoSaRequest() ) > SA_REQUEST_PERIOD_MSEC ) && someActiveLocalMember )
-      ( void ) sendRequestForClaimedAddress( true, someActiveLocalMember );
+    if( ( ( currentTime - lastIsoSaRequest() ) > SA_REQUEST_PERIOD_MSEC ) && someActiveLocalMember )
+      ( void ) sendRequestForClaimedAddress( true, someActiveLocalMember, NULL );
+    else
+    {
 #endif
-
-    const int32_t ci32_timeSinceLastAdrClaimRequest = ( System_c::getTime() - lastIsoSaRequest());
-    bool b_requestAdrClaim = false;
-    if ( ci32_timeSinceLastAdrClaimRequest > CONFIG_ISO_ITEM_MAX_AGE )
-    { // the last request is more than CONFIG_ISO_ITEM_MAX_AGE ago
-      // --> each client MUST have answered until now if it's still alive
       for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end();)
-      { // delete item, if it didn't answer longer than CONFIG_ISO_ITEM_MAX_AGE since last adress claim request
-        if ( ( (pc_iter->lastTime()+CONFIG_ISO_ITEM_MAX_AGE) < lastIsoSaRequest() )
-          && ( !(pc_iter->itemState(IState_c::Local))   ) )
-        { // its last AdrClaim is too old - it didn't react on the last request
-          // was it too late for the first time??
-          // special case: when the rate of ReqForAdrClaimed is at about CONFIG_ISO_ITEM_MAX_AGE
-          // a node migth answer just in time to the _previous_ request, which is in turn _before_ the last
-          // detected request on BUS
-          // -->> regard the client only as stale, when the last AdrClaim was longer than CONFIG_ISO_ITEM_MAX_AGE
-          //      before the newest ReqForAdrClaimed on BUS
-          if ( pc_iter->itemState( IState_c::PossiblyOffline) )
-          { // it's too late the second time -> remove it
-            Vec_ISOIterator pc_iterDelete = pc_iter;
-            pc_iter = internalIsoItemErase (pc_iterDelete); // erase returns iterator to next element after the erased one
+      {
+        // mark/delete REMOTE items only and if it's already time so we can take a decision
+        if( ( !pc_iter->itemState( IState_c::Local ) ) &&
+            ( currentTime >= (pc_iter->getLastRequestForAddressClaimed() + CONFIG_ISO_ITEM_MAX_AGE) ) )
+        {
+          if( pc_iter->getLastRequestForAddressClaimed() != -1 )
+          {
+            const int32_t answeredAfter = pc_iter->lastTime() - pc_iter->getLastRequestForAddressClaimed();
+            if( ( answeredAfter < 0 ) || ( answeredAfter > CONFIG_ISO_ITEM_MAX_AGE ) )
+            {
+              if( ( !someActiveLocalMember ) || ( pc_iter->itemState( IState_c::PossiblyOffline ) ) )
+              { // We can't give it a Second Chance OR it's too late the second time -> Remove it!
+                pc_iter = internalIsoItemErase (pc_iter);
+                continue;
+              }
+              else
+              { // give it another chance (only if we have some active Local Member)
+                pc_iter->setItemState( IState_c::PossiblyOffline );
+
+                // we're forcing, so no need for the return value
+                ( void )sendRequestForClaimedAddress( true, someActiveLocalMember, &(*pc_iter));
+              }
+            }
           }
-          else
-          { // give it another chance
-            pc_iter->setItemState( IState_c::PossiblyOffline );
-            ++pc_iter;
-            b_requestAdrClaim = true;
-          }
-        } else {
-          ++pc_iter;
         }
+        ++pc_iter;
       } // for
-      if ( b_requestAdrClaim )
-      { // at least one node needs an additional adr claim
-        ( void )sendRequestForClaimedAddress( true, someActiveLocalMember );
-        // we're forcing, so no need for the return value
-      }
-    } // if
+#if SA_REQUEST_PERIOD_MSEC > 0
+    }
+#endif
   }
   #endif
 }
@@ -539,7 +536,7 @@ IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveConflict)
 
 
 bool
-IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender )
+IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender, IsoItem_c* receiver )
 { // trigger an initial request for claimed address
   // ( only if no request was detected )
   if ( ( lastIsoSaRequest() != -1 ) && ( ! ab_force ) )
@@ -550,7 +547,9 @@ IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender )
 
   c_data.setIsoPri(6);
   c_data.setIsoPgn(REQUEST_PGN_MSG_PGN);
-  c_data.setIsoPs(255); // global request
+
+  c_data.setMonitorItemForDA( receiver );
+
   if ( sender )
     c_data.setMonitorItemForSA( sender );
   else
@@ -559,16 +558,21 @@ IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender )
   c_data.setUint32Data( 0, ADDRESS_CLAIM_PGN );
   getIsoBusInstance4Comm() << c_data;
 
-  setLastIsoSaRequest( HAL::getTime() );
-
-  // let local items answer, too!
-  for( const_iterC1_t iter = m_arrClientC1.begin(); 
-       iter != m_arrClientC1.end();
-       ++iter )
+  const int32_t current_time = HAL::getTime();
+  
+  if( receiver )
+    receiver->setLastRequestForAddressClaimed(current_time);
+  else
   {
+    setLastIsoSaRequest( current_time );
+
+    // let local items answer, too!
+    for( const_iterC1_t iter = m_arrClientC1.begin(); iter != m_arrClientC1.end(); ++iter )
+    {
     IsoItem_c *localItem = (*iter)->getIsoItem();
     if( localItem )
-      localItem->sendSaClaim();
+        localItem->sendSaClaim();
+    }
   }
   return true;
 }
@@ -786,9 +790,8 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSe
   if( aui32_pgn == ADDRESS_CLAIM_PGN )
   {
     if (apc_isoItemReceiver == NULL)
-    { // No specific destination so it's broadcast: Let all local item answer!
-      // update time of last GLOBAL adress claim request to detect dead nodes
-      setLastIsoSaRequest (ai_requestTimestamp); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
+    { // Broadcast: Let all local item answer!
+      setLastIsoSaRequest (ai_requestTimestamp);
 
       bool b_processedRequestPGN = false;
       for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
@@ -872,6 +875,15 @@ IsoMonitor_c::updateSaItemTable( IsoItem_c& isoItem, bool add ) {
   if( isoItem.nr() < 0xFE ) {
     m_isoItems[ isoItem.nr() ] = add ? &isoItem : 0x0;
   }
+}
+
+
+void
+IsoMonitor_c::setLastIsoSaRequest (int32_t ai32_time)
+{
+  mi32_lastSaRequest = ai32_time;
+  for( Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end(); ++pc_iter )
+    pc_iter->setLastRequestForAddressClaimed(ai32_time);
 }
 
 

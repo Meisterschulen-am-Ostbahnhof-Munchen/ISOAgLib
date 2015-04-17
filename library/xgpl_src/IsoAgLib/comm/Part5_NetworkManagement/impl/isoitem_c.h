@@ -90,6 +90,16 @@ public:
   /// @todo SOON-240 Merge with sendSaClaim - create an enum for the three cases!
   void sendAddressClaim (bool ab_fromConflict);
 
+  void setLastRequestForAddressClaimed(int32_t timestamp)
+  {
+    m_timestampLastRequestForAddressClaimed = timestamp;
+  }
+
+  int32_t getLastRequestForAddressClaimed() const
+  {
+    return m_timestampLastRequestForAddressClaimed;
+  }
+
   void setNr( uint8_t aui8_nr ) { mui8_nr = aui8_nr; }
   uint8_t nr() const { return mui8_nr; }
 
@@ -178,6 +188,7 @@ private:
   uint8_t mui8_nr; // SA
   IdentItem_c* mpc_identItem; // set for local items
   IsoName_c mc_isoName;
+  int32_t m_timestampLastRequestForAddressClaimed; // set for all, but only checked for Remote items!
 };
 
 }

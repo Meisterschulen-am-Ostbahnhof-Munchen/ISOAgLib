@@ -226,7 +226,7 @@ IdentItem_c::timeEventPreAddressClaim( void )
     mpc_isoItem = &getIsoMonitorInstance4Comm().insertIsoMember(
       isoName(), mui8_sa, IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false);
 
-    bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( false, NULL );
+    bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( false, NULL, NULL );
     if (cb_sent)
       updateLastIsoSaRequestForThisItem();
 

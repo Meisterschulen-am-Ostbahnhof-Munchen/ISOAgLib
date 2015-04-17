@@ -175,11 +175,11 @@
 /*@{*/
 
 /** time to delete inactive ISO items in monitor list [msec]
-    - if CONFIG_ISO_ITEM_MAX_AGE is not defined, no items are deleted
+    set to 0 to disable detection of stale remote nodes and deletion after a second chance
+    (nodes should answer in max. 250msec, but we add some buffer for send/receive buffers)
 */
 #ifndef CONFIG_ISO_ITEM_MAX_AGE
-  /// erase ISO 11783 items after time (>0), on missing address claim after request - can be manually overridden in project config file
-#  define CONFIG_ISO_ITEM_MAX_AGE 3000
+#  define CONFIG_ISO_ITEM_MAX_AGE 300
 #endif
 
 /** this define controls the time interval between regular SA requests on the bus

@@ -130,20 +130,20 @@ public:
   int32_t lastIsoSaRequest() const { return mi32_lastSaRequest; }
 
   /** set timestamp of last ISO request for SA claim msg
-    @param ai32_time set timestamp to ai32_time or use actual time on default
+    @param ai32_time set timestamp to
 
     changed by M.Wodok so that NO system time is used,
     because REQUEST_FOR_CLAIMED_ADDRESS may be processed AFTER
     ADDRESS_CLAIM, so it's NOT chronologically. So CAN-Pkg-Times
     should be used here instead!!
   */
-  void setLastIsoSaRequest (int32_t ai32_time/* = -1*/) {mi32_lastSaRequest = /*(ai32_time != -1)?*/ai32_time/*:System_c::getTime()*/;}
+  void setLastIsoSaRequest (int32_t ai32_time);
 
   /** trigger a request for claimed addreses
     @param ab_force false -> send request only if no request was detected until now
     @return true -> request was sent
    */
-  bool sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender );
+  bool sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender, IsoItem_c* receiver );
 
   void updateSaItemTable( IsoItem_c& item, bool add );
 
