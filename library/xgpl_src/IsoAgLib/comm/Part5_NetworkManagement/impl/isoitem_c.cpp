@@ -72,6 +72,7 @@ IsoItem_c::IsoItem_c(const IsoItem_c& acrc_src)
   , mui8_nr (acrc_src.mui8_nr)
   , mpc_identItem (acrc_src.mpc_identItem)
   , mc_isoName (acrc_src.mc_isoName)
+  , m_timestampLastRequestForAddressClaimed (acrc_src.m_timestampLastRequestForAddressClaimed)
 
 {
   #ifdef USE_WORKING_SET
