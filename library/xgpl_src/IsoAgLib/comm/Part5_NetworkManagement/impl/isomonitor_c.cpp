@@ -208,40 +208,33 @@ IsoMonitor_c::timeEvent()
 #if SA_REQUEST_PERIOD_MSEC > 0
     if( ( ( currentTime - lastIsoSaRequest() ) > SA_REQUEST_PERIOD_MSEC ) && someActiveLocalMember )
       ( void ) sendRequestForClaimedAddress( true, someActiveLocalMember, NULL );
-    else
-    {
 #endif
-      for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end();)
+    for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end();)
+    {
+      // mark/delete REMOTE items only and if it's already time so we can take a decision
+      if( ( !pc_iter->itemState( IState_c::Local ) ) &&
+          ( pc_iter->getLastRequestForAddressClaimed() != -1 ) &&
+          ( currentTime >= (pc_iter->getLastRequestForAddressClaimed() + CONFIG_ISO_ITEM_MAX_AGE) ) )
       {
-        // mark/delete REMOTE items only and if it's already time so we can take a decision
-        if( ( !pc_iter->itemState( IState_c::Local ) ) &&
-            ( currentTime >= (pc_iter->getLastRequestForAddressClaimed() + CONFIG_ISO_ITEM_MAX_AGE) ) )
+        const int32_t answeredAfter = pc_iter->lastTime() - pc_iter->getLastRequestForAddressClaimed();
+        if( ( answeredAfter < 0 ) || ( answeredAfter > CONFIG_ISO_ITEM_MAX_AGE ) )
         {
-          if( pc_iter->getLastRequestForAddressClaimed() != -1 )
-          {
-            const int32_t answeredAfter = pc_iter->lastTime() - pc_iter->getLastRequestForAddressClaimed();
-            if( ( answeredAfter < 0 ) || ( answeredAfter > CONFIG_ISO_ITEM_MAX_AGE ) )
-            {
-              if( ( !someActiveLocalMember ) || ( pc_iter->itemState( IState_c::PossiblyOffline ) ) )
-              { // We can't give it a Second Chance OR it's too late the second time -> Remove it!
-                pc_iter = internalIsoItemErase (pc_iter);
-                continue;
-              }
-              else
-              { // give it another chance (only if we have some active Local Member)
-                pc_iter->setItemState( IState_c::PossiblyOffline );
+          if( ( !someActiveLocalMember ) || ( pc_iter->itemState( IState_c::PossiblyOffline ) ) )
+          { // We can't give it a Second Chance OR it's too late the second time -> Remove it!
+            pc_iter = internalIsoItemErase (pc_iter);
+            continue;
+          }
+          else
+          { // give it another chance (only if we have some active Local Member)
+            pc_iter->setItemState( IState_c::PossiblyOffline );
 
-                // we're forcing, so no need for the return value
-                ( void )sendRequestForClaimedAddress( true, someActiveLocalMember, &(*pc_iter));
-              }
-            }
+            // we're forcing, so no need for the return value
+            ( void )sendRequestForClaimedAddress( true, someActiveLocalMember, &(*pc_iter));
           }
         }
-        ++pc_iter;
-      } // for
-#if SA_REQUEST_PERIOD_MSEC > 0
-    }
-#endif
+      }
+      ++pc_iter;
+    } // for
   }
   #endif
 }
