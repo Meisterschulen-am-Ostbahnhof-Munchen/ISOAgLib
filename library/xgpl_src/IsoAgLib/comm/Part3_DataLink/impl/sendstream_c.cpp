@@ -257,11 +257,6 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
   {
     case scui8_eCM_CTS:
     case scui8_CM_CTS:
-      if (   (men_sendState == AwaitCts)
-          || (men_sendState == SendPauseTillCts)
-          || (men_sendState == AwaitEndofmsgack)
-          || (men_sendState == SendData)
-         )
       { // awaited (or resent-) CTS received -- only possible in ISO protocol case
         mui8_packetsLeftToSendInBurst = arc_data.getUint8Data (1);
 
@@ -347,7 +342,6 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
           switchToState (SendData, 0);
         } // end request to send
       } // awaited (or resent-) CTS received
-      // else: nothing to do on "SendRts"
       break;
 
     case scui8_CM_EndofMsgACK:
@@ -413,7 +407,7 @@ void
 SendStream_c::sendPacketIso (bool ab_data, MultiSendPkg_c& arc_data )
 {
   // set identifier
-  arc_data.setIsoPri (6);
+  arc_data.setIsoPri (7);
   arc_data.setISONameForSA (mc_isoNameSender);
   arc_data.setLen (8);
 
