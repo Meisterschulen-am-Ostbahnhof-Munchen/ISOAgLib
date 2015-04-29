@@ -49,7 +49,7 @@ namespace __IsoAgLib {
 
 
 // helper consts
-static const uint8_t scui8_tpPriority=6;
+static const uint8_t scui8_tpPriority=7;
 
 
   /** C-style function, to get access to the unique MultiReceive_c singleton instance
