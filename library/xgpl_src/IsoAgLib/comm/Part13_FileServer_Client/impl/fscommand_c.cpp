@@ -57,6 +57,7 @@ FsCommand_c::FsCommand_c(FsClientServerCommunication_c &FSCSComm, FsServerInstan
   , m_packetLength(0)
   , m_multireceiveMsgBuf( NULL )
   , m_multireceiveMsgBufAllocSize( 0 )
+  , m_multireceiveMsgBufOffset( 0 )
   , m_receivedResponse( true )
   , m_lastrequestAttemptTime( -1 )
   , m_requestAttempts( 0 ) // value will be reset when needed
@@ -75,7 +76,6 @@ FsCommand_c::FsCommand_c(FsClientServerCommunication_c &FSCSComm, FsServerInstan
   , m_attrHidden( false )
   , m_attrReadOnly( false )
   , m_positionMode( 0 )
-  , m_offset( 0 )
   , m_position( 0 )
   , m_count( 0 )
   , m_data( NULL )
@@ -193,10 +193,16 @@ FsCommand_c::timeEvent(void)
     }
     else
     { // Give up
-        switch (en_lastCommand)
+        // have the lastCommand reset before calling callback,
+        // because they may trigger new commands,
+        // setting the lastCommand, which would be overwritten by "noCommand" then
+        switch( finishCommand() )
         {
           case en_noCommand:
             isoaglib_assert (!"Internal error. Shouldn't be in en_noCommand state when giveing up with the current command.");
+            break;
+          case en_requestProperties:
+            isoaglib_assert( !"Request Properties should not have been called for non-initializing fsCommands!" );
             break;
           case en_getCurrentDirectory:
             m_FSCSComm.getCurrentDirectoryResponse(IsoAgLib::fsFileserverNotResponding, (uint8_t *)NULL);
@@ -244,16 +250,7 @@ FsCommand_c::timeEvent(void)
           case en_initializeVolume:
             m_FSCSComm.initializeVolumeResponse(IsoAgLib::fsFileserverNotResponding, false, false, false, false, false, false, false);
             break;
-          default:
-  #if DEBUG_FILESERVER
-            INTERNAL_DEBUG_DEVICE << "Repetition of command not defined!" << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
-            break;
         }
-
-        m_receivedResponse = true;
-        en_lastCommand = en_noCommand;
-        m_offset = 0;
     }
   }
 
@@ -288,6 +285,21 @@ FsCommand_c::timeEvent(void)
 }
 
 
+FsCommand_c::commandtype_en
+FsCommand_c::finishCommand()
+{
+  const commandtype_en oldCommand = en_lastCommand;
+  en_lastCommand = en_noCommand;
+  m_receivedResponse = true;
+  ++m_tan;
+#ifdef WORKAROUND_FSCLIENT_LIMITED_TAN_USE
+  // There's a problem with TAN 0xFF, some CCI FS will always answer with the TAN 0xFE response!
+  m_tan &= 0x7F;
+#endif
+  return oldCommand;
+}
+
+
 bool
 FsCommand_c::processPartStreamDataChunk (Stream_c& stream, bool isFirstChunk, bool isLastChunkAndACKd)
 {
@@ -296,7 +308,7 @@ FsCommand_c::processPartStreamDataChunk (Stream_c& stream, bool isFirstChunk, bo
 
   if (isFirstChunk)
   {
-    m_offset = 0;
+    m_multireceiveMsgBufOffset = 0;
     uint8_t tan = stream.get();
     if (tan != m_tan)
     {
@@ -312,30 +324,32 @@ FsCommand_c::processPartStreamDataChunk (Stream_c& stream, bool isFirstChunk, bo
   uint16_t ui16_notParsedSize
     = stream.getNotParsedSize();
 
-  if ( (uint32_t)(m_offset + ui16_notParsedSize) > m_multireceiveMsgBufAllocSize )
+  if ( (uint32_t)(m_multireceiveMsgBufOffset + ui16_notParsedSize) > m_multireceiveMsgBufAllocSize )
   {
     stream.setStreamInvalid();
 #if DEBUG_FILESERVER
-    INTERNAL_DEBUG_DEVICE << "More data than allocated! " << m_multireceiveMsgBufAllocSize << " " << uint32_t(m_offset + ui16_notParsedSize) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "More data than allocated! " << m_multireceiveMsgBufAllocSize << " " << uint32_t(m_multireceiveMsgBufOffset + ui16_notParsedSize) << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
     return false; // don't keep the stream, we've processed it right now, so remove it
   }
 
   for (uint8_t i = 0; i < ui16_notParsedSize; ++i)
-    m_multireceiveMsgBuf[i + m_offset] = stream.get();
+    m_multireceiveMsgBuf[i + m_multireceiveMsgBufOffset] = stream.get();
 
-  m_offset += ui16_notParsedSize;
+  m_multireceiveMsgBufOffset += ui16_notParsedSize;
 
   if (isLastChunkAndACKd)
   {
-    m_receivedResponse = true;
-    switch ( stream.getFirstByte() )
+    if( stream.getFirstByte() != en_lastCommand )
+      return false; // don't keep the stream, we've processed it right now, so remove it
+
+    switch ( finishCommand() )
     {
+      // @todo Actually add cases for the other commands, too, and call the callbacks with error!
+      //       OR let it run into the timeout, but then don't finish the command!!!
       case en_getCurrentDirectory:
         decodeGetCurrentDirectoryResponse();
         m_FSCSComm.getCurrentDirectoryResponse(IsoAgLib::iFsError(m_errorCode), m_currentDirectory);
-        m_offset = 0;
-        en_lastCommand = en_noCommand;
 
         // GetCurDir response MAY indicate a ready FsCSC
         // so notify the FsCSC (which will catch double notifies)
@@ -344,25 +358,19 @@ FsCommand_c::processPartStreamDataChunk (Stream_c& stream, bool isFirstChunk, bo
         return false; // don't keep the stream, we've processed it right now, so remove it
 
       case en_readFile:
-        en_lastCommand = en_noCommand;
         if ( m_readDirectory )
         {
           decodeReadDirectoryResponse();
           if (m_initializingFileserver)
-          {
             closeFile(m_fileHandle);
-          }
           else
-          {
             m_FSCSComm.readDirectoryResponse(IsoAgLib::iFsError(m_errorCode), m_dirData);
-          }
         }
         else
         {
           decodeReadFileResponse();
           m_FSCSComm.readFileResponse(IsoAgLib::iFsError(m_errorCode), m_count, m_data);
         }
-        m_offset = 0;
         return false; // don't keep the stream, we've processed it right now, so remove it
       default:
         return false; // don't keep the stream, we've processed it right now, so remove it
@@ -414,8 +422,15 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
     return CommandRunning;
   }
 
-  switch (pkg.getUint8Data(0))
+  if( pkg.getUint8Data(0) != en_lastCommand )
+    return CommandRunning;
+
+  switch( finishCommand() )
   {
+    case en_noCommand:
+      isoaglib_assert( !"Shouldn't get a response for NoCommand!" );
+      break;
+
     case en_requestProperties:
       if (m_initializingFileserver)
       {
@@ -427,8 +442,6 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
         if (ce_versionNumber >= FsServerInstance_c::FsVersionFDIS) // currently only don't support DIS fileservers...
         { // supported FileServer.
           getFileserver().setFsProperties (ce_versionNumber, cui8_maxSimOpenFiles, cui8_fsCapabilities);
-          m_receivedResponse = true;
-          ++m_tan;
           openFile((uint8_t *)"\\\\", false, false, false, true, false, true);
           return CommandRunning;
         }
@@ -439,17 +452,20 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
         }
       }
       // else: not initializing, ignore such a message
-      return CommandRunning;
+      break;
+
+    case en_getCurrentDirectory:
+      isoaglib_assert( !"Not coming in via SinglePacket, should only be retrieved by MultiPacket!" );
+      break;
 
     case en_changeCurrentDirectory:
-      m_receivedResponse = true;
-      ++m_tan;
       m_FSCSComm.changeCurrentDirectoryResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), m_fileName);
-      en_lastCommand = en_noCommand;
-      return CommandRunning;
+      break;
 
     case en_openFile:
-      decodeOpenFileResponse( pkg );
+   	  m_errorCode = pkg.getUint8Data(2);
+   	  m_fileHandle = pkg.getUint8Data(3);
+   	  decodeAttributes( pkg.getUint8Data(4) );
 
       if (m_errorCode == IsoAgLib::fsSuccess)
         ++m_nrOpenFiles;
@@ -461,17 +477,14 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       }
 
       m_FSCSComm.openFileResponse(IsoAgLib::iFsError(m_errorCode), m_fileHandle, m_attrCaseSensitive, m_attrRemovable, m_attrLongFilenames, m_attrIsDirectory,  m_attrIsVolume, m_attrHidden, m_attrReadOnly);
-      en_lastCommand = en_noCommand;
-      return CommandRunning;
+      break;
 
     case en_seekFile:
       // in case of "isBeingInitialized" two Seek commands are being executed!
       //init case get volumes or real external seek file?
       if (m_initializingFileserver && m_positionMode == 0)
       {
-        m_receivedResponse = true;
-        ++m_tan;
-	      if (m_position == 0)
+        if (m_position == 0)
         {
 #if DEBUG_FILESERVER
 	        INTERNAL_DEBUG_DEVICE << "exploratory seek failed: using read length of 16\n" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -484,20 +497,15 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
         return CommandRunning;
       }
 
-      decodeSeekFileResponse( pkg );
+      m_errorCode = pkg.getUint8Data(2);
+      m_position = static_cast<uint32_t>(pkg.getUint8Data(4)) | (static_cast<uint32_t>(pkg.getUint8Data(5)) << 0x08) | (static_cast<uint32_t>(pkg.getUint8Data(6)) << 0x10) | (static_cast<uint32_t>(pkg.getUint8Data(7)) << 0x18);
 
       //init case get volumes or real external seek file?
       if (m_initializingFileserver && m_positionMode == 2)
-      {
         seekFile(m_fileHandle, 0, 0);
-      }
       else
-      {
         m_FSCSComm.seekFileResponse(IsoAgLib::iFsError(m_errorCode), m_position);
-        en_lastCommand = en_noCommand;
-      }
-
-      return CommandRunning;
+      break;
 
     case en_readFile:
       if (6 > m_multireceiveMsgBufAllocSize)
@@ -512,37 +520,27 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       for (uint8_t i = 0; i < 6; ++i)
         m_multireceiveMsgBuf[i] = pkg.getUint8Data(i + 2);
 
-      en_lastCommand = en_noCommand;
       if ( m_readDirectory )
       {
         decodeReadDirectoryResponse();
         if (m_initializingFileserver)
-        {
           closeFile(m_fileHandle);
-        }
         else
-        {
           m_FSCSComm.readDirectoryResponse(IsoAgLib::iFsError(m_errorCode), m_dirData);
-        }
       }
       else
       {
         decodeReadFileResponse();
         m_FSCSComm.readFileResponse(IsoAgLib::iFsError(m_errorCode), m_count, m_data);
       }
-      return CommandRunning;
+      break;
 
     case en_writeFile:
-      m_receivedResponse = true;
-      ++m_tan;
       m_FSCSComm.writeFileResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), (pkg.getUint8Data(3) | pkg.getUint8Data(4) << 0x08));
-      en_lastCommand = en_noCommand;
-      return CommandRunning;
+      break;
 
     case en_closeFile:
       m_errorCode = pkg.getUint8Data(2);
-      m_receivedResponse = true;
-      ++m_tan;
 
       if ( (m_errorCode == IsoAgLib::fsSuccess) && (m_nrOpenFiles > 0) )
         --m_nrOpenFiles;
@@ -556,67 +554,41 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       }
 
       m_FSCSComm.closeFileResponse(IsoAgLib::iFsError(m_errorCode));
-      en_lastCommand = en_noCommand;
-      return CommandRunning;
+      break;
 
     case en_moveFile:
-      m_receivedResponse = true;
-      ++m_tan;
       m_FSCSComm.moveFileResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)));
-      en_lastCommand = en_noCommand;
-      return CommandRunning;
+      break;
 
     case en_deleteFile:
-      ++m_tan;
-      m_receivedResponse = true;
-      en_lastCommand = en_noCommand;
       m_FSCSComm.deleteFileResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)));
-      return CommandRunning;
+      break;
 
     case en_getFileAttributes:
-      ++m_tan;
-      m_receivedResponse = true;
       decodeAttributes(pkg.getUint8Data(3));
       m_FSCSComm.getFileAttributesResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), m_attrCaseSensitive, m_attrRemovable, m_attrLongFilenames, m_attrIsDirectory,  m_attrIsVolume, m_attrHidden, m_attrReadOnly);
-      en_lastCommand = en_noCommand;
-      return CommandRunning;
+      break;
 
     case en_setFileAttributes:
-      ++m_tan;
-      m_receivedResponse = true;
       m_FSCSComm.setFileAttributesResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)));
-      en_lastCommand = en_noCommand;
-      return CommandRunning;
+      break;
 
     case en_getFileDateTime:
       {
-        m_receivedResponse = true;
-        ++m_tan;
-
         uint16_t date = pkg.getUint8Data(3) | (pkg.getUint8Data(4) << 8);
         uint16_t time = pkg.getUint8Data(5) | (pkg.getUint8Data(6) << 8);
 
         m_FSCSComm.getFileDateTimeResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), (uint16_t)(1980 + ((date >> 9) & 0x7F)), (date >> 5) & 0xF, (date) & 0x1F, (time >> 11) & 0x1F, (time >> 5) & 0x3F, 2 * ((time) & 0x1F));
-        en_lastCommand = en_noCommand;
-        return CommandRunning;
       }
+      break;
 
     case en_initializeVolume:
-      m_receivedResponse = true;
-      ++m_tan;
-
       decodeAttributes(pkg.getUint8Data(3));
 
       m_FSCSComm.initializeVolumeResponse(IsoAgLib::iFsError(pkg.getUint8Data(2)), m_attrCaseSensitive, m_attrRemovable, m_attrLongFilenames, m_attrIsDirectory,  m_attrIsVolume, m_attrHidden, m_attrReadOnly);
-      en_lastCommand = en_noCommand;
-      return CommandRunning;
-
-    default:
-#if DEBUG_FILESERVER
-      INTERNAL_DEBUG_DEVICE << "got message with content (decimal): " << (uint32_t)pkg.getUint8Data(0) << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-      return CommandRunning;
+      break;
   }
+  return CommandRunning;
 }
 
 
@@ -691,7 +663,7 @@ FsCommand_c::requestProperties()
 {
   en_lastCommand = en_requestProperties;
 
-  m_sendMsgBuf[0] = en_requestProperties;
+  m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = 0xFF;
   m_sendMsgBuf[2] = 0xFF;
   m_sendMsgBuf[3] = 0xFF;
@@ -723,7 +695,7 @@ FsCommand_c::getCurrentDirectory()
 {
   en_lastCommand = en_getCurrentDirectory;
 
-  m_sendMsgBuf[0] = en_getCurrentDirectory;
+  m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = m_tan;
   m_sendMsgBuf[2] = 0xFF;
   m_sendMsgBuf[3] = 0xFF;
@@ -758,7 +730,7 @@ FsCommand_c::changeCurrentDirectory(uint8_t *newDirectory)
   for (uint16_t i = 0; i < ui16_length; ++i)
     m_fileName[i] = newDirectory[i];
 
-  m_sendMsgBuf[ui8_bufferPosition++] = en_changeCurrentDirectory;
+  m_sendMsgBuf[ui8_bufferPosition++] = en_lastCommand;
   m_sendMsgBuf[ui8_bufferPosition++] = m_tan;
   m_sendMsgBuf[ui8_bufferPosition++] = static_cast<uint8_t>(ui16_length);
   m_sendMsgBuf[ui8_bufferPosition++] = static_cast<uint8_t>(ui16_length >> 8);
@@ -778,8 +750,7 @@ FsCommand_c::changeCurrentDirectory(uint8_t *newDirectory)
 IsoAgLib::iFsCommandErrors
 FsCommand_c::openFile(uint8_t *fileName, bool openExclusive, bool openForAppend, bool createNewFile, bool openForReading, bool openForWriting, bool openDirectory)
 {
-  if (en_lastCommand == en_noCommand)
-    en_lastCommand = en_openFile;
+  en_lastCommand = en_openFile;
 
   uint16_t ui16_length = CNAMESPACE::strlen((const char*)fileName);
   if ((ui16_length + 1) > m_fileNameAllocSize)
@@ -792,7 +763,7 @@ FsCommand_c::openFile(uint8_t *fileName, bool openExclusive, bool openForAppend,
   m_fileName[ui16_length] = 0;
   uint8_t ui8_bufferPosition = 0;
 
-  m_sendMsgBuf[ui8_bufferPosition++] = en_openFile;
+  m_sendMsgBuf[ui8_bufferPosition++] = en_lastCommand;
   m_sendMsgBuf[ui8_bufferPosition++] = m_tan;
 
   uint8_t openFlags = 0x0;
@@ -857,21 +828,19 @@ FsCommand_c::openFile(uint8_t *fileName, bool openExclusive, bool openForAppend,
 IsoAgLib::iFsCommandErrors
 FsCommand_c::seekFile(uint8_t fileHandle, uint8_t positionMode, int32_t offset)
 {
-  if (en_lastCommand == en_noCommand)
-    en_lastCommand = en_seekFile;
+  en_lastCommand = en_seekFile;
 
   m_fileHandle = fileHandle;
   m_positionMode = positionMode;
-  m_offset = offset;
 
-  m_sendMsgBuf[0] = en_seekFile;
+  m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = m_tan;
   m_sendMsgBuf[2] = m_fileHandle;
   m_sendMsgBuf[3] = m_positionMode;
-  m_sendMsgBuf[4] = m_offset;
-  m_sendMsgBuf[5] = m_offset >> 0x08;
-  m_sendMsgBuf[6] = m_offset >> 0x10;
-  m_sendMsgBuf[7] = m_offset >> 0x18;
+  m_sendMsgBuf[4] = offset;
+  m_sendMsgBuf[5] = offset >> 0x08;
+  m_sendMsgBuf[6] = offset >> 0x10;
+  m_sendMsgBuf[7] = offset >> 0x18;
 
   m_packetLength = 8;
 
@@ -904,7 +873,7 @@ FsCommand_c::writeFile(uint8_t fileHandle, uint16_t count, const uint8_t *data)
 
   m_fileHandle = fileHandle;
 
-  m_sendMsgBuf[0] = en_writeFile;
+  m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = m_tan;
   m_sendMsgBuf[2] = m_fileHandle;
   m_sendMsgBuf[3] = static_cast<uint8_t>(count);
@@ -931,7 +900,7 @@ FsCommand_c::closeFile(uint8_t fileHandle)
 
   m_fileHandle = fileHandle;
 
-  m_sendMsgBuf[0] = en_closeFile;
+  m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = m_tan;
   m_sendMsgBuf[2] = m_fileHandle;
   m_sendMsgBuf[3] = 0xFF;
@@ -954,7 +923,7 @@ FsCommand_c::moveFile(uint8_t *sourceName, uint8_t *destName, bool recursive, bo
 
   en_lastCommand = en_moveFile;
 
-  m_sendMsgBuf[ui8_bufferPosition++] = en_moveFile;
+  m_sendMsgBuf[ui8_bufferPosition++] = en_lastCommand;
   m_sendMsgBuf[ui8_bufferPosition++] = m_tan;
 
   uint8_t fileHandleMode = 0x00;
@@ -997,7 +966,7 @@ FsCommand_c::deleteFile (uint8_t *sourceName, bool recursive, bool force)
 
   en_lastCommand = en_deleteFile;
 
-  m_sendMsgBuf[ui8_bufferPosition++] = en_deleteFile;
+  m_sendMsgBuf[ui8_bufferPosition++] = en_lastCommand;
   m_sendMsgBuf[ui8_bufferPosition++] = m_tan;
 
   uint8_t fileHandleMode = 0x00;
@@ -1029,7 +998,7 @@ FsCommand_c::getFileAttributes(uint8_t *sourceName)
 {
   en_lastCommand = en_getFileAttributes;
 
-  m_sendMsgBuf[0] = en_getFileAttributes;
+  m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = m_tan;
 
   uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)sourceName);
@@ -1052,7 +1021,7 @@ FsCommand_c::setFileAttributes(uint8_t *sourceName, uint8_t hiddenAttr, uint8_t 
 {
   en_lastCommand = en_setFileAttributes;
 
-  m_sendMsgBuf[0] = en_setFileAttributes;
+  m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = m_tan;
 
   m_sendMsgBuf[2] = 0xF0 | hiddenAttr << 2 | readOnlyAttr;
@@ -1078,7 +1047,7 @@ FsCommand_c::getFileDateTime(uint8_t *sourceName)
 {
   en_lastCommand = en_getFileDateTime;
 
-  m_sendMsgBuf[0] = en_getFileDateTime;
+  m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = m_tan;
 
   uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)sourceName);
@@ -1140,8 +1109,6 @@ FsCommand_c::decodeGetCurrentDirectoryResponse()
   ui16_length = m_multireceiveMsgBuf[9] | (m_multireceiveMsgBuf[10] << 8);
   pui8_receivePointer = &m_multireceiveMsgBuf[11];
 
-  m_receivedResponse = true;
-  ++m_tan;
   if ((ui16_length + 1) > m_currentDirectoryAllocSize)
   {
     if (m_currentDirectory != NULL)
@@ -1160,33 +1127,8 @@ FsCommand_c::decodeGetCurrentDirectoryResponse()
 
 
 void
-FsCommand_c::decodeOpenFileResponse( const CanPkg_c& arc_data )
-{
-  m_receivedResponse = true;
-  ++m_tan;
-  m_errorCode = arc_data.getUint8Data(2);
-  m_fileHandle = arc_data.getUint8Data(3);
-  decodeAttributes(arc_data.getUint8Data(4));
-}
-
-
-void
-FsCommand_c::decodeSeekFileResponse( const CanPkg_c& arc_data )
-{
-  m_receivedResponse = true;
-  ++m_tan;
-  m_errorCode = arc_data.getUint8Data(2);
-
-  m_position = static_cast<uint32_t>(arc_data.getUint8Data(4)) | (static_cast<uint32_t>(arc_data.getUint8Data(5)) << 0x08) | (static_cast<uint32_t>(arc_data.getUint8Data(6)) << 0x10) | (static_cast<uint32_t>(arc_data.getUint8Data(7)) << 0x18);
-}
-
-
-void
 FsCommand_c::decodeReadFileResponse()
 {
-  m_receivedResponse = true;
-  ++m_tan;
-
   m_errorCode = m_multireceiveMsgBuf[0];
   m_count = m_multireceiveMsgBuf[1] | (m_multireceiveMsgBuf[2] << 0x08);
 
@@ -1216,34 +1158,32 @@ FsCommand_c::decodeReadFileResponse()
 void
 FsCommand_c::decodeReadDirectoryResponse()
 {
-  m_receivedResponse = true;
-  ++m_tan;
   IsoAgLib::iFsDirectoryPtr ps_tmpDir;
 
   m_errorCode = m_multireceiveMsgBuf[0];
 
   clearDirectoryList();
 
-  m_offset = 3;
+  int32_t offset = 3;
 
   for (uint16_t ui16_nrEntries = 0; ui16_nrEntries < m_count; ++ui16_nrEntries)
   {
-    if ((uint32_t)m_offset >= m_multireceiveMsgBufAllocSize)
+    if ((uint32_t)offset >= m_multireceiveMsgBufAllocSize)
       break;
 
     ps_tmpDir = new IsoAgLib::iFsDirectory();
 
-    ps_tmpDir->pui8_filename = new uint8_t[m_multireceiveMsgBuf[m_offset] + 1];
-    ps_tmpDir->pui8_filename[m_multireceiveMsgBuf[m_offset]] = 0;
+    ps_tmpDir->pui8_filename = new uint8_t[m_multireceiveMsgBuf[offset] + 1];
+    ps_tmpDir->pui8_filename[m_multireceiveMsgBuf[offset]] = 0;
 
-    for (uint8_t ui8_nameLength = 0; ui8_nameLength < m_multireceiveMsgBuf[m_offset]; ++ui8_nameLength)
-      ps_tmpDir->pui8_filename[ui8_nameLength] = m_multireceiveMsgBuf[ui8_nameLength + m_offset + 1];
+    for (uint8_t ui8_nameLength = 0; ui8_nameLength < m_multireceiveMsgBuf[offset]; ++ui8_nameLength)
+      ps_tmpDir->pui8_filename[ui8_nameLength] = m_multireceiveMsgBuf[ui8_nameLength + offset + 1];
 
-    m_offset += (m_multireceiveMsgBuf[m_offset] + 1);
-    if ((uint32_t)m_offset >= m_multireceiveMsgBufAllocSize)
+    offset += (m_multireceiveMsgBuf[offset] + 1);
+    if ((uint32_t)offset >= m_multireceiveMsgBufAllocSize)
       break;
 
-    decodeAttributes(m_multireceiveMsgBuf[m_offset]);
+    decodeAttributes(m_multireceiveMsgBuf[offset]);
 
     ps_tmpDir->b_caseSensitive = m_attrCaseSensitive;
     ps_tmpDir->b_removable = m_attrRemovable;
@@ -1253,25 +1193,25 @@ FsCommand_c::decodeReadDirectoryResponse()
     ps_tmpDir->b_hidden = m_attrHidden;
     ps_tmpDir->b_readOnly = m_attrReadOnly;
 
-    ++m_offset;
-    if ((uint32_t)(m_offset + 1) >= m_multireceiveMsgBufAllocSize)
+    ++offset;
+    if ((uint32_t)(offset + 1) >= m_multireceiveMsgBufAllocSize)
       break;
 
-    ps_tmpDir->ui16_date = m_multireceiveMsgBuf[m_offset] | (m_multireceiveMsgBuf[m_offset + 1] << 0x08);
+    ps_tmpDir->ui16_date = m_multireceiveMsgBuf[offset] | (m_multireceiveMsgBuf[offset + 1] << 0x08);
 
-    m_offset += 2;
-    if ((uint32_t)(m_offset + 1) >= m_multireceiveMsgBufAllocSize)
+    offset += 2;
+    if ((uint32_t)(offset + 1) >= m_multireceiveMsgBufAllocSize)
       break;
 
-    ps_tmpDir->ui16_time = m_multireceiveMsgBuf[m_offset] | (m_multireceiveMsgBuf[m_offset + 1] << 0x08);
+    ps_tmpDir->ui16_time = m_multireceiveMsgBuf[offset] | (m_multireceiveMsgBuf[offset + 1] << 0x08);
 
-    m_offset += 2;
-    if ((uint32_t)(m_offset + 3) >= m_multireceiveMsgBufAllocSize)
+    offset += 2;
+    if ((uint32_t)(offset + 3) >= m_multireceiveMsgBufAllocSize)
       break;
 
-    ps_tmpDir->ui32_size = static_cast<uint32_t>(m_multireceiveMsgBuf[m_offset]) | (static_cast<uint32_t>(m_multireceiveMsgBuf[m_offset + 1]) << 0x08) | (static_cast<uint32_t>(m_multireceiveMsgBuf[m_offset + 2]) << 0x10) | (static_cast<uint32_t>(m_multireceiveMsgBuf[m_offset + 3]) << 0x18);
+    ps_tmpDir->ui32_size = static_cast<uint32_t>(m_multireceiveMsgBuf[offset]) | (static_cast<uint32_t>(m_multireceiveMsgBuf[offset + 1]) << 0x08) | (static_cast<uint32_t>(m_multireceiveMsgBuf[offset + 2]) << 0x10) | (static_cast<uint32_t>(m_multireceiveMsgBuf[offset + 3]) << 0x18);
 
-    m_offset += 4;
+    offset += 4;
 
     m_dirData.push_back(ps_tmpDir);
   }
@@ -1331,14 +1271,13 @@ FsCommand_c::doCleanUp()
 IsoAgLib::iFsCommandErrors
 FsCommand_c::readFile(uint8_t fileHandle, uint16_t count, bool reportHiddenFiles)
 {
-  if (en_lastCommand == en_noCommand)
-    en_lastCommand = en_readFile;
+  en_lastCommand = en_readFile;
 
   m_fileHandle = fileHandle;
   m_count = count;
   uint8_t ui8_bufferPosition = 0;
 
-  m_sendMsgBuf[ui8_bufferPosition++] = en_readFile;
+  m_sendMsgBuf[ui8_bufferPosition++] = en_lastCommand;
   m_sendMsgBuf[ui8_bufferPosition++] = m_tan;
   m_sendMsgBuf[ui8_bufferPosition++] = m_fileHandle;
   m_sendMsgBuf[ui8_bufferPosition++] = static_cast<uint8_t>(m_count);

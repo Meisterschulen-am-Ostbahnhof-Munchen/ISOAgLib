@@ -75,9 +75,6 @@ class FsCommand_c : CanCustomer_c
 
     /** functions to decode fileserver repsonses. **/
     void decodeGetCurrentDirectoryResponse();
-    void decodeOpenFileResponse( const CanPkg_c& );
-    void decodeSeekFileResponse( const CanPkg_c& );
-    void decodeSeekFileResponse();
     void decodeReadFileResponse();
     void decodeReadDirectoryResponse();
 
@@ -108,6 +105,8 @@ class FsCommand_c : CanCustomer_c
       en_initializeVolume = 0x40
     };
     commandtype_en en_lastCommand;
+
+    commandtype_en finishCommand();
 
   public:
 
@@ -293,6 +292,7 @@ class FsCommand_c : CanCustomer_c
     uint8_t m_sendMsgBuf[CONFIG_FS_CLIENT_MAX_WRITE_SIZE + 16]; // 16 for command bytes overhead in message
     uint8_t *m_multireceiveMsgBuf;
     uint32_t m_multireceiveMsgBufAllocSize;
+    int32_t m_multireceiveMsgBufOffset;
 
     bool m_receivedResponse;
     int32_t m_lastrequestAttemptTime;
@@ -325,7 +325,6 @@ class FsCommand_c : CanCustomer_c
 
     /** seek file information **/
     uint8_t m_positionMode;
-    int32_t m_offset;
     uint32_t m_position;
 
     /** read file information */
