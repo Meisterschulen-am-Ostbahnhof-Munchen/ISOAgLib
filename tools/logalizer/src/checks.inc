@@ -51,7 +51,7 @@ checkHandshakingsVtCommands( PtrDataFrame_t at_ptrFrame )
   }
   else return;
 
-  gs_main.m_alive.response(e_category, ui8_saClient).push_back (std::make_pair< msgType_e, std::string >(msgType_direction, "")); // @todo VT commands
+  gs_main.m_alive.response(e_category, ui8_saClient).push_back (std::pair< msgType_e, std::string >(msgType_direction, "")); // @todo VT commands
   gs_main.m_alive.alives(e_category, ui8_saClient).push_back (at_ptrFrame->time());
 }
 
@@ -99,7 +99,7 @@ checkHandshakingTP( PtrDataFrame_t at_ptrFrame )
       mtype = msgTypeCONNABORT;
       ui8_saClient = at_ptrFrame->sourceAddress();
       // this message is special case! This aborts SA->DA and also DA->SA!
-      gs_main.m_alive.response(AliveCollection_c::categoryEtpTpCommunicationTimes, at_ptrFrame->destinationAddress()).push_back (std::make_pair<msgType_e,std::string>(mtype, "") );
+      gs_main.m_alive.response(AliveCollection_c::categoryEtpTpCommunicationTimes, at_ptrFrame->destinationAddress()).push_back (std::pair<msgType_e,std::string>(mtype, "") );
       gs_main.m_alive.alives(AliveCollection_c::categoryEtpTpCommunicationTimes, at_ptrFrame->destinationAddress()).push_back (at_ptrFrame->time());
       break; // CONN ABORT BY SENDER!
     }
@@ -109,7 +109,7 @@ checkHandshakingTP( PtrDataFrame_t at_ptrFrame )
     return;
   }
 
-  gs_main.m_alive.response(AliveCollection_c::categoryEtpTpCommunicationTimes, ui8_saClient).push_back (std::make_pair<msgType_e,std::string>(mtype, ""));
+  gs_main.m_alive.response(AliveCollection_c::categoryEtpTpCommunicationTimes, ui8_saClient).push_back (std::pair<msgType_e,std::string>(mtype, ""));
   gs_main.m_alive.alives(AliveCollection_c::categoryEtpTpCommunicationTimes, ui8_saClient).push_back (at_ptrFrame->time());
 }
 
@@ -139,7 +139,7 @@ checkHandshakingsProcData( PtrDataFrame_t at_ptrFrame )
       msgType_direction = msgTypeMeasurement;
       ui8_saClient = at_ptrFrame->sourceAddress();
     }
-    gs_main.m_alive.response(e_category, ui8_saClient).push_back (std::make_pair<msgType_e,std::string>(
+    gs_main.m_alive.response(e_category, ui8_saClient).push_back (std::pair<msgType_e,std::string>(
       msgType_direction, 
       interpretePgnData( at_ptrFrame )));
     gs_main.m_alive.alives(e_category, ui8_saClient).push_back (at_ptrFrame->time());
