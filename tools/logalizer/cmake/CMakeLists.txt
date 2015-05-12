@@ -20,14 +20,23 @@ include_directories(
 
 add_executable(
   logalizer
+  ../src/isoaglib_project_config.h
   ../src/logalizer.cpp
   ../src/transfercollection.cpp
+  ../src/transfercollection.h
   ../src/alivecollection.cpp
+  ../src/alivecollection.h
   ../src/addresstracker.cpp
+  ../src/addresstracker.h
   ../src/functionality_vt.inc
   ../src/functionality_tc.inc
   ../src/functionality_fs.inc
   ../src/functionality_tecu.inc
+  ../src/dataframe.h
+  ../src/inputstream.h
+  ../src/logenvirons.h
+  ../src/gpx_writer.inc
+  ../src/checks.inc
   ../src/parsers.inc)
 
 target_link_libraries(logalizer)

@@ -385,3 +385,30 @@ parseLogLineCsv( std::string const &acr_line ) // "0xCFE46F0*,54.6857,FF,FF,FF,F
   return std::make_pair( 0, t_ptrFrame );
 }
 
+
+std::pair< int, PtrDataFrame_t >
+parseLogLineKomodo( std::string const &acr_line ) // "0:00.003.537,0x0cff05b4,0,8,01 00 01 00 01 00 C0 C0"
+{
+  int i1, i2;
+  float f1;
+  int iID, inumDb;
+  unsigned arru_d[8];
+  int parsed_count = sscanf(
+      acr_line.c_str(),
+      "%d:%d.%f,%x,%*d,%d,%x %x %x %x %x %x %x %x",
+      &i1,
+      &i2,
+      &f1,
+      &iID,
+      &inumDb,
+      arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
+  int i_result = parsed_count == (5+inumDb) ? 0 : -1;
+  if (i_result < 0)
+    return std::make_pair( i_result, PtrDataFrame_t(0) );
+  uint64_t const cui64_time = static_cast<uint64_t>(i1*60000 + i2*1000 + f1);
+  std::vector< uint8_t > vec_data;
+  copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
+  return std::make_pair( i_result, t_ptrFrame );
+}
+

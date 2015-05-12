@@ -35,6 +35,7 @@
 #define ETP_DATA_TRANSFER_PGN   0x00C700LU
 #define ETP_CONN_MANAGE_PGN     0x00C800LU
 #define PROCESS_DATA_PGN        0x00CB00LU
+#define CAB_MESSAGE_1           0x00E000LU
 #define VT_TO_GLOBAL_PGN        0x00E6FFLU
 #define VT_TO_ECU_PGN           0x00E600LU
 #define ECU_TO_VT_PGN           0x00E700LU
@@ -49,10 +50,19 @@
 #define PROPRIETARY_A2_PGN      0x01EF00LU
 
 // <NO DESTINATION> PGNs
-#define SELECTED_SPEED_MESSAGE      0x00F022LU
 #define ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE 0x00F004LU
+#define ELECTRONIC_TRANSMISSION_CONTROLLER_2 0x00F005LU
+#define ELECTRONIC_AXLE_CONTROLLER_1 0x00F006LU
+#define SELECTED_SPEED_MESSAGE      0x00F022LU
+#define PRODUCT_IDENTIFICATION_PGN  0x00FC8DLU
+#define CONTROL_FUNCTION_FUNCTIONALITIES_PGN 0x00FC8ELU
+#define ALL_IMPLEMENTS_STOP_OPERATIONS_SWITCH_STATE_PGN 0x00FD02LU
+#define ECU_DIAGNOSTIC_PROTOCOL_PGN 0x00FD32LU
 #define ISOBUS_CERTIFICATION_PGN    0x00FD42LU
 #define SELECTED_SPEED_CMD          0x00FD43LU
+#define ECU_IDENTIFICATION_INFORMATION_PGN 0x00FDC5LU
+#define OPERATORS_EXTERNAL_LIGHT_CONTROLS_MESSAGE 0x00FDCCLU
+#define BASIC_JOYSTICK_MESSAGE_1    0x00FDD6LU
 #define TRACTOR_FACILITIES_PGN      0x00FE09LU
 #define WORKING_SET_MEMBER_PGN      0x00FE0CLU
 #define WORKING_SET_MASTER_PGN      0x00FE0DLU
@@ -115,17 +125,33 @@
 #define MAINTAIN_POWER_REQUEST_PGN  0x00FE47LU
 #define WHEEL_BASED_SPEED_DIST_PGN  0x00FE48LU
 #define GROUND_BASED_SPEED_DIST_PGN 0x00FE49LU
-#define SOFTWARE_IDENTIFICATION_PGN 0x00FEDALU
-#define ECU_IDENTIFICATION_INFORMATION_PGN 0x00FDC5LU
-#define ECU_DIAGNOSTIC_PROTOCOL_PGN     0x00FD32LU
+#define VEHICLE_FLUIDS              0x00FE68LU
+#define ELECTRONIC_TRANSMISSION_CONTROLLER_5 0x00FEC3LU
 
 #define ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN                0x00FECALU
 #define PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN     0x00FECBLU
 #define DIAGNOSTIC_DATA_CLEAR_PGN                          0x00FECCLU
+#define SOFTWARE_IDENTIFICATION_PGN 0x00FEDALU
+#define IDLE_OPERATION              0x00FEDCLU
 
+#define VEHICLE_DISTANCE            0x00FEE0LU
+#define SHUTDOWN                    0x00FEE4LU
+#define ENGINE_HOURS_REVOLUTIONS    0x00FEE5LU
 #define TIME_DATE_PGN               0x00FEE6LU
+#define VEHICLE_HOURS               0x00FEE7LU
 #define VEHICLE_DIRECTION_SPEED     0x00FEE8LU
+#define FUEL_CONSUMPTION_LIQUID     0x00FEE9LU
+#define VEHICLE_WEIGHT              0x00FEEALU
+#define ENGINE_TEMPERATURE_1        0x00FEEELU
+#define ENGINE_FLUID_LEVEL_PRESSURE_1 0x00FEEFLU
+#define POWER_TAKEOFF_INFORMATION   0x00FEF0LU
+#define CRUISE_CONTROL_VEHICLE_SPEED 0x00FEF1LU
+#define FUEL_ECONOMY_LIQUID         0x00FEF2LU
 #define VEHICLE_POSITION            0x00FEF3LU
+#define AMBIENT_CONDITIONS          0x00FEF5LU
+#define VEHICLE_ELECTRICAL_POWER    0x00FEF7LU
+#define TRANSMISSION_FLUIDS         0x00FEF8LU
+#define DASH_DISPLAY                0x00FEFCLU
 // PROPRIETARY_B_PGN ranges from 0x00FF00 to 0x00FFFF !
 #define PROPRIETARY_B_PGN           0x00FF00LU
 
@@ -210,7 +236,8 @@ exit_with_usage(const char* progname)
   std::cerr << "        10 -> SocketCAN candump -l"<<std::endl;
   std::cerr << "        11 -> WTK"<<std::endl;
   std::cerr << "        12 -> Kvaser Memorator CSV"<<std::endl;
-  std::cerr << "        13 -> ?csv"<<std::endl;
+  std::cerr << "        13 -> ?csv" << std::endl;
+  std::cerr << "        14 -> Komodo" << std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "--iop:   Store VT object pool transfers in iop format. Default: do not store" << std::endl;
@@ -239,7 +266,8 @@ exit_with_usage(const char* progname)
   std::cerr << "SocketCAN:   '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
   std::cerr << "WTK:         '0000.376 can r 18E6FFF1  8  21 00 FF FF 00 00 00 FF  0'"<<std::endl;
   std::cerr << "KvaserM.CSV: '0.33198,1,cfffff0,4,3,55,7d,7d,,,,,,1,2014-05-05 15:01:08'"<<std::endl;
-  std::cerr << "?csv:        '0xCFE46F0*,54.6857,FF,FF,FF,FF,00,FF,FF,FF'"<<std::endl;
+  std::cerr << "?csv:        '0xCFE46F0*,54.6857,FF,FF,FF,FF,00,FF,FF,FF'" << std::endl;
+  std::cerr << "Komodo:      '0:00.003.537,0x0cff05b4,0,8,01 00 01 00 01 00 C0 C0'" << std::endl;
   exit(0);
 }
 
@@ -349,6 +377,7 @@ interpretePgn( uint32_t rui32_pgn )
   case VT_TO_ECU_PGN:                           out << "VT_TO_ECU         "; break;
   case ECU_TO_VT_PGN:                           out << "ECU_TO_VT         "; break;
   case ACKNOWLEDGEMENT_PGN:                     out << "ACKNOWLEDGEMENT   "; break;
+  case CAB_MESSAGE_1:                           out << "CAB_MESSAGE_1     "; break;
   case PROCESS_DATA_PGN:                        out << "PROCESS_DATA      "; break;
   case CLIENT_TO_FS_PGN:                        out << "CLIENT_TO_FS      "; break;
   case FS_TO_CLIENT_PGN:                        out << "FS_TO_CLIENT      "; break;
@@ -363,6 +392,8 @@ interpretePgn( uint32_t rui32_pgn )
   case ADDRESS_CLAIM_PGN:                       out << "ADDRESS_CLAIM     "; break;
   case PROPRIETARY_A_PGN:                       out << "PROPRIETARY_A     "; break;
   case PROPRIETARY_A2_PGN:                      out << "PROPRIETARY_A2    "; break;
+  case OPERATORS_EXTERNAL_LIGHT_CONTROLS_MESSAGE: out << "OPERATORS_EXTERNAL_LIGHT_CONTROLS_MESSAGE "; break;
+  case BASIC_JOYSTICK_MESSAGE_1:                out << "BASIC_JOYSTICK_MESSAGE_1 "; break;
   case WORKING_SET_MEMBER_PGN:                  out << "WORKING_SET_MEMBER "; break;
   case WORKING_SET_MASTER_PGN:                  out << "WORKING_SET_MASTER "; break;
   case LANGUAGE_PGN:                            out << "LANGUAGE          "; break;
@@ -376,13 +407,37 @@ interpretePgn( uint32_t rui32_pgn )
   case MAINTAIN_POWER_REQUEST_PGN:              out << "MAINTAIN_POWER_REQ "; break;
   case WHEEL_BASED_SPEED_DIST_PGN:              out << "WHEEL_BASED_SPEED_DIST "; break;
   case GROUND_BASED_SPEED_DIST_PGN:             out << "GROUND_BASED_SPEED_DIST "; break;
+  case ELECTRONIC_TRANSMISSION_CONTROLLER_5:    out << "ELECTRONIC_TRANSMISSION_CONTROLLER_5 "; break;
+  case VEHICLE_FLUIDS:                          out << "VEHICLE_FLUIDS    "; break;
   case SELECTED_SPEED_CMD:                      out << "SELECTED_SPEED_CMD "; break;
   case SELECTED_SPEED_MESSAGE:                  out << "SELECTED_SPEED_MESSAGE "; break;
   case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:  out << "ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE "; break;
+  case ELECTRONIC_TRANSMISSION_CONTROLLER_2:    out << "ELECTRONIC_TRANSMISSION_CONTROLLER_2 "; break;
+  case ELECTRONIC_AXLE_CONTROLLER_1:            out << "ELECTRONIC_AXLE_CONTROLLER_1 "; break;
+  case PRODUCT_IDENTIFICATION_PGN:              out << "PRODUCT_IDENTIFICATION "; break;
+  case CONTROL_FUNCTION_FUNCTIONALITIES_PGN:    out << "CONTROL_FUNCTION_FUNCTIONALITIES "; break;
+  case ALL_IMPLEMENTS_STOP_OPERATIONS_SWITCH_STATE_PGN: out << "ALL_IMPLEMENTS_STOP_OPERATIONS_SWITCH_STATE "; break;
+  case ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:     out << "ACTIVE_DIAGNOSTIC_TROUBLE_CODES "; break;
   case SOFTWARE_IDENTIFICATION_PGN:             out << "SOFTWARE_IDENTIFICATION "; break;
+  case IDLE_OPERATION:                          out << "IDLE_OPERATION    "; break;
+  case VEHICLE_DISTANCE:                        out << "VEHICLE_DISTANCE  "; break;
+  case SHUTDOWN:                                out << "SHUTDOWN          "; break;
+  case ENGINE_HOURS_REVOLUTIONS:                out << "ENGINE_HOURS_REVOLUTIONS "; break;
   case TIME_DATE_PGN:                           out << "TIME_DATE         "; break;
+  case VEHICLE_HOURS:                           out << "VEHICLE_HOURS     "; break;
   case VEHICLE_DIRECTION_SPEED:                 out << "VEHICLE_DIRECTION_SPEED "; break;
-  case VEHICLE_POSITION:                        out << "VEHICLE_POSITION "; break;
+  case FUEL_CONSUMPTION_LIQUID:                 out << "FUEL_CONSUMPTION_LIQUID "; break;
+  case VEHICLE_WEIGHT:                          out << "VEHICLE_WEIGHT    "; break;
+  case ENGINE_TEMPERATURE_1:                    out << "ENGINE_TEMPERATURE_1 "; break;
+  case ENGINE_FLUID_LEVEL_PRESSURE_1:           out << "ENGINE_FLUID_LEVEL_PRESSURE_1 "; break;
+  case POWER_TAKEOFF_INFORMATION:               out << "POWER_TAKEOFF_INFORMATION "; break;
+  case CRUISE_CONTROL_VEHICLE_SPEED:            out << "CRUISE_CONTROL_VEHICLE_SPEED "; break;
+  case FUEL_ECONOMY_LIQUID:                     out << "FUEL_ECONOMY_LIQUID "; break;
+  case VEHICLE_POSITION:                        out << "VEHICLE_POSITION  "; break;
+  case AMBIENT_CONDITIONS:                      out << "AMBIENT_CONDITIONS "; break;
+  case VEHICLE_ELECTRICAL_POWER:                out << "VEHICLE_ELECTRICAL_POWER "; break;
+  case TRANSMISSION_FLUIDS:                     out << "TRANSMISSION_FLUIDS "; break;
+  case DASH_DISPLAY:                            out << "DASH_DISPLAY      "; break;
   case PROPRIETARY_B_PGN:                       out << "PROPRIETARY_B(1of) "; break;
   case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:      out << "NMEA_GPS_POSITION_RAPID_UPDATE "; break;
   case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:       out << "NMEA_GPS_COG_SOG_RAPID_UPDATE "; break;
@@ -445,7 +500,11 @@ interpretePgn( uint32_t rui32_pgn )
     out << "AUX_VALVE_" << std::dec << rui32_pgn-AUX_VALVE_0_COMMAND << "_COMMAND ";
     break;
   default:
-    out << std::hex << "0x" << rui32_pgn << std::dec;
+    if ((rui32_pgn & 0x00FF00) == PROPRIETARY_B_PGN) {
+      out << "PROPRIETARY_B (0x" << std::setfill('0') << std::hex << std::setw(2) << (rui32_pgn - PROPRIETARY_B_PGN) << ") ";
+    } else {
+      out << std::hex << "0x" << rui32_pgn << std::dec;
+    }
     break;
   }
 
@@ -463,10 +522,13 @@ interpreteRequestPgnMsg(PtrDataFrame_t at_ptrFrame)
 
   switch (cui32_requestedPgn) {
   case ADDRESS_CLAIM_PGN:
-    return gs_main.mc_tracker.requestForAddressClaimed(at_ptrFrame);
-  default:
-    return "";
+    (void)gs_main.mc_tracker.requestForAddressClaimed(at_ptrFrame);
+    break;
   }
+
+  std::ostringstream out;
+  out << "(0x" << std::setfill('0') << std::hex << std::setw(5) << cui32_requestedPgn << ", " << interpretePgn(cui32_requestedPgn) << ")";
+  return out.str();
 }
 
 
@@ -793,6 +855,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineWTK,
     parseLogLineKvaserMemorator,
     parseLogLineCsv,
+    parseLogLineKomodo,
     defaultParseLogLine
   };
 

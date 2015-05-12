@@ -21,12 +21,12 @@
 class DataFrame_c {
 public:
   DataFrame_c(
-      uint64_t aui64_time,
+      uint64_t aui64_time_ms,
       uint32_t aui64_identifier,
       std::vector< uint8_t > const &acrvec_data,
       bool ab_canExt = true
     ) :
-    mui64_time(aui64_time),
+    mui64_time_ms(aui64_time_ms),
     mui64_identifier(aui64_identifier),
     mvec_data(acrvec_data),
     mb_canExt(ab_canExt)
@@ -38,7 +38,7 @@ public:
       uint8_t aui8_destinationAddress,
       uint32_t pgn
     ) :
-    mui64_time(0),
+    mui64_time_ms(0),
     mui64_identifier( uint32_t( ( pgn | aui8_destinationAddress) ) << 8 | aui8_sourceAddress),
     mvec_data(acrvec_data),
     mb_canExt(true)
@@ -76,7 +76,7 @@ public:
   }
 
   uint64_t time() const {
-    return mui64_time;
+    return mui64_time_ms;
   }
 
   uint8_t dataOctet(size_t at_index) const {
@@ -108,7 +108,7 @@ public:
   }
 
 private:
-  uint64_t mui64_time;
+  uint64_t mui64_time_ms;
   uint32_t mui64_identifier;
   std::vector< uint8_t > mvec_data;
   bool mb_canExt;
