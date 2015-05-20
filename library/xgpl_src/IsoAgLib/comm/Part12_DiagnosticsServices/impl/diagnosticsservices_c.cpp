@@ -100,8 +100,8 @@ void DiagnosticsServices_c::timeEvent()
   if (!mb_dm1CurrentNeedsToBeSent)
   { // check if we have to send the DM1 out NOW?
     // simple, unoptimzed but secure version
-    const uint32_t nextActionTime = calculateNextActionTime();
-    if ((0 == nextActionTime) && m_dm1CurrentAtLeastOneDTC)
+    const int32_t nextActionTime = calculateNextActionTime();
+    if ((nextActionTime <= 0) && m_dm1CurrentAtLeastOneDTC)
     {
       mb_dm1CurrentNeedsToBeSent = true;
     }
@@ -220,7 +220,7 @@ void DiagnosticsServices_c::reactOnStateChange(const SendStream_c& sendStream)
   }
 }
 
-uint32_t
+int32_t
 DiagnosticsServices_c::calculateNextActionTime()
 {
   if (mb_dm1CurrentNeedsToBeSent)
@@ -257,7 +257,7 @@ DiagnosticsServices_c::calculateNextActionTime()
     if (i32_minNextAction < 0)
       i32_minNextAction = 0;
 
-    return static_cast<uint32_t>(i32_minNextAction);
+    return i32_minNextAction;
   }
 }
 
@@ -279,7 +279,7 @@ DiagnosticsServices_c::changeActiveDtcStatusAndRetrigger(DtcContainer_c::Dtc_s& 
   else
   { // Last State Change Sent is less than 1s,
     // need to see when the next needed send is.
-    const uint32_t retriggerDelay = calculateNextActionTime();
+    const int32_t retriggerDelay = calculateNextActionTime();
 
     setNextTriggerTime( HAL::getTime() + retriggerDelay );
   }

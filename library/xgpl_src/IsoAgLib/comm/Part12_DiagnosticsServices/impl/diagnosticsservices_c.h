@@ -173,7 +173,7 @@ private: // method
     Use this function at several places to set the Period or Retrigger-time.
     return: return a positive value, since return value is used for retrigger in the future
   */
-  uint32_t calculateNextActionTime();
+  int32_t calculateNextActionTime();
 
   uint16_t assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_searchForActiveDtc, bool* atleastoneDTC);
 
