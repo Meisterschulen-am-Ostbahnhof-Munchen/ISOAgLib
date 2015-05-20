@@ -185,7 +185,7 @@ private:
 #endif
 
 private:
-  int32_t mi32_nextWsMaintenanceMsg;
+  ecutime_t mi32_nextWsMaintenanceMsg;
   uint8_t mui8_clientId;
   vtClientDisplayState_t men_displayState;
 
@@ -198,8 +198,8 @@ private:
 
   MultipleVt_c m_multipleVt;
 
-  int32_t mi32_timeWsAnnounceKey;
-  int32_t mi32_fakeVtOffUntil;
+  ecutime_t mi32_timeWsAnnounceKey;
+  ecutime_t mi32_fakeVtOffUntil;
 
   uint8_t m_cmdTimedOut;
 

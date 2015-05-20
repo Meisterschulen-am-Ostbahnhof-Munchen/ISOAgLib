@@ -40,7 +40,7 @@ CanPkg_c::CanPkg_c( const CanPkg_c& arc_src )
 }
 
 
-CanPkg_c::CanPkg_c( uint32_t id, bool ext, uint8_t len, int32_t tm )
+CanPkg_c::CanPkg_c( uint32_t id, bool ext, uint8_t len, ecutime_t tm )
   : mc_data(),
     mi32_time( tm ),
     mc_ident( id, ext ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent ),
@@ -79,7 +79,7 @@ CanPkg_c::set(
   uint32_t at_ident, 
   const uint8_t* apb_data, 
   uint8_t aui8_len, 
-  int32_t ai32_time,
+  ecutime_t ai32_time,
   Ident_c::identType_t at_type)
 {
   isoaglib_assert( aui8_len <= 8 );

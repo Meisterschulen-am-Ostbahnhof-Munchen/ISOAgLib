@@ -127,7 +127,7 @@ IsoItem_c::changeAddressAndBroadcast (uint8_t aui8_newAddress)
 
 void 
 IsoItem_c::set(
-    int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
+    ecutime_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
     itemState_t aren_status, int ai_multitonInst )
 {
   BaseItem_c::set( ai32_time, aren_status, ai_multitonInst );
@@ -182,7 +182,7 @@ IsoItem_c::timeEvent()
 
   if (itemState(IState_c::PreAddressClaim))
   { // this item is in prepare address claim state -> wait for sending first adress claim
-    const int32_t lastAdrRequestTime = mpc_identItem->getLastIsoSaRequestForThisItem();
+    const ecutime_t lastAdrRequestTime = mpc_identItem->getLastIsoSaRequestForThisItem();
 
     if (lastAdrRequestTime != -1)
     {
@@ -297,7 +297,7 @@ sendAddressClaim( true );
 
 void
 IsoItem_c::processAddressClaimed(
-  int32_t ai32_pkgTime,
+  ecutime_t ai32_pkgTime,
   uint8_t aui8_pkgSa)
 {
   updateTime(ai32_pkgTime);
@@ -400,7 +400,7 @@ IsoItem_c::setLocalMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIs
 
 
 void
-IsoItem_c::processMsgWsMaster (uint8_t slaveCount, int32_t time )
+IsoItem_c::processMsgWsMaster (uint8_t slaveCount, ecutime_t time )
 {
   if (m_wsSlavesAnnouncing)
   {
@@ -417,7 +417,7 @@ IsoItem_c::processMsgWsMaster (uint8_t slaveCount, int32_t time )
 
 
 void
-IsoItem_c::processMsgWsMember( IsoName_c const& slaveName, int32_t time )
+IsoItem_c::processMsgWsMember( IsoName_c const& slaveName, ecutime_t time )
 {
   // @todo Should we check the timestamps on receive? --> Clarify via ISO!
 
@@ -441,7 +441,7 @@ IsoItem_c::processMsgWsMember( IsoName_c const& slaveName, int32_t time )
 
 
 void
-IsoItem_c::checkWsRemoteAnnouncingFinished( int32_t time )
+IsoItem_c::checkWsRemoteAnnouncingFinished( ecutime_t time )
 {
   isoaglib_assert( m_wsSlavesAnnouncing );
 
@@ -458,10 +458,10 @@ IsoItem_c::checkWsRemoteAnnouncingFinished( int32_t time )
 }
 
 
-int32_t
+ecutime_t
 IsoItem_c::startWsAnnounce()
 {
-  int32_t const ci32_timeNow = HAL::getTime();
+  const ecutime_t ci32_timeNow = HAL::getTime();
 
   if (m_wsLocalCurrentAnnounceStartedTime < 0)
   { // no announce currently running, so start it!
@@ -483,7 +483,7 @@ IsoItem_c::startWsAnnounce()
 /// Only check for valid announce keys (i.e. ai32_timeAnnounceStarted).
 /// Init your announce key to -1, then you're always fine with calling this function!
 bool
-IsoItem_c::isWsAnnounced (int32_t ai32_timeAnnounceStarted) const
+IsoItem_c::isWsAnnounced (ecutime_t ai32_timeAnnounceStarted) const
 {
   if (ai32_timeAnnounceStarted < 0)
     return false;

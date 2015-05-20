@@ -98,7 +98,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
   }
 
-  bool TracPTO_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
+  bool TracPTO_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
@@ -128,7 +128,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     if (((pkg.isoPgn() /*& 0x3FFFF*/) == FRONT_PTO_STATE_PGN) || ((pkg.isoPgn() /*& 0x3FFFF*/) == REAR_PTO_STATE_PGN))
     {
-      const int32_t ci32_now = pkg.time();
+      const ecutime_t ci32_now = pkg.time();
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
       if ( checkParseReceived( rcc_tempISOName ) )
@@ -195,7 +195,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** Detect stop of PTO update from tractor -> indication for stopped PTO */
   void TracPTO_c::timeEventImplMode()
   {
-    const int32_t ci32_now = System_c::getTime();
+    const ecutime_t ci32_now = System_c::getTime();
     // check for different pto data types whether the previously
     // sending node stopped sending -> other nodes can now step in
     if ( ( (ci32_now - mt_ptoFront.i32_lastPto)  >= CONFIG_TIMEOUT_TRACTOR_DATA

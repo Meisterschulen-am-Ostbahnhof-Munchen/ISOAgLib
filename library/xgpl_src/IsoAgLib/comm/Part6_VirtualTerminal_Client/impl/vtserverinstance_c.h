@@ -29,8 +29,8 @@ namespace __IsoAgLib {
   received from the LANGUAGE_PGN
 */
 typedef struct localSettings_s{
-  uint32_t lastReceived; /* Timestamp of last reception */
-  uint32_t lastRequested;
+  ecutime_t lastReceived; /* Timestamp of last reception */
+  ecutime_t lastRequested;
 
   /* the following data is extracted from one "VT Status Message" */
   uint16_t languageCode; /* 2 ASCII chars packed into 16 bit! "en", "de", etc. */
@@ -69,8 +69,8 @@ public:
     "Get Text Font Data Response" and "Get Hardware Response"
   */
   typedef struct vtCapabilities_s {
-    uint32_t lastReceivedHardware;
-    uint32_t lastRequestedHardware;
+    ecutime_t lastReceivedHardware;
+    ecutime_t lastRequestedHardware;
     uint8_t  hwGraphicType; // 0, 1 or 2 (2, 16 or 256 colors)
 
     //Bit 0 = 1 = VT has a touch screen or pointing device and supports Pointing Event message.
@@ -83,16 +83,16 @@ public:
     uint16_t hwWidth;   // hwWidth and
     uint16_t hwHeight;  // hwHeight have to be the same (only square mask dimension!)
 
-    uint32_t lastReceivedFont;
-    uint32_t lastRequestedFont;
+    ecutime_t lastReceivedFont;
+    ecutime_t lastRequestedFont;
     uint16_t fontSizes;
     uint8_t  fontTypes;
 
-    uint32_t lastReceivedVersion;
+    ecutime_t lastReceivedVersion;
     uint8_t  iso11783version;  // here the version number of the terminal gets stored as soon as the "VT Get Memory Response" was received
 
-    uint32_t lastReceivedSoftkeys;
-    uint32_t lastRequestedSoftkeys;
+    ecutime_t lastReceivedSoftkeys;
+    ecutime_t lastRequestedSoftkeys;
     uint8_t  skPhysical;
     uint8_t  skVirtual;
     uint8_t  skWidth;

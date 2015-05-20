@@ -141,7 +141,7 @@ namespace HAL {
 
   bool canRxWait( unsigned timeout_ms ) {
 
-    const int32_t endTime_ms = __IsoAgLib::System_c::getTime() + timeout_ms;
+    const ecutime_t endTime_ms = __IsoAgLib::System_c::getTime() + timeout_ms;
 
     while ( __IsoAgLib::System_c::getTime() < endTime_ms ) {
       for ( unsigned int c = 0; c < ( HAL_CAN_MAX_BUS_NR + 1 ); ++c ) {

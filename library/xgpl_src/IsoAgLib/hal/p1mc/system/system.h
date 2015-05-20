@@ -50,7 +50,7 @@ namespace HAL
 
   inline void triggerWatchdog() {}
 
-  inline int32_t getTime() {return __HAL::getTime();}
+  inline ecutime_t getTime() {return __HAL::getTime();}
 
   inline int16_t getSnr(uint8_t *snrDat) {return __HAL::getSnr(snrDat);}
 

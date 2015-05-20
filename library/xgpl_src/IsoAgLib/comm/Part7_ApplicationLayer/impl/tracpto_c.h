@@ -32,7 +32,7 @@ typedef enum
 typedef struct
 {
   /** last time of pto data msg [msec] */
-  int32_t i32_lastPto;
+  ecutime_t i32_lastPto;
   /** pto [1/8RPM] */
   uint16_t ui16_pto8DigitPerRpm;
   /** measured value of the set point of the rotational speed of the power take-off (PTO) output shaft [1/8RPM] */
@@ -125,7 +125,7 @@ typedef struct
       else                              setPtoFrontEngaged( IsoAgLib::IsoActive );
     }
 
-    bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
+    bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t );
 
     /** force a request for pgn for front pto state */
     bool sendRequestUpdateFront();

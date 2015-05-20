@@ -216,7 +216,7 @@ namespace __IsoAgLib {
       void doCommand( int32_t opcode, int32_t timeout = DEF_TimeOut_NormalCommand );
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
 
-      int32_t m_timeWsAnnounceKey;
+      ecutime_t m_timeWsAnnounceKey;
       StateHandler_c* m_stateHandler;
 
       // MultiSendStreamer_c variables
@@ -228,15 +228,15 @@ namespace __IsoAgLib {
       UploadPoolState_t m_uploadPoolState;
       UploadState_t m_uploadState;
       UploadSteps_t m_uploadStep;
-      uint32_t m_uploadTimestamp; // @todo This should be an int32_t.
-      uint32_t m_uploadTimeout;
+      ecutime_t m_uploadTimestamp;
+      int32_t m_uploadTimeout;
       //uint8_t m_commandParameter; // currently not used - @todo USE IT on processMsgTc!
 
       // timeEvent variables
       bool m_initDone;
       bool m_tcAliveNew;
-      int32_t m_timeStartWaitAfterAddrClaim;
-      int32_t m_timeWsTaskMsgSent;
+      ecutime_t m_timeStartWaitAfterAddrClaim;
+      ecutime_t m_timeWsTaskMsgSent;
 
       STL_NAMESPACE::vector<uint8_t> m_structureLabel;
       STL_NAMESPACE::vector<uint8_t> m_localizationLabel;

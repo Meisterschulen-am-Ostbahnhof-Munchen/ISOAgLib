@@ -202,7 +202,7 @@ IsoMonitor_c::timeEvent()
 #if CONFIG_ISO_ITEM_MAX_AGE > 0
   if ( lastIsoSaRequest() != -1)
   {
-    const int32_t currentTime = HAL::getTime();
+    const ecutime_t currentTime = HAL::getTime();
 
     IsoItem_c *someActiveLocalMember = anyActiveLocalItem();
 #if SA_REQUEST_PERIOD_MSEC > 0
@@ -216,7 +216,7 @@ IsoMonitor_c::timeEvent()
           ( pc_iter->getLastRequestForAddressClaimed() != -1 ) &&
           ( currentTime >= (pc_iter->getLastRequestForAddressClaimed() + CONFIG_ISO_ITEM_MAX_AGE) ) )
       {
-        const int32_t answeredAfter = pc_iter->lastTime() - pc_iter->getLastRequestForAddressClaimed();
+        const ecutime_t answeredAfter = pc_iter->lastTime() - pc_iter->getLastRequestForAddressClaimed();
         if( ( answeredAfter < 0 ) || ( answeredAfter > CONFIG_ISO_ITEM_MAX_AGE ) )
         {
           if( ( !someActiveLocalMember ) || ( pc_iter->itemState( IState_c::PossiblyOffline ) ) )
@@ -551,7 +551,7 @@ IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender, Is
   c_data.setUint32Data( 0, ADDRESS_CLAIM_PGN );
   getIsoBusInstance4Comm() << c_data;
 
-  const int32_t current_time = HAL::getTime();
+  const ecutime_t current_time = HAL::getTime();
   
   if( receiver )
     receiver->setLastRequestForAddressClaimed(current_time);
@@ -587,7 +587,7 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
   // don't do the generic "valid-resolving" check here!
   if( (pkg.isoPgn() & 0x3FF00LU) == ADDRESS_CLAIM_PGN )
   {
-    const int32_t ci32_time = pkg.time();
+    const ecutime_t ci32_time = pkg.time();
     const uint8_t cui8_sa = pkg.isoSa();
 
     IsoItem_c *pc_itemSameISOName = item( cc_dataIsoName );
@@ -777,7 +777,7 @@ IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
 
 
 bool
-IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t ai_requestTimestamp )
+IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t ai_requestTimestamp )
 {
   // ADDRESS_CLAIM_PGN is NETWORK-MANAGEMENT, so SA=0xFE is allowed
   if( aui32_pgn == ADDRESS_CLAIM_PGN )
@@ -872,7 +872,7 @@ IsoMonitor_c::updateSaItemTable( IsoItem_c& isoItem, bool add ) {
 
 
 void
-IsoMonitor_c::setLastIsoSaRequest (int32_t ai32_time)
+IsoMonitor_c::setLastIsoSaRequest (ecutime_t ai32_time)
 {
   mi32_lastSaRequest = ai32_time;
   for( Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end(); ++pc_iter )

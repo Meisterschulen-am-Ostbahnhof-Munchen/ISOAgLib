@@ -29,7 +29,7 @@
   {                                                                                                       \
     isoaglib_assert( bDlc <= 8 );                                                                         \
                                                                                                           \
-    const int32_t now = getTime();                                                                        \
+    const ecutime_t now = getTime();                                                                        \
     const __IsoAgLib::Ident_c::identType_t type = (bXtd != 0)                                             \
       ? __IsoAgLib::Ident_c::ExtendedIdent                                                                \
       : __IsoAgLib::Ident_c::StandardIdent;                                                               \

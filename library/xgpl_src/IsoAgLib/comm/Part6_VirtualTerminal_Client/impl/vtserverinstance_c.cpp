@@ -56,7 +56,7 @@ VtServerInstance_c::isVtActive() const
   {
     // Using the current time for comparison checks currently, because we don't have the information
     // about the time when the last can-msg was processed or checked for (in case there's none).
-    if ((System_c::getTime() - (int32_t)ms_vtStateA.lastReceived) <= 3000)
+    if ((System_c::getTime() - ms_vtStateA.lastReceived) <= 3000)
     { // comparing as int, so that in case "NOW-time > CAN-time" NO client-reload happens
       return true;
     }

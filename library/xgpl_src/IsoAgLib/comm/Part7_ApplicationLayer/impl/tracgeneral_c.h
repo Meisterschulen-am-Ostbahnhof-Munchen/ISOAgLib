@@ -34,7 +34,7 @@ namespace __IsoAgLib {
 typedef struct
 {
   /** last time of maintain power request [ms] */
-  int32_t i32_lastMaintainPowerRequest;
+  ecutime_t i32_lastMaintainPowerRequest;
 
   /** state whether maintenance of ECU power was requested */
   bool b_maintainEcuPower : 1;
@@ -73,7 +73,7 @@ public:
 
   virtual ~TracGeneral_c() {}
 
-  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
+  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t );
 
   /** force a request for pgn for language information */
   bool sendRequestUpdateLanguage();
@@ -213,7 +213,7 @@ public:
   /** deliver last receive time of maintain power request
     * @return time in [ms] since system start -> comparable to system time
     */
-  int32_t lastMaintainPowerRequest() const { return mi32_lastMaintainPowerRequest;}
+  ecutime_t lastMaintainPowerRequest() const { return mi32_lastMaintainPowerRequest;}
 
   /** check if timeout reached since last receive time of maintain power request */
   bool timeOutMaintainPowerRequest() const;
@@ -339,9 +339,6 @@ private:
 
 
   /// General
-  /** last time of ISO GPS msg [msec] */
-  int32_t mi32_lastIsoPositionSimple;
-
   /** key switch state */
   IsoAgLib::IsoActiveFlag_t mt_keySwitch;
 
@@ -367,7 +364,7 @@ private:
   IsoAgLib::IsoLimitFlag_t mt_rearHitchPosLimitStatus;
 
   /** last time of maintain power request [ms] */
-  int32_t mi32_lastMaintainPowerRequest;
+  ecutime_t mi32_lastMaintainPowerRequest;
 
   /** state whether maintenance of ECU power was requested */
   bool mb_maintainEcuPower;

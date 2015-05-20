@@ -257,7 +257,7 @@ FsCommand_c::timeEvent(void)
   // do we have open files or request is active? -> send maintenance messages.
   if ( (m_nrOpenFiles > 0) || !m_receivedResponse || m_keepConnectionOpen )
   { // Do Alive Sending
-    if ( (m_lastAliveSentTime == -1) || ( (HAL::getTime () - (uint32_t)m_lastAliveSentTime) > 2000 ) )
+    if ( (m_lastAliveSentTime == -1) || ( (HAL::getTime () - m_lastAliveSentTime) > 2000 ) )
     {
       CanPkgExt_c canpkgext;
       canpkgext.setExtCanPkg8(0x07, 0x00, CLIENT_TO_FS_PGN >> 8,

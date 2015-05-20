@@ -176,7 +176,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
 
-    const int32_t ci32_now = pkg.time();
+    const ecutime_t ci32_now = pkg.time();
 
     switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &0x3FFFF as this is the whole PGN...
     {
@@ -219,8 +219,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             i32_tempSpeed *= -1; //driving reverse;
 
 
-          const uint32_t testTimeOutdatedSpeed = (pkg.time() - mui32_lastUpdateTimeSpeedSelected);
-          const uint32_t testTimeOutdatedDist  = (pkg.time() - mui32_lastUpdateTimeDistDirec);
+          const int32_t testTimeOutdatedSpeed = int32_t( pkg.time() - mui32_lastUpdateTimeSpeedSelected);
+          const int32_t testTimeOutdatedDist  = int32_t( pkg.time() - mui32_lastUpdateTimeDistDirec);
           if (pkg.isoPgn() == GROUND_BASED_SPEED_DIST_PGN)
           {
             mui32_lastUpdateTimeSpeedReal = pkg.time();
@@ -231,7 +231,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             //decide if ground based speed is actually the best available speed
             if ( ( b_usableSpeed ) &&
                  ( ( mt_speedSource <= IsoAgLib::GroundBasedSpeed )
-                || ( (testTimeOutdatedSpeed >= getTimeOut()) && (testTimeOutdatedSpeed < (getTimeOut()+1000u)) )
+                || ( (testTimeOutdatedSpeed >= getTimeOut()) && (testTimeOutdatedSpeed < (getTimeOut()+1000)) )
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
@@ -241,7 +241,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             //if ground based dist and direction is actually the best available
             if ( ( mui32_distReal <= 0xFAFFFFFF ) &&
                  ( ( mt_distDirecSource <= IsoAgLib::GroundBasedDistDirec )
-                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000u) )
+                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000) )
                  )
                )
             { // distance information is usable and the current selected distance is at least not better or outdated
@@ -264,7 +264,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             mt_directionTheor = IsoAgLib::IsoDirectionFlag_t(pkg.getUint8Data(7)       & 0x3 );
             if ( ( b_usableSpeed ) &&
                  ( ( mt_speedSource <= IsoAgLib::WheelBasedSpeed )
-                || ( testTimeOutdatedSpeed >= getTimeOut() && testTimeOutdatedSpeed < (getTimeOut()+1000u) )
+                || ( testTimeOutdatedSpeed >= getTimeOut() && testTimeOutdatedSpeed < (getTimeOut()+1000) )
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
@@ -272,7 +272,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             }
             if ( ( mui32_distTheor <= 0xFAFFFFFF ) &&
                  ( ( mt_distDirecSource <= IsoAgLib::WheelBasedDistDirec )
-                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000u) )
+                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000) )
                  )
                )
             { // distance information is usable and the current selected distance is at least not better or outdated
@@ -346,7 +346,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   }
 
   // actually means updateSELECTEDSpeed !!!
-  void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, int32_t ai_time )
+  void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, ecutime_t ai_time )
   {
     #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
     TimePosGps_c& c_timeposgps = getTimePosGpsInstance4Comm();
@@ -412,7 +412,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   void TracMove_c::timeEventImplMode()
   {
-    const int32_t ci32_now = System_c::getTime();
+    const ecutime_t ci32_now = System_c::getTime();
     // checking for timeout of speed update
     if ( ( (ci32_now - mui32_lastUpdateTimeSpeedSelected)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isSelectedSpeedMissing() ) )
@@ -565,7 +565,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   }
 
 
-bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
+bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t )
 {
   // check if we are allowed to send a request for pgn
   if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) )

@@ -49,6 +49,11 @@
 
 typedef uint8_t boolean;
 
+#ifdef USE_TIMEBASE_INT64
+    typedef int64_t ecutime_t;
+#else
+    typedef int32_t ecutime_t;
+#endif
 
 namespace __HAL {
 

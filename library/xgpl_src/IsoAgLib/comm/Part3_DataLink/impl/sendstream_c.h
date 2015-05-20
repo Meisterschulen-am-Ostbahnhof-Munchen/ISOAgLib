@@ -100,7 +100,7 @@ public:
 
   void processMsg( const CanPkgExt_c& arc_data );
 
-  int32_t getNextTriggerTime() const { return mi32_timestampToWaitTo; }
+  ecutime_t getNextTriggerTime() const { return mi32_timestampToWaitTo; }
 
   /**
     check if time delay is reached
@@ -180,7 +180,7 @@ private:
   #endif
 
   /** timestamp for time control */
-  int32_t mi32_timestampToWaitTo;
+  ecutime_t mi32_timestampToWaitTo;
 
   /** data counter for data to send
       will be set on CTS and incremented after each sent packet. */

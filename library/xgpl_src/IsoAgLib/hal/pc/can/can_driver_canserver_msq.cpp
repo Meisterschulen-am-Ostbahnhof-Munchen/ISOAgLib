@@ -120,7 +120,7 @@ namespace __HAL {
     static __IsoAgLib::CanPkg_c pkg;
     pkg.setIdent( data.i32_ident, data.b_xtd ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent );
     pkg.setLen( data.b_dlc );
-    const int32_t now = getTime();
+    const ecutime_t now = getTime();
     pkg.setTime( now < data.i32_time ? now : data.i32_time );
     memcpy( pkg.getUint8DataPointer(), data.pb_data, data.b_dlc );
     HAL::CanFifos_c::get( channel ).push( pkg );

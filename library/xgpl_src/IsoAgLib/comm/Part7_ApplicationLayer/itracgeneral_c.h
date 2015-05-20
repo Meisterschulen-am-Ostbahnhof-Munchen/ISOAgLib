@@ -144,7 +144,7 @@ namespace IsoAgLib {
   uint8_t maxPowerTime() const { return TracGeneral_c::maxPowerTime();}
 
   /** deliver last receive time of maintain power request */
-  int32_t lastMaintainPowerRequest() const { return TracGeneral_c::lastMaintainPowerRequest();}
+  ecutime_t lastMaintainPowerRequest() const { return TracGeneral_c::lastMaintainPowerRequest();}
 
   /** check if timeout reached since last receive time of maintain power request */
   bool timeOutMaintainPowerRequest() const { return TracGeneral_c::timeOutMaintainPowerRequest();}

@@ -48,8 +48,8 @@ UploadPoolState_c::UploadPoolState_c(
   , mc_iVtObjectStreamer( *this )
   , men_uploadPoolState( UploadPoolEndSuccess ) // default for Slaves!
   , men_uploadPoolType( UploadPoolTypeCompleteInitially ) // dummy
-  , mui32_uploadTimestamp( 0 )
-  , mui32_uploadTimeout( 0 ) // will be set when needed
+  , mi32_uploadTimestamp( 0 )
+  , mi32_uploadTimeout( 0 ) // will be set when needed
   //ms_uploadPhasesAutomatic[..] // body!
   , mui_uploadPhaseAutomatic( UploadPhaseIVtObjectsFix )
   , ms_uploadPhaseUser() // body!
@@ -500,8 +500,8 @@ UploadPoolState_c::startGetVersions()
   m_connection.sendMessage( 223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
 
   men_uploadPoolState = UploadPoolWaitingForGetVersionsResponse;
-  mui32_uploadTimeout = s_timeOutGetVersions;
-  mui32_uploadTimestamp = HAL::getTime();
+  mi32_uploadTimeout = s_timeOutGetVersions;
+  mi32_uploadTimestamp = HAL::getTime();
 }
 
 
@@ -614,7 +614,7 @@ UploadPoolState_c::timeEventPoolUpload()
     // The Get Versions time-out is only for VTs that do incorrectly
     // answer with a DLC < 8 and hence we don't see that answer.
     // Should be removed in the future if all VTs do properly answer with DLC 8
-    if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
+    if (HAL::getTime() > (mi32_uploadTimeout + mi32_uploadTimestamp))
     {
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
       INTERNAL_DEBUG_DEVICE << "Version couldn't be checked (GVResp missing/short DLC) -> Upload pool" << INTERNAL_DEBUG_DEVICE_ENDL;

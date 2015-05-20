@@ -98,8 +98,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         s_unregister(REAR_HITCH_STATE_PGN);
     }
 
-    mi32_lastIsoPositionSimple = 0;
-
     mt_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
     mui8_maxPowerTime = mui8_frontLinkForce = mui8_rearLinkForce = NO_VAL_8;
     mui16_frontDraft = mui16_rearDraft = NO_VAL_16;
@@ -240,7 +238,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
   }
 
-  bool TracGeneral_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
+  bool TracGeneral_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) )
@@ -514,7 +512,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     mb_maintainEcuPower = false;
     mb_maintainActuatorPower = false;
 
-    const int32_t i32_now = HAL::getTime();
+    const ecutime_t i32_now = HAL::getTime();
     for (STL_NAMESPACE::map< IsoName_c, indicatedStateImpl_t >::iterator iter = mmap_indicatedState.begin();
          iter != mmap_indicatedState.end();
         )

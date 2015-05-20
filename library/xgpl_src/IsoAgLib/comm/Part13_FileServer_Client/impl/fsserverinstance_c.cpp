@@ -155,7 +155,7 @@ FsServerInstance_c::timeEvent()
     case online:
     case usable:
       // detect time-out
-      if (getLastTime() != -1 && (uint32_t)(HAL::getTime () - getLastTime()) > uint32_t(6000))
+      if (getLastTime() != -1 && (HAL::getTime () - getLastTime()) > 6000)
         setState (offline);
       break;
   }

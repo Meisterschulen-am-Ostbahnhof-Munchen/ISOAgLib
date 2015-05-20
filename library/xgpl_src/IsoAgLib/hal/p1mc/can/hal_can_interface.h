@@ -107,7 +107,7 @@ bool can_stateGlobalBit1err(uint8_t rui8_busNr = 0);
   @return timestamp of last successful send
           OR -1 if rui8_msgObjNr corresponds to no valid send obj
 */
-int32_t can_stateMsgobjTxok(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
+ecutime_t can_stateMsgobjTxok(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 
 /**
   test if buffer of a MsgObj is full (e.g. no more

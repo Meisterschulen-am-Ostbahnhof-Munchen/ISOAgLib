@@ -71,8 +71,8 @@ public:
     uint32_t ui32_spn;
     IsoAgLib::FailureModeIndicator_en en_fmi;
 
-    int32_t i32_timeLastStateChange;
-    int32_t i32_timeLastStateChangeSent;
+    ecutime_t i32_timeLastStateChange;
+    ecutime_t i32_timeLastStateChangeSent;
 
     bool b_active;
 

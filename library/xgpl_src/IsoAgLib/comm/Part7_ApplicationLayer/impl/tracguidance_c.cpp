@@ -138,7 +138,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     getIsoBusInstance4Comm() << pkg;
   }
 
-bool TracGuidance_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
+bool TracGuidance_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t )
 {
   bool const b_allowed = BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver);
   if (!b_allowed)

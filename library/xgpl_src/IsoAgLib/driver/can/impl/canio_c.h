@@ -106,7 +106,7 @@ namespace __IsoAgLib {
       CanIo_c& operator<<( CanPkg_c& acrc_src );
 
       /** return time stamp of the last can package that has been received and processed successfully */
-      int32_t getLastProcessedCanPkgTime() const {
+      ecutime_t getLastProcessedCanPkgTime() const {
         return mi32_lastProcessedCanPkgTime;
       }
 
@@ -132,7 +132,7 @@ namespace __IsoAgLib {
       int32_t mi32_maxSendDelay;
 
       /**  timestamp of last received and and processed CAN package  */
-      int32_t mi32_lastProcessedCanPkgTime;
+      ecutime_t mi32_lastProcessedCanPkgTime;
 
       /** configured bitrate */
       unsigned int mui_bitrate;

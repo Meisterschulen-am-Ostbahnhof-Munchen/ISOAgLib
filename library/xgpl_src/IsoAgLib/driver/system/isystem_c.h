@@ -44,7 +44,7 @@ public:
     deliver lasted time from start of system in msec.
     @return running time in [msec.]
   */
-  static int32_t getTime() { return System_c::getTime(); }
+  static ecutime_t getTime() { return System_c::getTime(); }
 
   /** @return true -> ECU's On/Off-Switch reports system being "On" */
   static bool switchedOn() { return System_c::switchedOn(); }

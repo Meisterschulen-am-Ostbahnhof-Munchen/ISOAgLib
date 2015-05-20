@@ -106,7 +106,7 @@ public:
   /** call back function called when the TP is finished */
   void reactOnStateChange(const SendStream_c& sendStream);
 
-  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t ai_time );
+  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t ai_time );
 
 #if DEBUG_DIAGNOSTICPGN
   bool isAtLeastOneDTCInCurrent() const { return m_dm1CurrentAtLeastOneDTC; }
@@ -126,7 +126,7 @@ private: // typedef
         uint32_t aui32_pgn,
         IsoItem_c *apc_isoItemSender,
         IsoItem_c *apc_isoItemReceiver,
-        int32_t ai_time )
+        ecutime_t ai_time )
     {
       return mrt_owner.processMsgRequestPGN(
           aui32_pgn,
@@ -191,7 +191,7 @@ private: // attributes
   // Wrap list of DTC active/inactive
   DtcContainer_c mc_dtcs;
 
-  int32_t mi32_dm1LastSentTime;
+  ecutime_t mi32_dm1LastSentTime;
   bool mb_dm1CurrentNeedsToBeSent; // indicates if sending needs to be triggered.
 
   /// The current buffer as created/changed by timeEvent/add/remove/clear

@@ -363,7 +363,7 @@ vtObjectAuxiliaryInput2_c::setInputStateEnabled(bool ab_enabled)
 
 void vtObjectAuxiliaryInput2_c::setTimeStampLastStateMsg()
 {
-  m_inputState.mui32_timeStampLastStateMsg = HAL::getTime();
+  m_inputState.mi32_timeStampLastStateMsg = HAL::getTime();
 }
 
 

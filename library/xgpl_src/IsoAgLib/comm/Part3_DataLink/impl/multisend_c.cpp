@@ -264,7 +264,7 @@ MultiSend_c::timeEvent()
     return;
   }
 
-  int32_t i32_nextRetriggerNeeded = -1; // default to: "no retriggering needed"
+  ecutime_t i32_nextRetriggerNeeded = -1; // default to: "no retriggering needed"
 
   int pkgCnt = getIsoBusInstance4Comm().sendCanFreecnt();
   if( -1 == pkgCnt ) {
@@ -310,7 +310,7 @@ MultiSend_c::timeEvent()
       }
       else
       { // SendStream not yet finished
-        const int32_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
+        const ecutime_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
         // needs to be triggered at the following time
         if ((i32_nextRetriggerNeeded == -1) || (ci32_nextTriggerTime < i32_nextRetriggerNeeded))
         { // no trigger yet set or this SendStream needs to come earlier!
@@ -349,10 +349,10 @@ MultiSend_c::processMsg( const CanPkg_c& arc_data )
 void
 MultiSend_c::calcAndSetNextTriggerTime()
 {
-  int32_t i32_nextRetriggerNeeded = -1;
+  ecutime_t i32_nextRetriggerNeeded = -1;
   for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end();)
   {
-    const int32_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
+    const ecutime_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
 
     if ((i32_nextRetriggerNeeded == -1) || (ci32_nextTriggerTime < i32_nextRetriggerNeeded))
     { // no trigger yet set or this SendStream needs to come earlier!

@@ -130,19 +130,19 @@ public:
     set receive time
     @param ai32_time time stamp of CAN telegram in [msec.] from system start
   */
-  void setTime(int32_t ai32_time) { CanPkg_c::setTime (ai32_time); }
+  void setTime(ecutime_t ai32_time) { CanPkg_c::setTime (ai32_time); }
 
   /**
     deliver time
     @return timestamp of the CAN telegram in [msec.] since system start
   */
-  int32_t time() const { return CanPkg_c::time(); }
+  ecutime_t time() const { return CanPkg_c::time(); }
 
-   void set( uint32_t at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time,
+   void set( uint32_t at_ident, const uint8_t* apb_data, uint8_t aui8_len, ecutime_t ai32_time,
     iIdent_c::identType_t at_type )
     { CanPkg_c::set (at_ident, apb_data, aui8_len, ai32_time, at_type); }
 
-  void set( uint32_t at_ident, const __IsoAgLib::Flexible8ByteString_c* apc_data, int32_t ai32_time,
+  void set( uint32_t at_ident, const __IsoAgLib::Flexible8ByteString_c* apc_data, ecutime_t ai32_time,
     iIdent_c::identType_t at_type )
     { CanPkg_c::set(at_ident, apc_data, ai32_time, at_type); }
 

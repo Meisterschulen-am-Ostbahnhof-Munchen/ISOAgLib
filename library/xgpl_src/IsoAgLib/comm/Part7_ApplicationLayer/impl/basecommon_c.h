@@ -105,13 +105,13 @@ namespace __IsoAgLib
     virtual void timeEventImplMode();
 
     /** Retrieve the last update time of the specified information type*/
-    int32_t lastedTimeSinceUpdate() const { return (System_c::getTime() - mi32_lastMsgReceived);}
+    int32_t lastedTimeSinceUpdate() const { return int32_t(System_c::getTime() - mi32_lastMsgReceived);}
 
     /** Retrieve the time of last update */
-    int32_t lastUpdateTime() const {return mi32_lastMsgReceived;}
+    ecutime_t lastUpdateTime() const {return mi32_lastMsgReceived;}
 
     /** set last time of data msg [msec]*/
-    void setUpdateTime(int32_t updateTime) {mi32_lastMsgReceived = updateTime;}
+    void setUpdateTime(ecutime_t updateTime) {mi32_lastMsgReceived = updateTime;}
 
     /** check if a received message should be parsed */
     bool checkParseReceived(const IsoName_c& acrc_currentSender) const;
@@ -194,7 +194,7 @@ namespace __IsoAgLib
           uint32_t aui32_pgn,
           IsoItem_c *apc_isoItemSender,
           IsoItem_c *apc_isoItemReceiver,
-          int32_t ai_time )
+          ecutime_t ai_time )
       {
         return mrt_owner.processMsgRequestPGN(
             aui32_pgn,
@@ -224,7 +224,7 @@ namespace __IsoAgLib
         uint32_t aui32_pgn,
         IsoItem_c *apc_isoItemSender,
         IsoItem_c *apc_isoItemReceiver,
-        int32_t ai_time ) = 0;
+        ecutime_t ai_time ) = 0;
 
   protected:
     Task_t mt_task;
@@ -241,7 +241,7 @@ namespace __IsoAgLib
     bool mb_filterCreated;
 
     /** last time of data msg [msec] */
-    int32_t mi32_lastMsgReceived;
+    ecutime_t mi32_lastMsgReceived;
 
     /** identItem which act as sender of a msg: either responses on behalf of implement or commands as tractor. */
     const IdentItem_c* mpc_ident;

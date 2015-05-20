@@ -185,7 +185,7 @@ namespace __IsoAgLib {
   {
     checkCreateReceiveFilter();
 
-    const int32_t ci32_now = System_c::getTime();
+    const ecutime_t ci32_now = System_c::getTime();
 
     // check for different base data types whether the previously
     if ( ( checkMode(IsoAgLib::IdentModeImplement)      )
@@ -424,11 +424,12 @@ namespace __IsoAgLib {
     return true;
   }
 
+  // @todo int32_t( this needs to be change to delta later on! )
   /** Retrieve the last update time of the specified information type
     */
-  int32_t TimePosGps_c::lastedTimeSinceUpdateGps() const
+  ecutime_t TimePosGps_c::lastedTimeSinceUpdateGps() const
   {
-    const int32_t ci32_now = System_c::getTime();
+    const ecutime_t ci32_now = System_c::getTime();
     #ifdef ENABLE_NMEA_2000_MULTI_PACKET
     if ( mi32_lastIsoPositionStream > mi32_lastIsoPositionSimple ) return ( ci32_now - mi32_lastIsoPositionStream);
     else return ( ci32_now - mi32_lastIsoPositionSimple);
@@ -437,7 +438,7 @@ namespace __IsoAgLib {
     #endif
   }
   /** Retrieve the time of last update */
-  int32_t TimePosGps_c::lastUpdateTimeGps() const
+  ecutime_t TimePosGps_c::lastUpdateTimeGps() const
   {
     #ifdef ENABLE_NMEA_2000_MULTI_PACKET
     if ( mi32_lastIsoPositionStream > mi32_lastIsoPositionSimple ) return mi32_lastIsoPositionStream;
@@ -449,13 +450,13 @@ namespace __IsoAgLib {
 
   /** Retrieve the last update time of the specified information type
     */
-  int32_t TimePosGps_c::lastedTimeSinceUpdateDirection() const
+  ecutime_t TimePosGps_c::lastedTimeSinceUpdateDirection() const
   {
-    const int32_t ci32_now = System_c::getTime();
+    const ecutime_t ci32_now = System_c::getTime();
     return ( ci32_now - mi32_lastIsoDirection);
   }
   /** Retrieve the time of last update */
-  int32_t TimePosGps_c::lastUpdateTimeDirection() const
+  ecutime_t TimePosGps_c::lastUpdateTimeDirection() const
   {
     return mi32_lastIsoDirection;
   }
@@ -485,7 +486,7 @@ namespace __IsoAgLib {
 
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
-    const int32_t ci32_now = pkg.time();
+    const ecutime_t ci32_now = pkg.time();
 
     switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN.
     {
@@ -548,7 +549,7 @@ namespace __IsoAgLib {
           if (pkg.isoPgn() == NMEA_GPS_POSITION_RAPID_UPDATE_PGN)
           {
             // give an offset to the millisecond time of day based on a filtered message rate
-            const int32_t ci32_updateDelta = ci32_now - mi32_lastMillisecondUpdate;
+            const int32_t ci32_updateDelta = int32_t(ci32_now - mi32_lastMillisecondUpdate);
             if ( (mi32_lastMillisecondUpdate != 0) && (ci32_updateDelta < 1000) )
             { // (don't process the first time or following lost communications)
               if ( mf_rapidUpdateRateFilter == 0.0f )
@@ -669,7 +670,7 @@ namespace __IsoAgLib {
     }
   }
 
-  bool TimePosGps_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
+  bool TimePosGps_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
@@ -1037,7 +1038,7 @@ namespace __IsoAgLib {
     */
   void TimePosGps_c::timeEventTracMode()
   {
-    const int32_t ci32_now = System_c::getTime();
+    const ecutime_t ci32_now = System_c::getTime();
 
     // time/date is only sent on request
 
@@ -1112,7 +1113,7 @@ namespace __IsoAgLib {
  *
   void TimePosGps_c::isoSendDirectionStream( void )
   {
-    const int32_t ci32_now = getLastRetriggerTime();
+    const int32_t ci32_now = ## adapt to ecutime_t if it should be used again! ## getLastRetriggerTime();
     // set data in Nmea2000SendStreamer_c
     mc_nmea2000Streamer.reset();
     STL_NAMESPACE::vector<uint8_t>& writeRef = mc_nmea2000Streamer.vec_data;
@@ -1209,7 +1210,7 @@ void TimePosGps_c::isoSendDirection( void )
     // little pre-Setup
     mui8_positionSequenceID = 0xFF; // not using tied-together-packaging right now
 
-    const int32_t ci32_now = System_c::getTime();
+    const ecutime_t ci32_now = System_c::getTime();
     // set data in Nmea2000SendStreamer_c
     mc_nmea2000Streamer.reset();
     STL_NAMESPACE::vector<uint8_t>& writeRef = mc_nmea2000Streamer.vec_data;

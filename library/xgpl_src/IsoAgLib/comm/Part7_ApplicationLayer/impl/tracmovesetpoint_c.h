@@ -76,7 +76,7 @@ namespace __IsoAgLib {
       */
     uint16_t selectedSpeedSetPointLimit() const {return mi16_selectedSpeedSetPointLimit;}
 
-  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
+  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t );
 
   private:
     // Private methods

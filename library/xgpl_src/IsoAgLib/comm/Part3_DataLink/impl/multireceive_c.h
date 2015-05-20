@@ -147,9 +147,9 @@ public:
   void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask, const IsoName_c* apcc_isoNameSender=NULL);
 
   //! @pre ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
-  Stream_c* createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize, int32_t ai_time );
+  Stream_c* createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize, ecutime_t ai_time );
 
-  int32_t nextTimeEvent() const;
+  ecutime_t nextTimeEvent() const;
   int32_t getCtsDelay() const { return (getStreamCount() == 1) ? CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM : CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS; }
 
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);

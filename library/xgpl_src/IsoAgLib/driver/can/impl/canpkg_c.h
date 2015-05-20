@@ -27,7 +27,7 @@ public:
 
   CanPkg_c();
   CanPkg_c( const CanPkg_c& arc_src );
-  CanPkg_c( uint32_t id, bool ext, uint8_t len, int32_t time );
+  CanPkg_c( uint32_t id, bool ext, uint8_t len, ecutime_t time );
   CanPkg_c &operator=( const CanPkg_c & );
 
   uint8_t operator[](uint8_t pos) const { isoaglib_header_assert( pos < 8 ); return mc_data[ pos ]; }
@@ -125,12 +125,12 @@ public:
     set receive time
     @param ai32_time time stamp of CAN telegram in [msec.] from system start
   */
-  void setTime(int32_t ai32_time) { mi32_time = ai32_time; }
+  void setTime(ecutime_t ai32_time) { mi32_time = ai32_time; }
 
   /**
     deliver time in [msec.] since system start
   */
-  int32_t time() const { return mi32_time; }
+  ecutime_t time() const { return mi32_time; }
 
   /**
     set complete CAN msg with one function call
@@ -141,7 +141,7 @@ public:
     @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
   void set( uint32_t at_ident, const uint8_t* apb_data, uint8_t aui8_len,
-            int32_t ai32_time, __IsoAgLib::Ident_c::identType_t at_type );
+            ecutime_t ai32_time, __IsoAgLib::Ident_c::identType_t at_type );
 
   /**
     set complete CAN msg with one function call
@@ -152,7 +152,7 @@ public:
     @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
   void set( uint32_t at_ident, const Flexible8ByteString_c* apc_data,
-            int32_t ai32_time, __IsoAgLib::Ident_c::identType_t at_type );
+            ecutime_t ai32_time, __IsoAgLib::Ident_c::identType_t at_type );
 
   /**
     put data into given reference to BIOS related data structure with data, len
@@ -263,7 +263,7 @@ public:
 
 protected:
   Flexible8ByteString_c mc_data;
-  int32_t mi32_time; // receive time
+  ecutime_t mi32_time; // receive time
   __IsoAgLib::Ident_c mc_ident;
   uint8_t mui8_len;
 };

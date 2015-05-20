@@ -61,13 +61,13 @@ private:
   static const int32_t sc_serverTimeOut = 3000;
   struct IsbState_s
   {
-    IsbState_s( int32_t timeReceived, uint8_t transitionNr, SwitchState_e state )
+    IsbState_s( ecutime_t timeReceived, uint8_t transitionNr, SwitchState_e state )
       : m_timeReceived( timeReceived ), m_transitionNr( transitionNr ), m_state( state ) {}
 
     // -1 is for enforced timeOut (on Node drop-off)
     bool timedOut() const { return( ( m_timeReceived < 0 ) || ( ( HAL::getTime() - m_timeReceived ) >= sc_serverTimeOut ) ); }
 
-    int32_t m_timeReceived;
+    ecutime_t m_timeReceived;
     uint8_t m_transitionNr;
     SwitchState_e m_state;
   };

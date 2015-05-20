@@ -285,7 +285,7 @@ class FsCommand_c : CanCustomer_c
     /** open file maintenance message **/
     uint8_t m_nrOpenFiles;
     bool m_keepConnectionOpen;
-    int32_t m_lastAliveSentTime;
+    ecutime_t m_lastAliveSentTime;
     static uint8_t m_maintenanceMsgBuf[8];
 
     uint8_t m_packetLength;
@@ -295,7 +295,7 @@ class FsCommand_c : CanCustomer_c
     int32_t m_multireceiveMsgBufOffset;
 
     bool m_receivedResponse;
-    int32_t m_lastrequestAttemptTime;
+    ecutime_t m_lastrequestAttemptTime;
     uint8_t m_requestAttempts;
 
     SendStream_c::sendSuccess_t m_sendSuccessNotify;

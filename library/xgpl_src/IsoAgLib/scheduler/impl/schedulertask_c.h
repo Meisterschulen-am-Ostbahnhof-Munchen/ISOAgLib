@@ -38,14 +38,14 @@ namespace __IsoAgLib {
       void setPeriod( int32_t period, bool retrigger );
 
       int32_t getTimeToNextTrigger() const {
-        return getNextTriggerTime() - System_c::getTime();
+        return int32_t(getNextTriggerTime() - System_c::getTime());
       }
 
-      int32_t getNextTriggerTime() const {
+      ecutime_t getNextTriggerTime() const {
         return m_nextTriggerTime;
       }
 
-      void setNextTriggerTime( int32_t time );
+      void setNextTriggerTime( ecutime_t time );
 
       void retriggerNow() {
         setNextTriggerTime( System_c::getTime() );
@@ -64,13 +64,13 @@ namespace __IsoAgLib {
       bool m_hardTiming;
       bool m_nextTriggerTimeSet;
       bool m_registered;
-      int32_t m_nextTriggerTime;
+      ecutime_t m_nextTriggerTime;
       int32_t m_period;
 
 #if defined( ISOAGLIB_DEBUG_TIMEEVENT ) || defined( ISOAGLIB_TASK_MAX_TIMEEVENT )
-      int32_t m_startTime;
-      int32_t m_thisTimeEvent;
-      int32_t m_maxTimeEvent;
+      ecutime_t m_startTime;
+      ecutime_t m_thisTimeEvent;
+      ecutime_t m_maxTimeEvent;
 #endif
   };
 

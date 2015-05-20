@@ -44,4 +44,6 @@ typedef unsigned int    uint_fast16_t;
 typedef unsigned long   uint_fast32_t;
 #endif // end HANDLE_FAST_DATATYPE_AS_STRICT
 
+typedef long ecutime_t;
+
 #endif

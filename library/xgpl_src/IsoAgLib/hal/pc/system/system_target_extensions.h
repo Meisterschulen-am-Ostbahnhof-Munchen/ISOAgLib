@@ -95,8 +95,8 @@ void openSystem();
 void closeSystem();
 bool isSystemOpened();
 
-int32_t getTime();
-int32_t getStartupTime();
+ecutime_t getTime();
+ecutime_t getStartupTime();
 int16_t getSnr(uint8_t *snrDat);               /* serial number of target */
 
 int16_t  getCpuFreq(void);                 /* get the cpu frequency*/

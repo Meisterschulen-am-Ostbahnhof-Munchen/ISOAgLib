@@ -49,7 +49,7 @@ namespace __IsoAgLib {
         (use BIOS function)
         @return running time in [msec.]
       */
-      static int32_t getTime() { return HAL::getTime(); }
+      static ecutime_t getTime() { return HAL::getTime(); }
 
       /** get the main power voltage
         @return voltage of power [mV]

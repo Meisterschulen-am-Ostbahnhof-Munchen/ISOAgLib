@@ -151,7 +151,7 @@ MeasureTimeProp_c::~MeasureTimeProp_c()
 
 
 void
-MeasureTimeProp_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
+MeasureTimeProp_c::start( ecutime_t ai32_lastVal, int32_t ai32_increment )
 {
   mi32_increment = ai32_increment;
   mi32_lastVal = ai32_lastVal;
@@ -164,7 +164,7 @@ MeasureTimeProp_c::start( int32_t ai32_lastVal, int32_t ai32_increment )
 
 
 bool
-MeasureTimeProp_c::updateTrigger( int32_t ai32_val )
+MeasureTimeProp_c::updateTrigger( ecutime_t ai32_val )
 {
   if (__IsoAgLib::abs(ai32_val - mi32_lastVal) >= mi32_increment)
   {
@@ -179,15 +179,15 @@ MeasureTimeProp_c::updateTrigger( int32_t ai32_val )
 
 
 int32_t
-MeasureTimeProp_c::nextTriggerTime( int32_t ai32_val )
+MeasureTimeProp_c::nextTriggerTime( ecutime_t ai32_val )
 {
-  return (mi32_lastVal + mi32_increment - ai32_val);
+  return int32_t(mi32_lastVal + mi32_increment - ai32_val);
 }
 
 
 void MeasureTimeProp_c::timeEvent()
 {
-  const int32_t now = System_c::getTime();
+  const ecutime_t now = System_c::getTime();
   const bool sendProcMsg = updateTrigger( now );
   const int32_t nextTimePeriod = nextTriggerTime( now );
 

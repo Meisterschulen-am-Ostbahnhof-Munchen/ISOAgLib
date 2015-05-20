@@ -38,7 +38,7 @@ namespace HAL
 
   void triggerWatchdog();
 
-  int32_t getTime(); // in [ms]
+  ecutime_t getTime(); // in [ms]
 
   int16_t getSnr(uint8_t *snrDat);
   int32_t getSerialNr(int16_t* pi16_errCode = NULL);

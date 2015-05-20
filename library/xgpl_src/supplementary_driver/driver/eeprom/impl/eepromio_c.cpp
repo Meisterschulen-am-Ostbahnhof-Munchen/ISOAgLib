@@ -231,7 +231,7 @@ EepromIo_c::wait_eepromReady( void )
     return HAL_NO_ERR;
 
   int16_t i16_result = HAL_BUSY_ERR;
-  int32_t i32_startTime = HAL::getTime();
+  const ecutime_t i32_startTime = HAL::getTime();
   while ((HAL::getTime() - i32_startTime) < 1000)
   { // call BIOS function and exit loop if EEPROM is ready
     i16_result = HAL::eepromReady();

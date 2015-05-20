@@ -127,7 +127,7 @@ public:
   uint8_t unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveConflict);
 
   /** deliver timestamp of last ISO request for SA claim msg */
-  int32_t lastIsoSaRequest() const { return mi32_lastSaRequest; }
+  ecutime_t lastIsoSaRequest() const { return mi32_lastSaRequest; }
 
   /** set timestamp of last ISO request for SA claim msg
     @param ai32_time set timestamp to
@@ -137,7 +137,7 @@ public:
     ADDRESS_CLAIM, so it's NOT chronologically. So CAN-Pkg-Times
     should be used here instead!!
   */
-  void setLastIsoSaRequest (int32_t ai32_time);
+  void setLastIsoSaRequest (ecutime_t ai32_time);
 
   /** trigger a request for claimed addreses
     @param ab_force false -> send request only if no request was detected until now
@@ -157,7 +157,7 @@ private:
 
   virtual void timeEvent();
   virtual void processMsg( const CanPkg_c& arc_data );
-  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver, int32_t ai_requestTimestamp );
+  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver, ecutime_t ai_requestTimestamp );
 
   IsoItem_c* anyActiveLocalItem() const;
   Vec_ISOIterator internalIsoItemErase( Vec_ISOIterator aiter_toErase);
@@ -266,7 +266,7 @@ private:
         uint32_t aui32_pgn,
         IsoItem_c *apc_isoItemSender,
         IsoItem_c *apc_isoItemReceiver,
-        int32_t ai_requestTimestamp )
+        ecutime_t ai_requestTimestamp )
     {
       return mrt_owner.processMsgRequestPGN(
           aui32_pgn,
@@ -292,7 +292,7 @@ private:
   IsoItem_c* m_isoItems[256];
 
   /** last time of request for adress claim */
-  int32_t mi32_lastSaRequest;
+  ecutime_t mi32_lastSaRequest;
 
   /** temporary memberItem instance for better inserting of new elements */
   IsoItem_c mc_tempIsoMemberItem;

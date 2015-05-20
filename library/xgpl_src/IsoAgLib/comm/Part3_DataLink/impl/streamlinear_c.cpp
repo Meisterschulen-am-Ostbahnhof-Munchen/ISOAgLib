@@ -19,7 +19,7 @@ namespace __IsoAgLib {
 StreamLinear_c::StreamLinear_c (
   const ReceiveStreamIdentifier_c& ac_rsi,
   uint32_t aui32_msgSize,
-  int32_t ai32_creationTime
+  ecutime_t ai32_creationTime
   MULTITON_INST_PARAMETER_DEF_WITH_COMMA ,
   bool ab_skipCtsAwait)
   : Stream_c (ac_rsi, aui32_msgSize, ai32_creationTime MULTITON_INST_PARAMETER_USE_WITH_COMMA , ab_skipCtsAwait)

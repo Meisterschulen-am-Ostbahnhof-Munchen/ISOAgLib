@@ -54,7 +54,7 @@ public:
     @param aren_status state of this ident (off, claimed address, ...)
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
+  void set(ecutime_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
            itemState_t aren_status = IState_c::Active, int ai_multitonInst = 0 );
 
   /** this sets the back-reference to the associated IdentItem if this is a LOCAL Item!
@@ -75,7 +75,7 @@ public:
     @param ai32_pkgTime Original message timestamp.
     @param aui8_pkgSa Original message source address.
   */
-  void processAddressClaimed (int32_t ai32_pkgTime, uint8_t aui8_pkgSa);
+  void processAddressClaimed (ecutime_t ai32_pkgTime, uint8_t aui8_pkgSa);
 
   /** send a SA claim message
    * - needed to respond on request for claimed SA fomr other nodes
@@ -90,12 +90,12 @@ public:
   /// @todo SOON-240 Merge with sendSaClaim - create an enum for the three cases!
   void sendAddressClaim (bool ab_fromConflict);
 
-  void setLastRequestForAddressClaimed(int32_t timestamp)
+  void setLastRequestForAddressClaimed(ecutime_t timestamp)
   {
     m_timestampLastRequestForAddressClaimed = timestamp;
   }
 
-  int32_t getLastRequestForAddressClaimed() const
+  ecutime_t getLastRequestForAddressClaimed() const
   {
     return m_timestampLastRequestForAddressClaimed;
   }
@@ -121,12 +121,12 @@ public:
 #ifdef USE_WORKING_SET
   // @todo move into own subclass????
 public:
-  int32_t announceTimeStamp() const { return m_wsRemoteAnnounceTime; }
+  ecutime_t announceTimeStamp() const { return m_wsRemoteAnnounceTime; }
 
   /** (Re-)Start sending the Working-Set Announce sequence
    * @return time-announce-started (=announce_key). You need this key to check for "isAnnounced(announce_key)".
    */
-  int32_t startWsAnnounce();
+  ecutime_t startWsAnnounce();
 
   // check if this item is a master (i.e. the master pointer points to itself)
   // NOTE: this function need NOT to be used in combination with function getMaster()
@@ -136,16 +136,16 @@ public:
   void setLocalMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames);
 
   /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
-  bool isWsAnnounced (int32_t ai32_timeAnnounceStarted) const;
+  bool isWsAnnounced (ecutime_t ai32_timeAnnounceStarted) const;
 
   bool isWsAnnouncing() const { return (m_wsLocalSlavesToClaimAddress != 0); }
 
   // Remote WS-handling
 public:
-  void processMsgWsMaster (uint8_t slaveCount, int32_t time );
-  void processMsgWsMember (IsoName_c const& slaveName, int32_t time);
+  void processMsgWsMaster (uint8_t slaveCount, ecutime_t time );
+  void processMsgWsMember (IsoName_c const& slaveName, ecutime_t time);
 private:
-  void checkWsRemoteAnnouncingFinished( int32_t time );
+  void checkWsRemoteAnnouncingFinished( ecutime_t time );
 #endif
 
 private: // methods
@@ -176,19 +176,19 @@ private:
     */
   int8_t m_wsLocalSlavesToClaimAddress;
 
-  int32_t m_wsLocalLastCompletedAnnounceStartedTime;
-  int32_t m_wsLocalCurrentAnnounceStartedTime;
+  ecutime_t m_wsLocalLastCompletedAnnounceStartedTime;
+  ecutime_t m_wsLocalCurrentAnnounceStartedTime;
 
   bool m_wsLocalRepeatAnnounce;
 
-  int32_t m_wsRemoteAnnounceTime;
+  ecutime_t m_wsRemoteAnnounceTime;
 #endif
 
 private:
   uint8_t mui8_nr; // SA
   IdentItem_c* mpc_identItem; // set for local items
   IsoName_c mc_isoName;
-  int32_t m_timestampLastRequestForAddressClaimed; // set for all, but only checked for Remote items!
+  ecutime_t m_timestampLastRequestForAddressClaimed; // set for all, but only checked for Remote items!
 };
 
 }

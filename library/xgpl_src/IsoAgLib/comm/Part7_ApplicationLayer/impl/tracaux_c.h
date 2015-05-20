@@ -354,7 +354,7 @@ namespace __IsoAgLib {
     {return IsoAgLib::IsoLimitFlag_t (marr_valve[valveNumber].ui8_measuredValveLimitStatus);}
     /*@}*/
 
-  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver, int32_t );
+  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver, ecutime_t );
 
   private:
     // Private methods
@@ -450,9 +450,6 @@ namespace __IsoAgLib {
 
     /** IsoName_c for implement sender */
     IsoName_c mc_sendImplISOName;
-
-    /** last time of command msg [msec] */
-    uint32_t mi32_lastMsgReceivedCmd;
 
     friend TracAux_c &getTracAuxInstance( unsigned instance );
   };

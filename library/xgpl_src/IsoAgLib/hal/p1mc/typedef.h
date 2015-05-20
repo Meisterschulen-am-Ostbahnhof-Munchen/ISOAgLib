@@ -29,4 +29,11 @@ typedef long int32_t;
 
 typedef unsigned long long int uint64_t;
 typedef long long int int64_t;
+
+#ifdef USE_TIMEBASE_INT64
+#error "64 Bit timebase not supported."
+#else
+    typedef long ecutime_t;
+#endif
+
 #endif

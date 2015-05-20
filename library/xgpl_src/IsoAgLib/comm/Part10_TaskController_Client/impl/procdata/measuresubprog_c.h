@@ -56,17 +56,17 @@ public:
   MeasureTimeProp_c( MeasureProg_c& measureProg );
   virtual ~MeasureTimeProp_c();
 
-  void start( int32_t ai32_lastVal, int32_t ai32_increment );
+  void start( ecutime_t ai32_lastVal, int32_t ai32_increment );
 
 private:
-  bool updateTrigger( int32_t );
-  int32_t nextTriggerTime( int32_t );
+  bool updateTrigger( ecutime_t );
+  int32_t nextTriggerTime( ecutime_t );
 
   virtual void timeEvent();
 
 private:
   MeasureProg_c &m_measureProg;
-  int32_t mi32_lastVal;
+  ecutime_t mi32_lastVal;
   int32_t mi32_increment;
 };
 

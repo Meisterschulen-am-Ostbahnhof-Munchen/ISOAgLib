@@ -37,11 +37,11 @@ public:
   struct InputState_s
   {
     InputState_s()
-      : mb_enabled(false), mui32_timeStampLastStateMsg(0)
+      : mb_enabled(false), mi32_timeStampLastStateMsg(0)
     {}
 
     bool mb_enabled;
-    uint32_t mui32_timeStampLastStateMsg;
+    ecutime_t mi32_timeStampLastStateMsg;
   };
 
   int16_t stream(uint8_t* destMemory,
@@ -83,7 +83,7 @@ public:
   bool sendNextStatusAsSoonAsPossible() const { return mb_highStatusUpdateRate || mb_valueChangeToHandle; }
 
 
-  uint32_t getTimeStampLastStateMsg() const  { return m_inputState.mui32_timeStampLastStateMsg; }
+  ecutime_t getTimeStampLastStateMsg() const  { return m_inputState.mi32_timeStampLastStateMsg; }
 
   uint16_t getValue1() const { return mui16_value1; }
   uint16_t getValue2() const { return mui16_value2; }

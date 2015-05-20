@@ -170,8 +170,8 @@ namespace __IsoAgLib {
     UploadPoolState_t men_uploadPoolState;
     UploadPoolType_t men_uploadPoolType;
 
-    uint32_t mui32_uploadTimestamp;
-    uint32_t mui32_uploadTimeout;
+    ecutime_t mi32_uploadTimestamp;
+    int32_t mi32_uploadTimeout;
 
     UploadPhase_s ms_uploadPhasesAutomatic [UploadPhaseLAST+1]; // automatic pool upload with all needed parts (lang indep, lang dep)
     unsigned int mui_uploadPhaseAutomatic; // not of type "UploadPhase_t",

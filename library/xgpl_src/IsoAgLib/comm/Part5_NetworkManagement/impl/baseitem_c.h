@@ -39,16 +39,13 @@ public:
     @param ab_status state of this ident (off, claimed address, ...) (default: off)
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  BaseItem_c( int32_t ai32_time = 0, IState_c::itemState_t ab_status = IState_c::IstateNull, int ai_multitonInst = 0);
+  BaseItem_c( ecutime_t ai32_time = 0, IState_c::itemState_t ab_status = IState_c::IstateNull, int ai_multitonInst = 0);
 
   /**
     copy constructor which takes it initial values from another BaseItem_c instance
     @param acrc_baseItem reference to the source BaseItem_c instance
   */
   BaseItem_c(const BaseItem_c& acrc_baseItem);
-
-  /** destructor which sets the update timestamp to 0 */
-  ~BaseItem_c();
 
   /**
     operator= which defines src as const to avoid
@@ -63,7 +60,7 @@ public:
     @param ai32_time optional timestamp to set as update time
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ai32_time = -1, int ai_multitonInst = 0);
+  void set(ecutime_t ai32_time = -1, int ai_multitonInst = 0);
 
   /**
     set pointer to containing Scheduler_c instance and update timestamp of object
@@ -71,7 +68,7 @@ public:
     @param ab_status state of this ident (off, claimed address, ...) (default: off)
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ai32_time, IState_c::itemState_t ab_status, int ai_multitonInst = 0);
+  void set(ecutime_t ai32_time, IState_c::itemState_t ab_status, int ai_multitonInst = 0);
 
   /**
     calculates time between now and last set of mi32_lastTime;
@@ -85,14 +82,14 @@ public:
     deliver the timestamp of the last update as int32_t [msec]
     @return last update [msec]
   */
-  int32_t lastTime() const {return mi32_lastTime;}
+  ecutime_t lastTime() const {return mi32_lastTime;}
 
   /**
     updates mi32_lastTime to ai32_time or actual
     system time if no time is given
     @param ai32_time optional time to store as last update time
   */
-  void updateTime( int32_t ai32_time = -1 )
+  void updateTime( ecutime_t ai32_time = -1 )
     {if ( ai32_time < 0 ) mi32_lastTime = System_c::getTime();
      else mi32_lastTime = ai32_time;
     }
@@ -107,7 +104,7 @@ public:
 
 private:
   /** last system time of access or alive or received message in [250ms]*/
-  int32_t mi32_lastTime;
+  ecutime_t mi32_lastTime;
 };
 
 

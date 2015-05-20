@@ -47,7 +47,7 @@ namespace __IsoAgLib {
   }
 
 
-  void SchedulerTask_c::setNextTriggerTime( int32_t time ) {
+  void SchedulerTask_c::setNextTriggerTime( ecutime_t time ) {
     isoaglib_assert( isRegistered() );
 
     m_nextTriggerTime = time;

@@ -79,7 +79,7 @@ private:
 #endif
 
   // time stamp of last auxiliary input maintenance message sent
-  uint32_t mui32_timeStampLastMaintenance;
+  ecutime_t mi32_timeStampLastMaintenance;
 
   bool mb_learnMode;
 

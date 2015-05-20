@@ -43,17 +43,17 @@ static bool sensorDigitalInputOpen[] = { false,false,false,false,false,false,fal
                                             false,false,false,false,false,false,false,false };
 
 /// Analog
-static int32_t lastSensorAnalogInputTime[ANALOG_INPUT_MAX+1];
+static ecutime_t lastSensorAnalogInputTime[ANALOG_INPUT_MAX+1];
 static int32_t lastSensorAnalogInputVal[ANALOG_INPUT_MAX+1];
 
-static int32_t next_sensorAnalogInputTime[ANALOG_INPUT_MAX+1];
+static ecutime_t next_sensorAnalogInputTime[ANALOG_INPUT_MAX+1];
 static int32_t next_sensorAnalogInputVal[ANALOG_INPUT_MAX+1];
 
 /// Digital
-static int32_t lastSensorDigitalInputTime[DIGITAL_INPUT_MAX+1];
+static ecutime_t lastSensorDigitalInputTime[DIGITAL_INPUT_MAX+1];
 static DigitalInputLine_s lastSensorDigitalInputVal[DIGITAL_INPUT_MAX+1];
 
-static int32_t next_sensorDigitalInputTime[DIGITAL_INPUT_MAX+1];
+static ecutime_t next_sensorDigitalInputTime[DIGITAL_INPUT_MAX+1];
 static DigitalInputLine_s next_sensorDigitalInputVal[DIGITAL_INPUT_MAX+1];
 
 

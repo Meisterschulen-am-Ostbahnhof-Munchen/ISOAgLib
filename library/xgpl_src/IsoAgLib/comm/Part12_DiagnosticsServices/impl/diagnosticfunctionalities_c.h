@@ -93,7 +93,7 @@ private:
     MultiSendEventHandlerProxy_c &operator=(MultiSendEventHandlerProxy_c const &);
   }; // MultiSendEventHandlerProxy_c
 
-  bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t );
+  bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, ecutime_t );
 
   void sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,int32_t ai32_pgn);
 

@@ -67,17 +67,17 @@ public:
 
   /** Retrieve the last update time of the specified information type
    */
-  int32_t lastedTimeSinceUpdateGps() const {return TimePosGps_c::lastedTimeSinceUpdateGps();}
+  ecutime_t lastedTimeSinceUpdateGps() const {return TimePosGps_c::lastedTimeSinceUpdateGps();}
 
   /** Retrieve the time of last update */
-  int32_t lastUpdateTimeGps() const {return TimePosGps_c::lastUpdateTimeGps();}
+  ecutime_t lastUpdateTimeGps() const {return TimePosGps_c::lastUpdateTimeGps();}
 
   /** Retrieve the last update time of the specified information type
    */
-  int32_t lastedTimeSinceUpdateDirection() const {return TimePosGps_c::lastedTimeSinceUpdateDirection();}
+  ecutime_t lastedTimeSinceUpdateDirection() const {return TimePosGps_c::lastedTimeSinceUpdateDirection();}
 
   /** Retrieve the time of last update */
-  int32_t lastUpdateTimeDirection() const {return TimePosGps_c::lastUpdateTimeDirection();}
+  ecutime_t lastUpdateTimeDirection() const {return TimePosGps_c::lastUpdateTimeDirection();}
 
   /** return a sender which sends GPS commands as a tractor */
   iIsoName_c& getSenderISONameGps() {return TimePosGps_c::getSenderISONameGps().toIisoName_c();}

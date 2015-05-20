@@ -91,7 +91,7 @@ namespace __IsoAgLib {
   int32_t Scheduler_c::timeEvent() {
 
 #if defined( ISOAGLIB_SCHEDULER_MAX_TIMEEVENT ) && ( ISOAGLIB_SCHEDULER_MAX_TIMEEVENT > 0 )
-    const int32_t startTime = System_c::getTime();
+    const ecutime_t startTime = System_c::getTime();
 #endif
 
     for ( int ind = 0; ind < CAN_INSTANCE_CNT; ind++ ) {

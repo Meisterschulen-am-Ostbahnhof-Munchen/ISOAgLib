@@ -17,7 +17,6 @@
 #define _HAL_CAN_H_
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/hal/hal_config.h>
 
 namespace __IsoAgLib {
   class CanPkg_c;

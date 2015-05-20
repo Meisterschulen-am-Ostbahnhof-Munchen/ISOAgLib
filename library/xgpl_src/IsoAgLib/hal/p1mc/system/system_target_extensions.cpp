@@ -42,7 +42,7 @@ void openSystem()
 }
 void closeSystem() {}
 
-int32_t getTime(void)
+ecutime_t getTime(void)
 {
   return os_gulGetTimeMs();
 }

@@ -34,7 +34,7 @@ namespace __IsoAgLib {
 Stream_c::Stream_c(
   const ReceiveStreamIdentifier_c& ac_rsi, 
   uint32_t aui32_msgSize,
-  int32_t ai_time
+  ecutime_t ai_time
   MULTITON_INST_PARAMETER_DEF_WITH_COMMA ,
   bool ab_skipCtsAwait
 ) : StreamInput_c()
@@ -389,7 +389,7 @@ Stream_c::timedOut()
 }
 
 
-int32_t
+ecutime_t
 Stream_c::nextTimeEvent() const
 {
   switch( getNextComing() )

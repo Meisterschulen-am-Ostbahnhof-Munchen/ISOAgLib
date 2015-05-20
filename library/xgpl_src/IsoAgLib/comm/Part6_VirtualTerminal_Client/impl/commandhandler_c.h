@@ -146,7 +146,7 @@ private:
   UploadCommandState_t men_uploadCommandState;
 
   uint8_t mui8_commandParameter; // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
-  int32_t mi32_commandTimestamp;
+  ecutime_t mi32_commandTimestamp;
   int32_t mi32_commandTimeout;
 #ifdef WORKAROUND_PREMATURE_TP_RESPONSES
   uint8_t m_queuedResponseErrByte; // 1-8 ==> command queued, 0 ==> no cmd queued.

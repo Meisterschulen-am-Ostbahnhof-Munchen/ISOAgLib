@@ -109,7 +109,7 @@ namespace __IsoAgLib {
       return;
 
     // Send the WS task message to maintain connection with the TC
-    const int32_t now = HAL::getTime();
+    const ecutime_t now = HAL::getTime();
     if ( now - m_timeWsTaskMsgSent >= 2000 ) {
       m_timeWsTaskMsgSent = now;
       sendMsg( 0xff, 0xff, 0xff, 0xff, getServer().getLastServerState(), 0x00, 0x00, 0x00 );
@@ -126,7 +126,7 @@ namespace __IsoAgLib {
 
     switch( m_uploadStep ) {
       case UploadUploading:
-        if ( ( ( uint32_t ) HAL::getTime() ) > ( m_uploadTimeout + m_uploadTimestamp ) ) {
+        if ( HAL::getTime() > ( m_uploadTimeout + m_uploadTimestamp ) ) {
           startUpload();
           break;
         }
@@ -149,7 +149,7 @@ namespace __IsoAgLib {
 
         // Waiting for request to transfer response
       case UploadWaitForOPTransferResponse:
-        if ( ( ( uint32_t ) HAL::getTime() ) > ( m_uploadTimeout + m_uploadTimestamp ) )
+        if ( HAL::getTime() > ( m_uploadTimeout + m_uploadTimestamp ) )
           startUpload();
         break;
 

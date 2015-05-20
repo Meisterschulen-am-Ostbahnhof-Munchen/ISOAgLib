@@ -177,7 +177,7 @@ class Stream_c : public StreamInput_c //, public ClientBase --> for single inher
 {
 public:
   Stream_c (const ReceiveStreamIdentifier_c& ac_rsi,
-            uint32_t aui32_msgSize, int32_t ai_time MULTITON_INST_PARAMETER_DEF_WITH_COMMA,
+            uint32_t aui32_msgSize, ecutime_t ai_time MULTITON_INST_PARAMETER_DEF_WITH_COMMA,
             bool ab_skipCtsAwait=false);
 
   Stream_c (const Stream_c &);
@@ -224,7 +224,7 @@ public:
 //  virtual bool eof() const=0; // pass on abstract method
 /// End StreamInput_c methods
 
-  int32_t nextTimeEvent() const;
+  ecutime_t nextTimeEvent() const;
 
   bool setDataPageOffset(uint32_t aui32_dataPageOffset);
 
@@ -240,8 +240,8 @@ public:
 #ifdef ENABLE_MULTIPACKET_RETRY
   uint8_t  getPkgsReceivedInBurst()       const { return mui8_pkgsReceivedInBurst; }
 #endif
-  int32_t getStartTime()                  const { return mi_startTime; }
-  int32_t getFinishTime()                 const { return mi_finishTime; }
+  ecutime_t getStartTime()                  const { return mi_startTime; }
+  ecutime_t getFinishTime()                 const { return mi_finishTime; }
   //! Provide first byte set by first call of processDataChunk... First byte containes command.
   uint8_t  getFirstByte()                 const { return mui8_streamFirstByte; };
   //! Store first byte of stream. First byte containes command.
@@ -268,7 +268,7 @@ private:
 
   NextComing_t mt_awaitStep;
 
-  int32_t mi32_delayCtsUntil;
+  ecutime_t mi32_delayCtsUntil;
 
 
 /// Byte counting stuff
@@ -293,10 +293,10 @@ private:
   uint32_t mui32_dataPageOffset;      //  Attribute: mui32_dataPageOffset: gets set when a DPO arrives...
   uint8_t mui8_maxPacketInTPBurst;      // Burst Size limit the RTS controller specified.
 
-  int32_t mi32_timeoutLimit;
+  ecutime_t mi32_timeoutLimit;
 
-  int32_t mi_startTime;
-  int32_t mi_finishTime;
+  ecutime_t mi_startTime;
+  ecutime_t mi_finishTime;
 
 #ifdef ENABLE_MULTIPACKET_RETRY
   uint32_t mui32_isoErrorBurstWaitForPkgThenRetry; // == 0 ==> normal operation. > 0 ==> missing packet in burst, wait for last packet, then re-CTS

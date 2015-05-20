@@ -814,7 +814,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& acr
 
 
 Stream_c*
-MultiReceive_c::createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize, int32_t ai_time )
+MultiReceive_c::createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize, ecutime_t ai_time )
 {
   // Assumption/Precondition: Stream not there, so create and add it without checking!
   mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize, ai_time MULTITON_INST_WITH_COMMA, false));
@@ -987,7 +987,7 @@ MultiReceive_c::timeEvent()
     ++i_list_streams;
   }
 
-  int32_t newPeriod = nextTimeEvent() - System_c::getTime();
+  int32_t newPeriod = int32_t(nextTimeEvent() - System_c::getTime());
   if( newPeriod < 1 )
     newPeriod = 1;
   
@@ -1426,10 +1426,10 @@ MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoI
 }
 
 
-int32_t
+ecutime_t
 MultiReceive_c::nextTimeEvent() const
 {
-  int32_t nextTrigger = System_c::getTime() + 5000; // default: idle around...
+  ecutime_t nextTrigger = System_c::getTime() + 5000; // default: idle around...
 
   for( STL_NAMESPACE::list<DEF_Stream_c_IMPL>::const_iterator i_list_streams = mlist_streams.begin();
     i_list_streams != mlist_streams.end();
@@ -1437,7 +1437,7 @@ MultiReceive_c::nextTimeEvent() const
   {
     DEF_Stream_c_IMPL const& rc_stream = *i_list_streams;
 
-    const int32_t streamNextTrigger = rc_stream.nextTimeEvent();
+    const ecutime_t streamNextTrigger = rc_stream.nextTimeEvent();
     if( (streamNextTrigger != msci32_timeNever) && (streamNextTrigger < nextTrigger) )
       nextTrigger = streamNextTrigger;
   }

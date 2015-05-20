@@ -117,7 +117,7 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   bool b_sendPreferredAssignments = false;
 
-  const int32_t i32_now = HAL::getTime();
+  const ecutime_t i32_now = HAL::getTime();
   const IsoName_c c_inputIsoName = arc_data.getISONameForSA();
   const uint16_t ui16_modelIdentificationCode = arc_data.getUint16Data(2-1);
 
@@ -336,14 +336,14 @@ void
 Aux2Functions_c::timeEvent()
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-  const int32_t i32_now = HAL::getTime();
-  int32_t next = i32_now + 300;
+  const ecutime_t i32_now = HAL::getTime();
+  ecutime_t next = i32_now + 300;
 
   // 1. check for timed out inputs
   for (STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::iterator iter_map = mmap_receivedInputMaintenanceData.begin();
       iter_map != mmap_receivedInputMaintenanceData.end();)
   {
-    const int32_t timeout = iter_map->second.mi32_timeLastAux2Maintenance + 300;
+    const ecutime_t timeout = iter_map->second.mi32_timeLastAux2Maintenance + 300;
     if ( i32_now > timeout )
     {
       // timeout => unassign all functions with matching isoname

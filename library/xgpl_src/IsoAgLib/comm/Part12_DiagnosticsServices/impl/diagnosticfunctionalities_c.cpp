@@ -147,7 +147,7 @@ DiagnosticFunctionalities_c::MultiSendEventHandlerProxy_c::reactOnStateChange(co
 
 
 bool
-DiagnosticFunctionalities_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* rpc_isoItemReceiver, int32_t )
+DiagnosticFunctionalities_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* rpc_isoItemReceiver, ecutime_t )
 {
   if( !mrc_identItem.isClaimedAddress() )
     return false;

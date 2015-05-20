@@ -191,7 +191,7 @@ CurvatureCommander_s* TracGuidanceCommand_c::getCommanderDataByIndex( uint8_t ui
     @todo SOON-824: add answering of requestPGN in case this object is configured for sending of these information
            - verify this also for the other TracFoo classes
   */
-bool TracGuidanceCommand_c::processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t )
+bool TracGuidanceCommand_c::processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, ecutime_t )
 {
   return false;
 }

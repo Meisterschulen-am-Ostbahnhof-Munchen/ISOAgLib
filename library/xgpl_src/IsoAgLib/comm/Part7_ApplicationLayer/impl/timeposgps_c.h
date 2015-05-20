@@ -133,7 +133,7 @@ public:
       @param apc_isoItemSender pointer to source address
       @param apc_isoItemReceiver pointer to destination address
     */
-  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t ai_time );
+  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t ai_time );
 
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate();
@@ -159,17 +159,17 @@ public:
   void sendCalendar();
 
   /** Retrieve the last update time of the specified information type*/
-  int32_t lastedTimeSinceUpdateGps() const;
+  ecutime_t lastedTimeSinceUpdateGps() const;
 
   /** Retrieve the time of last update */
-  int32_t lastUpdateTimeGps() const;
+  ecutime_t lastUpdateTimeGps() const;
 
 
   /** Retrieve the last update time of the specified information type*/
-  int32_t lastedTimeSinceUpdateDirection() const;
+  ecutime_t lastedTimeSinceUpdateDirection() const;
 
   /** Retrieve the time of last update */
-  int32_t lastUpdateTimeDirection() const;
+  ecutime_t lastUpdateTimeDirection() const;
 
 
   /** return a sender which sends commands as a tractor */
@@ -522,24 +522,24 @@ public:
       please use in conjunction with isPositionReceived() first,
       as else the uint16_t would wrap the result around into 0..x areas
       which would indicate you a not too old position you would use! */
-  uint16_t getGpsPositionUpdateAge( void ) const
-  { if ( mi32_lastIsoPositionStream > mi32_lastIsoPositionSimple) return (System_c::getTime() - mi32_lastIsoPositionStream);
-    else                                                        return (System_c::getTime() - mi32_lastIsoPositionSimple);}
+  int32_t getGpsPositionUpdateAge( void ) const
+  { if ( mi32_lastIsoPositionStream > mi32_lastIsoPositionSimple) return int32_t(System_c::getTime() - mi32_lastIsoPositionStream);
+    else                                                        return int32_t(System_c::getTime() - mi32_lastIsoPositionSimple);}
 #else
   /** deliver age of last gps-position-update in milliseconds
       please use in conjunction with isPositionReceived() first,
       as else the uint16_t would wrap the result around into 0..x areas
       which would indicate you a not too old position you would use! */
-  uint16_t getGpsPositionUpdateAge( void ) const
-  { return (System_c::getTime() - mi32_lastIsoPositionSimple); }
+  int32_t getGpsPositionUpdateAge( void ) const
+  { return int32_t(System_c::getTime() - mi32_lastIsoPositionSimple); }
 #endif
 
   /** deliver age of last gps-direction-update in milliseconds
       please use in conjunction with isPositionReceived() first,
       as else the uint16_t would wrap the result around into 0..x areas
       which would indicate you a not too old position you would use! */
-  uint16_t getGpsDirectionUpdateAge( void ) const
-  { return (System_c::getTime() - mi32_lastIsoDirection); }
+  int32_t getGpsDirectionUpdateAge( void ) const
+  { return int32_t(System_c::getTime() - mi32_lastIsoDirection); }
 
   /** register an event handler that gets called for any incoming PGN.
       Please look into the implementation to see for which PGNs it is
@@ -595,7 +595,7 @@ private:
   /** deliver time between now and last calendar set in [msec]
     @return msec since last calendar set
     */
-  int32_t calendarSetAge() const {return (System_c::getTime() - mi32_lastCalendarSet);};
+  ecutime_t calendarSetAge() const {return (System_c::getTime() - mi32_lastCalendarSet);};
 
   const struct CNAMESPACE::tm* Utc2LocalTime();
 
@@ -640,7 +640,7 @@ private:
     /** last timestamp where calendar was set
     -> use this to calculate new time
     */
-  int32_t mi32_lastCalendarSet;
+  ecutime_t mi32_lastCalendarSet;
 
       /** last timestamp where calendar was set
     -> use this to calculate new time
@@ -669,18 +669,18 @@ private:
   int32_t mi32_longitudeDegree10Minus7;
 
   /** raw millisecond time of day from the GPS message */
-  uint32_t mui32_timeMillisecondOfDay;
-  int32_t  mi32_lastMillisecondUpdate;  // time stamp of the update of this variable
-  float    mf_rapidUpdateRateFilter;
-  int32_t  mi32_rapidUpdateRateMs;
+  uint32_t  mui32_timeMillisecondOfDay;
+  ecutime_t mi32_lastMillisecondUpdate;  // time stamp of the update of this variable
+  float     mf_rapidUpdateRateFilter;
+  int32_t   mi32_rapidUpdateRateMs;
 
 
   /// General
   /** last time of ISO GPS msg [msec] Position */
-  int32_t mi32_lastIsoPositionSimple;
+  ecutime_t mi32_lastIsoPositionSimple;
 
   /** last time of ISO GPS msg [msec] Direction */
-  int32_t mi32_lastIsoDirection;
+  ecutime_t mi32_lastIsoDirection;
 
   /** course over ground reference */
   uint8_t mui8_courseOverGroundReference;
@@ -728,7 +728,7 @@ private:
   } bit_gpsTime;
 
   /** last time of ISO GPS msg [msec] */
-  int32_t mi32_lastIsoPositionStream;
+  ecutime_t mi32_lastIsoPositionStream;
 
   /** GNSS Type */
   IsoAgLib::IsoGnssType_t mt_gnssType;

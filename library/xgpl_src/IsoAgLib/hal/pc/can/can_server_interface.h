@@ -18,6 +18,10 @@
 #include <vector>
 #include <IsoAgLib/isoaglib_config.h>
 
+#ifdef USE_TIMEBASE_INT64
+#  error "64 Bit timebase currently not supported for CAN-Server! If this should ever work, use another port or alike!"
+#endif
+
 //#define DEBUG_CAN 1
 
 #if DEBUG_CAN
@@ -148,7 +152,7 @@ struct tMsgObj {
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
 
 struct can_data {
-  int32_t i32_time;
+  ecutime_t i32_time;
   int32_t i32_ident;
   uint8_t b_dlc;
   uint8_t b_xtd;
@@ -172,7 +176,7 @@ struct msqWrite_s {
   uint8_t  ui8_bus;
   uint8_t  ui8_obj;
   canMsg_s s_canMsg;
-  int32_t  i32_sendTimeStamp;
+  ecutime_t  i32_sendTimeStamp;
 };
 
 
@@ -239,7 +243,7 @@ struct transferBuf_s {
       struct canMsg_s s_canMsg;
       uint8_t  ui8_bus;
       uint8_t  ui8_obj;
-      int32_t  i32_sendTimeStamp;
+      ecutime_t  i32_sendTimeStamp;
     } s_data;
 #endif
   };

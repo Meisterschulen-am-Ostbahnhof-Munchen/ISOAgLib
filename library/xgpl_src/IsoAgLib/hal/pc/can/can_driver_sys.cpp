@@ -132,7 +132,7 @@ namespace __HAL {
   /** print errTest if errMask & data is true; return errMask & data */
   bool printIfError( uint32_t ui32_data, uint32_t ui32_errMask, const char* carr_errText ) {
     if ( ui32_data & ui32_errMask ) {
-      fprintf( stderr, "%d: %s ", getTime(), carr_errText );
+      fprintf( stderr, "%lld: %s ", getTime(), carr_errText );
       return true;
     }
     return false;

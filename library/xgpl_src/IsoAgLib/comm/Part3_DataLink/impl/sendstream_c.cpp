@@ -149,7 +149,7 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
 
     case SendData:
     {
-      const int32_t before = System_c::getTime();
+      const ecutime_t before = System_c::getTime();
 #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
       if (men_msgType == NmeaFastPacket)
       {
@@ -173,7 +173,7 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
           }
         } // for
 
-        const int32_t timeToNextTrigger = ( pkgCnt / 2 ) - ( System_c::getTime() - before );
+        const int32_t timeToNextTrigger = ( pkgCnt / 2 ) - int32_t( System_c::getTime() - before );
         // sending frames takes us at least 1 ms per 2 frames
         // retrigger first possible time we can continue sending.
         retriggerIn ( timeToNextTrigger < 0 ? 0 : timeToNextTrigger ); 
@@ -233,7 +233,7 @@ SendStream_c::timeEvent ( unsigned pkgCnt )
         }
         else
         { // IsoTP || IsoETP can send on immediately
-          const int32_t timeToNextTrigger = ( pkgCnt / 3 ) - ( System_c::getTime() - before );
+          const int32_t timeToNextTrigger = ( pkgCnt / 3 ) - int32_t( System_c::getTime() - before );
           // sending frames takes us at least 1 ms per 3 frames
           // retrigger first possible time we can continue sending.
           retriggerIn ( timeToNextTrigger <= 0 ? 1 : timeToNextTrigger ); 

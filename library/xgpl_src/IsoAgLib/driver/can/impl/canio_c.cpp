@@ -239,7 +239,7 @@ namespace __IsoAgLib {
      *  a send queue and no information about the possible about of frames 
      *  is available - so we just try to send and check the result */
     if( -1 != fc ) {
-      const int32_t now = System_c::getTime();
+      const ecutime_t now = System_c::getTime();
       while( fc < 1 ) {
         HAL::sleep_max_ms( 1 );
         /** we wait for CONFIG_CAN_BLOCK_TIME ms if the send-queue is opening for this one package.

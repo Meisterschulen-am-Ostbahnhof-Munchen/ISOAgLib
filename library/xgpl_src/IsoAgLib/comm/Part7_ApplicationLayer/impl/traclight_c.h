@@ -123,7 +123,7 @@ typedef struct {
     */
     virtual bool config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0 );
 
-    bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
+    bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t );
 
     virtual ~TracLight_c() {}
 
@@ -250,7 +250,7 @@ typedef struct {
     STL_NAMESPACE::map<uint8_t, lightBitData_t> mmap_data; // access mmap_data[sourceAdr].
 
     /** the last 10 times when a command was send.*/
-    int32_t marr_timeStamp[10];
+    ecutime_t marr_timeStamp[10];
 
     /** m_index which stores the position where the eldest marr_timeStamp is stored*/
     unsigned int m_index;

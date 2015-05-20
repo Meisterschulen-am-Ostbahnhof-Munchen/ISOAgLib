@@ -79,7 +79,7 @@ class FsServerInstance_c
     /** fileserver property number of open files */
     uint8_t ui8_nrOpenFiles;
     /** last time a fileserver status message has been received. */
-    int32_t i32_lastTime;
+    ecutime_t i32_lastTime;
 
     /** The fileServer Properties */
     /** fileserver's version number*/
@@ -143,7 +143,7 @@ class FsServerInstance_c
     /**
       * returns the last time a fileserver statusmessage has been received.
       */
-    int32_t getLastTime() { return i32_lastTime; }
+    ecutime_t getLastTime() { return i32_lastTime; }
 
     /**
       * sets the fileservers properties as defined in the ISO-11783 standard

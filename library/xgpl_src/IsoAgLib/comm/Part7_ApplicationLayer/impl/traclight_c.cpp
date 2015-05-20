@@ -107,7 +107,7 @@ namespace __IsoAgLib {
     }
   }
 
-  bool TracLight_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
+  bool TracLight_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
@@ -688,7 +688,7 @@ namespace __IsoAgLib {
 
   TracLight_c::SendMessage_e TracLight_c::sendLightingCommand()
   {
-    int32_t const ci32_now = System_c::getTime();
+    const ecutime_t ci32_now = System_c::getTime();
 
     CanPkgExt_c pkg;
 

@@ -90,7 +90,7 @@ void setHalSimulator( HALSimulator_c* sim ) { g_halSimulator = sim; }
 #error "LINUX_VERSION_CODE is not defined"
 #endif
 
-int32_t getStartupTime()
+ecutime_t getStartupTime()
 {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
   if ( msecPerClock != (1000 / sysconf(_SC_CLK_TCK)) )
@@ -102,27 +102,30 @@ int32_t getStartupTime()
         << INTERNAL_DEBUG_DEVICE_ENDL;
     MACRO_ISOAGLIB_ABORT();
   }
-  static int32_t st_startup4Times = int32_t (times(NULL));
+  static ecutime_t st_startup4Times = ecutime_t (times(NULL));
 #else
   static bool sb_init_done = false;
-  static int32_t st_startup4Times = int32_t (-1);
+  static ecutime_t st_startup4Times = ecutime_t (-1);
   if (!sb_init_done)
   {
     sb_init_done = true;
     timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
-    st_startup4Times = int32_t(ts.tv_sec)*1000 + int32_t(ts.tv_nsec/1000000);
+    st_startup4Times = ecutime_t(ts.tv_sec)*1000 + ecutime_t(ts.tv_nsec/1000000);
   }
 #endif
   return st_startup4Times;
 }
 #else // WIN32
-  int32_t getStartupTime()
+#  ifdef USE_TIMEBASE_INT64
+#    error "64 Bit timebase currently not supported for Windows, timeGetTime only returns 32 Bit."
+#  endif
+  ecutime_t getStartupTime()
   { // returns time in msec
     // VC++ and mingw with native Win32 API provides very accurate
     // msec timer - use that
     // in case of mingw compiler error link winmm.lib (add -lwinmm).
-    static int32_t st_startup4Times = MACRO_ISOAGLIB_TIMEGETTIME();
+    static ecutime_t st_startup4Times = MACRO_ISOAGLIB_TIMEGETTIME();
     return st_startup4Times;
   }
 #endif
@@ -166,19 +169,19 @@ isSystemOpened()
 #ifdef WIN32
   // VC++ and mingw with native Win32 API provides very accurate
   // msec timer - use that
-  int32_t getTime()
+  ecutime_t getTime()
   { // returns time in msec
     // in case of mingw compiler error link winmm.lib (add -lwinmm).
     return MACRO_ISOAGLIB_TIMEGETTIME() - getStartupTime();
   }
 #else
  // use gettimeofday for native LINUX system
-int32_t getTime()
+ecutime_t getTime()
 {
   /** linux-2.6 */
   static timespec ts;
   clock_gettime(CLOCK_MONOTONIC, &ts);
-  const int32_t ci_now = int32_t(ts.tv_sec)*1000 + int32_t(ts.tv_nsec/1000000);
+  const ecutime_t ci_now = ecutime_t(ts.tv_sec)*1000 + ecutime_t(ts.tv_nsec/1000000);
   return ci_now - getStartupTime();
 }
 #endif

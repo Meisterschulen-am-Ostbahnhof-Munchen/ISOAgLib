@@ -50,7 +50,7 @@ namespace __IsoAgLib {
     /** update selected speed with actually best available speed
         @param t_speedSrc  from which source is the speed available
       */
-    void updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, int32_t ai_time );
+    void updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, ecutime_t ai_time );
 
     /** update distance and direction with the actually best available distance and direction
         @param t_distanceSrc  from which source is the distance and direction available
@@ -250,7 +250,7 @@ namespace __IsoAgLib {
     uint16_t engineSpeed() const { return mui16_engineSpeed;}
 
 
-  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
+  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t );
 
   private:
     // Private methods
@@ -335,12 +335,12 @@ namespace __IsoAgLib {
     /** actually selected distance and direction source */
     IsoAgLib::DistanceDirectionSource_t mt_distDirecSource;
 
-    uint32_t mui32_lastUpdateTimeSpeedSelected;
-    uint32_t mui32_lastUpdateTimeSpeedReal;
-    uint32_t mui32_lastUpdateTimeSpeedTheor;
+    ecutime_t mui32_lastUpdateTimeSpeedSelected;
+    ecutime_t mui32_lastUpdateTimeSpeedReal;
+    ecutime_t mui32_lastUpdateTimeSpeedTheor;
 
     /** last time when direction and distance data was processed */
-    uint32_t mui32_lastUpdateTimeDistDirec;
+    ecutime_t mui32_lastUpdateTimeDistDirec;
 
 
     /************ DISTANCE **************/

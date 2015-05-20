@@ -181,7 +181,7 @@ IsbClient_c::handleChangedState()
   bool stopAllImplementOperationsNew = false;
   unsigned serverCntNew = 0;
 
-  int32_t nextTimeOut = -1;
+  ecutime_t nextTimeOut = -1;
 
   for( ServerMap_t::iterator iter = m_servers.begin(); iter != m_servers.end(); )
   {
@@ -192,7 +192,7 @@ IsbClient_c::handleChangedState()
     }
     else
     {
-      const int32_t thisTimeOut = iter->second.m_timeReceived + sc_serverTimeOut;
+      const ecutime_t thisTimeOut = iter->second.m_timeReceived + sc_serverTimeOut;
       if( ( nextTimeOut < 0 ) || ( thisTimeOut < nextTimeOut ) )
         nextTimeOut = thisTimeOut;
 

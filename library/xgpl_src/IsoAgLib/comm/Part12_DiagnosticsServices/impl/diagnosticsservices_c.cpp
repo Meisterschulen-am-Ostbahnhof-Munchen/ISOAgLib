@@ -240,7 +240,7 @@ DiagnosticsServices_c::calculateNextActionTime()
     }
 
     // global 1s periodic sending
-    int32_t i32_minNextAction = (mi32_dm1LastSentTime + sci32_periodDM1) - HAL::getTime();
+    int32_t i32_minNextAction = int32_t((mi32_dm1LastSentTime + sci32_periodDM1) - HAL::getTime());
   
     // and the need to send changes from the DTCs
     for (uint16_t counter = 0;counter < DtcContainer_c::scui16_sizeDTCList ;++counter) // loop_all_DTCs
@@ -248,8 +248,8 @@ DiagnosticsServices_c::calculateNextActionTime()
       if (mc_dtcs[counter].ui32_spn == DtcContainer_c::Dtc_s::spiNone)   
         continue;
 
-      const int32_t ci32_minNextDtcAction = (mc_dtcs[counter].i32_timeLastStateChangeSent + sci32_periodDM1)
-                                              - mc_dtcs[counter].i32_timeLastStateChange;
+      const int32_t ci32_minNextDtcAction = int32_t((mc_dtcs[counter].i32_timeLastStateChangeSent + sci32_periodDM1)
+                                              - mc_dtcs[counter].i32_timeLastStateChange);
 
       if (ci32_minNextDtcAction < i32_minNextAction)
         i32_minNextAction = ci32_minNextDtcAction;
@@ -457,7 +457,7 @@ DiagnosticsServices_c::sendSingleDM1DM2(uint32_t ui32_pgn, uint8_t* arr_send8byt
 }
 
 bool
-DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* isoItemSender, IsoItem_c* isoItemReceiver, int32_t )
+DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* isoItemSender, IsoItem_c* isoItemReceiver, ecutime_t )
 {
   if ( !mrc_identItem.isClaimedAddress() )
     return false;

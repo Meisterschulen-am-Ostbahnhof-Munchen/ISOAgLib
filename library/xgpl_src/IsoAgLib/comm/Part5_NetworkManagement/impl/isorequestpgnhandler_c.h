@@ -38,7 +38,7 @@ public:
       uint32_t aui32_pgn,
       IsoItem_c *apc_isoItemSender,
       IsoItem_c *apc_isoItemReceiver,
-      int32_t ai_requestTimestamp ) = 0;
+      ecutime_t ai_requestTimestamp ) = 0;
 
 };
 
@@ -60,7 +60,7 @@ private:
       uint32_t aui32_pgn,
       IsoItem_c *apc_isoItemSender,
       IsoItem_c *apc_isoItemReceiver,
-      int32_t ai_time )
+      ecutime_t ai_time )
   {
     return mrt_owner.processMsgRequestPGN(
         aui32_pgn,

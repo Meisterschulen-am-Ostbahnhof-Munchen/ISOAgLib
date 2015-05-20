@@ -85,7 +85,7 @@ DiagnosticPgnHandler_c::close()
 
 
 bool
-DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t pgn, IsoItem_c* isoItemSender, IsoItem_c* isoItemReceiver, int32_t )
+DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t pgn, IsoItem_c* isoItemSender, IsoItem_c* isoItemReceiver, ecutime_t )
 {
   if ( !mrc_identItem.isClaimedAddress() )
     return false;

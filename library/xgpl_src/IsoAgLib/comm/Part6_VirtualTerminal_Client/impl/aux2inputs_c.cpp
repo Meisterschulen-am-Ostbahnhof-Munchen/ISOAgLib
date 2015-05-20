@@ -28,7 +28,7 @@ Aux2Inputs_c::Aux2Inputs_c( const IdentItem_c& arc_wsMasterIdentItem )
 #ifdef USE_VTOBJECT_auxiliaryinput2
   , mlist_auxInput2()
 #endif
-  , mui32_timeStampLastMaintenance( 0 )
+  , mi32_timeStampLastMaintenance( 0 )
   , mb_learnMode(false)
   , mp_vtClientServerCommunication( NULL )
 {
@@ -70,10 +70,10 @@ void Aux2Inputs_c::timeEvent(void)
     {
       if (mrc_wsMasterIdentItem.isClaimedAddress())
       {
-        uint32_t ui32_currentTime = HAL::getTime();
+        const ecutime_t i32_currentTime = HAL::getTime();
 
         // send each 100msec, period of timeEvent() is < 100msec!
-        if (ui32_currentTime - mui32_timeStampLastMaintenance > 100)
+        if (i32_currentTime - mi32_timeStampLastMaintenance > 100)
         {
           CanPkgExt_c sendData;
           sendData.setExtCanPkg8(
@@ -91,7 +91,7 @@ void Aux2Inputs_c::timeEvent(void)
 
           getIsoBusInstance( mrc_wsMasterIdentItem.getMultitonInst() ) << sendData;
 
-          mui32_timeStampLastMaintenance = ui32_currentTime;
+          mi32_timeStampLastMaintenance = i32_currentTime;
 
           // if this application has also AUX2 functions which handle the AUX2 inputs
           // => notify them directly (sender won't get his own CAN message!)
@@ -142,17 +142,16 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
         continue;
 
       // send status for all AUX2 input objects or only for the requested AUX2 input object
-      uint32_t ui32_currentTime = HAL::getTime();
-
+      const ecutime_t i32_currentTime = HAL::getTime();
 
       // @todo: if the release comes before 200msec after press, we would need to send the message 
 
       // timing 1: do not send with less then 200msec distance
-      if (ui32_currentTime - (*iter)->getTimeStampLastStateMsg() >= 200)
+      if (i32_currentTime - (*iter)->getTimeStampLastStateMsg() >= 200)
       {
         // timing 2: send after 1sec for all
         // timing 3: send after 200msec for non latching booleans
-        if ( (ui32_currentTime - (*iter)->getTimeStampLastStateMsg() >= 1000) ||
+        if ( (i32_currentTime - (*iter)->getTimeStampLastStateMsg() >= 1000) ||
              (*iter)->sendNextStatusAsSoonAsPossible() )
         {
 

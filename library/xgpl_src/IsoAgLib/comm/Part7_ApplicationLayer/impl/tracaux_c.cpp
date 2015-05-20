@@ -75,9 +75,6 @@ namespace __IsoAgLib {
       s_unregister(AUX_VALVE_0_COMMAND, gcui32_pgnMask16consecutive);
     }
 
-    // set configure values
-    mi32_lastMsgReceivedCmd = 0;
-
     for (int i = 0; i < nrOfValves; i++)
     {
       marr_auxFlag[i].ui8_estimatedActivated = false;
@@ -112,7 +109,7 @@ namespace __IsoAgLib {
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
     unsigned int valveNumber = 15;
-    const int32_t ci32_now = pkg.time();
+    const ecutime_t ci32_now = pkg.time();
 
     switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, as this is the complete PGN anyway...
     {
@@ -767,7 +764,7 @@ namespace __IsoAgLib {
     return true;
   }
 
-bool TracAux_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
+bool TracAux_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t )
 {
   // check if we are allowed to send a request for pgn
   if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) )

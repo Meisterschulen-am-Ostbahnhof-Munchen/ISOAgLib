@@ -138,7 +138,7 @@ public:
     uint16_t aui16_referenceNumber );
 
   void updateLastIsoSaRequestForThisItem() { i32_lastIsoSaRequestForThisItem = HAL::getTime(); }
-  int32_t getLastIsoSaRequestForThisItem() const { return i32_lastIsoSaRequestForThisItem; }
+  ecutime_t getLastIsoSaRequestForThisItem() const { return i32_lastIsoSaRequestForThisItem; }
 
 protected:
   /** periodically called functions do perform
@@ -181,7 +181,7 @@ private:
   STL_NAMESPACE::vector<IsoName_c>* mpvec_slaveIsoNames;
   #endif
 
-  int32_t i32_lastIsoSaRequestForThisItem;
+  ecutime_t i32_lastIsoSaRequestForThisItem;
 
   bool mb_readyForActivation; // protect this ident from beeing initialized more than once
 };

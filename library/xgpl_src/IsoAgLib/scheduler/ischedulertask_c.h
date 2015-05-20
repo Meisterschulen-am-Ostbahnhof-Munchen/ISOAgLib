@@ -36,11 +36,11 @@ namespace IsoAgLib {
         return SchedulerTask_c::getTimeToNextTrigger();
       }
 
-      int32_t getNextTriggerTime() const {
+      ecutime_t getNextTriggerTime() const {
         return SchedulerTask_c::getNextTriggerTime();
       }
 
-      void setNextTriggerTime( int32_t time ) {
+      void setNextTriggerTime( ecutime_t time ) {
         SchedulerTask_c::setNextTriggerTime( time );
       }
 

@@ -153,7 +153,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         @return  IsoActive -> pto economy mode is engaged
       */
 
-    virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
+    virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t );
 
     IsoAgLib::IsoActiveFlag_t rearPtoEconomyMode() const {return mt_rearPtoEconomyMode;}
     /*@}*/

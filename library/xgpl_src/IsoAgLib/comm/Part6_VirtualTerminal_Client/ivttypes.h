@@ -153,7 +153,7 @@ enum e_vtColour { BackgroundColour=0, BorderColour=1, NeedleColour=2, ArcAndTick
 
 /** struct of the data contained in the "VT Status Message" */
 typedef struct vtState_s {
-  uint32_t lastReceived; /* Timestamp of last reception */
+  ecutime_t lastReceived; /* Timestamp of last reception */
 
   /* the following data is extracted from one "VT Status Message" */
   uint8_t  saOfActiveWorkingSetMaster;

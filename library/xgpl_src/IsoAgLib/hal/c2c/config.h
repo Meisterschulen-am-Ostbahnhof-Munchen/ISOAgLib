@@ -16,6 +16,9 @@
 
 #define SYSTEM_C2C
 
+#ifdef USE_TIMEBASE_INT64
+#  error "64 Bit timebase currently not supported."
+#endif
 
 #define HAL_CAN_BITRATE_LIST {10, 20, 40, 50, 100, 125, 250, 500, 1000}
 #define HAL_CAN_BITRATE_CNT 9
