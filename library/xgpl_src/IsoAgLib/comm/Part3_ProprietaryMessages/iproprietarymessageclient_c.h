@@ -26,7 +26,7 @@ namespace IsoAgLib
       iProprietaryMessageA_c() : ProprietaryMessageA_c() {}
       virtual ~iProprietaryMessageA_c() {}
 
-      virtual void processA( const iIsoItem_c& sender ) { (void)sender; }
+      virtual void processA( const iIsoItem_c& sender, bool a_broadcast) { (void)sender;  (void)a_broadcast; }
 
       void init(const iIdentItem_c& a_ident, const iIsoName_c& a_remote, uint8_t a_dp) { __IsoAgLib::ProprietaryMessageA_c::init(a_ident, a_remote, a_dp); }
       void close() { __IsoAgLib::ProprietaryMessageA_c::close(); }
@@ -51,6 +51,8 @@ namespace IsoAgLib
       }
       
       bool isSending() const { return __IsoAgLib::ProprietaryMessageA_c::isSending(); }
+
+      virtual void multiPacketFinished(bool /* a_success */) {}
   };
 
 

@@ -145,7 +145,8 @@ namespace __IsoAgLib
       (*it)->getDataReceive().setDataStream( 0, pkg.getUint8DataConstPointer(), pkg.getLen() );
       // the static cast is prettier that a old C cast, but the Hightec GCC 3.4.6 is quite picky
       //(*it)->processA( *static_cast<IsoAgLib::iIsoItem_c*>( pkg.getMonitorItemForSA() ) );
-      (*it)->processA( *( (IsoAgLib::iIsoItem_c*)( pkg.getMonitorItemForSA() ) ) );
+      (*it)->processA( *( (IsoAgLib::iIsoItem_c*)( pkg.getMonitorItemForSA() ) ),
+                       (NULL == pkg.getMonitorItemForDA()) /* a_broadcast */);
     }
   }
 
@@ -217,7 +218,8 @@ namespace __IsoAgLib
       for( ProprietaryMessageAVectorIterator_t it = msgs.begin(); it != msgs.end(); ++it ) {
         // the static cast is prettier that a old C cast, but the Hightec GCC 3.4.6 is quite picky
         //(*it)->processA( *static_cast<IsoAgLib::iIsoItem_c*>( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ) );
-        (*it)->processA( * ( IsoAgLib::iIsoItem_c*)( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ) );
+        (*it)->processA( * ( IsoAgLib::iIsoItem_c*)( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ),
+                         (ident.getDaIsoName().isUnspecified()) /* a_broadcast */);
       }
     }
     // don't keep the stream - we processed it right now!

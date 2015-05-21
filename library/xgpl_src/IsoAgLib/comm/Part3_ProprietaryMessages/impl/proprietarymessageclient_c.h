@@ -58,6 +58,8 @@ namespace __IsoAgLib
       const IsoName_c &remote() const { return m_remote; }
       uint8_t dp() const { return m_dp; }
 
+      virtual void multiPacketFinished(bool /* a_success */) {}
+      
     private:
       /** forbid copy construction / assignment as it would
           perform too many client-/filter-/mr-/ms-(de)registrations */
@@ -66,13 +68,15 @@ namespace __IsoAgLib
 
       void reactOnStateChange( const SendStream_c& sendStream ) {
         m_sendSuccess = sendStream.getSendSuccess();
+        if(SendStream_c::Running != m_sendSuccess)
+          multiPacketFinished(SendStream_c::SendSuccess == m_sendSuccess);
       }
       SendStream_c::sendSuccess_t m_sendSuccess;
 
       IsoAgLib::iGenericData_c ms_receivedData;
       IsoAgLib::iGenericData_c ms_sendData;
 
-    protected:
+    protected:      
       const IdentItem_c* m_ident;
       IsoName_c m_remote;
       uint8_t m_dp;
@@ -87,7 +91,7 @@ namespace __IsoAgLib
       void init(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp);
       void close();
 
-      virtual void processA( const IsoAgLib::iIsoItem_c& /* sender */ ) {}
+      virtual void processA( const IsoAgLib::iIsoItem_c& /* sender */, bool /* a_broadcast */) {}
 
       void enableReception();
       void disableReception();
