@@ -156,17 +156,20 @@ Stream_c::operator= (const Stream_c& ref)
 
 
 void
-Stream_c::awaitNextStep (NextComing_t at_awaitStep, int32_t ai32_timeOut)
+Stream_c::awaitNextStep (NextComing_t at_awaitStep, int32_t timeOut)
 {
   mt_awaitStep = at_awaitStep;
   if (at_awaitStep == AwaitCtsSend) {
 #ifdef ENABLE_MULTIPACKET_RETRY
     mui32_isoErrorBurstWaitForPkgThenRetry = 0;
 #endif
-    mi32_delayCtsUntil = HAL::getTime() + ai32_timeOut; // use the timeOut parameter here for the delay!!!!
+    mi32_delayCtsUntil = HAL::getTime() + timeOut; // use the timeOut parameter here for the delay!!!!
     mi32_timeoutLimit = msci32_timeNever; // no timeOut on own sending...
   } else {
-    mi32_timeoutLimit = (ai32_timeOut==msci32_timeNever) ? (msci32_timeNever) : (HAL::getTime()+ai32_timeOut);
+    // as we only have millisecond-accuracy, we need to add 1ms to
+    // make sure that the space between frames doesn't get too small.
+    timeOut += 1;
+    mi32_timeoutLimit = (timeOut==msci32_timeNever) ? (msci32_timeNever) : (HAL::getTime()+timeOut);
   }
 }
 

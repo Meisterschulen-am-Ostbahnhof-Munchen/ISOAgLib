@@ -162,7 +162,7 @@ private:
 
   void retriggerIn (int32_t i32_timeDelta) { mi32_timestampToWaitTo = System_c::getTime() + i32_timeDelta;}
 
-  void switchToState (sendState_t ren_sendState, int32_t i32_timeDelta) { men_sendState = ren_sendState; retriggerIn (i32_timeDelta); }
+  inline void switchToState( sendState_t sendState, int32_t timeDelta );
 
   const SendStream_c& operator= (const SendStream_c&); // Only private declaration, no implementation: Forbid assignment of SendStream_c instances.
 
@@ -213,6 +213,20 @@ private:
 
   MultiSend_c& mrc_multiSend;
 };
+
+
+void
+SendStream_c::switchToState( sendState_t sendState, int32_t timeDelta )
+{
+  // as we only have millisecond-accuracy, we need to add 1ms to
+  // make sure that the space between frames doesn't get too small.
+  if( timeDelta > 0 )
+    timeDelta += 1;
+
+  men_sendState = sendState;
+  retriggerIn( timeDelta );
+}
+
 
 } // __IsoAgLib
 
