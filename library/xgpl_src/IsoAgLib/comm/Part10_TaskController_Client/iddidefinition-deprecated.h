@@ -13,7 +13,8 @@
 // ATTENTION: The names in this file have been deprecated.
 // For new projects, this file should not be used, instead
 // please use the names in iddidefinition.h
-// This file may be included for backward compatibility
+// This file is only included for backward compatibility,
+// but is subject to be removed in the near future!
 // This file was auto-generated
 
 // no change - #define DDI_DATA_DICTIONARY_VERSION                             DDI_DATA_DICTIONARY_VERSION
@@ -114,8 +115,8 @@
 #define DDI_CONTENT_COUNT_ACTUAL                                DDI_ACTUAL_COUNT_CONTENT
 #define DDI_CONTENT_COUNT_MAXIMUM                               DDI_MAXIMUM_COUNT_CONTENT
 
-#define DDI_APPLICATION_TOTAL_VOLUME                            DDI_APPLICATION_TOTAL_VOLUME_IN__L_
-#define DDI_APPLICATION_TOTAL_MASS                              DDI_APPLICATION_TOTAL_MASS_IN__KG_
+#define DDI_APPLICATION_TOTAL_VOLUME                            DDI_APPLICATION_TOTAL_VOLUME_IN_L
+#define DDI_APPLICATION_TOTAL_MASS                              DDI_APPLICATION_TOTAL_MASS_IN_KG
 // no change - #define DDI_APPLICATION_TOTAL_COUNT                             DDI_APPLICATION_TOTAL_COUNT
 
 #define DDI_YIELD_VOLUME_PER_AREA                               DDI_VOLUME_PER_AREA_YIELD

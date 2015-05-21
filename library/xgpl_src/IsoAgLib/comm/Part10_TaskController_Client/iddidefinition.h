@@ -18,7 +18,7 @@
 // Column Headers (line 5)
 //     DDIdentifier	DDEName	Definition	Comment	Typically used by Device Class(es)	UnitSymbol	UnitQuantity	BitResolution	SAESPN	MinimumValue	MaximumValue	SubmitBy	SubmitDate	SubmitCompany	RevisionNumber	Last Status	Last Status Date	StatusComments	Attachments
 // Formula (put this formula into cell "U6")
-//     =CONCATENATE("#define DDI_",SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(UPPER(TRIM(B6))," - ", "_")," – ", "_")," ","_"),"(",""),")",""),"-","_"),"[","_"),"]","_"),"–","_"), "   ", A6, "   // ", $F$5, "=",F6,", ",$G$5,"=",G6,", ",$H$5,"=",H6,", ",$J$5,"=",J6,", ",$K$5,"=",K6)
+//     =CONCATENATE("#define DDI_",SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(UPPER(TRIM(B6))," - ", "_")," – ", "_")," ","_"),"(",""),")",""),"-","_"),"[",""),"]",""),"–","_"), "   ", A6, "   // ", $F$5, "=",F6,", ",$G$5,"=",G6,", ",$H$5,"=",H6,", ",$J$5,"=",J6,", ",$K$5,"=",K6)
 // Copy that formula all the way down column U to the last row in the spreadsheet
 
 
@@ -102,8 +102,8 @@
 #define DDI_SETPOINT_COUNT_CONTENT   77   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_COUNT_CONTENT   78   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MAXIMUM_COUNT_CONTENT   79   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_APPLICATION_TOTAL_VOLUME_IN__L_   80   // UnitSymbol=L, UnitQuantity=Capacity count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_APPLICATION_TOTAL_MASS_IN__KG_   81   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_APPLICATION_TOTAL_VOLUME_IN_L   80   // UnitSymbol=L, UnitQuantity=Capacity count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_APPLICATION_TOTAL_MASS_IN_KG   81   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_APPLICATION_TOTAL_COUNT   82   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_VOLUME_PER_AREA_YIELD   83   // UnitSymbol=ml/m², UnitQuantity=Capacity per area large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MASS_PER_AREA_YIELD   84   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -369,8 +369,8 @@
 #define DDI_MAXIMUM_SWATHING_WIDTH   348   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_NOZZLE_DRIFT_REDUCTION   349   // UnitSymbol=ppm, UnitQuantity=Parts per million, BitResolution=1, MinimumValue=0, MaximumValue=100
 #define DDI_FUNCTION_TYPE   350   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_APPLICATION_TOTAL_VOLUME_IN__ML_   351   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_APPLICATION_TOTAL_MASS_IN_GRAM__G_   352   // UnitSymbol=g, UnitQuantity=Mass large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_APPLICATION_TOTAL_VOLUME_IN_ML   351   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_APPLICATION_TOTAL_MASS_IN_GRAM_G   352   // UnitSymbol=g, UnitQuantity=Mass large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_TOTAL_APPLICATION_OF_NITROGEN   353   // UnitSymbol=g, UnitQuantity=Mass large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_TOTAL_APPLICATION_OF_AMMONIUM   354   // UnitSymbol=g, UnitQuantity=Mass large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_TOTAL_APPLICATION_OF_PHOSPHOR   355   // UnitSymbol=g, UnitQuantity=Mass large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -428,8 +428,6 @@
 
 
 // For backward compatibility:
-//#define DDI_PGN_BASED_LOGGING                    DDI_PGN_BASED_DATA
-//#define DDI_DEFAULT_PROCESS_DATA                 DDI_REQUEST_DEFAULT_PROCESS_DATA
-//#define DDI_INVALID_DDI                          DDI_RESERVED
+#include "iddidefinition-deprecated.h"
 
 #endif // _IDDIDEFINITION_H_
