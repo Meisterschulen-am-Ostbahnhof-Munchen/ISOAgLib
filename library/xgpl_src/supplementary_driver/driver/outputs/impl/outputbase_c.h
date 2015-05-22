@@ -13,7 +13,7 @@
 #ifndef OUTPUTBASE_C_H
 #define OUTPUTBASE_C_H
 
-#include <supplementary_driver/hal/hal_outputs.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 
 namespace __IsoAgLib {

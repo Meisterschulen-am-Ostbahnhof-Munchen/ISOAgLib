@@ -26,6 +26,12 @@ namespace IsoAgLib {
 class iAnalogI_c : private __IsoAgLib::AnalogI_c
 {
 public:
+  /** enum for error states of analog input
+    * values: noAinErr, ain_openErr, ain_shortcutErr,
+    *         ain_overvoltErr, ain_undervoltErr
+    */
+  typedef enum { noAinErr, ain_openErr, ain_shortcutErr, ain_overvoltErr, ain_undervoltErr } ain_err_t;
+
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
     @param ab_channel default-argument for the hardware channel of the input
@@ -71,6 +77,11 @@ public:
     @return number to use for BIOS access to this channel
   */
   uint8_t channelNr() const { return AnalogI_c::channelNr();}
+
+  /** deliver detailed error state information for this Analog Input
+    * @return ain_err_t [noAinErr|ain_openErr|ain_shortcutErr|ain_overvoltErr|ain_undervoltErr]
+    */
+  iAnalogI_c::ain_err_t getState( void ) const { return iAnalogI_c::ain_err_t((uint16_t)AnalogI_c::getState());}
 
 private:
   /**

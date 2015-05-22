@@ -28,6 +28,9 @@ namespace __IsoAgLib {
 class AnalogI_c : public InputBase_c
 {
 public:
+  /** enum for error states of analog input */
+  typedef enum { noAinErr, ain_openErr, ain_shortcutErr, ain_overvoltErr, ain_undervoltErr } ain_err_t;
+
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation
     @param ab_channel default-argument for the hardware channel of the input
@@ -61,6 +64,11 @@ public:
     @return true if sensor value is different from 0, otherwise 0
   */
   bool active() const;
+
+  /** deliver detailed error state information for this Analog Input
+    * @return ain_err_t [noAinErr|ain_openErr|ain_shortcutErr|ain_overvoltErr|ain_undervoltErr]
+    */
+  ain_err_t getState( void ) const;
 
   /**
     configure fast ADC gathering

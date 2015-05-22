@@ -12,9 +12,7 @@
 */
 
 #include "digitalo_c.h"
-#include "outputs_c.h"
-
-#include <IsoAgLib/util/iliberr_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 
 namespace __IsoAgLib {

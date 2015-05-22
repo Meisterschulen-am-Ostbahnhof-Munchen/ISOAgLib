@@ -20,7 +20,6 @@
 #include <IsoAgLib/util/compiler_adaptation.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/hal/hal_config.h>
-#include <IsoAgLib/hal/hal_errcodes.h>
 
 #define ISOAGLIB_VERSION_MAJOR 2
 #define ISOAGLIB_VERSION_MINOR 7

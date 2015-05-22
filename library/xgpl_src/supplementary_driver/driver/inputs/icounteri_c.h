@@ -27,6 +27,12 @@ namespace IsoAgLib {
   */
 class iCounterI_c : private __IsoAgLib::CounterI_c {
 public:
+  /** enum for error states of counter input
+    * values: noCinErr, cin_openErr, cin_shortcutErr,
+    *         cin_overvoltErr, cin_undervoltErr
+    */
+  typedef enum { noCinErr, cin_openErr, cin_shortcutErr, cin_overvoltErr, cin_undervoltErr } cin_err_t;
+
   /**
     constructor for a new digital input channel set up as counter.
     @param ab_channel hardware channel for this input
@@ -100,6 +106,11 @@ public:
     @return number to use for BIOS access to this channel
   */
   uint8_t channelNr() const { return CounterI_c::channelNr(); }
+
+  /** deliver detailed error state information for this Digital Input
+    * @return din_err_t [noDinErr|din_openErr|din_shortcutErr|din_overvoltErr|din_undervoltErr]
+    */
+  iCounterI_c::cin_err_t getState( void ) const { return iCounterI_c::cin_err_t((uint16_t)CounterI_c::getState());}
 };
 
 } // IsoAgLib

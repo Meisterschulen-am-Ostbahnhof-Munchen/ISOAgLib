@@ -27,6 +27,9 @@ namespace __IsoAgLib {
   */
 class DigitalI_c : public InputBase_c {
 public:
+  /** enum for error states of digital input */
+  typedef enum { noDinErr, din_openErr, din_shortcutErr, din_overvoltErr, din_undervoltErr } din_err_t;
+
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
     @param ab_channel default-argument for setting hardware channel for this input
@@ -66,6 +69,11 @@ public:
     @return true for (High signal AND ren_onoff==OnHigh)(Default!) or (Low signal AND ren_onoff==OnLow); otherwise false
   */
   bool active() const;
+
+  /** deliver detailed error state information for this Digital Input
+    * @return din_err_t [noDinErr|din_openErr|din_shortcutErr|din_overvoltErr|din_undervoltErr]
+    */
+  din_err_t getState( void ) const;
 
   /** handler function which is called from HAL */
   static void handleHalIrqEvent( uint8_t aui8_channel );

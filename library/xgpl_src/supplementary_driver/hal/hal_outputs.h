@@ -19,6 +19,13 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/hal_config.h>
 
+#define HAL_DIGOUT_OPEN         (int16_t)(-(20 * 0x0001))
+#define HAL_DIGOUT_SHORTCUT     (int16_t)(-(21 * 0x0001))
+// HAL_DIGOUT_OVERTEMP is currently not handled by ISOAgLib driver code!
+#define HAL_DIGOUT_OVERTEMP     (int16_t)(-(22 * 0x0001))
+#define HAL_DIGOUT_UNDERVOLT    (int16_t)(-(23 * 0x0001))
+#define HAL_DIGOUT_OVERVOLT     (int16_t)(-(24 * 0x0001))
+
 
 namespace HAL
 {

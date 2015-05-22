@@ -11,7 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include "outputbase_c.h"
+//#include "outputbase_c.h"
 
 
 namespace __IsoAgLib {

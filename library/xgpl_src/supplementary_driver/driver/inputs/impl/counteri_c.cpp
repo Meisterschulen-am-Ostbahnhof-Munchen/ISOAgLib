@@ -10,6 +10,21 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-//#include "counteri_c.h"
+#include "counteri_c.h"
 
-//currently empty.
+namespace __IsoAgLib {
+
+CounterI_c::cin_err_t
+CounterI_c::getState() const
+{
+  switch ( HAL::getCounterDiagState( channelNr() ) )
+  {
+    case HAL_COUNTERIN_OPEN:       return cin_openErr;
+    case HAL_COUNTERIN_SHORTCUT:   return cin_shortcutErr;
+    case HAL_COUNTERIN_OVERVOLT:   return cin_overvoltErr;
+    case HAL_COUNTERIN_UNDERVOLT:  return cin_undervoltErr;
+    default: return noCinErr;
+  }
+}
+
+} // __IsoAgLib

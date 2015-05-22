@@ -14,6 +14,7 @@
 
 #include "analogi_c.h"
 #include <IsoAgLib/util/iassert.h>
+#include <supplementary_driver/hal/hal_inputs.h>
 
 
 namespace __IsoAgLib {
@@ -83,6 +84,19 @@ bool
 AnalogI_c::active() const
 {
   return (val() > 0);
+}
+
+AnalogI_c::ain_err_t
+AnalogI_c::getState() const
+{
+  switch ( HAL::getAnalogInDiagState( channelNr() ) )
+  {
+    case HAL_ANALOGIN_OPEN:       return ain_openErr;
+    case HAL_ANALOGIN_SHORTCUT:   return ain_shortcutErr;
+    case HAL_ANALOGIN_OVERVOLT:   return ain_overvoltErr;
+    case HAL_ANALOGIN_UNDERVOLT:  return ain_undervoltErr;
+    default: return noAinErr;
+  }
 }
 
 } // __IsoAgLib

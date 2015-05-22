@@ -19,6 +19,27 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/hal_config.h>
 
+#define HAL_ANALOGIN_OPEN       (int16_t)(-(25 * 0x0001))
+#define HAL_ANALOGIN_SHORTCUT   (int16_t)(-(26 * 0x0001))
+// HAL_ANALOGIN_OVERTEMP is currently not handled by ISOAgLib driver code!
+#define HAL_ANALOGIN_OVERTEMP   (int16_t)(-(27 * 0x0001))
+#define HAL_ANALOGIN_UNDERVOLT  (int16_t)(-(28 * 0x0001))
+#define HAL_ANALOGIN_OVERVOLT   (int16_t)(-(29 * 0x0001))
+
+#define HAL_DIGIN_OPEN          (int16_t)(-(30 * 0x0001))
+#define HAL_DIGIN_SHORTCUT      (int16_t)(-(31 * 0x0001))
+// HAL_DIGIN_OVERTEMP is currently not handled by ISOAgLib driver code!
+#define HAL_DIGIN_OVERTEMP      (int16_t)(-(32 * 0x0001))
+#define HAL_DIGIN_UNDERVOLT     (int16_t)(-(33 * 0x0001))
+#define HAL_DIGIN_OVERVOLT      (int16_t)(-(34 * 0x0001))
+
+#define HAL_COUNTERIN_OPEN      (int16_t)(-(35 * 0x0001))
+#define HAL_COUNTERIN_SHORTCUT  (int16_t)(-(36 * 0x0001))
+// HAL_COUNTERIN_OVERTEMP is currently not handled by ISOAgLib driver code!
+#define HAL_COUNTERIN_OVERTEMP  (int16_t)(-(37 * 0x0001))
+#define HAL_COUNTERIN_UNDERVOLT (int16_t)(-(38 * 0x0001))
+#define HAL_COUNTERIN_OVERVOLT  (int16_t)(-(39 * 0x0001))
+
 
 namespace HAL
 {

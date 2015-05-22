@@ -15,6 +15,7 @@
 
 #include "inputbase_c.h"
 #include <IsoAgLib/util/iassert.h>
+#include <supplementary_driver/hal/hal_inputs.h>
 
 
 namespace __IsoAgLib {
@@ -25,6 +26,9 @@ namespace __IsoAgLib {
 class CounterI_c : public InputBase_c
 {
 public:
+  /** enum for error states of counter input */
+  typedef enum { noCinErr, cin_openErr, cin_shortcutErr, cin_overvoltErr, cin_undervoltErr } cin_err_t;
+
   /**
     constructor for a new digital input channel which performs configuration of hardware
     @param ab_channel hardware channel for this input
@@ -97,6 +101,11 @@ public:
    @return TRUE if voltage on pin is above limit (digital input functionality)
   */
   inline bool isCounterOn();
+
+  /** deliver detailed error state information for this Counter Input
+    * @return cin_err_t [noCinErr|cin_openErr|cin_shortcutErr|cin_overvoltErr|cin_undervoltErr]
+    */
+  cin_err_t getState( void ) const;
 
 private:
   // unimplemented, not copyable

@@ -24,6 +24,12 @@ namespace IsoAgLib {
   */
 class iDigitalI_c : private __IsoAgLib::DigitalI_c {
 public:
+  /** enum for error states of digital input
+    * values: noDinErr, din_openErr, din_shortcutErr,
+    *         din_overvoltErr, din_undervoltErr
+    */
+  typedef enum { noDinErr, din_openErr, din_shortcutErr, din_overvoltErr, din_undervoltErr } din_err_t;
+
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware
     @param ab_channel default-argument for setting hardware channel for this input
@@ -72,6 +78,11 @@ public:
     @return number to use for BIOS access to this channel
   */
   uint8_t channelNr() const { return DigitalI_c::channelNr(); }
+
+  /** deliver detailed error state information for this Digital Input
+    * @return din_err_t [noDinErr|din_openErr|din_shortcutErr|din_overvoltErr|din_undervoltErr]
+    */
+  iDigitalI_c::din_err_t getState( void ) const { return iDigitalI_c::din_err_t((uint16_t)DigitalI_c::getState());}
 
 private:
 // Private attributes

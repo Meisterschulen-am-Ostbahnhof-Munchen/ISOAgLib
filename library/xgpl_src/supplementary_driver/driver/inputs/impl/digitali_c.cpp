@@ -12,6 +12,7 @@
 */
 #include "digitali_c.h"
 #include <IsoAgLib/util/iassert.h>
+#include <supplementary_driver/hal/hal_inputs.h>
 
 
 namespace IsoAgLib {
@@ -163,6 +164,19 @@ DigitalI_c::val() const
   isoaglib_assert (i16_val != HAL_RANGE_ERR);
 
   return (i16_val == ON)?1:0;
+}
+
+DigitalI_c::din_err_t
+DigitalI_c::getState() const
+{
+  switch ( HAL::getDiginDiagState( channelNr() ) )
+  {
+    case HAL_DIGIN_OPEN:       return din_openErr;
+    case HAL_DIGIN_SHORTCUT:   return din_shortcutErr;
+    case HAL_DIGIN_OVERVOLT:   return din_overvoltErr;
+    case HAL_DIGIN_UNDERVOLT:  return din_undervoltErr;
+    default: return noDinErr;
+  }
 }
 
 } // __IsoAgLib

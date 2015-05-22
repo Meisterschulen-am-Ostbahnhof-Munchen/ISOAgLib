@@ -13,7 +13,6 @@
 #ifndef INPUTBASE_C_H
 #define INPUTBASE_C_H
 
-#include <supplementary_driver/hal/hal_inputs.h>
 #include <supplementary_driver/driver/inputs/iinput_c.h>
 
 

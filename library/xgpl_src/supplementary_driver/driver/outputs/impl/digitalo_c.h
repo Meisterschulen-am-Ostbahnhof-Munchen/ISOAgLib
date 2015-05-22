@@ -15,6 +15,7 @@
 #define DIGITAL_O_H
 
 #include "outputbase_c.h"
+#include <supplementary_driver/hal/hal_outputs.h>
 
 
 // Begin Namespace __IsoAgLib
