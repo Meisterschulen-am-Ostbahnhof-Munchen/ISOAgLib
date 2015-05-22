@@ -91,7 +91,7 @@ namespace __IsoAgLib
       void init(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp);
       void close();
 
-      virtual void processA( const IsoAgLib::iIsoItem_c& /* sender */, bool /* a_broadcast */) {}
+      virtual void processA( const IsoAgLib::iIsoItem_c& /* sender */, bool /* a_broadcast */) = 0;
 
       void enableReception();
       void disableReception();
