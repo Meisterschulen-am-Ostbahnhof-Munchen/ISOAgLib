@@ -261,6 +261,14 @@ Stream_c::handleDataPacket (const CanPkg_c& pkg)
       bool b_isoFirstWrongPktInBurst=false;
       if ((sequenceNr + offset) != mui32_pkgNextToWrite)
       { // wrong packet!
+        if( getIdent().getDa() == 0xFF )
+        { // on BAM there's no retry!
+          #if DEBUG_MULTIRECEIVE
+            INTERNAL_DEBUG_DEVICE << "wrong tp/etp pkg-number! ";
+          #endif
+          return false; // abort stream
+        }
+
         if( mui32_isoErrorBurstWaitForPkgThenRetry == 0 )
         {
             mui32_isoErrorBurstWaitForPkgThenRetry = mui32_pkgNextToWrite + mui8_pkgRemainingInBurst - 1;
