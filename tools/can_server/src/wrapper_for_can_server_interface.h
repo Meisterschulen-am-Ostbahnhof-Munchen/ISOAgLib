@@ -30,6 +30,7 @@
 #endif
 
 typedef uint8_t boolean;
+typedef int32_t ecutime_t;
 
 // include ISOAgLib's "can_server.h"
 #include <can_server_interface.h>
