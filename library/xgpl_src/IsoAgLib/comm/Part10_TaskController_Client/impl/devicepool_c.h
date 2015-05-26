@@ -134,6 +134,7 @@ namespace __IsoAgLib {
       const uint16_t m_parentId;
       STL_NAMESPACE::vector<uint16_t> m_childList;
       friend class __IsoAgLib::ProcData_c;
+      friend class __IsoAgLib::DevicePool_c;
 
     protected:
       bool addChild( uint16_t id );
@@ -248,6 +249,8 @@ namespace __IsoAgLib {
       void changeDesignator( DeviceObject_c&, const char* );
       void setLocalSettings( const localSettings_s& );
       void updateLocale();
+
+      DeviceObjectDet_c* getDetObject( uint16_t elementNumber );
 
     private:
       friend class TcClientConnection_c;

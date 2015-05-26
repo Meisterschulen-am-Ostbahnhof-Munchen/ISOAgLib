@@ -349,7 +349,20 @@ namespace __IsoAgLib {
   }
 
 
+  DeviceObjectDet_c* DevicePool_c::getDetObject( uint16_t elementNumber ) {
+    for( deviceMap_t::iterator it = m_devicePool.begin(); it != m_devicePool.end(); ++it ) {
+      if( it->second->getObjectType() == IsoAgLib::ProcData::ObjectTypeDET ) {
+        if( ((DeviceObjectDet_c*)it->second)->elementNumber() == elementNumber ) {
+          return (DeviceObjectDet_c*)it->second;
+        }
+      }
+    }
+    return NULL;
+  }
+
+
   void DevicePool_c::add( DeviceObject_c& devObj ) {
+    isoaglib_assert( (devObj.getObjectType() != IsoAgLib::ProcData::ObjectTypeDET) || (getDetObject(((DeviceObjectDet_c*)&devObj)->elementNumber()) == NULL) );
     (void)m_devicePool.insert(
       STL_NAMESPACE::pair<uint16_t, DeviceObject_c*>( devObj.getObjectId(), &devObj ) ).second;
   }

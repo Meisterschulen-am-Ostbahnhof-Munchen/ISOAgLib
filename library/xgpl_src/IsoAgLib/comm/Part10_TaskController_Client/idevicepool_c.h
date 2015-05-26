@@ -156,6 +156,13 @@ namespace IsoAgLib {
       void updateLocale() {
         __IsoAgLib::DevicePool_c::updateLocale();
       }
+
+      // gets the DET by ElementNumber. This is just a convenience function
+      // as the DeviceObjects are inserted by the application itself before!
+      iDeviceObjectDet_c* getDetObject( uint16_t elementNumber ) {
+        return (iDeviceObjectDet_c*) __IsoAgLib::DevicePool_c::getDetObject( elementNumber );
+      }
+
     private:
       friend class iTcClient_c;
   };
