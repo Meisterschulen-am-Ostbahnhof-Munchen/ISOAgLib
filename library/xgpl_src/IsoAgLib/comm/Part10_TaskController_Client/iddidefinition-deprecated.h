@@ -531,4 +531,5 @@
 // DDI=419 not previously defined
 // DDI=420 not previously defined
 
-#endif _IDDIDEFINITION_DEPRECATED_H_
+#endif
+//_IDDIDEFINITION_DEPRECATED_H_

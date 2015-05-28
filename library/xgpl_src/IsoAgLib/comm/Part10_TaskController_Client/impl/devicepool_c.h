@@ -20,6 +20,7 @@
 
 namespace __IsoAgLib {
 
+  class DevicePool_c;
 
   typedef struct {
     uint8_t language[2];
