@@ -32,9 +32,15 @@ namespace __IsoAgLib {
       m_designator( NULL ) {
 
     isoaglib_assert( m_objectId != 0xFFFF );
-    setDesignator( desig );
+    init( desig );
     if ( m_objectType != IsoAgLib::ProcData::ObjectTypeDVC )
       ++m_objIdCounter;
+  }
+
+
+  void DeviceObject_c::init( const char* desig ) {
+    isoaglib_assert( !desig || (CNAMESPACE::strlen( desig ) <= 32) );
+    m_designator = desig;
   }
 
 
@@ -177,6 +183,26 @@ namespace __IsoAgLib {
     isoaglib_assert( element <= 4095 );
   }
 
+  DeviceObjectDet_c::DeviceObjectDet_c()
+    : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDET, NULL )
+    , m_type( 0 )
+    , m_elementNumber( 4096 ) // invalid to detect uninitialized Det!
+    , m_parentId( 0xFFFF )
+    , m_childList()
+  {
+  }
+
+  void
+  DeviceObjectDet_c::init( uint16_t pid, uint16_t element, uint8_t type, const char* desig )
+  {
+    isoaglib_assert( m_element == 4096 );
+    isoaglib_assert( element <= 4095 );
+
+    init( desig );
+    m_type = type;
+    m_elementNumber = element;
+    m_parentId = pid;
+  }
 
   void DeviceObjectDet_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
     DeviceObject_c::format( byteStream );
@@ -268,6 +294,26 @@ namespace __IsoAgLib {
     , m_value( value )
     , m_dvpObjectId( ( dvpRef ) ? dvpRef->getObjectId() : 0xFFFF )
   {}
+
+  DeviceObjectDpt_c::DeviceObjectDpt_c( )
+    : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDPT, NULL )
+    , m_ddi( 0xFFFF )
+    , m_value( 0 )
+    , m_dvpObjectId( 0xFFFF )
+  {}
+
+  void
+  DeviceObjectDpt_c::init( uint16_t dpt_ddi, int32_t value, const char* desig, const DeviceObjectDvp_c* dvpRef )
+  {
+    isoaglib_assert( m_ddi == 0xFFFF );
+    isoaglib_assert( dpt_ddi != 0xFFFF );
+    m_ddi = dpt_ddi;
+    m_value = value;
+
+    init( desig );
+
+    m_dvpObjectId = ( dvpRef ) ? dvpRef->getObjectId() : 0xFFFF;
+  }
 
 
   void DeviceObjectDpt_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {

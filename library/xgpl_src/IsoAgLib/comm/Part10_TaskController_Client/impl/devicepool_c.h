@@ -46,6 +46,9 @@ namespace __IsoAgLib {
   class DeviceObject_c {
     public:
       DeviceObject_c( const IsoAgLib::ProcData::DeviceObjectType_t type, const char* desig );
+      DeviceObject_c( const IsoAgLib::ProcData::DeviceObjectType_t type );
+      void init( const char* desig );
+
       virtual ~DeviceObject_c() {}
 
       uint16_t getObjectId() const {
@@ -117,6 +120,8 @@ namespace __IsoAgLib {
   class DeviceObjectDet_c : public DeviceObject_c {
     public:
       DeviceObjectDet_c( uint16_t pid, uint16_t element, uint8_t type, const char* desig );
+      DeviceObjectDet_c();
+      void init( uint16_t pid, uint16_t element, uint8_t type, const char* desig );
 
     protected:
       uint16_t elementNumber() const {
@@ -130,9 +135,9 @@ namespace __IsoAgLib {
       size_t numberOfChildren() const {
         return m_childList.size();
       }
-      const uint8_t m_type;
-      const uint16_t m_elementNumber;
-      const uint16_t m_parentId;
+      uint8_t m_type;
+      uint16_t m_elementNumber;
+      uint16_t m_parentId;
       STL_NAMESPACE::vector<uint16_t> m_childList;
       friend class __IsoAgLib::ProcData_c;
       friend class __IsoAgLib::DevicePool_c;
@@ -180,6 +185,9 @@ namespace __IsoAgLib {
   class DeviceObjectDpt_c : public DeviceObject_c {
     public:
       DeviceObjectDpt_c( uint16_t dpt_ddi, int32_t value, const char* desig, const DeviceObjectDvp_c* );
+      DeviceObjectDpt_c();
+      void init( uint16_t dpt_ddi, int32_t value, const char* desig, const DeviceObjectDvp_c* );
+
       int32_t getValue() const {
         return m_value;
       }
@@ -188,9 +196,9 @@ namespace __IsoAgLib {
       uint32_t getSize() const;
       void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
 
-      const uint16_t m_ddi;
-      const int32_t m_value;
-      const uint16_t m_dvpObjectId;
+      uint16_t m_ddi;
+      int32_t m_value;
+      uint16_t m_dvpObjectId;
   };
 
 

@@ -91,6 +91,9 @@ namespace IsoAgLib {
   class iDeviceObjectDpt_c : public __IsoAgLib::DeviceObjectDpt_c {
     public:
       iDeviceObjectDpt_c( uint16_t dpt_ddi, int32_t value, const char* desig, const iDeviceObjectDvp_c* dvp ) : __IsoAgLib::DeviceObjectDpt_c( dpt_ddi, value, desig, dvp ) {}
+      iDeviceObjectDpt_c() : __IsoAgLib::DeviceObjectDpt_c() {}
+      void init( uint16_t dpt_ddi, int32_t value, const char* desig, const iDeviceObjectDvp_c* dvp ) { __IsoAgLib::DeviceObjectDpt_c::init( dpt_ddi, value, desig, dvp ); }
+
       int32_t getValue() const {
         return __IsoAgLib::DeviceObjectDpt_c::getValue();
       }
@@ -102,6 +105,10 @@ namespace IsoAgLib {
     public:
       iDeviceObjectDet_c( const iDeviceObjectDet_c& parent, uint16_t element, uint8_t type, const char* desig ) : DeviceObjectDet_c( parent.getObjectId(), element, type, desig ) {}
       iDeviceObjectDet_c( const iDeviceObjectDvc_c& parent, uint16_t element, uint8_t type, const char* desig ) : DeviceObjectDet_c( parent.getObjectId(), element, type, desig ) {}
+      iDeviceObjectDet_c() : DeviceObjectDet_c() {}
+      void init( const iDeviceObjectDet_c& parent, uint16_t element, uint8_t type, const char* desig ) { __IsoAgLib::DeviceObjectDet_c::init( parent.getObjectId(), element, type, desig ); }
+      void init( const iDeviceObjectDvc_c& parent, uint16_t element, uint8_t type, const char* desig ) { __IsoAgLib::DeviceObjectDet_c::init( parent.getObjectId(), element, type, desig ); }
+
       bool addChild( const iDeviceObjectDpt_c& c ) {
         return __IsoAgLib::DeviceObjectDet_c::addChild( c.getObjectId() );
       }
