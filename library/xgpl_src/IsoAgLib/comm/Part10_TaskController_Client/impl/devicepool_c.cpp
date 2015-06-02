@@ -195,10 +195,10 @@ namespace __IsoAgLib {
   void
   DeviceObjectDet_c::init( uint16_t pid, uint16_t element, uint8_t type, const char* desig )
   {
-    isoaglib_assert( m_element == 4096 );
+    isoaglib_assert( m_elementNumber == 4096 );
     isoaglib_assert( element <= 4095 );
 
-    init( desig );
+    DeviceObject_c::init( desig );
     m_type = type;
     m_elementNumber = element;
     m_parentId = pid;
@@ -310,7 +310,7 @@ namespace __IsoAgLib {
     m_ddi = dpt_ddi;
     m_value = value;
 
-    init( desig );
+    DeviceObject_c::init( desig );
 
     m_dvpObjectId = ( dvpRef ) ? dvpRef->getObjectId() : 0xFFFF;
   }
