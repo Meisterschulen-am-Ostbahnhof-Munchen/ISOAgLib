@@ -139,12 +139,6 @@ set_default_values()
     GENERATE_FILES_ROOT_DIR="$PWD"
 
     OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
-    # set default USE_LITTLE_ENDIAN_CPU, so that quick number variable
-    # to CAN string conversions are possible:
-    USE_LITTLE_ENDIAN_CPU=1
-    # set default USE_BIG_ENDIAN_CPU, so that quick number variable to
-    # CAN string conversions are possible:
-    USE_BIG_ENDIAN_CPU=0
     USE_VT_UNICODE_SUPPORT=0
     CAN_INSTANCE_CNT=1
     PRT_INSTANCE_CNT=1
@@ -817,13 +811,6 @@ END_OF_PATH
  
         echo_e "$ENDLINE" >&3
 
-        if [ "$USE_LITTLE_ENDIAN_CPU" -gt 0 ] ; then
-            echo_e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN" >&3
-        fi
-        if [ "$USE_BIG_ENDIAN_CPU" -gt 0 ] ; then
-            echo_e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN" >&3
-        fi
-    
         if [ "$OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" -gt 0 ] ; then
             echo_e "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" >&3
         fi
@@ -1320,9 +1307,6 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
                                   --> ("simulating"|"sys"|"rte"|"hal_simulator").
 --pc-eeprom-driver=EEPROM_DRIVER  produce the project definition files for the selected EEPROM_DRIVER if the project shall run on PC
                                   --> ("simulating"|"sys"|"hal_simulator").
---little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
---big-endian-cpu                  select configuration for BIG ENDIAN CPU type
---no-endianess                    don't select endianess now, it will be specified via project-defines!
 --with-cmake-skeleton=filename    define project specific CMakeLists skeleton file which is used for CMakeLists.txt
                                   generation (default: conf2build_CMakeLists.txt in the same directory as this script)
 --with-qmake-skeleton=filename    define project specific qmake skeleton file which is used for PROJECTNAME.pro
@@ -1403,17 +1387,6 @@ check_before_user_configuration()
                 ;;
             ('--pc-eeprom-driver='*)
                 PARAMETER_EEPROM_DRIVER=$(echo_ "$option" | sed 's/--pc-eeprom-driver=//')
-                ;;
-            (--little-endian-cpu)
-                PARAMETER_LITTLE_ENDIAN_CPU=1
-                ;;
-            (--big-endian-cpu)
-                PARAMETER_LITTLE_ENDIAN_CPU=0
-                USE_BIG_ENDIAN_CPU=1
-                ;;
-            (--no-endianess)
-                PARAMETER_LITTLE_ENDIAN_CPU=0
-                PARAMETER_BIG_ENDIAN_CPU=0
                 ;;
             ('--with-cmake-skeleton='*)
                 RootDir=$PWD
@@ -1502,22 +1475,12 @@ check_after_user_configuration()
 
     : ${USE_EMBED_LIB_DIRECTORY:="library/commercial_BIOS/bios_${USE_TARGET_SYSTEM}"}
     : ${USE_EMBED_HEADER_DIRECTORY:="library/commercial_BIOS/bios_${USE_TARGET_SYSTEM}"}
-
-    # check for little/big endian setting
-    if [ -n "${PARAMETER_LITTLE_ENDIAN_CPU:-}" ] ; then
-        USE_LITTLE_ENDIAN_CPU=$PARAMETER_LITTLE_ENDIAN_CPU
-    fi
 }
 
 report_summary()
 {
-    if [ "$USE_LITTLE_ENDIAN_CPU" -eq 1 ] ; then
-        echo_  "Endianess:     Little Endian CPU"
-    fi
-    if [ "$USE_BIG_ENDIAN_CPU" -eq 1 ] ; then
-        echo_  "Endianess:     Big Endian CPU"
-    fi
     echo_  "Target:        $IDE_NAME - (The settings below are already set up therefore)"
+    echo_  "Endianess:     Will be set/detected by the HAL"
     echo_  "Defines:       $PRJ_DEFINES (set in the project-file)"
     echo_  "Switches:      $ISOAGLIB_SWITCHES (set in the generated isoaglib_project_config.h)"
     echo_n "Include Path:  "

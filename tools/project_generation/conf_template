@@ -122,11 +122,6 @@ USE_TARGET_SYSTEM="pc_win32"
 #  Please add this path to PRJ_INCLUDE_PATH if it's not already part of it)
 # USE_HAL_PATH=""
 
-# Specify integer number memory representation type: LITTLE or BIG ENDIAN
-# default is for most targets: LITTLE -> USE_LITTLE_ENDIAN_CPU=1
-# typical cases for BIG ENDIAN are some ARM and mostly all Motorola 68k and PowerPC CPUs
-# USE_LITTLE_ENDIAN_CPU=1
-
 # Select wanted type of CAN driver connection:
 # embedded targets: "sys"
 # pc_win32 targets: "simulating" | "socket_server" | "socket_server_hal_simulator"
