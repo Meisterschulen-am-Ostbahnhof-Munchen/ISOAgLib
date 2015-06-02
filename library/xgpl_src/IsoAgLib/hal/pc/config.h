@@ -36,37 +36,21 @@
 
 // Intel x86 platforms (Windows PCs) are always little endian
 #if defined( WIN32 )
-#  ifndef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-#  endif
-#  ifndef FLOAT_WORD_ORDER
-#    define FLOAT_WORD_ORDER WORD_LO_HI
-#  endif
+#  define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#  define FLOAT_WORD_ORDER WORD_LO_HI
 #elif defined( __GNUC__ )
 #  if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#    ifndef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-#      define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-#    endif
-#    ifndef FLOAT_WORD_ORDER
-#      define FLOAT_WORD_ORDER WORD_LO_HI
-#    endif
+#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#    define FLOAT_WORD_ORDER WORD_LO_HI
 #  endif
 #  if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#    ifndef OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
-#      define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
-#    endif
-#    ifndef FLOAT_WORD_ORDER
-#      define FLOAT_WORD_ORDER BYTE_HI_LO
-#    endif
+#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
+#    define FLOAT_WORD_ORDER BYTE_HI_LO
 #  endif
 #endif
-
 
 #define HAL_SIZEOF_INT 4
 
-#ifdef USE_HUGE_MEM
-#  error "USE_HUGE_MEM must not be set!"
-#endif
 #define HUGE_MEM
 #define NEAR_MEM
 #define USE_NEAR_MEM

@@ -49,9 +49,6 @@
 #define USE_LITTLE_ENDIAN_CPU 1
 #define HAL_SIZEOF_INT 2
 
-#ifdef USE_HUGE_MEM
-#  error "USE_HUGE_MEM must not be set!"
-#endif
 #define HUGE_MEM
 #define NEAR_MEM      _near
 #define USE_NEAR_MEM  _near
