@@ -44,8 +44,75 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \subsection Change_ZD 2.7.1 to 2.7.2
 
-TBD
+Project-Generation (conf2build):
+ - Cleanup: Removed "cmake" directory, directly create projectName instead of cmake/projectName.
+ - Cleanup: Endianess can not be specified anymore (as will be done by the HAL now)
 
+Scheduler:
+ - Bugfix: Mutex/rxWaitBreak race condition fixed
+   Different Linux-Scheduling did switch context directly after breaking
+   the canRxWait which lead to the ISOAgLib thread sleeping to long.
+
+Network Management:
+ - Bugfix: Clear Possibly Offline when Address Claim received
+ - Enhancement:
+   - IsoRequestPgn: Set Address-Field now properly (Byte 5)
+   - Improved detection of missing Address Claimed
+     - Reduced detection window from 3s to 300ms. (officially 250ms + some rx/tx buffer)
+     - Giving a Second Chance to the non-responding item is directed directly now (to keep bus traffic low)
+     - Removed strange special case
+
+Multipacket:
+ - Bugfix:
+   - Broadcast frame space fixed
+     As we're using millisecond accuracy only, we need to
+     wait e.g. 51ms to get a min. frame space of 50ms.
+   - No (wrong) retry for Broadcast anymore
+     (Only relevant if ENABLE_MULTIPACKET_RETRY is defined.)
+ - Change: MultiReceive/Send changed Priority from 6 -> 7 according to ISO11783.
+ - Cleanup:
+   - Removed senseless intermediate AwaitCts state at Broadcast
+   - Remove obsolete/unused "setSendStreamDelay"
+
+HAL:
+ - Bugfix: CAN-Server-Client did not allocate last channel, so it could've crashed
+ - Enhancement:
+   - Autodetect Endianess.
+     Error if FLOAT_WORD_ORDER / ENDIANESS not given or given conflicted.
+   - Enable 64bit timestamps
+     - Enable with USE_TIMEBASE_INT64
+     - Time-deltas are still 32bit!
+     - Only works with SocketCAN, not (yet) CAN-Server!
+   - Add diagnostics getter
+ - Cleanup: Additionally clean up "hal_errcodes.h" to the appropriate places in supplementary_driver/hal.
+
+VT-Client:
+ - Enhancement: Now "selectable" can be updated in preparation for a partial object pool update upload
+ - Optimization: CommandHandler_c::queueOrReplace better structured and optimized.
+
+FS-Client:
+ - Bugfix: Timeout now properly handled, some additional cleanup.
+
+TC-Client:
+ - Bugfix: Call TaskActive only when Pool Activated and also when already Task Active
+   Old behavior was:
+   - Task was active and client connected afterwards:
+     No notification for TaskStarted() was called.
+   - Task Changes appeared while Pool was waiting 6s or uploading.
+ - Enhancement: DDI Definition now generated
+   - Old file kept for deprecated use. (Please adapt your code soon!)
+   - New file can now be generated from Excel.
+   - DDOP-Objects: Allow init during runtime (To allow placing objects into static RAM)
+   - Assert Double Element-IDs
+   - Added Get Object by Element-ID member function.
+
+Proprietary PGN:
+ - Enhancement: Added Broadcast flag and "finished" callback
+ - Change: PropA::processA is now abstract to force application to change signature
+
+Logalizer:
+ - Added new Log-format from Komodo
+ - Added new J1939 PGNs and Requested PGN
 
 \subsection Change_ZC 2.7.0 to 2.7.1
 
