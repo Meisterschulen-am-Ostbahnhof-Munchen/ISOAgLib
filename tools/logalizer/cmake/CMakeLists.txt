@@ -31,6 +31,7 @@ add_executable(
   ../src/functionality_vt.inc
   ../src/functionality_tc.inc
   ../src/functionality_fs.inc
+  ../src/functionality_gps.inc
   ../src/functionality_tecu.inc
   ../src/dataframe.h
   ../src/inputstream.h

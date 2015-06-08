@@ -217,6 +217,7 @@ void iopStore( uint8_t sa );
 #include "functionality_tc.inc"
 #include "functionality_fs.inc"
 #include "functionality_tecu.inc"
+#include "functionality_gps.inc"
 #include "parsers.inc"
 
 void
@@ -773,7 +774,8 @@ getPgnDataInterpreter( PtrDataFrame_t at_ptrFrame )
   case ADDRESS_CLAIM_PGN:                       return interpreteAddressClaimed;
   case PROCESS_DATA_PGN:                        return interpreteProcessData;
   case MAINTAIN_POWER_REQUEST_PGN:              return interpreteMaintainPower;
-  case GUIDANCE_MACHINE_STATUS:
+  case NMEA_GPS_CROSS_TRACK_ERROR_PGN:          return interpreteCrossTrackError;
+  case GUIDANCE_MACHINE_STATUS:                 return interpreteGuidanceMachineStatus;
   case GUIDANCE_SYSTEM_CMD:
   case ISOBUS_CERTIFICATION_PGN:
   case PROPRIETARY_A_PGN:

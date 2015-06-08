@@ -840,6 +840,71 @@ tecu_commandAuxiliaryStateRepr(unsigned ui_4lsb)
 
 
 std::string
+gps_readinessStateRequestResetCommandStatus(unsigned data)
+{
+  switch (data & 0x3) {
+  case 0u:
+    return "Reset_not_required";
+  case 1u:
+    return "Reset_required";
+  case 2u:
+    return "Error_indication";
+  case 3u:
+  default: // shouldn't run into a default actually!
+    return "Not_available";
+  }
+}
+
+std::string
+gps_readinessStateSteeringInputPositionStatus(unsigned data)
+{
+  switch (data & 0x3) {
+  case 0u:
+    return "Not_the_correct_position";
+  case 1u:
+    return "Correct_position";
+  case 2u:
+    return "Error_indication";
+  case 3u:
+  default: // shouldn't run into a default actually!
+    return "Not_available";
+  }
+}
+
+std::string
+gps_readinessStateSteeringSystemReadiness(unsigned data)
+{
+  switch (data & 0x3) {
+  case 0u:
+    return "System_is_not_ready";
+  case 1u:
+    return "System_is_ready";
+  case 2u:
+    return "Error_indication";
+  case 3u:
+  default: // shouldn't run into a default actually!
+    return "Not_available";
+  }
+}
+
+std::string
+gps_readinessStateMechanicalSystemLockout(unsigned data)
+{
+  switch (data & 0x3) {
+  case 0u:
+    return "Not_active";
+  case 1u:
+    return "Active";
+  case 2u:
+    return "Error_indication";
+  case 3u:
+  default: // shouldn't run into a default actually!
+    return "Not_available";
+  }
+}
+
+
+std::string
 interpreteValveCommand(PtrDataFrame_t at_ptrFrame)
 {
   std::ostringstream out;
@@ -849,6 +914,24 @@ interpreteValveCommand(PtrDataFrame_t at_ptrFrame)
     "Auxiliary port flow - command: " << tecu_commandPortFlowPercent(at_ptrFrame->dataOctet(0)) << "% " <<
     "Auxiliary fail safe mode - command: " << tecu_commandAuxiliaryFailSaveMode(at_ptrFrame->dataOctet(2) >> 6) << " " <<
     "Auxiliary state - command: " << tecu_commandAuxiliaryStateRepr(at_ptrFrame->dataOctet(2));
+
+  return out.str();
+}
+
+
+std::string
+interpreteGuidanceMachineStatus(PtrDataFrame_t at_ptrFrame)
+{
+  std::ostringstream out;
+
+  double estCurv = (double(unsigned(at_ptrFrame->dataOctet(0)) | (unsigned(at_ptrFrame->dataOctet(1))<<8))*0.25)-8032.;
+  out <<
+    "EstCurv: " << estCurv << "km^-1 " <<
+    "Readiness state: "
+      << "RequestResetCommandStatus: "   << gps_readinessStateRequestResetCommandStatus  (at_ptrFrame->dataOctet(2) >> 6) << " "
+      << "SteeringInputPositionStatus: " << gps_readinessStateSteeringInputPositionStatus(at_ptrFrame->dataOctet(2) >> 4) << " "
+      << "SteeringSystemReadiness: "     << gps_readinessStateSteeringSystemReadiness    (at_ptrFrame->dataOctet(2) >> 2) << " "
+      << "MechanicalSystemLockout: "     << gps_readinessStateMechanicalSystemLockout    (at_ptrFrame->dataOctet(2) >> 0) << " ";
 
   return out.str();
 }
