@@ -162,6 +162,7 @@
 #define NMEA_GPS_HIGH_PRECISION_RAPID_UPDATE_PGN  0x01F803LU
 #define NMEA_GPS_POSITION_DATA_PGN                0x01F805LU
 #define NMEA_GPS_TIME_DATE_PGN                    0x01F809LU
+#define NMEA_GPS_CROSS_TRACK_ERROR_PGN            0x01F903LU
 #define NMEA_GPS_DIRECTION_DATA_PGN               0x01FE11LU
 #define NMEA_GNSS_PSEUDORANGE_NOISE_STATISTICS    0x01FA06LU
 
@@ -441,7 +442,10 @@ interpretePgn( uint32_t rui32_pgn )
   case PROPRIETARY_B_PGN:                       out << "PROPRIETARY_B(1of) "; break;
   case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:      out << "NMEA_GPS_POSITION_RAPID_UPDATE "; break;
   case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:       out << "NMEA_GPS_COG_SOG_RAPID_UPDATE "; break;
+  case NMEA_GPS_HIGH_PRECISION_RAPID_UPDATE_PGN:out << "NMEA_GPS_HIGH_PRECISION_RAPID_UPDATE "; break;
   case NMEA_GPS_POSITION_DATA_PGN:              out << "NMEA_GPS_POSITION_DATA "; break;
+  case NMEA_GPS_TIME_DATE_PGN:                  out << "NMEA_GPS_TIME_DATE "; break;
+  case NMEA_GPS_CROSS_TRACK_ERROR_PGN:          out << "NMEA_GPS_CROSS_TRACK_ERROR "; break;
   case NMEA_GPS_DIRECTION_DATA_PGN:             out << "NMEA_GPS_DIRECTION_DATA "; break;
   case NMEA_GNSS_PSEUDORANGE_NOISE_STATISTICS:  out << "GNSS Pseudorange Noise Statistics "; break;
 
