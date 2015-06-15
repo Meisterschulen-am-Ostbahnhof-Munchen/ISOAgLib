@@ -45,6 +45,8 @@ public:
 class iDiagnosticsServices_c : private __IsoAgLib::DiagnosticsServices_c
 {
 public:
+  using __IsoAgLib::DiagnosticsServices_c::spnProprietary; // range starts here!
+
   /**
     Registering of the "iServiceToolVerifier_c"
     If no handler is registered (default behavior), the request is accepted from any node.

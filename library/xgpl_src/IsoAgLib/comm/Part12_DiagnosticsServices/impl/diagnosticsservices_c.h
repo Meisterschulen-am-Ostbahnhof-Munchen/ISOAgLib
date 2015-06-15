@@ -52,7 +52,10 @@ private:
     bool mb_bufferUsedForTP;
     bool mb_bufferIsValid;
   };
+
 public:
+  static const uint32_t spnProprietary = 0x7E000; // range starts here!
+
   DiagnosticsServices_c(IdentItem_c&);
   ~DiagnosticsServices_c();
 
