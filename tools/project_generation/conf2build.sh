@@ -36,8 +36,8 @@ TEMPFILE_PREFIX="/tmp/conf2build$$"
 main()
 {
     case `uname -s` in
-        *CYGWIN*|*MINGW*) SYSTEM='WINDOWS' ;;
-        *)                SYSTEM='LINUX' ;;
+        *CYGWIN*|*MINGW*) export SYSTEM='WINDOWS' ;;
+        *)                export SYSTEM='LINUX' ;;
     esac
     
     set_default_values
