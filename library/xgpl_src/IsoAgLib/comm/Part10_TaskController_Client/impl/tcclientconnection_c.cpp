@@ -142,6 +142,7 @@ namespace __IsoAgLib {
             // when the pool has been sent successfully, wait on the transfer response
           case __IsoAgLib::SendStream_c::SendSuccess:
             m_uploadStep = UploadWaitForOPTransferResponse;
+            m_uploadTimestamp = HAL::getTime();
             m_uploadTimeout = DEF_TimeOut_NormalCommand;
             break;
         }
