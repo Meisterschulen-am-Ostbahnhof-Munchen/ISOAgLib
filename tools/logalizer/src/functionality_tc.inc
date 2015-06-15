@@ -316,6 +316,48 @@ const char* ddis[] = {
 };
 
 std::string
+decodeTechnicalCapabilities( uint8_t cmd )
+{
+  std::ostringstream out;
+
+  switch( cmd )
+  {
+  case 0x0: out << "Version Request"; break;
+  case 0x1: out << "Version"; break;
+  default:  out << "Not specified Request/Answer!!!"; break;
+  }
+
+  return out.str();
+}
+
+std::string
+decodeDevDescTransMgmt( uint8_t cmd )
+{
+  std::ostringstream out;
+
+  switch( cmd )
+  {
+  case 0x0: out << "Structure Label Request"; break;
+  case 0x1: out << "Structure Label"; break;
+  case 0x2: out << "Localization Label Request"; break;
+  case 0x3: out << "Localization Label"; break;
+  case 0x4: out << "Request Object-pool Transfer"; break;
+  case 0x5: out << "Request Object-pool Transfer Response"; break;
+  case 0x6: out << "Object-pool Transfer"; break;
+  case 0x7: out << "Object-pool Transfer Response"; break;
+  case 0x8: out << "Object-pool Activate"; break;
+  case 0x9: out << "Object-pool Activate Response"; break;
+  case 0xA: out << "Object-pool Delete"; break;
+  case 0xB: out << "Object-pool Delete Reponse"; break;
+  case 0xC: out << "Change Designator"; break;
+  case 0xD: out << "Change Designator Response"; break;
+  default:  out << "Not specified Request/Answer!!!"; break;
+  }
+
+  return out.str();
+}
+
+std::string
 interpreteProcessData( PtrDataFrame_t at_ptrFrame )
 {
   if (at_ptrFrame->dataSize() < 8)
@@ -332,8 +374,8 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
 
     switch (at_ptrFrame->dataOctet(0) & 0x0F)
     {
-    case 0x00: out << "Command Technical Capabilities"; break;
-    case 0x01: out << "Command Device Description (Transfer and Management)"; break;
+    case 0x00: out << "Command Technical Capabilities " << decodeTechnicalCapabilities( at_ptrFrame->dataOctet(0) >> 4 ); break;
+    case 0x01: out << "Command Device Descriptor " << decodeDevDescTransMgmt( at_ptrFrame->dataOctet(0) >> 4 ); break;
     case 0x02: out << "Command Request Value  "; valueAndMeasurementCommand = true; break;
     case 0x03: out << "Command Value          "; valueAndMeasurementCommand = true; break;
     case 0x04: out << "Command Measur. Time   "; valueAndMeasurementCommand = true; break;
