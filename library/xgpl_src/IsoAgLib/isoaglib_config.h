@@ -242,6 +242,11 @@
 #  define CONFIG_VT_CLIENT_ANNEX_F_COMMAND_RETRIES 2
 #endif
 
+// it nothing special is defined for Bitmap storage, default to default storage.
+#ifndef CONFIG_VT_CLIENT_OP_BITMAPS_MEMORY_MODIFIER
+#  define CONFIG_VT_CLIENT_OP_BITMAPS_MEMORY_MODIFIER
+#endif
+
 // Don't keep this too low, as it will also be used for all other commands!
 #ifndef CONFIG_FS_CLIENT_MAX_WRITE_SIZE
 #  define CONFIG_FS_CLIENT_MAX_WRITE_SIZE 240
