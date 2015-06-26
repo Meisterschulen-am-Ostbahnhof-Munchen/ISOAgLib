@@ -1640,8 +1640,8 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
     if (arr_file[actDepth].empty())
       continue;
 
-    if (fixNr == -1) fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%d [] = {", m_objName.c_str(), actDepth);
-    else /* -fix- */ fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%dFixed%d [] = {", m_objName.c_str(), actDepth, fixNr);
+    if (fixNr == -1) fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%d [] CONFIG_VT_CLIENT_OP_BITMAPS_MEMORY_MODIFIER = {", m_objName.c_str(), actDepth);
+    else /* -fix- */ fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%dFixed%d [] = CONFIG_VT_CLIENT_OP_BITMAPS_MEMORY_MODIFIER {", m_objName.c_str(), actDepth, fixNr);
 
     // find matching path path for file
     struct stat s_stat;
