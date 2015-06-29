@@ -66,26 +66,10 @@ FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItem
          ++it_serverInstance)
     {
       // check if FsServerInstance to delete is in list
-      if (acrc_isoItem.isoName() == (*it_serverInstance)->getIsoItem().isoName())
-      { // There should only be one instance for an IsoName!
-        // In all cases simply remove associated entries from l_initializingCommands
-        for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.ml_initializingCommands.begin();
-             it_command != m_commands.ml_initializingCommands.end(); )
-        {
-          if (&(*it_command)->getFileserver() == (*it_serverInstance))
-          { // yep, command is connected to this FileServer.
-            delete (*it_command);
-            it_command = m_commands.ml_initializingCommands.erase(it_command);
-            // normally we could break the for loop here, too.
-          }
-          else
-          { // search next command
-            ++it_command;
-          }
-        }
-
-        // Set the FS to offline before removing,
-        // so that any necessary cleanup will be done correctly
+      if ( &acrc_isoItem == &((*it_serverInstance)->getIsoItem()) )
+      {
+        // Set the FS to offline before removing, so that any necessary
+        // cleanup (like initiating command, etc.) will be done correctly!
         (*it_serverInstance)->setState (FsServerInstance_c::offline);
         // now delete the instance
         delete (*it_serverInstance);
@@ -194,16 +178,26 @@ FsManager_c::notifyOnFileserverStateChange(FsServerInstance_c &fileserver, FsSer
   switch (fileserver.getState())
   {
     case FsServerInstance_c::offline:
-      if (oldState != FsServerInstance_c::usable)
-        // don't care about offline-dropping if the FS wasn't
-        // announced as usable before at all..
-        break;
-
-      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
-          iter != mv_communications.end();
-          ++iter)
+      for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.ml_initializingCommands.begin();
+            it_command != m_commands.ml_initializingCommands.end(); )
       {
-        (*iter)->notifyOnOfflineFileServer (fileserver);
+        if (&(*it_command)->getFileserver() == &fileserver)
+        {
+          delete (*it_command);
+          it_command = m_commands.ml_initializingCommands.erase( it_command );
+        }
+        else
+          ++it_command;
+      }
+
+      if (oldState == FsServerInstance_c::usable)
+      {
+        for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
+            iter != mv_communications.end();
+            ++iter)
+        {
+          (*iter)->notifyOnOfflineFileServer (fileserver);
+        }
       }
       break;
 

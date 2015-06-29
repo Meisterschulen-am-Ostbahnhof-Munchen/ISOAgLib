@@ -58,7 +58,7 @@ class FsClientServerCommunication_c
       * considered to have been successfull, if the current directory and all volumes of the fileserver have been set.
       * @return true if filerserver registered with success, false else.
       */
-    bool finishedRegistering() { return mb_finishedRegistering; }
+    bool finishedRegistering() { return mb_finishedRequestingFsConnection; }
 
     /**
       * Method used to get the used fileserver's existing volumes.
@@ -217,7 +217,7 @@ class FsClientServerCommunication_c
       * Flag indication if the registration process to a fileserver has been done successfully. This means that the current
       * directory as well as the existing volumes of the fileserver have been requested successfully.
       */
-    bool mb_finishedRegistering;
+    bool mb_finishedRequestingFsConnection;
 
  private:
   /** not copyable : copy constructor is only declared, never defined */

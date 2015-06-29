@@ -126,7 +126,7 @@ class FsCommand_c : CanCustomer_c
     void sendMultiPacketTry();
 
     enum ProcessResult_t {
-      CommandFinished,
+      CommandFinished, // only for Initializing Commands!
       CommandRunning
     };
     ProcessResult_t processMsgIso( const CanPkgExt_c& pkg );

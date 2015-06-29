@@ -45,7 +45,7 @@ FsClientServerCommunication_c::FsClientServerCommunication_c(
   , c_identItem( rc_identItem )
   , pui8_currentDirectory( NULL )
   , pc_commandHandler( NULL )
-  , mb_finishedRegistering( false )
+  , mb_finishedRequestingFsConnection( false )
 {
 }
 
@@ -101,8 +101,11 @@ FsClientServerCommunication_c::notifyOnOfflineFileServer (FsServerInstance_c &rc
   if (&getFileserver() != &rc_fsServerInstance)
     return;
 
+  delete pc_commandHandler;
+  pc_commandHandler = NULL;
+
   // notify the Application on lost FS
-  c_fsClient.notifyOnOfflineFileServer (*(getFileserver().toInterfacePointer()));
+  c_fsClient.notifyOnOfflineFileServer (*(rc_fsServerInstance.toInterfacePointer()));
 }
 
 
@@ -110,10 +113,10 @@ void
 FsClientServerCommunication_c::notifyOnFsReady()
 {
   // only when this command is for initializing the FsCSC,
-  if (!mb_finishedRegistering)
+  if (!mb_finishedRequestingFsConnection)
   { // call the API
     c_fsClient.fileserverReady();
-    mb_finishedRegistering = true;
+    mb_finishedRequestingFsConnection = true;
   }
 }
 
@@ -130,6 +133,8 @@ FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_fileSe
 
   /// (currently only Get Current Directory is performed)
   pc_commandHandler->getCurrentDirectory();
+  // let's get fsReady() called on the response of Get Current Directory
+  mb_finishedRequestingFsConnection = false;
 }
 
 
@@ -139,7 +144,7 @@ FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_fileSe
 /// FsClientServerCommunication_c::disconnectFsConnection()
 /// {
 ///   [...]
-///   mb_finishedRegistering = false;
+///   mb_finishedRequestingFsConnection = false;
 ///   [...]
 /// }
 
