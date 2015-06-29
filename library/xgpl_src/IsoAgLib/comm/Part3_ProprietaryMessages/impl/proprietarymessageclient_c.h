@@ -89,6 +89,7 @@ namespace __IsoAgLib
       virtual ~ProprietaryMessageA_c() {}
 
       void init(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp);
+      void change(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp);
       void close();
 
       virtual void processA( const IsoAgLib::iIsoItem_c& /* sender */, bool /* a_broadcast */) = 0;
@@ -112,6 +113,7 @@ namespace __IsoAgLib
       virtual ~ProprietaryMessageB_c() {}
 
       void init(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp);
+      void change(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp);
       void close();
 
       virtual void processB( const IsoAgLib::iIsoItem_c& /* sender */, uint8_t /* ps */ ) {}

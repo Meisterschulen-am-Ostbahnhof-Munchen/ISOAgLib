@@ -29,6 +29,7 @@ namespace IsoAgLib
       virtual void processA( const iIsoItem_c& sender, bool a_broadcast) = 0;
 
       void init(const iIdentItem_c& a_ident, const iIsoName_c& a_remote, uint8_t a_dp) { __IsoAgLib::ProprietaryMessageA_c::init(a_ident, a_remote, a_dp); }
+      void change(const iIdentItem_c& a_ident, const iIsoName_c& a_remote, uint8_t a_dp) { __IsoAgLib::ProprietaryMessageA_c::change(a_ident, a_remote, a_dp); }
       void close() { __IsoAgLib::ProprietaryMessageA_c::close(); }
 
       void enableReception() { __IsoAgLib::ProprietaryMessageA_c::enableReception(); }
@@ -64,6 +65,7 @@ namespace IsoAgLib
       virtual void processB( const iIsoItem_c& sender, uint8_t ps ) { (void)sender; (void)ps; }
 
       void init(const iIdentItem_c& a_ident, const iIsoName_c& a_remote, uint8_t a_dp) { __IsoAgLib::ProprietaryMessageB_c::init(a_ident, a_remote, a_dp); }
+      void change(const iIdentItem_c& a_ident, const iIsoName_c& a_remote, uint8_t a_dp) { __IsoAgLib::ProprietaryMessageB_c::change(a_ident, a_remote, a_dp); }
       void close() { __IsoAgLib::ProprietaryMessageB_c::close(); }
 
       // You can enable/disable multiple PropB PGNs (i.e. with different PS field)

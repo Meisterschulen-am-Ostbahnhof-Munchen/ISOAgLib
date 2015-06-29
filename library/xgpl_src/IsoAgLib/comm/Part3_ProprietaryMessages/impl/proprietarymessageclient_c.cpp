@@ -60,6 +60,14 @@ namespace __IsoAgLib
   }
 
 
+  void ProprietaryMessageA_c::change(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp) {
+    isoaglib_assert( NULL != m_ident );
+    m_ident = &a_ident;
+    m_remote = a_remote;
+    m_dp = a_dp;
+  }
+
+
   void ProprietaryMessageA_c::close() {
     isoaglib_assert( NULL != m_ident );
     isoaglib_assert( !m_isRegistered );
@@ -85,6 +93,9 @@ namespace __IsoAgLib
     getProprietaryMessageHandlerInstance( m_ident->getMultitonInst() ).deregisterProprietaryMessage( *this );
     m_isRegistered = false;
   }
+
+
+
 
 
   bool ProprietaryMessageB_c::sendWithPrio( uint8_t ps, unsigned prio, const IsoName_c& a_overwrite_remote ) {
@@ -123,6 +134,14 @@ namespace __IsoAgLib
 
   void ProprietaryMessageB_c::init(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp) {
     isoaglib_assert(NULL == m_ident);
+    m_ident = &a_ident;
+    m_remote = a_remote;
+    m_dp = a_dp;
+  }
+
+
+  void ProprietaryMessageB_c::change(const IdentItem_c& a_ident, const IsoName_c& a_remote, uint8_t a_dp) {
+    isoaglib_assert(NULL != m_ident);
     m_ident = &a_ident;
     m_remote = a_remote;
     m_dp = a_dp;
