@@ -1105,7 +1105,7 @@ vt2iso_c::init(
 
   std::string partFileName;
 
-  for (int i=0; i<=DEF_iso639entries; i++)
+  for (int i=0; i<DEF_iso639entries; i++)
   {
     arrb_objTypes[i] = false;
   }
