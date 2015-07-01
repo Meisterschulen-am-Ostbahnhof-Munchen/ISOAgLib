@@ -217,7 +217,7 @@ IsoMonitor_c::timeEvent()
           ( currentTime >= (pc_iter->getLastRequestForAddressClaimed() + CONFIG_ISO_ITEM_MAX_AGE) ) )
       {
         const ecutime_t answeredAfter = pc_iter->lastTime() - pc_iter->getLastRequestForAddressClaimed();
-        if( ( answeredAfter < 0 ) || ( answeredAfter > CONFIG_ISO_ITEM_MAX_AGE ) )
+        if( answeredAfter < 0 )
         {
           if( ( !someActiveLocalMember ) || ( pc_iter->itemState( IState_c::PossiblyOffline ) ) )
           { // We can't give it a Second Chance OR it's too late the second time -> Remove it!
