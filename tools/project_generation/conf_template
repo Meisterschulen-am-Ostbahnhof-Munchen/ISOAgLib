@@ -164,43 +164,42 @@ PRJ_ISO11783=1
 # Specify if Part 13 - FS-Client support is enabled.
 # PRJ_ISO_FILESERVER_CLIENT=1
 
-# Specify if Part 7 - all BASE data are selected
-# if only special BASE data should be used select one or more of the following parts
-# PRJ_BASE=1
-
-# only incorporate parts from BASE that provide tractor hitch and RPM information
+# Specify if Part 7 - tractor hitch, RPM and Key Switch information support is enabled.
+# NOTE: To use the Key Switch information, also enable PRJ_TRACTOR_MOVE
 # PRJ_TRACTOR_GENERAL=1
 
-# only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
-# the following project setting includes only measurement of tractor data.
-# i.e. NO SETTING OF COMMANDS
+# Specify if Part 7 - tractor moving (distance, speed, direction, ...) information support is enabled.
 # PRJ_TRACTOR_MOVE=1
 
-# additionally integrate sending of tractor move commands
+# Specify if Part 7 - tractor move commands support is enabled.
 # PRJ_TRACTOR_MOVE_SETPOINT=1
 
-# only incorporate parts from BASE that provide tractor PTO information
-# the following project setting includes only measurement of tractor data.
-# i.e. NO SETTING OF COMMANDS
+# Specify if Part 7 - tractor PTO information support is enabled.
 # PRJ_TRACTOR_PTO=1
 
-# additionally integrate sending of tractor PTO commands
+# Specify if Part 7 - tractor PTO commands support is enabled.
 # PRJ_TRACTOR_PTO_SETPOINT=1
 
-# only incorporate parts from BASE that provide tractor lighting information
+# Specify if Part 7 - tractor lighting information support is enabled.
 # PRJ_TRACTOR_LIGHT=1
 
-# only incorporate parts from BASE that provide tractor auxiliary valve information
+# Specify if Part 7 - tractor auxiliary valve information support is enabled.
 # PRJ_TRACTOR_AUX=1
 
-# only incorporate parts from BASE that provide time and GPS information
+# Specify if Part 7 - LEGACY time and GPS information (subject to be removed!) support is enabled.
+# Please use PRJ_TIME_DATE and/or PRJ_GNSS instead!
 # PRJ_TIME_GPS=1
 
-# only incorporate parts from BASE that provide tractor guidance information
-# PRJ_TRACTOR_GUIDANCE=1
+# Specify if Part 7 - time and date information support is enabled.
+# (Please don't use in combination with PRJ_TIME_GPS!)
+# PRJ_TIME_DATE=1
 
-# only incorporate parts from BASE that provide tractor certification information
-# PRJ_TRACTOR_CERTIFICATION=1
+# Specify if Part 7 - GNSS Position, Direction, UTC Date and Time information support is enabled.
+# (Please don't use in combination with PRJ_TIME_GPS!)
+# PRJ_GNSS=1
+
+# Specify if Part 7 - tractor guidance information support is enabled.
+# PRJ_TRACTOR_GUIDANCE=1
 
 # Specify if Part 7 - ISB support is enabled.
 # PRJ_ISB_CLIENT=1

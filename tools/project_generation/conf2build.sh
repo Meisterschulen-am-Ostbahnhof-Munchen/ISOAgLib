@@ -244,24 +244,17 @@ check_set_correct_variables()
         exit 2
     fi
 
+    if [ "$PRJ_BASE" -gt 0 ]; then
+        echo_ "ERROR! PRJ_BASE is obsolete and not used anymore."
+        echo_ "Please directly enable all required modules."
+        exit 2
+    fi
+
     if [ -z "$APP_PATH" ] ; then
         APP_PATH="$ISO_AG_LIB_PATH"
     fi
     APP_INSIDE="../$APP_PATH"
     ISO_AG_LIB_INSIDE="../$ISO_AG_LIB_PATH"
-
-    if [ "$PRJ_BASE" -gt 0 ]; then
-        # activate all base data sub-features, when PRJ_BASE is activated
-        PRJ_TRACTOR_GENERAL=1
-        PRJ_TRACTOR_MOVE=1
-        PRJ_TRACTOR_PTO=1
-        PRJ_TIME_GPS=1
-        PRJ_TRACTOR_LIGHT=1
-        PRJ_TRACTOR_FACILITIES=1
-        PRJ_TRACTOR_AUX=1
-        PRJ_TRACTOR_GUIDANCE=1
-        PRJ_ISB_CLIENT=1
-    fi
 
     if [ "$PRJ_TRACTOR_MOVE_SETPOINT" -ne 0 ]; then
         PRJ_TRACTOR_MOVE=1 # force basic trac move to compile in
@@ -372,43 +365,45 @@ append()
 comm_features()
 {
     printf '%s' " -name 'isoaglib_config.h'" >&3
-    if [ "$PRJ_BASE" -gt 0 ]; then
-        printf '%s' " -o -path '*/Part7_ApplicationLayer/*'" >&3
-    else
-        if expr "$PRJ_TRACTOR_GENERAL" \| "$PRJ_TRACTOR_MOVE" \| "$PRJ_TRACTOR_FACILITIES" \| "$PRJ_TRACTOR_PTO" \| "$PRJ_TRACTOR_LIGHT" \| "$PRJ_TRACTOR_AUX" \| "$PRJ_TIME_GPS" \| "$PRJ_TRACTOR_GUIDANCE" >/dev/null; then
-            printf '%s' " -o -name 'ibasetypes.h' -o -name 'basecommon_c*'" >&3
-        fi
-        if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral_c*' \)" >&3
-        fi
-        if [ "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove*' \)" >&3
-        elif [ "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -lt 1 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove_c.*' \)" >&3
-        fi
-        if [ "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto*' \)" >&3
-        elif [ "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -lt 1 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto_c.*' \)" >&3
-        fi
-        if [ "$PRJ_TRACTOR_LIGHT" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)" >&3
-        fi
-        if [ "$PRJ_TRACTOR_FACILITIES" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities_c*' \)" >&3
-        fi
-        if [ "$PRJ_TRACTOR_AUX" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracaux*' \)" >&3
-        fi
-        if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)" >&3
-        fi
-        if [ "$PRJ_TIME_GPS" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)" >&3
-        fi
-        if [ "$PRJ_ISB_CLIENT" -gt 0 ]; then
-            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*isbclient*' \) -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*isbstatehandler*' \)" >&3
-        fi
+    if expr "$PRJ_TRACTOR_GENERAL" \| "$PRJ_TRACTOR_MOVE" \| "$PRJ_TRACTOR_FACILITIES" \| "$PRJ_TRACTOR_PTO" \| "$PRJ_TRACTOR_LIGHT" \| "$PRJ_TRACTOR_AUX" \| "$PRJ_TIME_GPS" \| "$PRJ_TIME_DATE" \| "$PRJ_GNSS" \| "$PRJ_TRACTOR_GUIDANCE" >/dev/null; then
+        printf '%s' " -o -name 'ibasetypes.h' -o -name 'basecommon_c*'" >&3
+    fi
+    if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove*' \)" >&3
+    elif [ "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -lt 1 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove_c.*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto*' \)" >&3
+    elif [ "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -lt 1 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto_c.*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_LIGHT" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_FACILITIES" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_AUX" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracaux*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)" >&3
+    fi
+    if [ "$PRJ_TIME_GPS" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)" >&3
+    fi
+    if [ "$PRJ_TIME_DATE" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timedate*' \)" >&3
+    fi
+    if [ "$PRJ_GNSS" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*gnss*' \)" >&3
+    fi
+    if [ "$PRJ_ISB_CLIENT" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*isbclient*' \) -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*isbstatehandler*' \)" >&3
     fi
 
     if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
@@ -432,7 +427,7 @@ comm_features()
         fi
     fi
     if [ "$PRJ_DATASTREAMS" -lt 1 ]; then
-        if [ "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 ]; then
+        if [ "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 ]; then
             printf '%s' " -o -path '*/driver/datastreams/volatilememory_c.*'" >&3
         fi
     fi
@@ -819,15 +814,12 @@ END_OF_PATH
             echo_e "#define USE_EEPROM_IO" >&3
         fi
     
-        if [ "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_VIRTUALTERMINAL_CLIENT -gt 0 -o $PRJ_TIME_GPS -gt 0 ]; then
+        if [ "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_VIRTUALTERMINAL_CLIENT -gt 0 ]; then
             echo_e "#define USE_DATASTREAMS_IO" >&3
         fi
     
         if [ "$PRJ_ISO11783" -gt 0 ] ; then
             echo_e "#define USE_ISO_11783" >&3
-            if [ "$PRJ_BASE" -gt 0 ] ; then
-                echo_e "#define USE_BASE" >&3
-            fi
             if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
                 echo_e "#define USE_TRACTOR_GENERAL" >&3
             fi
@@ -851,6 +843,12 @@ END_OF_PATH
             fi
             if [ "$PRJ_TIME_GPS" -gt 0 ]; then
                 echo_e "#define USE_TIME_GPS" >&3
+            fi
+            if [ "$PRJ_TIME_DATE" -gt 0 ]; then
+                echo_e "#define USE_TIME_DATE" >&3
+            fi
+            if [ "$PRJ_GNSS" -gt 0 ]; then
+                echo_e "#define USE_GNSS" >&3
             fi
             if [ "$PRJ_ISB_CLIENT" -gt 0 ]; then
                 echo_e "#define USE_ISB_CLIENT" >&3
