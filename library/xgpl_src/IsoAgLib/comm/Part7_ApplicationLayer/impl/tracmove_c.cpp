@@ -16,16 +16,11 @@
 
 #include "tracmove_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
+#if defined(USE_TRACTOR_GENERAL)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
 #endif
 #include <IsoAgLib/util/impl/util_funcs.h>
-
-
-#if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
-#endif
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
 
 #define TIMEOUT_SPEED_LOST 3000
@@ -172,7 +167,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
-    #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+    #if defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
 
@@ -254,7 +249,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             mui32_lastUpdateTimeSpeedTheor = pkg.time();
             setSpeedTheor(i32_tempSpeed);
             setDistTheor( ui32_tempDist );
-            #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+            #if defined(USE_TRACTOR_GENERAL)
             // additionally scan for key switch and maximum power time
             c_tracgeneral.setKeySwitch(IsoAgLib::IsoActiveFlag_t( ( pkg.getUint8Data( 7 ) >> 2 ) & 0x3 ));
             c_tracgeneral.setMaxPowerTime(pkg.getUint8Data( 6 ) );
@@ -348,21 +343,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   // actually means updateSELECTEDSpeed !!!
   void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, ecutime_t ai_time )
   {
-    #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
-    TimePosGps_c& c_timeposgps = getTimePosGpsInstance4Comm();
-    #endif
     switch(t_speedSrc)
     {
       case IsoAgLib::SelectedSpeed:
         mt_speedSource = IsoAgLib::SelectedSpeed; //nothing more to do because variables are already set
         break;
-      #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
       case IsoAgLib::GpsBasedSpeed:
-        mt_speedSource = IsoAgLib::GpsBasedSpeed;
-        mt_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
-        mi32_selectedSpeed = c_timeposgps.getGpsSpeedCmSec()*10; // Selected Speed is in mm/s
+        isoaglib_assert( !"Don't call updateSpeed(), call updateSpeedGps() instead!" );
         break;
-      #endif
       case IsoAgLib::GroundBasedSpeed:
         mt_speedSource = IsoAgLib::GroundBasedSpeed;
         mt_selectedSpeedSource = IsoAgLib::IsoGroundBasedSpeed;
@@ -379,6 +367,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         break;
     }
     mui32_lastUpdateTimeSpeedSelected = ai_time;
+  }
+
+  void TracMove_c::updateSpeedGps( int32_t speed_mm_s, ecutime_t ai_time )
+  {
+    mt_speedSource = IsoAgLib::GpsBasedSpeed;
+    mt_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
+    mi32_selectedSpeed = speed_mm_s;
   }
 
   void TracMove_c::updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)
@@ -487,7 +482,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     uint8_t b_val8 = 0;
     //pkg.setUint8Data(7, b_val8);
-#if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+#if defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     // additionally scan for key switch and maximum power time
     pkg.setUint8Data(6, c_tracgeneral.maxPowerTime() );

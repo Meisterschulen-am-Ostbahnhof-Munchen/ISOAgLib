@@ -51,6 +51,7 @@ namespace __IsoAgLib {
         @param t_speedSrc  from which source is the speed available
       */
     void updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, ecutime_t ai_time );
+    void updateSpeedGps( int32_t speed_mm_s, ecutime_t ai_time );
 
     /** update distance and direction with the actually best available distance and direction
         @param t_distanceSrc  from which source is the distance and direction available

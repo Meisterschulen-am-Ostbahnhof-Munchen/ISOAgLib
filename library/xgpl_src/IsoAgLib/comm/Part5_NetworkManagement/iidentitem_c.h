@@ -211,6 +211,8 @@ private:
   friend class iProprietaryMessageClient_c;
   friend class iProprietaryMessageHandler_c;
   friend class iTimePosGps_c;
+  friend class iTimeDate_c;
+  friend class iGnss_c;
   friend class iTracAux_c;
   friend class iTracCert_c;
   friend class iTracFacilities_c;

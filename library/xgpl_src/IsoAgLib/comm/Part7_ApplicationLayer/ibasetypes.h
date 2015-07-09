@@ -35,7 +35,7 @@ enum IsoDataReq_t {
   IsoDontCare = 3         ///< corresponding function is not available/not implemented in service provider
 };
 
-/** GPS GNSS Method */
+/** GNSS Method */
 enum IsoGnssMethod_t {
   IsoNoGps           = 0,
   IsoGnssFix         = 1,
@@ -302,6 +302,47 @@ enum DistanceDirectionSource_t {
 enum IdentMode_t {
   IdentModeTractor = 0,
   IdentModeImplement = 1
+};
+
+enum TimeStandard_t
+{
+  TimeStandardUtc,
+  TimeStandardLocal,
+  TimeStandardUnknown
+};
+
+struct iDate_s {
+  uint16_t year;
+  uint8_t month;
+  uint8_t day;
+};
+
+struct iTime_s {
+  uint8_t hour;
+  uint8_t minute;
+  uint8_t second;
+  uint16_t msec;
+};
+
+struct iDateTime_s {
+  iDate_s date;
+  iTime_s time;
+  bool available;
+};
+
+struct iTimezone_s {
+  int8_t minuteOffset;
+  int8_t hourOffset;
+  bool available;
+};
+
+/** Class definition to be used with event processing of GPS messages et al. **/
+class iMsgEventHandler_c 
+{
+public:
+  iMsgEventHandler_c() {}
+  virtual ~iMsgEventHandler_c() {}
+  virtual void handleMsgEvent (uint32_t aui32_pgn) = 0;
 };
 
 } // end namespace IsoAgLib

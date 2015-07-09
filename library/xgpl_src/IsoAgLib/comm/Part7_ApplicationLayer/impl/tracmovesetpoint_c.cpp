@@ -18,7 +18,7 @@
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+#if defined(USE_TRACTOR_MOVE)
   #include "tracmove_c.h"
 #endif
 #include "tracmovesetpoint_c.h"
@@ -96,12 +96,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   */
   void TracMoveSetPoint_c::timeEventImplMode( )
   {
-    #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+    #if defined(USE_TRACTOR_MOVE)
     TracMove_c& c_tracmove = getTracMoveInstance4Comm();
     #endif
 
     if ( 1
-      #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+      #if defined(USE_TRACTOR_MOVE)
         && c_tracmove.getSelectedDataSourceISONameConst().isSpecified()
       #endif
        )

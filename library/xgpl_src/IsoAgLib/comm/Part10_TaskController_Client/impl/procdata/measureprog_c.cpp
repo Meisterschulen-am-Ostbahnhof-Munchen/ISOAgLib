@@ -14,7 +14,7 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measuresubprog_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdconnection_c.h>
 
-#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+#if defined(USE_TRACTOR_MOVE)
 #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
 #endif
 
@@ -134,7 +134,7 @@ namespace __IsoAgLib {
         break;
 
       case IsoAgLib::ProcData::MeasurementCommandDistProp: // distance proportional
-#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE) // if no distance available, NACK will be sent
+#if defined(USE_TRACTOR_MOVE) // if no distance available, NACK will be sent
         if ( pdLocal().isMethodSet( IsoAgLib::ProcData::DistInterval ) ) {
           if ( ai32_increment == sci32_stopValDistanceInterval ) {
             delete m_subProgDistProp;

@@ -50,7 +50,7 @@ const float gcf_rapidUpdateFilter = 0.15f;  // 15% new, 85%old to filter the upd
 
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
 // Off-class/namespace c-style helper functions
-void getDegree10Minus7FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32_result )
+static void getDegree10Minus7FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32_result )
 {
   #if HAL_SIZEOF_INT == 4
   // use 64 bit variable
@@ -72,7 +72,7 @@ void getDegree10Minus7FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32
   #endif
 }
 
-void getAltitude10Minus2FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32_result )
+static void getAltitude10Minus2FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32_result )
 {
   #if HAL_SIZEOF_INT == 4
   // use 64 bit variable
@@ -621,8 +621,8 @@ namespace __IsoAgLib {
             && (mui16_speedOverGroundCmSec        <= (65532))
              )
           {
-#if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
-            getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed, pkg.time() );
+#if defined (USE_TRACTOR_MOVE)
+            getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection );
 #endif
             notifyOnEvent (VEHICLE_DIRECTION_SPEED_PGN);
           }
@@ -655,8 +655,8 @@ namespace __IsoAgLib {
             && (mui16_speedOverGroundCmSec        <= (65532))
              )
           {
-#if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
-            getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed, pkg.time() );
+#if defined (USE_TRACTOR_MOVE)
+            getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection );
 #endif
             notifyOnEvent (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
           }
@@ -1014,8 +1014,8 @@ namespace __IsoAgLib {
           mui16_courseOverGroundRad10Minus4 = ui16_newCOG;
           mui16_speedOverGroundCmSec = ui16_newSOG;
           mi32_lastIsoDirection = rc_stream.getStartTime();
-#if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
-          getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed, mi32_lastIsoDirection );
+#if defined (USE_TRACTOR_MOVE)
+          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection );
 #endif
           notifyOnEvent (NMEA_GPS_DIRECTION_DATA_PGN);
         }

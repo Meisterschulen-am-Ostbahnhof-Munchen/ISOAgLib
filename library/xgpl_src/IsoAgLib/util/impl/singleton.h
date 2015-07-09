@@ -44,6 +44,8 @@
 #define getForeignInstance4Comm(PAR)      PAR.getMultitonInst()
 #define getIsoBusInstance4Comm()          getIsoBusInstance( getMultitonInst() )
 #define getCanInstance4Comm()             getCanInstance( getMultitonInst() )
+#define getTimeDateInstance4Comm()        getTimeDateInstance( getMultitonInst() )
+#define getGnssInstance4Comm()            getGnssInstance( getMultitonInst() )
 #define getTimePosGpsInstance4Comm()      getTimePosGpsInstance( getMultitonInst() )
 #define getTracGeneralInstance4Comm()     getTracGeneralInstance( getMultitonInst() )
 #define getTracFacilitiesInstance4Comm()  getTracFacilitiesInstance( getMultitonInst() )

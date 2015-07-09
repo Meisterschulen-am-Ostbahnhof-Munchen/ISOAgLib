@@ -21,6 +21,7 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
+#include <vector>
 
 #if defined(_MSC_VER)
 #pragma warning( push )
@@ -49,10 +50,24 @@ namespace __IsoAgLib
     virtual void init_specialized() {}
     virtual void close_specialized() {}
 
+    /** register an event handler that gets called for any incoming PGN.
+        Please look into the implementation to see for which PGNs it is
+        actually called.
+        Note: Double registration will be allowed, whereas deregistration
+              will remove all occurances. */
+    void registerMsgEventHandler (IsoAgLib::iMsgEventHandler_c &arc_msgEventHandler)
+    { mvec_msgEventHandlers.push_back (&arc_msgEventHandler); }
+
+    /** deregister all event handlers matching the parameter
+        @param arc_msgEventHandler Reference to an implementation of the
+                                   handler class of type MsgEventHandler_c */
+    void deregisterMsgEventHandler (IsoAgLib::iMsgEventHandler_c &arc_msgEventHandler);
+
     /** constructor */
     BaseCommon_c() :
       mt_task(*this, 100, true),
       mt_handler(*this),
+      mvec_msgEventHandlers(),
       mui16_suppressMask(0),
       mt_identMode(IsoAgLib::IdentModeImplement),
       mb_filterCreated(false),
@@ -153,6 +168,10 @@ namespace __IsoAgLib
     void setTimeOut( uint16_t aui16_timeout) { mui16_timeOut = aui16_timeout; }
     uint16_t getTimeOut( ) { return mui16_timeOut; }
 
+    /** Calls all the registered handlers with the given PGN,
+        so they can get the current values via the normal getters. */
+    void notifyOnEvent (uint32_t aui32_pgn);
+
     RegisterPgn_s getRegisterPgn() {
       return RegisterPgn_s(&mt_handler, 0 ); // XXX TODO
     }
@@ -229,6 +248,8 @@ namespace __IsoAgLib
   protected:
     Task_t mt_task;
     Handler_t mt_handler;
+
+    STL_NAMESPACE::vector<IsoAgLib::iMsgEventHandler_c*> mvec_msgEventHandlers;
 
     /** flags that disable PGNs individually */
     uint16_t mui16_suppressMask;

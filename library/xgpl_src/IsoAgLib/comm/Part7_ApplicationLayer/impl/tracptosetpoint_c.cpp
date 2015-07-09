@@ -17,7 +17,7 @@
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#if defined(USE_BASE) || defined(USE_TRACTOR_PTO)
+#if defined(USE_TRACTOR_PTO)
   #include "tracpto_c.h"
 #endif
 #include "tracptosetpoint_c.h"
@@ -127,7 +127,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) )
       return;
 
-    #if defined(USE_BASE) || defined(USE_TRACTOR_PTO)
+    #if defined(USE_TRACTOR_PTO)
     TracPTO_c& c_tracpto = getTracPtoInstance4Comm();
     //do not send message if no tractor is available to process the command
     if ( ! c_tracpto.getSelectedDataSourceISONameConst().isSpecified() ) return;

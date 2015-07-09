@@ -17,7 +17,7 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdconnection_c.h>
 
-#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+#if defined(USE_TRACTOR_MOVE)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
 #endif
 
@@ -75,7 +75,7 @@ MeasureDistProp_c::updateTrigger( int32_t ai32_val )
 int32_t
 MeasureDistProp_c::nextTriggerTime( int32_t ai32_val )
 {
-#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+#if defined(USE_TRACTOR_MOVE)
   const int32_t multitonInst = m_measureProg.connection().getMultitonInst();
   const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;
   const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance( multitonInst ).selectedSpeed());  // speed can be negative
@@ -109,7 +109,7 @@ MeasureDistProp_c::nextTriggerTime( int32_t ai32_val )
 
 void MeasureDistProp_c::timeEvent()
 {
-#if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
+#if defined(USE_TRACTOR_MOVE)
   const int32_t multitonInst = m_measureProg.connection().getMultitonInst();
   const int32_t distTheor = getTracMoveInstance( multitonInst ).distTheor();
   const bool sendProcMsg = updateTrigger( distTheor );

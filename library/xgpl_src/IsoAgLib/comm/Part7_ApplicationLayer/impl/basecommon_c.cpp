@@ -47,6 +47,7 @@ void
 BaseCommon_c::close( )
 {
   isoaglib_assert (initialized());
+  isoaglib_assert( mvec_msgEventHandlers.empty() );
 
   close_specialized();
   getSchedulerInstance().deregisterTask(mt_task);
@@ -91,6 +92,30 @@ bool BaseCommon_c::checkParseReceived(const IsoName_c& acrc_currentSender) const
                 || (mc_selectedDataSourceISOName.isUnspecified()         ) // last sender has not correctly claimed address member
                )
           );
+}
+
+
+void
+BaseCommon_c::deregisterMsgEventHandler (IsoAgLib::iMsgEventHandler_c &arc_msgEventHandler)
+{
+  for (STL_NAMESPACE::vector<IsoAgLib::iMsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != mvec_msgEventHandlers.end();)
+  {
+    if ((*iter) == &arc_msgEventHandler)
+      iter = mvec_msgEventHandlers.erase (iter);
+    else
+      ++iter;
+  }
+}
+
+
+void
+BaseCommon_c::notifyOnEvent(uint32_t aui32_pgn)
+{
+  STL_NAMESPACE::vector<IsoAgLib::iMsgEventHandler_c*>::iterator iter_end = mvec_msgEventHandlers.end();
+  for (STL_NAMESPACE::vector<IsoAgLib::iMsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != iter_end; ++iter)
+  { // call handler for each entry
+    (*iter)->handleMsgEvent (aui32_pgn);
+  }
 }
 
 

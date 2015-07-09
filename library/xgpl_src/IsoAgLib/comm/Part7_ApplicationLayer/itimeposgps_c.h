@@ -28,16 +28,6 @@
 namespace IsoAgLib {
 
 
-/** Class definition to be used with event processing of GPS messages et al. **/
-class iMsgEventHandler_c : private __IsoAgLib::MsgEventHandler_c
-{
-public:
-  iMsgEventHandler_c() {}
-  virtual ~iMsgEventHandler_c() {}
-  virtual void handleMsgEvent (uint32_t aui32_pgn) = 0;
-};
-
-
 /**
   working on Base Data Msg Type 1, 2 and Calendar;
   stores, updates  and delivers all base data informations;
