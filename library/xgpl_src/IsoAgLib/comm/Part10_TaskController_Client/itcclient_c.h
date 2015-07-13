@@ -74,8 +74,8 @@ namespace IsoAgLib {
       void disconnect( const iTcClientConnection_c & );
       void disconnect( const iPdConnection_c & );
 
-      void proprietaryServerRemovedFromMonitorList( const iIsoItem_c & );
-      void proprietaryServerAddedToMonitorList( const iIsoItem_c & );
+      // Do NOT call with "available=false" when "RemovedFromMonitorList" - this will be done automatically internally already!
+      void proprietaryServer( const iIsoItem_c &, bool available );
 
       void getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill );
 
@@ -204,15 +204,10 @@ namespace IsoAgLib {
     TcClient_c::disconnect( static_cast<const __IsoAgLib::PdConnection_c&>( connection ) );
   }
 
-  inline void iTcClient_c::proprietaryServerRemovedFromMonitorList( const iIsoItem_c &item )
+  inline void iTcClient_c::proprietaryServer( const iIsoItem_c &item, bool available )
   {
-    TcClient_c::proprietaryServerRemovedFromMonitorList( static_cast<const __IsoAgLib::IsoItem_c&>( item ) );
+    TcClient_c::proprietaryServer( static_cast<const __IsoAgLib::IsoItem_c&>( item ), available );
   }
-
-  inline void iTcClient_c::proprietaryServerAddedToMonitorList( const iIsoItem_c &item )
-  {
-    TcClient_c::proprietaryServerAddedToMonitorList( static_cast<const __IsoAgLib::IsoItem_c&>( item ) );
-  }	
 
   inline void iTcClient_c::getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill )
   {

@@ -66,8 +66,7 @@ namespace __IsoAgLib {
       void disconnect( const IdentItem_c& );
       void disconnect( const PdConnection_c& );
 
-      void proprietaryServerRemovedFromMonitorList( const IsoItem_c & );
-      void proprietaryServerAddedToMonitorList( const IsoItem_c & );
+      void proprietaryServer( const IsoItem_c &, bool available );
 
       void getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill );
 

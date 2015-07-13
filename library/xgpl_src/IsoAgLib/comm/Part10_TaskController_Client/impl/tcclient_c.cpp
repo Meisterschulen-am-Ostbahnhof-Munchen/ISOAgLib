@@ -294,20 +294,19 @@ namespace __IsoAgLib {
 
 
   void
-  TcClient_c::proprietaryServerAddedToMonitorList( const IsoItem_c &isoItem )
+  TcClient_c::proprietaryServer( const IsoItem_c &isoItem, bool available )
   {
-    addServer( isoItem, IsoAgLib::ProcData::RemoteTypeProprietary );
+    if( available )
+      addServer( isoItem, IsoAgLib::ProcData::RemoteTypeProprietary );
+    else
+    {
+      isoaglib_assert( m_pdRemoteNodes.find( &isoItem ) != m_pdRemoteNodes.end() );
+      isoaglib_assert( m_pdRemoteNodes.find( &isoItem )->second->isServer() );
+
+      removeRemotePd( isoItem );
+    }
   }
 
-
-  void
-  TcClient_c::proprietaryServerRemovedFromMonitorList( const IsoItem_c &isoItem )
-  {
-    isoaglib_assert( m_pdRemoteNodes.find( &isoItem ) != m_pdRemoteNodes.end() );
-    isoaglib_assert( m_pdRemoteNodes.find( &isoItem )->second->isServer() );
-
-    removeRemotePd( isoItem );
-  }
 
   void
   TcClient_c::addServer( const IsoItem_c& isoItem, IsoAgLib::ProcData::RemoteType_t type )
