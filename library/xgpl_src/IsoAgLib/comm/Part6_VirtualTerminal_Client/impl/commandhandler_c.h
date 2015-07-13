@@ -37,11 +37,13 @@ class CommandHandler_c : public MultiSendEventHandler_c
   enum UploadCommandState_t {
     UploadCommandIdle,
     UploadCommandWithAwaitingResponse,
-    UploadCommandPartialPoolUpdate // for e.g. user/language reasons
+    UploadCommandPartialPoolUpdate, // for e.g. user/language reasons
+    UploadCommandDestructing
   };
 
 public:
   CommandHandler_c( VtClientConnection_c& );
+  virtual ~CommandHandler_c();
 
   void processMsgVtToEcuActivations( const CanPkgExt_c& pkg );
   void processMsgVtToEcuActivations( Stream_c &stream );

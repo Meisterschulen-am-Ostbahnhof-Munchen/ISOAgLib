@@ -34,6 +34,8 @@ namespace __IsoAgLib {
     UploadPoolState_c( const UploadPoolState_c & );
 
   public:
+    virtual ~UploadPoolState_c();
+
     enum UploadPoolType_t {
       UploadPoolTypeCompleteInitially,
       UploadPoolTypeLanguageUpdate,
@@ -51,7 +53,8 @@ namespace __IsoAgLib {
       UploadPoolWaitingForEOOResponse,
       UploadPoolWaitingForStoreVersionResponse,
       UploadPoolEndFailed,
-      UploadPoolEndSuccess
+      UploadPoolEndSuccess,
+      UploadPoolDestructing
     };
 
     // same as iVtClientObjectPool_c::UploadError (ivtclientobjectpool_c.h should not be included here)

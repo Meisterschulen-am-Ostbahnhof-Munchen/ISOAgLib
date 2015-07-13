@@ -81,6 +81,13 @@ UploadPoolState_c::UploadPoolState_c(
 }
 
 
+UploadPoolState_c::~UploadPoolState_c()
+{
+  men_uploadPoolState = UploadPoolDestructing;
+  getMultiSendInstance( m_connection.getMultitonInst() ).abortSend( *this );
+}
+
+
 void
 UploadPoolState_c::processMsgVtToEcu( Stream_c &stream )
 {
@@ -692,7 +699,7 @@ UploadPoolState_c::getLanguageIndex( uint8_t langCode0, uint8_t langCode1 ) cons
 void
 UploadPoolState_c::reactOnStateChange( const SendStream_c& stream )
 {
-  if( !m_connection.isVtActive() )
+  if( !m_connection.isVtActive() || ( men_uploadPoolState == UploadPoolDestructing ) )
     return;
 
   switch( stream.getSendSuccess() )

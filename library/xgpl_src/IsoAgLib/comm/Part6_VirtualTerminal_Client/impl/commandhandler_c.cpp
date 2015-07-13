@@ -86,6 +86,12 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 /* 0xBD */ (1<<0) //NEVER OVERRIDE THIS COMMAND (Lock/Unlock Mask)
 };
 
+CommandHandler_c::~CommandHandler_c()
+{
+  men_uploadCommandState = UploadCommandDestructing;
+  getMultiSendInstance( m_connection.getMultitonInst() ).abortSend( *this );
+}
+
 
 bool
 CommandHandler_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, bool b_enableReplaceOfCmd)
@@ -990,7 +996,7 @@ CommandHandler_c::finishUploadCommand()
 void
 CommandHandler_c::reactOnStateChange( const SendStream_c& sendStream )
 {
-  if( !m_connection.isVtActive() )
+  if( !m_connection.isVtActive() || ( men_uploadCommandState == UploadCommandDestructing ) )
     return;
 
   switch( sendStream.getSendSuccess() )
