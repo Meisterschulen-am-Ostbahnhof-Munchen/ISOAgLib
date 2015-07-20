@@ -74,6 +74,7 @@ namespace __IsoAgLib {
     , m_identItem( NULL )
     , m_localization()
   {
+    isoaglib_assert( version != NULL );
     isoaglib_assert( CNAMESPACE::strlen( version ) <= 32 );
     m_serialNumber[ 0 ] = 0x00;
     STL_NAMESPACE::memset( ( void* )&m_localization, 0, sizeof( m_localization ) );
