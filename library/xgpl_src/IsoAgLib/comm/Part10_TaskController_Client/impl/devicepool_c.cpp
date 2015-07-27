@@ -431,12 +431,14 @@ namespace __IsoAgLib {
     m_procDatas.clear();
   }
 
-
+#if 0
+// currently not supported
   void DevicePool_c::changeDesignator( DeviceObject_c& obj, const char* str ) {
     obj.setDesignator( str );
     const IdentItem_c &identItem = getDvcObject()->getIdentItem();
     getTcClientInstance( identItem.getMultitonInst() ).processChangeDesignator( identItem, obj.getObjectId(), str );
   }
+#endif
 
 
   void DevicePool_c::setLocalSettings( const localSettings_s& l ) {

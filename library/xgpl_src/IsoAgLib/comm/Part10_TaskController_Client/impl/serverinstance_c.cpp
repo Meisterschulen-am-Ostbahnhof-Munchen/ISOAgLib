@@ -19,7 +19,7 @@
 namespace __IsoAgLib {
 
 
-  ServerInstance_c::ServerInstance_c( const IsoItem_c& isoItem, IsoAgLib::ProcData::RemoteType_t type )
+  ServerInstance_c::ServerInstance_c( const IsoItem_c& isoItem, IsoAgLib::ProcData::ServerType_t type )
     : PdRemoteNode_c( isoItem, true )
     , m_tcAliveCached( false )
     , m_lastActiveTaskTC( false )

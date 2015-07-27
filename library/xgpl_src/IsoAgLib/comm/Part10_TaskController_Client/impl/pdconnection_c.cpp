@@ -19,7 +19,6 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #endif
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdremotenode_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.h>
@@ -31,17 +30,39 @@
 
 namespace __IsoAgLib {
 
+  PdConnection_c::PdConnection_c()
+    : m_identItem( NULL )
+    , m_pdRemoteNode( NULL )
+    , m_pool( NULL )
+    , m_connectedPds()
+  {
+  }
 
+  
   PdConnection_c::PdConnection_c(
     const IdentItem_c& identItem,
     PdRemoteNode_c* pdRemoteNode,
     PdPool_c &pool )
-    : m_identItem( identItem )
-    , m_pdRemoteNode( pdRemoteNode )
-    , m_pool( pool )
+    : m_identItem( NULL )
+    , m_pdRemoteNode( NULL )
+    , m_pool( NULL )
     , m_connectedPds()
   {
-    createMeasureProgs();
+    init( identItem, pdRemoteNode );
+    start( pool );
+  }
+
+
+  PdConnection_c::~PdConnection_c()
+  {
+    stop();
+    close();
+  }
+
+  void PdConnection_c::init( const IdentItem_c &identItem, PdRemoteNode_c *remoteNode )
+  {
+    m_identItem = &identItem;
+    m_pdRemoteNode = remoteNode;
 
     if( m_pdRemoteNode )
     {
@@ -50,34 +71,55 @@ namespace __IsoAgLib {
 #ifdef HAL_USE_SPECIFIC_FILTERS
       getIsoFilterManagerInstance4Comm().insertIsoFilter(
         IsoFilter_s(
-          *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ( PROCESS_DATA_PGN << 8 ) ),
+          *this, IsoAgLib::iMaskFilter_c( 0x3FFFFFFUL, ( PROCESS_DATA_PGN << 8 ) ),
           &getIdentItem().isoName(), &m_pdRemoteNode->getIsoItem().isoName(), 8 ) );
 #endif
     }
   }
 
-
-  PdConnection_c::~PdConnection_c()
+  void PdConnection_c::start( PdPool_c &pool )
   {
+    m_pool = &pool;
+
+    createMeasureProgs();
+  }
+
+
+  void PdConnection_c::stop()
+  {
+    if( !m_pool )
+      return;
+
+    destroyMeasureProgs();
+
+    m_pool = NULL;
+  }
+
+
+  void PdConnection_c::close()
+  {
+    if( !m_identItem )
+      return;
+
     if( m_pdRemoteNode )
     {
 #ifdef HAL_USE_SPECIFIC_FILTERS
       getIsoFilterManagerInstance4Comm().removeIsoFilter(
         IsoFilter_s(
-          *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ( PROCESS_DATA_PGN << 8 ) ),
+          *this, IsoAgLib::iMaskFilter_c( 0x3FFFFFFUL, ( PROCESS_DATA_PGN << 8 ) ),
           &getIdentItem().isoName(), &m_pdRemoteNode->getIsoItem().isoName(), 8 ) );
 #endif
 
       m_pdRemoteNode->removeConnection( *this );
     }
 
-    destroyMeasureProgs();
+    m_identItem = NULL;
+    m_pdRemoteNode = NULL;
   }
-
 
   void PdConnection_c::createMeasureProgs()
   {
-    for( PdPool_c::PdBases_t::const_iterator i = m_pool.getPdList().begin(); i != m_pool.getPdList().end(); ++i )
+    for( PdPool_c::PdBases_t::const_iterator i = m_pool->getPdList().begin(); i != m_pool->getPdList().end(); ++i )
     {
       PdBase_c* pd = ( *i );
       const uint32_t key = getMapKey( pd->DDI(), pd->element());
@@ -107,16 +149,6 @@ namespace __IsoAgLib {
     ProcessPkg_c pkg( data, getMultitonInst() );
     // only PROCESS_DATA_PGN with SA/DA from IsoFilterManager, no need to check anything!
     processProcMsg( pkg );
-
-    // @todo to be removed later on, this was just the quick-hack!! Also remove from TcClient_c
-    // also remove #include above then!
-    getTcClientInstance4Comm().receivePdMessage(
-            *pkg.getMonitorItemForSA(),
-            pkg.getMonitorItemForDA(),
-            pkg.men_command,
-            pkg.mui16_element,
-            pkg.mui16_DDI,      
-            pkg.mi32_pdValue);
   }
 #endif
 
@@ -209,13 +241,17 @@ namespace __IsoAgLib {
   {
     // Note: element without DPD will not be processed properly.
     // Response will be NackInvalidElementNumber instead of NackDDINoSupportedByElement
-    NackResponse_t reason = NackInvalidElementNumber;
-    for( PdPool_c::PdBases_t::const_iterator i = m_pool.getPdList().begin(); i != m_pool.getPdList().end(); ++i )
+    NackResponse_t reason = NackProcessDataCommandNotSupported;
+    if( m_pool )
     {
-      if ( ( *i )->element() == element )
+      reason = NackInvalidElementNumber;
+      for( PdPool_c::PdBases_t::const_iterator i = m_pool->getPdList().begin(); i != m_pool->getPdList().end(); ++i )
       {
-        reason = NackDDINotSupportedByElement;
-        break;
+        if ( ( *i )->element() == element )
+        {
+          reason = NackDDINotSupportedByElement;
+          break;
+        }
       }
     }
 
@@ -284,7 +320,7 @@ namespace __IsoAgLib {
     ProcessPkg_c pkg( cmd, element, ddi, pdValue );
 
     pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( getRemoteItem() ) );
-    pkg.setMonitorItemForSA( m_identItem.getIsoItem() );
+    pkg.setMonitorItemForSA( m_identItem->getIsoItem() );
 
     getIsoBusInstance4Comm() << pkg;
   }

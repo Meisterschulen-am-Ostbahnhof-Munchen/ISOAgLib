@@ -18,7 +18,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 #include <IsoAgLib/util/iassert.h>
 
 #include <algorithm>
@@ -38,14 +38,13 @@ namespace __IsoAgLib {
   TcClient_c::TcClient_c()
     : m_handler( *this )
     , m_customer( *this )
-    , m_stateHandler( NULL )
-    , m_pdMessageHandler( NULL )
+    , m_clientInfo()
+    , m_peerConnections()
     , m_pdRemoteNodes()
-    , m_connections()
   {
   }
 
-        
+
   void
   TcClient_c::init() {
     isoaglib_assert ( !initialized() );
@@ -64,7 +63,8 @@ namespace __IsoAgLib {
   void
   TcClient_c::close() {
     isoaglib_assert( initialized() );
-    isoaglib_assert( m_connections.empty() );
+    isoaglib_assert( m_clientInfo.empty() );
+    isoaglib_assert( m_peerConnections.empty() );
 
     for (ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter)
       delete iter->second;
@@ -82,69 +82,94 @@ namespace __IsoAgLib {
   }
 
 
-  void
-  TcClient_c::setServerStateHandler( ServerStateHandler_c& hdl ) {
-    isoaglib_assert ( m_stateHandler == NULL );
-
-    m_stateHandler = &hdl;
-  }
-
-
-  void
-  TcClient_c::clearServerStateHandler()
+  bool
+  TcClient_c::registerClient( IdentItem_c& ident, const IsoAgLib::ProcData::ClientCapabilities_s &caps, TcClientConnection_c::StateHandler_c &hdl )
   {
-    isoaglib_assert( m_stateHandler != NULL );
+    if( caps.versionNr != 3 )
+      return false;
 
-    m_stateHandler = NULL;
+    if( m_clientInfo.find( &ident ) != m_clientInfo.end() )
+      return false;
+
+    if( caps.hasTcBas )
+      ident.getDiagnosticFunctionalities().addFunctionalitiesTaskControllerBasic(
+        true, caps.versionNr, TaskControllerBasicOptionsBitMask_t() );
+
+    if( caps.hasTcGeo )
+      ident.getDiagnosticFunctionalities().addFunctionalitiesTaskControllerGeo(
+        true, caps.versionNr, caps.numBin, TaskControllerGeoOptionsBitMask_t() );
+
+    if( caps.hasTcSc )
+      ident.getDiagnosticFunctionalities().addFunctionalitiesTaskControllerSectionControl(
+        true, caps.versionNr, caps.numBoom, caps.numSection);
+
+    ClientInfo_s newClientInfo;
+    newClientInfo.capabilities = caps;
+    newClientInfo.stateHandler = &hdl;
+
+    m_clientInfo.insert( IdentToClientInfoMap_t::value_type( &ident, newClientInfo ) );
+    return true;
   }
 
 
-  void
-  TcClient_c::setPdMessageHandler( PdMessageHandler_c& hdl ) {
-    isoaglib_assert ( m_pdMessageHandler == NULL );
-
-    m_pdMessageHandler = &hdl;
-  }
-
-
-  void
-  TcClient_c::clearPdMessageHandler()
+  bool
+  TcClient_c::deregisterClient( IdentItem_c& ident )
   {
-    isoaglib_assert( m_pdMessageHandler != NULL );
+    IdentToClientInfoMap_t::iterator iter = m_clientInfo.find( &ident );
+    if( iter == m_clientInfo.end() )
+      return false;
 
-    m_pdMessageHandler = NULL;
+    if( iter->second.capabilities.hasTcBas )
+      iter->first->getDiagnosticFunctionalities().remFunctionalities( TaskControllerBasic );
+
+    if( iter->second.capabilities.hasTcGeo )
+      iter->first->getDiagnosticFunctionalities().remFunctionalities( TaskControllerGeo );
+
+    if( iter->second.capabilities.hasTcSc )
+      iter->first->getDiagnosticFunctionalities().remFunctionalities( TaskControllerSectionControl );
+
+    for( int i=0; i<IsoAgLib::ProcData::ServerTypes; ++i )
+      iter->second.m_serverConnections[ i ].disconnect();
+
+    m_clientInfo.erase( iter );
+    return true;
   }
 
 
   TcClientConnection_c*
-  TcClient_c::connect( const IdentItem_c& identItem, TcClientConnection_c::StateHandler_c& sh, const IsoItem_c& tcDlItem, DevicePool_c& pool )
+  TcClient_c::doConnect( const IdentItem_c& ident, const ServerInstance_c& server, DevicePool_c& pool )
   {
-    for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_connections.begin();
-         connection != m_connections.end(); ++connection)
-    {
-      if ((&(*connection)->getIdentItem() == &identItem) && ((*connection)->getRemoteItem() == &tcDlItem))
-      {
-        isoaglib_assert( !"Double connect between one IdentItem_c and server detected!" );
-        return NULL;
-      }
-    }
-  
-    ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.find( &tcDlItem );
-    isoaglib_assert( iter != m_pdRemoteNodes.end() );
-    isoaglib_assert( iter->second->isServer() );
+    IdentToClientInfoMap_t::iterator iter = m_clientInfo.find( const_cast<IdentItem_c *>(&ident) );
+    if( iter == m_clientInfo.end() )
+      return NULL;
 
-    TcClientConnection_c* connection = new TcClientConnection_c( identItem, sh, static_cast<ServerInstance_c&>(*(iter->second)), pool );
-    m_connections.push_back( connection );
+    return( iter->second.m_serverConnections[ server.getEcuType() ].fullConnect( server, pool )
+        ? &iter->second.m_serverConnections[ server.getEcuType() ]
+        : NULL );
+  }
 
-    return connection;
+
+  void
+  TcClient_c::dontConnect( const IdentItem_c& ident, const ServerInstance_c& server )
+  {
+    IdentToClientInfoMap_t::iterator clientIter = m_clientInfo.find( const_cast<IdentItem_c *>(&ident) );
+    if( clientIter == m_clientInfo.end() )
+      return;
+
+    TcClientConnection_c &connection = clientIter->second.m_serverConnections[ server.getEcuType() ];
+
+    connection.disconnect();
+    ServerInstance_c *nextServer = findNextServerOfSameType( server );
+    if( nextServer )
+      connection.preConnect( *(clientIter->first), *nextServer, *clientIter->second.stateHandler, clientIter->second.capabilities );
   }
 
 
   PdConnection_c*
-  TcClient_c::connect( const IdentItem_c& identItem, const IsoItem_c& pdItem, PdPool_c& pool )
+  TcClient_c::connectPeer( const IdentItem_c& identItem, const IsoItem_c& pdItem, PdPool_c& pool )
   {
-    for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_connections.begin();
-         connection != m_connections.end(); ++connection)
+    for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_peerConnections.begin();
+         connection != m_peerConnections.end(); ++connection)
     {
       if ((&(*connection)->getIdentItem() == &identItem) && ((*connection)->getRemoteItem() == &pdItem))
       {
@@ -153,31 +178,27 @@ namespace __IsoAgLib {
       }
     }
   
-    PdRemoteNode_c *remoteNode = NULL;
-    
-    ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.find( &pdItem );
-    if( iter == m_pdRemoteNodes.end() )
+    PdRemoteNode_c *remoteNode = findRemoteNode( pdItem );
+    if( remoteNode == NULL )
     {
       remoteNode = new PdRemoteNode_c( pdItem, false );
-      m_pdRemoteNodes[ &pdItem ] = remoteNode;
+      m_pdRemoteNodes.push_back( std::pair<const IsoItem_c*, PdRemoteNode_c*>( &pdItem, remoteNode ) );
     }
-    else
-      remoteNode = iter->second;
 
     isoaglib_assert( !remoteNode->isServer() );
 
     PdConnection_c* connection = new PdConnection_c( identItem, remoteNode, pool );
-    m_connections.push_back( connection );
+    m_peerConnections.push_back( connection );
 
     return connection;
   }
 
 
   PdConnection_c*
-  TcClient_c::connectBroadcast( const IdentItem_c& identItem, PdPool_c& pool )
+  TcClient_c::connectPeerBroadcast( const IdentItem_c& identItem, PdPool_c& pool )
   {
-    for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_connections.begin();
-         connection != m_connections.end(); ++connection)
+    for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_peerConnections.begin();
+         connection != m_peerConnections.end(); ++connection)
     {
       if ((&(*connection)->getIdentItem() == &identItem) && ((*connection)->getRemoteItem() == NULL))
       {
@@ -187,22 +208,22 @@ namespace __IsoAgLib {
     }
 
     PdConnection_c* connection = new PdConnection_c( identItem, NULL, pool );
-    m_connections.push_back( connection );
+    m_peerConnections.push_back( connection );
 
     return connection;
   }
 
 
   void
-  TcClient_c::disconnect( const IdentItem_c& identItem )
+  TcClient_c::disconnectPeer( const IdentItem_c& identItem )
   {
-    for (STL_NAMESPACE::list<PdConnection_c*>::iterator connection = m_connections.begin();
-         connection != m_connections.end(); /*++connection*/)
+    for (STL_NAMESPACE::list<PdConnection_c*>::iterator connection = m_peerConnections.begin();
+         connection != m_peerConnections.end(); /*++connection*/)
     {
       if (&(*connection)->getIdentItem() == &identItem)
       {
         delete *connection;
-        connection = m_connections.erase(connection);
+        connection = m_peerConnections.erase(connection);
       }
       else
         ++connection;
@@ -210,26 +231,12 @@ namespace __IsoAgLib {
   }
 
   void
-  TcClient_c::disconnect( const PdConnection_c& connection)
+  TcClient_c::disconnectPeer( const PdConnection_c& connection)
   {
-    STL_NAMESPACE::list<PdConnection_c*>::iterator iter = STL_NAMESPACE::find(m_connections.begin(),m_connections.end(), &connection);
-    isoaglib_assert(iter != m_connections.end());
+    STL_NAMESPACE::list<PdConnection_c*>::iterator iter = STL_NAMESPACE::find(m_peerConnections.begin(),m_peerConnections.end(), &connection);
+    isoaglib_assert(iter != m_peerConnections.end());
     delete (*iter);
-    m_connections.erase(iter);
-  }
-
-  void
-  TcClient_c::getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill )
-  {
-    for (ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter)
-    {
-      if( iter->second->isServer() )
-      {
-        ServerInstance_c *server = static_cast<ServerInstance_c*>(iter->second);
-        if( server->isAlive() )
-          list_to_fill.push_back( STL_NAMESPACE::make_pair(&iter->first->toConstIisoItem_c(), server->getEcuType()) );
-      }
-    }
+    m_peerConnections.erase(iter);
   }
 
 
@@ -241,21 +248,9 @@ namespace __IsoAgLib {
     if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
       return;
 
-    // @todo to be removed later on!
-    if (m_pdMessageHandler)
-        m_pdMessageHandler->_eventPdMessageReceived(
-            *pkg.getMonitorItemForSA(),
-            pkg.getMonitorItemForDA(),
-            pkg.men_command,
-            pkg.mui16_element,
-            pkg.mui16_DDI,
-            pkg.mi32_pdValue);
-
-    ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.find( pkg.getMonitorItemForSA() );
-    if( iter == m_pdRemoteNodes.end() )
-      return;
-
-    iter->second->processMsg( pkg );
+    PdRemoteNode_c *node = findRemoteNode( *pkg.getMonitorItemForSA() );
+    if( node )
+      node->processMsg( pkg );
   }
 
 
@@ -271,11 +266,11 @@ namespace __IsoAgLib {
       switch( isoItem.isoName().getEcuType() )
       {
       case IsoName_c::ecuTypeTaskControl:
-        addServer( isoItem, IsoAgLib::ProcData::RemoteTypeTaskController );
+        addServer( isoItem, IsoAgLib::ProcData::ServerTypeTaskController );
         break;
 
       case IsoName_c::ecuTypeDataLogger:
-        addServer( isoItem, IsoAgLib::ProcData::RemoteTypeDataLogger );
+        addServer( isoItem, IsoAgLib::ProcData::ServerTypeDataLogger );
         break;
 
       default:
@@ -292,16 +287,28 @@ namespace __IsoAgLib {
     }
   }
 
+  PdRemoteNode_c *
+  TcClient_c::findRemoteNode( const IsoItem_c &item ) const
+  {
+    for( ItemToRemoteNodeMap_t::const_iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter )
+    {
+      if( iter->first == &item )
+        return iter->second;
+    }
+
+    return NULL;
+  }
+
 
   void
   TcClient_c::proprietaryServer( const IsoItem_c &isoItem, bool available )
   {
     if( available )
-      addServer( isoItem, IsoAgLib::ProcData::RemoteTypeProprietary );
+      addServer( isoItem, IsoAgLib::ProcData::ServerTypeProprietary );
     else
     {
-      isoaglib_assert( m_pdRemoteNodes.find( &isoItem ) != m_pdRemoteNodes.end() );
-      isoaglib_assert( m_pdRemoteNodes.find( &isoItem )->second->isServer() );
+      isoaglib_assert( findRemoteNode( isoItem ) );
+      isoaglib_assert( findRemoteNode( isoItem )->isServer() );
 
       removeRemotePd( isoItem );
     }
@@ -309,21 +316,23 @@ namespace __IsoAgLib {
 
 
   void
-  TcClient_c::addServer( const IsoItem_c& isoItem, IsoAgLib::ProcData::RemoteType_t type )
+  TcClient_c::addServer( const IsoItem_c& isoItem, IsoAgLib::ProcData::ServerType_t type )
   {
-    isoaglib_assert( m_pdRemoteNodes.find( &isoItem ) == m_pdRemoteNodes.end() );
+    isoaglib_assert( !findRemoteNode( isoItem )  );
     isoaglib_assert( !isoItem.itemState( IState_c::Local ) );
 
-    m_pdRemoteNodes[ &isoItem ] = new ServerInstance_c( isoItem, type );
+    m_pdRemoteNodes.push_back( std::pair<const IsoItem_c*, PdRemoteNode_c*>( &isoItem, new ServerInstance_c( isoItem, type ) ) );
   }
 
 
   void
   TcClient_c::removeRemotePd( const IsoItem_c& isoItem )
   {
-    ItemToRemoteNodeMap_t::iterator i = m_pdRemoteNodes.find( &isoItem );
-    if( i != m_pdRemoteNodes.end() )
+    for( ItemToRemoteNodeMap_t::const_iterator i = m_pdRemoteNodes.begin(); i != m_pdRemoteNodes.end(); ++i )
     {
+      if( i->first != &isoItem )
+        continue;
+
       if( i->second->isServer() )
       {
         ServerInstance_c* server = static_cast<ServerInstance_c *>( i->second );
@@ -331,19 +340,21 @@ namespace __IsoAgLib {
           notifyServerStatusChange( *server, false );
       }
       else
-        notifyPdNodeDestruction( *(i->second) );
+        notifyPeerDestruction( *(i->second) );
 
       delete i->second;
       m_pdRemoteNodes.erase( i );
+      break;
     }
   }
 
-
+#if 0
+// currently not supported
   void
   TcClient_c::processChangeDesignator( const IdentItem_c& ident, uint16_t objID, const char* newDesig )
   {
-    for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
-         it != m_connections.end(); ++it )
+    for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_peerConnections.begin();
+         it != m_peerConnections.end(); ++it )
     {
       if( ( &ident == &( ( *it )->getIdentItem() ) ) 
         && ( *it )->getRemoteNode()
@@ -353,76 +364,73 @@ namespace __IsoAgLib {
       }
     }
   }
-
+#endif
 
   void
-  TcClient_c::notifyServerStatusChange(ServerInstance_c& server, bool new_status)
+  TcClient_c::notifyServerStatusChange( ServerInstance_c& server, bool new_status )
   {
-    if (!new_status)
+    for( IdentToClientInfoMap_t::iterator clientIter = m_clientInfo.begin(); clientIter != m_clientInfo.end(); ++clientIter )
     {
-      STL_NAMESPACE::list<TcClientConnection_c*> delete_connections;
-      // first identify the PdConnection_c that are concerned
-      for (STL_NAMESPACE::list<PdConnection_c*>::iterator connection = m_connections.begin();
-          connection != m_connections.end(); /*++connection*/ )
+      TcClientConnection_c &connection = clientIter->second.m_serverConnections[ server.getEcuType() ];
+       
+      if( new_status )
       {
-        if ((*connection)->getRemoteItem() == &server.getIsoItem())
-        {
-          delete_connections.push_back( static_cast<TcClientConnection_c*>(*connection) );
-          connection = m_connections.erase(connection);
-        }
-        else
-          ++connection;
+        if( !connection.connected() )
+          connection.preConnect( *(clientIter->first), server, *clientIter->second.stateHandler, clientIter->second.capabilities );
       }
-      // then report disconnected TcClientConnection_c to application
-      // since we do not loop m_connections, the application can safely connect to an other Server
-      for (STL_NAMESPACE::list<TcClientConnection_c*>::iterator connection = delete_connections.begin();
-          connection != delete_connections.end(); ++connection)
+      else
       {
-        if (m_stateHandler)
-          m_stateHandler->_eventDisconnectedOnServerLoss(**connection);
-        delete *connection;
+        if( connection.connected() == &server )
+        {
+          connection.disconnect();
+          ServerInstance_c *nextServer = findNextServerOfSameType( server );
+          if( nextServer )
+            connection.preConnect( *(clientIter->first), *nextServer, *clientIter->second.stateHandler, clientIter->second.capabilities );
+        }
+      }
+    }
+  }
+
+
+  ServerInstance_c *
+  TcClient_c::findNextServerOfSameType( const ServerInstance_c &thisServer ) const
+  {
+    bool takeNextMatch=false;
+
+    for( ItemToRemoteNodeMap_t::const_iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter )
+    {
+      if( iter->second->isServer() )
+      {
+        ServerInstance_c &nextServer = static_cast<ServerInstance_c&>(*(iter->second));
+        if( !takeNextMatch && ( &nextServer == &thisServer ) )
+        {
+          takeNextMatch = true;
+          continue;
+        }
+
+        if( takeNextMatch && ( nextServer.getEcuType() == thisServer.getEcuType() ) && nextServer.isAlive() )
+          return &nextServer;
       }
     }
 
-    if (m_stateHandler)
-      m_stateHandler->_eventServerAvailable( server.getIsoItem(), server.getEcuType(), new_status );
+    return NULL;
   }
 
 
   void
-  TcClient_c::notifyPdNodeDestruction( PdRemoteNode_c& pdRemoteNode )
+  TcClient_c::notifyPeerDestruction( PdRemoteNode_c& pdRemoteNode )
   {
-    for (STL_NAMESPACE::list<PdConnection_c*>::iterator connection = m_connections.begin();
-        connection != m_connections.end(); )
+    for (STL_NAMESPACE::list<PdConnection_c*>::iterator connection = m_peerConnections.begin();
+        connection != m_peerConnections.end(); )
     {
       if ((*connection)->getRemoteNode() == &pdRemoteNode)
       {
         delete *connection;
-        connection = m_connections.erase( connection );
+        connection = m_peerConnections.erase( connection );
       }
       else
         ++connection;
     }
   }
-
-  void TcClient_c::sendPdMessage( const IsoItem_c& sa_item, const IsoItem_c* da_item, IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value )
-  {
-    isoaglib_assert(command < IsoAgLib::ProcData::CommandUndefined);
-
-    ProcessPkg_c pkg( command, element, ddi, value );
-
-    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( da_item ));
-    pkg.setMonitorItemForSA( const_cast<IsoItem_c*>( &sa_item ));
-
-    getIsoBusInstance4Comm() << pkg;
-  }
-
-#ifdef HAL_USE_SPECIFIC_FILTERS
-  void TcClient_c::receivePdMessage(const IsoItem_c& sa_item, const IsoItem_c* da_item, IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value)
-  {
-    if (m_pdMessageHandler)
-      m_pdMessageHandler->_eventPdMessageReceived(sa_item, da_item, command, element, ddi, value);
-  }
-#endif
 
 } // __IsoAgLib

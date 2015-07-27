@@ -18,13 +18,17 @@
 
 #include <list>
 
+namespace IsoAgLib {
+  class iTcClient_c;
+}
+
 
 namespace __IsoAgLib {
 
   class ServerInstance_c : public PdRemoteNode_c
   {
     public:
-      ServerInstance_c( const IsoItem_c& it, IsoAgLib::ProcData::RemoteType_t type );
+      ServerInstance_c( const IsoItem_c& it, IsoAgLib::ProcData::ServerType_t type );
       ~ServerInstance_c();
 
       virtual void processMsg( const ProcessPkg_c& pkg );
@@ -36,7 +40,7 @@ namespace __IsoAgLib {
       uint8_t   getLastServerState()  const { return m_lastTcState; }
       bool      getLastActiveTaskTC() const { return m_lastActiveTaskTC; }
 
-      IsoAgLib::ProcData::RemoteType_t getEcuType() const { return m_type; }
+      IsoAgLib::ProcData::ServerType_t getEcuType() const { return m_type; }
 
     private:
       virtual void timeEvent();
@@ -47,11 +51,13 @@ namespace __IsoAgLib {
       bool m_lastActiveTaskTC;
       uint8_t m_lastTcState;
       ecutime_t m_lastTcStateReceivedTime;
-      IsoAgLib::ProcData::RemoteType_t m_type;
+      IsoAgLib::ProcData::ServerType_t m_type;
 
     private:
       ServerInstance_c(ServerInstance_c const &);
       ServerInstance_c &operator=(ServerInstance_c const &);
+
+      friend class IsoAgLib::iTcClient_c;
   };
 
 }

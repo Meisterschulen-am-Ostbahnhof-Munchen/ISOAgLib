@@ -1,5 +1,6 @@
 /*
-  tcclientconnection_c.cpp: class for managing a TC-client/server connection
+  tcclientconnection_c.cpp: class for managing a client/server connection
+                            to TC/DL/Proprietary Servers
 
   (C) Copyright 2009 - 2015 by OSB AG and developing partners
 
@@ -33,86 +34,152 @@
 
 namespace __IsoAgLib {
 
-  TcClientConnection_c::TcClientConnection_c( const IdentItem_c& identItem, StateHandler_c& sh, ServerInstance_c& server, DevicePool_c& pool )
-    : PdConnection_c( identItem, &server, pool )
+  TcClientConnection_c::TcClientConnection_c() 
+    : PdConnection_c()
     , m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )
-    , m_timeWsAnnounceKey( -1 )
-    , m_stateHandler( &sh )
     , m_currentSendPosition( 0 )
     , m_storedSendPosition( 0 )
     , m_devicePoolToUpload()
-    , m_uploadPoolState( DDOPRegistered )
-    , m_uploadState( StateIdle )
-    , m_uploadStep( UploadNone )
-    , m_uploadTimestamp( 0 )
-    , m_uploadTimeout( 0 )
-    //, m_commandParameter()
-    , m_initDone( false )
-    , m_tcAliveNew( false )
-    , m_timeStartWaitAfterAddrClaim( -1 )
-    , m_timeWsTaskMsgSent( -1 )
-    , m_structureLabel()
-    , m_localizationLabel()
-    , m_sendSuccess( SendStream_c::SendSuccess )
-    , m_devPoolState( PoolStateInit )
-    , m_devPoolAction( PoolActionIdle )
+    , m_timeWsAnnounceKey( -1 )
+    , m_timeWaitWithAnyCommunicationUntil( -1 )
+    , m_timeLastWsTaskMsgSent( -1 )
+    , m_stateHandler( NULL )
+    , m_devPoolState( PoolStateDisconnected )
+    , m_cmdState( CommandStateNone )
+    , m_cmdSent( 0x00 )
+    , m_cmdSentTimestamp( 0 )
+    , m_cmdTimeout( 0 )
+    , m_capabilities()
     , m_schedulerTaskProxy( *this, 100, false )
   {
-    getDevicePool().init( getIdentItem() );
-
-    getSchedulerInstance().registerTask( m_schedulerTaskProxy, 0 );
   }
 
+
+  TcClientConnection_c::TcClientConnection_c( const TcClientConnection_c &rhs )
+    : PdConnection_c( rhs )
+    , m_multiSendEventHandler( *this )
+    , m_multiSendStreamer( *this )
+    , m_currentSendPosition( rhs.m_currentSendPosition )
+    , m_storedSendPosition( rhs.m_storedSendPosition )
+    , m_devicePoolToUpload( rhs.m_devicePoolToUpload )
+    , m_timeWsAnnounceKey( rhs.m_timeWsAnnounceKey )
+    , m_timeWaitWithAnyCommunicationUntil( rhs.m_timeWaitWithAnyCommunicationUntil )
+    , m_timeLastWsTaskMsgSent( rhs.m_timeLastWsTaskMsgSent )
+    , m_stateHandler( rhs.m_stateHandler )
+    , m_devPoolState( rhs.m_devPoolState )
+    , m_cmdState( rhs.m_cmdState )
+    , m_cmdSent( rhs.m_cmdSent )
+    , m_cmdSentTimestamp( rhs.m_cmdSentTimestamp )
+    , m_cmdTimeout( rhs.m_cmdTimeout )
+    , m_capabilities( rhs.m_capabilities )
+    , m_schedulerTaskProxy( *this, 100, false )
+  {
+  }
 
   TcClientConnection_c::~TcClientConnection_c()
   {
-    getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
+  }
 
-    // TODO: send deactivate msg
+
+  void TcClientConnection_c::preConnect(
+    const IdentItem_c& identItem,
+    ServerInstance_c& server,
+    StateHandler_c& sh,
+    const IsoAgLib::ProcData::ClientCapabilities_s& capabilities )
+  {
+    isoaglib_assert( getDevPoolState() == PoolStateDisconnected );
+
+    PdConnection_c::init( identItem, &server );
+
+    m_stateHandler = &sh;
+    m_capabilities = capabilities;
+
+    getSchedulerInstance().registerTask( m_schedulerTaskProxy, 0 );
+
+    m_cmdState = CommandStateNone;
+    m_timeWsAnnounceKey = -1;
+    m_timeWaitWithAnyCommunicationUntil = -1;
+    m_timeLastWsTaskMsgSent = -1;
+
+    setDevPoolState( PoolStatePreconnecting );
+  }
+
+
+  bool TcClientConnection_c::fullConnect( const ServerInstance_c& server, DevicePool_c& pool )
+  {
+    if( pool.isEmpty() || ( getDevicePool().getDvcObject() == NULL ) )
+      return false;
+
+    if( getDevPoolState() != PoolStatePreconnecting )
+      return false;
+
+    if( connected() != &server )
+      return false;
+
+    PdConnection_c::start( pool );
+    
+    getDevicePool().init( getIdentItem() );
+
+    doCommand( procCmdPar_RequestStructureLabelMsg );
+
+    setDevPoolState( PoolStateConnecting );
+
+    return true;
+  }
+
+
+  void TcClientConnection_c::disconnect()
+  {
+    isoaglib_assert( connected() );
+
+    getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
 
     stopRunningMeasurement();
 
-    if (getServer().getLastActiveTaskTC())
+    if (connected()->getLastActiveTaskTC())
       eventTaskStopped();
 
     getDevicePool().close();
+
+    PdConnection_c::stop();
+    PdConnection_c::close();
+
+    setDevPoolState( PoolStateDisconnected );
   }
 
-  
+
   void
-  TcClientConnection_c::timeEvent( void ) {
-    if ( !m_identItem.isClaimedAddress() )
+  TcClientConnection_c::timeEvent( void )
+  {
+    if( getDevPoolState() == PoolStateDisconnected )
       return;
 
-    // Wait until we are properly initialized before doing anything else
-    if ( ! m_initDone ) {
-      // Address claim is complete. Set time at which our address was claimed if it is
-      // still in an initialized state    
-      
-      if ( m_timeStartWaitAfterAddrClaim == -1 ) {
-        m_timeStartWaitAfterAddrClaim = HAL::getTime();
-        return;
-      }
+    isoaglib_assert( ( m_identItem == NULL ) && connected() );
 
-      // init is finished when more then 6sec after addr claim and at least one TC status message was received
-      if ( ( HAL::getTime() - m_timeStartWaitAfterAddrClaim >= 6000 ) && ( getServer().getLastStatusTime() != -1 ) )
-      {
-        m_timeWsAnnounceKey = m_identItem.getIsoItem()->startWsAnnounce();
-        m_initDone = true;
-      }
+    if( !m_identItem->isClaimedAddress() )
       return;
-    }
 
-    // Check if the working-set is completely announced
-    if ( !m_identItem.getIsoItem()->isWsAnnounced ( m_timeWsAnnounceKey ) )
+    if( m_timeWaitWithAnyCommunicationUntil < 0 )
+      m_timeWaitWithAnyCommunicationUntil = m_identItem->getIsoItem()->lastTime() + 6000;
+
+    if( HAL::getTime() < m_timeWaitWithAnyCommunicationUntil )
+      return;
+
+    if( connected()->getLastStatusTime() < 0 )
+      return;
+
+    if( m_timeWsAnnounceKey < 0 )
+      m_timeWsAnnounceKey = m_identItem->getIsoItem()->startWsAnnounce();
+
+    if( !m_identItem->getIsoItem()->isWsAnnounced( m_timeWsAnnounceKey ) )
       return;
 
     // Send the WS task message to maintain connection with the TC
     const ecutime_t now = HAL::getTime();
-    if ( now - m_timeWsTaskMsgSent >= 2000 ) {
-      m_timeWsTaskMsgSent = now;
-      sendMsg( 0xff, 0xff, 0xff, 0xff, getServer().getLastServerState(), 0x00, 0x00, 0x00 );
+    if ( now - m_timeLastWsTaskMsgSent >= 2000 ) {
+      m_timeLastWsTaskMsgSent = now;
+      sendMsg( 0xff, 0xff, 0xff, 0xff, connected()->getLastServerState(), 0x00, 0x00, 0x00 );
     }
 
     timeEventDevicePool();
@@ -120,130 +187,68 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::timeEventDevicePool() {
-    if ( m_uploadPoolState == DDOPCannotBeUploaded )
-      return;
+  TcClientConnection_c::timeEventDevicePool()
+  {
+    switch( m_cmdState )
+    {
+    case CommandStateNone:
+      switch ( getDevPoolState() )
+      {
+      case PoolStatePreconnecting:
+        doCommand( procCmdPar_RequestVersionMsg );
+        break;
 
-    switch( m_uploadStep ) {
-      case UploadUploading:
-        if ( HAL::getTime() > ( m_uploadTimeout + m_uploadTimestamp ) ) {
-          startUpload();
-          break;
+      case PoolStateUploading:
+        m_devicePoolToUpload = getDevicePool().getBytestream( procCmdPar_OPTransferMsg );
+        doCommand( procCmdPar_OPTransferMsg );
+        break;
+
+      /*case PoolStateStale: {
+        // Upload changed descriptions
+        STL_NAMESPACE::vector<uint8_t> newBytes;
+        if (getDevicePool().getDirtyBytestream(newBytes))
+        {
+          m_devicePoolToUpload = newBytes
+          doCommand( procCmdPar_OPTransferMsg );
         }
-        switch ( m_sendSuccess ) {
-          case __IsoAgLib::SendStream_c::Running:
-            break;
-          case __IsoAgLib::SendStream_c::SendAborted:
-            // aborted sending
-            m_uploadState = StateIdle;
-            m_uploadStep = UploadFailed;
-            break;
+        else
+          setDevPoolState(PoolStateActive);
+        // @todo trigger re-announce for fresh pool upload with changed objects
+      } break;*/
 
-            // when the pool has been sent successfully, wait on the transfer response
-          case __IsoAgLib::SendStream_c::SendSuccess:
-            m_uploadStep = UploadWaitForOPTransferResponse;
-            m_uploadTimestamp = HAL::getTime();
-            m_uploadTimeout = DEF_TimeOut_NormalCommand;
-            break;
-        }
+      case PoolStateUploaded:
+        doCommand( procCmdPar_OPActivateMsg );
         break;
 
-        // Waiting for request to transfer response
-      case UploadWaitForOPTransferResponse:
-        if ( HAL::getTime() > ( m_uploadTimeout + m_uploadTimestamp ) )
-          startUpload();
+      case PoolStateActive:
+        //if ( getDevicePool().isDirty() )
+        //  setDevPoolState(PoolStateStale);
+        // @todo trigger re-announce for fresh pool upload with changed objects
         break;
 
-      case UploadFailed:
-        //m_commandParameter = procCmdPar_OPTransferMsg;
-        m_uploadTimestamp = HAL::getTime();
-        m_uploadTimeout = DEF_WaitFor_Reupload;
+      case PoolStateError:
+        // do nothing here, for now. @todo move to next Server
         break;
 
-      case UploadNone:
       default:
         break;
-    }
-
-    if ( m_devPoolAction == PoolActionIdle ) {
-        switch ( getDevPoolState() ) {
-          case PoolStateActive:
-            //if ( getDevicePool().isDirty() )
-            //  setDevPoolState(PoolStateStale);
-            // @todo trigger re-announce for fresh pool upload with changed objects
-            break;
-          case PoolStateInit:
-            // Initialization state
-            //	Retrieve the structure label from the current pool
-            if ( getDevicePool().isEmpty() )
-              break;
-
-            setDevPoolState( PoolStatePresetting );
-            doCommand( procCmdPar_RequestStructureLabelMsg );
-            setDevPoolAction( PoolActionWaiting );
-            break;
-
-//      case  PoolStateError:
-//        setDevPoolState( PoolStateInit );
-//        m_PoolAction = PoolActionIdle;
-//        break;
-
-          case PoolStateInvalid:
-            // Pool is present, but it is the wrong version
-            doCommand( procCmdPar_OPDeleteMsg );
-            setDevPoolAction( PoolActionWaiting );
-            break;
-
-          case PoolStateNotPresent:
-            // No device pool present - upload it
-            if ( getDevicePool().isEmpty() )
-              break;
-
-            m_devicePoolToUpload = getDevicePool().getBytestream( procCmdPar_OPTransferMsg );
-            startUpload();
-            setDevPoolAction( PoolActionWaiting );
-            break;
-
-          case PoolStateStale: {
-              // Upload changed descriptions
-              /*STL_NAMESPACE::vector<uint8_t> newBytes;
-              if (getDevicePool().getDirtyBytestream(newBytes))
-              {
-                m_devicePoolToUpload = newBytes
-                startUpload();
-                setDevPoolAction( PoolActionWaiting );
-              }
-              else
-                setDevPoolState(PoolStateActive);*/
-              // @todo trigger re-announce for fresh pool upload with changed objects
-            }
-            break;
-
-          case PoolStateUploaded:
-            doCommand( procCmdPar_OPActivateMsg );
-            setDevPoolAction( PoolActionWaiting );
-            break;
-
-          default:
-            break;
-        }
       }
-  }
+      break;
 
+    case CommandStateWaitingForResponse:
+      // wait for (E)TP to finished before checking timeouts?
+      if( m_cmdSentTimestamp < 0 )
+        break;
 
-  void
-  TcClientConnection_c::startUpload() {
-    const uint32_t byteStreamLength = m_devicePoolToUpload.getEnd() - 1; // -1 to remove 0x61 opcode
-
-    sendMsg( procCmdPar_RequestOPTransferMsg, ( uint8_t )( ( byteStreamLength ) & 0xff ),
-             ( uint8_t )( ( byteStreamLength >> 8 ) & 0xff ), ( uint8_t )( ( byteStreamLength >> 16 ) & 0xff ),
-             ( uint8_t )( ( byteStreamLength >> 24 ) & 0xff ), 0xff, 0xff, 0xff );
-
-    m_uploadTimestamp = HAL::getTime();
-    m_uploadTimeout = DEF_TimeOut_OPTransfer;
-
-    m_uploadState = StateBusy;
-    m_uploadStep = UploadNone;
+      if( HAL::getTime() > ( m_cmdSentTimestamp + m_cmdTimeout ) )
+      {
+        // Timeout, retry last command?
+        // For now, give up!
+        m_cmdState = CommandStateNone;
+        m_devPoolState = PoolStateError;
+      }
+      break;
+    }
   }
 
 
@@ -261,7 +266,7 @@ namespace __IsoAgLib {
     ProcessPkg_c pkg( b0, b1, b2, b3, b4, b5, b6, b7);
 
     pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( getRemoteItem() ) );
-    pkg.setMonitorItemForSA( m_identItem.getIsoItem() );
+    pkg.setMonitorItemForSA( m_identItem->getIsoItem() );
 
     getIsoBusInstance4Comm() << pkg;
   }
@@ -270,101 +275,142 @@ namespace __IsoAgLib {
   void
   TcClientConnection_c::processMsgTc( const ProcessPkg_c& data )
   {
-    // handling of NACK
-    //  means that no device description is uploaded before
-    //  so extract all necessary information from the byte-stream (structure and localization label)
-    //  add the stream to the map
-    if ( ( data.getUint8Data( 0 ) & 0xF ) == 0xD ) {
-      //here starts nack handling
-      // these two cmds could be answered with a NACK
-      switch ( ( data.getUint8Data( 0 ) >> 4 ) & 0xF ) {
-        case 0x0: //NACK Request StructureLabel
-          m_uploadState = StateIdle;
-          m_structureLabel.clear();
-          eventStructureLabelResponse( 1, m_structureLabel );
-          break;
-        case 0x2: //NACK Request LocalizationLabel
-          m_uploadState = StateIdle;
-          m_localizationLabel.clear();
-          eventLocalizationLabelResponse( 1, m_localizationLabel );
-          break;
-        default:
-          break;
-      }
+    if( getDevPoolState() == PoolStateDisconnected )
+      return;
+
+    /// HANDLE UNSOLICITED MESSAGES
+    ///////////////////////////////
+
+    switch ( data.getUint8Data ( 0 ) )
+    {
+      case procCmdPar_RequestVersionMsg:
+      {
+        static const bool peerControl = false;
+        sendMsg(
+          procCmdPar_VersionMsg,
+          m_capabilities.versionNr,
+          0xFF,
+          (m_capabilities.hasTcBas ? 0x01:0) | (m_capabilities.hasTcGeo ? 0x02:0) | (m_capabilities.hasTcGeo ? 0x04:0)  | (peerControl ? 0x08:0) | (m_capabilities.hasTcSc ? 0x10:0),
+          0x00,
+          uint8_t( m_capabilities.numBoom ),
+          uint8_t( m_capabilities.numSection ),
+          uint8_t( m_capabilities.numBin ) );
+      } break;
     }
 
-    switch ( data.getUint8Data ( 0 ) ) {
+    /// HANDLE RESPONSES
+    ////////////////////
+
+    if( m_cmdState != CommandStateWaitingForResponse )
+      return;
+
+    /// HANDLE RESPONSES
+    ////////////////////
+    switch ( data.getUint8Data ( 0 ) )
+    {
       case procCmdPar_VersionMsg:
-        m_uploadState = StateIdle;
+      {
+        if( m_cmdSent != procCmdPar_RequestVersionMsg )
+          break;
+        m_cmdState = CommandStateNone;
+
+        IsoAgLib::ProcData::ServerCapabilities_s caps;
+        caps.versionNr = data.getUint8Data( 2-1 );
+
+        caps.hasTcBas           = ( data.getUint8Data( 4-1 ) & 0x01 ) != 0;
+        caps.hasTcGeoWithPbc    = ( data.getUint8Data( 4-1 ) & 0x02 ) != 0;
+        caps.hasTcGeoWithoutPbc = ( data.getUint8Data( 4-1 ) & 0x04 ) != 0;
+        caps.hasPeerControl     = ( data.getUint8Data( 4-1 ) & 0x08 ) != 0;
+        caps.hasTcSc            = ( data.getUint8Data( 4-1 ) & 0x10 ) != 0;
+
+        caps.numBoom    = data.getUint8Data( 6-1 );
+        caps.numSection = data.getUint8Data( 7-1 );
+        caps.numBin     = data.getUint8Data( 8-1 );
+
+        m_stateHandler->_eventConnectionRequest( getIdentItem(), *connected(), caps );
         break;
+      }
 
       case procCmdPar_StructureLabelMsg:
-        // command is always successful if not NACK'd above
-        m_structureLabel.clear();
-        for ( int i = 1; i < 8; i++ )
-          m_structureLabel.push_back( ( char )data.getUint8Data( i ) );
+      {
+        if( m_cmdSent != procCmdPar_RequestStructureLabelMsg )
+          break;
+        m_cmdState = CommandStateNone;
 
-        m_uploadState = StateIdle;
-        m_uploadStep = UploadNone;
+        STL_NAMESPACE::vector<uint8_t> structureLabel;
+        for( int i = 1; i < 8; i++ )
+        {
+          if( data.getUint8Data( i ) == 0xFF )
+            continue;
 
-        eventStructureLabelResponse( 0, m_structureLabel );
-        break;
+          for ( int i = 1; i < 8; i++ )
+            structureLabel.push_back( ( char )data.getUint8Data( i ) );
+          break;
+        }
+
+        eventStructureLabelResponse( structureLabel );
+      } break;
 
       case procCmdPar_LocalizationLabelMsg:
-        // command is always successful if not NACK'd above
-        m_localizationLabel.clear();
-        for ( int i = 1; i < 8; i++ )
-          m_localizationLabel.push_back( data.getUint8Data( i ) );
+      {
+        if( m_cmdSent != procCmdPar_RequestLocalizationLabelMsg )
+          break;
+        m_cmdState = CommandStateNone;
 
-        m_uploadState = StateIdle;
-        m_uploadStep = UploadNone;
-        eventLocalizationLabelResponse( 0, m_localizationLabel );
-        break;
+        STL_NAMESPACE::vector<uint8_t> localizationLabel;
+        for( int i = 1; i < 8; i++ )
+        {
+          if( data.getUint8Data( i ) == 0xFF )
+            continue;
+
+          for ( int i = 1; i < 8; i++ )
+            localizationLabel.push_back( data.getUint8Data( i ) );
+          break;
+        }
+
+        eventLocalizationLabelResponse( localizationLabel );
+      } break;
 
       case procCmdPar_RequestOPTransferRespMsg:
-        if ( data.getUint8Data( 1 ) == 0 ) { // on success, send the object pool
-          m_sendSuccess = SendStream_c::SendSuccess;
-          getMultiSendInstance4Comm().sendIsoTarget( m_identItem.isoName(), getRemoteName(), m_devicePoolToUpload.getBuffer(),
-              m_devicePoolToUpload.getEnd(), PROCESS_DATA_PGN, &m_multiSendEventHandler );
+        if( m_cmdSent != procCmdPar_RequestOPTransferMsg )
+          break;
+        m_cmdState = CommandStateNone;
 
-          m_uploadState = StateBusy;
-          m_uploadStep = UploadUploading;
-        } else
-          outOfMemory();
+        if ( data.getUint8Data( 1 ) == 0 ) // on success, send the object pool
+          doCommand( procCmdPar_OPTransferMsg );
+        else
+          m_devPoolState = PoolStateError;
         break;
 
       case procCmdPar_OPTransferRespMsg:
-        m_uploadState = StateIdle;
-        m_uploadStep = UploadNone;
+        if( m_cmdSent != procCmdPar_OPTransferMsg )
+          break;
+        m_cmdState = CommandStateNone;
+
         eventPoolUploadResponse( data.getUint8Data( 1 ) );
         break;
 
       case procCmdPar_OPActivateRespMsg:
-        m_uploadState = StateIdle;
-        m_uploadStep = UploadNone;
+        if( m_cmdSent != procCmdPar_OPActivateMsg )
+          break;
+        m_cmdState = CommandStateNone;
+
         eventPoolActivateResponse( data.getUint8Data( 1 ) );
         break;
 
-      case procCmdPar_OPDeleteRespMsg:
-        m_uploadState = StateIdle;
-        m_uploadStep = UploadNone;
-        eventPoolDeleteResponse( data.getUint8Data( 1 ) );
-        break;
-
+#if 0
+// not supported yet
       case procCmdPar_ChangeDesignatorRespMsg:
-        m_uploadState = StateIdle;
-        m_uploadStep = UploadNone;
+        if( m_cmdSent != procCmdPar_ChangeDesignatorMsg )
+          break;
+        m_cmdState = CommandStateNone;
+
         break;
+#endif
+
       default:
         break;
     }
-  }
-
-
-  void
-  TcClientConnection_c::outOfMemory() {
-    m_uploadStep = UploadFailed;
-    m_uploadPoolState = DDOPCannotBeUploaded;
   }
 
 
@@ -391,45 +437,46 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::eventStructureLabelResponse( uint8_t result, const STL_NAMESPACE::vector<uint8_t>& label ) {
-    if ( result == 0 && !label.empty() ) {
-      DeviceObjectDvc_c* dvc = getDevicePool().getDvcObject();
-      if ( dvc ) {
-        const IsoAgLib::StructureLabel_s& strLbl = dvc->getStructureLabel();
-        if ( STL_NAMESPACE::memcmp( ( void * )&strLbl, ( void * )&label[0], 7 ) != 0 ) {
-          setDevPoolState( PoolStateInvalid );
-        }
-      }
-    } else {
-      //m_pool.setDirty();
-      setDevPoolState( PoolStateNotPresent );
+  TcClientConnection_c::eventStructureLabelResponse( const STL_NAMESPACE::vector<uint8_t>& label )
+  {
+    if( label.empty() )
+    {
+      setDevPoolState( PoolStateUploading ); // not present -> upload
     }
-
-    if ( getDevPoolState() == PoolStatePresetting ) {
-      doCommand( procCmdPar_RequestLocalizationLabelMsg );
-      setDevPoolAction( PoolActionWaiting );
-    } else
-      setDevPoolAction( PoolActionIdle );
+    else
+    {
+      DeviceObjectDvc_c* dvc = getDevicePool().getDvcObject();
+      isoaglib_assert( dvc );
+      const IsoAgLib::StructureLabel_s& strLbl = dvc->getStructureLabel();
+      if ( STL_NAMESPACE::memcmp( ( void * )&strLbl, ( void * )&label[0], 7 ) != 0 )
+      {
+        setDevPoolState( PoolStateUploading ); // present, but wrong version -> upload
+      }
+      else
+      {
+        doCommand( procCmdPar_RequestLocalizationLabelMsg );
+      }
+    }
   }
 
 
   void
-  TcClientConnection_c::eventLocalizationLabelResponse( uint8_t result, const STL_NAMESPACE::vector<uint8_t>& label ) {
-    if ( result == 0 && !label.empty() ) {
-      DeviceObjectDvc_c* dvc = getDevicePool().getDvcObject();
-      if ( dvc ) {
-        const IsoAgLib::Localization_s& locale = dvc->getLocalization();
-        if ( STL_NAMESPACE::memcmp( ( void* )&locale, ( void * )&label[0], 7 ) != 0 ) {
-          getDevicePool().updateLocale();
-        }
-        setDevPoolState( PoolStateUploaded );
-      }
-    } else {
-      //m_pool.setDirty();
-      setDevPoolState( PoolStateNotPresent );
+  TcClientConnection_c::eventLocalizationLabelResponse( const STL_NAMESPACE::vector<uint8_t>& label )
+  {
+    if( label.empty() )
+    {
+      setDevPoolState( PoolStateUploading );
     }
-
-    setDevPoolAction( PoolActionIdle );
+    else
+    {
+      DeviceObjectDvc_c* dvc = getDevicePool().getDvcObject();
+      isoaglib_assert( dvc );
+      const IsoAgLib::Localization_s& locale = dvc->getLocalization();
+      if ( STL_NAMESPACE::memcmp( ( void* )&locale, ( void * )&label[0], 7 ) != 0 ) {
+        getDevicePool().updateLocale();
+      }
+      setDevPoolState( PoolStateUploaded );
+    }
   }
 
 
@@ -441,8 +488,6 @@ namespace __IsoAgLib {
     } else {
       setDevPoolState( PoolStateError );
     }
-
-    setDevPoolAction( PoolActionIdle );
   }
 
 
@@ -450,49 +495,84 @@ namespace __IsoAgLib {
   TcClientConnection_c::eventPoolActivateResponse( uint8_t result ) {
     if ( result == 0 ) {
       setDevPoolState( PoolStateActive );
-      if( getServer().getLastActiveTaskTC() )
+      if( connected()->getLastActiveTaskTC() )
         eventTaskStarted();
     } else {
       setDevPoolState( PoolStateError );
     }
-
-    setDevPoolAction( PoolActionIdle );
   }
 
 
   void
-  TcClientConnection_c::eventPoolDeleteResponse( uint8_t /* result */ ) {
-    setDevPoolState( PoolStateNotPresent );
-    setDevPoolAction( PoolActionIdle );
+  TcClientConnection_c::doCommand( ProcessDataMsg_t cmd, int32_t timeout )
+  {
+    m_cmdState = CommandStateWaitingForResponse;
+    m_cmdSent = cmd;
+    m_cmdTimeout = timeout;
+    m_cmdSentTimestamp = HAL::getTime();
+
+    switch( cmd )
+    {
+    case procCmdPar_OPTransferMsg:
+      getMultiSendInstance4Comm().sendIsoTarget(
+        m_identItem->isoName(),
+        getRemoteName(),
+        m_devicePoolToUpload.getBuffer(),
+        m_devicePoolToUpload.getEnd(),
+        PROCESS_DATA_PGN,
+        &m_multiSendEventHandler );
+
+      // Special for (E)TP Commands: Will be set after sent out completely (EoMAck received)
+      m_cmdSentTimestamp = -1;
+      break;
+
+    case procCmdPar_RequestOPTransferMsg:
+      {
+        const uint32_t byteStreamLength = m_devicePoolToUpload.getEnd() - 1; // -1 to remove 0x61 opcode
+
+        sendMsg( cmd,
+          ( uint8_t )( ( byteStreamLength ) & 0xff ),
+          ( uint8_t )( ( byteStreamLength >> 8 ) & 0xff ),
+          ( uint8_t )( ( byteStreamLength >> 16 ) & 0xff ),
+          ( uint8_t )( ( byteStreamLength >> 24 ) & 0xff ),
+          0xff, 0xff, 0xff );
+      }
+      break;
+
+    default:
+      {
+        ProcessPkg_c pkg( cmd, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
+
+        pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( getRemoteItem() ) );
+        pkg.setMonitorItemForSA( m_identItem->getIsoItem() );
+
+        getIsoBusInstance4Comm() << pkg;
+      }
+      break;
+    }
   }
 
 
-  void
-  TcClientConnection_c::doCommand( int32_t opcode, int32_t timeout ) {
-    if ( m_uploadState == StateBusy )
-      return; // StatusBusy
-    if ( m_uploadState == StateTimeout )
-      return; // StatusCannotProcess
-
-    ProcessPkg_c pkg( opcode, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
-
-    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( getRemoteItem() ) );
-    pkg.setMonitorItemForSA( m_identItem.getIsoItem() );
-
-    getIsoBusInstance4Comm() << pkg;
-
-    m_uploadTimestamp = HAL::getTime();
-    m_uploadTimeout = timeout;
-    m_uploadStep = UploadNone;
-    //m_commandParameter = opcode;
-    m_uploadState = StateBusy;
-  }
 
 
 // MultiSendEventHandler_c implementation
   void
-  TcClientConnection_c::reactOnStateChange( const SendStream_c& sendStream ) {
-    m_sendSuccess = sendStream.getSendSuccess();
+  TcClientConnection_c::reactOnStateChange( const SendStream_c& sendStream )
+  {
+    switch ( sendStream.getSendSuccess() )
+    {
+    case __IsoAgLib::SendStream_c::Running:
+      break;
+
+    case __IsoAgLib::SendStream_c::SendAborted:
+      doCommand( procCmdPar_OPTransferMsg );
+      break;
+
+    case __IsoAgLib::SendStream_c::SendSuccess:
+      // timeout counts from now on!
+      m_cmdSentTimestamp = HAL::getTime();
+      break;
+    }
   }
 
 // MultiSendStreamer_c implementation

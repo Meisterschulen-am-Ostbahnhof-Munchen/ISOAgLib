@@ -14,6 +14,8 @@
 #define ITCCLIENTCONNECTION_C_H
 
 #include "impl/tcclientconnection_c.h"
+#include "iprocdata.h"
+#include "itcclientserver_c.h"
 
 namespace IsoAgLib {
 
@@ -27,11 +29,19 @@ namespace IsoAgLib {
       class iStateHandler_c : private __IsoAgLib::TcClientConnection_c::StateHandler_c
       {
       public:
-        virtual void eventDefaultLoggingStarted( iTcClientConnection_c& ecu ) = 0;
-        virtual void eventTaskStarted( iTcClientConnection_c& ecu ) = 0;
-        virtual void eventTaskStopped( iTcClientConnection_c& ecu ) = 0;
+        virtual void eventConnectionRequest( const iIdentItem_c&, iTcClientServer_c &, const ProcData::ServerCapabilities_s & ) = 0;
+        virtual void eventDisconnectedOnServerLoss( iTcClientConnection_c& ) = 0;
+        virtual void eventDefaultLoggingStarted( iTcClientConnection_c& ) = 0;
+        virtual void eventTaskStarted( iTcClientConnection_c& ) = 0;
+        virtual void eventTaskStopped( iTcClientConnection_c& ) = 0;
 
       private:
+        virtual void _eventConnectionRequest( const __IsoAgLib::IdentItem_c& ident, __IsoAgLib::ServerInstance_c& server, const ProcData::ServerCapabilities_s &caps ) {
+          eventConnectionRequest( static_cast<const iIdentItem_c &>(ident), static_cast<iTcClientServer_c &>(server), caps );
+        }
+        virtual void _eventDisconnectedOnServerLoss( TcClientConnection_c& ecu ) {
+          eventDisconnectedOnServerLoss( static_cast<iTcClientConnection_c&>( ecu ) );
+        }
         virtual void _eventDefaultLoggingStarted( TcClientConnection_c& ecu ) {
           eventDefaultLoggingStarted( static_cast<iTcClientConnection_c&>( ecu ) );
         }
@@ -44,16 +54,19 @@ namespace IsoAgLib {
 
         friend class iTcClient_c;
       };
-
+#if 0
+// currently not supported
       /* TODO */
       bool sendCommandChangeDesignator( uint16_t objectID, const char* newString, uint8_t stringLength ) {
         return TcClientConnection_c::sendCommandChangeDesignator( objectID, newString, stringLength );
       }
+#endif
 
     private:
       iTcClientConnection_c();
 
       friend class iTcClient_c;
+      friend class iTcClientServer_c;
       friend class iProcData_c;
   };
 

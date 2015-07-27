@@ -172,6 +172,7 @@ namespace IsoAgLib {
 
     private:
       friend class iTcClient_c;
+      friend class iTcClientConnection_c;
   };
 
 } // IsoAgLib

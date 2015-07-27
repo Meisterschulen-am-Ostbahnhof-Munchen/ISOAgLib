@@ -19,6 +19,7 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
 #include <list>
 #include <map>
@@ -38,50 +39,32 @@ namespace __IsoAgLib {
     public:
       virtual ~TcClient_c() {}
 
-      class ServerStateHandler_c {
-        public:
-          virtual void _eventServerAvailable( const IsoItem_c&, IsoAgLib::ProcData::RemoteType_t, bool server_status ) = 0;
-          virtual void _eventDisconnectedOnServerLoss( const TcClientConnection_c& client_disconnected) = 0;
-      };
-
-      class PdMessageHandler_c {
-        public:
-          virtual void _eventPdMessageReceived( const IsoItem_c&, const IsoItem_c*, IsoAgLib::ProcData::CommandType_t, uint16_t, uint16_t, int32_t) = 0;
-      };
-
       void init();
       void close();
 
-      void setServerStateHandler( ServerStateHandler_c& hdl );
-      void clearServerStateHandler();
-
-      void setPdMessageHandler( PdMessageHandler_c& hdl );
-      void clearPdMessageHandler();
+      bool registerClient( IdentItem_c&, const IsoAgLib::ProcData::ClientCapabilities_s&, TcClientConnection_c::StateHandler_c& );
+      bool deregisterClient( IdentItem_c& );
 
       // Note: The connections will automatically get disconnected and destructed on RemoteNode-Loss.
-      TcClientConnection_c* connect(          const IdentItem_c&, TcClientConnection_c::StateHandler_c&, const IsoItem_c& tcDlItem, DevicePool_c& );
-      PdConnection_c*       connect(          const IdentItem_c&, const IsoItem_c& pdItem, PdPool_c& );
-      PdConnection_c*       connectBroadcast( const IdentItem_c&, PdPool_c& );
+      // important to either call "doConnect" or "dontConnect" after an eventConnectionRequest!
+      TcClientConnection_c* doConnect( const IdentItem_c&, const ServerInstance_c&, DevicePool_c& );
+      void                dontConnect( const IdentItem_c&, const ServerInstance_c& );
+      
+      PdConnection_c* connectPeer(          const IdentItem_c&, const IsoItem_c& pdItem, PdPool_c& );
+      PdConnection_c* connectPeerBroadcast( const IdentItem_c&, PdPool_c& );
 
-      void disconnect( const IdentItem_c& );
-      void disconnect( const PdConnection_c& );
+      void disconnectPeer( const IdentItem_c& );
+      void disconnectPeer( const PdConnection_c& );
 
       void proprietaryServer( const IsoItem_c &, bool available );
 
-      void getAllServers( IsoAgLib::ProcData::ServerList& list_to_fill );
-
+#if 0
+// currently not supported
       void processChangeDesignator( const IdentItem_c&, uint16_t, const char* );
-
-      void sendPdMessage( const IsoItem_c& sa_item, 
-                          const IsoItem_c* da_item,
-                          IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value );
-
-#ifdef HAL_USE_SPECIFIC_FILTERS
-      void receivePdMessage(const IsoItem_c& sa_item, const IsoItem_c* da_item, IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value);
 #endif
 
       void notifyServerStatusChange(ServerInstance_c& server, bool new_status);
-      void notifyPdNodeDestruction( PdRemoteNode_c& pdRemoteNode );
+      void notifyPeerDestruction( PdRemoteNode_c& pdRemoteNode );
 
     private:
       TcClient_c();
@@ -90,8 +73,13 @@ namespace __IsoAgLib {
       void reactOnIsoItemModification ( ControlFunctionStateHandler_c::iIsoItemAction_e, IsoItem_c const& );
 
       void removeRemotePd( const IsoItem_c & );
-      void addServer( const IsoItem_c &, IsoAgLib::ProcData::RemoteType_t type );
+      void addServer( const IsoItem_c &, IsoAgLib::ProcData::ServerType_t type );
   
+      ServerInstance_c *findNextServerOfSameType( const ServerInstance_c &thisServer ) const;
+
+      PdRemoteNode_c *findRemoteNode( const IsoItem_c & ) const;
+
+
       /// PROXY-CLASSES
       class CanCustomerProxy_c : public CanCustomer_c {
         public:
@@ -138,13 +126,24 @@ namespace __IsoAgLib {
     private:
       Handler_t m_handler;
       Customer_t m_customer;
-      ServerStateHandler_c* m_stateHandler;
-      PdMessageHandler_c* m_pdMessageHandler;
 
-      typedef STL_NAMESPACE::map<const IsoItem_c*, PdRemoteNode_c*> ItemToRemoteNodeMap_t;
+      struct ClientInfo_s
+      {
+        // 1/2: TcClient-PdConnections.
+        TcClientConnection_c m_serverConnections[ IsoAgLib::ProcData::ServerTypes ];
+
+        IsoAgLib::ProcData::ClientCapabilities_s capabilities;
+        TcClientConnection_c::StateHandler_c *stateHandler;
+      };
+      typedef STL_NAMESPACE::map<IdentItem_c*, struct ClientInfo_s> IdentToClientInfoMap_t;
+      IdentToClientInfoMap_t m_clientInfo;
+
+      // 2/2: Peer-PdConnections.
+      STL_NAMESPACE::list<PdConnection_c*> m_peerConnections;
+
+      typedef STL_NAMESPACE::list<std::pair<const IsoItem_c*, PdRemoteNode_c*> > ItemToRemoteNodeMap_t;
       ItemToRemoteNodeMap_t m_pdRemoteNodes;
-      STL_NAMESPACE::list<PdConnection_c*> m_connections;
-  
+
       friend TcClient_c &getTcClientInstance( unsigned instance );
       friend class ProcData_c;
   };

@@ -18,12 +18,11 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdconnection_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devicepool_c.h>
-#include <map>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 
 namespace IsoAgLib {
   class iDevicePool_c;
   class iTcClientConnection_c;
-  class iTcClientConnectionStateHandler_c;
 }
 
 namespace __IsoAgLib {
@@ -37,160 +36,109 @@ namespace __IsoAgLib {
   class ServerInstance_c;
 
 
+#define ISOAGLIB_LOCAL_PROXIES \
+      class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c { \
+        public: \
+          typedef TcClientConnection_c Owner_t; \
+ \
+          MultiSendEventHandlerProxy_c( Owner_t &owner ) : m_owner( owner ) {} \
+          ~MultiSendEventHandlerProxy_c() {} \
+ \
+        private: \
+          void reactOnStateChange( const SendStream_c& sendStream ) { \
+            m_owner.reactOnStateChange( sendStream ); \
+          } \
+ \
+          MultiSendEventHandlerProxy_c( const MultiSendEventHandlerProxy_c & ); \
+          MultiSendEventHandlerProxy_c &operator=( MultiSendEventHandlerProxy_c const & ); \
+ \
+          Owner_t &m_owner; \
+      }; \
+      class MultiSendStreamerProxy_c : public IsoAgLib::iMultiSendStreamer_c { \
+        public: \
+          typedef TcClientConnection_c Owner_t; \
+ \
+          MultiSendStreamerProxy_c( Owner_t &owner ) : m_owner( owner ) {} \
+          ~MultiSendStreamerProxy_c() {} \
+ \
+        private: \
+          virtual uint8_t getFirstByte() { return m_owner.getFirstByte(); } \
+          virtual void resetDataNextStreamPart() { m_owner.resetDataNextStreamPart(); } \
+          virtual void saveDataNextStreamPart() { m_owner.saveDataNextStreamPart(); } \
+          virtual void restoreDataNextStreamPart() { m_owner.restoreDataNextStreamPart(); } \
+          virtual uint32_t getStreamSize() { return m_owner.getStreamSize(); } \
+          virtual void setDataNextStreamPart ( __IsoAgLib::MultiSendPkg_c* data, uint8_t bytes ) { \
+            m_owner.setDataNextStreamPart( data, bytes ); } \
+ \
+          MultiSendStreamerProxy_c( const MultiSendStreamerProxy_c & );  \
+          MultiSendStreamerProxy_c &operator=( MultiSendStreamerProxy_c const & ); \
+ \
+          Owner_t &m_owner; \
+      };
+
+
   class TcClientConnection_c : public PdConnection_c
   {
-// @todo Convert to static const...
-#define DEF_TimeOut_GetVersion            5000
-#define DEF_TimeOut_OPTransfer            20000
-#define DEF_TimeOut_EndOfDevicePool       10000
-#define DEF_WaitFor_Reupload              5000
-#define DEF_TimeOut_ChangeDesignatorValue 1500
-#define DEF_TimeOut_NormalCommand         1500
+    static const ecutime_t DEF_TimeOut_GetVersion            = 5000;
+    static const ecutime_t DEF_TimeOut_OPTransfer            = 20000;
+    static const ecutime_t DEF_TimeOut_EndOfDevicePool       = 10000;
+    static const ecutime_t DEF_WaitFor_Reupload              = 5000;
+    static const ecutime_t DEF_TimeOut_ChangeDesignatorValue = 1500;
+    static const ecutime_t DEF_TimeOut_NormalCommand         = 1500;
 
     public:
-      enum DevPoolState_t {
-        PoolStateInit = 0,
-        PoolStatePresetting,
-        PoolStateNotPresent,
-        PoolStateStale,
-        PoolStateInvalid,
-        PoolStateUploaded,
-        PoolStateActive,
-        PoolStateError
-      };
-
-      enum UploadPoolState_t {
-        DDOPRegistered,
-        DDOPCannotBeUploaded
-      };
-
-
       class StateHandler_c {
         public:
-          virtual void _eventDefaultLoggingStarted( TcClientConnection_c& ecu ) = 0;
-          virtual void _eventTaskStarted( TcClientConnection_c& ecu ) = 0;
-          virtual void _eventTaskStopped( TcClientConnection_c& ecu ) = 0;
+          virtual void _eventConnectionRequest( const IdentItem_c &, ServerInstance_c &, const IsoAgLib::ProcData::ServerCapabilities_s & ) = 0;
+          virtual void _eventDisconnectedOnServerLoss( TcClientConnection_c& ) = 0;
+          virtual void _eventDefaultLoggingStarted( TcClientConnection_c& ) = 0;
+          virtual void _eventTaskStarted( TcClientConnection_c& ) = 0;
+          virtual void _eventTaskStopped( TcClientConnection_c& ) = 0;
       };
 
-
-      TcClientConnection_c(
-        const IdentItem_c& identItem,
-        StateHandler_c& sh,
-        ServerInstance_c& server,
-        DevicePool_c& pool );
-
+      TcClientConnection_c();
+      TcClientConnection_c( const TcClientConnection_c & );
       virtual ~TcClientConnection_c();
 
-      const ServerInstance_c& getServer() const { return (ServerInstance_c &)( *getRemoteNode() ); }
+      void preConnect(
+        const IdentItem_c& identItem,
+        ServerInstance_c& server,
+        StateHandler_c& sh,
+        const IsoAgLib::ProcData::ClientCapabilities_s& );
+
+      bool fullConnect( const ServerInstance_c& server, DevicePool_c& pool );
+
+      void disconnect();
+
+      ServerInstance_c* connected() const { return (ServerInstance_c *)( getRemoteNode() ); }
       const IsoName_c &getRemoteName() const { return getRemoteItem()->isoName(); } // no NULL check needed here!
 
+#if 0
+// not implemented yet
       bool sendCommandChangeDesignator( uint16_t /* objID */, const char* /* newString */, uint8_t /* length */ ) {
         return false; /* @todo: send msg */
       }
+#endif
 
       void eventTaskStarted();
       void eventTaskStopped();
       void stopRunningMeasurement();
 
     private:
-// @todo Send this?
-#if 0
-      void requestVersion() { doCommand( procCmdPar_RequestVersionMsg, DEF_TimeOut_GetVersion ); }
-#endif
-      int32_t requestPoolTransfer( ByteStreamBuffer_c pool );
-
-      void eventStructureLabelResponse( uint8_t result, const STL_NAMESPACE::vector<uint8_t>& label );
-      void eventLocalizationLabelResponse( uint8_t result, const STL_NAMESPACE::vector<uint8_t>& label );
-      void eventPoolUploadResponse( uint8_t result );
-      void eventPoolActivateResponse( uint8_t result );
-      void eventPoolDeleteResponse( uint8_t result );
-
-      void setDevPoolState( DevPoolState_t newState ) { m_devPoolState = newState; }
-      DevPoolState_t getDevPoolState() const { return m_devPoolState; }
-      UploadPoolState_t getUploadPoolState() { return m_uploadPoolState; }
-      DevicePool_c &getDevicePool() { return static_cast<DevicePool_c &>( m_pool ); }
-
-      void timeEvent();
-      void timeEventDevicePool();
-      void startUpload();
-
-      virtual void processMsgTc( const ProcessPkg_c& );
-      virtual void processRequestDefaultDataLogging();
-
-      void outOfMemory();
-
-      class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
-        public:
-          typedef TcClientConnection_c Owner_t;
-
-          MultiSendEventHandlerProxy_c( Owner_t &owner ) : m_owner( owner ) {}
-          ~MultiSendEventHandlerProxy_c() {}
-
-        private:
-          void reactOnStateChange( const SendStream_c& sendStream ) {
-            m_owner.reactOnStateChange( sendStream );
-          }
-
-          MultiSendEventHandlerProxy_c( MultiSendEventHandlerProxy_c const & ); // make class non-copyable
-          MultiSendEventHandlerProxy_c &operator=( MultiSendEventHandlerProxy_c const & ); // make class non-copyable
-
-          Owner_t &m_owner;
-      }; // MultiSendEventHandlerProxy_c
-      MultiSendEventHandlerProxy_c m_multiSendEventHandler;
-
-      void reactOnStateChange( const SendStream_c& );
-
-      class MultiSendStreamerProxy_c : public IsoAgLib::iMultiSendStreamer_c {
-        public:
-          typedef TcClientConnection_c Owner_t;
-
-          MultiSendStreamerProxy_c( Owner_t &owner ) : m_owner( owner ) {}
-          ~MultiSendStreamerProxy_c() {}
-
-        private:
-          virtual uint8_t getFirstByte() { return m_owner.getFirstByte(); }
-          virtual void resetDataNextStreamPart() { m_owner.resetDataNextStreamPart(); }
-          virtual void saveDataNextStreamPart() { m_owner.saveDataNextStreamPart(); }
-          virtual void restoreDataNextStreamPart() { m_owner.restoreDataNextStreamPart(); }
-          virtual uint32_t getStreamSize() { return m_owner.getStreamSize(); }
-          virtual void setDataNextStreamPart ( __IsoAgLib::MultiSendPkg_c* data, uint8_t bytes ) {
-            m_owner.setDataNextStreamPart( data, bytes ); }
-
-          MultiSendStreamerProxy_c( MultiSendStreamerProxy_c const & ); // make class non-copyable
-          MultiSendStreamerProxy_c &operator=( MultiSendStreamerProxy_c const & ); // make class non-copyable
-
-          Owner_t &m_owner;
-      }; // MultiSendStreamerProxy_c
-
-      MultiSendStreamerProxy_c m_multiSendStreamer;
-
-      void setDataNextStreamPart( MultiSendPkg_c*, uint8_t );
-      void resetDataNextStreamPart();
-      void saveDataNextStreamPart();
-      void restoreDataNextStreamPart();
-      uint32_t getStreamSize();
-      uint8_t getFirstByte();
-
-      void handleNack( int16_t ddi, int16_t element );
-
-    private:
-      enum PoolAction_t {
-        PoolActionIdle = 0,
-        PoolActionWaiting,
-        PoolActionTimeout
+      enum DevPoolState_t {
+        PoolStateDisconnected,
+        PoolStatePreconnecting,
+        PoolStateConnecting,
+        PoolStateUploading,
+        //PoolStateStale,
+        PoolStateUploaded,
+        PoolStateActive,
+        PoolStateError
       };
 
-      enum UploadState_t {
-        StateIdle,
-        StateBusy,
-        StateTimeout
-      };
-
-      enum UploadSteps_t {
-        UploadNone,
-        UploadUploading,
-        UploadWaitForOPTransferResponse,
-        UploadFailed
+      enum CommandState_t {
+        CommandStateNone = 0,
+        CommandStateWaitingForResponse,
       };
 
       enum ProcessDataMsg_t {
@@ -212,43 +160,67 @@ namespace __IsoAgLib {
         procCmdPar_ChangeDesignatorRespMsg = 0xD1
       };
 
+      int32_t requestPoolTransfer( ByteStreamBuffer_c pool );
 
-      void doCommand( int32_t opcode, int32_t timeout = DEF_TimeOut_NormalCommand );
+      void eventStructureLabelResponse( const STL_NAMESPACE::vector<uint8_t>& label );
+      void eventLocalizationLabelResponse( const STL_NAMESPACE::vector<uint8_t>& label );
+      void eventPoolUploadResponse( uint8_t result );
+      void eventPoolActivateResponse( uint8_t result );
+
+      void setDevPoolState( DevPoolState_t newState ) { m_devPoolState = newState; }
+      DevPoolState_t getDevPoolState() const { return m_devPoolState; }
+
+      DevicePool_c &getDevicePool() { return static_cast<DevicePool_c &>( *m_pool ); }
+
+      void timeEvent();
+      void timeEventDevicePool();
+
+      virtual void processMsgTc( const ProcessPkg_c& );
+      virtual void processRequestDefaultDataLogging();
+
+      void handleNack( int16_t ddi, int16_t element );
+
+      void doCommand( ProcessDataMsg_t cmd, int32_t timeout = DEF_TimeOut_NormalCommand );
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
 
-      ecutime_t m_timeWsAnnounceKey;
-      StateHandler_c* m_stateHandler;
+      ISOAGLIB_LOCAL_PROXIES
+
+      // MultiSendEventHandling
+      void reactOnStateChange( const SendStream_c& );
+
+      // MultiSendStreaming
+      void setDataNextStreamPart( MultiSendPkg_c*, uint8_t );
+      void resetDataNextStreamPart();
+      void saveDataNextStreamPart();
+      void restoreDataNextStreamPart();
+      uint32_t getStreamSize();
+      uint8_t getFirstByte();
+
+    private:
+      MultiSendEventHandlerProxy_c m_multiSendEventHandler;
+      MultiSendStreamerProxy_c m_multiSendStreamer;
 
       // MultiSendStreamer_c variables
       uint16_t m_currentSendPosition;
       uint16_t m_storedSendPosition;
       ByteStreamBuffer_c m_devicePoolToUpload;
 
-      // device pool upload variables
-      UploadPoolState_t m_uploadPoolState;
-      UploadState_t m_uploadState;
-      UploadSteps_t m_uploadStep;
-      ecutime_t m_uploadTimestamp;
-      int32_t m_uploadTimeout;
-      //uint8_t m_commandParameter; // currently not used - @todo USE IT on processMsgTc!
-
       // timeEvent variables
-      bool m_initDone;
-      bool m_tcAliveNew;
-      ecutime_t m_timeStartWaitAfterAddrClaim;
-      ecutime_t m_timeWsTaskMsgSent;
+      ecutime_t m_timeWsAnnounceKey;
+      ecutime_t m_timeWaitWithAnyCommunicationUntil;
+      ecutime_t m_timeLastWsTaskMsgSent;
 
-      STL_NAMESPACE::vector<uint8_t> m_structureLabel;
-      STL_NAMESPACE::vector<uint8_t> m_localizationLabel;
+      StateHandler_c* m_stateHandler;
 
-      SendStream_c::sendSuccess_t m_sendSuccess;
-
-      // device pool
       DevPoolState_t m_devPoolState;
-      PoolAction_t m_devPoolAction;
-      void setDevPoolAction( PoolAction_t action ) {
-        m_devPoolAction = action;
-      }
+
+      // Command handling
+      CommandState_t m_cmdState;
+      uint8_t m_cmdSent;
+      ecutime_t m_cmdSentTimestamp;
+      int32_t m_cmdTimeout;
+
+      IsoAgLib::ProcData::ClientCapabilities_s m_capabilities;
 
       CLASS_SCHEDULER_TASK_PROXY( TcClientConnection_c )
       SchedulerTaskProxy_c m_schedulerTaskProxy;

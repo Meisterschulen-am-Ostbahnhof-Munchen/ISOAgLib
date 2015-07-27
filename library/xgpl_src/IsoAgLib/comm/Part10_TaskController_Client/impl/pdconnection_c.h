@@ -46,14 +46,21 @@ namespace __IsoAgLib
 #endif
   {
   public:
+    PdConnection_c();
     PdConnection_c( const IdentItem_c& identItem, PdRemoteNode_c* remoteNode, PdPool_c &pool );
     virtual ~PdConnection_c();
 
-    const IdentItem_c&     getIdentItem() const { return m_identItem; }
+    void init( const IdentItem_c &identItem, PdRemoteNode_c *remoteNode );
+    void close();
+
+    void start( PdPool_c &pool );
+    void stop();
+
+    const IdentItem_c&     getIdentItem() const { return *m_identItem; }
     const PdRemoteNode_c* getRemoteNode() const { return m_pdRemoteNode; }
-    const IsoItem_c*      getRemoteItem() const; // get Server's IsoItem
+    const IsoItem_c*      getRemoteItem() const;
   
-    int getMultitonInst() const { return m_identItem.getMultitonInst(); }
+    int getMultitonInst() const { return m_identItem->getMultitonInst(); }
 
     void processProcMsg( const ProcessPkg_c& );
 
@@ -77,10 +84,10 @@ namespace __IsoAgLib
     void startOnChangeMeasurements();
 
   protected:
-    const IdentItem_c& m_identItem;
+    const IdentItem_c* m_identItem;
     PdRemoteNode_c* m_pdRemoteNode;
 
-    PdPool_c& m_pool;
+    PdPool_c* m_pool;
 
     // Measure progs presorted for DDIs
     static uint32_t getMapKey(uint16_t ddi, uint16_t element) { return ( uint32_t( uint32_t( ddi ) << 16 ) ) | uint32_t(element); }

@@ -39,6 +39,7 @@ library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/ipdlocal_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/ipdpool_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/ipdremote_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/itcclientconnection_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/itcclientserver_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.h -text

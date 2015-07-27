@@ -24,10 +24,11 @@ namespace IsoAgLib
 
   namespace ProcData
   {
-    enum RemoteType_t {
-      RemoteTypeTaskController,
-      RemoteTypeDataLogger,
-      RemoteTypeProprietary };
+    static const int ServerTypes = 3;
+    enum ServerType_t {
+      ServerTypeTaskController,
+      ServerTypeDataLogger,
+      ServerTypeProprietary };
 
     enum MeasurementCommand_t { 
       MeasurementCommandTimeProp =          0x4,
@@ -105,10 +106,33 @@ namespace IsoAgLib
     };
 
     typedef BitFieldWrapperRight_c<Property_s> Properties_t;
-  
-    typedef STL_NAMESPACE::list< STL_NAMESPACE::pair<const IsoAgLib::iIsoItem_c*, RemoteType_t> > ServerList;
 
-  }
+    struct ClientCapabilities_s {
+      uint8_t versionNr;
+
+      bool hasTcBas;
+      bool hasTcGeo;
+      bool hasTcSc;
+
+      unsigned numBoom;
+      unsigned numSection;
+      unsigned numBin;
+    };
+
+    struct ServerCapabilities_s {
+      uint8_t versionNr;
+
+      bool hasTcBas;
+      bool hasTcGeoWithPbc;
+      bool hasTcGeoWithoutPbc;
+      bool hasPeerControl;
+      bool hasTcSc;
+
+      unsigned numBoom;
+      unsigned numSection;
+      unsigned numBin;
+    };
+}
 
 }
 
