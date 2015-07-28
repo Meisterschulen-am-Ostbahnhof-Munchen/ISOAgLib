@@ -63,8 +63,9 @@ namespace __IsoAgLib {
       void processChangeDesignator( const IdentItem_c&, uint16_t, const char* );
 #endif
 
-      void notifyServerStatusChange(ServerInstance_c& server, bool new_status);
+      void notifyServerStatusChange( ServerInstance_c& server, bool new_status );
       void notifyPeerDestruction( PdRemoteNode_c& pdRemoteNode );
+      void notifyConnectionToBeEnded( TcClientConnection_c& );
 
     private:
       TcClient_c();

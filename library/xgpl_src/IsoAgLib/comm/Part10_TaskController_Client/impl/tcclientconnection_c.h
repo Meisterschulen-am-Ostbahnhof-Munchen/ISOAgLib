@@ -112,6 +112,8 @@ namespace __IsoAgLib {
 
       ServerInstance_c* connected() const { return (ServerInstance_c *)( getRemoteNode() ); }
       const IsoName_c &getRemoteName() const { return getRemoteItem()->isoName(); } // no NULL check needed here!
+      StateHandler_c* getStateHandler() const { return m_stateHandler; }
+      IsoAgLib::ProcData::ClientCapabilities_s getClientCapabilities() const { return m_capabilities; }
 
 #if 0
 // not implemented yet
@@ -167,13 +169,12 @@ namespace __IsoAgLib {
       void eventPoolUploadResponse( uint8_t result );
       void eventPoolActivateResponse( uint8_t result );
 
-      void setDevPoolState( DevPoolState_t newState ) { m_devPoolState = newState; }
+      void setDevPoolState( DevPoolState_t newState );
       DevPoolState_t getDevPoolState() const { return m_devPoolState; }
 
       DevicePool_c &getDevicePool() { return static_cast<DevicePool_c &>( *m_pool ); }
 
       void timeEvent();
-      void timeEventDevicePool();
 
       virtual void processMsgTc( const ProcessPkg_c& );
       virtual void processRequestDefaultDataLogging();
@@ -226,6 +227,15 @@ namespace __IsoAgLib {
       SchedulerTaskProxy_c m_schedulerTaskProxy;
 
   }; // TcClientConnection_c
+
+  inline void
+  TcClientConnection_c::setDevPoolState( DevPoolState_t newState )
+  {
+    m_devPoolState = newState;
+  
+    if( m_devPoolState != PoolStateDisconnected )
+      m_schedulerTaskProxy.retriggerNow();
+  }
 
 } // __IsoAgLib
 

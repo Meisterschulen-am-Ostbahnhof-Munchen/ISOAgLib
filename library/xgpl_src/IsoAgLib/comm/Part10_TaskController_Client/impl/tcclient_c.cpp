@@ -381,14 +381,27 @@ namespace __IsoAgLib {
       else
       {
         if( connection.connected() == &server )
-        {
-          connection.disconnect();
-          ServerInstance_c *nextServer = findNextServerOfSameType( server );
-          if( nextServer )
-            connection.preConnect( *(clientIter->first), *nextServer, *clientIter->second.stateHandler, clientIter->second.capabilities );
-        }
+          notifyConnectionToBeEnded( connection );
       }
     }
+  }
+
+
+  void
+  TcClient_c::notifyConnectionToBeEnded( TcClientConnection_c& connection )
+  {
+    isoaglib_assert( connection.connected() );
+
+    ServerInstance_c *thisServer = connection.connected();
+    const IdentItem_c &ident = connection.getIdentItem();
+    TcClientConnection_c::StateHandler_c &sh = *connection.getStateHandler();
+    IsoAgLib::ProcData::ClientCapabilities_s caps = connection.getClientCapabilities();
+
+    connection.disconnect();
+
+    ServerInstance_c *nextServer = findNextServerOfSameType( *thisServer );
+    if( nextServer )
+      connection.preConnect( ident, *nextServer, sh, caps );
   }
 
 

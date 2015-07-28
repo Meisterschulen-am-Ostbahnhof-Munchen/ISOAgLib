@@ -21,6 +21,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #endif
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/serverinstance_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/procdata_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measureprog_c.h>
@@ -108,7 +109,7 @@ namespace __IsoAgLib {
 
   bool TcClientConnection_c::fullConnect( const ServerInstance_c& server, DevicePool_c& pool )
   {
-    if( pool.isEmpty() || ( getDevicePool().getDvcObject() == NULL ) )
+    if( pool.isEmpty() || ( pool.getDvcObject() == NULL ) )
       return false;
 
     if( getDevPoolState() != PoolStatePreconnecting )
@@ -145,7 +146,11 @@ namespace __IsoAgLib {
     PdConnection_c::stop();
     PdConnection_c::close();
 
+    const bool wasFullyConnected = getDevPoolState() != PoolStatePreconnecting;
     setDevPoolState( PoolStateDisconnected );
+
+    if( wasFullyConnected )
+      m_stateHandler->_eventDisconnectedOnServerLoss( *this );
   }
 
 
@@ -155,7 +160,7 @@ namespace __IsoAgLib {
     if( getDevPoolState() == PoolStateDisconnected )
       return;
 
-    isoaglib_assert( ( m_identItem == NULL ) && connected() );
+    isoaglib_assert( ( m_identItem != NULL ) && connected() );
 
     if( !m_identItem->isClaimedAddress() )
       return;
@@ -182,13 +187,6 @@ namespace __IsoAgLib {
       sendMsg( 0xff, 0xff, 0xff, 0xff, connected()->getLastServerState(), 0x00, 0x00, 0x00 );
     }
 
-    timeEventDevicePool();
-  }
-
-
-  void
-  TcClientConnection_c::timeEventDevicePool()
-  {
     switch( m_cmdState )
     {
     case CommandStateNone:
@@ -227,7 +225,7 @@ namespace __IsoAgLib {
         break;
 
       case PoolStateError:
-        // do nothing here, for now. @todo move to next Server
+        getTcClientInstance( getIdentItem().getMultitonInst() ).notifyConnectionToBeEnded( *this );
         break;
 
       default:
