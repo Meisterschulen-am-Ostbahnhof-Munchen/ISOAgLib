@@ -53,6 +53,7 @@ private:
   friend class __IsoAgLib::TcClient_c;
   friend class __IsoAgLib::TcClientConnection_c;
   friend class __IsoAgLib::Setpoint_c;
+  friend class iTcClientServer_c;
 
 public:
   /** deliver the ISOName code of this item */

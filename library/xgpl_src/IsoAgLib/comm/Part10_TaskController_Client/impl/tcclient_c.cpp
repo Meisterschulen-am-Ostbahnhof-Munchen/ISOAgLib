@@ -328,7 +328,7 @@ namespace __IsoAgLib {
   void
   TcClient_c::removeRemotePd( const IsoItem_c& isoItem )
   {
-    for( ItemToRemoteNodeMap_t::const_iterator i = m_pdRemoteNodes.begin(); i != m_pdRemoteNodes.end(); ++i )
+    for( ItemToRemoteNodeMap_t::iterator i = m_pdRemoteNodes.begin(); i != m_pdRemoteNodes.end(); ++i )
     {
       if( i->first != &isoItem )
         continue;

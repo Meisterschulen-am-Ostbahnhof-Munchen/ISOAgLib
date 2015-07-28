@@ -37,7 +37,7 @@ namespace IsoAgLib {
 
       private:
         virtual void _eventConnectionRequest( const __IsoAgLib::IdentItem_c& ident, __IsoAgLib::ServerInstance_c& server, const ProcData::ServerCapabilities_s &caps ) {
-          eventConnectionRequest( static_cast<const iIdentItem_c &>(ident), static_cast<iTcClientServer_c &>(server), caps );
+          eventConnectionRequest( static_cast<const iIdentItem_c &>(ident), (iTcClientServer_c &)(server), caps );
         }
         virtual void _eventDisconnectedOnServerLoss( TcClientConnection_c& ecu ) {
           eventDisconnectedOnServerLoss( static_cast<iTcClientConnection_c&>( ecu ) );
