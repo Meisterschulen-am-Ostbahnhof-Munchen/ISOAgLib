@@ -26,6 +26,7 @@ namespace IsoAgLib {
     IsoAgLib::ProcData::ServerType_t getEcuType() const { return __IsoAgLib::ServerInstance_c::getEcuType(); }
 
     friend class iTcClient_c;
+    friend class iTcClientConnection_c;
   };
 
 }
