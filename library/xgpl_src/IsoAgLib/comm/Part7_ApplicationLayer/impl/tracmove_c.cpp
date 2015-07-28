@@ -374,6 +374,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     mt_speedSource = IsoAgLib::GpsBasedSpeed;
     mt_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
     mi32_selectedSpeed = speed_mm_s;
+
+    mui32_lastUpdateTimeSpeedSelected = ai_time;
   }
 
   void TracMove_c::updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)
