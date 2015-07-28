@@ -104,14 +104,6 @@ public:
   */
   void setDataUnion(const Flexible8ByteString_c* apc_data) { mui8_len = 8; mc_data = *apc_data; }
 
-  /**
-    set a complete 8-Byte data string from source type Union8ByteString_u.
-    The length of this package is automatically set to length 8.
-    @param apc_data pointer to source data Flexible8ByteString_c
-  */
-  void setDataUnion(uint8_t aui8_ind, const Flexible4ByteString_c* apc_data)
-    { mc_data.setFlexible4DataValueInd( aui8_ind, *apc_data ); }
-
   /** retrieve len of last received CAN message */
   uint8_t getLen( void ) const { return mui8_len; }
 

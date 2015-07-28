@@ -109,14 +109,6 @@ public:
   void setDataUnion(const __IsoAgLib::Flexible8ByteString_c* apc_data)
     { CanPkg_c::setDataUnion(apc_data); }
 
-  /**
-    set a complete 8-Byte data string from source type Union8ByteString_u.
-    The length of this package is automatically set to length 8.
-    @param apc_data pointer to source data Flexible8ByteString_c
-  */
-  void setDataUnion(uint8_t aui8_ind, const __IsoAgLib::Flexible4ByteString_c* apc_data)
-    { CanPkg_c::setDataUnion(aui8_ind, apc_data); }
-
   /** retrieve len of last received CAN message */
   uint8_t getLen( void ) const { return CanPkg_c::getLen(); }
 
