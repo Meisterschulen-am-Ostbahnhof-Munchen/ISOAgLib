@@ -52,10 +52,10 @@ private:
   virtual void close_specialized();
 
   virtual bool processMsgRequestPGN(
-    uint32_t aui32_pgn,
-    IsoItem_c *apc_isoItemSender,
-    IsoItem_c *apc_isoItemReceiver,
-    ecutime_t ai_time ) { return false; } // not used in here!
+    uint32_t /*aui32_pgn*/,
+    IsoItem_c* /*apc_isoItemSender*/,
+    IsoItem_c* /*apc_isoItemReceiver*/,
+    ecutime_t /*ai_time*/ ) { return false; } // not used in here!
 
   void processMsg( const CanPkg_c& arc_data );
 
