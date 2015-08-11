@@ -27,7 +27,6 @@ iLibErr_c &getILibErrInstance()
 void iLibErr_c::init()
 {
   CNAMESPACE::memset( &m_nonFatal, 0, TypeNonFatalSize * sizeof( uint16_t ) );
-  CNAMESPACE::memset( &m_fatal, 0, TypeNonFatalSize * sizeof( uint16_t ) );
 }
 
 
@@ -57,19 +56,5 @@ void iLibErr_c::registerNonFatal( TypeNonFatal_en at_errType, int instance )
   }
 }
 
-
-void iLibErr_c::registerFatal( TypeFatal_en at_errType, int instance )
-{
-  m_fatal[ at_errType ] |= uint16_t( 1 << instance );
-
-  #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  for ( STL_NAMESPACE::vector<iErrorObserver_c*,MALLOC_TEMPLATE(iErrorObserver_c*)>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
-  #else
-  for ( STL_NAMESPACE::vector<iErrorObserver_c*>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
-  #endif
-  {
-    (*pc_iter)->fatalError( at_errType, instance );
-  }
-}
 
 } // end of namespace IsoAgLib

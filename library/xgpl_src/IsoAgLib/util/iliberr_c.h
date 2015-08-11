@@ -61,17 +61,11 @@ public:
   };
 
 
-  enum TypeFatal_en {
-    TypeFatalSize
-  };
-
-
   enum State_en {
     Inactive,
     Active
   };
 
-  void registerFatal( TypeFatal_en at_errType, int instance );
   void registerNonFatal( TypeNonFatal_en at_errType, int instance );
 
   State_en state( TypeNonFatal_en type, int instance ) const {
@@ -82,22 +76,9 @@ public:
     return ( Inactive == state( type, instance ) );
   }
 
-  State_en state( TypeFatal_en type, int instance ) const {
-    return ( m_fatal[ type ] & ( 1 << instance ) ? Active : Inactive );
-  }
-
-  bool good( TypeFatal_en type, int instance ) const {
-    return ( Inactive == state( type, instance ) );
-  }
-
   void clear( TypeNonFatal_en type, int instance ) { 
     m_nonFatal[ type ] &= uint16_t(~( 1 << instance ));
   }
-
-  void clear( TypeFatal_en type, int instance ) { 
-    m_fatal[ type ] &= uint16_t(~( 1 << instance ));
-  }
-
 
   void registerObserver( iErrorObserver_c &arc_observer );
   void deregisterObserver( iErrorObserver_c &arc_observer );
@@ -106,7 +87,6 @@ private:
   iLibErr_c();
 
   uint16_t m_nonFatal[ TypeNonFatalSize ];
-  uint16_t m_fatal[ TypeNonFatalSize ];
 
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(iErrorObserver_c)
   friend iLibErr_c &getILibErrInstance();
@@ -115,20 +95,15 @@ private:
 class iErrorObserver_c {
 public:
   typedef iLibErr_c::TypeNonFatal_en TypeNonFatal_en;
-  typedef iLibErr_c::TypeFatal_en TypeFatal_en;
 
   virtual ~iErrorObserver_c() {}
 
   void nonFatalError( TypeNonFatal_en type, int instance ) {
     onNonFatalError( type, instance );
   }
-  void fatalError( TypeFatal_en type, int instance ) {
-    onFatalError( type, instance );
-  }
 
 private:
   virtual void onNonFatalError( TypeNonFatal_en type, int instance ) = 0;
-  virtual void onFatalError( TypeFatal_en type, int instance ) = 0;
 };
 
 
