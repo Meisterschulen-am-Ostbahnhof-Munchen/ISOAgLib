@@ -101,6 +101,8 @@ namespace __IsoAgLib {
       uint16_t aui16_numOfUserPoolUpdateObjects = 0);
     void startCurrentUploadPhase();
 
+    bool retrievedProperties() const;
+
     void processMsgVtToEcu( const CanPkgExt_c& pkg );
     void processMsgVtToEcu( Stream_c &stream );
 

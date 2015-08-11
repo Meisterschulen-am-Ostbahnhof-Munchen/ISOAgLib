@@ -560,12 +560,19 @@ UploadPoolState_c::fitTerminalWrapper( const vtObject_c& object ) const
 }
 
 
+bool
+UploadPoolState_c::retrievedProperties() const
+{
+  return m_connection.getVtServerInst().getVtCapabilities().lastReceivedFont
+      && m_connection.getVtServerInst().getVtCapabilities().lastReceivedHardware
+      && m_connection.getVtServerInst().getVtCapabilities().lastReceivedSoftkeys;
+}
+
+
 void
 UploadPoolState_c::timeEvent()
 {
-  if( !(m_connection.getVtServerInst().getVtCapabilities().lastReceivedFont
-     && m_connection.getVtServerInst().getVtCapabilities().lastReceivedHardware
-     && m_connection.getVtServerInst().getVtCapabilities().lastReceivedSoftkeys) )
+  if( !retrievedProperties() )
     timeEventRequestProperties();
   else
     timeEventPoolUpload();

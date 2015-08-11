@@ -607,8 +607,9 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& pkg )
 uint8_t
 VtClientConnection_c::getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour)
 {
-  if( !poolSuccessfullyUploaded() )
-    return colorValue;
+  // can't adapt the colors if not yet retrieved properties from the VT.
+  // Application needs to wait for this until sending/changing attributes.
+  isoaglib_assert( m_uploadPoolState.retrievedProperties() );
 
   uint8_t colorDepth = getVtServerInst().getVtCapabilities().hwGraphicType;
   if( ((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16)) )
