@@ -415,6 +415,10 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
       else
         out << " (Proprietary DDI)";
     }
+
+    if( gs_main.mb_storeDdop && ( at_ptrFrame->data()[0] == 0x81 ) ) {
+      ddopStore( at_ptrFrame->sourceAddress() );
+    }
   }
 
   return out.str();

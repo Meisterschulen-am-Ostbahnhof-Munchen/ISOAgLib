@@ -177,17 +177,20 @@ struct Main_s {
   Main_s();
   size_t mt_sizeMultipacketWrap; // default will be set when parsing parameters
   bool mb_storeIop;
+  bool mb_storeDdop;
   TransferCollection_c mc_trans;
   ParseLogLine_t *pt_parseLogLine;
   FILE *m_gpxFile;
   AliveCollection_c m_alive;
   AddressTracker_c mc_tracker;
   std::map< uint8_t, std::vector<uint8_t> > m_vtupl;
+  std::map< uint8_t, std::vector<uint8_t> > m_tcupl;
 };
 
 inline Main_s::Main_s() :
   mt_sizeMultipacketWrap(0),
-  mb_storeIop( false ),
+  mb_storeIop(false),
+  mb_storeDdop(false),
   mc_trans(),
   pt_parseLogLine(0),
   m_gpxFile( NULL ),
@@ -200,18 +203,20 @@ struct Main_s gs_main;
 } //namespace
 
 
-enum { OPT_GPX, OPT_TYPE, OPT_WRAP, OPT_STORE, OPT_HELP };
+enum { OPT_GPX, OPT_TYPE, OPT_WRAP, OPT_STORE_IOP, OPT_STORE_DDOP, OPT_HELP };
 
 CSimpleOpt::SOption g_rgOptions[] = {
     { OPT_GPX, "-gpx", SO_REQ_SEP },
     { OPT_TYPE, "-t", SO_REQ_SEP },
     { OPT_WRAP, "-w", SO_REQ_SEP },
-    { OPT_STORE, "--iop", SO_NONE },
+    { OPT_STORE_IOP, "--iop", SO_NONE },
+    { OPT_STORE_DDOP, "--ddop", SO_NONE },
     { OPT_HELP, "--help", SO_NONE },
     SO_END_OF_OPTIONS
 };
 
-void iopStore( uint8_t sa );
+void iopStore(uint8_t sa);
+void ddopStore(uint8_t sa);
 
 #include "functionality_vt.inc"
 #include "functionality_tc.inc"
@@ -224,7 +229,7 @@ void
 exit_with_usage(const char* progname)
 {
   std::cerr << "ISOBUS-Logalizer (c) 2007 - 2015 OSB AG." << std::endl << std::endl;
-  std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [-s] logFile" << std::endl << std::endl;
+  std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [--iop] [--ddop] [-s] logFile" << std::endl << std::endl;
   std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
   std::cerr << "         1 -> rte"<<std::endl;
   std::cerr << "         2 -> CANMon"<<std::endl;
@@ -243,7 +248,8 @@ exit_with_usage(const char* progname)
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "--iop:   Store VT object pool transfers in iop format. Default: do not store" << std::endl;
-  std::cerr << "logFile: filepath or - (dash, means standard input rather than a real file)"<<std::endl;
+  std::cerr << "--ddop:  Store TC object pool transfers in ddop format. Default: do not store" << std::endl;
+  std::cerr << "logFile: filepath or - (dash, means standard input rather than a real file)" << std::endl;
   std::cerr << std::endl;
 
   std::cerr << "can_server:  '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
@@ -320,6 +326,16 @@ iopAppend( PtrDataFrame_t at_ptrFrame ) {
   }
 }
 
+void
+ddopAppend(PtrDataFrame_t at_ptrFrame) {
+  if (((at_ptrFrame->pgn() & 0x3FF00) == 0xCB00) && (at_ptrFrame->data()[0] == 0x61)) {
+    if (gs_main.m_tcupl.find(at_ptrFrame->sourceAddress()) == gs_main.m_tcupl.end()) {
+      gs_main.m_tcupl[at_ptrFrame->sourceAddress()] = std::vector<uint8_t>();
+    }
+    gs_main.m_tcupl[at_ptrFrame->sourceAddress()].insert(gs_main.m_tcupl[at_ptrFrame->sourceAddress()].end(), at_ptrFrame->data().begin() + 1, at_ptrFrame->data().end());
+  }
+}
+
 void 
 iopStore( uint8_t sa ) {
   static unsigned n = 0;
@@ -336,6 +352,26 @@ iopStore( uint8_t sa ) {
     }
     f.close();
     gs_main.m_vtupl.erase( gs_main.m_vtupl.find( sa ) );
+  }
+}
+
+void
+ddopStore(uint8_t sa) {
+  static unsigned n = 0;
+  if (gs_main.m_tcupl.find(sa) != gs_main.m_tcupl.end()) {
+    char fn[512];
+    sprintf(fn, "%03d_0x%02x.ddop", n++, sa);
+    std::ofstream f(fn, std::ios::binary);
+    if (f.is_open()) {
+      std::ostream_iterator<unsigned char> fi(f, "");
+      std::copy(gs_main.m_tcupl[sa].begin(), gs_main.m_tcupl[sa].end(), fi);
+    }
+    else {
+      std::cerr << "Could not open " << fn << " for writing...sorry." << std::endl;
+      gs_main.mb_storeDdop = false;
+    }
+    f.close();
+    gs_main.m_tcupl.erase(gs_main.m_tcupl.find(sa));
   }
 }
 
@@ -833,7 +869,8 @@ endOfTransfer( std::ostringstream& out, PtrDataFrame_t at_ptrFrame, TransferColl
     // output in some ways, dump (raw), interprete and maybe store to a file
     multiPacket_dump( out, t_ptrArtificialFrame);
     out << interpretePgnData(t_ptrArtificialFrame);
-    if( gs_main.mb_storeIop ) iopAppend(t_ptrArtificialFrame);
+    if (gs_main.mb_storeIop) iopAppend(t_ptrArtificialFrame);
+    if (gs_main.mb_storeDdop) ddopAppend(t_ptrArtificialFrame);
 
     gs_main.mc_trans.deleteConnection(
         ae_variant,
@@ -953,8 +990,11 @@ int main (int argc, char** argv)
           case OPT_WRAP:
             gs_main.mt_sizeMultipacketWrap = atoi( args.OptionArg() );
             break;
-          case OPT_STORE:
+          case OPT_STORE_IOP:
             gs_main.mb_storeIop = true;
+            break;
+          case OPT_STORE_DDOP:
+            gs_main.mb_storeDdop = true;
             break;
           case OPT_HELP:
             exit_with_usage( argv[0] );
