@@ -319,7 +319,7 @@ check_set_correct_variables()
             IDE_NAME="Tasking EDE"
             ;;
         (*)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/proprietary_hal"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR"
             IDE_NAME="Proprietary - Filelist only"
             ;;
     esac
