@@ -133,15 +133,17 @@ bool DiagnosticFunctionalities_c::fillStructure(FunctionalitiesCharacteristics_t
   Functionality_s functionality_description;
   functionality_description.generation = getGeneration(functionality, version);
 
-  bool empty = true;
+  functionality_description.number_of_option_bytes = 0;
   for (uint8_t counter = 0; counter < options.getSizeInBytes(); ++counter)
   {
-    if (options.getByte(counter) != 0)
-      empty = false;
-    functionality_description.options_bytes[counter] = options.getByte(counter);
+    const uint8_t curByte = options.getByte(counter);
+    functionality_description.options_bytes[counter] = curByte;
+
+    // From A.12: If a functionality has option bytes, all trailing zero option bytes
+    //            shall be omitted and not counted in the number of option bytes.
+    if (curByte != 0)
+      functionality_description.number_of_option_bytes = counter+1;
   }
-  // if no option is set, omit transmitting option bytes and set # of bytes 0
-  functionality_description.number_of_option_bytes = uint8_t( empty ? 0 : options.getSizeInBytes());
 
   // add functionality
   return addFunctionality(functionality, functionality_description);
