@@ -16,6 +16,7 @@
 #include "impl/diagnosticsservices_c.h"
 
 #include "idiagnosticstypes.h"
+#include "idtccontainer_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -112,9 +113,9 @@ public:
     __IsoAgLib::DiagnosticsServices_c::serviceTool_dtcClearPrevious();
   }
 
-#if DEBUG_DIAGNOSTICPGN
   bool isAtLeastOneDTCInCurrent() const { return __IsoAgLib::DiagnosticsServices_c::isAtLeastOneDTCInCurrent(); }
-#endif
+
+  const IsoAgLib::iDtcContainer_c &getDtcContainer() const { return static_cast<const IsoAgLib::iDtcContainer_c &>( __IsoAgLib::DiagnosticsServices_c::getDtcContainer() ); }
 
 private:
   // this constructor is only needed to be compilable on some compilers.

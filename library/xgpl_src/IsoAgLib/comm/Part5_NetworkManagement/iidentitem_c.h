@@ -45,8 +45,6 @@ class iTracPTO_c;
 class iTracAux_c;
 
 
-typedef __IsoAgLib::DtcContainer_c iDtcContainer_c;
-
 /**
   class to define an interface class for the storage a retrieved SA. Users can derive from
   and implement the load and store functions to their needs.

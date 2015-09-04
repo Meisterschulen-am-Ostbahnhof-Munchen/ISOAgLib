@@ -111,9 +111,7 @@ public:
 
   bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t ai_time );
 
-#if DEBUG_DIAGNOSTICPGN
   bool isAtLeastOneDTCInCurrent() const { return m_dm1CurrentAtLeastOneDTC; }
-#endif
 
 private: // typedef
   class IsoRequestPgnHandlerProxy_c : public IsoRequestPgnHandler_c {
@@ -181,7 +179,7 @@ private: // method
   uint16_t assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_searchForActiveDtc, bool* atleastoneDTC);
 
   // do not call from this->timeEvent
-  void changeActiveDtcStatusAndRetrigger(DtcContainer_c::Dtc_s& dtcToChange, bool active);
+  void changeActiveDtcStatusAndRetrigger(IsoAgLib::iDtc_s& dtcToChange, bool active);
 
   void sendSingleDM1DM2(uint32_t ui32_pgn, uint8_t* arr_send8bytes);
 

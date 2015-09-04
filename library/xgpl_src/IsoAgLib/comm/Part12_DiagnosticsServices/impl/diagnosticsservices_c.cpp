@@ -245,7 +245,7 @@ DiagnosticsServices_c::calculateNextActionTime()
     // and the need to send changes from the DTCs
     for (uint16_t counter = 0;counter < DtcContainer_c::scui16_sizeDTCList ;++counter) // loop_all_DTCs
     {
-      if (mc_dtcs[counter].ui32_spn == DtcContainer_c::Dtc_s::spiNone)   
+      if (mc_dtcs[counter].ui32_spn == IsoAgLib::iDtc_s::spiNone)   
         continue;
 
       const int32_t ci32_minNextDtcAction = int32_t((mc_dtcs[counter].i32_timeLastStateChangeSent + sci32_periodDM1)
@@ -262,7 +262,7 @@ DiagnosticsServices_c::calculateNextActionTime()
 }
 
 void
-DiagnosticsServices_c::changeActiveDtcStatusAndRetrigger(DtcContainer_c::Dtc_s& arc_dtcToChange, bool a_active)
+DiagnosticsServices_c::changeActiveDtcStatusAndRetrigger(IsoAgLib::iDtc_s& arc_dtcToChange, bool a_active)
 {
   arc_dtcToChange.b_active = a_active;
   arc_dtcToChange.i32_timeLastStateChange = HAL::getTime();
@@ -320,7 +320,7 @@ uint16_t DiagnosticsServices_c::dtcActivate(uint32_t SPN, IsoAgLib::FailureModeI
     isoaglib_assert(DtcContainer_c::scui16_sizeDTCList != dtcId);
 
     // insert DTC
-    const DtcContainer_c::Dtc_s dtc(SPN,FMI); // explizit call of = operator case of weird issue with HighTec TC 1796 gcc v.3.4.6
+    const IsoAgLib::iDtc_s dtc(SPN,FMI); // explizit call of = operator case of weird issue with HighTec TC 1796 gcc v.3.4.6
     mc_dtcs[dtcId] = dtc;
 
     // request send out immediately
@@ -399,8 +399,8 @@ uint16_t DiagnosticsServices_c::assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_
 
   for (uint16_t counter = 0;counter < DtcContainer_c::scui16_sizeDTCList ;++counter) // loop_all_DTCs
   {
-    const DtcContainer_c::Dtc_s& c_dtc = mc_dtcs[counter]; 
-    if ( (c_dtc.ui32_spn != DtcContainer_c::Dtc_s::spiNone)
+    const IsoAgLib::iDtc_s& c_dtc = mc_dtcs[counter]; 
+    if ( (c_dtc.ui32_spn != IsoAgLib::iDtc_s::spiNone)
       && (c_dtc.b_active == ab_searchForActiveDtc) )
     {
       arr_send8bytes[temp_size++] = static_cast<uint8_t>(c_dtc.ui32_spn);

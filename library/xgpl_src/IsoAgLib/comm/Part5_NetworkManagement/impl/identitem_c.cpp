@@ -104,7 +104,7 @@ IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
   if (ab_enablediagnosticsServices)
   {
     mpc_diagnosticsServices = new DiagnosticsServices_c(*this);
-    mpc_dataStorageHandler->loadDtcs(mpc_diagnosticsServices->getDtcContainer());
+    mpc_dataStorageHandler->loadDtcs(static_cast<IsoAgLib::iDtcContainer_c &>( mpc_diagnosticsServices->getDtcContainer() ));
   }
 }
 
@@ -148,7 +148,7 @@ IdentItem_c::deactivate()
   m_diagnosticPgnHandler.close();
   if (mpc_diagnosticsServices)
   {
-    mpc_dataStorageHandler->storeDtcs(mpc_diagnosticsServices->getDtcContainer());
+    mpc_dataStorageHandler->storeDtcs(static_cast<const IsoAgLib::iDtcContainer_c &>( mpc_diagnosticsServices->getDtcContainer() ));
     mpc_diagnosticsServices->close();
   }
 

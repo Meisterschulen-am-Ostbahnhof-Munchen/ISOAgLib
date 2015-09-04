@@ -36,7 +36,7 @@ uint16_t DtcContainer_c::getFreeDTCIndex() const
   // search for DTC
   for (;counter < scui16_sizeDTCList ;++counter) // loop_all_DTCs
   {
-    if (marr_dtc[counter].ui32_spn == Dtc_s::spiNone)
+    if (marr_dtc[counter].ui32_spn == IsoAgLib::iDtc_s::spiNone)
       break;
   }
   return counter;
@@ -49,7 +49,7 @@ uint16_t DtcContainer_c::getNumberOfDtc(bool ab_searchForActiveDtc) const
   // search for active DTC
   for (uint16_t counter = 0;counter < scui16_sizeDTCList ;++counter) // loop_all_DTCs
   {
-    if ((marr_dtc[counter].ui32_spn != Dtc_s::spiNone)
+    if ((marr_dtc[counter].ui32_spn != IsoAgLib::iDtc_s::spiNone)
       && (marr_dtc[counter].b_active == ab_searchForActiveDtc))
       ++ui16_countActiveDtc;
   }
@@ -61,13 +61,13 @@ DtcContainer_c::dtcClearPrevious()
 {
   for (uint16_t counter = 0;counter < scui16_sizeDTCList ;++counter) // all_DTCs_in_array
   {
-    Dtc_s& dtc = marr_dtc[counter];
-    if (dtc.ui32_spn != Dtc_s::spiNone)
+    IsoAgLib::iDtc_s& dtc = marr_dtc[counter];
+    if (dtc.ui32_spn != IsoAgLib::iDtc_s::spiNone)
     { // valid one found
       if (!dtc.b_active)
       { // inactive == previously active
         // "remove it from the list".
-        dtc.ui32_spn = Dtc_s::spiNone;
+        dtc.ui32_spn = IsoAgLib::iDtc_s::spiNone;
       }
       // else: active one, don't touch
     }
