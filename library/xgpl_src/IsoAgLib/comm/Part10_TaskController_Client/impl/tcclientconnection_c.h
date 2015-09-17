@@ -79,11 +79,6 @@ namespace __IsoAgLib {
 
   class TcClientConnection_c : public PdConnection_c
   {
-    static const ecutime_t DEF_TimeOut_GetVersion            = 5000;
-    static const ecutime_t DEF_TimeOut_OPTransfer            = 20000;
-    static const ecutime_t DEF_TimeOut_EndOfDevicePool       = 10000;
-    static const ecutime_t DEF_WaitFor_Reupload              = 5000;
-    static const ecutime_t DEF_TimeOut_ChangeDesignatorValue = 1500;
     static const ecutime_t DEF_TimeOut_NormalCommand         = 1500;
 
     public:
