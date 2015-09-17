@@ -28,19 +28,19 @@ namespace __IsoAgLib {
   {
   }
 
-  PdLocal_c::PdLocal_c( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, SetpointHandler_c *handler )
-    : PdBase_c( ddi, element )
-    , m_setpoint( handler, settable )
+  PdLocal_c::PdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, SetpointHandler_c *_handler )
+    : PdBase_c( _ddi, _element )
+    , m_setpoint( _handler, _settable )
     , m_measurement()
-    , m_triggerMethod( triggerMethod )
+    , m_triggerMethod( _triggerMethod )
   {
   }
 
   void
-  PdLocal_c::init( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, SetpointHandler_c *handler )
+  PdLocal_c::init( uint16_t _ddi, uint16_t _element, uint8_t triggerMethod, bool _settable, SetpointHandler_c *_handler )
   {
-    PdBase_c::init( ddi, element );
-    m_setpoint.init( handler, settable );
+    PdBase_c::init( _ddi, _element );
+    m_setpoint.init( _handler, _settable );
     m_triggerMethod = triggerMethod;
   }
 

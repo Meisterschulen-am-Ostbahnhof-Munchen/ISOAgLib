@@ -23,13 +23,13 @@ namespace __IsoAgLib {
   {
   public:
     PdRemote_c();
-    PdRemote_c( uint16_t ddi, uint16_t element, MeasurementHandler_c* = NULL );
+    PdRemote_c( uint16_t _ddi, uint16_t _element, MeasurementHandler_c* = NULL );
 
-    void init( uint16_t ddi, uint16_t element, MeasurementHandler_c* = NULL );
+    void init( uint16_t _ddi, uint16_t _element, MeasurementHandler_c* = NULL );
 
     void requestValue();
     void sendSetpoint( int32_t );
-    void startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t, int32_t value );
+    void startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t, int32_t _value );
 
     virtual ConnectedPd_c &createConnectedPd( PdConnection_c &connection );
 
@@ -48,10 +48,10 @@ namespace __IsoAgLib {
 
 
   inline
-  PdRemote_c::PdRemote_c( uint16_t ddi, uint16_t element, MeasurementHandler_c* handler )
+  PdRemote_c::PdRemote_c( uint16_t _ddi, uint16_t _element, MeasurementHandler_c* _handler )
     : PdBase_c()
   {
-    init( ddi, element, handler );
+    init( _ddi, _element, _handler );
   }
 
 }

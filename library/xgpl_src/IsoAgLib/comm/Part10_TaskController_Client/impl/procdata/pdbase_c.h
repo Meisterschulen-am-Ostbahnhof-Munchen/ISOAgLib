@@ -26,7 +26,7 @@ namespace __IsoAgLib {
   {
   public:
     PdBase_c();
-    PdBase_c( uint16_t ddi, uint16_t element );
+    PdBase_c( uint16_t _ddi, uint16_t _element );
     virtual ~PdBase_c() {}
 
     uint16_t DDI()     const { return m_ddi; }
@@ -56,19 +56,19 @@ namespace __IsoAgLib {
 
 
   inline
-  PdBase_c::PdBase_c( uint16_t ddi, uint16_t element )
-    : m_ddi( ddi )
-    , m_element( element )
+  PdBase_c::PdBase_c( uint16_t _ddi, uint16_t _element )
+    : m_ddi( _ddi )
+    , m_element( _element )
     , m_connectedPds()
   {
   }
 
 
   inline void
-  PdBase_c::init( uint16_t ddi, uint16_t element )
+  PdBase_c::init( uint16_t _ddi, uint16_t _element )
   {
-    m_ddi = ddi;
-    m_element = element;
+    m_ddi = _ddi;
+    m_element = _element;
   }
 
 }

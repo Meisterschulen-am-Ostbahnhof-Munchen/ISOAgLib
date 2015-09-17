@@ -28,30 +28,30 @@ namespace IsoAgLib {
     {
     public:
       virtual ~iSetpointHandler_c() {}
-      virtual void processSetpointSet( iPdLocal_c& procdata, int32_t value, bool change ) = 0;
+      virtual void processSetpointSet( iPdLocal_c& _procdata, int32_t _value, bool _change ) = 0;
 
     private:
-      virtual void _processSetpointSet( __IsoAgLib::PdLocal_c& procdata, int32_t value, bool change )
-      { processSetpointSet( static_cast<iPdLocal_c&>( procdata ), value, change ); }
+      virtual void _processSetpointSet( __IsoAgLib::PdLocal_c& procdata, int32_t _value, bool _change )
+      { processSetpointSet( static_cast<iPdLocal_c&>( procdata ), _value, _change ); }
 
       friend class IsoAgLib::iPdLocal_c;
     };
 
     iPdLocal_c();
-    iPdLocal_c( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, iSetpointHandler_c * );
+    iPdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, iSetpointHandler_c * );
 
-    void init( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, iSetpointHandler_c * );
+    void init( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, iSetpointHandler_c * );
 
     uint16_t DDI() const;
     uint16_t element() const;
-    bool isMethodSet( ProcData::TriggerMethod_t method ) const;
+    bool isMethodSet( ProcData::TriggerMethod_t _method ) const;
 
     int32_t measurementValue() const;
     int32_t setpointValue() const;
 
     /* sets and send value (according to running programs) */
     void setMeasurementValue( int32_t ai32_val );
-    void startMeasurement( iPdConnection_c&, ProcData::MeasurementCommand_t, int32_t increment );
+    void startMeasurement( iPdConnection_c&, ProcData::MeasurementCommand_t, int32_t _increment );
 
     friend class iPdPool_c;
   };
@@ -64,15 +64,15 @@ namespace IsoAgLib {
   }
 
   inline
-  iPdLocal_c::iPdLocal_c( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, iSetpointHandler_c *handler )
-    : PdLocal_c( ddi, element, triggerMethod, settable, handler )
+  iPdLocal_c::iPdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, iSetpointHandler_c *_handler )
+    : PdLocal_c( _ddi, _element, _triggerMethod, _settable, _handler )
   {
   }
 
   inline void
-  iPdLocal_c::init( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, iSetpointHandler_c *handler )
+  iPdLocal_c::init( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, iSetpointHandler_c *_handler )
   {
-    PdLocal_c::init( ddi, element, triggerMethod, settable, handler );
+    PdLocal_c::init( _ddi, _element, _triggerMethod, _settable, _handler );
   }
 
   inline uint16_t
@@ -88,9 +88,9 @@ namespace IsoAgLib {
   }
 
   inline bool
-  iPdLocal_c::isMethodSet( ProcData::TriggerMethod_t method ) const
+  iPdLocal_c::isMethodSet( ProcData::TriggerMethod_t _method ) const
   {
-    return PdLocal_c::isMethodSet( method );
+    return PdLocal_c::isMethodSet( _method );
   }
 
   inline int32_t
@@ -112,9 +112,9 @@ namespace IsoAgLib {
   }
 
   inline void
-  iPdLocal_c::startMeasurement( IsoAgLib::iPdConnection_c& pdNode, ProcData::MeasurementCommand_t type, int32_t increment )
+  iPdLocal_c::startMeasurement( IsoAgLib::iPdConnection_c& pdNode, ProcData::MeasurementCommand_t _type, int32_t _increment )
   {
-    PdLocal_c::getMeasurement().startMeasurement( *this, static_cast<__IsoAgLib::PdConnection_c&>( pdNode ), type, increment );
+    PdLocal_c::getMeasurement().startMeasurement( *this, static_cast<__IsoAgLib::PdConnection_c&>( pdNode ), _type, _increment );
   }
 
 }

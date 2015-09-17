@@ -27,9 +27,9 @@ namespace __IsoAgLib {
   {
   public:
     PdLocal_c();
-    PdLocal_c( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, SetpointHandler_c * );
+    PdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, SetpointHandler_c * );
 
-    void init( uint16_t ddi, uint16_t element, uint8_t triggerMethod, bool settable, SetpointHandler_c * );
+    void init( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, SetpointHandler_c * );
 
     virtual ConnectedPd_c &createConnectedPd( PdConnection_c & );
 
@@ -40,7 +40,7 @@ namespace __IsoAgLib {
     Measurement_c& getMeasurement() { return m_measurement; }
 
     uint8_t triggerMethod() const { return m_triggerMethod; }
-    inline bool isMethodSet( IsoAgLib::ProcData::TriggerMethod_t method ) const;
+    inline bool isMethodSet( IsoAgLib::ProcData::TriggerMethod_t _method ) const;
 
   protected:
     Setpoint_c m_setpoint;
@@ -55,9 +55,9 @@ namespace __IsoAgLib {
 
 
   inline bool
-  PdLocal_c::isMethodSet( IsoAgLib::ProcData::TriggerMethod_t method ) const
+  PdLocal_c::isMethodSet( IsoAgLib::ProcData::TriggerMethod_t _method ) const
   {
-    return( (triggerMethod() & (1 << method)) != 0 );
+    return( (triggerMethod() & (1 << _method)) != 0 );
   }
 
 }

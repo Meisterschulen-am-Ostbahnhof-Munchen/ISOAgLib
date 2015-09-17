@@ -29,22 +29,22 @@ namespace IsoAgLib {
     {
     public:
       virtual ~iMeasurementHandler_c() {}
-      virtual void processMeasurement( iPdRemote_c&, int32_t value, bool change ) = 0;
+      virtual void processMeasurement( iPdRemote_c&, int32_t _value, bool _change ) = 0;
   
     private:
-      virtual void _processMeasurement( __IsoAgLib::PdRemote_c& pdRemote, int32_t value, bool change )
-      { processMeasurement( static_cast<IsoAgLib::iPdRemote_c&>( pdRemote ), value, change ); }
+      virtual void _processMeasurement( __IsoAgLib::PdRemote_c& pdRemote, int32_t _value, bool _change )
+      { processMeasurement( static_cast<IsoAgLib::iPdRemote_c&>( pdRemote ), _value, _change ); }
     };
 
     iPdRemote_c() : PdRemote_c() {}
-    iPdRemote_c( uint16_t ddi, uint16_t element, iMeasurementHandler_c* handler = NULL );
+    iPdRemote_c( uint16_t _ddi, uint16_t _element, iMeasurementHandler_c* _handler = NULL );
 
-    void init( uint16_t ddi, uint16_t element, iMeasurementHandler_c* handler = NULL );
+    void init( uint16_t _ddi, uint16_t _element, iMeasurementHandler_c* _handler = NULL );
 
     int32_t value() const;
     void requestValue();
-    void sendSetpoint( int32_t value );
-    void startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t cmd, int32_t value );
+    void sendSetpoint( int32_t _value );
+    void startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t _cmd, int32_t _value );
 
     friend class iPdPool_c;
   };
@@ -52,15 +52,15 @@ namespace IsoAgLib {
 
 
   inline
-  iPdRemote_c::iPdRemote_c( uint16_t ddi, uint16_t element, iMeasurementHandler_c* handler )
-    : PdRemote_c( ddi, element, handler )
+  iPdRemote_c::iPdRemote_c( uint16_t _ddi, uint16_t _element, iMeasurementHandler_c* _handler )
+    : PdRemote_c( _ddi, _element, _handler )
   {}
 
 
   inline void
-  iPdRemote_c::init( uint16_t ddi, uint16_t element, iMeasurementHandler_c* handler )
+  iPdRemote_c::init( uint16_t _ddi, uint16_t _element, iMeasurementHandler_c* _handler )
   {
-    PdRemote_c::init( ddi, element, handler );
+    PdRemote_c::init( _ddi, _element, _handler );
   }
 
 
@@ -79,16 +79,16 @@ namespace IsoAgLib {
 
 
   inline void
-  iPdRemote_c::sendSetpoint( int32_t value )
+  iPdRemote_c::sendSetpoint( int32_t _value )
   {
-    PdRemote_c::sendSetpoint( value );
+    PdRemote_c::sendSetpoint( _value );
   }
 
 
   inline void
-  iPdRemote_c::startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t cmd, int32_t value )
+  iPdRemote_c::startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t _cmd, int32_t _value )
   {
-    PdRemote_c::startMeasurement( cmd, value );
+    PdRemote_c::startMeasurement( _cmd, _value );
   }
 
 }

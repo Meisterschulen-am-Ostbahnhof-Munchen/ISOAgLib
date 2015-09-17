@@ -36,11 +36,11 @@ namespace __IsoAgLib {
 
 
   void
-  PdRemote_c::init( uint16_t ddi, uint16_t element, MeasurementHandler_c* handler )
+  PdRemote_c::init( uint16_t _ddi, uint16_t _element, MeasurementHandler_c* _handler )
   {
-    PdBase_c::init( ddi, element );
+    PdBase_c::init( _ddi, _element );
 
-    m_remoteValue.init( handler );
+    m_remoteValue.init( _handler );
   }
 
 
@@ -51,17 +51,17 @@ namespace __IsoAgLib {
   }
   
   
-  void PdRemote_c::sendSetpoint( int32_t value )
+  void PdRemote_c::sendSetpoint( int32_t _value )
   {
     for( PdBase_c::ConnectedPds_t::iterator iter = connectedPds().begin(); iter != connectedPds().end(); ++iter )
-      ( *iter )->sendMsg( IsoAgLib::ProcData::setValue, value );
+      ( *iter )->sendMsg( IsoAgLib::ProcData::setValue, _value );
   }
   
 
-  void PdRemote_c::startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t cmd, int32_t value )
+  void PdRemote_c::startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t cmd, int32_t _value )
   {
     for( PdBase_c::ConnectedPds_t::iterator iter = connectedPds().begin(); iter != connectedPds().end(); ++iter )
-      ( *iter )->sendMsg( static_cast< IsoAgLib::ProcData::CommandType_t >( cmd ), value );
+      ( *iter )->sendMsg( static_cast< IsoAgLib::ProcData::CommandType_t >( cmd ), _value );
   }
 
 }
