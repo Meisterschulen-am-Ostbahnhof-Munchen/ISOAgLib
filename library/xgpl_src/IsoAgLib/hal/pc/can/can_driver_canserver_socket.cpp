@@ -62,6 +62,10 @@
 
 #define TRACE(); printf("%s (%d)\n", __FUNCTION__, __LINE__ );
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
+
 namespace __IsoAgLib {
   class CanPkg_c;
 }
