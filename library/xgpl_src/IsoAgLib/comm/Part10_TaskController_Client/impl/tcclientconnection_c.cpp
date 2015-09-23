@@ -198,7 +198,7 @@ namespace __IsoAgLib {
 
       case PoolStateUploading:
         m_devicePoolToUpload = getDevicePool().getBytestream( procCmdPar_OPTransferMsg );
-        doCommand( procCmdPar_OPTransferMsg );
+        doCommand( procCmdPar_RequestOPTransferMsg );
         break;
 
       /*case PoolStateStale: {
