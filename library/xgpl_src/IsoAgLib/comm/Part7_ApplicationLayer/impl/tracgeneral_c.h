@@ -229,10 +229,10 @@ public:
   IsoAgLib::IsoLimitFlag_t rearHitchPosLimitStatus()const {return mt_rearHitchPosLimitStatus;}
 
   /** check whether maintenance of ECU power was requested */
-  bool maintainEcuPower() const { return mb_maintainEcuPower;}
+  bool maintainEcuPower() const { return mt_maintainEcuPower == IsoAgLib::IsoActive;}
 
   /** check whether maintenance of actuator power was requested */
-  bool maintainActuatorPower() const { return mb_maintainActuatorPower;}
+  bool maintainActuatorPower() const { return mt_maintainActuatorPower == IsoAgLib::IsoActive;}
 
   /** check whether maintenance of power
     * for implement in transport state was requested */
@@ -274,6 +274,8 @@ private:
       in case more than one BUS is used for IsoAgLib
     */
   TracGeneral_c();
+
+  virtual void init_specialized();
 
   /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address
@@ -318,6 +320,9 @@ private:
   SendHitchState_e prepareSendingHitchState( CanPkgExt_c& pkg );
 
   bool canSendLanguage();
+
+  bool canSendMaintainPower();
+  void sendMaintainPower();
 
 private:
   // Private attributes
@@ -367,10 +372,10 @@ private:
   ecutime_t mi32_lastMaintainPowerRequest;
 
   /** state whether maintenance of ECU power was requested */
-  bool mb_maintainEcuPower;
+  IsoAgLib::IsoActiveFlag_t mt_maintainEcuPower;
 
   /** state whether maintenance of actuator power was requested */
-  bool mb_maintainActuatorPower;
+  IsoAgLib::IsoActiveFlag_t mt_maintainActuatorPower;
 
   /** stores for each requesting implement (sourceAddress) a bit field with all indicated state*/
   STL_NAMESPACE::map< IsoName_c, indicatedStateImpl_t > mmap_indicatedState; // access mmap_data[isoName].
@@ -395,6 +400,11 @@ inline bool TracGeneral_c::canSendRearHitchState() {
 inline bool TracGeneral_c::canSendLanguage() {
   return 0 == (LANGUAGE_PGN_DISABLE_MASK & mui16_suppressMask);
 }
+
+inline bool TracGeneral_c::canSendMaintainPower() {
+  return 0 == (MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK & mui16_suppressMask);
+}
+
 
 /** C-style function, to get access to the unique TracGeneral_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS

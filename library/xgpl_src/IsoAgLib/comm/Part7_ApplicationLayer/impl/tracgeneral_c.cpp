@@ -80,6 +80,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       ; // no change, still the same mode
     else if (at_identMode == IsoAgLib::IdentModeTractor) {
       // a change from Implement mode to Tractor mode occured
+      UnregisterPgn_s s_unregister = getUnregisterPgn();
+      if (canSendMaintainPower())
+        s_unregister(MAINTAIN_POWER_REQUEST_PGN);
       RegisterPgn_s s_register = getRegisterPgn();
       if (canSendLanguage())
         s_register(LANGUAGE_PGN);
@@ -89,6 +92,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         s_register(REAR_HITCH_STATE_PGN);
     } else {
       // a change from Tractor mode to Implement mode occured
+      RegisterPgn_s s_register = getRegisterPgn();
+      if (canSendMaintainPower())
+        s_register(MAINTAIN_POWER_REQUEST_PGN);
       UnregisterPgn_s s_unregister = getUnregisterPgn();
       if (canSendLanguage())
         s_unregister(LANGUAGE_PGN);
@@ -102,7 +108,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     mui8_maxPowerTime = mui8_frontLinkForce = mui8_rearLinkForce = NO_VAL_8;
     mui16_frontDraft = mui16_rearDraft = NO_VAL_16;
     mi32_lastMaintainPowerRequest = -1;
-    mb_maintainEcuPower = mb_maintainActuatorPower = false;
+    mt_maintainEcuPower = mt_maintainActuatorPower = IsoAgLib::IsoInactive;
     mt_implState.i32_lastMaintainPowerRequest = -1;
     mt_implState.b_maintainEcuPower = mt_implState.b_maintainActuatorPower = false;
     mt_implState.inPark =      IsoAgLib::IsoNotAvailablePark;
@@ -112,6 +118,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     return true;
   };
+
+  void TracGeneral_c::init_specialized()
+  {
+    RegisterPgn_s s_register = getRegisterPgn();
+    if (canSendMaintainPower())
+      s_register(MAINTAIN_POWER_REQUEST_PGN);
+  }
 
   void TracGeneral_c::checkCreateReceiveFilter( )
   {
@@ -248,6 +261,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     switch (aui32_pgn) {
     default:
       b_processed = false;
+      break;
+    case MAINTAIN_POWER_REQUEST_PGN:
+      sendMaintainPower();
       break;
     case LANGUAGE_PGN:
       // call TracGeneral_c function to send language of Tractor-ECU
@@ -468,14 +484,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return LanguageSent;
   }
 
- /** force maintain power from tractor
-     @see  CanIo_c::operator<<
-     @param at_ecuPower IsoActive -> maintain ECU power
-     @param at_actuatorPower IsoActive-> maintain actuator power
-   */
-  void TracGeneral_c::forceMaintainPower( IsoAgLib::IsoActiveFlag_t at_ecuPower, IsoAgLib::IsoActiveFlag_t at_actuatorPower )
+   /** send maintain power from tractor
+      @see  TracGeneral_c::processMsgRequestPGN
+    */
+  void TracGeneral_c::sendMaintainPower()
   {
-    if ( (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK) != 0)
+    if( !canSendMaintainPower() )
       return;
 
     isoaglib_assert( getIdentItem() );
@@ -486,8 +500,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     pkg.setMonitorItemForSA( getIdentItem()->getIsoItem() );
     pkg.setIsoPri(6);
     pkg.setIsoPgn(MAINTAIN_POWER_REQUEST_PGN);
-    pkg.setUint8Data(0, ( at_ecuPower      << 6) |
-                        ( at_actuatorPower << 4) );
+    pkg.setUint8Data(0, ( mt_maintainEcuPower      << 6) |
+                        ( mt_maintainActuatorPower << 4) );
     pkg.setUint8Data(1, ( mt_implState.inTransport << 6) |
                         ( mt_implState.inPark      << 4) |
                         ( mt_implState.inWork      << 2) );
@@ -495,6 +509,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     pkg.setUint32Data(4, 0xFFFFFFFFUL);
     pkg.setLen(8);
     getIsoBusInstance4Comm() << pkg;
+  }
+
+ /** force maintain power from tractor
+     @see  CanIo_c::operator<<
+     @param at_ecuPower IsoActive -> maintain ECU power
+     @param at_actuatorPower IsoActive-> maintain actuator power
+   */
+  void TracGeneral_c::forceMaintainPower( IsoAgLib::IsoActiveFlag_t at_ecuPower, IsoAgLib::IsoActiveFlag_t at_actuatorPower )
+  {
+    mt_maintainEcuPower = at_ecuPower;
+    mt_maintainActuatorPower = at_actuatorPower;
+
+    sendMaintainPower();
   }
 
   /** force a request for pgn for language information */
@@ -509,8 +536,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   /** clean map of maintain power data, set Maintain Power value */
   void TracGeneral_c::updateMaintainPowerRequest()
   {
-    mb_maintainEcuPower = false;
-    mb_maintainActuatorPower = false;
+    mt_maintainEcuPower = IsoAgLib::IsoInactive;
+    mt_maintainActuatorPower = IsoAgLib::IsoInactive;
 
     const ecutime_t i32_now = HAL::getTime();
     for (STL_NAMESPACE::map< IsoName_c, indicatedStateImpl_t >::iterator iter = mmap_indicatedState.begin();
@@ -521,8 +548,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         mmap_indicatedState.erase(iter++);
       else
       {
-        mb_maintainEcuPower |= iter->second.b_maintainEcuPower;
-        mb_maintainActuatorPower |= iter->second.b_maintainActuatorPower;
+        if( iter->second.b_maintainEcuPower )
+          mt_maintainEcuPower = IsoAgLib::IsoActive;
+        if( iter->second.b_maintainActuatorPower )
+          mt_maintainActuatorPower = IsoAgLib::IsoActive;
         ++iter;
       }
     }
