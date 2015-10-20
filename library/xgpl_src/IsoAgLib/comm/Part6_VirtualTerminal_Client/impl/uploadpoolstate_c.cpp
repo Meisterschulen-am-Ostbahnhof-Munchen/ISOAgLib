@@ -38,11 +38,11 @@ static const int32_t s_timeOutGetVersions = 6000;
 UploadPoolState_c::UploadPoolState_c(
   VtClientConnection_c &connection,
   IsoAgLib::iVtClientObjectPool_c& pool,
-  const char *versionLabel,
+  const char *_versionLabel,
   bool wsMaster )
   : m_connection( connection )
   , m_pool( pool )
-  , mb_usingVersionLabel( versionLabel != NULL )
+  , mb_usingVersionLabel( _versionLabel != NULL )
   //marrp7c_versionLabel[ 7 ] body!
   , m_uploadingVersion( 0 )
   , mc_iVtObjectStreamer( *this )
@@ -60,12 +60,12 @@ UploadPoolState_c::UploadPoolState_c(
   , mui16_objectPoolUploadedLanguageCode( 0x0000 )
   , mi8_vtLanguage( -2 )
 {
-  if( versionLabel )
+  if( _versionLabel )
   {
-    const uint32_t cui_len = CNAMESPACE::strlen( versionLabel );
+    const uint32_t cui_len = CNAMESPACE::strlen( _versionLabel );
     isoaglib_assert( ! ( ( (m_pool.getNumLang() == 0) && (cui_len > 7) ) || ( (m_pool.getNumLang() > 0) && (cui_len > 5) ) ) ); 
     unsigned int i=0;
-    for( ; i<cui_len; ++i ) marrp7c_versionLabel[ i ] = versionLabel[ i ];
+    for( ; i<cui_len; ++i ) marrp7c_versionLabel[ i ] = _versionLabel[ i ];
     for( ; i<7;       ++i ) marrp7c_versionLabel[ i ] = ' '; // ASCII: Space
 
     isoaglib_assert( m_langRejectedUseDefaultAsFallback.bits() >= m_pool.getNumLang() );
