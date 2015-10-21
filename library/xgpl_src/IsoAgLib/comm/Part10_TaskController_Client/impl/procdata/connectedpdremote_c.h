@@ -29,7 +29,7 @@ namespace __IsoAgLib {
       virtual ~ConnectedPdRemote_c();
 
       virtual void handleRequest();
-      virtual void handleIncoming( int32_t );
+      virtual void handleIncoming( int32_t, bool wasBroadcast );
       virtual bool startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t, int32_t );
 
       const PdRemote_c &pdRemote() const { return static_cast<const PdRemote_c &>( m_pdBase ); }

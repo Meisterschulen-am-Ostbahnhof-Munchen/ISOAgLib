@@ -33,7 +33,7 @@ namespace __IsoAgLib {
       virtual ~MeasureProg_c();
 
       virtual void handleRequest() { sendValue(); }
-      virtual void handleIncoming( int32_t );
+      virtual void handleIncoming( int32_t, bool wasBroadcast );
       virtual bool startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t, int32_t ai32_increment );
 
       void valueUpdated();

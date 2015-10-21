@@ -59,14 +59,13 @@ namespace __IsoAgLib {
   }
 
   
-  void MeasureProg_c::handleIncoming( int32_t value )
+  void MeasureProg_c::handleIncoming( int32_t value, bool wasBroadcast )
   {
-    if ( !pdLocal().getSetpoint().isSettable() ) {
-      connection().sendNack( pdBase().DDI(), pdBase().element(), NackProcessDataNotSettable );
-      return;
-    }
+    if ( pdLocal().getSetpoint().isSettable() )
+      pdLocal().getSetpoint().processMsg( pdLocal(), value );
+    else
+      connection().sendNack( pdBase().DDI(), pdBase().element(), NackProcessDataNotSettable, wasBroadcast );
 
-    pdLocal().getSetpoint().processMsg( pdLocal(), value );
   }
 
 

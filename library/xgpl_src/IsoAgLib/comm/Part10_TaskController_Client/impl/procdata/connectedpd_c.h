@@ -37,7 +37,7 @@ namespace __IsoAgLib {
     PdBase_c &pdBase() { return m_pdBase; }
 
     virtual void handleRequest() = 0;
-    virtual void handleIncoming( int32_t ) = 0;
+    virtual void handleIncoming( int32_t, bool wasBroadcast ) = 0;
     virtual bool startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t ren_type, int32_t ai32_increment ) = 0;
 
     void sendMsg( IsoAgLib::ProcData::CommandType_t cmd, int32_t value );

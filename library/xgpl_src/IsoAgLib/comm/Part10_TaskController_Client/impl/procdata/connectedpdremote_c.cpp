@@ -35,8 +35,9 @@ namespace __IsoAgLib {
   }
 
 
-  void ConnectedPdRemote_c::handleIncoming( int32_t value )
+  void ConnectedPdRemote_c::handleIncoming( int32_t value, bool wasBroadcast )
   {
+    ( void )wasBroadcast;
     pdRemote().getRemoteValue().processMsg( pdRemote(), value );
   }
 

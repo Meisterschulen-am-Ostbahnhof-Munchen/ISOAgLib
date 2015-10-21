@@ -65,10 +65,10 @@ namespace __IsoAgLib
     void processProcMsg( const ProcessPkg_c& );
 
     void sendProcMsg( IsoAgLib::ProcData::CommandType_t, uint16_t ddi, uint16_t element, int32_t pdValue ) const;
-    void sendNack( int16_t ddi, int16_t element, NackResponse_t errorcodes ) const;
+    void sendNack( int16_t ddi, int16_t element, NackResponse_t errorcodes, bool wasBroadcast ) const;
 
   private:
-    void sendNackNotFound( int16_t ddi, int16_t element ) const;
+    void sendNackNotFound( int16_t ddi, int16_t element, bool wasBroadcast ) const;
 #ifdef HAL_USE_SPECIFIC_FILTERS
     virtual void processMsg( const CanPkg_c& data );
 #endif

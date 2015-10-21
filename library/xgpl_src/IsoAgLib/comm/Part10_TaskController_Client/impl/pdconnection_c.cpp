@@ -237,7 +237,7 @@ namespace __IsoAgLib {
 
   
   void
-  PdConnection_c::sendNackNotFound( int16_t ddi, int16_t element ) const
+  PdConnection_c::sendNackNotFound( int16_t ddi, int16_t element, bool wasBroadcast ) const
   {
     // Note: element without DPD will not be processed properly.
     // Response will be NackInvalidElementNumber instead of NackDDINoSupportedByElement
@@ -255,7 +255,7 @@ namespace __IsoAgLib {
       }
     }
 
-    sendNack( ddi, element, reason );
+    sendNack( ddi, element, reason, wasBroadcast );
   }
 
 
@@ -264,10 +264,12 @@ namespace __IsoAgLib {
     const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
     ConnectedPdMap_t::iterator iter = m_connectedPds.find(key);
 
+    const bool wasBroadcast = ( data.getMonitorItemForDA() == NULL );
+
     if ( iter != m_connectedPds.end())
       iter->second->handleRequest();
     else
-      sendNackNotFound( data.mui16_DDI, data.mui16_element );
+      sendNackNotFound( data.mui16_DDI, data.mui16_element, wasBroadcast );
   }
 
 
@@ -276,16 +278,20 @@ namespace __IsoAgLib {
     const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
     ConnectedPdMap_t::iterator iter = m_connectedPds.find(key);
 
+    const bool wasBroadcast = ( data.getMonitorItemForDA() == NULL );
+
     if( iter != m_connectedPds.end() )
-      iter->second->handleIncoming( data.mi32_pdValue );
+      iter->second->handleIncoming( data.mi32_pdValue, wasBroadcast );
     else
-      sendNackNotFound( data.mui16_DDI, data.mui16_element );
+      sendNackNotFound( data.mui16_DDI, data.mui16_element, wasBroadcast );
   }
 
 
   void PdConnection_c::processMeasurementMsg( const ProcessPkg_c& data ) {
     const uint32_t key = getMapKey( data.mui16_DDI, data.mui16_element );
     ConnectedPdMap_t::iterator iter = m_connectedPds.find(key);
+
+    const bool wasBroadcast = ( data.getMonitorItemForDA() == NULL );
 
     if( iter != m_connectedPds.end() )
     {
@@ -300,7 +306,7 @@ namespace __IsoAgLib {
 
             // measurementCommand_t and CommandType_t are unified for all measurement types
             if( !cPd.startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t( data.men_command ), data.mi32_pdValue ) )
-              sendNack( cPd.pdBase().DDI(), cPd.pdBase().element(), NackTriggerMethodNotSupported );
+              sendNack( cPd.pdBase().DDI(), cPd.pdBase().element(), NackTriggerMethodNotSupported, wasBroadcast );
           }
           break;
 
@@ -310,7 +316,7 @@ namespace __IsoAgLib {
       }
     }
     else
-      sendNackNotFound( data.mui16_DDI, data.mui16_element );
+      sendNackNotFound( data.mui16_DDI, data.mui16_element, wasBroadcast );
   }
 
 
@@ -327,13 +333,14 @@ namespace __IsoAgLib {
 
 
   void
-  PdConnection_c::sendNack( int16_t ddi, int16_t element, NackResponse_t errorcodes ) const
+  PdConnection_c::sendNack( int16_t ddi, int16_t element, NackResponse_t errorcodes, bool wasBroadcast ) const
   {
     isoaglib_assert( errorcodes != NackReserved1 );
     isoaglib_assert( errorcodes != NackReserved2 );
     isoaglib_assert( errorcodes != NackUndefined );
 
-    sendProcMsg( IsoAgLib::ProcData::nack, ddi, element, int32_t( 0xffffff00UL | uint32_t( errorcodes ) ) );
+    if( !wasBroadcast )
+      sendProcMsg( IsoAgLib::ProcData::nack, ddi, element, int32_t( 0xffffff00UL | uint32_t( errorcodes ) ) );
   }
   
 
