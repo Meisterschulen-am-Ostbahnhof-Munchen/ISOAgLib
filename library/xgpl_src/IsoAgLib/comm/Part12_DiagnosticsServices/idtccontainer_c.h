@@ -18,6 +18,8 @@
 
 namespace IsoAgLib {
 
+  class iDiagnosticsServices_c;
+  
 /**
   Provides interface for accessing the diagnostics services DM1/DM2/DM3 manager
   NOTE: this class is not Application-constructable
@@ -59,6 +61,9 @@ public:
 
 private:
   iDtcContainer_c(); // not to be constructed by Application
+
+  friend __IsoAgLib::IdentItem_c;
+  friend iDiagnosticsServices_c;
 };
 
 }
