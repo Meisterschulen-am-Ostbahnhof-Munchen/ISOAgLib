@@ -41,6 +41,9 @@ namespace IsoAgLib {
 
     void init( uint16_t _ddi, uint16_t _element, iMeasurementHandler_c* _handler = NULL );
 
+    uint16_t DDI() const;
+    uint16_t element() const;
+
     int32_t value() const;
     void requestValue();
     void sendSetpoint( int32_t _value );
@@ -63,6 +66,18 @@ namespace IsoAgLib {
     PdRemote_c::init( _ddi, _element, _handler );
   }
 
+
+  inline uint16_t
+  iPdRemote_c::DDI() const
+  {
+    PdRemote_c::DDI();
+  }
+
+  inline uint16_t
+  iPdRemote_c::element() const
+  {
+    PdRemote_c::element();
+  }
 
   inline int32_t
   iPdRemote_c::value() const
