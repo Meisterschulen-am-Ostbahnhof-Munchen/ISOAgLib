@@ -70,13 +70,13 @@ namespace IsoAgLib {
   inline uint16_t
   iPdRemote_c::DDI() const
   {
-    PdRemote_c::DDI();
+    return PdRemote_c::DDI();
   }
 
   inline uint16_t
   iPdRemote_c::element() const
   {
-    PdRemote_c::element();
+    return PdRemote_c::element();
   }
 
   inline int32_t
