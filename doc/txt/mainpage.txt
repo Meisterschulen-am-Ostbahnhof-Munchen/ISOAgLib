@@ -42,6 +42,91 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
+\subsection Change_ZE 2.7.2 to 2.8.0
+
+Network Management:
+ - Bugfix: Do not kick out Remote Node on Late Address Claim
+   When the AddressClaim is detected, but it was too late, do not kick out
+   the Remote node. We missed kicking it out after the 250ms time-frame,
+   but as it sent its Claim, it's (now) definitely to be considered on-line!
+
+TimePosGps_c:
+ - Refactoring: Split into TimeDate_c/Gnss_c
+   - Replacing TimePosGps_c!
+   - Added (i)TimeDate_c / (i)Gnss_c
+   - Removed PRJ_BASE / USE_BASE
+   - Moved MsgEventHandler to BaseCommon_c
+   - Removed updateDistanceDirection() from iTracMove_c.
+     Doesn't belong to API. Only called internally
+
+ProcessData / TC-Client:
+ - DirectPD:
+   - Don't send PDNACK if msg was addressed to global
+   - Added getter for DDI/element
+ - Cleanup: Adding DVC Version Assertion
+ - API-Fix: Renamed misleading "proprietaryServerRemovedFromMonitorList"
+   Unified "proprietaryServerRemovedFromMonitorList" and "proprietaryServerAddedToMonitorList"
+   to "proprietaryServer( const iIsoItem_c &, bool available )"
+ - Update to TC-Version 3:
+   - Error handling when Pool can't be uploaded.
+   - Added Disconnected callback
+   - Add AEF Functionalities.
+   - Handling of server-selection changed (ConnectionRequest callback)
+   - No more Delete-command on version-mismatch.
+   - Added timeout detection.
+   - Only process Responses when waiting for them!
+   - Split up to preConnect/fullConnection 
+ - Bugfix: Timeout handling of DDOP-Upload fixed
+   - If DDOP-Upload took longer then 1.5s, a (faulty) timeout was detected.
+   - This is now fixed, timeout is counting from the EoMAck now instead of
+     the start of the Tranport-Protocol...
+
+VT-Client:
+ - Crashfix: Deactivate of Objectpool now stops (E)TP-Send
+ - Bugfix: Now adapting colors during upload (again)
+   - Bug was introduced in some refactoring. Colors weren't adapted anymore,
+     so the pool was rejected on b/w and 16col. VTs most likely.
+     (Nobody noticed this, so everybody seems to be working with 256col. VTs only.
+
+FS-Client:
+ - Bugfix: Reconnecting to a power-cycled FS works now]
+   - Did not delete the FsCommand_c instance when FS went offline
+   - Did not again notify the application
+   - Did not properly remove the initializing FsCommand_c when it
+     went offline during retrieval of properties
+
+vt2iso:
+ - Enhancement: Allow linker storage specification for bitmap-data (CONFIG_VT_CLIENT_OP_BITMAPS_MEMORY_MODIFIER)
+
+Logalizer:
+ - Enhancement: Added output of more GNSS PGNs
+
+PropPGN:
+ - Enhancement: Allow Change while it's enabled now
+   This way it can be changed during the process-call.
+   disable/close/init/enable doesn't work there, as it's
+   iterating through the list (that is subject to be modified!)
+   when calling the process-callbacks!
+
+TracGeneral:
+ - Bugfix: Respond to Requests for Maintain Power Request
+
+Diagnostics:
+ - Compliancefix: Trimming trailing option bytes now.
+ - Enhancement
+   - Allow access to DTCs from application
+   - Added spnProprietary
+
+iLibErr_c:
+ - Cleanup: Removed Fatal-Errors, weren't used anymore anyway.
+
+Util:
+ - Cleanup: Removed Flexible4ByteString_c
+
+PC HAL:
+ - Enhancement: Override auto detect of endianness possible again
+
+
 \subsection Change_ZD 2.7.1 to 2.7.2
 
 Project-Generation (conf2build):
