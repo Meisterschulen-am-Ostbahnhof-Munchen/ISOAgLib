@@ -103,6 +103,13 @@
 #ifndef CONFIG_MULTI_SEND_MAX_PKG_PER_TIMEEVENT 
 #  define CONFIG_MULTI_SEND_MAX_PKG_PER_TIMEEVENT 20
 #endif
+
+/** minimum number of free messages left in the send buffer for other messages in multisend
+ */
+#ifndef CONFIG_MULTI_SEND_BUFFER_MIN_FREE_COUNT 
+#  define CONFIG_MULTI_SEND_BUFFER_MIN_FREE_COUNT 5
+#endif
+
 /** configures the maximum amount of packets to be allowed by all "CTS" messages.
     So you need to have at least a CAN-buffer for this many packets,
     because the clients will burst them and you cannot guarantee to handle

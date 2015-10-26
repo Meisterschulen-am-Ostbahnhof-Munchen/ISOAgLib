@@ -275,9 +275,9 @@ MultiSend_c::timeEvent()
     pkgCnt = CONFIG_MULTI_SEND_MAX_PKG_PER_TIMEEVENT;
   }
 
-   /* do not use the whole send buffer to give other modules a chance 
-      to send in parallel */
-  pkgCnt -= 5;
+  /* do not use the whole send buffer to give other
+     modules a chance to send in parallel */
+  pkgCnt -= CONFIG_MULTI_SEND_BUFFER_MIN_FREE_COUNT;
 
   if( pkgCnt < 0 ) {
     i32_nextRetriggerNeeded = System_c::getTime() + 5;
