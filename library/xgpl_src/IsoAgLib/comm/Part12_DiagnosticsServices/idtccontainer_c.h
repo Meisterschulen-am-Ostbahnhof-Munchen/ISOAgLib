@@ -62,8 +62,8 @@ public:
 private:
   iDtcContainer_c(); // not to be constructed by Application
 
-  friend __IsoAgLib::IdentItem_c;
-  friend iDiagnosticsServices_c;
+  friend class __IsoAgLib::IdentItem_c;
+  friend class iDiagnosticsServices_c;
 };
 
 }
