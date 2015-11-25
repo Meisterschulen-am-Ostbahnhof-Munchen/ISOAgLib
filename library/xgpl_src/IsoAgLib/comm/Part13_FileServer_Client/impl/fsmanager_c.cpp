@@ -165,8 +165,13 @@ FsManager_c::close()
   getSchedulerInstance().deregisterTask(*this);
 
   STL_NAMESPACE::for_each( m_commands.ml_initializingCommands.begin(), m_commands.ml_initializingCommands.end(), delete_object());
+  m_commands.ml_initializingCommands.clear();
+
   STL_NAMESPACE::for_each( mv_communications.begin(), mv_communications.end(), delete_object());
+  mv_communications.clear();
+
   STL_NAMESPACE::for_each( m_servers.m_serverInstances.begin(), m_servers.m_serverInstances.end(), delete_object());
+  m_servers.m_serverInstances.clear();
 
   setClosed();
 }
