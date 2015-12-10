@@ -52,7 +52,7 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
     case 0xAA: out << "Change Font Attributes"; i8_uidBytePos = 2; break;
     case 0xAB: out << "Change Line Attributes"; i8_uidBytePos = 2; break;
     case 0xAC: out << "Change Fill Attributes"; i8_uidBytePos = 2; break;
-    case 0xAD: out << "Change Active Mask"; i8_uidBytePos = 4; break;
+    case 0xAD: out << "Change Active Mask"; i8_uidBytePos = response ? 2 : 4; break;
     case 0xAE: out << "Change Soft Key Mask"; i8_uidBytePos = 5; break;
     case 0xAF: out << "Change Attribute"; i8_uidBytePos = 2; out << " AID="; out << uint16_t(at_ptrFrame->dataOctet(4-1)); break;
 
