@@ -327,7 +327,7 @@ struct iTime_s {
 struct iDateTime_s {
   iDate_s date;
   iTime_s time;
-  bool available;
+  ecutime_t timestamp;
 };
 
 struct iTimezone_s {
@@ -337,7 +337,7 @@ struct iTimezone_s {
 };
 
 /** Class definition to be used with event processing of GPS messages et al. **/
-class iMsgEventHandler_c 
+class iMsgEventHandler_c
 {
 public:
   iMsgEventHandler_c() {}

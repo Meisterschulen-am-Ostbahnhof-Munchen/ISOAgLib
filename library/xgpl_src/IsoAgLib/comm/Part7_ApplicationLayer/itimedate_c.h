@@ -32,8 +32,8 @@ public:
   // @return true => Request was sent on the bus. false => IdentItem not properly claimed!
   bool requestUpdate() { return TimeDate_c::requestUpdate(); }
 
-  const iTimezone_s &getTimezone() const;
-  const iDateTime_s &get( IsoAgLib::TimeStandard_t ) const;
+  const iTimezone_s &getTimezone() const { return TimeDate_c::getTimezone(); }
+  const iDateTime_s &get( IsoAgLib::TimeStandard_t ts ) const { return TimeDate_c::get( ts ); }
 
   ecutime_t lastUpdateTime() const { return TimeDate_c::lastUpdateTime(); }
 

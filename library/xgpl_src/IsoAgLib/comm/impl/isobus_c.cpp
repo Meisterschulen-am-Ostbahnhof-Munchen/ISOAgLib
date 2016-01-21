@@ -61,7 +61,7 @@
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timedate_c.h>
 #endif
 #ifdef USE_GNSS
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/gnsss_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/gnss_c.h>
 #endif
 #ifdef USE_ISB_CLIENT
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/isbclient_c.h>

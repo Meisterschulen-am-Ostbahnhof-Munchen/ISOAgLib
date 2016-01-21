@@ -50,16 +50,12 @@ public:
                                           bool ab_isFirstChunk,
                                           bool ab_isLastChunkAndACKd);
 
-  virtual void reactOnAbort (Stream_c& apc_stream) {}
+  virtual void reactOnAbort (Stream_c&) {}
 
 private:
   void setDateTimeUtcGps(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day, uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec );
 
-  virtual bool processMsgRequestPGN(
-    uint32_t aui32_pgn,
-    IsoItem_c *apc_isoItemSender,
-    IsoItem_c *apc_isoItemReceiver,
-    ecutime_t ai_time ) { return false; } // not used in here!
+  virtual bool processMsgRequestPGN(uint32_t , IsoItem_c *, IsoItem_c *, ecutime_t ) { return false; } // not used in here!
 
   virtual void checkCreateReceiveFilter() {}
 
@@ -84,7 +80,7 @@ public:
   /** deliver Degree GPS Longitude */
   float getGpsLongitudeDegree( void ) const { return ( float(mi32_longitudeDegree10Minus7) * 1.0e-7f ); }
 
-  
+
   /** *** Direction *** **/
 
   /** deliver GPS Speed Over Ground as [cm/s] */
@@ -185,7 +181,7 @@ private:
   STL_NAMESPACE::vector<uint16_t> mvec_refStationTypeAndStation;
   STL_NAMESPACE::vector<uint16_t> mvec_refStationDifferentialAge10Msec;
 
-  friend Gnss_c &getTimePosGpsInstance( unsigned instance );
+  friend Gnss_c &getGnssInstance( unsigned instance );
 };
 
 
@@ -193,7 +189,7 @@ inline
 ecutime_t
 Gnss_c::lastDateTimeUpdate() const
 {
-  return mi32_lastPositionStream;
+  return m_dateTime.timestamp;
 }
 
 
@@ -215,7 +211,7 @@ Gnss_c::lastDirectionUpdate() const
 
 
 
-Gnss_c &getTimePosGpsInstance( unsigned instance );
+Gnss_c &getGnssInstance( unsigned instance );
 
 } // __IsoAgLib
 

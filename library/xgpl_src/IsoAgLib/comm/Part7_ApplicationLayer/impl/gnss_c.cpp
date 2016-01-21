@@ -113,8 +113,6 @@ namespace __IsoAgLib {
     , mvec_refStationDifferentialAge10Msec()
   {
     mt_task.setPeriod( 1000, false );
-
-    m_dateTime.available = false;
   }
 
 
@@ -128,7 +126,7 @@ namespace __IsoAgLib {
     {
       if( ( mi32_lastPositionStream >= 0 ) && (ci32_now - mi32_lastPositionStream) >= getTimeOut( ) )
       {
-        m_dateTime.available = false;
+        m_dateTime.timestamp = -1;
         mi32_lastPositionStream = -1;
       }
 
@@ -170,7 +168,7 @@ namespace __IsoAgLib {
   Gnss_c::init_specialized()
   {
     IsoBus_c &isobus = getIsoBusInstance4Comm();
-    
+
     isobus.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (NMEA_GPS_POSITION_RAPID_UPDATE_PGN<<8) ), 8 );
     isobus.insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN<<8) ), 8 );
 #ifdef USE_J1939_VEHICLE_PGNS
@@ -185,7 +183,7 @@ namespace __IsoAgLib {
     mi32_lastPositionSimple = -1;
     mi32_lastDirection = -1;
     mt_gnssMethod = IsoAgLib::IsoNoGps;
-    m_dateTime.available = false;
+    m_dateTime.timestamp = -1;
     mt_gnssType = IsoAgLib::IsoGnssGps;
   }
 
@@ -198,7 +196,7 @@ namespace __IsoAgLib {
   }
 
 
-  Gnss_c &getTimePosGpsInstance( unsigned instance )
+  Gnss_c &getGnssInstance( unsigned instance )
   {
     MACRO_MULTITON_GET_INSTANCE_BODY(Gnss_c, PRT_INSTANCE_CNT, instance);
   }
@@ -342,7 +340,7 @@ namespace __IsoAgLib {
 
   void Gnss_c::setDateTimeUtcGps(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day, uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec )
   {
-    m_dateTime.available = true;
+    m_dateTime.timestamp = HAL::getTime();
 
     m_dateTime.date.year = ai16_year;
     m_dateTime.date.month = ab_month;
@@ -362,7 +360,7 @@ namespace __IsoAgLib {
     {
     case NMEA_GPS_POSITION_DATA_PGN:
       return ( totalLen >= 43 ) && ( ( ( totalLen - 43 ) & 0x03 ) == 0 );
-    
+
     case NMEA_GPS_DIRECTION_DATA_PGN:
       return totalLen == 14;
 

@@ -50,6 +50,8 @@ private:
   // from BaseCommon_c
   virtual void init_specialized();
   virtual void close_specialized();
+  virtual void checkCreateReceiveFilter() {};
+
 
   virtual bool processMsgRequestPGN(
     uint32_t /*aui32_pgn*/,

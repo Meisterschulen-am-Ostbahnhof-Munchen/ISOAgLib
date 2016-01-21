@@ -24,13 +24,13 @@ namespace IsoAgLib {
 class iGnss_c : private __IsoAgLib::Gnss_c {
 public:
   /** Retrieve the time of last position update (-1 if no position available (anymore, i.e. after timeout!)) */
-  ecutime_t lastPositionUpdate() const;
+  ecutime_t lastPositionUpdate() const { return Gnss_c::lastPositionUpdate(); }
 
   /** Retrieve the time of last date/time update (-1 if no date/time available (anymore, i.e. after timeout!)) */
-  ecutime_t lastDateTimeUpdate() const;
+  ecutime_t lastDateTimeUpdate() const { return Gnss_c::lastDateTimeUpdate(); }
 
   /** Retrieve the time of last direction update (-1 if no direction available (anymore, i.e. after timeout!)) */
-  ecutime_t lastDirectionUpdate() const;
+  ecutime_t lastDirectionUpdate() const { return Gnss_c::lastDirectionUpdate(); }
 
   const IsoAgLib::iDateTime_s &getDateTime() const { return Gnss_c::getDateTime(); }
 
@@ -95,9 +95,9 @@ public:
 
 private:
 #if ( PRT_INSTANCE_CNT == 1 )
-  friend iGnss_c& getITimePosGpsInstance();
+  friend iGnss_c& getIGnssInstance();
 #endif
-  friend iGnss_c& getITimePosGpsInstance( unsigned instance );
+  friend iGnss_c& getIGnssInstance( unsigned instance );
 };
 
 #if ( PRT_INSTANCE_CNT == 1 )

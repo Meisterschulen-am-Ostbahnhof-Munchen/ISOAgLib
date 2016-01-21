@@ -65,13 +65,17 @@ namespace __IsoAgLib {
     return false;
   }
 
-
   void
   TimeDate_c::init_specialized()
   {
     getIsoBusInstance4Comm().insertFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (TIME_DATE_PGN<<8) ), 8 );
     // BaseCommon did register the task already :(
     getSchedulerInstance().deregisterTask(mt_task);
+    mt_task.setPeriod( -1, false ); // one-shot = -1
+
+    m_dateTime[ IsoAgLib::TimeStandardUtc ].timestamp = -1;
+    m_dateTime[ IsoAgLib::TimeStandardLocal ].timestamp = -1;
+    m_dateTime[ IsoAgLib::TimeStandardUnknown ].timestamp = -1;
   }
 
   void
@@ -143,7 +147,7 @@ namespace __IsoAgLib {
 
       static IsoAgLib::iDateTime_s tempDateTime;
 
-      tempDateTime.available = true;
+      tempDateTime.timestamp = HAL::getTime();
       tempDateTime.date.year   = pkg.getUint8Data(5) + 1985;
       tempDateTime.date.month  = pkg.getUint8Data(3);
       tempDateTime.date.day    = (pkg.getUint8Data(4)+3) / 4;
@@ -159,7 +163,9 @@ namespace __IsoAgLib {
           || ( tempDateTime.time.minute > 59 )
           || ( tempDateTime.time.second > 59 ) )
       {
-        timeEvent();
+        if( getSelectedDataSourceISOName() == senderName )
+          timeEvent();
+
         return;
       }
 
@@ -191,20 +197,21 @@ namespace __IsoAgLib {
         m_timezone.available = false;
       }
 
-      m_dateTime[ IsoAgLib::TimeStandardUtc ].available = false;
-      m_dateTime[ IsoAgLib::TimeStandardLocal ].available = false;
-      m_dateTime[ IsoAgLib::TimeStandardUnknown ].available = false;
+      m_dateTime[ IsoAgLib::TimeStandardUtc ].timestamp = -1;
+      m_dateTime[ IsoAgLib::TimeStandardLocal ].timestamp = -1;
+      m_dateTime[ IsoAgLib::TimeStandardUnknown ].timestamp = -1;
 
       m_dateTime[ ts ] = tempDateTime;
 
       if( m_timezone.available )
       {
+        // we received UTC with local time offsets, thus we can also provide local time
         IsoAgLib::iDateTime_s &tsLocal = m_dateTime[ IsoAgLib::TimeStandardLocal ];
         tsLocal = m_dateTime[ IsoAgLib::TimeStandardUtc ];
 
         int16_t minutesOnDay = tsLocal.time.minute + ( tsLocal.time.hour * 60 );
         int16_t minutesOffset = m_timezone.minuteOffset + ( m_timezone.hourOffset * 60 );
-        
+
         minutesOnDay += minutesOffset;
         const int16_t minutesPerDay = 24 * 60;
 
@@ -252,6 +259,11 @@ namespace __IsoAgLib {
     { // there is a sender conflict
       IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::TracMultipleSender, getMultitonInst() );
     }
+  }
+
+  TimeDate_c &getTimeDateInstance( unsigned instance )
+  {
+    MACRO_MULTITON_GET_INSTANCE_BODY(TimeDate_c, PRT_INSTANCE_CNT, instance);
   }
 
 

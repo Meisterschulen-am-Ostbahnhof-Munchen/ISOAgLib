@@ -184,7 +184,7 @@ void BaseCommon_c::timeEventImplMode() {}
 /** send a PGN request */
 bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 {
-  if( ( ! getIdentItem() ) || ( ! getIdentItem()->getIsoItem() ) )
+  if( ( ! getIdentItem() ) || ( ! getIdentItem()->isClaimedAddress() ) )
     return false;
 
   IsoItem_c *dest = getSelectedDataSourceISONameConst().isSpecified()
