@@ -124,7 +124,7 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
     if (mb_learnMode)
     { // send message only to VT with function instance 0
       // => send to VT instance in m_vtClientServerCommunication because the application should care that a pool containing AUX2 objects
-      //    is only uploaded to a VT with function instance 0 (handled in initAndRegisterIsoObjectPool())
+      //    is only uploaded to a VT with function instance 0 (handled in initAndRegisterObjectPool())
       if (mp_vtClientServerCommunication->getVtServerInstPtr())
       {
         ui8_destinationAddress = mp_vtClientServerCommunication->getVtServerInstPtr()->getVtSourceAddress();

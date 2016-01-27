@@ -29,6 +29,7 @@ namespace IsoAgLib {
       class iStateHandler_c : private __IsoAgLib::TcClientConnection_c::StateHandler_c
       {
       public:
+        //! Please note that some callbacks here may get called during shutdown of the system. So in case you're shutting down, treat it accordingly.
         virtual void eventConnectionRequest( const iIdentItem_c&, iTcClientServer_c &, const ProcData::ServerCapabilities_s & ) = 0;
         virtual void eventDisconnectedOnServerLoss( iTcClientConnection_c& ) = 0;
         virtual void eventDefaultLoggingStarted( iTcClientConnection_c& ) = 0;

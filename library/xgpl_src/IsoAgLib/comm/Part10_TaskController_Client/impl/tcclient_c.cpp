@@ -129,7 +129,8 @@ namespace __IsoAgLib {
       iter->first->getDiagnosticFunctionalities().remFunctionalities( TaskControllerSectionControl );
 
     for( int i=0; i<IsoAgLib::ProcData::ServerTypes; ++i )
-      iter->second.m_serverConnections[ i ].disconnect();
+      if( iter->second.m_serverConnections[ i ].connected() )
+        iter->second.m_serverConnections[ i ].disconnect();
 
     m_clientInfo.erase( iter );
     return true;
