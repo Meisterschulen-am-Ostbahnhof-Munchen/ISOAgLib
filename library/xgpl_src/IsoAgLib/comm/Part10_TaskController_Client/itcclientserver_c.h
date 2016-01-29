@@ -25,6 +25,9 @@ namespace IsoAgLib {
     const iIsoItem_c& getIsoItem() const { return static_cast<const iIsoItem_c &>( __IsoAgLib::ServerInstance_c::getIsoItem() ); }
     IsoAgLib::ProcData::ServerType_t getEcuType() const { return __IsoAgLib::ServerInstance_c::getEcuType(); }
 
+  private:
+    iTcClientServer_c();
+
     friend class iTcClient_c;
     friend class iTcClientConnection_c;
   };
