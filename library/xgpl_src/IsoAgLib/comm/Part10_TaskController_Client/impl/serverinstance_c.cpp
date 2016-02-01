@@ -38,6 +38,13 @@ namespace __IsoAgLib {
   }
 
 
+  /** convert function - avoids lots of explicit static_casts */
+  const IsoAgLib::iTcClientServer_c&  ServerInstance_c::toConstITcClientServer_c() const
+  {
+    return (const IsoAgLib::iTcClientServer_c&)(*this);
+  }
+
+
   void ServerInstance_c::timeEvent() {
     const bool tcStatusOld = m_tcAliveCached;
     m_tcAliveCached = isAlive();

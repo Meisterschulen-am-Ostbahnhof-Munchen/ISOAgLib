@@ -20,6 +20,7 @@
 
 namespace IsoAgLib {
   class iTcClient_c;
+  class iTcClientServer_c;
 }
 
 
@@ -41,6 +42,8 @@ namespace __IsoAgLib {
       bool      getLastActiveTaskTC() const { return m_lastActiveTaskTC; }
 
       IsoAgLib::ProcData::ServerType_t getEcuType() const { return m_type; }
+
+      const IsoAgLib::iTcClientServer_c& toConstITcClientServer_c() const;
 
     private:
       virtual void timeEvent();

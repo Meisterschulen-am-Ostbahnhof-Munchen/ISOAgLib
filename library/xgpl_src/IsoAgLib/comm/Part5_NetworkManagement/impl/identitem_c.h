@@ -77,6 +77,7 @@ public:
   void deactivate();
 
   IsoAgLib::iIdentItem_c& toIidentItem_c();
+  const IsoAgLib::iIdentItem_c& toConstIidentItem_c() const;
 
   IsoItem_c* getIsoItem() const { return mpc_isoItem; }
 

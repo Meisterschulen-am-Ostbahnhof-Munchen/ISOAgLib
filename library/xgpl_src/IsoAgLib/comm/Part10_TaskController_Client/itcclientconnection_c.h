@@ -30,15 +30,15 @@ namespace IsoAgLib {
       {
       public:
         //! Please note that some callbacks here may get called during shutdown of the system. So in case you're shutting down, treat it accordingly.
-        virtual void eventConnectionRequest( const iIdentItem_c&, iTcClientServer_c &, const ProcData::ServerCapabilities_s & ) = 0;
+        virtual void eventConnectionRequest( const iIdentItem_c&, const iTcClientServer_c&, const ProcData::ServerCapabilities_s & ) = 0;
         virtual void eventDisconnectedOnServerLoss( iTcClientConnection_c& ) = 0;
         virtual void eventDefaultLoggingStarted( iTcClientConnection_c& ) = 0;
         virtual void eventTaskStarted( iTcClientConnection_c& ) = 0;
         virtual void eventTaskStopped( iTcClientConnection_c& ) = 0;
 
       private:
-        virtual void _eventConnectionRequest( const __IsoAgLib::IdentItem_c& ident, __IsoAgLib::ServerInstance_c& server, const ProcData::ServerCapabilities_s &caps ) {
-          eventConnectionRequest( static_cast<const iIdentItem_c &>(ident), static_cast<iTcClientServer_c &>(server), caps );
+        virtual void _eventConnectionRequest( const __IsoAgLib::IdentItem_c& ident, const __IsoAgLib::ServerInstance_c& server, const ProcData::ServerCapabilities_s &caps ) {
+          eventConnectionRequest( ident.toConstIidentItem_c(), server.toConstITcClientServer_c(), caps );
         }
         virtual void _eventDisconnectedOnServerLoss( TcClientConnection_c& ecu ) {
           eventDisconnectedOnServerLoss( static_cast<iTcClientConnection_c&>( ecu ) );

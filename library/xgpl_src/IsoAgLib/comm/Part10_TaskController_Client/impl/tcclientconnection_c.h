@@ -84,7 +84,7 @@ namespace __IsoAgLib {
     public:
       class StateHandler_c {
         public:
-          virtual void _eventConnectionRequest( const IdentItem_c &, ServerInstance_c &, const IsoAgLib::ProcData::ServerCapabilities_s & ) = 0;
+          virtual void _eventConnectionRequest( const IdentItem_c &, const ServerInstance_c &, const IsoAgLib::ProcData::ServerCapabilities_s & ) = 0;
           virtual void _eventDisconnectedOnServerLoss( TcClientConnection_c& ) = 0;
           virtual void _eventDefaultLoggingStarted( TcClientConnection_c& ) = 0;
           virtual void _eventTaskStarted( TcClientConnection_c& ) = 0;

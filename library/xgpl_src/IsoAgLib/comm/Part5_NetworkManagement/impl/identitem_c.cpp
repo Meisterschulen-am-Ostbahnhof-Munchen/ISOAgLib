@@ -115,6 +115,12 @@ IsoAgLib::iIdentItem_c& IdentItem_c::toIidentItem_c()
   return (IsoAgLib::iIdentItem_c&)(*this);
 }
 
+/** convert function - avoids lots of explicit static_casts */
+const IsoAgLib::iIdentItem_c& IdentItem_c::toConstIidentItem_c() const
+{
+  return (const IsoAgLib::iIdentItem_c&)(*this);
+}
+
 
 bool
 IdentItem_c::activate (int ai_multitonInst)
