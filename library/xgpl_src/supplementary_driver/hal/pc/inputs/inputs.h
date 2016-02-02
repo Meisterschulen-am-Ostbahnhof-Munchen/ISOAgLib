@@ -35,6 +35,13 @@
 #define ANALOG_INPUT_MAX 7
 #endif
 
+#ifndef ANALOG_VOLTAGE_INPUT_MIN
+#define ANALOG_VOLTAGE_INPUT_MIN 5
+#endif
+#ifndef ANALOG_VOLTAGE_INPUT_MAX
+#define ANALOG_VOLTAGE_INPUT_MAX 7
+#endif
+
 #ifndef DIGITAL_INPUT_MIN
 #define DIGITAL_INPUT_MIN 0
 #endif
