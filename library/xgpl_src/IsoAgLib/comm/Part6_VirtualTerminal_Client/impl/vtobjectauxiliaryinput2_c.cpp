@@ -33,7 +33,7 @@ vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 32; // Object Type = Auxiliary Input 2
-    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectAuxiliaryInput2_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectAuxiliaryInput2_a->backgroundColour, this, IsoAgLib::BackgroundColour);
     destMemory [4] = vtObjectAuxiliaryInput2_a->functionType;
     destMemory [5] = vtObjectAuxiliaryInput2_a->numberOfObjectsToFollow;
     sourceOffset += 6;

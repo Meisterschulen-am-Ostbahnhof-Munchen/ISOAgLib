@@ -44,7 +44,7 @@ public:
   // All special Attribute-Set methods
   void setFontColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) :
-        0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
+        0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
   }
 
   void setFontSize(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {

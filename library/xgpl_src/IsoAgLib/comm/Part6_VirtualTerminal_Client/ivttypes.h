@@ -149,7 +149,22 @@ struct repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s {
   uint8_t formatoptions; /* format is bit 8+7, options is bit 2-0 (NO RLE1/4/8 stuff here!! */
 };
 
-enum e_vtColour { BackgroundColour=0, BorderColour=1, NeedleColour=2, ArcAndTickColour=3, BarGraphColour=4, Colour=4 /*intentionally!*/, TargetLineColour=5, TransparencyColour=6, FontColour=7, LineColour=8, FillColour=9 };
+enum e_vtColour {
+  BackgroundColour=0,
+  BorderColour=1,
+  NeedleColour=2,
+  ArcAndTickColour=3,
+  BarGraphColour=4,
+  Colour=4 /*intentionally!*/,
+  TargetLineColour=5,
+  TransparencyColour=6,
+  FontColour=7,
+  LineColour=8,
+  FillColour=9
+#ifdef CONFIG_VT_CLIENT_PICTURE_GRAPHIC_COLOUR_CONVERSION
+ ,PictureGraphicColour=10
+#endif
+};
 
 /** struct of the data contained in the "VT Status Message" */
 typedef struct vtState_s {

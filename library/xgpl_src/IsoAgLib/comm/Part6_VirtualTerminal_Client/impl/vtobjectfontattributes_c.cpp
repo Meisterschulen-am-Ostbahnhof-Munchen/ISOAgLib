@@ -53,7 +53,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 23; // Object Type = Font Attributes
-    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectFontAttributes_a->fontColour, this, IsoAgLib::FontColour);
+    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectFontAttributes_a->fontColour, this, IsoAgLib::FontColour);
     destMemory [4] = mui8_fontSizeScaled; // size() must have been called before to prepare!!!!
     destMemory [5] = vtObjectFontAttributes_a->fontType;
     destMemory [6] = vtObjectFontAttributes_a->fontStyle & __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().fontTypes;
@@ -162,14 +162,14 @@ void
 vtObjectFontAttributes_c::setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s), __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFontColour, this, IsoAgLib::FontColour));
+    saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s), __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newFontColour, this, IsoAgLib::FontColour));
     saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize),   sizeof(iVtObjectFontAttributes_s), newFontSize);
     saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType),   sizeof(iVtObjectFontAttributes_s), newFontType);
     saveValue8 (MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle),  sizeof(iVtObjectFontAttributes_s), newFontStyle);
   }
   VtClientConnection_c& vtCSC = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId);
   vtCSC.commandHandler().sendCommandChangeFontAttributes(
-    this, vtCSC.getUserClippedColor (newFontColour, this, IsoAgLib::FontColour),
+    this, vtCSC.getUserConvertedColor (newFontColour, this, IsoAgLib::FontColour),
     newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd );
 }
 

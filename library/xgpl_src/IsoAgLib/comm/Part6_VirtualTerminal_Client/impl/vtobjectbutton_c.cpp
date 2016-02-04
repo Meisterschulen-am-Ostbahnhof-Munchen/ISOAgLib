@@ -49,8 +49,8 @@ vtObjectButton_c::stream(uint8_t* destMemory,
       destMemory [4] = (((uint32_t) vtObjectButton_a->width*vtDimension)/opDimension) >> 8;
       destMemory [5] = (((uint32_t) vtObjectButton_a->height*vtDimension)/opDimension) & 0xFF;
       destMemory [6] = (((uint32_t) vtObjectButton_a->height*vtDimension)/opDimension) >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectButton_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectButton_a->borderColour, this, IsoAgLib::BorderColour);
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectButton_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectButton_a->borderColour, this, IsoAgLib::BorderColour);
       destMemory [9] = vtObjectButton_a->keyCode;
       destMemory [10] = vtObjectButton_a->options;
       destMemory [11] = vtObjectButton_a->numberOfObjectsToFollow;

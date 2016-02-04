@@ -54,9 +54,9 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 
     number2LittleEndianString( uint16_t(pc_vtOGC_a->cursorX), p ); p += sizeof(uint16_t);
     number2LittleEndianString( uint16_t(pc_vtOGC_a->cursorY), p ); p += sizeof(uint16_t);
-    *(p++) = getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
+    *(p++) = getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserConvertedColor(
                                     pc_vtOGC_a->foregroundColour, this, IsoAgLib::Colour);
-    *(p++) = getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
+    *(p++) = getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserConvertedColor(
                                     pc_vtOGC_a->backgroundColour, this, IsoAgLib::BackgroundColour);
 
     if (pc_vtOGC_a->fontAttributes)
@@ -79,7 +79,7 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 
     number2LittleEndianString( uint8_t(pc_vtOGC_a->format), p ); p += sizeof(uint8_t);
     number2LittleEndianString( uint8_t(pc_vtOGC_a->options), p ); p += sizeof(uint8_t);
-    *(p++) = getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
+    *(p++) = getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserConvertedColor(
                                     pc_vtOGC_a->transparencyColour, this, IsoAgLib::TransparencyColour );
 
     // Check postcondition

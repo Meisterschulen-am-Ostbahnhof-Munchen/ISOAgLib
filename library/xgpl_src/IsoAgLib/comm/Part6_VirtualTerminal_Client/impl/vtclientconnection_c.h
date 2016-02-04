@@ -111,7 +111,7 @@ public:
   uint16_t getVtObjectPoolDimension() const;
   uint16_t getVtObjectPoolSoftKeyWidth() const;
   uint16_t getVtObjectPoolSoftKeyHeight() const;
-  uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
+  uint8_t  getUserConvertedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
   uint8_t  getClientId() const { return mui8_clientId; }
 
   bool connectedToVtServer() const               { return (mpc_vtServerInstance != NULL); }  

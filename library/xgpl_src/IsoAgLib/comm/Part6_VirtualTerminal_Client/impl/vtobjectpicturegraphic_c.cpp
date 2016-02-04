@@ -145,6 +145,10 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
       }
     }
 
+    // Get a ref to the vtClient, so that we can convert colours by calling getUserConvertedColor() over and over
+    VtClientConnection_c& vtClient = __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId);
+    const uint32_t pgheaderSize = 17;
+
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
@@ -157,25 +161,126 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
       destMemory [8] = actualHeight >> 8;
       destMemory [9] = ui8_graphicType;
       destMemory [10] = options;
-      destMemory [11] = __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor(
-                          vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
+      destMemory [11] = vtClient.getUserConvertedColor(vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
       destMemory [12] = (numberOfBytesInRawData) & 0xFF;
       destMemory [13] = (numberOfBytesInRawData >> 8) & 0xFF;
       destMemory [14] = (numberOfBytesInRawData >> 16) & 0xFF;
       destMemory [15] = (numberOfBytesInRawData >> 24) & 0xFF;
       destMemory [16] = vtObjectPictureGraphic_a->numberOfMacrosToFollow;
 
-      sourceOffset += 17;
-      curBytes += 17;
+      sourceOffset += pgheaderSize;
+      curBytes += pgheaderSize;
     }
 
-    while ((sourceOffset >= 17) && (sourceOffset < (17+numberOfBytesInRawData)) && ((curBytes+1) <= maxBytes)) {
-      destMemory [curBytes] = rawData [sourceOffset-17];
+#ifdef CONFIG_VT_CLIENT_PICTURE_GRAPHIC_COLOUR_CONVERSION
+    // Colour Operation is for b/w picture graphics only!
+    // let's get color 0 (black) and color 1 (white) converted by the application
+    // and decide then what to do with these colors in case of a b/w terminal (graphicType==0)
+    uint8_t colourOperation = 0;
+    enum ColourOperation_e
+    {
+                    // W B (White, Black) - 1 if that colour changed its value during the conversion
+          NoChange  // 0 0 = 0 - No change (leave all bits alone)
+        , SetToZero // 1 0 = 1 - 0 (set all bits to 0=black)
+        , SetToOne  // 0 1 = 2 - 1 (set all bits to 1=white)
+        , Toggle    // 1 1 = 3 - XOR (toggle all bits with XOR)
+    };
+
+    if( ui8_graphicType == 0 )
+    {
+        for( uint8_t colourCode=0; colourCode<2;++colourCode )
+        {
+            uint8_t convertedColour = vtClient.getUserConvertedColor( colourCode, this, IsoAgLib::PictureGraphicColour );
+
+            if( convertedColour != colourCode )
+            {
+                // If the colour toggled (from 1 to 0 or 0 to 1 which are the only possibilities for 1-bit color)
+                // then set that colour's bit (see table under ColourOperation_e)
+                // Black is bit 0, White is bit 1 (that's the reason for the shift below)
+                colourOperation |= (1 << colourCode);
+            }
+        }
+    }
+#endif
+
+    while ((sourceOffset >= pgheaderSize) && (sourceOffset < (pgheaderSize+numberOfBytesInRawData)) && ((curBytes+1) <= maxBytes))
+    {
+#ifdef CONFIG_VT_CLIENT_PICTURE_GRAPHIC_COLOUR_CONVERSION
+        if( sourceOffset < (pgheaderSize + (vtObjectPictureGraphic_a->numberOfMacrosToFollow << 1)) )
+        {
+            // Copy over the macros
+            // 2 bytes for each macro defined, so the end of the macros is 
+            // sourceOffset + (pgheaderSize + (vtObjectPictureGraphic_a->numberOfMacrosToFollow << 1))
+            destMemory [curBytes] = rawData [sourceOffset-pgheaderSize];
+        }
+        else
+        {
+            // If this is a RunLength Encoded 2-byte pair (count, colour), and this is not the colour byte
+            if ((options & 0x04) && (sourceOffset & 0x01))
+            {
+                // just return the byte without conversion
+                destMemory[curBytes] = rawData[sourceOffset - pgheaderSize];
+            }
+            else
+            {
+                // Otherwise, either it is not RLE encoded
+                // or this is the colour (2nd) byte of the 2-byte pair
+                // So, yes, we need to convert the color
+
+                // Try to do colour conversion on the bitmap if necessary (during upload)
+                switch (ui8_graphicType)
+                {
+                case 2: // 8-bit
+                    destMemory[curBytes] = vtClient.getUserConvertedColor(rawData[sourceOffset - pgheaderSize], this, IsoAgLib::PictureGraphicColour);
+                    break;
+
+                case 1: // 4-bit - Convert only 4 bits at a time (2 function calls)
+                    // Convert 2 color codes (YES, convert color)
+                    destMemory[curBytes] =
+                        (
+                            vtClient.getUserConvertedColor(rawData[sourceOffset - pgheaderSize] & 0x0F, this, IsoAgLib::PictureGraphicColour)			// Colour in Bottom 4 bits
+                        |
+                            (vtClient.getUserConvertedColor((rawData[sourceOffset - pgheaderSize] & 0xF0) >> 4, this, IsoAgLib::PictureGraphicColour)	// Colour in Top 4 bits
+                             << 4)
+                        );
+                    break;
+
+                case 0: // 1-bit - Convert all 8-bits at once
+                    switch (colourOperation)
+                    {
+                    case NoChange:
+                        destMemory[curBytes] = rawData[sourceOffset - pgheaderSize];
+                        break;
+
+                    case SetToZero:
+                        destMemory[curBytes] = 0;
+                        break;
+
+                    case SetToOne:
+                        destMemory[curBytes] = 0xFF;
+                        break;
+
+                    case Toggle:
+                        destMemory[curBytes] = rawData[sourceOffset - pgheaderSize] ^ 0xFF;
+                        break;
+                    }
+                    break;
+
+                default:
+                    isoaglib_assert( !"Error - Unknown ui8_graphicType, wrong object pool data!" );
+                    break;
+                }
+            }
+        }
+#else
+      destMemory [curBytes] = rawData [sourceOffset-pgheaderSize];
+#endif
+
       curBytes++;
       sourceOffset++;
     }
 
-    MACRO_streamEventMacro(17+numberOfBytesInRawData);
+    MACRO_streamEventMacro(pgheaderSize+numberOfBytesInRawData);
 
     return curBytes;
 }

@@ -52,7 +52,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
         destMemory [5] = (((uint32_t) vtObjectInputString_a->height*vtDimension)/opDimension) & 0xFF;
         destMemory [6] = (((uint32_t) vtObjectInputString_a->height*vtDimension)/opDimension) >> 8;
       }
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectInputString_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectInputString_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObjectInputString_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectInputString_a->fontAttributes->getID() >> 8;
       if (vtObjectInputString_a->inputAttributes != NULL)

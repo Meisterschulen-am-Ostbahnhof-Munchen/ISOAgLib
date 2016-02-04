@@ -34,7 +34,7 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObjectDataMask_a->ID & 0xFF;
       destMemory [1] = vtObjectDataMask_a->ID >> 8;
       destMemory [2] = 1; // Object Type = Data Mask
-      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectDataMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectDataMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       if (vtObjectDataMask_a->softKeyMask != NULL) {
           destMemory [4] = vtObjectDataMask_a->softKeyMask->getID() & 0xFF;
           destMemory [5] = vtObjectDataMask_a->softKeyMask->getID() >> 8;
