@@ -470,10 +470,21 @@ namespace __IsoAgLib {
       DeviceObjectDvc_c* dvc = getDevicePool().getDvcObject();
       isoaglib_assert( dvc );
       const IsoAgLib::Localization_s& locale = dvc->getLocalization();
-      if ( STL_NAMESPACE::memcmp( ( void* )&locale, ( void * )&label[0], 7 ) != 0 ) {
+      if ( STL_NAMESPACE::memcmp( ( void* )&locale, ( void * )&label[0], 7 ) != 0 ) 
+      {
+#if 0
+        // updateLocale() doesn't do anything yet, so this is not a good solution for now
         getDevicePool().updateLocale();
+        setDevPoolState(PoolStateUploaded);
+#else
+        // So, just upload a full DDOP when the localization label changes
+        setDevPoolState(PoolStateUploading);
+#endif
       }
-      setDevPoolState( PoolStateUploaded );
+      else
+      {
+        setDevPoolState(PoolStateUploaded);
+      }
     }
   }
 
