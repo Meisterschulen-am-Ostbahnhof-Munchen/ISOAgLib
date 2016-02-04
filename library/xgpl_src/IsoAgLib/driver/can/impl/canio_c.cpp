@@ -233,6 +233,7 @@ namespace __IsoAgLib {
 
     isoaglib_assert ( initialized() );
 
+#if CONFIG_CAN_BLOCK_TIME > 0
     int fc = sendCanFreecnt();
 
     /*  -1 indicates that the used CAN HAL implementation does not support 
@@ -254,6 +255,7 @@ namespace __IsoAgLib {
         fc = sendCanFreecnt();
       }
     }
+#endif
 
     if( ! HAL::canTxSend( mui8_busNumber, acrc_src ) ) {
       IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusOverflow, getMultitonInst() );
