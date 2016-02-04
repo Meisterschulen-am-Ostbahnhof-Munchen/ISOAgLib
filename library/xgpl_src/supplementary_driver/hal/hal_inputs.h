@@ -17,7 +17,6 @@
 #define _HAL_INDEPENDENT_INPUTS_H_
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/hal/hal_config.h>
 
 #define HAL_ANALOGIN_OPEN       (int16_t)(-(25 * 0x0001))
 #define HAL_ANALOGIN_SHORTCUT   (int16_t)(-(26 * 0x0001))
