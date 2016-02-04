@@ -49,6 +49,12 @@ namespace HAL
   */
   bool getOn_offSwitch();
 
+  /** 
+    check if it's safe to power off
+    @return true -> it's safe to power off (all settings have been saved)  
+  */
+  bool safeToPowerOff();
+
   /**
     get the main power voltage
     @return voltage of power [mV]

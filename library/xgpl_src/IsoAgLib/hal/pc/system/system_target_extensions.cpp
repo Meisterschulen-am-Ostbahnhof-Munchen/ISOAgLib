@@ -45,6 +45,12 @@
 
 
 bool
+HALSimulator_c::safeToPowerOff()
+{
+  return true;
+}
+
+bool
 HALSimulator_c::getOn_offSwitch()
 {
   #if 0
@@ -221,6 +227,11 @@ getOn_offSwitch()
 	return halSimulator().getOn_offSwitch();
 }
 
+bool
+safeToPowerOff()
+{
+  return halSimulator().safeToPowerOff();
+}
 
 int16_t
 KeyGetByte(uint8_t *p)

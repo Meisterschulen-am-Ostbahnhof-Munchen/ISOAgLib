@@ -78,6 +78,8 @@ namespace HAL
 
   inline bool getOn_offSwitch() { return ( ON == __HAL::get_on_off_switch() ); }
 
+  inline bool safeToPowerOff() { return true; }
+
   inline void powerHold( bool ab_on ) { ab_on ? __HAL::staying_alive(): __HAL::power_down(); }
 
   inline void delay_us(unsigned int i_tm) { __HAL::delay_us(i_tm); }

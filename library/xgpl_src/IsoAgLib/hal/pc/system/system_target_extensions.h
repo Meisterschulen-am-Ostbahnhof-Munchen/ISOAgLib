@@ -34,6 +34,7 @@ public:
 
   // System
   virtual bool getOn_offSwitch();
+  virtual bool safeToPowerOff();
   virtual void powerHold( bool /* ab_on */ ) {}
 
   // Outputs
@@ -104,6 +105,7 @@ int16_t  getCpuFreq(void);                 /* get the cpu frequency*/
 void powerHold( bool ab_on );              /* turn on and off self power holding */
 
 bool getOn_offSwitch(void);               /* the evaluation of the on/off-switch (D+)*/
+bool safeToPowerOff(void);                /* true if it's safe to power off (all settings have been saved)  */
 
 int16_t KeyGetByte(uint8_t *p);
 

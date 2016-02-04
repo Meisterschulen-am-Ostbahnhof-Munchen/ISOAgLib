@@ -68,6 +68,8 @@ namespace HAL
 
   inline bool getOn_offSwitch() {return __HAL::getOn_offSwitch();}
 
+  inline bool safeToPowerOff() { return true; }
+
   inline void powerHold( bool ab_on ) { __HAL::powerHold( ab_on ); }
 
   inline int16_t getAdcUbat() {return 14000;}

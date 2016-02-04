@@ -65,6 +65,8 @@ namespace HAL
 
   inline bool getOn_offSwitch() { return __HAL::getOn_offSwitch(); }
 
+  inline bool safeToPowerOff() { return __HAL::safeToPowerOff(); }
+
   inline int16_t getAdcUbat() { return 13500; }
 
   inline int16_t getAdc_u85() { return 8500; }

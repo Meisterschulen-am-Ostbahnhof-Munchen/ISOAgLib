@@ -64,6 +64,9 @@ namespace __IsoAgLib {
       /** @return true -> ECU's On/Off-Switch reports system being "On".  */
       static bool switchedOn() { return HAL::getOn_offSwitch(); }
 
+      /** @return true -> it's safe to power off (all settings have been saved by (BI)OS)  */
+      static bool safeToPowerOff() { return HAL::safeToPowerOff(); }
+
       /**
         deliver the serial nr of the device into uint8_t[6] array
         - f.e. to calculated individual wait berfore address claim

@@ -49,6 +49,9 @@ public:
   /** @return true -> ECU's On/Off-Switch reports system being "On" */
   static bool switchedOn() { return System_c::switchedOn(); }
 
+  /** @return true -> if it's safe to power off (all settings have been saved)  */
+  static bool safeToPowerOff() { return System_c::safeToPowerOff(); }
+
   /**
     get the main power voltage
     @return voltage of power [mV]
