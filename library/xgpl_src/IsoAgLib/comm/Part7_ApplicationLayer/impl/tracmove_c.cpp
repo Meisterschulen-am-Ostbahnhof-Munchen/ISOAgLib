@@ -315,7 +315,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
                     mi32_selectedSpeed *= -1; //driving reverse
                 }
                 else //fall back to ground based speed
+                {
+                  mi32_selectedSpeed = ERROR_VAL_32S;
                   mt_speedSource = IsoAgLib::GroundBasedSpeed;
+                }
 
                 if (pkg.getUint32Data(2) <= 0xFAFFFFFF) //valid selected distance?
                 {
