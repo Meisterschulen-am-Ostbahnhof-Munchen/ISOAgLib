@@ -248,17 +248,37 @@ namespace __IsoAgLib {
           * bus is in an error situation (bus-off or bus-passive) and no messages can be sent out.
           * In that case we clear the send buffer and try to insert the most recent message.
           **/
-        if ( ( System_c::getTime() - now ) > CONFIG_CAN_BLOCK_TIME ) {
-          IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusOverflow, getMultitonInst() );
+        if ( ( System_c::getTime() - now ) > CONFIG_CAN_BLOCK_TIME )
           break;
-        }
+
         fc = sendCanFreecnt();
       }
     }
 #endif
 
     if( ! HAL::canTxSend( mui8_busNumber, acrc_src ) ) {
-      IsoAgLib::getILibErrInstance().registerNonFatal( IsoAgLib::iLibErr_c::HalCanBusOverflow, getMultitonInst() );
+
+      IsoAgLib::iLibErr_c::TypeNonFatal_en nonFatalError = IsoAgLib::iLibErr_c::HalCanBusOverflow;;
+
+      HAL::canState_t state;
+      if( HAL::canState(mui8_busNumber, state) ) // If I'm able to retrieve the canState, then report that
+      {
+        switch( state )
+        {
+        case HAL::e_canBusOff:
+          nonFatalError = IsoAgLib::iLibErr_c::HalCanBusOff;
+          break;
+
+        case HAL::e_canBusWarn:
+          nonFatalError = IsoAgLib::iLibErr_c::HalCanBusWarn;
+          break;
+
+        case HAL::e_canNoError: // nothing special, bus okay, so just got overflown
+          ;
+        }
+      }
+
+      IsoAgLib::getILibErrInstance().registerNonFatal(nonFatalError, getMultitonInst());
     }
 
     return *this;
