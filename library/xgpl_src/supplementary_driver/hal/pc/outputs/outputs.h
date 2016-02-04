@@ -52,8 +52,11 @@ namespace HAL
   inline uint16_t getMaxPwmDigout(uint8_t /* aui8_channel */ )
   { return 0xFFFF; }
 
-  inline int16_t setDigout(uint8_t bOutputNo, uint16_t wPWMValue)
-    {return __HAL::setDigout(bOutputNo, wPWMValue);};
+  inline void setDigout(uint8_t bOutputNo, uint16_t wPWMValue)
+    { __HAL::setDigout(bOutputNo, wPWMValue); }
+
+  inline uint16_t getDigout( uint8_t bOutputNo )
+    { return __HAL::getDigout(bOutputNo); }
 
   inline int16_t getDigoutCurrent( uint8_t aui8_channel )
   {

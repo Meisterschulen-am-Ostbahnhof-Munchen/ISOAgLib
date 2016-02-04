@@ -37,8 +37,7 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-    @param bOutput PWM output channel [0..11] ([0..15] with babyboard)
-        (4 sets for ESX equivalent freq for channels [4..11])
+    @param bOutput PWM output channel
     @param dwFrequency PWM frequency in mHz [5x10^3..4,29x10^9]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel OR frequency)
   */
@@ -46,21 +45,27 @@ namespace HAL
 
   /**
     retrieve maximal PWM frequency -> setting to this value results in maximal output
-    @param aui8_channel channel number of output [0..11] ([0..15] with babyboard)
+    @param aui8_channel channel number of output
     @return max possible PWM value
   */
   uint16_t getMaxPwmDigout(uint8_t aui8_channel);
 
   /**
     set pwm value 0 ... 100 %
-    @param aui8_channel channel number of output [0..11] ([0..15] with babyboard)
+    @param aui8_channel channel number of output
     @param wPWMValue Value to set; depends on configured PWM freq; [0..0xFFFF]
-    @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
-  int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue);
+  void setDigout( uint8_t aui8_channel, uint16_t wPWMValue);
+
+  /**
+    get pwm value 0 ... 100 %
+    @param aui8_channel channel number of output
+    @return Value; depends on configured PWM freq; [0..0xFFFF]
+  */
+  uint16_t getDigout( uint8_t aui8_channel );
 
   /** deliver the actual current of the digital output
-    * @param aui8_channel channel to check [0..11] ([0..15] with babyboard)
+    * @param aui8_channel channel to check
     * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
     */
   int16_t getDigoutCurrent( uint8_t aui8_channel );
@@ -71,7 +76,7 @@ namespace HAL
 		* if the PWM setting is >0 but has a very low value, so that even under normal
 		* conditions the voltage with connected consuming device is lower than to open
 		* connector state at low level.
-    * @param aui8_channel channel to check [0..11] ([0..15] with babyboard)
+    * @param aui8_channel channel to check
     * @param aui16_minCurrent minimal allowed current in [mA]
     * @param aui16_maxCurrent maximum allowed current in [mA]
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,

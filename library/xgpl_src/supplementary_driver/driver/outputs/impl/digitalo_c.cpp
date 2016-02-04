@@ -19,7 +19,6 @@ namespace __IsoAgLib {
 
 DigitalO_c::DigitalO_c(uint8_t aui8_channel)
   : OutputBase_c(aui8_channel)
-  , ui16_value( 0 )
   , ui16_minAllowedCurrent( 0 )
   , ui16_maxAllowedCurrent( 0 )
   , ui16_maxOutputPwmFreq( 0 )
@@ -29,7 +28,6 @@ DigitalO_c::DigitalO_c(uint8_t aui8_channel)
 
 DigitalO_c::DigitalO_c()
   : OutputBase_c(0xFF) // uninitialized
-  , ui16_value( 0 )
   , ui16_minAllowedCurrent( 0 )
   , ui16_maxAllowedCurrent( 0 )
   , ui16_maxOutputPwmFreq( 0 )
@@ -62,15 +60,7 @@ DigitalO_c::setFreq(uint32_t aui32_val)
 void
 DigitalO_c::set(uint16_t aui16_val)
 {
-  // set output PWM signal with BIOS call
-  if (HAL::setDigout(channelNr(), aui16_val) != HAL_NO_ERR)
-  { // wrong channel number
-    isoaglib_assert( !"set error" );
-  }
-  else
-  { // correct channel number
-    ui16_value = aui16_val;
-  }
+  HAL::setDigout(channelNr(), aui16_val);
 }
 
 

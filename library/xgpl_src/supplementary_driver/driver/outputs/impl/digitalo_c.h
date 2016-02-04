@@ -74,7 +74,7 @@ public:
     deliver actual set value
     @return last set value [0..0xffff]
   */
-  uint16_t get()const{return ui16_value;}
+  uint16_t get()const{return HAL::getDigout( channelNr() );}
 
   /**
     * set the allowed current limits for active state
@@ -125,8 +125,6 @@ public:
 private:
   DigitalO_c(const DigitalO_c&); // intentionally private and unimplemented
   DigitalO_c& operator=(const DigitalO_c&); // intentionally private and unimplemented
-
-  uint16_t ui16_value;
 
   /** minimal allowed current in active state */
   uint16_t ui16_minAllowedCurrent;

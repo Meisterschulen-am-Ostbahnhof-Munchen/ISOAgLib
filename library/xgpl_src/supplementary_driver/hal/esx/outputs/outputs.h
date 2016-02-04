@@ -24,7 +24,11 @@
  */
 /*@{*/
 #define DIGITAL_OUTPUT_MIN 0
+#ifdef _INIT_BABYBOARD_
+#define DIGITAL_OUTPUT_MAX 40 // @todo Set to the right value for Babyboard Outputs...
+#else
 #define DIGITAL_OUTPUT_MAX 11
+#endif
 /*@}*/
 
 namespace __HAL {
@@ -112,21 +116,8 @@ namespace HAL
     #endif
   }
 
-  inline int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
-    #ifndef _INIT_BABYBOARD_
-    { return __HAL::set_digout(aui8_channel, wPWMValue); }
-    #else
-    {
-      if ( aui8_channel < 12 )return __HAL::set_digout(aui8_channel, wPWMValue);
-      else 
-      { __HAL::tBAOutput tOutputstatus;
-        __HAL::BA_get_digout_status (POSITION_1, (aui8_channel-12), &tOutputstatus);
-        const uint16_t cui16_percent = ( uint32_t(wPWMValue) * 100UL ) / uint32_t(tOutputstatus.wOutputFreq);
-        return __HAL::BA_set_digout(POSITION_1, (aui8_channel-12), cui16_percent);
-      }
-    }
-    #endif
-
+  void setDigout(uint8_t aui8_channel, uint16_t wPWMValue);
+  uint16_t getDigout( uint8_t bOutputNo );
 
   inline int16_t getDigoutCurrent( uint8_t aui8_channel )
   {

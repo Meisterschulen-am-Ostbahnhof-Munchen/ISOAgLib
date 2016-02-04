@@ -14,6 +14,8 @@
 #include "outputs_target_extensions.h"
 
 #include <IsoAgLib/hal/pc/errcodes.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
+#include "../../hal_outputs.h"
 
 #include <cstdio>
 
@@ -36,13 +38,25 @@ setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency)
 }
 
 
-int16_t
+static uint16_t PWMValue[DIGITAL_OUTPUT_MAX - DIGITAL_OUTPUT_MIN + 1];
+
+void
 setDigout( uint8_t bOutputNo, uint16_t wPWMValue )
 {
+  isoaglib_assert( bOutputNo >= DIGITAL_OUTPUT_MIN && bOutputNo <= DIGITAL_OUTPUT_MAX );
+
   printf("Outputs: Channel %i: DigOut set to %i.\n", bOutputNo, wPWMValue);
-  return HAL_NO_ERR;
+
+  PWMValue[bOutputNo - DIGITAL_OUTPUT_MIN] = wPWMValue;
 }
 
+uint16_t
+getDigout(uint8_t bOutputNo )
+{
+  isoaglib_assert( bOutputNo >= DIGITAL_OUTPUT_MIN && bOutputNo <= DIGITAL_OUTPUT_MAX );
+
+  return PWMValue[bOutputNo - DIGITAL_OUTPUT_MIN];
+}
 
 int16_t
 getDigoutDiagnose(uint8_t /*aui8_channel*/, uint16_t /*aui16_minCurrent*/, uint16_t /*aui16_maxCurrent*/ )

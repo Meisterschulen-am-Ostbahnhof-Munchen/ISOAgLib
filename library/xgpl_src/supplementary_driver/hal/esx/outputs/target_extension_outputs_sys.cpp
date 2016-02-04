@@ -15,6 +15,7 @@
 
 #include <IsoAgLib/hal/esx/config.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include "../../hal_outputs.h"
 
 #include <cstdlib>
 #include <cstdio>
@@ -87,6 +88,37 @@ static const uint16_t cui16_openLow_4000mA_13_17  = ( 170000 / 900 ); // 1700mV 
       return ci16_result*9; // 9mV per digit
     }
     #endif
+  }
+
+
+  static uint16_t PWMValue[DIGITAL_OUTPUT_MAX - DIGITAL_OUTPUT_MIN + 1];
+
+  void setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
+  {
+    isoaglib_assert( aui8_channel >= DIGITAL_OUTPUT_MIN && aui8_channel <= DIGITAL_OUTPUT_MAX );
+    #ifndef _INIT_BABYBOARD_
+    ( void )__HAL::set_digout(aui8_channel, wPWMValue);
+    #else
+    if ( aui8_channel < 12 )
+      ( void )__HAL::set_digout(aui8_channel, wPWMValue);
+    else 
+    {
+      __HAL::tBAOutput tOutputstatus;
+      __HAL::BA_get_digout_status (POSITION_1, (aui8_channel-12), &tOutputstatus);
+      const uint16_t cui16_percent = ( uint32_t(wPWMValue) * 100UL ) / uint32_t(tOutputstatus.wOutputFreq);
+      ( void )__HAL::BA_set_digout(POSITION_1, (aui8_channel-12), cui16_percent);
+    }
+    #endif
+
+    PWMValue[aui8_channel - DIGITAL_OUTPUT_MIN] = wPWMValue;
+  }
+
+  uint16_t getDigout( uint8_t bOutputNo )
+  {
+    // could be changed to read the actual values from the BIOS.
+    // but this implementation reflects the "old" version which just stored the value.
+    isoaglib_assert( bOutputNo >= DIGITAL_OUTPUT_MIN && bOutputNo <= DIGITAL_OUTPUT_MAX );
+    return PWMValue[bOutputNo - DIGITAL_OUTPUT_MIN];
   }
 
 };

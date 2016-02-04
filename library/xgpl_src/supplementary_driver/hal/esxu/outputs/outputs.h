@@ -78,8 +78,8 @@ namespace HAL
     return tOutputstatus.wMaxOutput;
   }
 
-  inline int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
-  { return __HAL::set_digout(aui8_channel, wPWMValue); }
+  void setDigout(uint8_t aui8_channel, uint16_t wPWMValue);
+  uint16_t getDigout( uint8_t bOutputNo );
 
   inline int16_t setDigoutMask(uint16_t wOutputMask, uint16_t wDigitalValue)
   { return __HAL::set_digout_mask(wOutputMask, wDigitalValue); }

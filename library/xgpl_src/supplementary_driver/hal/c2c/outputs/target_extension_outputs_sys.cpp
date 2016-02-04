@@ -15,6 +15,7 @@
 
 #include <IsoAgLib/hal/c2c/config.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include "../../hal_outputs.h"
 
 #include <cstdlib>
 #include <cstdio>
@@ -62,4 +63,23 @@ static const int16_t cui16_openLow  = 10;	// 800mV (40mV per bit)
     return __IsoAgLib::mul1Div1Mul2Div2(ci16_result, 3743, 1, 100);
   }
 
-};
+
+  static uint16_t PWMValue[DIGITAL_OUTPUT_MAX - DIGITAL_OUTPUT_MIN + 1];
+
+  void setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
+  {
+    isoaglib_assert( aui8_channel >= DIGITAL_OUTPUT_MIN && aui8_channel <= DIGITAL_OUTPUT_MAX );
+    ( void )__HAL::set_digout(aui8_channel, wPWMValue);
+
+    PWMValue[aui8_channel - DIGITAL_OUTPUT_MIN] = wPWMValue;
+  }
+
+  uint16_t getDigout( uint8_t bOutputNo )
+  {
+    // could be changed to read the actual values from the BIOS.
+    // but this implementation reflects the "old" version which just stored the value.
+    isoaglib_assert( bOutputNo >= DIGITAL_OUTPUT_MIN && bOutputNo <= DIGITAL_OUTPUT_MAX );
+    return PWMValue[bOutputNo - DIGITAL_OUTPUT_MIN];
+  }
+
+}

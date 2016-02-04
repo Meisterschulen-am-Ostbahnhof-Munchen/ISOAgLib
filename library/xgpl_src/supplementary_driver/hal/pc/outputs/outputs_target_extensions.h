@@ -20,7 +20,8 @@
 namespace __HAL {
 
   int16_t  setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency);  /* define the frequency of the pwm signal */
-  int16_t  setDigout(uint8_t bOutputNo, uint16_t wPWMValue);          /* set pwm value 0 ... 100 %*/
+  void     setDigout(uint8_t bOutputNo, uint16_t wPWMValue);        /* set pwm value 0 ... 100 % [0..0xFFFF] */
+  uint16_t getDigout(uint8_t bOutputNo);
 
   void setMainRelais( bool on );
 

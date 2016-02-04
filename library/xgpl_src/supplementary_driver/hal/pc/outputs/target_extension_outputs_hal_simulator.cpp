@@ -13,13 +13,12 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include <IsoAgLib/isoaglib_config.h>
-
 #include "outputs_target_extensions.h"
-
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/hal/pc/errcodes.h>
-
+#include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/hal/hal_system.h>
+#include "../../hal_outputs.h"
 
 
 namespace __HAL {
@@ -43,15 +42,26 @@ setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency)
 }
 
 
-int16_t
+
+static uint16_t PWMValue[DIGITAL_OUTPUT_MAX - DIGITAL_OUTPUT_MIN + 1];
+
+void
 setDigout(uint8_t bOutputNo, uint16_t wPWMValue )
 {
-  if( bOutputNo == 0xFF )
-    return HAL_RANGE_ERR;
+  isoaglib_assert( bOutputNo >= DIGITAL_OUTPUT_MIN && bOutputNo <= DIGITAL_OUTPUT_MAX );
 
   // Callback to HAL Event Handler in the application to update the screen (or whatever)
   halSimulator().eventSetDigout( bOutputNo, wPWMValue );
-  return HAL_NO_ERR;
+
+  PWMValue[bOutputNo - DIGITAL_OUTPUT_MIN] = wPWMValue;
+}
+
+uint16_t
+getDigout(uint8_t bOutputNo )
+{
+  isoaglib_assert( bOutputNo >= DIGITAL_OUTPUT_MIN && bOutputNo <= DIGITAL_OUTPUT_MAX );
+
+  return PWMValue[bOutputNo - DIGITAL_OUTPUT_MIN];
 }
 
 
