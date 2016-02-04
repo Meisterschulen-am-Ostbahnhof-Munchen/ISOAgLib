@@ -226,6 +226,9 @@
   /// BUS problem (not connected, blocked, off, ...)
   /// if CAN send lasts longer than defined
   /// --> discard send-queue and continue without sending.
+  /// in case an own CAN Send FIFO is implemented
+  /// and blocking is NOT wanted --> set it to 0 to disable
+  /// the blocking feature completely!
 #  define CONFIG_CAN_BLOCK_TIME 10
 #endif
 
