@@ -23,8 +23,8 @@
 
 #define ISOAGLIB_VERSION_MAJOR 2
 #define ISOAGLIB_VERSION_MINOR 8
-#define ISOAGLIB_VERSION_PATCH 0
-#define ISOAGLIB_VERSION_RC 0
+#define ISOAGLIB_VERSION_PATCH 1
+#define ISOAGLIB_VERSION_RC 1
 // RC = 0 => Final Release.
 // RC = 1 => Release Candidate 1, etc.
 
