@@ -42,6 +42,53 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
+\subsection Change_ZF 2.8.0 to 2.8.1
+
+TC-Client:
+ - Bugfix:
+   - Allow do(nt)Connect to be done asyncronous later (resulted in repeated version requests on the bus)
+   - Upload DDOP is Localization Label doesn't match
+   - Fixed assertion/crash within deregisterClient()
+ - Compilefixes: Interface-casts didn't work on all compilers, private c'tor missing in interface.
+
+System/HAL:
+ - Enhancement: Add "safeToPowerOff()"
+   Added to detect if BIOS/OS/RTOS is ready/safe to be powered down
+   (typically EEPROM writes in the background take some time,
+   so it shouldn't be shut down before that!
+
+CAN-I/O:
+ - Enhancement:
+   - More Detailed NonFatal-Error report (Also Warn/Error when sending failed)
+   - Allow disabling of Blocking in CAN-Send (Set CONFIG_CAN_BLOCK_TIME to 0)
+
+Inputs/Outputs:
+ - Cleanup: Remove unnecessary include.
+ - Enhancement:
+   - Added getDigout(): Default implementation for current HALs
+     - Store the value that was set and return it for getDigout().
+     - Special HALs can directly ask the BIOS about the current value.
+     - This could be changed for the STW platforms, too, on request.
+   - PC: Added defaults for ANALOG_VOLTAGE_INPUT_MIN / ANALOG_VOLTAGE_INPUT_MAX
+
+TracMove:
+ - Bugfix: Set Selected Speed to ERROR if no valid value received
+
+VT-Client:
+ - Enhancement:
+   - Color Conversion "convertColour()" always done now
+   - Also possible for Picture Graphic RAW data now (use CONFIG_VT_CLIENT_PICTURE_GRAPHIC_COLOUR_CONVERSION)
+
+TimeDate_c:
+ - Bugfix: Fixed compile and logical errors (after refactoring in 2.8.0 it broke)
+ 
+Logalizer:
+ - Bugfix: ObjectID in Change Active Mask Response fixed
+
+FS-Client:
+ - Crashfix: Closing ISOAgLib a second time crashed
+
+
 \subsection Change_ZE 2.7.2 to 2.8.0
 
 Network Management:
