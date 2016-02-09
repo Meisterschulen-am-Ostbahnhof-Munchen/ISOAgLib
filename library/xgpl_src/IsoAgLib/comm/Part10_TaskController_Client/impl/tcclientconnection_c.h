@@ -125,6 +125,7 @@ namespace __IsoAgLib {
       enum DevPoolState_t {
         PoolStateDisconnected,
         PoolStatePreconnecting,
+        PoolStateAwaitingConnectionDecision,
         PoolStateConnecting,
         PoolStateUploading,
         //PoolStateStale,
@@ -228,8 +229,22 @@ namespace __IsoAgLib {
   {
     m_devPoolState = newState;
   
-    if( m_devPoolState != PoolStateDisconnected )
+    switch( getDevPoolState() )
+    {
+    case PoolStatePreconnecting:
+    case PoolStateConnecting:
+    case PoolStateUploading:
+    //case PoolStateStale:
+    case PoolStateUploaded:
+    case PoolStateActive:
+    case PoolStateError:
       m_schedulerTaskProxy.retriggerNow();
+      break;
+
+    case PoolStateDisconnected:
+    case PoolStateAwaitingConnectionDecision:
+      break;
+    }
   }
 
 } // __IsoAgLib

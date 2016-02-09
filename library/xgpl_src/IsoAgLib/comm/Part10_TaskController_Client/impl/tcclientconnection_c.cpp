@@ -112,7 +112,7 @@ namespace __IsoAgLib {
     if( pool.isEmpty() || ( pool.getDvcObject() == NULL ) )
       return false;
 
-    if( getDevPoolState() != PoolStatePreconnecting )
+    if( getDevPoolState() != PoolStateAwaitingConnectionDecision )
       return false;
 
     if( connected() != &server )
@@ -146,7 +146,7 @@ namespace __IsoAgLib {
     PdConnection_c::stop();
     PdConnection_c::close();
 
-    const bool wasFullyConnected = getDevPoolState() != PoolStatePreconnecting;
+    const bool wasFullyConnected = ( getDevPoolState() != PoolStatePreconnecting ) && ( getDevPoolState() != PoolStateAwaitingConnectionDecision );
     setDevPoolState( PoolStateDisconnected );
 
     if( wasFullyConnected )
@@ -194,6 +194,10 @@ namespace __IsoAgLib {
       {
       case PoolStatePreconnecting:
         doCommand( procCmdPar_RequestVersionMsg );
+        break;
+
+      case PoolStateAwaitingConnectionDecision:
+        // Well yeah, wait for the application to finally decide and in case of connecting, have its DDOP ready...
         break;
 
       case PoolStateUploading:
@@ -311,6 +315,8 @@ namespace __IsoAgLib {
         if( m_cmdSent != procCmdPar_RequestVersionMsg )
           break;
         m_cmdState = CommandStateNone;
+
+        setDevPoolState( PoolStateAwaitingConnectionDecision );
 
         IsoAgLib::ProcData::ServerCapabilities_s caps;
         caps.versionNr = data.getUint8Data( 2-1 );
