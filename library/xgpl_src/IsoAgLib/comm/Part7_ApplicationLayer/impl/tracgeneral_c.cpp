@@ -37,8 +37,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   TracGeneral_c::TracGeneral_c()
     : mb_languageTecuReceived (false)
-    , mb_languagePgnChanged (false)
     , mt_keySwitch( IsoAgLib::IsoNotAvailable )
+    , mb_languagePgnChanged (false)
   {
     mp8ui8_languageTecu[0] = 0; // OK
     mp8ui8_languageTecu[1] = 0;  //OK
