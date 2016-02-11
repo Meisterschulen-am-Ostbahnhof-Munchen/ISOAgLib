@@ -391,6 +391,11 @@
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_17_32   368   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_33_48   369   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_49_64   370   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_65_80   371   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_81_96   372   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_97_112   373   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_113_128   374   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_129_144   375   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_145_160   376   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_161_176   377   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_177_192   378   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
