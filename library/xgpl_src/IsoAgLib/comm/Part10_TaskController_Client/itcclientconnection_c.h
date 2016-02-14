@@ -55,6 +55,19 @@ namespace IsoAgLib {
 
         friend class iTcClient_c;
       };
+
+      // This is to be able to change your DDOP during run-time.
+      // NOTE: This is a VERY EXPERIMENTAL method, the proper way
+      // would probably only work for TC Version 4 (Deactivate Command)
+      // so use with caution. Safest thing would be to only change your
+      // DDOP with a required power-cycle.
+      // This function/interface is subject to be changed!!!
+      // Only call if you're connected to a TC!
+      void forceDisconnectAndInitiateReconnect( bool shouldDeletePool = false )
+      {
+        __IsoAgLib::TcClientConnection_c::forceDisconnectAndInitiateReconnect( shouldDeletePool );
+      }
+
 #if 0
 // currently not supported
       /* TODO */

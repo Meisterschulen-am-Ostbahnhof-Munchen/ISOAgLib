@@ -107,6 +107,25 @@ namespace __IsoAgLib {
   }
 
 
+  void TcClientConnection_c::reConnect(
+    const IdentItem_c& identItem,
+    ServerInstance_c& server
+    )
+  {
+    isoaglib_assert( getDevPoolState() == PoolStateDisconnected );
+
+    PdConnection_c::init( identItem, &server );
+
+    getSchedulerInstance().registerTask( m_schedulerTaskProxy, 0 );
+
+    m_cmdState = CommandStateNone;
+    m_timeWsAnnounceKey = -1;
+    m_timeWaitWithAnyCommunicationUntil = -1;
+    m_timeLastWsTaskMsgSent = -1;
+
+    setDevPoolState( PoolStatePreconnecting );
+  }
+
   bool TcClientConnection_c::fullConnect( const ServerInstance_c& server, DevicePool_c& pool )
   {
     if( pool.isEmpty() || ( pool.getDvcObject() == NULL ) )
@@ -130,10 +149,20 @@ namespace __IsoAgLib {
   }
 
 
-  void TcClientConnection_c::disconnect()
+  void TcClientConnection_c::disconnect( bool shouldDeletePool )
   {
     isoaglib_assert( connected() );
 
+    if( getDevPoolState() == PoolStateUploaded || getDevPoolState() == PoolStateActive )
+    {
+      doCommand( procCmdPar_OPActivateMsg, 1500, 0 );
+
+      if (shouldDeletePool)
+      {
+        doCommand( procCmdPar_OPDeleteMsg, 1500 );
+      }
+    }
+  
     getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
 
     stopRunningMeasurement();
@@ -153,6 +182,16 @@ namespace __IsoAgLib {
       m_stateHandler->_eventDisconnectedOnServerLoss( *this );
   }
 
+  void TcClientConnection_c::forceDisconnectAndInitiateReconnect( bool shouldDeletePool )
+  {
+      ServerInstance_c* server = connected();
+      isoaglib_assert(server);
+
+      const IdentItem_c& identItem = getIdentItem();
+      
+      disconnect( shouldDeletePool );
+      reConnect( identItem, *server );
+  }
 
   void
   TcClientConnection_c::timeEvent( void )
@@ -509,9 +548,12 @@ namespace __IsoAgLib {
   void
   TcClientConnection_c::eventPoolActivateResponse( uint8_t result ) {
     if ( result == 0 ) {
-      setDevPoolState( PoolStateActive );
-      if( connected()->getLastActiveTaskTC() )
-        eventTaskStarted();
+      if( getDevPoolState() == PoolStateUploaded )
+      {
+        setDevPoolState( PoolStateActive );
+        if( connected()->getLastActiveTaskTC() )
+          eventTaskStarted();
+      }
     } else {
       setDevPoolState( PoolStateError );
     }
@@ -519,7 +561,7 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::doCommand( ProcessDataMsg_t cmd, int32_t timeout )
+  TcClientConnection_c::doCommand( ProcessDataMsg_t cmd, int32_t timeout, uint8_t param )
   {
     m_cmdState = CommandStateWaitingForResponse;
     m_cmdSent = cmd;
@@ -556,7 +598,7 @@ namespace __IsoAgLib {
 
     default:
       {
-        ProcessPkg_c pkg( cmd, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
+        ProcessPkg_c pkg( cmd, param, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
 
         pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( getRemoteItem() ) );
         pkg.setMonitorItemForSA( m_identItem->getIsoItem() );

@@ -101,9 +101,15 @@ namespace __IsoAgLib {
         StateHandler_c& sh,
         const IsoAgLib::ProcData::ClientCapabilities_s& );
 
+      void reConnect(
+        const IdentItem_c& identItem,
+        ServerInstance_c& server );
+
       bool fullConnect( const ServerInstance_c& server, DevicePool_c& pool );
 
-      void disconnect();
+      void disconnect( bool shouldDeletePool = false );
+
+      void forceDisconnectAndInitiateReconnect( bool shouldDeletePool = false );
 
       ServerInstance_c* connected() const { return (ServerInstance_c *)( getRemoteNode() ); }
       const IsoName_c &getRemoteName() const { return getRemoteItem()->isoName(); } // no NULL check needed here!
@@ -177,7 +183,7 @@ namespace __IsoAgLib {
 
       void handleNack( int16_t ddi, int16_t element );
 
-      void doCommand( ProcessDataMsg_t cmd, int32_t timeout = DEF_TimeOut_NormalCommand );
+      void doCommand( ProcessDataMsg_t cmd, int32_t timeout = DEF_TimeOut_NormalCommand, uint8_t param = 0xff );
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
 
       ISOAGLIB_LOCAL_PROXIES
