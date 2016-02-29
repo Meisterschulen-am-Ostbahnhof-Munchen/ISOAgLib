@@ -229,7 +229,7 @@ void
 exit_with_usage(const char* progname)
 {
   std::cerr << "ISOBUS-Logalizer (c) 2007 - 2015 OSB AG." << std::endl << std::endl;
-  std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [--iop] [--ddop] [-s] logFile" << std::endl << std::endl;
+  std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [--iop] [--ddop] logFile" << std::endl << std::endl;
   std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
   std::cerr << "         1 -> rte"<<std::endl;
   std::cerr << "         2 -> CANMon"<<std::endl;
@@ -245,6 +245,7 @@ exit_with_usage(const char* progname)
   std::cerr << "        12 -> Kvaser Memorator CSV"<<std::endl;
   std::cerr << "        13 -> ?csv" << std::endl;
   std::cerr << "        14 -> Komodo" << std::endl;
+  std::cerr << "        15 -> Vehicle Spy 3 Bus Traffic File" << std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "--iop:   Store VT object pool transfers in iop format. Default: do not store" << std::endl;
@@ -276,6 +277,7 @@ exit_with_usage(const char* progname)
   std::cerr << "KvaserM.CSV: '0.33198,1,cfffff0,4,3,55,7d,7d,,,,,,1,2014-05-05 15:01:08'"<<std::endl;
   std::cerr << "?csv:        '0xCFE46F0*,54.6857,FF,FF,FF,FF,00,FF,FF,FF'" << std::endl;
   std::cerr << "Komodo:      '0:00.003.537,0x0cff05b4,0,8,01 00 01 00 01 00 C0 C0'" << std::endl;
+  std::cerr << "Vehicle Spy 3'2,28.2609260000172,0.01300800000899471,67371012,F,F,HS CAN $CCBFFF7,HS CAN,,CCBFFF7,F,T,FE,FF,FF,FF,00,00,00,00,,,'" << std::endl;
   exit(0);
 }
 
@@ -899,6 +901,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineKvaserMemorator,
     parseLogLineCsv,
     parseLogLineKomodo,
+    parseLogLineVehicleSpy,
     defaultParseLogLine
   };
 

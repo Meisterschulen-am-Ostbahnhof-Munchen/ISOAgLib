@@ -412,3 +412,30 @@ parseLogLineKomodo( std::string const &acr_line ) // "0:00.003.537,0x0cff05b4,0,
   return std::make_pair( i_result, t_ptrFrame );
 }
 
+
+std::pair< int, PtrDataFrame_t >
+parseLogLineVehicleSpy( std::string const &acr_line ) // "2,28.2609260000172,0.01300800000899471,67371012,F,F,HS CAN $CCBFFF7,HS CAN,,CCBFFF7,F,T,FE,FF,FF,FF,00,00,00,00,,,"
+{
+  double d1;
+  char charArray[128];
+  int iID;
+  unsigned arru_d[8];
+  int parsed_count = sscanf(
+      acr_line.c_str(),
+      "%*d,%lf,%*lf,%*ld,%*[^,],%*[^,],%*[^,],%[^,],,%x,%*[^,],%*[^,],%x,%x,%x,%x,%x,%x,%x,%x",
+      &d1,
+      charArray,
+      &iID,
+      arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
+  const int inumDb = parsed_count - 3;
+  if( inumDb < 0 )
+    return std::make_pair( -1, PtrDataFrame_t(0) );
+  if( strstr(charArray, "CAN") == NULL )
+    return std::make_pair( -1, PtrDataFrame_t(0) );
+  uint64_t const cui64_time = static_cast<uint64_t>(d1*1000);
+  std::vector< uint8_t > vec_data;
+  copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
+  return std::make_pair( 0, t_ptrFrame );
+}
+

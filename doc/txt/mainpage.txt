@@ -84,6 +84,7 @@ TimeDate_c:
  
 Logalizer:
  - Bugfix: ObjectID in Change Active Mask Response fixed
+ - Enhancement: Added Vehicle Spy 3 file format
 
 FS-Client:
  - Crashfix: Closing ISOAgLib a second time crashed
