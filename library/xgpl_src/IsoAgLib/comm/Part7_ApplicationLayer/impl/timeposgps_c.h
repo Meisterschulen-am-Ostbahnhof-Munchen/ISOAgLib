@@ -78,15 +78,6 @@ class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
 
-/** Class definition to be used with event processing of GPS messages et al. **/
-class MsgEventHandler_c
-{
-public:
-  MsgEventHandler_c() {}
-  virtual ~MsgEventHandler_c() {}
-  virtual void handleMsgEvent (uint32_t aui32_pgn) = 0;
-};
-
 class TimePosGps_c;
 
 /** working on GPS data and Calendar;
@@ -541,19 +532,6 @@ public:
   int32_t getGpsDirectionUpdateAge( void ) const
   { return int32_t(System_c::getTime() - mi32_lastIsoDirection); }
 
-  /** register an event handler that gets called for any incoming PGN.
-      Please look into the implementation to see for which PGNs it is
-      actually called.
-      Note: Double registration will be allowed, whereas deregistration
-            will remove all occurances. */
-  void registerMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler)
-  { mvec_msgEventHandlers.push_back (&arc_msgEventHandler); }
-
-  /** deregister all event handlers matching the parameter
-      @param arc_msgEventHandler Reference to an implementation of the
-                                 handler class of type MsgEventHandler_c */
-  void deregisterMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler);
-
 private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
   public:
@@ -621,10 +599,6 @@ private:
     */
   void processMsg( const CanPkg_c& arc_data );
 
-  /** Calls all the registered handlers with the given PGN,
-      so they can get the current values via the normal getters. */
-  void notifyOnEvent (uint32_t aui32_pgn);
-
   /** send direction as detailed stream */
   void isoSendDirection( void );
 
@@ -632,8 +606,6 @@ private:
   /** send position as detailed stream */
   void isoSendPositionStream( void );
 #endif // END ENABLE_NMEA_2000_MULTI_PACKET
-
-
 
 private:
   // Private attributes
@@ -767,8 +739,6 @@ private:
     */
   const IdentItem_c* mpc_identGps;
   IsoAgLib::IdentMode_t  mt_identModeGps;
-
-  STL_NAMESPACE::vector<MsgEventHandler_c*> mvec_msgEventHandlers;
 
   friend TimePosGps_c &getTimePosGpsInstance( unsigned instance );
 };

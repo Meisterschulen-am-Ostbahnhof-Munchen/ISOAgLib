@@ -167,7 +167,6 @@ namespace __IsoAgLib {
   , mc_sendGpsISOName()
   , mpc_identGps(NULL)
   , mt_identModeGps( IsoAgLib::IdentModeImplement )
-  , mvec_msgEventHandlers()
   {}
 
 
@@ -1626,28 +1625,6 @@ void TimePosGps_c::isoSendDirection( void )
     return MACRO_ISOAGLIB_LOCALTIME( &t_secondsSince1970 );
   }
 
-void
-TimePosGps_c::notifyOnEvent(uint32_t aui32_pgn)
-{
-  STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter_end = mvec_msgEventHandlers.end();
-  for (STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != iter_end; ++iter)
-  { // call handler for each entry
-    (*iter)->handleMsgEvent (aui32_pgn);
-  }
-}
-
-
-void
-TimePosGps_c::deregisterMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler)
-{
-  for (STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != mvec_msgEventHandlers.end();)
-  {
-    if ((*iter) == &arc_msgEventHandler)
-      iter = mvec_msgEventHandlers.erase (iter);
-    else
-      ++iter;
-  }
-}
 
 void
 TimePosGps_c::reactOnStateChange(const SendStream_c& sendStream)

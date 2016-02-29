@@ -223,12 +223,12 @@ public:
       actually called.
       Note: Double registration will be allowed, whereas deregistration
             will remove all occurances. */
-  void registerMsgEventHandler (iMsgEventHandler_c &arc_msgEvent) { TimePosGps_c::registerMsgEventHandler ((__IsoAgLib::MsgEventHandler_c &)arc_msgEvent); }
+  void registerMsgEventHandler (iMsgEventHandler_c &arc_msgEvent) { TimePosGps_c::registerMsgEventHandler (arc_msgEvent); }
 
   /** deregister all event handlers matching the parameter
       @param arc_msgEventHandler Reference to an implementation of the
                                  handler class of type iMsgEventHandler_c */
-  void deregisterMsgEventHandler (iMsgEventHandler_c &arc_msgEvent) { TimePosGps_c::deregisterMsgEventHandler ((__IsoAgLib::MsgEventHandler_c &)arc_msgEvent); }
+  void deregisterMsgEventHandler (iMsgEventHandler_c &arc_msgEvent) { TimePosGps_c::deregisterMsgEventHandler (arc_msgEvent); }
 
 
   /* ******************************************* */
