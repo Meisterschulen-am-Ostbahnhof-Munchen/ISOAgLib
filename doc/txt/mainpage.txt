@@ -88,6 +88,10 @@ Logalizer:
 FS-Client:
  - Crashfix: Closing ISOAgLib a second time crashed
 
+TimePosGps_c:
+ - Bugfix from Refactoring (Split into TimeDate_c/Gnss_c):
+   Removed MsgEventHandler and using BaseCommon_c's one.
+
 
 \subsection Change_ZE 2.7.2 to 2.8.0
 
