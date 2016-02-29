@@ -793,6 +793,10 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& acr
         ++pc_iter;
       }
     }
+    else // this shouldn't be needed (as there always needs to be a client for a stream!)
+    {    // but some customer experienced an infinite loop, so maybe it was a KeptStream which doesn't have the client registered anymore...
+      ++pc_iter;
+    }
   }
 
   // then remove all MultiReceiveClientWrappers for this client
