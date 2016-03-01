@@ -78,6 +78,9 @@ VT-Client:
  - Enhancement:
    - Color Conversion "convertColour()" always done now
    - Also possible for Picture Graphic RAW data now (use CONFIG_VT_CLIENT_PICTURE_GRAPHIC_COLOUR_CONVERSION)
+   - Now scale command setWidth/setHeight/setSize. If old behavior is wanted, simply set
+     USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS. The attributes will be updated to the given value,
+     but on the bus the sizes are now transmitted scaled.
 
 TimeDate_c:
  - Bugfix: Fixed compile and logical errors (after refactoring in 2.8.0 it broke)
