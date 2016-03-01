@@ -141,6 +141,15 @@ typedef uint16_t objRange_t;
       } \
     }
 
+#define MACRO_scaleDimension(dim) \
+  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
+    dim *= factorM; \
+    dim /= factorD; \
+  } else { \
+    dim *= vtDimension; \
+    dim /= opDimension; \
+  }
+
 #define MACRO_scaleI32(x,y) \
   if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
     x *= factorM; \

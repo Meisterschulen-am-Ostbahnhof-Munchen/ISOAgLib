@@ -177,6 +177,37 @@ vtObject_c::saveValue16SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_s
 }
 
 void
+vtObject_c::saveValue16SetAttributeScaled (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd) {
+  MACRO_scaleLocalVars
+  MACRO_scaleSKLocalVars
+
+  uint32_t scaledDim = uint32_t( ui16_newValue );
+#ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+  MACRO_scaleDimension( scaledDim )
+#endif
+
+  if (ui16_structOffset != 0) saveValue16 (ui16_structOffset, ui16_structLen, ui16_newValue);
+  setAttribute (ui8_ind, scaledDim, b_enableReplaceOfCmd);
+}
+
+void
+vtObject_c::scaleSize( uint16_t &width, uint16_t &height ) const
+{
+#ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+  MACRO_scaleLocalVars
+  MACRO_scaleSKLocalVars
+
+  uint32_t scaledWidth = uint32_t( width );
+  uint32_t scaledHeight = uint32_t( height );
+  MACRO_scaleI32(scaledWidth,scaledHeight)
+  width = uint16_t( scaledWidth );
+  height = uint16_t( scaledHeight );
+#else
+  ;
+#endif
+}
+
+void
 vtObject_c::saveValue32SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint32_t ui32_newValue, bool b_enableReplaceOfCmd) {
   if (ui16_structOffset != 0) saveValue32 (ui16_structOffset, ui16_structLen, ui32_newValue);
   setAttribute (ui8_ind, ui32_newValue, b_enableReplaceOfCmd);

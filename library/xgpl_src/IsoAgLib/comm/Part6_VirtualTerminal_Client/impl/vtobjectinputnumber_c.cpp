@@ -123,6 +123,8 @@ vtObjectInputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_upd
     saveValue16 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), height), sizeof(iVtObjectInputNumber_s), newHeight);
   }
 
+  scaleSize( newWidth, newHeight );
+
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
