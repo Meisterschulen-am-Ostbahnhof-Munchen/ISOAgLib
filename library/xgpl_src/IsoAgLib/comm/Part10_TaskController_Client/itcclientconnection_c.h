@@ -68,6 +68,12 @@ namespace IsoAgLib {
         __IsoAgLib::TcClientConnection_c::forceDisconnectAndInitiateReconnect( shouldDeletePool );
       }
 
+      const iTcClientServer_c& server() const
+      {
+        isoaglib_assert( connected() );
+        return connected()->toConstITcClientServer_c();
+      }
+
 #if 0
 // currently not supported
       /* TODO */
