@@ -35,6 +35,10 @@
 #ifndef DIGITAL_OUTPUT_MAX
 #define DIGITAL_OUTPUT_MAX 11
 #endif
+#ifndef DIGITAL_OUTPUT_MAX_PWM_DIGOUT
+#define DIGITAL_OUTPUT_MAX_PWM_DIGOUT 0xFFFF
+#endif
+
 /*@}*/
 
 namespace HAL
@@ -50,13 +54,13 @@ namespace HAL
   { return __HAL::setPwmFreq(bOutputGroup, dwFrequency); }
 
   inline uint16_t getMaxPwmDigout(uint8_t /* aui8_channel */ )
-  { return 0xFFFF; }
+  { return DIGITAL_OUTPUT_MAX_PWM_DIGOUT; }
 
   inline void setDigout(uint8_t bOutputNo, uint16_t wPWMValue)
-    { __HAL::setDigout(bOutputNo, wPWMValue); }
+  { __HAL::setDigout(bOutputNo, wPWMValue); }
 
   inline uint16_t getDigout( uint8_t bOutputNo )
-    { return __HAL::getDigout(bOutputNo); }
+  { return __HAL::getDigout(bOutputNo); }
 
   inline int16_t getDigoutCurrent( uint8_t aui8_channel )
   {
