@@ -92,9 +92,13 @@ Logalizer:
 FS-Client:
  - Crashfix: Closing ISOAgLib a second time crashed
 
-TimePosGps_c:
+TimePosGps:
  - Bugfix from Refactoring (Split into TimeDate_c/Gnss_c):
    Removed MsgEventHandler and using BaseCommon_c's one.
+
+MultiSend:
+ - Bugfix: Large Buffer-values could result in no packet being sent.
+   (Only appears when special DEFINE values are being used, otherwise this works fine)
 
 
 \subsection Change_ZE 2.7.2 to 2.8.0
