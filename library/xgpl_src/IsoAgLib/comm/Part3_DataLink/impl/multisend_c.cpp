@@ -270,14 +270,15 @@ MultiSend_c::timeEvent()
   if( -1 == pkgCnt ) {
     pkgCnt = CONFIG_CAN_NO_SEND_BUFFER_INFO_FALLBACK_MULTISEND;
   }
+  else {
+    /* do not use the whole send buffer to give other
+       modules a chance to send in parallel */
+    pkgCnt -= CONFIG_MULTI_SEND_BUFFER_MIN_FREE_COUNT;
+  }
 
   if( CONFIG_MULTI_SEND_MAX_PKG_PER_TIMEEVENT < pkgCnt ) {
     pkgCnt = CONFIG_MULTI_SEND_MAX_PKG_PER_TIMEEVENT;
   }
-
-  /* do not use the whole send buffer to give other
-     modules a chance to send in parallel */
-  pkgCnt -= CONFIG_MULTI_SEND_BUFFER_MIN_FREE_COUNT;
 
   if( pkgCnt < 0 ) {
     i32_nextRetriggerNeeded = System_c::getTime() + 5;
