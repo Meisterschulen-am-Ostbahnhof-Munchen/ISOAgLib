@@ -53,6 +53,7 @@ namespace IsoAgLib {
   class iDeviceObjectDvp_c : public __IsoAgLib::DeviceObjectDvp_c {
     public:
       iDeviceObjectDvp_c( float scale, int32_t offset, uint8_t decimals, const char* desig ) : __IsoAgLib::DeviceObjectDvp_c( scale, offset, decimals, desig ) {}
+
       void setOffset( int32_t offset ) {
         __IsoAgLib::DeviceObjectDvp_c::setOffset( offset );
       }
@@ -62,8 +63,19 @@ namespace IsoAgLib {
       void setScale( float scale ) {
         __IsoAgLib::DeviceObjectDvp_c::setScale( scale );
       }
+
       void setUnitDesignator( const char* desig ) {
         __IsoAgLib::DeviceObjectDvp_c::setDesignator( desig );
+      }
+
+      int32_t getOffset() const {
+        return __IsoAgLib::DeviceObjectDvp_c::getOffset();
+      }
+      uint8_t getDecimals() const {
+        return __IsoAgLib::DeviceObjectDvp_c::getDecimals();
+      }
+      float getScale() const {
+        return __IsoAgLib::DeviceObjectDvp_c::getScale();
       }
   };
 

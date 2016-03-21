@@ -222,6 +222,16 @@ namespace __IsoAgLib {
         setDesignator( desig );
       }
 
+      int32_t getOffset() const {
+        return m_offset;
+      }
+      uint8_t getDecimals() const {
+        return m_decimals;
+      }
+      float getScale() const {
+        return m_scale;
+      }
+
     private:
       uint32_t getSize() const;
       void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
