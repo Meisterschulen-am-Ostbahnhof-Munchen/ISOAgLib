@@ -190,9 +190,9 @@ set_default_values()
     USE_EXTERNAL_LIBRARIES=''
     USE_EXTERNAL_LIBRARY_PATH=''
     USE_RS232_DRIVER='none'
-	USE_EEPROM_DRIVER='none'
-	USE_INPUTS_DRIVER='none'
-	USE_OUTPUTS_DRIVER='none'
+    USE_EEPROM_DRIVER='none'
+    USE_INPUTS_DRIVER='none'
+    USE_OUTPUTS_DRIVER='none'
     DEBUG_DEFINES=''
     NDEBUG_DEFINE="$(wrap NDEBUG)"
     COMBINED_DEFINES="$NDEBUG_DEFINE $DEBUG_DEFINES"
@@ -450,7 +450,7 @@ driver_and_hal_features()
       " -path '*/hal/hal_system.h' -o " \
       " -path '*/hal/hal_can.h' -o " \
       " -path '*/hal/hal_config.h' -o " \
-	  " -path '*/hal/hal_errcodes.h' -o " \
+      " -path '*/hal/hal_errcodes.h' -o " \
       " -path '*/hal/hal_typedef.h' -o " \
       " -path '*/hal/generic_utils/*' -o " \
       " -path '*/driver/system*' " >&3
@@ -558,9 +558,9 @@ driver_and_hal_features()
                     ;;
                 (sys)
                     case "$USE_TARGET_SYSTEM" in
-					    (pc_win32)
+                        (pc_win32)
                             printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_w32_sys*'" >&4
-					        ;;
+                            ;;
                         (pc_linux)
                             printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_linux_sys*'" >&4
                             ;;
@@ -812,7 +812,7 @@ END_OF_PATH
             echo_e "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" >&3
         fi
     
-		if [ "$PRJ_EEPROM" -gt 0 ] ; then
+        if [ "$PRJ_EEPROM" -gt 0 ] ; then
             echo_e "#define USE_EEPROM_IO" >&3
         fi
     
@@ -879,9 +879,9 @@ END_OF_PATH
                     echo_e "#define PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $PRJ_ISO_TERMINAL_OBJECT_SELECTION4" >&3
                 fi
             fi
-			if [ "$PRJ_ISO_TASKCONTROLLER_CLIENT" -gt 0 ] ; then
-				echo_e "#define USE_ISO_TASKCONTROLLER_CLIENT" >&3
-			fi
+            if [ "$PRJ_ISO_TASKCONTROLLER_CLIENT" -gt 0 ] ; then
+                echo_e "#define USE_ISO_TASKCONTROLLER_CLIENT" >&3
+            fi
             if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ] ; then
                 echo_e "#define USE_ISO_FILESERVER_CLIENT" >&3
             fi
@@ -1043,7 +1043,19 @@ create_qmake_winlin()
     local INSERT_QMAKE_PROJECT="$PROJECT"
     local INSERT_QMAKE_DEFINITIONS="$(print_qmake_definitions)"
     local INSERT_QMAKE_INCLUDE_DIRECTORIES="$(omit_or_printf ' \\ \n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${USE_EXTERNAL_INCLUDE_PATH:-} ${BIOS_INC:-})"
-   #local INSERT_QMAKE_LINK_DIRECTORIES="${USE_EXTERNAL_LIBRARY_PATH:-}"
+
+### NOTE This currently only works with 0 or 1 entries in libs/paths
+    local INSERT_QMAKE_LINK_LIBRARIES=""
+    if [ \( "a$USE_EXTERNAL_LIBRARIES" != "a" \) -o \( "a$USE_EXTERNAL_LIBRARY_PATH" != "a" \) ] ; then
+        INSERT_QMAKE_LINK_LIBRARIES="LIBS +="
+    fi
+    if [ \( "a$USE_EXTERNAL_LIBRARIES" != "a" \) ] ; then
+        INSERT_QMAKE_LINK_LIBRARIES="$INSERT_QMAKE_LINK_LIBRARIES -l$USE_EXTERNAL_LIBRARIES"
+    fi
+    if [ \( "a$USE_EXTERNAL_LIBRARY_PATH" != "a" \) ] ; then
+        INSERT_QMAKE_LINK_LIBRARIES="$INSERT_QMAKE_LINK_LIBRARIES -L$USE_EXTERNAL_LIBRARY_PATH"
+    fi
+
     local INSERT_QMAKE_APP_SOURCE_GROUP="$(
         omit_or_printf ' \\ \n %s' $(
             grep -E '\.cc|\.cpp|\.c|\.h' <"$AppPrjSourceFilelist" || status_le1))"
