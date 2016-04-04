@@ -455,7 +455,8 @@ FsCommand_c::processMsgIso( const CanPkgExt_c& pkg )
       break;
 
     case en_getCurrentDirectory:
-      isoaglib_assert( !"Not coming in via SinglePacket, should only be retrieved by MultiPacket!" );
+      // Typically not coming in via SinglePacket, should only be retrieved by MultiPacket!
+      // This comes from a broken File Server.
       break;
 
     case en_changeCurrentDirectory:
