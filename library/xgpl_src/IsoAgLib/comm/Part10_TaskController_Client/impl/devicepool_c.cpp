@@ -116,7 +116,7 @@ namespace __IsoAgLib {
   }
 
 
-  void DeviceObjectDvc_c::setStructureLabel( const uint8_t* label ) {
+  void DeviceObjectDvc_c::setStructureLabel( const uint8_t label[7] ) {
     m_structLabel.Byte1 = label[0];
     m_structLabel.Byte2 = label[1];
     m_structLabel.Byte3 = label[2];
@@ -128,15 +128,19 @@ namespace __IsoAgLib {
 
 
   void DeviceObjectDvc_c::setStructureLabel( const char* label ) {
-    if( CNAMESPACE::strlen( label ) > 6 ) {
-      setStructureLabel( ( const uint8_t* ) label );
-    } else {
-      uint8_t tmpBuf[7] = {0, 0, 0, 0, 0, 0, 0};
-      for( unsigned int i = 0; i < CNAMESPACE::strlen( label ); i++ ) {
-        tmpBuf[i] = label[i];
-      }
-      setStructureLabel( tmpBuf );
-    }
+    uint8_t tmpBuf[7] = {0, 0, 0, 0, 0, 0, 0};
+    
+    unsigned int len = CNAMESPACE::strlen( label );
+    isoaglib_assert( len <= 7 );
+    
+    // limit length only to not crash in release, but problem should be caught in debug!
+    if( len > 7 )
+      len = 7;
+
+    for( unsigned int i = 0; i < len; i++ )
+      tmpBuf[i] = label[i];
+
+    setStructureLabel( tmpBuf );
   }
 
 

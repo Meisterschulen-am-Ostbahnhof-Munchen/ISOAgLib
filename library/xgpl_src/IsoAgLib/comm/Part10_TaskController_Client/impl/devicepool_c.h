@@ -96,7 +96,7 @@ namespace __IsoAgLib {
       void setLocalSettings( const localSettings_s& s );
       void setLocalization( const Localization_s& s );
       void setStructureLabel( const char* s );
-      void setStructureLabel( const uint8_t* label );
+      void setStructureLabel( const uint8_t s[7] );
       void setSerialNumber( const char* s );
 
     private:

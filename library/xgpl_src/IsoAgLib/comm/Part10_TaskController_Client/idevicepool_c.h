@@ -39,6 +39,9 @@ namespace IsoAgLib {
       void setLocalization( const Localization_s& s ) {
         __IsoAgLib::DeviceObjectDvc_c::setLocalization( s );
       }
+      void setStructureLabel( const uint8_t s[7] ) {
+        __IsoAgLib::DeviceObjectDvc_c::setStructureLabel( s );
+      }
       void setStructureLabel( const char* s ) {
         __IsoAgLib::DeviceObjectDvc_c::setStructureLabel( s );
       }
