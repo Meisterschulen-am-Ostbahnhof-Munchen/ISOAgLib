@@ -315,7 +315,7 @@ check_set_correct_variables()
             IDE_NAME="CMake/qmake"
             ;;
         (esx|esxu|c2c)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR"
             IDE_NAME="Tasking EDE"
             ;;
         (*)
