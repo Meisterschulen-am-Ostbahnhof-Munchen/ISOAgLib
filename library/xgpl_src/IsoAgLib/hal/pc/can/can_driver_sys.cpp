@@ -128,105 +128,128 @@ namespace __HAL {
     return true;
   }
 
-
   /** print errTest if errMask & data is true; return errMask & data */
-  bool printIfError( uint32_t ui32_data, uint32_t ui32_errMask, const char* carr_errText ) {
+  inline bool printIfErrorBitmask( uint32_t ui32_data, uint32_t ui32_errMask, const char* carr_errText ) {
     if ( ui32_data & ui32_errMask ) {
-      fprintf( stderr, "%lld: %s ", int64_t(getTime()), carr_errText );
+      fprintf( stderr, carr_errText );
       return true;
     }
     return false;
   }
 
+  /** print errTest if data is exactly the value; return true is equal */
+  inline bool printIfErrorByte( uint32_t ui32_data, uint32_t ui32_value, const char* carr_errText ) {
+    if ( ui32_data == ui32_errMask ) {
+      fprintf( stderr, carr_errText );
+      return true;
+    }
+    return false;
+  }
 
   /** print human readable error code on error frame reception */
-  int16_t handleErrorFrame( const struct can_frame& frame ) {
+  void handleErrorFrame( const struct can_frame& frame ) {
+    fprintf( stderr, "handleErrorFrame: time=%lld: ", int64_t(getTime()) );
+
     // check dlc
     if ( CAN_ERR_DLC != frame.can_dlc ) {
-      fprintf( stderr, "handleErrorFrame: wrong dlc: %d!\n", frame.can_dlc );
+      fprintf( stderr, "wrong dlc: %d!\n", frame.can_dlc );
       /*  this is something weird - check your can driver */
-      return HAL_UNKNOWN_ERR;
+      return;
     }
 
-    ( void ) printIfError( frame.can_id, CAN_ERR_TX_TIMEOUT,            "TX timeout (by netdevice driver)" );
-    ( void ) printIfError( frame.can_id, CAN_ERR_ACK,                   "received no ACK on transmission" );
-    ( void ) printIfError( frame.can_id, CAN_ERR_BUSOFF,                "bus off" );
-    ( void ) printIfError( frame.can_id, CAN_ERR_BUSERROR,              "bus error (may flood!)" );
-    ( void ) printIfError( frame.can_id, CAN_ERR_RESTARTED,             "controller restarted" );
+    ( void ) printIfErrorBitmask( frame.can_id, CAN_ERR_TX_TIMEOUT,            "TX timeout (by netdevice driver); " );
+    ( void ) printIfErrorBitmask( frame.can_id, CAN_ERR_ACK,                   "received no ACK on transmission; " );
+    ( void ) printIfErrorBitmask( frame.can_id, CAN_ERR_BUSOFF,                "bus off; " );
+    ( void ) printIfErrorBitmask( frame.can_id, CAN_ERR_BUSERROR,              "bus error (may flood!); " );
+    ( void ) printIfErrorBitmask( frame.can_id, CAN_ERR_RESTARTED,             "controller restarted; " );
 
     /* arbitration lost in bit ... / data[0] */
-    if ( printIfError( frame.can_id, CAN_ERR_LOSTARB,                  "lost arbitration / data[0]: " ) ) {
-      ( void ) printIfError( frame.can_id, CAN_ERR_LOSTARB_UNSPEC,      "unspecified\n" );
+    if ( printIfErrorBitmask( frame.can_id, CAN_ERR_LOSTARB,                  "lost arbitration / data[0]: " ) ) {
+      if ( !printIfErrorByte( frame.data[ 0 ], CAN_ERR_LOSTARB_UNSPEC,         "unspecified; " ) {
+        /* "data[0] != CAN_ERR_LOSTARB_UNSPEC" ==> bit number in bitstream */
+        fprintf( stderr, "bit %d; ", int( frame.data[ 0 ]) );
+      }
     }
-    /* else bit number in bitstream */
 
     /* error status of CAN-controller / data[1] */
-    if ( printIfError( frame.can_id, CAN_ERR_CRTL,                     "controller problems / data[1]:" ) ) {
-      ( void ) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_UNSPEC,      "unspecified\n" );
-      ( void ) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_RX_OVERFLOW, "RX buffer overflow\n" );
-      ( void ) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_TX_OVERFLOW, "TX buffer overflow\n" );
-      ( void ) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_RX_WARNING,  "reached warning level for RX errors\n" );
-      ( void ) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_TX_WARNING,  "reached warning level for TX errors\n" );
-      ( void ) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_RX_PASSIVE,  "reached error passive status RX\n" );
-      ( void ) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_TX_PASSIVE,  "reached error passive status TX\n" );
+    if ( printIfErrorBitmask( frame.can_id, CAN_ERR_CRTL,                       "controller problems / data[1]:" ) ) {
+      if ( !printIfErrorByte( frame.data[ 1 ], CAN_ERR_CRTL_UNSPEC,              " unspecified; " ) ) {
+        ( void ) printIfErrorBitmask( frame.data[ 1 ], CAN_ERR_CRTL_RX_OVERFLOW, " RX buffer overflow;" );
+        ( void ) printIfErrorBitmask( frame.data[ 1 ], CAN_ERR_CRTL_TX_OVERFLOW, " TX buffer overflow;" );
+        ( void ) printIfErrorBitmask( frame.data[ 1 ], CAN_ERR_CRTL_RX_WARNING,  " reached warning level for RX errors;" );
+        ( void ) printIfErrorBitmask( frame.data[ 1 ], CAN_ERR_CRTL_TX_WARNING,  " reached warning level for TX errors;" );
+        ( void ) printIfErrorBitmask( frame.data[ 1 ], CAN_ERR_CRTL_RX_PASSIVE,  " reached error passive status RX;" ); /* (at least one error counter exceeds */
+        ( void ) printIfErrorBitmask( frame.data[ 1 ], CAN_ERR_CRTL_TX_PASSIVE,  " reached error passive status TX;" ); /* the protocol-defined level of 127)  */
+        fprintf( stderr, " " );
+      }
     }
-    /* (at least one error counter exceeds */
-    /* the protocol-defined level of 127)  */
 
     /* error in CAN protocol (type) / data[2] */
-    if ( printIfError( frame.can_id, CAN_ERR_PROT,                     "protocol violations / data[2..3]: " ) ) {
-      ( void ) printIfError( frame.data[ 2 ], CAN_ERR_PROT_UNSPEC,      "unspecified\n" );
-      ( void ) printIfError( frame.data[ 2 ], CAN_ERR_PROT_BIT,         "single bit error\n" );
-      ( void ) printIfError( frame.data[ 2 ], CAN_ERR_PROT_FORM,        "frame format error\n" );
-      ( void ) printIfError( frame.data[ 2 ], CAN_ERR_PROT_STUFF,       "bit stuffing error\n" );
-      ( void ) printIfError( frame.data[ 2 ], CAN_ERR_PROT_BIT0,        "unable to send dominant bit\n" );
-      ( void ) printIfError( frame.data[ 2 ], CAN_ERR_PROT_BIT1,        "unable to send recessive bit\n" );
-      ( void ) printIfError( frame.data[ 2 ], CAN_ERR_PROT_OVERLOAD,    "bus overload\n" );
-      ( void ) printIfError( frame.data[ 2 ], CAN_ERR_PROT_ACTIVE,      "active error announcement\n" );
-      ( void ) printIfError( frame.data[ 2 ], CAN_ERR_PROT_TX,          "error occured on transmission\n" );
-      /* error in CAN protocol (location) / data[3] */
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_UNSPEC,  "unspecified\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_SOF,     "start of frame\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID28_21, "ID bits 28 - 21 (SFF: 10 - 3)\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID20_18, "ID bits 20 - 18 (SFF: 2 - 0 \n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_SRTR,    "substitute RTR (SFF: RTR)\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_IDE,     "identifier extension\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID17_13, "ID bits 17-13\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID12_05, "ID bits 12-5\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID04_00, "ID bits 4-0\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_RTR,     "RTR\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_RES1,    "reserved bit 1\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_RES0,    "reserved bit 0\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_DLC,     "data length code\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_DATA,    "data section\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_CRC_SEQ, "CRC sequence\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_CRC_DEL, "CRC delimiter\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ACK,     "ACK slot\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ACK_DEL, "ACK delimiter\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_EOF,     "end of frame\n" );
-      ( void ) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_INTERM,  "intermission\n" );
+    if ( printIfErrorBitmask( frame.can_id, CAN_ERR_PROT,                    "protocol violations / data[2]:" ) ) {
+      if ( !printIfErrorByte( frame.data[ 2 ], CAN_ERR_PROT_UNSPEC,           " unspecified; " ) )
+      {
+        ( void ) printIfErrorBitmask( frame.data[ 2 ], CAN_ERR_PROT_BIT,      " single bit error;" );
+        ( void ) printIfErrorBitmask( frame.data[ 2 ], CAN_ERR_PROT_FORM,     " frame format error;" );
+        ( void ) printIfErrorBitmask( frame.data[ 2 ], CAN_ERR_PROT_STUFF,    " bit stuffing error;" );
+        ( void ) printIfErrorBitmask( frame.data[ 2 ], CAN_ERR_PROT_BIT0,     " unable to send dominant bit;" );
+        ( void ) printIfErrorBitmask( frame.data[ 2 ], CAN_ERR_PROT_BIT1,     " unable to send recessive bit;" );
+        ( void ) printIfErrorBitmask( frame.data[ 2 ], CAN_ERR_PROT_OVERLOAD, " bus overload;" );
+        ( void ) printIfErrorBitmask( frame.data[ 2 ], CAN_ERR_PROT_ACTIVE,   " active error announcement;" );
+        ( void ) printIfErrorBitmask( frame.data[ 2 ], CAN_ERR_PROT_TX,       " error occured on transmission;" );
+        fprintf( stderr, " " );
+      }
+    }
+    /* error in CAN protocol (location) / data[3] */
+    if ( printIfErrorBitmask( frame.can_id, CAN_ERR_PROT,                    "protocol violations / data[3]: " ) ) {
+      bool printed = false;
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_UNSPEC,  "unspecified; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_SOF,     "start of frame; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID28_21, "ID bits 28 - 21 (SFF: 10 - 3); " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID20_18, "ID bits 20 - 18 (SFF: 2 - 0); " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_SRTR,    "substitute RTR (SFF: RTR); " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_IDE,     "identifier extension; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID17_13, "ID bits 17-13; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID12_05, "ID bits 12-5; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID04_00, "ID bits 4-0; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_RTR,     "RTR; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_RES1,    "reserved bit 1; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_RES0,    "reserved bit 0; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_DLC,     "data length code; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_DATA,    "data section; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_CRC_SEQ, "CRC sequence; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_CRC_DEL, "CRC delimiter; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_ACK,     "ACK slot; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_ACK_DEL, "ACK delimiter; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_EOF,     "end of frame; " );
+      printed |= printIfErrorByte( frame.data[ 3 ], CAN_ERR_PROT_LOC_INTERM,  "intermission; " );
+      if ( !printed ) {
+        fprintf( stderr, "undefined; " );
+      }
     }
 
     /* error status of CAN-transceiver / data[4] */
     /* CANH CANL */
-    if ( printIfError( frame.can_id, CAN_ERR_TRX,                                "transceiver status  / data[4]: " ) ) {
-      bool printed = false;
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_UNSPEC,             "CAN_ERR_TRX_UNSPEC\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANH_NO_WIRE,       "CAN_ERR_TRX_CANH_NO_WIRE\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANH_SHORT_TO_BAT,  "CAN_ERR_TRX_CANH_SHORT_TO_BAT\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANH_SHORT_TO_VCC,  "CAN_ERR_TRX_CANH_SHORT_TO_VCC\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANH_SHORT_TO_GND,  "CAN_ERR_TRX_CANH_SHORT_TO_GND\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_NO_WIRE,       "CAN_ERR_TRX_CANL_NO_WIRE\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_BAT,  "CAN_ERR_TRX_CANL_SHORT_TO_BAT\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_VCC,  "CAN_ERR_TRX_CANL_SHORT_TO_VCC\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_GND,  "CAN_ERR_TRX_CANL_SHORT_TO_GND\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_CANH, "CAN_ERR_TRX_CANL_SHORT_TO_CANH\n" );
-      if ( ! printed ) {
-        fprintf( stderr, "\n" );
+    if ( printIfErrorBitmask( frame.can_id, CAN_ERR_TRX,                           "transceiver status  / data[4]:" ) ) {
+      if ( !printIfErrorByte( frame.data[ 4 ], CAN_ERR_TRX_UNSPEC,                  " CAN_ERR_TRX_UNSPEC; " ) )
+      {
+        if ( !printIfErrorBitmask( frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_CANH, " CAN_ERR_TRX_CANL_SHORT_TO_CANH; " ) )
+        {
+          bool printed = false;
+          printed |= printIfErrorByte( frame.data[ 4 ] & 0x0F, CAN_ERR_TRX_CANH_NO_WIRE,       " CAN_ERR_TRX_CANH_NO_WIRE;" );
+          printed |= printIfErrorByte( frame.data[ 4 ] & 0x0F, CAN_ERR_TRX_CANH_SHORT_TO_BAT,  " CAN_ERR_TRX_CANH_SHORT_TO_BAT;" );
+          printed |= printIfErrorByte( frame.data[ 4 ] & 0x0F, CAN_ERR_TRX_CANH_SHORT_TO_VCC,  " CAN_ERR_TRX_CANH_SHORT_TO_VCC;" );
+          printed |= printIfErrorByte( frame.data[ 4 ] & 0x0F, CAN_ERR_TRX_CANH_SHORT_TO_GND,  " CAN_ERR_TRX_CANH_SHORT_TO_GND;" );
+          printed |= printIfErrorByte( frame.data[ 4 ] & 0x70, CAN_ERR_TRX_CANL_NO_WIRE,       " CAN_ERR_TRX_CANL_NO_WIRE;" );
+          printed |= printIfErrorByte( frame.data[ 4 ] & 0x70, CAN_ERR_TRX_CANL_SHORT_TO_BAT,  " CAN_ERR_TRX_CANL_SHORT_TO_BAT;" );
+          printed |= printIfErrorByte( frame.data[ 4 ] & 0x70, CAN_ERR_TRX_CANL_SHORT_TO_VCC,  " CAN_ERR_TRX_CANL_SHORT_TO_VCC;" );
+          printed |= printIfErrorByte( frame.data[ 4 ] & 0x70, CAN_ERR_TRX_CANL_SHORT_TO_GND,  " CAN_ERR_TRX_CANL_SHORT_TO_GND;" );
+          if ( !printed ) {
+            fprintf( stderr, " undefined;" );
+          }
+        }
       }
     }
-
-    return HAL_UNKNOWN_ERR;
+    fprintf( stderr, "\n" );
   }
 
 
@@ -377,7 +400,9 @@ namespace HAL {
     while( recv( __HAL::g_bus[ channel ].mi_fd, ( char* ) &frame, sizeof( struct can_frame ), MSG_DONTWAIT ) != -1 ) {
       /* check for err frame */
       if ( ( CAN_ERR_FLAG & frame.can_id ) == CAN_ERR_FLAG ) {
+#ifndef CONFIG_HAL_PC_CAN_SUPPRESS_ERROR_FRAME_PRINTOUT
         __HAL::handleErrorFrame( frame );
+#endif
         return;
       }
 
