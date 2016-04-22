@@ -139,7 +139,7 @@ namespace __HAL {
 
   /** print errTest if data is exactly the value; return true is equal */
   inline bool printIfErrorByte( uint32_t ui32_data, uint32_t ui32_value, const char* carr_errText ) {
-    if ( ui32_data == ui32_errMask ) {
+    if ( ui32_data == ui32_value ) {
       fprintf( stderr, carr_errText );
       return true;
     }
@@ -165,7 +165,7 @@ namespace __HAL {
 
     /* arbitration lost in bit ... / data[0] */
     if ( printIfErrorBitmask( frame.can_id, CAN_ERR_LOSTARB,                  "lost arbitration / data[0]: " ) ) {
-      if ( !printIfErrorByte( frame.data[ 0 ], CAN_ERR_LOSTARB_UNSPEC,         "unspecified; " ) {
+      if ( !printIfErrorByte( frame.data[ 0 ], CAN_ERR_LOSTARB_UNSPEC,         "unspecified; " ) ) {
         /* "data[0] != CAN_ERR_LOSTARB_UNSPEC" ==> bit number in bitstream */
         fprintf( stderr, "bit %d; ", int( frame.data[ 0 ]) );
       }
