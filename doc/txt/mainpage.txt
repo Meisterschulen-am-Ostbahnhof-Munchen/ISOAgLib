@@ -47,10 +47,13 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 TC-Client:
  - Bugfix:
    - Allow do(nt)Connect to be done asyncronous later (resulted in repeated version requests on the bus)
-   - Upload DDOP is Localization Label doesn't match
+   - Upload DDOP if Localization Label doesn't match
    - Fixed assertion/crash within deregisterClient()
  - Compilefixes: Interface-casts didn't work on all compilers, private c'tor missing in interface.
- - Enhancement: Getters for Offset/Decimals/Scale added.
+ - Enhancements:
+   - Getters for Offset/Decimals/Scale added.
+   - Added Checksum Calculation over DDOP for generation of unique structure label
+   - DeviceObjectDPD is can now be empty-c'ted and init()ed later on!
 
 System/HAL:
  - Enhancement: Add "safeToPowerOff()"
