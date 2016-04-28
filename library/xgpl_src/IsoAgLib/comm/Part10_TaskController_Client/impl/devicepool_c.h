@@ -73,6 +73,8 @@ namespace __IsoAgLib {
 
       virtual void format( ByteStreamBuffer_c& byteStream ) const;
       virtual void formatBytestream( ByteStreamBuffer_c& byteStream ) const = 0;
+      virtual void calcChecksumAdd( DevicePool_c & ) const = 0;
+      void calcChecksumAddHeader( DevicePool_c & ) const;
 
     private:
       static uint16_t m_objIdCounter;
@@ -112,6 +114,7 @@ namespace __IsoAgLib {
 
       uint32_t getSize() const;
       void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void calcChecksumAdd( DevicePool_c & ) const;
   };
 
 
@@ -131,6 +134,7 @@ namespace __IsoAgLib {
     private:
       uint32_t getSize() const;
       void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void calcChecksumAdd( DevicePool_c & ) const;
 
       size_t numberOfChildren() const {
         return m_childList.size();
@@ -154,6 +158,9 @@ namespace __IsoAgLib {
     public:
       DeviceObjectDpd_c( uint16_t dpd_ddi, const IsoAgLib::ProcData::Properties_t&, const IsoAgLib::ProcData::Methods_t&, const char* desig, const DeviceObjectDvp_c* );
       DeviceObjectDpd_c( uint16_t dpd_ddi, uint8_t properties, uint8_t triggerMethods, const char* desig, const DeviceObjectDvp_c* dvp );
+      DeviceObjectDpd_c();
+      // be sure to not call this init twice, only use it in conjunction with the default c'tor!
+      void init( uint16_t dpd_ddi, const IsoAgLib::ProcData::Properties_t&, const IsoAgLib::ProcData::Methods_t&, const char* desig, const DeviceObjectDvp_c* );
 
       uint16_t ddi() const {
         return m_ddi;
@@ -171,11 +178,12 @@ namespace __IsoAgLib {
     private:
       uint32_t getSize() const;
       void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void calcChecksumAdd( DevicePool_c & ) const;
 
-      const uint16_t m_ddi;
-      const uint8_t m_properties;
-      const uint8_t m_method;
-      const uint16_t m_dvpObjectId;
+      uint16_t m_ddi;
+      uint8_t m_properties;
+      uint8_t m_method;
+      uint16_t m_dvpObjectId;
       friend class __IsoAgLib::ProcData_c;
   };
 
@@ -195,6 +203,7 @@ namespace __IsoAgLib {
     private:
       uint32_t getSize() const;
       void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void calcChecksumAdd( DevicePool_c & ) const;
 
       uint16_t m_ddi;
       int32_t m_value;
@@ -235,6 +244,7 @@ namespace __IsoAgLib {
     private:
       uint32_t getSize() const;
       void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void calcChecksumAdd( DevicePool_c & ) const;
 
       int32_t m_offset;
       float m_scale;
@@ -254,6 +264,19 @@ namespace __IsoAgLib {
 
       virtual uint8_t* allocByteStreamBuffer( uint32_t size ) = 0;
       virtual void freeByteStreamBuffer( uint8_t* buffer ) = 0;
+
+      virtual void calcChecksumStart() = 0;
+      virtual void calcChecksumAdd( uint8_t ) = 0;
+      virtual void calcChecksumEnd() = 0;
+
+      void calcChecksum();
+
+      void calcChecksumAdd( uint16_t val );
+      void calcChecksumAdd( uint32_t val );
+      void calcChecksumAdd( const uint8_t* bp, size_t len );
+      void calcChecksumAdd( const char* str );
+      void calcChecksumAdd( int32_t val );
+      void calcChecksumAdd( float val );
 
       bool isEmpty() const {
         return m_devicePool.empty();

@@ -64,8 +64,17 @@ namespace __IsoAgLib {
   }
 
 
+  void DeviceObject_c::calcChecksumAddHeader( DevicePool_c &pool ) const
+  {
+    static const char* deviceLabels[] = { "DVC", "DET", "DPD", "DPT", "DVP" };
+
+    pool.calcChecksumAdd( ( const uint8_t* )(deviceLabels[m_objectType]), 3 );
+    pool.calcChecksumAdd( m_objectId );
+  }
+
 
   /* --- DVC -------------------------------------------------------------*/
+
   DeviceObjectDvc_c::DeviceObjectDvc_c( const char* version, const char* desig )
     : __IsoAgLib::DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDVC, desig )
     , m_version( version )
@@ -117,6 +126,14 @@ namespace __IsoAgLib {
 
 
   void DeviceObjectDvc_c::setStructureLabel( const uint8_t label[7] ) {
+    isoaglib_assert( label[0] != 0xFF );
+    isoaglib_assert( label[1] != 0xFF );
+    isoaglib_assert( label[2] != 0xFF );
+    isoaglib_assert( label[3] != 0xFF );
+    isoaglib_assert( label[4] != 0xFF );
+    isoaglib_assert( label[5] != 0xFF );
+    isoaglib_assert( label[6] != 0xFF );
+
     m_structLabel.Byte1 = label[0];
     m_structLabel.Byte2 = label[1];
     m_structLabel.Byte3 = label[2];
@@ -174,6 +191,20 @@ namespace __IsoAgLib {
     return size;
   }
 
+
+  void
+  DeviceObjectDvc_c::calcChecksumAdd( DevicePool_c &pool ) const
+  {
+    calcChecksumAddHeader( pool );
+
+  //pool.calcChecksumAdd( m_designator );
+  //pool.calcChecksumAdd( m_version );
+  //pool.calcChecksumAdd( getWsmName().outputString(), 8 );
+  //pool.calcChecksumAdd( m_serialNumber );
+
+  //pool.calcChecksumAdd( ( uint8_t* )&m_structLabel, 7 );
+  //pool.calcChecksumAdd( ( uint8_t* )&m_localization, 7 );
+  }
 
 
   /* --- DET -------------------------------------------------------------*/
@@ -248,6 +279,23 @@ namespace __IsoAgLib {
   }
 
 
+  void
+  DeviceObjectDet_c::calcChecksumAdd( DevicePool_c &pool ) const
+  {
+    calcChecksumAddHeader( pool );
+
+    pool.calcChecksumAdd( uint8_t( m_type ) );
+  //pool.calcChecksumAdd( m_designator );
+    pool.calcChecksumAdd( m_elementNumber );
+    pool.calcChecksumAdd( m_parentId );
+    pool.calcChecksumAdd( ( uint16_t )m_childList.size() );
+
+    STL_NAMESPACE::vector<uint16_t>::const_iterator it;
+    for ( it = m_childList.begin(); it != m_childList.end(); ++it )
+      pool.calcChecksumAdd( *it );
+  }
+
+
   /* --- DPD -------------------------------------------------------------*/
 
   DeviceObjectDpd_c::DeviceObjectDpd_c( uint16_t dpd_ddi, const IsoAgLib::ProcData::Properties_t& bitmaskProps,
@@ -257,7 +305,9 @@ namespace __IsoAgLib {
     , m_properties( bitmaskProps.getByte( 0 ) )
     , m_method( bitmaskMethods.getByte( 0 ) )
     , m_dvpObjectId( ( dvp ) ? dvp->getObjectId() : 0xFFFF )
-  {}
+  {
+    isoaglib_assert( dpd_ddi != 0xFFFF );
+  }
 
 
   DeviceObjectDpd_c::DeviceObjectDpd_c( uint16_t dpd_ddi, uint8_t properties, uint8_t triggerMethods,
@@ -268,10 +318,32 @@ namespace __IsoAgLib {
     , m_method( triggerMethods )
     , m_dvpObjectId( ( dvp ) ? dvp->getObjectId() : 0xFFFF )
   {
+    isoaglib_assert( dpd_ddi != 0xFFFF );
     isoaglib_assert( properties < (1<<3) );
     isoaglib_assert( triggerMethods < (1<<5) );
   }
 
+  DeviceObjectDpd_c::DeviceObjectDpd_c()
+    : DeviceObject_c( IsoAgLib::ProcData::ObjectTypeDPD, NULL )
+    , m_ddi( 0xFFFF ) // Reserved - used to indicate uninitialized DPD
+    , m_properties( 0xFF )
+    , m_method( 0xFF )
+    , m_dvpObjectId( 0xFFFF )
+  {
+  }
+
+  void DeviceObjectDpd_c::init( uint16_t dpd_ddi, const IsoAgLib::ProcData::Properties_t& bitmaskProps,
+                                const IsoAgLib::ProcData::Methods_t& bitmaskMethods, const char* desig, const DeviceObjectDvp_c* dvp )
+  {
+    isoaglib_assert( m_ddi == 0xFFFF );
+    isoaglib_assert( dpd_ddi != 0xFFFF );
+
+    DeviceObject_c::init( desig );
+    m_ddi = dpd_ddi;
+    m_properties = bitmaskProps.getByte( 0 );
+    m_method = bitmaskMethods.getByte( 0 );
+    m_dvpObjectId = ( dvp ) ? dvp->getObjectId() : 0xFFFF;
+  }
 
   void DeviceObjectDpd_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
     DeviceObject_c::format( byteStream );
@@ -288,6 +360,19 @@ namespace __IsoAgLib {
     return ( DeviceObject_c::getSize() + sizeof( m_ddi ) + sizeof( m_properties ) + sizeof( m_method )
              + sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() )
              + sizeof( m_dvpObjectId ) );
+  }
+
+
+  void
+  DeviceObjectDpd_c::calcChecksumAdd( DevicePool_c &pool ) const
+  {
+    calcChecksumAddHeader( pool );
+
+    pool.calcChecksumAdd( m_ddi );
+    pool.calcChecksumAdd( m_properties );
+    pool.calcChecksumAdd( m_method );
+  //pool.calcChecksumAdd( m_designator );
+    pool.calcChecksumAdd( m_dvpObjectId );
   }
 
 
@@ -338,6 +423,18 @@ namespace __IsoAgLib {
   }
 
 
+  void
+  DeviceObjectDpt_c::calcChecksumAdd( DevicePool_c &pool ) const
+  {
+    calcChecksumAddHeader( pool );
+
+    pool.calcChecksumAdd( m_ddi );
+    pool.calcChecksumAdd( m_value );
+  //pool.calcChecksumAdd( m_designator );
+    pool.calcChecksumAdd( m_dvpObjectId );
+  }
+
+
   /* --- DVP -------------------------------------------------------------*/
 
   DeviceObjectDvp_c::DeviceObjectDvp_c( float scale, int32_t offset, uint8_t decimals, const char* desig )
@@ -361,6 +458,18 @@ namespace __IsoAgLib {
 
   uint32_t DeviceObjectDvp_c::getSize() const {
     return ( DeviceObject_c::getSize() + sizeof( m_offset ) + sizeof( m_scale ) + sizeof( m_decimals ) + sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() ) ) ;
+  }
+
+
+  void
+  DeviceObjectDvp_c::calcChecksumAdd( DevicePool_c &pool ) const
+  {
+    calcChecksumAddHeader( pool );
+
+  //pool.calcChecksumAdd( m_offset );
+  //pool.calcChecksumAdd( m_scale );
+  //pool.calcChecksumAdd( m_decimals );
+  //pool.calcChecksumAdd( m_designator );
   }
 
 
@@ -485,6 +594,59 @@ namespace __IsoAgLib {
       size += devObject->getSize();
     }
     return size;
+  }
+
+  void DevicePool_c::calcChecksum()
+  {
+    calcChecksumStart();
+    
+    for ( deviceMap_t::const_iterator it = m_devicePool.begin(); it != m_devicePool.end(); ++it ) {
+      DeviceObject_c* devObject = it->second;
+      devObject->calcChecksumAdd( *this );
+    }
+
+    calcChecksumEnd();
+  }
+
+
+  void DevicePool_c::calcChecksumAdd( uint16_t val ) {
+    calcChecksumAdd( ( uint8_t )( val & 0xff ) );
+    calcChecksumAdd( ( uint8_t )( ( val >> 8 ) & 0xff ) );
+  }
+
+
+  void DevicePool_c::calcChecksumAdd( uint32_t val ) {
+    calcChecksumAdd( ( uint16_t )( val & 0xffff ) );
+    calcChecksumAdd( ( uint16_t )( ( val >> 16 ) & 0xffff ) );
+  }
+
+
+  void DevicePool_c::calcChecksumAdd( const uint8_t* bp, size_t len ) {
+    while ( len-- )
+      calcChecksumAdd( *bp++ );
+  }
+
+
+  void DevicePool_c::calcChecksumAdd( const char* str ) {
+    const size_t l = CNAMESPACE::strlen( str );
+    calcChecksumAdd( uint8_t( l ) );
+    calcChecksumAdd( ( const uint8_t* )str, l );
+  }
+
+
+  void DevicePool_c::calcChecksumAdd( int32_t val ) {
+    calcChecksumAdd( ( uint32_t )val );
+  }
+
+
+  void DevicePool_c::calcChecksumAdd( float val ) {
+    uint32_t iVal = 0;
+    CNAMESPACE::memcpy( &iVal, &val, sizeof( float ) );
+  #if defined(__TSW_CPP__) // Tasking uses mixed endian
+    uint16_t lo = iVal >> 16;
+    iVal = ( iVal << 16 ) | lo;
+  #endif
+    calcChecksumAdd( iVal );
   }
 
 } // __IsoAgLib

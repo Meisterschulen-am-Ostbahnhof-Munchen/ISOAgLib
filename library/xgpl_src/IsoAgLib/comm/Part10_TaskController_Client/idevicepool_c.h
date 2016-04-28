@@ -95,6 +95,14 @@ namespace IsoAgLib {
       iDeviceObjectDpd_c( uint16_t dpd_ddi, uint8_t properties, uint8_t triggerMethods, const char* desig, const iDeviceObjectDvp_c* dvp )
         : DeviceObjectDpd_c( dpd_ddi, properties, triggerMethods, desig, dvp ) {}
 
+      // Caution: Only use this c'tor if you use the init() function exactly once before activating this object!
+      iDeviceObjectDpd_c() : DeviceObjectDpd_c() {}
+
+      // Caution: be sure to not call this init twice, only use it in conjunction with the default c'tor!
+      void init( uint16_t dpd_ddi, const ProcData::Properties_t& p, const ProcData::Methods_t& m, const char* desig, const iDeviceObjectDvp_c* dvp ) {
+        return __IsoAgLib::DeviceObjectDpd_c::init( dpd_ddi, p, m, desig, dvp );
+      }
+
       bool propertyDefaultSet() const {
         return __IsoAgLib::DeviceObjectDpd_c::propertyDefaultSet();
       }
@@ -149,6 +157,14 @@ namespace IsoAgLib {
       }
       virtual void freeByteStreamBuffer( uint8_t* buffer ) {
         CNAMESPACE::free( buffer );
+      }
+
+      virtual void calcChecksumStart() { /* no default implementation */ }
+      virtual void calcChecksumAdd( uint8_t ) { /* no default implementation */ }
+      virtual void calcChecksumEnd() { /* no default implementation */ }
+
+      void calcChecksum() {
+        __IsoAgLib::DevicePool_c::calcChecksum();
       }
 
       //! not pedantic: it is safe to insert object multiple time
