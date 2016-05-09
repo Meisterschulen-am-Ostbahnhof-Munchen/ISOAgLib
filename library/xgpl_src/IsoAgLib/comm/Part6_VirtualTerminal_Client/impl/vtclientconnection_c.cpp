@@ -681,6 +681,12 @@ VtClientConnection_c::doStop()
   m_commandHandler.doStop();
   m_uploadPoolState.doStop();
 
+  // this is a short workaround until doStart() will be done when vtServerInstance is being set.
+  // there's a short time window between vtServerInstance set and doStart() in timeEvent, where we're
+  // still in UploadIdle/UploadCommand - this causes problems when an unsolicited response is being received!
+  // So at least better be in UploadPool in that phase than UploadCommand...
+  men_uploadType = UploadPool;
+
   if( getVtServerInstPtr() )
     getMultiSendInstance( getMultitonInst() ).abortSend(
       getIdentItem().isoName(), 
