@@ -621,7 +621,7 @@ namespace __IsoAgLib {
              )
           {
 #if defined (USE_TRACTOR_MOVE)
-            getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection );
+            getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection, rcc_tempISOName );
 #endif
             notifyOnEvent (VEHICLE_DIRECTION_SPEED_PGN);
           }
@@ -655,7 +655,7 @@ namespace __IsoAgLib {
              )
           {
 #if defined (USE_TRACTOR_MOVE)
-            getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection );
+            getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection, rcc_tempISOName );
 #endif
             notifyOnEvent (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
           }
@@ -1014,7 +1014,7 @@ namespace __IsoAgLib {
           mui16_speedOverGroundCmSec = ui16_newSOG;
           mi32_lastIsoDirection = rc_stream.getStartTime();
 #if defined (USE_TRACTOR_MOVE)
-          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection );
+          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection, rcc_tempISOName );
 #endif
           notifyOnEvent (NMEA_GPS_DIRECTION_DATA_PGN);
         }

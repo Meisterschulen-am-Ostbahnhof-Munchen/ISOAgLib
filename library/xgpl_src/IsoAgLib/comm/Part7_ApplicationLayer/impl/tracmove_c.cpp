@@ -230,7 +230,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
-              updateSpeed(IsoAgLib::GroundBasedSpeed, pkg.time() );
+              updateSelectedSpeed(IsoAgLib::GroundBasedSpeed, pkg.time() );
             }
 
             //if ground based dist and direction is actually the best available
@@ -263,7 +263,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
-              updateSpeed(IsoAgLib::WheelBasedSpeed, pkg.time() );
+              updateSelectedSpeed(IsoAgLib::WheelBasedSpeed, pkg.time() );
             }
             if ( ( mui32_distTheor <= 0xFAFFFFFF ) &&
                  ( ( mt_distDirecSource <= IsoAgLib::WheelBasedDistDirec )
@@ -310,7 +310,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
                 {
                   mi32_selectedSpeed = pkg.getUint16Data(0);
                   mt_selectedSpeedSource =  t_testSpeedSource;
-                  updateSpeed(IsoAgLib::SelectedSpeed, pkg.time());
+                  updateSelectedSpeed(IsoAgLib::SelectedSpeed, pkg.time());
                   if (mt_selectedDirection == IsoAgLib::IsoReverse)
                     mi32_selectedSpeed *= -1; //driving reverse
                 }
@@ -343,8 +343,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     }
   }
 
-  // actually means updateSELECTEDSpeed !!!
-  void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, ecutime_t ai_time )
+  void TracMove_c::updateSelectedSpeed(IsoAgLib::SpeedSource_t t_speedSrc, ecutime_t ai_time )
   {
     switch(t_speedSrc)
     {
@@ -352,7 +351,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         mt_speedSource = IsoAgLib::SelectedSpeed; //nothing more to do because variables are already set
         break;
       case IsoAgLib::GpsBasedSpeed:
-        isoaglib_assert( !"Don't call updateSpeed(), call updateSpeedGps() instead!" );
+        isoaglib_assert( !"Don't call updateSelectedSpeed(), call updateSpeedGps() instead!" );
         break;
       case IsoAgLib::GroundBasedSpeed:
         mt_speedSource = IsoAgLib::GroundBasedSpeed;
@@ -372,13 +371,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     mui32_lastUpdateTimeSpeedSelected = ai_time;
   }
 
-  void TracMove_c::updateSpeedGps( int32_t speed_mm_s, ecutime_t ai_time )
+  void TracMove_c::updateSpeedGps( int32_t speed_mm_s, ecutime_t ai_time, const IsoName_c& ac_dataSourceISOName )
   {
     mt_speedSource = IsoAgLib::GpsBasedSpeed;
     mt_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
     mi32_selectedSpeed = speed_mm_s;
 
     mui32_lastUpdateTimeSpeedSelected = ai_time;
+
+    setSelectedDataSourceISOName( ac_dataSourceISOName );
+    setUpdateTime( ai_time );
   }
 
   void TracMove_c::updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)
@@ -420,12 +422,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       // --> switch value of selected speed to ZERO
       setSelectedSpeed( NO_VAL_32S );
     }
+
     if ( ( (ci32_now - mui32_lastUpdateTimeSpeedReal)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isRealSpeedMissing() ) )
     { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783
       // --> switch value of selected speed to ZERO
       setSpeedReal( NO_VAL_32S );
     }
+
     if ( ( (ci32_now - mui32_lastUpdateTimeSpeedTheor)  >= TIMEOUT_SPEED_LOST || getSelectedDataSourceISONameConst().isUnspecified()  )
       && ( !isTheorSpeedMissing() ) )
     { // TECU stoppped its Speed and doesn't send speed updates - as defined by ISO 11783

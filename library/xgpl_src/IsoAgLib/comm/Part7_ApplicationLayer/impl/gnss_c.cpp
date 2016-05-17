@@ -293,7 +293,7 @@ namespace __IsoAgLib {
 
           setTimeOut(TIMEOUT_SENDING_NODE_J1939);
 #if defined (USE_TRACTOR_MOVE)
-          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastDirection );
+          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastDirection, senderName );
 #endif
         }
         else
@@ -323,7 +323,7 @@ namespace __IsoAgLib {
           setSelectedDataSourceISOName( senderName );
 
 #if defined (USE_TRACTOR_MOVE)
-          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastDirection );
+          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastDirection, senderName );
 #endif
         }
         else
@@ -483,7 +483,7 @@ namespace __IsoAgLib {
         mui16_speedOverGroundCmSec = ui16_newSOG;
         mi32_lastDirection = stream.getStartTime();
 #if defined (USE_TRACTOR_MOVE)
-        getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastDirection );
+        getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastDirection, senderName );
 #endif
         #if DEBUG_NMEA
         INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_DIRECTION_DATA_PGN: CourseOverGround: " << mui16_courseOverGroundRad10Minus4

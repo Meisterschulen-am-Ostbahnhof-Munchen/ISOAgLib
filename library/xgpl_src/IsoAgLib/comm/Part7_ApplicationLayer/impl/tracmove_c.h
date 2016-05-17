@@ -46,12 +46,7 @@ namespace __IsoAgLib {
         @return true -> configuration was successfull
     */
     virtual bool config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
-
-    /** update selected speed with actually best available speed
-        @param t_speedSrc  from which source is the speed available
-      */
-    void updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, ecutime_t ai_time );
-    void updateSpeedGps( int32_t speed_mm_s, ecutime_t ai_time );
+    void updateSpeedGps( int32_t speed_mm_s, ecutime_t ai_time, const IsoName_c& ac_dataSourceISOName );
 
     /** update distance and direction with the actually best available distance and direction
         @param t_distanceSrc  from which source is the distance and direction available
@@ -251,7 +246,7 @@ namespace __IsoAgLib {
     uint16_t engineSpeed() const { return mui16_engineSpeed;}
 
 
-  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t );
+    virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, ecutime_t );
 
   private:
     // Private methods
@@ -330,6 +325,11 @@ namespace __IsoAgLib {
     /** Prepare sending any message.
      */
     void prepareSending( CanPkgExt_c& pkg );
+
+    /** update selected speed with actually best available speed
+        @param t_speedSrc  from which source is the speed available
+      */
+    void updateSelectedSpeed(IsoAgLib::SpeedSource_t t_speedSrc, ecutime_t ai_time );
 
   private:
     // Private attributes
