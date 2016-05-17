@@ -18,6 +18,9 @@
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/scheduler/ischeduler_c.h>
 
+#include <fstream>
+#include <sstream>
+
 #ifdef WIN32
 #include <windows.h>
 #else
@@ -42,16 +45,18 @@ public:
   int i_channel;
   int i_period;
   int b_ext;
+  std::string str_replay_file;
   uint8_t pui8_databytes [8];
 
   void parse (int argc, char *argv[]);
 
+  void usage_and_exit(int ai_errorCode) const;
+  
 private:
 
   int ahextoi (char* str);
   int databytes (char* src, uint8_t* dst);
 
-  void usage_and_exit(int ai_errorCode) const;
 };
 
 
@@ -132,12 +137,14 @@ void cmdline_c::parse (int argc, char *argv[])
         case 'd': i_databytes = databytes(argv[i], pui8_databytes); break;
         case 'p': i_period = atoi (argv[i]); break;
         case 'x': b_ext = true; i--; break;
+        case 'f': str_replay_file = std::string(argv[i]); break;
         default: printf ("Unsupported parameter!\n"); usage_and_exit(1); break;
       }
       nextup[2-1] = ' '; // free to await next parameter-pair
       continue;
     }
   }
+
   if (nextup[2-1] != ' ')
   { // didn't finish parameter-pair ==> error
     printf ("Incomplete parameter-type\n");
@@ -154,6 +161,7 @@ void cmdline_c::usage_and_exit (int ai_errorCode) const
   printf ("   -d <Databytes (up to 8) as HEX> (for compatibility also -s can be used)\n");
   printf ("   -p <Period in ms>\n");
   printf ("   -x     (use eXtended Identifier)\n");
+  printf ("   -f replay file (structure <timestamp (ms)> <ID> <up to 8 blank separated data bytes as HEX>\n");
   printf ("\n Example: can_messenger -x -n 1 -c 0 -i 1ceafffe -d a1b2c3d4e5f6affe\n\n");
 
   exit (ai_errorCode);
@@ -185,6 +193,69 @@ int main( int argc, char *argv[] )
 
   pkg.setIdent(params.i_id, (params.b_ext ? iIdent_c::ExtendedIdent : iIdent_c::StandardIdent));
   pkg.setDataFromString(0, params.pui8_databytes, params.i_databytes);
+  
+  if(!params.str_replay_file.empty())
+  {
+    std::ifstream input(params.str_replay_file.c_str());
+    if (!input)
+    {
+      params.usage_and_exit(1);
+    }
+
+    float timestamp = 0.0;
+    float last_time = 0.0;
+
+    const uint32_t buf_size = 256;
+    char buf[buf_size];
+    
+    uint32_t identifier = 0;
+    uint32_t data_byte = 0;
+    uint8_t len = 0;
+        
+    while (!input.eof())
+    {
+      input.getline(buf, buf_size);
+
+      len = 0;
+
+      std::istringstream lineStream(buf);
+      if (!lineStream.eof()) {
+        lineStream >> timestamp;
+      }
+      if (!lineStream.eof()) {
+        lineStream >> std::hex >> identifier;
+      }
+
+      while (!lineStream.eof()) {
+        lineStream >> data_byte;
+        if(!lineStream.eof())
+        {
+          pkg.setUint8Data(len, data_byte & 0xFF);
+          len++;
+        }
+        if(len >= 8)
+        {
+          break;
+        }
+      }
+      
+      pkg.setIdent(identifier, (identifier >= (1 << 11)) ? iIdent_c::ExtendedIdent : iIdent_c::StandardIdent);
+      pkg.setLen(len);
+
+      getCanInstance() << pkg;
+      
+      std::cout << std::hex << timestamp << " " << identifier << std::endl;
+
+      timestamp *= 1000;
+#ifdef WIN32
+      Sleep ( uint32_t(timestamp - last_time) ); // won't be too accurate though due to bad Windows Sleep-capability.
+#else
+      usleep( uint32_t(timestamp - last_time) * 1000 );
+#endif
+      last_time = timestamp;
+      
+    }    
+  }
 
   for( int i = 0; i < params.i_repeat; ++i ) {
     getCanInstance() << pkg;

@@ -6,7 +6,7 @@ ISO_AG_LIB_PATH="../.."
 
 USE_TARGET_SYSTEM="pc_linux"
 
-USE_CAN_DRIVER="socket_server"
+USE_CAN_DRIVER="sys"
 USE_RS232_DRIVER="simulating"
 CAN_INSTANCE_CNT=1
 PRT_INSTANCE_CNT=1
