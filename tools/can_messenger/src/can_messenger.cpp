@@ -183,6 +183,9 @@ int main( int argc, char *argv[] )
   for (int i=0; i<params.i_databytes; i++) printf (" %02x", params.pui8_databytes[i]);
   printf ("\n");
 
+  // Init System
+  IsoAgLib::getIsystemInstance().init();
+
   // Initialize ISOAgLib
   getISchedulerInstance().init();
 
@@ -259,14 +262,31 @@ int main( int argc, char *argv[] )
 
   for( int i = 0; i < params.i_repeat; ++i ) {
     getCanInstance() << pkg;
-    if( params.i_period && ( 1 != params.i_repeat ) ) {
+    const int32_t sleepPeriod = ( 1 != params.i_repeat ) ? params.i_period : 1;
+
+    if( sleepPeriod )
+    {
 #ifdef WIN32
-      Sleep ( params.i_period ); // won't be too accurate though due to bad Windows Sleep-capability.
+      Sleep ( sleepPeriod ); // won't be too accurate though due to bad Windows Sleep-capability.
 #else
-      usleep( params.i_period * 1000 );
+      usleep( sleepPeriod * 1000 );
 #endif
     }
   }
+
+  if( 1 != params.i_repeat )
+#ifdef WIN32
+      Sleep ( params.i_repeat ); // won't be too accurate though due to bad Windows Sleep-capability.
+#else
+      usleep( params.i_repeat * 1000 );
+#endif
+
+
+  /// Shutdown Scheduler
+  IsoAgLib::getISchedulerInstance().close();  
+
+  // Shutdown System
+  IsoAgLib::getIsystemInstance().close();  
 
   return 0;
 }
