@@ -177,12 +177,6 @@ int main( int argc, char *argv[] )
 
   params.parse (argc, argv);
 
-  printf ("Sending on CAN-Bus %d %d times with a period of %d: ID=%x [%d databytes:] ", params.i_channel, params.i_repeat, 
-                                                                                        params.i_period,  params.i_id,
-                                                                                        params.i_databytes);
-  for (int i=0; i<params.i_databytes; i++) printf (" %02x", params.pui8_databytes[i]);
-  printf ("\n");
-
   // Init System
   IsoAgLib::getIsystemInstance().init();
 
@@ -204,6 +198,8 @@ int main( int argc, char *argv[] )
     {
       params.usage_and_exit(1);
     }
+
+    printf ("Replaying CAN-log...\n" );
 
     float timestamp = 0.0;
     float last_time = 0.0;
@@ -241,8 +237,6 @@ int main( int argc, char *argv[] )
           break;
         }
       }
-      if (lineStream.eof())
-        break;
       
       pkg.setIdent(identifier, (identifier >= (1 << 11)) ? iIdent_c::ExtendedIdent : iIdent_c::StandardIdent);
       pkg.setLen(len);
@@ -262,6 +256,12 @@ int main( int argc, char *argv[] )
   }
   else
   {
+    printf ("Sending on CAN-Bus %d %d times with a period of %d: ID=%x [%d databytes:] ", params.i_channel, params.i_repeat, 
+                                                                                          params.i_period,  params.i_id,
+                                                                                          params.i_databytes);
+    for (int i=0; i<params.i_databytes; i++) printf (" %02x", params.pui8_databytes[i]);
+    printf ("\n");
+
     for( int i = 0; i < params.i_repeat; ++i ) {
       getCanInstance() << pkg;
       const int32_t sleepPeriod = ( 1 != params.i_repeat ) ? params.i_period : 1;
