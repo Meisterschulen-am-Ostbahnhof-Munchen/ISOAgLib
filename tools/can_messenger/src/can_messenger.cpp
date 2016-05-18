@@ -218,17 +218,17 @@ int main( int argc, char *argv[] )
     while (!input.eof())
     {
       input.getline(buf, buf_size);
+      std::istringstream lineStream(buf);
+
+      if (lineStream.eof())
+        break;
+      lineStream >> timestamp;
+      
+      if (lineStream.eof())
+        break;
+      lineStream >> std::hex >> identifier;
 
       len = 0;
-
-      std::istringstream lineStream(buf);
-      if (!lineStream.eof()) {
-        lineStream >> timestamp;
-      }
-      if (!lineStream.eof()) {
-        lineStream >> std::hex >> identifier;
-      }
-
       while (!lineStream.eof()) {
         lineStream >> data_byte;
         if(!lineStream.eof())
@@ -241,6 +241,8 @@ int main( int argc, char *argv[] )
           break;
         }
       }
+      if (lineStream.eof())
+        break;
       
       pkg.setIdent(identifier, (identifier >= (1 << 11)) ? iIdent_c::ExtendedIdent : iIdent_c::StandardIdent);
       pkg.setLen(len);
@@ -256,31 +258,31 @@ int main( int argc, char *argv[] )
       usleep( uint32_t(timestamp - last_time) * 1000 );
 #endif
       last_time = timestamp;
-      
-    }    
+    } // while( !eof )
   }
+  else
+  {
+    for( int i = 0; i < params.i_repeat; ++i ) {
+      getCanInstance() << pkg;
+      const int32_t sleepPeriod = ( 1 != params.i_repeat ) ? params.i_period : 1;
 
-  for( int i = 0; i < params.i_repeat; ++i ) {
-    getCanInstance() << pkg;
-    const int32_t sleepPeriod = ( 1 != params.i_repeat ) ? params.i_period : 1;
-
-    if( sleepPeriod )
-    {
+      if( sleepPeriod )
+      {
 #ifdef WIN32
-      Sleep ( sleepPeriod ); // won't be too accurate though due to bad Windows Sleep-capability.
+        Sleep ( sleepPeriod ); // won't be too accurate though due to bad Windows Sleep-capability.
 #else
-      usleep( sleepPeriod * 1000 );
+        usleep( sleepPeriod * 1000 );
 #endif
+      }
     }
-  }
 
-  if( 1 != params.i_repeat )
+    if( 1 != params.i_repeat )
 #ifdef WIN32
-      Sleep ( params.i_repeat ); // won't be too accurate though due to bad Windows Sleep-capability.
+        Sleep ( params.i_repeat ); // won't be too accurate though due to bad Windows Sleep-capability.
 #else
-      usleep( params.i_repeat * 1000 );
+        usleep( params.i_repeat * 1000 );
 #endif
-
+  }
 
   /// Shutdown Scheduler
   IsoAgLib::getISchedulerInstance().close();  
