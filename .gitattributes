@@ -70,7 +70,6 @@ library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.inc -text
 library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_simulator.cpp -text
 tools/LICENSE.txt -text
 tools/README.txt -text
-tools/can_messenger/README.txt -text
 tools/can_messenger/conf_can_messenger_msq_x86linux -text
 tools/can_messenger/conf_can_messenger_socket_win32 -text
 tools/can_messenger/conf_can_messenger_socket_x86linux -text
