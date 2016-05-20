@@ -352,7 +352,6 @@ tools/project_generation/conf2build_CMakeLists.txt -text
 tools/project_generation/conf2build_EDE.part1.pjt -text
 tools/project_generation/conf2build_EDE.part2.pjt -text
 tools/project_generation/conf2build_qmake.pro -text
-tools/project_generation/conf_template -text
 tools/vt2iso/cmake/CMakeLists.txt -text
 tools/vt2iso/doc/ISO-VirtualTerminal-Objects.txt -text
 tools/vt2iso/doc/vt2iso.xsd -text
