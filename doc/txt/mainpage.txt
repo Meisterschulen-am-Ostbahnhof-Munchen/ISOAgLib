@@ -44,6 +44,9 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \subsection Change_ZF 2.8.0 to 2.8.1
 
+CAN-Messenger:
+ - Enhancement: Replay a CAN-log file.
+
 TC-Client:
  - Bugfix:
    - Allow do(nt)Connect to be done asyncronous later (resulted in repeated version requests on the bus)
@@ -78,9 +81,13 @@ Inputs/Outputs:
      - Added DIGITAL_OUTPUT_MAX_PWM_DIGOUT.
 
 TracMove:
- - Bugfix: Set Selected Speed to ERROR if no valid value received
+ - Bugfix:
+   - Set Selected Speed to ERROR if no valid value received
+   - Handling GPS for SelectedSpeed now correctly. (not toggling between received/not received anymore.
+
 
 VT-Client:
+ - Bugfix: Avoid assertion on unsolicited response after reconnect
  - Enhancement:
    - Color Conversion "convertColour()" always done now
    - Also possible for Picture Graphic RAW data now (use CONFIG_VT_CLIENT_PICTURE_GRAPHIC_COLOUR_CONVERSION)
