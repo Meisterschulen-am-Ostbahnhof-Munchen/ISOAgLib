@@ -23,7 +23,6 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
 #include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
@@ -620,9 +619,6 @@ namespace __IsoAgLib {
             && (mui16_speedOverGroundCmSec        <= (65532))
              )
           {
-#if defined (USE_TRACTOR_MOVE)
-            getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection, rcc_tempISOName );
-#endif
             notifyOnEvent (VEHICLE_DIRECTION_SPEED_PGN);
           }
           // else: Regard this as NO (valid) COG/SOG, so it's just like nothing meaningful got received!
@@ -654,9 +650,6 @@ namespace __IsoAgLib {
             && (mui16_speedOverGroundCmSec        <= (65532))
              )
           {
-#if defined (USE_TRACTOR_MOVE)
-            getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection, rcc_tempISOName );
-#endif
             notifyOnEvent (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
           }
           // else: Regard this as NO (valid) COG/SOG, so it's just like nothing meaningful got received!
@@ -1013,9 +1006,6 @@ namespace __IsoAgLib {
           mui16_courseOverGroundRad10Minus4 = ui16_newCOG;
           mui16_speedOverGroundCmSec = ui16_newSOG;
           mi32_lastIsoDirection = rc_stream.getStartTime();
-#if defined (USE_TRACTOR_MOVE)
-          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastIsoDirection, rcc_tempISOName );
-#endif
           notifyOnEvent (NMEA_GPS_DIRECTION_DATA_PGN);
         }
 

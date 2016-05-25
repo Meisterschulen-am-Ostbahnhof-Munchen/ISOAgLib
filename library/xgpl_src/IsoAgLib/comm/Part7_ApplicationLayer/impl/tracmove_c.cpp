@@ -350,9 +350,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       case IsoAgLib::SelectedSpeed:
         mt_speedSource = IsoAgLib::SelectedSpeed; //nothing more to do because variables are already set
         break;
-      case IsoAgLib::GpsBasedSpeed:
-        isoaglib_assert( !"Don't call updateSelectedSpeed(), call updateSpeedGps() instead!" );
-        break;
       case IsoAgLib::GroundBasedSpeed:
         mt_speedSource = IsoAgLib::GroundBasedSpeed;
         mt_selectedSpeedSource = IsoAgLib::IsoGroundBasedSpeed;
@@ -369,18 +366,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         break;
     }
     mui32_lastUpdateTimeSpeedSelected = ai_time;
-  }
-
-  void TracMove_c::updateSpeedGps( int32_t speed_mm_s, ecutime_t ai_time, const IsoName_c& ac_dataSourceISOName )
-  {
-    mt_speedSource = IsoAgLib::GpsBasedSpeed;
-    mt_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
-    mi32_selectedSpeed = speed_mm_s;
-
-    mui32_lastUpdateTimeSpeedSelected = ai_time;
-
-    setSelectedDataSourceISOName( ac_dataSourceISOName );
-    setUpdateTime( ai_time );
   }
 
   void TracMove_c::updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)

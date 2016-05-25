@@ -15,7 +15,6 @@
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
-#include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
 #include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/util/iliberr_c.h>
 
@@ -292,9 +291,6 @@ namespace __IsoAgLib {
           setSelectedDataSourceISOName( senderName );
 
           setTimeOut(TIMEOUT_SENDING_NODE_J1939);
-#if defined (USE_TRACTOR_MOVE)
-          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastDirection, senderName );
-#endif
         }
         else
         { // there is a sender conflict
@@ -321,10 +317,6 @@ namespace __IsoAgLib {
 
           mi32_lastDirection = ci32_now;
           setSelectedDataSourceISOName( senderName );
-
-#if defined (USE_TRACTOR_MOVE)
-          getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastDirection, senderName );
-#endif
         }
         else
         { // there is a sender conflict
@@ -482,9 +474,7 @@ namespace __IsoAgLib {
         mui16_courseOverGroundRad10Minus4 = ui16_newCOG;
         mui16_speedOverGroundCmSec = ui16_newSOG;
         mi32_lastDirection = stream.getStartTime();
-#if defined (USE_TRACTOR_MOVE)
-        getTracMoveInstance4Comm().updateSpeedGps( getGpsSpeedCmSec()*10, mi32_lastDirection, senderName );
-#endif
+
         #if DEBUG_NMEA
         INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_DIRECTION_DATA_PGN: CourseOverGround: " << mui16_courseOverGroundRad10Minus4
           << ", SpeedOverGround [cm/sec]: " << mui16_speedOverGroundCmSec

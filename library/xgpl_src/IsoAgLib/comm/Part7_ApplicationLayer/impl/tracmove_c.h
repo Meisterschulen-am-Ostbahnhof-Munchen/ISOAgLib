@@ -46,7 +46,6 @@ namespace __IsoAgLib {
         @return true -> configuration was successfull
     */
     virtual bool config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
-    void updateSpeedGps( int32_t speed_mm_s, ecutime_t ai_time, const IsoName_c& ac_dataSourceISOName );
 
     /** update distance and direction with the actually best available distance and direction
         @param t_distanceSrc  from which source is the distance and direction available

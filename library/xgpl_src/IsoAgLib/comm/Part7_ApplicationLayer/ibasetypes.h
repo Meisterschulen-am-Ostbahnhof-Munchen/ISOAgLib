@@ -286,7 +286,6 @@ enum SpeedSource_t {
   NoSpeed = 0,
   WheelBasedSpeed = 1,
   GroundBasedSpeed = 2,
-  GpsBasedSpeed = 3,
   SelectedSpeed = 4
 };
 
