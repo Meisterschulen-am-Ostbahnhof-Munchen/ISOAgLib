@@ -205,7 +205,7 @@ namespace __IsoAgLib {
       return;
 
     if( m_timeWaitWithAnyCommunicationUntil < 0 )
-      m_timeWaitWithAnyCommunicationUntil = m_identItem->getIsoItem()->lastTime() + 6000;
+      m_timeWaitWithAnyCommunicationUntil = HAL::getTime() + 6000;
 
     if( HAL::getTime() < m_timeWaitWithAnyCommunicationUntil )
       return;
