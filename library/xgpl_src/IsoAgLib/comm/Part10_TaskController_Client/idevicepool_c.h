@@ -140,8 +140,11 @@ namespace IsoAgLib {
       }
       uint16_t elementNumber() const {
         return __IsoAgLib::DeviceObjectDet_c::elementNumber();
-      };
-  };
+      }
+      void clearChildren() {
+        return __IsoAgLib::DeviceObjectDet_c::clearChildren();
+      }
+};
 
 
 

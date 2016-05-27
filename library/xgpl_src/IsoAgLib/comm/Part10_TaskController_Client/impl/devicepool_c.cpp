@@ -296,6 +296,13 @@ namespace __IsoAgLib {
   }
 
 
+  void
+  DeviceObjectDet_c::clearChildren()
+  {
+	  m_childList.clear();
+  }
+
+
   /* --- DPD -------------------------------------------------------------*/
 
   DeviceObjectDpd_c::DeviceObjectDpd_c( uint16_t dpd_ddi, const IsoAgLib::ProcData::Properties_t& bitmaskProps,

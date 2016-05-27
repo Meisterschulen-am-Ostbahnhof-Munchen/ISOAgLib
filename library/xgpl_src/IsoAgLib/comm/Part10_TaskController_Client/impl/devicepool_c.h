@@ -148,6 +148,7 @@ namespace __IsoAgLib {
 
     protected:
       bool addChild( uint16_t id );
+      void clearChildren();
   };
 
 
