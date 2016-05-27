@@ -57,6 +57,7 @@ TC-Client:
    - Getters for Offset/Decimals/Scale added.
    - Added Checksum Calculation over DDOP for generation of unique structure label
    - DeviceObjectDPD is can now be empty-c'ted and init()ed later on!
+   - Clear of DET now possible for reuse of the same Object-IDs during runtime.
 
 System/HAL:
  - Enhancement: Add "safeToPowerOff()"
@@ -81,10 +82,8 @@ Inputs/Outputs:
      - Added DIGITAL_OUTPUT_MAX_PWM_DIGOUT.
 
 TracMove:
- - Bugfix:
-   - Set Selected Speed to ERROR if no valid value received
-   - Handling GPS for SelectedSpeed now correctly. (not toggling between received/not received anymore.
-
+ - Bugfix/Change: TracMove is NOT handling GPS speed anymore! (Get GPS info from Gnss/TimePosGps instead!)
+ - Bugfix: Set Selected Speed to ERROR if no valid value received
 
 VT-Client:
  - Bugfix: Avoid assertion on unsolicited response after reconnect
