@@ -54,6 +54,7 @@ TC-Client:
    - Fixed assertion/crash within deregisterClient()
  - Compilefixes: Interface-casts didn't work on all compilers, private c'tor missing in interface.
  - Enhancements:
+   - Safely reconnect now: Wait 6s before connecting again.
    - Getters for Offset/Decimals/Scale added.
    - Added Checksum Calculation over DDOP for generation of unique structure label
    - DeviceObjectDPD is can now be empty-c'ted and init()ed later on!
