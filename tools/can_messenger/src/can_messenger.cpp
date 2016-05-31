@@ -237,6 +237,15 @@ int main( int argc, char *argv[] )
           break;
         }
       }
+
+      if (last_time != 0.0)
+      {
+#ifdef WIN32
+          Sleep(uint32_t(timestamp - last_time)); // won't be too accurate though due to bad Windows Sleep-capability.
+#else
+          usleep(uint32_t(timestamp - last_time) * 1000);
+#endif
+      }
       
       pkg.setIdent(identifier, (identifier >= (1 << 11)) ? iIdent_c::ExtendedIdent : iIdent_c::StandardIdent);
       pkg.setLen(len);
@@ -245,12 +254,6 @@ int main( int argc, char *argv[] )
       
       std::cout << std::hex << timestamp << " " << identifier << std::endl;
 
-      timestamp *= 1000;
-#ifdef WIN32
-      Sleep ( uint32_t(timestamp - last_time) ); // won't be too accurate though due to bad Windows Sleep-capability.
-#else
-      usleep( uint32_t(timestamp - last_time) * 1000 );
-#endif
       last_time = timestamp;
     } // while( !eof )
   }
