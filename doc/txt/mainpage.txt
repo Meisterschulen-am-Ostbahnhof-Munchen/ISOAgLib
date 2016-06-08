@@ -1,4 +1,4 @@
-/*! \namespace __IsoAgLib
+﻿/*! \namespace __IsoAgLib
     \brief Internal namespace, not allowed to be used by Application-Code
 
     All members of the internal __IsoAgLib namespace are only for internal use inside of IsoAgLib. Applications are not allowed to directly use this namespace. All code using this namespace is treated as an extension of IsoAgLib and hence needs to be given back to the IsoAgLib project.
@@ -41,6 +41,12 @@ Please use the upper navigation bar to browse the documentation.
 To get more information about ISOAgLib in general, please visit <a href="http://www.isoaglib.com">www.isoaglib.com</a> where you can find information about licensing, ISOAgLib as product, ISOAgLib's functions, principles and toolchain, the Tutorial Network, download and commercial services.
 
 \section Changes Changes
+
+\subsection Change_ZG 2.8.1 to 2.8.2
+
+Diagnostics:
+ - Added support for J1939-71 Vehicle Identification
+
 
 \subsection Change_ZF 2.8.0 to 2.8.1
 
