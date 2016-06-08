@@ -119,4 +119,12 @@ namespace __IsoAgLib {
     m_lastActiveTaskTC = activeTask;
   }
 
+
+  void
+  ServerInstance_c::notifyOnDropOff()
+  {
+    m_lastTcStateReceivedTime = -1;
+  }
+
+
 }

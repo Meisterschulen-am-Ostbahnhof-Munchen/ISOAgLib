@@ -338,7 +338,10 @@ namespace __IsoAgLib {
       {
         ServerInstance_c* server = static_cast<ServerInstance_c *>( i->second );
         if( server->isAlive() )
+        {
+          server->notifyOnDropOff();
           notifyServerStatusChange( *server, false );
+        }
       }
       else
         notifyPeerDestruction( *(i->second) );

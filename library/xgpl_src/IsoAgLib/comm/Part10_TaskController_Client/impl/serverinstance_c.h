@@ -41,6 +41,8 @@ namespace __IsoAgLib {
       uint8_t   getLastServerState()  const { return m_lastTcState; }
       bool      getLastActiveTaskTC() const { return m_lastActiveTaskTC; }
 
+      void notifyOnDropOff();
+
       IsoAgLib::ProcData::ServerType_t getEcuType() const { return m_type; }
 
       const IsoAgLib::iTcClientServer_c& toConstITcClientServer_c() const;
