@@ -31,6 +31,7 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& identItem ) :
     m_diagnosticFunctionalities( identItem ),
     mcstr_ecuIdentification ( NULL ),
     mcstr_productIdentification( NULL ),
+    mcstr_vehicleIdentification( NULL ),
     mcstr_swIdentification ( NULL),
     mb_certificationIsSet ( false )
 {
@@ -51,6 +52,9 @@ DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
   if (mcstr_productIdentification)
     CNAMESPACE::free (mcstr_productIdentification);
 
+  if (mcstr_vehicleIdentification)
+    CNAMESPACE::free (mcstr_vehicleIdentification);
+
   if (mcstr_swIdentification)
     CNAMESPACE::free (mcstr_swIdentification);
 }
@@ -64,6 +68,7 @@ DiagnosticPgnHandler_c::init()
   getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
   getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).registerPGN ( *this, PRODUCT_IDENTIFICATION_PGN );
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).registerPGN ( *this, VEHICLE_IDENTIFICATION_PGN );
 
   m_diagnosticFunctionalities.init();
 }
@@ -76,6 +81,7 @@ DiagnosticPgnHandler_c::close()
 
   getMultiSendInstance( mrc_identItem.getMultitonInst() ).abortSend( m_mrEventProxy );
 
+  getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).unregisterPGN ( *this, VEHICLE_IDENTIFICATION_PGN );
   getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).unregisterPGN ( *this, PRODUCT_IDENTIFICATION_PGN );
   getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   getIsoRequestPgnInstance( mrc_identItem.getMultitonInst() ).unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );
@@ -215,6 +221,45 @@ DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t pgn, IsoItem_c* isoItemS
                   (uint8_t *) mcstr_productIdentification,
                   uint16_t(getCStringLength (mcstr_productIdentification)),
                   PRODUCT_IDENTIFICATION_PGN,
+                  &m_mrEventProxy) )
+            { // Message successfully started with multisend
+              return true;
+            }
+          }
+        }
+      }
+      break;
+
+    case VEHICLE_IDENTIFICATION_PGN:
+      if (mcstr_vehicleIdentification != NULL)
+      {
+        if (getCStringLength (mcstr_vehicleIdentification) < 9)
+        {
+          sendSinglePacket((uint8_t *) mcstr_vehicleIdentification, VEHICLE_IDENTIFICATION_PGN);
+          return true;
+        }
+        else
+        {
+          if( isoItemReceiver != NULL )
+          { // dest-spec. request -> answer TP
+            if( getMultiSendInstance( mrc_identItem.getMultitonInst() ).sendIsoTarget(
+                  mrc_identItem.isoName(),
+                  isoItemSender->isoName(),
+                  (uint8_t *) mcstr_vehicleIdentification,
+                  getCStringLength (mcstr_vehicleIdentification),
+                  VEHICLE_IDENTIFICATION_PGN,
+                  &m_mrEventProxy) )
+            { // Message successfully started with multisend
+              return true;
+            }
+          }
+          else
+          { // broadcast request -> answer broadcast
+            if ( getMultiSendInstance( mrc_identItem.getMultitonInst() ).sendIsoBroadcast(
+                  mrc_identItem.isoName(),
+                  (uint8_t *) mcstr_vehicleIdentification,
+                  uint16_t(getCStringLength (mcstr_vehicleIdentification)),
+                  VEHICLE_IDENTIFICATION_PGN,
                   &m_mrEventProxy) )
             { // Message successfully started with multisend
               return true;
@@ -376,6 +421,40 @@ DiagnosticPgnHandler_c::setProductIdentification(
 
   // detect buffer-overruns!
   isoaglib_assert (newLen == (destPtr - mcstr_productIdentification));
+
+  return true;
+}
+
+
+bool
+DiagnosticPgnHandler_c::setVehicleIdentification( const char *vin )
+{
+  isoaglib_assert (vin);
+
+  // currently a once set identification can't be changed.
+  // this is due to not having separate send-buffers!
+  if (mcstr_vehicleIdentification)
+    return false;
+
+  int len = getCStringLength (vin);
+
+  if ( (len > 200 ) || (len < 1 ) )
+    return false;
+
+  if (vin [len-1] != '*')
+    return false; // last character must be '*'
+
+  // string terminated by 0x00
+  int newLen = len + 1;
+
+  mcstr_vehicleIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
+
+  char *destPtr = mcstr_vehicleIdentification;
+  addCStringWithoutTermination (&destPtr, vin);
+  *destPtr++ = 0x00;
+
+  // detect buffer-overruns!
+  isoaglib_assert (newLen == (destPtr - mcstr_vehicleIdentification));
 
   return true;
 }

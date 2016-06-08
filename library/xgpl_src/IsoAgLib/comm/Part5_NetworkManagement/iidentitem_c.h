@@ -164,6 +164,18 @@ public:
     return IdentItem_c::setProductIdentification( code, brand, model );
   }
 
+  /** Set Vehicle Identification fields, needed during the diagnostic procedure
+      This message is not specified in ISO 11783, but can optionally be used on the ISOBUS.
+      @param vin Vehicle Identification Number according to J1939-71.
+                 End fields with *, even the last one (and even if it is only one)
+      @return true if the Vehicle Identification Number was okay
+              false if it was too long (> 200 chars), empty or not terminated with *
+   */
+  bool setVehicleIdentification( const char *vin )
+  {
+    return IdentItem_c::setVehicleIdentification( vin );
+  }
+
   //! Setter for the different certification message fields
   //! Parameter:
   //! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061

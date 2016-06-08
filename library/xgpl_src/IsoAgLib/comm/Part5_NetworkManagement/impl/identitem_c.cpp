@@ -303,6 +303,12 @@ IdentItem_c::setProductIdentification(
   return m_diagnosticPgnHandler.setProductIdentification( code, brand, model );
 }
 
+bool
+IdentItem_c::setVehicleIdentification( const char *vin )
+{
+  return m_diagnosticPgnHandler.setVehicleIdentification( vin );
+}
+
 bool IdentItem_c::setSwIdentification( const char *acstr_partNbr )
 {
   return m_diagnosticPgnHandler.setSwIdentification( acstr_partNbr );

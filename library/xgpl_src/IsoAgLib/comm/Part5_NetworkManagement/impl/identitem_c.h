@@ -125,6 +125,8 @@ public:
       const char *brand,
       const char *model );
 
+  bool setVehicleIdentification( const char *vin );
+
   bool setSwIdentification( const char *partNbr );
 
   const DiagnosticPgnHandler_c& getDiagnosticPgnHandler() const { return m_diagnosticPgnHandler; }

@@ -55,6 +55,8 @@ public:
     const char *brand,
     const char *model );
 
+  bool setVehicleIdentification( const char *vin );
+
   bool setSwIdentification(
     const char *swIdentification );
 
@@ -96,6 +98,7 @@ private:
 
   char *mcstr_ecuIdentification;
   char *mcstr_productIdentification;
+  char *mcstr_vehicleIdentification;
   char *mcstr_swIdentification;
   bool mb_certificationIsSet;
   uint8_t m_certification[8];
