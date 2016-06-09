@@ -446,7 +446,11 @@ namespace HAL {
         static __IsoAgLib::CanPkg_c msg;
         msg.setIdent( s_transferBuf.s_data.s_canMsg.ui32_id, type );
         msg.setLen( uint8_t(s_transferBuf.s_data.s_canMsg.i32_len) );
+#ifdef USE_HAL_CAN_CANSERVER_SOCKET_ONLY_HAL_GETTIME
+        msg.setTime( now );
+#else
         msg.setTime( ( now > s_transferBuf.s_data.i32_sendTimeStamp ) ? s_transferBuf.s_data.i32_sendTimeStamp : now );
+#endif
         memcpy( msg.getUint8DataPointer(), s_transferBuf.s_data.s_canMsg.ui8_data, s_transferBuf.s_data.s_canMsg.i32_len );
 
         ENTRY_POINT_FOR_RECEIVE_CAN_MSG
