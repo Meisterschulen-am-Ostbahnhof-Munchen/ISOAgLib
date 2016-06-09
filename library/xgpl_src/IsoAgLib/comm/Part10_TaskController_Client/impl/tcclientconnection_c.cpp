@@ -153,13 +153,19 @@ namespace __IsoAgLib {
   {
     isoaglib_assert( connected() );
 
-    if( getDevPoolState() == PoolStateUploaded || getDevPoolState() == PoolStateActive )
-    {
-      doCommand( procCmdPar_OPActivateMsg, 1500, 0 );
+    getMultiSendInstance( m_identItem->getMultitonInst() ).abortSend( m_multiSendEventHandler );
 
-      if (shouldDeletePool)
+    // is it worth sending a proper "I'm disconnecting" message??
+    if( connected()->isAlive() )
+    {
+      if( getDevPoolState() == PoolStateUploaded || getDevPoolState() == PoolStateActive )
       {
-        doCommand( procCmdPar_OPDeleteMsg, 1500 );
+        doCommand( procCmdPar_OPActivateMsg, 1500, 0 );
+
+        if (shouldDeletePool)
+        {
+          doCommand( procCmdPar_OPDeleteMsg, 1500 );
+        }
       }
     }
   
@@ -563,6 +569,8 @@ namespace __IsoAgLib {
   void
   TcClientConnection_c::doCommand( ProcessDataMsg_t cmd, int32_t timeout, uint8_t param )
   {
+    isoaglib_assert( (m_identItem != NULL) && connected() );
+
     m_cmdState = CommandStateWaitingForResponse;
     m_cmdSent = cmd;
     m_cmdTimeout = timeout;
@@ -616,6 +624,9 @@ namespace __IsoAgLib {
   void
   TcClientConnection_c::reactOnStateChange( const SendStream_c& sendStream )
   {
+    if( !connected()->isAlive() )
+      return;
+
     switch ( sendStream.getSendSuccess() )
     {
     case __IsoAgLib::SendStream_c::Running:
