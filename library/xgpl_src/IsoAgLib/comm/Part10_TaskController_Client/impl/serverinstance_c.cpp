@@ -22,7 +22,6 @@ namespace __IsoAgLib {
   ServerInstance_c::ServerInstance_c( const IsoItem_c& isoItem, IsoAgLib::ProcData::ServerType_t type )
     : PdRemoteNode_c( isoItem, true )
     , m_tcAliveCached( false )
-    , m_lastActiveTaskTC( false )
     , m_lastTcState( 0 )
     , m_lastTcStateReceivedTime( -1 )
     , m_type( type )
@@ -94,13 +93,15 @@ namespace __IsoAgLib {
   void
   ServerInstance_c::processStatus( uint8_t status )
   {
+    const bool activeTaskOld = getLastStatusTaskTotalsActive();
+
     m_lastTcState = status;
     m_lastTcStateReceivedTime = HAL::getTime();
 
-    const bool activeTask = status & 0x01;
+    const bool activeTaskNew = getLastStatusTaskTotalsActive();
 
-    if ( activeTask != m_lastActiveTaskTC ) {
-      if ( activeTask ) {
+    if ( activeTaskNew != activeTaskOld ) {
+      if ( activeTaskNew ) {
         for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
              it != m_connections.end(); ++it )
         {
@@ -115,8 +116,6 @@ namespace __IsoAgLib {
         }
       }
     }
-
-    m_lastActiveTaskTC = activeTask;
   }
 
 

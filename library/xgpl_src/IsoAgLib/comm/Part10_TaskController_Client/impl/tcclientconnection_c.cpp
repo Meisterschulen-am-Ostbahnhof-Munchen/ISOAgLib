@@ -173,7 +173,7 @@ namespace __IsoAgLib {
 
     stopRunningMeasurement();
 
-    if (connected()->getLastActiveTaskTC())
+    if (connected()->getLastStatusTaskTotalsActive())
       eventTaskStopped();
 
     getDevicePool().close();
@@ -229,7 +229,7 @@ namespace __IsoAgLib {
     const ecutime_t now = HAL::getTime();
     if ( now - m_timeLastWsTaskMsgSent >= 2000 ) {
       m_timeLastWsTaskMsgSent = now;
-      sendMsg( 0xff, 0xff, 0xff, 0xff, connected()->getLastServerState(), 0x00, 0x00, 0x00 );
+      sendMsg( 0xff, 0xff, 0xff, 0xff, (connected()->getLastStatusTaskTotalsActive() ? 0x01 : 0x00), 0x00, 0x00, 0x00 );
     }
 
     switch( m_cmdState )
@@ -292,7 +292,8 @@ namespace __IsoAgLib {
         // Timeout, retry last command?
         // For now, give up!
         m_cmdState = CommandStateNone;
-        m_devPoolState = PoolStateError;
+        // don't go to PoolStateError, as it cannot be detected then anymore if it was still in Preconnecting or Connected.
+        getTcClientInstance( getIdentItem().getMultitonInst() ).notifyConnectionToBeEnded( *this );
       }
       break;
     }
@@ -557,7 +558,7 @@ namespace __IsoAgLib {
       if( getDevPoolState() == PoolStateUploaded )
       {
         setDevPoolState( PoolStateActive );
-        if( connected()->getLastActiveTaskTC() )
+        if( connected()->getLastStatusTaskTotalsActive() )
           eventTaskStarted();
       }
     } else {

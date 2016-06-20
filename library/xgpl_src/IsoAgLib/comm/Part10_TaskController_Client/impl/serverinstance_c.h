@@ -37,9 +37,8 @@ namespace __IsoAgLib {
 
       bool isAlive() const;
 
-      ecutime_t getLastStatusTime()   const { return m_lastTcStateReceivedTime; }
-      uint8_t   getLastServerState()  const { return m_lastTcState; }
-      bool      getLastActiveTaskTC() const { return m_lastActiveTaskTC; }
+      ecutime_t getLastStatusTime()             const { return m_lastTcStateReceivedTime; }
+      bool      getLastStatusTaskTotalsActive() const { return m_lastTcState & 0x01; }
 
       void notifyOnDropOff();
 
@@ -52,10 +51,10 @@ namespace __IsoAgLib {
 
     private:
       bool m_tcAliveCached;
-      
-      bool m_lastActiveTaskTC;
-      uint8_t m_lastTcState;
+
+      uint8_t   m_lastTcState;
       ecutime_t m_lastTcStateReceivedTime;
+
       IsoAgLib::ProcData::ServerType_t m_type;
 
     private:
