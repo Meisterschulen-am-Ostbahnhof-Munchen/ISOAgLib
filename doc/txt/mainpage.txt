@@ -47,6 +47,11 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 Diagnostics:
  - Added support for J1939-71 Vehicle Identification
 
+TC-Client:
+ - Bugfix: 
+   - Only reflecting Task Totals Active bit now in Client Task Message.
+   - On Timeout of some TC-Response don't accidentally call the ServerDisconnected callback when still in Preconnecting
+
 
 \subsection Change_ZF 2.8.0 to 2.8.1
 
