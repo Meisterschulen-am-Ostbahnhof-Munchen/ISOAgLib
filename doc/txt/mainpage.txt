@@ -51,7 +51,10 @@ TC-Client:
  - Bugfix: 
    - Only reflecting Task Totals Active bit now in Client Task Message.
    - On Timeout of some TC-Response don't accidentally call the ServerDisconnected callback when still in Preconnecting.
-   
+
+FS-Client:
+ - Bugfix: Now reading correct number of directory-entries.
+
 CAN-Server:
  - Bugfix: When CAN-Card can't be opened, don't abort(), but exit().
  - Enhancement: Allow to be quit properly using "quit" or "exit".

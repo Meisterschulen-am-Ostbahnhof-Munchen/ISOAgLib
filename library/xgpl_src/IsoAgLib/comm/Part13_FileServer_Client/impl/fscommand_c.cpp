@@ -1162,6 +1162,7 @@ FsCommand_c::decodeReadDirectoryResponse()
   IsoAgLib::iFsDirectoryPtr ps_tmpDir;
 
   m_errorCode = m_multireceiveMsgBuf[0];
+  m_count = m_multireceiveMsgBuf[1] | (m_multireceiveMsgBuf[2] << 0x08);
 
   clearDirectoryList();
 
