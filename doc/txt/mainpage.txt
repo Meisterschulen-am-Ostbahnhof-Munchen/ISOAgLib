@@ -50,7 +50,11 @@ Diagnostics:
 TC-Client:
  - Bugfix: 
    - Only reflecting Task Totals Active bit now in Client Task Message.
-   - On Timeout of some TC-Response don't accidentally call the ServerDisconnected callback when still in Preconnecting
+   - On Timeout of some TC-Response don't accidentally call the ServerDisconnected callback when still in Preconnecting.
+   
+CAN-Server:
+ - Bugfix: When CAN-Card can't be opened, don't abort(), but exit().
+ - Enhancement: Allow to be quit properly using "quit" or "exit".
 
 
 \subsection Change_ZF 2.8.0 to 2.8.1

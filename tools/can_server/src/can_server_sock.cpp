@@ -551,7 +551,7 @@ bool handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
             std::cerr << "Can't initialize CAN-BUS." << std::endl;
             std::cerr << "CAN device/driver not ready.\n" << std::endl;
             i32_error = HAL_CONFIG_ERR;
-            abort();
+            exit(1);
           }
         }
 

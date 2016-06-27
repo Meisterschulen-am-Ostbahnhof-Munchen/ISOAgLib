@@ -150,6 +150,8 @@ void *readUserInput( void *ap_arg )
   static char const s_enable[] = "enable";
   static char const s_disable[] = "disable";
   static char const s_monitor[] = "monitor";
+  static char const s_quit[] = "quit";
+  static char const s_exit[] = "exit";
   static char const s_log[] = "log";
   static char const s_help[] = "help";
   static char const s_send[] = "send";
@@ -190,6 +192,9 @@ void *readUserInput( void *ap_arg )
         std::cerr << "Don't know how to disable " << s_toDisable << "." << std::endl;
         b_needHelp = true;
       }
+    } else if (!s_command.compare( s_quit ) || !s_command.compare( s_exit )) {
+      std::cerr << "Exiting CAN-Server..." << std::endl;
+      exit(0);
     }
     else if (s_command.compare(0, strlen(s_filter), s_filter ) == 0) {
       int startPos = size_ignore+strlen(s_filter);
@@ -280,6 +285,8 @@ void *readUserInput( void *ap_arg )
 
     if (b_needHelp) {
       std::cerr << "Interactive usage:" << std::endl <<
+        "  " << s_quit << std::endl << 
+        "  " << s_exit << " (see " << s_quit << ")" << std::endl <<
         "  " << s_enable << " " << s_monitor << std::endl <<
         "  " << s_disable << " " << s_monitor << std::endl <<
         "  " << s_enable << " " << s_log << " FILENAMEPREFIX" << std::endl <<
