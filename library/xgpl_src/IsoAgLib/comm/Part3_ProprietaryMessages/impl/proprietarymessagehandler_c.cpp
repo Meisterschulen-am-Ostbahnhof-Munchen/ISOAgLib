@@ -83,16 +83,29 @@ namespace __IsoAgLib
 
     if( m_customerB.m_msgs[ ps ] == NULL ) {
       m_customerB.m_msgs[ ps ] = new CanCustomerB_c::ProprietaryMessageBVector_t();
-
-      getCanInstance4Comm().insertFilter( m_customerB, m_customerB.m_filter, -1 );
-      isoaglib_assert(msg.ident());
-      getMultiReceiveInstance4Comm().registerClientIso ( m_customerB,
-                                                         msg.ident()->isoName(),
-                                                         m_customerB.m_filter.getFilter() >> 8,
-                                                         m_customerB.m_filter.getMask() >> 8,
-                                                         true /* also Broadcast */ );
     }
+
     m_customerB.m_msgs[ ps ]->push_front( &msg );
+
+    if( m_customerB.mmap_registeredMsgs.empty() )
+    {
+      getCanInstance4Comm().insertFilter( m_customerB, m_customerB.m_filter, -1 );
+    }
+
+    if( m_customerB.mmap_registeredMsgs.find( msg.ident()->isoName() ) != m_customerB.mmap_registeredMsgs.end() )
+    {
+      m_customerB.mmap_registeredMsgs[ msg.ident()->isoName() ] += 1;
+    }
+    else
+    {
+      m_customerB.mmap_registeredMsgs[ msg.ident()->isoName() ] = 1;
+
+      getMultiReceiveInstance4Comm().registerClientIso( m_customerB,
+                                                        msg.ident()->isoName(),
+                                                        m_customerB.m_filter.getFilter() >> 8,
+                                                        m_customerB.m_filter.getMask() >> 8,
+                                                        true /* also Broadcast */ );
+    }
   }
 
 
@@ -105,17 +118,30 @@ namespace __IsoAgLib
       if( *it == &msg )
       {
         m_customerB.m_msgs[ ps ]->erase( it );
+
         if( m_customerB.m_msgs[ ps ]->empty() )
         {
           delete m_customerB.m_msgs[ ps ];
           m_customerB.m_msgs[ ps ] = NULL;
+        }
 
+        if( m_customerB.mmap_registeredMsgs[ msg.ident()->isoName() ] > 1 )
+        {
+          m_customerB.mmap_registeredMsgs[ msg.ident()->isoName() ] -= 1;
+        }
+        else
+        {
+          m_customerB.mmap_registeredMsgs.erase( msg.ident()->isoName() );
+
+          getMultiReceiveInstance4Comm().deregisterClient( m_customerB,
+                                                           msg.ident()->isoName(),
+                                                           m_customerB.m_filter.getFilter() >> 8,
+                                                           m_customerB.m_filter.getMask() >> 8 );
+        }
+
+        if( m_customerB.mmap_registeredMsgs.empty() )
+        {
           getCanInstance4Comm().deleteFilter( m_customerB, m_customerB.m_filter );
-          isoaglib_assert(msg.ident());
-          getMultiReceiveInstance4Comm().deregisterClient ( m_customerB,
-                                                            msg.ident()->isoName(),
-                                                            m_customerB.m_filter.getFilter() >> 8,
-                                                            m_customerB.m_filter.getMask() >> 8 );
         }
         break;
       }

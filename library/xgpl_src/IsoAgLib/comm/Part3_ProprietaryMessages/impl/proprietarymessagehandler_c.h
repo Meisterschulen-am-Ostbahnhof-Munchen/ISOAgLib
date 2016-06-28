@@ -84,7 +84,7 @@ namespace __IsoAgLib
 
     class CanCustomerB_c : public CanCustomer_c {
       public:
-        CanCustomerB_c( ProprietaryMessageHandler_c& handler ) : m_filter( 0x00FF0000, PROPRIETARY_B_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ), m_handler( handler )
+        CanCustomerB_c( ProprietaryMessageHandler_c& handler ) : mmap_registeredMsgs(), m_filter( 0x00FF0000, PROPRIETARY_B_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ), m_handler( handler )
         { CNAMESPACE::memset( m_msgs, 0x00, sizeof( m_msgs ) ); }
 
         virtual ~CanCustomerB_c() {}
@@ -95,6 +95,7 @@ namespace __IsoAgLib
         typedef STL_NAMESPACE::list<ProprietaryMessageB_c*>::const_iterator ProprietaryMessageBVectorConstIterator_t;
 
         ProprietaryMessageBVector_t* m_msgs[256];
+        STL_NAMESPACE::map<IsoName_c,unsigned> mmap_registeredMsgs; // how many "PS" registered for a given NAME.
 
         const IsoAgLib::iMaskFilterType_c m_filter; // B1 and B2
 

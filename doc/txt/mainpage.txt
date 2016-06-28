@@ -58,6 +58,9 @@ FS-Client:
 CAN-Server:
  - Bugfix: When CAN-Card can't be opened, don't abort(), but exit().
  - Enhancement: Allow to be quit properly using "quit" or "exit".
+ 
+Proprietary PGN:
+ - Bugfix: Registering multiple PS in PropB didn't work properly when done dynamically
 
 
 \subsection Change_ZF 2.8.0 to 2.8.1
