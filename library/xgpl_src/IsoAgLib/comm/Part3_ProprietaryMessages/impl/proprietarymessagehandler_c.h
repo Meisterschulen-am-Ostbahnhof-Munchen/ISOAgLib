@@ -14,20 +14,18 @@
 #ifndef PROPRIETARYMESSAGEHANDLER_H
 #define PROPRIETARYMESSAGEHANDLER_H
 
-#include "proprietarymessageclient_c.h"
-
-#include <IsoAgLib/isoaglib_config.h>
-
-#include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-
-#include <cstring>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
+#include <IsoAgLib/driver/can/imaskfilter_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
 #include <list>
+#include <map>
 
 
 namespace __IsoAgLib
 {
+
+  class ProprietaryMessageA_c;
+  class ProprietaryMessageB_c;
 
 
   class ProprietaryMessageHandler_c : public Subsystem_c
@@ -49,73 +47,68 @@ namespace __IsoAgLib
 
   private:
 
+    class CanCustomerAB_c : public CanCustomer_c
+    {
+    private:
+      CanCustomerAB_c(const CanCustomerAB_c&); // not copyable!
+      CanCustomerAB_c& operator=(const CanCustomerAB_c&);
 
-    class CanCustomerA_c : public CanCustomer_c {
-      public:
-        CanCustomerA_c( ProprietaryMessageHandler_c& handler ) : m_filter( 0x00FF0000, PROPRIETARY_A_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ), m_handler( handler )  {}
-        virtual ~CanCustomerA_c() {}
+    public:
+      CanCustomerAB_c( ProprietaryMessageHandler_c& handler, IsoAgLib::iMaskFilterType_c filter ) : m_handler( handler ), m_filter( filter ), mmap_registeredMsgs() {}
+      virtual ~CanCustomerAB_c() {}
 
+      void   registerFilter( int multitonInst, const IsoName_c& identName );
+      void deregisterFilter( int multitonInst, const IsoName_c& identName );
 
-        typedef STL_NAMESPACE::list<ProprietaryMessageA_c*> ProprietaryMessageAVector_t;
-        typedef STL_NAMESPACE::list<ProprietaryMessageA_c*>::iterator ProprietaryMessageAVectorIterator_t;
-        typedef STL_NAMESPACE::list<ProprietaryMessageA_c*>::const_iterator ProprietaryMessageAVectorConstIterator_t;
+    private:
+      virtual void reactOnAbort( Stream_c & ) {}
+      virtual void notificationOnMultiReceiveError( ReceiveStreamIdentifier_c const &, uint8_t, bool ) {}
 
-        ProprietaryMessageAVector_t m_msgs;
+    protected:
+      ProprietaryMessageHandler_c& m_handler;
+      const IsoAgLib::iMaskFilterType_c m_filter;
 
-        const IsoAgLib::iMaskFilterType_c m_filter; // A1 and A2
-
-      private:
-        virtual void processMsg( const CanPkg_c& arc_data );
-
-        virtual bool reactOnStreamStart( const ReceiveStreamIdentifier_c& ident, uint32_t len );
-        virtual void reactOnAbort( Stream_c & ) { }
-        virtual bool processPartStreamDataChunk( Stream_c &apc_stream, bool first, bool last );
-        virtual void notificationOnMultiReceiveError( ReceiveStreamIdentifier_c const &, uint8_t, bool ) { }
-
-        ProprietaryMessageHandler_c& m_handler;
-
-      private:
-        /** not copyable : copy constructor is only declared, never defined */
-        CanCustomerA_c(const CanCustomerA_c&);
-        /** not copyable : copy operator is only declared, never defined */
-        CanCustomerA_c& operator=(const CanCustomerA_c&);
+    private:
+      STL_NAMESPACE::map<IsoName_c,unsigned> mmap_registeredMsgs; // how many registered for a given NAME.
     };
 
+    class CanCustomerA_c : public CanCustomerAB_c
+    {
+    public:
+      CanCustomerA_c( ProprietaryMessageHandler_c& handler ) : CanCustomerAB_c( handler, IsoAgLib::iMaskFilterType_c( 0x00FF0000, PROPRIETARY_A_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ) ), m_msgs() {} // A1 and A2
+      virtual ~CanCustomerA_c() {}
 
-    class CanCustomerB_c : public CanCustomer_c {
-      public:
-        CanCustomerB_c( ProprietaryMessageHandler_c& handler ) : mmap_registeredMsgs(), m_filter( 0x00FF0000, PROPRIETARY_B_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ), m_handler( handler )
-        { CNAMESPACE::memset( m_msgs, 0x00, sizeof( m_msgs ) ); }
+      typedef STL_NAMESPACE::list<ProprietaryMessageA_c*> MsgList;
+      typedef STL_NAMESPACE::list<ProprietaryMessageA_c*>::iterator MsgIterator;
 
-        virtual ~CanCustomerB_c() {}
+      MsgList m_msgs;
 
+    private:
+      virtual void processMsg( const CanPkg_c& arc_data );
 
-        typedef STL_NAMESPACE::list<ProprietaryMessageB_c*> ProprietaryMessageBVector_t;
-        typedef STL_NAMESPACE::list<ProprietaryMessageB_c*>::iterator ProprietaryMessageBVectorIterator_t;
-        typedef STL_NAMESPACE::list<ProprietaryMessageB_c*>::const_iterator ProprietaryMessageBVectorConstIterator_t;
-
-        ProprietaryMessageBVector_t* m_msgs[256];
-        STL_NAMESPACE::map<IsoName_c,unsigned> mmap_registeredMsgs; // how many "PS" registered for a given NAME.
-
-        const IsoAgLib::iMaskFilterType_c m_filter; // B1 and B2
-
-      private:
-        virtual void processMsg( const CanPkg_c& arc_data );
-
-        virtual bool reactOnStreamStart( const ReceiveStreamIdentifier_c& ident, uint32_t len );
-        virtual void reactOnAbort( Stream_c & ) { }
-        virtual bool processPartStreamDataChunk( Stream_c &apc_stream, bool first, bool last );
-        virtual void notificationOnMultiReceiveError( ReceiveStreamIdentifier_c const &, uint8_t, bool ) { }
-
-        ProprietaryMessageHandler_c& m_handler;
-
-      private:
-        /** not copyable : copy constructor is only declared, never defined */
-        CanCustomerB_c(const CanCustomerB_c&);
-        /** not copyable : copy operator is only declared, never defined */
-        CanCustomerB_c& operator=(const CanCustomerB_c&);
+      virtual bool reactOnStreamStart( const ReceiveStreamIdentifier_c& ident, uint32_t len );
+      virtual bool processPartStreamDataChunk( Stream_c &apc_stream, bool first, bool last );
     };
 
+    class CanCustomerB_c : public CanCustomerAB_c
+    {
+    public:
+      CanCustomerB_c( ProprietaryMessageHandler_c& handler ) : CanCustomerAB_c( handler, IsoAgLib::iMaskFilterType_c( 0x00FF0000, PROPRIETARY_B_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ) ) // B1 and B2
+      { CNAMESPACE::memset( m_msgs, 0x00, sizeof( m_msgs ) ); }
+
+      virtual ~CanCustomerB_c() {}
+
+      typedef STL_NAMESPACE::list<ProprietaryMessageB_c*> MsgList;
+      typedef STL_NAMESPACE::list<ProprietaryMessageB_c*>::iterator MsgIterator;
+
+      MsgList* m_msgs[256];
+
+    private:
+      virtual void processMsg( const CanPkg_c& arc_data );
+
+      virtual bool reactOnStreamStart( const ReceiveStreamIdentifier_c& ident, uint32_t len );
+      virtual bool processPartStreamDataChunk( Stream_c &apc_stream, bool first, bool last );
+    };
 
   private:
     CanCustomerA_c m_customerA;
@@ -124,9 +117,6 @@ namespace __IsoAgLib
     friend ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance);
   };
 
-  /** C-style function, to get access to the unique ProprietaryMesageHandler_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
   ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance);
 
 }

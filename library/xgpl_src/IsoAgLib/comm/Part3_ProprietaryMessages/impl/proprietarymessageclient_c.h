@@ -15,16 +15,15 @@
 #define PROPRIETARYMESSAGECLIENT_H
 
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
-#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/sendstream_c.h>
 #include "../igenericdata_c.h"
 
 
 namespace __IsoAgLib
 {
 
+  class IdentItem_c;
   class ProprietaryMessageHandler_c;
 
 

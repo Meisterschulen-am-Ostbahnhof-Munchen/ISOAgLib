@@ -13,8 +13,10 @@
 
 #include "proprietarymessagehandler_c.h"
 #include "proprietarymessageclient_c.h"
-#include <IsoAgLib/util/iassert.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
+
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4355 )
@@ -36,7 +38,6 @@ namespace __IsoAgLib
     setInitialized();
   }
 
-
   void
   ProprietaryMessageHandler_c::close()
   {
@@ -45,67 +46,45 @@ namespace __IsoAgLib
   }
 
 
-  void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageA_c& msg ) {
-    isoaglib_assert(msg.ident());
-    if( m_customerA.m_msgs.empty() ) {
-      getCanInstance4Comm().insertFilter( m_customerA, m_customerA.m_filter, -1 );
-      getMultiReceiveInstance4Comm().registerClientIso ( m_customerA,
-                                                         msg.ident()->isoName(),
-                                                         m_customerA.m_filter.getFilter() >> 8,
-                                                         m_customerA.m_filter.getMask() >> 8,
-                                                         true /* also Broadcast */ );
-    }
+  // Register A / B
+  /////////////////
+
+  void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageA_c& msg )
+  {
     m_customerA.m_msgs.push_front( &msg );
+    
+    m_customerA.registerFilter( getMultitonInst(), msg.ident()->isoName() );
   }
 
 
-  void ProprietaryMessageHandler_c::deregisterProprietaryMessage( ProprietaryMessageA_c& msg ) {
+  void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageB_c& msg, uint8_t ps )
+  {
+    if( m_customerB.m_msgs[ ps ] == NULL )
+    {
+      m_customerB.m_msgs[ ps ] = new CanCustomerB_c::MsgList();
+    }
 
-    for ( CanCustomerA_c::ProprietaryMessageAVectorIterator_t it = m_customerA.m_msgs.begin(); it != m_customerA.m_msgs.end(); ++it ) {
-      if( *it == &msg ) {
+    m_customerB.m_msgs[ ps ]->push_front( &msg );
+
+    m_customerB.registerFilter( getMultitonInst(), msg.ident()->isoName() );
+  }
+
+
+  // Deregister A / B
+  ///////////////////
+
+  void ProprietaryMessageHandler_c::deregisterProprietaryMessage( ProprietaryMessageA_c& msg )
+  {
+    for ( CanCustomerA_c::MsgIterator it = m_customerA.m_msgs.begin(); it != m_customerA.m_msgs.end(); ++it )
+    {
+      if( *it == &msg )
+      {
         m_customerA.m_msgs.erase( it );
         break;
       }
     }
 
-    if( m_customerA.m_msgs.empty() ) {
-      getCanInstance4Comm().deleteFilter( m_customerA, m_customerA.m_filter );
-      isoaglib_assert(msg.ident());
-      getMultiReceiveInstance4Comm().deregisterClient ( m_customerA,
-                                                        msg.ident()->isoName(),
-                                                        m_customerA.m_filter.getFilter() >> 8,
-                                                        m_customerA.m_filter.getMask() >> 8 );
-    }
-  }
-
-
-  void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageB_c& msg, uint8_t ps ) {
-
-    if( m_customerB.m_msgs[ ps ] == NULL ) {
-      m_customerB.m_msgs[ ps ] = new CanCustomerB_c::ProprietaryMessageBVector_t();
-    }
-
-    m_customerB.m_msgs[ ps ]->push_front( &msg );
-
-    if( m_customerB.mmap_registeredMsgs.empty() )
-    {
-      getCanInstance4Comm().insertFilter( m_customerB, m_customerB.m_filter, -1 );
-    }
-
-    if( m_customerB.mmap_registeredMsgs.find( msg.ident()->isoName() ) != m_customerB.mmap_registeredMsgs.end() )
-    {
-      m_customerB.mmap_registeredMsgs[ msg.ident()->isoName() ] += 1;
-    }
-    else
-    {
-      m_customerB.mmap_registeredMsgs[ msg.ident()->isoName() ] = 1;
-
-      getMultiReceiveInstance4Comm().registerClientIso( m_customerB,
-                                                        msg.ident()->isoName(),
-                                                        m_customerB.m_filter.getFilter() >> 8,
-                                                        m_customerB.m_filter.getMask() >> 8,
-                                                        true /* also Broadcast */ );
-    }
+    m_customerA.deregisterFilter( getMultitonInst(), msg.ident()->isoName() );
   }
 
 
@@ -113,7 +92,7 @@ namespace __IsoAgLib
   {
     isoaglib_assert( m_customerB.m_msgs[ ps ] != NULL );
 
-    for( CanCustomerB_c::ProprietaryMessageBVectorIterator_t it = m_customerB.m_msgs[ ps ]->begin(); it != m_customerB.m_msgs[ ps ]->end(); ++it )
+    for( CanCustomerB_c::MsgIterator it = m_customerB.m_msgs[ ps ]->begin(); it != m_customerB.m_msgs[ ps ]->end(); ++it )
     {
       if( *it == &msg )
       {
@@ -124,29 +103,60 @@ namespace __IsoAgLib
           delete m_customerB.m_msgs[ ps ];
           m_customerB.m_msgs[ ps ] = NULL;
         }
-
-        if( m_customerB.mmap_registeredMsgs[ msg.ident()->isoName() ] > 1 )
-        {
-          m_customerB.mmap_registeredMsgs[ msg.ident()->isoName() ] -= 1;
-        }
-        else
-        {
-          m_customerB.mmap_registeredMsgs.erase( msg.ident()->isoName() );
-
-          getMultiReceiveInstance4Comm().deregisterClient( m_customerB,
-                                                           msg.ident()->isoName(),
-                                                           m_customerB.m_filter.getFilter() >> 8,
-                                                           m_customerB.m_filter.getMask() >> 8 );
-        }
-
-        if( m_customerB.mmap_registeredMsgs.empty() )
-        {
-          getCanInstance4Comm().deleteFilter( m_customerB, m_customerB.m_filter );
-        }
         break;
       }
     }
+
+    m_customerB.deregisterFilter( getMultitonInst(), msg.ident()->isoName() );
   }
+
+
+  // CanCustomerAB_c/CanCustomerA_c/CanCustomerB_c
+  ////////////////////////////////////////////////
+
+  void
+  ProprietaryMessageHandler_c::CanCustomerAB_c::registerFilter( int multitonInst, const IsoName_c& identName )
+  {
+    if( mmap_registeredMsgs.empty() )
+    {
+      getCanInstance( multitonInst ).insertFilter( *this, m_filter, -1 );
+    }
+
+    if( mmap_registeredMsgs.find( identName ) != mmap_registeredMsgs.end() )
+    {
+      mmap_registeredMsgs[ identName ] += 1;
+    }
+    else
+    {
+      mmap_registeredMsgs[ identName ] = 1;
+
+      getMultiReceiveInstance( multitonInst ).registerClientIso(
+          *this, identName, m_filter.getFilter() >> 8, m_filter.getMask() >> 8, true );
+    }
+  }
+
+
+  void
+  ProprietaryMessageHandler_c::CanCustomerAB_c::deregisterFilter( int multitonInst, const IsoName_c& identName )
+  {
+    if( mmap_registeredMsgs[ identName ] > 1 )
+    {
+      mmap_registeredMsgs[ identName ] -= 1;
+    }
+    else
+    {
+      mmap_registeredMsgs.erase( identName );
+
+      getMultiReceiveInstance( multitonInst ).deregisterClient(
+          *this, identName, m_filter.getFilter() >> 8, m_filter.getMask() >> 8 );
+    }
+
+    if( mmap_registeredMsgs.empty() )
+    {
+      getCanInstance( multitonInst ).deleteFilter( *this, m_filter );
+    }
+  }
+
 
 
   void 
@@ -156,7 +166,7 @@ namespace __IsoAgLib
     if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
       return;
 
-    for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
+    for ( MsgIterator it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
       if ( ( pkg.getMonitorItemForDA() != NULL ) && ( pkg.getMonitorItemForDA() != (*it)->ident()->getIsoItem() ) )
         continue;
@@ -180,10 +190,8 @@ namespace __IsoAgLib
   bool
   ProprietaryMessageHandler_c::CanCustomerA_c::reactOnStreamStart( const ReceiveStreamIdentifier_c &ident, uint32_t )
   {
-
-    for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
+    for ( MsgIterator it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
-
       if ( ( ident.getDaIsoName().isSpecified() ) && ( ident.getDaIsoName() != (*it)->ident()->isoName() ) )
         continue;
 
@@ -203,17 +211,13 @@ namespace __IsoAgLib
   bool
   ProprietaryMessageHandler_c::CanCustomerA_c::processPartStreamDataChunk( Stream_c &apc_stream, bool, bool last )
   {
-    if( ! last ) {
+    if( ! last )
       return false;
-    }
 
-    // get the ident from the stream
+    MsgList msgs;
+
     const ReceiveStreamIdentifier_c& ident = apc_stream.getIdent();
-
-
-    ProprietaryMessageAVector_t msgs;
-
-    for ( ProprietaryMessageAVectorIterator_t it = m_msgs.begin(); it != m_msgs.end(); ++it )
+    for ( MsgIterator it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
       if ( ( ident.getDaIsoName().isSpecified() ) && ( ident.getDaIsoName() != (*it)->ident()->isoName() ) )
         continue;
@@ -228,29 +232,27 @@ namespace __IsoAgLib
       msgs.push_front( *it );
     }
 
-
-    if( ! msgs.empty() ) {
-
+    if( ! msgs.empty() )
+    {
       uint8_t db = apc_stream.getFirstByte();
       for ( unsigned cnt = 0; cnt < apc_stream.getByteTotalSize(); cnt++)
       {
-
-        for( ProprietaryMessageAVectorIterator_t it = msgs.begin(); it != msgs.end(); ++it ) {
+        for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
           (*it)->getDataReceive().setDataUi8( cnt, db );
         }
         db = apc_stream.getNextNotParsed();
       }
 
-      for( ProprietaryMessageAVectorIterator_t it = msgs.begin(); it != msgs.end(); ++it ) {
+      for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
         // the static cast is prettier that a old C cast, but the Hightec GCC 3.4.6 is quite picky
         //(*it)->processA( *static_cast<IsoAgLib::iIsoItem_c*>( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ) );
         (*it)->processA( * ( IsoAgLib::iIsoItem_c*)( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ),
                          (ident.getDaIsoName().isUnspecified()) /* a_broadcast */);
       }
     }
+
     // don't keep the stream - we processed it right now!
     return false;
-
   }
 
 
@@ -265,7 +267,7 @@ namespace __IsoAgLib
     if( m_msgs[ ps ] == NULL )
       return;
 
-    for ( ProprietaryMessageBVectorIterator_t it = m_msgs[ ps ]->begin(); it != m_msgs[ ps ]->end(); ++it )
+    for ( MsgIterator it = m_msgs[ ps ]->begin(); it != m_msgs[ ps ]->end(); ++it )
     {
       if ( pkg.isoDp() != (*it)->dp() )
         continue;
@@ -292,7 +294,7 @@ namespace __IsoAgLib
     if( m_msgs[ ps ] == NULL )
       return false;
 
-    for ( ProprietaryMessageBVectorIterator_t it = m_msgs[ ps ]->begin(); it != m_msgs[ ps ]->end(); ++it )
+    for ( MsgIterator it = m_msgs[ ps ]->begin(); it != m_msgs[ ps ]->end(); ++it )
     {
       if ( dp != (*it)->dp() )
         continue;
@@ -320,9 +322,9 @@ namespace __IsoAgLib
     if( m_msgs[ ps ] == NULL )
       return false;
 
-    ProprietaryMessageBVector_t msgs;
+    MsgList msgs;
 
-    for ( ProprietaryMessageBVectorIterator_t it = m_msgs[ ps ]->begin(); it != m_msgs[ ps ]->end(); ++it )
+    for ( MsgIterator it = m_msgs[ ps ]->begin(); it != m_msgs[ ps ]->end(); ++it )
     {
       if ( dp != (*it)->dp() )
         continue;
@@ -340,21 +342,21 @@ namespace __IsoAgLib
       uint8_t db = apc_stream.getFirstByte();
       for( unsigned cnt = 0; cnt < apc_stream.getByteTotalSize(); cnt++)
       {
-        for( ProprietaryMessageBVectorIterator_t it = msgs.begin(); it != msgs.end(); ++it ) {
+        for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
           (*it)->getDataReceive().setDataUi8( cnt, db );
         }
         db = apc_stream.getNextNotParsed();
       }
 
-      for( ProprietaryMessageBVectorIterator_t it = msgs.begin(); it != msgs.end(); ++it ) {
+      for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
         // the static cast is prettier that a old C cast, but the Hightec GCC 3.4.6 is quite picky
         //(*it)->processB( *static_cast<IsoAgLib::iIsoItem_c*>( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ) );
         (*it)->processB( *( IsoAgLib::iIsoItem_c*)( getIsoMonitorInstance( m_handler.getMultitonInst() ).isoMemberNrFast( ident.getSa() ) ), ps );
       }
     }
+
     // don't keep the stream - we processed it right now!
     return false;
-
   }
 
 

@@ -13,6 +13,8 @@
 
 #include "proprietarymessageclient_c.h"
 #include "proprietarymessagehandler_c.h"
+#include <IsoAgLib/comm/impl/isobus_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 
 
 namespace __IsoAgLib

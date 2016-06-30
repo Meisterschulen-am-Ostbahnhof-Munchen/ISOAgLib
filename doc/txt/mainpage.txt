@@ -60,7 +60,7 @@ CAN-Server:
  - Enhancement: Allow to be quit properly using "quit" or "exit".
  
 Proprietary PGN:
- - Bugfix: Registering multiple PS in PropB didn't work properly when done dynamically
+ - Bugfix: Registering multiple PS/IdentItems in PropB and multiple IdentItem in PropA didn't work properly when done dynamically
 
 
 \subsection Change_ZF 2.8.0 to 2.8.1
