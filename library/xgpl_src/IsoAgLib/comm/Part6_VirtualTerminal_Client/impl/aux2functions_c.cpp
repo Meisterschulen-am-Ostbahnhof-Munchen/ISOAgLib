@@ -142,6 +142,11 @@ Aux2Functions_c::notifyOnAux2InputStatus(
       const uint16_t cui16_value1 = arc_data.getUint16Data (4-1);
       const uint16_t cui16_value2 = arc_data.getUint16Data (6-1);
       const uint8_t cui8_operatingState = arc_data.getUint8Data (8-1);
+
+      // skip any (wrong) messages that indicate LEARN mode. (should only have been sent to the VT, not the implement!)
+      if( cui8_operatingState & 0x3 != 0 )
+        continue;
+
       arc_pool.eventAuxFunction2Value (iter->first, cui16_value1, cui16_value2, cui8_operatingState);
     }
   }

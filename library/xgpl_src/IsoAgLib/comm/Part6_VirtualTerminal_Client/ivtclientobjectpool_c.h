@@ -204,6 +204,9 @@ public:
   /**
     hook function that gets called immediately after recognizing an incoming
     Auxiliary Input Type 2 Status message - but only if you have a function assigned to it!
+    NOTE: The operating state is passed to the application, but in case it was Learn Mode,
+          it will be filtered out already by the library, so no callback will be triggered then
+          Only the 3rd and the folling bits can be set (from VT Version 6 on...)
    */
   virtual void eventAuxFunction2Value (uint16_t /*aui16_functionUid*/,
                                        uint16_t /*aui16_inputValue1*/,
