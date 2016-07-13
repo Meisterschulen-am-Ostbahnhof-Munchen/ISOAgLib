@@ -20,21 +20,6 @@ namespace IsoAgLib {
 
 class iScheduler_c;
 
-/**
- * AUX2 assigment storage 
- */
-struct iAux2FunctionInputAssignment_t{
-  uint16_t functionUid;
-  struct {
-    IsoAgLib::iIsoName_c name;
-    uint16_t modelIdentificationCode;
-    uint16_t uid;
-  } input;
-};
-
-typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t> iAux2Assignment_c; 
-typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::iterator iAux2AssignmentIterator_c; 
-typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::const_iterator iAux2AssignmentConstIterator_c;
 
 /**
   class to define an interface class for the storage of Preferred ISOVT. Users can derive from

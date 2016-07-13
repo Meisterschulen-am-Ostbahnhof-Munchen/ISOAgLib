@@ -64,16 +64,56 @@ void Aux2Functions_c::loadAssignment() {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   IsoAgLib::iAux2Assignment_c assigment;
   m_vtConnection.getVtClientDataStorage().loadPreferredAux2Assignment( assigment );
-  if( ! assigment.empty() ) { 
-    for( IsoAgLib::iAux2AssignmentIterator_c i = assigment.begin(); i != assigment.end(); ++i ) {
-      STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
-      if( iter != m_aux2Function.end() ) {
-        iter->second->setPreferredAssignedInput( i->input.name, i->input.modelIdentificationCode, i->input.uid );
-      }
+
+  for( IsoAgLib::iAux2AssignmentIterator_c i = assigment.begin(); i != assigment.end(); ++i ) {
+    STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
+    if( iter != m_aux2Function.end() ) {
+      iter->second->setPreferredAssignedInput( i->input.name, i->input.modelIdentificationCode, i->input.uid );
     }
   }
 #endif
 }
+
+
+// After assignments have been initially loaded, the application can activate some "presets"
+bool
+Aux2Functions_c::setUserPreset( const IsoAgLib::iAux2Assignment_c &assignments )
+{
+#ifdef USE_VTOBJECT_auxiliaryfunction2
+  bool success = true;
+
+  for( IsoAgLib::iAux2AssignmentConstIterator_c i = assignments.begin(); i != assignments.end(); ++i ) {
+    STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
+    if( iter == m_aux2Function.end() ) {
+      success = false;
+      continue;
+    }
+
+    IsoName_c inputName = i->input.name;
+    if( m_vtConnection.getPool().aux2acceptFunctionallyIdenticalInputWs() )
+    { // need only functional identical match, see if we can take an existing one
+      for( InputsIter iter = mmap_receivedInputMaintenanceData.begin(); iter != mmap_receivedInputMaintenanceData.end(); ++iter )
+      {
+        if( iter->first.isFunctionallyIdentical( inputName ) )
+        {
+          inputName = iter->first; // take this Input, it's functionally identical!
+          break;
+        }
+      }
+    }
+    iter->second->setPreferredAssignedInput( inputName, i->input.modelIdentificationCode, i->input.uid );
+    iter->second->setMatchingPreferredAssignedInputReady(true);
+  }
+
+  if( m_state == State_Ready )
+    sendPreferredAux2Assignments();
+
+  return success;
+#else
+  return false;
+#endif
+}
+
 
 void
 Aux2Functions_c::notifyOnAux2InputStatus(
@@ -174,10 +214,26 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
             continue; // this input device was already found in our preferred assignments => skip it
           
           iter->second->getPreferredAssignedInput(c_prefAssignedIsoName, ui16_prefAssignedModelIdentificationCode, ui16_prefAssignedInputUid);
-          if ( (ui16_prefAssignedModelIdentificationCode == ui16_modelIdentificationCode) && (c_prefAssignedIsoName == c_inputIsoName) ) { 
-            iter->second->setMatchingPreferredAssignedInputReady(true);
-            b_sendPreferredAssignments = true;
+
+          if( ui16_prefAssignedModelIdentificationCode != ui16_modelIdentificationCode )
+            continue;
+
+          if( m_vtConnection.getPool().aux2acceptFunctionallyIdenticalInputWs() )
+          { // need only functional identical match
+            if( !c_prefAssignedIsoName.isEqualRegardingNonInstFields( c_inputIsoName ) )
+              continue;
+
+            // update the PA to reflect the SPECIFIC input NAME detected! (keep the MIC/UID of course)
+            iter->second->setPreferredAssignedInput(c_inputIsoName, ui16_prefAssignedModelIdentificationCode, ui16_prefAssignedInputUid);
           }
+          else
+          { // need exact match
+            if( c_prefAssignedIsoName != c_inputIsoName )
+              continue;
+          }
+
+          iter->second->setMatchingPreferredAssignedInputReady(true);
+          b_sendPreferredAssignments = true;
         }
       }
       break;

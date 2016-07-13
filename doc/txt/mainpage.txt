@@ -47,6 +47,12 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 Diagnostics:
  - Added support for J1939-71 Vehicle Identification
 
+VT-Client:
+ - Enhancement:
+   - AUX-N:
+     - Allow application to set PA-Presets during runtime. 
+     - Allow match of "functional identical WS", can be specified via callback.
+ 
 TC-Client:
  - Bugfix: 
    - Only reflecting Task Totals Active bit now in Client Task Message.

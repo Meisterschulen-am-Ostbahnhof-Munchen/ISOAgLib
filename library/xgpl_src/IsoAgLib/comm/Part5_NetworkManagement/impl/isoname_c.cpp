@@ -100,6 +100,18 @@ IsoName_c::isEqualRegardingNonInstFields (const IsoName_c& acrc_isoName) const
 }
 
 
+bool
+IsoName_c::isFunctionallyIdentical (const IsoName_c& other) const
+{
+  // NOTE: We're not considering specified/unspecified here!
+  return ( (devClass()  == other.devClass() )
+        && (indGroup()  == other.indGroup() )
+        && (func()      == other.func()     )
+        && (manufCode() == other.manufCode())
+         );
+}
+
+
 IsoAgLib::iIsoName_c&
 IsoName_c::toIisoName_c()
 {

@@ -14,8 +14,10 @@
 #define IVTTYPES_H
 
 #include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <cstdlib>       // using abs()
 #include <algorithm>     // using min() max()
+#include <list>
 #include "impl/vttypes.h"
 
 
@@ -177,6 +179,22 @@ typedef struct vtState_s {
   uint8_t  busyCodes;
   uint8_t  functionBusy;
 } vtState_s;
+
+/**
+ * AUX2 assigment storage 
+ */
+struct iAux2FunctionInputAssignment_t{
+  uint16_t functionUid;
+  struct {
+    IsoAgLib::iIsoName_c name;
+    uint16_t modelIdentificationCode;
+    uint16_t uid;
+  } input;
+};
+
+typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t> iAux2Assignment_c; 
+typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::iterator iAux2AssignmentIterator_c; 
+typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::const_iterator iAux2AssignmentConstIterator_c;
 
 } // IsoAgLib
 

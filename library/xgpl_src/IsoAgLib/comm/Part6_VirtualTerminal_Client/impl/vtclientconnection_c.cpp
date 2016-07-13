@@ -217,6 +217,13 @@ VtClientConnection_c::~VtClientConnection_c()
 }
 
 
+bool
+VtClientConnection_c::setUserPreset( const IsoAgLib::iAux2Assignment_c &assignments )
+{
+  return m_aux2Functions.setUserPreset( assignments );
+}
+
+
 void 
 VtClientConnection_c::timeEvent()
 {

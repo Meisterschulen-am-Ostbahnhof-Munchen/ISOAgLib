@@ -240,6 +240,12 @@ public:
   */
   bool isEqualRegardingNonInstFields (const IsoName_c& acrc_isoName) const;
 
+  /** According to "3.25 Functionally Identical WS"
+   * Attention: Ignores if the NAMEs are specified or not!
+   * Self Configurable, Instance fields, and Identity Number are excluded
+  */
+  bool isFunctionallyIdentical (const IsoName_c& acrc_isoName) const;
+
   /** assignment operator */
   inline const IsoName_c& operator=(const IsoName_c& src)
     { mu_data = src.mu_data; m_specified = src.m_specified; return src; }

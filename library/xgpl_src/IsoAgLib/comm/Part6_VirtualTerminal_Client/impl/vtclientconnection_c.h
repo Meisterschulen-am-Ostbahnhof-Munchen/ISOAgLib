@@ -94,6 +94,8 @@ public:
   void notifyOnAux2InputStatus( const CanPkgExt_c& arc_data );
   void notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data);
 
+  bool setUserPreset( const IsoAgLib::iAux2Assignment_c & );
+
 #ifdef USE_VTOBJECT_auxiliaryinput2
   void triggerAux2InputStatusMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj) { m_aux2Inputs.timeEventInputStateMsg(a_aux2InputObj); }
 #endif

@@ -45,6 +45,13 @@ public:
   bool sendCommandChangeLineAttributes   (uint16_t aui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
   bool sendCommandHideShow               (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
   
+  /**
+   * After assignments have been initially loaded, the application can activate some "presets"
+   * In case of error, the other functions that were found were still set!
+   * @return TRUE: All functions were found/valid, FALSE: One function wasn't valid!
+   */
+  bool setUserPreset( const IsoAgLib::iAux2Assignment_c & );
+
   unsigned getCommandQueueSize() const { return commandHandler().getQueueSize(); }
 
   //! @param versionLabel7chars == NULL: Use VersionLabel used for Uploading/Loading (must be given at init!)
@@ -84,6 +91,13 @@ private:
   friend class iVtClient_c;
   friend class __IsoAgLib::VtClientConnection_c;
 };
+
+
+inline bool
+iVtClientConnection_c::setUserPreset( const IsoAgLib::iAux2Assignment_c &assignments )
+{
+  return VtClientConnection_c::setUserPreset( assignments );
+}
 
 
 inline bool
