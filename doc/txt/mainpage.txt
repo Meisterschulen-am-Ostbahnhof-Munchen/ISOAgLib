@@ -45,7 +45,8 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 \subsection Change_ZG 2.8.1 to 2.8.2
 
 Diagnostics:
- - Added support for J1939-71 Vehicle Identification
+ - Bugfix: DM1 will now be properly sent again after quick Deactivate/Activate
+ - Enhancement: Added support for J1939-71 Vehicle Identification
 
 VT-Client:
  - Bugfix: Support VTs that can reconfigure capabilities without changing their NAME.

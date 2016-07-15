@@ -267,6 +267,8 @@ DiagnosticsServices_c::changeActiveDtcStatusAndRetrigger(IsoAgLib::iDtc_s& arc_d
   arc_dtcToChange.b_active = a_active;
   arc_dtcToChange.i32_timeLastStateChange = HAL::getTime();
 
+  m_dm1CurrentAtLeastOneDTC = true;
+
   if (arc_dtcToChange.i32_timeLastStateChange >= (arc_dtcToChange.i32_timeLastStateChangeSent + sci32_periodDM1) )
   { // Last State Change Sent is more than 1s,
     // need to send this change out now!
