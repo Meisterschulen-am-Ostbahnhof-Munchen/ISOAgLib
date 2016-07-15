@@ -30,14 +30,8 @@ VtServerInstance_c::VtServerInstance_c( const IsoItem_c& isoItem, VtClient_c& cl
   , ms_vtCapabilitiesA()
   , ms_localSettingsA()
 {
-  /// init all variables to an initial upload state (Upload will not start before ws-announcing is due
-  ms_vtCapabilitiesA.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
-  ms_vtCapabilitiesA.lastRequestedSoftkeys = 0; // not yet requested vt's capabilities yet
-  ms_vtCapabilitiesA.lastReceivedHardware = 0; // not yet (queried and) got answer about vt's capabilities yet
-  ms_vtCapabilitiesA.lastRequestedHardware = 0; // not yet requested vt's capabilities yet
-  ms_vtCapabilitiesA.lastReceivedFont = 0; // not yet (queried and) got answer about vt's capabilities yet
-  ms_vtCapabilitiesA.lastRequestedFont = 0; // not yet requested vt's capabilities yet
-  ms_vtCapabilitiesA.lastReceivedVersion = 0; // interesting for NACK handling, that's why it's reset here!
+  /// init all variables to an initial upload state (Upload will not start before ws-announcing is due)
+  resetCapabilities();
   ms_localSettingsA.lastRequested = 0; // no language info requested yet
   ms_localSettingsA.lastReceived = 0; // no language info received yet
   ms_vtStateA.lastReceived = 0; // no vt_statusMessage received yet
@@ -49,8 +43,21 @@ VtServerInstance_c::~VtServerInstance_c()
 }
 
 
+void
+VtServerInstance_c::resetCapabilities()
+{
+  ms_vtCapabilitiesA.lastReceivedSoftkeys = 0; // not yet (queried and) got answer about vt's capabilities yet
+  ms_vtCapabilitiesA.lastRequestedSoftkeys = 0; // not yet requested vt's capabilities yet
+  ms_vtCapabilitiesA.lastReceivedHardware = 0; // not yet (queried and) got answer about vt's capabilities yet
+  ms_vtCapabilitiesA.lastRequestedHardware = 0; // not yet requested vt's capabilities yet
+  ms_vtCapabilitiesA.lastReceivedFont = 0; // not yet (queried and) got answer about vt's capabilities yet
+  ms_vtCapabilitiesA.lastRequestedFont = 0; // not yet requested vt's capabilities yet
+  ms_vtCapabilitiesA.lastReceivedVersion = 0; // interesting for NACK handling, that's why it's reset here!
+}
+
+
 bool
-VtServerInstance_c::isVtActive() const
+VtServerInstance_c::isVtActiveAndResetCapabilitiesIfInactive()
 {
   if (ms_vtStateA.lastReceived)
   {
@@ -61,6 +68,9 @@ VtServerInstance_c::isVtActive() const
       return true;
     }
   }
+
+  // reset properties for later re-requesting in case they change (without the NAME changing!)
+  resetCapabilities();
   return false;
 }
 

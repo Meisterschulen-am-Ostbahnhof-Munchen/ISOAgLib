@@ -767,8 +767,11 @@ VtClientConnection_c::isVtActive() const
     return false;
 
   const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
+  const bool cb_vtOff = getVtServerInst().isVtActiveAndResetCapabilitiesIfInactive();
 
-  return !cb_fakeVtOff && getVtServerInst().isVtActive();
+  // no lazy evaluation, always call it so that the properties would be re-requested
+  // after a drop-off (even if we'd be faking off currently!)
+  return !cb_fakeVtOff && cb_vtOff;
 }
 
 

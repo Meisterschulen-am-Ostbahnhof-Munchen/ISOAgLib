@@ -30,7 +30,7 @@ class iVtServerInstance_c : private __IsoAgLib::VtServerInstance_c
 {
 public:
 
-  bool isVtActive() const { return VtServerInstance_c::isVtActive(); }
+  bool isVtActive() { return VtServerInstance_c::isVtActiveAndResetCapabilitiesIfInactive(); }
 
   const iIsoName_c& getIsoName() const { return VtServerInstance_c::getIsoName().toConstIisoName_c(); }
   uint32_t          getVtHardwareDimension() const { return VtServerInstance_c::getVtHardwareDimension(); }

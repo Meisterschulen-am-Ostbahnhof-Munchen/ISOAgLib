@@ -70,14 +70,14 @@ VtServerInstance_c* VtServerManager_c::getActiveVtServer( bool mustBePrimary, co
   
   // search rest of list
   for ( ; lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
-    if ( (*lit_vtServerInst)->isVtActive() && (!mustBePrimary || (*lit_vtServerInst)->isPrimaryVt()) )
+    if ( (*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive() && (!mustBePrimary || (*lit_vtServerInst)->isPrimaryVt()) )
       return (*lit_vtServerInst);
 
     
   // not found => wrap around and start at beginning until ap_searchStart reached again
   lit_vtServerInst = ml_vtServerInst.begin();
   for ( ; lit_vtServerInst != lit_searchStart; ++lit_vtServerInst)
-    if ( (*lit_vtServerInst)->isVtActive() && (!mustBePrimary || (*lit_vtServerInst)->isPrimaryVt()) )
+    if ( (*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive() && (!mustBePrimary || (*lit_vtServerInst)->isPrimaryVt()) )
       return (*lit_vtServerInst);
 
   return NULL;
@@ -89,7 +89,7 @@ VtServerInstance_c* VtServerManager_c::getPreferredVtServer(const IsoName_c& are
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
   {
-    if ((*lit_vtServerInst)->isVtActive() && ((*lit_vtServerInst)->getIsoName() == aref_prefferedVTIsoName))
+    if ((*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive() && ((*lit_vtServerInst)->getIsoName() == aref_prefferedVTIsoName))
       return (*lit_vtServerInst);
   }
   return NULL;
@@ -101,7 +101,7 @@ VtServerInstance_c* VtServerManager_c::getSpecificVtServer(const IsoAgLib::iVtCl
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
   {
-    if ((*lit_vtServerInst)->isVtActive() && arc_pool.selectVtServer((*lit_vtServerInst)->getIsoName().toConstIisoName_c()))
+    if ((*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive() && arc_pool.selectVtServer((*lit_vtServerInst)->getIsoName().toConstIisoName_c()))
       return (*lit_vtServerInst);
   }
   return NULL;
@@ -114,7 +114,7 @@ uint16_t VtServerManager_c::getActiveVtCount() const
   STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
   {
-    if ((*lit_vtServerInst)->isVtActive())
+    if ((*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive())
       cnt++;
   }
   return cnt;    

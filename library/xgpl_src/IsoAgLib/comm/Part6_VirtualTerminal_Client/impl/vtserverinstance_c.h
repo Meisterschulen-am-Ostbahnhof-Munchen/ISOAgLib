@@ -104,9 +104,13 @@ public:
   virtual ~VtServerInstance_c();
 
   /** check if there's already been at least one vt_statusMessage in the last 3 seconds
+    Will also reset the properties if the VT got inactive, because some VTs change their
+    properties while still being address-claimed (they do only skipthe VT status message for >3s)
     @return true if at least one vt_statusMessage - false if there's not yet been one or the last one is more than 3 seconds old
   */
-  bool isVtActive() const;
+  bool isVtActiveAndResetCapabilitiesIfInactive();
+
+  void resetCapabilities();
 
   /** setter */
   void setLatestVtStatusData( const CanPkgExt_c& arc_data );
