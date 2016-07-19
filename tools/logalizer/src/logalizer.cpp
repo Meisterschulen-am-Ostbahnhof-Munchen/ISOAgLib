@@ -228,7 +228,7 @@ void ddopStore(uint8_t sa);
 void
 exit_with_usage(const char* progname)
 {
-  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2015 OSB AG." << std::endl << std::endl;
+  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2016 OSB AG." << std::endl << std::endl;
   std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [--iop] [--ddop] logFile" << std::endl << std::endl;
   std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
   std::cerr << "         1 -> rte"<<std::endl;

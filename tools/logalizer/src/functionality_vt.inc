@@ -62,6 +62,32 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
     case 0xB3: out << "Change String Value"; i8_uidBytePos = response ? 4 : 2; break;
     case 0xB4: out << "Change Child Position"; i8_uidBytePos = 4; break;
 
+    case 0xBD:
+        out << "Lock/Unlock Mask";
+        if (at_ptrFrame->dataOctet(2-1))
+            out << " -lock-";
+        else
+            out << " -unlock-";
+        if (response)
+        {
+            if ((at_ptrFrame->dataOctet(3-1) & 0x70) == 0)
+            {
+                out << " Normal response,";
+            }
+            else
+            {
+                out << " Unsolicited unlock,";
+            }
+            out << " Error Codes: 0x" << std::hex << std::uppercase << std::setw(2) << std::setfill('0') << unsigned(at_ptrFrame->dataOctet(3-1)) << std::setfill(' ') << std::setw(0) << std::nouppercase << std::dec << ",";
+        }
+        else
+        {
+            if (at_ptrFrame->dataOctet(2-1))
+                out << " Lock timeout in ms: " << ((uint16_t(at_ptrFrame->dataOctet(5+1-1)<<8)) | (uint16_t(at_ptrFrame->dataOctet(5-1)))) << ",";
+            i8_uidBytePos = 3;
+        } 
+        break;
+
     case 0xFE: out << "VT Status Message: Active WS-Master's SA: $"; out << std::hex << uint16_t(at_ptrFrame->dataOctet(1)); break;
     case 0xFF: out << "Working Set Maintenance"; break;
   }
