@@ -1172,20 +1172,21 @@ FsCommand_c::decodeReadDirectoryResponse()
   {
     if ((uint32_t)offset >= m_multireceiveMsgBufAllocSize)
       break;
+    const uint8_t filenameLength = m_multireceiveMsgBuf[offset++];
 
-    ps_tmpDir = new IsoAgLib::iFsDirectory();
-
-    ps_tmpDir->pui8_filename = new uint8_t[m_multireceiveMsgBuf[offset] + 1];
-    ps_tmpDir->pui8_filename[m_multireceiveMsgBuf[offset]] = 0;
-
-    for (uint8_t ui8_nameLength = 0; ui8_nameLength < m_multireceiveMsgBuf[offset]; ++ui8_nameLength)
-      ps_tmpDir->pui8_filename[ui8_nameLength] = m_multireceiveMsgBuf[ui8_nameLength + offset + 1];
-
-    offset += (m_multireceiveMsgBuf[offset] + 1);
-    if ((uint32_t)offset >= m_multireceiveMsgBufAllocSize)
+    if( ((uint32_t)offset + (uint32_t(filenameLength)+1+2+2+4) - 1) >= m_multireceiveMsgBufAllocSize)
       break;
 
-    decodeAttributes(m_multireceiveMsgBuf[offset]);
+    ps_tmpDir = new IsoAgLib::iFsDirectory();
+    ps_tmpDir->pui8_filename = new uint8_t[ filenameLength + 1 ]; // +1 for null-termination
+
+    unsigned filenameIndex = 0;
+    const int32_t offsetAttributes = offset + int32_t(filenameLength);
+    while( offset < offsetAttributes )
+      ps_tmpDir->pui8_filename[ filenameIndex++ ] = m_multireceiveMsgBuf[offset];
+    ps_tmpDir->pui8_filename[ filenameIndex ] = 0; // null-terminate
+
+    decodeAttributes(m_multireceiveMsgBuf[offset++]);
 
     ps_tmpDir->b_caseSensitive = m_attrCaseSensitive;
     ps_tmpDir->b_removable = m_attrRemovable;
@@ -1195,24 +1196,17 @@ FsCommand_c::decodeReadDirectoryResponse()
     ps_tmpDir->b_hidden = m_attrHidden;
     ps_tmpDir->b_readOnly = m_attrReadOnly;
 
-    ++offset;
-    if ((uint32_t)(offset + 1) >= m_multireceiveMsgBufAllocSize)
-      break;
-
     ps_tmpDir->ui16_date = m_multireceiveMsgBuf[offset] | (m_multireceiveMsgBuf[offset + 1] << 0x08);
-
     offset += 2;
-    if ((uint32_t)(offset + 1) >= m_multireceiveMsgBufAllocSize)
-      break;
 
     ps_tmpDir->ui16_time = m_multireceiveMsgBuf[offset] | (m_multireceiveMsgBuf[offset + 1] << 0x08);
-
     offset += 2;
-    if ((uint32_t)(offset + 3) >= m_multireceiveMsgBufAllocSize)
-      break;
 
-    ps_tmpDir->ui32_size = static_cast<uint32_t>(m_multireceiveMsgBuf[offset]) | (static_cast<uint32_t>(m_multireceiveMsgBuf[offset + 1]) << 0x08) | (static_cast<uint32_t>(m_multireceiveMsgBuf[offset + 2]) << 0x10) | (static_cast<uint32_t>(m_multireceiveMsgBuf[offset + 3]) << 0x18);
-
+    ps_tmpDir->ui32_size =
+         static_cast<uint32_t>(m_multireceiveMsgBuf[offset])
+      | (static_cast<uint32_t>(m_multireceiveMsgBuf[offset + 1]) << 0x08) 
+      | (static_cast<uint32_t>(m_multireceiveMsgBuf[offset + 2]) << 0x10) 
+      | (static_cast<uint32_t>(m_multireceiveMsgBuf[offset + 3]) << 0x18);
     offset += 4;
 
     m_dirData.push_back(ps_tmpDir);
