@@ -13,13 +13,27 @@
 
 // This file was auto-generated
 
-// Paste the formula below into cell "U6" of the file "export_YYYY-MM-DD.xlsx" which can be exported using this link:
+// VERSION INFO:
+// Last Updated:
+//   2016-07-19
+// Updated by:
+//   Mike Schmidt, AGCO Corporation
+//   Mike.Schmidt@agcocorp.com
+
+// INSTRUCTIONS:
+// Paste the formula below into cell "V6" of the file "export_YYYY-MM-DD.xlsx" which can be exported using this link:
 //     http://dictionary.isobus.net/isobus/exports/complete
 // Column Headers (line 5)
 //     DDIdentifier	DDEName	Definition	Comment	Typically used by Device Class(es)	UnitSymbol	UnitQuantity	BitResolution	SAESPN	MinimumValue	MaximumValue	SubmitBy	SubmitDate	SubmitCompany	RevisionNumber	Last Status	Last Status Date	StatusComments	Attachments
-// Formula (put this formula into cell "U6")
+// Formula (put this formula into cell "V6")
 //     =CONCATENATE("#define DDI_",SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(UPPER(TRIM(B6))," - ", "_")," – ", "_")," ","_"),"(",""),")",""),"-","_"),"[",""),"]",""),"–","_"), "   ", A6, "   // ", $F$5, "=",F6,", ",$G$5,"=",G6,", ",$H$5,"=",H6,", ",$J$5,"=",J6,", ",$K$5,"=",K6)
-// Copy that formula all the way down column U to the last row in the spreadsheet
+// Copy that formula all the way down column V to the last row in the spreadsheet
+// At the bottom of the list, replace this line:
+//#define DDI_65534_PROPRIETARY_DDI_RANGE   57344   // UnitSymbol=n.a., UnitQuantity=, BitResolution=0, MinimumValue=, MaximumValue=
+// with these 2 lines (without the //)
+//#define DDI_PROPRIETARY_DDI_RANGE_FIRST   57344   // UnitSymbol=n.a., UnitQuantity=, BitResolution=0, MinimumValue=, MaximumValue=
+//#define DDI_PROPRIETARY_DDI_RANGE_LAST   65534   // UnitSymbol=n.a., UnitQuantity=, BitResolution=0, MinimumValue=, MaximumValue=
+// Update the 'VERSION INFO' information at the top of this file
 
 
 #define DDI_DATA_DICTIONARY_VERSION   0   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -36,7 +50,7 @@
 #define DDI_SETPOINT_COUNT_PER_AREA_APPLICATION_RATE   11   // UnitSymbol=/m², UnitQuantity=Quantity per area unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_COUNT_PER_AREA_APPLICATION_RATE   12   // UnitSymbol=/m², UnitQuantity=Quantity per area unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_DEFAULT_COUNT_PER_AREA_APPLICATION_RATE   13   // UnitSymbol=/m², UnitQuantity=Quantity per area unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
-#define DDI_MINIMUM_COUNTPER_AREA_APPLICATION_RATE   14   // UnitSymbol=/m², UnitQuantity=Quantity per area unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MINIMUM_COUNT_PER_AREA_APPLICATION_RATE   14   // UnitSymbol=/m², UnitQuantity=Quantity per area unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MAXIMUM_COUNT_PER_AREA_APPLICATION_RATE   15   // UnitSymbol=/m², UnitQuantity=Quantity per area unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_SETPOINT_SPACING_APPLICATION_RATE   16   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_SPACING_APPLICATION_RATE   17   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -293,7 +307,7 @@
 #define DDI_LIFETIME_YIELD_TOTAL_MASS   269   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_YIELD_TOTAL_COUNT   270   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_TOTAL_AREA   271   // UnitSymbol=m², UnitQuantity=Area, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_LIFETIME_TOTAL_DISTANCE   272   // UnitSymbol=m, UnitQuantity=Distance, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_LIFETIME_EFFECTIVE_TOTAL_DISTANCE   272   // UnitSymbol=m, UnitQuantity=Distance, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_INEFFECTIVE_TOTAL_DISTANCE   273   // UnitSymbol=m, UnitQuantity=Distance, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_EFFECTIVE_TOTAL_TIME   274   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_INEFFECTIVE_TOTAL_TIME   275   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -301,7 +315,7 @@
 #define DDI_LIFETIME_AVERAGE_FUEL_CONSUMPTION_PER_TIME   277   // UnitSymbol=mm³/s, UnitQuantity=Flow, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_AVERAGE_FUEL_CONSUMPTION_PER_AREA   278   // UnitSymbol=mm³/m², UnitQuantity=Capacity per area unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_YIELD_TOTAL_DRY_MASS   279   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_LIFETIME_YIELD_TOTAL_SEED_COTTON_MASS   280   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_LIFETIME_YIELD_TOTAL_SEED_COTTON_MASS   280   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_YIELD_TOTAL_LINT_COTTON_MASS   281   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_THRESHING_ENGAGEMENT_TOTAL_TIME   282   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_PRECUT_TOTAL_COUNT   283   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -353,6 +367,7 @@
 #define DDI_MAXIMUM_HEADER_SPEED   329   // UnitSymbol=/s, UnitQuantity=Quantity per time unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_SETPOINT_CUTTING_DRUM_SPEED   330   // UnitSymbol=/s, UnitQuantity=Quantity per time unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_CUTTING_DRUM_SPEED   331   // UnitSymbol=/s, UnitQuantity=Quantity per time unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MINIMUM_CUTTING_DRUM_SPEED   332   // UnitSymbol=/s, UnitQuantity=Quantity per time unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MAXIMUM_CUTTING_DRUM_SPEED   333   // UnitSymbol=/s, UnitQuantity=Quantity per time unit, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_OPERATING_HOURS_SINCE_LAST_SHARPENING   334   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_FRONT_PTO_HOURS   335   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -381,7 +396,7 @@
 #define DDI_AVERAGE_DRY_YIELD_MASS_PER_TIME   358   // UnitSymbol=mg/s, UnitQuantity=Mass flow, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_AVERAGE_DRY_YIELD_MASS_PER_AREA   359   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LAST_BALE_SIZE   360   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_LAST_BALE_DENSITY   361   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_LAST_BALE_DENSITY   361   // UnitSymbol=mg/l, UnitQuantity=Mass per capacity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_TOTAL_BALE_LENGTH   362   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LAST_BALE_DRY_MASS   363   // UnitSymbol=g, UnitQuantity=Mass large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_FLAKE_SIZE   364   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=1000
@@ -407,7 +422,7 @@
 #define DDI_APPARENT_WIND_SPEED   384   // UnitSymbol=mm/s, UnitQuantity=Speed, BitResolution=1, MinimumValue=0, MaximumValue=100000000
 #define DDI_MSL_ATMOSPHERIC_PRESSURE   385   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=0.1, MinimumValue=0, MaximumValue=2000000
 #define DDI_ACTUAL_ATMOSPHERIC_PRESSURE   386   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=0.1, MinimumValue=0, MaximumValue=2000000
-#define DDI_TOTAL_REVOLUTIONS_IN_FRACTIONAL_REVOLUTIONS   387   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_TOTAL_REVOLUTIONS_IN_FRACTIONAL_REVOLUTIONS   387   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=0.0001, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_TOTAL_REVOLUTIONS_IN_COMPLETE_REVOLUTIONS   388   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_SETPOINT_REVOLUTIONS_SPECIFIED_AS_COUNT_PER_TIME   389   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_ACTUAL_REVOLUTIONS_PER_TIME   390   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=-2147483648, MaximumValue=2147483647
@@ -424,8 +439,8 @@
 #define DDI_ACTUAL_APPLICATION_OF_NITROGEN   401   // UnitSymbol=mg/l, UnitQuantity=Mass per capacity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_APPLICATION_OF_AMMONIUM   402   // UnitSymbol=mg/l, UnitQuantity=Mass per capacity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_APPLICATION_OF_PHOSPHOR   403   // UnitSymbol=mg/l, UnitQuantity=Mass per capacity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_ACTUAL_APPLICATION_OF_POTASSIUM   404   // UnitSymbol=g, UnitQuantity=Mass large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_ACTUAL_APPLICATION_OF_DRY_MATTER   405   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_ACTUAL_APPLICATION_OF_POTASSIUM   404   // UnitSymbol=mg/l, UnitQuantity=Mass per capacity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_ACTUAL_APPLICATION_OF_DRY_MATTER   405   // UnitSymbol=mg/l, UnitQuantity=Mass per capacity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_PROTEIN_CONTENT   406   // UnitSymbol=ppm, UnitQuantity=Parts per million, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_AVERAGE_PROTEIN_CONTENT   407   // UnitSymbol=ppm, UnitQuantity=Parts per million, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_AVERAGE_CROP_CONTAMINATION   408   // UnitSymbol=ppm, UnitQuantity=Parts per million, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -452,6 +467,20 @@
 #define DDI_UNLOADED_TOTAL_MASS   429   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_LOADED_TOTAL_MASS   430   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_UNLOADED_TOTAL_MASS   431   // UnitSymbol=kg, UnitQuantity=Mass, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_SETPOINT_APPLICATION_RATE_OF_NITROGEN   432   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_APPLICATION_RATE_OF_NITROGEN   433   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_MINIMUM_APPLICATION_RATE_OF_NITROGEN   434   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_MAXIMUM_APPLICATION_RATE_OF_NITROGEN   435   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_SETPOINT_APPLICATION_RATE_OF_AMMONIUM   436   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_APPLICATION_RATE_OF_AMMONIUM   437   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_MINIMUM_APPLICATION_RATE_OF_AMMONIUM   438   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_MAXIMUM_APPLICATION_RATE_OF_AMMONIUM   439   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_SETPOINT_APPLICATION_RATE_OF_PHOSPHOR   440   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_APPLICATION_RATE_OF_PHOSPHOR   441   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_MINIMUM_APPLICATION_RATE_OF_PHOSPHOR   442   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_MAXIMUM_APPLICATION_RATE_OF_PHOSPHOR   443   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_SETPOINT_APPLICATION_RATE_OF_POTASSIUM   444   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_APPLICATION_RATE_OF_POTASSIUM   445   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_MINIMUM_APPLICATION_RATE_OF_POTASSIUM   446   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MAXIMUM_APPLICATION_RATE_OF_POTASSIUM   447   // UnitSymbol=mg/m², UnitQuantity=Mass per area unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_SETPOINT_APPLICATION_RATE_OF_DRY_MATTER   448   // UnitSymbol=ppm (parts per million), UnitQuantity=Quantity per quantity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -472,7 +501,40 @@
 #define DDI_LAST_UNLOADED_COUNT   463   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_HAUL_COUNTER   464   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_HAUL_COUNTER   465   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-
+#define DDI_ACTUAL_RELATIVE_CONNECTOR_ANGLE   466   // UnitSymbol=°, UnitQuantity=Angle, BitResolution=0.001, MinimumValue=-180000, MaximumValue=180000
+#define DDI_SETPOINT_LENGTH_OF_CUT   472   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483.647
+#define DDI_MINIMUM_LENGTH_OF_CUT   473   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483.647
+#define DDI_MAXIMUM_LENGTH_OF_CUT   474   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483.647
+#define DDI_SETPOINT_BALE_HYDRAULIC_PRESSURE   475   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MINIMUM_BALE_HYDRAULIC_PRESSURE   476   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MAXIMUM_BALE_HYDRAULIC_PRESSURE   477   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_SETPOINT_FLAKE_SIZE   478   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=1000
+#define DDI_MINIMUM_FLAKE_SIZE   479   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=1000
+#define DDI_MAXIMUM_FLAKE_SIZE   480   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=1000
+#define DDI_SETPOINT_NUMBER_OF_SUBBALES   481   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_LAST_BALE_NUMBER_OF_SUBBALES   482   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_SETPOINT_ENGINE_SPEED   483   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_ACTUAL_ENGINE_SPEED   484   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MINIMUM_ENGINE_SPEED   485   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MAXIMUM_ENGINE_SPEED   486   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_DIESEL_EXHAUST_FLUID_TANK_PERCENTAGE_LEVEL   488   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.01, MinimumValue=0, MaximumValue=10000
+#define DDI_ACTUAL_PERCENTAGE_CONTENT   489   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.01, MinimumValue=0, MaximumValue=10000
+#define DDI_MAXIMUM_DIESEL_EXHAUST_FLUID_TANK_CONTENT   489   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MAXIMUM_FUEL_TANK_CONTENT   490   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_FUEL_PERCENTAGE_LEVEL   491   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.01, MinimumValue=0, MaximumValue=2147483647
+#define DDI_TOTAL_ENGINE_HOURS   492   // UnitSymbol=h, UnitQuantity=Hour, BitResolution=0.05, MinimumValue=0, MaximumValue=210554060.75
+#define DDI_LIFETIME_ENGINE_HOURS   493   // UnitSymbol=h, UnitQuantity=Hour, BitResolution=0.1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_LAST_EVENT_PARTNER_ID_BYTE_1_4   494   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=0xFFFFFFFF
+#define DDI_LAST_EVENT_PARTNER_ID_BYTE_5_8   495   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0x00000000, MaximumValue=0xFFFFFFFF
+#define DDI_LAST_EVENT_PARTNER_ID_BYTE_9_12   496   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0x00000000, MaximumValue=0xFFFFFFFF
+#define DDI_LAST_EVENT_PARTNER_ID_BYTE_13_16   497   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0x00000000, MaximumValue=0xFFFFFFFF
+#define DDI_LAST_EVENT_PARTNER_ID_TYPE   498   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0x00000000, MaximumValue=0xFFFFFFFF
+#define DDI_LAST_EVENT_PARTNER_ID_MANUFACTURER_ID_CODE   499   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0x00000000, MaximumValue=0xFFFFFFFF
+#define DDI_LAST_EVENT_PARTNER_ID_DEVICE_CLASS   500   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0x00000000, MaximumValue=0xFFFFFFFF
+#define DDI_SETPOINT_ENGINE_TORQUE   501   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_ACTUAL_ENGINE_TORQUE   502   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MINIMUM_ENGINE_TORQUE   503   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MAXIMUM_ENGINE_TORQUE   504   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_PGN_BASED_DATA   57342   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_REQUEST_DEFAULT_PROCESS_DATA   57343   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=0
 #define DDI_PROPRIETARY_DDI_RANGE_FIRST   57344   // UnitSymbol=n.a., UnitQuantity=, BitResolution=0, MinimumValue=, MaximumValue=
@@ -480,7 +542,7 @@
 #define DDI_RESERVED   65535   // UnitSymbol=n.a., UnitQuantity=, BitResolution=0, MinimumValue=, MaximumValue=
 
 
-// For backward compatibility:
-#include "iddidefinition-deprecated.h"
+// Include this for backward compatibility:
+//#include "iddidefinition-deprecated.h"
 
 #endif // _IDDIDEFINITION_H_
