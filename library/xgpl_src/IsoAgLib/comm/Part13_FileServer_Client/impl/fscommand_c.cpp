@@ -1183,7 +1183,7 @@ FsCommand_c::decodeReadDirectoryResponse()
     unsigned filenameIndex = 0;
     const int32_t offsetAttributes = offset + int32_t(filenameLength);
     while( offset < offsetAttributes )
-      ps_tmpDir->pui8_filename[ filenameIndex++ ] = m_multireceiveMsgBuf[offset];
+      ps_tmpDir->pui8_filename[ filenameIndex++ ] = m_multireceiveMsgBuf[offset++];
     ps_tmpDir->pui8_filename[ filenameIndex ] = 0; // null-terminate
 
     decodeAttributes(m_multireceiveMsgBuf[offset++]);
