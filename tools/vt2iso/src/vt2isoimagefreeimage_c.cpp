@@ -226,6 +226,8 @@ unsigned int Vt2IsoImageFreeImage_c::getR( unsigned int aui_x, unsigned int aui_
 /** deliver G-value of bitmap at given position */
 unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int aui_x, unsigned int aui_y )
 {
+ if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
+
  if (mb_palettized)
  { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's colour
    fiuint8_t idx;
@@ -234,7 +236,6 @@ unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int aui_x, unsigned int aui_
  }
  else
  {
-  if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
   #if defined( WIN32 )
   RGBQUAD temp_pixel;
   // ( FreeImage library documentation states, that first scanline in memory is
@@ -252,6 +253,8 @@ unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int aui_x, unsigned int aui_
 /** deliver B-value of bitmap at given position */
 unsigned int Vt2IsoImageFreeImage_c::getB( unsigned int aui_x, unsigned int aui_y )
 {
+ if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
+
  if (mb_palettized)
  { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's colour
    fiuint8_t idx;
@@ -260,7 +263,6 @@ unsigned int Vt2IsoImageFreeImage_c::getB( unsigned int aui_x, unsigned int aui_
  }
  else
  {
-  if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
   #if defined( WIN32 )
   RGBQUAD temp_pixel;
   // ( FreeImage library documentation states, that first scanline in memory is
