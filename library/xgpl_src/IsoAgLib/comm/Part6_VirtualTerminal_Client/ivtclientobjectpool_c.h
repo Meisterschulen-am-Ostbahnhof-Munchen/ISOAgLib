@@ -221,14 +221,6 @@ public:
   virtual void aux2AssignmentChanged ( iVtObjectAuxiliaryFunction2_c& ) {}
 
   /**
-    application can decide if an Aux2 Input device will be detected by the
-    exact same NAME/MIC (false) or if an only "functionally identical"
-    (according to 3.25 Functionally Identical WS) input working set is also
-    accepted (true).
-  */
-  virtual bool aux2acceptFunctionallyIdenticalInputWs() { return false; }
-
-  /**
     hook function that gets called immediately after recognizing an incoming
     Vt Status Msg with display state change (Active <-> Hidden)
     Please note that there's no Inactive state until Version 4

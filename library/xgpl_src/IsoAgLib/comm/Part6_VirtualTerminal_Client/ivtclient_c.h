@@ -16,6 +16,8 @@
 #include "impl/vtclient_c.h"
 #include "ivttypes.h"
 
+#include <list>
+
 namespace IsoAgLib {
 
 class iScheduler_c;
@@ -39,8 +41,21 @@ class iVtClientDataStorage_c {
       */
     virtual void storePreferredVt( const IsoAgLib::iIsoName_c &arc_isoname, uint8_t aui8_bootTime) = 0;
 
-    virtual void loadPreferredAux2Assignment( iAux2Assignment_c& assignment ) { (void)assignment; }
-    virtual void storePreferredAux2Assignment( const iAux2Assignment_c& assignment ) { (void)assignment; }
+    /** Application can load for one function object more then one input objects.
+        => The preferred assignment will be created, depending on the currently active joy sticks on the bus.
+        There can be CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION different input objects managed for one function object.
+      */
+    virtual void loadPreferredAux2Assignment( iAux2Assignment_c& assignment ) = 0;
+    
+    /** Called, when an assignment for a function is changed and the "preferred assignment" flag is set.
+        The application gets also the not matched preferred assignments (for not active joy sticks), which have been initially loaded via loadPreferredAux2Assignment().
+        => the passed list can be used to overwrite all previous PA infos for this function object.
+        
+        The iAux2InputData.preferredAssignmentMatched marks the input which is currently assigned.
+        It's not necessary to save preferredAssignmentMatched, because it is not used in loadPreferredAux2Assignment().
+      */
+    virtual void storePreferredAux2Assignment( uint16_t a_functionUid, const STL_NAMESPACE::list<iAux2InputData>& a_ref_preferred_assignment ) = 0;
+                                               
     virtual int32_t getAux2DeltaWaitBeforeSendingPreferredAssigment() { return 2000; };
     virtual uint16_t getAux2ModelIdentificationCode() { return 0; }
 };

@@ -180,16 +180,53 @@ typedef struct vtState_s {
   uint8_t  functionBusy;
 } vtState_s;
 
+struct iAux2InputData
+{
+  IsoAgLib::iIsoName_c name;
+  uint16_t    modelIdentificationCode;
+  uint16_t    uid;
+  bool        preferredAssignmentMatched;
+  bool        preserve;
+
+  iAux2InputData()
+    : name(),
+      modelIdentificationCode(0xFFFF),
+      uid(0xFFFF),
+      preferredAssignmentMatched(false), // a matching input object is found in an active joy stick ECU
+      preserve(false)                    // if CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION is reached
+                                         // => old preferred assignments candidates with preserve == false will be removed
+  {}
+
+  iAux2InputData(const IsoAgLib::iIsoName_c& a_name,
+                 uint16_t a_modelIdentificationCode,
+                 uint16_t a_uid,
+                 bool a_preserve)
+    : name(a_name),
+      modelIdentificationCode(a_modelIdentificationCode),
+      uid(a_uid),
+      preferredAssignmentMatched(false),
+      preserve(a_preserve)
+  {}
+
+  bool operator==(const iAux2InputData& arc_ref) const
+  {
+    // - check for preferredAssignmentMatched and preserve is not necessary
+    if ( !name.isEqualRegardingNonInstFields(arc_ref.name) ||
+         (modelIdentificationCode != arc_ref.modelIdentificationCode) ||
+         (uid != arc_ref.uid) )
+      return false;
+    else
+      return true;
+  }
+};
+
+
 /**
  * AUX2 assigment storage 
  */
 struct iAux2FunctionInputAssignment_t{
   uint16_t functionUid;
-  struct {
-    IsoAgLib::iIsoName_c name;
-    uint16_t modelIdentificationCode;
-    uint16_t uid;
-  } input;
+  iAux2InputData input;
 };
 
 typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t> iAux2Assignment_c; 

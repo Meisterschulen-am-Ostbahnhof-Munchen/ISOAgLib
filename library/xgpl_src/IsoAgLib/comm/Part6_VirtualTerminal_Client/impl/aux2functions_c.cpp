@@ -13,6 +13,7 @@
 #include "aux2functions_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
+#include "../ivtclient_c.h"
 
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclient_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
@@ -32,7 +33,7 @@ struct Aux2PreferredAssignmentInputDevice_s
       return (ui16_model < ref.ui16_model);
   }
 
-  IsoName_c isoName;
+  IsoAgLib::iIsoName_c isoName;
   uint16_t ui16_model;
 };
 
@@ -68,7 +69,7 @@ void Aux2Functions_c::loadAssignment() {
   for( IsoAgLib::iAux2AssignmentIterator_c i = assigment.begin(); i != assigment.end(); ++i ) {
     STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
     if( iter != m_aux2Function.end() ) {
-      iter->second->setPreferredAssignedInput( i->input.name, i->input.modelIdentificationCode, i->input.uid );
+      iter->second->addPreferredAssignedInputCandidate( i->input );
     }
   }
 #endif
@@ -89,20 +90,7 @@ Aux2Functions_c::setUserPreset( const IsoAgLib::iAux2Assignment_c &assignments )
       continue;
     }
 
-    IsoName_c inputName = i->input.name;
-    if( m_vtConnection.getPool().aux2acceptFunctionallyIdenticalInputWs() )
-    { // need only functional identical match, see if we can take an existing one
-      for( InputsIter iter = mmap_receivedInputMaintenanceData.begin(); iter != mmap_receivedInputMaintenanceData.end(); ++iter )
-      {
-        if( iter->first.isFunctionallyIdentical( inputName ) )
-        {
-          inputName = iter->first; // take this Input, it's functionally identical!
-          break;
-        }
-      }
-    }
-    iter->second->setPreferredAssignedInput( inputName, i->input.modelIdentificationCode, i->input.uid );
-    iter->second->setMatchingPreferredAssignedInputReady(true);
+    iter->second->addPreferredAssignedInputCandidate( i->input );
   }
 
   if( m_state == State_Ready )
@@ -127,7 +115,7 @@ Aux2Functions_c::notifyOnAux2InputStatus(
   const IsoName_c& c_inputIsoName = arc_data.getISONameForSA();
   uint16_t const cui16_inputObjectId = arc_data.getUint16Data(2-1);
 
-  IsoName_c c_assignedIsoName;
+  IsoAgLib::iIsoName_c c_assignedIsoName;
   uint16_t ui16_assignedInputUid = 0xFFFF;
 
   for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
@@ -135,7 +123,7 @@ Aux2Functions_c::notifyOnAux2InputStatus(
     iter->second->getAssignedInput(c_assignedIsoName, ui16_assignedInputUid);
 
     if ( (0xFFFF != ui16_assignedInputUid) &&
-         (IsoName_c::IsoNameUnspecified() != c_assignedIsoName) &&
+         (IsoAgLib::iIsoName_c::iIsoNameUnspecified() != c_assignedIsoName) &&
          (cui16_inputObjectId == ui16_assignedInputUid) &&
          (c_inputIsoName == c_assignedIsoName) )
     { // notify application on this new Input Status!
@@ -170,8 +158,9 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
   const uint8_t ui8_status = arc_data.getUint8Data(4-1);
   if (1 != ui8_status)
   {
-    // @todo: maintenance with initializing should not cause a timeout
-    return; // inputs with status not "ready" should not trigger sendPreferredAux2Assignments()
+    // maintenance with initializing should not cause a timeout
+    // inputs with status not "ready" should not trigger sendPreferredAux2Assignments()
+    return; 
   }
 
   switch (m_state)
@@ -200,10 +189,6 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
     getSchedulerInstance().registerTask( *this, m_vtConnection.getVtClientDataStorage().getAux2DeltaWaitBeforeSendingPreferredAssigment() );
   }
 
-  IsoName_c c_prefAssignedIsoName;
-  uint16_t ui16_prefAssignedModelIdentificationCode;
-  uint16_t ui16_prefAssignedInputUid;
-
   switch (m_state)
   {
     case State_WaitForPoolUploadSuccessfully:
@@ -217,28 +202,9 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
         {
           if(iter->second->getMatchingPreferredAssignedInputReady())
             continue; // this input device was already found in our preferred assignments => skip it
-          
-          iter->second->getPreferredAssignedInput(c_prefAssignedIsoName, ui16_prefAssignedModelIdentificationCode, ui16_prefAssignedInputUid);
 
-          if( ui16_prefAssignedModelIdentificationCode != ui16_modelIdentificationCode )
-            continue;
-
-          if( m_vtConnection.getPool().aux2acceptFunctionallyIdenticalInputWs() )
-          { // need only functional identical match
-            if( !c_prefAssignedIsoName.isEqualRegardingNonInstFields( c_inputIsoName ) )
-              continue;
-
-            // update the PA to reflect the SPECIFIC input NAME detected! (keep the MIC/UID of course)
-            iter->second->setPreferredAssignedInput(c_inputIsoName, ui16_prefAssignedModelIdentificationCode, ui16_prefAssignedInputUid);
-          }
-          else
-          { // need exact match
-            if( c_prefAssignedIsoName != c_inputIsoName )
-              continue;
-          }
-
-          iter->second->setMatchingPreferredAssignedInputReady(true);
-          b_sendPreferredAssignments = true;
+          b_sendPreferredAssignments |= iter->second->matchPreferredAssignedInput(c_inputIsoName.toConstIisoName_c(),
+                                                                                  ui16_modelIdentificationCode);
         }
       }
       break;
@@ -302,17 +268,15 @@ Aux2Functions_c::storeAux2Assignment(
   // set reference of function object ID (is needed for response in caller)
   rui16_functionObjId = (c_buffer[13-2] | (c_buffer[14-2] << 8));
 
-  bool b_preferredAssignedInputsChanged = false;
-
   if (0xFFFF == rui16_functionObjId)
   { // unassign ALL functions
     for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
     {
-      if( iter->second->setAssignedInput(IsoName_c::IsoNameUnspecified(), 0xFFFF) )
+      if( iter->second->setAssignedInput(IsoAgLib::iIsoName_c::iIsoNameUnspecified(), 0xFFFF /* model identification code */, 0xFFFF /* input ID */, b_preferredAssignment) )
         arc_pool.aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter->second ) ) );
 
       if( b_preferredAssignment )
-        b_preferredAssignedInputsChanged |= iter->second->setPreferredAssignedInput(IsoName_c::IsoNameUnspecified(), 0xFFFF /* default value */, 0xFFFF);
+        m_vtConnection.getVtClientDataStorage().storePreferredAux2Assignment(iter->first, iter->second->getRefPreferredAssignmentCandidates());
     }
   }
   else
@@ -340,7 +304,7 @@ Aux2Functions_c::storeAux2Assignment(
         c_inputIsoName = IsoName_c( &c_buffer[2-2] );
         STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::const_iterator iter_map = mmap_receivedInputMaintenanceData.find(c_inputIsoName);
         if( iter_map == mmap_receivedInputMaintenanceData.end() )
-          // @todo also check for READY?
+          // @todo also check for READY? (wait for AEF test)
           return (1<<0); // we did not yet receive an input maintenance message for this isoname => unknown
         // get model identification code from mmap_receivedInputMaintenanceData
         // (sort of a "backdoor" method because we do not get the code in the message!)
@@ -354,33 +318,16 @@ Aux2Functions_c::storeAux2Assignment(
         //c_inputIsoName is still unspecified!
       }
 
-      /// @todo We'd need to check if the Input is existing!!!      
-      if( iter->second->setAssignedInput( c_inputIsoName, inputObjId ) )
+      if( iter->second->setAssignedInput( c_inputIsoName.toConstIisoName_c(), ui16_modelIdentificationCode, inputObjId, b_preferredAssignment ) )
         arc_pool.aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter->second ) ) );
 
       if (b_preferredAssignment)
-        b_preferredAssignedInputsChanged |= iter->second->setPreferredAssignedInput(c_inputIsoName, ui16_modelIdentificationCode, inputObjId);
+        m_vtConnection.getVtClientDataStorage().storePreferredAux2Assignment(rui16_functionObjId, iter->second->getRefPreferredAssignmentCandidates());
     }
     else
     {
       return (1<<0); // function object not found.
     }
-  }
-
-  if (b_preferredAssignedInputsChanged)
-  {
-    IsoAgLib::iAux2Assignment_c assignment;
-
-    for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter) {
-      if( iter->second->hasPreferredAssigment() ) {
-        IsoAgLib::iAux2FunctionInputAssignment_t a;
-        a.functionUid = iter->first;
-        iter->second->getPreferredAssignedInput( a.input.name, a.input.modelIdentificationCode, a.input.uid );
-        assignment.push_front( a );
-      }
-    }
- 
-    m_vtConnection.getVtClientDataStorage().storePreferredAux2Assignment( assignment );
   }
 
 #else
@@ -411,12 +358,8 @@ Aux2Functions_c::timeEvent()
       for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter_function = m_aux2Function.begin();
           iter_function != m_aux2Function.end(); ++iter_function)
       {
-        if( iter_function->second->unassignInputIfIsoNameMatches(iter_map->first) ) {
-          // allow sending of preferred assignment if matching input appears again
-          iter_function->second->setMatchingPreferredAssignedInputReady(false);
-            
+        if( iter_function->second->unassignAfterTimeout(iter_map->first.toConstIisoName_c()) )            
           m_vtConnection.getPool().aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter_function->second ) ) );
-        }
       }
       mmap_receivedInputMaintenanceData.erase(iter_map++);
     } else {

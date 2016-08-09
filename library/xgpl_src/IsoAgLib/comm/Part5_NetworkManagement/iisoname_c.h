@@ -222,6 +222,13 @@ public:
   */
   void setSerNo(uint32_t aui32_serNo) { IsoName_c::setSerNo( aui32_serNo );}
 
+  /** Check if all Non-Instance fields of both ISONames match
+   * Attention: Ignores if the NAMEs are specified or not!
+   * @return true if equal, false if one non-inst field differs!
+  */
+  bool isEqualRegardingNonInstFields (const iIsoName_c& acrc_isoName) const
+  { return IsoName_c::isEqualRegardingNonInstFields( acrc_isoName ); }
+
   /** set this instance to indicator for specified value - with the NAME prior set
    * Attention: Make sure that the NAME was properly set before or will be properly
    *            set at latest before using this instance! */

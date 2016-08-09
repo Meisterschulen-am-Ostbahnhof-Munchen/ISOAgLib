@@ -222,6 +222,11 @@
 #endif
 
 
+#ifndef CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION
+#  define CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION 5
+#endif
+
+
 /* ******************************************************** */
 /*@{*/
 #ifndef CONFIG_CAN_BLOCK_TIME

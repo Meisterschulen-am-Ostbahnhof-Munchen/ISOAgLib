@@ -21,6 +21,8 @@
 #include "vtobject_c.h"
 #include "vttypes.h"
 
+#include <list>
+
 namespace __IsoAgLib {
 
 class Aux2Functions_c;
@@ -52,63 +54,24 @@ public:
 
 private:
 
-  // store assigned AUX inputs and preferred assigned AUX inputs in this structure
-  struct AssignedInput_s
-  {
-    AssignedInput_s()
-      : mc_inputIsoName(),
-        mui16_inputUid(0xFFFF)
-    {}
+  void getAssignedInput(IsoAgLib::iIsoName_c& arc_isoName, uint16_t& arui16_inputUid) const;
+  bool getPreferredAssignedInput(IsoAgLib::iIsoName_c& arc_isoName, uint16_t& arui16_inputModelIdentificationCode, uint16_t& arui16_inputUid) const;
+  bool matchPreferredAssignedInput(const IsoAgLib::iIsoName_c& arc_isoName, uint16_t arui16_inputModelIdentificationCode);
+  bool setAssignedInput(const IsoAgLib::iIsoName_c& arc_isoName, uint16_t a_modelIdentificationCode, uint16_t aui16_inputUid, bool a_preferredAssignment);
+  bool unassignAfterTimeout(const IsoAgLib::iIsoName_c& arc_isoName);
+  bool getMatchingPreferredAssignedInputReady();
+  void addPreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input);
+  const std::list<IsoAgLib::iAux2InputData>& getRefPreferredAssignmentCandidates() const { return ml_preferredAssignedInputCandidate; }
+  
+private:
 
-    bool operator==(const AssignedInput_s& arc_ref) const
-    {
-      if ( (mc_inputIsoName != arc_ref.mc_inputIsoName) ||
-           (mui16_inputUid != arc_ref.mui16_inputUid) )
-        return false;
-      else
-        return true;
-    }
-
-    IsoName_c mc_inputIsoName;
-    uint16_t mui16_inputUid;
-  };
-
-  struct PreferredAssignedInput_s
-  {
-    PreferredAssignedInput_s()
-      : mc_inputIsoName(),
-        mui16_inputModelIdentificationCode(0xFFFF),
-        mui16_inputUid(0xFFFF)
-    {}
-
-    bool operator==(const PreferredAssignedInput_s& arc_ref) const
-    {
-      if ( (mc_inputIsoName != arc_ref.mc_inputIsoName) ||
-           (mui16_inputModelIdentificationCode != arc_ref.mui16_inputModelIdentificationCode) ||
-           (mui16_inputUid != arc_ref.mui16_inputUid) )
-        return false;
-      else
-        return true;
-    }
-
-    IsoName_c mc_inputIsoName;
-    uint16_t mui16_inputModelIdentificationCode;
-    uint16_t mui16_inputUid;
-  };
-
-  void getAssignedInput(IsoName_c& arc_isoName, uint16_t& arui16_inputUid) const;
-  void getPreferredAssignedInput(IsoName_c& arc_isoName, uint16_t& arui16_inputModelIdentificationCode, uint16_t& arui16_inputUid) const;
-  bool setAssignedInput(const IsoName_c& arc_isoName, uint16_t aui16_inputUid);
-  bool unassignInputIfIsoNameMatches(const IsoName_c& arc_isoName);
-  bool setPreferredAssignedInput(const IsoName_c& arc_isoName, uint16_t aui16_inputModelIdentificationCode, uint16_t aui16_inputUid);
+  void removePreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input);
+    
   bool hasPreferredAssigment() const;
-  void setMatchingPreferredAssignedInputReady(bool a_isReady) { m_matchingPreferredAssignedInputReady = a_isReady; }
-  bool getMatchingPreferredAssignedInputReady() { return m_matchingPreferredAssignedInputReady; }
 
-  AssignedInput_s ms_assignedInput;
-  PreferredAssignedInput_s ms_preferredAssignedInput;
+  IsoAgLib::iAux2InputData ms_assignedInput;
 
-  bool m_matchingPreferredAssignedInputReady;
+  std::list<IsoAgLib::iAux2InputData> ml_preferredAssignedInputCandidate;
 
   friend class Aux2Functions_c;
 };

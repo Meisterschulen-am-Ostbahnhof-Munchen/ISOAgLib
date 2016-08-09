@@ -18,6 +18,7 @@
 #include "../ivtobjectbutton_c.h"
 #include "vtclient_c.h"
 
+#include <algorithm>
 
 namespace __IsoAgLib {
 
@@ -46,7 +47,6 @@ vtObjectAuxiliaryFunction2_c::stream(uint8_t* destMemory, uint16_t maxBytes, obj
 
 
 vtObjectAuxiliaryFunction2_c::vtObjectAuxiliaryFunction2_c()
-  : m_matchingPreferredAssignedInputReady(false)
 {}
 
 uint32_t
@@ -82,81 +82,184 @@ vtObjectAuxiliaryFunction2_c::setOriginSKM(bool /* b_SKM */)
 
 
 bool
-vtObjectAuxiliaryFunction2_c::setAssignedInput(const IsoName_c& arc_isoName, uint16_t aui16_inputUid)
+vtObjectAuxiliaryFunction2_c::setAssignedInput(const IsoAgLib::iIsoName_c& arc_isoName, uint16_t a_modelIdentificationCode, uint16_t aui16_inputUid, bool a_preferredAssignment)
 {
-  const AssignedInput_s assignedInputBackup = ms_assignedInput;
+  const IsoAgLib::iAux2InputData assignedInputBackup = ms_assignedInput;
+  IsoAgLib::iAux2InputData new_input(arc_isoName, a_modelIdentificationCode, aui16_inputUid, false /* fromUserInput */);
 
+  if(a_preferredAssignment)
+  {
+    removePreferredAssignedInputCandidate(ms_assignedInput);
+  }
+  
   if (aui16_inputUid != 0xFFFF)
   { // store assignment
-    ms_assignedInput.mc_inputIsoName = arc_isoName;
+    if(a_preferredAssignment)
+    {
+      addPreferredAssignedInputCandidate(new_input);
+    }
+    ms_assignedInput.name = arc_isoName;
+    ms_assignedInput.modelIdentificationCode = a_modelIdentificationCode;
   }
   else
   { // remove assignment
-    ms_assignedInput.mc_inputIsoName = IsoName_c::IsoNameUnspecified();
-    // reset timestamp
+    ms_assignedInput.name = IsoAgLib::iIsoName_c::iIsoNameUnspecified();
+    ms_assignedInput.modelIdentificationCode = 0xFFFF;
   }
-  ms_assignedInput.mui16_inputUid = aui16_inputUid;
+
+  ms_assignedInput.uid = aui16_inputUid;
 
   // true if changed
   return !(assignedInputBackup == ms_assignedInput);
 }
 
 bool
-vtObjectAuxiliaryFunction2_c::unassignInputIfIsoNameMatches(const IsoName_c& arc_isoName)
+vtObjectAuxiliaryFunction2_c::unassignAfterTimeout(const IsoAgLib::iIsoName_c& arc_isoName)
 {
-  if (arc_isoName != ms_assignedInput.mc_inputIsoName)
+  // reset any matching for preferred assignment for this arc_isoName
+  for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
+      iter != ml_preferredAssignedInputCandidate.end();
+      ++iter)
+  {
+    if(arc_isoName == iter->name)
+    {
+      iter->preferredAssignmentMatched = false;
+    }
+  }
+    
+  if (arc_isoName != ms_assignedInput.name)
     return false; 
   else
-    return setAssignedInput(arc_isoName, 0xFFFF); // unassign;
-}
-
-
-bool
-vtObjectAuxiliaryFunction2_c::setPreferredAssignedInput(const IsoName_c& arc_isoName, uint16_t aui16_inputModelIdentificationCode, uint16_t aui16_inputUid)
-{
-  const PreferredAssignedInput_s preferredAssignedInputBackup = ms_preferredAssignedInput;
-
-  if (aui16_inputUid != 0xFFFF)
-  { // store assignment
-    ms_preferredAssignedInput.mc_inputIsoName = arc_isoName;
-  }
-  else
-  {
-    ms_preferredAssignedInput.mc_inputIsoName = IsoName_c::IsoNameUnspecified();
-  }
-  ms_preferredAssignedInput.mui16_inputModelIdentificationCode = aui16_inputModelIdentificationCode;
-  ms_preferredAssignedInput.mui16_inputUid = aui16_inputUid;
-
-  // true if changed
-  return !(preferredAssignedInputBackup == ms_preferredAssignedInput);
+    return setAssignedInput(arc_isoName, ms_assignedInput.modelIdentificationCode, 0xFFFF, false /* a_preferredAssignment */); // unassign;
 }
 
 void
-vtObjectAuxiliaryFunction2_c::getPreferredAssignedInput(IsoName_c& arc_isoName, uint16_t& arui16_inputModelIdentificationCode, uint16_t& arui16_inputUid) const
+vtObjectAuxiliaryFunction2_c::addPreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input)
 {
-  arc_isoName = ms_preferredAssignedInput.mc_inputIsoName;
-  arui16_inputModelIdentificationCode = ms_preferredAssignedInput.mui16_inputModelIdentificationCode;
-  arui16_inputUid = ms_preferredAssignedInput.mui16_inputUid;
+  ml_preferredAssignedInputCandidate.push_back(a_ref_input);
+
+  if(ml_preferredAssignedInputCandidate.size() > CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION)
+  {
+    bool erased = false;
+    // delete oldes entry (no preset)
+    for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
+      iter != ml_preferredAssignedInputCandidate.end();
+      ++iter)
+    {
+      if(!iter->preserve)
+      {
+        ml_preferredAssignedInputCandidate.erase(iter);
+        erased = true;
+        break;
+      }
+    }
+
+    if(!erased)
+    {
+       ml_preferredAssignedInputCandidate.pop_front(); 
+    }
+  }
+
+}
+
+void vtObjectAuxiliaryFunction2_c::removePreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input)
+{
+  STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = STL_NAMESPACE::find(ml_preferredAssignedInputCandidate.begin(), ml_preferredAssignedInputCandidate.end(), a_ref_input);
+  if(iter != ml_preferredAssignedInputCandidate.end())
+  {
+    ml_preferredAssignedInputCandidate.erase(iter);
+  }
+}
+
+bool
+vtObjectAuxiliaryFunction2_c::matchPreferredAssignedInput(const IsoAgLib::iIsoName_c& arc_isoName,
+                                                          uint16_t aui16_inputModelIdentificationCode)
+{
+  bool first_loop = true;
+  
+  STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter_fuzzy = ml_preferredAssignedInputCandidate.end();
+  for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
+      iter != ml_preferredAssignedInputCandidate.end();
+      ++iter)
+  {
+    if(aui16_inputModelIdentificationCode != iter->modelIdentificationCode)
+      continue;
+      
+    if( iter->name == arc_isoName )
+    {
+      iter->preferredAssignmentMatched = true;
+      return true;
+    }
+
+    if( iter->name.isEqualRegardingNonInstFields( arc_isoName ) )
+    {
+      iter_fuzzy = iter;
+    }    
+  }
+
+  if(iter_fuzzy != ml_preferredAssignedInputCandidate.end())
+  {
+    iter_fuzzy->name = arc_isoName;
+    // use this input from now on as preferred input
+    iter_fuzzy->preferredAssignmentMatched = true;
+    return true;
+  }
+  
+  return false;
+}
+
+bool vtObjectAuxiliaryFunction2_c::getMatchingPreferredAssignedInputReady()
+{
+  for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
+      iter != ml_preferredAssignedInputCandidate.end();
+      ++iter)
+  {
+    if(iter->preferredAssignmentMatched)
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool
+vtObjectAuxiliaryFunction2_c::getPreferredAssignedInput(IsoAgLib::iIsoName_c& arc_isoName, uint16_t& arui16_inputModelIdentificationCode, uint16_t& arui16_inputUid) const
+{
+{
+  for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::const_iterator iter = ml_preferredAssignedInputCandidate.begin();
+      iter != ml_preferredAssignedInputCandidate.end();
+      ++iter)
+  {
+      if(iter->preferredAssignmentMatched)
+      {
+          arc_isoName = iter->name;
+          arui16_inputModelIdentificationCode = iter->modelIdentificationCode;
+          arui16_inputUid = iter->uid;
+          return true;
+      }
+    }
+  }
+  return false;
 }
 
 bool
 vtObjectAuxiliaryFunction2_c::isAssigned() const
 {
-  return (0xFFFF != ms_assignedInput.mui16_inputUid);
+  return (0xFFFF != ms_assignedInput.uid);
 }
 
 void
-vtObjectAuxiliaryFunction2_c::getAssignedInput(IsoName_c& arc_isoName, uint16_t& arui16_inputUid) const
+vtObjectAuxiliaryFunction2_c::getAssignedInput(IsoAgLib::iIsoName_c& arc_isoName, uint16_t& arui16_inputUid) const
 {
-  arc_isoName = ms_assignedInput.mc_inputIsoName;
-  arui16_inputUid = ms_assignedInput.mui16_inputUid;
+  arc_isoName = ms_assignedInput.name;
+  arui16_inputUid = ms_assignedInput.uid;
 }
 
 
 bool
 vtObjectAuxiliaryFunction2_c::hasPreferredAssigment() const
 {
-  return (IsoName_c::IsoNameUnspecified() != ms_preferredAssignedInput.mc_inputIsoName);
+  return !ml_preferredAssignedInputCandidate.empty();
 }
 
 
