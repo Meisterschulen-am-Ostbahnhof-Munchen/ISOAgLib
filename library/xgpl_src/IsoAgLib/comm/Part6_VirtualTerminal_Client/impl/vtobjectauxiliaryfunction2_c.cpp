@@ -175,8 +175,6 @@ bool
 vtObjectAuxiliaryFunction2_c::matchPreferredAssignedInput(const IsoAgLib::iIsoName_c& arc_isoName,
                                                           uint16_t aui16_inputModelIdentificationCode)
 {
-  bool first_loop = true;
-  
   STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter_fuzzy = ml_preferredAssignedInputCandidate.end();
   for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
       iter != ml_preferredAssignedInputCandidate.end();
