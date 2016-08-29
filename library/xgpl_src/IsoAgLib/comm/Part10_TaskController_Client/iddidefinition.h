@@ -15,7 +15,7 @@
 
 // VERSION INFO:
 // Last Updated:
-//   2016-07-19
+//   2016-08-23
 // Updated by:
 //   Mike Schmidt, AGCO Corporation
 //   Mike.Schmidt@agcocorp.com
@@ -374,8 +374,8 @@
 #define DDI_REAR_PTO_HOURS   336   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_FRONT_PTO_HOURS   337   // UnitSymbol=h, UnitQuantity=Hour, BitResolution=0.1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_REAR_PTO_HOURS   338   // UnitSymbol=h, UnitQuantity=Hour, BitResolution=0.1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_EFFECTIVE_LOADING_TIME   339   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_EFFECTIVE_UNLOADING_TIME   340   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_EFFECTIVE_TOTAL_LOADING_TIME   339   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_EFFECTIVE_TOTAL_UNLOADING_TIME   340   // UnitSymbol=s, UnitQuantity=Time count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_SETPOINT_GRAIN_KERNEL_CRACKER_GAP   341   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_GRAIN_KERNEL_CRACKER_GAP   342   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MINIMUM_GRAIN_KERNEL_CRACKER_GAP   343   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
@@ -502,6 +502,7 @@
 #define DDI_HAUL_COUNTER   464   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_HAUL_COUNTER   465   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_RELATIVE_CONNECTOR_ANGLE   466   // UnitSymbol=°, UnitQuantity=Angle, BitResolution=0.001, MinimumValue=-180000, MaximumValue=180000
+#define DDI_ACTUAL_PERCENTAGE_CONTENT   467   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.01, MinimumValue=0, MaximumValue=10000
 #define DDI_SETPOINT_LENGTH_OF_CUT   472   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483.647
 #define DDI_MINIMUM_LENGTH_OF_CUT   473   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483.647
 #define DDI_MAXIMUM_LENGTH_OF_CUT   474   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483.647
@@ -518,7 +519,6 @@
 #define DDI_MINIMUM_ENGINE_SPEED   485   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MAXIMUM_ENGINE_SPEED   486   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_DIESEL_EXHAUST_FLUID_TANK_PERCENTAGE_LEVEL   488   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.01, MinimumValue=0, MaximumValue=10000
-#define DDI_ACTUAL_PERCENTAGE_CONTENT   489   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.01, MinimumValue=0, MaximumValue=10000
 #define DDI_MAXIMUM_DIESEL_EXHAUST_FLUID_TANK_CONTENT   489   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MAXIMUM_FUEL_TANK_CONTENT   490   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_FUEL_PERCENTAGE_LEVEL   491   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.01, MinimumValue=0, MaximumValue=2147483647
