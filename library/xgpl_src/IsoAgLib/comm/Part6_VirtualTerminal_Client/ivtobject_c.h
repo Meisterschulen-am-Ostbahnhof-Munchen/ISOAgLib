@@ -494,6 +494,11 @@ protected:
     uint8_t flags:5;
     uint8_t clientId:3; // when changing, adapt the assertion in "setClientID(..)"!
   } s_properties;
+
+private:
+  // non-copy/assign-able
+  iVtObject_c( const iVtObject_c& );
+  iVtObject_c& operator=( const iVtObject_c& );
 };
 
 inline
