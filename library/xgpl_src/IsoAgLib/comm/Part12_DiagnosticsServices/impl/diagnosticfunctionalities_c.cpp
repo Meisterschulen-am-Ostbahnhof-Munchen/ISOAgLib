@@ -239,7 +239,7 @@ DiagnosticFunctionalities_c::getGeneration(FunctionalitiesCharacteristics_t func
       break;
     case AuxNInputs:
     case AuxNFunctions:
-      if (version == 3) return 1;
+      if (version >= 3) return 1;
       break;
     case TaskControllerBasic:
     case TaskControllerBasicWorkingSet:

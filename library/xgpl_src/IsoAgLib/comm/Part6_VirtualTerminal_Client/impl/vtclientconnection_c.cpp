@@ -156,19 +156,25 @@ VtClientConnection_c::VtClientConnection_c(
     UniversalTerminalOptionsBitMask_t() );
 
 #if defined(USE_VTOBJECT_auxiliaryfunction2) || defined (USE_VTOBJECT_auxiliaryinput2)
+  AuxNOptionsBitMask_t auxNOptionsFunction;
+  AuxNOptionsBitMask_t auxNOptionsInput;
   for (uint16_t ui16_objIndex = 0; ui16_objIndex < getPool().getNumObjects(); ui16_objIndex++)
   {
     IsoAgLib::iVtObject_c* p_obj = getPool().getIVtObjects()[0][ui16_objIndex];
 #ifdef USE_VTOBJECT_auxiliaryfunction2
     if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryFunction2_c::objectType())
     { // collect all available AUX 2 function objects in list
-      m_aux2Functions.getObjects()[ p_obj->getID() ] = static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>(p_obj);
+      IsoAgLib::iVtObjectAuxiliaryFunction2_c *aux2f = static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>(p_obj);
+      m_aux2Functions.getObjects()[ p_obj->getID() ] = aux2f;
+      auxNOptionsFunction.setBit( static_cast<AuxNOptions_t>( 1 << ( aux2f->get_vtObjectAuxiliaryFunction2_a().functionType ) ) );
     }
 #endif
 #ifdef USE_VTOBJECT_auxiliaryinput2
     if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryInput2_c::objectType())
     { // collect all available AUX 2 input objects in list
-      m_aux2Inputs.getObjectList().push_back(static_cast<IsoAgLib::iVtObjectAuxiliaryInput2_c*>(p_obj));
+      IsoAgLib::iVtObjectAuxiliaryInput2_c *aux2i = static_cast<IsoAgLib::iVtObjectAuxiliaryInput2_c*>(p_obj);
+      m_aux2Inputs.getObjectList().push_back( aux2i );
+      auxNOptionsInput.setBit( static_cast<AuxNOptions_t>( 1 << ( aux2i->get_vtObjectAuxiliaryInput2_a().functionType ) ) );
     }
 #endif
   }
@@ -177,12 +183,22 @@ VtClientConnection_c::VtClientConnection_c(
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   if (!m_aux2Functions.getObjects().empty())
   {
+    r_wsMasterIdentItem.getDiagnosticFunctionalities().addFunctionalitiesAuxN(
+      true,
+      static_cast<uint8_t>(getPool().getVersion()),
+      auxNOptionsFunction );
+
     m_aux2Functions.loadAssignment();
   }
 #endif
 #ifdef USE_VTOBJECT_auxiliaryinput2
   if (!m_aux2Inputs.getObjectList().empty())
   {
+    r_wsMasterIdentItem.getDiagnosticFunctionalities().addFunctionalitiesAuxN(
+      false,
+      static_cast<uint8_t>(getPool().getVersion()),
+      auxNOptionsInput );
+
     m_aux2Inputs.init(this);
   }
 #endif
