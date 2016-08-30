@@ -84,6 +84,11 @@
   #define MALLOC_TEMPLATE(PAR) __gnu_cxx::malloc_allocator<PAR>
 #else
   #define MALLOC_TEMPLATE(PAR) STL_NAMESPACE::__malloc_alloc_template<0>
+  #if defined( _MSC_VER )
+    #define __STR2__(x) #x
+    #define __STR1__(x) __STR2__(x)
+    #define __LOC__ __FILE__ "("__STR1__(__LINE__)") : warning: "
+  #endif
 #endif
 
 
