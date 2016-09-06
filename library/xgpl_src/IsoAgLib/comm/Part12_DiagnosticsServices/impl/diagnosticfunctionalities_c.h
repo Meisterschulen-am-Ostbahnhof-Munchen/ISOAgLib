@@ -129,14 +129,15 @@ bool DiagnosticFunctionalities_c::fillStructure(FunctionalitiesCharacteristics_t
                                          uint8_t version,
                                          const T& options)
 {
-  // fill structure
+  // fill structure in Little Endian!
   Functionality_s functionality_description;
   functionality_description.generation = getGeneration(functionality, version);
 
   functionality_description.number_of_option_bytes = 0;
-  for (uint8_t counter = 0; counter < options.getSizeInBytes(); ++counter)
+  const uint8_t byteSize = options.getSizeInBytes();
+  for (uint8_t counter = 0; counter < byteSize; ++counter)
   {
-    const uint8_t curByte = options.getByte(counter);
+    const uint8_t curByte = options.getByte(byteSize - counter - 1);
     functionality_description.options_bytes[counter] = curByte;
 
     // From A.12: If a functionality has option bytes, all trailing zero option bytes
