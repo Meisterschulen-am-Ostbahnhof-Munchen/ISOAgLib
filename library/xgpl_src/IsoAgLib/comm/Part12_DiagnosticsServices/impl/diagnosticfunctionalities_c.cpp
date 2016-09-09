@@ -231,7 +231,9 @@ DiagnosticFunctionalities_c::getGeneration(FunctionalitiesCharacteristics_t func
     case UniversalTerminalWorkingSet:
       if (version == 2) return 1;
       if (version == 3) return 2;
-      if (version == 4) return 3;
+      if (version == 4) return 2;
+      if (version == 5) return 2;
+      if (version == 6) return 3;
       break;
     case AuxOInputs:
     case AuxOFunctions:
