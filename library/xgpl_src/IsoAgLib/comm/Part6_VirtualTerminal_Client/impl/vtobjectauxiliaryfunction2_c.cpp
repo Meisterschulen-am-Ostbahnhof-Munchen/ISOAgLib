@@ -70,6 +70,14 @@ vtObjectAuxiliaryFunction2_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childO
   return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectAuxiliaryFunction2_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectAuxiliaryFunction2_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAuxiliaryFunction2_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryFunction2_s), b_enableReplaceOfCmd);
 }
 
+void
+vtObjectAuxiliaryFunction2_c::overrideFunctionType_onlyAtStartup(uint8_t newValue)
+{
+  isoaglib_assert( vtObject_a != NULL );
+
+  saveValue8 (MACRO_getStructOffset(get_vtObjectAuxiliaryFunction2_a(), functionType), sizeof(iVtObjectAuxiliaryFunction2_s), newValue);
+}
+
 
 void
 vtObjectAuxiliaryFunction2_c::setOriginSKM(bool /* b_SKM */)

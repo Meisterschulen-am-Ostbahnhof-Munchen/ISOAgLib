@@ -38,6 +38,13 @@ public:
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     return vtObjectAuxiliaryFunction2_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
+
+  // This function overrides the FunctionType as defined in the object pool.
+  // Only use it once at startup (after the object pool was initAndRegistered)
+  // It will only modify the object, not send out any command, so it needs
+  // to be done before the object pool upload takes place. (At best before the main loop runs)
+  void overrideFunctionType_onlyAtStartup(uint8_t newValue);
+
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectAuxiliaryFunction2_c::updateObjectType(); }
