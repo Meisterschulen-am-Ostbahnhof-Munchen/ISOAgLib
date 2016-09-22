@@ -43,7 +43,9 @@ public:
   // Only use it once at startup (after the object pool was initAndRegistered)
   // It will only modify the object, not send out any command, so it needs
   // to be done before the object pool upload takes place. (At best before the main loop runs)
-  void overrideFunctionType_onlyAtStartup(uint8_t newValue);
+  void overrideFunctionType_onlyAtStartup(uint8_t newValue) {
+    vtObjectAuxiliaryFunction2_c::overrideFunctionType_onlyAtStartup(newValue);
+  }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
