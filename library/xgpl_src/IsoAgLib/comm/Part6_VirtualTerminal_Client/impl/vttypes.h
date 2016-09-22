@@ -63,9 +63,9 @@ class vtObjectObjectPointer_c;
 class vtObjectMacro_c;
 class vtObjectArchedBarGraph_c;
 
-class vtObjectAuxiliaryFuntion_c;
+class vtObjectAuxiliaryFunction_c;
 class vtObjectAuxiliaryInput_c;
-class vtObjectAuxiliaryFuntion2_c;
+class vtObjectAuxiliaryFunction2_c;
 class vtObjectAuxiliaryInput2_c;
 class vtObjectAuxiliaryControlDesignatorObjectPointer_c;
 

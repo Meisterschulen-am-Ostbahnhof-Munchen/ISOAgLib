@@ -108,9 +108,9 @@ class iVtObjectInputAttributes_c;
 class iVtObjectObjectPointer_c;
 class iVtObjectMacro_c;
 
-class iVtObjectAuxiliaryFuntion_c;
+class iVtObjectAuxiliaryFunction_c;
 class iVtObjectAuxiliaryInput_c;
-class iVtObjectAuxiliaryFuntion2_c;
+class iVtObjectAuxiliaryFunction2_c;
 class iVtObjectAuxiliaryInput2_c;
 class iVtObjectAuxiliaryControlDesignatorObjectPointer_c;
 
