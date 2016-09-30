@@ -45,7 +45,9 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 \subsection Change_ZG 2.8.1 to 2.8.2
 
 Diagnostics:
- - Bugfix: DM1 will now be properly sent again after quick Deactivate/Activate
+ - Bugfix:
+   - DM1 will now be properly sent again after quick Deactivate/Activate
+   - Control Function Functionalities will now be answered Broadcast if request globally. 
  - Enhancement: Added support for J1939-71 Vehicle Identification
 
 VT-Client:

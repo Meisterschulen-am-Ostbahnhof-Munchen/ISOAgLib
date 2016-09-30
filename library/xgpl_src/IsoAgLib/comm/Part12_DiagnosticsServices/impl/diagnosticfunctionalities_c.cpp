@@ -147,16 +147,16 @@ DiagnosticFunctionalities_c::MultiSendEventHandlerProxy_c::reactOnStateChange(co
 
 
 bool
-DiagnosticFunctionalities_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* rpc_isoItemReceiver, ecutime_t )
+DiagnosticFunctionalities_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* isoItemSender, IsoItem_c* isoItemReceiver, ecutime_t )
 {
   if( !mrc_identItem.isClaimedAddress() )
     return false;
 
   // we're not Network Management, so don't answer requests from 0xFE
-  if( apc_isoItemSender == NULL )
+  if( isoItemSender == NULL )
     return false;
 
-  if( ( rpc_isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != rpc_isoItemReceiver ) )
+  if( ( isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != isoItemReceiver ) )
     return false; // request not adressed to us!
 
   switch( rui32_pgn )
@@ -174,15 +174,32 @@ DiagnosticFunctionalities_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
       }
       else
       {
-        if ( getMultiSendInstance4Comm().sendIsoBroadcast(
-              mrc_identItem.isoName(),
-              m_currentFunctionalities,
-              mui16_arrayLength,
-              CONTROL_FUNCTION_FUNCTIONALITIES_PGN,
-              &mt_multiSendEventHandler) )
-        { // Message successfully transmitted to multisend -> return true
-          mt_multiSendEventHandler.m_isMultiSendRunning = true;
-          return true;
+        if( isoItemReceiver != NULL )
+        { // dest-spec. request -> answer TP
+          if ( getMultiSendInstance4Comm().sendIsoTarget(
+                mrc_identItem.isoName(),
+                isoItemSender->isoName(),
+                m_currentFunctionalities,
+                mui16_arrayLength,
+                CONTROL_FUNCTION_FUNCTIONALITIES_PGN,
+                &mt_multiSendEventHandler) )
+          { // Message successfully started with multisend -> return true
+            mt_multiSendEventHandler.m_isMultiSendRunning = true;
+            return true;
+          }
+        }
+        else
+        { // broadcast request -> answer broadcast
+          if ( getMultiSendInstance4Comm().sendIsoBroadcast(
+                mrc_identItem.isoName(),
+                m_currentFunctionalities,
+                mui16_arrayLength,
+                CONTROL_FUNCTION_FUNCTIONALITIES_PGN,
+                &mt_multiSendEventHandler) )
+          { // Message successfully transmitted to multisend -> return true
+            mt_multiSendEventHandler.m_isMultiSendRunning = true;
+            return true;
+          }
         }
       }
     }
