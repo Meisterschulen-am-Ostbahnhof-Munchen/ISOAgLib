@@ -191,7 +191,6 @@ CommandHandler_c::sendCommandUpdateLanguagePool()
 bool
 CommandHandler_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
-  /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
   return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
                       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false, rppc_vtObjects, aui16_numObjects) // replaces COULD happen if user-triggered sequences are there.
       && sendCommand (0x12 /* Command: Object Pool Transfer --- Parameter: Object Pool Ready */,
@@ -727,15 +726,18 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
 #else
   STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
 #endif
-  if (mb_checkSameCommand && b_enableReplaceOfCmd && !mq_sendUpload.empty())
+
+  STL_NAMESPACE::list<SendUpload_c>& q_sendUpload = mq_sendUpload[ mu_sendPriority ];
+
+  if( mb_checkSameCommand && b_enableReplaceOfCmd && !q_sendUpload.empty() )
   { //get first equal command in queue
-    i_sendUpload = mq_sendUpload.begin();
+    i_sendUpload = q_sendUpload.begin();
     if ( men_uploadCommandState != UploadCommandIdle )
     { // the first item in the queue is currently in upload process - so do NOT use this for replacement, as the next action
       // after receive of the awaited ACK is simple erase of the first command
       ++i_sendUpload;
     }
-    for (; (p_queue == NULL) && (i_sendUpload != mq_sendUpload.end()); i_sendUpload++)
+    for (; (p_queue == NULL) && (i_sendUpload != q_sendUpload.end()); i_sendUpload++)
     { //first check if multisendstreamer is used!
       /* four cases:
       1. both use buffer
@@ -813,12 +815,12 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
 
   if( p_queue == NULL )
   {
-    const bool filledFromEmpty = mq_sendUpload.empty();
+    const bool wasFilledBefore = queueFilled();
 
-    mq_sendUpload.push_back (ar_sendUpload);
+    q_sendUpload.push_back (ar_sendUpload);
 
     // call after push(_back), so it's already available at call-time!
-    if( filledFromEmpty )
+    if( !wasFilledBefore )
       m_connection.notifyOnCommandQueueFilledFromEmpty();
   }
   else
@@ -837,132 +839,147 @@ CommandHandler_c::dumpQueue()
 #else
   STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
 #endif
-
-  for (i_sendUpload = mq_sendUpload.begin(); i_sendUpload != mq_sendUpload.end(); ++i_sendUpload)
+  for (unsigned prio=0; prio < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++prio)
   {
-    if (i_sendUpload->mssObjectString == NULL)
+    INTERNAL_DEBUG_DEVICE << "Queue with Priority " << prio << ": ";
+
+    for (i_sendUpload = mq_sendUpload[ prio ].begin(); i_sendUpload != mq_sendUpload[ prio ].end(); ++i_sendUpload)
     {
-      for (uint8_t i=0; i<=7; i++)
+      if (i_sendUpload->mssObjectString == NULL)
       {
-        INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(i_sendUpload->vec_uploadBuffer[i]);
-      }
-    }
-    else
-    {
-      MultiSendPkg_c msp;
-      int i_strSize = i_sendUpload->mssObjectString->getStreamer()->getStreamSize();
-      for (int i=0; i < i_strSize; i+=7) {
-        i_sendUpload->mssObjectString->getStreamer()->setDataNextStreamPart (&msp, (unsigned char) ((i_strSize - i) > 7 ? 7 : (i_strSize-i)));
-        for (uint8_t j=1; j<=7; j++)
+        for (uint8_t i=0; i<=7; i++)
         {
-          INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(msp[j]);
+          INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(i_sendUpload->vec_uploadBuffer[i]);
+        }
+      }
+      else
+      {
+        MultiSendPkg_c msp;
+        int i_strSize = i_sendUpload->mssObjectString->getStreamer()->getStreamSize();
+        for (int i=0; i < i_strSize; i+=7) {
+          i_sendUpload->mssObjectString->getStreamer()->setDataNextStreamPart (&msp, (unsigned char) ((i_strSize - i) > 7 ? 7 : (i_strSize-i)));
+          for (uint8_t j=1; j<=7; j++)
+          {
+            INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(msp[j]);
+          }
         }
       }
     }
+    INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
-  INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 }
 
 bool
 CommandHandler_c::tryToStart()
 {
-  if( mq_sendUpload.empty() )
-    return false;
+  for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
+  {
+    if( queueFilled( priority ) )
+    {
+      STL_NAMESPACE::list<SendUpload_c>& q_sendUpload = mq_sendUpload[ priority ];
 
-  men_uploadCommandState = UploadCommandWithAwaitingResponse;
-  SendUpload_c &actSend = mq_sendUpload.front();
+
+      men_uploadCommandState = UploadCommandWithAwaitingResponse;
+      mu_sendPriorityOfLastCommand = priority;
+
+      SendUpload_c &actSend = q_sendUpload.front();
+
 
 #ifdef WORKAROUND_PREMATURE_TP_RESPONSES
-  m_queuedResponseErrByte = 0; // no response stored.
+      m_queuedResponseErrByte = 0; // no response stored.
 #endif
 
-   /// Use Multi or Single CAN-Pkgs?
-  //////////////////////////////////
+      /// Use Multi or Single CAN-Pkgs?
+      //////////////////////////////////
 
-  if ((actSend.mssObjectString == NULL) && (actSend.vec_uploadBuffer.size() < 9))
-  { /// Fits into a single CAN-Pkg!
-    if (actSend.vec_uploadBuffer[0] == 0x11)
-    { /// Handle special case of LanguageUpdate / UserPoolUpdate
-      if (actSend.ppc_vtObjects)
-      { /// User triggered Partial Pool Update
-        m_connection.uploadPoolState().initObjectPoolUploadingPhases(
-          UploadPoolState_c::UploadPoolTypeUserPoolUpdate,
-          actSend.ppc_vtObjects,
-          actSend.ui16_numObjects );
+      if( (actSend.mssObjectString == NULL) && (actSend.vec_uploadBuffer.size() < 9) )
+      { /// Fits into a single CAN-Pkg!
+        if( actSend.vec_uploadBuffer[0] == 0x11 )
+        { /// Handle special case of LanguageUpdate / UserPoolUpdate
+          if( actSend.ppc_vtObjects )
+          { /// User triggered Partial Pool Update
+            m_connection.uploadPoolState().initObjectPoolUploadingPhases(
+              UploadPoolState_c::UploadPoolTypeUserPoolUpdate,
+              actSend.ppc_vtObjects,
+              actSend.ui16_numObjects );
+          }
+          else
+          { /// Language Pool Update
+            m_connection.uploadPoolState().initObjectPoolUploadingPhases(
+              UploadPoolState_c::UploadPoolTypeLanguageUpdate );
+          }
+          m_connection.uploadPoolState().startCurrentUploadPhase();
+
+          men_uploadCommandState = UploadCommandPartialPoolUpdate; // There's NO response for command 0x11! And there may be multiple parts!
+          mi32_commandTimestamp = -1;
+          mi32_commandTimeout = -1;
+          // There's no timeout (hence no valid "mui8_commandParameter")
+          return true;
+        }
+        else
+        { /// normal 8 byte package
+          mi32_commandTimestamp = HAL::getTime();
+          mui8_commandParameter = actSend.vec_uploadBuffer[0];
+
+          // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
+          m_connection.sendMessage(
+            actSend.vec_uploadBuffer[0], actSend.vec_uploadBuffer[1], actSend.vec_uploadBuffer[2], actSend.vec_uploadBuffer[3],
+            actSend.vec_uploadBuffer[4], actSend.vec_uploadBuffer[5], actSend.vec_uploadBuffer[6], actSend.vec_uploadBuffer[7] );
+        }
+      }
+      else if( (actSend.mssObjectString != NULL) && (actSend.mssObjectString->getStreamer()->getStreamSize() < 9) )
+      { /// Fits into a single CAN-Pkg!
+        mi32_commandTimestamp = HAL::getTime();
+        mui8_commandParameter = actSend.mssObjectString->getStreamer()->getFirstByte();
+
+        uint8_t ui8_len = actSend.mssObjectString->getStreamer()->getStreamSize();
+
+        uint8_t data[8];
+        actSend.mssObjectString->getStreamer()->set5ByteCommandHeader( data );
+        int i = 5;
+        for( ; i < ui8_len; ++i ) data[i] = actSend.mssObjectString->getStreamer()->getStringToStream()[i - 5];
+        for( ; i < 8; ++i ) data[i] = 0xFF; // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
+
+        m_connection.sendMessage(
+          data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7] );
+      }
+      else if( actSend.mssObjectString == NULL )
+      { /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
+        mi32_commandTimestamp = -1; // will get set on SendSuccess
+        mui8_commandParameter = actSend.vec_uploadBuffer[0];
+
+        (void)getMultiSendInstance( m_connection.getMultitonInst() ).sendIsoTarget(
+          m_connection.getIdentItem().isoName(),
+          m_connection.getVtServerInst().getIsoName(),
+          &actSend.vec_uploadBuffer.front(),
+          actSend.vec_uploadBuffer.size(), ECU_TO_VT_PGN, this );
       }
       else
-      { /// Language Pool Update
-        m_connection.uploadPoolState().initObjectPoolUploadingPhases(
-          UploadPoolState_c::UploadPoolTypeLanguageUpdate );
+      {
+        mi32_commandTimestamp = -1; // will get set on SendSuccess
+        mui8_commandParameter = actSend.mssObjectString->getStreamer()->getFirstByte();
+
+        (void)getMultiSendInstance( m_connection.getMultitonInst() ).sendIsoTarget(
+          m_connection.getIdentItem().isoName(),
+          m_connection.getVtServerInst().getIsoName(),
+          (IsoAgLib::iMultiSendStreamer_c*)actSend.mssObjectString->getStreamer(),
+          ECU_TO_VT_PGN, this );
       }
-      m_connection.uploadPoolState().startCurrentUploadPhase();
-
-      men_uploadCommandState = UploadCommandPartialPoolUpdate; // There's NO response for command 0x11! And there may be multiple parts!
-      mi32_commandTimestamp = -1;
-      mi32_commandTimeout = -1;
-      // There's no timeout (hence no valid "mui8_commandParameter")
-      return true;
-    }
-    else
-    { /// normal 8 byte package
-      mi32_commandTimestamp = HAL::getTime();
-      mui8_commandParameter = actSend.vec_uploadBuffer [0];
-
-      // Shouldn't be less than 8, else we're messin around with vec_uploadBuffer!
-      m_connection.sendMessage(
-        actSend.vec_uploadBuffer [0], actSend.vec_uploadBuffer [1], actSend.vec_uploadBuffer [2], actSend.vec_uploadBuffer [3],
-        actSend.vec_uploadBuffer [4], actSend.vec_uploadBuffer [5], actSend.vec_uploadBuffer [6], actSend.vec_uploadBuffer [7]);
-    }
-  }
-  else if ((actSend.mssObjectString != NULL) && (actSend.mssObjectString->getStreamer()->getStreamSize() < 9))
-  { /// Fits into a single CAN-Pkg!
-    mi32_commandTimestamp = HAL::getTime();
-    mui8_commandParameter = actSend.mssObjectString->getStreamer()->getFirstByte();
-
-    uint8_t ui8_len = actSend.mssObjectString->getStreamer()->getStreamSize();
-
-    uint8_t data[ 8 ];
-    actSend.mssObjectString->getStreamer()->set5ByteCommandHeader( data );
-    int i=5;
-    for (; i < ui8_len; ++i) data[ i ] = actSend.mssObjectString->getStreamer()->getStringToStream() [i-5];
-    for (; i < 8;       ++i) data[ i ] = 0xFF; // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
-    
-    m_connection.sendMessage(
-      data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ], data[ 6 ], data[ 7 ] );   
-  }
-  else if (actSend.mssObjectString == NULL)
-  { /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    mi32_commandTimestamp = -1; // will get set on SendSuccess
-    mui8_commandParameter = actSend.vec_uploadBuffer [0];
-
-    ( void )getMultiSendInstance( m_connection.getMultitonInst() ).sendIsoTarget(
-      m_connection.getIdentItem().isoName(),
-      m_connection.getVtServerInst().getIsoName(),
-      &actSend.vec_uploadBuffer.front(),
-      actSend.vec_uploadBuffer.size(), ECU_TO_VT_PGN, this );
-  }
-  else
-  {
-    mi32_commandTimestamp = -1; // will get set on SendSuccess
-    mui8_commandParameter = actSend.mssObjectString->getStreamer()->getFirstByte();
-
-    ( void )getMultiSendInstance( m_connection.getMultitonInst() ).sendIsoTarget(
-      m_connection.getIdentItem().isoName(),
-      m_connection.getVtServerInst().getIsoName(),
-      (IsoAgLib::iMultiSendStreamer_c*)actSend.mssObjectString->getStreamer(),
-      ECU_TO_VT_PGN, this );
-  }
 
 #if DEBUG_VTCOMM
-  INTERNAL_DEBUG_DEVICE << "Waiting for response to " << unsigned( mui8_commandParameter ) << "... " << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Waiting for response to " << unsigned( mui8_commandParameter ) << "... " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  mi32_commandTimeout = ((mui8_commandParameter >= 0xD0) && (mui8_commandParameter <= 0xD2))
-                          ? s_timeOutVersionLabel
-                          : (mui8_commandParameter == 0x12) ? s_timeOutEndOfObjectPool
-                            /* default: sending Annex F. */ : s_timeOutNormalCommand;
+      mi32_commandTimeout = ((mui8_commandParameter >= 0xD0) && (mui8_commandParameter <= 0xD2))
+        ? s_timeOutVersionLabel
+        : (mui8_commandParameter == 0x12) ? s_timeOutEndOfObjectPool
+          /* default: sending Annex F. */ : s_timeOutNormalCommand;
 
-  return true;
+      return true;
+    }
+  }
+
+  return false;
 }
 
 
@@ -972,24 +989,27 @@ CommandHandler_c::tryToStart()
 void
 CommandHandler_c::finishUploadCommand()
 {
-  isoaglib_assert( !mq_sendUpload.empty() );
+  STL_NAMESPACE::list<SendUpload_c>& q_sendUpload = mq_sendUpload[ mu_sendPriorityOfLastCommand ];
+
+  isoaglib_assert( !q_sendUpload.empty() );
   isoaglib_assert( men_uploadCommandState != UploadCommandIdle );
 
-  mq_sendUpload.pop_front();
+  q_sendUpload.pop_front();
 
-  #if DEBUG_VTCOMM
+#if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE
     << "Dequeued (after success, timeout, whatever..): " 
-    << ( mq_sendUpload.size()+1 ) << " -> " << mq_sendUpload.size() << "."
+    << ( q_sendUpload.size()+1 ) << " -> " << q_sendUpload.size() << "."
     << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+#endif
 
   mi32_commandTimestamp = -1;
 #ifdef WORKAROUND_PREMATURE_TP_RESPONSES
   m_queuedResponseErrByte = 0; // actually not used in UploadCommandIdle, just as the timestamp above!
 #endif
   men_uploadCommandState = UploadCommandIdle;
-  m_connection.notifyOnFinishedCommand( !mq_sendUpload.empty() );
+
+  m_connection.notifyOnFinishedCommand( queueFilled() );
 }
 
 
@@ -1399,7 +1419,10 @@ CommandHandler_c::finalizeCommand( unsigned errByte, const uint8_t *dataBytes )
 void
 CommandHandler_c::doStop()
 {
-  mq_sendUpload.clear();
+  for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
+  {
+    mq_sendUpload[ priority ].clear;
+  }
 
   men_uploadCommandState = UploadCommandIdle;
 }

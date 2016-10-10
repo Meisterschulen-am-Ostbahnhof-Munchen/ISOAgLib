@@ -264,6 +264,11 @@
 #  define CONFIG_VT_CLIENT_OP_BITMAPS_MEMORY_MODIFIER
 #endif
 
+// define how many send-queues should be set up.
+#ifndef CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES
+#  define CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES 1
+#endif
+
 // Don't keep this too low, as it will also be used for all other commands!
 #ifndef CONFIG_FS_CLIENT_MAX_WRITE_SIZE
 #  define CONFIG_FS_CLIENT_MAX_WRITE_SIZE 240

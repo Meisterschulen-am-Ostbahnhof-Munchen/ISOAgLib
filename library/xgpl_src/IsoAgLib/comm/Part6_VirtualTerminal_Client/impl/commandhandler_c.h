@@ -124,7 +124,30 @@ public:
   bool sendNonVolatileDeleteVersion( const char* versionLabel7chars );
 
   bool queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd=true);
-  unsigned getQueueSize() const { return mq_sendUpload.size(); }
+  unsigned getQueueSize() const {
+    unsigned int sz = 0;
+    for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
+      sz += getQueueSize( priority );
+
+    return sz;
+  }
+  unsigned getQueueSize( unsigned priority ) const {
+    isoaglib_assert( priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES );
+    return mq_sendUpload[ priority ].size();
+  }
+
+  bool queueFilled() const { 
+    for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
+    {
+      if( queueFilled( priority ) )
+        return true;
+    }
+    return false;
+  }
+
+  bool queueFilled( unsigned priority ) const { 
+    return !mq_sendUpload[ priority ].empty();
+  }
 
   void doStop();
   bool tryToStart();
@@ -132,6 +155,8 @@ public:
   uint8_t timeEventCommandTimeoutCheck() const;
   
   void sendCommandsToBus( bool commandsToBus ) { mb_commandsToBus = commandsToBus; }
+  void setSendPriority( unsigned priority ) { isoaglib_assert( priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ); mu_sendPriority = priority; }
+  unsigned getSendPriority() const { return mu_sendPriority; }
   void enableSameCommandCheck() { mb_checkSameCommand = true; }
   void disableSameCommandCheck() { mb_checkSameCommand = false; }
 
@@ -156,10 +181,14 @@ private:
 #endif
 
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >  mq_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >  mq_sendUpload[ CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ];
   #else
-  STL_NAMESPACE::list<SendUpload_c>  mq_sendUpload;
+  STL_NAMESPACE::list<SendUpload_c> mq_sendUpload[ CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ];
   #endif
+
+  unsigned mu_sendPriority;
+  unsigned mu_sendPriorityOfLastCommand;
+
   static SendUpload_c msc_tempSendUpload;
 
   bool mb_checkSameCommand;
@@ -178,9 +207,10 @@ CommandHandler_c::CommandHandler_c( VtClientConnection_c &connection )
   , m_queuedResponseErrByte( 0 )
 //, m_queuedResponsePkg
 #endif
-  , mq_sendUpload()
   , mb_checkSameCommand( true )
   , mb_commandsToBus( true )
+  , mu_sendPriority( 0 )
+  , mu_sendPriorityOfLastCommand( 0 )
 {
 }
 

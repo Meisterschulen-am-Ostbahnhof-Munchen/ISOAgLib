@@ -58,6 +58,8 @@ VT-Client:
      - Allow match of "functional identical WS", can be specified via callback.
      - Don't forward Input activations when some Learn-Mode bit is set.
      - Allow Function Type of Aux Function Type 2 objects to be modified before pool upload.
+   - Command Queue: Supporting multiple send-queues now, based on priority.
+     The number of queues can be set with CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES
  
 TC-Client:
  - Bugfix: 

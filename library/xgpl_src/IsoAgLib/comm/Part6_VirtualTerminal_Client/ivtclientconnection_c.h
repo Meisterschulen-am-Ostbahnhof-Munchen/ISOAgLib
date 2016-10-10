@@ -31,6 +31,12 @@ public:
      ON (true) again. */     
   void sendCommandsToBus( bool commandsToBus );
 
+  // specify in which command-queue all following commands will be placed.
+  // 0 is the highest priority!
+  // Range is [0..CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES-1]
+  void setSendPriority( unsigned priority );
+  unsigned getSendPriority() const;
+
   bool sendCommandChangeActiveMask       (uint16_t aui16_objectUid, uint16_t aui16_maskId, bool b_enableReplaceOfCmd = true );
   bool sendCommandChangeNumericValue     (uint16_t aui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeAttribute        (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
@@ -53,6 +59,7 @@ public:
   bool setUserPreset( const IsoAgLib::iAux2Assignment_c & );
 
   unsigned getCommandQueueSize() const { return commandHandler().getQueueSize(); }
+  unsigned getCommandQueueSize( unsigned priority ) const { return commandHandler().getQueueSize( priority ); }
 
   //! @param versionLabel7chars == NULL: Use VersionLabel used for Uploading/Loading (must be given at init!)
   //!                                    This includes the language-code for multi-language pools!
@@ -115,7 +122,19 @@ iVtClientConnection_c::sendNonVolatileDeleteVersion( const char* versionLabel7ch
 inline void
 iVtClientConnection_c::sendCommandsToBus( bool commandsToBus ) 
 {
-  return commandHandler().sendCommandsToBus( commandsToBus );
+  commandHandler().sendCommandsToBus( commandsToBus );
+}
+
+inline void
+iVtClientConnection_c::setSendPriority( unsigned priority )
+{
+  commandHandler().setSendPriority( priority );
+}
+
+inline unsigned
+iVtClientConnection_c::getSendPriority() const
+{
+  return commandHandler().getSendPriority();
 }
 
 inline bool
