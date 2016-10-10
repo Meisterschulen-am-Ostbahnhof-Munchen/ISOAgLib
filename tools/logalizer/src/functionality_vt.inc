@@ -8,10 +8,13 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
 
   if (at_ptrFrame->dataOctet(0) < 0x10)
     out << "Activation ";
-  if ((at_ptrFrame->dataOctet(0) >=0x10) && (at_ptrFrame->dataOctet(0) < 0xF0))
+  else if ((at_ptrFrame->dataOctet(0) >=0x20) && (at_ptrFrame->dataOctet(0) < 0x30))
+    out << "Auxiliary ";
+  else if ((at_ptrFrame->dataOctet(0) >=0x90) && (at_ptrFrame->dataOctet(0) < 0xF0))
     out << "Command ";
 
   int8_t i8_uidBytePos = -1;
+  char str_uidBytePos[ 100 ] = " ObjectID=";
 
   switch (at_ptrFrame->dataOctet(0))
   {
@@ -28,6 +31,16 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
     case 0x11: out << "Object Pool Transfer"; break;
     case 0x12: out << "End of Object Pool"; break;
 
+    case 0x20: out << "Auxiliary Assignment Type 1"; i8_uidBytePos = 4; break;
+    case 0x21: out << "Auxiliary Input Type 1 status"; break;
+
+    case 0x22: out << "Preferred Assignment"; break;
+    case 0x23: out << "Input Type 2 Maintenance"; i8_uidBytePos = 2; strcpy( str_uidBytePos, " MIC=" ); if (at_ptrFrame->dataOctet(4-1)) out << " -READY-"; else out << " -INIT'-"; break;
+    case 0x24: out << "Assignment Type 2"; i8_uidBytePos = 13; break;
+    case 0x25: out << "Input Status Type 2 Enable"; i8_uidBytePos = 2; break;
+    case 0x26: out << "Input Type 2 Status message"; i8_uidBytePos = 2; break;
+    case 0x27: out << "Capabilities"; break;
+
     case 0x92: out << "ESC"; i8_uidBytePos = 2; break;
 
     case 0xC0: out << "Get Memory"; break;
@@ -38,6 +51,9 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
     case 0xD0: out << "Store Version"; break;
     case 0xD1: out << "Load Version"; break;
     case 0xD2: out << "Delete Version"; break;
+
+    case 0xDF: // break left out intentionally
+    case 0xE0: out << "Get Versions"; break;
 
     case 0xA0: out << "Hide/Show Object"; i8_uidBytePos = 2; if (at_ptrFrame->dataOctet(4-1)) out << " -show-"; else out << " -hide-"; break;
     case 0xA1: out << "Enable/Disable Object"; i8_uidBytePos = 2; if (at_ptrFrame->dataOctet(4-1)) out << " -enable-"; else out << " -disable-"; break;
@@ -92,19 +108,37 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
     case 0xFF: out << "Working Set Maintenance"; break;
   }
   if (i8_uidBytePos > 0)
-    out << std::dec << " ObjectID=" <<((uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos+1-1)<<8)) | (uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos-1))));
+    out << std::dec << str_uidBytePos <<((uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos+1-1)<<8)) | (uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos-1))));
 
   return out.str();
 }
 
+bool auxDirectionToVt( uint8_t auxByte )
+{
+  switch( auxByte )
+  {
+    case 0x20: return false; // "Auxiliary Assignment Type 1";
+    case 0x21: return false; // "Auxiliary Input Type 1 status"; break;
+    
+    case 0x22: return true;  // "Preferred Assignment"; break;
+    case 0x23: return true;  // "Input Type 2 Maintenance"; i8_uidBytePos = 2; strcpy( str_uidBytePos, " MIC=" ); break;
+    case 0x24: return false; // "Assignment Type 2"; i8_uidBytePos = 13; break;
+    case 0x25: return false; // "Input Status Type 2 Enable"; i8_ui8BytePos = 2; break;
+    case 0x26: return false; // "Input Type 2 Status message"; i8_uidBytePos = 2; break;
+    case 0x27: return true;  // "Capabilities"; break;
+    default:   return true;
+  }
+}
 
 std::string
 interpretePgnsVtFromEcu( PtrDataFrame_t at_ptrFrame )
 {
-  std::string result(
-    partiallyInterpretePgnsVtEcu(at_ptrFrame, false) );
+  const uint8_t gfByte = at_ptrFrame->dataOctet(0);
+  bool const cb_response = ((gfByte >= 0x20) && (gfByte <= 0x2F)) ? !auxDirectionToVt(gfByte) : (gfByte < 0x10);
 
-  bool const cb_response = at_ptrFrame->dataOctet(0) < 0x10;
+  std::string result(
+    partiallyInterpretePgnsVtEcu(at_ptrFrame, cb_response) );
+
   if (cb_response)
     result += " Response";
 
@@ -119,9 +153,8 @@ interpretePgnsVtFromEcu( PtrDataFrame_t at_ptrFrame )
 std::string
 interpretePgnsVtToEcu( PtrDataFrame_t at_ptrFrame )
 {
-  bool const cb_response =
-    (at_ptrFrame->dataOctet(0) >=0x10) &&
-    (at_ptrFrame->dataOctet(0) < 0xF0);
+  const uint8_t gfByte = at_ptrFrame->dataOctet(0);
+  bool const cb_response = ((gfByte >= 0x20) && (gfByte <= 0x2F)) ? auxDirectionToVt(gfByte) : ( (gfByte >=0x10) && (gfByte < 0xF0) );
 
   std::string result(
     partiallyInterpretePgnsVtEcu(at_ptrFrame, cb_response) );
