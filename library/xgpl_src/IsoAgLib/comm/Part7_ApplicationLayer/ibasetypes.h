@@ -310,6 +310,62 @@ enum TimeStandard_t
   TimeStandardUnknown
 };
 
+enum DistanceUnit_t {
+  DistanceUnitMetric = 0,      ///< Unit type is marked explicit as Metric (kilometres, metres, ...)
+  DistanceUnitImperialUS = 1,  ///< Unit type is marked explicit as Imperial/US (miles, feet, ...)
+  DistanceUnitReserved = 2,    ///< Unit type is marked explicit as Reserved
+  DistanceUnitNotAvailable = 3 ///< Unit type is not available/no action/not changed
+};
+
+enum AreaUnit_t {
+  AreaUnitMetric = 0,      ///< Unit type is marked explicit as Metric (hectares or square metres)
+  AreaUnitImperialUS = 1,  ///< Unit type is marked explicit as Imperial/US (acres or square feet)
+  AreaUnitReserved = 2,    ///< Unit type is marked explicit as Reserved
+  AreaUnitNotAvailable = 3 ///< Unit type is not available/no action/not changed
+};
+
+enum VolumeUnit_t {
+  VolumeUnitMetric = 0,      ///< Unit type is marked explicit as Metric (litre)
+  VolumeUnitImperial = 1,    ///< Unit type is marked explicit as Imperial (gallon)
+  VolumeUnitUS = 2,          ///< Unit type is marked explicit as US (gallon)
+  VolumeUnitNotAvailable = 3 ///< Unit type is not available/no action/not changed
+};
+
+enum MassUnit_t {
+  MassUnitMetric = 0,      ///< Unit type is marked explicit as Metric (tonnes, kilograms, ...)
+  MassUnitImperial = 1,    ///< Unit type is marked explicit as Imperial (long tons, pounds, ...)
+  MassUnitUS = 2,          ///< Unit type is marked explicit as US (short tons, pounds, ...)
+  MassUnitNotAvailable = 3 ///< Unit type is not available/no action/not changed
+};
+
+enum TemperatureUnit_t {
+  TemperatureUnitMetric = 0,      ///< Unit type is marked explicit as Metric (degree Celsius, degrees Kelvin, ...)
+  TemperatureUnitImperialUS = 1,  ///< Unit type is marked explicit as Imperial/US (degress Fahrenheit, ...)
+  TemperatureUnitReserved = 2,    ///< Unit type is marked explicit as Reserved
+  TemperatureUnitNotAvailable = 3 ///< Unit type is not available/no action/not changed
+};
+
+enum PressureUnit_t {
+  PressureUnitMetric = 0,      ///< Unit type is marked explicit as Metric (kilopascals, pascals, ...)
+  PressureUnitImperialUS = 1,  ///< Unit type is marked explicit as Imperial/US (pounds per square inch, ...)
+  PressureUnitReserved = 2,    ///< Unit type is marked explicit as Reserved
+  PressureUnitNotAvailable = 3 ///< Unit type is not available/no action/not changed
+};
+
+enum ForceUnit_t {
+  ForceUnitMetric = 0,      ///< Unit type is marked explicit as Metric (newtons, ...)
+  ForceUnitImperialUS = 1,  ///< Unit type is marked explicit as Imperial/US (pounds force, ...)
+  ForceUnitReserved = 2,    ///< Unit type is marked explicit as Reserved
+  ForceUnitNotAvailable = 3 ///< Unit type is not available/no action/not changed
+};
+
+enum UnitsSystem_t {
+  UnitsSystemMetric = 0,      ///< Unit type for all other units is marked explicit as Metric
+  UnitsSystemImperial = 1,    ///< Unit type for all other units is marked explicit as Imperial
+  UnitsSystemUS = 2,          ///< Unit type for all other units is marked explicit as US
+  UnitsSystemNotAvailable = 3 ///< Unit type for all other units is not available/no action/not changed
+};
+
 struct iDate_s {
   uint16_t year;
   uint8_t month;
