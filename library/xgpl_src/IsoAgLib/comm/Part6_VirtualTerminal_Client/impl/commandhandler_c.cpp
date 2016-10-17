@@ -1421,7 +1421,7 @@ CommandHandler_c::doStop()
 {
   for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
   {
-    mq_sendUpload[ priority ].clear;
+    mq_sendUpload[ priority ].clear();
   }
 
   men_uploadCommandState = UploadCommandIdle;
