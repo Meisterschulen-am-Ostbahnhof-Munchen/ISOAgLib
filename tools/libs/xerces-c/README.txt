@@ -17,4 +17,13 @@ Download:
 
 = Linux =
 
-Favor package libxerces-c2-dev over libxerces-c-dev.
+Favor package libxerces-c2-dev over libxerces-c-dev. If these are no longer supported
+    (as is decribed here: https://launchpad.net/ubuntu/wily/+source/xerces-c2)
+on your packaging system, you can either build them by hand or you can grab the following DEB file:
+
+    https://launchpad.net/ubuntu/+source/xerces-c2/2.8.0+deb1-3build2/+build/7763264
+
+Then install by
+
+    sudo dpkg -i libxerces-c28_2.8.0+deb1-3build2_i386.deb 
+    sudo dpkg -i libxerces-c2

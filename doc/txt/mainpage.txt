@@ -73,6 +73,9 @@ CAN-Server:
  - Bugfix: When CAN-Card can't be opened, don't abort(), but exit().
  - Enhancement: Allow to be quit properly using "quit" or "exit".
  
+vt2iso:
+ - README.TXT adapted regarding installing of Xerces library under newer Linux distributions.
+ 
 Proprietary PGN:
  - Bugfix: Registering multiple PS/IdentItems in PropB and multiple IdentItem in PropA didn't work properly when done dynamically
 
