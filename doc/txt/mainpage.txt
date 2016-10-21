@@ -60,6 +60,7 @@ VT-Client:
      - Allow Function Type of Aux Function Type 2 objects to be modified before pool upload.
    - Command Queue: Supporting multiple send-queues now, based on priority.
      The number of queues can be set with CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES
+   - Added defines for VT Version 4 Button/Key abort code.
  
 TC-Client:
  - Bugfix: 

@@ -24,6 +24,8 @@
 #define BUTTON_HAS_BEEN_RELEASED 0
 #define BUTTON_HAS_BEEN_PRESSED 1
 #define BUTTON_IS_STILL_HELD 2
+#define BUTTON_PRESS_ABORTED 3
+// BUTTON_PRESS_ABORTED is only valid from VT Version 4, but maybe lower versioned VTs do send it also...
 
 #define BUTTON_HAS_BEEN_UNLATCHED 0
 #define BUTTON_HAS_BEEN_LATCHED 1
@@ -31,6 +33,10 @@
 #define KEY_HAS_BEEN_RELEASED 0
 #define KEY_HAS_BEEN_PRESSED 1
 #define KEY_IS_STILL_HELD 2
+#define KEY_IS_STILL_PRESSED 2
+#define KEY_PRESS_ABORTED 3
+// KEY_IS_STILL_HELD is the obsolete/wrong naming. (Although it means the same :-)
+// KEY_PRESS_ABORTED is only valid from VT Version 4, but maybe lower versioned VTs do send it also...
 
 #define VT_OBJECT_TYPE_WORKING_SET 0
 #define VT_OBJECT_TYPE_DATA_MASK 1
