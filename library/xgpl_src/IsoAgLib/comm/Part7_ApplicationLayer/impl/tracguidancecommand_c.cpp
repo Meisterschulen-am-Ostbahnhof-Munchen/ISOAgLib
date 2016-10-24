@@ -31,7 +31,7 @@ TracGuidanceCommand_c &getTracGuidanceCommandInstance( unsigned instance )
 }
 
 
-bool TracGuidanceCommand_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+bool TracGuidanceCommand_c::config_base ( IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
 {
   //call config for handling which is base data independent
   //if something went wrong leave function before something is configured

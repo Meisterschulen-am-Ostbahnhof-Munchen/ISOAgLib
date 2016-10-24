@@ -36,7 +36,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     MACRO_MULTITON_GET_INSTANCE_BODY(TracMove_c, PRT_INSTANCE_CNT, instance);
   }
 
-  bool TracMove_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+  bool TracMove_c::config_base ( IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();

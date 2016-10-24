@@ -17,6 +17,7 @@
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticfunctionalities_c.h>
 #include "tracgeneral_c.h"
 #include "tracpto_c.h"
 
@@ -51,8 +52,25 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   }
 
 
-  bool TracGeneral_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
-  { // set configure values
+  bool TracGeneral_c::config_base ( IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+  {
+    if(NULL != apc_ident)
+    {
+      switch(at_identMode)
+      {
+        case IsoAgLib::IdentModeTractor:
+          // will be removed soon
+          break;
+        case IsoAgLib::IdentModeImplement:
+          apc_ident->getDiagnosticFunctionalities().addFunctionalitiesBasicTractorECU(
+              true /* implement */,
+              1 /* version */,
+              BasicTractorECUOptionsBitMask_t() );
+          break;
+      }
+    }
+
+    // set configure values
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
 

@@ -27,7 +27,7 @@ public:
     @param apc_ident pointer to the variable of the responsible member instance. If NULL the module cannot send requests!
     @return true -> configuration was successfull
   */
-  bool config ( const iIdentItem_c* ident ) { return TimeDate_c::config_base( ident, IsoAgLib::IdentModeImplement, 0 ); }
+  bool config ( iIdentItem_c* ident ) { return TimeDate_c::config_base( ident, IsoAgLib::IdentModeImplement, 0 ); }
 
   // @return true => Request was sent on the bus. false => IdentItem not properly claimed!
   bool requestUpdate() { return TimeDate_c::requestUpdate(); }

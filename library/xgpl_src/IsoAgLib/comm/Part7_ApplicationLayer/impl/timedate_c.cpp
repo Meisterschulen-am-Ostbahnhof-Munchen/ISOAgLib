@@ -87,7 +87,7 @@ namespace __IsoAgLib {
       getSchedulerInstance().registerTask(mt_task, 0);
   }
 
-  bool TimeDate_c::config_base( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask )
+  bool TimeDate_c::config_base ( IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask )
   {
     isoaglib_assert( at_identMode == IsoAgLib::IdentModeImplement );
     isoaglib_assert( aui16_suppressMask == 0 );

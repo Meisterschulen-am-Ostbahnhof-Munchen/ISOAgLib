@@ -87,7 +87,7 @@ namespace __IsoAgLib
         @param apc_ident pointer to the ident  instance (pointer enables automatic value update if var val is changed)
         @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       */
-    virtual bool config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0);
+    virtual bool config_base ( IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0);
 
 
     /** functions with actions, which must be performed periodically

@@ -37,7 +37,7 @@ private __IsoAgLib::TracGuidanceCommand_c {
       @param at_identMode set mode to either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool config ( const iIdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0 )
+  bool config ( iIdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0 )
   { return TracGuidanceCommand_c::config_base ( apc_ident, at_identMode, aui16_suppressMask ); }
 
   /* ******************************************* */

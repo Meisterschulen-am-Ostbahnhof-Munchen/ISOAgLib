@@ -37,7 +37,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
    */
-  bool TracPTO_c::config_base ( const IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+  bool TracPTO_c::config_base ( IdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
     //store old mode to decide to register or unregister from request for pgn
     //and set Periode for Scheduler_c
