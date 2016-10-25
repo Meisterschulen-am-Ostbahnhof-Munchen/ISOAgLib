@@ -1,6 +1,6 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = Complete
-PROJECT_NUMBER         = 2.8.1
+PROJECT_NUMBER         = 2.8.2-rc1
 OUTPUT_DIRECTORY       = 
 CREATE_SUBDIRS         = YES
 OUTPUT_LANGUAGE        = English
