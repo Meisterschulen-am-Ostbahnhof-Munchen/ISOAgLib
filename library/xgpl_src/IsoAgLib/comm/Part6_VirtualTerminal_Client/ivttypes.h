@@ -224,6 +224,13 @@ struct iAux2InputData
     else
       return true;
   }
+
+  // Some old Tasking Compiler needs this operator,
+  // so don't remove it!
+  bool operator!=(const iAux2InputData& arc_ref) const
+  {
+    return !(operator==(arc_ref));
+  }
 };
 
 
