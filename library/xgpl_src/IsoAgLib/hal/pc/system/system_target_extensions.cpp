@@ -146,17 +146,13 @@ clock_t getStartUpTime()
   return st_startup4Times;
 }
 #else // WIN32
-  #if defined( _MSC_VER )
-  // VC++ with native Win32 API provides very accurate
+  // VC++ with native Win32 API (and now even MinGW) provides very accurate
   // msec timer - use that
   int32_t getStartupTime()
   { // returns time in msec
     static int32_t st_startup4Times = timeGetTime();
     return st_startup4Times;
   }
-  #endif
-  // MinGW doesn't need getStartupTime() AS IT SEEMS RIGHT NOW.
-  // @todo SOON-175 needs to be compiled under MinGW and tested!!!!!!!!!!!!!!!!!!!!!!!!!!
 #endif
 
 
@@ -230,23 +226,12 @@ int16_t configWatchdog()
 }
 
 #ifdef WIN32
-  #if defined( _MSC_VER )
-  // VC++ with native Win32 API provides very accurate
+  // VC++ with native Win32 API (and now even MinGW) provides very accurate
   // msec timer - use that
   int32_t getTime()
   { // returns time in msec
     return timeGetTime() - getStartupTime();
   }
-  #else
-  // MinGW has neither simple access to timeGetTime()
-  // nor to gettimeofday()
-  // - but beware: at least in LINUX clock() measures
-  //   only the times of the EXE in CPU core
-  int32_t getTime()
-  { // returns time in msec
-    return (clock()/(CLOCKS_PER_SEC/1000));
-  }
-  #endif
 #else
 
 
