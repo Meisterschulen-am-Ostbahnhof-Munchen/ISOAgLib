@@ -55,6 +55,7 @@ VT-Client:
  - Enhancement:
    - AUX-N:
      - Allow application to set PA-Presets during runtime. 
+     - Allow application to clear PA-Presets during runtime.
      - Allow match of "functional identical WS", can be specified via callback.
      - Don't forward Input activations when some Learn-Mode bit is set.
      - Allow Function Type of Aux Function Type 2 objects to be modified before pool upload.

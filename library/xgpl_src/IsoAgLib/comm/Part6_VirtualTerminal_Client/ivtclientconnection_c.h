@@ -54,9 +54,14 @@ public:
   /**
    * After assignments have been initially loaded, the application can activate some "presets"
    * In case of error, the other functions that were found were still set!
+   * Two actions are performed independently:
+   * 1. clear ALL current PA entries. This works even if the "assignments" list is empty.
+   * 2. set all PAs from the "assignments" list. If the list is empty, nothing is set.
+   * @param firstClearAllPAs before setting the assignments, clear all assignments first
+   * @param assignments A list of UserPreset-/Preferred-Assignments. 
    * @return TRUE: All functions were found/valid, FALSE: One function wasn't valid!
    */
-  bool setUserPreset( const IsoAgLib::iAux2Assignment_c & );
+  bool setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assignments );
 
   unsigned getCommandQueueSize() const { return commandHandler().getQueueSize(); }
   unsigned getCommandQueueSize( unsigned priority ) const { return commandHandler().getQueueSize( priority ); }
@@ -101,9 +106,9 @@ private:
 
 
 inline bool
-iVtClientConnection_c::setUserPreset( const IsoAgLib::iAux2Assignment_c &assignments )
+iVtClientConnection_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assignments )
 {
-  return VtClientConnection_c::setUserPreset( assignments );
+  return VtClientConnection_c::setUserPreset( firstClearAllPAs, assignments );
 }
 
 

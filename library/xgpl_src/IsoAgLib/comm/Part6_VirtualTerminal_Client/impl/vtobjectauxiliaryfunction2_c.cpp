@@ -269,5 +269,12 @@ vtObjectAuxiliaryFunction2_c::hasPreferredAssigment() const
 }
 
 
+void
+vtObjectAuxiliaryFunction2_c::clearPreferredAssignments()
+{
+  ml_preferredAssignedInputCandidate.clear();
+}
+
+
 } // __IsoAgLib
 #endif

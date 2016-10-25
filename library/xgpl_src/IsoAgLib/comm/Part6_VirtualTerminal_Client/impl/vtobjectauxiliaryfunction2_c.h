@@ -63,6 +63,7 @@ private:
   bool getMatchingPreferredAssignedInputReady();
   void addPreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input);
   const std::list<IsoAgLib::iAux2InputData>& getRefPreferredAssignmentCandidates() const { return ml_preferredAssignedInputCandidate; }
+  void clearPreferredAssignments();
   
 private:
 

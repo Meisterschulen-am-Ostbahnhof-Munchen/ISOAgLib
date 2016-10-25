@@ -45,11 +45,12 @@ public:
 
   void loadAssignment();
 
+  // - if requested, clear all Preferred Assignments first.
   // - after assignments have been initially loaded, the application can activate some "presets"
   // - return if all functions were found/valid: true=OK, false=ERROR.
   // - in case of error, the other functions that were found were still set!
   // - set iAux2InputData.preserve = true to avoid that a function/input assignment is pushed aside when CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION is reached
-  bool setUserPreset( const IsoAgLib::iAux2Assignment_c &assigment );
+  bool setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assigment );
 
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>& getObjects() { return m_aux2Function; }

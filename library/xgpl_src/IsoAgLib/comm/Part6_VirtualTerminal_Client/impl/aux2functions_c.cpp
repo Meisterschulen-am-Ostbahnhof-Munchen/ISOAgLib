@@ -78,10 +78,18 @@ void Aux2Functions_c::loadAssignment() {
 
 // After assignments have been initially loaded, the application can activate some "presets"
 bool
-Aux2Functions_c::setUserPreset( const IsoAgLib::iAux2Assignment_c &assignments )
+Aux2Functions_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assignments )
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
   bool success = true;
+
+  if( firstClearAllPAs )
+  {
+    for( STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter )
+    {
+      iter->second->clearPreferredAssignments();
+    }
+  }
 
   for( IsoAgLib::iAux2AssignmentConstIterator_c i = assignments.begin(); i != assignments.end(); ++i ) {
     STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
@@ -98,6 +106,8 @@ Aux2Functions_c::setUserPreset( const IsoAgLib::iAux2Assignment_c &assignments )
 
   return success;
 #else
+  ( void )firstClearAllPAs;
+  ( void )assignments;
   return false;
 #endif
 }
