@@ -2,7 +2,7 @@
   can_server_sock.cpp: can server communicates with clients through
     sockets message forwarding to other clients
 
-  (C) Copyright 2009 - 2015 by OSB AG and developing partners
+  (C) Copyright 2009 - 2016 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

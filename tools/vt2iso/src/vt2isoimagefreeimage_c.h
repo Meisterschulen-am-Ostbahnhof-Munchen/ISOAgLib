@@ -2,7 +2,7 @@
   vt2isoimagefreeimage_c.h: image handling for vt2iso with
     paintlib library
 
-  (C) Copyright 2009 - 2015 by OSB AG and developing partners
+  (C) Copyright 2009 - 2016 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

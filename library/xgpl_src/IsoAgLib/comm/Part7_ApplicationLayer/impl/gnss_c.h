@@ -1,7 +1,7 @@
 /*
   gnss_c.h: Receiving GNSS Position, Direction and Date/Time.
 
-  (C) Copyright 2015 - 2015 by OSB AG and developing partners
+  (C) Copyright 2015 - 2016 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
