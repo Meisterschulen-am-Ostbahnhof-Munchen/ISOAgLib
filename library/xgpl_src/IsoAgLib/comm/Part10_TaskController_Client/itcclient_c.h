@@ -37,7 +37,7 @@ namespace IsoAgLib {
       iTcClientConnection_c* doConnect( const iIdentItem_c& identItem, const iTcClientServer_c& server, iDevicePool_c& pool );
       void                 dontConnect( const iIdentItem_c& identItem, const iTcClientServer_c& server );
 
-      // Peer Connections (direct PD, no DDOP)
+      // Peer Connections (direct PD, no DDOP). Must NOT be a TC/DL.
       iPdConnection_c* connectPeer(          const iIdentItem_c&, const iIsoItem_c& pdItem, iPdPool_c& );
       iPdConnection_c* connectPeerBroadcast( const iIdentItem_c&, iPdPool_c& );
 

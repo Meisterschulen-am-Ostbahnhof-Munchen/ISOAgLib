@@ -37,11 +37,9 @@ ProcessPkg_c::ProcessPkg_c( IsoAgLib::ProcData::CommandType_t cmd, uint16_t elem
   , mui16_element( element )
   , mui16_DDI( ddi )
 {
-  isoaglib_assert( men_command != IsoAgLib::ProcData::commandReserved1 );
-  isoaglib_assert( men_command != IsoAgLib::ProcData::commandReserved2 );
-  isoaglib_assert( men_command != IsoAgLib::ProcData::commandReserved3 );
-  isoaglib_assert( men_command != IsoAgLib::ProcData::commandReserved4 );
-  isoaglib_assert( men_command != IsoAgLib::ProcData::CommandUndefined );
+  isoaglib_assert( men_command != IsoAgLib::ProcData::SetValueAndAcknowledge );
+  isoaglib_assert( men_command != IsoAgLib::ProcData::ReservedB );
+  isoaglib_assert( men_command != IsoAgLib::ProcData::ReservedC );
 
   setIsoPgn( PROCESS_DATA_PGN );
   setIsoPri( 3 );
@@ -54,13 +52,12 @@ ProcessPkg_c::ProcessPkg_c( IsoAgLib::ProcData::CommandType_t cmd, uint16_t elem
   setInt32Data( 4, mi32_pdValue );
 }
 
-
 ProcessPkg_c::ProcessPkg_c( uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7 )
   : CanPkgExt_c()
   , mi32_pdValue( 0 )
-  , men_command( IsoAgLib::ProcData::CommandUndefined )
-  , mui16_element( 0 )
-  , mui16_DDI( 0 )
+  , men_command( static_cast< IsoAgLib::ProcData::CommandType_t >( d0 & 0x0F ) )
+  , mui16_element( uint16_t( d0 >> 4 ) | ( uint16_t( d1 ) << 4 ) )
+  , mui16_DDI( uint16_t( d2 )| ( uint16_t( d3 ) << 8 ) )
 {
   setIsoPgn( PROCESS_DATA_PGN );
   setIsoPri( 3 );

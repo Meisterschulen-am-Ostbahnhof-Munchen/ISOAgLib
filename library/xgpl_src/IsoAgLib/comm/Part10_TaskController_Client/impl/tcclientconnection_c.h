@@ -123,11 +123,30 @@ namespace __IsoAgLib {
       }
 #endif
 
-      void eventTaskStarted();
-      void eventTaskStopped();
-      void stopRunningMeasurement();
+      void eventTaskStartStop( bool start );
+
+      void notifyOnPeerDropOff( PdRemoteNode_c& pdRemoteNode ) { mc_csHandler.notifyOnPeerDropOff( pdRemoteNode ); }
 
     private:
+      enum ControlAssignmentMode_t {
+        AssignReceiver = 0,
+        UnassignReceiver = 1,
+        ReceiverAck = 2,
+        AssignTransmitter = 3,
+        UnassignTransmitter = 4,
+        TransmitterAck = 5,
+        Reserved6 = 6,
+        Reserved7 = 7,
+        Reserved8 = 8,
+        Reserved9 = 9,
+        Reserved10 = 10,
+        Reserved11 = 11,
+        Reserved12 = 12,
+        Reserved13 = 13,
+        Reserved14 = 14,
+        Reserved15 = 15,
+      };
+
       enum DevPoolState_t {
         PoolStateDisconnected,
         PoolStatePreconnecting,
@@ -178,13 +197,20 @@ namespace __IsoAgLib {
 
       void timeEvent();
 
-      virtual void processMsgTc( const ProcessPkg_c& );
+      void processMultiPacket( Stream_c &stream );
+      virtual void processProcMsg( const ProcessPkg_c& );
+      void processMsgTc( const ProcessPkg_c& data );
+
       virtual void processRequestDefaultDataLogging();
+
+      void processControlAssignment( bool assign, uint16_t elem, uint16_t ddi, const IsoName_c& name );
 
       void handleNack( int16_t ddi, int16_t element );
 
       void doCommand( ProcessDataMsg_t cmd, int32_t timeout = DEF_TimeOut_NormalCommand, uint8_t param = 0xff );
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
+
+      void stopRunningMeasurement();
 
       ISOAGLIB_LOCAL_PROXIES
 
@@ -202,6 +228,89 @@ namespace __IsoAgLib {
     private:
       MultiSendEventHandlerProxy_c m_multiSendEventHandler;
       MultiSendStreamerProxy_c m_multiSendStreamer;
+
+      class MultiReceiveClient_c : CanCustomer_c
+      {
+      public:
+        MultiReceiveClient_c( TcClientConnection_c& owner ) : m_owner( owner ) {}
+
+        virtual bool reactOnStreamStart( ReceiveStreamIdentifier_c const &, uint32_t aui32_totalLen )
+        { // currently only accept Peer Control Assignment commands.
+          return ( aui32_totalLen == 14 );
+        }
+
+        virtual bool processPartStreamDataChunk( Stream_c &stream, bool isFirstChunk, bool isLastChunk )
+        {
+          if( isLastChunk )
+            m_owner.processMultiPacket( stream );
+
+          return false; // don't keep stream.
+        }
+
+        // MultiReceiveClient_c shall not be copyable. Otherwise the
+        // reference to the containing object would become invalid.
+        MultiReceiveClient_c(MultiReceiveClient_c const &);
+        MultiReceiveClient_c &operator=(MultiReceiveClient_c const &);
+
+      private:
+        TcClientConnection_c &m_owner;
+      } mc_mrClient;
+
+      class ControlSourceHandler_c : SchedulerTask_c
+      {
+      public:
+        ControlSourceHandler_c( TcClientConnection_c &tcClientConnection );
+
+        void stop();
+
+        bool addSetpointValueSource( uint16_t _element, uint16_t _ddi, const IsoItem_c& );
+        bool removeSetpointValueSource( uint16_t _element, uint16_t _ddi, const IsoItem_c& );
+
+        void notifyOnPeerDropOff( PdRemoteNode_c& );
+
+        const IsoItem_c* getSetpointValueSource( uint16_t _element, uint16_t _ddi );
+
+      private:
+        struct SetpointValueSource_s
+        {
+          SetpointValueSource_s( uint16_t _element, uint16_t _ddi, PdRemoteNode_c& _controlSource )
+            : element( _element )
+            , ddi( _ddi )
+            , m_lastReceivedTime( HAL::getTime() )
+            , controlSource( _controlSource )
+          {}
+          SetpointValueSource_s( const SetpointValueSource_s& rhs )
+            : element( rhs.element )
+            , ddi( rhs.ddi )
+            , m_lastReceivedTime( rhs.m_lastReceivedTime )
+            , controlSource( rhs.controlSource )
+          {}
+          SetpointValueSource_s& operator=( const SetpointValueSource_s& rhs ); // cannot (and shouldn't) be implemented due to reference to ControlSource_c!
+
+          uint16_t element;
+          uint16_t ddi;
+          PdRemoteNode_c& controlSource;
+
+          ecutime_t m_lastReceivedTime;
+        };
+
+        typedef std::list<SetpointValueSource_s> SpValSourceList;
+        typedef std::list<SetpointValueSource_s>::iterator SpValSourceListIter;
+        
+        SpValSourceListIter findSetpointValueSource( uint16_t _element, uint16_t _ddi, const IsoItem_c& isoItem );
+        SpValSourceListIter findControlSource( const IsoItem_c& isoItem );
+
+      private:
+        void recalcTimeEventTrigger();
+        virtual void timeEvent();
+
+        SpValSourceListIter doRemoveSetpointValueSource( SpValSourceListIter iter );
+
+      private:
+        TcClientConnection_c& m_tcClientConnection; // back-ref.
+
+        SpValSourceList m_listSpValueSource;
+      } mc_csHandler;
 
       // MultiSendStreamer_c variables
       uint16_t m_currentSendPosition;

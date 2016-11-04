@@ -107,7 +107,7 @@ namespace __IsoAgLib {
 
   void MeasureProg_c::sendValue()
   {
-    connection().sendProcMsg( IsoAgLib::ProcData::setValue, pdBase().DDI(), pdBase().element(), pdLocal().getMeasurement().getValue() );
+    connection().sendProcMsg( IsoAgLib::ProcData::Value, pdBase().DDI(), pdBase().element(), pdLocal().getMeasurement().getValue() );
   }
 
 

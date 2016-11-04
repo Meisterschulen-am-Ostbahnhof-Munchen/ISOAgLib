@@ -47,14 +47,14 @@ namespace __IsoAgLib {
   void PdRemote_c::requestValue()
   {
     for( PdBase_c::ConnectedPds_t::iterator iter = connectedPds().begin(); iter != connectedPds().end(); ++iter )
-      ( *iter )->sendMsg( IsoAgLib::ProcData::requestValue, 0 );
+      ( *iter )->sendMsg( IsoAgLib::ProcData::RequestValue, 0 );
   }
   
   
   void PdRemote_c::sendSetpoint( int32_t _value )
   {
     for( PdBase_c::ConnectedPds_t::iterator iter = connectedPds().begin(); iter != connectedPds().end(); ++iter )
-      ( *iter )->sendMsg( IsoAgLib::ProcData::setValue, _value );
+      ( *iter )->sendMsg( IsoAgLib::ProcData::Value, _value );
   }
   
 

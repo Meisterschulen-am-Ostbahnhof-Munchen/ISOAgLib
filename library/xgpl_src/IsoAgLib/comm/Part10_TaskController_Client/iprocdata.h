@@ -38,24 +38,22 @@ namespace IsoAgLib
       MeasurementCommandOnChange =          0x8 };
 
     enum CommandType_t {
-      requestConfiguration                  = 0x0,
-      configurationResponse                 = 0x1,
-      requestValue                          = 0x2,
-      setValue                              = 0x3,
-      measurementTimeValueStart             = 0x4,
-      measurementDistanceValueStart         = 0x5,
-      measurementMinimumThresholdValueStart = 0x6,
-      measurementMaximumThresholdValueStart = 0x7,
-      measurementChangeThresholdValueStart  = 0x8,
-      commandReserved1                      = 0x9,
-      commandReserved2                      = 0xa,
-      commandReserved3                      = 0xb,
-      commandReserved4                      = 0xc,
-      nack                                  = 0xd,
-      taskControllerStatus                  = 0xe,
-      workingsetMasterMaintenance           = 0xf,
-
-      CommandUndefined                      = 0x10
+      TechnicalData                         = 0x0,
+      DeviceDescriptor                      = 0x1,
+      RequestValue                          = 0x2,
+      Value                                 = 0x3,
+      MeasurementTimeValueStart             = 0x4,
+      MeasurementDistanceValueStart         = 0x5,
+      MeasurementMinimumThresholdValueStart = 0x6,
+      MeasurementMaximumThresholdValueStart = 0x7,
+      MeasurementChangeThresholdValueStart  = 0x8,
+      ControlAssignment                     = 0x9,
+      SetValueAndAcknowledge                = 0xa,
+      ReservedB                             = 0xb,
+      ReservedC                             = 0xc,
+      ProcessDataAcknowledge                = 0xd,
+      TaskControllerStatus                  = 0xe,
+      ClientTask                            = 0xf,
     };
 
     enum SpecialDDI_t {

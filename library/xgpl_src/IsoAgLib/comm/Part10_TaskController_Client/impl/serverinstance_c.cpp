@@ -63,30 +63,33 @@ namespace __IsoAgLib {
   {
     PdRemoteNode_c::processMsg( pkg );
 
-    switch (pkg.men_command)
+    if( pkg.getMonitorItemForDA() == NULL )
     {
-      case IsoAgLib::ProcData::taskControllerStatus:
-        processStatus( pkg[4] );
-        break;
+      switch (pkg.men_command)
+      {
+        case IsoAgLib::ProcData::TaskControllerStatus:
+          processStatus( pkg[4] );
+          break;
 
-      case IsoAgLib::ProcData::requestConfiguration:
-      case IsoAgLib::ProcData::configurationResponse:
-      case IsoAgLib::ProcData::nack:
-      case IsoAgLib::ProcData::requestValue:
-      case IsoAgLib::ProcData::setValue:
-      case IsoAgLib::ProcData::measurementTimeValueStart:
-      case IsoAgLib::ProcData::measurementDistanceValueStart:
-      case IsoAgLib::ProcData::measurementMinimumThresholdValueStart:
-      case IsoAgLib::ProcData::measurementMaximumThresholdValueStart:
-      case IsoAgLib::ProcData::measurementChangeThresholdValueStart:
-      case IsoAgLib::ProcData::commandReserved1:
-      case IsoAgLib::ProcData::commandReserved2:
-      case IsoAgLib::ProcData::commandReserved3:
-      case IsoAgLib::ProcData::commandReserved4:
-      case IsoAgLib::ProcData::workingsetMasterMaintenance:
-      case IsoAgLib::ProcData::CommandUndefined:
-        ; // not handled when global
+        case IsoAgLib::ProcData::TechnicalData:
+        case IsoAgLib::ProcData::DeviceDescriptor:
+        case IsoAgLib::ProcData::ProcessDataAcknowledge:
+        case IsoAgLib::ProcData::RequestValue:
+        case IsoAgLib::ProcData::Value:
+        case IsoAgLib::ProcData::MeasurementTimeValueStart:
+        case IsoAgLib::ProcData::MeasurementDistanceValueStart:
+        case IsoAgLib::ProcData::MeasurementMinimumThresholdValueStart:
+        case IsoAgLib::ProcData::MeasurementMaximumThresholdValueStart:
+        case IsoAgLib::ProcData::MeasurementChangeThresholdValueStart:
+        case IsoAgLib::ProcData::ControlAssignment:
+        case IsoAgLib::ProcData::SetValueAndAcknowledge:
+        case IsoAgLib::ProcData::ReservedB:
+        case IsoAgLib::ProcData::ReservedC:
+        case IsoAgLib::ProcData::ClientTask:
+          ; // not handled when global
+      }
     }
+    // else: Destination specific, not handled HERE.
   }
 
 
@@ -101,19 +104,10 @@ namespace __IsoAgLib {
     const bool activeTaskNew = getLastStatusTaskTotalsActive();
 
     if ( activeTaskNew != activeTaskOld ) {
-      if ( activeTaskNew ) {
-        for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
-             it != m_connections.end(); ++it )
-        {
-          static_cast<TcClientConnection_c*>( *it )->eventTaskStarted(); 
-        }
-      } else {
-        for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
-             it != m_connections.end(); ++it )
-        {
-          static_cast<TcClientConnection_c*>( *it )->stopRunningMeasurement();
-          static_cast<TcClientConnection_c*>( *it )->eventTaskStopped();
-        }
+      for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
+            it != m_connections.end(); ++it )
+      {
+        static_cast<TcClientConnection_c*>( *it )->eventTaskStartStop( activeTaskNew );
       }
     }
   }

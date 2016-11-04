@@ -16,6 +16,7 @@
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #ifdef HAL_USE_SPECIFIC_FILTERS
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
@@ -37,6 +38,8 @@ namespace __IsoAgLib {
 
   TcClientConnection_c::TcClientConnection_c() 
     : PdConnection_c()
+    , mc_mrClient( *this )
+    , mc_csHandler( *this )
     , m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )
     , m_currentSendPosition( 0 )
@@ -56,9 +59,10 @@ namespace __IsoAgLib {
   {
   }
 
-
   TcClientConnection_c::TcClientConnection_c( const TcClientConnection_c &rhs )
     : PdConnection_c( rhs )
+    , mc_mrClient( *this )
+    , mc_csHandler( *this )
     , m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )
     , m_currentSendPosition( rhs.m_currentSendPosition )
@@ -145,6 +149,8 @@ namespace __IsoAgLib {
 
     setDevPoolState( PoolStateConnecting );
 
+    getMultiReceiveInstance( m_identItem->getMultitonInst() ).registerClientIso( *this,  m_identItem->isoName(), PROCESS_DATA_PGN, 0x3FFFFUL, false, false, &connected()->getIsoItem().isoName() );
+
     return true;
   }
 
@@ -153,6 +159,7 @@ namespace __IsoAgLib {
   {
     isoaglib_assert( connected() );
 
+    getMultiReceiveInstance( m_identItem->getMultitonInst() ).deregisterClient( *this, m_identItem->isoName(), PROCESS_DATA_PGN, 0x3FFFFUL, &connected()->getIsoItem().isoName() );
     getMultiSendInstance( m_identItem->getMultitonInst() ).abortSend( m_multiSendEventHandler );
 
     // is it worth sending a proper "I'm disconnecting" message??
@@ -172,9 +179,10 @@ namespace __IsoAgLib {
     getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
 
     stopRunningMeasurement();
+    mc_csHandler.stop();
 
     if (connected()->getLastStatusTaskTotalsActive())
-      eventTaskStopped();
+      eventTaskStartStop( false );
 
     getDevicePool().close();
 
@@ -321,6 +329,147 @@ namespace __IsoAgLib {
 
 
   void
+  TcClientConnection_c::processControlAssignment( bool assign, uint16_t elem, uint16_t ddi, const IsoName_c& name )
+  {
+    const uint32_t key = getMapKey( ddi, elem );
+    ConnectedPdMap_t::iterator iter = m_connectedPds.find(key);
+
+    bool success = false;
+
+    if ( iter != m_connectedPds.end())
+    {
+      const IsoItem_c* isoItem = getIsoMonitorInstance4Comm().item( name );
+      if( isoItem )
+      {
+        if( assign )
+        {
+          success = mc_csHandler.addSetpointValueSource( elem, ddi, *isoItem );
+        }
+        else
+        {
+          success = mc_csHandler.removeSetpointValueSource( elem, ddi, *isoItem );
+        }
+      }
+    }
+
+    if( success )
+    {
+      sendProcMsg( IsoAgLib::ProcData::ControlAssignment, ddi, elem, int32_t( 0xfffffff0UL | uint32_t( ReceiverAck ) ) );
+    }
+    else
+    {
+      // we currently don't have a better error-code for NAME unknown/don't assign to TC or DL/don't reassign/etc., so....
+      sendNackNotFound( ddi, elem, false );
+    }
+  }
+
+  void
+  TcClientConnection_c::processMultiPacket( Stream_c &stream )
+  {
+    const IsoAgLib::ProcData::CommandType_t command = static_cast< IsoAgLib::ProcData::CommandType_t >( stream.getFirstByte() & 0x0F );
+
+    switch( command )
+    {
+    case IsoAgLib::ProcData::ControlAssignment:
+      {
+        if( stream.getByteTotalSize() != 14 )
+          break;
+
+        uint16_t elem = ( uint16_t( stream.getFirstByte() ) >> 4 ) | ( uint16_t( stream.getNextNotParsed() ) << 4 );
+        uint16_t ddi  = uint16_t( stream.getNextNotParsed() ); // do not put into one term because of unspecified evaluation order!
+                 ddi |= uint16_t( stream.getNextNotParsed() ) << 8;
+
+        const ControlAssignmentMode_t mode = static_cast< ControlAssignmentMode_t >( stream.getNextNotParsed() & 0x0F );
+        ( void )stream.getNextNotParsed();
+
+        uint8_t rawName[ 8 ];
+        for( unsigned i=0; i<8; ++i )
+          rawName[ i ] = stream.getNextNotParsed();
+        const IsoName_c name( rawName );
+
+        bool assign = true;
+        switch( mode )
+        {
+        case UnassignReceiver:
+          assign = false;
+          // break left out intentionally
+
+        case AssignReceiver:
+          processControlAssignment( assign, elem, ddi, name );
+          break;
+
+        default:
+          ; // ignore invalid message.
+        }
+      }
+      break;
+
+    default:
+      ;
+    }
+  }
+
+
+  void
+  TcClientConnection_c::processProcMsg( const ProcessPkg_c& pkg )
+  {
+    const IsoItem_c* spValueSource = NULL; // will be set in the switch!
+
+    // Additionally accept the message if from a valid Peer Control / Setpoint Value source!
+    switch (pkg.men_command)
+    {
+      case IsoAgLib::ProcData::Value:
+        spValueSource = mc_csHandler.getSetpointValueSource( pkg.mui16_element, pkg.mui16_DDI );
+
+        // if no special Control Source is given, commands are only accepted from the connected TC
+        if( spValueSource == NULL )
+          spValueSource = getRemoteItem();
+        break;
+
+      case IsoAgLib::ProcData::TechnicalData:
+      case IsoAgLib::ProcData::DeviceDescriptor:
+      case IsoAgLib::ProcData::RequestValue:
+      case IsoAgLib::ProcData::MeasurementTimeValueStart:
+      case IsoAgLib::ProcData::MeasurementDistanceValueStart:
+      case IsoAgLib::ProcData::MeasurementMinimumThresholdValueStart:
+      case IsoAgLib::ProcData::MeasurementMaximumThresholdValueStart:
+      case IsoAgLib::ProcData::MeasurementChangeThresholdValueStart:
+      case IsoAgLib::ProcData::ControlAssignment:
+      case IsoAgLib::ProcData::SetValueAndAcknowledge:
+      case IsoAgLib::ProcData::ReservedB:
+      case IsoAgLib::ProcData::ReservedC:
+      case IsoAgLib::ProcData::ProcessDataAcknowledge:
+      case IsoAgLib::ProcData::TaskControllerStatus:
+      case IsoAgLib::ProcData::ClientTask:
+        // accept these messages only from the connected TC/DL.
+        spValueSource = getRemoteItem();
+    }
+
+    if( pkg.getMonitorItemForSA() == spValueSource )
+    {
+      PdConnection_c::processProcMsg( pkg );
+
+      if( pkg.getMonitorItemForDA() )
+      {
+        switch (pkg.men_command)
+        {
+          case IsoAgLib::ProcData::TechnicalData:
+          case IsoAgLib::ProcData::DeviceDescriptor:
+          case IsoAgLib::ProcData::ProcessDataAcknowledge:
+          case IsoAgLib::ProcData::ControlAssignment:
+            processMsgTc( pkg );
+            break;
+        
+          default:
+            ;
+        }
+      }
+      // else: Global, not handled in a connection.
+    }
+  }
+
+
+  void
   TcClientConnection_c::processMsgTc( const ProcessPkg_c& data )
   {
     if( getDevPoolState() == PoolStateDisconnected )
@@ -328,6 +477,7 @@ namespace __IsoAgLib {
 
     /// HANDLE UNSOLICITED MESSAGES
     ///////////////////////////////
+    // (not handling Peer Control Assignment here as it's 14-byte TP!)
 
     switch ( data.getUint8Data ( 0 ) )
     {
@@ -464,25 +614,33 @@ namespace __IsoAgLib {
   }
 
 
-  void TcClientConnection_c::eventTaskStarted() {
+  void TcClientConnection_c::eventTaskStartStop( bool started )
+  {
     isoaglib_assert( m_stateHandler );
-    if( getDevPoolState() == PoolStateActive )
-      m_stateHandler->_eventTaskStarted( *this );
-  }
 
-
-  void TcClientConnection_c::eventTaskStopped() {
-    isoaglib_assert( m_stateHandler );
     if( getDevPoolState() == PoolStateActive )
-      m_stateHandler->_eventTaskStopped( *this );
+    {
+      if( started )
+      {
+        m_stateHandler->_eventTaskStarted( *this );
+        // Application will need to reset totals to zero here!
+      }
+      else
+      {
+        stopRunningMeasurement();
+        mc_csHandler.stop();
+
+        m_stateHandler->_eventTaskStopped( *this );
+      }
+    }
   }
 
 
   void
-  TcClientConnection_c::stopRunningMeasurement() {
-    for( ConnectedPdMap_t::iterator i = m_connectedPds.begin(); i != m_connectedPds.end(); ++i ) {
+  TcClientConnection_c::stopRunningMeasurement()
+  {
+    for( ConnectedPdMap_t::iterator i = m_connectedPds.begin(); i != m_connectedPds.end(); ++i )
       static_cast<MeasureProg_c *>( i->second )->stopAllMeasurements();
-    }
   }
 
 
@@ -559,7 +717,7 @@ namespace __IsoAgLib {
       {
         setDevPoolState( PoolStateActive );
         if( connected()->getLastStatusTaskTotalsActive() )
-          eventTaskStarted();
+          eventTaskStartStop( true );
       }
     } else {
       setDevPoolState( PoolStateError );
@@ -677,4 +835,208 @@ namespace __IsoAgLib {
   }
 
 
-}; // __IsoAgLib
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  /// ******************* TcClientConnection_c::ControlSourceHandler_c ******************* ///
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+  TcClientConnection_c::ControlSourceHandler_c::ControlSourceHandler_c( TcClientConnection_c &tcClientConnection )
+    : SchedulerTask_c( 3000, false ) // dummy period, not using period, always triggering by nextTime!
+    , m_tcClientConnection( tcClientConnection )
+  {}
+
+
+  void
+  TcClientConnection_c::ControlSourceHandler_c::stop()
+  {
+    for( SpValSourceListIter iter = m_listSpValueSource.begin(); iter != m_listSpValueSource.end(); )
+    {
+      iter = doRemoveSetpointValueSource( iter );
+    }
+  }
+
+
+  const IsoItem_c*
+  TcClientConnection_c::ControlSourceHandler_c::getSetpointValueSource( uint16_t _element, uint16_t _ddi )
+  {
+    for( SpValSourceListIter iter = m_listSpValueSource.begin(); iter != m_listSpValueSource.end(); ++iter )
+    {
+      if( ( iter->element == _element )
+        &&( iter->ddi == _ddi ) )
+        return &iter->controlSource.getIsoItem();
+    }
+
+    return NULL;
+  }
+
+
+  TcClientConnection_c::ControlSourceHandler_c::SpValSourceListIter
+  TcClientConnection_c::ControlSourceHandler_c::findSetpointValueSource( uint16_t _element, uint16_t _ddi, const IsoItem_c& isoItem )
+  {
+    SpValSourceListIter iter = m_listSpValueSource.begin();
+
+    for( ; iter != m_listSpValueSource.end(); ++iter )
+    {
+      if( ( iter->element == _element )
+        &&( iter->ddi == _ddi )
+        &&( &iter->controlSource.getIsoItem() == &isoItem ) )
+        break;
+    }
+
+    return iter;
+  }
+
+  
+  TcClientConnection_c::ControlSourceHandler_c::SpValSourceListIter
+  TcClientConnection_c::ControlSourceHandler_c::findControlSource( const IsoItem_c& isoItem )
+  {
+    SpValSourceListIter iter = m_listSpValueSource.begin();
+
+    for( ; iter != m_listSpValueSource.end(); ++iter )
+    {
+      if( &iter->controlSource.getIsoItem() == &isoItem )
+        break;
+    }
+
+    return iter;
+  }
+
+
+        
+  bool
+  TcClientConnection_c::ControlSourceHandler_c::addSetpointValueSource( uint16_t _element, uint16_t _ddi, const IsoItem_c& isoItem )
+  {
+    switch( isoItem.isoName().getEcuType() )
+    {
+    case IsoName_c::ecuTypeTaskControl:
+    case IsoName_c::ecuTypeDataLogger:
+      // Do not assign to a TC/DL; only to PEERs!
+      return false;
+
+    default:
+      ;
+    }
+
+    if( getSetpointValueSource( _element, _ddi ) )
+      return false; // currently no REassignments. (require unassign first!)
+
+#if 0
+    "** This kind of code would only be needed if we'd remove the gottenSetpointValueSource above and reassign to another. Let's wait what standard/certification will say..."
+    // was it already added/assigned?
+    if( findSetpointValueSource( _element, _ddi, isoItem ) != m_listSpValueSource.end() )
+      return false; // @todo is this correct: right now -> reject!
+#endif
+
+    SpValSourceListIter iter = findControlSource( isoItem );
+    PdRemoteNode_c& cs = ( iter == m_listSpValueSource.end() )
+      ? getTcClientInstance( m_tcClientConnection.getMultitonInst() ).addConnectionToControlSource( m_tcClientConnection, isoItem )
+      : iter->controlSource;
+
+    m_listSpValueSource.push_back( SetpointValueSource_s( _element, _ddi, cs ) );
+
+    recalcTimeEventTrigger();
+    return true;
+  }
+
+  
+  bool
+  TcClientConnection_c::ControlSourceHandler_c::removeSetpointValueSource( uint16_t _element, uint16_t _ddi, const IsoItem_c& _isoItem )
+  {
+    SpValSourceListIter iter = findSetpointValueSource( _element, _ddi, _isoItem ) ;
+    if( iter != m_listSpValueSource.end() )
+    {
+      ( void )doRemoveSetpointValueSource( iter );
+      
+      recalcTimeEventTrigger();
+      return true;
+    }
+
+    return false;
+  }
+
+  TcClientConnection_c::ControlSourceHandler_c::SpValSourceListIter
+  TcClientConnection_c::ControlSourceHandler_c::doRemoveSetpointValueSource( SpValSourceListIter iter )
+  {
+    isoaglib_assert( iter != m_listSpValueSource.end() );
+
+    const IsoItem_c& _isoItem = iter->controlSource.getIsoItem();
+    
+    SpValSourceListIter result = m_listSpValueSource.erase( iter );
+
+    if( findControlSource( _isoItem ) == m_listSpValueSource.end() )
+      getTcClientInstance( m_tcClientConnection.getMultitonInst() ).removeConnectionFromControlSource( m_tcClientConnection, _isoItem );
+
+    return result;
+  }
+
+  
+  void 
+  TcClientConnection_c::ControlSourceHandler_c::notifyOnPeerDropOff( PdRemoteNode_c& pdRemoteNode )
+  {
+    bool atLeastOneSpValueSourceWasConnected = false;
+
+    for( SpValSourceListIter iter = m_listSpValueSource.begin(); iter != m_listSpValueSource.end(); )
+    {
+      const IsoItem_c& isoItem = iter->controlSource.getIsoItem();
+      if( &pdRemoteNode.getIsoItem() == &isoItem )
+      {
+        atLeastOneSpValueSourceWasConnected = true;
+        iter = m_listSpValueSource.erase( iter );
+      }
+      else
+        ++iter;
+    }
+
+    if( atLeastOneSpValueSourceWasConnected )
+      pdRemoteNode.removeConnection( m_tcClientConnection );
+
+    recalcTimeEventTrigger();
+  }
+
+
+  void TcClientConnection_c::ControlSourceHandler_c::recalcTimeEventTrigger()
+  {
+    if( m_listSpValueSource.empty() )
+    {
+      if( SchedulerTask_c::isRegistered() )
+        getSchedulerInstance().deregisterTask( *this );
+    }
+    else
+    {
+      if( !SchedulerTask_c::isRegistered() )
+        getSchedulerInstance().registerTask( *this, 0 );
+
+      SpValSourceListIter iter = m_listSpValueSource.begin(); 
+      ecutime_t oldestOverallReceiveTime = iter->m_lastReceivedTime;
+      ++iter;
+
+      for( ; iter != m_listSpValueSource.end(); ++iter )
+      {
+        if( iter->m_lastReceivedTime < oldestOverallReceiveTime )
+          oldestOverallReceiveTime = iter->m_lastReceivedTime;
+      }
+
+      SchedulerTask_c::setNextTriggerTime( oldestOverallReceiveTime + 3000 );
+    }
+  }
+
+
+  void TcClientConnection_c::ControlSourceHandler_c::timeEvent()
+  {
+    for( SpValSourceListIter iter = m_listSpValueSource.begin(); iter != m_listSpValueSource.end(); )
+    {
+      if( HAL::getTime() > ( iter->m_lastReceivedTime + 3000 ) )
+        iter = doRemoveSetpointValueSource( iter );
+      else
+        ++iter;
+    }
+
+    recalcTimeEventTrigger();
+  }
+
+
+}

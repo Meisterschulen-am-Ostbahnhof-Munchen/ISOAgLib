@@ -64,9 +64,12 @@ namespace __IsoAgLib {
 #endif
 
       void notifyServerStatusChange( ServerInstance_c& server, bool new_status );
-      void notifyPeerDestruction( PdRemoteNode_c& pdRemoteNode );
+      void notifyPeerAndControlSourceDestruction( PdRemoteNode_c& pdRemoteNode );
       void notifyConnectionToBeEnded( TcClientConnection_c& );
 
+      PdRemoteNode_c& addConnectionToControlSource( PdConnection_c&, const IsoItem_c & );
+      void removeConnectionFromControlSource( PdConnection_c&, const IsoItem_c & );
+  
     private:
       TcClient_c();
 
@@ -75,7 +78,7 @@ namespace __IsoAgLib {
 
       void removeRemotePd( const IsoItem_c & );
       void addServer( const IsoItem_c &, IsoAgLib::ProcData::ServerType_t type );
-  
+
       ServerInstance_c *findNextServerOfSameType( const ServerInstance_c &thisServer ) const;
 
       PdRemoteNode_c *findRemoteNode( const IsoItem_c & ) const;
@@ -142,7 +145,7 @@ namespace __IsoAgLib {
       // 2/2: Peer-PdConnections.
       STL_NAMESPACE::list<PdConnection_c*> m_peerConnections;
 
-      typedef STL_NAMESPACE::list<std::pair<const IsoItem_c*, PdRemoteNode_c*> > ItemToRemoteNodeMap_t;
+      typedef STL_NAMESPACE::list<PdRemoteNode_c*> ItemToRemoteNodeMap_t;
       ItemToRemoteNodeMap_t m_pdRemoteNodes;
 
       friend TcClient_c &getTcClientInstance( unsigned instance );

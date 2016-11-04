@@ -67,7 +67,7 @@ namespace __IsoAgLib {
     isoaglib_assert( m_peerConnections.empty() );
 
     for (ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter)
-      delete iter->second;
+      delete *iter;
     m_pdRemoteNodes.clear();
 
 #ifdef HAL_USE_SPECIFIC_FILTERS
@@ -169,6 +169,17 @@ namespace __IsoAgLib {
   PdConnection_c*
   TcClient_c::connectPeer( const IdentItem_c& identItem, const IsoItem_c& pdItem, PdPool_c& pool )
   {
+    switch( pdItem.isoName().getEcuType() )
+    {
+    case IsoName_c::ecuTypeTaskControl:
+    case IsoName_c::ecuTypeDataLogger:
+      isoaglib_assert( !"Peer-connect to a TC/DL attempted!" );
+      return NULL;
+    
+    default:
+      ;
+    }
+
     for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_peerConnections.begin();
          connection != m_peerConnections.end(); ++connection)
     {
@@ -183,7 +194,7 @@ namespace __IsoAgLib {
     if( remoteNode == NULL )
     {
       remoteNode = new PdRemoteNode_c( pdItem, false );
-      m_pdRemoteNodes.push_back( std::pair<const IsoItem_c*, PdRemoteNode_c*>( &pdItem, remoteNode ) );
+      m_pdRemoteNodes.push_back( remoteNode );
     }
 
     isoaglib_assert( !remoteNode->isServer() );
@@ -293,8 +304,8 @@ namespace __IsoAgLib {
   {
     for( ItemToRemoteNodeMap_t::const_iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter )
     {
-      if( iter->first == &item )
-        return iter->second;
+      if( &(*iter)->getIsoItem() == &item )
+        return *iter;
     }
 
     return NULL;
@@ -311,7 +322,12 @@ namespace __IsoAgLib {
       isoaglib_assert( findRemoteNode( isoItem ) );
       isoaglib_assert( findRemoteNode( isoItem )->isServer() );
 
-      removeRemotePd( isoItem );
+      PdRemoteNode_c* pdRemoteNode = findRemoteNode( isoItem );
+      if( pdRemoteNode && pdRemoteNode->isServer() )
+      {
+        removeRemotePd( isoItem );
+      }
+      // else: do not let other nodes get remove accidentally with this function!
     }
   }
 
@@ -322,7 +338,48 @@ namespace __IsoAgLib {
     isoaglib_assert( !findRemoteNode( isoItem )  );
     isoaglib_assert( !isoItem.itemState( IState_c::Local ) );
 
-    m_pdRemoteNodes.push_back( std::pair<const IsoItem_c*, PdRemoteNode_c*>( &isoItem, new ServerInstance_c( isoItem, type ) ) );
+    m_pdRemoteNodes.push_back( new ServerInstance_c( isoItem, type ) );
+  }
+
+
+  PdRemoteNode_c &
+  TcClient_c::addConnectionToControlSource( PdConnection_c& connection, const IsoItem_c& isoItem )
+  {
+    PdRemoteNode_c* remoteNode = findRemoteNode( isoItem );
+
+    if( remoteNode == NULL )
+    {
+      remoteNode = new PdRemoteNode_c( isoItem, false );
+      m_pdRemoteNodes.push_back( remoteNode );
+    }
+
+    remoteNode->addConnection( connection );
+
+    return *remoteNode;
+  }
+
+
+  void
+  TcClient_c::removeConnectionFromControlSource( PdConnection_c& connection, const IsoItem_c& isoItem )
+  {
+    PdRemoteNode_c* remoteNode = findRemoteNode( isoItem );
+    isoaglib_assert( remoteNode );
+
+    remoteNode->removeConnection( connection );
+
+    if( !remoteNode->hasConnections() )
+    {
+      for( ItemToRemoteNodeMap_t::iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter )
+      {
+        if( &(*iter)->getIsoItem() == &isoItem )
+        {
+          m_pdRemoteNodes.erase( iter );
+          break;
+        }
+      }
+
+      delete remoteNode;
+    }
   }
 
 
@@ -331,22 +388,22 @@ namespace __IsoAgLib {
   {
     for( ItemToRemoteNodeMap_t::iterator i = m_pdRemoteNodes.begin(); i != m_pdRemoteNodes.end(); ++i )
     {
-      if( i->first != &isoItem )
+      if( &(*i)->getIsoItem() != &isoItem )
         continue;
 
-      if( i->second->isServer() )
+      if( (*i)->isServer() )
       {
-        ServerInstance_c* server = static_cast<ServerInstance_c *>( i->second );
+        ServerInstance_c* server = static_cast<ServerInstance_c *>( *i );
         if( server->isAlive() )
         {
-          server->notifyOnDropOff();
+          server->notifyOnDropOff(); // to avoid immediate reconnect in the "Online->Offline transition below!
           notifyServerStatusChange( *server, false );
         }
       }
       else
-        notifyPeerDestruction( *(i->second) );
+        notifyPeerAndControlSourceDestruction( **i );
 
-      delete i->second;
+      delete *i;
       m_pdRemoteNodes.erase( i );
       break;
     }
@@ -416,9 +473,9 @@ namespace __IsoAgLib {
 
     for( ItemToRemoteNodeMap_t::const_iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter )
     {
-      if( iter->second->isServer() )
+      if( (*iter)->isServer() )
       {
-        ServerInstance_c &nextServer = static_cast<ServerInstance_c&>(*(iter->second));
+        ServerInstance_c &nextServer = static_cast<ServerInstance_c&>(**iter);
         if( !takeNextMatch && ( &nextServer == &thisServer ) )
         {
           takeNextMatch = true;
@@ -435,8 +492,19 @@ namespace __IsoAgLib {
 
 
   void
-  TcClient_c::notifyPeerDestruction( PdRemoteNode_c& pdRemoteNode )
+  TcClient_c::notifyPeerAndControlSourceDestruction( PdRemoteNode_c& pdRemoteNode )
   {
+    // 1/2: TC/DL Connection - check if Control Source was used!
+    for( IdentToClientInfoMap_t::iterator clientIter = m_clientInfo.begin(); clientIter != m_clientInfo.end(); ++clientIter )
+    {
+      for( int i=0; i<IsoAgLib::ProcData::ServerTypes; ++i )
+      {
+        TcClientConnection_c &connection = clientIter->second.m_serverConnections[ i ];
+        connection.notifyOnPeerDropOff( pdRemoteNode );
+      }
+    }
+
+    // 2/2: Peer Connections
     for (STL_NAMESPACE::list<PdConnection_c*>::iterator connection = m_peerConnections.begin();
         connection != m_peerConnections.end(); )
     {

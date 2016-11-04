@@ -33,6 +33,8 @@ namespace __IsoAgLib {
     void addConnection( PdConnection_c& c );
     void removeConnection( PdConnection_c& c );
   
+    bool hasConnections() const { return !m_connections.empty(); }
+
     virtual void processMsg( const ProcessPkg_c& pkg );
 
   protected:

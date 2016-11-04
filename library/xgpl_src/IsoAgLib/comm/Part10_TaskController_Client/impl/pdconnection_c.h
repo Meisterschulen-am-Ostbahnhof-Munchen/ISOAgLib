@@ -30,15 +30,16 @@ namespace __IsoAgLib
   class PdPool_c;
 
   enum NackResponse_t { 
-    NackProcessDataCommandNotSupported =          0x01, // Bit 0 = 1 Process Data Command not supported
-    NackInvalidElementNumber =                    0x02, // Bit 1 = 1 Invalid Element Number
-    NackDDINotSupportedByElement =                0x04, // Bit 2 = 1 DDI not supported by element
-    NackTriggerMethodNotSupported =               0x08, // Bit 3 = 1 Trigger method not supported
-    NackProcessDataNotSettable =                  0x10, // Bit 4 = 1 Process Data not settable
-    NackInvalidOrUnsupportedIntervalOrThreshold = 0x20, // Bit 5 = 1 Invalid or unsupported interval or threshold
-    NackReserved1 =                               0x40,
-    NackReserved2 =                               0x80,
-    NackUndefined };
+    NackNoErrors =                                  0x00, // 0 = no errors
+    NackProcessDataCommandNotSupported =            0x01, // Bit 1 = 1 Process Data Command not supported
+    NackInvalidElementNumber =                      0x02, // Bit 2 = 1 Invalid Element Number
+    NackDDINotSupportedByElement =                  0x04, // Bit 3 = 1 DDI not supported by element
+    NackTriggerMethodNotSupported =                 0x08, // Bit 4 = 1 Trigger method not supported
+    NackProcessDataNotSettable =                    0x10, // Bit 5 = 1 Process Data not settable
+    NackInvalidOrUnsupportedIntervalOrThreshold =   0x20, // Bit 6 = 1 Invalid or unsupported interval or threshold
+    NackProcessDataValueNotConformToDdiDefinition = 0x40, // Bit 7 = 1 Process data value does not conform to DDI definition (TCv4+)
+    NackProcessDataValueIsOutsideOperationalRange = 0x80, // Bit 8 = 1 Process data value is outside the operational range of this device (TCv4+)
+  };
 
   class PdConnection_c
 #ifdef HAL_USE_SPECIFIC_FILTERS
@@ -62,17 +63,18 @@ namespace __IsoAgLib
   
     int getMultitonInst() const { return m_identItem->getMultitonInst(); }
 
-    void processProcMsg( const ProcessPkg_c& );
+    virtual void processProcMsg( const ProcessPkg_c& );
 
     void sendProcMsg( IsoAgLib::ProcData::CommandType_t, uint16_t ddi, uint16_t element, int32_t pdValue ) const;
     void sendNack( int16_t ddi, int16_t element, NackResponse_t errorcodes, bool wasBroadcast ) const;
 
-  private:
+  protected:
     void sendNackNotFound( int16_t ddi, int16_t element, bool wasBroadcast ) const;
+
+  private:
 #ifdef HAL_USE_SPECIFIC_FILTERS
     virtual void processMsg( const CanPkg_c& data );
 #endif
-    virtual void processMsgTc( const ProcessPkg_c& ) {}
     void processMeasurementMsg( const ProcessPkg_c& );
     void processRequestMsg( const ProcessPkg_c& );
     virtual void processRequestDefaultDataLogging() {}
