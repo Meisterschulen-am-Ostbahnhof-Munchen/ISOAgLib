@@ -42,11 +42,16 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
-\subsection Change_ZH 2.8.2 to 2.x.y
+\subsection Change_ZH 2.8.2 to 2.x.y (TRUNK)
+
+VT-Client:
+ - Enhancement:
+   - Support "VT On User-Layout Hide/Show" message
+     (VTs with Version 4 but can also be supported/sent from lower versioned VTs!)
 
 TC-Client:
  - Enhancement: Added "Peer Control".
-
+ 
 
 \subsection Change_ZG 2.8.1 to 2.8.2
 

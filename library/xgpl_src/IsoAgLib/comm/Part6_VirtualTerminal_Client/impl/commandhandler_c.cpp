@@ -1102,13 +1102,18 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
   // Version 4 feature that was "Display Activation" in some draft
   // but is now "VT On User-Layout Hide/Show message"
   case 0x09:  // Command: "Control Element Function", parameter "VT On User-Layout Hide/Show message"
-    // Command: "Control Element Function"
-    // Parameter "VT On User-Layout Hide/Show message Response"
-    // @todo Version 4 Handling of that message needs to be redone when adding Version 4 properly.
-    m_connection.sendMessage(
-      pkg.getUint8Data( 0 ), pkg.getUint8Data( 1 ), pkg.getUint8Data( 2 ), pkg.getUint8Data( 3 ),
-      pkg.getUint8Data( 4 ), pkg.getUint8Data( 5 ), pkg.getUint8Data( 6 ), pkg.getUint8Data( 7 ) );
-    break;
+    {
+      const uint16_t cui16_objId1 = ( uint16_t(pkg.getUint8Data( 1 )) | (uint16_t(pkg.getUint8Data( 2 )) << 8) );
+      const bool cb_obj1Shown = pool.eventOnUserLayoutHideShow( cui16_objId1, ( pkg.getUint8Data( 3 ) & 0x01 ) != 0 );
+
+      const uint16_t cui16_objId2 = ( uint16_t(pkg.getUint8Data( 4 )) | (uint16_t(pkg.getUint8Data( 5 )) << 8) );
+      const bool cb_obj2Shown = (cui16_objId2 == 0xFFFF)
+        ? false : pool.eventOnUserLayoutHideShow( cui16_objId2, ( pkg.getUint8Data( 6 ) & 0x01 ) != 0 );
+
+      m_connection.sendMessage(
+        pkg.getUint8Data( 0 ), pkg.getUint8Data( 1 ), pkg.getUint8Data( 2 ), cb_obj1Shown ? 0x01 : 0x00,
+        pkg.getUint8Data( 4 ), pkg.getUint8Data( 5 ), cb_obj2Shown ? 0x01 : 0x00, 0xFF );
+    } break;
 
   /***************************************/
   /*** ### AUX Assignment Messages ### ***/

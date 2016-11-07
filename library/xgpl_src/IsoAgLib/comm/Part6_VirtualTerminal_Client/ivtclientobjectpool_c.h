@@ -99,6 +99,18 @@ public:
   virtual void eventNumericValue (uint16_t aui16_objId, uint8_t aui8_value, uint32_t aui32_value)=0;
 
   /**
+    hook function that gets called after receiving a "VT On User-Layout Hide/Show" Message
+    @param aui16_objId of the object that is hidden/shown
+    @param ab_show true if object is shown, false if object is hidden
+    @return true if object is supported and shown, false if object is not supported or hidden.
+            ==> So if the client supports this feature, simply "ab_show" can be returned
+            and the specified masks the need to be updated when "shown".
+            If the feature is not supported, just use this default-implementation
+            and return "false" here in general. Do not return "true" when "ab_show==false"!!
+    */
+    virtual bool eventOnUserLayoutHideShow (uint16_t /*aui16_objId*/, bool /*ab_show*/) { return false; }
+
+  /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Input String Value" Message. The function is called after
     the last TP package is received.
