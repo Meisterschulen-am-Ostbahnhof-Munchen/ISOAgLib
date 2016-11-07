@@ -483,13 +483,13 @@ namespace __IsoAgLib {
     {
       case procCmdPar_RequestVersionMsg:
       {
-        static const bool peerControl = false;
+        static const bool peerControl = true;
         sendMsg(
           procCmdPar_VersionMsg,
           m_capabilities.versionNr,
-          0xFF,
+          0xFF, // client does not send boot-time information.
           (m_capabilities.hasTcBas ? 0x01:0) | (m_capabilities.hasTcGeo ? 0x02:0) | (m_capabilities.hasTcGeo ? 0x04:0)  | (peerControl ? 0x08:0) | (m_capabilities.hasTcSc ? 0x10:0),
-          0x00,
+          0x00, // optiones byte 2
           uint8_t( m_capabilities.numBoom ),
           uint8_t( m_capabilities.numSection ),
           uint8_t( m_capabilities.numBin ) );
