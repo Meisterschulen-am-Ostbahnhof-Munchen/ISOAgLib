@@ -54,9 +54,10 @@ public:
   /**
    * After assignments have been initially loaded, the application can activate some "presets"
    * In case of error, the other functions that were found were still set!
-   * Two actions are performed independently:
-   * 1. clear ALL current PA entries. This works even if the "assignments" list is empty.
+   * Three actions are performed independently:
+   * 1. if firstClearAllPAs is set, clear ALL current PA entries. This works even if the "assignments" list is empty.
    * 2. set all PAs from the "assignments" list. If the list is empty, nothing is set.
+   * 3. The callback "storePreferredAux2Assignment" is called for each affected function.
    * @param firstClearAllPAs before setting the assignments, clear all assignments first
    * @param assignments A list of UserPreset-/Preferred-Assignments. 
    * @return TRUE: All functions were found/valid, FALSE: One function wasn't valid!

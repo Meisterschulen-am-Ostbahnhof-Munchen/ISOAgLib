@@ -87,10 +87,16 @@ Aux2Functions_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assi
   {
     for( STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter )
     {
-      iter->second->clearPreferredAssignments();
+      if( iter->second->clearPreferredAssignments() )
+      {
+        // only "store" if there was actually something "cleared", i.e. some candidates existing before.
+        m_vtConnection.getVtClientDataStorage().storePreferredAux2Assignment(iter->first, iter->second->getRefPreferredAssignmentCandidates());
+      }
     }
   }
 
+  bool b_sendPreferredAssignments = false;
+  
   for( IsoAgLib::iAux2AssignmentConstIterator_c i = assignments.begin(); i != assignments.end(); ++i ) {
     STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
     if( iter == m_aux2Function.end() ) {
@@ -99,9 +105,22 @@ Aux2Functions_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assi
     }
 
     iter->second->addPreferredAssignedInputCandidate( i->input );
+    m_vtConnection.getVtClientDataStorage().storePreferredAux2Assignment(iter->first, iter->second->getRefPreferredAssignmentCandidates());
+
+    if(iter->second->getMatchingPreferredAssignedInputReady())
+      continue; // a matching input device was already found
+    
+    // check against already received input maintenance messages
+    for(STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::const_iterator iter_maintenance = mmap_receivedInputMaintenanceData.begin();
+        iter_maintenance != mmap_receivedInputMaintenanceData.end();
+        ++iter_maintenance)
+    {
+      b_sendPreferredAssignments |= iter->second->matchPreferredAssignedInput(iter_maintenance->first.toConstIisoName_c(),
+                                                                              iter_maintenance->second.mui16_inputModelIdentificationCode);
+    }
   }
 
-  if( m_state == State_Ready )
+  if( b_sendPreferredAssignments )
     sendPreferredAux2Assignments();
 
   return success;
@@ -220,7 +239,7 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
       break;
   }
 
-  if ( ( m_state == State_Ready ) && b_sendPreferredAssignments )
+  if( b_sendPreferredAssignments )
     sendPreferredAux2Assignments();
 #else
   (void)arc_data;
@@ -243,8 +262,8 @@ Aux2Functions_c::objectPoolUploadedSuccessfully()
 
   if (!b_preferredAssignmentFound)
   {
-    sendPreferredAux2Assignments();
     m_state = State_Ready;    
+    sendPreferredAux2Assignments();
   }
   else
   { // we have preferred assignments => wait for first input maintenance message
@@ -385,19 +404,19 @@ Aux2Functions_c::timeEvent()
 
   // 2. send preferred assignment
   if( ! mmap_receivedInputMaintenanceData.empty() && ( m_state == State_CollectInputMaintenanceMessage ) ) {
-    sendPreferredAux2Assignments();
     m_state = State_Ready;
+    sendPreferredAux2Assignments();
   }
 #endif
 }
 
 
-bool
+void
 Aux2Functions_c::sendPreferredAux2Assignments()
 {
 #ifdef USE_VTOBJECT_auxiliaryfunction2
-  if( m_aux2Function.empty() )
-    return true;
+  if( m_aux2Function.empty() || ( m_state != State_Ready) )
+    return;
 
   static SendUpload_c msc_tempSendUpload;
   Aux2PreferredAssignmentInputDevice_s key;
@@ -463,9 +482,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   for (uint16_t i = msgSize; i < 8; i++)
     msc_tempSendUpload.vec_uploadBuffer.push_back( 0xFF );
   
-  return m_vtConnection.commandHandler().queueOrReplace (msc_tempSendUpload, true /* b_enableReplaceOfCmd */);
-#else
-  return true;
+  ( void )m_vtConnection.commandHandler().queueOrReplace (msc_tempSendUpload, true /* b_enableReplaceOfCmd */);
 #endif
 }
 

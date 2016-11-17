@@ -75,7 +75,7 @@ public:
   void timeEvent();
 
 
-  bool sendPreferredAux2Assignments();
+  void sendPreferredAux2Assignments();
 
   void setState(Aux2FunctionsState_en a_state) { m_state = a_state; }
 

@@ -54,7 +54,6 @@ public:
 #endif
 
 private:
-
   void getAssignedInput(IsoAgLib::iIsoName_c& arc_isoName, uint16_t& arui16_inputUid) const;
   bool getPreferredAssignedInput(IsoAgLib::iIsoName_c& arc_isoName, uint16_t& arui16_inputModelIdentificationCode, uint16_t& arui16_inputUid) const;
   bool matchPreferredAssignedInput(const IsoAgLib::iIsoName_c& arc_isoName, uint16_t arui16_inputModelIdentificationCode);
@@ -62,17 +61,13 @@ private:
   bool unassignAfterTimeout(const IsoAgLib::iIsoName_c& arc_isoName);
   bool getMatchingPreferredAssignedInputReady();
   void addPreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input);
+  void removePreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input);
+  bool clearPreferredAssignments();
   const std::list<IsoAgLib::iAux2InputData>& getRefPreferredAssignmentCandidates() const { return ml_preferredAssignedInputCandidate; }
-  void clearPreferredAssignments();
+  bool hasPreferredAssigment() const;
   
 private:
-
-  void removePreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input);
-    
-  bool hasPreferredAssigment() const;
-
   IsoAgLib::iAux2InputData ms_assignedInput;
-
   std::list<IsoAgLib::iAux2InputData> ml_preferredAssignedInputCandidate;
 
   friend class Aux2Functions_c;

@@ -269,10 +269,14 @@ vtObjectAuxiliaryFunction2_c::hasPreferredAssigment() const
 }
 
 
-void
+bool
 vtObjectAuxiliaryFunction2_c::clearPreferredAssignments()
 {
+  const bool clearedSomething = !ml_preferredAssignedInputCandidate.empty();
+  
   ml_preferredAssignedInputCandidate.clear();
+
+  return clearedSomething;
 }
 
 
