@@ -41,19 +41,19 @@ static const uint8_t scui8_cmdCompareTableMax = 0xBD;
 /// (1<<0) means DO NOT OVERRIDE THESE COMMANDS AT ALL
 static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdCompareTableMin)+1] = {
 /* 0x92 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND
-/* 0x93 */ 0 , //invalid command
-/* 0x94 */ 0 , //invalid command
-/* 0x95 */ 0 , //invalid command
-/* 0x96 */ 0 , //invalid command
-/* 0x97 */ 0 , //invalid command
-/* 0x98 */ 0 , //invalid command
-/* 0x99 */ 0 , //invalid command
-/* 0x9A */ 0 , //invalid command
-/* 0x9B */ 0 , //invalid command
-/* 0x9C */ 0 , //invalid command
-/* 0x9D */ 0 , //invalid command
-/* 0x9E */ 0 , //invalid command
-/* 0x9F */ 0 , //invalid command
+/* 0x93 */ 0 , //invalid command - currently reserved
+/* 0x94 */ 0 , //invalid command - currently reserved
+/* 0x95 */ 0 , //invalid command - currently reserved
+/* 0x96 */ 0 , //invalid command - currently reserved
+/* 0x97 */ 0 , //invalid command - currently reserved
+/* 0x98 */ 0 , //invalid command - currently reserved
+/* 0x99 */ 0 , //invalid command - currently reserved
+/* 0x9A */ 0 , //invalid command - currently reserved
+/* 0x9B */ 0 , //invalid command - currently reserved
+/* 0x9C */ 0 , //invalid command - currently reserved
+/* 0x9D */ 0 , //invalid command - currently reserved
+/* 0x9E */ 0 , //invalid command - currently reserved
+/* 0x9F */ 0 , //invalid command - currently reserved
 /* 0xA0 */ (1<<1) | (1<<2) ,
 /* 0xA1 */ (1<<1) | (1<<2) ,
 /* 0xA2 */ (1<<1) | (1<<2) ,
@@ -67,7 +67,7 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 /* 0xAA */ (1<<1) | (1<<2) ,
 /* 0xAB */ (1<<1) | (1<<2) ,
 /* 0xAC */ (1<<1) | (1<<2) ,
-/* 0xAD */ (1<<0) , // changed. was "(1<<1) | (1<<2) ," before, but we shouldn't change earlier to a datamask as it's probably not setup correctly at this time.  // (Change Active Mask)
+/* 0xAD */ (1<<1) | (1<<2) , // (Change Active Mask), need to allow this when we need to show an Alarm Mask
 /* 0xAE */ (1<<1) | (1<<2) | (1<<3) ,
 /* 0xAF */ (1<<1) | (1<<2) | (1<<3) ,
 /* 0xB0 */ (1<<1) | (1<<2) ,
@@ -75,14 +75,14 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 /* 0xB2 */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Delete Object Pool)
 /* 0xB3 */ (1<<1) | (1<<2) ,
 /* 0xB4 */ (1<<1) | (1<<2) | (1<<3) | (1<<4), // (Change Child Position)
-/* 0xB5 */ 0 , //invalid command
-/* 0xB6 */ 0 , //invalid command
-/* 0xB7 */ 0 , //invalid command
+/* 0xB5 */ (1<<1) | (1<<2) , //Change Object Label command
+/* 0xB6 */ (1<<1) | (1<<2) | (1<<3) , //Change Polygon Point command
+/* 0xB7 */ (1<<1) | (1<<2) , //Change Polygon Scale command
 /* 0xB8 */ (1<<0) ,  //NEVER OVERRIDE THIS COMMAND (Graphics Context)
 /* 0xB9 */ (1<<0) , // changed. was "(1<<1) | (1<<2) | (1<<3) | (1<<4)," before, but I guess no overriding should take place in request commands // (Get Attribute Value)
-/* 0xBA */ 0, //invalid command
-/* 0xBB */ 0, //invalid command
-/* 0xBC */ 0, //invalid command
+/* 0xBA */ (1<<1) | (1<<2) , //Select Colour Map command
+/* 0xBB */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Identify VT message)
+/* 0xBC */ (1<<0) , //NEVER OVERRIDE THIS COMMAND (Execute Extended Macro command)
 /* 0xBD */ (1<<0) //NEVER OVERRIDE THIS COMMAND (Lock/Unlock Mask)
 };
 
@@ -719,112 +719,141 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
   if( !m_connection.poolSuccessfullyUploaded() )
     return false;
 
-  SendUpload_c* p_queue = NULL;
-  uint8_t i = 0;
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >::iterator i_sendUpload;
 #else
   STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
 #endif
 
-  STL_NAMESPACE::list<SendUpload_c>& q_sendUpload = mq_sendUpload[ mu_sendPriority ];
-
-  if( mb_checkSameCommand && b_enableReplaceOfCmd && !q_sendUpload.empty() )
-  { //get first equal command in queue
-    i_sendUpload = q_sendUpload.begin();
-    if ( men_uploadCommandState != UploadCommandIdle )
-    { // the first item in the queue is currently in upload process - so do NOT use this for replacement, as the next action
-      // after receive of the awaited ACK is simple erase of the first command
-      ++i_sendUpload;
-    }
-    for (; (p_queue == NULL) && (i_sendUpload != q_sendUpload.end()); i_sendUpload++)
-    { //first check if multisendstreamer is used!
-      /* four cases:
-      1. both use buffer
-      2. buffer is queued and could be replaced by mssObjectString
-      3. mss is queued and could be replaced by buffer
-      4. both use mssObjectString
-        */
-      if (i_sendUpload->mssObjectString == NULL)
-      {
-        if (ar_sendUpload.mssObjectString == NULL)
-        {
-           // 1. both use buffer
-          if (i_sendUpload->vec_uploadBuffer[0] == ar_sendUpload.vec_uploadBuffer[0])
-          {
-            uint8_t ui8_offset = (ar_sendUpload.vec_uploadBuffer[0]);
-            if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
-            { // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
-              if ((ui8_offset == 0x11) || (ui8_offset == 0x12) ||
-                  ((ui8_offset >= 0x60) && (ui8_offset <= 0x7F)) ) /// no checking for Proprietary commands (we don't need the replace-feature here!)
-                break;
-
-              isoaglib_assert( !"Shouldn't reach here. Check which command it was!" );
-              return false;
-            }
-            // get bitmask for the corresponding command
-            uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-scui8_cmdCompareTableMin];
-            if (!(ui8_bitmask & (1<<0)))
-            { // go Check for overwrite...
-              for (i=1;i<=7;i++)
-              {
-                if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == ar_sendUpload.vec_uploadBuffer[i]))
-                  break;
-              }
-              if (!(i<=7))
-              { // loop ran through, all to-compare-bytes matched!
-                p_queue = &*i_sendUpload; // so overwrite this SendUpload_c with the new value one
-              }
-            }
-          }
-        }
-        else
-        {
-          // 2. buffer is queued and could be replaced by mssObjectString
-          if ((*i_sendUpload).vec_uploadBuffer[0] == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
-          {
-            if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == ar_sendUpload.mssObjectString->getStreamer()->getID())
-              p_queue = &*i_sendUpload;
-          }
-        }
-      }
-      else
-      {
-        // i_sendUpload->mssObjectString != NULL
-        if (ar_sendUpload.mssObjectString == NULL)
-        {
-          // 3. mss is queued and could be replaced by buffer
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.vec_uploadBuffer[0])
-          {
-            if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (ar_sendUpload.vec_uploadBuffer[1] | (ar_sendUpload.vec_uploadBuffer[2]<<8)))
-              p_queue = &*i_sendUpload;
-          }
-        }
-        else
-        {
-          // 4. both use mssObjectString
-          if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
-          {
-            if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == ar_sendUpload.mssObjectString->getStreamer()->getID())
-              p_queue = &*i_sendUpload;
-          }
-        }
-      } // if
-    } // for
-  }
-
-  if( p_queue == NULL )
+  if( mb_checkSameCommand && b_enableReplaceOfCmd )
   {
-    const bool wasFilledBefore = queueFilled();
+    bool alreadyReplacedFirstMatchingCommand = false;
 
-    q_sendUpload.push_back (ar_sendUpload);
+    for( unsigned prio = mu_sendPriority; prio < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++prio )
+    {
+      STL_NAMESPACE::list<SendUpload_c>& q_sendUpload = mq_sendUpload[prio];
+  
+      if( !q_sendUpload.empty() )
+      { //get first equal command in queue
+        i_sendUpload = q_sendUpload.begin();
+        if( (men_uploadCommandState != UploadCommandIdle) && (mu_sendPriorityOfLastCommand == prio) )		// Need to check that we're looking at the correct queue, before skipping the first item!
+        { // the first item in the queue is currently in upload process - so do NOT use this for replacement, as the next action
+          // after receive of the awaited ACK is simple erase of the first command
+          ++i_sendUpload;
+        }
+        while( i_sendUpload != q_sendUpload.end() )
+        { 
+          bool thisCommandMatched = false;
 
-    // call after push(_back), so it's already available at call-time!
-    if( !wasFilledBefore )
-      m_connection.notifyOnCommandQueueFilledFromEmpty();
+          //first check if multisendstreamer is used!
+          /* four cases:
+          1. both use buffer
+          2. buffer is queued and could be replaced by mssObjectString
+          3. mss is queued and could be replaced by buffer
+          4. both use mssObjectString
+            */
+          if (i_sendUpload->mssObjectString == NULL)
+          {
+            if (ar_sendUpload.mssObjectString == NULL)
+            {
+               // 1. both use buffer
+              if (i_sendUpload->vec_uploadBuffer[0] == ar_sendUpload.vec_uploadBuffer[0])
+              {
+                uint8_t ui8_offset = (ar_sendUpload.vec_uploadBuffer[0]);
+                if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
+                { // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
+                  if ((ui8_offset == 0x11) || (ui8_offset == 0x12) ||
+                      ((ui8_offset >= 0x60) && (ui8_offset <= 0x7F)) ) /// no checking for Proprietary commands (we don't need the replace-feature here!)
+                    break;
+  
+                  isoaglib_assert( !"Shouldn't reach here. Check which command it was!" );
+                  return false;
+                }
+                // get bitmask for the corresponding command
+                uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-scui8_cmdCompareTableMin];
+                isoaglib_assert( ui8_bitmask != 0 ); // unused/reserved commands must not be in the queue!
+                if( !(ui8_bitmask & (1 << 0)) )
+                { // go Check for overwrite...
+                  uint8_t i;
+                  for (i=1;i<=7;i++)
+                  {
+                    if (((ui8_bitmask & 1<<i) !=0) && !(i_sendUpload->vec_uploadBuffer[i] == ar_sendUpload.vec_uploadBuffer[i]))
+                      break;
+                  }
+                  if (!(i<=7))
+                  { // loop ran through, all to-compare-bytes matched!
+                    thisCommandMatched = true;
+                  }
+                }
+              }
+            }
+            else
+            {
+              // 2. buffer is queued and could be replaced by mssObjectString
+              if ((*i_sendUpload).vec_uploadBuffer[0] == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+              {
+                if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == ar_sendUpload.mssObjectString->getStreamer()->getID())
+                  thisCommandMatched = true;
+              }
+            }
+          }
+          else
+          {
+            // i_sendUpload->mssObjectString != NULL
+            if (ar_sendUpload.mssObjectString == NULL)
+            {
+              // 3. mss is queued and could be replaced by buffer
+              if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.vec_uploadBuffer[0])
+              {
+                if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (ar_sendUpload.vec_uploadBuffer[1] | (ar_sendUpload.vec_uploadBuffer[2]<<8)))
+                  thisCommandMatched = true;
+              }
+            }
+            else
+            {
+              // 4. both use mssObjectString
+              if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+              {
+                if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == ar_sendUpload.mssObjectString->getStreamer()->getID())
+                  thisCommandMatched = true;
+              }
+            }
+          } // if
+
+          if( thisCommandMatched )
+          {
+            if( alreadyReplacedFirstMatchingCommand )
+            {
+		          // Further instances of this command have been found, so delete them from the queue!
+		          i_sendUpload = q_sendUpload.erase( i_sendUpload );
+	          }
+	          else
+	          {
+		          *i_sendUpload = ar_sendUpload; // overloaded "operator=", so overwrite this SendUpload_c with the new value one
+		          ++i_sendUpload;
+
+              alreadyReplacedFirstMatchingCommand = true;
+	          }
+          }
+          else
+          {
+	          ++i_sendUpload;
+          }
+        } // for
+      }
+    }
+
+    if( alreadyReplacedFirstMatchingCommand )
+      return true;
   }
-  else
-    *p_queue = ar_sendUpload; // overloaded "operator="
+
+  const bool wasFilledBefore = queueFilled();
+
+  mq_sendUpload[ mu_sendPriority ].push_back( ar_sendUpload );
+
+  // call after push(_back), so it's already available at call-time!
+  if( !wasFilledBefore )
+    m_connection.notifyOnCommandQueueFilledFromEmpty();
 
   return true;
 }
