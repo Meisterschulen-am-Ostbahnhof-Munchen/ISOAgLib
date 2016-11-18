@@ -80,6 +80,7 @@ TC-Client:
  - Bugfix: 
    - Only reflecting Task Totals Active bit now in Client Task Message.
    - On Timeout of some TC-Response don't accidentally call the ServerDisconnected callback when still in Preconnecting.
+   - Memory-Leak when disconnecting during DDOP-Upload (with default allocation)
 
 FS-Client:
  - Bugfix: Now reading correct number of directory-entries.
