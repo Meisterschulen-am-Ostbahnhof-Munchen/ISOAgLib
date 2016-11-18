@@ -51,7 +51,7 @@ namespace __IsoAgLib {
   }
 
 
-  void DeviceObject_c::format( ByteStreamBuffer_c& byteStream ) const {
+  void DeviceObject_c::formatHeader( ByteStreamBuffer_c& byteStream ) const {
     static const char* deviceLabels[] = { "DVC", "DET", "DPD", "DPT", "DVP" };
 
     byteStream.format( ( const uint8_t* )deviceLabels[m_objectType], 3 );
@@ -167,9 +167,8 @@ namespace __IsoAgLib {
   }
 
 
-  void
-  DeviceObjectDvc_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
-    DeviceObject_c::format( byteStream );
+  void DeviceObjectDvc_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& ) const {
+    formatHeader( byteStream );
 
     byteStream.format( m_designator );
     byteStream.format( m_version );
@@ -240,8 +239,8 @@ namespace __IsoAgLib {
     m_parentId = pid;
   }
 
-  void DeviceObjectDet_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
-    DeviceObject_c::format( byteStream );
+  void DeviceObjectDet_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& ) const {
+    formatHeader( byteStream );
 
     byteStream.format( uint8_t( m_type ) );
     byteStream.format( m_designator );
@@ -352,12 +351,12 @@ namespace __IsoAgLib {
     m_dvpObjectId = ( dvp ) ? dvp->getObjectId() : 0xFFFF;
   }
 
-  void DeviceObjectDpd_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
-    DeviceObject_c::format( byteStream );
+  void DeviceObjectDpd_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const {
+    formatHeader( byteStream );
 
-    byteStream.format( m_ddi );
-    byteStream.format( m_properties );
-    byteStream.format( m_method );
+    byteStream.format( ddi() );
+    byteStream.format( properties( caps.hasPeerControl ) );
+    byteStream.format( method() );
     byteStream.format( m_designator );
     byteStream.format( m_dvpObjectId );
   }
@@ -413,8 +412,8 @@ namespace __IsoAgLib {
   }
 
 
-  void DeviceObjectDpt_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
-    DeviceObject_c::format( byteStream );
+  void DeviceObjectDpt_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& ) const {
+    formatHeader( byteStream );
 
     byteStream.format( m_ddi );
     byteStream.format( m_value );
@@ -453,8 +452,8 @@ namespace __IsoAgLib {
   {}
 
 
-  void DeviceObjectDvp_c::formatBytestream( ByteStreamBuffer_c& byteStream ) const {
-    DeviceObject_c::format( byteStream );
+  void DeviceObjectDvp_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& ) const {
+    formatHeader( byteStream );
 
     byteStream.format( m_offset );
     byteStream.format( m_scale );
@@ -578,7 +577,7 @@ namespace __IsoAgLib {
   }
 
 
-  ByteStreamBuffer_c DevicePool_c::getBytestream( uint8_t cmd ) {
+  ByteStreamBuffer_c DevicePool_c::getBytestream( uint8_t cmd, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) {
     const uint32_t size = getBytestreamSize() + 1; // one extra byte for command
     ByteStreamBuffer_c buffer;
     buffer.setBuffer( allocByteStreamBuffer( size ) );
@@ -586,8 +585,7 @@ namespace __IsoAgLib {
     buffer.format( cmd );
 
     for ( deviceMap_t::iterator it = m_devicePool.begin(); it != m_devicePool.end(); ++it ) {
-      DeviceObject_c* devObject = it->second;
-      devObject->formatBytestream( buffer );
+      it->second->formatBytestream( buffer, caps );
     }
 
     return buffer;
@@ -597,8 +595,7 @@ namespace __IsoAgLib {
   uint32_t DevicePool_c::getBytestreamSize() const {
     uint32_t size = 0;
     for ( deviceMap_t::const_iterator it = m_devicePool.begin(); it != m_devicePool.end(); ++it ) {
-      DeviceObject_c* devObject = it->second;
-      size += devObject->getSize();
+      size += it->second->getSize();
     }
     return size;
   }
@@ -608,8 +605,7 @@ namespace __IsoAgLib {
     calcChecksumStart();
     
     for ( deviceMap_t::const_iterator it = m_devicePool.begin(); it != m_devicePool.end(); ++it ) {
-      DeviceObject_c* devObject = it->second;
-      devObject->calcChecksumAdd( *this );
+      it->second->calcChecksumAdd( *this );
     }
 
     calcChecksumEnd();

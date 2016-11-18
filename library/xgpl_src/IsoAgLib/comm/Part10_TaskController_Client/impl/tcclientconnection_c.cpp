@@ -54,7 +54,8 @@ namespace __IsoAgLib {
     , m_cmdSent( 0x00 )
     , m_cmdSentTimestamp( 0 )
     , m_cmdTimeout( 0 )
-    , m_capabilities()
+    , m_capsClient()
+    , m_capsServer()
     , m_schedulerTaskProxy( *this, 100, false )
   {
   }
@@ -77,7 +78,8 @@ namespace __IsoAgLib {
     , m_cmdSent( rhs.m_cmdSent )
     , m_cmdSentTimestamp( rhs.m_cmdSentTimestamp )
     , m_cmdTimeout( rhs.m_cmdTimeout )
-    , m_capabilities( rhs.m_capabilities )
+    , m_capsClient( rhs.m_capsClient )
+    , m_capsServer( rhs.m_capsServer )
     , m_schedulerTaskProxy( *this, 100, false )
   {
   }
@@ -98,7 +100,7 @@ namespace __IsoAgLib {
     PdConnection_c::init( identItem, &server );
 
     m_stateHandler = &sh;
-    m_capabilities = capabilities;
+    m_capsClient = capabilities;
 
     getSchedulerInstance().registerTask( m_schedulerTaskProxy, 0 );
 
@@ -260,7 +262,7 @@ namespace __IsoAgLib {
         break;
 
       case PoolStateUploading:
-        m_devicePoolToUpload = getDevicePool().getBytestream( procCmdPar_OPTransferMsg );
+        m_devicePoolToUpload = getDevicePool().getBytestream( procCmdPar_OPTransferMsg, m_capsServer );
         doCommand( procCmdPar_RequestOPTransferMsg );
         break;
 
@@ -492,13 +494,13 @@ namespace __IsoAgLib {
         static const bool peerControl = true;
         sendMsg(
           procCmdPar_VersionMsg,
-          m_capabilities.versionNr,
+          m_capsClient.versionNr,
           0xFF, // client does not send boot-time information.
-          (m_capabilities.hasTcBas ? 0x01:0) | (m_capabilities.hasTcGeo ? 0x02:0) | (m_capabilities.hasTcGeo ? 0x04:0)  | (peerControl ? 0x08:0) | (m_capabilities.hasTcSc ? 0x10:0),
+          (m_capsClient.hasTcBas ? 0x01:0) | (m_capsClient.hasTcGeo ? 0x02:0) | (m_capsClient.hasTcGeo ? 0x04:0)  | (peerControl ? 0x08:0) | (m_capsClient.hasTcSc ? 0x10:0),
           0x00, // optiones byte 2
-          uint8_t( m_capabilities.numBoom ),
-          uint8_t( m_capabilities.numSection ),
-          uint8_t( m_capabilities.numBin ) );
+          uint8_t( m_capsClient.numBoom ),
+          uint8_t( m_capsClient.numSection ),
+          uint8_t( m_capsClient.numBin ) );
       } break;
     }
 
@@ -520,20 +522,19 @@ namespace __IsoAgLib {
 
         setDevPoolState( PoolStateAwaitingConnectionDecision );
 
-        IsoAgLib::ProcData::ServerCapabilities_s caps;
-        caps.versionNr = data.getUint8Data( 2-1 );
+        m_capsServer.versionNr = data.getUint8Data( 2-1 );
 
-        caps.hasTcBas           = ( data.getUint8Data( 4-1 ) & 0x01 ) != 0;
-        caps.hasTcGeoWithPbc    = ( data.getUint8Data( 4-1 ) & 0x02 ) != 0;
-        caps.hasTcGeoWithoutPbc = ( data.getUint8Data( 4-1 ) & 0x04 ) != 0;
-        caps.hasPeerControl     = ( data.getUint8Data( 4-1 ) & 0x08 ) != 0;
-        caps.hasTcSc            = ( data.getUint8Data( 4-1 ) & 0x10 ) != 0;
+        m_capsServer.hasTcBas           = ( data.getUint8Data( 4-1 ) & 0x01 ) != 0;
+        m_capsServer.hasTcGeoWithPbc    = ( data.getUint8Data( 4-1 ) & 0x02 ) != 0;
+        m_capsServer.hasTcGeoWithoutPbc = ( data.getUint8Data( 4-1 ) & 0x04 ) != 0;
+        m_capsServer.hasPeerControl     = ( data.getUint8Data( 4-1 ) & 0x08 ) != 0;
+        m_capsServer.hasTcSc            = ( data.getUint8Data( 4-1 ) & 0x10 ) != 0;
 
-        caps.numBoom    = data.getUint8Data( 6-1 );
-        caps.numSection = data.getUint8Data( 7-1 );
-        caps.numBin     = data.getUint8Data( 8-1 );
+        m_capsServer.numBoom    = data.getUint8Data( 6-1 );
+        m_capsServer.numSection = data.getUint8Data( 7-1 );
+        m_capsServer.numBin     = data.getUint8Data( 8-1 );
 
-        m_stateHandler->_eventConnectionRequest( getIdentItem(), *connected(), caps );
+        m_stateHandler->_eventConnectionRequest( getIdentItem(), *connected(), m_capsServer );
         break;
       }
 

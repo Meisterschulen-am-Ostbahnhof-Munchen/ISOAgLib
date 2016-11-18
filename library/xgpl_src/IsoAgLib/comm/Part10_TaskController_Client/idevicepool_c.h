@@ -104,7 +104,7 @@ namespace IsoAgLib {
       }
 
       bool propertyDefaultSet() const {
-        return __IsoAgLib::DeviceObjectDpd_c::propertyDefaultSet();
+        return __IsoAgLib::DeviceObjectDpd_c::hasProperty( ProcData::Defaultset );
       }
   };
 

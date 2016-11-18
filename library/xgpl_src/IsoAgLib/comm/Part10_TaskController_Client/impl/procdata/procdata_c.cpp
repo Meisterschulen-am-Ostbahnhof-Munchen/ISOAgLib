@@ -41,7 +41,7 @@ namespace __IsoAgLib {
       dpd.ddi(),
       det.elementNumber(),
       dpd.method(),
-      dpd.propertySetpoint(),
+      dpd.hasProperty( IsoAgLib::ProcData::Settable ),
       setpointhandler );
 
 #ifndef NDEBUG

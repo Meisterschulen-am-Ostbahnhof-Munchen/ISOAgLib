@@ -114,7 +114,7 @@ namespace __IsoAgLib {
       ServerInstance_c* connected() const { return (ServerInstance_c *)( getRemoteNode() ); }
       const IsoName_c &getRemoteName() const { return getRemoteItem()->isoName(); } // no NULL check needed here!
       StateHandler_c* getStateHandler() const { return m_stateHandler; }
-      IsoAgLib::ProcData::ClientCapabilities_s getClientCapabilities() const { return m_capabilities; }
+      IsoAgLib::ProcData::ClientCapabilities_s getClientCapabilities() const { return m_capsClient; }
 
 #if 0
 // not implemented yet
@@ -332,7 +332,8 @@ namespace __IsoAgLib {
       ecutime_t m_cmdSentTimestamp;
       int32_t m_cmdTimeout;
 
-      IsoAgLib::ProcData::ClientCapabilities_s m_capabilities;
+      IsoAgLib::ProcData::ClientCapabilities_s m_capsClient;
+      IsoAgLib::ProcData::ServerCapabilities_s m_capsServer;
 
       CLASS_SCHEDULER_TASK_PROXY( TcClientConnection_c )
       SchedulerTaskProxy_c m_schedulerTaskProxy;

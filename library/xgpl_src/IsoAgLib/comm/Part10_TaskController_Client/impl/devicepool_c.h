@@ -71,8 +71,8 @@ namespace __IsoAgLib {
 
       virtual uint32_t getSize() const;
 
-      virtual void format( ByteStreamBuffer_c& byteStream ) const;
-      virtual void formatBytestream( ByteStreamBuffer_c& byteStream ) const = 0;
+      void formatHeader( ByteStreamBuffer_c& byteStream ) const;
+      virtual void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const = 0;
       virtual void calcChecksumAdd( DevicePool_c & ) const = 0;
       void calcChecksumAddHeader( DevicePool_c & ) const;
 
@@ -113,7 +113,7 @@ namespace __IsoAgLib {
       Localization_s m_localization;
 
       uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
   };
 
@@ -133,7 +133,7 @@ namespace __IsoAgLib {
 
     private:
       uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
 
       size_t numberOfChildren() const {
@@ -169,16 +169,16 @@ namespace __IsoAgLib {
       uint8_t method() const {
         return m_method;
       }
-      bool propertySetpoint() const {
-        return ( m_properties & ( 1 << 1 ) ) != 0;
+      uint8_t properties( bool includeControlSource ) const {
+        return( includeControlSource ? m_properties : ( m_properties & ~( 1 << IsoAgLib::ProcData::ControlSource ) ) );
       }
-      bool propertyDefaultSet() const {
-        return ( m_properties & ( 1 << 0 ) ) != 0;
+      bool hasProperty( IsoAgLib::ProcData::Property_t prop ) const {
+        return( m_properties & ( 1 << prop ) ) != 0;
       }
 
     private:
       uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
 
       uint16_t m_ddi;
@@ -203,7 +203,7 @@ namespace __IsoAgLib {
 
     private:
       uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
 
       uint16_t m_ddi;
@@ -244,7 +244,7 @@ namespace __IsoAgLib {
 
     private:
       uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
 
       int32_t m_offset;
@@ -303,7 +303,7 @@ namespace __IsoAgLib {
       DeviceObjectDvc_c* getDvcObject() const;
       DeviceObject_c* getObject( const uint16_t objId, const IsoAgLib::ProcData::DeviceObjectType_t ) const;
 
-      ByteStreamBuffer_c getBytestream( uint8_t cmdByte );
+      ByteStreamBuffer_c getBytestream( uint8_t cmdByte, const IsoAgLib::ProcData::ServerCapabilities_s& caps );
       uint32_t getBytestreamSize() const;
 
       typedef STL_NAMESPACE::list<ProcData_c*> ProcDataList_t;
