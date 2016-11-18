@@ -374,6 +374,10 @@ class ByteStreamBuffer_c
       return m_buffer;
     }
 
+    bool hasBuffer() {
+      return( m_buffer != NULL );
+    }
+
     void setEnd( uint32_t e ) {
       m_offset = e;
     }
@@ -392,7 +396,7 @@ class ByteStreamBuffer_c
       return m_buffer[ p ];
     }
     void reset() {
-      setBuffer( 0 );
+      setBuffer( NULL );
       setEnd( 0 );
       setSize( 0 );
     }

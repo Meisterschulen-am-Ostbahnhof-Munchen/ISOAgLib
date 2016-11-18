@@ -162,6 +162,12 @@ namespace __IsoAgLib {
     getMultiReceiveInstance( m_identItem->getMultitonInst() ).deregisterClient( *this, m_identItem->isoName(), PROCESS_DATA_PGN, 0x3FFFFUL, &connected()->getIsoItem().isoName() );
     getMultiSendInstance( m_identItem->getMultitonInst() ).abortSend( m_multiSendEventHandler );
 
+    if( m_devicePoolToUpload.hasBuffer() )
+    {
+      getDevicePool().freeByteStreamBuffer( m_devicePoolToUpload.getBuffer() );
+      m_devicePoolToUpload.setBuffer( NULL );
+    }
+
     // is it worth sending a proper "I'm disconnecting" message??
     if( connected()->isAlive() )
     {
@@ -700,13 +706,14 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::eventPoolUploadResponse( uint8_t result ) {
-    if ( result == 0 ) {
-      setDevPoolState( PoolStateUploaded );
-      getDevicePool().freeByteStreamBuffer( m_devicePoolToUpload.getBuffer() );
-    } else {
-      setDevPoolState( PoolStateError );
-    }
+  TcClientConnection_c::eventPoolUploadResponse( uint8_t result )
+  {
+    setDevPoolState( ( result == 0 )
+                       ? PoolStateUploaded
+                       : PoolStateError );
+
+    getDevicePool().freeByteStreamBuffer( m_devicePoolToUpload.getBuffer() );
+    m_devicePoolToUpload.setBuffer( NULL );
   }
 
 
