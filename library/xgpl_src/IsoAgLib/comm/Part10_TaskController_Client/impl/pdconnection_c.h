@@ -65,7 +65,9 @@ namespace __IsoAgLib
 
     virtual void processProcMsg( const ProcessPkg_c& );
 
-    void sendProcMsg( IsoAgLib::ProcData::CommandType_t, uint16_t ddi, uint16_t element, int32_t pdValue ) const;
+    void sendProcMsg(     IsoAgLib::ProcData::CommandType_t, uint16_t ddi, uint16_t element, int32_t pdValue ) const;
+    void sendProcMsgPeer( IsoAgLib::ProcData::CommandType_t, uint16_t ddi, uint16_t element, int32_t pdValue, const IsoName_c &peer ) const;
+
     void sendNack( int16_t ddi, int16_t element, NackResponse_t errorcodes, bool wasBroadcast ) const;
 
   protected:

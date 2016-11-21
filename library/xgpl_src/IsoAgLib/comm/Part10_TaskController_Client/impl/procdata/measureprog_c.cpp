@@ -110,7 +110,16 @@ namespace __IsoAgLib {
 
   void MeasureProg_c::sendValue()
   {
-    connection().sendProcMsg( IsoAgLib::ProcData::Value, pdBase().DDI(), pdBase().element(), pdLocal().getMeasurement().getValue() );
+    // @todo Currently a "Request Value" would also NOT responded to the TC/DL anymore, but also to the Setpoint Value User.
+    //       Needs to be clarified in ISO what to actually do.
+    if( isSetpointValueUserAssigned() )
+    {
+      connection().sendProcMsgPeer( IsoAgLib::ProcData::Value, pdBase().DDI(), m_spValueUser->m_elem, pdLocal().getMeasurement().getValue(), m_spValueUser->m_name );
+    }
+    else
+    {
+      connection().sendProcMsg( IsoAgLib::ProcData::Value, pdBase().DDI(), pdBase().element(), pdLocal().getMeasurement().getValue() );
+    }
   }
 
 

@@ -328,6 +328,18 @@ namespace __IsoAgLib {
 
 
   void
+  PdConnection_c::sendProcMsgPeer( IsoAgLib::ProcData::CommandType_t cmd, uint16_t ddi, uint16_t element, int32_t pdValue, const IsoName_c &peer ) const
+  {
+    ProcessPkg_c pkg( cmd, element, ddi, pdValue );
+
+    pkg.setISONameForDA( peer );
+    pkg.setMonitorItemForSA( m_identItem->getIsoItem() );
+
+    getIsoBusInstance4Comm() << pkg;
+  }
+
+
+  void
   PdConnection_c::sendNack( int16_t ddi, int16_t element, NackResponse_t errorcodes, bool wasBroadcast ) const
   {
     if( !wasBroadcast )
