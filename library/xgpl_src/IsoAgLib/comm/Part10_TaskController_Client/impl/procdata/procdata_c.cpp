@@ -42,6 +42,7 @@ namespace __IsoAgLib {
       det.elementNumber(),
       dpd.method(),
       dpd.hasProperty( IsoAgLib::ProcData::Settable ),
+      dpd.hasProperty( IsoAgLib::ProcData::ControlSource ),
       setpointhandler );
 
 #ifndef NDEBUG
@@ -50,12 +51,17 @@ namespace __IsoAgLib {
 #endif
 
     isoaglib_assert(
-      ( DDI() != IsoAgLib::ProcData::DefaultDataLoggingDDI ) ? true :
-      isMethodSet( IsoAgLib::ProcData::TimeInterval ) &
-      isMethodSet( IsoAgLib::ProcData::DistInterval ) &
-      isMethodSet( IsoAgLib::ProcData::ThresholdLimit ) &
-      isMethodSet( IsoAgLib::ProcData::OnChange ) &
-      isMethodSet( IsoAgLib::ProcData::Total ) );
+      ( DDI() != IsoAgLib::ProcData::DefaultDataLoggingDDI ) ||
+        ( isMethodSet( IsoAgLib::ProcData::TimeInterval ) &&
+          isMethodSet( IsoAgLib::ProcData::DistInterval ) &&
+          isMethodSet( IsoAgLib::ProcData::ThresholdLimit ) &&
+          isMethodSet( IsoAgLib::ProcData::OnChange ) &&
+          isMethodSet( IsoAgLib::ProcData::Total ) ) );
+
+    isoaglib_assert(
+      !dpd.hasProperty( IsoAgLib::ProcData::ControlSource ) ||
+        ( isMethodSet( IsoAgLib::ProcData::TimeInterval ) &&
+          isMethodSet( IsoAgLib::ProcData::OnChange ) ) );
   }
 
 

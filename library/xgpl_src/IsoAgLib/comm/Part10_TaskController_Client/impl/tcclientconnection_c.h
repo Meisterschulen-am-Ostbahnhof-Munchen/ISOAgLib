@@ -125,7 +125,7 @@ namespace __IsoAgLib {
 
       void eventTaskStartStop( bool start );
 
-      void notifyOnPeerDropOff( PdRemoteNode_c& pdRemoteNode ) { mc_csHandler.notifyOnPeerDropOff( pdRemoteNode ); }
+      void notifyOnPeerDropOff( PdRemoteNode_c& pdRemoteNode ) { mc_localCsHandler.notifyOnPeerDropOff( pdRemoteNode ); }
 
     private:
       enum ControlAssignmentMode_t {
@@ -203,7 +203,8 @@ namespace __IsoAgLib {
 
       virtual void processRequestDefaultDataLogging();
 
-      void processControlAssignment( bool assign, uint16_t elem, uint16_t ddi, const IsoName_c& name );
+      bool processControlAssignmentReceiver(    bool assign, uint16_t elem, uint16_t ddi, const IsoName_c& name );
+      bool processControlAssignmentTransmitter( bool assign, uint16_t elem, uint16_t ddi, const IsoName_c& name, uint16_t destElem );
 
       void handleNack( int16_t ddi, int16_t element );
 
@@ -310,7 +311,7 @@ namespace __IsoAgLib {
         TcClientConnection_c& m_tcClientConnection; // back-ref.
 
         SpValSourceList m_listSpValueSource;
-      } mc_csHandler;
+      } mc_localCsHandler;
 
       // MultiSendStreamer_c variables
       uint16_t m_currentSendPosition;

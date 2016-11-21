@@ -35,6 +35,7 @@ namespace __IsoAgLib {
     , m_subProgDistProp( NULL )
     , m_minThreshold( sci32_stopValThresholdMinimum )
     , m_maxThreshold( sci32_stopValThresholdMaximum )
+    , m_spValueUser( NULL )
   {
   }
 
@@ -44,6 +45,8 @@ namespace __IsoAgLib {
     delete m_subProgDistProp;
     delete m_subProgOnChange;
     delete m_subProgTimeProp;
+
+    delete m_spValueUser;
   }
 
 
@@ -201,5 +204,29 @@ namespace __IsoAgLib {
     m_minThreshold = sci32_stopValThresholdMinimum;
     m_maxThreshold = sci32_stopValThresholdMaximum;
   }
+
+
+  void MeasureProg_c::assignSetpointValueUser( const IsoName_c& name, uint16_t elem )
+  {
+    // currently allow re-assignments.
+    if( isSetpointValueUserAssigned() )
+      delete m_spValueUser;
+
+    m_spValueUser = new SetpointValueUser_c( name, elem );
+  }
+
+
+  void MeasureProg_c::unassignSetpointValueUser()
+  {
+    delete m_spValueUser;
+    m_spValueUser = NULL;
+  }
+
+
+  bool MeasureProg_c::isSetpointValueUserAssigned() const
+  {
+    return( m_spValueUser != NULL );
+  }
+
 
 }

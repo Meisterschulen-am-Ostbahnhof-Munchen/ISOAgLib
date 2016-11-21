@@ -39,7 +39,7 @@ namespace __IsoAgLib {
   TcClientConnection_c::TcClientConnection_c() 
     : PdConnection_c()
     , mc_mrClient( *this )
-    , mc_csHandler( *this )
+    , mc_localCsHandler( *this )
     , m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )
     , m_currentSendPosition( 0 )
@@ -63,7 +63,7 @@ namespace __IsoAgLib {
   TcClientConnection_c::TcClientConnection_c( const TcClientConnection_c &rhs )
     : PdConnection_c( rhs )
     , mc_mrClient( *this )
-    , mc_csHandler( *this )
+    , mc_localCsHandler( *this )
     , m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )
     , m_currentSendPosition( rhs.m_currentSendPosition )
@@ -187,7 +187,7 @@ namespace __IsoAgLib {
     getSchedulerInstance().deregisterTask( m_schedulerTaskProxy );
 
     stopRunningMeasurement();
-    mc_csHandler.stop();
+    mc_localCsHandler.stop();
 
     if (connected()->getLastStatusTaskTotalsActive())
       eventTaskStartStop( false );
@@ -336,8 +336,8 @@ namespace __IsoAgLib {
   }
 
 
-  void
-  TcClientConnection_c::processControlAssignment( bool assign, uint16_t elem, uint16_t ddi, const IsoName_c& name )
+  bool
+  TcClientConnection_c::processControlAssignmentReceiver( bool assign, uint16_t elem, uint16_t ddi, const IsoName_c& name )
   {
     const uint32_t key = getMapKey( ddi, elem );
     ConnectedPdMap_t::iterator iter = m_connectedPds.find(key);
@@ -351,25 +351,59 @@ namespace __IsoAgLib {
       {
         if( assign )
         {
-          success = mc_csHandler.addSetpointValueSource( elem, ddi, *isoItem );
+          success = mc_localCsHandler.addSetpointValueSource( elem, ddi, *isoItem );
         }
         else
         {
-          success = mc_csHandler.removeSetpointValueSource( elem, ddi, *isoItem );
+          success = mc_localCsHandler.removeSetpointValueSource( elem, ddi, *isoItem );
         }
       }
     }
 
-    if( success )
-    {
-      sendProcMsg( IsoAgLib::ProcData::ControlAssignment, ddi, elem, int32_t( 0xfffffff0UL | uint32_t( ReceiverAck ) ) );
-    }
-    else
-    {
-      // we currently don't have a better error-code for NAME unknown/don't assign to TC or DL/don't reassign/etc., so....
-      sendNackNotFound( ddi, elem, false );
-    }
+    return success;
   }
+
+
+  bool
+  TcClientConnection_c::processControlAssignmentTransmitter( bool assign, uint16_t elem, uint16_t ddi, const IsoName_c& name, uint16_t destElem )
+  {
+    const uint32_t key = getMapKey( ddi, elem );
+    ConnectedPdMap_t::iterator iter = m_connectedPds.find(key);
+
+    bool success = false;
+
+    if ( iter != m_connectedPds.end())
+    {
+      const IsoItem_c* isoItem = getIsoMonitorInstance4Comm().item( name );
+      MeasureProg_c* mprog = static_cast< MeasureProg_c* >( iter->second );
+
+      if( isoItem && mprog->pdLocal().isControlSource() )
+      {
+
+        if( assign )
+        {
+          mprog->assignSetpointValueUser( isoItem->isoName(), destElem );
+
+          const bool validTriggerMethodT = mprog->startMeasurement( IsoAgLib::ProcData::MeasurementCommandTimeProp, 1000 );
+          const bool validTriggerMethodO = mprog->startMeasurement( IsoAgLib::ProcData::MeasurementCommandOnChange, 1 );
+
+          isoaglib_assert( validTriggerMethodT && validTriggerMethodO );
+          ( void )validTriggerMethodT; // must be valid in case Control Source bit is set
+          ( void )validTriggerMethodO; // must be valid in case Control Source bit is set
+        }
+        else
+        {
+          // @todo Not sure if this is correct, or only Time/Chg measurements should be stopped.
+          mprog->stopAllMeasurements();
+
+          mprog->unassignSetpointValueUser();
+        }
+      }
+    }
+
+    return success;
+  }
+
 
   void
   TcClientConnection_c::processMultiPacket( Stream_c &stream )
@@ -383,32 +417,50 @@ namespace __IsoAgLib {
         if( stream.getByteTotalSize() != 14 )
           break;
 
+        // parse message...
         uint16_t elem = ( uint16_t( stream.getFirstByte() ) >> 4 ) | ( uint16_t( stream.getNextNotParsed() ) << 4 );
         uint16_t ddi  = uint16_t( stream.getNextNotParsed() ); // do not put into one term because of unspecified evaluation order!
                  ddi |= uint16_t( stream.getNextNotParsed() ) << 8;
 
-        const ControlAssignmentMode_t mode = static_cast< ControlAssignmentMode_t >( stream.getNextNotParsed() & 0x0F );
-        ( void )stream.getNextNotParsed();
+        uint8_t byte5 = stream.getNextNotParsed();
+        uint8_t byte6 = stream.getNextNotParsed();
+
+        const ControlAssignmentMode_t mode = static_cast< ControlAssignmentMode_t >( byte5 & 0x0F );
+        uint16_t destElem = ( uint16_t( byte5 ) >> 4 ) | ( uint16_t( byte6 ) << 4 );
 
         uint8_t rawName[ 8 ];
         for( unsigned i=0; i<8; ++i )
           rawName[ i ] = stream.getNextNotParsed();
         const IsoName_c name( rawName );
 
+        // process message...
         bool assign = true;
+        bool transmitter = false;
+        bool success = false;
         switch( mode )
         {
         case UnassignReceiver:
           assign = false;
-          // break left out intentionally
-
         case AssignReceiver:
-          processControlAssignment( assign, elem, ddi, name );
+          success = processControlAssignmentReceiver( assign, elem, ddi, name );
+          break;
+
+        case UnassignTransmitter:
+          assign = false;
+        case AssignTransmitter:
+          transmitter = true;
+          success = processControlAssignmentTransmitter( assign, elem, ddi, name, destElem );
           break;
 
         default:
           ; // ignore invalid message.
         }
+
+        if( success )
+          sendProcMsg( IsoAgLib::ProcData::ControlAssignment, ddi, elem, int32_t( 0xfffffff0UL | uint32_t( transmitter ? TransmitterAck : ReceiverAck ) ) );
+        else
+          // we currently don't have a better error-code for NAME unknown/don't assign to TC or DL/don't reassign/etc., so....
+          sendNackNotFound( ddi, elem, false );
       }
       break;
 
@@ -427,7 +479,7 @@ namespace __IsoAgLib {
     switch (pkg.men_command)
     {
       case IsoAgLib::ProcData::Value:
-        spValueSource = mc_csHandler.getSetpointValueSource( pkg.mui16_element, pkg.mui16_DDI );
+        spValueSource = mc_localCsHandler.getSetpointValueSource( pkg.mui16_element, pkg.mui16_DDI );
 
         // if no special Control Source is given, commands are only accepted from the connected TC
         if( spValueSource == NULL )
@@ -635,7 +687,7 @@ namespace __IsoAgLib {
       else
       {
         stopRunningMeasurement();
-        mc_csHandler.stop();
+        mc_localCsHandler.stop();
 
         m_stateHandler->_eventTaskStopped( *this );
       }

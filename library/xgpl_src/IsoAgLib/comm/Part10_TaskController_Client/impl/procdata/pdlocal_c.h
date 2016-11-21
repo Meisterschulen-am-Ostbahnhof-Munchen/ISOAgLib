@@ -27,11 +27,11 @@ namespace __IsoAgLib {
   {
   public:
     PdLocal_c();
-    PdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, SetpointHandler_c * );
+    PdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, bool _controlSource, SetpointHandler_c * );
 
-    void init( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, SetpointHandler_c * );
+    void init( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, bool _controlSource, SetpointHandler_c * );
 
-    virtual ConnectedPd_c &createConnectedPd( PdConnection_c & );
+    virtual ConnectedPd_c &createConnectedPd( PdConnection_c & ) ISOAGLIB_OVERRIDE;
 
     const Setpoint_c &getSetpoint() const { return m_setpoint; }
     Setpoint_c &getSetpoint() { return m_setpoint; }
@@ -41,12 +41,14 @@ namespace __IsoAgLib {
 
     uint8_t triggerMethod() const { return m_triggerMethod; }
     inline bool isMethodSet( IsoAgLib::ProcData::TriggerMethod_t _method ) const;
+    inline bool isControlSource() const;
 
   protected:
     Setpoint_c m_setpoint;
     Measurement_c m_measurement;
 
     uint8_t m_triggerMethod;
+    bool m_controlSource;
 
     /** not copyable */
     PdLocal_c( const PdLocal_c& );
@@ -58,6 +60,12 @@ namespace __IsoAgLib {
   PdLocal_c::isMethodSet( IsoAgLib::ProcData::TriggerMethod_t _method ) const
   {
     return( (triggerMethod() & (1 << _method)) != 0 );
+  }
+
+  inline bool
+  PdLocal_c::isControlSource() const
+  {
+    return m_controlSource;
   }
 
 }

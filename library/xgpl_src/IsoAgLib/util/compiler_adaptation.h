@@ -15,14 +15,13 @@
 
 #include "compiler_adaptation_unicode.h" // defines TCHAR etc.
 
-/* ******************************************** */
-/* * as some compilers can't manage long symbol */
-/* * names, use some #defines to create shorter */
-/* * names during the compile phase. The source */
-/* * code can still use the long describing     */
-/* * names                                      */
-/* ******************************************** */
+#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
+#if ( (defined(GCC_VERSION) && (GCC_VERSION >= 40700)) || (defined(_MSC_VER) && (_MSC_VER >= 1600)) || (__cplusplus >= 201103L) )
+#define ISOAGLIB_OVERRIDE override
+#else
+#define ISOAGLIB_OVERRIDE
+#endif
 
 #if defined(__TSW_CPP__)
   #define DEF_GET_POINTER_ADR_DEBUG_OUTPUT( pointer ) uint32_t( pointer )

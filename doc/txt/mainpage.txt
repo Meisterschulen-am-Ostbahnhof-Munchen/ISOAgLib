@@ -50,7 +50,7 @@ VT-Client:
      (VTs with Version 4 but can also be supported/sent from lower versioned VTs!)
 
 TC-Client:
- - Enhancement: Added "Peer Control".
+ - Enhancement: Added "Peer Control" for Setpoint Value Source / Setpoint Value User.
  
 
 \subsection Change_ZG 2.8.1 to 2.8.2

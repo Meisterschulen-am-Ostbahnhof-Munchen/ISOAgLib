@@ -17,6 +17,8 @@
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/connectedpd_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/pdlocal_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+
 
 namespace __IsoAgLib {
 
@@ -32,9 +34,9 @@ namespace __IsoAgLib {
       MeasureProg_c( PdConnection_c&, PdLocal_c& );
       virtual ~MeasureProg_c();
 
-      virtual void handleRequest() { sendValue(); }
-      virtual void handleIncoming( int32_t, bool wasBroadcast );
-      virtual bool startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t, int32_t ai32_increment );
+      virtual void handleRequest() ISOAGLIB_OVERRIDE { sendValue(); }
+      virtual void handleIncoming( int32_t, bool wasBroadcast ) ISOAGLIB_OVERRIDE;
+      virtual bool startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t, int32_t ai32_increment ) ISOAGLIB_OVERRIDE;
 
       void valueUpdated();
       void sendValue();
@@ -42,6 +44,12 @@ namespace __IsoAgLib {
 
       bool minMaxLimitsPassed() const;
 
+      // Peer Control - Setpoint Value Source
+      void assignSetpointValueUser( const IsoName_c& name, uint16_t elem );
+      void unassignSetpointValueUser();
+      bool isSetpointValueUserAssigned() const;
+
+      // helper
       const PdLocal_c &pdLocal() const { return static_cast<const PdLocal_c &>( m_pdBase ); }
       PdLocal_c &pdLocal() { return static_cast<PdLocal_c &>( m_pdBase ); }
 
@@ -55,6 +63,17 @@ namespace __IsoAgLib {
 
       int32_t m_minThreshold;
       int32_t m_maxThreshold;
+
+      struct SetpointValueUser_c
+      {
+        SetpointValueUser_c( const IsoName_c& name, uint16_t elem )
+          : m_name( name )
+          , m_elem( elem )
+        {}
+
+        IsoName_c m_name;
+        uint16_t  m_elem;
+      } *m_spValueUser;
   };
 
 }

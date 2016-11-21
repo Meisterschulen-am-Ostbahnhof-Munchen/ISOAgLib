@@ -38,9 +38,9 @@ namespace IsoAgLib {
     };
 
     iPdLocal_c();
-    iPdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, iSetpointHandler_c * );
+    iPdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, bool _controlSource, iSetpointHandler_c * );
 
-    void init( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, iSetpointHandler_c * );
+    void init( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, bool _controlSource, iSetpointHandler_c * );
 
     uint16_t DDI() const;
     uint16_t element() const;
@@ -64,15 +64,15 @@ namespace IsoAgLib {
   }
 
   inline
-  iPdLocal_c::iPdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, iSetpointHandler_c *_handler )
-    : PdLocal_c( _ddi, _element, _triggerMethod, _settable, _handler )
+  iPdLocal_c::iPdLocal_c( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, bool _controlSource, iSetpointHandler_c *_handler )
+    : PdLocal_c( _ddi, _element, _triggerMethod, _settable, _controlSource, _handler )
   {
   }
 
   inline void
-  iPdLocal_c::init( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, iSetpointHandler_c *_handler )
+  iPdLocal_c::init( uint16_t _ddi, uint16_t _element, uint8_t _triggerMethod, bool _settable, bool _controlSource, iSetpointHandler_c *_handler )
   {
-    PdLocal_c::init( _ddi, _element, _triggerMethod, _settable, _handler );
+    PdLocal_c::init( _ddi, _element, _triggerMethod, _settable, _controlSource, _handler );
   }
 
   inline uint16_t
