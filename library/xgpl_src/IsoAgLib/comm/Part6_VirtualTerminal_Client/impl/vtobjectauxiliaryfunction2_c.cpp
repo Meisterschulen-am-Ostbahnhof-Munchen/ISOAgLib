@@ -144,6 +144,9 @@ vtObjectAuxiliaryFunction2_c::unassignAfterTimeout(const IsoAgLib::iIsoName_c& a
 void
 vtObjectAuxiliaryFunction2_c::addPreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input)
 {
+  // avoid any possible duplicates in list
+  removePreferredAssignedInputCandidate(a_ref_input);
+
   ml_preferredAssignedInputCandidate.push_back(a_ref_input);
 
   if(ml_preferredAssignedInputCandidate.size() > CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION)
