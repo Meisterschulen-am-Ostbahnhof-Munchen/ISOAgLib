@@ -437,7 +437,7 @@ public:
   typedef struct iVtObjectAuxiliaryInput2_s {
     uint16_t ID;
     uint8_t backgroundColour;
-    uint8_t functionType;
+    uint8_t functionAttributes;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   } iVtObjectAuxiliaryInput2_s;
@@ -445,7 +445,7 @@ public:
   typedef struct iVtObjectAuxiliaryFunction2_s {
     uint16_t ID;
     uint8_t backgroundColour;
-    uint8_t functionType;
+    uint8_t functionAttributes;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   } iVtObjectAuxiliaryFunction2_s;
