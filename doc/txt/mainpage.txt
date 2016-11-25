@@ -62,14 +62,16 @@ Diagnostics:
  - Enhancement: Added support for J1939-71 Vehicle Identification
 
 VT-Client:
- - Bugfix: Support VTs that can reconfigure capabilities without changing their NAME.
+ - Bugfix:
+   - Support VTs that can reconfigure capabilities without changing their NAME.
+   - AUX-N: Diagnostics CFF would cause a buffer-overflow when options (like Single Assignment, etc.) are set.
  - Enhancement:
    - AUX-N:
      - Allow application to set PA-Presets during runtime. 
      - Allow application to clear PA-Presets during runtime.
      - Allow match of "functional identical WS", can be specified via callback.
      - Don't forward Input activations when some Learn-Mode bit is set.
-     - Allow Function Type of Aux Function Type 2 objects to be modified before pool upload.
+     - Allow Function Attributes of Aux Function Type 2 objects to be modified before pool upload.
    - Command Queue: Supporting multiple send-queues now, based on priority.
      The number of queues can be set with CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES
    - ATTENTION: Now erasing further matches in all queues when replacing a command! (takes more CPU time)

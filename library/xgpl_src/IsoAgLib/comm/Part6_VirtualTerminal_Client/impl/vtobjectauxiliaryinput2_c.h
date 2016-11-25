@@ -100,6 +100,8 @@ public:
   */
   bool setValue(uint16_t aui16_value1, uint16_t aui16_value2, StateForLearnMode_en aen_stateForLearnMode);
 
+  uint8_t getFunctionType() { return (getValue8(MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), functionAttributes), 0 /* ui16_structLen */) & 0x1F); }
+
 private:
 
   enum FunctionType_en 
@@ -120,8 +122,6 @@ private:
     FunctionType_AnalogReturnTo50Quad                        = 13,
     FunctionType_Encoder                                     = 14
   };
-
-  uint8_t getFunctionType() { return (getValue8(MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), functionType), 0 /* ui16_structLen */) & 0x1F); }
 
   InputState_s m_inputState;
 
