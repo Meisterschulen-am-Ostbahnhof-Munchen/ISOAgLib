@@ -250,10 +250,8 @@ private:
   friend class iIsoMonitor_c;
   friend class iTimePosGps_c;
   friend class iTracMove_c;
-  friend class iTracMoveSetPoint_c;
   friend class iTracGeneral_c;
   friend class iTracPTO_c;
-  friend class iTracPTOSetPoint_c;
   friend class iTracLight_c;
   friend class iTracFacilities_c;
   friend class iTracAux_c;

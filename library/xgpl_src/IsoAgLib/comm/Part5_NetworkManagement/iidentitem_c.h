@@ -19,6 +19,7 @@
 
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h>
 
+// forward declarations (for friends)
 namespace __IsoAgLib {
   class VtClient_c;
   class DevPropertyHandler_c;
@@ -27,20 +28,21 @@ namespace __IsoAgLib {
   class TcClientConnection_c;
 }
 
+// forward declarations (for friends)
 namespace IsoAgLib {
 class iVtClient_c;
 class iProprietaryMessageHandler_c;
 class iProprietaryMessageClient_c;
 class iTimePosGps_c;
+class iTimeDate_c;
+class iGnss_c;
 class iTracCert_c;
 class iTracFacilities_c;
 class iTracGeneral_c;
 class iTracGuidanceCommand_c;
 class iTracGuidance_c;
 class iTracLight_c;
-class iTracMoveSetPoint_c;
 class iTracMove_c;
-class iTracPTOSetPoint_c;
 class iTracPTO_c;
 class iTracAux_c;
 
@@ -230,9 +232,7 @@ private:
   friend class iTracGuidanceCommand_c;
   friend class iTracGuidance_c;
   friend class iTracLight_c;
-  friend class iTracMoveSetPoint_c;
   friend class iTracMove_c;
-  friend class iTracPTOSetPoint_c;
   friend class iTracPTO_c;
   friend class iIsbClient_c;
   friend class iVtClientConnection_c;
