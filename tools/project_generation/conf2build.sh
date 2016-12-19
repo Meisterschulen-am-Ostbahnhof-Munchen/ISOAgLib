@@ -163,8 +163,6 @@ set_default_values()
     PRJ_TRACTOR_FACILITIES=0
     PRJ_TRACTOR_AUX=0
     PRJ_TRACTOR_GUIDANCE=0
-    PRJ_TRACTOR_MOVE_SETPOINT=0
-    PRJ_TRACTOR_PTO_SETPOINT=0
     PRJ_ISB_CLIENT=0
     PRJ_EEPROM=0
     PRJ_DATASTREAMS=0
@@ -259,10 +257,12 @@ check_set_correct_variables()
     ISO_AG_LIB_INSIDE="../$ISO_AG_LIB_PATH"
 
     if [ "$PRJ_TRACTOR_MOVE_SETPOINT" -ne 0 ]; then
-        PRJ_TRACTOR_MOVE=1 # force basic trac move to compile in
+        echo_ "ERROR! TRAC_MOVE_SETPOINT not supported any longer."
+		exit 2
     fi
     if [ "$PRJ_TRACTOR_PTO_SETPOINT" -gt 0 ]; then
-        PRJ_TRACTOR_PTO=1 # force basic trac move to compile in
+        echo_ "ERROR! TRAC_PTO_SETPOINT not supported any longer."
+		exit 2
     fi
 
     # overwrite settings from config file with command line parameter settings
@@ -371,28 +371,24 @@ comm_features()
         printf '%s' " -o -name 'ibasetypes.h' -o -name 'basecommon_c*'" >&3
     fi
     if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
-        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral_c*' \)" >&3
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral*' \)" >&3
     fi
-    if [ "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -gt 0 ]; then
+    if [ "$PRJ_TRACTOR_MOVE" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove*' \)" >&3
-    elif [ "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -lt 1 ]; then
-        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove_c.*' \)" >&3
     fi
-    if [ "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -gt 0 ]; then
+    if [ "$PRJ_TRACTOR_PTO" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto*' \)" >&3
-    elif [ "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -lt 1 ]; then
-        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto_c.*' \)" >&3
     fi
-    if [ "$PRJ_TRACTOR_LIGHT" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+    if [ "$PRJ_TRACTOR_LIGHT" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)" >&3
     fi
-    if [ "$PRJ_TRACTOR_FACILITIES" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities_c*' \)" >&3
+    if [ "$PRJ_TRACTOR_FACILITIES" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities*' \)" >&3
     fi
-    if [ "$PRJ_TRACTOR_AUX" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+    if [ "$PRJ_TRACTOR_AUX" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracaux*' \)" >&3
     fi
-    if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+    if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)" >&3
     fi
     if [ "$PRJ_TIME_GPS" -gt 0 ]; then
