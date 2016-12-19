@@ -42,6 +42,14 @@ namespace IsoAgLib {
   bool config ( iIdentItem_c* apc_ident, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0)
   { return TracMove_c::config_base( apc_ident, at_identMode, aui16_suppressMask ); }
 
+  /** update distance and direction with the actually best available distance and direction
+    @param t_distanceSrc  from which source is the distance and direction available
+    */
+  void updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)
+  {
+    TracMove_c::updateDistanceDirection(t_distanceSrc);
+  }
+
   /* ******************************************* */
   /** \name Set Values for periodic send on BUS  */
   /*@{*/
