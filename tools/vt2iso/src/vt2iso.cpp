@@ -656,8 +656,12 @@ void vt2iso_c::clean_exit (const char* error_message)
   partFileName = mstr_destinDirAndProjectPrefix + "_derived-cpp.h";
   partFile_derived = &save_fopen (partFileName.c_str(),"wt");
 
-  fprintf (partFile_derived, "#include \"%s-defines.inc\"\n", mstr_outFileName.c_str());
   fprintf (partFile_derived, "#include \"%s-variables%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
+  fprintf (partFile_derived, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+  fprintf (partFile_derived, "// Begin section vt_object_pool\n");
+  fprintf (partFile_derived, "#  pragma section . vt_object_pool\n");
+  fprintf (partFile_derived, "#endif\n\n");
+  fprintf (partFile_derived, "#include \"%s-defines.inc\"\n", mstr_outFileName.c_str());
   fprintf (partFile_derived, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   if (b_externalize)
   {
@@ -681,6 +685,10 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_derived, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
   }
   fprintf (partFile_derived, "#include \"%s-functions.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_derived, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+  fprintf (partFile_derived, "// End section vt_object_pool\n");
+  fprintf (partFile_derived, "#  pragma section\n");
+  fprintf (partFile_derived, "#endif\n");
 
   if (pc_specialParsing)
   {
