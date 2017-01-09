@@ -232,6 +232,7 @@ public:
     const std::string& xmlFile,
     std::string* dictionary,
     bool ab_externalize,
+    bool ab_createAll,
     bool ab_disableContainmentRules,
     DOMBuilder* ap_parser,
     bool ab_verbose,
@@ -317,9 +318,80 @@ public:
   static FILE& save_fopen (const std::string& arcstr_fileName, const char* apcc_mode);
 
 private:
+  class ListByObject_c
+  {
+  public:
+    static void init( bool b_createAll, const std::string& str_outDirName, const std::string& str_outFileName, const std::string& str_namespaceDeclarationBegin, const std::string& str_namespaceDeclarationEnd );
+
+  public:
+    ListByObject_c( unsigned int objType );
+    virtual ~ListByObject_c();
+
+    virtual void open();
+    virtual void close();
+    bool wasCreated() { return (partFile != NULL); }
+
+  public:
+    virtual const std::string getPath() const;              // Used for mkdir
+    virtual const std::string getPathAndFileName() const;   // Used for fopen, etc.
+    virtual const std::string getIncludeName() const;       // Used in #include's
+    virtual const std::string getLocalDir() const = 0;      // Optional Local folder under mstr_outDirName folder (used by both getIncludeName() and getPathAndFileName())
+    virtual const std::string getFileName() const = 0;
+
+  protected:
+    virtual void AddToList();
+
+  protected:
+    FILE *partFile;
+    const unsigned int objType;
+
+  protected:
+    static bool mb_createAll;
+    static std::string mstr_outDirName;
+    static std::string mstr_outFileName;
+    static std::string mstr_namespaceDeclarationBegin;
+    static std::string mstr_namespaceDeclarationEnd;
+  };
+
+
+  class VariablesListByObject_c : public ListByObject_c
+  {
+  public:
+    VariablesListByObject_c( unsigned int objType );
+
+    virtual void AddToList( const std::string& objName, const std::string& pc_postfix );
+
+  public:
+    virtual const std::string getLocalDir() const;
+    virtual const std::string getFileName() const;
+  };
+
+
+  class AttributesListByObject_c : public ListByObject_c
+  {
+  public:
+    AttributesListByObject_c( unsigned int objType );
+
+  public:
+    virtual void AddToList() { ListByObject_c::AddToList(); }
+    FILE * GetPartFile() { return partFile; }
+
+  public:
+    virtual const std::string getLocalDir() const;
+    virtual const std::string getFileName() const;
+  };
+
+
+  VariablesListByObject_c* VariablesListByObject_List[maxObjectTypes];
+  AttributesListByObject_c* AttributesListByObject_List[maxObjectTypes];
+
+private:
   bool firstLineFileE;
 
-  FILE *partFile_variables;
+#ifdef USE_SPECIAL_PARSING_PROP
+  FILE *partFile_variables_prop;
+  FILE *partFile_attributes_prop;
+#endif
   FILE *partFile_variables_extern;
   FILE *partFile_attributes;
   FILE *partFile_attributes_extern;
@@ -336,7 +408,9 @@ private:
 
   unsigned int ui_languages;
 
-  std::string partFileName_attributes; // original destination filename for the attributes. stored for writing in the wrapped attributes at the end of program execution.
+#ifdef USE_SPECIAL_PARSING_PROP
+  std::string partFileName_attributes_prop; // original destination filename for the attributes-prop. stored for writing in the wrapped attributes at the end of program execution.
+#endif
   std::string partFileName_obj_selection; // original destination filename for the obj-selection. stored for overwriting it at the end of program execution if new content is available.
   std::string mstr_sourceDir;
   std::string mstr_sourceDirAndProjectPrefix;
@@ -374,6 +448,7 @@ private:
   bool is_skHeight;
 
   bool b_externalize;
+  bool b_createAll;
   bool mb_parseOnlyWorkingSet;
   bool mb_verbose;
   bool mb_acceptUnknownAttributes;

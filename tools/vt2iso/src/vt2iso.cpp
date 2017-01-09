@@ -18,6 +18,7 @@
 #include <iterator>
 #include <fstream>
 #include <sys/stat.h>
+#include <direct.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -242,6 +243,7 @@ static void usage()
     "[Extended:]\n"
     " -p     Output ISO11783-VT Palette to act-file.\n"
     " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n"
+    " -c     Create attribute and variable files for every object even if they're empty.\n"
     " -m     More informative output (verbose mode). Will also print out warnings on overridden values with language-files.\n"
     " -r=pre Do not use iVtObjectID as id prefix, use pre instead.\n"
     " -u     User defined attributes accepted\n"
@@ -259,7 +261,7 @@ static void usage()
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
 #if 0
     /*  This feature is not shown up in the help here in order to avoid confusion about. Furthermore it is not
-     *  yet extensively testd FOB 06/19/2009
+     *  yet extensively tested. FOB 06/19/2009
      */
     " -d     Specify a search path for xmls marked as relative in vtp project file. Seperate directories with colons.\n"
 #endif 
@@ -697,20 +699,61 @@ void vt2iso_c::clean_exit (const char* error_message)
   fclose (partFile_derived);
 
 
+  FILE* partFileTmp = NULL;
+
+
+  partFileName = mstr_destinDirAndProjectPrefix + "-attributes.inc";
+  partFileTmp = &save_fopen(partFileName.c_str(), "wt");
+
+  for( unsigned int objType=0; objType< maxObjectTypes; ++objType )
+  {
+    if( AttributesListByObject_List[objType]->wasCreated() )
+    {
+      fprintf(partFileTmp, "#include \"%s\"\n", AttributesListByObject_List[objType]->getIncludeName().c_str());
+    }
+  }
+
+  fclose(partFileTmp);
+
+
+  partFileName = mstr_destinDirAndProjectPrefix + "-variables.inc";
+  partFileTmp = &save_fopen(partFileName.c_str(), "wt");
+
+  for( unsigned int objType=0; objType< maxObjectTypes; ++objType )
+  {
+    if( VariablesListByObject_List[objType]->wasCreated() )
+    {
+      fprintf(partFileTmp, "#include \"%s\"\n", VariablesListByObject_List[objType]->getIncludeName().c_str());
+    }
+  }
+
+  fclose(partFileTmp);
+
+
   // Write Derived Includes (-h)
   partFileName = mstr_destinDirAndProjectPrefix + "_derived-h.h";
-  partFile_derived = &save_fopen (partFileName.c_str(),"wt");
+  partFileTmp = &save_fopen (partFileName.c_str(),"wt");
 
-  fprintf (partFile_derived, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-  fprintf (partFile_derived, "#include \"%s-handler-derived.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
+  fprintf (partFileTmp, "#include \"%s-handler-derived.inc\"\n", mstr_outFileName.c_str());
+
+  fclose (partFileTmp);
+
 
   if (b_externalize)
   {
-    FILE* partFileTmp;
     partFileName = mstr_destinDirAndProjectPrefix + "-variables.cpp";
     partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
+    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+    fprintf (partFileTmp, "// Begin section vt_object_pool\n");
+    fprintf (partFileTmp, "#  pragma section . vt_object_pool\n");
+    fprintf (partFileTmp, "#endif\n\n");
     fprintf (partFileTmp, "#include \"%s-variables.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+    fprintf (partFileTmp, "// End section vt_object_pool\n");
+    fprintf (partFileTmp, "#  pragma section\n");
+    fprintf (partFileTmp, "#endif\n");
     fclose (partFileTmp);
 
     partFileName = mstr_destinDirAndProjectPrefix + "-attributes.cpp";
@@ -718,7 +761,15 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-variables-extern.inc\"\n", mstr_outFileName.c_str());
     fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+    fprintf (partFileTmp, "// Begin section vt_object_pool\n");
+    fprintf (partFileTmp, "#  pragma section . vt_object_pool\n");
+    fprintf (partFileTmp, "#endif\n\n");
     fprintf (partFileTmp, "#include \"%s-attributes.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+    fprintf (partFileTmp, "// End section vt_object_pool\n");
+    fprintf (partFileTmp, "#  pragma section\n");
+    fprintf (partFileTmp, "#endif\n");
     fclose (partFileTmp);
 
     partFileName = mstr_destinDirAndProjectPrefix + "-list.cpp";
@@ -726,18 +777,34 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", mstr_outFileName.c_str());
     fprintf (partFileTmp, "#include \"%s-variables-extern.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+    fprintf (partFileTmp, "// Begin section vt_object_pool\n");
+    fprintf (partFileTmp, "#  pragma section . vt_object_pool\n");
+    fprintf (partFileTmp, "#endif\n\n");
     for (unsigned int i=0; i<ui_languages; i++)
     {
       fprintf (partFileTmp, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
     }
     fprintf (partFileTmp, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+    fprintf (partFileTmp, "// End section vt_object_pool\n");
+    fprintf (partFileTmp, "#  pragma section\n");
+    fprintf (partFileTmp, "#endif\n");
     fclose (partFileTmp);
 
     partFileName = mstr_destinDirAndProjectPrefix + "-list_attributes.cpp";
     partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+    fprintf (partFileTmp, "// Begin section vt_object_pool\n");
+    fprintf (partFileTmp, "#  pragma section . vt_object_pool\n");
+    fprintf (partFileTmp, "#endif\n\n");
     fprintf (partFileTmp, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
+    fprintf (partFileTmp, "// End section vt_object_pool\n");
+    fprintf (partFileTmp, "#  pragma section\n");
+    fprintf (partFileTmp, "#endif\n");
     fclose (partFileTmp);
   }
 
@@ -745,15 +812,18 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (pc_specialParsing)
     pc_specialParsing->outputCollectedData2Files();
 
-  fprintf ( partFile_variables, "%s", mstr_namespaceDeclarationEnd.c_str());
+
+  for( unsigned int objType=0; objType< maxObjectTypes; ++objType )
+  {
+    VariablesListByObject_List[objType]->close();
+    AttributesListByObject_List[objType]->close();
+  }
+
   fprintf ( partFile_variables_extern, "%s", mstr_namespaceDeclarationEnd.c_str());
-  fprintf ( partFile_attributes, "%s", mstr_namespaceDeclarationEnd.c_str());
   fprintf ( partFile_attributes_extern, "%s", mstr_namespaceDeclarationEnd.c_str());
   fprintf ( partFile_defines, "%s", mstr_namespaceDeclarationEnd.c_str());
 
-  if (partFile_derived)           fclose (partFile_derived);
   if (partFile_variables_extern)  fclose (partFile_variables_extern);
-  if (partFile_attributes)        fclose (partFile_attributes);
   if (partFile_attributes_extern) fclose (partFile_attributes_extern);
   if (partFile_defines)           fclose (partFile_defines);
   if (partFile_obj_selection)     fclose (partFile_obj_selection);
@@ -762,10 +832,31 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (partFile_functions_origin)  fclose (partFile_functions_origin);
 
   if (partFile_attributes)
-  { // if any "-attributes.inc.tmp" were written, copy them over wrapped to "-attributes.inc"
-    partFileName = partFileName_attributes + ".tmp";
-    lineWrapTextFile( partFileName_attributes, partFileName, 1022 );
+  { // if any "-attributes.inc" was written, wrap all long lines creating a temporary file "-attributes.inc.tmp"
+    for( unsigned int objType=0; objType< maxObjectTypes; ++objType )
+    {
+      const std::string partFileName_attributes = AttributesListByObject_List[objType]->getPathAndFileName();
+      partFileName = partFileName_attributes + ".tmp";
+      lineWrapTextFile( partFileName_attributes, partFileName, 1022 );
+    }
   }
+
+#ifdef USE_SPECIAL_PARSING_PROP
+  if (partFile_variables_prop)
+  {
+    fprintf ( partFile_variables_prop, "%s", mstr_namespaceDeclarationEnd.c_str());
+    fclose (partFile_variables_prop);
+  }
+
+  if (partFile_attributes_prop)
+  {
+    fprintf ( partFile_attributes_prop, "%s", mstr_namespaceDeclarationEnd.c_str());
+    fclose (partFile_attributes_prop);
+    // if "-attributes-prop.inc" was written, wrap all long lines creating a temporary file "-attributes-prop.inc.tmp"
+    partFileName = partFileName_attributes_prop + ".tmp";
+    lineWrapTextFile( partFileName_attributes_prop, partFileName, 1022 );
+  }
+#endif
 
   if (partFile_obj_selection)
   { // if any "-objectselection.inc.tmp" were written, copy them over to "-objectselection.inc", but only if the content differs
@@ -1035,6 +1126,7 @@ vt2iso_c::init(
   const string& arcstr_cmdlineName,
   std::string* dictionary,
   bool ab_externalize,
+  bool ab_createAll,
   bool ab_disableContainmentRules,
   DOMBuilder* ap_parser,
   bool ab_verbose,
@@ -1094,9 +1186,11 @@ vt2iso_c::init(
   }
 
   b_externalize = ab_externalize;
+  b_createAll = ab_createAll;
   b_disableContainmentRules = ab_disableContainmentRules;
 
-  partFile_variables = NULL;
+  ListByObject_c::init( b_createAll, mstr_outDirName, mstr_outFileName, mstr_namespaceDeclarationBegin, mstr_namespaceDeclarationEnd );
+
   partFile_variables_extern = NULL;
   partFile_attributes = NULL;
   partFile_attributes_extern = NULL;
@@ -1138,18 +1232,22 @@ vt2iso_c::init(
   }
 
 
-  partFileName = mstr_destinDirAndProjectPrefix + "-variables.inc";
-  partFile_variables = &save_fopen (partFileName.c_str(),"wt");
-  fprintf (partFile_variables, "%s", mstr_namespaceDeclarationBegin.c_str());
+#ifdef USE_SPECIAL_PARSING_PROP
+  partFileName = mstr_destinDirAndProjectPrefix + "-variables-prop.inc";
+  partFile_variables_prop = &save_fopen (partFileName.c_str(),"wt");
+  fprintf (partFile_variables_prop, "%s", mstr_namespaceDeclarationBegin.c_str());
+#endif
 
   partFileName = mstr_destinDirAndProjectPrefix + "-variables-extern.inc";
   partFile_variables_extern = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_variables_extern, "%s", mstr_namespaceDeclarationBegin.c_str());
 
-  partFileName_attributes = mstr_destinDirAndProjectPrefix + "-attributes.inc"; // store original file-name for later wrap-copying over
-  partFileName = partFileName_attributes + ".tmp";
-  partFile_attributes = &save_fopen (partFileName.c_str(),"wt");
-  fprintf (partFile_attributes, "%s", mstr_namespaceDeclarationBegin.c_str());
+#ifdef USE_SPECIAL_PARSING_PROP
+  partFileName_attributes_prop = mstr_destinDirAndProjectPrefix + "-attributes-prop.inc"; // store original file-name for later wrap-copying over
+  partFileName = partFileName_attributes_prop;
+  partFile_attributes_prop = &save_fopen (partFileName.c_str(),"wt");
+  fprintf (partFile_attributes_prop, "%s", mstr_namespaceDeclarationBegin.c_str());
+#endif
 
   partFileName = mstr_destinDirAndProjectPrefix + "-attributes-extern.inc";
   partFile_attributes_extern = &save_fopen (partFileName.c_str(),"wt");
@@ -1185,9 +1283,9 @@ vt2iso_c::init(
 #ifdef USE_SPECIAL_PARSING_PROP
   pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (arcstr_cmdlineName,
       arcstr_definesPrefix,
-      partFile_variables,
+      partFile_variables_prop,
       partFile_variables_extern,
-      partFile_attributes,
+      partFile_attributes_prop,
       partFile_attributes_extern,
       partFile_functions,
       partFile_defines);
@@ -2023,6 +2121,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
     if ( pc_specialParsingPropTag && objType == 0xFFFF )
       objType = pc_specialParsingPropTag->getObjType (m_nodeName);
+  }
+
+  if( objType < maxObjectTypes )
+  {
+    AttributesListByObject_List[objType]->AddToList();		// This opens & initializes the file just in case it hasn't been done yet.
+    partFile_attributes = AttributesListByObject_List[objType]->GetPartFile();		// Set partFile_attributes for future fprintf commands
   }
 
   // ERROR: Wrong <TAG>
@@ -2893,7 +2997,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       }
       else if (objType < maxObjectTypes)
       {
-        fprintf (partFile_variables, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str());
+        VariablesListByObject_List[objType]->AddToList(m_objName, pc_postfix.c_str());	// pc_postfix is for the Language-specific objects (appended with "_1" etc.).  It is "" otherwise.
+
         fprintf (partFile_variables_extern,  "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str());
         fprintf (partFile_attributes, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str(), objID);
 
@@ -4417,12 +4522,13 @@ vt2iso_c::vt2iso_c()
   , opDimension(0)
   , skWidth(0)
   , skHeight(0)
-  , mi_objectPoolVersion(0x02) // only version 2 vts are on the market at the moment.
+  , mi_objectPoolVersion(0x02) // dummy default if pool version not given in VTP.
   , is_opDimension(false)
   , is_opAdditionallyRequiredObjects(false)
   , is_skWidth(false)
   , is_skHeight(false)
   , b_externalize(false)
+  , b_createAll(false)
   , mb_parseOnlyWorkingSet(false)
   , mb_verbose (false)
   , mb_acceptUnknownAttributes(false)
@@ -4435,6 +4541,12 @@ vt2iso_c::vt2iso_c()
   , parser(NULL)
 {
   picBuffer = new unsigned char[ui_picBufferSize];
+
+  for( unsigned int objType=0; objType< maxObjectTypes; ++objType )
+  {
+    VariablesListByObject_List[objType] = new VariablesListByObject_c( objType );
+    AttributesListByObject_List[objType] = new AttributesListByObject_c( objType );
+  }
 }
 
 vt2iso_c::~vt2iso_c()
@@ -4625,6 +4737,9 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
   { // No separator given, so append separator (i.e. (back)slash)
     mstr_destinDirAndProjectPrefix.push_back (scc_dirSeparatorCorrect);
   }
+
+  // mstr_destinDirAndProjectPrefix now holds prepared outDir (with dirSeparator & before filename prefix gets added)
+  mstr_outDirName = mstr_destinDirAndProjectPrefix;
 
   if (mstr_outFileName.length() == 0)
     mstr_outFileName = mstr_projectName;
@@ -5051,6 +5166,7 @@ int main(int argC, char* argV[])
 
   bool generatePalette = false;
   bool externalize = false;
+  bool createAll = false;
   bool verbose = false;
   bool b_accept_unknown_attributes = false;
   bool b_silentMode = false;
@@ -5135,6 +5251,10 @@ int main(int argC, char* argV[])
     else if (!strcmp(argV[argInd], "-e"))
     {
       externalize = true;
+    }
+    else if (!strcmp(argV[argInd], "-c"))
+    {
+      createAll = true;
     }
     else if (!strcmp(argV[argInd], "-m"))
     {
@@ -5293,7 +5413,7 @@ int main(int argC, char* argV[])
   // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, b_pedanticMode, str_outFileName, str_searchPath, str_langPrefix, str_definesPrefix, str_baseClass, str_baseClassHdr );
+  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, createAll, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, b_pedanticMode, str_outFileName, str_searchPath, str_langPrefix, str_definesPrefix, str_baseClass, str_baseClassHdr );
 
   if (cb_initSuccess)
   {
@@ -5900,12 +6020,14 @@ vt2iso_c::processVtPresetFile(const std::string& pch_fileName)
 }
 
 
-void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::string &tmpFileName, unsigned int maxLineLen )
+void vt2iso_c::lineWrapTextFile( const std::string &srcFileName, const std::string &tmpFileName, unsigned int maxLineLen )
 {
-  FILE *destFile = &save_fopen( destFileName.c_str(), "wt" );
-  FILE *srcFile = fopen( tmpFileName.c_str(), "r" );
+  FILE *srcFile = fopen( srcFileName.c_str(), "r" );
+  if ( !srcFile )  // Just skip if the source file didn't exist
+    return;
 
-  if ( destFile && srcFile )
+  FILE *tmpFile = &save_fopen( tmpFileName.c_str(), "wt" );
+  if ( tmpFile )
   {
     char *strBuf = new char[maxLineLen];
     if ( !strBuf ) return; // catch out-of-memory-case. (shouldn't really happen for those few bytes)
@@ -5986,7 +6108,7 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
 
       if ( writeToI == (bytesRead - 1) || (writeToI == 0) )
       { /* full buffer can be written */
-        fwrite( strBuf, 1, bytesRead, destFile );
+        fwrite( strBuf, 1, bytesRead, tmpFile );
         bytesRead = fread( strBuf, 1, maxLineLen, srcFile );
 
         strBufI = 0;
@@ -5999,7 +6121,7 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
       else
       { /* partial can be written */
         j = writeToI + 1;
-        fwrite( strBuf, 1, writeToI + 1, destFile );
+        fwrite( strBuf, 1, writeToI + 1, tmpFile );
 
         i = 0;
         for ( ; j < (unsigned int)bytesRead; ++i, ++j )
@@ -6036,9 +6158,9 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
       if ( addLineFeed )
       {
         if(inStringContext)
-          fwrite( "\"\n\"", 1, 3, destFile );
+          fwrite( "\"\n\"", 1, 3, tmpFile );
         else
-          fwrite( "\n", 1, 1, destFile );            
+          fwrite( "\n", 1, 1, tmpFile );
       }
     }
 
@@ -6046,12 +6168,13 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
   }
   /* else, file open error */
 
-  if ( destFile ) fclose( destFile );
+  if ( tmpFile ) fclose( tmpFile );
   if ( srcFile )  fclose( srcFile );
 
-  if ( destFile && srcFile )
-  { /* delete temp file */
-    remove( tmpFileName.c_str() );
+  if ( tmpFile && srcFile )
+  { // swap files.
+    remove( srcFileName.c_str() );
+    rename( tmpFileName.c_str(), srcFileName.c_str() );
   }
 }
 
@@ -6309,5 +6432,207 @@ UCS2* vt2iso_c::findWideChar(const UCS2 *s, UCS2 wc, size_t n)
     s++;
   }
   return NULL;
+}
+
+int simple_mkdir( const std::string& sPath )
+{
+#if defined WIN32 && !defined cygwin
+  return _mkdir(sPath.c_str()); // can be used on Windows
+#else
+  mode_t nMode = 0733; // UNIX style permissions
+  return mkdir(sPath.c_str(),nMode); // can be used on non-Windows
+#endif
+}
+
+// static variables
+bool vt2iso_c::ListByObject_c::mb_createAll = false;
+std::string vt2iso_c::ListByObject_c::mstr_outDirName;
+std::string vt2iso_c::ListByObject_c::mstr_outFileName;
+std::string vt2iso_c::ListByObject_c::mstr_namespaceDeclarationBegin;
+std::string vt2iso_c::ListByObject_c::mstr_namespaceDeclarationEnd;
+
+// static function
+void vt2iso_c::ListByObject_c::init( bool b_createAll, const std::string& str_outDirName, const std::string& str_outFileName, const std::string& str_namespaceDeclarationBegin, const std::string& str_namespaceDeclarationEnd )
+{
+  mb_createAll = b_createAll;
+  mstr_outDirName = str_outDirName;
+  mstr_outFileName = str_outFileName;
+  mstr_namespaceDeclarationBegin = str_namespaceDeclarationBegin;
+  mstr_namespaceDeclarationEnd = str_namespaceDeclarationEnd;
+}
+
+vt2iso_c::ListByObject_c::ListByObject_c( unsigned int _objType )
+  : objType( _objType )
+  , partFile( NULL )
+{
+}
+
+vt2iso_c::ListByObject_c::~ListByObject_c()
+{
+  close();
+}
+
+void vt2iso_c::ListByObject_c::open()
+{
+  if (!partFile) // Could change this to an assert()
+  {
+    if( getLocalDir().length() > 0 )
+    {
+      simple_mkdir( getPath() );
+    }
+
+    const char* className = otClassnameTable[objType];
+
+    partFile = &save_fopen( getPathAndFileName().c_str(),"wt" );
+    fprintf (partFile, "%s", mstr_namespaceDeclarationBegin.c_str());
+  }
+}
+
+void vt2iso_c::ListByObject_c::close()
+{
+  if (mb_createAll && !partFile)
+  {
+    // Do this if you want to create all files whether the objects exist or not
+    open();
+  }
+
+  if (partFile)
+  {
+    fprintf ( partFile, "%s", mstr_namespaceDeclarationEnd.c_str());
+    fclose(partFile);
+    partFile = NULL;
+  }
+  else
+  {
+    if( !mb_createAll )
+    {
+      // Do this if you only want to create the files if the objects exist (and delete anything from a previous run)
+      DeleteFile( getPathAndFileName().c_str() );
+    }
+  }
+}
+
+// In the base class, this function simply makes sure the file is open and writable
+// This is useful, because if you don't try to write to the file (by calling this function)
+// then it won't get created.
+void vt2iso_c::ListByObject_c::AddToList()
+{
+  if( !partFile )
+  {
+    open();
+  }
+}
+
+// This is used for opening/closing the file
+// returns for instance, "OUTDIR\variables\PROJECT-variables-CLASS.inc"
+// where OUTDIR is the output folder
+// and PROJECT is the project name
+// and CLASS is the VT Object Class name (eg. "DataMask")
+const std::string vt2iso_c::ListByObject_c::getPathAndFileName() const
+{
+  std::string retval = getPath();
+  retval += getFileName();
+
+  return retval;
+}
+
+// This is used for creating the sub folder (mkdir)
+// returns for instance, "OUTDIR\variables"
+// where OUTDIR is the output folder
+const std::string vt2iso_c::ListByObject_c::getPath() const
+{
+  std::string retval = mstr_outDirName;
+
+  if( getLocalDir().length() > 0 )
+  {
+    retval += getLocalDir();
+    retval += scc_dirSeparatorCorrect;  // Filesystem dependent separator ('/' or '\')
+  }
+
+  return retval;
+}
+
+// This is used in the #includes
+// returns for instance, "variables/PROJECT-variables-CLASS.inc"
+// where PROJECT is the project name
+// and CLASS is the VT Object Class name (eg. "DataMask")
+const std::string vt2iso_c::ListByObject_c::getIncludeName() const
+{
+  std::string retval = getLocalDir();
+
+  if( getLocalDir().length() > 0 )
+  {
+    retval += '/';  // Always use '/' for #include paths
+  }
+
+  retval += getFileName();
+
+  return retval;
+}
+
+////////////////////////////////////////
+// class VariablesListByObject_c
+////////////////////////////////////////
+vt2iso_c::VariablesListByObject_c::VariablesListByObject_c( unsigned int _objType )
+  : ListByObject_c( _objType )
+{
+}
+
+// gives the name of a local folder that will be created under the output folder
+// This is where all files of this type will be placed
+const std::string vt2iso_c::VariablesListByObject_c::getLocalDir() const
+{
+  return "variables";
+}
+
+// returns "PROJECT-variables-CLASS.inc"
+// where PROJECT is the project name
+// and CLASS is the VT Object Class name (eg. "DataMask")
+const std::string vt2iso_c::VariablesListByObject_c::getFileName() const
+{
+  std::string retval = mstr_outFileName;
+  retval += "-";
+  retval += "variables-";
+  retval += otClassnameTable[objType];
+  retval += ".inc";
+
+  return retval;
+}
+
+// pc_postfix is for the Language-specific objects (appended with "_1" etc.).  It is "" otherwise.
+void vt2iso_c::VariablesListByObject_c::AddToList( const std::string& objName, const std::string& pc_postfix )
+{
+  ListByObject_c::AddToList();
+
+  fprintf(partFile, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable[objType], objName.c_str(), pc_postfix.c_str());
+}
+
+////////////////////////////////////////
+// class AttributesListByObject_c
+////////////////////////////////////////
+vt2iso_c::AttributesListByObject_c::AttributesListByObject_c( unsigned int _objType )
+  : ListByObject_c( _objType )
+{
+}
+
+// gives the name of a local folder that will be created under the output folder
+// This is where all files of this type will be placed
+const std::string vt2iso_c::AttributesListByObject_c::getLocalDir() const
+{
+  return "attributes";
+}
+
+// returns "PROJECT-attributes-CLASS.inc"
+// where PROJECT is the project name
+// and CLASS is the VT Object Class name (eg. "DataMask")
+const std::string vt2iso_c::AttributesListByObject_c::getFileName() const
+{
+  std::string retval = mstr_outFileName;
+  retval += "-";
+  retval += "attributes-";
+  retval += otClassnameTable[objType];
+  retval += ".inc";
+
+  return retval;
 }
 
