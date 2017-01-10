@@ -1,7 +1,7 @@
 /*
   vt2iso.cpp
 
-  (C) Copyright 2009 - 2016 by OSB AG and developing partners
+  (C) Copyright 2009 - 2017 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -26,10 +26,10 @@
 #if defined WIN32 && !defined cygwin
   #include <windows.h>
   #include <ostream>
-  static const char scc_dirSeparatorWrong = '/';
-  static const char scc_dirSeparatorCorrect = '\\';
   #include "WinDirent.h"   // Gives me a POSIX API for Windows
   #include <direct.h>
+  static const char scc_dirSeparatorWrong = '/';
+  static const char scc_dirSeparatorCorrect = '\\';
 #else
   #include <dirent.h>
   static const char scc_dirSeparatorWrong = '\\';
@@ -6497,7 +6497,7 @@ void vt2iso_c::ListByObject_c::close()
     if( !mb_createAll )
     {
       // Do this if you only want to create the files if the objects exist (and delete anything from a previous run)
-      DeleteFile( getPathAndFileName().c_str() );
+      remove( getPathAndFileName().c_str() );
     }
   }
 }
