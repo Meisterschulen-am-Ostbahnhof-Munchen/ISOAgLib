@@ -41,6 +41,7 @@ DiagnosticsServices_c::DiagnosticsServices_c( IdentItem_c& arc_identItem ) :
   mi32_dm1LastSentTime(-1),
   mb_dm1CurrentNeedsToBeSent(false),
   marr_dm1CurrentSize(0),
+  m_dm1CurrentAtLeastOneDTC(false),  
   ms_dm1SendingBroadcast(marr_dm1SendingBroadcast),
   ms_dm1SendingDestination(marr_dm1SendingDestination),
   ms_dm2SendingDestination(marr_dm2SendingDestination),
@@ -53,9 +54,6 @@ DiagnosticsServices_c::DiagnosticsServices_c( IdentItem_c& arc_identItem ) :
   //std::memset(marr_dm1SendingDestination,0,2+4*(CONFIG_MAX_ACTIVE_DTCS));
   //std::memset(marr_dm2SendingDestination,0,2+4*(CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS));
 
-  // prepare initial DM1 and DM2
-  marr_dm1CurrentSize                       = assembleDM1DM2(marr_dm1Current,true, &m_dm1CurrentAtLeastOneDTC);
-  ms_dm2SendingDestination.marr_bufferSize  = assembleDM1DM2(ms_dm2SendingDestination.marr_buffer,false, NULL); // not required but nice to be prepared
 }
 
 DiagnosticsServices_c::~DiagnosticsServices_c()
@@ -70,6 +68,10 @@ int DiagnosticsServices_c::getMultitonInst() const
 void
 DiagnosticsServices_c::init()
 {
+  // prepare initial DM1 and DM2
+  marr_dm1CurrentSize                       = assembleDM1DM2(marr_dm1Current,true, &m_dm1CurrentAtLeastOneDTC);
+  ms_dm2SendingDestination.marr_bufferSize  = assembleDM1DM2(ms_dm2SendingDestination.marr_buffer,false, NULL); // not required but nice to be prepared
+  
   getSchedulerInstance().registerTask( *this, 0 );
 
   getIsoRequestPgnInstance4Comm().registerPGN ( mt_isoRequestPgnHandler, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN );
