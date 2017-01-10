@@ -18,7 +18,6 @@
 #include <iterator>
 #include <fstream>
 #include <sys/stat.h>
-#include <direct.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -30,6 +29,7 @@
   static const char scc_dirSeparatorWrong = '/';
   static const char scc_dirSeparatorCorrect = '\\';
   #include "WinDirent.h"   // Gives me a POSIX API for Windows
+  #include <direct.h>
 #else
   #include <dirent.h>
   static const char scc_dirSeparatorWrong = '\\';
@@ -745,15 +745,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     partFileName = mstr_destinDirAndProjectPrefix + "-variables.cpp";
     partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
-    fprintf (partFileTmp, "// Begin section vt_object_pool\n");
-    fprintf (partFileTmp, "#  pragma section . vt_object_pool\n");
-    fprintf (partFileTmp, "#endif\n\n");
     fprintf (partFileTmp, "#include \"%s-variables.inc\"\n", mstr_outFileName.c_str());
-    fprintf (partFileTmp, "\n#if defined( USE_SECTION_VT_OBJECT_POOL )\n");
-    fprintf (partFileTmp, "// End section vt_object_pool\n");
-    fprintf (partFileTmp, "#  pragma section\n");
-    fprintf (partFileTmp, "#endif\n");
     fclose (partFileTmp);
 
     partFileName = mstr_destinDirAndProjectPrefix + "-attributes.cpp";
@@ -831,14 +823,12 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (partFile_functions)         fclose (partFile_functions);
   if (partFile_functions_origin)  fclose (partFile_functions_origin);
 
-  if (partFile_attributes)
-  { // if any "-attributes.inc" was written, wrap all long lines creating a temporary file "-attributes.inc.tmp"
-    for( unsigned int objType=0; objType< maxObjectTypes; ++objType )
-    {
-      const std::string partFileName_attributes = AttributesListByObject_List[objType]->getPathAndFileName();
-      partFileName = partFileName_attributes + ".tmp";
-      lineWrapTextFile( partFileName_attributes, partFileName, 1022 );
-    }
+  // if any "-attributes.inc" was written, wrap all long lines creating a temporary file "-attributes.inc.tmp"
+  for( unsigned int objType=0; objType< maxObjectTypes; ++objType )
+  {
+    const std::string partFileName_attributes = AttributesListByObject_List[objType]->getPathAndFileName();
+    partFileName = partFileName_attributes + ".tmp";
+    lineWrapTextFile( partFileName_attributes, partFileName, 1022 );
   }
 
 #ifdef USE_SPECIAL_PARSING_PROP
@@ -6139,10 +6129,10 @@ void vt2iso_c::lineWrapTextFile( const std::string &srcFileName, const std::stri
         {
           if ( wrapCharI[i] < maxLineLen )
           {
-            if ( wrapCharI[i] > i )
+            if ( long(wrapCharI[i]) > (writeToI + 1) )
             {
-              lastWrapCharI[i] -= i;
-              wrapCharI[i] -= i;
+              lastWrapCharI[i] -= (writeToI + 1);
+              wrapCharI[i] -= (writeToI + 1);
             }
             else
             {

@@ -14,8 +14,6 @@
 #ifndef VT2ISO_H
 #define VT2ISO_H
 
-#define DEF_MAX_OBJECTS (10000)
-
 #include <xercesc/dom/DOMErrorHandler.hpp>
 #include <xercesc/dom/DOMBuilder.hpp>
 #include <xercesc/util/XMLString.hpp>
