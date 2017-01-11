@@ -63,6 +63,21 @@
 #ifdef USE_GNSS
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/gnss_c.h>
 #endif
+#ifdef USE_TRACTOR
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractor_c.h>
+#endif
+#ifdef USE_TRACTOR_GROUND_BASED
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorgroundbased_c.h>
+#endif
+#ifdef USE_TRACTOR_MACHINE_SELECTED
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractormachineselected_c.h>
+#endif
+#ifdef USE_TRACTOR_FRONT_HITCH
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorfronthitch_c.h>
+#endif
+#ifdef USE_TRACTOR_REAR_HITCH
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorrearhitch_c.h>
+#endif
 #ifdef USE_ISB_CLIENT
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/isbclient_c.h>
 #endif
@@ -76,75 +91,90 @@ namespace __IsoAgLib {
 bool
 IsoBus_c::init (uint8_t aui8_busNumber)
 {
-  if (getCanInstance4Comm().initialized())
+  if (getCanInstance( getMultitonInst() ).initialized())
     return false;
 
   /// CAN-Bus
   const bool cb_canSuccess =
-    getCanInstance4Comm().init (aui8_busNumber, 250);
+    getCanInstance( getMultitonInst() ).init (aui8_busNumber, 250);
 
   if (!cb_canSuccess)
     return false;
 
   /// Part 5 - Network Management
-  getIsoRequestPgnInstance4Comm().init();
-  getIsoMonitorInstance4Comm().init();
+  getIsoRequestPgnInstance( getMultitonInst() ).init();
+  getIsoMonitorInstance( getMultitonInst() ).init();
 #ifdef HAL_USE_SPECIFIC_FILTERS
-  getIsoFilterManager4Comm().init();
+  getIsoFilterManagerInstance( getMultitonInst() ).init();
 #endif
 
   /// Part 3 - Data Link
-  getMultiReceiveInstance4Comm().init();
-  getMultiSendInstance4Comm().init();
+  getMultiReceiveInstance( getMultitonInst() ).init();
+  getMultiSendInstance( getMultitonInst() ).init();
 
   /// Part 3 - Proprietary PGNs
   #ifdef USE_ISO_PROPRIETARY_PGN
-  getProprietaryMessageHandlerInstance4Comm().init();
+  getProprietaryMessageHandlerInstance( getMultitonInst() ).init();
   #endif
 
   /// Part 6 - Virtual Terminal (Client)
   #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
-    getVtClientInstance4Comm().init();
+    getVtClientInstance( getMultitonInst() ).init();
   #endif
 
   /// Part 7 - Application (Tractor-Client)
   #ifdef USE_TRACTOR_GENERAL
-    getTracGeneralInstance4Comm().init();
+    getTracGeneralInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_TRACTOR_FACILITIES
-    getTracFacilitiesInstance4Comm().init();
+    getTracFacilitiesInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_TRACTOR_MOVE
-    getTracMoveInstance4Comm().init();
+    getTracMoveInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_TRACTOR_PTO
-    getTracPtoInstance4Comm().init();
+    getTracPtoInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_TRACTOR_LIGHT
-    getTracLightInstance4Comm().init();
+    getTracLightInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_TRACTOR_AUX
-    getTracAuxInstance4Comm().init();
+    getTracAuxInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_TRACTOR_GUIDANCE
-    getTracGuidanceInstance4Comm().init();
-    getTracGuidanceCommandInstance4Comm().init();
+    getTracGuidanceInstance( getMultitonInst() ).init();
+    getTracGuidanceCommandInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_TIME_GPS
-    getTimePosGpsInstance4Comm().init();
+    getTimePosGpsInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_TIME_DATE
-    getTimeDateInstance4Comm().init();
+    getTimeDateInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_GNSS
-    getGnssInstance4Comm().init();
+    getGnssInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_ISB_CLIENT
-    getIsbClientInstance4Comm().init();
+    getIsbClientInstance( getMultitonInst() ).init();
+  #endif
+  #ifdef USE_TRACTOR
+    getTractorInstance( getMultitonInst() ).init();
+  #endif
+  #ifdef USE_TRACTOR_GROUND_BASED
+    getTractorGroundBasedInstance( getMultitonInst() ).init();
+  #endif
+  #ifdef USE_TRACTOR_MACHINE_SELECTED
+    getTractorMachineSelectedInstance( getMultitonInst() ).init();
+  #endif
+  #ifdef USE_TRACTOR_FRONT_HITCH
+    getTractorFrontHitchInstance( getMultitonInst() ).init();
+  #endif
+  #ifdef USE_TRACTOR_REAR_HITCH
+    getTractorRearHitchInstance( getMultitonInst() ).init();
   #endif
 
   #ifdef USE_ISO_TASKCONTROLLER_CLIENT
-    getTcClientInstance4Comm().init();
+    getTcClientInstance( getMultitonInst() ).init();
   #endif
 
   /// Part 12 - Diagnostics Services
@@ -152,7 +182,7 @@ IsoBus_c::init (uint8_t aui8_busNumber)
 
   /// Part 13 - File Server (Client)
   #ifdef USE_ISO_FILESERVER_CLIENT
-    getFsManagerInstance4Comm().init();
+    getFsManagerInstance( getMultitonInst() ).init();
   #endif
 
   return true;
@@ -162,12 +192,12 @@ IsoBus_c::init (uint8_t aui8_busNumber)
 bool
 IsoBus_c::close()
 {
-  if (!getCanInstance4Comm().initialized())
+  if (!getCanInstance( getMultitonInst() ).initialized())
     return false;
 
   /// Part 13 - File Server (Client)
   #ifdef USE_ISO_FILESERVER_CLIENT
-    getFsManagerInstance4Comm().close();
+    getFsManagerInstance( getMultitonInst() ).close();
   #endif
 
   /// Part 12 - Diagnostics Services
@@ -175,68 +205,83 @@ IsoBus_c::close()
 
   /// Part 10 - Task Controller (Client)
   #ifdef USE_ISO_TASKCONTROLLER_CLIENT
-    getTcClientInstance4Comm().close();
+    getTcClientInstance( getMultitonInst() ).close();
   #endif
 
   /// Part 7 - Application (Tractor-Client)
+  #ifdef USE_TRACTOR_REAR_HITCH
+    getTractorRearHitchInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_FRONT_HITCH
+    getTractorFrontHitchInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_MACHINE_SELECTED
+    getTractorMachineSelectedInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_GROUND_BASED
+    getTractorGroundBasedInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR
+    getTractorInstance( getMultitonInst() ).close();
+  #endif
   #ifdef USE_ISB_CLIENT
-    getIsbClientInstance4Comm().close();
+    getIsbClientInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_GNSS
-    getGnssInstance4Comm().close();
+    getGnssInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TIME_DATE
-    getTimeDateInstance4Comm().close();
+    getTimeDateInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TIME_GPS
-    getTimePosGpsInstance4Comm().close();
+    getTimePosGpsInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TRACTOR_GUIDANCE
-    getTracGuidanceCommandInstance4Comm().close();
-    getTracGuidanceInstance4Comm().close();
+    getTracGuidanceCommandInstance( getMultitonInst() ).close();
+    getTracGuidanceInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TRACTOR_AUX
-    getTracAuxInstance4Comm().close();
+    getTracAuxInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TRACTOR_LIGHT
-    getTracLightInstance4Comm().close();
+    getTracLightInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TRACTOR_PTO
-    getTracPtoInstance4Comm().close();
+    getTracPtoInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TRACTOR_MOVE
-    getTracMoveInstance4Comm().close();
+    getTracMoveInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TRACTOR_FACILITIES
-    getTracFacilitiesInstance4Comm().close();
+    getTracFacilitiesInstance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TRACTOR_GENERAL
-    getTracGeneralInstance4Comm().close();
+    getTracGeneralInstance( getMultitonInst() ).close();
   #endif
 
   /// Part 6 - Virtual Terminal (Client)
   #ifdef USE_ISO_VIRTUALTERMINAL_CLIENT
-    getVtClientInstance4Comm().close();
+    getVtClientInstance( getMultitonInst() ).close();
   #endif
 
   /// Part 3 - Proprietary PGNs
   #ifdef USE_ISO_PROPRIETARY_PGN
-  getProprietaryMessageHandlerInstance4Comm().close();
+  getProprietaryMessageHandlerInstance( getMultitonInst() ).close();
   #endif
 
   /// Part 3 - Data Link
-  getMultiSendInstance4Comm().close();
-  getMultiReceiveInstance4Comm().close();
+  getMultiSendInstance( getMultitonInst() ).close();
+  getMultiReceiveInstance( getMultitonInst() ).close();
 
   /// Part 5 - Network Management
 #ifdef HAL_USE_SPECIFIC_FILTERS
-  getIsoFilterManager4Comm().close();
+  getIsoFilterManagerInstance( getMultitonInst() ).close();
 #endif
-  getIsoMonitorInstance4Comm().close();
-  getIsoRequestPgnInstance4Comm().close();
+  getIsoMonitorInstance( getMultitonInst() ).close();
+  getIsoRequestPgnInstance( getMultitonInst() ).close();
 
   /// CAN-Bus
-  getCanInstance4Comm().close();
+  getCanInstance( getMultitonInst() ).close();
 
   return true;
 }
@@ -269,7 +314,7 @@ IsoBus_c::operator<<(CanPkg_c& acrc_src)
     return *this;
   }
 
-  (void) getCanInstance4Comm().operator<<( acrc_src );
+  (void) getCanInstance( getMultitonInst() ).operator<<( acrc_src );
   return *this;
 }
 

@@ -16,6 +16,12 @@
 #ifndef ITRACMOVE_C_H
 #define ITRACMOVE_C_H
 
+#if _MSC_VER
+  #pragma message ( "warning: iTracMove_c is deprecated and will be removed in a future release! Please migrate to using the new classes iTractor_c, iTractorGroundBased_c, iTractorMachineSelected_c." )
+#elif __GNUC__
+  #warning "iTracMove_c is deprecated and will be removed in a future release! Please migrate to using the new classes iTractor_c, iTractorGroundBased_c, iTractorMachineSelected_c."
+#endif
+
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */

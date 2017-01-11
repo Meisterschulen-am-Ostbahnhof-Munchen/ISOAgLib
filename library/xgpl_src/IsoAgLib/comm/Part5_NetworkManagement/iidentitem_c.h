@@ -34,8 +34,6 @@ class iVtClient_c;
 class iProprietaryMessageHandler_c;
 class iProprietaryMessageClient_c;
 class iTimePosGps_c;
-class iTimeDate_c;
-class iGnss_c;
 class iTracCert_c;
 class iTracFacilities_c;
 class iTracGeneral_c;
@@ -45,7 +43,12 @@ class iTracLight_c;
 class iTracMove_c;
 class iTracPTO_c;
 class iTracAux_c;
-
+// new Tractor classes
+class iTimeDate_c;
+class iGnss_c;
+class iTractor_c;
+class iTractorGroundBased_c;
+class iTractorMachineSelected_c;
 
 /**
   class to define an interface class for the storage a retrieved SA. Users can derive from
@@ -223,8 +226,6 @@ private:
   friend class iProprietaryMessageClient_c;
   friend class iProprietaryMessageHandler_c;
   friend class iTimePosGps_c;
-  friend class iTimeDate_c;
-  friend class iGnss_c;
   friend class iTracAux_c;
   friend class iTracCert_c;
   friend class iTracFacilities_c;
@@ -234,6 +235,11 @@ private:
   friend class iTracLight_c;
   friend class iTracMove_c;
   friend class iTracPTO_c;
+  friend class iTimeDate_c;
+  friend class iGnss_c;
+  friend class iTractor_c;
+  friend class iTractorGroundBased_c;
+  friend class iTractorMachineSelected_c;
   friend class iIsbClient_c;
   friend class iVtClientConnection_c;
   friend class iVtClient_c;

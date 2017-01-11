@@ -92,7 +92,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // set the member base msg value vars to NO_VAL codes
     setHitchRear(NO_VAL_8);
     setHitchFront(NO_VAL_8);
-    mi16_engine = NO_VAL_16S;
 
     // un-/register to PGN
     if (t_oldMode == at_identMode)

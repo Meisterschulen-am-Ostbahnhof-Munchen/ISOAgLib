@@ -172,9 +172,11 @@ enum IsoLimitFlag_t {
   IsoNotLimited = 0,          ///< corresponding limit status is not active
   IsoOperatorLimited = 1,     ///< request cannot be implemented
   IsoLimitedHigh = 2,         ///< corresponding function is in error state, and thus not useable
-  IsoLimitedLow = 3,           ///< corresponding function is not available/not implemented in service provider
+  IsoLimitedLow = 3,          ///< corresponding function is not available/not implemented in service provider
+  IsoReservedLimit1 = 4,
+  IsoReservedLimit2 = 5,
   IsoNonRecoverabelFault = 6, ///not recoverable from the viewpoint of the implemented
-  IsoNotAvailableLimit = 7    ///paramter not supported
+  IsoNotAvailableLimit = 7    ///parameter not supported
 };
 
 /** use an enum typedef for the different states of direction */
@@ -225,6 +227,13 @@ enum IsoSteerReadinessFlag_t {
   IsoNotAvailableSteerReadiness = 3 ///< corresponding function is not available in service provider
 };
 
+enum IsoHitchInWorkIndicationFlag_t {
+  IsoHitchPositionOutOfWork = 0,           ///< 00 Hitch position is out-of-work
+  IsoHitchPositionInWork = 1,              ///< 01 Hitch position is in-work
+  IsoErrorHitchInWorkIndication = 2,       ///< 10 Error indication
+  IsoNotAvailableHitchInWorkIndication = 3 ///< 11 Not available
+};
+
 /** use an enum typedef for facilities type */
 enum IsoFacilityFlag_t {
   IsoFacilityNotAvailable = 0,  ///< facility is not available
@@ -254,6 +263,8 @@ enum IsoSpeedSourceFlag_t {
   IsoNavigationBasedSpeed = 2, ///< speed source is navigation-based
   IsoBlendedSpeed = 3,         ///< speed source is "blended"
   IsoSimulatedSpeed = 4,       ///< speed source is simulated
+  IsoReservedSpeedSource1 = 5,
+  IsoReservedSpeedSource2 = 6,
   IsoNotAvailableSpeed = 7     ///<corresponding function is not available in service provider
 };
 
@@ -412,13 +423,17 @@ public:
 #define NO_VAL_16 ((uint16_t)0xFFFFu)
 #define NO_VAL_8 ((uint8_t)0xFFu)
 
+// Signed variants only used in (obsolete) TravMove!
 #define ERROR_VAL_32S ((int32_t)0x80000001l)
 #define ERROR_VAL_16S ((int16_t)0x8001)
 #define ERROR_VAL_8S ((int8_t)0x81)
-#define ERROR_VAL_32 0xFFFFFFFEUL
+#define ERROR_VAL_32 0xFFFFFFFEul
 #define ERROR_VAL_16 0xFFFEu
 #define ERROR_VAL_8 0xFEu
 
+#define MAX_VAL_32 ((uint32_t)0xFAFFFFFFul)
+#define MAX_VAL_16 ((uint16_t)0xFAFFu)
+#define MAX_VAL_8 ((uint8_t)0xFAu)
 
 #endif
 

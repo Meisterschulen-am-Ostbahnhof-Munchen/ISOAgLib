@@ -325,10 +325,6 @@ private:
   void sendMaintainPower();
 
 private:
-  // Private attributes
-  /** engine speed */
-  int16_t mi16_engine;
-
   /** front hitch data */
   uint8_t mui8_hitchFront;
 

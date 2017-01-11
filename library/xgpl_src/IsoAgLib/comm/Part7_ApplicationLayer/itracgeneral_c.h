@@ -17,9 +17,12 @@
 #ifndef ITRACGENERAL_C_H
 #define ITRACGENERAL_C_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
+#if _MSC_VER
+  #pragma message ( "warning: iTracGeneral_c is deprecated and will be removed in a future release! Please migrate to using the new classes iTractor_c, iTractorFrontHitch_c, iTractorRearHitch_c." )
+#elif __GNUC__
+  #warning "iTracGeneral_c is deprecated and will be removed in a future release! Please migrate to using the new classes iTractor_c, iTractorFrontHitch_c, iTractorRearHitch_c."
+#endif
+
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include "ibasetypes.h"
 #include "impl/tracgeneral_c.h"
