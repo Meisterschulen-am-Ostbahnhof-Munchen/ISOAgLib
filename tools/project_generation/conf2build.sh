@@ -153,6 +153,13 @@ set_default_values()
     PRJ_RS232_OVER_CAN=0
     PRJ_MULTIPACKET_STREAM_CHUNK=1
     PRJ_BASE=0
+  #NEW tractor
+    PRJ_TRACTOR=0
+    PRJ_TRACTOR_GROUND_BASED=0
+    PRJ_TRACTOR_MACHINE_SELECTED=0
+    PRJ_TRACTOR_FRONT_HITCH=0
+    PRJ_TRACTOR_REAR_HITCH=0
+  #OLD/deprecated tractor
     PRJ_TRACTOR_GENERAL=0
     PRJ_TRACTOR_MOVE=0
     PRJ_TRACTOR_PTO=0
@@ -256,15 +263,6 @@ check_set_correct_variables()
     APP_INSIDE="../$APP_PATH"
     ISO_AG_LIB_INSIDE="../$ISO_AG_LIB_PATH"
 
-    if [ "$PRJ_TRACTOR_MOVE_SETPOINT" -ne 0 ]; then
-        echo_ "ERROR! TRAC_MOVE_SETPOINT not supported any longer."
-		exit 2
-    fi
-    if [ "$PRJ_TRACTOR_PTO_SETPOINT" -gt 0 ]; then
-        echo_ "ERROR! TRAC_PTO_SETPOINT not supported any longer."
-		exit 2
-    fi
-
     # overwrite settings from config file with command line parameter settings
     if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
@@ -367,6 +365,8 @@ append()
 comm_features()
 {
     printf '%s' " -name 'isoaglib_config.h'" >&3
+
+  #OLD/deprecated tractor features
     if expr "$PRJ_TRACTOR_GENERAL" \| "$PRJ_TRACTOR_MOVE" \| "$PRJ_TRACTOR_FACILITIES" \| "$PRJ_TRACTOR_PTO" \| "$PRJ_TRACTOR_LIGHT" \| "$PRJ_TRACTOR_AUX" \| "$PRJ_TIME_GPS" \| "$PRJ_TIME_DATE" \| "$PRJ_GNSS" \| "$PRJ_TRACTOR_GUIDANCE" >/dev/null; then
         printf '%s' " -o -name 'ibasetypes.h' -o -name 'basecommon_c*'" >&3
     fi
@@ -394,6 +394,30 @@ comm_features()
     if [ "$PRJ_TIME_GPS" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)" >&3
     fi
+
+  #NEW Tractor features
+    if expr "$PRJ_TRACTOR" \| "$PRJ_TRACTOR_GROUND_BASED" \| "$PRJ_TRACTOR_MACHINE_SELECTED" \| "$PRJ_TRACTOR_FRONT_HITCH" \| "$PRJ_TRACTOR_REAR_HITCH" >/dev/null; then
+        printf '%s' " -o -name 'ibasetypes.h' -o -name 'tractorcommonrx_c*'" >&3
+    fi
+    if expr "$PRJ_TRACTOR_FRONT_HITCH" \| "$PRJ_TRACTOR_REAR_HITCH" >/dev/null; then
+        printf '%s' " -o -name 'tractorhitch_c*'" >&3
+    fi
+    if [ "$PRJ_TRACTOR" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractor_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_GROUND_BASED" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorgroundbased_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_MACHINE_SELECTED" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractormachineselected_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_FRONT_HITCH" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorfronthitch_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_REAR_HITCH" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorrearhitch_c*' \)" >&3
+    fi
+
     if [ "$PRJ_TIME_DATE" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timedate*' \)" >&3
     fi
@@ -818,6 +842,25 @@ END_OF_PATH
     
         if [ "$PRJ_ISO11783" -gt 0 ] ; then
             echo_e "#define USE_ISO_11783" >&3
+
+            #new Tractor
+            if [ "$PRJ_TRACTOR" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR" >&3
+            fi
+            if [ "$PRJ_TRACTOR_GROUND_BASED" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_GROUND_BASED" >&3
+            fi
+            if [ "$PRJ_TRACTOR_MACHINE_SELECTED" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_MACHINE_SELECTED" >&3
+            fi
+            if [ "$PRJ_TRACTOR_FRONT_HITCH" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_FRONT_HITCH" >&3
+            fi
+            if [ "$PRJ_TRACTOR_REAR_HITCH" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_REAR_HITCH" >&3
+            fi
+
+            #old Tractor
             if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
                 echo_e "#define USE_TRACTOR_GENERAL" >&3
             fi
