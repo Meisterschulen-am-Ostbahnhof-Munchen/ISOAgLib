@@ -14,6 +14,7 @@
 #include "tractor_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
 
 namespace __IsoAgLib {
@@ -34,15 +35,20 @@ namespace __IsoAgLib {
     mt_maintainEcuPower      = IsoAgLib::IsoNotAvailable;
     mt_maintainActuatorPower = IsoAgLib::IsoNotAvailable;
     
-    m_implTransportFlag = IsoAgLib::IsoNotAvailableTransport;
-    m_implParkFlag      = IsoAgLib::IsoNotAvailablePark;
-    m_implWorkFlag      = IsoAgLib::IsoNotAvailableWork;
+    m_implTransportFlag   = IsoAgLib::IsoNotAvailableTransport;
+    m_implParkFlag        = IsoAgLib::IsoNotAvailablePark;
+    m_implReadyToWorkFlag = IsoAgLib::IsoNotAvailableWork;
+    m_implInWorkFlag      = IsoAgLib::IsoNotAvailableInWork;
+
+    m_pgnRequest.init();
   }
 
 
   void
   Tractor_c::close()
   {
+    m_pgnRequest.close();
+
     m_ident = NULL;
 
     TractorCommonRx_c::close();
@@ -103,13 +109,14 @@ namespace __IsoAgLib {
 
     CanPkgExt_c pkg;
     pkg.setMonitorItemForSA( m_ident->getIsoItem() );
-    pkg.setIsoPri(6);
-    pkg.setIsoPgn(MAINTAIN_POWER_REQUEST_PGN);
+    pkg.setIsoPri( 6 );
+    pkg.setIsoPgn( MAINTAIN_POWER_REQUEST_PGN );
     pkg.setUint8Data(0, ( mt_maintainEcuPower      << 6) |
                         ( mt_maintainActuatorPower << 4) );
-    pkg.setUint8Data(1, ( m_implTransportFlag << 6) |
-                        ( m_implParkFlag      << 4) |
-                        ( m_implWorkFlag      << 2) );
+    pkg.setUint8Data(1, ( m_implTransportFlag   << 6) |
+                        ( m_implParkFlag        << 4) |
+                        ( m_implReadyToWorkFlag << 2) |
+                        ( m_implInWorkFlag          ) );
     pkg.setUint16Data(2, 0xFFFFU);
     pkg.setUint32Data(4, 0xFFFFFFFFUL);
     pkg.setLen(8);
@@ -126,6 +133,38 @@ namespace __IsoAgLib {
     mt_maintainActuatorPower = actuatorPower;
 
     sendMaintainPower();
+  }
+
+  void
+  Tractor_c::IsoRequestPgnHandlerProxy_c::init()
+  {
+    getIsoRequestPgnInstance( mrt_owner.getMultitonInst() ).registerPGN ( *this, MAINTAIN_POWER_REQUEST_PGN );
+  }
+
+  void
+  Tractor_c::IsoRequestPgnHandlerProxy_c::close()
+  {
+    getIsoRequestPgnInstance( mrt_owner.getMultitonInst() ).unregisterPGN ( *this, MAINTAIN_POWER_REQUEST_PGN );
+  }
+
+  bool
+  Tractor_c::IsoRequestPgnHandlerProxy_c::processMsgRequestPGN( uint32_t pgn, IsoItem_c *sender, IsoItem_c *receiver, ecutime_t time )
+  {
+    isoaglib_assert( pgn == MAINTAIN_POWER_REQUEST_PGN );
+    
+    ( void )pgn;    
+    ( void )sender;
+    ( void )time;
+
+    if( ( mrt_owner.m_ident != NULL ) && ( mrt_owner.m_ident->getIsoItem() != NULL ) )
+    {
+      if( ( receiver == NULL ) || ( receiver == mrt_owner.m_ident->getIsoItem() ) )
+      {
+        mrt_owner.sendMaintainPower();
+        return true;
+      }
+    }
+    return false;
   }
 
 

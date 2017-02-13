@@ -268,12 +268,20 @@ enum IsoSpeedSourceFlag_t {
   IsoNotAvailableSpeed = 7     ///<corresponding function is not available in service provider
 };
 
-/** use an enum for the different states of ISO flags for the implement work state */
+/** use an enum for the different states of ISO flags for the implement ready-to-work state */
 enum IsoImplWorkFlag_t {
   IsoNotReadyForFieldWork = 0, ///< Implement is not ready for field work
   IsoReadyForFieldWork = 1,    ///< Implement is ready for field work
   IsoErrorWork = 2,            ///< corresponding function is in error state, and thus not useable
   IsoNotAvailableWork = 3      ///< corresponding function is not available/not implemented in service provider
+};
+
+/** use an enum for the different states of ISO flags for the implement in-work state */
+enum IsoImplInWorkFlag_t {
+  IsoNotInWork = 0,            ///< Implement is not in work
+  IsoInWork = 1,               ///< Implement is in work
+  IsoErrorInWork = 2,          ///< corresponding function is in error state, and thus not useable
+  IsoNotAvailableInWork = 3    ///< corresponding function is not available/not implemented in service provider
 };
 
 /** use an enum for the different states of ISO flags for the implement transport state */

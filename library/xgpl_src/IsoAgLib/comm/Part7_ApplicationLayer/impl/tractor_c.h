@@ -14,7 +14,12 @@
 #define TRACTOR_C_H
 
 #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorcommonrx_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable : 4355 )
+#endif
 
 namespace __IsoAgLib {
 
@@ -68,18 +73,38 @@ namespace __IsoAgLib {
 
     void maintainPowerAndSendImplStates( IsoAgLib::IsoActiveFlag_t ecuPower, IsoAgLib::IsoActiveFlag_t actuatorPower );
 
-    void setImplTransportState( IsoAgLib::IsoImplTransportFlag_t val ) { m_implTransportFlag = val; }
-    void setImplParkState(      IsoAgLib::IsoImplParkFlag_t      val ) { m_implParkFlag      = val; }
-    void setImplWorkState(      IsoAgLib::IsoImplWorkFlag_t      val ) { m_implWorkFlag      = val; }
+    void setImplTransportState( IsoAgLib::IsoImplTransportFlag_t val ) { m_implTransportFlag   = val; }
+    void setImplParkState(      IsoAgLib::IsoImplParkFlag_t      val ) { m_implParkFlag        = val; }
+    void setImplWorkState(      IsoAgLib::IsoImplWorkFlag_t      val ) { m_implReadyToWorkFlag = val; }
+    void setImplInWorkState(    IsoAgLib::IsoImplInWorkFlag_t    val ) { m_implInWorkFlag      = val; }
 
 
   private:
-    Tractor_c() : TractorCommonRx_c( TractorCommonRx_c::TIMEOUT_SENDING_NODE_J1939, WHEEL_BASED_SPEED_DIST_PGN ) {}
+    Tractor_c() : TractorCommonRx_c( TractorCommonRx_c::TIMEOUT_SENDING_NODE_J1939, WHEEL_BASED_SPEED_DIST_PGN ), m_pgnRequest( *this ) { /* all done at init() */ }
 
     virtual void setValues( const CanPkgExt_c& arc_data );
     virtual void resetValues();
 
     void sendMaintainPower();
+
+    class IsoRequestPgnHandlerProxy_c : public IsoRequestPgnHandler_c {
+    public:
+      typedef Tractor_c Owner_t;
+
+      IsoRequestPgnHandlerProxy_c( Owner_t &owner ) : mrt_owner( owner ) {}
+      virtual ~IsoRequestPgnHandlerProxy_c() {}
+
+      void init();
+      void close();
+
+    private:
+      virtual bool processMsgRequestPGN( uint32_t pgn, IsoItem_c *sender, IsoItem_c *receiver, ecutime_t time );
+
+      IsoRequestPgnHandlerProxy_c(IsoRequestPgnHandlerProxy_c const &); // not copyable!
+      IsoRequestPgnHandlerProxy_c &operator=(IsoRequestPgnHandlerProxy_c const &); // not assignable!
+
+      Owner_t &mrt_owner;
+    };
 
   private:
     /// Reception
@@ -101,7 +126,10 @@ namespace __IsoAgLib {
     
     IsoAgLib::IsoImplTransportFlag_t m_implTransportFlag;
     IsoAgLib::IsoImplParkFlag_t      m_implParkFlag;
-    IsoAgLib::IsoImplWorkFlag_t      m_implWorkFlag;
+    IsoAgLib::IsoImplWorkFlag_t      m_implReadyToWorkFlag;
+    IsoAgLib::IsoImplInWorkFlag_t    m_implInWorkFlag;
+
+    IsoRequestPgnHandlerProxy_c m_pgnRequest;
 
     friend Tractor_c &getTractorInstance( unsigned instance );
   };
@@ -124,4 +152,9 @@ namespace __IsoAgLib {
   }
 
 }
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+
 #endif
