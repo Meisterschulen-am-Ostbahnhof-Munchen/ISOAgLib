@@ -16,6 +16,8 @@
 #define ITRACTOR_C_H
 
 #include "impl/tractor_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+
 
 namespace IsoAgLib
 {
