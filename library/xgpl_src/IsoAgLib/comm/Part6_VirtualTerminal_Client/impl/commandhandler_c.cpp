@@ -1176,7 +1176,9 @@ CommandHandler_c::processMsgVtToEcuActivations( Stream_c &stream )
   {
     case 0x08:
     {
-      const uint16_t inputStringId = uint16_t( stream.getNextNotParsed() ) | ( uint16_t( stream.getNextNotParsed() ) << 8 );
+      const uint8_t secondByte = stream.getNextNotParsed();
+      const uint8_t thirdByte = stream.getNextNotParsed();
+      const uint16_t inputStringId = uint16_t( secondByte ) | ( uint16_t( thirdByte ) << 8 );
       const unsigned inputStringLength = stream.getNextNotParsed();
 
       const uint16_t ui16_totalstreamsize = stream.getByteTotalSize();
