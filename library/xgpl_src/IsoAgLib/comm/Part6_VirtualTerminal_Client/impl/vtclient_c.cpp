@@ -201,7 +201,8 @@ void VtClient_c::processMsgNonGlobal( const CanPkgExt_c& pkg ) {
   for( STL_NAMESPACE::vector<VtClientConnection_c*>::iterator it = m_vtConnections.begin();
        it != m_vtConnections.end(); ++it )
   {
-    if( (*it)->connectedToVtServer() &&
+    if( ( *it != NULL ) &&
+        ( *it )->connectedToVtServer() &&
         ( pkg.getMonitorItemForDA() == (*it)->getIdentItem().getIsoItem() ) &&
         ( pkg.getMonitorItemForSA() == &(*it)->getVtServerInst().getIsoItem() ) )
     {
@@ -279,9 +280,11 @@ void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
         // notify all connected vtCSCs
         for (ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
         {
-          if ( m_vtConnections[ui8_index] &&
+          if( m_vtConnections[ui8_index] &&
               (m_vtConnections[ui8_index]->getVtServerInstPtr() == pc_server) )
-          m_vtConnections[ui8_index]->notifyOnVtsLanguagePgn();
+          {
+            m_vtConnections[ui8_index]->notifyOnVtsLanguagePgn();
+          }
         }
       }
       break;
@@ -298,7 +301,8 @@ VtClient_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, u
 {
   for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
   {
-    if (&static_cast<__IsoAgLib::IdentItem_c&>(mrc_wsMasterIdentItem) == &m_vtConnections[ui8_index]->getIdentItem())
+    if( ( m_vtConnections[ui8_index] != NULL ) &&
+        ( &m_vtConnections[ui8_index]->getIdentItem() == &static_cast<__IsoAgLib::IdentItem_c&>( mrc_wsMasterIdentItem ) ) )
       return m_vtConnections[ui8_index]->commandHandler().sendCommand(apui8_buffer, ui32_size);
   }
   return false;

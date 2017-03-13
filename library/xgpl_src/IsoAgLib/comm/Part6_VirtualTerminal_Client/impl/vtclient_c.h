@@ -58,7 +58,7 @@ public:
   bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& apc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size);
 
   VtClientConnection_c& getClientByID (uint8_t ui8_clientIndex) { return *m_vtConnections[ui8_clientIndex]; }
-  VtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex) { return (!m_vtConnections.empty()) ? m_vtConnections[ui8_clientIndex] : NULL; }
+  VtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex) { return ( ui8_clientIndex < m_vtConnections.size() ) ? m_vtConnections[ui8_clientIndex] : NULL; }
 
   bool isAnyVtAvailable() const { return m_serverManager.isAnyVtAvailable(); }
   // is any claimed VT sending VT status
