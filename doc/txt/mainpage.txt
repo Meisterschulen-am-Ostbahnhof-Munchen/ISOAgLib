@@ -56,6 +56,7 @@ Tractor-Classes:
 
 VT-Client:
  - Bugfix:
+   - Crash after deregistering one of many Object Pools fixed.
    - Activation-Processing may have resulted in wrong Object ID, depending on the OR-order the compiler has chosen.
  - Enhancement:
    - Support "VT On User-Layout Hide/Show" message
