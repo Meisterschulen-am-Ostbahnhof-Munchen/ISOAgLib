@@ -42,7 +42,7 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
-\subsection Change_ZH 2.8.2 to 2.x.y (TRUNK)
+\subsection Change_ZI 2.8.2 to 2.x.y (TRUNK)
 
 Tractor-Classes:
  - Refactoring:
@@ -65,10 +65,21 @@ VT-Client:
 TC-Client:
  - Enhancement: Added "Peer Control" for Setpoint Value Source / Setpoint Value User.
 
+Diagnostics:
+ - Bugfix:
+   - DM1 will now be be sent after startup if active DTCs were being loaded.
+
 vt2iso:
  - Now splitting the attributes/variables files into one for each object-type.
    (New option "-c" to create these files even when no object of the given type exists in the pool)
    Still compatible with the old file-names, as "...-attributes.inc" will still exist and simply include all the single files.
+
+
+\subsection Change_ZH 2.8.2 to 2.8.2.1
+
+Diagnostics:
+ - Bugfix:
+   - DM1 will now be be sent after startup if active DTCs were being loaded.
 
 
 \subsection Change_ZG 2.8.1 to 2.8.2
