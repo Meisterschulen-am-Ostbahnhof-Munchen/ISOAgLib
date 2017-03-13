@@ -74,7 +74,10 @@ vt2iso:
    (New option "-c" to create these files even when no object of the given type exists in the pool)
    Still compatible with the old file-names, as "...-attributes.inc" will still exist and simply include all the single files.
 
-
+Outputs:
+ - Cleanup: Rename getMaxOutputPwmFreq -> getMaxOutputPwm, move caching to HAL.
+ 
+ 
 \subsection Change_ZH 2.8.2 to 2.8.2.1
 
 Diagnostics:
