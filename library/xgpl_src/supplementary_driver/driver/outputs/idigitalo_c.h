@@ -111,10 +111,11 @@ public:
   */
   int16_t getDigoutAdc( void ) const { return DigitalO_c::getDigoutAdc(); }
 
-  /** deliver the max allowed PWM -> setting this value results in max output
+  /** deliver the max allowed PWM value for the configured frequency!
+    -> setting this value on the related frequency results in max output
     @return max allowed PWM for the current PWM frequency setting
   */
-  uint16_t getMaxOutputPwmFreq() const { return DigitalO_c::getMaxOutputPwmFreq(); }
+  uint16_t getMaxOutputPwm() const { return DigitalO_c::getMaxOutputPwm(); }
 
 private:
   iDigitalO_c(const iDigitalO_c& /*acrc_src*/); // intentionally private and unimplemented

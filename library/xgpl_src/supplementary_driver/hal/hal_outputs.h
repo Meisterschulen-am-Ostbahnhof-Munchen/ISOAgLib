@@ -44,7 +44,7 @@ namespace HAL
   int16_t setPwmFreq(uint8_t bOutput, uint32_t dwFrequency);
 
   /**
-    retrieve maximal PWM frequency -> setting to this value results in maximal output
+    retrieve maximal PWM value for configured frequency -> setting to this value results in maximal output
     @param aui8_channel channel number of output
     @return max possible PWM value
   */

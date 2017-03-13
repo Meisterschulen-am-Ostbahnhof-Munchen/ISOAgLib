@@ -63,19 +63,32 @@ namespace HAL
   /** \name Output BIOS functions */
 /*@{*/
 
+  static unsigned isCachedMaxPwm[ DIGITAL_OUTPUT_MAX-DIGITAL_OUTPUT_MIN+1 ] = {}; // all fields will be init'd to 0, meaning "false". Use this instead of bool for this reason
+  static uint16_t cachedMaxPwm[ DIGITAL_OUTPUT_MAX-DIGITAL_OUTPUT_MIN+1 ];
+
   inline void setMainRelais(bool bitState)
   { __HAL::set_relais(bitState); }
 
   // ESXu BIOS lets PWM channels OUT1, OUT2 configure individual PWM FREQ
   inline int16_t setPwmFreq(uint8_t bOutput, uint32_t dwFrequency)
-  { return __HAL::set_pwm_freq(bOutput, dwFrequency); }
+  {
+    isCachedMaxPwm[ bOutput ] = 0; // false
+
+    return __HAL::set_pwm_freq(bOutput, dwFrequency);
+  }
 
   inline uint16_t getMaxPwmDigout(uint8_t aui8_channel)
   {
-    __HAL::tOutput tOutputstatus;
-    int16_t retval = __HAL::get_digout_status(aui8_channel,&tOutputstatus);
+    if( isCachedMaxPwm[ aui8_channel ] == 0 ) // false
+    {
+      __HAL::tOutput tOutputstatus;
+      ( void )__HAL::get_digout_status(aui8_channel,&tOutputstatus);
 
-    return tOutputstatus.wMaxOutput;
+      cachedMaxPwm[ aui8_channel ] = tOutputstatus.wMaxOutput;
+      isCachedMaxPwm[ aui8_channel ] = 1; // true
+    }
+
+    return cachedMaxPwm[ aui8_channel ];
   }
 
   void setDigout(uint8_t aui8_channel, uint16_t wPWMValue);

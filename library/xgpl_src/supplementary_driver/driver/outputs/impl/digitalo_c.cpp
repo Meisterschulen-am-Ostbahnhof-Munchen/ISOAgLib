@@ -21,7 +21,6 @@ DigitalO_c::DigitalO_c(uint8_t aui8_channel)
   : OutputBase_c(aui8_channel)
   , ui16_minAllowedCurrent( 0 )
   , ui16_maxAllowedCurrent( 0 )
-  , ui16_maxOutputPwmFreq( 0 )
 {
 }
 
@@ -30,7 +29,6 @@ DigitalO_c::DigitalO_c()
   : OutputBase_c(0xFF) // uninitialized
   , ui16_minAllowedCurrent( 0 )
   , ui16_maxAllowedCurrent( 0 )
-  , ui16_maxOutputPwmFreq( 0 )
 {
 }
 
@@ -46,13 +44,7 @@ DigitalO_c::setFreq(uint32_t aui32_val)
   // set output PWM frequency with BIOS call
   if (HAL::setPwmFreq(channelNr(), aui32_val) != HAL_NO_ERR)
   { // wrong channel number or wrong frequency
-    ui16_maxOutputPwmFreq = 0xFFFF;
     isoaglib_assert( !"setFreq error" );
-  }
-  else
-  {
-    // retrieve max allowed PWM freq
-    ui16_maxOutputPwmFreq = HAL::getMaxPwmDigout( channelNr() );
   }
 }
 
@@ -63,12 +55,13 @@ DigitalO_c::set(uint16_t aui16_val)
   HAL::setDigout(channelNr(), aui16_val);
 }
 
+    // retrieve max allowed PWM freq
+    ui16_maxOutputPwmFreq = HAL::getMaxPwmDigout( channelNr() );
 
 void
 DigitalO_c::set(bool ab_state)
 {
-  if ( ab_state ) set( ui16_maxOutputPwmFreq );
-  else set( uint16_t(0) );
+  set( ab_state ? getMaxOutputPwm() : uint16_t(0) );
 }
 
 

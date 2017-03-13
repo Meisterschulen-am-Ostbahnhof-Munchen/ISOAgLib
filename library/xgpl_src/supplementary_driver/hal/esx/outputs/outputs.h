@@ -73,6 +73,9 @@ namespace HAL
   /** \name Output BIOS functions */
 /*@{*/
 
+  static unsigned isCachedMaxPwm[ DIGITAL_OUTPUT_MAX-DIGITAL_OUTPUT_MIN+1 ] = {}; // all fields will be init'd to 0, meaning "false". Use this instead of bool for this reason
+  static uint16_t cachedMaxPwm[ DIGITAL_OUTPUT_MAX-DIGITAL_OUTPUT_MIN+1 ];
+
   inline void setMainRelais(bool bitState)
   { __HAL::set_relais(bitState); }
   
@@ -80,6 +83,8 @@ namespace HAL
   // rest of PWM channels [4..11] use common PWM freq
   inline int16_t setPwmFreq(uint8_t bOutput, uint32_t dwFrequency)
   {
+    isCachedMaxPwm[ bOutput ] = 0; // false
+
     if (bOutput < 4)
       return __HAL::set_pwm_freq(bOutput, dwFrequency);
     #ifndef _INIT_BABYBOARD_
@@ -98,22 +103,32 @@ namespace HAL
 
   inline uint16_t getMaxPwmDigout(uint8_t aui8_channel)
   { 
-    #ifndef _INIT_BABYBOARD_
-    __HAL::tOutput tOutputstatus;
-    __HAL::get_digout_status(aui8_channel,&tOutputstatus);
-    return tOutputstatus.wMaxOutput;
-    #else
-    if ( aui8_channel < 12 )
-    { __HAL::tOutput tOutputstatus;
+    if( isCachedMaxPwm[ aui8_channel ] == 0 ) // false
+	{
+      #ifndef _INIT_BABYBOARD_
+      __HAL::tOutput tOutputstatus;
       __HAL::get_digout_status(aui8_channel,&tOutputstatus);
-      return tOutputstatus.wMaxOutput;
-    }
-    else
-    { __HAL::tBAOutput tOutputstatus;
-      __HAL::BA_get_digout_status(POSITION_1, (aui8_channel-12),&tOutputstatus);
-      return tOutputstatus.wMaxOutput;
-    }
-    #endif
+
+      cachedMaxPwm[ aui8_channel ] = tOutputstatus.wMaxOutput;
+      #else
+      if ( aui8_channel < 12 )
+      { __HAL::tOutput tOutputstatus;
+        __HAL::get_digout_status(aui8_channel,&tOutputstatus);
+
+        cachedMaxPwm[ aui8_channel ] = tOutputstatus.wMaxOutput;
+      }
+      else
+      { __HAL::tBAOutput tOutputstatus;
+        __HAL::BA_get_digout_status(POSITION_1, (aui8_channel-12),&tOutputstatus);
+
+        cachedMaxPwm[ aui8_channel ] = tOutputstatus.wMaxOutput;
+      }
+      #endif
+
+      isCachedMaxPwm[ aui8_channel ] = 1; // true
+	}
+
+    return cachedMaxPwm[ aui8_channel ];
   }
 
   void setDigout(uint8_t aui8_channel, uint16_t wPWMValue);

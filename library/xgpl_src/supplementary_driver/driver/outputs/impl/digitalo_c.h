@@ -116,11 +116,12 @@ public:
   */
   int16_t getDigoutAdc( void ) const { return HAL::getDigoutAdc( channelNr() );}
 
-  /** deliver the max allowed PWM -> setting this value results in max output
+  /** deliver the max allowed PWM for the configured frequency!
+    -> setting this value on the related frequency results in max output
     @return max allowed PWM for the current PWM frequency setting
   */
-  uint16_t getMaxOutputPwmFreq() const
-  { return ui16_maxOutputPwmFreq; }
+  uint16_t getMaxOutputPwm() const
+  { return HAL::getMaxPwmDigout(channelNr()); }
 
 private:
   DigitalO_c(const DigitalO_c&); // intentionally private and unimplemented
@@ -131,9 +132,6 @@ private:
 
   /** maximum allowed current in active state */
   uint16_t ui16_maxAllowedCurrent;
-
-  /** max allowed PWM freq -> setting this value results in max output */
-  uint16_t ui16_maxOutputPwmFreq;
 };
 
 } // __IsoAgLib
