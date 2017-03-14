@@ -159,6 +159,8 @@ set_default_values()
     PRJ_TRACTOR_MACHINE_SELECTED=0
     PRJ_TRACTOR_FRONT_HITCH=0
     PRJ_TRACTOR_REAR_HITCH=0
+    PRJ_TRACTOR_FRONT_PTO=0
+    PRJ_TRACTOR_REAR_PTO=0
   #OLD/deprecated tractor
     PRJ_TRACTOR_GENERAL=0
     PRJ_TRACTOR_MOVE=0
@@ -402,6 +404,9 @@ comm_features()
     if expr "$PRJ_TRACTOR_FRONT_HITCH" \| "$PRJ_TRACTOR_REAR_HITCH" >/dev/null; then
         printf '%s' " -o -name 'tractorhitch_c*'" >&3
     fi
+    if expr "$PRJ_TRACTOR_FRONT_PTO" \| "$PRJ_TRACTOR_REAR_PTO" >/dev/null; then
+        printf '%s' " -o -name 'tractorpto_c*'" >&3
+    fi
     if [ "$PRJ_TRACTOR" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractor_c*' \)" >&3
     fi
@@ -416,6 +421,12 @@ comm_features()
     fi
     if [ "$PRJ_TRACTOR_REAR_HITCH" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorrearhitch_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_FRONT_PTO" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorfrontpto_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_REAR_PTO" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorrearpto_c*' \)" >&3
     fi
 
     if [ "$PRJ_TIME_DATE" -gt 0 ]; then
@@ -858,6 +869,12 @@ END_OF_PATH
             fi
             if [ "$PRJ_TRACTOR_REAR_HITCH" -gt 0 ]; then
                 echo_e "#define USE_TRACTOR_REAR_HITCH" >&3
+            fi
+            if [ "$PRJ_TRACTOR_FRONT_PTO" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_FRONT_PTO" >&3
+            fi
+            if [ "$PRJ_TRACTOR_REAR_PTO" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_REAR_PTO" >&3
             fi
 
             #old Tractor
