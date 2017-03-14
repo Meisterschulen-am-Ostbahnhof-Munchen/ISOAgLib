@@ -32,6 +32,14 @@
 #ifdef USE_ISO_TASKCONTROLLER_CLIENT
   #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #endif
+#ifdef USE_ISO_FILESERVER_CLIENT
+  #include <IsoAgLib/comm/Part13_FileServer_Client/impl/fsmanager_c.h>
+#endif
+#ifdef USE_ISB_CLIENT
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/isbclient_c.h>
+#endif
+
+/// OLD tractor classes
 #ifdef USE_TRACTOR_GENERAL
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
 #endif
@@ -57,6 +65,8 @@
 #ifdef USE_TIME_GPS
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
 #endif
+
+/// NEW tractor classes
 #ifdef USE_TIME_DATE
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timedate_c.h>
 #endif
@@ -78,11 +88,11 @@
 #ifdef USE_TRACTOR_REAR_HITCH
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorrearhitch_c.h>
 #endif
-#ifdef USE_ISB_CLIENT
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/isbclient_c.h>
+#ifdef USE_TRACTOR_FRONT_PTO
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorfrontpto_c.h>
 #endif
-#ifdef USE_ISO_FILESERVER_CLIENT
-  #include <IsoAgLib/comm/Part13_FileServer_Client/impl/fsmanager_c.h>
+#ifdef USE_TRACTOR_REAR_PTO
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorrearpto_c.h>
 #endif
 
 
@@ -122,7 +132,7 @@ IsoBus_c::init (uint8_t aui8_busNumber)
     getVtClientInstance( getMultitonInst() ).init();
   #endif
 
-  /// Part 7 - Application (Tractor-Client)
+  /// Part 7 - Application (Tractor-Client) - OLD
   #ifdef USE_TRACTOR_GENERAL
     getTracGeneralInstance( getMultitonInst() ).init();
   #endif
@@ -148,14 +158,13 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   #ifdef USE_TIME_GPS
     getTimePosGpsInstance( getMultitonInst() ).init();
   #endif
+  
+  /// Part 7 - Application (Tractor-Client) - NEW
   #ifdef USE_TIME_DATE
     getTimeDateInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_GNSS
     getGnssInstance( getMultitonInst() ).init();
-  #endif
-  #ifdef USE_ISB_CLIENT
-    getIsbClientInstance( getMultitonInst() ).init();
   #endif
   #ifdef USE_TRACTOR
     getTractorInstance( getMultitonInst() ).init();
@@ -172,7 +181,19 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   #ifdef USE_TRACTOR_REAR_HITCH
     getTractorRearHitchInstance( getMultitonInst() ).init();
   #endif
+  #ifdef USE_TRACTOR_FRONT_PTO
+    getTractorFrontPtoInstance( getMultitonInst() ).init();
+  #endif
+  #ifdef USE_TRACTOR_REAR_PTO
+    getTractorRearPtoInstance( getMultitonInst() ).init();
+  #endif
 
+  /// Part 7 - Application (ISB, etc.)
+  #ifdef USE_ISB_CLIENT
+    getIsbClientInstance( getMultitonInst() ).init();
+  #endif
+
+  /// Part 10 - Task Controller (Client)
   #ifdef USE_ISO_TASKCONTROLLER_CLIENT
     getTcClientInstance( getMultitonInst() ).init();
   #endif
@@ -208,31 +229,12 @@ IsoBus_c::close()
     getTcClientInstance( getMultitonInst() ).close();
   #endif
 
-  /// Part 7 - Application (Tractor-Client)
-  #ifdef USE_TRACTOR_REAR_HITCH
-    getTractorRearHitchInstance( getMultitonInst() ).close();
-  #endif
-  #ifdef USE_TRACTOR_FRONT_HITCH
-    getTractorFrontHitchInstance( getMultitonInst() ).close();
-  #endif
-  #ifdef USE_TRACTOR_MACHINE_SELECTED
-    getTractorMachineSelectedInstance( getMultitonInst() ).close();
-  #endif
-  #ifdef USE_TRACTOR_GROUND_BASED
-    getTractorGroundBasedInstance( getMultitonInst() ).close();
-  #endif
-  #ifdef USE_TRACTOR
-    getTractorInstance( getMultitonInst() ).close();
-  #endif
+  /// Part 7 - Application (ISB, etc.)
   #ifdef USE_ISB_CLIENT
     getIsbClientInstance( getMultitonInst() ).close();
   #endif
-  #ifdef USE_GNSS
-    getGnssInstance( getMultitonInst() ).close();
-  #endif
-  #ifdef USE_TIME_DATE
-    getTimeDateInstance( getMultitonInst() ).close();
-  #endif
+
+  /// Part 7 - Application (Tractor-Client) - OLD
   #ifdef USE_TIME_GPS
     getTimePosGpsInstance( getMultitonInst() ).close();
   #endif
@@ -257,6 +259,35 @@ IsoBus_c::close()
   #endif
   #ifdef USE_TRACTOR_GENERAL
     getTracGeneralInstance( getMultitonInst() ).close();
+  #endif
+
+  /// Part 7 - Application (Tractor-Client) - NEW
+  #ifdef USE_GNSS
+    getGnssInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TIME_DATE
+    getTimeDateInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_REAR_PTO
+    getTractorRearPtoInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_FRONT_PTO
+    getTractorFrontPtoInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_REAR_HITCH
+    getTractorRearHitchInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_FRONT_HITCH
+    getTractorFrontHitchInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_MACHINE_SELECTED
+    getTractorMachineSelectedInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_GROUND_BASED
+    getTractorGroundBasedInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR
+    getTractorInstance( getMultitonInst() ).close();
   #endif
 
   /// Part 6 - Virtual Terminal (Client)
