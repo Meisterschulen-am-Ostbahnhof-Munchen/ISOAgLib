@@ -17,6 +17,12 @@
 #ifndef ITRACPTO_C_H
 #define ITRACPTO_C_H
 
+#if _MSC_VER
+  #pragma message ( "warning: iTracPto_c is deprecated and will be removed in a future release! Please migrate to using the new classes iTractorRearPro_c, iTractorFrontPto_c." )
+#elif __GNUC__
+  #warning "iTracPto_c is deprecated and will be removed in a future release! Please migrate to using the new classes iTractorRearPro_c, iTractorFrontPto_c."
+#endif
+
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */

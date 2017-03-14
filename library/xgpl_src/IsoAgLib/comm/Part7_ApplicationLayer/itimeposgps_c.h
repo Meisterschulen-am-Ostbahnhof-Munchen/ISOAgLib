@@ -17,6 +17,12 @@
 #ifndef ITIMEPOSGPS_C_H
 #define ITIMEPOSGPS_C_H
 
+#if _MSC_VER
+  #pragma message ( "warning: iTimePosGps_c is deprecated and will be removed in a future release! Please migrate to using the new classes iTimeData_c, iGnss_c." )
+#elif __GNUC__
+  #warning "iTimePosGps_c is deprecated and will be removed in a future release! Please migrate to using the new classes iTimeData_c, iGnss_c."
+#endif
+
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */

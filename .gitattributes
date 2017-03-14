@@ -88,9 +88,11 @@ library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorrearpto_c.h -t
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimedate_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractor_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorfronthitch_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorfrontpto_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorgroundbased_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractormachineselected_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorrearhitch_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorrearpto_c.h -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_interface.inc -text
 library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_simulator.cpp -text
 tools/LICENSE.txt -text
