@@ -55,8 +55,6 @@ DigitalO_c::set(uint16_t aui16_val)
   HAL::setDigout(channelNr(), aui16_val);
 }
 
-    // retrieve max allowed PWM freq
-    ui16_maxOutputPwmFreq = HAL::getMaxPwmDigout( channelNr() );
 
 void
 DigitalO_c::set(bool ab_state)
