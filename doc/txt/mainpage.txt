@@ -46,7 +46,7 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 Tractor-Classes:
  - Refactoring:
-   - TracGeneral/TracMove/TracHitch/TracPto is marked obsolete. Please note that it will be removed in future version!
+   - TimePosGps/TracGeneral/TracMove/TracHitch/TracPto/TracLight is marked obsolete. Please note that it will be removed in future version!
    - Introduced new classes (which contain the receiving Implement-side only!), with new settings in conf2build!
      - Tractor (contains KeySwitch, MaintainPower and Wheel Based Speed and Distance/Direction, Operator Direction, etc. Does answer to Requests for MAINTAIN_POWER_REQUEST_PGN)
      - TractorGroundBased (contains Ground Based Speed and Distance/Direction)
@@ -55,6 +55,7 @@ Tractor-Classes:
      - TractorRearHitch (contains Rear Hitch position and status)
      - TractorFrontPto (contains Front Power Take Off (PTO) information)
      - TractorRearPto (contains Rear Power Take Off (PTO) information)
+     - TractorLighting (contains handling of Lighting Command and sending of Lighting Data)
 
 VT-Client:
  - Bugfix:

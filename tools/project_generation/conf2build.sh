@@ -161,6 +161,7 @@ set_default_values()
     PRJ_TRACTOR_REAR_HITCH=0
     PRJ_TRACTOR_FRONT_PTO=0
     PRJ_TRACTOR_REAR_PTO=0
+    PRJ_TRACTOR_LIGHTING=0
   #OLD/deprecated tractor
     PRJ_TRACTOR_GENERAL=0
     PRJ_TRACTOR_MOVE=0
@@ -398,7 +399,7 @@ comm_features()
     fi
 
   #NEW Tractor features
-    if expr "$PRJ_TRACTOR" \| "$PRJ_TRACTOR_GROUND_BASED" \| "$PRJ_TRACTOR_MACHINE_SELECTED" \| "$PRJ_TRACTOR_FRONT_HITCH" \| "$PRJ_TRACTOR_REAR_HITCH" >/dev/null; then
+    if expr "$PRJ_TRACTOR" \| "$PRJ_TRACTOR_GROUND_BASED" \| "$PRJ_TRACTOR_MACHINE_SELECTED" \| "$PRJ_TRACTOR_FRONT_HITCH" \| "$PRJ_TRACTOR_REAR_HITCH" \| "$PRJ_TRACTOR_FRONT_PTO" \| "$PRJ_TRACTOR_REAR_PTO" \| "$PRJ_TRACTOR_LIGHTING" >/dev/null; then
         printf '%s' " -o -name 'ibasetypes.h' -o -name 'tractorcommonrx_c*'" >&3
     fi
     if expr "$PRJ_TRACTOR_FRONT_HITCH" \| "$PRJ_TRACTOR_REAR_HITCH" >/dev/null; then
@@ -427,6 +428,9 @@ comm_features()
     fi
     if [ "$PRJ_TRACTOR_REAR_PTO" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorrearpto_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_LIGHTING" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorlighting_c*' \)" >&3
     fi
 
     if [ "$PRJ_TIME_DATE" -gt 0 ]; then
@@ -876,6 +880,15 @@ END_OF_PATH
             if [ "$PRJ_TRACTOR_REAR_PTO" -gt 0 ]; then
                 echo_e "#define USE_TRACTOR_REAR_PTO" >&3
             fi
+            if [ "$PRJ_TRACTOR_LIGHTING" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_LIGHTING" >&3
+            fi
+            if [ "$PRJ_TIME_DATE" -gt 0 ]; then
+                echo_e "#define USE_TIME_DATE" >&3
+            fi
+            if [ "$PRJ_GNSS" -gt 0 ]; then
+                echo_e "#define USE_GNSS" >&3
+            fi
 
             #old Tractor
             if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
@@ -902,12 +915,7 @@ END_OF_PATH
             if [ "$PRJ_TIME_GPS" -gt 0 ]; then
                 echo_e "#define USE_TIME_GPS" >&3
             fi
-            if [ "$PRJ_TIME_DATE" -gt 0 ]; then
-                echo_e "#define USE_TIME_DATE" >&3
-            fi
-            if [ "$PRJ_GNSS" -gt 0 ]; then
-                echo_e "#define USE_GNSS" >&3
-            fi
+
             if [ "$PRJ_ISB_CLIENT" -gt 0 ]; then
                 echo_e "#define USE_ISB_CLIENT" >&3
             fi

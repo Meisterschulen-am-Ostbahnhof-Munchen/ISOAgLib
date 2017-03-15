@@ -16,9 +16,12 @@
 #ifndef ITRACLIGHT_C_H
 #define ITRACLIGHT_C_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
+#if _MSC_VER
+  #pragma message ( "warning: iTracLight_c is deprecated and will be removed in a future release! Please migrate to using the new class iTractorLighting_c." )
+#elif __GNUC__
+  #warning "iTracLight_c is deprecated and will be removed in a future release! Please migrate to using the new class iTractorLighting_c."
+#endif
+
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include "ibasetypes.h"
 #include "impl/traclight_c.h"

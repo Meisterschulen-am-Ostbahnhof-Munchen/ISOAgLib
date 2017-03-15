@@ -77,6 +77,8 @@ library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorgroundbased_c.
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorgroundbased_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorhitch_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorhitch_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorlighting_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorlighting_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractormachineselected_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractormachineselected_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorpto_c.cpp -text
@@ -90,6 +92,7 @@ library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractor_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorfronthitch_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorfrontpto_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorgroundbased_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorlighting_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractormachineselected_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorrearhitch_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorrearpto_c.h -text

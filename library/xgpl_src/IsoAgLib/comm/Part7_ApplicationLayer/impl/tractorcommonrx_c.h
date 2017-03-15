@@ -81,9 +81,10 @@ namespace __IsoAgLib
     /** get IsoName of data source */
     const IsoName_c& getSender() const { return mc_sender; }
 
-    /** if a message is not sent after 3 or 5 seconds it is expected that the sending node stopped sending */
     static const uint16_t TIMEOUT_SENDING_NODE_NMEA = 3000;
     static const uint16_t TIMEOUT_SENDING_NODE_J1939 = 5000;
+    /** if this is not a cyclic message, use this timeout to disable the timeout: */
+    static const uint16_t TIMEOUT_SENDING_NODE_NONE = 0;
 
     virtual void resetValues() = 0;
     virtual void setValues( const CanPkgExt_c& ) = 0;

@@ -62,6 +62,7 @@ enum IsoGnssType_t {
 };
 
 /** different lighting types; implements and tractor*/
+// ATTENTION: This enum is subject to be removed. Only valid for the legacy TracLight class!
 enum IsoCommandFlag_t {
   daytimeRunning =        1,
   alternateHead =         2,
@@ -409,6 +410,50 @@ struct iTimezone_s {
   int8_t hourOffset;
   bool available;
 };
+
+struct iLighting_t {
+  IsoActiveFlag_t daytimeRunning;
+  IsoActiveFlag_t alternateHead;
+  IsoActiveFlag_t lowBeamHead;
+  IsoActiveFlag_t highBeamHead;
+
+  IsoActiveFlag_t frontFog;
+  IsoActiveFlag_t beacon;
+  IsoActiveFlag_t rightTurn;
+  IsoActiveFlag_t leftTurn;
+
+  IsoActiveFlag_t backUpLightAlarmHorn;
+  IsoActiveFlag_t centerStop;
+  IsoActiveFlag_t rightStop;
+  IsoActiveFlag_t leftStop;
+
+  IsoActiveFlag_t implClearance;
+  IsoActiveFlag_t tracClearance;
+  IsoActiveFlag_t implMarker;
+  IsoActiveFlag_t tracMarker;
+
+  IsoActiveFlag_t rearFog;
+  IsoActiveFlag_t undersideWork;
+  IsoActiveFlag_t rearLowWork;
+  IsoActiveFlag_t rearHighWork;
+
+  IsoActiveFlag_t sideLowWork;
+  IsoActiveFlag_t sideHighWork;
+  IsoActiveFlag_t frontLowWork;
+  IsoActiveFlag_t frontHighWork;
+
+  IsoActiveFlag_t implOEMOpt2;
+  IsoActiveFlag_t implOEMOpt1;
+  IsoActiveFlag_t implRightForwardWork;
+  IsoActiveFlag_t implLeftForwardWork;
+
+  /** lighting data message request state (in COMMAND), reserved (in DATA) */
+  IsoDataReq_t dataMsgReq;
+  IsoActiveFlag_t implRightFacingWork;
+  IsoActiveFlag_t implLeftFacingWork;
+  IsoActiveFlag_t implRearWork;
+};
+
 
 /** Class definition to be used with event processing of GPS messages et al. **/
 class iMsgEventHandler_c

@@ -94,7 +94,8 @@ TractorCommonRx_c::timeEvent()
   if ( mi32_lastMsgReceived < 0 )
     return;
   
-  if( lastedTimeSinceUpdate() >= mui16_timeOut )
+  if( ( mui16_timeOut != TIMEOUT_SENDING_NODE_NONE ) &&
+      ( lastedTimeSinceUpdate() >= mui16_timeOut ) )
   {
     mi32_lastMsgReceived = -1;
     mc_sender.setUnspecified();
@@ -119,8 +120,11 @@ TractorCommonRx_c::processMsg( const CanPkg_c& data )
 
   if( checkParseReceived( sender ) )
   {
-    setValues( pkg );
     updateReceived( pkg.time(), sender );
+
+    setValues( pkg );
+
+    notifyOnEvent();
   }
 }
 
