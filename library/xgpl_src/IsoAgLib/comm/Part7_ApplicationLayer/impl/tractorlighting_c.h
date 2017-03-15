@@ -70,10 +70,10 @@ namespace __IsoAgLib {
 
   private:
     /// Reception
-    Lighting_t mt_cmd;
+    IsoAgLib::iLighting_t mt_cmd;
 
     // Sending
-    Lighting_t mt_data;
+    IsoAgLib::iLighting_t mt_data;
     IdentItem_c* m_ident;
 
     IsoRequestPgnHandlerProxy_c m_pgnRequest;

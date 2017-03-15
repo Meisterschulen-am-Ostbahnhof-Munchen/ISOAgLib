@@ -21,7 +21,7 @@ namespace __IsoAgLib {
 
   TractorLighting_c &getTractorLightingInstance( unsigned instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(Tractor_c, PRT_INSTANCE_CNT, instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TractorLighting_c, PRT_INSTANCE_CNT, instance);
   }
 
 
@@ -189,7 +189,7 @@ namespace __IsoAgLib {
 
 
   void
-  TractorLighting_c::sendLightingData()
+  TractorLighting_c::sendData()
   {
     isoaglib_assert( m_ident != NULL );
     if( m_ident->getIsoItem() == NULL )
@@ -274,7 +274,7 @@ namespace __IsoAgLib {
     {
       if( ( receiver == NULL ) || ( receiver == mrt_owner.m_ident->getIsoItem() ) )
       {
-        mrt_owner.sendLightingData();
+        mrt_owner.sendData();
         return true;
       }
     }

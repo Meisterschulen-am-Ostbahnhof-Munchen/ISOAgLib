@@ -240,6 +240,7 @@ private:
   friend class iTractor_c;
   friend class iTractorGroundBased_c;
   friend class iTractorMachineSelected_c;
+  friend class iTractorLighting_c;
   friend class iIsbClient_c;
   friend class iVtClientConnection_c;
   friend class iVtClient_c;
