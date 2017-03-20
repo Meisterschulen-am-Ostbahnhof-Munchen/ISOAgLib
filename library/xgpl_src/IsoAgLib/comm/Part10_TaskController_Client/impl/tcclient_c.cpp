@@ -36,7 +36,8 @@ namespace __IsoAgLib {
   }
 
   TcClient_c::TcClient_c()
-    : m_handler( *this )
+    : m_provider( NULL )
+    , m_handler( *this )
     , m_customer( *this )
     , m_clientInfo()
     , m_peerConnections()

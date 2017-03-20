@@ -27,15 +27,21 @@ namespace IsoAgLib {
   class iTcClient_c : private __IsoAgLib::TcClient_c
   {
   public:
-      void init();
-      void close();
+      class iProvider_c : public __IsoAgLib::TcClient_c::Provider_c {
+      public:
+        virtual uint32_t provideDistance() const = 0;
+        virtual uint16_t provideSpeed() const = 0;
+      };
+
+      // If a Distance-measurement is used, a provider needs to be supplied.
+      void setProvider( iProvider_c * );
 
       // Client Connections (with DDOP-Upload)
       bool registerClient( iIdentItem_c& ident, const IsoAgLib::ProcData::ClientCapabilities_s& caps, IsoAgLib::iTcClientConnection_c::iStateHandler_c &sh );
       bool deregisterClient( iIdentItem_c& );
 
-      iTcClientConnection_c* doConnect( const iIdentItem_c& identItem, const iTcClientServer_c& server, iDevicePool_c& pool );
-      void                 dontConnect( const iIdentItem_c& identItem, const iTcClientServer_c& server );
+      iTcClientConnection_c* doConnect( const iIdentItem_c&, const iTcClientServer_c&, iDevicePool_c& );
+      void                 dontConnect( const iIdentItem_c&, const iTcClientServer_c& );
 
       // Peer Connections (direct PD, no DDOP). Must NOT be a TC/DL.
       iPdConnection_c* connectPeer(          const iIdentItem_c&, const iIsoItem_c& pdItem, iPdPool_c& );
@@ -69,15 +75,9 @@ namespace IsoAgLib {
     return static_cast<iTcClient_c&>( __IsoAgLib::getTcClientInstance( instance ) );
   }
 
-  inline void
-  iTcClient_c::init()
+  inline void iTcClient_c::setProvider( iProvider_c *provider )
   {
-    TcClient_c::init();
-  }
-
-  inline void iTcClient_c::close()
-  {
-    TcClient_c::close();
+    TcClient_c::setProvider( provider );
   }
 
   inline bool iTcClient_c::registerClient( iIdentItem_c& ident, const IsoAgLib::ProcData::ClientCapabilities_s& caps, IsoAgLib::iTcClientConnection_c::iStateHandler_c &sh )

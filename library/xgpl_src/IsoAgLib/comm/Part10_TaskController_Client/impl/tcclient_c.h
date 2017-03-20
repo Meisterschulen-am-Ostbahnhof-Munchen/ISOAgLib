@@ -36,11 +36,21 @@ namespace __IsoAgLib {
 
   class TcClient_c : public Subsystem_c {
       MACRO_MULTITON_CONTRIBUTION();
+
     public:
+      class Provider_c {
+      public:
+        virtual uint32_t provideDistance() const = 0;
+        virtual uint16_t provideSpeed() const = 0;
+      };
+
       virtual ~TcClient_c() {}
 
       void init();
       void close();
+
+      void setProvider( Provider_c * );
+      Provider_c *getProvider() const;
 
       bool registerClient( IdentItem_c&, const IsoAgLib::ProcData::ClientCapabilities_s&, TcClientConnection_c::StateHandler_c& );
       bool deregisterClient( IdentItem_c& );
@@ -128,6 +138,7 @@ namespace __IsoAgLib {
       typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
     private:
+      Provider_c *m_provider;
       Handler_t m_handler;
       Customer_t m_customer;
 
@@ -151,6 +162,24 @@ namespace __IsoAgLib {
       friend TcClient_c &getTcClientInstance( unsigned instance );
       friend class ProcData_c;
   };
+
+  inline
+  void
+  TcClient_c::setProvider( TcClient_c::Provider_c *provider )
+  {
+    m_provider = provider;
+  }
+
+
+  inline
+  TcClient_c::Provider_c *
+  TcClient_c::getProvider() const
+  {
+    return m_provider;
+  }
+
+
+
 
   TcClient_c &getTcClientInstance( unsigned instance );
 

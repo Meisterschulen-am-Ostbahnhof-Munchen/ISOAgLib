@@ -32,17 +32,17 @@ public:
   MeasureDistProp_c( MeasureProg_c& measureProg );
   virtual ~MeasureDistProp_c();
 
-  void start( int32_t ai32_lastVal, int32_t ai32_increment );
+  void start( uint32_t currentDistance, int32_t ai32_increment );
 
 private:
-  bool updateTrigger( int32_t );
-  int32_t nextTriggerTime( int32_t );
+  bool updateTrigger( uint32_t );
+  int32_t nextTriggerTime( uint32_t );
 
   virtual void timeEvent();
 
 private:
   MeasureProg_c &m_measureProg;
-  int32_t mi32_lastVal;
+  uint32_t mui32_lastDistance;
   int32_t mi32_increment;
 };
 
@@ -56,7 +56,7 @@ public:
   MeasureTimeProp_c( MeasureProg_c& measureProg );
   virtual ~MeasureTimeProp_c();
 
-  void start( ecutime_t ai32_lastVal, int32_t ai32_increment );
+  void start( ecutime_t currentTime, int32_t ai32_increment );
 
 private:
   bool updateTrigger( ecutime_t );
@@ -66,7 +66,7 @@ private:
 
 private:
   MeasureProg_c &m_measureProg;
-  ecutime_t mi32_lastVal;
+  ecutime_t mt_lastTime;
   int32_t mi32_increment;
 };
 

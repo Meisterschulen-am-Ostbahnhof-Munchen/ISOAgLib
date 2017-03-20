@@ -82,6 +82,23 @@ namespace __IsoAgLib {
   };
 
 
+  inline
+  const IsoAgLib::iLighting_t&
+  TractorLighting_c::getCommand()
+  {
+    return mt_cmd;
+  }
+
+  
+  inline
+  const IsoAgLib::iLighting_t&
+  TractorLighting_c::getData()
+  {
+    return mt_data;
+  }
+
+
+
   TractorLighting_c &getTractorLightingInstance( unsigned instance );
 
 

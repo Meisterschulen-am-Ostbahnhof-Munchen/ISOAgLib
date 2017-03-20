@@ -13,10 +13,7 @@
 #include "measureprog_c.h"
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdata/measuresubprog_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/pdconnection_c.h>
-
-#if defined(USE_TRACTOR_MOVE)
-#include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
-#endif
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 
 
 namespace __IsoAgLib {
@@ -145,7 +142,6 @@ namespace __IsoAgLib {
         break;
 
       case IsoAgLib::ProcData::MeasurementCommandDistProp: // distance proportional
-#if defined(USE_TRACTOR_MOVE) // if no distance available, NACK will be sent
         if ( pdLocal().isMethodSet( IsoAgLib::ProcData::DistInterval ) ) {
           if ( ai32_increment == sci32_stopValDistanceInterval ) {
             delete m_subProgDistProp;
@@ -155,12 +151,11 @@ namespace __IsoAgLib {
               m_subProgDistProp = new MeasureDistProp_c( *this );
             if( ai32_increment < 0 )
               ai32_increment = -ai32_increment;
-            const int32_t multitonInst = connection().getMultitonInst();
-            m_subProgDistProp->start(int32_t(getTracMoveInstance(multitonInst).distTheor()), ai32_increment);
+            const uint32_t curDistance = getTcClientInstance( connection().getMultitonInst() ).getProvider()->provideDistance();
+            m_subProgDistProp->start(int32_t( curDistance ), ai32_increment); // @todo Check int32 here instead of uint32!
           }       
           b_validTriggerMethod = true;
         }
-#endif
         break;
 
       case IsoAgLib::ProcData::MeasurementCommandOnChange: // change threshold proportional
