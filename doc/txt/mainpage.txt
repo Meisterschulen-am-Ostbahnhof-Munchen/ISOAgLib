@@ -43,7 +43,13 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 \section Changes Changes
 
 \subsection Change_ZI 2.8.2 to 2.x.y (TRUNK)
+[Enhancement] [TC-Client] [Distance-Measurement independent of (old)Trac-Classes]
+[Compilefix] [prev.commit] [Added missing implementation for TractorLighting_c.]
 
+- Introduced (i)Provider_c class so that DistanceMeasurement can get the application-selected speed/distance.
+- Fixed distance from int32_t to uint32_t.
+
+Reviewed by M. Wodok
 Tractor-Classes:
  - Refactoring:
    - TimePosGps/TracGeneral/TracMove/TracHitch/TracPto/TracLight is marked obsolete. Please note that it will be removed in future version!
@@ -66,7 +72,11 @@ VT-Client:
      (VTs with Version 4 but can also be supported/sent from lower versioned VTs!)
 
 TC-Client:
- - Enhancement: Added "Peer Control" for Setpoint Value Source / Setpoint Value User.
+ - Enhancement:
+   - Not using (old) Tractor-classes for retrieving speed/distance fro distance-based measurements
+     Now a callback can be provided so the application can decide where to get the speed/distance from.
+	 (Will throw an isoaglib_assert when distance-based measurements are user but callback is not set!)
+   - Added "Peer Control" for Setpoint Value Source / Setpoint Value User.
 
 Diagnostics:
  - Bugfix:
