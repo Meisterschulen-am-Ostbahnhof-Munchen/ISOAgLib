@@ -152,7 +152,7 @@ namespace __IsoAgLib {
             if( ai32_increment < 0 )
               ai32_increment = -ai32_increment;
             const uint32_t curDistance = getTcClientInstance( connection().getMultitonInst() ).getProvider()->provideDistance();
-            m_subProgDistProp->start(int32_t( curDistance ), ai32_increment); // @todo Check int32 here instead of uint32!
+            m_subProgDistProp->start( curDistance, ai32_increment );
           }       
           b_validTriggerMethod = true;
         }
