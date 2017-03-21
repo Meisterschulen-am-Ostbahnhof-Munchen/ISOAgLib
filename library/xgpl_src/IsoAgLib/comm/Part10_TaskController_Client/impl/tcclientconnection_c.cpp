@@ -151,7 +151,7 @@ namespace __IsoAgLib {
 
     setDevPoolState( PoolStateConnecting );
 
-    getMultiReceiveInstance( m_identItem->getMultitonInst() ).registerClientIso( *this,  m_identItem->isoName(), PROCESS_DATA_PGN, 0x3FFFFUL, false, false, &connected()->getIsoItem().isoName() );
+    getMultiReceiveInstance( m_identItem->getMultitonInst() ).registerClientIso( mc_mrClient,  m_identItem->isoName(), PROCESS_DATA_PGN, 0x3FFFFUL, false, false, &connected()->getIsoItem().isoName() );
 
     return true;
   }
@@ -161,7 +161,7 @@ namespace __IsoAgLib {
   {
     isoaglib_assert( connected() );
 
-    getMultiReceiveInstance( m_identItem->getMultitonInst() ).deregisterClient( *this, m_identItem->isoName(), PROCESS_DATA_PGN, 0x3FFFFUL, &connected()->getIsoItem().isoName() );
+    getMultiReceiveInstance( m_identItem->getMultitonInst() ).deregisterClient( mc_mrClient, m_identItem->isoName(), PROCESS_DATA_PGN, 0x3FFFFUL, &connected()->getIsoItem().isoName() );
     getMultiSendInstance( m_identItem->getMultitonInst() ).abortSend( m_multiSendEventHandler );
 
     if( m_devicePoolToUpload.hasBuffer() )

@@ -230,7 +230,7 @@ namespace __IsoAgLib {
       MultiSendEventHandlerProxy_c m_multiSendEventHandler;
       MultiSendStreamerProxy_c m_multiSendStreamer;
 
-      class MultiReceiveClient_c : CanCustomer_c
+      class MultiReceiveClient_c : public CanCustomer_c
       {
       public:
         MultiReceiveClient_c( TcClientConnection_c& owner ) : m_owner( owner ) {}
