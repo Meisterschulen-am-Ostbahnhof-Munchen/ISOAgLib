@@ -42,14 +42,8 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
-\subsection Change_ZI 2.8.2 to 2.x.y (TRUNK)
-[Enhancement] [TC-Client] [Distance-Measurement independent of (old)Trac-Classes]
-[Compilefix] [prev.commit] [Added missing implementation for TractorLighting_c.]
+\subsection Change_ZI 2.8.2 to 2.9.0-rc2
 
-- Introduced (i)Provider_c class so that DistanceMeasurement can get the application-selected speed/distance.
-- Fixed distance from int32_t to uint32_t.
-
-Reviewed by M. Wodok
 Tractor-Classes:
  - Refactoring:
    - TimePosGps/TracGeneral/TracMove/TracHitch/TracPto/TracLight is marked obsolete. Please note that it will be removed in future version!
