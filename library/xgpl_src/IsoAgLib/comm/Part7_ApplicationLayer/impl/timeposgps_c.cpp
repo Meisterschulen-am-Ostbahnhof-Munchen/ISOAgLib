@@ -27,10 +27,6 @@
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
-#ifdef WINCE
-#include <time_CE.h>
-#endif
-
 #if DEBUG_NMEA
   #ifdef SYSTEM_PC
     #include <iostream>

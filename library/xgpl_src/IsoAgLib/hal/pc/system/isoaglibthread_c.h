@@ -17,16 +17,14 @@
 // IsoAgLib
 #include <IsoAgLib/isoaglib_config.h>
 
-
 // This feature (ISOAgLib in a thread) is only enabled if Mutual-Exclusion is enabled, too.
 #ifdef USE_MUTUAL_EXCLUSION
 
 // IsoAgLib
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/hal/generic_utils/system/mutex_pthread.h>
+#include <IsoAgLib/hal/generic_utils/system/ThreadWrapper_pthread.h>
 
-// system
-#include <pthread.h>
 
 // STL
 #include <set>
@@ -49,7 +47,7 @@ namespace __IsoAgLib {
  *       It is still an open discussion if BUS/System-Init should belong
  *       into this class or not though...
  */
-class IsoAgLibThread_c
+class IsoAgLibThread_c : public HAL::ThreadWrapper
 {
   /// Singleton Part
 public:
@@ -61,9 +59,7 @@ public:
 private:
   IsoAgLibThread_c()
     : mc_protectAccess()
-    , mthread_core()
 	, mpf_threadSetupHook (NULL)
-    , mb_requestThreadToStop (false)
     , mset_keys()
   {} // private c'tor
   ~IsoAgLibThread_c() {} // private d'tor
@@ -113,17 +109,14 @@ public:
 
 private: // methods
   // thread stuff
-  static void* thread_core (void* thread_param);
-
+  virtual int Exec();
+    
 private: // attributes
   HAL::ExclusiveAccess_c mc_protectAccess; // make start/stop sequence thread-safe
-  pthread_t mthread_core;
   void ( *mpf_threadSetupHook )();
-  bool mb_requestThreadToStop;
 
   STL_NAMESPACE::set<void *>mset_keys;
 };
-
 
 inline
 bool

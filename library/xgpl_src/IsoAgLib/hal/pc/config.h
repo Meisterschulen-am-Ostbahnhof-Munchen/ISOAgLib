@@ -59,6 +59,10 @@
 
 #endif
 
+#if defined( WIN32 )
+#define NOMINMAX
+#endif
+
 #define HAL_SIZEOF_INT 4
 
 #define HUGE_MEM

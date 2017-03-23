@@ -67,14 +67,21 @@ namespace HAL {
     return false;
   }
 
+#ifdef USE_MUTUAL_EXCLUSION
+  void canRxWaitBreak()
+  {
+  }
+#endif
 
-  unsigned canTxQueueFree( unsigned channel ) {
+
+
+  int canTxQueueFree( unsigned channel ) {
     return -1;
   }
 
 
-  bool defineRxFilter( uint32_t id, uint32_t mask ) {}
-  bool deleteRxFilter( uint32_t id, uint32_t mask ) {}
+  void defineRxFilter(unsigned channel, bool xtd, uint32_t filter, uint32_t mask) {}
+  void deleteRxFilter(unsigned channel, bool xtd, uint32_t filter, uint32_t mask) {}
 
 } // end namespace __HAL
 

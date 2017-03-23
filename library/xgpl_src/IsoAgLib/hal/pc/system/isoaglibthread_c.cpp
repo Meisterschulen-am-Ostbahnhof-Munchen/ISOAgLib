@@ -79,9 +79,8 @@ IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
       bool isoRetVal = IsoAgLib::getIIsoBusInstance().init (aui8_busNr);
       isoaglib_assert (isoRetVal == true); (void)isoRetVal;
 
-      mb_requestThreadToStop = false;
-      int createRetVal = pthread_create (&mthread_core, NULL, thread_core, (void *)this);
-      isoaglib_assert (createRetVal == 0); (void)createRetVal;
+      const bool createRetVal = Start();
+      isoaglib_assert (createRetVal == true); (void)createRetVal;
 
       mc_protectAccess.releaseAccess();
       return startSuccess;
@@ -114,9 +113,10 @@ IsoAgLibThread_c::stop (void *key)
 #ifdef DEBUG_THREAD
       std::cout << "IsoAgLibThread_c::stop - Stop THREAD for key " << key << "." << std::endl;
 #endif
-      mb_requestThreadToStop = true;
-      int joinRetVal = pthread_join (mthread_core, NULL);
-      isoaglib_assert (joinRetVal == 0); (void)joinRetVal;
+      
+      const bool joinRetVal = StopAndJoin();
+      isoaglib_assert (joinRetVal == true); (void)joinRetVal;
+      
       // Thread is not running now anymore...
       bool isoRetVal = IsoAgLib::getIIsoBusInstance().close();
       isoaglib_assert (isoRetVal == true); (void)isoRetVal;
@@ -135,17 +135,13 @@ IsoAgLibThread_c::stop (void *key)
   }
 }
 
-
-void *
-IsoAgLibThread_c::thread_core (void* thread_param)
+int IsoAgLibThread_c::Exec()
 {
-  IsoAgLibThread_c &thisThread = *(static_cast<IsoAgLibThread_c *>(thread_param));
-
   // call user-hook for setting up things like thread-name, -priority, etc.
-  if( thisThread.mpf_threadSetupHook != NULL )
-    thisThread.mpf_threadSetupHook();
+  if( mpf_threadSetupHook != NULL )
+    mpf_threadSetupHook();
 
-  while (!thisThread.mb_requestThreadToStop)
+  while (!GetRequestToStop())
   {
     const int32_t i32_sleepTime = IsoAgLib::getISchedulerInstance().timeEventWithWaitMutex();
 
@@ -154,10 +150,11 @@ IsoAgLibThread_c::thread_core (void* thread_param)
     }
   }
 
-  return NULL;
+  return 0;    
 }
 
 }
-
 #endif
+
+
 
