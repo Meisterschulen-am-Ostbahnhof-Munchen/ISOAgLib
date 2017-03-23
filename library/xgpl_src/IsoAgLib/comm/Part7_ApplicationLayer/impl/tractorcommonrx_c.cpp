@@ -54,13 +54,17 @@ TractorCommonRx_c::close()
 bool
 TractorCommonRx_c::checkParseReceived( const IsoName_c& sender ) const
 {
-  if( sender.getEcuType() != IsoName_c::ecuTypeTractorECU )
-    return false;
+  if( mc_sender == sender )
+    return true; // actual sender equivalent to last, always fine. (should be most typical case)
 
-  return( ( mc_sender.isUnspecified() )                  // no sender yet locked to
-       || ( mc_sender == sender       )                  // actual sender equivalent to last
-       || ( mc_sender.funcInst() > sender.funcInst() ) ); // new sender has lower function instance (i.e. higher priority).
-  // NOTE: Typically there should only be ONE sender for each PGN, but who knows how reality looks like...
+  if( mc_sender.isUnspecified() )
+    return true; // no sender yet locked to, so take ANY sender.
+
+  if( sender.getEcuType() != IsoName_c::ecuTypeTractorECU )
+    return false; // if we have any sender, we only change to TECUs
+
+  return( ( mc_sender.getEcuType() != IsoName_c::ecuTypeTractorECU ) // fine if we didn't have a TECU yet.
+       || ( mc_sender.funcInst() > sender.funcInst() ) ); // new sender has lower TECU function instance (i.e. higher priority) than the current TECU.
 }
 
 
