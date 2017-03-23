@@ -242,6 +242,7 @@ namespace __IsoAgLib {
 
         virtual bool processPartStreamDataChunk( Stream_c &stream, bool isFirstChunk, bool isLastChunk )
         {
+          ( void )isFirstChunk;
           if( isLastChunk )
             m_owner.processMultiPacket( stream );
 
@@ -277,14 +278,14 @@ namespace __IsoAgLib {
           SetpointValueSource_s( uint16_t _element, uint16_t _ddi, PdRemoteNode_c& _controlSource )
             : element( _element )
             , ddi( _ddi )
-            , m_lastReceivedTime( HAL::getTime() )
             , controlSource( _controlSource )
+            , m_lastReceivedTime( HAL::getTime() )
           {}
           SetpointValueSource_s( const SetpointValueSource_s& rhs )
             : element( rhs.element )
             , ddi( rhs.ddi )
-            , m_lastReceivedTime( rhs.m_lastReceivedTime )
             , controlSource( rhs.controlSource )
+            , m_lastReceivedTime( rhs.m_lastReceivedTime )
           {}
           SetpointValueSource_s& operator=( const SetpointValueSource_s& rhs ); // cannot (and shouldn't) be implemented due to reference to ControlSource_c!
 

@@ -385,16 +385,16 @@ void bigEndianHexNumberText2CanStringUint16( const char* ac_src, uint8_t* pui8_t
 #if HAL_SIZEOF_INT <= 4
   uint16_t temp;
   CNAMESPACE::sscanf( ac_src, SCANF_HEX_INT16_STRING, &temp );
-  #else
+#else
   unsigned int temp;
   sscanf( ac_src, "%4x",  &temp );
-  #endif
-  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
+#endif
+#if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target,   &temp, 2 );
-  #else
+#else
   pui8_target[0] =   ( temp        & 0xFF );
   pui8_target[1] = ( ( temp >> 8 ) & 0xFF );
-  #endif
+#endif
 }
 /** convert big endian textual unsigned int 32Bit number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanStringUint32( const char* ac_src, uint8_t* pui8_target )
@@ -407,21 +407,18 @@ void bigEndianHexNumberText2CanStringUint32( const char* ac_src, uint8_t* pui8_t
 #if HAL_SIZEOF_INT <= 2
   uint32_t temp;
   CNAMESPACE::sscanf( ac_src, "%8lx", &temp );
-  #elif HAL_SIZEOF_INT == 4
-  uint32_t temp;
-  sscanf( ac_src, "%8x", &temp );
-  #else
+#else
   unsigned int temp;
   sscanf( ac_src, "%8x", &temp );
-  #endif
-  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
+#endif
+#if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target,   &temp, 4 );
-  #else
+#else
   pui8_target[0] =   ( temp         & 0xFF );
   pui8_target[1] = ( ( temp >> 8  ) & 0xFF );
   pui8_target[2] = ( ( temp >> 16 ) & 0xFF );
   pui8_target[3] = ( ( temp >> 24 ) & 0xFF );
-  #endif
+#endif
 }
 
 /** convert big endian textual unsigned int 64Bit number representation into little endian uint8_t string of specified size */

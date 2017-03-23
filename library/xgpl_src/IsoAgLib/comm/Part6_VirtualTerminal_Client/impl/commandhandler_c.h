@@ -199,10 +199,10 @@ CommandHandler_c::CommandHandler_c( VtClientConnection_c &connection )
   , mui8_commandParameter( 0 ) // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
   , mi32_commandTimestamp( -1 ) // no check initially
   , mi32_commandTimeout( 0 ) // will be set when needed
-  , mb_checkSameCommand( true )
-  , mb_commandsToBus( true )
   , mu_sendPriority( 0 )
   , mu_sendPriorityOfLastCommand( 0 )
+  , mb_checkSameCommand( true )
+  , mb_commandsToBus( true )
 {
 }
 
