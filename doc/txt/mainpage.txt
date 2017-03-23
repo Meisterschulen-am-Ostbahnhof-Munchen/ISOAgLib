@@ -69,7 +69,7 @@ TC-Client:
  - Enhancement:
    - Not using (old) Tractor-classes for retrieving speed/distance fro distance-based measurements
      Now a callback can be provided so the application can decide where to get the speed/distance from.
-	 (Will throw an isoaglib_assert when distance-based measurements are user but callback is not set!)
+     (Will throw an isoaglib_assert when distance-based measurements are user but callback is not set!)
    - Added "Peer Control" for Setpoint Value Source / Setpoint Value User.
 
 Diagnostics:
@@ -83,6 +83,9 @@ vt2iso:
 
 Outputs:
  - Cleanup: Rename getMaxOutputPwmFreq -> getMaxOutputPwm, move caching to HAL.
+ 
+Platform:
+ - Builds under more recent WINCE now.
  
  
 \subsection Change_ZH 2.8.2 to 2.8.2.1
