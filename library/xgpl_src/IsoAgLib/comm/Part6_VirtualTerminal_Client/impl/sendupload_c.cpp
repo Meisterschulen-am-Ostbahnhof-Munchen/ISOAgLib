@@ -80,7 +80,7 @@ SendUpload_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overri
 #ifdef STRIP_TRAILING_SPACES_FROM_STRING_UPLOADS
   uint16_t strLen = getStringLengthWithoutTrailingSpaces( apc_string, overrideSendLength, utf16 );
 #else
-  uint16_t strLen = (CNAMESPACE::strlen(apc_string) < overrideSendLength && !utf16) ? CNAMESPACE::strlen(apc_string) : overrideSendLength;
+  uint16_t strLen = uint16_t( (CNAMESPACE::strlen(apc_string) < overrideSendLength && !utf16) ? CNAMESPACE::strlen(apc_string) : overrideSendLength );
 #endif
 
   /// Use BUFFER - NOT MultiSendStreamer!

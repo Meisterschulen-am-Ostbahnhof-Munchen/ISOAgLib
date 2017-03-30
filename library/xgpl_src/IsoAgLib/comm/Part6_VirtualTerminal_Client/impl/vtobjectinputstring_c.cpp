@@ -217,7 +217,7 @@ vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject, bo
 
   setStringToStream( newValue );  // use MultiSendStreamer with mpc_stringToStream set!
   uint16_t ui16_tempLen = 0;
-  if (newValue != NULL ) ui16_tempLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length;
+  if (newValue != NULL ) ui16_tempLen = uint16_t( (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length );
   setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue( this, b_enableReplaceOfCmd );
 }

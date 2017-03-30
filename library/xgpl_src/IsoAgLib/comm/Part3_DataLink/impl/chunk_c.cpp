@@ -104,7 +104,7 @@ Chunk_c::setFree()
 uint8_t
 Chunk_c::getFreeCnt() const
 { // ~X2C
-  return marr_data.capacity() - marr_data.size();
+  return uint8_t( marr_data.capacity() - marr_data.size() );
 } // -X2C
 
 

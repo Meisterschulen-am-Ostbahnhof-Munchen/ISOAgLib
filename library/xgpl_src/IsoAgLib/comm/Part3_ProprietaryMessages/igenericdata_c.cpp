@@ -142,7 +142,7 @@ namespace IsoAgLib
 
   uint16_t iGenericData_c::getLen() const
   {
-    return vec_data.size();
+    return uint16_t( vec_data.size() );
   }
 
 

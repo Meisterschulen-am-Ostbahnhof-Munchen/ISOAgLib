@@ -109,7 +109,9 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
   }
 
   setStringToStream( newValidationString ); // use MultiSendStreamer with mpc_stringToStream set!
-  const uint16_t ui16_tempLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
+  const uint16_t ui16_newValStrLen = uint16_t( CNAMESPACE::strlen (newValidationString) );
+  const uint16_t ui16_inAttrLen = uint16_t( get_vtObjectInputAttributes_a()->length );
+  const uint16_t ui16_tempLen = (ui16_newValStrLen <= ui16_inAttrLen) ? ui16_newValStrLen : ui16_inAttrLen;
   setStrLenToSend( ui16_tempLen );
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, b_enableReplaceOfCmd);
 }

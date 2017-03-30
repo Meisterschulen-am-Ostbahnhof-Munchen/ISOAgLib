@@ -324,7 +324,7 @@ FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_fileSe
     {
       if (!ui8_errorCode)
       {
-        uint16_t ui16_length = CNAMESPACE::strlen((char *)piu8_newCurrentDirectory);
+        uint16_t ui16_length = uint16_t( CNAMESPACE::strlen((char *)piu8_newCurrentDirectory) );
         delete pui8_currentDirectory;
         pui8_currentDirectory = new uint8_t[ui16_length + 1];
         pui8_currentDirectory[ui16_length] = 0;
@@ -339,7 +339,7 @@ FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_fileSe
     {
       if (!ui8_errorCode)
       {
-        uint16_t ui16_length = CNAMESPACE::strlen((char *)piu8_newCurrentDirectory);
+        uint16_t ui16_length = uint16_t( CNAMESPACE::strlen((char *)piu8_newCurrentDirectory) );
         delete pui8_currentDirectory;
         pui8_currentDirectory = new uint8_t[ui16_length + 1];
         pui8_currentDirectory[ui16_length] = 0;

@@ -717,7 +717,7 @@ FsCommand_c::changeCurrentDirectory(uint8_t *newDirectory)
 {
   en_lastCommand = en_changeCurrentDirectory;
 
-  uint16_t ui16_length = CNAMESPACE::strlen((const char*)newDirectory);
+  uint16_t ui16_length = uint16_t( CNAMESPACE::strlen((const char*)newDirectory) );
   uint8_t ui8_bufferPosition = 0;
   if ((ui16_length + 1) > m_fileNameAllocSize)
   {
@@ -753,7 +753,7 @@ FsCommand_c::openFile(uint8_t *fileName, bool openExclusive, bool openForAppend,
 {
   en_lastCommand = en_openFile;
 
-  uint16_t ui16_length = CNAMESPACE::strlen((const char*)fileName);
+  uint16_t ui16_length = uint16_t( CNAMESPACE::strlen((const char*)fileName) );
   if ((ui16_length + 1) > m_fileNameAllocSize)
   {
     if (m_fileName != NULL)
@@ -938,8 +938,8 @@ FsCommand_c::moveFile(uint8_t *sourceName, uint8_t *destName, bool recursive, bo
 
   m_sendMsgBuf[ui8_bufferPosition++] = fileHandleMode;
 
-  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)sourceName);
-  uint16_t ui16_destLength = CNAMESPACE::strlen((const char *)destName);
+  uint16_t ui16_srcLength = uint16_t( CNAMESPACE::strlen((const char *)sourceName) );
+  uint16_t ui16_destLength = uint16_t( CNAMESPACE::strlen((const char *)destName) );
 
   m_sendMsgBuf[ui8_bufferPosition++] = (0xFFu & ui16_srcLength);
   m_sendMsgBuf[ui8_bufferPosition++] = ui16_srcLength >> 0x08;
@@ -979,7 +979,7 @@ FsCommand_c::deleteFile (uint8_t *sourceName, bool recursive, bool force)
 
   m_sendMsgBuf[ui8_bufferPosition++] = fileHandleMode;
 
-  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)sourceName);
+  uint16_t ui16_srcLength = uint16_t( CNAMESPACE::strlen((const char *)sourceName) );
 
   m_sendMsgBuf[ui8_bufferPosition++] = (0xFFu & ui16_srcLength);
   m_sendMsgBuf[ui8_bufferPosition++] = ui16_srcLength >> 8;
@@ -1002,7 +1002,7 @@ FsCommand_c::getFileAttributes(uint8_t *sourceName)
   m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = m_tan;
 
-  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)sourceName);
+  uint16_t ui16_srcLength = uint16_t( CNAMESPACE::strlen((const char *)sourceName) );
 
   m_sendMsgBuf[2] = static_cast<uint8_t>(ui16_srcLength);
   m_sendMsgBuf[3] = static_cast<uint8_t>(ui16_srcLength >> 8);
@@ -1027,7 +1027,7 @@ FsCommand_c::setFileAttributes(uint8_t *sourceName, uint8_t hiddenAttr, uint8_t 
 
   m_sendMsgBuf[2] = 0xF0 | hiddenAttr << 2 | readOnlyAttr;
 
-  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)sourceName);
+  uint16_t ui16_srcLength = uint16_t( CNAMESPACE::strlen((const char *)sourceName) );
 
   m_sendMsgBuf[3] = static_cast<uint8_t>(ui16_srcLength);
   m_sendMsgBuf[4] = static_cast<uint8_t>(ui16_srcLength >> 8);
@@ -1051,7 +1051,7 @@ FsCommand_c::getFileDateTime(uint8_t *sourceName)
   m_sendMsgBuf[0] = en_lastCommand;
   m_sendMsgBuf[1] = m_tan;
 
-  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)sourceName);
+  uint16_t ui16_srcLength = uint16_t( CNAMESPACE::strlen((const char *)sourceName) );
 
   m_sendMsgBuf[2] = static_cast<uint8_t>(ui16_srcLength);
   m_sendMsgBuf[3] = static_cast<uint8_t>(ui16_srcLength >> 8);

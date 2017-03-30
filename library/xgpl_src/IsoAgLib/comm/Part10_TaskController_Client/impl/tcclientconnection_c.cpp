@@ -62,10 +62,10 @@ namespace __IsoAgLib {
 
   TcClientConnection_c::TcClientConnection_c( const TcClientConnection_c &rhs )
     : PdConnection_c( rhs )
-    , mc_mrClient( *this )
-    , mc_localCsHandler( *this )
     , m_multiSendEventHandler( *this )
     , m_multiSendStreamer( *this )
+    , mc_mrClient( *this )
+    , mc_localCsHandler( *this )
     , m_currentSendPosition( rhs.m_currentSendPosition )
     , m_storedSendPosition( rhs.m_storedSendPosition )
     , m_devicePoolToUpload( rhs.m_devicePoolToUpload )
