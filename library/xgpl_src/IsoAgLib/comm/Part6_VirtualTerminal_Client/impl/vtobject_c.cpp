@@ -321,7 +321,7 @@ vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iV
 {
   bool foundAtLeastOnce = false;
   // Find the child object in question
-  for(int8_t i = 0; i < numObjectsToFollow; i++) {
+  for(uint8_t i = 0; i < numObjectsToFollow; i++) {
     if (childObject->getID() == objectsToFollow[i].vtObject->getID()) {
       if (b_updateObject) {
         // Check if RAM version of objectsToFollow already exists?
