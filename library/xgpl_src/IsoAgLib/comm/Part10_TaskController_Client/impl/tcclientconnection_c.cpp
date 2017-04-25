@@ -175,11 +175,11 @@ namespace __IsoAgLib {
     {
       if( getDevPoolState() == PoolStateUploaded || getDevPoolState() == PoolStateActive )
       {
-        doCommand( procCmdPar_OPActivateMsg, 1500, 0 );
+        doCommand( procCmdPar_OPActivateMsg, DEF_TimeOut_DdopDeactivation, 0 );
 
         if (shouldDeletePool)
         {
-          doCommand( procCmdPar_OPDeleteMsg, 1500 );
+          doCommand( procCmdPar_OPDeleteMsg, DEF_TimeOut_DdopDeactivation );
         }
       }
     }
@@ -303,13 +303,17 @@ namespace __IsoAgLib {
       if( m_cmdSentTimestamp < 0 )
         break;
 
-      if( HAL::getTime() > ( m_cmdSentTimestamp + m_cmdTimeout ) )
+      // most commands do not have a time-out. There three consec. 0-bits for Busy need to be in the TC Status message. (to be implemented later!)
+      if( m_cmdTimeout > 0 )
       {
-        // Timeout, retry last command?
-        // For now, give up!
-        m_cmdState = CommandStateNone;
-        // don't go to PoolStateError, as it cannot be detected then anymore if it was still in Preconnecting or Connected.
-        getTcClientInstance( getIdentItem().getMultitonInst() ).notifyConnectionToBeEnded( *this );
+        if( HAL::getTime() > ( m_cmdSentTimestamp + m_cmdTimeout ) )
+        {
+          // Timeout, retry last command?
+          // For now, give up!
+          m_cmdState = CommandStateNone;
+          // don't go to PoolStateError, as it cannot be detected then anymore if it was still in Preconnecting or Connected.
+          getTcClientInstance( getIdentItem().getMultitonInst() ).notifyConnectionToBeEnded( *this );
+        }
       }
       break;
     }

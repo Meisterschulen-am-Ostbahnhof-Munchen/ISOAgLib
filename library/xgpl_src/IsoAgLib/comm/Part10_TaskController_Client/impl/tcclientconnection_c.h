@@ -79,7 +79,7 @@ namespace __IsoAgLib {
 
   class TcClientConnection_c : public PdConnection_c
   {
-    static const ecutime_t DEF_TimeOut_NormalCommand         = 1500;
+    static const ecutime_t DEF_TimeOut_DdopDeactivation = 2000;
 
     public:
       class StateHandler_c {
@@ -208,7 +208,7 @@ namespace __IsoAgLib {
 
       void handleNack( int16_t ddi, int16_t element );
 
-      void doCommand( ProcessDataMsg_t cmd, int32_t timeout = DEF_TimeOut_NormalCommand, uint8_t param = 0xff );
+      void doCommand( ProcessDataMsg_t cmd, int32_t timeout = -1, uint8_t param = 0xff );
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
 
       void stopRunningMeasurement();
