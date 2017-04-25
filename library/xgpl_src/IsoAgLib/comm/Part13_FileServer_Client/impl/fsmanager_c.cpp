@@ -136,6 +136,8 @@ FsManager_c::deregisterFsClient(IdentItem_c &identItem)
   {
     if (&((*iter)->getClientIdentItem()) == &identItem)
     {
+      m_commands.handleDestructingFsCsc( **iter );
+
       delete *iter;
       mv_communications.erase(iter);
       return;
@@ -282,6 +284,21 @@ void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& data ) {
     {
       (*iter)->processMsgIso( pkg );
     }
+  }
+}
+
+
+void FsManager_c::FsCommandManager_c::handleDestructingFsCsc( const FsClientServerCommunication_c& fsCsc )
+{
+  for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); )
+  {
+    if( (*it)->uses( fsCsc ) )
+    {
+      delete *it;
+      it = ml_initializingCommands.erase( it );
+    }
+    else
+      ++it;
   }
 }
 

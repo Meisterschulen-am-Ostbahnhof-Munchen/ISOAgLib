@@ -92,6 +92,8 @@ class FsManager_c : public SchedulerTask_c
 
       virtual void processMsg( const CanPkg_c& data );
 
+      void handleDestructingFsCsc( const FsClientServerCommunication_c& fsCsc );
+
       STL_NAMESPACE::list<FsCommand_c*> ml_initializingCommands;
 
       FsManager_c& m_fsManager;

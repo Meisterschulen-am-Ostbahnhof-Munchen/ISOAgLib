@@ -125,6 +125,8 @@ class FsCommand_c : CanCustomer_c
         will retry until it could be started... */
     void sendMultiPacketTry();
 
+    bool uses( const FsClientServerCommunication_c &fsCsc) const { return &m_FSCSComm == &fsCsc; }
+
     enum ProcessResult_t {
       CommandFinished, // only for Initializing Commands!
       CommandRunning
