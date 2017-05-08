@@ -332,6 +332,15 @@ UploadPoolState_c::handleLoadVersionResponse( unsigned errorNibble )
 
   if( errorNibble == 0 )
   {
+#ifdef ENABLE_SKM_HANDLER
+    // Call fitTerminal() for all soft key masks to create and initialize SkmHandlers for this VT connection
+    for (uint32_t curObject = 0; curObject < m_pool.getNumObjects(); ++curObject)
+    {
+      if( m_pool.getIVtObjects()[0][curObject]->getObjectType() == VT_OBJECT_TYPE_SOFT_KEY_MASK )
+        fitTerminalWrapper( *static_cast<vtObject_c*>( m_pool.getIVtObjects()[0][curObject] ) );
+    }
+#endif
+
     finalizeUploading();
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
     INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) without error..." << INTERNAL_DEBUG_DEVICE_ENDL;
