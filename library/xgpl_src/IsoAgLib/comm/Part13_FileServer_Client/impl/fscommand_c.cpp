@@ -98,6 +98,11 @@ FsCommand_c::FsCommand_c(FsClientServerCommunication_c &FSCSComm, FsServerInstan
 
 FsCommand_c::~FsCommand_c()
 {
+  if(m_waitForMultiSendFinish)   
+  {
+    getMultiSendInstance4Comm().abortSend(m_multiSendEventHandler, ConnectionAbortReasonAnyOtherError);
+  }
+
   doCleanUp();
 
   if (m_receiveFilterCreated)
