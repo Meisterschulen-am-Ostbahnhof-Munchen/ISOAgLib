@@ -125,6 +125,26 @@ FsManager_c::registerFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &
 
   mv_communications.push_back(c_fscscClient);
 
+  // if there are already file servers online => create FsCommand_c(s)
+  STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_end = m_servers.m_serverInstances.end();
+  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = m_servers.m_serverInstances.begin();
+       it_serverInstance != it_end;
+       ++it_serverInstance)
+  {
+    switch ((*it_serverInstance)->getState())
+    {
+    case FsServerInstance_c::online:
+      {            
+        FsCommand_c *pc_command = new FsCommand_c(*mv_communications.front(), *(*it_serverInstance));
+        m_commands.ml_initializingCommands.push_back(pc_command);
+        break;
+      }
+
+    default:
+      ;
+    }
+  }
+
   return c_fscscClient;
 }
 
