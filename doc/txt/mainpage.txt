@@ -76,6 +76,7 @@ TC-Client:
    
 FS-Client:
  - Bugfix: Fixed crash when shutting down during Initializing-FsCommand-phase
+ - Enhancement: Allow FS-Client to be started during runtime.
 
 Diagnostics:
  - Bugfix:
