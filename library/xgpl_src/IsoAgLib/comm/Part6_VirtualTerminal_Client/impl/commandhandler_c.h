@@ -207,10 +207,10 @@ CommandHandler_c::CommandHandler_c( VtClientConnection_c &connection )
   , m_queuedResponseErrByte( 0 )
 //, m_queuedResponsePkg
 #endif
-  , mb_checkSameCommand( true )
-  , mb_commandsToBus( true )
   , mu_sendPriority( 0 )
   , mu_sendPriorityOfLastCommand( 0 )
+  , mb_checkSameCommand( true )
+  , mb_commandsToBus( true )
 {
 }
 
