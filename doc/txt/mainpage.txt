@@ -42,7 +42,7 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
-\subsection Change_ZI 2.8.2 to 2.9.0-rc
+\subsection Change_ZI 2.8.2 to 2.9.0
 
 Tractor-Classes:
  - Refactoring:

@@ -118,13 +118,24 @@ public:
     ( void )i_retV; assert( i_retV == 0 );
   }
 
-  // default copy constructor copies already (recursivly) initialized m_exclusiveAccess to new instance
-  // => no need to call pthread_mutex_init()
+  
+  ExclusiveAccess_c(const ExclusiveAccess_c& /* a_ref_exclusive_access */)
+  {
+    // new instances needs a new mutex handle, otherwise pthread_mutex_destroy would close the same HANDLE twice
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    // we don't get the recursive info from a_ref_exclusive_access
+    // => the new mutex is not recursive
+    // => might be a problem unter Linux but not under Windows (mutex is always recursive)
+    // pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+
+    const int i_retV = pthread_mutex_init( &m_exclusiveAccess, &attr );
+    ( void )i_retV; assert( i_retV == 0 );
+  }
   
   ~ExclusiveAccess_c()
   {
-      pthread_mutex_destroy( &m_exclusiveAccess );      
-  }
+    pthread_mutex_destroy( &m_exclusiveAccess ); }
   
   int waitAcquireAccess() { return pthread_mutex_lock( &m_exclusiveAccess ); }
   int tryAcquireAccess() { return pthread_mutex_trylock( &m_exclusiveAccess ); }

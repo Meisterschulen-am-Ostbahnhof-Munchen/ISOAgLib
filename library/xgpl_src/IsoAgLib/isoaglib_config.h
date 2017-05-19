@@ -22,10 +22,10 @@
 #include <IsoAgLib/hal/hal_config.h>
 
 #define ISOAGLIB_VERSION_MAJOR 2
-#define ISOAGLIB_VERSION_MINOR 8
-#define ISOAGLIB_VERSION_PATCH 2
+#define ISOAGLIB_VERSION_MINOR 9
+#define ISOAGLIB_VERSION_PATCH 0
 #define ISOAGLIB_VERSION_FIX 0
-#define ISOAGLIB_VERSION_RC -1
+#define ISOAGLIB_VERSION_RC 0
 // RC < 0 => Changes in Trunk, preparing Next Release.
 // RC = 0 => Final Release.
 // RC = 1 => Release Candidate 1, etc.

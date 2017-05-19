@@ -1,6 +1,6 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = API
-PROJECT_NUMBER         = 2.9.0-rc
+PROJECT_NUMBER         = 2.9.0
 OUTPUT_DIRECTORY       = 
 CREATE_SUBDIRS         = YES
 OUTPUT_LANGUAGE        = English
