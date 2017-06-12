@@ -497,10 +497,10 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
     fprintf (partFile_functions, "  int i_objCount = numObjects;\n");
     fprintf (partFile_functions, "  int i_listIndex = 0;\n");
-    fprintf (partFile_functions, "  IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM * pps_sROMs = %sall_sROMs;\n", mstr_namespacePrefix.c_str());
+    fprintf (partFile_functions, "  IsoAgLib::iVtObject_c::iVtObject_s* const HUGE_MEM * pps_sROMs = %sall_sROMs;\n", mstr_namespacePrefix.c_str());
     fprintf (partFile_functions, "  do \n");
     fprintf (partFile_functions, "  {\n");
-    fprintf (partFile_functions, "    IsoAgLib::iVtObject_c* HUGE_MEM * pc_objList = %sall_iVtObjectLists [i_listIndex];\n", mstr_namespacePrefix.c_str());
+    fprintf (partFile_functions, "    IsoAgLib::iVtObject_c* const HUGE_MEM * pc_objList = %sall_iVtObjectLists [i_listIndex];\n", mstr_namespacePrefix.c_str());
     fprintf (partFile_functions, "    while (i_objCount)\n");
     fprintf (partFile_functions, "    {\n");
     fprintf (partFile_functions, "      ((__IsoAgLib::vtObject_c*)(*pc_objList))->init (*pps_sROMs MULTITON_INST_PARAMETER_USE_WITH_COMMA);\n");
@@ -591,7 +591,9 @@ void vt2iso_c::clean_exit (const char* error_message)
     // write implementation of handler class constructor into list
     // as there the list must be known
     // -> the handler decleration can be included from everywhere
-    fprintf (partFile_list, "\nIsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [] = {" );
+
+    // const implies local linking, but the "extern" forces external linking (lists should be in .rodata section instead of .data)
+    fprintf (partFile_list, "\nextern IsoAgLib::iVtObject_c* const HUGE_MEM * const all_iVtObjectLists [] = {" );
     fprintf (partFile_list, "\n  all_iVtObjects," );
     for (unsigned int i=0; i<ui_languages; i++)
       fprintf (partFile_list, "\n  all_iVtObjects%d,", i);
@@ -636,7 +638,7 @@ void vt2iso_c::clean_exit (const char* error_message)
       fprintf (partFile_handler_derived, "\n\n#include \"%s\"\n", mstr_baseClassHdr.c_str() );
     fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationBegin.c_str());
     fprintf (partFile_handler_derived, "\n// forward declaration");
-    fprintf (partFile_handler_derived, "\nextern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];");
+    fprintf (partFile_handler_derived, "\nextern IsoAgLib::iVtObject_c* const HUGE_MEM * const all_iVtObjectLists [];");
     fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationEnd.c_str());
     fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public %s {", mstr_className.c_str(), mstr_baseClass.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
@@ -668,12 +670,12 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (b_externalize)
   {
     fputs(mstr_namespaceDeclarationBegin.c_str(), partFile_derived);
-    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n");
-    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n");
-    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects [];\n");
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c::iVtObject_s* const HUGE_MEM all_sROMs [];\n");
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* const HUGE_MEM * const all_iVtObjectLists [];\n");
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* const HUGE_MEM all_iVtObjects [];\n");
     for (unsigned int i=0; i<ui_languages; i++)
     {
-      fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i [];\n", i);
+      fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* const HUGE_MEM all_iVtObjects%i [];\n", i);
     }
     fputs(mstr_namespaceDeclarationEnd.c_str(), partFile_derived);
   }
@@ -1260,12 +1262,13 @@ vt2iso_c::init(
   partFileName = mstr_destinDirAndProjectPrefix + "-list.inc";
   partFile_list = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_list, "%s", mstr_namespaceDeclarationBegin.c_str());
-  fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects [] = {");
+  fprintf (partFile_list, "IsoAgLib::iVtObject_c* const HUGE_MEM all_iVtObjects [] = {");
 
   partFileName = mstr_destinDirAndProjectPrefix + "-list_attributes.inc";
   partFile_listAttributes = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_listAttributes, "%s", mstr_namespaceDeclarationBegin.c_str());
-  fprintf (partFile_listAttributes, "IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [] = {");
+  // const implies local linking, but the "extern" forces external linking (lists should be in .rodata section instead of .data)
+  fprintf (partFile_listAttributes, "extern IsoAgLib::iVtObject_c::iVtObject_s* const HUGE_MEM all_sROMs [] = {");
 
   partFileName = mstr_destinDirAndProjectPrefix + "-handler-derived.inc";
   partFile_handler_derived = &save_fopen (partFileName.c_str(),"wt");
@@ -2483,7 +2486,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::string langFileName;
             langFileName = str(format("%s-list%02d.inc") % mstr_destinDirAndProjectPrefix % ui_languages);
             arrs_language [ui_languages].partFile = &save_fopen (langFileName.c_str(), "wt");
-            langFileName = str(format("%sIsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%d [] = {") % mstr_namespaceDeclarationBegin % ui_languages);
+            langFileName = str(format("%sIsoAgLib::iVtObject_c* const HUGE_MEM all_iVtObjects%d [] = {") % mstr_namespaceDeclarationBegin % ui_languages);
             fputs (langFileName.c_str(), arrs_language [ui_languages].partFile);
             arrs_language [ui_languages].code[0] = languageCode[0];
             arrs_language [ui_languages].code[1] = languageCode[1];

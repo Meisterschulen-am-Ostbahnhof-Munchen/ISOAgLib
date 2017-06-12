@@ -308,7 +308,7 @@ public:
   */
   virtual void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF)=0;
 
-  iVtClientObjectPool_c(iVtObject_c*HUGE_MEM** a_iVtObjects, uint16_t a_numObjects, uint16_t a_numObjectsLang, ObjectPoolSettings_s a_objectPoolSettings)
+  iVtClientObjectPool_c(iVtObject_c* const HUGE_MEM* const* a_iVtObjects, uint16_t a_numObjects, uint16_t a_numObjectsLang, ObjectPoolSettings_s a_objectPoolSettings)
     : iVtObjects (a_iVtObjects)
     , numObjects (a_numObjects)
     , numObjectsLang (a_numObjectsLang)
@@ -319,7 +319,7 @@ public:
     , b_initAllObjects (false)
     , numLang( 0 )
   {
-    iVtObject_c*HUGE_MEM** iter = a_iVtObjects+1; // skip first entry (should be the general object pool part!)
+    iVtObject_c* const HUGE_MEM* const* iter = a_iVtObjects+1; // skip first entry (should be the general object pool part!)
     while (*iter++ != NULL)
       ++numLang;
   };
@@ -384,7 +384,7 @@ private:
   virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/, uint8_t /*aui8_commandByte*/, __IsoAgLib::Stream_c& /*arc_stream*/)  { return 0; }
 
 protected:
-  iVtObject_c*HUGE_MEM** iVtObjects;
+  iVtObject_c* const HUGE_MEM* const* iVtObjects;
   uint16_t numObjects;
   uint16_t numObjectsLang;
   ObjectPoolVersion_en version;
@@ -395,7 +395,7 @@ protected:
   uint8_t numLang;
 
 public:
-  iVtObject_c*HUGE_MEM**
+  iVtObject_c* const HUGE_MEM* const*
                         getIVtObjects()     const { return iVtObjects; }
   uint16_t              getNumObjects()     const { return numObjects; }
   uint16_t              getNumObjectsLang() const { return numObjectsLang; }

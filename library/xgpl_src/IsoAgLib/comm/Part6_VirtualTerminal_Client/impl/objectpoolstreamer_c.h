@@ -55,11 +55,11 @@ public:
   uint32_t mui32_objectStreamPosition;
   uint32_t mui32_objectStreamPositionStored;
   uint32_t mui32_size;
-  IsoAgLib::iVtObject_c*HUGE_MEM* mpc_objectsToUpload; // @todo maybe this variable can be optimized away and mpc_iterObjects be directly used...
+  IsoAgLib::iVtObject_c* const HUGE_MEM* mpc_objectsToUpload; // @todo maybe this variable can be optimized away and mpc_iterObjects be directly used...
 
   /** pointers needed by MultiSendStreamer */
-  IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjects;
-  IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjectsStored;
+  IsoAgLib::iVtObject_c* const HUGE_MEM* mpc_iterObjects;
+  IsoAgLib::iVtObject_c* const HUGE_MEM* mpc_iterObjectsStored;
 
   UploadPoolState_c& m_uploadPoolState;
 
