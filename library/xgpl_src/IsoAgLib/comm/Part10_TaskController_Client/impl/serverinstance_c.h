@@ -36,6 +36,10 @@ namespace __IsoAgLib {
       void processStatus( uint8_t status );
 
       bool isAlive() const;
+      uint32_t getNotBusyCount() const
+      {
+          return m_tcNotBusyCount;
+      }
 
       ecutime_t getLastStatusTime()             const { return m_lastTcStateReceivedTime; }
       bool      getLastStatusTaskTotalsActive() const { return m_lastTcState & 0x01; }
@@ -48,12 +52,15 @@ namespace __IsoAgLib {
 
     private:
       virtual void timeEvent();
+      
+      bool isBusy() const;
 
     private:
       bool m_tcAliveCached;
 
       uint8_t   m_lastTcState;
       ecutime_t m_lastTcStateReceivedTime;
+      uint32_t  m_tcNotBusyCount;
 
       IsoAgLib::ProcData::ServerType_t m_type;
 

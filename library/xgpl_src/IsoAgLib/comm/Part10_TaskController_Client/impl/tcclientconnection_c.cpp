@@ -54,6 +54,7 @@ namespace __IsoAgLib {
     , m_cmdSent( 0x00 )
     , m_cmdSentTimestamp( 0 )
     , m_cmdTimeout( 0 )
+    , m_cmdTcNotBusyCountStart ( 0 )
     , m_capsClient()
     , m_capsServer()
     , m_schedulerTaskProxy( *this, 100, false )
@@ -78,6 +79,7 @@ namespace __IsoAgLib {
     , m_cmdSent( rhs.m_cmdSent )
     , m_cmdSentTimestamp( rhs.m_cmdSentTimestamp )
     , m_cmdTimeout( rhs.m_cmdTimeout )
+    , m_cmdTcNotBusyCountStart( rhs.m_cmdTcNotBusyCountStart )
     , m_capsClient( rhs.m_capsClient )
     , m_capsServer( rhs.m_capsServer )
     , m_schedulerTaskProxy( *this, 100, false )
@@ -303,18 +305,35 @@ namespace __IsoAgLib {
       if( m_cmdSentTimestamp < 0 )
         break;
 
-      // most commands do not have a time-out. There three consec. 0-bits for Busy need to be in the TC Status message. (to be implemented later!)
+      bool timeoutDetected = false;
+      // most commands do not have a time-out. 
       if( m_cmdTimeout > 0 )
       {
         if( HAL::getTime() > ( m_cmdSentTimestamp + m_cmdTimeout ) )
-        {
-          // Timeout, retry last command?
-          // For now, give up!
-          m_cmdState = CommandStateNone;
-          // don't go to PoolStateError, as it cannot be detected then anymore if it was still in Preconnecting or Connected.
-          getTcClientInstance( getIdentItem().getMultitonInst() ).notifyConnectionToBeEnded( *this );
-        }
+          timeoutDetected = true;
       }
+      else
+      {
+        isoaglib_assert( connected() );
+        const uint32_t notBusyCount = connected()->getNotBusyCount();
+        
+        if( notBusyCount < m_cmdTcNotBusyCountStart )
+          m_cmdTcNotBusyCountStart = notBusyCount;
+        
+        // There DEF_MaxTcNotBusyCount consec. 0-bits for Busy need to be in the TC Status message.
+        if( notBusyCount > ( m_cmdTcNotBusyCountStart + DEF_MaxTcNotBusyCount ) )
+          timeoutDetected = true;
+      }
+      
+      if( timeoutDetected )
+      {
+        // Timeout, retry last command?
+        // For now, give up!
+        m_cmdState = CommandStateNone;
+        // don't go to PoolStateError, as it cannot be detected then anymore if it was still in Preconnecting or Connected.
+        getTcClientInstance( getIdentItem().getMultitonInst() ).notifyConnectionToBeEnded( *this );
+      }
+
       break;
     }
   }
@@ -798,7 +817,8 @@ namespace __IsoAgLib {
     m_cmdSent = cmd;
     m_cmdTimeout = timeout;
     m_cmdSentTimestamp = HAL::getTime();
-
+    m_cmdTcNotBusyCountStart = connected()->getNotBusyCount();
+    
     switch( cmd )
     {
     case procCmdPar_OPTransferMsg:

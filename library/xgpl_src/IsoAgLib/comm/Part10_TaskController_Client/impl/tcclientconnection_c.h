@@ -80,6 +80,7 @@ namespace __IsoAgLib {
   class TcClientConnection_c : public PdConnection_c
   {
     static const ecutime_t DEF_TimeOut_DdopDeactivation = 2000;
+    static const uint16_t  DEF_MaxTcNotBusyCount = 3;
 
     public:
       class StateHandler_c {
@@ -333,6 +334,7 @@ namespace __IsoAgLib {
       uint8_t m_cmdSent;
       ecutime_t m_cmdSentTimestamp;
       int32_t m_cmdTimeout;
+      uint32_t m_cmdTcNotBusyCountStart;
 
       IsoAgLib::ProcData::ClientCapabilities_s m_capsClient;
       IsoAgLib::ProcData::ServerCapabilities_s m_capsServer;

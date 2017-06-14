@@ -24,6 +24,7 @@ namespace __IsoAgLib {
     , m_tcAliveCached( false )
     , m_lastTcState( 0 )
     , m_lastTcStateReceivedTime( -1 )
+    , m_tcNotBusyCount( 0 )
     , m_type( type )
   {
     // assume the SchedulerTask_c is properly c'ted in PdRemoteNode_c
@@ -55,6 +56,12 @@ namespace __IsoAgLib {
 
   bool ServerInstance_c::isAlive() const {
     return ( getLastStatusTime() != -1 ) && ( HAL::getTime() - getLastStatusTime() <= 6000 );
+  }
+  
+  bool ServerInstance_c::isBusy() const {
+    return ( ((m_lastTcState & (1 << 1)) != 0) ||
+             ((m_lastTcState & (1 << 2)) != 0) ||
+             ((m_lastTcState & (1 << 3)) != 0) );
   }
 
 
@@ -100,6 +107,11 @@ namespace __IsoAgLib {
 
     m_lastTcState = status;
     m_lastTcStateReceivedTime = HAL::getTime();
+    
+    if ( isBusy() )
+      m_tcNotBusyCount = 0;
+    else
+      m_tcNotBusyCount++;
 
     const bool activeTaskNew = getLastStatusTaskTotalsActive();
 
