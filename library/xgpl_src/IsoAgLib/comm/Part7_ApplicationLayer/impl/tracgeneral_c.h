@@ -23,6 +23,12 @@
 
 #include <ctime>
 
+
+namespace IsoAgLib {
+  /// For backward compatibility
+  typedef IsoImplReadyToWorkFlag_t IsoImplWorkFlag_t;
+}
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -49,6 +55,7 @@ typedef struct
   unsigned int inWork: 2;
 
 } indicatedStateImpl_t;
+
 
 /** stores, updates  and delivers all base data informations;
     Derive from BaseCommon_c some fundamental funktionality for all base data

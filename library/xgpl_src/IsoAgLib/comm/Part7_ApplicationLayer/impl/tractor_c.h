@@ -73,10 +73,15 @@ namespace __IsoAgLib {
 
     void maintainPowerAndSendImplStates( IsoAgLib::IsoActiveFlag_t ecuPower, IsoAgLib::IsoActiveFlag_t actuatorPower );
 
-    void setImplTransportState( IsoAgLib::IsoImplTransportFlag_t val ) { m_implTransportFlag   = val; }
-    void setImplParkState(      IsoAgLib::IsoImplParkFlag_t      val ) { m_implParkFlag        = val; }
-    void setImplWorkState(      IsoAgLib::IsoImplWorkFlag_t      val ) { m_implReadyToWorkFlag = val; }
-    void setImplInWorkState(    IsoAgLib::IsoImplInWorkFlag_t    val ) { m_implInWorkFlag      = val; }
+    void setImplTransportState(   IsoAgLib::IsoImplTransportFlag_t   val ) { m_implTransportFlag   = val; }
+    void setImplParkState(        IsoAgLib::IsoImplParkFlag_t        val ) { m_implParkFlag        = val; }
+    void setImplReadyToWorkState( IsoAgLib::IsoImplReadyToWorkFlag_t val ) { m_implReadyToWorkFlag = val; }
+    void setImplInWorkState(      IsoAgLib::IsoImplInWorkFlag_t      val ) { m_implInWorkFlag      = val; }
+
+    IsoAgLib::IsoImplTransportFlag_t   getImplTransportState() const   { return m_implTransportFlag; }
+    IsoAgLib::IsoImplParkFlag_t        getImplParkState() const        { return m_implParkFlag; }
+    IsoAgLib::IsoImplReadyToWorkFlag_t getImplReadyToWorkState() const { return m_implReadyToWorkFlag; }
+    IsoAgLib::IsoImplInWorkFlag_t      getImplInWorkState() const      { return m_implInWorkFlag; }
 
 
   private:
@@ -124,10 +129,10 @@ namespace __IsoAgLib {
     IsoAgLib::IsoActiveFlag_t mt_maintainEcuPower;
     IsoAgLib::IsoActiveFlag_t mt_maintainActuatorPower;
     
-    IsoAgLib::IsoImplTransportFlag_t m_implTransportFlag;
-    IsoAgLib::IsoImplParkFlag_t      m_implParkFlag;
-    IsoAgLib::IsoImplWorkFlag_t      m_implReadyToWorkFlag;
-    IsoAgLib::IsoImplInWorkFlag_t    m_implInWorkFlag;
+    IsoAgLib::IsoImplTransportFlag_t   m_implTransportFlag;
+    IsoAgLib::IsoImplParkFlag_t        m_implParkFlag;
+    IsoAgLib::IsoImplReadyToWorkFlag_t m_implReadyToWorkFlag;
+    IsoAgLib::IsoImplInWorkFlag_t      m_implInWorkFlag;
 
     IsoRequestPgnHandlerProxy_c m_pgnRequest;
 

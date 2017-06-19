@@ -113,11 +113,33 @@ namespace IsoAgLib
       */
     void setImplParkState( IsoAgLib::IsoImplParkFlag_t val ) { Tractor_c::setImplParkState( val ); }
 
-    /** set state of implement in work
+    /** set state of implement ready to work state
+      * Information is only sent out in a subsequent "maintainPowerAndSendImplStates(..)"-call!
+      * @param val state of implement ready to work state
+      */
+    void setImplReadyToWorkState( IsoAgLib::IsoImplReadyToWorkFlag_t val ) { Tractor_c::setImplReadyToWorkState( val ); }
+
+    /** set state of implement in work state
       * Information is only sent out in a subsequent "maintainPowerAndSendImplStates(..)"-call!
       * @param val state of implement in work state
       */
-    void setImplWorkState( IsoAgLib::IsoImplWorkFlag_t val ) { Tractor_c::setImplWorkState( val ); }
+    void setImplInWorkState( IsoAgLib::IsoImplInWorkFlag_t val ) { Tractor_c::setImplInWorkState( val ); }
+
+    /** @return state of implement in transport state
+      */
+    IsoAgLib::IsoImplTransportFlag_t getImplTransportState() const { return Tractor_c::getImplTransportState(); }
+
+    /** @return state of implement in park state
+      */
+    IsoAgLib::IsoImplParkFlag_t getImplParkState() const { return Tractor_c::getImplParkState(); }
+
+    /** @return state of implement ready to work state
+      */
+    IsoAgLib::IsoImplReadyToWorkFlag_t getImplReadyToWorkState() const { return Tractor_c::getImplReadyToWorkState(); }
+
+    /** @return state of implement in work state
+      */
+    IsoAgLib::IsoImplInWorkFlag_t getImplInWorkState() const { return Tractor_c::getImplInWorkState(); }
 
 private:
 #if ( PRT_INSTANCE_CNT == 1 )

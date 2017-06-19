@@ -270,7 +270,7 @@ enum IsoSpeedSourceFlag_t {
 };
 
 /** use an enum for the different states of ISO flags for the implement ready-to-work state */
-enum IsoImplWorkFlag_t {
+enum IsoImplReadyToWorkFlag_t {
   IsoNotReadyForFieldWork = 0, ///< Implement is not ready for field work
   IsoReadyForFieldWork = 1,    ///< Implement is ready for field work
   IsoErrorWork = 2,            ///< corresponding function is in error state, and thus not useable
