@@ -8,7 +8,7 @@ namespace __IsoAgLib {
                              const VtClient_c& aref_vtClient)
       : mref_uploadPoolState(aref_uploadPoolState),
         mref_vtClient(aref_vtClient),
-        m_moveToNextVtInfoShown(false),
+        m_moveToNextVtInfoShown(NOT_SET),
         m_state(STATE_INACTIVE),
         mpc_lastVtServerInstance(NULL)
   {
@@ -20,18 +20,18 @@ namespace __IsoAgLib {
     {
       if(mref_vtClient.getActiveVtCount() > 1)
       {
-        if(!m_moveToNextVtInfoShown)
+        if(MORE_THAN_ONE_VT != m_moveToNextVtInfoShown)
         {
           mref_uploadPoolState.getPool().multipleActiveVts(true /* a_state */);
-          m_moveToNextVtInfoShown = true;
+          m_moveToNextVtInfoShown = MORE_THAN_ONE_VT;
         }
       }
       else
       {
-        if(m_moveToNextVtInfoShown)
+        if(ONE_VT != m_moveToNextVtInfoShown)
         {
           mref_uploadPoolState.getPool().multipleActiveVts(false /* a_state */);
-          m_moveToNextVtInfoShown = false;
+          m_moveToNextVtInfoShown = ONE_VT;
         }
       }
     }

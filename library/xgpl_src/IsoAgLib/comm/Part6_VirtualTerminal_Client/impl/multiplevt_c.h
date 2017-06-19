@@ -46,7 +46,7 @@ namespace __IsoAgLib {
 
       void resetInfoShown()
       {
-        m_moveToNextVtInfoShown = false;
+        m_moveToNextVtInfoShown = NOT_SET;
       }
 
       void trySwitchingState();
@@ -74,10 +74,17 @@ namespace __IsoAgLib {
         STATE_SWITCH_REQUESTED
       };
 
+      enum vtInfoShownState
+      {
+        ONE_VT,
+        MORE_THAN_ONE_VT,
+        NOT_SET
+      };
+
       const UploadPoolState_c& mref_uploadPoolState;
       const VtClient_c&        mref_vtClient;
 
-      bool m_moveToNextVtInfoShown;
+      vtInfoShownState m_moveToNextVtInfoShown;
 
       State m_state;
 
