@@ -464,6 +464,9 @@ namespace __IsoAgLib {
     ServerInstance_c *nextServer = findNextServerOfSameType( *thisServer );
     if( nextServer )
       connection.preConnect( ident, *nextServer, sh, caps );
+    else if( thisServer->isAlive() )        
+      // enable reconnect for same server
+      connection.preConnect( ident, *thisServer, sh, caps );
   }
 
 
@@ -472,6 +475,8 @@ namespace __IsoAgLib {
   {
     bool takeNextMatch=false;
 
+    ServerInstance_c* p_firstMatchedServerInList = NULL;
+    
     for( ItemToRemoteNodeMap_t::const_iterator iter = m_pdRemoteNodes.begin(); iter != m_pdRemoteNodes.end(); ++iter )
     {
       if( (*iter)->isServer() )
@@ -483,12 +488,18 @@ namespace __IsoAgLib {
           continue;
         }
 
-        if( takeNextMatch && ( nextServer.getEcuType() == thisServer.getEcuType() ) && nextServer.isAlive() )
-          return &nextServer;
+        if( ( nextServer.getEcuType() == thisServer.getEcuType() ) && nextServer.isAlive() )
+        {
+          if( NULL == p_firstMatchedServerInList )
+            p_firstMatchedServerInList = static_cast<ServerInstance_c*>(*iter);
+          
+          if( takeNextMatch )
+            return &nextServer;
+        }
       }
     }
 
-    return NULL;
+    return p_firstMatchedServerInList;
   }
 
 
