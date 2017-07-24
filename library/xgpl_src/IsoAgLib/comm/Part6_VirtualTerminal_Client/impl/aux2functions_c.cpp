@@ -425,8 +425,8 @@ Aux2Functions_c::sendPreferredAux2Assignments()
 
   for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
   {
-    if (! iter->second->getMatchingPreferredAssignedInputReady())
-      continue; // skip preferred assignments for which we didn't detect a input maintenance message with ready state
+    if (! iter->second->getMatchingPreferredAssignedInputReady() || iter->second->isOmittedFromUpload())
+      continue; // skip preferred assignments for which we didn't detect a input maintenance message with ready state (or function is omitted from upload anyway)
 
     objIds.ui16_function = iter->first;
 
