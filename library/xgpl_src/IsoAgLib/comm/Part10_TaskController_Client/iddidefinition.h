@@ -15,7 +15,7 @@
 
 // VERSION INFO:
 // Last Updated:
-//   2016-08-23
+//   2017-06-23
 // Updated by:
 //   Mike Schmidt, AGCO Corporation
 //   Mike.Schmidt@agcocorp.com
@@ -196,22 +196,22 @@
 #define DDI_PRESCRIPTION_CONTROL_STATE   158   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=3
 #define DDI_NUMBER_OF_SUB_UNITS_PER_SECTION   159   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_SECTION_CONTROL_STATE   160   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=3
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_1_16   161   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_17_32   162   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_33_48   163   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_49_64   164   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_65_80   165   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_81_96   166   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_97_112   167   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_113_128   168   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_129_144   169   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_145_160   170   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_161_176   171   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_177_192   172   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_193_208   173   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_209_224   174   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_225_240   175   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_CONDENSED_WORK_STATE_241_256   176   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_1_16   161   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_17_32   162   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_33_48   163   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_49_64   164   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_65_80   165   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_81_96   166   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_97_112   167   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_113_128   168   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_129_144   169   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_145_160   170   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_161_176   171   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_177_192   172   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_193_208   173   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_209_224   174   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_225_240   175   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_CONDENSED_WORK_STATE_241_256   176   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_ACTUAL_LENGTH_OF_CUT   177   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483.647
 #define DDI_ELEMENT_TYPE_INSTANCE   178   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=65533
 #define DDI_ACTUAL_CULTURAL_PRACTICE   179   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -242,7 +242,7 @@
 #define DDI_MAXIMUM_TANK_AGITATION_PRESSURE   204   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=0.1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_SC_TURN_ON_TIME   205   // UnitSymbol=ms, UnitQuantity=Time, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_SC_TURN_OFF_TIME   206   // UnitSymbol=ms, UnitQuantity=Time, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_WIND_SPEED   207   // UnitSymbol=mm/s, UnitQuantity=Speed, BitResolution=1, MinimumValue=0, MaximumValue=100 000 000
+#define DDI_WIND_SPEED   207   // UnitSymbol=mm/s, UnitQuantity=Speed, BitResolution=1, MinimumValue=0, MaximumValue=100000000
 #define DDI_WIND_DIRECTION   208   // UnitSymbol=°, UnitQuantity=Angle, BitResolution=1, MinimumValue=0, MaximumValue=359
 #define DDI_AIR_HUMIDITY   209   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=1, MinimumValue=0, MaximumValue=100
 #define DDI_SKY_CONDITIONS   210   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
@@ -385,7 +385,7 @@
 #define DDI_MINIMUM_SWATHING_WIDTH   347   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MAXIMUM_SWATHING_WIDTH   348   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_NOZZLE_DRIFT_REDUCTION   349   // UnitSymbol=ppm, UnitQuantity=Parts per million, BitResolution=1, MinimumValue=0, MaximumValue=100
-#define DDI_FUNCTION_TYPE   350   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_FUNCTION_OR_OPERATION_TECHNIQUE   350   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_APPLICATION_TOTAL_VOLUME_IN_ML   351   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_APPLICATION_TOTAL_MASS_IN_GRAM_G   352   // UnitSymbol=g, UnitQuantity=Mass large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_TOTAL_APPLICATION_OF_NITROGEN   353   // UnitSymbol=g, UnitQuantity=Mass large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -402,22 +402,22 @@
 #define DDI_ACTUAL_FLAKE_SIZE   364   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=1000
 #define DDI_SETPOINT_DOWNFORCE_PRESSURE   365   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_ACTUAL_DOWNFORCE_PRESSURE   366   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_1_16   367   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_17_32   368   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_33_48   369   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_49_64   370   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_65_80   371   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_1_16   367   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_17_32   368   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_33_48   369   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_49_64   370   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_65_80   371   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_81_96   372   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_97_112   373   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_113_128   374   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_129_144   375   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_145_160   376   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_161_176   377   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_177_192   378   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_193_208   379   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_209_224   380   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_225_240   381   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_241_256   382   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_97_112   373   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_113_128   374   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_129_144   375   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_145_160   376   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_161_176   377   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_177_192   378   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_193_208   379   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_209_224   380   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_225_240   381   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_241_256   382   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_APPARENT_WIND_DIRECTION   383   // UnitSymbol=°, UnitQuantity=Angle, BitResolution=1, MinimumValue=0, MaximumValue=359
 #define DDI_APPARENT_WIND_SPEED   384   // UnitSymbol=mm/s, UnitQuantity=Speed, BitResolution=1, MinimumValue=0, MaximumValue=100000000
 #define DDI_MSL_ATMOSPHERIC_PRESSURE   385   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=0.1, MinimumValue=0, MaximumValue=2000000
@@ -429,7 +429,7 @@
 #define DDI_DEFAULT_REVOLUTIONS_PER_TIME   391   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_MINIMUM_REVOLUTIONS_PER_TIME   392   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_MAXIMUM_REVOLUTIONS_PER_TIME   393   // UnitSymbol=r/min, UnitQuantity=Revolutions per minute, BitResolution=0.0001, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_ACTUAL_FUEL_TANK_CONTENT   394   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_FUEL_TANK_CONTENT   394   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_DIESEL_EXHAUST_FLUID_TANK_CONTENT   395   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_SETPOINT_SPEED   396   // UnitSymbol=mm/s, UnitQuantity=Speed, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_ACTUAL_SPEED   397   // UnitSymbol=mm/s, UnitQuantity=Speed, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
@@ -535,6 +535,28 @@
 #define DDI_ACTUAL_ENGINE_TORQUE   502   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MINIMUM_ENGINE_TORQUE   503   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
 #define DDI_MAXIMUM_ENGINE_TORQUE   504   // UnitSymbol=0, UnitQuantity=Percent, BitResolution=0.001, MinimumValue=0, MaximumValue=2147483647
+#define DDI_TRAMLINE_CONTROL_LEVEL   505   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=7
+#define DDI_SETPOINT_TRAMLINE_CONTROL_LEVEL   506   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=3
+#define DDI_TRAMLINE_SEQUENCE_NUMBER   507   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_UNIQUE_A_B_GUIDANCE_REFERENCE_LINE_ID   508   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_ACTUAL_TRACK_NUMBER   509   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_TRACK_NUMBER_TO_THE_RIGHT   510   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_TRACK_NUMBER_TO_THE_LEFT   511   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_GUIDANCE_LINE_SWATH_WIDTH   512   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_GUIDANCE_LINE_DEVIATION   513   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_GNSS_QUALITY   514   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_TRAMLINE_CONTROL_STATE   515   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=3
+#define DDI_TRAMLINE_OVERDOSING_RATE   516   // UnitSymbol=ppm, UnitQuantity=Parts per million, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_SETPOINT_TRAMLINE_CONDENSED_WORK_STATE_1_16   517   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_TRAMLINE_CONDENSED_WORK_STATE_1_16   518   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_LAST_BALE_LIFETIME_COUNT   519   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_ACTUAL_CANOPY_HEIGHT   520   // UnitSymbol=mm, UnitQuantity=Length, BitResolution=1, MinimumValue=0, MaximumValue=0
+#define DDI_GNSS_INSTALLATION_TYPE   521   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=100
+#define DDI_TWINE_BALE_TOTAL_COUNT   522   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_MESH_BALE_TOTAL_COUNT   523   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_LIFETIME_TWINE_BALE_TOTAL_COUNT   524   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_LIFETIME_MESH_BALE_TOTAL_COUNT   525   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_ACTUAL_COOLING_FLUID_TEMPERATURE   526   // UnitSymbol=mK, UnitQuantity=Temperature, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_PGN_BASED_DATA   57342   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_REQUEST_DEFAULT_PROCESS_DATA   57343   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=0
 #define DDI_PROPRIETARY_DDI_RANGE_FIRST   57344   // UnitSymbol=n.a., UnitQuantity=, BitResolution=0, MinimumValue=, MaximumValue=
