@@ -383,7 +383,7 @@ vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int1
 
 
 bool
-vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t x, int16_t y, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd)
+vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t x, int16_t y, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd, OffsetMode_en offsetMode)
 {
   MACRO_scaleLocalVars
   MACRO_scaleSKLocalVars
@@ -393,6 +393,21 @@ vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int1
 #ifndef USE_VT_CLIENT_OLD_UNSCALED_CHILD_POSITIONING_COMMANDS
   MACRO_scaleI32(x32,y32)
 #endif
+  switch( offsetMode )
+  {
+  case DataAlarmMaskOffset:
+    x32 += vtOffsetX;
+    y32 += vtOffsetY;
+    break;
+
+  case SoftKeyOffset:
+    x32 += skOffsetX;
+    y32 += skOffsetY;
+    break;
+
+  case NoOffset:
+    ;
+  }
 
   VtClientConnection_c &connection = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId);
 
