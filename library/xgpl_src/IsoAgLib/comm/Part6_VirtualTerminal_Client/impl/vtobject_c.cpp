@@ -401,9 +401,12 @@ vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int1
     break;
 
   case SoftKeyOffset:
-    x32 += skOffsetX;
-    y32 += skOffsetY;
-    break;
+    {
+      const int16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factorM)/factorD)) >>1;
+      const int16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factorM)/factorD)) >>1;
+      x32 += centerX + skOffsetX;
+      y32 += centerY + skOffsetY;
+    } break;
 
   case NoOffset:
     ;
