@@ -47,7 +47,9 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 VT-Client:
  - Bugfix:
    - Change Child Position now takes the dam/sk offset into account
-   - AUX-N: Don't send PA if Aux2Function is omitted from upload
+   - AUX-N:
+     - Don't send PA if Aux2Function is omitted from upload
+	 - If a PA is already queued, it will be replaced by a new one now. Before the new one was simply discarded (or assertion in DEBUG).
  
 
 \subsection Change_ZI 2.8.2 to 2.9.0
