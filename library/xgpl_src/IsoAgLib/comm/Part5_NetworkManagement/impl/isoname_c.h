@@ -242,7 +242,7 @@ public:
 
   /** According to "3.25 Functionally Identical WS"
    * Attention: Ignores if the NAMEs are specified or not!
-   * Self Configurable, Instance fields, and Identity Number are excluded
+   * Self Configurable and Identity Number are excluded
   */
   bool isFunctionallyIdentical (const IsoName_c& acrc_isoName) const;
 

@@ -104,10 +104,13 @@ bool
 IsoName_c::isFunctionallyIdentical (const IsoName_c& other) const
 {
   // NOTE: We're not considering specified/unspecified here!
-  return ( (devClass()  == other.devClass() )
-        && (indGroup()  == other.indGroup() )
-        && (func()      == other.func()     )
-        && (manufCode() == other.manufCode())
+  return ( (devClass()     == other.devClass()    )
+        && (devClassInst() == other.devClassInst())
+        && (indGroup()     == other.indGroup()    )
+        && (func()         == other.func()        )
+        && (funcInst()     == other.funcInst()    )
+        && (ecuInst()      == other.ecuInst()     )
+        && (manufCode()    == other.manufCode()   )
          );
 }
 

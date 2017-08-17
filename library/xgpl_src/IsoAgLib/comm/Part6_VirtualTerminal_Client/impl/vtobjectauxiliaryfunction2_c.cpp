@@ -200,7 +200,7 @@ vtObjectAuxiliaryFunction2_c::matchPreferredAssignedInput(const IsoAgLib::iIsoNa
       return true;
     }
 
-    if( iter->name.isEqualRegardingNonInstFields( arc_isoName ) )
+    if( iter->name.isFunctionallyIdentical( arc_isoName ) )
     {
       iter_fuzzy = iter;
     }    

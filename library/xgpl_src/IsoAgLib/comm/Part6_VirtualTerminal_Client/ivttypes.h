@@ -217,7 +217,7 @@ struct iAux2InputData
   bool operator==(const iAux2InputData& arc_ref) const
   {
     // - check for preferredAssignmentMatched and preserve is not necessary
-    if ( !name.isEqualRegardingNonInstFields(arc_ref.name) ||
+    if ( (name != arc_ref.name) ||
          (modelIdentificationCode != arc_ref.modelIdentificationCode) ||
          (uid != arc_ref.uid) )
       return false;

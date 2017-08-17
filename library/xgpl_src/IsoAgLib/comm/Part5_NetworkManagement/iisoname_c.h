@@ -229,6 +229,13 @@ public:
   bool isEqualRegardingNonInstFields (const iIsoName_c& acrc_isoName) const
   { return IsoName_c::isEqualRegardingNonInstFields( acrc_isoName ); }
 
+  /** According to "3.25 Functionally Identical WS"
+   * Attention: Ignores if the NAMEs are specified or not!
+   * Self Configurable and Identity Number are excluded
+  */
+  bool isFunctionallyIdentical (const iIsoName_c& acrc_isoName) const
+  { return IsoName_c::isFunctionallyIdentical( acrc_isoName ); }
+
   /** set this instance to indicator for specified value - with the NAME prior set
    * Attention: Make sure that the NAME was properly set before or will be properly
    *            set at latest before using this instance! */
