@@ -51,6 +51,9 @@ vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c()
   : m_inputState(),
     mui16_value1(0),
     mui16_value2(0),
+#ifdef CONFIG_VT_CLIENT_AUX2INPUTS_FORCE_OFF_STATE_BETWEEN_ON_MESSAGES
+    m_nextMessageState(StateForNextMessageInactive),
+#endif
     mb_inputActivatedInLearnMode(false),
     mb_highStatusUpdateRate(false),
     mb_valueChangeToHandle(false)
@@ -198,6 +201,25 @@ vtObjectAuxiliaryInput2_c::setValue(uint16_t aui16_value1, uint16_t aui16_value2
       break;
   }
 
+#ifdef CONFIG_VT_CLIENT_AUX2INPUTS_FORCE_OFF_STATE_BETWEEN_ON_MESSAGES
+  switch( m_nextMessageState )
+  {
+  case StateForNextMessageOn:
+    //next message state is supposed to be ON, but haven't actaully sent the preceding off.
+    oldValue1 = 1;
+    break;
+
+  case StateForNextMessageOff:
+    //next message state is supposed to be OFF, but haven't actaully sent the preceding on.
+    oldValue1 = 0;
+    break;
+
+  case StateForNextMessageInactive:
+  default:
+    break;
+  }
+#endif
+
   // set mui16_value2 for some cases
   switch (getFunctionType())
   {
@@ -240,6 +262,53 @@ vtObjectAuxiliaryInput2_c::setValue(uint16_t aui16_value1, uint16_t aui16_value2
   }
 
   mui16_value1 = aui16_value1;
+
+#ifdef CONFIG_VT_CLIENT_AUX2INPUTS_FORCE_OFF_STATE_BETWEEN_ON_MESSAGES
+  //at this point a state transition has occurred either on->off or off->on
+  switch (getFunctionType())
+  {
+    case FunctionType_NonLatchingBoolean:
+    case FunctionType_LatchingBoolean:
+      if( mb_valueChangeToHandle )
+      {
+        //haven't sent out last message yet!
+        switch( m_nextMessageState )
+        {
+          case StateForNextMessageInactive:
+            if( oldValue1 == 0 ) 
+            {
+              //unsent message was state off, we need to send it before sending on state again.
+              mui16_value1 = oldValue1;
+              mui16_value2 = oldValue2;
+              m_nextMessageState = StateForNextMessageOn;
+            }
+            else if( oldValue1 == 1 )
+            {
+              //unsent message was state on, we need to send it before sending off state.
+              mui16_value1 = oldValue1;
+              mui16_value2 = oldValue2;
+              m_nextMessageState = StateForNextMessageOff;
+            }
+            break;
+
+          case StateForNextMessageOn:
+            mui16_value2++; // count the transition
+          case StateForNextMessageOff: //break left out intentionally.
+            //at this point an on->off->on or and off->on->off transition has occured without sending any message.
+            mui16_value1 = ( m_nextMessageState == StateForNextMessageOff ) ? 1 : 0; 
+            m_nextMessageState = StateForNextMessageInactive;
+            break;
+
+          default:
+            break;
+        }
+      }
+      break;
+
+    default:
+      break;
+  }
+#endif
 
   // special handling for non latched boolean
   switch (getFunctionType())
@@ -291,6 +360,24 @@ vtObjectAuxiliaryInput2_c::updateValueForHeldPositionAfterFirstMsg()
 {
   // message successfully sent => reset flag
   mb_valueChangeToHandle = false;
+
+#ifdef CONFIG_VT_CLIENT_AUX2INPUTS_FORCE_OFF_STATE_BETWEEN_ON_MESSAGES
+  switch( m_nextMessageState )
+  {
+    case StateForNextMessageOn:
+      mui16_value2++; // count the transition
+    case StateForNextMessageOff: //break left out intentionally.
+      mui16_value1 = ( m_nextMessageState == StateForNextMessageOn ) ? 1 : 0; 
+      m_nextMessageState = StateForNextMessageInactive;
+      mb_valueChangeToHandle = true; //will be sent out in 50ms.
+      mb_highStatusUpdateRate = ( getFunctionType() == FunctionType_NonLatchingBoolean ) && (mui16_value1 != 0);
+      return;
+
+    case StateForNextMessageInactive:
+      default:
+      break;
+  }
+#endif
 
   switch (getFunctionType())
   {

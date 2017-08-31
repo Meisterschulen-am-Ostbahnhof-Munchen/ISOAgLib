@@ -33,6 +33,15 @@ public:
     StateForLearnMode_SetInactive
   };
 
+#ifdef CONFIG_VT_CLIENT_AUX2INPUTS_FORCE_OFF_STATE_BETWEEN_ON_MESSAGES
+  enum StateForNextMessage_en
+  {
+    StateForNextMessageInactive,
+    StateForNextMessageOff,
+    StateForNextMessageOn
+  };
+#endif
+
   // store information about AUX input
   struct InputState_s
   {
@@ -80,8 +89,9 @@ public:
 
   bool getInputStateEnabled() const { return m_inputState.mb_enabled; }
 
-  bool sendNextStatusAsSoonAsPossible() const { return mb_highStatusUpdateRate || mb_valueChangeToHandle; }
+  bool sendNextStatusAsSoonAsPossible() const { return mb_valueChangeToHandle; }
 
+  bool highUpdateRateActive() const { return mb_highStatusUpdateRate; }
 
   ecutime_t getTimeStampLastStateMsg() const  { return m_inputState.mi32_timeStampLastStateMsg; }
 
@@ -127,6 +137,10 @@ private:
 
   uint16_t mui16_value1;
   uint16_t mui16_value2;
+
+#ifdef CONFIG_VT_CLIENT_AUX2INPUTS_FORCE_OFF_STATE_BETWEEN_ON_MESSAGES
+  StateForNextMessage_en m_nextMessageState;
+#endif
 
   // set this value to true when the input is "activated" via setValue()
   bool mb_inputActivatedInLearnMode;

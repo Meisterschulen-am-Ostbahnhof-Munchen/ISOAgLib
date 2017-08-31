@@ -142,16 +142,17 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
         continue;
 
       // send status for all AUX2 input objects or only for the requested AUX2 input object
-      const ecutime_t i32_currentTime = HAL::getTime();
+      const ecutime_t currentTime = HAL::getTime();
 
-      // @todo: if the release comes before 200msec after press, we would need to send the message 
-
-      // timing 1: do not send with less then 200msec distance
-      if (i32_currentTime - (*iter)->getTimeStampLastStateMsg() >= 200)
+      // timing 1: do not send with less then 50 msec distance
+      if (currentTime - (*iter)->getTimeStampLastStateMsg() >= 50)
       {
         // timing 2: send after 1sec for all
         // timing 3: send after 200msec for non latching booleans
-        if ( (i32_currentTime - (*iter)->getTimeStampLastStateMsg() >= 1000) ||
+        // timing 4: send immediately if change of state occured.
+        if ( (currentTime - (*iter)->getTimeStampLastStateMsg() >= 1000) || 
+              ((*iter)->highUpdateRateActive() && 
+                 (currentTime - (*iter)->getTimeStampLastStateMsg() >= 200) ) || 
              (*iter)->sendNextStatusAsSoonAsPossible() )
         {
 
