@@ -100,6 +100,7 @@ int16_t openDatFileAndSeek(long al_position)
   }
   if ( NULL != eepromDat )
   { // seek on success to the wanted position
+    isoaglib_assert(al_position < getEepromSize());
     fseek(eepromDat, al_position, 0);
     return HAL_NO_ERR;
   }
@@ -109,6 +110,8 @@ int16_t openDatFileAndSeek(long al_position)
 /* write one or more bytes into the eeprom*/
 int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData)
 {
+  isoaglib_assert((wAddress + wNumber) <= getEepromSize());
+
   int16_t errCode = openDatFileAndSeek(wAddress);
   if ( errCode  != HAL_NO_ERR ) return errCode;
 
@@ -116,15 +119,14 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData)
   INTERNAL_DEBUG_DEVICE << "Writing data to EEPROM address " << wAddress << " - Text: ";
 #endif
 
-  for (int i=0; i < wNumber; ++i)
-  {
-    fputc (pbData[i], eepromDat);
-#if DEBUG_EEPROM
-    INTERNAL_DEBUG_DEVICE << (isprint(pbData[i]) ? pbData[i] : '.');
-#endif
-  }
+  fwrite(pbData, sizeof(uint8_t), wNumber, eepromDat);
 
 #if DEBUG_EEPROM
+  for (int i=0; i < wNumber; ++i)
+  {
+    INTERNAL_DEBUG_DEVICE << (isprint(pbData[i]) ? pbData[i] : '.');
+  }
+
   switch (wNumber)
   {
     case 4:
@@ -165,6 +167,8 @@ int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte)
 /* read one or more uint8_t from the eeprom */
 int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte)
 {
+  isoaglib_assert((wAddress + wNumber) <= getEepromSize());
+
   const int16_t errCode = openDatFileAndSeek(wAddress);
   if ( errCode  != HAL_NO_ERR ) return errCode;
 
@@ -172,16 +176,19 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte)
   INTERNAL_DEBUG_DEVICE << "Reading EEPROM data from address " << wAddress << " - Text: ";
 #endif
 
-  for (int i=0; i < wNumber; ++i)
-  {
-    const int16_t c = fgetc(eepromDat);
-    pbByte[i] = ( c == EOF ) ? 0xFF : (const uint8_t)c;   // pad when at EOF
-#if DEBUG_EEPROM
-    INTERNAL_DEBUG_DEVICE << ((pbByte[i] >= 0x20) ? pbByte[i] : '.');
-#endif
+  const size_t bytesRead = fread(pbByte, sizeof(uint8_t), wNumber, eepromDat);
+
+  if (bytesRead < wNumber)
+  { // pad when at EOF
+    memset(&pbByte[bytesRead], 0xFF, wNumber - bytesRead);
   }
 
 #if DEBUG_EEPROM
+  for (int i=0; i < wNumber; ++i)
+  {
+    INTERNAL_DEBUG_DEVICE << (isprint(pbByte[i]) ? pbByte[i] : '.');
+  }
+
   switch (wNumber)
   {
     case 4:

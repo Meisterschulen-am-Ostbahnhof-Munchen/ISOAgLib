@@ -56,6 +56,9 @@ VT-Client:
        - Minimum message timing 50ms instead of 200ms
        - Introduced CONFIG_VT_CLIENT_AUX2INPUTS_FORCE_OFF_STATE_BETWEEN_ON_MESSAGES
 
+HAL-Simulator:
+ - EEPROM-Cleanup: Some more assertions, faster read/write
+
 
 \subsection Change_ZI 2.8.2 to 2.9.0
 
