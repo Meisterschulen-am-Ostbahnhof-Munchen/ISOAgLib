@@ -97,6 +97,8 @@ vtObjectAuxiliaryFunction2_c::setAssignedInput(const IsoAgLib::iIsoName_c& arc_i
 
   if(a_preferredAssignment)
   {
+    // remove/add for same input changes the list order 
+    // => currently used input will won't be dropped at check agains CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION
     removePreferredAssignedInputCandidate(ms_assignedInput);
   }
   
