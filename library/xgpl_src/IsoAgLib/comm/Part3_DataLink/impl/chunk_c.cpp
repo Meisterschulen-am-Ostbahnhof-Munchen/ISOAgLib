@@ -93,7 +93,7 @@ Chunk_c::getData(uint32_t aui32_pos)
 void
 Chunk_c::setFree()
 { // ~X2C
-  marr_data.clear();
+  marr_data.erase( marr_data.begin(), marr_data.end() );
 } // -X2C
 
 
@@ -126,7 +126,7 @@ Chunk_c::free()
 bool
 Chunk_c::full()
 { // ~X2C
-  return marr_data.size() == marr_data.capacity();
+  return marr_data.size() == mscui16_chunkSize;
 } // -X2C
 
 } // end namespace __IsoAgLib
