@@ -59,6 +59,9 @@ VT-Client:
 HAL-Simulator:
  - EEPROM-Cleanup: Some more assertions, faster read/write
 
+Multi-Packet:
+ - Fix/Avoid memory reallocation on specific compilers.
+
 
 \subsection Change_ZI 2.8.2 to 2.9.0
 
