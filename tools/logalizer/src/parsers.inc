@@ -112,7 +112,7 @@ parseLogLineRte( std::string const &acr_line ) // "[0] HW             97.41  X  
 {
   int iB, iDb = 0; // "%i* %x
   unsigned arru_d[8];
-  uint64_t iA;
+  long long unsigned iA; //min. uint64_t
   static int const sci_minimal_expected_parse_count = 4;
   int parsed_count = 0;
   static int remembered_mode = 0;
@@ -124,7 +124,7 @@ parseLogLineRte( std::string const &acr_line ) // "[0] HW             97.41  X  
     case 1:
       parsed_count = sscanf(
           acr_line.c_str(),
-          "%*s %*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x",
+          "%*s %*s %lli.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x",
           &iA, &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
       if (parsed_count <= -1 || sci_minimal_expected_parse_count <= parsed_count)
         remembered_mode = current_mode;
@@ -132,7 +132,7 @@ parseLogLineRte( std::string const &acr_line ) // "[0] HW             97.41  X  
     case 2:
       parsed_count = sscanf(
           acr_line.c_str(),
-          "%*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x",
+          "%*s %lli.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x",
           &iA, &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
       if (remembered_mode)
         ;
@@ -239,6 +239,26 @@ parseLogLineTrc2( std::string const &acr_line ) // "    13)       116.6 1 Rx    
   int parsed_count = sscanf(
       acr_line.c_str(),
       " %*s %u.%*u %*u %*s %x %*x %u %x %x %x %x %x %x %x %x",
+      &iA, &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
+  int i_result = parsed_count == (3+iDb) ? 0 : -1;
+  if (i_result < 0)
+    return std::make_pair( i_result, PtrDataFrame_t(0) );
+
+  std::vector< uint8_t > vec_data;
+  copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data);
+  return std::make_pair( i_result, t_ptrFrame );
+}
+
+
+std::pair< int, PtrDataFrame_t >
+parseLogLineTrc3( std::string const &acr_line ) // "    1       116.6  DT  18EF808B RX 8  12 15 15 15 15 15 15 15"
+{
+  unsigned arru_d[8];
+  int iA, iB, iDb;
+  int parsed_count = sscanf(
+      acr_line.c_str(),
+      " %*s %u.%*u %*s %x %*s %u %x %x %x %x %x %x %x %x",
       &iA, &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
   int i_result = parsed_count == (3+iDb) ? 0 : -1;
   if (i_result < 0)

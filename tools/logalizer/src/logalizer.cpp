@@ -1,7 +1,7 @@
 /*
   logalizer.cpp
 
-  (C) Copyright 2009 - 2016 by OSB AG and developing partners
+  (C) Copyright 2009 - 2017 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -228,14 +228,14 @@ void ddopStore(uint8_t sa);
 void
 exit_with_usage(const char* progname)
 {
-  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2016 OSB AG." << std::endl << std::endl;
+  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2017 OSB AG." << std::endl << std::endl;
   std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [--iop] [--ddop] logFile" << std::endl << std::endl;
   std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
   std::cerr << "         1 -> rte"<<std::endl;
   std::cerr << "         2 -> CANMon"<<std::endl;
   std::cerr << "         3 -> CANoe ASCII (.asc)"<<std::endl;
   std::cerr << "         4 -> A1ASCII"<<std::endl;
-  std::cerr << "         5 -> PCANView"<<std::endl;
+  std::cerr << "         5 -> PCAN-View (.trc)"<<std::endl;
   std::cerr << "         6 -> JohnDeere"<<std::endl;
   std::cerr << "         7 -> rte2"<<std::endl;
   std::cerr << "         8 -> JRF (.jrf)"<<std::endl;
@@ -246,6 +246,7 @@ exit_with_usage(const char* progname)
   std::cerr << "        13 -> ?csv" << std::endl;
   std::cerr << "        14 -> Komodo" << std::endl;
   std::cerr << "        15 -> Vehicle Spy 3 Bus Traffic File" << std::endl;
+  std::cerr << "        16 -> PCAN-View v4 (.trc)" << std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "--iop:   Store VT object pool transfers in iop format. Default: do not store" << std::endl;
@@ -278,6 +279,8 @@ exit_with_usage(const char* progname)
   std::cerr << "?csv:        '0xCFE46F0*,54.6857,FF,FF,FF,FF,00,FF,FF,FF'" << std::endl;
   std::cerr << "Komodo:      '0:00.003.537,0x0cff05b4,0,8,01 00 01 00 01 00 C0 C0'" << std::endl;
   std::cerr << "Vehicle Spy 3'2,28.2609260000172,0.01300800000899471,67371012,F,F,HS CAN $CCBFFF7,HS CAN,,CCBFFF7,F,T,FE,FF,FF,FF,00,00,00,00,,,'" << std::endl;
+  std::cerr << "PCAN-View v4:'    13)       116.6  DT  18EF808B RX 8  12 15 15 15 15 15 15 15'" << std::endl;
+
   exit(0);
 }
 
@@ -902,6 +905,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineCsv,
     parseLogLineKomodo,
     parseLogLineVehicleSpy,
+    parseLogLineTrc3,
     defaultParseLogLine
   };
 
@@ -1021,7 +1025,7 @@ int main (int argc, char** argv)
   std::string str_line;
   for (;;) {
     getline(t_ptrIn->raw(), str_line);
-    if( t_ptrIn->raw().eof() || t_ptrIn->raw().fail() ) {
+    if( t_ptrIn->raw().fail() ) {
       break;
     }
     std::pair< int, PtrDataFrame_t > parse_result = parseLogLine(std::cout, str_line);
@@ -1032,8 +1036,12 @@ int main (int argc, char** argv)
       checkHandshakingsVtCommands(parse_result.second);
       checkHandshakingTP(parse_result.second);
       checkHandshakingsProcData(parse_result.second);
-    }    
+    }
+    if (t_ptrIn->raw().eof()) {
+      break;
+    }
   }
+
   t_ptrIn = PtrInputStream_t(0);
 
   gs_main.m_alive.report( std::cout );

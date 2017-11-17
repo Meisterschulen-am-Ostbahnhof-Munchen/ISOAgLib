@@ -36,7 +36,7 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
 
     case 0x22: out << "Preferred Assignment"; break;
     case 0x23: out << "Input Type 2 Maintenance"; i8_uidBytePos = 2; strcpy( str_uidBytePos, " MIC=" ); if (at_ptrFrame->dataOctet(4-1)) out << " -READY-"; else out << " -INIT'-"; break;
-    case 0x24: out << "Assignment Type 2"; i8_uidBytePos = 13; break;
+    case 0x24: out << "Assignment Type 2"; i8_uidBytePos = response ? 2 : 13; break;
     case 0x25: out << "Input Status Type 2 Enable"; i8_uidBytePos = 2; break;
     case 0x26: out << "Input Type 2 Status message"; i8_uidBytePos = 2; break;
     case 0x27: out << "Capabilities"; break;
@@ -108,7 +108,12 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
     case 0xFF: out << "Working Set Maintenance"; break;
   }
   if (i8_uidBytePos > 0)
-    out << std::dec << str_uidBytePos <<((uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos+1-1)<<8)) | (uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos-1))));
+  {
+    if ((unsigned)i8_uidBytePos < at_ptrFrame->dataSize())
+      out << std::dec << str_uidBytePos << ((uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos + 1 - 1) << 8)) | (uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos - 1))));
+    else
+      out << "*** ERROR: Command too short!!! ***";
+  }
 
   return out.str();
 }
