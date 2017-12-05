@@ -223,7 +223,9 @@ void ddopStore(uint8_t sa);
 #include "functionality_fs.inc"
 #include "functionality_tecu.inc"
 #include "functionality_gps.inc"
+#include "functionality_nw.inc"
 #include "parsers.inc"
+
 
 void
 exit_with_usage(const char* progname)
@@ -581,6 +583,7 @@ interpreteRequestPgnMsg(PtrDataFrame_t at_ptrFrame)
 std::string
 interpreteAddressClaimed(PtrDataFrame_t at_ptrFrame)
 {
+  readOutName(std::cout, at_ptrFrame);
   return gs_main.mc_tracker.addressClaimed(at_ptrFrame);
 }
 
@@ -1045,7 +1048,7 @@ int main (int argc, char** argv)
   t_ptrIn = PtrInputStream_t(0);
 
   gs_main.m_alive.report( std::cout );
-  
+  printFullNameAndAddressList(std::cout);
   if( gs_main.m_gpxFile )
     gpxClose();
 }

@@ -33,6 +33,7 @@ add_executable(
   ../src/functionality_fs.inc
   ../src/functionality_gps.inc
   ../src/functionality_tecu.inc
+  ../src/functionality_nw.inc
   ../src/dataframe.h
   ../src/inputstream.h
   ../src/logenvirons.h
