@@ -60,7 +60,6 @@ public:
   const IsoAgLib::iDtc_s& operator[](uint16_t aui16_index) const { return __IsoAgLib::DtcContainer_c::operator[](aui16_index); }
 
 private:
-  iDtcContainer_c(); // not to be constructed by Application
 
   friend class __IsoAgLib::IdentItem_c;
   friend class iDiagnosticsServices_c;
