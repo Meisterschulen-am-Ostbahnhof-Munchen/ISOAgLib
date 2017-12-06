@@ -1,5 +1,3 @@
-//gilt nur für Agriculture and forestry
-//to do erweitern auf alle Industrie-Gruppen
 
 #include <iostream>
 #include <vector>
@@ -7,12 +5,6 @@
 
 #define BITS_PER_BYTE 8
 #define LENGTH_OUTPUT_STRING 21
-
-//TO DO Manufacturer Code Industry Group 1
-//TO DO Manufacturer Code Industry Group 3
-//TO DO Manufacturer Code Industry Group 4
-//TO DO Manufacturer Code Industry Group 5
-
 
 //Table actualized on 2017-11-30
 char manuCode[880][120] = {
@@ -2053,7 +2045,6 @@ std::map<uint64_t, std::vector<uint16_t>> listOfNamesAndAddresses;
 
 void readOutName(std::ostream& out, PtrDataFrame_t at_ptrFrame)
 {
-
   bool boSelfConfig;
   uint16_t IndustryGroup;
   uint16_t DeviceClass;
@@ -2099,118 +2090,118 @@ void readOutName(std::ostream& out, PtrDataFrame_t at_ptrFrame)
 
   //print out decoded name
   out << fullName << ": " << std::setfill(' ');
-    if (Function < 86)
+  if (Function < 86)
+  {
+    if (strlen(functions_basic[Function]) < LENGTH_OUTPUT_STRING)
     {
-      if (strlen(functions_basic[Function]) < LENGTH_OUTPUT_STRING)
+      out << std::setw(LENGTH_OUTPUT_STRING) << std::left << functions_basic[Function] << "/";
+    }
+    else
+    {
+      for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
       {
-        out << std::setw(LENGTH_OUTPUT_STRING) << std::left << functions_basic[Function] << "/";
+          charShortened[i] = functions_basic[Function][i];
       }
-      else
-      {
-          for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
+      charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
+      out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
+    }
+  }
+  else
+  {
+    switch(IndustryGroup)
+    {
+      case 0:
+          if (IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString.length() < LENGTH_OUTPUT_STRING)
           {
-              charShortened[i] = functions_basic[Function][i];
+              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << "/";
           }
-          charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
-        out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-      }
+          else
+          {
+              for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
+              {
+                  charShortened[i] = IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString[i];
+              }
+              charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
+              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
+          }
+          break;
+      case 1:
+          if (IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString.length() < LENGTH_OUTPUT_STRING)
+          {
+              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << "/";
+          }
+          else
+          {
+              for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
+              {
+                  charShortened[i] = IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString[i];
+              }
+              charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
+              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
+          }
+          break;
+      case 2:
+          if (IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString.length() < LENGTH_OUTPUT_STRING)
+          {
+              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << "/";
+          }
+          else
+          {
+              for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
+              {
+                  charShortened[i] = IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString[i];
+              }
+              charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
+              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
+          }
+          break;
+      case 3:     //break left out intentionally
+      case 4:
+      case 5:
+      case 6:
+      case 7:
+          out << std::setw(LENGTH_OUTPUT_STRING) << std::left << "Function not included yet";
+          break;
+      default:
+          break;
     }
-    else
-    {
-        switch(IndustryGroup)
-        {
-        case 0:
-            if (IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString.length() < LENGTH_OUTPUT_STRING)
-            {
-                out << std::setw(LENGTH_OUTPUT_STRING) << std::left << IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << "/";
-            }
-            else
-            {
-                for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
-                {
-                    charShortened[i] = IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString[i];
-                }
-                charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
-                out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-            }
-            break;
-        case 1:
-            if (IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString.length() < LENGTH_OUTPUT_STRING)
-            {
-                out << std::setw(LENGTH_OUTPUT_STRING) << std::left << IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << "/";
-            }
-            else
-            {
-                for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
-                {
-                    charShortened[i] = IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString[i];
-                }
-                charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
-                out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-            }
-            break;
-        case 2:
-            if (IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString.length() < LENGTH_OUTPUT_STRING)
-            {
-                out << std::setw(LENGTH_OUTPUT_STRING) << std::left << IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << "/";
-            }
-            else
-            {
-                for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
-                {
-                    charShortened[i] = IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString[i];
-                }
-                charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
-                out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-            }
-            break;
-        case 3:     //break left out intentionally
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-            out << std::setw(LENGTH_OUTPUT_STRING) << std::left << "Function not included yet";
-            break;
-        default:
-            break;
-        }
-    }
+  }
 
-    if (strlen(vehicleSystem[DeviceClass]) < LENGTH_OUTPUT_STRING)
+  if (strlen(vehicleSystem[DeviceClass]) < LENGTH_OUTPUT_STRING)
+  {
+    out << std::setw(LENGTH_OUTPUT_STRING) << std::left << vehicleSystem[DeviceClass] << "/";
+  }
+  else
+  {
+    for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
     {
-      out << std::setw(LENGTH_OUTPUT_STRING) << std::left << vehicleSystem[DeviceClass] << "/";
+      charShortened[i] = vehicleSystem[DeviceClass][i];
     }
-    else
+    charShortened[LENGTH_OUTPUT_STRING] = '\0';
+    out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
+  }
+  if (strlen(manuCode[ManufacturerCode]) < LENGTH_OUTPUT_STRING)
+  {
+    out << std::setw(LENGTH_OUTPUT_STRING) << std::left << manuCode[ManufacturerCode] << "/";
+  }
+  else
+  {
+    for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
     {
-      for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
-      {
-        charShortened[i] = vehicleSystem[DeviceClass][i];
-      }
-      charShortened[LENGTH_OUTPUT_STRING] = '\0';
-      out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
+      charShortened[i] = manuCode[ManufacturerCode][i];
     }
-    if (strlen(manuCode[ManufacturerCode]) < LENGTH_OUTPUT_STRING)
-    {
-      out << std::setw(LENGTH_OUTPUT_STRING) << std::left << manuCode[ManufacturerCode] << "/";
-    }
-    else
-    {
-      for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
-      {
-        charShortened[i] = manuCode[ManufacturerCode][i];
-      }
-      charShortened[LENGTH_OUTPUT_STRING] = '\0';
-      out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-    }
-    if (boSelfConfig)
-    {
-      out << std::left << " SC[X] /";
-    }
-    else
-    {
-      out << std::left << " SC[ ] /";
-    }
-    out << std::left << " FI[" << FunctionInstance << "] /" << " DCI[" << DeviceClassInstance << "] /" << " ECUI[" << EcuInstance << "]";
+    charShortened[LENGTH_OUTPUT_STRING] = '\0';
+    out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
+  }
+  if (boSelfConfig)
+  {
+    out << std::left << " SC[X] /";
+  }
+  else
+  {
+    out << std::left << " SC[ ] /";
+  }
+  out << std::left << " FI[" << FunctionInstance << "] /" << " DCI[" << DeviceClassInstance << "] /" << " ECUI[" << EcuInstance << "]" << std::right << std::setw(0);
 };
 
 void printFullNameAndAddressList(std::ostream& out) {
@@ -2231,7 +2222,7 @@ void printFullNameAndAddressList(std::ostream& out) {
   
   out << std::endl << std::endl << "Summary of ISOBUS Names with their claimed source addresses: " << std::endl << std::endl;
   out << std::setw(20) <<std::left << "NAME (64bit number)" <<std::setw(30) << "NAME (LE as on CAN)"  <<std::setw(11) <<std::left 
-    << "Addresses" << std::setw(100) << "Decoded" << std::endl;
+      << "Addresses" << std::setw(100) << "Decoded" << std::endl;
   
   for (it = listOfNamesAndAddresses.begin(); it != listOfNamesAndAddresses.end(); ++it)
   {
@@ -2272,51 +2263,51 @@ void printFullNameAndAddressList(std::ostream& out) {
     EcuInstance = (dataOctet[4] & 0x7);
     SerNo = dataOctet[2] & 0x1F << 16 | (dataOctet[1] << 8) | dataOctet[0];
 
-      //print decoded NAME
-      out << std::left << " Man  DC  DCI   F   FI ECUI SC IG" << std::endl;
-      out << std::setw(61) << std::dec << " " << std::left << "[" << std::setw(3) << std::right << ManufacturerCode << "]" << "[" << std::setw(2) << std::right 
-        << DeviceClass << "]" << "[" << std::setw(2) << std::right << DeviceClassInstance << "]" << "[" << std::setw(3) << std::right << Function << "]" << "[" 
-        << std::setw(3) << std::right << FunctionInstance << "]" << "[" << std::setw(3) << EcuInstance << "]";
-      if (boSelfConfig)
-      {
-        out << std::setw(3) << "[X]";
-      }
-      else
-      {
-          out << std::setw(3) << "[ ]";
-      }
-      out << "[" << IndustryGroup << "]__ " << industrieGruppe[IndustryGroup] << std::endl;;
+    //print decoded NAME
+    out << std::left << " Man  DC  DCI   F   FI ECUI SC IG" << std::endl;
+    out << std::setw(61) << std::dec << " " << std::left << "[" << std::setw(3) << std::right << ManufacturerCode << "]" << "[" << std::setw(2) << std::right 
+      << DeviceClass << "]" << "[" << std::setw(2) << std::right << DeviceClassInstance << "]" << "[" << std::setw(3) << std::right << Function << "]" << "[" 
+      << std::setw(3) << std::right << FunctionInstance << "]" << "[" << std::setw(3) << EcuInstance << "]";
+    if (boSelfConfig)
+    {
+      out << std::setw(3) << "[X]";
+    }
+    else
+    {
+      out << std::setw(3) << "[ ]";
+    }
+    out << "[" << IndustryGroup << "]__ " << industrieGruppe[IndustryGroup] << std::endl;;
 
-      if (Function < 86)
+    if (Function < 86)
+    {
+      out << std::setw(63) << " " << "|    |        |___________________ " << functions_basic[Function] << std::endl;
+    }
+    else
+    {
+      out << std::setw(63) << " " << "|    |        |___________________ ";
+      switch (IndustryGroup)
       {
-        out << std::setw(63) << " " << "|    |        |___________________ " << functions_basic[Function] << std::endl;
+        case 0:
+            out << IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << std::endl;
+            break;
+        case 1:
+            out << IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << std::endl;
+            break;
+        case 2:
+            out << IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << std::endl;
+            break;
+        case 3:   //break left out intentionally
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+            out << "Function not included in Logalizer yet" << std::endl;
+            break;
+        default:
+            break;
       }
-      else
-      {
-          out << std::setw(63) << " " << "|    |        |___________________ ";
-          switch (IndustryGroup)
-          {
-          case 0:
-              out << IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << std::endl;
-              break;
-          case 1:
-              out << IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << std::endl;
-              break;
-          case 2:
-              out << IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << std::endl;
-              break;
-          case 3:   //break left out intentionally
-          case 4:
-          case 5:
-          case 6:
-          case 7:
-              out << "Function not included in Logalizer yet" << std::endl;
-              break;
-          default:
-              break;
-          }
-      }
-      out << std::setw(63) << " " << "|    |____________________________ " << vehicleSystem[DeviceClass] << std::endl;
-      out << std::setw(63) << " " << "|_________________________________ " << manuCode[ManufacturerCode] << std::endl;
+    }
+    out << std::setw(63) << " " << "|    |____________________________ " << vehicleSystem[DeviceClass] << std::endl;
+    out << std::setw(63) << " " << "|_________________________________ " << manuCode[ManufacturerCode] << std::endl;
   }
 }
