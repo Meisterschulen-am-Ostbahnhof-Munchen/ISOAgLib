@@ -4,10 +4,10 @@
 #include <map>
 
 #define BITS_PER_BYTE 8
-#define LENGTH_OUTPUT_STRING 21
+#define LENGTH_OUTPUT_STRING 20   //19 characters + space
 
-//Table actualized on 2017-11-30
-char manuCode[880][120] = {
+//Table updated on 2017-11-30
+const char* manufacturerCodeArray[] = {
   "Reserved",
   "Bendix Commercial Vehicle Systems LLC (formerly Allied Signal Inc.) Elyria, OH USA",
   "Allison Transmission, GMC  Indianapolis, IN USA",
@@ -881,7 +881,7 @@ char manuCode[880][120] = {
   "Thomas G. Faria Co. Uncasville, CT  USA",
 };
 
-char industrieGruppe[8][53] = {
+const char* industryGroupArray[] = {
   "Global, applies to all",
   "On-Highway Equipment",
   "Agricultural and Forestry Equipment",
@@ -891,9 +891,8 @@ char industrieGruppe[8][53] = {
   "Reserved for future assignment by SAE",
   "Reserved for future assignment by SAE",
 };
-//nicht verwendet
 
-char vehicleSystem[28][31] = {
+const char* deviceClassArray[] = {
   "non-specific System",
   "Tractor",
   "Tillage",
@@ -924,7 +923,7 @@ char vehicleSystem[28][31] = {
   "Not Available",
 };
 
-char functions_basic[85][45] = {
+const char* functionsBasicArray[] = {
   "Engine",
   "Auxiliary Power Unit (APU)",
   "Electric Propulsion Control",
@@ -1012,19 +1011,7 @@ char functions_basic[85][45] = {
   "Start Aid Device",
 };
 
-char self_config[2][22] = {
-  "not self configurable",
-  "self configurable",
-};
-
-struct s_functions
-{
-  std::string functionString;
-};
-
-//alle auf 16 erweitert: n.a. sind hinzugefügt
-
-s_functions IG0dvc0FunctionStr[28] = {
+const char* functionsIg0Dvc0Array[] = {
   { "Reserved" },
   { "Off-board diagnostic-service tool" },
   { "On-board data logger" },
@@ -1055,7 +1042,7 @@ s_functions IG0dvc0FunctionStr[28] = {
   { "Not Available" }
 };
 
-s_functions IG1dvc0FunctionStr[10] = {
+const char* functionsIg1Dvc0Array[] = {
   { "Tachograph" },
   { "Door Controller" },
   { "Articulation Turntable Control" },
@@ -1068,7 +1055,7 @@ s_functions IG1dvc0FunctionStr[10] = {
   { "Not Available" }
 };
 
-s_functions IG1dvc1FunctionStr[7] = {
+const char* functionsIg1Dvc1Array[] = {
   { "Forward Road Image Processing" },
   { "Fifth Wheel Smart System" },
   { "Catalyst Fluid Sensor" },
@@ -1078,7 +1065,7 @@ s_functions IG1dvc1FunctionStr[7] = {
   { "Not Available" }
 };
 
-s_functions IG1dvc2FunctionStr[7] = {
+const char* functionsIg1Dvc2Array[] = {
   { "n.a." },
   { "n.a." },
   { "n.a." },
@@ -1088,7 +1075,7 @@ s_functions IG1dvc2FunctionStr[7] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc0FunctionStr[255] = {
+const char* functionsIg2Dvc0Array[] = {
   { "Non Virtual Terminal Display" },
   { "Operator Controls - Machine Specific" },
   { "Task Controller (Mapping Computer)" },
@@ -1219,7 +1206,7 @@ s_functions IG2dvc0FunctionStr[255] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc1FunctionStr[16] = {
+const char* functionsIg2Dvc1Array[] = {
   { "n.a" },
   { "Auxiliary Valve Control" },
   { "Rear Hitch Control" },
@@ -1238,7 +1225,7 @@ s_functions IG2dvc1FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc2FunctionStr[16] = {
+const char* functionsIg2Dvc2Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1257,7 +1244,7 @@ s_functions IG2dvc2FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc3FunctionStr[16] = {
+const char* functionsIg2Dvc3Array[] = {
   { " n.a" },
   { " n.a" },
   { " n.a" },
@@ -1276,7 +1263,7 @@ s_functions IG2dvc3FunctionStr[16] = {
   { " Not Available" }
 };
 
-s_functions IG2dvc4FunctionStr[16] = {
+const char* functionsIg2Dvc4Array[] = {
   { "Seed Rate Control" },
   { "Section On/Off Control" },
   { "n.a" },
@@ -1295,7 +1282,7 @@ s_functions IG2dvc4FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc5FunctionStr[16] = {
+const char* functionsIg2Dvc5Array[] = {
   { "Fertilize Rate Control" },
   { "Section On/Off Control" },
   { "Product Pressure" },
@@ -1314,7 +1301,7 @@ s_functions IG2dvc5FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc6FunctionStr[16] = {
+const char* functionsIg2Dvc6Array[] = {
   { "Spray Rate Control" },
   { "Section On/Off Control" },
   { "Product Pressure" },
@@ -1333,7 +1320,7 @@ s_functions IG2dvc6FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc7FunctionStr[16] = {
+const char* functionsIg2Dvc7Array[] = {
   { "Tailing Monitor" },
   { "Header Control" },
   { "Product Loss Monitor" },
@@ -1352,7 +1339,7 @@ s_functions IG2dvc7FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc8FunctionStr[16] = {
+const char* functionsIg2Dvc8Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1371,7 +1358,7 @@ s_functions IG2dvc8FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc9FunctionStr[16] = {
+const char* functionsIg2Dvc9Array[] = {
   { "Twine Wrapper Control" },
   { "Product Packaging Control" },
   { "n.a." },
@@ -1390,7 +1377,7 @@ s_functions IG2dvc9FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc10FunctionStr[16] = {
+const char* functionsIg2Dvc10Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1409,7 +1396,7 @@ s_functions IG2dvc10FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc11FunctionStr[16] = {
+const char* functionsIg2Dvc11Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1428,7 +1415,7 @@ s_functions IG2dvc11FunctionStr[16] = {
   { "Not Available" },
 };
 
-s_functions IG2dvc12FunctionStr[16] = {
+const char* functionsIg2Dvc12Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1447,7 +1434,7 @@ s_functions IG2dvc12FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc13FunctionStr[16] = {
+const char* functionsIg2Dvc13Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1466,7 +1453,7 @@ s_functions IG2dvc13FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc14FunctionStr[16] = {
+const char* functionsIg2Dvc14Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1485,7 +1472,7 @@ s_functions IG2dvc14FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc15FunctionStr[16] = {
+const char* functionsIg2Dvc15Array[] = {
   { "Material Rate Control" },
   { "n.a" },
   { "n.a" },
@@ -1504,7 +1491,7 @@ s_functions IG2dvc15FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc16FunctionStr[16] = {
+const char* functionsIg2Dvc16Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1523,7 +1510,7 @@ s_functions IG2dvc16FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc17FunctionStr[16] = {
+const char* functionsIg2Dvc17Array[] = {
   { "Guidance Feeler" },
   { "Camera System" },
   { "Crop Scouting" },
@@ -1542,7 +1529,7 @@ s_functions IG2dvc17FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc18FunctionStr[16] = {
+const char* functionsIg2Dvc18Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1561,7 +1548,7 @@ s_functions IG2dvc18FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc19FunctionStr[16] = {
+const char* functionsIg2Dvc19Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1580,7 +1567,7 @@ s_functions IG2dvc19FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc20FunctionStr[16] = {
+const char* functionsIg2Dvc20Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1599,7 +1586,7 @@ s_functions IG2dvc20FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc21FunctionStr[16] = {
+const char* functionsIg2Dvc21Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1618,7 +1605,7 @@ s_functions IG2dvc21FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc22FunctionStr[16] = {
+const char* functionsIg2Dvc22Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1637,7 +1624,7 @@ s_functions IG2dvc22FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc23FunctionStr[16] = {
+const char* functionsIg2Dvc23Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1656,7 +1643,7 @@ s_functions IG2dvc23FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc24FunctionStr[16] = {
+const char* functionsIg2Dvc24Array[] = {
   { "n.a" },
   { "n.a" },
   { "n.a" },
@@ -1675,7 +1662,7 @@ s_functions IG2dvc24FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc25FunctionStr[16] = {
+const char* functionsIg2Dvc25Array[] = {
   { "Slurry/Manure Rate Control" },
   { "Section On/Off Control" },
   { "Product Pressure" },
@@ -1694,7 +1681,7 @@ s_functions IG2dvc25FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG2dvc26FunctionStr[16] = {
+const char* functionsIg2Dvc26Array[] = {
   { "Feeder/Mixer Rate Control" },
   { "Section On/Off Control" },
   { "Product Pressure" },
@@ -1713,532 +1700,277 @@ s_functions IG2dvc26FunctionStr[16] = {
   { "Not Available" }
 };
 
-s_functions IG3dvc0FunctionStr[100] = {
-  { "Supplemental Engine Control Sensing " },
-  { "Laser Receiver " },
-  { "Land Leveling System Operator Interface " },
-  { "Land Leveling Electric Mast " },
-  { "Single Land Leveling System Supervisor " },
-  { "Land Leveling System Display " },
-  { "Laser Tracer " },
-  { "Loader Control " },
-  { "Slope Sensor " },
-  { "Liftarm Control " },
-  { "Supplemental Sensor Processing Units " },
-  { "Hydraulic System Planner " },
-  { "Hydraulic Valve Controller " },
-  { "Joystick Control " },
-  { "Rotation Sensor " },
-  { "Sonic Sensor " },
-  { "Survey Total Station Target " },
-  { "Heading Sensor " },
-  { "Alarm device " },
-  { "Not Available " }
+
+struct dvcFctWithSize_s {
+  const char** deviceClassFunction;
+  size_t arraySize;
+};
+dvcFctWithSize_s IG0deviceClassFunctionArray[] = {
+  { functionsIg0Dvc0Array, sizeof(functionsIg0Dvc0Array) / sizeof(functionsIg0Dvc0Array[0]) }
 };
 
-s_functions IG3dvc1FunctionStr[255] = {
-  { "Main Controller" },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "Not Available" }
+dvcFctWithSize_s IG1deviceClassFunctionArray[] = {
+  { functionsIg1Dvc0Array, sizeof(functionsIg1Dvc0Array) / sizeof(functionsIg1Dvc0Array[0]) },
+  { functionsIg1Dvc1Array, sizeof(functionsIg1Dvc1Array) / sizeof(functionsIg1Dvc1Array[0]) },
+  { functionsIg1Dvc2Array, sizeof(functionsIg1Dvc2Array) / sizeof(functionsIg1Dvc2Array[0]) }
+};
+dvcFctWithSize_s IG2deviceClassFunctionArray[] = {
+  { functionsIg2Dvc0Array,  sizeof(functionsIg2Dvc0Array) /  sizeof(functionsIg2Dvc0Array[0]) }, 
+  { functionsIg2Dvc1Array,  sizeof(functionsIg2Dvc1Array) /  sizeof(functionsIg2Dvc1Array[0]) }, 
+  { functionsIg2Dvc2Array,  sizeof(functionsIg2Dvc2Array) /  sizeof(functionsIg2Dvc2Array[0]) }, 
+  { functionsIg2Dvc3Array,  sizeof(functionsIg2Dvc3Array) /  sizeof(functionsIg2Dvc3Array[0]) },
+  { functionsIg2Dvc4Array,  sizeof(functionsIg2Dvc4Array) /  sizeof(functionsIg2Dvc4Array[0]) }, 
+  { functionsIg2Dvc5Array,  sizeof(functionsIg2Dvc5Array) /  sizeof(functionsIg2Dvc5Array[0]) }, 
+  { functionsIg2Dvc6Array,  sizeof(functionsIg2Dvc6Array) /  sizeof(functionsIg2Dvc6Array[0]) },
+  { functionsIg2Dvc7Array,  sizeof(functionsIg2Dvc7Array) /  sizeof(functionsIg2Dvc7Array[0]) },
+  { functionsIg2Dvc8Array,  sizeof(functionsIg2Dvc8Array) /  sizeof(functionsIg2Dvc8Array[0]) }, 
+  { functionsIg2Dvc9Array,  sizeof(functionsIg2Dvc9Array) /  sizeof(functionsIg2Dvc9Array[0]) }, 
+  { functionsIg2Dvc10Array, sizeof(functionsIg2Dvc10Array) / sizeof(functionsIg2Dvc10Array[0]) },
+  { functionsIg2Dvc11Array, sizeof(functionsIg2Dvc11Array) / sizeof(functionsIg2Dvc11Array[0]) },
+  { functionsIg2Dvc12Array, sizeof(functionsIg2Dvc12Array) / sizeof(functionsIg2Dvc12Array[0]) },
+  { functionsIg2Dvc13Array, sizeof(functionsIg2Dvc13Array) / sizeof(functionsIg2Dvc13Array[0]) },
+  { functionsIg2Dvc14Array, sizeof(functionsIg2Dvc14Array) / sizeof(functionsIg2Dvc14Array[0]) },
+  { functionsIg2Dvc15Array, sizeof(functionsIg2Dvc15Array) / sizeof(functionsIg2Dvc15Array[0]) },
+  { functionsIg2Dvc16Array, sizeof(functionsIg2Dvc16Array) / sizeof(functionsIg2Dvc16Array[0]) },
+  { functionsIg2Dvc17Array, sizeof(functionsIg2Dvc17Array) / sizeof(functionsIg2Dvc17Array[0]) },
+  { functionsIg2Dvc18Array, sizeof(functionsIg2Dvc18Array) / sizeof(functionsIg2Dvc18Array[0]) },
+  { functionsIg2Dvc19Array, sizeof(functionsIg2Dvc19Array) / sizeof(functionsIg2Dvc19Array[0]) },
+  { functionsIg2Dvc20Array, sizeof(functionsIg2Dvc20Array) / sizeof(functionsIg2Dvc20Array[0]) },
+  { functionsIg2Dvc21Array, sizeof(functionsIg2Dvc21Array) / sizeof(functionsIg2Dvc21Array[0]) },
+  { functionsIg2Dvc22Array, sizeof(functionsIg2Dvc22Array) / sizeof(functionsIg2Dvc22Array[0]) },
+  { functionsIg2Dvc23Array, sizeof(functionsIg2Dvc23Array) / sizeof(functionsIg2Dvc23Array[0]) },
+  { functionsIg2Dvc24Array, sizeof(functionsIg2Dvc24Array) / sizeof(functionsIg2Dvc24Array[0]) },
+  { functionsIg2Dvc25Array, sizeof(functionsIg2Dvc25Array) / sizeof(functionsIg2Dvc25Array[0]) },
+  { functionsIg2Dvc26Array, sizeof(functionsIg2Dvc26Array) / sizeof(functionsIg2Dvc26Array[0]) }
 };
 
-s_functions IG3dvc2FunctionStr[255] = {
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "n.a." },
-  { "Not Available" }
-};
-
-s_functions IG3dvc3FunctionStr[16] = {
-  {"Not Available"}
-};
-
-s_functions IG3dvc4FunctionStr[16] = {
-  {"Blade Controller"},
-  {"Not Available"}
-};
-s_functions IG3dvc5FunctionStr[16] = {
-  { "Slope Sensor" },
-  { "Not Available" }
-};
-
-s_functions IG3dvc6FunctionStr[16] = {
-  {"Not Available"}
-};
-
-s_functions IG3dvc7FunctionStr[16] = {
-  {"Not Available"}
-};
-
-s_functions IG3dvc8FunctionStr[16] = {
-  { "HFWD Controller " },
-  { "Not Available " },
-};
-
-struct s_DVCFKT {
-  s_functions *deviceClassFunction;
-};
-s_DVCFKT IG0deviceClassFunctionArray[1] = {
-  { IG0dvc0FunctionStr }
-};
-
-s_DVCFKT IG1deviceClassFunctionArray[3] = {
-  { IG1dvc0FunctionStr },{ IG1dvc1FunctionStr },{ IG1dvc2FunctionStr }
-};
-s_DVCFKT IG2deviceClassFunctionArray[27] = {
-  { IG2dvc0FunctionStr },{ IG2dvc1FunctionStr },{ IG2dvc2FunctionStr },{ IG2dvc3FunctionStr },{ IG2dvc4FunctionStr },{ IG2dvc5FunctionStr },{ IG2dvc6FunctionStr },{ IG2dvc7FunctionStr },
-  { IG2dvc8FunctionStr },{ IG2dvc9FunctionStr },{ IG2dvc10FunctionStr },{ IG2dvc11FunctionStr },{ IG2dvc12FunctionStr },{ IG2dvc13FunctionStr },{ IG2dvc14FunctionStr },{ IG2dvc15FunctionStr },
-  { IG2dvc16FunctionStr },{ IG2dvc17FunctionStr },{ IG2dvc18FunctionStr },{ IG2dvc19FunctionStr },{ IG2dvc20FunctionStr },{ IG2dvc21FunctionStr },{ IG2dvc22FunctionStr },{ IG2dvc23FunctionStr },
-  { IG2dvc24FunctionStr },{ IG2dvc25FunctionStr },{ IG2dvc26FunctionStr }
-};
-
+// ui8 SA stored as ui16 for cout convenience
 std::map<uint64_t, std::vector<uint16_t>> listOfNamesAndAddresses;
 
-void readOutName(std::ostream& out, PtrDataFrame_t at_ptrFrame)
+struct namefields_s
 {
-  bool boSelfConfig;
-  uint16_t IndustryGroup;
-  uint16_t DeviceClass;
-  uint16_t DeviceClassInstance;
-  uint16_t ManufacturerCode;
-  uint16_t Function;
-  uint16_t FunctionInstance;
-  uint16_t EcuInstance;
-  uint16_t SerNo;
-  std::vector<uint16_t> listOfAddresses;
-  uint64_t fullName = 0;
-  char charShortened[LENGTH_OUTPUT_STRING+1];
+    bool boSelfConfig;
+    uint16_t IndustryGroup;
+    uint16_t DeviceClass;
+    uint16_t DeviceClassInstance;
+    uint16_t ManuCode;
+    uint16_t Function;
+    uint16_t FunctionInstance;
+    uint16_t EcuInstance;
+    uint16_t SerNo;
+};
 
-  boSelfConfig = at_ptrFrame->dataOctet(7);
-  IndustryGroup = (at_ptrFrame->dataOctet(7) >> 4) & 0x7;
-  DeviceClass = at_ptrFrame->dataOctet(6) >> 1;
-  DeviceClassInstance = (at_ptrFrame->dataOctet(7) & 0xF);
-  ManufacturerCode = (at_ptrFrame->dataOctet(3) << 3) | (at_ptrFrame->dataOctet(2) >> 5);
-  Function = (at_ptrFrame->dataOctet(5));
-  FunctionInstance = (at_ptrFrame->dataOctet(4) >> 3);
-  EcuInstance = (at_ptrFrame->dataOctet(4) & 0x7);
-  SerNo = at_ptrFrame->dataOctet(2) & 0x1F << 16 | (at_ptrFrame->dataOctet(1) << 8) | at_ptrFrame->dataOctet(0);
-  uint16_t sourceAddress = at_ptrFrame->sourceAddress();
-  for (uint8_t i = 0; i < 8; i++)
-  {
-    fullName |=  ((uint64_t)at_ptrFrame->dataOctet(7-i) << (7-i) * BITS_PER_BYTE);
-  }
+namefields_s decodeName(const std::vector<uint8_t> &dataFrame)
+{
+    namefields_s decodedName;
+    decodedName.boSelfConfig = dataFrame[7];
+    decodedName.IndustryGroup = (dataFrame[7] >> 4) & 0x7;
+    decodedName.DeviceClass = dataFrame[6] >> 1;
+    decodedName.DeviceClassInstance = (dataFrame[7] & 0xF);
+    decodedName.ManuCode = (dataFrame[3] << 3) | (dataFrame[2] >> 5);
+    decodedName.Function = (dataFrame[5]);
+    decodedName.FunctionInstance = (dataFrame[4] >> 3);
+    decodedName.EcuInstance = (dataFrame[4] & 0x7);
+    decodedName.SerNo = dataFrame[2] & 0x1F << 16 | (dataFrame[1] << 8) | dataFrame[0];
+    return decodedName;
+}
 
-  listOfAddresses.push_back(sourceAddress);
-  std::pair<std::map<uint64_t, std::vector<uint16_t>>::iterator, bool> ret;
-  ret = listOfNamesAndAddresses.insert(std::make_pair(fullName, listOfAddresses));
-  if (ret.second == false)
-  {
-    //Name already existed
-    //check if the current source address differs from the last stored source address
-    if (ret.first->second.back() != sourceAddress)
+inline const char* getFunction(const uint16_t industryGroup, const uint16_t deviceClass, const uint16_t function)
+{
+    if (function < 128)
     {
-      ret.first->second.push_back(sourceAddress);
+        if (function < sizeof(functionsBasicArray) / sizeof(functionsBasicArray[0]))
+        {
+            return functionsBasicArray[function];
+        }
+        else
+        {
+            return "undefined";
+        }
     }
-    //else: the address is equal to the last stored address, nothing needs to be done here
-  }
-  //else: the new name was inserted, nothing needs to be done here
-
-  //print out decoded name
-  out << fullName << ": " << std::setfill(' ');
-  if (Function < 86)
-  {
-    if (strlen(functions_basic[Function]) < LENGTH_OUTPUT_STRING)
+    else //function >= 128
     {
-      out << std::setw(LENGTH_OUTPUT_STRING) << std::left << functions_basic[Function] << "/";
+        switch (industryGroup)
+        {
+        case 0:
+            if (deviceClass < sizeof(IG0deviceClassFunctionArray) / sizeof(IG0deviceClassFunctionArray[0]) &&
+                (function - 128) < IG0deviceClassFunctionArray[deviceClass].arraySize)
+            {
+                return IG0deviceClassFunctionArray[deviceClass].deviceClassFunction[function - 128];
+            }
+            else
+            {
+                return "undefined";
+            }
+            break;
+        case 1:
+            if (deviceClass < sizeof(IG1deviceClassFunctionArray) / sizeof(IG1deviceClassFunctionArray[0]) &&
+                (function - 128) < IG1deviceClassFunctionArray[deviceClass].arraySize)
+            {
+                return IG1deviceClassFunctionArray[deviceClass].deviceClassFunction[function - 128];
+            }
+            else
+            {
+                return "undefined";
+            }
+            break;
+        case 2:
+            if (deviceClass < sizeof(IG2deviceClassFunctionArray) / sizeof(IG2deviceClassFunctionArray[0]) &&
+                (function - 128) < IG2deviceClassFunctionArray[deviceClass].arraySize)
+            {
+                return IG2deviceClassFunctionArray[deviceClass].deviceClassFunction[function - 128];
+            }
+            else
+            {
+                return "undefined";
+            }
+            break;
+        case 3:     //break left out intentionally
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+            return "Function not included yet";
+            break;
+        default:
+            return "not defined yet";
+        }
+    }
+}
+
+inline const char* getDeviceClass(const uint16_t deviceClass)
+{
+    if (deviceClass < sizeof(deviceClassArray) / (sizeof(deviceClassArray[0])))
+    {
+        return deviceClassArray[deviceClass];
     }
     else
     {
-      for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
-      {
-          charShortened[i] = functions_basic[Function][i];
-      }
-      charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
-      out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
+        return "undefined";
     }
-  }
-  else
-  {
-    switch(IndustryGroup)
-    {
-      case 0:
-          if (IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString.length() < LENGTH_OUTPUT_STRING)
-          {
-              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << "/";
-          }
-          else
-          {
-              for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
-              {
-                  charShortened[i] = IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString[i];
-              }
-              charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
-              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-          }
-          break;
-      case 1:
-          if (IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString.length() < LENGTH_OUTPUT_STRING)
-          {
-              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << "/";
-          }
-          else
-          {
-              for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
-              {
-                  charShortened[i] = IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString[i];
-              }
-              charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
-              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-          }
-          break;
-      case 2:
-          if (IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString.length() < LENGTH_OUTPUT_STRING)
-          {
-              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << "/";
-          }
-          else
-          {
-              for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
-              {
-                  charShortened[i] = IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString[i];
-              }
-              charShortened[LENGTH_OUTPUT_STRING-1] = '\0';
-              out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-          }
-          break;
-      case 3:     //break left out intentionally
-      case 4:
-      case 5:
-      case 6:
-      case 7:
-          out << std::setw(LENGTH_OUTPUT_STRING) << std::left << "Function not included yet";
-          break;
-      default:
-          break;
-    }
-  }
+}
 
-  if (strlen(vehicleSystem[DeviceClass]) < LENGTH_OUTPUT_STRING)
-  {
-    out << std::setw(LENGTH_OUTPUT_STRING) << std::left << vehicleSystem[DeviceClass] << "/";
-  }
-  else
-  {
-    for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
+inline const char* getManufacturer(const uint16_t ManuCode)
+{
+    if (ManuCode < sizeof(manufacturerCodeArray) / (sizeof(manufacturerCodeArray[0])))
     {
-      charShortened[i] = vehicleSystem[DeviceClass][i];
+        return manufacturerCodeArray[ManuCode];
     }
-    charShortened[LENGTH_OUTPUT_STRING] = '\0';
-    out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-  }
-  if (strlen(manuCode[ManufacturerCode]) < LENGTH_OUTPUT_STRING)
-  {
-    out << std::setw(LENGTH_OUTPUT_STRING) << std::left << manuCode[ManufacturerCode] << "/";
-  }
-  else
-  {
-    for (uint8_t i = 0; i < LENGTH_OUTPUT_STRING; i++)
+    else
     {
-      charShortened[i] = manuCode[ManufacturerCode][i];
+        return "undefined";
     }
-    charShortened[LENGTH_OUTPUT_STRING] = '\0';
-    out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened << "/";
-  }
-  if (boSelfConfig)
-  {
-    out << std::left << " SC[X] /";
-  }
-  else
-  {
-    out << std::left << " SC[ ] /";
-  }
-  out << std::left << " FI[" << FunctionInstance << "] /" << " DCI[" << DeviceClassInstance << "] /" << " ECUI[" << EcuInstance << "]" << std::right << std::setw(0);
+}
+
+inline const char* getIndustryGroup(const uint16_t IndustryGroup)
+{
+    if (IndustryGroup < 8)
+    {
+        return industryGroupArray[IndustryGroup];
+    }
+    else
+    {
+        return "undefined";
+    }
+
+}
+inline void printShortenedString(std::ostream& out, const char* string)
+{
+    char charShortened[LENGTH_OUTPUT_STRING];
+    if (strlen(string) < LENGTH_OUTPUT_STRING)
+    {
+        out << std::setw(LENGTH_OUTPUT_STRING) << std::left << string;
+    }
+    else
+    {
+        snprintf(charShortened, LENGTH_OUTPUT_STRING, "%s", string);
+        out << std::setw(LENGTH_OUTPUT_STRING) << std::left << charShortened;
+    }
+}
+
+void readOutName(std::ostream& out, PtrDataFrame_t at_ptrFrame)
+{
+    namefields_s isobusName;
+    uint16_t sourceAddress;
+    std::vector<uint16_t> listOfAddresses;
+    uint64_t fullName = 0;
+
+    // Decode NAME
+    isobusName = decodeName(at_ptrFrame->data());
+
+    sourceAddress = at_ptrFrame->sourceAddress();
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        fullName |= ((uint64_t)at_ptrFrame->dataOctet(7 - i) << (7 - i) * BITS_PER_BYTE);
+    }
+
+    // Track SA changes for this NAME
+    listOfAddresses.push_back(sourceAddress);
+    std::pair<std::map<uint64_t, std::vector<uint16_t>>::iterator, bool> ret;
+    ret = listOfNamesAndAddresses.insert(std::make_pair(fullName, listOfAddresses));
+    if (ret.second == false)
+    {
+        //Name already existed
+        //check if the current source address differs from the last stored source address
+        if (ret.first->second.back() != sourceAddress)
+        {
+            ret.first->second.push_back(sourceAddress);
+        }
+        //else: the address is equal to the last stored address, nothing needs to be done here
+    }
+    //else: the new name was inserted, nothing needs to be done here
+
+    // Print out decoded NAME
+    out << fullName << ": " << std::setfill(' ');
+
+    printShortenedString(std::cout, getFunction(isobusName.IndustryGroup, isobusName.DeviceClass, isobusName.Function));
+    out << "/";
+
+    printShortenedString(std::cout, getDeviceClass(isobusName.DeviceClass));
+    out << "/";
+
+    printShortenedString(std::cout, getManufacturer(isobusName.ManuCode));
+    out << "/";
+
+    if (isobusName.boSelfConfig)
+    {
+        out << std::left << " SC[X] /";
+    }
+    else
+    {
+        out << std::left << " SC[ ] /";
+    }
+    out << std::left << " FI[" << isobusName.FunctionInstance << "] /" << " DCI[" << isobusName.DeviceClassInstance << "] /" << " ECUI[" << isobusName.EcuInstance << "]" << std::right << std::setw(0);
 };
 
 void printFullNameAndAddressList(std::ostream& out) {
   using std::hex;
-  bool boSelfConfig;
-  uint16_t IndustryGroup;
-  uint16_t DeviceClass;
-  uint16_t DeviceClassInstance;
-  uint16_t ManufacturerCode;
-  uint16_t Function;
-  uint16_t FunctionInstance;
-  uint16_t EcuInstance;
-  uint16_t SerNo;
-  uint16_t dataOctet[8];
+  namefields_s isobusName;
+  std::vector<uint8_t> dataOctet;
   std::map<uint64_t, std::vector<uint16_t>>::iterator it;
 
   out << std::setfill(' ');
-  
   out << std::endl << std::endl << "Summary of ISOBUS Names with their claimed source addresses: " << std::endl << std::endl;
   out << std::setw(20) <<std::left << "NAME (64bit number)" <<std::setw(30) << "NAME (LE as on CAN)"  <<std::setw(11) <<std::left 
       << "Addresses" << std::setw(100) << "Decoded" << std::endl;
   
   for (it = listOfNamesAndAddresses.begin(); it != listOfNamesAndAddresses.end(); ++it)
   {
+    dataOctet.clear();
+
     //print name (as 64 bit number)
     out <<std::setw(20)<<std::left<< std::hex << it->first;
 
     //create data octets from full name:
     for (uint8_t i = 0; i < 8; i++)
     {
-      dataOctet[i] = 0xFF & it->first >> (i * BITS_PER_BYTE);
+      dataOctet.push_back(0xFF & it->first >> (i * BITS_PER_BYTE));
     }
 
     //print name as LE as on CAN bus:
     for (uint8_t i = 0; i < 8; i++)
     {
-      out << std::setfill('0') << std::setw(2) << std::hex << dataOctet[i] << " ";
+      out << std::setfill('0') << std::setw(2) << std::hex << (uint16_t)dataOctet[i] << " ";
     }
 
     out << std::setfill(' ') << std::setw(6) << " ";
@@ -2253,22 +1985,14 @@ void printFullNameAndAddressList(std::ostream& out) {
     };
     out << std::setw(12 - it->second.size() * 3) << " ";
 
-    boSelfConfig = dataOctet[7];
-    IndustryGroup = (dataOctet[7]>> 4) & 0x7;
-    DeviceClass = dataOctet[6] >> 1;
-    DeviceClassInstance = (dataOctet[7] & 0xF);
-    ManufacturerCode = (dataOctet[3] << 3) | (dataOctet[2] >> 5);
-    Function = (dataOctet[5]);
-    FunctionInstance = (dataOctet[4] >> 3);
-    EcuInstance = (dataOctet[4] & 0x7);
-    SerNo = dataOctet[2] & 0x1F << 16 | (dataOctet[1] << 8) | dataOctet[0];
+    isobusName = decodeName(dataOctet);
 
     //print decoded NAME
     out << std::left << " Man  DC  DCI   F   FI ECUI SC IG" << std::endl;
-    out << std::setw(61) << std::dec << " " << std::left << "[" << std::setw(3) << std::right << ManufacturerCode << "]" << "[" << std::setw(2) << std::right 
-      << DeviceClass << "]" << "[" << std::setw(2) << std::right << DeviceClassInstance << "]" << "[" << std::setw(3) << std::right << Function << "]" << "[" 
-      << std::setw(3) << std::right << FunctionInstance << "]" << "[" << std::setw(3) << EcuInstance << "]";
-    if (boSelfConfig)
+    out << std::setw(61) << std::dec << " " << std::left << "[" << std::setw(3) << std::right << isobusName.ManuCode << "]" << "[" << std::setw(2) << std::right 
+      << isobusName.DeviceClass << "]" << "[" << std::setw(2) << std::right << isobusName.DeviceClassInstance << "]" << "[" << std::setw(3) << std::right << isobusName.Function << "]" << "["
+      << std::setw(3) << std::right << isobusName.FunctionInstance << "]" << "[" << std::setw(3) << isobusName.EcuInstance << "]";
+    if (isobusName.boSelfConfig)
     {
       out << std::setw(3) << "[X]";
     }
@@ -2276,38 +2000,16 @@ void printFullNameAndAddressList(std::ostream& out) {
     {
       out << std::setw(3) << "[ ]";
     }
-    out << "[" << IndustryGroup << "]__ " << industrieGruppe[IndustryGroup] << std::endl;;
+    out << "[" << isobusName.IndustryGroup << "]__ ";
+    out << getIndustryGroup(isobusName.IndustryGroup) << std::endl;
 
-    if (Function < 86)
-    {
-      out << std::setw(63) << " " << "|    |        |___________________ " << functions_basic[Function] << std::endl;
-    }
-    else
-    {
-      out << std::setw(63) << " " << "|    |        |___________________ ";
-      switch (IndustryGroup)
-      {
-        case 0:
-            out << IG0deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << std::endl;
-            break;
-        case 1:
-            out << IG1deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << std::endl;
-            break;
-        case 2:
-            out << IG2deviceClassFunctionArray[DeviceClass].deviceClassFunction[Function - 128].functionString << std::endl;
-            break;
-        case 3:   //break left out intentionally
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-            out << "Function not included in Logalizer yet" << std::endl;
-            break;
-        default:
-            break;
-      }
-    }
-    out << std::setw(63) << " " << "|    |____________________________ " << vehicleSystem[DeviceClass] << std::endl;
-    out << std::setw(63) << " " << "|_________________________________ " << manuCode[ManufacturerCode] << std::endl;
+    out << std::setw(63) << " " << "|    |        |___________________ ";
+    out << getFunction(isobusName.IndustryGroup, isobusName.DeviceClass, isobusName.Function) << std::endl;
+
+    out << std::setw(63) << " " << "|    |____________________________ ";
+    out << getDeviceClass(isobusName.DeviceClass) << std::endl;
+
+    out << std::setw(63) << " " << "|_________________________________ ";
+    out << getManufacturer(isobusName.ManuCode) << std::endl;
   }
 }
