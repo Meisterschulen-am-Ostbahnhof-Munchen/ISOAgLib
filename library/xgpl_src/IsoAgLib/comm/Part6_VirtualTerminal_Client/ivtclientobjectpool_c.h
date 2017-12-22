@@ -82,12 +82,20 @@ public:
   virtual void eventKeyCode (uint8_t aui8_keyActivationCode, uint16_t aui16_objId, uint16_t aui16_objIdMask, uint8_t aui8_keyCode, bool ab_wasButton)=0;
 
   /**
-    hook function that gets called after the ISO_Terminal_c instance
-    receives a "Pointing Event" Message
-    <!--@param aui16_xPosition of where the user has clicked (besides buttons and input objects) or touched
-    @param aui16_yPosition of where the user has clicked (besides buttons and input objects) or touched-->
+    hook function that gets called on a "Pointing Event" Message
+    @param xPositionVt x position of where the user has clicked (besides buttons and input objects) or touched, based on scaled to VT's dimensions
+    @param yPositionVt y position of where the user has clicked (besides buttons and input objects) or touched, based on scaled to VT's dimensions
   */
-  virtual void eventPointingEvent (uint16_t /*aui16_xPosition*/, uint16_t /*aui16_yPosition*/) {}
+  virtual void eventPointingEvent (uint16_t xPositionVt, uint16_t yPositionVt) { (void)xPositionVt; (void)yPositionVt; }
+
+  /**
+    hook function that gets called on a "Pointing Event" Message
+    NOTE: Positions can be negative here, in case an offset for the DataMask is used when uploading!
+          If normal fullscreen scaling is used, it's not negative.
+    @param xPositionOp x position of where the user has clicked (besides buttons and input objects) or touched, based on unscaled OP's dimensions
+    @param yPositionOp y position of where the user has clicked (besides buttons and input objects) or touched, based on unscaled OP's dimensions
+  */
+  virtual void eventPointingEventOp (int16_t xPositionOp, int16_t yPositionOp) { (void)xPositionOp; (void)yPositionOp; }
 
   /**
     hook function that gets called after the ISO_Terminal_c instance
