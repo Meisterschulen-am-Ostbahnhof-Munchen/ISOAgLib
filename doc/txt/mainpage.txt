@@ -45,6 +45,9 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 \subsection Change_ZJ 2.9.0 to 2.9.x
 
 VT-Client:
+ - Enhancement:
+   - Added eventPointingEventOp for back-scaled Pointing Event positions
+   - Renamed some Enabled -> SecondOptions Bit; Added getEnabled that masks properly
  - Bugfix:
    - Change Child Position now takes the dam/sk offset into account
    - AUX-N Functions:
