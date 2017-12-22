@@ -87,12 +87,18 @@ public:
     vtObjectInputNumber_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
+  void setSecondOptionsByte(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectInputNumber_c::setSecondOptionsByte (newValue, b_updateObject, b_enableReplaceOfCmd);
+  }
+
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false){
     vtObjectInputNumber_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); }
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1 | (get_vtObjectInputNumber_a().secondOptionsByte & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0 | (get_vtObjectInputNumber_a().secondOptionsByte & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+
+  bool getEnabled() { return get_vtObjectInputNumber_a().secondOptionsByte & 0x1; }
 
   bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

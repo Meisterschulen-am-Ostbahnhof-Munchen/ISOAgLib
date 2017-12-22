@@ -47,7 +47,7 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
       destMemory [9] = vtObjectInputList_a->value;
 
       destMemory [10] = vtObjectInputList_a->numberOfObjectsToFollow;
-      destMemory [11] = vtObjectInputList_a->enabled;
+      destMemory [11] = vtObjectInputList_a->options;
       destMemory [12] = vtObjectInputList_a->numberOfMacrosToFollow;
       sourceOffset += 13;
       curBytes += 13;
@@ -87,7 +87,7 @@ vtObjectInputList_c::fitTerminal() const
 void
 vtObjectInputList_c::updateEnable(uint8_t aui8_enOrDis)
 {
-  saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), aui8_enOrDis);
+  saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), options), sizeof(iVtObjectInputList_s), aui8_enOrDis);
 }
 
 

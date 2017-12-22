@@ -55,12 +55,18 @@ public:
     vtObjectInputList_c::setVariableReference(newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectInputList_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
+  }
+
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputList_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); }
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1 | (get_vtObjectInputList_a().options & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0 | (get_vtObjectInputList_a().options & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+
+  bool getEnabled() { return get_vtObjectInputList_a().options & 0x1; }
 
   bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 

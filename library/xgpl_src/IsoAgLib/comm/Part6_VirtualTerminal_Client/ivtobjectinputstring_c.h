@@ -83,8 +83,10 @@ public:
     vtObjectInputString_c::setHorizontalJustification (newHorizontalJustification, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); }
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1 | (get_vtObjectInputString_a().enabled & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0 | (get_vtObjectInputString_a().enabled & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+
+  bool getEnabled() { return get_vtObjectInputString_a().enabled & 0x1; }
 
   bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

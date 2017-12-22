@@ -97,6 +97,10 @@ public:
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), horizontalJustification) : 0, sizeof(iVtObjectInputNumber_s), 13, newValue, newValue, b_enableReplaceOfCmd);
   }
 
+  void setSecondOptionsByte(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), secondOptionsByte) : 0, sizeof(iVtObjectInputNumber_s), 14, newValue, newValue, b_enableReplaceOfCmd);
+  }
+
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

@@ -153,7 +153,7 @@ public:
     uint16_t height;
     iVtObject_c* variableReference;
     uint8_t value;
-    uint8_t enabled;
+    uint8_t options;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
