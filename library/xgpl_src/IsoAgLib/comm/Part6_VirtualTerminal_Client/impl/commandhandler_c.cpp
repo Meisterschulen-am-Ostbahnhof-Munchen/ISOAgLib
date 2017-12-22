@@ -1086,10 +1086,29 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
     break;
 
   case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
-    pool.eventPointingEvent(
-        pkg.getUint8Data( 1 ) | (pkg.getUint8Data( 2 ) << 8) /* X position in pixels */,
-        pkg.getUint8Data( 3 ) | (pkg.getUint8Data( 4 ) << 8) /* Y position in pixels */);
+  {
+    const int32_t opDimension = m_connection.getVtObjectPoolDimension();
+    const int32_t vtDimension = m_connection.getHwDimension();
+    const int32_t vtOffsetX   = m_connection.getHwOffsetX();
+    const int32_t vtOffsetY   = m_connection.getHwOffsetY();
+
+    const uint16_t xPosVt = pkg.getUint8Data( 1 ) | (pkg.getUint8Data( 2 ) << 8);
+    const uint16_t yPosVt = pkg.getUint8Data( 3 ) | (pkg.getUint8Data( 4 ) << 8);
+
+    pool.eventPointingEvent( xPosVt, yPosVt );
+
+    int32_t xPosOp = xPosVt - vtOffsetX;
+    int32_t yPosOp = yPosVt - vtOffsetY;
+
+    xPosOp *= opDimension;
+    xPosOp /= vtDimension;
+
+    yPosOp *= opDimension;
+    yPosOp /= vtDimension;
+
+    pool.eventPointingEventOp ((int16_t)xPosOp, (int16_t)yPosOp );
     break;
+  }
 
   case 0x03: // Command: "VT Select Input Object"
     pool.eventVtSelectInputObject(
