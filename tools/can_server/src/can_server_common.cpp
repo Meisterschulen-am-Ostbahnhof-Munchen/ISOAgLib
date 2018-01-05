@@ -20,6 +20,7 @@
 #include <sstream>
 #include <functional>
 #include <algorithm>
+#include <string>
 #include <string.h>
 
 #ifdef WIN32
@@ -450,6 +451,55 @@ std::string Option_c< OPTION_PRODUCTIVE >::doGetUsage() const
   return "  --productive               Set productive mode (contrarily to --interactive)\n";
 }
 
+template <>
+int Option_c< OPTION_INITIAL_CAN_OPEN >::doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const
+{
+  if (!strcmp(argv[ai_pos], "--init")) {
+    if (ai_pos+1>=argc) {
+      std::cerr << "error: option needs second parameter" << std::endl;
+      exit(1);
+    }
+
+    std::string arg2 = std::string(argv[ai_pos+1]);
+    std::size_t pos_delimiter = arg2.find(',');
+    if(std::string::npos != pos_delimiter)
+    {
+      std::string str_baud = arg2.substr(pos_delimiter + 1);
+
+      int baud = 0;
+      std::stringstream(str_baud) >> baud;
+
+      if(baud > 0)
+      {
+        ar_server.m_initialOpenChannelBaud = baud;
+      }
+      arg2 = arg2.substr(0, pos_delimiter);
+    }
+
+    int bus = 0;
+    std::stringstream(arg2) >> bus;
+    if(bus >= 0)
+    {
+      ar_server.m_initialOpenChannel = bus;
+    }
+
+    return 2;
+  }
+  return 0;
+}
+
+template <>
+std::string Option_c< OPTION_INITIAL_CAN_OPEN >::doGetSetting(__HAL::server_c &ar_server) const
+{
+  return (ar_server.m_initialOpenChannel >= 0) ? "" : "Initial CAN bus open\n";
+}
+
+template <>
+std::string Option_c< OPTION_INITIAL_CAN_OPEN >::doGetUsage() const
+{
+  return "  --init <can_bus>[,<baud_rate>]      Open specified CAN without active client\n";
+}
+
 #ifndef WIN32
 /*  WIN32 Platforms can't handle the daemonize syscall. The service aequivalent is not supported by can_server */
 template <>
@@ -549,4 +599,25 @@ void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE 
       fprintf(f_handle, " %-3hx", ps_canMsg->ui8_data[ui8_i]);
     fprintf(f_handle, "\n");
     fflush(f_handle);
+}
+
+void initialCanOpen(__HAL::server_c* pc_serverData)
+{
+  if(pc_serverData->m_initialOpenChannel >= 0)
+  {
+    if (pc_serverData->mb_logMode) {
+      newFileLog( pc_serverData, pc_serverData->m_initialOpenChannel);
+    }
+
+    if (!openBusOnCard(pc_serverData->m_initialOpenChannel,
+                       pc_serverData->m_initialOpenChannelBaud,
+                       pc_serverData))
+    {
+      std::cerr << "Can't initialize CAN-BUS." << std::endl;
+      std::cerr << "CAN device/driver not ready.\n" << std::endl;
+      exit(1);
+    }
+
+    pc_serverData->canBus(pc_serverData->m_initialOpenChannel).mui16_busRefCnt++;
+  }
 }

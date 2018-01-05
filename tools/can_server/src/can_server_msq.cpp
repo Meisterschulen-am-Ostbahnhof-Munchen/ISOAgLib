@@ -87,6 +87,8 @@ __HAL::server_c::server_c() :
   mb_monitorMode(false),
   mb_inputFileMode(false),
   mf_canInput(0),
+  m_initialOpenChannel(-1),
+  m_initialOpenChannelBaud(250),
   mb_daemon(false),
   mi32_lastPipeId(0),
   mi16_reducedLoadOnIsoBus(-1),
@@ -1185,6 +1187,7 @@ yasper::ptr< AOption_c > const ga_options[] = {
   Option_c< OPTION_NICE_CAN_READ >::create(),
   Option_c< OPTION_INTERACTIVE >::create(),
   Option_c< OPTION_PRODUCTIVE >::create(),
+  Option_c< OPTION_INITIAL_CAN_OPEN >::create(),
 #ifndef WIN32
   Option_c< OPTION_DAEMON > ::create(),
 #endif
@@ -1241,6 +1244,8 @@ int main(int argc, char *argv[])
   if (c_serverData.mi_canReadNiceValue)
     setpriority(PRIO_PROCESS, 0, c_serverData.mi_canReadNiceValue);
 #endif
+
+  initialCanOpen(&c_serverData);
 
   can_read(&c_serverData);
 }

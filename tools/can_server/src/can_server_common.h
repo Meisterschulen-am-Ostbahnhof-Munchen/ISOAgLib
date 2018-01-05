@@ -95,6 +95,10 @@ public:
   // replay
   bool     mb_inputFileMode;
   FILE*    mf_canInput;
+  // initial CAN open
+  int      m_initialOpenChannel;
+  int      m_initialOpenChannelBaud;
+
 #ifndef WIN32
   // daemon option
   bool     mb_daemon;
@@ -169,6 +173,7 @@ enum OPTION_REDUCED_LOAD_ISO_BUS_NO {};
 enum OPTION_NICE_CAN_READ {};
 enum OPTION_INTERACTIVE {};
 enum OPTION_PRODUCTIVE {};
+enum OPTION_INITIAL_CAN_OPEN {};
 #ifndef WIN32
 enum OPTION_DAEMON {};
 #endif
@@ -204,5 +209,7 @@ bool     readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_s
 bool     isBusOpen(uint8_t ui8_bus);
 
 void sendUserMsg(uint32_t DLC, uint32_t ui32_id, uint32_t ui32_bus, uint8_t ui8_xtd, uint8_t* pui8_data, __HAL::server_c* pc_serverData);
+
+void initialCanOpen(__HAL::server_c* pc_serverData);
 
 #endif //ndef _CAN_SERVER_COMMON_H_

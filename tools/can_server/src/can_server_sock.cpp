@@ -76,6 +76,8 @@ __HAL::server_c::server_c() :
   mb_monitorMode(false),
   mb_inputFileMode(false),
   mf_canInput(0),
+  m_initialOpenChannel(-1),
+  m_initialOpenChannelBaud(250),
 #ifndef WIN32
   mb_daemon(false),
 #endif
@@ -1036,6 +1038,7 @@ yasper::ptr< AOption_c > const ga_options[] = {
   Option_c< OPTION_REDUCED_LOAD_ISO_BUS_NO >::create(),
   Option_c< OPTION_INTERACTIVE >::create(),
   Option_c< OPTION_PRODUCTIVE >::create(),
+  Option_c< OPTION_INITIAL_CAN_OPEN >::create(),
 #ifndef WIN32
   Option_c< OPTION_DAEMON>::create(),
 #endif
@@ -1074,6 +1077,8 @@ int main(int argc, char *argv[])
       exit( i_status ); // thread could not be created
     }
   }
+
+  initialCanOpen(&c_serverData);
 
   readWrite(&c_serverData);
 }
