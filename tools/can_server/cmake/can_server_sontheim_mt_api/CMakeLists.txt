@@ -29,12 +29,12 @@ include_directories(
 if(WIN32)
   include_directories(
     ../../../../tools/libs/pthread/include
-    "C:/Programme/Sontheim/MT_Api/Header")
+    "C:/Programme/Sontheim/MT_Api/7.4.78.0/Header")
 
   find_package(Threads REQUIRED)
   link_directories(
     ../../../../tools/libs/pthread/lib
-    "C:/Programme/Sontheim/MT_Api/Library")
+    "C:/Programme/Sontheim/MT_Api/7.4.78.0/Library")
   set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32 SIECA132)
 else()
   message( FATAL_ERROR "This can server variant can't be build on non Windows systems.")
