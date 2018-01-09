@@ -460,6 +460,8 @@ int Option_c< OPTION_INITIAL_CAN_OPEN >::doCheckAndHandle(int argc, char *argv[]
       exit(1);
     }
 
+    __HAL::server_c::InitialOpenChannelData data;
+
     std::string arg2 = std::string(argv[ai_pos+1]);
     std::size_t pos_delimiter = arg2.find(',');
     if(std::string::npos != pos_delimiter)
@@ -471,7 +473,7 @@ int Option_c< OPTION_INITIAL_CAN_OPEN >::doCheckAndHandle(int argc, char *argv[]
 
       if(baud > 0)
       {
-        ar_server.m_initialOpenChannelBaud = baud;
+         data.baud_rate = baud;
       }
       arg2 = arg2.substr(0, pos_delimiter);
     }
@@ -480,7 +482,8 @@ int Option_c< OPTION_INITIAL_CAN_OPEN >::doCheckAndHandle(int argc, char *argv[]
     std::stringstream(arg2) >> bus;
     if(bus >= 0)
     {
-      ar_server.m_initialOpenChannel = bus;
+      data.bus_number = bus;
+      ar_server.m_l_initialOpenChannelData.push_back(data);
     }
 
     return 2;
@@ -491,13 +494,13 @@ int Option_c< OPTION_INITIAL_CAN_OPEN >::doCheckAndHandle(int argc, char *argv[]
 template <>
 std::string Option_c< OPTION_INITIAL_CAN_OPEN >::doGetSetting(__HAL::server_c &ar_server) const
 {
-  return (ar_server.m_initialOpenChannel >= 0) ? "" : "Initial CAN bus open\n";
+  return (ar_server.m_l_initialOpenChannelData.size() >= 0) ? "" : "Initial CAN bus open\n";
 }
 
 template <>
 std::string Option_c< OPTION_INITIAL_CAN_OPEN >::doGetUsage() const
 {
-  return "  --init <can_bus>[,<baud_rate>]      Open specified CAN without active client\n";
+  return "  --init <can_bus>[,<baud_rate>]  Open specified CAN without active client (can be used multiple times)\n";
 }
 
 #ifndef WIN32
@@ -603,14 +606,16 @@ void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE 
 
 void initialCanOpen(__HAL::server_c* pc_serverData)
 {
-  if(pc_serverData->m_initialOpenChannel >= 0)
+  for(std::list<__HAL::server_c::InitialOpenChannelData>::const_iterator iter = pc_serverData->m_l_initialOpenChannelData.begin();
+      iter != pc_serverData->m_l_initialOpenChannelData.end();
+      ++iter)
   {
     if (pc_serverData->mb_logMode) {
-      newFileLog( pc_serverData, pc_serverData->m_initialOpenChannel);
+      newFileLog( pc_serverData, iter->bus_number);
     }
 
-    if (!openBusOnCard(pc_serverData->m_initialOpenChannel,
-                       pc_serverData->m_initialOpenChannelBaud,
+    if (!openBusOnCard(iter->bus_number,
+                       iter->baud_rate,
                        pc_serverData))
     {
       std::cerr << "Can't initialize CAN-BUS." << std::endl;
@@ -618,6 +623,6 @@ void initialCanOpen(__HAL::server_c* pc_serverData)
       exit(1);
     }
 
-    pc_serverData->canBus(pc_serverData->m_initialOpenChannel).mui16_busRefCnt++;
+    pc_serverData->canBus(iter->bus_number).mui16_busRefCnt++;
   }
 }

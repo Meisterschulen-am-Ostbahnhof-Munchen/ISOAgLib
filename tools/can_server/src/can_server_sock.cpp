@@ -76,8 +76,6 @@ __HAL::server_c::server_c() :
   mb_monitorMode(false),
   mb_inputFileMode(false),
   mf_canInput(0),
-  m_initialOpenChannel(-1),
-  m_initialOpenChannelBaud(250),
 #ifndef WIN32
   mb_daemon(false),
 #endif

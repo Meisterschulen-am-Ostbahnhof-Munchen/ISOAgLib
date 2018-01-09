@@ -85,6 +85,16 @@ public:
   msqData_s ms_msqDataServer;
 #endif
 
+  struct InitialOpenChannelData
+  {
+    int bus_number;
+    int baud_rate;
+
+    InitialOpenChannelData()
+        : bus_number(-1), baud_rate(250)
+    {}
+  };
+
   std::list<client_c> mlist_clients;
   std::string mstr_logFileBase;
   std::string mstr_inputFile;
@@ -96,8 +106,7 @@ public:
   bool     mb_inputFileMode;
   FILE*    mf_canInput;
   // initial CAN open
-  int      m_initialOpenChannel;
-  int      m_initialOpenChannelBaud;
+  std::list<InitialOpenChannelData> m_l_initialOpenChannelData;
 
 #ifndef WIN32
   // daemon option

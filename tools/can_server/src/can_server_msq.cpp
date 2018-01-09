@@ -87,8 +87,6 @@ __HAL::server_c::server_c() :
   mb_monitorMode(false),
   mb_inputFileMode(false),
   mf_canInput(0),
-  m_initialOpenChannel(-1),
-  m_initialOpenChannelBaud(250),
   mb_daemon(false),
   mi32_lastPipeId(0),
   mi16_reducedLoadOnIsoBus(-1),
