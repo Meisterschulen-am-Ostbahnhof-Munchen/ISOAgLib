@@ -58,9 +58,6 @@
 #endif
 
 
-static const uint32_t scui32_selectTimeoutMax = 50000;
-static const uint32_t scui32_selectTimeoutMin = 1000;
-
 __HAL::server_c::canBus_s::canBus_s() :
   mui16_globalMask(0),
   mi32_can_device(0),
@@ -721,72 +718,59 @@ void readWrite(__HAL::server_c* pc_serverData)
   __HAL::transferBuf_s s_transferBuf;
   int i_selectResult;
   struct timeval t_timeout;
-  bool b_deviceHandleFound;
-  bool b_deviceConnected;
-  bool b_handlesAvailableForSelect;
+  bool b_anyFdSet;
+
+#ifdef WIN32  
+  SOCKET dummy_device_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+#endif
 
   for (;;) {
 
     pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
     FD_ZERO(&rfds);
+    b_anyFdSet = false;
 
     std::list<__HAL::client_c>::iterator iter_client;
-
-    b_handlesAvailableForSelect = false;
-
     for (iter_client = pc_serverData->mlist_clients.begin(); iter_client != pc_serverData->mlist_clients.end(); iter_client++)
     {
       FD_SET(iter_client->i32_commandSocket, &rfds);
       FD_SET(iter_client->i32_dataSocket, &rfds);
-      b_handlesAvailableForSelect = true; // calling select() makes sense because we have a socket from client
+      b_anyFdSet = true;
     }
 
-    b_deviceHandleFound=false;
-    b_deviceConnected = false;
 
     for (uint32_t ui32=0; ui32 < pc_serverData->nCanBusses(); ui32++ )
     {
       if (pc_serverData->canBus(ui32).mi32_can_device > 0)
       {
         FD_SET(pc_serverData->canBus(ui32).mi32_can_device, &rfds);
-        b_deviceHandleFound=true;
-        b_handlesAvailableForSelect = true; // calling select() makes sense because we have a file handle from CAN device
+        b_anyFdSet = true;
       }
+    }
 
-      if (pc_serverData->canBus(ui32).mb_deviceConnected)
-        b_deviceConnected = true;
+    if(!b_anyFdSet)
+    {
+#ifdef WIN32
+        // avoid select() call with empty rfds
+        FD_SET(dummy_device_socket, &rfds);
+#endif
     }
 
     // from now on: no access to client list => unlock mutex
     pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
-    if (b_handlesAvailableForSelect)
+    t_timeout.tv_sec = 0;
+    t_timeout.tv_usec = 1000;
+
+    // timeout to check for
+    // 1. modified client list => new sockets to wait for
+    // new incoming can messages when can device has no file handle (WIN32 PEAK can card and RTE)
+    i_selectResult = select(FD_SETSIZE, &rfds, NULL, NULL, &t_timeout);
+
+    if(i_selectResult < 0)
     {
-
-		t_timeout.tv_sec = 0;
-		// do long timeout if we have a device handle or if we do not have hardware device at all
-		if (b_deviceHandleFound || !b_deviceConnected)
-		  t_timeout.tv_usec = scui32_selectTimeoutMax;
-		else
-		  t_timeout.tv_usec = scui32_selectTimeoutMin;
-
-		// timeout to check for
-		// 1. modified client list => new sockets to wait for
-		// new incoming can messages when can device has no file handle (WIN32 PEAK can card and RTE)
-		i_selectResult = select(FD_SETSIZE, &rfds, NULL, NULL, &t_timeout);
-
-	   if (i_selectResult < 0)
-		  // error
-		  continue;
-    }
-    else
-    { // no sockets or device handle available for select => just sleep for a while
-#ifdef WIN32
-      Sleep( 10 );
-#else
-      usleep( 10000 );
-#endif
+        continue;
     }
 
     // new message from can device ?
@@ -795,29 +779,25 @@ void readWrite(__HAL::server_c* pc_serverData)
       if( !isBusOpen(ui32_cnt) )
         continue; // this bus number was not yet used => do not try to read
 
-      if ( !b_deviceHandleFound ||
-           (b_deviceHandleFound && pc_serverData->canBus(ui32_cnt).mi32_can_device && FD_ISSET(pc_serverData->canBus(ui32_cnt).mi32_can_device, &rfds)) 
-         )
-      { // do card read
-        if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData))
-        {
-          pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
-          s_transferBuf.s_data.ui8_bus = ui32_cnt;
-          enqueue_msg(&s_transferBuf, 0, pc_serverData);
-          pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
-          if (pc_serverData->mb_logMode) {
-            dumpCanMsg(
-                &s_transferBuf,
-                pc_serverData);
-          }
-          if (pc_serverData->mb_monitorMode)
-            monitorCanMsg (&s_transferBuf);
+      while(readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData))
+      {
+        pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
+        s_transferBuf.s_data.ui8_bus = ui32_cnt;
+        enqueue_msg(&s_transferBuf, 0, pc_serverData);
+        pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
+
+        if (pc_serverData->mb_logMode) {
+          dumpCanMsg(
+            &s_transferBuf,
+            pc_serverData);
         }
-      }
+
+        if (pc_serverData->mb_monitorMode)
+          monitorCanMsg (&s_transferBuf);
+       }
     }
 
     pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
-
     // new message from socket ?
     for (iter_client = pc_serverData->mlist_clients.begin(); iter_client != pc_serverData->mlist_clients.end(); )
     {

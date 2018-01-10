@@ -27,6 +27,9 @@ include_directories(
   ../../../../library/xgpl_src)
 
 if(WIN32)
+  add_definitions(
+    -DHAVE_STRUCT_TIMESPEC=1)
+
   include_directories(
     ../../../../tools/libs/pthread/include
     ../../../libs/pcan/Include)
