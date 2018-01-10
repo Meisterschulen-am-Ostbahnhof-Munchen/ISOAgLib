@@ -175,7 +175,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
   l_retval = canSetFilterMode(ss_canDevice.canBus(ui8_bus).m_handle, filterMode_nofilter);
   if (l_retval != NTCAN_SUCCESS) {
     // Error handling...
-    printf ( "error in  canEnableAllIds!\n");
+    printf ( "error in  canSetFilterMode!\n");
     return false;       
   }
 
@@ -191,7 +191,6 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
   }
 
   ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
-  pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
   return true;
 }
 
@@ -199,7 +198,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 {
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
-  //ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
+  ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
 

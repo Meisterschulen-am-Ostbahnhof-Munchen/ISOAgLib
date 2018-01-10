@@ -62,7 +62,6 @@ __HAL::server_c::canBus_s::canBus_s() :
   mui16_globalMask(0),
   mi32_can_device(0),
   mi32_sendDelay(0),
-  mb_deviceConnected(false),
   mui16_busRefCnt(0),
   m_logFile(LogFile_c::Null_s()())
 {
@@ -776,11 +775,11 @@ void readWrite(__HAL::server_c* pc_serverData)
     // new message from can device ?
     for (uint32_t ui32_cnt = 0; ui32_cnt < pc_serverData->nCanBusses(); ui32_cnt++ )
     {
-      if( !isBusOpen(ui32_cnt) )
-        continue; // this bus number was not yet used => do not try to read
-
       while(readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData))
       {
+        if (!isBusOpen(ui32_cnt))
+          continue;
+
         pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
         s_transferBuf.s_data.ui8_bus = ui32_cnt;
         enqueue_msg(&s_transferBuf, 0, pc_serverData);

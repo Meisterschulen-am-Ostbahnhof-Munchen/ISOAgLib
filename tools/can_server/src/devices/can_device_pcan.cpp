@@ -164,7 +164,6 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     DEBUG_PRINT1("Connected to USB dongle. %d\n", channel);
     ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
     ss_canDevice.canBus(ui8_bus).m_channel = channel;
-    pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
     return true;
   }
   else
@@ -177,7 +176,6 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
       DEBUG_PRINT1("Connected to PCI card. %d\n", channel);
       ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
       ss_canDevice.canBus(ui8_bus).m_channel = channel;
-      pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
       return true;
     }
     else
@@ -217,7 +215,6 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
       return false;
 
     ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
-    pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
 
     return true;
 #endif
@@ -242,7 +239,6 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
     std::cerr << "Close PEAK CAN Fault with return-code: " << status << std::endl;
   }
   ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
-  pc_serverData->canBus(ui8_bus).mb_deviceConnected = false;
 #endif
 }
 

@@ -131,7 +131,6 @@ public:
     uint16_t                 mui16_globalMask;
     int32_t                  mi32_can_device;
     int32_t                  mi32_sendDelay;
-    bool                     mb_deviceConnected;
     uint16_t                 mui16_busRefCnt;
     yasper::ptr< LogFile_c > m_logFile;
     canBus_s();
