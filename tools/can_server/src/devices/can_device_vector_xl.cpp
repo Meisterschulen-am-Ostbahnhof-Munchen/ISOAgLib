@@ -26,6 +26,8 @@
 
 /* Typedef taken from windows.h to avoid complete windows inclusion: */
 typedef void *HANDLE;
+/* basetsd.h is needed for vxlapi.h for version lib97*/
+#include <basetsd.h>
 extern "C" {
   #include <vxlapi.h>
 }
@@ -285,7 +287,6 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
     }
     ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
-    pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
   }
   
   // either fresh init without error or the bus was already initialized

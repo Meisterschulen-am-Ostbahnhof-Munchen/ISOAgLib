@@ -1,7 +1,7 @@
 For the PEAK PCAN driver read ../libs/pcan/README.txt .
 
 For the Sontheim driver download the MT-API from the download center at
-    http://www.s-i-e.de/
+	https://www.sontheim-industrie-elektronik.de/de/support/downloads/mt-api-treiber/
 and run the contained installation program. Install to
     C:\Programme\Sontheim\MT_Api .
 If it's already installed in a different path, then adapt
@@ -15,8 +15,8 @@ If it's already installed in a different path, then adapt
     can_server_vector.vcproj .
 
 For the Vector XL driver download
-    http://www.vector-worldwide.com/downloads/drivers/xl_lib67.zip
-and run the contained setup program. Install to
+    https://vector.com/vi_downloadcenter_en.html?type=Driver&formular_treffer_submit=1
+and run the contained setup program. Install the CanXL driver to
     C:\Programme\XL Driver Library .
 If it's already installed in a different path, then adapt
     can_server_vector_xl.vcproj .
