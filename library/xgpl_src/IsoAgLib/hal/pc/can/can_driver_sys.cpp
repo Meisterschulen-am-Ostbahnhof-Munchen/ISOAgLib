@@ -131,7 +131,7 @@ namespace __HAL {
   /** print errTest if errMask & data is true; return errMask & data */
   inline bool printIfErrorBitmask( uint32_t ui32_data, uint32_t ui32_errMask, const char* carr_errText ) {
     if ( ui32_data & ui32_errMask ) {
-      fprintf( stderr, carr_errText );
+      fprintf( stderr, "%s", carr_errText );
       return true;
     }
     return false;
@@ -140,7 +140,7 @@ namespace __HAL {
   /** print errTest if data is exactly the value; return true is equal */
   inline bool printIfErrorByte( uint32_t ui32_data, uint32_t ui32_value, const char* carr_errText ) {
     if ( ui32_data == ui32_value ) {
-      fprintf( stderr, carr_errText );
+      fprintf( stderr, "%s", carr_errText );
       return true;
     }
     return false;
@@ -458,7 +458,7 @@ namespace HAL {
 
   void defineRxFilter( unsigned channel, bool xtd, uint32_t id, uint32_t mask ) {
 
-    id |= xtd ? CAN_EFF_FLAG : 0; 
+    id |= xtd ? CAN_EFF_FLAG : 0;
     mask |= CAN_EFF_FLAG;
 
     struct can_filter f;
@@ -471,7 +471,7 @@ namespace HAL {
 
   void deleteRxFilter( unsigned channel, bool xtd, uint32_t id, uint32_t mask ) {
 
-    id |= xtd ? CAN_EFF_FLAG : 0; 
+    id |= xtd ? CAN_EFF_FLAG : 0;
     mask |= CAN_EFF_FLAG;
 
     for( std::list<struct can_filter>::iterator i = __HAL::g_bus[channel].m_filter.begin(); i != __HAL::g_bus[channel].m_filter.end(); ++i ) {
