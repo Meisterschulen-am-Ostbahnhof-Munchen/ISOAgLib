@@ -442,7 +442,7 @@ parseLogLineVehicleSpy( std::string const &acr_line ) // "2,28.2609260000172,0.0
   unsigned arru_d[8];
   int parsed_count = sscanf(
       acr_line.c_str(),
-      "%*d,%lf,%*lf,%*ld,%*[^,],%*[^,],%*[^,],%[^,],,%x,%*[^,],%*[^,],%x,%x,%x,%x,%x,%x,%x,%x",
+      "%*d,%lf,%*f,%*d,%*[^,],%*[^,],%*[^,],%[^,],,%x,%*[^,],%*[^,],%x,%x,%x,%x,%x,%x,%x,%x",
       &d1,
       charArray,
       &iID,
@@ -459,3 +459,55 @@ parseLogLineVehicleSpy( std::string const &acr_line ) // "2,28.2609260000172,0.0
   return std::make_pair( 0, t_ptrFrame );
 }
 
+
+std::pair< int, PtrDataFrame_t >
+parseLogLineViewtoolGinkgoCsv( std::string const &acr_line ) // "Device0,CH1,Extended Frame,Data Frame,0x18EFFFAD,Receive,8,40 FF FF FF FF FF FF FF ,Success,00:05:56.126.000"
+{
+  int iHour, iMin, iSec, iMsec;
+  char charArrExt[30];
+  int iID;
+  int iDlc;
+  unsigned arru_d[8];
+
+  std::string my_line = acr_line;
+  std::size_t pos = my_line.find_last_of(",");
+  if( std::string::npos == pos ) 
+    return std::make_pair( -1, PtrDataFrame_t(0) );
+
+  std::string my_time = my_line.substr( pos+1, std::string::npos );
+  my_line = my_line.substr( 0, pos );
+  pos = my_line.find_last_of(",");
+  if( std::string::npos == pos ) 
+    return std::make_pair( -1, PtrDataFrame_t(0) );
+
+  my_line = my_line.substr( 0, pos );
+
+  int cnt_time_el = sscanf(
+      my_time.c_str(),
+      "%d:%d:%d.%d.%*d",
+      &iHour, &iMin, &iSec, &iMsec );
+  if( 4 != cnt_time_el ) 
+    return std::make_pair( -1, PtrDataFrame_t(0) );
+
+  int parsed_count = sscanf(
+      acr_line.c_str(),
+      "%*[^,],%*[^,],%[^,],%*[^,],%x,%*[^,],%d,%x %x %x %x %x %x %x %x ", 
+      charArrExt,
+      &iID,
+      &iDlc,
+      arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7 );
+
+  const int inumDb = parsed_count - 3;
+  if( inumDb != iDlc ) // not the right number of CAN data bytes
+    return std::make_pair( -1, PtrDataFrame_t(0) );
+
+  const bool bExt = ( strstr(charArrExt, "Extended") == NULL ) ? false : true;
+
+  uint64_t const cui64_time_ms = static_cast<uint64_t>( ( iHour * 60 * 60 * 1000 ) + ( iMin * 60 * 1000 ) + ( iSec * 1000 ) + iMsec );
+
+  std::vector< uint8_t > vec_data;
+  copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
+
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time_ms, iID, vec_data, bExt);
+  return std::make_pair( 0, t_ptrFrame );
+}

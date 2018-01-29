@@ -1,7 +1,7 @@
 /*
   logalizer.cpp
 
-  (C) Copyright 2009 - 2017 by OSB AG and developing partners
+  (C) Copyright 2009 - 2018 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -230,7 +230,7 @@ void ddopStore(uint8_t sa);
 void
 exit_with_usage(const char* progname)
 {
-  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2017 OSB AG." << std::endl << std::endl;
+  std::cerr << "ISOBUS-Logalizer (c) 2007 - 2018 OSB AG." << std::endl << std::endl;
   std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [--iop] [--ddop] logFile" << std::endl << std::endl;
   std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
   std::cerr << "         1 -> rte"<<std::endl;
@@ -249,6 +249,7 @@ exit_with_usage(const char* progname)
   std::cerr << "        14 -> Komodo" << std::endl;
   std::cerr << "        15 -> Vehicle Spy 3 Bus Traffic File" << std::endl;
   std::cerr << "        16 -> PCAN-View v4 (.trc)" << std::endl;
+  std::cerr << "        17 -> Viewtool Ginkgo (csv)" << std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "--iop:   Store VT object pool transfers in iop format. Default: do not store" << std::endl;
@@ -256,32 +257,33 @@ exit_with_usage(const char* progname)
   std::cerr << "logFile: filepath or - (dash, means standard input rather than a real file)" << std::endl;
   std::cerr << std::endl;
 
-  std::cerr << "can_server:  '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
-  std::cerr << "rte:         '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
-  std::cerr << "              (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
-  std::cerr << "CANMon:      'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
-  std::cerr << "CANoe:       '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
+  std::cerr << "can_server:        '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
+  std::cerr << "rte:               '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
+  std::cerr << "                    (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
+  std::cerr << "CANMon:            'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
+  std::cerr << "CANoe:             '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
 #ifdef WIN32
   std::cerr << "A1ASCII:     'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff    '..." <<std::endl  << "             ...'   446270'"<<std::endl;
 #else
-  std::cerr << "A1ASCII:     'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<std::endl;
+  std::cerr << "A1ASCII:           'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<std::endl;
 #endif
-  std::cerr << "PCANView:    '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
+  std::cerr << "PCANView:          '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
 #ifdef WIN32
   std::cerr << "JohnDeere:   'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<std::endl;
   std::cerr << "             ...'    17920  ....... '"<<std::endl;
 #else
-  std::cout << "JohnDeere:    'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<std::endl;
+  std::cout << "JohnDeere:         'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<std::endl;
 #endif
-  std::cerr << "JRF:         '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
-  std::cerr << "PCANExplorer:'    13)       116.6 1  Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
-  std::cerr << "SocketCAN:   '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
-  std::cerr << "WTK:         '0000.376 can r 18E6FFF1  8  21 00 FF FF 00 00 00 FF  0'"<<std::endl;
-  std::cerr << "KvaserM.CSV: '0.33198,1,cfffff0,4,3,55,7d,7d,,,,,,1,2014-05-05 15:01:08'"<<std::endl;
-  std::cerr << "?csv:        '0xCFE46F0*,54.6857,FF,FF,FF,FF,00,FF,FF,FF'" << std::endl;
-  std::cerr << "Komodo:      '0:00.003.537,0x0cff05b4,0,8,01 00 01 00 01 00 C0 C0'" << std::endl;
-  std::cerr << "Vehicle Spy 3'2,28.2609260000172,0.01300800000899471,67371012,F,F,HS CAN $CCBFFF7,HS CAN,,CCBFFF7,F,T,FE,FF,FF,FF,00,00,00,00,,,'" << std::endl;
-  std::cerr << "PCAN-View v4:'    13)       116.6  DT  18EF808B RX 8  12 15 15 15 15 15 15 15'" << std::endl;
+  std::cerr << "JRF:               '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
+  std::cerr << "PCANExplorer:      '    13)       116.6 1  Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
+  std::cerr << "SocketCAN:         '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
+  std::cerr << "WTK:               '0000.376 can r 18E6FFF1  8  21 00 FF FF 00 00 00 FF  0'"<<std::endl;
+  std::cerr << "KvaserM.CSV:       '0.33198,1,cfffff0,4,3,55,7d,7d,,,,,,1,2014-05-05 15:01:08'"<<std::endl;
+  std::cerr << "?csv:              '0xCFE46F0*,54.6857,FF,FF,FF,FF,00,FF,FF,FF'" << std::endl;
+  std::cerr << "Komodo:            '0:00.003.537,0x0cff05b4,0,8,01 00 01 00 01 00 C0 C0'" << std::endl;
+  std::cerr << "Vehicle Spy 3      '2,28.2609260000172,0.01300800000899471,67371012,F,F,HS CAN $CCBFFF7,HS CAN,,CCBFFF7,F,T,FE,FF,FF,FF,00,00,00,00,,,'" << std::endl;
+  std::cerr << "PCAN-View v4:      '    13)       116.6  DT  18EF808B RX 8  12 15 15 15 15 15 15 15'" << std::endl;
+  std::cerr << "Viewtool Ginkgo:   'Device0,CH1,Extended Frame,Data Frame,0x18EFFFAD,Receive,8,40 FF FF FF FF FF FF FF ,Success,00:05:56.126.000'" << std::endl;
 
   exit(0);
 }
@@ -343,7 +345,7 @@ ddopAppend(PtrDataFrame_t at_ptrFrame) {
   }
 }
 
-void 
+void
 iopStore( uint8_t sa ) {
   static unsigned n = 0;
   if( gs_main.m_vtupl.find( sa ) != gs_main.m_vtupl.end() ) {
@@ -699,7 +701,7 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
     /* fall through */
   case ETP_DATA_TRANSFER_PGN:
     out << "DATA - Data Packet #"<<std::setw(2)<<std::setfill(' ')<<std::dec<<uint16_t(at_ptrFrame->dataOctet(0));
-    { 
+    {
       TransferCollection_c::PtrConnection_t t_ptrConnection =
         getTransferConnection( out,
             e_variant,
@@ -909,6 +911,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineKomodo,
     parseLogLineVehicleSpy,
     parseLogLineTrc3,
+    parseLogLineViewtoolGinkgoCsv,
     defaultParseLogLine
   };
 
