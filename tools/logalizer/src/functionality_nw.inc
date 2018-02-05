@@ -1757,7 +1757,7 @@ struct namefields_s
     uint16_t Function;
     uint16_t FunctionInstance;
     uint16_t EcuInstance;
-    uint16_t SerNo;
+    uint32_t SerNo;
 };
 
 namefields_s decodeName(const std::vector<uint8_t> &dataFrame)
@@ -1771,7 +1771,7 @@ namefields_s decodeName(const std::vector<uint8_t> &dataFrame)
     decodedName.Function = (dataFrame[5]);
     decodedName.FunctionInstance = (dataFrame[4] >> 3);
     decodedName.EcuInstance = (dataFrame[4] & 0x7);
-    decodedName.SerNo = dataFrame[2] & 0x1F << 16 | (dataFrame[1] << 8) | dataFrame[0];
+    decodedName.SerNo = (dataFrame[2] & 0x1F) << 16 | (dataFrame[1] << 8) | dataFrame[0];
     return decodedName;
 }
 
@@ -1921,7 +1921,7 @@ void readOutName(std::ostream& out, PtrDataFrame_t at_ptrFrame)
     //else: the new name was inserted, nothing needs to be done here
 
     // Print out decoded NAME
-    out << fullName << ": " << std::setfill(' ');
+    out << std::right << std::setfill('0') << std::setw(16) << fullName << ": " << std::left << std::setfill(' ');
 
     printShortenedString(std::cout, getFunction(isobusName.IndustryGroup, isobusName.DeviceClass, isobusName.Function));
     out << "/";
@@ -1932,15 +1932,11 @@ void readOutName(std::ostream& out, PtrDataFrame_t at_ptrFrame)
     printShortenedString(std::cout, getManufacturer(isobusName.ManuCode));
     out << "/";
 
-    if (isobusName.boSelfConfig)
-    {
-        out << std::left << " SC[X] /";
-    }
-    else
-    {
-        out << std::left << " SC[ ] /";
-    }
-    out << std::left << " FI[" << isobusName.FunctionInstance << "] /" << " DCI[" << isobusName.DeviceClassInstance << "] /" << " ECUI[" << isobusName.EcuInstance << "]" << std::right << std::setw(0);
+    out << std::setfill(' ') << std::right << std::dec 
+    << " SC["   << std::setw(1) << (isobusName.boSelfConfig ? "X" : " ") << "] /"
+    << " FI["   << std::setw(2) << isobusName.FunctionInstance << "] /"
+    << " DCI["  << std::setw(2) << isobusName.DeviceClassInstance << "] /"
+    << " ECUI[" << std::setw(1) << isobusName.EcuInstance << "]";
 };
 
 void printFullNameAndAddressList(std::ostream& out) {
@@ -1959,7 +1955,7 @@ void printFullNameAndAddressList(std::ostream& out) {
     dataOctet.clear();
 
     //print name (as 64 bit number)
-    out <<std::setw(20)<<std::left<< std::hex << it->first;
+    out << std:: setfill('0') << std::setw(16) <<std::right << std::hex << it->first << "    ";
 
     //create data octets from full name:
     for (uint8_t i = 0; i < 8; i++)
@@ -1970,46 +1966,45 @@ void printFullNameAndAddressList(std::ostream& out) {
     //print name as LE as on CAN bus:
     for (uint8_t i = 0; i < 8; i++)
     {
-      out << std::setfill('0') << std::setw(2) << std::hex << (uint16_t)dataOctet[i] << " ";
+      out << std::right << std::setfill('0') << std::setw(2) << std::hex << (uint16_t)dataOctet[i] << " ";
     }
 
-    out << std::setfill(' ') << std::setw(6) << " ";
+    out << "      ";
     //print source address
     for (uint8_t i = 0; i < it->second.size(); i++)
     {
-      out  << std::left << std::hex << it->second[i];
-      if (i != it->second.size()-1)
+      out  << std::right << std::setfill('0') << std::setw(2) << std::hex << it->second[i];
+      if (i != it->second.size() - 1)
       {
         out << ",";
       }
     };
-    out << std::setw(12 - it->second.size() * 3) << " ";
+    out << std::setfill(' ') << std::setw(12 - it->second.size() * 3) << " ";
 
     isobusName = decodeName(dataOctet);
 
     //print decoded NAME
-    out << std::left << " Man  DC  DCI   F   FI ECUI SC IG" << std::endl;
-    out << std::setw(61) << std::dec << " " << std::left << "[" << std::setw(3) << std::right << isobusName.ManuCode << "]" << "[" << std::setw(2) << std::right 
-      << isobusName.DeviceClass << "]" << "[" << std::setw(2) << std::right << isobusName.DeviceClassInstance << "]" << "[" << std::setw(3) << std::right << isobusName.Function << "]" << "["
-      << std::setw(3) << std::right << isobusName.FunctionInstance << "]" << "[" << std::setw(3) << isobusName.EcuInstance << "]";
-    if (isobusName.boSelfConfig)
-    {
-      out << std::setw(3) << "[X]";
-    }
-    else
-    {
-      out << std::setw(3) << "[ ]";
-    }
-    out << "[" << isobusName.IndustryGroup << "]__ ";
+    out << std::left << "  Man   DC  DCI  F   FI  EI SC  Serial IG" << std::endl;
+    out << std::setw(61) << std::dec << std::right << " "
+        << "[" << std::setw(4) << isobusName.ManuCode << "]"
+        << "[" << std::setw(3) << isobusName.DeviceClass << "]"
+        << "[" << std::setw(2) << isobusName.DeviceClassInstance << "]"
+        << "[" << std::setw(3) << isobusName.Function << "]"
+        << "[" << std::setw(2) << isobusName.FunctionInstance << "]"
+        << "[" << std::setw(1) << isobusName.EcuInstance << "]"
+        << "[" << std::setw(1) << (isobusName.boSelfConfig ? "X" : " ") << "]"
+        << "[" << std::setw(7) << isobusName.SerNo << "]"
+        << "[" << std::setw(1) << isobusName.IndustryGroup << "]__ ";
+
     out << getIndustryGroup(isobusName.IndustryGroup) << std::endl;
 
-    out << std::setw(63) << " " << "|    |        |___________________ ";
+    out << std::setw(63) << " " << " |    |        |__________________________ ";
     out << getFunction(isobusName.IndustryGroup, isobusName.DeviceClass, isobusName.Function) << std::endl;
 
-    out << std::setw(63) << " " << "|    |____________________________ ";
+    out << std::setw(63) << " " << " |    |___________________________________ ";
     out << getDeviceClass(isobusName.DeviceClass) << std::endl;
 
-    out << std::setw(63) << " " << "|_________________________________ ";
+    out << std::setw(63) << " " << " |________________________________________ ";
     out << getManufacturer(isobusName.ManuCode) << std::endl;
   }
 }
