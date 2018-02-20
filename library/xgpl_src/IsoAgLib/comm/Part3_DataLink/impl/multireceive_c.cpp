@@ -283,7 +283,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
 
             if (pc_streamFound != NULL)
             { // abort, already running stream (on any PGN) is interrupted by RTS
-              notifyErrorConnAbort (c_isoRSI, TransferErrorAlreadyRunningStream, true);
+              notifyErrorConnAbort (pc_streamFound->getIdent(), TransferErrorAlreadyRunningStream, true);
               // actually questionable: ConnAbort with what PGN?
               // --> The interrupted Stream's, or the interrupting Stream's?
               tellClientRemoveStream (*pc_streamFound);
