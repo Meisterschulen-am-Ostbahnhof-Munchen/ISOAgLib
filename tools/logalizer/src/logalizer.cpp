@@ -407,11 +407,6 @@ getTransferConnection(
 }
 
 
-std::string
-interpretePgnAcknowledge( PtrDataFrame_t )
-{
-  return "";
-}
 
 
 std::string
@@ -561,14 +556,44 @@ interpretePgn( uint32_t rui32_pgn )
   return out.str();
 }
 
+std::string
+interpretePgnAcknowledge(PtrDataFrame_t at_ptrFrame)
+{
+    std::string TypeOfAck;
+
+    switch (at_ptrFrame->dataOctet(0))
+    {
+    case 0: TypeOfAck = "POSITIVE";
+        break;
+    case 1: TypeOfAck = "NEGATIVE (NACK)";
+        break;
+    case 2: TypeOfAck = "ACCESS DENIED";
+        break;
+    case 3: TypeOfAck = "CANNOT RESPOND NOW (BUSY)";
+        break;
+    default: TypeOfAck = "undefined";//this should not happen, only 0-3 are defined in standard
+        break;
+    }
+
+    uint32_t cui32_requestedPgn =
+        (uint32_t(at_ptrFrame->dataOctet(7)) << 16) |
+        (uint32_t(at_ptrFrame->dataOctet(6)) << 8) |
+        (uint32_t(at_ptrFrame->dataOctet(5)));
+
+    std::ostringstream out;
+    out << "(0x" << std::right << std::setfill('0') << std::hex << std::setw(5) << cui32_requestedPgn << ", " << interpretePgn(cui32_requestedPgn) << ") " << TypeOfAck << "; GF Value ="
+        << " 0x" << std::right << std::setfill('0') << std::hex << std::setw(2) << unsigned(at_ptrFrame->dataOctet(1));
+    return out.str();
+}
+
 
 std::string
 interpreteRequestPgnMsg(PtrDataFrame_t at_ptrFrame)
 {
   uint32_t cui32_requestedPgn =
-    ( uint32_t(at_ptrFrame->dataOctet(2)) << 8 |
-      at_ptrFrame->dataOctet(1) ) << 8 |
-    at_ptrFrame->dataOctet(0);
+      (uint32_t(at_ptrFrame->dataOctet(2)) << 16) |
+      (uint32_t(at_ptrFrame->dataOctet(1)) << 8) |
+      (uint32_t(at_ptrFrame->dataOctet(0)));
 
   switch (cui32_requestedPgn) {
   case ADDRESS_CLAIM_PGN:
@@ -577,7 +602,7 @@ interpreteRequestPgnMsg(PtrDataFrame_t at_ptrFrame)
   }
 
   std::ostringstream out;
-  out << "(0x" << std::setfill('0') << std::hex << std::setw(5) << cui32_requestedPgn << ", " << interpretePgn(cui32_requestedPgn) << ")";
+  out << "(0x" << std::right << std::setfill('0') << std::hex << std::setw(5) << cui32_requestedPgn << ", " << interpretePgn(cui32_requestedPgn) << ")";
   return out.str();
 }
 
