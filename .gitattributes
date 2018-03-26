@@ -376,6 +376,7 @@ tools/logalizer/src/functionality_gps.inc -text
 tools/logalizer/src/functionality_nw.inc -text
 tools/logalizer/src/functionality_tc.inc -text
 tools/logalizer/src/functionality_tecu.inc -text
+tools/logalizer/src/functionality_tim.inc -text
 tools/logalizer/src/functionality_vt.inc -text
 tools/logalizer/src/gpx_writer.inc -text
 tools/logalizer/src/parsers.inc -text

@@ -27,27 +27,31 @@
 #include <SimpleOpt.h>
 
 // <DESTINATION> PGNs
-#define CLIENT_TO_FS_PGN        0x00AA00LU
-#define FS_TO_GLOBAL_PGN        0x00ABFFLU
-#define FS_TO_CLIENT_PGN        0x00AB00LU
-#define GUIDANCE_MACHINE_STATUS 0x00AC00LU
-#define GUIDANCE_SYSTEM_CMD     0x00AD00LU
-#define ETP_DATA_TRANSFER_PGN   0x00C700LU
-#define ETP_CONN_MANAGE_PGN     0x00C800LU
-#define PROCESS_DATA_PGN        0x00CB00LU
-#define CAB_MESSAGE_1           0x00E000LU
-#define VT_TO_GLOBAL_PGN        0x00E6FFLU
-#define VT_TO_ECU_PGN           0x00E600LU
-#define ECU_TO_VT_PGN           0x00E700LU
-#define ECU_TO_GLOBAL_PGN       0x00E7FFLU
+#define TIM_SERVER_TO_CLIENT_PGN  0x002300LU
+#define TIM_CLIENT_TO_SERVER_PGN  0x002400LU
+#define AUTH_SERVER_TO_CLIENT_PGN 0x007000LU
+#define AUTH_CLIENT_TO_SERVER_PGN 0x006F00LU
+#define CLIENT_TO_FS_PGN          0x00AA00LU
+#define FS_TO_GLOBAL_PGN          0x00ABFFLU
+#define FS_TO_CLIENT_PGN          0x00AB00LU
+#define GUIDANCE_MACHINE_STATUS   0x00AC00LU
+#define GUIDANCE_SYSTEM_CMD       0x00AD00LU
+#define ETP_DATA_TRANSFER_PGN     0x00C700LU
+#define ETP_CONN_MANAGE_PGN       0x00C800LU
+#define PROCESS_DATA_PGN          0x00CB00LU
+#define CAB_MESSAGE_1             0x00E000LU
+#define VT_TO_GLOBAL_PGN          0x00E6FFLU
+#define VT_TO_ECU_PGN             0x00E600LU
+#define ECU_TO_VT_PGN             0x00E700LU
+#define ECU_TO_GLOBAL_PGN         0x00E7FFLU
 /* we're NOT using ACK/NACK to Global address, we're directing directly to the sender! */
-#define ACKNOWLEDGEMENT_PGN     0x00E800LU
-#define REQUEST_PGN_MSG_PGN     0x00EA00LU
-#define TP_DATA_TRANSFER_PGN    0x00EB00LU
-#define TP_CONN_MANAGE_PGN      0x00EC00LU
-#define ADDRESS_CLAIM_PGN       0x00EE00LU
-#define PROPRIETARY_A_PGN       0x00EF00LU
-#define PROPRIETARY_A2_PGN      0x01EF00LU
+#define ACKNOWLEDGEMENT_PGN       0x00E800LU
+#define REQUEST_PGN_MSG_PGN       0x00EA00LU
+#define TP_DATA_TRANSFER_PGN      0x00EB00LU
+#define TP_CONN_MANAGE_PGN        0x00EC00LU
+#define ADDRESS_CLAIM_PGN         0x00EE00LU
+#define PROPRIETARY_A_PGN         0x00EF00LU
+#define PROPRIETARY_A2_PGN        0x01EF00LU
 
 // <NO DESTINATION> PGNs
 #define ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE 0x00F004LU
@@ -224,6 +228,7 @@ void ddopStore(uint8_t sa);
 #include "functionality_tecu.inc"
 #include "functionality_gps.inc"
 #include "functionality_nw.inc"
+#include "functionality_tim.inc"
 #include "parsers.inc"
 
 
@@ -416,48 +421,52 @@ interpretePgn( uint32_t rui32_pgn )
 
   switch (rui32_pgn)
   {
-  case VT_TO_ECU_PGN:                           out << "VT_TO_ECU         "; break;
-  case ECU_TO_VT_PGN:                           out << "ECU_TO_VT         "; break;
-  case ACKNOWLEDGEMENT_PGN:                     out << "ACKNOWLEDGEMENT   "; break;
-  case CAB_MESSAGE_1:                           out << "CAB_MESSAGE_1     "; break;
-  case PROCESS_DATA_PGN:                        out << "PROCESS_DATA      "; break;
-  case CLIENT_TO_FS_PGN:                        out << "CLIENT_TO_FS      "; break;
-  case FS_TO_CLIENT_PGN:                        out << "FS_TO_CLIENT      "; break;
-  case GUIDANCE_MACHINE_STATUS:                 out << "GUIDANCE_MACH_ST  "; break;
-  case GUIDANCE_SYSTEM_CMD:                     out << "GUIDANCE_SYS_CMD  "; break;
-  case ISOBUS_CERTIFICATION_PGN:                out << "ISOBUS_CERTIFICAT."; break;
-  case ETP_DATA_TRANSFER_PGN:                   out << "ETP_DATA_TRANSFER "; break;
-  case ETP_CONN_MANAGE_PGN:                     out << "ETP_CONN_MANAGE   "; break;
-  case REQUEST_PGN_MSG_PGN:                     out << "REQUEST_MSG       "; break;
-  case TP_DATA_TRANSFER_PGN:                    out << "TP_DATA_TRANSFER  "; break;
-  case TP_CONN_MANAGE_PGN:                      out << "TP_CONN_MANAGE    "; break;
-  case ADDRESS_CLAIM_PGN:                       out << "ADDRESS_CLAIM     "; break;
-  case PROPRIETARY_A_PGN:                       out << "PROPRIETARY_A     "; break;
-  case PROPRIETARY_A2_PGN:                      out << "PROPRIETARY_A2    "; break;
+  case TIM_SERVER_TO_CLIENT_PGN:                  out << "TIM_SERV_TO_CLIENT ";        break;
+  case TIM_CLIENT_TO_SERVER_PGN:                  out << "TIM_CLIENT_TO_SERV ";        break;
+  case AUTH_SERVER_TO_CLIENT_PGN:                 out << "AUTH_SERV_TO_CLIENT ";       break;
+  case AUTH_CLIENT_TO_SERVER_PGN:                 out << "AUTH_CLIENT_TO_SERV ";       break;
+  case VT_TO_ECU_PGN:                             out << "VT_TO_ECU         ";         break;
+  case ECU_TO_VT_PGN:                             out << "ECU_TO_VT         ";         break;
+  case ACKNOWLEDGEMENT_PGN:                       out << "ACKNOWLEDGEMENT   ";         break;
+  case CAB_MESSAGE_1:                             out << "CAB_MESSAGE_1     ";         break;
+  case PROCESS_DATA_PGN:                          out << "PROCESS_DATA      ";         break;
+  case CLIENT_TO_FS_PGN:                          out << "CLIENT_TO_FS      ";         break;
+  case FS_TO_CLIENT_PGN:                          out << "FS_TO_CLIENT      ";         break;
+  case GUIDANCE_MACHINE_STATUS:                   out << "GUIDANCE_MACH_ST  ";         break;
+  case GUIDANCE_SYSTEM_CMD:                       out << "GUIDANCE_SYS_CMD  ";         break;
+  case ISOBUS_CERTIFICATION_PGN:                  out << "ISOBUS_CERTIFICAT.";         break;
+  case ETP_DATA_TRANSFER_PGN:                     out << "ETP_DATA_TRANSFER ";         break;
+  case ETP_CONN_MANAGE_PGN:                       out << "ETP_CONN_MANAGE   ";         break;
+  case REQUEST_PGN_MSG_PGN:                       out << "REQUEST_MSG       ";         break;
+  case TP_DATA_TRANSFER_PGN:                      out << "TP_DATA_TRANSFER  ";         break;
+  case TP_CONN_MANAGE_PGN:                        out << "TP_CONN_MANAGE    ";         break;
+  case ADDRESS_CLAIM_PGN:                         out << "ADDRESS_CLAIM     ";         break;
+  case PROPRIETARY_A_PGN:                         out << "PROPRIETARY_A     ";         break;
+  case PROPRIETARY_A2_PGN:                        out << "PROPRIETARY_A2    ";         break;
   case OPERATORS_EXTERNAL_LIGHT_CONTROLS_MESSAGE: out << "OPERATORS_EXTERNAL_LIGHT_CONTROLS_MESSAGE "; break;
-  case BASIC_JOYSTICK_MESSAGE_1:                out << "BASIC_JOYSTICK_MESSAGE_1 "; break;
-  case WORKING_SET_MEMBER_PGN:                  out << "WORKING_SET_MEMBER "; break;
-  case WORKING_SET_MASTER_PGN:                  out << "WORKING_SET_MASTER "; break;
-  case LANGUAGE_PGN:                            out << "LANGUAGE          "; break;
-  case LIGHTING_DATA_PGN:                       out << "LIGHTING_DATA     "; break;
-  case LIGHTING_COMMAND_PGN:                    out << "LIGHTING_COMMAND  "; break;
-  case HITCH_PTO_COMMANDS:                      out << "HITCH_PTO_COMMANDS "; break;
-  case REAR_PTO_STATE_PGN:                      out << "REAR_PTO_STATE    "; break;
-  case FRONT_PTO_STATE_PGN:                     out << "FRONT_PTO_STATE   "; break;
-  case REAR_HITCH_STATE_PGN:                    out << "REAR_HITCH_STATE  "; break;
-  case FRONT_HITCH_STATE_PGN:                   out << "FRONT_HITCH_STATE "; break;
-  case MAINTAIN_POWER_REQUEST_PGN:              out << "MAINTAIN_POWER_REQ "; break;
-  case WHEEL_BASED_SPEED_DIST_PGN:              out << "WHEEL_BASED_SPEED_DIST "; break;
-  case GROUND_BASED_SPEED_DIST_PGN:             out << "GROUND_BASED_SPEED_DIST "; break;
-  case ELECTRONIC_TRANSMISSION_CONTROLLER_5:    out << "ELECTRONIC_TRANSMISSION_CONTROLLER_5 "; break;
-  case VEHICLE_FLUIDS:                          out << "VEHICLE_FLUIDS    "; break;
-  case SELECTED_SPEED_CMD:                      out << "SELECTED_SPEED_CMD "; break;
-  case SELECTED_SPEED_MESSAGE:                  out << "SELECTED_SPEED_MESSAGE "; break;
-  case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:  out << "ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE "; break;
-  case ELECTRONIC_TRANSMISSION_CONTROLLER_2:    out << "ELECTRONIC_TRANSMISSION_CONTROLLER_2 "; break;
-  case ELECTRONIC_AXLE_CONTROLLER_1:            out << "ELECTRONIC_AXLE_CONTROLLER_1 "; break;
-  case PRODUCT_IDENTIFICATION_PGN:              out << "PRODUCT_IDENTIFICATION "; break;
-  case CONTROL_FUNCTION_FUNCTIONALITIES_PGN:    out << "CONTROL_FUNCTION_FUNCTIONALITIES "; break;
+  case BASIC_JOYSTICK_MESSAGE_1:                  out << "BASIC_JOYSTICK_MESSAGE_1 "; break;
+  case WORKING_SET_MEMBER_PGN:                    out << "WORKING_SET_MEMBER "; break;
+  case WORKING_SET_MASTER_PGN:                    out << "WORKING_SET_MASTER "; break;
+  case LANGUAGE_PGN:                              out << "LANGUAGE          "; break;
+  case LIGHTING_DATA_PGN:                         out << "LIGHTING_DATA     "; break;
+  case LIGHTING_COMMAND_PGN:                      out << "LIGHTING_COMMAND  "; break;
+  case HITCH_PTO_COMMANDS:                        out << "HITCH_PTO_COMMANDS "; break;
+  case REAR_PTO_STATE_PGN:                        out << "REAR_PTO_STATE    "; break;
+  case FRONT_PTO_STATE_PGN:                       out << "FRONT_PTO_STATE   "; break;
+  case REAR_HITCH_STATE_PGN:                      out << "REAR_HITCH_STATE  "; break;
+  case FRONT_HITCH_STATE_PGN:                     out << "FRONT_HITCH_STATE "; break;
+  case MAINTAIN_POWER_REQUEST_PGN:                out << "MAINTAIN_POWER_REQ "; break;
+  case WHEEL_BASED_SPEED_DIST_PGN:                out << "WHEEL_BASED_SPEED_DIST "; break;
+  case GROUND_BASED_SPEED_DIST_PGN:               out << "GROUND_BASED_SPEED_DIST "; break;
+  case ELECTRONIC_TRANSMISSION_CONTROLLER_5:      out << "ELECTRONIC_TRANSMISSION_CONTROLLER_5 "; break;
+  case VEHICLE_FLUIDS:                            out << "VEHICLE_FLUIDS    "; break;
+  case SELECTED_SPEED_CMD:                        out << "SELECTED_SPEED_CMD "; break;
+  case SELECTED_SPEED_MESSAGE:                    out << "SELECTED_SPEED_MESSAGE "; break;
+  case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:    out << "ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE "; break;
+  case ELECTRONIC_TRANSMISSION_CONTROLLER_2:      out << "ELECTRONIC_TRANSMISSION_CONTROLLER_2 "; break;
+  case ELECTRONIC_AXLE_CONTROLLER_1:              out << "ELECTRONIC_AXLE_CONTROLLER_1 "; break;
+  case PRODUCT_IDENTIFICATION_PGN:                out << "PRODUCT_IDENTIFICATION "; break;
+  case CONTROL_FUNCTION_FUNCTIONALITIES_PGN:      out << "CONTROL_FUNCTION_FUNCTIONALITIES "; break;
   case ALL_IMPLEMENTS_STOP_OPERATIONS_SWITCH_STATE_PGN: out << "ALL_IMPLEMENTS_STOP_OPERATIONS_SWITCH_STATE "; break;
   case ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:     out << "ACTIVE_DIAGNOSTIC_TROUBLE_CODES "; break;
   case SOFTWARE_IDENTIFICATION_PGN:             out << "SOFTWARE_IDENTIFICATION "; break;
@@ -775,6 +784,10 @@ getPgnDataInterpreter( PtrDataFrame_t at_ptrFrame )
 {
   switch (at_ptrFrame->pgn())
   {
+  case TIM_SERVER_TO_CLIENT_PGN:                return interpretePgnsTimServerToClient;
+  case TIM_CLIENT_TO_SERVER_PGN:                return interpretePgnsTimClientToServer;
+  case AUTH_SERVER_TO_CLIENT_PGN:               return interpreteTimAuthenticationServerToClient;
+  case AUTH_CLIENT_TO_SERVER_PGN:               return interpreteTimAuthenticationClientToServer;
   case VT_TO_ECU_PGN:                           return interpretePgnsVtToEcu;
   case ECU_TO_VT_PGN:                           return interpretePgnsVtFromEcu;
   case ACKNOWLEDGEMENT_PGN:                     return interpretePgnAcknowledge;
