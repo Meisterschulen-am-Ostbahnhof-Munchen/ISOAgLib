@@ -28,12 +28,13 @@ add_executable(
   ../src/alivecollection.h
   ../src/addresstracker.cpp
   ../src/addresstracker.h
-  ../src/functionality_vt.inc
-  ../src/functionality_tc.inc
   ../src/functionality_fs.inc
   ../src/functionality_gps.inc
-  ../src/functionality_tecu.inc
   ../src/functionality_nw.inc
+  ../src/functionality_tc.inc
+  ../src/functionality_tecu.inc
+  ../src/functionality_tim.inc
+  ../src/functionality_vt.inc
   ../src/dataframe.h
   ../src/inputstream.h
   ../src/logenvirons.h
