@@ -84,7 +84,8 @@ void checkAndHandleOptionsAndStartup(int argc, char *argv[], __HAL::server_c &ar
   (void) __HAL::getTime();
 
   const uint32_t apiversion = initCardApi();
-  if ( apiversion == 0 ) { // failure - nothing found
+  if ( apiversion == 0 
+    && !ar_server.mb_virtualSubstitute) { // failure - nothing found
     DEBUG_PRINT("FAILURE - No CAN card was found with automatic search\n");
     exit(1);
   }
@@ -501,6 +502,28 @@ template <>
 std::string Option_c< OPTION_INITIAL_CAN_OPEN >::doGetUsage() const
 {
   return "  --init <can_bus>[,<baud_rate>]  Open specified CAN without active client (can be used multiple times)\n";
+}
+
+template <>
+int Option_c< OPTION_VIRTUAL_CAN_SUBSTITUTE >::doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const
+{
+  if (!strcmp(argv[ai_pos], "--virtual")) {
+    ar_server.mb_virtualSubstitute = true;
+    return 1;
+  }
+  return 0;
+}
+
+template <>
+std::string Option_c< OPTION_VIRTUAL_CAN_SUBSTITUTE >::doGetSetting(__HAL::server_c &ar_server) const
+{
+  return ar_server.mb_virtualSubstitute ? "Usage of virtual substitutes set\n" : "";
+}
+
+template <>
+std::string Option_c< OPTION_VIRTUAL_CAN_SUBSTITUTE >::doGetUsage() const
+{
+  return "  --virtual                  Replace non existing physical CAN nodes with a virtual substitute\n";
 }
 
 #ifndef WIN32

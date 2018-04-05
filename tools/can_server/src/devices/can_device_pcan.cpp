@@ -39,6 +39,7 @@ using namespace __HAL;
 static struct canDevice_s {
   struct canBus_s {
     bool          mb_canBusIsOpen;
+    bool          mb_channelVirtual;
     TPCANHandle   m_channel;
     canBus_s();
   };
@@ -63,6 +64,7 @@ inline size_t canDevice_s::nCanBusses()
 
 canDevice_s::canBus_s::canBus_s() :
   mb_canBusIsOpen(false),
+  mb_channelVirtual(false),
   m_channel(PCAN_NONEBUS)
 {
 }
@@ -180,8 +182,17 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     }
     else
     {
-      std::cerr << "Open PEAK CAN Fault with return-code: " << status << std::endl;
-      return false;
+      if (pc_serverData->mb_virtualSubstitute)
+      {
+        ss_canDevice.canBus(ui8_bus).mb_channelVirtual = true;
+        ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
+        return true;
+      }
+      else
+      {
+        std::cerr << "Open PEAK CAN Fault with return-code: " << status << std::endl;
+        return false;
+      }
     }
   }
 #else
@@ -259,11 +270,18 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
       msg.DATA[i] = ps_canMsg->ui8_data[i];
 
     assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
-    status = CAN_Write(ss_canDevice.canBus(ui8_bus).m_channel, &msg);
-    if (status == PCAN_ERROR_OK)
+    if (ss_canDevice.canBus(ui8_bus).mb_channelVirtual)
+    {
       return 1;
+    }
     else
-      return 0;
+    {
+      status = CAN_Write(ss_canDevice.canBus(ui8_bus).m_channel, &msg);
+      if (status == PCAN_ERROR_OK)
+        return 1;
+      else
+        return 0;
+    }
 #else
 
   TPCANMsg msg;
@@ -295,6 +313,11 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   TPCANMsg msg;
   TPCANStatus status;
   TPCANTimestamp timestamp;
+
+  if (ss_canDevice.canBus(ui8_bus).mb_channelVirtual)
+  {
+    return false;
+  }
 
   status = CAN_Read(ss_canDevice.canBus(ui8_bus).m_channel, &msg, &timestamp);
   if (status != PCAN_ERROR_OK) 

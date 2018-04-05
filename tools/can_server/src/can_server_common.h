@@ -107,6 +107,8 @@ public:
   FILE*    mf_canInput;
   // initial CAN open
   std::list<InitialOpenChannelData> m_l_initialOpenChannelData;
+  // replace non-existing physical CAN devices with a virtual substitute
+  bool     mb_virtualSubstitute;
 
 #ifndef WIN32
   // daemon option
@@ -182,6 +184,7 @@ enum OPTION_NICE_CAN_READ {};
 enum OPTION_INTERACTIVE {};
 enum OPTION_PRODUCTIVE {};
 enum OPTION_INITIAL_CAN_OPEN {};
+enum OPTION_VIRTUAL_CAN_SUBSTITUTE {};
 #ifndef WIN32
 enum OPTION_DAEMON {};
 #endif

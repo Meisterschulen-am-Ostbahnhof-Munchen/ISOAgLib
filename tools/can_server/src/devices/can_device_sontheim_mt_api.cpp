@@ -92,6 +92,7 @@ uint32_t initCardApi ()
   
   uint32_t busnr=0;
   long l_netnumber = 0;
+
   for (; l_netnumber < l_netnumber_max; l_netnumber++)
   {
     // open new handle
@@ -116,7 +117,7 @@ uint32_t initCardApi ()
   if (busnr == 0) 
   {
      printf("HW detection failed.\n");
-     exit(1);
+     return 0;
   }
   return 1;
 }
@@ -134,8 +135,15 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
   if ( ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen )
     return true; // already initialized and files are already open
 
-  if ( !ss_canDevice.canBus(ui8_bus).mb_isHandleAvailable )
+  if (!ss_canDevice.canBus(ui8_bus).mb_isHandleAvailable)
+  {
+    if (pc_serverData->mb_virtualSubstitute)
+    {
+      ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
+      return true;
+    }
     return false; // not available
+  }
 
   DEBUG_PRINT1("Opening CAN BUS channel=%u\n", unsigned(ui8_bus));
 
@@ -210,6 +218,12 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   long      l_len;
 
   l_len = 1;
+
+  if (!ss_canDevice.canBus(ui8_bus).mb_isHandleAvailable)
+  {
+    return false;
+  }
+
   l_retval = canRead (ss_canDevice.canBus(ui8_bus).m_handle,
                       &t_CANMsg[0],
                       &l_len);
@@ -249,15 +263,27 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   // should have been checked already by calling function isBusOpen:
   assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
   // blocked transmit
-  l_retval = canSend ( ss_canDevice.canBus(ui8_bus).m_handle,
-                       &t_CANMsg[0],
-                       &l_len );
-  if ( l_retval == NTCAN_SUCCESS ) {
+  if (ss_canDevice.canBus(ui8_bus).mb_isHandleAvailable)
+  {
+    l_retval = canSend(ss_canDevice.canBus(ui8_bus).m_handle,
+      &t_CANMsg[0],
+      &l_len);
+    if (l_retval == NTCAN_SUCCESS) {
+      return 1;
+    }
+    else
+    {
+      printf("error in canSend: %d!\n", l_retval);
+      return 0;
+    }
+  }
+  else if (pc_serverData->mb_virtualSubstitute)
+  {
     return 1;
   }
   else
   {
-    printf("error in canSend: %d!\n", l_retval);
+    printf("error in canSend!\n");
     return 0;
   }
 }

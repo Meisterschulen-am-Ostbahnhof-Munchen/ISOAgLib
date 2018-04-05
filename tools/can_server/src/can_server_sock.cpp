@@ -72,6 +72,7 @@ __HAL::server_c::server_c() :
   mb_monitorMode(false),
   mb_inputFileMode(false),
   mf_canInput(0),
+  mb_virtualSubstitute(false),
 #ifndef WIN32
   mb_daemon(false),
 #endif
@@ -1016,6 +1017,7 @@ yasper::ptr< AOption_c > const ga_options[] = {
   Option_c< OPTION_INTERACTIVE >::create(),
   Option_c< OPTION_PRODUCTIVE >::create(),
   Option_c< OPTION_INITIAL_CAN_OPEN >::create(),
+  Option_c< OPTION_VIRTUAL_CAN_SUBSTITUTE >::create(),
 #ifndef WIN32
   Option_c< OPTION_DAEMON>::create(),
 #endif
