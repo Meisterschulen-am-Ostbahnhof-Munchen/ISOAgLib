@@ -66,6 +66,9 @@ HAL-Simulator:
 Multi-Packet:
  - Fix/Avoid memory reallocation on specific compilers.
 
+CAN-Server:
+ - Added '--virtual' parameter
+ 
 
 \subsection Change_ZI 2.8.2 to 2.9.0
 
