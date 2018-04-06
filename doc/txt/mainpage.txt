@@ -60,6 +60,10 @@ VT-Client:
        - Minimum message timing 50ms instead of 200ms
        - Introduced CONFIG_VT_CLIENT_AUX2INPUTS_FORCE_OFF_STATE_BETWEEN_ON_MESSAGES
 
+TC-Client:
+ - Enhancement:
+   - Added v4 Support, ExtStructLabel, send PACK on Start Measurement
+
 HAL-Simulator:
  - EEPROM-Cleanup: Some more assertions, faster read/write
 
