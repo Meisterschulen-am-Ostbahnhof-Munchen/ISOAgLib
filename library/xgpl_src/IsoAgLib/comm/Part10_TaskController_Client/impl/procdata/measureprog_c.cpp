@@ -64,7 +64,7 @@ namespace __IsoAgLib {
     if ( pdLocal().getSetpoint().isSettable() )
       pdLocal().getSetpoint().processMsg( pdLocal(), value );
     else
-      connection().sendNack( pdBase().DDI(), pdBase().element(), NackProcessDataNotSettable, wasBroadcast );
+      connection().sendPdAck( pdBase().DDI(), pdBase().element(), IsoAgLib::ProcData::Value, NackProcessDataNotSettable, wasBroadcast );
 
   }
 

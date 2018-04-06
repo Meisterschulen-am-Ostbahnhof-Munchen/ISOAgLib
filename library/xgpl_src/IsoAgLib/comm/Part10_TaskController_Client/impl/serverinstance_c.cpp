@@ -92,7 +92,7 @@ namespace __IsoAgLib {
         case IsoAgLib::ProcData::SetValueAndAcknowledge:
         case IsoAgLib::ProcData::ReservedB:
         case IsoAgLib::ProcData::ReservedC:
-        case IsoAgLib::ProcData::ClientTask:
+        case IsoAgLib::ProcData::ClientTaskOrNotApplicable:
           ; // not handled when global
       }
     }

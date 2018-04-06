@@ -29,8 +29,8 @@ namespace __IsoAgLib
   class PdRemoteNode_c;
   class PdPool_c;
 
-  enum NackResponse_t { 
-    NackNoErrors =                                  0x00, // 0 = no errors
+  enum PdAckResponse_t { 
+    PdAckNoErrors =                                 0x00, // 0 = no errors
     NackProcessDataCommandNotSupported =            0x01, // Bit 1 = 1 Process Data Command not supported
     NackInvalidElementNumber =                      0x02, // Bit 2 = 1 Invalid Element Number
     NackDDINotSupportedByElement =                  0x04, // Bit 3 = 1 DDI not supported by element
@@ -68,10 +68,10 @@ namespace __IsoAgLib
     void sendProcMsg(     IsoAgLib::ProcData::CommandType_t, uint16_t ddi, uint16_t element, int32_t pdValue ) const;
     void sendProcMsgPeer( IsoAgLib::ProcData::CommandType_t, uint16_t ddi, uint16_t element, int32_t pdValue, const IsoName_c &peer ) const;
 
-    void sendNack( int16_t ddi, int16_t element, NackResponse_t errorcodes, bool wasBroadcast ) const;
+    void sendPdAck(int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t, PdAckResponse_t errorcodes, bool wasBroadcast) const;
 
   protected:
-    void sendNackNotFound( int16_t ddi, int16_t element, bool wasBroadcast ) const;
+    void sendNackNotFound( int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t, bool wasBroadcast ) const;
 
   private:
 #ifdef HAL_USE_SPECIFIC_FILTERS
@@ -92,6 +92,7 @@ namespace __IsoAgLib
     PdRemoteNode_c* m_pdRemoteNode;
 
     PdPool_c* m_pool;
+    IsoAgLib::ProcData::ConnectionCapabilities_s m_capsConnection; // initialized along with server caps, or set to defaults.
 
     // Measure progs presorted for DDIs
     static uint32_t getMapKey(uint16_t ddi, uint16_t element) { return ( uint32_t( uint32_t( ddi ) << 16 ) ) | uint32_t(element); }

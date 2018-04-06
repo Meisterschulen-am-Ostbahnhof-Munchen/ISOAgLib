@@ -196,7 +196,7 @@ namespace __IsoAgLib {
         case IsoAgLib::ProcData::ReservedB:
         case IsoAgLib::ProcData::ReservedC:
         case IsoAgLib::ProcData::TaskControllerStatus:
-        case IsoAgLib::ProcData::ClientTask:
+        case IsoAgLib::ProcData::ClientTaskOrNotApplicable:
           // not handled HERE when destination-specific
           break;
       }
@@ -219,7 +219,7 @@ namespace __IsoAgLib {
         case IsoAgLib::ProcData::ReservedB:
         case IsoAgLib::ProcData::ReservedC:
         case IsoAgLib::ProcData::TaskControllerStatus:
-        case IsoAgLib::ProcData::ClientTask:
+        case IsoAgLib::ProcData::ClientTaskOrNotApplicable:
           // not handled when global
           break;
 
@@ -232,11 +232,11 @@ namespace __IsoAgLib {
 
   
   void
-  PdConnection_c::sendNackNotFound( int16_t ddi, int16_t element, bool wasBroadcast ) const
+  PdConnection_c::sendNackNotFound( int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t cmdType, bool wasBroadcast ) const
   {
     // Note: element without DPD will not be processed properly.
     // Response will be NackInvalidElementNumber instead of NackDDINoSupportedByElement
-    NackResponse_t reason = NackProcessDataCommandNotSupported;
+    PdAckResponse_t reason = NackProcessDataCommandNotSupported;
     if( m_pool )
     {
       reason = NackInvalidElementNumber;
@@ -250,7 +250,7 @@ namespace __IsoAgLib {
       }
     }
 
-    sendNack( ddi, element, reason, wasBroadcast );
+    sendPdAck( ddi, element, cmdType, reason, wasBroadcast );
   }
 
 
@@ -264,7 +264,7 @@ namespace __IsoAgLib {
     if ( iter != m_connectedPds.end())
       iter->second->handleRequest();
     else
-      sendNackNotFound( data.mui16_DDI, data.mui16_element, wasBroadcast );
+      sendNackNotFound( data.mui16_DDI, data.mui16_element, IsoAgLib::ProcData::RequestValue, wasBroadcast );
   }
 
 
@@ -278,7 +278,7 @@ namespace __IsoAgLib {
     if( iter != m_connectedPds.end() )
       iter->second->handleIncoming( data.mi32_pdValue, wasBroadcast );
     else
-      sendNackNotFound( data.mui16_DDI, data.mui16_element, wasBroadcast );
+      sendNackNotFound( data.mui16_DDI, data.mui16_element, IsoAgLib::ProcData::Value, wasBroadcast );
   }
 
 
@@ -290,28 +290,27 @@ namespace __IsoAgLib {
 
     if( iter != m_connectedPds.end() )
     {
-      switch ( data.men_command ) {
-        case IsoAgLib::ProcData::MeasurementDistanceValueStart:
-        case IsoAgLib::ProcData::MeasurementTimeValueStart:
-        case IsoAgLib::ProcData::MeasurementChangeThresholdValueStart:
-        case IsoAgLib::ProcData::MeasurementMinimumThresholdValueStart:
-        case IsoAgLib::ProcData::MeasurementMaximumThresholdValueStart:
-          {
-            ConnectedPd_c &cPd = *( iter->second );
+      ConnectedPd_c &cPd = *( iter->second );
 
-            // measurementCommand_t and CommandType_t are unified for all measurement types
-            if( !cPd.startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t( data.men_command ), data.mi32_pdValue ) )
-              sendNack( cPd.pdBase().DDI(), cPd.pdBase().element(), NackTriggerMethodNotSupported, wasBroadcast );
-          }
-          break;
-
-        default:
-          isoaglib_assert( !"Method shall not be called for this Process command" );
-          break;
+      // measurementCommand_t and CommandType_t are unified for all measurement types
+      const bool measurementAccepted = cPd.startMeasurement( IsoAgLib::ProcData::MeasurementCommand_t( data.men_command ), data.mi32_pdValue );
+      if( measurementAccepted )
+      {
+        if (m_capsConnection.versionNr >= 4)
+        {
+          // TODO Version 4 Send out current value! to be clarified, within threshold it's already sent in "cPd.startMeasurement(..)" above.
+          // ... can be sent out also if version <4, doesn't hurt and is currently done so already, partly (within threshold)
+          sendPdAck(cPd.pdBase().DDI(), cPd.pdBase().element(), data.men_command, PdAckNoErrors, wasBroadcast);
+          // PdAck could be sent out also for version < 4, but not sure how the TCs would react on it, so better only do it version 4+.
+        }
+      }
+      else
+      {
+        sendPdAck(cPd.pdBase().DDI(), cPd.pdBase().element(), data.men_command, NackTriggerMethodNotSupported, wasBroadcast);
       }
     }
     else
-      sendNackNotFound( data.mui16_DDI, data.mui16_element, wasBroadcast );
+      sendNackNotFound( data.mui16_DDI, data.mui16_element, data.men_command, wasBroadcast );
   }
 
 
@@ -340,11 +339,16 @@ namespace __IsoAgLib {
 
 
   void
-  PdConnection_c::sendNack( int16_t ddi, int16_t element, NackResponse_t errorcodes, bool wasBroadcast ) const
+  PdConnection_c::sendPdAck( int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t pdCmd, PdAckResponse_t errorcodes, bool wasBroadcast ) const
   {
-    if( !wasBroadcast )
-      sendProcMsg( IsoAgLib::ProcData::ProcessDataAcknowledge, ddi, element, int32_t( 0xffffff00UL | uint32_t( errorcodes ) ) );
+    if (wasBroadcast)
+      return;
+
+    if (m_capsConnection.versionNr < 4)
+      pdCmd = IsoAgLib::ProcData::ClientTaskOrNotApplicable; // NOT APPLICABLE
+
+    sendProcMsg( IsoAgLib::ProcData::ProcessDataAcknowledge, ddi, element, int32_t( 0xfffff000UL | ( uint32_t( pdCmd ) << 8 ) | uint32_t( errorcodes ) ) );
   }
-  
+
 
 };

@@ -43,6 +43,12 @@ namespace __IsoAgLib {
   } StructureLabel_s;
 
 
+  typedef struct {
+      uint8_t length;
+      uint8_t byteString[32];
+  } ExtendedStructureLabel_s;
+
+
   class DeviceObject_c {
     public:
       DeviceObject_c( const IsoAgLib::ProcData::DeviceObjectType_t type, const char* desig );
@@ -69,10 +75,10 @@ namespace __IsoAgLib {
       const uint16_t m_objectId;
       const char* m_designator;
 
-      virtual uint32_t getSize() const;
+      virtual uint32_t getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const;
 
       void formatHeader( ByteStreamBuffer_c& byteStream ) const;
-      virtual void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const = 0;
+      virtual void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const = 0;
       virtual void calcChecksumAdd( DevicePool_c & ) const = 0;
       void calcChecksumAddHeader( DevicePool_c & ) const;
 
@@ -91,6 +97,8 @@ namespace __IsoAgLib {
       const IsoName_c& getWsmName()               const { return m_identItem->isoName(); }
       const Localization_s& getLocalization()     const { return m_localization; }
       const StructureLabel_s& getStructureLabel() const { return m_structLabel; }
+      const ExtendedStructureLabel_s& getExtendedStructureLabel()
+                                                  const { return m_extendedStructureLabel; }
       const char* getVersion()                    const { return m_version; }
       const char* getSerialNumber()               const { return m_serialNumber; }
 
@@ -99,6 +107,8 @@ namespace __IsoAgLib {
       void setLocalization( const Localization_s& s );
       void setStructureLabel( const char* s );
       void setStructureLabel( const uint8_t s[7] );
+      void setExtendedStructureLabel( const char* s );                 // len 0..32. input 0-terminated string
+      void setExtendedStructureLabel( const char* s, uint8_t length ); // len 0..32. input can have 0-bytes!
       void setSerialNumber( const char* s );
 
     private:
@@ -109,11 +119,12 @@ namespace __IsoAgLib {
       const char* m_version;
       char m_serialNumber[ 32+1 ];
       StructureLabel_s m_structLabel;
+      ExtendedStructureLabel_s m_extendedStructureLabel;
       const IdentItem_c *m_identItem;
       Localization_s m_localization;
 
-      uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
+      uint32_t getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
   };
 
@@ -132,8 +143,8 @@ namespace __IsoAgLib {
       }
 
     private:
-      uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
+      uint32_t getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
 
       size_t numberOfChildren() const {
@@ -177,8 +188,8 @@ namespace __IsoAgLib {
       }
 
     private:
-      uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
+      uint32_t getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
 
       uint16_t m_ddi;
@@ -202,8 +213,8 @@ namespace __IsoAgLib {
       }
 
     private:
-      uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
+      uint32_t getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
 
       uint16_t m_ddi;
@@ -243,8 +254,8 @@ namespace __IsoAgLib {
       }
 
     private:
-      uint32_t getSize() const;
-      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const;
+      uint32_t getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const;
+      void formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const;
       void calcChecksumAdd( DevicePool_c & ) const;
 
       int32_t m_offset;
@@ -303,8 +314,8 @@ namespace __IsoAgLib {
       DeviceObjectDvc_c* getDvcObject() const;
       DeviceObject_c* getObject( const uint16_t objId, const IsoAgLib::ProcData::DeviceObjectType_t ) const;
 
-      ByteStreamBuffer_c getBytestream( uint8_t cmdByte, const IsoAgLib::ProcData::ServerCapabilities_s& caps );
-      uint32_t getBytestreamSize() const;
+      ByteStreamBuffer_c getBytestream( uint8_t cmdByte, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps );
+      uint32_t getBytestreamSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const;
 
       typedef STL_NAMESPACE::list<ProcData_c*> ProcDataList_t;
       ProcDataList_t &getProcDataList() { return *reinterpret_cast<ProcDataList_t*>( &m_procDatas ); }

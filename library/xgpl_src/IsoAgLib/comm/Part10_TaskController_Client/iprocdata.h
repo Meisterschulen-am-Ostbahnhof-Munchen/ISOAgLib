@@ -53,7 +53,7 @@ namespace IsoAgLib
       ReservedC                             = 0xc,
       ProcessDataAcknowledge                = 0xd,
       TaskControllerStatus                  = 0xe,
-      ClientTask                            = 0xf,
+      ClientTaskOrNotApplicable             = 0xf,
     };
 
     enum SpecialDDI_t {
@@ -129,6 +129,16 @@ namespace IsoAgLib
       unsigned numBoom;
       unsigned numSection;
       unsigned numBin;
+    };
+
+    struct ConnectionCapabilities_s {
+      ConnectionCapabilities_s()
+        : versionNr(0)
+        , hasPeerControl(false)
+      {}
+
+      uint8_t versionNr;
+      bool hasPeerControl;
     };
 }
 

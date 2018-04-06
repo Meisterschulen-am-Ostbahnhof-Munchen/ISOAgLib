@@ -264,7 +264,7 @@ namespace __IsoAgLib {
         break;
 
       case PoolStateUploading:
-        m_devicePoolToUpload = getDevicePool().getBytestream( procCmdPar_OPTransferMsg, m_capsServer );
+        m_devicePoolToUpload = getDevicePool().getBytestream( procCmdPar_OPTransferMsg, m_capsConnection);
         doCommand( procCmdPar_RequestOPTransferMsg );
         break;
 
@@ -483,7 +483,7 @@ namespace __IsoAgLib {
           sendProcMsg( IsoAgLib::ProcData::ControlAssignment, ddi, elem, int32_t( 0xfffffff0UL | uint32_t( transmitter ? TransmitterAck : ReceiverAck ) ) );
         else
           // we currently don't have a better error-code for NAME unknown/don't assign to TC or DL/don't reassign/etc., so....
-          sendNackNotFound( ddi, elem, false );
+          sendNackNotFound( ddi, elem, command, false );
       }
       break;
 
@@ -523,7 +523,7 @@ namespace __IsoAgLib {
       case IsoAgLib::ProcData::ReservedC:
       case IsoAgLib::ProcData::ProcessDataAcknowledge:
       case IsoAgLib::ProcData::TaskControllerStatus:
-      case IsoAgLib::ProcData::ClientTask:
+      case IsoAgLib::ProcData::ClientTaskOrNotApplicable:
         // accept these messages only from the connected TC/DL.
         spValueSource = getRemoteItem();
     }
@@ -608,6 +608,9 @@ namespace __IsoAgLib {
         m_capsServer.numBoom    = data.getUint8Data( 6-1 );
         m_capsServer.numSection = data.getUint8Data( 7-1 );
         m_capsServer.numBin     = data.getUint8Data( 8-1 );
+
+        m_capsConnection.versionNr      = ( m_capsServer.versionNr < m_capsClient.versionNr ) ? m_capsServer.versionNr : m_capsClient.versionNr;
+        m_capsConnection.hasPeerControl = m_capsServer.hasPeerControl;
 
         m_stateHandler->_eventConnectionRequest( getIdentItem(), *connected(), m_capsServer );
         break;

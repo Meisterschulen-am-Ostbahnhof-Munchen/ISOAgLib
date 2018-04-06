@@ -59,7 +59,7 @@ namespace __IsoAgLib {
   }
 
 
-  uint32_t DeviceObject_c::getSize() const {
+  uint32_t DeviceObject_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const {
     return ( sizeof( m_objectId ) + 3 /* label */ );
   }
 
@@ -80,14 +80,13 @@ namespace __IsoAgLib {
     , m_version( version )
   //, m_serialNumber()
     , m_structLabel()
+    , m_extendedStructureLabel()
     , m_identItem( NULL )
     , m_localization()
   {
     isoaglib_assert( version != NULL );
-    isoaglib_assert( CNAMESPACE::strlen( version ) <= 32 );
     m_serialNumber[ 0 ] = 0x00;
-    STL_NAMESPACE::memset( ( void* )&m_localization, 0, sizeof( m_localization ) );
-    m_localization.reserved = 0xff; // Reserved field
+    // no init here, appropriate setters need to be called. basta.
   }
 
 
@@ -160,6 +159,17 @@ namespace __IsoAgLib {
     setStructureLabel( tmpBuf );
   }
 
+  void DeviceObjectDvc_c::setExtendedStructureLabel( const char* s, uint8_t length )
+  {
+    isoaglib_assert( length <= 32 );
+
+    m_extendedStructureLabel.length = length;
+    CNAMESPACE::memcpy( m_extendedStructureLabel.byteString, s, length );
+  }
+
+  void DeviceObjectDvc_c::setExtendedStructureLabel( const char* s ) {
+    setExtendedStructureLabel( s, (uint8_t)CNAMESPACE::strlen( s ) );
+  }
 
   void DeviceObjectDvc_c::setSerialNumber( const char* s ) {
     isoaglib_assert( CNAMESPACE::strlen( s ) <= 32 );
@@ -167,8 +177,10 @@ namespace __IsoAgLib {
   }
 
 
-  void DeviceObjectDvc_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& ) const {
+  void DeviceObjectDvc_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
     formatHeader( byteStream );
+
+    isoaglib_assert( CNAMESPACE::strlen( m_version ) <= size_t((caps.versionNr >= 4) ? 128 : 32) );
 
     byteStream.format( m_designator );
     byteStream.format( m_version );
@@ -177,16 +189,29 @@ namespace __IsoAgLib {
 
     byteStream.format( ( uint8_t* )&m_structLabel, 7 );
     byteStream.format( ( uint8_t* )&m_localization, 7 );
+
+    if( caps.versionNr >= 4 )
+    {
+      byteStream.format( m_extendedStructureLabel.length );
+      byteStream.format( (uint8_t*)&m_extendedStructureLabel.byteString, m_extendedStructureLabel.length );
+    }
   }
 
 
-  uint32_t DeviceObjectDvc_c::getSize() const {
-    uint32_t size = DeviceObject_c::getSize();
+  uint32_t DeviceObjectDvc_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
+    uint32_t size = DeviceObject_c::getSize( caps );
     size += sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() );
     size += sizeof( uint8_t ) + CNAMESPACE::strlen( getVersion() );
     size += 8; // m_wsmName;
     size += sizeof( uint8_t ) + CNAMESPACE::strlen( getSerialNumber() );
     size += 14; /*  m_structLabel + m_localization */
+
+    if( caps.versionNr >= 4 )
+    {
+      size += 1; // Extended Structure Label length byte
+      size += m_extendedStructureLabel.length;
+    }
+
     return size;
   }
 
@@ -239,7 +264,7 @@ namespace __IsoAgLib {
     m_parentId = pid;
   }
 
-  void DeviceObjectDet_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& ) const {
+  void DeviceObjectDet_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const {
     formatHeader( byteStream );
 
     byteStream.format( uint8_t( m_type ) );
@@ -267,8 +292,8 @@ namespace __IsoAgLib {
   }
 
 
-  uint32_t DeviceObjectDet_c::getSize() const {
-    uint32_t size = DeviceObject_c::getSize();
+  uint32_t DeviceObjectDet_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
+    uint32_t size = DeviceObject_c::getSize( caps );
     size += sizeof( m_type );
     size += sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() );
     size += sizeof( m_elementNumber ) + sizeof( m_parentId );
@@ -351,7 +376,7 @@ namespace __IsoAgLib {
     m_dvpObjectId = ( dvp ) ? dvp->getObjectId() : 0xFFFF;
   }
 
-  void DeviceObjectDpd_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) const {
+  void DeviceObjectDpd_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
     formatHeader( byteStream );
 
     byteStream.format( ddi() );
@@ -362,8 +387,8 @@ namespace __IsoAgLib {
   }
 
 
-  uint32_t DeviceObjectDpd_c::getSize() const {
-    return ( DeviceObject_c::getSize() + sizeof( m_ddi ) + sizeof( m_properties ) + sizeof( m_method )
+  uint32_t DeviceObjectDpd_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
+    return ( DeviceObject_c::getSize( caps ) + sizeof( m_ddi ) + sizeof( m_properties ) + sizeof( m_method )
              + sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() )
              + sizeof( m_dvpObjectId ) );
   }
@@ -412,7 +437,7 @@ namespace __IsoAgLib {
   }
 
 
-  void DeviceObjectDpt_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& ) const {
+  void DeviceObjectDpt_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const {
     formatHeader( byteStream );
 
     byteStream.format( m_ddi );
@@ -422,8 +447,8 @@ namespace __IsoAgLib {
   }
 
 
-  uint32_t DeviceObjectDpt_c::getSize() const {
-    return ( DeviceObject_c::getSize() + sizeof( m_ddi ) + sizeof( m_value )
+  uint32_t DeviceObjectDpt_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
+    return ( DeviceObject_c::getSize( caps ) + sizeof( m_ddi ) + sizeof( m_value )
              + sizeof( uint8_t ) + CNAMESPACE::strlen( m_designator )
              + sizeof( m_dvpObjectId ) );
   }
@@ -452,7 +477,7 @@ namespace __IsoAgLib {
   {}
 
 
-  void DeviceObjectDvp_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ServerCapabilities_s& ) const {
+  void DeviceObjectDvp_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const {
     formatHeader( byteStream );
 
     byteStream.format( m_offset );
@@ -462,8 +487,8 @@ namespace __IsoAgLib {
   }
 
 
-  uint32_t DeviceObjectDvp_c::getSize() const {
-    return ( DeviceObject_c::getSize() + sizeof( m_offset ) + sizeof( m_scale ) + sizeof( m_decimals ) + sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() ) ) ;
+  uint32_t DeviceObjectDvp_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
+    return ( DeviceObject_c::getSize( caps ) + sizeof( m_offset ) + sizeof( m_scale ) + sizeof( m_decimals ) + sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() ) ) ;
   }
 
 
@@ -577,8 +602,8 @@ namespace __IsoAgLib {
   }
 
 
-  ByteStreamBuffer_c DevicePool_c::getBytestream( uint8_t cmd, const IsoAgLib::ProcData::ServerCapabilities_s& caps ) {
-    const uint32_t size = getBytestreamSize() + 1; // one extra byte for command
+  ByteStreamBuffer_c DevicePool_c::getBytestream( uint8_t cmd, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) {
+    const uint32_t size = getBytestreamSize( caps ) + 1; // one extra byte for command
     ByteStreamBuffer_c buffer;
     buffer.setBuffer( allocByteStreamBuffer( size ) );
     buffer.setSize( size );
@@ -592,10 +617,10 @@ namespace __IsoAgLib {
   }
 
 
-  uint32_t DevicePool_c::getBytestreamSize() const {
+  uint32_t DevicePool_c::getBytestreamSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
     uint32_t size = 0;
     for ( deviceMap_t::const_iterator it = m_devicePool.begin(); it != m_devicePool.end(); ++it ) {
-      size += it->second->getSize();
+      size += it->second->getSize( caps );
     }
     return size;
   }

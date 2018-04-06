@@ -86,8 +86,14 @@ namespace __IsoAgLib {
   bool
   TcClient_c::registerClient( IdentItem_c& ident, const IsoAgLib::ProcData::ClientCapabilities_s &caps, TcClientConnection_c::StateHandler_c &hdl )
   {
-    if( caps.versionNr != 3 )
-      return false;
+    switch( caps.versionNr )
+    {
+    case 3:
+    case 4:
+      break; // supported versions
+    default:
+      return false; // unsupported versions
+    }
 
     if( m_clientInfo.find( &ident ) != m_clientInfo.end() )
       return false;
