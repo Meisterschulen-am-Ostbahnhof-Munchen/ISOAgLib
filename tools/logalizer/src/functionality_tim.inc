@@ -411,13 +411,20 @@ CertificateRequest(PtrDataFrame_t a_ptrFrame)
     return (out);
 }
 
+std::ostringstream
+interpreteAuxValveID(PtrDataFrame_t a_ptrFrame)
+{
+    std::ostringstream out;
+    out << "Auxiliary valve " << std::dec << uint16_t(a_ptrFrame->dataOctet(0)) << " flow request: ";
+    return (out);
+}
+
 // noch nicht getestet
 std::ostringstream
 interpreteAuxValveCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
-    out << "Auxiliary valve " << std::dec << uint16_t(a_ptrFrame->dataOctet(0)) << " flow request: ";
-    uint16_t slotInfo = a_ptrFrame->dataOctet(4) << 8 | a_ptrFrame->dataOctet(5);
+    uint16_t slotInfo = a_ptrFrame->dataOctet(5) << 8 | a_ptrFrame->dataOctet(4);
     if (slotInfo == 0x0000)
     {
         out << "Valve fully opened (Extend)";
@@ -458,11 +465,10 @@ interpreteAuxValveCommand(PtrDataFrame_t a_ptrFrame)
 }
 
 std::ostringstream
-interpreteFrontPTOCommand(PtrDataFrame_t a_ptrFrame)
+interpretePTOCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
-    out << "Front PTO Request: ";
-    uint16_t slotInfo = a_ptrFrame->dataOctet(4) << 8 | a_ptrFrame->dataOctet(5);
+    uint16_t slotInfo = a_ptrFrame->dataOctet(5) << 8 | a_ptrFrame->dataOctet(4);
     if (slotInfo == 0x0000)
     {
         out << "Speed counter clockwise set by TIM Server";
@@ -499,89 +505,10 @@ interpreteFrontPTOCommand(PtrDataFrame_t a_ptrFrame)
 }
 
 std::ostringstream
-interpreteRearPTOCommand(PtrDataFrame_t a_ptrFrame)
+interpreteHitchCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
-    out << "Rear PTO Request: ";
-    uint16_t slotInfo = a_ptrFrame->dataOctet(4) << 8 | a_ptrFrame->dataOctet(5);
-    if (slotInfo == 0x0000)
-    {
-        out << "Speed counter clockwise set by TIM Server";
-    }
-    else if (slotInfo >= 0x0001 && slotInfo <= 0x7D7F)
-    {
-        out << "Rotate counter clockwise with a speed of " << std::dec << uint16_t((0x7D80 - slotInfo) * 0.125) << " 1/min";
-    }
-    else if (slotInfo == 0x7D80)
-    {
-        out << "Off";
-    }
-    else if (slotInfo >= 0x7D81 && slotInfo <= 0xFAFF)
-    {
-        out << "Rotate clockwise with a speed of " << std::dec << uint16_t((slotInfo - 0x7D80) * 0.125) << " 1/min";
-    }
-    else if (slotInfo == 0xFB00)
-    {
-        out << "Speed clockwise set by TIM Server";
-    }
-    else if (slotInfo == 0xFBFD)
-    {
-        out << "Release control";
-    }
-    else if (slotInfo == 0xFBFF)
-    {
-        out << "Ready to control";
-    }
-    else
-    {
-        out << "Reserved";
-    }
-    return (out);
-}
-
-std::ostringstream
-interpreteFrontHitchCommand(PtrDataFrame_t a_ptrFrame)
-{
-    std::ostringstream out;
-    out << "Front Hitch Request: ";
-    uint16_t slotInfo = a_ptrFrame->dataOctet(4) << 8 | a_ptrFrame->dataOctet(5);
-    if (slotInfo == 0x000)
-    {
-        out << "Full lower";
-    }
-    else if (slotInfo >= 0x0001 && slotInfo <= 0x270F)
-    {
-        out << "Raise up to " << std::dec << uint16_t(slotInfo / 100) << "." << uint16_t(slotInfo % 100) << " \%";
-    }
-    else if (slotInfo == 0x2710)
-    {
-        out << "Full Raise";
-    }
-    else if (slotInfo == 0xFB00)
-    {
-        out << "Float";
-    }
-    else if (slotInfo == 0xFBFD)
-    {
-        out << "Release control";
-    }
-    else if (slotInfo == 0xFBFF)
-    {
-        out << "Ready to control";
-    }
-    else
-    {
-        out << "Reserved";
-    }
-    return (out);
-}
-
-std::ostringstream
-interpreteRearHitchCommand(PtrDataFrame_t a_ptrFrame)
-{
-    std::ostringstream out;
-    out << "Rear Hitch Request: ";
-    uint16_t slotInfo = a_ptrFrame->dataOctet(4) << 8 | a_ptrFrame->dataOctet(5);
+    uint16_t slotInfo = a_ptrFrame->dataOctet(5) << 8 | a_ptrFrame->dataOctet(4);
     if (slotInfo == 0x000)
     {
         out << "Full lower";
@@ -617,8 +544,7 @@ std::ostringstream
 interpreteVehicleSpeedCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
-    out << "Vehicle Speed Request: ";
-    uint16_t slotInfo = a_ptrFrame->dataOctet(4) << 8 | a_ptrFrame->dataOctet(5);
+    uint16_t slotInfo = a_ptrFrame->dataOctet(5) << 8 | a_ptrFrame->dataOctet(4);
     if (slotInfo == 0x0000)
     {
         out << "Reverse speed set by TIM server";
@@ -662,8 +588,7 @@ std::ostringstream
 interpreteExternalGuidanceCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
-    out << "External Guidance Request: ";
-    uint16_t slotInfo = (a_ptrFrame->dataOctet(4) << 8) | a_ptrFrame->dataOctet(5);
+    uint16_t slotInfo = (a_ptrFrame->dataOctet(5) << 8) | a_ptrFrame->dataOctet(4);
     if (slotInfo >= 0x0000 && slotInfo <= 0x7D7F)
     {
         // Left
@@ -702,6 +627,66 @@ interpretePgnsTimServerToClient(PtrDataFrame_t a_ptrFrame)
     std::string result(" - ");
     switch (a_ptrFrame->dataOctet(0))
     {
+    case 0x00:
+    case 0x01:
+    case 0x02:
+    case 0x03:
+    case 0x04:
+    case 0x05:
+    case 0x06:
+    case 0x07:
+    case 0x08:
+    case 0x09:
+    case 0x0A:
+    case 0x0B:
+    case 0x0C:
+    case 0x0D:
+    case 0x0E:
+    case 0x0F:
+    case 0x10:
+    case 0x11:
+    case 0x12:
+    case 0x13:
+    case 0x14:
+    case 0x15:
+    case 0x16:
+    case 0x17:
+    case 0x18:
+    case 0x19:
+    case 0x1A:
+    case 0x1B:
+    case 0x1C:
+    case 0x1D:
+    case 0x1E:
+    case 0x1F:
+        result.append(interpreteAuxValveID(a_ptrFrame).str());
+        result.append(" flow status:  ");
+        result.append(interpreteAuxValveCommand(a_ptrFrame).str());
+        break;
+    case 0x40:
+        result.append("Front PTO Status:  ");
+        result.append(interpretePTOCommand(a_ptrFrame).str());
+        break;
+    case 0x41:
+        result.append("Rear PTO Status:  ");
+        result.append(interpretePTOCommand(a_ptrFrame).str());
+        break;
+    case 0x42:
+        result.append("Front Hitch Status:  ");
+        result.append(interpreteHitchCommand(a_ptrFrame).str());
+        break;
+    case 0x43:
+        result.append("Rear Hitch Status:  ");
+        result.append(interpreteHitchCommand(a_ptrFrame).str());
+        break;
+    case 0x44:
+        result.append("Vehicle Speed Status:  ");
+        result.append(interpreteVehicleSpeedCommand(a_ptrFrame).str());
+        break;
+    case 0x46:
+        result.append("External Guidance Status:  ");
+        result.append(interpreteExternalGuidanceCommand(a_ptrFrame).str());
+        break;
     case 0xF3:
         result.append("Function assignment status response.");
         break;
@@ -724,6 +709,7 @@ interpretePgnsTimServerToClient(PtrDataFrame_t a_ptrFrame)
         result.append(partiallyInterpreteTimServerStatus(a_ptrFrame).str());
         break;
     default:
+        result.append("Unknown command. Upgrade logalizer in interpretePgnsTimServerToClient()");
         break;
     }
 
@@ -768,24 +754,32 @@ interpretePgnsTimClientToServer(PtrDataFrame_t a_ptrFrame)
     case 0x1D:
     case 0x1E:
     case 0x1F:
+        result.append(interpreteAuxValveID(a_ptrFrame).str());
+        result.append(" flow request: ");
         result.append(interpreteAuxValveCommand(a_ptrFrame).str());
         break;
     case 0x40:
-        result.append(interpreteFrontPTOCommand(a_ptrFrame).str());
+        result.append("Front PTO Request: ");
+        result.append(interpretePTOCommand(a_ptrFrame).str());
         break;
     case 0x41:
-        result.append(interpreteRearPTOCommand(a_ptrFrame).str());
+        result.append("Rear PTO Request: ");
+        result.append(interpretePTOCommand(a_ptrFrame).str());
         break;
     case 0x42:
-        result.append(interpreteFrontHitchCommand(a_ptrFrame).str());
+        result.append("Front Hitch Request: ");
+        result.append(interpreteHitchCommand(a_ptrFrame).str());
         break;
     case 0x43:
-        result.append(interpreteRearHitchCommand(a_ptrFrame).str());
+        result.append("Rear Hitch Request: ");
+        result.append(interpreteHitchCommand(a_ptrFrame).str());
         break;
     case 0x44:
+        result.append("Vehicle Speed Request: ");
         result.append(interpreteVehicleSpeedCommand(a_ptrFrame).str());
         break;
     case 0x46:
+        result.append("External Guidance Request: ");
         result.append(interpreteExternalGuidanceCommand(a_ptrFrame).str());
         break;
     case 0xF3:
@@ -860,6 +854,7 @@ interpreteTimAuthenticationServerToClient(PtrDataFrame_t a_ptrFrame)
     default:
         break;
     }
+
     return result;
 }
 
@@ -906,6 +901,7 @@ interpreteTimAuthenticationClientToServer(PtrDataFrame_t a_ptrFrame)
     default:
         break;
     }
+
     return result;
 }
 
