@@ -177,7 +177,6 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     {
 
       int32_t i32_busInd = -1, i32_virtualBusInd = -1;
-      XLaccess virtualChannelMask = 0;
 
       // select the wanted channels
       ss_canDevice.canBus(ui8_bus).m_xlChannelMask = ss_canDevice.canBus(ui8_bus).m_xlInitMask = 0;
@@ -189,27 +188,20 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         {
           i32_busInd++;
           printf("Detect Real Channel %d\n", i32_busInd);
-          if (ui8_bus == i32_busInd)
+          if (ui8_bus == i)
           { // BUS found
             ss_canDevice.canBus(ui8_bus).m_xlChannelMask |= g_xlDrvConfig.channel[i].channelMask;
           }
         }
-        else if (g_xlDrvConfig.channel[i].hwType == XL_HWTYPE_VIRTUAL)
+        else if ((gHwType == XL_HWTYPE_AUTO) && (g_xlDrvConfig.channel[i].hwType == XL_HWTYPE_VIRTUAL))
         {
           i32_virtualBusInd++;
           printf("Detect Virtual Channel %d\n", i32_virtualBusInd);
-          if (ui8_bus == i32_virtualBusInd)
+          if (ui8_bus == i)
           { // BUS found
-            virtualChannelMask |= g_xlDrvConfig.channel[i].channelMask;
+            ss_canDevice.canBus(ui8_bus).m_xlChannelMask |= g_xlDrvConfig.channel[i].channelMask;
           }
         }
-      }
-
-      // if AUTO HW detection is wanted, and only virtual channels are found
-      // use virtualChannelMask
-      if ((gHwType == XL_HWTYPE_AUTO) && (i32_busInd == -1))
-      { // no real CAN channels found
-        ss_canDevice.canBus(ui8_bus).m_xlChannelMask = virtualChannelMask;
       }
 
       ss_canDevice.canBus(ui8_bus).m_xlInitMask = ss_canDevice.canBus(ui8_bus).m_xlPermissionMask = ss_canDevice.canBus(ui8_bus).m_xlChannelMask;
@@ -290,6 +282,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
           goto error;
 
       }
+      ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
     }
     else
     {
