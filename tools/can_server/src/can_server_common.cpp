@@ -507,9 +507,15 @@ std::string Option_c< OPTION_INITIAL_CAN_OPEN >::doGetUsage() const
 template <>
 int Option_c< OPTION_VIRTUAL_CAN_SUBSTITUTE >::doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const
 {
+  #ifdef DEFAULT_SUBSTITUTE_VIRTUAL
+  if (!strcmp(argv[ai_pos], "--novirtual")) {
+    ar_server.mb_virtualSubstitute = false;
+    return 1;
+#else
   if (!strcmp(argv[ai_pos], "--virtual")) {
     ar_server.mb_virtualSubstitute = true;
     return 1;
+#endif
   }
   return 0;
 }
@@ -523,7 +529,11 @@ std::string Option_c< OPTION_VIRTUAL_CAN_SUBSTITUTE >::doGetSetting(__HAL::serve
 template <>
 std::string Option_c< OPTION_VIRTUAL_CAN_SUBSTITUTE >::doGetUsage() const
 {
+#ifdef DEFAULT_SUBSTITUTE_VIRTUAL
+  return "  --novirtual                Don't replace non existing physical CAN nodes with a virtual substitute\n";
+#else
   return "  --virtual                  Replace non existing physical CAN nodes with a virtual substitute\n";
+#endif
 }
 
 #ifndef WIN32

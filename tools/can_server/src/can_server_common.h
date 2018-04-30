@@ -23,6 +23,9 @@
 #include <../../tools/libs/misc/yasper.h>
 #include <IsoAgLib/hal/pc/errcodes.h>
 
+// Uncomment this define to substitute unavailable buses on the hardware by
+// virtual buses by default (can be disable with option '--novirtual')
+//#define DEFAULT_SUBSTITUTE_VIRTUAL
 #define HAL_CAN_MAX_BUS_NR 16
 
 namespace __HAL {

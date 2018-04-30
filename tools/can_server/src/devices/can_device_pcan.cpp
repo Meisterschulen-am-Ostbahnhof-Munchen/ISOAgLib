@@ -190,7 +190,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
       }
       else
       {
-        std::cerr << "Open PEAK CAN Fault with return-code: " << status << std::endl;
+        std::cerr << "Open PEAK CAN Fault with return-code: " << std::dec << status << std::endl;
         return false;
       }
     }

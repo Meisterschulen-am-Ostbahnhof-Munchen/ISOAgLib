@@ -72,7 +72,11 @@ __HAL::server_c::server_c() :
   mb_monitorMode(false),
   mb_inputFileMode(false),
   mf_canInput(0),
+#ifdef DEFAULT_SUBSTITUTE_VIRTUAL
+  mb_virtualSubstitute(true),
+#else
   mb_virtualSubstitute(false),
+#endif
 #ifndef WIN32
   mb_daemon(false),
 #endif
