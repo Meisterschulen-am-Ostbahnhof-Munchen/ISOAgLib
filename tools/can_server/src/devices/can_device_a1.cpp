@@ -21,6 +21,9 @@
 #include "can_server_common.h"
 #include <assert.h>
 
+#define HARDWARE "A1"
+#define HARDWARE_PATCH 0
+
 struct canMsgA1_s {
         unsigned        id;
         int             msg_type;
@@ -28,6 +31,7 @@ struct canMsgA1_s {
         unsigned char   data[8];
         unsigned long   time;           /* timestamp in msec, at read only */
 };
+
 
 /* ioctl request codes */
 #define CAN_MAGIC_NUMBER        'z'
@@ -91,6 +95,16 @@ canDevice_s::canBus_s::canBus_s() :
 bool isBusOpen(uint8_t ui8_bus)
 {
   return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
+}
+
+const char* getHardware()
+{
+  return HARDWARE;
+}
+
+unsigned getHardwarePatch()
+{
+  return HARDWARE_PATCH;
 }
 
 uint32_t initCardApi ()

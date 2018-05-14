@@ -105,6 +105,7 @@ tools/README.txt -text
 tools/can_messenger/conf_can_messenger_msq_x86linux -text
 tools/can_messenger/conf_can_messenger_socket_win32 -text
 tools/can_messenger/conf_can_messenger_socket_x86linux -text
+tools/can_server/Changelog.txt -text
 tools/can_server/README.txt -text
 tools/can_server/cmake/can_server_lawicel/CMakeLists.txt -text
 tools/can_server/cmake/can_server_msq_no_card/CMakeLists.txt -text

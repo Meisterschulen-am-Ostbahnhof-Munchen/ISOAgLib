@@ -27,6 +27,8 @@
 #include "wrapper_for_can_server_interface.h"
 #include "can_server_common.h"
 
+#define HARDWARE "RTE"
+#define HARDWARE_PATCH 0
 
 using namespace __HAL;
 
@@ -116,6 +118,16 @@ bool isBusOpen(uint8_t ui8_bus)
   return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
 }
 
+
+const char* getHardware()
+{
+  return HARDWARE;
+}
+
+unsigned getHardwarePatch()
+{
+  return HARDWARE_PATCH;
+}
 
 uint32_t initCardApi ()
 {

@@ -14,6 +14,9 @@
 #include "wrapper_for_can_server_interface.h"
 #include "can_server_common.h"
 
+#define HARDWARE "No Card"
+#define HARDWARE_PATCH 0
+
 using namespace __HAL;
 
 static struct canDevice_s {
@@ -48,6 +51,16 @@ canDevice_s::canBus_s::canBus_s() :
 bool isBusOpen(uint8_t ui8_bus)
 {
   return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
+}
+
+const char* getHardware()
+{
+  return HARDWARE;
+}
+
+unsigned getHardwarePatch()
+{
+  return HARDWARE_PATCH;
 }
 
 uint32_t initCardApi ()

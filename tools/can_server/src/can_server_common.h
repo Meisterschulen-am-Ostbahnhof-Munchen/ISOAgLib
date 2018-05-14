@@ -23,6 +23,10 @@
 #include <../../tools/libs/misc/yasper.h>
 #include <IsoAgLib/hal/pc/errcodes.h>
 
+#define MAJOR 2
+#define MINOR 1
+#define PATCH 0
+
 // Uncomment this define to substitute unavailable buses on the hardware by
 // virtual buses by default (can be disable with option '--novirtual')
 //#define DEFAULT_SUBSTITUTE_VIRTUAL
@@ -210,6 +214,9 @@ extern yasper::ptr< AOption_c > const *const gp_optionsEnd;
 
 /////////////////////////////////////////////////////////////////////////
 // Driver Function Declarations
+
+const char* getHardware();
+unsigned getHardwarePatch();
 
 uint32_t initCardApi();
 bool     resetCard(void);

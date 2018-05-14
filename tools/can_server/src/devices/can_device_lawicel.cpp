@@ -19,8 +19,10 @@
 #include <lawicel_can.h>
 
 
-using namespace __HAL;
+#define HARDWARE "Lawicel"
+#define HARDWARE_PATCH 0
 
+using namespace __HAL;
 
 #define LAWICEL_ADAPTER_NAME_LEN 32
 #define LAWICEL_ADAPTER_VER_LEN 255
@@ -69,6 +71,16 @@ canDevice_s::canBus_s::canBus_s() :
 bool isBusOpen(uint8_t ui8_bus)
 {
 	return ss_canDevice.canBus(ui8_bus).isOpen;
+}
+
+const char* getHardware()
+{
+  return HARDWARE;
+}
+
+unsigned getHardwarePatch()
+{
+  return HARDWARE_PATCH;
 }
 
 uint32_t initCardApi ()

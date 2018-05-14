@@ -76,6 +76,11 @@ void checkAndHandleOptionsAndStartup(int argc, char *argv[], __HAL::server_c &ar
 
   if (ar_server.mb_interactive) {
     std::cerr << "IsoAgLib CAN-Server" << std::endl;
+    std::cerr << "Version " << MAJOR    << "."
+                            << MINOR    << "."
+                            << PATCH    << " " 
+                            << getHardware() << "."
+                            << getHardwarePatch() << std::endl;
     std::cerr << "(Run with '--help' to get help)" << std::endl << std::endl;
     printSettings (ar_server);
   }
@@ -306,7 +311,12 @@ void *readUserInput( void *ap_arg )
 
 void usage() {
   std::cout
-    << "IsoAgLib CAN-Server - Virtual Host CAN-Bus." << std::endl << std::endl
+    << "IsoAgLib CAN-Server - Virtual Host CAN-Bus." << std::endl
+    << "Version " << MAJOR    << "."
+                  << MINOR    << "."
+                  << PATCH    << " " 
+                  << getHardware() << "."
+                  << getHardwarePatch() << std::endl << std::endl
     << "Usage: can_server [OPTIONS]" << std::endl << std::endl
     << "Note: When running in Interactive mode (default)" << std::endl
     << "      type 'help' for a list of interactive commands." << std::endl << std::endl

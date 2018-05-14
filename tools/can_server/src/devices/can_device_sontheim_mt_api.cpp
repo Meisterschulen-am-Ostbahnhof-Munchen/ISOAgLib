@@ -31,6 +31,9 @@ typedef int HINSTANCE;
 #include "can_server_common.h"
 #include <assert.h>
 
+#define HARDWARE "Sontheim MT"
+#define HARDWARE_PATCH 0
+
 using namespace __HAL;
 
 /////////////////////////////////////////////////////////////////////////
@@ -77,6 +80,16 @@ canDevice_s::canBus_s::canBus_s() :
 bool isBusOpen(uint8_t ui8_bus)
 {
   return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
+}
+
+const char* getHardware()
+{
+  return HARDWARE;
+}
+
+unsigned getHardwarePatch()
+{
+  return HARDWARE_PATCH;
 }
 
 uint32_t initCardApi ()

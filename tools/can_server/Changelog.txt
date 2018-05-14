@@ -1,0 +1,41 @@
+=============================== COMMON ===============================
+
+2018-05-14 Version 2.1.0    Julian Fichtner     (j.fichtner@osb-ag.de)
+
+	* Added a version labeling. Started with version 2.1.0
+		~ can_server_common.h / .cpp
+		~ can_device_*.cpp
+		
+	* Added '--virtual' option for virtual busses
+		~ can_server_common.h / .cpp
+		~ can_server_sock.h / .cpp
+		~ can_device_*.cpp
+
+YYYY-MM-DD Version 2.0.0    Author              Contact data
+
+	* Changed the TCP/IP interface
+	  Attention: Incompatible with version 1.0.0
+		
+YYYY-MM-DD Version 1.0.0    Author              Contact data
+
+	* First release
+		
+=============================== NO CARD ==============================
+
+	2018-05-14 PATCH 0      Author              Contact data
+	* No hardware specific changes yet
+
+================================ PCAN ================================
+
+	2018-05-14 PATCH 0      Author              Contact data
+	* No hardware specific changes yet
+
+============================= SONTHEIM MT ============================
+
+	2018-05-14 PATCH 0      Author              Contact data
+	* No hardware specific changes yet
+
+============================== VECTOR XL =============================
+
+	2018-05-14 PATCH 0      Author              Contact data
+	* No hardware specific changes yet

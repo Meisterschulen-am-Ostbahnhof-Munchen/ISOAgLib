@@ -30,6 +30,9 @@ extern "C" {
 #include "can_server_common.h"
 #include <assert.h>
 
+#define HARDWARE "Vector"
+#define HARDWARE_PATCH 0
+
 #define HWTYPE_AUTO 1000
 
 using namespace __HAL;
@@ -105,6 +108,16 @@ static void printDriverConfig( void ) {
 bool isBusOpen(uint8_t ui8_bus)
 {
   return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
+}
+
+const char* getHardware()
+{
+  return HARDWARE;
+}
+
+unsigned getHardwarePatch()
+{
+  return HARDWARE_PATCH;
 }
 
 uint32_t initCardApi ()

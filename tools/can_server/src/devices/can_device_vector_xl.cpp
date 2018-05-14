@@ -39,6 +39,9 @@ extern "C" {
 #include <assert.h>
 #include <vector>
 
+#define HARDWARE "VectorXL"
+#define HARDWARE_PATCH 0
+
 #define XL_HWTYPE_AUTO 1000
 
 using namespace __HAL;
@@ -126,6 +129,16 @@ static void printDriverConfig( void )
 bool isBusOpen(uint8_t ui8_bus)
 {
   return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
+}
+
+const char* getHardware()
+{
+  return HARDWARE;
+}
+
+unsigned getHardwarePatch()
+{
+  return HARDWARE_PATCH;
 }
 
 uint32_t initCardApi ()

@@ -33,6 +33,8 @@
   #endif
 #endif
 
+#define HARDWARE "PCAN"
+#define HARDWARE_PATCH 0
 
 using namespace __HAL;
 
@@ -72,6 +74,16 @@ canDevice_s::canBus_s::canBus_s() :
 bool isBusOpen(uint8_t ui8_bus)
 {
   return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
+}
+
+const char* getHardware()
+{
+  return HARDWARE;
+}
+
+unsigned getHardwarePatch()
+{
+  return HARDWARE_PATCH;
 }
 
 uint32_t initCardApi ()
@@ -240,14 +252,17 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
   (void)ui8_bus;
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
 #ifdef WIN32
-  TPCANStatus status = CAN_Uninitialize(ss_canDevice.canBus(ui8_bus).m_channel);
-  if(status == PCAN_ERROR_OK)
+  if (!ss_canDevice.canBus(ui8_bus).mb_channelVirtual)
   {
-    DEBUG_PRINT("Disonnected peak driver.\n");
-  }
-  else
-  {
-    std::cerr << "Close PEAK CAN Fault with return-code: " << status << std::endl;
+    TPCANStatus status = CAN_Uninitialize(ss_canDevice.canBus(ui8_bus).m_channel);
+    if (status == PCAN_ERROR_OK)
+    {
+      DEBUG_PRINT("Disonnected peak driver.\n");
+    }
+    else
+    {
+      std::cerr << "Close PEAK CAN Fault with return-code: " << status << std::endl;
+    }
   }
   ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
 #endif
