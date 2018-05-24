@@ -115,7 +115,11 @@ namespace HAL
 
     void ThreadWrapper::ExecThread()
     {
-        m_exit_code = Exec();
+        const int exit_code = Exec();
+
+        m_exclusive_access.waitAcquireAccess();
+        m_exit_code = exit_code;
+        m_exclusive_access.releaseAccess();
     }
 
 };

@@ -28,6 +28,8 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
+#include "mutex_pthread.h"
+
 #ifdef USE_MUTUAL_EXCLUSION
 
 #ifdef WINCE
@@ -55,7 +57,10 @@ namespace HAL
 
             int GetExitCode() const
             {
-                return m_exit_code;
+                m_exclusive_access.waitAcquireAccess();
+                const int exit_code = m_exit_code;
+                m_exclusive_access.releaseAccess();
+                return exit_code;
             }
 
         protected:
@@ -74,6 +79,8 @@ namespace HAL
 #endif
             
             void ExecThread();
+
+            mutable ExclusiveAccess_c m_exclusive_access;
 
             int m_exit_code;
             bool m_request_to_stop;
