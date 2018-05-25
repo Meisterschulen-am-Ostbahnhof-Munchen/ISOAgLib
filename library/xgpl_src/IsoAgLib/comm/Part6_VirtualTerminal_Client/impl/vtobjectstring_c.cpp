@@ -1,7 +1,7 @@
 /*
-  isoterminalstringmss_c.cpp
+  vtobjectstringstreamer_c.cpp
 
-  (C) Copyright 2009 - 2016 by OSB AG and developing partners
+  (C) Copyright 2009 - 2018 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -18,7 +18,7 @@
 namespace IsoAgLib {
   // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple
   // constructor/destructor direct in scope of iVtObjectString_c
-  iVtObjectString_c::iVtObjectString_c() : vtObjectString_c() {}
+  iVtObjectString_c::iVtObjectString_c() : vtObject_c() {}
   iVtObjectString_c::~iVtObjectString_c(){}
 }
 
@@ -87,24 +87,4 @@ vtObjectStringStreamer_c::getStreamSize()
 {
   return 5+mui16_strLenToSend;
 }
-
-
-vtObjectString_c::vtObjectString_c()
-{}
-
-vtObjectString_c::~vtObjectString_c()
-{}
-
-void vtObjectString_c::setStringToStream( const char* apc_stringToStream )
-{
-  mc_streamer.setStringToStream( apc_stringToStream );
-  // additionally set the ID
-  mc_streamer.setID( getID() );
-}
-
-void vtObjectString_c::setStrLenToSend( uint16_t aui16_strLenToSend )
-{
-  mc_streamer.setStrLenToSend( aui16_strLenToSend );
-}
-
 } // end namespace __IsoAgLib

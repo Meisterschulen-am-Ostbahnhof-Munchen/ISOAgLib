@@ -11,26 +11,49 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "sendupload_c.h"
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectstring_c.h>
 
 
 namespace __IsoAgLib {
 
-
-void
-SendUpload_c::set (vtObjectString_c* apc_objectString)
+const SendUpload_c& SendUpload_c::operator= (const SendUpload_c& r_source)
 {
-  ppc_vtObjects = NULL;
+  SendUploadBase_c::operator=(r_source);
 
-  mssObjectString = apc_objectString;
+  if (mc_streamer != NULL)
+  {
+    delete mc_streamer;
+  }
+  mc_streamer = r_source.mc_streamer;
+  ppc_vtObjects = r_source.ppc_vtObjects;
+  ui16_numObjects = r_source.ui16_numObjects;
+  return r_source;
 }
 
+SendUpload_c::~SendUpload_c()
+{
+  if (mc_streamer != NULL)
+  {
+    delete mc_streamer;
+  }
+}
+
+void
+SendUpload_c::setStreamer(const char* apc_newValue, uint16_t a_ID, uint16_t aui16_strLenToSend)
+{
+  isoaglib_assert(mc_streamer == NULL);
+
+  ppc_vtObjects = NULL;
+
+  mc_streamer = new vtObjectStringStreamer_c(apc_newValue, a_ID, aui16_strLenToSend);
+}
 
 void
 SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9)
 {
   SendUploadBase_c::set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9);
-  mssObjectString = NULL;
-  ppc_vtObjects = NULL; /// Use BUFFER - NOT MultiSendStreamer!
+  mc_streamer = NULL;   /// Use BUFFER - NOT MultiSendStreamer!
+  ppc_vtObjects = NULL; 
   ui16_numObjects = 0;
 }
 
@@ -39,7 +62,7 @@ void
 SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
   SendUploadBase_c::set( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8 );
-  mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
+  mc_streamer = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = rppc_vtObjects;
   ui16_numObjects = aui16_numObjects;
 }
@@ -102,7 +125,7 @@ SendUpload_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overri
     vec_uploadBuffer.push_back (0xFF);
   }
 
-  mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
+  mc_streamer = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = NULL;
 }
 
@@ -111,7 +134,7 @@ void
 SendUpload_c::set (uint8_t* apui8_buffer, uint32_t bufferSize)
 {
   SendUploadBase_c::set (apui8_buffer, bufferSize);
-  mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
+  mc_streamer = NULL;   /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = NULL;
 }
 

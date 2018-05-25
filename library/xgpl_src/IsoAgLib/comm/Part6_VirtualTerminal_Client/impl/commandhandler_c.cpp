@@ -18,6 +18,7 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectpicturegraphic_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectstring_c.h>
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 
 
@@ -118,10 +119,12 @@ CommandHandler_c::sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size)
 
 
 bool
-CommandHandler_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectString, bool b_enableReplaceOfCmd)
+CommandHandler_c::sendCommandChangeStringValueRef(IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
-  msc_tempSendUpload.set (apc_objectString);
-  return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
+  msc_tempSendUpload.setStreamer (apc_newValue, apc_object->getID(), overrideSendLength);
+  bool returnValue = queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
+  msc_tempSendUpload.unsetStreamer();
+  return returnValue;
 }
 
 
@@ -752,9 +755,9 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
           3. mss is queued and could be replaced by buffer
           4. both use mssObjectString
             */
-          if (i_sendUpload->mssObjectString == NULL)
+          if (i_sendUpload->mc_streamer == NULL)
           {
-            if (ar_sendUpload.mssObjectString == NULL)
+            if (ar_sendUpload.mc_streamer == NULL)
             {
                // 1. both use buffer
               if (i_sendUpload->vec_uploadBuffer[0] == ar_sendUpload.vec_uploadBuffer[0])
@@ -797,9 +800,9 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
             else
             {
               // 2. buffer is queued and could be replaced by mssObjectString
-              if ((*i_sendUpload).vec_uploadBuffer[0] == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+              if ((*i_sendUpload).vec_uploadBuffer[0] == ar_sendUpload.mc_streamer->getFirstByte())
               {
-                if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == ar_sendUpload.mssObjectString->getStreamer()->getID())
+                if (((*i_sendUpload).vec_uploadBuffer[1] | (*i_sendUpload).vec_uploadBuffer[2]<<8) == ar_sendUpload.mc_streamer->getID())
                   thisCommandMatched = true;
               }
             }
@@ -807,21 +810,21 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
           else
           {
             // i_sendUpload->mssObjectString != NULL
-            if (ar_sendUpload.mssObjectString == NULL)
+            if (ar_sendUpload.mc_streamer == NULL)
             {
               // 3. mss is queued and could be replaced by buffer
-              if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.vec_uploadBuffer[0])
+              if ((*i_sendUpload).mc_streamer->getFirstByte() == ar_sendUpload.vec_uploadBuffer[0])
               {
-                if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == (ar_sendUpload.vec_uploadBuffer[1] | (ar_sendUpload.vec_uploadBuffer[2]<<8)))
+                if ((*i_sendUpload).mc_streamer->getID() == (ar_sendUpload.vec_uploadBuffer[1] | (ar_sendUpload.vec_uploadBuffer[2]<<8)))
                   thisCommandMatched = true;
               }
             }
             else
             {
               // 4. both use mssObjectString
-              if ((*i_sendUpload).mssObjectString->getStreamer()->getFirstByte() == ar_sendUpload.mssObjectString->getStreamer()->getFirstByte())
+              if ((*i_sendUpload).mc_streamer->getFirstByte() == ar_sendUpload.mc_streamer->getFirstByte())
               {
-                if ((*i_sendUpload).mssObjectString->getStreamer()->getID() == ar_sendUpload.mssObjectString->getStreamer()->getID())
+                if ((*i_sendUpload).mc_streamer->getID() == ar_sendUpload.mc_streamer->getID())
                   thisCommandMatched = true;
               }
             }
@@ -881,7 +884,7 @@ CommandHandler_c::dumpQueue()
 
     for (i_sendUpload = mq_sendUpload[ prio ].begin(); i_sendUpload != mq_sendUpload[ prio ].end(); ++i_sendUpload)
     {
-      if (i_sendUpload->mssObjectString == NULL)
+      if (i_sendUpload->mc_streamer == NULL)
       {
         for (uint8_t i=0; i<=7; i++)
         {
@@ -891,9 +894,9 @@ CommandHandler_c::dumpQueue()
       else
       {
         MultiSendPkg_c msp;
-        int i_strSize = i_sendUpload->mssObjectString->getStreamer()->getStreamSize();
+        int i_strSize = i_sendUpload->mc_streamer->getStreamSize();
         for (int i=0; i < i_strSize; i+=7) {
-          i_sendUpload->mssObjectString->getStreamer()->setDataNextStreamPart (&msp, (unsigned char) ((i_strSize - i) > 7 ? 7 : (i_strSize-i)));
+          i_sendUpload->mc_streamer->setDataNextStreamPart (&msp, (unsigned char) ((i_strSize - i) > 7 ? 7 : (i_strSize-i)));
           for (uint8_t j=1; j<=7; j++)
           {
             INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(msp[j]);
@@ -924,7 +927,7 @@ CommandHandler_c::tryToStart()
       /// Use Multi or Single CAN-Pkgs?
       //////////////////////////////////
 
-      if( (actSend.mssObjectString == NULL) && (actSend.vec_uploadBuffer.size() < 9) )
+      if( (actSend.mc_streamer == NULL) && (actSend.vec_uploadBuffer.size() < 9) )
       { /// Fits into a single CAN-Pkg!
         if( actSend.vec_uploadBuffer[0] == 0x11 )
         { /// Handle special case of LanguageUpdate / UserPoolUpdate
@@ -959,23 +962,23 @@ CommandHandler_c::tryToStart()
             actSend.vec_uploadBuffer[4], actSend.vec_uploadBuffer[5], actSend.vec_uploadBuffer[6], actSend.vec_uploadBuffer[7] );
         }
       }
-      else if( (actSend.mssObjectString != NULL) && (actSend.mssObjectString->getStreamer()->getStreamSize() < 9) )
+      else if( (actSend.mc_streamer != NULL) && (actSend.mc_streamer->getStreamSize() < 9) )
       { /// Fits into a single CAN-Pkg!
         mi32_commandTimestamp = HAL::getTime();
-        mui8_commandParameter = actSend.mssObjectString->getStreamer()->getFirstByte();
+        mui8_commandParameter = actSend.mc_streamer->getFirstByte();
 
-        uint8_t ui8_len = actSend.mssObjectString->getStreamer()->getStreamSize();
+        uint8_t ui8_len = actSend.mc_streamer->getStreamSize();
 
         uint8_t data[8];
-        actSend.mssObjectString->getStreamer()->set5ByteCommandHeader( data );
+        actSend.mc_streamer->set5ByteCommandHeader( data );
         int i = 5;
-        for( ; i < ui8_len; ++i ) data[i] = actSend.mssObjectString->getStreamer()->getStringToStream()[i - 5];
+        for( ; i < ui8_len; ++i ) data[i] = actSend.mc_streamer->getStringToStream()[i - 5];
         for( ; i < 8; ++i ) data[i] = 0xFF; // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
 
         m_connection.sendMessage(
           data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7] );
       }
-      else if( actSend.mssObjectString == NULL )
+      else if( actSend.mc_streamer == NULL )
       { /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
         mi32_commandTimestamp = -1; // will get set on SendSuccess
         mui8_commandParameter = actSend.vec_uploadBuffer[0];
@@ -989,12 +992,12 @@ CommandHandler_c::tryToStart()
       else
       {
         mi32_commandTimestamp = -1; // will get set on SendSuccess
-        mui8_commandParameter = actSend.mssObjectString->getStreamer()->getFirstByte();
+        mui8_commandParameter = actSend.mc_streamer->getFirstByte();
 
         (void)getMultiSendInstance( m_connection.getMultitonInst() ).sendIsoTarget(
           m_connection.getIdentItem().isoName(),
           m_connection.getVtServerInst().getIsoName(),
-          (IsoAgLib::iMultiSendStreamer_c*)actSend.mssObjectString->getStreamer(),
+          (IsoAgLib::iMultiSendStreamer_c*)actSend.mc_streamer,
           ECU_TO_VT_PGN, this );
       }
 

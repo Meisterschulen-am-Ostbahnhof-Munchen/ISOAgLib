@@ -1,5 +1,5 @@
 /*
-  ivtobjectstring.h
+  ivtobjectstring_c.h
 
   (C) Copyright 2009 - 2016 by OSB AG and developing partners
 
@@ -13,12 +13,12 @@
 #ifndef IVTOBJECTSTRING_H
 #define IVTOBJECTSTRING_H
 
-#include "impl/vtobjectstring_c.h"
+#include "impl/vtobject_c.h"
 
 
 namespace IsoAgLib {
 
-class iVtObjectString_c : public __IsoAgLib::vtObjectString_c
+class iVtObjectString_c : public __IsoAgLib::vtObject_c
 {
 public:
   iVtObjectString_c();

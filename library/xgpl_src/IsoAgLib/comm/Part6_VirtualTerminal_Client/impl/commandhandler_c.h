@@ -58,8 +58,8 @@ public:
   bool sendCommandChangeAttribute        (IsoAgLib::iVtObject_c*, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeSoftKeyMask      (IsoAgLib::iVtObject_c*, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeStringValue      (IsoAgLib::iVtObject_c*, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeStringValueRef   (IsoAgLib::iVtObject_c*, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeActiveMask       (IsoAgLib::iVtObject_c*, IsoAgLib::iVtObject_c* apc_mask, bool b_enableReplaceOfCmd=true );
-  bool sendCommandChangeStringValue      (IsoAgLib::iVtObjectString_c*, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeChildPosition    (IsoAgLib::iVtObject_c*, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeChildLocation    (IsoAgLib::iVtObject_c*, IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c*, uint8_t newColour,  bool b_enableReplaceOfCmd=true);
