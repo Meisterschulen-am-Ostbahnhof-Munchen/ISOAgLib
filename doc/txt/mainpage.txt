@@ -48,6 +48,7 @@ VT-Client:
  - Enhancement:
    - Added eventPointingEventOp for back-scaled Pointing Event positions
    - Renamed some Enabled -> SecondOptions Bit; Added getEnabled that masks properly
+   - Reduced the RAM usage for pools with many string objects
  - Bugfix:
    - Change Child Position now takes the dam/sk offset into account
    - AUX-N Functions:
@@ -69,11 +70,21 @@ HAL-Simulator:
 
 Multi-Packet:
  - Fix/Avoid memory reallocation on specific compilers.
+ - ConnAbort correct stream when RTS comes in running stream.
 
 CAN-Server:
  - Added '--virtual' parameter
- 
+ - Added '--init' parameter
+ - General stability fixes
+ - Added Version Number
 
+Logalizer:
+ - Added TIM parsing, interpretation of ACKNOWLEDGE_PGN and NAME summary at the end
+
+Framework:
+ - ThreadWrapper: additional mutex protection of ThreadWrapper::m_exit_code
+
+ 
 \subsection Change_ZI 2.8.2 to 2.9.0
 
 Tractor-Classes:
