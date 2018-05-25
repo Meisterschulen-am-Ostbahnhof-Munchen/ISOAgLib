@@ -431,7 +431,7 @@ interpreteAuxValveCommand(PtrDataFrame_t a_ptrFrame)
     }
     else if (slotInfo >= 0x0001 && slotInfo <= 0x7D7F)
     {
-        out << "Extend flow at " << std::dec << uint16_t((0x7D80 - slotInfo) * 0.004) << " \%";
+        out << "Extend flow at " << std::dec << uint16_t((0x7D80 - slotInfo) * 0.004) << " %";
     }
     else if (slotInfo == 0x7D80)
     {
@@ -439,7 +439,7 @@ interpreteAuxValveCommand(PtrDataFrame_t a_ptrFrame)
     }
     else if (slotInfo >= 0x7D81 && slotInfo <= 0xFAFF)
     {
-        out << "Retract flow at " << std::dec << uint16_t((slotInfo - 0x7D80) * 0.004) << " \%";
+        out << "Retract flow at " << std::dec << uint16_t((slotInfo - 0x7D80) * 0.004) << " %";
     }
     else if (slotInfo == 0xFB00)
     {
@@ -515,7 +515,7 @@ interpreteHitchCommand(PtrDataFrame_t a_ptrFrame)
     }
     else if (slotInfo >= 0x0001 && slotInfo <= 0x270F)
     {
-        out << "Raise up to " << std::dec << uint16_t(slotInfo / 100) << "." << uint16_t(slotInfo % 100) << " \%";
+        out << "Raise up to " << std::dec << uint16_t(slotInfo / 100) << "." << uint16_t(slotInfo % 100) << " %";
     }
     else if (slotInfo == 0x2710)
     {
