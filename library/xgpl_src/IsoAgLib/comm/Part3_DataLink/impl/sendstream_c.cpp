@@ -264,6 +264,12 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
           uint32_t(arc_data.getUint8Data(2)) +
           ((men_msgType == IsoTP) ? 0 : (uint32_t(arc_data.getUint16Data(3)) << 8));
 
+        if( cui32_packetNrRequested == 0 )
+        { // invalid. Only "1..n" allowed!"
+          abortSend( ConnectionAbortReasonAnyOtherError );
+          break;
+        }
+
         mui32_dataBufferOffset = (cui32_packetNrRequested - 1UL) * 7L; // take sequence nr with -1 because prepareSendMsg increment by 1 before first send
 
         if (mui8_packetsLeftToSendInBurst == 0)
