@@ -400,7 +400,7 @@ comm_features()
     fi
 
   #NEW Tractor features
-    if expr "$PRJ_TRACTOR" \| "$PRJ_TRACTOR_GROUND_BASED" \| "$PRJ_TRACTOR_MACHINE_SELECTED" \| "$PRJ_TRACTOR_FRONT_HITCH" \| "$PRJ_TRACTOR_REAR_HITCH" \| "$PRJ_TRACTOR_FRONT_PTO" \| "$PRJ_TRACTOR_REAR_PTO" \| "$PRJ_TRACTOR_LIGHTING" >/dev/null; then
+    if expr "$PRJ_TRACTOR" \| "$PRJ_TRACTOR_GROUND_BASED" \| "$PRJ_TRACTOR_MACHINE_SELECTED" \| "$PRJ_TRACTOR_FRONT_HITCH" \| "$PRJ_TRACTOR_REAR_HITCH" \| "$PRJ_TRACTOR_FRONT_PTO" \| "$PRJ_TRACTOR_REAR_PTO" \| "$PRJ_TRACTOR_LIGHTING" \| "$PRJ_TRACTOR_ENGINE_CONTROLLER_1" >/dev/null; then
         printf '%s' " -o -name 'ibasetypes.h' -o -name 'tractorcommonrx_c*'" >&3
     fi
     if expr "$PRJ_TRACTOR_FRONT_HITCH" \| "$PRJ_TRACTOR_REAR_HITCH" >/dev/null; then
