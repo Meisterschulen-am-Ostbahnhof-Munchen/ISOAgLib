@@ -1,5 +1,5 @@
 /*
-  tractorenginecontroller1_c.h:
+  tractorenginecontroller1_c.h: class for retrieving tractor engine controller data
 
   (C) Copyright 2018 - 2018 by OSB AG and developing partners
 
@@ -72,43 +72,43 @@ namespace __IsoAgLib
         /** deliver ISO engine torque mode
         * @return TorqueMode_t [0;15], 0 offset
         */
-        TorqueMode_t TorqueMode() const { return mt_TorqueMode; }
+        TorqueMode_t torqueMode() const { return mt_torqueMode; }
         
         /** an additional torque in percent of the reference engine torque
         * @return [+0.000% to +0.875%];  res: .125%/bit, offset: 0 
         */
-        uint8_t ActualPercentTorqueFractional() const { return mui8_actualPercentTorqueFractional; }
+        uint8_t actualPercentTorqueFractional() const { return mui8_actualPercentTorqueFractional; }
        
         /** requested torque output of the engine by the drive
         * @return [-125%;125%], res: 1%/bit, offset: -125% 
         */
-        int8_t DriverTargetPercentTorque() const { return mui8_driverTargetPercentTorque - 125; }
+        int8_t driverTargetPercentTorque() const { return mui8_driverTargetPercentTorque - 125; }
         
         /** the calculated output torque of the engine
         * @return [-125%;125%], res: 1%/bit, offset: -125%
         */
-        int8_t PercentTorque() const { return mui8_actualPercentTorque  - 125; }
+        int8_t percentTorque() const { return mui8_actualPercentTorque  - 125; }
         
         /** Actual engine speed which is calculated over a minimum crankshaft angle of 720 degrees divided by the number of
         cylinders
         * @return [0 rpm;8,031.875 rpm], res: 0.125 rpm/bit, offset: 0 rpm 
         */
-        uint16_t Rpm() const { return mui16_RPM; }
+        uint16_t rpm() const { return mui16_rpm; }
         
         /** source address of the SAE J1939 device currently controlling the engine
         * @return [0;255] , offset: 0,  Operational Range: 0 to 253
         */
-        uint8_t SourceAddress() const { return mui8_sourceAddressOfEngineControl; }
+        uint8_t sourceAddress() const { return mui8_sourceAddressOfEngineControl; }
         
         /** starter actions / errors
         * @return StarterMode_t [0;15], 0 offset
         */
-        StarterMode_t StarterMode() const { return mt_StarterMode; }
+        StarterMode_t starterMode() const { return mt_starterMode; }
         
         /** target torque output of the engine
         * @return [-125%;125%], res: 1%/bit, offset: -125%
         */
-        int8_t DemandPercentTorque() const { return mui8_DemandPercentTorque - 125; }
+        int8_t demandPercentTorque() const { return mui8_demandPercentTorque - 125; }
 
     private:
         TractorEngineController1_c(): TractorCommonRx_c( TractorCommonRx_c::TIMEOUT_SENDING_NODE_J1939 , ELECTRONIC_ENGINE_CONTROLLER_1_PGN ) {}
@@ -118,7 +118,7 @@ namespace __IsoAgLib
 
     private:
         /**  [0; 15] , 0 offset */
-        TorqueMode_t mt_TorqueMode;    
+        TorqueMode_t mt_torqueMode;    
         
         /**  [+0.000% to +0.875%], res: .125%/bit, offset: 0 */
         uint8_t mui8_actualPercentTorqueFractional;
@@ -130,16 +130,16 @@ namespace __IsoAgLib
         uint8_t mui8_actualPercentTorque;
         
         /**  [0 rpm;8,031.875 rpm], res: 0.125 rpm/bit, offset: 0 rpm */
-        uint16_t mui16_RPM;
+        uint16_t mui16_rpm;
         
         /**  [0;255] , offset: 0,  Operational Range: 0 to 253 */
         uint8_t mui8_sourceAddressOfEngineControl;                    
         
          /** [0;15], 0 offset */
-        StarterMode_t mt_StarterMode;
+        StarterMode_t mt_starterMode;
         
         /**  [-125%;125%], res: 1%/bit, offset: -125% */
-        uint8_t mui8_DemandPercentTorque;
+        uint8_t mui8_demandPercentTorque;
 
         friend TractorEngineController1_c &getTractorEngineController1Instance( unsigned instance );
     };
@@ -148,31 +148,37 @@ namespace __IsoAgLib
    
     inline bool TractorEngineController1_c::isTorqueModeUsable() const
     {
-        return mt_TorqueMode != torque_mode_not_available;
+        return mt_torqueMode != torque_mode_not_available;
     }
+
     inline bool TractorEngineController1_c::isActualPercentTorqueFractionalUsable() const
     {
         return mui8_actualPercentTorqueFractional <= MAX_VAL_8;
     }
+
     inline bool TractorEngineController1_c::isDriverTargetPercentTorqueUsable() const
     {
         return mui8_driverTargetPercentTorque <= MAX_VAL_8;
     }
+    
     inline bool TractorEngineController1_c::isActualPercentTorqueUsable() const
     {
         return mui8_actualPercentTorque <= MAX_VAL_8;
     }
+    
     inline bool TractorEngineController1_c::isRpmUsable() const
     {
-        return mui16_RPM <= MAX_VAL_16;
+        return mui16_rpm <= MAX_VAL_16;
     }
+    
     inline bool TractorEngineController1_c::isStarterModeUsable() const
     {
-        return mt_StarterMode != starter_mode_not_available;
+        return mt_starterMode != starter_mode_not_available;
     }
+    
     inline bool TractorEngineController1_c::isDemandPercentTorqueUsable() const
     {
-        return  mui8_DemandPercentTorque <= MAX_VAL_8;
+        return mui8_demandPercentTorque <= MAX_VAL_8;
     }
 }
 #endif

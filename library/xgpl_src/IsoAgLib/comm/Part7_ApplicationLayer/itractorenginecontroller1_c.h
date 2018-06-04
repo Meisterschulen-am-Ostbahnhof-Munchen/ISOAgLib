@@ -46,51 +46,51 @@ namespace IsoAgLib {
       /** deliver ISO engine torque mode
       * @return TorqueMode_t [0;15], 0 offset
       */
-      uint8_t TorqueMode() const {
-          return __IsoAgLib::TractorEngineController1_c::TorqueMode();
+      uint8_t torqueMode() const {
+          return __IsoAgLib::TractorEngineController1_c::torqueMode();
       }
       /** an additional torque in percent of the reference engine torque
       * @return [+0.000% to +0.875%];  res: .125%/bit, offset: 0
       */
-      uint8_t ActualPercentTorqueFractional() const {
-          return __IsoAgLib::TractorEngineController1_c::ActualPercentTorqueFractional();
+      uint8_t actualPercentTorqueFractional() const {
+          return __IsoAgLib::TractorEngineController1_c::actualPercentTorqueFractional();
       }
       /** requested torque output of the engine by the drive
       * @return [-125%;125%], res: 1%/bit, offset: -125%
       */
-      int8_t DriverTargetPercentTorque() const {
-          return __IsoAgLib::TractorEngineController1_c::DriverTargetPercentTorque();
+      int8_t driverTargetPercentTorque() const {
+          return __IsoAgLib::TractorEngineController1_c::driverTargetPercentTorque();
       }
       /** the calculated output torque of the engine
       * @return [-125%;125%], res: 1%/bit, offset: -125%
       */
-      int8_t PercentTorque() const {
-          return __IsoAgLib::TractorEngineController1_c::PercentTorque();
+      int8_t percentTorque() const {
+          return __IsoAgLib::TractorEngineController1_c::percentTorque();
       }
       /** Actual engine speed which is calculated over a minimum crankshaft angle of 720 degrees divided by the number of
       cylinders
       * @return [0 rpm;8,031.875 rpm], res: 0.125 rpm/bit, offset: 0 rpm
       */
-      uint16_t Rpm() const {
-          return __IsoAgLib::TractorEngineController1_c::Rpm();
+      uint16_t rpm() const {
+          return __IsoAgLib::TractorEngineController1_c::rpm();
       }
       /** source address of the SAE J1939 device currently controlling the engine
       * @return [0;255] , offset: 0,  Operational Range: 0 to 253
       */
-      uint8_t SourceAddress() const {
-          return __IsoAgLib::TractorEngineController1_c::SourceAddress();
+      uint8_t sourceAddress() const {
+          return __IsoAgLib::TractorEngineController1_c::sourceAddress();
       }
       /** starter actions / errors
       * @return StarterMode_t [0;15], 0 offset
       */
-      StarterMode_t StarterMode() const {
-          return __IsoAgLib::TractorEngineController1_c::StarterMode();
+      StarterMode_t starterMode() const {
+          return __IsoAgLib::TractorEngineController1_c::starterMode();
       }
       /** target torque output of the engine
       * @return [-125%;125%], res: 1%/bit, offset: -125%
       */
-      int8_t DemandPercentTorque() const {
-          return __IsoAgLib::TractorEngineController1_c::DemandPercentTorque();
+      int8_t demandPercentTorque() const {
+          return __IsoAgLib::TractorEngineController1_c::demandPercentTorque();
       }
 
     /** register an event handler that gets called for any incoming PGN.
@@ -121,17 +121,17 @@ namespace IsoAgLib {
 
 private:
 #if ( PRT_INSTANCE_CNT == 1 )
-    friend iTractorEngineController1_c& getITractorEngineController1_Instance();
+    friend iTractorEngineController1_c& getITractorEngineController1Instance();
 #endif
-    friend iTractorEngineController1_c& getITractorEngineController1_Instance( unsigned instance );
+    friend iTractorEngineController1_c& getITractorEngineController1Instance( unsigned instance );
   };
 
 #if ( PRT_INSTANCE_CNT == 1 )
-  inline iTractorEngineController1_c& getITractorEngineController1_Instance()
-  { return static_cast<iTractorEngineController1_c&>(__IsoAgLib::getTractorEngineController1_Instance( 0 )); }
+  inline iTractorEngineController1_c& getITractorEngineController1Instance()
+  { return static_cast<iTractorEngineController1_c&>(__IsoAgLib::getTractorEngineController1Instance( 0 )); }
 #endif
-  inline iTractorEngineController1_c& getITractorEngineController1_Instance( unsigned instance )
-  { return static_cast<iTractorEngineController1_c&>(__IsoAgLib::getTractorEngineController1_Instance( instance )); }
+  inline iTractorEngineController1_c& getITractorEngineController1Instance( unsigned instance )
+  { return static_cast<iTractorEngineController1_c&>(__IsoAgLib::getTractorEngineController1Instance( instance )); }
 
 }
 #endif
