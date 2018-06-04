@@ -162,6 +162,7 @@ set_default_values()
     PRJ_TRACTOR_FRONT_PTO=0
     PRJ_TRACTOR_REAR_PTO=0
     PRJ_TRACTOR_LIGHTING=0
+    PRJ_TRACTOR_ENGINE_CONTROLLER_1=0
   #OLD/deprecated tractor
     PRJ_TRACTOR_GENERAL=0
     PRJ_TRACTOR_MOVE=0
@@ -431,6 +432,9 @@ comm_features()
     fi
     if [ "$PRJ_TRACTOR_LIGHTING" -gt 0 ]; then
         printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorlighting_c*' \)" >&3
+    fi
+    if [ "$PRJ_TRACTOR_ENGINE_CONTROLLER_1" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tractorenginecontroller1_c*' \)" >&3
     fi
 
     if [ "$PRJ_TIME_DATE" -gt 0 ]; then
@@ -883,6 +887,10 @@ END_OF_PATH
             if [ "$PRJ_TRACTOR_LIGHTING" -gt 0 ]; then
                 echo_e "#define USE_TRACTOR_LIGHTING" >&3
             fi
+            if [ "$PRJ_TRACTOR_ENGINE_CONTROLLER_1" -gt 0 ]; then
+                echo_e "#define USE_TRACTOR_ENGINE_CONTROLLER_1" >&3
+            fi
+
             if [ "$PRJ_TIME_DATE" -gt 0 ]; then
                 echo_e "#define USE_TIME_DATE" >&3
             fi

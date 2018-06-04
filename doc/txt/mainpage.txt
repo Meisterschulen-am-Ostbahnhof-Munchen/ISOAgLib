@@ -84,6 +84,9 @@ Logalizer:
 Framework:
  - ThreadWrapper: additional mutex protection of ThreadWrapper::m_exit_code
 
+Tractor:
+ - Added new class for Electronic Engine Controller
+ 
  
 \subsection Change_ZI 2.8.2 to 2.9.0
 

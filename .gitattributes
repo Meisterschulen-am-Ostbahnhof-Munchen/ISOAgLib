@@ -69,6 +69,8 @@ library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractor_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractor_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorcommonrx_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorcommonrx_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorenginecontroller1_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorenginecontroller1_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorfronthitch_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorfronthitch_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorfrontpto_c.cpp -text
@@ -89,6 +91,7 @@ library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorrearpto_c.cpp 
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorrearpto_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimedate_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractor_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorenginecontroller1_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorfronthitch_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorfrontpto_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itractorgroundbased_c.h -text

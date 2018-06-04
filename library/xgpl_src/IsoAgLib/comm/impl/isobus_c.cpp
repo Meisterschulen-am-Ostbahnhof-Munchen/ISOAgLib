@@ -97,6 +97,9 @@
 #ifdef USE_TRACTOR_LIGHTING
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorlighting_c.h>
 #endif
+#ifdef USE_TRACTOR_ENGINE_CONTROLLER_1
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorenginecontroller1_c.h>
+#endif
 
 
 namespace __IsoAgLib {
@@ -193,6 +196,9 @@ IsoBus_c::init (uint8_t aui8_busNumber)
   #ifdef USE_TRACTOR_LIGHTING
     getTractorLightingInstance( getMultitonInst() ).init();
   #endif
+#ifdef USE_TRACTOR_ENGINE_CONTROLLER_1
+    getTractorEngineController1Instance( getMultitonInst() ).init();
+#endif
 
   /// Part 7 - Application (ISB, etc.)
   #ifdef USE_ISB_CLIENT
@@ -273,6 +279,9 @@ IsoBus_c::close()
   #endif
   #ifdef USE_TIME_DATE
     getTimeDateInstance( getMultitonInst() ).close();
+  #endif
+  #ifdef USE_TRACTOR_ENGINE_CONTROLLER_1
+    getTractorEngineController1Instance( getMultitonInst() ).close();
   #endif
   #ifdef USE_TRACTOR_LIGHTING
     getTractorLightingInstance( getMultitonInst() ).close();
