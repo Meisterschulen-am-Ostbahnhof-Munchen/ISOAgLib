@@ -56,6 +56,13 @@ namespace IsoAgLib {
         friend class iTcClient_c;
       };
 
+      //! It will pass out negative PdAck messages to the application
+      //! Note: In a proper running system no negative PdAcks should
+      //! be on the bus, so this is for special purposes only!!!
+      //! It can be set or unset, but only one is possible at a time!
+      void setNackHandler( IsoAgLib::ProcData::iNackHandler_c* handler )
+      { PdConnection_c::setNackHandler( handler ); }
+
       // This is to be able to change your DDOP during run-time.
       // NOTE: This is a VERY EXPERIMENTAL method, the proper way
       // would probably only work for TC Version 4 (Deactivate Command)

@@ -20,8 +20,13 @@ namespace IsoAgLib {
 
   class iPdConnection_c : private __IsoAgLib::PdConnection_c
   {
-    // to be filled on demand. Needed as handle for now only.
-    
+    //! It will pass out negative PdAck messages to the application
+    //! Note: In a proper running system no negative PdAcks should
+    //! be on the bus, so this is for special purposes only!!!
+    //! It can be set or unset, but only one is possible at a time!
+    void setNackHandler( IsoAgLib::ProcData::iNackHandler_c* handler )
+    { PdConnection_c::setNackHandler(handler); }
+
     friend class iTcClient_c;
     friend class iPdLocal_c;
   

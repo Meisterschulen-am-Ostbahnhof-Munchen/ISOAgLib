@@ -29,18 +29,6 @@ namespace __IsoAgLib
   class PdRemoteNode_c;
   class PdPool_c;
 
-  enum PdAckResponse_t { 
-    PdAckNoErrors =                                 0x00, // 0 = no errors
-    NackProcessDataCommandNotSupported =            0x01, // Bit 1 = 1 Process Data Command not supported
-    NackInvalidElementNumber =                      0x02, // Bit 2 = 1 Invalid Element Number
-    NackDDINotSupportedByElement =                  0x04, // Bit 3 = 1 DDI not supported by element
-    NackTriggerMethodNotSupported =                 0x08, // Bit 4 = 1 Trigger method not supported
-    NackProcessDataNotSettable =                    0x10, // Bit 5 = 1 Process Data not settable
-    NackInvalidOrUnsupportedIntervalOrThreshold =   0x20, // Bit 6 = 1 Invalid or unsupported interval or threshold
-    NackProcessDataValueNotConformToDdiDefinition = 0x40, // Bit 7 = 1 Process data value does not conform to DDI definition (TCv4+)
-    NackProcessDataValueIsOutsideOperationalRange = 0x80, // Bit 8 = 1 Process data value is outside the operational range of this device (TCv4+)
-  };
-
   class PdConnection_c
 #ifdef HAL_USE_SPECIFIC_FILTERS
     : public CanCustomer_c
@@ -57,6 +45,9 @@ namespace __IsoAgLib
     void start( PdPool_c &pool );
     void stop();
 
+    //! can be set or unset. only one possible at a time!
+    void setNackHandler( IsoAgLib::ProcData::iNackHandler_c* handler ) { m_nackHandler = handler; }
+
     const IdentItem_c&     getIdentItem() const { return *m_identItem; }
     const PdRemoteNode_c* getRemoteNode() const { return m_pdRemoteNode; }
     const IsoItem_c*      getRemoteItem() const;
@@ -65,10 +56,12 @@ namespace __IsoAgLib
 
     virtual void processProcMsg( const ProcessPkg_c& );
 
+    void processPdAck(const ProcessPkg_c&) const;
+
     void sendProcMsg(     IsoAgLib::ProcData::CommandType_t, uint16_t ddi, uint16_t element, int32_t pdValue ) const;
     void sendProcMsgPeer( IsoAgLib::ProcData::CommandType_t, uint16_t ddi, uint16_t element, int32_t pdValue, const IsoName_c &peer ) const;
 
-    void sendPdAck(int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t, PdAckResponse_t errorcodes, bool wasBroadcast) const;
+    void sendPdAck(int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t, IsoAgLib::ProcData::AckResponse_t errorcodes, bool wasBroadcast) const;
 
   protected:
     void sendNackNotFound( int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t, bool wasBroadcast ) const;
@@ -99,6 +92,8 @@ namespace __IsoAgLib
 
     typedef STL_NAMESPACE::map<uint32_t, ConnectedPd_c*> ConnectedPdMap_t;
     ConnectedPdMap_t m_connectedPds;
+
+    IsoAgLib::ProcData::iNackHandler_c* m_nackHandler;
   };
 
 }

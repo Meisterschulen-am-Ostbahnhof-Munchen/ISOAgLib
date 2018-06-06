@@ -56,6 +56,18 @@ namespace IsoAgLib
       ClientTaskOrNotApplicable             = 0xf,
     };
 
+    enum AckResponse_t {
+      AckNoErrors = 0x00, // 0 = no errors
+      NackProcessDataCommandNotSupported = 0x01, // Bit 1 = 1 Process Data Command not supported
+      NackInvalidElementNumber = 0x02, // Bit 2 = 1 Invalid Element Number
+      NackDDINotSupportedByElement = 0x04, // Bit 3 = 1 DDI not supported by element
+      NackTriggerMethodNotSupported = 0x08, // Bit 4 = 1 Trigger method not supported
+      NackProcessDataNotSettable = 0x10, // Bit 5 = 1 Process Data not settable
+      NackInvalidOrUnsupportedIntervalOrThreshold = 0x20, // Bit 6 = 1 Invalid or unsupported interval or threshold
+      NackProcessDataValueNotConformToDdiDefinition = 0x40, // Bit 7 = 1 Process data value does not conform to DDI definition (TCv4+)
+      NackProcessDataValueIsOutsideOperationalRange = 0x80, // Bit 8 = 1 Process data value is outside the operational range of this device (TCv4+)
+    };
+
     enum SpecialDDI_t {
       PgnBasedDataDDI       = 0xDFFE,
       DefaultDataLoggingDDI = 0xDFFF,
@@ -140,7 +152,21 @@ namespace IsoAgLib
       uint8_t versionNr;
       bool hasPeerControl;
     };
-}
+
+    class iNackHandler_c
+    {
+    public:
+      // errBitmask is a combination of the bits defined in "ProcData::AckResponse_t ackResponse".
+      // connection can be either of type
+      // - iProcDataConnection_c
+      // - iTcClientConnection_c
+      // as there's an intermediate base-class missing, only the raw void pointer is returned so you can
+      // compare the raw pointers against your connections to figure out to which one it applied.
+      // Global: Only possible in CF<->CF direct PD connections, not in a TcClientConnection.
+      virtual void handleNack(int32_t ddi, uint16_t element, uint8_t errBitmask, bool global, const void *connection);
+    };
+
+  }
 
 }
 

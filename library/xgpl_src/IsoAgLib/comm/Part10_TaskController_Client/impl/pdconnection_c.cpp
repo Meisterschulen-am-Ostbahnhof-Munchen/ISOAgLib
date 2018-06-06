@@ -35,6 +35,7 @@ namespace __IsoAgLib {
     , m_pdRemoteNode( NULL )
     , m_pool( NULL )
     , m_connectedPds()
+    , m_nackHandler( NULL )
   {
   }
 
@@ -47,6 +48,7 @@ namespace __IsoAgLib {
     , m_pdRemoteNode( NULL )
     , m_pool( NULL )
     , m_connectedPds()
+    , m_nackHandler( NULL )
   {
     init( identItem, pdRemoteNode );
     start( pool );
@@ -188,9 +190,12 @@ namespace __IsoAgLib {
           processMeasurementMsg( pkg );
           break;
 
+        case IsoAgLib::ProcData::ProcessDataAcknowledge:
+          processPdAck(pkg);
+          break;
+
         case IsoAgLib::ProcData::TechnicalData:
         case IsoAgLib::ProcData::DeviceDescriptor:
-        case IsoAgLib::ProcData::ProcessDataAcknowledge:
         case IsoAgLib::ProcData::ControlAssignment:
         case IsoAgLib::ProcData::SetValueAndAcknowledge:
         case IsoAgLib::ProcData::ReservedB:
@@ -205,9 +210,12 @@ namespace __IsoAgLib {
     {
       switch (pkg.men_command)
       {
+        case IsoAgLib::ProcData::ProcessDataAcknowledge:
+          processPdAck( pkg );
+          break;
+
         case IsoAgLib::ProcData::TechnicalData:
         case IsoAgLib::ProcData::DeviceDescriptor:
-        case IsoAgLib::ProcData::ProcessDataAcknowledge:
         case IsoAgLib::ProcData::RequestValue:
         case IsoAgLib::ProcData::MeasurementTimeValueStart:
         case IsoAgLib::ProcData::MeasurementDistanceValueStart:
@@ -236,15 +244,15 @@ namespace __IsoAgLib {
   {
     // Note: element without DPD will not be processed properly.
     // Response will be NackInvalidElementNumber instead of NackDDINoSupportedByElement
-    PdAckResponse_t reason = NackProcessDataCommandNotSupported;
+    IsoAgLib::ProcData::AckResponse_t reason = IsoAgLib::ProcData::NackProcessDataCommandNotSupported;
     if( m_pool )
     {
-      reason = NackInvalidElementNumber;
+      reason = IsoAgLib::ProcData::NackInvalidElementNumber;
       for( PdPool_c::PdBases_t::const_iterator i = m_pool->getPdList().begin(); i != m_pool->getPdList().end(); ++i )
       {
         if ( ( *i )->element() == element )
         {
-          reason = NackDDINotSupportedByElement;
+          reason = IsoAgLib::ProcData::NackDDINotSupportedByElement;
           break;
         }
       }
@@ -300,13 +308,13 @@ namespace __IsoAgLib {
         {
           // TODO Version 4 Send out current value! to be clarified, within threshold it's already sent in "cPd.startMeasurement(..)" above.
           // ... can be sent out also if version <4, doesn't hurt and is currently done so already, partly (within threshold)
-          sendPdAck(cPd.pdBase().DDI(), cPd.pdBase().element(), data.men_command, PdAckNoErrors, wasBroadcast);
+          sendPdAck(cPd.pdBase().DDI(), cPd.pdBase().element(), data.men_command, IsoAgLib::ProcData::AckNoErrors, wasBroadcast);
           // PdAck could be sent out also for version < 4, but not sure how the TCs would react on it, so better only do it version 4+.
         }
       }
       else
       {
-        sendPdAck(cPd.pdBase().DDI(), cPd.pdBase().element(), data.men_command, NackTriggerMethodNotSupported, wasBroadcast);
+        sendPdAck(cPd.pdBase().DDI(), cPd.pdBase().element(), data.men_command, IsoAgLib::ProcData::NackTriggerMethodNotSupported, wasBroadcast);
       }
     }
     else
@@ -339,7 +347,7 @@ namespace __IsoAgLib {
 
 
   void
-  PdConnection_c::sendPdAck( int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t pdCmd, PdAckResponse_t errorcodes, bool wasBroadcast ) const
+  PdConnection_c::sendPdAck( int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t pdCmd, IsoAgLib::ProcData::AckResponse_t errorcodes, bool wasBroadcast ) const
   {
     if (wasBroadcast)
       return;
@@ -350,5 +358,15 @@ namespace __IsoAgLib {
     sendProcMsg( IsoAgLib::ProcData::ProcessDataAcknowledge, ddi, element, int32_t( 0xfffff000UL | ( uint32_t( pdCmd ) << 8 ) | uint32_t( errorcodes ) ) );
   }
 
+  void
+  PdConnection_c::processPdAck(const ProcessPkg_c& pkg) const
+  {
+    const uint8_t errCodes = (pkg.mi32_pdValue & 0xFF);
+
+    if( (errCodes != 0) && m_nackHandler )
+    {
+      m_nackHandler->handleNack(pkg.mui16_DDI, pkg.mui16_element, errCodes, (pkg.getMonitorItemForDA() != NULL), this);
+    }
+  }
 
 };
