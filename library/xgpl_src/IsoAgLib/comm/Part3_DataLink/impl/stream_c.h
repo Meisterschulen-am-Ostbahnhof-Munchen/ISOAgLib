@@ -226,7 +226,7 @@ public:
 
   ecutime_t nextTimeEvent() const;
 
-  bool setDataPageOffset(uint32_t aui32_dataPageOffset);
+  bool setDataPageOffset(uint8_t numPacketsToApply, uint32_t aui32_dataPageOffset);
 
   const ReceiveStreamIdentifier_c& getIdent() const { return mc_ident; }
   StreamType_t     getStreamType()        const { return mc_ident.getStreamType(); };
@@ -284,7 +284,7 @@ private:
 /// Pkg counting stuff
   uint32_t mui32_pkgNextToWrite;      // should be initialized to 1
   uint32_t mui32_pkgTotalSize;        // calculated amount of pkgs to arrive for the given byteTotalSize!
-  uint8_t   mui8_pkgRemainingInBurst; // the value requested by CTS
+  uint8_t   mui8_pkgRemainingInBurst; // the value requested by CTS (eventually downsized by the DPO)
 #ifdef ENABLE_MULTIPACKET_RETRY
   uint8_t   mui8_pkgsReceivedInBurst;
 #endif

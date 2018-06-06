@@ -369,9 +369,20 @@ Stream_c::handleDataPacket (const CanPkg_c& pkg)
 }
 
 bool
-Stream_c::setDataPageOffset (uint32_t aui32_dataPageOffset)
+Stream_c::setDataPageOffset (uint8_t numPacketsToApply, uint32_t aui32_dataPageOffset)
 {
   if (mt_awaitStep == AwaitDpo) {
+    if ((numPacketsToApply == 0) || (numPacketsToApply > mui8_pkgRemainingInBurst))
+    {
+      #if DEBUG_MULTIRECEIVE
+        INTERNAL_DEBUG_DEVICE << "\n\n DPO had incorrect value in Byte 2 (Number of packets to which to apply the offset (1 to 255)). \n ";
+      #endif
+      return false;
+    }
+
+    // override of burst-size as given in CTS. typically the same as in the CTS, but possible to be downsized.
+    mui8_pkgRemainingInBurst = numPacketsToApply;
+
     mui32_dataPageOffset = aui32_dataPageOffset;
     awaitNextStep (AwaitData, msci32_timeOutT5);
     #if DEBUG_MULTIRECEIVE

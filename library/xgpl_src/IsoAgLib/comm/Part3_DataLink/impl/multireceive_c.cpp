@@ -389,7 +389,8 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
             }
 
             // try to set the DPO in this stream - if it's not allowed right now (or timedout), this DPO was not correct
-            if (! (pc_streamFound->setDataPageOffset ( uint32_t(arc_pkg.getUint8Data(2)) |
+            if (! (pc_streamFound->setDataPageOffset (arc_pkg.getUint8Data(1),
+                                                       uint32_t(arc_pkg.getUint8Data(2)) |
                                                       (uint32_t(arc_pkg.getUint8Data(3)) << 8) |
                                                       (uint32_t(arc_pkg.getUint8Data(4)) << 16))))
             { // DPO not awaited now!
