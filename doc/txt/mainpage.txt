@@ -64,6 +64,7 @@ VT-Client:
 TC-Client:
  - Enhancement:
    - Added v4 Support, ExtStructLabel, send PACK on Start Measurement
+   - Added handler for PdNAcks to API. (Also in direct CF<->CF PD Communication!)
 
 HAL-Simulator:
  - EEPROM-Cleanup: Some more assertions, faster read/write
