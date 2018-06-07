@@ -1,5 +1,5 @@
 /*
-  (C) Copyright 2009 - 2016 by OSB AG and developing partners
+  (C) Copyright 2009 - 2018 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -15,7 +15,7 @@
 
 // VERSION INFO:
 // Last Updated:
-//   2017-06-23
+//   2018-06-06
 // Updated by:
 //   Mike Schmidt, AGCO Corporation
 //   Mike.Schmidt@agcocorp.com
@@ -254,7 +254,7 @@
 #define DDI_ACTUAL_BALE_HYDRAULIC_PRESSURE   216   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LAST_BALE_AVERAGE_HYDRAULIC_PRESSURE   217   // UnitSymbol=Pa, UnitQuantity=Pressure, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_SETPOINT_BALE_COMPRESSION_PLUNGER_LOAD   218   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2000
-#define DDI_ACTUAL_BALE_COMPRESSION_PLUNGER_LOAD   219   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2000
+#define DDI_ACTUAL_BALE_COMPRESSION_PLUNGER_LOAD   219   // UnitSymbol=ppm, UnitQuantity=Parts per million, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LAST_BALE_AVERAGE_BALE_COMPRESSION_PLUNGER_LOAD   220   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2000
 #define DDI_LAST_BALE_APPLIED_PRESERVATIVE   221   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LAST_BALE_TAG_NUMBER   222   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -407,7 +407,7 @@
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_33_48   369   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_49_64   370   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_65_80   371   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
-#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_81_96   372   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
+#define DDI_CONDENSED_SECTION_OVERRIDE_STATE_81_96   372   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_97_112   373   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_113_128   374   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_CONDENSED_SECTION_OVERRIDE_STATE_129_144   375   // UnitSymbol=not defined, UnitQuantity=not defined, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
@@ -435,7 +435,7 @@
 #define DDI_ACTUAL_SPEED   397   // UnitSymbol=mm/s, UnitQuantity=Speed, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_MINIMUM_SPEED   398   // UnitSymbol=mm/s, UnitQuantity=Speed, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_MAXIMUM_SPEED   399   // UnitSymbol=mm/s, UnitQuantity=Speed, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
-#define DDI_SPEED_SOURCE   400   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=100
+#define DDI_SPEED_SOURCE   400   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=255
 #define DDI_ACTUAL_APPLICATION_OF_NITROGEN   401   // UnitSymbol=mg/l, UnitQuantity=Mass per capacity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_APPLICATION_OF_AMMONIUM   402   // UnitSymbol=mg/l, UnitQuantity=Mass per capacity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_APPLICATION_OF_PHOSPHOR   403   // UnitSymbol=mg/l, UnitQuantity=Mass per capacity unit, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
@@ -557,6 +557,19 @@
 #define DDI_LIFETIME_TWINE_BALE_TOTAL_COUNT   524   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_LIFETIME_MESH_BALE_TOTAL_COUNT   525   // UnitSymbol=#, UnitQuantity=Quantity/Count, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
 #define DDI_ACTUAL_COOLING_FLUID_TEMPERATURE   526   // UnitSymbol=mK, UnitQuantity=Temperature, BitResolution=1, MinimumValue=0, MaximumValue=2147483647
+#define DDI_LAST_BALE_CAPACITY   528   // UnitSymbol=kg/h, UnitQuantity=Mass per hour unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_SETPOINT_TILLAGE_DISC_GANG_ANGLE   529   // UnitSymbol=°, UnitQuantity=Angle, BitResolution=0.001, MinimumValue=-180000, MaximumValue=180000
+#define DDI_ACTUAL_TILLAGE_DISC_GANG_ANGLE   530   // UnitSymbol=°, UnitQuantity=Angle, BitResolution=0.001, MinimumValue=-180000, MaximumValue=180000
+#define DDI_ACTUAL_APPLIED_PRESERVATIVE_PER_YIELD_MASS   531   // UnitSymbol=mm³/kg, UnitQuantity=Capacity per mass unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_SETPOINT_APPLIED_PRESERVATIVE_PER_YIELD_MASS   532   // UnitSymbol=mm³/kg, UnitQuantity=Capacity per mass unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_DEFAULT_APPLIED_PRESERVATIVE_PER_YIELD_MASS   533   // UnitSymbol=mm³/kg, UnitQuantity=Capacity per mass unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_MINIMUM_APPLIED_PRESERVATIVE_PER_YIELD_MASS   534   // UnitSymbol=mm³/kg, UnitQuantity=Capacity per mass unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_MAXIMUM_APPLIED_PRESERVATIVE_PER_YIELD_MASS   535   // UnitSymbol=mm³/kg, UnitQuantity=Capacity per mass unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_TOTAL_APPLIED_PRESERVATIVE   536   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_LIFETIME_APPLIED_PRESERVATIVE   537   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_AVERAGE_APPLIED_PRESERVATIVE_PER_YIELD_MASS   538   // UnitSymbol=mm³/kg, UnitQuantity=Capacity per mass unit, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_PRESERVATIVE_TANK_VOLUME   539   // UnitSymbol=ml, UnitQuantity=Capacity large, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
+#define DDI_ACTUAL_PRESERVATIVE_TANK_LEVEL   540   // UnitSymbol=ppm, UnitQuantity=Parts per million, BitResolution=1, MinimumValue=0, MaximumValue=4294967295
 #define DDI_PGN_BASED_DATA   57342   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=-2147483648, MaximumValue=2147483647
 #define DDI_REQUEST_DEFAULT_PROCESS_DATA   57343   // UnitSymbol=n.a., UnitQuantity=, BitResolution=1, MinimumValue=0, MaximumValue=0
 #define DDI_PROPRIETARY_DDI_RANGE_FIRST   57344   // UnitSymbol=n.a., UnitQuantity=, BitResolution=0, MinimumValue=, MaximumValue=
