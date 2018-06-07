@@ -364,10 +364,10 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
         retriggerIn (0); // changed from 1500 to 0 by JVB 20090916
         /** @todo SOON-178 Should we remove the finished send-stream here now immediately
             even though we're NOT iterating through the list now? */
-        break;
       }
-      // else: handle the same as ConnAbort (EoMACK was sent unsolicited)
-      // break left out intentionally
+      // else: according to standard: ignore (EoMACK was sent unsolicited)
+      break;
+
     case scui8_CM_ConnAbort:
       #if DEBUG_MULTISEND
       INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- ConnAbort received!" << INTERNAL_DEBUG_DEVICE_ENDL;
