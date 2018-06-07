@@ -74,6 +74,7 @@ Multi-Packet:
  - Fix/Avoid memory reallocation on specific compilers.
  - ConnAbort correct stream when RTS comes in running stream.
  - ConnAbort (wrong) CTS with NextPacketNr=0.
+ - Ignore premature EoMAck instead of internally aborting the stream (without ConnAbort msg) according to standard.
 
 CAN-Server:
  - Added '--virtual' parameter
