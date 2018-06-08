@@ -20,6 +20,7 @@ namespace IsoAgLib {
 
   class iPdConnection_c : private __IsoAgLib::PdConnection_c
   {
+  public:
     //! It will pass out negative PdAck messages to the application
     //! Note: In a proper running system no negative PdAcks should
     //! be on the bus, so this is for special purposes only!!!

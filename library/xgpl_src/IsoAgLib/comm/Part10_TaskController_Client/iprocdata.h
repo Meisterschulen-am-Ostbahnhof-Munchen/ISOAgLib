@@ -163,7 +163,7 @@ namespace IsoAgLib
       // as there's an intermediate base-class missing, only the raw void pointer is returned so you can
       // compare the raw pointers against your connections to figure out to which one it applied.
       // Global: Only possible in CF<->CF direct PD connections, not in a TcClientConnection.
-      virtual void handleNack(int32_t ddi, uint16_t element, uint8_t errBitmask, bool global, const void *connection);
+      virtual void handleNack(int32_t ddi, uint16_t element, uint8_t errBitmask, bool global, const void *connection) = 0;
     };
 
   }
