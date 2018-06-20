@@ -1,5 +1,5 @@
 // functionality_tim.inc
-std::ostringstream
+std::string
 partiallyInterpreteTimServerStatus(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -69,10 +69,10 @@ partiallyInterpreteTimServerStatus(PtrDataFrame_t a_ptrFrame)
     }
     out << "]";
 
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 partiallyInterpreteTimClientStatus(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -92,10 +92,10 @@ partiallyInterpreteTimClientStatus(PtrDataFrame_t a_ptrFrame)
     }
     out << "]";
 
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 partiallyInterpreteConnectionVersionResponse(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -116,10 +116,10 @@ partiallyInterpreteConnectionVersionResponse(PtrDataFrame_t a_ptrFrame)
     case 0xFF: out << "TIM server and TIM client versions are incompatible";  break;
     default:  out << std::dec << uint16_t(a_ptrFrame->dataOctet(2));          break;
     }
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 interpreteFacility(uint8_t a_facility)
 {
     std::ostringstream out;
@@ -131,11 +131,11 @@ interpreteFacility(uint8_t a_facility)
     case 0x3: out << "Not available.";  break;
     default:                            break;
     }
-    return (out);
+    return (out.str());
 }
 
 // TODO: improve output here + replace tabs with setw()!
-std::ostringstream
+std::string
 functionSupportResponse(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -179,6 +179,7 @@ functionSupportResponse(PtrDataFrame_t a_ptrFrame)
         case 0x1D:
         case 0x1E:
         case 0x1F:
+        case 0x20:
         {
             out << "Auxiliary valve " << std::dec << uint16_t(a_ptrFrame->data()[idx]);
             ++idx;
@@ -188,9 +189,9 @@ functionSupportResponse(PtrDataFrame_t a_ptrFrame)
             {
                 ++idx;
                 out << std::left << std::setfill(' ') << std::setw(120) << " " << "Valve State: ";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3).str() << "\n";
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3) << "\n";
                 out << std::left << std::setfill(' ') << std::setw(120) << " " << "Valve Flow: ";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
             }
         }
         break;
@@ -204,13 +205,13 @@ functionSupportResponse(PtrDataFrame_t a_ptrFrame)
             {
                 ++idx;
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Disengagement:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Engagement:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Speed counter clockwise:\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO speed clockwise:\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3);
             }
         }
         break;
@@ -224,13 +225,13 @@ functionSupportResponse(PtrDataFrame_t a_ptrFrame)
             {
                 ++idx;
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Disengagement:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Engagement:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Speed counter clockwise:\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO speed clockwise:\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3);
             }
         }
         break;
@@ -244,9 +245,9 @@ functionSupportResponse(PtrDataFrame_t a_ptrFrame)
             {
                 ++idx;
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Motion:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Position:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
             }
         }
         break;
@@ -260,9 +261,9 @@ functionSupportResponse(PtrDataFrame_t a_ptrFrame)
             {
                 ++idx;
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Motion:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Position:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
             }
         }
         break;
@@ -276,23 +277,23 @@ functionSupportResponse(PtrDataFrame_t a_ptrFrame)
             {
                 ++idx;
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tVehicle speed forward:\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tVehicle speed reverse:\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tStart vehicle:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tStop vehicle:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3);
             }
             if (neededBytes >= 2)
             {
                 ++idx;
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tForward direction:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tReverse direction:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tChange direction:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
             }
         }
         break;
@@ -306,7 +307,7 @@ functionSupportResponse(PtrDataFrame_t a_ptrFrame)
             {
                 ++idx;
                 out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tCurvature:\t\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3).str();
+                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
             }
         }
         break;
@@ -320,10 +321,10 @@ functionSupportResponse(PtrDataFrame_t a_ptrFrame)
         ++idx;
         ++functionNumber;
     }
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 partiallyInterpreteTimServerAuthenticationStatus(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -355,10 +356,10 @@ partiallyInterpreteTimServerAuthenticationStatus(PtrDataFrame_t a_ptrFrame)
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Manufacturer Series Certificate valid: " << (a_ptrFrame->dataOctet(3) & 0x8 ? "Yes\n" : "No\n");
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Device Certificate valid: " <<              (a_ptrFrame->dataOctet(3) & 0x4 ? "Yes\n" : "No\n");
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Challenge signed: " <<                      (a_ptrFrame->dataOctet(3) & 0x2 ? "Yes" :   "No");
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 partiallyInterpreteTimClientAuthenticationStatus(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -390,11 +391,11 @@ partiallyInterpreteTimClientAuthenticationStatus(PtrDataFrame_t a_ptrFrame)
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Manufacturer Series Certificate valid: " <<  (a_ptrFrame->dataOctet(3) & 0x8 ? "Yes\n" : "No\n");
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Device Certificate valid: " <<               (a_ptrFrame->dataOctet(3) & 0x4 ? "Yes\n" : "No\n");
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Challenge signed: " <<                       (a_ptrFrame->dataOctet(3) & 0x2 ? "Yes" :   "No");
-    return (out);
+    return (out.str());
 }
 
 // noch nicht getestet
-std::ostringstream
+std::string
 CertificateRequest(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -408,19 +409,19 @@ CertificateRequest(PtrDataFrame_t a_ptrFrame)
     case 0x4: out << "Device Certificate";              break;
     default:  out << "Unknown Certificate";             break;
     }
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 interpreteAuxValveID(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
     out << "Auxiliary valve " << std::dec << uint16_t(a_ptrFrame->dataOctet(0)) << " flow request: ";
-    return (out);
+    return (out.str());
 }
 
 // noch nicht getestet
-std::ostringstream
+std::string
 interpreteAuxValveCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -461,10 +462,10 @@ interpreteAuxValveCommand(PtrDataFrame_t a_ptrFrame)
     {
         out << "Reserved";
     }
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 interpretePTOCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -501,10 +502,10 @@ interpretePTOCommand(PtrDataFrame_t a_ptrFrame)
     {
         out << "Reserved";
     }
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 interpreteHitchCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -537,10 +538,10 @@ interpreteHitchCommand(PtrDataFrame_t a_ptrFrame)
     {
         out << "Reserved";
     }
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 interpreteVehicleSpeedCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -581,10 +582,10 @@ interpreteVehicleSpeedCommand(PtrDataFrame_t a_ptrFrame)
     {
         out << "Reserved";
     }
-    return (out);
+    return (out.str());
 }
 
-std::ostringstream
+std::string
 interpreteExternalGuidanceCommand(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
@@ -618,7 +619,7 @@ interpreteExternalGuidanceCommand(PtrDataFrame_t a_ptrFrame)
         // Reserved
         out << "Reserved";
     }
-    return (out);
+    return (out.str());
 }
 
 std::string
@@ -659,45 +660,45 @@ interpretePgnsTimServerToClient(PtrDataFrame_t a_ptrFrame)
     case 0x1D:
     case 0x1E:
     case 0x1F:
-        result.append(interpreteAuxValveID(a_ptrFrame).str());
+        result.append(interpreteAuxValveID(a_ptrFrame));
         result.append(" flow status:  ");
-        result.append(interpreteAuxValveCommand(a_ptrFrame).str());
+        result.append(interpreteAuxValveCommand(a_ptrFrame));
         break;
     case 0x40:
         result.append("Front PTO Status:  ");
-        result.append(interpretePTOCommand(a_ptrFrame).str());
+        result.append(interpretePTOCommand(a_ptrFrame));
         break;
     case 0x41:
         result.append("Rear PTO Status:  ");
-        result.append(interpretePTOCommand(a_ptrFrame).str());
+        result.append(interpretePTOCommand(a_ptrFrame));
         break;
     case 0x42:
         result.append("Front Hitch Status:  ");
-        result.append(interpreteHitchCommand(a_ptrFrame).str());
+        result.append(interpreteHitchCommand(a_ptrFrame));
         break;
     case 0x43:
         result.append("Rear Hitch Status:  ");
-        result.append(interpreteHitchCommand(a_ptrFrame).str());
+        result.append(interpreteHitchCommand(a_ptrFrame));
         break;
     case 0x44:
         result.append("Vehicle Speed Status:  ");
-        result.append(interpreteVehicleSpeedCommand(a_ptrFrame).str());
+        result.append(interpreteVehicleSpeedCommand(a_ptrFrame));
         break;
     case 0x46:
         result.append("External Guidance Status:  ");
-        result.append(interpreteExternalGuidanceCommand(a_ptrFrame).str());
+        result.append(interpreteExternalGuidanceCommand(a_ptrFrame));
         break;
     case 0xF3:
         result.append("Function assignment status response.");
         break;
     case 0xF4:
-        result.append(functionSupportResponse(a_ptrFrame).str());
+        result.append(functionSupportResponse(a_ptrFrame));
         break;
     case 0xF5:
         result.append("Function assignment response");
         break;
     case 0xF6:
-        result.append(partiallyInterpreteConnectionVersionResponse(a_ptrFrame).str());
+        result.append(partiallyInterpreteConnectionVersionResponse(a_ptrFrame));
         break;
     case 0xF7:
         result.append("Client version request");
@@ -706,7 +707,7 @@ interpretePgnsTimServerToClient(PtrDataFrame_t a_ptrFrame)
         result.append("Server version response");
         break;
     case 0xFA:
-        result.append(partiallyInterpreteTimServerStatus(a_ptrFrame).str());
+        result.append(partiallyInterpreteTimServerStatus(a_ptrFrame));
         break;
     default:
         result.append("Unknown command. Upgrade logalizer in interpretePgnsTimServerToClient()");
@@ -754,33 +755,33 @@ interpretePgnsTimClientToServer(PtrDataFrame_t a_ptrFrame)
     case 0x1D:
     case 0x1E:
     case 0x1F:
-        result.append(interpreteAuxValveID(a_ptrFrame).str());
+        result.append(interpreteAuxValveID(a_ptrFrame));
         result.append(" flow request: ");
-        result.append(interpreteAuxValveCommand(a_ptrFrame).str());
+        result.append(interpreteAuxValveCommand(a_ptrFrame));
         break;
     case 0x40:
         result.append("Front PTO Request: ");
-        result.append(interpretePTOCommand(a_ptrFrame).str());
+        result.append(interpretePTOCommand(a_ptrFrame));
         break;
     case 0x41:
         result.append("Rear PTO Request: ");
-        result.append(interpretePTOCommand(a_ptrFrame).str());
+        result.append(interpretePTOCommand(a_ptrFrame));
         break;
     case 0x42:
         result.append("Front Hitch Request: ");
-        result.append(interpreteHitchCommand(a_ptrFrame).str());
+        result.append(interpreteHitchCommand(a_ptrFrame));
         break;
     case 0x43:
         result.append("Rear Hitch Request: ");
-        result.append(interpreteHitchCommand(a_ptrFrame).str());
+        result.append(interpreteHitchCommand(a_ptrFrame));
         break;
     case 0x44:
         result.append("Vehicle Speed Request: ");
-        result.append(interpreteVehicleSpeedCommand(a_ptrFrame).str());
+        result.append(interpreteVehicleSpeedCommand(a_ptrFrame));
         break;
     case 0x46:
         result.append("External Guidance Request: ");
-        result.append(interpreteExternalGuidanceCommand(a_ptrFrame).str());
+        result.append(interpreteExternalGuidanceCommand(a_ptrFrame));
         break;
     case 0xF3:
         result.append("Function assignment status request");
@@ -801,7 +802,7 @@ interpretePgnsTimClientToServer(PtrDataFrame_t a_ptrFrame)
         result.append("Server version request");
         break;
     case 0xF9:
-        result.append(partiallyInterpreteTimClientStatus(a_ptrFrame).str());
+        result.append(partiallyInterpreteTimClientStatus(a_ptrFrame));
         break;
     default:
         result.append("Unknown command. Upgrade logalizer in interpretePgnsTimClientToServer()");
@@ -828,7 +829,7 @@ interpreteTimAuthenticationServerToClient(PtrDataFrame_t a_ptrFrame)
         break;
     case 0x03:
         result.append("Client ");
-        result.append(CertificateRequest(a_ptrFrame).str());
+        result.append(CertificateRequest(a_ptrFrame));
         break;
     case 0x04:
         result.append("Server random challenge response.");
@@ -849,7 +850,7 @@ interpreteTimAuthenticationServerToClient(PtrDataFrame_t a_ptrFrame)
         result.append("Client authentication info request.");
         break;
     case 0xF9:
-        result.append(partiallyInterpreteTimServerAuthenticationStatus(a_ptrFrame).str());
+        result.append(partiallyInterpreteTimServerAuthenticationStatus(a_ptrFrame));
         break;
     default:
         break;
@@ -872,7 +873,7 @@ interpreteTimAuthenticationClientToServer(PtrDataFrame_t a_ptrFrame)
         break;
     case 0x02:
         result.append("Server ");
-        result.append(CertificateRequest(a_ptrFrame).str());
+        result.append(CertificateRequest(a_ptrFrame));
         break;
     case 0x03:
         result.append("Client certificate response.");
@@ -896,7 +897,7 @@ interpreteTimAuthenticationClientToServer(PtrDataFrame_t a_ptrFrame)
         result.append("Client authentication info response.");
         break;
     case 0xFA:
-        result.append(partiallyInterpreteTimClientAuthenticationStatus(a_ptrFrame).str());
+        result.append(partiallyInterpreteTimClientAuthenticationStatus(a_ptrFrame));
         break;
     default:
         break;

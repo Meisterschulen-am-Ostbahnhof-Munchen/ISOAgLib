@@ -666,7 +666,7 @@ interpreteVehiclePosition( PtrDataFrame_t at_ptrFrame )
 
   handleVehiclePosition( at_ptrFrame->time(), lat, lon );
 
-  out << "Latitude: " << lat << "° " << "Longitude: " << lon << "° ";
+  out << "Latitude: " << std::fixed << std::setprecision(6) << lat << "° " << "Longitude: " << lon << std::setprecision(4) << "° ";
   return out.str();
 }
 
