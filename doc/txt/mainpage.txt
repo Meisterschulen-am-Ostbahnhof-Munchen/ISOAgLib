@@ -75,6 +75,7 @@ Multi-Packet:
  - ConnAbort correct stream when RTS comes in running stream.
  - ConnAbort (wrong) CTS with NextPacketNr=0.
  - Ignore premature EoMAck instead of internally aborting the stream (without ConnAbort msg) according to standard.
+ - Removed an endless loop, triggered by a forced (E)TP Abort.
 
 CAN-Server:
  - Added '--virtual' parameter
@@ -90,8 +91,8 @@ Framework:
 
 Tractor:
  - Added new class for Electronic Engine Controller
- 
- 
+
+   
 \subsection Change_ZI 2.8.2 to 2.9.0
 
 Tractor-Classes:
