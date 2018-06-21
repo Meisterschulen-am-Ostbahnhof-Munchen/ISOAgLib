@@ -384,7 +384,8 @@ MultiSend_c::abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& ac
 void
 MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler, ConnectionAbortReason_t reason)
 {
-  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); ++pc_iter)
+  size_t sendStreamsToCheck = mlist_sendStream.size();
+  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); sendStreamsToCheck--> 0; ++pc_iter)
   {
     if (pc_iter->getMultiSendEventHandler() == &apc_multiSendEventHandler)
     {
