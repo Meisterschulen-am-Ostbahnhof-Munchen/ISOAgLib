@@ -385,7 +385,7 @@ void
 MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler, ConnectionAbortReason_t reason)
 {
   size_t sendStreamsToCheck = mlist_sendStream.size();
-  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); sendStreamsToCheck--> 0; ++pc_iter)
+  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); (sendStreamsToCheck--) > 0; ++pc_iter)
   {
     if (pc_iter->getMultiSendEventHandler() == &apc_multiSendEventHandler)
     {
