@@ -28,14 +28,19 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
-#include "mutex_pthread.h"
-
 #ifdef USE_MUTUAL_EXCLUSION
 
 #ifdef WINCE
-#include <windows.h>
+  #include <windows.h>
 #else
-#include <pthread.h>
+  // Version >= Microsoft Visual Studio C++ 2015
+  // fix broken pthread.h (that defines timespec on its own, which may result in double definition)
+  #if _MSC_VER >= 1900
+    #ifndef HAVE_STRUCT_TIMESPEC
+      #define HAVE_STRUCT_TIMESPEC
+    #endif
+  #endif
+  #include <pthread.h>
 #endif
 
 namespace HAL
