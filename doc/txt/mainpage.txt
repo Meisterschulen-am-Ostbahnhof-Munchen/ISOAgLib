@@ -88,6 +88,7 @@ Logalizer:
 
 Framework:
  - ThreadWrapper: additional mutex protection of ThreadWrapper::m_exit_code
+ - Compilefixes for HAVE_STRUCT_TIMESPEC issue
 
 Tractor:
  - Added new class for Electronic Engine Controller
