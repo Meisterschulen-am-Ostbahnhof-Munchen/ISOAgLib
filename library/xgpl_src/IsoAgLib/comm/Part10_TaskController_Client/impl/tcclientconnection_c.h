@@ -80,7 +80,6 @@ namespace __IsoAgLib {
   class TcClientConnection_c : public PdConnection_c
   {
     static const ecutime_t DEF_TimeOut_DdopDeactivation = 2000;
-    static const uint16_t  DEF_MaxTcNotBusyCount = 3;
 
     public:
       class StateHandler_c {
@@ -160,11 +159,6 @@ namespace __IsoAgLib {
         PoolStateError
       };
 
-      enum CommandState_t {
-        CommandStateNone = 0,
-        CommandStateWaitingForResponse,
-      };
-
       enum ProcessDataMsg_t {
         procCmdPar_RequestVersionMsg = 0x00,
         procCmdPar_VersionMsg = 0x10,
@@ -209,7 +203,7 @@ namespace __IsoAgLib {
 
       void handleNack( int16_t ddi, int16_t element );
 
-      void doCommand( ProcessDataMsg_t cmd, int32_t timeout = -1, uint8_t param = 0xff );
+      void doCommand( ProcessDataMsg_t cmd, ProcessDataMsg_t expectedCmd, int32_t timeout = -1, uint8_t param = 0xff );
       void sendMsg( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t ) const;
 
       void stopRunningMeasurement();
@@ -315,6 +309,49 @@ namespace __IsoAgLib {
         SpValSourceList m_listSpValueSource;
       } mc_localCsHandler;
 
+      class CurrentCommand_c
+      {
+      public:
+        enum State_en
+        {
+          Idle,
+          Running,
+          FinishedAndWaitingForResponse,
+          Aborted
+        };
+
+        CurrentCommand_c();
+        CurrentCommand_c(const CurrentCommand_c& a_rhs);
+
+        void init();
+        void setRunningTp(ProcessDataMsg_t cmd, ProcessDataMsg_t expectedResponse, int32_t timeout);
+        void sentSinglePkg(ProcessDataMsg_t cmd, ProcessDataMsg_t expectedResponse, int32_t timeout, uint32_t busyCount);
+        void sentMultiPkg(uint32_t busyCount);
+        void setAborted();
+        void finished();
+
+        State_en getState() const;
+
+        bool isTimedOut(ServerInstance_c& a_connected);
+
+        bool handleResponseMessage( uint8_t response );
+
+        ProcessDataMsg_t getLastSentCommand() const;
+
+      private:
+        ecutime_t m_cmdSendFinishedTimestamp;
+        State_en m_state;
+        ProcessDataMsg_t m_dataMessageSent;
+        ProcessDataMsg_t m_expectedResponse;
+        int32_t m_cmdTimeout;
+        uint32_t m_cmdTcNotBusyCountStart;
+
+        static const uint16_t  DEF_MaxTcNotBusyCount = 3;
+
+        bool isDefinedTimeoutTriggered() const;
+
+      } m_currentCommand;
+
       // MultiSendStreamer_c variables
       uint16_t m_currentSendPosition;
       uint16_t m_storedSendPosition;
@@ -328,13 +365,6 @@ namespace __IsoAgLib {
       StateHandler_c* m_stateHandler;
 
       DevPoolState_t m_devPoolState;
-
-      // Command handling
-      CommandState_t m_cmdState;
-      uint8_t m_cmdSent;
-      ecutime_t m_cmdSentTimestamp;
-      int32_t m_cmdTimeout;
-      uint32_t m_cmdTcNotBusyCountStart;
 
       IsoAgLib::ProcData::ClientCapabilities_s m_capsClient;
       IsoAgLib::ProcData::ServerCapabilities_s m_capsServer;

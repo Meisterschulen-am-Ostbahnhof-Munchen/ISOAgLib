@@ -50,11 +50,7 @@ namespace __IsoAgLib {
     , m_timeLastWsTaskMsgSent( -1 )
     , m_stateHandler( NULL )
     , m_devPoolState( PoolStateDisconnected )
-    , m_cmdState( CommandStateNone )
-    , m_cmdSent( 0x00 )
-    , m_cmdSentTimestamp( 0 )
-    , m_cmdTimeout( 0 )
-    , m_cmdTcNotBusyCountStart ( 0 )
+    , m_currentCommand()
     , m_capsClient()
     , m_capsServer()
     , m_schedulerTaskProxy( *this, 100, false )
@@ -75,11 +71,7 @@ namespace __IsoAgLib {
     , m_timeLastWsTaskMsgSent( rhs.m_timeLastWsTaskMsgSent )
     , m_stateHandler( rhs.m_stateHandler )
     , m_devPoolState( rhs.m_devPoolState )
-    , m_cmdState( rhs.m_cmdState )
-    , m_cmdSent( rhs.m_cmdSent )
-    , m_cmdSentTimestamp( rhs.m_cmdSentTimestamp )
-    , m_cmdTimeout( rhs.m_cmdTimeout )
-    , m_cmdTcNotBusyCountStart( rhs.m_cmdTcNotBusyCountStart )
+    , m_currentCommand( rhs.m_currentCommand )
     , m_capsClient( rhs.m_capsClient )
     , m_capsServer( rhs.m_capsServer )
     , m_schedulerTaskProxy( *this, 100, false )
@@ -106,7 +98,7 @@ namespace __IsoAgLib {
 
     getSchedulerInstance().registerTask( m_schedulerTaskProxy, 0 );
 
-    m_cmdState = CommandStateNone;
+    m_currentCommand.init();
     m_timeWsAnnounceKey = -1;
     m_timeWaitWithAnyCommunicationUntil = -1;
     m_timeLastWsTaskMsgSent = -1;
@@ -126,7 +118,7 @@ namespace __IsoAgLib {
 
     getSchedulerInstance().registerTask( m_schedulerTaskProxy, 0 );
 
-    m_cmdState = CommandStateNone;
+    m_currentCommand.init();
     m_timeWsAnnounceKey = -1;
     m_timeWaitWithAnyCommunicationUntil = -1;
     m_timeLastWsTaskMsgSent = -1;
@@ -149,7 +141,7 @@ namespace __IsoAgLib {
     
     getDevicePool().init( getIdentItem() );
 
-    doCommand( procCmdPar_RequestStructureLabelMsg );
+    doCommand( procCmdPar_RequestStructureLabelMsg, procCmdPar_StructureLabelMsg );
 
     setDevPoolState( PoolStateConnecting );
 
@@ -177,11 +169,11 @@ namespace __IsoAgLib {
     {
       if( getDevPoolState() == PoolStateUploaded || getDevPoolState() == PoolStateActive )
       {
-        doCommand( procCmdPar_OPActivateMsg, DEF_TimeOut_DdopDeactivation, 0 );
+        doCommand( procCmdPar_OPActivateMsg, procCmdPar_OPActivateRespMsg, DEF_TimeOut_DdopDeactivation, 0 );
 
         if (shouldDeletePool)
         {
-          doCommand( procCmdPar_OPDeleteMsg, DEF_TimeOut_DdopDeactivation );
+          doCommand( procCmdPar_OPDeleteMsg, procCmdPar_OPDeleteRespMsg, DEF_TimeOut_DdopDeactivation );
         }
       }
     }
@@ -250,13 +242,14 @@ namespace __IsoAgLib {
       sendMsg( 0xff, 0xff, 0xff, 0xff, (connected()->getLastStatusTaskTotalsActive() ? 0x01 : 0x00), 0x00, 0x00, 0x00 );
     }
 
-    switch( m_cmdState )
+    switch( m_currentCommand.getState() )
     {
-    case CommandStateNone:
+    case CurrentCommand_c::Idle:
+    {
       switch ( getDevPoolState() )
       {
       case PoolStatePreconnecting:
-        doCommand( procCmdPar_RequestVersionMsg );
+        doCommand( procCmdPar_RequestVersionMsg, procCmdPar_VersionMsg );
         break;
 
       case PoolStateAwaitingConnectionDecision:
@@ -264,31 +257,15 @@ namespace __IsoAgLib {
         break;
 
       case PoolStateUploading:
-        m_devicePoolToUpload = getDevicePool().getBytestream( procCmdPar_OPTransferMsg, m_capsConnection);
-        doCommand( procCmdPar_RequestOPTransferMsg );
+        m_devicePoolToUpload = getDevicePool().getBytestream( procCmdPar_OPTransferMsg, m_capsConnection );
+        doCommand( procCmdPar_RequestOPTransferMsg, procCmdPar_RequestOPTransferRespMsg );
         break;
 
-      /*case PoolStateStale: {
-        // Upload changed descriptions
-        STL_NAMESPACE::vector<uint8_t> newBytes;
-        if (getDevicePool().getDirtyBytestream(newBytes))
-        {
-          m_devicePoolToUpload = newBytes
-          doCommand( procCmdPar_OPTransferMsg );
-        }
-        else
-          setDevPoolState(PoolStateActive);
-        // @todo trigger re-announce for fresh pool upload with changed objects
-      } break;*/
-
       case PoolStateUploaded:
-        doCommand( procCmdPar_OPActivateMsg );
+        doCommand( procCmdPar_OPActivateMsg, procCmdPar_OPActivateRespMsg );
         break;
 
       case PoolStateActive:
-        //if ( getDevicePool().isDirty() )
-        //  setDevPoolState(PoolStateStale);
-        // @todo trigger re-announce for fresh pool upload with changed objects
         break;
 
       case PoolStateError:
@@ -298,44 +275,33 @@ namespace __IsoAgLib {
       default:
         break;
       }
+    }
       break;
+    case CurrentCommand_c::Running:
+       break;
+    case CurrentCommand_c::FinishedAndWaitingForResponse:
+    {
+      isoaglib_assert( connected() );
 
-    case CommandStateWaitingForResponse:
-      // wait for (E)TP to finished before checking timeouts?
-      if( m_cmdSentTimestamp < 0 )
-        break;
-
-      bool timeoutDetected = false;
-      // most commands do not have a time-out. 
-      if( m_cmdTimeout > 0 )
-      {
-        if( HAL::getTime() > ( m_cmdSentTimestamp + m_cmdTimeout ) )
-          timeoutDetected = true;
-      }
-      else
-      {
-        isoaglib_assert( connected() );
-        const uint32_t notBusyCount = connected()->getNotBusyCount();
-        
-        if( notBusyCount < m_cmdTcNotBusyCountStart )
-          m_cmdTcNotBusyCountStart = notBusyCount;
-        
-        // There DEF_MaxTcNotBusyCount consec. 0-bits for Busy need to be in the TC Status message.
-        if( notBusyCount > ( m_cmdTcNotBusyCountStart + DEF_MaxTcNotBusyCount ) )
-          timeoutDetected = true;
-      }
-      
-      if( timeoutDetected )
+      if ( m_currentCommand.isTimedOut( *connected() ) )
       {
         // Timeout, retry last command?
         // For now, give up!
-        m_cmdState = CommandStateNone;
+        m_currentCommand.finished();
         // don't go to PoolStateError, as it cannot be detected then anymore if it was still in Preconnecting or Connected.
         getTcClientInstance( getIdentItem().getMultitonInst() ).notifyConnectionToBeEnded( *this );
       }
-
-      break;
     }
+    break;
+    case CurrentCommand_c::Aborted:
+    {
+      // The only possible TP message here, is the OP transfer. So no other cmd could have been aborted. Start a retry of the transfer.
+      doCommand( procCmdPar_OPTransferMsg, procCmdPar_OPTransferRespMsg );
+    }
+      break;
+    default:
+      break;
+   }
   }
 
 
@@ -582,7 +548,10 @@ namespace __IsoAgLib {
     /// HANDLE RESPONSES
     ////////////////////
 
-    if( m_cmdState != CommandStateWaitingForResponse )
+    if( m_currentCommand.getState() != CurrentCommand_c::FinishedAndWaitingForResponse )
+      return;
+
+    if ( !m_currentCommand.handleResponseMessage( data.getUint8Data( 0 ) ) )
       return;
 
     /// HANDLE RESPONSES
@@ -591,23 +560,19 @@ namespace __IsoAgLib {
     {
       case procCmdPar_VersionMsg:
       {
-        if( m_cmdSent != procCmdPar_RequestVersionMsg )
-          break;
-        m_cmdState = CommandStateNone;
-
         setDevPoolState( PoolStateAwaitingConnectionDecision );
 
         m_capsServer.versionNr = data.getUint8Data( 2-1 );
 
-        m_capsServer.hasTcBas           = ( data.getUint8Data( 4-1 ) & 0x01 ) != 0;
-        m_capsServer.hasTcGeoWithPbc    = ( data.getUint8Data( 4-1 ) & 0x02 ) != 0;
-        m_capsServer.hasTcGeoWithoutPbc = ( data.getUint8Data( 4-1 ) & 0x04 ) != 0;
-        m_capsServer.hasPeerControl     = ( data.getUint8Data( 4-1 ) & 0x08 ) != 0;
-        m_capsServer.hasTcSc            = ( data.getUint8Data( 4-1 ) & 0x10 ) != 0;
+        m_capsServer.hasTcBas           = ( data.getUint8Data( 4 - 1 ) & 0x01 ) != 0;
+        m_capsServer.hasTcGeoWithPbc    = ( data.getUint8Data( 4 - 1 ) & 0x02 ) != 0;
+        m_capsServer.hasTcGeoWithoutPbc = ( data.getUint8Data( 4 - 1 ) & 0x04 ) != 0;
+        m_capsServer.hasPeerControl     = ( data.getUint8Data( 4 - 1 ) & 0x08 ) != 0;
+        m_capsServer.hasTcSc            = ( data.getUint8Data( 4 - 1 ) & 0x10 ) != 0;
 
-        m_capsServer.numBoom    = data.getUint8Data( 6-1 );
-        m_capsServer.numSection = data.getUint8Data( 7-1 );
-        m_capsServer.numBin     = data.getUint8Data( 8-1 );
+        m_capsServer.numBoom    = data.getUint8Data( 6 - 1 );
+        m_capsServer.numSection = data.getUint8Data( 7 - 1 );
+        m_capsServer.numBin     = data.getUint8Data( 8 - 1 );
 
         m_capsConnection.versionNr      = ( m_capsServer.versionNr < m_capsClient.versionNr ) ? m_capsServer.versionNr : m_capsClient.versionNr;
         m_capsConnection.hasPeerControl = m_capsServer.hasPeerControl;
@@ -618,10 +583,6 @@ namespace __IsoAgLib {
 
       case procCmdPar_StructureLabelMsg:
       {
-        if( m_cmdSent != procCmdPar_RequestStructureLabelMsg )
-          break;
-        m_cmdState = CommandStateNone;
-
         STL_NAMESPACE::vector<uint8_t> structureLabel;
         for( int i = 1; i < 8; i++ )
         {
@@ -638,10 +599,6 @@ namespace __IsoAgLib {
 
       case procCmdPar_LocalizationLabelMsg:
       {
-        if( m_cmdSent != procCmdPar_RequestLocalizationLabelMsg )
-          break;
-        m_cmdState = CommandStateNone;
-
         STL_NAMESPACE::vector<uint8_t> localizationLabel;
         for( int i = 1; i < 8; i++ )
         {
@@ -657,39 +614,23 @@ namespace __IsoAgLib {
       } break;
 
       case procCmdPar_RequestOPTransferRespMsg:
-        if( m_cmdSent != procCmdPar_RequestOPTransferMsg )
-          break;
-        m_cmdState = CommandStateNone;
-
         if ( data.getUint8Data( 1 ) == 0 ) // on success, send the object pool
-          doCommand( procCmdPar_OPTransferMsg );
+          doCommand( procCmdPar_OPTransferMsg, procCmdPar_OPTransferRespMsg );
         else
           m_devPoolState = PoolStateError;
         break;
 
       case procCmdPar_OPTransferRespMsg:
-        if( m_cmdSent != procCmdPar_OPTransferMsg )
-          break;
-        m_cmdState = CommandStateNone;
-
         eventPoolUploadResponse( data.getUint8Data( 1 ) );
         break;
 
       case procCmdPar_OPActivateRespMsg:
-        if( m_cmdSent != procCmdPar_OPActivateMsg )
-          break;
-        m_cmdState = CommandStateNone;
-
         eventPoolActivateResponse( data.getUint8Data( 1 ) );
         break;
 
 #if 0
 // not supported yet
       case procCmdPar_ChangeDesignatorRespMsg:
-        if( m_cmdSent != procCmdPar_ChangeDesignatorMsg )
-          break;
-        m_cmdState = CommandStateNone;
-
         break;
 #endif
 
@@ -747,7 +688,7 @@ namespace __IsoAgLib {
       }
       else
       {
-        doCommand( procCmdPar_RequestLocalizationLabelMsg );
+        doCommand( procCmdPar_RequestLocalizationLabelMsg, procCmdPar_LocalizationLabelMsg );
       }
     }
   }
@@ -812,16 +753,10 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::doCommand( ProcessDataMsg_t cmd, int32_t timeout, uint8_t param )
+  TcClientConnection_c::doCommand( ProcessDataMsg_t cmd, ProcessDataMsg_t expectedCmd, int32_t timeout, uint8_t param )
   {
     isoaglib_assert( (m_identItem != NULL) && connected() );
 
-    m_cmdState = CommandStateWaitingForResponse;
-    m_cmdSent = cmd;
-    m_cmdTimeout = timeout;
-    m_cmdSentTimestamp = HAL::getTime();
-    m_cmdTcNotBusyCountStart = connected()->getNotBusyCount();
-    
     switch( cmd )
     {
     case procCmdPar_OPTransferMsg:
@@ -833,8 +768,7 @@ namespace __IsoAgLib {
         PROCESS_DATA_PGN,
         &m_multiSendEventHandler );
 
-      // Special for (E)TP Commands: Will be set after sent out completely (EoMAck received)
-      m_cmdSentTimestamp = -1;
+      m_currentCommand.setRunningTp(cmd, expectedCmd, timeout);
       break;
 
     case procCmdPar_RequestOPTransferMsg:
@@ -842,22 +776,21 @@ namespace __IsoAgLib {
         const uint32_t byteStreamLength = m_devicePoolToUpload.getEnd() - 1; // -1 to remove 0x61 opcode
 
         sendMsg( cmd,
-          ( uint8_t )( ( byteStreamLength ) & 0xff ),
-          ( uint8_t )( ( byteStreamLength >> 8 ) & 0xff ),
+          ( uint8_t )( ( byteStreamLength       ) & 0xff ),
+          ( uint8_t )( ( byteStreamLength >>  8 ) & 0xff ),
           ( uint8_t )( ( byteStreamLength >> 16 ) & 0xff ),
           ( uint8_t )( ( byteStreamLength >> 24 ) & 0xff ),
           0xff, 0xff, 0xff );
+
+        m_currentCommand.sentSinglePkg( cmd, expectedCmd, timeout, connected()->getNotBusyCount());
       }
       break;
 
     default:
       {
-        ProcessPkg_c pkg( cmd, param, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF );
+        sendMsg( cmd, param, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff );
 
-        pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( getRemoteItem() ) );
-        pkg.setMonitorItemForSA( m_identItem->getIsoItem() );
-
-        getIsoBusInstance4Comm() << pkg;
+        m_currentCommand.sentSinglePkg( cmd, expectedCmd, timeout, connected()->getNotBusyCount());
       }
       break;
     }
@@ -870,6 +803,7 @@ namespace __IsoAgLib {
   void
   TcClientConnection_c::reactOnStateChange( const SendStream_c& sendStream )
   {
+    isoaglib_assert( connected() );
     if( !connected()->isAlive() )
       return;
 
@@ -879,12 +813,12 @@ namespace __IsoAgLib {
       break;
 
     case __IsoAgLib::SendStream_c::SendAborted:
-      doCommand( procCmdPar_OPTransferMsg );
+      m_currentCommand.setAborted();
       break;
 
     case __IsoAgLib::SendStream_c::SendSuccess:
       // timeout counts from now on!
-      m_cmdSentTimestamp = HAL::getTime();
+      m_currentCommand.sentMultiPkg( connected()->getNotBusyCount() );
       break;
     }
   }
@@ -922,12 +856,136 @@ namespace __IsoAgLib {
   }
 
 
+  ////////////////////////////////////////////////////////////////////////////////////////////
+  /// ************************* TcClientConnection_c::cmdSend_c ************************** ///
+  ////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+  TcClientConnection_c::CurrentCommand_c::CurrentCommand_c()
+    : m_cmdSendFinishedTimestamp( -1 )
+    , m_state( Idle )
+    , m_dataMessageSent( procCmdPar_RequestVersionMsg )
+    , m_expectedResponse( procCmdPar_RequestVersionMsg )
+    , m_cmdTimeout( 0 )
+    , m_cmdTcNotBusyCountStart( 0 )
+  {
+  }
+
+  TcClientConnection_c::CurrentCommand_c::CurrentCommand_c( const CurrentCommand_c& a_rhs )
+    : m_cmdSendFinishedTimestamp( a_rhs.m_cmdSendFinishedTimestamp )
+    , m_state( a_rhs.m_state )
+    , m_dataMessageSent( a_rhs.m_dataMessageSent )
+    , m_expectedResponse( a_rhs.m_expectedResponse )
+    , m_cmdTimeout( a_rhs.m_cmdTimeout )
+    , m_cmdTcNotBusyCountStart( a_rhs.m_cmdTcNotBusyCountStart )
+  {
+  }
+
+  void
+  TcClientConnection_c::CurrentCommand_c::init()
+  {
+    m_state = Idle;
+  }
+
+  void
+  TcClientConnection_c::CurrentCommand_c::setRunningTp(ProcessDataMsg_t cmd, ProcessDataMsg_t expectedResponse, int32_t timeout)
+  {
+    m_cmdSendFinishedTimestamp = -1;
+    m_state = Running;
+    m_dataMessageSent = cmd;
+    m_expectedResponse = expectedResponse;
+    m_cmdTimeout = timeout;
+  }
+
+  void
+  TcClientConnection_c::CurrentCommand_c::sentSinglePkg(ProcessDataMsg_t cmd, ProcessDataMsg_t expectedResponse, int32_t timeout, uint32_t busyCount)
+  {
+    m_cmdSendFinishedTimestamp = HAL::getTime();
+    m_state = FinishedAndWaitingForResponse;
+    m_dataMessageSent = cmd;
+    m_expectedResponse = expectedResponse;
+    m_cmdTimeout = timeout;
+    m_cmdTcNotBusyCountStart = busyCount;
+  }
+
+  void
+  TcClientConnection_c::CurrentCommand_c::sentMultiPkg(uint32_t busyCount)
+  {
+    m_cmdSendFinishedTimestamp = HAL::getTime();
+    m_state = FinishedAndWaitingForResponse;
+    m_cmdTcNotBusyCountStart = busyCount;
+  }
+
+  void
+  TcClientConnection_c::CurrentCommand_c::setAborted()
+  {
+    m_cmdSendFinishedTimestamp = HAL::getTime();
+    m_state = Aborted; }
+
+  void
+  TcClientConnection_c::CurrentCommand_c::finished()
+  {
+    m_state = Idle;
+  }
+
+  TcClientConnection_c::CurrentCommand_c::State_en
+  TcClientConnection_c::CurrentCommand_c::getState() const
+  { 
+    return ( m_state );
+  }
+
+  bool
+  TcClientConnection_c::CurrentCommand_c::isTimedOut( ServerInstance_c& a_connected )
+  {
+    isoaglib_assert( m_state == FinishedAndWaitingForResponse );
+    isoaglib_assert( m_cmdSendFinishedTimestamp != -1 );
+
+    // most commands do not have a time-out. 
+    if ( m_cmdTimeout > 0)
+    {
+      return ( isDefinedTimeoutTriggered() );
+    }
+    else
+    {
+      const uint32_t notBusyCount = a_connected.getNotBusyCount();
+
+      if ( notBusyCount < m_cmdTcNotBusyCountStart )
+        m_cmdTcNotBusyCountStart = notBusyCount;
+
+      // There DEF_MaxTcNotBusyCount consec. 0-bits for Busy need to be in the TC Status message.
+      return ( notBusyCount > ( m_cmdTcNotBusyCountStart + DEF_MaxTcNotBusyCount ) );
+    }
+  }
+
+  bool
+  TcClientConnection_c::CurrentCommand_c::handleResponseMessage( uint8_t response )
+  {
+    isoaglib_assert( m_state == FinishedAndWaitingForResponse );
+    const bool retValue = (response == m_expectedResponse);
+    if ( retValue )
+      finished();
+    return ( retValue );
+  }
+
+  TcClientConnection_c::ProcessDataMsg_t
+  TcClientConnection_c::CurrentCommand_c::getLastSentCommand() const
+  {
+    return ( m_dataMessageSent );
+  }
+
+  bool
+  TcClientConnection_c::CurrentCommand_c::isDefinedTimeoutTriggered() const
+  {
+    isoaglib_assert( m_cmdSendFinishedTimestamp != -1 );
+    return ( HAL::getTime() > ( m_cmdSendFinishedTimestamp + m_cmdTimeout ) );
+  }
+
 
 
   ////////////////////////////////////////////////////////////////////////////////////////////
   /// ******************* TcClientConnection_c::ControlSourceHandler_c ******************* ///
   ////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 
