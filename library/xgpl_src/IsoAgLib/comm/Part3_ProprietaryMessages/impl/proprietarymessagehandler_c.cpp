@@ -51,14 +51,18 @@ namespace __IsoAgLib
 
   void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageA_c& msg )
   {
+    isoaglib_assert( initialized() ); // most likely module was not configured!
+
     m_customerA.m_msgs.push_front( &msg );
-    
+
     m_customerA.registerFilter( getMultitonInst(), msg.ident()->isoName() );
   }
 
 
   void ProprietaryMessageHandler_c::registerProprietaryMessage( ProprietaryMessageB_c& msg, uint8_t ps )
   {
+    isoaglib_assert(initialized()); // most likely module was not configured!
+
     if( m_customerB.m_msgs[ ps ] == NULL )
     {
       m_customerB.m_msgs[ ps ] = new CanCustomerB_c::MsgList();
