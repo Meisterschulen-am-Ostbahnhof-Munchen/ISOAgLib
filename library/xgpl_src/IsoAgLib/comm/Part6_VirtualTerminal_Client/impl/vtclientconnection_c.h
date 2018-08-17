@@ -116,15 +116,16 @@ public:
   uint8_t  getUserConvertedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
   uint8_t  getClientId() const { return mui8_clientId; }
 
-  bool connectedToVtServer() const               { return (mpc_vtServerInstance != NULL); }  
+  bool connectedToVtServer() const               { return (mpc_vtServerInstance != NULL); }
   /** ATTENTION: Please assure "connectedToVtServer()/isVtActive()" before getting this reference */
-  VtServerInstance_c& getVtServerInst() const    { isoaglib_header_assert(NULL != mpc_vtServerInstance); return *mpc_vtServerInstance; }  
+  VtServerInstance_c& getVtServerInst() const    { isoaglib_header_assert(NULL != mpc_vtServerInstance); return *mpc_vtServerInstance; }
   VtServerInstance_c* getVtServerInstPtr() const { return mpc_vtServerInstance; }
 
   IdentItem_c& getIdentItem() const              { return mrc_wsMasterIdentItem; }
   int getMultitonInst() { return mrc_wsMasterIdentItem.getMultitonInst(); }
 
   bool moveToNextVt();
+  bool disconnectFromVt();
 
   void notifyOnVtServerInstanceLoss( VtServerInstance_c& r_oldVtServerInst );
 
@@ -138,6 +139,7 @@ public:
   // ### from CommandHandler_c ###
   void notifyOnCommandQueueFilledFromEmpty();
   void notifyOnFinishedCommand( bool stillCommandsLeft );
+  inline void notifyOnDisconnect();
 
   //! @return true for successful assignment, false if SA couldn't be found.
   bool storeAuxAssignment( const CanPkgExt_c& arc_data );
@@ -151,6 +153,7 @@ public:
   // @return 0x00: No command timed out (or already checked and reset)
   //      != 0x00: The command that timed out and was the reason for a reconnect!
   inline uint8_t getAndResetLastTimedOutCommand();
+  inline bool isDisconnectedForShutdown() const;
 
 private:
   void timeEvent();
@@ -218,8 +221,10 @@ private:
 
   IsoName_c mc_preferredVt;
   int32_t mi32_bootTime_ms;
+  bool mb_reconnect;
+  bool mb_disconnectedForShutdown;
 
-  IsoAgLib::iVtClientDataStorage_c& m_dataStorageHandler; 
+  IsoAgLib::iVtClientDataStorage_c& m_dataStorageHandler;
 
   CLASS_SCHEDULER_TASK_PROXY(VtClientConnection_c)
 
@@ -274,6 +279,23 @@ VtClientConnection_c::getAndResetLastTimedOutCommand()
   return timedOutCmd;
 }
 
+
+inline
+void
+VtClientConnection_c::notifyOnDisconnect()
+{
+  if( !mb_reconnect )
+  {
+    mb_disconnectedForShutdown = true;
+  }
+}
+
+inline
+bool
+VtClientConnection_c::isDisconnectedForShutdown() const
+{
+  return mb_disconnectedForShutdown;
+}
 
 } // __IsoAgLib
 

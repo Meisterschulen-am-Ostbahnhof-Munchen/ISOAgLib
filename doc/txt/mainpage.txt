@@ -49,6 +49,7 @@ VT-Client:
    - Added eventPointingEventOp for back-scaled Pointing Event positions
    - Renamed some Enabled -> SecondOptions Bit; Added getEnabled that masks properly
    - Reduced the RAM usage for pools with many string objects
+   - Added disconnect from VtServer for clean shutdown
  - Bugfix:
    - Change Child Position now takes the dam/sk offset into account
    - AUX-N Functions:

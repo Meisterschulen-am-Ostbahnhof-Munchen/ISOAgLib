@@ -138,7 +138,7 @@ CommandHandler_c::sendCommandChangePriority (IsoAgLib::iVtObject_c* apc_object, 
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       newPriority, 0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
 }
-#endif 
+#endif
 
 
 bool
@@ -175,6 +175,19 @@ CommandHandler_c::sendCommandSetAudioVolume (uint8_t aui8_volume)
 bool
 CommandHandler_c::sendCommandDeleteObjectPool()
 {
+  for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
+  {
+    if( (UploadCommandIdle != men_uploadCommandState) && ( priority == mu_sendPriorityOfLastCommand ))
+    {
+      isoaglib_assert( ! mq_sendUpload[ priority ].empty() );
+      mq_sendUpload[ priority ].erase( ++(mq_sendUpload[ priority ].begin()), mq_sendUpload[ priority ].end() );
+    }
+    else
+    {
+      mq_sendUpload[ priority ].clear();
+    }
+  }
+
   return sendCommand (178 /* Command: Command --- Parameter: Delete Object Pool */,
                       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, true); // don't care for enableReplaceOfCommand parameter actually
 }
@@ -735,7 +748,7 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
     for( unsigned prio = mu_sendPriority; prio < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++prio )
     {
       STL_NAMESPACE::list<SendUpload_c>& q_sendUpload = mq_sendUpload[prio];
-  
+
       if( !q_sendUpload.empty() )
       { //get first equal command in queue
         i_sendUpload = q_sendUpload.begin();
@@ -745,7 +758,7 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
           ++i_sendUpload;
         }
         while( i_sendUpload != q_sendUpload.end() )
-        { 
+        {
           bool thisCommandMatched = false;
 
           //first check if multisendstreamer is used!
@@ -774,7 +787,7 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
                     if ((ui8_offset == 0x11) || (ui8_offset == 0x12) ||
                         ((ui8_offset >= 0x60) && (ui8_offset <= 0x7F)) ) /// no checking for Proprietary commands (we don't need the replace-feature here!)
                       break;
-  
+
                     isoaglib_assert( !"Shouldn't reach here. Check which command it was!" );
                     return false;
                   }
@@ -1032,7 +1045,7 @@ CommandHandler_c::finishUploadCommand()
 
 #if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE
-    << "Dequeued (after success, timeout, whatever..): " 
+    << "Dequeued (after success, timeout, whatever..): "
     << ( q_sendUpload.size()+1 ) << " -> " << q_sendUpload.size() << "."
     << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
@@ -1130,7 +1143,7 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
     pool.eventNumericValue(
         uint16_t(pkg.getUint8Data( 1 )) | (uint16_t(pkg.getUint8Data( 2 )) << 8) /* objID */,
         pkg.getUint8Data( 4 ) /* 1 byte value */,
-        (uint32_t(pkg.getUint8Data( 4 ))      ) | (uint32_t(pkg.getUint8Data( 5 )) << 8) | 
+        (uint32_t(pkg.getUint8Data( 4 ))      ) | (uint32_t(pkg.getUint8Data( 5 )) << 8) |
         (uint32_t(pkg.getUint8Data( 6 )) << 16) | (uint32_t(pkg.getUint8Data( 7 )) << 24) /* 4 byte value */);
     break;
 
@@ -1164,7 +1177,7 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
   /***************************************/
   /*** ### AUX Assignment Messages ### ***/
   case 0x20: // Command: "Auxiliary Control type 1", parameter "Auxiliary Assignment"
-    { 
+    {
       if( !m_connection.uploadPoolState().activeAuxO() )
         break;
 
@@ -1270,6 +1283,7 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
   case 0xB2: // Command: "Command", parameter "Delete Object Pool Response"
     errByte = 2;
     checkForVtSwitch = true;
+    m_connection.notifyOnDisconnect();
     break;
 
   case 0xA6: // Command: "Command", parameter "Change Size Response"

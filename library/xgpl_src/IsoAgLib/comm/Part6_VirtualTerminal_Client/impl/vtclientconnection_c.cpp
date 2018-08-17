@@ -144,6 +144,8 @@ VtClientConnection_c::VtClientConnection_c(
   , m_skOffsetY( 0 ) // to be retrieved from the APP
   , mc_preferredVt( IsoName_c::IsoNameUnspecified() )
   , mi32_bootTime_ms( 0 )
+  , mb_reconnect( true )
+  , mb_disconnectedForShutdown( false )
   , m_dataStorageHandler( arc_dataStorage )
   , m_schedulerTaskProxy( *this, 100, false )
 {
@@ -246,9 +248,12 @@ VtClientConnection_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux
 }
 
 
-void 
+void
 VtClientConnection_c::timeEvent()
 {
+  if( mb_disconnectedForShutdown )
+    return;
+
   if (!mrc_wsMasterIdentItem.isClaimedAddress())
     return;
 
@@ -258,7 +263,7 @@ VtClientConnection_c::timeEvent()
 
   // setup all states properly first (for example: UploadState_c::men_uploadPoolState will be used in m_multipleVt.timeEvent())
   checkAndHandleVtStateChange();
-  
+
   if (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToAnyVt == men_registerPoolMode)
   {
     switch(m_multipleVt.timeEvent())
@@ -271,11 +276,14 @@ VtClientConnection_c::timeEvent()
     }
   }
 
-  
+
   // Do nothing if there's no VT active
   if (!isVtActive())
   {
-    timeEventSearchForNewVt();
+    if( mb_reconnect )
+    {
+      timeEventSearchForNewVt();
+    }
     return;
   }
 
@@ -322,7 +330,7 @@ VtClientConnection_c::timeEvent()
     // let the application know of the failed command!
     m_cmdTimedOut = cmdTimedOut;
 #ifdef CONFIG_VT_CLIENT_ON_MISSING_RESPONSE_CONTINUE
-    commandHandler().finishUploadCommand(); 
+    commandHandler().finishUploadCommand();
     getPool().eventAllRetriesFailedNowContinuing();
 #else
     // It's the safest thing to just reconnect to the VT.
@@ -395,14 +403,14 @@ VtClientConnection_c::timeEventSearchForNewVt()
           {
             INTERNAL_DEBUG_DEVICE << "VT not active and searching for next VT -> FOUND NEW VT" << INTERNAL_DEBUG_DEVICE_ENDL;
           }
-#endif            
+#endif
           return;
         }
         else
         {
           // break intentionally left out
         }
-        
+
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt:
       // check if initial timeout is done
       if (isPreferredVTTimeOut())
@@ -411,7 +419,7 @@ VtClientConnection_c::timeEventSearchForNewVt()
         mpc_vtServerInstance = getVtClientInstance4Comm().getActiveVtServer(
             (IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt == men_registerPoolMode),
             NULL );
-        
+
 #if defined( DEBUG_MULTIPLEVTCOMM ) && defined( SYSTEM_PC )
         static bool sb_foundNewVt = false;
         if (mpc_vtServerInstance && !sb_foundNewVt)
@@ -542,11 +550,11 @@ VtClientConnection_c::notifyOnAuxInputStatus( const CanPkgExt_c& pkg )
       uint16_t const cui16_inputValueAnalog = pkg.getUint16Data (3-1);
       uint16_t const cui16_inputValueTransitions = pkg.getUint16Data (5-1);
       uint8_t const cui8_inputValueDigital = pkg.getUint8Data (7-1);
-      
+
       getPool().eventAuxFunctionValue(
-        it->mui16_functionUid, 
-        cui16_inputValueAnalog, 
-        cui16_inputValueTransitions, 
+        it->mui16_functionUid,
+        cui16_inputValueAnalog,
+        cui16_inputValueTransitions,
         cui8_inputValueDigital );
     }
   }
@@ -649,29 +657,39 @@ bool
 VtClientConnection_c::moveToNextVt()
 {
   bool result = false;
-  
   result = m_commandHandler.sendCommandDeleteObjectPool();
 
   if(result)
   {
     m_multipleVt.trySwitchingState();
   }
-  
+
+  return result;
+}
+
+bool
+VtClientConnection_c::disconnectFromVt()
+{
+  bool result = m_commandHandler.sendCommandDeleteObjectPool();
+  if(result)
+  {
+    mb_reconnect = false;
+  }
   return result;
 }
 
 void
 VtClientConnection_c::restartWithNextVt()
 {
-  if(m_multipleVt.isSwitching())
+  if(m_multipleVt.isSwitching() && mb_reconnect )
   {
     // call doStop() and set mb_vtAliveCurrent properly
-    restart(); 
-   
+    restart();
+
     m_multipleVt.setLastVtServerInstance(mpc_vtServerInstance);
-    
+
     mpc_vtServerInstance = NULL;
-    
+
     m_multipleVt.resetInfoShown();
 
     // call doStart() in next checkAndHandleVtStateChange()
@@ -718,7 +736,7 @@ VtClientConnection_c::doStop()
 
   if( getVtServerInstPtr() )
     getMultiSendInstance( getMultitonInst() ).abortSend(
-      getIdentItem().isoName(), 
+      getIdentItem().isoName(),
       getVtServerInst().getIsoName() );
 
   // Do NOT do this only if "m_uploadPoolState.activeAuxN()"
@@ -765,19 +783,26 @@ VtClientConnection_c::checkAndHandleVtStateChange()
 #endif
     doStart();
   }
-  else if (b_vtAliveOld && !mb_vtAliveCurrent)
+  else if (b_vtAliveOld && !mb_vtAliveCurrent )
   { /// ON -> OFF  ***  Connection to VT lost
+    if( mb_reconnect )
+    {
 #if DEBUG_VTCOMM || DEBUG_MULTIPLEVTCOMM
-    const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
-    INTERNAL_DEBUG_DEVICE
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << (cb_fakeVtOff ? "=== (as it was forced to)                                                  ===" : "")
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== time: " << HAL::getTime() << " ==="
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
+      const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
+      INTERNAL_DEBUG_DEVICE
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << (cb_fakeVtOff ? "=== (as it was forced to)                                                  ===" : "")
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== time: " << HAL::getTime() << " ==="
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
+        << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-    doStop();
+      doStop();
+    }
+    else
+    {
+      notifyOnDisconnect();
+    }
   }
 }
 
@@ -789,11 +814,11 @@ VtClientConnection_c::isVtActive() const
     return false;
 
   const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
-  const bool cb_vtOff = getVtServerInst().isVtActiveAndResetCapabilitiesIfInactive();
+  const bool cb_vtOn = getVtServerInst().isVtActiveAndResetCapabilitiesIfInactive();
 
   // no lazy evaluation, always call it so that the properties would be re-requested
   // after a drop-off (even if we'd be faking off currently!)
-  return !cb_fakeVtOff && cb_vtOff;
+  return !cb_fakeVtOff && cb_vtOn;
 }
 
 
@@ -840,7 +865,7 @@ VtClientConnection_c::setVtDisplayState( uint8_t ui8_sa )
   if( !getIdentItem().isClaimedAddress() )
     return;
 
-  vtClientDisplayState_t newDisplayState = 
+  vtClientDisplayState_t newDisplayState =
     (ui8_sa == getIdentItem().getIsoItem()->nr())
       ? VtClientDisplayStateActive
       : VtClientDisplayStateHidden;
@@ -858,7 +883,7 @@ VtClientConnection_c::sendMessage(
   uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7 )
 {
   CanPkgExt_c sendData;
-  
+
   sendData.setIsoPri( 7 );
   sendData.setIsoPgn( ECU_TO_VT_PGN );
   sendData.setMonitorItemForDA( &const_cast<IsoItem_c&>( getVtServerInst().getIsoItem() ) );
@@ -872,7 +897,7 @@ VtClientConnection_c::sendMessage(
   sendData.setUint8Data( 6, d6 );
   sendData.setUint8Data( 7, d7 );
   sendData.setLen( 8 );
-  
+
   getIsoBusInstance4Comm() << sendData;
 }
 

@@ -28,7 +28,7 @@ public:
   /* enable/disable sending of commands to the VT over the ISOBUS.
      defaults to true, can be temporarily switched OFF (false) to locally
      modify the objects, partial pool update them and then switched
-     ON (true) again. */     
+     ON (true) again. */
   void sendCommandsToBus( bool commandsToBus );
 
   // specify in which command-queue all following commands will be placed.
@@ -50,7 +50,7 @@ public:
   bool sendCommandChangeFontAttributes   (uint16_t aui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes   (uint16_t aui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
   bool sendCommandHideShow               (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
-  
+
   /**
    * After assignments have been initially loaded, the application can activate some "presets"
    * In case of error, the other functions that were found were still set!
@@ -59,7 +59,7 @@ public:
    * 2. set all PAs from the "assignments" list. If the list is empty, nothing is set.
    * 3. The callback "storePreferredAux2Assignment" is called for each affected function.
    * @param firstClearAllPAs before setting the assignments, clear all assignments first
-   * @param assignments A list of UserPreset-/Preferred-Assignments. 
+   * @param assignments A list of UserPreset-/Preferred-Assignments.
    * @return TRUE: All functions were found/valid, FALSE: One function wasn't valid!
    */
   bool setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assignments );
@@ -85,7 +85,7 @@ public:
 
   /**
    * Start "move to next VT" procedure by sending the "delete object pool"
-   * 
+   *
    * return TRUE:  message sending was successfully
    * return FALSE: message sending failed
    *               reasons: a) sendCommandsToBus(false) is active
@@ -93,10 +93,13 @@ public:
    **/
   bool moveToNextVt() { return VtClientConnection_c::moveToNextVt(); }
 
+  bool disconnectFromVt() { return VtClientConnection_c::disconnectFromVt(); }
+
   // Note: This function will clear the stored timed out command after returning it!
   // @return 0x00: No command timed (or already checked and reset)
   //      != 0x00: The command that timed out and was the reason for a reconnect!
   uint8_t getAndResetLastTimedOutCommand() { return VtClientConnection_c::getAndResetLastTimedOutCommand(); }
+  bool isDisconnectedForShutdown() const { return VtClientConnection_c::isDisconnectedForShutdown(); }
 
 private:
   iVtClientConnection_c();
@@ -122,11 +125,11 @@ iVtClientConnection_c::sendNonVolatileDeleteVersion( const char* versionLabel7ch
     return commandHandler().sendNonVolatileDeleteVersion( uploadPoolState().versionLabel() );
   }
   else
-    return commandHandler().sendNonVolatileDeleteVersion( versionLabel7chars ); 
+    return commandHandler().sendNonVolatileDeleteVersion( versionLabel7chars );
 }
 
 inline void
-iVtClientConnection_c::sendCommandsToBus( bool commandsToBus ) 
+iVtClientConnection_c::sendCommandsToBus( bool commandsToBus )
 {
   commandHandler().sendCommandsToBus( commandsToBus );
 }
@@ -149,7 +152,7 @@ iVtClientConnection_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc
   return commandHandler().sendCommandUpdateObjectPool (rppc_vtObjects, aui16_numObjects);
 }
 
-inline bool 
+inline bool
 iVtClientConnection_c::sendCommandChangeActiveMask (uint16_t aui16_objectUid, uint16_t aui16_maskId, bool b_enableReplaceOfCmd)
 {
   return commandHandler().sendCommandChangeActiveMask( aui16_objectUid, aui16_maskId, b_enableReplaceOfCmd );
@@ -161,13 +164,13 @@ iVtClientConnection_c::sendCommandChangeNumericValue (uint16_t aui16_objectUid, 
   return commandHandler().sendCommandChangeNumericValue(aui16_objectUid, byte1, byte2, byte3, byte4, b_enableReplaceOfCmd);
 }
 
-inline bool 
+inline bool
 iVtClientConnection_c::sendCommandChangeAttribute (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd)
 {
   return commandHandler().sendCommandChangeAttribute(aui16_objectUid, attrId, byte1, byte2, byte3, byte4, b_enableReplaceOfCmd);
 }
 
-inline bool 
+inline bool
 iVtClientConnection_c::sendCommandChangeSoftKeyMask  (uint16_t aui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd)
 {
   return commandHandler().sendCommandChangeSoftKeyMask(aui16_objectUid, maskType, newSoftKeyMaskID, b_enableReplaceOfCmd);
