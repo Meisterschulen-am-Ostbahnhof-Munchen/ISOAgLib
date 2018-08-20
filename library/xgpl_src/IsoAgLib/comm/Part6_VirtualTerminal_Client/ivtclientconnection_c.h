@@ -101,6 +101,8 @@ public:
   uint8_t getAndResetLastTimedOutCommand() { return VtClientConnection_c::getAndResetLastTimedOutCommand(); }
   bool isDisconnectedForShutdown() const { return VtClientConnection_c::isDisconnectedForShutdown(); }
 
+  uint8_t getVersion() const { return VtClientConnection_c::getVersion(); }
+
 private:
   iVtClientConnection_c();
 

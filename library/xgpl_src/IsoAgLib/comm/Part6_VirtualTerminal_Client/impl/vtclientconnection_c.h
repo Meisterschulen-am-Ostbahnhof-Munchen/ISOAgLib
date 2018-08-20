@@ -154,6 +154,7 @@ public:
   //      != 0x00: The command that timed out and was the reason for a reconnect!
   inline uint8_t getAndResetLastTimedOutCommand();
   inline bool isDisconnectedForShutdown() const;
+  uint8_t getVersion() const;
 
 private:
   void timeEvent();

@@ -69,7 +69,7 @@ public:
   bool sendCommandChangeFillAttributes   (IsoAgLib::iVtObject_c*, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeFontAttributes   (IsoAgLib::iVtObject_c*, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes   (IsoAgLib::iVtObject_c*, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
-  bool sendCommandLockUnlockMask         (IsoAgLib::iVtObject_c*, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd = true);
+  bool sendCommandLockUnlockMask         (IsoAgLib::iVtObject_c*, bool b_lockMask, uint16_t ui16_lockTimeOut);
 
   bool sendCommandHideShow               (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeNumericValue     (uint16_t aui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
@@ -136,7 +136,7 @@ public:
     return mq_sendUpload[ priority ].size();
   }
 
-  bool queueFilled() const { 
+  bool queueFilled() const {
     for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
     {
       if( queueFilled( priority ) )
@@ -145,7 +145,7 @@ public:
     return false;
   }
 
-  bool queueFilled( unsigned priority ) const { 
+  bool queueFilled( unsigned priority ) const {
     return !mq_sendUpload[ priority ].empty();
   }
 
@@ -153,7 +153,7 @@ public:
   bool tryToStart();
   void finishUploadCommand();
   uint8_t timeEventCommandTimeoutCheck() const;
-  
+
   void sendCommandsToBus( bool commandsToBus ) { mb_commandsToBus = commandsToBus; }
   void setSendPriority( unsigned priority ) { isoaglib_assert( priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ); mu_sendPriority = priority; }
   unsigned getSendPriority() const { return mu_sendPriority; }

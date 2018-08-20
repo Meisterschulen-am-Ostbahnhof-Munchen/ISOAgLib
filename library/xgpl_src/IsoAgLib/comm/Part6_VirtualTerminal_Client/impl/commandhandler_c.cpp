@@ -683,13 +683,13 @@ CommandHandler_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* apc_objec
 
 
 bool
-CommandHandler_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
+CommandHandler_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut)
 {
   return sendCommand (189 /* Command: Command --- Parameter: Lock/Undlock Mask */,
                       b_lockMask,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8, /* object id of the data mask to lock */
                       ui16_lockTimeOut & 0xFF, ui16_lockTimeOut >> 8, /* lock timeout on ms or zero for no timeout */
-                      0xFF, 0xFF, b_enableReplaceOfCmd);
+                      0xFF, 0xFF, false);
 }
 
 

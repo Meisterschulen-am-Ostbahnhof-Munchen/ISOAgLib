@@ -50,6 +50,7 @@ VT-Client:
    - Renamed some Enabled -> SecondOptions Bit; Added getEnabled that masks properly
    - Reduced the RAM usage for pools with many string objects
    - Added disconnect from VtServer for clean shutdown
+   - Added lock/unlock mask
  - Bugfix:
    - Change Child Position now takes the dam/sk offset into account
    - AUX-N Functions:

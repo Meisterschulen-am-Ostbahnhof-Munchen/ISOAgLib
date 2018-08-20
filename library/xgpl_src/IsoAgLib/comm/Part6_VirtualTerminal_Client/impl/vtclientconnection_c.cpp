@@ -954,5 +954,13 @@ VtClientConnection_c::getVtObjectPoolSoftKeyHeight() const
   return getPool().getSkHeight();
 }
 
+uint8_t
+VtClientConnection_c::getVersion() const
+{
+  return ( getVtServerInst().getVtIsoVersion() < getPool().getVersion() )
+         ? getVtServerInst().getVtIsoVersion()
+         : getPool().getVersion();
+}
+
 
 } // __IsoAgLib

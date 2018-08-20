@@ -88,6 +88,18 @@ vtObjectDataMask_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int
   return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectDataMask_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectDataMask_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectDataMask_a(), objectsToFollow), sizeof(iVtObjectDataMask_s), b_enableReplaceOfCmd, DataAlarmMaskOffset);
 }
 
+
+bool
+vtObjectDataMask_c::lockUnlockMask( bool b_lockMask, uint16_t ui16_lockTimeOut )
+{
+  bool result = true;
+  if( __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVersion() >= 4 )
+  {
+    result = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandLockUnlockMask( this, b_lockMask, ui16_lockTimeOut );
+  }
+  return result;
+}
+
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectDataMask_c::updateBackgroundColour (bool b_SendRequest)
