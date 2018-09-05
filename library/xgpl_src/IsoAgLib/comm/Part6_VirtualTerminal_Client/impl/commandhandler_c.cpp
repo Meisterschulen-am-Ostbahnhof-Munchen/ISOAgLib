@@ -173,6 +173,17 @@ CommandHandler_c::sendCommandSetAudioVolume (uint8_t aui8_volume)
 
 
 bool
+CommandHandler_c::sendCommandSetColourMapOrPalette (uint16_t aui16_objectUid, bool b_enableReplaceOfCmd)
+{
+  bool retval = sendCommand( 186, /* Command: Command --- Parameter: Set Colour Map Or Palette */
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                      b_enableReplaceOfCmd );
+  return retval;
+}
+
+
+bool
 CommandHandler_c::sendCommandDeleteObjectPool()
 {
   for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
@@ -685,11 +696,12 @@ CommandHandler_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* apc_objec
 bool
 CommandHandler_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut)
 {
-  return sendCommand (189 /* Command: Command --- Parameter: Lock/Undlock Mask */,
+  bool retval = sendCommand (189 /* Command: Command --- Parameter: Lock/Unlock Mask */,
                       b_lockMask,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8, /* object id of the data mask to lock */
                       ui16_lockTimeOut & 0xFF, ui16_lockTimeOut >> 8, /* lock timeout on ms or zero for no timeout */
                       0xFF, 0xFF, false);
+  return retval;
 }
 
 
@@ -1294,6 +1306,7 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
   case 0xAC: // Command: "Command", parameter "Change Fill Attributes Response"
   case 0xAD: // Command: "Command", parameter "Change Active Mask Response"
   case 0x92: // Command: "Command", parameter "ESC Response"
+  case 186:  // Command: "Command", parameter "Set Colour Map Or Palette"
     errByte = 4;
     break;
 

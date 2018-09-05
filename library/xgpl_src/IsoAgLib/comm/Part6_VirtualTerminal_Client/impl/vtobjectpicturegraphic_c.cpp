@@ -209,7 +209,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
         if( sourceOffset < (pgheaderSize + (vtObjectPictureGraphic_a->numberOfMacrosToFollow << 1)) )
         {
             // Copy over the macros
-            // 2 bytes for each macro defined, so the end of the macros is 
+            // 2 bytes for each macro defined, so the end of the macros is
             // sourceOffset + (pgheaderSize + (vtObjectPictureGraphic_a->numberOfMacrosToFollow << 1))
             destMemory [curBytes] = rawData [sourceOffset-pgheaderSize];
         }

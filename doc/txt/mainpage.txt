@@ -51,6 +51,7 @@ VT-Client:
    - Reduced the RAM usage for pools with many string objects
    - Added disconnect from VtServer for clean shutdown
    - Added lock/unlock mask
+   - Added colour map object and commands
  - Bugfix:
    - Change Child Position now takes the dam/sk offset into account
    - AUX-N Functions:

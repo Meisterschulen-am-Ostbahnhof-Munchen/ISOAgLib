@@ -24,6 +24,7 @@
 #include "ivtobjectinputattributes_c.h"
 #include "ivtobjectlineattributes_c.h"
 #include "ivtobjectpicturegraphic_c.h"
+#include "ivtobjectcolourmap_c.h"
 #include "ivtobjectsoftkeymask_c.h"
 #include "ivtobjectworkingset_c.h"
 

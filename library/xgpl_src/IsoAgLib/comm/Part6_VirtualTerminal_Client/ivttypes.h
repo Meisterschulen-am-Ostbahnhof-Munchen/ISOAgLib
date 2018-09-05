@@ -42,18 +42,15 @@
 #define VT_OBJECT_TYPE_DATA_MASK 1
 #define VT_OBJECT_TYPE_ALARM_MASK 2
 #define VT_OBJECT_TYPE_CONTAINER 3
-#define VT_OBJECT_TYPE_WINDOW_MASK 34
 #define VT_OBJECT_TYPE_SOFT_KEY_MASK 4
 #define VT_OBJECT_TYPE_KEY 5
 #define VT_OBJECT_TYPE_BUTTON 6
-#define VT_OBJECT_TYPE_KEY_GROUP 35
 #define VT_OBJECT_TYPE_INPUT_BOOLEAN 7
 #define VT_OBJECT_TYPE_INPUT_STRING 8
 #define VT_OBJECT_TYPE_INPUT_NUMBER 9
 #define VT_OBJECT_TYPE_INPUT_LIST 10
 #define VT_OBJECT_TYPE_OUTPUT_STRING 11
 #define VT_OBJECT_TYPE_OUTPUT_NUMBER 12
-#define VT_OBJECT_TYPE_OUTPUT_LIST 37
 #define VT_OBJECT_TYPE_LINE 13
 #define VT_OBJECT_TYPE_RECTANGLE 14
 #define VT_OBJECT_TYPE_ELLIPSE 15
@@ -61,7 +58,6 @@
 #define VT_OBJECT_TYPE_METER 17
 #define VT_OBJECT_TYPE_LINEAR_BAR_GRAPH 18
 #define VT_OBJECT_TYPE_ARCHED_BAR_GRAPH 19
-#define VT_OBJECT_TYPE_GRAPHICS_CONTEXT 36
 #define VT_OBJECT_TYPE_PICTURE_GRAPHIC 20
 #define VT_OBJECT_TYPE_NUMBER_VARIABLE 21
 #define VT_OBJECT_TYPE_STRING_VARIABLE 22
@@ -69,8 +65,6 @@
 #define VT_OBJECT_TYPE_LINE_ATTRIBUTES 24
 #define VT_OBJECT_TYPE_FILL_ATTRIBUTES 25
 #define VT_OBJECT_TYPE_INPUT_ATTRIBUTES 26
-#define VT_OBJECT_TYPE_EXTENDED_INPUT_ATTRIBUTES 38
-#define VT_OBJECT_TYPE_COLOUR_MAP 39
 #define VT_OBJECT_TYPE_OBJECT_POINTER 27
 #define VT_OBJECT_TYPE_MACRO 28
 #define VT_OBJECT_TYPE_AUXILIARY_FUNCTION_1 29
@@ -78,6 +72,12 @@
 #define VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2 31
 #define VT_OBJECT_TYPE_AUXILIARY_INPUT_2 32
 #define VT_OBJECT_TYPE_AUXILIARY_POINTER 33
+#define VT_OBJECT_TYPE_WINDOW_MASK 34
+#define VT_OBJECT_TYPE_KEY_GROUP 35
+#define VT_OBJECT_TYPE_GRAPHICS_CONTEXT 36
+#define VT_OBJECT_TYPE_OUTPUT_LIST 37
+#define VT_OBJECT_TYPE_EXTENDED_INPUT_ATTRIBUTES 38
+#define VT_OBJECT_TYPE_COLOUR_MAP 39
 
 namespace IsoAgLib {
 
@@ -105,6 +105,7 @@ class iVtObjectMeter_c;
 class iVtObjectLinearBarGraph_c;
 class iVtObjectArchedBarGraph_c;
 class iVtObjectPictureGraphic_c;
+class iVtObjectColourMap_c;
 class iVtObjectNumberVariable_c;
 class iVtObjectStringVariable_c;
 class iVtObjectFontAttributes_c;
@@ -235,15 +236,15 @@ struct iAux2InputData
 
 
 /**
- * AUX2 assigment storage 
+ * AUX2 assigment storage
  */
 struct iAux2FunctionInputAssignment_t{
   uint16_t functionUid;
   iAux2InputData input;
 };
 
-typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t> iAux2Assignment_c; 
-typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::iterator iAux2AssignmentIterator_c; 
+typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t> iAux2Assignment_c;
+typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::iterator iAux2AssignmentIterator_c;
 typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::const_iterator iAux2AssignmentConstIterator_c;
 
 } // IsoAgLib

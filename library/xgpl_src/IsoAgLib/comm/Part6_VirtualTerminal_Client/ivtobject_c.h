@@ -344,6 +344,12 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   } iVtObjectPictureGraphic_s;
 
+  typedef struct iVtObjectColourMap_s {
+    uint16_t ID;
+    uint16_t numOfColourIdxToFollow;
+    const HUGE_MEM uint8_t* colourMapArray;
+  } iVtObjectColourMap_s;
+
   typedef struct iVtObjectPolygon_s {
     uint16_t ID;
     uint16_t width;
@@ -485,7 +491,7 @@ public:
    */
   virtual uint16_t getObjectType() const = 0;
 
-protected: 
+protected:
   iVtObject_s* vtObject_a;
 
   iVtObjectButton_c* p_parentButtonObject;

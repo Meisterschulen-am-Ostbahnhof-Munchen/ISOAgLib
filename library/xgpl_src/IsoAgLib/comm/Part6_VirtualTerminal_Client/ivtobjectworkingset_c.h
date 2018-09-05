@@ -59,6 +59,10 @@ public:
     return vtObjectWorkingSet_c::setAudioVolume (aui8_volume);
   }
 
+  bool setColourMapOrPalette (uint16_t aui16_objectId) {
+    return vtObjectWorkingSet_c::setColourMapOrPalette (aui16_objectId);
+  }
+
   // ///////////////////////// getter for attributes
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const {

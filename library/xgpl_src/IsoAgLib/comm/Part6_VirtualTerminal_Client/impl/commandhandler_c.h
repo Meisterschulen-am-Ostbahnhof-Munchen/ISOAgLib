@@ -116,6 +116,7 @@ public:
 
   bool sendCommandControlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
   bool sendCommandSetAudioVolume (uint8_t aui8_volume);
+  bool sendCommandSetColourMapOrPalette (uint16_t aui16_objectUid, bool b_enableReplaceOfCmd=true);
   bool sendCommandEsc (bool b_enableReplaceOfCmd=true);
   bool sendCommandDeleteObjectPool();
   bool sendCommandUpdateLanguagePool();

@@ -53,6 +53,7 @@ class vtObjectMeter_c;
 class vtObjectLinearBarGraph_c;
 class vtObjectArchedBarGraph_c;
 class vtObjectPictureGraphic_c;
+class vtObjectColourMap_c;
 class vtObjectNumberVariable_c;
 class vtObjectStringVariable_c;
 class vtObjectFontAttributes_c;

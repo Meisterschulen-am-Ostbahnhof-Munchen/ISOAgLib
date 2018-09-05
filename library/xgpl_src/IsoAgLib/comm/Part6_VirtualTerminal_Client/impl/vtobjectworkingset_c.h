@@ -48,6 +48,7 @@ public:
   bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
 
   bool setAudioVolume (uint8_t aui8_volume);
+  bool setColourMapOrPalette (uint16_t aui16_objectId);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** these attributes are in parentheses in the spec, so commented out here

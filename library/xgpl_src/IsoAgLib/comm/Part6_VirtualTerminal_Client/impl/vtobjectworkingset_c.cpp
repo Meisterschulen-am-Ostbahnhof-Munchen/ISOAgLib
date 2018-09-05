@@ -119,6 +119,16 @@ vtObjectWorkingSet_c::setAudioVolume (uint8_t aui8_volume)
   return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSetAudioVolume (aui8_volume);
 }
 
+bool
+vtObjectWorkingSet_c::setColourMapOrPalette (uint16_t aui16_objectId)
+{
+  bool result = true;
+  if( __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVersion() >= 4 )
+  {
+    result = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSetColourMapOrPalette (aui16_objectId);
+  }
+  return result;
+}
 
 void
 vtObjectWorkingSet_c::setOriginSKM(bool /*b_SKM*/)
