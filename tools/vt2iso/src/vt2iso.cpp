@@ -11,12 +11,15 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-// Headers are order dependant  
+// Headers are order dependant
+#include "svnversion.h"
+
 #include <sstream>
 #include <vector>
 #include <algorithm>
 #include <iterator>
 #include <fstream>
+#include <algorithm>
 #include <sys/stat.h>
 
 #include <stdlib.h>
@@ -97,7 +100,7 @@ std::string escapedString (const std::string &instr)
     {
     case '\\':
       if( (i+1) < instr.length() )
-      { 
+      {
         switch( instr[i+1] )
         {
         case 'n': // support for \n and \r is subject to change. currently:
@@ -226,7 +229,7 @@ Vt2IsoImageFreeImage_c c_Bitmap;
 // ---------------------------------------------------------------------------
 static void usage()
 {
-  std::cout << "\nvt2iso BUILD DATE: " << __DATE__ <<std::endl<<std::endl<<
+  std::cout << "\nvt2iso BUILD DATE: " << __DATE__ << std::endl << "svn-revision: " << SVNVERSION << std::endl << std::endl <<
     "Usage:\n"
     " vt2iso [options] <VTP file> [options]"<<std::endl<<std::endl<<
     "This program converts the input-files into ISOAgLib VT-Client Code-files."<<std::endl<<
@@ -264,7 +267,7 @@ static void usage()
      *  yet extensively tested. FOB 06/19/2009
      */
     " -d     Specify a search path for xmls marked as relative in vtp project file. Seperate directories with colons.\n"
-#endif 
+#endif
     << std::endl;
 
 #ifdef USE_SPECIAL_PARSING
@@ -606,7 +609,7 @@ void vt2iso_c::clean_exit (const char* error_message)
 
   if (partFile_listAttributes)
   { // -list_attributes.inc
-    fputs ("\n};\n", partFile_listAttributes); 
+    fputs ("\n};\n", partFile_listAttributes);
     fprintf ( partFile_listAttributes, "%s", mstr_namespaceDeclarationEnd.c_str());
     fclose(partFile_listAttributes);
   }
@@ -948,7 +951,7 @@ bool vt2iso_c::copyWithQuoteAndLength (std::string &dest, const std::string& src
     }
     dest.push_back(src[srcIndex++]);
   }
-  
+
   // fill with spaces if necessary
   if( unicode )
   {
@@ -1161,7 +1164,7 @@ vt2iso_c::init(
   mvec_searchPath = getSearchPath( arcstr_searchPath );
 
   // Will generate all needed (part)filenames/directories
-  if (!prepareFileNameAndDirectory (arcstr_cmdlineName)) 
+  if (!prepareFileNameAndDirectory (arcstr_cmdlineName))
     return false;
 
   std::string str_namespace;
@@ -1370,7 +1373,7 @@ void vt2iso_c::defaultAndConvertAttributes (unsigned int a_objType)
       // note: if conflicting values for the "enabled" state are set, this is ignored
       if (arrc_attributes [attrEnabled].isGiven())
       { // old enabled=".." given...
-        const signed int retEnabled = booltoi (arrc_attributes [attrEnabled].get().c_str()); 
+        const signed int retEnabled = booltoi (arrc_attributes [attrEnabled].get().c_str());
         if (retEnabled == -1)
         {
           std::cerr << "Error in booltoi() from 'enabled=\"" << arrc_attributes [attrEnabled].get() << "\"'! STOPPING PARSER! bye."<<std::endl<<std::endl;
@@ -1583,7 +1586,7 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
       {
           continue;
       }
-      
+
       if (treatSpecial)
       { // get 'name=', 'id=' and all other possible attributes
         if (attr_name.compare("name") == 0)
@@ -1962,7 +1965,7 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
         {
           if (arrs_language[curLang].unicode)
           {
-            bufferCur += 2;  // start me at the beginning of the tag 
+            bufferCur += 2;  // start me at the beginning of the tag
             numWideChars = (bufferEnd - bufferCur) / 2;
             UCS2* commaLoc = findWideChar ((const UCS2*)bufferCur, 0x2C, numWideChars );
             if (commaLoc)   // if not valid, we are done looking..
@@ -2011,11 +2014,11 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
         if (arrs_language[curLang].unicode)
         {
           UCS2* newStart = findWideChar ((const UCS2*)bufferCur, 0x00, numWideChars );
-          if (newStart) 
+          if (newStart)
           {
             newStart++;  // theres another 0x0000 out there...
             bufferCur = (char*)newStart;
-          } 
+          }
           else
           {
             bufferCur = bufferEnd + 1;   // Jane, stop this crazy thing
@@ -2286,7 +2289,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       case otMeter:          case otLinearbargraph: case otArchedbargraph:
       case otPicturegraphic:
       case otFontattributes: case otLineattributes:  case otFillattributes:  case otInputattributes:
-        objHasArrayEventMacro = true; // only variables and object pointer have no events/macros
+        objHasArrayEventMacro = true; // only variables, object pointers and colour maps have no events/macros
         break;
     }
 
@@ -2510,6 +2513,39 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         if (firstElement == false)
           fprintf (partFile_attributes, "};\n");
       }
+
+      // ### print out Colour Map value array
+      std::vector<std::string> vec_strValues;
+      if( objType == otColourMap )
+      {
+          if (!arrc_attributes [attrCsvFile].isGiven()) {
+            std::cout << "Colour Map: attribute not found (csv_file)" << std::endl;
+            return false;
+          }
+          // read values from csv file
+          int const numColours = processColourMapCsv( arrc_attributes [attrCsvFile].get(), vec_strValues );
+          if( -1 == numColours )
+          {
+            // error msg already in processColourMapCsv()
+            return false;
+          }
+          // print as
+          //   const HUGE_MEM uint8_t iVtObjectcolourMap1_aRawData [] = { 255, 254, 253, 252, ..., 0 };
+          //   const IsoAgLib::iVtObject_c::iVtObjectColourMap_s iVtObjectcolourMap1_sROM = {20001, 256, iVtObjectcolourMap1_aRawData };
+          fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%sDataArray [] = {", m_objName.c_str());
+
+          for( int idx = 0; idx < numColours; ++idx )
+          {
+            fprintf (partFile_attributes, "%s", vec_strValues[idx].c_str() );
+            if( idx < (numColours-1) )
+            {
+              fprintf (partFile_attributes, "," );
+            }
+          }
+          fprintf (partFile_attributes, "};\n");
+      }
+
+
       // ### Print out RAWBITMAP byte array
       unsigned int deXactualWidth(0);
       unsigned int deXactualHeight(0);
@@ -2784,7 +2820,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           char MBBuffer[ maxTagLength ];
 
           if (arrs_language[curLang].unicode)  // The first read of a UCS-2 has a BOM there
-            bufferCur += 2;  // move me forward, start me at the beginning of the tag 
+            bufferCur += 2;  // move me forward, start me at the beginning of the tag
 
           while (bufferCur < bufferEnd)
           {
@@ -2823,15 +2859,15 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                       pc_foundValue.push_back((char)0xfe);
 
                       for (char* it=(char*)(firstQuote+1); it < (char*)nextQuote; it++)
-                      {   
-                        // We MUST handle a NULL (zero, 0) with a   '\x00' 
-                        //   in addition, we may be considered paranoid, but that doesn't mean 
+                      {
+                        // We MUST handle a NULL (zero, 0) with a   '\x00'
+                        //   in addition, we may be considered paranoid, but that doesn't mean
                         //      these "special" control chars are NOT out to get us!  ;-)
 
                         int incoming = *it & 0xff; // mask sign extension
                         int upDgt, lowDgt;
                         char pushChar;
-                        pc_foundValue.push_back(0x5c);	// Prepend with '\x'  
+                        pc_foundValue.push_back(0x5c);	// Prepend with '\x'
                         pc_foundValue.push_back('x');
 
                         upDgt = incoming/16;
@@ -2868,8 +2904,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   return false;
                 }
               }  // end of working on the UCS-2  vtu file tag/string
-              else  
-              {  //  For *.vtl files we can use those standard i/o calls ------------ 
+              else
+              {  //  For *.vtl files we can use those standard i/o calls ------------
                 char* comma = strchr (bufferCur, ',');
                 if (comma)
                 {
@@ -2920,11 +2956,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             if (arrs_language[curLang].unicode)
             {
               UCS2* newStart = findWideChar ((const UCS2*)bufferCur, 0x0000, numWideChars );
-              if (newStart) 
+              if (newStart)
               {
                 newStart += 2;  // theres another 0x0000 out there...
                 bufferCur = (char*)newStart;
-              } 
+              }
               else
               {
                 bufferCur = bufferEnd + 1;
@@ -2934,7 +2970,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             {
               int lineLen = strlen (bufferCur)+1; // include terminating 0x00
               bufferCur += lineLen;
-            } 
+            }
           }  // END OF -    while (bufferCur < bufferEnd)
 
           if (b_foundLanguageValue)
@@ -3571,6 +3607,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                    objBitmapOptions, deXtransCol);
           break;
 
+        case otColourMap:
+        {
+          // partially needs to be processed before here - see "otColourMap"
+          fprintf (partFile_attributes, ", %d, iVtObject%sDataArray", vec_strValues.size(), m_objName.c_str()  );
+        }
+        break;
+
         case otNumbervariable:
           arrc_attributes [attrValue].setIfNotGiven ("0");
 
@@ -3871,6 +3914,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       // #########################################
       // ### Print out Repeat Array REFERENCES ###
       // #########################################
+
       if (objHasArrayObject)
       {
         if (objChildObjects == 0)
@@ -3987,6 +4031,72 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 }
 
 
+int vt2iso_c::processColourMapCsv( const std::string& filename, std::vector<std::string>& aref_vecStrValues )
+{
+  // open file and read one line
+  ifstream ifs;
+  std::string const filename_complete = mstr_sourceDir + filename;
+  ifs.open( filename_complete.c_str(), ios_base::in );
+  if( ! ifs.is_open() )
+  {
+    std::cout << "csv file not found: " << filename_complete << std::endl;
+    return -1;
+  }
+  std::string tmpline;
+  std::string line;
+  int lineCnt = 0;
+  while (std::getline(ifs, tmpline ))
+  {
+    line = tmpline;
+    ++lineCnt;
+  }
+  ifs.close();
+  if( lineCnt != 1 )
+  {
+    std::cout << "error: several lines in ColourMap csv file" << std::endl;
+    return -1;
+  }
+  // remove whitespaces
+  line.erase( std::remove( line.begin(), line.end(), ' ' ), line.end() );
+  // split values at "," convert to uint8_t and copy to uint8_t array
+  size_t pos = 0;
+  std::string token;
+  std::string const delimiter = ",";
+  while (((pos = line.find(delimiter)) != std::string::npos ) )
+  {
+    token = line.substr(0, pos);
+    aref_vecStrValues.push_back( token );
+    line.erase(0, pos + delimiter.length());
+  }
+  aref_vecStrValues.push_back( line );
+
+  // check and conversion to 0..255
+  for( std::vector<std::string>::iterator it = aref_vecStrValues.begin(); it != aref_vecStrValues.end(); ++it )
+  {
+    std::istringstream ss(*it);
+    int16_t iVal;
+    if( ! ( ss >> iVal ))
+    {
+      std::cout << "Colour map: bad value: " << *it << std::endl;
+      return -1;
+    }
+    else if( ( iVal < 0 ) || (iVal > 255 )) {
+      std::cout << "Colour Map: bad value: " << *it << std::endl;
+      return -1;
+    }
+  }
+
+  // check number of values
+  int const vecSize = aref_vecStrValues.size();
+  if( ( vecSize != 2 ) && ( vecSize != 16 ) && (vecSize != 256 ) )
+  {
+    std::cout << "colourMap: only 2/16/256 values allowed" << std::endl;
+    return -1;
+  }
+  return vecSize;
+}
+
+
 bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n, bool ab_outputEnabled)
 { // Process all Child-Elements
   DOMNode *child;
@@ -4093,7 +4203,7 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
         arrc_attributes [attrEvent].clear();
 
         is_objChildName = false;
-        
+
         for(int i=0;i<nSize;++i)
         {
           DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
@@ -5350,7 +5460,7 @@ int main(int argC, char* argV[])
   {
     usage();
     std::cerr << "vt2iso: Error: No filename given." << std::endl;
-    return 1; 
+    return 1;
   }
 
   // Initialize the XML4C system
@@ -5416,7 +5526,7 @@ int main(int argC, char* argV[])
       if (!pc_vt2iso->processVtPresetFile(str_vtPresetFile))
       {
         std::cerr << "vt2iso: Error in processing vt preset file." << std::endl;
-        return 1; 
+        return 1;
       }
     }
 
@@ -5834,7 +5944,6 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
 
         }
       }
-
     }
   }
 
@@ -6036,7 +6145,7 @@ void vt2iso_c::lineWrapTextFile( const std::string &srcFileName, const std::stri
     unsigned int wrapCharI[NUM_WRAP_CHARS]; // initialization follows right below
     bool inStringContext = false; // add additional quote at line end and at line start if in string context
     bool lastWasBackslash = false; // for detecting \" and alike...
-    
+
     for ( i = 0; i < NUM_WRAP_CHARS; ++i )
     {
       lastWrapCharI[i] = maxLineLen;
@@ -6051,9 +6160,9 @@ void vt2iso_c::lineWrapTextFile( const std::string &srcFileName, const std::stri
 
         if( ('"' == charVal) && (!lastWasBackslash) )
           inStringContext = !inStringContext;
-        
-        lastWasBackslash = ('\\' == charVal); 
-        
+
+        lastWasBackslash = ('\\' == charVal);
+
         /* look for places to break the line */
         i = 0;
         for ( ; i < NUM_WRAP_CHARS; ++i )
@@ -6331,7 +6440,7 @@ vt2iso_c::scanLanguageFilesOS( language_s& a_lang )
 
         std::string langFileName = str_tmpWorkDir + p->str_pathName + scc_dirSeparatorCorrect + std::string( ent->d_name );
         files.push_front( langFileName );
-        break;   // found the desired language, lets get on with it 
+        break;   // found the desired language, lets get on with it
       }
 
       closedir( dir );
@@ -6409,10 +6518,10 @@ bool vt2iso_c::isEol( const char c ) {
 
 
 /*
-This function finds the first occurrence of the wide character wc in the 
-initial size wide characters of the object beginning at block. The return 
-value is a pointer to the located wide character, or a null pointer if 
-no match was found. 
+This function finds the first occurrence of the wide character wc in the
+initial size wide characters of the object beginning at block. The return
+value is a pointer to the located wide character, or a null pointer if
+no match was found.
 */
 UCS2* vt2iso_c::findWideChar(const UCS2 *s, UCS2 wc, size_t n)
 {
