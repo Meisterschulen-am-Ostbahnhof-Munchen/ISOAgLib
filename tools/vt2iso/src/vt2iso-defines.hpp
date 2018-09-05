@@ -369,10 +369,12 @@ typedef struct {
 #define attrAbsolutePath4 (122)
 #define attrAbsolutePath8 (123)
 #define attrAutoSetLength (124)
+#define attrAutoSetLength (124)
 
 #define attrAuxiliaryObjectID (125)
+#define attrCsvFile (126)
 
-#define maxAttributeNames (126)
+#define maxAttributeNames (127)
 
 
 

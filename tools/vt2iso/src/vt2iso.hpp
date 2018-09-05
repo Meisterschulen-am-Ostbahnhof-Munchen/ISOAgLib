@@ -285,6 +285,9 @@ private:
 
   bool openDecodePrintOut (const std::list<Path_s>& rcl_bitmapPath, unsigned int &options, int& ref_maxDepth, int fixNr=-1);
 
+  // return -1 on error, otherwise 2/16/256
+  int processColourMapCsv( const std::string& filename, std::vector<std::string>& aref_vecStrValues );
+
   bool checkForAllowedExecution() const;
 
   std::string getObjectReference (int ai_attributeIndex) { return arrc_attributes [ai_attributeIndex].getObjectReference(); }

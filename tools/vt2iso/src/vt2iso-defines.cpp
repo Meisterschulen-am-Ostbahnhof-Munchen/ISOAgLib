@@ -120,7 +120,7 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
   /* "graphicscontext" */ 0, // check for graphics context object
   /* "outputlist" */      ombMacro | ombOutputfield | ombOutputshape | ombOutputgraphic | ombInputfield | ombPicturegraphic | ombGraphicsContext | ombObjectpointer,
                           0, // check for extended input attributes
-                          0, // check for colour map
+  /* "colourmap" */       0, // really NONE
                           0, // check for object label reference list
                           0,
                           0,
@@ -332,7 +332,8 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "abs_path4", //proprietary
   "abs_path8", //proprietary
   "auto_set_length", //proprietary
-  "auxiliary_object_id" // for AuxConDesignOP
+  "auxiliary_object_id", // for AuxConDesignOP
+  "csv_file"
 };
 
 // Table of possible Macro Commands
