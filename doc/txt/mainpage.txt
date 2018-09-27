@@ -52,6 +52,8 @@ VT-Client:
    - Added disconnect from VtServer for clean shutdown
    - Added lock/unlock mask
    - Added colour map object and commands
+ - Changes:
+   - Always upload pool, just omit new features/objects
  - Bugfix:
    - Change Child Position now takes the dam/sk offset into account
    - AUX-N Functions:
