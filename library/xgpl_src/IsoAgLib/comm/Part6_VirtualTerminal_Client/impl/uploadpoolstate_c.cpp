@@ -262,9 +262,8 @@ UploadPoolState_c::handleGetMemoryResponse( const CanPkgExt_c &pkg )
   case UploadPoolWaitingForVtVersionResponse:
     m_connection.getVtServerInst().setVersion( pkg );
 
-    // Special case when adapting a v3 pool to upload to v2 VTs, omitting all the new aux...
-    m_uploadingVersion = (m_connection.getVtServerInst().getVtIsoVersion() == 2) && (m_pool.getVersion() == 3)
-                           ? 2 : m_pool.getVersion();
+    // Use the lesser version between VT and object pool
+    m_uploadingVersion = m_connection.getVersion();
 
 #if DEBUG_VTCOMM || DEBUG_VTPOOLUPLOAD
     INTERNAL_DEBUG_DEVICE << "Upload pool as v" << (unsigned)m_uploadingVersion << " to a v" << (unsigned)m_connection.getVtServerInst().getVtIsoVersion() << " VT." << INTERNAL_DEBUG_DEVICE_ENDL;
