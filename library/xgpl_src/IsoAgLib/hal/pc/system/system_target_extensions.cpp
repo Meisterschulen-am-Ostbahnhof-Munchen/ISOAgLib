@@ -185,7 +185,7 @@ isSystemOpened()
 ecutime_t getTime()
 {
   /** linux-2.6 */
-  static timespec ts;
+  timespec ts;
   clock_gettime(CLOCK_MONOTONIC, &ts);
   const ecutime_t ci_now = ecutime_t(ts.tv_sec)*1000 + ecutime_t(ts.tv_nsec/1000000);
   return ci_now - getStartupTime();
