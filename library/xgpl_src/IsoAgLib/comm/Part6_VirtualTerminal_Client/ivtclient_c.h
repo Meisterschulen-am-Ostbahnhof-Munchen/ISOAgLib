@@ -41,6 +41,7 @@ class iVtClientDataStorage_c {
       */
     virtual void storePreferredVt( const IsoAgLib::iIsoName_c &arc_isoname, uint8_t aui8_bootTime) = 0;
 
+#ifdef USE_VTOBJECT_auxiliaryfunction2
     /** Application can load for one function object more then one input objects.
         => The preferred assignment will be created, depending on the currently active joy sticks on the bus.
         There can be CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION different input objects managed for one function object.
@@ -57,7 +58,7 @@ class iVtClientDataStorage_c {
     virtual void storePreferredAux2Assignment( uint16_t a_functionUid, const STL_NAMESPACE::list<iAux2InputData>& a_ref_preferred_assignment ) = 0;
                                                
     virtual int32_t getAux2DeltaWaitBeforeSendingPreferredAssigment() { return 2000; };
-    virtual uint16_t getAux2ModelIdentificationCode() { return 0; }
+#endif
 };
 
 
