@@ -427,7 +427,7 @@ public:
     int16_t  viewportY;
     uint16_t canvasWidth;
     uint16_t canvasHeight;
-    int8_t   viewportZoom;    //!< Zoom value [-32 ... 32]
+    float    viewportZoom;    //!< Zoom value [-32.0F ... 32.0F]
     int16_t  cursorX;
     int16_t  cursorY;
     uint8_t  foregroundColour;

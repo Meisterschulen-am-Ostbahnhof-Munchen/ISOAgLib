@@ -31,25 +31,26 @@ public:
     ,e_commandID                = 0xB8  // dec. 184
      //! Graphics context sub command ID as in ISO App.F
     ,e_setGraphicsCursorCmdID   = 0
-    ,e_setForegroundColourCmdID = 1
-    ,e_setBackgroundColourCmdID = 2
-    ,e_setLineAttributeCmdID    = 3
-    ,e_setFillAttributeCmdID    = 4
-    ,e_setFontAttributeCmdID    = 5
-    ,e_eraseRectangleCmdID      = 6
-    ,e_drawPointCmdID           = 7
-    ,e_drawLineCmdID            = 8
-    ,e_drawRectangleCmdID       = 9
-    ,e_drawClosedEllipseCmdID   = 10
-    ,e_drawPolygonCmdID         = 11
-    ,e_drawTextCmdID            = 12
-    ,e_panViewportCmdID         = 13
-    ,e_zoomViewportCmdID        = 14
-    ,e_panAndZoomViewportCmdID  = 15
-    ,e_changeViewportSizeCmdID  = 16
-    ,e_drawVTObjectCmdID        = 17
-    ,e_copyCanvasToPictureGraphicCmdID   = 18
-    ,e_copyViewportToPictureGraphicCmdID = 19
+    ,e_moveGraphicsCursorCmdID  = 1
+    ,e_setForegroundColourCmdID = 2
+    ,e_setBackgroundColourCmdID = 3
+    ,e_setLineAttributeCmdID    = 4
+    ,e_setFillAttributeCmdID    = 5
+    ,e_setFontAttributeCmdID    = 6
+    ,e_eraseRectangleCmdID      = 7
+    ,e_drawPointCmdID           = 8
+    ,e_drawLineCmdID            = 9
+    ,e_drawRectangleCmdID       = 10
+    ,e_drawClosedEllipseCmdID   = 11
+    ,e_drawPolygonCmdID         = 12
+    ,e_drawTextCmdID            = 13
+    ,e_panViewportCmdID         = 14
+    ,e_zoomViewportCmdID        = 15
+    ,e_panAndZoomViewportCmdID  = 16
+    ,e_changeViewportSizeCmdID  = 17
+    ,e_drawVTObjectCmdID        = 18
+    ,e_copyCanvasToPictureGraphicCmdID   = 19
+    ,e_copyViewportToPictureGraphicCmdID = 20
   };
 
   //! @param destMemory
@@ -119,10 +120,10 @@ public:
   void panViewport(int16_t ai16_x, int16_t ai16_y,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void zoomViewport(int8_t newValue,
+  void zoomViewport(float newValue,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void panAndZoomViewport(int16_t ai16_x, int16_t ai16_y, int8_t newValue,
+  void panAndZoomViewport(int16_t ai16_x, int16_t ai16_y, float newValue,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   void changeViewportSize(uint16_t newWidth, uint16_t newHeight,
@@ -183,7 +184,7 @@ private:
     sizeof(int16_t)*2 +
     sizeof(uint16_t) +
     sizeof(uint16_t) +
-    sizeof(int8_t) +
+    sizeof(float) +
     sizeof(int16_t)*2 +
     sizeof(uint8_t) +
     sizeof(uint8_t) +

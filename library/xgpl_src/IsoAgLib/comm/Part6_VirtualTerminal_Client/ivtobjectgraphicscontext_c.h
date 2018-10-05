@@ -209,7 +209,7 @@ public:
   //! @param newValue Zoom value
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void zoomViewport(int8_t newValue,
+  void zoomViewport(float newValue,
                     bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::zoomViewport( newValue, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -221,7 +221,7 @@ public:
   //! @param newValue Zoom value
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void panAndZoomViewport(int16_t ai16_x, int16_t ai16_y, int8_t newValue,
+  void panAndZoomViewport(int16_t ai16_x, int16_t ai16_y, float newValue,
                           bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::panAndZoomViewport( ai16_x, ai16_y, newValue, b_updateObject, b_enableReplaceOfCmd);
   }

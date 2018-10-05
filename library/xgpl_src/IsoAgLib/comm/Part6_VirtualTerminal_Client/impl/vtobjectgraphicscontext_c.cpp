@@ -50,7 +50,7 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
     number2LittleEndianString( uint16_t(pc_vtOGC_a->viewportY), p ); p += sizeof(uint16_t);
     number2LittleEndianString( uint16_t(pc_vtOGC_a->canvasWidth), p ); p += sizeof(uint16_t);
     number2LittleEndianString( uint16_t(pc_vtOGC_a->canvasHeight), p ); p += sizeof(uint16_t);
-    number2LittleEndianString( uint8_t(pc_vtOGC_a->viewportZoom), p ); p += sizeof(uint8_t);
+    floatVar2LittleEndianStream( &(pc_vtOGC_a->viewportZoom), p ); p += sizeof(float);
 
     number2LittleEndianString( uint16_t(pc_vtOGC_a->cursorX), p ); p += sizeof(uint16_t);
     number2LittleEndianString( uint16_t(pc_vtOGC_a->cursorY), p ); p += sizeof(uint16_t);
@@ -103,7 +103,7 @@ vtObjectGraphicsContext_c::setGraphicsCursor( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGraphicsCursor(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandSetGraphicsCursor(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -116,7 +116,7 @@ vtObjectGraphicsContext_c::setForegroundColour( uint8_t newValue,
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetForegroundColour(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandSetForegroundColour(
               this, newValue, b_enableReplaceOfCmd);
 }
 
@@ -129,7 +129,7 @@ vtObjectGraphicsContext_c::setBackgroundColour( uint8_t newValue,
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetBackgroundColour(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandSetBackgroundColour(
               this, newValue, b_enableReplaceOfCmd);
 }
 
@@ -142,7 +142,7 @@ vtObjectGraphicsContext_c::setLineAttributes( const IsoAgLib::iVtObjectLineAttri
       sizeof(iVtObjectGraphicsContext_s), newLineAttributes);
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGCLineAttributes(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandSetGCLineAttributes(
               this, newLineAttributes, b_enableReplaceOfCmd);
 }
 
@@ -155,7 +155,7 @@ vtObjectGraphicsContext_c::setFillAttributes( const IsoAgLib::iVtObjectFillAttri
       sizeof(iVtObjectGraphicsContext_s), newFillAttributes);
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGCFillAttributes(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandSetGCFillAttributes(
               this, newFillAttributes, b_enableReplaceOfCmd);
 }
 
@@ -168,7 +168,7 @@ vtObjectGraphicsContext_c::setFontAttributes( const IsoAgLib::iVtObjectFontAttri
       sizeof(iVtObjectGraphicsContext_s), newFontAttributes);
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGCFontAttributes(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandSetGCFontAttributes(
               this, newFontAttributes, b_enableReplaceOfCmd);
 }
 
@@ -183,7 +183,7 @@ vtObjectGraphicsContext_c::eraseRectangle( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandEraseRectangle(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandEraseRectangle(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -192,7 +192,7 @@ vtObjectGraphicsContext_c::drawPoint( bool /*b_updateObject*/, bool b_enableRepl
 {
   // No change of object => b_updateObject ignored.
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawPoint(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandDrawPoint(
               this, b_enableReplaceOfCmd);
 }
 
@@ -207,7 +207,7 @@ vtObjectGraphicsContext_c::drawLine( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawLine(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandDrawLine(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -222,7 +222,7 @@ vtObjectGraphicsContext_c::drawRectangle( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawRectangle(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandDrawRectangle(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -237,7 +237,7 @@ vtObjectGraphicsContext_c::drawClosedEllipse( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawClosedEllipse(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandDrawClosedEllipse(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
@@ -253,7 +253,7 @@ vtObjectGraphicsContext_c::drawPolygon( uint16_t cnt, const int16_t* api16_x, co
       sizeof(iVtObjectGraphicsContext_s), api16_y[cnt-1] );
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawPolygon(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandDrawPolygon(
               this, cnt, api16_x, api16_y, b_enableReplaceOfCmd);
 }
 
@@ -275,7 +275,7 @@ vtObjectGraphicsContext_c::drawText( uint8_t type, uint8_t cnt, const char* apc_
       sizeof(iVtObjectGraphicsContext_s), i16_y );
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawText(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandDrawText(
               this, type, cnt, apc_string, b_enableReplaceOfCmd);
 }
 
@@ -290,43 +290,43 @@ vtObjectGraphicsContext_c::panViewport( int16_t ai16_x, int16_t ai16_y,
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanViewport(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandPanViewport(
               this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
 void
-vtObjectGraphicsContext_c::zoomViewport( int8_t newValue,
+vtObjectGraphicsContext_c::zoomViewport( float newValue,
                                          bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   // Check precondition as defined in ISO
-  if ((-32 > newValue) || (newValue > 32)) { return; }
+  if ((-32.0F > newValue) || (newValue > 32.0F)) { return; }
 
   if (b_updateObject) {
-    saveSignedValue8 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom),
+    saveValueFloat (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom),
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandZoomViewport(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandZoomViewport(
               this, newValue, b_enableReplaceOfCmd);
 }
 
 void
-vtObjectGraphicsContext_c::panAndZoomViewport( int16_t ai16_x, int16_t ai16_y, int8_t newValue,
+vtObjectGraphicsContext_c::panAndZoomViewport( int16_t ai16_x, int16_t ai16_y, float newValue,
                                                bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   // Check precondition as defined in ISO
-  if ((-32 > newValue) || (newValue > 32)) { return; }
+  if ((-32.0F > newValue) || (newValue > 32.0F)) { return; }
 
   if (b_updateObject) {
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportX),
       sizeof(iVtObjectGraphicsContext_s), ai16_x );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY),
       sizeof(iVtObjectGraphicsContext_s), ai16_y );
-    saveSignedValue8 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom),
+    saveValueFloat (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom),
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanAndZoomViewport(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandPanAndZoomViewport(
               this, ai16_x, ai16_y, newValue, b_enableReplaceOfCmd);
 }
 
@@ -341,7 +341,7 @@ vtObjectGraphicsContext_c::changeViewportSize( uint16_t newWidth, uint16_t newHe
       sizeof(iVtObjectGraphicsContext_s), newHeight);
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandChangeViewportSize(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandChangeViewportSize(
               this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
@@ -363,7 +363,7 @@ vtObjectGraphicsContext_c::drawVtObject( const iVtObject_c* const newVtObject,
       sizeof(iVtObjectGraphicsContext_s), i16_y );
   }
 
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawVtObject(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandDrawVtObject(
               this, newVtObject, b_enableReplaceOfCmd);
 }
 
@@ -371,7 +371,7 @@ void
 vtObjectGraphicsContext_c::copyCanvas2PictureGraphic( const IsoAgLib::iVtObjectPictureGraphic_c* const pc_iVtObjectPictureGraphic,
                                                       bool /*b_updateObject*/, bool b_enableReplaceOfCmd)
 {
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandCopyCanvas2PictureGraphic(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandCopyCanvas2PictureGraphic(
               this, pc_iVtObjectPictureGraphic, b_enableReplaceOfCmd);
 }
 
@@ -379,7 +379,7 @@ void
 vtObjectGraphicsContext_c::copyViewport2PictureGraphic( const IsoAgLib::iVtObjectPictureGraphic_c* const pc_iVtObjectPictureGraphic,
                                                         bool /*b_updateObject*/, bool b_enableReplaceOfCmd)
 {
-  getVtClientInstance4Comm().getClientByID(s_properties.clientId).sendCommandCopyViewport2PictureGraphic(
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandCopyViewport2PictureGraphic(
               this, pc_iVtObjectPictureGraphic, b_enableReplaceOfCmd);
 }
 
@@ -424,9 +424,9 @@ uint8_t
 vtObjectGraphicsContext_c::updateViewPortZoom(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom), sizeof(iVtObjectGraphicsContext_s), 5);
+    return getValueFloatGetAttribute(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom), sizeof(iVtObjectGraphicsContext_s), 5);
   else
-    return getValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom), sizeof(iVtObjectGraphicsContext_s));
+    return getValueFloat(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom), sizeof(iVtObjectGraphicsContext_s));
 }
 
 uint16_t
@@ -527,7 +527,7 @@ vtObjectGraphicsContext_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_a
     case 2: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportHeight), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 3: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportX), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 4: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 5: saveValueFloat(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringFloat(pui8_attributeValue)); break;
     case 6: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 7: saveValue16(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 8: saveValue8(MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), foregroundColour), sizeof(iVtObjectGraphicsContext_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;

@@ -18,6 +18,12 @@
 
 #include <list>
 
+#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+namespace IsoAgLib { class iVtObjectLineAttributes_c; }
+namespace IsoAgLib { class iVtObjectFillAttributes_c; }
+namespace IsoAgLib { class iVtObjectFontAttributes_c; }
+#endif
+
 namespace IsoAgLib { class iVtObject_c; }
 namespace IsoAgLib { class iVtObjectString_c; }
 namespace IsoAgLib { class iVtObjectPictureGraphic_c; }
@@ -103,8 +109,8 @@ public:
   bool sendCommandDrawPolygon                 (IsoAgLib::iVtObject_c*, uint16_t ui16_numOfPoints, const int16_t* api16_x, const int16_t* api16_y, bool b_enableReplaceOfCmd=true);
   bool sendCommandDrawText                    (IsoAgLib::iVtObject_c*, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *apc_newValue, bool b_enableReplaceOfCmd=true);
   bool sendCommandPanViewport                 (IsoAgLib::iVtObject_c*, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd=true);
-  bool sendCommandZoomViewport                (IsoAgLib::iVtObject_c*, int8_t newValue, bool b_enableReplaceOfCmd=true);
-  bool sendCommandPanAndZoomViewport          (IsoAgLib::iVtObject_c*, int16_t ai16_x, int16_t ai16_y, int8_t newValue, bool b_enableReplaceOfCmd=true);
+  bool sendCommandZoomViewport                (IsoAgLib::iVtObject_c*, float newValue, bool b_enableReplaceOfCmd=true);
+  bool sendCommandPanAndZoomViewport          (IsoAgLib::iVtObject_c*, int16_t ai16_x, int16_t ai16_y, float newValue, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeViewportSize          (IsoAgLib::iVtObject_c*, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
   bool sendCommandDrawVtObject                (IsoAgLib::iVtObject_c*, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd=true);
   bool sendCommandCopyCanvas2PictureGraphic   (IsoAgLib::iVtObject_c*, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic, bool b_enableReplaceOfCmd=true);

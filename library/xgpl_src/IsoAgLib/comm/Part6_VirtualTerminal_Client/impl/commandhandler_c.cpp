@@ -14,6 +14,13 @@
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>
+
+#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectgraphicscontext_c.h>
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectfillattributes_c.h>
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectfontattributes_c.h>
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectlineattributes_c.h>
+#endif
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectstring_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectpicturegraphic_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.h>
@@ -597,25 +604,43 @@ CommandHandler_c::sendCommandPanViewport(
 
 bool
 CommandHandler_c::sendCommandZoomViewport(
-  IsoAgLib::iVtObject_c* apc_object, int8_t newValue, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, float newValue, bool b_enableReplaceOfCmd)
 {
-  uint8_t zoom = convert_n::castUI( newValue );
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  uint32_t ui32_convertedFloat;
+  floatVar2LittleEndianStream( &newValue, &ui32_convertedFloat );
+#else
+  uint8_t ui8_convertedFloat[4];
+  floatVar2LittleEndianStream( &newValue, &ui8_convertedFloat );
+  uint32_t ui32_convertedFloat = __IsoAgLib::convertLittleEndianStringUi32( ui8_convertedFloat );
+#endif
+
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_zoomViewportCmdID,
-                      zoom, 0xFF, 0xFF, 0xFF,
+                      ui32_convertedFloat & 0xFF, (ui32_convertedFloat >> 8) & 0xFF, (ui32_convertedFloat >> 16) & 0xFF, ui32_convertedFloat >> 24,
                       b_enableReplaceOfCmd);
 }
 
 
 bool
 CommandHandler_c::sendCommandPanAndZoomViewport(
-  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, int8_t newValue, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, float newValue, bool b_enableReplaceOfCmd)
 {
   uint16_t x = convert_n::castUI( ai16_x );
   uint16_t y = convert_n::castUI( ai16_y );
-  uint8_t zoom = convert_n::castUI( newValue );
-  uint8_t pui8_buffer[9];
+
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  // zoom
+  uint32_t ui32_convertedFloat;
+  floatVar2LittleEndianStream( &newValue, &ui32_convertedFloat );
+#else
+  // zoom
+  uint8_t ui8_convertedFloat[4];
+  floatVar2LittleEndianStream( &newValue, &ui8_convertedFloat );
+  uint32_t ui32_convertedFloat = __IsoAgLib::convertLittleEndianStringUi32( ui8_convertedFloat );
+#endif
+  uint8_t pui8_buffer[12];
   pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
   pui8_buffer[1] = apc_object->getID() & 0xFF;
   pui8_buffer[2] = apc_object->getID() >> 8;
@@ -624,7 +649,10 @@ CommandHandler_c::sendCommandPanAndZoomViewport(
   pui8_buffer[5] = x >> 8;
   pui8_buffer[6] = y & 0xFF;
   pui8_buffer[7] = y >> 8;
-  pui8_buffer[8] = zoom;
+  pui8_buffer[8] = ui32_convertedFloat & 0xFF;
+  pui8_buffer[9] = (ui32_convertedFloat >> 8) & 0xFF;
+  pui8_buffer[10] = (ui32_convertedFloat >> 16) & 0xFF;
+  pui8_buffer[11] = ui32_convertedFloat >> 24;
 
   // Send buffer as ISOBUS command.
   msc_tempSendUpload.set( pui8_buffer, sizeof(pui8_buffer)/sizeof(*pui8_buffer) );
