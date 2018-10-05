@@ -26,6 +26,10 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include "hal_config.h"
 
+//! NOTE: The HAL functions are not neccessarily thread-safe!!!
+//        Consider looking at the exact implementation,
+//        or use the Scheduler-Mutex to ensure thread-safety!
+
 namespace HAL
 {
   void openSystem();

@@ -47,6 +47,7 @@ namespace HAL
 
   inline void triggerWatchdog() {}
 
+  // Thread-safe (at least for PC, not neccessarily for the other platforms!)
   inline ecutime_t getTime() { return __HAL::getTime(); }
 
   inline int16_t getSnr( uint8_t *snrDat ) { return __HAL::getSnr( snrDat ); }

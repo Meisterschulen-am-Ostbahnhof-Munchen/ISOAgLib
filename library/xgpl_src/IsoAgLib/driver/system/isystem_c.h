@@ -20,6 +20,11 @@ namespace IsoAgLib {
 /**
   Layer class to encapsulate the hardware specific details.
   All system interaction have to be done via this class.
+  
+  NOTE: These functions are not neccessarily thread-safe!
+        Use the Scheduler-Mutex to ensure thread-safety
+		or be sure to check the specific implementation!
+		
   @author Dipl.-Inform. Martin Wodok
   @author Dipl.-Inform. Achim Spangler
 */
@@ -42,6 +47,7 @@ public:
 
   /**
     deliver lasted time from start of system in msec.
+	(Not normally thread-safe, but specific implementation could be!)
     @return running time in [msec.]
   */
   static ecutime_t getTime() { return System_c::getTime(); }
