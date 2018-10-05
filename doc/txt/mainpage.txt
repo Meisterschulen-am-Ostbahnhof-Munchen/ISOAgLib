@@ -72,6 +72,7 @@ TC-Client:
    - Added handler for PdNAcks to API. (Also in direct CF<->CF PD Communication!)
    - Updated DDI-Defines.
    - Added a cmdSend class to better handle different send states (e.g. Running, Aborted, etc..)
+   - Added more constructors/getters in device description.
 
 HAL-Simulator:
  - EEPROM-Cleanup: Some more assertions, faster read/write

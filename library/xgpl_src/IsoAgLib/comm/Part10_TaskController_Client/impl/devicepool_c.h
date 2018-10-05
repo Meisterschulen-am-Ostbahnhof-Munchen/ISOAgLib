@@ -304,6 +304,7 @@ namespace __IsoAgLib {
       void setLocalSettings( const localSettings_s& );
       void updateLocale();
 
+      DeviceObjectDvc_c* getDvcObject() const;
       DeviceObjectDet_c* getDetObject( uint16_t elementNumber );
 
     private:
@@ -311,7 +312,6 @@ namespace __IsoAgLib {
       void init( const IdentItem_c& ident );
       void close();
 
-      DeviceObjectDvc_c* getDvcObject() const;
       DeviceObject_c* getObject( const uint16_t objId, const IsoAgLib::ProcData::DeviceObjectType_t ) const;
 
       ByteStreamBuffer_c getBytestream( uint8_t cmdByte, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps );

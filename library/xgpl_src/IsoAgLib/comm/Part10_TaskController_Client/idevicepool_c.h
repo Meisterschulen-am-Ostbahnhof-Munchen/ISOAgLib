@@ -56,6 +56,16 @@ namespace IsoAgLib {
   class iDeviceObjectDvp_c : public __IsoAgLib::DeviceObjectDvp_c {
     public:
       iDeviceObjectDvp_c( float scale, int32_t offset, uint8_t decimals, const char* desig ) : __IsoAgLib::DeviceObjectDvp_c( scale, offset, decimals, desig ) {}
+      iDeviceObjectDvp_c( const iDeviceObjectDvp_c& obj ) : __IsoAgLib::DeviceObjectDvp_c( obj.getScale(), obj.getOffset(), obj.getDecimals(), obj.getDesignator() ) {}
+      const iDeviceObjectDvp_c& operator=(const iDeviceObjectDvp_c& obj) 
+      {
+        setScale( obj.getScale() );
+        setOffset( obj.getOffset() );
+        setDecimals( obj.getDecimals() );
+        setDesignator( obj.getDesignator() );
+
+        return *this;
+      }
 
       void setOffset( int32_t offset ) {
         __IsoAgLib::DeviceObjectDvp_c::setOffset( offset );
@@ -204,6 +214,9 @@ namespace IsoAgLib {
         return (iDeviceObjectDet_c*) __IsoAgLib::DevicePool_c::getDetObject( elementNumber );
       }
 
+      iDeviceObjectDvc_c* getDvcObject() const {
+        return static_cast<iDeviceObjectDvc_c*>(DevicePool_c::getDvcObject());
+      }
     private:
       friend class iTcClient_c;
       friend class iTcClientConnection_c;
