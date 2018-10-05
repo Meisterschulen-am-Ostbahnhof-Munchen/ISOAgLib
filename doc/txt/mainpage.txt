@@ -99,6 +99,9 @@ Framework:
 Tractor:
  - Added new class for Electronic Engine Controller
 
+HAL:
+ - PC / System: Made System_c::getTime() thread-safe.
+ 
    
 \subsection Change_ZI 2.8.2 to 2.9.0
 
