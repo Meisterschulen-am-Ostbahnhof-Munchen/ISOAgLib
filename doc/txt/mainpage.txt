@@ -42,11 +42,12 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
-\subsection Change_ZJ 2.9.0 to 2.9.x
+\subsection Change_ZJ 2.9.0 to 2.9.1
 
 VT-Client:
  - Enhancement:
    - Added eventPointingEventOp for back-scaled Pointing Event positions
+   - v4+ Pointing Event Enhancements (held/released)
    - Renamed some Enabled -> SecondOptions Bit; Added getEnabled that masks properly
    - Reduced the RAM usage for pools with many string objects
    - Added disconnect from VtServer for clean shutdown
@@ -55,6 +56,7 @@ VT-Client:
    - AUX-N PrefAssignment callback only available with setting USE_VTOBJECT_auxiliaryfunction2
  - Changes:
    - Always upload pool, just omit new features/objects
+   - Graphics Context adapted to latest spec. (float instead int for zoom, etc.)
  - Bugfix:
    - Change Child Position now takes the dam/sk offset into account
    - AUX-N Functions:
