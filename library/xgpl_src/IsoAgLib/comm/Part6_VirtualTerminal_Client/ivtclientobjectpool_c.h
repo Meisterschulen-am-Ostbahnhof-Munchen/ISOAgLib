@@ -85,8 +85,9 @@ public:
     hook function that gets called on a "Pointing Event" Message
     @param xPositionVt x position of where the user has clicked (besides buttons and input objects) or touched, based on scaled to VT's dimensions
     @param yPositionVt y position of where the user has clicked (besides buttons and input objects) or touched, based on scaled to VT's dimensions
+    @param aui8_touchState VT Version 3 and prior: FF (pressed implied), VT Version 4 and later: 0 = Released, 1 = Pressed, 2 = Held
   */
-  virtual void eventPointingEvent (uint16_t xPositionVt, uint16_t yPositionVt) { (void)xPositionVt; (void)yPositionVt; }
+  virtual void eventPointingEvent (uint16_t xPositionVt, uint16_t yPositionVt, uint8_t aui8_touchState = 0xFF) { (void)xPositionVt; (void)yPositionVt; (void)aui8_touchState; }
 
   /**
     hook function that gets called on a "Pointing Event" Message
@@ -94,8 +95,9 @@ public:
           If normal fullscreen scaling is used, it's not negative.
     @param xPositionOp x position of where the user has clicked (besides buttons and input objects) or touched, based on unscaled OP's dimensions
     @param yPositionOp y position of where the user has clicked (besides buttons and input objects) or touched, based on unscaled OP's dimensions
+    @param aui8_touchState VT Version 3 and prior: FF (pressed implied), VT Version 4 and later: 0 = Released, 1 = Pressed, 2 = Held
   */
-  virtual void eventPointingEventOp (int16_t xPositionOp, int16_t yPositionOp) { (void)xPositionOp; (void)yPositionOp; }
+  virtual void eventPointingEventOp (int16_t xPositionOp, int16_t yPositionOp, uint8_t aui8_touchState = 0xFF) { (void)xPositionOp; (void)yPositionOp; (void)aui8_touchState; }
 
   /**
     hook function that gets called after the ISO_Terminal_c instance

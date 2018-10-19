@@ -449,7 +449,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   {
     noInputUnits++;
     msgSize += 11;
-    msgSize += iter->second.size() * 2 * sizeof(uint16_t);
+    msgSize += uint16_t(iter->second.size()) * 2 * sizeof(uint16_t);
   }
 
   msc_tempSendUpload.vec_uploadBuffer.reserve( (msgSize < 8) ? 8 : msgSize );
@@ -467,7 +467,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
 
     msc_tempSendUpload.vec_uploadBuffer.push_back(iter->first.ui16_model & 0xFF);
     msc_tempSendUpload.vec_uploadBuffer.push_back(iter->first.ui16_model >> 8);
-    msc_tempSendUpload.vec_uploadBuffer.push_back(iter->second.size());
+    msc_tempSendUpload.vec_uploadBuffer.push_back(uint8_t( iter->second.size() )); // not more possible per standard, so fine to cast!
     
     for (STL_NAMESPACE::list<Aux2PreferredAssignmentObjects_s>::const_iterator iter_list = iter->second.begin(); iter_list != iter->second.end(); ++iter_list)
     {

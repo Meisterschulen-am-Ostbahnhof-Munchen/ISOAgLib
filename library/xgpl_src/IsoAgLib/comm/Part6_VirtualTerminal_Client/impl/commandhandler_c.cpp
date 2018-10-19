@@ -1150,8 +1150,9 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
 
     const uint16_t xPosVt = pkg.getUint8Data( 1 ) | (pkg.getUint8Data( 2 ) << 8);
     const uint16_t yPosVt = pkg.getUint8Data( 3 ) | (pkg.getUint8Data( 4 ) << 8);
+    const uint8_t touchState = pkg.getUint8Data( 5 ) & ((m_connection.getVersion() >= 6) ? 0x0F : 0xFF); // AND away the v6 TAN 
 
-    pool.eventPointingEvent( xPosVt, yPosVt );
+    pool.eventPointingEvent( xPosVt, yPosVt, touchState );
 
     int32_t xPosOp = xPosVt - vtOffsetX;
     int32_t yPosOp = yPosVt - vtOffsetY;
@@ -1162,7 +1163,7 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
     yPosOp *= opDimension;
     yPosOp /= vtDimension;
 
-    pool.eventPointingEventOp ((int16_t)xPosOp, (int16_t)yPosOp );
+    pool.eventPointingEventOp ((int16_t)xPosOp, (int16_t)yPosOp, touchState );
     break;
   }
 
