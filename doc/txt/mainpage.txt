@@ -57,6 +57,7 @@ VT-Client:
  - Changes:
    - Always upload pool, just omit new features/objects
    - Graphics Context adapted to latest spec. (float instead int for zoom, etc.)
+   - Do not downscale Line object to size 0 (just as Line Attributes as also min 1 always)
  - Bugfix:
    - Change Child Position now takes the dam/sk offset into account
    - AUX-N Functions:
