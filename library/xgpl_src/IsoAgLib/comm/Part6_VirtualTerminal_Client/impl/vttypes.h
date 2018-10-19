@@ -143,26 +143,43 @@ typedef uint16_t objRange_t;
     }
 
 #define MACRO_scaleDimension(dim) \
+ { \
+  int32_t scaleM, scaleD; \
   if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
-    dim *= factorM; \
-    dim /= factorD; \
+    scaleM = factorM; \
+    scaleD = factorD; \
   } else { \
-    dim *= vtDimension; \
-    dim /= opDimension; \
-  }
+    scaleM = vtDimension; \
+    scaleD = opDimension; \
+  } \
+  if (dim > 0) { \
+    dim *= scaleM; \
+    dim /= scaleD; \
+    dim = (dim > 0) ? dim : 1; \
+  } \
+ }
 
 #define MACRO_scaleI32(x,y) \
+ { \
+  int32_t scaleM, scaleD; \
   if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
-    x *= factorM; \
-    x /= factorD; \
-    y *= factorM; \
-    y /= factorD; \
+    scaleM = factorM; \
+    scaleD = factorD; \
   } else { \
-    x *= vtDimension; \
-    x /= opDimension; \
-    y *= vtDimension; \
-    y /= opDimension; \
-  }
+    scaleM = vtDimension; \
+    scaleD = opDimension; \
+  } \
+  if (x > 0) { \
+    x *= scaleM; \
+    x /= scaleD; \
+    x = (x > 0) ? x : 1; \
+  } \
+  if (y > 0) { \
+    y *= scaleM; \
+    y /= scaleD; \
+    y = (y > 0) ? y : 1; \
+  } \
+ }
 
 #define MACRO_getBlockfont(index)  \
     int32_t xBlock, yBlock; \
