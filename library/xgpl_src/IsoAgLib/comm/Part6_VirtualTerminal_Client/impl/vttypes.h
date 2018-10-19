@@ -169,15 +169,24 @@ typedef uint16_t objRange_t;
     scaleM = vtDimension; \
     scaleD = opDimension; \
   } \
-  if (x > 0) { \
-    x *= scaleM; \
-    x /= scaleD; \
-    x = (x > 0) ? x : 1; \
+
+  x *= scaleM; \
+  x /= scaleD; \
+
+  y *= scaleM; \
+  y /= scaleD; \
+ }
+
+#define MACRO_scaleSizeI32(x,y) \
+ { \
+  const bool xUsed = x > 0; \
+  const bool yUsed = y > 0; \
+  MACRO_scaleI32(x, y); \
+  if (xUsed && (x == 0)) { \
+    x = 1; \
   } \
-  if (y > 0) { \
-    y *= scaleM; \
-    y /= scaleD; \
-    y = (y > 0) ? y : 1; \
+  if (yUsed && (y == 0)) { \
+    y = 1; \
   } \
  }
 
@@ -249,7 +258,6 @@ typedef uint16_t objRange_t;
 
 #define MACRO_streamObjectXYcenteredInButton(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
-    MACRO_scaleSKLocalVars \
     int16_t centerX = (vtButtonWidth -  ((opButtonWidth *factorM)/factorD)) >>1; \
     int16_t centerY = (vtButtonHeight - ((opButtonHeight*factorM)/factorD)) >>1; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \

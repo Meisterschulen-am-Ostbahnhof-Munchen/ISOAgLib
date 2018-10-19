@@ -33,21 +33,18 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
+    uint32_t width  = (uint32_t)vtObjectPolygon_a->width;
+    uint32_t height = (uint32_t)vtObjectPolygon_a->height;
+    MACRO_scaleSizeI32(width, height);
+
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 16; // Object Type = Polygon
-      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
-        destMemory [3] = (((uint32_t) vtObjectPolygon_a->width*factorM)/factorD) & 0xFF;
-        destMemory [4] = (((uint32_t) vtObjectPolygon_a->width*factorM)/factorD) >> 8;
-        destMemory [5] = (((uint32_t) vtObjectPolygon_a->height*factorM)/factorD) & 0xFF;
-        destMemory [6] = (((uint32_t) vtObjectPolygon_a->height*factorM)/factorD) >> 8;
-      } else {
-        destMemory [3] = (((uint32_t) vtObjectPolygon_a->width*vtDimension)/opDimension) & 0xFF;
-        destMemory [4] = (((uint32_t) vtObjectPolygon_a->width*vtDimension)/opDimension) >> 8;
-        destMemory [5] = (((uint32_t) vtObjectPolygon_a->height*vtDimension)/opDimension) & 0xFF;
-        destMemory [6] = (((uint32_t) vtObjectPolygon_a->height*vtDimension)/opDimension) >> 8;
-      }
+      destMemory [3] = width & 0xFF;
+      destMemory [4] = width >> 8;
+      destMemory [5] = height & 0xFF;
+      destMemory [6] = height >> 8;
       destMemory [7] = vtObjectPolygon_a->lineAttributes->getID() & 0xFF;
       destMemory [8] = vtObjectPolygon_a->lineAttributes->getID() >> 8;
 

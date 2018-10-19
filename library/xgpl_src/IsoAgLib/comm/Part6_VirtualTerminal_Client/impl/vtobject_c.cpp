@@ -199,7 +199,7 @@ vtObject_c::scaleSize( uint16_t &width, uint16_t &height ) const
 
   uint32_t scaledWidth = uint32_t( width );
   uint32_t scaledHeight = uint32_t( height );
-  MACRO_scaleI32(scaledWidth,scaledHeight)
+  MACRO_scaleSizeI32(scaledWidth,scaledHeight)
   width = uint16_t( scaledWidth );
   height = uint16_t( scaledHeight );
 #else

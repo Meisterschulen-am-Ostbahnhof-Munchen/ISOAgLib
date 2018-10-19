@@ -34,24 +34,20 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
+    uint32_t width  = (uint32_t)vtObjectEllipse_a->width;
+    uint32_t height = (uint32_t)vtObjectEllipse_a->height;
+    MACRO_scaleSizeI32(width, height);
+
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 15; // Object Type = Ellipse
       destMemory [3] = vtObjectEllipse_a->lineAttributes->getID() & 0xFF;
       destMemory [4] = vtObjectEllipse_a->lineAttributes->getID() >> 8;
-      if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
-        destMemory [5] = (((uint32_t) vtObjectEllipse_a->width*factorM)/factorD) & 0xFF;
-        destMemory [6] = (((uint32_t) vtObjectEllipse_a->width*factorM)/factorD) >> 8;
-        destMemory [7] = (((uint32_t) vtObjectEllipse_a->height*factorM)/factorD) & 0xFF;
-        destMemory [8] = (((uint32_t) vtObjectEllipse_a->height*factorM)/factorD) >> 8;
-      } else {
-        destMemory [5] = (((uint32_t) vtObjectEllipse_a->width*vtDimension)/opDimension) & 0xFF;
-        destMemory [6] = (((uint32_t) vtObjectEllipse_a->width*vtDimension)/opDimension) >> 8;
-        destMemory [7] = (((uint32_t) vtObjectEllipse_a->height*vtDimension)/opDimension) & 0xFF;
-        destMemory [8] = (((uint32_t) vtObjectEllipse_a->height*vtDimension)/opDimension) >> 8;
-
-      }
+      destMemory [5] = width & 0xFF;
+      destMemory [6] = width >> 8;
+      destMemory [7] = height & 0xFF;
+      destMemory [8] = height >> 8;
       destMemory [9] = vtObjectEllipse_a->ellipseType;
       destMemory [10] = vtObjectEllipse_a->startAngle;
       destMemory [11] = vtObjectEllipse_a->endAngle;

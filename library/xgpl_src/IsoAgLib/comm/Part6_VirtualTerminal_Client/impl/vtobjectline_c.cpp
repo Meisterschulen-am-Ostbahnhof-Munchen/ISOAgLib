@@ -35,7 +35,7 @@ vtObjectLine_c::stream(uint8_t* destMemory,
 
     uint32_t width  = (uint32_t)vtObjectLine_a->width;
     uint32_t height = (uint32_t)vtObjectLine_a->height;
-    MACRO_scaleI32(width, height);
+    MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;

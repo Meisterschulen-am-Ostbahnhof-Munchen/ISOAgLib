@@ -31,21 +31,15 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
+    uint32_t width  = (uint32_t)vtObjectLineAttributes_a->lineWidth;
+    MACRO_scaleDimension(width);
+
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 24; // Object Type = Line Attributes
       destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectLineAttributes_a->lineColour, this, IsoAgLib::LineColour);
-      /** @todo SOON-174 not yet supporting different lineAttributes scaling for buttons!! */
-      if (s_properties.flags & FLAG_ORIGIN_SKM) {
-        destMemory [4] = (((uint32_t) vtObjectLineAttributes_a->lineWidth*factorM)/factorD) & 0xFF;
-      } else {
-        destMemory [4] = (((uint32_t) vtObjectLineAttributes_a->lineWidth*vtDimension)/opDimension) & 0xFF;
-      }
-      if ((vtObjectLineAttributes_a->lineWidth >= 1) && (destMemory [4] == 0))
-      { // if downscaling line-widths of at least 1, do NEVER send 0, at least always send 1!
-        destMemory [4] = 1;
-      }
+      destMemory [4] = width & 0xFF;
       destMemory [5] = vtObjectLineAttributes_a->lineArt & 0xFF;
       destMemory [6] = vtObjectLineAttributes_a->lineArt >> 8;
 

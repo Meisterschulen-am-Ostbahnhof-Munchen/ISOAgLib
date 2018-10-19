@@ -32,17 +32,15 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
+    uint32_t width  = (uint32_t)vtObjectMeter_a->width;
+    MACRO_scaleDimension(width);
+
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 17; // Object Type = Meter
-      if (s_properties.flags & FLAG_ORIGIN_SKM) { // no need to check for p_parentButtonObject as this object can't be nested in a button!
-        destMemory [3] = (((uint32_t) vtObjectMeter_a->width*factorM)/factorD) & 0xFF;
-        destMemory [4] = (((uint32_t) vtObjectMeter_a->width*factorM)/factorD) >> 8;
-      } else {
-        destMemory [3] = (((uint32_t) vtObjectMeter_a->width*vtDimension)/opDimension) & 0xFF;
-        destMemory [4] = (((uint32_t) vtObjectMeter_a->width*vtDimension)/opDimension) >> 8;
-      }
+      destMemory [3] = width & 0xFF;
+      destMemory [4] = width >> 8;
       destMemory [5] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectMeter_a->needleColour, this, IsoAgLib::NeedleColour);
       destMemory [6] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectMeter_a->borderColour, this, IsoAgLib::BorderColour);
       destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectMeter_a->arcAndTickColour, this, IsoAgLib::ArcAndTickColour);

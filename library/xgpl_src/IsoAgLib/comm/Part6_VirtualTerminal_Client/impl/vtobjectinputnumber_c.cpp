@@ -15,6 +15,7 @@
 
 #ifdef USE_VTOBJECT_inputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
 
@@ -30,15 +31,20 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectInputNumber_s
     MACRO_streamLocalVars;
     MACRO_scaleLocalVars;
+    MACRO_scaleSKLocalVars;
+
+    uint32_t width  = (uint32_t)vtObjectInputNumber_a->width;
+    uint32_t height = (uint32_t)vtObjectInputNumber_a->height;
+    MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 9; // Object Type = Input Number
-      destMemory [3] = (((uint32_t) vtObjectInputNumber_a->width*vtDimension)/opDimension) & 0xFF;
-      destMemory [4] = (((uint32_t) vtObjectInputNumber_a->width*vtDimension)/opDimension) >> 8;
-      destMemory [5] = (((uint32_t) vtObjectInputNumber_a->height*vtDimension)/opDimension) & 0xFF;
-      destMemory [6] = (((uint32_t) vtObjectInputNumber_a->height*vtDimension)/opDimension) >> 8;
+      destMemory [3] = width & 0xFF;
+      destMemory [4] = width >> 8;
+      destMemory [5] = height & 0xFF;
+      destMemory [6] = height >> 8;
       destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectInputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObjectInputNumber_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObjectInputNumber_a->fontAttributes->getID() >> 8;

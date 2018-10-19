@@ -13,6 +13,7 @@
 #include "vtobjectinputlist_c.h"
 
 #ifdef USE_VTOBJECT_inputlist
+#include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
 
@@ -28,15 +29,20 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectInputList_s
     MACRO_streamLocalVars;
     MACRO_scaleLocalVars;
+    MACRO_scaleSKLocalVars;
+
+    uint32_t width  = (uint32_t)vtObjectInputList_a->width;
+    uint32_t height = (uint32_t)vtObjectInputList_a->height;
+    MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 10; // Object Type = Input List
-      destMemory [3] = (((uint32_t) vtObjectInputList_a->width*vtDimension)/opDimension) & 0xFF;
-      destMemory [4] = (((uint32_t) vtObjectInputList_a->width*vtDimension)/opDimension) >> 8;
-      destMemory [5] = (((uint32_t) vtObjectInputList_a->height*vtDimension)/opDimension) & 0xFF;
-      destMemory [6] = (((uint32_t) vtObjectInputList_a->height*vtDimension)/opDimension) >> 8;
+      destMemory [3] = width & 0xFF;
+      destMemory [4] = width >> 8;
+      destMemory [5] = height & 0xFF;
+      destMemory [6] = height >> 8;
       if (vtObjectInputList_a->variableReference != NULL) {
         destMemory [7] = vtObjectInputList_a->variableReference->getID() & 0xFF;
         destMemory [8] = vtObjectInputList_a->variableReference->getID() >> 8;

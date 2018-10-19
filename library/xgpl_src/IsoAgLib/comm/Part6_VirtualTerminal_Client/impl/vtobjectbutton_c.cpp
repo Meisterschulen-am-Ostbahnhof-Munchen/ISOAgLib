@@ -40,15 +40,20 @@ vtObjectButton_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectButton_s
     MACRO_streamLocalVars;
     MACRO_scaleLocalVars;
+    MACRO_scaleSKLocalVars;
+
+    uint32_t width  = (uint32_t)vtObjectButton_a->width;
+    uint32_t height = (uint32_t)vtObjectButton_a->height;
+    MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 6; // Object Type = Button
-      destMemory [3] = (((uint32_t) vtObjectButton_a->width*vtDimension)/opDimension) & 0xFF;
-      destMemory [4] = (((uint32_t) vtObjectButton_a->width*vtDimension)/opDimension) >> 8;
-      destMemory [5] = (((uint32_t) vtObjectButton_a->height*vtDimension)/opDimension) & 0xFF;
-      destMemory [6] = (((uint32_t) vtObjectButton_a->height*vtDimension)/opDimension) >> 8;
+      destMemory [3] = width & 0xFF;
+      destMemory [4] = width >> 8;
+      destMemory [5] = height & 0xFF;
+      destMemory [6] = height >> 8;
       destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectButton_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectButton_a->borderColour, this, IsoAgLib::BorderColour);
       destMemory [9] = vtObjectButton_a->keyCode;

@@ -14,6 +14,7 @@
 #include "vtobjectinputboolean_c.h"
 
 #ifdef USE_VTOBJECT_inputboolean
+#include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
 
@@ -29,14 +30,18 @@ vtObjectInputBoolean_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectInputBoolean_s
     MACRO_streamLocalVars;
     MACRO_scaleLocalVars;
+    MACRO_scaleSKLocalVars;
+
+    uint32_t width  = (uint32_t)vtObjectInputBoolean_a->width;
+    MACRO_scaleDimension(width);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 7; // Object Type = Input Boolean
       destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectInputBoolean_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      destMemory [4] = (((uint32_t) vtObjectInputBoolean_a->width*vtDimension)/opDimension) & 0xFF;
-      destMemory [5] = (((uint32_t) vtObjectInputBoolean_a->width*vtDimension)/opDimension) >> 8;
+      destMemory [4] = width & 0xFF;
+      destMemory [5] = width >> 8;
       destMemory [6] = vtObjectInputBoolean_a->foregroundColour->getID() & 0xFF;
       destMemory [7] = vtObjectInputBoolean_a->foregroundColour->getID() >> 8;
       if (vtObjectInputBoolean_a->variableReference != NULL) {
