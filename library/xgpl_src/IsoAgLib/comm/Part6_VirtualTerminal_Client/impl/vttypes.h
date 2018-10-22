@@ -169,10 +169,8 @@ typedef uint16_t objRange_t;
     scaleM = vtDimension; \
     scaleD = opDimension; \
   } \
-
   x *= scaleM; \
   x /= scaleD; \
-
   y *= scaleM; \
   y /= scaleD; \
  }
