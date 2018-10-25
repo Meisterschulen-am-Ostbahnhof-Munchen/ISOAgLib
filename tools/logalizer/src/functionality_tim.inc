@@ -134,194 +134,473 @@ interpreteFacility(uint8_t a_facility)
     return (out.str());
 }
 
-// TODO: improve output here + replace tabs with setw()!
+//// TODO: improve output here + replace tabs with setw()!
+//std::string
+//functionSupportResponse(PtrDataFrame_t a_ptrFrame)
+//{
+//    std::ostringstream out;
+//    out << std::left << std::setfill(' ') << std::setw(113) << " " << "Function support response. Number of supported functions: " << std::dec << uint16_t(a_ptrFrame->data()[1]);
+//    uint8_t functionNumber = 1;
+//    for (uint8_t idx = 2; idx < a_ptrFrame->dataSize(); )
+//    {
+//        out << "\n";
+//        out << std::left << std::setfill(' ') << std::setw(116) << " " << "Function " << std::dec << uint16_t(functionNumber) << ": ";
+//        switch (a_ptrFrame->data()[idx])
+//        {
+//        case 0x00:
+//        case 0x01:
+//        case 0x02:
+//        case 0x03:
+//        case 0x04:
+//        case 0x05:
+//        case 0x06:
+//        case 0x07:
+//        case 0x08:
+//        case 0x09:
+//        case 0x0A:
+//        case 0x0B:
+//        case 0x0C:
+//        case 0x0D:
+//        case 0x0E:
+//        case 0x0F:
+//        case 0x10:
+//        case 0x11:
+//        case 0x12:
+//        case 0x13:
+//        case 0x14:
+//        case 0x15:
+//        case 0x16:
+//        case 0x17:
+//        case 0x18:
+//        case 0x19:
+//        case 0x1A:
+//        case 0x1B:
+//        case 0x1C:
+//        case 0x1D:
+//        case 0x1E:
+//        case 0x1F:
+//        case 0x20:
+//        {
+//            out << "Auxiliary valve " << std::dec << uint16_t(a_ptrFrame->data()[idx]);
+//            ++idx;
+//            uint8_t neededBytes = a_ptrFrame->data()[idx];
+//            out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) <<"\n";
+//            if (neededBytes >= 1)
+//            {
+//                ++idx;
+//                out << std::left << std::setfill(' ') << std::setw(120) << " " << "Valve State: ";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3) << "\n";
+//                out << std::left << std::setfill(' ') << std::setw(120) << " " << "Valve Flow: ";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
+//            }
+//        }
+//        break;
+//        case 0x40:
+//        {
+//            out << "Front PTO";
+//            ++idx;
+//            uint8_t neededBytes = a_ptrFrame->data()[idx];
+//            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
+//            if (neededBytes >= 1)
+//            {
+//                ++idx;
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Disengagement:\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Engagement:\t\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Speed counter clockwise:\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO speed clockwise:\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3);
+//            }
+//        }
+//        break;
+//        case 0x41:
+//        {
+//            out << "Rear PTO";
+//            ++idx;
+//            uint8_t neededBytes = a_ptrFrame->data()[idx];
+//            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
+//            if (neededBytes >= 1)
+//            {
+//                ++idx;
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Disengagement:\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Engagement:\t\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Speed counter clockwise:\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO speed clockwise:\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3);
+//            }
+//        }
+//        break;
+//        case 0x42:
+//        {
+//            out << "Front Hitch";
+//            ++idx;
+//            uint8_t neededBytes = a_ptrFrame->data()[idx];
+//            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
+//            if (neededBytes >= 1)
+//            {
+//                ++idx;
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Motion:\t\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Position:\t\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
+//            }
+//        }
+//        break;
+//        case 0x43:
+//        {
+//            out << "Rear Hitch";
+//            ++idx;
+//            uint8_t neededBytes = a_ptrFrame->data()[idx];
+//            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
+//            if (neededBytes >= 1)
+//            {
+//                ++idx;
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Motion:\t\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Position:\t\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
+//            }
+//        }
+//        break;
+//        case 0x44:
+//        {
+//            out << "Vehicle Speed";
+//            ++idx;
+//            uint8_t neededBytes = a_ptrFrame->data()[idx];
+//            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
+//            if (neededBytes >= 1)
+//            {
+//                ++idx;
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tVehicle speed forward:\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tVehicle speed reverse:\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tStart vehicle:\t\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tStop vehicle:\t\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3);
+//            }
+//            if (neededBytes >= 2)
+//            {
+//                ++idx;
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tForward direction:\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tReverse direction:\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tChange direction:\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
+//            }
+//        }
+//        break;
+//        case 0x46:
+//        {
+//            out << "External Guidance";
+//            ++idx;
+//            uint8_t neededBytes = a_ptrFrame->data()[idx];
+//            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
+//            if (neededBytes >= 1)
+//            {
+//                ++idx;
+//                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tCurvature:\t\t\t\t\t\t";
+//                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
+//            }
+//        }
+//        break;
+//        default:
+//            out << "Unknown Function ID";
+//            ++idx;
+//            uint8_t neededBytes = a_ptrFrame->data()[idx];
+//            idx += neededBytes;
+//            break;
+//        }
+//        ++idx;
+//        ++functionNumber;
+//    }
+//    return (out.str());
+//}
+//
+
+struct TSASupportedFunctions {
+    uint16_t sourceAddress; //uint16 for easier cout output
+    std::vector<uint8_t> supportedFunctionsDataBytes;
+};
+
+std::vector<TSASupportedFunctions> vecListOfSupportedFunctions;
+
 std::string
 functionSupportResponse(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
-    out << std::left << std::setfill(' ') << std::setw(113) << " " << "Function support response. Number of supported functions: " << std::dec << uint16_t(a_ptrFrame->data()[1]);
-    uint8_t functionNumber = 1;
-    for (uint8_t idx = 2; idx < a_ptrFrame->dataSize(); )
+    TSASupportedFunctions SaAndFunctions;
+    out << std::left << std::setfill(' ') << "Function support response. Number of supported functions: " << std::dec << uint16_t(a_ptrFrame->data()[1]);
+    SaAndFunctions.sourceAddress = a_ptrFrame->sourceAddress();
+    SaAndFunctions.supportedFunctionsDataBytes = a_ptrFrame->data();
+
+    //check if there is already data stored for this SA
+    for (uint8_t i = 0; i < vecListOfSupportedFunctions.size(); i++)
     {
-        out << "\n";
-        out << std::left << std::setfill(' ') << std::setw(116) << " " << "Function " << std::dec << uint16_t(functionNumber) << ": ";
-        switch (a_ptrFrame->data()[idx])
+        if (vecListOfSupportedFunctions[i].sourceAddress == a_ptrFrame->sourceAddress())
         {
-        case 0x00:
-        case 0x01:
-        case 0x02:
-        case 0x03:
-        case 0x04:
-        case 0x05:
-        case 0x06:
-        case 0x07:
-        case 0x08:
-        case 0x09:
-        case 0x0A:
-        case 0x0B:
-        case 0x0C:
-        case 0x0D:
-        case 0x0E:
-        case 0x0F:
-        case 0x10:
-        case 0x11:
-        case 0x12:
-        case 0x13:
-        case 0x14:
-        case 0x15:
-        case 0x16:
-        case 0x17:
-        case 0x18:
-        case 0x19:
-        case 0x1A:
-        case 0x1B:
-        case 0x1C:
-        case 0x1D:
-        case 0x1E:
-        case 0x1F:
-        case 0x20:
-        {
-            out << "Auxiliary valve " << std::dec << uint16_t(a_ptrFrame->data()[idx]);
-            ++idx;
-            uint8_t neededBytes = a_ptrFrame->data()[idx];
-            out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) <<"\n";
-            if (neededBytes >= 1)
+            if (vecListOfSupportedFunctions[i].supportedFunctionsDataBytes == a_ptrFrame->data())
             {
-                ++idx;
-                out << std::left << std::setfill(' ') << std::setw(120) << " " << "Valve State: ";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3) << "\n";
-                out << std::left << std::setfill(' ') << std::setw(120) << " " << "Valve Flow: ";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
+                return (out.str());
             }
         }
-        break;
-        case 0x40:
-        {
-            out << "Front PTO";
-            ++idx;
-            uint8_t neededBytes = a_ptrFrame->data()[idx];
-            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
-            if (neededBytes >= 1)
-            {
-                ++idx;
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Disengagement:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Engagement:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Speed counter clockwise:\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO speed clockwise:\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3);
-            }
-        }
-        break;
-        case 0x41:
-        {
-            out << "Rear PTO";
-            ++idx;
-            uint8_t neededBytes = a_ptrFrame->data()[idx];
-            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
-            if (neededBytes >= 1)
-            {
-                ++idx;
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Disengagement:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Engagement:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO Speed counter clockwise:\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tPTO speed clockwise:\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3);
-            }
-        }
-        break;
-        case 0x42:
-        {
-            out << "Front Hitch";
-            ++idx;
-            uint8_t neededBytes = a_ptrFrame->data()[idx];
-            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
-            if (neededBytes >= 1)
-            {
-                ++idx;
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Motion:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Position:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
-            }
-        }
-        break;
-        case 0x43:
-        {
-            out << "Rear Hitch";
-            ++idx;
-            uint8_t neededBytes = a_ptrFrame->data()[idx];
-            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
-            if (neededBytes >= 1)
-            {
-                ++idx;
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Motion:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tHitch Position:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
-            }
-        }
-        break;
-        case 0x44:
-        {
-            out << "Vehicle Speed";
-            ++idx;
-            uint8_t neededBytes = a_ptrFrame->data()[idx];
-            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
-            if (neededBytes >= 1)
-            {
-                ++idx;
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tVehicle speed forward:\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tVehicle speed reverse:\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tStart vehicle:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tStop vehicle:\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx]) & 0x3);
-            }
-            if (neededBytes >= 2)
-            {
-                ++idx;
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tForward direction:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tReverse direction:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 4) & 0x3);
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tChange direction:\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 2) & 0x3);
-            }
-        }
-        break;
-        case 0x46:
-        {
-            out << "External Guidance";
-            ++idx;
-            uint8_t neededBytes = a_ptrFrame->data()[idx];
-            out << "\tNeeded Bytes: " << std::dec << uint16_t(neededBytes);
-            if (neededBytes >= 1)
-            {
-                ++idx;
-                out << "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tCurvature:\t\t\t\t\t\t";
-                out << interpreteFacility((a_ptrFrame->data()[idx] >> 6) & 0x3);
-            }
-        }
-        break;
-        default:
-            out << "Unknown Function ID";
-            ++idx;
-            uint8_t neededBytes = a_ptrFrame->data()[idx];
-            idx += neededBytes;
-            break;
-        }
-        ++idx;
-        ++functionNumber;
     }
+    //store data in list to print out summary at end of file
+    vecListOfSupportedFunctions.push_back(SaAndFunctions);
+
     return (out.str());
+}
+
+
+void printFullListOfSupportedFunctions(std::ostream& out)
+{
+    using std::hex;
+    out << "\nList of Source Addresses and their supported TIM functions: \n\n";
+    out << std::left << std::setfill(' ') << std::setw(10) << "SA:" << "Function List:\n";
+    for (uint8_t i = 0; i < vecListOfSupportedFunctions.size(); ++i)
+    {
+        uint8_t functionNumber = 1;
+        out << std::hex << vecListOfSupportedFunctions[i].sourceAddress;
+        for (uint8_t idx = 2; idx < vecListOfSupportedFunctions[i].supportedFunctionsDataBytes.size(); )
+        {
+            if (idx == 2)
+            {
+                out << std::left << std::setfill(' ') << std::setw(8) << " ";
+            }
+            else
+            {
+                out << std::left << std::setfill(' ') << std::setw(10) << " ";
+            }
+            out << "Function " << std::dec << uint16_t(functionNumber) << ": ";
+            switch (vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx])
+            {
+            case 0x00:
+            {
+                out << "Auxiliary valve Superset";
+                ++idx;
+                uint8_t neededBytes = vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx];
+                out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) << "\n";
+                if (neededBytes >= 1)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Valve State: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3) << "\n";
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Valve Flow: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 4) & 0x3);
+                }
+            }
+            break;
+            case 0x01:
+            case 0x02:
+            case 0x03:
+            case 0x04:
+            case 0x05:
+            case 0x06:
+            case 0x07:
+            case 0x08:
+            case 0x09:
+            case 0x0A:
+            case 0x0B:
+            case 0x0C:
+            case 0x0D:
+            case 0x0E:
+            case 0x0F:
+            case 0x10:
+            case 0x11:
+            case 0x12:
+            case 0x13:
+            case 0x14:
+            case 0x15:
+            case 0x16:
+            case 0x17:
+            case 0x18:
+            case 0x19:
+            case 0x1A:
+            case 0x1B:
+            case 0x1C:
+            case 0x1D:
+            case 0x1E:
+            case 0x1F:
+            case 0x20:
+            {
+                out << "Auxiliary valve " << std::dec << uint16_t(vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx]);
+                ++idx;
+                uint8_t neededBytes = vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx];
+                out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) << "\n";
+                if (neededBytes >= 1)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Valve State: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3) << "\n";
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Valve Flow: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 4) & 0x3);
+                }
+            }
+            break;
+            case 0x40:
+            {
+                out << "Front PTO";
+                ++idx;
+                uint8_t neededBytes = vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx];
+                out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) << "\n";
+                if (neededBytes >= 1)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO Disengagement: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO Engagement counter-clockwise: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 4) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO Engagement clockwise: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 2) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO Speed counter clockwise: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx]) & 0x3);
+                }
+                if (neededBytes >= 2)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO speed clockwise: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3);
+
+                }
+            }
+            break;
+            case 0x41:
+            {
+                out << "Rear PTO";
+                ++idx;
+                uint8_t neededBytes = vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx];
+                out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) << "\n";
+                if (neededBytes >= 1)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO Disengagement: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO Engagement counter-clockwise: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 4) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO Engagement clockwise: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 2) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO Speed counter clockwise: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx]) & 0x3);
+                }
+                if (neededBytes >= 2)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "PTO speed clockwise: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3);
+
+                }
+            }
+            break;
+            case 0x42:
+            {
+                out << "Front Hitch";
+                ++idx;
+                uint8_t neededBytes = vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx];
+                out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) << "\n";
+                if (neededBytes >= 1)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Hitch Motion: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Hitch Position: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 4) & 0x3);
+                }
+            }
+            break;
+            case 0x43:
+            {
+                out << "Rear Hitch";
+                ++idx;
+                uint8_t neededBytes = vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx];
+                out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) << "\n";
+                if (neededBytes >= 1)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Hitch Motion: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Hitch Position: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 4) & 0x3);
+                }
+            }
+            break;
+            case 0x44:
+            {
+                out << "Vehicle Speed";
+                ++idx;
+                uint8_t neededBytes = vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx];
+                out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) << "\n";
+                if (neededBytes >= 1)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Vehicle speed forward: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Vehicle speed reverse: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 4) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Start vehicle: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 2) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Stop vehicle: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx]) & 0x3);
+                }
+                if (neededBytes >= 2)
+                {
+                    ++idx;
+                    out << "\n";
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Forward direction: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Reverse direction: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 4) & 0x3) << "\n";
+
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Change direction: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 2) & 0x3);
+                }
+            }
+            break;
+            case 0x46:
+            {
+                out << "External Guidance";
+                ++idx;
+                uint8_t neededBytes = vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx];
+                out << " Needed Bytes: " << std::dec << uint16_t(neededBytes) << "\n";
+                if (neededBytes >= 1)
+                {
+                    ++idx;
+                    out << std::left << std::setfill(' ') << std::setw(14) << " " << std::setw(34) << "Curvature: ";
+                    out << interpreteFacility((vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx] >> 6) & 0x3);
+                }
+            }
+            break;
+            default:
+                out << "Reserved";
+                ++idx;
+                uint8_t neededBytes = vecListOfSupportedFunctions[i].supportedFunctionsDataBytes[idx];
+                idx += neededBytes;
+                break;
+            }
+            ++idx;
+            ++functionNumber;
+            out << "\n";
+        }
+        out << "\n";
+    }
 }
 
 std::string

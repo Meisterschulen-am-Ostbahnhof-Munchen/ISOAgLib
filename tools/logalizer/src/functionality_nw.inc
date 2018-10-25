@@ -1744,8 +1744,13 @@ dvcFctWithSize_s IG2deviceClassFunctionArray[] = {
   { functionsIg2Dvc26Array, sizeof(functionsIg2Dvc26Array) / sizeof(functionsIg2Dvc26Array[0]) }
 };
 
-// ui8 SA stored as ui16 for cout convenience
-std::map<uint64_t, std::vector<uint16_t> > listOfNamesAndAddresses;
+typedef struct {
+    // ui8 SA stored as ui16 for cout convenience
+    std::map<uint64_t, std::vector<uint16_t> > listOfNamesAndAddresses;
+    std::vector<uint8_t> listOfTcServerSas;
+}TNamesAndAdressesMgmt;
+
+TNamesAndAdressesMgmt tNamesAndAddressesMgmt;
 
 struct namefields_s
 {
@@ -1773,6 +1778,34 @@ namefields_s decodeName(const std::vector<uint8_t> &dataFrame)
     decodedName.EcuInstance = (dataFrame[4] & 0x7);
     decodedName.SerNo = (dataFrame[2] & 0x1F) << 16 | (dataFrame[1] << 8) | dataFrame[0];
     return decodedName;
+}
+
+void vSetOverrideTcSa(uint8_t u8OverrideTcSa)
+{
+    tNamesAndAddressesMgmt.listOfTcServerSas.push_back(u8OverrideTcSa);
+}
+
+bool boSaIsTc(uint8_t u8Sa)
+{
+    bool boSaFound = false;
+    if (tNamesAndAddressesMgmt.listOfTcServerSas.empty())
+    {
+        //list still empty, so no TC available yet
+        return false;
+    }
+    //is SA already stored as TC?
+    else
+    {
+        for (auto it = tNamesAndAddressesMgmt.listOfTcServerSas.begin(); it != tNamesAndAddressesMgmt.listOfTcServerSas.end(); ++it)
+        {
+            if (*it == u8Sa)
+            {
+                boSaFound = true;
+                break;
+            }
+        }
+    }
+    return boSaFound;
 }
 
 inline const char* getFunction(const uint16_t industryGroup, const uint16_t deviceClass, const uint16_t function)
@@ -1907,7 +1940,7 @@ void readOutName(std::ostream& out, PtrDataFrame_t at_ptrFrame)
     // Track SA changes for this NAME
     listOfAddresses.push_back(sourceAddress);
     std::pair<std::map<uint64_t, std::vector<uint16_t> >::iterator, bool> ret;
-    ret = listOfNamesAndAddresses.insert(std::make_pair(fullName, listOfAddresses));
+    ret = tNamesAndAddressesMgmt.listOfNamesAndAddresses.insert(std::make_pair(fullName, listOfAddresses));
     if (ret.second == false)
     {
         //Name already existed
@@ -1937,6 +1970,22 @@ void readOutName(std::ostream& out, PtrDataFrame_t at_ptrFrame)
     << " FI["   << std::setw(2) << isobusName.FunctionInstance << "] /"
     << " DCI["  << std::setw(2) << isobusName.DeviceClassInstance << "] /"
     << " ECUI[" << std::setw(1) << isobusName.EcuInstance << "]";
+
+    //TC Server management
+    if (isobusName.Function == 130 /*Task Controller*/)
+    {
+        if (tNamesAndAddressesMgmt.listOfTcServerSas.empty())
+        {
+            //vector still empty, so insert SA
+            tNamesAndAddressesMgmt.listOfTcServerSas.push_back(sourceAddress);
+        }        
+        //is SA already stored as TC?
+        else if (!boSaIsTc(sourceAddress))
+        {
+            tNamesAndAddressesMgmt.listOfTcServerSas.push_back(sourceAddress);
+        }
+        //else: SA already stored as TC, nothing needs to be done here
+    }
 };
 
 void printFullNameAndAddressList(std::ostream& out) {
@@ -1950,7 +1999,7 @@ void printFullNameAndAddressList(std::ostream& out) {
   out << std::setw(20) <<std::left << "NAME (64bit number)" <<std::setw(30) << "NAME (LE as on CAN)"  <<std::setw(11) <<std::left 
       << "Addresses" << std::setw(100) << "Decoded" << std::endl;
   
-  for (it = listOfNamesAndAddresses.begin(); it != listOfNamesAndAddresses.end(); ++it)
+  for (it = tNamesAndAddressesMgmt.listOfNamesAndAddresses.begin(); it != tNamesAndAddressesMgmt.listOfNamesAndAddresses.end(); ++it)
   {
     dataOctet.clear();
 

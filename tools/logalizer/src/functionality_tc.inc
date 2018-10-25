@@ -161,22 +161,22 @@ const char* ddis[] = {
 "Prescription Control State",
 "Number of Sub-Units per Section",
 "Section Control State",
-"Actual Condensed Work State (1-16)",
-"Actual Condensed Work State (17-32)",
-"Actual Condensed Work State (33-48)",
-"Actual Condensed Work State (49-64)",
-"Actual Condensed Work State (65-80)",
-"Actual Condensed Work State (81-96)",
-"Actual Condensed Work State (97-112)",
-"Actual Condensed Work State (113-128)",
-"Actual Condensed Work State (129-144)",
-"Actual Condensed Work State (145-160)",
-"Actual Condensed Work State (161-176)",
-"Actual Condensed Work State (177-192)",
-"Actual Condensed Work State (193-208)",
-"Actual Condensed Work State (209-224)",
-"Actual Condensed Work State (225-240)",
-"Actual Condensed Work State (241-256)",
+"Actual   Condensed Work State (1-16)   ",  //align lenths (also with setpoint condensed work state ddis)
+"Actual   Condensed Work State (17-32)  ",
+"Actual   Condensed Work State (33-48)  ",
+"Actual   Condensed Work State (49-64)  ",
+"Actual   Condensed Work State (65-80)  ",
+"Actual   Condensed Work State (81-96)  ",
+"Actual   Condensed Work State (97-112) ",
+"Actual   Condensed Work State (113-128)",
+"Actual   Condensed Work State (129-144)",
+"Actual   Condensed Work State (145-160)",
+"Actual   Condensed Work State (161-176)",
+"Actual   Condensed Work State (177-192)",
+"Actual   Condensed Work State (193-208)",
+"Actual   Condensed Work State (209-224)",
+"Actual   Condensed Work State (225-240)",
+"Actual   Condensed Work State (241-256)",
 "Actual length of cut",
 "Element Type Instance",
 "Actual Cultural Practice",
@@ -290,13 +290,13 @@ const char* ddis[] = {
 "Setpoint Prescription Mode",
 "Actual Prescription Mode",
 "Setpoint Work State",
-"Setpoint Condensed Work State (1-16)",
-"Setpoint Condensed Work State (17-32)",
-"Setpoint Condensed Work State (33-48)",
-"Setpoint Condensed Work State (49-64)",
-"Setpoint Condensed Work State (65-80)",
-"Setpoint Condensed Work State (81-96)",
-"Setpoint Condensed Work State (97-112)",
+"Setpoint Condensed Work State (1-16)   ",
+"Setpoint Condensed Work State (17-32)  ",
+"Setpoint Condensed Work State (33-48)  ",
+"Setpoint Condensed Work State (49-64)  ",
+"Setpoint Condensed Work State (65-80)  ",
+"Setpoint Condensed Work State (81-96)  ",
+"Setpoint Condensed Work State (97-112) ",
 "Setpoint Condensed Work State (113-128)",
 "Setpoint Condensed Work State (129-144)",
 "Setpoint Condensed Work State (145-160)",
@@ -620,18 +620,29 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
   else
   {
     bool valueAndMeasurementCommand = false;
+    bool commandRequest = false;
+    bool isMeasurementTime = false;
+    bool isMeasurementDist = false;
+    bool isMeasurementMin = false;
+    bool isMeasurementMax = false;
+    bool isMeasurementChange = false;
+    bool boDdiIsAcws = false;
+    bool boDdiIsScws = false;
+    bool boDdiIsPcsOrScs = false;
 
     switch (at_ptrFrame->dataOctet(0) & 0x0F)
     {
     case 0x00: out << "Command Technical Capabilities " << decodeTechnicalCapabilities( at_ptrFrame->dataOctet(0) >> 4 ); break;
     case 0x01: out << "Command Device Descriptor " << decodeDevDescTransMgmt( at_ptrFrame->dataOctet(0) >> 4 ); break;
-    case 0x02: out << "Command Request Value  "; valueAndMeasurementCommand = true; break;
-    case 0x03: out << "Command Value          "; valueAndMeasurementCommand = true; break;
-    case 0x04: out << "Command Measur. Time   "; valueAndMeasurementCommand = true; break;
-    case 0x05: out << "Command Measur. Dist.  "; valueAndMeasurementCommand = true; break;
-    case 0x06: out << "Command Measur. Min.   "; valueAndMeasurementCommand = true; break;
-    case 0x07: out << "Command Measur. Max.   "; valueAndMeasurementCommand = true; break;
-    case 0x08: out << "Command Measur. Change "; valueAndMeasurementCommand = true; break;
+    case 0x02: out << "Request  Value         "; valueAndMeasurementCommand = true; commandRequest = true;  break;
+    case 0x03: boSaIsTc(at_ptrFrame->sourceAddress()) ? 
+               out << "Setpoint Value         ": 
+               out << "Measrmnt Value         "; valueAndMeasurementCommand = true;                         break;
+    case 0x04: out << "Measurement Time  [ms] "; valueAndMeasurementCommand = true; isMeasurementTime  = true;  break;
+    case 0x05: out << "Measurement Dist. [mm] "; valueAndMeasurementCommand = true; isMeasurementDist  = true;  break;
+    case 0x06: out << "Measurement Minimum    "; valueAndMeasurementCommand = true; isMeasurementMin  = true;  break;
+    case 0x07: out << "Measurement Maximum    "; valueAndMeasurementCommand = true; isMeasurementMax  = true;  break;
+    case 0x08: out << "Measurement Change     "; valueAndMeasurementCommand = true; isMeasurementChange  = true;  break;
     case 0x09: out << "Command Peer Control Assignment"; break;
     case 0x0A: out << "Command Set Value and Acknowledge"; break;
     case 0x0D: out << "Message Process Data Acknowledge (PDACK)"; break;
@@ -646,13 +657,58 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
       uint32_t ddi = uint16_t(at_ptrFrame->dataOctet(2)) | (uint16_t(at_ptrFrame->dataOctet(3)) << 8);
       int32_t value = int32_t( uint32_t(at_ptrFrame->dataOctet(4)) | uint32_t(at_ptrFrame->dataOctet(5))<<8 | uint32_t(at_ptrFrame->dataOctet(6))<<16 | uint32_t(at_ptrFrame->dataOctet(7))<<24 );
 
+      if (ddi >= 161 && ddi <= 176)
+      {
+          boDdiIsAcws = true;
+      }
+      else if (ddi >= 290 && ddi <= 305)
+      {
+          boDdiIsScws = true;
+      }
+
       out << "E=" << std::setw(4) << std::dec << element << " DDI=";
       if( ddi >= 0xdfff )
         out << "$" << std::setw(4) << std::hex << ddi << std::dec;
       else
         out << std::setw(5) << std::dec << ddi;
-      out << " => " << std::setw(11) << std::left << value;
-      
+     
+      if (commandRequest)
+          //do not print values for requests!! only leads to confusion
+          out << " => " << std::setw(11) << std::left << std::dec << "/";
+      else if (isMeasurementTime)
+      {
+          out << " => t=" << std::setw(9) << std::left << std::dec << value;
+      }
+      else if (isMeasurementDist)
+      {
+          out << " => d=" << std::setw(9) << std::left << std::dec << value;
+      }
+      else if (isMeasurementMin)
+      {
+          out << " => m=" << std::setw(9) << std::left << std::dec << value;
+      }
+      else if (isMeasurementMax)
+      {
+          out << " => M=" << std::setw(9) << std::left << std::dec << value;
+      }
+      else if (isMeasurementChange)
+      {
+          out << " => c=" << std::setw(9) << std::left << std::dec << value;
+      }
+      else if (boDdiIsAcws || boDdiIsScws)
+          {
+          //Condensed work state DDIs, use hex presentation
+          out << " => 0x" << std::setw(9) << std::left << std::hex << (uint32_t)value;
+          }
+      else if (ddi == 158 || ddi == 160)
+      {
+          //prescription or section control state
+          boDdiIsPcsOrScs = true;
+          out << " => 0x" << std::setw(9) << std::left << std::hex << (uint32_t)value;
+      }
+      else
+          out << " => " << std::setw(11) << std::left << std::dec << value;
+
       if( ddi < (sizeof(ddis) / sizeof(ddis[0])) )
         out << " (" << ddis[ ddi ] << ")";
       else if( ddi == 0xdffe )
@@ -663,7 +719,61 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
         out << " (Reserved)";
       else if (ddi >= 0xe00)
         out << " (Proprietary DDI)";
+
+      //print on off presentation for CWS sections
+      if ((boDdiIsAcws || boDdiIsScws) && !(commandRequest))
+      {
+          out << " Sections";
+          if (boDdiIsAcws)
+              out << " == ";
+          else
+              out << " -> ";
+          for (uint8_t i = 16; i > 0;--i)
+          {
+              int bitPair = (((uint32_t)value >> ((i-1 )*2)) & 0x3);
+              switch (bitPair)
+              {
+              case 0:
+                  out << "off" << " ";
+                  break;
+              case 1:
+                  out << "ON " << " ";
+                  break;
+              case 2:
+                  out << "err" << " ";
+                  break;
+              case 3:
+                  out << "nc " << " ";
+                  break;
+              default:
+                  break;
+              }
+          }
+      }
+
+      //print presentation of SCS or PCS
+      if (boDdiIsPcsOrScs)
+      {
+          int bitPair = (uint32_t)value & 0x3;
+          out << "Control State: ";
+          switch (bitPair)
+          {
+          case 0:
+              out << "MANUAL" << " ";
+              break;
+          case 1:
+              out << "AUTO  " << " ";
+              break;
+          case 2:
+              out << "err   " << " ";
+              break;
+          case 3:
+              out << "ndf   " << " ";
+              break;
+          }
+      }
     }
+
 
     if( gs_main.mb_storeDdop && ( at_ptrFrame->data()[0] == 0x81 ) ) {
       ddopStore( at_ptrFrame->sourceAddress() );

@@ -51,15 +51,15 @@ AliveCollection_c::report( std::ostream& out ) const
       {
         if (ci32_alivePeriod > 0)
         { // we have a periodic event!
-          out << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<name(categoryIter)<<"] with alive-periods of "<<alivePeriod(categoryIter)<<" ms:"<<std::endl;
+          out << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<name(categoryIter)<<"] with alive-periods of "<<alivePeriod(categoryIter)<<" ms:" << std::endl << "{" <<std::endl;
         }
         else if (ci32_alivePeriod < 0)
         { // we have a handshaking event!
-          out << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<name(categoryIter)<<"] with alive-periods of "<<(-alivePeriod(categoryIter))<<" ms:"<<std::endl;
+          out << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<name(categoryIter)<<"] with alive-periods of "<<(-alivePeriod(categoryIter))<<" ms:" << std::endl << "{" <<std::endl;
         }
         else
         { // single events!! "== 0"
-          out << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" sent out ["<<name(categoryIter)<<"] at the following times:"<<std::endl;
+          out << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" sent out ["<<name(categoryIter)<<"] at the following times:" << std::endl << "{" <<std::endl;
         }
         std::vector<std::pair<msgType_e,std::string> >::const_iterator type_iter=response(categoryIter, static_cast<uint8_t>( i ) ).begin();
         for (std::vector<uint64_t>::const_iterator iter=alives(categoryIter, static_cast<uint8_t>( i )).begin();
@@ -108,8 +108,8 @@ AliveCollection_c::report( std::ostream& out ) const
               case msgTypeEOMACK:     out << " (E)TP-CONN: End of Message ACK (EoMACK)   "; i32_alivePeriodSpecial = 1250; break;
               case msgTypeDATA:       out << " (E)TP-DATA                                "; i32_alivePeriodSpecial = 250; break;
               case msgTypeCONNABORT:  out << " (E)TP-CONN: Connection Abort (CONNABORT)  "; i32_alivePeriodSpecial = -1; break; // doesn't come normally!
-              case msgTypeSetpoint:   out << " (TC->Client) Setpoint "; i32_alivePeriodSpecial = 0; break;
-              case msgTypeMeasurement:out << " (Client->TC) Measrmnt "; i32_alivePeriodSpecial = 0; break;
+              case msgTypeTcToClient: out << " (TC->Client) "; i32_alivePeriodSpecial = 0; break;
+              case msgTypeClientToTc: out << " (Client->TC) "; i32_alivePeriodSpecial = 0; break;
               default:                out << " ??? "; i32_alivePeriodSpecial = 0; break;
               }
               if ( ((*type_iter).first == msgTypeResponse) && ((*(type_iter-1)).first == msgTypeResponse) )
@@ -142,6 +142,7 @@ AliveCollection_c::report( std::ostream& out ) const
           if (type_iter != response(categoryIter, static_cast<uint8_t>( i )).end())
             ++type_iter;
         }
+        out << "}" << std::endl;
       }
     }
   }

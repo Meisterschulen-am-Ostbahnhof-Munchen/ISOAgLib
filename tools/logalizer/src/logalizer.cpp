@@ -203,16 +203,18 @@ inline Main_s::Main_s() :
 {
 }
 
+
 struct Main_s gs_main;
 } //namespace
 
 
-enum { OPT_GPX, OPT_TYPE, OPT_WRAP, OPT_STORE_IOP, OPT_STORE_DDOP, OPT_HELP };
+enum { OPT_GPX, OPT_TYPE, OPT_WRAP, OPT_TC_SA, OPT_STORE_IOP, OPT_STORE_DDOP, OPT_HELP};
 
 CSimpleOpt::SOption g_rgOptions[] = {
     { OPT_GPX, "-gpx", SO_REQ_SEP },
     { OPT_TYPE, "-t", SO_REQ_SEP },
     { OPT_WRAP, "-w", SO_REQ_SEP },
+    { OPT_TC_SA, "-tc", SO_REQ_SEP},
     { OPT_STORE_IOP, "--iop", SO_NONE },
     { OPT_STORE_DDOP, "--ddop", SO_NONE },
     { OPT_HELP, "--help", SO_NONE },
@@ -223,11 +225,11 @@ void iopStore(uint8_t sa);
 void ddopStore(uint8_t sa);
 
 #include "functionality_vt.inc"
-#include "functionality_tc.inc"
 #include "functionality_fs.inc"
 #include "functionality_tecu.inc"
 #include "functionality_gps.inc"
 #include "functionality_nw.inc"
+#include "functionality_tc.inc"
 #include "functionality_tim.inc"
 #include "parsers.inc"
 
@@ -236,7 +238,7 @@ void
 exit_with_usage(const char* progname)
 {
   std::cerr << "ISOBUS-Logalizer (c) 2007 - 2018 OSB AG." << std::endl << std::endl;
-  std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [--iop] [--ddop] logFile" << std::endl << std::endl;
+  std::cerr << "Usage: " << progname << " [-t logType] [-gpx gpxFile] [-w num] [-tc num] [--iop] [--ddop] logFile" << std::endl << std::endl;
   std::cerr << "-t:      0 -> can_server [DEFAULT]"<<std::endl;
   std::cerr << "         1 -> rte"<<std::endl;
   std::cerr << "         2 -> CANMon"<<std::endl;
@@ -257,6 +259,7 @@ exit_with_usage(const char* progname)
   std::cerr << "        17 -> Viewtool Ginkgo (csv)" << std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
+  std::cerr << "-tc:     Override TC SA manually. SA must be given as decimal integer." << std::endl;
   std::cerr << "--iop:   Store VT object pool transfers in iop format. Default: do not store" << std::endl;
   std::cerr << "--ddop:  Store TC object pool transfers in ddop format. Default: do not store" << std::endl;
   std::cerr << "logFile: filepath or - (dash, means standard input rather than a real file)" << std::endl;
@@ -636,6 +639,14 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
   std::ostringstream out;
 
   bool b_streamEnd = false;
+  bool boEtpRts = false;
+  bool boEtpCts = false;
+  bool boEtpDpo = false;
+  bool boEtpEoMack = false;
+  bool boTpRts = false;
+  bool boTpCts = false;
+  bool boTpEoMack = false;
+
   TransferCollection_c::Variant_e e_variant = TransferCollection_c::variant_etp;
 
   switch (at_ptrFrame->pgn()) {
@@ -647,6 +658,7 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
     switch (at_ptrFrame->dataOctet(0)) {
     case 0x10:
       out << "RTS - Request to Send (TP)            ";
+      boTpRts = true;
       {
         size_t const ct_sizeTransferData = size_t(at_ptrFrame->dataOctet(2)) << 8 | at_ptrFrame->dataOctet(1);
         (void)gs_main.mc_trans.newConnection(
@@ -657,6 +669,7 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       }
       break;
     case 0x14:
+        boEtpRts = true;
       out << "RTS - Request to Send (ETP)           ";
       {
         size_t const ct_sizeTransferData = (static_cast<uint32_t>(at_ptrFrame->dataOctet(4)) << 24) |
@@ -671,14 +684,16 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       }
       break;
     case 0x11:
+        boTpCts = true;
       out << "CTS - Clear to Send (TP)              ";
-
       break;
     case 0x15:
+        boEtpCts = true;
       out << "CTS - Clear to Send (ETP)             ";
       break;
 
     case 0x16:
+        boEtpDpo = true;
       out << "DPO - Data Packet Offset (ETP)        ";
       {
         TransferCollection_c::PtrConnection_t t_ptrConnection =
@@ -695,10 +710,12 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       break;
     case 0x13:
       out << "EoMACK - End of Message Ack (TP)      ";
+      boTpEoMack = true;
       b_streamEnd = true;
       break;
     case 0x17:
       out << "EoMACK - End of Message Ack (ETP)     ";
+      boEtpEoMack = true;
       b_streamEnd = true;
       break;
     case 0x20:
@@ -728,6 +745,20 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
         out << ")";
       }
     }
+    if (boEtpCts)
+        out << " #Packets:          " << std::left << std::dec << std::setfill(' ') << std::setw(10) << (uint16_t)at_ptrFrame->dataOctet(1) << " | #NextPacket: " << (uint32_t)((at_ptrFrame->dataOctet(4) << 2 * BITS_PER_BYTE) | (at_ptrFrame->dataOctet(3) << BITS_PER_BYTE) | at_ptrFrame->dataOctet(2));
+    else if (boEtpDpo)
+        out << " #PacketsForOffset: " << std::left << std::dec << std::setfill(' ') << std::setw(10) << (uint16_t)at_ptrFrame->dataOctet(1) << " | DPO        : " << (uint32_t)((at_ptrFrame->dataOctet(4) << 2 * BITS_PER_BYTE) | (at_ptrFrame->dataOctet(3) << BITS_PER_BYTE) | at_ptrFrame->dataOctet(2));
+    else if (boEtpRts)
+        out << " #Bytes:            " << std::left << std::dec  << std::setfill(' ') << std::setw(10) << (uint32_t)((at_ptrFrame->dataOctet(4) << 3 * BITS_PER_BYTE) | (at_ptrFrame->dataOctet(3) << 2 * BITS_PER_BYTE) | (at_ptrFrame->dataOctet(2) << BITS_PER_BYTE) | at_ptrFrame->dataOctet(1));
+    else if (boEtpEoMack)
+        out << " #TotalBytes: " << std::left << std::dec << std::setfill(' ') << std::setw(10) << (uint32_t)((at_ptrFrame->dataOctet(4) << 3 * BITS_PER_BYTE) | (at_ptrFrame->dataOctet(3) << 2 * BITS_PER_BYTE) | (at_ptrFrame->dataOctet(2) << BITS_PER_BYTE) | at_ptrFrame->dataOctet(1));
+    else if (boTpCts)
+        out << " #Packets:      " << std::left << std::dec << std::setfill(' ') << std::setw(5) << (uint16_t)at_ptrFrame->dataOctet(1)                                                  << " | #NextPacket:   " <<                 (uint16_t)at_ptrFrame->dataOctet(2);
+    else if (boTpRts)
+        out << " #TotalPackets: " << std::left << std::dec << std::setfill(' ') << std::setw(5) << (uint16_t)at_ptrFrame->dataOctet(3)                                                  << " | #TotalBytes:   " << std::setw(5) << (uint16_t)((at_ptrFrame->dataOctet(2) << BITS_PER_BYTE) | at_ptrFrame->dataOctet(1)) << " | #MaxPacketsResponse: " << (uint16_t)at_ptrFrame->dataOctet(4);
+    else if (boTpEoMack)
+        out << " #TotalBytes:   " << std::left << std::dec << std::setfill(' ') << std::setw(5) << (uint16_t)((at_ptrFrame->dataOctet(2) << BITS_PER_BYTE) | at_ptrFrame->dataOctet(1)) << " | #TotalPackets: " <<                 (uint16_t)at_ptrFrame->dataOctet(3);
     break;
 
   case TP_DATA_TRANSFER_PGN:
@@ -1026,7 +1057,6 @@ int main (int argc, char** argv)
 {
   gs_main.pt_parseLogLine = parseLogLineCanServer;
   gs_main.mt_sizeMultipacketWrap = 32; // CAN server default
-
   CSimpleOpt args(argc, argv, g_rgOptions);
   // while there are arguments left to process
   while (args.Next()) {
@@ -1041,6 +1071,10 @@ int main (int argc, char** argv)
           case OPT_WRAP:
             gs_main.mt_sizeMultipacketWrap = atoi( args.OptionArg() );
             break;
+          case OPT_TC_SA:
+              // "-tc 89": override SA of TC server manually
+              vSetOverrideTcSa(atoi(args.OptionArg()));
+              break;
           case OPT_STORE_IOP:
             gs_main.mb_storeIop = true;
             break;
@@ -1089,6 +1123,7 @@ int main (int argc, char** argv)
   t_ptrIn = PtrInputStream_t(0);
 
   gs_main.m_alive.report( std::cout );
+  printFullListOfSupportedFunctions(std::cout);   // TODO @ JPRI: Reaktivieren!
   printFullNameAndAddressList(std::cout);
   if( gs_main.m_gpxFile )
     gpxClose();

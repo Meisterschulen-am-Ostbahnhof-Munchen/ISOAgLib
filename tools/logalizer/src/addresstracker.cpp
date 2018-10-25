@@ -35,6 +35,8 @@ std::string
 AddressTracker_c::requestForAddressClaimed(PtrDataFrame_t at_ptrFrame)
 {
   size_t ct_dest = at_ptrFrame->destinationAddress();
+  if (ct_dest == 0xfe)
+      return "";
   std::pair< Attributes_t::iterator, Attributes_t::iterator > range =
     (0xFF == ct_dest) ?
     std::make_pair( t_attributes.begin(), t_attributes.end() ) :
@@ -58,6 +60,9 @@ std::string
 AddressTracker_c::addressClaimed(PtrDataFrame_t at_ptrFrame)
 {
   size_t ct_source = at_ptrFrame->sourceAddress();
+  if (ct_source == 0xfe)
+      return "";
+
   Attributes_t::iterator it = attributesAt(ct_source);
   IsoName_c c_name = at_ptrFrame->data();
   bool b_setOrReplace = false;

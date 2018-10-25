@@ -28,8 +28,8 @@ enum msgType_e
   msgTypeDPO,
   msgTypeEOMACK,
   msgTypeCONNABORT,
-  msgTypeSetpoint, // TC->Client
-  msgTypeMeasurement // Client->TC
+  msgTypeTcToClient, // TC->Client
+  msgTypeClientToTc // Client->TC
 };
 
 

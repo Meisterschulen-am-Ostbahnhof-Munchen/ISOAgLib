@@ -129,14 +129,14 @@ checkHandshakingsProcData( PtrDataFrame_t at_ptrFrame )
 
   if( (at_ptrFrame->destinationAddress() != 0xFF) && ((at_ptrFrame->dataOctet(0) & 0x0F) < 0x0E) )
   { // ignore TC Status, Maintenance, etc.
-    if( at_ptrFrame->sourceAddress() >= 0xF0 ) // assume it's the TC
+    if( boSaIsTc(at_ptrFrame->sourceAddress())) // assume it's the TC
     {
-      msgType_direction = msgTypeSetpoint;
+      msgType_direction = msgTypeTcToClient;
       ui8_saClient = at_ptrFrame->destinationAddress();
     }
     else
     {
-      msgType_direction = msgTypeMeasurement;
+      msgType_direction = msgTypeClientToTc;
       ui8_saClient = at_ptrFrame->sourceAddress();
     }
     gs_main.m_alive.response(e_category, ui8_saClient).push_back (std::pair<msgType_e,std::string>(
