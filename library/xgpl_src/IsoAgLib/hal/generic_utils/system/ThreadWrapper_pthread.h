@@ -30,18 +30,7 @@
 
 #ifdef USE_MUTUAL_EXCLUSION
 
-#ifdef WINCE
-  #include <windows.h>
-#else
-  // Version >= Microsoft Visual Studio C++ 2015
-  // fix broken pthread.h (that defines timespec on its own, which may result in double definition)
-  #if _MSC_VER >= 1900
-    #ifndef HAVE_STRUCT_TIMESPEC
-      #define HAVE_STRUCT_TIMESPEC
-    #endif
-  #endif
-  #include <pthread.h>
-#endif
+#include "mutex_pthread.h"
 
 namespace HAL
 {

@@ -44,6 +44,12 @@ public:
     */
   bool close();
 
+  enum SendMsgResult {
+      SendMsgSuccess,
+      SendMsgFailure
+  };
+
+  SendMsgResult sendMsg(CanPkgExt_c& acrc_src);
   IsoBus_c& operator<< (CanPkgExt_c& acrc_src);
   IsoBus_c& operator<< (CanPkg_c& acrc_src);
 

@@ -336,22 +336,33 @@ IsoBus_c::close()
 }
 
 
+IsoBus_c::SendMsgResult
+IsoBus_c::sendMsg(CanPkgExt_c& acrc_src)
+{
+  isoaglib_assert(acrc_src.identType() == Ident_c::ExtendedIdent);
+
+  // check if source and destination address are valid
+  if (!acrc_src.resolveSendingInformation(getMultitonInst()))
+  { // preconditions for correct sending are not fullfilled -> set error state
+    return SendMsgFailure;
+  }
+
+  (void)getCanInstance4Comm().operator<<(static_cast<CanPkg_c&>(acrc_src));
+  return SendMsgSuccess;
+}
+
+
 IsoBus_c&
 IsoBus_c::operator<<(CanPkgExt_c& acrc_src)
 {
-  isoaglib_assert( acrc_src.identType() == Ident_c::ExtendedIdent );
-
-  // check if source and destination address are valid
-  if ( ! acrc_src.resolveSendingInformation( getMultitonInst() ) )
-  { // preconditions for correct sending are not fullfilled -> set error state
+  if ( sendMsg( acrc_src ) == SendMsgFailure )
+  {
 #if 0
     /* check is temporary disabled! */
     getILibErrInstance().registerError(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can);
 #endif
-    return *this;
   }
 
-  (void) getCanInstance4Comm().operator<<( static_cast<CanPkg_c&>(acrc_src) );
   return *this;
 }
 

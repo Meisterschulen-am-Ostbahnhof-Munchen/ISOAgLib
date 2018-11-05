@@ -211,47 +211,47 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
 }
 
 
-bool
-MultiSend_c::sendIntern (const IsoName_c& isoNameSender, const IsoName_c& isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, SendStream_c::msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
+MultiSend_c::SendResult
+MultiSend_c::sendInternDetailed(const IsoName_c& isoNameSender, const IsoName_c& isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, SendStream_c::msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
-  isoaglib_assert( aui32_dataSize >= endSinglePacketSize );
-  isoaglib_assert( (ren_msgType != SendStream_c::NmeaFastPacket) || (aui32_dataSize < endNmeaFastPacketSize) );
-  isoaglib_assert( (ren_msgType != SendStream_c::IsoTPbroadcast) || (aui32_dataSize < beginEtpPacketSize) );
-  isoaglib_assert( (ren_msgType != SendStream_c::IsoTP) || (aui32_dataSize < endTpPacketSize) );
-  isoaglib_assert( (ren_msgType != SendStream_c::IsoETP) || (aui32_dataSize >= beginEtpPacketSize) );
-  // end of preconditions.
+    isoaglib_assert(aui32_dataSize >= endSinglePacketSize);
+    isoaglib_assert((ren_msgType != SendStream_c::NmeaFastPacket) || (aui32_dataSize < endNmeaFastPacketSize));
+    isoaglib_assert((ren_msgType != SendStream_c::IsoTPbroadcast) || (aui32_dataSize < beginEtpPacketSize));
+    isoaglib_assert((ren_msgType != SendStream_c::IsoTP) || (aui32_dataSize < endTpPacketSize));
+    isoaglib_assert((ren_msgType != SendStream_c::IsoETP) || (aui32_dataSize >= beginEtpPacketSize));
+    // end of preconditions.
 
-  /// first check if new transfer can be started
-  /// - is the sender correct?
-  if( getIsoMonitorInstance4Comm().item( isoNameSender ) == NULL )
-    return false;
+    /// first check if new transfer can be started
+    /// - is the sender correct?
+    if (getIsoMonitorInstance4Comm().item(isoNameSender) == NULL)
+        return MS_NOT_STARTED_NW_RESOLUTION_ERROR;
 
-  // - is the receiver correct?:
-  switch (ren_msgType) {
-  case SendStream_c::IsoTPbroadcast:
-  case SendStream_c::NmeaFastPacket:
-    // Destination must be "Unspecified"
-    isoaglib_assert( isoNameReceiver.isUnspecified() );
-    if( isoNameReceiver.isSpecified() )
-      return false;
-    break;
-  default:
-    // destination specific - so the receiver must be registered!
-    if( getIsoMonitorInstance4Comm().item( isoNameReceiver ) == NULL )
-      return false;
-  }
-  
-  SendStream_c * const cpc_newSendStream = addSendStream( isoNameSender, isoNameReceiver );
-  if (!cpc_newSendStream)
-  { // couldn't create one, because one still running...
-    return false;
-  }
+    // - is the receiver correct?:
+    switch (ren_msgType) {
+    case SendStream_c::IsoTPbroadcast:
+    case SendStream_c::NmeaFastPacket:
+        // Destination must be "Unspecified"
+        isoaglib_assert(isoNameReceiver.isUnspecified());
+        if (isoNameReceiver.isSpecified())
+            return MS_NOT_STARTED_NW_RESOLUTION_ERROR;
+        break;
+    default:
+        // destination specific - so the receiver must be registered!
+        if (getIsoMonitorInstance4Comm().item(isoNameReceiver) == NULL)
+            return MS_NOT_STARTED_NW_RESOLUTION_ERROR;
+    }
 
-  cpc_newSendStream->init( isoNameSender, isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, apc_mss, ren_msgType, apc_multiSendEventHandler );
+    SendStream_c * const cpc_newSendStream = addSendStream(isoNameSender, isoNameReceiver);
+    if (!cpc_newSendStream)
+    { // couldn't create one, because one still running...
+        return MS_NOT_STARTED_ALREADY_RUNNING;
+    }
 
-  // let this SendStream get sorted in now...
-  calcAndSetNextTriggerTime();
-  return true;
+    cpc_newSendStream->init(isoNameSender, isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, apc_mss, ren_msgType, apc_multiSendEventHandler);
+
+    // let this SendStream get sorted in now...
+    calcAndSetNextTriggerTime();
+    return MS_STARTED;
 }
 
 
