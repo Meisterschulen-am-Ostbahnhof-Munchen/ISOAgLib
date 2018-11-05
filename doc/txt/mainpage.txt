@@ -87,6 +87,7 @@ Multi-Packet:
  - ConnAbort (wrong) CTS with NextPacketNr=0.
  - Ignore premature EoMAck instead of internally aborting the stream (without ConnAbort msg) according to standard.
  - Removed an endless loop, triggered by a forced (E)TP Abort.
+ - More detailed start functions (NW Resolution Problem/Success/Busy)
 
 CAN-Server:
  - Added '--virtual' parameter
@@ -100,6 +101,7 @@ Logalizer:
 Framework:
  - ThreadWrapper: additional mutex protection of ThreadWrapper::m_exit_code
  - Compilefixes for HAVE_STRUCT_TIMESPEC issue
+ - More detailed ISOBUS CAN send message. (NW Resolution Problem/Success)
 
 Tractor:
  - Added new class for Electronic Engine Controller
