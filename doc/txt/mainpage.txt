@@ -89,6 +89,10 @@ Multi-Packet:
  - Removed an endless loop, triggered by a forced (E)TP Abort.
  - More detailed start functions (NW Resolution Problem/Success/Busy)
 
+ProprietaryMessage:
+ - Bugfix: Fixed (E)TP-Reception (OoB-access) when using StreamLinear
+ - ATTENTION: Limiting (E)TP-Reception to 0xFFFE bytes for now, would have crashed before due to uint16_t usage. Needs to be fixed if used!
+
 CAN-Server:
  - Added '--virtual' parameter
  - Added '--init' parameter
