@@ -192,8 +192,12 @@ namespace __IsoAgLib
 
 
   bool
-  ProprietaryMessageHandler_c::CanCustomerA_c::reactOnStreamStart( const ReceiveStreamIdentifier_c &ident, uint32_t )
+  ProprietaryMessageHandler_c::CanCustomerA_c::reactOnStreamStart( const ReceiveStreamIdentifier_c &ident, uint32_t len )
   {
+    // currently only supports up to 0xFFFE byte, because most internal setters are uint16_t only
+    if ( len >= 0xFFFF )
+      return false;
+
     for ( MsgIterator it = m_msgs.begin(); it != m_msgs.end(); ++it )
     {
       if ( ( ident.getDaIsoName().isSpecified() ) && ( ident.getDaIsoName() != (*it)->ident()->isoName() ) )
@@ -238,13 +242,22 @@ namespace __IsoAgLib
 
     if( ! msgs.empty() )
     {
+      uint16_t cnt=0;
+
       uint8_t db = apc_stream.getFirstByte();
-      for ( unsigned cnt = 0; cnt < apc_stream.getByteTotalSize(); cnt++)
+      for (; cnt < 1; ++cnt)
       {
+        for (MsgIterator it = msgs.begin(); it != msgs.end(); ++it) {
+          (*it)->getDataReceive().setDataUi8( cnt, db );
+        }
+      }
+
+      for (; cnt < apc_stream.getByteTotalSize(); ++cnt)
+      {
+        db = apc_stream.getNextNotParsed();
         for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
           (*it)->getDataReceive().setDataUi8( cnt, db );
         }
-        db = apc_stream.getNextNotParsed();
       }
 
       for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
@@ -267,7 +280,7 @@ namespace __IsoAgLib
     if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
       return;
 
-    const unsigned ps = pkg.isoPs();
+    const uint8_t ps = pkg.isoPs();
     if( m_msgs[ ps ] == NULL )
       return;
 
@@ -290,10 +303,14 @@ namespace __IsoAgLib
 
 
   bool
-  ProprietaryMessageHandler_c::CanCustomerB_c::reactOnStreamStart( const ReceiveStreamIdentifier_c &ident, uint32_t )
+  ProprietaryMessageHandler_c::CanCustomerB_c::reactOnStreamStart( const ReceiveStreamIdentifier_c &ident, uint32_t len )
   {
-    const unsigned ps = ident.getPgn() & 0xFF;
-    const unsigned dp = ident.getPgn() >> 16;
+    // currently only supports up to 0xFFFE byte, because most internal setters are uint16_t only
+    if (len >= 0xFFFF)
+      return false;
+
+    const uint8_t ps = uint8_t( ident.getPgn() & 0xFF );
+    const uint8_t dp = uint8_t( ident.getPgn() >> 16 );
 
     if( m_msgs[ ps ] == NULL )
       return false;
@@ -320,8 +337,8 @@ namespace __IsoAgLib
       return false;
 
     const ReceiveStreamIdentifier_c& ident = apc_stream.getIdent();
-    const unsigned ps = ident.getPgn() & 0xFF;
-    const unsigned dp = ident.getPgn() >> 16;
+    const uint8_t ps = uint8_t( ident.getPgn() & 0xFF );
+    const uint8_t dp = uint8_t( ident.getPgn() >> 16 );
 
     if( m_msgs[ ps ] == NULL )
       return false;
@@ -343,13 +360,22 @@ namespace __IsoAgLib
 
     if( ! msgs.empty() )
     {
+      uint16_t cnt = 0;
+
       uint8_t db = apc_stream.getFirstByte();
-      for( unsigned cnt = 0; cnt < apc_stream.getByteTotalSize(); cnt++)
+      for( ; cnt < 1; ++cnt )
       {
         for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
           (*it)->getDataReceive().setDataUi8( cnt, db );
         }
+      }
+
+      for( ; cnt < apc_stream.getByteTotalSize(); ++cnt )
+      {
         db = apc_stream.getNextNotParsed();
+        for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
+          (*it)->getDataReceive().setDataUi8( cnt, db );
+        }
       }
 
       for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
@@ -364,9 +390,9 @@ namespace __IsoAgLib
   }
 
 
-  ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance)
+  ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance( int instance )
   {
-    MACRO_MULTITON_GET_INSTANCE_BODY(ProprietaryMessageHandler_c, PRT_INSTANCE_CNT, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(ProprietaryMessageHandler_c, PRT_INSTANCE_CNT, instance );
   }
 
 } // namespace __IsoAgLib

@@ -1,5 +1,6 @@
 /*
-  iproprietarymessageclient_c.h
+  iproprietarymessageclient_c.h - Currently only supports up to 0xFFFE byte,
+  because most internal setters are uint16_t only!
 
   (C) Copyright 2009 - 2016 by OSB AG and developing partners
 
@@ -26,8 +27,10 @@ namespace IsoAgLib
       iProprietaryMessageA_c() : ProprietaryMessageA_c() {}
       virtual ~iProprietaryMessageA_c() {}
 
+      //! Attention: Only messages of size up tp 0xFFFE are received currently!
       virtual void processA( const iIsoItem_c& sender, bool a_broadcast) = 0;
 
+      //! Attention: Only messages of size up tp 0xFFFE are received currently!
       void init(const iIdentItem_c& a_ident, const iIsoName_c& a_remote, uint8_t a_dp) { __IsoAgLib::ProprietaryMessageA_c::init(a_ident, a_remote, a_dp); }
       void change(const iIdentItem_c& a_ident, const iIsoName_c& a_remote, uint8_t a_dp) { __IsoAgLib::ProprietaryMessageA_c::change(a_ident, a_remote, a_dp); }
       void close() { __IsoAgLib::ProprietaryMessageA_c::close(); }
@@ -62,8 +65,10 @@ namespace IsoAgLib
       iProprietaryMessageB_c() : ProprietaryMessageB_c() {}
       virtual ~iProprietaryMessageB_c() {}
 
+      //! Attention: Only messages of size up tp 0xFFFE are received currently!
       virtual void processB( const iIsoItem_c& sender, uint8_t ps ) { (void)sender; (void)ps; }
 
+      //! Attention: Only messages of size up tp 0xFFFE are received currently!
       void init(const iIdentItem_c& a_ident, const iIsoName_c& a_remote, uint8_t a_dp) { __IsoAgLib::ProprietaryMessageB_c::init(a_ident, a_remote, a_dp); }
       void change(const iIdentItem_c& a_ident, const iIsoName_c& a_remote, uint8_t a_dp) { __IsoAgLib::ProprietaryMessageB_c::change(a_ident, a_remote, a_dp); }
       void close() { __IsoAgLib::ProprietaryMessageB_c::close(); }

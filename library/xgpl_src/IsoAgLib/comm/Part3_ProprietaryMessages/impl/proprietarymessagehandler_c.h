@@ -1,5 +1,6 @@
 /*
-  proprietarymessagehandler_c.h
+  proprietarymessagehandler_c.h - Currently only supports up to 0xFFFE byte,
+  because most internal setters are uint16_t only!
 
   (C) Copyright 2009 - 2016 by OSB AG and developing partners
 
@@ -114,10 +115,10 @@ namespace __IsoAgLib
     CanCustomerA_c m_customerA;
     CanCustomerB_c m_customerB;
 
-    friend ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance);
+    friend ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(int instance);
   };
 
-  ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance);
+  ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(int instance);
 
 }
 #endif
