@@ -59,6 +59,7 @@ VT-Client:
    - Graphics Context adapted to latest spec. (float instead int for zoom, etc.)
    - Do not downscale Line object to size 0 (just as Line Attributes as also min 1 always)
  - Bugfix:
+   - Fix usage of StreamInput_c::get(std::string&) in eventStringValue()
    - Change Child Position now takes the dam/sk offset into account
    - AUX-N Functions:
      - Remove private constructor for iDtcContainer_c, so it can be stored to NV.
