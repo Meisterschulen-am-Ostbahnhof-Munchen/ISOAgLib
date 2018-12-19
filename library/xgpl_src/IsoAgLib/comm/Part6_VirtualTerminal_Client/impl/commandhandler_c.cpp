@@ -26,7 +26,7 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectstring_c.h>
-#include <supplementary_driver/driver/datastreams/volatilememory_c.h>
+#include <supplementary_driver/driver/datastreams/volatilememorywithsize_c.h>
 
 
 namespace __IsoAgLib {
@@ -1191,7 +1191,7 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
   case 0x08:  // Command: "Control Element Function", parameter "VT Input String Value"
     if (pkg.getUint8Data( 3 ) <= 4) //within a 8 byte long cmd can be only a 4 char long string
     {
-      VolatileMemory_c c_vmString (pkg.getUint8DataConstPointer( 4 ));
+      VolatileMemoryWithSize_c c_vmString (pkg.getUint8DataConstPointer( 4 ), pkg.getUint8Data( 3 ));
       pool.eventStringValue(
           uint16_t(pkg.getUint8Data( 1 )) | (uint16_t(pkg.getUint8Data( 2 )) << 8) /* objID */,
           pkg.getUint8Data( 3 ) /* total number of bytes */, c_vmString,
