@@ -24,7 +24,7 @@ public:
       uint64_t aui64_time_ms,
       uint32_t aui64_identifier,
       std::vector< uint8_t > const &acrvec_data,
-      bool ab_canExt = true
+      bool ab_canExt
     ) :
     mui64_time_ms(aui64_time_ms),
     mui64_identifier(aui64_identifier),

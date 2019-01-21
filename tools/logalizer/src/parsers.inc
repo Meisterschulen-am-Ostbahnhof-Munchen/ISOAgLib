@@ -12,13 +12,17 @@ parseLogLineCANMon( std::string const &acr_line ) //RX        4     1   CFE5182x
       acr_line.c_str(),
       "%*s %i %*i %x%*s%x %x %x %x %x %x %x %x",
       &iA, &iB, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
+
+  //quick fix for standard CAN ID recognition (replace this when better solution known => i.e. is a standard identifier padded with 0s? does the ID always end with 'x|'? => then interprete CAN ID also as string as e.g. in candump)
+  const bool cb_extendedFrameFormat = (iB > 0x7FF);
+
   int i_result = (parsed_count >= 2) ? 0 : -1;
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
 
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(parsed_count-2), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -28,16 +32,19 @@ parseLogLineJohnDeere( std::string const &acr_line ) // "r Xtd 2 1CAAF883 8 20 0
 {
   int iA, iB;
   unsigned arru_d[8];
+  char msgType[10]; //Xtd for extended Identifier; hopefully string never longer than 9
   int parsed_count = sscanf(
       acr_line.c_str(),
-      "r Xtd %*i %x %*i %x %x %x %x %x %x %x %x %*i   %*i %i      17920  %*s ",
-      &iB, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7, &iA);
+      "r %s %*i %x %*i %x %x %x %x %x %x %x %x %*i   %*i %i      17920  %*s ",
+      msgType, &iB, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7, &iA);
+
+  const bool cb_extendedFrameFormat = (msgType[0] == 'X' && msgType[1] == 't' && msgType[2] == 'd');
   int i_result = parsed_count >= 2 ? 0 : -1;
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(parsed_count-2), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -45,21 +52,25 @@ parseLogLineJohnDeere( std::string const &acr_line ) // "r Xtd 2 1CAAF883 8 20 0
 std::pair< int, PtrDataFrame_t >
 parseLogLineCanServer( std::string const &acr_line ) // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0"
 {
-  long long iA;
-  int iB;
+  long long iA; // time
+  int iB; // ID
+  unsigned msgType; // 0==std. !=0 ==ext.
   unsigned arru_d[8];
   int parsed_count = sscanf(
       acr_line.c_str(),
-      "%lli %*i %*i %*i %*i %*i %x %x %x %x %x %x %x %x %x",
-      &iA, &iB, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
-  int i_result = parsed_count >= 2 ? 0 : -1;
+      "%lli %*i %*i %i %*i %*i %x %x %x %x %x %x %x %x %x",
+      &iA, &msgType, &iB, /* busNr, msgObj, dlc, prio, */ arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
+
+  const bool cb_extendedFrameFormat = (1 == msgType);
+
+  int i_result = parsed_count >= 3 ? 0 : -1;
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
 
-  size_t t_sizeData = size_t(parsed_count-2);
+  size_t t_sizeData = size_t(parsed_count-3);
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + t_sizeData, back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -77,10 +88,13 @@ parseLogLineCANoe( std::string const &acr_line ) // "  18.9530 1  0CFE4980x     
   int i_result = parsed_count == (3+iDb) ? 0 : -1;
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
+  
+  //quick hack (see e.g. candump for better solution,but need to verify log format first)
+  const bool cb_extendedFrameFormat = (iB > 0x7FF);
   uint64_t const cui64_time = uint64_t(f1*1000);
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iB, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iB, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -149,9 +163,12 @@ parseLogLineRte( std::string const &acr_line ) // "[0] HW             97.41  X  
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
 
+  //quick hack (see e.g. candump for better solution,but need to verify log format first)
+  const bool cb_extendedFrameFormat = (iB > 0x7FF);
+
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -206,8 +223,10 @@ parseLogLineRte2( std::string const &acr_line )
 
         vec_data[byte] = uint8_t (strtol (cursor, &cursor, 16));
     }
+    //quick hack (see e.g. candump for better solution,but need to verify log format first)
+    const bool cb_extendedFrameFormat = (cui32_identifier > 0x7FF);
 
-    return std::make_pair( 0, new DataFrame_c( cui64_time, cui32_identifier, vec_data ) );
+    return std::make_pair( 0, new DataFrame_c( cui64_time, cui32_identifier, vec_data , cb_extendedFrameFormat) );
 }
 
 
@@ -224,9 +243,12 @@ parseLogLineTrc( std::string const &acr_line ) // "    13)       116.6  Rx     1
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
 
+  //quick hack (see e.g. candump for better solution,but need to verify log format first)
+  const bool cb_extendedFrameFormat = (iB > 0x7FF);
+
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -244,9 +266,12 @@ parseLogLineTrc2( std::string const &acr_line ) // "    13)       116.6 1 Rx    
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
 
+  //quick hack (see e.g. candump for better solution,but need to verify log format first)
+  const bool cb_extendedFrameFormat = (iB > 0x7FF);
+
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -264,9 +289,12 @@ parseLogLineTrc3( std::string const &acr_line ) // "    1       116.6  DT  18EF8
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
 
+  //quick hack (see e.g. candump for better solution,but need to verify log format first)
+  const bool cb_extendedFrameFormat = (iB > 0x7FF);
+
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -277,6 +305,8 @@ parseLogLineJrf( std::string const &acr_line ) // "41.19,0CFFFF2A,77,04,00,00,7D
   float fA;
   int iB;
   unsigned arru_d[8];
+  char canId[9];    //8 chars + null termination
+  bool b_extendedFrameFormat = true;
   int parsed_count = sscanf(
       acr_line.c_str(),
       "%f,%x,%x,%x,%x,%x,%x,%x,%x,%x",
@@ -285,10 +315,26 @@ parseLogLineJrf( std::string const &acr_line ) // "41.19,0CFFFF2A,77,04,00,00,7D
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
 
+  const int parsed_count2 = sscanf(
+      acr_line.c_str(),
+      "%*f,%s,%*x",
+      &canId);
+
+  if (parsed_count2 == 1)
+  {
+      if (iB <= 0x7ff && (canId[1] == '\0' || canId[2] == '\0' || canId[3] == '\0')) //to ensure that we don't have an ext ID padded with leading zeros
+      {
+          //this must be a standard ID
+          b_extendedFrameFormat = false;
+      }
+      //else: b_extendedFrameFormat already has value true
+  }
+  //else: sscanf returned 0; 
+
   uint64_t const cui64_time = uint64_t(fA*1000);
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(parsed_count-2), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iB, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iB, vec_data, b_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -315,6 +361,8 @@ parseLogLineSocketCAN( std::string const &acr_line ) // (1321953173.064559) can1
   unsigned int d[8];
   unsigned int t_s, t_us;
   unsigned int id;
+  char canId[9]; // 8 chars for ext ID + null termination
+  bool b_extendedFrameFormat = true;
 
   const int cnt = sscanf(
                     acr_line.c_str(),
@@ -325,14 +373,77 @@ parseLogLineSocketCAN( std::string const &acr_line ) // (1321953173.064559) can1
   if (r < 0)
     return std::make_pair(r, PtrDataFrame_t(0));
 
+  const int cnt2 = sscanf(
+      acr_line.c_str(),
+      "(%*d.%*d) can%*d %[^#]s",
+      &canId);
+
+  if (cnt2 == 1)
+  {
+      if (id <= 0x7ff && (canId[1] == '\0' || canId[2] == '\0' || canId[3] == '\0')) //to ensure that we don't have an ext ID padded with leading zeros
+      {
+          //this must be a standard ID
+          b_extendedFrameFormat = false;
+      }
+      //else: b_extendedFrameFormat already has value true
+  }
+  //else: sscanf returned 0; 
+
   const uint64_t t_ms = uint64_t((t_s*1000)+(t_us/1000));
   std::vector<uint8_t> vec_data;
   copy(d, d + size_t(cnt-3), back_inserter(vec_data));
 
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(t_ms, id, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(t_ms, id, vec_data, b_extendedFrameFormat);
   return std::make_pair(r, t_ptrFrame);
 }
 
+std::pair< int, PtrDataFrame_t >
+parseLogLineSocketCAN2(std::string const &acr_line) //  (001.004013)  can1  18FEF326   [8]  34 06 30 95 A0 EF 95 3E
+
+{
+#if DEBUG
+    std::cout << acr_line << std::endl;
+#endif
+
+    unsigned int d[8];
+    unsigned int t_s, t_us;
+    unsigned int id, dlc;
+    char canId[9]; // 8 chars for ext ID + null termination
+    bool b_extendedFrameFormat = true;
+
+    const int cnt = sscanf(
+        acr_line.c_str(),
+        " (%d.%d) can%*d %x [%u] %x %x %x %x %x %x %x %x",
+        &t_s, &t_us, &id, &dlc, d, d + 1, d + 2, d + 3, d + 4, d + 5, d + 6, d + 7);
+
+    int i_result = (cnt == (4 + dlc) ? 0 : -1);
+
+    if (i_result < 0)
+        return std::make_pair(i_result, PtrDataFrame_t(0));
+
+    const int cnt2 = sscanf(
+        acr_line.c_str(),
+        "(%*d.%*d) can%*d %s",
+        &canId);
+
+    if (cnt2 == 1)
+    {
+        if (id <= 0x7ff && (canId[1] == '\0' || canId[2] == '\0' || canId[3] == '\0')) //to ensure that we don't have an ext ID padded with leading zeros
+        {
+            //this must be a standard ID
+            b_extendedFrameFormat = false;
+        }
+        //else: b_extendedFrameFormat already has value true
+    }
+    //else: sscanf returned 0; leave b_extendedFrameFormat as true
+
+    const uint64_t t_ms = uint64_t((t_s * 1000) + (t_us / 1000));
+    std::vector<uint8_t> vec_data;
+    copy(d, d + size_t(dlc), back_inserter(vec_data));
+
+    PtrDataFrame_t t_ptrFrame = new DataFrame_c(t_ms, id, vec_data, b_extendedFrameFormat);
+    return std::make_pair(i_result, t_ptrFrame);
+}
 
 std::pair< int, PtrDataFrame_t >
 parseLogLineWTK( std::string const &acr_line ) // "0000.376 can r 18E6FFF1  8  21 00 FF FF 00 00 00 FF  0"
@@ -351,10 +462,14 @@ parseLogLineWTK( std::string const &acr_line ) // "0000.376 can r 18E6FFF1  8  2
   int i_result = parsed_count == (4+inumDb) ? 0 : -1;
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
+
+  //quick hack (see e.g. candump for better solution,but need to verify log format first)
+  const bool cb_extendedFrameFormat = (iID > 0x7FF);
+
   uint64_t const cui64_time = static_cast<uint64_t>(f1*1000);
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -374,10 +489,14 @@ parseLogLineKvaserMemorator( std::string const &acr_line ) // "0.33198,1,cfffff0
   int i_result = parsed_count == (3+inumDb) ? 0 : -1;
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
+
+  //quick hack (see e.g. candump for better solution,but need to verify log format first)
+  const bool cb_extendedFrameFormat = (iID > 0x7FF);
+
   uint64_t const cui64_time = static_cast<uint64_t>(f1*1000);
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -398,10 +517,13 @@ parseLogLineCsv( std::string const &acr_line ) // "0xCFE46F0*,54.6857,FF,FF,FF,F
   if( inumDb < 0 )
     return std::make_pair( -1, PtrDataFrame_t(0) );
 
+  //quick hack (see e.g. candump for better solution,but need to verify log format first)
+  const bool cb_extendedFrameFormat = (iID > 0x7FF);
+
   uint64_t const cui64_time = static_cast<uint64_t>(f1*1000);
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data, cb_extendedFrameFormat);
   return std::make_pair( 0, t_ptrFrame );
 }
 
@@ -413,6 +535,8 @@ parseLogLineKomodo( std::string const &acr_line ) // "0:00.003.537,0x0cff05b4,0,
   float f1;
   int iID, inumDb;
   unsigned arru_d[8];
+  char canId[11]; // "0x" + 8 chars for extended ID + null termination
+  bool b_extendedFrameFormat;
   int parsed_count = sscanf(
       acr_line.c_str(),
       "%d:%d.%f,%x,%*d,%d,%x %x %x %x %x %x %x %x",
@@ -425,10 +549,27 @@ parseLogLineKomodo( std::string const &acr_line ) // "0:00.003.537,0x0cff05b4,0,
   int i_result = parsed_count == (5+inumDb) ? 0 : -1;
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
+
+  const int parsed_count2 = sscanf(
+      acr_line.c_str(),
+      "%*d:%*d.%*f,%s,%*d",
+      &canId);
+
+  if (parsed_count2 == 1)
+  {
+      if (iID <= 0x7ff && (canId[3] == '\0' || canId[4] == '\0' || canId[5] == '\0')) //to ensure that we don't have an ext ID padded with leading zeros; first 2 chars are "0x"
+      {
+          //this must be a standard ID
+          b_extendedFrameFormat = false;
+      }
+      //else: b_extendedFrameFormat already has value true
+  }
+  //else: sscanf returned 0; 
+
   uint64_t const cui64_time = static_cast<uint64_t>(i1*60000 + i2*1000 + f1);
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data, b_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
@@ -452,10 +593,14 @@ parseLogLineVehicleSpy( std::string const &acr_line ) // "2,28.2609260000172,0.0
     return std::make_pair( -1, PtrDataFrame_t(0) );
   if( strstr(charArray, "CAN") == NULL )
     return std::make_pair( -1, PtrDataFrame_t(0) );
+
+  //quick hack (see e.g. candump for better solution,but need to verify log format first)
+  const bool cb_extendedFrameFormat = (iID > 0x7FF);
+
   uint64_t const cui64_time = static_cast<uint64_t>(d1*1000);
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data, cb_extendedFrameFormat);
   return std::make_pair( 0, t_ptrFrame );
 }
 

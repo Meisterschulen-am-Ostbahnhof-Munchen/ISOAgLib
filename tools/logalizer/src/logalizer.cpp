@@ -250,13 +250,14 @@ exit_with_usage(const char* progname)
   std::cerr << "         8 -> JRF (.jrf)"<<std::endl;
   std::cerr << "         9 -> PCANExplorer (.trc)"<<std::endl;
   std::cerr << "        10 -> SocketCAN candump -l"<<std::endl;
-  std::cerr << "        11 -> WTK"<<std::endl;
-  std::cerr << "        12 -> Kvaser Memorator CSV"<<std::endl;
-  std::cerr << "        13 -> ?csv" << std::endl;
-  std::cerr << "        14 -> Komodo" << std::endl;
-  std::cerr << "        15 -> Vehicle Spy 3 Bus Traffic File" << std::endl;
-  std::cerr << "        16 -> PCAN-View v4 (.trc)" << std::endl;
-  std::cerr << "        17 -> Viewtool Ginkgo (csv)" << std::endl;
+  std::cerr << "        11 -> SocketCAN2 (different candump format)" << std::endl;
+  std::cerr << "        12 -> WTK"<<std::endl;
+  std::cerr << "        13 -> Kvaser Memorator CSV"<<std::endl;
+  std::cerr << "        14 -> ?csv" << std::endl;
+  std::cerr << "        15 -> Komodo" << std::endl;
+  std::cerr << "        16 -> Vehicle Spy 3 Bus Traffic File" << std::endl;
+  std::cerr << "        17 -> PCAN-View v4 (.trc)" << std::endl;
+  std::cerr << "        18 -> Viewtool Ginkgo (csv)" << std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "-tc:     Override TC SA manually. SA must be given as decimal integer." << std::endl;
@@ -285,6 +286,7 @@ exit_with_usage(const char* progname)
   std::cerr << "JRF:               '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
   std::cerr << "PCANExplorer:      '    13)       116.6 1  Rx     18EF808B 80 8  12 15 15 15 15 15 15 15'"<<std::endl;
   std::cerr << "SocketCAN:         '(1321953173.037244) can1 10B14D4C#FF7F0000FFFFFFFF'"<<std::endl;
+  std::cerr << "SocketCAN2:        '(001.004013)  can1  18FEF326   [8]  34 06 30 95 A0 EF 95 3E'" << std::endl;
   std::cerr << "WTK:               '0000.376 can r 18E6FFF1  8  21 00 FF FF 00 00 00 FF  0'"<<std::endl;
   std::cerr << "KvaserM.CSV:       '0.33198,1,cfffff0,4,3,55,7d,7d,,,,,,1,2014-05-05 15:01:08'"<<std::endl;
   std::cerr << "?csv:              '0xCFE46F0*,54.6857,FF,FF,FF,FF,00,FF,FF,FF'" << std::endl;
@@ -974,6 +976,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineJrf,
     parseLogLineTrc2,
     parseLogLineSocketCAN,
+    parseLogLineSocketCAN2,
     parseLogLineWTK,
     parseLogLineKvaserMemorator,
     parseLogLineCsv,
@@ -1004,8 +1007,14 @@ parseLogLine( std::ostream& out, std::string const &acr_line )
     // Timestamp
     out << std::setfill (' ') << std::dec << std::setw (10) << (t_ptrFrame->time()/1000) << "." << std::setfill('0')<<std::setw(3)<<(t_ptrFrame->time()%1000)<< "   ";
 
-    // CAN-ID / number of bytes
-    out << std::setfill ('0') << std::hex << std::setw (8) << t_ptrFrame->identifier() << "  " << uint16_t(t_ptrFrame->dataSize()) << " ";
+    if (t_ptrFrame->isExtendedFrameFormat()) {
+        // CAN-ID / number of bytes
+        out << std::setfill('0') << std::hex << std::setw(8) << t_ptrFrame->identifier() << "  " << uint16_t(t_ptrFrame->dataSize()) << " ";
+    }
+    else
+    {
+        out << std::setfill(' ') << std::hex << std::setw(8) << t_ptrFrame->identifier() << "  " << uint16_t(t_ptrFrame->dataSize()) << " " << std::setfill('0');
+    }
 
     // Databytes (HEX)
     size_t i;
@@ -1038,6 +1047,15 @@ parseLogLine( std::ostream& out, std::string const &acr_line )
 
       gs_main.mc_tracker.checkTimeouts( out, t_ptrFrame->time() );
       out << std::endl;
+    }
+    else  //standard Identifier
+    {
+        // SA
+        out << "  " << std::setw(2) << uint16_t(t_ptrFrame->sourceAddress()) << "->??";
+        //DA not available for standard identifier
+        //printout the highest 3 Bits of Identifier
+        out << " 3 MSB of Identifier: " << ((t_ptrFrame->identifier() >> 1*BITS_PER_BYTE ) & 0xF);
+        out << std::endl;
     }
   }
   else
