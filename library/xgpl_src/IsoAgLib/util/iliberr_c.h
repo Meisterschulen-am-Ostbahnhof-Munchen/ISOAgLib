@@ -57,9 +57,9 @@ public:
     ProcData,
     ProcDataSetpoint,
     TcOutOfMemory,
+    MultiReceiveTpAbort,
     TypeNonFatalSize
   };
-
 
   enum State_en {
     Inactive,

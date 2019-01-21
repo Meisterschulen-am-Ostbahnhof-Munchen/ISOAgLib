@@ -1158,6 +1158,7 @@ MultiReceive_c::tellClient (Stream_c &arc_stream)
     CanCustomer_c* pc_clientFound = getClient (arc_stream.getIdent());
     if (pc_clientFound) {
       pc_clientFound->reactOnAbort (arc_stream);
+      IsoAgLib::getILibErrInstance().registerNonFatal(IsoAgLib::iLibErr_c::MultiReceiveTpAbort, getMultitonInst());
     }
   } // else: // NEVER promote aborts from BROADCASTS, because there's no partial parsing possible, so no need to inform the user...
 }

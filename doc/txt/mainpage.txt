@@ -89,6 +89,7 @@ Multi-Packet:
  - Ignore premature EoMAck instead of internally aborting the stream (without ConnAbort msg) according to standard.
  - Removed an endless loop, triggered by a forced (E)TP Abort.
  - More detailed start functions (NW Resolution Problem/Success/Busy)
+ - Report Aborts to iLibErr.
 
 ProprietaryMessage:
  - Bugfix: Fixed (E)TP-Reception (OoB-access) when using StreamLinear
@@ -102,6 +103,7 @@ CAN-Server:
 
 Logalizer:
  - Added TIM parsing, interpretation of ACKNOWLEDGE_PGN and NAME summary at the end
+ - Added new log format
 
 Framework:
  - ThreadWrapper: additional mutex protection of ThreadWrapper::m_exit_code
@@ -113,6 +115,7 @@ Tractor:
 
 HAL:
  - PC / System: Made System_c::getTime() thread-safe.
+ - SocketCAN: Added diagnostics to iLibErr.
  
    
 \subsection Change_ZI 2.8.2 to 2.9.0
