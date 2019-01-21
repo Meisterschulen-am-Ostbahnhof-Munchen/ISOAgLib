@@ -43,6 +43,7 @@
 #define DEF_CAN_NETDEV_PREFIX "can"
 #endif
 
+static HAL::canState_t s_canStateLastErrorFrame = HAL::e_canNoError;
 
 namespace __HAL {
 
@@ -155,6 +156,15 @@ namespace __HAL {
       fprintf( stderr, "wrong dlc: %d!\n", frame.can_dlc );
       /*  this is something weird - check your can driver */
       return;
+    }
+
+    if(0 != (frame.can_id & CAN_ERR_BUSOFF))
+    {
+        s_canStateLastErrorFrame = HAL::e_canBusOff;
+    }
+    else
+    {
+        s_canStateLastErrorFrame = HAL::e_canBusWarn;
     }
 
     ( void ) printIfErrorBitmask( frame.can_id, CAN_ERR_TX_TIMEOUT,            "TX timeout (by netdevice driver); " );
@@ -406,6 +416,8 @@ namespace HAL {
         return;
       }
 
+      s_canStateLastErrorFrame = HAL::e_canNoError;
+
       const bool ext = ( ( frame.can_id & CAN_EFF_FLAG ) == CAN_EFF_FLAG );
       __IsoAgLib::CanPkg_c pkg(
           frame.can_id & ( ext ? CAN_EFF_MASK : CAN_SFF_MASK ),
@@ -446,10 +458,9 @@ namespace HAL {
 
 
   bool canState( unsigned, canState_t& state ) {
-    state = e_canNoError;
+    state = s_canStateLastErrorFrame;
     return true;
   }
-
 
   int canTxQueueFree( unsigned ) {
     return -1;

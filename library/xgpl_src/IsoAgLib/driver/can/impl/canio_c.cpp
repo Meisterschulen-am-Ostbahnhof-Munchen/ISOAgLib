@@ -198,6 +198,22 @@ namespace __IsoAgLib {
 
       HAL::canRxPoll( mui8_busNumber );
 
+      HAL::canState_t state;
+      if( HAL::canState(mui8_busNumber, state) )
+      {
+        switch( state )
+        {
+        case HAL::e_canBusOff:
+          IsoAgLib::getILibErrInstance().registerNonFatal(IsoAgLib::iLibErr_c::HalCanBusOff, getMultitonInst());
+          break;
+        case HAL::e_canBusWarn:
+          IsoAgLib::getILibErrInstance().registerNonFatal(IsoAgLib::iLibErr_c::HalCanBusWarn, getMultitonInst());
+          break;
+        case HAL::e_canNoError:
+          break;
+        }
+      }
+
       while( ! HAL::CanFifos_c::get(mui8_busNumber).empty() ) {
 
         if(br_break)
