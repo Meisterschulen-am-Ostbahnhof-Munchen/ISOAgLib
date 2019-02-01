@@ -2020,15 +2020,24 @@ void printFullNameAndAddressList(std::ostream& out) {
 
     out << "      ";
     //print source address
-    for (uint8_t i = 0; i < it->second.size(); i++)
+    for (uint8_t i = 0; i < it->second.size(); ++i)
     {
+      if (i > 2)
+      {
+          out << "."; //to show that not all elements are printed
+          break;    // don't print endless lines
+      }
       out  << std::right << std::setfill('0') << std::setw(2) << std::hex << it->second[i];
       if (i != it->second.size() - 1)
       {
         out << ",";
       }
-    };
-    out << std::setfill(' ') << std::setw(12 - it->second.size() * 3) << " ";
+    }
+    if (it->second.size() * 3 <= 12)
+    {
+        out << std::setfill(' ') << std::setw(12 - it->second.size() * 3);
+    }
+    out << std::setfill(' ') << " ";
 
     isobusName = decodeName(dataOctet);
 
