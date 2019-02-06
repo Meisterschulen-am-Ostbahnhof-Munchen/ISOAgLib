@@ -3,7 +3,7 @@ std::string
 partiallyInterpreteTimServerStatus(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
-    out << "Tim Server Status | HB[";
+    out << "Tim Server Status | HB["; //Heartbeat
     out << std::setfill(' ') << std::right << std::setw(3) << std::dec << uint16_t(a_ptrFrame->dataOctet(1));
     out << "] [";
     switch (a_ptrFrame->dataOctet(2) >> 6)
@@ -15,7 +15,7 @@ partiallyInterpreteTimServerStatus(PtrDataFrame_t a_ptrFrame)
     default: out << "  "; break;
     }
 
-    out << "] OpAck[";
+    out << "] OpAck[";  //Operator Acknowledgement
     switch ((a_ptrFrame->dataOctet(2) >> 4) & 0x3)
     {
     case 0: out << "NACK"; break; //Not acknowledged
@@ -25,7 +25,7 @@ partiallyInterpreteTimServerStatus(PtrDataFrame_t a_ptrFrame)
     default: out << "    "; break;
     }
 
-    out << "] SysSt[";
+    out << "] SysSt[";  //System state
     switch (a_ptrFrame->dataOctet(2) & 0xF)
     {
     case 0x0: out << "NAU"; break; //No automation active
@@ -35,7 +35,7 @@ partiallyInterpreteTimServerStatus(PtrDataFrame_t a_ptrFrame)
     default:  out << "RES"; break; //Reserved
     }
 
-    out << "] SrvSt[";
+    out << "] SrvSt[";  //Server state
     switch ((a_ptrFrame->dataOctet(3) >> 4))
     {
     case 0x0: out << "AutNA"; break; //Automation unavailable
@@ -48,7 +48,7 @@ partiallyInterpreteTimServerStatus(PtrDataFrame_t a_ptrFrame)
     default:  out << "RES  "; break; //Reserved
     }
 
-    out << "] SysStdStl[";
+    out << "] SysStdStl[";  //System stand still
     switch ((a_ptrFrame->dataOctet(3) >> 2) & 0x3)
     {
     case 0: out << "NStl"; break; //Not standstill
@@ -58,7 +58,7 @@ partiallyInterpreteTimServerStatus(PtrDataFrame_t a_ptrFrame)
     default: out << "    ";break;
     }
 
-    out << "] SysStatOp[";
+    out << "] SysStatOp[";  //System stationary operation
     switch (a_ptrFrame->dataOctet(3) & 0x3)
     {
     case 0: out << "NStaOp"; break; //No stationary Operation
@@ -76,7 +76,7 @@ std::string
 partiallyInterpreteTimClientStatus(PtrDataFrame_t a_ptrFrame)
 {
     std::ostringstream out;
-    out << "Tim Client Status | HB[";
+    out << "Tim Client Status | HB["; //Heartbeat
     out << std::setfill(' ') << std::right << std::setw(3) << std::dec << uint16_t(a_ptrFrame->dataOctet(1));
     out << "] ClSt[";
     switch ((a_ptrFrame->dataOctet(2) >> 4))
@@ -634,7 +634,7 @@ partiallyInterpreteTimServerAuthenticationStatus(PtrDataFrame_t a_ptrFrame)
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Manufacturer Certificate valid: " <<       (a_ptrFrame->dataOctet(3) & 0x10 ? "Yes\n" : "No\n");
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Manufacturer Series Certificate valid: " << (a_ptrFrame->dataOctet(3) & 0x8 ? "Yes\n" : "No\n");
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Device Certificate valid: " <<              (a_ptrFrame->dataOctet(3) & 0x4 ? "Yes\n" : "No\n");
-    out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Challenge signed: " <<                      (a_ptrFrame->dataOctet(3) & 0x2 ? "Yes" :   "No");
+    out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Challenge signed: " <<                      (a_ptrFrame->dataOctet(3) & 0x2 ? "Yes"   : "No");
     return (out.str());
 }
 
@@ -669,7 +669,7 @@ partiallyInterpreteTimClientAuthenticationStatus(PtrDataFrame_t a_ptrFrame)
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Manufacturer Certificate valid: " <<        (a_ptrFrame->dataOctet(3) & 0x10 ? "Yes\n" : "No\n");
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Manufacturer Series Certificate valid: " <<  (a_ptrFrame->dataOctet(3) & 0x8 ? "Yes\n" : "No\n");
     out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Device Certificate valid: " <<               (a_ptrFrame->dataOctet(3) & 0x4 ? "Yes\n" : "No\n");
-    out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Challenge signed: " <<                       (a_ptrFrame->dataOctet(3) & 0x2 ? "Yes" :   "No");
+    out << std::setfill(' ') << std::left << std::setw(120) << " " << std::setw(40) << "Challenge signed: " <<                       (a_ptrFrame->dataOctet(3) & 0x2 ? "Yes"   : "No");
     return (out.str());
 }
 
