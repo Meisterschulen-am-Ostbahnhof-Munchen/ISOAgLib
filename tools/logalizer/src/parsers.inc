@@ -298,6 +298,45 @@ parseLogLineTrc3( std::string const &acr_line ) // "    1       116.6  DT  18EF8
   return std::make_pair( i_result, t_ptrFrame );
 }
 
+std::pair< int, PtrDataFrame_t >
+parseLogLineTrc4(std::string const &acr_line) // "    13)       116.6 1 Rx     18EF808B - 8  12 15 15 15 15 15 15 15"
+{
+    unsigned arru_d[8];
+    int iA, iB, iDb;
+    char canId[9]; // 8 chars for ext ID + null termination
+    bool b_extendedFrameFormat = true;
+
+    int parsed_count = sscanf(
+        acr_line.c_str(),
+        " %*s %u.%*u %*u %*s %x %*s %u %x %x %x %x %x %x %x %x",
+        &iA, &iB, &iDb, arru_d, arru_d + 1, arru_d + 2, arru_d + 3, arru_d + 4, arru_d + 5, arru_d + 6, arru_d + 7);
+    int i_result = parsed_count == (3 + iDb) ? 0 : -1;
+    if (i_result < 0)
+        return std::make_pair(i_result, PtrDataFrame_t(0));
+
+    int parsed_count2 = sscanf(
+        acr_line.c_str(),
+        " %*s %*u.%*u %*u %*s %s",
+        canId
+    );
+
+    if (parsed_count2 == 1)
+    {
+        if (iDb <= 0x7ff && (canId[1] == '\0' || canId[2] == '\0' || canId[3] == '\0')) //to ensure that we don't have an ext ID padded with leading zeros
+        {
+            //this must be a standard ID
+            b_extendedFrameFormat = false;
+        }
+        //else: b_extendedFrameFormat already has value true
+    }
+    //else: sscanf returned 0; 
+
+    std::vector< uint8_t > vec_data;
+    copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
+    PtrDataFrame_t t_ptrFrame = new DataFrame_c(iA, iB, vec_data, b_extendedFrameFormat);
+    return std::make_pair(i_result, t_ptrFrame);
+}
+
 
 std::pair< int, PtrDataFrame_t >
 parseLogLineJrf( std::string const &acr_line ) // "41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF"
@@ -318,7 +357,7 @@ parseLogLineJrf( std::string const &acr_line ) // "41.19,0CFFFF2A,77,04,00,00,7D
   const int parsed_count2 = sscanf(
       acr_line.c_str(),
       "%*f,%s,%*x",
-      &canId);
+      canId);
 
   if (parsed_count2 == 1)
   {
@@ -376,7 +415,7 @@ parseLogLineSocketCAN( std::string const &acr_line ) // (1321953173.064559) can1
   const int cnt2 = sscanf(
       acr_line.c_str(),
       "(%*d.%*d) can%*d %[^#]s",
-      &canId);
+      canId);
 
   if (cnt2 == 1)
   {
@@ -424,7 +463,7 @@ parseLogLineSocketCAN2(std::string const &acr_line) //  (001.004013)  can1  18FE
     const int cnt2 = sscanf(
         acr_line.c_str(),
         "(%*d.%*d) can%*d %s",
-        &canId);
+        canId);
 
     if (cnt2 == 1)
     {
@@ -553,7 +592,7 @@ parseLogLineKomodo( std::string const &acr_line ) // "0:00.003.537,0x0cff05b4,0,
   const int parsed_count2 = sscanf(
       acr_line.c_str(),
       "%*d:%*d.%*f,%s,%*d",
-      &canId);
+      canId);
 
   if (parsed_count2 == 1)
   {

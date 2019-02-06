@@ -257,7 +257,8 @@ exit_with_usage(const char* progname)
   std::cerr << "        15 -> Komodo" << std::endl;
   std::cerr << "        16 -> Vehicle Spy 3 Bus Traffic File" << std::endl;
   std::cerr << "        17 -> PCAN-View v4 (.trc)" << std::endl;
-  std::cerr << "        18 -> Viewtool Ginkgo (csv)" << std::endl;
+  std::cerr << "        18 -> PCAN-View v6 (.trc)" << std::endl;
+  std::cerr << "        19 -> Viewtool Ginkgo (csv)" << std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "-tc:     Override TC SA manually. SA must be given as decimal integer." << std::endl;
@@ -293,6 +294,7 @@ exit_with_usage(const char* progname)
   std::cerr << "Komodo:            '0:00.003.537,0x0cff05b4,0,8,01 00 01 00 01 00 C0 C0'" << std::endl;
   std::cerr << "Vehicle Spy 3      '2,28.2609260000172,0.01300800000899471,67371012,F,F,HS CAN $CCBFFF7,HS CAN,,CCBFFF7,F,T,FE,FF,FF,FF,00,00,00,00,,,'" << std::endl;
   std::cerr << "PCAN-View v4:      '    13)       116.6  DT  18EF808B RX 8  12 15 15 15 15 15 15 15'" << std::endl;
+  std::cerr << "PCAN-View v6:      '    13)       116.6 1 Rx  18EF808B - 8  12 15 15 15 15 15 15 15'" << std::endl;
   std::cerr << "Viewtool Ginkgo:   'Device0,CH1,Extended Frame,Data Frame,0x18EFFFAD,Receive,8,40 FF FF FF FF FF FF FF ,Success,00:05:56.126.000'" << std::endl;
 
   exit(0);
@@ -983,6 +985,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineKomodo,
     parseLogLineVehicleSpy,
     parseLogLineTrc3,
+    parseLogLineTrc4,
     parseLogLineViewtoolGinkgoCsv,
     defaultParseLogLine
   };
