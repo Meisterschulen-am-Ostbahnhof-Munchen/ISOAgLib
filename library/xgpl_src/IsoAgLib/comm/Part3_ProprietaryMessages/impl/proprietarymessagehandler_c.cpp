@@ -244,17 +244,24 @@ namespace __IsoAgLib
     {
       uint16_t cnt=0;
 
-      uint8_t db = apc_stream.getFirstByte();
-      for (; cnt < 1; ++cnt)
-      {
-        for (MsgIterator it = msgs.begin(); it != msgs.end(); ++it) {
-          (*it)->getDataReceive().setDataUi8( cnt, db );
-        }
+      if (apc_stream.getIdent().getDa() == 0xFF)
+      { // was BAM, where the first byte was not set already!
+        // let all be read by loop below, no special handling for first byte
+      }
+      else
+      { // directed, first byte was filled out, get it in a special way!
+          uint8_t db = apc_stream.getFirstByte();
+          for (; cnt < 1; ++cnt)
+          {
+              for (MsgIterator it = msgs.begin(); it != msgs.end(); ++it) {
+                  (*it)->getDataReceive().setDataUi8(cnt, db);
+              }
+          }
       }
 
       for (; cnt < apc_stream.getByteTotalSize(); ++cnt)
       {
-        db = apc_stream.getNextNotParsed();
+        uint8_t db = apc_stream.getNextNotParsed();
         for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
           (*it)->getDataReceive().setDataUi8( cnt, db );
         }
@@ -271,7 +278,7 @@ namespace __IsoAgLib
     // don't keep the stream - we processed it right now!
     return false;
   }
-
+  
 
   void 
   ProprietaryMessageHandler_c::CanCustomerB_c::processMsg( const CanPkg_c& data )
@@ -362,17 +369,24 @@ namespace __IsoAgLib
     {
       uint16_t cnt = 0;
 
-      uint8_t db = apc_stream.getFirstByte();
-      for( ; cnt < 1; ++cnt )
-      {
-        for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
-          (*it)->getDataReceive().setDataUi8( cnt, db );
-        }
+      if (apc_stream.getIdent().getDa() == 0xFF)
+      { // was BAM, where the first byte was not set already!
+        // let all be read by loop below, no special handling for first byte
+      }
+      else
+      { // directed, first byte was filled out, get it in a special way!
+          uint8_t db = apc_stream.getFirstByte();
+          for (; cnt < 1; ++cnt)
+          {
+              for (MsgIterator it = msgs.begin(); it != msgs.end(); ++it) {
+                  (*it)->getDataReceive().setDataUi8(cnt, db);
+              }
+          }
       }
 
       for( ; cnt < apc_stream.getByteTotalSize(); ++cnt )
       {
-        db = apc_stream.getNextNotParsed();
+        uint8_t db = apc_stream.getNextNotParsed();
         for( MsgIterator it = msgs.begin(); it != msgs.end(); ++it ) {
           (*it)->getDataReceive().setDataUi8( cnt, db );
         }
