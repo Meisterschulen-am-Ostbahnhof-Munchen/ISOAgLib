@@ -92,7 +92,9 @@ Multi-Packet:
  - Report Aborts to iLibErr.
 
 ProprietaryMessage:
- - Bugfix: Fixed (E)TP-Reception (OoB-access) when using StreamLinear
+ - Bugfix:
+   - Fixed (E)TP-Reception (OoB-access) when using StreamLinear
+   - Fixed wrong BAM data bytes processing
  - ATTENTION: Limiting (E)TP-Reception to 0xFFFE bytes for now, would have crashed before due to uint16_t usage. Needs to be fixed if used!
 
 CAN-Server:
