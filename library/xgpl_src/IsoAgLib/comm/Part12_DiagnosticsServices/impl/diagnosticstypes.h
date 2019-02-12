@@ -52,6 +52,8 @@ enum FunctionalitiesCharacteristics_t
   BasicTractorECUImplement,
   StopAllImplementOperations = 21,
   StopAllImplementOperationsImplement,
+  DataLogger = 24,
+  DataLoggerWorkingSet,
   Functionality_ReservedForISO = 0xFF
 };
 
@@ -158,6 +160,20 @@ struct TaskControllerGeoOptions_s
   enum { number_of_bits = TaskControllerGeo_BITSIZE };
 };
 typedef BitFieldWrapperRight_c<TaskControllerGeoOptions_s> TaskControllerGeoOptionsBitMask_t;
+
+// DL
+enum DataLoggerOptions_t
+{
+    DataLogger_SupportsFMISInterface = 0,
+    DataLogger_BITSIZE = 8
+};
+
+struct DataLoggerOptions_s
+{
+    typedef DataLoggerOptions_t enum_type;
+    enum { number_of_bits = DataLogger_BITSIZE };
+};
+typedef BitFieldWrapperRight_c<DataLoggerOptions_s> DataLoggerOptionsBitMask_t;
 
 // Basic TECU
 enum BasicTractorECUOptions_t

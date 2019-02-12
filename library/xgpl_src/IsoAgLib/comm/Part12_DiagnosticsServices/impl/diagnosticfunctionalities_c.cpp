@@ -276,6 +276,10 @@ DiagnosticFunctionalities_c::getGeneration(FunctionalitiesCharacteristics_t func
     case StopAllImplementOperationsImplement:
       if (version == 1) return 1;
       break;
+    case DataLogger:
+    case DataLoggerWorkingSet:
+      if (version == 4) return 1;
+      break;
 #if 0
     case AdvanceTractorECU:
     case AdvanceTractorECUImplement:
@@ -377,6 +381,12 @@ bool DiagnosticFunctionalities_c::addFunctionalitiesTaskControllerSectionControl
   functionality_description.options_bytes[1] = numberOfSections;  
 
   return addFunctionality(functionality, functionality_description);
+}
+
+bool DiagnosticFunctionalities_c::addFunctionalitiesDataLogger(bool implement, uint8_t version, const DataLoggerOptionsBitMask_t& options)
+{
+  FunctionalitiesCharacteristics_t functionality = (implement ? DataLoggerWorkingSet : DataLogger);
+  return fillStructure(functionality, version, options);
 }
 
 bool DiagnosticFunctionalities_c::addFunctionalitiesBasicTractorECU(bool implement, uint8_t version, const BasicTractorECUOptionsBitMask_t& options)
