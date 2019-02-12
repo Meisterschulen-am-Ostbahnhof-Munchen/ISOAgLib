@@ -78,6 +78,7 @@ TC-Client:
    - Updated DDI-Defines.
    - Added a cmdSend class to better handle different send states (e.g. Running, Aborted, etc..)
    - Added more constructors/getters in device description.
+   - Added CFF for Data Logger (Working Set)
 
 HAL-Simulator:
  - EEPROM-Cleanup: Some more assertions, faster read/write
