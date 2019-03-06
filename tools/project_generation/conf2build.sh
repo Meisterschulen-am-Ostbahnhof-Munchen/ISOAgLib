@@ -469,7 +469,7 @@ comm_features()
     fi
     if [ "$PRJ_DATASTREAMS" -lt 1 ]; then
         if [ "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 ]; then
-            printf '%s' " -o -path '*/driver/datastreams/volatilememory_c.*'" >&3
+            printf '%s' " -o -path '*/driver/datastreams/volatilememorywithsize_c.*'" >&3
         fi
     fi
     if [ "$PRJ_ISO11783" -gt 0 ]; then
