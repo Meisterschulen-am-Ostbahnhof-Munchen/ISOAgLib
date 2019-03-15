@@ -258,7 +258,8 @@ exit_with_usage(const char* progname)
   std::cerr << "        16 -> Vehicle Spy 3 Bus Traffic File" << std::endl;
   std::cerr << "        17 -> PCAN-View v4 (.trc)" << std::endl;
   std::cerr << "        18 -> PCAN-View v6 (.trc)" << std::endl;
-  std::cerr << "        19 -> Viewtool Ginkgo (csv)" << std::endl;
+  std::cerr << "        19 -> Viewtool Ginkgo (.csv)" << std::endl;
+  std::cerr << "        20 -> RM CAN Device Monitor (.txt)" << std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "-tc:     Override TC SA manually. SA must be given as decimal integer." << std::endl;
@@ -296,6 +297,7 @@ exit_with_usage(const char* progname)
   std::cerr << "PCAN-View v4:      '    13)       116.6  DT  18EF808B RX 8  12 15 15 15 15 15 15 15'" << std::endl;
   std::cerr << "PCAN-View v6:      '    13)       116.6 1 Rx  18EF808B - 8  12 15 15 15 15 15 15 15'" << std::endl;
   std::cerr << "Viewtool Ginkgo:   'Device0,CH1,Extended Frame,Data Frame,0x18EFFFAD,Receive,8,40 FF FF FF FF FF FF FF ,Success,00:05:56.126.000'" << std::endl;
+  std::cerr << "RM CAN Device:     '18EF808B 1RXE    8  12  15  15  15  15  15  15  15                        1234,5678" << std::endl;
 
   exit(0);
 }
@@ -987,6 +989,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineTrc3,
     parseLogLineTrc4,
     parseLogLineViewtoolGinkgoCsv,
+    parseLogLineRmCanDeviceMonitor,
     defaultParseLogLine
   };
 
@@ -1144,7 +1147,7 @@ int main (int argc, char** argv)
   t_ptrIn = PtrInputStream_t(0);
 
   gs_main.m_alive.report( std::cout );
-  printFullListOfSupportedFunctions(std::cout);   // TODO @ JPRI: Reaktivieren!
+  printFullListOfSupportedFunctions(std::cout);
   printFullNameAndAddressList(std::cout);
   if( gs_main.m_gpxFile )
     gpxClose();

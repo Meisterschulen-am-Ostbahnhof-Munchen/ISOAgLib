@@ -695,3 +695,107 @@ parseLogLineViewtoolGinkgoCsv( std::string const &acr_line ) // "Device0,CH1,Ext
   PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time_ms, iID, vec_data, bExt);
   return std::make_pair( 0, t_ptrFrame );
 }
+
+std::pair< int, PtrDataFrame_t >
+parseLogLineRmCanDeviceMonitor( std::string const &acr_line ) // "18EAFFFE 1RXE    3   00  EE  00                                            6411,9285"
+{
+  int iS, iMsec; // time
+  int iB; // ID
+  int iDb = 0; // number of data bytes
+  unsigned arru_d[8];
+
+  int parsed_count = sscanf(
+      acr_line.c_str(),
+      "%*x %*s    %d",
+      &iDb);
+
+
+  // TODO: Check if 'last_off()' does a better job in grabbing the timestamp than this switch. Find out if e.g. 6411,0000 <--> 6411 is plotted if iMsec == 0?
+  switch(iDb)
+  {
+    case 0:
+      parsed_count = sscanf(
+        acr_line.c_str(),
+        "%x %*s    %d   %d,%d",
+        &iB, &iDb, &iS, &iMsec);
+    break;
+
+    case 1:
+      parsed_count = sscanf(
+          acr_line.c_str(),
+          "%x %*s    %d   %x %d,%d",
+          &iB, &iDb, arru_d, &iS, &iMsec);
+    break;
+
+    case 2:
+      parsed_count = sscanf(
+          acr_line.c_str(),
+          "%x %*s    %d   %x %x %d,%d",
+          &iB, &iDb, arru_d, arru_d+1, &iS, &iMsec);
+    break;
+
+    case 3:
+      parsed_count = sscanf(
+          acr_line.c_str(),
+          "%x %*s    %d   %x %x %x %d,%d",
+          &iB, &iDb, arru_d, arru_d+1, arru_d+2, &iS, &iMsec);
+    break;
+
+    case 4:
+      parsed_count = sscanf(
+          acr_line.c_str(),
+          "%x %*s    %d   %x %x %x %x %d,%d",
+          &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, &iS, &iMsec);
+    break;
+
+    case 5:
+      parsed_count = sscanf(
+          acr_line.c_str(),
+          "%x %*s    %d   %x %x %x %x %x %d,%d",
+          &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, &iS, &iMsec);
+    break;
+
+    case 6:
+      parsed_count = sscanf(
+          acr_line.c_str(),
+          "%x %*s    %d   %x %x %x %x %x %x %d,%d",
+          &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, &iS, &iMsec);
+    break;
+
+    case 7:
+      parsed_count = sscanf(
+          acr_line.c_str(),
+          "%x %*s    %d   %x %x %x %x %x %x %x %d,%d",
+          &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, &iS, &iMsec);
+    break;
+
+    case 8:
+      parsed_count = sscanf(
+          acr_line.c_str(),
+          "%x %*s    %d   %x %x %x %x %x %x %x %x %d,%d",
+          &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7, &iS, &iMsec);
+    break;
+
+    default:
+    break;
+  }
+
+  int i_result = ( (parsed_count == (4+iDb) ) ? 0 : -1);
+  if (i_result < 0)
+    return std::make_pair( i_result, PtrDataFrame_t(0) );
+
+  while(iMsec >= 1000)
+  {
+    iMsec /= 10;
+  }
+
+  const bool cb_extendedFrameFormat = (iB > 0x7FF);	// TODO: Find out if RXE stands for extended format
+  uint64_t const cui64_time_ms = (1000 * iS) + (iMsec);
+  std::vector< uint8_t > vec_data;
+  copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
+
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time_ms, iB, vec_data, cb_extendedFrameFormat);
+  return std::make_pair( i_result, t_ptrFrame );
+}
+
+

@@ -6,21 +6,54 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
 
   std::ostringstream out;
 
-  if (at_ptrFrame->dataOctet(0) < 0x10)
+  if (at_ptrFrame->dataOctet(1-1) < 0x10)
     out << "Activation ";
-  else if ((at_ptrFrame->dataOctet(0) >=0x20) && (at_ptrFrame->dataOctet(0) < 0x30))
+  else if ((at_ptrFrame->dataOctet(1-1) >=0x20) && (at_ptrFrame->dataOctet(1-1) < 0x30))
     out << "Auxiliary ";
-  else if ((at_ptrFrame->dataOctet(0) >=0x90) && (at_ptrFrame->dataOctet(0) < 0xF0))
+  else if ((at_ptrFrame->dataOctet(1-1) >=0x90) && (at_ptrFrame->dataOctet(1-1) < 0xF0))
     out << "Command ";
 
   int8_t i8_uidBytePos = -1;
   char str_uidBytePos[ 100 ] = " ObjectID=";
 
-  switch (at_ptrFrame->dataOctet(0))
+  switch (at_ptrFrame->dataOctet(1-1))
   {
-    case 0x00: out << "Soft Key"; i8_uidBytePos = 3; break;
-    case 0x01: out << "Button"; i8_uidBytePos = 3; break;
-    case 0x02: out << "Pointing Event"; break;
+    case 0x00:
+      if ( ((uint16_t(at_ptrFrame->dataOctet(3 + 1 - 1) << 8)) | (uint16_t(at_ptrFrame->dataOctet(3 - 1)))) == 0xFFFF )
+        out << "Alarm ACK";
+      else
+        out << "Soft Key";
+      i8_uidBytePos = 3;
+      switch (at_ptrFrame->dataOctet(2-1))
+      {
+        case 0: out << " - Released"; break;
+        case 1: out << " - Pressed "; break;
+        case 2: out << " - Held    "; break;
+        case 3: out << " - Aborted "; break;
+        default:                      break;
+      }
+
+    case 0x01: out << "Button"; i8_uidBytePos = 3;
+      switch (at_ptrFrame->dataOctet(2-1))
+      {
+        case 0: out << " - Released"; break;
+        case 1: out << " - Pressed "; break;
+        case 2: out << " - Held    "; break;
+        case 3: out << " - Aborted "; break;
+        default:                      break;
+      }
+
+    case 0x02: out << "Pointing Event";
+      out << " X:" << ((uint16_t(at_ptrFrame->dataOctet(2 + 1 - 1) << 8)) | (uint16_t(at_ptrFrame->dataOctet(2 - 1))));
+      out << " Y:" << ((uint16_t(at_ptrFrame->dataOctet(4 + 1 - 1) << 8)) | (uint16_t(at_ptrFrame->dataOctet(4 - 1))));
+      switch (at_ptrFrame->dataOctet(6-1) & 0x0F)
+      {
+        case 0: out << " - Released"; break;
+        case 1: out << " - Pressed "; break;
+        case 2: out << " - Held    "; break;
+        default:                      break;
+      }
+
     case 0x03: out << "VT Select Input Object"; i8_uidBytePos = 2; break;
     case 0x04: out << "VT ESC"; i8_uidBytePos = 2; break;
     case 0x05: out << "VT Change Numeric Value"; i8_uidBytePos = 2; break;
@@ -104,7 +137,7 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
         } 
         break;
 
-    case 0xFE: out << "VT Status Message: Active WS-Master's SA: $"; out << std::hex << uint16_t(at_ptrFrame->dataOctet(1)); break;
+    case 0xFE: out << "VT Status Message: Active WS-Master's SA: $"; out << std::hex << uint16_t(at_ptrFrame->dataOctet(2-1)); break;
     case 0xFF: out << "Working Set Maintenance"; break;
   }
   if (i8_uidBytePos > 0)
