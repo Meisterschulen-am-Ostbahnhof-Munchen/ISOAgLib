@@ -169,7 +169,8 @@ namespace __IsoAgLib {
     {
       if( getDevPoolState() == PoolStateUploaded || getDevPoolState() == PoolStateActive )
       {
-        doCommand( procCmdPar_OPActivateMsg, procCmdPar_OPActivateRespMsg, DEF_TimeOut_DdopDeactivation, 0 );
+        if(m_capsConnection.versionNr >= 4)
+          doCommand( procCmdPar_OPActivateMsg, procCmdPar_OPActivateRespMsg, DEF_TimeOut_DdopDeactivation, 0 );
 
         if (shouldDeletePool)
         {

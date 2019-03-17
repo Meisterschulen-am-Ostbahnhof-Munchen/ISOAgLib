@@ -79,6 +79,7 @@ TC-Client:
    - Added a cmdSend class to better handle different send states (e.g. Running, Aborted, etc..)
    - Added more constructors/getters in device description.
    - Added CFF for Data Logger (Working Set)
+   - Only do DDOP deactivation if version is 4+.
 
 HAL-Simulator:
  - EEPROM-Cleanup: Some more assertions, faster read/write
@@ -106,7 +107,8 @@ CAN-Server:
 
 Logalizer:
  - Added TIM parsing, interpretation of ACKNOWLEDGE_PGN and NAME summary at the end
- - Added new log format
+ - Added new log formats
+ - Expanded the parsing of SK, Button and Pointing Event status
 
 Framework:
  - ThreadWrapper: additional mutex protection of ThreadWrapper::m_exit_code
@@ -119,7 +121,10 @@ Tractor:
 HAL:
  - PC / System: Made System_c::getTime() thread-safe.
  - SocketCAN: Added diagnostics to iLibErr.
- 
+
+Project Generation:
+ - Use volatilememorywithsize_c for PRJ_ISO_VIRTUALTERMINAL_CLIENT
+
    
 \subsection Change_ZI 2.8.2 to 2.9.0
 
