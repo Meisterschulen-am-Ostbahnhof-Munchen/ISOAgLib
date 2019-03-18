@@ -799,3 +799,54 @@ parseLogLineRmCanDeviceMonitor( std::string const &acr_line ) // "18EAFFFE 1RXE 
 }
 
 
+// TODO: rename parsing format when format is known
+std::pair< int, PtrDataFrame_t >
+parseLogLinePloegerUnknownFormat(std::string const &acr_line) // " 0   419428883 X       8   2  98 255 255 255 255   1  54       0.018340 R"
+{
+    unsigned int CanId;
+    char extended[9];  //probably long enough? -> should be -> check docu of format?
+    int Dlc;
+    int arr_dataBytes[8];
+    float time;
+    std::string substring;
+    
+    const int parsed_count = sscanf(
+        acr_line.c_str(),
+        " %*d %d %s %d %d %d %d %d %d %d %d %d",
+        &CanId,
+        extended,
+        &Dlc,
+        arr_dataBytes, arr_dataBytes + 1, arr_dataBytes + 2, arr_dataBytes + 3, arr_dataBytes + 4, arr_dataBytes + 5, arr_dataBytes + 6, arr_dataBytes + 7);
+
+    if (parsed_count > 2)   //parse at least 3 formats
+    {
+        size_t pos = acr_line.find_last_of(".");
+        if (std::string::npos == pos)
+        {
+            return std::make_pair(-1, PtrDataFrame_t(0));
+        }
+        else
+        {
+        // go 6 pos back(this should be sufficient, if not, parts of the time will not be parsed properly => leading to errors/nonesense in time summaries)
+        substring = acr_line.substr(pos - 6, std::string::npos);
+        }
+    }
+    else
+    {
+        return std::make_pair(-1, PtrDataFrame_t(0));
+    }
+
+    const int substring_parsed_count = sscanf(
+        substring.c_str(),
+        "%f",
+        &time);
+
+    const uint64_t cui64_time_ms = static_cast<uint64_t>(time * 1000);
+    const bool extendedFrameFormat = (extended[0] == 'X');
+
+    std::vector< uint8_t > vec_data;
+    copy(arr_dataBytes, arr_dataBytes + size_t(Dlc), back_inserter(vec_data));
+
+    PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time_ms, CanId, vec_data, extendedFrameFormat);
+    return std::make_pair(0, t_ptrFrame);
+}

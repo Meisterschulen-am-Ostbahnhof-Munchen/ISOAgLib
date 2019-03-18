@@ -629,6 +629,7 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
     bool boDdiIsAcws = false;
     bool boDdiIsScws = false;
     bool boDdiIsPcsOrScs = false;
+    bool boIsTaskControllerStatus = false;
 
     switch (at_ptrFrame->dataOctet(0) & 0x0F)
     {
@@ -646,8 +647,13 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
     case 0x09: out << "Command Peer Control Assignment"; break;
     case 0x0A: out << "Command Set Value and Acknowledge"; break;
     case 0x0D: out << "Message Process Data Acknowledge (PDACK)"; break;
-    case 0x0E: out << "Message Task Controller Status"; break;
-    case 0x0F: out << "Message Working Set Task"; break;
+    case 0x0E: out << "Message Task Controller Status"; boIsTaskControllerStatus = true; break;
+    case 0x0F: out << "Message Working Set Task"; 
+        if (at_ptrFrame->dataOctet(4) & 0x01)
+        {
+            out << " | Task Active";
+            break;
+        }
     default:   out << "RESERVED."; break;
     }
 
@@ -743,7 +749,7 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
                   out << "err" << " ";
                   break;
               case 3:
-                  out << "nc " << " ";
+                  out << "na " << " ";
                   break;
               default:
                   break;
@@ -774,6 +780,36 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
       }
     }
 
+    //print Task Controller Status Message Information
+    if (boIsTaskControllerStatus)
+    {
+        out << " | ";
+        if (at_ptrFrame->data()[4] & 0x01)
+        {
+            // Bit 1 = 1
+            out << "Task started | ";
+        }
+        if (at_ptrFrame->data()[4] & 0x02)
+        {
+            // Bit 2 = 1
+            out << "TC/DL busy saving data | ";
+        }
+        if (at_ptrFrame->data()[4] & 0x04)
+        {
+            // Bit 3 = 1
+            out << "TC/DL busy reading data | ";
+        }
+        if (at_ptrFrame->data()[4] & 0x08)
+        {
+            // Bit 4 = 1
+            out << "TC/DL busy executing a device descriptor command | ";
+        }
+        if (at_ptrFrame->data()[4] & 0x80)
+        {
+            // Bit 8 = 1
+            out << "TC/DL out of memory | ";
+        }
+    }
 
     if( gs_main.mb_storeDdop && ( at_ptrFrame->data()[0] == 0x81 ) ) {
       ddopStore( at_ptrFrame->sourceAddress() );

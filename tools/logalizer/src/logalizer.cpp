@@ -260,6 +260,7 @@ exit_with_usage(const char* progname)
   std::cerr << "        18 -> PCAN-View v6 (.trc)" << std::endl;
   std::cerr << "        19 -> Viewtool Ginkgo (.csv)" << std::endl;
   std::cerr << "        20 -> RM CAN Device Monitor (.txt)" << std::endl;
+  std::cerr << "        21 -> Unknown Format Ploeger(.txt)" << std::endl;    // TODO use correct name for format if known
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "-tc:     Override TC SA manually. SA must be given as decimal integer." << std::endl;
@@ -298,6 +299,7 @@ exit_with_usage(const char* progname)
   std::cerr << "PCAN-View v6:      '    13)       116.6 1 Rx  18EF808B - 8  12 15 15 15 15 15 15 15'" << std::endl;
   std::cerr << "Viewtool Ginkgo:   'Device0,CH1,Extended Frame,Data Frame,0x18EFFFAD,Receive,8,40 FF FF FF FF FF FF FF ,Success,00:05:56.126.000'" << std::endl;
   std::cerr << "RM CAN Device:     '18EF808B 1RXE    8  12  15  15  15  15  15  15  15                        1234,5678" << std::endl;
+  std::cerr << "Unknown by Ploeger:'0   419428883 X       8   2  98 255 255 255 255   1  54       0.018340 R'" << std::endl;    //TODO: use proper name for format if known
 
   exit(0);
 }
@@ -990,6 +992,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineTrc4,
     parseLogLineViewtoolGinkgoCsv,
     parseLogLineRmCanDeviceMonitor,
+    parseLogLinePloegerUnknownFormat,
     defaultParseLogLine
   };
 
