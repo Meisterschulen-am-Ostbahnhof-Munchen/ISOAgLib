@@ -70,8 +70,8 @@ operator<(
     TransferCollection_c::Key_s const &arcs_left,
     TransferCollection_c::Key_s const &arcs_right)
 {
-  return
-    arcs_left.me_variant < arcs_right.me_variant &&
-    arcs_left.mui8_transferSourceAddress < arcs_right.mui8_transferSourceAddress &&
-    arcs_left.mui8_transferDestinationAddress < arcs_right.mui8_transferDestinationAddress;
+    const uint32_t combinedValueLeft  = (arcs_left .me_variant << 2 * 8) | (arcs_left. mui8_transferSourceAddress << 8) | (arcs_left. mui8_transferDestinationAddress);
+    const uint32_t combinedValueRight = (arcs_right.me_variant << 2 * 8) | (arcs_right.mui8_transferSourceAddress << 8) | (arcs_right.mui8_transferDestinationAddress);
+
+    return (combinedValueLeft < combinedValueRight);
 }

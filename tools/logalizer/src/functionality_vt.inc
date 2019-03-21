@@ -62,7 +62,15 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
     case 0x08: out << "Input String Value"; i8_uidBytePos = 2; break;
 
     case 0x11: out << "Object Pool Transfer"; break;
-    case 0x12: out << "End of Object Pool"; break;
+    case 0x12: out << "End of Object Pool"; 
+        if (response)
+        {
+            if (at_ptrFrame->dataOctet(2 - 1) == 0)
+                out << " (No Error) ";
+            else
+                out << " (Error(s)) ";
+        }
+        break;
 
     case 0x20: out << "Auxiliary Assignment Type 1"; i8_uidBytePos = 4; break;
     case 0x21: out << "Auxiliary Input Type 1 status"; break;
@@ -81,7 +89,15 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
     case 0xC3: out << "Get Text Font Data"; break;
     case 0xC7: out << "Get Hardware"; break;
 
-    case 0xD0: out << "Store Version"; break;
+    case 0xD0: out << "Store Version"; 
+        if (response)
+        {
+            if (at_ptrFrame->dataOctet(6 - 1) == 0)
+                out << " (No Error) ";
+            else
+                out << " (Error(s)) ";
+        }
+        break;
     case 0xD1: out << "Load Version"; break;
     case 0xD2: out << "Delete Version"; break;
 

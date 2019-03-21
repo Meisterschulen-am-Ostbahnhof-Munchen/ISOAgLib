@@ -261,6 +261,7 @@ exit_with_usage(const char* progname)
   std::cerr << "        19 -> Viewtool Ginkgo (.csv)" << std::endl;
   std::cerr << "        20 -> RM CAN Device Monitor (.txt)" << std::endl;
   std::cerr << "        21 -> Unknown Format Ploeger(.txt)" << std::endl;    // TODO use correct name for format if known
+  std::cerr << "        22 -> Unknown Format Ploeger 2(.txt)" << std::endl;    // TODO use correct name for format if known
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "-tc:     Override TC SA manually. SA must be given as decimal integer." << std::endl;
@@ -300,6 +301,7 @@ exit_with_usage(const char* progname)
   std::cerr << "Viewtool Ginkgo:   'Device0,CH1,Extended Frame,Data Frame,0x18EFFFAD,Receive,8,40 FF FF FF FF FF FF FF ,Success,00:05:56.126.000'" << std::endl;
   std::cerr << "RM CAN Device:     '18EF808B 1RXE    8  12  15  15  15  15  15  15  15                        1234,5678" << std::endl;
   std::cerr << "Unknown by Ploeger:'0   419428883 X       8   2  98 255 255 255 255   1  54       0.018340 R'" << std::endl;    //TODO: use proper name for format if known
+  std::cerr << "Unknown byPloeger2:'ID=99618844x,Type=D,Length=8,Data=77FF364656023415'" << std::endl;    //TODO: use proper name for format if known
 
   exit(0);
 }
@@ -324,7 +326,7 @@ multiPacket_dump( std::ostringstream& out, PtrDataFrame_t at_ptrFrame )
     for (size_t inblock = 0; inblock < gs_main.mt_sizeMultipacketWrap; ++inblock)
     {
       if ((blockoffset + inblock) < at_ptrFrame->dataSize())
-        out << std::setw(2)<<std::setfill('0') << uint32_t(at_ptrFrame->dataOctet(blockoffset+inblock)) << " ";
+        out << std::right << std::setw(2)<<std::setfill('0') << uint32_t(at_ptrFrame->dataOctet(blockoffset+inblock)) << " ";
       else
         out << "   ";
     }
@@ -337,7 +339,7 @@ multiPacket_dump( std::ostringstream& out, PtrDataFrame_t at_ptrFrame )
     }
     out << std::endl;
   }
-
+  out << std::left; //set back to left aligned (no idea where this alignment is needed next)
   return out.str();
 }
 
@@ -656,6 +658,8 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
   bool boTpEoMack = false;
 
   TransferCollection_c::Variant_e e_variant = TransferCollection_c::variant_etp;
+  uint8_t sourceAddress = at_ptrFrame->sourceAddress();
+  uint8_t destinationAddress = at_ptrFrame->destinationAddress();
 
   switch (at_ptrFrame->pgn()) {
 
@@ -671,8 +675,8 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
         size_t const ct_sizeTransferData = size_t(at_ptrFrame->dataOctet(2)) << 8 | at_ptrFrame->dataOctet(1);
         (void)gs_main.mc_trans.newConnection(
             e_variant,
-            at_ptrFrame->sourceAddress(),
-            at_ptrFrame->destinationAddress(),
+            sourceAddress,
+            destinationAddress,
             ct_sizeTransferData);
       }
       break;
@@ -686,17 +690,21 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(1)));
         (void)gs_main.mc_trans.newConnection(
             e_variant,
-            at_ptrFrame->sourceAddress(),
-            at_ptrFrame->destinationAddress(),
+            sourceAddress,
+            destinationAddress,
             ct_sizeTransferData);
       }
       break;
     case 0x11:
         boTpCts = true;
       out << "CTS - Clear to Send (TP)              ";
+      sourceAddress = at_ptrFrame->destinationAddress();
+      destinationAddress = at_ptrFrame->sourceAddress();    //switch SA and DA as the CTS comes from the receiving node, but the connections was saved from the sender's point of view
       break;
     case 0x15:
         boEtpCts = true;
+        sourceAddress = at_ptrFrame->destinationAddress();
+        destinationAddress = at_ptrFrame->sourceAddress();    //switch SA and DA as the CTS comes from the receiving node, but the connections was saved from the sender's point of view
       out << "CTS - Clear to Send (ETP)             ";
       break;
 
@@ -707,8 +715,8 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
         TransferCollection_c::PtrConnection_t t_ptrConnection =
           getTransferConnection( out,
               e_variant,
-              at_ptrFrame->sourceAddress(),
-              at_ptrFrame->destinationAddress());
+              sourceAddress,
+              destinationAddress);
         if (t_ptrConnection)
           t_ptrConnection->mui32_packetOffSet =
             ((static_cast<uint32_t>(at_ptrFrame->dataOctet(4)) << 16) |
@@ -720,11 +728,15 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       out << "EoMACK - End of Message Ack (TP)      ";
       boTpEoMack = true;
       b_streamEnd = true;
+      sourceAddress = at_ptrFrame->destinationAddress();
+      destinationAddress = at_ptrFrame->sourceAddress();    //switch SA and DA as the EoMACK comes from the receiving node, but the connections was saved from the sender's point of view
       break;
     case 0x17:
       out << "EoMACK - End of Message Ack (ETP)     ";
       boEtpEoMack = true;
       b_streamEnd = true;
+      sourceAddress = at_ptrFrame->destinationAddress();
+      destinationAddress = at_ptrFrame->sourceAddress();    //switch SA and DA as the EoMACK comes from the receiving node, but the connections was saved from the sender's point of view
       break;
     case 0x20:
       out << "BAM - Broadcast Announce Msg (TP)     ";
@@ -741,8 +753,8 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       TransferCollection_c::PtrConnection_t t_ptrConnection =
         getTransferConnection( out,
             e_variant,
-            at_ptrFrame->sourceAddress(),
-            at_ptrFrame->destinationAddress());
+            sourceAddress,
+            destinationAddress);
       if (t_ptrConnection) {
         t_ptrConnection->mui32_embeddedPgn =
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(7)) << 16) |
@@ -778,24 +790,27 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       TransferCollection_c::PtrConnection_t t_ptrConnection =
         getTransferConnection( out,
             e_variant,
-            at_ptrFrame->sourceAddress(),
-            at_ptrFrame->destinationAddress());
-      if (!t_ptrConnection)
-        ;
-      else if ((at_ptrFrame->pgn() == TP_DATA_TRANSFER_PGN)) {
-        for (int i = 0; i < 7; i++) {
-          if ((7 *  (at_ptrFrame->dataOctet(0) - 1)) + i >= int(t_ptrConnection->mvec_data.size()))
-            break;
-          size_t t_index = (7 *  (at_ptrFrame->dataOctet(0) - 1)) + i;
-          (t_ptrConnection->mvec_data)[t_index] = at_ptrFrame->dataOctet(i + 1);
-        }
-      } else if (at_ptrFrame->pgn() == ETP_DATA_TRANSFER_PGN) {
-        for (int i = 0; i < 7; i++) {
-          size_t t_index = (t_ptrConnection->mui32_packetOffSet * 7 + (7 *  (at_ptrFrame->dataOctet(0) - 1))) + i;
-          if (t_index >= t_ptrConnection->mvec_data.size())
-            break;
-          (t_ptrConnection->mvec_data)[t_index] = at_ptrFrame->dataOctet(i + 1);
-        }
+            sourceAddress,
+            destinationAddress);
+
+      if (t_ptrConnection)
+      {
+          if ((at_ptrFrame->pgn() == TP_DATA_TRANSFER_PGN)) {
+              for (int i = 0; i < 7; i++) {
+                  if ((7 * (at_ptrFrame->dataOctet(0) - 1)) + i >= int(t_ptrConnection->mvec_data.size()))
+                      break;
+                  size_t t_index = (7 * (at_ptrFrame->dataOctet(0) - 1)) + i;
+                  (t_ptrConnection->mvec_data)[t_index] = at_ptrFrame->dataOctet(i + 1);
+              }
+          }
+          else if (at_ptrFrame->pgn() == ETP_DATA_TRANSFER_PGN) {
+              for (int i = 0; i < 7; i++) {
+                  size_t t_index = (t_ptrConnection->mui32_packetOffSet * 7 + (7 * (at_ptrFrame->dataOctet(0) - 1))) + i;
+                  if (t_index >= t_ptrConnection->mvec_data.size())
+                      break;
+                  (t_ptrConnection->mvec_data)[t_index] = at_ptrFrame->dataOctet(i + 1);
+              }
+          }
       }
     }
     break;
@@ -807,8 +822,8 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
     TransferCollection_c::PtrConnection_t t_ptrConnection =
       getTransferConnection( out,
           e_variant,
-          at_ptrFrame->destinationAddress(),
-          at_ptrFrame->sourceAddress());
+          sourceAddress,        //source and destination address were already switch above
+          destinationAddress);
     if (t_ptrConnection) {
       endOfTransfer( out, at_ptrFrame, e_variant );
     }
@@ -821,7 +836,10 @@ interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
 Interprete_t *
 getPgnDataInterpreter( PtrDataFrame_t at_ptrFrame )
 {
-  switch (at_ptrFrame->pgn())
+    uint32_t pgn = at_ptrFrame->pgn();
+    if ((pgn & PROPRIETARY_B_PGN) == PROPRIETARY_B_PGN)
+        pgn = PROPRIETARY_B_PGN;
+  switch (pgn)
   {
   case TIM_SERVER_TO_CLIENT_PGN:                return interpretePgnsTimServerToClient;
   case TIM_CLIENT_TO_SERVER_PGN:                return interpretePgnsTimClientToServer;
@@ -958,7 +976,7 @@ endOfTransfer( std::ostringstream& out, PtrDataFrame_t at_ptrFrame, TransferColl
     out << interpretePgnData(t_ptrArtificialFrame);
     if (gs_main.mb_storeIop) iopAppend(t_ptrArtificialFrame);
     if (gs_main.mb_storeDdop) ddopAppend(t_ptrArtificialFrame);
-
+   
     gs_main.mc_trans.deleteConnection(
         ae_variant,
         at_ptrFrame->destinationAddress(),
@@ -993,6 +1011,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineViewtoolGinkgoCsv,
     parseLogLineRmCanDeviceMonitor,
     parseLogLinePloegerUnknownFormat,
+    parseLogLinePloegerUnknownFormat_2,
     defaultParseLogLine
   };
 

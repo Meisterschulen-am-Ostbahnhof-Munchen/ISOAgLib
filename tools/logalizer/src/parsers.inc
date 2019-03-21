@@ -850,3 +850,42 @@ parseLogLinePloegerUnknownFormat(std::string const &acr_line) // " 0   419428883
     PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time_ms, CanId, vec_data, extendedFrameFormat);
     return std::make_pair(0, t_ptrFrame);
 }
+
+// TODO: rename parsing format when format is known
+std::pair< int, PtrDataFrame_t >
+parseLogLinePloegerUnknownFormat_2(std::string const &acr_line) // "ID=99618844x,Type=D,Length=8,Data=B5FF36462692CA14"
+{
+    uint32_t CanId;
+    int Dlc;
+    char extended[5]; //no idea how big this array should be
+    int arr_dataBytes[8];
+    uint64_t u64DataBytes;
+
+    const int parsed_count = sscanf(
+        acr_line.c_str(),
+        "ID=%d%[^,],Type=D,Length=%1d,Data=%llx",
+        &CanId,
+        extended,
+        &Dlc,
+        &u64DataBytes);
+
+    if (parsed_count > 2)   //parse at least 3 formats
+    {
+        for (uint8_t i = 0; i < Dlc; ++i)
+        {
+            arr_dataBytes[i] = u64DataBytes >> ( (Dlc -1 - i ) * 8) & 0xFF;
+        }
+    }
+    else
+    {
+        return std::make_pair(-1, PtrDataFrame_t(0));
+    }
+
+    const bool extendedFrameFormat = (extended[0] == 'x');
+
+    std::vector< uint8_t > vec_data;
+    copy(arr_dataBytes, arr_dataBytes + size_t(Dlc), back_inserter(vec_data));
+
+    PtrDataFrame_t t_ptrFrame = new DataFrame_c(0, CanId, vec_data, extendedFrameFormat);
+    return std::make_pair(0, t_ptrFrame);
+}

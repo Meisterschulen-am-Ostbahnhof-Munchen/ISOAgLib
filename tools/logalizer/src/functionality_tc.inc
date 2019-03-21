@@ -652,8 +652,8 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
         if (at_ptrFrame->dataOctet(4) & 0x01)
         {
             out << " | Task Active";
-            break;
         }
+        break;
     default:   out << "RESERVED."; break;
     }
 
@@ -783,31 +783,30 @@ interpreteProcessData( PtrDataFrame_t at_ptrFrame )
     //print Task Controller Status Message Information
     if (boIsTaskControllerStatus)
     {
-        out << " | ";
         if (at_ptrFrame->data()[4] & 0x01)
         {
             // Bit 1 = 1
-            out << "Task started | ";
+            out << " | Task started";
         }
         if (at_ptrFrame->data()[4] & 0x02)
         {
             // Bit 2 = 1
-            out << "TC/DL busy saving data | ";
+            out << " | TC/DL busy saving data";
         }
         if (at_ptrFrame->data()[4] & 0x04)
         {
             // Bit 3 = 1
-            out << "TC/DL busy reading data | ";
+            out << " | TC/DL busy reading data";
         }
         if (at_ptrFrame->data()[4] & 0x08)
         {
             // Bit 4 = 1
-            out << "TC/DL busy executing a device descriptor command | ";
+            out << " | TC/DL busy executing a device descriptor command";
         }
         if (at_ptrFrame->data()[4] & 0x80)
         {
             // Bit 8 = 1
-            out << "TC/DL out of memory | ";
+            out << " | TC/DL out of memory";
         }
     }
 
