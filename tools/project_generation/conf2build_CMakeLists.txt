@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.1)
 
+project(${INSERT_CMAKE_PROJECT})
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING
       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
@@ -8,8 +10,6 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 find_program(CSCOPE cscope)
 find_program(CTAGS ctags)
-
-project(${INSERT_CMAKE_PROJECT})
 
 add_definitions(${INSERT_CMAKE_DEFINITIONS})
 
