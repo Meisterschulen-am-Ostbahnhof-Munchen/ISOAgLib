@@ -197,8 +197,15 @@ void
 MultiReceive_c::processMsg( const CanPkg_c& arc_data )
 {
   CanPkgExt_c pkg( arc_data, getMultitonInst() );
-  if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-    return;
+
+  // Only check for packet validity, if the PGN is no GNSS fast packet message. This is a hack for non-ISOBUS compliant legacy devices
+  if (pkg.isoPurePgn() != NMEA_GPS_POSITION_DATA_PGN
+   && pkg.isoPurePgn() != NMEA_GPS_DIRECTION_DATA_PGN)
+  {
+    if (!pkg.isValid() || (pkg.getMonitorItemForSA() == NULL))
+      return;
+  }
+
 
   const uint8_t cui8_pgnFormat = pkg.isoPf();
 
@@ -580,7 +587,16 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
 void
 MultiReceive_c::processMsgNmea( const CanPkgExt_c& pkg )
 {
-  const uint8_t cui8_dataByte0 = pkg.getUint8Data(0);
+  IsoName_c senderName;
+
+  if (!pkg.isValid() || (pkg.getMonitorItemForSA() == NULL))
+  {
+    senderName.setOsbSpecialName( pkg.isoSa() );
+  }
+  else
+  {
+    senderName = pkg.getISONameForSA();
+  }
 
   /** Note:
     * FP can also be destination specific!
@@ -593,11 +609,12 @@ MultiReceive_c::processMsgNmea( const CanPkgExt_c& pkg )
     pkg.hasDa() ? pkg.isoPs()           : uint8_t(0xFFu),
     pkg.hasDa() ? pkg.getISONameForDA() : IsoName_c::IsoNameUnspecified(),
     pkg.isoSa(),
-    pkg.getISONameForSA());
+    senderName);
 
   Stream_c* pc_streamFound = getStreamNmea (c_fpRSI);
   if (!pc_streamFound)
   { // stream not there. create a new one if it's the first frame
+    const uint8_t cui8_dataByte0 = pkg.getUint8Data(0);
     const uint8_t cui8_counterFrame = cui8_dataByte0 & 0x1F;
     /** @todo SOON-178 check for matching sequence counter!!! add seq-cnt to StreamFastPacket-class. */
 
