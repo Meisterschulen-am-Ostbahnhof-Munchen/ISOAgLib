@@ -123,7 +123,9 @@ HAL:
  - SocketCAN: Added diagnostics to iLibErr.
 
 Project Generation:
- - Use volatilememorywithsize_c for PRJ_ISO_VIRTUALTERMINAL_CLIENT
+ - conf2build
+   - Use volatilememorywithsize_c for PRJ_ISO_VIRTUALTERMINAL_CLIENT
+   - Correct project definition location so Release/Debug setting is not overwritten
 
    
 \subsection Change_ZI 2.8.2 to 2.9.0
