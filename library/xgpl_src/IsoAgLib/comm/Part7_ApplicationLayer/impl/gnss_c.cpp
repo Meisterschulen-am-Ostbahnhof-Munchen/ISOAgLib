@@ -110,6 +110,7 @@ namespace __IsoAgLib {
     , mui8_noRefStations( 0 )
     , mvec_refStationTypeAndStation()
     , mvec_refStationDifferentialAge10Msec()
+    , m_gnssCFSHproxy( *this )
   {
     mt_task.setPeriod( 1000, false );
   }
@@ -178,6 +179,8 @@ namespace __IsoAgLib {
     getMultiReceiveInstance4Comm().registerClientNmea( *this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFFLU, true, false );
     getMultiReceiveInstance4Comm().registerClientNmea( *this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFFLU, true, false );
 
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( m_gnssCFSHproxy );
+
     mi32_lastPositionStream = -1;
     mi32_lastPositionSimple = -1;
     mi32_lastDirection = -1;
@@ -190,7 +193,10 @@ namespace __IsoAgLib {
   void
   Gnss_c::close_specialized()
   {
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( m_gnssCFSHproxy );
+
     getMultiReceiveInstance4Comm().deregisterClient( *this );
+
     getIsoBusInstance4Comm().deleteAllFiltersForCustomer( *this );
   }
 
@@ -203,11 +209,19 @@ namespace __IsoAgLib {
 
   void Gnss_c::processMsg( const CanPkg_c& arc_data )
   {
-    CanPkgExt_c pkg( arc_data, getMultitonInst() );
-    if( !pkg.isValid() || (pkg.getMonitorItemForSA() == NULL) )
-      return;
+    IsoName_c senderName;
 
-    IsoName_c const& senderName = pkg.getISONameForSA();
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
+    if (!pkg.isValid() || (pkg.getMonitorItemForSA() == NULL))
+    {
+      uint8_t SA = arc_data.ident() & 0xFF;
+      senderName.setOsbSpecialName(SA);
+    }
+    else
+    {
+      senderName = pkg.getISONameForSA();
+    }
+
 
     const ecutime_t ci32_now = pkg.time();
 
@@ -306,7 +320,7 @@ namespace __IsoAgLib {
           /// @todo ON REQUEST-259: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
           if ( (pkg.getUint16Data( 2 ) > 62855)
             || (pkg.getUint16Data( 4 ) > 65532) )
-            return;
+          return;
 
           mui8_directionSequenceID          = pkg.getUint8Data ( 0 );
           mui8_courseOverGroundReference    = pkg.getUint8Data ( 1 ) & 0x03;
@@ -342,6 +356,38 @@ namespace __IsoAgLib {
     m_dateTime.time.minute = ab_minute;
     m_dateTime.time.second = ab_second;
     m_dateTime.time.msec = aui16_msec;
+  }
+
+  void
+  Gnss_c::reactOnIsoItemModification(ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
+  {
+    if (getSelectedDataSourceISONameConst().isSpecified()
+     && getSelectedDataSourceISONameConst().isOsbSpecialName())
+    {
+
+      switch (at_action)
+      {
+      case __IsoAgLib::ControlFunctionStateHandler_c::AddToMonitorList:
+      case __IsoAgLib::ControlFunctionStateHandler_c::ChangedAddress:
+      case __IsoAgLib::ControlFunctionStateHandler_c::ReclaimedAddress:
+        {
+          const uint8_t selectedDataSourceSA = getSelectedDataSourceISOName().getOsbSpecialSA();
+          const uint8_t isoItemSA = acrc_isoItem.nr();
+
+          if (selectedDataSourceSA == isoItemSA)
+          {
+            setSelectedDataSourceISOName(acrc_isoItem.isoName());
+          }
+        }
+        break;
+      case __IsoAgLib::ControlFunctionStateHandler_c::LostAddress:
+        break;
+      case __IsoAgLib::ControlFunctionStateHandler_c::RemoveFromMonitorList:
+        break;
+      default:
+        break;
+      }
+    }
   }
 
 

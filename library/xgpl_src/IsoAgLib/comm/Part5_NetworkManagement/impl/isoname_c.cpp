@@ -114,6 +114,44 @@ IsoName_c::isFunctionallyIdentical (const IsoName_c& other) const
          );
 }
 
+void
+IsoName_c::setOsbSpecialName(uint8_t a_SA)
+{
+  set(false,
+      2 /*aui8_indGroup*/,
+      0 /*aui8_devClass*/,
+      0 /*aui8_devClassInst*/,
+      a_SA /*ab_func*/,
+      900 /*aui16_manufCode*/,
+      0 /*aui32_serNo*/,
+      0 /*ab_funcInst = 0*/,
+      0 /*ab_ecuInst = 0*/);
+
+  setReservedBit(1);
+}
+
+bool
+IsoName_c::isOsbSpecialName() const
+{
+  return (selfConf()      == false
+       && indGroup()      == 2
+       && devClass()      == 0
+       && devClassInst()  == 0
+       && reservedBit()   == 1
+       && manufCode()     == 900
+       && serNo()         == 0
+       && funcInst()      == 0
+       && ecuInst()       == 0);
+}
+
+uint8_t
+IsoName_c::getOsbSpecialSA() const
+{
+  return func();
+}
+
+
+
 
 IsoAgLib::iIsoName_c&
 IsoName_c::toIisoName_c()

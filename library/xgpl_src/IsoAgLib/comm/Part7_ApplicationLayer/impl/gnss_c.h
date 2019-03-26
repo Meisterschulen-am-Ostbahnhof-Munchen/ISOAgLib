@@ -42,6 +42,8 @@ public:
 
   const IsoAgLib::iDateTime_s & getDateTime() const { return m_dateTime; }
 
+  void reactOnIsoItemModification(ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem);
+
 public:
   virtual bool reactOnStreamStart(const ReceiveStreamIdentifier_c& ac_ident,
                                   uint32_t aui32_totalLen);
@@ -180,6 +182,8 @@ private:
   uint8_t mui8_noRefStations;
   STL_NAMESPACE::vector<uint16_t> mvec_refStationTypeAndStation;
   STL_NAMESPACE::vector<uint16_t> mvec_refStationDifferentialAge10Msec;
+
+  ControlFunctionStateHandlerProxy_c<Gnss_c> m_gnssCFSHproxy;
 
   friend Gnss_c &getGnssInstance( unsigned instance );
 };

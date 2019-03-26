@@ -152,6 +152,11 @@ public:
   */
   inline uint8_t devClass() const;
 
+  /** get the reserved bit
+    @return:reserved bit
+  */
+  inline uint8_t reservedBit() const;
+
   /** get function code
     @return function code
   */
@@ -206,6 +211,11 @@ public:
     @param aui8_devClass device class of ECU
   */
   inline void setDevClass(uint8_t aui8_devClass);
+
+  /** set the reserved bit
+    @param aui8_reserved not yet defined in ISO11783
+  */
+  inline void setReservedBit(uint8_t aui8_reserved );
 
   /** set function code
     @param ab_func function of the ECU (usual 25 for network interconnect)
@@ -278,6 +288,10 @@ public:
         ? (mu_data > right.mu_data)
         : false; }
 
+  void setOsbSpecialName(uint8_t a_SA);
+  bool isOsbSpecialName() const;
+  uint8_t getOsbSpecialSA() const;
+
   /** convert function */
   IsoAgLib::iIsoName_c& toIisoName_c();
 
@@ -322,6 +336,12 @@ IsoName_c::devClass() const
   return uint8_t(mu_data[6] >> 1);
 }
 
+inline
+uint8_t
+IsoName_c::reservedBit() const
+{
+  return uint8_t(mu_data[6] & 0x01);
+}
 
 inline
 uint8_t
@@ -409,10 +429,10 @@ inline
 void
 IsoName_c::setDevClass (uint8_t aui8_devClass)
 {
-  mu_data.setUint8Data( 6, uint8_t((0 /* reserved bit set to zero!*/) | (aui8_devClass << 1)) );
-/* old version, which would be right if the reserved bit would have been set somewhere else.
-  pb_data[6] = ((pb_data[6] & 0x1) | (aui8_devClass << 1));
-*/
+  mu_data.setUint8Data( 6, uint8_t((mu_data[6] & 0x01) | (aui8_devClass << 1)) );
+
+  // For keeping consistency to old behaviour:
+  setReservedBit(0);
 }
 
 
@@ -439,6 +459,13 @@ IsoName_c::setEcuInst (uint8_t ab_ecuInst)
   mu_data.setUint8Data( 4, uint8_t((mu_data[4] & 0xF8) | (ab_ecuInst & 0x7)) );
 }
 
+inline
+void
+IsoName_c::setReservedBit (uint8_t aui8_reserved)
+{
+  isoaglib_assert((0 <= aui8_reserved) && (aui8_reserved <= 1));
+  mu_data.setUint8Data( 6, uint8_t((mu_data[6] & 0xFE) | aui8_reserved) );
+}
 
 inline
 void
