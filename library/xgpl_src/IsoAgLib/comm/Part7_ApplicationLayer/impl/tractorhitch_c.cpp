@@ -1,7 +1,7 @@
 /*
   tractorhitch_c.cpp: common class for front and rear hitch.
 
-  (C) Copyright 2016 - 2017 by OSB AG and developing partners
+  (C) Copyright 2016 - 2019 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

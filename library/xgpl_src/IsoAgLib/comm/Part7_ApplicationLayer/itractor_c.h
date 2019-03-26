@@ -3,7 +3,7 @@
     and OperatorDirection/Master/Key switch state from a tractor ecu.
     Also Maintain Power can be commanded to the TECU.
 
-  (C) Copyright 2016 - 2016 by OSB AG and developing partners
+  (C) Copyright 2016 - 2019 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

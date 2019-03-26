@@ -2,7 +2,7 @@
   can_device_vector_canlib.cpp: interface for Vector-Informatik
     can card (canlib)
 
-  (C) Copyright 2009 - 2016 by OSB AG and developing partners
+  (C) Copyright 2009 - 2019 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

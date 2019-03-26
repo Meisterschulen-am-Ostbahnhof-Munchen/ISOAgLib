@@ -2,7 +2,7 @@
   proprietarymessagehandler_c.h - Currently only supports up to 0xFFFE byte,
   because most internal setters are uint16_t only!
 
-  (C) Copyright 2009 - 2016 by OSB AG and developing partners
+  (C) Copyright 2009 - 2019 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

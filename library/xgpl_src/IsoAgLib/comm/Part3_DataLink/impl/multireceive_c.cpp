@@ -2,7 +2,7 @@
   multireceive_c.cpp: Implementation of ISO 11783-Part 3
     (Extended-)Transport-Protocol and NMEA 2000 Fast-Packet Protocol
 
-  (C) Copyright 2009 - 2016 by OSB AG and developing partners
+  (C) Copyright 2009 - 2019 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)

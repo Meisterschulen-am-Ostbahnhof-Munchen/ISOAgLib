@@ -2,7 +2,7 @@
   itractormachineselected_c.h: interface for retrieving machine selected
     speed and distance from a tractor ecu.
 
-  (C) Copyright 2016 - 2016 by OSB AG and developing partners
+  (C) Copyright 2016 - 2019 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
