@@ -463,7 +463,7 @@ inline
 void
 IsoName_c::setReservedBit (uint8_t aui8_reserved)
 {
-  isoaglib_assert((0 <= aui8_reserved) && (aui8_reserved <= 1));
+  isoaglib_assert(/*(0 <= aui8_reserved) && */(aui8_reserved <= 1));  //<-- Already guaranteed by type uint8_t
   mu_data.setUint8Data( 6, uint8_t((mu_data[6] & 0xFE) | aui8_reserved) );
 }
 
