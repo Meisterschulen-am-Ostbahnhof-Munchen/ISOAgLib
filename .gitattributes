@@ -393,6 +393,7 @@ tools/project_generation/conf2build_EDE.part1.pjt -text
 tools/project_generation/conf2build_EDE.part2.pjt -text
 tools/project_generation/conf2build_qmake.pro -text
 tools/vt2iso/cmake/CMakeLists.txt -text
+tools/vt2iso/cmake/getsvn.cmake -text
 tools/vt2iso/doc/ISO-VirtualTerminal-Objects.txt -text
 tools/vt2iso/doc/vt2iso.xsd -text
 tools/vt2iso/src/vt2iso-defines.hpp -text
