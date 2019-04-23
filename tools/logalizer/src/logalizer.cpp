@@ -262,6 +262,7 @@ exit_with_usage(const char* progname)
   std::cerr << "        20 -> RM CAN Device Monitor (.txt)" << std::endl;
   std::cerr << "        21 -> Unknown Format Ploeger(.txt)" << std::endl;    // TODO use correct name for format if known
   std::cerr << "        22 -> Unknown Format Ploeger 2(.txt)" << std::endl;    // TODO use correct name for format if known
+  std::cerr << "        23 -> csv 2 (.xlsx)" << std::endl;
   std::cerr << std::endl;
   std::cerr << "-w:      Number of data-bytes to display per line. Defaults to 32." << std::endl;
   std::cerr << "-tc:     Override TC SA manually. SA must be given as decimal integer." << std::endl;
@@ -302,6 +303,7 @@ exit_with_usage(const char* progname)
   std::cerr << "RM CAN Device:     '18EF808B 1RXE    8  12  15  15  15  15  15  15  15                        1234,5678" << std::endl;
   std::cerr << "Unknown by Ploeger:'0   419428883 X       8   2  98 255 255 255 255   1  54       0.018340 R'" << std::endl;    //TODO: use proper name for format if known
   std::cerr << "Unknown byPloeger2:'ID=99618844x,Type=D,Length=8,Data=77FF364656023415'" << std::endl;    //TODO: use proper name for format if known
+  std::cerr << "csv 2:             '00:27.9 1CE6FF26    FE  FF  FF  FF  FF  FF  0   FF'" << std::endl;
 
   exit(0);
 }
@@ -1012,6 +1014,7 @@ getLogLineParser( size_t at_choice )
     parseLogLineRmCanDeviceMonitor,
     parseLogLinePloegerUnknownFormat,
     parseLogLinePloegerUnknownFormat_2,
+    parseLogLineCsv2,
     defaultParseLogLine
   };
 

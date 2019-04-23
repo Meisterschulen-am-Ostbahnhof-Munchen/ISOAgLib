@@ -1,4 +1,12 @@
 std::string
+interpreteAux2StatusValue(uint16_t u16Value1, uint16_t u16Value2)
+{
+    std::ostringstream out;
+    out << " | Value 1: " << u16Value1 << " | Value 2: " << u16Value2;
+    return out.str();
+}
+
+std::string
 partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
 {
   if (at_ptrFrame->dataSize() < 8)
@@ -79,7 +87,11 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
     case 0x23: out << "Input Type 2 Maintenance"; i8_uidBytePos = 2; strcpy( str_uidBytePos, " MIC=" ); if (at_ptrFrame->dataOctet(4-1)) out << " -READY-"; else out << " -INIT'-"; break;
     case 0x24: out << "Assignment Type 2"; i8_uidBytePos = response ? 2 : 13; break;
     case 0x25: out << "Input Status Type 2 Enable"; i8_uidBytePos = 2; break;
-    case 0x26: out << "Input Type 2 Status message"; i8_uidBytePos = 2; break;
+    case 0x26: out << "Input Type 2 Status message"; 
+        i8_uidBytePos = 2; 
+        out << interpreteAux2StatusValue(at_ptrFrame->dataOctet(3) | (at_ptrFrame->dataOctet(4) << 8), 
+                                         at_ptrFrame->dataOctet(5) | (at_ptrFrame->dataOctet(6) << 8)); 
+        break;
     case 0x27: out << "Capabilities"; break;
 
     case 0x92: out << "ESC"; i8_uidBytePos = 2; break;

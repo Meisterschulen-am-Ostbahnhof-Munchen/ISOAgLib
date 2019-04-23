@@ -566,6 +566,33 @@ parseLogLineCsv( std::string const &acr_line ) // "0xCFE46F0*,54.6857,FF,FF,FF,F
   return std::make_pair( 0, t_ptrFrame );
 }
 
+std::pair< int, PtrDataFrame_t >
+parseLogLineCsv2(std::string const &acr_line) // "00:27.9   1CE6FF26    FE  FF  FF  FF  FF  FF  0   FF"
+{
+    int min, s, ms100;
+    int iID;
+    unsigned arru_d[8];
+    int parsed_count = sscanf(
+        acr_line.c_str(),
+        "%d:%d.%d %x %x %x %x %x %x %x %x %x",
+        &min,
+        &s,
+        &ms100,
+        &iID,
+        arru_d, arru_d + 1, arru_d + 2, arru_d + 3, arru_d + 4, arru_d + 5, arru_d + 6, arru_d + 7);
+    const int inumDb = parsed_count - 4;
+    if (inumDb < 0)
+        return std::make_pair(-1, PtrDataFrame_t(0));
+
+    //quick hack (see e.g. candump for better solution,but need to verify log format first)
+    const bool cb_extendedFrameFormat = (iID > 0x7FF);
+
+    uint64_t const cui64_time = static_cast<uint64_t>(min * 60000 + s * 1000 + ms100 *100);
+    std::vector< uint8_t > vec_data;
+    copy(arru_d, arru_d + size_t(inumDb), back_inserter(vec_data));
+    PtrDataFrame_t t_ptrFrame = new DataFrame_c(cui64_time, iID, vec_data, cb_extendedFrameFormat);
+    return std::make_pair(0, t_ptrFrame);
+}
 
 std::pair< int, PtrDataFrame_t >
 parseLogLineKomodo( std::string const &acr_line ) // "0:00.003.537,0x0cff05b4,0,8,01 00 01 00 01 00 C0 C0"
