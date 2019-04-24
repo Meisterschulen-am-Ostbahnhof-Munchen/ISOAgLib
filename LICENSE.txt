@@ -1,5 +1,6 @@
+In case no commercial license is obtained for ISOAgLib from OSB AG,
 ISOAgLib is licensed under GNU General Public License with exceptions
-for ISOAgLib.
+for ISOAgLib, which is stated here:
 
 The ISOAgLib Software (in the following "ISOAgLib") shall be governed
 by the GNU General Public License v2 (in the following "GPL"). However,
