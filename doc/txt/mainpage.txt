@@ -42,7 +42,14 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
-\subsection Change_ZK 2.9.1 to 2.9.2
+\subsection Change_ZK 2.9.1 to 2.9.1.1
+
+Compilation:
+ - Fixes vt2iso compilation problem from 2.9.1
+ - Warnings removed.
+
+Logalizer:
+ - New Parse format (.csv) + Aux 2 Input Value Message decoded
 
 GNSS:
  - Add reception of non-ISOBUS-conform GNSS information (i.e. missing/partial Address Claim, etc.)
