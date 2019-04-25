@@ -41,7 +41,6 @@ vtObjectColourMap_c::stream(uint8_t* destMemory,
 
     HUGE_MEM uint8_t const * colourMapArray = vtObjectColourMap_a->colourMapArray;
 
-    VtClientConnection_c& vtClient = __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId);
     uint16_t const numOfColourIdxToFollow = vtObjectColourMap_a->numOfColourIdxToFollow;
 
     if (sourceOffset == 0) { // dump out constant sized stuff
