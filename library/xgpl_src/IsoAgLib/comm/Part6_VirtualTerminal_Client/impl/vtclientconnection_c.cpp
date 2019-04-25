@@ -964,9 +964,9 @@ VtClientConnection_c::getVtObjectPoolSoftKeyHeight() const
 uint8_t
 VtClientConnection_c::getVersion() const
 {
-  return ( getVtServerInst().getVtIsoVersion() < getPool().getVersion() )
+  return ( getVtServerInst().getVtIsoVersion() < uint8_t( getPool().getVersion() ) )
          ? getVtServerInst().getVtIsoVersion()
-         : getPool().getVersion();
+         : uint8_t( getPool().getVersion() );
 }
 
 
