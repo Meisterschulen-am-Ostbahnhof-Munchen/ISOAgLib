@@ -118,6 +118,7 @@ namespace __IsoAgLib {
     , mvec_refStationTypeAndStation()
     , mvec_refStationDifferentialAge10Msec()
     , m_gnssCFSHproxy( *this )
+    , m_nmeaPositionDataReceived( false )
   {
     mt_task.setPeriod( 1000, false );
   }
@@ -151,6 +152,7 @@ namespace __IsoAgLib {
         mt_gnssType = IsoAgLib::IsoGnssGps;
         mui8_satelliteCnt = 0;
         mi32_altitudeCm = 0x7FFFFFFF;
+        m_nmeaPositionDataReceived = false;
       }
 
       if( ( mi32_lastDirection >= 0 ) && (ci32_now - mi32_lastDirection) >= getTimeOut( ) )
@@ -273,7 +275,8 @@ namespace __IsoAgLib {
           mi32_lastPositionSimple = ci32_now;
           setSelectedDataSourceISOName( senderName );
 
-          if (getGnssMode() == IsoAgLib::IsoNoGps)
+          /// do not overwrite data if we are receiving from NMEA_GPS_POSITION_DATA_PGN 
+          if (!m_nmeaPositionDataReceived)
           { /// @todo ON REQUEST-259: Allow Rapid Update without Complete Position TP/FP before? Is is just an update or can it be standalone?
             /// for now, allow it as standalone and set GpsMethod simply to IsoGnssNull as we don't have reception info...
             mt_gnssMethod = IsoAgLib::IsoGnssNull; // was IsoGnssFix before. Actually, noone knows what to set here ;-)
@@ -496,6 +499,9 @@ namespace __IsoAgLib {
           else
             IsoAgLib::convertIstream( stream, mvec_refStationDifferentialAge10Msec[ind] );
         }
+
+        m_nmeaPositionDataReceived = true;
+
         #if DEBUG_NMEA
         INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_POSITON_DATA_PGN Lat: " << mi32_latitudeDegree10Minus7
           << ", Lon: " << mi32_longitudeDegree10Minus7 << ", Alt: " << mi32_altitudeCm

@@ -192,6 +192,9 @@ private:
 
   ControlFunctionStateHandlerProxy_c<Gnss_c> m_gnssCFSHproxy;
 
+  /** helper boolean for correct handling of rapid update PGNs without position data PGNs */
+  bool m_nmeaPositionDataReceived;
+
   friend Gnss_c &getGnssInstance( unsigned instance );
 };
 
