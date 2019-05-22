@@ -40,6 +40,7 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
         case 3: out << " - Aborted "; break;
         default:                      break;
       }
+      break;
 
     case 0x01: out << "Button"; i8_uidBytePos = 3;
       switch (at_ptrFrame->dataOctet(2-1))
@@ -50,6 +51,7 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
         case 3: out << " - Aborted "; break;
         default:                      break;
       }
+      break;
 
     case 0x02: out << "Pointing Event";
       out << " X:" << ((uint16_t(at_ptrFrame->dataOctet(2 + 1 - 1) << 8)) | (uint16_t(at_ptrFrame->dataOctet(2 - 1))));
@@ -61,6 +63,7 @@ partiallyInterpretePgnsVtEcu( PtrDataFrame_t at_ptrFrame, bool response )
         case 2: out << " - Held    "; break;
         default:                      break;
       }
+      break;
 
     case 0x03: out << "VT Select Input Object"; i8_uidBytePos = 2; break;
     case 0x04: out << "VT ESC"; i8_uidBytePos = 2; break;
