@@ -231,6 +231,7 @@ void ddopStore(uint8_t sa);
 #include "functionality_nw.inc"
 #include "functionality_tc.inc"
 #include "functionality_tim.inc"
+#include "functionality_ImplementApplication.inc"
 #include "parsers.inc"
 
 
@@ -932,11 +933,13 @@ getPgnDataInterpreter( PtrDataFrame_t at_ptrFrame )
   case SELECTED_SPEED_CMD:
   case SELECTED_SPEED_MESSAGE:
   case SOFTWARE_IDENTIFICATION_PGN:
-  case TIME_DATE_PGN:
+      break;
+  case TIME_DATE_PGN:                           return interpreteTimeDate;
   case PROPRIETARY_B_PGN:
-  case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:
-  case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:
-  case NMEA_GPS_POSITION_DATA_PGN:
+      break;
+  case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:      return interpretePositionDataRapidUpdate;
+  case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:       return interpreteCogSogRapidUpdate;
+  case NMEA_GPS_POSITION_DATA_PGN:              return interpreteGpsPositionData;
   case NMEA_GPS_DIRECTION_DATA_PGN:
   case NMEA_GNSS_PSEUDORANGE_NOISE_STATISTICS:
   default:

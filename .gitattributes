@@ -378,6 +378,7 @@ tools/libs/xerces-c/README.txt -text
 tools/logalizer/README.txt -text
 tools/logalizer/cmake/CMakeLists.txt -text
 tools/logalizer/src/checks.inc -text
+tools/logalizer/src/functionality_ImplementApplication.inc -text
 tools/logalizer/src/functionality_fs.inc -text
 tools/logalizer/src/functionality_gps.inc -text
 tools/logalizer/src/functionality_nw.inc -text

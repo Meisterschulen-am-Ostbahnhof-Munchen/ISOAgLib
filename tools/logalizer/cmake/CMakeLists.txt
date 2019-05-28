@@ -36,6 +36,7 @@ add_executable(
   ../src/functionality_tim.inc
   ../src/functionality_vt.inc
   ../src/functionality_tim.inc
+  ../src/functionality_ImplementApplication.inc
   ../src/dataframe.h
   ../src/inputstream.h
   ../src/logenvirons.h
