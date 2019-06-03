@@ -170,6 +170,18 @@ public:
   //  Operation: init
   void init();
 
+  //  Operation: overwrite dynamically CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS
+  void setMaxPaketsAllowedOverall(uint8_t a_max_pakets)
+  {
+      mui8_maxPaketsAllowedOverall = a_max_pakets;
+  }
+
+  //  Operation: overwrite dynamically CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS
+  void setMaxPaketsAllowedPerClient(uint8_t a_max_pakets)
+  {
+      mui8_maxPaketsAllowedPerClient = a_max_pakets;
+  }
+
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
 
@@ -363,6 +375,10 @@ private:
 
   Handler_t mt_handler;
   Customer_t mt_customer;
+
+  uint8_t mui8_maxPaketsAllowedOverall;
+  uint8_t mui8_maxPaketsAllowedPerClient;
+
 private:
   MultiReceive_c();
   friend MultiReceive_c &getMultiReceiveInstance( unsigned int instance );

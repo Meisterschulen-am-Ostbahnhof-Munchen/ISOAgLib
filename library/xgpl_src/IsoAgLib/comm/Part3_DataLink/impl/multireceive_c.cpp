@@ -139,6 +139,8 @@ MultiReceive_c::MultiReceive_c()
   , mlist_clients()
   , mt_handler(*this)
   , mt_customer(*this)
+  , mui8_maxPaketsAllowedOverall(CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS)
+  , mui8_maxPaketsAllowedPerClient(CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS)
 {
 }
 
@@ -1090,7 +1092,7 @@ MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
 
   // the following "> 0" check shouldn't be needed because if we reach here, we shouldn't
   uint8_t ui8_allowPackets = (getStreamCount() > 0)
-    ? uint8_t((CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS) / getStreamCount())
+    ? uint8_t((mui8_maxPaketsAllowedOverall) / getStreamCount())
     : uint8_t(1);
 
   if (ui8_allowPackets == 0)
@@ -1098,9 +1100,9 @@ MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
     // we'd have to take action and cannot wait for the sender sending...
     ui8_allowPackets = 1;
   }
-  if (ui8_allowPackets > CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS)
+  if (ui8_allowPackets > mui8_maxPaketsAllowedPerClient)
   { // limit the number of packets a single sender can send even if we could handle all those packets!
-    ui8_allowPackets = CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS;
+    ui8_allowPackets = mui8_maxPaketsAllowedPerClient;
   }
 
   uint8_t ui8_pkgsToExpect = arc_stream.expectBurst (ui8_allowPackets); // we wish e.g. 20 pkgs (as always), but there're only 6 more missing to complete the stream!
@@ -1264,7 +1266,6 @@ MultiReceive_c::init()
 
   setInitialized();
 }
-
 
 void
 MultiReceive_c::close( void )
