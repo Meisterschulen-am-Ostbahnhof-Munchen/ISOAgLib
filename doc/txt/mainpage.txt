@@ -42,6 +42,15 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
+\subsection Change_ZM 2.9.1.2 to 2.9.2
+
+Logalizer:
+ - Enhancement: Added interpretations for TIME_DATE_PGN, NMEA_GPS_POSITION_RAPID_UPDATE_PGN, NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN, NMEA_GPS_POSITION_DATA_PGN
+
+MultiReceive:
+ - Add setter for maxPaketsAllowedOverall and mui8_maxPaketsAllowedPerClient
+
+
 \subsection Change_ZL 2.9.1.1 to 2.9.1.2
 
 Logalizer:
