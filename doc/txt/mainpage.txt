@@ -40,6 +40,7 @@ Please use the upper navigation bar to browse the documentation.
 
 To get more information about ISOAgLib in general, please visit <a href="http://www.isoaglib.com">www.isoaglib.com</a> where you can find information about licensing, ISOAgLib as product, ISOAgLib's functions, principles and toolchain, the Tutorial Network, download and commercial services.
 
+
 \section Changes Changes
 
 
