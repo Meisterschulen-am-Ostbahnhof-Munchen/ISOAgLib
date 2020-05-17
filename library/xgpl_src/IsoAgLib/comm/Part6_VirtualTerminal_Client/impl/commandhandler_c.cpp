@@ -750,6 +750,15 @@ CommandHandler_c::sendCommandHideShow (uint16_t aui16_objectUid, uint8_t b_hideO
 
 
 bool
+CommandHandler_c::sendCommandSelectInputObject( uint16_t aui16_objectUid, bool b_activate, bool b_enableReplaceOfCmd )
+{
+  return sendCommand(162 /* Command: Command --- Parameter: Select Input Object */,
+                     aui16_objectUid & 0xFF, aui16_objectUid >> 8, b_activate ? 0x00 : 0xFF,
+                     0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
+}
+
+
+bool
 CommandHandler_c::sendCommandEsc( bool b_enableReplaceOfCmd )
 {
   return sendCommand (146 /* Command: Command --- Parameter: ESC */,

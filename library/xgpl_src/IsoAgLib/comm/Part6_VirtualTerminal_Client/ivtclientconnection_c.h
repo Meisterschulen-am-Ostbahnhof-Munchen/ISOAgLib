@@ -57,6 +57,7 @@ public:
   bool sendCommandChangeFontAttributes   (uint16_t aui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes   (uint16_t aui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
   bool sendCommandHideShow               (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
+  bool sendCommandSelectInputObject      (uint16_t aui16_objectUid, bool b_activate, bool b_enableReplaceOfCmd=true);
 
   /**
    * After assignments have been initially loaded, the application can activate some "presets"
@@ -243,6 +244,12 @@ inline bool
 iVtClientConnection_c::sendCommandEsc (bool b_enableReplaceOfCmd)
 {
   return commandHandler().sendCommandEsc(b_enableReplaceOfCmd);
+}
+
+inline bool
+iVtClientConnection_c::sendCommandSelectInputObject (uint16_t aui16_objectUid, bool b_activate, bool b_enableReplaceOfCmd)
+{
+  return commandHandler().sendCommandSelectInputObject(aui16_objectUid, b_activate, b_enableReplaceOfCmd);
 }
 
 

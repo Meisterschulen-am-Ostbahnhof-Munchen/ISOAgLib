@@ -445,9 +445,8 @@ vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCm
 bool
 vtObject_c::select(uint8_t selectOrActivate)
 {
-  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommand(
-    0xA2 /* Command: Command --- Parameter: Select Input Object */,
-    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8, selectOrActivate, 0xFF, 0xFF, 0xFF, 0xFF, true );
+  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSelectInputObject(
+    vtObject_a->ID, (selectOrActivate == 0), true );
 }
 
 

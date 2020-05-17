@@ -131,6 +131,7 @@ public:
   bool sendCommandSetAudioVolume (uint8_t aui8_volume);
   bool sendCommandSetColourMapOrPalette (uint16_t aui16_objectUid, bool b_enableReplaceOfCmd=true);
   bool sendCommandEsc (bool b_enableReplaceOfCmd=true);
+  bool sendCommandSelectInputObject (uint16_t aui16_objectUid, bool b_activate, bool b_enableReplaceOfCmd=true);
   bool sendCommandDeleteObjectPool();
   bool sendCommandUpdateLanguagePool();
   bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
