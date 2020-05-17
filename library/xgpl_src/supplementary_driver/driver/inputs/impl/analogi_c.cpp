@@ -28,6 +28,9 @@ namespace __IsoAgLib {
 
 AnalogI_c::AnalogI_c(uint8_t ab_channel, IsoAgLib::iInput_c::analogType_t ren_analogType, bool ab_useMean, bool ab_fastAdc )
   : InputBase_c(ab_channel, IsoAgLib::iInput_c::analog)
+  , ui16_minRangeValue(0)
+  , ui16_maxRangeValue(0)
+  , b_activateOverrideRangeErrors(false)
 {
   if ( ab_channel != 0xFF )
     init( ab_channel, ren_analogType, ab_useMean, ab_fastAdc );
@@ -96,14 +99,37 @@ AnalogI_c::active() const
 AnalogI_c::ain_err_t
 AnalogI_c::getState() const
 {
+  ain_err_t t_retAinError = noAinErr;
+
   switch ( HAL::getAnalogInDiagState( channelNr() ) )
   {
-    case HAL_ANALOGIN_OPEN:       return ain_openErr;
-    case HAL_ANALOGIN_SHORTCUT:   return ain_shortcutErr;
-    case HAL_ANALOGIN_OVERVOLT:   return ain_overvoltErr;
-    case HAL_ANALOGIN_UNDERVOLT:  return ain_undervoltErr;
-    default: return noAinErr;
+    case HAL_ANALOGIN_OPEN:       t_retAinError = ain_openErr;       break; //FMI5
+    case HAL_ANALOGIN_SHORTCUT:   t_retAinError = ain_shortcutErr;   break; //FMI6
+    case HAL_ANALOGIN_OVERVOLT:   t_retAinError = ain_overvoltErr;   break; //FMI3
+    case HAL_ANALOGIN_UNDERVOLT:  t_retAinError = ain_undervoltErr;  break; //FMI4
+    default:                      t_retAinError = noAinErr;          break;
   }
+
+  // override errors from HAL
+  if (b_activateOverrideRangeErrors)
+  {
+     if (t_retAinError == ain_openErr || t_retAinError == ain_undervoltErr)
+     {
+       if (val() >= ui16_minRangeValue)
+       {
+         t_retAinError = noAinErr;
+       }
+     }
+     else if (t_retAinError == ain_overvoltErr)
+     {
+       if (val() <= ui16_maxRangeValue)
+       {
+         t_retAinError = noAinErr;
+       }
+     }   
+  }
+
+  return t_retAinError;
 }
 
 } // __IsoAgLib

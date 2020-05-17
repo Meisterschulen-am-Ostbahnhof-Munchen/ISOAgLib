@@ -90,6 +90,13 @@ public:
     */
   iAnalogI_c::ain_err_t getState( void ) const { return iAnalogI_c::ain_err_t((uint16_t)AnalogI_c::getState());}
 
+  /**
+    set the min and max override range and activate override range errors in case of valid min/max (max >= min)
+    @param aui16_minValue minimum range value
+    @param aui16_maxValue maximum range value
+  */
+  void setOverrideRangeValues(uint16_t aui16_minRangeValue, uint16_t aui16_maxRangeValue) { AnalogI_c::setOverrideRangeValues(aui16_minRangeValue, aui16_maxRangeValue); }
+
 private:
   /**
     HIDDEN! copy constructor for AnalogI_c

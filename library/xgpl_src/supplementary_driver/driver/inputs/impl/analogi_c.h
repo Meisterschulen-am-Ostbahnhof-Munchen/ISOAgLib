@@ -72,6 +72,13 @@ public:
   */
   bool active() const;
 
+  /**
+    set the min and max override range and activate override range errors in case of valid min/max (max >= min)
+    @param aui16_minValue minimum range value
+    @param aui16_maxValue maximum range value
+  */
+  void setOverrideRangeValues( uint16_t aui16_minRangeValue, uint16_t aui16_maxRangeValue ) { ui16_minRangeValue = aui16_minRangeValue; ui16_maxRangeValue = aui16_maxRangeValue; b_activateOverrideRangeErrors = (ui16_maxRangeValue >= ui16_minRangeValue); }
+
   /** deliver detailed error state information for this Analog Input
     * @return ain_err_t [noAinErr|ain_openErr|ain_shortcutErr|ain_overvoltErr|ain_undervoltErr]
     */
@@ -100,6 +107,11 @@ private: // Private attributes
 
   /** if true the fast analog input method is used */
   bool b_fastAdc;
+
+  /** min and max sensor ranges */
+  uint16_t ui16_minRangeValue;
+  uint16_t ui16_maxRangeValue;
+  bool b_activateOverrideRangeErrors;
 };
 
 } // __IsoAgLib
