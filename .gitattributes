@@ -111,19 +111,6 @@ tools/README.txt -text
 tools/can_messenger/conf_can_messenger_msq_x86linux -text
 tools/can_messenger/conf_can_messenger_socket_win32 -text
 tools/can_messenger/conf_can_messenger_socket_x86linux -text
-tools/can_server/Changelog.txt -text
-tools/can_server/README.txt -text
-tools/can_server/cmake/can_server_lawicel/CMakeLists.txt -text
-tools/can_server/cmake/can_server_msq_no_card/CMakeLists.txt -text
-tools/can_server/cmake/can_server_msq_pcan/CMakeLists.txt -text
-tools/can_server/cmake/can_server_msq_socketcan/CMakeLists.txt -text
-tools/can_server/cmake/can_server_socket_no_card/CMakeLists.txt -text
-tools/can_server/cmake/can_server_socket_pcan/CMakeLists.txt -text
-tools/can_server/cmake/can_server_socket_socketcan/CMakeLists.txt -text
-tools/can_server/cmake/can_server_sontheim_mt_api/CMakeLists.txt -text
-tools/can_server/cmake/can_server_sontheim_st_api/CMakeLists.txt -text
-tools/can_server/cmake/can_server_vector/CMakeLists.txt -text
-tools/can_server/cmake/can_server_vector_xl/CMakeLists.txt -text
 tools/libs/README.txt -text
 tools/libs/boost/README.txt -text
 tools/libs/boost/boost_1_38_0/LICENSE_1_0.txt -text
@@ -346,7 +333,6 @@ tools/libs/freeimage/license-fi.txt -text
 tools/libs/freeimage/license-gpl.txt -text
 tools/libs/freeimage/mingw/libfreeimage.a -text
 tools/libs/misc/00README.txt -text
-tools/libs/pcan/README.txt -text
 tools/libs/pthread/00README.txt -text
 tools/libs/pthread/ANNOUNCE -text
 tools/libs/pthread/BUGS -text

@@ -11,9 +11,9 @@ yasper.h:
 
   Downloaded from http://yasper.sourceforge.net/.
 
-  Used in IsoAgLib at least for tools/can_server.
+  Used in IsoAgLib at least for tools/logalizer
 
-
+  
 SimpleOpt.h:
 SimpleGlob.h:
 
