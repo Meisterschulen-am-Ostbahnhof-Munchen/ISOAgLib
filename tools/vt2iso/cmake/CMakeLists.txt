@@ -33,21 +33,6 @@ include_directories(
   ../../libs/freeimage
   ${CMAKE_CURRENT_BINARY_DIR})
 
-# a custom target that is always built
-add_custom_target(svnheader ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/svnheader.h)
-
-# creates svnheader.h using cmake script
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/svnheader.h
-    COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-                         -P ${CMAKE_CURRENT_SOURCE_DIR}/getsvn.cmake)
-
-# svnversion.h is a generated file
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/svnversion.h
-    PROPERTIES GENERATED TRUE
-    HEADER_FILE_ONLY TRUE)
-
-
 if(WIN32)
   set(BOOST_ROOT "../../libs/boost/boost_1_38_0")
   include_directories(
@@ -74,9 +59,6 @@ add_executable(
   ../src/vt2iso.cpp
   ../src/vt2isoimagebase_c.cpp
   ../src/vt2isoimagefreeimage_c.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/svnversion.h)
+)
 
 target_link_libraries(vt2iso freeimage ${ISOAGLIB_ADDITIONAL_LIBRARIES})
-
-# explicitly say that the executable depends on the svnheader
-add_dependencies(vt2iso svnheader)
