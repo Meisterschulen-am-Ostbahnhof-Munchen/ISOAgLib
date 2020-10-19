@@ -136,7 +136,7 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
                           0,
                           0,
                           0,
-  /* "objectpool" */     ~0, // all
+  /* "objectpool" */      18446744073709551615ull, // all
   /* "include_object" */  0, // really NONE
   /* "include_macro" */   0, // really NONE
   /* "point" */           0, // really NONE
