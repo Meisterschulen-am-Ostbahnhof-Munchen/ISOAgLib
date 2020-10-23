@@ -14,6 +14,7 @@
 #include "vt2iso-defines.hpp"
 #include <cstring>
 #include <stdio.h>
+#include <cstdint>
 
 //! Number of regular object plus gap plus number of internal objects.
 char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
@@ -136,7 +137,7 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
                           0,
                           0,
                           0,
-  /* "objectpool" */      18446744073709551615ull, // all
+  /* "objectpool" */      UINT64_MAX, // all
   /* "include_object" */  0, // really NONE
   /* "include_macro" */   0, // really NONE
   /* "point" */           0, // really NONE
