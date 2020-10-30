@@ -45,6 +45,9 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \subsection Change_ZN 2.9.2 to ?
 
+PeerControl:
+ - Fixed bug causing the User to stop receiving Setpoints from the Source after 3 seconds
+
 Inputs:
  - Analog inputs enhanced with range override possibility (iAnalogI_c::setOverrideRangeValues()).
 

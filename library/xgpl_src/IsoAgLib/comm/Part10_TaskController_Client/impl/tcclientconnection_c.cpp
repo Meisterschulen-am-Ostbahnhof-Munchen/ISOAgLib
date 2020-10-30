@@ -481,6 +481,9 @@ namespace __IsoAgLib {
         // if no special Control Source is given, commands are only accepted from the connected TC
         if( spValueSource == NULL )
           spValueSource = getRemoteItem();
+        else {
+          mc_localCsHandler.updateTimestampSetpointValueSource( *spValueSource );
+        } 
         break;
 
       case IsoAgLib::ProcData::TechnicalData:
@@ -1024,6 +1027,19 @@ namespace __IsoAgLib {
     }
 
     return NULL;
+  }
+
+
+  void
+  TcClientConnection_c::ControlSourceHandler_c::updateTimestampSetpointValueSource( const IsoItem_c& isoItem )
+  {
+    SpValSourceListIter iter = findControlSource( isoItem );
+
+    if( iter != m_listSpValueSource.end() )
+    {
+      // update the timestamp of the last received message
+      iter->m_lastReceivedTime = HAL::getTime();
+    }
   }
 
 

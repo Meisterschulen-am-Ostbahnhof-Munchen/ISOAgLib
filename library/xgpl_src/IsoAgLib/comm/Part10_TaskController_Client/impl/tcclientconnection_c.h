@@ -273,6 +273,7 @@ namespace __IsoAgLib {
         void notifyOnPeerDropOff( PdRemoteNode_c& );
 
         const IsoItem_c* getSetpointValueSource( uint16_t _element, uint16_t _ddi );
+        void             updateTimestampSetpointValueSource( const IsoItem_c& isoItem );
 
       private:
         struct SetpointValueSource_s
