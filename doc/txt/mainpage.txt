@@ -54,6 +54,9 @@ Inputs:
 VT-Client:
  - Added iVtClientConnection_c::sendCommandSelectInputObject( 0xFFFF, false, ... ) for deselecting current focus
 
+Process-Data:
+ - Add interface to send/receive Process Data directly to/from any node (use ISOAGLIB_SWITCH "USE_DIRECT_PD_HANDLING").
+   Please use only when you know what you are doing!
 
 \subsection Change_ZM 2.9.1.2 to 2.9.2
 

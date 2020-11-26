@@ -65,6 +65,52 @@ namespace IsoAgLib {
       void processChangeDesignator( iIdentItem_c& identItem, uint16_t objID, const char* newDesignator );
 #endif
 
+
+#if defined(USE_DIRECT_PD_HANDLING)
+      /// /////////////////////////////////////////////////
+      /// WARNING: only use if you know what you are doing!
+      /// /////////////////////////////////////////////////
+      class iPdMessageHandler_c : private __IsoAgLib::TcClient_c::PdMessageHandler_c {
+        public:
+          virtual void eventPdMessageReceived(
+              const iIsoItem_c& sa_item, 
+              const iIsoItem_c* da_item,
+              IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value) = 0;
+
+        private:
+          virtual void _eventPdMessageReceived(
+              const __IsoAgLib::IsoItem_c& sa_item, 
+              const __IsoAgLib::IsoItem_c* da_item,
+              IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value) {
+            eventPdMessageReceived(
+                (const iIsoItem_c&) sa_item ,
+                (const iIsoItem_c*) da_item ,
+                command, element, ddi, value );
+          }
+          friend class iTcClient_c;
+      };
+
+      void setPdMessageHandler( iPdMessageHandler_c& hdl ) {
+        TcClient_c::setPdMessageHandler( hdl );
+      }
+ 
+      void clearPdMessageHandler() {
+        TcClient_c::clearPdMessageHandler();
+      }
+
+      void sendPdMessage( const iIsoItem_c& sa_item, 
+                          const iIsoItem_c* da_item,
+                          IsoAgLib::ProcData::CommandType_t command,
+                          uint16_t element,
+                          uint16_t ddi,
+                          int32_t value ) {
+        return TcClient_c::sendPdMessage(
+            static_cast<const __IsoAgLib::IsoItem_c&>( sa_item ),
+            static_cast<const __IsoAgLib::IsoItem_c*>( da_item ),
+            command, element, ddi, value );
+      }
+#endif
+
     private:
 #if ( PRT_INSTANCE_CNT == 1 )
       friend iTcClient_c& getItcClientInstance();

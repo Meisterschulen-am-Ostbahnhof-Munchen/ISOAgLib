@@ -25,9 +25,6 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
-#ifdef HAL_USE_SPECIFIC_FILTERS
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
-#endif
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/serverinstance_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/tcclient_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>

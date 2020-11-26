@@ -86,7 +86,29 @@ namespace __IsoAgLib {
 
       PdRemoteNode_c& addConnectionToControlSource( PdConnection_c&, const IsoItem_c & );
       void removeConnectionFromControlSource( PdConnection_c&, const IsoItem_c & );
-  
+
+
+#if defined(USE_DIRECT_PD_HANDLING)
+      /// /////////////////////////////////////////////////
+      /// WARNING: only use if you know what you are doing!
+      /// /////////////////////////////////////////////////
+      class PdMessageHandler_c {
+        public:
+          virtual void _eventPdMessageReceived( const IsoItem_c&, const IsoItem_c*, IsoAgLib::ProcData::CommandType_t, uint16_t, uint16_t, int32_t) = 0;
+      };
+
+      void setPdMessageHandler( PdMessageHandler_c& hdl );
+      void clearPdMessageHandler();
+
+      void sendPdMessage( const IsoItem_c& sa_item, 
+                          const IsoItem_c* da_item,
+                          IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value );
+
+    private:
+      PdMessageHandler_c* m_pdMessageHandler;
+#endif
+
+
     private:
       TcClient_c();
 

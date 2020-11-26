@@ -22,7 +22,7 @@
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
-#ifdef HAL_USE_SPECIFIC_FILTERS
+#if defined(HAL_USE_SPECIFIC_FILTERS) && !defined(USE_DIRECT_PD_HANDLING)
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #endif
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
@@ -77,7 +77,7 @@ namespace __IsoAgLib {
     {
       m_pdRemoteNode->addConnection( *this );
 
-#ifdef HAL_USE_SPECIFIC_FILTERS
+#if defined(HAL_USE_SPECIFIC_FILTERS) && !defined(USE_DIRECT_PD_HANDLING)
       getIsoFilterManagerInstance4Comm().insertIsoFilter(
         IsoFilter_s(
           *this, IsoAgLib::iMaskFilter_c( 0x3FFFFFFUL, ( PROCESS_DATA_PGN << 8 ) ),
@@ -112,7 +112,7 @@ namespace __IsoAgLib {
 
     if( m_pdRemoteNode )
     {
-#ifdef HAL_USE_SPECIFIC_FILTERS
+#if defined(HAL_USE_SPECIFIC_FILTERS) && !defined(USE_DIRECT_PD_HANDLING)
       getIsoFilterManagerInstance4Comm().removeIsoFilter(
         IsoFilter_s(
           *this, IsoAgLib::iMaskFilter_c( 0x3FFFFFFUL, ( PROCESS_DATA_PGN << 8 ) ),
@@ -149,7 +149,7 @@ namespace __IsoAgLib {
   }
 
 
-#ifdef HAL_USE_SPECIFIC_FILTERS
+#if defined(HAL_USE_SPECIFIC_FILTERS) && !defined(USE_DIRECT_PD_HANDLING)
   void
   PdConnection_c::processMsg( const CanPkg_c& data )
   {

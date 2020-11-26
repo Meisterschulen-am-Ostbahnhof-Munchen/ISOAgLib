@@ -20,7 +20,7 @@
 #ifndef PDCONNECTION_C_H
 #define PDCONNECTION_C_H
 
-#ifdef HAL_USE_SPECIFIC_FILTERS
+#if defined(HAL_USE_SPECIFIC_FILTERS) && !defined(USE_DIRECT_PD_HANDLING)
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #endif
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
@@ -37,7 +37,7 @@ namespace __IsoAgLib
   class PdPool_c;
 
   class PdConnection_c
-#ifdef HAL_USE_SPECIFIC_FILTERS
+#if defined(HAL_USE_SPECIFIC_FILTERS) && !defined(USE_DIRECT_PD_HANDLING)
     : public CanCustomer_c
 #endif
   {
@@ -74,7 +74,7 @@ namespace __IsoAgLib
     void sendNackNotFound( int16_t ddi, int16_t element, IsoAgLib::ProcData::CommandType_t, bool wasBroadcast ) const;
 
   private:
-#ifdef HAL_USE_SPECIFIC_FILTERS
+#if defined(HAL_USE_SPECIFIC_FILTERS) && !defined(USE_DIRECT_PD_HANDLING)
     virtual void processMsg( const CanPkg_c& data );
 #endif
     void processMeasurementMsg( const ProcessPkg_c& );

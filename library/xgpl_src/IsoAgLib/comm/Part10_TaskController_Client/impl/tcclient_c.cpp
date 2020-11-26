@@ -43,7 +43,11 @@ namespace __IsoAgLib {
   }
 
   TcClient_c::TcClient_c()
-    : m_provider( NULL )
+    :
+#if defined(USE_DIRECT_PD_HANDLING)
+      m_pdMessageHandler( NULL ),
+#endif
+      m_provider( NULL )
     , m_handler( *this )
     , m_customer( *this )
     , m_clientInfo()
@@ -58,7 +62,7 @@ namespace __IsoAgLib {
     isoaglib_assert ( !initialized() );
 
     __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( m_handler );
-#ifdef HAL_USE_SPECIFIC_FILTERS
+#if defined(HAL_USE_SPECIFIC_FILTERS) && !defined(USE_DIRECT_PD_HANDLING)
     getIsoBusInstance4Comm().insertFilter( m_customer, IsoAgLib::iMaskFilter_c( ( 0x3FFFF00UL ), ( PROCESS_DATA_PGN | 0xFF ) << 8 ), 8 );
 #else
     getIsoBusInstance4Comm().insertFilter( m_customer, IsoAgLib::iMaskFilter_c( ( 0x3FF0000UL ), PROCESS_DATA_PGN << 8 ), 8 );
@@ -78,7 +82,7 @@ namespace __IsoAgLib {
       delete *iter;
     m_pdRemoteNodes.clear();
 
-#ifdef HAL_USE_SPECIFIC_FILTERS
+#if defined(HAL_USE_SPECIFIC_FILTERS) && !defined(USE_DIRECT_PD_HANDLING)
     getIsoBusInstance4Comm().deleteFilter( m_customer, IsoAgLib::iMaskFilter_c( ( 0x3FFFF00UL ), ( PROCESS_DATA_PGN | 0xFF ) << 8 ) );
 #else
     getIsoBusInstance4Comm().deleteFilter( m_customer, IsoAgLib::iMaskFilter_c( ( 0x3FF0000UL ), PROCESS_DATA_PGN << 8 ) );
@@ -273,6 +277,17 @@ namespace __IsoAgLib {
 
     if( ! pkg.isValid() || ( pkg.getMonitorItemForSA() == NULL ) )
       return;
+
+#if defined(USE_DIRECT_PD_HANDLING)
+    if (m_pdMessageHandler)
+        m_pdMessageHandler->_eventPdMessageReceived(
+            *pkg.getMonitorItemForSA(),
+            pkg.getMonitorItemForDA(),
+            pkg.men_command,
+            pkg.mui16_element,
+            pkg.mui16_DDI,
+            pkg.mi32_pdValue);
+#endif
 
     PdRemoteNode_c *node = findRemoteNode( *pkg.getMonitorItemForSA() );
     if( node )
@@ -542,5 +557,39 @@ namespace __IsoAgLib {
         ++connection;
     }
   }
+
+
+#if defined(USE_DIRECT_PD_HANDLING)
+  void
+  TcClient_c::setPdMessageHandler( PdMessageHandler_c& hdl )
+  {
+    isoaglib_assert ( m_pdMessageHandler == NULL );
+
+    m_pdMessageHandler = &hdl;
+  }
+
+
+  void
+  TcClient_c::clearPdMessageHandler()
+  {
+    isoaglib_assert( m_pdMessageHandler != NULL );
+
+    m_pdMessageHandler = NULL;
+  }
+
+
+  void TcClient_c::sendPdMessage( const IsoItem_c& sa_item, const IsoItem_c* da_item, IsoAgLib::ProcData::CommandType_t command, uint16_t element, uint16_t ddi, int32_t value )
+  {
+    isoaglib_assert(command < IsoAgLib::ProcData::CommandUndefined);
+
+    ProcessPkg_c pkg( command, element, ddi, value );
+
+    pkg.setMonitorItemForDA( const_cast<IsoItem_c*>( da_item ));
+    pkg.setMonitorItemForSA( const_cast<IsoItem_c*>( &sa_item ));
+
+    getIsoBusInstance4Comm() << pkg;
+  }
+#endif
+
 
 } // __IsoAgLib
