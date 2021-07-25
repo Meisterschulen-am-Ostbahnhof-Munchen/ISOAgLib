@@ -80,7 +80,9 @@ set(COMPONENT_SRCS
   library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientobjectpool_c.cpp
   library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.cpp
   library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
-  library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+  library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractor_c.cpp
+  library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tractorcommonrx_c.cpp
+  library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp  
   library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
   library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
   library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.cpp
