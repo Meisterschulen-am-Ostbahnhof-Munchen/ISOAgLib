@@ -135,6 +135,7 @@ MultiReceiveClientWrapper_s::stop (CanCustomer_c& apc_fpCustomer)
 // c'tor
 MultiReceive_c::MultiReceive_c()
   : SchedulerTask_c( 100, true )
+  , mi_multitonInst()
   , mlist_streams()
   , mlist_clients()
   , mt_handler(*this)
