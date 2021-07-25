@@ -283,7 +283,8 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& ar
       {
         case 0x14: // decimal 20
           b_eCmd=true; // break left out intentionally
-
+        /* fall through */
+        /* no break */
         case 0x10: // decimal 16
           { // to allow local variables!
             /////////////////////////

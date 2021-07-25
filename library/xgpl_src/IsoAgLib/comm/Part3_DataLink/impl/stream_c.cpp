@@ -260,6 +260,8 @@ Stream_c::handleDataPacket (const CanPkg_c& pkg)
     case StreamETP:
       offset = mui32_dataPageOffset;
       // break left out intentionally
+    /* fall through */
+    /* no break */
     case StreamTP:
       if( sequenceNr == 0 )
         return false; // abort stream

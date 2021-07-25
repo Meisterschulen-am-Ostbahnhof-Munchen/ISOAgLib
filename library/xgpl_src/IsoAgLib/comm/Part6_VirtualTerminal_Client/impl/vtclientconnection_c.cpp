@@ -417,7 +417,8 @@ VtClientConnection_c::timeEventSearchForNewVt()
         {
           // break intentionally left out
         }
-
+    /* fall through */
+    /* no break */
     case IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_MasterToPrimaryVt:
       // check if initial timeout is done
       if (isPreferredVTTimeOut())
