@@ -37,6 +37,9 @@ iVtObject_c::setOriginSKM(bool b_SKM)
   if (b_SKM) s_properties.flags |= FLAG_ORIGIN_SKM;
 }
 
+
+uint16_t iVtObject_c::iVtObject_s::nextID = 0;
+
 /// Operation : setOriginBTN
 /// @param p_btn: false if this object is not included in a button.
 void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
