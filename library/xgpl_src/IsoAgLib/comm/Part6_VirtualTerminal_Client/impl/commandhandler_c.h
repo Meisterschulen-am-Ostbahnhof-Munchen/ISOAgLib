@@ -63,7 +63,7 @@ public:
   void processMsgVtToEcuResponses( const CanPkgExt_c& pkg );
 
   bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, bool b_enableReplaceOfCmd=true);
-  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd=true, IsoAgLib::iVtObject_c** rppc_vtObjects=NULL, uint16_t aui16_numObjects=0);
+  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd=true, const std::vector<IsoAgLib::iVtObject_c*>* rppc_vtObjects=NULL, uint16_t aui16_numObjects=0);
   bool sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size);
 
   bool sendCommandHideShow               (IsoAgLib::iVtObject_c*, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd);
@@ -134,7 +134,7 @@ public:
   bool sendCommandSelectInputObject (uint16_t aui16_objectUid, bool b_activate, bool b_enableReplaceOfCmd=true);
   bool sendCommandDeleteObjectPool();
   bool sendCommandUpdateLanguagePool();
-  bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
+  bool sendCommandUpdateObjectPool (const std::vector<IsoAgLib::iVtObject_c*>*  rppc_vtObjects, uint16_t aui16_numObjects);
 
   bool sendNonVolatileDeleteVersion( const char* versionLabel7chars );
 

@@ -66,8 +66,8 @@ public:
   const std::vector<IsoAgLib::iVtObject_c*>* mpc_objectsToUpload; // @todo maybe this variable can be optimized away and mpc_iterObjects be directly used...
 
   /** pointers needed by MultiSendStreamer */
-  IsoAgLib::iVtObject_c* const HUGE_MEM* mpc_iterObjects;
-  IsoAgLib::iVtObject_c* const HUGE_MEM* mpc_iterObjectsStored;
+  std::vector<IsoAgLib::iVtObject_c*>::const_iterator mpc_iterObjects;
+  std::vector<IsoAgLib::iVtObject_c*>::const_iterator mpc_iterObjectsStored;
 
   UploadPoolState_c& m_uploadPoolState;
 

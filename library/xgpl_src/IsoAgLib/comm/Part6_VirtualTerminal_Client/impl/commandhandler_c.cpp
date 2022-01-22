@@ -117,7 +117,7 @@ CommandHandler_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint
 
 
 bool
-CommandHandler_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
+CommandHandler_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd,  const std::vector<IsoAgLib::iVtObject_c*>* rppc_vtObjects, uint16_t aui16_numObjects)
 {
   msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rppc_vtObjects, aui16_numObjects);
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
@@ -230,7 +230,7 @@ CommandHandler_c::sendCommandUpdateLanguagePool()
 
 
 bool
-CommandHandler_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
+CommandHandler_c::sendCommandUpdateObjectPool (const std::vector<IsoAgLib::iVtObject_c*>*  rppc_vtObjects, uint16_t aui16_numObjects)
 {
   return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
                       0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false, rppc_vtObjects, aui16_numObjects) // replaces COULD happen if user-triggered sequences are there.

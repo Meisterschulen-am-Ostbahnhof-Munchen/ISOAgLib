@@ -104,7 +104,7 @@ namespace __IsoAgLib {
 
     void initObjectPoolUploadingPhases(
       UploadPoolType_t ren_uploadPoolType,
-      IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects = NULL,
+	  const std::vector<IsoAgLib::iVtObject_c*>* rppc_listOfUserPoolUpdateObjects = NULL,
       uint16_t aui16_numOfUserPoolUpdateObjects = 0);
     void startCurrentUploadPhase();
 
@@ -118,8 +118,8 @@ namespace __IsoAgLib {
     void notifyOnVtsLanguagePgn();
     void finalizeUploading();
 
-    uint32_t fitTerminalWrapper( const vtObject_c& object ) const;
-    bool dontUpload( const vtObject_c& object ) const;
+    uint32_t fitTerminalWrapper( const vtObject_c* object) const;
+    bool dontUpload( const vtObject_c* object) const;
 
     bool activeAuxN() const;
     bool activeAuxO() const;

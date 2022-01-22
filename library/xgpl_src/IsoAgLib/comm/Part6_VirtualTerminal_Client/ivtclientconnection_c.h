@@ -80,7 +80,7 @@ public:
   //!        versionLabel7chars != NULL: Use VersionLabel given. Must be 7 characters!
   bool sendNonVolatileDeleteVersion( const char* versionLabel7chars );
   bool sendCommandEsc (bool b_enableReplaceOfCmd=true);
-  bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
+  bool sendCommandUpdateObjectPool (const std::vector<IsoAgLib::iVtObject_c*>* rppc_vtObjects, uint16_t aui16_numObjects);
 
   uint8_t getClientId() const { return VtClientConnection_c::getClientId(); }
   bool isClientActive() const { return VtClientConnection_c::isClientActive(); }
@@ -157,7 +157,7 @@ iVtClientConnection_c::getSendPriority() const
 }
 
 inline bool
-iVtClientConnection_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
+iVtClientConnection_c::sendCommandUpdateObjectPool (const std::vector<IsoAgLib::iVtObject_c*>* rppc_vtObjects, uint16_t aui16_numObjects)
 {
   return commandHandler().sendCommandUpdateObjectPool (rppc_vtObjects, aui16_numObjects);
 }

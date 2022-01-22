@@ -561,17 +561,17 @@ UploadPoolState_c::startLoadVersion()
 
 
 bool
-UploadPoolState_c::dontUpload( const vtObject_c& object ) const
+UploadPoolState_c::dontUpload( const vtObject_c* object)  const
 {
-  return( object.isOmittedFromUpload()
-       || ((m_uploadingVersion == 2) && (object.getObjectType() >= VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2) && (object.getObjectType() <= VT_OBJECT_TYPE_AUXILIARY_POINTER) ) );
+  return( object->isOmittedFromUpload()
+       || ((m_uploadingVersion == 2) && (object->getObjectType() >= VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2) && (object->getObjectType() <= VT_OBJECT_TYPE_AUXILIARY_POINTER) ) );
 }
 
 
 uint32_t
-UploadPoolState_c::fitTerminalWrapper( const vtObject_c& object ) const
+UploadPoolState_c::fitTerminalWrapper( const vtObject_c* object) const
 {
-  return dontUpload( object ) ? 0 : object.fitTerminal();
+  return dontUpload( object ) ? 0 : object->fitTerminal();
 }
 
 
@@ -923,7 +923,7 @@ UploadPoolState_c::finalizeUploading()
 void
 UploadPoolState_c::initObjectPoolUploadingPhases(
   UploadPoolType_t ren_uploadPoolType, 
-  IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, 
+  const std::vector<IsoAgLib::iVtObject_c*>* rppc_listOfUserPoolUpdateObjects,
   uint16_t aui16_numOfUserPoolUpdateObjects )
 {
   isoaglib_assert( m_uploadingVersion != 0 );
@@ -940,7 +940,11 @@ UploadPoolState_c::initObjectPoolUploadingPhases(
 
     /// COUNT
     for (uint32_t curObject=0; curObject < aui16_numOfUserPoolUpdateObjects; ++curObject)
-      ms_uploadPhaseUser.ui32_size += fitTerminalWrapper( *static_cast<vtObject_c*>( mppc_uploadPhaseUserObjects[curObject] ) );
+    {
+    	IsoAgLib::iVtObject_c* curObjectO =  mppc_uploadPhaseUserObjects->at(curObject);
+    	vtObject_c* curObjectOO = (vtObject_c*)curObjectO;
+        ms_uploadPhaseUser.ui32_size += fitTerminalWrapper( curObjectOO );
+    }
   }
   else
   { // *CONDITIONALLY* Calculate GENERAL Parts sizes
@@ -952,7 +956,7 @@ UploadPoolState_c::initObjectPoolUploadingPhases(
       ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].pc_streamer = &mc_iVtObjectStreamer;
       ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size = 1; // the 0x11 command-byte is always there.
       for (uint32_t curObject=0; curObject < m_pool.getNumObjects(); ++curObject)
-        ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size += fitTerminalWrapper( *static_cast<vtObject_c*>( m_pool.getIVtObjects()[0][curObject] ) );
+        ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size += fitTerminalWrapper( (vtObject_c*) m_pool.getIVtObjects(0)->at(curObject)  );
 
       /// Phase 2
       const STL_NAMESPACE::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = m_pool.getAppSpecificFixPoolData();
@@ -975,7 +979,7 @@ UploadPoolState_c::initObjectPoolUploadingPhases(
 
       for (uint32_t curObject=0; curObject < m_pool.getNumObjectsLang(); ++curObject)
         ms_uploadPhasesAutomatic[ UploadPhaseIVtObjectsLang ].ui32_size
-          += fitTerminalWrapper( *static_cast<vtObject_c*>( m_pool.getIVtObjects()[ realUploadingLanguageAsIndex ][ curObject ] ) );
+          += fitTerminalWrapper( (vtObject_c*) m_pool.getIVtObjects(realUploadingLanguageAsIndex)->at(curObject) );
       if (ms_uploadPhasesAutomatic[ UploadPhaseIVtObjectsLang ].ui32_size > 0)
       { // only if there's at least one object being streamed up as user-partial-objectpool-update add the CMD byte for size calculation...
         ++ms_uploadPhasesAutomatic[ UploadPhaseIVtObjectsLang ].ui32_size; // add the 0x11 byte!

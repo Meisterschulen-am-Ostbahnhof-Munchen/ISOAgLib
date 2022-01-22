@@ -44,11 +44,12 @@ ObjectPoolStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t by
     // stream some more bytes into internal ISO_VT_UPLOAD_BUFFER_SIZE byte buffer...
     while( true )
     {
-      vtObject_c &object = *((vtObject_c*)(*mpc_iterObjects));
+    	IsoAgLib::iVtObject_c* const* const pobject = 	mpc_iterObjects.base();
+    	vtObject_c* object = (vtObject_c*)pobject;
       
       const uint16_t bytes2Buffer = m_uploadPoolState.dontUpload( object )
         ? 0
-        : object.stream( marr_uploadBuffer+m_uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-m_uploadBufferFilled, mui32_objectStreamPosition );
+        : object->stream( marr_uploadBuffer+m_uploadBufferFilled, ISO_VT_UPLOAD_BUFFER_SIZE-m_uploadBufferFilled, mui32_objectStreamPosition );
 
       if( bytes2Buffer == 0 )
       { // no data for this object, try next one!
@@ -72,7 +73,7 @@ ObjectPoolStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t by
 void
 ObjectPoolStreamer_c::resetDataNextStreamPart()
 {
-  mpc_iterObjects = mpc_objectsToUpload;
+  mpc_iterObjects = mpc_objectsToUpload->begin();
   mui32_objectStreamPosition = 0;
   m_uploadBufferPosition = 0;
   m_uploadBufferFilled = 1;
