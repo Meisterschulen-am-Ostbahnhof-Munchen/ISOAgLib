@@ -325,41 +325,17 @@ public:
   */
   virtual void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF)=0;
 
-  iVtClientObjectPool_c(iVtObject_c* const /*HUGE_MEM*/* const* a_iVtObjects, uint16_t a_numObjects, uint16_t a_numObjectsLang, ObjectPoolSettings_s a_objectPoolSettings)
+  iVtClientObjectPool_c(std::vector<std::vector<iVtObject_c*>> a_iVtObjects, ObjectPoolSettings_s a_objectPoolSettings)
     : iVtObjects (a_iVtObjects)
-    , numObjects (a_numObjects)
-    , numObjectsLang (a_numObjectsLang)
     , version(a_objectPoolSettings.version)
     , dimension (a_objectPoolSettings.dimension)
     , skWidth (a_objectPoolSettings.skWidth)
     , skHeight (a_objectPoolSettings.skHeight)
     , b_initAllObjects (false)
-    , numLang( 0 )
   {
-    iVtObject_c* const /*HUGE_MEM*/* const* iter = a_iVtObjects+1; // skip first entry (should be the general object pool part!)
-    while (*iter++ != NULL)
-      ++numLang;
+
   };
 
-  iVtClientObjectPool_c(iVtObject_c* const /*HUGE_MEM*/* const* a_iVtObjects, uint16_t a_numObjectsLang, ObjectPoolSettings_s a_objectPoolSettings)
-    : iVtObjects (a_iVtObjects)
-    , numObjects (0)
-    , numObjectsLang (a_numObjectsLang)
-    , version(a_objectPoolSettings.version)
-    , dimension (a_objectPoolSettings.dimension)
-    , skWidth (a_objectPoolSettings.skWidth)
-    , skHeight (a_objectPoolSettings.skHeight)
-    , b_initAllObjects (false)
-    , numLang( 0 )
-  {
-    iVtObject_c* const /*HUGE_MEM*/* const* iter = a_iVtObjects+1; // skip first entry (should be the general object pool part!)
-    while (*iter++ != NULL)
-      ++numLang;
-
-    while (iVtObjects [0][numObjects]){
-    	numObjects++;
-    }
-  };
 
    virtual ~iVtClientObjectPool_c() {}
 
@@ -421,32 +397,30 @@ private:
   virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/, uint8_t /*aui8_commandByte*/, __IsoAgLib::Stream_c& /*arc_stream*/)  { return 0; }
 
 protected:
-  iVtObject_c* const HUGE_MEM* const* iVtObjects;
-  uint16_t numObjects;
-  uint16_t numObjectsLang;
+  std::vector<std::vector<iVtObject_c*>> iVtObjects;
   ObjectPoolVersion_en version;
   uint16_t dimension;
   uint16_t skWidth;
   uint16_t skHeight;
   bool b_initAllObjects;
-  uint8_t numLang;
+
 
 public:
-  iVtObject_c* const HUGE_MEM* const*
-                        getIVtObjects()     const { return iVtObjects; }
-  uint16_t              getNumObjects()     const { return numObjects; }
-  uint16_t              getNumObjectsLang() const { return numObjectsLang; }
+  std::vector<std::vector<iVtObject_c*>>
+                        getIVtObjects()     const { return iVtObjects; }				// return Vector
+  uint16_t              getNumObjects()     const { return iVtObjects[0].size(); }		// only General Pool.
+  uint16_t              getNumObjectsLang() const { return iVtObjects[1].size(); }	    // skip first entry (should be the general object pool part!)
   ObjectPoolVersion_en  getVersion()        const { return version; }
   // method overrideVersion is only for special proprietary use.
   void overrideVersion(ObjectPoolVersion_en override) { version = override; }
   uint16_t              getDimension()      const { return dimension; }
   uint16_t              getSkWidth()        const { return skWidth; }
   uint16_t              getSkHeight()       const { return skHeight; }
-  uint8_t               getNumLang()        const { return numLang; }
+  uint8_t               getNumLang()        const { return iVtObjects.size() -1; }		// skip first entry (should be the general object pool part!)
   bool                  multiLanguage()     const { return getNumLang() > 0; }
 
   iVtObjectWorkingSet_c&
-  getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects); }
+  getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(iVtObjects[0][0]); }
 };
 
 } // IsoAgLib
