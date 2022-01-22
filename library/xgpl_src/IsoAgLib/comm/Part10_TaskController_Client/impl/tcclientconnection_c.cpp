@@ -435,12 +435,16 @@ namespace __IsoAgLib {
         {
         case UnassignReceiver:
           assign = false;
+          /* fall through */
+          /* no break */
         case AssignReceiver:
           success = processControlAssignmentReceiver( assign, elem, ddi, name );
           break;
 
         case UnassignTransmitter:
           assign = false;
+          /* fall through */
+          /* no break */
         case AssignTransmitter:
           transmitter = true;
           success = processControlAssignmentTransmitter( assign, elem, ddi, name, destElem );
