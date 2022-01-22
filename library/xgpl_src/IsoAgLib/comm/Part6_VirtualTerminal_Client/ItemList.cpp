@@ -12,10 +12,16 @@ using namespace IsoAgLib;
 
 List::List(long size) : _size(size), _count(0) {
     _items = new iVtObject_c*[size];
+    all_items = new iVtObject_c**[2];
+    all_items[0] = _items;
+    all_items[1] = nullptr;
+
+
 }
 
 List::List(List &list) : _size(list._size), _count(list._count) {
 	_items = list._items;
+	all_items = list.all_items;
 }
 
 

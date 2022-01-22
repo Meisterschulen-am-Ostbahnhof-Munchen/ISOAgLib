@@ -31,11 +31,9 @@ public:
     IsoAgLib::iVtObject_c* Pop();
 
 
-private:
     void RemoveAt(long index);
-  
-private:
     IsoAgLib::iVtObject_c** _items;
+    IsoAgLib::iVtObject_c*** all_items;
     long _size; 
     long _count; 
 };
