@@ -341,25 +341,6 @@ public:
       ++numLang;
   };
 
-  iVtClientObjectPool_c(iVtObject_c* const /*HUGE_MEM*/* const* a_iVtObjects, uint16_t a_numObjectsLang, ObjectPoolSettings_s a_objectPoolSettings)
-    : iVtObjects (a_iVtObjects)
-    , numObjects (0)
-    , numObjectsLang (a_numObjectsLang)
-    , version(a_objectPoolSettings.version)
-    , dimension (a_objectPoolSettings.dimension)
-    , skWidth (a_objectPoolSettings.skWidth)
-    , skHeight (a_objectPoolSettings.skHeight)
-    , b_initAllObjects (false)
-    , numLang( 0 )
-  {
-    iVtObject_c* const /*HUGE_MEM*/* const* iter = a_iVtObjects+1; // skip first entry (should be the general object pool part!)
-    while (*iter++ != NULL)
-      ++numLang;
-
-    while (iVtObjects [0][numObjects]){
-    	numObjects++;
-    }
-  };
 
    virtual ~iVtClientObjectPool_c() {}
 
