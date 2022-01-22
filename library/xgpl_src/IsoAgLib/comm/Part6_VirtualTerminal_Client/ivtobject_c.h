@@ -32,6 +32,9 @@ class iVtObject_c : public ClientBase
 public:
   struct iVtObject_s {
     uint16_t ID;
+    iVtObject_s(uint16_t ID)
+    : ID(ID)
+    {}
   };
 
   struct iVtObjectAlarmMask_s : iVtObject_s {
@@ -75,6 +78,7 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
+    iVtObjectButton_s(uint16_t ID):iVtObject_s(ID) {}
   };
 
   struct iVtObjectContainer_s : iVtObject_s {
@@ -94,6 +98,7 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
+    iVtObjectDataMask_s(uint16_t ID):iVtObject_s(ID) {}
   };
 
   struct iVtObjectEllipse_s : iVtObject_s {
@@ -123,6 +128,7 @@ public:
     uint8_t fontStyle;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
+    iVtObjectFontAttributes_s(uint16_t ID):iVtObject_s(ID) {}
   };
 
   struct iVtObjectInputAttributes_s : iVtObject_s {
@@ -305,6 +311,7 @@ public:
     char* value; /* size length+1 (0-termination intern!) */
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
+    iVtObjectOutputString_s(uint16_t ID):iVtObject_s(ID) {}
   };
 
   struct iVtObjectPictureGraphic_s : iVtObject_s {
@@ -376,6 +383,31 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     uint8_t numberOfLanguagesToFollow;
     const repeat_vtLanguage_s* languagesToFollow;
+
+    iVtObjectWorkingSet_s(
+    	    uint16_t ID,
+    		uint8_t backgroundColour,
+    		uint8_t selectable,
+    		iVtObjectMask_c* activeMask, // data or alarm mask
+    		uint8_t numberOfObjectsToFollow,
+    		const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow,
+    		uint8_t numberOfMacrosToFollow,
+    		const repeat_event_iVtObjectMacro_s* macrosToFollow,
+    		uint8_t numberOfLanguagesToFollow,
+    		const repeat_vtLanguage_s* languagesToFollow
+    		)
+    : iVtObject_s(ID)
+    , backgroundColour(backgroundColour)
+    , selectable(selectable)
+	, activeMask(activeMask)
+	, numberOfObjectsToFollow(numberOfObjectsToFollow)
+	, objectsToFollow(objectsToFollow)
+	, numberOfMacrosToFollow(numberOfMacrosToFollow)
+	, macrosToFollow(macrosToFollow)
+	, numberOfLanguagesToFollow(numberOfLanguagesToFollow)
+	, languagesToFollow(languagesToFollow)
+    {}
+
   };
 
   struct iVtObjectAuxiliaryInput_s : iVtObject_s {
