@@ -1,8 +1,10 @@
 # Edit following two lines to set component requirements (see docs)
 set(COMPONENT_REQUIRES )
-set(COMPONENT_PRIV_REQUIRES 
-	spi_flash
-	main)
+set(COMPONENT_PRIV_REQUIRES
+	isoaglib_project_config
+	IsoAgLib-hal
+	Versuche
+	)
 
 set(COMPONENT_SRCS 
   library/xgpl_src/IsoAgLib/comm/impl/isobus_c.cpp
