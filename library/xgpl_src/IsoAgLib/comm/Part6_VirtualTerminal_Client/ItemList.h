@@ -13,33 +13,31 @@ public:
     List& operator=(const List&);
 
     long Count() const;
-    iVtObject_c* Get(long index) const;
-    iVtObject_c* First() const;
-    iVtObject_c* Last() const;
-    bool Includes(const iVtObject_c*) const;
+    IsoAgLib::iVtObject_c* Get(long index) const;
+    IsoAgLib::iVtObject_c* First() const;
+    IsoAgLib::iVtObject_c* Last() const;
+    bool Includes(IsoAgLib::iVtObject_c* const) const;
 
-    void Append(const iVtObject_c*);
-    void Prepend(const iVtObject_c*);
+    void Append(IsoAgLib::iVtObject_c* const);
+    void Prepend(IsoAgLib::iVtObject_c* const );
 
-    void Remove(const iVtObject_c*);
+    void Remove(IsoAgLib::iVtObject_c* const);
     void RemoveLast();
     void RemoveFirst();
     void RemoveAll();
 
-    iVtObject_c* Top() const;
-    void Push(const iVtObject_c*);
-    iVtObject_c* Pop();
+    IsoAgLib::iVtObject_c* Top() const;
+    void Push(IsoAgLib::iVtObject_c* const);
+    IsoAgLib::iVtObject_c* Pop();
 
 
 private:
     void RemoveAt(long index);
   
 private:
-    iVtObject_c** _items;
+    IsoAgLib::iVtObject_c** _items;
     long _size; 
     long _count; 
 };
-
-#include "ItemList.cpp"
 
 #endif /* ITEM_LIST_H */

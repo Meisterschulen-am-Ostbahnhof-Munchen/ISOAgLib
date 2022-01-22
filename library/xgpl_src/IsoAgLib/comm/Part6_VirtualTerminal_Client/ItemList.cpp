@@ -4,7 +4,11 @@
  *   [1] http://st-www.cs.illinois.edu/patterns/dpbook/Source.html
  */
 
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>
 #include <iostream>
+#include "ItemList.h"
+
+using namespace IsoAgLib;
 
 List::List(long size) : _size(size), _count(0) {
     _items = new iVtObject_c*[size];
@@ -36,7 +40,7 @@ long List::Count() const {
 // TODO:
 //   * solve warning 'control reaches end of non-void function'.
 //   * shouldn't the test be if (index < _count) ???
-Item& List::Get(long index) const {
+iVtObject_c* List::Get(long index) const {
     if (_count <= _size) {
       return (_items[index]);
     } else {
@@ -46,17 +50,17 @@ Item& List::Get(long index) const {
 }
 
 
-Item& List::First() const {
+iVtObject_c* List::First() const {
     return (Get(0));
 }
 
 
-Item& List::Last() const {
+iVtObject_c* List::Last() const {
   return (Get(Count()-1));
 }
 
 
-bool List::Includes(const iVtObject_c* anItem) const {
+bool List::Includes(iVtObject_c* const anItem) const {
     for (long i = 0; i < Count(); i++) {
         if (_items[i] == anItem) {
             return (true);
@@ -67,7 +71,7 @@ bool List::Includes(const iVtObject_c* anItem) const {
 
 
 
-void List::Append(const iVtObject_c* anItem) {
+void List::Append(iVtObject_c* const anItem) {
     if (_count <= _size) {
         _items[_count] = anItem;
         _count++;
@@ -110,17 +114,17 @@ void List::RemoveAll() {
 
 
 
-Item& List::Top() const {
+iVtObject_c* List::Top() const {
     return (Last());
 }
 
 
-void List::Push(iVtObject_c* anItem) {
+void List::Push(iVtObject_c* const anItem) {
     Append(anItem);
 }
 
 
-Item& List::Pop()
+iVtObject_c* List::Pop()
 {
 	iVtObject_c* top = Last();
     RemoveLast();
