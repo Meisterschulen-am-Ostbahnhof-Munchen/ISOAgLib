@@ -30,11 +30,11 @@ namespace IsoAgLib {
 class iVtObject_c : public ClientBase
 {
 public:
-  typedef struct iVtObject_s {
+  struct iVtObject_s {
     uint16_t ID;
-  } iVtObject_s;
+  };
 
-  typedef struct iVtObjectAlarmMask_s {
+  struct iVtObjectAlarmMask_s {
     uint16_t ID;
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
@@ -44,9 +44,9 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectAlarmMask_s;
+  };
 
-  typedef struct iVtObjectArchedBarGraph_s {
+  struct iVtObjectArchedBarGraph_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -64,9 +64,9 @@ public:
     uint16_t targetValue;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectArchedBarGraph_s;
+  };
 
-  typedef struct iVtObjectButton_s {
+  struct iVtObjectButton_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -78,9 +78,9 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectButton_s;
+  };
 
-  typedef struct iVtObjectContainer_s {
+  struct iVtObjectContainer_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -89,9 +89,9 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectContainer_s;
+  };
 
-  typedef struct iVtObjectDataMask_s {
+  struct iVtObjectDataMask_s {
     uint16_t ID;
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
@@ -99,9 +99,9 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectDataMask_s;
+  };
 
-  typedef struct iVtObjectEllipse_s {
+  struct iVtObjectEllipse_s {
     uint16_t ID;
     iVtObjectLineAttributes_c* lineAttributes;
     uint16_t width;
@@ -112,18 +112,18 @@ public:
     iVtObjectFillAttributes_c* fillAttributes;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectEllipse_s;
+  };
 
-  typedef struct iVtObjectFillAttributes_s {
+  struct iVtObjectFillAttributes_s {
     uint16_t ID;
     uint8_t fillType;
     uint8_t fillColour;
     iVtObjectPictureGraphic_c* fillPatternObject;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectFillAttributes_s;
+  };
 
-  typedef struct iVtObjectFontAttributes_s {
+  struct iVtObjectFontAttributes_s {
     uint16_t ID;
     uint8_t fontColour;
     uint8_t fontSize;
@@ -131,18 +131,18 @@ public:
     uint8_t fontStyle;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectFontAttributes_s;
+  };
 
-  typedef struct iVtObjectInputAttributes_s {
+  struct iVtObjectInputAttributes_s {
     uint16_t ID;
     uint8_t validationType;
     uint8_t length;
     char* validationString;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectInputAttributes_s;
+  };
 
-  typedef struct iVtObjectInputBoolean_s {
+  struct iVtObjectInputBoolean_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint16_t width;
@@ -152,9 +152,9 @@ public:
     uint8_t enabled;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectInputBoolean_s;
+  };
 
-  typedef struct iVtObjectInputList_s {
+  struct iVtObjectInputList_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -165,9 +165,9 @@ public:
     const repeat_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectInputList_s;
+  };
 
-  typedef struct iVtObjectInputNumber_s {
+  struct iVtObjectInputNumber_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -186,9 +186,9 @@ public:
     uint8_t secondOptionsByte;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectInputNumber_s;
+  };
 
-  typedef struct iVtObjectInputString_s {
+  struct iVtObjectInputString_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -203,9 +203,9 @@ public:
     uint8_t enabled;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectInputString_s;
+  };
 
-  typedef struct iVtObjectKey_s {
+  struct iVtObjectKey_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t keyCode;
@@ -213,9 +213,9 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectKey_s;
+  };
 
-  typedef struct iVtObjectLinearBarGraph_s {
+  struct iVtObjectLinearBarGraph_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -231,18 +231,18 @@ public:
     uint16_t targetValue;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectLinearBarGraph_s;
+  };
 
-  typedef struct iVtObjectLineAttributes_s {
+  struct iVtObjectLineAttributes_s {
     uint16_t ID;
     uint8_t lineColour;
     uint8_t lineWidth;
     uint16_t lineArt;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectLineAttributes_s;
+  };
 
-  typedef struct iVtObjectLine_s {
+  struct iVtObjectLine_s {
     uint16_t ID;
     iVtObjectLineAttributes_c* lineAttributes;
     uint16_t width;
@@ -250,15 +250,15 @@ public:
     uint8_t lineDirection;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectLine_s;
+  };
 
-  typedef struct iVtObjectMacro_s {
+  struct iVtObjectMacro_s {
     uint16_t ID;
     uint16_t numBytesToFollow;
     const uint8_t* commandsToFollow;
-  } iVtObjectMacro_s;
+  };
 
-  typedef struct iVtObjectMeter_s {
+  struct iVtObjectMeter_s {
     uint16_t ID;
     uint16_t width;
     uint8_t needleColour;
@@ -274,19 +274,19 @@ public:
     uint16_t value;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectMeter_s;
+  };
 
-  typedef struct iVtObjectNumberVariable_s {
+  struct iVtObjectNumberVariable_s {
     uint16_t ID;
     uint32_t value;
-  } iVtObjectNumberVariable_s;
+  };
 
-  typedef struct iVtObjectObjectPointer_s {
+  struct iVtObjectObjectPointer_s {
     uint16_t ID;
     iVtObject_c* value;
-  } iVtObjectObjectPointer_s;
+  };
 
-  typedef struct iVtObjectOutputList_s {
+  struct iVtObjectOutputList_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -296,9 +296,9 @@ public:
     const repeat_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectOutputList_s;
+  };
 
-  typedef struct iVtObjectOutputNumber_s {
+  struct iVtObjectOutputNumber_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -314,9 +314,9 @@ public:
     uint8_t horizontalJustification;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectOutputNumber_s;
+  };
 
-  typedef struct iVtObjectOutputString_s {
+  struct iVtObjectOutputString_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -329,9 +329,9 @@ public:
     char* value; /* size length+1 (0-termination intern!) */
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectOutputString_s;
+  };
 
-  typedef struct iVtObjectPictureGraphic_s {
+  struct iVtObjectPictureGraphic_s {
     uint16_t ID;
     uint16_t width;
     uint16_t actualWidth;
@@ -349,15 +349,15 @@ public:
     const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s* fixedBitmapsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectPictureGraphic_s;
+  };
 
-  typedef struct iVtObjectColourMap_s {
+  struct iVtObjectColourMap_s {
     uint16_t ID;
     uint16_t numOfColourIdxToFollow;
     const HUGE_MEM uint8_t* colourMapArray;
-  } iVtObjectColourMap_s;
+  };
 
-  typedef struct iVtObjectPolygon_s {
+  struct iVtObjectPolygon_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -368,9 +368,9 @@ public:
     const repeat_x_y_s* pointsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectPolygon_s;
+  };
 
-  typedef struct iVtObjectRectangle_s {
+  struct iVtObjectRectangle_s {
     uint16_t ID;
     iVtObjectLineAttributes_c* lineAttributes;
     uint16_t width;
@@ -379,24 +379,24 @@ public:
     iVtObjectFillAttributes_c* fillAttributes;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectRectangle_s;
+  };
 
-  typedef struct iVtObjectSoftKeyMask_s {
+  struct iVtObjectSoftKeyMask_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-  } iVtObjectSoftKeyMask_s;
+  };
 
-  typedef struct iVtObjectStringVariable_s {
+  struct iVtObjectStringVariable_s {
     uint16_t ID;
     uint16_t length;
     char* value;
-  } iVtObjectStringVariable_s;
+  };
 
-  typedef struct iVtObjectWorkingSet_s {
+  struct iVtObjectWorkingSet_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t selectable;
@@ -407,26 +407,26 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     uint8_t numberOfLanguagesToFollow;
     const repeat_vtLanguage_s* languagesToFollow;
-  } iVtObjectWorkingSet_s;
+  };
 
-  typedef struct iVtObjectAuxiliaryInput_s {
+  struct iVtObjectAuxiliaryInput_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t functionType;
     uint8_t inputId;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
-  } iVtObjectAuxiliaryInput_s;
+  };
 
-  typedef struct iVtObjectAuxiliaryFunction_s {
+  struct iVtObjectAuxiliaryFunction_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t functionType;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
-  } iVtObjectAuxiliaryFunction_s;
+  };
 
-  typedef struct iVtObjectGraphicsContext_s {
+  struct iVtObjectGraphicsContext_s {
     uint16_t ID;
     uint16_t viewportWidth;
     uint16_t viewportHeight;
@@ -445,29 +445,29 @@ public:
     uint8_t  format;          //!< 0 => 1 bit/pixel, 1 => 4 bit/pixel, 2 => 8 bit/pixel
     uint8_t  options;         //!< Bit 0 transparent flag; Bit 1 line, font, fill colour usage
     uint8_t  transparencyColour;  //!< Colour to be shown transparent.
-  } iVtObjectGraphicsContext_s;
+  };
 
-  typedef struct iVtObjectAuxiliaryInput2_s {
+  struct iVtObjectAuxiliaryInput2_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t functionAttributes;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
-  } iVtObjectAuxiliaryInput2_s;
+  };
 
-  typedef struct iVtObjectAuxiliaryFunction2_s {
+  struct iVtObjectAuxiliaryFunction2_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t functionAttributes;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
-  } iVtObjectAuxiliaryFunction2_s;
+  };
 
-  typedef struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s {
+  struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s {
     uint16_t ID;
     uint8_t pointerType;
     iVtObject_c* value;
-  } iVtObjectAuxiliaryControlDesignatorObjectPointer_s;
+  };
 
 // METHODS
 public:
