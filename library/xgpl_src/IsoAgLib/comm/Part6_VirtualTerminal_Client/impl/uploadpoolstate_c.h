@@ -191,7 +191,7 @@ namespace __IsoAgLib {
     // which results in undefined behavior (mostly only in -O2, so beware)
 
     UploadPhase_s ms_uploadPhaseUser; // user triggered upload phase...
-    IsoAgLib::iVtObject_c** mppc_uploadPhaseUserObjects;
+    const std::vector<IsoAgLib::iVtObject_c*>* mppc_uploadPhaseUserObjects;
 
     int8_t mi8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
     int8_t mi8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"

@@ -762,7 +762,7 @@ UploadPoolState_c::indicateUploadPhaseCompletion()
 {
   if (men_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { // we only have one part, so we're done!
-    mc_iVtObjectStreamer.mpc_objectsToUpload = NULL; // just for proper cleanup.
+    mc_iVtObjectStreamer.mpc_objectsToUpload = nullptr; // just for proper cleanup.
     // We don't need that pointer anymore. It can be invalid after we told the client
     // that we're done with partial user objectpool upload/update.
     indicateUploadCompletion(); // Send "End of Object Pool" message
@@ -814,14 +814,14 @@ UploadPoolState_c::startCurrentUploadPhase()
     switch (UploadPhase_t (mui_uploadPhaseAutomatic)) // allowed cast, we're in enum-bounds!
     {
       case UploadPhaseIVtObjectsFix:
-        mc_iVtObjectStreamer.mpc_objectsToUpload = m_pool.getIVtObjects()[0]; // main FIX (lang. indep) iVtObject part
+        mc_iVtObjectStreamer.mpc_objectsToUpload = m_pool.getIVtObjects(0); // main FIX (lang. indep) iVtObject part
         mc_iVtObjectStreamer.setStreamSize (ms_uploadPhasesAutomatic [mui_uploadPhaseAutomatic].ui32_size);
         break;
 
       case UploadPhaseIVtObjectsLang:
       { // phase 0 & 1 use iVtObjectStreamer, so prepare for that!
         const int8_t realUploadingLanguageAsIndex = calcRealUploadingLanguage( true ) + 1; // skip language-independent objects.
-        mc_iVtObjectStreamer.mpc_objectsToUpload = m_pool.getIVtObjects()[ realUploadingLanguageAsIndex ];
+        mc_iVtObjectStreamer.mpc_objectsToUpload = m_pool.getIVtObjects(realUploadingLanguageAsIndex);
         mc_iVtObjectStreamer.setStreamSize (ms_uploadPhasesAutomatic [mui_uploadPhaseAutomatic].ui32_size);
       } break;
 

@@ -408,6 +408,8 @@ protected:
 public:
   std::vector<std::vector<iVtObject_c*>>
                         getIVtObjects()     const { return iVtObjects; }				// return Vector
+  const std::vector<IsoAgLib::iVtObject_c*>*
+                        getIVtObjects(int i)const { return &iVtObjects[i]; }				// return Vector
   uint16_t              getNumObjects()     const { return iVtObjects[0].size(); }		// only General Pool.
   uint16_t              getNumObjectsLang() const { return iVtObjects[1].size(); }	    // skip first entry (should be the general object pool part!)
   ObjectPoolVersion_en  getVersion()        const { return version; }
