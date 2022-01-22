@@ -34,7 +34,7 @@ public:
     uint16_t ID;
   };
 
-  struct iVtObjectAlarmMask_s {
+  struct iVtObjectAlarmMask_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
@@ -46,7 +46,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectArchedBarGraph_s {
+  struct iVtObjectArchedBarGraph_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -66,7 +66,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectButton_s {
+  struct iVtObjectButton_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -80,7 +80,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectContainer_s {
+  struct iVtObjectContainer_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -91,7 +91,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectDataMask_s {
+  struct iVtObjectDataMask_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
@@ -101,7 +101,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectEllipse_s {
+  struct iVtObjectEllipse_s : iVtObject_s {
     uint16_t ID;
     iVtObjectLineAttributes_c* lineAttributes;
     uint16_t width;
@@ -114,7 +114,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectFillAttributes_s {
+  struct iVtObjectFillAttributes_s : iVtObject_s {
     uint16_t ID;
     uint8_t fillType;
     uint8_t fillColour;
@@ -123,7 +123,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectFontAttributes_s {
+  struct iVtObjectFontAttributes_s : iVtObject_s {
     uint16_t ID;
     uint8_t fontColour;
     uint8_t fontSize;
@@ -133,7 +133,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectInputAttributes_s {
+  struct iVtObjectInputAttributes_s : iVtObject_s {
     uint16_t ID;
     uint8_t validationType;
     uint8_t length;
@@ -142,7 +142,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectInputBoolean_s {
+  struct iVtObjectInputBoolean_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint16_t width;
@@ -154,7 +154,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectInputList_s {
+  struct iVtObjectInputList_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -167,7 +167,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectInputNumber_s {
+  struct iVtObjectInputNumber_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -188,7 +188,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectInputString_s {
+  struct iVtObjectInputString_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -205,7 +205,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectKey_s {
+  struct iVtObjectKey_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t keyCode;
@@ -215,7 +215,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectLinearBarGraph_s {
+  struct iVtObjectLinearBarGraph_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -233,7 +233,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectLineAttributes_s {
+  struct iVtObjectLineAttributes_s : iVtObject_s {
     uint16_t ID;
     uint8_t lineColour;
     uint8_t lineWidth;
@@ -242,7 +242,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectLine_s {
+  struct iVtObjectLine_s : iVtObject_s {
     uint16_t ID;
     iVtObjectLineAttributes_c* lineAttributes;
     uint16_t width;
@@ -252,13 +252,13 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectMacro_s {
+  struct iVtObjectMacro_s : iVtObject_s {
     uint16_t ID;
     uint16_t numBytesToFollow;
     const uint8_t* commandsToFollow;
   };
 
-  struct iVtObjectMeter_s {
+  struct iVtObjectMeter_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint8_t needleColour;
@@ -276,17 +276,17 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectNumberVariable_s {
+  struct iVtObjectNumberVariable_s : iVtObject_s {
     uint16_t ID;
     uint32_t value;
   };
 
-  struct iVtObjectObjectPointer_s {
+  struct iVtObjectObjectPointer_s : iVtObject_s {
     uint16_t ID;
     iVtObject_c* value;
   };
 
-  struct iVtObjectOutputList_s {
+  struct iVtObjectOutputList_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -298,7 +298,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectOutputNumber_s {
+  struct iVtObjectOutputNumber_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -316,7 +316,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectOutputString_s {
+  struct iVtObjectOutputString_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -331,7 +331,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectPictureGraphic_s {
+  struct iVtObjectPictureGraphic_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t actualWidth;
@@ -351,13 +351,13 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectColourMap_s {
+  struct iVtObjectColourMap_s : iVtObject_s {
     uint16_t ID;
     uint16_t numOfColourIdxToFollow;
     const HUGE_MEM uint8_t* colourMapArray;
   };
 
-  struct iVtObjectPolygon_s {
+  struct iVtObjectPolygon_s : iVtObject_s {
     uint16_t ID;
     uint16_t width;
     uint16_t height;
@@ -370,7 +370,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectRectangle_s {
+  struct iVtObjectRectangle_s : iVtObject_s {
     uint16_t ID;
     iVtObjectLineAttributes_c* lineAttributes;
     uint16_t width;
@@ -381,7 +381,7 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectSoftKeyMask_s {
+  struct iVtObjectSoftKeyMask_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t numberOfObjectsToFollow;
@@ -390,13 +390,13 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectStringVariable_s {
+  struct iVtObjectStringVariable_s : iVtObject_s {
     uint16_t ID;
     uint16_t length;
     char* value;
   };
 
-  struct iVtObjectWorkingSet_s {
+  struct iVtObjectWorkingSet_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t selectable;
@@ -409,7 +409,7 @@ public:
     const repeat_vtLanguage_s* languagesToFollow;
   };
 
-  struct iVtObjectAuxiliaryInput_s {
+  struct iVtObjectAuxiliaryInput_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t functionType;
@@ -418,7 +418,7 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   };
 
-  struct iVtObjectAuxiliaryFunction_s {
+  struct iVtObjectAuxiliaryFunction_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t functionType;
@@ -426,7 +426,7 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   };
 
-  struct iVtObjectGraphicsContext_s {
+  struct iVtObjectGraphicsContext_s : iVtObject_s {
     uint16_t ID;
     uint16_t viewportWidth;
     uint16_t viewportHeight;
@@ -447,7 +447,7 @@ public:
     uint8_t  transparencyColour;  //!< Colour to be shown transparent.
   };
 
-  struct iVtObjectAuxiliaryInput2_s {
+  struct iVtObjectAuxiliaryInput2_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t functionAttributes;
@@ -455,7 +455,7 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   };
 
-  struct iVtObjectAuxiliaryFunction2_s {
+  struct iVtObjectAuxiliaryFunction2_s : iVtObject_s {
     uint16_t ID;
     uint8_t backgroundColour;
     uint8_t functionAttributes;
@@ -463,7 +463,7 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
   };
 
-  struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s {
+  struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s : iVtObject_s {
     uint16_t ID;
     uint8_t pointerType;
     iVtObject_c* value;
