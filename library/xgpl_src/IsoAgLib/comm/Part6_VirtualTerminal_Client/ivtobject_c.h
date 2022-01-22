@@ -40,7 +40,7 @@ public:
     uint8_t priority;
     uint8_t acousticSignal;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
@@ -72,7 +72,7 @@ public:
     uint8_t keyCode;
     uint8_t options;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
@@ -82,7 +82,7 @@ public:
     uint16_t height;
     uint8_t hidden;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
@@ -91,7 +91,7 @@ public:
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
@@ -196,7 +196,7 @@ public:
     uint8_t backgroundColour;
     uint8_t keyCode;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
@@ -371,7 +371,7 @@ public:
     uint8_t selectable;
     iVtObjectMask_c* activeMask; // data or alarm mask
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     uint8_t numberOfLanguagesToFollow;
@@ -383,14 +383,14 @@ public:
     uint8_t functionType;
     uint8_t inputId;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
   };
 
   struct iVtObjectAuxiliaryFunction_s : iVtObject_s {
     uint8_t backgroundColour;
     uint8_t functionType;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
   };
 
   struct iVtObjectGraphicsContext_s : iVtObject_s {
@@ -417,14 +417,14 @@ public:
     uint8_t backgroundColour;
     uint8_t functionAttributes;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
   };
 
   struct iVtObjectAuxiliaryFunction2_s : iVtObject_s {
     uint8_t backgroundColour;
     uint8_t functionAttributes;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    const repeat_iVtObject_x_y_iVtObject_s* objectsToFollow;
   };
 
   struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s : iVtObject_s {

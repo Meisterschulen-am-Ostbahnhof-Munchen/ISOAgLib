@@ -141,6 +141,13 @@ struct repeat_iVtObject_s {
 };
 
 // +++ (attribute list) struct declarations
+struct repeat_iVtObject_x_y_iVtObject_s {
+  iVtObject_c* vtObject;
+  int16_t x;
+  int16_t y;
+};
+
+// +++ (attribute list) struct declarations
 struct repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s {
   iVtObject_c* vtObject;
   int16_t x;
