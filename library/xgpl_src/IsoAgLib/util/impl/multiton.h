@@ -1,5 +1,5 @@
 /*
-  singleton.h
+  multiton.h
 
   (C) Copyright 2009 - 2019 by OSB AG
 
@@ -17,8 +17,8 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef SINGLETON_H_
-#define SINGLETON_H_
+#ifndef MULTITON_H_
+#define MULTITON_H_
 
 #include <IsoAgLib/isoaglib_config.h>
 
@@ -159,4 +159,4 @@ union MaxAlign_u {
   } \
   return *rpt_instance
 
-#endif // SINGLETON_H_
+#endif // MULTITON_H_

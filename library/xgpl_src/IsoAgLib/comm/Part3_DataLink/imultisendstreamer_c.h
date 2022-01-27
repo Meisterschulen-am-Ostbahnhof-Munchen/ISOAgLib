@@ -22,7 +22,7 @@
 #define IMULTI_SEND_STREAMER_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 
 /* *************************************** */
 /* ********** include headers ************ */

@@ -22,7 +22,7 @@
 #ifndef STREAM_C_H
 #define STREAM_C_H
 
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>

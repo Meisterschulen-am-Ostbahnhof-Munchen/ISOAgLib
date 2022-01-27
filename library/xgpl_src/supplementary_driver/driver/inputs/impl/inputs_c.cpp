@@ -19,7 +19,7 @@
 */
 
 #include "inputs_c.h"
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 
 
 

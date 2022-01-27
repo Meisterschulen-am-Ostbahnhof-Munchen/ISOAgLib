@@ -24,7 +24,7 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/comm/Part10_TaskController_Client/iprocdata.h>
 

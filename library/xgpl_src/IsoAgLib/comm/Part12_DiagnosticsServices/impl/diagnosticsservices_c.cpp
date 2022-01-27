@@ -26,7 +26,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 

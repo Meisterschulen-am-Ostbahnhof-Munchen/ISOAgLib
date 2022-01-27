@@ -21,7 +21,7 @@
 #define SENDSTREAM_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>

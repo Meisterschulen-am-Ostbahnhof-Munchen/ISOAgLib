@@ -25,7 +25,7 @@
 #include <IsoAgLib/driver/can/icancustomer_c.h>
 #include <IsoAgLib/driver/can/icanpkg_c.h>
 #include <IsoAgLib/driver/can/imaskfilter_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 
 #if 0 < PROP_INSTANCE_CNT
 namespace IsoAgLib

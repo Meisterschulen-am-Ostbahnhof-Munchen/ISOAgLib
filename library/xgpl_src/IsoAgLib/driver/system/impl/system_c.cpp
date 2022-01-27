@@ -20,7 +20,7 @@
 #include "system_c.h"
 
 #include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 
 
 namespace __IsoAgLib {

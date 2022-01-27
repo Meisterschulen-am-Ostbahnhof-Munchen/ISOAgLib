@@ -21,7 +21,7 @@
 #define ISTATE_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

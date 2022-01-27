@@ -22,7 +22,7 @@
 #include "eepromio_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/util/iliberr_c.h>
 
 

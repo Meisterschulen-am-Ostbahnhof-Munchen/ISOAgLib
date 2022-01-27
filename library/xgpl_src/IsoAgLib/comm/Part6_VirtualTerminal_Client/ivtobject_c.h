@@ -22,7 +22,7 @@
 
 #include "ivttypes.h"
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/util/iassert.h>
 
 namespace IsoAgLib {

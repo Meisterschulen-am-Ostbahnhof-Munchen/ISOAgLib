@@ -22,7 +22,7 @@
 #define ISBCLIENT_C_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/cfstatehandler_c.h>

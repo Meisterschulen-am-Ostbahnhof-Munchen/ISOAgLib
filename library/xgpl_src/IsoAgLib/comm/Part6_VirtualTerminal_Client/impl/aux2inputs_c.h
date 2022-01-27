@@ -22,7 +22,7 @@
 #define AUX2INPUTS_C_H
 
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 
 #include "../ivtobjectauxiliaryinput2_c.h"

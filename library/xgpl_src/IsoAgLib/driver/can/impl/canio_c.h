@@ -24,7 +24,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/hal/hal_can.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include "ident_c.h"

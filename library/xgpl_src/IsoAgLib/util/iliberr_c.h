@@ -23,7 +23,7 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/util/impl/container.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 

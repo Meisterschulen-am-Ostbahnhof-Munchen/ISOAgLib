@@ -20,7 +20,7 @@
 #ifndef ISOBUS_C_H
 #define ISOBUS_C_H
 
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/can/imaskfilter_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>

@@ -20,7 +20,7 @@
 #ifndef OUTPUTS_C_H
 #define OUTPUTS_C_H
 
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include "digitalo_c.h"
 
 

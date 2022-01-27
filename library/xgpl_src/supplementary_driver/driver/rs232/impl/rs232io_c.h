@@ -23,7 +23,7 @@
 #define RS232_IO_H
 
 #include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/multiton.h>
 #include <supplementary_driver/hal/hal_rs232.h>
 
 
