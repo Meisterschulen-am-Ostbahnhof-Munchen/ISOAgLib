@@ -69,6 +69,13 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
 
 vtObjectWorkingSet_c::vtObjectWorkingSet_c() {}
 
+vtObjectWorkingSet_c::vtObjectWorkingSet_c(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst)
+: vtObject_c((iVtObject_s*) vtObjectWorkingSetSROM , ai_multitonInst)
+{}
+
+void vtObjectWorkingSet_c::init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst)
+{ vtObject_c::init ((iVtObject_s*) vtObjectWorkingSetSROM , ai_multitonInst); };
+
 
 uint32_t
 vtObjectWorkingSet_c::fitTerminal() const
