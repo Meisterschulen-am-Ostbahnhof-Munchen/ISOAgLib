@@ -30,7 +30,7 @@ class iVtObjectInputAttributes_c : public __IsoAgLib::vtObjectInputAttributes_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_ATTRIBUTES; }
 
-  void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM , int ai_multitonInst) {
     vtObjectInputAttributes_c::init (vtObjectInputAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

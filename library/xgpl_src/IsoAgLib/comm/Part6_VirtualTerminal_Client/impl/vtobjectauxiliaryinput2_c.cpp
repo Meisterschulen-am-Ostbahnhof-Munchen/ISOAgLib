@@ -66,7 +66,7 @@ vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c()
     mb_valueChangeToHandle(false)
 {}
 
-void vtObjectAuxiliaryInput2_c::init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+void vtObjectAuxiliaryInput2_c::init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst)
 {
   vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
 

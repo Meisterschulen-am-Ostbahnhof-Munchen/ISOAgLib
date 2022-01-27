@@ -39,7 +39,7 @@ class vtObjectAuxiliaryFunction2_c : public vtObject_c
 public:
   vtObjectAuxiliaryFunction2_c();
 
-  void init(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  void init(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst)
   {vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunction2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
 
   int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);

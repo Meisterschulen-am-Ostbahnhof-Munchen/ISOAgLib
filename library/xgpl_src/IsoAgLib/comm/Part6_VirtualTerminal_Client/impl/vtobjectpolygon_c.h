@@ -37,7 +37,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectPolygon_s* vtObjectPolygonSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  void init(const iVtObjectPolygon_s* vtObjectPolygonSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectPolygonSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
   iVtObjectPolygon_s* get_vtObjectPolygon_a() { return (iVtObjectPolygon_s *)&(get_vtObject_a()); }

@@ -30,7 +30,7 @@ class iVtObjectButton_c : public __IsoAgLib::vtObjectButton_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_BUTTON; }
 
-  void init(const iVtObjectButton_s* vtObjectButtonSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst) {
     vtObjectButton_c::init (vtObjectButtonSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

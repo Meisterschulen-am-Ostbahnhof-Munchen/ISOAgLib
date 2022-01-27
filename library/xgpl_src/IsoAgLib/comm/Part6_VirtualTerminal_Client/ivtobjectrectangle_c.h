@@ -32,7 +32,7 @@ class iVtObjectRectangle_c : public __IsoAgLib::vtObjectRectangle_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_RECTANGLE; }
 
-  void init(const iVtObjectRectangle_s* vtObjectRectangleSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst) {
     vtObjectRectangle_c::init (vtObjectRectangleSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

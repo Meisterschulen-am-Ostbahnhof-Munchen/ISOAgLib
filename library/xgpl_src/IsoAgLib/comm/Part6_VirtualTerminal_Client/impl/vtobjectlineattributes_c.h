@@ -34,7 +34,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectLineAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
   iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a() { return (iVtObjectLineAttributes_s *)&(get_vtObject_a()); }

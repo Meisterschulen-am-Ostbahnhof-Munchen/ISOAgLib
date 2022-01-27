@@ -31,7 +31,7 @@ class iVtObjectColourMap_c : public __IsoAgLib::vtObjectColourMap_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_COLOUR_MAP; }
 
-  void init(const iVtObjectColourMap_s* vtObjectColourMapSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectColourMap_s* vtObjectColourMapSROM , int ai_multitonInst) {
     vtObjectColourMap_c::init (vtObjectColourMapSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

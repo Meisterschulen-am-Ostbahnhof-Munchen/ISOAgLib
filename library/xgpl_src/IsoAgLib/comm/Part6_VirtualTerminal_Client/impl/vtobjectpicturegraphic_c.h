@@ -34,7 +34,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
   inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return (iVtObjectPictureGraphic_s *)&(get_vtObject_a()); }

@@ -32,7 +32,7 @@ class iVtObjectMeter_c : public __IsoAgLib::vtObjectMeter_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_METER; }
 
-  void init(const iVtObjectMeter_s* vtObjectMeterSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectMeter_s* vtObjectMeterSROM , int ai_multitonInst) {
     vtObjectMeter_c::init (vtObjectMeterSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

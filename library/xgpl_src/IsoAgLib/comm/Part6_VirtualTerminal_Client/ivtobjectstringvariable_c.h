@@ -39,7 +39,7 @@ public:
 
   iVtObjectStringVariable_c();
 
-  void init(const iVtObjectStringVariable_s* vtObjectStringVariableSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst) {
     vtObjectStringVariable_c::init (vtObjectStringVariableSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

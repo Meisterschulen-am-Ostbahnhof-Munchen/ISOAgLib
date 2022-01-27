@@ -37,7 +37,7 @@ public:
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
 
-  void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst) {
     vtObjectOutputString_c::init (vtObjectOutputStringSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

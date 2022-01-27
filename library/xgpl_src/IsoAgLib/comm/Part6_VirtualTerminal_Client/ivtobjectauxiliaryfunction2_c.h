@@ -34,7 +34,7 @@ public:
 
   ~iVtObjectAuxiliaryFunction2_c(){};
 
-  void init(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryFunction2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); };
+  void init(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryFunction2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); };
 
   const iVtObjectAuxiliaryFunction2_s& get_vtObjectAuxiliaryFunction2_a() { return *vtObjectAuxiliaryFunction2_c::get_vtObjectAuxiliaryFunction2_a(); };
 

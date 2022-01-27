@@ -32,7 +32,7 @@ class iVtObjectKey_c : public __IsoAgLib::vtObjectKey_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_KEY; }
 
-  void init(const iVtObjectKey_s* vtObjectKeySROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst) {
     vtObjectKey_c::init (vtObjectKeySROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

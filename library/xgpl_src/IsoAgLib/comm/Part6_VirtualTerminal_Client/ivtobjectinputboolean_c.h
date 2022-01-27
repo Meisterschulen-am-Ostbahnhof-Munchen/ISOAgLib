@@ -32,7 +32,7 @@ class iVtObjectInputBoolean_c : public __IsoAgLib::vtObjectInputBoolean_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_BOOLEAN; }
 
-  void init(const iVtObjectInputBoolean_s* vtObjectInputBooleanSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , int ai_multitonInst) {
     vtObjectInputBoolean_c::init (vtObjectInputBooleanSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

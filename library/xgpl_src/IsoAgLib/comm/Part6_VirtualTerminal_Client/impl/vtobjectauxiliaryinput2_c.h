@@ -64,7 +64,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
+  void init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst);
 
   iVtObjectAuxiliaryInput2_s* get_vtObjectAuxiliaryInput2_a() { return (iVtObjectAuxiliaryInput2_s *)&(get_vtObject_a()); }
 

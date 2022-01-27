@@ -32,7 +32,7 @@ class iVtObjectOutputList_c : public __IsoAgLib::vtObjectOutputList_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_LIST; }
 
-  void init(const iVtObjectOutputList_s* vtObjectOutputListSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectOutputList_s* vtObjectOutputListSROM , int ai_multitonInst) {
     vtObjectOutputList_c::init (vtObjectOutputListSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

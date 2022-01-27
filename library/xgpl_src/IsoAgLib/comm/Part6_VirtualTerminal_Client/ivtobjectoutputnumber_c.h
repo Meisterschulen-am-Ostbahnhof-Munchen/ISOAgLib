@@ -34,7 +34,7 @@ class iVtObjectOutputNumber_c : public __IsoAgLib::vtObjectOutputNumber_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_NUMBER; }
 
-  void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROM , int ai_multitonInst) {
     vtObjectOutputNumber_c::init (vtObjectOutputNumberSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

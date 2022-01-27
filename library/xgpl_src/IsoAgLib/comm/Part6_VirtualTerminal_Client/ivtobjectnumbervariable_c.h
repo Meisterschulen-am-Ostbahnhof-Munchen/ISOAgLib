@@ -32,7 +32,7 @@ class iVtObjectNumberVariable_c : public __IsoAgLib::vtObjectNumberVariable_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_NUMBER_VARIABLE; }
 
-  void init(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , int ai_multitonInst) {
     vtObjectNumberVariable_c::init (vtObjectNumberVariableSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

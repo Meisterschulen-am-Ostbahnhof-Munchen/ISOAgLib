@@ -32,7 +32,7 @@ class iVtObjectEllipse_c : public __IsoAgLib::vtObjectEllipse_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_ELLIPSE; }
 
-  void init(const iVtObjectEllipse_s* vtObjectellipseSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst) {
     vtObjectEllipse_c::init (vtObjectellipseSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

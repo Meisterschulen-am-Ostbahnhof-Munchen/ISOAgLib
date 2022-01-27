@@ -32,7 +32,7 @@ public:
 
   virtual ~iVtObjectSoftKeyMask_c(){}
 
-  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst) {
     vtObjectSoftKeyMask_c::init (vtObjectSoftKeyMaskSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

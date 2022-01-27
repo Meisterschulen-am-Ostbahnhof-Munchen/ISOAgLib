@@ -30,7 +30,7 @@ class iVtObjectLineAttributes_c : public __IsoAgLib::vtObjectLineAttributes_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_LINE_ATTRIBUTES; }
 
-  void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst) {
     vtObjectLineAttributes_c::init (vtObjectLineAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

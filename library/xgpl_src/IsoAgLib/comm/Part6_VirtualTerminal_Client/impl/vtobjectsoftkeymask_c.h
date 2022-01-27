@@ -47,7 +47,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectSoftKeyMaskSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
 #ifdef ENABLE_SKM_HANDLER

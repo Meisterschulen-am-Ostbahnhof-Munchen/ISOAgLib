@@ -44,7 +44,7 @@ public:
   virtual void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) = 0;
 #endif
 
-  void init (iVtObject_s* aps_vtObject_a MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  void init (iVtObject_s* aps_vtObject_a , int ai_multitonInst)
   {
     // typical double init is caught in objectpool-class's init-call!
     vtObject_a = aps_vtObject_a;

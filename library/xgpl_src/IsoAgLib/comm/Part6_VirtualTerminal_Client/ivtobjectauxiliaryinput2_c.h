@@ -34,7 +34,7 @@ public:
 
   typedef  __IsoAgLib::vtObjectAuxiliaryInput2_c::StateForLearnMode_en StateForLearnMode_en;
 
-  void init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
+  void init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
   const iVtObjectAuxiliaryInput2_s& get_vtObjectAuxiliaryInput2_a() { return *vtObjectAuxiliaryInput2_c::get_vtObjectAuxiliaryInput2_a(); }
 

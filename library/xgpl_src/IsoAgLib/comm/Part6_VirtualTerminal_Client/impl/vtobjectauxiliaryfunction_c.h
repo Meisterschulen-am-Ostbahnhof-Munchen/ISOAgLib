@@ -37,7 +37,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst)
   {vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunctionSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
 
   iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a() {return (iVtObjectAuxiliaryFunction_s *)&(get_vtObject_a());}

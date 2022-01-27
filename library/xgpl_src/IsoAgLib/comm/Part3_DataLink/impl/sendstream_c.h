@@ -65,7 +65,7 @@ public:
 
 public:
   // This c'tor does NOT REALLY "initialize "anything, use "init(...)" directly after construction!!!!
-  SendStream_c (MultiSend_c& arc_multiSend MULTITON_INST_PARAMETER_DEF_WITH_COMMA )
+  SendStream_c (MultiSend_c& arc_multiSend , int ai_multitonInst )
     : MULTITON_PARENT_CONSTRUCTOR 
       mui32_pgn (0)
     , mc_isoNameReceiver()

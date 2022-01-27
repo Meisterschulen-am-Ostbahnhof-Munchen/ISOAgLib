@@ -38,7 +38,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectEllipse_s* vtObjectellipseSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  void init(const iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectellipseSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
   iVtObjectEllipse_s* get_vtObjectEllipse_a() { return (iVtObjectEllipse_s *)&(get_vtObject_a()); }

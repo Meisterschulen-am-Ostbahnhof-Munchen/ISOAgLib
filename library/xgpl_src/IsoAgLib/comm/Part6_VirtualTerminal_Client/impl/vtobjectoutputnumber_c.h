@@ -39,7 +39,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  void init(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectOutputNumberSROMs MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
 
   iVtObjectOutputNumber_s* get_vtObjectOutputNumber_a() { return (iVtObjectOutputNumber_s *)&(get_vtObject_a()); }

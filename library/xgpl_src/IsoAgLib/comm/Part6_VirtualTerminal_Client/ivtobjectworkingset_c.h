@@ -31,7 +31,7 @@ class iVtObjectWorkingSet_c : public __IsoAgLib::vtObjectWorkingSet_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_WORKING_SET; }
 
-  void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst) {
     vtObjectWorkingSet_c::init (vtObjectWorkingSetSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 

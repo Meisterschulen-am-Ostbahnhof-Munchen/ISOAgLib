@@ -34,7 +34,7 @@ public:
 
   virtual ~iVtObjectFontAttributes_c();
 
-  void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+  void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst) {
     vtObjectFontAttributes_c::init (vtObjectFontAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   };
 

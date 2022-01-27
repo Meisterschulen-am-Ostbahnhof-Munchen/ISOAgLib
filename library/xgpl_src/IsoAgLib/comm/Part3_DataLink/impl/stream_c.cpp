@@ -42,7 +42,7 @@ Stream_c::Stream_c(
   const ReceiveStreamIdentifier_c& ac_rsi, 
   uint32_t aui32_msgSize,
   ecutime_t ai_time
-  MULTITON_INST_PARAMETER_DEF_WITH_COMMA ,
+  , int ai_multitonInst ,
   bool ab_skipCtsAwait
 ) : StreamInput_c()
   , MULTITON_MEMBER_CONSTRUCTOR
