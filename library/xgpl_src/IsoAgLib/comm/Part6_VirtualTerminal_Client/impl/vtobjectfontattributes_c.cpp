@@ -25,17 +25,29 @@
 #include "../ivtobjectmacro_c.h"
 
 namespace IsoAgLib {
-// implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
-// cconstructor/functions direct in scope of iVtObjectFontAttributes_c
-  iVtObjectFontAttributes_c::iVtObjectFontAttributes_c() : vtObjectFontAttributes_c() {}
+	// implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
+	// cconstructor/functions direct in scope of iVtObjectFontAttributes_c
+	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c() : vtObjectFontAttributes_c() {}
 
-  iVtObjectFontAttributes_c::~iVtObjectFontAttributes_c() {}
+	iVtObjectFontAttributes_c::~iVtObjectFontAttributes_c() {}
 
-  uint16_t
-      iVtObjectFontAttributes_c::getScaledWidthHeight()
-  {
-    return vtObjectFontAttributes_c::getScaledWidthHeight();
-  }
+	uint16_t
+	  iVtObjectFontAttributes_c::getScaledWidthHeight()
+	{
+	return vtObjectFontAttributes_c::getScaledWidthHeight();
+	}
+
+	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst)
+	: vtObjectFontAttributes_c(vtObjectFontAttributesSROM , ai_multitonInst)
+	{
+
+	}
+
+	void iVtObjectFontAttributes_c::init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst)
+	{
+	  vtObjectFontAttributes_c::init (vtObjectFontAttributesSROM , ai_multitonInst);
+	};
+
 }
 
 
@@ -230,6 +242,11 @@ vtObjectFontAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
   }
 }
 #endif
+
+vtObjectFontAttributes_c::vtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObject_c , int ai_multitonInst)
+: __IsoAgLib::vtObject_c((iVtObject_s*) vtObject_c, ai_multitonInst)
+{
+}
 
 } // __IsoAgLib
 
