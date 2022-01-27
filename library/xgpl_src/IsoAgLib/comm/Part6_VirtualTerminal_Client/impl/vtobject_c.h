@@ -55,7 +55,7 @@ public:
     // then these modifications are GONE and result in a MEMORY LEAK
     // This is subject to be correctly fixed in some later version, if needed!
 
-    MULTITON_INST_INIT_CALL
+    setMultitonInst( ai_multitonInst );
   }
 
   //! Internal checker function
