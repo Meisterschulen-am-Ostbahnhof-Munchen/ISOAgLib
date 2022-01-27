@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_ellipse
+
 
 #include "vtobject_c.h"
 #include "../ivtobjectlineattributes_c.h"
@@ -107,4 +107,4 @@ public:
 
 #endif
 
-#endif
+

@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+
 
 #include "vtobject_c.h"
 #include "vttypes.h"
@@ -86,4 +86,4 @@ private:
 
 #endif
 
-#endif
+

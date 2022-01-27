@@ -19,7 +19,7 @@
 */
 #include "vtobjectauxiliaryinput2_c.h"
 
-#ifdef USE_VTOBJECT_auxiliaryinput2
+
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "vtclient_c.h"
@@ -462,4 +462,4 @@ void vtObjectAuxiliaryInput2_c::setTimeStampLastStateMsg()
 
 
 } // __IsoAgLib
-#endif
+

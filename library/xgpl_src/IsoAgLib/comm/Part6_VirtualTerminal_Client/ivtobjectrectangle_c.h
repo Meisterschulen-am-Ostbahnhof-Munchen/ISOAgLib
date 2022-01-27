@@ -23,7 +23,6 @@
 #include "impl/vtobjectrectangle_c.h"
 
 
-#ifdef USE_VTOBJECT_rectangle
 
 namespace IsoAgLib {
 
@@ -95,4 +94,3 @@ public:
 
 #endif
 
-#endif

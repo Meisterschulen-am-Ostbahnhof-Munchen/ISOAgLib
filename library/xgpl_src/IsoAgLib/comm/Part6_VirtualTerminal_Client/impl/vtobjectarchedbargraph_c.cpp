@@ -20,7 +20,7 @@
 
 #include "vtobjectarchedbargraph_c.h"
 
-#ifdef USE_VTOBJECT_archedbargraph
+
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -293,4 +293,4 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 }
 #endif
 } // __IsoAgLib
-#endif
+

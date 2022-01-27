@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_meter
+
 
 #include "vtobject_c.h"
 #include "vtclient_c.h"
@@ -124,4 +124,4 @@ public:
 
 #endif
 
-#endif
+

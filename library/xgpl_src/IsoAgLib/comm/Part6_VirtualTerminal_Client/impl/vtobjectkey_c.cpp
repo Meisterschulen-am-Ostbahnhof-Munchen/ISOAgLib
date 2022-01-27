@@ -20,7 +20,7 @@
 
 #include "vtobjectkey_c.h"
 
-#ifdef USE_VTOBJECT_key
+
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -125,4 +125,4 @@ vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValu
 
 } // __IsoAgLib
 
-#endif
+

@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_archedbargraph
+
 
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
@@ -137,4 +137,4 @@ public:
 
 #endif
 
-#endif
+

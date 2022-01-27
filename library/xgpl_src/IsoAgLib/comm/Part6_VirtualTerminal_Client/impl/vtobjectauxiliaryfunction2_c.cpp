@@ -20,7 +20,7 @@
 
 #include "vtobjectauxiliaryfunction2_c.h"
 
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "vtclient_c.h"
@@ -293,4 +293,4 @@ vtObjectAuxiliaryFunction2_c::clearPreferredAssignments()
 
 
 } // __IsoAgLib
-#endif
+

@@ -103,9 +103,9 @@ public:
 
   bool setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c & );
 
-#ifdef USE_VTOBJECT_auxiliaryinput2
+
   void triggerAux2InputStatusMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj) { m_aux2Inputs.timeEventInputStateMsg(a_aux2InputObj); }
-#endif
+
 
   void populateScalingInformation();
 

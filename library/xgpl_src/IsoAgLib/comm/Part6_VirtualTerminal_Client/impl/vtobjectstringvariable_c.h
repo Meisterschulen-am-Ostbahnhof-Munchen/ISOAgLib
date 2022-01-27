@@ -24,7 +24,6 @@
 #include "../ivtobjectstring_c.h"
 
 
-#ifdef USE_VTOBJECT_stringvariable
 
 #include "vtclientconnection_c.h"
 
@@ -69,4 +68,3 @@ public:
 
 #endif
 
-#endif

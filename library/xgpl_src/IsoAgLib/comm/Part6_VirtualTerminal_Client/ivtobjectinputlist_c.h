@@ -23,7 +23,6 @@
 #include "impl/vtobjectinputlist_c.h"
 
 
-#ifdef USE_VTOBJECT_inputlist
 
 namespace IsoAgLib {
 
@@ -113,4 +112,3 @@ public:
 
 #endif
 
-#endif

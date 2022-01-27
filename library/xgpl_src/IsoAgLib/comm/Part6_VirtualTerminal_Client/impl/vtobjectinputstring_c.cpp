@@ -21,7 +21,7 @@
 #include "../ivtobjectinputstring_c.h"
 #include "vtobjectinputstring_c.h"
 
-#ifdef USE_VTOBJECT_inputstring
+
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectinputattributes_c.h"
 #include "../ivtobjectstringvariable_c.h"
@@ -353,4 +353,4 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 
 } // __IsoAgLib
 
-#endif
+

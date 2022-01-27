@@ -23,7 +23,6 @@
 #include "impl/vtobjectmeter_c.h"
 
 
-#ifdef USE_VTOBJECT_meter
 
 namespace IsoAgLib {
 
@@ -150,4 +149,4 @@ public:
 
 #endif
 
-#endif
+

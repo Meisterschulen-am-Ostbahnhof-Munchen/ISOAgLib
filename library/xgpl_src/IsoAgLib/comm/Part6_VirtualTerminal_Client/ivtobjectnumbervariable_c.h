@@ -23,7 +23,6 @@
 #include "impl/vtobjectnumbervariable_c.h"
 
 
-#ifdef USE_VTOBJECT_numbervariable
 
 namespace IsoAgLib {
 
@@ -60,4 +59,3 @@ public:
 
 #endif
 
-#endif

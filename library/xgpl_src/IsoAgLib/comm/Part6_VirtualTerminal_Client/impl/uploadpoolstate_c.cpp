@@ -164,12 +164,9 @@ UploadPoolState_c::initPool()
       {
         getPool().getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID( clientId );
         // do not allow language dependent AUX2 objects
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+
         isoaglib_assert(getPool().getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->getObjectType() != IsoAgLib::iVtObjectAuxiliaryFunction2_c::objectType());
-#endif
-#ifdef USE_VTOBJECT_auxiliaryinput2
         isoaglib_assert(getPool().getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->getObjectType() != IsoAgLib::iVtObjectAuxiliaryInput2_c::objectType());
-#endif
       }
     }
   }

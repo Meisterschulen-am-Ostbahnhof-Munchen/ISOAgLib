@@ -24,7 +24,7 @@
 #include "../ivtobjectstring_c.h"
 
 
-#ifdef USE_VTOBJECT_inputstring
+
 
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectinputattributes_c.h"
@@ -129,4 +129,4 @@ private:
 
 #endif
 
-#endif
+

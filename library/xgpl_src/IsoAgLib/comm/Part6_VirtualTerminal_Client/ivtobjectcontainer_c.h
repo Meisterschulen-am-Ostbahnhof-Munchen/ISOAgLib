@@ -23,7 +23,6 @@
 #include "impl/vtobjectcontainer_c.h"
 
 
-#ifdef USE_VTOBJECT_container
 
 namespace IsoAgLib {
 
@@ -84,4 +83,4 @@ public:
 
 #endif
 
-#endif
+

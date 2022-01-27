@@ -23,7 +23,6 @@
 #include "impl/vtobjectinputboolean_c.h"
 
 
-#ifdef USE_VTOBJECT_inputboolean
 
 namespace IsoAgLib {
 
@@ -105,4 +104,3 @@ public:
 
 #endif
 
-#endif

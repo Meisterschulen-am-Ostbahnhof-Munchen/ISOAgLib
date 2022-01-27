@@ -59,9 +59,9 @@ public:
   // - set iAux2InputData.preserve = true to avoid that a function/input assignment is pushed aside when CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION is reached
   bool setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assigment );
 
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+
   STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>& getObjects() { return m_aux2Function; }
-#endif
+
 
   void notifyOnAux2InputStatus( const CanPkgExt_c& arc_data, IsoAgLib::iVtClientObjectPool_c& arc_pool);
 
@@ -116,9 +116,9 @@ private:
   typedef STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::iterator InputsIter;
   STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s> mmap_receivedInputMaintenanceData;
 
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+
   STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*> m_aux2Function;
-#endif
+
 
   // back reference for accessing functions in parent
   VtClientConnection_c& m_vtConnection;

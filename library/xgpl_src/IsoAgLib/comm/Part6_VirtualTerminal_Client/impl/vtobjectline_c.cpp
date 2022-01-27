@@ -20,7 +20,7 @@
 
 #include "vtobjectline_c.h"
 
-#ifdef USE_VTOBJECT_line
+
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -164,4 +164,4 @@ vtObjectLine_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVal
 
 } // __IsoAgLib
 
-#endif
+

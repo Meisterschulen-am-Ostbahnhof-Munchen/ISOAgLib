@@ -21,7 +21,6 @@
 #include "../ivtobjectstringvariable_c.h"
 #include "vtobjectstringvariable_c.h"
 
-#ifdef USE_VTOBJECT_stringvariable
 
 #include "vtclient_c.h"
 
@@ -170,4 +169,3 @@ vtObjectStringVariable_c::getString()
 
 } // __IsoAgLib
 
-#endif

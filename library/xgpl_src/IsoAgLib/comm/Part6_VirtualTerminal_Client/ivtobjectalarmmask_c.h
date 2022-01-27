@@ -22,7 +22,6 @@
 
 #include "impl/vtobjectalarmmask_c.h"
 
-#ifdef USE_VTOBJECT_alarmmask
 
 #include "ivtobjectsoftkeymask_c.h"
 
@@ -96,4 +95,3 @@ public:
 
 #endif
 
-#endif

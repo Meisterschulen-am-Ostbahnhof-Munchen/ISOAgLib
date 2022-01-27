@@ -22,7 +22,6 @@
 
 #include "impl/vtobjectstringvariable_c.h"
 
-#ifdef USE_VTOBJECT_stringvariable 
 #include "ivtobjectoutputstring_c.h"
 
 #ifdef USE_VT_UNICODE_SUPPORT
@@ -84,4 +83,4 @@ public:
 
 #endif
 
-#endif
+

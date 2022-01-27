@@ -23,7 +23,6 @@
 #include "impl/vtobjectinputnumber_c.h"
 
 
-#ifdef USE_VTOBJECT_inputnumber
 
 namespace IsoAgLib {
 
@@ -184,4 +183,4 @@ public:
 
 #endif
 
-#endif
+

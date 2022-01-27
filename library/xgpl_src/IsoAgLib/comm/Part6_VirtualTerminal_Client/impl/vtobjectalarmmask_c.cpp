@@ -20,7 +20,7 @@
 
 #include "vtobjectalarmmask_c.h"
 
-#ifdef USE_VTOBJECT_alarmmask
+
 #include "vtclient_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -151,4 +151,4 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
 }
 #endif
 } // end of namespace __IsoAgLib
-#endif
+

@@ -20,7 +20,7 @@
 
 #include "vtobjectpolygon_c.h"
 
-#ifdef USE_VTOBJECT_polygon
+
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
@@ -173,4 +173,4 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 
 } // __IsoAgLib
 
-#endif
+

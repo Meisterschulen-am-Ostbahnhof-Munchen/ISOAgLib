@@ -20,7 +20,7 @@
 
 #include "vtobjectlinearbargraph_c.h"
 
-#ifdef USE_VTOBJECT_linearbargraph
+
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -258,4 +258,4 @@ vtObjectLinearBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 } // __IsoAgLib
 
-#endif
+

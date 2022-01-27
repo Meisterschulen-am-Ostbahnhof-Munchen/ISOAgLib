@@ -21,7 +21,7 @@
 #include "../ivtobjectoutputstring_c.h"
 #include "vtobjectoutputstring_c.h"
 
-#ifdef USE_VTOBJECT_outputstring
+
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectstringvariable_c.h"
@@ -352,4 +352,4 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 
 } //__IsoAgLib
 
-#endif
+

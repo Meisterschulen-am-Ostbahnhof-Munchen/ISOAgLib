@@ -23,7 +23,6 @@
 #include "impl/vtobjectkey_c.h"
 
 
-#ifdef USE_VTOBJECT_key
 
 namespace IsoAgLib {
 
@@ -78,4 +77,3 @@ public:
 
 #endif
 
-#endif

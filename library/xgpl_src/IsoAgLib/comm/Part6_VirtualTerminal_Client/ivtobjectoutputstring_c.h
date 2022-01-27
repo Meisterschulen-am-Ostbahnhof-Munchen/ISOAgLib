@@ -23,7 +23,6 @@
 #include "impl/vtobjectoutputstring_c.h"
 
 
-#ifdef USE_VTOBJECT_outputstring
 
 #include "ivtclient_c.h"
 
@@ -138,4 +137,3 @@ public:
 
 #endif
 
-#endif

@@ -23,7 +23,6 @@
 #include "impl/vtobjectobjectpointer_c.h"
 
 
-#ifdef USE_VTOBJECT_objectpointer
 
 namespace IsoAgLib {
 
@@ -58,4 +57,3 @@ public:
 
 #endif
 
-#endif

@@ -23,7 +23,6 @@
 #include "impl/vtobjectoutputnumber_c.h"
 
 
-#ifdef USE_VTOBJECT_outputnumber
 
 #include "ivtobjectfontattributes_c.h"
 
@@ -157,4 +156,3 @@ public:
 
 #endif
 
-#endif

@@ -62,10 +62,7 @@ VtClient_c::init()
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, VT_TO_ECU_PGN << 8, Ident_c::ExtendedIdent ), 8 );
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ACKNOWLEDGEMENT_PGN << 8, Ident_c::ExtendedIdent ), 8 );
 #endif
-#ifdef USE_VTOBJECT_auxiliaryfunction2
   getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, ECU_TO_GLOBAL_PGN << 8, Ident_c::ExtendedIdent ), 8 );
-#endif
-
   setInitialized();
 }
 
@@ -85,9 +82,7 @@ VtClient_c::close()
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, VT_TO_ECU_PGN << 8, Ident_c::ExtendedIdent  ) );
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FF0000UL, ACKNOWLEDGEMENT_PGN << 8, Ident_c::ExtendedIdent ) );
 #endif
-#ifdef USE_VTOBJECT_auxiliaryfunction2
   getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilterType_c( 0x3FFFF00UL, ECU_TO_GLOBAL_PGN << 8, Ident_c::ExtendedIdent ) );
-#endif
 
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
 
