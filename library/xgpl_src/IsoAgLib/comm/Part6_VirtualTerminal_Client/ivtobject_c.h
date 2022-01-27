@@ -334,8 +334,33 @@ public:
     char* value; /* size length+1 (0-termination intern!) */
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-    iVtObjectOutputString_s():iVtObject_s() {}
-    iVtObjectOutputString_s(uint16_t ID):iVtObject_s(ID) {}
+    iVtObjectOutputString_s(
+    	    uint16_t ID = 0,
+    	    uint16_t width = 50,
+    	    uint16_t height= 20,
+    	    uint8_t backgroundColour = 1,
+    	    iVtObjectFontAttributes_c* fontAttributes = nullptr,
+    	    uint8_t options = 0,
+    	    iVtObjectStringVariable_c* variableReference = nullptr,
+    	    uint8_t horizontalJustification = 0,
+    	    uint16_t length = 0,
+    	    char* value = nullptr, /* size length+1 (0-termination intern!) */
+    	    uint8_t numberOfMacrosToFollow = 0,
+    	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
+    		)
+    :iVtObject_s(ID),
+    width(width),
+    height(height),
+    backgroundColour(backgroundColour),
+    fontAttributes(fontAttributes),
+    options(options),
+    variableReference(variableReference),
+    horizontalJustification(horizontalJustification),
+    length(length),
+    value(value), /* size length+1 (0-termination intern!) */
+    numberOfMacrosToFollow(numberOfMacrosToFollow),
+    macrosToFollow(macrosToFollow)
+	{}
   };
 
   struct iVtObjectPictureGraphic_s : iVtObject_s {
