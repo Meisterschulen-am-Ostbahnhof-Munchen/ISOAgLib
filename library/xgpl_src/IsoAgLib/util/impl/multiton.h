@@ -28,7 +28,6 @@
 #  include <ext/malloc_allocator.h>
 #endif
 
-#define MULTITON_INST_PARAMETER_DEF               int ai_multitonInst
 #define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF  int ai_multitonInst = 0
 #define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA , int ai_multitonInst = 0
 #define MULTITON_INST_PARAMETER_USE               ai_multitonInst

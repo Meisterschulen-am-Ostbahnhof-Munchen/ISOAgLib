@@ -324,7 +324,7 @@ public:
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
-  virtual void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF)=0;
+  virtual void initAllObjectsOnce(int ai_multitonInst)=0;
 
   iVtClientObjectPool_c(ObjectPoolSettings_s a_objectPoolSettings)
     : iVtObjects (new List())
