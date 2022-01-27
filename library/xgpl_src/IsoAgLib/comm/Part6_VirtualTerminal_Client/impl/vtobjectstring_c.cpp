@@ -26,6 +26,9 @@ namespace IsoAgLib {
   // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple
   // constructor/destructor direct in scope of iVtObjectString_c
   iVtObjectString_c::iVtObjectString_c() : vtObject_c() {}
+  iVtObjectString_c::iVtObjectString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectOutputStringSROM , ai_multitonInst)
+  {}
   iVtObjectString_c::~iVtObjectString_c(){}
 }
 

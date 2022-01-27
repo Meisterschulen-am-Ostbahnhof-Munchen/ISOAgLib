@@ -45,6 +45,7 @@ public:
   iVtObjectOutputString_s* get_vtObjectOutputString_a() { return (iVtObjectOutputString_s *)&(get_vtObject_a()); }
 
   vtObjectOutputString_c();
+  vtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);
   ~vtObjectOutputString_c();
 
   uint32_t fitTerminal() const;

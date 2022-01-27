@@ -29,6 +29,7 @@ class iVtObjectString_c : public __IsoAgLib::vtObject_c
 {
 public:
   iVtObjectString_c();
+  iVtObjectString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);
   ~iVtObjectString_c();
 
   virtual const char* getString() = 0;

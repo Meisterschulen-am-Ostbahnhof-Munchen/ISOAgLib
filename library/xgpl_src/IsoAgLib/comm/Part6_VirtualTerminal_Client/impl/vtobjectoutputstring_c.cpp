@@ -35,6 +35,17 @@ namespace IsoAgLib {
   // constructor/destructor direct in scope of iVtObjectOutputString_c
   iVtObjectOutputString_c::iVtObjectOutputString_c() {}
   iVtObjectOutputString_c::~iVtObjectOutputString_c(){}
+
+  iVtObjectOutputString_c::iVtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
+  : __IsoAgLib::vtObjectOutputString_c(vtObjectOutputStringSROM , ai_multitonInst)
+  {}
+
+  void iVtObjectOutputString_c::init(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
+  {
+     vtObjectOutputString_c::init (vtObjectOutputStringSROM , ai_multitonInst);
+   }
+
+
 }
 
 
@@ -103,6 +114,11 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
 
 vtObjectOutputString_c::vtObjectOutputString_c() {}
 vtObjectOutputString_c::~vtObjectOutputString_c() {}
+
+vtObjectOutputString_c::vtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
+: iVtObjectString_c(vtObjectOutputStringSROM , ai_multitonInst)
+{}
+
 
 
 uint32_t
