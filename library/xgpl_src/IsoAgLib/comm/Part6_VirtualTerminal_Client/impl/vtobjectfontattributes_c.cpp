@@ -90,6 +90,15 @@ vtObjectFontAttributes_c::vtObjectFontAttributes_c()
 : mui8_fontSizeScaled( 0xFF ) // set mui8_fontSizeScaled to "not yet calculated"
 {}
 
+vtObjectFontAttributes_c::vtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObject_c , int ai_multitonInst)
+: __IsoAgLib::vtObject_c((iVtObject_s*) vtObject_c, ai_multitonInst)
+, mui8_fontSizeScaled( 0xFF ) // set mui8_fontSizeScaled to "not yet calculated"
+{
+}
+
+void vtObjectFontAttributes_c::init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst)
+{ vtObject_c::init ((iVtObject_s*) vtObjectFontAttributesSROM , ai_multitonInst);}
+
 
 vtObjectFontAttributes_c::~vtObjectFontAttributes_c()
 {}
@@ -243,13 +252,7 @@ vtObjectFontAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 }
 #endif
 
-vtObjectFontAttributes_c::vtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObject_c , int ai_multitonInst)
-: __IsoAgLib::vtObject_c((iVtObject_s*) vtObject_c, ai_multitonInst)
-{
-}
 
-void vtObjectFontAttributes_c::init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst)
-{ vtObject_c::init ((iVtObject_s*) vtObjectFontAttributesSROM , ai_multitonInst);}
 
 
 } // __IsoAgLib
