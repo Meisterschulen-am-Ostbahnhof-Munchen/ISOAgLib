@@ -81,6 +81,8 @@ void List::Append(iVtObject_c* const anItem) {
     if (_count <= _size) {
         _items[_count] = anItem;
         _count++;
+    } else {
+    	//Exception !!! //TODO
     }
 }
 
