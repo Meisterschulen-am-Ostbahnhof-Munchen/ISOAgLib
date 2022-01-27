@@ -39,7 +39,7 @@ public:
                  objRange_t sourceOffset);
 
   void init(const iVtObjectInputList_s* vtObjectInputListSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectInputListSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
+  { vtObject_c::init ((iVtObject_s*) vtObjectInputListSROM , ai_multitonInst);}
 
   iVtObjectInputList_s* get_vtObjectInputList_a() { return (iVtObjectInputList_s *)&(get_vtObject_a()); }
 

@@ -33,7 +33,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_STRING; }
 
   void init(const iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst) {
-    vtObjectInputString_c::init (vtObjectInputStringSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectInputString_c::init (vtObjectInputStringSROM , ai_multitonInst);
   }
 
   const iVtObjectInputString_s& get_vtObjectInputString_a() { return *vtObjectInputString_c::get_vtObjectInputString_a(); }

@@ -32,7 +32,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_FILL_ATTRIBUTES; }
 
   void init(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst) {
-    vtObjectFillAttributes_c::init (vtObjectFillAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectFillAttributes_c::init (vtObjectFillAttributesSROM , ai_multitonInst);
   }
 
   const iVtObjectFillAttributes_s& get_vtObjectFillAttributes_a() { return *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a(); }

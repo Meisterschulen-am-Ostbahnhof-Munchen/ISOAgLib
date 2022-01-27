@@ -40,7 +40,7 @@ public:
                  objRange_t sourceOffset);
 
   void init(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectArchedBarGraphSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
+  { vtObject_c::init ((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst); }
 
   iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return (iVtObjectArchedBarGraph_s *)&(get_vtObject_a()); }
 

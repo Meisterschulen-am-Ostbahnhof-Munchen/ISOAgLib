@@ -37,7 +37,7 @@ StreamChunk_c::StreamChunk_c (const ReceiveStreamIdentifier_c& ac_rsi,
                               ecutime_t ai32_creationTime
                               , int ai_multitonInst
                              ,bool ab_skipCtsAwait)
-  : Stream_c (ac_rsi, aui32_msgSize, ai32_creationTime MULTITON_INST_PARAMETER_USE_WITH_COMMA , ab_skipCtsAwait)
+  : Stream_c (ac_rsi, aui32_msgSize, ai32_creationTime , ai_multitonInst , ab_skipCtsAwait)
 {
   /// Do NOTHING more here
   /// User HAS TO call "immediateInitAfterConstruction" **immediately** AFTER Construction!

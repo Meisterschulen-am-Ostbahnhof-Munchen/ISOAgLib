@@ -33,7 +33,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_ELLIPSE; }
 
   void init(const iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst) {
-    vtObjectEllipse_c::init (vtObjectellipseSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectEllipse_c::init (vtObjectellipseSROM , ai_multitonInst);
   }
 
   const iVtObjectEllipse_s& get_vtObjectEllipse_a() { return *vtObjectEllipse_c::get_vtObjectEllipse_a(); }

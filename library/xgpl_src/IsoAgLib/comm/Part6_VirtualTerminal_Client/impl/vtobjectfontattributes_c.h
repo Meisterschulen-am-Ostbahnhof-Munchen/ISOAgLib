@@ -35,7 +35,7 @@ public:
                  objRange_t sourceOffset);
 
   void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectFontAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
+  { vtObject_c::init ((iVtObject_s*) vtObjectFontAttributesSROM , ai_multitonInst);}
 
   iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a() { return (iVtObjectFontAttributes_s *)&(get_vtObject_a()); }
 

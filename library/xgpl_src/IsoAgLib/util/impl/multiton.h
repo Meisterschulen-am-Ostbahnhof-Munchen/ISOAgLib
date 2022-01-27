@@ -32,7 +32,6 @@
 #define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF  int ai_multitonInst = 0
 #define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA , int ai_multitonInst = 0
 #define MULTITON_INST_PARAMETER_USE               ai_multitonInst
-#define MULTITON_INST_PARAMETER_USE_WITH_COMMA  , ai_multitonInst
 
 #define MULTITON_PAR_ARR_DEF(PAR)                     int getMultitonInst() const { return (PAR) ? (PAR)->getMultitonInst() : 0; }
 #define MULTITON_MEMBER_DEF               ClientBase c_clientBase; \

@@ -31,7 +31,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
 
   void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst) {
-    vtObjectDataMask_c::init (vtObjectDataMaskSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectDataMask_c::init (vtObjectDataMaskSROM , ai_multitonInst);
   }
 
   const iVtObjectDataMask_s& get_vtObjectDataMask_a() { return *vtObjectDataMask_c::get_vtObjectDataMask_a(); }

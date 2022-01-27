@@ -35,7 +35,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_ALARM_MASK; }
 
   void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst) {
-    vtObjectAlarmMask_c::init (vtObjectAlarmMaskSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectAlarmMask_c::init (vtObjectAlarmMaskSROM , ai_multitonInst);
   }
   ~iVtObjectAlarmMask_c(){}
 

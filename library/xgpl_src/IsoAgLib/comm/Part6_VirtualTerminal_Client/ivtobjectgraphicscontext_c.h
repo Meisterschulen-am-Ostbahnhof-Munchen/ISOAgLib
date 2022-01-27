@@ -34,7 +34,7 @@ public:
   /// @param vtObjectGraphicsContextSROM
   /// @param b_initPointer
   void init(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst) {
-    vtObjectGraphicsContext_c::init (vtObjectGraphicsContextSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectGraphicsContext_c::init (vtObjectGraphicsContextSROM , ai_multitonInst);
   };
 
   /// Operation: get_vtObjectGraphicsContext_a

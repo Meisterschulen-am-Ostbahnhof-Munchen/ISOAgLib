@@ -36,7 +36,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_CONTAINER; }
 
   void init(const iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst) {
-    vtObjectContainer_c::init (vtObjectContainer_sROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectContainer_c::init (vtObjectContainer_sROM , ai_multitonInst);
   }
 
   const iVtObjectContainer_s& get_vtObjectContainer_a() { return *vtObjectContainer_c::get_vtObjectContainer_a(); }

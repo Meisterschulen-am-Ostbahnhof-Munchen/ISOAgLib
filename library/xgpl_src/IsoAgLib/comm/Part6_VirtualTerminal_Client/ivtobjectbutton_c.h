@@ -31,7 +31,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_BUTTON; }
 
   void init(const iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst) {
-    vtObjectButton_c::init (vtObjectButtonSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectButton_c::init (vtObjectButtonSROM , ai_multitonInst);
   }
 
   const iVtObjectButton_s& get_vtObjectButton_a();

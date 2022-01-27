@@ -68,7 +68,7 @@ vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c()
 
 void vtObjectAuxiliaryInput2_c::init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst)
 {
-  vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryInput2SROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+  vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryInput2SROM , ai_multitonInst);
 
   // set reserved value 0xFFFF for mui16_value2 for some function types
   switch (getFunctionType())

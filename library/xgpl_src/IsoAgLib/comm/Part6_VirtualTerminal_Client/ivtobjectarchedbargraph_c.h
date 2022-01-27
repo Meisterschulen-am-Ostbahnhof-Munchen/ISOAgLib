@@ -33,7 +33,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_ARCHED_BAR_GRAPH; }
 
   void init(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst) {
-    vtObjectArchedBarGraph_c::init (vtObjectArchedBarGraphSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectArchedBarGraph_c::init (vtObjectArchedBarGraphSROM , ai_multitonInst);
   }
 
   const iVtObjectArchedBarGraph_s& get_vtObjectArchedBarGraph_a() { return *vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a(); }

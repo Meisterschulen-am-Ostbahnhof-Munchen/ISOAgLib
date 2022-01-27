@@ -34,7 +34,7 @@ public:
 
   ~iVtObjectAuxiliaryControlDesignatorObjectPointer_c(){}
 
-  void init(const iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryControlDesignatorObjectPointerSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); };
+  void init(const iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryControlDesignatorObjectPointerSROM , ai_multitonInst); };
 
   const iVtObjectAuxiliaryControlDesignatorObjectPointer_s& get_vtObjectAuxiliaryControlDesignatorObjectPointer_a() { return *vtObjectAuxiliaryControlDesignatorObjectPointer_c::get_vtObjectAuxiliaryControlDesignatorObjectPointer_a(); }
 

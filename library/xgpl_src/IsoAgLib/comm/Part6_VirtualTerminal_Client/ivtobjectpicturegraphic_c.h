@@ -32,7 +32,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_PICTURE_GRAPHIC; }
 
   void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst) {
-    vtObjectPictureGraphic_c::init (vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectPictureGraphic_c::init (vtObjectPictureGraphicSROM , ai_multitonInst);
   }
 
   const iVtObjectPictureGraphic_s& get_vtObjectPictureGraphic_a() { return *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a(); }

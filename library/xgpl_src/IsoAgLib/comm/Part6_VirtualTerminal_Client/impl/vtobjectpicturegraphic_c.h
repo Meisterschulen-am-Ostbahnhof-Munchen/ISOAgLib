@@ -35,7 +35,7 @@ public:
                  objRange_t sourceOffset);
 
   void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
+  { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM , ai_multitonInst); }
 
   inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return (iVtObjectPictureGraphic_s *)&(get_vtObject_a()); }
 

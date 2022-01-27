@@ -38,7 +38,7 @@ public:
                  objRange_t sourceOffset);
 
   void init(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectObjectPointerSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
+  { vtObject_c::init ((iVtObject_s*) vtObjectObjectPointerSROM , ai_multitonInst);}
 
   iVtObjectObjectPointer_s* get_vtObjectObjectPointer_a() { return (iVtObjectObjectPointer_s *)&(get_vtObject_a()); }
 

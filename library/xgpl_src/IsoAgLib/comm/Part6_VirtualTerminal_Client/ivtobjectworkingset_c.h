@@ -32,7 +32,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_WORKING_SET; }
 
   void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst) {
-    vtObjectWorkingSet_c::init (vtObjectWorkingSetSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectWorkingSet_c::init (vtObjectWorkingSetSROM , ai_multitonInst);
   }
 
   const iVtObjectWorkingSet_s& get_vtObjectWorkingSet_a() { return *vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); }

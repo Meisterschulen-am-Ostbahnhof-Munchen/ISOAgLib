@@ -33,7 +33,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_LINE; }
 
   void init(const iVtObjectLine_s* vtObjectLineSROM , int ai_multitonInst) {
-    vtObjectLine_c::init (vtObjectLineSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectLine_c::init (vtObjectLineSROM , ai_multitonInst);
   }
 
   const iVtObjectLine_s& get_vtObjectLine_a() { return *vtObjectLine_c::get_vtObjectLine_a(); }

@@ -33,7 +33,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_NUMBER_VARIABLE; }
 
   void init(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , int ai_multitonInst) {
-    vtObjectNumberVariable_c::init (vtObjectNumberVariableSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectNumberVariable_c::init (vtObjectNumberVariableSROM , ai_multitonInst);
   }
 
   const iVtObjectNumberVariable_s& get_vtObjectNumberVariable_a() { return *vtObjectNumberVariable_c::get_vtObjectNumberVariable_a(); }

@@ -31,7 +31,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_LINE_ATTRIBUTES; }
 
   void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst) {
-    vtObjectLineAttributes_c::init (vtObjectLineAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
+    vtObjectLineAttributes_c::init (vtObjectLineAttributesSROM , ai_multitonInst);
   }
 
   const iVtObjectLineAttributes_s& get_vtObjectLineAttributes_a() { return *vtObjectLineAttributes_c::get_vtObjectLineAttributes_a (); }
