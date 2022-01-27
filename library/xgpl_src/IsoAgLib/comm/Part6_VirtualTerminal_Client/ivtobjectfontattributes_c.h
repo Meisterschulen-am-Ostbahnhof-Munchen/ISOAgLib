@@ -29,6 +29,7 @@ class iVtObjectFontAttributes_c : public __IsoAgLib::vtObjectFontAttributes_c
 {
 public:
   iVtObjectFontAttributes_c();
+  iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_FONT_ATTRIBUTES; }
 
