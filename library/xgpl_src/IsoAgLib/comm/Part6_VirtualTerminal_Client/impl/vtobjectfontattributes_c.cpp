@@ -248,5 +248,9 @@ vtObjectFontAttributes_c::vtObjectFontAttributes_c(const iVtObjectFontAttributes
 {
 }
 
+void vtObjectFontAttributes_c::init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst)
+{ vtObject_c::init ((iVtObject_s*) vtObjectFontAttributesSROM , ai_multitonInst);}
+
+
 } // __IsoAgLib
 
