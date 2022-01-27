@@ -40,7 +40,6 @@
 #define MULTITON_MEMBER_COPY_CONSTRUCTOR(PAR) c_clientBase( PAR.getMultitonInst() ),
 #define MULTITON_PARENT_CONSTRUCTOR      ClientBase( ai_multitonInst ),
 
-#define MULTITON_INST_INIT_CALL                   setMultitonInst( ai_multitonInst );
 #define MULTITON_INST                             getMultitonInst()
 #define MULTITON_INST_WITH_COMMA                , getMultitonInst()
 
