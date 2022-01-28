@@ -30,6 +30,14 @@ class iVtObjectDataMask_c : public __IsoAgLib::vtObjectDataMask_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
 
+
+  iVtObjectDataMask_c() {}
+
+  iVtObjectDataMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
+  : vtObjectDataMask_c(vtObjectDataMaskSROM , ai_multitonInst)
+  {}
+
+
   void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst) {
     vtObjectDataMask_c::init (vtObjectDataMaskSROM , ai_multitonInst);
   }

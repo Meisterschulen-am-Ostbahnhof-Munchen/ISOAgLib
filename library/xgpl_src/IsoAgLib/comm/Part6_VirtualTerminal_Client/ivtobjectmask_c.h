@@ -28,6 +28,16 @@ namespace IsoAgLib {
 class iVtObjectMask_c : public __IsoAgLib::vtObject_c
 {
 public:
+
+  iVtObjectMask_c()
+  : vtObject_c()
+  {}
+
+
+  iVtObjectMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
+  : vtObject_c((iVtObject_s*) vtObjectDataMaskSROM , ai_multitonInst)
+  {}
+
   virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask,
                               bool b_updateObject= false, bool b_enableReplaceOfCmd=false) = 0;
 
