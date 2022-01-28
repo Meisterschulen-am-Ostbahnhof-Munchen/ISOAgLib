@@ -73,6 +73,9 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
+
+
+protected:
   struct iVtObjectButton_s : iVtObject_s {
     uint16_t width;
     uint16_t height;
@@ -111,6 +114,8 @@ public:
     {}
   };
 
+
+public:
   struct iVtObjectContainer_s : iVtObject_s {
     uint16_t width;
     uint16_t height;
@@ -358,6 +363,7 @@ public:
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
+
 
   struct iVtObjectOutputString_s : iVtObject_s {
     uint16_t width;
