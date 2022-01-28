@@ -30,6 +30,15 @@ class iVtObjectFontAttributes_c : public __IsoAgLib::vtObjectFontAttributes_c
 public:
   iVtObjectFontAttributes_c();
   iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
+  iVtObjectFontAttributes_c(
+		int ai_multitonInst,
+		uint16_t ID = 0,
+		uint8_t fontColour = 0,
+		uint8_t fontSize = 1,
+		uint8_t fontType = 0, // always =0 ISO_LATIN_1
+		uint8_t fontStyle = 0,
+		uint8_t numberOfMacrosToFollow = 0,
+		const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr);
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_FONT_ATTRIBUTES; }
 

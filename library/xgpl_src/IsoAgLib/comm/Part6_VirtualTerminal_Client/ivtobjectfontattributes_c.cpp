@@ -10,25 +10,47 @@
 namespace IsoAgLib {
 	// implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
 	// cconstructor/functions direct in scope of iVtObjectFontAttributes_c
-	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c() : vtObjectFontAttributes_c() {}
-
-	iVtObjectFontAttributes_c::~iVtObjectFontAttributes_c() {}
-
-	uint16_t
-	  iVtObjectFontAttributes_c::getScaledWidthHeight()
-	{
-	return vtObjectFontAttributes_c::getScaledWidthHeight();
+	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c() :
+			vtObjectFontAttributes_c() {
 	}
 
-	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst)
-	: vtObjectFontAttributes_c(vtObjectFontAttributesSROM , ai_multitonInst)
-	{
+	iVtObjectFontAttributes_c::~iVtObjectFontAttributes_c() {
+	}
+
+	uint16_t iVtObjectFontAttributes_c::getScaledWidthHeight() {
+		return vtObjectFontAttributes_c::getScaledWidthHeight();
+	}
+
+	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s *vtObjectFontAttributesSROM, int ai_multitonInst) :
+			vtObjectFontAttributes_c(vtObjectFontAttributesSROM, ai_multitonInst) {
 
 	}
 
-	void iVtObjectFontAttributes_c::init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst)
+	void iVtObjectFontAttributes_c::init(const iVtObjectFontAttributes_s *vtObjectFontAttributesSROM, int ai_multitonInst) {
+		vtObjectFontAttributes_c::init(vtObjectFontAttributesSROM, ai_multitonInst);
+	}
+	;
+
+	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(
+			int ai_multitonInst,
+			uint16_t ID,
+			uint8_t fontColour,
+			uint8_t fontSize,
+			uint8_t fontType, // always =0 ISO_LATIN_1
+			uint8_t fontStyle,
+			uint8_t numberOfMacrosToFollow,
+			const repeat_event_iVtObjectMacro_s *macrosToFollow)
+	:vtObjectFontAttributes_c(
+			new iVtObjectFontAttributes_s(
+					ID,
+					fontColour,
+					fontSize,
+					fontType, // always =0 ISO_LATIN_1
+					fontStyle,
+					numberOfMacrosToFollow,
+					macrosToFollow),
+				ai_multitonInst)
 	{
-	  vtObjectFontAttributes_c::init (vtObjectFontAttributesSROM , ai_multitonInst);
-	};
+	}
 
 }
