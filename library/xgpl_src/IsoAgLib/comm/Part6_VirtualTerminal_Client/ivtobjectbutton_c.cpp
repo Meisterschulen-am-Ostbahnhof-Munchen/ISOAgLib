@@ -41,9 +41,6 @@ namespace IsoAgLib {
 					  , ai_multitonInst)
 	{}
 
-    void iVtObjectButton_c::init(const iVtObject_c::iVtObjectButton_s *vtObjectButtonSROM, int ai_multitonInst) {
-        vtObjectButton_c::init (vtObjectButtonSROM , ai_multitonInst);
-    }
 
     void
     iVtObjectButton_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {

@@ -48,7 +48,6 @@ public:
   	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
   		);
 
-  void init(const iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
 
   const iVtObjectButton_s& get_vtObjectButton_a();
 
