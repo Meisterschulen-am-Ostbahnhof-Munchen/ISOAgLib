@@ -26,7 +26,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
 #include <utility>
-#include "ItemList.h"
+#include "iVtObject_cList.h"
 
 struct localSettings_s;
 
