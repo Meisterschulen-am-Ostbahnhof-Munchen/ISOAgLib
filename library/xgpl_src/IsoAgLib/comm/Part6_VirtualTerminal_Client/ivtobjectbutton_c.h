@@ -35,6 +35,38 @@ public:
   :vtObjectButton_c(vtObjectButtonSROM , ai_multitonInst)
   {}
 
+
+  iVtObjectButton_c(
+		int ai_multitonInst,
+  		uint16_t ID = 0,
+  	    uint16_t width = 80,
+  	    uint16_t height = 30,
+  	    uint8_t backgroundColour = 12,
+  	    uint8_t borderColour = 8,
+  	    uint8_t keyCode = 251,
+  	    uint8_t options = 0,
+  	    uint8_t numberOfObjectsToFollow = 0,
+  	    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow = nullptr,
+  	    uint8_t numberOfMacrosToFollow = 0,
+  	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
+  		)
+  : vtObjectButton_c(
+		  new iVtObjectButton_s(
+				    ID,
+			  	    width,
+			  	    height,
+			  	    backgroundColour,
+			  	    borderColour,
+			  	    keyCode,
+			  	    options,
+			  	    numberOfObjectsToFollow,
+			  	    objectsToFollow,
+			  	    numberOfMacrosToFollow,
+			  	    macrosToFollow)
+                    , ai_multitonInst)
+  {}
+
+
   void init(const iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst) {
     vtObjectButton_c::init (vtObjectButtonSROM , ai_multitonInst);
   }
