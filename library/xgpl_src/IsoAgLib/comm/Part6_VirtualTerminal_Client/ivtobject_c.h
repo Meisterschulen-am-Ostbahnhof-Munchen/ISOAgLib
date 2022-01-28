@@ -34,10 +34,7 @@ public:
     uint16_t ID;
     static uint16_t nextID;
     iVtObject_s(uint16_t oID = 0){
-    	if(oID == 0)
-    		ID = nextID++;
-    	else
-    		ID = oID;
+        ID = oID == 0 ? nextID++ : oID;
     }
   };
 
