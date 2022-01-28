@@ -122,34 +122,64 @@ namespace __IsoAgLib {
     {
       case AUX_VALVE_0_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_1_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_2_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_3_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_4_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_5_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_6_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_7_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_8_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_9_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_10_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_11_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_12_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_13_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_14_ESTIMATED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_15_ESTIMATED_FLOW:
         if ( checkParseReceived( rcc_tempISOName ) )
         { // sender is allowed to send
@@ -169,34 +199,64 @@ namespace __IsoAgLib {
         break;
       case AUX_VALVE_0_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_1_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_2_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_3_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_4_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_5_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_6_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_7_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_8_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_9_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_10_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_11_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_12_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_13_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_14_MEASURED_FLOW:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_15_MEASURED_FLOW:
         if ( checkParseReceived( rcc_tempISOName ) )
         { // sender is allowed to send
@@ -219,34 +279,64 @@ namespace __IsoAgLib {
         break;
       case AUX_VALVE_0_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_1_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_2_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_3_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_4_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_5_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_6_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_7_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_8_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_9_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_10_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_11_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_12_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_13_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_14_COMMAND:
         valveNumber--;
+        /* fall through */
+        /* no break */
       case AUX_VALVE_15_COMMAND:
         if ( checkMode(IsoAgLib::IdentModeTractor) )
         {
