@@ -29,7 +29,7 @@ namespace IsoAgLib {
 
 class iVtObject_c : public ClientBase
 {
-public:
+protected:
   struct iVtObject_s {
     uint16_t ID;
     static uint16_t nextID;
@@ -104,7 +104,7 @@ public:
 
 
 
-protected:
+
   struct iVtObjectButton_s : iVtObject_s {
     uint16_t width;
     uint16_t height;
@@ -144,7 +144,6 @@ protected:
   };
 
 
-public:
   struct iVtObjectContainer_s : iVtObject_s {
     uint16_t width;
     uint16_t height;
