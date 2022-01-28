@@ -12,7 +12,7 @@ namespace IsoAgLib {
 
 iVtObjectWorkingSet_c::iVtObjectWorkingSet_c(const iVtObjectWorkingSet_s *vtObjectWorkingSetSROM,
                                                        int ai_multitonInst)
-        :__IsoAgLib::vtObjectWorkingSet_c(vtObjectWorkingSetSROM , ai_multitonInst)
+        :vtObjectWorkingSet_c(vtObjectWorkingSetSROM , ai_multitonInst)
 {}
 
 
@@ -58,4 +58,33 @@ iVtObjectWorkingSet_c::iVtObjectWorkingSet_c(const iVtObjectWorkingSet_s *vtObje
     uint16_t iVtObjectWorkingSet_c::getObjectType() const { return objectType(); }
 
     uint16_t iVtObjectWorkingSet_c::objectType() { return VT_OBJECT_TYPE_WORKING_SET; }
+
+    iVtObjectWorkingSet_c::iVtObjectWorkingSet_c(
+    		int ai_multitonInst,
+			uint16_t ID,
+			uint8_t backgroundColour,
+			uint8_t selectable,
+			iVtObjectMask_c *activeMask,
+			uint8_t numberOfObjectsToFollow,
+			const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *objectsToFollow,
+			uint8_t numberOfMacrosToFollow,
+			const repeat_event_iVtObjectMacro_s *macrosToFollow,
+			uint8_t numberOfLanguagesToFollow,
+			const repeat_vtLanguage_s *languagesToFollow)
+    :vtObjectWorkingSet_c(
+    		new iVtObjectWorkingSet_s(
+    				ID,
+    				backgroundColour,
+    				selectable,
+					activeMask,
+    				numberOfObjectsToFollow,
+    				objectsToFollow,
+    				numberOfMacrosToFollow,
+    				macrosToFollow,
+    				numberOfLanguagesToFollow,
+    				languagesToFollow),
+    		ai_multitonInst)
+    {
+
+    }
 }
