@@ -84,8 +84,31 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-    iVtObjectButton_s():iVtObject_s() {}
-    iVtObjectButton_s(uint16_t ID):iVtObject_s(ID) {}
+    iVtObjectButton_s(
+    		uint16_t ID = 0,
+    	    uint16_t width = 80,
+    	    uint16_t height = 30,
+    	    uint8_t backgroundColour = 12,
+    	    uint8_t borderColour = 8,
+    	    uint8_t keyCode = 251,
+    	    uint8_t options = 0,
+    	    uint8_t numberOfObjectsToFollow = 0,
+    	    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow = nullptr,
+    	    uint8_t numberOfMacrosToFollow = 0,
+    	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
+    		)
+    : iVtObject_s(ID)
+    , width(width)
+    , height(height)
+    , backgroundColour(backgroundColour)
+    , borderColour(borderColour)
+    , keyCode(keyCode)
+    , options(options)
+    , numberOfObjectsToFollow(numberOfObjectsToFollow)
+    , objectsToFollow(objectsToFollow)
+    , numberOfMacrosToFollow(numberOfMacrosToFollow)
+    , macrosToFollow(macrosToFollow)
+    {}
   };
 
   struct iVtObjectContainer_s : iVtObject_s {
