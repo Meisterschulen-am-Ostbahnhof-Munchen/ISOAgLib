@@ -29,45 +29,29 @@ namespace IsoAgLib {
 class iVtObjectWorkingSet_c : public __IsoAgLib::vtObjectWorkingSet_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_WORKING_SET; }
+  static uint16_t objectType();
 
   iVtObjectWorkingSet_c(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
 
 
-  const iVtObjectWorkingSet_s& get_vtObjectWorkingSet_a() { return *vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); }
+  const iVtObjectWorkingSet_s& get_vtObjectWorkingSet_a();
 
-  void updateSelectable( uint8_t newSelectable ) {
-    vtObjectWorkingSet_c::updateSelectable( newSelectable );
-  }
+  void updateSelectable( uint8_t newSelectable );
 
-  void changeActiveMask(iVtObjectMask_c* apc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectWorkingSet_c::changeActiveMask (apc_iVtObjectMask, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void changeActiveMask(iVtObjectMask_c* apc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void changeBackgroundColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectWorkingSet_c::changeBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void changeBackgroundColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectWorkingSet_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject);
-  }
+  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false);
 
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    return vtObjectWorkingSet_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
-  }
+  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime) {
-    return vtObjectWorkingSet_c::controlAudioDevice (aui8_repetitions, aui16_frequency, aui16_onTime, aui16_offTime);
-  }
+  bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
 
   //! @param aui8_volume The Volume given in percent. Range 0..100
-  bool setAudioVolume (uint8_t aui8_volume) {
-    return vtObjectWorkingSet_c::setAudioVolume (aui8_volume);
-  }
+  bool setAudioVolume (uint8_t aui8_volume);
 
-  bool setColourMapOrPalette (uint16_t aui16_objectId) {
-    return vtObjectWorkingSet_c::setColourMapOrPalette (aui16_objectId);
-  }
+  bool setColourMapOrPalette (uint16_t aui16_objectId);
 
   // ///////////////////////// getter for attributes
   /** these attributes are in parentheses in the spec, so commented out here
@@ -88,7 +72,7 @@ public:
   }
   */
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() const;
 };
 
 } // IsoAgLib
