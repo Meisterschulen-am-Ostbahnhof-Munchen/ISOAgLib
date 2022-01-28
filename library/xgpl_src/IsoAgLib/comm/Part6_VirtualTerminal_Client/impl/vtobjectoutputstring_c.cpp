@@ -30,24 +30,6 @@
 #include "vtclient_c.h"
 
 
-namespace IsoAgLib {
-  // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple
-  // constructor/destructor direct in scope of iVtObjectOutputString_c
-  iVtObjectOutputString_c::iVtObjectOutputString_c() {}
-  iVtObjectOutputString_c::~iVtObjectOutputString_c(){}
-
-  iVtObjectOutputString_c::iVtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
-  : __IsoAgLib::vtObjectOutputString_c(vtObjectOutputStringSROM , ai_multitonInst)
-  {}
-
-  void iVtObjectOutputString_c::init(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
-  {
-     vtObjectOutputString_c::init (vtObjectOutputStringSROM , ai_multitonInst);
-   }
-
-
-}
-
 
 namespace __IsoAgLib {
 

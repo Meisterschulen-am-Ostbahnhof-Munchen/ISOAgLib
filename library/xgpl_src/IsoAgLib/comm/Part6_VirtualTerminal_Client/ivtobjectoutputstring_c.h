@@ -31,13 +31,60 @@ namespace IsoAgLib {
 class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 {
 public:
-  iVtObjectOutputString_c();
-  iVtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);
-  ~iVtObjectOutputString_c();
+  iVtObjectOutputString_c(){}
+  ~iVtObjectOutputString_c(){}
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
 
-  void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);
+
+  iVtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
+  : __IsoAgLib::vtObjectOutputString_c(vtObjectOutputStringSROM , ai_multitonInst)
+  {}
+
+
+
+  iVtObjectOutputString_c(
+		int ai_multitonInst,
+  	    uint16_t ID = 0,
+  	    uint16_t width = 50,
+  	    uint16_t height= 20,
+  	    uint8_t backgroundColour = 1,
+  	    iVtObjectFontAttributes_c* fontAttributes = nullptr,
+  	    uint8_t options = 0,
+  	    iVtObjectStringVariable_c* variableReference = nullptr,
+  	    uint8_t horizontalJustification = 0,
+  	    uint16_t length = 0,
+  	    char* value = nullptr, /* size length+1 (0-termination intern!) */
+  	    uint8_t numberOfMacrosToFollow = 0,
+  	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
+  		)
+  :vtObjectOutputString_c(
+		  new iVtObjectOutputString_s(
+			  	    ID,
+			  	    width,
+			  	    height,
+			  	    backgroundColour,
+			  	    fontAttributes,
+			  	    options,
+			  	    variableReference,
+			  	    horizontalJustification,
+			  	    length,
+			  	    value, /* size length+1 (0-termination intern!) */
+			  	    numberOfMacrosToFollow,
+			  	    macrosToFollow
+				  )
+  	  	  ,ai_multitonInst)
+  {}
+
+
+
+
+
+  void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
+  {
+     vtObjectOutputString_c::init (vtObjectOutputStringSROM , ai_multitonInst);
+   }
+
 
   const iVtObjectOutputString_s& get_vtObjectOutputString_a() { return *vtObjectOutputString_c::get_vtObjectOutputString_a(); }
 
