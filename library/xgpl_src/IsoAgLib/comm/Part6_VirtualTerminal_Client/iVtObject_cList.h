@@ -1,41 +1,28 @@
-#ifndef ITEM_LIST_H
-#define ITEM_LIST_H
+/*
+ * iVtObject_cList.h
+ *
+ *  Created on: 28.01.2022
+ *      Author: franz
+ */
+
+#ifndef COMPONENTS_ISOAGLIB_LIBRARY_XGPL_SRC_ISOAGLIB_COMM_PART6_VIRTUALTERMINAL_CLIENT_IVTOBJECT_CLIST_H_
+#define COMPONENTS_ISOAGLIB_LIBRARY_XGPL_SRC_ISOAGLIB_COMM_PART6_VIRTUALTERMINAL_CLIENT_IVTOBJECT_CLIST_H_
 
 
 const long DEFAULT_LIST_CAPACITY = 200;
 
 
-class List {
+class iVtObject_cList {
 public:
-    List(long size = DEFAULT_LIST_CAPACITY);
-    List(List&);
-    ~List();
-    List& operator=(const List&);
-
+    iVtObject_cList(long size = DEFAULT_LIST_CAPACITY);
+    ~iVtObject_cList();
     long Count() const;
-    IsoAgLib::iVtObject_c* Get(long index) const;
-    IsoAgLib::iVtObject_c* First() const;
-    IsoAgLib::iVtObject_c* Last() const;
-    bool Includes(IsoAgLib::iVtObject_c* const) const;
-
     void Append(IsoAgLib::iVtObject_c* const);
-    void Prepend(IsoAgLib::iVtObject_c* const );
-
-    void Remove(IsoAgLib::iVtObject_c* const);
-    void RemoveLast();
-    void RemoveFirst();
-    void RemoveAll();
-
-    IsoAgLib::iVtObject_c* Top() const;
-    void Push(IsoAgLib::iVtObject_c* const);
-    IsoAgLib::iVtObject_c* Pop();
-
-
-    void RemoveAt(long index);
     IsoAgLib::iVtObject_c** _items;
     IsoAgLib::iVtObject_c*** all_items;
-    long _size; 
+    long _size;
     long _count; 
 };
 
-#endif /* ITEM_LIST_H */
+#endif /* COMPONENTS_ISOAGLIB_LIBRARY_XGPL_SRC_ISOAGLIB_COMM_PART6_VIRTUALTERMINAL_CLIENT_IVTOBJECT_CLIST_H_ */
+

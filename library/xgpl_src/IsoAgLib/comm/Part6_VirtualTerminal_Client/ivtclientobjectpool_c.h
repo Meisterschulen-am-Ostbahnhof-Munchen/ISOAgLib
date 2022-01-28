@@ -327,7 +327,7 @@ public:
   virtual void initAllObjectsOnce(int ai_multitonInst)=0;
 
   iVtClientObjectPool_c(ObjectPoolSettings_s a_objectPoolSettings)
-    : iVtObjects (new List())
+    : iVtObjects (new iVtObject_cList())
     , version(a_objectPoolSettings.version)
     , dimension (a_objectPoolSettings.dimension)
     , skWidth (a_objectPoolSettings.skWidth)
@@ -398,7 +398,7 @@ private:
   virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/, uint8_t /*aui8_commandByte*/, __IsoAgLib::Stream_c& /*arc_stream*/)  { return 0; }
 
 protected:
-  List *iVtObjects;
+  iVtObject_cList *iVtObjects;
   ObjectPoolVersion_en version;
   uint16_t dimension;
   uint16_t skWidth;
