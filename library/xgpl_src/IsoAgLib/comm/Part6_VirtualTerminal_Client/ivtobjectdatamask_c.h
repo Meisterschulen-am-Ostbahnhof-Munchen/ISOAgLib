@@ -31,16 +31,19 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
 
 
-  iVtObjectDataMask_c() {}
+  iVtObjectDataMask_c();
 
-  iVtObjectDataMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
-  : vtObjectDataMask_c(vtObjectDataMaskSROM , ai_multitonInst)
-  {}
+  iVtObjectDataMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);
 
-
-  void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst) {
-    vtObjectDataMask_c::init (vtObjectDataMaskSROM , ai_multitonInst);
-  }
+  iVtObjectDataMask_c(
+		int ai_multitonInst,
+  		uint16_t ID = 0,
+  	    uint8_t backgroundColour = 0,
+  	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr,
+  	    uint8_t numberOfObjectsToFollow = 0,
+  	    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow = nullptr,
+  	    uint8_t numberOfMacrosToFollow = 0,
+  	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr);
 
   const iVtObjectDataMask_s& get_vtObjectDataMask_a() { return *vtObjectDataMask_c::get_vtObjectDataMask_a(); }
 

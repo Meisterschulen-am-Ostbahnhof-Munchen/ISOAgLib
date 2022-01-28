@@ -35,7 +35,6 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);
 
 
   iVtObjectDataMask_s* get_vtObjectDataMask_a() { return (iVtObjectDataMask_s *)&(get_vtObject_a()); }

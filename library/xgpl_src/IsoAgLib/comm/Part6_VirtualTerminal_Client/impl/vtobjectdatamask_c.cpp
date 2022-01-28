@@ -69,10 +69,6 @@ vtObjectDataMask_c::vtObjectDataMask_c(const iVtObjectDataMask_s* vtObjectDataMa
 {}
 
 
-void vtObjectDataMask_c::init(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
-{ vtObject_c::init ((iVtObject_s*) vtObjectDataMaskSROM , ai_multitonInst);}
-
-
 
 uint32_t
 vtObjectDataMask_c::fitTerminal() const
