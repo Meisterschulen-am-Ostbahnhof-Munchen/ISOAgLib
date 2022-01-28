@@ -217,7 +217,7 @@ public:
     uint8_t fontStyle;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-    iVtObjectFontAttributes_s(
+    explicit iVtObjectFontAttributes_s(
     	    uint16_t ID = 0,
     	    uint8_t fontColour = 0,
     	    uint8_t fontSize = 1,
