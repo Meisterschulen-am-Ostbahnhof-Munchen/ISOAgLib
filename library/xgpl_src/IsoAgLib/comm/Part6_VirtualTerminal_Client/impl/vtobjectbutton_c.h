@@ -40,6 +40,9 @@ public:
   iVtObjectButton_s* get_vtObjectButton_a() { return (iVtObjectButton_s *)&(get_vtObject_a()); }
 
   vtObjectButton_c();
+  vtObjectButton_c(const iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst)
+  : vtObject_c((iVtObject_s*) vtObjectButtonSROM , ai_multitonInst)
+  {}
 
   uint32_t fitTerminal() const;
 
