@@ -105,8 +105,22 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
-    iVtObjectDataMask_s():iVtObject_s() {}
-    iVtObjectDataMask_s(uint16_t ID):iVtObject_s(ID) {}
+    iVtObjectDataMask_s(
+    		uint16_t ID = 0,
+    	    uint8_t backgroundColour = 0,
+    	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr,
+    	    uint8_t numberOfObjectsToFollow = 0,
+    	    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow = nullptr,
+    	    uint8_t numberOfMacrosToFollow = 0,
+    	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr)
+    :iVtObject_s(ID)
+    , backgroundColour(backgroundColour)
+    , softKeyMask(softKeyMask)
+    , numberOfObjectsToFollow(numberOfObjectsToFollow)
+    , objectsToFollow(objectsToFollow)
+    , numberOfMacrosToFollow(numberOfMacrosToFollow)
+    , macrosToFollow(macrosToFollow)
+    {}
   };
 
   struct iVtObjectEllipse_s : iVtObject_s {
@@ -457,11 +471,12 @@ public:
 	, languagesToFollow(languagesToFollow)
     {}
     iVtObjectWorkingSet_s(
-    		iVtObjectMask_c* activeMask, // data or alarm mask
-    		uint8_t numberOfObjectsToFollow,
-    		const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow
+    	    uint16_t ID = 0,
+    		iVtObjectMask_c* activeMask = nullptr, // data or alarm mask
+    		uint8_t numberOfObjectsToFollow = 0,
+    		const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow = nullptr
     		)
-    : iVtObject_s()
+    : iVtObject_s(ID)
     , backgroundColour(1)
     , selectable(1)
 	, activeMask(activeMask)
