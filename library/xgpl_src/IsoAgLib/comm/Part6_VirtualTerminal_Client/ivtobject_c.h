@@ -52,12 +52,44 @@ public:
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
+    iVtObjectAlarmMask_s(
+    		uint16_t ID = 0,
+    		uint8_t backgroundColour = 0,
+			iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
+			uint8_t priority = 0,
+            uint8_t acousticSignal = 0,
+			uint8_t numberOfObjectsToFollow = 0,
+			const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *objectsToFollow = nullptr,
+            uint8_t numberOfMacrosToFollow = 0,
+			const repeat_event_iVtObjectMacro_s *macrosToFollow = nullptr)
+    : iVtObject_s(ID)
+    , backgroundColour(backgroundColour)
+    , softKeyMask(softKeyMask)
+    , priority(priority)
+    , acousticSignal(acousticSignal)
+    , numberOfObjectsToFollow(numberOfObjectsToFollow)
+    , objectsToFollow(objectsToFollow)
+    , numberOfMacrosToFollow(numberOfMacrosToFollow)
+    , macrosToFollow(macrosToFollow)
+    {}
   };
 
   struct iVtObjectArchedBarGraph_s : iVtObject_s {
     uint16_t width;
     uint16_t height;
-    uint8_t colour;
+
+      iVtObjectArchedBarGraph_s(uint16_t width, uint16_t height, uint8_t colour, uint8_t targetLineColour,
+                                uint8_t options, uint8_t startAngle, uint8_t endAngle, uint16_t barGraphWidth,
+                                uint16_t minValue, uint16_t maxValue, iVtObject_c *variableReference, uint16_t value,
+                                iVtObject_c *targetValueVariableReference, uint16_t targetValue,
+                                uint8_t numberOfMacrosToFollow, const repeat_event_iVtObjectMacro_s *macrosToFollow)
+              : width(width), height(height), colour(colour), targetLineColour(targetLineColour), options(options),
+                startAngle(startAngle), endAngle(endAngle), barGraphWidth(barGraphWidth), minValue(minValue),
+                maxValue(maxValue), variableReference(variableReference), value(value),
+                targetValueVariableReference(targetValueVariableReference), targetValue(targetValue),
+                numberOfMacrosToFollow(numberOfMacrosToFollow), macrosToFollow(macrosToFollow) {}
+
+      uint8_t colour;
     uint8_t targetLineColour;
     uint8_t options;
     uint8_t startAngle;
@@ -119,7 +151,14 @@ public:
   struct iVtObjectContainer_s : iVtObject_s {
     uint16_t width;
     uint16_t height;
-    uint8_t hidden;
+
+      iVtObjectContainer_s(uint16_t width, uint16_t height, uint8_t hidden, uint8_t numberOfObjectsToFollow,
+                           const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *objectsToFollow,
+                           uint8_t numberOfMacrosToFollow, const repeat_event_iVtObjectMacro_s *macrosToFollow) : width(
+              width), height(height), hidden(hidden), numberOfObjectsToFollow(numberOfObjectsToFollow), objectsToFollow(
+              objectsToFollow), numberOfMacrosToFollow(numberOfMacrosToFollow), macrosToFollow(macrosToFollow) {}
+
+      uint8_t hidden;
     uint8_t numberOfObjectsToFollow;
     const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
