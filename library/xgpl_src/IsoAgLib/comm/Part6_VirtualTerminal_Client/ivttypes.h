@@ -148,6 +148,13 @@ struct repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s {
   iVtObjectFontAttributes_c* vtObjectBlockFont;
   int16_t row;
   int16_t col;
+  repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s(
+		  iVtObject_c *vtObject = nullptr,
+		  int16_t x = 0,
+		  int16_t y = 0,
+		  iVtObjectFontAttributes_c *vtObjectBlockFont = nullptr,
+		  int16_t row = 0,
+          int16_t col = 0);
 };
 
 struct repeat_event_iVtObjectMacro_s {
