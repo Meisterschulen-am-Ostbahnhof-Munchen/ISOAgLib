@@ -20,6 +20,8 @@
 #ifndef VTOBJECTGRAPHICSCONTEXT_C_H
 #define VTOBJECTGRAPHICSCONTEXT_C_H
 
+#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+
 #include <IsoAgLib/isoaglib_config.h>
 
 #include "vtobject_c.h"
@@ -208,4 +210,5 @@ private:
 
 } // __IsoAgLib
 
+#endif
 #endif

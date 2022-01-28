@@ -19,6 +19,7 @@
 */
 
 #include "vtobjectgraphicscontext_c.h"
+#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
 
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectfontattributes_c.h"
@@ -552,3 +553,5 @@ vtObjectGraphicsContext_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_a
 #endif
 
 } // __IsoAgLib
+
+#endif

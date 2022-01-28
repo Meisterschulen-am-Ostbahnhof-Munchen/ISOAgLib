@@ -21,6 +21,7 @@
 #define IVTOBJECTGRAPHICSCONTEXT_C_H
 
 #include "impl/vtobjectgraphicscontext_c.h"
+#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
 
 namespace IsoAgLib {
 
@@ -381,5 +382,5 @@ public:
 }; // class iVtObjectGraphicsContext_c
 
 } // namespace IsoAgLib
-
+#endif
 #endif // IVTOBJECTGRAPHICSCONTEXT_C_H
