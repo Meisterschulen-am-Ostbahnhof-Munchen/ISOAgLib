@@ -33,9 +33,12 @@ class iVtObjectAlarmMask_c : public __IsoAgLib::vtObjectAlarmMask_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_ALARM_MASK; }
 
-  void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst) {
-    vtObjectAlarmMask_c::init (vtObjectAlarmMaskSROM , ai_multitonInst);
-  }
+
+  iVtObjectAlarmMask_c(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst)
+  :vtObjectAlarmMask_c(vtObjectAlarmMaskSROM , ai_multitonInst)
+  {}
+
+
   ~iVtObjectAlarmMask_c(){}
 
   const iVtObjectAlarmMask_s& get_vtObjectAlarmMask_a() { return *vtObjectAlarmMask_c::get_vtObjectAlarmMask_a(); }

@@ -78,7 +78,16 @@ protected:
   };
 
 
-  struct iVtObjectAlarmMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
+  struct iVtObjectMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
+	  iVtObjectMask_s(
+			  ObjectID ID = autoID)
+	  :iVtObjectObject_s(ID)
+	  ,iVtObjectwMacro_s(ID)
+	  {}
+  };
+
+
+  struct iVtObjectAlarmMask_s : iVtObjectMask_s {
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
     uint8_t priority;
@@ -90,7 +99,7 @@ protected:
 			iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
 			uint8_t priority = 0,
             uint8_t acousticSignal = 0)
-    : iVtObjectObject_s(ID)
+    : iVtObjectMask_s(ID)
     , backgroundColour(backgroundColour)
     , softKeyMask(softKeyMask)
     , priority(priority)
@@ -135,6 +144,7 @@ protected:
     	    uint8_t options = 0
     		)
     : iVtObjectObject_s(ID)
+    , iVtObjectwMacro_s(ID)
     , width(width)
     , height(height)
     , backgroundColour(backgroundColour)
@@ -151,14 +161,14 @@ protected:
     uint8_t hidden;
   };
 
-  struct iVtObjectDataMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
+  struct iVtObjectDataMask_s : iVtObjectMask_s {
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
     iVtObjectDataMask_s(
     		ObjectID ID = autoID,
     	    uint8_t backgroundColour = 0,
     	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr)
-    :iVtObjectObject_s(ID)
+    :iVtObjectMask_s(ID)
     , backgroundColour(backgroundColour)
     , softKeyMask(softKeyMask)
     {}

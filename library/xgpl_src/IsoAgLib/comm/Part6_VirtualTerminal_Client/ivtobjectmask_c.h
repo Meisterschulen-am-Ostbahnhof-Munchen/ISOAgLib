@@ -34,7 +34,7 @@ public:
   {}
 
 
-  iVtObjectMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
+  iVtObjectMask_c(const iVtObjectMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
   : vtObject_c((iVtObject_s*) vtObjectDataMaskSROM , ai_multitonInst)
   {}
 

@@ -37,7 +37,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst) { vtObject_c::init ((iVtObject_s*) vtObjectAlarmMaskSROM , ai_multitonInst); }
+  vtObjectAlarmMask_c(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst)
+  :iVtObjectMask_c((iVtObjectMask_s*) vtObjectAlarmMaskSROM , ai_multitonInst)
+  {}
 
   iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a() { return dynamic_cast<iVtObjectAlarmMask_s *>(&(get_vtObject_a())); }
 

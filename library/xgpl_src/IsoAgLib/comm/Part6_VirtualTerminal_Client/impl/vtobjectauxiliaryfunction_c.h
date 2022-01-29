@@ -37,8 +37,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst)
-  {vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunctionSROM , ai_multitonInst);}
+  vtObjectAuxiliaryFunction_c(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s *)vtObjectAuxiliaryFunctionSROM , ai_multitonInst)
+  {}
 
   iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a() {return dynamic_cast<iVtObjectAuxiliaryFunction_s *>(&(get_vtObject_a()));}
 
