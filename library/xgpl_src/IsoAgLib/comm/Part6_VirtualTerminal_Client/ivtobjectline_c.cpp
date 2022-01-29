@@ -15,7 +15,7 @@ namespace IsoAgLib {
     uint16_t iVtObjectLine_c::objectType() { return VT_OBJECT_TYPE_LINE; }
 
 iVtObjectLine_c::iVtObjectLine_c(
-		int ai_multitonInst,
+		iVtClientObjectPool_c* pool,
 		ObjectID ID,
 		iVtObjectLineAttributes_c *lineAttributes,
 		uint16_t width,
@@ -27,9 +27,11 @@ new iVtObjectLine_s(
 		lineAttributes,
 		width,
 		height,
-		lineDirection)
-	,ai_multitonInst)
-{}
+		lineDirection),
+	pool->getAiMultitonInst())
+	{
+		pool->Append(this);
+	}
 
 }
 

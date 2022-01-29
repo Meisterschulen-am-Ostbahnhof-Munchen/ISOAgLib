@@ -33,7 +33,7 @@ public:
 
 
   iVtObjectWorkingSet_c(
-		int ai_multitonInst,
+		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
   		uint8_t backgroundColour = 0,
   		uint8_t selectable = 1,

@@ -22,6 +22,7 @@
 
 #include "vtobject_c.h"
 #include "../ivtobjectmask_c.h"
+#include "vtclient_c.h"
 
 
 namespace __IsoAgLib {
@@ -39,7 +40,6 @@ public:
 
   iVtObjectWorkingSet_s* get_vtObjectWorkingSet_a() { return dynamic_cast<iVtObjectWorkingSet_s *>(&(get_vtObject_a())); }
 
-  vtObjectWorkingSet_c();
   vtObjectWorkingSet_c(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
 
   uint32_t fitTerminal() const;

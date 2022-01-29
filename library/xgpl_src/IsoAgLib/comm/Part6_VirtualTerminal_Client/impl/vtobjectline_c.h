@@ -26,7 +26,7 @@
 
 
 #include "vtobject_c.h"
-
+#include "vtclient_c.h"
 
 namespace __IsoAgLib {
 

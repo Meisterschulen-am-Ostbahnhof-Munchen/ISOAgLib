@@ -11,7 +11,7 @@
 namespace IsoAgLib {
 
 	iVtObjectWorkingSet_c::iVtObjectWorkingSet_c(
-			int ai_multitonInst,
+			iVtClientObjectPool_c* pool,
 			ObjectID ID,
 			uint8_t backgroundColour,
 			uint8_t selectable,
@@ -26,8 +26,10 @@ namespace IsoAgLib {
 					activeMask,
 					numberOfLanguagesToFollow,
 					languagesToFollow),
-			ai_multitonInst)
-	{}
+				pool->getAiMultitonInst())
+			{
+				pool->Append(this);
+			}
 
     const iVtObject_c::iVtObjectWorkingSet_s &iVtObjectWorkingSet_c::get_vtObjectWorkingSet_a() { return *vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); }
 

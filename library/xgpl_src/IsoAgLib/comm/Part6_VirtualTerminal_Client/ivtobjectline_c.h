@@ -32,7 +32,7 @@ public:
   static uint16_t objectType();
 
   iVtObjectLine_c(
-			int ai_multitonInst,
+			iVtClientObjectPool_c* pool,
 	  		ObjectID ID = autoID,
 			iVtObjectLineAttributes_c *lineAttributes = nullptr,
 			uint16_t width = 100,
