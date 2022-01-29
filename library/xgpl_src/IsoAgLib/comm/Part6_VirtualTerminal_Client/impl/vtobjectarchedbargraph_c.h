@@ -39,12 +39,10 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectArchedBarGraph_c(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst)
-  {}
+  vtObjectArchedBarGraph_c(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst);
 
 
-  iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return dynamic_cast<iVtObjectArchedBarGraph_s *>(&(get_vtObject_a())); }
+  iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a();
 
   ~vtObjectArchedBarGraph_c() override = default;
 
@@ -52,45 +50,25 @@ public:
 
     virtual void setValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
 
-    virtual void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width) : 0, sizeof(iVtObjectArchedBarGraph_s), 1 /* "Width" */, newWidth, b_enableReplaceOfCmd);
-  }
+    virtual void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height) : 0, sizeof(iVtObjectArchedBarGraph_s), 2 /* "Height" */, newHeight, b_enableReplaceOfCmd);
-  }
+    virtual void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setColour(uint8_t newColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour) : 0, sizeof(iVtObjectArchedBarGraph_s), 3 /* "Colour" */, newColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newColour, this, IsoAgLib::Colour), b_enableReplaceOfCmd);
-  }
+    virtual void setColour(uint8_t newColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectArchedBarGraph_s), 4 /* "Target Line Colour" */, newTargetLineColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newTargetLineColour, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
-  }
+    virtual void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), options) : 0, sizeof(iVtObjectArchedBarGraph_s), 5 /* "Options" */, newOptions, newOptions, b_enableReplaceOfCmd);
-  }
+    virtual void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), startAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 6 /* "Start Angle" */, newStartAngle, newStartAngle, b_enableReplaceOfCmd);
-  }
+    virtual void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), endAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 7 /* "End Angle" */, newEndAngle, newEndAngle, b_enableReplaceOfCmd);
-  }
+    virtual void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), barGraphWidth) : 0, sizeof(iVtObjectArchedBarGraph_s), 8 /* "Bar Graph Width" */, newBarGraphWidth, b_enableReplaceOfCmd);
-  }
+    virtual void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setMinValue(uint32_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), minValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 9 /* "Min value" */, newMin, b_enableReplaceOfCmd);
-  }
+    virtual void setMinValue(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setMaxValue(uint32_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), maxValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 10 /* "Max value" */, newMax, b_enableReplaceOfCmd);
-  }
+    virtual void setMaxValue(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   void setVariableReference(IsoAgLib::iVtObject_c* newVariableReference, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), variableReference) : 0, sizeof(iVtObjectArchedBarGraph_s), 11 /* "Variable Reference" */, newVariableReference, b_enableReplaceOfCmd);

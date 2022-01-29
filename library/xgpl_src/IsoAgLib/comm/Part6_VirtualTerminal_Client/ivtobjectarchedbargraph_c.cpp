@@ -90,11 +90,11 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         vtObjectArchedBarGraph_c::setBarGraphWidth (newBarGraphWidth, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectArchedBarGraph_c::setMinValue(uint32_t newMin, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectArchedBarGraph_c::setMinValue(uint16_t newMin, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setMinValue (newMin, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectArchedBarGraph_c::setMaxValue(uint32_t newMax, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectArchedBarGraph_c::setMaxValue(uint16_t newMax, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setMaxValue (newMax, b_updateObject, b_enableReplaceOfCmd);
     }
 

@@ -70,9 +70,9 @@ public:
 
   void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setMinValue(uint32_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setMinValue(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setMaxValue(uint32_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setMaxValue(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   void setVariableReference(iVtObject_c* newVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setVariableReference (newVariableReference, b_updateObject, b_enableReplaceOfCmd);

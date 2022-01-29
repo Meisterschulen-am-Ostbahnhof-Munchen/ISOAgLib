@@ -290,6 +290,56 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     default: break;
   }
 }
+
+    vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
+            const IsoAgLib::iVtObject_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a() { return dynamic_cast<iVtObjectArchedBarGraph_s *>(&(get_vtObject_a())); }
+
+    void vtObjectArchedBarGraph_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width) : 0, sizeof(iVtObjectArchedBarGraph_s), 1 /* "Width" */, newWidth, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectArchedBarGraph_c::setHeight(uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height) : 0, sizeof(iVtObjectArchedBarGraph_s), 2 /* "Height" */, newHeight, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectArchedBarGraph_c::setColour(uint8_t newColour, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour) : 0, sizeof(iVtObjectArchedBarGraph_s), 3 /* "Colour" */, newColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newColour, this, IsoAgLib::Colour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectArchedBarGraph_c::setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject,
+                                                       bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectArchedBarGraph_s), 4 /* "Target Line Colour" */, newTargetLineColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newTargetLineColour, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectArchedBarGraph_c::setOptions(uint8_t newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), options) : 0, sizeof(iVtObjectArchedBarGraph_s), 5 /* "Options" */, newOptions, newOptions, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectArchedBarGraph_c::setStartAngle(uint8_t newStartAngle, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), startAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 6 /* "Start Angle" */, newStartAngle, newStartAngle, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectArchedBarGraph_c::setEndAngle(uint8_t newEndAngle, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), endAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 7 /* "End Angle" */, newEndAngle, newEndAngle, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectArchedBarGraph_c::setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject,
+                                                    bool b_enableReplaceOfCmd) {
+        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), barGraphWidth) : 0, sizeof(iVtObjectArchedBarGraph_s), 8 /* "Bar Graph Width" */, newBarGraphWidth, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectArchedBarGraph_c::setMinValue(uint16_t newMin, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), minValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 9 /* "Min value" */, newMin, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectArchedBarGraph_c::setMaxValue(uint16_t newMax, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), maxValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 10 /* "Max value" */, newMax, b_enableReplaceOfCmd);
+    }
+
 #endif
 } // __IsoAgLib
 
