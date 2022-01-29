@@ -30,9 +30,9 @@ class iVtObjectMacro_c : public __IsoAgLib::vtObjectMacro_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_MACRO; }
 
-  void init(const iVtObjectMacro_s* vtObjectMacroSROM , int ai_multitonInst) {
-    vtObjectMacro_c::init (vtObjectMacroSROM , ai_multitonInst);
-  }
+  iVtObjectMacro_c(const iVtObjectMacro_s* vtObjectMacroSROM , int ai_multitonInst)
+  :vtObjectMacro_c(vtObjectMacroSROM , ai_multitonInst)
+  {}
 
   const iVtObjectMacro_s& get_vtObjectMacro_a() { return *vtObjectMacro_c::get_vtObjectMacro_a(); }
 
