@@ -37,7 +37,7 @@ public:
 
 
 
-  iVtObjectDataMask_s* get_vtObjectDataMask_a() { return (iVtObjectDataMask_s *)&(get_vtObject_a()); }
+  iVtObjectDataMask_s* get_vtObjectDataMask_a() { return dynamic_cast<iVtObjectDataMask_s *>(&(get_vtObject_a())); }
 
   vtObjectDataMask_c();
   vtObjectDataMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);

@@ -48,10 +48,11 @@ protected:
         this->ID = ID == autoID ? nextID : ID;
         nextID = (ObjectID)((uint16_t)nextID + 1);
     }
+    virtual ~iVtObject_s() = default;
   };
 
 
-  struct iVtObjectObject_s : iVtObject_s {
+  struct iVtObjectObject_s : virtual iVtObject_s {
 	uint8_t numberOfObjectsToFollow_size;
     uint8_t numberOfObjectsToFollow;
     repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
@@ -62,16 +63,16 @@ protected:
   };
 
 
-  struct iVtObjectObjectMacro_s : iVtObjectObject_s {
+  struct iVtObjectwMacro_s : virtual iVtObject_s {
 		uint8_t numberOfMacrosToFollow_size;
 	    uint8_t numberOfMacrosToFollow;
 	    const repeat_event_iVtObjectMacro_s* macrosToFollow;
-	    iVtObjectObjectMacro_s(
+	    iVtObjectwMacro_s(
 	    		ObjectID ID = autoID);
   };
 
 
-  struct iVtObjectAlarmMask_s : iVtObjectObjectMacro_s {
+  struct iVtObjectAlarmMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
     uint8_t priority;
@@ -83,7 +84,7 @@ protected:
 			iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
 			uint8_t priority = 0,
             uint8_t acousticSignal = 0)
-    : iVtObjectObjectMacro_s(ID)
+    : iVtObjectObject_s(ID)
     , backgroundColour(backgroundColour)
     , softKeyMask(softKeyMask)
     , priority(priority)
@@ -94,19 +95,7 @@ protected:
   struct iVtObjectArchedBarGraph_s : iVtObject_s {
     uint16_t width;
     uint16_t height;
-
-      iVtObjectArchedBarGraph_s(uint16_t width, uint16_t height, uint8_t colour, uint8_t targetLineColour,
-                                uint8_t options, uint8_t startAngle, uint8_t endAngle, uint16_t barGraphWidth,
-                                uint16_t minValue, uint16_t maxValue, iVtObject_c *variableReference, uint16_t value,
-                                iVtObject_c *targetValueVariableReference, uint16_t targetValue,
-                                uint8_t numberOfMacrosToFollow, const repeat_event_iVtObjectMacro_s *macrosToFollow)
-              : width(width), height(height), colour(colour), targetLineColour(targetLineColour), options(options),
-                startAngle(startAngle), endAngle(endAngle), barGraphWidth(barGraphWidth), minValue(minValue),
-                maxValue(maxValue), variableReference(variableReference), value(value),
-                targetValueVariableReference(targetValueVariableReference), targetValue(targetValue),
-                numberOfMacrosToFollow(numberOfMacrosToFollow), macrosToFollow(macrosToFollow) {}
-
-      uint8_t colour;
+    uint8_t colour;
     uint8_t targetLineColour;
     uint8_t options;
     uint8_t startAngle;

@@ -91,7 +91,7 @@ typedef uint16_t objRange_t;
 #endif
 
 #define MACRO_localVars \
-    MACRO_vtObjectTypeS* MACRO_vtObjectTypeA = (MACRO_vtObjectTypeS *) vtObject_a;
+    MACRO_vtObjectTypeS* MACRO_vtObjectTypeA = dynamic_cast<MACRO_vtObjectTypeS *>(vtObject_a);
 
 #define MACRO_streamLocalVars \
     MACRO_localVars \

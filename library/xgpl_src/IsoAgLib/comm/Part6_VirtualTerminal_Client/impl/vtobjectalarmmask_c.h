@@ -39,7 +39,7 @@ public:
 
   void init(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst) { vtObject_c::init ((iVtObject_s*) vtObjectAlarmMaskSROM , ai_multitonInst); }
 
-  iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a() { return (iVtObjectAlarmMask_s *)&(get_vtObject_a()); }
+  iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a() { return dynamic_cast<iVtObjectAlarmMask_s *>(&(get_vtObject_a())); }
 
   vtObjectAlarmMask_c();
 

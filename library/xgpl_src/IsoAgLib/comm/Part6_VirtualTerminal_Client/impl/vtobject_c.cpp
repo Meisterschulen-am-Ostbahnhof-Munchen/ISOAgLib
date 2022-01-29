@@ -120,9 +120,11 @@ void
 vtObject_c::createRamStructIfNotYet (uint16_t ui16_structLen)
 { // Do we have to generate a RAM copy of our struct (to save the value), or has this already be done?
   if (!(s_properties.flags & FLAG_IN_RAM)) {
-    void* old=vtObject_a;
-    vtObject_a = (iVtObject_s*) new uint8_t [ui16_structLen];
-    CNAMESPACE::memcpy (vtObject_a, old, ui16_structLen);
+	  //TODO !! i really do not think this is needed anymore. CHECK !
+
+//    void* old=vtObject_a;
+//    vtObject_a = (iVtObject_s*) new uint8_t [ui16_structLen];
+//    CNAMESPACE::memcpy (vtObject_a, old, ui16_structLen);
     s_properties.flags |= FLAG_IN_RAM;
   }
 }
