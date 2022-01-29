@@ -54,9 +54,7 @@ public:
   	    iVtObjectStringVariable_c* variableReference = nullptr,
   	    uint8_t horizontalJustification = 0,
   	    uint16_t length = 0,
-  	    char* value = nullptr, /* size length+1 (0-termination intern!) */
-  	    uint8_t numberOfMacrosToFollow = 0,
-  	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
+  	    char* value = nullptr /* size length+1 (0-termination intern!) */
   		)
   :vtObjectOutputString_c(
 		  new iVtObjectOutputString_s(
@@ -69,9 +67,7 @@ public:
 			  	    variableReference,
 			  	    horizontalJustification,
 			  	    length,
-			  	    value, /* size length+1 (0-termination intern!) */
-			  	    numberOfMacrosToFollow,
-			  	    macrosToFollow
+			  	    value /* size length+1 (0-termination intern!) */
 				  )
   	  	  ,ai_multitonInst)
   {}

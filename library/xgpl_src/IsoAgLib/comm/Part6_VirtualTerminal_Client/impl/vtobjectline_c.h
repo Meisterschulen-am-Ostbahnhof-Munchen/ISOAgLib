@@ -40,7 +40,7 @@ public:
   void init(const iVtObjectLine_s* vtObjectLineSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectLineSROM , ai_multitonInst); }
 
-  iVtObjectLine_s* get_vtObjectLine_a() { return (iVtObjectLine_s *)&(get_vtObject_a()); }
+  iVtObjectLine_s* get_vtObjectLine_a() { return dynamic_cast<iVtObjectLine_s *>(&(get_vtObject_a())); }
 
   vtObjectLine_c();
 

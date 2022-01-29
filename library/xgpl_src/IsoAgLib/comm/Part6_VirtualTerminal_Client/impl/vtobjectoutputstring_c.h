@@ -42,7 +42,7 @@ public:
   void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectOutputStringSROM , ai_multitonInst); }
 
-  iVtObjectOutputString_s* get_vtObjectOutputString_a() { return (iVtObjectOutputString_s *)&(get_vtObject_a()); }
+  iVtObjectOutputString_s* get_vtObjectOutputString_a() { return dynamic_cast<iVtObjectOutputString_s *>(&(get_vtObject_a())); }
 
   vtObjectOutputString_c();
   vtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);

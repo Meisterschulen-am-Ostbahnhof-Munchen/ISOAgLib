@@ -254,16 +254,12 @@ protected:
     uint8_t enabled;
   };
 
-  struct iVtObjectKey_s : iVtObject_s {
+  struct iVtObjectKey_s : iVtObjectObject_s, iVtObjectwMacro_s {
     uint8_t backgroundColour;
     uint8_t keyCode;
-    uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectLinearBarGraph_s : iVtObject_s {
+  struct iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     uint8_t colour;
@@ -276,25 +272,19 @@ protected:
     uint16_t value;
     iVtObject_c* targetValueVariableReference;
     uint16_t targetValue;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectLineAttributes_s : iVtObject_s {
+  struct iVtObjectLineAttributes_s : iVtObjectwMacro_s {
     uint8_t lineColour;
     uint8_t lineWidth;
     uint16_t lineArt;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectLine_s : iVtObject_s {
+  struct iVtObjectLine_s : iVtObjectwMacro_s {
     iVtObjectLineAttributes_c* lineAttributes;
     uint16_t width;
     uint16_t height;
     uint8_t lineDirection;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
   struct iVtObjectMacro_s : iVtObject_s {
@@ -302,7 +292,7 @@ protected:
     const uint8_t* commandsToFollow;
   };
 
-  struct iVtObjectMeter_s : iVtObject_s {
+  struct iVtObjectMeter_s : iVtObjectwMacro_s {
     uint16_t width;
     uint8_t needleColour;
     uint8_t borderColour;
@@ -315,8 +305,6 @@ protected:
     uint16_t maxValue;
     iVtObject_c* variableReference;
     uint16_t value;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
   struct iVtObjectNumberVariable_s : iVtObject_s {
@@ -327,18 +315,14 @@ protected:
     iVtObject_c* value;
   };
 
-  struct iVtObjectOutputList_s : iVtObject_s {
+  struct iVtObjectOutputList_s : iVtObjectObject_s, iVtObjectwMacro_s  {
     uint16_t width;
     uint16_t height;
     iVtObject_c* variableReference;
     uint8_t value;
-    uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_s* objectsToFollow;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectOutputNumber_s : iVtObject_s {
+  struct iVtObjectOutputNumber_s : iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     uint8_t backgroundColour;
@@ -351,12 +335,10 @@ protected:
     uint8_t numberOfDecimals;
     uint8_t format;
     uint8_t horizontalJustification;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
 
-  struct iVtObjectOutputString_s : iVtObject_s {
+  struct iVtObjectOutputString_s : iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     uint8_t backgroundColour;
@@ -366,8 +348,6 @@ protected:
     uint8_t horizontalJustification;
     uint16_t length;
     char* value; /* size length+1 (0-termination intern!) */
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
     iVtObjectOutputString_s(
     		ObjectID ID = autoID,
     	    uint16_t width = 50,
@@ -378,9 +358,7 @@ protected:
     	    iVtObjectStringVariable_c* variableReference = nullptr,
     	    uint8_t horizontalJustification = 0,
     	    uint16_t length = 0,
-    	    char* value = nullptr, /* size length+1 (0-termination intern!) */
-    	    uint8_t numberOfMacrosToFollow = 0,
-    	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
+    	    char* value = nullptr /* size length+1 (0-termination intern!) */
     		)
     :iVtObject_s(ID),
     width(width),
@@ -391,13 +369,11 @@ protected:
     variableReference(variableReference),
     horizontalJustification(horizontalJustification),
     length(length),
-    value(value), /* size length+1 (0-termination intern!) */
-    numberOfMacrosToFollow(numberOfMacrosToFollow),
-    macrosToFollow(macrosToFollow)
+    value(value) /* size length+1 (0-termination intern!) */
 	{}
   };
 
-  struct iVtObjectPictureGraphic_s : iVtObject_s {
+  struct iVtObjectPictureGraphic_s : iVtObjectwMacro_s {
     uint16_t width;
     uint16_t actualWidth;
     uint16_t actualHeight;
@@ -412,8 +388,6 @@ protected:
     const uint8_t* rawData2;
     uint8_t numberOfFixedBitmapsToFollow;
     const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s* fixedBitmapsToFollow;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
   struct iVtObjectColourMap_s : iVtObject_s {

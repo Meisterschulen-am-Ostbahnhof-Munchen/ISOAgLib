@@ -37,7 +37,7 @@ public:
   void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM , ai_multitonInst); }
 
-  inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return (iVtObjectPictureGraphic_s *)&(get_vtObject_a()); }
+  inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return dynamic_cast<iVtObjectPictureGraphic_s *>(&(get_vtObject_a())); }
 
   vtObjectPictureGraphic_c();
 

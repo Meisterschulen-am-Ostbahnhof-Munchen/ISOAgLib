@@ -37,7 +37,7 @@ public:
   void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectLineAttributesSROM , ai_multitonInst); }
 
-  iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a() { return (iVtObjectLineAttributes_s *)&(get_vtObject_a()); }
+  iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a() { return dynamic_cast<iVtObjectLineAttributes_s *>(&(get_vtObject_a())); }
 
   vtObjectLineAttributes_c();
 
