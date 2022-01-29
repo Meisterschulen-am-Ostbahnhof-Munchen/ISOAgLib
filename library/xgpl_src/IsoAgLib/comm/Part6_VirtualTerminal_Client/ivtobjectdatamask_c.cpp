@@ -42,7 +42,6 @@ namespace IsoAgLib {
         return vtObjectDataMask_c::moveChildLocation (apc_childObject, dx, dy, b_updateObject);
     }
 
-    const iVtObject_c::iVtObjectDataMask_s &iVtObjectDataMask_c::get_vtObjectDataMask_a() { return *vtObjectDataMask_c::get_vtObjectDataMask_a(); }
 
     uint16_t iVtObjectDataMask_c::objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
 

@@ -37,7 +37,7 @@ public:
   :vtObjectAuxiliaryFunction_c(vtObjectAuxiliaryFunctionSROM , ai_multitonInst)
   {}
 
-  const iVtObjectAuxiliaryFunction_s& get_vtObjectAuxiliaryFunction_a() { return *vtObjectAuxiliaryFunction_c::get_vtObjectAuxiliaryFunction_a(); };
+
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
     return vtObjectAuxiliaryFunction_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject);

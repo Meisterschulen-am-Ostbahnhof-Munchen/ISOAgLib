@@ -35,7 +35,7 @@ public:
   :vtObjectPictureGraphic_c(vtObjectPictureGraphicSROM , ai_multitonInst)
   {}
 
-  const iVtObjectPictureGraphic_s& get_vtObjectPictureGraphic_a() { return *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a(); }
+
 
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);

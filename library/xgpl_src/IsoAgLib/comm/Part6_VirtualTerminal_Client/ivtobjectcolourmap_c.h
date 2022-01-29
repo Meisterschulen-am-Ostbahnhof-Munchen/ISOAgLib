@@ -35,7 +35,6 @@ public:
   :vtObjectColourMap_c(vtObjectColourMapSROM , ai_multitonInst)
   {}
 
-  const iVtObjectColourMap_s& get_vtObjectColourMap_a() { return *vtObjectColourMap_c::get_vtObjectColourMap_a(); }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes

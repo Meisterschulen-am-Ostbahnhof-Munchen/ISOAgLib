@@ -37,7 +37,7 @@ public:
   :vtObjectOutputNumber_c(vtObjectOutputNumberSROM , ai_multitonInst)
   {}
 
-  const iVtObjectOutputNumber_s& get_vtObjectOutputNumber_a() { return *vtObjectOutputNumber_c::get_vtObjectOutputNumber_a(); }
+
 
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     vtObjectOutputNumber_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);

@@ -39,7 +39,7 @@ public:
 
 
 
-  const iVtObjectDataMask_s& get_vtObjectDataMask_a();
+
 
   void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 

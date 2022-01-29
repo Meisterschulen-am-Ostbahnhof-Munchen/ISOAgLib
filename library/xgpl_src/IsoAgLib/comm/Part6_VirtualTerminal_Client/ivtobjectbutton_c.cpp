@@ -121,4 +121,10 @@ namespace IsoAgLib {
     uint16_t iVtObjectButton_c::objectType() { return VT_OBJECT_TYPE_BUTTON; }
 
 
+
+    const iVtObjectButton_c::iVtObjectButton_s& iVtObjectButton_c::get_vtObjectButton_a()
+    {
+      return *vtObjectButton_c::get_vtObjectButton_a();
+    }
+
 }

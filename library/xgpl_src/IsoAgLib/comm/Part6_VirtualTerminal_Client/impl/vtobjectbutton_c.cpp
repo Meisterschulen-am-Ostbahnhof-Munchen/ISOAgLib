@@ -25,15 +25,6 @@
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
 
-namespace IsoAgLib {
-  // implement here a normal functions, as the compiler dislikes inlining of that simple functions
-  // direct in scope of iVtObjectButton_s
-  const iVtObjectButton_c::iVtObjectButton_s& iVtObjectButton_c::get_vtObjectButton_a()
-  {
-    return *vtObjectButton_c::get_vtObjectButton_a();
-  }
-
-}
 
 
 namespace __IsoAgLib {
