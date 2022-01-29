@@ -45,7 +45,7 @@ public:
 
   iVtObjectOutputString_c(
 		int ai_multitonInst,
-  	    uint16_t ID = 0,
+		ObjectID ID = autoID,
   	    uint16_t width = 50,
   	    uint16_t height= 20,
   	    uint8_t backgroundColour = 1,

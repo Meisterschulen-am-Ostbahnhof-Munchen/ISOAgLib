@@ -35,7 +35,7 @@ public:
 
   iVtObjectButton_c(
 		int ai_multitonInst,
-  		uint16_t ID = 0,
+		ObjectID ID = autoID,
   	    uint16_t width = 80,
   	    uint16_t height = 30,
   	    uint8_t backgroundColour = 12,

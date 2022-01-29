@@ -14,7 +14,7 @@ namespace IsoAgLib {
 
 	iVtObjectButton_c::iVtObjectButton_c(
 			int ai_multitonInst,
-			uint16_t ID,
+			ObjectID ID,
 			uint16_t width,
 			uint16_t height,
 			uint8_t backgroundColour,

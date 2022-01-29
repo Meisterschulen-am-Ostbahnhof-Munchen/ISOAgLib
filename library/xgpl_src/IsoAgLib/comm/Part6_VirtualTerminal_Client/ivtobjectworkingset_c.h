@@ -35,7 +35,7 @@ public:
 
   iVtObjectWorkingSet_c(
 		int ai_multitonInst,
-  	    uint16_t ID = 0,
+		ObjectID ID = autoID,
   		uint8_t backgroundColour = 0,
   		uint8_t selectable = 1,
   		iVtObjectMask_c* activeMask = nullptr, // data or alarm mask

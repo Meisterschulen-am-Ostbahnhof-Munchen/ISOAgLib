@@ -33,7 +33,7 @@ namespace IsoAgLib {
 
 	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(
 			int ai_multitonInst,
-			uint16_t ID,
+			ObjectID ID,
 			uint8_t fontColour,
 			uint8_t fontSize,
 			uint8_t fontType, // always =0 ISO_LATIN_1

@@ -29,14 +29,23 @@ const uint8_t OO_CAPACITY = 100;
 
 namespace IsoAgLib {
 
+
+enum ObjectID : uint16_t
+{
+	autoID = 0,
+	firstID = 257 /* Macro ObjID must be 0-255 !! */
+};
+
 class iVtObject_c : public ClientBase
 {
 protected:
+
   struct iVtObject_s {
-    uint16_t ID;
-    static uint16_t nextID;
-    iVtObject_s(uint16_t oID = 0){
-        ID = oID == 0 ? nextID++ : oID;
+	ObjectID ID;
+    static ObjectID nextID;
+    iVtObject_s(ObjectID ID = autoID){
+        this->ID = ID == autoID ? nextID : ID;
+        nextID = (ObjectID)((uint16_t)nextID + 1);
     }
   };
 
@@ -46,7 +55,9 @@ protected:
     uint8_t numberOfObjectsToFollow;
     repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
-    iVtObjectObject_s(uint16_t ID = 0, uint8_t size = OO_CAPACITY);
+    iVtObjectObject_s(
+    		ObjectID ID = autoID,
+			uint8_t size = OO_CAPACITY);
   };
 
 
@@ -60,7 +71,7 @@ protected:
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     iVtObjectAlarmMask_s(
-    		uint16_t ID = 0,
+    		ObjectID ID = autoID,
     		uint8_t backgroundColour = 0,
 			iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
 			uint8_t priority = 0,
@@ -121,7 +132,7 @@ protected:
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     iVtObjectButton_s(
-    		uint16_t ID = 0,
+    		ObjectID ID = autoID,
     	    uint16_t width = 80,
     	    uint16_t height = 30,
     	    uint8_t backgroundColour = 12,
@@ -167,7 +178,7 @@ protected:
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     iVtObjectDataMask_s(
-    		uint16_t ID = 0,
+    		ObjectID ID = autoID,
     	    uint8_t backgroundColour = 0,
     	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr,
     	    uint8_t numberOfMacrosToFollow = 0,
@@ -208,7 +219,7 @@ protected:
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     explicit iVtObjectFontAttributes_s(
-    	    uint16_t ID = 0,
+    		ObjectID ID = autoID,
     	    uint8_t fontColour = 0,
     	    uint8_t fontSize = 1,
     	    uint8_t fontType = 0, // always =0 ISO_LATIN_1
@@ -407,7 +418,7 @@ protected:
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     iVtObjectOutputString_s(
-    	    uint16_t ID = 0,
+    		ObjectID ID = autoID,
     	    uint16_t width = 50,
     	    uint16_t height= 20,
     	    uint8_t backgroundColour = 1,
@@ -503,7 +514,7 @@ protected:
     uint8_t numberOfLanguagesToFollow;
     const repeat_vtLanguage_s* languagesToFollow;
     iVtObjectWorkingSet_s(
-    	    uint16_t ID = 0,
+    		ObjectID ID = autoID,
     		uint8_t backgroundColour = 0,
     		uint8_t selectable = 1,
     		iVtObjectMask_c* activeMask = nullptr, // data or alarm mask

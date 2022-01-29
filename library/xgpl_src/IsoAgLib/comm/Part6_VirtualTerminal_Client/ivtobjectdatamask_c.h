@@ -37,7 +37,7 @@ public:
 
   iVtObjectDataMask_c(
 		int ai_multitonInst,
-  		uint16_t ID = 0,
+		ObjectID ID = autoID,
   	    uint8_t backgroundColour = 0,
   	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr,
   	    uint8_t numberOfMacrosToFollow = 0,

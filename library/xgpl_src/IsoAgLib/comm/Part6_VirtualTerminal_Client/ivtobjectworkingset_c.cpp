@@ -61,7 +61,7 @@ iVtObjectWorkingSet_c::iVtObjectWorkingSet_c(const iVtObjectWorkingSet_s *vtObje
 
     iVtObjectWorkingSet_c::iVtObjectWorkingSet_c(
     		int ai_multitonInst,
-			uint16_t ID,
+			ObjectID ID,
 			uint8_t backgroundColour,
 			uint8_t selectable,
 			iVtObjectMask_c *activeMask,

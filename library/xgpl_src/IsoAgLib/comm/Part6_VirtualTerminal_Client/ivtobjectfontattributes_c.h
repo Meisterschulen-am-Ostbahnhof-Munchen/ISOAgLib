@@ -32,7 +32,7 @@ public:
   iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
   iVtObjectFontAttributes_c(
 		int ai_multitonInst,
-		uint16_t ID = 0,
+		ObjectID ID = autoID,
 		uint8_t fontColour = 0,
 		uint8_t fontSize = 1,
 		uint8_t fontType = 0, // always =0 ISO_LATIN_1

@@ -37,8 +37,8 @@ namespace IsoAgLib {
 	  if (b_SKM) s_properties.flags |= FLAG_ORIGIN_SKM;
 	}
 
-
-	uint16_t iVtObject_c::iVtObject_s::nextID = 0;
+	/* Macro ObjID must be 0-255 !! */
+	ObjectID iVtObject_c::iVtObject_s::nextID = firstID;
 
 	/// Operation : setOriginBTN
 	/// @param p_btn: false if this object is not included in a button.
@@ -48,7 +48,7 @@ namespace IsoAgLib {
 	}
 
     iVtObject_c::iVtObjectObject_s::iVtObjectObject_s(
-    		uint16_t ID,
+    		ObjectID ID,
 			uint8_t size)
             : iVtObject_s(ID)
     		, numberOfObjectsToFollow_size(size)
