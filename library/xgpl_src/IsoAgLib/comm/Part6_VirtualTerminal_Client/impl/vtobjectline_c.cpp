@@ -65,7 +65,6 @@ vtObjectLine_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectLine_c::vtObjectLine_c() {}
 
 
 uint32_t

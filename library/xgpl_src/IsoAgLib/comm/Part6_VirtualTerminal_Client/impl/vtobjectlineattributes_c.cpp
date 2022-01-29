@@ -60,7 +60,6 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectLineAttributes_c::vtObjectLineAttributes_c() {}
 
 
 uint32_t

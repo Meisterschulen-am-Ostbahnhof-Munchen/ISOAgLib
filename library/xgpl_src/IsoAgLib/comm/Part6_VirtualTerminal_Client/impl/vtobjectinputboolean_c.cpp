@@ -71,7 +71,6 @@ vtObjectInputBoolean_c::stream(uint8_t* destMemory,
 
 
 
-vtObjectInputBoolean_c::vtObjectInputBoolean_c() {}
 
 
 uint32_t

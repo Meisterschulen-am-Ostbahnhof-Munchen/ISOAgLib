@@ -56,7 +56,6 @@ public:
 
   iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a() { return dynamic_cast<iVtObjectSoftKeyMask_s *>(&(get_vtObject_a())); }
 
-  vtObjectSoftKeyMask_c();
   virtual ~vtObjectSoftKeyMask_c();
 
   uint32_t fitTerminal() const;

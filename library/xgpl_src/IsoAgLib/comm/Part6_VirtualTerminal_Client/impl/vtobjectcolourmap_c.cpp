@@ -66,7 +66,6 @@ vtObjectColourMap_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-vtObjectColourMap_c::vtObjectColourMap_c() {}
 
 uint32_t
 vtObjectColourMap_c::fitTerminal() const

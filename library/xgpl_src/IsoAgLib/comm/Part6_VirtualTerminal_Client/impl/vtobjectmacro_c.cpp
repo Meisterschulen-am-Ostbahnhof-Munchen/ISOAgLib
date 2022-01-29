@@ -56,7 +56,6 @@ vtObjectMacro_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectMacro_c::vtObjectMacro_c() {}
 
 
 uint32_t

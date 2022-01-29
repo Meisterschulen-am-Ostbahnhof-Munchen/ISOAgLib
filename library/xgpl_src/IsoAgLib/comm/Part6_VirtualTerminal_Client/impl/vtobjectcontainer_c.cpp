@@ -73,7 +73,6 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectContainer_c::vtObjectContainer_c() {}
 
 
 uint32_t

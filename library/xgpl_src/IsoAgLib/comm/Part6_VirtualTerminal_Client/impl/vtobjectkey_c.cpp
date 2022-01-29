@@ -58,7 +58,6 @@ vtObjectKey_c::stream(uint8_t* destMemory,
 
 
 
-vtObjectKey_c::vtObjectKey_c() {}
 
 
 uint32_t

@@ -76,7 +76,7 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectPolygon_c::vtObjectPolygon_c() {}
+
 
 
 uint32_t

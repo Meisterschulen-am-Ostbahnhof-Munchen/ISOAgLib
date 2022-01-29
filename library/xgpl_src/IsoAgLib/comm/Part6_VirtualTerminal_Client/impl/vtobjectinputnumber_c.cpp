@@ -99,7 +99,6 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectInputNumber_c::vtObjectInputNumber_c() {}
 
 
 uint32_t

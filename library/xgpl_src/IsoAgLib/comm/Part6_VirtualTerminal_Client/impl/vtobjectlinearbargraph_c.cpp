@@ -87,7 +87,6 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c() {}
 
 
 uint32_t

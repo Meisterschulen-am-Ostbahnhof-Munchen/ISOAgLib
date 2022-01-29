@@ -61,7 +61,6 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectFillAttributes_c::vtObjectFillAttributes_c() {}
 
 
 uint32_t

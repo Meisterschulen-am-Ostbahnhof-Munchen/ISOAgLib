@@ -78,7 +78,6 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectEllipse_c::vtObjectEllipse_c() {}
 
 
 uint32_t

@@ -52,7 +52,6 @@ vtObjectObjectPointer_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectObjectPointer_c::vtObjectObjectPointer_c() {}
 
 
 uint32_t

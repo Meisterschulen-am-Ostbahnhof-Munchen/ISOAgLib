@@ -45,7 +45,6 @@ public:
 
   iVtObjectInputString_s* get_vtObjectInputString_a() { return dynamic_cast<iVtObjectInputString_s *>(&(get_vtObject_a())); }
 
-  vtObjectInputString_c();
 
   uint32_t fitTerminal() const;
 

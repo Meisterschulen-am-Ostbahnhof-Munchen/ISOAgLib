@@ -50,7 +50,6 @@ vtObjectNumberVariable_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectNumberVariable_c::vtObjectNumberVariable_c() {}
 
 
 uint32_t

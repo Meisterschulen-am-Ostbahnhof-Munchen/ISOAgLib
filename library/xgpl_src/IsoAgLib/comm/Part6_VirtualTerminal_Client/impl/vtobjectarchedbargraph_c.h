@@ -46,7 +46,6 @@ public:
 
   iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return dynamic_cast<iVtObjectArchedBarGraph_s *>(&(get_vtObject_a())); }
 
-  vtObjectArchedBarGraph_c();
   ~vtObjectArchedBarGraph_c() {}
 
   uint32_t fitTerminal() const;

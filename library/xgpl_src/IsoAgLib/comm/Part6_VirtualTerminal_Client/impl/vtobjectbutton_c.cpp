@@ -77,7 +77,6 @@ vtObjectButton_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectButton_c::vtObjectButton_c() {}
 
 
 uint32_t

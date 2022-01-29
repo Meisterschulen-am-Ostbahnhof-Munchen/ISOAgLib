@@ -79,7 +79,6 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectMeter_c::vtObjectMeter_c() {}
 
 
 uint32_t

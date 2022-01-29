@@ -72,7 +72,6 @@ vtObjectOutputList_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectOutputList_c::vtObjectOutputList_c() {}
 
 
 IsoAgLib::iVtObject_c*

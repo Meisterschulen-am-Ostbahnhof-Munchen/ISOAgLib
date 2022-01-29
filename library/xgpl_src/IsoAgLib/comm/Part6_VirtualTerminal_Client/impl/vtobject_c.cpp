@@ -49,7 +49,6 @@ namespace IsoAgLib {
 
 namespace __IsoAgLib {
 
-vtObject_c::vtObject_c( ) {}
 
 vtObject_c::vtObject_c(iVtObject_s* aps_vtObject_a , int ai_multitonInst)
 {

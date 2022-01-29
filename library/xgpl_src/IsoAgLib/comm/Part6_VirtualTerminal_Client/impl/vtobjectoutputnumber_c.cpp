@@ -90,7 +90,6 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectOutputNumber_c::vtObjectOutputNumber_c() {}
 
 
 uint32_t
