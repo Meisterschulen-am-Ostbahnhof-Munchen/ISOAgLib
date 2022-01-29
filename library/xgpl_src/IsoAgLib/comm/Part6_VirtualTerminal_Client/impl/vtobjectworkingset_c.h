@@ -35,6 +35,9 @@ public:
 
   void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
 
+  void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
+
+
   iVtObjectWorkingSet_s* get_vtObjectWorkingSet_a() { return (iVtObjectWorkingSet_s *)&(get_vtObject_a()); }
 
   vtObjectWorkingSet_c();

@@ -113,6 +113,16 @@ vtObjectDataMask_c::lockUnlockMask( bool b_lockMask, uint16_t ui16_lockTimeOut )
   return result;
 }
 
+
+void vtObjectDataMask_c::Append(iVtObject_c* const vtObject, int16_t x, int16_t y)
+{
+	MACRO_localVars;
+	vtObjectDataMask_a->Append(vtObject, x, y);
+}
+
+
+
+
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectDataMask_c::updateBackgroundColour (bool b_SendRequest)

@@ -20,8 +20,6 @@ namespace IsoAgLib {
 			uint16_t ID,
 			uint8_t backgroundColour,
 			iVtObjectSoftKeyMask_c *softKeyMask,
-			uint8_t numberOfObjectsToFollow,
-			const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *objectsToFollow,
 			uint8_t numberOfMacrosToFollow,
 			const repeat_event_iVtObjectMacro_s *macrosToFollow)
     : iVtObjectDataMask_c(
@@ -29,8 +27,6 @@ namespace IsoAgLib {
     				ID,
     				backgroundColour,
     				softKeyMask,
-    				numberOfObjectsToFollow,
-    				objectsToFollow,
     				numberOfMacrosToFollow,
     				macrosToFollow),
 			ai_multitonInst)

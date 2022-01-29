@@ -77,6 +77,13 @@ void vtObjectWorkingSet_c::init(const iVtObjectWorkingSet_s* vtObjectWorkingSetS
 { vtObject_c::init ((iVtObject_s*) vtObjectWorkingSetSROM , ai_multitonInst); };
 
 
+void vtObjectWorkingSet_c::Append(iVtObject_c* const vtObject, int16_t x, int16_t y)
+{
+	  MACRO_localVars;
+	  vtObjectWorkingSet_a->Append(vtObject, x, y);
+}
+
+
 uint32_t
 vtObjectWorkingSet_c::fitTerminal() const
 {

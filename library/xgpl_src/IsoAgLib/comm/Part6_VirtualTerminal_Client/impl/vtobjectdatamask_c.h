@@ -42,6 +42,8 @@ public:
   vtObjectDataMask_c();
   vtObjectDataMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);
 
+  void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
+
   uint32_t fitTerminal() const;
 
   void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

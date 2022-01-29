@@ -40,10 +40,11 @@ public:
   		uint16_t ID = 0,
   	    uint8_t backgroundColour = 0,
   	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr,
-  	    uint8_t numberOfObjectsToFollow = 0,
-  	    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow = nullptr,
   	    uint8_t numberOfMacrosToFollow = 0,
   	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr);
+
+
+
 
   const iVtObjectDataMask_s& get_vtObjectDataMask_a();
 
