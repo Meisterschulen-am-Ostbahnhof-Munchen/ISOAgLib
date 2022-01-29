@@ -32,9 +32,9 @@ public:
 
   virtual ~iVtObjectSoftKeyMask_c(){}
 
-  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst) {
-    vtObjectSoftKeyMask_c::init (vtObjectSoftKeyMaskSROM , ai_multitonInst);
-  }
+  iVtObjectSoftKeyMask_c(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst)
+  :vtObjectSoftKeyMask_c(vtObjectSoftKeyMaskSROM , ai_multitonInst)
+  {}
 
   const iVtObjectSoftKeyMask_s& get_vtObjectSoftKeyMask_a() { return *vtObjectSoftKeyMask_c::get_vtObjectSoftKeyMask_a(); }
 

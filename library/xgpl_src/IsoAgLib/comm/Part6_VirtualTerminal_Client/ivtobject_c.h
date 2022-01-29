@@ -240,12 +240,12 @@ protected:
     uint8_t secondOptionsByte;
   };
 
-  struct iVtObjectString_s : iVtObjectwMacro_s {
+  struct iVtObjectString_s : virtual iVtObject_s {
 
   };
 
 
-  struct iVtObjectInputString_s : iVtObjectString_s {
+  struct iVtObjectInputString_s : iVtObjectString_s, iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     uint8_t backgroundColour;
@@ -343,7 +343,7 @@ protected:
   };
 
 
-  struct iVtObjectOutputString_s : iVtObjectString_s {
+  struct iVtObjectOutputString_s : iVtObjectString_s, iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     uint8_t backgroundColour;

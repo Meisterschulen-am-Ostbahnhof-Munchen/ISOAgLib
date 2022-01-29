@@ -47,8 +47,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectSoftKeyMaskSROM , ai_multitonInst); }
+  vtObjectSoftKeyMask_c(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectSoftKeyMaskSROM , ai_multitonInst)
+  {}
 
 #ifdef ENABLE_SKM_HANDLER
   void registerSkmHandler_c( iSkmHandler_c* _SkmHandler );
