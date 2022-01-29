@@ -72,9 +72,9 @@ protected:
 		uint8_t numberOfMacrosToFollow_size;
 	    uint8_t numberOfMacrosToFollow;
 	    const repeat_event_iVtObjectMacro_s* macrosToFollow;
-	    explicit iVtObjectwMacro_s(
-			ObjectID ID = autoID,
-			uint8_t size = OO_CAPACITY);
+    explicit iVtObjectwMacro_s(
+		ObjectID ID = autoID,
+		uint8_t size = OO_CAPACITY);
   };
 
 
@@ -244,12 +244,19 @@ protected:
   };
 
   struct iVtObjectFillAttributes_s : iVtObjectwMacro_s {
-      iVtObjectFillAttributes_s(uint8_t fillType, uint8_t fillColour, iVtObjectPictureGraphic_c *fillPatternObject)
-              : fillType(fillType), fillColour(fillColour), fillPatternObject(fillPatternObject) {}
-
-      uint8_t fillType;
+    uint8_t fillType;
     uint8_t fillColour;
     iVtObjectPictureGraphic_c* fillPatternObject;
+    iVtObjectFillAttributes_s(
+    		ObjectID ID = autoID,
+    		uint8_t fillType = 0,
+			uint8_t fillColour = 0,
+			iVtObjectPictureGraphic_c *fillPatternObject = nullptr)
+    : iVtObjectwMacro_s(ID)
+    , fillType(fillType)
+    , fillColour(fillColour)
+    , fillPatternObject(fillPatternObject)
+    {}
   };
 
   struct iVtObjectFontAttributes_s : iVtObjectwMacro_s {
@@ -263,7 +270,7 @@ protected:
     	    uint8_t fontSize = 1,
     	    uint8_t fontType = 0, // always =0 ISO_LATIN_1
     	    uint8_t fontStyle = 0)
-    :iVtObject_s(ID)
+    :iVtObjectwMacro_s(ID)
     , fontColour(fontColour)
     , fontSize(fontSize)
     , fontType(fontType) // always =0 ISO_LATIN_1
@@ -272,12 +279,19 @@ protected:
   };
 
   struct iVtObjectInputAttributes_s : iVtObjectwMacro_s {
-      iVtObjectInputAttributes_s(uint8_t validationType, uint8_t length, char *validationString) : validationType(
-              validationType), length(length), validationString(validationString) {}
-
-      uint8_t validationType;
+    uint8_t validationType;
     uint8_t length;
     char* validationString;
+    iVtObjectInputAttributes_s(
+    		ObjectID ID = autoID,
+    		uint8_t validationType = 0,
+			uint8_t length = 0,
+			char *validationString = nullptr)
+    : iVtObjectwMacro_s(ID)
+    , validationType(validationType)
+    , length(length)
+    , validationString(validationString)
+    {}
   };
 
   struct iVtObjectInputBoolean_s : iVtObjectwMacro_s {
