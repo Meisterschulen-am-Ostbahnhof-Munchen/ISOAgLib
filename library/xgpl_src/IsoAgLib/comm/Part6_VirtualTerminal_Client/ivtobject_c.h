@@ -25,6 +25,8 @@
 #include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/util/iassert.h>
 
+const uint8_t OO_CAPACITY = 100;
+
 namespace IsoAgLib {
 
 class iVtObject_c : public ClientBase
@@ -40,10 +42,11 @@ protected:
 
 
   struct iVtObjectObject_s : iVtObject_s {
+	uint8_t numberOfObjectsToFollow_size;
     uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
-    void Append(iVtObject_c* vtObject, int16_t x, int16_t y);
-    iVtObjectObject_s(uint16_t ID = 0);
+    repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
+    iVtObjectObject_s(uint16_t ID = 0, uint8_t size = OO_CAPACITY);
   };
 
 

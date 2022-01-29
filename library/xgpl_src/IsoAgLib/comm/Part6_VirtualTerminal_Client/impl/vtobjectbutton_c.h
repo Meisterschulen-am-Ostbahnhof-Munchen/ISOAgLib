@@ -40,6 +40,9 @@ public:
   vtObjectButton_c();
   vtObjectButton_c(const iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
 
+
+  void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
+
   uint32_t fitTerminal() const;
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

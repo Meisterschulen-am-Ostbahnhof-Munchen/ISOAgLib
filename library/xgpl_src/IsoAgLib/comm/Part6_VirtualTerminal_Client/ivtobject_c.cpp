@@ -48,12 +48,30 @@ namespace IsoAgLib {
 	}
 
     iVtObject_c::iVtObjectObject_s::iVtObjectObject_s(
-    		uint16_t ID)
+    		uint16_t ID,
+			uint8_t size)
             : iVtObject_s(ID)
+    		, numberOfObjectsToFollow_size(size)
             , numberOfObjectsToFollow(0)
             , objectsToFollow(nullptr)
     {
     	objectsToFollow = new repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s[200];
+    }
+
+
+    void iVtObject_c::iVtObjectObject_s::Append(
+    		iVtObject_c* const vtObject,
+			int16_t x,
+			int16_t y)
+    {
+        if (numberOfObjectsToFollow <= numberOfObjectsToFollow_size) {
+        	objectsToFollow[numberOfObjectsToFollow].vtObject = vtObject;
+        	objectsToFollow[numberOfObjectsToFollow].x = x;
+        	objectsToFollow[numberOfObjectsToFollow].y = y;
+        	numberOfObjectsToFollow++;
+        } else {
+        	//Exception !!! //TODO
+        }
     }
 
 
