@@ -33,7 +33,7 @@ public:
 
 
   iVtObjectLineAttributes_c(
-		int ai_multitonInst,
+		iVtClientObjectPool_c* pool,
   		ObjectID ID = autoID,
   		uint8_t lineColour = 0,
 		uint8_t lineWidth = 1,

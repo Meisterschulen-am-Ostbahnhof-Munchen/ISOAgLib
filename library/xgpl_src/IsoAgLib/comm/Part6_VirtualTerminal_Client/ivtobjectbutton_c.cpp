@@ -13,7 +13,7 @@ namespace IsoAgLib {
 
 
 	iVtObjectButton_c::iVtObjectButton_c(
-			int ai_multitonInst,
+			iVtClientObjectPool_c* pool,
 			ObjectID ID,
 			uint16_t width,
 			uint16_t height,
@@ -29,9 +29,11 @@ namespace IsoAgLib {
 						backgroundColour,
 						borderColour,
 						keyCode,
-						options)
-					  , ai_multitonInst)
-	{}
+						options),
+		pool->getAiMultitonInst())
+	{
+		pool->Append(this);
+	}
 
 
     void

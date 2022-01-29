@@ -324,9 +324,9 @@ public:
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
-  virtual void initAllObjectsOnce(int ai_multitonInst)=0;
+  virtual void initAllObjectsOnce()=0;
 
-  iVtClientObjectPool_c(ObjectPoolSettings_s a_objectPoolSettings);;
+  iVtClientObjectPool_c(ObjectPoolSettings_s a_objectPoolSettings);
 
 
    virtual ~iVtClientObjectPool_c() {}
@@ -395,6 +395,7 @@ protected:
   uint16_t skWidth;
   uint16_t skHeight;
   bool b_initAllObjects;
+  int ai_multitonInst;
 
 public:
   iVtObject_c* const * const*
@@ -410,7 +411,8 @@ public:
   uint8_t               getNumLang()        const; //TODO
   bool                  multiLanguage()     const;
   void                  Append(iVtObject_c* const c);	//TODO !! make this working for Multi-Language as well !!!
-
+  int                   getAiMultitonInst() const;
+  void                  setAiMultitonInst(int aiMultitonInst);
 
   iVtObjectWorkingSet_c&
   getWorkingSetObject() const;

@@ -12,7 +12,7 @@ namespace IsoAgLib {
 
 
     iVtObjectOutputString_c::iVtObjectOutputString_c(
-    		int ai_multitonInst,
+    		iVtClientObjectPool_c* pool,
 			ObjectID ID,
 			uint16_t width,
 			uint16_t height,
@@ -34,9 +34,11 @@ namespace IsoAgLib {
                     horizontalJustification,
 					strlen(value),
                     value /* size length+1 (0-termination intern!) */
-            )
-            ,ai_multitonInst)
-    {}
+            ),
+		pool->getAiMultitonInst())
+	{
+    	pool->Append(this);
+	}
 
     uint16_t iVtObjectOutputString_c::objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
 

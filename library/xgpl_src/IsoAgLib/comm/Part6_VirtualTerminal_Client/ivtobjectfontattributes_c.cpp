@@ -21,7 +21,7 @@ namespace IsoAgLib {
 
 
 	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(
-			int ai_multitonInst,
+			iVtClientObjectPool_c* pool,
 			ObjectID ID,
 			uint8_t fontColour,
 			uint8_t fontSize,
@@ -34,7 +34,9 @@ namespace IsoAgLib {
 					fontSize,
 					fontType, // always =0 ISO_LATIN_1
 					fontStyle),
-				ai_multitonInst)
-	{}
+					pool->getAiMultitonInst())
+	    {
+	    	pool->Append(this);
+	    }
 
 }

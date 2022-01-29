@@ -32,7 +32,7 @@ public:
 
 
   iVtObjectButton_c(
-		int ai_multitonInst,
+		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
   	    uint16_t width = 80,
   	    uint16_t height = 30,

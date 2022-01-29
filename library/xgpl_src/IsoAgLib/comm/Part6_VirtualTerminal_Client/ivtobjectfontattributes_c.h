@@ -29,7 +29,7 @@ class iVtObjectFontAttributes_c : public __IsoAgLib::vtObjectFontAttributes_c
 {
 public:
   iVtObjectFontAttributes_c(
-		int ai_multitonInst,
+		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
 		uint8_t fontColour = 0,
 		uint8_t fontSize = 1,

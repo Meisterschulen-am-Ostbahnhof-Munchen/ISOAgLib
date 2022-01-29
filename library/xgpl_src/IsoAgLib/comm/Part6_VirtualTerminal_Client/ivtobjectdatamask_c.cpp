@@ -10,7 +10,7 @@ namespace IsoAgLib {
 
 
     iVtObjectDataMask_c::iVtObjectDataMask_c(
-    		int ai_multitonInst,
+    		iVtClientObjectPool_c* pool,
 			ObjectID ID,
 			uint8_t backgroundColour,
 			iVtObjectSoftKeyMask_c *softKeyMask)
@@ -19,8 +19,10 @@ namespace IsoAgLib {
     				ID,
     				backgroundColour,
     				softKeyMask),
-			ai_multitonInst)
-    {}
+				pool->getAiMultitonInst())
+    {
+    	pool->Append(this);
+    }
 
     void iVtObjectDataMask_c::setSoftKeyMask(iVtObjectSoftKeyMask_c *newSoftKeyMask, bool b_updateObject,
                                              bool b_enableReplaceOfCmd) {

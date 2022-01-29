@@ -31,7 +31,7 @@ public:
   static uint16_t objectType();
 
   iVtObjectDataMask_c(
-		int ai_multitonInst,
+		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
   	    uint8_t backgroundColour = 0,
   	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr);

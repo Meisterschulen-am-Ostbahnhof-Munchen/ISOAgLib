@@ -151,7 +151,8 @@ void
 UploadPoolState_c::initPool()
 {
 	IsoAgLib::iVtClientObjectPool_c& pool = getPool();
-	pool.initAllObjectsOnce(m_connection.getMultitonInst());
+	pool.setAiMultitonInst(m_connection.getMultitonInst());
+	pool.initAllObjectsOnce();
 
   // now let all clients know which client they belong to
   const uint8_t clientId = m_connection.getClientId();

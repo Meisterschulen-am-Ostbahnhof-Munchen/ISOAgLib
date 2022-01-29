@@ -104,4 +104,12 @@ uint8_t iVtClientObjectPool_c::convertColourDefault(
 
     }
 
+    int iVtClientObjectPool_c::getAiMultitonInst() const {
+        return ai_multitonInst;
+    }
+
+    void iVtClientObjectPool_c::setAiMultitonInst(int aiMultitonInst) {
+        ai_multitonInst = aiMultitonInst;
+    }
+
 }
