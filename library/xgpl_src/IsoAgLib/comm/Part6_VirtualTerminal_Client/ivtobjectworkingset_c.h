@@ -31,7 +31,6 @@ class iVtObjectWorkingSet_c : public __IsoAgLib::vtObjectWorkingSet_c
 public:
   static uint16_t objectType();
 
-  iVtObjectWorkingSet_c(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
 
   iVtObjectWorkingSet_c(
 		int ai_multitonInst,
