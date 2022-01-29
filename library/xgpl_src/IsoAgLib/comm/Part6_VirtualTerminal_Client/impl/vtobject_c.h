@@ -31,7 +31,6 @@ namespace __IsoAgLib {
 class vtObject_c : public IsoAgLib::iVtObject_c
 {
 public:
-  vtObject_c();
   vtObject_c(iVtObject_s* aps_vtObject_a , int ai_multitonInst);
   virtual ~vtObject_c();
 

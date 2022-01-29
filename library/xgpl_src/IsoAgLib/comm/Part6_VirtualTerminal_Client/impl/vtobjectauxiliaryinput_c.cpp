@@ -52,7 +52,6 @@ vtObjectAuxiliaryInput_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
 }
 
 
-vtObjectAuxiliaryInput_c::vtObjectAuxiliaryInput_c() {}
 
 
 uint32_t
