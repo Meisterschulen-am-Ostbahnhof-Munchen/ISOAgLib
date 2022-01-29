@@ -31,9 +31,9 @@ class iVtObjectInputBoolean_c : public __IsoAgLib::vtObjectInputBoolean_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_BOOLEAN; }
 
-  void init(const iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , int ai_multitonInst) {
-    vtObjectInputBoolean_c::init (vtObjectInputBooleanSROM , ai_multitonInst);
-  }
+  iVtObjectInputBoolean_c(const iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , int ai_multitonInst)
+  :vtObjectInputBoolean_c(vtObjectInputBooleanSROM , ai_multitonInst)
+  {}
 
   const iVtObjectInputBoolean_s& get_vtObjectInputBoolean_a() { return *vtObjectInputBoolean_c::get_vtObjectInputBoolean_a(); }
 
