@@ -31,9 +31,9 @@ class iVtObjectRectangle_c : public __IsoAgLib::vtObjectRectangle_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_RECTANGLE; }
 
-  void init(const iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst) {
-    vtObjectRectangle_c::init (vtObjectRectangleSROM , ai_multitonInst);
-  }
+  iVtObjectRectangle_c(const iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst)
+  :vtObjectRectangle_c(vtObjectRectangleSROM , ai_multitonInst)
+  {}
 
   const iVtObjectRectangle_s& get_vtObjectRectangle_a() { return *vtObjectRectangle_c::get_vtObjectRectangle_a(); }
 
@@ -89,6 +89,8 @@ public:
 
   virtual uint16_t getObjectType() const { return objectType(); }
 };
+
+
 
 } // __IsoAgLib
 

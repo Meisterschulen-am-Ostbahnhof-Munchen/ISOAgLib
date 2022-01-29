@@ -58,8 +58,6 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectAuxiliaryControlDesignatorObjectPointer_c::vtObjectAuxiliaryControlDesignatorObjectPointer_c() {}
-
 
 uint32_t
 vtObjectAuxiliaryControlDesignatorObjectPointer_c::fitTerminal() const

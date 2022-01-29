@@ -37,12 +37,12 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectRectangleSROM , ai_multitonInst); }
+  vtObjectRectangle_c(const iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectRectangleSROM , ai_multitonInst)
+  {}
 
   iVtObjectRectangle_s* get_vtObjectRectangle_a() { return dynamic_cast<iVtObjectRectangle_s *>(&(get_vtObject_a())); }
 
-  vtObjectRectangle_c();
 
   uint32_t fitTerminal() const;
 

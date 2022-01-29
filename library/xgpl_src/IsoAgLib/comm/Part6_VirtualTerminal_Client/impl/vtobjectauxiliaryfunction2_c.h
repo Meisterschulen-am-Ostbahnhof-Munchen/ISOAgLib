@@ -37,10 +37,9 @@ class Aux2Functions_c;
 class vtObjectAuxiliaryFunction2_c : public vtObject_c
 {
 public:
-  vtObjectAuxiliaryFunction2_c();
-
-  void init(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst)
-  {vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryFunction2SROM , ai_multitonInst);}
+  vtObjectAuxiliaryFunction2_c(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s *)vtObjectAuxiliaryFunction2SROM , ai_multitonInst)
+  {}
 
   int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
 

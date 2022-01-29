@@ -64,11 +64,10 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst);
+  vtObjectAuxiliaryInput2_c(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst);
 
   iVtObjectAuxiliaryInput2_s* get_vtObjectAuxiliaryInput2_a() { return dynamic_cast<iVtObjectAuxiliaryInput2_s *>(&(get_vtObject_a())); }
 
-  vtObjectAuxiliaryInput2_c();
 
   uint32_t fitTerminal() const;
 

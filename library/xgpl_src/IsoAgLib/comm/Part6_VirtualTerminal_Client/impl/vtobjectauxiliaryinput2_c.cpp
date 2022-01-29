@@ -54,8 +54,9 @@ vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 
 
 // Operation : vtObjectAuxiliaryInput2_c
-vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c()
-  : m_inputState(),
+vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst)
+  : vtObject_c((iVtObject_s *)vtObjectAuxiliaryInput2SROM , ai_multitonInst),
+    m_inputState(),
     mui16_value1(0),
     mui16_value2(0),
 #ifdef CONFIG_VT_CLIENT_AUX2INPUTS_FORCE_OFF_STATE_BETWEEN_ON_MESSAGES
@@ -64,11 +65,7 @@ vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c()
     mb_inputActivatedInLearnMode(false),
     mb_highStatusUpdateRate(false),
     mb_valueChangeToHandle(false)
-{}
-
-void vtObjectAuxiliaryInput2_c::init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst)
 {
-  vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryInput2SROM , ai_multitonInst);
 
   // set reserved value 0xFFFF for mui16_value2 for some function types
   switch (getFunctionType())

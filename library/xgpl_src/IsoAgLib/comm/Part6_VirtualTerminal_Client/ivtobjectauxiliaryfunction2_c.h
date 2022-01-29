@@ -33,7 +33,9 @@ public:
 
   ~iVtObjectAuxiliaryFunction2_c(){};
 
-  void init(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryFunction2SROM , ai_multitonInst); };
+  iVtObjectAuxiliaryFunction2_c(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst)
+  :vtObjectAuxiliaryFunction2_c(vtObjectAuxiliaryFunction2SROM , ai_multitonInst)
+  {};
 
   const iVtObjectAuxiliaryFunction2_s& get_vtObjectAuxiliaryFunction2_a() { return *vtObjectAuxiliaryFunction2_c::get_vtObjectAuxiliaryFunction2_a(); };
 

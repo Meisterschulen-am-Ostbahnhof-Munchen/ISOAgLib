@@ -53,9 +53,6 @@ vtObjectAuxiliaryFunction2_c::stream(uint8_t* destMemory, uint16_t maxBytes, obj
 }
 
 
-vtObjectAuxiliaryFunction2_c::vtObjectAuxiliaryFunction2_c()
-{}
-
 uint32_t
 vtObjectAuxiliaryFunction2_c::fitTerminal() const
 {

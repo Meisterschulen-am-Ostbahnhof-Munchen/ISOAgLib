@@ -76,7 +76,7 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectRectangle_c::vtObjectRectangle_c() {}
+
 
 
 uint32_t
