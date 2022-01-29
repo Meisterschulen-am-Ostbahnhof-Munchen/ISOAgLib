@@ -39,14 +39,21 @@ protected:
   };
 
 
+  struct iVtObjectObject_s : iVtObject_s {
+    uint8_t numberOfObjectsToFollow;
+    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    void Append(iVtObject_c* vtObject, int16_t x, int16_t y);
+    iVtObjectObject_s(uint16_t ID = 0);
+  };
 
-  struct iVtObjectAlarmMask_s : iVtObject_s {
+
+
+
+  struct iVtObjectAlarmMask_s : iVtObjectObject_s {
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
     uint8_t priority;
     uint8_t acousticSignal;
-    uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     iVtObjectAlarmMask_s(
@@ -55,17 +62,13 @@ protected:
 			iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
 			uint8_t priority = 0,
             uint8_t acousticSignal = 0,
-			uint8_t numberOfObjectsToFollow = 0,
-			const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *objectsToFollow = nullptr,
             uint8_t numberOfMacrosToFollow = 0,
 			const repeat_event_iVtObjectMacro_s *macrosToFollow = nullptr)
-    : iVtObject_s(ID)
+    : iVtObjectObject_s(ID)
     , backgroundColour(backgroundColour)
     , softKeyMask(softKeyMask)
     , priority(priority)
     , acousticSignal(acousticSignal)
-    , numberOfObjectsToFollow(numberOfObjectsToFollow)
-    , objectsToFollow(objectsToFollow)
     , numberOfMacrosToFollow(numberOfMacrosToFollow)
     , macrosToFollow(macrosToFollow)
     {}
@@ -105,15 +108,13 @@ protected:
 
 
 
-  struct iVtObjectButton_s : iVtObject_s {
+  struct iVtObjectButton_s : iVtObjectObject_s {
     uint16_t width;
     uint16_t height;
     uint8_t backgroundColour;
     uint8_t borderColour;
     uint8_t keyCode;
     uint8_t options;
-    uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     uint8_t numberOfMacrosToFollow;
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
     iVtObjectButton_s(
@@ -129,15 +130,13 @@ protected:
     	    uint8_t numberOfMacrosToFollow = 0,
     	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
     		)
-    : iVtObject_s(ID)
+    : iVtObjectObject_s(ID)
     , width(width)
     , height(height)
     , backgroundColour(backgroundColour)
     , borderColour(borderColour)
     , keyCode(keyCode)
     , options(options)
-    , numberOfObjectsToFollow(numberOfObjectsToFollow)
-    , objectsToFollow(objectsToFollow)
     , numberOfMacrosToFollow(numberOfMacrosToFollow)
     , macrosToFollow(macrosToFollow)
     {}

@@ -23,28 +23,38 @@
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
-// Operation : vtObject_c
-//iVtObject_c::vtObject_c()
-//: flags( 0 ), ui16_bitmaskAttributeAlreadyRequested  (0)
-//{
-//}
+	// Operation : vtObject_c
+	//iVtObject_c::vtObject_c()
+	//: flags( 0 ), ui16_bitmaskAttributeAlreadyRequested  (0)
+	//{
+	//}
 
-// Operation : setOriginSKM
-//! @param b_SKM: true if this object is included in a softkeymask.
-void
-iVtObject_c::setOriginSKM(bool b_SKM)
-{
-  if (b_SKM) s_properties.flags |= FLAG_ORIGIN_SKM;
-}
+	// Operation : setOriginSKM
+	//! @param b_SKM: true if this object is included in a softkeymask.
+	void
+	iVtObject_c::setOriginSKM(bool b_SKM)
+	{
+	  if (b_SKM) s_properties.flags |= FLAG_ORIGIN_SKM;
+	}
 
 
-uint16_t iVtObject_c::iVtObject_s::nextID = 0;
+	uint16_t iVtObject_c::iVtObject_s::nextID = 0;
 
-/// Operation : setOriginBTN
-/// @param p_btn: false if this object is not included in a button.
-void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
-{
-  if (p_btn) p_parentButtonObject = p_btn;
-}
+	/// Operation : setOriginBTN
+	/// @param p_btn: false if this object is not included in a button.
+	void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
+	{
+	  if (p_btn) p_parentButtonObject = p_btn;
+	}
+
+    iVtObject_c::iVtObjectObject_s::iVtObjectObject_s(
+    		uint16_t ID)
+            : iVtObject_s(ID)
+            , numberOfObjectsToFollow(0)
+            , objectsToFollow(nullptr)
+    {
+    	objectsToFollow = new repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s[200];
+    }
+
 
 } // end of namespace IsoAgLib
