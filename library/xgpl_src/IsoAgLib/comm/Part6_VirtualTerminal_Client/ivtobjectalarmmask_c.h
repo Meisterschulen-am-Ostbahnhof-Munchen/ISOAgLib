@@ -41,7 +41,6 @@ public:
 
   ~iVtObjectAlarmMask_c(){}
 
-  const iVtObjectAlarmMask_s& get_vtObjectAlarmMask_a() { return *vtObjectAlarmMask_c::get_vtObjectAlarmMask_a(); }
 
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectAlarmMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);

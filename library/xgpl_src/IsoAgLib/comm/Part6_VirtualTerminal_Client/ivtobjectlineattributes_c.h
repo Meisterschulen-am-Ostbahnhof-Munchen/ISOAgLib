@@ -28,13 +28,13 @@ namespace IsoAgLib {
 class iVtObjectLineAttributes_c : public __IsoAgLib::vtObjectLineAttributes_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_LINE_ATTRIBUTES; }
+  static uint16_t objectType();
 
   iVtObjectLineAttributes_c(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst)
   :vtObjectLineAttributes_c(vtObjectLineAttributesSROM , ai_multitonInst)
   {}
 
-  const iVtObjectLineAttributes_s& get_vtObjectLineAttributes_a() { return *vtObjectLineAttributes_c::get_vtObjectLineAttributes_a (); }
+
 
   void setLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectLineAttributes_c::setLineColour (newValue, b_updateObject, b_enableReplaceOfCmd);

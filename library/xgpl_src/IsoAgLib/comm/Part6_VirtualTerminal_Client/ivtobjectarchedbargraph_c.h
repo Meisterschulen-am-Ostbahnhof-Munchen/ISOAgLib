@@ -35,7 +35,9 @@ public:
   :vtObjectArchedBarGraph_c(vtObjectArchedBarGraphSROM , ai_multitonInst)
   {}
 
-  const iVtObjectArchedBarGraph_s& get_vtObjectArchedBarGraph_a() { return *vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a(); }
+
+
+
   ~iVtObjectArchedBarGraph_c(){}
 
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
