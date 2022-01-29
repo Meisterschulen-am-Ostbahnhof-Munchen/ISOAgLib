@@ -47,7 +47,6 @@ public:
   	    uint8_t options = 0,
   	    iVtObjectStringVariable_c* variableReference = nullptr,
   	    uint8_t horizontalJustification = 0,
-  	    uint16_t length = 0,
   	    char* value = nullptr /* size length+1 (0-termination intern!) */
   		);
 

@@ -21,7 +21,6 @@ namespace IsoAgLib {
 			uint8_t options,
 			iVtObjectStringVariable_c *variableReference,
 			uint8_t horizontalJustification,
-			uint16_t length,
 			char *value)
             :vtObjectOutputString_c(
             new iVtObjectOutputString_s(
@@ -33,7 +32,7 @@ namespace IsoAgLib {
                     options,
                     variableReference,
                     horizontalJustification,
-                    length,
+					strlen(value),
                     value /* size length+1 (0-termination intern!) */
             )
             ,ai_multitonInst)
