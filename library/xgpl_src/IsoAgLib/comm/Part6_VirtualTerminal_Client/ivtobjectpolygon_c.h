@@ -31,9 +31,9 @@ class iVtObjectPolygon_c : public __IsoAgLib::vtObjectPolygon_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_POLYGON; }
 
-  void init(const iVtObjectPolygon_s* vtObjectPolygonSROM , int ai_multitonInst) {
-    vtObjectPolygon_c::init (vtObjectPolygonSROM , ai_multitonInst);
-  }
+  iVtObjectPolygon_c(const iVtObjectPolygon_s* vtObjectPolygonSROM , int ai_multitonInst)
+  :vtObjectPolygon_c(vtObjectPolygonSROM , ai_multitonInst)
+  {}
 
   const iVtObjectPolygon_s& get_vtObjectPolygon_a() { return *vtObjectPolygon_c::get_vtObjectPolygon_a(); }
 
