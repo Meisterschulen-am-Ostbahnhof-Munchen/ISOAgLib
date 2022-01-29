@@ -62,30 +62,32 @@ protected:
   };
 
 
+  struct iVtObjectObjectMacro_s : iVtObjectObject_s {
+		uint8_t numberOfMacrosToFollow_size;
+	    uint8_t numberOfMacrosToFollow;
+	    const repeat_event_iVtObjectMacro_s* macrosToFollow;
+	    iVtObjectObjectMacro_s(
+	    		ObjectID ID = autoID);
+  };
 
 
-  struct iVtObjectAlarmMask_s : iVtObjectObject_s {
+  struct iVtObjectAlarmMask_s : iVtObjectObjectMacro_s {
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
     uint8_t priority;
     uint8_t acousticSignal;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
+
     iVtObjectAlarmMask_s(
     		ObjectID ID = autoID,
     		uint8_t backgroundColour = 0,
 			iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
 			uint8_t priority = 0,
-            uint8_t acousticSignal = 0,
-            uint8_t numberOfMacrosToFollow = 0,
-			const repeat_event_iVtObjectMacro_s *macrosToFollow = nullptr)
-    : iVtObjectObject_s(ID)
+            uint8_t acousticSignal = 0)
+    : iVtObjectObjectMacro_s(ID)
     , backgroundColour(backgroundColour)
     , softKeyMask(softKeyMask)
     , priority(priority)
     , acousticSignal(acousticSignal)
-    , numberOfMacrosToFollow(numberOfMacrosToFollow)
-    , macrosToFollow(macrosToFollow)
     {}
   };
 
