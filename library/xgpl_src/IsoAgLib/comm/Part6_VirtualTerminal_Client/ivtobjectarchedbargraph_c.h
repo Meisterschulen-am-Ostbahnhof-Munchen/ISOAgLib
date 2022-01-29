@@ -29,60 +29,50 @@ namespace IsoAgLib {
 class iVtObjectArchedBarGraph_c : public __IsoAgLib::vtObjectArchedBarGraph_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_ARCHED_BAR_GRAPH; }
+  static uint16_t objectType();
 
-  iVtObjectArchedBarGraph_c(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst)
-  :vtObjectArchedBarGraph_c(vtObjectArchedBarGraphSROM , ai_multitonInst)
-  {}
+  iVtObjectArchedBarGraph_c(
+			iVtClientObjectPool_c* pool,
+			ObjectID ID = autoID,
+			uint16_t width = 100,
+			uint16_t height = 100,
+			uint8_t colour = 12,
+			uint8_t targetLineColour = 14,
+			uint8_t options = 0,
+			uint8_t startAngle = 0,
+			uint8_t endAngle = 180,
+			uint16_t barGraphWidth = 15,
+			uint16_t minValue = 0,
+			uint16_t maxValue = 100,
+			iVtObject_c *variableReference = nullptr,
+			uint16_t value = 20,
+			iVtObject_c *targetValueVariableReference = nullptr,
+			uint16_t targetValue = 50);
 
 
+  ~iVtObjectArchedBarGraph_c() override = default;
 
+  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
-  ~iVtObjectArchedBarGraph_c(){}
+  void setWidth(uint16_t newWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    vtObjectArchedBarGraph_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setHeight(uint16_t newHeight, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setWidth(uint16_t newWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setHeight(uint16_t newHeight, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setColour (newColour, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setOptions(uint8_t newOptions, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setTargetLineColour (newTargetLineColour, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setStartAngle(uint8_t newStartAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setOptions(uint8_t newOptions, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setOptions (newOptions, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setEndAngle(uint8_t newEndAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setStartAngle(uint8_t newStartAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setStartAngle (newStartAngle, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setEndAngle(uint8_t newEndAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setEndAngle (newEndAngle, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setMinValue(uint32_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setBarGraphWidth (newBarGraphWidth, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setMinValue(uint32_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setMinValue (newMin, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setMaxValue(uint32_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectArchedBarGraph_c::setMaxValue (newMax, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setMaxValue(uint32_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   void setVariableReference(iVtObject_c* newVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setVariableReference (newVariableReference, b_updateObject, b_enableReplaceOfCmd);

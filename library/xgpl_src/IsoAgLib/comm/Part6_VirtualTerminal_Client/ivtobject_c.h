@@ -73,14 +73,14 @@ protected:
 	    uint8_t numberOfMacrosToFollow;
 	    const repeat_event_iVtObjectMacro_s* macrosToFollow;
 	    iVtObjectwMacro_s(
-	    		ObjectID ID = autoID,
-				uint8_t size = OO_CAPACITY);
+			ObjectID ID = autoID,
+			uint8_t size = OO_CAPACITY);
   };
 
 
   struct iVtObjectMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
 	  iVtObjectMask_s(
-			  ObjectID ID = autoID)
+		ObjectID ID = autoID)
 	  :iVtObjectObject_s(ID)
 	  ,iVtObjectwMacro_s(ID)
 	  {}
@@ -92,7 +92,6 @@ protected:
     iVtObjectSoftKeyMask_c* softKeyMask;
     uint8_t priority;
     uint8_t acousticSignal;
-
     iVtObjectAlarmMask_s(
     		ObjectID ID = autoID,
     		uint8_t backgroundColour = 0,
@@ -173,8 +172,7 @@ protected:
     	    uint8_t backgroundColour = 12,
     	    uint8_t borderColour = 8,
     	    uint8_t keyCode = 251,
-    	    uint8_t options = 0
-    		)
+    	    uint8_t options = 0)
     : iVtObjectObject_s(ID)
     , iVtObjectwMacro_s(ID)
     , width(width)
@@ -564,7 +562,7 @@ public:
   // Constructor
   iVtObject_c();
 
-  virtual ~iVtObject_c() {}
+  virtual ~iVtObject_c() = default;
 
   //  Operation: getID
   uint16_t getID() const;
