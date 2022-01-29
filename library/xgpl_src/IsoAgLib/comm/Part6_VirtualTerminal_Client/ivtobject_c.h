@@ -20,6 +20,7 @@
 #ifndef IVTOBJECT_C_H
 #define IVTOBJECT_C_H
 
+#include <stdint.h>
 #include "ivttypes.h"
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/multiton.h>
