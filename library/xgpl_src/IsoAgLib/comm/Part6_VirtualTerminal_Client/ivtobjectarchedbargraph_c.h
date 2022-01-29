@@ -31,9 +31,9 @@ class iVtObjectArchedBarGraph_c : public __IsoAgLib::vtObjectArchedBarGraph_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_ARCHED_BAR_GRAPH; }
 
-  void init(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst) {
-    vtObjectArchedBarGraph_c::init (vtObjectArchedBarGraphSROM , ai_multitonInst);
-  }
+  iVtObjectArchedBarGraph_c(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst)
+  :vtObjectArchedBarGraph_c(vtObjectArchedBarGraphSROM , ai_multitonInst)
+  {}
 
   const iVtObjectArchedBarGraph_s& get_vtObjectArchedBarGraph_a() { return *vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a(); }
   ~iVtObjectArchedBarGraph_c(){}

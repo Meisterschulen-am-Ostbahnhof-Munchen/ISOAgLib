@@ -31,9 +31,9 @@ class iVtObjectPictureGraphic_c : public __IsoAgLib::vtObjectPictureGraphic_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_PICTURE_GRAPHIC; }
 
-  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst) {
-    vtObjectPictureGraphic_c::init (vtObjectPictureGraphicSROM , ai_multitonInst);
-  }
+  iVtObjectPictureGraphic_c(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst)
+  :vtObjectPictureGraphic_c(vtObjectPictureGraphicSROM , ai_multitonInst)
+  {}
 
   const iVtObjectPictureGraphic_s& get_vtObjectPictureGraphic_a() { return *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a(); }
 

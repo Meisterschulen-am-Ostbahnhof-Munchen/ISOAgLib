@@ -292,7 +292,6 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
     return curBytes;
 }
 
-vtObjectPictureGraphic_c::vtObjectPictureGraphic_c() {}
 
 uint32_t
 vtObjectPictureGraphic_c::fitTerminal() const

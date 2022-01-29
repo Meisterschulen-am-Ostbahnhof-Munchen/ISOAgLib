@@ -34,12 +34,12 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectPictureGraphicSROM , ai_multitonInst); }
+  vtObjectPictureGraphic_c(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectPictureGraphicSROM , ai_multitonInst)
+  {}
 
   inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return dynamic_cast<iVtObjectPictureGraphic_s *>(&(get_vtObject_a())); }
 
-  vtObjectPictureGraphic_c();
 
   uint32_t fitTerminal() const;
 
