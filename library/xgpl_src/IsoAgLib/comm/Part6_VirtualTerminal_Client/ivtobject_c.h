@@ -222,7 +222,7 @@ protected:
     uint8_t options;
   };
 
-  struct iVtObjectInputNumber_s : iVtObject_s {
+  struct iVtObjectInputNumber_s : iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     uint8_t backgroundColour;
@@ -238,11 +238,9 @@ protected:
     uint8_t format;
     uint8_t horizontalJustification;
     uint8_t secondOptionsByte;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectInputString_s : iVtObject_s {
+  struct iVtObjectInputString_s : iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     uint8_t backgroundColour;
@@ -254,8 +252,6 @@ protected:
     uint16_t length;
     char* value;
     uint8_t enabled;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
   struct iVtObjectKey_s : iVtObject_s {

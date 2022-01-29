@@ -83,7 +83,7 @@ namespace IsoAgLib {
     , numberOfMacrosToFollow(0)
     , macrosToFollow(nullptr)
     {
-
+    	//TODO implement List like with iVtObjectObject_s
     }
 
 
