@@ -31,9 +31,9 @@ class iVtObjectInputNumber_c : public __IsoAgLib::vtObjectInputNumber_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_NUMBER; }
 
-  void init(const iVtObjectInputNumber_s* vtObjectInputNumberSROM , int ai_multitonInst) {
-    vtObjectInputNumber_c::init (vtObjectInputNumberSROM , ai_multitonInst);
-  }
+  iVtObjectInputNumber_c(const iVtObjectInputNumber_s* vtObjectInputNumberSROM , int ai_multitonInst)
+  :vtObjectInputNumber_c(vtObjectInputNumberSROM , ai_multitonInst)
+  {}
 
   const iVtObjectInputNumber_s& get_vtObjectInputNumber_a() { return *vtObjectInputNumber_c::get_vtObjectInputNumber_a(); }
 
