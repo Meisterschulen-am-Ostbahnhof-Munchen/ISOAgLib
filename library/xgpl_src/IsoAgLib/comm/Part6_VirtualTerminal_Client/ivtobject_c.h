@@ -44,7 +44,7 @@ protected:
   struct iVtObject_s {
 	ObjectID ID;
     static ObjectID nextID;
-    iVtObject_s(ObjectID ID = autoID){
+    explicit iVtObject_s(ObjectID ID = autoID){
         this->ID = ID == autoID ? nextID : ID;
         nextID = (ObjectID)((uint16_t)nextID + 1);
     }
@@ -60,7 +60,7 @@ protected:
     uint8_t numberOfObjectsToFollow;
     repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
-    iVtObjectObject_s(
+    explicit iVtObjectObject_s(
     		ObjectID ID = autoID,
 			uint8_t size = OO_CAPACITY);
   };
@@ -72,14 +72,14 @@ protected:
 		uint8_t numberOfMacrosToFollow_size;
 	    uint8_t numberOfMacrosToFollow;
 	    const repeat_event_iVtObjectMacro_s* macrosToFollow;
-	    iVtObjectwMacro_s(
+	    explicit iVtObjectwMacro_s(
 			ObjectID ID = autoID,
 			uint8_t size = OO_CAPACITY);
   };
 
 
   struct iVtObjectMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
-	  iVtObjectMask_s(
+	  explicit iVtObjectMask_s(
 		ObjectID ID = autoID)
 	  :iVtObjectObject_s(ID)
 	  ,iVtObjectwMacro_s(ID)
@@ -92,7 +92,7 @@ protected:
     iVtObjectSoftKeyMask_c* softKeyMask;
     uint8_t priority;
     uint8_t acousticSignal;
-    iVtObjectAlarmMask_s(
+    explicit iVtObjectAlarmMask_s(
     		ObjectID ID = autoID,
     		uint8_t backgroundColour = 0,
 			iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
@@ -121,7 +121,7 @@ protected:
     uint16_t value;
     iVtObject_c* targetValueVariableReference;
     uint16_t targetValue;
-    iVtObjectArchedBarGraph_s(
+    explicit iVtObjectArchedBarGraph_s(
     		ObjectID ID = autoID,
     		uint16_t width = 100,
 			uint16_t height = 100,
@@ -165,7 +165,7 @@ protected:
     uint8_t borderColour;
     uint8_t keyCode;
     uint8_t options;
-    iVtObjectButton_s(
+    explicit iVtObjectButton_s(
     		ObjectID ID = autoID,
     	    uint16_t width = 80,
     	    uint16_t height = 30,
@@ -194,7 +194,7 @@ protected:
   struct iVtObjectDataMask_s : iVtObjectMask_s {
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
-    iVtObjectDataMask_s(
+    explicit iVtObjectDataMask_s(
     		ObjectID ID = autoID,
     	    uint8_t backgroundColour = 0,
     	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr)
@@ -323,7 +323,7 @@ protected:
     uint8_t lineColour;
     uint8_t lineWidth;
     uint16_t lineArt;
-    iVtObjectLineAttributes_s(
+    explicit iVtObjectLineAttributes_s(
     		ObjectID ID = autoID,
     		uint8_t lineColour = 0,
 			uint8_t lineWidth = 1,
@@ -340,7 +340,7 @@ protected:
     uint16_t width;
     uint16_t height;
     uint8_t lineDirection;
-    iVtObjectLine_s(
+    explicit iVtObjectLine_s(
     		ObjectID ID = autoID,
     		iVtObjectLineAttributes_c *lineAttributes = nullptr,
 			uint16_t width = 100,
@@ -415,7 +415,7 @@ protected:
     uint8_t horizontalJustification;
     uint16_t length;
     char* value; /* size length+1 (0-termination intern!) */
-    iVtObjectOutputString_s(
+    explicit iVtObjectOutputString_s(
     		ObjectID ID = autoID,
     	    uint16_t width = 50,
     	    uint16_t height= 20,
@@ -495,7 +495,7 @@ protected:
     iVtObjectMask_c* activeMask; // data or alarm mask
     uint8_t numberOfLanguagesToFollow;
     const repeat_vtLanguage_s* languagesToFollow;
-    iVtObjectWorkingSet_s(
+    explicit iVtObjectWorkingSet_s(
     		ObjectID ID = autoID,
     		uint8_t backgroundColour = 0,
     		uint8_t selectable = 1,
@@ -562,7 +562,7 @@ public:
   // Constructor
   iVtObject_c();
 
-  virtual ~iVtObject_c() = default;
+  ~iVtObject_c() override = default;
 
   //  Operation: getID
   uint16_t getID() const;
