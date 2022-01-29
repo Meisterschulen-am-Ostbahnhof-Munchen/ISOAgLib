@@ -125,8 +125,6 @@ protected:
     	    uint8_t borderColour = 8,
     	    uint8_t keyCode = 251,
     	    uint8_t options = 0,
-    	    uint8_t numberOfObjectsToFollow = 0,
-    	    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow = nullptr,
     	    uint8_t numberOfMacrosToFollow = 0,
     	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
     		)
