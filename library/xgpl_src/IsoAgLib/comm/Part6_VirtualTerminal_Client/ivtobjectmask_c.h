@@ -29,9 +29,7 @@ class iVtObjectMask_c : public __IsoAgLib::vtObject_c
 {
 public:
 
-  iVtObjectMask_c()
-  : vtObject_c()
-  {}
+
 
 
   iVtObjectMask_c(const iVtObjectMask_s* vtObjectDataMaskSROM , int ai_multitonInst)

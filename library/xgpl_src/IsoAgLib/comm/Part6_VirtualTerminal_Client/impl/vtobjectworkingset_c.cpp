@@ -67,7 +67,7 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-vtObjectWorkingSet_c::vtObjectWorkingSet_c() {}
+
 
 vtObjectWorkingSet_c::vtObjectWorkingSet_c(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst)
 : vtObject_c((iVtObject_s*) vtObjectWorkingSetSROM , ai_multitonInst)

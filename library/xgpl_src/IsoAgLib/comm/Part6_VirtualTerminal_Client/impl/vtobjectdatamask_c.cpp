@@ -62,7 +62,6 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectDataMask_c::vtObjectDataMask_c() {}
 
 vtObjectDataMask_c::vtObjectDataMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
 : iVtObjectMask_c((iVtObjectMask_s*)vtObjectDataMaskSROM , ai_multitonInst)

@@ -52,7 +52,6 @@ vtObjectAuxiliaryFunction_c::stream(uint8_t* destMemory, uint16_t maxBytes, objR
 }
 
 
-vtObjectAuxiliaryFunction_c::vtObjectAuxiliaryFunction_c() {}
 
 
 uint32_t

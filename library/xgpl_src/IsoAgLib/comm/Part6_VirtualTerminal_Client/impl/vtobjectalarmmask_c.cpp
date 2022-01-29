@@ -64,8 +64,6 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectAlarmMask_c::vtObjectAlarmMask_c() {}
-
 
 uint32_t
 vtObjectAlarmMask_c::fitTerminal() const

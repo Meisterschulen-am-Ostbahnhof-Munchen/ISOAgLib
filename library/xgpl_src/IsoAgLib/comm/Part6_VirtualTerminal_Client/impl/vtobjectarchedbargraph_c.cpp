@@ -104,7 +104,6 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c() {}
 
 
 uint32_t
