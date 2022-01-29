@@ -45,4 +45,17 @@ namespace IsoAgLib {
     const iVtObject_c::iVtObjectDataMask_s &iVtObjectDataMask_c::get_vtObjectDataMask_a() { return *vtObjectDataMask_c::get_vtObjectDataMask_a(); }
 
     uint16_t iVtObjectDataMask_c::objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
+
+
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+
+    uint8_t iVtObjectDataMask_c::updateBackgroundColour(bool b_SendRequest) {
+        return vtObjectDataMask_c::updateBackgroundColour(b_SendRequest);
+    }
+
+    uint16_t iVtObjectDataMask_c::updateSoftKeyMask(bool b_SendRequest) {
+        return vtObjectDataMask_c::updateSoftKeyMask(b_SendRequest);
+    }
+
+#endif
 }

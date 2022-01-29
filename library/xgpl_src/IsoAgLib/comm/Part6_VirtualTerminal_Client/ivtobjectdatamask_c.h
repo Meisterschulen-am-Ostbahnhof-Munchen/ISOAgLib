@@ -58,13 +58,9 @@ public:
   }
   */
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
-    return vtObjectDataMask_c::updateBackgroundColour(b_SendRequest);
-  }
+  uint8_t updateBackgroundColour(bool b_SendRequest=false);
 
-  uint16_t updateSoftKeyMask(bool b_SendRequest=false) {
-    return vtObjectDataMask_c::updateSoftKeyMask(b_SendRequest);
-  }
+  uint16_t updateSoftKeyMask(bool b_SendRequest=false);
 #endif
 
   virtual uint16_t getObjectType() const;

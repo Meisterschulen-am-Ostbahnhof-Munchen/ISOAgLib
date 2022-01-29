@@ -151,7 +151,10 @@ vtObjectDataMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attribu
     default: break;
   }
 }
-
 #endif
+
+IsoAgLib::iVtObject_c::iVtObjectDataMask_s *vtObjectDataMask_c::get_vtObjectDataMask_a() { return dynamic_cast<iVtObjectDataMask_s *>(&(get_vtObject_a())); }
+
+
 
 } // __IsoAgLib
