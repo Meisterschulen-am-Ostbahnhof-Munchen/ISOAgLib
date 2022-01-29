@@ -53,6 +53,8 @@ protected:
 
 
   // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
+  /** iVtObjectObject_s is a Object than contain other Objects.
+    */
   struct iVtObjectObject_s : virtual iVtObject_s {
 	uint8_t numberOfObjectsToFollow_size;
     uint8_t numberOfObjectsToFollow;
@@ -64,6 +66,8 @@ protected:
   };
 
   // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
+  /** iVtObjectwMacro_s is a Object than contain Macros.
+    */
   struct iVtObjectwMacro_s : virtual iVtObject_s {
 		uint8_t numberOfMacrosToFollow_size;
 	    uint8_t numberOfMacrosToFollow;
@@ -195,35 +199,27 @@ protected:
     {}
   };
 
-  struct iVtObjectInputAttributes_s : iVtObject_s {
+  struct iVtObjectInputAttributes_s : iVtObjectwMacro_s {
     uint8_t validationType;
     uint8_t length;
     char* validationString;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectInputBoolean_s : iVtObject_s {
+  struct iVtObjectInputBoolean_s : iVtObjectwMacro_s {
     uint8_t backgroundColour;
     uint16_t width;
     iVtObject_c* foregroundColour;
     iVtObject_c* variableReference;
     uint8_t value;
     uint8_t enabled;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectInputList_s : iVtObject_s {
+  struct iVtObjectInputList_s : iVtObjectObject_s, iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     iVtObject_c* variableReference;
     uint8_t value;
     uint8_t options;
-    uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_s* objectsToFollow;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
   struct iVtObjectInputNumber_s : iVtObject_s {

@@ -36,7 +36,7 @@ public:
   void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectInputAttributesSROM , ai_multitonInst); }
 
-  iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return (iVtObjectInputAttributes_s *)&(get_vtObject_a()); }
+  iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return dynamic_cast<iVtObjectInputAttributes_s *>(&(get_vtObject_a())); }
 
   vtObjectInputAttributes_c();
 

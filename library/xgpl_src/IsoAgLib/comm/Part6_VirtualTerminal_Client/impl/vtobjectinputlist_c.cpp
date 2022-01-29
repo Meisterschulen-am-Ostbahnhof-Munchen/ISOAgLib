@@ -78,14 +78,14 @@ vtObjectInputList_c::vtObjectInputList_c() {}
 IsoAgLib::iVtObject_c*
 vtObjectInputList_c::getListItem(uint8_t xth)
 {
-  return ((iVtObjectInputList_s *) vtObject_a)->objectsToFollow[xth].vtObject;
+  return (dynamic_cast<iVtObjectInputList_s *>(vtObject_a))->objectsToFollow[xth].vtObject;
 }
 
 
 uint8_t
 vtObjectInputList_c::getNumberOfListItems()
 {
-    return ((iVtObjectInputList_s *) vtObject_a)->numberOfObjectsToFollow;
+    return (dynamic_cast<iVtObjectInputList_s *>(vtObject_a))->numberOfObjectsToFollow;
 }
 
 
