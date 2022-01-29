@@ -216,7 +216,14 @@ protected:
   };
 
   struct iVtObjectEllipse_s : iVtObjectwMacro_s {
-    iVtObjectLineAttributes_c* lineAttributes;
+      iVtObjectEllipse_s(iVtObjectLineAttributes_c *lineAttributes, uint16_t width, uint16_t height,
+                         uint8_t ellipseType, uint8_t startAngle, uint8_t endAngle,
+                         iVtObjectFillAttributes_c *fillAttributes) : lineAttributes(lineAttributes), width(width),
+                                                                      height(height), ellipseType(ellipseType),
+                                                                      startAngle(startAngle), endAngle(endAngle),
+                                                                      fillAttributes(fillAttributes) {}
+
+      iVtObjectLineAttributes_c* lineAttributes;
     uint16_t width;
     uint16_t height;
     uint8_t ellipseType;
@@ -226,7 +233,10 @@ protected:
   };
 
   struct iVtObjectFillAttributes_s : iVtObjectwMacro_s {
-    uint8_t fillType;
+      iVtObjectFillAttributes_s(uint8_t fillType, uint8_t fillColour, iVtObjectPictureGraphic_c *fillPatternObject)
+              : fillType(fillType), fillColour(fillColour), fillPatternObject(fillPatternObject) {}
+
+      uint8_t fillType;
     uint8_t fillColour;
     iVtObjectPictureGraphic_c* fillPatternObject;
   };
@@ -251,13 +261,22 @@ protected:
   };
 
   struct iVtObjectInputAttributes_s : iVtObjectwMacro_s {
-    uint8_t validationType;
+      iVtObjectInputAttributes_s(uint8_t validationType, uint8_t length, char *validationString) : validationType(
+              validationType), length(length), validationString(validationString) {}
+
+      uint8_t validationType;
     uint8_t length;
     char* validationString;
   };
 
   struct iVtObjectInputBoolean_s : iVtObjectwMacro_s {
-    uint8_t backgroundColour;
+      iVtObjectInputBoolean_s(uint8_t backgroundColour, uint16_t width, iVtObject_c *foregroundColour,
+                              iVtObject_c *variableReference, uint8_t value, uint8_t enabled) : backgroundColour(
+              backgroundColour), width(width), foregroundColour(foregroundColour), variableReference(variableReference),
+                                                                                                value(value),
+                                                                                                enabled(enabled) {}
+
+      uint8_t backgroundColour;
     uint16_t width;
     iVtObject_c* foregroundColour;
     iVtObject_c* variableReference;
@@ -266,7 +285,11 @@ protected:
   };
 
   struct iVtObjectInputList_s : iVtObjectObject_s, iVtObjectwMacro_s {
-    uint16_t width;
+      iVtObjectInputList_s(uint16_t width, uint16_t height, iVtObject_c *variableReference, uint8_t value,
+                           uint8_t options) : width(width), height(height), variableReference(variableReference),
+                                              value(value), options(options) {}
+
+      uint16_t width;
     uint16_t height;
     iVtObject_c* variableReference;
     uint8_t value;
@@ -274,7 +297,30 @@ protected:
   };
 
   struct iVtObjectInputNumber_s : iVtObjectwMacro_s {
-    uint16_t width;
+      iVtObjectInputNumber_s(uint16_t width, uint16_t height, uint8_t backgroundColour, iVtObject_c *fontAttributes,
+                             uint8_t options, iVtObject_c *variableReference, uint32_t value, uint32_t minValue,
+                             uint32_t maxValue, int32_t offset, float scale, uint8_t numberOfDecimals, uint8_t format,
+                             uint8_t horizontalJustification, uint8_t secondOptionsByte) : width(width), height(height),
+                                                                                           backgroundColour(
+                                                                                                   backgroundColour),
+                                                                                           fontAttributes(
+                                                                                                   fontAttributes),
+                                                                                           options(options),
+                                                                                           variableReference(
+                                                                                                   variableReference),
+                                                                                           value(value),
+                                                                                           minValue(minValue),
+                                                                                           maxValue(maxValue),
+                                                                                           offset(offset), scale(scale),
+                                                                                           numberOfDecimals(
+                                                                                                   numberOfDecimals),
+                                                                                           format(format),
+                                                                                           horizontalJustification(
+                                                                                                   horizontalJustification),
+                                                                                           secondOptionsByte(
+                                                                                                   secondOptionsByte) {}
+
+      uint16_t width;
     uint16_t height;
     uint8_t backgroundColour;
     iVtObject_c* fontAttributes;
@@ -292,6 +338,7 @@ protected:
   };
 
   struct iVtObjectString_s : virtual iVtObject_s {
+      iVtObjectString_s(){}
 
   };
 
