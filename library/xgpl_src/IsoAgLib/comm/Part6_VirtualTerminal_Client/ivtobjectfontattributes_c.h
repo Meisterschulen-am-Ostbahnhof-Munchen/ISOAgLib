@@ -28,7 +28,7 @@ namespace IsoAgLib {
 class iVtObjectFontAttributes_c : public __IsoAgLib::vtObjectFontAttributes_c
 {
 public:
-  iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
+  //iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
   iVtObjectFontAttributes_c(
 		int ai_multitonInst,
 		ObjectID ID = autoID,

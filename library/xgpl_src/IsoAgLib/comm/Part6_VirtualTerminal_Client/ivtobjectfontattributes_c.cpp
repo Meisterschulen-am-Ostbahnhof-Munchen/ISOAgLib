@@ -18,10 +18,6 @@ namespace IsoAgLib {
 		return vtObjectFontAttributes_c::getScaledWidthHeight();
 	}
 
-	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s *vtObjectFontAttributesSROM, int ai_multitonInst) :
-			vtObjectFontAttributes_c(vtObjectFontAttributesSROM, ai_multitonInst) {
-
-	}
 
 
 	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(
@@ -39,7 +35,6 @@ namespace IsoAgLib {
 					fontType, // always =0 ISO_LATIN_1
 					fontStyle),
 				ai_multitonInst)
-	{
-	}
+	{}
 
 }
