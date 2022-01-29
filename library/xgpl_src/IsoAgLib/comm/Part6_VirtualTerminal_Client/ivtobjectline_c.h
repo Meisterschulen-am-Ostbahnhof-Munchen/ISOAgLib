@@ -31,9 +31,13 @@ class iVtObjectLine_c : public __IsoAgLib::vtObjectLine_c
 public:
   static uint16_t objectType();
 
-  iVtObjectLine_c(const iVtObjectLine_s* vtObjectLineSROM , int ai_multitonInst)
-  :vtObjectLine_c(vtObjectLineSROM , ai_multitonInst)
-  {}
+  iVtObjectLine_c(
+			int ai_multitonInst,
+	  		ObjectID ID = autoID,
+			iVtObjectLineAttributes_c *lineAttributes = nullptr,
+			uint16_t width = 100,
+			uint16_t height =100,
+			uint8_t lineDirection = 0);
 
 
 

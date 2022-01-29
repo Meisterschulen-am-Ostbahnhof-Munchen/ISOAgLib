@@ -294,10 +294,12 @@ protected:
     uint8_t lineWidth;
     uint16_t lineArt;
     iVtObjectLineAttributes_s(
-    		uint8_t lineColour,
-			uint8_t lineWidth,
-			uint16_t lineArt)
-    : lineColour(lineColour)
+    		ObjectID ID = autoID,
+    		uint8_t lineColour = 0,
+			uint8_t lineWidth = 1,
+			uint16_t lineArt = 65535)
+    : iVtObjectwMacro_s(ID)
+    , lineColour(lineColour)
     , lineWidth(lineWidth)
     , lineArt(lineArt)
     {}
@@ -309,11 +311,13 @@ protected:
     uint16_t height;
     uint8_t lineDirection;
     iVtObjectLine_s(
-    		iVtObjectLineAttributes_c *lineAttributes,
-			uint16_t width,
-			uint16_t height,
-			uint8_t lineDirection)
-    : lineAttributes(lineAttributes)
+    		ObjectID ID = autoID,
+    		iVtObjectLineAttributes_c *lineAttributes = nullptr,
+			uint16_t width = 100,
+			uint16_t height =100,
+			uint8_t lineDirection = 0)
+    :  iVtObjectwMacro_s(ID)
+    , lineAttributes(lineAttributes)
     , width(width)
     , height(height)
     , lineDirection(lineDirection)

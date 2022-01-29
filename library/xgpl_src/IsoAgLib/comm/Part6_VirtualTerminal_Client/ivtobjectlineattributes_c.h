@@ -30,9 +30,14 @@ class iVtObjectLineAttributes_c : public __IsoAgLib::vtObjectLineAttributes_c
 public:
   static uint16_t objectType();
 
-  iVtObjectLineAttributes_c(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst)
-  :vtObjectLineAttributes_c(vtObjectLineAttributesSROM , ai_multitonInst)
-  {}
+
+
+  iVtObjectLineAttributes_c(
+		int ai_multitonInst,
+  		ObjectID ID = autoID,
+  		uint8_t lineColour = 0,
+		uint8_t lineWidth = 1,
+		uint16_t lineArt = 65535);
 
 
 
