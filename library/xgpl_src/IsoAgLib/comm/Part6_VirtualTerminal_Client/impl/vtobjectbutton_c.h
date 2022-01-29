@@ -37,7 +37,6 @@ public:
 
   iVtObjectButton_s* get_vtObjectButton_a() { return dynamic_cast<iVtObjectButton_s *>(&(get_vtObject_a())); }
 
-  vtObjectButton_c();
   vtObjectButton_c(const iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
 
 

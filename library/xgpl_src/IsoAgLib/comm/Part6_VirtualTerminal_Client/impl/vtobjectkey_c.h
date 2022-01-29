@@ -45,7 +45,6 @@ public:
 
   iVtObjectKey_s* get_vtObjectKey_a() { return dynamic_cast<iVtObjectKey_s *>(&(get_vtObject_a())); }
 
-  vtObjectKey_c();
 
   uint32_t fitTerminal() const;
 

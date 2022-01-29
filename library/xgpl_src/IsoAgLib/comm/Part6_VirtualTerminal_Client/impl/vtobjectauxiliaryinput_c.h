@@ -43,7 +43,6 @@ public:
 
   iVtObjectAuxiliaryInput_s* get_vtObjectAuxiliaryInput_a() { return dynamic_cast<iVtObjectAuxiliaryInput_s *>(&(get_vtObject_a())); }
 
-  vtObjectAuxiliaryInput_c();
 
   uint32_t fitTerminal() const;
 

@@ -44,7 +44,7 @@ public:
 
   iVtObjectInputBoolean_s* get_vtObjectInputBoolean_a() { return dynamic_cast<iVtObjectInputBoolean_s *>(&(get_vtObject_a())); }
 
-  vtObjectInputBoolean_c();
+
 
   uint32_t fitTerminal() const;
 

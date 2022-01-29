@@ -44,7 +44,6 @@ public:
 
   iVtObjectEllipse_s* get_vtObjectEllipse_a() { return dynamic_cast<iVtObjectEllipse_s *>(&(get_vtObject_a())); }
 
-  vtObjectEllipse_c();
 
   uint32_t fitTerminal() const;
 

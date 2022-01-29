@@ -40,7 +40,6 @@ public:
 
   inline iVtObjectColourMap_s* get_vtObjectColourMap_a() { return (iVtObjectColourMap_s *)&(get_vtObject_a()); }
 
-  vtObjectColourMap_c();
 
   uint32_t fitTerminal() const;
 

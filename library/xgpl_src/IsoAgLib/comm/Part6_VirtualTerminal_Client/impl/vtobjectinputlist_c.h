@@ -44,7 +44,7 @@ public:
 
   iVtObjectInputList_s* get_vtObjectInputList_a() { return dynamic_cast<iVtObjectInputList_s *>(&(get_vtObject_a())); }
 
-  vtObjectInputList_c();
+
 
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
 

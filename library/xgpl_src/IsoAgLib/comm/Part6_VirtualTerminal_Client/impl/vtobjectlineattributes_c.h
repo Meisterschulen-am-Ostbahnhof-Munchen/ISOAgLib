@@ -40,7 +40,7 @@ public:
 
   iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a() { return dynamic_cast<iVtObjectLineAttributes_s *>(&(get_vtObject_a())); }
 
-  vtObjectLineAttributes_c();
+
 
   uint32_t fitTerminal() const;
 

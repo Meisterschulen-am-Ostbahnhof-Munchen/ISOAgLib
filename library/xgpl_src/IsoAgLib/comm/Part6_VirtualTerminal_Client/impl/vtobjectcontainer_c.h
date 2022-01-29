@@ -44,7 +44,6 @@ public:
 
   iVtObjectContainer_s* get_vtObjectContainer_a() { return dynamic_cast<iVtObjectContainer_s *>(&(get_vtObject_a())); }
 
-  vtObjectContainer_c();
 
   uint32_t fitTerminal() const;
 

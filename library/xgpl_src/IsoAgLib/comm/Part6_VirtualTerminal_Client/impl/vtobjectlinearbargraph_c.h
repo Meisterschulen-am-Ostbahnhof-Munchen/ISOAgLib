@@ -45,7 +45,7 @@ public:
 
   iVtObjectLinearBarGraph_s* get_vtObjectLinearBarGraph_a() { return dynamic_cast<iVtObjectLinearBarGraph_s *>(&(get_vtObject_a())); }
 
-  vtObjectLinearBarGraph_c();
+
 
   uint32_t fitTerminal() const;
 

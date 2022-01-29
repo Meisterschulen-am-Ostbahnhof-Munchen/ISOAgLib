@@ -43,7 +43,7 @@ public:
 
   iVtObjectLine_s* get_vtObjectLine_a() { return dynamic_cast<iVtObjectLine_s *>(&(get_vtObject_a())); }
 
-  vtObjectLine_c();
+
 
   uint32_t fitTerminal() const;
 

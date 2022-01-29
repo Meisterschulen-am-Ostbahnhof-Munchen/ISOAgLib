@@ -43,7 +43,6 @@ public:
 
   iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a() {return dynamic_cast<iVtObjectAuxiliaryFunction_s *>(&(get_vtObject_a()));}
 
-  vtObjectAuxiliaryFunction_c();
   ~vtObjectAuxiliaryFunction_c() {}
 
   uint32_t fitTerminal() const;

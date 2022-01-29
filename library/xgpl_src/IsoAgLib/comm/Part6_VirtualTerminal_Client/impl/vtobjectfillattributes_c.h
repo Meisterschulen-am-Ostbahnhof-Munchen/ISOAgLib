@@ -39,7 +39,6 @@ public:
 
   iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a() { return dynamic_cast<iVtObjectFillAttributes_s *>(&(get_vtObject_a())); }
 
-  vtObjectFillAttributes_c();
 
   uint32_t fitTerminal() const;
 
