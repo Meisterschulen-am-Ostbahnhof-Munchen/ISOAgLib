@@ -189,6 +189,17 @@ protected:
     uint16_t width;
     uint16_t height;
     uint8_t hidden;
+    iVtObjectContainer_s(
+    		ObjectID ID = autoID,
+    		uint16_t width = 100,
+			uint16_t height = 100,
+			uint8_t hidden = 0)
+    : iVtObjectObject_s(ID)
+    , iVtObjectwMacro_s(ID)
+    , width(width)
+    , height(height)
+    , hidden(hidden)
+    {}
   };
 
   struct iVtObjectDataMask_s : iVtObjectMask_s {
