@@ -41,9 +41,7 @@ public:
   	    uint8_t backgroundColour = 12,
   	    uint8_t borderColour = 8,
   	    uint8_t keyCode = 251,
-  	    uint8_t options = 0,
-  	    uint8_t numberOfMacrosToFollow = 0,
-  	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
+  	    uint8_t options = 0
   		);
 
 

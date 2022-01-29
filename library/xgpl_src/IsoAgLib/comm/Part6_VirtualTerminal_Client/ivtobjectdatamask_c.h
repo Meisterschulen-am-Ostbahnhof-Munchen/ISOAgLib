@@ -39,9 +39,7 @@ public:
 		int ai_multitonInst,
 		ObjectID ID = autoID,
   	    uint8_t backgroundColour = 0,
-  	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr,
-  	    uint8_t numberOfMacrosToFollow = 0,
-  	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr);
+  	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr);
 
 
 

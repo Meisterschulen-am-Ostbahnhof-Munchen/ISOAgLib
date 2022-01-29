@@ -20,9 +20,7 @@ namespace IsoAgLib {
 			uint8_t backgroundColour,
 			uint8_t borderColour,
 			uint8_t keyCode,
-			uint8_t options,
-			uint8_t numberOfMacrosToFollow,
-			const repeat_event_iVtObjectMacro_s *macrosToFollow)
+			uint8_t options)
 	: vtObjectButton_c(
 			  new iVtObjectButton_s(
 						ID,
@@ -31,9 +29,7 @@ namespace IsoAgLib {
 						backgroundColour,
 						borderColour,
 						keyCode,
-						options,
-						numberOfMacrosToFollow,
-						macrosToFollow)
+						options)
 					  , ai_multitonInst)
 	{}
 

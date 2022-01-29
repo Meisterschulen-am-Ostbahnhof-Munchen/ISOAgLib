@@ -37,18 +37,14 @@ namespace IsoAgLib {
 			uint8_t fontColour,
 			uint8_t fontSize,
 			uint8_t fontType, // always =0 ISO_LATIN_1
-			uint8_t fontStyle,
-			uint8_t numberOfMacrosToFollow,
-			const repeat_event_iVtObjectMacro_s *macrosToFollow)
+			uint8_t fontStyle)
 	:vtObjectFontAttributes_c(
 			new iVtObjectFontAttributes_s(
 					ID,
 					fontColour,
 					fontSize,
 					fontType, // always =0 ISO_LATIN_1
-					fontStyle,
-					numberOfMacrosToFollow,
-					macrosToFollow),
+					fontStyle),
 				ai_multitonInst)
 	{
 	}

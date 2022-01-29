@@ -76,8 +76,10 @@ namespace IsoAgLib {
 
 
     iVtObject_c::iVtObjectwMacro_s::iVtObjectwMacro_s(
-    		ObjectID ID)
+    		ObjectID ID,
+			uint8_t size)
     :iVtObject_s(ID)
+    , numberOfMacrosToFollow_size(size)
     , numberOfMacrosToFollow(0)
     , macrosToFollow(nullptr)
     {

@@ -42,7 +42,7 @@ public:
   void init(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst); }
 
-  iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return (iVtObjectArchedBarGraph_s *)&(get_vtObject_a()); }
+  iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return dynamic_cast<iVtObjectArchedBarGraph_s *>(&(get_vtObject_a())); }
 
   vtObjectArchedBarGraph_c();
   ~vtObjectArchedBarGraph_c() {}

@@ -52,6 +52,7 @@ protected:
   };
 
 
+  // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
   struct iVtObjectObject_s : virtual iVtObject_s {
 	uint8_t numberOfObjectsToFollow_size;
     uint8_t numberOfObjectsToFollow;
@@ -62,13 +63,14 @@ protected:
 			uint8_t size = OO_CAPACITY);
   };
 
-
+  // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
   struct iVtObjectwMacro_s : virtual iVtObject_s {
 		uint8_t numberOfMacrosToFollow_size;
 	    uint8_t numberOfMacrosToFollow;
 	    const repeat_event_iVtObjectMacro_s* macrosToFollow;
 	    iVtObjectwMacro_s(
-	    		ObjectID ID = autoID);
+	    		ObjectID ID = autoID,
+				uint8_t size = OO_CAPACITY);
   };
 
 
@@ -92,7 +94,7 @@ protected:
     {}
   };
 
-  struct iVtObjectArchedBarGraph_s : iVtObject_s {
+  struct iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     uint8_t colour;
@@ -107,22 +109,18 @@ protected:
     uint16_t value;
     iVtObject_c* targetValueVariableReference;
     uint16_t targetValue;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
 
 
 
-  struct iVtObjectButton_s : iVtObjectObject_s {
+  struct iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
     uint8_t backgroundColour;
     uint8_t borderColour;
     uint8_t keyCode;
     uint8_t options;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
     iVtObjectButton_s(
     		ObjectID ID = autoID,
     	    uint16_t width = 80,
@@ -130,9 +128,7 @@ protected:
     	    uint8_t backgroundColour = 12,
     	    uint8_t borderColour = 8,
     	    uint8_t keyCode = 251,
-    	    uint8_t options = 0,
-    	    uint8_t numberOfMacrosToFollow = 0,
-    	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr
+    	    uint8_t options = 0
     		)
     : iVtObjectObject_s(ID)
     , width(width)
@@ -141,49 +137,30 @@ protected:
     , borderColour(borderColour)
     , keyCode(keyCode)
     , options(options)
-    , numberOfMacrosToFollow(numberOfMacrosToFollow)
-    , macrosToFollow(macrosToFollow)
     {}
   };
 
 
-  struct iVtObjectContainer_s : iVtObject_s {
+  struct iVtObjectContainer_s : iVtObjectObject_s, iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;
-
-      iVtObjectContainer_s(uint16_t width, uint16_t height, uint8_t hidden, uint8_t numberOfObjectsToFollow,
-                           const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *objectsToFollow,
-                           uint8_t numberOfMacrosToFollow, const repeat_event_iVtObjectMacro_s *macrosToFollow) : width(
-              width), height(height), hidden(hidden), numberOfObjectsToFollow(numberOfObjectsToFollow), objectsToFollow(
-              objectsToFollow), numberOfMacrosToFollow(numberOfMacrosToFollow), macrosToFollow(macrosToFollow) {}
-
-      uint8_t hidden;
-    uint8_t numberOfObjectsToFollow;
-    const repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
+    uint8_t hidden;
   };
 
-  struct iVtObjectDataMask_s : iVtObjectObject_s {
+  struct iVtObjectDataMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
     iVtObjectDataMask_s(
     		ObjectID ID = autoID,
     	    uint8_t backgroundColour = 0,
-    	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr,
-    	    uint8_t numberOfMacrosToFollow = 0,
-    	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr)
+    	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr)
     :iVtObjectObject_s(ID)
     , backgroundColour(backgroundColour)
     , softKeyMask(softKeyMask)
-    , numberOfMacrosToFollow(numberOfMacrosToFollow)
-    , macrosToFollow(macrosToFollow)
     {}
   };
 
-  struct iVtObjectEllipse_s : iVtObject_s {
+  struct iVtObjectEllipse_s : iVtObjectwMacro_s {
     iVtObjectLineAttributes_c* lineAttributes;
     uint16_t width;
     uint16_t height;
@@ -191,40 +168,30 @@ protected:
     uint8_t startAngle;
     uint8_t endAngle;
     iVtObjectFillAttributes_c* fillAttributes;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectFillAttributes_s : iVtObject_s {
+  struct iVtObjectFillAttributes_s : iVtObjectwMacro_s {
     uint8_t fillType;
     uint8_t fillColour;
     iVtObjectPictureGraphic_c* fillPatternObject;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
   };
 
-  struct iVtObjectFontAttributes_s : iVtObject_s {
+  struct iVtObjectFontAttributes_s : iVtObjectwMacro_s {
     uint8_t fontColour;
     uint8_t fontSize;
     uint8_t fontType; // always =0 ISO_LATIN_1
     uint8_t fontStyle;
-    uint8_t numberOfMacrosToFollow;
-    const repeat_event_iVtObjectMacro_s* macrosToFollow;
     explicit iVtObjectFontAttributes_s(
     		ObjectID ID = autoID,
     	    uint8_t fontColour = 0,
     	    uint8_t fontSize = 1,
     	    uint8_t fontType = 0, // always =0 ISO_LATIN_1
-    	    uint8_t fontStyle = 0,
-    	    uint8_t numberOfMacrosToFollow = 0,
-    	    const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr)
+    	    uint8_t fontStyle = 0)
     :iVtObject_s(ID)
     , fontColour(fontColour)
     , fontSize(fontSize)
     , fontType(fontType) // always =0 ISO_LATIN_1
     , fontStyle(fontStyle)
-    , numberOfMacrosToFollow(numberOfMacrosToFollow)
-    , macrosToFollow(macrosToFollow)
     {}
   };
 

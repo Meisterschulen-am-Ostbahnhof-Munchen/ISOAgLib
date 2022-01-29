@@ -37,7 +37,7 @@ public:
   void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
 
 
-  iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a() { return (iVtObjectFontAttributes_s *)&(get_vtObject_a()); }
+  iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a() { return dynamic_cast<iVtObjectFontAttributes_s *>(&(get_vtObject_a())); }
 
   vtObjectFontAttributes_c();
   vtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);

@@ -19,16 +19,12 @@ namespace IsoAgLib {
     		int ai_multitonInst,
 			ObjectID ID,
 			uint8_t backgroundColour,
-			iVtObjectSoftKeyMask_c *softKeyMask,
-			uint8_t numberOfMacrosToFollow,
-			const repeat_event_iVtObjectMacro_s *macrosToFollow)
+			iVtObjectSoftKeyMask_c *softKeyMask)
     : iVtObjectDataMask_c(
     		new iVtObjectDataMask_s(
     				ID,
     				backgroundColour,
-    				softKeyMask,
-    				numberOfMacrosToFollow,
-    				macrosToFollow),
+    				softKeyMask),
 			ai_multitonInst)
     {
 
