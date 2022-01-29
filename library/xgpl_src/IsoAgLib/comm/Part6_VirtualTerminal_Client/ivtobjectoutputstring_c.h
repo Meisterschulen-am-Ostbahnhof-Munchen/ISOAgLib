@@ -56,8 +56,6 @@ public:
 
 
 
-  const iVtObjectOutputString_s& get_vtObjectOutputString_a();
-
   void setValueCopy(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
   }

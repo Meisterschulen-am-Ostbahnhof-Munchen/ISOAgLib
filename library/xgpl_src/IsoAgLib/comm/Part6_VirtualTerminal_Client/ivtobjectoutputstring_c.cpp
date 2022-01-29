@@ -52,6 +52,6 @@ namespace IsoAgLib {
         vtObjectOutputString_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    const iVtObject_c::iVtObjectOutputString_s &iVtObjectOutputString_c::get_vtObjectOutputString_a() { return *vtObjectOutputString_c::get_vtObjectOutputString_a(); }
+
 }
 
