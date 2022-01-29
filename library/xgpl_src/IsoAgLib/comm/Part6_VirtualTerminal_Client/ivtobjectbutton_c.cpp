@@ -118,10 +118,6 @@ namespace IsoAgLib {
 
     bool iVtObjectButton_c::v4disable(bool b_updateObject, bool b_enableReplaceOfCmd) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
 
-    iVtObjectButton_c::iVtObjectButton_c(const iVtObject_c::iVtObjectButton_s *vtObjectButtonSROM, int ai_multitonInst)
-            :vtObjectButton_c(vtObjectButtonSROM , ai_multitonInst)
-    {}
-
     uint16_t iVtObjectButton_c::objectType() { return VT_OBJECT_TYPE_BUTTON; }
 
 

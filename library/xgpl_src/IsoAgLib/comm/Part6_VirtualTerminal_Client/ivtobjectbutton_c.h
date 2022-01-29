@@ -30,7 +30,6 @@ class iVtObjectButton_c : public __IsoAgLib::vtObjectButton_c
 public:
   static uint16_t objectType();
 
-  iVtObjectButton_c(const iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
 
   iVtObjectButton_c(
 		int ai_multitonInst,
