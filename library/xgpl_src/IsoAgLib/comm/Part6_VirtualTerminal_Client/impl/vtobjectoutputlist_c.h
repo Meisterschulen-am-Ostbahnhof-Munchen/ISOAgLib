@@ -38,8 +38,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectOutputList_s* vtObjectOutputListSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectOutputListSROM , ai_multitonInst);}
+  vtObjectOutputList_c(const iVtObjectOutputList_s* vtObjectOutputListSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectOutputListSROM , ai_multitonInst)
+  {}
 
   iVtObjectOutputList_s* get_vtObjectOutputList_a() { return dynamic_cast<iVtObjectOutputList_s *>(&(get_vtObject_a())); }
 
