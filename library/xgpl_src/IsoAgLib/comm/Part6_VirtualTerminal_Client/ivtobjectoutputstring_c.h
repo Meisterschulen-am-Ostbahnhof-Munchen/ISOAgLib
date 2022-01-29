@@ -36,9 +36,6 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
 
 
-  iVtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
-  : __IsoAgLib::vtObjectOutputString_c(vtObjectOutputStringSROM , ai_multitonInst)
-  {}
 
 
 
@@ -54,22 +51,7 @@ public:
   	    uint8_t horizontalJustification = 0,
   	    uint16_t length = 0,
   	    char* value = nullptr /* size length+1 (0-termination intern!) */
-  		)
-  :vtObjectOutputString_c(
-		  new iVtObjectOutputString_s(
-			  	    ID,
-			  	    width,
-			  	    height,
-			  	    backgroundColour,
-			  	    fontAttributes,
-			  	    options,
-			  	    variableReference,
-			  	    horizontalJustification,
-			  	    length,
-			  	    value /* size length+1 (0-termination intern!) */
-				  )
-  	  	  ,ai_multitonInst)
-  {}
+  		);
 
 
 
