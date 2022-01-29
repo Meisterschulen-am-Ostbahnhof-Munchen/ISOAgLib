@@ -78,6 +78,8 @@ public:
   ClientBase( int ai_multitonInst = 0 ) : mi_multitonInst(ai_multitonInst){};
   ClientBase( const ClientBase& acrc_src )
     : mi_multitonInst(acrc_src.mi_multitonInst) { };
+
+  virtual ~ClientBase() = default;
   int getMultitonInst() const { return mi_multitonInst;};
   void setMultitonInst( int ai_instance ) { mi_multitonInst = ai_instance;};
 protected:
