@@ -150,8 +150,8 @@ UploadPoolState_c::processMsgVtToEcu( const CanPkgExt_c& pkg )
 void
 UploadPoolState_c::initPool()
 {
-	IsoAgLib::iVtClientObjectPool_c *pool = getpPool();
-	pool->initAllObjectsOnce(m_connection.getMultitonInst());
+	IsoAgLib::iVtClientObjectPool_c& pool = getPool();
+	pool.initAllObjectsOnce(m_connection.getMultitonInst());
 
   // now let all clients know which client they belong to
   const uint8_t clientId = m_connection.getClientId();
