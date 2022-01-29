@@ -293,6 +293,14 @@ protected:
     uint8_t lineColour;
     uint8_t lineWidth;
     uint16_t lineArt;
+    iVtObjectLineAttributes_s(
+    		uint8_t lineColour,
+			uint8_t lineWidth,
+			uint16_t lineArt)
+    : lineColour(lineColour)
+    , lineWidth(lineWidth)
+    , lineArt(lineArt)
+    {}
   };
 
   struct iVtObjectLine_s : iVtObjectwMacro_s {
@@ -300,6 +308,16 @@ protected:
     uint16_t width;
     uint16_t height;
     uint8_t lineDirection;
+    iVtObjectLine_s(
+    		iVtObjectLineAttributes_c *lineAttributes,
+			uint16_t width,
+			uint16_t height,
+			uint8_t lineDirection)
+    : lineAttributes(lineAttributes)
+    , width(width)
+    , height(height)
+    , lineDirection(lineDirection)
+    {}
   };
 
   struct iVtObjectMacro_s : iVtObject_s {
