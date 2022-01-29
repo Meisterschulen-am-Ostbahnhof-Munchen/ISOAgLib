@@ -68,7 +68,6 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectInputAttributes_c::vtObjectInputAttributes_c() {}
 
 
 uint32_t

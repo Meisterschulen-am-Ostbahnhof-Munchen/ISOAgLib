@@ -105,7 +105,6 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectInputString_c::vtObjectInputString_c() {}
 
 
 uint32_t

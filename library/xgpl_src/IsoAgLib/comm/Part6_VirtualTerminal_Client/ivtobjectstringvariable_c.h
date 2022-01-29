@@ -36,11 +36,10 @@ class iVtObjectStringVariable_c : public __IsoAgLib::vtObjectStringVariable_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_STRING_VARIABLE; }
 
-  iVtObjectStringVariable_c();
 
-  void init(const iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst) {
-    vtObjectStringVariable_c::init (vtObjectStringVariableSROM , ai_multitonInst);
-  }
+  iVtObjectStringVariable_c(const iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst)
+  :vtObjectStringVariable_c(vtObjectStringVariableSROM , ai_multitonInst)
+  {}
 
   const iVtObjectStringVariable_s& get_vtObjectStringVariable_a() {
     return *vtObjectStringVariable_c::get_vtObjectStringVariable_a ();

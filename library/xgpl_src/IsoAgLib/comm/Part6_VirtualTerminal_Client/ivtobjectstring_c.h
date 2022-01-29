@@ -28,7 +28,6 @@ namespace IsoAgLib {
 class iVtObjectString_c : public __IsoAgLib::vtObject_c
 {
 public:
-  iVtObjectString_c();
   iVtObjectString_c(const iVtObjectString_s* vtObjectOutputSROM , int ai_multitonInst);
   ~iVtObjectString_c();
 

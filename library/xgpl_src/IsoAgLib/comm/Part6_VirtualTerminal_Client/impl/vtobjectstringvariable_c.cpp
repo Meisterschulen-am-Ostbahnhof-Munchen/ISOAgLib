@@ -24,12 +24,6 @@
 
 #include "vtclient_c.h"
 
-namespace IsoAgLib {
-  // implement here a normal constructor, as the compiler dislikes inlining of that simple constructor
-  // direct in scope of iVtObjectStringVariable_c
-  iVtObjectStringVariable_c::iVtObjectStringVariable_c() : vtObjectStringVariable_c() {}
-}
-
 
 namespace __IsoAgLib {
 
@@ -61,8 +55,6 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
   return curBytes;
 }
 
-
-vtObjectStringVariable_c::vtObjectStringVariable_c() {}
 
 
 uint32_t
