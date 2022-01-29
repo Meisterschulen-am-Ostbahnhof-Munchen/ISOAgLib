@@ -35,7 +35,6 @@ public:
   :vtObjectRectangle_c(vtObjectRectangleSROM , ai_multitonInst)
   {}
 
-  const iVtObjectRectangle_s& get_vtObjectRectangle_a() { return *vtObjectRectangle_c::get_vtObjectRectangle_a(); }
 
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);

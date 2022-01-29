@@ -41,9 +41,7 @@ public:
   :vtObjectStringVariable_c(vtObjectStringVariableSROM , ai_multitonInst)
   {}
 
-  const iVtObjectStringVariable_s& get_vtObjectStringVariable_a() {
-    return *vtObjectStringVariable_c::get_vtObjectStringVariable_a ();
-  }
+
 
   void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);

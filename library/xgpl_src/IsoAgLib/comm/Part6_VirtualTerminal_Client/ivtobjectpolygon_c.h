@@ -35,7 +35,6 @@ public:
   :vtObjectPolygon_c(vtObjectPolygonSROM , ai_multitonInst)
   {}
 
-  const iVtObjectPolygon_s& get_vtObjectPolygon_a() { return *vtObjectPolygon_c::get_vtObjectPolygon_a(); }
 
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
