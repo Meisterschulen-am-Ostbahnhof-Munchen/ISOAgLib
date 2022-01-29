@@ -31,9 +31,9 @@ class iVtObjectEllipse_c : public __IsoAgLib::vtObjectEllipse_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_ELLIPSE; }
 
-  void init(const iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst) {
-    vtObjectEllipse_c::init (vtObjectellipseSROM , ai_multitonInst);
-  }
+  iVtObjectEllipse_c(const iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst)
+  :vtObjectEllipse_c(vtObjectellipseSROM , ai_multitonInst)
+  {}
 
   const iVtObjectEllipse_s& get_vtObjectEllipse_a() { return *vtObjectEllipse_c::get_vtObjectEllipse_a(); }
 

@@ -38,8 +38,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectellipseSROM , ai_multitonInst); }
+  vtObjectEllipse_c(const iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectellipseSROM , ai_multitonInst)
+  {}
 
   iVtObjectEllipse_s* get_vtObjectEllipse_a() { return dynamic_cast<iVtObjectEllipse_s *>(&(get_vtObject_a())); }
 
