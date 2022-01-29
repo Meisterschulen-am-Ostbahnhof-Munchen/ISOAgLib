@@ -28,7 +28,6 @@ namespace IsoAgLib {
 class iVtObjectFontAttributes_c : public __IsoAgLib::vtObjectFontAttributes_c
 {
 public:
-  iVtObjectFontAttributes_c();
   iVtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
   iVtObjectFontAttributes_c(
 		int ai_multitonInst,
@@ -42,7 +41,6 @@ public:
 
   virtual ~iVtObjectFontAttributes_c();
 
-  void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
 
 
   const iVtObjectFontAttributes_s& get_vtObjectFontAttributes_a() { return *vtObjectFontAttributes_c::get_vtObjectFontAttributes_a(); };

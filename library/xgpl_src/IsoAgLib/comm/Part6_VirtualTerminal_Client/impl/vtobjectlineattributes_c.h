@@ -34,8 +34,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectLineAttributesSROM , ai_multitonInst); }
+  vtObjectLineAttributes_c(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectLineAttributesSROM , ai_multitonInst)
+  {}
 
   iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a() { return dynamic_cast<iVtObjectLineAttributes_s *>(&(get_vtObject_a())); }
 

@@ -62,10 +62,6 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectFontAttributes_c::vtObjectFontAttributes_c()
-: mui8_fontSizeScaled( 0xFF ) // set mui8_fontSizeScaled to "not yet calculated"
-{}
-
 vtObjectFontAttributes_c::vtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObject_c , int ai_multitonInst)
 : __IsoAgLib::vtObject_c((iVtObject_s*) vtObject_c, ai_multitonInst)
 , mui8_fontSizeScaled( 0xFF ) // set mui8_fontSizeScaled to "not yet calculated"

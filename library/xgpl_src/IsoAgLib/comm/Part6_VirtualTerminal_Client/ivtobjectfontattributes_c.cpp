@@ -10,9 +10,6 @@
 namespace IsoAgLib {
 	// implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
 	// cconstructor/functions direct in scope of iVtObjectFontAttributes_c
-	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c() :
-			vtObjectFontAttributes_c() {
-	}
 
 	iVtObjectFontAttributes_c::~iVtObjectFontAttributes_c() {
 	}
@@ -26,10 +23,6 @@ namespace IsoAgLib {
 
 	}
 
-	void iVtObjectFontAttributes_c::init(const iVtObjectFontAttributes_s *vtObjectFontAttributesSROM, int ai_multitonInst) {
-		vtObjectFontAttributes_c::init(vtObjectFontAttributesSROM, ai_multitonInst);
-	}
-	;
 
 	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(
 			int ai_multitonInst,
