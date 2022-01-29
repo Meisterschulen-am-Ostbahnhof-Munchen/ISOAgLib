@@ -31,9 +31,9 @@ class iVtObjectObjectPointer_c : public __IsoAgLib::vtObjectObjectPointer_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_OBJECT_POINTER; }
 
-  void init(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst) {
-    vtObjectObjectPointer_c::init (vtObjectObjectPointerSROM , ai_multitonInst);
-  }
+  iVtObjectObjectPointer_c(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst)
+  :vtObjectObjectPointer_c(vtObjectObjectPointerSROM , ai_multitonInst)
+  {}
 
   const iVtObjectObjectPointer_s& get_vtObjectObjectPointer_a() { return *vtObjectObjectPointer_c::get_vtObjectObjectPointer_a(); }
 

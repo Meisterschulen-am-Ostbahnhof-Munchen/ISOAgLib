@@ -31,9 +31,9 @@ class iVtObjectKey_c : public __IsoAgLib::vtObjectKey_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_KEY; }
 
-  void init(const iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst) {
-    vtObjectKey_c::init (vtObjectKeySROM , ai_multitonInst);
-  }
+  iVtObjectKey_c(const iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst)
+  :vtObjectKey_c(vtObjectKeySROM , ai_multitonInst)
+  {}
 
   const iVtObjectKey_s& get_vtObjectKey_a() { return *vtObjectKey_c::get_vtObjectKey_a(); }
 

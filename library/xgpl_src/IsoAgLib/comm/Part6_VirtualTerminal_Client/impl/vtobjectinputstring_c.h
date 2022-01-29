@@ -39,8 +39,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectInputStringSROM , ai_multitonInst); }
+  vtObjectInputString_c(const iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst)
+  :iVtObjectString_c((iVtObjectString_s*)vtObjectInputStringSROM , ai_multitonInst)
+  {}
 
   iVtObjectInputString_s* get_vtObjectInputString_a() { return dynamic_cast<iVtObjectInputString_s *>(&(get_vtObject_a())); }
 

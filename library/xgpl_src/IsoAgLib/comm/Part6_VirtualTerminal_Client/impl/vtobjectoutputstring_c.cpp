@@ -94,11 +94,10 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectOutputString_c::vtObjectOutputString_c() {}
 vtObjectOutputString_c::~vtObjectOutputString_c() {}
 
 vtObjectOutputString_c::vtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
-: iVtObjectString_c(vtObjectOutputStringSROM , ai_multitonInst)
+: iVtObjectString_c((iVtObjectString_s*)vtObjectOutputStringSROM , ai_multitonInst)
 {}
 
 

@@ -31,9 +31,9 @@ class iVtObjectInputString_c : public __IsoAgLib::vtObjectInputString_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_STRING; }
 
-  void init(const iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst) {
-    vtObjectInputString_c::init (vtObjectInputStringSROM , ai_multitonInst);
-  }
+  iVtObjectInputString_c(const iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst)
+  :vtObjectInputString_c(vtObjectInputStringSROM , ai_multitonInst)
+  {}
 
   const iVtObjectInputString_s& get_vtObjectInputString_a() { return *vtObjectInputString_c::get_vtObjectInputString_a(); }
 

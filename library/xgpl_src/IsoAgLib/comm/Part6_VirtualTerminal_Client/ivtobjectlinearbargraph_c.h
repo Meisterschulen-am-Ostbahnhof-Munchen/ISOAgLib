@@ -31,9 +31,9 @@ class iVtObjectLinearBarGraph_c : public __IsoAgLib::vtObjectLinearBarGraph_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_LINEAR_BAR_GRAPH; }
 
-  void init(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst) {
-    vtObjectLinearBarGraph_c::init (vtObjectLinearBarGraphSROM , ai_multitonInst);
-  }
+  iVtObjectLinearBarGraph_c(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst)
+  :vtObjectLinearBarGraph_c(vtObjectLinearBarGraphSROM , ai_multitonInst)
+  {}
 
   const iVtObjectLinearBarGraph_s& get_vtObjectLinearBarGraph_a() { return *vtObjectLinearBarGraph_c::get_vtObjectLinearBarGraph_a(); }
 

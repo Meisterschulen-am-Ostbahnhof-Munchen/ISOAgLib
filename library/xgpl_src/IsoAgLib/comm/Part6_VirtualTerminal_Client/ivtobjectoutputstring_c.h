@@ -31,7 +31,6 @@ namespace IsoAgLib {
 class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 {
 public:
-  iVtObjectOutputString_c(){}
   ~iVtObjectOutputString_c(){}
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
@@ -76,10 +75,6 @@ public:
 
 
 
-  void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
-  {
-     vtObjectOutputString_c::init (vtObjectOutputStringSROM , ai_multitonInst);
-   }
 
 
   const iVtObjectOutputString_s& get_vtObjectOutputString_a() { return *vtObjectOutputString_c::get_vtObjectOutputString_a(); }

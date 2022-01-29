@@ -39,8 +39,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectLinearBarGraphSROM , ai_multitonInst); }
+  vtObjectLinearBarGraph_c(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectLinearBarGraphSROM , ai_multitonInst)
+  {}
 
   iVtObjectLinearBarGraph_s* get_vtObjectLinearBarGraph_a() { return dynamic_cast<iVtObjectLinearBarGraph_s *>(&(get_vtObject_a())); }
 

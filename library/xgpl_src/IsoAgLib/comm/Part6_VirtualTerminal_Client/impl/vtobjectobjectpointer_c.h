@@ -37,8 +37,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectObjectPointerSROM , ai_multitonInst);}
+  vtObjectObjectPointer_c(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectObjectPointerSROM , ai_multitonInst)
+  {}
 
   iVtObjectObjectPointer_s* get_vtObjectObjectPointer_a() { return (iVtObjectObjectPointer_s *)&(get_vtObject_a()); }
 

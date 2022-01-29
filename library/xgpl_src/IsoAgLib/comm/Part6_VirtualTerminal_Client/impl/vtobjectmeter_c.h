@@ -39,8 +39,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectMeter_s* vtObjectMeterSROM , int ai_multitonInst)
-  { vtObject_c::init ((iVtObject_s*) vtObjectMeterSROM , ai_multitonInst); }
+  vtObjectMeter_c(const iVtObjectMeter_s* vtObjectMeterSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectMeterSROM , ai_multitonInst)
+  {}
 
   iVtObjectMeter_s* get_vtObjectMeter_a() { return dynamic_cast<iVtObjectMeter_s *>(&(get_vtObject_a())); }
 
