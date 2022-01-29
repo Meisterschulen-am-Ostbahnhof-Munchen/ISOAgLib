@@ -114,6 +114,7 @@ namespace __IsoAgLib {
     void processMsgVtToEcu( Stream_c &stream );
 
     IsoAgLib::iVtClientObjectPool_c& getPool() const { return m_pool; }
+    IsoAgLib::iVtClientObjectPool_c *getpPool() const { return &m_pool; }
 
     void notifyOnVtsLanguagePgn();
     void finalizeUploading();
