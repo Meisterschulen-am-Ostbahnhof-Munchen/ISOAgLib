@@ -295,18 +295,28 @@ protected:
   };
 
   struct iVtObjectInputBoolean_s : iVtObjectwMacro_s {
-      iVtObjectInputBoolean_s(uint8_t backgroundColour, uint16_t width, iVtObject_c *foregroundColour,
-                              iVtObject_c *variableReference, uint8_t value, uint8_t enabled) : backgroundColour(
-              backgroundColour), width(width), foregroundColour(foregroundColour), variableReference(variableReference),
-                                                                                                value(value),
-                                                                                                enabled(enabled) {}
-
-      uint8_t backgroundColour;
+    uint8_t backgroundColour;
     uint16_t width;
     iVtObject_c* foregroundColour;
     iVtObject_c* variableReference;
     uint8_t value;
     uint8_t enabled;
+    iVtObjectInputBoolean_s(
+    		ObjectID ID = autoID,
+    		uint8_t backgroundColour = 1,
+			uint16_t width = 20,
+			iVtObject_c *foregroundColour = nullptr,
+			iVtObject_c *variableReference = nullptr,
+			uint8_t value = 0,
+			uint8_t enabled = 1)
+    : iVtObjectwMacro_s(ID)
+    , backgroundColour(backgroundColour)
+    , width(width)
+    , foregroundColour(foregroundColour)
+    , variableReference(variableReference)
+    , value(value)
+    , enabled(enabled)
+    {}
   };
 
   struct iVtObjectInputList_s : iVtObjectObject_s, iVtObjectwMacro_s {
