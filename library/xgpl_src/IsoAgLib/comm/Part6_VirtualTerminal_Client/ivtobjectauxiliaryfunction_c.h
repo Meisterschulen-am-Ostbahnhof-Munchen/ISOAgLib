@@ -33,7 +33,9 @@ public:
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_FUNCTION_1; }
 
-  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryFunctionSROM , ai_multitonInst); };
+  iVtObjectAuxiliaryFunction_c(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst)
+  :vtObjectAuxiliaryFunction_c(vtObjectAuxiliaryFunctionSROM , ai_multitonInst)
+  {}
 
   const iVtObjectAuxiliaryFunction_s& get_vtObjectAuxiliaryFunction_a() { return *vtObjectAuxiliaryFunction_c::get_vtObjectAuxiliaryFunction_a(); };
 

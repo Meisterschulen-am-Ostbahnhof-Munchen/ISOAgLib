@@ -29,14 +29,13 @@ namespace IsoAgLib {
 class iVtObjectContainer_c : public __IsoAgLib::vtObjectContainer_c
 {
 public:
-  iVtObjectContainer_c();
   ~iVtObjectContainer_c();
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_CONTAINER; }
 
-  void init(const iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst) {
-    vtObjectContainer_c::init (vtObjectContainer_sROM , ai_multitonInst);
-  }
+  iVtObjectContainer_c(const iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst)
+  :vtObjectContainer_c(vtObjectContainer_sROM , ai_multitonInst)
+  {}
 
   const iVtObjectContainer_s& get_vtObjectContainer_a() { return *vtObjectContainer_c::get_vtObjectContainer_a(); }
 

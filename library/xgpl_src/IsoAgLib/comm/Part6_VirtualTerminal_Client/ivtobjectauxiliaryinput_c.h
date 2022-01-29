@@ -31,7 +31,9 @@ class iVtObjectAuxiliaryInput_c : public __IsoAgLib::vtObjectAuxiliaryInput_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_INPUT_1; }
 
-  void init(const iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM , int ai_multitonInst) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryInputSROM , ai_multitonInst); }
+  iVtObjectAuxiliaryInput_c(const iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM , int ai_multitonInst)
+  :vtObjectAuxiliaryInput_c(vtObjectAuxiliaryInputSROM , ai_multitonInst)
+  {}
 
   const iVtObjectAuxiliaryInput_s& get_vtObjectAuxiliaryInput_a() { return *vtObjectAuxiliaryInput_c::get_vtObjectAuxiliaryInput_a(); }
 
