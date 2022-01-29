@@ -53,7 +53,7 @@ public:
     @param ai32_pos uint8_t position in data string to start
     @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
   */
-  void setDataPart(const HUGE_MEM uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize = 7);
+  void setDataPart(const uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize = 7);
 
   /**
     set the 7 uint8_t data part of transfer message
@@ -70,7 +70,7 @@ public:
     @param ai32_pos uint8_t position in data string to start
     @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
    */
-  void setFastPacketDataPart(const HUGE_MEM uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize = 7, uint8_t aui8_offset = 0);
+  void setFastPacketDataPart(const uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize = 7, uint8_t aui8_offset = 0);
 
   /**
     set the 7 uint8_t data part of transfer message

@@ -112,7 +112,7 @@ public:
     Send an ISO 11738 (E)TP targeted multipacket message using a given data-buffer
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler);
+  bool sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler);
 
 
   enum SendResult
@@ -125,13 +125,13 @@ public:
   /**
     Send an ISO 11738 (E)TP targeted multipacket message using a given data-buffer
   */
-  SendResult sendIsoTargetDetailed(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler);
+  SendResult sendIsoTargetDetailed(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler);
 
   /**
     Send an ISO 11783 (E)TP broadcast multipacket message using a given data-buffer
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoBroadcast (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
+  bool sendIsoBroadcast (const IsoName_c& acrc_isoNameSender, const uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
     { return sendIntern (acrc_isoNameSender, IsoName_c(), rhpb_data, aui16_dataSize, ai32_pgn, NULL /* NOT "yet" supported */, SendStream_c::IsoTPbroadcast, apc_multiSendEventHandler); }
 
   /**
@@ -153,7 +153,7 @@ public:
                    retrieve of data to send.
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoFastPacket (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
+  bool sendIsoFastPacket (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, uint8_t* rhpb_data, uint16_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
     { return sendIntern (acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, NULL, SendStream_c::NmeaFastPacket, apc_multiSendEventHandler); }
 
   /**
@@ -167,7 +167,7 @@ public:
     Send a FastPacket broadcast multipacket message using a given data-buffer
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
+  bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
     { return sendIntern (acrc_isoNameSender, IsoName_c(), rhpb_data, aui16_dataSize, ai32_pgn, NULL, SendStream_c::NmeaFastPacket, apc_multiSendEventHandler); }
 
   /**
@@ -263,7 +263,7 @@ private:
 
   SendResult sendInternDetailed(const IsoName_c& sender,
                                 const IsoName_c& receiver,
-                                const HUGE_MEM uint8_t* data,
+                                const uint8_t* data,
                                 uint32_t dataSize,
                                 int32_t pgn,
                                 IsoAgLib::iMultiSendStreamer_c* mss,
@@ -272,7 +272,7 @@ private:
 
   inline bool sendIntern( const IsoName_c& sender,
                           const IsoName_c& receiver,
-                          const HUGE_MEM uint8_t* data,
+                          const uint8_t* data,
                           uint32_t dataSize,
                           int32_t pgn,
                           IsoAgLib::iMultiSendStreamer_c* mss,
@@ -331,7 +331,7 @@ MultiSend_c::sendIsoTarget(const IsoName_c& acrc_isoNameSender, const IsoName_c&
 
 inline
 bool 
-MultiSend_c::sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
+MultiSend_c::sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
   return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, NULL, protocolTypeByPacketSize(aui32_dataSize),apc_multiSendEventHandler);
 }
@@ -339,7 +339,7 @@ MultiSend_c::sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c
 
 inline
 MultiSend_c::SendResult
-MultiSend_c::sendIsoTargetDetailed(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
+MultiSend_c::sendIsoTargetDetailed(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
   return sendInternDetailed(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, NULL, protocolTypeByPacketSize(aui32_dataSize), apc_multiSendEventHandler);
 }
@@ -347,7 +347,7 @@ MultiSend_c::sendIsoTargetDetailed(const IsoName_c& acrc_isoNameSender, const Is
 
 inline
 bool
-MultiSend_c::sendIntern(const IsoName_c& isoNameSender, const IsoName_c& isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, SendStream_c::msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
+MultiSend_c::sendIntern(const IsoName_c& isoNameSender, const IsoName_c& isoNameReceiver, const uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, SendStream_c::msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
     switch (sendInternDetailed(isoNameSender, isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, apc_mss, ren_msgType, apc_multiSendEventHandler))
     {

@@ -90,7 +90,7 @@ public:
   virtual bool processMsgRequestPGN (uint32_t, IsoItem_c*, IsoItem_c*, ecutime_t );
 
 private:
-  void sendSinglePacket (const HUGE_MEM uint8_t* data, int32_t pgn);
+  void sendSinglePacket (const uint8_t* data, int32_t pgn);
 
 private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c

@@ -39,7 +39,7 @@ vtObjectColourMap_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectColourMap_s
     MACRO_streamLocalVars;
 
-    HUGE_MEM uint8_t const * colourMapArray = vtObjectColourMap_a->colourMapArray;
+    uint8_t const * colourMapArray = vtObjectColourMap_a->colourMapArray;
 
     uint16_t const numOfColourIdxToFollow = vtObjectColourMap_a->numOfColourIdxToFollow;
 

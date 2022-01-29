@@ -405,11 +405,11 @@ protected:
     uint8_t options;
     uint8_t transparencyColour;
     uint32_t numberOfBytesInRawData0;
-    const HUGE_MEM uint8_t* rawData0;
+    const uint8_t* rawData0;
     uint32_t numberOfBytesInRawData1;
-    const HUGE_MEM uint8_t* rawData1;
+    const uint8_t* rawData1;
     uint32_t numberOfBytesInRawData2;
-    const HUGE_MEM uint8_t* rawData2;
+    const uint8_t* rawData2;
     uint8_t numberOfFixedBitmapsToFollow;
     const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s* fixedBitmapsToFollow;
     uint8_t numberOfMacrosToFollow;
@@ -418,7 +418,7 @@ protected:
 
   struct iVtObjectColourMap_s : iVtObject_s {
     uint16_t numOfColourIdxToFollow;
-    const HUGE_MEM uint8_t* colourMapArray;
+    const uint8_t* colourMapArray;
   };
 
   struct iVtObjectPolygon_s : iVtObjectwMacro_s {

@@ -172,7 +172,7 @@ struct repeat_vtLanguage_s {
 };
 
 struct repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s {
-  const HUGE_MEM uint8_t* rawData;
+  const uint8_t* rawData;
   uint32_t numberOfBytesInRawData;
   uint16_t actualWidth;
   uint16_t actualHeight;

@@ -49,13 +49,13 @@ public:
     vtObjectPictureGraphic_c::setTransparencyColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setRawData0 (HUGE_MEM uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF) {
+  void setRawData0 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF) {
     vtObjectPictureGraphic_c::setRawData0 (newValue, aui32_size, ab_rle, aui16_actWidth, aui16_actHeight, aui16_width);
   }
-  void setRawData1 (HUGE_MEM uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF) {
+  void setRawData1 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF) {
     vtObjectPictureGraphic_c::setRawData1 (newValue, aui32_size, ab_rle, aui16_actWidth, aui16_actHeight, aui16_width);
   }
-  void setRawData2 (HUGE_MEM uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF) {
+  void setRawData2 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF) {
     vtObjectPictureGraphic_c::setRawData2 (newValue, aui32_size, ab_rle, aui16_actWidth, aui16_actHeight, aui16_width);
   }
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

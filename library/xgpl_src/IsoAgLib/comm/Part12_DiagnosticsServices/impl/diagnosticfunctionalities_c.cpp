@@ -229,7 +229,7 @@ DiagnosticFunctionalities_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
 
 
 void
-DiagnosticFunctionalities_c::sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_pgn)
+DiagnosticFunctionalities_c::sendSinglePacket (const uint8_t* rhpb_data, int32_t ai32_pgn)
 {
   CanPkgExt_c pkg;
   pkg.setIsoPri (6);

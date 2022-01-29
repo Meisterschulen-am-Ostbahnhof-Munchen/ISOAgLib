@@ -535,7 +535,7 @@ DiagnosticPgnHandler_c::setCertificationData(
 }
 
 void
-DiagnosticPgnHandler_c::sendSinglePacket (const HUGE_MEM uint8_t* data, int32_t pgn)
+DiagnosticPgnHandler_c::sendSinglePacket (const uint8_t* data, int32_t pgn)
 {
   CanPkgExt_c pkg;
   pkg.setIsoPri( 6 );

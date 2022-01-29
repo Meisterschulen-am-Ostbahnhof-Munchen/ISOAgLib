@@ -35,10 +35,10 @@ static const uint8_t paddingDataArr[] = {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF
   @param ai32_pos uint8_t position in data string to start
   @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7) {Anyway MAX 7 bytes!!}
 */
-void MultiSendPkg_c::setDataPart(const HUGE_MEM uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize)
+void MultiSendPkg_c::setDataPart(const uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize)
 {
   #ifdef USE_HUGE_MEM
-  const HUGE_MEM uint8_t* pb_source = apb_source + ai32_pos;
+  const uint8_t* pb_source = apb_source + ai32_pos;
   // fist assign is performed with index:=1, so that last assign should be performed with
   // ind == ab_partSize (e.g. ab_partSize:=7 ==> last written index:=7 == Byt8 of CanPkg_c)
   for ( uint8_t ind = 1; ind <= ab_partSize; ind++ )
@@ -92,10 +92,10 @@ void MultiSendPkg_c::setDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSou
   @param ai32_pos uint8_t position in data string to start
   @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7) {Anyway MAX 7 bytes!!}
  */
-void MultiSendPkg_c::setFastPacketDataPart(const HUGE_MEM uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize, uint8_t aui8_offset)
+void MultiSendPkg_c::setFastPacketDataPart(const uint8_t* apb_source, int32_t ai32_pos, uint8_t ab_partSize, uint8_t aui8_offset)
 {
 #ifdef USE_HUGE_MEM
-  const HUGE_MEM uint8_t* pb_source = apb_source + ai32_pos;
+  const uint8_t* pb_source = apb_source + ai32_pos;
   // examples:
   // ab_partSize:=7, aui8_offset:=1 ==> cui8_endCondition:=8
   // ==> first assign should match target byte index aui8_offset:=1

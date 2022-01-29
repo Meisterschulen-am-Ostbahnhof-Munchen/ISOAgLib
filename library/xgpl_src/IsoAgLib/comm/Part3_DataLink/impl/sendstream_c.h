@@ -93,7 +93,7 @@ public:
   */
   void init (const IsoName_c& acrc_isoNameSender,
              const IsoName_c& acrc_isoNameReceiver,
-             const HUGE_MEM uint8_t* rhpb_data,
+             const uint8_t* rhpb_data,
              uint32_t aui32_dataSize,
              uint32_t aui32_pgn,
              IsoAgLib::iMultiSendStreamer_c* apc_mss,
@@ -197,7 +197,7 @@ private:
   uint32_t mui32_dataSize;
 
   /** pointer to the data */
-  const HUGE_MEM uint8_t* mhpbui8_data;
+  const uint8_t* mhpbui8_data;
 
   sendState_t men_sendState;
 

@@ -57,7 +57,7 @@ public:
 
   /// The following modification functions will only take affect on updating the object pool!
   /// USE THEM WITH CARE!!!
-  void setRawData0 (HUGE_MEM uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF)
+  void setRawData0 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF)
   { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
     saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData0),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
     saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData0), sizeof(iVtObjectPictureGraphic_s), aui32_size);
@@ -68,7 +68,7 @@ public:
     if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
   }
 
-  void setRawData1 (HUGE_MEM uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF)
+  void setRawData1 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF)
   { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
     saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData1),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
     saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData1), sizeof(iVtObjectPictureGraphic_s), aui32_size);
@@ -79,7 +79,7 @@ public:
     if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
   }
 
-  void setRawData2 (HUGE_MEM uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF)
+  void setRawData2 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF)
   { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
     saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData2),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
     saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData2), sizeof(iVtObjectPictureGraphic_s), aui32_size);

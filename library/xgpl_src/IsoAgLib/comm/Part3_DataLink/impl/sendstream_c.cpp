@@ -48,7 +48,7 @@ static const uint8_t scui8_CM_ConnAbort = 255;
 namespace __IsoAgLib {
 
 void
-SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
+SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const uint8_t* rhpb_data, uint32_t aui32_dataSize, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
   mui32_pgn = aui32_pgn;
   if ((mui32_pgn & 0x0FF00LU) < 0x0F000LU) mui32_pgn &= 0x3FF00LU;
