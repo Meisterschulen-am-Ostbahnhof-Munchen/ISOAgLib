@@ -69,4 +69,39 @@ uint8_t iVtClientObjectPool_c::convertColourDefault(
   }
 }
 
+    iVtObject_c *const *const *iVtClientObjectPool_c::getIVtObjects() const { return iVtObjects->all_items; }
+
+    uint16_t iVtClientObjectPool_c::getNumObjects() const { return iVtObjects->Count(); }
+
+    uint16_t iVtClientObjectPool_c::getNumObjectsLang() const { return 0; }
+
+    iVtClientObjectPool_c::ObjectPoolVersion_en iVtClientObjectPool_c::getVersion() const { return version; }
+
+    void iVtClientObjectPool_c::overrideVersion(iVtClientObjectPool_c::ObjectPoolVersion_en override) { version = override; }
+
+    uint16_t iVtClientObjectPool_c::getDimension() const { return dimension; }
+
+    uint16_t iVtClientObjectPool_c::getSkWidth() const { return skWidth; }
+
+    uint16_t iVtClientObjectPool_c::getSkHeight() const { return skHeight; }
+
+    uint8_t iVtClientObjectPool_c::getNumLang() const { return 0; }
+
+    bool iVtClientObjectPool_c::multiLanguage() const { return getNumLang() > 0; }
+
+    void iVtClientObjectPool_c::Append(iVtObject_c *const c) {iVtObjects->Append(c);}
+
+    iVtObjectWorkingSet_c &iVtClientObjectPool_c::getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects->all_items); }
+
+    iVtClientObjectPool_c::iVtClientObjectPool_c(iVtClientObjectPool_c::ObjectPoolSettings_s a_objectPoolSettings)
+            : iVtObjects (new iVtObject_cList())
+            , version(a_objectPoolSettings.version)
+            , dimension (a_objectPoolSettings.dimension)
+            , skWidth (a_objectPoolSettings.skWidth)
+            , skHeight (a_objectPoolSettings.skHeight)
+            , b_initAllObjects (false)
+    {
+
+    }
+
 }

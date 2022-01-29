@@ -326,16 +326,7 @@ public:
   */
   virtual void initAllObjectsOnce(int ai_multitonInst)=0;
 
-  iVtClientObjectPool_c(ObjectPoolSettings_s a_objectPoolSettings)
-    : iVtObjects (new iVtObject_cList())
-    , version(a_objectPoolSettings.version)
-    , dimension (a_objectPoolSettings.dimension)
-    , skWidth (a_objectPoolSettings.skWidth)
-    , skHeight (a_objectPoolSettings.skHeight)
-    , b_initAllObjects (false)
-  {
-
-  };
+  iVtClientObjectPool_c(ObjectPoolSettings_s a_objectPoolSettings);;
 
 
    virtual ~iVtClientObjectPool_c() {}
@@ -406,23 +397,23 @@ protected:
   bool b_initAllObjects;
 
 public:
-  iVtObject_c* const HUGE_MEM* const*
-                        getIVtObjects()     const { return iVtObjects->all_items; }
-  uint16_t              getNumObjects()     const { return iVtObjects->Count(); }
-  uint16_t              getNumObjectsLang() const { return 0; } //TODO
-  ObjectPoolVersion_en  getVersion()        const { return version; }
+  iVtObject_c* const * const*
+                        getIVtObjects()     const;
+  uint16_t              getNumObjects()     const;
+  uint16_t              getNumObjectsLang() const; //TODO
+  ObjectPoolVersion_en  getVersion()        const;
   // method overrideVersion is only for special proprietary use.
-  void overrideVersion(ObjectPoolVersion_en override) { version = override; }
-  uint16_t              getDimension()      const { return dimension; }
-  uint16_t              getSkWidth()        const { return skWidth; }
-  uint16_t              getSkHeight()       const { return skHeight; }
-  uint8_t               getNumLang()        const { return 0; } //TODO
-  bool                  multiLanguage()     const { return getNumLang() > 0; }
-  void                  Append(iVtObject_c* const c) {iVtObjects->Append(c);}	//TODO !! make this working for Multi-Language as well !!!
+  void overrideVersion(ObjectPoolVersion_en override);
+  uint16_t              getDimension()      const;
+  uint16_t              getSkWidth()        const;
+  uint16_t              getSkHeight()       const;
+  uint8_t               getNumLang()        const; //TODO
+  bool                  multiLanguage()     const;
+  void                  Append(iVtObject_c* const c);	//TODO !! make this working for Multi-Language as well !!!
 
 
   iVtObjectWorkingSet_c&
-  getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects->all_items); }
+  getWorkingSetObject() const;
 };
 
 } // IsoAgLib
