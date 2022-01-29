@@ -38,5 +38,21 @@ namespace IsoAgLib {
             )
             ,ai_multitonInst)
     {}
+
+    uint16_t iVtObjectOutputString_c::objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
+
+    uint16_t iVtObjectOutputString_c::getObjectType() const { return objectType(); }
+
+    void iVtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject,
+                                          bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    void iVtObjectOutputString_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject,
+                                                             bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    const iVtObject_c::iVtObjectOutputString_s &iVtObjectOutputString_c::get_vtObjectOutputString_a() { return *vtObjectOutputString_c::get_vtObjectOutputString_a(); }
 }
 

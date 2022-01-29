@@ -33,9 +33,7 @@ class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 public:
   ~iVtObjectOutputString_c(){}
 
-  static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
-
-
+  static uint16_t objectType();
 
 
 
@@ -59,7 +57,7 @@ public:
 
 
 
-  const iVtObjectOutputString_s& get_vtObjectOutputString_a() { return *vtObjectOutputString_c::get_vtObjectOutputString_a(); }
+  const iVtObjectOutputString_s& get_vtObjectOutputString_a();
 
   void setValueCopy(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectOutputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
@@ -106,13 +104,9 @@ public:
     vtObjectOutputString_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputString_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputString_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -149,7 +143,7 @@ public:
   }
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() const;
 };
 
 } // IsoAgLib
