@@ -30,8 +30,6 @@ class iVtObjectLineAttributes_c : public __IsoAgLib::vtObjectLineAttributes_c
 public:
   static uint16_t objectType();
 
-
-
   iVtObjectLineAttributes_c(
 		iVtClientObjectPool_c* pool,
   		ObjectID ID = autoID,
@@ -39,43 +37,22 @@ public:
 		uint8_t lineWidth = 1,
 		uint16_t lineArt = 65535);
 
-
-
-  void setLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLineAttributes_c::setLineColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLineAttributes_c::setLineWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setLineArt(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLineAttributes_c::setLineArt (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setLineAttributes(uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLineAttributes_c::setLineAttributes (newLineColour, newLineWidth, newLineArt, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setLineArt(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setLineAttributes(uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectLineAttributes_c::updateObjectType(); }
   */
 
-  uint8_t updateLineColour(bool b_SendRequest=false) {
-    return vtObjectLineAttributes_c::updateLineColour(b_SendRequest);
-  }
-
-  uint8_t updateLineWidth(bool b_SendRequest=false) {
-    return vtObjectLineAttributes_c::updateLineWidth(b_SendRequest);
-  }
-
-  uint16_t updateLineArt(bool b_SendRequest=false) {
-    return vtObjectLineAttributes_c::updateLineArt(b_SendRequest);
-  }
+  uint8_t updateLineColour(bool b_SendRequest=false);
+  uint8_t updateLineWidth(bool b_SendRequest=false);
+  uint16_t updateLineArt(bool b_SendRequest=false);
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() const;
 };
 
 } // IsoAgLib
