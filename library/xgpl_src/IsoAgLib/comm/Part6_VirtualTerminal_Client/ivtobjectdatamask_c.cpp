@@ -8,27 +8,19 @@
 namespace IsoAgLib {
 
 
-	iVtObjectDataMask_c::iVtObjectDataMask_c() {}
-
-    iVtObjectDataMask_c::iVtObjectDataMask_c(const iVtObject_c::iVtObjectDataMask_s *vtObjectDataMaskSROM,
-                                             int ai_multitonInst)
-            : vtObjectDataMask_c(vtObjectDataMaskSROM , ai_multitonInst)
-    {}
 
     iVtObjectDataMask_c::iVtObjectDataMask_c(
     		int ai_multitonInst,
 			ObjectID ID,
 			uint8_t backgroundColour,
 			iVtObjectSoftKeyMask_c *softKeyMask)
-    : iVtObjectDataMask_c(
+    : vtObjectDataMask_c(
     		new iVtObjectDataMask_s(
     				ID,
     				backgroundColour,
     				softKeyMask),
 			ai_multitonInst)
-    {
-
-    }
+    {}
 
     void iVtObjectDataMask_c::setSoftKeyMask(iVtObjectSoftKeyMask_c *newSoftKeyMask, bool b_updateObject,
                                              bool b_enableReplaceOfCmd) {

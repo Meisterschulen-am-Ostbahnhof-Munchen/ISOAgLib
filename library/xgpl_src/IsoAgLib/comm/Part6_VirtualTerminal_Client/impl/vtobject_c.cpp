@@ -110,7 +110,7 @@ vtObject_c::setAttributeFloat(uint8_t attrID, float newValue, bool b_enableRepla
 void
 vtObject_c::getAttribute(uint8_t attrID, bool b_enableReplaceOfCmd)
 {
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandGetAttributeValue (this, attrID, b_enableReplaceOfCmd);
+  //__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).sendCommandGetAttributeValue (this, attrID, b_enableReplaceOfCmd);
 }
 #endif
 

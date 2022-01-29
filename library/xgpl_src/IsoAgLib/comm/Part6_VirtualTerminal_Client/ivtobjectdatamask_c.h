@@ -30,11 +30,6 @@ class iVtObjectDataMask_c : public __IsoAgLib::vtObjectDataMask_c
 public:
   static uint16_t objectType();
 
-
-  iVtObjectDataMask_c();
-
-  iVtObjectDataMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);
-
   iVtObjectDataMask_c(
 		int ai_multitonInst,
 		ObjectID ID = autoID,

@@ -1378,7 +1378,7 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
 
   case 0xB9: // Command: "Get Technical Data", parameter "Get Attribute Value Response"
     errByte = 7;
-    #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+    #ifdef xUSE_ISO_TERMINAL_GETATTRIBUTES
     #warning Currently not supported!!
     // client requested any attribute value for an object in the pool -> create ram struct if not yet existing
     if ((pkg.getUint8Data( 1 ) == 0xFF) && (pkg.getUint8Data( 2 ) == 0xFF)) // object id is set to 0xFFFF to indicate error response

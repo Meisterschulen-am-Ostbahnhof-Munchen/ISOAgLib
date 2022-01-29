@@ -44,7 +44,8 @@ public:
   */
 
   uint16_t updateNumOfColourIdxToFollow(bool b_SendRequest=false) {
-    return vtObjectColourMap_c::updateNumOfColourIdxToFollow(b_SendRequest);
+    //return vtObjectColourMap_c::updateNumOfColourIdxToFollow(b_SendRequest);
+	  return 0;
   }
 
 #endif
