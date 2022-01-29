@@ -33,7 +33,6 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
 
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
 

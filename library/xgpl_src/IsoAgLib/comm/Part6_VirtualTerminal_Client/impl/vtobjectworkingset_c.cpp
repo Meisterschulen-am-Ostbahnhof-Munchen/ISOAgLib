@@ -73,8 +73,6 @@ vtObjectWorkingSet_c::vtObjectWorkingSet_c(const iVtObjectWorkingSet_s* vtObject
 : vtObject_c((iVtObject_s*) vtObjectWorkingSetSROM , ai_multitonInst)
 {}
 
-void vtObjectWorkingSet_c::init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst)
-{ vtObject_c::init ((iVtObject_s*) vtObjectWorkingSetSROM , ai_multitonInst); };
 
 
 void vtObjectWorkingSet_c::Append(iVtObject_c* const vtObject, int16_t x, int16_t y)

@@ -70,9 +70,9 @@ public:
   /// Operation: init
   /// @param vtObjectGraphicsContextSROM
   /// @param b_initPointer
-  void init(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst) {
-    vtObject_c::init ((iVtObject_s*) vtObjectGraphicsContextSROM , ai_multitonInst);
-  }
+  vtObjectGraphicsContext_c::vtObjectGraphicsContext_c(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst)
+  :vtObject_c((iVtObject_s*) vtObjectGraphicsContextSROM , ai_multitonInst)
+  {}
 
   //  Operation: get_vtObjectGraphicsContext_a
   inline iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a( void ) {

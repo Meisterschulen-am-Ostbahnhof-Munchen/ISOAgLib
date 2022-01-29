@@ -34,8 +34,6 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
-
 
   iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a() { return dynamic_cast<iVtObjectFontAttributes_s *>(&(get_vtObject_a())); }
 
