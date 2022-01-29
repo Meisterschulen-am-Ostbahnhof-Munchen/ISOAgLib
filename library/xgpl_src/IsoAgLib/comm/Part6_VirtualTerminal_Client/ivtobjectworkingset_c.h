@@ -39,8 +39,6 @@ public:
   		uint8_t backgroundColour = 0,
   		uint8_t selectable = 1,
   		iVtObjectMask_c* activeMask = nullptr, // data or alarm mask
-  		uint8_t numberOfMacrosToFollow = 0,
-  		const repeat_event_iVtObjectMacro_s* macrosToFollow = nullptr,
   		uint8_t numberOfLanguagesToFollow = 0,
   		const repeat_vtLanguage_s* languagesToFollow = nullptr);
 

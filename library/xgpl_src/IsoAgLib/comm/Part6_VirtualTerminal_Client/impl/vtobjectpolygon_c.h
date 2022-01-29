@@ -40,7 +40,7 @@ public:
   void init(const iVtObjectPolygon_s* vtObjectPolygonSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectPolygonSROM , ai_multitonInst); }
 
-  iVtObjectPolygon_s* get_vtObjectPolygon_a() { return (iVtObjectPolygon_s *)&(get_vtObject_a()); }
+  iVtObjectPolygon_s* get_vtObjectPolygon_a() { return dynamic_cast<iVtObjectPolygon_s *>(&(get_vtObject_a())); }
 
   vtObjectPolygon_c();
 

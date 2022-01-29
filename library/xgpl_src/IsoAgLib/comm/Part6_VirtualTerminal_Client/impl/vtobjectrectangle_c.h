@@ -40,7 +40,7 @@ public:
   void init(const iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst)
   { vtObject_c::init ((iVtObject_s*) vtObjectRectangleSROM , ai_multitonInst); }
 
-  iVtObjectRectangle_s* get_vtObjectRectangle_a() { return (iVtObjectRectangle_s *)&(get_vtObject_a()); }
+  iVtObjectRectangle_s* get_vtObjectRectangle_a() { return dynamic_cast<iVtObjectRectangle_s *>(&(get_vtObject_a())); }
 
   vtObjectRectangle_c();
 

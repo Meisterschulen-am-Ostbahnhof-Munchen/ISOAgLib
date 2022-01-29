@@ -65,8 +65,6 @@ iVtObjectWorkingSet_c::iVtObjectWorkingSet_c(const iVtObjectWorkingSet_s *vtObje
 			uint8_t backgroundColour,
 			uint8_t selectable,
 			iVtObjectMask_c *activeMask,
-			uint8_t numberOfMacrosToFollow,
-			const repeat_event_iVtObjectMacro_s *macrosToFollow,
 			uint8_t numberOfLanguagesToFollow,
 			const repeat_vtLanguage_s *languagesToFollow)
     :vtObjectWorkingSet_c(
@@ -75,8 +73,6 @@ iVtObjectWorkingSet_c::iVtObjectWorkingSet_c(const iVtObjectWorkingSet_s *vtObje
     				backgroundColour,
     				selectable,
 					activeMask,
-    				numberOfMacrosToFollow,
-    				macrosToFollow,
     				numberOfLanguagesToFollow,
     				languagesToFollow),
     		ai_multitonInst)

@@ -55,7 +55,7 @@ public:
   void unRegisterSkmHandler_c( iSkmHandler_c* _SkmHandler );
 #endif // ENABLE_SKM_HANDLER
 
-  iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a() { return (iVtObjectSoftKeyMask_s *)&(get_vtObject_a()); }
+  iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a() { return dynamic_cast<iVtObjectSoftKeyMask_s *>(&(get_vtObject_a())); }
 
   vtObjectSoftKeyMask_c();
   virtual ~vtObjectSoftKeyMask_c();

@@ -44,7 +44,7 @@ public:
 
   int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
 
-  iVtObjectAuxiliaryFunction2_s* get_vtObjectAuxiliaryFunction2_a() {return (iVtObjectAuxiliaryFunction2_s *)&(get_vtObject_a());}
+  iVtObjectAuxiliaryFunction2_s* get_vtObjectAuxiliaryFunction2_a() {return dynamic_cast<iVtObjectAuxiliaryFunction2_s *>(&(get_vtObject_a()));}
 
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);

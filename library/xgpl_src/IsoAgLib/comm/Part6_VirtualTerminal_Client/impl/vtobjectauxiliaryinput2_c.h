@@ -66,7 +66,7 @@ public:
 
   void init(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst);
 
-  iVtObjectAuxiliaryInput2_s* get_vtObjectAuxiliaryInput2_a() { return (iVtObjectAuxiliaryInput2_s *)&(get_vtObject_a()); }
+  iVtObjectAuxiliaryInput2_s* get_vtObjectAuxiliaryInput2_a() { return dynamic_cast<iVtObjectAuxiliaryInput2_s *>(&(get_vtObject_a())); }
 
   vtObjectAuxiliaryInput2_c();
 
