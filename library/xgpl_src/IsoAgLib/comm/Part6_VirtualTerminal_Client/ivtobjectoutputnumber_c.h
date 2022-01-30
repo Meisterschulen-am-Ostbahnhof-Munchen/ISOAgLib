@@ -31,7 +31,7 @@ namespace IsoAgLib {
 class iVtObjectOutputNumber_c : public __IsoAgLib::vtObjectOutputNumber_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_NUMBER; }
+  static uint16_t objectType();
 
   iVtObjectOutputNumber_c(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROM , int ai_multitonInst)
   :vtObjectOutputNumber_c(vtObjectOutputNumberSROM , ai_multitonInst)
@@ -39,57 +39,19 @@ public:
 
 
 
-  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    vtObjectOutputNumber_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setOffset (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setScale (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setNumberOfDecimals (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setFormat (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputNumber_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES  
@@ -98,21 +60,10 @@ public:
   uint8_t updateObjectType() const { return vtObjectOutputNumber_c::updateObjectType(); }
   */
   
-  uint16_t updateWidth(bool b_SendRequest=false) {
-    return vtObjectOutputNumber_c::updateWidth(b_SendRequest);
-  }
-
-  uint16_t updateHeight(bool b_SendRequest=false) {
-    return vtObjectOutputNumber_c::updateHeight(b_SendRequest);
-  }
-
-  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
-    return vtObjectOutputNumber_c::updateBackgroundColour(b_SendRequest);
-  }
-
-  uint16_t updateFontAttributes(bool b_SendRequest=false) {
-    return vtObjectOutputNumber_c::updateFontAttributes(b_SendRequest);
-  }
+  uint16_t updateWidth(bool b_SendRequest=false);
+  uint16_t updateHeight(bool b_SendRequest=false);
+  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  uint16_t updateFontAttributes(bool b_SendRequest=false);
 
   uint8_t updateOptions(bool b_SendRequest=false) {
     return vtObjectOutputNumber_c::updateOptions(b_SendRequest);
@@ -149,7 +100,7 @@ public:
   */
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() const;
 };
 
 } // IsoAgLib

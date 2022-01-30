@@ -68,50 +68,68 @@ public:
     virtual void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), backgroundColour) : 0, sizeof(iVtObjectOutputNumber_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
-  void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+
+    virtual void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), fontAttributes) : 0, sizeof(iVtObjectOutputNumber_s), 4, newValue, b_enableReplaceOfCmd);
   }
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+
+    virtual void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), options) : 0, sizeof(iVtObjectOutputNumber_s), 5, newValue, newValue, b_enableReplaceOfCmd);
   }
-  void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+
+    virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), variableReference) : 0, sizeof(iVtObjectOutputNumber_s), 6, (iVtObject_c*)newValue, b_enableReplaceOfCmd);
   }
-  void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+
+    virtual void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), offset) : 0, sizeof(iVtObjectOutputNumber_s), 7, *((uint32_t*)&newValue), b_enableReplaceOfCmd);
   }
-  void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+
+    virtual void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValueFloatSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), scale) : 0, sizeof(iVtObjectOutputNumber_s), 8, newValue, b_enableReplaceOfCmd);
   }
-  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+
+    virtual void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), numberOfDecimals) : 0, sizeof(iVtObjectOutputNumber_s), 9, newValue, newValue, b_enableReplaceOfCmd);
   }
-  void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+
+    virtual void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), format) : 0, sizeof(iVtObjectOutputNumber_s), 10, (newValue) ? 1 : 0, (newValue) ? 1 : 0, b_enableReplaceOfCmd);
   }
-  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+
+    virtual void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputNumber_s), 11, newValue, newValue, b_enableReplaceOfCmd);
   }
 
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
     // ///////////////////////// getter for attributes
-  /** that attribute is in parentheses in the spec, so commented out here
+    virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 12; }
    */
 
   uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
-  uint16_t updateFontAttributes(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
-  uint16_t updateVariableReference(bool b_SendRequest=false);
-  int32_t updateOffset(bool b_SendRequest=false);
-  float updateScale(bool b_SendRequest=false);
-  uint8_t updateNumberOfDecimals(bool b_SendRequest=false);
-  uint8_t updateFormat(bool b_SendRequest=false);
-  uint8_t updateJustification(bool b_SendRequest=false);
+
+        virtual uint16_t updateHeight(bool b_SendRequest=false);
+
+        virtual uint8_t updateBackgroundColour(bool b_SendRequest=false);
+
+        virtual uint16_t updateFontAttributes(bool b_SendRequest=false);
+
+        virtual uint8_t updateOptions(bool b_SendRequest=false);
+
+        virtual uint16_t updateVariableReference(bool b_SendRequest=false);
+
+        virtual int32_t updateOffset(bool b_SendRequest=false);
+
+        virtual float updateScale(bool b_SendRequest=false);
+
+        virtual uint8_t updateNumberOfDecimals(bool b_SendRequest=false);
+
+        virtual uint8_t updateFormat(bool b_SendRequest=false);
+
+        virtual uint8_t updateJustification(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint32_t updateValue(bool b_SendRequest=false);
