@@ -46,8 +46,6 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-
-
   iVtObjectDataMask_s* get_vtObjectDataMask_a();
 
   vtObjectDataMask_c(
@@ -57,21 +55,15 @@ public:
 	IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask);
 
   vtObjectDataMask_c(iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);
-
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
-
   uint32_t fitTerminal() const;
-
   void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setBackgroundColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   bool lockUnlockMask( bool b_lockMask, uint16_t ui16_lockTimeOut );
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
