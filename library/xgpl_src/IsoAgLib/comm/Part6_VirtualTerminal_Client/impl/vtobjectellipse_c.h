@@ -38,7 +38,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectEllipse_c(const iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst);
+  vtObjectEllipse_c(iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst);
 
     iVtObjectEllipse_s* get_vtObjectEllipse_a();
 

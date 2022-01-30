@@ -176,6 +176,8 @@ vtObjectEllipse_c::updateFillAttributes(bool b_SendRequest)
     return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes), sizeof(iVtObjectEllipse_s));
 }
 
+#endif
+
 void
 vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
 {
@@ -192,7 +194,7 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
   }
 }
 
-    vtObjectEllipse_c::vtObjectEllipse_c(const IsoAgLib::iVtObject_c::iVtObjectEllipse_s *vtObjectellipseSROM,
+    vtObjectEllipse_c::vtObjectEllipse_c(IsoAgLib::iVtObject_c::iVtObjectEllipse_s *vtObjectellipseSROM,
                                          int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectellipseSROM , ai_multitonInst)
     {}
@@ -231,7 +233,7 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
         saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes) : 0, sizeof(iVtObjectEllipse_s), 7 /* "Fill Attributes" */, newFillAttributes, b_enableReplaceOfCmd);
     }
 
-#endif
+
 
 } // __IsoAgLib
 

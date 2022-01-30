@@ -14,7 +14,7 @@ namespace IsoAgLib {
 
     uint16_t iVtObjectEllipse_c::objectType() { return VT_OBJECT_TYPE_ELLIPSE; }
 
-    iVtObjectEllipse_c::iVtObjectEllipse_c(const iVtObject_c::iVtObjectEllipse_s *vtObjectellipseSROM,
+    iVtObjectEllipse_c::iVtObjectEllipse_c(iVtObject_c::iVtObjectEllipse_s *vtObjectellipseSROM,
                                            int ai_multitonInst)
             :vtObjectEllipse_c(vtObjectellipseSROM , ai_multitonInst)
     {}
