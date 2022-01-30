@@ -61,27 +61,41 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
 			iVtObject_c *variableReference = nullptr,
 			uint16_t value = 20,
 			iVtObject_c *targetValueVariableReference = nullptr,
-			uint16_t targetValue = 50)
-  : iVtObjectwMacro_s(ID)
-	, width(width)
-	, height(height)
-	, colour(colour)
-	, targetLineColour(targetLineColour)
-	, options(options)
-	, startAngle(startAngle)
-	, endAngle(endAngle)
-	, barGraphWidth(barGraphWidth)
-	, minValue(minValue)
-	, maxValue(maxValue)
-	, variableReference(variableReference)
-	, value(value)
-	, targetValueVariableReference(targetValueVariableReference)
-	, targetValue(targetValue)
- {}
+			uint16_t targetValue = 50);
 };
 
+    vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s::iVtObjectArchedBarGraph_s(
+    	   IsoAgLib::ObjectID ID,
+		   uint16_t width, uint16_t height,
+		   uint8_t colour,
+		   uint8_t targetLineColour,
+		   uint8_t options, uint8_t startAngle,
+		   uint8_t endAngle,
+		   uint16_t barGraphWidth,
+		   uint16_t minValue, uint16_t maxValue,
+		   IsoAgLib::iVtObject_c *variableReference,
+		   uint16_t value,
+		   IsoAgLib::iVtObject_c *targetValueVariableReference,
+		   uint16_t targetValue)
+            : iVtObjectwMacro_s(ID)
+            , width(width)
+            , height(height)
+            , colour(colour)
+            , targetLineColour(targetLineColour)
+            , options(options)
+            , startAngle(startAngle)
+            , endAngle(endAngle)
+            , barGraphWidth(barGraphWidth)
+            , minValue(minValue)
+            , maxValue(maxValue)
+            , variableReference(variableReference)
+            , value(value)
+            , targetValueVariableReference(targetValueVariableReference)
+            , targetValue(targetValue)
+    {}
 
-vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
+
+    vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
 		int ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		uint16_t width,
