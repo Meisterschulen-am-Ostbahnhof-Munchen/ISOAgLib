@@ -36,7 +36,7 @@ public:
 		uint8_t fontType = 0, // always =0 ISO_LATIN_1
 		uint8_t fontStyle = 0);
 
-  static uint16_t objectType() { return VT_OBJECT_TYPE_FONT_ATTRIBUTES; }
+  static uint16_t objectType();
 
   virtual ~iVtObjectFontAttributes_c();
 
@@ -87,7 +87,7 @@ public:
   }
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib

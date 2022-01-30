@@ -39,4 +39,8 @@ namespace IsoAgLib {
 	    	pool->Append(this);
 	    }
 
+    uint16_t iVtObjectFontAttributes_c::objectType() { return VT_OBJECT_TYPE_FONT_ATTRIBUTES; }
+
+    uint16_t iVtObjectFontAttributes_c::getObjectType() const { return objectType(); }
+
 }

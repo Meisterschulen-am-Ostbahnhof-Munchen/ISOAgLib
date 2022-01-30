@@ -69,21 +69,13 @@ public:
   uint32_t fitTerminal() const;
 
     virtual void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual void setEllipseType(uint8_t newEllipseType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   void setOriginSKM(bool b_SKM);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -93,19 +85,12 @@ public:
   */
 
   uint16_t updateLineAttributes(bool b_SendRequest=false);
-
   uint16_t updateWidth(bool b_SendRequest=false);
-
   uint16_t updateHeight(bool b_SendRequest=false);
-
-        virtual uint8_t updateEllipseType(bool b_SendRequest=false);
-
+  virtual uint8_t updateEllipseType(bool b_SendRequest=false);
   uint8_t updateStartAngle(bool b_SendRequest=false);
-
   uint8_t updateEndAngle(bool b_SendRequest=false);
-
   uint16_t updateFillAttributes(bool b_SendRequest=false);
-
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };
