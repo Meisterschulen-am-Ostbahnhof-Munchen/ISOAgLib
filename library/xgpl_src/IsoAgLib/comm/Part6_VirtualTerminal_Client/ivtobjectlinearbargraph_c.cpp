@@ -44,6 +44,7 @@ namespace IsoAgLib {
 			targetValueVariableReference,
     		targetValue)
     {
+		pool->Append(this);
     }
 
     void iVtObjectLinearBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
