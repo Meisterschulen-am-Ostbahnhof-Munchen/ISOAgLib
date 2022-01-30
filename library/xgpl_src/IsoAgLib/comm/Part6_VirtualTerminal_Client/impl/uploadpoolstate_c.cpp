@@ -706,7 +706,11 @@ UploadPoolState_c::getLanguageIndex( uint8_t langCode0, uint8_t langCode1 ) cons
 {
   for( int i=0; i<m_pool.getNumLang(); ++i )
   {
-    const uint8_t* lang = m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[ i ].language;
+
+	  IsoAgLib::iVtObject_c::iVtObjectLanguages_s* lu;
+	  lu = (IsoAgLib::iVtObject_c::iVtObjectLanguages_s*)m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a();
+
+    const uint8_t* lang = lu->languagesToFollow[ i ].language;
     if(  ( langCode0 == lang[ 0 ] )
       && ( langCode1 == lang[ 1 ] ) )
       return i;
@@ -848,7 +852,12 @@ UploadPoolState_c::setObjectPoolUploadingLanguage()
   if( m_pool.multiLanguage() )
   {
     const int8_t realUploadingLanguage = calcRealUploadingLanguage( false );
-    const uint8_t* lang = m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ realUploadingLanguage ].language;
+
+	  IsoAgLib::iVtObject_c::iVtObjectLanguages_s* lu;
+	  lu = (IsoAgLib::iVtObject_c::iVtObjectLanguages_s*)m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a();
+
+
+    const uint8_t* lang = lu->languagesToFollow[ realUploadingLanguage ].language;
     mui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
     marrp7c_versionLabel[ 5 ] = lang[ 0 ];
     marrp7c_versionLabel[ 6 ] = lang[ 1 ];

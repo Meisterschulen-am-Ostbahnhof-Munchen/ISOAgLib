@@ -87,4 +87,19 @@ namespace IsoAgLib {
     }
 
 
+
+    iVtObject_c::iVtObjectLanguages_s::iVtObjectLanguages_s(
+    		ObjectID ID,
+			uint8_t size)
+    :iVtObject_s(ID)
+    , numberOfLanguagesToFollow_size(size)
+    , numberOfLanguagesToFollow(0)
+    , languagesToFollow(nullptr)
+    {
+    	//TODO implement List like with iVtObjectObject_s
+    }
+
+
+
+
 } // end of namespace IsoAgLib

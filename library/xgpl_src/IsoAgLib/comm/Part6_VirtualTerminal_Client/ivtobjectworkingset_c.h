@@ -37,9 +37,8 @@ public:
 		ObjectID ID = autoID,
   		uint8_t backgroundColour = 0,
   		uint8_t selectable = 1,
-  		iVtObjectMask_c* activeMask = nullptr, // data or alarm mask
-  		uint8_t numberOfLanguagesToFollow = 0,
-  		const repeat_vtLanguage_s* languagesToFollow = nullptr);
+  		iVtObjectMask_c* activeMask = nullptr // data or alarm mask
+		);
 
 
 

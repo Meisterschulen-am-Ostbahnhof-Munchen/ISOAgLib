@@ -57,9 +57,8 @@ public:
 		IsoAgLib::ObjectID ID,
   		uint8_t backgroundColour,
   		uint8_t selectable,
-		IsoAgLib::iVtObjectMask_c* activeMask, // data or alarm mask
-  		uint8_t numberOfLanguagesToFollow,
-  		const IsoAgLib::repeat_vtLanguage_s* languagesToFollow);
+		IsoAgLib::iVtObjectMask_c* activeMask // data or alarm mask
+  		);
 
   vtObjectWorkingSet_c(iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
 

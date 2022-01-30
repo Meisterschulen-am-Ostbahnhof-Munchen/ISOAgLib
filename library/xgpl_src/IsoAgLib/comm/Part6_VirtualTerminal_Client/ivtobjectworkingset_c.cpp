@@ -15,17 +15,13 @@ namespace IsoAgLib {
 			ObjectID ID,
 			uint8_t backgroundColour,
 			uint8_t selectable,
-			iVtObjectMask_c *activeMask,
-			uint8_t numberOfLanguagesToFollow,
-			const repeat_vtLanguage_s *languagesToFollow)
+			iVtObjectMask_c *activeMask)
 	:vtObjectWorkingSet_c(
 			pool->getAiMultitonInst(),
 				ID,
 				backgroundColour,
 				selectable,
-				activeMask,
-				numberOfLanguagesToFollow,
-				languagesToFollow)
+				activeMask)
 		{
 			pool->Append(this);
 		}

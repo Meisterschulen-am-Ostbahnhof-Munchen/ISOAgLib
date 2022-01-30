@@ -39,7 +39,7 @@ enum ObjectID : uint16_t
 
 class iVtObject_c : public ClientBase
 {
-protected:
+public:
 
   struct iVtObject_s {
 	ObjectID ID;
@@ -77,6 +77,17 @@ protected:
 		uint8_t size = OO_CAPACITY);
   };
 
+  // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
+  /** iVtObjectwMacro_s is a Object than contain Macros.
+    */
+  struct iVtObjectLanguages_s : virtual iVtObject_s {
+	  uint8_t numberOfLanguagesToFollow_size;
+	  uint8_t numberOfLanguagesToFollow;
+	  const IsoAgLib::repeat_vtLanguage_s* languagesToFollow;
+  explicit iVtObjectLanguages_s(
+		ObjectID ID = autoID,
+		uint8_t size = OO_CAPACITY);
+  };
 
   struct iVtObjectMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
 	  explicit iVtObjectMask_s(
@@ -86,7 +97,7 @@ protected:
 	  {}
   };
 
-
+protected:
   struct iVtObjectAlarmMask_s : iVtObjectMask_s {
     uint8_t backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;

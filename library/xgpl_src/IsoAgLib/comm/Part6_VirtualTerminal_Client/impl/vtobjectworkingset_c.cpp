@@ -29,25 +29,22 @@ namespace __IsoAgLib {
 
 
 
-struct vtObjectWorkingSet_c::iVtObjectWorkingSet_s : iVtObjectObject_s, iVtObjectwMacro_s {
+struct vtObjectWorkingSet_c::iVtObjectWorkingSet_s : iVtObjectObject_s, iVtObjectwMacro_s, iVtObjectLanguages_s {
   uint8_t backgroundColour;
   uint8_t selectable;
   IsoAgLib::iVtObjectMask_c* activeMask; // data or alarm mask
-  uint8_t numberOfLanguagesToFollow;
-  const IsoAgLib::repeat_vtLanguage_s* languagesToFollow;
   explicit iVtObjectWorkingSet_s(
 		  IsoAgLib::ObjectID ID,
   		uint8_t backgroundColour,
   		uint8_t selectable,
-		IsoAgLib::iVtObjectMask_c* activeMask, // data or alarm mask
-  		uint8_t numberOfLanguagesToFollow,
-  		const IsoAgLib::repeat_vtLanguage_s* languagesToFollow)
-  : iVtObjectObject_s(ID)
-  , backgroundColour(backgroundColour)
-  , selectable(selectable)
+		IsoAgLib::iVtObjectMask_c* activeMask // data or alarm mask
+  	  	  )
+    : iVtObjectObject_s(ID)
+    , iVtObjectwMacro_s(ID)
+    , iVtObjectLanguages_s(ID)
+    , backgroundColour(backgroundColour)
+    , selectable(selectable)
 	, activeMask(activeMask)
-	, numberOfLanguagesToFollow(numberOfLanguagesToFollow)
-	, languagesToFollow(languagesToFollow)
   {}
 };
 
@@ -96,17 +93,14 @@ vtObjectWorkingSet_c::vtObjectWorkingSet_c(
 		IsoAgLib::ObjectID ID,
   		uint8_t backgroundColour,
   		uint8_t selectable,
-		IsoAgLib::iVtObjectMask_c* activeMask, // data or alarm mask
-  		uint8_t numberOfLanguagesToFollow,
-  		const IsoAgLib::repeat_vtLanguage_s* languagesToFollow)
+		IsoAgLib::iVtObjectMask_c* activeMask // data or alarm mask
+  		)
 	:vtObjectWorkingSet_c(
 			new iVtObjectWorkingSet_s(
 					ID,
 					backgroundColour,
 					selectable,
-					activeMask,
-					numberOfLanguagesToFollow,
-					languagesToFollow),
+					activeMask),
 			ai_multitonInst)
 {
 }
