@@ -29,6 +29,36 @@
 
 namespace __IsoAgLib {
 
+
+
+struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_s {
+  uint16_t width;
+  uint16_t height;
+  uint8_t backgroundColour;
+  uint8_t borderColour;
+  uint8_t keyCode;
+  uint8_t options;
+  explicit iVtObjectButton_s(
+		IsoAgLib::ObjectID ID,
+  	    uint16_t width,
+  	    uint16_t height,
+  	    uint8_t backgroundColour,
+  	    uint8_t borderColour,
+  	    uint8_t keyCode,
+  	    uint8_t options)
+  : iVtObjectObject_s(ID)
+  , iVtObjectwMacro_s(ID)
+  , width(width)
+  , height(height)
+  , backgroundColour(backgroundColour)
+  , borderColour(borderColour)
+  , keyCode(keyCode)
+  , options(options)
+  {}
+};
+
+
+
 int16_t
 vtObjectButton_c::stream(uint8_t* destMemory,
                          uint16_t maxBytes,
@@ -67,6 +97,41 @@ vtObjectButton_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
+
+
+vtObjectButton_c::vtObjectButton_c(
+  int ai_multitonInst,
+	IsoAgLib::ObjectID ID,
+	uint16_t width,
+	uint16_t height,
+	uint8_t backgroundColour,
+	uint8_t borderColour,
+	uint8_t keyCode,
+	uint8_t options)
+:vtObjectButton_c(
+		new iVtObjectButton_s(
+			ID,
+			width,
+			height,
+			backgroundColour,
+			borderColour,
+			keyCode,
+			options),
+		ai_multitonInst)
+{}
+
+
+vtObjectButton_c::vtObjectButton_c(vtObjectButton_c::iVtObjectButton_s *vtObjectButtonSROM,
+                                   int ai_multitonInst)
+        : vtObject_c((iVtObject_s*) vtObjectButtonSROM , ai_multitonInst)
+		, vtObject_a(vtObjectButtonSROM)
+{}
+
+
+
+vtObjectButton_c::iVtObjectButton_s *vtObjectButton_c::get_vtObjectButton_a() {
+	return vtObject_a;
+}
 
 
 
@@ -115,10 +180,6 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
   }
 }
 
-    vtObjectButton_c::vtObjectButton_c(const IsoAgLib::iVtObject_c::iVtObjectButton_s *vtObjectButtonSROM,
-                                       int ai_multitonInst)
-            : vtObject_c((iVtObject_s*) vtObjectButtonSROM , ai_multitonInst)
-    {}
 
     void vtObjectButton_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), width) : 0, sizeof(iVtObjectButton_s), 1, newValue, b_enableReplaceOfCmd);
@@ -218,5 +279,13 @@ vtObjectButton_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeV
 void vtObjectButton_c::Append(iVtObject_c * const vtObject, int16_t x, int16_t y) {
 	get_vtObjectButton_a()->Append(vtObject, x, y);
 }
+
+    uint16_t vtObjectButton_c::getHeight() const {
+        return vtObject_a->height;
+    }
+
+    uint16_t vtObjectButton_c::getWidth() const {
+        return vtObject_a->width;
+    }
 
 } // __IsoAgLib

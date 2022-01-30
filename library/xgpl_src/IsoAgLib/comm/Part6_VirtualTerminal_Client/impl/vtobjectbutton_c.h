@@ -29,15 +29,35 @@ namespace __IsoAgLib {
 
 class vtObjectButton_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectButton_s;
+
+	// Pointer to the internal implementation
+	iVtObjectButton_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectButton_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
 
-  iVtObjectButton_s* get_vtObjectButton_a() { return dynamic_cast<iVtObjectButton_s *>(&(get_vtObject_a())); }
+  iVtObjectButton_s* get_vtObjectButton_a();
 
-  vtObjectButton_c(const iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
+  vtObjectButton_c(
+    int ai_multitonInst,
+	IsoAgLib::ObjectID ID,
+	uint16_t width,
+	uint16_t height,
+	uint8_t backgroundColour,
+	uint8_t borderColour,
+	uint8_t keyCode,
+	uint8_t options);
+
+  vtObjectButton_c(iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
 
 
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
@@ -51,6 +71,12 @@ public:
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+
+
+	uint16_t getHeight() const;
+
+	uint16_t getWidth() const;
 
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 

@@ -135,31 +135,7 @@ protected:
 
 
 
-  struct iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_s {
-    uint16_t width;
-    uint16_t height;
-    uint8_t backgroundColour;
-    uint8_t borderColour;
-    uint8_t keyCode;
-    uint8_t options;
-    explicit iVtObjectButton_s(
-    		ObjectID ID = autoID,
-    	    uint16_t width = 80,
-    	    uint16_t height = 30,
-    	    uint8_t backgroundColour = 12,
-    	    uint8_t borderColour = 8,
-    	    uint8_t keyCode = 251,
-    	    uint8_t options = 0)
-    : iVtObjectObject_s(ID)
-    , iVtObjectwMacro_s(ID)
-    , width(width)
-    , height(height)
-    , backgroundColour(backgroundColour)
-    , borderColour(borderColour)
-    , keyCode(keyCode)
-    , options(options)
-    {}
-  };
+
 
 
   struct iVtObjectContainer_s : iVtObjectObject_s, iVtObjectwMacro_s {

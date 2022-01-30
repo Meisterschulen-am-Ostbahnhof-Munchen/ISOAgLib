@@ -22,15 +22,14 @@ namespace IsoAgLib {
 			uint8_t keyCode,
 			uint8_t options)
 	: vtObjectButton_c(
-			  new iVtObjectButton_s(
+						pool->getAiMultitonInst(),
 						ID,
 						width,
 						height,
 						backgroundColour,
 						borderColour,
 						keyCode,
-						options),
-		pool->getAiMultitonInst())
+						options)
 	{
 		pool->Append(this);
 	}
@@ -121,12 +120,5 @@ namespace IsoAgLib {
     bool iVtObjectButton_c::v4disable(bool b_updateObject, bool b_enableReplaceOfCmd) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
 
     uint16_t iVtObjectButton_c::objectType() { return VT_OBJECT_TYPE_BUTTON; }
-
-
-
-    const iVtObjectButton_c::iVtObjectButton_s& iVtObjectButton_c::get_vtObjectButton_a()
-    {
-      return *vtObjectButton_c::get_vtObjectButton_a();
-    }
 
 }

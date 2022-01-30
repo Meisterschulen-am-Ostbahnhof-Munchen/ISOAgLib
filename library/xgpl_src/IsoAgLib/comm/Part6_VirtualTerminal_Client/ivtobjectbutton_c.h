@@ -43,8 +43,6 @@ public:
   		);
 
 
-  const iVtObjectButton_s& get_vtObjectButton_a();
-
   bool v4enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   bool v4disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   bool v4select(uint8_t selectOrActivate);
