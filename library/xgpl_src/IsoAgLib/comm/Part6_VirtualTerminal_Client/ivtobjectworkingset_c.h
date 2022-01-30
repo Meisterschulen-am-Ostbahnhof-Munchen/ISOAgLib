@@ -43,7 +43,6 @@ public:
 
 
 
-  const iVtObjectWorkingSet_s& get_vtObjectWorkingSet_a();
 
   void updateSelectable( uint8_t newSelectable );
 

@@ -19,19 +19,16 @@ namespace IsoAgLib {
 			uint8_t numberOfLanguagesToFollow,
 			const repeat_vtLanguage_s *languagesToFollow)
 	:vtObjectWorkingSet_c(
-		new iVtObjectWorkingSet_s(
+			pool->getAiMultitonInst(),
 				ID,
 				backgroundColour,
 				selectable,
 				activeMask,
 				numberOfLanguagesToFollow,
-				languagesToFollow),
-			pool->getAiMultitonInst())
+				languagesToFollow)
 		{
 			pool->Append(this);
 		}
-
-    const iVtObject_c::iVtObjectWorkingSet_s &iVtObjectWorkingSet_c::get_vtObjectWorkingSet_a() { return *vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); }
 
     void iVtObjectWorkingSet_c::updateSelectable(uint8_t newSelectable) {
         vtObjectWorkingSet_c::updateSelectable( newSelectable );

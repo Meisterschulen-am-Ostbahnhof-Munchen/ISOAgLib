@@ -656,27 +656,7 @@ protected:
     char* value;
   };
 
-  struct iVtObjectWorkingSet_s : iVtObjectObject_s, iVtObjectwMacro_s {
-    uint8_t backgroundColour;
-    uint8_t selectable;
-    iVtObjectMask_c* activeMask; // data or alarm mask
-    uint8_t numberOfLanguagesToFollow;
-    const repeat_vtLanguage_s* languagesToFollow;
-    explicit iVtObjectWorkingSet_s(
-    		ObjectID ID = autoID,
-    		uint8_t backgroundColour = 0,
-    		uint8_t selectable = 1,
-    		iVtObjectMask_c* activeMask = nullptr, // data or alarm mask
-    		uint8_t numberOfLanguagesToFollow = 0,
-    		const repeat_vtLanguage_s* languagesToFollow = nullptr)
-    : iVtObjectObject_s(ID)
-    , backgroundColour(backgroundColour)
-    , selectable(selectable)
-	, activeMask(activeMask)
-	, numberOfLanguagesToFollow(numberOfLanguagesToFollow)
-	, languagesToFollow(languagesToFollow)
-    {}
-  };
+
 
   struct iVtObjectAuxiliaryInput_s : iVtObjectObject_s {
       iVtObjectAuxiliaryInput_s(uint8_t backgroundColour, uint8_t functionType, uint8_t inputId) : backgroundColour(

@@ -706,7 +706,7 @@ UploadPoolState_c::getLanguageIndex( uint8_t langCode0, uint8_t langCode1 ) cons
 {
   for( int i=0; i<m_pool.getNumLang(); ++i )
   {
-    const uint8_t* lang = m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ i ].language;
+    const uint8_t* lang = m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a()->languagesToFollow[ i ].language;
     if(  ( langCode0 == lang[ 0 ] )
       && ( langCode1 == lang[ 1 ] ) )
       return i;

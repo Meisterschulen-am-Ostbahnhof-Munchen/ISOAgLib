@@ -29,6 +29,16 @@ namespace __IsoAgLib {
 
 class vtObjectWorkingSet_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectWorkingSet_s;
+
+	// Pointer to the internal implementation
+	iVtObjectWorkingSet_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectWorkingSet_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
@@ -38,9 +48,20 @@ public:
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
 
 
-  iVtObjectWorkingSet_s* get_vtObjectWorkingSet_a() { return dynamic_cast<iVtObjectWorkingSet_s *>(&(get_vtObject_a())); }
+  iVtObjectWorkingSet_s* get_vtObjectWorkingSet_a();
 
-  vtObjectWorkingSet_c(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
+
+
+  vtObjectWorkingSet_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+  		uint8_t backgroundColour,
+  		uint8_t selectable,
+		IsoAgLib::iVtObjectMask_c* activeMask, // data or alarm mask
+  		uint8_t numberOfLanguagesToFollow,
+  		const IsoAgLib::repeat_vtLanguage_s* languagesToFollow);
+
+  vtObjectWorkingSet_c(iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
 
   uint32_t fitTerminal() const;
 
