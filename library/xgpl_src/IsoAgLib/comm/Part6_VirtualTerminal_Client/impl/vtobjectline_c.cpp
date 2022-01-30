@@ -29,6 +29,27 @@
 
 namespace __IsoAgLib {
 
+
+
+struct vtObjectLine_c::iVtObjectLine_s : iVtObjectwMacro_s {
+  IsoAgLib::iVtObjectLineAttributes_c* lineAttributes;
+  uint16_t width;
+  uint16_t height;
+  uint8_t lineDirection;
+  explicit iVtObjectLine_s(
+		  IsoAgLib::ObjectID ID,
+		  IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+			uint16_t width,
+			uint16_t height,
+			uint8_t lineDirection)
+  :  iVtObjectwMacro_s(ID)
+  , lineAttributes(lineAttributes)
+  , width(width)
+  , height(height)
+  , lineDirection(lineDirection)
+  {}
+};
+
 int16_t
 vtObjectLine_c::stream(uint8_t* destMemory,
                        uint16_t maxBytes,
@@ -65,6 +86,35 @@ vtObjectLine_c::stream(uint8_t* destMemory,
 }
 
 
+
+vtObjectLine_c::vtObjectLine_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+		uint16_t width,
+		uint16_t height,
+		uint8_t lineDirection)
+	: vtObjectLine_c(
+		new iVtObjectLine_s(
+	        ID,
+			lineAttributes,
+			width,
+			height,
+			lineDirection),
+			ai_multitonInst)
+{
+}
+
+
+
+vtObjectLine_c::vtObjectLine_c(vtObjectLine_c::iVtObjectLine_s *vtObjectLineSROM, int ai_multitonInst)
+        : vtObject_c((iVtObject_s*) vtObjectLineSROM , ai_multitonInst)
+		, vtObject_a(vtObjectLineSROM)
+{}
+
+vtObjectLine_c::iVtObjectLine_s *vtObjectLine_c::get_vtObjectLine_a() {
+	return vtObject_a;
+}
 
 
 uint32_t
@@ -160,6 +210,26 @@ vtObjectLine_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVal
   }
 }
 #endif
+
+
+    void vtObjectLine_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newValue, bool b_updateObject,
+                                           bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes) : 0, sizeof(iVtObjectLine_s), 1, (IsoAgLib::iVtObject_c*) newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLine_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), width) : 0, sizeof(iVtObjectLine_s), 2, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLine_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), height) : 0, sizeof(iVtObjectLine_s), 3, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLine_c::setLineDirection(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection) : 0, sizeof(iVtObjectLine_s), 4, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
+
 
 } // __IsoAgLib
 

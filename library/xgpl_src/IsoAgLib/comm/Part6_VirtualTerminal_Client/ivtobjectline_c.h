@@ -41,53 +41,23 @@ public:
 
 
 
-  void setLineAttributes(iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLine_c::setLineAttributes(newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setWidth (int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLine_c::setWidth(newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setHeight (int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLine_c::setHeight(newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLine_c::setLineDirection(newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLine_c::setEndPoint(newWidth, newHeight, newLineDirection, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLine_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setLineAttributes(iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setWidth (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setHeight (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectLine_c::updateObjectType(); }
   */
-
-  uint16_t updateLineAttributes(bool b_SendRequest=false) {
-    return vtObjectLine_c::updateLineAttributes(b_SendRequest);
-  }
-
-  uint16_t updateWidth(bool b_SendRequest=false) {
-    return vtObjectLine_c::updateWidth(b_SendRequest);
-  }
-
-  uint16_t updateHeight(bool b_SendRequest=false) {
-    return vtObjectLine_c::updateHeight(b_SendRequest);
-  }
-
-  uint8_t updateLineDirection(bool b_SendRequest=false) {
-    return vtObjectLine_c::updateLineDirection(b_SendRequest);
-  }
+  uint16_t updateLineAttributes(bool b_SendRequest=false);
+  uint16_t updateWidth(bool b_SendRequest=false);
+  uint16_t updateHeight(bool b_SendRequest=false);
+  uint8_t updateLineDirection(bool b_SendRequest=false);
 #endif
-
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() const;
 };
 
 } // IsoAgLib

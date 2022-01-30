@@ -359,24 +359,7 @@ protected:
 
 
 
-  struct iVtObjectLine_s : iVtObjectwMacro_s {
-    iVtObjectLineAttributes_c* lineAttributes;
-    uint16_t width;
-    uint16_t height;
-    uint8_t lineDirection;
-    explicit iVtObjectLine_s(
-    		ObjectID ID = autoID,
-    		iVtObjectLineAttributes_c *lineAttributes = nullptr,
-			uint16_t width = 100,
-			uint16_t height =100,
-			uint8_t lineDirection = 0)
-    :  iVtObjectwMacro_s(ID)
-    , lineAttributes(lineAttributes)
-    , width(width)
-    , height(height)
-    , lineDirection(lineDirection)
-    {}
-  };
+
 
   struct iVtObjectMacro_s : iVtObject_s {
       iVtObjectMacro_s(uint16_t numBytesToFollow, const uint8_t *commandsToFollow) : numBytesToFollow(numBytesToFollow),
