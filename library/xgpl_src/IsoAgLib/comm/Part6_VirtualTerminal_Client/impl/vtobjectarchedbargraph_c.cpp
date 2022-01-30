@@ -63,9 +63,9 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
 			iVtObject_c *targetValueVariableReference = nullptr,
 			uint16_t targetValue = 50)
   : iVtObjectwMacro_s(ID)
-  , width(width)
-  , height(height)
-  , colour(colour)
+	, width(width)
+	, height(height)
+	, colour(colour)
 	, targetLineColour(targetLineColour)
 	, options(options)
 	, startAngle(startAngle)
@@ -77,11 +77,47 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
 	, value(value)
 	, targetValueVariableReference(targetValueVariableReference)
 	, targetValue(targetValue)
-	 {}
+ {}
 };
 
 
-
+vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		uint16_t width,
+		uint16_t height,
+		uint8_t colour,
+		uint8_t targetLineColour,
+		uint8_t options,
+		uint8_t startAngle,
+		uint8_t endAngle,
+		uint16_t barGraphWidth,
+		uint16_t minValue,
+		uint16_t maxValue,
+		iVtObject_c *variableReference,
+		uint16_t value,
+		iVtObject_c *targetValueVariableReference,
+		uint16_t targetValue)
+	:vtObjectArchedBarGraph_c(
+					new iVtObjectArchedBarGraph_s(
+							ID,
+							width,
+							height,
+							colour,
+							targetLineColour,
+							options,
+							startAngle,
+							endAngle,
+							barGraphWidth,
+							minValue,
+							maxValue,
+							variableReference,
+							value,
+							targetValueVariableReference,
+							targetValue),
+						ai_multitonInst)
+		{
+		}
 
 
 
@@ -192,43 +228,7 @@ vtObjectArchedBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool 
   }
 }
 
-vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
-		int ai_multitonInst,
-		IsoAgLib::ObjectID ID,
-		uint16_t width,
-		uint16_t height,
-		uint8_t colour,
-		uint8_t targetLineColour,
-		uint8_t options,
-		uint8_t startAngle,
-		uint8_t endAngle,
-		uint16_t barGraphWidth,
-		uint16_t minValue,
-		uint16_t maxValue,
-		iVtObject_c *variableReference,
-		uint16_t value,
-		iVtObject_c *targetValueVariableReference,
-		uint16_t targetValue)
-	:vtObjectArchedBarGraph_c(
-					new iVtObjectArchedBarGraph_s(
-							ID,
-							width,
-							height,
-							colour,
-							targetLineColour,
-							options,
-							startAngle,
-							endAngle,
-							barGraphWidth,
-							minValue,
-							maxValue,
-							variableReference,
-							value,
-							targetValueVariableReference,
-							targetValue),
-						ai_multitonInst)
-		{
-		}
+
 
 void
 vtObjectArchedBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
