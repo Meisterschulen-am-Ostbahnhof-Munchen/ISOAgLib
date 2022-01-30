@@ -30,6 +30,26 @@
 namespace __IsoAgLib {
 
 
+struct vtObjectFontAttributes_c::iVtObjectFontAttributes_s : iVtObjectwMacro_s {
+  uint8_t fontColour;
+  uint8_t fontSize;
+  uint8_t fontType; // always =0 ISO_LATIN_1
+  uint8_t fontStyle;
+  explicit iVtObjectFontAttributes_s(
+		IsoAgLib::ObjectID ID,
+  	    uint8_t fontColour,
+  	    uint8_t fontSize,
+  	    uint8_t fontType, // always =0 ISO_LATIN_1
+  	    uint8_t fontStyle)
+  :iVtObjectwMacro_s(ID)
+  , fontColour(fontColour)
+  , fontSize(fontSize)
+  , fontType(fontType) // always =0 ISO_LATIN_1
+  , fontStyle(fontStyle)
+  {}
+};
+
+
 uint8_t vtObjectFontAttributes_c::marr_font2PixelDimensionTableW [15] = {6,  8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128};
 uint8_t vtObjectFontAttributes_c::marr_font2PixelDimensionTableH [15] = {8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128,192};
 
@@ -62,8 +82,28 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
 }
 
 
-vtObjectFontAttributes_c::vtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObject_c , int ai_multitonInst)
+vtObjectFontAttributes_c::vtObjectFontAttributes_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		uint8_t fontColour,
+		uint8_t fontSize,
+		uint8_t fontType, // always =0 ISO_LATIN_1
+		uint8_t fontStyle)
+: vtObjectFontAttributes_c(
+		new iVtObjectFontAttributes_s(
+				ID,
+				fontColour,
+				fontSize,
+				fontType, // always =0 ISO_LATIN_1
+				fontStyle),
+		ai_multitonInst)
+{
+}
+
+
+vtObjectFontAttributes_c::vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObject_c , int ai_multitonInst)
 : __IsoAgLib::vtObject_c((iVtObject_s*) vtObject_c, ai_multitonInst)
+, vtObject_a(vtObject_c)
 , mui8_fontSizeScaled( 0xFF ) // set mui8_fontSizeScaled to "not yet calculated"
 {
 }
@@ -221,6 +261,29 @@ vtObjectFontAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
   }
 }
 #endif
+
+
+	vtObjectFontAttributes_c::iVtObjectFontAttributes_s* vtObjectFontAttributes_c::get_vtObjectFontAttributes_a() {
+    	return vtObject_a;
+    }
+
+    void vtObjectFontAttributes_c::setFontColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) :
+                                0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectFontAttributes_c::setFontSize(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize) : 0, sizeof(iVtObjectFontAttributes_s), 2, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectFontAttributes_c::setFontType(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType) : 0, sizeof(iVtObjectFontAttributes_s), 3, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectFontAttributes_c::setFontStyle(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle) : 0, sizeof(iVtObjectFontAttributes_s), 4, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
 
 
 

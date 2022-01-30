@@ -186,24 +186,7 @@ protected:
     {}
   };
 
-  struct iVtObjectFontAttributes_s : iVtObjectwMacro_s {
-    uint8_t fontColour;
-    uint8_t fontSize;
-    uint8_t fontType; // always =0 ISO_LATIN_1
-    uint8_t fontStyle;
-    explicit iVtObjectFontAttributes_s(
-    		ObjectID ID = autoID,
-    	    uint8_t fontColour = 0,
-    	    uint8_t fontSize = 1,
-    	    uint8_t fontType = 0, // always =0 ISO_LATIN_1
-    	    uint8_t fontStyle = 0)
-    :iVtObjectwMacro_s(ID)
-    , fontColour(fontColour)
-    , fontSize(fontSize)
-    , fontType(fontType) // always =0 ISO_LATIN_1
-    , fontStyle(fontStyle)
-    {}
-  };
+
 
   struct iVtObjectInputAttributes_s : iVtObjectwMacro_s {
     uint8_t validationType;

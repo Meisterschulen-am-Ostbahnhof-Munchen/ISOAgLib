@@ -29,43 +29,44 @@ namespace __IsoAgLib {
 
 class vtObjectFontAttributes_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectFontAttributes_s;
+
+	// Pointer to the internal implementation
+	iVtObjectFontAttributes_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectFontAttributes_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
 
-  iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a() { return dynamic_cast<iVtObjectFontAttributes_s *>(&(get_vtObject_a())); }
+  iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a();
 
+	vtObjectFontAttributes_c(
+			int ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			uint8_t fontColour,
+			uint8_t fontSize,
+			uint8_t fontType, // always =0 ISO_LATIN_1
+			uint8_t fontStyle);
 
-  vtObjectFontAttributes_c(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
-
+  vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
   virtual ~vtObjectFontAttributes_c();
-
   uint32_t fitTerminal() const;
-
   uint16_t getScaledWidthHeight();
 
-    virtual // //////////////////////////////////
+     // //////////////////////////////////
   // All special Attribute-Set methods
-  void setFontColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) :
-        0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
-  }
-
-    virtual void setFontSize(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize) : 0, sizeof(iVtObjectFontAttributes_s), 2, newValue, newValue, b_enableReplaceOfCmd);
-  }
-
-    virtual void setFontType(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType) : 0, sizeof(iVtObjectFontAttributes_s), 3, newValue, newValue, b_enableReplaceOfCmd);
-  }
-
-    virtual void setFontStyle(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle) : 0, sizeof(iVtObjectFontAttributes_s), 4, newValue, newValue, b_enableReplaceOfCmd);
-  }
-
-  void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setFontColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setFontSize(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setFontType(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setFontStyle(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 
@@ -77,9 +78,9 @@ public:
 
         virtual uint8_t updateFontSize(bool b_SendRequest=false);
 
-  uint8_t updateFontType(bool b_SendRequest=false);
+        virtual uint8_t updateFontType(bool b_SendRequest=false);
 
-  uint8_t updateFontStyle(bool b_SendRequest=false);
+        virtual uint8_t updateFontStyle(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
