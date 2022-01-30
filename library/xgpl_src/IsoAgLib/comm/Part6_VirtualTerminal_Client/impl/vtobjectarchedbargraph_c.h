@@ -34,12 +34,16 @@ namespace __IsoAgLib {
 
 class vtObjectArchedBarGraph_c : public vtObject_c
 {
+protected:
+	iVtObjectArchedBarGraph_s* vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectArchedBarGraph_c(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst);
+  vtObjectArchedBarGraph_c(iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst);
   iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a();
   ~vtObjectArchedBarGraph_c() override = default;
   uint32_t fitTerminal() const;

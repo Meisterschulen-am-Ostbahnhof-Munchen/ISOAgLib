@@ -294,13 +294,14 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 #endif
 
     vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
-            const IsoAgLib::iVtObject_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst)
+            IsoAgLib::iVtObject_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, int ai_multitonInst)
+            : vtObject_c((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst)
+    		, vtObject_a(vtObjectArchedBarGraphSROM)
     {}
 
-IsoAgLib::iVtObject_c::iVtObjectArchedBarGraph_s* vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a() {
-	return dynamic_cast<iVtObjectArchedBarGraph_s*>(&(get_vtObject_a()));
-}
+	IsoAgLib::iVtObject_c::iVtObjectArchedBarGraph_s* vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a() {
+		return vtObject_a;
+	}
 
     void vtObjectArchedBarGraph_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width) : 0, sizeof(iVtObjectArchedBarGraph_s), 1 /* "Width" */, newWidth, b_enableReplaceOfCmd);
