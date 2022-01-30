@@ -24,7 +24,7 @@
 
 
 
-
+//#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
 #include "vtclient_c.h"
@@ -40,6 +40,8 @@ protected:
 
 	// Pointer to the internal implementation
 	iVtObjectArchedBarGraph_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectArchedBarGraph_s> vtObject_a;
 
 
 public:
