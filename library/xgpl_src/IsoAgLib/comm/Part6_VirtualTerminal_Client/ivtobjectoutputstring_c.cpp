@@ -80,7 +80,7 @@ namespace IsoAgLib {
     }
 
     void
-    iVtObjectOutputString_c::setFontAttributes(iVtObject_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    iVtObjectOutputString_c::setFontAttributes(iVtObjectFontAttributes_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectOutputString_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
