@@ -34,59 +34,62 @@ namespace __IsoAgLib {
 
 class vtObjectOutputString_c : public IsoAgLib::iVtObjectString_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectOutputString_s;
+
+	// Pointer to the internal implementation
+	iVtObjectOutputString_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectOutputString_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
 
-  iVtObjectOutputString_s* get_vtObjectOutputString_a() { return dynamic_cast<iVtObjectOutputString_s *>(&(get_vtObject_a())); }
+  iVtObjectOutputString_s* get_vtObjectOutputString_a();
 
-  vtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);
+  vtObjectOutputString_c(
+		  	int ai_multitonInst,
+		  	IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t height,
+			uint8_t backgroundColour,
+			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
+			uint8_t options,
+			IsoAgLib::iVtObjectStringVariable_c *variableReference,
+			uint8_t horizontalJustification,
+			char *value);
+
+
+
+
+  vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);
   ~vtObjectOutputString_c();
-
   uint32_t fitTerminal() const;
-
   void setOriginSKM(bool b_SKM);
-
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
-
   const char* getString();
-
-  void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  virtual void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
-  void setValueCopyUTF8(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+        virtual void setValueCopyUTF8(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+        virtual void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
-  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-        virtual // //////////////////////////////////
+        virtual void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  // //////////////////////////////////
   // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), width) : 0, sizeof(iVtObjectOutputString_s), 1, newValue, b_enableReplaceOfCmd);
-  }
-
-        virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), height) : 0, sizeof(iVtObjectOutputString_s), 2, newValue, b_enableReplaceOfCmd);
-  }
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour) : 0, sizeof(iVtObjectOutputString_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
-  }
-  void setFontAttributes(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes) : 0, sizeof(iVtObjectOutputString_s), 4, newValue, b_enableReplaceOfCmd);
-  }
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), options) : 0, sizeof(iVtObjectOutputString_s), 5, newValue, newValue, b_enableReplaceOfCmd);
-  }
-  void setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference) : 0, sizeof(iVtObjectOutputString_s), 6, (iVtObject_c*)newValue, b_enableReplaceOfCmd);
-  }
-
-        virtual void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputString_s), 7, newValue, newValue, b_enableReplaceOfCmd);
-  }
-
+        virtual void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+        virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+        virtual void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+        virtual void setFontAttributes(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+        virtual void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+        virtual void setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+        virtual void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
         virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
@@ -95,13 +98,13 @@ public:
   uint8_t updateObjectType() const { return 11; }
   */
 
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
-  uint16_t updateFontAttributes(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
-  uint16_t updateVariableReference(bool b_SendRequest=false);
-  uint8_t updateJustification(bool b_SendRequest=false);
+    virtual uint16_t updateWidth(bool b_SendRequest=false);
+  virtual uint16_t updateHeight(bool b_SendRequest=false);
+  virtual uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  virtual uint16_t updateFontAttributes(bool b_SendRequest=false);
+  virtual uint8_t updateOptions(bool b_SendRequest=false);
+  virtual uint16_t updateVariableReference(bool b_SendRequest=false);
+  virtual uint8_t updateJustification(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif

@@ -33,6 +33,47 @@
 
 namespace __IsoAgLib {
 
+
+
+struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtObjectwMacro_s {
+  uint16_t width;
+  uint16_t height;
+  uint8_t backgroundColour;
+  IsoAgLib::iVtObjectFontAttributes_c* fontAttributes;
+  uint8_t options;
+  IsoAgLib::iVtObjectStringVariable_c* variableReference;
+  uint8_t horizontalJustification;
+  uint16_t length;
+  char* value; /* size length+1 (0-termination intern!) */
+  explicit iVtObjectOutputString_s(
+		IsoAgLib::ObjectID ID,
+  	    uint16_t width,
+  	    uint16_t height,
+  	    uint8_t backgroundColour,
+		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
+  	    uint8_t options,
+		IsoAgLib::iVtObjectStringVariable_c* variableReference,
+  	    uint8_t horizontalJustification,
+  	    uint16_t length,
+  	    char* value /* size length+1 (0-termination intern!) */
+  		)
+  :iVtObjectString_s(ID)
+  ,iVtObjectwMacro_s(ID)
+  ,width(width)
+  ,height(height)
+  ,backgroundColour(backgroundColour)
+  ,fontAttributes(fontAttributes)
+  ,options(options)
+  ,variableReference(variableReference)
+  ,horizontalJustification(horizontalJustification)
+  ,length(length)
+  ,value(value) /* size length+1 (0-termination intern!) */
+	{}
+};
+
+
+
+
 int16_t
 vtObjectOutputString_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
@@ -96,8 +137,39 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
 
 vtObjectOutputString_c::~vtObjectOutputString_c() {}
 
-vtObjectOutputString_c::vtObjectOutputString_c(const iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
+
+
+
+vtObjectOutputString_c::vtObjectOutputString_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		uint16_t width,
+		uint16_t height,
+		uint8_t backgroundColour,
+		IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
+		uint8_t options,
+		IsoAgLib::iVtObjectStringVariable_c *variableReference,
+		uint8_t horizontalJustification,
+		char *value)
+	:vtObjectOutputString_c(
+			new iVtObjectOutputString_s(
+					ID,
+					width,
+					height,
+					backgroundColour,
+					fontAttributes,
+					options,
+					variableReference,
+					horizontalJustification,
+					strlen(value),
+					value),
+			ai_multitonInst)
+{
+}
+
+vtObjectOutputString_c::vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
 : iVtObjectString_c((iVtObjectString_s*)vtObjectOutputStringSROM , ai_multitonInst)
+, vtObject_a(vtObjectOutputStringSROM)
 {}
 
 
@@ -138,7 +210,9 @@ vtObjectOutputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObj
   const uint16_t cui16_strLen = (uint16_t)CNAMESPACE::strlen (newValue);
   char* pc_iso8859 = new char [cui16_strLen+1];
 
-  const uint8_t cui8_fontType = get_vtObjectOutputString_a()->fontAttributes->get_vtObjectFontAttributes_a().fontType;
+  // TODO !
+  const uint8_t cui8_fontType = 0;
+  //cui8_fontType = get_vtObjectOutputString_a()->fontAttributes->get_vtObjectFontAttributes_a().fontType;
 
   convertStringUnicodeTo8859 (newValue, cui16_strLen, pc_iso8859, cui8_fontType);
 
@@ -345,7 +419,46 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     default: break;
   }
 }
+
 #endif
+
+vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtObjectOutputString_a() { return dynamic_cast<iVtObjectOutputString_s *>(&(get_vtObject_a())); }
+
+    void vtObjectOutputString_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), width) : 0, sizeof(iVtObjectOutputString_s), 1, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectOutputString_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), height) : 0, sizeof(iVtObjectOutputString_s), 2, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectOutputString_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour) : 0, sizeof(iVtObjectOutputString_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectOutputString_c::setFontAttributes(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
+                                                   bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes) : 0, sizeof(iVtObjectOutputString_s), 4, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectOutputString_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), options) : 0, sizeof(iVtObjectOutputString_s), 5, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
+    void
+    vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c *newValue, bool b_updateObject,
+                                                 bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference) : 0, sizeof(iVtObjectOutputString_s), 6, (iVtObject_c*)newValue, b_enableReplaceOfCmd);
+    }
+
+    void
+    vtObjectOutputString_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputString_s), 7, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
+
+
+
 
 } //__IsoAgLib
 

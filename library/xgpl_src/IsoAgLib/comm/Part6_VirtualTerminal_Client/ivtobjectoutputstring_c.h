@@ -31,7 +31,7 @@ namespace IsoAgLib {
 class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 {
 public:
-  ~iVtObjectOutputString_c(){}
+  ~iVtObjectOutputString_c() override = default;
 
   static uint16_t objectType();
 
@@ -51,89 +51,37 @@ public:
   		);
 
 
-
-
-
-
-
-  void setValueCopy(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setValueCopy(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef USE_VT_UNICODE_SUPPORT
-  void setValueCopyUTF8(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputString_c::setValueCopyUTF8 (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setValueCopyUTF8(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputString_c::setValueCopyUTF16 (newValue, length, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
-  void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputString_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setVariableReference(iVtObjectStringVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false)  {
-    vtObjectOutputString_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  const char* getString() { return vtObjectOutputString_c::getString(); }
-
-
+  void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setVariableReference(iVtObjectStringVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  const char* getString();
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputString_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setFontAttributes(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputString_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectOutputString_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setFontAttributes(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectOutputString_c::updateObjectType(); }
    */
 
-  uint16_t updateWidth(bool b_SendRequest=false) {
-    return vtObjectOutputString_c::updateWidth(b_SendRequest);
-  }
-
-  uint16_t updateHeight(bool b_SendRequest=false) {
-    return vtObjectOutputString_c::updateHeight(b_SendRequest);
-  }
-
-  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
-    return vtObjectOutputString_c::updateBackgroundColour(b_SendRequest);
-  }
-
-  uint16_t updateFontAttributes(bool b_SendRequest=false) {
-    return vtObjectOutputString_c::updateFontAttributes(b_SendRequest);
-  }
-
-  uint8_t updateOptions(bool b_SendRequest=false) {
-    return vtObjectOutputString_c::updateOptions(b_SendRequest);
-  }
-
-  uint16_t updateVariableReference(bool b_SendRequest=false) {
-    return vtObjectOutputString_c::updateVariableReference(b_SendRequest);
-  }
-
-  uint8_t updateJustification(bool b_SendRequest=false) {
-    return vtObjectOutputString_c::updateJustification(b_SendRequest);
-  }
+  uint16_t updateWidth(bool b_SendRequest=false);
+  uint16_t updateHeight(bool b_SendRequest=false);
+  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  uint16_t updateFontAttributes(bool b_SendRequest=false);
+  uint8_t updateOptions(bool b_SendRequest=false);
+  uint16_t updateVariableReference(bool b_SendRequest=false);
+  uint8_t updateJustification(bool b_SendRequest=false);
 #endif
 
   virtual uint16_t getObjectType() const;

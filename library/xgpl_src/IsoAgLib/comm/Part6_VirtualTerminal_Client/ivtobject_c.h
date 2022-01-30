@@ -51,6 +51,19 @@ public:
     virtual ~iVtObject_s() = default;
   };
 
+  // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
+  /** iVtObjectwMacro_s is a Object than contain Macros.
+    */
+  struct iVtObjectLanguages_s : virtual iVtObject_s {
+	  uint8_t numberOfLanguagesToFollow_size;
+	  uint8_t numberOfLanguagesToFollow;
+	  const IsoAgLib::repeat_vtLanguage_s* languagesToFollow;
+  explicit iVtObjectLanguages_s(
+		ObjectID ID = autoID,
+		uint8_t size = OO_CAPACITY);
+  };
+
+protected:
 
   // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
   /** iVtObjectObject_s is a Object than contain other Objects.
@@ -77,17 +90,17 @@ public:
 		uint8_t size = OO_CAPACITY);
   };
 
-  // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
-  /** iVtObjectwMacro_s is a Object than contain Macros.
-    */
-  struct iVtObjectLanguages_s : virtual iVtObject_s {
-	  uint8_t numberOfLanguagesToFollow_size;
-	  uint8_t numberOfLanguagesToFollow;
-	  const IsoAgLib::repeat_vtLanguage_s* languagesToFollow;
-  explicit iVtObjectLanguages_s(
-		ObjectID ID = autoID,
-		uint8_t size = OO_CAPACITY);
+
+
+
+  struct iVtObjectString_s : virtual iVtObject_s {
+	  explicit iVtObjectString_s(
+		ObjectID ID = autoID)
+	  :iVtObject_s(ID)
+	  {}
   };
+
+
 
   struct iVtObjectMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
 	  explicit iVtObjectMask_s(
@@ -291,10 +304,7 @@ protected:
     uint8_t secondOptionsByte;
   };
 
-  struct iVtObjectString_s : virtual iVtObject_s {
-      iVtObjectString_s(){}
 
-  };
 
 
   struct iVtObjectInputString_s : iVtObjectString_s, iVtObjectwMacro_s {
@@ -507,40 +517,7 @@ protected:
   };
 
 
-  struct iVtObjectOutputString_s : iVtObjectString_s, iVtObjectwMacro_s {
-    uint16_t width;
-    uint16_t height;
-    uint8_t backgroundColour;
-    iVtObjectFontAttributes_c* fontAttributes;
-    uint8_t options;
-    iVtObjectStringVariable_c* variableReference;
-    uint8_t horizontalJustification;
-    uint16_t length;
-    char* value; /* size length+1 (0-termination intern!) */
-    explicit iVtObjectOutputString_s(
-    		ObjectID ID = autoID,
-    	    uint16_t width = 50,
-    	    uint16_t height= 20,
-    	    uint8_t backgroundColour = 1,
-    	    iVtObjectFontAttributes_c* fontAttributes = nullptr,
-    	    uint8_t options = 0,
-    	    iVtObjectStringVariable_c* variableReference = nullptr,
-    	    uint8_t horizontalJustification = 0,
-    	    uint16_t length = 0,
-    	    char* value = nullptr /* size length+1 (0-termination intern!) */
-    		)
-    :iVtObject_s(ID),
-    width(width),
-    height(height),
-    backgroundColour(backgroundColour),
-    fontAttributes(fontAttributes),
-    options(options),
-    variableReference(variableReference),
-    horizontalJustification(horizontalJustification),
-    length(length),
-    value(value) /* size length+1 (0-termination intern!) */
-	{}
-  };
+
 
   struct iVtObjectPictureGraphic_s : iVtObjectwMacro_s {
       iVtObjectPictureGraphic_s(uint16_t width, uint16_t actualWidth, uint16_t actualHeight, uint8_t format,

@@ -23,7 +23,7 @@ namespace IsoAgLib {
 			uint8_t horizontalJustification,
 			char *value)
             :vtObjectOutputString_c(
-            new iVtObjectOutputString_s(
+            		pool->getAiMultitonInst(),
                     ID,
                     width,
                     height,
@@ -32,10 +32,8 @@ namespace IsoAgLib {
                     options,
                     variableReference,
                     horizontalJustification,
-					strlen(value),
                     value /* size length+1 (0-termination intern!) */
-            ),
-		pool->getAiMultitonInst())
+            )
 	{
     	pool->Append(this);
 	}
@@ -61,6 +59,80 @@ namespace IsoAgLib {
     void iVtObjectOutputString_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectOutputString_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
+
+    void iVtObjectOutputString_c::setValueCopy(const char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    void iVtObjectOutputString_c::setValueRef(const char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    void iVtObjectOutputString_c::setVariableReference(iVtObjectStringVariable_c *newValue, bool b_updateObject,
+                                                       bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    const char *iVtObjectOutputString_c::getString() { return vtObjectOutputString_c::getString(); }
+
+    void iVtObjectOutputString_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    void
+    iVtObjectOutputString_c::setFontAttributes(iVtObject_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    void iVtObjectOutputString_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+
+
+    uint16_t iVtObjectOutputString_c::updateWidth(bool b_SendRequest) {
+        return vtObjectOutputString_c::updateWidth(b_SendRequest);
+    }
+
+    uint16_t iVtObjectOutputString_c::updateHeight(bool b_SendRequest) {
+        return vtObjectOutputString_c::updateHeight(b_SendRequest);
+    }
+
+    uint8_t iVtObjectOutputString_c::updateBackgroundColour(bool b_SendRequest) {
+        return vtObjectOutputString_c::updateBackgroundColour(b_SendRequest);
+    }
+
+    uint16_t iVtObjectOutputString_c::updateFontAttributes(bool b_SendRequest) {
+        return vtObjectOutputString_c::updateFontAttributes(b_SendRequest);
+    }
+
+    uint8_t iVtObjectOutputString_c::updateOptions(bool b_SendRequest) {
+        return vtObjectOutputString_c::updateOptions(b_SendRequest);
+    }
+
+    uint16_t iVtObjectOutputString_c::updateVariableReference(bool b_SendRequest) {
+        return vtObjectOutputString_c::updateVariableReference(b_SendRequest);
+    }
+
+    uint8_t iVtObjectOutputString_c::updateJustification(bool b_SendRequest) {
+        return vtObjectOutputString_c::updateJustification(b_SendRequest);
+    }
+
+#endif
+
+
+
+#ifdef USE_VT_UNICODE_SUPPORT
+    void iVtObjectOutputString_c::setValueCopyUTF8(const char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setValueCopyUTF8 (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    void iVtObjectOutputString_c::setValueCopyUTF16(const char *newValue, uint16_t length, bool b_updateObject,
+                                                    bool b_enableReplaceOfCmd) {
+        vtObjectOutputString_c::setValueCopyUTF16 (newValue, length, b_updateObject, b_enableReplaceOfCmd);
+    }
+#endif
+
 
 
 }
