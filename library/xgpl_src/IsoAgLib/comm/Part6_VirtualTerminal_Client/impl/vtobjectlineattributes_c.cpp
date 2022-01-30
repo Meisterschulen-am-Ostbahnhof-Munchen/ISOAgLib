@@ -27,6 +27,24 @@
 
 namespace __IsoAgLib {
 
+
+
+struct vtObjectLineAttributes_c::iVtObjectLineAttributes_s : iVtObjectwMacro_s {
+  uint8_t lineColour;
+  uint8_t lineWidth;
+  uint16_t lineArt;
+  explicit iVtObjectLineAttributes_s(
+		  IsoAgLib::ObjectID ID,
+  		uint8_t lineColour,
+			uint8_t lineWidth,
+			uint16_t lineArt)
+  : iVtObjectwMacro_s(ID)
+  , lineColour(lineColour)
+  , lineWidth(lineWidth)
+  , lineArt(lineArt)
+  {}
+};
+
 int16_t
 vtObjectLineAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
@@ -59,6 +77,35 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
+
+vtObjectLineAttributes_c::vtObjectLineAttributes_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		uint8_t lineColour,
+		uint8_t lineWidth,
+		uint16_t lineArt)
+:vtObjectLineAttributes_c(
+		new iVtObjectLineAttributes_s(
+        ID,
+		lineColour,
+		lineWidth,
+		lineArt),
+		ai_multitonInst)
+{
+}
+
+
+    vtObjectLineAttributes_c::vtObjectLineAttributes_c(
+    		vtObjectLineAttributes_c::iVtObjectLineAttributes_s *vtObjectLineAttributesSROM, int ai_multitonInst)
+            : vtObject_c((iVtObject_s*) vtObjectLineAttributesSROM , ai_multitonInst)
+    		, vtObject_a(vtObjectLineAttributesSROM)
+    {}
+
+
+
+    vtObjectLineAttributes_c::iVtObjectLineAttributes_s *vtObjectLineAttributes_c::get_vtObjectLineAttributes_a() {
+        return vtObject_a;
+    }
 
 
 
@@ -118,6 +165,22 @@ vtObjectLineAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     default: break;
   }
 }
+
+    void vtObjectLineAttributes_c::setLineColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour) : 0, sizeof(iVtObjectLineAttributes_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLineAttributes_c::setLineWidth(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth) : 0, sizeof(iVtObjectLineAttributes_s), 2, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLineAttributes_c::setLineArt(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt) : 0, sizeof(iVtObjectLineAttributes_s), 3, newValue, b_enableReplaceOfCmd);
+    }
+
+
 #endif
+
+
 
 } // __IsoAgLib

@@ -21,12 +21,11 @@ iVtObjectLineAttributes_c::iVtObjectLineAttributes_c(
 		uint8_t lineWidth,
 		uint16_t lineArt)
 :vtObjectLineAttributes_c(
-new iVtObjectLineAttributes_s(
+		pool->getAiMultitonInst(),
         ID,
 		lineColour,
 		lineWidth,
-		lineArt),
-	pool->getAiMultitonInst())
+		lineArt)
 	{
 		pool->Append(this);
 	}

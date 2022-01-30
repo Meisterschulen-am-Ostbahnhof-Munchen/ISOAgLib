@@ -29,49 +29,54 @@ namespace __IsoAgLib {
 
 class vtObjectLineAttributes_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectLineAttributes_s;
+
+	// Pointer to the internal implementation
+	iVtObjectLineAttributes_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectLineAttributes_s> vtObject_a;
+
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectLineAttributes_c(const iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectLineAttributesSROM , ai_multitonInst)
-  {}
 
-  iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a() { return dynamic_cast<iVtObjectLineAttributes_s *>(&(get_vtObject_a())); }
+  vtObjectLineAttributes_c(
+		  int ai_multitonInst,
+		  IsoAgLib::ObjectID ID,
+  		uint8_t lineColour,
+  		uint8_t lineWidth,
+  		uint16_t lineArt);
+
+
+  vtObjectLineAttributes_c(iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst);
+  iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a();
 
 
 
   uint32_t fitTerminal() const;
 
-    virtual // //////////////////////////////////
+    // //////////////////////////////////
   // All special Attribute-Set methods
-  void setLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour) : 0, sizeof(iVtObjectLineAttributes_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
-  }
-
-    virtual void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth) : 0, sizeof(iVtObjectLineAttributes_s), 2, newValue, newValue, b_enableReplaceOfCmd);
-  }
-
-    virtual void setLineArt(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt) : 0, sizeof(iVtObjectLineAttributes_s), 3, newValue, b_enableReplaceOfCmd);
-  }
-
+    virtual void setLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setLineArt(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setLineAttributes(uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 
-        virtual /** that attribute is in parentheses in the spec, so commented out here
+        /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 24; }
   */
 
-  uint8_t updateLineColour(bool b_SendRequest=false);
-
-        virtual uint8_t updateLineWidth(bool b_SendRequest=false);
-
-        virtual uint16_t updateLineArt(bool b_SendRequest=false);
-
+  virtual uint8_t updateLineColour(bool b_SendRequest=false);
+  virtual uint8_t updateLineWidth(bool b_SendRequest=false);
+  virtual uint16_t updateLineArt(bool b_SendRequest=false);
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };

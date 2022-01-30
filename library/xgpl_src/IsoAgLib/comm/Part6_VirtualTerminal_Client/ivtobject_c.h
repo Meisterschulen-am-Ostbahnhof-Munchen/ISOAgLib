@@ -357,21 +357,7 @@ protected:
     uint16_t targetValue;
   };
 
-  struct iVtObjectLineAttributes_s : iVtObjectwMacro_s {
-    uint8_t lineColour;
-    uint8_t lineWidth;
-    uint16_t lineArt;
-    explicit iVtObjectLineAttributes_s(
-    		ObjectID ID = autoID,
-    		uint8_t lineColour = 0,
-			uint8_t lineWidth = 1,
-			uint16_t lineArt = 65535)
-    : iVtObjectwMacro_s(ID)
-    , lineColour(lineColour)
-    , lineWidth(lineWidth)
-    , lineArt(lineArt)
-    {}
-  };
+
 
   struct iVtObjectLine_s : iVtObjectwMacro_s {
     iVtObjectLineAttributes_c* lineAttributes;
