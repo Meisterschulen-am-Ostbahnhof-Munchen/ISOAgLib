@@ -20,13 +20,81 @@
 
 #include "vtobjectarchedbargraph_c.h"
 
-
+#include "../ivtobject_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
 
 
 namespace __IsoAgLib {
+
+
+
+
+struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
+  uint16_t width;
+  uint16_t height;
+  uint8_t colour;
+  uint8_t targetLineColour;
+  uint8_t options;
+  uint8_t startAngle;
+  uint8_t endAngle;
+  uint16_t barGraphWidth;
+  uint16_t minValue;
+  uint16_t maxValue;
+  iVtObject_c* variableReference;
+  uint16_t value;
+  iVtObject_c* targetValueVariableReference;
+  uint16_t targetValue;
+  explicit iVtObjectArchedBarGraph_s(
+		IsoAgLib::ObjectID ID = IsoAgLib::ObjectID::autoID,
+  		uint16_t width = 100,
+			uint16_t height = 100,
+			uint8_t colour = 12,
+			uint8_t targetLineColour = 14,
+			uint8_t options = 0,
+			uint8_t startAngle = 0,
+			uint8_t endAngle = 180,
+			uint16_t barGraphWidth = 15,
+			uint16_t minValue = 0,
+			uint16_t maxValue = 100,
+			iVtObject_c *variableReference = nullptr,
+			uint16_t value = 20,
+			iVtObject_c *targetValueVariableReference = nullptr,
+			uint16_t targetValue = 50)
+  : iVtObjectwMacro_s(ID)
+  , width(width)
+  , height(height)
+  , colour(colour)
+	, targetLineColour(targetLineColour)
+	, options(options)
+	, startAngle(startAngle)
+	, endAngle(endAngle)
+	, barGraphWidth(barGraphWidth)
+	, minValue(minValue)
+	, maxValue(maxValue)
+	, variableReference(variableReference)
+	, value(value)
+	, targetValueVariableReference(targetValueVariableReference)
+	, targetValue(targetValue)
+	 {}
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int16_t
 vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
@@ -123,6 +191,44 @@ vtObjectArchedBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool 
     __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 }
+
+vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		uint16_t width,
+		uint16_t height,
+		uint8_t colour,
+		uint8_t targetLineColour,
+		uint8_t options,
+		uint8_t startAngle,
+		uint8_t endAngle,
+		uint16_t barGraphWidth,
+		uint16_t minValue,
+		uint16_t maxValue,
+		iVtObject_c *variableReference,
+		uint16_t value,
+		iVtObject_c *targetValueVariableReference,
+		uint16_t targetValue)
+	:vtObjectArchedBarGraph_c(
+					new iVtObjectArchedBarGraph_s(
+							ID,
+							width,
+							height,
+							colour,
+							targetLineColour,
+							options,
+							startAngle,
+							endAngle,
+							barGraphWidth,
+							minValue,
+							maxValue,
+							variableReference,
+							value,
+							targetValueVariableReference,
+							targetValue),
+						ai_multitonInst)
+		{
+		}
 
 void
 vtObjectArchedBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -293,13 +399,13 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 #endif
 
-    vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
-            IsoAgLib::iVtObject_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, int ai_multitonInst)
+	vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
+			vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, int ai_multitonInst)
             : vtObject_c((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst)
     		, vtObject_a(vtObjectArchedBarGraphSROM)
     {}
 
-	IsoAgLib::iVtObject_c::iVtObjectArchedBarGraph_s* vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a() {
+    vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s* vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a() {
 		return vtObject_a;
 	}
 

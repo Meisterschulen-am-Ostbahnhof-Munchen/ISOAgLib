@@ -31,7 +31,7 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
 		iVtObject_c *targetValueVariableReference,
 		uint16_t targetValue)
 	:vtObjectArchedBarGraph_c(
-			new iVtObjectArchedBarGraph_s(
+					pool->getAiMultitonInst(),
 					ID,
 					width,
 					height,
@@ -46,8 +46,7 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
 					variableReference,
 					value,
 					targetValueVariableReference,
-					targetValue),
-	pool->getAiMultitonInst())
+					targetValue)
 	{
 		pool->Append(this);
 	}

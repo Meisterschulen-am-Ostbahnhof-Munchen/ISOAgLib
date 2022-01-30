@@ -35,6 +35,10 @@ namespace __IsoAgLib {
 class vtObjectArchedBarGraph_c : public vtObject_c
 {
 protected:
+	// Internal implementation class
+	struct iVtObjectArchedBarGraph_s;
+
+	// Pointer to the internal implementation
 	iVtObjectArchedBarGraph_s* vtObject_a;
 
 
@@ -43,7 +47,27 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
+  vtObjectArchedBarGraph_c(
+		    int ai_multitonInst,
+			IsoAgLib::ObjectID ID = IsoAgLib::ObjectID::autoID,
+			uint16_t width = 100,
+			uint16_t height = 100,
+			uint8_t colour = 12,
+			uint8_t targetLineColour = 14,
+			uint8_t options = 0,
+			uint8_t startAngle = 0,
+			uint8_t endAngle = 180,
+			uint16_t barGraphWidth = 15,
+			uint16_t minValue = 0,
+			uint16_t maxValue = 100,
+			iVtObject_c *variableReference = nullptr,
+			uint16_t value = 20,
+			iVtObject_c *targetValueVariableReference = nullptr,
+			uint16_t targetValue = 50);
+
   vtObjectArchedBarGraph_c(iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst);
+
+
   iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a();
   ~vtObjectArchedBarGraph_c() override = default;
   uint32_t fitTerminal() const;

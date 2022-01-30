@@ -106,54 +106,7 @@ protected:
     {}
   };
 
-  struct iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
-    uint16_t width;
-    uint16_t height;
-    uint8_t colour;
-    uint8_t targetLineColour;
-    uint8_t options;
-    uint8_t startAngle;
-    uint8_t endAngle;
-    uint16_t barGraphWidth;
-    uint16_t minValue;
-    uint16_t maxValue;
-    iVtObject_c* variableReference;
-    uint16_t value;
-    iVtObject_c* targetValueVariableReference;
-    uint16_t targetValue;
-    explicit iVtObjectArchedBarGraph_s(
-    		ObjectID ID = autoID,
-    		uint16_t width = 100,
-			uint16_t height = 100,
-			uint8_t colour = 12,
-			uint8_t targetLineColour = 14,
-			uint8_t options = 0,
-			uint8_t startAngle = 0,
-			uint8_t endAngle = 180,
-			uint16_t barGraphWidth = 15,
-			uint16_t minValue = 0,
-			uint16_t maxValue = 100,
-			iVtObject_c *variableReference = nullptr,
-			uint16_t value = 20,
-			iVtObject_c *targetValueVariableReference = nullptr,
-			uint16_t targetValue = 50)
-    : iVtObjectwMacro_s(ID)
-    , width(width)
-    , height(height)
-    , colour(colour)
-	, targetLineColour(targetLineColour)
-	, options(options)
-	, startAngle(startAngle)
-	, endAngle(endAngle)
-	, barGraphWidth(barGraphWidth)
-	, minValue(minValue)
-	, maxValue(maxValue)
-	, variableReference(variableReference)
-	, value(value)
-	, targetValueVariableReference(targetValueVariableReference)
-	, targetValue(targetValue)
-	 {}
-  };
+
 
 
 
