@@ -34,7 +34,7 @@ namespace __IsoAgLib {
 
 class vtObjectArchedBarGraph_c : public vtObject_c
 {
-protected:
+private:
 	// Internal implementation class
 	struct iVtObjectArchedBarGraph_s;
 

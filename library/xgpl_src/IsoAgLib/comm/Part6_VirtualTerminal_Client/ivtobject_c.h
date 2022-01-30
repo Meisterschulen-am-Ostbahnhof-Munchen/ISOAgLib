@@ -155,18 +155,7 @@ protected:
     {}
   };
 
-  struct iVtObjectDataMask_s : iVtObjectMask_s {
-    uint8_t backgroundColour;
-    iVtObjectSoftKeyMask_c* softKeyMask;
-    explicit iVtObjectDataMask_s(
-    		ObjectID ID = autoID,
-    	    uint8_t backgroundColour = 0,
-    	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr)
-    :iVtObjectMask_s(ID)
-    , backgroundColour(backgroundColour)
-    , softKeyMask(softKeyMask)
-    {}
-  };
+
 
   struct iVtObjectEllipse_s : iVtObjectwMacro_s {
     iVtObjectLineAttributes_c* lineAttributes;
@@ -798,7 +787,7 @@ public:
   virtual uint16_t getObjectType() const = 0;
 
 protected:
-  iVtObject_s* vtObject_a;
+  iVtObject_s* vtObject_a; //TODO: remove this later !!!
 
   iVtObjectButton_c* p_parentButtonObject;
 

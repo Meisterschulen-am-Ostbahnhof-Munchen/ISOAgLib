@@ -9,17 +9,19 @@ namespace IsoAgLib {
 
 
 
+
+
+
     iVtObjectDataMask_c::iVtObjectDataMask_c(
     		iVtClientObjectPool_c* pool,
 			ObjectID ID,
 			uint8_t backgroundColour,
 			iVtObjectSoftKeyMask_c *softKeyMask)
     : vtObjectDataMask_c(
-    		new iVtObjectDataMask_s(
+    				pool->getAiMultitonInst(),
     				ID,
     				backgroundColour,
-    				softKeyMask),
-				pool->getAiMultitonInst())
+    				softKeyMask)
     {
     	pool->Append(this);
     }

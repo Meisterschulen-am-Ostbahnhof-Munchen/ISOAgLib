@@ -28,6 +28,17 @@ namespace __IsoAgLib {
 
 class vtObjectDataMask_c : public IsoAgLib::iVtObjectMask_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectDataMask_s;
+
+	// Pointer to the internal implementation
+	iVtObjectDataMask_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectDataMask_s> vtObject_a;
+
+
+
 public:
   virtual ~vtObjectDataMask_c() {}
 
@@ -39,8 +50,13 @@ public:
 
   iVtObjectDataMask_s* get_vtObjectDataMask_a();
 
-  vtObjectDataMask_c();
-  vtObjectDataMask_c(const iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);
+  vtObjectDataMask_c(
+	int ai_multitonInst,
+	IsoAgLib::ObjectID ID,
+	uint8_t backgroundColour,
+	IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask);
+
+  vtObjectDataMask_c(iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);
 
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
 
@@ -50,9 +66,7 @@ public:
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setBackgroundColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectDataMask_a(), backgroundColour) : 0, sizeof(iVtObjectDataMask_s), 1 /* "Background Colour" */, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
-  }
+  void setBackgroundColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
