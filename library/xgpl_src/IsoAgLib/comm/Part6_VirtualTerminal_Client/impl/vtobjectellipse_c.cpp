@@ -30,6 +30,38 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectEllipse_c::iVtObjectEllipse_s : iVtObjectwMacro_s {
+  IsoAgLib::iVtObjectLineAttributes_c* lineAttributes;
+  uint16_t width;
+  uint16_t height;
+  uint8_t ellipseType;
+  uint8_t startAngle;
+  uint8_t endAngle;
+  IsoAgLib::iVtObjectFillAttributes_c* fillAttributes;
+  iVtObjectEllipse_s(
+		IsoAgLib::ObjectID ID,
+		IsoAgLib::iVtObjectLineAttributes_c *lineAttributes ,
+		uint16_t width,
+		uint16_t height,
+		uint8_t ellipseType,
+		uint8_t startAngle,
+		uint8_t endAngle,
+		IsoAgLib::iVtObjectFillAttributes_c *fillAttributes)
+  : iVtObjectwMacro_s(ID)
+  , lineAttributes(lineAttributes)
+  , width(width)
+  , height(height)
+  , ellipseType(ellipseType)
+  , startAngle(startAngle)
+  , endAngle(endAngle)
+  , fillAttributes(fillAttributes)
+  {}
+};
+
+
+
+
 int16_t
 vtObjectEllipse_c::stream(uint8_t* destMemory,
                           uint16_t maxBytes,
@@ -194,12 +226,40 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
   }
 }
 
-    vtObjectEllipse_c::vtObjectEllipse_c(IsoAgLib::iVtObject_c::iVtObjectEllipse_s *vtObjectellipseSROM,
+
+	vtObjectEllipse_c::vtObjectEllipse_c(
+			int ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+			uint16_t width,
+			uint16_t height,
+			uint8_t ellipseType,
+			uint8_t startAngle,
+			uint8_t endAngle,
+			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes)
+	:vtObjectEllipse_c(
+			new iVtObjectEllipse_s(
+					ID,
+					lineAttributes,
+					width,
+					height,
+					ellipseType,
+					startAngle,
+					endAngle,
+					fillAttributes),
+	ai_multitonInst)
+{
+}
+
+    vtObjectEllipse_c::vtObjectEllipse_c(iVtObjectEllipse_s *vtObjectellipseSROM,
                                          int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectellipseSROM , ai_multitonInst)
+            : vtObject_c((iVtObject_s*) vtObjectellipseSROM , ai_multitonInst)
+    		, vtObject_a(vtObjectellipseSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectEllipse_s *vtObjectEllipse_c::get_vtObjectEllipse_a() { return dynamic_cast<iVtObjectEllipse_s *>(&(get_vtObject_a())); }
+	vtObjectEllipse_c::iVtObjectEllipse_s* vtObjectEllipse_c::get_vtObjectEllipse_a() {
+		return vtObject_a;
+	}
 
     void
     vtObjectEllipse_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject,

@@ -30,8 +30,20 @@ class iVtObjectEllipse_c : public __IsoAgLib::vtObjectEllipse_c
 {
 public:
   static uint16_t objectType();
-  iVtObjectEllipse_c(const iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst);
-  const iVtObjectEllipse_s& get_vtObjectEllipse_a();
+
+  iVtObjectEllipse_c(
+	iVtClientObjectPool_c* pool,
+	ObjectID ID = autoID,
+	iVtObjectLineAttributes_c *lineAttributes = nullptr,
+	uint16_t width = 100,
+	uint16_t height = 100,
+	uint8_t ellipseType = 0,
+	uint8_t startAngle = 0,
+	uint8_t endAngle = 180,
+	iVtObjectFillAttributes_c *fillAttributes = nullptr);
+
+
+
   void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

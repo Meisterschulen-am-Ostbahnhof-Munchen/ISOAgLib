@@ -14,10 +14,33 @@ namespace IsoAgLib {
 
     uint16_t iVtObjectEllipse_c::objectType() { return VT_OBJECT_TYPE_ELLIPSE; }
 
-    iVtObjectEllipse_c::iVtObjectEllipse_c(iVtObject_c::iVtObjectEllipse_s *vtObjectellipseSROM,
-                                           int ai_multitonInst)
-            :vtObjectEllipse_c(vtObjectellipseSROM , ai_multitonInst)
-    {}
+
+
+    iVtObjectEllipse_c::iVtObjectEllipse_c(
+    		iVtClientObjectPool_c *pool,
+			ObjectID ID,
+    		iVtObjectLineAttributes_c *lineAttributes,
+			uint16_t width,
+    		uint16_t height,
+			uint8_t ellipseType,
+			uint8_t startAngle,
+    		uint8_t endAngle,
+			iVtObjectFillAttributes_c *fillAttributes)
+    :vtObjectEllipse_c(
+			pool->getAiMultitonInst(),
+			ID,
+    		lineAttributes,
+			width,
+    		height,
+			ellipseType,
+			startAngle,
+    		endAngle,
+			fillAttributes)
+	{
+		pool->Append(this);
+	}
+
+
 
     void iVtObjectEllipse_c::setLineAttributes(iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject,
                                                bool b_enableReplaceOfCmd) {
@@ -91,9 +114,8 @@ namespace IsoAgLib {
 #endif
 
 
-	const iVtObject_c::iVtObjectEllipse_s& iVtObjectEllipse_c::get_vtObjectEllipse_a() {
-		return *vtObjectEllipse_c::get_vtObjectEllipse_a();
-	}
+
+
 
 
 }

@@ -33,10 +33,33 @@ namespace __IsoAgLib {
 
 class vtObjectEllipse_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectEllipse_s;
+
+	// Pointer to the internal implementation
+	iVtObjectEllipse_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectEllipse_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
+
+
+  vtObjectEllipse_c(
+		    int ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+			uint16_t width,
+			uint16_t height,
+			uint8_t ellipseType,
+			uint8_t startAngle,
+			uint8_t endAngle,
+			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes);
+
 
   vtObjectEllipse_c(iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst);
 

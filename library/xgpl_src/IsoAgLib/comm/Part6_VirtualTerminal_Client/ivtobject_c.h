@@ -168,33 +168,7 @@ protected:
 
 
 
-  struct iVtObjectEllipse_s : iVtObjectwMacro_s {
-    iVtObjectLineAttributes_c* lineAttributes;
-    uint16_t width;
-    uint16_t height;
-    uint8_t ellipseType;
-    uint8_t startAngle;
-    uint8_t endAngle;
-    iVtObjectFillAttributes_c* fillAttributes;
-    iVtObjectEllipse_s(
-    		ObjectID ID = autoID,
-    		iVtObjectLineAttributes_c *lineAttributes = nullptr,
-			uint16_t width = 100,
-			uint16_t height = 100,
-			uint8_t ellipseType = 0,
-			uint8_t startAngle = 0,
-			uint8_t endAngle = 180,
-			iVtObjectFillAttributes_c *fillAttributes = nullptr)
-    : iVtObjectwMacro_s(ID)
-    , lineAttributes(lineAttributes)
-    , width(width)
-    , height(height)
-    , ellipseType(ellipseType)
-    , startAngle(startAngle)
-    , endAngle(endAngle)
-    , fillAttributes(fillAttributes)
-    {}
-  };
+
 
   struct iVtObjectFillAttributes_s : iVtObjectwMacro_s {
     uint8_t fillType;
