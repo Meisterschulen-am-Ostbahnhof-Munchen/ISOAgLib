@@ -29,114 +29,54 @@ namespace IsoAgLib {
 class iVtObjectLinearBarGraph_c : public __IsoAgLib::vtObjectLinearBarGraph_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_LINEAR_BAR_GRAPH; }
+  static uint16_t objectType();
 
-  iVtObjectLinearBarGraph_c(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst)
-  :vtObjectLinearBarGraph_c(vtObjectLinearBarGraphSROM , ai_multitonInst)
-  {}
+  iVtObjectLinearBarGraph_c(
+			iVtClientObjectPool_c* pool,
+		    ObjectID ID = autoID,
+		    uint16_t width = 30,
+			uint16_t height = 100,
+			uint8_t colour = 12,
+			uint8_t targetLineColour = 14,
+			uint8_t options = 0,
+			uint8_t numberOfTicks = 4,
+			uint16_t minValue = 0,
+			uint16_t maxValue = 100,
+			iVtObject_c *variableReference = nullptr,
+			uint16_t value = 40,
+			iVtObject_c *targetValueVariableReference = nullptr,
+			uint16_t targetValue = 50);
 
-  const iVtObjectLinearBarGraph_s& get_vtObjectLinearBarGraph_a() { return *vtObjectLinearBarGraph_c::get_vtObjectLinearBarGraph_a(); }
-
-  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    vtObjectLinearBarGraph_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setTargetLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setTargetLineColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setNumberOfTicks (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setMinValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setMinValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setMaxValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setMaxValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setTargetValueVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setTargetValueVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setTargetValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setTargetValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectLinearBarGraph_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setTargetLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setMinValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setMaxValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setTargetValueVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setTargetValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectLinearBarGraph_c::updateObjectType(); }
   */
 
-  uint16_t updateWidth(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateWidth(b_SendRequest);
-  }
-
-  uint16_t updateHeight(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateHeight(b_SendRequest);
-  }
-
-  uint8_t updateColour(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateColour(b_SendRequest);
-  }
-
-  uint8_t updateTargetLineColour(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateTargetLineColour(b_SendRequest);
-  }
-
-  uint8_t updateOptions(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateOptions(b_SendRequest);
-  }
-
-  uint8_t updateNumberOfTicks(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateNumberOfTicks(b_SendRequest);
-  }
-
-  uint16_t updateMinValue(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateMinValue(b_SendRequest);
-  }
-
-  uint16_t updateMaxValue(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateMaxValue(b_SendRequest);
-  }
-
-  uint16_t updateVariableReference(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateVariableReference(b_SendRequest);
-  }
-
-  uint16_t updateTargetValueVariableReference(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateTargetValueVariableReference(b_SendRequest);
-  }
-
-  uint16_t updateTargetValue(bool b_SendRequest=false) {
-    return vtObjectLinearBarGraph_c::updateTargetValue(b_SendRequest);
-  }
+  uint16_t updateWidth(bool b_SendRequest=false);
+  uint16_t updateHeight(bool b_SendRequest=false);
+  uint8_t updateColour(bool b_SendRequest=false);
+  uint8_t updateTargetLineColour(bool b_SendRequest=false);
+  uint8_t updateOptions(bool b_SendRequest=false);
+  uint8_t updateNumberOfTicks(bool b_SendRequest=false);
+  uint16_t updateMinValue(bool b_SendRequest=false);
+  uint16_t updateMaxValue(bool b_SendRequest=false);
+  uint16_t updateVariableReference(bool b_SendRequest=false);
+  uint16_t updateTargetValueVariableReference(bool b_SendRequest=false);
+  uint16_t updateTargetValue(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint16_t updateValue(bool b_SendRequest=false) {
@@ -145,7 +85,7 @@ public:
   */
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() const;
 };
 
 } // IsoAgLib

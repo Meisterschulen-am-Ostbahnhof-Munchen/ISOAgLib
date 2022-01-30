@@ -34,16 +34,42 @@ namespace __IsoAgLib {
 
 class vtObjectLinearBarGraph_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectLinearBarGraph_s;
+
+	// Pointer to the internal implementation
+	iVtObjectLinearBarGraph_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectLinearBarGraph_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectLinearBarGraph_c(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectLinearBarGraphSROM , ai_multitonInst)
-  {}
 
-  iVtObjectLinearBarGraph_s* get_vtObjectLinearBarGraph_a() { return dynamic_cast<iVtObjectLinearBarGraph_s *>(&(get_vtObject_a())); }
+
+  vtObjectLinearBarGraph_c(
+		    int ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+		    uint16_t width,
+			uint16_t height,
+			uint8_t colour,
+			uint8_t targetLineColour,
+			uint8_t options,
+			uint8_t numberOfTicks,
+			uint16_t minValue,
+			uint16_t maxValue,
+			iVtObject_c *variableReference,
+			uint16_t value,
+			iVtObject_c *targetValueVariableReference,
+			uint16_t targetValue);
+
+  vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst);
+
+  iVtObjectLinearBarGraph_s* get_vtObjectLinearBarGraph_a();
 
 
 
@@ -51,62 +77,37 @@ public:
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), width) : 0, sizeof(iVtObjectLinearBarGraph_s), 1, newValue, b_enableReplaceOfCmd);
-  }
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), height) : 0, sizeof(iVtObjectLinearBarGraph_s), 2, newValue, b_enableReplaceOfCmd);
-  }
-  void setColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), colour) : 0, sizeof(iVtObjectLinearBarGraph_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::Colour), b_enableReplaceOfCmd);
-  }
-  void setTargetLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectLinearBarGraph_s), 4, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
-  }
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), options) : 0, sizeof(iVtObjectLinearBarGraph_s), 5, newValue, newValue, b_enableReplaceOfCmd);
-  }
-  void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), numberOfTicks) : 0, sizeof(iVtObjectLinearBarGraph_s), 6, newValue, newValue, b_enableReplaceOfCmd);
-  }
-  void setMinValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), minValue) : 0, sizeof(iVtObjectLinearBarGraph_s), 7, newValue, b_enableReplaceOfCmd);
-  }
-  void setMaxValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), maxValue) : 0, sizeof(iVtObjectLinearBarGraph_s), 8, newValue, b_enableReplaceOfCmd);
-  }
-  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), variableReference) : 0, sizeof(iVtObjectLinearBarGraph_s), 9, newValue, b_enableReplaceOfCmd);
-  }
-
-  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
-
-  void setTargetValueVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), targetValueVariableReference) : 0, sizeof(iVtObjectLinearBarGraph_s), 10, newValue, b_enableReplaceOfCmd);
-  }
-  void setTargetValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), targetValue) : 0, sizeof(iVtObjectLinearBarGraph_s), 11, newValue, b_enableReplaceOfCmd);
-  }
-
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setTargetLineColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setMinValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setMaxValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+   virtual void setTargetValueVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setTargetValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+   virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  /** that attribute is in parentheses in the spec, so commented out here
+  virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 18; }
   */
 
   uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  uint8_t updateColour(bool b_SendRequest=false);
-  uint8_t updateTargetLineColour(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
-  uint8_t updateNumberOfTicks(bool b_SendRequest=false);
-  uint16_t updateMinValue(bool b_SendRequest=false);
-  uint16_t updateMaxValue(bool b_SendRequest=false);
-  uint16_t updateVariableReference(bool b_SendRequest=false);
-  uint16_t updateTargetValueVariableReference(bool b_SendRequest=false);
-  uint16_t updateTargetValue(bool b_SendRequest=false);
+  virtual uint16_t updateHeight(bool b_SendRequest=false);
+        virtual uint8_t updateColour(bool b_SendRequest=false);
+        virtual uint8_t updateTargetLineColour(bool b_SendRequest=false);
+        virtual uint8_t updateOptions(bool b_SendRequest=false);
+        virtual uint8_t updateNumberOfTicks(bool b_SendRequest=false);
+        virtual uint16_t updateMinValue(bool b_SendRequest=false);
+        virtual uint16_t updateMaxValue(bool b_SendRequest=false);
+        virtual uint16_t updateVariableReference(bool b_SendRequest=false);
+        virtual uint16_t updateTargetValueVariableReference(bool b_SendRequest=false);
+        virtual uint16_t updateTargetValue(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint16_t updateValue(bool b_SendRequest=false);

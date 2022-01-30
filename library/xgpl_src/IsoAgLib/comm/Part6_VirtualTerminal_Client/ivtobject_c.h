@@ -321,41 +321,6 @@ protected:
     uint8_t keyCode;
   };
 
-  struct iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
-      iVtObjectLinearBarGraph_s(uint16_t width, uint16_t height, uint8_t colour, uint8_t targetLineColour,
-                                uint8_t options, uint8_t numberOfTicks, uint16_t minValue, uint16_t maxValue,
-                                iVtObject_c *variableReference, uint16_t value,
-                                iVtObject_c *targetValueVariableReference, uint16_t targetValue) : width(width),
-                                                                                                   height(height),
-                                                                                                   colour(colour),
-                                                                                                   targetLineColour(
-                                                                                                           targetLineColour),
-                                                                                                   options(options),
-                                                                                                   numberOfTicks(
-                                                                                                           numberOfTicks),
-                                                                                                   minValue(minValue),
-                                                                                                   maxValue(maxValue),
-                                                                                                   variableReference(
-                                                                                                           variableReference),
-                                                                                                   value(value),
-                                                                                                   targetValueVariableReference(
-                                                                                                           targetValueVariableReference),
-                                                                                                   targetValue(
-                                                                                                           targetValue) {}
-
-      uint16_t width;
-    uint16_t height;
-    uint8_t colour;
-    uint8_t targetLineColour;
-    uint8_t options;
-    uint8_t numberOfTicks;
-    uint16_t minValue;
-    uint16_t maxValue;
-    iVtObject_c* variableReference;
-    uint16_t value;
-    iVtObject_c* targetValueVariableReference;
-    uint16_t targetValue;
-  };
 
 
 

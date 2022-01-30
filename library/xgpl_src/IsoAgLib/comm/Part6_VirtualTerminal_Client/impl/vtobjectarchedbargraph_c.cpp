@@ -95,44 +95,6 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
     {}
 
 
-    vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
-		int ai_multitonInst,
-		IsoAgLib::ObjectID ID,
-		uint16_t width,
-		uint16_t height,
-		uint8_t colour,
-		uint8_t targetLineColour,
-		uint8_t options,
-		uint8_t startAngle,
-		uint8_t endAngle,
-		uint16_t barGraphWidth,
-		uint16_t minValue,
-		uint16_t maxValue,
-		iVtObject_c *variableReference,
-		uint16_t value,
-		iVtObject_c *targetValueVariableReference,
-		uint16_t targetValue)
-	:vtObjectArchedBarGraph_c(
-					new iVtObjectArchedBarGraph_s(
-							ID,
-							width,
-							height,
-							colour,
-							targetLineColour,
-							options,
-							startAngle,
-							endAngle,
-							barGraphWidth,
-							minValue,
-							maxValue,
-							variableReference,
-							value,
-							targetValueVariableReference,
-							targetValue),
-						ai_multitonInst)
-		{
-		}
-
 
 
 
@@ -221,8 +183,54 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
+    vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
+            int ai_multitonInst,
+            IsoAgLib::ObjectID ID,
+            uint16_t width,
+            uint16_t height,
+            uint8_t colour,
+            uint8_t targetLineColour,
+            uint8_t options,
+            uint8_t startAngle,
+            uint8_t endAngle,
+            uint16_t barGraphWidth,
+            uint16_t minValue,
+            uint16_t maxValue,
+            iVtObject_c *variableReference,
+            uint16_t value,
+            iVtObject_c *targetValueVariableReference,
+            uint16_t targetValue)
+            :vtObjectArchedBarGraph_c(
+            new iVtObjectArchedBarGraph_s(
+                    ID,
+                    width,
+                    height,
+                    colour,
+                    targetLineColour,
+                    options,
+                    startAngle,
+                    endAngle,
+                    barGraphWidth,
+                    minValue,
+                    maxValue,
+                    variableReference,
+                    value,
+                    targetValueVariableReference,
+                    targetValue),
+            ai_multitonInst)
+    {
+    }
 
 
+    vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
+            vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, int ai_multitonInst)
+            : vtObject_c((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst)
+            , vtObject_a(vtObjectArchedBarGraphSROM)
+    {}
+
+    vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s* vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a() {
+        return vtObject_a;
+    }
 
 uint32_t
 vtObjectArchedBarGraph_c::fitTerminal() const
@@ -413,15 +421,7 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 #endif
 
-	vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
-			vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, int ai_multitonInst)
-            : vtObject_c((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst)
-    		, vtObject_a(vtObjectArchedBarGraphSROM)
-    {}
 
-    vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s* vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a() {
-		return vtObject_a;
-	}
 
     void vtObjectArchedBarGraph_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width) : 0, sizeof(iVtObjectArchedBarGraph_s), 1 /* "Width" */, newWidth, b_enableReplaceOfCmd);

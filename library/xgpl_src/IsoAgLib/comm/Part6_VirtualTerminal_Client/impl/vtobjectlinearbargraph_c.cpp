@@ -28,6 +28,52 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
+  uint16_t width;
+  uint16_t height;
+  uint8_t colour;
+  uint8_t targetLineColour;
+  uint8_t options;
+  uint8_t numberOfTicks;
+  uint16_t minValue;
+  uint16_t maxValue;
+  iVtObject_c* variableReference;
+  uint16_t value;
+  iVtObject_c* targetValueVariableReference;
+  uint16_t targetValue;
+  iVtObjectLinearBarGraph_s(
+		    IsoAgLib::ObjectID ID,
+  		    uint16_t width,
+			uint16_t height,
+			uint8_t colour,
+			uint8_t targetLineColour,
+			uint8_t options,
+			uint8_t numberOfTicks,
+			uint16_t minValue,
+			uint16_t maxValue,
+			iVtObject_c *variableReference,
+			uint16_t value,
+			iVtObject_c *targetValueVariableReference,
+			uint16_t targetValue)
+  : iVtObjectwMacro_s(ID)
+  , width(width)
+  , height(height)
+  , colour(colour)
+  , targetLineColour(targetLineColour)
+  , options(options)
+  , numberOfTicks(numberOfTicks)
+  , minValue(minValue)
+  , maxValue(maxValue)
+  , variableReference(variableReference)
+  , value(value)
+  , targetValueVariableReference(targetValueVariableReference)
+  , targetValue(targetValue)
+  {}
+};
+
+
+
 int16_t
 vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
@@ -87,6 +133,52 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
 }
 
 
+vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		uint16_t width,
+		uint16_t height,
+		uint8_t colour,
+		uint8_t targetLineColour,
+		uint8_t options,
+		uint8_t numberOfTicks,
+		uint16_t minValue,
+		uint16_t maxValue,
+		iVtObject_c *variableReference,
+		uint16_t value,
+		iVtObject_c *targetValueVariableReference,
+		uint16_t targetValue)
+	:vtObjectLinearBarGraph_c(
+			new iVtObjectLinearBarGraph_s(
+		    		ID,
+		    		width,
+					height,
+					colour,
+		    		targetLineColour,
+					options,
+					numberOfTicks,
+		    		minValue,
+					maxValue,
+					variableReference,
+		    		value,
+					targetValueVariableReference,
+		    		targetValue),
+			ai_multitonInst)
+{
+
+
+}
+
+vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst)
+            : vtObject_c((iVtObject_s*) vtObjectLinearBarGraphSROM , ai_multitonInst)
+			, vtObject_a(vtObjectLinearBarGraphSROM)
+    {}
+
+
+
+vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s *vtObjectLinearBarGraph_c::get_vtObjectLinearBarGraph_a() {
+	return vtObject_a;
+}
 
 
 uint32_t
@@ -254,6 +346,57 @@ vtObjectLinearBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
   }
 }
 #endif
+
+
+
+
+    void vtObjectLinearBarGraph_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), width) : 0, sizeof(iVtObjectLinearBarGraph_s), 1, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), height) : 0, sizeof(iVtObjectLinearBarGraph_s), 2, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), colour) : 0, sizeof(iVtObjectLinearBarGraph_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::Colour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setTargetLineColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectLinearBarGraph_s), 4, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), options) : 0, sizeof(iVtObjectLinearBarGraph_s), 5, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setNumberOfTicks(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), numberOfTicks) : 0, sizeof(iVtObjectLinearBarGraph_s), 6, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setMinValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), minValue) : 0, sizeof(iVtObjectLinearBarGraph_s), 7, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setMaxValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), maxValue) : 0, sizeof(iVtObjectLinearBarGraph_s), 8, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setVariableReference(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
+                                                        bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), variableReference) : 0, sizeof(iVtObjectLinearBarGraph_s), 9, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setTargetValueVariableReference(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
+                                                                   bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), targetValueVariableReference) : 0, sizeof(iVtObjectLinearBarGraph_s), 10, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectLinearBarGraph_c::setTargetValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLinearBarGraph_a(), targetValue) : 0, sizeof(iVtObjectLinearBarGraph_s), 11, newValue, b_enableReplaceOfCmd);
+    }
+
+
 
 } // __IsoAgLib
 
