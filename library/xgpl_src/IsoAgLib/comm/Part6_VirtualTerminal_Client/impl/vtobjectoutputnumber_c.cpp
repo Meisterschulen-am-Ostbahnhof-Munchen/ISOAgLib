@@ -280,6 +280,11 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     default: break;
   }
 }
+
+    void vtObjectOutputNumber_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), width) : 0, sizeof(iVtObjectOutputNumber_s), 1, newValue, b_enableReplaceOfCmd);
+    }
+
 #endif
 
 } // __IsoAgLib

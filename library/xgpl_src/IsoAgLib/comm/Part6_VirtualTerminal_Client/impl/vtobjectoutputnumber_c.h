@@ -55,11 +55,9 @@ public:
 
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
 
-    virtual // //////////////////////////////////
+    // //////////////////////////////////
   // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), width) : 0, sizeof(iVtObjectOutputNumber_s), 1, newValue, b_enableReplaceOfCmd);
-  }
+   virtual void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
     virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), height) : 0, sizeof(iVtObjectOutputNumber_s), 2, newValue, b_enableReplaceOfCmd);
