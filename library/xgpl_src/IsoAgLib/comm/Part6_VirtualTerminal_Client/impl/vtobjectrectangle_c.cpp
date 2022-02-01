@@ -170,6 +170,38 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
   }
 }
 #endif
+    vtObjectRectangle_c::vtObjectRectangle_c(const IsoAgLib::iVtObject_c::iVtObjectRectangle_s *vtObjectRectangleSROM,
+                                             int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectRectangleSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectRectangle_s *vtObjectRectangle_c::get_vtObjectRectangle_a() { return dynamic_cast<iVtObjectRectangle_s *>(&(get_vtObject_a())); }
+
+    void
+    vtObjectRectangle_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject,
+                                           bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes) : 0, sizeof(iVtObjectRectangle_s), 1 /* "Line Attribute" */, (IsoAgLib::iVtObject_c*) newLineAttributes, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectRectangle_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), width) : 0, sizeof(iVtObjectRectangle_s), 2 /* "Width" */, newWidth, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectRectangle_c::setHeight(uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), height) : 0, sizeof(iVtObjectRectangle_s), 3 /* "Height" */, newHeight, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectRectangle_c::setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject,
+                                                 bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression) : 0, sizeof(iVtObjectRectangle_s), 4 /* "Line Suppression" */, newLineSupressionValue, newLineSupressionValue, b_enableReplaceOfCmd);
+    }
+
+    void
+    vtObjectRectangle_c::setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c *newFillAttributes, bool b_updateObject,
+                                           bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes) : 0, sizeof(iVtObjectRectangle_s), 5 /* "Fill Attributes" */, (IsoAgLib::iVtObject_c*) newFillAttributes, b_enableReplaceOfCmd);
+    }
+
 
 } // __IsoAgLib
 
