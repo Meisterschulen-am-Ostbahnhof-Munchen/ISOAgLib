@@ -46,16 +46,12 @@ public:
     
   VtServerManager_c();
   virtual ~VtServerManager_c() {}
-
   void close();
-
   VtServerInstance_c* getActiveVtServer( bool mustBePrimary, const VtServerInstance_c* ap_searchStart ) const;
   VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const;
   VtServerInstance_c* getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const;
   uint16_t getActiveVtCount() const;
-
   bool isAnyVtAvailable() const;
-
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action,
                                    IsoItem_c const& acrc_isoItem,
                                    std::vector<VtClientConnection_c*>& aref_vtConnections,
@@ -63,8 +59,7 @@ public:
 
   void processVtStatusMsg(const CanPkgExt_c& arc_data,
                           std::vector<VtClientConnection_c*>& aref_vtConnections);
-  
-  std::vector<VtServerInstance_c*>& getRefServerInstanceVec() { return ml_vtServerInst; }
+  std::vector<VtServerInstance_c*>& getRefServerInstanceVec();
 
 // the following define should be globally defined in the project settings...
 // (currently not supported, due to multi VT enhancements)

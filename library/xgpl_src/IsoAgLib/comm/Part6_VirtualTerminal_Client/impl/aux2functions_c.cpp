@@ -463,5 +463,9 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   ( void )m_vtConnection.commandHandler().queueOrReplace (msc_tempSendUpload, true /* b_enableReplaceOfCmd */);
 }
 
+    std::map<uint16_t, vtObjectAuxiliaryFunction2_c *> &Aux2Functions_c::getObjects() { return m_aux2Function; }
+
+    void Aux2Functions_c::setLearnMode(bool a_learnMode) { mb_learnMode = a_learnMode; }
+
 
 }

@@ -47,22 +47,15 @@ public:
   };
 
   Aux2Functions_c( VtClientConnection_c& vtConnection );
-
   virtual ~Aux2Functions_c(void);
-
   void loadAssignment();
-
   // - if requested, clear all Preferred Assignments first.
   // - after assignments have been initially loaded, the application can activate some "presets"
   // - return if all functions were found/valid: true=OK, false=ERROR.
   // - in case of error, the other functions that were found were still set!
   // - set iAux2InputData.preserve = true to avoid that a function/input assignment is pushed aside when CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION is reached
   bool setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assigment );
-
-
-  std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>& getObjects() { return m_aux2Function; }
-
-
+  std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>& getObjects();
   void notifyOnAux2InputStatus( const CanPkgExt_c& arc_data, IsoAgLib::iVtClientObjectPool_c& arc_pool);
 
   /** update maintenance time stamp in mmap_receivedInputMaintenanceData and decide when to send the preferred assignment message
@@ -80,16 +73,11 @@ public:
   uint8_t storeAux2Assignment(Stream_c& arc_stream, uint16_t& rui16_functionObjId, IsoAgLib::iVtClientObjectPool_c& arc_pool);
 
   void timeEvent();
-
-
   void sendPreferredAux2Assignments();
-
   void setState(Aux2FunctionsState_en a_state) { m_state = a_state; }
-
   /** set internal state and send empty preferred AUX2 assignment message (if we don't have any preferred assignments) */
   void objectPoolUploadedSuccessfully();
-
-  void setLearnMode(bool a_learnMode) { mb_learnMode = a_learnMode; }
+  void setLearnMode(bool a_learnMode);
 
 private:
 
