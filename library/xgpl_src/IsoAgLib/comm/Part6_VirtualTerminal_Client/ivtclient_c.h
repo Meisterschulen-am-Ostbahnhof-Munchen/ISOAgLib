@@ -77,11 +77,9 @@ public:
   /**
     register given object pool for uploading when possible.
   */
-  iVtClientConnection_c* initAndRegisterObjectPool (iIdentItem_c& arc_identItem, iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, iVtClientObjectPool_c::RegisterPoolMode_en aen_mode)
-  { return VtClient_c::initAndRegisterObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(arc_identItem), arc_pool, apc_versionLabel, apc_claimDataStorage, aen_mode)->toInterfacePointer(); }
+  iVtClientConnection_c* initAndRegisterObjectPool (iIdentItem_c& arc_identItem, iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, iVtClientObjectPool_c::RegisterPoolMode_en aen_mode);
 
-  bool deregisterObjectPool (iIdentItem_c& arc_wsMasterIdentItem)
-  { return VtClient_c::deregisterObjectPool (arc_wsMasterIdentItem); }
+  bool deregisterObjectPool (iIdentItem_c& arc_wsMasterIdentItem);
 
   //! Be sure to only use this function with a valid index!
   iVtClientConnection_c& getClientByID (uint8_t ui8_clientIndex)
