@@ -33,9 +33,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectInputAttributes_c(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM , int ai_multitonInst)
-  :iVtObjectString_c((iVtObjectString_s*) vtObjectInputAttributesSROM , ai_multitonInst)
-  {}
+  vtObjectInputAttributes_c(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM , int ai_multitonInst);
 
   iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return dynamic_cast<iVtObjectInputAttributes_s *>(&(get_vtObject_a())); }
 

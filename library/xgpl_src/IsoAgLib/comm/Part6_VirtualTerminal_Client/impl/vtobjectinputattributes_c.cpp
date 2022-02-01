@@ -148,5 +148,11 @@ vtObjectInputAttributes_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*
   */
 }
 #endif
+    vtObjectInputAttributes_c::vtObjectInputAttributes_c(
+            const IsoAgLib::iVtObject_c::iVtObjectInputAttributes_s *vtObjectInputAttributesSROM, int ai_multitonInst)
+            :iVtObjectString_c((iVtObjectString_s*) vtObjectInputAttributesSROM , ai_multitonInst)
+    {}
+
+
 
 } // __IsoAgLib
