@@ -86,8 +86,7 @@ public:
   bool deregisterObjectPool (iIdentItem_c& arc_wsMasterIdentItem);
 
   //! Be sure to only use this function with a valid index!
-  iVtClientConnection_c& getClientByID (uint8_t ui8_clientIndex)
-  { return VtClient_c::getClientByID (ui8_clientIndex).toInterfaceReference(); }
+  iVtClientConnection_c& getClientByID (uint8_t ui8_clientIndex);
 
   //! Returns NULL if index was not valid. ATTENTION: Index may be valid, but maybe it's a newer client on this index, if it was deregistered/registered.
   iVtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex)

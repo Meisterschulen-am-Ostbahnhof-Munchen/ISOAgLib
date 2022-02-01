@@ -26,6 +26,10 @@ iVtClient_c &getIvtClientInstance(unsigned int instance) { return static_cast<iV
                                            iVtClientObjectPool_c::RegisterPoolMode_en aen_mode) { return VtClient_c::initAndRegisterObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(arc_identItem), arc_pool, apc_versionLabel, apc_claimDataStorage, aen_mode)->toInterfacePointer(); }
 
 
+
+    iVtClientConnection_c &iVtClient_c::getClientByID(uint8_t ui8_clientIndex) { return VtClient_c::getClientByID (ui8_clientIndex).toInterfaceReference(); }
+
+
 }
 
 
