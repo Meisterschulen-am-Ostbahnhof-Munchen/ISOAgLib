@@ -37,13 +37,11 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectAuxiliaryFunction_c(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s *)vtObjectAuxiliaryFunctionSROM , ai_multitonInst)
-  {}
+  vtObjectAuxiliaryFunction_c(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst);
 
-  iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a() {return dynamic_cast<iVtObjectAuxiliaryFunction_s *>(&(get_vtObject_a()));}
+  iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a();
 
-  ~vtObjectAuxiliaryFunction_c() {}
+  ~vtObjectAuxiliaryFunction_c() = default;
 
   uint32_t fitTerminal() const;
 
@@ -57,7 +55,7 @@ public:
   uint8_t updateObjectType() const { return 29; }
   */
 
-  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/);;
 #endif
 };
 

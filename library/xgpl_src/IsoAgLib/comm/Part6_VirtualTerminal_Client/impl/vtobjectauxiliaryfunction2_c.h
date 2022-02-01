@@ -37,13 +37,11 @@ class Aux2Functions_c;
 class vtObjectAuxiliaryFunction2_c : public vtObject_c
 {
 public:
-  vtObjectAuxiliaryFunction2_c(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s *)vtObjectAuxiliaryFunction2SROM , ai_multitonInst)
-  {}
+  vtObjectAuxiliaryFunction2_c(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst);
 
   int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
 
-  iVtObjectAuxiliaryFunction2_s* get_vtObjectAuxiliaryFunction2_a() {return dynamic_cast<iVtObjectAuxiliaryFunction2_s *>(&(get_vtObject_a()));}
+  iVtObjectAuxiliaryFunction2_s* get_vtObjectAuxiliaryFunction2_a();
 
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);
@@ -56,10 +54,10 @@ public:
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 31; }
   */
-  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/);;
 #endif
 
-  uint8_t getFunctionType() { return (getValue8(MACRO_getStructOffset(get_vtObjectAuxiliaryFunction2_a(), functionAttributes), 0 /* ui16_structLen */) & 0x1F); }
+  uint8_t getFunctionType();
 
 private:
   void getAssignedInput(IsoAgLib::iIsoName_c& arc_isoName, uint16_t& arui16_inputUid) const;
@@ -71,7 +69,7 @@ private:
   void addPreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input);
   void removePreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input);
   bool clearPreferredAssignments();
-  const std::list<IsoAgLib::iAux2InputData>& getRefPreferredAssignmentCandidates() const { return ml_preferredAssignedInputCandidate; }
+  const std::list<IsoAgLib::iAux2InputData>& getRefPreferredAssignmentCandidates() const;
   bool hasPreferredAssigment() const;
   
 private:

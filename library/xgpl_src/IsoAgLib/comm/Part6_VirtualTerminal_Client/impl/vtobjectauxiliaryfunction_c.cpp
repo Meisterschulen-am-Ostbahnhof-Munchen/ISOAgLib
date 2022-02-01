@@ -86,5 +86,15 @@ vtObjectAuxiliaryFunction_c::setOriginSKM(bool /* b_SKM */)
   }
 }
 
+    vtObjectAuxiliaryFunction_c::vtObjectAuxiliaryFunction_c(
+            const IsoAgLib::iVtObject_c::iVtObjectAuxiliaryFunction_s *vtObjectAuxiliaryFunctionSROM,
+            int ai_multitonInst)
+            :vtObject_c((iVtObject_s *)vtObjectAuxiliaryFunctionSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectAuxiliaryFunction_s *vtObjectAuxiliaryFunction_c::get_vtObjectAuxiliaryFunction_a() {return dynamic_cast<iVtObjectAuxiliaryFunction_s *>(&(get_vtObject_a()));}
+
+    void vtObjectAuxiliaryFunction_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
+
 } // __IsoAgLib
 

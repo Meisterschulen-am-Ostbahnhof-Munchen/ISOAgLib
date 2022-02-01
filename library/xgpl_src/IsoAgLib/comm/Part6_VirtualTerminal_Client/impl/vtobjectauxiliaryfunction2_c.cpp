@@ -288,6 +288,21 @@ vtObjectAuxiliaryFunction2_c::clearPreferredAssignments()
   return clearedSomething;
 }
 
+    vtObjectAuxiliaryFunction2_c::vtObjectAuxiliaryFunction2_c(
+            const IsoAgLib::iVtObject_c::iVtObjectAuxiliaryFunction2_s *vtObjectAuxiliaryFunction2SROM,
+            int ai_multitonInst)
+            :vtObject_c((iVtObject_s *)vtObjectAuxiliaryFunction2SROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectAuxiliaryFunction2_s *
+    vtObjectAuxiliaryFunction2_c::get_vtObjectAuxiliaryFunction2_a() {return dynamic_cast<iVtObjectAuxiliaryFunction2_s *>(&(get_vtObject_a()));}
+
+    void vtObjectAuxiliaryFunction2_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
+
+    const std::list<IsoAgLib::iAux2InputData> &vtObjectAuxiliaryFunction2_c::getRefPreferredAssignmentCandidates() const { return ml_preferredAssignedInputCandidate; }
+
+    uint8_t vtObjectAuxiliaryFunction2_c::getFunctionType() { return (getValue8(MACRO_getStructOffset(get_vtObjectAuxiliaryFunction2_a(), functionAttributes), 0 /* ui16_structLen */) & 0x1F); }
+
 
 } // __IsoAgLib
 
