@@ -187,5 +187,13 @@ vtObjectContainer_c::saveReceivedAttribute(uint8_t attrID, uint8_t* /*pui8_attri
   }
 }
 #endif
+    vtObjectContainer_c::vtObjectContainer_c(const IsoAgLib::iVtObject_c::iVtObjectContainer_s *vtObjectContainer_sROM,
+                                             int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectContainer_sROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectContainer_s *vtObjectContainer_c::get_vtObjectContainer_a() { return dynamic_cast<iVtObjectContainer_s *>(&(get_vtObject_a())); }
+
+
 } // __IsoAgLib
 
