@@ -128,7 +128,7 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
       }
     }
 
-    for (STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>::iterator iter = mlist_auxInput2.begin(); iter != mlist_auxInput2.end(); ++iter)
+    for (std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>::iterator iter = mlist_auxInput2.begin(); iter != mlist_auxInput2.end(); ++iter)
     {
       // send message only when in learn mode or input enabled
       if (!mb_learnMode && !(*iter)->getInputStateEnabled())
@@ -201,7 +201,7 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
 bool Aux2Inputs_c::setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool a_enabled)
 {
   bool b_objFound = false;
-  for (STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>::iterator iter = mlist_auxInput2.begin(); iter != mlist_auxInput2.end(); ++iter)
+  for (std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>::iterator iter = mlist_auxInput2.begin(); iter != mlist_auxInput2.end(); ++iter)
   {
     if ( ((*iter)->getID() == aui16_inputObjId) || (0xFFFF == aui16_inputObjId))
     {

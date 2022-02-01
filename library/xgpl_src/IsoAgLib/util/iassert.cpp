@@ -50,7 +50,7 @@ void isoaglib_assert_callFinish()
 #if defined(__TSW_CPP__)
 void assert_fail()
 {
-  STL_NAMESPACE::abort();
+  std::abort();
 }
 #else
 void assert_fail(char const *pcs_file, int i_line, char const *pcs_expression)

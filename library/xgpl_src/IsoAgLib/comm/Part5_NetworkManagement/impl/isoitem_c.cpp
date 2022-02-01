@@ -394,13 +394,13 @@ uint8_t IsoItem_c::calc_randomWait()
 #ifdef USE_WORKING_SET
 /// This is for IdentItem's setting of WS-master/slave
 void
-IsoItem_c::setLocalMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames)
+IsoItem_c::setLocalMasterSlaves (std::vector<IsoName_c>* apvec_slaveIsoNames)
 {
   // ISOAgLib doesn't allow changing the WS-definition during runtime!
   isoaglib_assert( m_wsSlavesAnnounced == NULL );
 
   if (apvec_slaveIsoNames)
-    m_wsSlavesAnnounced = new STL_NAMESPACE::vector<IsoName_c> (*apvec_slaveIsoNames);
+    m_wsSlavesAnnounced = new std::vector<IsoName_c> (*apvec_slaveIsoNames);
   else
     m_wsSlavesAnnounced = NULL;
 }
@@ -416,7 +416,7 @@ IsoItem_c::processMsgWsMaster (uint8_t slaveCount, ecutime_t time )
   }
   else
   {
-    m_wsSlavesAnnouncing = new STL_NAMESPACE::vector<IsoName_c>( slaveCount, IsoName_c::IsoNameUnspecified() );
+    m_wsSlavesAnnouncing = new std::vector<IsoName_c>( slaveCount, IsoName_c::IsoNameUnspecified() );
   }
 
   checkWsRemoteAnnouncingFinished( time );
@@ -432,7 +432,7 @@ IsoItem_c::processMsgWsMember( IsoName_c const& slaveName, ecutime_t time )
   if( m_wsSlavesAnnouncing == NULL )
     return;
 
-  for( STL_NAMESPACE::vector<IsoName_c>::iterator iter = m_wsSlavesAnnouncing->begin();
+  for( std::vector<IsoName_c>::iterator iter = m_wsSlavesAnnouncing->begin();
         iter != m_wsSlavesAnnouncing->end(); ++iter )
   {
     if( iter->isUnspecified() )

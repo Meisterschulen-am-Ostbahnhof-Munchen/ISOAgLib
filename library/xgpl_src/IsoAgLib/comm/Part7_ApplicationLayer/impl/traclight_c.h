@@ -254,7 +254,7 @@ typedef struct {
     lightBitData_t mt_cmd;
 
     /** stores for each requesting implement (sourceAddress) a bit field with all lighting information*/
-    STL_NAMESPACE::map<uint8_t, lightBitData_t> mmap_data; // access mmap_data[sourceAdr].
+    std::map<uint8_t, lightBitData_t> mmap_data; // access mmap_data[sourceAdr].
 
     /** the last 10 times when a command was send.*/
     ecutime_t marr_timeStamp[10];

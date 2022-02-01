@@ -144,7 +144,7 @@ namespace __IsoAgLib {
     */
   bool TracLight_c::find(const uint8_t sa) const
    {
-      STL_NAMESPACE::map<uint8_t, lightBitData_t>::const_iterator ci = mmap_data.find(sa);
+      std::map<uint8_t, lightBitData_t>::const_iterator ci = mmap_data.find(sa);
       if (ci != mmap_data.end())
         return true;
       else
@@ -160,7 +160,7 @@ namespace __IsoAgLib {
     */
   IsoAgLib::IsoActiveFlag_t TracLight_c::getByIndex(const unsigned int acui_index, const IsoAgLib::IsoCommandFlag_t at_command)
   {
-    STL_NAMESPACE::map<uint8_t, lightBitData_t>::iterator itr;
+    std::map<uint8_t, lightBitData_t>::iterator itr;
     const lightBitData_t* pt_data = NULL;
     unsigned int count = 0;
 
@@ -187,7 +187,7 @@ namespace __IsoAgLib {
   IsoAgLib::IsoActiveFlag_t TracLight_c::getBySa(const uint8_t sa, const IsoAgLib::IsoCommandFlag_t t_command) const
   {
     const lightBitData_t* pt_data = NULL;
-    STL_NAMESPACE::map<uint8_t, lightBitData_t>::const_iterator itr = mmap_data.find(sa);
+    std::map<uint8_t, lightBitData_t>::const_iterator itr = mmap_data.find(sa);
 
     if (itr != mmap_data.end())
       pt_data = &itr->second;
@@ -508,7 +508,7 @@ namespace __IsoAgLib {
     switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN!
     {
       case LIGHTING_DATA_PGN:
-        // lighting state information is sent by more than one sender -> store ALL messages with SA as key in STL_NAMESPACE::map
+        // lighting state information is sent by more than one sender -> store ALL messages with SA as key in std::map
         pt_data = &(mmap_data[pkg.isoSa()]);
         if (pt_data != NULL)
           pt_data->dataMsgReq = IsoAgLib::IsoDontCare; //reserved field in lighting data

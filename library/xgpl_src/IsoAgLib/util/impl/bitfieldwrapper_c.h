@@ -32,19 +32,19 @@
 
 template <unsigned N> class Isoaglib32Bitset {
   private:
-    STL_NAMESPACE::vector<uint32_t> _v;
+    std::vector<uint32_t> _v;
   public:
     Isoaglib32Bitset( void ): _v((N+31)>>5, uint32_t(0) ) {}
     Isoaglib32Bitset( const Isoaglib32Bitset& ar_src ) : _v(ar_src._v){};
 
     Isoaglib32Bitset<N>& set( void ) {
-      STL_NAMESPACE::vector<uint32_t>::iterator i;
+      std::vector<uint32_t>::iterator i;
       for (i=_v.begin(); i!=_v.end(); ++i) *i = 0xFFFFFFFFUL;
       return *this;
     }
 
     Isoaglib32Bitset<N>& reset( void ) {
-      STL_NAMESPACE::vector<uint32_t>::iterator i;
+      std::vector<uint32_t>::iterator i;
       for (i=_v.begin(); i!=_v.end(); ++i) *i = 0;
       return *this;
     }
@@ -76,19 +76,19 @@ template <unsigned N> class Isoaglib32Bitset {
 
 template <unsigned N> class IsoaglibBitset {
   private:
-    STL_NAMESPACE::vector<uint8_t> _v;
+    std::vector<uint8_t> _v;
   public:
     IsoaglibBitset( void ): _v((N+7)>>3, uint8_t(0) ) {}
     IsoaglibBitset( const IsoaglibBitset& ar_src ) : _v(ar_src._v){};
 
     IsoaglibBitset<N>& set( void ) {
-      STL_NAMESPACE::vector<uint8_t>::iterator i;
+      std::vector<uint8_t>::iterator i;
       for (i=_v.begin(); i!=_v.end(); ++i) *i = 0xFFu;
       return *this;
     }
 
     IsoaglibBitset<N>& reset( void ) {
-      STL_NAMESPACE::vector<uint8_t>::iterator i;
+      std::vector<uint8_t>::iterator i;
       for (i=_v.begin(); i!=_v.end(); ++i) *i = 0x00u;
       return *this;
     }
@@ -199,7 +199,7 @@ class BitFieldWrapper_c
     enum {sizeInBits = T::number_of_bits};
     enum {sizeInBytes = ( T::number_of_bits+7 ) >> 3 };
 
-    STL_NAMESPACE::vector<uint8_t> m_bitField;
+    std::vector<uint8_t> m_bitField;
 
   public:
     /** Constructor */
@@ -220,7 +220,7 @@ class BitFieldWrapper_c
         or if there are any reserved bits which should not be set */
     BitFieldWrapper_c& setAllBits()
     {
-      STL_NAMESPACE::vector<uint8_t>::iterator i;
+      std::vector<uint8_t>::iterator i;
       for (i=m_bitField.begin(); i!=m_bitField.end(); ++i) *i = 0xFFu;
       return *this;
     }
@@ -228,8 +228,8 @@ class BitFieldWrapper_c
     /** do bitwise AND assignment */
     void operator &= ( const BitFieldWrapper_c& c_refBitField )
     {
-      STL_NAMESPACE::vector<uint8_t>::iterator i = m_bitField.begin();
-      STL_NAMESPACE::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
+      std::vector<uint8_t>::iterator i = m_bitField.begin();
+      std::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
       for (; i!=m_bitField.end(); ++i, ++j)
         *i &= *j;
     }
@@ -237,8 +237,8 @@ class BitFieldWrapper_c
     /** do bitwise OR assignment */
     void operator |= ( const BitFieldWrapper_c& c_refBitField )
     {
-      STL_NAMESPACE::vector<uint8_t>::iterator i = m_bitField.begin();
-      STL_NAMESPACE::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
+      std::vector<uint8_t>::iterator i = m_bitField.begin();
+      std::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
       for (; i!=m_bitField.end(); ++i, ++j)
         *i |= *j;
     }
@@ -246,8 +246,8 @@ class BitFieldWrapper_c
     /** do bitwise XOR assignment */
     void operator ^= ( const BitFieldWrapper_c& c_refBitField )
     {
-      STL_NAMESPACE::vector<uint8_t>::iterator i = m_bitField.begin();
-      STL_NAMESPACE::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
+      std::vector<uint8_t>::iterator i = m_bitField.begin();
+      std::vector<uint8_t>::const_iterator j = c_refBitField.m_bitField.begin();
       for (; i!=m_bitField.end(); ++i, ++j)
         *i ^= *j;
     }

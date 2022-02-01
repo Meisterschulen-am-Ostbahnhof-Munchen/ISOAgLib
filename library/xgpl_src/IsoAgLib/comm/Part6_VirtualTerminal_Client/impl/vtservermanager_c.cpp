@@ -53,7 +53,7 @@ VtServerManager_c::close()
 
 VtServerInstance_c* VtServerManager_c::getActiveVtServer( bool mustBePrimary, const VtServerInstance_c* ap_searchStart ) const
 {
-  STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst = ml_vtServerInst.begin();
+  std::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst = ml_vtServerInst.begin();
 
   if(NULL != ap_searchStart)
   {
@@ -73,7 +73,7 @@ VtServerInstance_c* VtServerManager_c::getActiveVtServer( bool mustBePrimary, co
     }
   }
 
-  STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_searchStart = lit_vtServerInst;
+  std::vector<VtServerInstance_c*>::const_iterator lit_searchStart = lit_vtServerInst;
   
   // search rest of list
   for ( ; lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
@@ -93,7 +93,7 @@ VtServerInstance_c* VtServerManager_c::getActiveVtServer( bool mustBePrimary, co
 
 VtServerInstance_c* VtServerManager_c::getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const
 {
-  STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
+  std::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
   {
     if ((*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive() && ((*lit_vtServerInst)->getIsoName() == aref_prefferedVTIsoName))
@@ -105,7 +105,7 @@ VtServerInstance_c* VtServerManager_c::getPreferredVtServer(const IsoName_c& are
 
 VtServerInstance_c* VtServerManager_c::getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const
 {
-  STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
+  std::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
   {
     if ((*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive() && arc_pool.selectVtServer((*lit_vtServerInst)->getIsoName().toConstIisoName_c()))
@@ -118,7 +118,7 @@ uint16_t VtServerManager_c::getActiveVtCount() const
 {
   uint16_t cnt = 0;
   
-  STL_NAMESPACE::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
+  std::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst;
   for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
   {
     if ((*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive())
@@ -133,7 +133,7 @@ void
 VtServerManager_c::reactOnIsoItemModification(
   ControlFunctionStateHandler_c::iIsoItemAction_e action,
   IsoItem_c const& isoItem,
-  STL_NAMESPACE::vector<VtClientConnection_c*>& aref_vtConnections,
+  std::vector<VtClientConnection_c*>& aref_vtConnections,
   VtClient_c& aref_vtClient )
 {
   // we only care for the VTs
@@ -144,7 +144,7 @@ VtServerManager_c::reactOnIsoItemModification(
   {
     case ControlFunctionStateHandler_c::AddToMonitorList:
     { ///! Attention: This function is also called from "init()", not only from ISOMonitor!
-      for( STL_NAMESPACE::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
+      for( std::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
            iter != ml_vtServerInst.end(); ++iter )
       { // check if newly added VtServerInstance is already in our list
         if (&isoItem == &(*iter)->getIsoItem())
@@ -156,7 +156,7 @@ VtServerManager_c::reactOnIsoItemModification(
     } break;
 
     case ControlFunctionStateHandler_c::RemoveFromMonitorList:
-      for( STL_NAMESPACE::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
+      for( std::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
            iter != ml_vtServerInst.end(); ++iter )
       { // check if lost VtServerInstance is in our list
         if (&isoItem == &(*iter)->getIsoItem())
@@ -183,9 +183,9 @@ VtServerManager_c::reactOnIsoItemModification(
 
 void
 VtServerManager_c::processVtStatusMsg(const CanPkgExt_c& arc_data,
-                                      STL_NAMESPACE::vector<VtClientConnection_c*>& aref_vtConnections)
+                                      std::vector<VtClientConnection_c*>& aref_vtConnections)
 {
-  STL_NAMESPACE::vector<VtServerInstance_c*>::iterator lit_vtServerInst;
+  std::vector<VtServerInstance_c*>::iterator lit_vtServerInst;
 
   for (lit_vtServerInst = ml_vtServerInst.begin();
       lit_vtServerInst != ml_vtServerInst.end();
@@ -210,6 +210,8 @@ VtServerManager_c::processVtStatusMsg(const CanPkgExt_c& arc_data,
     }
   }
 }
+
+    bool VtServerManager_c::isAnyVtAvailable() const { return !ml_vtServerInst.empty(); }
 
 // (currently not supported, due to multi VT enhancements)
 #if 0

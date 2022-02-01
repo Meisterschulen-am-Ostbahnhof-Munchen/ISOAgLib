@@ -77,7 +77,7 @@ class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
     void reset() { ui16_currentSendPosition = ui16_storedSendPosition = 0; vec_data.clear();};
 
     /** public send buffer */
-    STL_NAMESPACE::vector<uint8_t> vec_data;
+    std::vector<uint8_t> vec_data;
   private:
     uint16_t ui16_currentSendPosition;
     uint16_t ui16_storedSendPosition;
@@ -728,8 +728,8 @@ private:
   uint8_t mui8_positionSequenceID;
   int32_t mi32_geoidalSeparationCm;
   uint8_t mui8_noRefStations;
-  STL_NAMESPACE::vector<uint16_t> mvec_refStationTypeAndStation;
-  STL_NAMESPACE::vector<uint16_t> mvec_refStationDifferentialAge10Msec;
+  std::vector<uint16_t> mvec_refStationTypeAndStation;
+  std::vector<uint16_t> mvec_refStationDifferentialAge10Msec;
 
   /** buffer class for sending data streams */
   Nmea2000SendStreamer_c mc_nmea2000Streamer;

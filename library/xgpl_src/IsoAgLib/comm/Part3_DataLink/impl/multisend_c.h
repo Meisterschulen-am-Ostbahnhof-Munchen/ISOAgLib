@@ -66,7 +66,7 @@ public:
   void set (uint8_t* apui8_buffer, uint32_t bufferSize);
 
   /// Use either a MultiSendStreamer or a direct ui8-Buffer
-  STL_NAMESPACE::vector<uint8_t> vec_uploadBuffer;  // don't use malloc_alloc for uint8_t values - here the 8byte overhead per malloc item are VERY big
+  std::vector<uint8_t> vec_uploadBuffer;  // don't use malloc_alloc for uint8_t values - here the 8byte overhead per malloc item are VERY big
   // ==> chunk allocation which can be shared among instances is alot better
 };
 
@@ -302,7 +302,7 @@ private:
   uint8_t mui8_nextFpSequenceCounter;
   #endif
 
-  STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
+  std::list<SendStream_c> mlist_sendStream;
   Customer_t mt_customer;
 #ifdef HAL_USE_SPECIFIC_FILTERS
   Handler_t mt_handler;

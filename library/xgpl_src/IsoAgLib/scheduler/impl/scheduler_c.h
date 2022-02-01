@@ -108,7 +108,7 @@ namespace __IsoAgLib {
       void rescheduleTask( const SchedulerTask_c& task );
 
       //  Attribute: mc_taskQueue
-      STL_NAMESPACE::list<SchedulerTask_c*> m_taskQueue;
+      std::list<SchedulerTask_c*> m_taskQueue;
 
 #ifdef USE_MUTUAL_EXCLUSION
       /** Attribute for the exclusive access of the IsoAgLib for threads */

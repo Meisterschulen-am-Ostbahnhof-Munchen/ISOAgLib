@@ -77,7 +77,7 @@ namespace __IsoAgLib
       const IsoAgLib::iMaskFilterType_c m_filter;
 
     private:
-      STL_NAMESPACE::map<IsoName_c,unsigned> mmap_registeredMsgs; // how many registered for a given NAME.
+      std::map<IsoName_c,unsigned> mmap_registeredMsgs; // how many registered for a given NAME.
     };
 
     class CanCustomerA_c : public CanCustomerAB_c
@@ -86,8 +86,8 @@ namespace __IsoAgLib
       CanCustomerA_c( ProprietaryMessageHandler_c& handler ) : CanCustomerAB_c( handler, IsoAgLib::iMaskFilterType_c( 0x00FF0000, PROPRIETARY_A_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ) ), m_msgs() {} // A1 and A2
       virtual ~CanCustomerA_c() {}
 
-      typedef STL_NAMESPACE::list<ProprietaryMessageA_c*> MsgList;
-      typedef STL_NAMESPACE::list<ProprietaryMessageA_c*>::iterator MsgIterator;
+      typedef std::list<ProprietaryMessageA_c*> MsgList;
+      typedef std::list<ProprietaryMessageA_c*>::iterator MsgIterator;
 
       MsgList m_msgs;
 
@@ -106,8 +106,8 @@ namespace __IsoAgLib
 
       virtual ~CanCustomerB_c() {}
 
-      typedef STL_NAMESPACE::list<ProprietaryMessageB_c*> MsgList;
-      typedef STL_NAMESPACE::list<ProprietaryMessageB_c*>::iterator MsgIterator;
+      typedef std::list<ProprietaryMessageB_c*> MsgList;
+      typedef std::list<ProprietaryMessageB_c*>::iterator MsgIterator;
 
       MsgList* m_msgs[256];
 

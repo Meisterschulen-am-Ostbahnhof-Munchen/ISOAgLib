@@ -67,15 +67,7 @@
  #define CNAMESPACE std
 #endif
 
-/** usually the STL containers and algorithms are placed in std,
-    but compilers like IAR just take the parts from ANSI C++ which they like,
-    and change the other ....
-*/
-#ifdef __IAR_SYSTEMS_ICC__
-	#define STL_NAMESPACE
-#else
-	#define STL_NAMESPACE std
-#endif
+
 
 
 #ifdef __IAR_SYSTEMS_ICC__
@@ -89,7 +81,7 @@
 #if defined( __GNUC__ ) && __GNUC__ >= 4
   #define MALLOC_TEMPLATE(PAR) __gnu_cxx::malloc_allocator<PAR>
 #else
-  #define MALLOC_TEMPLATE(PAR) STL_NAMESPACE::__malloc_alloc_template<0>
+  #define MALLOC_TEMPLATE(PAR) std::__malloc_alloc_template<0>
   #if defined( _MSC_VER )
     #define __STR2__(x) #x
     #define __STR1__(x) __STR2__(x)

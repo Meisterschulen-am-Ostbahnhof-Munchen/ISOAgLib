@@ -132,7 +132,7 @@ namespace IsoAgLib
 
   void iGenericData_c::CheckSizeOfVectorForWrite( uint16_t aui16_pos, uint16_t aui16_size )
   {
-    const STL_NAMESPACE::vector<uint8_t>::size_type csize_vector = vec_data.size();
+    const std::vector<uint8_t>::size_type csize_vector = vec_data.size();
     const uint16_t cui16_limit = (aui16_pos + aui16_size);
 
     /** size of the vector is less than what is needed for this write */

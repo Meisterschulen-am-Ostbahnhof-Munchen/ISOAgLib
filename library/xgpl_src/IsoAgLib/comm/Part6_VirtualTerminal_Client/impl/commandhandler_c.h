@@ -192,9 +192,9 @@ private:
   int32_t mi32_commandTimeout;
 
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >  mq_sendUpload[ CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ];
+  std::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >  mq_sendUpload[ CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ];
   #else
-  STL_NAMESPACE::list<SendUpload_c> mq_sendUpload[ CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ];
+  std::list<SendUpload_c> mq_sendUpload[ CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ];
   #endif
 
   unsigned mu_sendPriority;

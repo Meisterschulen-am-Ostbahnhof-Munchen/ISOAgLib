@@ -126,7 +126,7 @@ namespace __IsoAgLib
   protected:
     Task_t mt_task;
 
-    STL_NAMESPACE::vector<IsoAgLib::iMsgEventHandler_c*> mvec_msgEventHandlers;
+    std::vector<IsoAgLib::iMsgEventHandler_c*> mvec_msgEventHandlers;
 
   private:
     ecutime_t mi32_lastMsgReceived;

@@ -792,9 +792,9 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
     return false;
 
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >::iterator i_sendUpload;
+  std::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >::iterator i_sendUpload;
 #else
-  STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
+  std::list<SendUpload_c>::iterator i_sendUpload;
 #endif
 
   if( mb_checkSameCommand && b_enableReplaceOfCmd )
@@ -803,7 +803,7 @@ CommandHandler_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableRepl
 
     for( unsigned prio = mu_sendPriority; prio < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++prio )
     {
-      STL_NAMESPACE::list<SendUpload_c>& q_sendUpload = mq_sendUpload[prio];
+      std::list<SendUpload_c>& q_sendUpload = mq_sendUpload[prio];
 
       if( !q_sendUpload.empty() )
       { //get first equal command in queue
@@ -943,9 +943,9 @@ CommandHandler_c::dumpQueue()
 {
 #if DEBUG_VTCOMM
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  STL_NAMESPACE::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >::iterator i_sendUpload;
+  std::list<SendUpload_c,MALLOC_TEMPLATE(SendUpload_c) >::iterator i_sendUpload;
 #else
-  STL_NAMESPACE::list<SendUpload_c>::iterator i_sendUpload;
+  std::list<SendUpload_c>::iterator i_sendUpload;
 #endif
   for (unsigned prio=0; prio < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++prio)
   {
@@ -985,7 +985,7 @@ CommandHandler_c::tryToStart()
   {
     if( queueFilled( priority ) )
     {
-      STL_NAMESPACE::list<SendUpload_c>& q_sendUpload = mq_sendUpload[ priority ];
+      std::list<SendUpload_c>& q_sendUpload = mq_sendUpload[ priority ];
 
 
       men_uploadCommandState = UploadCommandWithAwaitingResponse;
@@ -1092,7 +1092,7 @@ CommandHandler_c::tryToStart()
 void
 CommandHandler_c::finishUploadCommand()
 {
-  STL_NAMESPACE::list<SendUpload_c>& q_sendUpload = mq_sendUpload[ mu_sendPriorityOfLastCommand ];
+  std::list<SendUpload_c>& q_sendUpload = mq_sendUpload[ mu_sendPriorityOfLastCommand ];
 
   isoaglib_assert( !q_sendUpload.empty() );
   isoaglib_assert( men_uploadCommandState != UploadCommandIdle );

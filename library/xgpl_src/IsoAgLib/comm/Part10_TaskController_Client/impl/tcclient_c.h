@@ -179,13 +179,13 @@ namespace __IsoAgLib {
         IsoAgLib::ProcData::ClientCapabilities_s capabilities;
         TcClientConnection_c::StateHandler_c *stateHandler;
       };
-      typedef STL_NAMESPACE::map<IdentItem_c*, struct ClientInfo_s> IdentToClientInfoMap_t;
+      typedef std::map<IdentItem_c*, struct ClientInfo_s> IdentToClientInfoMap_t;
       IdentToClientInfoMap_t m_clientInfo;
 
       // 2/2: Peer-PdConnections.
-      STL_NAMESPACE::list<PdConnection_c*> m_peerConnections;
+      std::list<PdConnection_c*> m_peerConnections;
 
-      typedef STL_NAMESPACE::list<PdRemoteNode_c*> ItemToRemoteNodeMap_t;
+      typedef std::list<PdRemoteNode_c*> ItemToRemoteNodeMap_t;
       ItemToRemoteNodeMap_t m_pdRemoteNodes;
 
       friend TcClient_c &getTcClientInstance( unsigned instance );

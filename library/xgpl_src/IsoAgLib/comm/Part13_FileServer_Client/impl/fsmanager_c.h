@@ -80,7 +80,7 @@ class FsManager_c : public SchedulerTask_c
 
       void processFsToGlobal( const CanPkgExt_c& pkg );
 
-      STL_NAMESPACE::vector<FsServerInstance_c *> m_serverInstances;
+      std::vector<FsServerInstance_c *> m_serverInstances;
       FsManager_c& m_fsManager;
 
     private:
@@ -101,7 +101,7 @@ class FsManager_c : public SchedulerTask_c
 
       void handleDestructingFsCsc( const FsClientServerCommunication_c& fsCsc );
 
-      STL_NAMESPACE::list<FsCommand_c*> ml_initializingCommands;
+      std::list<FsCommand_c*> ml_initializingCommands;
 
       FsManager_c& m_fsManager;
 
@@ -143,7 +143,7 @@ class FsManager_c : public SchedulerTask_c
     FsServerManager_c m_servers;
     FsCommandManager_c m_commands;
 
-    STL_NAMESPACE::vector<FsClientServerCommunication_c *> mv_communications;
+    std::vector<FsClientServerCommunication_c *> mv_communications;
 
     friend FsManager_c &getFsManagerInstance(uint8_t instance);
 };

@@ -963,7 +963,7 @@ UploadPoolState_c::initObjectPoolUploadingPhases(
         ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size += fitTerminalWrapper( *static_cast<vtObject_c*>( m_pool.getIVtObjects()[0][curObject] ) );
 
       /// Phase 2
-      const STL_NAMESPACE::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = m_pool.getAppSpecificFixPoolData();
+      const std::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = m_pool.getAppSpecificFixPoolData();
       ms_uploadPhasesAutomatic [UploadPhaseAppSpecificFix].pc_streamer = cpair_retval.second;
       ms_uploadPhasesAutomatic [UploadPhaseAppSpecificFix].ui32_size = cpair_retval.first;
     }
@@ -991,7 +991,7 @@ UploadPoolState_c::initObjectPoolUploadingPhases(
     } // else: no LANGUAGE SPECIFIC objectpool, so keep this at 0 to indicate this!
 
     /// Phase 3
-    const STL_NAMESPACE::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval
+    const std::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval
       = m_pool.getAppSpecificLangPoolData( calcAppUploadingLanguage(), mui16_objectPoolUploadingLanguageCode );
 
     ms_uploadPhasesAutomatic [UploadPhaseAppSpecificLang].pc_streamer = cpair_retval.second;

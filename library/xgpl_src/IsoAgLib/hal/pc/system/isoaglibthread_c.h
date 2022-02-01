@@ -122,7 +122,7 @@ private: // attributes
   HAL::ExclusiveAccess_c mc_protectAccess; // make start/stop sequence thread-safe
   void ( *mpf_threadSetupHook )();
 
-  STL_NAMESPACE::set<void *>mset_keys;
+  std::set<void *>mset_keys;
 };
 
 inline

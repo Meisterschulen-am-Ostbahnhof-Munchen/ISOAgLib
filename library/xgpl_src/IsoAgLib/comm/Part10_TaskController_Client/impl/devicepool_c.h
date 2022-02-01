@@ -160,7 +160,7 @@ namespace __IsoAgLib {
       uint8_t m_type;
       uint16_t m_elementNumber;
       uint16_t m_parentId;
-      STL_NAMESPACE::vector<uint16_t> m_childList;
+      std::vector<uint16_t> m_childList;
       friend class __IsoAgLib::ProcData_c;
       friend class __IsoAgLib::DevicePool_c;
 
@@ -324,10 +324,10 @@ namespace __IsoAgLib {
       ByteStreamBuffer_c getBytestream( uint8_t cmdByte, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps );
       uint32_t getBytestreamSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& ) const;
 
-      typedef STL_NAMESPACE::list<ProcData_c*> ProcDataList_t;
+      typedef std::list<ProcData_c*> ProcDataList_t;
       ProcDataList_t &getProcDataList() { return *reinterpret_cast<ProcDataList_t*>( &m_procDatas ); }
 
-      typedef STL_NAMESPACE::map<uint16_t, DeviceObject_c*> deviceMap_t;
+      typedef std::map<uint16_t, DeviceObject_c*> deviceMap_t;
       deviceMap_t m_devicePool;
   };
 

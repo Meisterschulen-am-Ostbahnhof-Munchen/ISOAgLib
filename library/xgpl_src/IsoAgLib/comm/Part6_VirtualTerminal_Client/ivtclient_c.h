@@ -61,7 +61,7 @@ class iVtClientDataStorage_c {
         The iAux2InputData.preferredAssignmentMatched marks the input which is currently assigned.
         It's not necessary to save preferredAssignmentMatched, because it is not used in loadPreferredAux2Assignment().
       */
-    virtual void storePreferredAux2Assignment( uint16_t a_functionUid, const STL_NAMESPACE::list<iAux2InputData>& a_ref_preferred_assignment ) = 0;
+    virtual void storePreferredAux2Assignment( uint16_t a_functionUid, const std::list<iAux2InputData>& a_ref_preferred_assignment ) = 0;
                                                
     virtual int32_t getAux2DeltaWaitBeforeSendingPreferredAssigment() { return 2000; };
 };

@@ -202,7 +202,7 @@ private:
   uint8_t mui8_clientId;
   vtClientDisplayState_t men_displayState;
 
-  STL_NAMESPACE::list<AuxAssignment_s> mlist_auxAssignments;
+  std::list<AuxAssignment_s> mlist_auxAssignments;
   Aux2Inputs_c m_aux2Inputs;
   Aux2Functions_c m_aux2Functions;
 

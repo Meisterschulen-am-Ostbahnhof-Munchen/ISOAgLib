@@ -131,7 +131,7 @@ bool
 vtObjectAuxiliaryFunction2_c::unassignAfterTimeout(const IsoAgLib::iIsoName_c& arc_isoName)
 {
   // reset any matching for preferred assignment for this arc_isoName
-  for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
+  for(std::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
       iter != ml_preferredAssignedInputCandidate.end();
       ++iter)
   {
@@ -159,7 +159,7 @@ vtObjectAuxiliaryFunction2_c::addPreferredAssignedInputCandidate(const IsoAgLib:
   {
     bool erased = false;
     // delete oldes entry (no preset)
-    for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
+    for(std::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
       iter != ml_preferredAssignedInputCandidate.end();
       ++iter)
     {
@@ -181,7 +181,7 @@ vtObjectAuxiliaryFunction2_c::addPreferredAssignedInputCandidate(const IsoAgLib:
 
 void vtObjectAuxiliaryFunction2_c::removePreferredAssignedInputCandidate(const IsoAgLib::iAux2InputData& a_ref_input)
 {
-  STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = STL_NAMESPACE::find(ml_preferredAssignedInputCandidate.begin(), ml_preferredAssignedInputCandidate.end(), a_ref_input);
+  std::list<IsoAgLib::iAux2InputData>::iterator iter = std::find(ml_preferredAssignedInputCandidate.begin(), ml_preferredAssignedInputCandidate.end(), a_ref_input);
   if(iter != ml_preferredAssignedInputCandidate.end())
   {
     ml_preferredAssignedInputCandidate.erase(iter);
@@ -192,8 +192,8 @@ bool
 vtObjectAuxiliaryFunction2_c::matchPreferredAssignedInput(const IsoAgLib::iIsoName_c& arc_isoName,
                                                           uint16_t aui16_inputModelIdentificationCode)
 {
-  STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter_fuzzy = ml_preferredAssignedInputCandidate.end();
-  for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
+  std::list<IsoAgLib::iAux2InputData>::iterator iter_fuzzy = ml_preferredAssignedInputCandidate.end();
+  for(std::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
       iter != ml_preferredAssignedInputCandidate.end();
       ++iter)
   {
@@ -225,7 +225,7 @@ vtObjectAuxiliaryFunction2_c::matchPreferredAssignedInput(const IsoAgLib::iIsoNa
 
 bool vtObjectAuxiliaryFunction2_c::getMatchingPreferredAssignedInputReady()
 {
-  for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
+  for(std::list<IsoAgLib::iAux2InputData>::iterator iter = ml_preferredAssignedInputCandidate.begin();
       iter != ml_preferredAssignedInputCandidate.end();
       ++iter)
   {
@@ -241,7 +241,7 @@ bool
 vtObjectAuxiliaryFunction2_c::getPreferredAssignedInput(IsoAgLib::iIsoName_c& arc_isoName, uint16_t& arui16_inputModelIdentificationCode, uint16_t& arui16_inputUid) const
 {
 {
-  for(STL_NAMESPACE::list<IsoAgLib::iAux2InputData>::const_iterator iter = ml_preferredAssignedInputCandidate.begin();
+  for(std::list<IsoAgLib::iAux2InputData>::const_iterator iter = ml_preferredAssignedInputCandidate.begin();
       iter != ml_preferredAssignedInputCandidate.end();
       ++iter)
   {

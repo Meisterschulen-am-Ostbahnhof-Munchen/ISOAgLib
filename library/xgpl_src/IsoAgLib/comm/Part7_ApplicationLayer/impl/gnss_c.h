@@ -187,8 +187,8 @@ private:
   uint8_t mui8_positionSequenceID;
   int32_t mi32_geoidalSeparationCm;
   uint8_t mui8_noRefStations;
-  STL_NAMESPACE::vector<uint16_t> mvec_refStationTypeAndStation;
-  STL_NAMESPACE::vector<uint16_t> mvec_refStationDifferentialAge10Msec;
+  std::vector<uint16_t> mvec_refStationTypeAndStation;
+  std::vector<uint16_t> mvec_refStationDifferentialAge10Msec;
 
   ControlFunctionStateHandlerProxy_c<Gnss_c> m_gnssCFSHproxy;
 

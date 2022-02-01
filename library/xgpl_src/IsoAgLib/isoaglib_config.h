@@ -485,13 +485,13 @@
 #    include <fstream>
 #    include "stdio.h"
 #    ifndef ISOAGLIB_USE_UNICODE
-#      define INTERNAL_DEBUG_DEVICE STL_NAMESPACE::cout
+#      define INTERNAL_DEBUG_DEVICE std::cout
 #      define INTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
 #    else
-#      define INTERNAL_DEBUG_DEVICE STL_NAMESPACE::wcout
+#      define INTERNAL_DEBUG_DEVICE std::wcout
 #      define INTERNAL_DEBUG_DEVICE_NEWLINE L"\r\n"
 #    endif
-#    define INTERNAL_DEBUG_DEVICE_ENDL STL_NAMESPACE::endl
+#    define INTERNAL_DEBUG_DEVICE_ENDL std::endl
 #    define INTERNAL_DEBUG_FLUSH fflush(0);
 #  else
 #    ifdef USE_RS232

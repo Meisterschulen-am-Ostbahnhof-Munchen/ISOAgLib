@@ -128,19 +128,19 @@ public:
   void setHardwareData( const CanPkgExt_c& arc_data );
 
   /** getter */
-  const IsoName_c&           getIsoName()             const { return m_isoItem.isoName(); }
-  uint8_t                    getVtSourceAddress()     const { return m_isoItem.nr(); }
+  const IsoName_c&           getIsoName()             const;
+  uint8_t                    getVtSourceAddress()     const;
   uint32_t                   getVtHardwareDimension() const;
   uint16_t                   getVtFontSizes()         const;
   uint8_t                    getVtIsoVersion()        const;
-  vtCapabilities_s&          getVtCapabilities()            { return ms_vtCapabilitiesA; }
-  const vtCapabilities_s&    getConstVtCapabilities() const { return ms_vtCapabilitiesA; }
-  const IsoAgLib::vtState_s& getVtState()             const { return ms_vtStateA; }
-  localSettings_s*           getLocalSettings()             { return &ms_localSettingsA; }
-  const IsoItem_c&           getIsoItem()             const { return m_isoItem; }
-  bool                       isPrimaryVt()            const { return (getIsoName().funcInst() == 0); }
+  vtCapabilities_s&          getVtCapabilities();
+  const vtCapabilities_s&    getConstVtCapabilities() const;
+  const IsoAgLib::vtState_s& getVtState()             const;
+  localSettings_s*           getLocalSettings();
+  const IsoItem_c&           getIsoItem()             const;
+  bool                       isPrimaryVt()            const;
   
-  bool receivedLocalSettings() const { return( ms_localSettingsA.lastReceived != 0 ); }
+  bool receivedLocalSettings() const;
   void requestLocalSettings( IdentItem_c& identItem );
 
 // the following define should be globally defined in the project settings...

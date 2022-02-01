@@ -152,7 +152,7 @@ void TracGuidanceCommand_c::setCommander(uint8_t ui8_sourceAddress)
   */
 CurvatureCommander_s* TracGuidanceCommand_c::getCommanderDataBySA( uint8_t ui8_sourceAddress )
 {
-  STL_NAMESPACE::map<uint8_t, CurvatureCommander_s>::iterator itr = mmap_commanders.find(ui8_sourceAddress);
+  std::map<uint8_t, CurvatureCommander_s>::iterator itr = mmap_commanders.find(ui8_sourceAddress);
   CurvatureCommander_s*  ps_commander = NULL;
 
   if ( itr != mmap_commanders.end() )
@@ -173,7 +173,7 @@ CurvatureCommander_s* TracGuidanceCommand_c::getCommanderDataBySA( uint8_t ui8_s
   */
 CurvatureCommander_s* TracGuidanceCommand_c::getCommanderDataByIndex( uint8_t ui8_index)
 {
-  STL_NAMESPACE::map<uint8_t, CurvatureCommander_s>::iterator itr;
+  std::map<uint8_t, CurvatureCommander_s>::iterator itr;
   CurvatureCommander_s*  ps_commander = NULL;
   unsigned int count = 0;
 

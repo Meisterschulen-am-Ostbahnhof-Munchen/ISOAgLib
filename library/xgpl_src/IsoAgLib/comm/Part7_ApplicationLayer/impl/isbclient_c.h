@@ -117,10 +117,10 @@ private:
 private:
   Subsystem_c m_runState;
 
-  typedef STL_NAMESPACE::map< IsoItem_c*, IsbState_s > ServerMap_t;
+  typedef std::map< IsoItem_c*, IsbState_s > ServerMap_t;
   ServerMap_t m_servers;
 
-  typedef STL_NAMESPACE::list< IsoAgLib::iIsbStateHandler_c* > CallbackList_t;
+  typedef std::list< IsoAgLib::iIsbStateHandler_c* > CallbackList_t;
   CallbackList_t m_callbacks;
 
   bool m_lastCallbackStopAllImplementOperations;

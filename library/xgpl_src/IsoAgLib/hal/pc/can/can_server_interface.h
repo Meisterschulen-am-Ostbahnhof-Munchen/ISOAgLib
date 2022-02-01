@@ -273,7 +273,7 @@ public:
   uint16_t ui16_pid;
   int32_t  i32_msecStartDeltaClientMinusServer;
 
-  //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
+  //typedef std::vector<tMsgObj> ArrMsgObj;
   //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
 
   struct canBus_s {

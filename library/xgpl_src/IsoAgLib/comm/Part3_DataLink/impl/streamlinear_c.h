@@ -50,7 +50,7 @@ public:
   inline uint8_t* getLinearBuffer();
 
 private:
-  STL_NAMESPACE::vector<uint8_t> mvecui8_buffer;
+  std::vector<uint8_t> mvecui8_buffer;
   uint32_t mui32_parsedCnt;
 };
 

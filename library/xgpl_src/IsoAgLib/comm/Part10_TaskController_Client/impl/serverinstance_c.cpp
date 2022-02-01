@@ -123,7 +123,7 @@ namespace __IsoAgLib {
     const bool activeTaskNew = getLastStatusTaskTotalsActive();
 
     if ( activeTaskNew != activeTaskOld ) {
-      for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
+      for( std::list<PdConnection_c*>::const_iterator it = m_connections.begin();
             it != m_connections.end(); ++it )
       {
         static_cast<TcClientConnection_c*>( *it )->eventTaskStartStop( activeTaskNew );

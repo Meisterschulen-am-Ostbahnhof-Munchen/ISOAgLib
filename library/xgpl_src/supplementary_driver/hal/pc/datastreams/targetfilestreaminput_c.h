@@ -37,9 +37,9 @@
 
 //  +X2C Class 915 : FileTargetFileStreamInput_c
 #ifndef USE_BUFFERED_READ
-class TargetFileStreamInput_c :public STL_NAMESPACE::ifstream
+class TargetFileStreamInput_c :public std::ifstream
 #else
-class TargetFileStreamInput_c // :public STL_NAMESPACE::ifstream
+class TargetFileStreamInput_c // :public std::ifstream
 #endif
 {
 

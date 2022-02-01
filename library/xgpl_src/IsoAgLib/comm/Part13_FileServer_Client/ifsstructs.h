@@ -48,7 +48,7 @@ struct iFsDirectory
 };
 
 typedef struct iFsDirectory * iFsDirectoryPtr;
-typedef STL_NAMESPACE::vector<iFsDirectoryPtr> iFsDirList;
+typedef std::vector<iFsDirectoryPtr> iFsDirList;
 
 struct iFsWhitelist_c
 {
@@ -58,7 +58,7 @@ struct iFsWhitelist_c
   uint8_t ui8_minSimultaniouslyOpenFiles;
 };
 
-typedef STL_NAMESPACE::vector<iFsWhitelist_c> iFsWhitelistList;
+typedef std::vector<iFsWhitelist_c> iFsWhitelistList;
 
 enum iFsCommandErrors
 {

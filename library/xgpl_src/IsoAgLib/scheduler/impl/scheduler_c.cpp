@@ -158,8 +158,8 @@ namespace __IsoAgLib {
   void
   Scheduler_c::rescheduleTask( const SchedulerTask_c& task ) {
 
-    STL_NAMESPACE::list<SchedulerTask_c*>::iterator i;
-    STL_NAMESPACE::list<SchedulerTask_c*>::iterator p;
+    std::list<SchedulerTask_c*>::iterator i;
+    std::list<SchedulerTask_c*>::iterator p;
 
     // find task in queue
     for( i = m_taskQueue.begin(); i != m_taskQueue.end(); ++i ) {

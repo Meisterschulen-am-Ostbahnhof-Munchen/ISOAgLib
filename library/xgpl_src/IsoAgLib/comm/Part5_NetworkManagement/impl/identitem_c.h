@@ -188,7 +188,7 @@ private:
    * It may be a slave - this can be determined by searching
    * through all Items' list for this Item's IsoName!
    */
-  STL_NAMESPACE::vector<IsoName_c>* mpvec_slaveIsoNames;
+  std::vector<IsoName_c>* mpvec_slaveIsoNames;
   #endif
 
   ecutime_t i32_lastIsoSaRequestForThisItem;

@@ -151,7 +151,7 @@ public:
   uint8_t mui8_commanderSa;
 
   /** list of all available clients which sends curvature commands */
-  STL_NAMESPACE::map<uint8_t, CurvatureCommander_s> mmap_commanders; // mmap_commanders[sourceAddress]
+  std::map<uint8_t, CurvatureCommander_s> mmap_commanders; // mmap_commanders[sourceAddress]
 
   friend TracGuidanceCommand_c &getTracGuidanceCommandInstance( unsigned instance );
 };

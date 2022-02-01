@@ -73,7 +73,7 @@ void Aux2Functions_c::loadAssignment() {
   m_vtConnection.getVtClientDataStorage().loadPreferredAux2Assignment( assigment );
 
   for( IsoAgLib::iAux2AssignmentIterator_c i = assigment.begin(); i != assigment.end(); ++i ) {
-    STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
+    std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
     if( iter != m_aux2Function.end() ) {
       iter->second->addPreferredAssignedInputCandidate( i->input );
     }
@@ -90,7 +90,7 @@ Aux2Functions_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assi
 
   if( firstClearAllPAs )
   {
-    for( STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter )
+    for( std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter )
     {
       if( iter->second->clearPreferredAssignments() )
       {
@@ -103,7 +103,7 @@ Aux2Functions_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assi
   bool b_sendPreferredAssignments = false;
   
   for( IsoAgLib::iAux2AssignmentConstIterator_c i = assignments.begin(); i != assignments.end(); ++i ) {
-    STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
+    std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( i->functionUid );
     if( iter == m_aux2Function.end() ) {
       success = false;
       continue;
@@ -116,7 +116,7 @@ Aux2Functions_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assi
       continue; // a matching input device was already found
     
     // check against already received input maintenance messages
-    for(STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::const_iterator iter_maintenance = mmap_receivedInputMaintenanceData.begin();
+    for(std::map<IsoName_c,InputMaintenanceDataForIsoName_s>::const_iterator iter_maintenance = mmap_receivedInputMaintenanceData.begin();
         iter_maintenance != mmap_receivedInputMaintenanceData.end();
         ++iter_maintenance)
     {
@@ -146,7 +146,7 @@ Aux2Functions_c::notifyOnAux2InputStatus(
   IsoAgLib::iIsoName_c c_assignedIsoName;
   uint16_t ui16_assignedInputUid = 0xFFFF;
 
-  for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
+  for (std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
   {
     iter->second->getAssignedInput(c_assignedIsoName, ui16_assignedInputUid);
 
@@ -221,7 +221,7 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
     case State_CollectInputMaintenanceMessage:
     case State_Ready:
       if( initializingToReady ) {
-        for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
+        for (std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
         {
           if(iter->second->getMatchingPreferredAssignedInputReady())
             continue; // this input device was already found in our preferred assignments => skip it
@@ -242,7 +242,7 @@ Aux2Functions_c::objectPoolUploadedSuccessfully()
 {
   // if we don't have any preferred assignments => send empty preferred assignment msg
   bool b_preferredAssignmentFound = false;
-  for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
+  for (std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
   {
     if( iter->second->hasPreferredAssigment() ) {
       b_preferredAssignmentFound = true;
@@ -273,7 +273,7 @@ Aux2Functions_c::storeAux2Assignment(
     return (1<<0); // message should always have 14 bytes
 
   // first byte already consumed from stream! --> Byte-offset -2 instead of -1!
-  STL_NAMESPACE::vector<uint8_t> c_buffer;
+  std::vector<uint8_t> c_buffer;
   for (uint16_t i = 0; i < arc_stream.getByteTotalSize(); i++)
   {
     c_buffer.push_back( arc_stream.get() );
@@ -287,7 +287,7 @@ Aux2Functions_c::storeAux2Assignment(
 
   if (0xFFFF == rui16_functionObjId)
   { // unassign ALL functions
-    for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
+    for (std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
     {
       if( iter->second->setAssignedInput(IsoAgLib::iIsoName_c::iIsoNameUnspecified(), 0xFFFF /* model identification code */, 0xFFFF /* input ID */, b_preferredAssignment) )
         arc_pool.aux2AssignmentChanged( *( static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>( iter->second ) ) );
@@ -298,7 +298,7 @@ Aux2Functions_c::storeAux2Assignment(
   }
   else
   { // (un)assign given function
-    STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( rui16_functionObjId );
+    std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.find( rui16_functionObjId );
     if( iter != m_aux2Function.end() )
     {
       bool unassignName = true;
@@ -319,7 +319,7 @@ Aux2Functions_c::storeAux2Assignment(
       if( assign )
       {
         c_inputIsoName = IsoName_c( &c_buffer[2-2] );
-        STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::const_iterator iter_map = mmap_receivedInputMaintenanceData.find(c_inputIsoName);
+        std::map<IsoName_c,InputMaintenanceDataForIsoName_s>::const_iterator iter_map = mmap_receivedInputMaintenanceData.find(c_inputIsoName);
         if( iter_map == mmap_receivedInputMaintenanceData.end() )
           // @todo also check for READY? (wait for AEF test)
           return (1<<0); // we did not yet receive an input maintenance message for this isoname => unknown
@@ -357,14 +357,14 @@ Aux2Functions_c::timeEvent()
   ecutime_t next = i32_now + 300;
 
   // 1. check for timed out inputs
-  for (STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::iterator iter_map = mmap_receivedInputMaintenanceData.begin();
+  for (std::map<IsoName_c,InputMaintenanceDataForIsoName_s>::iterator iter_map = mmap_receivedInputMaintenanceData.begin();
       iter_map != mmap_receivedInputMaintenanceData.end();)
   {
     const ecutime_t timeout = iter_map->second.mi32_timeLastAux2Maintenance + 300;
     if ( i32_now > timeout )
     {
       // timeout => unassign all functions with matching isoname
-      for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter_function = m_aux2Function.begin();
+      for (std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter_function = m_aux2Function.begin();
           iter_function != m_aux2Function.end(); ++iter_function)
       {
         if( iter_function->second->unassignAfterTimeout(iter_map->first.toConstIisoName_c()) )            
@@ -399,9 +399,9 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   static SendUpload_c msc_tempSendUpload;
   Aux2PreferredAssignmentInputDevice_s key;
   Aux2PreferredAssignmentObjects_s objIds;
-  STL_NAMESPACE::map<Aux2PreferredAssignmentInputDevice_s, STL_NAMESPACE::list<Aux2PreferredAssignmentObjects_s> > map_Inputs;
+  std::map<Aux2PreferredAssignmentInputDevice_s, std::list<Aux2PreferredAssignmentObjects_s> > map_Inputs;
 
-  for (STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
+  for (std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::const_iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
   {
     if (! iter->second->getMatchingPreferredAssignedInputReady() || iter->second->isOmittedFromUpload())
       continue; // skip preferred assignments for which we didn't detect a input maintenance message with ready state (or function is omitted from upload anyway)
@@ -423,7 +423,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   uint16_t msgSize = 2; // minimum size for no assignments
   uint8_t noInputUnits = 0;
 
-  for (STL_NAMESPACE::map<Aux2PreferredAssignmentInputDevice_s, STL_NAMESPACE::list<Aux2PreferredAssignmentObjects_s> >::const_iterator iter = map_Inputs.begin(); iter != map_Inputs.end(); ++iter)
+  for (std::map<Aux2PreferredAssignmentInputDevice_s, std::list<Aux2PreferredAssignmentObjects_s> >::const_iterator iter = map_Inputs.begin(); iter != map_Inputs.end(); ++iter)
   {
     noInputUnits++;
     msgSize += 11;
@@ -435,7 +435,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
   msc_tempSendUpload.vec_uploadBuffer.push_back (0x22);
   msc_tempSendUpload.vec_uploadBuffer.push_back (noInputUnits);
 
-  for (STL_NAMESPACE::map<Aux2PreferredAssignmentInputDevice_s, STL_NAMESPACE::list<Aux2PreferredAssignmentObjects_s> >::const_iterator iter = map_Inputs.begin(); iter != map_Inputs.end(); ++iter)
+  for (std::map<Aux2PreferredAssignmentInputDevice_s, std::list<Aux2PreferredAssignmentObjects_s> >::const_iterator iter = map_Inputs.begin(); iter != map_Inputs.end(); ++iter)
   {
     const uint8_t* pui8_isoName = iter->first.isoName.outputString(); 
     for (uint8_t ui8_i = 0; ui8_i < 8; ui8_i++)
@@ -447,7 +447,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
     msc_tempSendUpload.vec_uploadBuffer.push_back(iter->first.ui16_model >> 8);
     msc_tempSendUpload.vec_uploadBuffer.push_back(uint8_t( iter->second.size() )); // not more possible per standard, so fine to cast!
     
-    for (STL_NAMESPACE::list<Aux2PreferredAssignmentObjects_s>::const_iterator iter_list = iter->second.begin(); iter_list != iter->second.end(); ++iter_list)
+    for (std::list<Aux2PreferredAssignmentObjects_s>::const_iterator iter_list = iter->second.begin(); iter_list != iter->second.end(); ++iter_list)
     {
       msc_tempSendUpload.vec_uploadBuffer.push_back(iter_list->ui16_function & 0xFF);
       msc_tempSendUpload.vec_uploadBuffer.push_back(iter_list->ui16_function >> 8);

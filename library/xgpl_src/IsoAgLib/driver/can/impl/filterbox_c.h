@@ -123,7 +123,7 @@ private:
   IsoAgLib::iMaskFilterType_c mc_maskFilterPair;
 
   /**vector of pointer to pc_customer CanCustomer_c  which works with the received CAN data */
-  STL_NAMESPACE::vector<CustomerLen_s> mvec_customer;
+  std::vector<CustomerLen_s> mvec_customer;
 
   /** Indicate if FilterBox is iterating through the customers in "processMsg" */
   static FilterBox_c* mspc_currentlyProcessedFilterBox;

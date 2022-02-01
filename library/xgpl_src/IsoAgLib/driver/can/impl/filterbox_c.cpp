@@ -59,7 +59,7 @@ FilterBox_c::set (const IsoAgLib::iMaskFilterType_c& arc_maskFilterPair,
 
   mc_maskFilterPair = arc_maskFilterPair;
 
-  STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
+  std::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
   for (; pc_iter != mvec_customer.end(); ++pc_iter)
   {
     if (apc_customer == pc_iter->pc_customer)
@@ -83,7 +83,7 @@ bool
 FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) const
 
 {
-  STL_NAMESPACE::vector<CustomerLen_s>::const_iterator pc_iter;
+  std::vector<CustomerLen_s>::const_iterator pc_iter;
   for(pc_iter = mvec_customer.begin(); pc_iter != mvec_customer.end(); ++pc_iter)
     if( &ar_customer == pc_iter->pc_customer)
       return true;
@@ -96,7 +96,7 @@ bool
 FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 {
   int deleteIndex = 0;
-  for (STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
+  for (std::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
        pc_iter != mvec_customer.end();)
   {
     if (&ar_customer == pc_iter->pc_customer)

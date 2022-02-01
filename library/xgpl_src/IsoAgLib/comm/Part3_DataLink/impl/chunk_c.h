@@ -80,7 +80,7 @@ protected:
 private:
 
   //  Attribute: marr_data
-  STL_NAMESPACE::vector<uint8_t> marr_data;
+  std::vector<uint8_t> marr_data;
 
 }; // ~X2C
 

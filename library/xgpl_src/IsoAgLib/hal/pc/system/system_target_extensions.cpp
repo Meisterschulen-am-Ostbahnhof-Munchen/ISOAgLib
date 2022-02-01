@@ -72,7 +72,7 @@ HALSimulator_c::getOn_offSwitch()
   #else
     // use std C++ cin function to check for unprocessed input
     // -> as soon as RETURN is hit, the programm stops
-    return ( STL_NAMESPACE::cin.rdbuf()->in_avail() <= 0 );
+    return ( std::cin.rdbuf()->in_avail() <= 0 );
   #endif
 }
 

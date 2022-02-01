@@ -37,7 +37,7 @@ namespace __IsoAgLib {
   class CanIo_c : public Subsystem_c {
       MACRO_MULTITON_CONTRIBUTION();
     protected:
-      typedef STL_NAMESPACE::list<FilterBox_c*> ArrFilterBox;
+      typedef std::list<FilterBox_c*> ArrFilterBox;
 
     public:
 

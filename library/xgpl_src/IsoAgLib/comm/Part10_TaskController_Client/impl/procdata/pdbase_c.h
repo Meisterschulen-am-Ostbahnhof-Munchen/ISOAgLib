@@ -44,7 +44,7 @@ namespace __IsoAgLib {
     void addConnected( ConnectedPd_c& );
     void removeConnected( ConnectedPd_c& );
 
-    typedef STL_NAMESPACE::list<ConnectedPd_c*> ConnectedPds_t;
+    typedef std::list<ConnectedPd_c*> ConnectedPds_t;
     ConnectedPds_t &connectedPds() { return m_connectedPds; }
 
   protected:

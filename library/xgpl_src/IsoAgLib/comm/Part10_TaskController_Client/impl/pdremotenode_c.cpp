@@ -47,7 +47,7 @@ namespace __IsoAgLib {
     // avoid double connect
     // - manual connect from event-callback (probably due to app. only connecting later)
     // - reconnect inside of ISOAgLib
-    for( STL_NAMESPACE::list<PdConnection_c*>::iterator it = m_connections.begin();
+    for( std::list<PdConnection_c*>::iterator it = m_connections.begin();
          it != m_connections.end(); ++it )
     {
       if( *it == &c )
@@ -60,7 +60,7 @@ namespace __IsoAgLib {
   void
   PdRemoteNode_c::removeConnection( PdConnection_c& c )
   {
-    for( STL_NAMESPACE::list<PdConnection_c*>::iterator it = m_connections.begin();
+    for( std::list<PdConnection_c*>::iterator it = m_connections.begin();
          it != m_connections.end(); ++it )
     {
       if( *it == &c )
@@ -75,7 +75,7 @@ namespace __IsoAgLib {
   void
   PdRemoteNode_c::processMsg( const ProcessPkg_c& pkg )
   {
-    for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_connections.begin();
+    for( std::list<PdConnection_c*>::const_iterator it = m_connections.begin();
          it != m_connections.end(); ++it )
     {
       if( ( pkg.getMonitorItemForDA() == NULL ) || 

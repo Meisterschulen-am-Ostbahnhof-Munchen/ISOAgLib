@@ -1108,7 +1108,7 @@ namespace __IsoAgLib {
     const int32_t ci32_now = ## adapt to ecutime_t if it should be used again! ## getLastRetriggerTime();
     // set data in Nmea2000SendStreamer_c
     mc_nmea2000Streamer.reset();
-    STL_NAMESPACE::vector<uint8_t>& writeRef = mc_nmea2000Streamer.vec_data;
+    std::vector<uint8_t>& writeRef = mc_nmea2000Streamer.vec_data;
     // use helper function to transfer value to the byte vector
     number2LittleEndianString( uint8_t (ui8_dataModeAndHeadingReference|0xC0), writeRef );     /// NOT there in the RAPID UPDATE one
     number2LittleEndianString( mui8_directionSequenceID, writeRef );
@@ -1162,7 +1162,7 @@ void TimePosGps_c::isoSendDirection( void )
 
 
 #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
-  void setDegree10Minus7ToStream( const int32_t& ri32_src, STL_NAMESPACE::vector<uint8_t>& writeRef )
+  void setDegree10Minus7ToStream( const int32_t& ri32_src, std::vector<uint8_t>& writeRef )
   {
     #if HAL_SIZEOF_INT == 4
     // use 64 bit variable
@@ -1178,7 +1178,7 @@ void TimePosGps_c::isoSendDirection( void )
     #endif
   }
 
-  void setAltitude10Minus2ToStream( const int32_t& ri32_result, STL_NAMESPACE::vector<uint8_t>& writeRef )
+  void setAltitude10Minus2ToStream( const int32_t& ri32_result, std::vector<uint8_t>& writeRef )
   {
     #if HAL_SIZEOF_INT == 4
     // use 64 bit variable
@@ -1205,7 +1205,7 @@ void TimePosGps_c::isoSendDirection( void )
     const ecutime_t ci32_now = System_c::getTime();
     // set data in Nmea2000SendStreamer_c
     mc_nmea2000Streamer.reset();
-    STL_NAMESPACE::vector<uint8_t>& writeRef = mc_nmea2000Streamer.vec_data;
+    std::vector<uint8_t>& writeRef = mc_nmea2000Streamer.vec_data;
     // use helper function to transfer value to the byte vector
     number2LittleEndianString( mui8_positionSequenceID, writeRef );
 

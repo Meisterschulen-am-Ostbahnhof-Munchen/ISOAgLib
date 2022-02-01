@@ -597,9 +597,9 @@ const uint16_t* pp96ui16_8859s [8] =
 };
 
 
-void convertString8859ToUnicode (const STL_NAMESPACE::string& rrefstr_iso8859, STL_NAMESPACE::string& rrefstr_unicode, uint8_t aui8_encoding)
+void convertString8859ToUnicode (const std::string& rrefstr_iso8859, std::string& rrefstr_unicode, uint8_t aui8_encoding)
 {
-  STL_NAMESPACE::string::const_iterator cit_str8859;
+  std::string::const_iterator cit_str8859;
   rrefstr_unicode.erase ();
   for (cit_str8859=rrefstr_iso8859.begin(); cit_str8859 != rrefstr_iso8859.end(); cit_str8859++)
   {
@@ -681,7 +681,7 @@ void convertStringUnicodeTo8859 (const char* apui8_stringUnicode, uint16_t aui16
 
 
 // only supports 2-byte UTF-8 encodings, but this should be enough for us...
-void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t aui16_unicode)
+void push_backUTF8 (std::string& rrefstr_string, uint16_t aui16_unicode)
 {
   if (aui16_unicode < 0x80)
   {

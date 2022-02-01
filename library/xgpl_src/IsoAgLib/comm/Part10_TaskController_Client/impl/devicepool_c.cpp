@@ -125,7 +125,7 @@ namespace __IsoAgLib {
 
 
   void DeviceObjectDvc_c::setLocalization( const Localization_s& local ) {
-    //if (STL_NAMESPACE::memcmp((void*)&local, (void*)&m_Localization, sizeof(Localization_s)) != 0)
+    //if (std::memcmp((void*)&local, (void*)&m_Localization, sizeof(Localization_s)) != 0)
     // setDirty(true);
     m_localization = local;
   }
@@ -280,14 +280,14 @@ namespace __IsoAgLib {
     byteStream.format( m_parentId );
     byteStream.format( ( uint16_t )m_childList.size() );
 
-    STL_NAMESPACE::vector<uint16_t>::const_iterator it;
+    std::vector<uint16_t>::const_iterator it;
     for ( it = m_childList.begin(); it != m_childList.end(); ++it )
       byteStream.format( *it );
   }
 
 
   bool DeviceObjectDet_c::addChild( uint16_t childId ) {
-    STL_NAMESPACE::vector<uint16_t>::iterator it;
+    std::vector<uint16_t>::iterator it;
     for ( it = m_childList.begin(); it != m_childList.end(); ++it ) {
       if ( *it == childId )
         return true;
@@ -321,7 +321,7 @@ namespace __IsoAgLib {
     pool.calcChecksumAdd( m_parentId );
     pool.calcChecksumAdd( ( uint16_t )m_childList.size() );
 
-    STL_NAMESPACE::vector<uint16_t>::const_iterator it;
+    std::vector<uint16_t>::const_iterator it;
     for ( it = m_childList.begin(); it != m_childList.end(); ++it )
       pool.calcChecksumAdd( *it );
   }
@@ -562,7 +562,7 @@ namespace __IsoAgLib {
   void DevicePool_c::add( DeviceObject_c& devObj ) {
     isoaglib_assert( (devObj.getObjectType() != IsoAgLib::ProcData::ObjectTypeDET) || (getDetObject(((DeviceObjectDet_c*)&devObj)->elementNumber()) == NULL) );
     (void)m_devicePool.insert(
-      STL_NAMESPACE::pair<uint16_t, DeviceObject_c*>( devObj.getObjectId(), &devObj ) ).second;
+      std::pair<uint16_t, DeviceObject_c*>( devObj.getObjectId(), &devObj ) ).second;
   }
 
 

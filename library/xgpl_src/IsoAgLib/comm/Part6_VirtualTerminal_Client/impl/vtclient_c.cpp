@@ -200,7 +200,7 @@ void VtClient_c::processMsgNonGlobal( const CanPkgExt_c& pkg ) {
 
   isoaglib_assert( ( pkg.isoPurePgn() == VT_TO_ECU_PGN ) || ( pkg.isoPurePgn() == ACKNOWLEDGEMENT_PGN ) );
 
-  for( STL_NAMESPACE::vector<VtClientConnection_c*>::iterator it = m_vtConnections.begin();
+  for( std::vector<VtClientConnection_c*>::iterator it = m_vtConnections.begin();
        it != m_vtConnections.end(); ++it )
   {
     if( ( *it != NULL ) &&
@@ -259,7 +259,7 @@ void VtClient_c::processMsgGlobal( const CanPkgExt_c& arc_data ) {
 
     case LANGUAGE_PGN:
     {
-      STL_NAMESPACE::vector<VtServerInstance_c*>::iterator lit_vtServerInst;
+      std::vector<VtServerInstance_c*>::iterator lit_vtServerInst;
       VtServerInstance_c* pc_server = NULL;
       uint8_t ui8_index;
 

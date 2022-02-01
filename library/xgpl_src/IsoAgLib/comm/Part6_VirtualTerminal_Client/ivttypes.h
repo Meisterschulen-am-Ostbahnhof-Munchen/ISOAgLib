@@ -264,9 +264,9 @@ struct iAux2FunctionInputAssignment_t{
   iAux2InputData input;
 };
 
-typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t> iAux2Assignment_c;
-typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::iterator iAux2AssignmentIterator_c;
-typedef STL_NAMESPACE::list<iAux2FunctionInputAssignment_t>::const_iterator iAux2AssignmentConstIterator_c;
+typedef std::list<iAux2FunctionInputAssignment_t> iAux2Assignment_c;
+typedef std::list<iAux2FunctionInputAssignment_t>::iterator iAux2AssignmentIterator_c;
+typedef std::list<iAux2FunctionInputAssignment_t>::const_iterator iAux2AssignmentConstIterator_c;
 
 } // IsoAgLib
 

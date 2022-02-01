@@ -52,10 +52,10 @@ public:
 
     Functionality_s();
   };
-  typedef STL_NAMESPACE::map<FunctionalitiesCharacteristics_t,Functionality_s> FunctionalitiesArr;
-  typedef STL_NAMESPACE::map<FunctionalitiesCharacteristics_t,Functionality_s>::iterator FunctionalitiesArrIter;
-  typedef STL_NAMESPACE::map<FunctionalitiesCharacteristics_t,Functionality_s>::const_iterator FunctionalitiesArrCIter;
-  typedef STL_NAMESPACE::pair<FunctionalitiesCharacteristics_t,Functionality_s> FunctionalitiesArrPair;
+  typedef std::map<FunctionalitiesCharacteristics_t,Functionality_s> FunctionalitiesArr;
+  typedef std::map<FunctionalitiesCharacteristics_t,Functionality_s>::iterator FunctionalitiesArrIter;
+  typedef std::map<FunctionalitiesCharacteristics_t,Functionality_s>::const_iterator FunctionalitiesArrCIter;
+  typedef std::pair<FunctionalitiesCharacteristics_t,Functionality_s> FunctionalitiesArrPair;
 
 public:
   DiagnosticFunctionalities_c( IdentItem_c& );

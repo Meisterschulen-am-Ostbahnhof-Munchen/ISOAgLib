@@ -370,8 +370,8 @@ private:
 
   // attributes
 private:
-  STL_NAMESPACE::list<DEF_Stream_c_IMPL> mlist_streams;
-  STL_NAMESPACE::list<MultiReceiveClientWrapper_s> mlist_clients;
+  std::list<DEF_Stream_c_IMPL> mlist_streams;
+  std::list<MultiReceiveClientWrapper_s> mlist_clients;
 
   Handler_t mt_handler;
   Customer_t mt_customer;

@@ -78,7 +78,7 @@ TractorCommonRx_c::checkParseReceived( const IsoName_c& sender ) const
 void
 TractorCommonRx_c::deregisterMsgEventHandler (IsoAgLib::iMsgEventHandler_c &arc_msgEventHandler)
 {
-  for (STL_NAMESPACE::vector<IsoAgLib::iMsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != mvec_msgEventHandlers.end();)
+  for (std::vector<IsoAgLib::iMsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != mvec_msgEventHandlers.end();)
   {
     if ((*iter) == &arc_msgEventHandler)
       iter = mvec_msgEventHandlers.erase (iter);
@@ -91,8 +91,8 @@ TractorCommonRx_c::deregisterMsgEventHandler (IsoAgLib::iMsgEventHandler_c &arc_
 void
 TractorCommonRx_c::notifyOnEvent()
 {
-  STL_NAMESPACE::vector<IsoAgLib::iMsgEventHandler_c*>::iterator iter_end = mvec_msgEventHandlers.end();
-  for (STL_NAMESPACE::vector<IsoAgLib::iMsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != iter_end; ++iter)
+  std::vector<IsoAgLib::iMsgEventHandler_c*>::iterator iter_end = mvec_msgEventHandlers.end();
+  for (std::vector<IsoAgLib::iMsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != iter_end; ++iter)
   {
     (*iter)->handleMsgEvent( mui32_pgn );
   }

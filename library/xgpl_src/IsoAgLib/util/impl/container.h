@@ -32,15 +32,15 @@
 #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   #define CONTAINER_CLIENTx_MEMBERS(Cx, iterCx_t, const_iterCx_t, m_arrClientCx) \
   private: \
-    typedef STL_NAMESPACE::vector<Cx*,MALLOC_TEMPLATE(Cx*)>::iterator iterCx_t; \
-    typedef STL_NAMESPACE::vector<Cx*,MALLOC_TEMPLATE(Cx*)>::const_iterator const_iterCx_t; \
-    STL_NAMESPACE::vector<Cx*,MALLOC_TEMPLATE(Cx*)> m_arrClientCx;
+    typedef std::vector<Cx*,MALLOC_TEMPLATE(Cx*)>::iterator iterCx_t; \
+    typedef std::vector<Cx*,MALLOC_TEMPLATE(Cx*)>::const_iterator const_iterCx_t; \
+    std::vector<Cx*,MALLOC_TEMPLATE(Cx*)> m_arrClientCx;
 #else
   #define CONTAINER_CLIENTx_MEMBERS(Cx, iterCx_t, const_iterCx_t, m_arrClientCx) \
   private: \
-    typedef STL_NAMESPACE::vector<Cx*>::iterator iterCx_t; \
-    typedef STL_NAMESPACE::vector<Cx*>::const_iterator const_iterCx_t; \
-    STL_NAMESPACE::vector<Cx*> m_arrClientCx;
+    typedef std::vector<Cx*>::iterator iterCx_t; \
+    typedef std::vector<Cx*>::const_iterator const_iterCx_t; \
+    std::vector<Cx*> m_arrClientCx;
 #endif
 
 
@@ -53,7 +53,7 @@ public: \
 \
   void unregisterCx( Cx* pc_client ) \
   { \
-    for( STL_NAMESPACE::vector<Cx*>::iterator iter = m_arrClientCx.begin(); \
+    for( std::vector<Cx*>::iterator iter = m_arrClientCx.begin(); \
          iter != m_arrClientCx.end(); \
          ++iter ) \
     { \

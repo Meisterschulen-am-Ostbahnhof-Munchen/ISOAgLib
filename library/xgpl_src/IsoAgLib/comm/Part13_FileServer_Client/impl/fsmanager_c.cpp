@@ -44,8 +44,8 @@ namespace __IsoAgLib {
 void
 FsManager_c::timeEvent(void)
 {
-  STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_end = m_servers.m_serverInstances.end();
-  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = m_servers.m_serverInstances.begin();
+  std::vector<FsServerInstance_c *>::iterator it_end = m_servers.m_serverInstances.end();
+  for (std::vector<FsServerInstance_c *>::iterator it_serverInstance = m_servers.m_serverInstances.begin();
        it_serverInstance != it_end;
        ++it_serverInstance)
   {
@@ -68,7 +68,7 @@ FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItem
   }
   else if (at_action == ControlFunctionStateHandler_c::RemoveFromMonitorList)
   {
-    for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = m_servers.m_serverInstances.begin();
+    for (std::vector<FsServerInstance_c *>::iterator it_serverInstance = m_servers.m_serverInstances.begin();
          it_serverInstance != m_servers.m_serverInstances.end();
          ++it_serverInstance)
     {
@@ -120,7 +120,7 @@ FsManager_c::registerFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &
   FsClientServerCommunication_c *c_fscscClient = NULL;
 
 #ifndef NDEBUG
-  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = mv_communications.begin();
+  for (std::vector<FsClientServerCommunication_c *>::iterator it_communications = mv_communications.begin();
        it_communications != mv_communications.end(); ++it_communications)
   {
     if (&(*it_communications)->getClientIdentItem() == &rc_identItem)
@@ -133,8 +133,8 @@ FsManager_c::registerFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &
   mv_communications.push_back(c_fscscClient);
 
   // if there are already file servers online => create FsCommand_c(s)
-  STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_end = m_servers.m_serverInstances.end();
-  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = m_servers.m_serverInstances.begin();
+  std::vector<FsServerInstance_c *>::iterator it_end = m_servers.m_serverInstances.end();
+  for (std::vector<FsServerInstance_c *>::iterator it_serverInstance = m_servers.m_serverInstances.begin();
        it_serverInstance != it_end;
        ++it_serverInstance)
   {
@@ -158,7 +158,7 @@ FsManager_c::registerFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &
 void 
 FsManager_c::deregisterFsClient(IdentItem_c &identItem)
 {
-  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
+  for (std::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
        iter != mv_communications.end(); ++iter)
   {
     if (&((*iter)->getClientIdentItem()) == &identItem)
@@ -193,13 +193,13 @@ FsManager_c::close()
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
   getSchedulerInstance().deregisterTask(*this);
 
-  STL_NAMESPACE::for_each( m_commands.ml_initializingCommands.begin(), m_commands.ml_initializingCommands.end(), delete_object());
+  std::for_each( m_commands.ml_initializingCommands.begin(), m_commands.ml_initializingCommands.end(), delete_object());
   m_commands.ml_initializingCommands.clear();
 
-  STL_NAMESPACE::for_each( mv_communications.begin(), mv_communications.end(), delete_object());
+  std::for_each( mv_communications.begin(), mv_communications.end(), delete_object());
   mv_communications.clear();
 
-  STL_NAMESPACE::for_each( m_servers.m_serverInstances.begin(), m_servers.m_serverInstances.end(), delete_object());
+  std::for_each( m_servers.m_serverInstances.begin(), m_servers.m_serverInstances.end(), delete_object());
   m_servers.m_serverInstances.clear();
 
   setClosed();
@@ -212,7 +212,7 @@ FsManager_c::notifyOnFileserverStateChange(FsServerInstance_c &fileserver, FsSer
   switch (fileserver.getState())
   {
     case FsServerInstance_c::offline:
-      for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = m_commands.ml_initializingCommands.begin();
+      for (std::list<FsCommand_c *>::iterator it_command = m_commands.ml_initializingCommands.begin();
             it_command != m_commands.ml_initializingCommands.end(); )
       {
         if (&(*it_command)->getFileserver() == &fileserver)
@@ -226,7 +226,7 @@ FsManager_c::notifyOnFileserverStateChange(FsServerInstance_c &fileserver, FsSer
 
       if (oldState == FsServerInstance_c::usable)
       {
-        for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
+        for (std::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
             iter != mv_communications.end();
             ++iter)
         {
@@ -248,7 +248,7 @@ FsManager_c::notifyOnFileserverStateChange(FsServerInstance_c &fileserver, FsSer
       break;
 
     case FsServerInstance_c::usable:
-      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
+      for (std::vector<FsClientServerCommunication_c *>::iterator iter = mv_communications.begin();
            iter != mv_communications.end();
            ++iter)
       {
@@ -265,7 +265,7 @@ FsManager_c::notifyOnFileserverStateChange(FsServerInstance_c &fileserver, FsSer
 
 
 void FsManager_c::FsServerManager_c::processFsToGlobal( const CanPkgExt_c& pkg ) {
-  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it = m_serverInstances.begin(); it != m_serverInstances.end(); ++it) {
+  for (std::vector<FsServerInstance_c *>::iterator it = m_serverInstances.begin(); it != m_serverInstances.end(); ++it) {
     if( pkg.getMonitorItemForSA() == &(*it)->getIsoItem() ) {
       (*it)->processFsToGlobal( pkg ); 
     }
@@ -295,7 +295,7 @@ void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& data ) {
   }
   else
   { // destination-specific
-    for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); )
+    for( std::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); )
     {
       if( (*it)->processMsgIso( pkg ) == FsCommand_c::CommandFinished )
       {
@@ -306,7 +306,7 @@ void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& data ) {
         ++it;
     }
   
-    for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator iter = m_fsManager.mv_communications.begin();
+    for (std::vector<FsClientServerCommunication_c *>::iterator iter = m_fsManager.mv_communications.begin();
          iter != m_fsManager.mv_communications.end(); ++iter )
     {
       (*iter)->processMsgIso( pkg );
@@ -317,7 +317,7 @@ void FsManager_c::FsCommandManager_c::processMsg( const CanPkg_c& data ) {
 
 void FsManager_c::FsCommandManager_c::handleDestructingFsCsc( const FsClientServerCommunication_c& fsCsc )
 {
-  for( STL_NAMESPACE::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); )
+  for( std::list<FsCommand_c*>::iterator it = ml_initializingCommands.begin(); it != ml_initializingCommands.end(); )
   {
     if( (*it)->uses( fsCsc ) )
     {

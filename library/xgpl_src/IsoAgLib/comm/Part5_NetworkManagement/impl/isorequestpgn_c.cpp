@@ -93,7 +93,7 @@ IsoRequestPgn_c::unregisterPGN(
     uint32_t aui32_pgnMask)
 {
   PGN_s const cs_lookFor(&r_PGNHandler, cui32_pgnToRegister, aui32_pgnMask);
-  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = m_registeredClientsWithPGN.begin();
+  for (std::vector<PGN_s>::iterator regPGN_it = m_registeredClientsWithPGN.begin();
        regPGN_it != m_registeredClientsWithPGN.end();
       )
   {
@@ -138,7 +138,7 @@ IsoRequestPgn_c::checkIfAlreadyRegistered(
     uint32_t aui32_pgnMask)
 {
   PGN_s const cs_lookFor(&r_PGNHandler, cui32_pgn, aui32_pgnMask);
-  bool const bc_found = m_registeredClientsWithPGN.end() != STL_NAMESPACE::find(
+  bool const bc_found = m_registeredClientsWithPGN.end() != std::find(
       m_registeredClientsWithPGN.begin(),
       m_registeredClientsWithPGN.end(),
       cs_lookFor);
@@ -169,9 +169,9 @@ IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
 
   /// 1. Distribute to all clients
   bool b_processedByAnyClient = false;
-  for (STL_NAMESPACE::vector<PGN_s>::iterator it_pgn = m_registeredClientsWithPGN.begin();;) {
+  for (std::vector<PGN_s>::iterator it_pgn = m_registeredClientsWithPGN.begin();;) {
 
-    it_pgn = STL_NAMESPACE::find_if(
+    it_pgn = std::find_if(
         it_pgn,
         m_registeredClientsWithPGN.end(),
         DoesMatchPgn_s(mui32_requestedPGN));

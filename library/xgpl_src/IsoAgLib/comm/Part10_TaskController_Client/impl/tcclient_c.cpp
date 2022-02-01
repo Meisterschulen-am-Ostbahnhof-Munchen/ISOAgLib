@@ -198,7 +198,7 @@ namespace __IsoAgLib {
       ;
     }
 
-    for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_peerConnections.begin();
+    for (std::list<PdConnection_c*>::const_iterator connection = m_peerConnections.begin();
          connection != m_peerConnections.end(); ++connection)
     {
       if ((&(*connection)->getIdentItem() == &identItem) && ((*connection)->getRemoteItem() == &pdItem))
@@ -227,7 +227,7 @@ namespace __IsoAgLib {
   PdConnection_c*
   TcClient_c::connectPeerBroadcast( const IdentItem_c& identItem, PdPool_c& pool )
   {
-    for (STL_NAMESPACE::list<PdConnection_c*>::const_iterator connection = m_peerConnections.begin();
+    for (std::list<PdConnection_c*>::const_iterator connection = m_peerConnections.begin();
          connection != m_peerConnections.end(); ++connection)
     {
       if ((&(*connection)->getIdentItem() == &identItem) && ((*connection)->getRemoteItem() == NULL))
@@ -247,7 +247,7 @@ namespace __IsoAgLib {
   void
   TcClient_c::disconnectPeer( const IdentItem_c& identItem )
   {
-    for (STL_NAMESPACE::list<PdConnection_c*>::iterator connection = m_peerConnections.begin();
+    for (std::list<PdConnection_c*>::iterator connection = m_peerConnections.begin();
          connection != m_peerConnections.end(); /*++connection*/)
     {
       if (&(*connection)->getIdentItem() == &identItem)
@@ -263,7 +263,7 @@ namespace __IsoAgLib {
   void
   TcClient_c::disconnectPeer( const PdConnection_c& connection)
   {
-    STL_NAMESPACE::list<PdConnection_c*>::iterator iter = STL_NAMESPACE::find(m_peerConnections.begin(),m_peerConnections.end(), &connection);
+    std::list<PdConnection_c*>::iterator iter = std::find(m_peerConnections.begin(),m_peerConnections.end(), &connection);
     isoaglib_assert(iter != m_peerConnections.end());
     delete (*iter);
     m_peerConnections.erase(iter);
@@ -443,7 +443,7 @@ namespace __IsoAgLib {
   void
   TcClient_c::processChangeDesignator( const IdentItem_c& ident, uint16_t objID, const char* newDesig )
   {
-    for( STL_NAMESPACE::list<PdConnection_c*>::const_iterator it = m_peerConnections.begin();
+    for( std::list<PdConnection_c*>::const_iterator it = m_peerConnections.begin();
          it != m_peerConnections.end(); ++it )
     {
       if( ( &ident == &( ( *it )->getIdentItem() ) ) 
@@ -545,7 +545,7 @@ namespace __IsoAgLib {
     }
 
     // 2/2: Peer Connections
-    for (STL_NAMESPACE::list<PdConnection_c*>::iterator connection = m_peerConnections.begin();
+    for (std::list<PdConnection_c*>::iterator connection = m_peerConnections.begin();
         connection != m_peerConnections.end(); )
     {
       if ((*connection)->getRemoteNode() == &pdRemoteNode)

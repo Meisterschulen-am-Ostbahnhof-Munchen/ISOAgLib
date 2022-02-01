@@ -256,7 +256,7 @@ namespace __IsoAgLib
     Task_t mt_task;
     Handler_t mt_handler;
 
-    STL_NAMESPACE::vector<IsoAgLib::iMsgEventHandler_c*> mvec_msgEventHandlers;
+    std::vector<IsoAgLib::iMsgEventHandler_c*> mvec_msgEventHandlers;
 
     /** flags that disable PGNs individually */
     uint16_t mui16_suppressMask;

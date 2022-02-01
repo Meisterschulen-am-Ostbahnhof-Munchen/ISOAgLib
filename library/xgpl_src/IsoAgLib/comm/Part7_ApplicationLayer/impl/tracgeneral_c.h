@@ -388,7 +388,7 @@ private:
   IsoAgLib::IsoActiveFlag_t mt_maintainActuatorPower;
 
   /** stores for each requesting implement (sourceAddress) a bit field with all indicated state*/
-  STL_NAMESPACE::map< IsoName_c, indicatedStateImpl_t > mmap_indicatedState; // access mmap_data[isoName].
+  std::map< IsoName_c, indicatedStateImpl_t > mmap_indicatedState; // access mmap_data[isoName].
 
   /** bit field with indicated state for tractor*/
   indicatedStateImpl_t mt_implState;

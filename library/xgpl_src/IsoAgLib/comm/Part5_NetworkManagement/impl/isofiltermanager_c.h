@@ -36,8 +36,8 @@ class IsoFilterManager_c : public Subsystem_c
 {
   MACRO_MULTITON_CONTRIBUTION();
 public:
-  typedef STL_NAMESPACE::vector<IsoFilterBox_c> IsoFilterBox_vec;
-  typedef STL_NAMESPACE::vector<IsoFilterBox_c>::iterator IsoFilterBox_it;
+  typedef std::vector<IsoFilterBox_c> IsoFilterBox_vec;
+  typedef std::vector<IsoFilterBox_c>::iterator IsoFilterBox_it;
 
   ~IsoFilterManager_c () {}
 

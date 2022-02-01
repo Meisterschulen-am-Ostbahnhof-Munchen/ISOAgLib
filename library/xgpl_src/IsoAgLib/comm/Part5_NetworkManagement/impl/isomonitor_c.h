@@ -41,9 +41,9 @@ namespace IsoAgLib { class iIsoMonitor_c; }
 namespace __IsoAgLib {
 
 /** type of map which is used to store ControlFunctionStateHandler_c clients corresponding to a IsoName_c reference */
-typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*> ControlFunctionStateHandlerVector_t;
-typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::iterator ControlFunctionStateHandlerVectorIterator_t;
-typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::const_iterator ControlFunctionStateHandlerVectorConstIterator_t;
+typedef std::vector<ControlFunctionStateHandler_c*> ControlFunctionStateHandlerVector_t;
+typedef std::vector<ControlFunctionStateHandler_c*>::iterator ControlFunctionStateHandlerVectorIterator_t;
+typedef std::vector<ControlFunctionStateHandler_c*>::const_iterator ControlFunctionStateHandlerVectorConstIterator_t;
 
 /** this object manages a monitor list of all
   ISO members including inserting and administration of local own members.
@@ -56,13 +56,13 @@ class IsoMonitor_c : public SchedulerTask_c
 private:
   // private typedef alias names
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::list<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) > Vec_ISO;
-  typedef STL_NAMESPACE::list<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) >::iterator Vec_ISOIterator;
-  typedef STL_NAMESPACE::list<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) >::const_iterator Vec_ISOIteratorConst;
+  typedef std::list<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) > Vec_ISO;
+  typedef std::list<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) >::iterator Vec_ISOIterator;
+  typedef std::list<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) >::const_iterator Vec_ISOIteratorConst;
   #else
-  typedef STL_NAMESPACE::list<IsoItem_c> Vec_ISO;
-  typedef STL_NAMESPACE::list<IsoItem_c>::iterator Vec_ISOIterator;
-  typedef STL_NAMESPACE::list<IsoItem_c>::const_iterator Vec_ISOIteratorConst;
+  typedef std::list<IsoItem_c> Vec_ISO;
+  typedef std::list<IsoItem_c>::iterator Vec_ISOIterator;
+  typedef std::list<IsoItem_c>::const_iterator Vec_ISOIteratorConst;
   #endif
 
 public:

@@ -546,7 +546,7 @@ VtClientConnection_c::notifyOnAuxInputStatus( const CanPkgExt_c& pkg )
   uint8_t const cui8_inputNumber = pkg.getUint8Data(2-1);
 
   // Look for all Functions that are controlled by this Input right now!
-  for( STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin();
+  for( std::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin();
        it != mlist_auxAssignments.end(); ++it )
   {
     if ( (it->mui8_inputNumber == cui8_inputNumber)
@@ -576,7 +576,7 @@ VtClientConnection_c::storeAuxAssignment( const CanPkgExt_c& pkg )
   if ( (inputIsoNameNew == NULL) && (cui8_inputNrNew != 0xFF))
     return false;
 
-  for( STL_NAMESPACE::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin();
+  for( std::list<AuxAssignment_s>::iterator it = mlist_auxAssignments.begin();
        it != mlist_auxAssignments.end(); )
   {
     if (it->mui16_functionUid == cui16_functionUidNew)

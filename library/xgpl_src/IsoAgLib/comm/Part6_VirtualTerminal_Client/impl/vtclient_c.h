@@ -235,7 +235,7 @@ private:
     IsoAgLib::iVtClientObjectPool_c::RegisterPoolMode_en aen_mode );
 
 private:
-  STL_NAMESPACE::vector<VtClientConnection_c*> m_vtConnections;
+  std::vector<VtClientConnection_c*> m_vtConnections;
 
   Handler_t mt_handler;
 

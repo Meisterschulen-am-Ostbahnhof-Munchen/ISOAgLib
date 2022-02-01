@@ -595,7 +595,7 @@ namespace __IsoAgLib {
 
       case procCmdPar_StructureLabelMsg:
       {
-        STL_NAMESPACE::vector<uint8_t> structureLabel;
+        std::vector<uint8_t> structureLabel;
         for( int i = 1; i < 8; i++ )
         {
           if( data.getUint8Data( i ) == 0xFF )
@@ -611,7 +611,7 @@ namespace __IsoAgLib {
 
       case procCmdPar_LocalizationLabelMsg:
       {
-        STL_NAMESPACE::vector<uint8_t> localizationLabel;
+        std::vector<uint8_t> localizationLabel;
         for( int i = 1; i < 8; i++ )
         {
           if( data.getUint8Data( i ) == 0xFF )
@@ -683,7 +683,7 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::eventStructureLabelResponse( const STL_NAMESPACE::vector<uint8_t>& label )
+  TcClientConnection_c::eventStructureLabelResponse( const std::vector<uint8_t>& label )
   {
     if( label.empty() )
     {
@@ -694,7 +694,7 @@ namespace __IsoAgLib {
       DeviceObjectDvc_c* dvc = getDevicePool().getDvcObject();
       isoaglib_assert( dvc );
       const IsoAgLib::StructureLabel_s& strLbl = dvc->getStructureLabel();
-      if ( STL_NAMESPACE::memcmp( ( void * )&strLbl, ( void * )&label[0], 7 ) != 0 )
+      if ( std::memcmp( ( void * )&strLbl, ( void * )&label[0], 7 ) != 0 )
       {
         setDevPoolState( PoolStateUploading ); // present, but wrong version -> upload
       }
@@ -707,7 +707,7 @@ namespace __IsoAgLib {
 
 
   void
-  TcClientConnection_c::eventLocalizationLabelResponse( const STL_NAMESPACE::vector<uint8_t>& label )
+  TcClientConnection_c::eventLocalizationLabelResponse( const std::vector<uint8_t>& label )
   {
     if( label.empty() )
     {
@@ -718,7 +718,7 @@ namespace __IsoAgLib {
       DeviceObjectDvc_c* dvc = getDevicePool().getDvcObject();
       isoaglib_assert( dvc );
       const IsoAgLib::Localization_s& locale = dvc->getLocalization();
-      if ( STL_NAMESPACE::memcmp( ( void* )&locale, ( void * )&label[0], 7 ) != 0 ) 
+      if ( std::memcmp( ( void* )&locale, ( void * )&label[0], 7 ) != 0 ) 
       {
 #if 0
         // updateLocale() doesn't do anything yet, so this is not a good solution for now

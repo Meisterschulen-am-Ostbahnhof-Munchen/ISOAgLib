@@ -195,7 +195,7 @@ MultiSend_c::close()
 SendStream_c*
 MultiSend_c::getRunningStream(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
-  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); ++pc_iter)
+  for (std::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); ++pc_iter)
   {
     if (pc_iter->isFinished())
       continue;
@@ -292,7 +292,7 @@ MultiSend_c::timeEvent()
   } else {
 
     unsigned numBurstTp = 0;
-    for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter = mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); ++pc_iter ) {
+    for (std::list<SendStream_c>::iterator pc_iter = mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); ++pc_iter ) {
       numBurstTp += pc_iter->isBurstStream() ? 1 : 0;
     }
 
@@ -306,7 +306,7 @@ MultiSend_c::timeEvent()
     }
 
     // Call each SendStream_c's timeEvent()
-    for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end();)
+    for (std::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end();)
     { // only call a SendStream when its time has come!
       if ( pc_iter->isFinished () ||
            (pc_iter->timeHasCome() && (pc_iter->timeEvent( unsigned ( pkgCnt ) ))) )
@@ -358,7 +358,7 @@ void
 MultiSend_c::calcAndSetNextTriggerTime()
 {
   ecutime_t i32_nextRetriggerNeeded = -1;
-  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end();)
+  for (std::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end();)
   {
     const ecutime_t ci32_nextTriggerTime = pc_iter->getNextTriggerTime();
 
@@ -392,7 +392,7 @@ void
 MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler, ConnectionAbortReason_t reason)
 {
   size_t sendStreamsToCheck = mlist_sendStream.size();
-  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); (sendStreamsToCheck--) > 0; ++pc_iter)
+  for (std::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); (sendStreamsToCheck--) > 0; ++pc_iter)
   {
     if (pc_iter->getMultiSendEventHandler() == &apc_multiSendEventHandler)
     {

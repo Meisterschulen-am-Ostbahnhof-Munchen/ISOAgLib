@@ -60,7 +60,7 @@ public:
   bool setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assigment );
 
 
-  STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*>& getObjects() { return m_aux2Function; }
+  std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>& getObjects() { return m_aux2Function; }
 
 
   void notifyOnAux2InputStatus( const CanPkgExt_c& arc_data, IsoAgLib::iVtClientObjectPool_c& arc_pool);
@@ -113,11 +113,11 @@ private:
   // use this map:
   // 1. to detect input maintenance message timeout => unassign functions
   // 2. when storing preferred assignment (during processing of assign command from VT), get the model identificaton code from here (via matching isoname)
-  typedef STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s>::iterator InputsIter;
-  STL_NAMESPACE::map<IsoName_c,InputMaintenanceDataForIsoName_s> mmap_receivedInputMaintenanceData;
+  typedef std::map<IsoName_c,InputMaintenanceDataForIsoName_s>::iterator InputsIter;
+  std::map<IsoName_c,InputMaintenanceDataForIsoName_s> mmap_receivedInputMaintenanceData;
 
 
-  STL_NAMESPACE::map<uint16_t, vtObjectAuxiliaryFunction2_c*> m_aux2Function;
+  std::map<uint16_t, vtObjectAuxiliaryFunction2_c*> m_aux2Function;
 
 
   // back reference for accessing functions in parent

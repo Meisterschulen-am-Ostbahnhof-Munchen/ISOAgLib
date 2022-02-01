@@ -97,7 +97,7 @@ namespace __IsoAgLib
     // Measure progs presorted for DDIs
     static uint32_t getMapKey(uint16_t ddi, uint16_t element) { return ( uint32_t( uint32_t( ddi ) << 16 ) ) | uint32_t(element); }
 
-    typedef STL_NAMESPACE::map<uint32_t, ConnectedPd_c*> ConnectedPdMap_t;
+    typedef std::map<uint32_t, ConnectedPd_c*> ConnectedPdMap_t;
     ConnectedPdMap_t m_connectedPds;
 
     IsoAgLib::ProcData::iNackHandler_c* m_nackHandler;

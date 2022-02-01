@@ -140,7 +140,7 @@ public:
   //       as it already checks isMaster()
   bool isMaster () const { return (m_wsSlavesAnnounced != NULL); }
 
-  void setLocalMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames);
+  void setLocalMasterSlaves (std::vector<IsoName_c>* apvec_slaveIsoNames);
 
   /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
   bool isWsAnnounced (ecutime_t ai32_timeAnnounceStarted) const;
@@ -164,7 +164,7 @@ private: // methods
 #ifdef USE_WORKING_SET
 public:
   // return pointer to vector of clients
-  STL_NAMESPACE::vector<IsoName_c>* getVectorOfClients() const { return m_wsSlavesAnnounced;}
+  std::vector<IsoName_c>* getVectorOfClients() const { return m_wsSlavesAnnounced;}
 
 private:
   /** Used for both Local and Remote items!
@@ -173,8 +173,8 @@ private:
    * It may be a slave - this can be determined by searching
    * through all Items' list for this Item's IsoName!
    */
-  STL_NAMESPACE::vector<IsoName_c>* m_wsSlavesAnnounced;
-  STL_NAMESPACE::vector<IsoName_c>* m_wsSlavesAnnouncing;
+  std::vector<IsoName_c>* m_wsSlavesAnnounced;
+  std::vector<IsoName_c>* m_wsSlavesAnnouncing;
 
   /**
     * == -1  waiting to announce WS-master message

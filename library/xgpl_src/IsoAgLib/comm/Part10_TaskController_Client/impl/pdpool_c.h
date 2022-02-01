@@ -37,7 +37,7 @@ namespace __IsoAgLib {
 
     void addPdBase( PdBase_c& pd );
 
-    typedef STL_NAMESPACE::vector<PdBase_c*> PdBases_t;
+    typedef std::vector<PdBase_c*> PdBases_t;
     const PdBases_t &getPdList() const { return m_procDatas; }
   
   protected:
@@ -56,7 +56,7 @@ namespace __IsoAgLib {
   inline void
   PdPool_c::addPdBase( PdBase_c &pd )
   {
-    isoaglib_assert( STL_NAMESPACE::find( m_procDatas.begin(), m_procDatas.end(), &pd ) == m_procDatas.end() );
+    isoaglib_assert( std::find( m_procDatas.begin(), m_procDatas.end(), &pd ) == m_procDatas.end() );
     isoaglib_assert( ( m_procDatas.size() < m_procDatas.capacity() ) && "Capacity to small, causes realloc in Release mode!" );
 
     m_procDatas.push_back( &pd );

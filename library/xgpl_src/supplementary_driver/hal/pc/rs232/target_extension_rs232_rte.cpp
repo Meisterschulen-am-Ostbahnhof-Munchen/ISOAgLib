@@ -56,7 +56,7 @@ PointerSerial_t pc_serial[RS232_CHANNEL_CNT] = {NULL,NULL,NULL};
 PointerSerial_t pc_serial[RS232_CHANNEL_CNT];
 #endif
 
-STL_NAMESPACE::deque<uint8_t> c_buffer[RS232_CHANNEL_CNT];
+std::deque<uint8_t> c_buffer[RS232_CHANNEL_CNT];
 
 /** send handler which is called by RTE on each new received data -> store current fertilizer amount */
 int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *data ) {
@@ -231,7 +231,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
   uint8_t ui8_test;
   if (! c_buffer[aui8_channel].empty())
   {
-    for ( STL_NAMESPACE::deque<uint8_t>::iterator iter = c_buffer[aui8_channel].begin(); iter != c_buffer[aui8_channel].end(); ++iter )
+    for ( std::deque<uint8_t>::iterator iter = c_buffer[aui8_channel].begin(); iter != c_buffer[aui8_channel].end(); ++iter )
     { // check if terminating char is found
       ui8_test = *iter;
       if ( ui8_test == bLastChar )

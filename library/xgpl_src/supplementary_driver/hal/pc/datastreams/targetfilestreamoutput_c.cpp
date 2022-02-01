@@ -43,17 +43,17 @@ bool TargetFileStreamOutput_c::open( const TCHAR* filename, FileMode_t at_mode )
 #else
 	if ( ( at_mode & StreamIn ) != 0 ) return false;
 
-	STL_NAMESPACE::ios_base::openmode mode = STL_NAMESPACE::ios_base::out;
+	std::ios_base::openmode mode = std::ios_base::out;
 
-	if ( ( at_mode & StreamAte    ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::ate    );
-	if ( ( at_mode & StreamApp    ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::app    );
-	if ( ( at_mode & StreamTrunc  ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::trunc  );
-	if ( ( at_mode & StreamBinary ) != 0 ) mode = STL_NAMESPACE::ios_base::openmode( mode | STL_NAMESPACE::ios_base::binary );
+	if ( ( at_mode & StreamAte    ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::ate    );
+	if ( ( at_mode & StreamApp    ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::app    );
+	if ( ( at_mode & StreamTrunc  ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::trunc  );
+	if ( ( at_mode & StreamBinary ) != 0 ) mode = std::ios_base::openmode( mode | std::ios_base::binary );
 
-	static_cast<STL_NAMESPACE::ofstream*>(this)->open( filename, mode );
+	static_cast<std::ofstream*>(this)->open( filename, mode );
 
-	if ( ( static_cast<STL_NAMESPACE::ofstream*>(this)->good() )
-		&& ( static_cast<STL_NAMESPACE::ofstream*>(this)->is_open() ) ) return true;
+	if ( ( static_cast<std::ofstream*>(this)->good() )
+		&& ( static_cast<std::ofstream*>(this)->is_open() ) ) return true;
 	else
 		return false;
 #endif
@@ -64,7 +64,7 @@ bool TargetFileStreamOutput_c::open( const TCHAR* filename, FileMode_t at_mode )
 //! @param ui8_data:
 TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 {
-//	(static_cast<STL_NAMESPACE::ofstream*>(this))->put(ui8_data);
+//	(static_cast<std::ofstream*>(this))->put(ui8_data);
 	(static_cast<ofstream*>(this))->put(ui8_data);
 
 	return *this;
@@ -77,9 +77,9 @@ void TargetFileStreamOutput_c::close(const TCHAR* pathname)
 {
   if (pathname)
   {
-    (static_cast<STL_NAMESPACE::ofstream*>(this))->flush();
+    (static_cast<std::ofstream*>(this))->flush();
 #if defined(__GNUC__) && __GNUC__ < 3
-    fsync((static_cast<STL_NAMESPACE::ofstream*>(this))->rdbuf()->fd());
+    fsync((static_cast<std::ofstream*>(this))->rdbuf()->fd());
     // sync also directory entry (not done by fsync!)
     int fd = ::open(pathname, O_RDONLY);
     if (-1 != fd)
@@ -88,8 +88,8 @@ void TargetFileStreamOutput_c::close(const TCHAR* pathname)
       ::close(fd);
     }
 #else
-    (static_cast<STL_NAMESPACE::ofstream*>(this))->rdbuf()->pubsync();
+    (static_cast<std::ofstream*>(this))->rdbuf()->pubsync();
 #endif
   }
-  static_cast<STL_NAMESPACE::ofstream*>(this)->close();
+  static_cast<std::ofstream*>(this)->close();
 }

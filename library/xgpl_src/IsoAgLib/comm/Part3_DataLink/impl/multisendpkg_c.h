@@ -61,7 +61,7 @@ public:
     @param ai32_pos uint8_t position in data string to start
     @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
    */
-  void setDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSource, int32_t ai32_pos, uint8_t ab_partSize = 7);
+  void setDataPart(const std::vector<uint8_t>& rc_vecSource, int32_t ai32_pos, uint8_t ab_partSize = 7);
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   /**
@@ -78,7 +78,7 @@ public:
     @param ai32_pos uint8_t position in data string to start
     @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
    */
-  void setFastPacketDataPart(const STL_NAMESPACE::vector<uint8_t>& rc_vecSource, int32_t ai32_pos, uint8_t ab_partSize = 7, uint8_t aui8_offset = 0);
+  void setFastPacketDataPart(const std::vector<uint8_t>& rc_vecSource, int32_t ai32_pos, uint8_t ab_partSize = 7, uint8_t aui8_offset = 0);
   #endif
 };
 

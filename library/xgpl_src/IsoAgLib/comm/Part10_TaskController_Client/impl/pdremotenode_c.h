@@ -46,7 +46,7 @@ namespace __IsoAgLib {
 
   protected:
     const IsoItem_c& m_isoItem;
-    STL_NAMESPACE::list<PdConnection_c*> m_connections;   
+    std::list<PdConnection_c*> m_connections;   
     bool m_isServer;
   };
   

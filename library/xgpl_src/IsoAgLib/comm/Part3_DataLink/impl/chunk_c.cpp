@@ -32,7 +32,7 @@ namespace __IsoAgLib {
 Chunk_c::Chunk_c( const Chunk_c& acrc_src )
 {
   marr_data.reserve (acrc_src.marr_data.capacity());
-  STL_NAMESPACE::copy(acrc_src.marr_data.begin(), acrc_src.marr_data.end(), marr_data.begin());
+  std::copy(acrc_src.marr_data.begin(), acrc_src.marr_data.end(), marr_data.begin());
 }
 
 

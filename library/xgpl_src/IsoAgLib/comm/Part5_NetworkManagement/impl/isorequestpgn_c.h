@@ -134,7 +134,7 @@ private: // Private attributes
   Subsystem_c mc_subsystemState;
 
   /// holds all registered clients with PGN(s)
-  STL_NAMESPACE::vector<PGN_s> m_registeredClientsWithPGN;
+  std::vector<PGN_s> m_registeredClientsWithPGN;
 
   /// The following variables are just kept here as cache in case the user
   /// calls "sendAcknowledgePGN" out and the CAN-Pkg was changed in between
@@ -152,7 +152,7 @@ private: // Private attributes
 IsoRequestPgn_c& getIsoRequestPgnInstance (unsigned int instance = 0);
 
 /** Convenience functor to register PGN. */
-struct RegisterPgn_s : public STL_NAMESPACE::binary_function< uint32_t, uint32_t, void > {
+struct RegisterPgn_s : public std::binary_function< uint32_t, uint32_t, void > {
   void operator()(
       uint32_t aui32_pgn,
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {
@@ -167,7 +167,7 @@ private:
 };
 
 /** Convenience functor to unregister PGN. */
-struct UnregisterPgn_s : public STL_NAMESPACE::binary_function< uint32_t, uint32_t, void > {
+struct UnregisterPgn_s : public std::binary_function< uint32_t, uint32_t, void > {
   void operator()(
       uint32_t aui32_pgn,
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {

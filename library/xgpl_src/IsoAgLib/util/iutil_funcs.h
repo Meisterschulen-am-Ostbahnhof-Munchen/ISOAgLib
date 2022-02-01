@@ -138,13 +138,13 @@ inline uint16_t convert8859ToUnicode (uint8_t aui8_char, uint8_t aui8_encoding)
 inline uint8_t convertUnicodeTo8859 (uint16_t aui16_unicode, uint8_t aui8_encoding)
 { return __IsoAgLib::convertUnicodeTo8859 (aui16_unicode, aui8_encoding); }
 
-inline void convertString8859ToUnicode (const STL_NAMESPACE::string& rrefstr_iso8859, STL_NAMESPACE::string& rrefstr_unicode, uint8_t aui8_encoding)
+inline void convertString8859ToUnicode (const std::string& rrefstr_iso8859, std::string& rrefstr_unicode, uint8_t aui8_encoding)
 { __IsoAgLib::convertString8859ToUnicode (rrefstr_iso8859, rrefstr_unicode, aui8_encoding); }
 
 inline void convertStringUnicodeTo8859 (const char* apui8_stringUnicode, uint16_t aui16_stringUnicodeLength, char* apui8_iso8859buffer, uint8_t aui8_encoding)
 { __IsoAgLib::convertStringUnicodeTo8859 (apui8_stringUnicode, aui16_stringUnicodeLength, apui8_iso8859buffer, aui8_encoding); }
 
-inline void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t aui16_unicode)
+inline void push_backUTF8 (std::string& rrefstr_string, uint16_t aui16_unicode)
 { push_backUTF8 (rrefstr_string, aui16_unicode); }
 
 #endif

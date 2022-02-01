@@ -187,8 +187,8 @@ namespace __IsoAgLib {
 
       int32_t requestPoolTransfer( ByteStreamBuffer_c pool );
 
-      void eventStructureLabelResponse( const STL_NAMESPACE::vector<uint8_t>& label );
-      void eventLocalizationLabelResponse( const STL_NAMESPACE::vector<uint8_t>& label );
+      void eventStructureLabelResponse( const std::vector<uint8_t>& label );
+      void eventLocalizationLabelResponse( const std::vector<uint8_t>& label );
       void eventPoolUploadResponse( uint8_t result );
       void eventPoolActivateResponse( uint8_t result );
 

@@ -161,7 +161,7 @@ template<class T> void number2LittleEndianString( const T at_src, uint8_t* pui8_
 
 
 /** convert number reference variable to little endian byte string */
-template<class T> void numberRef2LittleEndianString( const T& acrc_src, STL_NAMESPACE::vector<uint8_t>& acrc_target )
+template<class T> void numberRef2LittleEndianString( const T& acrc_src, std::vector<uint8_t>& acrc_target )
 {
 #if defined(NO_8BIT_CHAR_TYPE)
   const unsigned int BitSize = sizeof(T) * 16;
@@ -185,7 +185,7 @@ template<class T> void numberRef2LittleEndianString( const T& acrc_src, STL_NAME
 #endif
 }
 /** convert number call-by-val variable to little endian byte string */
-template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE::vector<uint8_t>& rc_target )
+template<class T> void number2LittleEndianString( const T at_src, std::vector<uint8_t>& rc_target )
 {
 #if defined(NO_8BIT_CHAR_TYPE)
   const unsigned int BitSize = sizeof(T) * 16;
@@ -210,7 +210,7 @@ template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE:
 }
 
 /** convert number call-by-val variable to little endian byte string */
-template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE::vector<uint8_t>& rc_target, uint16_t aui16_bytePos)
+template<class T> void number2LittleEndianString( const T at_src, std::vector<uint8_t>& rc_target, uint16_t aui16_bytePos)
 {
 #if defined(NO_8BIT_CHAR_TYPE)
   const unsigned int BitSize = sizeof(T) * 16;
@@ -335,9 +335,9 @@ getCStringCount (const char *src, char countChar);
     return DEF_ISO8859_REPLACEMENT_CHAR; // default to iso8859-Replacement Character in case the char's not found;
   }
 
-  void convertString8859ToUnicode (const STL_NAMESPACE::string& rrefstr_iso8859, STL_NAMESPACE::string& rrefstr_unicode, uint8_t aui8_encoding);
+  void convertString8859ToUnicode (const std::string& rrefstr_iso8859, std::string& rrefstr_unicode, uint8_t aui8_encoding);
   void convertStringUnicodeTo8859 (const char* apui8_stringUnicode, uint16_t aui16_stringUnicodeLength, char* apui8_iso8859buffer, uint8_t aui8_encoding);
-  void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t aui16_unicode);
+  void push_backUTF8 (std::string& rrefstr_string, uint16_t aui16_unicode);
   void spacePadBomUTF16 (char* utf16Str, uint16_t byteStrLen, uint16_t bytesToPad);
 #endif
 

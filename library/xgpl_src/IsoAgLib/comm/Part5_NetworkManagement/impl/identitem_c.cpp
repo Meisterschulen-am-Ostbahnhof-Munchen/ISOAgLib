@@ -87,7 +87,7 @@ IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
   }
   if (ai8_slaveCount >= 0)
   { // we're workingset-master!
-    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c>();
+    mpvec_slaveIsoNames = new std::vector<IsoName_c>();
     // which is indicated by "mpvec_slaveIsoNames != NULL"
     if (ai8_slaveCount > 0)
     { // we have Slaves

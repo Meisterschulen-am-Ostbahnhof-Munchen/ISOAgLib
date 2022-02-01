@@ -215,5 +215,23 @@ VtServerInstance_c::requestLocalSettings( IdentItem_c& identItem )
   }
 }
 
+    const IsoName_c &VtServerInstance_c::getIsoName() const { return m_isoItem.isoName(); }
+
+    uint8_t VtServerInstance_c::getVtSourceAddress() const { return m_isoItem.nr(); }
+
+    VtServerInstance_c::vtCapabilities_s &VtServerInstance_c::getVtCapabilities() { return ms_vtCapabilitiesA; }
+
+    const VtServerInstance_c::vtCapabilities_s &VtServerInstance_c::getConstVtCapabilities() const { return ms_vtCapabilitiesA; }
+
+    const IsoAgLib::vtState_s &VtServerInstance_c::getVtState() const { return ms_vtStateA; }
+
+    localSettings_s *VtServerInstance_c::getLocalSettings() { return &ms_localSettingsA; }
+
+    const IsoItem_c &VtServerInstance_c::getIsoItem() const { return m_isoItem; }
+
+    bool VtServerInstance_c::isPrimaryVt() const { return (getIsoName().funcInst() == 0); }
+
+    bool VtServerInstance_c::receivedLocalSettings() const { return( ms_localSettingsA.lastReceived != 0 ); }
+
 
 } // __IsoAgLib

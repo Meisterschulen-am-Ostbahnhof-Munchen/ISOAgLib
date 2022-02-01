@@ -54,17 +54,17 @@ public:
   VtServerInstance_c* getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const;
   uint16_t getActiveVtCount() const;
 
-  bool isAnyVtAvailable() const { return !ml_vtServerInst.empty(); }
+  bool isAnyVtAvailable() const;
 
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action,
                                    IsoItem_c const& acrc_isoItem,
-                                   STL_NAMESPACE::vector<VtClientConnection_c*>& aref_vtConnections,
+                                   std::vector<VtClientConnection_c*>& aref_vtConnections,
                                    VtClient_c& aref_vtClient);
 
   void processVtStatusMsg(const CanPkgExt_c& arc_data,
-                          STL_NAMESPACE::vector<VtClientConnection_c*>& aref_vtConnections);
+                          std::vector<VtClientConnection_c*>& aref_vtConnections);
   
-  STL_NAMESPACE::vector<VtServerInstance_c*>& getRefServerInstanceVec() { return ml_vtServerInst; }
+  std::vector<VtServerInstance_c*>& getRefServerInstanceVec() { return ml_vtServerInst; }
 
 // the following define should be globally defined in the project settings...
 // (currently not supported, due to multi VT enhancements)
@@ -78,7 +78,7 @@ public:
 
 private:
     
-  STL_NAMESPACE::vector<VtServerInstance_c*> ml_vtServerInst;
+  std::vector<VtServerInstance_c*> ml_vtServerInst;
   
 };
 

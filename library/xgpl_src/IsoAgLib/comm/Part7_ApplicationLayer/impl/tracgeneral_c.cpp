@@ -565,7 +565,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     mt_maintainActuatorPower = IsoAgLib::IsoInactive;
 
     const ecutime_t i32_now = HAL::getTime();
-    for (STL_NAMESPACE::map< IsoName_c, indicatedStateImpl_t >::iterator iter = mmap_indicatedState.begin();
+    for (std::map< IsoName_c, indicatedStateImpl_t >::iterator iter = mmap_indicatedState.begin();
          iter != mmap_indicatedState.end();
         )
     {

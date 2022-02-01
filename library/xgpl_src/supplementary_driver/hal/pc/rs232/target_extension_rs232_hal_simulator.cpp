@@ -35,7 +35,7 @@
 namespace __HAL {
 HANDLE hCom[RS232_CHANNEL_CNT];
 DCB oldConfig[RS232_CHANNEL_CNT];
-STL_NAMESPACE::deque<int8_t> deq_readBuff[RS232_CHANNEL_CNT];
+std::deque<int8_t> deq_readBuff[RS232_CHANNEL_CNT];
 
 int8_t c_read;
 

@@ -158,9 +158,9 @@ IsoMonitor_c::timeEvent()
 {
   int32_t i32_checkPeriod = 3000;
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*,MALLOC_TEMPLATE(__IsoAgLib::IdentItem_c*)>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
+  for ( std::vector<__IsoAgLib::IdentItem_c*,MALLOC_TEMPLATE(__IsoAgLib::IdentItem_c*)>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
   #else
-  for ( STL_NAMESPACE::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
+  for ( std::vector<__IsoAgLib::IdentItem_c*>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
   #endif
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
@@ -260,11 +260,11 @@ IsoMonitor_c::getMaster( IsoItem_c &member )
   {
     if( (*iter).isMaster() )
     {
-      STL_NAMESPACE::vector<IsoName_c>* wsSlaves = (*iter).getVectorOfClients();
+      std::vector<IsoName_c>* wsSlaves = (*iter).getVectorOfClients();
       if (wsSlaves == NULL)
         continue;
 
-      for( STL_NAMESPACE::vector<IsoName_c>::iterator memberIter = wsSlaves->begin();
+      for( std::vector<IsoName_c>::iterator memberIter = wsSlaves->begin();
            memberIter != wsSlaves->end();
            ++memberIter )
       {
@@ -470,9 +470,9 @@ IsoMonitor_c::deleteItem( const IsoItem_c& isoitem )
 
 
 bool
-isAddressFree( const IsoItem_c* apc_isoItem, const STL_NAMESPACE::list<IsoItem_c>& vec_isoMember, uint8_t address, bool ab_resolveConflict )
+isAddressFree( const IsoItem_c* apc_isoItem, const std::list<IsoItem_c>& vec_isoMember, uint8_t address, bool ab_resolveConflict )
 {
-  for (STL_NAMESPACE::list<IsoItem_c>::const_iterator pc_iterItem = vec_isoMember.begin();
+  for (std::list<IsoItem_c>::const_iterator pc_iterItem = vec_isoMember.begin();
         pc_iterItem != vec_isoMember.end(); ++pc_iterItem)
   {
     if ((pc_iterItem->nr() == address)

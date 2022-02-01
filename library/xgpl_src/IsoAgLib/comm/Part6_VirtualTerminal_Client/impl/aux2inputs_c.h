@@ -55,7 +55,7 @@ public:
   inline void setModelIdentificationCode(uint16_t a_model) { m_modelIdentificationCode = a_model; }
 
 
-  STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>& getObjectList() { return mlist_auxInput2; }
+  std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>& getObjectList() { return mlist_auxInput2; }
 
 
   /**
@@ -82,7 +82,7 @@ private:
   uint16_t m_modelIdentificationCode;
 
 
-  STL_NAMESPACE::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*> mlist_auxInput2;
+  std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*> mlist_auxInput2;
 
 
   // time stamp of last auxiliary input maintenance message sent

@@ -145,13 +145,13 @@ namespace IsoAgLib
     bool CheckSizeOfVectorForRead(uint16_t aui16_pos, uint16_t aui16_size ) const;
 
     /** type definition of vector */
-    typedef STL_NAMESPACE::vector<uint8_t> vec_data_t;
+    typedef std::vector<uint8_t> vec_data_t;
 
     /** type definition of an iterator to write the data */
-    typedef STL_NAMESPACE::vector<uint8_t>::iterator vec_data_iterator_t;
+    typedef std::vector<uint8_t>::iterator vec_data_iterator_t;
 
     /** type definition of a constant iterator to read the data */
-    typedef STL_NAMESPACE::vector<uint8_t>::const_iterator vec_data_const_iterator_t;
+    typedef std::vector<uint8_t>::const_iterator vec_data_const_iterator_t;
 
   private:
     /** vector to store the data */

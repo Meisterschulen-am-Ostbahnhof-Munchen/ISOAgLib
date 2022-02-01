@@ -54,9 +54,9 @@ void iLibErr_c::registerNonFatal( TypeNonFatal_en at_errType, int instance )
   m_nonFatal[ at_errType ] |= uint16_t( 1 << instance );
 
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  for ( STL_NAMESPACE::vector<iErrorObserver_c*,MALLOC_TEMPLATE(iErrorObserver_c*)>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
+  for ( std::vector<iErrorObserver_c*,MALLOC_TEMPLATE(iErrorObserver_c*)>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
   #else
-  for ( STL_NAMESPACE::vector<iErrorObserver_c*>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
+  for ( std::vector<iErrorObserver_c*>::iterator pc_iter = m_arrClientC1.begin(); ( pc_iter != m_arrClientC1.end() ); ++pc_iter )
   #endif
   {
     (*pc_iter)->nonFatalError( at_errType, instance );

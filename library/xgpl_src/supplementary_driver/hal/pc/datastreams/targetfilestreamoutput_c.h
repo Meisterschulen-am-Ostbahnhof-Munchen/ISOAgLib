@@ -36,7 +36,7 @@
 // ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamOutput_c
-class TargetFileStreamOutput_c : public STL_NAMESPACE::ofstream
+class TargetFileStreamOutput_c : public std::ofstream
 {
 
 public:
@@ -54,13 +54,13 @@ public:
   virtual TargetFileStreamOutput_c& operator<<(uint8_t ui8_data);
 
   //  Operation: eof
-  virtual bool eof() const { return static_cast<const STL_NAMESPACE::ofstream*>(this)->eof();};
+  virtual bool eof() const { return static_cast<const std::ofstream*>(this)->eof();};
 
   // Operation: fail
-  virtual bool fail() const { return static_cast<const STL_NAMESPACE::ofstream*>(this)->fail();};
+  virtual bool fail() const { return static_cast<const std::ofstream*>(this)->fail();};
 
   // Operation: good
-  virtual bool good() const { return static_cast<const STL_NAMESPACE::ofstream*>(this)->good();};
+  virtual bool good() const { return static_cast<const std::ofstream*>(this)->good();};
 
 }; // ~X2C
 
