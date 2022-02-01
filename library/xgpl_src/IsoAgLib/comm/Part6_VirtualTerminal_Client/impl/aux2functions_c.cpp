@@ -468,4 +468,14 @@ Aux2Functions_c::sendPreferredAux2Assignments()
     void Aux2Functions_c::setLearnMode(bool a_learnMode) { mb_learnMode = a_learnMode; }
 
 
+    Aux2Functions_c::InputMaintenanceDataForIsoName_s::InputMaintenanceDataForIsoName_s()
+            : mui16_inputModelIdentificationCode(0xFFFF),
+              mi32_timeLastAux2Maintenance(0)
+    {}
+
+    Aux2Functions_c::InputMaintenanceDataForIsoName_s::InputMaintenanceDataForIsoName_s(
+            uint16_t a_inputModelIdentificationCode, ecutime_t a_timeLastAux2Maintenance)
+            : mui16_inputModelIdentificationCode(a_inputModelIdentificationCode),
+              mi32_timeLastAux2Maintenance(a_timeLastAux2Maintenance)
+    {}
 }

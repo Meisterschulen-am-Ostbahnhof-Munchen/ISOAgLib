@@ -84,15 +84,9 @@ private:
   // use this structure to store received data from input maintenance message in map with isoname as key
   struct InputMaintenanceDataForIsoName_s
   {
-    InputMaintenanceDataForIsoName_s()
-      : mui16_inputModelIdentificationCode(0xFFFF),
-        mi32_timeLastAux2Maintenance(0)
-    {}
+    InputMaintenanceDataForIsoName_s();
 
-    InputMaintenanceDataForIsoName_s(uint16_t a_inputModelIdentificationCode, ecutime_t a_timeLastAux2Maintenance )
-      : mui16_inputModelIdentificationCode(a_inputModelIdentificationCode),
-        mi32_timeLastAux2Maintenance(a_timeLastAux2Maintenance)
-    {}
+    InputMaintenanceDataForIsoName_s(uint16_t a_inputModelIdentificationCode, ecutime_t a_timeLastAux2Maintenance );
 
     uint16_t mui16_inputModelIdentificationCode;
     ecutime_t  mi32_timeLastAux2Maintenance;
