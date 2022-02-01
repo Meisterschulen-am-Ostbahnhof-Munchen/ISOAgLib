@@ -212,5 +212,11 @@ bool Aux2Inputs_c::setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool
   return b_objFound;
 }
 
+    void Aux2Inputs_c::setState(Aux2Inputs_c::Aux2InputsState_en a_state) { m_state = a_state; }
+
+    void Aux2Inputs_c::setModelIdentificationCode(uint16_t a_model) { m_modelIdentificationCode = a_model; }
+
+    std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c *> &Aux2Inputs_c::getObjectList() { return mlist_auxInput2; }
+
 
 }

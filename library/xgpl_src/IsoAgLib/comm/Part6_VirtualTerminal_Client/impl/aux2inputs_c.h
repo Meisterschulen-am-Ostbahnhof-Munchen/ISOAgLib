@@ -50,12 +50,12 @@ public:
   /** send AUX2 input maintenance message (100msec) and call timeEventInputStateMsg(NULL) (1sec) */
   void timeEvent(void);
 
-  inline void setState(Aux2InputsState_en a_state) { m_state = a_state; }
+  inline void setState(Aux2InputsState_en a_state);
 
-  inline void setModelIdentificationCode(uint16_t a_model) { m_modelIdentificationCode = a_model; }
+  inline void setModelIdentificationCode(uint16_t a_model);
 
 
-  std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>& getObjectList() { return mlist_auxInput2; }
+  std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>& getObjectList();
 
 
   /**
@@ -64,32 +64,20 @@ public:
   */
   bool setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool a_enabled);
 
-
-
   /**
     send AUX2 input status message for all inputs (a_aux2InputObj == NULL) or only for passed AUX2 input object
   */
   void timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj);
-
-
   void setLearnMode(bool a_learnMode) { mb_learnMode = a_learnMode; }
 
 private:
   const IdentItem_c& mrc_wsMasterIdentItem;
-
   Aux2InputsState_en m_state;
-
   uint16_t m_modelIdentificationCode;
-
-
   std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*> mlist_auxInput2;
-
-
   // time stamp of last auxiliary input maintenance message sent
   ecutime_t mi32_timeStampLastMaintenance;
-
   bool mb_learnMode;
-
   VtClientConnection_c* mp_vtClientServerCommunication;
 
 private:
