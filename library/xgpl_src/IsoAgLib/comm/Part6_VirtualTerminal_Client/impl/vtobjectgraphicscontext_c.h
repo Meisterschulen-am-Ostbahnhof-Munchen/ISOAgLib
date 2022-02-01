@@ -75,7 +75,7 @@ public:
   {}
 
   //  Operation: get_vtObjectGraphicsContext_a
-  inline iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a( void ) {
+  iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a( void ) {
     return (iVtObjectGraphicsContext_s *)&(get_vtObject_a());
   }
 

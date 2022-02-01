@@ -36,7 +36,7 @@ public:
 
   vtObjectPictureGraphic_c(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst);
 
-  inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a();
+  iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a();
 
 
   uint32_t fitTerminal() const;

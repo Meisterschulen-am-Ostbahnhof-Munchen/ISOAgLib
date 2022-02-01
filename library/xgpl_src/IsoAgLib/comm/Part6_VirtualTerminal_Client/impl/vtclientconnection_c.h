@@ -146,7 +146,7 @@ public:
   // ### from CommandHandler_c ###
   void notifyOnCommandQueueFilledFromEmpty();
   void notifyOnFinishedCommand( bool stillCommandsLeft );
-  inline void notifyOnDisconnect();
+  void notifyOnDisconnect();
 
   //! @return true for successful assignment, false if SA couldn't be found.
   bool storeAuxAssignment( const CanPkgExt_c& arc_data );
@@ -159,8 +159,8 @@ public:
   //       Typically call this in eventObjectPoolUploadedSuccessfully!
   // @return 0x00: No command timed out (or already checked and reset)
   //      != 0x00: The command that timed out and was the reason for a reconnect!
-  inline uint8_t getAndResetLastTimedOutCommand();
-  inline bool isDisconnectedForShutdown() const;
+  uint8_t getAndResetLastTimedOutCommand();
+  bool isDisconnectedForShutdown() const;
   uint8_t getVersion() const;
 
 private:

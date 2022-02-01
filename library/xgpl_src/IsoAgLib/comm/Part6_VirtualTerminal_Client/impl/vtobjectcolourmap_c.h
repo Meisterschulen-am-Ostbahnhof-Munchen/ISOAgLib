@@ -38,7 +38,7 @@ public:
   :vtObject_c((iVtObject_s*) vtObjectColourMapSROM , ai_multitonInst)
   {}
 
-  inline iVtObjectColourMap_s* get_vtObjectColourMap_a() { return (iVtObjectColourMap_s *)&(get_vtObject_a()); }
+  iVtObjectColourMap_s* get_vtObjectColourMap_a() { return (iVtObjectColourMap_s *)&(get_vtObject_a()); }
 
 
   uint32_t fitTerminal() const;
