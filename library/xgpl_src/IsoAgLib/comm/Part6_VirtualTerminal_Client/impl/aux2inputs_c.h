@@ -50,9 +50,9 @@ public:
   /** send AUX2 input maintenance message (100msec) and call timeEventInputStateMsg(NULL) (1sec) */
   void timeEvent(void);
 
-  inline void setState(Aux2InputsState_en a_state);
+  void setState(Aux2InputsState_en a_state);
 
-  inline void setModelIdentificationCode(uint16_t a_model);
+  void setModelIdentificationCode(uint16_t a_model);
 
 
   std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>& getObjectList();
