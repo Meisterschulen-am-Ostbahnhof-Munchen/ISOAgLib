@@ -80,4 +80,16 @@ namespace __IsoAgLib {
   {
     mpc_lastVtServerInstance = ap_lastVtServerInstance;
   }
+
+    bool MultipleVt_c::isSwitching() const {
+        return (STATE_SWITCH_REQUESTED == m_state);
+    }
+
+    const VtServerInstance_c *MultipleVt_c::getLastVtServerInstance() const {
+        return mpc_lastVtServerInstance;
+    }
+
+    void MultipleVt_c::resetInfoShown() {
+        m_moveToNextVtInfoShown = NOT_SET;
+    }
 }

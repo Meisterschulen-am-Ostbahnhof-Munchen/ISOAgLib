@@ -51,25 +51,13 @@ namespace __IsoAgLib {
        */
       TimeEventResult timeEvent();
 
-      void resetInfoShown()
-      {
-        m_moveToNextVtInfoShown = NOT_SET;
-      }
+      void resetInfoShown();
 
       void trySwitchingState();
-
-      bool isSwitching() const
-      {
-        return (STATE_SWITCH_REQUESTED == m_state);
-      }
-
+      bool isSwitching() const;
       void resetSwitchingData();
-
       void setLastVtServerInstance(const VtServerInstance_c* ap_lastVtServerInstance);
-      const VtServerInstance_c* getLastVtServerInstance() const
-      {
-        return mpc_lastVtServerInstance;
-      }
+      const VtServerInstance_c* getLastVtServerInstance() const;
 
     private:
       MultipleVt_c( const MultipleVt_c& ); // non-copyable
@@ -90,11 +78,8 @@ namespace __IsoAgLib {
 
       const UploadPoolState_c& mref_uploadPoolState;
       const VtClient_c&        mref_vtClient;
-
       vtInfoShownState m_moveToNextVtInfoShown;
-
       State m_state;
-
       const VtServerInstance_c* mpc_lastVtServerInstance;
   };
 }
