@@ -35,7 +35,7 @@ public:
 
   vtObjectInputAttributes_c(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM , int ai_multitonInst);
 
-  iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a() { return dynamic_cast<iVtObjectInputAttributes_s *>(&(get_vtObject_a())); }
+  iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a();
 
 
 

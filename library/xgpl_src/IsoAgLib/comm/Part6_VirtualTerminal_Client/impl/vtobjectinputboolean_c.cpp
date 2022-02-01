@@ -170,6 +170,32 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     default: break;
   }
 }
+
+    vtObjectInputBoolean_c::vtObjectInputBoolean_c(
+            const IsoAgLib::iVtObject_c::iVtObjectInputBoolean_s *vtObjectInputBooleanSROM, int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectInputBooleanSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectInputBoolean_s *vtObjectInputBoolean_c::get_vtObjectInputBoolean_a() { return dynamic_cast<iVtObjectInputBoolean_s *>(&(get_vtObject_a())); }
+
+    void vtObjectInputBoolean_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), backgroundColour) : 0, sizeof(iVtObjectInputBoolean_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectInputBoolean_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), width) : 0, sizeof(iVtObjectInputBoolean_s), 2, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectInputBoolean_c::setForegroundColour(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
+                                                     bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), foregroundColour) : 0, sizeof(iVtObjectInputBoolean_s), 3, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectInputBoolean_c::setVariableReference(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
+                                                      bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), variableReference) : 0, sizeof(iVtObjectInputBoolean_s), 4, newValue, b_enableReplaceOfCmd);
+    }
+
 #endif
 
 } // __IsoAgLib

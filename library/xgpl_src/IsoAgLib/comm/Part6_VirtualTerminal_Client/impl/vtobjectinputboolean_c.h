@@ -38,35 +38,21 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectInputBoolean_c(const iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectInputBooleanSROM , ai_multitonInst)
-  {}
+  vtObjectInputBoolean_c(const iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , int ai_multitonInst);
 
-  iVtObjectInputBoolean_s* get_vtObjectInputBoolean_a() { return dynamic_cast<iVtObjectInputBoolean_s *>(&(get_vtObject_a())); }
+  iVtObjectInputBoolean_s* get_vtObjectInputBoolean_a();
 
 
 
   uint32_t fitTerminal() const;
 
   void setValue(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
-
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), backgroundColour) : 0, sizeof(iVtObjectInputBoolean_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
-  }
-
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), width) : 0, sizeof(iVtObjectInputBoolean_s), 2, newValue, b_enableReplaceOfCmd);
-  }
-
-  void setForegroundColour(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), foregroundColour) : 0, sizeof(iVtObjectInputBoolean_s), 3, newValue, b_enableReplaceOfCmd);
-  }
-
-  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), variableReference) : 0, sizeof(iVtObjectInputBoolean_s), 4, newValue, b_enableReplaceOfCmd);
-  }
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setForegroundColour(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -75,11 +61,8 @@ public:
   */
 
   uint8_t updateBackgroundColour(bool b_SendRequest=false);
-
   uint16_t updateWidth(bool b_SendRequest=false);
-
   uint16_t updateForegroundColour(bool b_SendRequest=false);
-
   uint16_t updateVariableReference(bool b_SendRequest=false);
 
   /** these attributes are in parentheses in the spec, so commented out here
