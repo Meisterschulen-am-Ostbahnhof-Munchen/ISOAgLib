@@ -68,7 +68,7 @@ public:
     send AUX2 input status message for all inputs (a_aux2InputObj == NULL) or only for passed AUX2 input object
   */
   void timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj);
-  void setLearnMode(bool a_learnMode) { mb_learnMode = a_learnMode; }
+  void setLearnMode(bool a_learnMode);
 
 private:
   const IdentItem_c& mrc_wsMasterIdentItem;

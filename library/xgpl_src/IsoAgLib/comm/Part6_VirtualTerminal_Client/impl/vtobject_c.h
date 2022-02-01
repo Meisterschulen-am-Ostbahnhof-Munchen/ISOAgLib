@@ -120,16 +120,10 @@ private:
   friend class vtLayoutManager_c;
   bool genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen);
 
-  virtual void updateEnable(uint8_t /*aui8_enOrDis*/) {}
+  virtual void updateEnable(uint8_t /*aui8_enOrDis*/);
 };
 
 
-inline
-bool
-vtObject_c::isOmittedFromUpload() const
-{
-  return (s_properties.flags & FLAG_OMIT_OBJECT) != 0;
-}
 
 
 } // __IsoAgLib

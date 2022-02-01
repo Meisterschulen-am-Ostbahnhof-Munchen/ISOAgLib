@@ -479,6 +479,13 @@ vtObject_c::select(uint8_t selectOrActivate)
   return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSelectInputObject(
     vtObject_a->ID, (selectOrActivate == 0), true );
 }
+    bool
+    vtObject_c::isOmittedFromUpload() const
+    {
+        return (s_properties.flags & FLAG_OMIT_OBJECT) != 0;
+    }
+
+    void vtObject_c::updateEnable(uint8_t) {}
 
 
 } // __IsoAgLib

@@ -218,5 +218,7 @@ bool Aux2Inputs_c::setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool
 
     std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c *> &Aux2Inputs_c::getObjectList() { return mlist_auxInput2; }
 
+    void Aux2Inputs_c::setLearnMode(bool a_learnMode) { mb_learnMode = a_learnMode; }
+
 
 }
