@@ -111,11 +111,10 @@ private:
 };
 
 #if ( PRT_INSTANCE_CNT == 1 )
-  inline iVtClient_c& getIvtClientInstance()
-  { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( 0 )); }
+  iVtClient_c& getIvtClientInstance();
 #endif
-  inline iVtClient_c& getIvtClientInstance( unsigned instance )
-  { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( instance )); }
+  iVtClient_c& getIvtClientInstance( unsigned instance );
+
 
 }
 
