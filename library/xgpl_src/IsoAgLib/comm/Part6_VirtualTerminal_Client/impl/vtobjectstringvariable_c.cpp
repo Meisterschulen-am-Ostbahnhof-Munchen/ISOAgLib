@@ -159,5 +159,14 @@ vtObjectStringVariable_c::getString()
   return get_vtObjectStringVariable_a()->value;
 }
 
+    vtObjectStringVariable_c::vtObjectStringVariable_c(
+            const IsoAgLib::iVtObject_c::iVtObjectStringVariable_s *vtObjectStringVariableSROM, int ai_multitonInst)
+            :iVtObjectString_c((iVtObjectString_s*) vtObjectStringVariableSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectStringVariable_s *vtObjectStringVariable_c::get_vtObjectStringVariable_a() { return (iVtObjectStringVariable_s *)&(get_vtObject_a()); }
+
+    void vtObjectStringVariable_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
+
 } // __IsoAgLib
 

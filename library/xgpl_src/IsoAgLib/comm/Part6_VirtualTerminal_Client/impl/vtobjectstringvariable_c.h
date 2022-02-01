@@ -37,15 +37,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectStringVariable_c(const iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst)
-  :iVtObjectString_c((iVtObjectString_s*) vtObjectStringVariableSROM , ai_multitonInst)
-  {}
-
-  iVtObjectStringVariable_s* get_vtObjectStringVariable_a() { return (iVtObjectStringVariable_s *)&(get_vtObject_a()); }
-
-
+  vtObjectStringVariable_c(const iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst);
+  iVtObjectStringVariable_s* get_vtObjectStringVariable_a();
   uint32_t fitTerminal() const;
-
   void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
   void setValueCopyUTF8(const char* newValue, uint8_t aui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -60,7 +54,7 @@ public:
   uint8_t updateObjectType() const { return 22; }
   */
 
-  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/);;
 #endif
 };
 
