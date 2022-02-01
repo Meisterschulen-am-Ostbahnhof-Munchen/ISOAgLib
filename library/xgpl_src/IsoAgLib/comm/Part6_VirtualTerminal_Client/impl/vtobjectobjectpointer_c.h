@@ -36,21 +36,12 @@ public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
-
-  vtObjectObjectPointer_c(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectObjectPointerSROM , ai_multitonInst)
-  {}
-
-  iVtObjectObjectPointer_s* get_vtObjectObjectPointer_a() { return (iVtObjectObjectPointer_s *)&(get_vtObject_a()); }
-
+  vtObjectObjectPointer_c(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst);
+  iVtObjectObjectPointer_s* get_vtObjectObjectPointer_a();
   vtObjectObjectPointer_c();
-
   uint32_t fitTerminal() const;
-
   void setValue(const IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-
   void setOriginSKM(bool b_SKM);
-
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/);
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** these attributes are in parentheses in the spec, so commented out here

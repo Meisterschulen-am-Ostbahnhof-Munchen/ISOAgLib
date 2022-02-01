@@ -207,6 +207,26 @@ vtObjectOutputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attrib
   }
 }
 #endif
+    vtObjectOutputList_c::vtObjectOutputList_c(
+            const IsoAgLib::iVtObject_c::iVtObjectOutputList_s *vtObjectOutputListSROM, int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectOutputListSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectOutputList_s *vtObjectOutputList_c::get_vtObjectOutputList_a() { return dynamic_cast<iVtObjectOutputList_s *>(&(get_vtObject_a())); }
+
+    void vtObjectOutputList_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputList_a(), width) : 0, sizeof(iVtObjectOutputList_s), 1, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectOutputList_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputList_a(), height) : 0, sizeof(iVtObjectOutputList_s), 2, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectOutputList_c::setVariableReference(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
+                                                    bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputList_a(), variableReference) : 0, sizeof(iVtObjectOutputList_s), 3, newValue, b_enableReplaceOfCmd);
+    }
+
 
 } // __IsoAgLib
 

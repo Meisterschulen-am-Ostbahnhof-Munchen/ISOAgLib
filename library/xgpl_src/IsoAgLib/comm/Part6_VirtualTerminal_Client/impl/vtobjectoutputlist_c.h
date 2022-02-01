@@ -38,38 +38,20 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectOutputList_c(const iVtObjectOutputList_s* vtObjectOutputListSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectOutputListSROM , ai_multitonInst)
-  {}
-
-  iVtObjectOutputList_s* get_vtObjectOutputList_a() { return dynamic_cast<iVtObjectOutputList_s *>(&(get_vtObject_a())); }
-
+  vtObjectOutputList_c(const iVtObjectOutputList_s* vtObjectOutputListSROM , int ai_multitonInst);
+  iVtObjectOutputList_s* get_vtObjectOutputList_a();
   vtObjectOutputList_c();
-
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
-
   uint8_t getNumberOfListItems();
-
   uint32_t fitTerminal() const;
-
   void setValue(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
-
   void setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false);
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputList_a(), width) : 0, sizeof(iVtObjectOutputList_s), 1, newValue, b_enableReplaceOfCmd);
-  }
-
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputList_a(), height) : 0, sizeof(iVtObjectOutputList_s), 2, newValue, b_enableReplaceOfCmd);
-  }
-
-  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputList_a(), variableReference) : 0, sizeof(iVtObjectOutputList_s), 3, newValue, b_enableReplaceOfCmd);
-  }
-
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   // ///////////////////////// getter for attributes
