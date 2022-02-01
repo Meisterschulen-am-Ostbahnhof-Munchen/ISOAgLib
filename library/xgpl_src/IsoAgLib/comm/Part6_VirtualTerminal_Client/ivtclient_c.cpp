@@ -15,6 +15,7 @@ iVtClient_c &getIvtClientInstance() { return static_cast<iVtClient_c&>(__IsoAgLi
 iVtClient_c &getIvtClientInstance(unsigned int instance) { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( instance )); }
 
 
+    int32_t iVtClientDataStorage_c::getAux2DeltaWaitBeforeSendingPreferredAssigment() { return 2000; }
 }
 
 

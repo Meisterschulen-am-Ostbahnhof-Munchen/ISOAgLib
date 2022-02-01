@@ -63,7 +63,7 @@ class iVtClientDataStorage_c {
       */
     virtual void storePreferredAux2Assignment( uint16_t a_functionUid, const std::list<iAux2InputData>& a_ref_preferred_assignment ) = 0;
                                                
-    virtual int32_t getAux2DeltaWaitBeforeSendingPreferredAssigment() { return 2000; };
+    virtual int32_t getAux2DeltaWaitBeforeSendingPreferredAssigment();;
 };
 
 
