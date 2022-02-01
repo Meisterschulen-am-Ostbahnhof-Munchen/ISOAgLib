@@ -32,29 +32,16 @@ class MultiSendPkg_c;
 class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
  public:
-  vtObjectStringStreamer_c(const char* apc_newValue, uint16_t a_ID, uint16_t aui16_strLenToSend)
-    : iMultiSendStreamer_c()
-    , mui16_vtObjectAId (a_ID)
-    , mpc_stringToStream (apc_newValue)
-    , mui16_strLenToSend (aui16_strLenToSend)
-    , mui32_streamPosition (0)
-    //marr_uploadBuffer
-    , mui32_streamPositionStored (0)
-  {}
-  
+  vtObjectStringStreamer_c(const char* apc_newValue, uint16_t a_ID, uint16_t aui16_strLenToSend);
   void setDataNextStreamPart(MultiSendPkg_c* mspData,
                              uint8_t bytes);
-
   void resetDataNextStreamPart();
   void saveDataNextStreamPart();
   void restoreDataNextStreamPart();
-
   uint32_t getStreamSize();
   uint8_t getFirstByte () { return 179; /* Command: "Command" --- Parameter: "Change String Value"; */ }
-
-  const char* getStringToStream() { return mpc_stringToStream; }
-  uint16_t getID() { return mui16_vtObjectAId; }
-
+  const char* getStringToStream();
+  uint16_t getID();
   void set5ByteCommandHeader(uint8_t* destinBuffer);
 
 private:

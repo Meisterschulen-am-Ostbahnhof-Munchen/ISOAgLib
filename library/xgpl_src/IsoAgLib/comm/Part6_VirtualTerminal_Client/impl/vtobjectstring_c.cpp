@@ -96,4 +96,19 @@ vtObjectStringStreamer_c::getStreamSize()
 {
   return 5+mui16_strLenToSend;
 }
+
+    vtObjectStringStreamer_c::vtObjectStringStreamer_c(const char *apc_newValue, uint16_t a_ID,
+                                                       uint16_t aui16_strLenToSend)
+            : iMultiSendStreamer_c()
+            , mui16_vtObjectAId (a_ID)
+            , mpc_stringToStream (apc_newValue)
+            , mui16_strLenToSend (aui16_strLenToSend)
+            , mui32_streamPosition (0)
+            //marr_uploadBuffer
+            , mui32_streamPositionStored (0)
+    {}
+
+    const char *vtObjectStringStreamer_c::getStringToStream() { return mpc_stringToStream; }
+
+    uint16_t vtObjectStringStreamer_c::getID() { return mui16_vtObjectAId; }
 } // end namespace __IsoAgLib
