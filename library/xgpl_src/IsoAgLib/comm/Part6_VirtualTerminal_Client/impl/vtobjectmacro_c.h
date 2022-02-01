@@ -32,11 +32,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectMacro_c(const iVtObjectMacro_s* vtObjectMacroSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectMacroSROM , ai_multitonInst)
-  {}
+  vtObjectMacro_c(const iVtObjectMacro_s* vtObjectMacroSROM , int ai_multitonInst);
 
-  iVtObjectMacro_s* get_vtObjectMacro_a() { return (iVtObjectMacro_s *)&(get_vtObject_a()); }
+  iVtObjectMacro_s* get_vtObjectMacro_a();
 
   vtObjectMacro_c();
 
@@ -47,7 +45,7 @@ public:
   uint8_t updateObjectType() const { return 28; }
    */
 
-  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/);;
 #endif
 };
 

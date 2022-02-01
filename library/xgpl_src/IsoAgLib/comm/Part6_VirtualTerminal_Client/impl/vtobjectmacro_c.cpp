@@ -65,4 +65,13 @@ vtObjectMacro_c::fitTerminal() const
   return 5 + (vtObjectMacro_a->commandsToFollow ? vtObjectMacro_a->numBytesToFollow : 0);
 }
 
+    vtObjectMacro_c::vtObjectMacro_c(const IsoAgLib::iVtObject_c::iVtObjectMacro_s *vtObjectMacroSROM,
+                                     int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectMacroSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectMacro_s *vtObjectMacro_c::get_vtObjectMacro_a() { return (iVtObjectMacro_s *)&(get_vtObject_a()); }
+
+    void vtObjectMacro_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
+
 } // __IsoAgLib
