@@ -1584,5 +1584,55 @@ bool CommandHandler_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* a
 bool CommandHandler_c::sendCommandHideShow( IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
 { return sendCommandHideShow(apc_object->getID(), b_hideOrShow, b_enableReplaceOfCmd); }
 
+    unsigned CommandHandler_c::getQueueSize() const {
+        unsigned int sz = 0;
+        for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
+            sz += getQueueSize( priority );
+
+        return sz;
+    }
+
+    unsigned CommandHandler_c::getQueueSize(unsigned int priority) const {
+        isoaglib_assert( priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES );
+        return mq_sendUpload[ priority ].size();
+    }
+
+    bool CommandHandler_c::queueFilled() const {
+        for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
+        {
+            if( queueFilled( priority ) )
+                return true;
+        }
+        return false;
+    }
+
+    bool CommandHandler_c::queueFilled(unsigned int priority) const {
+        return !mq_sendUpload[ priority ].empty();
+    }
+
+    void CommandHandler_c::sendCommandsToBus(bool commandsToBus) { mb_commandsToBus = commandsToBus; }
+
+    void CommandHandler_c::setSendPriority(unsigned int priority) { isoaglib_assert( priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ); mu_sendPriority = priority; }
+
+    unsigned CommandHandler_c::getSendPriority() const { return mu_sendPriority; }
+
+    void CommandHandler_c::enableSameCommandCheck() { mb_checkSameCommand = true; }
+
+    void CommandHandler_c::disableSameCommandCheck() { mb_checkSameCommand = false; }
+
+
+
+    CommandHandler_c::CommandHandler_c( VtClientConnection_c &connection )
+            : m_connection( connection )
+            , men_uploadCommandState( UploadCommandIdle )
+            , mui8_commandParameter( 0 ) // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
+            , mi32_commandTimestamp( -1 ) // no check initially
+            , mi32_commandTimeout( 0 ) // will be set when needed
+            , mu_sendPriority( 0 )
+            , mu_sendPriorityOfLastCommand( 0 )
+            , mb_checkSameCommand( true )
+            , mb_commandsToBus( true )
+    {
+    }
 
 } // __IsoAgLib

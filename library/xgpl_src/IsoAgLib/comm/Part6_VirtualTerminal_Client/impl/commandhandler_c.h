@@ -139,41 +139,23 @@ public:
   bool sendNonVolatileDeleteVersion( const char* versionLabel7chars );
 
   bool queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd=true);
-  unsigned getQueueSize() const {
-    unsigned int sz = 0;
-    for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
-      sz += getQueueSize( priority );
+  unsigned getQueueSize() const;
+  unsigned getQueueSize( unsigned priority ) const;
 
-    return sz;
-  }
-  unsigned getQueueSize( unsigned priority ) const {
-    isoaglib_assert( priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES );
-    return mq_sendUpload[ priority ].size();
-  }
+  bool queueFilled() const;
 
-  bool queueFilled() const {
-    for( unsigned priority = 0; priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES; ++priority )
-    {
-      if( queueFilled( priority ) )
-        return true;
-    }
-    return false;
-  }
-
-  bool queueFilled( unsigned priority ) const {
-    return !mq_sendUpload[ priority ].empty();
-  }
+  bool queueFilled( unsigned priority ) const;
 
   void doStop();
   bool tryToStart();
   void finishUploadCommand();
   uint8_t timeEventCommandTimeoutCheck() const;
 
-  void sendCommandsToBus( bool commandsToBus ) { mb_commandsToBus = commandsToBus; }
-  void setSendPriority( unsigned priority ) { isoaglib_assert( priority < CONFIG_VT_CLIENT_NUM_SEND_PRIORITIES ); mu_sendPriority = priority; }
-  unsigned getSendPriority() const { return mu_sendPriority; }
-  void enableSameCommandCheck() { mb_checkSameCommand = true; }
-  void disableSameCommandCheck() { mb_checkSameCommand = false; }
+  void sendCommandsToBus( bool commandsToBus );
+  void setSendPriority( unsigned priority );
+  unsigned getSendPriority() const;
+  void enableSameCommandCheck();
+  void disableSameCommandCheck();
 
 private:
   void dumpQueue();
@@ -207,19 +189,7 @@ private:
 };
 
 
-inline
-CommandHandler_c::CommandHandler_c( VtClientConnection_c &connection )
-  : m_connection( connection )
-  , men_uploadCommandState( UploadCommandIdle )
-  , mui8_commandParameter( 0 ) // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
-  , mi32_commandTimestamp( -1 ) // no check initially
-  , mi32_commandTimeout( 0 ) // will be set when needed
-  , mu_sendPriority( 0 )
-  , mu_sendPriorityOfLastCommand( 0 )
-  , mb_checkSameCommand( true )
-  , mb_commandsToBus( true )
-{
-}
+
 
 
 } // __IsoAgLib
