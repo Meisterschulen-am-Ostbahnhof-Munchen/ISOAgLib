@@ -27,7 +27,7 @@ namespace
 uint8_t const carrui8_normalized[] = {
   16, 231, 34, 37, 124, 127, 142, 188, 145, 21, 46, 51, 196, 201, 226, 19 };
 
-inline uint8_t normalizeDepth2Color(uint8_t ui8_color) {
+uint8_t normalizeDepth2Color(uint8_t ui8_color) {
   return ui8_color < 16 ? carrui8_normalized[ui8_color] : ui8_color;
 }
 
