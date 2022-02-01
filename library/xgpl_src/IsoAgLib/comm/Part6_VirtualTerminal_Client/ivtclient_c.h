@@ -36,6 +36,10 @@ class iScheduler_c;
  */
 class iVtClientDataStorage_c {
   public:
+
+	virtual ~iVtClientDataStorage_c() = default;
+
+
     /** Application needs to load the stored preferred ISOVT iIsoName_c and boottime.
         @param arc_isoname saved isoname. Set to Undefined if not known
         @param arui8_boottime_s saved boottime in second. Set to 0 or 0xFF if not known
@@ -63,7 +67,7 @@ class iVtClientDataStorage_c {
       */
     virtual void storePreferredAux2Assignment( uint16_t a_functionUid, const std::list<iAux2InputData>& a_ref_preferred_assignment ) = 0;
                                                
-    virtual int32_t getAux2DeltaWaitBeforeSendingPreferredAssigment();;
+    virtual int32_t getAux2DeltaWaitBeforeSendingPreferredAssigment();
 };
 
 
