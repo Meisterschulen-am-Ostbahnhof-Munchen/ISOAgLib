@@ -89,11 +89,7 @@ public:
   iVtClientConnection_c& getClientByID (uint8_t ui8_clientIndex);
 
   //! Returns NULL if index was not valid. ATTENTION: Index may be valid, but maybe it's a newer client on this index, if it was deregistered/registered.
-  iVtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex)
-  {
-    __IsoAgLib::VtClientConnection_c* result = VtClient_c::getClientPtrByID( ui8_clientIndex );
-    return result ? result->toInterfacePointer() : NULL;
-  }
+  iVtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex);
 
   bool isAnyVtAvailable() const { return VtClient_c::isAnyVtAvailable(); }
 

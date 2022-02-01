@@ -30,6 +30,12 @@ iVtClient_c &getIvtClientInstance(unsigned int instance) { return static_cast<iV
     iVtClientConnection_c &iVtClient_c::getClientByID(uint8_t ui8_clientIndex) { return VtClient_c::getClientByID (ui8_clientIndex).toInterfaceReference(); }
 
 
+    iVtClientConnection_c *iVtClient_c::getClientPtrByID(uint8_t ui8_clientIndex) {
+        __IsoAgLib::VtClientConnection_c* result = VtClient_c::getClientPtrByID( ui8_clientIndex );
+        return result ? result->toInterfacePointer() : NULL;
+    }
+
+
 }
 
 
