@@ -457,6 +457,29 @@ void vtObjectAuxiliaryInput2_c::setTimeStampLastStateMsg()
   m_inputState.mi32_timeStampLastStateMsg = HAL::getTime();
 }
 
+    IsoAgLib::iVtObject_c::iVtObjectAuxiliaryInput2_s *vtObjectAuxiliaryInput2_c::get_vtObjectAuxiliaryInput2_a() { return dynamic_cast<iVtObjectAuxiliaryInput2_s *>(&(get_vtObject_a())); }
 
+    void vtObjectAuxiliaryInput2_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
+
+    bool vtObjectAuxiliaryInput2_c::getInputStateEnabled() const { return m_inputState.mb_enabled; }
+
+    bool vtObjectAuxiliaryInput2_c::sendNextStatusAsSoonAsPossible() const { return mb_valueChangeToHandle; }
+
+    bool vtObjectAuxiliaryInput2_c::highUpdateRateActive() const { return mb_highStatusUpdateRate; }
+
+    ecutime_t vtObjectAuxiliaryInput2_c::getTimeStampLastStateMsg() const { return m_inputState.mi32_timeStampLastStateMsg; }
+
+    uint16_t vtObjectAuxiliaryInput2_c::getValue1() const { return mui16_value1; }
+
+    uint16_t vtObjectAuxiliaryInput2_c::getValue2() const { return mui16_value2; }
+
+    bool vtObjectAuxiliaryInput2_c::getInputActivatedInLearnMode() const { return mb_inputActivatedInLearnMode; }
+
+    uint8_t vtObjectAuxiliaryInput2_c::getFunctionType() { return (getValue8(MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), functionAttributes), 0 /* ui16_structLen */) & 0x1F); }
+
+
+    vtObjectAuxiliaryInput2_c::InputState_s::InputState_s()
+            : mb_enabled(false), mi32_timeStampLastStateMsg(0)
+    {}
 } // __IsoAgLib
 

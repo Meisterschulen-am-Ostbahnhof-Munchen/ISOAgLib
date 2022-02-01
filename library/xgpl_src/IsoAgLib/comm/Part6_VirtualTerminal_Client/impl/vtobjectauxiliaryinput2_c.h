@@ -52,9 +52,7 @@ public:
   // store information about AUX input
   struct InputState_s
   {
-    InputState_s()
-      : mb_enabled(false), mi32_timeStampLastStateMsg(0)
-    {}
+    InputState_s();
 
     bool mb_enabled;
     ecutime_t mi32_timeStampLastStateMsg;
@@ -66,7 +64,7 @@ public:
 
   vtObjectAuxiliaryInput2_c(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst);
 
-  iVtObjectAuxiliaryInput2_s* get_vtObjectAuxiliaryInput2_a() { return dynamic_cast<iVtObjectAuxiliaryInput2_s *>(&(get_vtObject_a())); }
+  iVtObjectAuxiliaryInput2_s* get_vtObjectAuxiliaryInput2_a();
 
 
   uint32_t fitTerminal() const;
@@ -81,7 +79,7 @@ public:
   uint8_t updateObjectType() const { return 32; }
   */
 
-  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/);;
 #endif
 
   void setInputStateEnabled(bool ab_enabled);
@@ -92,19 +90,13 @@ public:
     for signaling "held" position
   */
   void updateValueForHeldPositionAfterFirstMsg();
-
-  bool getInputStateEnabled() const { return m_inputState.mb_enabled; }
-
-  bool sendNextStatusAsSoonAsPossible() const { return mb_valueChangeToHandle; }
-
-  bool highUpdateRateActive() const { return mb_highStatusUpdateRate; }
-
-  ecutime_t getTimeStampLastStateMsg() const  { return m_inputState.mi32_timeStampLastStateMsg; }
-
-  uint16_t getValue1() const { return mui16_value1; }
-  uint16_t getValue2() const { return mui16_value2; }
-
-  bool getInputActivatedInLearnMode() const { return mb_inputActivatedInLearnMode; }
+  bool getInputStateEnabled() const;
+  bool sendNextStatusAsSoonAsPossible() const;
+  bool highUpdateRateActive() const;
+  ecutime_t getTimeStampLastStateMsg() const;
+  uint16_t getValue1() const;
+  uint16_t getValue2() const;
+  bool getInputActivatedInLearnMode() const;
 
   /**
     set new value and trigger AUX2 input state message
@@ -115,8 +107,7 @@ public:
     @return true if range of value matches the expected range for this function type
   */
   bool setValue(uint16_t aui16_value1, uint16_t aui16_value2, StateForLearnMode_en aen_stateForLearnMode);
-
-  uint8_t getFunctionType() { return (getValue8(MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), functionAttributes), 0 /* ui16_structLen */) & 0x1F); }
+  uint8_t getFunctionType();
 
 private:
 
