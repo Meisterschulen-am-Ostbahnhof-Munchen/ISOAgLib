@@ -43,7 +43,7 @@ class iIdentItem_c;
 class VtClient_c : private Subsystem_c {
   MACRO_MULTITON_CONTRIBUTION();
 public:
-  virtual ~VtClient_c() {}
+  virtual ~VtClient_c() = default;
 
   void init();
   void close();
@@ -64,26 +64,20 @@ public:
 
   bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& apc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size);
 
-  VtClientConnection_c& getClientByID (uint8_t ui8_clientIndex) { return *m_vtConnections[ui8_clientIndex]; }
-  VtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex) { return ( ui8_clientIndex < m_vtConnections.size() ) ? m_vtConnections[ui8_clientIndex] : NULL; }
+  VtClientConnection_c& getClientByID (uint8_t ui8_clientIndex);
+  VtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex);
 
-  bool isAnyVtAvailable() const { return m_serverManager.isAnyVtAvailable(); }
+  bool isAnyVtAvailable() const;
   // is any claimed VT sending VT status
-  bool isAnyVtActive( bool mustBePrimary ) const { return (getActiveVtServer( mustBePrimary, NULL ) != NULL); }
-  uint16_t getActiveVtCount() const { return m_serverManager.getActiveVtCount(); }
+  bool isAnyVtActive( bool mustBePrimary ) const;
+  uint16_t getActiveVtCount() const;
 
   void notifyAllConnectionsOnAux1InputStatus( const CanPkgExt_c& refc_data ) const;
   void notifyAllConnectionsOnAux2InputStatus( const CanPkgExt_c& refc_data ) const;
   void notifyAllConnectionsOnAux2InputMaintenance( const CanPkgExt_c& refc_data ) const;
-
-  VtServerInstance_c* getActiveVtServer( bool mustBePrimary, const VtServerInstance_c* ap_searchStart ) const
-  { return m_serverManager.getActiveVtServer(mustBePrimary, ap_searchStart); }
-
-  VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const
-  { return m_serverManager.getPreferredVtServer(aref_prefferedVTIsoName); }
-  
-  VtServerInstance_c* getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const
-  { return m_serverManager.getSpecificVtServer(arc_pool); }
+  VtServerInstance_c* getActiveVtServer( bool mustBePrimary, const VtServerInstance_c* ap_searchStart ) const;
+  VtServerInstance_c* getPreferredVtServer(const IsoName_c& aref_prefferedVTIsoName) const;
+  VtServerInstance_c* getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const;
 
   ////////////////////////
   // INTERFACE FUNTIONS //
@@ -104,48 +98,28 @@ private:
   public:
     typedef VtClient_c Owner_t;
 
-    CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+    CanCustomerProxy_c(Owner_t &art_owner);
 
-    virtual ~CanCustomerProxy_c() {}
+    virtual ~CanCustomerProxy_c() = default;
 
   private:
-    virtual void processMsg( const CanPkg_c& arc_data ) {
-      mrt_owner.processMsg( arc_data );
-    }
+    virtual void processMsg( const CanPkg_c& arc_data );
 
     virtual bool reactOnStreamStart(
         ReceiveStreamIdentifier_c const &ac_ident,
-        uint32_t aui32_totalLen)
-    {
-      return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
-    }
+        uint32_t aui32_totalLen);
 
-    virtual void reactOnAbort(Stream_c &arc_stream)
-    {
-      mrt_owner.reactOnAbort(arc_stream);
-    }
+    virtual void reactOnAbort(Stream_c &arc_stream);
 
     virtual bool processPartStreamDataChunk(
         Stream_c &apc_stream,
         bool ab_isFirstChunk,
-        bool ab_isLastChunk)
-    {
-      return mrt_owner.processPartStreamDataChunk(
-          apc_stream,
-          ab_isFirstChunk,
-          ab_isLastChunk);
-    }
+        bool ab_isLastChunk);
 
     virtual void notificationOnMultiReceiveError(
         ReceiveStreamIdentifier_c const &ac_streamIdent,
         uint8_t aui8_multiReceiveError,
-        bool ab_isGlobal)
-    {
-      mrt_owner.notificationOnMultiReceiveError(
-          ac_streamIdent,
-          aui8_multiReceiveError,
-          ab_isGlobal);
-    }
+        bool ab_isGlobal);
 
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
@@ -160,17 +134,14 @@ private:
   public:
     typedef VtClient_c Owner_t;
 
-    ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+    explicit ControlFunctionStateHandlerProxy_c(Owner_t &art_owner);
 
-    virtual ~ControlFunctionStateHandlerProxy_c() {}
+    virtual ~ControlFunctionStateHandlerProxy_c() = default;
 
   private:
     virtual void reactOnIsoItemModification(
         iIsoItemAction_e at_action,
-        IsoItem_c const &acrc_isoItem)
-    {
-      mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
-    }
+        IsoItem_c const &acrc_isoItem);
 
     // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
@@ -187,44 +158,23 @@ private:
     */
   VtClient_c();
 
-  void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem)
-  {
-    m_serverManager.reactOnIsoItemModification(at_action, acrc_isoItem, m_vtConnections, *this);
-  }
+  void reactOnIsoItemModification (ControlFunctionStateHandler_c::iIsoItemAction_e at_action, IsoItem_c const& acrc_isoItem);
 
   virtual bool reactOnStreamStart(
       ReceiveStreamIdentifier_c const &ac_ident,
-      uint32_t aui32_totalLen)
-  {
-    return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
-  }
+      uint32_t aui32_totalLen);
 
-  virtual void reactOnAbort(Stream_c &arc_stream)
-  {
-    mt_customer.reactOnAbortDefault(arc_stream);
-  }
+  virtual void reactOnAbort(Stream_c &arc_stream);
 
   virtual bool processPartStreamDataChunk(
       Stream_c &apc_stream,
       bool ab_isFirstChunk,
-      bool ab_isLastChunk)
-  {
-    return mt_customer.processPartStreamDataChunkDefault(
-        apc_stream,
-        ab_isFirstChunk,
-        ab_isLastChunk);
-  }
+      bool ab_isLastChunk);
 
   virtual void notificationOnMultiReceiveError(
       ReceiveStreamIdentifier_c const &ac_streamIdent,
       uint8_t aui8_multiReceiveError,
-      bool ab_isGlobal)
-  {
-    mt_customer.notificationOnMultiReceiveErrorDefault(
-        ac_streamIdent,
-        aui8_multiReceiveError,
-        ab_isGlobal);
-  }
+      bool ab_isGlobal);
 
 
   VtClientConnection_c* initAndRegisterObjectPoolCommon(

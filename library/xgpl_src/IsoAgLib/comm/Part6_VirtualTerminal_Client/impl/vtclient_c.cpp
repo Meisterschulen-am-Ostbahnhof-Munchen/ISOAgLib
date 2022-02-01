@@ -341,4 +341,88 @@ VtClient_c::notifyAllConnectionsOnAux2InputMaintenance( const CanPkgExt_c& refc_
   }
 }
 
+    VtClientConnection_c &VtClient_c::getClientByID(uint8_t ui8_clientIndex) { return *m_vtConnections[ui8_clientIndex]; }
+
+    VtClientConnection_c *VtClient_c::getClientPtrByID(uint8_t ui8_clientIndex) { return ( ui8_clientIndex < m_vtConnections.size() ) ? m_vtConnections[ui8_clientIndex] : NULL; }
+
+    bool VtClient_c::isAnyVtAvailable() const { return m_serverManager.isAnyVtAvailable(); }
+
+    bool VtClient_c::isAnyVtActive(bool mustBePrimary) const { return (getActiveVtServer( mustBePrimary, NULL ) != NULL); }
+
+    uint16_t VtClient_c::getActiveVtCount() const { return m_serverManager.getActiveVtCount(); }
+
+    VtServerInstance_c *
+    VtClient_c::getActiveVtServer(bool mustBePrimary, const VtServerInstance_c *ap_searchStart) const { return m_serverManager.getActiveVtServer(mustBePrimary, ap_searchStart); }
+
+    VtServerInstance_c *VtClient_c::getPreferredVtServer(const IsoName_c &aref_prefferedVTIsoName) const { return m_serverManager.getPreferredVtServer(aref_prefferedVTIsoName); }
+
+    VtServerInstance_c *VtClient_c::getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c &arc_pool) const { return m_serverManager.getSpecificVtServer(arc_pool); }
+
+    void VtClient_c::reactOnIsoItemModification(ControlFunctionStateHandler_c::iIsoItemAction_e at_action,
+                                                const IsoItem_c &acrc_isoItem) {
+        m_serverManager.reactOnIsoItemModification(at_action, acrc_isoItem, m_vtConnections, *this);
+    }
+
+    bool VtClient_c::reactOnStreamStart(const ReceiveStreamIdentifier_c &ac_ident, uint32_t aui32_totalLen) {
+        return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
+    }
+
+    void VtClient_c::reactOnAbort(Stream_c &arc_stream) {
+        mt_customer.reactOnAbortDefault(arc_stream);
+    }
+
+    bool VtClient_c::processPartStreamDataChunk(Stream_c &apc_stream, bool ab_isFirstChunk, bool ab_isLastChunk) {
+        return mt_customer.processPartStreamDataChunkDefault(
+                apc_stream,
+                ab_isFirstChunk,
+                ab_isLastChunk);
+    }
+
+    void VtClient_c::notificationOnMultiReceiveError(const ReceiveStreamIdentifier_c &ac_streamIdent,
+                                                     uint8_t aui8_multiReceiveError, bool ab_isGlobal) {
+        mt_customer.notificationOnMultiReceiveErrorDefault(
+                ac_streamIdent,
+                aui8_multiReceiveError,
+                ab_isGlobal);
+    }
+
+    VtClient_c::CanCustomerProxy_c::CanCustomerProxy_c(VtClient_c::CanCustomerProxy_c::Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    void VtClient_c::CanCustomerProxy_c::processMsg(const CanPkg_c &arc_data) {
+        mrt_owner.processMsg( arc_data );
+    }
+
+    bool VtClient_c::CanCustomerProxy_c::reactOnStreamStart(const ReceiveStreamIdentifier_c &ac_ident,
+                                                            uint32_t aui32_totalLen) {
+        return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
+    }
+
+    void VtClient_c::CanCustomerProxy_c::reactOnAbort(Stream_c &arc_stream) {
+        mrt_owner.reactOnAbort(arc_stream);
+    }
+
+    bool VtClient_c::CanCustomerProxy_c::processPartStreamDataChunk(Stream_c &apc_stream, bool ab_isFirstChunk,
+                                                                    bool ab_isLastChunk) {
+        return mrt_owner.processPartStreamDataChunk(
+                apc_stream,
+                ab_isFirstChunk,
+                ab_isLastChunk);
+    }
+
+    void
+    VtClient_c::CanCustomerProxy_c::notificationOnMultiReceiveError(const ReceiveStreamIdentifier_c &ac_streamIdent,
+                                                                    uint8_t aui8_multiReceiveError, bool ab_isGlobal) {
+        mrt_owner.notificationOnMultiReceiveError(
+                ac_streamIdent,
+                aui8_multiReceiveError,
+                ab_isGlobal);
+    }
+
+    VtClient_c::ControlFunctionStateHandlerProxy_c::ControlFunctionStateHandlerProxy_c(
+            VtClient_c::ControlFunctionStateHandlerProxy_c::Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    void VtClient_c::ControlFunctionStateHandlerProxy_c::reactOnIsoItemModification(
+            ControlFunctionStateHandler_c::iIsoItemAction_e at_action, const IsoItem_c &acrc_isoItem) {
+        mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
+    }
 } // __IsoAgLib
