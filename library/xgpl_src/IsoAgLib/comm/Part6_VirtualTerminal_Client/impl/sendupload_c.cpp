@@ -145,5 +145,37 @@ SendUpload_c::set (uint8_t* apui8_buffer, uint32_t bufferSize)
   ppc_vtObjects = NULL;
 }
 
+    SendUpload_c::SendUpload_c()
+            : SendUploadBase_c()
+            , mc_streamer(NULL)
+            , ppc_vtObjects (NULL)
+            , ui16_numObjects (0)
+    {}
+
+    SendUpload_c::SendUpload_c(uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6,
+                               uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c **rppc_vtObjects,
+                               uint16_t aui16_numObjects)
+            : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8)
+            , mc_streamer(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
+            , ppc_vtObjects (rppc_vtObjects)
+            , ui16_numObjects (aui16_numObjects)
+    {}
+
+    SendUpload_c::SendUpload_c(uint8_t *apui8_buffer, uint32_t bufferSize)
+            : SendUploadBase_c (apui8_buffer, bufferSize)
+            , mc_streamer(NULL)   /// Use BUFFER - NOT MultiSendStreamer!
+            , ppc_vtObjects (NULL)
+            , ui16_numObjects (0)
+    {}
+
+    void SendUpload_c::unsetStreamer() { mc_streamer = NULL; }
+
+    SendUpload_c::SendUpload_c(const SendUpload_c &r_source)
+            : SendUploadBase_c(r_source)
+            , mc_streamer(r_source.mc_streamer)
+            , ppc_vtObjects (r_source.ppc_vtObjects)
+            , ui16_numObjects (r_source.ui16_numObjects)
+    {}
+
 
 } // __IsoAgLib

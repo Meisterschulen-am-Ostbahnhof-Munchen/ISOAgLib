@@ -1043,4 +1043,45 @@ UploadPoolState_c::activeAuxN() const
           m_connection.getVtServerInst().isPrimaryVt() );
 }
 
+    IsoAgLib::iVtClientObjectPool_c &UploadPoolState_c::getPool() const { return m_pool; }
+
+    const char *UploadPoolState_c::versionLabel() const { return( mb_usingVersionLabel ? marrp7c_versionLabel : NULL ); }
+
+    UploadPoolState_c::UploadPhase_s::UploadPhase_s() : pc_streamer (NULL), ui32_size (0) {}
+
+    UploadPoolState_c::UploadPhase_s::UploadPhase_s(IsoAgLib::iMultiSendStreamer_c *apc_streamer, uint32_t aui32_size) : pc_streamer (apc_streamer), ui32_size(aui32_size) {}
+
+
+
+    void UploadPoolState_c::doStart()
+    {
+        mi8_vtLanguage = -2; // (re-)query LANGUAGE_PGN
+        m_uploadingVersion = 0; // re-query version (needed for pool adaptation, e.g. omit Aux2 for v2 VTs)
+    }
+
+
+    void UploadPoolState_c::doStop()
+    {
+        men_uploadPoolState = UploadPoolInit;
+    }
+
+
+    void UploadPoolState_c::notifyOnVtsLanguagePgn()
+    {
+        mi8_vtLanguage = -2;
+    }
+
+
+    bool UploadPoolState_c::successfullyUploaded() const
+    {
+        return( men_uploadPoolState == UploadPoolEndSuccess );
+    }
+
+    bool UploadPoolState_c::unsuccessfullyUploaded() const
+    {
+        return( men_uploadPoolState == UploadPoolEndFailed );
+    }
+
+
+
 } // __IsoAgLib

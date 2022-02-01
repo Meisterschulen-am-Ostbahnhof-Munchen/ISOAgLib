@@ -76,8 +76,8 @@ namespace __IsoAgLib {
 
     struct UploadPhase_s
     {
-      UploadPhase_s() : pc_streamer (NULL), ui32_size (0) {}
-      UploadPhase_s (IsoAgLib::iMultiSendStreamer_c* apc_streamer, uint32_t aui32_size) : pc_streamer (apc_streamer), ui32_size(aui32_size) {}
+      UploadPhase_s();
+      UploadPhase_s (IsoAgLib::iMultiSendStreamer_c* apc_streamer, uint32_t aui32_size);
 
       IsoAgLib::iMultiSendStreamer_c* pc_streamer;
       uint32_t ui32_size;
@@ -113,7 +113,7 @@ namespace __IsoAgLib {
     void processMsgVtToEcu( const CanPkgExt_c& pkg );
     void processMsgVtToEcu( Stream_c &stream );
 
-    IsoAgLib::iVtClientObjectPool_c& getPool() const { return m_pool; }
+    IsoAgLib::iVtClientObjectPool_c& getPool() const;
 
     void notifyOnVtsLanguagePgn();
     void finalizeUploading();
@@ -126,7 +126,7 @@ namespace __IsoAgLib {
     bool successfullyUploaded() const;
     bool unsuccessfullyUploaded() const;
 
-    const char *versionLabel() const { return( mb_usingVersionLabel ? marrp7c_versionLabel : NULL ); }
+    const char *versionLabel() const;
 
     void timeEvent();
     bool timeEventCalculateLanguage();
@@ -155,7 +155,6 @@ namespace __IsoAgLib {
     void startGetVersions();
     void sendGetMemory( bool onlyRequestVersion );
 
-    void timeEventUploadPoolTimeoutCheck();
     void timeEventRequestProperties();
     void timeEventPoolUpload();
 
@@ -209,41 +208,6 @@ namespace __IsoAgLib {
 
     IsoaglibArrayBitset<64> m_langRejectedUseDefaultAsFallback; // 64 languages should be enough for everybody :)
   };
-
-
-  inline void
-  UploadPoolState_c::doStart()
-  {
-    mi8_vtLanguage = -2; // (re-)query LANGUAGE_PGN
-    m_uploadingVersion = 0; // re-query version (needed for pool adaptation, e.g. omit Aux2 for v2 VTs)
-  }
-
-
-  inline void
-  UploadPoolState_c::doStop()
-  {
-    men_uploadPoolState = UploadPoolInit;
-  }
-
-
-  inline void
-  UploadPoolState_c::notifyOnVtsLanguagePgn()
-  {
-    mi8_vtLanguage = -2;
-  }
-
-
-  inline bool
-  UploadPoolState_c::successfullyUploaded() const
-  {
-    return( men_uploadPoolState == UploadPoolEndSuccess );
-  }
-
-  inline bool
-  UploadPoolState_c::unsuccessfullyUploaded() const
-  {
-    return( men_uploadPoolState == UploadPoolEndFailed );
-  }
 
 } // __IsoAgLib
 

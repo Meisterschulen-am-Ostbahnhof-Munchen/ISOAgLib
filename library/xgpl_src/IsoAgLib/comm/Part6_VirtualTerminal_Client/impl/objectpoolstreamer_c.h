@@ -43,18 +43,14 @@ class UploadPoolState_c;
 class ObjectPoolStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
 public:
-  ObjectPoolStreamer_c( UploadPoolState_c& uploadPoolState )
-    : m_uploadPoolState( uploadPoolState )
-  {}
-
-  virtual ~ObjectPoolStreamer_c() {}
-
+  explicit ObjectPoolStreamer_c( UploadPoolState_c& uploadPoolState );
+  virtual ~ObjectPoolStreamer_c() = default;
   virtual void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
   virtual void resetDataNextStreamPart();
   virtual void saveDataNextStreamPart();
   virtual void restoreDataNextStreamPart();
-  virtual uint32_t getStreamSize() { return mui32_size; }
-  virtual uint8_t getFirstByte() { return 0x11; }
+  virtual uint32_t getStreamSize();
+  virtual uint8_t getFirstByte();
 
   void setStreamSize(uint32_t aui32_size) { mui32_size = aui32_size; }
 

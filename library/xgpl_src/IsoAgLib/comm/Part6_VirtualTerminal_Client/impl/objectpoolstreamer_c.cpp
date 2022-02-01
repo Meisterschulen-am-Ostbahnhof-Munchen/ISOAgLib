@@ -103,5 +103,13 @@ ObjectPoolStreamer_c::restoreDataNextStreamPart()
     marr_uploadBuffer [i] = marr_uploadBufferStored [i];
 }
 
+    ObjectPoolStreamer_c::ObjectPoolStreamer_c(UploadPoolState_c &uploadPoolState)
+            : m_uploadPoolState( uploadPoolState )
+    {}
+
+    uint32_t ObjectPoolStreamer_c::getStreamSize() { return mui32_size; }
+
+    uint8_t ObjectPoolStreamer_c::getFirstByte() { return 0x11; }
+
 
 } // __IsoAgLib
