@@ -110,8 +110,7 @@ vtObjectFontAttributes_c::vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vt
 
 
 
-vtObjectFontAttributes_c::~vtObjectFontAttributes_c()
-{}
+
 
 
 uint32_t

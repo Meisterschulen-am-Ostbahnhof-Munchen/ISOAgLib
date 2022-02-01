@@ -56,7 +56,7 @@ public:
 			uint8_t fontStyle);
 
   vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
-  virtual ~vtObjectFontAttributes_c();
+  virtual ~vtObjectFontAttributes_c() = default;
   uint32_t fitTerminal() const;
   uint16_t getScaledWidthHeight();
 

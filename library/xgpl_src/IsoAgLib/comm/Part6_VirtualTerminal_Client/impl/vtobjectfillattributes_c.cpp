@@ -121,5 +121,26 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     default: break;
   }
 }
+
+    vtObjectFillAttributes_c::vtObjectFillAttributes_c(
+            const IsoAgLib::iVtObject_c::iVtObjectFillAttributes_s *vtObjectFillAttributesSROM, int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectFillAttributesSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectFillAttributes_s *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a() { return dynamic_cast<iVtObjectFillAttributes_s *>(&(get_vtObject_a())); }
+
+    void vtObjectFillAttributes_c::setFillType(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType) : 0, sizeof(iVtObjectFillAttributes_s), 1 /* "Fill Type" */, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectFillAttributes_c::setFillColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour) : 0, sizeof(iVtObjectFillAttributes_s), 2 /* "Fill Colour" */, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectFillAttributes_c::setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c *newValue, bool b_updateObject,
+                                                  bool b_enableReplaceOfCmd) {
+        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject) : 0, sizeof(iVtObjectFillAttributes_s), 3 /* "Fill Pattern" */, newValue, b_enableReplaceOfCmd);
+    }
+
 #endif
 } // __IsoAgLib
