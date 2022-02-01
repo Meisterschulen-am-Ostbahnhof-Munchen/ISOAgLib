@@ -38,16 +38,10 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectNumberVariable_c(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectNumberVariableSROM , ai_multitonInst)
-  {}
-
-  iVtObjectNumberVariable_s* get_vtObjectNumberVariable_a() { return (iVtObjectNumberVariable_s *)&(get_vtObject_a()); }
-
+  vtObjectNumberVariable_c(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , int ai_multitonInst);
+  iVtObjectNumberVariable_s* get_vtObjectNumberVariable_a();
   vtObjectNumberVariable_c();
-
   uint32_t fitTerminal() const;
-
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

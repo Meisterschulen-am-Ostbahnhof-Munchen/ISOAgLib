@@ -89,6 +89,14 @@ vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*p
     saveValue32(MACRO_getStructOffset(get_vtObjectNumberVariable_a(), value), sizeof(iVtObjectNumberVariable_s), convertLittleEndianStringUi32(pui8_attributeValue));
   */
 }
+
+    vtObjectNumberVariable_c::vtObjectNumberVariable_c(
+            const IsoAgLib::iVtObject_c::iVtObjectNumberVariable_s *vtObjectNumberVariableSROM, int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectNumberVariableSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectNumberVariable_s *vtObjectNumberVariable_c::get_vtObjectNumberVariable_a() { return (iVtObjectNumberVariable_s *)&(get_vtObject_a()); }
+
 #endif
 
 } // __IsoAgLib
