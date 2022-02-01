@@ -57,18 +57,12 @@ public:
   iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a() { return dynamic_cast<iVtObjectSoftKeyMask_s *>(&(get_vtObject_a())); }
 
   virtual ~vtObjectSoftKeyMask_c();
-
   uint32_t fitTerminal() const;
-
   uint8_t get_numberOfObjectsToFollow() const;
-
   void setOriginSKM(bool b_SKM);
-
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour) : 0, sizeof(iVtObjectSoftKeyMask_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
-  }
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here

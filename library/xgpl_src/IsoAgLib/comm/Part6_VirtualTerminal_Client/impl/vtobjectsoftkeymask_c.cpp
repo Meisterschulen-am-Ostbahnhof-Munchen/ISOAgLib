@@ -228,6 +228,11 @@ vtObjectSoftKeyMask_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
   if (attrID == 1)
     saveValue8(MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour), sizeof(iVtObjectSoftKeyMask_s), convertLittleEndianStringUi8(pui8_attributeValue));
 }
+
+    void vtObjectSoftKeyMask_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour) : 0, sizeof(iVtObjectSoftKeyMask_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    }
+
 #endif
 
 } // __IsoAgLib
