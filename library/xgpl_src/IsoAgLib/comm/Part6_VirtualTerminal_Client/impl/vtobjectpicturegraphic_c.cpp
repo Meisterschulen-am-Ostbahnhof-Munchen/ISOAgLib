@@ -396,5 +396,61 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
   }
 }
 #endif
+    vtObjectPictureGraphic_c::vtObjectPictureGraphic_c(
+            const IsoAgLib::iVtObject_c::iVtObjectPictureGraphic_s *vtObjectPictureGraphicSROM, int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectPictureGraphicSROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectPictureGraphic_s *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a() { return dynamic_cast<iVtObjectPictureGraphic_s *>(&(get_vtObject_a())); }
+
+    void vtObjectPictureGraphic_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width) : 0, sizeof(iVtObjectPictureGraphic_s), 1, newValue, b_enableReplaceOfCmd);
+    }
+
+    void vtObjectPictureGraphic_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options) : 0, sizeof(iVtObjectPictureGraphic_s), 2, newValue, newValue & 0x7, b_enableReplaceOfCmd);
+    }
+
+    void
+    vtObjectPictureGraphic_c::setTransparencyColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
+    }
+
+    void
+    vtObjectPictureGraphic_c::setRawData0(uint8_t *newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth,
+                                          uint16_t aui16_actHeight, uint16_t aui16_width) { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
+        saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData0),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
+        saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData0), sizeof(iVtObjectPictureGraphic_s), aui32_size);
+        saveValue8 (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options),                 sizeof(iVtObjectPictureGraphic_s), ab_rle ? (get_vtObjectPictureGraphic_a()->options |  (1<<2))
+                                                                                                                                              : (get_vtObjectPictureGraphic_a()->options & ~(1<<2)) );
+        if (aui16_actWidth != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth),  sizeof(iVtObjectPictureGraphic_s), aui16_actWidth);
+        if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
+        if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
+    }
+
+    void
+    vtObjectPictureGraphic_c::setRawData1(uint8_t *newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth,
+                                          uint16_t aui16_actHeight, uint16_t aui16_width) { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
+        saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData1),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
+        saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData1), sizeof(iVtObjectPictureGraphic_s), aui32_size);
+        saveValue8 (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options),                 sizeof(iVtObjectPictureGraphic_s), ab_rle ? (get_vtObjectPictureGraphic_a()->options |  (1<<3))
+                                                                                                                                              : (get_vtObjectPictureGraphic_a()->options & ~(1<<3)) );
+        if (aui16_actWidth != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth),  sizeof(iVtObjectPictureGraphic_s), aui16_actWidth);
+        if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
+        if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
+    }
+
+    void
+    vtObjectPictureGraphic_c::setRawData2(uint8_t *newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth,
+                                          uint16_t aui16_actHeight, uint16_t aui16_width) { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
+        saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData2),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
+        saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData2), sizeof(iVtObjectPictureGraphic_s), aui32_size);
+        saveValue8 (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options),                 sizeof(iVtObjectPictureGraphic_s), ab_rle ? (get_vtObjectPictureGraphic_a()->options |  (1<<4))
+                                                                                                                                              : (get_vtObjectPictureGraphic_a()->options & ~(1<<4)) );
+        if (aui16_actWidth != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth),  sizeof(iVtObjectPictureGraphic_s), aui16_actWidth);
+        if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
+        if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
+    }
+
 
 } // __IsoAgLib

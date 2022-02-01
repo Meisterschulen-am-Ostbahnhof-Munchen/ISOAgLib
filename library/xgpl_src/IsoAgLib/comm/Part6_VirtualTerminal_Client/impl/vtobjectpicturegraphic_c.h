@@ -34,61 +34,24 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectPictureGraphic_c(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectPictureGraphicSROM , ai_multitonInst)
-  {}
+  vtObjectPictureGraphic_c(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst);
 
-  inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a() { return dynamic_cast<iVtObjectPictureGraphic_s *>(&(get_vtObject_a())); }
+  inline iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a();
 
 
   uint32_t fitTerminal() const;
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width) : 0, sizeof(iVtObjectPictureGraphic_s), 1, newValue, b_enableReplaceOfCmd);
-  }
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options) : 0, sizeof(iVtObjectPictureGraphic_s), 2, newValue, newValue & 0x7, b_enableReplaceOfCmd);
-  }
-  void setTransparencyColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
-  }
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setTransparencyColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   /// The following modification functions will only take affect on updating the object pool!
   /// USE THEM WITH CARE!!!
-  void setRawData0 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF)
-  { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
-    saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData0),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
-    saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData0), sizeof(iVtObjectPictureGraphic_s), aui32_size);
-    saveValue8 (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options),                 sizeof(iVtObjectPictureGraphic_s), ab_rle ? (get_vtObjectPictureGraphic_a()->options |  (1<<2))
-                                                                                                                                          : (get_vtObjectPictureGraphic_a()->options & ~(1<<2)) );
-    if (aui16_actWidth != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth),  sizeof(iVtObjectPictureGraphic_s), aui16_actWidth);
-    if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
-    if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
-  }
-
-  void setRawData1 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF)
-  { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
-    saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData1),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
-    saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData1), sizeof(iVtObjectPictureGraphic_s), aui32_size);
-    saveValue8 (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options),                 sizeof(iVtObjectPictureGraphic_s), ab_rle ? (get_vtObjectPictureGraphic_a()->options |  (1<<3))
-                                                                                                                                          : (get_vtObjectPictureGraphic_a()->options & ~(1<<3)) );
-    if (aui16_actWidth != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth),  sizeof(iVtObjectPictureGraphic_s), aui16_actWidth);
-    if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
-    if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
-  }
-
-  void setRawData2 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF)
-  { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
-    saveValueP (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), rawData2),                sizeof(iVtObjectPictureGraphic_s), (IsoAgLib::iVtObject_c*)newValue);
-    saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData2), sizeof(iVtObjectPictureGraphic_s), aui32_size);
-    saveValue8 (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options),                 sizeof(iVtObjectPictureGraphic_s), ab_rle ? (get_vtObjectPictureGraphic_a()->options |  (1<<4))
-                                                                                                                                          : (get_vtObjectPictureGraphic_a()->options & ~(1<<4)) );
-    if (aui16_actWidth != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth),  sizeof(iVtObjectPictureGraphic_s), aui16_actWidth);
-    if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
-    if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
-  }
+  void setRawData0 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF);
+  void setRawData1 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF);
+  void setRawData2 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF);
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
