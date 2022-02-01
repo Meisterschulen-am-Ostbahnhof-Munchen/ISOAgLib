@@ -67,7 +67,7 @@ public:
   VtClientConnection_c& getClientByID (uint8_t ui8_clientIndex);
   VtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex);
 
-  bool isAnyVtAvailable() const;
+    virtual bool isAnyVtAvailable() const;
   // is any claimed VT sending VT status
   bool isAnyVtActive( bool mustBePrimary ) const;
   uint16_t getActiveVtCount() const;
