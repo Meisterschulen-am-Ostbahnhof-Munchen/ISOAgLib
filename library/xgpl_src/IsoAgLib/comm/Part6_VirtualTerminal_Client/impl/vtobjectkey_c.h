@@ -39,29 +39,17 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectKey_c(const iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectKeySROM , ai_multitonInst)
-  {}
-
-  iVtObjectKey_s* get_vtObjectKey_a() { return dynamic_cast<iVtObjectKey_s *>(&(get_vtObject_a())); }
-
-
+  vtObjectKey_c(const iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst);
+  iVtObjectKey_s* get_vtObjectKey_a();
   uint32_t fitTerminal() const;
-
   void setOriginSKM(bool b_SKM);
-
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectKey_a(), backgroundColour) : 0, sizeof(iVtObjectKey_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
-  }
-  void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectKey_a(), keyCode) : 0, sizeof(iVtObjectKey_s), 2, newValue, newValue, b_enableReplaceOfCmd);
-  }
+  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -71,7 +59,6 @@ public:
 
   uint8_t updateBackgroundColour(bool b_SendRequest=false);
   uint8_t updateKeyCode(bool b_SendRequest=false);
-
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };

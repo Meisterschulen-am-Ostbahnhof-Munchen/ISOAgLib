@@ -40,14 +40,9 @@ public:
                  objRange_t sourceOffset);
 
   vtObjectInputString_c(const iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst);
-
   iVtObjectInputString_s* get_vtObjectInputString_a();
-
-
   uint32_t fitTerminal() const;
-
   const char* getString();
-
   void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setValueCopy(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 

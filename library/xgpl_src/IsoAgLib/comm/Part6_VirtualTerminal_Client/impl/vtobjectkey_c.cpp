@@ -121,6 +121,20 @@ vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValu
   }
 }
 #endif
+    vtObjectKey_c::vtObjectKey_c(const IsoAgLib::iVtObject_c::iVtObjectKey_s *vtObjectKeySROM, int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectKeySROM , ai_multitonInst)
+    {}
+
+    IsoAgLib::iVtObject_c::iVtObjectKey_s *vtObjectKey_c::get_vtObjectKey_a() { return dynamic_cast<iVtObjectKey_s *>(&(get_vtObject_a())); }
+
+    void vtObjectKey_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectKey_a(), backgroundColour) : 0, sizeof(iVtObjectKey_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    }
+
+    void vtObjectKey_c::setKeyCode(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectKey_a(), keyCode) : 0, sizeof(iVtObjectKey_s), 2, newValue, newValue, b_enableReplaceOfCmd);
+    }
+
 
 } // __IsoAgLib
 
