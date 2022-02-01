@@ -111,4 +111,6 @@ vtObjectStringStreamer_c::getStreamSize()
     const char *vtObjectStringStreamer_c::getStringToStream() { return mpc_stringToStream; }
 
     uint16_t vtObjectStringStreamer_c::getID() { return mui16_vtObjectAId; }
+
+    uint8_t vtObjectStringStreamer_c::getFirstByte() { return 179; /* Command: "Command" --- Parameter: "Change String Value"; */ }
 } // end namespace __IsoAgLib

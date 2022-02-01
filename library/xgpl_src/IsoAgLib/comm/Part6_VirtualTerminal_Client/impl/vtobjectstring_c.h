@@ -39,7 +39,7 @@ class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
   void saveDataNextStreamPart();
   void restoreDataNextStreamPart();
   uint32_t getStreamSize();
-  uint8_t getFirstByte () { return 179; /* Command: "Command" --- Parameter: "Change String Value"; */ }
+  uint8_t getFirstByte ();
   const char* getStringToStream();
   uint16_t getID();
   void set5ByteCommandHeader(uint8_t* destinBuffer);
