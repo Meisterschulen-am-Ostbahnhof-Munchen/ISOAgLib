@@ -34,11 +34,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectColourMap_c(const iVtObjectColourMap_s* vtObjectColourMapSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectColourMapSROM , ai_multitonInst)
-  {}
+  vtObjectColourMap_c(const iVtObjectColourMap_s* vtObjectColourMapSROM , int ai_multitonInst);
 
-  iVtObjectColourMap_s* get_vtObjectColourMap_a() { return (iVtObjectColourMap_s *)&(get_vtObject_a()); }
+  iVtObjectColourMap_s* get_vtObjectColourMap_a();
 
 
   uint32_t fitTerminal() const;

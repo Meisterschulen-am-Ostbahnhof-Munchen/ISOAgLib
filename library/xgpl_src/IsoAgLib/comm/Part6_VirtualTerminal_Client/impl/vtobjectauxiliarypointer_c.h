@@ -40,21 +40,16 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectAuxiliaryControlDesignatorObjectPointer_c(const iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst)
-  : vtObject_c((iVtObject_s *)vtObjectAuxiliaryControlDesignatorObjectPointerSROM , ai_multitonInst)
-  {}
+  vtObjectAuxiliaryControlDesignatorObjectPointer_c(const iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst);
 
-  iVtObjectAuxiliaryControlDesignatorObjectPointer_s* get_vtObjectAuxiliaryControlDesignatorObjectPointer_a() { return (iVtObjectAuxiliaryControlDesignatorObjectPointer_s *)&(get_vtObject_a()); }
+  iVtObjectAuxiliaryControlDesignatorObjectPointer_s* get_vtObjectAuxiliaryControlDesignatorObjectPointer_a();
 
 
-  ~vtObjectAuxiliaryControlDesignatorObjectPointer_c() {}
+  ~vtObjectAuxiliaryControlDesignatorObjectPointer_c() = default;
 
   uint32_t fitTerminal() const;
 
-  void setAuxiliaryObjectId(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false)
-  {
-    saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAuxiliaryControlDesignatorObjectPointer_a(), value) : 0, sizeof(iVtObjectAuxiliaryControlDesignatorObjectPointer_s), 2 /* "auxiliary object ID Attribute" */, apc_newObject, b_enableReplaceOfCmd);
-  }
+  void setAuxiliaryObjectId(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

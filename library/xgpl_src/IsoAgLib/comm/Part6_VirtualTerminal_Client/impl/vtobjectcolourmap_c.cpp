@@ -91,6 +91,14 @@ vtObjectColourMap_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     default: break;
   }
 }
+
+    IsoAgLib::iVtObject_c::iVtObjectColourMap_s *vtObjectColourMap_c::get_vtObjectColourMap_a() { return (iVtObjectColourMap_s *)&(get_vtObject_a()); }
+
+    vtObjectColourMap_c::vtObjectColourMap_c(const IsoAgLib::iVtObject_c::iVtObjectColourMap_s *vtObjectColourMapSROM,
+                                             int ai_multitonInst)
+            :vtObject_c((iVtObject_s*) vtObjectColourMapSROM , ai_multitonInst)
+    {}
+
 #endif // USE_ISO_TERMINAL_GETATTRIBUTES
 
 } // __IsoAgLib
