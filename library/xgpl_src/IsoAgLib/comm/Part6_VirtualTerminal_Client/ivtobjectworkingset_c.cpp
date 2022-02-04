@@ -13,7 +13,7 @@ namespace IsoAgLib {
 	iVtObjectWorkingSet_c::iVtObjectWorkingSet_c(
 			iVtClientObjectPool_c* pool,
 			ObjectID ID,
-			uint8_t backgroundColour,
+			Colour backgroundColour,
 			uint8_t selectable,
 			iVtObjectMask_c *activeMask)
 	:vtObjectWorkingSet_c(

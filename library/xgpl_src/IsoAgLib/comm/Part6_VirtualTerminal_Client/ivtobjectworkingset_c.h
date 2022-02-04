@@ -35,7 +35,7 @@ public:
   iVtObjectWorkingSet_c(
 		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
-  		uint8_t backgroundColour = 0,
+  		Colour backgroundColour = BLACK,
   		uint8_t selectable = 1,
   		iVtObjectMask_c* activeMask = nullptr // data or alarm mask
 		);

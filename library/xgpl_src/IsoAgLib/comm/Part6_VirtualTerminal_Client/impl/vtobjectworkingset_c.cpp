@@ -30,12 +30,12 @@ namespace __IsoAgLib {
 
 
 struct vtObjectWorkingSet_c::iVtObjectWorkingSet_s : iVtObjectObject_s, iVtObjectwMacro_s, iVtObjectLanguages_s {
-  uint8_t backgroundColour;
+  Colour backgroundColour;
   uint8_t selectable;
   IsoAgLib::iVtObjectMask_c* activeMask; // data or alarm mask
   explicit iVtObjectWorkingSet_s(
 		  IsoAgLib::ObjectID ID,
-  		uint8_t backgroundColour,
+  		Colour backgroundColour,
   		uint8_t selectable,
 		IsoAgLib::iVtObjectMask_c* activeMask // data or alarm mask
   	  	  )
@@ -91,7 +91,7 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
 vtObjectWorkingSet_c::vtObjectWorkingSet_c(
 		int ai_multitonInst,
 		IsoAgLib::ObjectID ID,
-  		uint8_t backgroundColour,
+  		Colour backgroundColour,
   		uint8_t selectable,
 		IsoAgLib::iVtObjectMask_c* activeMask // data or alarm mask
   		)

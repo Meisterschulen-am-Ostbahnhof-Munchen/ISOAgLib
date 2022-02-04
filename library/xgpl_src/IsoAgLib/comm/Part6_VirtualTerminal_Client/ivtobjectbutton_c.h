@@ -36,8 +36,8 @@ public:
 		ObjectID ID = autoID,
   	    uint16_t width = 80,
   	    uint16_t height = 30,
-  	    uint8_t backgroundColour = 12,
-  	    uint8_t borderColour = 8,
+  	    Colour backgroundColour = RED,
+  	    Colour borderColour = GREY,
   	    uint8_t keyCode = 251,
   	    uint8_t options = 0
   		);

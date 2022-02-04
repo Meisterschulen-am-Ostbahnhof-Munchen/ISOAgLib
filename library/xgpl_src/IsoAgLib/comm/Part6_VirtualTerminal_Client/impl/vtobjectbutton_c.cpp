@@ -34,16 +34,16 @@ namespace __IsoAgLib {
 struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
-  uint8_t backgroundColour;
-  uint8_t borderColour;
+  Colour backgroundColour;
+  Colour borderColour;
   uint8_t keyCode;
   uint8_t options;
   explicit iVtObjectButton_s(
 		IsoAgLib::ObjectID ID,
   	    uint16_t width,
   	    uint16_t height,
-  	    uint8_t backgroundColour,
-  	    uint8_t borderColour,
+  	    Colour backgroundColour,
+  	    Colour borderColour,
   	    uint8_t keyCode,
   	    uint8_t options)
   : iVtObjectObject_s(ID)
@@ -104,8 +104,8 @@ vtObjectButton_c::vtObjectButton_c(
 	IsoAgLib::ObjectID ID,
 	uint16_t width,
 	uint16_t height,
-	uint8_t backgroundColour,
-	uint8_t borderColour,
+	Colour backgroundColour,
+	Colour borderColour,
 	uint8_t keyCode,
 	uint8_t options)
 :vtObjectButton_c(

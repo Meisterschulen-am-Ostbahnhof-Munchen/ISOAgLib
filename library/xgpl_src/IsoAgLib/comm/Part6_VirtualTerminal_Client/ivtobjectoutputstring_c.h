@@ -42,7 +42,7 @@ public:
 		ObjectID ID = autoID,
   	    uint16_t width = 50,
   	    uint16_t height= 20,
-  	    uint8_t backgroundColour = 1,
+  	    Colour backgroundColour = WHITE,
   	    iVtObjectFontAttributes_c* fontAttributes = nullptr,
   	    uint8_t options = 0,
   	    iVtObjectStringVariable_c* variableReference = nullptr,

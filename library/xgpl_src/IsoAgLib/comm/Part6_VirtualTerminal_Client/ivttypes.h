@@ -185,7 +185,7 @@ enum e_vtColour {
   NeedleColour=2,
   ArcAndTickColour=3,
   BarGraphColour=4,
-  Colour=4 /*intentionally!*/,
+  cColour=4 /*intentionally!*/,
   TargetLineColour=5,
   TransparencyColour=6,
   FontColour=7,

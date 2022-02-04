@@ -37,7 +37,8 @@ enum ObjectID : uint16_t
 	firstID = 257 /* Macro ObjID must be 0-255 !! */
 };
 
-enum Colour : uint8_t {
+enum Colour : uint8_t
+{
 	BLACK = 0,
 	WHITE = 1,
 	GREEN = 2,
@@ -131,13 +132,13 @@ protected:
 
 protected:
   struct iVtObjectAlarmMask_s : iVtObjectMask_s {
-    uint8_t backgroundColour;
+    Colour backgroundColour;
     iVtObjectSoftKeyMask_c* softKeyMask;
     uint8_t priority;
     uint8_t acousticSignal;
     explicit iVtObjectAlarmMask_s(
     		ObjectID ID = autoID,
-    		uint8_t backgroundColour = 0,
+    		Colour backgroundColour = BLACK,
 			iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
 			uint8_t priority = 0,
             uint8_t acousticSignal = 0)
@@ -180,12 +181,12 @@ protected:
 
   struct iVtObjectFillAttributes_s : iVtObjectwMacro_s {
     uint8_t fillType;
-    uint8_t fillColour;
+    Colour fillColour;
     iVtObjectPictureGraphic_c* fillPatternObject;
     iVtObjectFillAttributes_s(
     		ObjectID ID = autoID,
     		uint8_t fillType = 0,
-			uint8_t fillColour = 0,
+			Colour fillColour = BLACK,
 			iVtObjectPictureGraphic_c *fillPatternObject = nullptr)
     : iVtObjectwMacro_s(ID)
     , fillType(fillType)
@@ -213,7 +214,7 @@ protected:
   };
 
   struct iVtObjectInputBoolean_s : iVtObjectwMacro_s {
-    uint8_t backgroundColour;
+    Colour backgroundColour;
     uint16_t width;
     iVtObject_c* foregroundColour;
     iVtObject_c* variableReference;
@@ -221,7 +222,7 @@ protected:
     uint8_t enabled;
     iVtObjectInputBoolean_s(
     		ObjectID ID = autoID,
-    		uint8_t backgroundColour = 1,
+    		Colour backgroundColour = WHITE,
 			uint16_t width = 20,
 			iVtObject_c *foregroundColour = nullptr,
 			iVtObject_c *variableReference = nullptr,
@@ -259,7 +260,7 @@ protected:
   };
 
   struct iVtObjectInputNumber_s : iVtObjectwMacro_s {
-      iVtObjectInputNumber_s(uint16_t width, uint16_t height, uint8_t backgroundColour, iVtObject_c *fontAttributes,
+      iVtObjectInputNumber_s(uint16_t width, uint16_t height, Colour backgroundColour, iVtObject_c *fontAttributes,
                              uint8_t options, iVtObject_c *variableReference, uint32_t value, uint32_t minValue,
                              uint32_t maxValue, int32_t offset, float scale, uint8_t numberOfDecimals, uint8_t format,
                              uint8_t horizontalJustification, uint8_t secondOptionsByte) : width(width), height(height),
@@ -284,7 +285,7 @@ protected:
 
       uint16_t width;
     uint16_t height;
-    uint8_t backgroundColour;
+    Colour backgroundColour;
     iVtObject_c* fontAttributes;
     uint8_t options;
     iVtObject_c* variableReference;
@@ -303,7 +304,7 @@ protected:
 
 
   struct iVtObjectInputString_s : iVtObjectString_s, iVtObjectwMacro_s {
-      iVtObjectInputString_s(uint16_t width, uint16_t height, uint8_t backgroundColour,
+      iVtObjectInputString_s(uint16_t width, uint16_t height, Colour backgroundColour,
                              iVtObjectFontAttributes_c *fontAttributes, iVtObjectInputAttributes_c *inputAttributes,
                              uint8_t options, iVtObjectStringVariable_c *variableReference,
                              uint8_t horizontalJustification, uint16_t length, char *value, uint8_t enabled) : width(
@@ -321,7 +322,7 @@ protected:
 
       uint16_t width;
     uint16_t height;
-    uint8_t backgroundColour;
+    Colour backgroundColour;
     iVtObjectFontAttributes_c* fontAttributes;
     iVtObjectInputAttributes_c* inputAttributes;
     uint8_t options;
@@ -333,10 +334,10 @@ protected:
   };
 
   struct iVtObjectKey_s : iVtObjectObject_s, iVtObjectwMacro_s {
-      iVtObjectKey_s(uint8_t backgroundColour, uint8_t keyCode) : backgroundColour(backgroundColour),
+      iVtObjectKey_s(Colour backgroundColour, uint8_t keyCode) : backgroundColour(backgroundColour),
                                                                   keyCode(keyCode) {}
 
-      uint8_t backgroundColour;
+      Colour backgroundColour;
     uint8_t keyCode;
   };
 
@@ -355,7 +356,7 @@ protected:
   };
 
   struct iVtObjectMeter_s : iVtObjectwMacro_s {
-      iVtObjectMeter_s(uint16_t width, uint8_t needleColour, uint8_t borderColour, uint8_t arcAndTickColour,
+      iVtObjectMeter_s(uint16_t width, uint8_t needleColour, Colour borderColour, uint8_t arcAndTickColour,
                        uint8_t options, uint8_t numberOfTicks, uint8_t startAngle, uint8_t endAngle, uint16_t minValue,
                        uint16_t maxValue, iVtObject_c *variableReference, uint16_t value) : width(width),
                                                                                             needleColour(needleColour),
@@ -375,7 +376,7 @@ protected:
 
       uint16_t width;
     uint8_t needleColour;
-    uint8_t borderColour;
+    Colour borderColour;
     uint8_t arcAndTickColour;
     uint8_t options;
     uint8_t numberOfTicks;
@@ -410,7 +411,7 @@ protected:
   };
 
   struct iVtObjectOutputNumber_s : iVtObjectwMacro_s {
-      iVtObjectOutputNumber_s(uint16_t width, uint16_t height, uint8_t backgroundColour,
+      iVtObjectOutputNumber_s(uint16_t width, uint16_t height, Colour backgroundColour,
                               iVtObjectFontAttributes_c *fontAttributes, uint8_t options,
                               iVtObject_c *variableReference, uint32_t value, int32_t offset, float scale,
                               uint8_t numberOfDecimals, uint8_t format, uint8_t horizontalJustification) : width(width),
@@ -433,7 +434,7 @@ protected:
 
       uint16_t width;
     uint16_t height;
-    uint8_t backgroundColour;
+    Colour backgroundColour;
     iVtObjectFontAttributes_c* fontAttributes;
     uint8_t options;
     iVtObject_c* variableReference;
@@ -518,9 +519,9 @@ protected:
   };
 
   struct iVtObjectSoftKeyMask_s : iVtObjectObject_s, iVtObjectwMacro_s  {
-      iVtObjectSoftKeyMask_s(uint8_t backgroundColour) : backgroundColour(backgroundColour) {}
+      iVtObjectSoftKeyMask_s(Colour backgroundColour) : backgroundColour(backgroundColour) {}
 
-      uint8_t backgroundColour;
+      Colour backgroundColour;
   };
 
   struct iVtObjectStringVariable_s : iVtObject_s {
@@ -533,26 +534,26 @@ protected:
 
 
   struct iVtObjectAuxiliaryInput_s : iVtObjectObject_s {
-      iVtObjectAuxiliaryInput_s(uint8_t backgroundColour, uint8_t functionType, uint8_t inputId) : backgroundColour(
+      iVtObjectAuxiliaryInput_s(Colour backgroundColour, uint8_t functionType, uint8_t inputId) : backgroundColour(
               backgroundColour), functionType(functionType), inputId(inputId) {}
 
-      uint8_t backgroundColour;
+      Colour backgroundColour;
     uint8_t functionType;
     uint8_t inputId;
   };
 
   struct iVtObjectAuxiliaryFunction_s : iVtObjectObject_s {
-      iVtObjectAuxiliaryFunction_s(uint8_t backgroundColour, uint8_t functionType) : backgroundColour(backgroundColour),
+      iVtObjectAuxiliaryFunction_s(Colour backgroundColour, uint8_t functionType) : backgroundColour(backgroundColour),
                                                                                      functionType(functionType) {}
 
-      uint8_t backgroundColour;
+      Colour backgroundColour;
     uint8_t functionType;
   };
 
   struct iVtObjectGraphicsContext_s : iVtObject_s {
       iVtObjectGraphicsContext_s(uint16_t viewportWidth, uint16_t viewportHeight, int16_t viewportX, int16_t viewportY,
                                  uint16_t canvasWidth, uint16_t canvasHeight, float viewportZoom, int16_t cursorX,
-                                 int16_t cursorY, uint8_t foregroundColour, uint8_t backgroundColour,
+                                 int16_t cursorY, uint8_t foregroundColour, Colour backgroundColour,
                                  iVtObjectFontAttributes_c *fontAttributes, iVtObjectLineAttributes_c *lineAttributes,
                                  iVtObjectFillAttributes_c *fillAttributes, uint8_t format, uint8_t options,
                                  uint8_t transparencyColour) : viewportWidth(viewportWidth),
@@ -588,18 +589,18 @@ protected:
   };
 
   struct iVtObjectAuxiliaryInput2_s : iVtObjectObject_s {
-      iVtObjectAuxiliaryInput2_s(uint8_t backgroundColour, uint8_t functionAttributes) : backgroundColour(
+      iVtObjectAuxiliaryInput2_s(Colour backgroundColour, uint8_t functionAttributes) : backgroundColour(
               backgroundColour), functionAttributes(functionAttributes) {}
 
-      uint8_t backgroundColour;
+      Colour backgroundColour;
     uint8_t functionAttributes;
   };
 
   struct iVtObjectAuxiliaryFunction2_s : iVtObjectObject_s {
-      iVtObjectAuxiliaryFunction2_s(uint8_t backgroundColour, uint8_t functionAttributes) : backgroundColour(
+      iVtObjectAuxiliaryFunction2_s(Colour backgroundColour, uint8_t functionAttributes) : backgroundColour(
               backgroundColour), functionAttributes(functionAttributes) {}
 
-      uint8_t backgroundColour;
+      Colour backgroundColour;
     uint8_t functionAttributes;
   };
 

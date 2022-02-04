@@ -50,7 +50,7 @@ public:
 	vtObjectFontAttributes_c(
 			int ai_multitonInst,
 			IsoAgLib::ObjectID ID,
-			uint8_t fontColour,
+			IsoAgLib::Colour fontColour,
 			uint8_t fontSize,
 			uint8_t fontType, // always =0 ISO_LATIN_1
 			uint8_t fontStyle);

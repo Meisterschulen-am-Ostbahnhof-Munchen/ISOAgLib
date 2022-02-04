@@ -38,7 +38,7 @@ namespace __IsoAgLib {
 struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
-  uint8_t backgroundColour;
+  Colour backgroundColour;
   IsoAgLib::iVtObjectFontAttributes_c* fontAttributes;
   uint8_t options;
   IsoAgLib::iVtObjectStringVariable_c* variableReference;
@@ -49,7 +49,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
 		IsoAgLib::ObjectID ID,
   	    uint16_t width,
   	    uint16_t height,
-  	    uint8_t backgroundColour,
+  	    Colour backgroundColour,
 		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
   	    uint8_t options,
 		IsoAgLib::iVtObjectStringVariable_c* variableReference,
@@ -145,7 +145,7 @@ vtObjectOutputString_c::vtObjectOutputString_c(
 		IsoAgLib::ObjectID ID,
 		uint16_t width,
 		uint16_t height,
-		uint8_t backgroundColour,
+		Colour backgroundColour,
 		IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
 		uint8_t options,
 		IsoAgLib::iVtObjectStringVariable_c *variableReference,

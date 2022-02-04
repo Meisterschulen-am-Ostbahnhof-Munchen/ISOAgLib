@@ -31,7 +31,7 @@ public:
   iVtObjectFontAttributes_c(
 		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
-		uint8_t fontColour = 0,
+		Colour fontColour = BLACK,
 		uint8_t fontSize = 1,
 		uint8_t fontType = 0, // always =0 ISO_LATIN_1
 		uint8_t fontStyle = 0);

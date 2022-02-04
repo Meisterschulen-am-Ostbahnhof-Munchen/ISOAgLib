@@ -56,7 +56,7 @@ public:
 		  	IsoAgLib::ObjectID ID,
 			uint16_t width,
 			uint16_t height,
-			uint8_t backgroundColour,
+			IsoAgLib::Colour backgroundColour,
 			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
 			uint8_t options,
 			IsoAgLib::iVtObjectStringVariable_c *variableReference,

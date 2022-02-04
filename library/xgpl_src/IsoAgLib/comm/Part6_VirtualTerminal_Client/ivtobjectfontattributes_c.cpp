@@ -23,7 +23,7 @@ namespace IsoAgLib {
 	iVtObjectFontAttributes_c::iVtObjectFontAttributes_c(
 			iVtClientObjectPool_c* pool,
 			ObjectID ID,
-			uint8_t fontColour,
+			Colour fontColour,
 			uint8_t fontSize,
 			uint8_t fontType, // always =0 ISO_LATIN_1
 			uint8_t fontStyle)

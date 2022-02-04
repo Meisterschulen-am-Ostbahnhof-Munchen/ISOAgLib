@@ -52,8 +52,8 @@ public:
 	IsoAgLib::ObjectID ID,
 	uint16_t width,
 	uint16_t height,
-	uint8_t backgroundColour,
-	uint8_t borderColour,
+	IsoAgLib::Colour backgroundColour,
+	IsoAgLib::Colour borderColour,
 	uint8_t keyCode,
 	uint8_t options);
 

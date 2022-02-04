@@ -55,7 +55,7 @@ public:
   vtObjectWorkingSet_c(
 		int ai_multitonInst,
 		IsoAgLib::ObjectID ID,
-  		uint8_t backgroundColour,
+		IsoAgLib::Colour backgroundColour,
   		uint8_t selectable,
 		IsoAgLib::iVtObjectMask_c* activeMask // data or alarm mask
   		);

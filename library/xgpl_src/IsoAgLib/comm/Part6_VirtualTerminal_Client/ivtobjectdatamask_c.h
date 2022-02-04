@@ -33,7 +33,7 @@ public:
   iVtObjectDataMask_c(
 		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
-  	    uint8_t backgroundColour = 0,
+  	    Colour backgroundColour = BLACK,
   	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr);
 
   void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

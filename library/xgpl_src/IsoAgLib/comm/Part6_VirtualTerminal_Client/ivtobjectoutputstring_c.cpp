@@ -16,7 +16,7 @@ namespace IsoAgLib {
 			ObjectID ID,
 			uint16_t width,
 			uint16_t height,
-			uint8_t backgroundColour,
+			Colour backgroundColour,
 			iVtObjectFontAttributes_c *fontAttributes,
 			uint8_t options,
 			iVtObjectStringVariable_c *variableReference,

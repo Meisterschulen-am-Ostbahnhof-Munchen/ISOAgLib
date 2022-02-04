@@ -51,7 +51,7 @@ public:
   vtObjectDataMask_c(
 	int ai_multitonInst,
 	IsoAgLib::ObjectID ID,
-	uint8_t backgroundColour,
+	IsoAgLib::Colour backgroundColour,
 	IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask);
 
   vtObjectDataMask_c(iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);

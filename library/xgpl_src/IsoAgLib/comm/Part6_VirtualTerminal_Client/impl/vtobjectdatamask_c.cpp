@@ -33,11 +33,11 @@ namespace __IsoAgLib {
 
 
 struct vtObjectDataMask_c::iVtObjectDataMask_s : iVtObjectMask_s {
-  uint8_t backgroundColour;
+  IsoAgLib::Colour backgroundColour;
   IsoAgLib::iVtObjectSoftKeyMask_c* softKeyMask;
   explicit iVtObjectDataMask_s(
 		  IsoAgLib::ObjectID ID,
-  	    uint8_t backgroundColour,
+		  IsoAgLib::Colour backgroundColour,
 		IsoAgLib::iVtObjectSoftKeyMask_c* softKeyMask)
   :iVtObjectMask_s(ID)
   , backgroundColour(backgroundColour)
@@ -96,7 +96,7 @@ vtObjectDataMask_c::iVtObjectDataMask_s* vtObjectDataMask_c::get_vtObjectDataMas
 vtObjectDataMask_c::vtObjectDataMask_c(
 		int ai_multitonInst,
 		IsoAgLib::ObjectID ID,
-		uint8_t backgroundColour,
+		Colour backgroundColour,
 		IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask)
 :vtObjectDataMask_c(
 		new iVtObjectDataMask_s(
