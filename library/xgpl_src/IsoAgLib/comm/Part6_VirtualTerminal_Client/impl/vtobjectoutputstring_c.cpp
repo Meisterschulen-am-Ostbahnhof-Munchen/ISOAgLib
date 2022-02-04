@@ -38,7 +38,7 @@ namespace __IsoAgLib {
 struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
-  Colour backgroundColour;
+  IsoAgLib::Colour backgroundColour;
   IsoAgLib::iVtObjectFontAttributes_c* fontAttributes;
   uint8_t options;
   IsoAgLib::iVtObjectStringVariable_c* variableReference;
@@ -49,7 +49,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
 		IsoAgLib::ObjectID ID,
   	    uint16_t width,
   	    uint16_t height,
-  	    Colour backgroundColour,
+		IsoAgLib::Colour backgroundColour,
 		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
   	    uint8_t options,
 		IsoAgLib::iVtObjectStringVariable_c* variableReference,
@@ -145,7 +145,7 @@ vtObjectOutputString_c::vtObjectOutputString_c(
 		IsoAgLib::ObjectID ID,
 		uint16_t width,
 		uint16_t height,
-		Colour backgroundColour,
+		IsoAgLib::Colour backgroundColour,
 		IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
 		uint8_t options,
 		IsoAgLib::iVtObjectStringVariable_c *variableReference,
@@ -432,7 +432,7 @@ vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtO
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), height) : 0, sizeof(iVtObjectOutputString_s), 2, newValue, b_enableReplaceOfCmd);
     }
 
-    void vtObjectOutputString_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectOutputString_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour) : 0, sizeof(iVtObjectOutputString_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 

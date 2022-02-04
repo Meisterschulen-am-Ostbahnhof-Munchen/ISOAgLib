@@ -37,7 +37,7 @@ public:
 
   const iVtObjectKey_s& get_vtObjectKey_a() { return *vtObjectKey_c::get_vtObjectKey_a(); }
 
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectKey_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 

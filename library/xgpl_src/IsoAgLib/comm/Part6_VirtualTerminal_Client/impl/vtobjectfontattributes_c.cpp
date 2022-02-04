@@ -31,13 +31,13 @@ namespace __IsoAgLib {
 
 
 struct vtObjectFontAttributes_c::iVtObjectFontAttributes_s : iVtObjectwMacro_s {
-  Colour fontColour;
+  IsoAgLib::Colour fontColour;
   uint8_t fontSize;
   uint8_t fontType; // always =0 ISO_LATIN_1
   uint8_t fontStyle;
   explicit iVtObjectFontAttributes_s(
 		IsoAgLib::ObjectID ID,
-  	    Colour fontColour,
+		IsoAgLib::Colour fontColour,
   	    uint8_t fontSize,
   	    uint8_t fontType, // always =0 ISO_LATIN_1
   	    uint8_t fontStyle)
@@ -85,7 +85,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
 vtObjectFontAttributes_c::vtObjectFontAttributes_c(
 		int ai_multitonInst,
 		IsoAgLib::ObjectID ID,
-		Colour fontColour,
+		IsoAgLib::Colour fontColour,
 		uint8_t fontSize,
 		uint8_t fontType, // always =0 ISO_LATIN_1
 		uint8_t fontStyle)

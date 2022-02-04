@@ -183,7 +183,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
     // Colour Operation is for b/w picture graphics only!
     // let's get color 0 (black) and color 1 (white) converted by the application
     // and decide then what to do with these colors in case of a b/w terminal (graphicType==0)
-    uint8_t colourOperation = 0;
+    Colour colourOperation = 0;
     enum ColourOperation_e
     {
                     // W B (White, Black) - 1 if that colour changed its value during the conversion
@@ -195,7 +195,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
 
     if( ui8_graphicType == 0 )
     {
-        for( uint8_t colourCode=0; colourCode<2;++colourCode )
+        for( Colour colourCode=0; colourCode<2;++colourCode )
         {
             uint8_t convertedColour = vtClient.getUserConvertedColor( colourCode, this, IsoAgLib::PictureGraphicColour );
 

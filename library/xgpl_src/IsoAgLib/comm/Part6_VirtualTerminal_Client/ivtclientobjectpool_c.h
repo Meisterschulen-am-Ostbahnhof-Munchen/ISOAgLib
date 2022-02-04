@@ -21,7 +21,10 @@
 #ifndef IVTCLIENTOBJECTPOOL_H
 #define IVTCLIENTOBJECTPOOL_H
 
+#include <stdint.h>
 #include "ivttypes.h"
+#include "iColour.h"
+#include "iObjectID.h"
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
@@ -334,7 +337,7 @@ public:
   /** Default implementation for convertColour which can also be used
    *  by custom color conversion implementations.
    */
-   static uint8_t convertColourDefault(uint8_t colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c *obj, IsoAgLib::e_vtColour whichColour);
+   static uint8_t convertColourDefault(IsoAgLib::Colour colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c *obj, IsoAgLib::e_vtColour whichColour);
 
   /**
     hook function that gets called every time a color-value
@@ -349,7 +352,7 @@ public:
     @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...-->
     @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
   */
-  virtual uint8_t convertColour(uint8_t colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c * obj, IsoAgLib::e_vtColour whichColour)
+  virtual uint8_t convertColour(IsoAgLib::Colour colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c * obj, IsoAgLib::e_vtColour whichColour)
   {
     return convertColourDefault(colorValue, colorDepth, obj, whichColour);
   }

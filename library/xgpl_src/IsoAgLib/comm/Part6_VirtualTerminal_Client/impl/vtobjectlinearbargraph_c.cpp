@@ -32,8 +32,8 @@ namespace __IsoAgLib {
 struct vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
-  uint8_t colour;
-  uint8_t targetLineColour;
+  IsoAgLib::Colour colour;
+  IsoAgLib::Colour targetLineColour;
   uint8_t options;
   uint8_t numberOfTicks;
   uint16_t minValue;
@@ -46,8 +46,8 @@ struct vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
 		    IsoAgLib::ObjectID ID,
   		    uint16_t width,
 			uint16_t height,
-			uint8_t colour,
-			uint8_t targetLineColour,
+			IsoAgLib::Colour colour,
+			IsoAgLib::Colour targetLineColour,
 			uint8_t options,
 			uint8_t numberOfTicks,
 			uint16_t minValue,
@@ -97,7 +97,7 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectLinearBarGraph_a->colour, this, IsoAgLib::Colour);
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectLinearBarGraph_a->colour, this, IsoAgLib::AColour);
       destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectLinearBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
       destMemory [9] = vtObjectLinearBarGraph_a->options;
       destMemory [10] = vtObjectLinearBarGraph_a->numberOfTicks;
@@ -138,8 +138,8 @@ vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(
 		IsoAgLib::ObjectID ID,
 		uint16_t width,
 		uint16_t height,
-		uint8_t colour,
-		uint8_t targetLineColour,
+		IsoAgLib::Colour colour,
+		IsoAgLib::Colour targetLineColour,
 		uint8_t options,
 		uint8_t numberOfTicks,
 		uint16_t minValue,

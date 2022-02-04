@@ -75,7 +75,7 @@ namespace IsoAgLib {
 
     const char *iVtObjectOutputString_c::getString() { return vtObjectOutputString_c::getString(); }
 
-    void iVtObjectOutputString_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectOutputString_c::setBackgroundColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectOutputString_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 

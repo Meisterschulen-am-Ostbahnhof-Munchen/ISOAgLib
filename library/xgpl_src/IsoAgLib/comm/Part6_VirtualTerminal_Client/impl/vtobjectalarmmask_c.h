@@ -41,7 +41,7 @@ public:
   iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a();
   vtObjectAlarmMask_c();
   uint32_t fitTerminal() const;
-  void setBackgroundColour(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setBackgroundColour(IsoAgLib::Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setPriority(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setAcousticSignal(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

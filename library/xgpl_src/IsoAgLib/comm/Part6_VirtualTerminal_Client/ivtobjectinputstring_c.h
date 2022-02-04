@@ -61,7 +61,7 @@ public:
     vtObjectInputString_c::setVariableReference (newVariable, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void changeBackgroundColour(uint8_t colorValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void changeBackgroundColour(Colour colorValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setBackgroundColour (colorValue, b_updateObject, b_enableReplaceOfCmd);
   }
 

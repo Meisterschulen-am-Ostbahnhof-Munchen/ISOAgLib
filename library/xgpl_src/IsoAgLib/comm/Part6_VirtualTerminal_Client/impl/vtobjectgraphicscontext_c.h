@@ -93,7 +93,7 @@ public:
   void setForegroundColour(uint8_t newValue,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void setBackgroundColour(uint8_t newValue,
+  void setBackgroundColour(Colour newValue,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   void setLineAttributes(const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes,

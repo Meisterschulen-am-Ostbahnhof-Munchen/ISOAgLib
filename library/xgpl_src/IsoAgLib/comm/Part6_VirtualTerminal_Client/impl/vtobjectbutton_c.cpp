@@ -34,16 +34,16 @@ namespace __IsoAgLib {
 struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
-  Colour backgroundColour;
-  Colour borderColour;
+  IsoAgLib::Colour backgroundColour;
+  IsoAgLib::Colour borderColour;
   uint8_t keyCode;
   uint8_t options;
   explicit iVtObjectButton_s(
 		IsoAgLib::ObjectID ID,
   	    uint16_t width,
   	    uint16_t height,
-  	    Colour backgroundColour,
-  	    Colour borderColour,
+		IsoAgLib::Colour backgroundColour,
+		IsoAgLib::Colour borderColour,
   	    uint8_t keyCode,
   	    uint8_t options)
   : iVtObjectObject_s(ID)
@@ -104,8 +104,8 @@ vtObjectButton_c::vtObjectButton_c(
 	IsoAgLib::ObjectID ID,
 	uint16_t width,
 	uint16_t height,
-	Colour backgroundColour,
-	Colour borderColour,
+	IsoAgLib::Colour backgroundColour,
+	IsoAgLib::Colour borderColour,
 	uint8_t keyCode,
 	uint8_t options)
 :vtObjectButton_c(
@@ -189,11 +189,11 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), height) : 0, sizeof(iVtObjectButton_s), 2, newValue, b_enableReplaceOfCmd);
     }
 
-    void vtObjectButton_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectButton_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), backgroundColour) : 0, sizeof(iVtObjectButton_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
-    void vtObjectButton_c::setBorderColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectButton_c::setBorderColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectButton_a(), borderColour) : 0, sizeof(iVtObjectButton_s), 4, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd);
     }
 

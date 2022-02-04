@@ -78,9 +78,9 @@ public:
 
 	uint16_t getWidth() const;
 
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setBorderColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setBorderColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
     virtual void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 

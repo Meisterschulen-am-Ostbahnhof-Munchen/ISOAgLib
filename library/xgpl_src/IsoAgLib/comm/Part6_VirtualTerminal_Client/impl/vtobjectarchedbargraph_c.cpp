@@ -34,8 +34,8 @@ namespace __IsoAgLib {
 struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
-  uint8_t colour;
-  uint8_t targetLineColour;
+  IsoAgLib::Colour colour;
+  IsoAgLib::Colour targetLineColour;
   uint8_t options;
   uint8_t startAngle;
   uint8_t endAngle;
@@ -47,11 +47,11 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
   iVtObject_c* targetValueVariableReference;
   uint16_t targetValue;
   explicit iVtObjectArchedBarGraph_s(
-		IsoAgLib::ObjectID ID,
+		  IsoAgLib::ObjectID ID,
   		uint16_t width,
 			uint16_t height,
-			uint8_t colour,
-			uint8_t targetLineColour,
+			IsoAgLib::Colour colour,
+			IsoAgLib::Colour targetLineColour,
 			uint8_t options,
 			uint8_t startAngle,
 			uint8_t endAngle,
@@ -67,8 +67,8 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
     vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s::iVtObjectArchedBarGraph_s(
     	   IsoAgLib::ObjectID ID,
 		   uint16_t width, uint16_t height,
-		   uint8_t colour,
-		   uint8_t targetLineColour,
+		   IsoAgLib::Colour colour,
+		   IsoAgLib::Colour targetLineColour,
 		   uint8_t options, uint8_t startAngle,
 		   uint8_t endAngle,
 		   uint16_t barGraphWidth,
@@ -188,8 +188,8 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
             IsoAgLib::ObjectID ID,
             uint16_t width,
             uint16_t height,
-            uint8_t colour,
-            uint8_t targetLineColour,
+			IsoAgLib::Colour colour,
+			IsoAgLib::Colour targetLineColour,
             uint8_t options,
             uint8_t startAngle,
             uint8_t endAngle,

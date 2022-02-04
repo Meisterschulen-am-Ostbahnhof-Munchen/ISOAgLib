@@ -41,7 +41,7 @@ public:
     vtObjectInputBoolean_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputBoolean_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 

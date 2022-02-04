@@ -32,17 +32,18 @@ namespace __IsoAgLib {
 
 
 
-struct vtObjectDataMask_c::iVtObjectDataMask_s : iVtObjectMask_s {
-  IsoAgLib::Colour backgroundColour;
-  IsoAgLib::iVtObjectSoftKeyMask_c* softKeyMask;
-  explicit iVtObjectDataMask_s(
-		  IsoAgLib::ObjectID ID,
-		  IsoAgLib::Colour backgroundColour,
-		IsoAgLib::iVtObjectSoftKeyMask_c* softKeyMask)
-  :iVtObjectMask_s(ID)
-  , backgroundColour(backgroundColour)
-  , softKeyMask(softKeyMask)
-  {}
+struct vtObjectDataMask_c::iVtObjectDataMask_s: iVtObjectMask_s {
+	IsoAgLib::Colour backgroundColour;
+	IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask;
+	explicit iVtObjectDataMask_s(
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::Colour backgroundColour,
+			IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask)
+	: iVtObjectMask_s(ID)
+	, backgroundColour(backgroundColour)
+	, softKeyMask(softKeyMask)
+	{
+	}
 };
 
 
@@ -96,7 +97,7 @@ vtObjectDataMask_c::iVtObjectDataMask_s* vtObjectDataMask_c::get_vtObjectDataMas
 vtObjectDataMask_c::vtObjectDataMask_c(
 		int ai_multitonInst,
 		IsoAgLib::ObjectID ID,
-		Colour backgroundColour,
+		IsoAgLib::Colour backgroundColour,
 		IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask)
 :vtObjectDataMask_c(
 		new iVtObjectDataMask_s(
@@ -190,7 +191,7 @@ vtObjectDataMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attribu
   }
 }
 
-    void vtObjectDataMask_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectDataMask_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectDataMask_a(), backgroundColour) : 0, sizeof(iVtObjectDataMask_s), 1 /* "Background Colour" */, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 

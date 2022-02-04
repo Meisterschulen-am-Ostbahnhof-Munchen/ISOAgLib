@@ -45,7 +45,7 @@ public:
     vtObjectMeter_c::setNeedleColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setBorderColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+  void setBorderColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setBorderColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 

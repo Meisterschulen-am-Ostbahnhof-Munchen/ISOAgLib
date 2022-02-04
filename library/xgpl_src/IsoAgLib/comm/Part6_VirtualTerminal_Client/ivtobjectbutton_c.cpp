@@ -48,7 +48,7 @@ namespace IsoAgLib {
         vtObjectButton_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectButton_c::setBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectButton_c::setBackgroundColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectButton_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -105,7 +105,7 @@ namespace IsoAgLib {
         vtObjectButton_c::setKeyCode (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectButton_c::setBorderColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectButton_c::setBorderColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectButton_c::setBorderColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
