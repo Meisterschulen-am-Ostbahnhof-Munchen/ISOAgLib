@@ -33,7 +33,7 @@ public:
   iVtObjectLineAttributes_c(
 		iVtClientObjectPool_c* pool,
   		ObjectID ID = autoID,
-  		uint8_t lineColour = 0,
+  		Colour lineColour = BLACK,
 		uint8_t lineWidth = 1,
 		uint16_t lineArt = 65535);
 

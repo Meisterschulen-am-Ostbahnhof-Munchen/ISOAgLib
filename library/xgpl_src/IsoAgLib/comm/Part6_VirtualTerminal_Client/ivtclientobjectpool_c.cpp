@@ -27,8 +27,9 @@ namespace
 uint8_t const carrui8_normalized[] = {
   16, 231, 34, 37, 124, 127, 142, 188, 145, 21, 46, 51, 196, 201, 226, 19 };
 
-uint8_t normalizeDepth2Color(uint8_t ui8_color) {
-  return ui8_color < 16 ? carrui8_normalized[ui8_color] : ui8_color;
+IsoAgLib::Colour normalizeDepth2Color(IsoAgLib::Colour ui8_color) {
+	//TODO
+  return ui8_color < 16 ? (IsoAgLib::Colour)carrui8_normalized[ui8_color] : ui8_color;
 }
 
 }
@@ -37,11 +38,11 @@ uint8_t normalizeDepth2Color(uint8_t ui8_color) {
 namespace IsoAgLib
 {
 
-uint8_t iVtClientObjectPool_c::convertColourDefault(
+Colour iVtClientObjectPool_c::convertColourDefault(
     Colour colorValue,
     uint8_t colorDepth,
-    IsoAgLib::iVtObject_c * /*obj*/,
-    IsoAgLib::e_vtColour /*whichColour*/)
+    iVtObject_c * /*obj*/,
+    e_vtColour /*whichColour*/)
 {
   unsigned const cu_fittingDepth =
     colorValue < 2 ? 0 :
@@ -51,10 +52,10 @@ uint8_t iVtClientObjectPool_c::convertColourDefault(
   if (colorDepth >= cu_fittingDepth)
     return colorValue; // don't convert
 
-  uint8_t const colorValue1 = (1 == cu_fittingDepth) ?
+  Colour const colorValue1 = (1 == cu_fittingDepth) ?
     normalizeDepth2Color(colorValue) : colorValue;
 
-  isoaglib_assert(15 < colorValue1);
+  isoaglib_assert(NAVY < colorValue1);
   if (colorValue1 < 232) {
     unsigned const cu_r0 = colorValue1 - 16u;
     unsigned const cu_z0 = cu_r0 % 6u;
@@ -62,10 +63,10 @@ uint8_t iVtClientObjectPool_c::convertColourDefault(
     unsigned const cu_z1 = cu_r1 % 6u;
     unsigned const cu_r2 = cu_r1 / 6u;
     unsigned const cu_z2 = cu_r2 % 6u;
-    return 7u < cu_z0 + cu_z1 + cu_z2 ? 1 : 0;
+    return (IsoAgLib::Colour)(7u < cu_z0 + cu_z1 + cu_z2 ? 1 : 0);
   } else {
     // Convert proprietary colors to black:
-    return 0;
+    return BLACK;
   }
 }
 

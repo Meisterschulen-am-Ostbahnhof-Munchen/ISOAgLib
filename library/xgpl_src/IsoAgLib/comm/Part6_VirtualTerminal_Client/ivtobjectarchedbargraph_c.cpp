@@ -63,11 +63,11 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         vtObjectArchedBarGraph_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectArchedBarGraph_c::setColour(uint8_t newColour, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectArchedBarGraph_c::setColour(Colour newColour, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setColour (newColour, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectArchedBarGraph_c::setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject,
+    void iVtObjectArchedBarGraph_c::setTargetLineColour(Colour newTargetLineColour, bool b_updateObject,
                                                         bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setTargetLineColour (newTargetLineColour, b_updateObject, b_enableReplaceOfCmd);
     }

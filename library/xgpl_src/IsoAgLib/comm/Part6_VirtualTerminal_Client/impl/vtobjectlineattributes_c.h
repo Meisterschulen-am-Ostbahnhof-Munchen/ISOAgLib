@@ -49,9 +49,9 @@ public:
   vtObjectLineAttributes_c(
 		  int ai_multitonInst,
 		  IsoAgLib::ObjectID ID,
-  		uint8_t lineColour,
-  		uint8_t lineWidth,
-  		uint16_t lineArt);
+		  IsoAgLib::Colour lineColour,
+  		  uint8_t lineWidth,
+  		  uint16_t lineArt);
 
 
   vtObjectLineAttributes_c(iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst);
@@ -66,7 +66,7 @@ public:
     virtual void setLineColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setLineArt(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setLineAttributes(Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setLineAttributes(IsoAgLib::Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 

@@ -17,7 +17,7 @@ namespace IsoAgLib {
 iVtObjectLineAttributes_c::iVtObjectLineAttributes_c(
 		iVtClientObjectPool_c* pool,
 		ObjectID ID,
-		uint8_t lineColour,
+		Colour lineColour,
 		uint8_t lineWidth,
 		uint16_t lineArt)
 :vtObjectLineAttributes_c(

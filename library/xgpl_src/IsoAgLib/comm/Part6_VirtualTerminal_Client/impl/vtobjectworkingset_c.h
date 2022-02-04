@@ -66,7 +66,7 @@ public:
 
   void updateSelectable( uint8_t newSelectable );
     virtual void changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-    virtual void changeBackgroundColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+    virtual void changeBackgroundColour(IsoAgLib::Colour newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setOriginSKM(bool b_SKM);
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

@@ -54,8 +54,8 @@ public:
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
   void setWidth(uint16_t newWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setHeight(uint16_t newHeight, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setColour(Colour newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setTargetLineColour(Colour newTargetLineColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setOptions(uint8_t newOptions, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setStartAngle(uint8_t newStartAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setEndAngle(uint8_t newEndAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

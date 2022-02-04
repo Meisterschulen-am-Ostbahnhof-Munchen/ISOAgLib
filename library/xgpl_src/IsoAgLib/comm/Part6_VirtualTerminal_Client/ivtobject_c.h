@@ -333,7 +333,7 @@ protected:
   };
 
   struct iVtObjectMeter_s : iVtObjectwMacro_s {
-      iVtObjectMeter_s(uint16_t width, uint8_t needleColour, Colour borderColour, uint8_t arcAndTickColour,
+      iVtObjectMeter_s(uint16_t width, Colour needleColour, Colour borderColour, Colour arcAndTickColour,
                        uint8_t options, uint8_t numberOfTicks, uint8_t startAngle, uint8_t endAngle, uint16_t minValue,
                        uint16_t maxValue, iVtObject_c *variableReference, uint16_t value) : width(width),
                                                                                             needleColour(needleColour),
@@ -352,9 +352,9 @@ protected:
                                                                                             value(value) {}
 
       uint16_t width;
-    uint8_t needleColour;
+    Colour needleColour;
     Colour borderColour;
-    uint8_t arcAndTickColour;
+    Colour arcAndTickColour;
     uint8_t options;
     uint8_t numberOfTicks;
     uint8_t startAngle;
@@ -428,7 +428,7 @@ protected:
 
   struct iVtObjectPictureGraphic_s : iVtObjectwMacro_s {
       iVtObjectPictureGraphic_s(uint16_t width, uint16_t actualWidth, uint16_t actualHeight, uint8_t format,
-                                uint8_t options, uint8_t transparencyColour, uint32_t numberOfBytesInRawData0,
+                                uint8_t options, Colour transparencyColour, uint32_t numberOfBytesInRawData0,
                                 const uint8_t *rawData0, uint32_t numberOfBytesInRawData1, const uint8_t *rawData1,
                                 uint32_t numberOfBytesInRawData2, const uint8_t *rawData2,
                                 uint8_t numberOfFixedBitmapsToFollow,
@@ -445,7 +445,7 @@ protected:
     uint16_t actualHeight;
     uint8_t format;
     uint8_t options;
-    uint8_t transparencyColour;
+    Colour transparencyColour;
     uint32_t numberOfBytesInRawData0;
     const uint8_t* rawData0;
     uint32_t numberOfBytesInRawData1;
@@ -533,7 +533,7 @@ protected:
                                  int16_t cursorY, uint8_t foregroundColour, Colour backgroundColour,
                                  iVtObjectFontAttributes_c *fontAttributes, iVtObjectLineAttributes_c *lineAttributes,
                                  iVtObjectFillAttributes_c *fillAttributes, uint8_t format, uint8_t options,
-                                 uint8_t transparencyColour) : viewportWidth(viewportWidth),
+                                 Colour transparencyColour) : viewportWidth(viewportWidth),
                                                                viewportHeight(viewportHeight), viewportX(viewportX),
                                                                viewportY(viewportY), canvasWidth(canvasWidth),
                                                                canvasHeight(canvasHeight), viewportZoom(viewportZoom),

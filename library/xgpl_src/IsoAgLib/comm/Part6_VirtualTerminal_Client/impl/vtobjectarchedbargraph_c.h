@@ -76,8 +76,8 @@ public:
     virtual void setValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
     virtual void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setColour(uint8_t newColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setTargetLineColour(uint8_t newTargetLineColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setColour(IsoAgLib::Colour newColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setTargetLineColour(IsoAgLib::Colour newTargetLineColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

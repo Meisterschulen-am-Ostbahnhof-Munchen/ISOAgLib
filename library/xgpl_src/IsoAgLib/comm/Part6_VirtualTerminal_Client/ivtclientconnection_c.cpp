@@ -95,7 +95,7 @@ iVtClientConnection_c::sendCommandChangeChildLocation (uint16_t aui16_objectUid,
 }
 
 bool
-iVtClientConnection_c::sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, uint8_t newColour,  bool b_enableReplaceOfCmd)
+iVtClientConnection_c::sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, Colour newColour,  bool b_enableReplaceOfCmd)
 {
   return commandHandler().sendCommandChangeBackgroundColour(aui16_objectUid, newColour,  b_enableReplaceOfCmd);
 }

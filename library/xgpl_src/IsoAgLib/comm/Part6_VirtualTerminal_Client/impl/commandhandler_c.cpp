@@ -316,7 +316,7 @@ CommandHandler_c::sendCommandChangeChildLocation (uint16_t aui16_objectUid, uint
 
 
 bool
-CommandHandler_c::sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, uint8_t newColour, bool b_enableReplaceOfCmd)
+CommandHandler_c::sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, IsoAgLib::Colour newColour, bool b_enableReplaceOfCmd)
 {
   return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -358,7 +358,7 @@ CommandHandler_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, Iso
 
 
 bool
-CommandHandler_c::sendCommandChangeLineAttributes (uint16_t aui16_objectUid, Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+CommandHandler_c::sendCommandChangeLineAttributes (uint16_t aui16_objectUid, IsoAgLib::Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
 {
   return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1566,7 +1566,7 @@ bool CommandHandler_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* ap
 bool CommandHandler_c::sendCommandChangeChildLocation (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd)
 { return sendCommandChangeChildLocation(apc_object->getID(), apc_childObject->getID(), dx, dy, b_enableReplaceOfCmd); }
 
-bool CommandHandler_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newColour,  bool b_enableReplaceOfCmd)
+bool CommandHandler_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::Colour newColour,  bool b_enableReplaceOfCmd)
 { return sendCommandChangeBackgroundColour(apc_object->getID(), newColour, b_enableReplaceOfCmd); }
 
 bool CommandHandler_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
@@ -1578,7 +1578,7 @@ bool CommandHandler_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* a
 bool CommandHandler_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 { return sendCommandChangeFontAttributes( apc_object->getID(), newFontColour, newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd); }
 
-bool CommandHandler_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+bool CommandHandler_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
 { return sendCommandChangeLineAttributes( apc_object->getID(), newLineColour, newLineWidth, newLineArt, b_enableReplaceOfCmd); }
 
 bool CommandHandler_c::sendCommandHideShow( IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)
