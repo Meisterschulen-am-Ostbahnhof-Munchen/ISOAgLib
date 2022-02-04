@@ -1,5 +1,5 @@
 /*
-  vtserverinstance_c.h - interface class for wrapping one vtserver instance
+  ivtserverinstance_c.h - interface class for wrapping one vtserver instance
 
   (C) Copyright 2009 - 2019 by OSB AG
 
