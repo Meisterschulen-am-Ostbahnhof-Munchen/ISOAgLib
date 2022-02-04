@@ -37,6 +37,25 @@ enum ObjectID : uint16_t
 	firstID = 257 /* Macro ObjID must be 0-255 !! */
 };
 
+enum Colour : uint8_t {
+	BLACK = 0,
+	WHITE = 1,
+	GREEN = 2,
+	TEAL = 3,
+	MAROON = 4,
+	PURPLE = 5,
+	OLIVE = 6,
+	SILVER = 7,
+	GREY = 8,
+	BLUE = 9,
+	LIME = 10,
+	CYAN = 11,
+	RED = 12,
+	MAGENTA = 13,
+	YELLOW = 14,
+	NAVY = 15,
+};
+
 class iVtObject_c : public ClientBase
 {
 public:
