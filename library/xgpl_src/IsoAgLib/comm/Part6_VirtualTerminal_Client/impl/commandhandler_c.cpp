@@ -336,7 +336,7 @@ CommandHandler_c::sendCommandChangeSize (uint16_t aui16_objectUid,uint16_t newWi
 
 
 bool
-CommandHandler_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
+CommandHandler_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 {
   return sendCommand (172 /* Command: Command --- Parameter: Change FillAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -348,7 +348,7 @@ CommandHandler_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uin
 
 
 bool
-CommandHandler_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+CommandHandler_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, IsoAgLib::Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 {
   return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -358,7 +358,7 @@ CommandHandler_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, uin
 
 
 bool
-CommandHandler_c::sendCommandChangeLineAttributes (uint16_t aui16_objectUid, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+CommandHandler_c::sendCommandChangeLineAttributes (uint16_t aui16_objectUid, Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
 {
   return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1572,13 +1572,13 @@ bool CommandHandler_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c*
 bool CommandHandler_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 { return sendCommandChangeSize(apc_object->getID(), newWidth, newHeight, b_enableReplaceOfCmd); }
 
-bool CommandHandler_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
+bool CommandHandler_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 { return sendCommandChangeFillAttributes(apc_object->getID(), newFillType, newFillColour, newFillPatternObject, b_enableReplaceOfCmd); }
 
-bool CommandHandler_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+bool CommandHandler_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 { return sendCommandChangeFontAttributes( apc_object->getID(), newFontColour, newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd); }
 
-bool CommandHandler_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
+bool CommandHandler_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)
 { return sendCommandChangeLineAttributes( apc_object->getID(), newLineColour, newLineWidth, newLineArt, b_enableReplaceOfCmd); }
 
 bool CommandHandler_c::sendCommandHideShow( IsoAgLib::iVtObject_c* apc_object, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd)

@@ -45,9 +45,9 @@ public:
   uint32_t fitTerminal() const;
 
   void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setNeedleColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setBorderColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setArcAndTickColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setNeedleColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setArcAndTickColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setOptions(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

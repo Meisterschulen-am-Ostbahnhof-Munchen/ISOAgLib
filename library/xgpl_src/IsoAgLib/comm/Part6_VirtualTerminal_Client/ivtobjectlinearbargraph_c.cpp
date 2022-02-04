@@ -59,12 +59,12 @@ namespace IsoAgLib {
         vtObjectLinearBarGraph_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectLinearBarGraph_c::setColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectLinearBarGraph_c::setColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLinearBarGraph_c::setColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
     void
-    iVtObjectLinearBarGraph_c::setTargetLineColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    iVtObjectLinearBarGraph_c::setTargetLineColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLinearBarGraph_c::setTargetLineColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 

@@ -43,11 +43,11 @@ public:
 
   uint16_t getScaledWidthHeight();
 
-  void setFontColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setFontColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFontSize(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFontType(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFontStyle(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setFontAttributes(Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectFontAttributes_c::updateObjectType(); }

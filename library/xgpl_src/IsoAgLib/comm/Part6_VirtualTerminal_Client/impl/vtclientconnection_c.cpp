@@ -646,7 +646,7 @@ VtClientConnection_c::processMsgVtToEcu( const CanPkgExt_c& pkg )
 }
 
 
-uint8_t
+IsoAgLib::Colour
 VtClientConnection_c::getUserConvertedColor (IsoAgLib::Colour colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour)
 {
   // can't adapt the colors if not yet retrieved properties from the VT.

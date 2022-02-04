@@ -337,7 +337,7 @@ public:
   /** Default implementation for convertColour which can also be used
    *  by custom color conversion implementations.
    */
-   static uint8_t convertColourDefault(IsoAgLib::Colour colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c *obj, IsoAgLib::e_vtColour whichColour);
+   static IsoAgLib::Colour convertColourDefault(IsoAgLib::Colour colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c *obj, IsoAgLib::e_vtColour whichColour);
 
   /**
     hook function that gets called every time a color-value
@@ -352,7 +352,7 @@ public:
     @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...-->
     @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
   */
-  virtual uint8_t convertColour(IsoAgLib::Colour colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c * obj, IsoAgLib::e_vtColour whichColour)
+  virtual IsoAgLib::Colour convertColour(IsoAgLib::Colour colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c * obj, IsoAgLib::e_vtColour whichColour)
   {
     return convertColourDefault(colorValue, colorDepth, obj, whichColour);
   }

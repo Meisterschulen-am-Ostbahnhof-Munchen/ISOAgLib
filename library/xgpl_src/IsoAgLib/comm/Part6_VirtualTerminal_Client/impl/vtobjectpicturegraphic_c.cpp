@@ -412,7 +412,7 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     }
 
     void
-    vtObjectPictureGraphic_c::setTransparencyColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    vtObjectPictureGraphic_c::setTransparencyColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour) : 0, sizeof(iVtObjectPictureGraphic_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
     }
 

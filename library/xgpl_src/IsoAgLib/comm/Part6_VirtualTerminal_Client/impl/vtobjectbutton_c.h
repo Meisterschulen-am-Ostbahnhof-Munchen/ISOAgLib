@@ -80,7 +80,7 @@ public:
 
   void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setBorderColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
     virtual void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 

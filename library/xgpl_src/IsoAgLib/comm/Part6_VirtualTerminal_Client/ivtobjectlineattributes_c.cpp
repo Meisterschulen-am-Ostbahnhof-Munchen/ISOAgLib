@@ -30,7 +30,7 @@ iVtObjectLineAttributes_c::iVtObjectLineAttributes_c(
 		pool->Append(this);
 	}
 
-    void iVtObjectLineAttributes_c::setLineColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectLineAttributes_c::setLineColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLineAttributes_c::setLineColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -42,7 +42,7 @@ iVtObjectLineAttributes_c::iVtObjectLineAttributes_c(
         vtObjectLineAttributes_c::setLineArt (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectLineAttributes_c::setLineAttributes(uint8_t newLineColour, uint8_t newLineWidth, uint16_t newLineArt,
+    void iVtObjectLineAttributes_c::setLineAttributes(Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt,
                                                       bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLineAttributes_c::setLineAttributes (newLineColour, newLineWidth, newLineArt, b_updateObject, b_enableReplaceOfCmd);
     }

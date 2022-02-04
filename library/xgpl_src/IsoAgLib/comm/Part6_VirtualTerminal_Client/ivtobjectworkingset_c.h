@@ -47,7 +47,7 @@ public:
 
   void changeActiveMask(iVtObjectMask_c* apc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  void changeBackgroundColour(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void changeBackgroundColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false);
 

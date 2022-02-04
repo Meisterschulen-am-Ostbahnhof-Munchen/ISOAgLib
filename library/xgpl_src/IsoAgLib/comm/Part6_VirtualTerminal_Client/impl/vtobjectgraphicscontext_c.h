@@ -90,7 +90,7 @@ public:
   void setGraphicsCursor(int16_t ai16_x, int16_t ai16_y,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void setForegroundColour(uint8_t newValue,
+  void setForegroundColour(Colour newValue,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   void setBackgroundColour(Colour newValue,

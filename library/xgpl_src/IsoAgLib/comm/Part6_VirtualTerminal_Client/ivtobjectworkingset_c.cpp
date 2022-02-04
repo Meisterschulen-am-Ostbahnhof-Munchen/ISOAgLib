@@ -35,7 +35,7 @@ namespace IsoAgLib {
         vtObjectWorkingSet_c::changeActiveMask (apc_iVtObjectMask, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectWorkingSet_c::changeBackgroundColour(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectWorkingSet_c::changeBackgroundColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectWorkingSet_c::changeBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 

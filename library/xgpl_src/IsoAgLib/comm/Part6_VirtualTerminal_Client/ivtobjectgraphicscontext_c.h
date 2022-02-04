@@ -59,7 +59,7 @@ public:
   //! @param newValue Colour value to be set.
   //! @param b_updateObject
   //! @param b_enableReplaceOfCmd
-  void setForegroundColour(uint8_t newValue,
+  void setForegroundColour(Colour newValue,
                            bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::setForegroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
