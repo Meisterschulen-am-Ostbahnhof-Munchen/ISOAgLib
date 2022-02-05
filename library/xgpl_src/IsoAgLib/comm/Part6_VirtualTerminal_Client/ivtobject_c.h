@@ -39,6 +39,14 @@ class iVtObject_c : public ClientBase
 {
 public:
 
+
+	  /**
+	   *
+	   * iVtObject_s is the mother of all objects. it defines the ObjectID
+	   *
+	   *
+	   *
+	   */
   struct iVtObject_s {
 	ObjectID ID;
     static ObjectID nextID;
@@ -50,8 +58,13 @@ public:
   };
 
   // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
-  /** iVtObjectwMacro_s is a Object than contain Macros.
-    */
+  /**
+   * iVtObjectLanguages_s is a List of Languages.
+   * currentyl only supported on the WS Object
+   *
+   *
+   *
+   */
   struct iVtObjectLanguages_s : virtual iVtObject_s {
 	  uint8_t numberOfLanguagesToFollow_size;
 	  uint8_t numberOfLanguagesToFollow;
@@ -64,8 +77,14 @@ public:
 protected:
 
   // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
-  /** iVtObjectObject_s is a Object than contain other Objects.
-    */
+  /**
+   *
+   *
+   * iVtObjectObject_s is a Object than contain other Objects.
+   *
+   *
+   *
+   */
   struct iVtObjectObject_s : virtual iVtObject_s {
 	uint8_t numberOfObjectsToFollow_size;
     uint8_t numberOfObjectsToFollow;
@@ -77,8 +96,15 @@ protected:
   };
 
   // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
-  /** iVtObjectwMacro_s is a Object than contain Macros.
-    */
+  /**
+   *
+   *
+   * iVtObjectwMacro_s is a Object than contain Macros.
+   *
+   *
+   *
+   *
+   */
   struct iVtObjectwMacro_s : virtual iVtObject_s {
 		uint8_t numberOfMacrosToFollow_size;
 	    uint8_t numberOfMacrosToFollow;
@@ -390,8 +416,6 @@ protected:
 		, value(value)
 		{
 		}
-
-
 	};
 
 	struct iVtObjectNumberVariable_s: iVtObject_s {
@@ -417,7 +441,7 @@ protected:
 	};
 
 	struct iVtObjectOutputList_s: iVtObjectObject_s, iVtObjectwMacro_s {
-		iVtObjectOutputList_s(uint16_t width, uint16_t height,
+		iVtObjectOutputList_s(				ObjectID ID,uint16_t width, uint16_t height,
 				iVtObject_c *variableReference, uint8_t value) :
 				width(width), height(height), variableReference(
 						variableReference), value(value) {
@@ -430,7 +454,7 @@ protected:
 	};
 
 	struct iVtObjectOutputNumber_s: iVtObjectwMacro_s {
-		iVtObjectOutputNumber_s(uint16_t width, uint16_t height,
+		iVtObjectOutputNumber_s(				ObjectID ID,uint16_t width, uint16_t height,
 				Colour backgroundColour,
 				iVtObjectFontAttributes_c *fontAttributes, uint8_t options,
 				iVtObject_c *variableReference, uint32_t value, int32_t offset,
@@ -459,7 +483,7 @@ protected:
 	};
 
 	struct iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
-		iVtObjectPictureGraphic_s(uint16_t width, uint16_t actualWidth,
+		iVtObjectPictureGraphic_s(				ObjectID ID,uint16_t width, uint16_t actualWidth,
 				uint16_t actualHeight, uint8_t format, uint8_t options,
 				Colour transparencyColour, uint32_t numberOfBytesInRawData0,
 				const uint8_t *rawData0, uint32_t numberOfBytesInRawData1,
@@ -493,7 +517,7 @@ protected:
 	};
 
 	struct iVtObjectColourMap_s: iVtObject_s {
-		iVtObjectColourMap_s(uint16_t numOfColourIdxToFollow,
+		iVtObjectColourMap_s(				ObjectID ID,uint16_t numOfColourIdxToFollow,
 				const uint8_t *colourMapArray) :
 				numOfColourIdxToFollow(numOfColourIdxToFollow), colourMapArray(
 						colourMapArray) {
@@ -504,7 +528,7 @@ protected:
 	};
 
 	struct iVtObjectPolygon_s: iVtObjectwMacro_s {
-		iVtObjectPolygon_s(uint16_t width, uint16_t height,
+		iVtObjectPolygon_s(				ObjectID ID,uint16_t width, uint16_t height,
 				iVtObjectLineAttributes_c *lineAttributes,
 				iVtObjectFillAttributes_c *fillAttributes, uint8_t polygonType,
 				uint8_t numberOfPoints, const repeat_x_y_s *pointsToFollow) :
@@ -523,7 +547,7 @@ protected:
 	};
 
 	struct iVtObjectRectangle_s: iVtObjectwMacro_s {
-		iVtObjectRectangle_s(iVtObjectLineAttributes_c *lineAttributes,
+		iVtObjectRectangle_s(				ObjectID ID,iVtObjectLineAttributes_c *lineAttributes,
 				uint16_t width, uint16_t height, uint8_t lineSuppression,
 				iVtObjectFillAttributes_c *fillAttributes) :
 				lineAttributes(lineAttributes), width(width), height(height), lineSuppression(
@@ -538,7 +562,7 @@ protected:
 	};
 
 	struct iVtObjectSoftKeyMask_s: iVtObjectObject_s, iVtObjectwMacro_s {
-		iVtObjectSoftKeyMask_s(Colour backgroundColour) :
+		iVtObjectSoftKeyMask_s(				ObjectID ID,Colour backgroundColour) :
 				backgroundColour(backgroundColour) {
 		}
 
@@ -546,7 +570,7 @@ protected:
 	};
 
 	struct iVtObjectAuxiliaryInput_s: iVtObjectObject_s {
-		iVtObjectAuxiliaryInput_s(Colour backgroundColour, uint8_t functionType,
+		iVtObjectAuxiliaryInput_s(				ObjectID ID,Colour backgroundColour, uint8_t functionType,
 				uint8_t inputId) :
 				backgroundColour(backgroundColour), functionType(functionType), inputId(
 						inputId) {
@@ -558,7 +582,7 @@ protected:
 	};
 
 	struct iVtObjectAuxiliaryFunction_s: iVtObjectObject_s {
-		iVtObjectAuxiliaryFunction_s(Colour backgroundColour,
+		iVtObjectAuxiliaryFunction_s(				ObjectID ID,Colour backgroundColour,
 				uint8_t functionType) :
 				backgroundColour(backgroundColour), functionType(functionType) {
 		}
@@ -568,7 +592,7 @@ protected:
 	};
 
 	struct iVtObjectGraphicsContext_s: iVtObject_s {
-		iVtObjectGraphicsContext_s(uint16_t viewportWidth,
+		iVtObjectGraphicsContext_s(				ObjectID ID,uint16_t viewportWidth,
 				uint16_t viewportHeight, int16_t viewportX, int16_t viewportY,
 				uint16_t canvasWidth, uint16_t canvasHeight, float viewportZoom,
 				int16_t cursorX, int16_t cursorY, uint8_t foregroundColour,
@@ -603,39 +627,55 @@ protected:
 		iVtObjectFillAttributes_c *fillAttributes;
 		uint8_t format; //!< 0 => 1 bit/pixel, 1 => 4 bit/pixel, 2 => 8 bit/pixel
 		uint8_t options; //!< Bit 0 transparent flag; Bit 1 line, font, fill colour usage
-		uint8_t transparencyColour;  //!< Colour to be shown transparent.
+		Colour transparencyColour;  //!< Colour to be shown transparent.
 	};
 
 	struct iVtObjectAuxiliaryInput2_s: iVtObjectObject_s {
-		iVtObjectAuxiliaryInput2_s(Colour backgroundColour,
-				uint8_t functionAttributes) :
-				backgroundColour(backgroundColour), functionAttributes(
-						functionAttributes) {
-		}
-
 		Colour backgroundColour;
 		uint8_t functionAttributes;
+		iVtObjectAuxiliaryInput2_s(
+				ObjectID ID,
+				Colour backgroundColour,
+				uint8_t functionAttributes)
+		: iVtObjectObject_s(ID)
+		, backgroundColour(backgroundColour)
+		, functionAttributes(functionAttributes)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectAuxiliaryFunction2_s: iVtObjectObject_s {
-		iVtObjectAuxiliaryFunction2_s(Colour backgroundColour,
-				uint8_t functionAttributes) :
-				backgroundColour(backgroundColour), functionAttributes(
-						functionAttributes) {
-		}
-
 		Colour backgroundColour;
 		uint8_t functionAttributes;
+		iVtObjectAuxiliaryFunction2_s(
+				ObjectID ID,
+				Colour backgroundColour,
+				uint8_t functionAttributes)
+		: iVtObjectObject_s(ID)
+		, backgroundColour(backgroundColour)
+		, functionAttributes(functionAttributes)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s: iVtObject_s {
-		iVtObjectAuxiliaryControlDesignatorObjectPointer_s(uint8_t pointerType,
-				iVtObject_c *value) :
-				pointerType(pointerType), value(value) {
-		}
-
 		uint8_t pointerType;
 		iVtObject_c *value;
+		iVtObjectAuxiliaryControlDesignatorObjectPointer_s(
+				ObjectID ID,
+				uint8_t pointerType,
+				iVtObject_c *value)
+		: iVtObject_s(ID)
+		, pointerType(pointerType)
+		, value(value)
+		{
+		}
+
+
 	};
 
 // METHODS
