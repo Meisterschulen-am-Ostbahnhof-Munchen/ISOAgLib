@@ -220,353 +220,377 @@ protected:
     {}
   };
 
-  struct iVtObjectInputNumber_s : iVtObjectwMacro_s {
-      iVtObjectInputNumber_s(uint16_t width, uint16_t height, Colour backgroundColour, iVtObject_c *fontAttributes,
-                             uint8_t options, iVtObject_c *variableReference, uint32_t value, uint32_t minValue,
-                             uint32_t maxValue, int32_t offset, float scale, uint8_t numberOfDecimals, uint8_t format,
-                             uint8_t horizontalJustification, uint8_t secondOptionsByte) : width(width), height(height),
-                                                                                           backgroundColour(
-                                                                                                   backgroundColour),
-                                                                                           fontAttributes(
-                                                                                                   fontAttributes),
-                                                                                           options(options),
-                                                                                           variableReference(
-                                                                                                   variableReference),
-                                                                                           value(value),
-                                                                                           minValue(minValue),
-                                                                                           maxValue(maxValue),
-                                                                                           offset(offset), scale(scale),
-                                                                                           numberOfDecimals(
-                                                                                                   numberOfDecimals),
-                                                                                           format(format),
-                                                                                           horizontalJustification(
-                                                                                                   horizontalJustification),
-                                                                                           secondOptionsByte(
-                                                                                                   secondOptionsByte) {}
+	struct iVtObjectInputNumber_s: iVtObjectwMacro_s {
+		uint16_t width;
+		uint16_t height;
+		Colour backgroundColour;
+		iVtObject_c *fontAttributes;
+		uint8_t options;
+		iVtObject_c *variableReference;
+		uint32_t value;
+		uint32_t minValue;
+		uint32_t maxValue;
+		int32_t offset;
+		float scale;
+		uint8_t numberOfDecimals;
+		uint8_t format;
+		uint8_t horizontalJustification;
+		uint8_t secondOptionsByte;
+		iVtObjectInputNumber_s(
+	    		ObjectID ID = autoID,
+				uint16_t width,
+				uint16_t height,
+				Colour backgroundColour,
+				iVtObject_c *fontAttributes,
+				uint8_t options,
+				iVtObject_c *variableReference,
+				uint32_t value,
+				uint32_t minValue,
+				uint32_t maxValue,
+				int32_t offset,
+				float scale,
+				uint8_t numberOfDecimals,
+				uint8_t format,
+				uint8_t horizontalJustification,
+				uint8_t secondOptionsByte)
+		: iVtObjectwMacro_s(ID)
+		, width(width)
+		, height(height)
+		, backgroundColour(backgroundColour)
+		, fontAttributes(fontAttributes)
+		, options(options)
+		, variableReference(variableReference)
+		, value(value)
+		, minValue(minValue)
+		, maxValue(maxValue)
+		, offset(offset)
+		, scale(scale)
+		, numberOfDecimals(numberOfDecimals)
+		, format(format)
+		, horizontalJustification(horizontalJustification)
+		, secondOptionsByte(secondOptionsByte)
+		{
+		}
 
-      uint16_t width;
-    uint16_t height;
-    Colour backgroundColour;
-    iVtObject_c* fontAttributes;
-    uint8_t options;
-    iVtObject_c* variableReference;
-    uint32_t value;
-    uint32_t minValue;
-    uint32_t maxValue;
-    int32_t offset;
-    float scale;
-    uint8_t numberOfDecimals;
-    uint8_t format;
-    uint8_t horizontalJustification;
-    uint8_t secondOptionsByte;
-  };
-
-
-
-
-  struct iVtObjectInputString_s : iVtObjectString_s, iVtObjectwMacro_s {
-      iVtObjectInputString_s(uint16_t width, uint16_t height, Colour backgroundColour,
-                             iVtObjectFontAttributes_c *fontAttributes, iVtObjectInputAttributes_c *inputAttributes,
-                             uint8_t options, iVtObjectStringVariable_c *variableReference,
-                             uint8_t horizontalJustification, uint16_t length, char *value, uint8_t enabled) : width(
-              width), height(height), backgroundColour(backgroundColour), fontAttributes(fontAttributes),
-                                                                                                               inputAttributes(
-                                                                                                                       inputAttributes),
-                                                                                                               options(options),
-                                                                                                               variableReference(
-                                                                                                                       variableReference),
-                                                                                                               horizontalJustification(
-                                                                                                                       horizontalJustification),
-                                                                                                               length(length),
-                                                                                                               value(value),
-                                                                                                               enabled(enabled) {}
-
-      uint16_t width;
-    uint16_t height;
-    Colour backgroundColour;
-    iVtObjectFontAttributes_c* fontAttributes;
-    iVtObjectInputAttributes_c* inputAttributes;
-    uint8_t options;
-    iVtObjectStringVariable_c* variableReference;
-    uint8_t horizontalJustification;
-    uint16_t length;
-    char* value;
-    uint8_t enabled;
-  };
-
-  struct iVtObjectKey_s : iVtObjectObject_s, iVtObjectwMacro_s {
-      iVtObjectKey_s(Colour backgroundColour, uint8_t keyCode) : backgroundColour(backgroundColour),
-                                                                  keyCode(keyCode) {}
-
-      Colour backgroundColour;
-    uint8_t keyCode;
-  };
+	};
 
 
 
 
+  struct iVtObjectInputString_s: iVtObjectString_s, iVtObjectwMacro_s {
+		iVtObjectInputString_s(uint16_t width, uint16_t height,
+				Colour backgroundColour,
+				iVtObjectFontAttributes_c *fontAttributes,
+				iVtObjectInputAttributes_c *inputAttributes, uint8_t options,
+				iVtObjectStringVariable_c *variableReference,
+				uint8_t horizontalJustification, uint16_t length, char *value,
+				uint8_t enabled) :
+				width(width), height(height), backgroundColour(
+						backgroundColour), fontAttributes(fontAttributes), inputAttributes(
+						inputAttributes), options(options), variableReference(
+						variableReference), horizontalJustification(
+						horizontalJustification), length(length), value(value), enabled(
+						enabled) {
+		}
 
+		uint16_t width;
+		uint16_t height;
+		Colour backgroundColour;
+		iVtObjectFontAttributes_c *fontAttributes;
+		iVtObjectInputAttributes_c *inputAttributes;
+		uint8_t options;
+		iVtObjectStringVariable_c *variableReference;
+		uint8_t horizontalJustification;
+		uint16_t length;
+		char *value;
+		uint8_t enabled;
+	};
 
-  struct iVtObjectMacro_s : iVtObject_s {
-      iVtObjectMacro_s(uint16_t numBytesToFollow, const uint8_t *commandsToFollow) : numBytesToFollow(numBytesToFollow),
-                                                                                     commandsToFollow(
-                                                                                             commandsToFollow) {}
+	struct iVtObjectKey_s: iVtObjectObject_s, iVtObjectwMacro_s {
+		iVtObjectKey_s(Colour backgroundColour, uint8_t keyCode) :
+				backgroundColour(backgroundColour), keyCode(keyCode) {
+		}
 
-      uint16_t numBytesToFollow;
-    const uint8_t* commandsToFollow;
-  };
+		Colour backgroundColour;
+		uint8_t keyCode;
+	};
 
-  struct iVtObjectMeter_s : iVtObjectwMacro_s {
-      iVtObjectMeter_s(uint16_t width, Colour needleColour, Colour borderColour, Colour arcAndTickColour,
-                       uint8_t options, uint8_t numberOfTicks, uint8_t startAngle, uint8_t endAngle, uint16_t minValue,
-                       uint16_t maxValue, iVtObject_c *variableReference, uint16_t value) : width(width),
-                                                                                            needleColour(needleColour),
-                                                                                            borderColour(borderColour),
-                                                                                            arcAndTickColour(
-                                                                                                    arcAndTickColour),
-                                                                                            options(options),
-                                                                                            numberOfTicks(
-                                                                                                    numberOfTicks),
-                                                                                            startAngle(startAngle),
-                                                                                            endAngle(endAngle),
-                                                                                            minValue(minValue),
-                                                                                            maxValue(maxValue),
-                                                                                            variableReference(
-                                                                                                    variableReference),
-                                                                                            value(value) {}
+	struct iVtObjectMacro_s: iVtObject_s {
+		iVtObjectMacro_s(uint16_t numBytesToFollow,
+				const uint8_t *commandsToFollow) :
+				numBytesToFollow(numBytesToFollow), commandsToFollow(
+						commandsToFollow) {
+		}
 
-      uint16_t width;
-    Colour needleColour;
-    Colour borderColour;
-    Colour arcAndTickColour;
-    uint8_t options;
-    uint8_t numberOfTicks;
-    uint8_t startAngle;
-    uint8_t endAngle;
-    uint16_t minValue;
-    uint16_t maxValue;
-    iVtObject_c* variableReference;
-    uint16_t value;
-  };
+		uint16_t numBytesToFollow;
+		const uint8_t *commandsToFollow;
+	};
 
-  struct iVtObjectNumberVariable_s : iVtObject_s {
-      iVtObjectNumberVariable_s(uint32_t value) : value(value) {}
+	struct iVtObjectMeter_s: iVtObjectwMacro_s {
+		iVtObjectMeter_s(uint16_t width, Colour needleColour,
+				Colour borderColour, Colour arcAndTickColour, uint8_t options,
+				uint8_t numberOfTicks, uint8_t startAngle, uint8_t endAngle,
+				uint16_t minValue, uint16_t maxValue,
+				iVtObject_c *variableReference, uint16_t value) :
+				width(width), needleColour(needleColour), borderColour(
+						borderColour), arcAndTickColour(arcAndTickColour), options(
+						options), numberOfTicks(numberOfTicks), startAngle(
+						startAngle), endAngle(endAngle), minValue(minValue), maxValue(
+						maxValue), variableReference(variableReference), value(
+						value) {
+		}
 
-      uint32_t value;
-  };
+		uint16_t width;
+		Colour needleColour;
+		Colour borderColour;
+		Colour arcAndTickColour;
+		uint8_t options;
+		uint8_t numberOfTicks;
+		uint8_t startAngle;
+		uint8_t endAngle;
+		uint16_t minValue;
+		uint16_t maxValue;
+		iVtObject_c *variableReference;
+		uint16_t value;
+	};
 
-  struct iVtObjectObjectPointer_s : iVtObject_s {
-      iVtObjectObjectPointer_s(iVtObject_c *value) : value(value) {}
+	struct iVtObjectNumberVariable_s: iVtObject_s {
+		iVtObjectNumberVariable_s(uint32_t value) :
+				value(value) {
+		}
 
-      iVtObject_c* value;
-  };
+		uint32_t value;
+	};
 
-  struct iVtObjectOutputList_s : iVtObjectObject_s, iVtObjectwMacro_s  {
-      iVtObjectOutputList_s(uint16_t width, uint16_t height, iVtObject_c *variableReference, uint8_t value) : width(
-              width), height(height), variableReference(variableReference), value(value) {}
+	struct iVtObjectObjectPointer_s: iVtObject_s {
+		iVtObjectObjectPointer_s(iVtObject_c *value) :
+				value(value) {
+		}
 
-      uint16_t width;
-    uint16_t height;
-    iVtObject_c* variableReference;
-    uint8_t value;
-  };
+		iVtObject_c *value;
+	};
 
-  struct iVtObjectOutputNumber_s : iVtObjectwMacro_s {
-      iVtObjectOutputNumber_s(uint16_t width, uint16_t height, Colour backgroundColour,
-                              iVtObjectFontAttributes_c *fontAttributes, uint8_t options,
-                              iVtObject_c *variableReference, uint32_t value, int32_t offset, float scale,
-                              uint8_t numberOfDecimals, uint8_t format, uint8_t horizontalJustification) : width(width),
-                                                                                                           height(height),
-                                                                                                           backgroundColour(
-                                                                                                                   backgroundColour),
-                                                                                                           fontAttributes(
-                                                                                                                   fontAttributes),
-                                                                                                           options(options),
-                                                                                                           variableReference(
-                                                                                                                   variableReference),
-                                                                                                           value(value),
-                                                                                                           offset(offset),
-                                                                                                           scale(scale),
-                                                                                                           numberOfDecimals(
-                                                                                                                   numberOfDecimals),
-                                                                                                           format(format),
-                                                                                                           horizontalJustification(
-                                                                                                                   horizontalJustification) {}
+	struct iVtObjectOutputList_s: iVtObjectObject_s, iVtObjectwMacro_s {
+		iVtObjectOutputList_s(uint16_t width, uint16_t height,
+				iVtObject_c *variableReference, uint8_t value) :
+				width(width), height(height), variableReference(
+						variableReference), value(value) {
+		}
 
-      uint16_t width;
-    uint16_t height;
-    Colour backgroundColour;
-    iVtObjectFontAttributes_c* fontAttributes;
-    uint8_t options;
-    iVtObject_c* variableReference;
-    uint32_t value;
-    int32_t offset;
-    float scale;
-    uint8_t numberOfDecimals;
-    uint8_t format;
-    uint8_t horizontalJustification;
-  };
+		uint16_t width;
+		uint16_t height;
+		iVtObject_c *variableReference;
+		uint8_t value;
+	};
 
+	struct iVtObjectOutputNumber_s: iVtObjectwMacro_s {
+		iVtObjectOutputNumber_s(uint16_t width, uint16_t height,
+				Colour backgroundColour,
+				iVtObjectFontAttributes_c *fontAttributes, uint8_t options,
+				iVtObject_c *variableReference, uint32_t value, int32_t offset,
+				float scale, uint8_t numberOfDecimals, uint8_t format,
+				uint8_t horizontalJustification) :
+				width(width), height(height), backgroundColour(
+						backgroundColour), fontAttributes(fontAttributes), options(
+						options), variableReference(variableReference), value(
+						value), offset(offset), scale(scale), numberOfDecimals(
+						numberOfDecimals), format(format), horizontalJustification(
+						horizontalJustification) {
+		}
 
+		uint16_t width;
+		uint16_t height;
+		Colour backgroundColour;
+		iVtObjectFontAttributes_c *fontAttributes;
+		uint8_t options;
+		iVtObject_c *variableReference;
+		uint32_t value;
+		int32_t offset;
+		float scale;
+		uint8_t numberOfDecimals;
+		uint8_t format;
+		uint8_t horizontalJustification;
+	};
 
+	struct iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
+		iVtObjectPictureGraphic_s(uint16_t width, uint16_t actualWidth,
+				uint16_t actualHeight, uint8_t format, uint8_t options,
+				Colour transparencyColour, uint32_t numberOfBytesInRawData0,
+				const uint8_t *rawData0, uint32_t numberOfBytesInRawData1,
+				const uint8_t *rawData1, uint32_t numberOfBytesInRawData2,
+				const uint8_t *rawData2, uint8_t numberOfFixedBitmapsToFollow,
+				const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow) :
+				width(width), actualWidth(actualWidth), actualHeight(
+						actualHeight), format(format), options(options), transparencyColour(
+						transparencyColour), numberOfBytesInRawData0(
+						numberOfBytesInRawData0), rawData0(rawData0), numberOfBytesInRawData1(
+						numberOfBytesInRawData1), rawData1(rawData1), numberOfBytesInRawData2(
+						numberOfBytesInRawData2), rawData2(rawData2), numberOfFixedBitmapsToFollow(
+						numberOfFixedBitmapsToFollow), fixedBitmapsToFollow(
+						fixedBitmapsToFollow) {
+		}
 
-  struct iVtObjectPictureGraphic_s : iVtObjectwMacro_s {
-      iVtObjectPictureGraphic_s(uint16_t width, uint16_t actualWidth, uint16_t actualHeight, uint8_t format,
-                                uint8_t options, Colour transparencyColour, uint32_t numberOfBytesInRawData0,
-                                const uint8_t *rawData0, uint32_t numberOfBytesInRawData1, const uint8_t *rawData1,
-                                uint32_t numberOfBytesInRawData2, const uint8_t *rawData2,
-                                uint8_t numberOfFixedBitmapsToFollow,
-                                const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow)
-              : width(width), actualWidth(actualWidth), actualHeight(actualHeight), format(format), options(options),
-                transparencyColour(transparencyColour), numberOfBytesInRawData0(numberOfBytesInRawData0),
-                rawData0(rawData0), numberOfBytesInRawData1(numberOfBytesInRawData1), rawData1(rawData1),
-                numberOfBytesInRawData2(numberOfBytesInRawData2), rawData2(rawData2),
-                numberOfFixedBitmapsToFollow(numberOfFixedBitmapsToFollow),
-                fixedBitmapsToFollow(fixedBitmapsToFollow) {}
+		uint16_t width;
+		uint16_t actualWidth;
+		uint16_t actualHeight;
+		uint8_t format;
+		uint8_t options;
+		Colour transparencyColour;
+		uint32_t numberOfBytesInRawData0;
+		const uint8_t *rawData0;
+		uint32_t numberOfBytesInRawData1;
+		const uint8_t *rawData1;
+		uint32_t numberOfBytesInRawData2;
+		const uint8_t *rawData2;
+		uint8_t numberOfFixedBitmapsToFollow;
+		const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow;
+	};
 
-      uint16_t width;
-    uint16_t actualWidth;
-    uint16_t actualHeight;
-    uint8_t format;
-    uint8_t options;
-    Colour transparencyColour;
-    uint32_t numberOfBytesInRawData0;
-    const uint8_t* rawData0;
-    uint32_t numberOfBytesInRawData1;
-    const uint8_t* rawData1;
-    uint32_t numberOfBytesInRawData2;
-    const uint8_t* rawData2;
-    uint8_t numberOfFixedBitmapsToFollow;
-    const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s* fixedBitmapsToFollow;
-  };
+	struct iVtObjectColourMap_s: iVtObject_s {
+		iVtObjectColourMap_s(uint16_t numOfColourIdxToFollow,
+				const uint8_t *colourMapArray) :
+				numOfColourIdxToFollow(numOfColourIdxToFollow), colourMapArray(
+						colourMapArray) {
+		}
 
-  struct iVtObjectColourMap_s : iVtObject_s {
-      iVtObjectColourMap_s(uint16_t numOfColourIdxToFollow, const uint8_t *colourMapArray) : numOfColourIdxToFollow(
-              numOfColourIdxToFollow), colourMapArray(colourMapArray) {}
+		uint16_t numOfColourIdxToFollow;
+		const uint8_t *colourMapArray;
+	};
 
-      uint16_t numOfColourIdxToFollow;
-    const uint8_t* colourMapArray;
-  };
+	struct iVtObjectPolygon_s: iVtObjectwMacro_s {
+		iVtObjectPolygon_s(uint16_t width, uint16_t height,
+				iVtObjectLineAttributes_c *lineAttributes,
+				iVtObjectFillAttributes_c *fillAttributes, uint8_t polygonType,
+				uint8_t numberOfPoints, const repeat_x_y_s *pointsToFollow) :
+				width(width), height(height), lineAttributes(lineAttributes), fillAttributes(
+						fillAttributes), polygonType(polygonType), numberOfPoints(
+						numberOfPoints), pointsToFollow(pointsToFollow) {
+		}
 
-  struct iVtObjectPolygon_s : iVtObjectwMacro_s {
-      iVtObjectPolygon_s(uint16_t width, uint16_t height, iVtObjectLineAttributes_c *lineAttributes,
-                         iVtObjectFillAttributes_c *fillAttributes, uint8_t polygonType, uint8_t numberOfPoints,
-                         const repeat_x_y_s *pointsToFollow) : width(width), height(height),
-                                                               lineAttributes(lineAttributes),
-                                                               fillAttributes(fillAttributes), polygonType(polygonType),
-                                                               numberOfPoints(numberOfPoints),
-                                                               pointsToFollow(pointsToFollow) {}
+		uint16_t width;
+		uint16_t height;
+		iVtObjectLineAttributes_c *lineAttributes;
+		iVtObjectFillAttributes_c *fillAttributes;
+		uint8_t polygonType;
+		uint8_t numberOfPoints;
+		const repeat_x_y_s *pointsToFollow;
+	};
 
-      uint16_t width;
-    uint16_t height;
-    iVtObjectLineAttributes_c* lineAttributes;
-    iVtObjectFillAttributes_c* fillAttributes;
-    uint8_t polygonType;
-    uint8_t numberOfPoints;
-    const repeat_x_y_s* pointsToFollow;
-  };
+	struct iVtObjectRectangle_s: iVtObjectwMacro_s {
+		iVtObjectRectangle_s(iVtObjectLineAttributes_c *lineAttributes,
+				uint16_t width, uint16_t height, uint8_t lineSuppression,
+				iVtObjectFillAttributes_c *fillAttributes) :
+				lineAttributes(lineAttributes), width(width), height(height), lineSuppression(
+						lineSuppression), fillAttributes(fillAttributes) {
+		}
 
-  struct iVtObjectRectangle_s : iVtObjectwMacro_s {
-      iVtObjectRectangle_s(iVtObjectLineAttributes_c *lineAttributes, uint16_t width, uint16_t height,
-                           uint8_t lineSuppression, iVtObjectFillAttributes_c *fillAttributes) : lineAttributes(
-              lineAttributes), width(width), height(height), lineSuppression(lineSuppression), fillAttributes(
-              fillAttributes) {}
+		iVtObjectLineAttributes_c *lineAttributes;
+		uint16_t width;
+		uint16_t height;
+		uint8_t lineSuppression;
+		iVtObjectFillAttributes_c *fillAttributes;
+	};
 
-      iVtObjectLineAttributes_c* lineAttributes;
-    uint16_t width;
-    uint16_t height;
-    uint8_t lineSuppression;
-    iVtObjectFillAttributes_c* fillAttributes;
-  };
+	struct iVtObjectSoftKeyMask_s: iVtObjectObject_s, iVtObjectwMacro_s {
+		iVtObjectSoftKeyMask_s(Colour backgroundColour) :
+				backgroundColour(backgroundColour) {
+		}
 
-  struct iVtObjectSoftKeyMask_s : iVtObjectObject_s, iVtObjectwMacro_s  {
-      iVtObjectSoftKeyMask_s(Colour backgroundColour) : backgroundColour(backgroundColour) {}
+		Colour backgroundColour;
+	};
 
-      Colour backgroundColour;
-  };
+	struct iVtObjectAuxiliaryInput_s: iVtObjectObject_s {
+		iVtObjectAuxiliaryInput_s(Colour backgroundColour, uint8_t functionType,
+				uint8_t inputId) :
+				backgroundColour(backgroundColour), functionType(functionType), inputId(
+						inputId) {
+		}
 
+		Colour backgroundColour;
+		uint8_t functionType;
+		uint8_t inputId;
+	};
 
+	struct iVtObjectAuxiliaryFunction_s: iVtObjectObject_s {
+		iVtObjectAuxiliaryFunction_s(Colour backgroundColour,
+				uint8_t functionType) :
+				backgroundColour(backgroundColour), functionType(functionType) {
+		}
 
+		Colour backgroundColour;
+		uint8_t functionType;
+	};
 
+	struct iVtObjectGraphicsContext_s: iVtObject_s {
+		iVtObjectGraphicsContext_s(uint16_t viewportWidth,
+				uint16_t viewportHeight, int16_t viewportX, int16_t viewportY,
+				uint16_t canvasWidth, uint16_t canvasHeight, float viewportZoom,
+				int16_t cursorX, int16_t cursorY, uint8_t foregroundColour,
+				Colour backgroundColour,
+				iVtObjectFontAttributes_c *fontAttributes,
+				iVtObjectLineAttributes_c *lineAttributes,
+				iVtObjectFillAttributes_c *fillAttributes, uint8_t format,
+				uint8_t options, Colour transparencyColour) :
+				viewportWidth(viewportWidth), viewportHeight(viewportHeight), viewportX(
+						viewportX), viewportY(viewportY), canvasWidth(
+						canvasWidth), canvasHeight(canvasHeight), viewportZoom(
+						viewportZoom), cursorX(cursorX), cursorY(cursorY), foregroundColour(
+						foregroundColour), backgroundColour(backgroundColour), fontAttributes(
+						fontAttributes), lineAttributes(lineAttributes), fillAttributes(
+						fillAttributes), format(format), options(options), transparencyColour(
+						transparencyColour) {
+		}
 
-  struct iVtObjectAuxiliaryInput_s : iVtObjectObject_s {
-      iVtObjectAuxiliaryInput_s(Colour backgroundColour, uint8_t functionType, uint8_t inputId) : backgroundColour(
-              backgroundColour), functionType(functionType), inputId(inputId) {}
+		uint16_t viewportWidth;
+		uint16_t viewportHeight;
+		int16_t viewportX;       //!< Upper left corner of the viewport
+		int16_t viewportY;
+		uint16_t canvasWidth;
+		uint16_t canvasHeight;
+		float viewportZoom;    //!< Zoom value [-32.0F ... 32.0F]
+		int16_t cursorX;
+		int16_t cursorY;
+		uint8_t foregroundColour;
+		uint8_t backgroundColour;
+		iVtObjectFontAttributes_c *fontAttributes;
+		iVtObjectLineAttributes_c *lineAttributes;
+		iVtObjectFillAttributes_c *fillAttributes;
+		uint8_t format; //!< 0 => 1 bit/pixel, 1 => 4 bit/pixel, 2 => 8 bit/pixel
+		uint8_t options; //!< Bit 0 transparent flag; Bit 1 line, font, fill colour usage
+		uint8_t transparencyColour;  //!< Colour to be shown transparent.
+	};
 
-      Colour backgroundColour;
-    uint8_t functionType;
-    uint8_t inputId;
-  };
+	struct iVtObjectAuxiliaryInput2_s: iVtObjectObject_s {
+		iVtObjectAuxiliaryInput2_s(Colour backgroundColour,
+				uint8_t functionAttributes) :
+				backgroundColour(backgroundColour), functionAttributes(
+						functionAttributes) {
+		}
 
-  struct iVtObjectAuxiliaryFunction_s : iVtObjectObject_s {
-      iVtObjectAuxiliaryFunction_s(Colour backgroundColour, uint8_t functionType) : backgroundColour(backgroundColour),
-                                                                                     functionType(functionType) {}
+		Colour backgroundColour;
+		uint8_t functionAttributes;
+	};
 
-      Colour backgroundColour;
-    uint8_t functionType;
-  };
+	struct iVtObjectAuxiliaryFunction2_s: iVtObjectObject_s {
+		iVtObjectAuxiliaryFunction2_s(Colour backgroundColour,
+				uint8_t functionAttributes) :
+				backgroundColour(backgroundColour), functionAttributes(
+						functionAttributes) {
+		}
 
-  struct iVtObjectGraphicsContext_s : iVtObject_s {
-      iVtObjectGraphicsContext_s(uint16_t viewportWidth, uint16_t viewportHeight, int16_t viewportX, int16_t viewportY,
-                                 uint16_t canvasWidth, uint16_t canvasHeight, float viewportZoom, int16_t cursorX,
-                                 int16_t cursorY, uint8_t foregroundColour, Colour backgroundColour,
-                                 iVtObjectFontAttributes_c *fontAttributes, iVtObjectLineAttributes_c *lineAttributes,
-                                 iVtObjectFillAttributes_c *fillAttributes, uint8_t format, uint8_t options,
-                                 Colour transparencyColour) : viewportWidth(viewportWidth),
-                                                               viewportHeight(viewportHeight), viewportX(viewportX),
-                                                               viewportY(viewportY), canvasWidth(canvasWidth),
-                                                               canvasHeight(canvasHeight), viewportZoom(viewportZoom),
-                                                               cursorX(cursorX), cursorY(cursorY),
-                                                               foregroundColour(foregroundColour),
-                                                               backgroundColour(backgroundColour),
-                                                               fontAttributes(fontAttributes),
-                                                               lineAttributes(lineAttributes),
-                                                               fillAttributes(fillAttributes), format(format),
-                                                               options(options),
-                                                               transparencyColour(transparencyColour) {}
+		Colour backgroundColour;
+		uint8_t functionAttributes;
+	};
 
-      uint16_t viewportWidth;
-    uint16_t viewportHeight;
-    int16_t  viewportX;       //!< Upper left corner of the viewport
-    int16_t  viewportY;
-    uint16_t canvasWidth;
-    uint16_t canvasHeight;
-    float    viewportZoom;    //!< Zoom value [-32.0F ... 32.0F]
-    int16_t  cursorX;
-    int16_t  cursorY;
-    uint8_t  foregroundColour;
-    uint8_t  backgroundColour;
-    iVtObjectFontAttributes_c* fontAttributes;
-    iVtObjectLineAttributes_c* lineAttributes;
-    iVtObjectFillAttributes_c* fillAttributes;
-    uint8_t  format;          //!< 0 => 1 bit/pixel, 1 => 4 bit/pixel, 2 => 8 bit/pixel
-    uint8_t  options;         //!< Bit 0 transparent flag; Bit 1 line, font, fill colour usage
-    uint8_t  transparencyColour;  //!< Colour to be shown transparent.
-  };
+	struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s: iVtObject_s {
+		iVtObjectAuxiliaryControlDesignatorObjectPointer_s(uint8_t pointerType,
+				iVtObject_c *value) :
+				pointerType(pointerType), value(value) {
+		}
 
-  struct iVtObjectAuxiliaryInput2_s : iVtObjectObject_s {
-      iVtObjectAuxiliaryInput2_s(Colour backgroundColour, uint8_t functionAttributes) : backgroundColour(
-              backgroundColour), functionAttributes(functionAttributes) {}
-
-      Colour backgroundColour;
-    uint8_t functionAttributes;
-  };
-
-  struct iVtObjectAuxiliaryFunction2_s : iVtObjectObject_s {
-      iVtObjectAuxiliaryFunction2_s(Colour backgroundColour, uint8_t functionAttributes) : backgroundColour(
-              backgroundColour), functionAttributes(functionAttributes) {}
-
-      Colour backgroundColour;
-    uint8_t functionAttributes;
-  };
-
-  struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s : iVtObject_s {
-      iVtObjectAuxiliaryControlDesignatorObjectPointer_s(uint8_t pointerType, iVtObject_c *value) : pointerType(
-              pointerType), value(value) {}
-
-      uint8_t pointerType;
-    iVtObject_c* value;
-  };
+		uint8_t pointerType;
+		iVtObject_c *value;
+	};
 
 // METHODS
 public:
