@@ -547,48 +547,76 @@ protected:
 	};
 
 	struct iVtObjectRectangle_s: iVtObjectwMacro_s {
-		iVtObjectRectangle_s(				ObjectID ID,iVtObjectLineAttributes_c *lineAttributes,
-				uint16_t width, uint16_t height, uint8_t lineSuppression,
-				iVtObjectFillAttributes_c *fillAttributes) :
-				lineAttributes(lineAttributes), width(width), height(height), lineSuppression(
-						lineSuppression), fillAttributes(fillAttributes) {
-		}
-
 		iVtObjectLineAttributes_c *lineAttributes;
 		uint16_t width;
 		uint16_t height;
 		uint8_t lineSuppression;
 		iVtObjectFillAttributes_c *fillAttributes;
+		iVtObjectRectangle_s(
+				ObjectID ID,
+				iVtObjectLineAttributes_c *lineAttributes,
+				uint16_t width,
+				uint16_t height,
+				uint8_t lineSuppression,
+				iVtObjectFillAttributes_c *fillAttributes)
+		: lineAttributes(lineAttributes)
+		, width(width)
+		, height(height)
+		, lineSuppression(lineSuppression)
+		, fillAttributes(fillAttributes)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectSoftKeyMask_s: iVtObjectObject_s, iVtObjectwMacro_s {
-		iVtObjectSoftKeyMask_s(				ObjectID ID,Colour backgroundColour) :
-				backgroundColour(backgroundColour) {
+		Colour backgroundColour;
+		iVtObjectSoftKeyMask_s(
+				ObjectID ID,
+				Colour backgroundColour)
+		: iVtObjectObject_s(ID)
+		, iVtObjectwMacro_s(ID)
+		, backgroundColour(backgroundColour)
+		{
 		}
 
-		Colour backgroundColour;
+
 	};
 
 	struct iVtObjectAuxiliaryInput_s: iVtObjectObject_s {
-		iVtObjectAuxiliaryInput_s(				ObjectID ID,Colour backgroundColour, uint8_t functionType,
-				uint8_t inputId) :
-				backgroundColour(backgroundColour), functionType(functionType), inputId(
-						inputId) {
-		}
-
 		Colour backgroundColour;
 		uint8_t functionType;
 		uint8_t inputId;
+		iVtObjectAuxiliaryInput_s(
+				ObjectID ID,
+				Colour backgroundColour,
+				uint8_t functionType,
+				uint8_t inputId)
+		: iVtObjectObject_s(ID)
+		, backgroundColour(backgroundColour)
+		, functionType(functionType)
+		, inputId(inputId)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectAuxiliaryFunction_s: iVtObjectObject_s {
-		iVtObjectAuxiliaryFunction_s(				ObjectID ID,Colour backgroundColour,
-				uint8_t functionType) :
-				backgroundColour(backgroundColour), functionType(functionType) {
-		}
-
 		Colour backgroundColour;
 		uint8_t functionType;
+		iVtObjectAuxiliaryFunction_s(
+				ObjectID ID,
+				Colour backgroundColour,
+				uint8_t functionType)
+		: iVtObjectObject_s(ID)
+		, backgroundColour(backgroundColour)
+		, functionType(functionType)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectGraphicsContext_s: iVtObject_s {
