@@ -237,7 +237,7 @@ protected:
 		uint8_t horizontalJustification;
 		uint8_t secondOptionsByte;
 		iVtObjectInputNumber_s(
-	    		ObjectID ID = autoID,
+	    		ObjectID ID,
 				uint16_t width,
 				uint16_t height,
 				Colour backgroundColour,
@@ -278,21 +278,6 @@ protected:
 
 
   struct iVtObjectInputString_s: iVtObjectString_s, iVtObjectwMacro_s {
-		iVtObjectInputString_s(uint16_t width, uint16_t height,
-				Colour backgroundColour,
-				iVtObjectFontAttributes_c *fontAttributes,
-				iVtObjectInputAttributes_c *inputAttributes, uint8_t options,
-				iVtObjectStringVariable_c *variableReference,
-				uint8_t horizontalJustification, uint16_t length, char *value,
-				uint8_t enabled) :
-				width(width), height(height), backgroundColour(
-						backgroundColour), fontAttributes(fontAttributes), inputAttributes(
-						inputAttributes), options(options), variableReference(
-						variableReference), horizontalJustification(
-						horizontalJustification), length(length), value(value), enabled(
-						enabled) {
-		}
-
 		uint16_t width;
 		uint16_t height;
 		Colour backgroundColour;
@@ -304,15 +289,51 @@ protected:
 		uint16_t length;
 		char *value;
 		uint8_t enabled;
+		iVtObjectInputString_s(
+	    		ObjectID ID,
+				uint16_t width,
+				uint16_t height,
+				Colour backgroundColour,
+				iVtObjectFontAttributes_c *fontAttributes,
+				iVtObjectInputAttributes_c *inputAttributes,
+				uint8_t options,
+				iVtObjectStringVariable_c *variableReference,
+				uint8_t horizontalJustification,
+				uint16_t length,
+				char *value,
+				uint8_t enabled)
+		: iVtObjectString_s(ID)
+		, iVtObjectwMacro_s(ID)
+		, width(width)
+		, height(height)
+		, backgroundColour(backgroundColour)
+		, fontAttributes(fontAttributes)
+		, inputAttributes(inputAttributes)
+		, options(options)
+		, variableReference(variableReference)
+		, horizontalJustification(horizontalJustification)
+		, length(length)
+		, value(value)
+		, enabled(enabled)
+		{
+		}
 	};
 
 	struct iVtObjectKey_s: iVtObjectObject_s, iVtObjectwMacro_s {
-		iVtObjectKey_s(Colour backgroundColour, uint8_t keyCode) :
-				backgroundColour(backgroundColour), keyCode(keyCode) {
-		}
-
 		Colour backgroundColour;
 		uint8_t keyCode;
+		iVtObjectKey_s(
+	    		ObjectID ID,
+				Colour backgroundColour,
+				uint8_t keyCode)
+		: iVtObjectObject_s(ID)
+		, iVtObjectwMacro_s(ID)
+		, backgroundColour(backgroundColour)
+		, keyCode(keyCode)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectMacro_s: iVtObject_s {
