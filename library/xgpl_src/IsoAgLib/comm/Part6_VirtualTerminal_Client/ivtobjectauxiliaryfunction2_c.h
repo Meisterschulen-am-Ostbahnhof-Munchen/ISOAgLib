@@ -1,5 +1,5 @@
 /*
-  ivtobjectauxiliaryfunction_c.h
+  ivtobjectauxiliaryfunction2_c.h
 
   (C) Copyright 2009 - 2019 by OSB AG
 

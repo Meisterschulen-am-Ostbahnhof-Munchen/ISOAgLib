@@ -1,5 +1,5 @@
 /*
-  ivtobjectauxiliarycontroldesignatorobjectpointer_c.h
+  ivtobjectauxiliarypointer_c.h
 
   (C) Copyright 2009 - 2019 by OSB AG
 
