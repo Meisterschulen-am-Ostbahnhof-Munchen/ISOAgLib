@@ -348,7 +348,7 @@ CommandHandler_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uin
 
 
 bool
-CommandHandler_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, IsoAgLib::Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+CommandHandler_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 {
   return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
@@ -1575,7 +1575,7 @@ bool CommandHandler_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object,
 bool CommandHandler_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 { return sendCommandChangeFillAttributes(apc_object->getID(), newFillType, newFillColour, newFillPatternObject, b_enableReplaceOfCmd); }
 
-bool CommandHandler_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+bool CommandHandler_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 { return sendCommandChangeFontAttributes( apc_object->getID(), newFontColour, newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd); }
 
 bool CommandHandler_c::sendCommandChangeLineAttributes (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd)

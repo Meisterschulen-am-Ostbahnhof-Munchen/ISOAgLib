@@ -54,7 +54,7 @@ public:
   bool sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, Colour newColour,  bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeSize             (uint16_t aui16_objectUid, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeFillAttributes   (uint16_t aui16_objectUid, uint8_t newFillType, Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
-  bool sendCommandChangeFontAttributes   (uint16_t aui16_objectUid, Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeFontAttributes   (uint16_t aui16_objectUid, Colour newFontColour, Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes   (uint16_t aui16_objectUid, Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
   bool sendCommandHideShow               (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true);
   bool sendCommandSelectInputObject      (uint16_t aui16_objectUid, bool b_activate, bool b_enableReplaceOfCmd=true);

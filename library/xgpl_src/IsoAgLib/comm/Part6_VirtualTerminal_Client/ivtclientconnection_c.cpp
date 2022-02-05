@@ -113,7 +113,7 @@ iVtClientConnection_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid
 }
 
 bool
-iVtClientConnection_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
+iVtClientConnection_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, Colour newFontColour, Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 {
   return commandHandler().sendCommandChangeFontAttributes(aui16_objectUid, newFontColour, newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd);
 }

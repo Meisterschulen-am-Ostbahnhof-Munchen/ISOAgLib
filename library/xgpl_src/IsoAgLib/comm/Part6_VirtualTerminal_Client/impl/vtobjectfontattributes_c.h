@@ -63,10 +63,10 @@ public:
      // //////////////////////////////////
   // All special Attribute-Set methods
     virtual void setFontColour(IsoAgLib::Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setFontSize(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setFontSize(IsoAgLib::Font newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setFontType(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setFontStyle(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    void setFontAttributes(IsoAgLib::Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    void setFontAttributes(IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 

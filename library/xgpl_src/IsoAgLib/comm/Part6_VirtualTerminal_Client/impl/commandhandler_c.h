@@ -25,6 +25,7 @@
 #include "ivttypes.h"
 #include "iColour.h"
 #include "iObjectID.h"
+#include "iFont.h"
 #include <IsoAgLib/isoaglib_config.h>
 #include "sendupload_c.h"
 
@@ -85,7 +86,7 @@ public:
   bool sendCommandChangeSize             (IsoAgLib::iVtObject_c*, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeEndPoint         (IsoAgLib::iVtObject_c*, uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeFillAttributes   (IsoAgLib::iVtObject_c*, uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
-  bool sendCommandChangeFontAttributes   (IsoAgLib::iVtObject_c*, IsoAgLib::Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeFontAttributes   (IsoAgLib::iVtObject_c*, IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes   (IsoAgLib::iVtObject_c*, IsoAgLib::Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
   bool sendCommandLockUnlockMask         (IsoAgLib::iVtObject_c*, bool b_lockMask, uint16_t ui16_lockTimeOut);
 
@@ -103,7 +104,7 @@ public:
   bool sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, IsoAgLib::Colour newColour,  bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeSize             (uint16_t aui16_objectUid, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeFillAttributes   (uint16_t aui16_objectUid, uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
-  bool sendCommandChangeFontAttributes   (uint16_t aui16_objectUid, IsoAgLib::Colour newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeFontAttributes   (uint16_t aui16_objectUid, IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes   (uint16_t aui16_objectUid, IsoAgLib::Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
 
 #ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT

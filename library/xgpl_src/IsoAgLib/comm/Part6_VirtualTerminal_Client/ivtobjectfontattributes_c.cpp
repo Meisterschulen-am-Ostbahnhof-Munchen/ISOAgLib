@@ -46,7 +46,7 @@ namespace IsoAgLib {
         vtObjectFontAttributes_c::setFontColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectFontAttributes_c::setFontSize(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectFontAttributes_c::setFontSize(Font newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectFontAttributes_c::setFontSize (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -58,7 +58,7 @@ namespace IsoAgLib {
         vtObjectFontAttributes_c::setFontStyle(newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectFontAttributes_c::setFontAttributes(Colour newFontColour, uint8_t newFontSize, uint8_t newFontType,
+    void iVtObjectFontAttributes_c::setFontAttributes(Colour newFontColour, Font newFontSize, uint8_t newFontType,
                                                       uint8_t newFontStyle, bool b_updateObject,
                                                       bool b_enableReplaceOfCmd) {
         vtObjectFontAttributes_c::setFontAttributes(newFontColour, newFontSize, newFontType, newFontStyle, b_updateObject, b_enableReplaceOfCmd);
