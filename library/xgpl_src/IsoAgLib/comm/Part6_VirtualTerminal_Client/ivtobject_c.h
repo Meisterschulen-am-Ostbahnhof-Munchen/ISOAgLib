@@ -502,12 +502,7 @@ protected:
       Colour backgroundColour;
   };
 
-  struct iVtObjectStringVariable_s : iVtObject_s {
-      iVtObjectStringVariable_s(uint16_t length, char *value) : length(length), value(value) {}
 
-      uint16_t length;
-    char* value;
-  };
 
 
 

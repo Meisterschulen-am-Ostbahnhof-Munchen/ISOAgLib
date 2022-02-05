@@ -13,10 +13,7 @@ namespace IsoAgLib {
 
     uint16_t iVtObjectStringVariable_c::objectType() { return VT_OBJECT_TYPE_STRING_VARIABLE; }
 
-    iVtObjectStringVariable_c::iVtObjectStringVariable_c(
-            const iVtObject_c::iVtObjectStringVariable_s *vtObjectStringVariableSROM, int ai_multitonInst)
-            :vtObjectStringVariable_c(vtObjectStringVariableSROM , ai_multitonInst)
-    {}
+
 
     void iVtObjectStringVariable_c::setValueCopy(const char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);

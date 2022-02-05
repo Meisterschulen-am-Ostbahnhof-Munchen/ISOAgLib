@@ -27,6 +27,20 @@
 
 namespace __IsoAgLib {
 
+
+
+struct vtObjectStringVariable_c::iVtObjectStringVariable_s : iVtObject_s {
+    uint16_t length;
+    char* value;
+    iVtObjectStringVariable_s(
+  		  uint16_t length,
+			  char *value)
+    : length(length)
+    , value(value)
+    {}
+};
+
+
 int16_t
 vtObjectStringVariable_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
@@ -160,11 +174,13 @@ vtObjectStringVariable_c::getString()
 }
 
     vtObjectStringVariable_c::vtObjectStringVariable_c(
-            const IsoAgLib::iVtObject_c::iVtObjectStringVariable_s *vtObjectStringVariableSROM, int ai_multitonInst)
+            vtObjectStringVariable_c::iVtObjectStringVariable_s *vtObjectStringVariableSROM, int ai_multitonInst)
             :iVtObjectString_c((iVtObjectString_s*) vtObjectStringVariableSROM , ai_multitonInst)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectStringVariable_s *vtObjectStringVariable_c::get_vtObjectStringVariable_a() { return (iVtObjectStringVariable_s *)&(get_vtObject_a()); }
+    vtObjectStringVariable_c::iVtObjectStringVariable_s *vtObjectStringVariable_c::get_vtObjectStringVariable_a() {
+    	return vtObject_a;
+    }
 
     void vtObjectStringVariable_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 
