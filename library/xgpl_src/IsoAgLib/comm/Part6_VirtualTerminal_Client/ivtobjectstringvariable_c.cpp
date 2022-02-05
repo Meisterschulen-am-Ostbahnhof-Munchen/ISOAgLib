@@ -44,5 +44,16 @@ namespace IsoAgLib {
 
     uint16_t iVtObjectStringVariable_c::getObjectType() const { return objectType(); }
 
+iVtObjectStringVariable_c::iVtObjectStringVariable_c(
+		iVtClientObjectPool_c *pool,
+		ObjectID ID,
+		char *value)
+	: vtObjectStringVariable_c(pool->getAiMultitonInst()
+	, ID
+	, value /* size length+1 (0-termination intern!) */
+	)
+{
+	pool->Append(this);
+}
 
 } // IsoAgLib

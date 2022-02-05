@@ -33,9 +33,11 @@ struct vtObjectStringVariable_c::iVtObjectStringVariable_s : iVtObject_s {
     uint16_t length;
     char* value;
     iVtObjectStringVariable_s(
-  		  uint16_t length,
-			  char *value)
-    : length(length)
+    		IsoAgLib::ObjectID ID,
+  		    uint16_t length,
+			char *value)
+    : iVtObject_s(ID)
+    , length(length)
     , value(value)
     {}
 };
@@ -177,6 +179,19 @@ vtObjectStringVariable_c::getString()
             vtObjectStringVariable_c::iVtObjectStringVariable_s *vtObjectStringVariableSROM, int ai_multitonInst)
             :iVtObjectString_c((iVtObjectString_s*) vtObjectStringVariableSROM , ai_multitonInst)
     {}
+
+    vtObjectStringVariable_c::vtObjectStringVariable_c(
+    		int ai_multitonInst,
+    		IsoAgLib::ObjectID ID,
+    		char *value)
+    	:vtObjectStringVariable_c(
+    			new iVtObjectStringVariable_s(
+    					ID,
+    					strlen(value),
+    					value),
+    			ai_multitonInst)
+    {
+    }
 
     vtObjectStringVariable_c::iVtObjectStringVariable_s *vtObjectStringVariable_c::get_vtObjectStringVariable_a() {
     	return vtObject_a;

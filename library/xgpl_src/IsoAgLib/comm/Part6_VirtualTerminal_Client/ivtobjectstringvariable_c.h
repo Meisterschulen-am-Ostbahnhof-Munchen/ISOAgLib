@@ -35,7 +35,11 @@ class iVtObjectStringVariable_c : public __IsoAgLib::vtObjectStringVariable_c
 {
 public:
   static uint16_t objectType();
-
+  iVtObjectStringVariable_c(
+		  iVtClientObjectPool_c* pool,
+		  ObjectID ID = autoID,
+		  char* value = nullptr /* size length+1 (0-termination intern!) */
+		  );
   void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
   void setValueCopyUTF8(const char* newValue, uint8_t aui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

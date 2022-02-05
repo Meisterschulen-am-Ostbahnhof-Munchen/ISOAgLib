@@ -46,6 +46,11 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
+  vtObjectStringVariable_c(
+		  int ai_multitonInst,
+		  IsoAgLib::ObjectID ID,
+		  char *value);
+
   vtObjectStringVariable_c(iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst);
   iVtObjectStringVariable_s* get_vtObjectStringVariable_a();
   uint32_t fitTerminal() const;
