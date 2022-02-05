@@ -34,47 +34,21 @@ namespace IsoAgLib {
 class iVtObjectStringVariable_c : public __IsoAgLib::vtObjectStringVariable_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_STRING_VARIABLE; }
-
-
-  iVtObjectStringVariable_c(const iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst)
-  :vtObjectStringVariable_c(vtObjectStringVariableSROM , ai_multitonInst)
-  {}
-
-
-
-  void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
+  static uint16_t objectType();
+  iVtObjectStringVariable_c(const iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst);
+  void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
-  void setValueCopyUTF8(const char* newValue, uint8_t aui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectStringVariable_c::setValueCopyUTF8 (newValue, aui8_fontType, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setValueCopyUTF8(const char* newValue, iVtObjectOutputString_c& arc_ops, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-	  //TODO!!
-    //const uint8_t cui8_fontType = arc_ops.get_vtObjectOutputString_a().fontAttributes->get_vtObjectFontAttributes_a().fontType;
-    //vtObjectStringVariable_c::setValueCopyUTF8 (newValue, cui8_fontType, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectStringVariable_c::setValueCopyUTF16 (newValue, length, b_updateObject, b_enableReplaceOfCmd);
-  }
-
+  void setValueCopyUTF8(const char* newValue, uint8_t aui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setValueCopyUTF8(const char* newValue, iVtObjectOutputString_c& arc_ops, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
-  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectStringVariable_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  const char* getString() { return vtObjectStringVariable_c::getString(); }
-
+  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  const char* getString();
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectStringVariable_c::updateObjectType(); }
   */
-
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() const;
 };
 
 } // IsoAgLib

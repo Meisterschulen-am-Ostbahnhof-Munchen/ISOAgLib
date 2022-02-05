@@ -44,20 +44,14 @@ public:
 
 
   void updateSelectable( uint8_t newSelectable );
-
   void changeActiveMask(iVtObjectMask_c* apc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-
   void changeBackgroundColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false);
-
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
   bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
 
   //! @param aui8_volume The Volume given in percent. Range 0..100
   bool setAudioVolume (uint8_t aui8_volume);
-
   bool setColourMapOrPalette (uint16_t aui16_objectId);
 
   // ///////////////////////// getter for attributes
