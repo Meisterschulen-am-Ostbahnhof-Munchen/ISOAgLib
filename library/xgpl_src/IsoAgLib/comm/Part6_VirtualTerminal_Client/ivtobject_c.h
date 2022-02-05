@@ -109,24 +109,7 @@ protected:
   };
 
 protected:
-  struct iVtObjectAlarmMask_s : iVtObjectMask_s {
-    Colour backgroundColour;
-    iVtObjectSoftKeyMask_c* softKeyMask;
-    uint8_t priority;
-    uint8_t acousticSignal;
-    explicit iVtObjectAlarmMask_s(
-    		ObjectID ID = autoID,
-    		Colour backgroundColour = BLACK,
-			iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
-			uint8_t priority = 0,
-            uint8_t acousticSignal = 0)
-    : iVtObjectMask_s(ID)
-    , backgroundColour(backgroundColour)
-    , softKeyMask(softKeyMask)
-    , priority(priority)
-    , acousticSignal(acousticSignal)
-    {}
-  };
+
 
 
 

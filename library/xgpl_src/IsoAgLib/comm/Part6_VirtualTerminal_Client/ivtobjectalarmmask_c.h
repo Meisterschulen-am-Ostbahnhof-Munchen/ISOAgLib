@@ -34,9 +34,23 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_ALARM_MASK; }
 
 
-  iVtObjectAlarmMask_c(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst)
-  :vtObjectAlarmMask_c(vtObjectAlarmMaskSROM , ai_multitonInst)
-  {}
+  iVtObjectAlarmMask_c(
+			      iVtClientObjectPool_c* pool,
+				  ObjectID ID = autoID,
+				  Colour backgroundColour = BLACK,
+				  iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
+				  uint8_t priority = 0,
+		          uint8_t acousticSignal = 0)
+	:vtObjectAlarmMask_c(
+					pool->getAiMultitonInst(),
+					  ID,
+					  backgroundColour,
+					  softKeyMask,
+					  priority,
+			          acousticSignal)
+	{
+		pool->Append(this);
+	}
 
 
   ~iVtObjectAlarmMask_c(){}

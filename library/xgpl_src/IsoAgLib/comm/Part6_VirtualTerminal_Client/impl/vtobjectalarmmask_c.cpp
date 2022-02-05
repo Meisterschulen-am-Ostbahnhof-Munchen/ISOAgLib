@@ -28,6 +28,27 @@
 
 namespace __IsoAgLib {
 
+
+
+struct vtObjectAlarmMask_c::iVtObjectAlarmMask_s : iVtObjectMask_s {
+  IsoAgLib::Colour backgroundColour;
+  IsoAgLib::iVtObjectSoftKeyMask_c* softKeyMask;
+  uint8_t priority;
+  uint8_t acousticSignal;
+  explicit iVtObjectAlarmMask_s(
+		  IsoAgLib::ObjectID ID,
+		  IsoAgLib::Colour backgroundColour,
+		  IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask,
+		  uint8_t priority,
+          uint8_t acousticSignal)
+  : iVtObjectMask_s(ID)
+  , backgroundColour(backgroundColour)
+  , softKeyMask(softKeyMask)
+  , priority(priority)
+  , acousticSignal(acousticSignal)
+  {}
+};
+
 int16_t
 vtObjectAlarmMask_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
@@ -148,7 +169,11 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
   }
 }
 #endif
-    IsoAgLib::iVtObject_c::iVtObjectAlarmMask_s *vtObjectAlarmMask_c::get_vtObjectAlarmMask_a() { return dynamic_cast<iVtObjectAlarmMask_s *>(&(get_vtObject_a())); }
+
+
+vtObjectAlarmMask_c::iVtObjectAlarmMask_s *vtObjectAlarmMask_c::get_vtObjectAlarmMask_a() {
+	return vtObject_a;
+}
 
     void vtObjectAlarmMask_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour) : 0, sizeof(iVtObjectAlarmMask_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
@@ -162,9 +187,34 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAlarmMask_a(), acousticSignal) : 0, sizeof(iVtObjectAlarmMask_s), 4, newValue, newValue, b_enableReplaceOfCmd);
     }
 
-    vtObjectAlarmMask_c::vtObjectAlarmMask_c(const IsoAgLib::iVtObject_c::iVtObjectAlarmMask_s *vtObjectAlarmMaskSROM,
-                                             int ai_multitonInst)
-            :iVtObjectMask_c((iVtObjectMask_s*) vtObjectAlarmMaskSROM , ai_multitonInst)
+
+
+    vtObjectAlarmMask_c::vtObjectAlarmMask_c(
+  		  int ai_multitonInst,
+  		  IsoAgLib::ObjectID ID,
+  		  IsoAgLib::Colour backgroundColour,
+  		  IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask,
+  		  uint8_t priority,
+  		  uint8_t acousticSignal)
+    :vtObjectAlarmMask_c(
+    		new iVtObjectAlarmMask_s(
+    		  		  ID,
+    		  		  backgroundColour,
+    		  		  softKeyMask,
+    		  		  priority,
+    		  		  acousticSignal
+    				),
+					ai_multitonInst
+  		  )
+    {
+
+    }
+
+    vtObjectAlarmMask_c::vtObjectAlarmMask_c(
+    		vtObjectAlarmMask_c::iVtObjectAlarmMask_s *vtObjectAlarmMaskSROM,
+            int ai_multitonInst)
+            : iVtObjectMask_c((iVtObjectMask_s*) vtObjectAlarmMaskSROM
+            , ai_multitonInst)
     {}
 
 

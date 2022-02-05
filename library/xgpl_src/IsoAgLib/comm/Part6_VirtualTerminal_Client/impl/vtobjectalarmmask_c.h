@@ -32,12 +32,30 @@ namespace __IsoAgLib {
 
 class vtObjectAlarmMask_c : public IsoAgLib::iVtObjectMask_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectAlarmMask_s;
+
+	// Pointer to the internal implementation
+	iVtObjectAlarmMask_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectAlarmMask_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectAlarmMask_c(const iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst);
+  vtObjectAlarmMask_c(
+		  int ai_multitonInst,
+		  IsoAgLib::ObjectID ID,
+		  IsoAgLib::Colour backgroundColour,
+		  IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask,
+		  uint8_t priority,
+		  uint8_t acousticSignal);
+
+  vtObjectAlarmMask_c(iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst);
   iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a();
   vtObjectAlarmMask_c();
   uint32_t fitTerminal() const;
