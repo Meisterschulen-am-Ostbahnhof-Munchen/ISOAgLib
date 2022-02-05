@@ -454,20 +454,6 @@ protected:
 	};
 
 	struct iVtObjectOutputNumber_s: iVtObjectwMacro_s {
-		iVtObjectOutputNumber_s(				ObjectID ID,uint16_t width, uint16_t height,
-				Colour backgroundColour,
-				iVtObjectFontAttributes_c *fontAttributes, uint8_t options,
-				iVtObject_c *variableReference, uint32_t value, int32_t offset,
-				float scale, uint8_t numberOfDecimals, uint8_t format,
-				uint8_t horizontalJustification) :
-				width(width), height(height), backgroundColour(
-						backgroundColour), fontAttributes(fontAttributes), options(
-						options), variableReference(variableReference), value(
-						value), offset(offset), scale(scale), numberOfDecimals(
-						numberOfDecimals), format(format), horizontalJustification(
-						horizontalJustification) {
-		}
-
 		uint16_t width;
 		uint16_t height;
 		Colour backgroundColour;
@@ -480,26 +466,40 @@ protected:
 		uint8_t numberOfDecimals;
 		uint8_t format;
 		uint8_t horizontalJustification;
+		iVtObjectOutputNumber_s(
+				ObjectID ID,
+				uint16_t width,
+				uint16_t height,
+				Colour backgroundColour,
+				iVtObjectFontAttributes_c *fontAttributes,
+				uint8_t options,
+				iVtObject_c *variableReference,
+				uint32_t value,
+				int32_t offset,
+				float scale,
+				uint8_t numberOfDecimals,
+				uint8_t format,
+				uint8_t horizontalJustification)
+		: iVtObjectwMacro_s(ID)
+		, width(width)
+		, height(height)
+		, backgroundColour(backgroundColour)
+		, fontAttributes(fontAttributes)
+		, options(options)
+		, variableReference(variableReference)
+		, value(value)
+		, offset(offset)
+		, scale(scale)
+		, numberOfDecimals(numberOfDecimals)
+		, format(format)
+		, horizontalJustification(horizontalJustification)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
-		iVtObjectPictureGraphic_s(				ObjectID ID,uint16_t width, uint16_t actualWidth,
-				uint16_t actualHeight, uint8_t format, uint8_t options,
-				Colour transparencyColour, uint32_t numberOfBytesInRawData0,
-				const uint8_t *rawData0, uint32_t numberOfBytesInRawData1,
-				const uint8_t *rawData1, uint32_t numberOfBytesInRawData2,
-				const uint8_t *rawData2, uint8_t numberOfFixedBitmapsToFollow,
-				const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow) :
-				width(width), actualWidth(actualWidth), actualHeight(
-						actualHeight), format(format), options(options), transparencyColour(
-						transparencyColour), numberOfBytesInRawData0(
-						numberOfBytesInRawData0), rawData0(rawData0), numberOfBytesInRawData1(
-						numberOfBytesInRawData1), rawData1(rawData1), numberOfBytesInRawData2(
-						numberOfBytesInRawData2), rawData2(rawData2), numberOfFixedBitmapsToFollow(
-						numberOfFixedBitmapsToFollow), fixedBitmapsToFollow(
-						fixedBitmapsToFollow) {
-		}
-
 		uint16_t width;
 		uint16_t actualWidth;
 		uint16_t actualHeight;
@@ -514,29 +514,59 @@ protected:
 		const uint8_t *rawData2;
 		uint8_t numberOfFixedBitmapsToFollow;
 		const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow;
+		iVtObjectPictureGraphic_s(
+				ObjectID ID,
+				uint16_t width,
+				uint16_t actualWidth,
+				uint16_t actualHeight,
+				uint8_t format,
+				uint8_t options,
+				Colour transparencyColour,
+				uint32_t numberOfBytesInRawData0,
+				const uint8_t *rawData0,
+				uint32_t numberOfBytesInRawData1,
+				const uint8_t *rawData1,
+				uint32_t numberOfBytesInRawData2,
+				const uint8_t *rawData2,
+				uint8_t numberOfFixedBitmapsToFollow,
+				const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow)
+		: iVtObjectwMacro_s(ID)
+		, width(width)
+		, actualWidth(actualWidth)
+		, actualHeight(actualHeight)
+		, format(format)
+		, options(options)
+		, transparencyColour(transparencyColour)
+		, numberOfBytesInRawData0(numberOfBytesInRawData0)
+		, rawData0(rawData0)
+		, numberOfBytesInRawData1(numberOfBytesInRawData1)
+		, rawData1(rawData1)
+		, numberOfBytesInRawData2(numberOfBytesInRawData2)
+		, rawData2(rawData2)
+		, numberOfFixedBitmapsToFollow(numberOfFixedBitmapsToFollow)
+		, fixedBitmapsToFollow(fixedBitmapsToFollow) {
+		}
+
+
 	};
 
 	struct iVtObjectColourMap_s: iVtObject_s {
-		iVtObjectColourMap_s(				ObjectID ID,uint16_t numOfColourIdxToFollow,
-				const uint8_t *colourMapArray) :
-				numOfColourIdxToFollow(numOfColourIdxToFollow), colourMapArray(
-						colourMapArray) {
-		}
-
 		uint16_t numOfColourIdxToFollow;
 		const uint8_t *colourMapArray;
+		iVtObjectColourMap_s(
+				ObjectID ID,
+				uint16_t numOfColourIdxToFollow,
+				const uint8_t *colourMapArray)
+		: iVtObject_s(ID)
+		, numOfColourIdxToFollow(numOfColourIdxToFollow)
+		, colourMapArray(colourMapArray)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectPolygon_s: iVtObjectwMacro_s {
-		iVtObjectPolygon_s(				ObjectID ID,uint16_t width, uint16_t height,
-				iVtObjectLineAttributes_c *lineAttributes,
-				iVtObjectFillAttributes_c *fillAttributes, uint8_t polygonType,
-				uint8_t numberOfPoints, const repeat_x_y_s *pointsToFollow) :
-				width(width), height(height), lineAttributes(lineAttributes), fillAttributes(
-						fillAttributes), polygonType(polygonType), numberOfPoints(
-						numberOfPoints), pointsToFollow(pointsToFollow) {
-		}
-
 		uint16_t width;
 		uint16_t height;
 		iVtObjectLineAttributes_c *lineAttributes;
@@ -544,6 +574,27 @@ protected:
 		uint8_t polygonType;
 		uint8_t numberOfPoints;
 		const repeat_x_y_s *pointsToFollow;
+		iVtObjectPolygon_s(
+				ObjectID ID,
+				uint16_t width,
+				uint16_t height,
+				iVtObjectLineAttributes_c *lineAttributes,
+				iVtObjectFillAttributes_c *fillAttributes,
+				uint8_t polygonType,
+				uint8_t numberOfPoints,
+				const repeat_x_y_s *pointsToFollow)
+		: iVtObjectwMacro_s(ID)
+		, width(width)
+		, height(height)
+		, lineAttributes(lineAttributes)
+		, fillAttributes(fillAttributes)
+		, polygonType(polygonType)
+		, numberOfPoints(numberOfPoints)
+		, pointsToFollow(pointsToFollow)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectRectangle_s: iVtObjectwMacro_s {
@@ -559,7 +610,8 @@ protected:
 				uint16_t height,
 				uint8_t lineSuppression,
 				iVtObjectFillAttributes_c *fillAttributes)
-		: lineAttributes(lineAttributes)
+		: iVtObjectwMacro_s(ID)
+		, lineAttributes(lineAttributes)
 		, width(width)
 		, height(height)
 		, lineSuppression(lineSuppression)
