@@ -51,7 +51,7 @@ public:
 			int ai_multitonInst,
 			IsoAgLib::ObjectID ID,
 			IsoAgLib::Colour fontColour,
-			uint8_t fontSize,
+			IsoAgLib::Font fontSize,
 			uint8_t fontType, // always =0 ISO_LATIN_1
 			uint8_t fontStyle);
 

@@ -24,7 +24,7 @@ namespace IsoAgLib {
 			iVtClientObjectPool_c* pool,
 			ObjectID ID,
 			Colour fontColour,
-			uint8_t fontSize,
+			Font fontSize,
 			uint8_t fontType, // always =0 ISO_LATIN_1
 			uint8_t fontStyle)
 	:vtObjectFontAttributes_c(

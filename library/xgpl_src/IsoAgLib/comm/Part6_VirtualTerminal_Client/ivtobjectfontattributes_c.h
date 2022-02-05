@@ -32,7 +32,7 @@ public:
 		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
 		Colour fontColour = BLACK,
-		uint8_t fontSize = 1,
+		Font fontSize = FONT8x8,
 		uint8_t fontType = 0, // always =0 ISO_LATIN_1
 		uint8_t fontStyle = 0);
 

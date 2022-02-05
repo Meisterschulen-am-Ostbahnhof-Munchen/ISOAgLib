@@ -24,6 +24,7 @@
 #include "ivttypes.h"
 #include "iColour.h"
 #include "iObjectID.h"
+#include "iFont.h"
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/util/iassert.h>
