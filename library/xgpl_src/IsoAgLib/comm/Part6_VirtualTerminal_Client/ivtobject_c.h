@@ -332,35 +332,23 @@ protected:
 		, keyCode(keyCode)
 		{
 		}
-
-
 	};
 
 	struct iVtObjectMacro_s: iVtObject_s {
-		iVtObjectMacro_s(uint16_t numBytesToFollow,
-				const uint8_t *commandsToFollow) :
-				numBytesToFollow(numBytesToFollow), commandsToFollow(
-						commandsToFollow) {
-		}
-
 		uint16_t numBytesToFollow;
 		const uint8_t *commandsToFollow;
+		iVtObjectMacro_s(
+				ObjectID ID,
+				uint16_t numBytesToFollow,
+				const uint8_t *commandsToFollow)
+		: iVtObject_s(ID)
+		, numBytesToFollow(numBytesToFollow)
+		, commandsToFollow(commandsToFollow)
+		{
+		}
 	};
 
 	struct iVtObjectMeter_s: iVtObjectwMacro_s {
-		iVtObjectMeter_s(uint16_t width, Colour needleColour,
-				Colour borderColour, Colour arcAndTickColour, uint8_t options,
-				uint8_t numberOfTicks, uint8_t startAngle, uint8_t endAngle,
-				uint16_t minValue, uint16_t maxValue,
-				iVtObject_c *variableReference, uint16_t value) :
-				width(width), needleColour(needleColour), borderColour(
-						borderColour), arcAndTickColour(arcAndTickColour), options(
-						options), numberOfTicks(numberOfTicks), startAngle(
-						startAngle), endAngle(endAngle), minValue(minValue), maxValue(
-						maxValue), variableReference(variableReference), value(
-						value) {
-		}
-
 		uint16_t width;
 		Colour needleColour;
 		Colour borderColour;
@@ -373,22 +361,59 @@ protected:
 		uint16_t maxValue;
 		iVtObject_c *variableReference;
 		uint16_t value;
+		iVtObjectMeter_s(
+				ObjectID ID,
+				uint16_t width,
+				Colour needleColour,
+				Colour borderColour,
+				Colour arcAndTickColour,
+				uint8_t options,
+				uint8_t numberOfTicks,
+				uint8_t startAngle,
+				uint8_t endAngle,
+				uint16_t minValue,
+				uint16_t maxValue,
+				iVtObject_c *variableReference,
+				uint16_t value)
+		: iVtObjectwMacro_s(ID)
+		, width(width)
+		, needleColour(needleColour)
+		, borderColour(borderColour)
+		, arcAndTickColour(arcAndTickColour)
+		, options(options)
+		, numberOfTicks(numberOfTicks)
+		, startAngle(startAngle)
+		, endAngle(endAngle)
+		, minValue(minValue)
+		, maxValue(maxValue)
+		, variableReference(variableReference)
+		, value(value)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectNumberVariable_s: iVtObject_s {
-		iVtObjectNumberVariable_s(uint32_t value) :
-				value(value) {
-		}
-
 		uint32_t value;
+		iVtObjectNumberVariable_s(
+				ObjectID ID,
+				uint32_t value)
+		: iVtObject_s(ID)
+		, value(value)
+		{
+		}
 	};
 
 	struct iVtObjectObjectPointer_s: iVtObject_s {
-		iVtObjectObjectPointer_s(iVtObject_c *value) :
-				value(value) {
-		}
-
 		iVtObject_c *value;
+		iVtObjectObjectPointer_s(
+				ObjectID ID,
+				iVtObject_c *value)
+		: iVtObject_s(ID)
+		, value(value)
+		{
+		}
 	};
 
 	struct iVtObjectOutputList_s: iVtObjectObject_s, iVtObjectwMacro_s {
