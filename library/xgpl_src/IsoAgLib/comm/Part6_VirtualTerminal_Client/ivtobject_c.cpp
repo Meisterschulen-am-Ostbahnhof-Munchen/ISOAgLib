@@ -128,6 +128,22 @@ namespace IsoAgLib {
     }
 
 
+	// implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
+	// constructor/functions direct in scope of iVtObject_c
+	iVtObject_c::iVtObject_c() :
+	vtObject_a(NULL),
+	p_parentButtonObject(NULL)
+	{
+	s_properties.flags = 0;
+	s_properties.clientId = 0;
+	}
+
+	uint16_t iVtObject_c::getID() const
+	{
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+	}
+
 
 
 } // end of namespace IsoAgLib
