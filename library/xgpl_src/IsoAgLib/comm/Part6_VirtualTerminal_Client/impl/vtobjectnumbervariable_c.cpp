@@ -26,6 +26,22 @@
 
 namespace __IsoAgLib {
 
+
+
+
+struct vtObjectNumberVariable_c::iVtObjectNumberVariable_s: iVtObject_s {
+	uint32_t value;
+	iVtObjectNumberVariable_s(
+			IsoAgLib::ObjectID ID,
+			uint32_t value)
+	: iVtObject_s(ID)
+	, value(value)
+	{
+	}
+};
+
+
+
 int16_t
 vtObjectNumberVariable_c::stream(uint8_t* destMemory,
                                  uint16_t /*maxBytes*/,
@@ -89,15 +105,21 @@ vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*p
     saveValue32(MACRO_getStructOffset(get_vtObjectNumberVariable_a(), value), sizeof(iVtObjectNumberVariable_s), convertLittleEndianStringUi32(pui8_attributeValue));
   */
 }
+#endif
+
 
     vtObjectNumberVariable_c::vtObjectNumberVariable_c(
-            const IsoAgLib::iVtObject_c::iVtObjectNumberVariable_s *vtObjectNumberVariableSROM, int ai_multitonInst)
+    		vtObjectNumberVariable_c::iVtObjectNumberVariable_s *vtObjectNumberVariableSROM, int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectNumberVariableSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectNumberVariableSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectNumberVariable_s *vtObjectNumberVariable_c::get_vtObjectNumberVariable_a() { return (iVtObjectNumberVariable_s *)&(get_vtObject_a()); }
+    vtObjectNumberVariable_c::iVtObjectNumberVariable_s *vtObjectNumberVariable_c::get_vtObjectNumberVariable_a()
+    {
+    	return vtObject_a;
+    }
 
-#endif
+
 
 } // __IsoAgLib
 

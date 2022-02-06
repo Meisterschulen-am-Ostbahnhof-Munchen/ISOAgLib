@@ -33,12 +33,21 @@ namespace __IsoAgLib {
 
 class vtObjectNumberVariable_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectNumberVariable_s;
+
+	// Pointer to the internal implementation
+	iVtObjectNumberVariable_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectNumberVariable_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectNumberVariable_c(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , int ai_multitonInst);
+  vtObjectNumberVariable_c(iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , int ai_multitonInst);
   iVtObjectNumberVariable_s* get_vtObjectNumberVariable_a();
   vtObjectNumberVariable_c();
   uint32_t fitTerminal() const;

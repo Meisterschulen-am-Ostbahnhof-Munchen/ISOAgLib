@@ -31,12 +31,6 @@ class iVtObjectNumberVariable_c : public __IsoAgLib::vtObjectNumberVariable_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_NUMBER_VARIABLE; }
 
-  iVtObjectNumberVariable_c(const iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , int ai_multitonInst)
-  :vtObjectNumberVariable_c(vtObjectNumberVariableSROM , ai_multitonInst)
-  {}
-
-  const iVtObjectNumberVariable_s& get_vtObjectNumberVariable_a() { return *vtObjectNumberVariable_c::get_vtObjectNumberVariable_a(); }
-
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     vtObjectNumberVariable_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd); }
 

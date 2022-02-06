@@ -166,16 +166,6 @@ protected:
 
 
 
-	struct iVtObjectNumberVariable_s: iVtObject_s {
-		uint32_t value;
-		iVtObjectNumberVariable_s(
-				ObjectID ID,
-				uint32_t value)
-		: iVtObject_s(ID)
-		, value(value)
-		{
-		}
-	};
 
 	struct iVtObjectObjectPointer_s: iVtObject_s {
 		iVtObject_c *value;
