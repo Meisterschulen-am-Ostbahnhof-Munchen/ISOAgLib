@@ -34,12 +34,22 @@ namespace __IsoAgLib {
 
 class vtObjectInputString_c : public IsoAgLib::iVtObjectString_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectInputString_s;
+
+	// Pointer to the internal implementation
+	iVtObjectInputString_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectInputString_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectInputString_c(const iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst);
+  vtObjectInputString_c(iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst);
   iVtObjectInputString_s* get_vtObjectInputString_a();
   uint32_t fitTerminal() const;
   const char* getString();

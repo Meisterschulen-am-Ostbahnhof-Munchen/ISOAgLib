@@ -31,11 +31,6 @@ class iVtObjectMeter_c : public __IsoAgLib::vtObjectMeter_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_METER; }
 
-  iVtObjectMeter_c(const iVtObjectMeter_s* vtObjectMeterSROM , int ai_multitonInst)
-  :vtObjectMeter_c(vtObjectMeterSROM , ai_multitonInst)
-  {}
-
-  const iVtObjectMeter_s& get_vtObjectMeter_a() { return *vtObjectMeter_c::get_vtObjectMeter_a(); }
 
   void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);

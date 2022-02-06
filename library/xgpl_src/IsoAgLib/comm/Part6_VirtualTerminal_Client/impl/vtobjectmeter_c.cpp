@@ -28,6 +28,52 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectMeter_c::iVtObjectMeter_s: iVtObjectwMacro_s {
+	uint16_t width;
+	IsoAgLib::Colour needleColour;
+	IsoAgLib::Colour borderColour;
+	IsoAgLib::Colour arcAndTickColour;
+	uint8_t options;
+	uint8_t numberOfTicks;
+	uint8_t startAngle;
+	uint8_t endAngle;
+	uint16_t minValue;
+	uint16_t maxValue;
+	IsoAgLib::iVtObject_c *variableReference;
+	uint16_t value;
+	iVtObjectMeter_s(
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			IsoAgLib::Colour needleColour,
+			IsoAgLib::Colour borderColour,
+			IsoAgLib::Colour arcAndTickColour,
+			uint8_t options,
+			uint8_t numberOfTicks,
+			uint8_t startAngle,
+			uint8_t endAngle,
+			uint16_t minValue,
+			uint16_t maxValue,
+			IsoAgLib::iVtObject_c *variableReference,
+			uint16_t value)
+    : iVtObject_s(ID)
+	, iVtObjectwMacro_s(ID)
+	, width(width)
+	, needleColour(needleColour)
+	, borderColour(borderColour)
+	, arcAndTickColour(arcAndTickColour)
+	, options(options)
+	, numberOfTicks(numberOfTicks)
+	, startAngle(startAngle)
+	, endAngle(endAngle)
+	, minValue(minValue)
+	, maxValue(maxValue)
+	, variableReference(variableReference)
+	, value(value)
+	{
+	}
+};
+
 int16_t
 vtObjectMeter_c::stream(uint8_t* destMemory,
                         uint16_t maxBytes,
@@ -233,12 +279,16 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
   }
 }
 #endif
-    vtObjectMeter_c::vtObjectMeter_c(const IsoAgLib::iVtObject_c::iVtObjectMeter_s *vtObjectMeterSROM,
+    vtObjectMeter_c::vtObjectMeter_c(vtObjectMeter_c::iVtObjectMeter_s *vtObjectMeterSROM,
                                      int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectMeterSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectMeterSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectMeter_s *vtObjectMeter_c::get_vtObjectMeter_a() { return dynamic_cast<iVtObjectMeter_s *>(&(get_vtObject_a())); }
+    vtObjectMeter_c::iVtObjectMeter_s *vtObjectMeter_c::get_vtObjectMeter_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectMeter_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), width) : 0, sizeof(iVtObjectMeter_s), 1 /* "Width" */, newValue, b_enableReplaceOfCmd);

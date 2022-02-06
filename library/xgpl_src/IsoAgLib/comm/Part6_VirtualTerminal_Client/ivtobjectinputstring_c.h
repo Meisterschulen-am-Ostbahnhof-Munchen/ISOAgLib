@@ -31,12 +31,6 @@ class iVtObjectInputString_c : public __IsoAgLib::vtObjectInputString_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_STRING; }
 
-  iVtObjectInputString_c(const iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst)
-  :vtObjectInputString_c(vtObjectInputStringSROM , ai_multitonInst)
-  {}
-
-  const iVtObjectInputString_s& get_vtObjectInputString_a() { return *vtObjectInputString_c::get_vtObjectInputString_a(); }
-
   const char* getString() { return vtObjectInputString_c::getString(); }
 
   void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -89,10 +83,10 @@ public:
     vtObjectInputString_c::setHorizontalJustification (newHorizontalJustification, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1 | (get_vtObjectInputString_a().enabled & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0 | (get_vtObjectInputString_a().enabled & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
 
-  bool getEnabled() { return get_vtObjectInputString_a().enabled & 0x1; }
+  bool getEnabled(); //TODO
 
   bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

@@ -147,48 +147,6 @@ protected:
 
 
 
-  struct iVtObjectInputString_s: iVtObjectString_s, iVtObjectwMacro_s {
-		uint16_t width;
-		uint16_t height;
-		Colour backgroundColour;
-		iVtObjectFontAttributes_c *fontAttributes;
-		iVtObjectInputAttributes_c *inputAttributes;
-		uint8_t options;
-		iVtObjectStringVariable_c *variableReference;
-		uint8_t horizontalJustification;
-		uint16_t length;
-		char *value;
-		uint8_t enabled;
-		iVtObjectInputString_s(
-	    		ObjectID ID,
-				uint16_t width,
-				uint16_t height,
-				Colour backgroundColour,
-				iVtObjectFontAttributes_c *fontAttributes,
-				iVtObjectInputAttributes_c *inputAttributes,
-				uint8_t options,
-				iVtObjectStringVariable_c *variableReference,
-				uint8_t horizontalJustification,
-				uint16_t length,
-				char *value,
-				uint8_t enabled)
-		: iVtObject_s(ID)
-		, iVtObjectString_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, width(width)
-		, height(height)
-		, backgroundColour(backgroundColour)
-		, fontAttributes(fontAttributes)
-		, inputAttributes(inputAttributes)
-		, options(options)
-		, variableReference(variableReference)
-		, horizontalJustification(horizontalJustification)
-		, length(length)
-		, value(value)
-		, enabled(enabled)
-		{
-		}
-	};
 
 	struct iVtObjectKey_s: iVtObjectObject_s, iVtObjectwMacro_s {
 		Colour backgroundColour;
@@ -220,50 +178,7 @@ protected:
 		}
 	};
 
-	struct iVtObjectMeter_s: iVtObjectwMacro_s {
-		uint16_t width;
-		Colour needleColour;
-		Colour borderColour;
-		Colour arcAndTickColour;
-		uint8_t options;
-		uint8_t numberOfTicks;
-		uint8_t startAngle;
-		uint8_t endAngle;
-		uint16_t minValue;
-		uint16_t maxValue;
-		iVtObject_c *variableReference;
-		uint16_t value;
-		iVtObjectMeter_s(
-				ObjectID ID,
-				uint16_t width,
-				Colour needleColour,
-				Colour borderColour,
-				Colour arcAndTickColour,
-				uint8_t options,
-				uint8_t numberOfTicks,
-				uint8_t startAngle,
-				uint8_t endAngle,
-				uint16_t minValue,
-				uint16_t maxValue,
-				iVtObject_c *variableReference,
-				uint16_t value)
-	    : iVtObject_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, width(width)
-		, needleColour(needleColour)
-		, borderColour(borderColour)
-		, arcAndTickColour(arcAndTickColour)
-		, options(options)
-		, numberOfTicks(numberOfTicks)
-		, startAngle(startAngle)
-		, endAngle(endAngle)
-		, minValue(minValue)
-		, maxValue(maxValue)
-		, variableReference(variableReference)
-		, value(value)
-		{
-		}
-	};
+
 
 	struct iVtObjectNumberVariable_s: iVtObject_s {
 		uint32_t value;

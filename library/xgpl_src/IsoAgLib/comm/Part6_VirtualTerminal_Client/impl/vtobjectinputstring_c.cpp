@@ -33,6 +33,51 @@
 
 namespace __IsoAgLib {
 
+
+
+struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObjectwMacro_s {
+		uint16_t width;
+		uint16_t height;
+		IsoAgLib::Colour backgroundColour;
+		IsoAgLib::iVtObjectFontAttributes_c *fontAttributes;
+		IsoAgLib::iVtObjectInputAttributes_c *inputAttributes;
+		uint8_t options;
+		IsoAgLib::iVtObjectStringVariable_c *variableReference;
+		uint8_t horizontalJustification;
+		uint16_t length;
+		char *value;
+		uint8_t enabled;
+		iVtObjectInputString_s(
+				IsoAgLib::ObjectID ID,
+				uint16_t width,
+				uint16_t height,
+				IsoAgLib::Colour backgroundColour,
+				IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
+				IsoAgLib::iVtObjectInputAttributes_c *inputAttributes,
+				uint8_t options,
+				IsoAgLib::iVtObjectStringVariable_c *variableReference,
+				uint8_t horizontalJustification,
+				uint16_t length,
+				char *value,
+				uint8_t enabled)
+		: iVtObject_s(ID)
+		, iVtObjectString_s(ID)
+		, iVtObjectwMacro_s(ID)
+		, width(width)
+		, height(height)
+		, backgroundColour(backgroundColour)
+		, fontAttributes(fontAttributes)
+		, inputAttributes(inputAttributes)
+		, options(options)
+		, variableReference(variableReference)
+		, horizontalJustification(horizontalJustification)
+		, length(length)
+		, value(value)
+		, enabled(enabled)
+		{
+		}
+	};
+
 int16_t
 vtObjectInputString_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
@@ -350,13 +395,17 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     default: break;
   }
 }
-
+#endif
     vtObjectInputString_c::vtObjectInputString_c(
-            const IsoAgLib::iVtObject_c::iVtObjectInputString_s *vtObjectInputStringSROM, int ai_multitonInst)
+    		vtObjectInputString_c::iVtObjectInputString_s *vtObjectInputStringSROM, int ai_multitonInst)
             :iVtObjectString_c((iVtObjectString_s*)vtObjectInputStringSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectInputStringSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectInputString_s *vtObjectInputString_c::get_vtObjectInputString_a() { return dynamic_cast<iVtObjectInputString_s *>(&(get_vtObject_a())); }
+    vtObjectInputString_c::iVtObjectInputString_s *vtObjectInputString_c::get_vtObjectInputString_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectInputString_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), width) : 0, sizeof(iVtObjectInputString_s), 1 /* "Width" */, newValue, b_enableReplaceOfCmd);
@@ -394,7 +443,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification) : 0, sizeof(iVtObjectInputString_s), 8 /* "Horizontal justification" */, newHorizontalJustification, newHorizontalJustification, b_enableReplaceOfCmd);
     }
 
-#endif
+
 
 
 
