@@ -47,6 +47,14 @@ namespace IsoAgLib {
 	  if (p_btn) p_parentButtonObject = p_btn;
 	}
 
+
+	iVtObject_c::iVtObjectObject_s::iVtObjectObject_s(
+			ObjectID ID)
+	: iVtObjectObject_s(ID, OO_CAPACITY)
+	{
+	}
+
+
     iVtObject_c::iVtObjectObject_s::iVtObjectObject_s(
     		ObjectID ID,
 			uint8_t size)
@@ -55,7 +63,7 @@ namespace IsoAgLib {
             , numberOfObjectsToFollow(0)
             , objectsToFollow(nullptr)
     {
-    	objectsToFollow = new repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s[200];
+    	objectsToFollow = new repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s[size];
     }
 
 
@@ -103,3 +111,4 @@ namespace IsoAgLib {
 
 
 } // end of namespace IsoAgLib
+

@@ -91,8 +91,10 @@ protected:
     repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
     void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
     explicit iVtObjectObject_s(
-    		ObjectID ID = autoID,
-			uint8_t size = OO_CAPACITY);
+    		ObjectID ID);
+    explicit iVtObjectObject_s(
+    		ObjectID ID,
+			uint8_t size);
   };
 
   // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem
