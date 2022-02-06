@@ -147,64 +147,6 @@ protected:
 
 
 
-	struct iVtObjectInputNumber_s: iVtObjectwMacro_s {
-		uint16_t width;
-		uint16_t height;
-		Colour backgroundColour;
-		iVtObject_c *fontAttributes;
-		uint8_t options;
-		iVtObject_c *variableReference;
-		uint32_t value;
-		uint32_t minValue;
-		uint32_t maxValue;
-		int32_t offset;
-		float scale;
-		uint8_t numberOfDecimals;
-		uint8_t format;
-		uint8_t horizontalJustification;
-		uint8_t secondOptionsByte;
-		iVtObjectInputNumber_s(
-	    		ObjectID ID,
-				uint16_t width,
-				uint16_t height,
-				Colour backgroundColour,
-				iVtObject_c *fontAttributes,
-				uint8_t options,
-				iVtObject_c *variableReference,
-				uint32_t value,
-				uint32_t minValue,
-				uint32_t maxValue,
-				int32_t offset,
-				float scale,
-				uint8_t numberOfDecimals,
-				uint8_t format,
-				uint8_t horizontalJustification,
-				uint8_t secondOptionsByte)
-	    : iVtObject_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, width(width)
-		, height(height)
-		, backgroundColour(backgroundColour)
-		, fontAttributes(fontAttributes)
-		, options(options)
-		, variableReference(variableReference)
-		, value(value)
-		, minValue(minValue)
-		, maxValue(maxValue)
-		, offset(offset)
-		, scale(scale)
-		, numberOfDecimals(numberOfDecimals)
-		, format(format)
-		, horizontalJustification(horizontalJustification)
-		, secondOptionsByte(secondOptionsByte)
-		{
-		}
-
-	};
-
-
-
-
   struct iVtObjectInputString_s: iVtObjectString_s, iVtObjectwMacro_s {
 		uint16_t width;
 		uint16_t height;

@@ -31,12 +31,6 @@ class iVtObjectInputNumber_c : public __IsoAgLib::vtObjectInputNumber_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_NUMBER; }
 
-  iVtObjectInputNumber_c(const iVtObjectInputNumber_s* vtObjectInputNumberSROM , int ai_multitonInst)
-  :vtObjectInputNumber_c(vtObjectInputNumberSROM , ai_multitonInst)
-  {}
-
-  const iVtObjectInputNumber_s& get_vtObjectInputNumber_a() { return *vtObjectInputNumber_c::get_vtObjectInputNumber_a(); }
-
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     vtObjectInputNumber_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -101,10 +95,10 @@ public:
     vtObjectInputNumber_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1 | (get_vtObjectInputNumber_a().secondOptionsByte & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0 | (get_vtObjectInputNumber_a().secondOptionsByte & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
 
-  bool getEnabled() { return get_vtObjectInputNumber_a().secondOptionsByte & 0x1; }
+  bool getEnabled(); //TODO
 
   bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

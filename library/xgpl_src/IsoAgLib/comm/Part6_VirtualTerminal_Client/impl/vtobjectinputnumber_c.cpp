@@ -29,6 +29,67 @@
 
 namespace __IsoAgLib {
 
+
+
+
+struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
+	uint16_t width;
+	uint16_t height;
+	IsoAgLib::Colour backgroundColour;
+	IsoAgLib::iVtObject_c *fontAttributes;
+	uint8_t options;
+	IsoAgLib::iVtObject_c *variableReference;
+	uint32_t value;
+	uint32_t minValue;
+	uint32_t maxValue;
+	int32_t offset;
+	float scale;
+	uint8_t numberOfDecimals;
+	uint8_t format;
+	uint8_t horizontalJustification;
+	uint8_t secondOptionsByte;
+	iVtObjectInputNumber_s(
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t height,
+			IsoAgLib::Colour backgroundColour,
+			IsoAgLib::iVtObject_c *fontAttributes,
+			uint8_t options,
+			IsoAgLib::iVtObject_c *variableReference,
+			uint32_t value,
+			uint32_t minValue,
+			uint32_t maxValue,
+			int32_t offset,
+			float scale,
+			uint8_t numberOfDecimals,
+			uint8_t format,
+			uint8_t horizontalJustification,
+			uint8_t secondOptionsByte)
+    : iVtObject_s(ID)
+	, iVtObjectwMacro_s(ID)
+	, width(width)
+	, height(height)
+	, backgroundColour(backgroundColour)
+	, fontAttributes(fontAttributes)
+	, options(options)
+	, variableReference(variableReference)
+	, value(value)
+	, minValue(minValue)
+	, maxValue(maxValue)
+	, offset(offset)
+	, scale(scale)
+	, numberOfDecimals(numberOfDecimals)
+	, format(format)
+	, horizontalJustification(horizontalJustification)
+	, secondOptionsByte(secondOptionsByte)
+	{
+	}
+
+};
+
+
+
+
 int16_t
 vtObjectInputNumber_c::stream(uint8_t* destMemory,
                               uint16_t maxBytes,
@@ -305,11 +366,15 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 }
 #endif
     vtObjectInputNumber_c::vtObjectInputNumber_c(
-            const IsoAgLib::iVtObject_c::iVtObjectInputNumber_s *vtObjectInputNumberSROM, int ai_multitonInst)
+    		vtObjectInputNumber_c::iVtObjectInputNumber_s *vtObjectInputNumberSROM, int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectInputNumberSROM , ai_multitonInst)
+            ,vtObject_a(vtObjectInputNumberSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectInputNumber_s *vtObjectInputNumber_c::get_vtObjectInputNumber_a() { return dynamic_cast<iVtObjectInputNumber_s *>(&(get_vtObject_a())); }
+    vtObjectInputNumber_c::iVtObjectInputNumber_s *vtObjectInputNumber_c::get_vtObjectInputNumber_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectInputNumber_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), width) : 0, sizeof(iVtObjectInputNumber_s), 1, newValue, b_enableReplaceOfCmd);
