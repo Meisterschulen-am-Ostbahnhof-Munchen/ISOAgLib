@@ -33,10 +33,6 @@ public:
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_CONTAINER; }
 
-  iVtObjectContainer_c(const iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst)
-  :vtObjectContainer_c(vtObjectContainer_sROM , ai_multitonInst)
-  {}
-
 
 
   void hide(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { vtObjectContainer_c::hideShow (0, b_updateObject, b_enableReplaceOfCmd); }

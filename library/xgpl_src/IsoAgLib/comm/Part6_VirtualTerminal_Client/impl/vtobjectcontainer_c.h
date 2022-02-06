@@ -33,12 +33,23 @@ namespace __IsoAgLib {
 
 class vtObjectContainer_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectContainer_s;
+
+	// Pointer to the internal implementation
+	iVtObjectContainer_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectContainer_s> vtObject_a;
+
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectContainer_c(const iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst);
+  vtObjectContainer_c(iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst);
 
   iVtObjectContainer_s* get_vtObjectContainer_a();
 

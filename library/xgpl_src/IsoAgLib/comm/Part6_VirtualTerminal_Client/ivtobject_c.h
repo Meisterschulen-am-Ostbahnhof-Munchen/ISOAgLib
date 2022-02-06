@@ -110,7 +110,7 @@ protected:
 	    uint8_t numberOfMacrosToFollow;
 	    const repeat_event_iVtObjectMacro_s* macrosToFollow;
     explicit iVtObjectwMacro_s(
-		ObjectID ID = autoID,
+		ObjectID ID,
 		uint8_t size = OO_CAPACITY);
   };
 
@@ -119,7 +119,7 @@ protected:
 
   struct iVtObjectString_s : virtual iVtObject_s {
 	  explicit iVtObjectString_s(
-		ObjectID ID = autoID)
+		ObjectID ID)
 	  :iVtObject_s(ID)
 	  {}
   };
@@ -128,7 +128,7 @@ protected:
 
   struct iVtObjectMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
 	  explicit iVtObjectMask_s(
-		ObjectID ID = autoID)
+		ObjectID ID)
 	  :iVtObjectObject_s(ID)
 	  ,iVtObjectwMacro_s(ID)
 	  {}
@@ -145,22 +145,7 @@ protected:
 
 
 
-  struct iVtObjectContainer_s : iVtObjectObject_s, iVtObjectwMacro_s {
-    uint16_t width;
-    uint16_t height;
-    uint8_t hidden;
-    iVtObjectContainer_s(
-    		ObjectID ID = autoID,
-    		uint16_t width = 100,
-			uint16_t height = 100,
-			uint8_t hidden = 0)
-    : iVtObjectObject_s(ID)
-    , iVtObjectwMacro_s(ID)
-    , width(width)
-    , height(height)
-    , hidden(hidden)
-    {}
-  };
+
 
 
 
@@ -171,7 +156,7 @@ protected:
     Colour fillColour;
     iVtObjectPictureGraphic_c* fillPatternObject;
     iVtObjectFillAttributes_s(
-    		ObjectID ID = autoID,
+    		ObjectID ID,
     		uint8_t fillType = 0,
 			Colour fillColour = BLACK,
 			iVtObjectPictureGraphic_c *fillPatternObject = nullptr)
@@ -189,7 +174,7 @@ protected:
     uint8_t length;
     char* validationString;
     iVtObjectInputAttributes_s(
-    		ObjectID ID = autoID,
+    		ObjectID ID,
     		uint8_t validationType = 0,
 			uint8_t length = 0,
 			char *validationString = nullptr)
@@ -208,7 +193,7 @@ protected:
     uint8_t value;
     uint8_t enabled;
     iVtObjectInputBoolean_s(
-    		ObjectID ID = autoID,
+    		ObjectID ID,
     		Colour backgroundColour = WHITE,
 			uint16_t width = 20,
 			iVtObject_c *foregroundColour = nullptr,
@@ -232,13 +217,15 @@ protected:
     uint8_t value;
     uint8_t options;
     iVtObjectInputList_s(
-    		ObjectID ID = autoID,
+    		ObjectID ID,
     		uint16_t width = 150,
 			uint16_t height = 30,
 			iVtObject_c *variableReference = nullptr,
 			uint8_t value = 0,
 			uint8_t options = 0)
-    : width(width)
+    : iVtObjectObject_s(ID)
+	, iVtObjectwMacro_s(ID)
+    , width(width)
     , height(height)
     , variableReference(variableReference)
     , value(value)
@@ -441,16 +428,26 @@ protected:
 	};
 
 	struct iVtObjectOutputList_s: iVtObjectObject_s, iVtObjectwMacro_s {
-		iVtObjectOutputList_s(				ObjectID ID,uint16_t width, uint16_t height,
-				iVtObject_c *variableReference, uint8_t value) :
-				width(width), height(height), variableReference(
-						variableReference), value(value) {
-		}
-
 		uint16_t width;
 		uint16_t height;
 		iVtObject_c *variableReference;
 		uint8_t value;
+		iVtObjectOutputList_s(
+				ObjectID ID,
+				uint16_t width,
+				uint16_t height,
+				iVtObject_c *variableReference,
+				uint8_t value)
+		: iVtObjectObject_s(ID)
+		, iVtObjectwMacro_s(ID)
+		, width(width)
+		, height(height)
+		, variableReference(variableReference)
+		, value(value)
+		{
+		}
+
+
 	};
 
 	struct iVtObjectOutputNumber_s: iVtObjectwMacro_s {
