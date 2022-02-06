@@ -161,22 +161,6 @@ protected:
 
 
 
-  struct iVtObjectInputAttributes_s : iVtObjectwMacro_s {
-    uint8_t validationType;
-    uint8_t length;
-    char* validationString;
-    iVtObjectInputAttributes_s(
-    		ObjectID ID,
-    		uint8_t validationType = 0,
-			uint8_t length = 0,
-			char *validationString = nullptr)
-    : iVtObject_s(ID)
-    , iVtObjectwMacro_s(ID)
-    , validationType(validationType)
-    , length(length)
-    , validationString(validationString)
-    {}
-  };
 
   struct iVtObjectInputBoolean_s : iVtObjectwMacro_s {
     Colour backgroundColour;

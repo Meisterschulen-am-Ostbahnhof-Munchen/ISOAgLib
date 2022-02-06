@@ -26,6 +26,26 @@
 
 namespace __IsoAgLib {
 
+
+
+struct vtObjectInputAttributes_c::iVtObjectInputAttributes_s : iVtObjectwMacro_s {
+  uint8_t validationType;
+  uint8_t length;
+  char* validationString;
+  iVtObjectInputAttributes_s(
+		IsoAgLib::ObjectID ID,
+  		uint8_t validationType,
+		uint8_t length,
+		char *validationString)
+  : iVtObject_s(ID)
+  , iVtObjectwMacro_s(ID)
+  , validationType(validationType)
+  , length(length)
+  , validationString(validationString)
+  {}
+};
+
+
 int16_t
 vtObjectInputAttributes_c::stream(uint8_t* destMemory,
                                   uint16_t maxBytes,
@@ -149,11 +169,15 @@ vtObjectInputAttributes_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*
 }
 #endif
     vtObjectInputAttributes_c::vtObjectInputAttributes_c(
-            const IsoAgLib::iVtObject_c::iVtObjectInputAttributes_s *vtObjectInputAttributesSROM, int ai_multitonInst)
+            vtObjectInputAttributes_c::iVtObjectInputAttributes_s *vtObjectInputAttributesSROM, int ai_multitonInst)
             :iVtObjectString_c((iVtObjectString_s*) vtObjectInputAttributesSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectInputAttributesSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectInputAttributes_s *vtObjectInputAttributes_c::get_vtObjectInputAttributes_a() { return dynamic_cast<iVtObjectInputAttributes_s *>(&(get_vtObject_a())); }
+    vtObjectInputAttributes_c::iVtObjectInputAttributes_s *vtObjectInputAttributes_c::get_vtObjectInputAttributes_a()
+    {
+    	return vtObject_a;
+    }
 
 
 } // __IsoAgLib
