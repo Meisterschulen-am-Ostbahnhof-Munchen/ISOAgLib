@@ -42,7 +42,8 @@ struct vtObjectLine_c::iVtObjectLine_s : iVtObjectwMacro_s {
 			uint16_t width,
 			uint16_t height,
 			uint8_t lineDirection)
-  :  iVtObjectwMacro_s(ID)
+  : iVtObject_s(ID)
+  , iVtObjectwMacro_s(ID)
   , lineAttributes(lineAttributes)
   , width(width)
   , height(height)

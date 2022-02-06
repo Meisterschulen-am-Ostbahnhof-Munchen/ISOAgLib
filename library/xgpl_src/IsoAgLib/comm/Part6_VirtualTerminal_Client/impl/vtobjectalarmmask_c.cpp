@@ -41,7 +41,8 @@ struct vtObjectAlarmMask_c::iVtObjectAlarmMask_s : iVtObjectMask_s {
 		  IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask,
 		  uint8_t priority,
           uint8_t acousticSignal)
-  : iVtObjectMask_s(ID)
+  : iVtObject_s(ID)
+  , iVtObjectMask_s(ID)
   , backgroundColour(backgroundColour)
   , softKeyMask(softKeyMask)
   , priority(priority)

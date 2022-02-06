@@ -41,7 +41,8 @@ struct vtObjectFontAttributes_c::iVtObjectFontAttributes_s : iVtObjectwMacro_s {
 		IsoAgLib::Font fontSize,
   	    uint8_t fontType, // always =0 ISO_LATIN_1
   	    uint8_t fontStyle)
-  :iVtObjectwMacro_s(ID)
+  : iVtObject_s(ID)
+  , iVtObjectwMacro_s(ID)
   , fontColour(fontColour)
   , fontSize(fontSize)
   , fontType(fontType) // always =0 ISO_LATIN_1

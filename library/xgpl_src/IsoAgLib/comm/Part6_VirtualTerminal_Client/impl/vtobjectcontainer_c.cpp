@@ -43,7 +43,8 @@ struct vtObjectContainer_c::iVtObjectContainer_s : iVtObjectObject_s, iVtObjectw
   		  uint16_t width,
 		  uint16_t height,
 		  uint8_t hidden)
-  : iVtObjectObject_s(ID)
+  : iVtObject_s(ID)
+  , iVtObjectObject_s(ID)
   , iVtObjectwMacro_s(ID)
   , width(width)
   , height(height)

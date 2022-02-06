@@ -70,7 +70,7 @@ namespace IsoAgLib {
             , numberOfObjectsToFollow(0)
             , objectsToFollow(nullptr)
     {
-    	objectsToFollow = new repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s[size];
+    	objectsToFollow = new repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s[numberOfObjectsToFollow_size];
     }
 
 
@@ -87,6 +87,14 @@ namespace IsoAgLib {
         } else {
         	//Exception !!! //TODO
         }
+    }
+
+
+    iVtObject_c::iVtObjectwMacro_s::iVtObjectwMacro_s(
+    		ObjectID ID)
+    : iVtObjectwMacro_s(ID, OO_CAPACITY)
+    {
+
     }
 
 

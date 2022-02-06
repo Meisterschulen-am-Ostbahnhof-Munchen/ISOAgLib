@@ -50,7 +50,8 @@ public:
   struct iVtObject_s {
 	ObjectID ID;
     static ObjectID nextID;
-    explicit iVtObject_s(ObjectID ID = autoID);
+    explicit iVtObject_s() = delete;
+    explicit iVtObject_s(ObjectID ID);
     virtual ~iVtObject_s() = default;
   };
 
@@ -66,10 +67,10 @@ public:
 	  uint8_t numberOfLanguagesToFollow_size;
 	  uint8_t numberOfLanguagesToFollow;
 	  const IsoAgLib::repeat_vtLanguage_s* languagesToFollow;
-  explicit iVtObjectLanguages_s() = delete;
-  explicit iVtObjectLanguages_s(
+	  explicit iVtObjectLanguages_s() = delete;
+	  explicit iVtObjectLanguages_s(
 		ObjectID ID);
-  explicit iVtObjectLanguages_s(
+	  explicit iVtObjectLanguages_s(
 		ObjectID ID,
 		uint8_t size);
   };
@@ -112,9 +113,11 @@ protected:
 		uint8_t numberOfMacrosToFollow_size;
 	    uint8_t numberOfMacrosToFollow;
 	    const repeat_event_iVtObjectMacro_s* macrosToFollow;
-    explicit iVtObjectwMacro_s(
-		ObjectID ID,
-		uint8_t size = OO_CAPACITY);
+	    explicit iVtObjectwMacro_s(
+			ObjectID ID);
+		explicit iVtObjectwMacro_s(
+			ObjectID ID,
+			uint8_t size);
   };
 
 
@@ -132,8 +135,9 @@ protected:
   struct iVtObjectMask_s : iVtObjectObject_s, iVtObjectwMacro_s {
 	  explicit iVtObjectMask_s(
 		ObjectID ID)
-	  :iVtObjectObject_s(ID)
-	  ,iVtObjectwMacro_s(ID)
+	  : iVtObject_s(ID)
+	  , iVtObjectObject_s(ID)
+	  , iVtObjectwMacro_s(ID)
 	  {}
   };
 
@@ -163,7 +167,8 @@ protected:
     		uint8_t fillType = 0,
 			Colour fillColour = BLACK,
 			iVtObjectPictureGraphic_c *fillPatternObject = nullptr)
-    : iVtObjectwMacro_s(ID)
+    : iVtObject_s(ID)
+    , iVtObjectwMacro_s(ID)
     , fillType(fillType)
     , fillColour(fillColour)
     , fillPatternObject(fillPatternObject)
@@ -181,7 +186,8 @@ protected:
     		uint8_t validationType = 0,
 			uint8_t length = 0,
 			char *validationString = nullptr)
-    : iVtObjectwMacro_s(ID)
+    : iVtObject_s(ID)
+    , iVtObjectwMacro_s(ID)
     , validationType(validationType)
     , length(length)
     , validationString(validationString)
@@ -203,7 +209,8 @@ protected:
 			iVtObject_c *variableReference = nullptr,
 			uint8_t value = 0,
 			uint8_t enabled = 1)
-    : iVtObjectwMacro_s(ID)
+    : iVtObject_s(ID)
+    , iVtObjectwMacro_s(ID)
     , backgroundColour(backgroundColour)
     , width(width)
     , foregroundColour(foregroundColour)
@@ -226,7 +233,8 @@ protected:
 			iVtObject_c *variableReference = nullptr,
 			uint8_t value = 0,
 			uint8_t options = 0)
-    : iVtObjectObject_s(ID)
+    : iVtObject_s(ID)
+    , iVtObjectObject_s(ID)
 	, iVtObjectwMacro_s(ID)
     , width(width)
     , height(height)
@@ -269,7 +277,8 @@ protected:
 				uint8_t format,
 				uint8_t horizontalJustification,
 				uint8_t secondOptionsByte)
-		: iVtObjectwMacro_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectwMacro_s(ID)
 		, width(width)
 		, height(height)
 		, backgroundColour(backgroundColour)
@@ -318,7 +327,8 @@ protected:
 				uint16_t length,
 				char *value,
 				uint8_t enabled)
-		: iVtObjectString_s(ID)
+		: iVtObject_s(ID)
+		, iVtObjectString_s(ID)
 		, iVtObjectwMacro_s(ID)
 		, width(width)
 		, height(height)
@@ -342,7 +352,8 @@ protected:
 	    		ObjectID ID,
 				Colour backgroundColour,
 				uint8_t keyCode)
-		: iVtObjectObject_s(ID)
+		: iVtObject_s(ID)
+		, iVtObjectObject_s(ID)
 		, iVtObjectwMacro_s(ID)
 		, backgroundColour(backgroundColour)
 		, keyCode(keyCode)
@@ -391,7 +402,8 @@ protected:
 				uint16_t maxValue,
 				iVtObject_c *variableReference,
 				uint16_t value)
-		: iVtObjectwMacro_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectwMacro_s(ID)
 		, width(width)
 		, needleColour(needleColour)
 		, borderColour(borderColour)
@@ -441,7 +453,8 @@ protected:
 				uint16_t height,
 				iVtObject_c *variableReference,
 				uint8_t value)
-		: iVtObjectObject_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectObject_s(ID)
 		, iVtObjectwMacro_s(ID)
 		, width(width)
 		, height(height)
@@ -480,7 +493,8 @@ protected:
 				uint8_t numberOfDecimals,
 				uint8_t format,
 				uint8_t horizontalJustification)
-		: iVtObjectwMacro_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectwMacro_s(ID)
 		, width(width)
 		, height(height)
 		, backgroundColour(backgroundColour)
@@ -530,7 +544,8 @@ protected:
 				const uint8_t *rawData2,
 				uint8_t numberOfFixedBitmapsToFollow,
 				const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow)
-		: iVtObjectwMacro_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectwMacro_s(ID)
 		, width(width)
 		, actualWidth(actualWidth)
 		, actualHeight(actualHeight)
@@ -583,7 +598,8 @@ protected:
 				uint8_t polygonType,
 				uint8_t numberOfPoints,
 				const repeat_x_y_s *pointsToFollow)
-		: iVtObjectwMacro_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectwMacro_s(ID)
 		, width(width)
 		, height(height)
 		, lineAttributes(lineAttributes)
@@ -610,7 +626,8 @@ protected:
 				uint16_t height,
 				uint8_t lineSuppression,
 				iVtObjectFillAttributes_c *fillAttributes)
-		: iVtObjectwMacro_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectwMacro_s(ID)
 		, lineAttributes(lineAttributes)
 		, width(width)
 		, height(height)
@@ -627,7 +644,8 @@ protected:
 		iVtObjectSoftKeyMask_s(
 				ObjectID ID,
 				Colour backgroundColour)
-		: iVtObjectObject_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectObject_s(ID)
 		, iVtObjectwMacro_s(ID)
 		, backgroundColour(backgroundColour)
 		{
@@ -645,7 +663,8 @@ protected:
 				Colour backgroundColour,
 				uint8_t functionType,
 				uint8_t inputId)
-		: iVtObjectObject_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectObject_s(ID)
 		, backgroundColour(backgroundColour)
 		, functionType(functionType)
 		, inputId(inputId)
@@ -662,7 +681,8 @@ protected:
 				ObjectID ID,
 				Colour backgroundColour,
 				uint8_t functionType)
-		: iVtObjectObject_s(ID)
+		: iVtObject_s(ID)
+	    , iVtObjectObject_s(ID)
 		, backgroundColour(backgroundColour)
 		, functionType(functionType)
 		{
@@ -737,7 +757,8 @@ protected:
 				ObjectID ID,
 				Colour backgroundColour,
 				uint8_t functionAttributes)
-		: iVtObjectObject_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectObject_s(ID)
 		, backgroundColour(backgroundColour)
 		, functionAttributes(functionAttributes)
 		{
@@ -753,7 +774,8 @@ protected:
 				ObjectID ID,
 				Colour backgroundColour,
 				uint8_t functionAttributes)
-		: iVtObjectObject_s(ID)
+	    : iVtObject_s(ID)
+		, iVtObjectObject_s(ID)
 		, backgroundColour(backgroundColour)
 		, functionAttributes(functionAttributes)
 		{

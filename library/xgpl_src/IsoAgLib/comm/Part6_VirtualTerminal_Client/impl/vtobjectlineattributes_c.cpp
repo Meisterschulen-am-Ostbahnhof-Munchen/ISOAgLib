@@ -38,7 +38,8 @@ struct vtObjectLineAttributes_c::iVtObjectLineAttributes_s: iVtObjectwMacro_s {
 			IsoAgLib::Colour lineColour,
 			uint8_t lineWidth,
 			uint16_t lineArt)
-	: iVtObjectwMacro_s(ID)
+    : iVtObject_s(ID)
+	, iVtObjectwMacro_s(ID)
 	, lineColour(lineColour)
 	, lineWidth(lineWidth)
 	, lineArt(lineArt) {

@@ -39,7 +39,8 @@ struct vtObjectWorkingSet_c::iVtObjectWorkingSet_s : iVtObjectObject_s, iVtObjec
   		uint8_t selectable,
 		IsoAgLib::iVtObjectMask_c* activeMask // data or alarm mask
   	  	  )
-    : iVtObjectObject_s(ID)
+    : iVtObject_s(ID)
+    , iVtObjectObject_s(ID)
     , iVtObjectwMacro_s(ID)
     , iVtObjectLanguages_s(ID)
     , backgroundColour(backgroundColour)

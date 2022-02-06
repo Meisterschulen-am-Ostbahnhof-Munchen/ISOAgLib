@@ -77,7 +77,8 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
 		   uint16_t value,
 		   IsoAgLib::iVtObject_c *targetValueVariableReference,
 		   uint16_t targetValue)
-            : iVtObjectwMacro_s(ID)
+			: iVtObject_s(ID)
+			, iVtObjectwMacro_s(ID)
             , width(width)
             , height(height)
             , colour(colour)

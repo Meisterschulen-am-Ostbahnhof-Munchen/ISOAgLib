@@ -48,7 +48,8 @@ struct vtObjectEllipse_c::iVtObjectEllipse_s : iVtObjectwMacro_s {
 		uint8_t startAngle,
 		uint8_t endAngle,
 		IsoAgLib::iVtObjectFillAttributes_c *fillAttributes)
-  : iVtObjectwMacro_s(ID)
+  : iVtObject_s(ID)
+  , iVtObjectwMacro_s(ID)
   , lineAttributes(lineAttributes)
   , width(width)
   , height(height)

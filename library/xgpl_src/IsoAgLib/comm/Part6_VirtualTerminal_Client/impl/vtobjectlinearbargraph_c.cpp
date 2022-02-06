@@ -56,7 +56,8 @@ struct vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
 			uint16_t value,
 			iVtObject_c *targetValueVariableReference,
 			uint16_t targetValue)
-  : iVtObjectwMacro_s(ID)
+  : iVtObject_s(ID)
+  , iVtObjectwMacro_s(ID)
   , width(width)
   , height(height)
   , colour(colour)

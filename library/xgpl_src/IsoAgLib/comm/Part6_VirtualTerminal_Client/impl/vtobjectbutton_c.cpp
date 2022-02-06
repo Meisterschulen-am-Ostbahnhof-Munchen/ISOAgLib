@@ -46,7 +46,8 @@ struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_
 		IsoAgLib::Colour borderColour,
   	    uint8_t keyCode,
   	    uint8_t options)
-  : iVtObjectObject_s(ID)
+  : iVtObject_s(ID)
+  , iVtObjectObject_s(ID)
   , iVtObjectwMacro_s(ID)
   , width(width)
   , height(height)

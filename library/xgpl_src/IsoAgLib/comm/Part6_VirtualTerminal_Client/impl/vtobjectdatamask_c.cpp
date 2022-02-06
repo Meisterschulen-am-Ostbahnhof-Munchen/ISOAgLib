@@ -39,7 +39,8 @@ struct vtObjectDataMask_c::iVtObjectDataMask_s: iVtObjectMask_s {
 			IsoAgLib::ObjectID ID,
 			IsoAgLib::Colour backgroundColour,
 			IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask)
-	: iVtObjectMask_s(ID)
+    : iVtObject_s(ID)
+	, iVtObjectMask_s(ID)
 	, backgroundColour(backgroundColour)
 	, softKeyMask(softKeyMask)
 	{

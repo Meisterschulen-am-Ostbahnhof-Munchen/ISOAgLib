@@ -57,17 +57,18 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
   	    uint16_t length,
   	    char* value /* size length+1 (0-termination intern!) */
   		)
-  :iVtObjectString_s(ID)
-  ,iVtObjectwMacro_s(ID)
-  ,width(width)
-  ,height(height)
-  ,backgroundColour(backgroundColour)
-  ,fontAttributes(fontAttributes)
-  ,options(options)
-  ,variableReference(variableReference)
-  ,horizontalJustification(horizontalJustification)
-  ,length(length)
-  ,value(value) /* size length+1 (0-termination intern!) */
+  : iVtObject_s(ID)
+  , iVtObjectString_s(ID)
+  , iVtObjectwMacro_s(ID)
+  , width(width)
+  , height(height)
+  , backgroundColour(backgroundColour)
+  , fontAttributes(fontAttributes)
+  , options(options)
+  , variableReference(variableReference)
+  , horizontalJustification(horizontalJustification)
+  , length(length)
+  , value(value) /* size length+1 (0-termination intern!) */
 	{}
 };
 
