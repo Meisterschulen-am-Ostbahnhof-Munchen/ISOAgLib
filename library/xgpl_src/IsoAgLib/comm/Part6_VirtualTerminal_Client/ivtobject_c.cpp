@@ -47,6 +47,13 @@ namespace IsoAgLib {
 	  if (p_btn) p_parentButtonObject = p_btn;
 	}
 
+	iVtObject_c::iVtObject_s::iVtObject_s(
+			ObjectID ID)
+    {
+        this->ID = ID == autoID ? nextID : ID;
+        nextID = (ObjectID)((uint16_t)nextID + 1);
+    }
+
 
 	iVtObject_c::iVtObjectObject_s::iVtObjectObject_s(
 			ObjectID ID)
@@ -94,7 +101,12 @@ namespace IsoAgLib {
     	//TODO implement List like with iVtObjectObject_s
     }
 
+    iVtObject_c::iVtObjectLanguages_s::iVtObjectLanguages_s(
+    		ObjectID ID)
+    : iVtObjectLanguages_s(ID, OO_CAPACITY)
+    {
 
+    }
 
     iVtObject_c::iVtObjectLanguages_s::iVtObjectLanguages_s(
     		ObjectID ID,
