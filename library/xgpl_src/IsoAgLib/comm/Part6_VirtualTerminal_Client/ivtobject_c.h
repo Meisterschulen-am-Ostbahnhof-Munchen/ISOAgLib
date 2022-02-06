@@ -145,49 +145,6 @@ protected:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  struct iVtObjectInputBoolean_s : iVtObjectwMacro_s {
-    Colour backgroundColour;
-    uint16_t width;
-    iVtObject_c* foregroundColour;
-    iVtObject_c* variableReference;
-    uint8_t value;
-    uint8_t enabled;
-    iVtObjectInputBoolean_s(
-    		ObjectID ID,
-    		Colour backgroundColour = WHITE,
-			uint16_t width = 20,
-			iVtObject_c *foregroundColour = nullptr,
-			iVtObject_c *variableReference = nullptr,
-			uint8_t value = 0,
-			uint8_t enabled = 1)
-    : iVtObject_s(ID)
-    , iVtObjectwMacro_s(ID)
-    , backgroundColour(backgroundColour)
-    , width(width)
-    , foregroundColour(foregroundColour)
-    , variableReference(variableReference)
-    , value(value)
-    , enabled(enabled)
-    {}
-  };
-
   struct iVtObjectInputList_s : iVtObjectObject_s, iVtObjectwMacro_s {
     uint16_t width;
     uint16_t height;

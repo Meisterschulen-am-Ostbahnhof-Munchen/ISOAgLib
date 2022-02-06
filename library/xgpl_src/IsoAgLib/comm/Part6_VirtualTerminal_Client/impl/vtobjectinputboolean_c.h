@@ -33,12 +33,22 @@ namespace __IsoAgLib {
 
 class vtObjectInputBoolean_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectInputBoolean_s;
+
+	// Pointer to the internal implementation
+	iVtObjectInputBoolean_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectInputBoolean_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectInputBoolean_c(const iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , int ai_multitonInst);
+  vtObjectInputBoolean_c(iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , int ai_multitonInst);
 
   iVtObjectInputBoolean_s* get_vtObjectInputBoolean_a();
 

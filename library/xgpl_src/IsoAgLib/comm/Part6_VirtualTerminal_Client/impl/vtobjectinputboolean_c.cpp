@@ -28,6 +28,33 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectInputBoolean_c::iVtObjectInputBoolean_s : iVtObjectwMacro_s {
+  IsoAgLib::Colour backgroundColour;
+  uint16_t width;
+  IsoAgLib::iVtObject_c* foregroundColour;
+  IsoAgLib::iVtObject_c* variableReference;
+  uint8_t value;
+  uint8_t enabled;
+  iVtObjectInputBoolean_s(
+		IsoAgLib::ObjectID ID,
+		IsoAgLib::Colour backgroundColour,
+		uint16_t width,
+		IsoAgLib::iVtObject_c *foregroundColour,
+		IsoAgLib::iVtObject_c *variableReference,
+		uint8_t value,
+		uint8_t enabled)
+  : iVtObject_s(ID)
+  , iVtObjectwMacro_s(ID)
+  , backgroundColour(backgroundColour)
+  , width(width)
+  , foregroundColour(foregroundColour)
+  , variableReference(variableReference)
+  , value(value)
+  , enabled(enabled)
+  {}
+};
+
 int16_t
 vtObjectInputBoolean_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
@@ -170,13 +197,17 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     default: break;
   }
 }
-
+#endif
     vtObjectInputBoolean_c::vtObjectInputBoolean_c(
-            const IsoAgLib::iVtObject_c::iVtObjectInputBoolean_s *vtObjectInputBooleanSROM, int ai_multitonInst)
+    		vtObjectInputBoolean_c::iVtObjectInputBoolean_s *vtObjectInputBooleanSROM, int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectInputBooleanSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectInputBooleanSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectInputBoolean_s *vtObjectInputBoolean_c::get_vtObjectInputBoolean_a() { return dynamic_cast<iVtObjectInputBoolean_s *>(&(get_vtObject_a())); }
+    vtObjectInputBoolean_c::iVtObjectInputBoolean_s *vtObjectInputBoolean_c::get_vtObjectInputBoolean_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectInputBoolean_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), backgroundColour) : 0, sizeof(iVtObjectInputBoolean_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
@@ -196,7 +227,7 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
         saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), variableReference) : 0, sizeof(iVtObjectInputBoolean_s), 4, newValue, b_enableReplaceOfCmd);
     }
 
-#endif
+
 
 } // __IsoAgLib
 

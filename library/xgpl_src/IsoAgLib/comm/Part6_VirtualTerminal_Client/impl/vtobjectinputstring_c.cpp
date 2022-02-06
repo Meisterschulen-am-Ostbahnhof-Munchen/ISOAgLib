@@ -279,9 +279,9 @@ uint16_t
 vtObjectInputString_c::updateFontAttributes(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputBoolean_s), 4);
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputString_s), 4);
   else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputBoolean_s));
+    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputString_s));
 }
 
 uint16_t
@@ -339,7 +339,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     case 1: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), width), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 2: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), height), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 3: saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 5: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), inputAttributes), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 6: saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), options), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
     case 7: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), variableReference), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
