@@ -31,11 +31,6 @@ class iVtObjectInputList_c : public __IsoAgLib::vtObjectInputList_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_LIST; }
 
-  iVtObjectInputList_c(const iVtObjectInputList_s* vtObjectInputListSROM , int ai_multitonInst)
-  :vtObjectInputList_c(vtObjectInputListSROM , ai_multitonInst)
-  {}
-
-  const iVtObjectInputList_s& get_vtObjectInputList_a() { return *vtObjectInputList_c::get_vtObjectInputList_a(); }
 
   iVtObject_c* getListItem(uint8_t xth) { return vtObjectInputList_c::getListItem (xth); }
 
@@ -69,10 +64,10 @@ public:
     vtObjectInputList_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (1 | (get_vtObjectInputList_a().options & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { return vtObject_c::able (0 | (get_vtObjectInputList_a().options & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
 
-  bool getEnabled() { return get_vtObjectInputList_a().options & 0x1; }
+  bool getEnabled(); //TODO
 
   bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 

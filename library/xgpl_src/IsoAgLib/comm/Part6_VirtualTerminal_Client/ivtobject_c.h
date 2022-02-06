@@ -145,29 +145,7 @@ protected:
 
 
 
-  struct iVtObjectInputList_s : iVtObjectObject_s, iVtObjectwMacro_s {
-    uint16_t width;
-    uint16_t height;
-    iVtObject_c* variableReference;
-    uint8_t value;
-    uint8_t options;
-    iVtObjectInputList_s(
-    		ObjectID ID,
-    		uint16_t width = 150,
-			uint16_t height = 30,
-			iVtObject_c *variableReference = nullptr,
-			uint8_t value = 0,
-			uint8_t options = 0)
-    : iVtObject_s(ID)
-    , iVtObjectObject_s(ID)
-	, iVtObjectwMacro_s(ID)
-    , width(width)
-    , height(height)
-    , variableReference(variableReference)
-    , value(value)
-    , options(options)
-    {}
-  };
+
 
 	struct iVtObjectInputNumber_s: iVtObjectwMacro_s {
 		uint16_t width;

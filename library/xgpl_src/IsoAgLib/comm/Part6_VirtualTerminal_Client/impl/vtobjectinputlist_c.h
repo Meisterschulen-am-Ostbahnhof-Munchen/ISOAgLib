@@ -33,11 +33,21 @@ namespace __IsoAgLib {
 
 class vtObjectInputList_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectInputList_s;
+
+	// Pointer to the internal implementation
+	iVtObjectInputList_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectInputList_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
-  vtObjectInputList_c(const iVtObjectInputList_s* vtObjectInputListSROM , int ai_multitonInst);
+  vtObjectInputList_c(iVtObjectInputList_s* vtObjectInputListSROM , int ai_multitonInst);
   iVtObjectInputList_s* get_vtObjectInputList_a();
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
   uint8_t getNumberOfListItems();
