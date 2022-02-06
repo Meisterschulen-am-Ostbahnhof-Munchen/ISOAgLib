@@ -31,11 +31,6 @@ class iVtObjectFillAttributes_c : public __IsoAgLib::vtObjectFillAttributes_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_FILL_ATTRIBUTES; }
 
-  iVtObjectFillAttributes_c(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst)
-  :vtObjectFillAttributes_c(vtObjectFillAttributesSROM , ai_multitonInst)
-  {}
-
-  const iVtObjectFillAttributes_s& get_vtObjectFillAttributes_a() { return *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a(); }
 
   void setFillType(uint8_t newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillType(newFillType, b_updateObject, b_enableReplaceOfCmd);

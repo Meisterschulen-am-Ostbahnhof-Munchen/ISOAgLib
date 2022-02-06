@@ -26,6 +26,28 @@
 
 namespace __IsoAgLib {
 
+
+
+struct vtObjectFillAttributes_c::iVtObjectFillAttributes_s : iVtObjectwMacro_s {
+  uint8_t fillType;
+  IsoAgLib::Colour fillColour;
+  IsoAgLib::iVtObjectPictureGraphic_c* fillPatternObject;
+  iVtObjectFillAttributes_s(
+		IsoAgLib::ObjectID ID,
+  		uint8_t fillType,
+		IsoAgLib::Colour fillColour,
+		IsoAgLib::iVtObjectPictureGraphic_c *fillPatternObject)
+  : iVtObject_s(ID)
+  , iVtObjectwMacro_s(ID)
+  , fillType(fillType)
+  , fillColour(fillColour)
+  , fillPatternObject(fillPatternObject)
+  {}
+};
+
+
+
+
 int16_t
 vtObjectFillAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
@@ -121,13 +143,18 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     default: break;
   }
 }
+#endif
 
     vtObjectFillAttributes_c::vtObjectFillAttributes_c(
-            const IsoAgLib::iVtObject_c::iVtObjectFillAttributes_s *vtObjectFillAttributesSROM, int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectFillAttributesSROM , ai_multitonInst)
+            vtObjectFillAttributes_c::iVtObjectFillAttributes_s *vtObjectFillAttributesSROM, int ai_multitonInst)
+            : vtObject_c((iVtObject_s*) vtObjectFillAttributesSROM , ai_multitonInst)
+    		, vtObject_a(vtObjectFillAttributesSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectFillAttributes_s *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a() { return dynamic_cast<iVtObjectFillAttributes_s *>(&(get_vtObject_a())); }
+    vtObjectFillAttributes_c::iVtObjectFillAttributes_s *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectFillAttributes_c::setFillType(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType) : 0, sizeof(iVtObjectFillAttributes_s), 1 /* "Fill Type" */, newValue, newValue, b_enableReplaceOfCmd);
@@ -142,5 +169,5 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
         saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject) : 0, sizeof(iVtObjectFillAttributes_s), 3 /* "Fill Pattern" */, newValue, b_enableReplaceOfCmd);
     }
 
-#endif
+
 } // __IsoAgLib

@@ -28,12 +28,22 @@ namespace __IsoAgLib {
 
 class vtObjectFillAttributes_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectFillAttributes_s;
+
+	// Pointer to the internal implementation
+	iVtObjectFillAttributes_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectFillAttributes_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectFillAttributes_c(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst);
+  vtObjectFillAttributes_c(iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst);
   iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a();
   uint32_t fitTerminal() const;
   void setFillType(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

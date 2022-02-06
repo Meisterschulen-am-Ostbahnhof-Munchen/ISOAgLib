@@ -18,7 +18,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "sendupload_c.h"
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectstring_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectstringstreamer_c.h>
 
 
 namespace __IsoAgLib {

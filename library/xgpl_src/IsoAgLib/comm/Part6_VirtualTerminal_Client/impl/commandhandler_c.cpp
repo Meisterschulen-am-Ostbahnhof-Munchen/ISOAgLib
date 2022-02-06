@@ -32,7 +32,7 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectpicturegraphic_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientconnection_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectstring_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectstringstreamer_c.h>
 #include <supplementary_driver/driver/datastreams/volatilememorywithsize_c.h>
 
 

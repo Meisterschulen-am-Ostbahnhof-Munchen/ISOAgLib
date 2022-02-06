@@ -158,22 +158,6 @@ protected:
 
 
 
-  struct iVtObjectFillAttributes_s : iVtObjectwMacro_s {
-    uint8_t fillType;
-    Colour fillColour;
-    iVtObjectPictureGraphic_c* fillPatternObject;
-    iVtObjectFillAttributes_s(
-    		ObjectID ID,
-    		uint8_t fillType = 0,
-			Colour fillColour = BLACK,
-			iVtObjectPictureGraphic_c *fillPatternObject = nullptr)
-    : iVtObject_s(ID)
-    , iVtObjectwMacro_s(ID)
-    , fillType(fillType)
-    , fillColour(fillColour)
-    , fillPatternObject(fillPatternObject)
-    {}
-  };
 
 
 
