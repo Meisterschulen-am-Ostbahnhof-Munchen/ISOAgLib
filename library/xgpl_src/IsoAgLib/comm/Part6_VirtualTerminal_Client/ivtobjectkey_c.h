@@ -31,11 +31,6 @@ class iVtObjectKey_c : public __IsoAgLib::vtObjectKey_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_KEY; }
 
-  iVtObjectKey_c(const iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst)
-  :vtObjectKey_c(vtObjectKeySROM , ai_multitonInst)
-  {}
-
-  const iVtObjectKey_s& get_vtObjectKey_a() { return *vtObjectKey_c::get_vtObjectKey_a(); }
 
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectKey_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);

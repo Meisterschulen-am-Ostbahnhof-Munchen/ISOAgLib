@@ -34,12 +34,22 @@ namespace __IsoAgLib {
 
 class vtObjectKey_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectKey_s;
+
+	// Pointer to the internal implementation
+	iVtObjectKey_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectKey_s> vtObject_a;
+
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectKey_c(const iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst);
+  vtObjectKey_c(iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst);
   iVtObjectKey_s* get_vtObjectKey_a();
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);

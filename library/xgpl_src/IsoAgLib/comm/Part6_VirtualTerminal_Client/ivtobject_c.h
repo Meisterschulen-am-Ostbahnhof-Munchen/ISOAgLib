@@ -148,21 +148,7 @@ protected:
 
 
 
-	struct iVtObjectKey_s: iVtObjectObject_s, iVtObjectwMacro_s {
-		Colour backgroundColour;
-		uint8_t keyCode;
-		iVtObjectKey_s(
-	    		ObjectID ID,
-				Colour backgroundColour,
-				uint8_t keyCode)
-		: iVtObject_s(ID)
-		, iVtObjectObject_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, backgroundColour(backgroundColour)
-		, keyCode(keyCode)
-		{
-		}
-	};
+
 
 	struct iVtObjectMacro_s: iVtObject_s {
 		uint16_t numBytesToFollow;

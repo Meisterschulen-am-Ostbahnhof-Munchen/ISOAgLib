@@ -29,6 +29,23 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectKey_c::iVtObjectKey_s: iVtObjectObject_s, iVtObjectwMacro_s {
+	IsoAgLib::Colour backgroundColour;
+	uint8_t keyCode;
+	iVtObjectKey_s(
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::Colour backgroundColour,
+			uint8_t keyCode)
+	: iVtObject_s(ID)
+	, iVtObjectObject_s(ID)
+	, iVtObjectwMacro_s(ID)
+	, backgroundColour(backgroundColour)
+	, keyCode(keyCode)
+	{
+	}
+};
+
 int16_t
 vtObjectKey_c::stream(uint8_t* destMemory,
                       uint16_t maxBytes,
@@ -121,11 +138,15 @@ vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValu
   }
 }
 #endif
-    vtObjectKey_c::vtObjectKey_c(const IsoAgLib::iVtObject_c::iVtObjectKey_s *vtObjectKeySROM, int ai_multitonInst)
+    vtObjectKey_c::vtObjectKey_c(vtObjectKey_c::iVtObjectKey_s *vtObjectKeySROM, int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectKeySROM , ai_multitonInst)
+    		,vtObject_a(vtObjectKeySROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectKey_s *vtObjectKey_c::get_vtObjectKey_a() { return dynamic_cast<iVtObjectKey_s *>(&(get_vtObject_a())); }
+    vtObjectKey_c::iVtObjectKey_s *vtObjectKey_c::get_vtObjectKey_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectKey_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectKey_a(), backgroundColour) : 0, sizeof(iVtObjectKey_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
