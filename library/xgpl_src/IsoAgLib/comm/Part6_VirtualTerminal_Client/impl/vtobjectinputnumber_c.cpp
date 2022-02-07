@@ -185,7 +185,8 @@ vtObjectInputNumber_c::setValue(uint32_t newValue,
                                 bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (get_vtObjectInputNumber_a()->variableReference == NULL) {
-    if (b_updateObject) saveValue32 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), value),  sizeof(iVtObjectInputNumber_s), newValue);
+    if (b_updateObject)
+    	vtObject_a->value = newValue;
 
     __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
   }
