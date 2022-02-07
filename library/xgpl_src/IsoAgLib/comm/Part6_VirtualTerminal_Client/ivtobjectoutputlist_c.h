@@ -31,11 +31,6 @@ class iVtObjectOutputList_c : public __IsoAgLib::vtObjectOutputList_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_OUTPUT_LIST; }
 
-  iVtObjectOutputList_c(const iVtObjectOutputList_s* vtObjectOutputListSROM , int ai_multitonInst)
-  :vtObjectOutputList_c(vtObjectOutputListSROM , ai_multitonInst)
-  {}
-
-  const iVtObjectOutputList_s& get_vtObjectOutputList_a() { return *vtObjectOutputList_c::get_vtObjectOutputList_a(); }
 
   iVtObject_c* getListItem(uint8_t xth) { return vtObjectOutputList_c::getListItem (xth); }
 

@@ -154,29 +154,7 @@ protected:
 
 
 
-	struct iVtObjectOutputList_s: iVtObjectObject_s, iVtObjectwMacro_s {
-		uint16_t width;
-		uint16_t height;
-		iVtObject_c *variableReference;
-		uint8_t value;
-		iVtObjectOutputList_s(
-				ObjectID ID,
-				uint16_t width,
-				uint16_t height,
-				iVtObject_c *variableReference,
-				uint8_t value)
-	    : iVtObject_s(ID)
-		, iVtObjectObject_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, width(width)
-		, height(height)
-		, variableReference(variableReference)
-		, value(value)
-		{
-		}
 
-
-	};
 
 	struct iVtObjectOutputNumber_s: iVtObjectwMacro_s {
 		uint16_t width;
