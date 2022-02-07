@@ -99,10 +99,9 @@ vtObjectButton_c::stream(uint8_t* destMemory,
 }
 
 
-uint16_t vtObjectButton_c::getID() const
-{
-isoaglib_assert(vtObject_a);
-return vtObject_a->ID;
+uint16_t vtObjectButton_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
 }
 
 
@@ -130,7 +129,7 @@ vtObjectButton_c::vtObjectButton_c(
 
 vtObjectButton_c::vtObjectButton_c(vtObjectButton_c::iVtObjectButton_s *vtObjectButtonSROM,
                                    int ai_multitonInst)
-        : vtObject_c((iVtObject_s*) vtObjectButtonSROM , ai_multitonInst)
+        : vtObject_c(ai_multitonInst)
 		, vtObject_a(vtObjectButtonSROM)
 {}
 
