@@ -139,6 +139,9 @@ namespace IsoAgLib {
 	}
 
 
+	iVtObject_c::~iVtObject_c() = default;
+
+
 
 
 

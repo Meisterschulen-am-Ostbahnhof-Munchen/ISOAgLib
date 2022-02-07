@@ -61,7 +61,7 @@ vtObject_c::vtObject_c(int ai_multitonInst)
   setMultitonInst( ai_multitonInst );
 }
 
-
+vtObject_c::~vtObject_c() = default;
 
 void
 vtObject_c::setAttribute(uint8_t attrID, uint32_t newValue, bool b_enableReplaceOfCmd)

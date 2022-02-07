@@ -172,7 +172,7 @@ VtClientConnection_c::VtClientConnection_c(
 
     if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryFunction2_c::objectType())
     { // collect all available AUX 2 function objects in list
-      IsoAgLib::iVtObjectAuxiliaryFunction2_c *aux2f = static_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>(p_obj);
+      IsoAgLib::iVtObjectAuxiliaryFunction2_c *aux2f = dynamic_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>(p_obj);
       m_aux2Functions.getObjects()[ p_obj->getID() ] = aux2f;
       if (!aux2f->isOmittedFromUpload())
       {
@@ -182,7 +182,7 @@ VtClientConnection_c::VtClientConnection_c(
 
     if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryInput2_c::objectType())
     { // collect all available AUX 2 input objects in list
-      IsoAgLib::iVtObjectAuxiliaryInput2_c *aux2i = static_cast<IsoAgLib::iVtObjectAuxiliaryInput2_c*>(p_obj);
+      IsoAgLib::iVtObjectAuxiliaryInput2_c *aux2i = dynamic_cast<IsoAgLib::iVtObjectAuxiliaryInput2_c*>(p_obj);
       m_aux2Inputs.getObjectList().push_back( aux2i );
       if (!aux2i->isOmittedFromUpload())
       {

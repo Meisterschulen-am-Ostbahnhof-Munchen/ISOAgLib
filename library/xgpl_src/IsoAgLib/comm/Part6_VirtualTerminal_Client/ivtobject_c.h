@@ -37,8 +37,7 @@ namespace IsoAgLib {
 // https://www.geeksforgeeks.org/pure-virtual-functions-and-abstract-classes/
 //
 
-class iVtObject_c : public ClientBase
-{
+class iVtObject_c : public virtual AbstractClientBase {
 public:
 
 
@@ -150,7 +149,7 @@ public:
   // Constructor
   iVtObject_c();
 
-  ~iVtObject_c() override = default;
+  virtual ~iVtObject_c() = 0;
 
   //  Operation: getID
   virtual IsoAgLib::ObjectID getID() const = 0;

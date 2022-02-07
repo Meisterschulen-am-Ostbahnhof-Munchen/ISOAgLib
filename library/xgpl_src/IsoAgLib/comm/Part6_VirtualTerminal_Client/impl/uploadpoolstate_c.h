@@ -118,8 +118,8 @@ namespace __IsoAgLib {
     void notifyOnVtsLanguagePgn();
     void finalizeUploading();
 
-    uint32_t fitTerminalWrapper( const vtObject_c& object ) const;
-    bool dontUpload( const vtObject_c& object ) const;
+    uint32_t fitTerminalWrapper( const vtObject_c* object ) const;
+    bool dontUpload( const vtObject_c* object ) const;
 
     bool activeAuxN() const;
     bool activeAuxO() const;
