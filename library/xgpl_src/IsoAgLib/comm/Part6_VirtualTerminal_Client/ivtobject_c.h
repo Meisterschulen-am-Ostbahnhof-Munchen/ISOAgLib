@@ -147,31 +147,7 @@ protected:
 
 
 
-	struct iVtObjectRectangle_s: iVtObjectwMacro_s {
-		iVtObjectLineAttributes_c *lineAttributes;
-		uint16_t width;
-		uint16_t height;
-		uint8_t lineSuppression;
-		iVtObjectFillAttributes_c *fillAttributes;
-		iVtObjectRectangle_s(
-				ObjectID ID,
-				iVtObjectLineAttributes_c *lineAttributes,
-				uint16_t width,
-				uint16_t height,
-				uint8_t lineSuppression,
-				iVtObjectFillAttributes_c *fillAttributes)
-	    : iVtObject_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, lineAttributes(lineAttributes)
-		, width(width)
-		, height(height)
-		, lineSuppression(lineSuppression)
-		, fillAttributes(fillAttributes)
-		{
-		}
 
-
-	};
 
 	struct iVtObjectSoftKeyMask_s: iVtObjectObject_s, iVtObjectwMacro_s {
 		Colour backgroundColour;

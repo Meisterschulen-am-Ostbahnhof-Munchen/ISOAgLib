@@ -32,12 +32,21 @@ namespace __IsoAgLib {
 
 class vtObjectRectangle_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectRectangle_s;
+
+	// Pointer to the internal implementation
+	iVtObjectRectangle_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectRectangle_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectRectangle_c(const iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst);
+  vtObjectRectangle_c(iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst);
   iVtObjectRectangle_s* get_vtObjectRectangle_a();
   uint32_t fitTerminal() const;
   void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

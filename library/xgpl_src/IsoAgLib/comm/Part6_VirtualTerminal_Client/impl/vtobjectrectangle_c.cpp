@@ -30,6 +30,33 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectRectangle_c::iVtObjectRectangle_s: iVtObjectwMacro_s {
+	IsoAgLib::iVtObjectLineAttributes_c *lineAttributes;
+	uint16_t width;
+	uint16_t height;
+	uint8_t lineSuppression;
+	IsoAgLib::iVtObjectFillAttributes_c *fillAttributes;
+	iVtObjectRectangle_s(
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+			uint16_t width,
+			uint16_t height,
+			uint8_t lineSuppression,
+			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes)
+    : iVtObject_s(ID)
+	, iVtObjectwMacro_s(ID)
+	, lineAttributes(lineAttributes)
+	, width(width)
+	, height(height)
+	, lineSuppression(lineSuppression)
+	, fillAttributes(fillAttributes)
+	{
+	}
+
+
+};
+
 int16_t
 vtObjectRectangle_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
@@ -170,12 +197,16 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
   }
 }
 #endif
-    vtObjectRectangle_c::vtObjectRectangle_c(const IsoAgLib::iVtObject_c::iVtObjectRectangle_s *vtObjectRectangleSROM,
+    vtObjectRectangle_c::vtObjectRectangle_c(iVtObjectRectangle_s *vtObjectRectangleSROM,
                                              int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectRectangleSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectRectangleSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectRectangle_s *vtObjectRectangle_c::get_vtObjectRectangle_a() { return dynamic_cast<iVtObjectRectangle_s *>(&(get_vtObject_a())); }
+    vtObjectRectangle_c::iVtObjectRectangle_s *vtObjectRectangle_c::get_vtObjectRectangle_a()
+    {
+    	return vtObject_a;
+    }
 
     void
     vtObjectRectangle_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject,

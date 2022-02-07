@@ -31,11 +31,6 @@ class iVtObjectRectangle_c : public __IsoAgLib::vtObjectRectangle_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_RECTANGLE; }
 
-  iVtObjectRectangle_c(const iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst)
-  :vtObjectRectangle_c(vtObjectRectangleSROM , ai_multitonInst)
-  {}
-
-
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
   }
