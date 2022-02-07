@@ -101,8 +101,8 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectInputNumber_a->width;
-    uint32_t height = (uint32_t)vtObjectInputNumber_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -113,44 +113,44 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectInputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      destMemory [8] = vtObjectInputNumber_a->fontAttributes->getID() & 0xFF;
-      destMemory [9] = vtObjectInputNumber_a->fontAttributes->getID() >> 8;
-      destMemory [10] = vtObjectInputNumber_a->options;
-      if (vtObjectInputNumber_a->variableReference != NULL) {
-          destMemory [11] = vtObjectInputNumber_a->variableReference->getID() & 0xFF;
-          destMemory [12] = vtObjectInputNumber_a->variableReference->getID() >> 8;
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [8] = vtObject_a->fontAttributes->getID() & 0xFF;
+      destMemory [9] = vtObject_a->fontAttributes->getID() >> 8;
+      destMemory [10] = vtObject_a->options;
+      if (vtObject_a->variableReference != NULL) {
+          destMemory [11] = vtObject_a->variableReference->getID() & 0xFF;
+          destMemory [12] = vtObject_a->variableReference->getID() >> 8;
       } else {
           destMemory [11] = 0xFF;
           destMemory [12] = 0xFF;
       }
-      destMemory [13] = (vtObjectInputNumber_a->value) & 0xFF;
-      destMemory [14] = (vtObjectInputNumber_a->value >> 8) & 0xFF;
-      destMemory [15] = (vtObjectInputNumber_a->value >> 16) & 0xFF;
-      destMemory [16] = (vtObjectInputNumber_a->value >> 24) & 0xFF;
+      destMemory [13] = (vtObject_a->value) & 0xFF;
+      destMemory [14] = (vtObject_a->value >> 8) & 0xFF;
+      destMemory [15] = (vtObject_a->value >> 16) & 0xFF;
+      destMemory [16] = (vtObject_a->value >> 24) & 0xFF;
 
-      destMemory [17] = (vtObjectInputNumber_a->minValue) & 0xFF;
-      destMemory [18] = (vtObjectInputNumber_a->minValue >> 8) & 0xFF;
-      destMemory [19] = (vtObjectInputNumber_a->minValue >> 16) & 0xFF;
-      destMemory [20] = (vtObjectInputNumber_a->minValue >> 24) & 0xFF;
+      destMemory [17] = (vtObject_a->minValue) & 0xFF;
+      destMemory [18] = (vtObject_a->minValue >> 8) & 0xFF;
+      destMemory [19] = (vtObject_a->minValue >> 16) & 0xFF;
+      destMemory [20] = (vtObject_a->minValue >> 24) & 0xFF;
 
-      destMemory [21] = (vtObjectInputNumber_a->maxValue) & 0xFF;
-      destMemory [22] = (vtObjectInputNumber_a->maxValue >> 8) & 0xFF;
-      destMemory [23] = (vtObjectInputNumber_a->maxValue >> 16) & 0xFF;
-      destMemory [24] = (vtObjectInputNumber_a->maxValue >> 24) & 0xFF;
+      destMemory [21] = (vtObject_a->maxValue) & 0xFF;
+      destMemory [22] = (vtObject_a->maxValue >> 8) & 0xFF;
+      destMemory [23] = (vtObject_a->maxValue >> 16) & 0xFF;
+      destMemory [24] = (vtObject_a->maxValue >> 24) & 0xFF;
 
-      destMemory [25] = (vtObjectInputNumber_a->offset) & 0xFF;
-      destMemory [26] = (vtObjectInputNumber_a->offset >> 8) & 0xFF;
-      destMemory [27] = (vtObjectInputNumber_a->offset >> 16) & 0xFF;
-      destMemory [28] = (vtObjectInputNumber_a->offset >> 24) & 0xFF;
+      destMemory [25] = (vtObject_a->offset) & 0xFF;
+      destMemory [26] = (vtObject_a->offset >> 8) & 0xFF;
+      destMemory [27] = (vtObject_a->offset >> 16) & 0xFF;
+      destMemory [28] = (vtObject_a->offset >> 24) & 0xFF;
 
-      __IsoAgLib::floatVar2LittleEndianStream (&vtObjectInputNumber_a->scale, &destMemory[29]);
+      __IsoAgLib::floatVar2LittleEndianStream (&vtObject_a->scale, &destMemory[29]);
 
-      destMemory [33] = vtObjectInputNumber_a->numberOfDecimals;
-      destMemory [34] = vtObjectInputNumber_a->format;
-      destMemory [35] = vtObjectInputNumber_a->horizontalJustification;
-      destMemory [36] = vtObjectInputNumber_a->secondOptionsByte;
-      destMemory [37] = vtObjectInputNumber_a->numberOfMacrosToFollow;
+      destMemory [33] = vtObject_a->numberOfDecimals;
+      destMemory [34] = vtObject_a->format;
+      destMemory [35] = vtObject_a->horizontalJustification;
+      destMemory [36] = vtObject_a->secondOptionsByte;
+      destMemory [37] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 38;
       curBytes += 38;
     }
@@ -168,8 +168,7 @@ IsoAgLib::ObjectID vtObjectInputNumber_c::getID() const {
 uint32_t
 vtObjectInputNumber_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 38+vtObjectInputNumber_a->numberOfMacrosToFollow*2;
+  return 38+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 

@@ -62,22 +62,22 @@ vtObjectLine_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectLine_a->width;
-    uint32_t height = (uint32_t)vtObjectLine_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 13; // Object Type = Line
-      destMemory [3] = vtObjectLine_a->lineAttributes->getID() & 0xFF;
-      destMemory [4] = vtObjectLine_a->lineAttributes->getID() >> 8;
+      destMemory [3] = vtObject_a->lineAttributes->getID() & 0xFF;
+      destMemory [4] = vtObject_a->lineAttributes->getID() >> 8;
       destMemory [5] = width & 0xFF;
       destMemory [6] = width >> 8;
       destMemory [7] = height & 0xFF;
       destMemory [8] = height >> 8;
-      destMemory [9] = vtObjectLine_a->lineDirection;
-      destMemory [10] = vtObjectLine_a->numberOfMacrosToFollow;
+      destMemory [9] = vtObject_a->lineDirection;
+      destMemory [10] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 11;
       curBytes += 11;
     }
@@ -126,18 +126,16 @@ vtObjectLine_c::iVtObjectLine_s *vtObjectLine_c::get_vtObjectLine_a() {
 uint32_t
 vtObjectLine_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 11+vtObjectLine_a->numberOfMacrosToFollow*2;
+  return 11+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
 void
 vtObjectLine_c::setOriginSKM(bool b_SKM)
 {
-  MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
-    vtObjectLine_a->lineAttributes->setOriginSKM (b_SKM);
+    vtObject_a->lineAttributes->setOriginSKM (b_SKM);
   }
 }
 

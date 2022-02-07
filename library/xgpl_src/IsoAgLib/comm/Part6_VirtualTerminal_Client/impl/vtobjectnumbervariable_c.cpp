@@ -49,17 +49,16 @@ vtObjectNumberVariable_c::stream(uint8_t* destMemory,
 {
 #define MACRO_vtObjectTypeA vtObjectNumberVariable_a
 #define MACRO_vtObjectTypeS iVtObjectNumberVariable_s
-    MACRO_localVars;
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 21; // Object Type = Number Variable
 
-      destMemory [3] = (vtObjectNumberVariable_a->value) & 0xFF;
-      destMemory [4] = (vtObjectNumberVariable_a->value >> 8) & 0xFF;
-      destMemory [5] = (vtObjectNumberVariable_a->value >> 16) & 0xFF;
-      destMemory [6] = (vtObjectNumberVariable_a->value >> 24) & 0xFF;
+      destMemory [3] = (vtObject_a->value) & 0xFF;
+      destMemory [4] = (vtObject_a->value >> 8) & 0xFF;
+      destMemory [5] = (vtObject_a->value >> 16) & 0xFF;
+      destMemory [6] = (vtObject_a->value >> 24) & 0xFF;
       return 7;
     }
     return 0;

@@ -45,15 +45,14 @@ vtObjectObjectPointer_c::stream(uint8_t* destMemory,
 {
 #define MACRO_vtObjectTypeA vtObjectObjectPointer_a
 #define MACRO_vtObjectTypeS iVtObjectObjectPointer_s
-    MACRO_localVars;
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 27; // Object Type = Object Pointer
-      if (vtObjectObjectPointer_a->value != NULL) {
-        destMemory [3] = vtObjectObjectPointer_a->value->getID() & 0xFF;
-        destMemory [4] = vtObjectObjectPointer_a->value->getID() >> 8;
+      if (vtObject_a->value != NULL) {
+        destMemory [3] = vtObject_a->value->getID() & 0xFF;
+        destMemory [4] = vtObject_a->value->getID() >> 8;
       } else {
         destMemory [3] = 0xFF;
         destMemory [4] = 0xFF;
@@ -89,19 +88,17 @@ vtObjectObjectPointer_c::setValue(IsoAgLib::iVtObject_c* apc_newObject, bool b_u
 void
 vtObjectObjectPointer_c::setOriginSKM(bool b_SKM)
 {
-  MACRO_localVars;
-  if (vtObjectObjectPointer_a->value != NULL) {
-    vtObjectObjectPointer_a->value->setOriginSKM (b_SKM);
+  if (vtObject_a->value != NULL) {
+    vtObject_a->value->setOriginSKM (b_SKM);
   }
 }
 
 void
 vtObjectObjectPointer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 {
-  MACRO_localVars;
   if (p_btn) p_parentButtonObject = p_btn;
-  if (vtObjectObjectPointer_a->value != NULL) {
-    vtObjectObjectPointer_a->value->setOriginBTN (p_btn);
+  if (vtObject_a->value != NULL) {
+    vtObject_a->value->setOriginBTN (p_btn);
   }
 }
 

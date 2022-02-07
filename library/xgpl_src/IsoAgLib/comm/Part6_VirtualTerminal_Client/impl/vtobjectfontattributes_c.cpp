@@ -69,11 +69,11 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 23; // Object Type = Font Attributes
-    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectFontAttributes_a->fontColour, this, IsoAgLib::FontColour);
+    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->fontColour, this, IsoAgLib::FontColour);
     destMemory [4] = mui8_fontSizeScaled; // size() must have been called before to prepare!!!!
-    destMemory [5] = vtObjectFontAttributes_a->fontType;
-    destMemory [6] = vtObjectFontAttributes_a->fontStyle & __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().fontTypes;
-    destMemory [7] = vtObjectFontAttributes_a->numberOfMacrosToFollow;
+    destMemory [5] = vtObject_a->fontType;
+    destMemory [6] = vtObject_a->fontStyle & __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().fontTypes;
+    destMemory [7] = vtObject_a->numberOfMacrosToFollow;
     sourceOffset += 8;
     curBytes += 8;
   }
@@ -122,13 +122,11 @@ vtObjectFontAttributes_c::vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vt
 uint32_t
 vtObjectFontAttributes_c::fitTerminal() const
 {
-  MACRO_localVars;
-
   mui8_fontSizeScaled = 0xFF;
   // Recalc mui8_fontSizeScaled (with 0xFF it will re-calc the font size)
   calcScaledFontDimension();
 
-  return 8+vtObjectFontAttributes_a->numberOfMacrosToFollow*2;
+  return 8+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
@@ -147,7 +145,6 @@ vtObjectFontAttributes_c::getScaledWidthHeight()
 void
 vtObjectFontAttributes_c::calcScaledFontDimension() const
 {
-  MACRO_localVars;
   MACRO_scaleLocalVars;
   MACRO_scaleSKLocalVars;
 
@@ -155,7 +152,7 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
   if (mui8_fontSizeScaled != 0xFF)
     return; // already calculated
 
-  mui8_fontSizeScaled = vtObjectFontAttributes_a->fontSize;
+  mui8_fontSizeScaled = vtObject_a->fontSize;
   if (mui8_fontSizeScaled > (15-1)) mui8_fontSizeScaled = (15-1);
 
   uint32_t width, height;

@@ -66,28 +66,28 @@ vtObjectInputBoolean_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectInputBoolean_a->width;
+    uint32_t width  = (uint32_t)vtObject_a->width;
     MACRO_scaleDimension(width);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 7; // Object Type = Input Boolean
-      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectInputBoolean_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [4] = width & 0xFF;
       destMemory [5] = width >> 8;
-      destMemory [6] = vtObjectInputBoolean_a->foregroundColour->getID() & 0xFF;
-      destMemory [7] = vtObjectInputBoolean_a->foregroundColour->getID() >> 8;
-      if (vtObjectInputBoolean_a->variableReference != NULL) {
-        destMemory [8] = vtObjectInputBoolean_a->variableReference->getID() & 0xFF;
-        destMemory [9] = vtObjectInputBoolean_a->variableReference->getID() >> 8;
+      destMemory [6] = vtObject_a->foregroundColour->getID() & 0xFF;
+      destMemory [7] = vtObject_a->foregroundColour->getID() >> 8;
+      if (vtObject_a->variableReference != NULL) {
+        destMemory [8] = vtObject_a->variableReference->getID() & 0xFF;
+        destMemory [9] = vtObject_a->variableReference->getID() >> 8;
       } else {
         destMemory [8] = 0xFF;
         destMemory [9] = 0xFF;
       }
-      destMemory [10] = vtObjectInputBoolean_a->value;
-      destMemory [11] = vtObjectInputBoolean_a->enabled;
-      destMemory [12] = vtObjectInputBoolean_a->numberOfMacrosToFollow;
+      destMemory [10] = vtObject_a->value;
+      destMemory [11] = vtObject_a->enabled;
+      destMemory [12] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 13;
       curBytes += 13;
     }
@@ -107,8 +107,7 @@ IsoAgLib::ObjectID vtObjectInputBoolean_c::getID() const {
 uint32_t
 vtObjectInputBoolean_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 13+vtObjectInputBoolean_a->numberOfMacrosToFollow*2;
+  return 13+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 

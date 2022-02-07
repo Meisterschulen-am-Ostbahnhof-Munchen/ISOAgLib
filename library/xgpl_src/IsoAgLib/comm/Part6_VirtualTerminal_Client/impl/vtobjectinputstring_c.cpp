@@ -89,8 +89,8 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectInputString_a->width;
-    uint32_t height = (uint32_t)vtObjectInputString_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -101,51 +101,51 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectInputString_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      destMemory [8] = vtObjectInputString_a->fontAttributes->getID() & 0xFF;
-      destMemory [9] = vtObjectInputString_a->fontAttributes->getID() >> 8;
-      if (vtObjectInputString_a->inputAttributes != NULL)
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [8] = vtObject_a->fontAttributes->getID() & 0xFF;
+      destMemory [9] = vtObject_a->fontAttributes->getID() >> 8;
+      if (vtObject_a->inputAttributes != NULL)
       {
-        destMemory [10] = vtObjectInputString_a->inputAttributes->getID() & 0xFF;
-        destMemory [11] = vtObjectInputString_a->inputAttributes->getID() >> 8;
+        destMemory [10] = vtObject_a->inputAttributes->getID() & 0xFF;
+        destMemory [11] = vtObject_a->inputAttributes->getID() >> 8;
       }
       else
       {
         destMemory [10] = 0xFF;
         destMemory [11] = 0xFF;
       }
-      destMemory [12] = vtObjectInputString_a->options;
-      if (vtObjectInputString_a->variableReference != NULL) {
-        destMemory [13] = vtObjectInputString_a->variableReference->getID() & 0xFF;
-        destMemory [14] = vtObjectInputString_a->variableReference->getID() >> 8;
+      destMemory [12] = vtObject_a->options;
+      if (vtObject_a->variableReference != NULL) {
+        destMemory [13] = vtObject_a->variableReference->getID() & 0xFF;
+        destMemory [14] = vtObject_a->variableReference->getID() >> 8;
       } else {
         destMemory [13] = 0xFF;
         destMemory [14] = 0xFF;
       }
-      destMemory [15] = vtObjectInputString_a->horizontalJustification;
-      destMemory [16] = static_cast<uint8_t>(vtObjectInputString_a->length);  // Length not greater than 255!
+      destMemory [15] = vtObject_a->horizontalJustification;
+      destMemory [16] = static_cast<uint8_t>(vtObject_a->length);  // Length not greater than 255!
       sourceOffset += 17;
       curBytes += 17;
     }
 
-    while ((sourceOffset >= 17U) && (sourceOffset < (17U+vtObjectInputString_a->length)) && ((curBytes+1) <= maxBytes)) {
-      if (vtObjectInputString_a->value == NULL)
+    while ((sourceOffset >= 17U) && (sourceOffset < (17U+vtObject_a->length)) && ((curBytes+1) <= maxBytes)) {
+      if (vtObject_a->value == NULL)
         destMemory [curBytes] = 0x00;
       else
-        destMemory [curBytes] = vtObjectInputString_a->value [sourceOffset-17];
+        destMemory [curBytes] = vtObject_a->value [sourceOffset-17];
       curBytes++;
       sourceOffset++;
     }
 
-    if ((sourceOffset == (17U + vtObjectInputString_a->length)) && ((curBytes+1) <= maxBytes)) {
-      destMemory [curBytes] = vtObjectInputString_a->enabled;
+    if ((sourceOffset == (17U + vtObject_a->length)) && ((curBytes+1) <= maxBytes)) {
+      destMemory [curBytes] = vtObject_a->enabled;
       curBytes++;
       sourceOffset++;
-      destMemory [curBytes] = vtObjectInputString_a->numberOfMacrosToFollow;
+      destMemory [curBytes] = vtObject_a->numberOfMacrosToFollow;
       curBytes++;
       sourceOffset++;
     }
-    MACRO_streamEventMacro(19U+vtObjectInputString_a->length);
+    MACRO_streamEventMacro(19U+vtObject_a->length);
     return curBytes;
 }
 
@@ -158,8 +158,7 @@ IsoAgLib::ObjectID vtObjectInputString_c::getID() const {
 uint32_t
 vtObjectInputString_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 19+vtObjectInputString_a->length+vtObjectInputString_a->numberOfMacrosToFollow*2;
+  return 19+vtObject_a->length+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
@@ -223,8 +222,7 @@ vtObjectInputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length,
 void
 vtObjectInputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  if (vtObjectInputString_a->variableReference != NULL) {
+  if (vtObject_a->variableReference != NULL) {
     // register error!!
     return;
   }
@@ -252,8 +250,7 @@ vtObjectInputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b_
 void
 vtObjectInputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  if (vtObjectInputString_a->variableReference != NULL) {
+  if (vtObject_a->variableReference != NULL) {
     // register error!!
     return;
   }

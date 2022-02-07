@@ -63,8 +63,8 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectInputList_a->width;
-    uint32_t height = (uint32_t)vtObjectInputList_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -75,24 +75,24 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      if (vtObjectInputList_a->variableReference != NULL) {
-        destMemory [7] = vtObjectInputList_a->variableReference->getID() & 0xFF;
-        destMemory [8] = vtObjectInputList_a->variableReference->getID() >> 8;
+      if (vtObject_a->variableReference != NULL) {
+        destMemory [7] = vtObject_a->variableReference->getID() & 0xFF;
+        destMemory [8] = vtObject_a->variableReference->getID() >> 8;
       } else {
         destMemory [7] = 0xFF;
         destMemory [8] = 0xFF;
       }
-      destMemory [9] = vtObjectInputList_a->value;
+      destMemory [9] = vtObject_a->value;
 
-      destMemory [10] = vtObjectInputList_a->numberOfObjectsToFollow;
-      destMemory [11] = vtObjectInputList_a->options;
-      destMemory [12] = vtObjectInputList_a->numberOfMacrosToFollow;
+      destMemory [10] = vtObject_a->numberOfObjectsToFollow;
+      destMemory [11] = vtObject_a->options;
+      destMemory [12] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 13;
       curBytes += 13;
     }
 
     MACRO_streamObject(13);
-    MACRO_streamEventMacro(13U+vtObjectInputList_a->numberOfObjectsToFollow*2U);
+    MACRO_streamEventMacro(13U+vtObject_a->numberOfObjectsToFollow*2U);
     return curBytes;
 }
 
@@ -120,8 +120,7 @@ vtObjectInputList_c::getNumberOfListItems()
 uint32_t
 vtObjectInputList_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 13+vtObjectInputList_a->numberOfObjectsToFollow*2+vtObjectInputList_a->numberOfMacrosToFollow*2;
+  return 13+vtObject_a->numberOfObjectsToFollow*2+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 

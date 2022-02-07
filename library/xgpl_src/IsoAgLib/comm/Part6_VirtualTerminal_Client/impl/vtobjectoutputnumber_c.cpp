@@ -89,8 +89,8 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectOutputNumber_a->width;
-    uint32_t height = (uint32_t)vtObjectOutputNumber_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -101,34 +101,34 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectOutputNumber_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      destMemory [8] = vtObjectOutputNumber_a->fontAttributes->getID() & 0xFF;
-      destMemory [9] = vtObjectOutputNumber_a->fontAttributes->getID() >> 8;
-      destMemory [10] = vtObjectOutputNumber_a->options;
-      if (vtObjectOutputNumber_a->variableReference != NULL) {
-        destMemory [11] = vtObjectOutputNumber_a->variableReference->getID() & 0xFF;
-        destMemory [12] = vtObjectOutputNumber_a->variableReference->getID() >> 8;
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [8] = vtObject_a->fontAttributes->getID() & 0xFF;
+      destMemory [9] = vtObject_a->fontAttributes->getID() >> 8;
+      destMemory [10] = vtObject_a->options;
+      if (vtObject_a->variableReference != NULL) {
+        destMemory [11] = vtObject_a->variableReference->getID() & 0xFF;
+        destMemory [12] = vtObject_a->variableReference->getID() >> 8;
       } else {
         destMemory [11] = 0xFF;
         destMemory [12] = 0xFF;
       }
-      destMemory [13] = (vtObjectOutputNumber_a->value) & 0xFF;
-      destMemory [14] = (vtObjectOutputNumber_a->value >> 8) & 0xFF;
-      destMemory [15] = (vtObjectOutputNumber_a->value >> 16) & 0xFF;
-      destMemory [16] = (vtObjectOutputNumber_a->value >> 24) & 0xFF;
+      destMemory [13] = (vtObject_a->value) & 0xFF;
+      destMemory [14] = (vtObject_a->value >> 8) & 0xFF;
+      destMemory [15] = (vtObject_a->value >> 16) & 0xFF;
+      destMemory [16] = (vtObject_a->value >> 24) & 0xFF;
 
-      uint32_t offset = *((uint32_t*)&(vtObjectOutputNumber_a->offset));
+      uint32_t offset = *((uint32_t*)&(vtObject_a->offset));
       destMemory [17] = (offset) & 0xFF;
       destMemory [18] = (offset >> 8) & 0xFF;
       destMemory [19] = (offset >> 16) & 0xFF;
       destMemory [20] = (offset >> 24) & 0xFF;
 
-      __IsoAgLib::floatVar2LittleEndianStream (&vtObjectOutputNumber_a->scale, &destMemory[21]);
+      __IsoAgLib::floatVar2LittleEndianStream (&vtObject_a->scale, &destMemory[21]);
 
-      destMemory [25] = vtObjectOutputNumber_a->numberOfDecimals;
-      destMemory [26] = vtObjectOutputNumber_a->format;
-      destMemory [27] = vtObjectOutputNumber_a->horizontalJustification;
-      destMemory [28] = vtObjectOutputNumber_a->numberOfMacrosToFollow;
+      destMemory [25] = vtObject_a->numberOfDecimals;
+      destMemory [26] = vtObject_a->format;
+      destMemory [27] = vtObject_a->horizontalJustification;
+      destMemory [28] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 29;
       curBytes += 29;
     }
@@ -146,8 +146,7 @@ IsoAgLib::ObjectID vtObjectOutputNumber_c::getID() const {
 uint32_t
 vtObjectOutputNumber_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 29+vtObjectOutputNumber_a->numberOfMacrosToFollow*2;
+  return 29+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
@@ -168,21 +167,19 @@ vtObjectOutputNumber_c::setValue(uint32_t newValue, bool b_updateObject, bool b_
 void
 vtObjectOutputNumber_c::setOriginSKM(bool b_SKM)
 {
-  MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
-    vtObjectOutputNumber_a->fontAttributes->setOriginSKM (b_SKM);
+    vtObject_a->fontAttributes->setOriginSKM (b_SKM);
   }
 }
 
 void
 vtObjectOutputNumber_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 {
-  MACRO_localVars;
   if (p_btn)
   {
     p_parentButtonObject = p_btn;
-    vtObjectOutputNumber_a->fontAttributes->setOriginBTN (p_btn);
+    vtObject_a->fontAttributes->setOriginBTN (p_btn);
   }
 }
 

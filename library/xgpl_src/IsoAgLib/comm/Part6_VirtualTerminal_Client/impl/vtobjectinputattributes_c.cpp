@@ -59,31 +59,31 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 26; // Object Type = Input Attributes
-      destMemory [3] = vtObjectInputAttributes_a->validationType;
+      destMemory [3] = vtObject_a->validationType;
 
-      destMemory [4] = vtObjectInputAttributes_a->length;
+      destMemory [4] = vtObject_a->length;
       sourceOffset += 5;
       curBytes += 5;
     }
 
-    while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
+    while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObject_a->length)) && ((curBytes+1) <= maxBytes))
     {
-      if (vtObjectInputAttributes_a->validationString == NULL)
+      if (vtObject_a->validationString == NULL)
           destMemory [curBytes] = 0x00;
       else
-          destMemory [curBytes] = vtObjectInputAttributes_a->validationString [sourceOffset-5];
+          destMemory [curBytes] = vtObject_a->validationString [sourceOffset-5];
 
       curBytes++;
       sourceOffset++;
     }
 
-    if ((sourceOffset == (5U + vtObjectInputAttributes_a->length)) && ((curBytes+1) <= maxBytes))
+    if ((sourceOffset == (5U + vtObject_a->length)) && ((curBytes+1) <= maxBytes))
     {
-      destMemory [curBytes] = vtObjectInputAttributes_a->numberOfMacrosToFollow;
+      destMemory [curBytes] = vtObject_a->numberOfMacrosToFollow;
       curBytes++;
       sourceOffset++;
     }
-    MACRO_streamEventMacro(6U+vtObjectInputAttributes_a->length);
+    MACRO_streamEventMacro(6U+vtObject_a->length);
     return curBytes;
 }
 
@@ -96,8 +96,7 @@ IsoAgLib::ObjectID vtObjectInputAttributes_c::getID() const {
 uint32_t
 vtObjectInputAttributes_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 6+vtObjectInputAttributes_a->length+vtObjectInputAttributes_a->numberOfMacrosToFollow*2;
+  return 6+vtObject_a->length+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 

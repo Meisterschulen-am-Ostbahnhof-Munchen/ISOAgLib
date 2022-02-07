@@ -85,7 +85,7 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectMeter_a->width;
+    uint32_t width  = (uint32_t)vtObject_a->width;
     MACRO_scaleDimension(width);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -94,28 +94,28 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
       destMemory [2] = 17; // Object Type = Meter
       destMemory [3] = width & 0xFF;
       destMemory [4] = width >> 8;
-      destMemory [5] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectMeter_a->needleColour, this, IsoAgLib::NeedleColour);
-      destMemory [6] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectMeter_a->borderColour, this, IsoAgLib::BorderColour);
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectMeter_a->arcAndTickColour, this, IsoAgLib::ArcAndTickColour);
-      destMemory [8] = vtObjectMeter_a->options;
-      destMemory [9] = vtObjectMeter_a->numberOfTicks;
-      destMemory [10] = vtObjectMeter_a->startAngle;
-      destMemory [11] = vtObjectMeter_a->endAngle;
-      destMemory [12] = vtObjectMeter_a->minValue & 0xFF;
-      destMemory [13] = vtObjectMeter_a->minValue >> 8;
-      destMemory [14] = vtObjectMeter_a->maxValue & 0xFF;
-      destMemory [15] = vtObjectMeter_a->maxValue >> 8;
-      if (vtObjectMeter_a->variableReference != NULL) {
-        destMemory [16] = vtObjectMeter_a->variableReference->getID() & 0xFF;
-        destMemory [17] = vtObjectMeter_a->variableReference->getID() >> 8;
+      destMemory [5] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->needleColour, this, IsoAgLib::NeedleColour);
+      destMemory [6] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->borderColour, this, IsoAgLib::BorderColour);
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->arcAndTickColour, this, IsoAgLib::ArcAndTickColour);
+      destMemory [8] = vtObject_a->options;
+      destMemory [9] = vtObject_a->numberOfTicks;
+      destMemory [10] = vtObject_a->startAngle;
+      destMemory [11] = vtObject_a->endAngle;
+      destMemory [12] = vtObject_a->minValue & 0xFF;
+      destMemory [13] = vtObject_a->minValue >> 8;
+      destMemory [14] = vtObject_a->maxValue & 0xFF;
+      destMemory [15] = vtObject_a->maxValue >> 8;
+      if (vtObject_a->variableReference != NULL) {
+        destMemory [16] = vtObject_a->variableReference->getID() & 0xFF;
+        destMemory [17] = vtObject_a->variableReference->getID() >> 8;
       } else {
         destMemory [16] = 0xFF;
         destMemory [17] = 0xFF;
       }
-      destMemory [18] = vtObjectMeter_a->value & 0xFF;
-      destMemory [19] = vtObjectMeter_a->value >> 8;
+      destMemory [18] = vtObject_a->value & 0xFF;
+      destMemory [19] = vtObject_a->value >> 8;
 
-      destMemory [20] = vtObjectMeter_a->numberOfMacrosToFollow;
+      destMemory [20] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 21;
       curBytes += 21;
     }
@@ -133,8 +133,7 @@ IsoAgLib::ObjectID vtObjectMeter_c::getID() const {
 uint32_t
 vtObjectMeter_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 21+vtObjectMeter_a->numberOfMacrosToFollow*2;
+  return 21+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 

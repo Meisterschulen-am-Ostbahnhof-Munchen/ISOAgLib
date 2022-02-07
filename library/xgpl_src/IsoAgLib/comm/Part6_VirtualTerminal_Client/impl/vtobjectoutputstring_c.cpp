@@ -86,8 +86,8 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectOutputString_a->width;
-    uint32_t height = (uint32_t)vtObjectOutputString_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -98,40 +98,40 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectOutputString_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      destMemory [8] = vtObjectOutputString_a->fontAttributes->getID() & 0xFF;
-      destMemory [9] = vtObjectOutputString_a->fontAttributes->getID() >> 8;
-      destMemory [10] = vtObjectOutputString_a->options;
-      if (vtObjectOutputString_a->variableReference != NULL) {
-        destMemory [11] = vtObjectOutputString_a->variableReference->getID() & 0xFF;
-        destMemory [12] = vtObjectOutputString_a->variableReference->getID() >> 8;
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [8] = vtObject_a->fontAttributes->getID() & 0xFF;
+      destMemory [9] = vtObject_a->fontAttributes->getID() >> 8;
+      destMemory [10] = vtObject_a->options;
+      if (vtObject_a->variableReference != NULL) {
+        destMemory [11] = vtObject_a->variableReference->getID() & 0xFF;
+        destMemory [12] = vtObject_a->variableReference->getID() >> 8;
       } else {
         destMemory [11] = 0xFF;
         destMemory [12] = 0xFF;
       }
-      destMemory [13] = vtObjectOutputString_a->horizontalJustification;
-      destMemory [14] = vtObjectOutputString_a->length & 0xFF;
-      destMemory [15] = vtObjectOutputString_a->length >> 8;
+      destMemory [13] = vtObject_a->horizontalJustification;
+      destMemory [14] = vtObject_a->length & 0xFF;
+      destMemory [15] = vtObject_a->length >> 8;
       sourceOffset += 16;
       curBytes += 16;
     }
 
-    while ((sourceOffset >= 16U) && (sourceOffset < (16U+vtObjectOutputString_a->length)) && ((curBytes+1) <= maxBytes)) {
-      if (vtObjectOutputString_a->value == NULL)
+    while ((sourceOffset >= 16U) && (sourceOffset < (16U+vtObject_a->length)) && ((curBytes+1) <= maxBytes)) {
+      if (vtObject_a->value == NULL)
         destMemory [curBytes] = 0x00;
       else
-        destMemory [curBytes] = vtObjectOutputString_a->value [sourceOffset-16];
+        destMemory [curBytes] = vtObject_a->value [sourceOffset-16];
       curBytes++;
       sourceOffset++;
     }
 
-    if ((sourceOffset == (16U + vtObjectOutputString_a->length)) && ((curBytes+1) <= maxBytes)) {
-      destMemory [curBytes] = vtObjectOutputString_a->numberOfMacrosToFollow;
+    if ((sourceOffset == (16U + vtObject_a->length)) && ((curBytes+1) <= maxBytes)) {
+      destMemory [curBytes] = vtObject_a->numberOfMacrosToFollow;
       curBytes++;
       sourceOffset++;
     }
 
-    MACRO_streamEventMacro(17U+vtObjectOutputString_a->length);
+    MACRO_streamEventMacro(17U+vtObject_a->length);
     return curBytes;
 }
 
@@ -182,29 +182,26 @@ vtObjectOutputString_c::vtObjectOutputString_c(iVtObjectOutputString_s* vtObject
 uint32_t
 vtObjectOutputString_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 17+vtObjectOutputString_a->length+vtObjectOutputString_a->numberOfMacrosToFollow*2;
+  return 17+vtObject_a->length+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
 void
 vtObjectOutputString_c::setOriginSKM(bool b_SKM)
 {
-  MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
-    vtObjectOutputString_a->fontAttributes->setOriginSKM (b_SKM);
+    vtObject_a->fontAttributes->setOriginSKM (b_SKM);
   }
 }
 
 void
 vtObjectOutputString_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 {
-  MACRO_localVars;
   if (p_btn)
   {
     p_parentButtonObject = p_btn;
-    vtObjectOutputString_a->fontAttributes->setOriginBTN (p_btn);
+    vtObject_a->fontAttributes->setOriginBTN (p_btn);
   }
 }
 
@@ -258,8 +255,7 @@ vtObjectOutputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length
 void
 vtObjectOutputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  if (vtObjectOutputString_a->variableReference != NULL) {
+  if (vtObject_a->variableReference != NULL) {
     // register error!!
     return;
   }
@@ -287,8 +283,7 @@ vtObjectOutputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b
 void
 vtObjectOutputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  if (vtObjectOutputString_a->variableReference != NULL) {
+  if (vtObject_a->variableReference != NULL) {
     // register error!!
     return;
   }
@@ -312,8 +307,7 @@ vtObjectOutputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_
 void
 vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newVariable, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  if (vtObjectOutputString_a->length != 0) {
+  if (vtObject_a->length != 0) {
     // register error!!
     return;
   }

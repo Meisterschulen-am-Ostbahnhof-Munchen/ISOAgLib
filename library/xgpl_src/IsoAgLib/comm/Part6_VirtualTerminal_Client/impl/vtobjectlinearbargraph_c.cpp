@@ -86,8 +86,8 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectLinearBarGraph_a->width;
-    uint32_t height = (uint32_t)vtObjectLinearBarGraph_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -98,33 +98,33 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectLinearBarGraph_a->colour, this, IsoAgLib::AColour);
-      destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectLinearBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
-      destMemory [9] = vtObjectLinearBarGraph_a->options;
-      destMemory [10] = vtObjectLinearBarGraph_a->numberOfTicks;
-      destMemory [11] = vtObjectLinearBarGraph_a->minValue & 0xFF;
-      destMemory [12] = vtObjectLinearBarGraph_a->minValue >> 8;
-      destMemory [13] = vtObjectLinearBarGraph_a->maxValue & 0xFF;
-      destMemory [14] = vtObjectLinearBarGraph_a->maxValue >> 8;
-      if (vtObjectLinearBarGraph_a->variableReference != NULL) {
-        destMemory [15] = vtObjectLinearBarGraph_a->variableReference->getID() & 0xFF;
-        destMemory [16] = vtObjectLinearBarGraph_a->variableReference->getID() >> 8;
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->colour, this, IsoAgLib::AColour);
+      destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->targetLineColour, this, IsoAgLib::TargetLineColour);
+      destMemory [9] = vtObject_a->options;
+      destMemory [10] = vtObject_a->numberOfTicks;
+      destMemory [11] = vtObject_a->minValue & 0xFF;
+      destMemory [12] = vtObject_a->minValue >> 8;
+      destMemory [13] = vtObject_a->maxValue & 0xFF;
+      destMemory [14] = vtObject_a->maxValue >> 8;
+      if (vtObject_a->variableReference != NULL) {
+        destMemory [15] = vtObject_a->variableReference->getID() & 0xFF;
+        destMemory [16] = vtObject_a->variableReference->getID() >> 8;
       } else {
         destMemory [15] = 0xFF;
         destMemory [16] = 0xFF;
       }
-      destMemory [17] = vtObjectLinearBarGraph_a->value & 0xFF;
-      destMemory [18] = vtObjectLinearBarGraph_a->value >> 8;
-      if (vtObjectLinearBarGraph_a->targetValueVariableReference != NULL) {
-        destMemory [19] = vtObjectLinearBarGraph_a->targetValueVariableReference->getID() & 0xFF;
-        destMemory [20] = vtObjectLinearBarGraph_a->targetValueVariableReference->getID() >> 8;
+      destMemory [17] = vtObject_a->value & 0xFF;
+      destMemory [18] = vtObject_a->value >> 8;
+      if (vtObject_a->targetValueVariableReference != NULL) {
+        destMemory [19] = vtObject_a->targetValueVariableReference->getID() & 0xFF;
+        destMemory [20] = vtObject_a->targetValueVariableReference->getID() >> 8;
       } else {
         destMemory [19] = 0xFF;
         destMemory [20] = 0xFF;
       }
-      destMemory [21] = vtObjectLinearBarGraph_a->targetValue & 0xFF;
-      destMemory [22] = vtObjectLinearBarGraph_a->targetValue >> 8;
-      destMemory [23] = vtObjectLinearBarGraph_a->numberOfMacrosToFollow;
+      destMemory [21] = vtObject_a->targetValue & 0xFF;
+      destMemory [22] = vtObject_a->targetValue >> 8;
+      destMemory [23] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 24;
       curBytes += 24;
     }
@@ -191,8 +191,7 @@ vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s *vtObjectLinearBarGraph_c::g
 uint32_t
 vtObjectLinearBarGraph_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 24+vtObjectLinearBarGraph_a->numberOfMacrosToFollow*2;
+  return 24+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 

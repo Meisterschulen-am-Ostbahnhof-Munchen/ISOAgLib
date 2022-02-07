@@ -57,19 +57,19 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectLineAttributes_a->lineWidth;
+    uint32_t width  = (uint32_t)vtObject_a->lineWidth;
     MACRO_scaleDimension(width);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 24; // Object Type = Line Attributes
-      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectLineAttributes_a->lineColour, this, IsoAgLib::LineColour);
+      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->lineColour, this, IsoAgLib::LineColour);
       destMemory [4] = width & 0xFF;
-      destMemory [5] = vtObjectLineAttributes_a->lineArt & 0xFF;
-      destMemory [6] = vtObjectLineAttributes_a->lineArt >> 8;
+      destMemory [5] = vtObject_a->lineArt & 0xFF;
+      destMemory [6] = vtObject_a->lineArt >> 8;
 
-      destMemory [7] = vtObjectLineAttributes_a->numberOfMacrosToFollow;
+      destMemory [7] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 8;
       curBytes += 8;
     }
@@ -119,8 +119,7 @@ vtObjectLineAttributes_c::vtObjectLineAttributes_c(
 uint32_t
 vtObjectLineAttributes_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 8+vtObjectLineAttributes_a->numberOfMacrosToFollow*2;
+  return 8+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 void
