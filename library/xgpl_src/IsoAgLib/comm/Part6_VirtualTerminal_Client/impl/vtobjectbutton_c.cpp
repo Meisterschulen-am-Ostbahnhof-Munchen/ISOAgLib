@@ -182,27 +182,55 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
 
 
     void vtObjectButton_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? (vtObject_a->width) : 0, sizeof(iVtObjectButton_s), 1, newValue, b_enableReplaceOfCmd);
+        MACRO_scaleLocalVars
+        MACRO_scaleSKLocalVars
+
+        uint32_t scaledDim = uint32_t( newValue );
+      #ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+        MACRO_scaleDimension( scaledDim )
+      #endif
+
+    	if (b_updateObject)
+    		vtObject_a->width = newValue;
+        setAttribute (1, scaledDim, b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? (vtObject_a->height) : 0, sizeof(iVtObjectButton_s), 2, newValue, b_enableReplaceOfCmd);
+        MACRO_scaleLocalVars
+        MACRO_scaleSKLocalVars
+
+        uint32_t scaledDim = uint32_t( newValue );
+      #ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+        MACRO_scaleDimension( scaledDim )
+      #endif
+
+    	if (b_updateObject)
+    		vtObject_a->height = newValue;
+        setAttribute (2, scaledDim, b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? (vtObject_a->backgroundColour) : 0, sizeof(iVtObjectButton_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->backgroundColour = newValue;
+	setAttribute(3, __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserConvertedColor(newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? (vtObject_a->borderColour) : 0, sizeof(iVtObjectButton_s), 4, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->borderColour = newValue;
+    	setAttribute(4, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::setKeyCode(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? (vtObject_a->keyCode) : 0, sizeof(iVtObjectButton_s), 5, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->keyCode = newValue;
+    	setAttribute(5, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::v4setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? (vtObject_a->options) : 0, sizeof(iVtObjectButton_s), 6, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->options = newValue;
+    	setAttribute(6, newValue, b_enableReplaceOfCmd);
     }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
