@@ -17,7 +17,7 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#include "vtobjectstring_c.h"
+#include "vtobjectstringstreamer_c.h"
 #include "../ivtobjectstring_c.h"
 
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
