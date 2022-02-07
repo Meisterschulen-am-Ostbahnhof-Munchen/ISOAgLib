@@ -56,14 +56,14 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 22; // Object Type = Integer Variable
-    destMemory [3] = vtObjectStringVariable_a->length & 0xFF;
-    destMemory [4] = vtObjectStringVariable_a->length >> 8;
+    destMemory [3] = vtObject_a->length & 0xFF;
+    destMemory [4] = vtObject_a->length >> 8;
     curBytes += 5;
     sourceOffset += 5;
   }
 
-  while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObjectStringVariable_a->length)) && ((curBytes+1) <= maxBytes)) {
-    destMemory [curBytes] = vtObjectStringVariable_a->value [sourceOffset-5];
+  while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObject_a->length)) && ((curBytes+1) <= maxBytes)) {
+    destMemory [curBytes] = vtObject_a->value [sourceOffset-5];
     curBytes++;
     sourceOffset++;
   }

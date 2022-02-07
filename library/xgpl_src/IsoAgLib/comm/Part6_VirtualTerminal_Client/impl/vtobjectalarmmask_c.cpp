@@ -61,27 +61,27 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
 
     if (sourceOffset == 0) { // dump out constant sized stuff
-      destMemory [0] = vtObjectAlarmMask_a->ID & 0xFF;
-      destMemory [1] = vtObjectAlarmMask_a->ID >> 8;
+      destMemory [0] = vtObject_a->ID & 0xFF;
+      destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 2; // Object Type = Alarm Mask
-      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectAlarmMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      if (vtObjectAlarmMask_a->softKeyMask != NULL) {
-          destMemory [4] = vtObjectAlarmMask_a->softKeyMask->getID() & 0xFF;
-          destMemory [5] = vtObjectAlarmMask_a->softKeyMask->getID() >> 8;
+      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      if (vtObject_a->softKeyMask != NULL) {
+          destMemory [4] = vtObject_a->softKeyMask->getID() & 0xFF;
+          destMemory [5] = vtObject_a->softKeyMask->getID() >> 8;
       } else {
           destMemory [4] = 0xFF;
           destMemory [5] = 0xFF;
       }
-      destMemory [6] = vtObjectAlarmMask_a->priority;
-      destMemory [7] = vtObjectAlarmMask_a->acousticSignal;
-      destMemory [8] = vtObjectAlarmMask_a->numberOfObjectsToFollow;
-      destMemory [9] = vtObjectAlarmMask_a->numberOfMacrosToFollow;
+      destMemory [6] = vtObject_a->priority;
+      destMemory [7] = vtObject_a->acousticSignal;
+      destMemory [8] = vtObject_a->numberOfObjectsToFollow;
+      destMemory [9] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 10;
       curBytes += 10;
     }
 
     MACRO_DAMstreamObjectXY(10);
-    MACRO_streamEventMacro(10U+vtObjectAlarmMask_a->numberOfObjectsToFollow*6U);
+    MACRO_streamEventMacro(10U+vtObject_a->numberOfObjectsToFollow*6U);
     return curBytes;
 }
 

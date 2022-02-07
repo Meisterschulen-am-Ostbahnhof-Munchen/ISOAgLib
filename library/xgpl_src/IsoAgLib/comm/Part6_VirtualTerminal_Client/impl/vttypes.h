@@ -91,7 +91,6 @@ typedef uint16_t objRange_t;
 #endif
 
 #define MACRO_streamLocalVars \
-	MACRO_vtObjectTypeS* MACRO_vtObjectTypeA = dynamic_cast<MACRO_vtObjectTypeS *>(vtObject_a); \
     /* current bytes written */ \
     uint16_t curBytes=0;
 

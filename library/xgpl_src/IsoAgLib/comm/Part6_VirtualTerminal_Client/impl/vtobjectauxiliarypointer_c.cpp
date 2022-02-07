@@ -56,11 +56,11 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 33; // Object Type = Auxiliary Control Designator Object Pointer
-    destMemory [3] = vtObjectAuxiliaryControlDesignatorObjectPointer_a->pointerType;
-    if (vtObjectAuxiliaryControlDesignatorObjectPointer_a->value)
+    destMemory [3] = vtObject_a->pointerType;
+    if (vtObject_a->value)
     {
-      destMemory [4] = vtObjectAuxiliaryControlDesignatorObjectPointer_a->value->getID() & 0xFF;
-      destMemory [5] = vtObjectAuxiliaryControlDesignatorObjectPointer_a->value->getID() >> 8;
+      destMemory [4] = vtObject_a->value->getID() & 0xFF;
+      destMemory [5] = vtObject_a->value->getID() >> 8;
     }
     else
     {

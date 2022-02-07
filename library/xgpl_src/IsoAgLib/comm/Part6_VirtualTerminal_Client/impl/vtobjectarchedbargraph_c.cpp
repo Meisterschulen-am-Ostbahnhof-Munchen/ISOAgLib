@@ -120,8 +120,8 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectArchedBarGraph_a->width;
-    uint32_t height = (uint32_t)vtObjectArchedBarGraph_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -132,50 +132,50 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectArchedBarGraph_a->colour, this, IsoAgLib::AColour);
-      destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectArchedBarGraph_a->targetLineColour, this, IsoAgLib::TargetLineColour);
-      destMemory [9] = vtObjectArchedBarGraph_a->options;
-      destMemory [10] = vtObjectArchedBarGraph_a->startAngle;
-      destMemory [11] = vtObjectArchedBarGraph_a->endAngle;
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->colour, this, IsoAgLib::AColour);
+      destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->targetLineColour, this, IsoAgLib::TargetLineColour);
+      destMemory [9] = vtObject_a->options;
+      destMemory [10] = vtObject_a->startAngle;
+      destMemory [11] = vtObject_a->endAngle;
       if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject)
       {
-        destMemory [12] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*factorM)/factorD) & 0xFF;
-        destMemory [13] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*factorM)/factorD) >> 8;
+        destMemory [12] = (((uint32_t) vtObject_a->barGraphWidth*factorM)/factorD) & 0xFF;
+        destMemory [13] = (((uint32_t) vtObject_a->barGraphWidth*factorM)/factorD) >> 8;
       }
       else
       {
-        destMemory [12] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*vtDimension)/opDimension) & 0xFF;
-        destMemory [13] = (((uint32_t) vtObjectArchedBarGraph_a->barGraphWidth*vtDimension)/opDimension) >> 8;
+        destMemory [12] = (((uint32_t) vtObject_a->barGraphWidth*vtDimension)/opDimension) & 0xFF;
+        destMemory [13] = (((uint32_t) vtObject_a->barGraphWidth*vtDimension)/opDimension) >> 8;
       }
-      if ( (vtObjectArchedBarGraph_a->barGraphWidth > 0) &&
+      if ( (vtObject_a->barGraphWidth > 0) &&
            (destMemory [12] == 0) && (destMemory [13] == 0))
       { // if the arch had a linewidth > 0, then don't allow downscaling to let it become 0!
         destMemory [12] = 0x01;
       //destMemory [13] = 0x00; // is already set to 0 as checked in the if-statement!
       }
-      destMemory [14] = vtObjectArchedBarGraph_a->minValue & 0xFF;
-      destMemory [15] = vtObjectArchedBarGraph_a->minValue >> 8;
-      destMemory [16] = vtObjectArchedBarGraph_a->maxValue & 0xFF;
-      destMemory [17] = vtObjectArchedBarGraph_a->maxValue >> 8;
-      if (vtObjectArchedBarGraph_a->variableReference != NULL) {
-        destMemory [18] = vtObjectArchedBarGraph_a->variableReference->getID() & 0xFF;
-        destMemory [19] = vtObjectArchedBarGraph_a->variableReference->getID() >> 8;
+      destMemory [14] = vtObject_a->minValue & 0xFF;
+      destMemory [15] = vtObject_a->minValue >> 8;
+      destMemory [16] = vtObject_a->maxValue & 0xFF;
+      destMemory [17] = vtObject_a->maxValue >> 8;
+      if (vtObject_a->variableReference != NULL) {
+        destMemory [18] = vtObject_a->variableReference->getID() & 0xFF;
+        destMemory [19] = vtObject_a->variableReference->getID() >> 8;
       } else {
         destMemory [18] = 0xFF;
         destMemory [19] = 0xFF;
       }
-      destMemory [20] = vtObjectArchedBarGraph_a->value & 0xFF;
-      destMemory [21] = vtObjectArchedBarGraph_a->value >> 8;
-      if (vtObjectArchedBarGraph_a->targetValueVariableReference != NULL) {
-        destMemory [22] = vtObjectArchedBarGraph_a->targetValueVariableReference->getID() & 0xFF;
-        destMemory [23] = vtObjectArchedBarGraph_a->targetValueVariableReference->getID() >> 8;
+      destMemory [20] = vtObject_a->value & 0xFF;
+      destMemory [21] = vtObject_a->value >> 8;
+      if (vtObject_a->targetValueVariableReference != NULL) {
+        destMemory [22] = vtObject_a->targetValueVariableReference->getID() & 0xFF;
+        destMemory [23] = vtObject_a->targetValueVariableReference->getID() >> 8;
       } else {
         destMemory [22] = 0xFF;
         destMemory [23] = 0xFF;
       }
-      destMemory [24] = vtObjectArchedBarGraph_a->targetValue & 0xFF;
-      destMemory [25] = vtObjectArchedBarGraph_a->targetValue >> 8;
-      destMemory [26] = vtObjectArchedBarGraph_a->numberOfMacrosToFollow;
+      destMemory [24] = vtObject_a->targetValue & 0xFF;
+      destMemory [25] = vtObject_a->targetValue >> 8;
+      destMemory [26] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 27;
       curBytes += 27;
     }
