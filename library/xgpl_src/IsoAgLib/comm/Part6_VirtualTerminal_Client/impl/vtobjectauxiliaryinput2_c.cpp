@@ -60,9 +60,9 @@ vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 32; // Object Type = Auxiliary Input 2
-    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectAuxiliaryInput2_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-    destMemory [4] = vtObjectAuxiliaryInput2_a->functionAttributes;
-    destMemory [5] = vtObjectAuxiliaryInput2_a->numberOfObjectsToFollow;
+    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+    destMemory [4] = vtObject_a->functionAttributes;
+    destMemory [5] = vtObject_a->numberOfObjectsToFollow;
     sourceOffset += 6;
     curBytes += 6;
   }
@@ -122,32 +122,28 @@ vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c(iVtObjectAuxiliaryInput2_s*
 uint32_t
 vtObjectAuxiliaryInput2_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 6+vtObjectAuxiliaryInput2_a->numberOfObjectsToFollow*6;
+  return 6+vtObject_a->numberOfObjectsToFollow*6;
 }
 
 
 bool
 vtObjectAuxiliaryInput2_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectAuxiliaryInput2_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectAuxiliaryInput2_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryInput2_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryInput2_s), b_enableReplaceOfCmd);
 }
 
 bool
 vtObjectAuxiliaryInput2_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectAuxiliaryInput2_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectAuxiliaryInput2_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryInput2_s), b_enableReplaceOfCmd, SoftKeyOffset);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryInput2_s), b_enableReplaceOfCmd, SoftKeyOffset);
 }
 
 
 void
 vtObjectAuxiliaryInput2_c::setOriginSKM(bool /* b_SKM */)
 {
-  MACRO_localVars;
-  for (int i=0; i<vtObjectAuxiliaryInput2_a->numberOfObjectsToFollow; i++) {
-    vtObjectAuxiliaryInput2_a->objectsToFollow[i].vtObject->setOriginSKM (true);
+  for (int i=0; i<vtObject_a->numberOfObjectsToFollow; i++) {
+    vtObject_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }
 }
 

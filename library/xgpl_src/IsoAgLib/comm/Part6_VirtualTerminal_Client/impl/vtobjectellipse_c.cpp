@@ -74,34 +74,34 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectEllipse_a->width;
-    uint32_t height = (uint32_t)vtObjectEllipse_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 15; // Object Type = Ellipse
-      destMemory [3] = vtObjectEllipse_a->lineAttributes->getID() & 0xFF;
-      destMemory [4] = vtObjectEllipse_a->lineAttributes->getID() >> 8;
+      destMemory [3] = vtObject_a->lineAttributes->getID() & 0xFF;
+      destMemory [4] = vtObject_a->lineAttributes->getID() >> 8;
       destMemory [5] = width & 0xFF;
       destMemory [6] = width >> 8;
       destMemory [7] = height & 0xFF;
       destMemory [8] = height >> 8;
-      destMemory [9] = vtObjectEllipse_a->ellipseType;
-      destMemory [10] = vtObjectEllipse_a->startAngle;
-      destMemory [11] = vtObjectEllipse_a->endAngle;
+      destMemory [9] = vtObject_a->ellipseType;
+      destMemory [10] = vtObject_a->startAngle;
+      destMemory [11] = vtObject_a->endAngle;
 
-      if (vtObjectEllipse_a->fillAttributes != NULL)
+      if (vtObject_a->fillAttributes != NULL)
       {
-        destMemory [12] = vtObjectEllipse_a->fillAttributes->getID() & 0xFF;
-        destMemory [13] = vtObjectEllipse_a->fillAttributes->getID() >> 8;
+        destMemory [12] = vtObject_a->fillAttributes->getID() & 0xFF;
+        destMemory [13] = vtObject_a->fillAttributes->getID() >> 8;
       } else {
         destMemory [12] = 0xFF;
         destMemory [13] = 0xFF;
       }
 
-      destMemory [14] = vtObjectEllipse_a->numberOfMacrosToFollow;
+      destMemory [14] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 15;
       curBytes += 15;
     }
@@ -118,18 +118,16 @@ IsoAgLib::ObjectID vtObjectEllipse_c::getID() const {
 uint32_t
 vtObjectEllipse_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 15+vtObjectEllipse_a->numberOfMacrosToFollow*2;
+  return 15+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
 void
 vtObjectEllipse_c::setOriginSKM(bool b_SKM)
 {
-  MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
-    vtObjectEllipse_a->lineAttributes->setOriginSKM (b_SKM);
+    vtObject_a->lineAttributes->setOriginSKM (b_SKM);
   }
 }
 

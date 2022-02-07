@@ -63,8 +63,8 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectContainer_a->width;
-    uint32_t height = (uint32_t)vtObjectContainer_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -75,16 +75,16 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = vtObjectContainer_a->hidden;
-      destMemory [8] = vtObjectContainer_a->numberOfObjectsToFollow;
-      destMemory [9] = vtObjectContainer_a->numberOfMacrosToFollow;
+      destMemory [7] = vtObject_a->hidden;
+      destMemory [8] = vtObject_a->numberOfObjectsToFollow;
+      destMemory [9] = vtObject_a->numberOfMacrosToFollow;
 
       sourceOffset += 10;
       curBytes += 10;
     }
 
     MACRO_streamObjectXY(10);
-    MACRO_streamEventMacro(10U+vtObjectContainer_a->numberOfObjectsToFollow*6U);
+    MACRO_streamEventMacro(10U+vtObject_a->numberOfObjectsToFollow*6U);
     return curBytes;
 }
 
@@ -97,8 +97,7 @@ IsoAgLib::ObjectID vtObjectContainer_c::getID() const {
 uint32_t
 vtObjectContainer_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 10+vtObjectContainer_a->numberOfObjectsToFollow*6+vtObjectContainer_a->numberOfMacrosToFollow*2;
+  return 10+vtObject_a->numberOfObjectsToFollow*6+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
@@ -129,26 +128,22 @@ vtObjectContainer_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
 bool
 vtObjectContainer_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-
-  MACRO_localVars;
-  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectContainer_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectContainer_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectContainer_a(), objectsToFollow), sizeof(iVtObjectContainer_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectContainer_a(), objectsToFollow), sizeof(iVtObjectContainer_s), b_enableReplaceOfCmd);
 }
 
 bool
 vtObjectContainer_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectContainer_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectContainer_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectContainer_a(), objectsToFollow), sizeof(iVtObjectContainer_s), b_enableReplaceOfCmd, NoOffset);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectContainer_a(), objectsToFollow), sizeof(iVtObjectContainer_s), b_enableReplaceOfCmd, NoOffset);
 }
 
 void
 vtObjectContainer_c::setOriginSKM(bool b_SKM)
 {
-  MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
-    for (int i=0; i<vtObjectContainer_a->numberOfObjectsToFollow; i++) {
-      vtObjectContainer_a->objectsToFollow[i].vtObject->setOriginSKM (b_SKM);
+    for (int i=0; i<vtObject_a->numberOfObjectsToFollow; i++) {
+      vtObject_a->objectsToFollow[i].vtObject->setOriginSKM (b_SKM);
     }
   }
 }
@@ -156,10 +151,9 @@ vtObjectContainer_c::setOriginSKM(bool b_SKM)
 void
 vtObjectContainer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 {
-  MACRO_localVars;
   if (p_btn) p_parentButtonObject = p_btn;
-  for (int i=0; i<vtObjectContainer_a->numberOfObjectsToFollow; i++) {
-    vtObjectContainer_a->objectsToFollow[i].vtObject->setOriginBTN (p_btn);
+  for (int i=0; i<vtObject_a->numberOfObjectsToFollow; i++) {
+    vtObject_a->objectsToFollow[i].vtObject->setOriginBTN (p_btn);
   }
 }
 

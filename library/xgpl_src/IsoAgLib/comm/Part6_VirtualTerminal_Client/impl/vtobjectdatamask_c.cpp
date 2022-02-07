@@ -60,25 +60,25 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
 
     if (sourceOffset == 0) { // dump out constant sized stuff
-      destMemory [0] = vtObjectDataMask_a->ID & 0xFF;
-      destMemory [1] = vtObjectDataMask_a->ID >> 8;
+      destMemory [0] = vtObject_a->ID & 0xFF;
+      destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 1; // Object Type = Data Mask
-      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectDataMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      if (vtObjectDataMask_a->softKeyMask != NULL) {
-          destMemory [4] = vtObjectDataMask_a->softKeyMask->getID() & 0xFF;
-          destMemory [5] = vtObjectDataMask_a->softKeyMask->getID() >> 8;
+      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      if (vtObject_a->softKeyMask != NULL) {
+          destMemory [4] = vtObject_a->softKeyMask->getID() & 0xFF;
+          destMemory [5] = vtObject_a->softKeyMask->getID() >> 8;
       } else {
           destMemory [4] = 0xFF;
           destMemory [5] = 0xFF;
       }
-      destMemory [6] = vtObjectDataMask_a->numberOfObjectsToFollow;
-      destMemory [7] = vtObjectDataMask_a->numberOfMacrosToFollow;
+      destMemory [6] = vtObject_a->numberOfObjectsToFollow;
+      destMemory [7] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 8;
       curBytes += 8;
     }
 
     MACRO_DAMstreamObjectXY(8);
-    MACRO_streamEventMacro(8U+vtObjectDataMask_a->numberOfObjectsToFollow*6U);
+    MACRO_streamEventMacro(8U+vtObject_a->numberOfObjectsToFollow*6U);
 
     return curBytes;
 }
@@ -117,8 +117,7 @@ vtObjectDataMask_c::vtObjectDataMask_c(
 uint32_t
 vtObjectDataMask_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 8+vtObjectDataMask_a->numberOfObjectsToFollow*6+vtObjectDataMask_a->numberOfMacrosToFollow*2;
+  return 8+vtObject_a->numberOfObjectsToFollow*6+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
@@ -135,15 +134,13 @@ vtObjectDataMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyM
 bool
 vtObjectDataMask_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectDataMask_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectDataMask_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectDataMask_a(), objectsToFollow), sizeof(iVtObjectDataMask_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectDataMask_a(), objectsToFollow), sizeof(iVtObjectDataMask_s), b_enableReplaceOfCmd);
 }
 
 bool
 vtObjectDataMask_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectDataMask_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectDataMask_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectDataMask_a(), objectsToFollow), sizeof(iVtObjectDataMask_s), b_enableReplaceOfCmd, DataAlarmMaskOffset);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectDataMask_a(), objectsToFollow), sizeof(iVtObjectDataMask_s), b_enableReplaceOfCmd, DataAlarmMaskOffset);
 }
 
 
@@ -161,8 +158,7 @@ vtObjectDataMask_c::lockUnlockMask( bool b_lockMask, uint16_t ui16_lockTimeOut )
 
 void vtObjectDataMask_c::Append(iVtObject_c* const vtObject, int16_t x, int16_t y)
 {
-	MACRO_localVars;
-	vtObjectDataMask_a->Append(vtObject, x, y);
+	vtObject_a->Append(vtObject, x, y);
 }
 
 
