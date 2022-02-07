@@ -134,6 +134,12 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
 }
 
 
+IsoAgLib::ObjectID vtObjectLinearBarGraph_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
+
 vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(
 		int ai_multitonInst,
 		IsoAgLib::ObjectID ID,

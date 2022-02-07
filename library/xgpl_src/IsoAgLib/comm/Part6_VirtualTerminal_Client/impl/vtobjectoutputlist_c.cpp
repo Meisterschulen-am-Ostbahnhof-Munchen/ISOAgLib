@@ -96,7 +96,10 @@ vtObjectOutputList_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-
+IsoAgLib::ObjectID vtObjectOutputList_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
 
 
 IsoAgLib::iVtObject_c*

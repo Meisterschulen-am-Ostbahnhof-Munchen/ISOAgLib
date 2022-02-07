@@ -116,6 +116,12 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
   return curBytes;
 }
 
+
+IsoAgLib::ObjectID vtObjectSoftKeyMask_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
 uint8_t vtObjectSoftKeyMask_c::get_numberOfObjectsToFollow() const
 {
   MACRO_localVars;

@@ -87,6 +87,11 @@ vtObjectLine_c::stream(uint8_t* destMemory,
 }
 
 
+IsoAgLib::ObjectID vtObjectLine_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
 
 vtObjectLine_c::vtObjectLine_c(
 		int ai_multitonInst,

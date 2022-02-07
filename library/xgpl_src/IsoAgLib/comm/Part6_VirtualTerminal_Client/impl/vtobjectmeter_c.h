@@ -47,6 +47,7 @@ public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
+  IsoAgLib::ObjectID getID() const;
 
   vtObjectMeter_c(iVtObjectMeter_s* vtObjectMeterSROM , int ai_multitonInst);
   iVtObjectMeter_s* get_vtObjectMeter_a();

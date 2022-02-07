@@ -89,7 +89,10 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
 }
 
 
-
+IsoAgLib::ObjectID vtObjectContainer_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
 
 uint32_t
 vtObjectContainer_c::fitTerminal() const

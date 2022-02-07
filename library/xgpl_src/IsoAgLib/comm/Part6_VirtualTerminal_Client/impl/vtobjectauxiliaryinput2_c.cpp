@@ -73,6 +73,11 @@ vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 }
 
 
+IsoAgLib::ObjectID vtObjectAuxiliaryInput2_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
 // Operation : vtObjectAuxiliaryInput2_c
 vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c(iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst)
   : vtObject_c((iVtObject_s *)vtObjectAuxiliaryInput2SROM , ai_multitonInst),

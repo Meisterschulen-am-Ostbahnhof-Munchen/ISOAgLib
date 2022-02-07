@@ -43,6 +43,7 @@ public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
+  IsoAgLib::ObjectID getID() const;
 
 
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);

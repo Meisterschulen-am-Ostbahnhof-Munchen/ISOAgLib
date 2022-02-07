@@ -83,6 +83,11 @@ vtObjectColourMap_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
+IsoAgLib::ObjectID vtObjectColourMap_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
 
 uint32_t
 vtObjectColourMap_c::fitTerminal() const

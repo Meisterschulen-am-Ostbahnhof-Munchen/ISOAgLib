@@ -48,7 +48,10 @@ private:
 public:
   vtObjectAuxiliaryFunction2_c(iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst);
 
-  int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
+  int16_t stream(uint8_t* destMemory,
+                 uint16_t maxBytes,
+                 objRange_t sourceOffset);
+  IsoAgLib::ObjectID getID() const;
 
   iVtObjectAuxiliaryFunction2_s* get_vtObjectAuxiliaryFunction2_a();
 

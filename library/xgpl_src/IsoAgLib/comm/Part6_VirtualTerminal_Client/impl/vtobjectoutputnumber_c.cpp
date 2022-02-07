@@ -138,7 +138,10 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
 }
 
 
-
+IsoAgLib::ObjectID vtObjectOutputNumber_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
 
 uint32_t
 vtObjectOutputNumber_c::fitTerminal() const

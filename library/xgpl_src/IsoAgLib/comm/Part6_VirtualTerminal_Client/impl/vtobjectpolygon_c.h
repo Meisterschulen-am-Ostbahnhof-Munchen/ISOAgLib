@@ -45,6 +45,7 @@ public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
+  IsoAgLib::ObjectID getID() const;
 
   vtObjectPolygon_c(iVtObjectPolygon_s* vtObjectPolygonSROM , int ai_multitonInst);
   iVtObjectPolygon_s* get_vtObjectPolygon_a();

@@ -87,7 +87,10 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-
+IsoAgLib::ObjectID vtObjectInputAttributes_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
 
 
 uint32_t

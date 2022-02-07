@@ -42,6 +42,7 @@ public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
+  IsoAgLib::ObjectID getID() const;
 
   vtObjectFillAttributes_c(iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst);
   iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a();

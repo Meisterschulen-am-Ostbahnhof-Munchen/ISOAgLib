@@ -47,6 +47,7 @@ public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
+  IsoAgLib::ObjectID getID() const;
 
 
   iVtObjectOutputString_s* get_vtObjectOutputString_a();
@@ -67,7 +68,7 @@ public:
 
 
   vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);
-  ~vtObjectOutputString_c();
+  ~vtObjectOutputString_c() = default;
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);

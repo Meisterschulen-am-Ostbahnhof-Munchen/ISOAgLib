@@ -55,6 +55,7 @@ public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
+  IsoAgLib::ObjectID getID() const;
 
   vtObjectSoftKeyMask_c(iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst);
 

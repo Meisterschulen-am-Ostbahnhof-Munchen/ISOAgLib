@@ -87,6 +87,12 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
 
 
 
+IsoAgLib::ObjectID vtObjectAlarmMask_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
+
 uint32_t
 vtObjectAlarmMask_c::fitTerminal() const
 {

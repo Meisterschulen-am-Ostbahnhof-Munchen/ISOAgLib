@@ -84,6 +84,11 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
 }
 
 
+IsoAgLib::ObjectID vtObjectDataMask_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
 
 vtObjectDataMask_c::vtObjectDataMask_c(iVtObjectDataMask_s *vtObjectDataMaskSROM, int ai_multitonInst)
 	: iVtObjectMask_c((iVtObjectMask_s*) vtObjectDataMaskSROM, ai_multitonInst)

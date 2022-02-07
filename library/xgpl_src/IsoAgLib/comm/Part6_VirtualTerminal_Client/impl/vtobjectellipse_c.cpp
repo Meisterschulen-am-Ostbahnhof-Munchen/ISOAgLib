@@ -110,8 +110,10 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
-
-
+IsoAgLib::ObjectID vtObjectEllipse_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
 
 uint32_t
 vtObjectEllipse_c::fitTerminal() const

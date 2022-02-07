@@ -358,6 +358,13 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
 }
 
 
+
+IsoAgLib::ObjectID vtObjectPictureGraphic_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
+
 uint32_t
 vtObjectPictureGraphic_c::fitTerminal() const
 {

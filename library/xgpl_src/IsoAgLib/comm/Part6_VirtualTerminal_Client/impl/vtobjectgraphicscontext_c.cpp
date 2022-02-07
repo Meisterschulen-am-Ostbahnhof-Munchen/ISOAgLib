@@ -160,6 +160,12 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
   return 0;
 }
 
+
+IsoAgLib::ObjectID vtObjectGraphicsContext_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
 vtObjectGraphicsContext_c::vtObjectGraphicsContext_c() {}
 
 vtObjectGraphicsContext_c::vtObjectGraphicsContext_c(iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst)

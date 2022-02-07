@@ -72,6 +72,11 @@ vtObjectAuxiliaryFunction2_c::stream(uint8_t* destMemory, uint16_t maxBytes, obj
 }
 
 
+IsoAgLib::ObjectID vtObjectAuxiliaryFunction2_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
 uint32_t
 vtObjectAuxiliaryFunction2_c::fitTerminal() const
 {

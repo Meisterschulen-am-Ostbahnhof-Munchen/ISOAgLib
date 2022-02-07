@@ -74,7 +74,10 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::stream(uint8_t* destMemory,
   return curBytes;
 }
 
-
+IsoAgLib::ObjectID vtObjectAuxiliaryControlDesignatorObjectPointer_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
 
 uint32_t
 vtObjectAuxiliaryControlDesignatorObjectPointer_c::fitTerminal() const

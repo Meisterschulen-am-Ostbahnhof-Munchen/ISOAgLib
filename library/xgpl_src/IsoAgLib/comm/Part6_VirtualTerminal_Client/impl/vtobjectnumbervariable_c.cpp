@@ -65,7 +65,10 @@ vtObjectNumberVariable_c::stream(uint8_t* destMemory,
     return 0;
 }
 
-
+IsoAgLib::ObjectID vtObjectNumberVariable_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
 
 
 uint32_t

@@ -98,6 +98,10 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
 
 
 
+IsoAgLib::ObjectID vtObjectInputList_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
 
 IsoAgLib::iVtObject_c*
 vtObjectInputList_c::getListItem(uint8_t xth)

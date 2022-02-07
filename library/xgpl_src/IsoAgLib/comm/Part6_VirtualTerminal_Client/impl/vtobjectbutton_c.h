@@ -43,8 +43,8 @@ public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
-
   IsoAgLib::ObjectID getID() const;
+
 
 
   iVtObjectButton_s* get_vtObjectButton_a();
