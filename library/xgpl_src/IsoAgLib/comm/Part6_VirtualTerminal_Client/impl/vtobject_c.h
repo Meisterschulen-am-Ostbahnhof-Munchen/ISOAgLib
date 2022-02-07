@@ -85,15 +85,7 @@ protected:
   void saveValueBool  (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, bool b_newValue);
 
 
-protected:
 
-  uint8_t getValue8   (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
-  uint16_t getValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
-  uint32_t getValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
-  int8_t getSignedValue8   (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
-  int16_t getSignedValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
-  int32_t getSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
-  float getValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
 
 
 protected:

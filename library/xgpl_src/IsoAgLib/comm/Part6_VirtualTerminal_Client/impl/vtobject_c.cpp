@@ -244,55 +244,7 @@ vtObject_c::saveValuePSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_st
 }
 
 
-// //////////////////////////////// GetAttributeValue 8/16/32
-uint8_t
-vtObject_c::getValue8 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
-{
-  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
-  return * (((uint8_t *)vtObject_a)+ui16_structOffset);
-}
 
-uint16_t
-vtObject_c::getValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
-{
-  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
-  return * ((uint16_t*) (((uint8_t *)vtObject_a)+ui16_structOffset));
-}
-
-uint32_t
-vtObject_c::getValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
-{
-  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
-  return * ((uint32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset));
-}
-
-int8_t
-vtObject_c::getSignedValue8 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
-{
-  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
-  return * (((int8_t *)vtObject_a)+ui16_structOffset);
-}
-
-int16_t
-vtObject_c::getSignedValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
-{
-  if (b_createRamStructIfNeeded)  createRamStructIfNotYet (ui16_structLen);
-  return * ((int16_t*) (((uint8_t *)vtObject_a)+ui16_structOffset));
-}
-
-int32_t
-vtObject_c::getSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
-{
-  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
-  return * ((int32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset));
-}
-
-float
-vtObject_c::getValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded)
-{
-  if (b_createRamStructIfNeeded) createRamStructIfNotYet (ui16_structLen);
-  return * ((float*) (((uint8_t *)vtObject_a)+ui16_structOffset));
-}
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 // //////////////////////////////// get(Signed)Value(8/16/32)GetAttribute
