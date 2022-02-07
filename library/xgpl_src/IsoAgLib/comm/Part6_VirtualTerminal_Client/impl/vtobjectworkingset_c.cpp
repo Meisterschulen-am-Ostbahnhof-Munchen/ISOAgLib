@@ -60,30 +60,30 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
 
     if (sourceOffset == 0) { // dump out constant sized stuff
-        destMemory [0] = vtObjectWorkingSet_a->ID & 0xFF;
-        destMemory [1] = vtObjectWorkingSet_a->ID >> 8;
+        destMemory [0] = vtObject_a->ID & 0xFF;
+        destMemory [1] = vtObject_a->ID >> 8;
         destMemory [2] = 0; // Object Type = Working Set
-        destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectWorkingSet_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-        destMemory [4] = vtObjectWorkingSet_a->selectable;
-        if (vtObjectWorkingSet_a->activeMask != NULL) {
-            destMemory [5] = vtObjectWorkingSet_a->activeMask->getID() & 0xFF;
-            destMemory [6] = vtObjectWorkingSet_a->activeMask->getID() >> 8;
+        destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+        destMemory [4] = vtObject_a->selectable;
+        if (vtObject_a->activeMask != NULL) {
+            destMemory [5] = vtObject_a->activeMask->getID() & 0xFF;
+            destMemory [6] = vtObject_a->activeMask->getID() >> 8;
         } else {
             destMemory [5] = 0; // using 0x00 here as 0xFFFF is NOT allowed
             destMemory [6] = 0; // using 0x00 here as 0xFFFF is NOT allowed
         }
-        destMemory [7] = vtObjectWorkingSet_a->numberOfObjectsToFollow;
-        destMemory [8] = vtObjectWorkingSet_a->numberOfMacrosToFollow;
-        destMemory [9] = vtObjectWorkingSet_a->numberOfLanguagesToFollow;
+        destMemory [7] = vtObject_a->numberOfObjectsToFollow;
+        destMemory [8] = vtObject_a->numberOfMacrosToFollow;
+        destMemory [9] = vtObject_a->numberOfLanguagesToFollow;
 
         sourceOffset += 10;
         curBytes += 10;
     }
 
     MACRO_streamObjectXYcenteredInSoftKey(10);
-    uint16_t tempOffset = 10+vtObjectWorkingSet_a->numberOfObjectsToFollow*6;
+    uint16_t tempOffset = 10+vtObject_a->numberOfObjectsToFollow*6;
     MACRO_streamEventMacro(tempOffset);
-    tempOffset = tempOffset + vtObjectWorkingSet_a->numberOfMacrosToFollow*2;
+    tempOffset = tempOffset + vtObject_a->numberOfMacrosToFollow*2;
     MACRO_streamLanguages(tempOffset);
 
     return curBytes;
@@ -126,16 +126,14 @@ vtObjectWorkingSet_c::iVtObjectWorkingSet_s* vtObjectWorkingSet_c::get_vtObjectW
 
 void vtObjectWorkingSet_c::Append(iVtObject_c* const vtObject, int16_t x, int16_t y)
 {
-	  MACRO_localVars;
-	  vtObjectWorkingSet_a->Append(vtObject, x, y);
+	vtObject_a->Append(vtObject, x, y);
 }
 
 
 uint32_t
 vtObjectWorkingSet_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 10+vtObjectWorkingSet_a->numberOfObjectsToFollow*6+vtObjectWorkingSet_a->numberOfMacrosToFollow*2+vtObjectWorkingSet_a->numberOfLanguagesToFollow*2;
+  return 10+vtObject_a->numberOfObjectsToFollow*6+vtObject_a->numberOfMacrosToFollow*2+vtObject_a->numberOfLanguagesToFollow*2;
 }
 
 
@@ -166,15 +164,13 @@ vtObjectWorkingSet_c::changeBackgroundColour(IsoAgLib::Colour newValue, bool b_u
 bool
 vtObjectWorkingSet_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectWorkingSet_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectWorkingSet_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd);
 }
 
 bool
 vtObjectWorkingSet_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectWorkingSet_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectWorkingSet_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd, SoftKeyOffset);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd, SoftKeyOffset);
 }
 
 bool
@@ -203,10 +199,9 @@ vtObjectWorkingSet_c::setColourMapOrPalette (uint16_t aui16_objectId)
 void
 vtObjectWorkingSet_c::setOriginSKM(bool /*b_SKM*/)
 {
-  MACRO_localVars;
   s_properties.flags |= FLAG_ORIGIN_SKM; // WS Descriptor has to fit inside a SoftKey!
-  for (int i=0; i<vtObjectWorkingSet_a->numberOfObjectsToFollow; i++) {
-    vtObjectWorkingSet_a->objectsToFollow[i].vtObject->setOriginSKM (true);
+  for (int i=0; i<vtObject_a->numberOfObjectsToFollow; i++) {
+    vtObject_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }
 }
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

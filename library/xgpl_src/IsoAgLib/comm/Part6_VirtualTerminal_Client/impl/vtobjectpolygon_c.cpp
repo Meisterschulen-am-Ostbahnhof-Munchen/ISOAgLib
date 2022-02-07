@@ -81,8 +81,8 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectPolygon_a->width;
-    uint32_t height = (uint32_t)vtObjectPolygon_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -93,26 +93,26 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = vtObjectPolygon_a->lineAttributes->getID() & 0xFF;
-      destMemory [8] = vtObjectPolygon_a->lineAttributes->getID() >> 8;
+      destMemory [7] = vtObject_a->lineAttributes->getID() & 0xFF;
+      destMemory [8] = vtObject_a->lineAttributes->getID() >> 8;
 
-      if (vtObjectPolygon_a->fillAttributes != NULL) {
-        destMemory [9] = vtObjectPolygon_a->fillAttributes->getID() & 0xFF;
-        destMemory [10] = vtObjectPolygon_a->fillAttributes->getID() >> 8;
+      if (vtObject_a->fillAttributes != NULL) {
+        destMemory [9] = vtObject_a->fillAttributes->getID() & 0xFF;
+        destMemory [10] = vtObject_a->fillAttributes->getID() >> 8;
       } else {
         destMemory [9] = 0xFF;
         destMemory [10] = 0xFF;
       }
 
-      destMemory [11] = vtObjectPolygon_a->polygonType;
-      destMemory [12] = vtObjectPolygon_a->numberOfPoints;
-      destMemory [13] = vtObjectPolygon_a->numberOfMacrosToFollow;
+      destMemory [11] = vtObject_a->polygonType;
+      destMemory [12] = vtObject_a->numberOfPoints;
+      destMemory [13] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 14;
       curBytes += 14;
     }
     MACRO_streamPolygonPoints(14);
 
-    MACRO_streamEventMacro(14U+vtObjectPolygon_a->numberOfPoints * 4U);
+    MACRO_streamEventMacro(14U+vtObject_a->numberOfPoints * 4U);
     return curBytes;
 }
 
@@ -126,18 +126,16 @@ IsoAgLib::ObjectID vtObjectPolygon_c::getID() const {
 uint32_t
 vtObjectPolygon_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 14+vtObjectPolygon_a->numberOfPoints*4+vtObjectPolygon_a->numberOfMacrosToFollow*2;
+  return 14+vtObject_a->numberOfPoints*4+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
 void
 vtObjectPolygon_c::setOriginSKM(bool b_SKM)
 {
-  MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
-    vtObjectPolygon_a->lineAttributes->setOriginSKM (b_SKM);
+    vtObject_a->lineAttributes->setOriginSKM (b_SKM);
   }
 }
 

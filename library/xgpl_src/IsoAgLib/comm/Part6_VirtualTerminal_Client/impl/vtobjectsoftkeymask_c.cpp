@@ -67,9 +67,9 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 4; // Object Type = Soft Key Mask
-    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectSoftKeyMask_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
     destMemory [4] = numberOfObjectsToFollow;
-    destMemory [5] = vtObjectSoftKeyMask_a->numberOfMacrosToFollow;
+    destMemory [5] = vtObject_a->numberOfMacrosToFollow;
 
     sourceOffset += 6;
     curBytes += 6;
@@ -112,7 +112,7 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
     }
   }
 
-  MACRO_streamEventMacro(6+vtObjectSoftKeyMask_a->numberOfObjectsToFollow*2U);
+  MACRO_streamEventMacro(6+vtObject_a->numberOfObjectsToFollow*2U);
   return curBytes;
 }
 
@@ -124,8 +124,6 @@ IsoAgLib::ObjectID vtObjectSoftKeyMask_c::getID() const {
 
 uint8_t vtObjectSoftKeyMask_c::get_numberOfObjectsToFollow() const
 {
-  MACRO_localVars;
-
 #ifdef ENABLE_SKM_HANDLER
   if( m_SkmHandler )
   {
@@ -134,7 +132,7 @@ uint8_t vtObjectSoftKeyMask_c::get_numberOfObjectsToFollow() const
   else
 #endif // ENABLE_SKM_HANDLER
   {
-    return vtObjectSoftKeyMask_a->numberOfObjectsToFollow;
+    return vtObject_a->numberOfObjectsToFollow;
   }
 }
 
@@ -190,8 +188,6 @@ void vtObjectSoftKeyMask_c::unRegisterSkmHandler_c( iSkmHandler_c* _SkmHandler )
 uint32_t
 vtObjectSoftKeyMask_c::fitTerminal() const
 {
-  MACRO_localVars;
-
   const uint8_t skVirtual = __IsoAgLib::getVtClientInstance4Comm().getClientByID( s_properties.clientId ).getVtServerInst().getVtCapabilities().skVirtual;
 
 #ifdef ENABLE_SKM_HANDLER
@@ -200,7 +196,7 @@ vtObjectSoftKeyMask_c::fitTerminal() const
   // If this skm doesn't have a handler, but needs one, then auto-create it
   if (!m_SkmHandler)
   {
-    if( skVirtual < vtObjectSoftKeyMask_a->numberOfObjectsToFollow )
+    if( skVirtual < vtObject_a->numberOfObjectsToFollow )
     {
       // Assume that the constructor below will callback registerSkmHandler which will set the m_SkmHandler
       new DEFAULT_SKM_HANDLER_C( __IsoAgLib::getVtClientInstance4Comm().getClientByID( s_properties.clientId ).getPool(), *(IsoAgLib::iVtObjectSoftKeyMask_c*)this );
@@ -223,7 +219,7 @@ vtObjectSoftKeyMask_c::fitTerminal() const
   }
   else
   { // okay, enough virtual SKs supported, so upload this SKM
-    return 6 + (numberOfObjectsToFollow*2) + (vtObjectSoftKeyMask_a->numberOfMacrosToFollow*2);
+    return 6 + (numberOfObjectsToFollow*2) + (vtObject_a->numberOfMacrosToFollow*2);
   }
 }
 
@@ -231,9 +227,8 @@ vtObjectSoftKeyMask_c::fitTerminal() const
 void
 vtObjectSoftKeyMask_c::setOriginSKM(bool /*b_SKM*/)
 {
-  MACRO_localVars;
-  for (int i=0; i<vtObjectSoftKeyMask_a->numberOfObjectsToFollow; i++) {
-    vtObjectSoftKeyMask_a->objectsToFollow[i].vtObject->setOriginSKM (true);
+  for (int i=0; i<vtObject_a->numberOfObjectsToFollow; i++) {
+    vtObject_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }
 }
 

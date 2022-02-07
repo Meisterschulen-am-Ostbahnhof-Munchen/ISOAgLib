@@ -94,71 +94,71 @@ struct vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
 #if 0
 #define helperForDifferentSizes(a,b,c,f,g,h,x,y,z,optionander) \
         if (vtDimension < 400) { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->a; \
-          rawData = vtObjectPictureGraphic_a->x; \
-          options = (vtObjectPictureGraphic_a->f & 0x03) + ((vtObjectPictureGraphic_a->f & optionander) ? 0x04 : 0x00); \
+          numberOfBytesInRawData = vtObject_a->a; \
+          rawData = vtObject_a->x; \
+          options = (vtObject_a->f & 0x03) + ((vtObject_a->f & optionander) ? 0x04 : 0x00); \
         } else if (vtDimension < 480) { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->b; \
-          rawData = vtObjectPictureGraphic_a->y; \
-          options = (vtObjectPictureGraphic_a->g & 0x03) + ((vtObjectPictureGraphic_a->g & optionander) ? 0x04 : 0x00); \
+          numberOfBytesInRawData = vtObject_a->b; \
+          rawData = vtObject_a->y; \
+          options = (vtObject_a->g & 0x03) + ((vtObject_a->g & optionander) ? 0x04 : 0x00); \
         } else { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->c; \
-          rawData = vtObjectPictureGraphic_a->z; \
-          options = (vtObjectPictureGraphic_a->h & 0x03) + ((vtObjectPictureGraphic_a->h & optionander) ? 0x04 : 0x00); \
+          numberOfBytesInRawData = vtObject_a->c; \
+          rawData = vtObject_a->z; \
+          options = (vtObject_a->h & 0x03) + ((vtObject_a->h & optionander) ? 0x04 : 0x00); \
         }
 
 #define helperForDifferentSizesSizeOnly(a,b,c) \
         if (vtDimension < 400) { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->a; \
+          numberOfBytesInRawData = vtObject_a->a; \
         } else if (vtDimension < 480) { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->b; \
+          numberOfBytesInRawData = vtObject_a->b; \
         } else { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->c; \
+          numberOfBytesInRawData = vtObject_a->c; \
         }
 //#else
 #define helperForDifferentSizes(a,b,f,g,x,y,optionander) \
         if ( ( vtDimension < 480) || ( optionander == 0x04 ) ) { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->a; \
-          rawData = vtObjectPictureGraphic_a->x; \
-          options = (vtObjectPictureGraphic_a->f & 0x03) + ((vtObjectPictureGraphic_a->f & optionander) ? 0x04 : 0x00); \
+          numberOfBytesInRawData = vtObject_a->a; \
+          rawData = vtObject_a->x; \
+          options = (vtObject_a->f & 0x03) + ((vtObject_a->f & optionander) ? 0x04 : 0x00); \
         } else { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->b; \
-          rawData = vtObjectPictureGraphic_a->y; \
-          options = (vtObjectPictureGraphic_a->g & 0x03) + ((vtObjectPictureGraphic_a->g & optionander) ? 0x04 : 0x00); \
+          numberOfBytesInRawData = vtObject_a->b; \
+          rawData = vtObject_a->y; \
+          options = (vtObject_a->g & 0x03) + ((vtObject_a->g & optionander) ? 0x04 : 0x00); \
         }
 
 #define helperForDifferentSizesSizeOnly(a,b,col) \
         if ( ( vtDimension < 480) || ( col == 0x0 ) ) { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->a; \
+          numberOfBytesInRawData = vtObject_a->a; \
         } else { \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->b; \
+          numberOfBytesInRawData = vtObject_a->b; \
         }
 #endif
 
 #define min(a,b) (a<b)?a:b
 
 #define MACRO_helperForDifferentSizesSizeOnly(a) \
-          numberOfBytesInRawData = vtObjectPictureGraphic_a->a;
+          numberOfBytesInRawData = vtObject_a->a;
 
 #define MACRO_helperForDifferentSizes(a,f,x,optionander) \
           MACRO_helperForDifferentSizesSizeOnly(a) \
-          rawData = vtObjectPictureGraphic_a->x; \
-          options = (vtObjectPictureGraphic_a->f & 0x03) + ((vtObjectPictureGraphic_a->f & optionander) ? 0x04 : 0x00); /* get the right RLE 1/4/8 bit to bit 2 when streaming! */
+          rawData = vtObject_a->x; \
+          options = (vtObject_a->f & 0x03) + ((vtObject_a->f & optionander) ? 0x04 : 0x00); /* get the right RLE 1/4/8 bit to bit 2 when streaming! */
 
 #define MACRO_calculate_ui8_graphicType \
-          ui8_graphicType = ( min (__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().hwGraphicType, vtObjectPictureGraphic_a->format) ); \
+          ui8_graphicType = ( min (__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().hwGraphicType, vtObject_a->format) ); \
           /* If 16-color bitmap is not specified, take the 2-color version. -That's the only exception! */ \
-          if ((ui8_graphicType == 1) && (vtObjectPictureGraphic_a->rawData1 == NULL)) ui8_graphicType = 0;
+          if ((ui8_graphicType == 1) && (vtObject_a->rawData1 == NULL)) ui8_graphicType = 0;
 
 #define MACRO_CheckFixedBitmapsLoop_start \
     /* See if we have colorDepth of VT */ \
     uint8_t vtDepth = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().hwGraphicType; \
     /* Check for 100%-matching fixedBitmaps first */ \
     bool b_foundFixedBitmap = false; \
-    for (int fixNr=0; fixNr<vtObjectPictureGraphic_a->numberOfFixedBitmapsToFollow; fixNr++) { \
+    for (int fixNr=0; fixNr<vtObject_a->numberOfFixedBitmapsToFollow; fixNr++) { \
       /* Matching means only match in WIDTH, not (yet) HEIGHT - and in Colourdepth! */ \
-      if ( (width == vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].actualWidth) \
-      && (vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].formatoptions >> 6 == vtDepth) ) {
+      if ( (width == vtObject_a->fixedBitmapsToFollow [fixNr].actualWidth) \
+      && (vtObject_a->fixedBitmapsToFollow [fixNr].formatoptions >> 6 == vtDepth) ) {
 // here user can insert code into the loop.
 #define MACRO_CheckFixedBitmapsLoop_end \
         b_foundFixedBitmap = true; \
@@ -169,9 +169,9 @@ struct vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
 #define MACRO_calculateRequestedSize \
   uint16_t width; \
   if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
-    width = (((uint32_t) vtObjectPictureGraphic_a->width * factorM)/factorD); \
+    width = (((uint32_t) vtObject_a->width * factorM)/factorD); \
   } else { \
-    width = (((uint32_t) vtObjectPictureGraphic_a->width * vtDimension) /opDimension); \
+    width = (((uint32_t) vtObject_a->width * vtDimension) /opDimension); \
   }
 
 
@@ -195,19 +195,19 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
     MACRO_calculateRequestedSize
 
     MACRO_CheckFixedBitmapsLoop_start
-        rawData = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].rawData;
-        numberOfBytesInRawData = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].numberOfBytesInRawData;
-        actualWidth = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].actualWidth;
-        actualHeight = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].actualHeight;
+        rawData = vtObject_a->fixedBitmapsToFollow [fixNr].rawData;
+        numberOfBytesInRawData = vtObject_a->fixedBitmapsToFollow [fixNr].numberOfBytesInRawData;
+        actualWidth = vtObject_a->fixedBitmapsToFollow [fixNr].actualWidth;
+        actualHeight = vtObject_a->fixedBitmapsToFollow [fixNr].actualHeight;
         /* format is bit 8+7, options is bit 2-0 (NO RLE1/4/8 stuff here!! */
-        options = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].formatoptions & 0x7;
+        options = vtObject_a->fixedBitmapsToFollow [fixNr].formatoptions & 0x7;
         ui8_graphicType = vtDepth;
     MACRO_CheckFixedBitmapsLoop_end
 
     if (!b_foundFixedBitmap) {
       // See what we have as standard...
-      actualWidth = vtObjectPictureGraphic_a->actualWidth;
-      actualHeight = vtObjectPictureGraphic_a->actualHeight;
+      actualWidth = vtObject_a->actualWidth;
+      actualHeight = vtObject_a->actualHeight;
       MACRO_calculate_ui8_graphicType
       switch (ui8_graphicType) {
         case 2:  MACRO_helperForDifferentSizes (numberOfBytesInRawData2, options, rawData2, 0x10) break;
@@ -233,12 +233,12 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
       destMemory [8] = actualHeight >> 8;
       destMemory [9] = ui8_graphicType;
       destMemory [10] = options;
-      destMemory [11] = vtClient.getUserConvertedColor(vtObjectPictureGraphic_a->transparencyColour, this, IsoAgLib::TransparencyColour);
+      destMemory [11] = vtClient.getUserConvertedColor(vtObject_a->transparencyColour, this, IsoAgLib::TransparencyColour);
       destMemory [12] = (numberOfBytesInRawData) & 0xFF;
       destMemory [13] = (numberOfBytesInRawData >> 8) & 0xFF;
       destMemory [14] = (numberOfBytesInRawData >> 16) & 0xFF;
       destMemory [15] = (numberOfBytesInRawData >> 24) & 0xFF;
-      destMemory [16] = vtObjectPictureGraphic_a->numberOfMacrosToFollow;
+      destMemory [16] = vtObject_a->numberOfMacrosToFollow;
 
       sourceOffset += pgheaderSize;
       curBytes += pgheaderSize;
@@ -278,11 +278,11 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
     while ((sourceOffset >= pgheaderSize) && (sourceOffset < (pgheaderSize+numberOfBytesInRawData)) && ((curBytes+1) <= maxBytes))
     {
 #ifdef CONFIG_VT_CLIENT_PICTURE_GRAPHIC_COLOUR_CONVERSION
-        if( sourceOffset < (pgheaderSize + (vtObjectPictureGraphic_a->numberOfMacrosToFollow << 1)) )
+        if( sourceOffset < (pgheaderSize + (vtObject_a->numberOfMacrosToFollow << 1)) )
         {
             // Copy over the macros
             // 2 bytes for each macro defined, so the end of the macros is
-            // sourceOffset + (pgheaderSize + (vtObjectPictureGraphic_a->numberOfMacrosToFollow << 1))
+            // sourceOffset + (pgheaderSize + (vtObject_a->numberOfMacrosToFollow << 1))
             destMemory [curBytes] = rawData [sourceOffset-pgheaderSize];
         }
         else
@@ -368,7 +368,6 @@ IsoAgLib::ObjectID vtObjectPictureGraphic_c::getID() const {
 uint32_t
 vtObjectPictureGraphic_c::fitTerminal() const
 {
-  MACRO_localVars;
   MACRO_scaleLocalVars;
   MACRO_scaleSKLocalVars;
 
@@ -378,7 +377,7 @@ vtObjectPictureGraphic_c::fitTerminal() const
   MACRO_calculateRequestedSize
 
   MACRO_CheckFixedBitmapsLoop_start
-      numberOfBytesInRawData = vtObjectPictureGraphic_a->fixedBitmapsToFollow [fixNr].numberOfBytesInRawData;
+      numberOfBytesInRawData = vtObject_a->fixedBitmapsToFollow [fixNr].numberOfBytesInRawData;
   MACRO_CheckFixedBitmapsLoop_end
 
   if (!b_foundFixedBitmap) {
@@ -391,7 +390,7 @@ vtObjectPictureGraphic_c::fitTerminal() const
     }
   }
 
-  return 17+numberOfBytesInRawData+vtObjectPictureGraphic_a->numberOfMacrosToFollow*2;
+  return 17+numberOfBytesInRawData+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

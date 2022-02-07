@@ -68,32 +68,32 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectRectangle_a->width;
-    uint32_t height = (uint32_t)vtObjectRectangle_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 14; // Object Type = Rectangle
-      destMemory [3] = vtObjectRectangle_a->lineAttributes->getID() & 0xFF;
-      destMemory [4] = vtObjectRectangle_a->lineAttributes->getID() >> 8;
+      destMemory [3] = vtObject_a->lineAttributes->getID() & 0xFF;
+      destMemory [4] = vtObject_a->lineAttributes->getID() >> 8;
       destMemory [5] = width & 0xFF;
       destMemory [6] = width >> 8;
       destMemory [7] = height & 0xFF;
       destMemory [8] = height >> 8;
-      destMemory [9] = vtObjectRectangle_a->lineSuppression;
+      destMemory [9] = vtObject_a->lineSuppression;
 
-    if (vtObjectRectangle_a->fillAttributes != NULL)
+    if (vtObject_a->fillAttributes != NULL)
     {
-        destMemory [10] = vtObjectRectangle_a->fillAttributes->getID() & 0xFF;
-        destMemory [11] = vtObjectRectangle_a->fillAttributes->getID() >> 8;
+        destMemory [10] = vtObject_a->fillAttributes->getID() & 0xFF;
+        destMemory [11] = vtObject_a->fillAttributes->getID() >> 8;
       } else {
         destMemory [10] = 0xFF;
         destMemory [11] = 0xFF;
       }
 
-      destMemory [12] = vtObjectRectangle_a->numberOfMacrosToFollow;
+      destMemory [12] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 13;
       curBytes += 13;
     }
@@ -112,18 +112,16 @@ IsoAgLib::ObjectID vtObjectRectangle_c::getID() const {
 uint32_t
 vtObjectRectangle_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 13+vtObjectRectangle_a->numberOfMacrosToFollow*2;
+  return 13+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
 void
 vtObjectRectangle_c::setOriginSKM(bool b_SKM)
 {
-  MACRO_localVars;
   if (b_SKM) {
     s_properties.flags |= FLAG_ORIGIN_SKM;
-    vtObjectRectangle_a->lineAttributes->setOriginSKM (b_SKM);
+    vtObject_a->lineAttributes->setOriginSKM (b_SKM);
   }
 }
 
