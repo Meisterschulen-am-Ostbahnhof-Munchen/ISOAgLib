@@ -66,7 +66,8 @@ IsoItem_c::IsoItem_c()
   @param acrc_src source IsoItem_c instance
 */
 IsoItem_c::IsoItem_c(const IsoItem_c& acrc_src)
-  : BaseItem_c (acrc_src)
+  : AbstractClientBase()
+  , BaseItem_c (acrc_src)
 #ifdef USE_WORKING_SET
   , m_wsSlavesAnnounced (NULL)
   , m_wsSlavesAnnouncing (NULL)
