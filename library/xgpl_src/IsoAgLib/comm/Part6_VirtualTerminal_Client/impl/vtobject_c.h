@@ -65,8 +65,6 @@ protected:
   void getAttribute      (uint8_t attrID, bool b_enableReplaceOfCmd=true);
   #endif
 
-  void createRamStructIfNotYet (uint16_t ui16_structLen);
-
 
 private:
   void saveValue8     (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_newValue);
@@ -77,10 +75,9 @@ private:
   void saveSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int32_t i32_newValue);
   void saveValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, float f_newValue);
   void saveValueBool  (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, bool b_newValue);
-
   void saveValueP     (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iVtObject_c* const p_newValue);
-protected:
   void saveValueISOName (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iIsoName_c& ar_newIsoName);
+protected:
   void saveValue8SetAttribute       (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t newValueSend, bool b_enableReplaceOfCmd);
   void saveValue16SetAttribute      (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd);
   void saveValue16SetAttributeScaled(uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd);

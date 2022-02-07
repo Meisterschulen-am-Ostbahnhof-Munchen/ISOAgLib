@@ -38,7 +38,6 @@ vtObject_c::vtObject_c(iVtObject_s* aps_vtObject_a , int ai_multitonInst)
 {
   // typical double init is caught in objectpool-class's init-call!
   vtObject_a = aps_vtObject_a;
-  s_properties.flags &= ~FLAG_IN_RAM;
   s_properties.flags &= ~FLAG_STRING_IN_RAM;
   s_properties.flags &= ~FLAG_OBJECTS2FOLLOW_IN_RAM;
   // NOTE: If objects were modified using b_updateObject==true,
@@ -51,7 +50,6 @@ vtObject_c::vtObject_c(iVtObject_s* aps_vtObject_a , int ai_multitonInst)
 vtObject_c::vtObject_c(int ai_multitonInst)
 {
   // typical double init is caught in objectpool-class's init-call!
-  s_properties.flags &= ~FLAG_IN_RAM;
   s_properties.flags &= ~FLAG_STRING_IN_RAM;
   s_properties.flags &= ~FLAG_OBJECTS2FOLLOW_IN_RAM;
   // NOTE: If objects were modified using b_updateObject==true,
@@ -95,88 +93,66 @@ vtObject_c::getAttribute(uint8_t attrID, bool b_enableReplaceOfCmd)
 #endif
 
 
-void
-vtObject_c::createRamStructIfNotYet (uint16_t ui16_structLen)
-{ // Do we have to generate a RAM copy of our struct (to save the value), or has this already be done?
-  if (!(s_properties.flags & FLAG_IN_RAM)) {
-	  //TODO !! i really do not think this is needed anymore. CHECK !
-
-//    void* old=vtObject_a;
-//    vtObject_a = (iVtObject_s*) new uint8_t [ui16_structLen];
-//    CNAMESPACE::memcpy (vtObject_a, old, ui16_structLen);
-    s_properties.flags |= FLAG_IN_RAM;
-  }
-}
 
 
 // //////////////////////////////// saveValue(8/16/32)
 void
 vtObject_c::saveValue8 (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_newValue)
 {
-  createRamStructIfNotYet (ui16_structLen);
   ((uint8_t *)vtObject_a) [ui16_structOffset] = ui8_newValue;
 }
 
 void
 vtObject_c::saveValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint16_t ui16_newValue)
 {
-  createRamStructIfNotYet (ui16_structLen);
   * ((uint16_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = ui16_newValue;
 }
 
 void
 vtObject_c::saveValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint32_t ui32_newValue)
 {
-  createRamStructIfNotYet (ui16_structLen);
   * ((uint32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = ui32_newValue;
 }
 
 void
 vtObject_c::saveSignedValue8 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int8_t i8_newValue)
 {
-  createRamStructIfNotYet (ui16_structLen);
   ((int8_t *)vtObject_a) [ui16_structOffset] = i8_newValue;
 }
 
 void
 vtObject_c::saveSignedValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int16_t i16_newValue)
 {
-  createRamStructIfNotYet (ui16_structLen);
   * ((int16_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = i16_newValue;
 }
 
 void
 vtObject_c::saveSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int32_t i32_newValue)
 {
-  createRamStructIfNotYet (ui16_structLen);
   * ((int32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = i32_newValue;
 }
 
 void
 vtObject_c::saveValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, float f_newValue)
 {
-  createRamStructIfNotYet (ui16_structLen);
   * ((float*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = f_newValue;
 }
 
 void
 vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iVtObject_c* const p_newValue)
 {
-  createRamStructIfNotYet (ui16_structLen);
   * ((const IsoAgLib::iVtObject_c**) (((uint8_t *)vtObject_a)+ui16_structOffset)) = p_newValue;
 }
 
 void
 vtObject_c::saveValueISOName (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, const IsoAgLib::iIsoName_c& ar_newIsoName)
 {
-  createRamStructIfNotYet (ui16_structLen);
   *((IsoAgLib::iIsoName_c*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = ar_newIsoName;
 }
 
 void
 vtObject_c::saveValueBool (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, bool b_newValue)
 {
-  createRamStructIfNotYet (ui16_structLen);
   *((bool*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = b_newValue;
 }
 
