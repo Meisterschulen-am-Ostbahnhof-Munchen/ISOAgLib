@@ -92,8 +92,7 @@ IsoAgLib::ObjectID vtObjectColourMap_c::getID() const {
 uint32_t
 vtObjectColourMap_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return pgheaderSize + vtObjectColourMap_a->numOfColourIdxToFollow;
+  return pgheaderSize + vtObject_a->numOfColourIdxToFollow;
 }
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
