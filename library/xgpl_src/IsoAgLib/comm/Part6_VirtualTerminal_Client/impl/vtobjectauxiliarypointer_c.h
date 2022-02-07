@@ -35,12 +35,21 @@ namespace __IsoAgLib {
 
 class vtObjectAuxiliaryControlDesignatorObjectPointer_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s;
+
+	// Pointer to the internal implementation
+	iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectAuxiliaryControlDesignatorObjectPointer_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectAuxiliaryControlDesignatorObjectPointer_c(const iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst);
+  vtObjectAuxiliaryControlDesignatorObjectPointer_c(iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst);
 
   iVtObjectAuxiliaryControlDesignatorObjectPointer_s* get_vtObjectAuxiliaryControlDesignatorObjectPointer_a();
 

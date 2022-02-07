@@ -33,12 +33,6 @@ public:
 
   ~iVtObjectAuxiliaryControlDesignatorObjectPointer_c(){}
 
-  iVtObjectAuxiliaryControlDesignatorObjectPointer_c(const iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst)
-  : vtObjectAuxiliaryControlDesignatorObjectPointer_c(vtObjectAuxiliaryControlDesignatorObjectPointerSROM , ai_multitonInst)
-  {}
-
-  const iVtObjectAuxiliaryControlDesignatorObjectPointer_s& get_vtObjectAuxiliaryControlDesignatorObjectPointer_a() { return *vtObjectAuxiliaryControlDesignatorObjectPointer_c::get_vtObjectAuxiliaryControlDesignatorObjectPointer_a(); }
-
   void setAuxiliaryObjectId(iVtObject_c* apc_newObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId (apc_newObject, b_updateObject, b_enableReplaceOfCmd);
   }

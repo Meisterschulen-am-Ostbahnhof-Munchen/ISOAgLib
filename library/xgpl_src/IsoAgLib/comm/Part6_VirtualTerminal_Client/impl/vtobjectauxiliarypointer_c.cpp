@@ -27,6 +27,23 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectAuxiliaryControlDesignatorObjectPointer_c::iVtObjectAuxiliaryControlDesignatorObjectPointer_s: iVtObject_s {
+	uint8_t pointerType;
+	iVtObject_c *value;
+	iVtObjectAuxiliaryControlDesignatorObjectPointer_s(
+			IsoAgLib::ObjectID ID,
+			uint8_t pointerType,
+			iVtObject_c *value)
+	: iVtObject_s(ID)
+	, pointerType(pointerType)
+	, value(value)
+	{
+	}
+
+
+};
+
 int16_t
 vtObjectAuxiliaryControlDesignatorObjectPointer_c::stream(uint8_t* destMemory,
                                                           uint16_t /*maxBytes*/,
@@ -86,15 +103,21 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::saveReceivedAttribute(uint8_t
   default: break;
   */
 }
+#endif
+
 
     vtObjectAuxiliaryControlDesignatorObjectPointer_c::vtObjectAuxiliaryControlDesignatorObjectPointer_c(
-            const IsoAgLib::iVtObject_c::iVtObjectAuxiliaryControlDesignatorObjectPointer_s *vtObjectAuxiliaryControlDesignatorObjectPointerSROM,
+            vtObjectAuxiliaryControlDesignatorObjectPointer_c::iVtObjectAuxiliaryControlDesignatorObjectPointer_s *vtObjectAuxiliaryControlDesignatorObjectPointerSROM,
             int ai_multitonInst)
             : vtObject_c((iVtObject_s *)vtObjectAuxiliaryControlDesignatorObjectPointerSROM , ai_multitonInst)
+    		, vtObject_a(vtObjectAuxiliaryControlDesignatorObjectPointerSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectAuxiliaryControlDesignatorObjectPointer_s *
-    vtObjectAuxiliaryControlDesignatorObjectPointer_c::get_vtObjectAuxiliaryControlDesignatorObjectPointer_a() { return (iVtObjectAuxiliaryControlDesignatorObjectPointer_s *)&(get_vtObject_a()); }
+    vtObjectAuxiliaryControlDesignatorObjectPointer_c::iVtObjectAuxiliaryControlDesignatorObjectPointer_s *
+    vtObjectAuxiliaryControlDesignatorObjectPointer_c::get_vtObjectAuxiliaryControlDesignatorObjectPointer_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId(IsoAgLib::iVtObject_c *apc_newObject,
                                                                                  bool b_updateObject,
@@ -102,7 +125,7 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::saveReceivedAttribute(uint8_t
         saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAuxiliaryControlDesignatorObjectPointer_a(), value) : 0, sizeof(iVtObjectAuxiliaryControlDesignatorObjectPointer_s), 2 /* "auxiliary object ID Attribute" */, apc_newObject, b_enableReplaceOfCmd);
     }
 
-#endif
+
 
 } // __IsoAgLib
 

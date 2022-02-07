@@ -145,23 +145,6 @@ protected:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	struct iVtObjectPolygon_s: iVtObjectwMacro_s {
 		uint16_t width;
 		uint16_t height;
@@ -365,21 +348,7 @@ protected:
 
 	};
 
-	struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s: iVtObject_s {
-		uint8_t pointerType;
-		iVtObject_c *value;
-		iVtObjectAuxiliaryControlDesignatorObjectPointer_s(
-				ObjectID ID,
-				uint8_t pointerType,
-				iVtObject_c *value)
-		: iVtObject_s(ID)
-		, pointerType(pointerType)
-		, value(value)
-		{
-		}
 
-
-	};
 
 // METHODS
 public:
