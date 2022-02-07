@@ -31,10 +31,6 @@ class iVtObjectPolygon_c : public __IsoAgLib::vtObjectPolygon_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_POLYGON; }
 
-  iVtObjectPolygon_c(const iVtObjectPolygon_s* vtObjectPolygonSROM , int ai_multitonInst)
-  :vtObjectPolygon_c(vtObjectPolygonSROM , ai_multitonInst)
-  {}
-
 
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);

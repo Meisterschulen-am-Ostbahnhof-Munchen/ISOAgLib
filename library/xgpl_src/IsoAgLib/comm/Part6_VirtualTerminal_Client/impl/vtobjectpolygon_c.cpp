@@ -29,6 +29,47 @@
 
 
 namespace __IsoAgLib {
+
+
+struct repeat_x_y_s {
+  int16_t x;
+  int16_t y;
+};
+
+
+struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
+	uint16_t width;
+	uint16_t height;
+	IsoAgLib::iVtObjectLineAttributes_c *lineAttributes;
+	IsoAgLib::iVtObjectFillAttributes_c *fillAttributes;
+	uint8_t polygonType;
+	uint8_t numberOfPoints;
+	const repeat_x_y_s *pointsToFollow;
+	iVtObjectPolygon_s(
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t height,
+			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes,
+			uint8_t polygonType,
+			uint8_t numberOfPoints,
+			const repeat_x_y_s *pointsToFollow)
+    : iVtObject_s(ID)
+	, iVtObjectwMacro_s(ID)
+	, width(width)
+	, height(height)
+	, lineAttributes(lineAttributes)
+	, fillAttributes(fillAttributes)
+	, polygonType(polygonType)
+	, numberOfPoints(numberOfPoints)
+	, pointsToFollow(pointsToFollow)
+	{
+	}
+
+
+};
+
+
 int16_t
 vtObjectPolygon_c::stream(uint8_t* destMemory,
                           uint16_t maxBytes,
@@ -170,9 +211,10 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
   }
 }
 #endif
-    vtObjectPolygon_c::vtObjectPolygon_c(const IsoAgLib::iVtObject_c::iVtObjectPolygon_s *vtObjectPolygonSROM,
+    vtObjectPolygon_c::vtObjectPolygon_c(iVtObjectPolygon_s *vtObjectPolygonSROM,
                                          int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectPolygonSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectPolygonSROM)
     {}
 
     void vtObjectPolygon_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -189,7 +231,10 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
         saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPolygon_a(), lineAttributes) : 0, sizeof(iVtObjectPolygon_s), 3 /* "Line Attribute" */, (IsoAgLib::iVtObject_c*) newLineAttributes, b_enableReplaceOfCmd);
     }
 
-    IsoAgLib::iVtObject_c::iVtObjectPolygon_s *vtObjectPolygon_c::get_vtObjectPolygon_a() { return dynamic_cast<iVtObjectPolygon_s *>(&(get_vtObject_a())); }
+    vtObjectPolygon_c::iVtObjectPolygon_s *vtObjectPolygon_c::get_vtObjectPolygon_a()
+    {
+    	return vtObject_a;
+    }
 
     void
     vtObjectPolygon_c::setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c *newFillAttributes, bool b_updateObject,

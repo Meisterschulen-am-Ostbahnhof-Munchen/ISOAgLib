@@ -145,37 +145,7 @@ protected:
 
 
 
-	struct iVtObjectPolygon_s: iVtObjectwMacro_s {
-		uint16_t width;
-		uint16_t height;
-		iVtObjectLineAttributes_c *lineAttributes;
-		iVtObjectFillAttributes_c *fillAttributes;
-		uint8_t polygonType;
-		uint8_t numberOfPoints;
-		const repeat_x_y_s *pointsToFollow;
-		iVtObjectPolygon_s(
-				ObjectID ID,
-				uint16_t width,
-				uint16_t height,
-				iVtObjectLineAttributes_c *lineAttributes,
-				iVtObjectFillAttributes_c *fillAttributes,
-				uint8_t polygonType,
-				uint8_t numberOfPoints,
-				const repeat_x_y_s *pointsToFollow)
-	    : iVtObject_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, width(width)
-		, height(height)
-		, lineAttributes(lineAttributes)
-		, fillAttributes(fillAttributes)
-		, polygonType(polygonType)
-		, numberOfPoints(numberOfPoints)
-		, pointsToFollow(pointsToFollow)
-		{
-		}
 
-
-	};
 
 	struct iVtObjectRectangle_s: iVtObjectwMacro_s {
 		iVtObjectLineAttributes_c *lineAttributes;

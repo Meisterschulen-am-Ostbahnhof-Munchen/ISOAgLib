@@ -162,10 +162,7 @@ struct repeat_event_iVtObjectMacro_s {
   iVtObjectMacro_c* vtObjectMacro;
 };
 
-struct repeat_x_y_s {
-  int16_t x;
-  int16_t y;
-};
+
 
 struct repeat_vtLanguage_s {
   uint8_t language[2];

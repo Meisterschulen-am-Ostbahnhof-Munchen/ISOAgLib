@@ -32,12 +32,21 @@ namespace __IsoAgLib {
 
 class vtObjectPolygon_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectPolygon_s;
+
+	// Pointer to the internal implementation
+	iVtObjectPolygon_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectPolygon_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectPolygon_c(const iVtObjectPolygon_s* vtObjectPolygonSROM , int ai_multitonInst);
+  vtObjectPolygon_c(iVtObjectPolygon_s* vtObjectPolygonSROM , int ai_multitonInst);
   iVtObjectPolygon_s* get_vtObjectPolygon_a();
   vtObjectPolygon_c();
   uint32_t fitTerminal() const;
