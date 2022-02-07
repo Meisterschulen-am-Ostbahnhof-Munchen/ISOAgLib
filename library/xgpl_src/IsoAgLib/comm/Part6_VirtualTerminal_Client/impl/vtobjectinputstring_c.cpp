@@ -285,8 +285,8 @@ void
 vtObjectInputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    saveValue16 (MACRO_getStructOffset(get_vtObjectInputString_a(), width),  sizeof(iVtObjectInputString_s), newWidth);
-    saveValue16 (MACRO_getStructOffset(get_vtObjectInputString_a(), height), sizeof(iVtObjectInputString_s), newHeight);
+	  vtObject_a->width = newWidth;
+	  vtObject_a->height = newHeight;
   }
 
   scaleSize( newWidth, newHeight );

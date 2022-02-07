@@ -152,8 +152,8 @@ void
 vtObjectButton_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    saveValue16 ((vtObject_a->width),  sizeof(iVtObjectButton_s), newWidth);
-    saveValue16 ((vtObject_a->height), sizeof(iVtObjectButton_s), newHeight);
+    vtObject_a->width = newWidth;
+    vtObject_a->height = newHeight;
   }
 
   scaleSize( newWidth, newHeight );

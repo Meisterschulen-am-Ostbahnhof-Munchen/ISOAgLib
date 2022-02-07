@@ -250,7 +250,8 @@ void
 vtObjectArchedBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (get_vtObjectArchedBarGraph_a()->variableReference == NULL) {
-    if (b_updateObject) saveValue16 (MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), value), sizeof(iVtObjectArchedBarGraph_s), newValue);
+    if (b_updateObject)
+    	vtObject_a->value = newValue;
 
     __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, 0x00, 0x00, b_enableReplaceOfCmd);
   }
@@ -262,8 +263,8 @@ void
 vtObjectArchedBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    saveValue16 (MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width),  sizeof(iVtObjectArchedBarGraph_s), newWidth);
-    saveValue16 (MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height), sizeof(iVtObjectArchedBarGraph_s), newHeight);
+	  vtObject_a->width = newWidth;
+	  vtObject_a->height = newHeight;
   }
 
   scaleSize( newWidth, newHeight );

@@ -456,12 +456,12 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 1: vtObject_a->width), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 2: saveValue8(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
     case 3: saveValue8(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), transparencyColour), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
     /** these attributes are in parentheses in the spec, so commented out here
-    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 5: saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 4: vtObject_a->actualWidth), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 5: vtObject_a->actualHeight), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     case 6: saveValue8(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), format), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
     */
     default: break;
@@ -499,9 +499,9 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
         saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData0), sizeof(iVtObjectPictureGraphic_s), aui32_size);
         saveValue8 (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options),                 sizeof(iVtObjectPictureGraphic_s), ab_rle ? (get_vtObjectPictureGraphic_a()->options |  (1<<2))
                                                                                                                                               : (get_vtObjectPictureGraphic_a()->options & ~(1<<2)) );
-        if (aui16_actWidth != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth),  sizeof(iVtObjectPictureGraphic_s), aui16_actWidth);
-        if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
-        if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
+        if (aui16_actWidth != 0xFFFF) vtObject_a->actualWidth  = aui16_actWidth;
+        if (aui16_actHeight!= 0xFFFF) vtObject_a->actualHeight = aui16_actHeight;
+        if (aui16_width    != 0xFFFF) vtObject_a->width        = aui16_width;
     }
 
     void
@@ -511,9 +511,9 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
         saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData1), sizeof(iVtObjectPictureGraphic_s), aui32_size);
         saveValue8 (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options),                 sizeof(iVtObjectPictureGraphic_s), ab_rle ? (get_vtObjectPictureGraphic_a()->options |  (1<<3))
                                                                                                                                               : (get_vtObjectPictureGraphic_a()->options & ~(1<<3)) );
-        if (aui16_actWidth != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth),  sizeof(iVtObjectPictureGraphic_s), aui16_actWidth);
-        if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
-        if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
+        if (aui16_actWidth != 0xFFFF) vtObject_a->actualWidth  = aui16_actWidth;
+        if (aui16_actHeight!= 0xFFFF) vtObject_a->actualHeight = aui16_actHeight;
+        if (aui16_width    != 0xFFFF) vtObject_a->width       = aui16_width;
     }
 
     void
@@ -523,9 +523,9 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
         saveValue32(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), numberOfBytesInRawData2), sizeof(iVtObjectPictureGraphic_s), aui32_size);
         saveValue8 (MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), options),                 sizeof(iVtObjectPictureGraphic_s), ab_rle ? (get_vtObjectPictureGraphic_a()->options |  (1<<4))
                                                                                                                                               : (get_vtObjectPictureGraphic_a()->options & ~(1<<4)) );
-        if (aui16_actWidth != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualWidth),  sizeof(iVtObjectPictureGraphic_s), aui16_actWidth);
-        if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
-        if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
+        if (aui16_actWidth != 0xFFFF) vtObject_a->actualWidth  = aui16_actWidth;
+        if (aui16_actHeight!= 0xFFFF) vtObject_a->actualHeight = aui16_actHeight;
+        if (aui16_width    != 0xFFFF) vtObject_a->width        = aui16_width;
     }
 
 

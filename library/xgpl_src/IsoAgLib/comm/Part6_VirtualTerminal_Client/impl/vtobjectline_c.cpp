@@ -145,8 +145,8 @@ void
 vtObjectLine_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), width),  sizeof(iVtObjectLine_s), newWidth);
-    saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), newHeight);
+	  vtObject_a->width = newWidth;
+	  vtObject_a->height = newHeight;
   }
 
   scaleSize( newWidth, newHeight );
@@ -158,9 +158,9 @@ void
 vtObjectLine_c::setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), width), sizeof(iVtObjectLine_s), newWidth);
-    saveValue16 (MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), newHeight);
-    saveValue8  (MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s), newLineDirection);
+	  vtObject_a->width = newWidth;
+	  vtObject_a->height = newHeight;
+	  vtObject_a->lineDirection = newLineDirection;
   }
 
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeEndPoint (this, newWidth, newHeight, newLineDirection, b_enableReplaceOfCmd);

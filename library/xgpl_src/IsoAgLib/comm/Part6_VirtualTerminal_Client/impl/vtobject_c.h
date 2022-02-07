@@ -70,7 +70,9 @@ protected:
 
 protected:
   void saveValue8     (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_newValue);
+private:
   void saveValue16    (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint16_t ui16_newValue);
+protected:
   void saveValue32    (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint32_t ui32_newValue);
   void saveSignedValue8  (uint16_t ui16_structOffset, uint16_t ui16_structLen, int8_t i8_newValue);
   void saveSignedValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int16_t i16_newValue);
