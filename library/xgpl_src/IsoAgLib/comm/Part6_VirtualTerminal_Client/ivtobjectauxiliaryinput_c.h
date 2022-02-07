@@ -31,11 +31,6 @@ class iVtObjectAuxiliaryInput_c : public __IsoAgLib::vtObjectAuxiliaryInput_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_INPUT_1; }
 
-  iVtObjectAuxiliaryInput_c(const iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM , int ai_multitonInst)
-  :vtObjectAuxiliaryInput_c(vtObjectAuxiliaryInputSROM , ai_multitonInst)
-  {}
-
-
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
     return vtObjectAuxiliaryInput_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject);

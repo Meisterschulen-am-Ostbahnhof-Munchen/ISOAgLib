@@ -27,6 +27,32 @@
 
 namespace __IsoAgLib {
 
+
+
+
+struct vtObjectAuxiliaryInput_c::iVtObjectAuxiliaryInput_s: iVtObjectObject_s {
+	IsoAgLib::Colour backgroundColour;
+	uint8_t functionType;
+	uint8_t inputId;
+	iVtObjectAuxiliaryInput_s(
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::Colour backgroundColour,
+			uint8_t functionType,
+			uint8_t inputId)
+    : iVtObject_s(ID)
+	, iVtObjectObject_s(ID)
+	, backgroundColour(backgroundColour)
+	, functionType(functionType)
+	, inputId(inputId)
+	{
+	}
+
+
+};
+
+
+
+
 int16_t
 vtObjectAuxiliaryInput_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
@@ -87,11 +113,15 @@ vtObjectAuxiliaryInput_c::setOriginSKM(bool /* b_SKM */)
 }
 
     vtObjectAuxiliaryInput_c::vtObjectAuxiliaryInput_c(
-            const IsoAgLib::iVtObject_c::iVtObjectAuxiliaryInput_s *vtObjectAuxiliaryInputSROM, int ai_multitonInst)
+            iVtObjectAuxiliaryInput_s *vtObjectAuxiliaryInputSROM, int ai_multitonInst)
             :vtObject_c((iVtObject_s *)vtObjectAuxiliaryInputSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectAuxiliaryInputSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectAuxiliaryInput_s *vtObjectAuxiliaryInput_c::get_vtObjectAuxiliaryInput_a() { return dynamic_cast<iVtObjectAuxiliaryInput_s *>(&(get_vtObject_a())); }
+    vtObjectAuxiliaryInput_c::iVtObjectAuxiliaryInput_s *vtObjectAuxiliaryInput_c::get_vtObjectAuxiliaryInput_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectAuxiliaryInput_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 
