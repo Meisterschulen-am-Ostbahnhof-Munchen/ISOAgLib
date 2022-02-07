@@ -449,7 +449,7 @@ vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCm
 
   return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommand(
     0xA1 /* Command: Command --- Parameter: Enable/Disable Object */,
-    vtObject_a->ID & 0xFF, vtObject_a->ID >> 8, enOrDis, 0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd );
+	getID() & 0xFF, getID() >> 8, enOrDis, 0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd );
 }
 
 
@@ -457,7 +457,7 @@ bool
 vtObject_c::select(uint8_t selectOrActivate)
 {
   return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSelectInputObject(
-    vtObject_a->ID, (selectOrActivate == 0), true );
+    getID(), (selectOrActivate == 0), true );
 }
     bool
     vtObject_c::isOmittedFromUpload() const
