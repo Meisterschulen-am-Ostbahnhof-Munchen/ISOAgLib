@@ -194,9 +194,9 @@ typedef uint16_t objRange_t;
 
 #define MACRO_getBlockfont(index)  \
     int32_t xBlock, yBlock; \
-    if (MACRO_vtObjectTypeA->objectsToFollow [index].vtObjectBlockFont != NULL) { \
-      xBlock = MACRO_vtObjectTypeA->objectsToFollow [index].col * (MACRO_vtObjectTypeA->objectsToFollow [index].vtObjectBlockFont->getScaledWidthHeight () >> 8); \
-      yBlock = MACRO_vtObjectTypeA->objectsToFollow [index].row * (MACRO_vtObjectTypeA->objectsToFollow [index].vtObjectBlockFont->getScaledWidthHeight () & 0xFF); \
+    if (vtObject_a->objectsToFollow [index].vtObjectBlockFont != NULL) { \
+      xBlock = vtObject_a->objectsToFollow [index].col * (vtObject_a->objectsToFollow [index].vtObjectBlockFont->getScaledWidthHeight () >> 8); \
+      yBlock = vtObject_a->objectsToFollow [index].row * (vtObject_a->objectsToFollow [index].vtObjectBlockFont->getScaledWidthHeight () & 0xFF); \
     } else { \
       xBlock = 0; \
       yBlock = 0; \
@@ -204,11 +204,11 @@ typedef uint16_t objRange_t;
 
 #define MACRO_streamObject(bytesBefore) \
     uint16_t nrObject = (sourceOffset-(bytesBefore)) / 2; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+2) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2U*vtObject_a->numberOfObjectsToFollow)) && ((curBytes+2) <= maxBytes)) { \
       /* write out an object */ \
-      if(MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject != NULL) { \
-        destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject->getID() & 0xFF; \
-        destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObject].vtObject->getID() >> 8; \
+      if(vtObject_a->objectsToFollow [nrObject].vtObject != NULL) { \
+        destMemory [curBytes]   = vtObject_a->objectsToFollow [nrObject].vtObject->getID() & 0xFF; \
+        destMemory [curBytes+1] = vtObject_a->objectsToFollow [nrObject].vtObject->getID() >> 8; \
       } else { \
         destMemory [curBytes]   = 0xFF; \
         destMemory [curBytes+1] = 0xFF; \
@@ -220,16 +220,16 @@ typedef uint16_t objRange_t;
 
 #define MACRO_DAMstreamObjectXY(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*vtObject_a->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       /* write out an object_X_Y pair */ \
-      destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
-      destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
+      destMemory [curBytes]   = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
+      destMemory [curBytes+1] = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
       MACRO_getBlockfont(nrObjectXY)  \
       isoaglib_assert( !(s_properties.flags & FLAG_ORIGIN_SKM) && (p_parentButtonObject == NULL) ); \
-      destMemory [curBytes+2] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock+vtOffsetX) & 0xFF; \
-      destMemory [curBytes+3] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock+vtOffsetX) >> 8; \
-      destMemory [curBytes+4] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock+vtOffsetY) & 0xFF; \
-      destMemory [curBytes+5] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock+vtOffsetY) >> 8; \
+      destMemory [curBytes+2] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock+vtOffsetX) & 0xFF; \
+      destMemory [curBytes+3] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock+vtOffsetX) >> 8; \
+      destMemory [curBytes+4] = ((((vtObject_a->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock+vtOffsetY) & 0xFF; \
+      destMemory [curBytes+5] = ((((vtObject_a->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock+vtOffsetY) >> 8; \
       nrObjectXY++; \
       curBytes += 6; \
       sourceOffset += 6; \
@@ -237,21 +237,21 @@ typedef uint16_t objRange_t;
 
 #define MACRO_streamObjectXY(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*vtObject_a->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       /* write out an object_X_Y pair */ \
-      destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
-      destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
+      destMemory [curBytes]   = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
+      destMemory [curBytes+1] = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
       MACRO_getBlockfont(nrObjectXY)  \
       if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
-        destMemory [curBytes+2] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*factorM)/factorD)+xBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*factorM)/factorD)+xBlock) >> 8; \
-        destMemory [curBytes+4] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*factorM)/factorD)+yBlock) & 0xFF; \
-        destMemory [curBytes+5] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*factorM)/factorD)+yBlock) >> 8; \
+        destMemory [curBytes+2] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*factorM)/factorD)+xBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*factorM)/factorD)+xBlock) >> 8; \
+        destMemory [curBytes+4] = ((((vtObject_a->objectsToFollow [nrObjectXY].y)*factorM)/factorD)+yBlock) & 0xFF; \
+        destMemory [curBytes+5] = ((((vtObject_a->objectsToFollow [nrObjectXY].y)*factorM)/factorD)+yBlock) >> 8; \
       } else { \
-        destMemory [curBytes+2] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \
-        destMemory [curBytes+4] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) & 0xFF; \
-        destMemory [curBytes+5] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) >> 8; \
+        destMemory [curBytes+2] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \
+        destMemory [curBytes+4] = ((((vtObject_a->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) & 0xFF; \
+        destMemory [curBytes+5] = ((((vtObject_a->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock) >> 8; \
       } \
       nrObjectXY++; \
       curBytes += 6; \
@@ -262,15 +262,15 @@ typedef uint16_t objRange_t;
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
     int16_t centerX = (vtButtonWidth -  ((opButtonWidth *factorM)/factorD)) >>1; \
     int16_t centerY = (vtButtonHeight - ((opButtonHeight*factorM)/factorD)) >>1; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*vtObject_a->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       MACRO_getBlockfont(nrObjectXY)  \
       /* write out an objectX_y pair */ \
-      destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
-      destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
-      destMemory [curBytes+2] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX) & 0xFF; \
-      destMemory [curBytes+3] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX) >> 8; \
-      destMemory [curBytes+4] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY) & 0xFF; \
-      destMemory [curBytes+5] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY) >> 8; \
+      destMemory [curBytes]   = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
+      destMemory [curBytes+1] = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
+      destMemory [curBytes+2] = (((vtObject_a->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX) & 0xFF; \
+      destMemory [curBytes+3] = (((vtObject_a->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX) >> 8; \
+      destMemory [curBytes+4] = (((vtObject_a->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY) & 0xFF; \
+      destMemory [curBytes+5] = (((vtObject_a->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY) >> 8; \
       nrObjectXY++; \
       curBytes += 6; \
       sourceOffset += 6; \
@@ -281,15 +281,15 @@ typedef uint16_t objRange_t;
     MACRO_scaleSKLocalVars \
     int16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factorM)/factorD)) >>1; \
     int16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factorM)/factorD)) >>1; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*vtObject_a->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       MACRO_getBlockfont(nrObjectXY)  \
       /* write out an objectX_y pair */ \
-      destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
-      destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
-      destMemory [curBytes+2] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX+skOffsetX) & 0xFF; \
-      destMemory [curBytes+3] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX+skOffsetX) >> 8; \
-      destMemory [curBytes+4] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY+skOffsetY) & 0xFF; \
-      destMemory [curBytes+5] = (((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY+skOffsetY) >> 8; \
+      destMemory [curBytes]   = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
+      destMemory [curBytes+1] = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
+      destMemory [curBytes+2] = (((vtObject_a->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX+skOffsetX) & 0xFF; \
+      destMemory [curBytes+3] = (((vtObject_a->objectsToFollow [nrObjectXY].x*factorM)/factorD)+xBlock+centerX+skOffsetX) >> 8; \
+      destMemory [curBytes+4] = (((vtObject_a->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY+skOffsetY) & 0xFF; \
+      destMemory [curBytes+5] = (((vtObject_a->objectsToFollow [nrObjectXY].y*factorM)/factorD)+yBlock+centerY+skOffsetY) >> 8; \
       nrObjectXY++; \
       curBytes += 6; \
       sourceOffset += 6; \
@@ -297,10 +297,10 @@ typedef uint16_t objRange_t;
 
 #define MACRO_streamEventMacro(bytesBefore) \
     uint16_t nrEventMacro = (sourceOffset-(bytesBefore)) / 2; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2U*MACRO_vtObjectTypeA->numberOfMacrosToFollow)) && ((curBytes+2) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2U*vtObject_a->numberOfMacrosToFollow)) && ((curBytes+2) <= maxBytes)) { \
       /* write out an objectX_y pair */ \
-      destMemory [curBytes]   = MACRO_vtObjectTypeA->macrosToFollow [nrEventMacro].event; \
-      destMemory [curBytes+1] = MACRO_vtObjectTypeA->macrosToFollow [nrEventMacro].vtObjectMacro->getID() & 0xFF; /* Macro ObjID must be 0-255 !! */ \
+      destMemory [curBytes]   = vtObject_a->macrosToFollow [nrEventMacro].event; \
+      destMemory [curBytes+1] = vtObject_a->macrosToFollow [nrEventMacro].vtObjectMacro->getID() & 0xFF; /* Macro ObjID must be 0-255 !! */ \
       nrEventMacro++; \
       curBytes += 2; \
       sourceOffset += 2; \
@@ -308,39 +308,39 @@ typedef uint16_t objRange_t;
 
 #define MACRO_streamLanguages(bytesBefore)\
     uint16_t nrLanguageCode = (sourceOffset-(bytesBefore)) / 2; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2U*MACRO_vtObjectTypeA->numberOfLanguagesToFollow)) && ((curBytes+2) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+2U*vtObject_a->numberOfLanguagesToFollow)) && ((curBytes+2) <= maxBytes)) { \
       /* write out a two character Language Code pair */ \
-      destMemory [curBytes]   = MACRO_vtObjectTypeA->languagesToFollow [nrLanguageCode].language[0]; \
-      destMemory [curBytes+1] = MACRO_vtObjectTypeA->languagesToFollow [nrLanguageCode].language[1]; \
+      destMemory [curBytes]   = vtObject_a->languagesToFollow [nrLanguageCode].language[0]; \
+      destMemory [curBytes+1] = vtObject_a->languagesToFollow [nrLanguageCode].language[1]; \
       nrLanguageCode++; \
       curBytes += 2; \
       sourceOffset += 2; \
     }
 
 /** @todo SOON-174 polygon positions with x/yBlock!?
-      if (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont != NULL) { \
-        xBlock = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].col * (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () >> 8); \
-        yBlock = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].row * (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () & 0xFF); \
+      if (vtObject_a->objectsToFollow [nrObjectXY].vtObjectBlockFont != NULL) { \
+        xBlock = vtObject_a->objectsToFollow [nrObjectXY].col * (vtObject_a->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () >> 8); \
+        yBlock = vtObject_a->objectsToFollow [nrObjectXY].row * (vtObject_a->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () & 0xFF); \
       } else { \
       } \
 */
 /* M.Wodok's Version... */
 #define MACRO_streamPolygonPoints(bytesBefore) \
     uint16_t nrPointXY = (sourceOffset-(bytesBefore)) >>2; \
-    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+4U*MACRO_vtObjectTypeA->numberOfPoints)) && ((curBytes+4) <= maxBytes)) { \
+    while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+4U*vtObject_a->numberOfPoints)) && ((curBytes+4) <= maxBytes)) { \
       int32_t xBlock, yBlock; \
         xBlock = 0; \
         yBlock = 0; \
       if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
-        destMemory [curBytes  ] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x)*factorM)/factorD)+xBlock) & 0xFF; \
-        destMemory [curBytes+1] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x)*factorM)/factorD)+xBlock) >> 8; \
-        destMemory [curBytes+2] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y)*factorM)/factorD)+yBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y)*factorM)/factorD)+yBlock) >> 8; \
+        destMemory [curBytes  ] = ((((uint32_t) (vtObject_a->pointsToFollow [nrPointXY].x)*factorM)/factorD)+xBlock) & 0xFF; \
+        destMemory [curBytes+1] = ((((uint32_t) (vtObject_a->pointsToFollow [nrPointXY].x)*factorM)/factorD)+xBlock) >> 8; \
+        destMemory [curBytes+2] = ((((uint32_t) (vtObject_a->pointsToFollow [nrPointXY].y)*factorM)/factorD)+yBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((uint32_t) (vtObject_a->pointsToFollow [nrPointXY].y)*factorM)/factorD)+yBlock) >> 8; \
       } else { \
-        destMemory [curBytes  ] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
-        destMemory [curBytes+1] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \
-        destMemory [curBytes+2] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y)*vtDimension)/opDimension)+yBlock) & 0xFF; \
-        destMemory [curBytes+3] = ((((uint32_t) (MACRO_vtObjectTypeA->pointsToFollow [nrPointXY].y)*vtDimension)/opDimension)+yBlock) >> 8; \
+        destMemory [curBytes  ] = ((((uint32_t) (vtObject_a->pointsToFollow [nrPointXY].x)*vtDimension)/opDimension)+xBlock) & 0xFF; \
+        destMemory [curBytes+1] = ((((uint32_t) (vtObject_a->pointsToFollow [nrPointXY].x)*vtDimension)/opDimension)+xBlock) >> 8; \
+        destMemory [curBytes+2] = ((((uint32_t) (vtObject_a->pointsToFollow [nrPointXY].y)*vtDimension)/opDimension)+yBlock) & 0xFF; \
+        destMemory [curBytes+3] = ((((uint32_t) (vtObject_a->pointsToFollow [nrPointXY].y)*vtDimension)/opDimension)+yBlock) >> 8; \
       } \
       nrPointXY++; \
       curBytes += 4; \
