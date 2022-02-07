@@ -32,7 +32,7 @@ class vtObject_c : public IsoAgLib::iVtObject_c
 {
 public:
   vtObject_c(iVtObject_s* aps_vtObject_a , int ai_multitonInst);
-  virtual ~vtObject_c();
+  virtual ~vtObject_c() = default;
 
   virtual int16_t stream(uint8_t* destMemory,
                          uint16_t maxBytes,
@@ -43,8 +43,6 @@ public:
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   virtual void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) = 0;
 #endif
-
-  void init (iVtObject_s* aps_vtObject_a , int ai_multitonInst);
 
 
   //! Internal checker function

@@ -174,7 +174,7 @@ public:
 
 protected:
   iVtObject_s* vtObject_a; //TODO: remove this later !!!
-
+protected:
   iVtObjectButton_c* p_parentButtonObject;
 
   struct {
