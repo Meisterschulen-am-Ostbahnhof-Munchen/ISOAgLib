@@ -150,21 +150,6 @@ protected:
 
 
 
-	struct iVtObjectMacro_s: iVtObject_s {
-		uint16_t numBytesToFollow;
-		const uint8_t *commandsToFollow;
-		iVtObjectMacro_s(
-				ObjectID ID,
-				uint16_t numBytesToFollow,
-				const uint8_t *commandsToFollow)
-		: iVtObject_s(ID)
-		, numBytesToFollow(numBytesToFollow)
-		, commandsToFollow(commandsToFollow)
-		{
-		}
-	};
-
-
 
 
 	struct iVtObjectObjectPointer_s: iVtObject_s {

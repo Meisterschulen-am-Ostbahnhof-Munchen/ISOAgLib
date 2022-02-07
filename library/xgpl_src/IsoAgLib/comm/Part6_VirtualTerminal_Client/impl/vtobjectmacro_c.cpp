@@ -25,6 +25,25 @@
 
 namespace __IsoAgLib {
 
+
+//TODO!! ID of Macro must be 0..127 or so ..
+
+struct vtObjectMacro_c::iVtObjectMacro_s: iVtObject_s {
+	uint16_t numBytesToFollow;
+	const uint8_t *commandsToFollow;
+	iVtObjectMacro_s(
+			IsoAgLib::ObjectID ID,
+			uint16_t numBytesToFollow,
+			const uint8_t *commandsToFollow)
+	: iVtObject_s(ID)
+	, numBytesToFollow(numBytesToFollow)
+	, commandsToFollow(commandsToFollow)
+	{
+	}
+};
+
+
+
 int16_t
 vtObjectMacro_c::stream(uint8_t* destMemory,
                         uint16_t maxBytes,
@@ -65,12 +84,16 @@ vtObjectMacro_c::fitTerminal() const
   return 5 + (vtObjectMacro_a->commandsToFollow ? vtObjectMacro_a->numBytesToFollow : 0);
 }
 
-    vtObjectMacro_c::vtObjectMacro_c(const IsoAgLib::iVtObject_c::iVtObjectMacro_s *vtObjectMacroSROM,
+    vtObjectMacro_c::vtObjectMacro_c(vtObjectMacro_c::iVtObjectMacro_s *vtObjectMacroSROM,
                                      int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectMacroSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectMacroSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectMacro_s *vtObjectMacro_c::get_vtObjectMacro_a() { return (iVtObjectMacro_s *)&(get_vtObject_a()); }
+    vtObjectMacro_c::iVtObjectMacro_s *vtObjectMacro_c::get_vtObjectMacro_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectMacro_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 

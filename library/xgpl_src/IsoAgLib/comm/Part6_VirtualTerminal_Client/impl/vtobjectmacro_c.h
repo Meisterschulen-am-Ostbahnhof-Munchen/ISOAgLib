@@ -27,12 +27,21 @@ namespace __IsoAgLib {
 
 class vtObjectMacro_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectMacro_s;
+
+	// Pointer to the internal implementation
+	iVtObjectMacro_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectMacro_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectMacro_c(const iVtObjectMacro_s* vtObjectMacroSROM , int ai_multitonInst);
+  vtObjectMacro_c(iVtObjectMacro_s* vtObjectMacroSROM , int ai_multitonInst);
 
   iVtObjectMacro_s* get_vtObjectMacro_a();
 
