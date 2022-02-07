@@ -128,7 +128,8 @@ void
 vtObjectOutputList_c::setValue(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (get_vtObjectOutputList_a()->variableReference == NULL) {
-    if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectOutputList_a(), value), sizeof(iVtObjectOutputList_s), newValue);
+    if (b_updateObject)
+    	vtObject_a->value = newValue;
 
     __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
   }

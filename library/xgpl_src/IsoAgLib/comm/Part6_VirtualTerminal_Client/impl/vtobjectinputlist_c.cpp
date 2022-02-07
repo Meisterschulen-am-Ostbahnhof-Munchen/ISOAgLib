@@ -128,7 +128,7 @@ vtObjectInputList_c::fitTerminal() const
 void
 vtObjectInputList_c::updateEnable(uint8_t aui8_enOrDis)
 {
-  saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), options), sizeof(iVtObjectInputList_s), aui8_enOrDis);
+	vtObject_a->options = aui8_enOrDis;
 }
 
 
@@ -136,7 +136,8 @@ void
 vtObjectInputList_c::setValue(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (get_vtObjectInputList_a()->variableReference == NULL) {
-    if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s), newValue);
+    if (b_updateObject)
+    	vtObject_a->value = newValue;
 
     __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
   }

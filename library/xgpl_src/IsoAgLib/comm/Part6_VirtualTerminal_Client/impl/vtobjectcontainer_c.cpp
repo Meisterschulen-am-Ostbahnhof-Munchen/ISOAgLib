@@ -105,7 +105,8 @@ vtObjectContainer_c::fitTerminal() const
 void
 vtObjectContainer_c::hideShow(uint8_t b_hideOrShow, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectContainer_a(), hidden), sizeof(iVtObjectContainer_s), (!b_hideOrShow)&0x01);
+  if (b_updateObject)
+	  vtObject_a->hidden = (!b_hideOrShow)&0x01;
 
    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandHideShow(
      this, b_hideOrShow, b_enableReplaceOfCmd );

@@ -142,7 +142,7 @@ vtObjectWorkingSet_c::fitTerminal() const
 void
 vtObjectWorkingSet_c::updateSelectable( uint8_t newSelectable )
 {
-  saveValue8 (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), selectable), sizeof(iVtObjectWorkingSet_s), newSelectable);
+	vtObject_a->selectable = newSelectable;
 }
 
 void
@@ -156,7 +156,8 @@ vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMa
 void
 vtObjectWorkingSet_c::changeBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (b_updateObject) saveValue8 (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), backgroundColour), sizeof(iVtObjectWorkingSet_s), newValue);
+  if (b_updateObject)
+	  vtObject_a->backgroundColour = newValue;
 
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
 }

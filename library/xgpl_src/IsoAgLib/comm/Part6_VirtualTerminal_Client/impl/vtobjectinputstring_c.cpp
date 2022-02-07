@@ -166,7 +166,7 @@ vtObjectInputString_c::fitTerminal() const
 void
 vtObjectInputString_c::updateEnable(uint8_t aui8_enOrDis)
 {
-  saveValue8 (MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s), aui8_enOrDis);
+	vtObject_a->enabled = aui8_enOrDis;
 }
 
 

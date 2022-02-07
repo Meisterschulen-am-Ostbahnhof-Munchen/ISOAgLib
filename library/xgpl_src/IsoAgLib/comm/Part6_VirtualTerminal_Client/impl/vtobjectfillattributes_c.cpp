@@ -99,8 +99,8 @@ void
 vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType),   sizeof(iVtObjectFillAttributes_s), newFillType);
-    saveValue8 (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newFillColour, this, IsoAgLib::FillColour));
+	vtObject_a->fillType   = newFillType;
+    vtObject_a->fillColour = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newFillColour, this, IsoAgLib::FillColour);
     saveValueP (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s), newFillPattern);
   }
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor(

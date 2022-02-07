@@ -176,7 +176,7 @@ vtObjectInputNumber_c::fitTerminal() const
 void
 vtObjectInputNumber_c::updateEnable(uint8_t aui8_enOrDis)
 {
-  saveValue8 (MACRO_getStructOffset(get_vtObjectInputNumber_a(), secondOptionsByte), sizeof(iVtObjectInputNumber_s), aui8_enOrDis);
+	vtObject_a->secondOptionsByte = aui8_enOrDis;
 }
 
 

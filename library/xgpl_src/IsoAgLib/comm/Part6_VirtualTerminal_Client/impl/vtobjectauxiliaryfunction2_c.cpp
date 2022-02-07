@@ -102,8 +102,7 @@ void
 vtObjectAuxiliaryFunction2_c::overrideFunctionType_onlyAtStartup(uint8_t newValue)
 {
   isoaglib_assert( vtObject_a != NULL );
-
-  saveValue8 (MACRO_getStructOffset(get_vtObjectAuxiliaryFunction2_a(), functionAttributes), sizeof(iVtObjectAuxiliaryFunction2_s), newValue);
+  vtObject_a->functionAttributes = newValue;
 }
 
 

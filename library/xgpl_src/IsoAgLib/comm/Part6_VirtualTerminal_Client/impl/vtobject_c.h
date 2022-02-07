@@ -68,7 +68,7 @@ protected:
   void createRamStructIfNotYet (uint16_t ui16_structLen);
 
 
-protected:
+private:
   void saveValue8     (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_newValue);
 private:
   void saveValue16    (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint16_t ui16_newValue);
