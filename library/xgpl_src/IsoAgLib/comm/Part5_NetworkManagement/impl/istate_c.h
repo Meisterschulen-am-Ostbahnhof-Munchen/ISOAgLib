@@ -66,6 +66,9 @@ public:
   */
   IState_c(const IState_c& acrc_src);
 
+
+  virtual ~IState_c() = default;
+
   /**
     set the state of an monitor list item and
     return the resulting state value

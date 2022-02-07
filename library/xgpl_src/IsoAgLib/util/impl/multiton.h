@@ -67,24 +67,35 @@
 #define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance( getMultitonInst() )
 #define getFsManagerInstance4Comm()       getFsManagerInstance( getMultitonInst() )
 
+
+
 /** the class ClientBase delivers the base information, to concat client class instances
  * with the corresponding server class instance. This is realized by the single
  * attribute singletonVecKey
  */
-class ClientBase {
+class AbstractClientBase {
 public:
-  ClientBase( int ai_multitonInst = 0 ) : mi_multitonInst(ai_multitonInst){};
-  ClientBase( const ClientBase& acrc_src )
+	AbstractClientBase( int ai_multitonInst = 0 ) : mi_multitonInst(ai_multitonInst){};
+	AbstractClientBase( const AbstractClientBase& acrc_src )
     : mi_multitonInst(acrc_src.mi_multitonInst) { };
 
-  virtual ~ClientBase() = default;
+  virtual ~AbstractClientBase() = 0; //this makes the Class abstract
   int getMultitonInst() const { return mi_multitonInst;};
   void setMultitonInst( int ai_instance ) { mi_multitonInst = ai_instance;};
 protected:
-  const ClientBase& operator=( const ClientBase& acrc_src )
+  const AbstractClientBase& operator=( const AbstractClientBase& acrc_src )
   { mi_multitonInst = acrc_src.mi_multitonInst; return *this;};
 private:
   int mi_multitonInst;
+};
+
+
+
+
+class ClientBase : public virtual AbstractClientBase{
+public:
+	ClientBase( int ai_multitonInst = 0 ) : AbstractClientBase(ai_multitonInst){};
+	virtual ~ClientBase() = default; //this makes the Class non-abstract
 };
 
 /** PROP_SINGLETON defines the number of proprietary busses to be supported.

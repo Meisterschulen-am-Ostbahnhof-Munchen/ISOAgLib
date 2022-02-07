@@ -120,6 +120,8 @@ public:
                        ab_enablediagnosticsServices );
   }
 
+  virtual ~iIdentItem_c() = default;
+
   /** deliver pointer to IsoItem_c in IsoMonitor_c
       @return NULL -> either no ISO item or not yet registered in IsoMonitor_c
     */

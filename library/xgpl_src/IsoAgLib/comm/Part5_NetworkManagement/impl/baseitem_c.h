@@ -54,6 +54,9 @@ public:
   */
   BaseItem_c(const BaseItem_c& acrc_baseItem);
 
+
+  virtual ~BaseItem_c() = default;
+
   /**
     operator= which defines src as const to avoid
     compile warnings with the automatic generated version

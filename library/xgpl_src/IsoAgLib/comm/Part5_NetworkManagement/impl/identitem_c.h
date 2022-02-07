@@ -63,7 +63,7 @@ class IdentItem_c : public BaseItem_c
 {
 public:
   IdentItem_c();
-  ~IdentItem_c();
+  virtual ~IdentItem_c();
 
   void init( const IsoName_c& arc_isoNameParam,
              IsoAgLib::iIdentDataStorage_c& arc_dataStorage,
