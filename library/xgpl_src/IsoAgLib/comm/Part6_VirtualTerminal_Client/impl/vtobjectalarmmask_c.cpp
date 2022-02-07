@@ -214,8 +214,8 @@ vtObjectAlarmMask_c::iVtObjectAlarmMask_s *vtObjectAlarmMask_c::get_vtObjectAlar
     vtObjectAlarmMask_c::vtObjectAlarmMask_c(
     		vtObjectAlarmMask_c::iVtObjectAlarmMask_s *vtObjectAlarmMaskSROM,
             int ai_multitonInst)
-            : iVtObjectMask_c((iVtObjectMask_s*) vtObjectAlarmMaskSROM
-            , ai_multitonInst)
+            : iVtObjectMask_c((iVtObjectMask_s*) vtObjectAlarmMaskSROM, ai_multitonInst)
+    		, vtObject_a(vtObjectAlarmMaskSROM)
     {}
 
 

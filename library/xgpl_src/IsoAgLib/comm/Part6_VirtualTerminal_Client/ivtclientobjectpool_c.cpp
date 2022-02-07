@@ -101,6 +101,7 @@ Colour iVtClientObjectPool_c::convertColourDefault(
             , skWidth (a_objectPoolSettings.skWidth)
             , skHeight (a_objectPoolSettings.skHeight)
             , b_initAllObjects (false)
+    		, ai_multitonInst(0)
     {
 
     }
