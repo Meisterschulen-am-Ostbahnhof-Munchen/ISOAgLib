@@ -31,6 +31,15 @@ namespace __IsoAgLib {
 //! VT client object for graphics context.
 class vtObjectGraphicsContext_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectGraphicsContext_s;
+
+	// Pointer to the internal implementation
+	iVtObjectGraphicsContext_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectGraphicsContext_s> vtObject_a;
+
 public:
   //! ISO related IDs
   enum ID_t {
@@ -70,14 +79,11 @@ public:
   /// Operation: init
   /// @param vtObjectGraphicsContextSROM
   /// @param b_initPointer
-  vtObjectGraphicsContext_c::vtObjectGraphicsContext_c(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst)
-  :vtObject_c((iVtObject_s*) vtObjectGraphicsContextSROM , ai_multitonInst)
-  {}
+  vtObjectGraphicsContext_c(iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst);
+
 
   //  Operation: get_vtObjectGraphicsContext_a
-  iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a( void ) {
-    return (iVtObjectGraphicsContext_s *)&(get_vtObject_a());
-  }
+  iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a( void );
 
   //  Operation: vtObjectGraphicsContext_c
   vtObjectGraphicsContext_c( void );
@@ -90,10 +96,10 @@ public:
   void setGraphicsCursor(int16_t ai16_x, int16_t ai16_y,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void setForegroundColour(Colour newValue,
+  void setForegroundColour(IsoAgLib::Colour newValue,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  void setBackgroundColour(Colour newValue,
+  void setBackgroundColour(IsoAgLib::Colour newValue,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   void setLineAttributes(const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes,

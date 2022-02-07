@@ -30,19 +30,6 @@ class iVtObjectGraphicsContext_c : public __IsoAgLib::vtObjectGraphicsContext_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_GRAPHICS_CONTEXT; }
 
-  /// Operation: init
-  ///
-  /// @param vtObjectGraphicsContextSROM
-  /// @param b_initPointer
-  iVtObjectGraphicsContext_c(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst)
-  :vtObjectGraphicsContext_c(vtObjectGraphicsContextSROM , ai_multitonInst)
-  {};
-
-  /// Operation: get_vtObjectGraphicsContext_a
-  const iVtObjectGraphicsContext_s& get_vtObjectGraphicsContext_a() {
-    return *vtObjectGraphicsContext_c::get_vtObjectGraphicsContext_a();
-  };
-
   /// This command alters the graphics cursor X/Y attributes of the object (Sub-Command ID 0).
   ///
   /// @param ac_point Position of cursor to be set

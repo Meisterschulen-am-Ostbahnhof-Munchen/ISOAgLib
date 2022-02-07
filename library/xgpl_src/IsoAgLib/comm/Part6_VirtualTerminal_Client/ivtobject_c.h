@@ -255,65 +255,6 @@ protected:
 
 	};
 
-	struct iVtObjectGraphicsContext_s: iVtObject_s {
-		uint16_t viewportWidth;
-		uint16_t viewportHeight;
-		int16_t viewportX;       //!< Upper left corner of the viewport
-		int16_t viewportY;
-		uint16_t canvasWidth;
-		uint16_t canvasHeight;
-		float viewportZoom;    //!< Zoom value [-32.0F ... 32.0F]
-		int16_t cursorX;
-		int16_t cursorY;
-		uint8_t foregroundColour;
-		uint8_t backgroundColour;
-		iVtObjectFontAttributes_c *fontAttributes;
-		iVtObjectLineAttributes_c *lineAttributes;
-		iVtObjectFillAttributes_c *fillAttributes;
-		uint8_t format; //!< 0 => 1 bit/pixel, 1 => 4 bit/pixel, 2 => 8 bit/pixel
-		uint8_t options; //!< Bit 0 transparent flag; Bit 1 line, font, fill colour usage
-		Colour transparencyColour;  //!< Colour to be shown transparent.
-		iVtObjectGraphicsContext_s(
-				ObjectID ID,
-				uint16_t viewportWidth,
-				uint16_t viewportHeight,
-				int16_t viewportX,
-				int16_t viewportY,
-				uint16_t canvasWidth,
-				uint16_t canvasHeight,
-				float viewportZoom,
-				int16_t cursorX,
-				int16_t cursorY,
-				uint8_t foregroundColour,
-				Colour backgroundColour,
-				iVtObjectFontAttributes_c *fontAttributes,
-				iVtObjectLineAttributes_c *lineAttributes,
-				iVtObjectFillAttributes_c *fillAttributes,
-				uint8_t format,
-				uint8_t options,
-				Colour transparencyColour)
-		: iVtObject_s(ID)
-		, viewportWidth(viewportWidth)
-		, viewportHeight(viewportHeight)
-		, viewportX(viewportX)
-		, viewportY(viewportY)
-		, canvasWidth(canvasWidth)
-		, canvasHeight(canvasHeight)
-		, viewportZoom(viewportZoom)
-		, cursorX(cursorX)
-		, cursorY(cursorY)
-		, foregroundColour(foregroundColour)
-		, backgroundColour(backgroundColour)
-		, fontAttributes(fontAttributes)
-		, lineAttributes(lineAttributes)
-		, fillAttributes(fillAttributes)
-		, format(format)
-		, options(options)
-		, transparencyColour(transparencyColour)
-		{
-		}
-	};
-
 
 
 
