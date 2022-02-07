@@ -83,8 +83,6 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
                                objRange_t sourceOffset)
 {
-#define MACRO_vtObjectTypeA vtObjectOutputNumber_a
-#define MACRO_vtObjectTypeS iVtObjectOutputNumber_s
     uint16_t curBytes=0; /* current bytes written */;
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;

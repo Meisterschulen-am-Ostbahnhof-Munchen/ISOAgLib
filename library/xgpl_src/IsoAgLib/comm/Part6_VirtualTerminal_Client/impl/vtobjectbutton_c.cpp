@@ -65,8 +65,6 @@ vtObjectButton_c::stream(uint8_t* destMemory,
                          uint16_t maxBytes,
                          objRange_t sourceOffset)
 {
-#define MACRO_vtObjectTypeA vtObjectButton_a
-#define MACRO_vtObjectTypeS iVtObjectButton_s
     uint16_t curBytes=0; /* current bytes written */;
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;

@@ -51,8 +51,6 @@ struct vtObjectAuxiliaryFunction2_c::iVtObjectAuxiliaryFunction2_s: iVtObjectObj
 int16_t
 vtObjectAuxiliaryFunction2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
-#define MACRO_vtObjectTypeA vtObjectAuxiliaryFunction2_a
-#define MACRO_vtObjectTypeS iVtObjectAuxiliaryFunction2_s
   uint16_t curBytes=0; /* current bytes written */;
   MACRO_scaleLocalVars;
   if (sourceOffset == 0) { // dump out constant sized stuff

@@ -53,8 +53,6 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
                                  objRange_t sourceOffset)
 {
-#define MACRO_vtObjectTypeA vtObjectFillAttributes_a
-#define MACRO_vtObjectTypeS iVtObjectFillAttributes_s
     uint16_t curBytes=0; /* current bytes written */;
 
     if (sourceOffset == 0) { // dump out constant sized stuff

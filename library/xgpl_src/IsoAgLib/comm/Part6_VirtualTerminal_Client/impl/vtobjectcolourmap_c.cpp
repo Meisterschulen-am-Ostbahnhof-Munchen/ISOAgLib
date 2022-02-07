@@ -52,8 +52,6 @@ vtObjectColourMap_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)
 {
-#define MACRO_vtObjectTypeA vtObjectColourMap_a
-#define MACRO_vtObjectTypeS iVtObjectColourMap_s
     uint16_t curBytes=0; /* current bytes written */;
 
     uint8_t const * colourMapArray = vtObject_a->colourMapArray;

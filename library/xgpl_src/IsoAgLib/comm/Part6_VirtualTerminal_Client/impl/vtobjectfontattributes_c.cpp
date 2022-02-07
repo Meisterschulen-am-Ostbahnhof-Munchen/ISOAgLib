@@ -61,8 +61,6 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
                                  objRange_t sourceOffset)
 {
-#define MACRO_vtObjectTypeA vtObjectFontAttributes_a
-#define MACRO_vtObjectTypeS iVtObjectFontAttributes_s
   uint16_t curBytes=0; /* current bytes written */
 
   if (sourceOffset == 0) { // dump out constant sized stuff

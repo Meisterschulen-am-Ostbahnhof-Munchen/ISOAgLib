@@ -51,8 +51,6 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
                               uint16_t maxBytes,
                               objRange_t sourceOffset)
 {
-#define MACRO_vtObjectTypeA vtObjectSoftKeyMask_a
-#define MACRO_vtObjectTypeS iVtObjectSoftKeyMask_s
   uint16_t curBytes=0; /* current bytes written */;
 
   const uint8_t numberOfObjectsToFollow = get_numberOfObjectsToFollow();

@@ -31,9 +31,6 @@
 #include <IsoAgLib/util/convert.h>
 #include <IsoAgLib/util/iassert.h>
 
-// Make sure not such macro is used.
-#undef MACRO_vtObjectTypeA
-#undef MACRO_vtObjectTypeS
 
 
 namespace __IsoAgLib {
