@@ -36,8 +36,17 @@ class Aux2Functions_c;
 
 class vtObjectAuxiliaryFunction2_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectAuxiliaryFunction2_s;
+
+	// Pointer to the internal implementation
+	iVtObjectAuxiliaryFunction2_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectAuxiliaryFunction2_s> vtObject_a;
+
 public:
-  vtObjectAuxiliaryFunction2_c(const iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst);
+  vtObjectAuxiliaryFunction2_c(iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst);
 
   int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
 
