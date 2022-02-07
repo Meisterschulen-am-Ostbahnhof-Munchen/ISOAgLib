@@ -423,7 +423,10 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 
 #endif
 
-vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtObjectOutputString_a() { return dynamic_cast<iVtObjectOutputString_s *>(&(get_vtObject_a())); }
+vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtObjectOutputString_a()
+{
+	return vtObject_a;
+}
 
     void vtObjectOutputString_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), width) : 0, sizeof(iVtObjectOutputString_s), 1, newValue, b_enableReplaceOfCmd);
