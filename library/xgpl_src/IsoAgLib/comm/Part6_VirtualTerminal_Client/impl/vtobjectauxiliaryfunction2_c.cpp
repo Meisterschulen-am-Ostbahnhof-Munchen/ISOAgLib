@@ -329,7 +329,9 @@ vtObjectAuxiliaryFunction2_c::clearPreferredAssignments()
 
     const std::list<IsoAgLib::iAux2InputData> &vtObjectAuxiliaryFunction2_c::getRefPreferredAssignmentCandidates() const { return ml_preferredAssignedInputCandidate; }
 
-    uint8_t vtObjectAuxiliaryFunction2_c::getFunctionType() { return (getValue8(MACRO_getStructOffset(get_vtObjectAuxiliaryFunction2_a(), functionAttributes), 0 /* ui16_structLen */) & 0x1F); }
+    uint8_t vtObjectAuxiliaryFunction2_c::getFunctionType() {
+    	return vtObject_a->functionAttributes;
+    }
 
 
 } // __IsoAgLib

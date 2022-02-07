@@ -504,7 +504,10 @@ vtObjectAuxiliaryInput2_c::iVtObjectAuxiliaryInput2_s *vtObjectAuxiliaryInput2_c
 
     bool vtObjectAuxiliaryInput2_c::getInputActivatedInLearnMode() const { return mb_inputActivatedInLearnMode; }
 
-    uint8_t vtObjectAuxiliaryInput2_c::getFunctionType() { return (getValue8(MACRO_getStructOffset(get_vtObjectAuxiliaryInput2_a(), functionAttributes), 0 /* ui16_structLen */) & 0x1F); }
+    uint8_t vtObjectAuxiliaryInput2_c::getFunctionType()
+    {
+    	return vtObject_a->functionAttributes;
+    }
 
 
     vtObjectAuxiliaryInput2_c::InputState_s::InputState_s()
