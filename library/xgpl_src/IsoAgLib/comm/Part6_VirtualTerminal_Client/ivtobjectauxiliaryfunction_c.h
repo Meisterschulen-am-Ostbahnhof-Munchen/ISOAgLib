@@ -33,11 +33,6 @@ public:
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_FUNCTION_1; }
 
-  iVtObjectAuxiliaryFunction_c(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst)
-  :vtObjectAuxiliaryFunction_c(vtObjectAuxiliaryFunctionSROM , ai_multitonInst)
-  {}
-
-
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
     return vtObjectAuxiliaryFunction_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject);

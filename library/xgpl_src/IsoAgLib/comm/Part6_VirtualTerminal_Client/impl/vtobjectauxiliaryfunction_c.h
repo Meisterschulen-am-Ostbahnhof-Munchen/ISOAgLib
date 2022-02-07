@@ -32,12 +32,21 @@ namespace __IsoAgLib {
 
 class vtObjectAuxiliaryFunction_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectAuxiliaryFunction_s;
+
+	// Pointer to the internal implementation
+	iVtObjectAuxiliaryFunction_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectAuxiliaryFunction_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectAuxiliaryFunction_c(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst);
+  vtObjectAuxiliaryFunction_c(iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst);
 
   iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a();
 

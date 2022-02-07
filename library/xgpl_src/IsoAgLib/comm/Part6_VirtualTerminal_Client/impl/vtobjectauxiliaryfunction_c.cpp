@@ -28,6 +28,30 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectAuxiliaryFunction_c::iVtObjectAuxiliaryFunction_s: iVtObjectObject_s {
+	IsoAgLib::Colour backgroundColour;
+	uint8_t functionType;
+	iVtObjectAuxiliaryFunction_s(
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::Colour backgroundColour,
+			uint8_t functionType)
+	: iVtObject_s(ID)
+    , iVtObjectObject_s(ID)
+	, backgroundColour(backgroundColour)
+	, functionType(functionType)
+	{
+	}
+
+
+};
+
+
+
+
+
+
+
 int16_t
 vtObjectAuxiliaryFunction_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
@@ -87,12 +111,16 @@ vtObjectAuxiliaryFunction_c::setOriginSKM(bool /* b_SKM */)
 }
 
     vtObjectAuxiliaryFunction_c::vtObjectAuxiliaryFunction_c(
-            const IsoAgLib::iVtObject_c::iVtObjectAuxiliaryFunction_s *vtObjectAuxiliaryFunctionSROM,
+            iVtObjectAuxiliaryFunction_s *vtObjectAuxiliaryFunctionSROM,
             int ai_multitonInst)
             :vtObject_c((iVtObject_s *)vtObjectAuxiliaryFunctionSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectAuxiliaryFunctionSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectAuxiliaryFunction_s *vtObjectAuxiliaryFunction_c::get_vtObjectAuxiliaryFunction_a() {return dynamic_cast<iVtObjectAuxiliaryFunction_s *>(&(get_vtObject_a()));}
+    vtObjectAuxiliaryFunction_c::iVtObjectAuxiliaryFunction_s *vtObjectAuxiliaryFunction_c::get_vtObjectAuxiliaryFunction_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectAuxiliaryFunction_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 

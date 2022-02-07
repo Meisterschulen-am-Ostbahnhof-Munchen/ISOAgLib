@@ -238,22 +238,6 @@ protected:
 
 	};
 
-	struct iVtObjectAuxiliaryFunction_s: iVtObjectObject_s {
-		Colour backgroundColour;
-		uint8_t functionType;
-		iVtObjectAuxiliaryFunction_s(
-				ObjectID ID,
-				Colour backgroundColour,
-				uint8_t functionType)
-		: iVtObject_s(ID)
-	    , iVtObjectObject_s(ID)
-		, backgroundColour(backgroundColour)
-		, functionType(functionType)
-		{
-		}
-
-
-	};
 
 
 
