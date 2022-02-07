@@ -32,11 +32,20 @@ namespace __IsoAgLib {
 
 class vtObjectObjectPointer_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectObjectPointer_s;
+
+	// Pointer to the internal implementation
+	iVtObjectObjectPointer_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectObjectPointer_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
-  vtObjectObjectPointer_c(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst);
+  vtObjectObjectPointer_c(iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst);
   iVtObjectObjectPointer_s* get_vtObjectObjectPointer_a();
   vtObjectObjectPointer_c();
   uint32_t fitTerminal() const;

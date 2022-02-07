@@ -152,16 +152,7 @@ protected:
 
 
 
-	struct iVtObjectObjectPointer_s: iVtObject_s {
-		iVtObject_c *value;
-		iVtObjectObjectPointer_s(
-				ObjectID ID,
-				iVtObject_c *value)
-		: iVtObject_s(ID)
-		, value(value)
-		{
-		}
-	};
+
 
 	struct iVtObjectOutputList_s: iVtObjectObject_s, iVtObjectwMacro_s {
 		uint16_t width;

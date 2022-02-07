@@ -26,6 +26,18 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectObjectPointer_c::iVtObjectObjectPointer_s: iVtObject_s {
+	IsoAgLib::iVtObject_c *value;
+	iVtObjectObjectPointer_s(
+			IsoAgLib::ObjectID ID,
+			iVtObject_c *value)
+	: iVtObject_s(ID)
+	, value(value)
+	{
+	}
+};
+
 int16_t
 vtObjectObjectPointer_c::stream(uint8_t* destMemory,
                                 uint16_t /*maxBytes*/,
@@ -111,11 +123,15 @@ vtObjectObjectPointer_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pu
 }
 #endif
     vtObjectObjectPointer_c::vtObjectObjectPointer_c(
-            const IsoAgLib::iVtObject_c::iVtObjectObjectPointer_s *vtObjectObjectPointerSROM, int ai_multitonInst)
+    		vtObjectObjectPointer_c::iVtObjectObjectPointer_s *vtObjectObjectPointerSROM, int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectObjectPointerSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectObjectPointerSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectObjectPointer_s *vtObjectObjectPointer_c::get_vtObjectObjectPointer_a() { return (iVtObjectObjectPointer_s *)&(get_vtObject_a()); }
+    vtObjectObjectPointer_c::iVtObjectObjectPointer_s *vtObjectObjectPointer_c::get_vtObjectObjectPointer_a()
+    {
+    	return vtObject_a;
+    }
 
 
 } // __IsoAgLib
