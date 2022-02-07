@@ -149,10 +149,10 @@ public:
   // Constructor
   iVtObject_c();
 
-  virtual ~iVtObject_c() = 0;
+  virtual ~iVtObject_c() = 0; //pure virtual
 
   //  Operation: getID
-  virtual IsoAgLib::ObjectID getID() const = 0;
+  virtual IsoAgLib::ObjectID getID() const = 0; //pure virtual
 
   //! *** API-function ***
   //! Per default, all objects are uploaded.
