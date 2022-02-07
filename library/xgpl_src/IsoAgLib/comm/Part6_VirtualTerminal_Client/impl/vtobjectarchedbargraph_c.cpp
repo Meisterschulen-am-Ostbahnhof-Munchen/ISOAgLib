@@ -241,8 +241,7 @@ IsoAgLib::ObjectID vtObjectArchedBarGraph_c::getID() const {
 uint32_t
 vtObjectArchedBarGraph_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 27+vtObjectArchedBarGraph_a->numberOfMacrosToFollow*2;
+  return 27+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 
