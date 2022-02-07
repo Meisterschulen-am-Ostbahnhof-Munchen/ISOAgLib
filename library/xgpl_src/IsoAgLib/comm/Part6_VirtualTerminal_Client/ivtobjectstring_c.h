@@ -32,6 +32,9 @@ public:
   ~iVtObjectString_c();
 
   virtual const char* getString() = 0;
+
+  //  Operation: getID
+  virtual IsoAgLib::ObjectID getID() const = 0;
 };
 
 } // IsoAgLib

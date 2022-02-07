@@ -265,7 +265,8 @@ private:
 
 
 protected:
-  MULTITON_MEMBER_DEF
+ClientBase c_clientBase;
+int getMultitonInst() const { return c_clientBase.getMultitonInst(); }
 
 
 private:

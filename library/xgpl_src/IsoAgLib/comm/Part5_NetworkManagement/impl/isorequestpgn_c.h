@@ -162,7 +162,8 @@ struct RegisterPgn_s : public std::binary_function< uint32_t, uint32_t, void > {
     MULTITON_MEMBER_CONSTRUCTOR
     mcp_handler(apc_handler) {}
 private:
-  MULTITON_MEMBER_DEF
+  ClientBase c_clientBase;
+  int getMultitonInst() const { return c_clientBase.getMultitonInst(); }
   IsoRequestPgnHandler_c *const mcp_handler;
 };
 
@@ -177,7 +178,8 @@ struct UnregisterPgn_s : public std::binary_function< uint32_t, uint32_t, void >
     MULTITON_MEMBER_CONSTRUCTOR
     mcp_handler(apc_handler) {}
 private:
-  MULTITON_MEMBER_DEF
+  ClientBase c_clientBase;
+  int getMultitonInst() const { return c_clientBase.getMultitonInst(); }
   IsoRequestPgnHandler_c *const mcp_handler;
 };
 

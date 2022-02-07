@@ -34,6 +34,8 @@ const uint8_t OO_CAPACITY = 100;
 namespace IsoAgLib {
 
 
+// https://www.geeksforgeeks.org/pure-virtual-functions-and-abstract-classes/
+//
 
 class iVtObject_c : public ClientBase
 {
@@ -151,7 +153,7 @@ public:
   ~iVtObject_c() override = default;
 
   //  Operation: getID
-  virtual IsoAgLib::ObjectID getID() const;
+  virtual IsoAgLib::ObjectID getID() const = 0;
 
   //! *** API-function ***
   //! Per default, all objects are uploaded.
