@@ -151,7 +151,7 @@ public:
   ~iVtObject_c() override = default;
 
   //  Operation: getID
-  uint16_t getID() const;
+  virtual uint16_t getID() const;
 
   //! *** API-function ***
   //! Per default, all objects are uploaded.

@@ -44,6 +44,8 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
+	uint16_t getID() const;
+
 
   iVtObjectButton_s* get_vtObjectButton_a();
 
