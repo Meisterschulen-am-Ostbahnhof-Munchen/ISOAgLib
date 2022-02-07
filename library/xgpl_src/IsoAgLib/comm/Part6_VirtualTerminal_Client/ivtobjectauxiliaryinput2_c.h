@@ -33,11 +33,6 @@ public:
 
   typedef  __IsoAgLib::vtObjectAuxiliaryInput2_c::StateForLearnMode_en StateForLearnMode_en;
 
-  iVtObjectAuxiliaryInput2_c(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst)
-  :vtObjectAuxiliaryInput2_c(vtObjectAuxiliaryInput2SROM , ai_multitonInst)
-  {}
-
-  const iVtObjectAuxiliaryInput2_s& get_vtObjectAuxiliaryInput2_a() { return *vtObjectAuxiliaryInput2_c::get_vtObjectAuxiliaryInput2_a(); }
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
     return vtObjectAuxiliaryInput2_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject);

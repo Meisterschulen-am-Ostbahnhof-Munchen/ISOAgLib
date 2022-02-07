@@ -314,23 +314,6 @@ protected:
 		}
 	};
 
-	struct iVtObjectAuxiliaryInput2_s: iVtObjectObject_s {
-		Colour backgroundColour;
-		uint8_t functionAttributes;
-		iVtObjectAuxiliaryInput2_s(
-				ObjectID ID,
-				Colour backgroundColour,
-				uint8_t functionAttributes)
-	    : iVtObject_s(ID)
-		, iVtObjectObject_s(ID)
-		, backgroundColour(backgroundColour)
-		, functionAttributes(functionAttributes)
-		{
-		}
-
-
-	};
-
 
 
 

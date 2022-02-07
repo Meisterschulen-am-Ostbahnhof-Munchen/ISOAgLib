@@ -29,6 +29,26 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectAuxiliaryInput2_c::iVtObjectAuxiliaryInput2_s: iVtObjectObject_s {
+	IsoAgLib::Colour backgroundColour;
+	uint8_t functionAttributes;
+	iVtObjectAuxiliaryInput2_s(
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::Colour backgroundColour,
+			uint8_t functionAttributes)
+    : iVtObject_s(ID)
+	, iVtObjectObject_s(ID)
+	, backgroundColour(backgroundColour)
+	, functionAttributes(functionAttributes)
+	{
+	}
+
+
+};
+
+
+
 int16_t
 vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
@@ -54,8 +74,9 @@ vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 
 
 // Operation : vtObjectAuxiliaryInput2_c
-vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c(const iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst)
+vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c(iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst)
   : vtObject_c((iVtObject_s *)vtObjectAuxiliaryInput2SROM , ai_multitonInst),
+	vtObject_a(vtObjectAuxiliaryInput2SROM),
     m_inputState(),
     mui16_value1(0),
     mui16_value2(0),
@@ -457,7 +478,10 @@ void vtObjectAuxiliaryInput2_c::setTimeStampLastStateMsg()
   m_inputState.mi32_timeStampLastStateMsg = HAL::getTime();
 }
 
-    IsoAgLib::iVtObject_c::iVtObjectAuxiliaryInput2_s *vtObjectAuxiliaryInput2_c::get_vtObjectAuxiliaryInput2_a() { return dynamic_cast<iVtObjectAuxiliaryInput2_s *>(&(get_vtObject_a())); }
+vtObjectAuxiliaryInput2_c::iVtObjectAuxiliaryInput2_s *vtObjectAuxiliaryInput2_c::get_vtObjectAuxiliaryInput2_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectAuxiliaryInput2_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 
