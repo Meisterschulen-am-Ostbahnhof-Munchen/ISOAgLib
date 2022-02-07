@@ -124,8 +124,8 @@ vtObjectAuxiliaryFunction_c::setOriginSKM(bool /* b_SKM */)
     {
     	return vtObject_a;
     }
-
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectAuxiliaryFunction_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
-
+#endif
 } // __IsoAgLib
 

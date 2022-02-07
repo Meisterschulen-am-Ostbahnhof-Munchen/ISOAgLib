@@ -200,8 +200,8 @@ vtObjectStringVariable_c::getString()
     vtObjectStringVariable_c::iVtObjectStringVariable_s *vtObjectStringVariable_c::get_vtObjectStringVariable_a() {
     	return vtObject_a;
     }
-
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectStringVariable_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
-
+#endif
 } // __IsoAgLib
 

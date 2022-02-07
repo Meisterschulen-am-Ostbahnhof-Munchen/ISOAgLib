@@ -236,7 +236,7 @@ vtObjectButton_c::updateBackgroundColour(bool b_SendRequest)
   if (b_SendRequest)
     return getValue8GetAttribute((vtObject_a->backgroundColour), sizeof(iVtObjectButton_s), 3);
   else
-    return getValue8((vtObject_a->backgroundColour), sizeof(iVtObjectButton_s));
+    return vtObject_a->backgroundColour;
 }
 
 uint8_t
@@ -245,7 +245,7 @@ vtObjectButton_c::updateBorderColour(bool b_SendRequest)
   if (b_SendRequest)
     return getValue8GetAttribute((vtObject_a->borderColour), sizeof(iVtObjectButton_s), 4);
   else
-    return getValue8((vtObject_a->borderColour), sizeof(iVtObjectButton_s));
+    return vtObject_a->borderColour;
 }
 
 uint8_t
@@ -254,7 +254,7 @@ vtObjectButton_c::updateKeyCode(bool b_SendRequest)
   if (b_SendRequest)
     return getValue8GetAttribute((vtObject_a->keyCode), sizeof(iVtObjectButton_s), 5);
   else
-    return getValue8((vtObject_a->keyCode), sizeof(iVtObjectButton_s));
+    return vtObject_a->keyCode;
 }
 
 uint8_t

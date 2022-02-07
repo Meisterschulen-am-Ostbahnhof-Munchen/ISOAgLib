@@ -69,7 +69,7 @@ namespace IsoAgLib {
                                           bool b_enableReplaceOfCmd) {
         vtObjectOutputNumber_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
     }
-
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
     uint16_t iVtObjectOutputNumber_c::updateWidth(bool b_SendRequest) {
         return vtObjectOutputNumber_c::updateWidth(b_SendRequest);
     }
@@ -85,6 +85,6 @@ namespace IsoAgLib {
     uint16_t iVtObjectOutputNumber_c::updateFontAttributes(bool b_SendRequest) {
         return vtObjectOutputNumber_c::updateFontAttributes(b_SendRequest);
     }
-
+#endif
 
 }

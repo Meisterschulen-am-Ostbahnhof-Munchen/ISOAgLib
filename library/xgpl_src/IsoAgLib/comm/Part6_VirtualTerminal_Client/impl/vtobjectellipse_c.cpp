@@ -211,7 +211,6 @@ vtObjectEllipse_c::updateFillAttributes(bool b_SendRequest)
     return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes), sizeof(iVtObjectEllipse_s));
 }
 
-#endif
 
 void
 vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
@@ -229,6 +228,7 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
   }
 }
 
+#endif
 
 	vtObjectEllipse_c::vtObjectEllipse_c(
 			int ai_multitonInst,

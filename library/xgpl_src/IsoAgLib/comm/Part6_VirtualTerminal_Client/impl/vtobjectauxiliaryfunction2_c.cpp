@@ -324,9 +324,9 @@ vtObjectAuxiliaryFunction2_c::clearPreferredAssignments()
     {
     	return vtObject_a;
     }
-
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectAuxiliaryFunction2_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
-
+#endif
     const std::list<IsoAgLib::iAux2InputData> &vtObjectAuxiliaryFunction2_c::getRefPreferredAssignmentCandidates() const { return ml_preferredAssignedInputCandidate; }
 
     uint8_t vtObjectAuxiliaryFunction2_c::getFunctionType() {
