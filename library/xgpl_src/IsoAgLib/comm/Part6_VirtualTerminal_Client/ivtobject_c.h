@@ -158,57 +158,7 @@ protected:
 
 
 
-	struct iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
-		uint16_t width;
-		uint16_t actualWidth;
-		uint16_t actualHeight;
-		uint8_t format;
-		uint8_t options;
-		Colour transparencyColour;
-		uint32_t numberOfBytesInRawData0;
-		const uint8_t *rawData0;
-		uint32_t numberOfBytesInRawData1;
-		const uint8_t *rawData1;
-		uint32_t numberOfBytesInRawData2;
-		const uint8_t *rawData2;
-		uint8_t numberOfFixedBitmapsToFollow;
-		const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow;
-		iVtObjectPictureGraphic_s(
-				ObjectID ID,
-				uint16_t width,
-				uint16_t actualWidth,
-				uint16_t actualHeight,
-				uint8_t format,
-				uint8_t options,
-				Colour transparencyColour,
-				uint32_t numberOfBytesInRawData0,
-				const uint8_t *rawData0,
-				uint32_t numberOfBytesInRawData1,
-				const uint8_t *rawData1,
-				uint32_t numberOfBytesInRawData2,
-				const uint8_t *rawData2,
-				uint8_t numberOfFixedBitmapsToFollow,
-				const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow)
-	    : iVtObject_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, width(width)
-		, actualWidth(actualWidth)
-		, actualHeight(actualHeight)
-		, format(format)
-		, options(options)
-		, transparencyColour(transparencyColour)
-		, numberOfBytesInRawData0(numberOfBytesInRawData0)
-		, rawData0(rawData0)
-		, numberOfBytesInRawData1(numberOfBytesInRawData1)
-		, rawData1(rawData1)
-		, numberOfBytesInRawData2(numberOfBytesInRawData2)
-		, rawData2(rawData2)
-		, numberOfFixedBitmapsToFollow(numberOfFixedBitmapsToFollow)
-		, fixedBitmapsToFollow(fixedBitmapsToFollow) {
-		}
 
-
-	};
 
 	struct iVtObjectColourMap_s: iVtObject_s {
 		uint16_t numOfColourIdxToFollow;

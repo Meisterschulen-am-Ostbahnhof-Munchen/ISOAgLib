@@ -31,11 +31,6 @@ class iVtObjectPictureGraphic_c : public __IsoAgLib::vtObjectPictureGraphic_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_PICTURE_GRAPHIC; }
 
-  iVtObjectPictureGraphic_c(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst)
-  :vtObjectPictureGraphic_c(vtObjectPictureGraphicSROM , ai_multitonInst)
-  {}
-
-
 
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);

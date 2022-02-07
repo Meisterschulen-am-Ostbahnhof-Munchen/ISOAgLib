@@ -26,6 +26,60 @@
 
 
 namespace __IsoAgLib {
+
+struct vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
+	uint16_t width;
+	uint16_t actualWidth;
+	uint16_t actualHeight;
+	uint8_t format;
+	uint8_t options;
+	IsoAgLib::Colour transparencyColour;
+	uint32_t numberOfBytesInRawData0;
+	const uint8_t *rawData0;
+	uint32_t numberOfBytesInRawData1;
+	const uint8_t *rawData1;
+	uint32_t numberOfBytesInRawData2;
+	const uint8_t *rawData2;
+	uint8_t numberOfFixedBitmapsToFollow;
+	const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow;
+	iVtObjectPictureGraphic_s(
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t actualWidth,
+			uint16_t actualHeight,
+			uint8_t format,
+			uint8_t options,
+			IsoAgLib::Colour transparencyColour,
+			uint32_t numberOfBytesInRawData0,
+			const uint8_t *rawData0,
+			uint32_t numberOfBytesInRawData1,
+			const uint8_t *rawData1,
+			uint32_t numberOfBytesInRawData2,
+			const uint8_t *rawData2,
+			uint8_t numberOfFixedBitmapsToFollow,
+			const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow)
+    : iVtObject_s(ID)
+	, iVtObjectwMacro_s(ID)
+	, width(width)
+	, actualWidth(actualWidth)
+	, actualHeight(actualHeight)
+	, format(format)
+	, options(options)
+	, transparencyColour(transparencyColour)
+	, numberOfBytesInRawData0(numberOfBytesInRawData0)
+	, rawData0(rawData0)
+	, numberOfBytesInRawData1(numberOfBytesInRawData1)
+	, rawData1(rawData1)
+	, numberOfBytesInRawData2(numberOfBytesInRawData2)
+	, rawData2(rawData2)
+	, numberOfFixedBitmapsToFollow(numberOfFixedBitmapsToFollow)
+	, fixedBitmapsToFollow(fixedBitmapsToFollow) {
+	}
+
+
+};
+
+
 #if 0
 #define helperForDifferentSizes(a,b,c,f,g,h,x,y,z,optionander) \
         if (vtDimension < 400) { \
@@ -397,11 +451,15 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 }
 #endif
     vtObjectPictureGraphic_c::vtObjectPictureGraphic_c(
-            const IsoAgLib::iVtObject_c::iVtObjectPictureGraphic_s *vtObjectPictureGraphicSROM, int ai_multitonInst)
+    		vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s *vtObjectPictureGraphicSROM, int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectPictureGraphicSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectPictureGraphicSROM)
     {}
 
-    IsoAgLib::iVtObject_c::iVtObjectPictureGraphic_s *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a() { return dynamic_cast<iVtObjectPictureGraphic_s *>(&(get_vtObject_a())); }
+    vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a()
+    {
+    	return vtObject_a;
+    }
 
     void vtObjectPictureGraphic_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width) : 0, sizeof(iVtObjectPictureGraphic_s), 1, newValue, b_enableReplaceOfCmd);

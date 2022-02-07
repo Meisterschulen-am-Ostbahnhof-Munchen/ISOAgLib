@@ -29,12 +29,21 @@ namespace __IsoAgLib {
 
 class vtObjectPictureGraphic_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectPictureGraphic_s;
+
+	// Pointer to the internal implementation
+	iVtObjectPictureGraphic_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectPictureGraphic_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectPictureGraphic_c(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst);
+  vtObjectPictureGraphic_c(iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst);
 
   iVtObjectPictureGraphic_s* get_vtObjectPictureGraphic_a();
 
