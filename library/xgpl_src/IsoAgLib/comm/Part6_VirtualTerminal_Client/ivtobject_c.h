@@ -156,52 +156,7 @@ protected:
 
 
 
-	struct iVtObjectOutputNumber_s: iVtObjectwMacro_s {
-		uint16_t width;
-		uint16_t height;
-		Colour backgroundColour;
-		iVtObjectFontAttributes_c *fontAttributes;
-		uint8_t options;
-		iVtObject_c *variableReference;
-		uint32_t value;
-		int32_t offset;
-		float scale;
-		uint8_t numberOfDecimals;
-		uint8_t format;
-		uint8_t horizontalJustification;
-		iVtObjectOutputNumber_s(
-				ObjectID ID,
-				uint16_t width,
-				uint16_t height,
-				Colour backgroundColour,
-				iVtObjectFontAttributes_c *fontAttributes,
-				uint8_t options,
-				iVtObject_c *variableReference,
-				uint32_t value,
-				int32_t offset,
-				float scale,
-				uint8_t numberOfDecimals,
-				uint8_t format,
-				uint8_t horizontalJustification)
-	    : iVtObject_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, width(width)
-		, height(height)
-		, backgroundColour(backgroundColour)
-		, fontAttributes(fontAttributes)
-		, options(options)
-		, variableReference(variableReference)
-		, value(value)
-		, offset(offset)
-		, scale(scale)
-		, numberOfDecimals(numberOfDecimals)
-		, format(format)
-		, horizontalJustification(horizontalJustification)
-		{
-		}
 
-
-	};
 
 	struct iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
 		uint16_t width;

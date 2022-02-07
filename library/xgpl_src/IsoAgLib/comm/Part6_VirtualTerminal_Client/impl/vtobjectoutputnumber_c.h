@@ -34,12 +34,21 @@ namespace __IsoAgLib {
 
 class vtObjectOutputNumber_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectOutputNumber_s;
+
+	// Pointer to the internal implementation
+	iVtObjectOutputNumber_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectOutputNumber_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectOutputNumber_c(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , int ai_multitonInst);
+  vtObjectOutputNumber_c(iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , int ai_multitonInst);
 
   iVtObjectOutputNumber_s* get_vtObjectOutputNumber_a();
 

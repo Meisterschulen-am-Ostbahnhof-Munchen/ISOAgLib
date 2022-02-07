@@ -30,6 +30,54 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectOutputNumber_c::iVtObjectOutputNumber_s: iVtObjectwMacro_s {
+	uint16_t width;
+	uint16_t height;
+	IsoAgLib::Colour backgroundColour;
+	IsoAgLib::iVtObjectFontAttributes_c *fontAttributes;
+	uint8_t options;
+	iVtObject_c *variableReference;
+	uint32_t value;
+	int32_t offset;
+	float scale;
+	uint8_t numberOfDecimals;
+	uint8_t format;
+	uint8_t horizontalJustification;
+	iVtObjectOutputNumber_s(
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t height,
+			IsoAgLib::Colour backgroundColour,
+			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
+			uint8_t options,
+			iVtObject_c *variableReference,
+			uint32_t value,
+			int32_t offset,
+			float scale,
+			uint8_t numberOfDecimals,
+			uint8_t format,
+			uint8_t horizontalJustification)
+    : iVtObject_s(ID)
+	, iVtObjectwMacro_s(ID)
+	, width(width)
+	, height(height)
+	, backgroundColour(backgroundColour)
+	, fontAttributes(fontAttributes)
+	, options(options)
+	, variableReference(variableReference)
+	, value(value)
+	, offset(offset)
+	, scale(scale)
+	, numberOfDecimals(numberOfDecimals)
+	, format(format)
+	, horizontalJustification(horizontalJustification)
+	{
+	}
+
+
+};
+
 int16_t
 vtObjectOutputNumber_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
@@ -331,11 +379,15 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputNumber_s), 11, newValue, newValue, b_enableReplaceOfCmd);
     }
 
-    IsoAgLib::iVtObject_c::iVtObjectOutputNumber_s *vtObjectOutputNumber_c::get_vtObjectOutputNumber_a() { return dynamic_cast<iVtObjectOutputNumber_s *>(&(get_vtObject_a())); }
+    vtObjectOutputNumber_c::iVtObjectOutputNumber_s *vtObjectOutputNumber_c::get_vtObjectOutputNumber_a()
+    {
+    	return vtObject_a;
+    }
 
     vtObjectOutputNumber_c::vtObjectOutputNumber_c(
-            const IsoAgLib::iVtObject_c::iVtObjectOutputNumber_s *vtObjectOutputNumberSROMs, int ai_multitonInst)
+    		vtObjectOutputNumber_c::iVtObjectOutputNumber_s *vtObjectOutputNumberSROMs, int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectOutputNumberSROMs , ai_multitonInst)
+    		,vtObject_a(vtObjectOutputNumberSROMs)
     {}
 
 

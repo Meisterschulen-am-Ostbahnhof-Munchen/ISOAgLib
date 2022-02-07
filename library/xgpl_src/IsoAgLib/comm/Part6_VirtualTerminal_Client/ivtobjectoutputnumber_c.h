@@ -33,10 +33,6 @@ class iVtObjectOutputNumber_c : public __IsoAgLib::vtObjectOutputNumber_c
 public:
   static uint16_t objectType();
 
-  iVtObjectOutputNumber_c(const iVtObjectOutputNumber_s* vtObjectOutputNumberSROM , int ai_multitonInst)
-  :vtObjectOutputNumber_c(vtObjectOutputNumberSROM , ai_multitonInst)
-  {}
-
 
 
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
