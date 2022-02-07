@@ -96,8 +96,7 @@ IsoAgLib::ObjectID vtObjectAlarmMask_c::getID() const {
 uint32_t
 vtObjectAlarmMask_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 10+vtObjectAlarmMask_a->numberOfObjectsToFollow*6+vtObjectAlarmMask_a->numberOfMacrosToFollow*2;
+	return 10 + vtObject_a->numberOfObjectsToFollow * 6	+ vtObject_a->numberOfMacrosToFollow * 2;
 }
 
 

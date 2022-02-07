@@ -79,8 +79,7 @@ IsoAgLib::ObjectID vtObjectStringVariable_c::getID() const {
 uint32_t
 vtObjectStringVariable_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 5+vtObjectStringVariable_a->length;
+  return 5 + vtObject_a->length;
 }
 
 #ifdef USE_VT_UNICODE_SUPPORT
