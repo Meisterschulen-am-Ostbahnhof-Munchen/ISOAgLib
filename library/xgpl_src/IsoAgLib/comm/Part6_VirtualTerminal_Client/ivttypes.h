@@ -171,13 +171,7 @@ struct repeat_vtLanguage_s {
   uint8_t language[2];
 };
 
-struct repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s {
-  const uint8_t* rawData;
-  uint32_t numberOfBytesInRawData;
-  uint16_t actualWidth;
-  uint16_t actualHeight;
-  uint8_t formatoptions; /* format is bit 8+7, options is bit 2-0 (NO RLE1/4/8 stuff here!! */
-};
+
 
 enum e_vtColour {
   BackgroundColour=0,
