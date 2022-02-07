@@ -149,20 +149,7 @@ protected:
 
 
 
-	struct iVtObjectSoftKeyMask_s: iVtObjectObject_s, iVtObjectwMacro_s {
-		Colour backgroundColour;
-		iVtObjectSoftKeyMask_s(
-				ObjectID ID,
-				Colour backgroundColour)
-	    : iVtObject_s(ID)
-		, iVtObjectObject_s(ID)
-		, iVtObjectwMacro_s(ID)
-		, backgroundColour(backgroundColour)
-		{
-		}
 
-
-	};
 
 	struct iVtObjectAuxiliaryInput_s: iVtObjectObject_s {
 		Colour backgroundColour;

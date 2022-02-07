@@ -42,19 +42,28 @@ public:
   };
 #endif // ENABLE_SKM_HANDLER
 
+private:
+	// Internal implementation class
+	struct iVtObjectSoftKeyMask_s;
+
+	// Pointer to the internal implementation
+	iVtObjectSoftKeyMask_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectSoftKeyMask_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectSoftKeyMask_c(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst);
+  vtObjectSoftKeyMask_c(iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst);
 
 #ifdef ENABLE_SKM_HANDLER
   void registerSkmHandler_c( iSkmHandler_c* _SkmHandler );
   void unRegisterSkmHandler_c( iSkmHandler_c* _SkmHandler );
 #endif // ENABLE_SKM_HANDLER
 
-  iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a() { return dynamic_cast<iVtObjectSoftKeyMask_s *>(&(get_vtObject_a())); }
+  iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a();
 
   virtual ~vtObjectSoftKeyMask_c();
   uint32_t fitTerminal() const;

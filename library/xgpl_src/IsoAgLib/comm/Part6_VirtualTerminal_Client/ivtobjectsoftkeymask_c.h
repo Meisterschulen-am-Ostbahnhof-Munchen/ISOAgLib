@@ -32,10 +32,6 @@ public:
 
   virtual ~iVtObjectSoftKeyMask_c(){}
 
-  iVtObjectSoftKeyMask_c(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst)
-  :vtObjectSoftKeyMask_c(vtObjectSoftKeyMaskSROM , ai_multitonInst)
-  {}
-
 
   void setBackgroundColour(Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectSoftKeyMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
