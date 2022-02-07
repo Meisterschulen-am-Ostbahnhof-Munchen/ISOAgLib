@@ -43,7 +43,7 @@ public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
-
+	uint16_t getID() const;
 
   iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a();
 

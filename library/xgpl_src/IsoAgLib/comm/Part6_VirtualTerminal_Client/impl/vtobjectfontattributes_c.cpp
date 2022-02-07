@@ -82,6 +82,11 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
   return curBytes;
 }
 
+uint16_t vtObjectFontAttributes_c::getID() const {
+	isoaglib_assert(vtObject_a);
+	return vtObject_a->ID;
+}
+
 
 vtObjectFontAttributes_c::vtObjectFontAttributes_c(
 		int ai_multitonInst,
@@ -103,7 +108,7 @@ vtObjectFontAttributes_c::vtObjectFontAttributes_c(
 
 
 vtObjectFontAttributes_c::vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObject_c , int ai_multitonInst)
-: __IsoAgLib::vtObject_c((iVtObject_s*) vtObject_c, ai_multitonInst)
+: __IsoAgLib::vtObject_c(ai_multitonInst)
 , vtObject_a(vtObject_c)
 , mui8_fontSizeScaled( 0xFF ) // set mui8_fontSizeScaled to "not yet calculated"
 {
