@@ -82,7 +82,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
   return curBytes;
 }
 
-uint16_t vtObjectFontAttributes_c::getID() const {
+IsoAgLib::ObjectID vtObjectFontAttributes_c::getID() const {
 	isoaglib_assert(vtObject_a);
 	return vtObject_a->ID;
 }

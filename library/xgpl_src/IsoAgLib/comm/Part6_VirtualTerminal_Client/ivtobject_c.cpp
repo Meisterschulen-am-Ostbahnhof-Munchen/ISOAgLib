@@ -138,7 +138,7 @@ namespace IsoAgLib {
 	s_properties.clientId = 0;
 	}
 
-	uint16_t iVtObject_c::getID() const
+	IsoAgLib::ObjectID iVtObject_c::getID() const
 	{
 	isoaglib_assert(vtObject_a);
 	return vtObject_a->ID;

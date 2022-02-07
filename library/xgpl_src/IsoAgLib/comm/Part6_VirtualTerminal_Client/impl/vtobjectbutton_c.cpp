@@ -99,7 +99,7 @@ vtObjectButton_c::stream(uint8_t* destMemory,
 }
 
 
-uint16_t vtObjectButton_c::getID() const {
+IsoAgLib::ObjectID vtObjectButton_c::getID() const {
 	isoaglib_assert(vtObject_a);
 	return vtObject_a->ID;
 }

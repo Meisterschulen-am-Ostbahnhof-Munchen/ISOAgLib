@@ -151,7 +151,7 @@ public:
   ~iVtObject_c() override = default;
 
   //  Operation: getID
-  virtual uint16_t getID() const;
+  virtual IsoAgLib::ObjectID getID() const;
 
   //! *** API-function ***
   //! Per default, all objects are uploaded.
