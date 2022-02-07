@@ -71,8 +71,8 @@ vtObjectButton_c::stream(uint8_t* destMemory,
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint32_t width  = (uint32_t)vtObjectButton_a->width;
-    uint32_t height = (uint32_t)vtObjectButton_a->height;
+    uint32_t width  = (uint32_t)vtObject_a->width;
+    uint32_t height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -83,18 +83,18 @@ vtObjectButton_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectButton_a->backgroundColour, this, IsoAgLib::BackgroundColour);
-      destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObjectButton_a->borderColour, this, IsoAgLib::BorderColour);
-      destMemory [9] = vtObjectButton_a->keyCode;
-      destMemory [10] = vtObjectButton_a->options;
-      destMemory [11] = vtObjectButton_a->numberOfObjectsToFollow;
-      destMemory [12] = vtObjectButton_a->numberOfMacrosToFollow;
+      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [8] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->borderColour, this, IsoAgLib::BorderColour);
+      destMemory [9] = vtObject_a->keyCode;
+      destMemory [10] = vtObject_a->options;
+      destMemory [11] = vtObject_a->numberOfObjectsToFollow;
+      destMemory [12] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 13;
       curBytes += 13;
     }
 
     MACRO_streamObjectXYcenteredInButton(13);
-    MACRO_streamEventMacro(13U+vtObjectButton_a->numberOfObjectsToFollow*6U);
+    MACRO_streamEventMacro(13U+vtObject_a->numberOfObjectsToFollow*6U);
     return curBytes;
 }
 
@@ -144,8 +144,7 @@ vtObjectButton_c::iVtObjectButton_s *vtObjectButton_c::get_vtObjectButton_a() {
 uint32_t
 vtObjectButton_c::fitTerminal() const
 {
-  MACRO_localVars;
-  return 13+vtObjectButton_a->numberOfObjectsToFollow*6+vtObjectButton_a->numberOfMacrosToFollow*2;
+  return 13+vtObject_a->numberOfObjectsToFollow*6+vtObject_a->numberOfMacrosToFollow*2;
 }
 
 void
@@ -165,24 +164,21 @@ vtObjectButton_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateOb
 bool
 vtObjectButton_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObjectButton_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectButton_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd);
 }
 
 bool
 vtObjectButton_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  MACRO_localVars;
-  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectButton_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectButton_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd, NoOffset);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd, NoOffset);
 }
 
 void
 vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
 {
-  MACRO_localVars;
   p_parentButtonObject = (IsoAgLib::iVtObjectButton_c*)this;
-  for (int i=0; i<vtObjectButton_a->numberOfObjectsToFollow; i++) {
-    vtObjectButton_a->objectsToFollow[i].vtObject->setOriginBTN (p_parentButtonObject);
+  for (int i=0; i<vtObject_a->numberOfObjectsToFollow; i++) {
+    vtObject_a->objectsToFollow[i].vtObject->setOriginBTN (p_parentButtonObject);
   }
 }
 
