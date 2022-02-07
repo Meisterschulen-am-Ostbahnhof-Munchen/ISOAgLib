@@ -59,7 +59,7 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
 {
 #define MACRO_vtObjectTypeA vtObjectInputList_a
 #define MACRO_vtObjectTypeS iVtObjectInputList_s
-    MACRO_streamLocalVars;
+    uint16_t curBytes=0; /* current bytes written */;
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 

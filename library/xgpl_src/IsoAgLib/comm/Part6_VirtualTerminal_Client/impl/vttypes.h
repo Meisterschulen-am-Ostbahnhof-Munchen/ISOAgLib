@@ -90,9 +90,6 @@ typedef uint32_t objRange_t;
 typedef uint16_t objRange_t;
 #endif
 
-#define MACRO_streamLocalVars \
-    uint16_t curBytes=0; /* current bytes written */
-
 #define MACRO_scaleLocalVars \
     int32_t opDimension = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolDimension(); \
     int32_t vtDimension = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwDimension(); \

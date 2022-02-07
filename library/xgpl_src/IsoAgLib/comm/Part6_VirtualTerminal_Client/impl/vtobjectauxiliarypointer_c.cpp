@@ -51,7 +51,7 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::stream(uint8_t* destMemory,
 {
 #define MACRO_vtObjectTypeA vtObjectAuxiliaryControlDesignatorObjectPointer_a
 #define MACRO_vtObjectTypeS iVtObjectAuxiliaryControlDesignatorObjectPointer_s
-  MACRO_streamLocalVars;
+  uint16_t curBytes=0; /* current bytes written */;
   if (sourceOffset == 0) { // dump out constant sized stuff
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;

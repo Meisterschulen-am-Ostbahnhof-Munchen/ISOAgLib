@@ -77,7 +77,7 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
 {
 #define MACRO_vtObjectTypeA vtObjectPolygon_a
 #define MACRO_vtObjectTypeS iVtObjectPolygon_s
-    MACRO_streamLocalVars;
+    uint16_t curBytes=0; /* current bytes written */;
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 

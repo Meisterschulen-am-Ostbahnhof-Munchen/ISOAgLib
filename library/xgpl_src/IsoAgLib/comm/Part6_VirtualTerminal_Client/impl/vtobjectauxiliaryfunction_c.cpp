@@ -57,7 +57,7 @@ vtObjectAuxiliaryFunction_c::stream(uint8_t* destMemory, uint16_t maxBytes, objR
 {
 #define MACRO_vtObjectTypeA vtObjectAuxiliaryFunction_a
 #define MACRO_vtObjectTypeS iVtObjectAuxiliaryFunction_s
-  MACRO_streamLocalVars;
+  uint16_t curBytes=0; /* current bytes written */;
   MACRO_scaleLocalVars;
   if (sourceOffset == 0) { // dump out constant sized stuff
     destMemory [0] = vtObject_a->ID & 0xFF;

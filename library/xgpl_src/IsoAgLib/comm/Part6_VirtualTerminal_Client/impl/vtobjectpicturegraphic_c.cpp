@@ -180,7 +180,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
 {
 #define MACRO_vtObjectTypeA vtObjectPictureGraphic_a
 #define MACRO_vtObjectTypeS iVtObjectPictureGraphic_s
-    MACRO_streamLocalVars;
+    uint16_t curBytes=0; /* current bytes written */;
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 

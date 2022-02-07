@@ -51,7 +51,7 @@ vtObjectMacro_c::stream(uint8_t* destMemory,
 { // ~X2C
 #define MACRO_vtObjectTypeA vtObjectMacro_a
 #define MACRO_vtObjectTypeS iVtObjectMacro_s
-    MACRO_streamLocalVars;
+    uint16_t curBytes=0; /* current bytes written */;
 
     uint16_t numBytesToFollow = vtObject_a->commandsToFollow ? vtObject_a->numBytesToFollow : 0;
 
