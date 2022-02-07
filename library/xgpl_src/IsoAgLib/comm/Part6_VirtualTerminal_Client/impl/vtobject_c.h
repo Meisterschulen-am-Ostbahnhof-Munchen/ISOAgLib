@@ -51,11 +51,6 @@ public:
   bool isOmittedFromUpload() const;
 
 protected:
-  iVtObject_s& get_vtObject_a()
-  {
-    isoaglib_header_assert(vtObject_a);
-    return *vtObject_a;
-  }
 
   enum OffsetMode_en
   {
