@@ -160,21 +160,7 @@ protected:
 
 
 
-	struct iVtObjectColourMap_s: iVtObject_s {
-		uint16_t numOfColourIdxToFollow;
-		const uint8_t *colourMapArray;
-		iVtObjectColourMap_s(
-				ObjectID ID,
-				uint16_t numOfColourIdxToFollow,
-				const uint8_t *colourMapArray)
-		: iVtObject_s(ID)
-		, numOfColourIdxToFollow(numOfColourIdxToFollow)
-		, colourMapArray(colourMapArray)
-		{
-		}
 
-
-	};
 
 	struct iVtObjectPolygon_s: iVtObjectwMacro_s {
 		uint16_t width;

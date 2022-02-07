@@ -26,6 +26,23 @@
 
 namespace __IsoAgLib {
 
+
+struct vtObjectColourMap_c::iVtObjectColourMap_s: iVtObject_s {
+	uint16_t numOfColourIdxToFollow;
+	const uint8_t *colourMapArray;
+	iVtObjectColourMap_s(
+			IsoAgLib::ObjectID ID,
+			uint16_t numOfColourIdxToFollow,
+			const uint8_t *colourMapArray)
+	: iVtObject_s(ID)
+	, numOfColourIdxToFollow(numOfColourIdxToFollow)
+	, colourMapArray(colourMapArray)
+	{
+	}
+
+
+};
+
 #define min(a,b) (a<b)?a:b
 
 const uint8_t vtObjectColourMap_c::pgheaderSize = 5;
@@ -91,14 +108,20 @@ vtObjectColourMap_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     default: break;
   }
 }
+#endif // USE_ISO_TERMINAL_GETATTRIBUTES
 
-    IsoAgLib::iVtObject_c::iVtObjectColourMap_s *vtObjectColourMap_c::get_vtObjectColourMap_a() { return (iVtObjectColourMap_s *)&(get_vtObject_a()); }
 
-    vtObjectColourMap_c::vtObjectColourMap_c(const IsoAgLib::iVtObject_c::iVtObjectColourMap_s *vtObjectColourMapSROM,
+vtObjectColourMap_c::iVtObjectColourMap_s *vtObjectColourMap_c::get_vtObjectColourMap_a()
+{
+	return vtObject_a;
+}
+
+    vtObjectColourMap_c::vtObjectColourMap_c(vtObjectColourMap_c::iVtObjectColourMap_s *vtObjectColourMapSROM,
                                              int ai_multitonInst)
             :vtObject_c((iVtObject_s*) vtObjectColourMapSROM , ai_multitonInst)
+    		,vtObject_a(vtObjectColourMapSROM)
     {}
 
-#endif // USE_ISO_TERMINAL_GETATTRIBUTES
+
 
 } // __IsoAgLib

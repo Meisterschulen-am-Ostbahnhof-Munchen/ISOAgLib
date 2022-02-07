@@ -29,12 +29,21 @@ namespace __IsoAgLib {
 
 class vtObjectColourMap_c : public vtObject_c
 {
+private:
+	// Internal implementation class
+	struct iVtObjectColourMap_s;
+
+	// Pointer to the internal implementation
+	iVtObjectColourMap_s* vtObject_a;
+	//TODO
+	//std::unique_ptr<iVtObjectColourMap_s> vtObject_a;
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  vtObjectColourMap_c(const iVtObjectColourMap_s* vtObjectColourMapSROM , int ai_multitonInst);
+  vtObjectColourMap_c(iVtObjectColourMap_s* vtObjectColourMapSROM , int ai_multitonInst);
 
   iVtObjectColourMap_s* get_vtObjectColourMap_a();
 

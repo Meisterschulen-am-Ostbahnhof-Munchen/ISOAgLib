@@ -31,10 +31,6 @@ class iVtObjectColourMap_c : public __IsoAgLib::vtObjectColourMap_c
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_COLOUR_MAP; }
 
-  iVtObjectColourMap_c(const iVtObjectColourMap_s* vtObjectColourMapSROM , int ai_multitonInst)
-  :vtObjectColourMap_c(vtObjectColourMapSROM , ai_multitonInst)
-  {}
-
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
