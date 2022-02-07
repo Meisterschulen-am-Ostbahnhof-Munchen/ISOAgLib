@@ -221,7 +221,7 @@ vtObjectInputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length,
 
 
 void
-vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectInputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   MACRO_localVars;
   if (vtObjectInputString_a->variableReference != NULL) {
@@ -235,7 +235,7 @@ vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject, b
       s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
       char *newStringBuffer = new char [get_vtObjectInputString_a()->length+1];
-      saveValueP (MACRO_getStructOffset(get_vtObjectInputString_a(), value), sizeof(iVtObjectInputString_s), (IsoAgLib::iVtObject_c*)newStringBuffer);
+      vtObject_a->value = newStringBuffer;
     }
     char *dest = get_vtObjectInputString_a()->value;
     const char *src = newValue;
@@ -250,7 +250,7 @@ vtObjectInputString_c::setValueCopy(const char* newValue, bool b_updateObject, b
 
 
 void
-vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectInputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   MACRO_localVars;
   if (vtObjectInputString_a->variableReference != NULL) {
@@ -265,7 +265,7 @@ vtObjectInputString_c::setValueRef(const char* newValue, bool b_updateObject, bo
       s_properties.flags &= ~FLAG_STRING_IN_RAM;
     }
 
-    saveValueP (MACRO_getStructOffset(get_vtObjectInputString_a(), value),  sizeof(iVtObjectInputString_s), (IsoAgLib::iVtObject_c*)newValue);
+    vtObject_a->value = newValue;
   }
 
   uint16_t ui16_tempLen = 0;

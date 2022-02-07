@@ -15,11 +15,11 @@ namespace IsoAgLib {
 
 
 
-    void iVtObjectStringVariable_c::setValueCopy(const char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectStringVariable_c::setValueCopy(char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectStringVariable_c::setValueRef(const char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectStringVariable_c::setValueRef(char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectStringVariable_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 #ifdef USE_VT_UNICODE_SUPPORT

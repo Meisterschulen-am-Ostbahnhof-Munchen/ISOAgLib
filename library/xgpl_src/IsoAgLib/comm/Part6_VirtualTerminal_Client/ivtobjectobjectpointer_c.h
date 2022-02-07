@@ -32,7 +32,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_OBJECT_POINTER; }
 
 
-  void setValue(const iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+  void setValue(iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectObjectPointer_c::setValue (apc_newObject, b_updateObject, b_enableReplaceOfCmd);
   }
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

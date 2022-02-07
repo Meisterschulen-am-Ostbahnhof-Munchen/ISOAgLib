@@ -38,7 +38,7 @@ public:
     vtObjectInputAttributes_c::setValidationStringCopy (newValidationString, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+  void setValidationStringRef(char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputAttributes_c::setValidationStringRef (newValidationString, b_updateObject, b_enableReplaceOfCmd);
   }
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

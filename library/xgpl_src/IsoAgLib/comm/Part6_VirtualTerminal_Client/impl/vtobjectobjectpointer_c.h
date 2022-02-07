@@ -52,7 +52,7 @@ public:
   iVtObjectObjectPointer_s* get_vtObjectObjectPointer_a();
   vtObjectObjectPointer_c();
   uint32_t fitTerminal() const;
-  void setValue(const IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setValue(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setOriginSKM(bool b_SKM);
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/);
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

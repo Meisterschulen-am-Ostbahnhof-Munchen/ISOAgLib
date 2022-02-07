@@ -56,7 +56,7 @@ public:
   iVtObjectStringVariable_s* get_vtObjectStringVariable_a();
   uint32_t fitTerminal() const;
 
-    virtual void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setValueCopy    (char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
 
         virtual void setValueCopyUTF8(const char* newValue, uint8_t aui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -64,7 +64,7 @@ public:
         virtual void setValueCopyUTF16 (const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
-        virtual void setValueRef(const char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+        virtual void setValueRef(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   const char* getString();
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

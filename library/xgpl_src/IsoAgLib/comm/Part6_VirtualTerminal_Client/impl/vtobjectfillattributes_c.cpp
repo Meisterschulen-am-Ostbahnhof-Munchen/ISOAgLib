@@ -101,7 +101,7 @@ vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, IsoAgLib::Colou
   if (b_updateObject) {
 	vtObject_a->fillType   = newFillType;
     vtObject_a->fillColour = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newFillColour, this, IsoAgLib::FillColour);
-    saveValueP (MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s), newFillPattern);
+    vtObject_a->fillPatternObject = newFillPattern;
   }
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor(
     newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd );

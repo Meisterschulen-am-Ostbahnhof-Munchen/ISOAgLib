@@ -40,14 +40,14 @@ public:
 		  ObjectID ID = autoID,
 		  char* value = nullptr /* size length+1 (0-termination intern!) */
 		  );
-  void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
   void setValueCopyUTF8(const char* newValue, uint8_t aui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setValueCopyUTF8(const char* newValue, iVtObjectOutputString_c& arc_ops, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
-  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setValueRef(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   const char* getString();
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectStringVariable_c::updateObjectType(); }

@@ -148,7 +148,8 @@ vtObjectWorkingSet_c::updateSelectable( uint8_t newSelectable )
 void
 vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), apc_vtObjectMask);
+  if (b_updateObject)
+	  vtObject_a->activeMask = apc_vtObjectMask;
 
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeActiveMask( this, apc_vtObjectMask, b_enableReplaceOfCmd);
 }

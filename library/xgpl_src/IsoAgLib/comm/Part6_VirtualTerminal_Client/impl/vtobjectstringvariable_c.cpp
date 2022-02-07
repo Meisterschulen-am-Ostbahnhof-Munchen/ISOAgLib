@@ -131,7 +131,7 @@ vtObjectStringVariable_c::setValueCopyUTF16 (const char* newValue, uint16_t leng
 
 
 void
-vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     // check if not already RAM string buffer?
@@ -139,7 +139,7 @@ vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject
       s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
       char *newStringBuffer = new char [get_vtObjectStringVariable_a()->length+1];
-      saveValueP (MACRO_getStructOffset(get_vtObjectStringVariable_a(), value), sizeof(iVtObjectStringVariable_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
+      vtObject_a->value = newStringBuffer;
     }
     char *dest = get_vtObjectStringVariable_a()->value;
     const char *src = newValue;
@@ -154,7 +154,7 @@ vtObjectStringVariable_c::setValueCopy(const char* newValue, bool b_updateObject
 
 
 void
-vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
@@ -163,7 +163,7 @@ vtObjectStringVariable_c::setValueRef(const char* newValue, bool b_updateObject,
       s_properties.flags &= ~FLAG_STRING_IN_RAM;
     }
 
-    saveValueP (MACRO_getStructOffset(get_vtObjectStringVariable_a(), value), sizeof(iVtObjectStringVariable_s), (IsoAgLib::iVtObject_c*) newValue);
+    vtObject_a->value = newValue;
   }
 
   uint16_t ui16_tempLen = 0;

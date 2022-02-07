@@ -33,11 +33,11 @@ public:
 
   const char* getString() { return vtObjectInputString_c::getString(); }
 
-  void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setValueRef(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 

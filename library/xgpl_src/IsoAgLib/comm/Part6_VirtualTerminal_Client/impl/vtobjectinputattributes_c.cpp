@@ -110,7 +110,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
       s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
       char *newStringBuffer = new char [get_vtObjectInputAttributes_a()->length+1];
-      saveValueP (MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationString), sizeof(iVtObjectInputAttributes_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
+      vtObject_a->validationString = newStringBuffer;
     }
     char *dest = get_vtObjectInputAttributes_a()->validationString;
     const char *src = newValidationString;
@@ -125,7 +125,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
 
 
 void
-vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectInputAttributes_c::setValidationStringRef(char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
@@ -134,7 +134,7 @@ vtObjectInputAttributes_c::setValidationStringRef(const char* newValidationStrin
       s_properties.flags &= ~FLAG_STRING_IN_RAM;
     }
 
-    saveValueP (MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationString), sizeof(iVtObjectInputAttributes_s), (IsoAgLib::iVtObject_c*) newValidationString);
+    vtObject_a->validationString = newValidationString;
   }
 
   const uint16_t ui16_newValStrLen = uint16_t( CNAMESPACE::strlen (newValidationString) );

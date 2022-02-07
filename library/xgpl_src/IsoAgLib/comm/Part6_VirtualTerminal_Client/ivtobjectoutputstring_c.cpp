@@ -60,11 +60,11 @@ namespace IsoAgLib {
         vtObjectOutputString_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectOutputString_c::setValueCopy(const char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectOutputString_c::setValueCopy(char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectOutputString_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectOutputString_c::setValueRef(const char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectOutputString_c::setValueRef(char *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectOutputString_c::setValueRef (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 

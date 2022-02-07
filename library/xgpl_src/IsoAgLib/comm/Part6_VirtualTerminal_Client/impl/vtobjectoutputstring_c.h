@@ -73,14 +73,14 @@ public:
   void setOriginSKM(bool b_SKM);
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
   const char* getString();
-  virtual void setValueCopy    (const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  virtual void setValueCopy    (char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
 
         virtual void setValueCopyUTF8(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
         virtual void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
-        virtual void setValueRef(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+        virtual void setValueRef(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   // //////////////////////////////////
   // All special Attribute-Set methods
         virtual void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
