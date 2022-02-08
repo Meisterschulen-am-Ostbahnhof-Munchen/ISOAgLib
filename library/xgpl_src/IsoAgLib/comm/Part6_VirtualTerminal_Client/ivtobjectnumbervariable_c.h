@@ -35,7 +35,7 @@ public:
     vtObjectNumberVariable_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd); }
 
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES  
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES  
   // ///////////////////////// getter for attributes
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectNumberVariable_c::updateObjectType(); }

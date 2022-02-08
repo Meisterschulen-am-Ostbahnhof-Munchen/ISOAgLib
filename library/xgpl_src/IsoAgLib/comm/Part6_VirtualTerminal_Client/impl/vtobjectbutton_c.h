@@ -93,7 +93,7 @@ public:
 
     virtual void v4setOptions (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 6; }

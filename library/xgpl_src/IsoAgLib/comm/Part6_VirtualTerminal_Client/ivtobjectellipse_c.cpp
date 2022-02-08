@@ -80,7 +80,7 @@ namespace IsoAgLib {
     }
 
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
 
 

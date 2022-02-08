@@ -185,8 +185,8 @@ set_default_values()
     # has to be overridden by configuration:
     USE_TARGET_SYSTEM='void'
     USE_HAL_PATH=''
-    USE_ISO_TERMINAL_GRAPHICCONTEXT=0
-    USE_ISO_TERMINAL_GETATTRIBUTES=0
+    CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT=0
+    CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES=0
     USE_ISO_TERMINAL_ATTRIBUTES=0
     PRJ_ISO_TERMINAL_OBJECT_SELECTION1=''
     PRJ_ISO_TERMINAL_OBJECT_SELECTION2=''
@@ -460,7 +460,7 @@ comm_features()
     fi
     
     if [ "$PRJ_ISO_VIRTUALTERMINAL_CLIENT" -gt 0 ]; then
-        if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" -eq 0 ]; then
+        if [ "$CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT" -eq 0 ]; then
             # exclude graphicscontext_c
             printf '%s' " -o \( -path '*/Part6_VirtualTerminal_Client/i*' -a -not -name '*graphicscontext_c*' \)" >&3
         else
@@ -935,8 +935,8 @@ END_OF_PATH
                 if [ "$USE_ISO_TERMINAL_ATTRIBUTES" -ne 0 ] ; then
                     echo_e "#define USE_ISO_TERMINAL_ATTRIBUTES" >&3
                 fi
-                if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" -ne 0 ] ; then
-                    echo_e "#define USE_ISO_TERMINAL_GRAPHICCONTEXT" >&3
+                if [ "$CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT" -ne 0 ] ; then
+                    echo_e "#define CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT" >&3
                 fi
                 if [ -n "$PRJ_ISO_TERMINAL_OBJECT_SELECTION1" ] ; then
                     echo_e "#define PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $PRJ_ISO_TERMINAL_OBJECT_SELECTION1" >&3

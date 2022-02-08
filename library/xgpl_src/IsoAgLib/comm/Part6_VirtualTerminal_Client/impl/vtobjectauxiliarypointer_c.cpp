@@ -84,7 +84,7 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::fitTerminal() const
 }
 
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 /** that attribute is in parentheses in the spec, so commented out here
 uint16_t
 vtObjectAuxiliaryControlDesignatorObjectPointer_c::updateValue(bool b_SendRequest)

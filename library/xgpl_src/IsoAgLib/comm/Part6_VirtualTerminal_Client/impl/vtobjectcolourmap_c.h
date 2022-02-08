@@ -53,7 +53,7 @@ public:
 
   static uint8_t const pgheaderSize;
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };

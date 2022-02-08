@@ -105,7 +105,7 @@ vtObjectKey_c::setOriginSKM(bool /*b_SKM*/)
   }
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectKey_c::updateBackgroundColour(bool b_SendRequest)
 {

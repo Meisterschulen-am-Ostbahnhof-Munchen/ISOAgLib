@@ -50,7 +50,7 @@ public:
 
   uint32_t fitTerminal() const;
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 28; }
    */

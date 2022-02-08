@@ -211,7 +211,7 @@ vtObjectFontAttributes_c::setFontAttributes(IsoAgLib::Colour newFontColour, IsoA
     newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd );
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectFontAttributes_c::updateFontColour(bool b_SendRequest)
 {

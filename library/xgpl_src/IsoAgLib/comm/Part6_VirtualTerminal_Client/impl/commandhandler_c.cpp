@@ -22,7 +22,7 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>
 
-#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+#ifdef CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectgraphicscontext_c.h>
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectfillattributes_c.h>
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectfontattributes_c.h>
@@ -367,7 +367,7 @@ CommandHandler_c::sendCommandChangeLineAttributes (uint16_t aui16_objectUid, Iso
 }
 
 
-#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+#ifdef CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT
 bool
 CommandHandler_c::sendCommandSetGraphicsCursor(
   IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
@@ -717,7 +717,7 @@ CommandHandler_c::sendCommandCopyViewport2PictureGraphic(
 #endif
 
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 bool
 CommandHandler_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* apc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd)
 {
@@ -1378,7 +1378,7 @@ CommandHandler_c::processMsgVtToEcuResponses( const CanPkgExt_c& pkg )
 
   case 0xB9: // Command: "Get Technical Data", parameter "Get Attribute Value Response"
     errByte = 7;
-    #ifdef xUSE_ISO_TERMINAL_GETATTRIBUTES
+    #ifdef xCONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     #warning Currently not supported!!
     // client requested any attribute value for an object in the pool -> create ram struct if not yet existing
     if ((pkg.getUint8Data( 1 ) == 0xFF) && (pkg.getUint8Data( 2 ) == 0xFF)) // object id is set to 0xFFFF to indicate error response

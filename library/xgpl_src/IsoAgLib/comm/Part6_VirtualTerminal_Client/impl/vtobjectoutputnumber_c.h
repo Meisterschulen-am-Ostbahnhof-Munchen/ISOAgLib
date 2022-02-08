@@ -74,7 +74,7 @@ public:
     virtual void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     // ///////////////////////// getter for attributes
     virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 12; }

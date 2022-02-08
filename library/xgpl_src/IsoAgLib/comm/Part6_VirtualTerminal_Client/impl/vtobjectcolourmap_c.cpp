@@ -93,7 +93,7 @@ vtObjectColourMap_c::fitTerminal() const
   return pgheaderSize + vtObject_a->numOfColourIdxToFollow;
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
 
 void
@@ -110,7 +110,7 @@ vtObjectColourMap_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     default: break;
   }
 }
-#endif // USE_ISO_TERMINAL_GETATTRIBUTES
+#endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
 
 vtObjectColourMap_c::iVtObjectColourMap_s *vtObjectColourMap_c::get_vtObjectColourMap_a()

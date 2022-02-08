@@ -1,0 +1,17 @@
+menu "### ISOAgLib Example Configuration ###"
+
+    config USE_ISO_TERMINAL_GRAPHICCONTEXT
+        bool "USE_ISO_TERMINAL_GRAPHICCONTEXT"
+        default n
+        help
+            Enable support for ...
+            
+            
+    config USE_ISO_TERMINAL_GETATTRIBUTES
+        bool "USE_ISO_TERMINAL_GETATTRIBUTES"
+        default n
+        help
+            Enable support for ...
+            
+
+endmenu

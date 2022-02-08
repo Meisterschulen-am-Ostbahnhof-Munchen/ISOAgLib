@@ -21,7 +21,8 @@
 #define _ISOAGLIB_CONFIG_H_
 
 #define INCLUDED_FROM_ISOAGLIB_CONFIG
-#include <isoaglib_project_config.h>
+#include "isoaglib_project_config.h"
+#include "sdkconfig.h"
 #undef INCLUDED_FROM_ISOAGLIB_CONFIG
 
 #include <IsoAgLib/util/compiler_adaptation.h>

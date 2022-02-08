@@ -100,7 +100,7 @@ vtObjectObjectPointer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
   }
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 /** that attribute is in parentheses in the spec, so commented out here
 uint16_t
 vtObjectObjectPointer_c::updateValue(bool b_SendRequest)

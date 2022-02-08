@@ -391,7 +391,7 @@ vtObjectPictureGraphic_c::fitTerminal() const
   return 17+numberOfBytesInRawData+vtObject_a->numberOfMacrosToFollow*2;
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint16_t
 vtObjectPictureGraphic_c::updateWidth(bool b_SendRequest)
 {

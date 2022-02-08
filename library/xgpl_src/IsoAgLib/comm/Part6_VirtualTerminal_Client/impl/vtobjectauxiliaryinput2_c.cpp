@@ -481,7 +481,7 @@ vtObjectAuxiliaryInput2_c::iVtObjectAuxiliaryInput2_s *vtObjectAuxiliaryInput2_c
     {
     	return vtObject_a;
     }
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectAuxiliaryInput2_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 #endif
     bool vtObjectAuxiliaryInput2_c::getInputStateEnabled() const { return m_inputState.mb_enabled; }

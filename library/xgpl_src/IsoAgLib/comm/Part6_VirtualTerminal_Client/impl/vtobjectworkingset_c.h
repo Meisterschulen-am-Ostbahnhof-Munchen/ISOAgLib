@@ -74,7 +74,7 @@ public:
     virtual bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
     virtual bool setAudioVolume (uint8_t aui8_volume);
     virtual bool setColourMapOrPalette (uint16_t aui16_objectId);
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 0; }
   uint8_t updateBackgroundColour(bool b_SendRequest=false);

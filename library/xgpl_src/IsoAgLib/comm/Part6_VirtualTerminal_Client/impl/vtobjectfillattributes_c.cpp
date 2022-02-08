@@ -104,7 +104,7 @@ vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, IsoAgLib::Colou
     newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd );
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectFillAttributes_c::updateFillType(bool b_SendRequest)
 {

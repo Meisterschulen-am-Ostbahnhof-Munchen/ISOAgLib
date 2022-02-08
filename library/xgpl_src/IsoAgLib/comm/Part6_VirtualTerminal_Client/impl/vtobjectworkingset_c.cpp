@@ -202,7 +202,7 @@ vtObjectWorkingSet_c::setOriginSKM(bool /*b_SKM*/)
     vtObject_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }
 }
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 /** these attributes are in parentheses in the spec, so commented out here
 uint8_t
 vtObjectWorkingSet_c::updateBackgroundColour (bool b_SendRequest)

@@ -337,7 +337,7 @@ vtObjectOutputString_c::getString()
   return get_vtObjectOutputString_a()->value;
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint16_t
 vtObjectOutputString_c::updateWidth(bool b_SendRequest)
 {

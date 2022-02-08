@@ -19,7 +19,7 @@
 */
 
 #include "vtobjectgraphicscontext_c.h"
-#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+#ifdef CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT
 
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectfontattributes_c.h"
@@ -467,7 +467,7 @@ vtObjectGraphicsContext_c::copyViewport2PictureGraphic( const IsoAgLib::iVtObjec
               this, pc_iVtObjectPictureGraphic, b_enableReplaceOfCmd);
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint16_t
 vtObjectGraphicsContext_c::updateViewportWidth(bool b_SendRequest)
 {

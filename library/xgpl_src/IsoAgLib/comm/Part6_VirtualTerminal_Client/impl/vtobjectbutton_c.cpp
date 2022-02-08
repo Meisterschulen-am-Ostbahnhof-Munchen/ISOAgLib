@@ -233,7 +233,7 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
     	setAttribute(6, newValue, b_enableReplaceOfCmd);
     }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint16_t
 vtObjectButton_c::updateWidth(bool b_SendRequest)
 {

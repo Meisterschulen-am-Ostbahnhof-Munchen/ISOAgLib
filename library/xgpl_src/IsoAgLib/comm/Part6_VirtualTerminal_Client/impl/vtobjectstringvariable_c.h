@@ -67,7 +67,7 @@ public:
         virtual void setValueRef(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   const char* getString();
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 22; }
   */

@@ -50,7 +50,7 @@ namespace IsoAgLib {
     uint16_t iVtObjectDataMask_c::objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
 
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
     uint8_t iVtObjectDataMask_c::updateBackgroundColour(bool b_SendRequest) {
         return vtObjectDataMask_c::updateBackgroundColour(b_SendRequest);

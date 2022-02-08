@@ -126,7 +126,7 @@ vtObjectInputBoolean_c::setValue(bool newValue, bool b_updateObject, bool b_enab
   }
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectInputBoolean_c::updateBackgroundColour(bool b_SendRequest)
 {

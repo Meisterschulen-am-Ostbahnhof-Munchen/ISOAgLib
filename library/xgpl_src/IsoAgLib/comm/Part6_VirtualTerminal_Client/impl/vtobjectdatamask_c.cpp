@@ -162,7 +162,7 @@ void vtObjectDataMask_c::Append(iVtObject_c* const vtObject, int16_t x, int16_t 
 
 
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectDataMask_c::updateBackgroundColour (bool b_SendRequest)
 {

@@ -20,7 +20,7 @@
 #ifndef VTOBJECTGRAPHICSCONTEXT_C_H
 #define VTOBJECTGRAPHICSCONTEXT_C_H
 
-#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+#ifdef CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT
 
 #include <IsoAgLib/isoaglib_config.h>
 
@@ -156,7 +156,7 @@ public:
   void copyViewport2PictureGraphic(const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic,
        bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 36; }

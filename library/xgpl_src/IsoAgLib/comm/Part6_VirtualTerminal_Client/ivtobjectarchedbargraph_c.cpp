@@ -120,7 +120,7 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
     }
 
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
 
     uint16_t iVtObjectArchedBarGraph_c::updateWidth(bool b_SendRequest) {

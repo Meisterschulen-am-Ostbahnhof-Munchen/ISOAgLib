@@ -146,7 +146,7 @@ vtObjectMeter_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableR
   }
 }
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 uint16_t
 vtObjectMeter_c::updateWidth(bool b_SendRequest)
 {

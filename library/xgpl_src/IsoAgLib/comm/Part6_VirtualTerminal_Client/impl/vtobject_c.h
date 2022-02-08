@@ -41,7 +41,7 @@ public:
 
   virtual uint32_t fitTerminal() const = 0;
  
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   virtual void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) = 0;
 #endif
 
@@ -61,7 +61,7 @@ protected:
   void setAttribute      (uint8_t attrID, uint32_t newValue, bool b_enableReplaceOfCmd=true);
   void setAttributeFloat (uint8_t attrID, float newValue, bool b_enableReplaceOfCmd=true);
 
-  #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+  #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   void getAttribute      (uint8_t attrID, bool b_enableReplaceOfCmd=true);
   #endif
 
@@ -92,7 +92,7 @@ protected:
 
 protected:
 
-  #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+  #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   uint8_t getValue8GetAttribute  (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_createRamStructIfNeeded=false);
   uint16_t getValue16GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_createRamStructIfNeeded=false);
   uint32_t getValue32GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_createRamStructIfNeeded=false);

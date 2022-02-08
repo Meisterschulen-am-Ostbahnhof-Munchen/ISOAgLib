@@ -62,7 +62,7 @@ iVtObjectLine_c::iVtObjectLine_c(
     uint16_t iVtObjectLine_c::getObjectType() const { return objectType(); }
 
 
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
 
     uint16_t iVtObjectLine_c::updateLineAttributes(bool b_SendRequest) {

@@ -63,7 +63,7 @@ namespace IsoAgLib {
                                                       bool b_enableReplaceOfCmd) {
         vtObjectFontAttributes_c::setFontAttributes(newFontColour, newFontSize, newFontType, newFontStyle, b_updateObject, b_enableReplaceOfCmd);
     }
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     uint8_t iVtObjectFontAttributes_c::updateFontColour(bool b_SendRequest) {
         return vtObjectFontAttributes_c::updateFontColour(b_SendRequest);
     }

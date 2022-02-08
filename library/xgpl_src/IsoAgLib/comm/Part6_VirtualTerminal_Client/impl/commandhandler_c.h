@@ -31,7 +31,7 @@
 
 #include <list>
 
-#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+#ifdef CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT
 namespace IsoAgLib { class iVtObjectLineAttributes_c; }
 namespace IsoAgLib { class iVtObjectFillAttributes_c; }
 namespace IsoAgLib { class iVtObjectFontAttributes_c; }
@@ -107,7 +107,7 @@ public:
   bool sendCommandChangeFontAttributes   (uint16_t aui16_objectUid, IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes   (uint16_t aui16_objectUid, IsoAgLib::Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
 
-#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+#ifdef CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT
   bool sendCommandSetGraphicsCursor           (IsoAgLib::iVtObject_c*, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd=true);
   bool sendCommandSetForegroundColour         (IsoAgLib::iVtObject_c*, uint8_t newValue, bool b_enableReplaceOfCmd=true);
   bool sendCommandSetBackgroundColour         (IsoAgLib::iVtObject_c*, uint8_t newValue, bool b_enableReplaceOfCmd=true);
@@ -129,7 +129,7 @@ public:
   bool sendCommandCopyCanvas2PictureGraphic   (IsoAgLib::iVtObject_c*, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic, bool b_enableReplaceOfCmd=true);
   bool sendCommandCopyViewport2PictureGraphic (IsoAgLib::iVtObject_c*, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic, bool b_enableReplaceOfCmd=true);
 #endif
-#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
+#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   bool sendCommandGetAttributeValue           (IsoAgLib::iVtObject_c*, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd=true);
 #endif
 
