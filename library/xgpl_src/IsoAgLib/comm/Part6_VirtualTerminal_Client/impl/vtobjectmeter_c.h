@@ -83,7 +83,7 @@ public:
   uint8_t updateEndAngle(bool b_SendRequest=false);
   uint16_t updateMinValue(bool b_SendRequest=false);
   uint16_t updateMaxValue(bool b_SendRequest=false);
-  uint16_t updateVariableReference(bool b_SendRequest=false);
+  IsoAgLib::iVtObject_c * updateVariableReference(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint16_t updateValue(bool b_SendRequest=false);

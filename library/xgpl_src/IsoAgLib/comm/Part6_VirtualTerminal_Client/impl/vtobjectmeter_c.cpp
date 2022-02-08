@@ -231,19 +231,17 @@ vtObjectMeter_c::updateMinValue(bool b_SendRequest)
 uint16_t
 vtObjectMeter_c::updateMaxValue(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), maxValue), sizeof(iVtObjectMeter_s), 10);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), maxValue), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (10, false);
+    return vtObject_a->maxValue;
 }
 
-uint16_t
+IsoAgLib::iVtObject_c *
 vtObjectMeter_c::updateVariableReference(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), variableReference), sizeof(iVtObjectMeter_s), 11);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), variableReference), sizeof(iVtObjectMeter_s));
+	  getAttribute (11, false);
+  return vtObject_a->variableReference;
 }
 
 /** that attribute is in parentheses in the spec, so commented out here
