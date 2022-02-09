@@ -78,7 +78,7 @@ public:
   virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 13; }
   */
-  uint16_t updateLineAttributes(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectLineAttributes_c*  updateLineAttributes(bool b_SendRequest=false);
   virtual uint16_t updateWidth(bool b_SendRequest=false);
   virtual uint16_t updateHeight(bool b_SendRequest=false);
   virtual uint8_t updateLineDirection(bool b_SendRequest=false);

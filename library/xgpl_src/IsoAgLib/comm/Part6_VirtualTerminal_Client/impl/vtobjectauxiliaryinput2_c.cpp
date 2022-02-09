@@ -78,7 +78,7 @@ IsoAgLib::ObjectID vtObjectAuxiliaryInput2_c::getID() const {
 
 // Operation : vtObjectAuxiliaryInput2_c
 vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c(iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst)
-  : vtObject_c((iVtObject_s *)vtObjectAuxiliaryInput2SROM , ai_multitonInst),
+  : vtObject_c(ai_multitonInst),
 	vtObject_a(vtObjectAuxiliaryInput2SROM),
     m_inputState(),
     mui16_value1(0),

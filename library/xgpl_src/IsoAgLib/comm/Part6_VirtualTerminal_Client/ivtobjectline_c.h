@@ -53,7 +53,7 @@ public:
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectLine_c::updateObjectType(); }
   */
-  uint16_t updateLineAttributes(bool b_SendRequest=false);
+  iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
   uint8_t updateLineDirection(bool b_SendRequest=false);

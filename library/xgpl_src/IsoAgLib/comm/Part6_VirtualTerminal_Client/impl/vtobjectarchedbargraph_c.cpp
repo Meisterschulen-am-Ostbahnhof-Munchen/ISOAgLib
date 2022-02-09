@@ -229,7 +229,7 @@ IsoAgLib::ObjectID vtObjectArchedBarGraph_c::getID() const {
 
     vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
             vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, int ai_multitonInst)
-            : vtObject_c((iVtObject_s*) vtObjectArchedBarGraphSROM , ai_multitonInst)
+            : vtObject_c(ai_multitonInst)
             , vtObject_a(vtObjectArchedBarGraphSROM)
     {}
 

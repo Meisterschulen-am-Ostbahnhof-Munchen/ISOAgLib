@@ -68,7 +68,7 @@ iVtObjectLine_c::iVtObjectLine_c(
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
 
-    uint16_t iVtObjectLine_c::updateLineAttributes(bool b_SendRequest) {
+    iVtObjectLineAttributes_c* iVtObjectLine_c::updateLineAttributes(bool b_SendRequest) {
         return vtObjectLine_c::updateLineAttributes(b_SendRequest);
     }
 

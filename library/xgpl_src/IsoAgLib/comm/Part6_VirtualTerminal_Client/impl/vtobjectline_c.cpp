@@ -112,7 +112,7 @@ vtObjectLine_c::vtObjectLine_c(
 
 
 vtObjectLine_c::vtObjectLine_c(vtObjectLine_c::iVtObjectLine_s *vtObjectLineSROM, int ai_multitonInst)
-        : vtObject_c((iVtObject_s*) vtObjectLineSROM , ai_multitonInst)
+        : vtObject_c(ai_multitonInst)
 		, vtObject_a(vtObjectLineSROM)
 {}
 
@@ -163,40 +163,36 @@ vtObjectLine_c::setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newL
 }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-uint16_t
+IsoAgLib::iVtObjectLineAttributes_c*
 vtObjectLine_c::updateLineAttributes(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes), sizeof(iVtObjectLine_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes), sizeof(iVtObjectLine_s));
+    getAttribute(1);
+  return vtObject_a->lineAttributes;
 }
 
 uint16_t
 vtObjectLine_c::updateWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectLine_a(), width), sizeof(iVtObjectLine_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectLine_a(), width), sizeof(iVtObjectLine_s));
+    getAttribute(2);
+  return vtObject_a->width;
 }
 
 uint16_t
 vtObjectLine_c::updateHeight(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), 3);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s));
+    getAttribute(3);
+  return vtObject_a->height;
 }
 
 uint8_t
 vtObjectLine_c::updateLineDirection(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s), 4);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s));
+    getAttribute(4);
+  return vtObject_a->lineDirection;
 }
 
 void
@@ -204,31 +200,54 @@ vtObjectLine_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVal
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes), sizeof(iVtObjectLine_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectLine_a(), width), sizeof(iVtObjectLine_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectLine_a(), height), sizeof(iVtObjectLine_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection), sizeof(iVtObjectLine_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    //case 1: vtObject_a->lineAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break; TODO !!
+    case 2: vtObject_a->width          = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case 3: vtObject_a->height         = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case 4: vtObject_a->lineDirection  = convertLittleEndianStringUi8(pui8_attributeValue); break;
     default: break;
   }
 }
 #endif
 
 
-    void vtObjectLine_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newValue, bool b_updateObject,
-                                           bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), lineAttributes) : 0, sizeof(iVtObjectLine_s), 1, (IsoAgLib::iVtObject_c*) newValue, b_enableReplaceOfCmd);
+    void vtObjectLine_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->lineAttributes = newValue;
+        setAttribute (1, newValue->getID(), b_enableReplaceOfCmd); //TODO test this !
     }
 
     void vtObjectLine_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), width) : 0, sizeof(iVtObjectLine_s), 2, newValue, b_enableReplaceOfCmd);
+        MACRO_scaleLocalVars
+        MACRO_scaleSKLocalVars
+
+        uint32_t scaledDim = uint32_t( newValue );
+      #ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+        MACRO_scaleDimension( scaledDim )
+      #endif
+
+    	if (b_updateObject)
+    		vtObject_a->width = newValue;
+        setAttribute ( 2, scaledDim, b_enableReplaceOfCmd);
     }
 
     void vtObjectLine_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), height) : 0, sizeof(iVtObjectLine_s), 3, newValue, b_enableReplaceOfCmd);
+        MACRO_scaleLocalVars
+        MACRO_scaleSKLocalVars
+
+        uint32_t scaledDim = uint32_t( newValue );
+      #ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+        MACRO_scaleDimension( scaledDim )
+      #endif
+
+    	if (b_updateObject)
+    		vtObject_a->height = newValue;
+        setAttribute ( 3, scaledDim, b_enableReplaceOfCmd);
     }
 
     void vtObjectLine_c::setLineDirection(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLine_a(), lineDirection) : 0, sizeof(iVtObjectLine_s), 4, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->lineDirection = newValue;
+        setAttribute ( 4, newValue, b_enableReplaceOfCmd);
     }
 
 

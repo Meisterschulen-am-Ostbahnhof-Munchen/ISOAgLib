@@ -104,7 +104,7 @@ vtObjectLineAttributes_c::vtObjectLineAttributes_c(
 
     vtObjectLineAttributes_c::vtObjectLineAttributes_c(
     		vtObjectLineAttributes_c::iVtObjectLineAttributes_s *vtObjectLineAttributesSROM, int ai_multitonInst)
-            : vtObject_c((iVtObject_s*) vtObjectLineAttributesSROM , ai_multitonInst)
+            : vtObject_c(ai_multitonInst)
     		, vtObject_a(vtObjectLineAttributesSROM)
     {}
 
@@ -137,27 +137,24 @@ uint8_t
 vtObjectLineAttributes_c::updateLineColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s), 1);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s));
+    getAttribute(1);
+  return vtObject_a->lineColour;
 }
 
 uint8_t
 vtObjectLineAttributes_c::updateLineWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth), sizeof(iVtObjectLineAttributes_s), 2);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth), sizeof(iVtObjectLineAttributes_s));
+    getAttribute(2);
+  return vtObject_a->lineWidth;
 }
 
 uint16_t
 vtObjectLineAttributes_c::updateLineArt(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s), 3);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s));
+    getAttribute(3);
+  return vtObject_a->lineArt;
 }
 
 void
@@ -165,23 +162,29 @@ vtObjectLineAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 {
   switch (attrID)
   {
-    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour), sizeof(iVtObjectLineAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth), sizeof(iVtObjectLineAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt), sizeof(iVtObjectLineAttributes_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 1: vtObject_a->lineColour = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case 2: vtObject_a->lineWidth  = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case 3: vtObject_a->lineArt    = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     default: break;
   }
 }
 #endif
     void vtObjectLineAttributes_c::setLineColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineColour) : 0, sizeof(iVtObjectLineAttributes_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->lineColour = newValue;
+        setAttribute(1, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectLineAttributes_c::setLineWidth(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineWidth) : 0, sizeof(iVtObjectLineAttributes_s), 2, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->lineWidth = newValue;
+        setAttribute(2, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectLineAttributes_c::setLineArt(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectLineAttributes_a(), lineArt) : 0, sizeof(iVtObjectLineAttributes_s), 3, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->lineArt = newValue;
+        setAttribute(3, newValue, b_enableReplaceOfCmd);
     }
 
 

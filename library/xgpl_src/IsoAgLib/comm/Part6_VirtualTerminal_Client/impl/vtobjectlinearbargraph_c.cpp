@@ -175,7 +175,7 @@ vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(
 }
 
 vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst)
-            : vtObject_c((iVtObject_s*) vtObjectLinearBarGraphSROM , ai_multitonInst)
+            : vtObject_c(ai_multitonInst)
 			, vtObject_a(vtObjectLinearBarGraphSROM)
     {}
 
