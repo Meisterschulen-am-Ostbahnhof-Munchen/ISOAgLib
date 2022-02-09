@@ -106,26 +106,15 @@ typedef uint16_t objRange_t;
     skOffsetX       = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetX(); \
     skOffsetY       = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetY();
 
+
+
+//TODO !! revert this Change !
+
 #define MACRO_scaleSKLocalVars \
     int32_t opSoftKeyWidth,  opSoftKeyHeight, vtSoftKeyWidth, vtSoftKeyHeight, skOffsetX, skOffsetY; \
     int32_t opButtonWidth, opButtonHeight, vtButtonWidth, vtButtonHeight;\
     int32_t factorM, factorD; /* zaehler, nenner */ \
     if (p_parentButtonObject != NULL) { \
-      opButtonWidth  = p_parentButtonObject->getWidth()-8; \
-      opButtonHeight = p_parentButtonObject->getHeight()-8; \
-      vtButtonWidth  = ((opButtonWidth+8) * vtDimension) / opDimension - 8; \
-      vtButtonHeight = ((opButtonHeight+8) * vtDimension) / opDimension - 8; \
-      const int32_t ci_factorX = ((vtButtonWidth << 20) / opButtonWidth); \
-      const int32_t ci_factorY = ((vtButtonHeight << 20) / opButtonHeight); \
-      if (ci_factorX < ci_factorY) { \
-        factorM = vtButtonWidth; \
-        factorD = opButtonWidth; \
-      } else { \
-        factorM = vtButtonHeight; \
-        factorD = opButtonHeight; \
-      } \
-      /* initialize variables which are normally only used in the else branch */ \
-      opSoftKeyWidth = opSoftKeyHeight = vtSoftKeyWidth = vtSoftKeyHeight = skOffsetX = skOffsetY = 0; \
     } else {  \
       MACRO_getSkDimension \
       /* set defaults for button sizes to avoid compiler warning */ \
