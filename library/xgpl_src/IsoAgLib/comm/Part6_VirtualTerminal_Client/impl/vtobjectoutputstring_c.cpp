@@ -446,7 +446,9 @@ vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtO
     }
 
     void vtObjectOutputString_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), options) : 0, sizeof(iVtObjectOutputString_s), 5, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->options = newValue;
+    	setAttribute (5, newValue, b_enableReplaceOfCmd);
     }
 
     void
@@ -457,7 +459,9 @@ vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtO
 
     void
     vtObjectOutputString_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputString_s), 7, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->horizontalJustification = newValue;
+    	setAttribute (7, newValue, b_enableReplaceOfCmd);
     }
 
 

@@ -39,7 +39,9 @@ namespace IsoAgLib { class iVtObjectFontAttributes_c; }
 
 namespace IsoAgLib { class iVtObject_c; }
 namespace IsoAgLib { class iVtObjectString_c; }
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
 namespace IsoAgLib { class iVtObjectPictureGraphic_c; }
+#endif //CONFIG_USE_VTOBJECT_picturegraphic
 
 
 namespace __IsoAgLib {
@@ -85,7 +87,9 @@ public:
 //bool sendCommandChangePriority         (IsoAgLib::iVtObject_c*, int8_t newPriority, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeSize             (IsoAgLib::iVtObject_c*, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeEndPoint         (IsoAgLib::iVtObject_c*, uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_enableReplaceOfCmd=true);
+#ifdef CONFIG_USE_VTOBJECT_fillattributes
   bool sendCommandChangeFillAttributes   (IsoAgLib::iVtObject_c*, uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
+#endif
   bool sendCommandChangeFontAttributes   (IsoAgLib::iVtObject_c*, IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes   (IsoAgLib::iVtObject_c*, IsoAgLib::Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
   bool sendCommandLockUnlockMask         (IsoAgLib::iVtObject_c*, bool b_lockMask, uint16_t ui16_lockTimeOut);
@@ -103,7 +107,9 @@ public:
   bool sendCommandChangeChildLocation    (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, IsoAgLib::Colour newColour,  bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeSize             (uint16_t aui16_objectUid, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
+#ifdef CONFIG_USE_VTOBJECT_fillattributes
   bool sendCommandChangeFillAttributes   (uint16_t aui16_objectUid, uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
+#endif
   bool sendCommandChangeFontAttributes   (uint16_t aui16_objectUid, IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeLineAttributes   (uint16_t aui16_objectUid, IsoAgLib::Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_enableReplaceOfCmd=true);
 

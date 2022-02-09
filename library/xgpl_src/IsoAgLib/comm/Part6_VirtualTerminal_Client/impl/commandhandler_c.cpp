@@ -334,7 +334,7 @@ CommandHandler_c::sendCommandChangeSize (uint16_t aui16_objectUid,uint16_t newWi
                       0xFF, b_enableReplaceOfCmd);
 }
 
-
+#ifdef CONFIG_USE_VTOBJECT_fillattributes
 bool
 CommandHandler_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 {
@@ -345,7 +345,7 @@ CommandHandler_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uin
                       (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
                       0xFF, b_enableReplaceOfCmd);
 }
-
+#endif
 
 bool
 CommandHandler_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
@@ -1572,8 +1572,10 @@ bool CommandHandler_c::sendCommandChangeBackgroundColour (IsoAgLib::iVtObject_c*
 bool CommandHandler_c::sendCommandChangeSize (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd)
 { return sendCommandChangeSize(apc_object->getID(), newWidth, newHeight, b_enableReplaceOfCmd); }
 
+#ifdef CONFIG_USE_VTOBJECT_fillattributes
 bool CommandHandler_c::sendCommandChangeFillAttributes (IsoAgLib::iVtObject_c* apc_object, uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 { return sendCommandChangeFillAttributes(apc_object->getID(), newFillType, newFillColour, newFillPatternObject, b_enableReplaceOfCmd); }
+#endif
 
 bool CommandHandler_c::sendCommandChangeFontAttributes (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
 { return sendCommandChangeFontAttributes( apc_object->getID(), newFontColour, newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd); }

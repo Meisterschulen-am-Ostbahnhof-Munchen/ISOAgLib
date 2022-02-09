@@ -275,20 +275,27 @@ vtObjectFontAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     }
 
     void vtObjectFontAttributes_c::setFontColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour) :
-                                0, sizeof(iVtObjectFontAttributes_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->fontColour = newValue;
+    	setAttribute (1, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectFontAttributes_c::setFontSize(IsoAgLib::Font newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize) : 0, sizeof(iVtObjectFontAttributes_s), 2, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->fontSize = newValue;
+    	setAttribute (2, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectFontAttributes_c::setFontType(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType) : 0, sizeof(iVtObjectFontAttributes_s), 3, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->fontType = newValue;
+    	setAttribute (3, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectFontAttributes_c::setFontStyle(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle) : 0, sizeof(iVtObjectFontAttributes_s), 4, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->fontStyle = newValue;
+    	setAttribute (4, newValue, b_enableReplaceOfCmd);
     }
 
 

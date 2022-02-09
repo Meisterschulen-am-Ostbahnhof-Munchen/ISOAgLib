@@ -106,11 +106,13 @@ iVtClientConnection_c::sendCommandChangeSize             (uint16_t aui16_objectU
   return commandHandler().sendCommandChangeSize(aui16_objectUid, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
+#ifdef CONFIG_USE_VTOBJECT_fillattributes
 bool
 iVtClientConnection_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 {
   return commandHandler().sendCommandChangeFillAttributes(aui16_objectUid, newFillType, newFillColour, newFillPatternObject, b_enableReplaceOfCmd);
 }
+#endif
 
 bool
 iVtClientConnection_c::sendCommandChangeFontAttributes (uint16_t aui16_objectUid, Colour newFontColour, Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd)
