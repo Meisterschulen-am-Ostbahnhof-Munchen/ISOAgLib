@@ -176,8 +176,6 @@ public:
    */
   virtual uint16_t getObjectType() const = 0;
 
-private:
-  iVtObject_s* vtObject_a; //TODO: remove this later !!!
 protected:
 #ifdef CONFIG_USE_VTOBJECT_button
   iVtObjectButton_c* p_parentButtonObject;

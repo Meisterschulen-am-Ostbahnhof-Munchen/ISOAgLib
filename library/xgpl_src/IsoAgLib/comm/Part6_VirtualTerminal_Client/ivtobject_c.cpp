@@ -134,9 +134,8 @@ void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
 	// implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
 	// constructor/functions direct in scope of iVtObject_c
 	iVtObject_c::iVtObject_c()
-	: vtObject_a(NULL)
 #ifdef CONFIG_USE_VTOBJECT_button
-	, p_parentButtonObject(NULL)
+	: p_parentButtonObject(NULL)
 #endif //CONFIG_USE_VTOBJECT_button
 	{
 	s_properties.flags = 0;
