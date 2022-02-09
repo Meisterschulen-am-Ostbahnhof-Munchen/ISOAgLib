@@ -328,8 +328,7 @@ typedef uint16_t objRange_t;
     }
 
 
-#define MACRO_getStructOffset(structPointer,structElement) \
-  ((uint16_t) ((uint8_t*)(&structPointer->structElement) - ((uint8_t*)structPointer)))
+
 
 #define MACRO_streamUi16(msg, value)  \
   (msg)[0] = value & 0xFF;  \
