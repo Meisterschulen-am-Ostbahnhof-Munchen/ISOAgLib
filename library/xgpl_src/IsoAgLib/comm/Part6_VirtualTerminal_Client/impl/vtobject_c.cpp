@@ -36,6 +36,7 @@ namespace __IsoAgLib {
 
 
 vtObject_c::vtObject_c(int ai_multitonInst)
+:iVtObject_c()
 {
   // typical double init is caught in objectpool-class's init-call!
   s_properties.flags &= ~FLAG_STRING_IN_RAM;
