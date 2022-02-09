@@ -180,6 +180,35 @@ PREDEFINED             = ENABLE_MULTIPACKET_VARIANT_FAST_PACKET \
                          USE_TRACTOR_PTO \
                          USE_TRACTOR_GUIDANCE \
                          USE_TIME_GPS \
+                         USE_VTOBJECT_alarmmask \
+                         USE_VTOBJECT_archedbargraph \
+                         USE_VTOBJECT_auxiliaryfunction \
+                         USE_VTOBJECT_auxiliaryinput \
+                         USE_VTOBJECT_button \
+                         USE_VTOBJECT_container \
+                         USE_VTOBJECT_datamask \
+                         USE_VTOBJECT_ellipse \
+                         USE_VTOBJECT_fillattributes \
+                         USE_VTOBJECT_fontattributes \
+                         USE_VTOBJECT_inputboolean \
+                         USE_VTOBJECT_inputlist \
+                         USE_VTOBJECT_inputnumber \
+                         USE_VTOBJECT_inputstring \
+                         USE_VTOBJECT_key \
+                         USE_VTOBJECT_line \
+                         USE_VTOBJECT_linearbargraph \
+                         USE_VTOBJECT_macro \
+                         USE_VTOBJECT_meter \
+                         USE_VTOBJECT_numbervariable \
+                         USE_VTOBJECT_objectpointer \
+                         USE_VTOBJECT_outputnumber \
+                         USE_VTOBJECT_outputstring \
+                         USE_VTOBJECT_polygon \
+                         USE_VTOBJECT_picturegraphic \
+                         USE_VTOBJECT_rectangle \
+                         USE_VTOBJECT_softkeymask \
+                         USE_VTOBJECT_stringvariable \
+                         USE_VTOBJECT_workingset
 EXPAND_AS_DEFINED      = MACRO_SINGLETON_CONTRIBUTION \
                          MACRO_MULTITON_CONTRIBUTION \
                          CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST \

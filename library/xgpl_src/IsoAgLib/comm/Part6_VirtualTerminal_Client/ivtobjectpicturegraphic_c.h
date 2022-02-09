@@ -91,4 +91,4 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif //IVTOBJECTPICTUREGRAPHIC_C_H

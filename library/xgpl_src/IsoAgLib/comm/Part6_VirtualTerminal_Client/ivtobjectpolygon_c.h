@@ -23,6 +23,7 @@
 #include "impl/vtobjectpolygon_c.h"
 
 
+#ifdef USE_VTOBJECT_polygon
 
 namespace IsoAgLib {
 
@@ -87,5 +88,6 @@ public:
 
 } // IsoAgLibb
 
-#endif
+#endif //USE_VTOBJECT_polygon
 
+#endif //IVTOBJECTPOLYGON_C_H

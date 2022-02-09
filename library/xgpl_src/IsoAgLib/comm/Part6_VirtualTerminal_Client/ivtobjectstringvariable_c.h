@@ -22,11 +22,12 @@
 
 #include "impl/vtobjectstringvariable_c.h"
 
+#ifdef USE_VTOBJECT_stringvariable 
 #include "ivtobjectoutputstring_c.h"
 
 #ifdef USE_VT_UNICODE_SUPPORT
 #include "ivtobjectfontattributes_c.h"
-#endif
+#endif //USE_VT_UNICODE_SUPPORT
 
 
 namespace IsoAgLib {
@@ -45,9 +46,11 @@ public:
   void setValueCopyUTF8(const char* newValue, uint8_t aui8_fontType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setValueCopyUTF8(const char* newValue, iVtObjectOutputString_c& arc_ops, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setValueCopyUTF16(const char* newValue, uint16_t length, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-#endif
+#endif //USE_VT_UNICODE_SUPPORT
 
   void setValueRef(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  
+  
   const char* getString();
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectStringVariable_c::updateObjectType(); }
@@ -57,6 +60,6 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_stringvariable
 
-
+#endif //IVTOBJECTSTRINGVARIABLE_C_H

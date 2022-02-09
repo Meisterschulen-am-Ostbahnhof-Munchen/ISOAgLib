@@ -69,6 +69,7 @@ Aux2Functions_c::~Aux2Functions_c()
 
 
 void Aux2Functions_c::loadAssignment() {
+#ifdef USE_VTOBJECT_auxiliaryfunction2
   IsoAgLib::iAux2Assignment_c assigment;
   m_vtConnection.getVtClientDataStorage().loadPreferredAux2Assignment( assigment );
 
@@ -78,7 +79,7 @@ void Aux2Functions_c::loadAssignment() {
       iter->second->addPreferredAssignedInputCandidate( i->input );
     }
   }
-
+#endif
 }
 
 
@@ -86,6 +87,7 @@ void Aux2Functions_c::loadAssignment() {
 bool
 Aux2Functions_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assignments )
 {
+#ifdef USE_VTOBJECT_auxiliaryfunction2
   bool success = true;
 
   if( firstClearAllPAs )
@@ -129,6 +131,11 @@ Aux2Functions_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assi
     sendPreferredAux2Assignments();
 
   return success;
+#else
+  ( void )firstClearAllPAs;
+  ( void )assignments;
+  return false;
+#endif
 }
 
 
@@ -137,6 +144,7 @@ Aux2Functions_c::notifyOnAux2InputStatus(
   const CanPkgExt_c& arc_data, 
   IsoAgLib::iVtClientObjectPool_c& arc_pool )
 {
+#ifdef USE_VTOBJECT_auxiliaryfunction2
   if (mb_learnMode || ((arc_data.getUint8Data(8-1) & 0x3) != 0))
     return; // do not respond to input status messages in learn mode or learn mode bits are set in received message
 
@@ -166,11 +174,16 @@ Aux2Functions_c::notifyOnAux2InputStatus(
       arc_pool.eventAuxFunction2Value (iter->first, cui16_value1, cui16_value2, cui8_operatingState);
     }
   }
+#else
+  (void)arc_data;
+  (void)arc_pool;
+#endif
 }
 
 void
 Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
 {
+#ifdef USE_VTOBJECT_auxiliaryfunction2
   bool b_sendPreferredAssignments = false;
 
   const ecutime_t i32_now = HAL::getTime();
@@ -235,11 +248,15 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
 
   if( b_sendPreferredAssignments )
     sendPreferredAux2Assignments();
+#else
+  (void)arc_data;
+#endif
 }
 
 void
 Aux2Functions_c::objectPoolUploadedSuccessfully()
 {
+#ifdef USE_VTOBJECT_auxiliaryfunction2
   // if we don't have any preferred assignments => send empty preferred assignment msg
   bool b_preferredAssignmentFound = false;
   for (std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
@@ -259,6 +276,7 @@ Aux2Functions_c::objectPoolUploadedSuccessfully()
   { // we have preferred assignments => wait for first input maintenance message
     m_state = State_WaitForFirstInputMaintenanceMessage;
   }
+#endif
 }
 
 uint8_t
@@ -267,6 +285,7 @@ Aux2Functions_c::storeAux2Assignment(
   uint16_t& rui16_functionObjId, 
   IsoAgLib::iVtClientObjectPool_c& arc_pool )
 {
+#ifdef USE_VTOBJECT_auxiliaryfunction2
   const uint16_t ui16_totalstreamsize = arc_stream.getByteTotalSize();
   
   if (ui16_totalstreamsize != 14)
@@ -346,6 +365,13 @@ Aux2Functions_c::storeAux2Assignment(
       return (1<<0); // function object not found.
     }
   }
+
+#else
+  (void)arc_stream;
+  (void)rui16_functionObjId;
+  (void)arc_pool;
+#endif
+
   return 0x00;
 }
 
@@ -353,6 +379,7 @@ Aux2Functions_c::storeAux2Assignment(
 void
 Aux2Functions_c::timeEvent()
 {
+#ifdef USE_VTOBJECT_auxiliaryfunction2
   const ecutime_t i32_now = HAL::getTime();
   ecutime_t next = i32_now + 300;
 
@@ -387,12 +414,14 @@ Aux2Functions_c::timeEvent()
     m_state = State_Ready;
     sendPreferredAux2Assignments();
   }
+#endif
 }
 
 
 void
 Aux2Functions_c::sendPreferredAux2Assignments()
 {
+#ifdef USE_VTOBJECT_auxiliaryfunction2
   if( m_aux2Function.empty() || ( m_state != State_Ready) )
     return;
 
@@ -461,6 +490,7 @@ Aux2Functions_c::sendPreferredAux2Assignments()
     msc_tempSendUpload.vec_uploadBuffer.push_back( 0xFF );
   
   ( void )m_vtConnection.commandHandler().queueOrReplace (msc_tempSendUpload, true /* b_enableReplaceOfCmd */);
+#endif
 }
 
     std::map<uint16_t, vtObjectAuxiliaryFunction2_c *> &Aux2Functions_c::getObjects() { return m_aux2Function; }
