@@ -53,6 +53,8 @@ public:
 
   iVtObjectButton_s* get_vtObjectButton_a();
 
+  vtObjectButton_c() = delete;
+
   vtObjectButton_c(
     int ai_multitonInst,
 	IsoAgLib::ObjectID ID,

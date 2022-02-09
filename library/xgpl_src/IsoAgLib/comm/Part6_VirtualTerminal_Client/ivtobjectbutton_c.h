@@ -34,6 +34,8 @@ public:
   static uint16_t objectType();
 
 
+  iVtObjectButton_c() = delete;
+
   explicit iVtObjectButton_c(
 		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
