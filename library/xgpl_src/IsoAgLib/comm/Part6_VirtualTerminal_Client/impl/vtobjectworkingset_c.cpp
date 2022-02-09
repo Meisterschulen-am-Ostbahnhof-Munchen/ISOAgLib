@@ -111,7 +111,7 @@ vtObjectWorkingSet_c::vtObjectWorkingSet_c(
 }
 
 vtObjectWorkingSet_c::vtObjectWorkingSet_c(iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst)
-	: vtObject_c((iVtObject_s*) vtObjectWorkingSetSROM , ai_multitonInst)
+	: vtObject_c(ai_multitonInst)
 	, vtObject_a(vtObjectWorkingSetSROM)
 
 {}

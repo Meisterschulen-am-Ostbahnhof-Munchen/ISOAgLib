@@ -468,7 +468,7 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 #endif
     vtObjectPictureGraphic_c::vtObjectPictureGraphic_c(
     		vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s *vtObjectPictureGraphicSROM, int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectPictureGraphicSROM , ai_multitonInst)
+            :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectPictureGraphicSROM)
     {}
 

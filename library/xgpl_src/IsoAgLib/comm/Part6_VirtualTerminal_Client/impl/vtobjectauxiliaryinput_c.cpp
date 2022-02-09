@@ -111,7 +111,7 @@ vtObjectAuxiliaryInput_c::setOriginSKM(bool /* b_SKM */)
 
     vtObjectAuxiliaryInput_c::vtObjectAuxiliaryInput_c(
             iVtObjectAuxiliaryInput_s *vtObjectAuxiliaryInputSROM, int ai_multitonInst)
-            :vtObject_c((iVtObject_s *)vtObjectAuxiliaryInputSROM , ai_multitonInst)
+            :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectAuxiliaryInputSROM)
     {}
 

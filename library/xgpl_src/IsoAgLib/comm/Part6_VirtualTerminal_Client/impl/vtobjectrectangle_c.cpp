@@ -198,7 +198,7 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 #endif
     vtObjectRectangle_c::vtObjectRectangle_c(iVtObjectRectangle_s *vtObjectRectangleSROM,
                                              int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectRectangleSROM , ai_multitonInst)
+            :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectRectangleSROM)
     {}
 

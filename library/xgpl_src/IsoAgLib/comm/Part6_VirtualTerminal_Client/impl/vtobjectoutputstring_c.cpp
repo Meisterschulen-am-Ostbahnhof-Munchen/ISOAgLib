@@ -171,7 +171,7 @@ vtObjectOutputString_c::vtObjectOutputString_c(
 }
 
 vtObjectOutputString_c::vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
-: iVtObjectString_c((iVtObjectString_s*)vtObjectOutputStringSROM , ai_multitonInst)
+: iVtObjectString_c(ai_multitonInst)
 , vtObject_a(vtObjectOutputStringSROM)
 {}
 

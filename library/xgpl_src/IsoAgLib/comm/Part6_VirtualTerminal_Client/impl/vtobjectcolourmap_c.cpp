@@ -120,7 +120,7 @@ vtObjectColourMap_c::iVtObjectColourMap_s *vtObjectColourMap_c::get_vtObjectColo
 
     vtObjectColourMap_c::vtObjectColourMap_c(vtObjectColourMap_c::iVtObjectColourMap_s *vtObjectColourMapSROM,
                                              int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectColourMapSROM , ai_multitonInst)
+            :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectColourMapSROM)
     {}
 

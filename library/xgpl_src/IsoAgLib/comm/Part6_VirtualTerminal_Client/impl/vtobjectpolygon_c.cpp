@@ -212,7 +212,7 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 #endif
     vtObjectPolygon_c::vtObjectPolygon_c(iVtObjectPolygon_s *vtObjectPolygonSROM,
                                          int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectPolygonSROM , ai_multitonInst)
+            :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectPolygonSROM)
     {}
 

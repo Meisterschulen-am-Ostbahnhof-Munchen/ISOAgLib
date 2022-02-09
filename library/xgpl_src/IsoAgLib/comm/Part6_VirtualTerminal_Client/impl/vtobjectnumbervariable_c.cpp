@@ -111,7 +111,7 @@ vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*p
 
     vtObjectNumberVariable_c::vtObjectNumberVariable_c(
     		vtObjectNumberVariable_c::iVtObjectNumberVariable_s *vtObjectNumberVariableSROM, int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectNumberVariableSROM , ai_multitonInst)
+            :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectNumberVariableSROM)
     {}
 

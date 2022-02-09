@@ -88,7 +88,7 @@ vtObjectMacro_c::fitTerminal() const
 
     vtObjectMacro_c::vtObjectMacro_c(vtObjectMacro_c::iVtObjectMacro_s *vtObjectMacroSROM,
                                      int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectMacroSROM , ai_multitonInst)
+            :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectMacroSROM)
     {}
 

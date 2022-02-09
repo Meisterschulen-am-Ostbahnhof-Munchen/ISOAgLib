@@ -33,13 +33,12 @@ public:
 
 
   iVtObjectMask_c(const iVtObjectMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
-  : vtObject_c((iVtObject_s*) vtObjectDataMaskSROM , ai_multitonInst)
+  : vtObject_c(ai_multitonInst)
   {}
 
-  virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask,
-                              bool b_updateObject= false, bool b_enableReplaceOfCmd=false) = 0;
+  virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) = 0;
 
-  virtual ~iVtObjectMask_c() {}
+  virtual ~iVtObjectMask_c() = default;
 };
 
 } // __IsoAgLib

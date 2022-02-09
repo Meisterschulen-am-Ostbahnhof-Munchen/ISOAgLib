@@ -136,7 +136,7 @@ vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValu
 }
 #endif
     vtObjectKey_c::vtObjectKey_c(vtObjectKey_c::iVtObjectKey_s *vtObjectKeySROM, int ai_multitonInst)
-            :vtObject_c((iVtObject_s*) vtObjectKeySROM , ai_multitonInst)
+            :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectKeySROM)
     {}
 

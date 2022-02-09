@@ -180,7 +180,7 @@ vtObjectStringVariable_c::getString()
 
     vtObjectStringVariable_c::vtObjectStringVariable_c(
             vtObjectStringVariable_c::iVtObjectStringVariable_s *vtObjectStringVariableSROM, int ai_multitonInst)
-            :iVtObjectString_c((iVtObjectString_s*) vtObjectStringVariableSROM , ai_multitonInst)
+            :iVtObjectString_c(ai_multitonInst)
     		,vtObject_a(vtObjectStringVariableSROM)
     {}
 
