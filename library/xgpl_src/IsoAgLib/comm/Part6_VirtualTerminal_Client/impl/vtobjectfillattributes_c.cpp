@@ -175,4 +175,4 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 } // __IsoAgLib
 
-#endif CONFIG_USE_VTOBJECT_fillattributes
+#endif //CONFIG_USE_VTOBJECT_fillattributes

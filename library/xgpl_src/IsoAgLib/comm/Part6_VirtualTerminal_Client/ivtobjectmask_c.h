@@ -30,7 +30,7 @@ class iVtObjectMask_c : public __IsoAgLib::vtObject_c
 public:
 
 
-
+  iVtObjectMask_c() = delete;
 
   iVtObjectMask_c(const iVtObjectMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
   : vtObject_c(ai_multitonInst)

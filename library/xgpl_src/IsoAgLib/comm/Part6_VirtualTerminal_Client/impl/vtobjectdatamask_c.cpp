@@ -104,9 +104,8 @@ vtObjectDataMask_c::vtObjectDataMask_c(iVtObjectDataMask_s *vtObjectDataMaskSROM
 {
 }
 
-vtObjectDataMask_c::iVtObjectDataMask_s* vtObjectDataMask_c::get_vtObjectDataMask_a() {
-	return vtObject_a;
-}
+
+vtObjectDataMask_c::~vtObjectDataMask_c() = default;
 
 vtObjectDataMask_c::vtObjectDataMask_c(
 		  int ai_multitonInst

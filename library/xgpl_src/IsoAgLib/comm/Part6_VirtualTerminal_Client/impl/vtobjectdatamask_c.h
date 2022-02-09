@@ -20,6 +20,7 @@
 #ifndef VTOBJECTDATAMASK_C_H
 #define VTOBJECTDATAMASK_C_H
 
+#include <memory> // PImpl
 #include "../ivtobjectmask_c.h"
 #include "../ivtobjectsoftkeymask_c.h"
 #include "vtclient_c.h"
@@ -33,21 +34,20 @@ private:
 	struct iVtObjectDataMask_s;
 
 	// Pointer to the internal implementation
-	iVtObjectDataMask_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectDataMask_s> vtObject_a;
+	std::unique_ptr<iVtObjectDataMask_s> vtObject_a;
 
 
 
 public:
-  virtual ~vtObjectDataMask_c() {}
+  virtual ~vtObjectDataMask_c();
 
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  iVtObjectDataMask_s* get_vtObjectDataMask_a();
+
+  vtObjectDataMask_c() = delete;
 
   vtObjectDataMask_c(
 	  int ai_multitonInst
