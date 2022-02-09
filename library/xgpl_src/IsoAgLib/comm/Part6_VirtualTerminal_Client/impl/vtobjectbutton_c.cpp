@@ -59,23 +59,30 @@ struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_
 		IsoAgLib::Colour backgroundColour,
 		IsoAgLib::Colour borderColour,
   	    uint8_t keyCode,
-  	    uint8_t options)
-  : iVtObject_s(ID)
-  , iVtObjectObject_s(ID)
-  , iVtObjectwMacro_s(ID)
-  , width(width)
-  , height(height)
-  , backgroundColour(backgroundColour)
-  , borderColour(borderColour)
-  , keyCode(keyCode)
-  , options(options)
-  {}
+  	    uint8_t options);
 };
 
+    vtObjectButton_c::iVtObjectButton_s::iVtObjectButton_s(
+            IsoAgLib::ObjectID ID,
+            uint16_t width,
+            uint16_t height,
+            IsoAgLib::Colour backgroundColour,
+            IsoAgLib::Colour borderColour,
+            uint8_t keyCode,
+            uint8_t options)
+            : iVtObject_s(ID)
+            , iVtObjectObject_s(ID)
+            , iVtObjectwMacro_s(ID)
+            , width(width)
+            , height(height)
+            , backgroundColour(backgroundColour)
+            , borderColour(borderColour)
+            , keyCode(keyCode)
+            , options(options)
+    {}
 
 
-
-int16_t
+    int16_t
 vtObjectButton_c::stream(uint8_t* destMemory,
                           uint16_t maxBytes,
                           objRange_t sourceOffset)
