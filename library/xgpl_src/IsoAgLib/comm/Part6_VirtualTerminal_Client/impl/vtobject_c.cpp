@@ -37,7 +37,7 @@ namespace __IsoAgLib {
 vtObject_c::vtObject_c(iVtObject_s* aps_vtObject_a , int ai_multitonInst)
 {
   // typical double init is caught in objectpool-class's init-call!
-  vtObject_a = aps_vtObject_a;
+  //vtObject_a = aps_vtObject_a;
   s_properties.flags &= ~FLAG_STRING_IN_RAM;
   s_properties.flags &= ~FLAG_OBJECTS2FOLLOW_IN_RAM;
   // NOTE: If objects were modified using b_updateObject==true,
@@ -92,132 +92,6 @@ vtObject_c::getAttribute(uint8_t attrID, bool b_enableReplaceOfCmd)
 }
 #endif
 
-
-
-
-// //////////////////////////////// saveValue(8/16/32)
-void
-vtObject_c::saveValue8 (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_newValue)
-{
-  ((uint8_t *)vtObject_a) [ui16_structOffset] = ui8_newValue;
-}
-
-void
-vtObject_c::saveValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint16_t ui16_newValue)
-{
-  * ((uint16_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = ui16_newValue;
-}
-
-void
-vtObject_c::saveValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint32_t ui32_newValue)
-{
-  * ((uint32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = ui32_newValue;
-}
-
-void
-vtObject_c::saveSignedValue8 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int8_t i8_newValue)
-{
-  ((int8_t *)vtObject_a) [ui16_structOffset] = i8_newValue;
-}
-
-void
-vtObject_c::saveSignedValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int16_t i16_newValue)
-{
-  * ((int16_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = i16_newValue;
-}
-
-void
-vtObject_c::saveSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, int32_t i32_newValue)
-{
-  * ((int32_t*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = i32_newValue;
-}
-
-void
-vtObject_c::saveValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, float f_newValue)
-{
-  * ((float*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = f_newValue;
-}
-
-void
-vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iVtObject_c* const p_newValue)
-{
-  * ((const IsoAgLib::iVtObject_c**) (((uint8_t *)vtObject_a)+ui16_structOffset)) = p_newValue;
-}
-
-void
-vtObject_c::saveValueISOName (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, const IsoAgLib::iIsoName_c& ar_newIsoName)
-{
-  *((IsoAgLib::iIsoName_c*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = ar_newIsoName;
-}
-
-void
-vtObject_c::saveValueBool (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, bool b_newValue)
-{
-  *((bool*) (((uint8_t *)vtObject_a)+ui16_structOffset)) = b_newValue;
-}
-
-
-// //////////////////////////////// saveValue(8/16/32)SetAttribute
-void
-vtObject_c::saveValue8SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t ui8_newValueSend, bool b_enableReplaceOfCmd) {
-  if (ui16_structOffset != 0) saveValue8 (ui16_structOffset, ui16_structLen, ui8_newValue);
-  setAttribute (ui8_ind, (uint32_t) ui8_newValueSend, b_enableReplaceOfCmd);
-}
-
-void
-vtObject_c::saveValue16SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd) {
-  if (ui16_structOffset != 0) saveValue16 (ui16_structOffset, ui16_structLen, ui16_newValue);
-  setAttribute (ui8_ind, (uint32_t) ui16_newValue, b_enableReplaceOfCmd);
-}
-
-void
-vtObject_c::saveValue16SetAttributeScaled (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd) {
-  MACRO_scaleLocalVars
-  MACRO_scaleSKLocalVars
-
-  uint32_t scaledDim = uint32_t( ui16_newValue );
-#ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
-  MACRO_scaleDimension( scaledDim )
-#endif
-
-  if (ui16_structOffset != 0) saveValue16 (ui16_structOffset, ui16_structLen, ui16_newValue);
-  setAttribute (ui8_ind, scaledDim, b_enableReplaceOfCmd);
-}
-
-void
-vtObject_c::scaleSize( uint16_t &width, uint16_t &height ) const
-{
-#ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
-  MACRO_scaleLocalVars
-  MACRO_scaleSKLocalVars
-
-  uint32_t scaledWidth = uint32_t( width );
-  uint32_t scaledHeight = uint32_t( height );
-  MACRO_scaleSizeI32(scaledWidth,scaledHeight)
-  width = uint16_t( scaledWidth );
-  height = uint16_t( scaledHeight );
-#else
-  ;
-#endif
-}
-
-void
-vtObject_c::saveValue32SetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint32_t ui32_newValue, bool b_enableReplaceOfCmd) {
-  if (ui16_structOffset != 0) saveValue32 (ui16_structOffset, ui16_structLen, ui32_newValue);
-  setAttribute (ui8_ind, ui32_newValue, b_enableReplaceOfCmd);
-}
-
-void
-vtObject_c::saveValueFloatSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, float f_newValue, bool b_enableReplaceOfCmd) {
-  if (ui16_structOffset != 0) saveValueFloat (ui16_structOffset, ui16_structLen, f_newValue);
-  setAttributeFloat (ui8_ind, f_newValue, b_enableReplaceOfCmd);
-}
-
-void
-vtObject_c::saveValuePSetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, IsoAgLib::iVtObject_c* p_newValue, bool b_enableReplaceOfCmd) {
-  if (ui16_structOffset != 0) saveValueP (ui16_structOffset, ui16_structLen, p_newValue);
-  setAttribute (ui8_ind, (p_newValue == NULL) ? 65535 : p_newValue->getID(), b_enableReplaceOfCmd);
-}
 
 
 
