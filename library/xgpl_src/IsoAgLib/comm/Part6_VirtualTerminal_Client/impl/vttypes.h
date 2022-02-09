@@ -114,8 +114,6 @@ typedef uint16_t objRange_t;
     int32_t opSoftKeyWidth,  opSoftKeyHeight, vtSoftKeyWidth, vtSoftKeyHeight, skOffsetX, skOffsetY; \
     int32_t opButtonWidth, opButtonHeight, vtButtonWidth, vtButtonHeight;\
     int32_t factorM, factorD; /* zaehler, nenner */ \
-    if (p_parentButtonObject != NULL) { \
-    } else {  \
       MACRO_getSkDimension \
       /* set defaults for button sizes to avoid compiler warning */ \
       opButtonWidth = opButtonHeight = vtButtonWidth = vtButtonHeight = 0; \
@@ -128,7 +126,6 @@ typedef uint16_t objRange_t;
         factorM = vtSoftKeyHeight; \
         factorD = opSoftKeyHeight; \
       } \
-    }
 
 #define MACRO_scaleDimension(dim) \
  { \
