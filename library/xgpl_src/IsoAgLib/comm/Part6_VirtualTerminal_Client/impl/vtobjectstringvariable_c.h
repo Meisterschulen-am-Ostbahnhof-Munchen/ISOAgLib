@@ -73,7 +73,7 @@ public:
   uint8_t updateObjectType() const { return 22; }
   */
 
-  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/);;
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/);
 #endif
 };
 

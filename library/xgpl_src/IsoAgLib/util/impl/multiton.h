@@ -79,8 +79,8 @@ public:
 	AbstractClientBase( const AbstractClientBase& acrc_src );
 
   virtual ~AbstractClientBase() = 0; //this makes the Class abstract
-  int getMultitonInst() const;;
-  void setMultitonInst( int ai_instance );;
+  int getMultitonInst() const;
+  void setMultitonInst( int ai_instance );
 protected:
   const AbstractClientBase& operator=( const AbstractClientBase& acrc_src );;
 private:

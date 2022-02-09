@@ -53,7 +53,7 @@ public:
 
   // special functions for streamer. Attention: Will allocate dynamic streamer object!
   void setStreamer(const char* apc_newValue, uint16_t a_ID, uint16_t aui16_strLenToSend);
-  void unsetStreamer();;
+  void unsetStreamer();
 
   SendUpload_c (const SendUpload_c& r_source);
 
