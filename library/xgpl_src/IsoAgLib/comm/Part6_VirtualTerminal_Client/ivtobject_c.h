@@ -53,7 +53,7 @@ public:
     static ObjectID nextID;
     explicit iVtObject_s() = delete;
     explicit iVtObject_s(ObjectID ID);
-    virtual ~iVtObject_s() = default;
+    virtual ~iVtObject_s() = 0;
   };
 
   // the "virtual" here is really important, avoid https://en.wikipedia.org/wiki/Multiple_inheritance#The_diamond_problem

@@ -67,6 +67,8 @@ public:
 
   vtObjectButton_c(iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
 
+  virtual ~vtObjectButton_c() = default;
+
 
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
 

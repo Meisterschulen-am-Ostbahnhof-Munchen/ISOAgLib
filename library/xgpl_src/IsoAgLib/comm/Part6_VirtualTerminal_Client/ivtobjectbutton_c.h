@@ -47,6 +47,7 @@ public:
   	    uint8_t options = 0
   		);
 
+  virtual ~iVtObjectButton_c() = default;
 
   bool v4enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   bool v4disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

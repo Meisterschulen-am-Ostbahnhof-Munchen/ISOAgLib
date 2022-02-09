@@ -50,12 +50,13 @@ void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
 }
 #endif //CONFIG_USE_VTOBJECT_button
 
-	iVtObject_c::iVtObject_s::iVtObject_s(
-			ObjectID ID)
+	iVtObject_c::iVtObject_s::iVtObject_s(ObjectID ID)
     {
         this->ID = ID == autoID ? nextID : ID;
         nextID = (ObjectID)((uint16_t)nextID + 1);
     }
+
+	iVtObject_c::iVtObject_s::~iVtObject_s() = default;
 
 
 	iVtObject_c::iVtObjectObject_s::iVtObjectObject_s(
