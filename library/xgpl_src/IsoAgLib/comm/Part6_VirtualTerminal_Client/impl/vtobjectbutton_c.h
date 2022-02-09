@@ -47,8 +47,8 @@ private:
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
   vtObjectButton_c() = delete;
 
@@ -64,7 +64,7 @@ public:
 
   vtObjectButton_c(iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
 
-  virtual ~vtObjectButton_c();
+  ~vtObjectButton_c() override;
 
 
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);

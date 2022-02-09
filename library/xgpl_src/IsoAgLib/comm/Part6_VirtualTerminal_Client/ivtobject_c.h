@@ -149,7 +149,7 @@ public:
   // Constructor
   iVtObject_c();
 
-  virtual ~iVtObject_c() = 0; //pure virtual
+  ~iVtObject_c() override = 0; //pure virtual
 
   //  Operation: getID
   virtual IsoAgLib::ObjectID getID() const = 0; //pure virtual

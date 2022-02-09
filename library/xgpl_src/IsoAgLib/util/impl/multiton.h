@@ -75,16 +75,14 @@
  */
 class AbstractClientBase {
 public:
-	AbstractClientBase( int ai_multitonInst = 0 ) : mi_multitonInst(ai_multitonInst){};
-	AbstractClientBase( const AbstractClientBase& acrc_src )
-    : mi_multitonInst(acrc_src.mi_multitonInst) { };
+	explicit AbstractClientBase( int ai_multitonInst = 0 );
+	AbstractClientBase( const AbstractClientBase& acrc_src );
 
   virtual ~AbstractClientBase() = 0; //this makes the Class abstract
-  int getMultitonInst() const { return mi_multitonInst;};
-  void setMultitonInst( int ai_instance ) { mi_multitonInst = ai_instance;};
+  int getMultitonInst() const;;
+  void setMultitonInst( int ai_instance );;
 protected:
-  const AbstractClientBase& operator=( const AbstractClientBase& acrc_src )
-  { mi_multitonInst = acrc_src.mi_multitonInst; return *this;};
+  const AbstractClientBase& operator=( const AbstractClientBase& acrc_src );;
 private:
   int mi_multitonInst;
 };
@@ -94,8 +92,8 @@ private:
 
 class ClientBase : public virtual AbstractClientBase{
 public:
-	ClientBase( int ai_multitonInst = 0 ) : AbstractClientBase(ai_multitonInst){};
-	virtual ~ClientBase() = default; //this makes the Class non-abstract
+	explicit ClientBase( int ai_multitonInst = 0 );
+	~ClientBase() override; //this makes the Class non-abstract
 };
 
 /** PROP_SINGLETON defines the number of proprietary busses to be supported.

@@ -31,8 +31,8 @@ namespace __IsoAgLib {
 class vtObject_c : public virtual IsoAgLib::iVtObject_c
 {
 public:
-  vtObject_c(int ai_multitonInst);
-  virtual ~vtObject_c() = 0;
+  explicit vtObject_c(int ai_multitonInst);
+  ~vtObject_c() override = 0;
 
   virtual int16_t stream(uint8_t* destMemory,
                          uint16_t maxBytes,
