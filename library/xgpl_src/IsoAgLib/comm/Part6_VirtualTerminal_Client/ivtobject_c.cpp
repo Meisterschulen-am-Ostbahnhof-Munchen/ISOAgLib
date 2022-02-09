@@ -40,12 +40,15 @@ iVtObject_c::setOriginSKM(bool b_SKM)
 	/* Macro ObjID must be 0-255 !! */
 	ObjectID iVtObject_c::iVtObject_s::nextID = firstID;
 
+
+#ifdef CONFIG_USE_VTOBJECT_button
 /// Operation : setOriginBTN
 /// @param p_btn: false if this object is not included in a button.
 void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
 {
   if (p_btn) p_parentButtonObject = p_btn;
 }
+#endif //CONFIG_USE_VTOBJECT_button
 
 	iVtObject_c::iVtObject_s::iVtObject_s(
 			ObjectID ID)
@@ -130,9 +133,11 @@ void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
 
 	// implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
 	// constructor/functions direct in scope of iVtObject_c
-	iVtObject_c::iVtObject_c() :
-	vtObject_a(NULL),
-	p_parentButtonObject(NULL)
+	iVtObject_c::iVtObject_c()
+	: vtObject_a(NULL)
+#ifdef CONFIG_USE_VTOBJECT_button
+	, p_parentButtonObject(NULL)
+#endif //CONFIG_USE_VTOBJECT_button
 	{
 	s_properties.flags = 0;
 	s_properties.clientId = 0;

@@ -23,6 +23,9 @@
 #include "impl/vtobjectbutton_c.h"
 
 
+#ifdef CONFIG_USE_VTOBJECT_button
+
+
 namespace IsoAgLib {
 
 class iVtObjectButton_c : public __IsoAgLib::vtObjectButton_c
@@ -90,4 +93,6 @@ public:
 
 } // IsoAgLib
 
-#endif // IVTOBJECTBUTTON_C_H
+#endif //CONFIG_USE_VTOBJECT_button
+
+#endif //IVTOBJECTBUTTON_C_H

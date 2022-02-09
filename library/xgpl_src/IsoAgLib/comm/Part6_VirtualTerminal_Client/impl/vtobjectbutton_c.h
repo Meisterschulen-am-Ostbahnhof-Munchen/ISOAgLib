@@ -20,6 +20,11 @@
 #ifndef VTOBJECTBUTTON_C_H
 #define VTOBJECTBUTTON_C_H
 
+#include <IsoAgLib/isoaglib_config.h>
+
+
+#ifdef CONFIG_USE_VTOBJECT_button
+
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -89,7 +94,9 @@ public:
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
+#ifdef CONFIG_USE_VTOBJECT_button
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
+#endif //CONFIG_USE_VTOBJECT_button
 
     virtual void v4setOptions (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -117,4 +124,6 @@ public:
 
 } // __IsoAgLib
 
-#endif
+#endif //CONFIG_USE_VTOBJECT_button
+
+#endif //VTOBJECTBUTTON_C_H

@@ -164,7 +164,10 @@ public:
   void omitFromUpload();
 
   virtual void setOriginSKM(bool b_SKM);
+
+#ifdef CONFIG_USE_VTOBJECT_button
   virtual void setOriginBTN(iVtObjectButton_c* p_btn);
+#endif //CONFIG_USE_VTOBJECT_button
 
   void setClientID (uint8_t ui8_clientID);
 
@@ -176,7 +179,9 @@ public:
 protected:
   iVtObject_s* vtObject_a; //TODO: remove this later !!!
 protected:
+#ifdef CONFIG_USE_VTOBJECT_button
   iVtObjectButton_c* p_parentButtonObject;
+#endif //CONFIG_USE_VTOBJECT_button
 
   struct {
     uint8_t flags:5;

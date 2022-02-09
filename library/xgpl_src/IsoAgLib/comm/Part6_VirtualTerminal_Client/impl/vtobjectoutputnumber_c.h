@@ -59,7 +59,9 @@ public:
   uint32_t fitTerminal() const;
   virtual void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
   void setOriginSKM(bool b_SKM);
+#ifdef CONFIG_USE_VTOBJECT_button
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
+#endif //CONFIG_USE_VTOBJECT_button
 
     // //////////////////////////////////
   // All special Attribute-Set methods

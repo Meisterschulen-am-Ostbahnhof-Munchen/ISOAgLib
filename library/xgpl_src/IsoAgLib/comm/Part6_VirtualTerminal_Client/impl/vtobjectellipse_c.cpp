@@ -28,6 +28,8 @@
 #include "vtclient_c.h"
 
 
+
+
 namespace __IsoAgLib {
 
 
@@ -295,4 +297,4 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 
 } // __IsoAgLib
 
-#endif
+#endif //CONFIG_USE_VTOBJECT_ellipse

@@ -241,11 +241,11 @@ typedef uint16_t objRange_t;
       curBytes += 6; \
       sourceOffset += 6; \
     }
-
+	  //TODO !! revert this Change !
 #define MACRO_streamObjectXYcenteredInButton(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
-    int16_t centerX = (vtButtonWidth -  ((opButtonWidth *factorM)/factorD)) >>1; \
-    int16_t centerY = (vtButtonHeight - ((opButtonHeight*factorM)/factorD)) >>1; \
+    int16_t centerX = 0; \
+    int16_t centerY = 0; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*vtObject_a->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       MACRO_getBlockfont(nrObjectXY)  \
       /* write out an objectX_y pair */ \

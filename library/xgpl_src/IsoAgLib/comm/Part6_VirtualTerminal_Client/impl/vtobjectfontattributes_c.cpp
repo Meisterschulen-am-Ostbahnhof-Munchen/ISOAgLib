@@ -155,7 +155,14 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
 
   uint32_t width, height;
   uint8_t wIndex=0, hIndex=0;
-  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) {
+  if (
+		  (s_properties.flags & FLAG_ORIGIN_SKM)
+#ifdef CONFIG_USE_VTOBJECT_button
+		  or
+		  p_parentButtonObject
+#endif //CONFIG_USE_VTOBJECT_button
+	 )
+  {
     width = (((uint32_t) factorM * (marr_font2PixelDimensionTableW [mui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
     height= (((uint32_t) factorM * (marr_font2PixelDimensionTableH [mui8_fontSizeScaled]) <<10)/factorD); // (8 bit shifted fixed floating)
   } else {

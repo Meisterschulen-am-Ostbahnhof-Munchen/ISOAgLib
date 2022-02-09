@@ -193,6 +193,7 @@ vtObjectOutputString_c::setOriginSKM(bool b_SKM)
   }
 }
 
+#ifdef CONFIG_USE_VTOBJECT_button
 void
 vtObjectOutputString_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 {
@@ -202,6 +203,7 @@ vtObjectOutputString_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
     vtObject_a->fontAttributes->setOriginBTN (p_btn);
   }
 }
+#endif //CONFIG_USE_VTOBJECT_button
 
 #ifdef USE_VT_UNICODE_SUPPORT
 void

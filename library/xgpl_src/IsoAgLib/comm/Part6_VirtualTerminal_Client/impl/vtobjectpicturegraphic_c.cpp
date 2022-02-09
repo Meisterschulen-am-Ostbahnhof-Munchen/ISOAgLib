@@ -165,10 +165,10 @@ struct vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
         break; \
       } \
     }
-
+//TODO !! revert this Change !
 #define MACRO_calculateRequestedSize \
   uint16_t width; \
-  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
+  if ((s_properties.flags & FLAG_ORIGIN_SKM)) { \
     width = (((uint32_t) vtObject_a->width * factorM)/factorD); \
   } else { \
     width = (((uint32_t) vtObject_a->width * vtDimension) /opDimension); \

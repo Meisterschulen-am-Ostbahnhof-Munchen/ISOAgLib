@@ -9,6 +9,8 @@
 
 #include "ivtobjectbutton_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_button
+
 namespace IsoAgLib {
 
 
@@ -122,3 +124,5 @@ namespace IsoAgLib {
     uint16_t iVtObjectButton_c::objectType() { return VT_OBJECT_TYPE_BUTTON; }
 
 }
+
+#endif //CONFIG_USE_VTOBJECT_button

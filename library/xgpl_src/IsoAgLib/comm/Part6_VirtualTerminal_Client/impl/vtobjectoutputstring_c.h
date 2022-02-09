@@ -71,7 +71,9 @@ public:
   ~vtObjectOutputString_c() = default;
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);
+#ifdef CONFIG_USE_VTOBJECT_button
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
+#endif //CONFIG_USE_VTOBJECT_button
   const char* getString();
   virtual void setValueCopy    (char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT

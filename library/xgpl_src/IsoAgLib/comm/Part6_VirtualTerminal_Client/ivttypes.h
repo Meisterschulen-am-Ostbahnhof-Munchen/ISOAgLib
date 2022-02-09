@@ -102,7 +102,9 @@ class iVtObjectAlarmMask_c;
 class iVtObjectContainer_c;
 class iVtObjectSoftKeyMask_c;
 class iVtObjectKey_c;
-class iVtObjectButton_c;
+#ifdef CONFIG_USE_VTOBJECT_button
+	class iVtObjectButton_c;
+#endif //CONFIG_USE_VTOBJECT_button
 class iVtObjectInputBoolean_c;
 class iVtObjectInputString_c;
 class iVtObjectInputNumber_c;

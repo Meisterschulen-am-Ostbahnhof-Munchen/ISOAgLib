@@ -20,6 +20,7 @@
 
 #include "vtobjectbutton_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_button
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -31,7 +32,6 @@
 namespace __IsoAgLib {
 
 
-
 struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
@@ -41,8 +41,8 @@ struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_
   uint8_t options;
   explicit iVtObjectButton_s(
 		IsoAgLib::ObjectID ID,
-  	    uint16_t width,
-  	    uint16_t height,
+		uint16_t width,
+		uint16_t height,
 		IsoAgLib::Colour backgroundColour,
 		IsoAgLib::Colour borderColour,
   	    uint8_t keyCode,
@@ -61,10 +61,11 @@ struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_
 
 
 
+
 int16_t
 vtObjectButton_c::stream(uint8_t* destMemory,
-                         uint16_t maxBytes,
-                         objRange_t sourceOffset)
+                          uint16_t maxBytes,
+                          objRange_t sourceOffset)
 {
     uint16_t curBytes=0; /* current bytes written */;
     MACRO_scaleLocalVars;
@@ -172,6 +173,7 @@ vtObjectButton_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16
   return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd, NoOffset);
 }
 
+
 void
 vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
 {
@@ -180,6 +182,7 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
     vtObject_a->objectsToFollow[i].vtObject->setOriginBTN (p_parentButtonObject);
   }
 }
+
 
 
     void vtObjectButton_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -318,3 +321,5 @@ void vtObjectButton_c::Append(iVtObject_c * const vtObject, int16_t x, int16_t y
     }
 
 } // __IsoAgLib
+
+#endif //CONFIG_USE_VTOBJECT_button
