@@ -22,7 +22,7 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
-
+#ifdef USE_VTOBJECT_alarmmask
 #include "../ivtobjectmask_c.h"
 #include "../ivtobjectsoftkeymask_c.h"
 #include "vtclient_c.h"
@@ -76,6 +76,7 @@ public:
   uint16_t updateSoftKeyMask(bool b_SendRequest=false);
   uint8_t updatePriority(bool b_SendRequest=false);
   uint8_t updateAcousticSignal(bool b_SendRequest=false);
+
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };
@@ -84,3 +85,4 @@ public:
 
 #endif
 
+#endif

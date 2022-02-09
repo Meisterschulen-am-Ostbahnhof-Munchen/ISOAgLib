@@ -21,7 +21,7 @@
 #include "../ivtobjectoutputstring_c.h"
 #include "vtobjectoutputstring_c.h"
 
-
+#ifdef USE_VTOBJECT_outputstring
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectstringvariable_c.h"
@@ -462,4 +462,4 @@ vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtO
 
 } //__IsoAgLib
 
-
+#endif

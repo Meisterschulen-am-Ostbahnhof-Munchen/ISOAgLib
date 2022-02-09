@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-
+#ifdef USE_VTOBJECT_rectangle
 
 #include "vtobject_c.h"
 
@@ -73,6 +73,6 @@ public:
 
 } // __IsoAgLib
 
-#endif
+#endif // USE_VTOBJECT_rectangle
 
-
+#endif // VTOBJECTRECTANGLE_C_H

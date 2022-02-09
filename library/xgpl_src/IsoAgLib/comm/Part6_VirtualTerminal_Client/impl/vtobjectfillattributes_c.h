@@ -56,9 +56,13 @@ public:
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 25; }
   */
+
   uint8_t updateFillType(bool b_SendRequest=false);
+
   uint8_t updateFillColour(bool b_SendRequest=false);
+
   uint16_t updateFillPattern(bool b_SendRequest=false);
+
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };

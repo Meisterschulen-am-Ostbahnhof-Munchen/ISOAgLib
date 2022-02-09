@@ -21,8 +21,10 @@
 #include "../ivtobjectstringvariable_c.h"
 #include "vtobjectstringvariable_c.h"
 
+#ifdef USE_VTOBJECT_stringvariable
 
 #include "vtclient_c.h"
+
 
 
 namespace __IsoAgLib {
@@ -68,6 +70,7 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
 
   return curBytes;
 }
+
 
 IsoAgLib::ObjectID vtObjectStringVariable_c::getID() const {
 	isoaglib_assert(vtObject_a);
@@ -202,3 +205,4 @@ vtObjectStringVariable_c::getString()
 #endif
 } // __IsoAgLib
 
+#endif //USE_VTOBJECT_stringvariable

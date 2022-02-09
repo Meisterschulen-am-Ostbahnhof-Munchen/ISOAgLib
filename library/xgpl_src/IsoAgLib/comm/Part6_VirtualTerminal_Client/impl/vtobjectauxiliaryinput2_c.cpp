@@ -19,7 +19,7 @@
 */
 #include "vtobjectauxiliaryinput2_c.h"
 
-
+#ifdef USE_VTOBJECT_auxiliaryinput2
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "vtclient_c.h"
@@ -508,4 +508,4 @@ vtObjectAuxiliaryInput2_c::iVtObjectAuxiliaryInput2_s *vtObjectAuxiliaryInput2_c
             : mb_enabled(false), mi32_timeStampLastStateMsg(0)
     {}
 } // __IsoAgLib
-
+#endif

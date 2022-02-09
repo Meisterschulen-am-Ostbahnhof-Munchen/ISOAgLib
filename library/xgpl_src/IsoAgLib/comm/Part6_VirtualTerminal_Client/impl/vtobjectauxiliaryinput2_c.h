@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-
+#ifdef USE_VTOBJECT_auxiliaryinput2
 
 #include "vtobject_c.h"
 #include "vttypes.h"
@@ -163,4 +163,6 @@ private:
 
 } // __IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_auxiliaryinput2
+
+#endif //VTOBJECTAUXILIARYINPUT2_C_H

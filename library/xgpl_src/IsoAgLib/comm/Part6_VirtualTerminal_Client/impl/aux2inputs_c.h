@@ -54,9 +54,9 @@ public:
 
   void setModelIdentificationCode(uint16_t a_model);
 
-
+#ifdef USE_VTOBJECT_auxiliaryinput2
   std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>& getObjectList();
-
+#endif
 
   /**
     set enabled state for matching input object ID (0xFFFF => all input objects)
@@ -64,20 +64,32 @@ public:
   */
   bool setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool a_enabled);
 
+
+#ifdef USE_VTOBJECT_auxiliaryinput2
   /**
     send AUX2 input status message for all inputs (a_aux2InputObj == NULL) or only for passed AUX2 input object
   */
   void timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj);
+#endif
+
   void setLearnMode(bool a_learnMode);
 
 private:
   const IdentItem_c& mrc_wsMasterIdentItem;
+
   Aux2InputsState_en m_state;
+
   uint16_t m_modelIdentificationCode;
+
+#ifdef USE_VTOBJECT_auxiliaryinput2
   std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*> mlist_auxInput2;
+#endif
+
   // time stamp of last auxiliary input maintenance message sent
   ecutime_t mi32_timeStampLastMaintenance;
+
   bool mb_learnMode;
+
   VtClientConnection_c* mp_vtClientServerCommunication;
 
 private:

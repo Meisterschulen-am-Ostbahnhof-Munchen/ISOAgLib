@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-
+#ifdef USE_VTOBJECT_linearbargraph
 
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
@@ -120,6 +120,6 @@ public:
 
 } // __IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_linearbargraph
 
-
+#endif //VTOBJECTLINEARBARGRAPH_C_H

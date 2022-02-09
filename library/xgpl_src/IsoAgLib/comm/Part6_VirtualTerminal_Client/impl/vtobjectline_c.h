@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-
+#ifdef USE_VTOBJECT_line
 
 #include "vtobject_c.h"
 #include "vtclient_c.h"
@@ -88,6 +88,6 @@ public:
 
 } // __IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_line
 
-
+#endif //VTOBJECTLINE_C_H

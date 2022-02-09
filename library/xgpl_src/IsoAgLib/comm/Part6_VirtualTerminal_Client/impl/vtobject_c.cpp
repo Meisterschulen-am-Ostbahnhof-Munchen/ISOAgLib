@@ -395,5 +395,4 @@ vtObject_c::select(uint8_t selectOrActivate)
 
     void vtObject_c::updateEnable(uint8_t) {}
 
-
 } // __IsoAgLib

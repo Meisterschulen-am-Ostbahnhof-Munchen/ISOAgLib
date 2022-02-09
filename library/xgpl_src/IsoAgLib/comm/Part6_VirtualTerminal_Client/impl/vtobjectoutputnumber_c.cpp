@@ -20,7 +20,7 @@
 
 #include "vtobjectoutputnumber_c.h"
 
-
+#ifdef USE_VTOBJECT_outputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
@@ -393,4 +393,4 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 
 } // __IsoAgLib
 
-
+#endif

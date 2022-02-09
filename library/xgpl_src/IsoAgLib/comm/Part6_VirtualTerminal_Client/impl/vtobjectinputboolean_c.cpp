@@ -20,7 +20,7 @@
 
 #include "vtobjectinputboolean_c.h"
 
-
+#ifdef USE_VTOBJECT_inputboolean
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -233,4 +233,4 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 
 } // __IsoAgLib
 
-
+#endif

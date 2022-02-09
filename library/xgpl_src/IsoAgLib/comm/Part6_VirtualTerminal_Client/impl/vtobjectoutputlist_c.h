@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-
+#ifdef USE_VTOBJECT_outputlist
 
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
@@ -51,10 +51,15 @@ public:
   vtObjectOutputList_c(iVtObjectOutputList_s* vtObjectOutputListSROM , int ai_multitonInst);
   iVtObjectOutputList_s* get_vtObjectOutputList_a();
   vtObjectOutputList_c();
+
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
+
   uint8_t getNumberOfListItems();
+
   uint32_t fitTerminal() const;
+
   void setValue(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+
   void setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false);
 
   // //////////////////////////////////
@@ -87,4 +92,4 @@ private:
 
 #endif
 
-
+#endif

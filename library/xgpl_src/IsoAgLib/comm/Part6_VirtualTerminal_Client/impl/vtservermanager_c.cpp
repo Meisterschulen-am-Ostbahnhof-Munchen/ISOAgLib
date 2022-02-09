@@ -211,9 +211,15 @@ VtServerManager_c::processVtStatusMsg(const CanPkgExt_c& arc_data,
   }
 }
 
-    bool VtServerManager_c::isAnyVtAvailable() const { return !ml_vtServerInst.empty(); }
+    bool VtServerManager_c::isAnyVtAvailable() const 
+	{ 
+	return !ml_vtServerInst.empty(); 
+	}
 
-    std::vector<VtServerInstance_c *> &VtServerManager_c::getRefServerInstanceVec() { return ml_vtServerInst; }
+    std::vector<VtServerInstance_c *> &VtServerManager_c::getRefServerInstanceVec() 
+	{ 
+	return ml_vtServerInst; 
+	}
 
 // (currently not supported, due to multi VT enhancements)
 #if 0

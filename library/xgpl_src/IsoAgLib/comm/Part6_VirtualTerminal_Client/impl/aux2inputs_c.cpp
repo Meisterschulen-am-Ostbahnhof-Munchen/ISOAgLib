@@ -32,7 +32,9 @@ Aux2Inputs_c::Aux2Inputs_c( const IdentItem_c& arc_wsMasterIdentItem )
   , mrc_wsMasterIdentItem( arc_wsMasterIdentItem )
   , m_state(Aux2InputsState_NoAuxInputAvailable)
   , m_modelIdentificationCode( 0 )
+#ifdef USE_VTOBJECT_auxiliaryinput2
   , mlist_auxInput2()
+#endif
   , mi32_timeStampLastMaintenance( 0 )
   , mb_learnMode(false)
   , mp_vtClientServerCommunication( NULL )
@@ -41,6 +43,7 @@ Aux2Inputs_c::Aux2Inputs_c( const IdentItem_c& arc_wsMasterIdentItem )
 
 void Aux2Inputs_c::init(VtClientConnection_c* ap_vtClientServerCommunication)
 {
+#ifdef USE_VTOBJECT_auxiliaryinput2
   getSchedulerInstance().registerTask( *this, 0 );
 
   setPeriod( 10, false );
@@ -48,19 +51,25 @@ void Aux2Inputs_c::init(VtClientConnection_c* ap_vtClientServerCommunication)
   setState(Aux2InputsState_Initializing);
 
   mp_vtClientServerCommunication = ap_vtClientServerCommunication;
+#else
+  (void)ap_vtClientServerCommunication;
+#endif
 }
 
 Aux2Inputs_c::~Aux2Inputs_c(void)
 {
+#ifdef USE_VTOBJECT_auxiliaryinput2
   if (Aux2InputsState_NoAuxInputAvailable != m_state)
   { // m_state is different from initial state => was registered in scheduler 
     getSchedulerInstance().deregisterTask( *this );
   }
+#endif
 }
 
 
 void Aux2Inputs_c::timeEvent(void)
 {
+#ifdef USE_VTOBJECT_auxiliaryinput2
   switch (m_state)
   {
     case Aux2InputsState_Initializing:
@@ -106,9 +115,11 @@ void Aux2Inputs_c::timeEvent(void)
   }
 
   timeEventInputStateMsg(NULL);
+#endif
 }
 
 
+#ifdef USE_VTOBJECT_auxiliaryinput2
 void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2InputObj)
 {
   if (mrc_wsMasterIdentItem.isClaimedAddress())
@@ -195,11 +206,12 @@ void Aux2Inputs_c::timeEventInputStateMsg(vtObjectAuxiliaryInput2_c* a_aux2Input
     }
   }    
 }
-
+#endif
 
 
 bool Aux2Inputs_c::setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool a_enabled)
 {
+#ifdef USE_VTOBJECT_auxiliaryinput2
   bool b_objFound = false;
   for (std::list<IsoAgLib::iVtObjectAuxiliaryInput2_c*>::iterator iter = mlist_auxInput2.begin(); iter != mlist_auxInput2.end(); ++iter)
   {
@@ -210,6 +222,11 @@ bool Aux2Inputs_c::setInputStateEnabledInObjects(uint16_t aui16_inputObjId, bool
     }
   }
   return b_objFound;
+#else
+  (void)aui16_inputObjId;
+  (void)a_enabled;
+  return false;
+#endif
 }
 
     void Aux2Inputs_c::setState(Aux2Inputs_c::Aux2InputsState_en a_state) { m_state = a_state; }

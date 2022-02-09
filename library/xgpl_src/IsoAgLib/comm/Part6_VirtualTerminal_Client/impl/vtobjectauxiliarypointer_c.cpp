@@ -23,7 +23,7 @@
 #include "vtclient_c.h"
 
 
-
+#ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
 namespace __IsoAgLib {
 
@@ -130,4 +130,4 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::saveReceivedAttribute(uint8_t
 
 } // __IsoAgLib
 
-
+#endif //USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer

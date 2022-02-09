@@ -245,11 +245,6 @@ vtObjectWorkingSet_c::saveReceivedAttribute (uint8_t attrID, uint8_t* /*pui8_att
     default: break;
   }
 }
-
 #endif
-
-
-
-
 
 } // __IsoAgLib

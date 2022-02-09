@@ -18,9 +18,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-
 #include "vtobjectdatamask_c.h"
-
 
 #include "../ivtobject_c.h"
 #include "../ivtobjectfontattributes_c.h"
@@ -197,7 +195,5 @@ vtObjectDataMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attribu
     }
 
 #endif
-
-
 
 } // __IsoAgLib

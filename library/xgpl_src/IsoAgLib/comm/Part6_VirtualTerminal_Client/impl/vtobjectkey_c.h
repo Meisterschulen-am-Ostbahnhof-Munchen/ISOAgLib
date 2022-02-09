@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-
+#ifdef USE_VTOBJECT_key
 
 #include "vtclient_c.h"
 #include "vtobject_c.h"
@@ -76,6 +76,6 @@ public:
 
 } // __IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_key
 
-
+#endif //VTOBJECTKEY_C_H

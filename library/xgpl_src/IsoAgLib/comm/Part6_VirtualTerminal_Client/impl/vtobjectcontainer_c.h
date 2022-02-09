@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-
+#ifdef USE_VTOBJECT_container
 
 #include "vtobject_c.h"
 #include "vtclient_c.h"
@@ -86,6 +86,6 @@ protected:
 
 } // __IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_container
 
-
+#endif //VTOBJECTCONTAINER_C_H

@@ -20,7 +20,7 @@
 
 #include "vtobjectellipse_c.h"
 
-
+#ifdef USE_VTOBJECT_ellipse
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
@@ -107,6 +107,7 @@ vtObjectEllipse_c::stream(uint8_t* destMemory,
     MACRO_streamEventMacro(15);
     return curBytes;
 }
+
 
 IsoAgLib::ObjectID vtObjectEllipse_c::getID() const {
 	isoaglib_assert(vtObject_a);
@@ -207,7 +208,6 @@ vtObjectEllipse_c::updateFillAttributes(bool b_SendRequest)
     return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes), sizeof(iVtObjectEllipse_s));
 }
 
-
 void
 vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
 {
@@ -223,7 +223,6 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
     default: break;
   }
 }
-
 #endif
 
 	vtObjectEllipse_c::vtObjectEllipse_c(
@@ -296,4 +295,4 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 
 } // __IsoAgLib
 
-
+#endif

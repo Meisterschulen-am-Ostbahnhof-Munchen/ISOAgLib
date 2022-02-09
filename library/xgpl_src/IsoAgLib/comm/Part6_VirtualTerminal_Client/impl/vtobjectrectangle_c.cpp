@@ -20,7 +20,7 @@
 
 #include "vtobjectrectangle_c.h"
 
-
+#ifdef USE_VTOBJECT_rectangle
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
@@ -235,4 +235,4 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 
 } // __IsoAgLib
 
-
+#endif //USE_VTOBJECT_rectangle

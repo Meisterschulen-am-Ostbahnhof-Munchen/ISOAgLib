@@ -78,8 +78,11 @@ namespace __IsoAgLib {
 
       const UploadPoolState_c& mref_uploadPoolState;
       const VtClient_c&        mref_vtClient;
+
       vtInfoShownState m_moveToNextVtInfoShown;
+
       State m_state;
+
       const VtServerInstance_c* mpc_lastVtServerInstance;
   };
 }

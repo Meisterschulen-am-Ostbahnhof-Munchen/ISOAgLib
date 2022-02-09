@@ -20,7 +20,7 @@
 
 #include "vtobjectinputnumber_c.h"
 
-
+#ifdef USE_VTOBJECT_inputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -439,4 +439,4 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 
 } // __IsoAgLib
 
-
+#endif

@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-
+#ifdef USE_VTOBJECT_meter
 
 #include "vtobject_c.h"
 #include "vtclient_c.h"
@@ -52,6 +52,7 @@ public:
   vtObjectMeter_c(iVtObjectMeter_s* vtObjectMeterSROM , int ai_multitonInst);
   iVtObjectMeter_s* get_vtObjectMeter_a();
   vtObjectMeter_c();
+
   uint32_t fitTerminal() const;
 
   void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
@@ -95,6 +96,6 @@ public:
 
 } // __IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_meter
 
-
+#endif //VTOBJECTMETER_C_H

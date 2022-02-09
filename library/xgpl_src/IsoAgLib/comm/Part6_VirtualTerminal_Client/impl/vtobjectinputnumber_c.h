@@ -23,6 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
+#ifdef USE_VTOBJECT_inputnumber
 
 #include "ivtobjectfontattributes_c.h"
 #include "vtobject_c.h"
@@ -107,6 +108,6 @@ private:
 
 } // __IsoAgLib
 
-#endif
+#endif // USE_VTOBJECT_inputnumber
 
-
+#endif // VTOBJECTINPUTNUMBER_C_H

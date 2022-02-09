@@ -20,7 +20,7 @@
 
 #include "vtobjectauxiliaryfunction_c.h"
 
-
+#ifdef USE_VTOBJECT_auxiliaryfunction
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "vtclient_c.h"
@@ -122,4 +122,4 @@ vtObjectAuxiliaryFunction_c::setOriginSKM(bool /* b_SKM */)
     void vtObjectAuxiliaryFunction_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 #endif
 } // __IsoAgLib
-
+#endif
