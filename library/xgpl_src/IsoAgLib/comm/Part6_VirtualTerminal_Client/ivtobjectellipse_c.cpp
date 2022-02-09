@@ -9,6 +9,8 @@
 #include "ivtobjectellipse_c.h"
 
 
+#ifdef USE_VTOBJECT_ellipse
+
 namespace IsoAgLib {
 
 
@@ -118,4 +120,6 @@ namespace IsoAgLib {
 
 
 
-}
+} // IsoAgLib
+
+#endif //USE_VTOBJECT_ellipse

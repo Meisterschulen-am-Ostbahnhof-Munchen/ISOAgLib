@@ -7,6 +7,10 @@
 
 #include "ivtobjectcontainer_c.h"
 
+
+#ifdef USE_VTOBJECT_container
+
+
 namespace IsoAgLib {
 
 
@@ -15,4 +19,6 @@ namespace IsoAgLib {
   iVtObjectContainer_c::~iVtObjectContainer_c() {}
 
 
-}
+} // IsoAgLib
+
+#endif //USE_VTOBJECT_container

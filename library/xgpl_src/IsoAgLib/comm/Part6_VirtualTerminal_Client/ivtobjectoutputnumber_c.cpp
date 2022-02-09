@@ -9,6 +9,10 @@
 #include "ivtobjectoutputnumber_c.h"
 
 
+
+#ifdef USE_VTOBJECT_outputnumber
+
+
 namespace IsoAgLib {
     uint16_t iVtObjectOutputNumber_c::objectType() { return VT_OBJECT_TYPE_OUTPUT_NUMBER; }
 
@@ -87,4 +91,6 @@ namespace IsoAgLib {
     }
 #endif
 
-}
+} // IsoAgLib
+
+#endif //USE_VTOBJECT_outputnumber

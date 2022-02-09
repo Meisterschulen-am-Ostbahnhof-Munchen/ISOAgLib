@@ -9,6 +9,9 @@
 
 #include "ivtobjectline_c.h"
 
+
+#ifdef USE_VTOBJECT_line
+
 namespace IsoAgLib {
 
 
@@ -85,6 +88,7 @@ iVtObjectLine_c::iVtObjectLine_c(
 #endif
 
 
+} // IsoAgLib
 
-}
+#endif //USE_VTOBJECT_line
 
