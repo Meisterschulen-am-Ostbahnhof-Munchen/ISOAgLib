@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_button
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -40,9 +41,7 @@ private:
 	struct iVtObjectButton_s;
 
 	// Pointer to the internal implementation
-	iVtObjectButton_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectButton_s> vtObject_a;
+	std::unique_ptr<iVtObjectButton_s> vtObject_a;
 
 
 public:
@@ -50,8 +49,6 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
-
-  iVtObjectButton_s* get_vtObjectButton_a();
 
   vtObjectButton_c() = delete;
 
@@ -67,7 +64,7 @@ public:
 
   vtObjectButton_c(iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
 
-  virtual ~vtObjectButton_c() = default;
+  virtual ~vtObjectButton_c();
 
 
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);

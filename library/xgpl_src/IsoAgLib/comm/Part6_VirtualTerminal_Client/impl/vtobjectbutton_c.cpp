@@ -154,11 +154,7 @@ vtObjectButton_c::vtObjectButton_c(vtObjectButton_c::iVtObjectButton_s *vtObject
 {}
 
 
-
-vtObjectButton_c::iVtObjectButton_s *vtObjectButton_c::get_vtObjectButton_a() {
-	return vtObject_a;
-}
-
+vtObjectButton_c::~vtObjectButton_c() = default;
 
 
 uint32_t
@@ -184,13 +180,13 @@ vtObjectButton_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateOb
 bool
 vtObjectButton_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow));
 }
 
 bool
 vtObjectButton_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectButton_a(), objectsToFollow), sizeof(iVtObjectButton_s), b_enableReplaceOfCmd, NoOffset);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), b_enableReplaceOfCmd, NoOffset);
 }
 
 
@@ -324,7 +320,7 @@ vtObjectButton_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeV
 #endif
 
 void vtObjectButton_c::Append(iVtObject_c * const vtObject, int16_t x, int16_t y) {
-	get_vtObjectButton_a()->Append(vtObject, x, y);
+	vtObject_a->Append(vtObject, x, y);
 }
 
     uint16_t vtObjectButton_c::getHeight() const {
@@ -334,6 +330,8 @@ void vtObjectButton_c::Append(iVtObject_c * const vtObject, int16_t x, int16_t y
     uint16_t vtObjectButton_c::getWidth() const {
         return vtObject_a->width;
     }
+
+
 
 } // __IsoAgLib
 
