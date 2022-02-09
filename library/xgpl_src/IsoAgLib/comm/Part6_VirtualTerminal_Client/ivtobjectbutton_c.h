@@ -34,7 +34,7 @@ public:
   static uint16_t objectType();
 
 
-  iVtObjectButton_c(
+  explicit iVtObjectButton_c(
 		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
   	    uint16_t width = 80,
@@ -51,23 +51,23 @@ public:
   bool v4select(uint8_t selectOrActivate);
 
 
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  void setBorderColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setBorderColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  void v4setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void v4setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false);
+  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -75,20 +75,20 @@ public:
   uint8_t updateObjectType() const { return vtObjectButton_c::updateObjectType(); }
   */
 
-  uint16_t updateWidth(bool b_SendRequest=false);
+  uint16_t updateWidth(bool b_SendRequest=false) override;
 
-  uint16_t updateHeight(bool b_SendRequest=false);
+  uint16_t updateHeight(bool b_SendRequest=false) override;
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  uint8_t updateBackgroundColour(bool b_SendRequest=false) override;
 
-  uint8_t updateBorderColour(bool b_SendRequest=false);
+  uint8_t updateBorderColour(bool b_SendRequest=false) override;
 
-  uint8_t updateKeyCode(bool b_SendRequest=false);
+  uint8_t updateKeyCode(bool b_SendRequest=false) override;
 
-  uint8_t updateOptions(bool b_SendRequest=false);
+  uint8_t updateOptions(bool b_SendRequest=false) override;
 #endif
 
-  virtual uint16_t getObjectType() const;
+  uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib

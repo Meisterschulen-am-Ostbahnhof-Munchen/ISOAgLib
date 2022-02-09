@@ -54,9 +54,8 @@ namespace IsoAgLib {
         vtObjectButton_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    bool iVtObjectButton_c::moveChildLocation(IsoAgLib::iVtObject_c *apc_childObject, int8_t dx, int8_t dy,
-                                              bool b_updateObject) {
-        return vtObjectButton_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject);
+    bool iVtObjectButton_c::moveChildLocation(IsoAgLib::iVtObject_c *apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        return vtObjectButton_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
     }
 
     uint16_t iVtObjectButton_c::getObjectType() const { return objectType(); }
