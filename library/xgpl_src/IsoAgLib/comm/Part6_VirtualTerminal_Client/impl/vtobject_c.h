@@ -79,7 +79,6 @@ private:
   void saveValueISOName (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iIsoName_c& ar_newIsoName);
 
   void saveValue8SetAttribute       (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint8_t ui8_newValue, uint8_t newValueSend, bool b_enableReplaceOfCmd);
-protected:
   void saveValue16SetAttribute      (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd);
   void saveValue16SetAttributeScaled(uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint16_t ui16_newValue, bool b_enableReplaceOfCmd);
   void saveValue32SetAttribute      (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, uint32_t ui32_newValue, bool b_enableReplaceOfCmd);

@@ -427,11 +427,31 @@ vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtO
 }
 
     void vtObjectOutputString_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), width) : 0, sizeof(iVtObjectOutputString_s), 1, newValue, b_enableReplaceOfCmd);
+    	  MACRO_scaleLocalVars
+    	  MACRO_scaleSKLocalVars
+
+    	  uint32_t scaledDim = uint32_t( newValue );
+    	#ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+    	  MACRO_scaleDimension( scaledDim )
+    	#endif
+
+      	if (b_updateObject)
+      		vtObject_a->width = newValue;
+    	  setAttribute (1, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectOutputString_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), height) : 0, sizeof(iVtObjectOutputString_s), 2, newValue, b_enableReplaceOfCmd);
+  	  MACRO_scaleLocalVars
+  	  MACRO_scaleSKLocalVars
+
+  	  uint32_t scaledDim = uint32_t( newValue );
+  	#ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+  	  MACRO_scaleDimension( scaledDim )
+  	#endif
+
+    	if (b_updateObject)
+    		vtObject_a->height = newValue;
+  	  setAttribute (2, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectOutputString_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -440,9 +460,10 @@ vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtO
     	setAttribute (3, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
-    void vtObjectOutputString_c::setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c *newValue, bool b_updateObject,
-                                                   bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes) : 0, sizeof(iVtObjectOutputString_s), 4, newValue, b_enableReplaceOfCmd);
+    void vtObjectOutputString_c::setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->fontAttributes = newValue;
+    	setAttribute (4, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectOutputString_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -452,9 +473,10 @@ vtObjectOutputString_c::iVtObjectOutputString_s *vtObjectOutputString_c::get_vtO
     }
 
     void
-    vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c *newValue, bool b_updateObject,
-                                                 bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference) : 0, sizeof(iVtObjectOutputString_s), 6, (iVtObject_c*)newValue, b_enableReplaceOfCmd);
+    vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->variableReference = newValue;
+    	setAttribute (6, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void
