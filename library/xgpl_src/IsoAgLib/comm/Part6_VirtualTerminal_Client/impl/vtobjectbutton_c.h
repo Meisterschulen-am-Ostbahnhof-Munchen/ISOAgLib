@@ -68,21 +68,19 @@ public:
 
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
 
     virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual // //////////////////////////////////
-  // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    // //////////////////////////////////
+    // All special Attribute-Set methods
+    virtual void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
     virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
+    virtual uint16_t getHeight() const;
 
-
-	uint16_t getHeight() const;
-
-	uint16_t getWidth() const;
+    virtual uint16_t getWidth() const;
 
     virtual void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 

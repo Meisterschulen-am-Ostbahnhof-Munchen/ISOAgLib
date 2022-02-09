@@ -58,7 +58,9 @@ namespace IsoAgLib {
         return vtObjectButton_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    uint16_t iVtObjectButton_c::getObjectType() const { return objectType(); }
+    uint16_t iVtObjectButton_c::getObjectType() const {
+        return objectType();
+    }
 
 
 
