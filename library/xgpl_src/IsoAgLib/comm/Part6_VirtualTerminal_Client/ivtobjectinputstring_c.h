@@ -23,7 +23,7 @@
 #include "impl/vtobjectinputstring_c.h"
 
 
-#ifdef USE_VTOBJECT_inputstring
+#ifdef CONFIG_USE_VTOBJECT_inputstring
 
 namespace IsoAgLib {
 
@@ -140,6 +140,6 @@ public:
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_inputstring
+#endif //CONFIG_USE_VTOBJECT_inputstring
 
 #endif //IVTOBJECTINPUTSTRING_C_H

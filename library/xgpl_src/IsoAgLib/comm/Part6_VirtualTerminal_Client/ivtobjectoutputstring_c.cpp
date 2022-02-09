@@ -8,7 +8,7 @@
 
 #include "ivtobjectoutputstring_c.h"
 
-#ifdef USE_VTOBJECT_outputstring
+#ifdef CONFIG_USE_VTOBJECT_outputstring
 
 namespace IsoAgLib {
 
@@ -139,5 +139,5 @@ namespace IsoAgLib {
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_outputstring
+#endif //CONFIG_USE_VTOBJECT_outputstring
 

@@ -20,7 +20,7 @@
 
 #include "vtobjectalarmmask_c.h"
 
-#ifdef USE_VTOBJECT_alarmmask
+#ifdef CONFIG_USE_VTOBJECT_alarmmask
 #include "vtclient_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -222,4 +222,4 @@ vtObjectAlarmMask_c::iVtObjectAlarmMask_s *vtObjectAlarmMask_c::get_vtObjectAlar
 
 
 } // end of namespace __IsoAgLib
-#endif //USE_VTOBJECT_alarmmask
+#endif //CONFIG_USE_VTOBJECT_alarmmask

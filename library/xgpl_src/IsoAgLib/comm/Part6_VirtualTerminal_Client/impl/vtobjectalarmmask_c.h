@@ -22,7 +22,7 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
-#ifdef USE_VTOBJECT_alarmmask
+#ifdef CONFIG_USE_VTOBJECT_alarmmask
 #include "../ivtobjectmask_c.h"
 #include "../ivtobjectsoftkeymask_c.h"
 #include "vtclient_c.h"

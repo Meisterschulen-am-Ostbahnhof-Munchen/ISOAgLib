@@ -69,7 +69,7 @@ Aux2Functions_c::~Aux2Functions_c()
 
 
 void Aux2Functions_c::loadAssignment() {
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   IsoAgLib::iAux2Assignment_c assigment;
   m_vtConnection.getVtClientDataStorage().loadPreferredAux2Assignment( assigment );
 
@@ -87,7 +87,7 @@ void Aux2Functions_c::loadAssignment() {
 bool
 Aux2Functions_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assignments )
 {
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   bool success = true;
 
   if( firstClearAllPAs )
@@ -144,7 +144,7 @@ Aux2Functions_c::notifyOnAux2InputStatus(
   const CanPkgExt_c& arc_data, 
   IsoAgLib::iVtClientObjectPool_c& arc_pool )
 {
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   if (mb_learnMode || ((arc_data.getUint8Data(8-1) & 0x3) != 0))
     return; // do not respond to input status messages in learn mode or learn mode bits are set in received message
 
@@ -183,7 +183,7 @@ Aux2Functions_c::notifyOnAux2InputStatus(
 void
 Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
 {
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   bool b_sendPreferredAssignments = false;
 
   const ecutime_t i32_now = HAL::getTime();
@@ -256,7 +256,7 @@ Aux2Functions_c::notifyOnAux2InputMaintenance( const CanPkgExt_c& arc_data )
 void
 Aux2Functions_c::objectPoolUploadedSuccessfully()
 {
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   // if we don't have any preferred assignments => send empty preferred assignment msg
   bool b_preferredAssignmentFound = false;
   for (std::map<uint16_t, vtObjectAuxiliaryFunction2_c*>::iterator iter = m_aux2Function.begin(); iter != m_aux2Function.end(); ++iter)
@@ -285,7 +285,7 @@ Aux2Functions_c::storeAux2Assignment(
   uint16_t& rui16_functionObjId, 
   IsoAgLib::iVtClientObjectPool_c& arc_pool )
 {
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   const uint16_t ui16_totalstreamsize = arc_stream.getByteTotalSize();
   
   if (ui16_totalstreamsize != 14)
@@ -379,7 +379,7 @@ Aux2Functions_c::storeAux2Assignment(
 void
 Aux2Functions_c::timeEvent()
 {
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   const ecutime_t i32_now = HAL::getTime();
   ecutime_t next = i32_now + 300;
 
@@ -421,7 +421,7 @@ Aux2Functions_c::timeEvent()
 void
 Aux2Functions_c::sendPreferredAux2Assignments()
 {
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   if( m_aux2Function.empty() || ( m_state != State_Ready) )
     return;
 

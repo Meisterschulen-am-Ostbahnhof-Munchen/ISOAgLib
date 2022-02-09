@@ -19,7 +19,7 @@
 */
 #include "vtobjectauxiliaryinput_c.h"
 
-#ifdef USE_VTOBJECT_auxiliaryinput
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryinput
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "vtclient_c.h"
@@ -123,4 +123,4 @@ vtObjectAuxiliaryInput_c::setOriginSKM(bool /* b_SKM */)
     void vtObjectAuxiliaryInput_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 #endif
 } // __IsoAgLib
-#endif //USE_VTOBJECT_auxiliaryinput
+#endif //CONFIG_USE_VTOBJECT_auxiliaryinput

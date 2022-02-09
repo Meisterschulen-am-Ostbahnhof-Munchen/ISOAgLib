@@ -25,7 +25,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
+#ifdef CONFIG_USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
 #include "vtobject_c.h"
 #include "vttypes.h"
@@ -75,6 +75,6 @@ public:
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
+#endif //CONFIG_USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
 #endif //VTOBJECTAUXILIARYCONTROLDESIGNATOROBJECTPOINTER_C_H

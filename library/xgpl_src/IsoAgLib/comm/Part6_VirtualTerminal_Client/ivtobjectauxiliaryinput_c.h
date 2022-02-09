@@ -23,7 +23,7 @@
 #include "impl/vtobjectauxiliaryinput_c.h"
 
 
-#ifdef USE_VTOBJECT_auxiliaryinput
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryinput
 
 namespace IsoAgLib {
 
@@ -51,6 +51,6 @@ public:
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_auxiliaryinput
+#endif //CONFIG_USE_VTOBJECT_auxiliaryinput
 
 #endif //IVTOBJECTAUXILIARYINPUT_C_H

@@ -14,9 +14,9 @@ iVtClient_c &getIvtClientInstance() { return static_cast<iVtClient_c&>(__IsoAgLi
 
 iVtClient_c &getIvtClientInstance(unsigned int instance) { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( instance )); }
 
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
     int32_t iVtClientDataStorage_c::getAux2DeltaWaitBeforeSendingPreferredAssigment() { return 2000; }
-#endif //USE_VTOBJECT_auxiliaryfunction2
+#endif //CONFIG_USE_VTOBJECT_auxiliaryfunction2
 
 
     bool iVtClient_c::deregisterObjectPool(iIdentItem_c &arc_wsMasterIdentItem) { return VtClient_c::deregisterObjectPool (arc_wsMasterIdentItem); }

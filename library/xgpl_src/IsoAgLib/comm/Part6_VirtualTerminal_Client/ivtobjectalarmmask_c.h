@@ -22,7 +22,7 @@
 
 #include "impl/vtobjectalarmmask_c.h"
 
-#ifdef USE_VTOBJECT_alarmmask
+#ifdef CONFIG_USE_VTOBJECT_alarmmask
 
 #include "ivtobjectsoftkeymask_c.h"
 
@@ -108,6 +108,6 @@ public:
 
 } // IsoAgLib
 
-#endif // USE_VTOBJECT_alarmmask
+#endif // CONFIG_USE_VTOBJECT_alarmmask
 
 #endif // IVTOBJECTALARMMASK_C_H

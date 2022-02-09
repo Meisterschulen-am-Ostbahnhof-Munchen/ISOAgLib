@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_ellipse
+#ifdef CONFIG_USE_VTOBJECT_ellipse
 
 #include "vtobject_c.h"
 #include "../ivtobjectlineattributes_c.h"
@@ -98,6 +98,6 @@ public:
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_ellipse
+#endif //CONFIG_USE_VTOBJECT_ellipse
 
 #endif //VTOBJECTELLIPSE_C_H

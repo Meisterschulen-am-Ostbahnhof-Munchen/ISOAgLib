@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_outputstring
+#ifdef CONFIG_USE_VTOBJECT_outputstring
 
 #include "../ivtobjectstring_c.h"
 #include "vtclientconnection_c.h"
@@ -112,6 +112,6 @@ public:
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_outputstring
+#endif //CONFIG_USE_VTOBJECT_outputstring
 
 #endif //VTOBJECTOUTPUTSTRING_C_H

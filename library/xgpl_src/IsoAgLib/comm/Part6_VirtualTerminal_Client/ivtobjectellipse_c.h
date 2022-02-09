@@ -23,7 +23,7 @@
 #include "impl/vtobjectellipse_c.h"
 
 
-#ifdef USE_VTOBJECT_ellipse
+#ifdef CONFIG_USE_VTOBJECT_ellipse
 
 namespace IsoAgLib {
 
@@ -72,6 +72,6 @@ public:
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_ellipse
+#endif //CONFIG_USE_VTOBJECT_ellipse
 
 #endif //IVTOBJECTELLIPSE_C_H

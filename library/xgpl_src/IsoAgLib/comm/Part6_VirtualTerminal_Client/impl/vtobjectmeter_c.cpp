@@ -20,7 +20,7 @@
 
 #include "vtobjectmeter_c.h"
 
-#ifdef USE_VTOBJECT_meter
+#ifdef CONFIG_USE_VTOBJECT_meter
 #include "vtclient_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -337,4 +337,4 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_meter
+#endif //CONFIG_USE_VTOBJECT_meter

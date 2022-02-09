@@ -20,7 +20,7 @@
 
 #include "vtobjectarchedbargraph_c.h"
 
-#ifdef USE_VTOBJECT_archedbargraph
+#ifdef CONFIG_USE_VTOBJECT_archedbargraph
 #include "../ivtobject_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"

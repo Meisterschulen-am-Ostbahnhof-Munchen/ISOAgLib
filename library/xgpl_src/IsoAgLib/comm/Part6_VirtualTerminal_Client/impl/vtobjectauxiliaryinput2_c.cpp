@@ -19,7 +19,7 @@
 */
 #include "vtobjectauxiliaryinput2_c.h"
 
-#ifdef USE_VTOBJECT_auxiliaryinput2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryinput2
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "vtclient_c.h"

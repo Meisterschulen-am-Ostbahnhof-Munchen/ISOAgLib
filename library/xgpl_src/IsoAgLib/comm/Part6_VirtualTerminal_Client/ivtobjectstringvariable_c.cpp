@@ -7,7 +7,7 @@
 
 #include "ivtobjectstringvariable_c.h"
 
-#ifdef USE_VTOBJECT_stringvariable
+#ifdef CONFIG_USE_VTOBJECT_stringvariable
 
 
 namespace IsoAgLib {
@@ -60,4 +60,4 @@ iVtObjectStringVariable_c::iVtObjectStringVariable_c(
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_stringvariable
+#endif //CONFIG_USE_VTOBJECT_stringvariable

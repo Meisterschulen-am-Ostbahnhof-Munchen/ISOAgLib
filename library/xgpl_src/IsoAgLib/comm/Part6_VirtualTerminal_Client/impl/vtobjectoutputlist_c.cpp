@@ -20,7 +20,7 @@
 
 #include "vtobjectoutputlist_c.h"
 
-#ifdef USE_VTOBJECT_outputlist
+#ifdef CONFIG_USE_VTOBJECT_outputlist
 #include "vtclient_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -260,4 +260,4 @@ vtObjectOutputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attrib
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_outputlist
+#endif //CONFIG_USE_VTOBJECT_outputlist

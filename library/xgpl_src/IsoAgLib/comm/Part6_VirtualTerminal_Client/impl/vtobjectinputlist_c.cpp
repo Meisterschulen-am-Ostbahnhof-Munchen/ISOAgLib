@@ -19,7 +19,7 @@
 */
 #include "vtobjectinputlist_c.h"
 
-#ifdef USE_VTOBJECT_inputlist
+#ifdef CONFIG_USE_VTOBJECT_inputlist
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -265,4 +265,4 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_inputlist
+#endif //CONFIG_USE_VTOBJECT_inputlist

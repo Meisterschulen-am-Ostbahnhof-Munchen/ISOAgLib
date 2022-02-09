@@ -24,7 +24,7 @@
 #include "../ivtobjectstring_c.h"
 
 
-#ifdef USE_VTOBJECT_inputstring
+#ifdef CONFIG_USE_VTOBJECT_inputstring
 
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectinputattributes_c.h"
@@ -100,6 +100,6 @@ private:
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_inputstring
+#endif //CONFIG_USE_VTOBJECT_inputstring
 
 #endif //VTOBJECTINPUTSTRING_C_H

@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_archedbargraph
+#ifdef CONFIG_USE_VTOBJECT_archedbargraph
 
 //#include <memory> // PImpl
 #include "vtobject_c.h"

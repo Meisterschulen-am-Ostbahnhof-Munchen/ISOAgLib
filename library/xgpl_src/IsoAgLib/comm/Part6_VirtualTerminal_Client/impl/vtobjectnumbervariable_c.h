@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_numbervariable
+#ifdef CONFIG_USE_VTOBJECT_numbervariable
 
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
@@ -68,6 +68,6 @@ public:
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_numbervariable
+#endif //CONFIG_USE_VTOBJECT_numbervariable
 
 #endif //VTOBJECTNUMBERVARIABLE_C_H

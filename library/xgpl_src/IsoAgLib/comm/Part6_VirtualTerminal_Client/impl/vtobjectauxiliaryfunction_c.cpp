@@ -20,7 +20,7 @@
 
 #include "vtobjectauxiliaryfunction_c.h"
 
-#ifdef USE_VTOBJECT_auxiliaryfunction
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "vtclient_c.h"

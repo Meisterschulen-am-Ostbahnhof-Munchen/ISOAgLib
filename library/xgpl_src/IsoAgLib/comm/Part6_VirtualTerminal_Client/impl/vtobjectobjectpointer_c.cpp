@@ -20,7 +20,7 @@
 
 #include "vtobjectobjectpointer_c.h"
 
-#ifdef USE_VTOBJECT_objectpointer
+#ifdef CONFIG_USE_VTOBJECT_objectpointer
 #include "vtclient_c.h"
 
 
@@ -135,4 +135,4 @@ vtObjectObjectPointer_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pu
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_objectpointer
+#endif //CONFIG_USE_VTOBJECT_objectpointer

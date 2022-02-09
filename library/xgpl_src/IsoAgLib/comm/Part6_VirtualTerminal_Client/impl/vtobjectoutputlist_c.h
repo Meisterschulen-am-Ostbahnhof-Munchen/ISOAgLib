@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_outputlist
+#ifdef CONFIG_USE_VTOBJECT_outputlist
 
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"

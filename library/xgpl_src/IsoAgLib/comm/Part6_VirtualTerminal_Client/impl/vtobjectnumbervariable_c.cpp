@@ -20,7 +20,7 @@
 
 #include "vtobjectnumbervariable_c.h"
 
-#ifdef USE_VTOBJECT_numbervariable 
+#ifdef CONFIG_USE_VTOBJECT_numbervariable 
 #include "vtclient_c.h"
 
 
@@ -124,4 +124,4 @@ vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*p
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_numbervariable
+#endif //CONFIG_USE_VTOBJECT_numbervariable

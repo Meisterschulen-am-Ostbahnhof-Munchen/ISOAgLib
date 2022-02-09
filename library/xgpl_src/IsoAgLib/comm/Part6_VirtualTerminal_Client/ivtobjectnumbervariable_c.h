@@ -23,7 +23,7 @@
 #include "impl/vtobjectnumbervariable_c.h"
 
 
-#ifdef USE_VTOBJECT_numbervariable
+#ifdef CONFIG_USE_VTOBJECT_numbervariable
 
 namespace IsoAgLib {
 
@@ -52,6 +52,6 @@ public:
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_numbervariable
+#endif //CONFIG_USE_VTOBJECT_numbervariable
 
 #endif //IVTOBJECTNUMBERVARIABLE_C_H

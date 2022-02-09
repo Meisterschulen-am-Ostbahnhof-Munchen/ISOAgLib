@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_polygon
+#ifdef CONFIG_USE_VTOBJECT_polygon
 
 #include "vtobject_c.h"
 
@@ -75,6 +75,6 @@ public:
 
 } // __IsoAgLibb
 
-#endif // USE_VTOBJECT_polygon
+#endif // CONFIG_USE_VTOBJECT_polygon
 
 #endif // VTOBJECTPOLYGON_C_H

@@ -24,7 +24,7 @@
 #include "../ivtobjectstring_c.h"
 
 
-#ifdef USE_VTOBJECT_stringvariable
+#ifdef CONFIG_USE_VTOBJECT_stringvariable
 
 #include "vtclientconnection_c.h"
 

@@ -164,13 +164,13 @@ VtClientConnection_c::VtClientConnection_c(
     static_cast<uint8_t>(getPool().getVersion()),
     UniversalTerminalOptionsBitMask_t() );
 
-#if defined(USE_VTOBJECT_auxiliaryfunction2) || defined (USE_VTOBJECT_auxiliaryinput2)
+#if defined(CONFIG_USE_VTOBJECT_auxiliaryfunction2) || defined (CONFIG_USE_VTOBJECT_auxiliaryinput2)
   AuxNOptionsBitMask_t auxNOptionsFunction;
   AuxNOptionsBitMask_t auxNOptionsInput;
   for (uint16_t ui16_objIndex = 0; ui16_objIndex < getPool().getNumObjects(); ui16_objIndex++)
   {
     IsoAgLib::iVtObject_c* p_obj = getPool().getIVtObjects()[0][ui16_objIndex];
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
     if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryFunction2_c::objectType())
     { // collect all available AUX 2 function objects in list
       IsoAgLib::iVtObjectAuxiliaryFunction2_c *aux2f = dynamic_cast<IsoAgLib::iVtObjectAuxiliaryFunction2_c*>(p_obj);
@@ -181,7 +181,7 @@ VtClientConnection_c::VtClientConnection_c(
       }
     }
 #endif
-#ifdef USE_VTOBJECT_auxiliaryinput2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryinput2
     if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryInput2_c::objectType())
     { // collect all available AUX 2 input objects in list
       IsoAgLib::iVtObjectAuxiliaryInput2_c *aux2i = dynamic_cast<IsoAgLib::iVtObjectAuxiliaryInput2_c*>(p_obj);
@@ -195,7 +195,7 @@ VtClientConnection_c::VtClientConnection_c(
   }
 #endif
 
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   if (!m_aux2Functions.getObjects().empty())
   {
     r_wsMasterIdentItem.getDiagnosticFunctionalities().addFunctionalitiesAuxN(
@@ -206,7 +206,7 @@ VtClientConnection_c::VtClientConnection_c(
     m_aux2Functions.loadAssignment();
   }
 #endif
-#ifdef USE_VTOBJECT_auxiliaryinput2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryinput2
   if (!m_aux2Inputs.getObjectList().empty())
   {
     r_wsMasterIdentItem.getDiagnosticFunctionalities().addFunctionalitiesAuxN(
@@ -752,7 +752,7 @@ VtClientConnection_c::doStop()
   // So we just always re-set the Aux2 states now. This could be done in doStart() maybe
   // if it doesn't hurt to have some states set in Aux2 while it's stopped.......
   m_aux2Functions.setState(Aux2Functions_c::State_WaitForPoolUploadSuccessfully);
-#ifdef USE_VTOBJECT_auxiliaryinput2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryinput2
   if (!m_aux2Inputs.getObjectList().empty())
   {
     m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Initializing);
@@ -850,7 +850,7 @@ VtClientConnection_c::notifyOnFinishedNonUserPoolUpload( bool initialUpload )
   {
     // set internal state and send empty preferred AUX2 assignment message, if we don't have any preferred assignments
     m_aux2Functions.objectPoolUploadedSuccessfully();
-#ifdef USE_VTOBJECT_auxiliaryinput2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryinput2
     if (!m_aux2Inputs.getObjectList().empty())
     {
       m_aux2Inputs.setState(Aux2Inputs_c::Aux2InputsState_Ready);

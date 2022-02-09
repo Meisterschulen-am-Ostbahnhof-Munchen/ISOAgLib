@@ -8,7 +8,7 @@
 #include "ivtobjectarchedbargraph_c.h"
 
 
-#ifdef USE_VTOBJECT_archedbargraph
+#ifdef CONFIG_USE_VTOBJECT_archedbargraph
 
 namespace IsoAgLib {
 
@@ -183,6 +183,6 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
 
 } // IsoAgLib
 
-#endif // USE_VTOBJECT_archedbargraph
+#endif // CONFIG_USE_VTOBJECT_archedbargraph
 
 

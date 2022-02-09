@@ -23,7 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef USE_VTOBJECT_inputlist
+#ifdef CONFIG_USE_VTOBJECT_inputlist
 
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
@@ -87,6 +87,6 @@ private:
 
 } // __IsoAgLib
 
-#endif // USE_VTOBJECT_inputlist
+#endif // CONFIG_USE_VTOBJECT_inputlist
 
 #endif // VTOBJECTINPUTLIST_C_H

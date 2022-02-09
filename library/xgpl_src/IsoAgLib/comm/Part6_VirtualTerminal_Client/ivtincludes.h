@@ -35,79 +35,79 @@
 #include "ivtobjectsoftkeymask_c.h"
 #include "ivtobjectworkingset_c.h"
 
-#ifdef USE_VTOBJECT_alarmmask
+#ifdef CONFIG_USE_VTOBJECT_alarmmask
   #include "ivtobjectalarmmask_c.h"
 #endif
-#ifdef USE_VTOBJECT_archedbargraph
+#ifdef CONFIG_USE_VTOBJECT_archedbargraph
   #include "ivtobjectarchedbargraph_c.h"
 #endif
-#ifdef USE_VTOBJECT_auxiliaryfunction
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction
   #include "ivtobjectauxiliaryfunction_c.h"
 #endif
-#ifdef USE_VTOBJECT_auxiliaryinput
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryinput
   #include "ivtobjectauxiliaryinput_c.h"
 #endif
-#ifdef USE_VTOBJECT_container
+#ifdef CONFIG_USE_VTOBJECT_container
   #include "ivtobjectcontainer_c.h"
 #endif
-#ifdef USE_VTOBJECT_ellipse
+#ifdef CONFIG_USE_VTOBJECT_ellipse
   #include "ivtobjectellipse_c.h"
 #endif
-#ifdef USE_VTOBJECT_inputboolean
+#ifdef CONFIG_USE_VTOBJECT_inputboolean
   #include "ivtobjectinputboolean_c.h"
 #endif
-#ifdef USE_VTOBJECT_inputlist
+#ifdef CONFIG_USE_VTOBJECT_inputlist
   #include "ivtobjectinputlist_c.h"
 #endif
-#ifdef USE_VTOBJECT_inputnumber
+#ifdef CONFIG_USE_VTOBJECT_inputnumber
   #include "ivtobjectinputnumber_c.h"
 #endif
-#ifdef USE_VTOBJECT_inputstring
+#ifdef CONFIG_USE_VTOBJECT_inputstring
   #include "ivtobjectinputstring_c.h"
 #endif
-#ifdef USE_VTOBJECT_key
+#ifdef CONFIG_USE_VTOBJECT_key
   #include "ivtobjectkey_c.h"
 #endif
-#ifdef USE_VTOBJECT_line
+#ifdef CONFIG_USE_VTOBJECT_line
   #include "ivtobjectline_c.h"
 #endif
-#ifdef USE_VTOBJECT_linearbargraph
+#ifdef CONFIG_USE_VTOBJECT_linearbargraph
   #include "ivtobjectlinearbargraph_c.h"
 #endif
-#ifdef USE_VTOBJECT_meter
+#ifdef CONFIG_USE_VTOBJECT_meter
   #include "ivtobjectmeter_c.h"
 #endif
-#ifdef USE_VTOBJECT_numbervariable
+#ifdef CONFIG_USE_VTOBJECT_numbervariable
   #include "ivtobjectnumbervariable_c.h"
 #endif
-#ifdef USE_VTOBJECT_objectpointer
+#ifdef CONFIG_USE_VTOBJECT_objectpointer
   #include "ivtobjectobjectpointer_c.h"
 #endif
-#ifdef USE_VTOBJECT_outputnumber
+#ifdef CONFIG_USE_VTOBJECT_outputnumber
   #include "ivtobjectoutputnumber_c.h"
 #endif
-#ifdef USE_VTOBJECT_outputstring
+#ifdef CONFIG_USE_VTOBJECT_outputstring
   #include "ivtobjectoutputstring_c.h"
 #endif
-#ifdef USE_VTOBJECT_outputlist
+#ifdef CONFIG_USE_VTOBJECT_outputlist
   #include "ivtobjectoutputlist_c.h"
 #endif
-#ifdef USE_VTOBJECT_polygon
+#ifdef CONFIG_USE_VTOBJECT_polygon
   #include "ivtobjectpolygon_c.h"
 #endif
-#ifdef USE_VTOBJECT_rectangle
+#ifdef CONFIG_USE_VTOBJECT_rectangle
   #include "ivtobjectrectangle_c.h"
 #endif
-#ifdef USE_VTOBJECT_stringvariable
+#ifdef CONFIG_USE_VTOBJECT_stringvariable
   #include "ivtobjectstringvariable_c.h"
 #endif
-#ifdef USE_VTOBJECT_auxiliaryfunction2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
   #include "ivtobjectauxiliaryfunction2_c.h"
 #endif
-#ifdef USE_VTOBJECT_auxiliaryinput2
+#ifdef CONFIG_USE_VTOBJECT_auxiliaryinput2
   #include "ivtobjectauxiliaryinput2_c.h"
 #endif
-#ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
+#ifdef CONFIG_USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
   #include "ivtobjectauxiliarypointer_c.h"
 #endif
 

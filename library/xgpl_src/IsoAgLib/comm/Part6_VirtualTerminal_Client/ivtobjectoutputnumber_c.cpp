@@ -10,7 +10,7 @@
 
 
 
-#ifdef USE_VTOBJECT_outputnumber
+#ifdef CONFIG_USE_VTOBJECT_outputnumber
 
 
 namespace IsoAgLib {
@@ -93,4 +93,4 @@ namespace IsoAgLib {
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_outputnumber
+#endif //CONFIG_USE_VTOBJECT_outputnumber

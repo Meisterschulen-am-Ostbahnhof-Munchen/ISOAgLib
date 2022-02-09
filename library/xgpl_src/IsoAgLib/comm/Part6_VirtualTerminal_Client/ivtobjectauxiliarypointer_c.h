@@ -23,7 +23,7 @@
 #include "impl/vtobjectauxiliarypointer_c.h"
 
 
-#ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
+#ifdef CONFIG_USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
 namespace IsoAgLib {
 
@@ -53,6 +53,6 @@ public:
 
 } // IsoAgLib
 
-#endif // USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
+#endif // CONFIG_USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
 #endif // IVTOBJECTAUXILIARYCONTROLDESIGNATOROBJECTPOINTER_C_H

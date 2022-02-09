@@ -22,7 +22,7 @@
 
 #include "impl/vtobjectstringvariable_c.h"
 
-#ifdef USE_VTOBJECT_stringvariable 
+#ifdef CONFIG_USE_VTOBJECT_stringvariable 
 #include "ivtobjectoutputstring_c.h"
 
 #ifdef USE_VT_UNICODE_SUPPORT
@@ -60,6 +60,6 @@ public:
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_stringvariable
+#endif //CONFIG_USE_VTOBJECT_stringvariable
 
 #endif //IVTOBJECTSTRINGVARIABLE_C_H

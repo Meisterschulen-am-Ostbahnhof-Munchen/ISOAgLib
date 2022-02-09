@@ -23,7 +23,7 @@
 #include "impl/vtobjectoutputlist_c.h"
 
 
-#ifdef USE_VTOBJECT_outputlist
+#ifdef CONFIG_USE_VTOBJECT_outputlist
 
 namespace IsoAgLib {
 
@@ -94,6 +94,6 @@ public:
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_outputlist
+#endif //CONFIG_USE_VTOBJECT_outputlist
 
 #endif //IVTOBJECTOUTPUTLIST_C_H

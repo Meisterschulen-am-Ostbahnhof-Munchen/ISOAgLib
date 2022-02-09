@@ -22,7 +22,7 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
-#ifdef USE_VTOBJECT_objectpointer
+#ifdef CONFIG_USE_VTOBJECT_objectpointer
 #include "vtobject_c.h"
 #include "vttypes.h"
 #include "vtclientconnection_c.h"
@@ -68,6 +68,6 @@ public:
 
 } // __IsoAgLib
 
-#endif //USE_VTOBJECT_objectpointer
+#endif //CONFIG_USE_VTOBJECT_objectpointer
 
 #endif //VTOBJECTOBJECTPOINTER_C_H

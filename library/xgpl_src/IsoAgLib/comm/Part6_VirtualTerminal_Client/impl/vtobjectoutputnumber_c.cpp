@@ -20,7 +20,7 @@
 
 #include "vtobjectoutputnumber_c.h"
 
-#ifdef USE_VTOBJECT_outputnumber
+#ifdef CONFIG_USE_VTOBJECT_outputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"

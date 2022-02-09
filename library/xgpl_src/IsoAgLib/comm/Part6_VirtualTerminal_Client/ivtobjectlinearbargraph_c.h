@@ -23,7 +23,7 @@
 #include "impl/vtobjectlinearbargraph_c.h"
 
 
-#ifdef USE_VTOBJECT_linearbargraph
+#ifdef CONFIG_USE_VTOBJECT_linearbargraph
 
 namespace IsoAgLib {
 
@@ -91,6 +91,6 @@ public:
 
 } // IsoAgLib
 
-#endif //USE_VTOBJECT_linearbargraph
+#endif //CONFIG_USE_VTOBJECT_linearbargraph
 
 #endif //IVTOBJECTLINEARBARGRAPH_C_H

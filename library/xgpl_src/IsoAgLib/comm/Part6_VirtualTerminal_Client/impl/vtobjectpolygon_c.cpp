@@ -20,7 +20,7 @@
 
 #include "vtobjectpolygon_c.h"
 
-#ifdef USE_VTOBJECT_polygon
+#ifdef CONFIG_USE_VTOBJECT_polygon
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"

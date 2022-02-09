@@ -20,7 +20,7 @@
 
 #include "vtobjectinputboolean_c.h"
 
-#ifdef USE_VTOBJECT_inputboolean
+#ifdef CONFIG_USE_VTOBJECT_inputboolean
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"

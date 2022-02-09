@@ -22,7 +22,7 @@
 
 #include "impl/vtobjectarchedbargraph_c.h"
 
-#ifdef USE_VTOBJECT_archedbargraph
+#ifdef CONFIG_USE_VTOBJECT_archedbargraph
 
 
 namespace IsoAgLib {
@@ -101,6 +101,6 @@ public:
 
 } // IsoAgLib
 
-#endif // USE_VTOBJECT_archedbargraph
+#endif // CONFIG_USE_VTOBJECT_archedbargraph
 
 #endif // IVTOBJECTARCHEDBARGRAPH_C_H
