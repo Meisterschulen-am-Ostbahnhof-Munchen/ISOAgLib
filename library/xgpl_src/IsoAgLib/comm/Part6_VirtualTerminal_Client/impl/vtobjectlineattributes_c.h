@@ -20,6 +20,10 @@
 #ifndef VTOBJECTLINEATTRIBUTES_C_H
 #define VTOBJECTLINEATTRIBUTES_C_H
 
+#include <IsoAgLib/isoaglib_config.h>
+
+#ifdef CONFIG_USE_VTOBJECT_lineattributes
+
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -83,4 +87,6 @@ public:
 
 } // __IsoAgLib
 
-#endif
+#endif // CONFIG_USE_VTOBJECT_lineattributes
+
+#endif //VTOBJECTLINEATTRIBUTES_C_H

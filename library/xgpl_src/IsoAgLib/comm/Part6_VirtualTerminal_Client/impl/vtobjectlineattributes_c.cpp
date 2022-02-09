@@ -20,6 +20,8 @@
 
 #include "vtobjectlineattributes_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_lineattributes
+
 #include "vtclient_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -188,3 +190,7 @@ vtObjectLineAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 
 } // __IsoAgLib
+
+#endif // CONFIG_USE_VTOBJECT_lineattributes
+
+

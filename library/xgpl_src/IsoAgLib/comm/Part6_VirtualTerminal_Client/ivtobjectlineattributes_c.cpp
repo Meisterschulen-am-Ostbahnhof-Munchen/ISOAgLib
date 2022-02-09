@@ -9,6 +9,8 @@
 
 #include "ivtobjectlineattributes_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_lineattributes
+
 namespace IsoAgLib {
 
 
@@ -67,5 +69,7 @@ iVtObjectLineAttributes_c::iVtObjectLineAttributes_c(
 #endif
 
 
-}
+} // IsoAgLib
+
+#endif //CONFIG_USE_VTOBJECT_lineattributes
 

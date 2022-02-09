@@ -3,16 +3,12 @@ menu "### ISOAgLib Example Configuration ###"
     config USE_ISO_TERMINAL_GRAPHICCONTEXT
         bool "USE_ISO_TERMINAL_GRAPHICCONTEXT"
         default n
-            
-            
     config USE_ISO_TERMINAL_GETATTRIBUTES
         bool "USE_ISO_TERMINAL_GETATTRIBUTES"
         default n
-        
      config USE_VTOBJECT_alarmmask
         bool "USE_VTOBJECT_alarmmask"
         default n
-        
      config USE_VTOBJECT_archedbargraph
          bool "USE_VTOBJECT_archedbargraph"
          default n
@@ -60,6 +56,9 @@ menu "### ISOAgLib Example Configuration ###"
          default n
      config USE_VTOBJECT_linearbargraph
          bool "USE_VTOBJECT_linearbargraph"
+         default n
+     config USE_VTOBJECT_lineattributes
+         bool "USE_VTOBJECT_lineattributes"
          default n
      config USE_VTOBJECT_macro
          bool "USE_VTOBJECT_macro"

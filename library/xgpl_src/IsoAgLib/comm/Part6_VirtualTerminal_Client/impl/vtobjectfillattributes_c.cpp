@@ -19,6 +19,9 @@
 */
 #include "vtobjectfillattributes_c.h"
 
+
+#ifdef CONFIG_USE_VTOBJECT_fillattributes
+
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -171,3 +174,5 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 
 } // __IsoAgLib
+
+#endif CONFIG_USE_VTOBJECT_fillattributes

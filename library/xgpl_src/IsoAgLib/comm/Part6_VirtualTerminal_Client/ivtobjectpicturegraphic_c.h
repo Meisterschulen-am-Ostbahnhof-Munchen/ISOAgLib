@@ -22,6 +22,7 @@
 
 #include "impl/vtobjectpicturegraphic_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
 
 namespace IsoAgLib {
 
@@ -90,5 +91,7 @@ public:
 };
 
 } // IsoAgLib
+
+#endif //CONFIG_USE_VTOBJECT_picturegraphic
 
 #endif //IVTOBJECTPICTUREGRAPHIC_C_H

@@ -20,6 +20,7 @@
 
 #include "vtobjectpicturegraphic_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -524,3 +525,5 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 
 } // __IsoAgLib
+
+#endif //CONFIG_USE_VTOBJECT_picturegraphic

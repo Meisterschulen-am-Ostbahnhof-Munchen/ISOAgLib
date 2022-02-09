@@ -20,6 +20,11 @@
 #ifndef VTOBJECTFILLATTRIBUTES_C_H
 #define VTOBJECTFILLATTRIBUTES_C_H
 
+#include <IsoAgLib/isoaglib_config.h>
+
+
+#ifdef CONFIG_USE_VTOBJECT_fillattributes
+
 #include "vtobject_c.h"
 #include "../ivtobjectpicturegraphic_c.h"
 
@@ -69,4 +74,6 @@ public:
 
 } // __IsoAgLib
 
-#endif
+#endif //CONFIG_USE_VTOBJECT_fillattributes
+
+#endif //VTOBJECTFILLATTRIBUTES_C_H

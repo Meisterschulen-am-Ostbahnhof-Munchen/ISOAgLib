@@ -197,6 +197,7 @@ PREDEFINED             = ENABLE_MULTIPACKET_VARIANT_FAST_PACKET \
                          CONFIG_USE_VTOBJECT_key \
                          CONFIG_USE_VTOBJECT_line \
                          CONFIG_USE_VTOBJECT_linearbargraph \
+                         CONFIG_USE_VTOBJECT_lineattributes \
                          CONFIG_USE_VTOBJECT_macro \
                          CONFIG_USE_VTOBJECT_meter \
                          CONFIG_USE_VTOBJECT_numbervariable \

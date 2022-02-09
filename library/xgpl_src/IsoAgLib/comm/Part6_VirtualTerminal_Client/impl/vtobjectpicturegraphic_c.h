@@ -20,6 +20,11 @@
 #ifndef VTOBJECTPICTUREGRAPHIC_C_H
 #define VTOBJECTPICTUREGRAPHIC_C_H
 
+#include <IsoAgLib/isoaglib_config.h>
+
+
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
+
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -83,4 +88,6 @@ public:
 
 } //__IsoAgLib
 
-#endif
+#endif //CONFIG_USE_VTOBJECT_picturegraphic
+
+#endif //VTOBJECTPICTUREGRAPHIC_C_H

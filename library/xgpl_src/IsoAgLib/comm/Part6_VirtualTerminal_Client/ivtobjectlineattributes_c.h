@@ -22,6 +22,7 @@
 
 #include "impl/vtobjectlineattributes_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_lineattributes
 
 namespace IsoAgLib {
 
@@ -57,4 +58,6 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif // CONFIG_USE_VTOBJECT_lineattributes
+
+#endif // IVTOBJECTLINEATTRIBUTES_C_H

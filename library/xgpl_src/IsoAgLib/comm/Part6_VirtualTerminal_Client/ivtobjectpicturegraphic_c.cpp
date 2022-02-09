@@ -7,10 +7,13 @@
 
 #include "ivtobjectpicturegraphic_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
+
 namespace IsoAgLib {
 
 
 } // IsoAgLib
 
+#endif //CONFIG_USE_VTOBJECT_picturegraphic
 
 
