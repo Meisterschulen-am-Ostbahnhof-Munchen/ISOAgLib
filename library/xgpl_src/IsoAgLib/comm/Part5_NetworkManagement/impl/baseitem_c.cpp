@@ -39,7 +39,8 @@ BaseItem_c::BaseItem_c( ecutime_t ai32_time, IState_c::itemState_t ab_status, in
   @param acrc_baseItem reference to the source BaseItem_c instance
 */
 BaseItem_c::BaseItem_c(const BaseItem_c& acrc_baseItem)
-: IState_c(acrc_baseItem), mi32_lastTime(acrc_baseItem.mi32_lastTime)
+: AbstractClientBase()
+, IState_c(acrc_baseItem), mi32_lastTime(acrc_baseItem.mi32_lastTime)
 {}
 
 /**

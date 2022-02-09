@@ -78,8 +78,6 @@ namespace IsoAgLib {
         return vtObjectButton_c::updateHeight(b_SendRequest);
     }
 
-
-
     uint8_t iVtObjectButton_c::updateBackgroundColour(bool b_SendRequest) {
         return vtObjectButton_c::updateBackgroundColour(b_SendRequest);
     }
@@ -115,13 +113,21 @@ namespace IsoAgLib {
         vtObjectButton_c::v4setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    bool iVtObjectButton_c::v4select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
+    bool iVtObjectButton_c::v4select(uint8_t selectOrActivate) {
+    	return vtObject_c::select(selectOrActivate);
+    }
 
-    bool iVtObjectButton_c::v4enable(bool b_updateObject, bool b_enableReplaceOfCmd) { return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd); }
+    bool iVtObjectButton_c::v4enable(bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd);
+    }
 
-    bool iVtObjectButton_c::v4disable(bool b_updateObject, bool b_enableReplaceOfCmd) { return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd); }
+    bool iVtObjectButton_c::v4disable(bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd);
+    }
 
-    uint16_t iVtObjectButton_c::objectType() { return VT_OBJECT_TYPE_BUTTON; }
+    uint16_t iVtObjectButton_c::objectType() {
+    	return VT_OBJECT_TYPE_BUTTON;
+    }
 
 }
 

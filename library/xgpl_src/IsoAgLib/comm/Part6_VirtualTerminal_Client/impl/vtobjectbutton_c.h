@@ -35,6 +35,7 @@ namespace __IsoAgLib {
 class vtObjectButton_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectButton_s;
 
@@ -49,8 +50,6 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
-
-
 
   iVtObjectButton_s* get_vtObjectButton_a();
 

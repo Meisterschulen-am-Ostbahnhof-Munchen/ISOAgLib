@@ -32,6 +32,19 @@
 namespace __IsoAgLib {
 
 
+enum vtObjectButton_c::AttributeID:uint8_t
+{
+
+	Width            = 1,
+	Height           = 2,
+	BackgroundColour = 3,
+	BorderColour     = 4,
+	KeyCode          = 5,
+	Options          = 6,
+};
+
+
+
 struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
@@ -242,7 +255,7 @@ uint16_t
 vtObjectButton_c::updateWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(1);
+    getAttribute(Width);
   return vtObject_a->width;
 }
 
@@ -250,7 +263,7 @@ uint16_t
 vtObjectButton_c::updateHeight(bool b_SendRequest)
 {
   if (b_SendRequest)
-	  getAttribute (2);
+	  getAttribute(Height);
   return vtObject_a->height;
 
 }
@@ -259,7 +272,7 @@ uint8_t
 vtObjectButton_c::updateBackgroundColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(3);
+    getAttribute(BackgroundColour);
   return vtObject_a->backgroundColour;
 }
 
@@ -267,7 +280,7 @@ uint8_t
 vtObjectButton_c::updateBorderColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(4);
+    getAttribute(BorderColour);
   return vtObject_a->borderColour;
 }
 
@@ -275,7 +288,7 @@ uint8_t
 vtObjectButton_c::updateKeyCode(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(5);
+    getAttribute(KeyCode);
   return vtObject_a->keyCode;
 }
 
@@ -283,7 +296,7 @@ uint8_t
 vtObjectButton_c::updateOptions(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(6);
+    getAttribute(Options);
   return vtObject_a->options;
 }
 
@@ -292,12 +305,12 @@ vtObjectButton_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeV
 {
   switch (attrID)
   {
-    case 1: vtObject_a->width            = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case 2: vtObject_a->height           = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case 3: vtObject_a->backgroundColour = convertLittleEndianStringColour(pui8_attributeValue); break;
-    case 4: vtObject_a->borderColour     = convertLittleEndianStringColour(pui8_attributeValue); break;
-    case 5: vtObject_a->keyCode          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
-    case 6: vtObject_a->options          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Width:            vtObject_a->width            = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case Height:           vtObject_a->height           = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case BackgroundColour: vtObject_a->backgroundColour = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case BorderColour:     vtObject_a->borderColour     = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case KeyCode:          vtObject_a->keyCode          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Options:          vtObject_a->options          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     default: break;
   }
 }

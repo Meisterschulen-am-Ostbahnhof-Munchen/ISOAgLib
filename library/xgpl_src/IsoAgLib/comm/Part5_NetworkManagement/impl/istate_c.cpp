@@ -45,7 +45,8 @@ __IsoAgLib::IState_c::IState_c(uint8_t aui8_state, int ai_multitonInst )
   @param acrc_src source for this new instance
 */
 __IsoAgLib::IState_c::IState_c(const __IsoAgLib::IState_c& acrc_src)
-	: ClientBase( acrc_src )
+	: AbstractClientBase( acrc_src )
+	, ClientBase( acrc_src )
 {
   en_itemState = acrc_src.en_itemState;
 }
