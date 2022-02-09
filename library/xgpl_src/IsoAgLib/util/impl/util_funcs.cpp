@@ -40,6 +40,18 @@ uint8_t convertLittleEndianStringUi8( const uint8_t* apui8_src )
   return apui8_src[0];
 }
 
+IsoAgLib::Colour convertLittleEndianStringColour( const uint8_t* apui8_src )
+{
+  return (IsoAgLib::Colour)apui8_src[0];
+}
+
+
+IsoAgLib::Font convertLittleEndianStringFont( const uint8_t* apui8_src )
+{
+  return (IsoAgLib::Font)apui8_src[0];
+}
+
+
 
 uint8_t bcd2dec(uint8_t ab_bcd)
 {

@@ -222,37 +222,33 @@ vtObjectFontAttributes_c::setFontAttributes(IsoAgLib::Colour newFontColour, IsoA
 uint8_t
 vtObjectFontAttributes_c::updateFontColour(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s), 1);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s));
+	if (b_SendRequest)
+		getAttribute(1);
+	return vtObject_a->fontColour;
 }
 
 uint8_t
 vtObjectFontAttributes_c::updateFontSize(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize), sizeof(iVtObjectFontAttributes_s), 2);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize), sizeof(iVtObjectFontAttributes_s));
+	if (b_SendRequest)
+		getAttribute(2);
+	return vtObject_a->fontSize;
 }
 
 uint8_t
 vtObjectFontAttributes_c::updateFontType(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType), sizeof(iVtObjectFontAttributes_s), 3);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType), sizeof(iVtObjectFontAttributes_s));
+	if (b_SendRequest)
+		getAttribute(3);
+	return vtObject_a->fontType;
 }
 
 uint8_t
 vtObjectFontAttributes_c::updateFontStyle(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle), sizeof(iVtObjectFontAttributes_s), 4);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle), sizeof(iVtObjectFontAttributes_s));
+	if (b_SendRequest)
+		getAttribute(4);
+	return vtObject_a->fontStyle;
 }
 
 void
@@ -260,14 +256,14 @@ vtObjectFontAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 {
   switch (attrID)
   {
-    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontColour), sizeof(iVtObjectFontAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontSize), sizeof(iVtObjectFontAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontType), sizeof(iVtObjectFontAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectFontAttributes_a(), fontStyle), sizeof(iVtObjectFontAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 1: vtObject_a->fontColour = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case 2: vtObject_a->fontSize   = convertLittleEndianStringFont(  pui8_attributeValue); break;
+    case 3: vtObject_a->fontType   = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case 4: vtObject_a->fontStyle  = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     default: break;
   }
 }
-#endif
+#endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
 
 	vtObjectFontAttributes_c::iVtObjectFontAttributes_s* vtObjectFontAttributes_c::get_vtObjectFontAttributes_a() {

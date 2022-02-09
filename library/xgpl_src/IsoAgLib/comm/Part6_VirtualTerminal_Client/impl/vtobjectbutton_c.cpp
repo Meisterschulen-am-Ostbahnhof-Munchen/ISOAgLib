@@ -242,54 +242,49 @@ uint16_t
 vtObjectButton_c::updateWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute((vtObject_a->width), sizeof(iVtObjectButton_s), 1);
-  else
-    return getValue16((vtObject_a->width), sizeof(iVtObjectButton_s));
+    getAttribute(1);
+  return vtObject_a->width;
 }
 
 uint16_t
 vtObjectButton_c::updateHeight(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute((vtObject_a->height), sizeof(iVtObjectButton_s), 2);
-  else
-    return getValue16((vtObject_a->height), sizeof(iVtObjectButton_s));
+	  getAttribute (2);
+  return vtObject_a->height;
+
 }
 
 uint8_t
 vtObjectButton_c::updateBackgroundColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute((vtObject_a->backgroundColour), sizeof(iVtObjectButton_s), 3);
-  else
-    return vtObject_a->backgroundColour;
+    getAttribute(3);
+  return vtObject_a->backgroundColour;
 }
 
 uint8_t
 vtObjectButton_c::updateBorderColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute((vtObject_a->borderColour), sizeof(iVtObjectButton_s), 4);
-  else
-    return vtObject_a->borderColour;
+    getAttribute(4);
+  return vtObject_a->borderColour;
 }
 
 uint8_t
 vtObjectButton_c::updateKeyCode(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute((vtObject_a->keyCode), sizeof(iVtObjectButton_s), 5);
-  else
-    return vtObject_a->keyCode;
+    getAttribute(5);
+  return vtObject_a->keyCode;
 }
 
 uint8_t
 vtObjectButton_c::updateOptions(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute((vtObject_a->options), sizeof(iVtObjectButton_s), 6);
-  else
-    return getValue8((vtObject_a->options), sizeof(iVtObjectButton_s));
+    getAttribute(6);
+  return vtObject_a->options;
 }
 
 void
@@ -297,12 +292,12 @@ vtObjectButton_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeV
 {
   switch (attrID)
   {
-    case 1: saveValue16((vtObject_a->width), sizeof(iVtObjectButton_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16((vtObject_a->height), sizeof(iVtObjectButton_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue8((vtObject_a->backgroundColour), sizeof(iVtObjectButton_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 4: saveValue8((vtObject_a->borderColour), sizeof(iVtObjectButton_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 5: saveValue8((vtObject_a->keyCode), sizeof(iVtObjectButton_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 6: saveValue8((vtObject_a->options), sizeof(iVtObjectButton_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 1: vtObject_a->width            = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case 2: vtObject_a->height           = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case 3: vtObject_a->backgroundColour = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case 4: vtObject_a->borderColour     = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case 5: vtObject_a->keyCode          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case 6: vtObject_a->options          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     default: break;
   }
 }

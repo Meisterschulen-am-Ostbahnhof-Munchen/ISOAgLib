@@ -20,6 +20,8 @@
 
 #include "vtobjectcolourmap_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_colourmap
+
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
 
@@ -127,3 +129,5 @@ vtObjectColourMap_c::iVtObjectColourMap_s *vtObjectColourMap_c::get_vtObjectColo
 
 
 } // __IsoAgLib
+
+#endif //CONFIG_USE_VTOBJECT_colourmap

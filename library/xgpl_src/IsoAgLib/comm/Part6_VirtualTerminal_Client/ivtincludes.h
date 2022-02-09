@@ -22,7 +22,9 @@
 
 #include "ivttypes.h"
 
+#ifdef CONFIG_USE_VTOBJECT_button
 #include "ivtobjectbutton_c.h"
+#endif
 #include "ivtobjectdatamask_c.h"
 #include "ivtobjectfontattributes_c.h"
 #include "ivtobjectgraphicscontext_c.h"
@@ -31,7 +33,9 @@
 #include "ivtobjectinputattributes_c.h"
 #include "ivtobjectlineattributes_c.h"
 #include "ivtobjectpicturegraphic_c.h"
+#ifdef CONFIG_USE_VTOBJECT_colourmap
 #include "ivtobjectcolourmap_c.h"
+#endif
 #include "ivtobjectsoftkeymask_c.h"
 #include "ivtobjectworkingset_c.h"
 

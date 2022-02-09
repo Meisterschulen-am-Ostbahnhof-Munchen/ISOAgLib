@@ -102,13 +102,6 @@ void
 vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    // check if not already RAM string buffer?
-    if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
-      s_properties.flags |= FLAG_STRING_IN_RAM;
-      // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new char [get_vtObjectInputAttributes_a()->length+1];
-      vtObject_a->validationString = newStringBuffer;
-    }
     char *dest = get_vtObjectInputAttributes_a()->validationString;
     const char *src = newValidationString;
     int copyLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
@@ -126,10 +119,7 @@ vtObjectInputAttributes_c::setValidationStringRef(char* newValidationString, boo
 {
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-    if (s_properties.flags & FLAG_STRING_IN_RAM) {
       delete (get_vtObjectInputAttributes_a()->validationString);
-      s_properties.flags &= ~FLAG_STRING_IN_RAM;
-    }
 
     vtObject_a->validationString = newValidationString;
   }

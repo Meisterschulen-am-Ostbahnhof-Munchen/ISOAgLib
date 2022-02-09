@@ -261,13 +261,6 @@ vtObjectOutputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b
   }
 
   if (b_updateObject) {
-    // check if not already RAM string buffer?
-    if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
-      s_properties.flags |= FLAG_STRING_IN_RAM;
-      // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new char [get_vtObjectOutputString_a()->length+1];
-      vtObject_a->value = newStringBuffer;
-    }
     char *dest = get_vtObjectOutputString_a()->value;
     const char *src = newValue;
     int copyLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length;
@@ -290,10 +283,7 @@ vtObjectOutputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_
 
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-    if (s_properties.flags & FLAG_STRING_IN_RAM) {
       delete (get_vtObjectOutputString_a()->value);
-      s_properties.flags &= ~FLAG_STRING_IN_RAM;
-    }
 
     vtObject_a->value = newValue;
   }
@@ -327,8 +317,7 @@ vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_up
 	  vtObject_a->height = newHeight;
   }
 
-  // TODO
-  //scaleSize( newWidth, newHeight );
+  scaleSize( newWidth, newHeight );
 
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
@@ -344,78 +333,72 @@ vtObjectOutputString_c::getString()
 uint16_t
 vtObjectOutputString_c::updateWidth(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), width), sizeof(iVtObjectOutputString_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), width), sizeof(iVtObjectOutputString_s));
+	if (b_SendRequest)
+		getAttribute(1);
+	return vtObject_a->width;
 }
 
 uint16_t
 vtObjectOutputString_c::updateHeight(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s));
+	if (b_SendRequest)
+		getAttribute(2);
+	return vtObject_a->height;
 }
 
 uint8_t
 vtObjectOutputString_c::updateBackgroundColour(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour), sizeof(iVtObjectOutputString_s), 3);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour), sizeof(iVtObjectOutputString_s));
+	if (b_SendRequest)
+		getAttribute(3);
+	return vtObject_a->backgroundColour;
 }
 
 uint16_t
 vtObjectOutputString_c::updateFontAttributes(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes), sizeof(iVtObjectOutputString_s), 4);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes), sizeof(iVtObjectOutputString_s));
+	if (b_SendRequest)
+		getAttribute(4);
+	return vtObject_a->backgroundColour;
 }
 
 uint8_t
 vtObjectOutputString_c::updateOptions(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), options), sizeof(iVtObjectOutputString_s), 5);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), options), sizeof(iVtObjectOutputString_s));
+	if (b_SendRequest)
+		getAttribute(5);
+	return vtObject_a->options;
 }
 
-uint16_t
+IsoAgLib::iVtObjectStringVariable_c*
 vtObjectOutputString_c::updateVariableReference(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference), sizeof(iVtObjectOutputString_s), 6);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference), sizeof(iVtObjectOutputString_s));
+	if (b_SendRequest)
+		getAttribute(6);
+	return vtObject_a->variableReference;
 }
 
 uint8_t
 vtObjectOutputString_c::updateJustification(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification), sizeof(iVtObjectOutputString_s), 7);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification), sizeof(iVtObjectOutputString_s));
+	if (b_SendRequest)
+		getAttribute(7);
+	return vtObject_a->horizontalJustification;
 }
+
 
 void
 vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), width), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), height), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), backgroundColour), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), fontAttributes), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), options), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 6: saveValue16(MACRO_getStructOffset(get_vtObjectOutputString_a(), variableReference), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 7: saveValue8(MACRO_getStructOffset(get_vtObjectOutputString_a(), horizontalJustification), sizeof(iVtObjectOutputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 1: vtObject_a->width                   = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case 2: vtObject_a->height                  = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case 3: vtObject_a->backgroundColour        = convertLittleEndianStringColour(pui8_attributeValue); break;
+    //case 4: vtObject_a->fontAttributes          = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
+    case 5: vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    //case 6: vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
+    case 7: vtObject_a->horizontalJustification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     default: break;
   }
 }

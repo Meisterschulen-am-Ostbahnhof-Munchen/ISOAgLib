@@ -22,6 +22,8 @@
 
 #include "impl/vtobjectsoftkeymask_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+
 
 namespace IsoAgLib {
 
@@ -55,4 +57,6 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif //CONFIG_USE_VTOBJECT_softkeymask
+
+#endif //IVTOBJECTSOFTKEYMASK_C_H

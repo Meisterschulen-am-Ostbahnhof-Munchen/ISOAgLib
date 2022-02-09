@@ -112,7 +112,7 @@ namespace IsoAgLib {
         return vtObjectOutputString_c::updateOptions(b_SendRequest);
     }
 
-    uint16_t iVtObjectOutputString_c::updateVariableReference(bool b_SendRequest) {
+    IsoAgLib::iVtObjectStringVariable_c* iVtObjectOutputString_c::updateVariableReference(bool b_SendRequest) {
         return vtObjectOutputString_c::updateVariableReference(b_SendRequest);
     }
 

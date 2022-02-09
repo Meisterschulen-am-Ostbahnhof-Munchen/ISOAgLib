@@ -105,7 +105,7 @@ public:
   virtual uint8_t updateBackgroundColour(bool b_SendRequest=false);
   virtual uint16_t updateFontAttributes(bool b_SendRequest=false);
   virtual uint8_t updateOptions(bool b_SendRequest=false);
-  virtual uint16_t updateVariableReference(bool b_SendRequest=false);
+  virtual IsoAgLib::iVtObjectStringVariable_c*  updateVariableReference(bool b_SendRequest=false);
   virtual uint8_t updateJustification(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);

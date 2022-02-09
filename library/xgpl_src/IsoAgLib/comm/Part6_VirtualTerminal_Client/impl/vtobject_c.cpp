@@ -38,13 +38,6 @@ namespace __IsoAgLib {
 vtObject_c::vtObject_c(int ai_multitonInst)
 :iVtObject_c()
 {
-  // typical double init is caught in objectpool-class's init-call!
-  s_properties.flags &= ~FLAG_STRING_IN_RAM;
-  s_properties.flags &= ~FLAG_OBJECTS2FOLLOW_IN_RAM;
-  // NOTE: If objects were modified using b_updateObject==true,
-  // then these modifications are GONE and result in a MEMORY LEAK
-  // This is subject to be correctly fixed in some later version, if needed!
-
   setMultitonInst( ai_multitonInst );
 }
 
@@ -101,44 +94,7 @@ vtObject_c::scaleSize( uint16_t &width, uint16_t &height ) const
   ;
 #endif
 }
-#ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-// //////////////////////////////// get(Signed)Value(8/16/32)GetAttribute
-uint8_t
-vtObject_c::getValue8GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
-  getAttribute (ui8_ind, b_enableReplaceOfCmd);
-  return getValue8 (ui16_structOffset, ui16_structLen);
-}
-uint16_t
-vtObject_c::getValue16GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
-  getAttribute (ui8_ind, b_enableReplaceOfCmd);
-  return getValue16 (ui16_structOffset, ui16_structLen);
-}
-uint32_t
-vtObject_c::getValue32GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
-  getAttribute (ui8_ind, b_enableReplaceOfCmd);
-  return getValue32 (ui16_structOffset, ui16_structLen);
-}
-int8_t
-vtObject_c::getSignedValue8GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
-  getAttribute (ui8_ind, b_enableReplaceOfCmd);
-  return getSignedValue8 (ui16_structOffset, ui16_structLen);
-}
-int16_t
-vtObject_c::getSignedValue16GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
-  getAttribute (ui8_ind, b_enableReplaceOfCmd);
-  return getSignedValue16 (ui16_structOffset, ui16_structLen);
-}
-int32_t
-vtObject_c::getSignedValue32GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
-  getAttribute (ui8_ind, b_enableReplaceOfCmd);
-  return getSignedValue32 (ui16_structOffset, ui16_structLen);
-}
-float
-vtObject_c::getValueFloatGetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
-  getAttribute (ui8_ind, b_enableReplaceOfCmd);
-  return getValueFloat (ui16_structOffset, ui16_structLen);
-}
-#endif
+
 
 
 bool

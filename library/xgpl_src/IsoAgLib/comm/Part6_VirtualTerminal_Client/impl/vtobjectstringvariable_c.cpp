@@ -135,12 +135,6 @@ vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject, bool
 {
   if (b_updateObject) {
     // check if not already RAM string buffer?
-    if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
-      s_properties.flags |= FLAG_STRING_IN_RAM;
-      // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new char [get_vtObjectStringVariable_a()->length+1];
-      vtObject_a->value = newStringBuffer;
-    }
     char *dest = get_vtObjectStringVariable_a()->value;
     const char *src = newValue;
     int copyLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectStringVariable_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectStringVariable_a()->length;
@@ -158,10 +152,7 @@ vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject, bool 
 {
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-    if (s_properties.flags & FLAG_STRING_IN_RAM) {
       delete (get_vtObjectStringVariable_a()->value);
-      s_properties.flags &= ~FLAG_STRING_IN_RAM;
-    }
 
     vtObject_a->value = newValue;
   }

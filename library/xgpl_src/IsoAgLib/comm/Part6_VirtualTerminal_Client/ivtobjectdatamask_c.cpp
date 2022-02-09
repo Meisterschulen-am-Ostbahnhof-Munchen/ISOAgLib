@@ -26,10 +26,12 @@ namespace IsoAgLib {
     	pool->Append(this);
     }
 
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
     void iVtObjectDataMask_c::setSoftKeyMask(iVtObjectSoftKeyMask_c *newSoftKeyMask, bool b_updateObject,
                                              bool b_enableReplaceOfCmd) {
         vtObjectDataMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject, b_enableReplaceOfCmd);
     }
+#endif
 
     void iVtObjectDataMask_c::setBackgroundColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectDataMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
@@ -56,9 +58,11 @@ namespace IsoAgLib {
         return vtObjectDataMask_c::updateBackgroundColour(b_SendRequest);
     }
 
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
     uint16_t iVtObjectDataMask_c::updateSoftKeyMask(bool b_SendRequest) {
         return vtObjectDataMask_c::updateSoftKeyMask(b_SendRequest);
     }
+#endif
 
 #endif
 }

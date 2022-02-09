@@ -81,7 +81,7 @@ public:
   uint8_t updateBackgroundColour(bool b_SendRequest=false);
   uint16_t updateFontAttributes(bool b_SendRequest=false);
   uint8_t updateOptions(bool b_SendRequest=false);
-  uint16_t updateVariableReference(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectStringVariable_c* updateVariableReference(bool b_SendRequest=false);
   uint8_t updateJustification(bool b_SendRequest=false);
 #endif
 

@@ -20,6 +20,8 @@
 #ifndef VTOBJECTCOLOURMAP_C_H
 #define VTOBJECTCOLOURMAP_C_H
 
+#ifdef CONFIG_USE_VTOBJECT_colourmap
+
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -60,4 +62,6 @@ public:
 
 } //__IsoAgLib
 
-#endif
+#endif //CONFIG_USE_VTOBJECT_colourmap
+
+#endif //VTOBJECTCOLOURMAP_C_H

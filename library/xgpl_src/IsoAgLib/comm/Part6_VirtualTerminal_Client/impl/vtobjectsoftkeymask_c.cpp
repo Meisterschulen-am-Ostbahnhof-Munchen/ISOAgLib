@@ -19,6 +19,7 @@
 */
 
 #include "vtobjectsoftkeymask_c.h"
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
 #include "../ivtobjectmacro_c.h"
 
 #include "vtclient_c.h"
@@ -256,3 +257,5 @@ vtObjectSoftKeyMask_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 #endif
 
 } // __IsoAgLib
+
+#endif //CONFIG_USE_VTOBJECT_softkeymask

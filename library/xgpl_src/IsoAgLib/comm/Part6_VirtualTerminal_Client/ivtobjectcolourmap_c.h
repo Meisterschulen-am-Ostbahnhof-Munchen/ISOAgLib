@@ -22,6 +22,8 @@
 
 #include "impl/vtobjectcolourmap_c.h"
 
+#ifdef CONFIG_USE_VTOBJECT_colourmap
+
 
 namespace IsoAgLib {
 
@@ -50,4 +52,6 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif //CONFIG_USE_VTOBJECT_colourmap
+
+#endif //IVTOBJECTCOLOURMAP_C_H

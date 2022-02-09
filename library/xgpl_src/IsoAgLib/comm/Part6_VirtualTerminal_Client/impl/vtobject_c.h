@@ -60,6 +60,9 @@ protected:
   void setAttribute      (uint8_t attrID, uint32_t newValue, bool b_enableReplaceOfCmd=true);
   void setAttributeFloat (uint8_t attrID, float newValue, bool b_enableReplaceOfCmd=true);
 
+  #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
+  void getAttribute      (uint8_t attrID, bool b_enableReplaceOfCmd=true);
+  #endif
 
 
 protected:

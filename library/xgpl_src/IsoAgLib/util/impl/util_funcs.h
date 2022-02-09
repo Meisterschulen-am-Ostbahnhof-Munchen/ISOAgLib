@@ -34,6 +34,9 @@ class StreamInput_c;
 #include <string>
 #endif
 
+#include "iColour.h"
+#include "iFont.h"
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib
 {
@@ -97,6 +100,10 @@ template<class T> void convertLittleEndianString( const uint8_t* apui8_src, T& r
 
 /** convert receive multistream into an unsigned variable */
 uint8_t convertLittleEndianStringUi8( const uint8_t* apui8_src );
+/** convert receive multistream into an Colour variable */
+IsoAgLib::Colour convertLittleEndianStringColour( const uint8_t* apui8_src );
+/** convert receive multistream into an Colour variable */
+IsoAgLib::Font convertLittleEndianStringFont( const uint8_t* apui8_src );
 /** convert receive multistream into an unsigned variable */
 inline int8_t convertLittleEndianStringI8( const uint8_t* apui8_src ){ return (int8_t)(apui8_src[0]);};
 /** convert receive multistream into an unsigned variable */

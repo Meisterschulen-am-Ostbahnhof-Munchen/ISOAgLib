@@ -71,8 +71,8 @@ public:
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 1; }
   */
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
-  uint16_t updateSoftKeyMask(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif

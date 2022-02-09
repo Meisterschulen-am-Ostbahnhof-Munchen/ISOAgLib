@@ -24,6 +24,9 @@ menu "### ISOAgLib Example Configuration ###"
      config USE_VTOBJECT_container
          bool "USE_VTOBJECT_container"
          default n
+     config USE_VTOBJECT_colourmap
+         bool "USE_VTOBJECT_colourmap"
+         default n
      config USE_VTOBJECT_datamask
          bool "USE_VTOBJECT_datamask"
          default n
