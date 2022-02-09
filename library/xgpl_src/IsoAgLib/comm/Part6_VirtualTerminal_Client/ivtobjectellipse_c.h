@@ -23,6 +23,7 @@
 #include "impl/vtobjectellipse_c.h"
 
 
+#ifdef USE_VTOBJECT_ellipse
 
 namespace IsoAgLib {
 
@@ -65,11 +66,12 @@ public:
   uint8_t updateStartAngle(bool b_SendRequest=false);
   uint8_t updateEndAngle(bool b_SendRequest=false);
   uint16_t updateFillAttributes(bool b_SendRequest=false);
-#endif
+#endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_ellipse
 
+#endif //IVTOBJECTELLIPSE_C_H

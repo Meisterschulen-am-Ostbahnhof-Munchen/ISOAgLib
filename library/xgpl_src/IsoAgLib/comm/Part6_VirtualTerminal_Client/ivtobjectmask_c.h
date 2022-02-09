@@ -44,4 +44,4 @@ public:
 
 } // __IsoAgLib
 
-#endif
+#endif //IVTOBJECTMASK_C_H

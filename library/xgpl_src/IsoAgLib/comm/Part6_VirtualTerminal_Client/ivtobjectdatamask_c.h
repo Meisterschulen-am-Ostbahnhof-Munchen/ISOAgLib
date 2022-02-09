@@ -60,4 +60,4 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif //IVTOBJECTDATAMASK_C_H

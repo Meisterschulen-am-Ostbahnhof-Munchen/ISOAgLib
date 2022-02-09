@@ -363,11 +363,12 @@ public:
   uint8_t updateTransparencyColour(bool b_SendRequest=false) {
     return vtObjectGraphicsContext_c::updateTransparencyColour(b_SendRequest);
   }
-#endif
+#endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
   virtual uint16_t getObjectType() const { return objectType(); }
 }; // class iVtObjectGraphicsContext_c
 
 } // namespace IsoAgLib
-#endif
+#endif // CONFIG_USE_ISO_TERMINAL_GRAPHICCONTEXT
+
 #endif // IVTOBJECTGRAPHICSCONTEXT_C_H

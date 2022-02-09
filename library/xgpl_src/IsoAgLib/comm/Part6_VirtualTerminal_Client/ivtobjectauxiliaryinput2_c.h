@@ -23,6 +23,7 @@
 #include "impl/vtobjectauxiliaryinput2_c.h"
 
 
+#ifdef USE_VTOBJECT_auxiliaryinput2
 
 namespace IsoAgLib {
 
@@ -45,7 +46,7 @@ public:
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectAuxiliaryInput2_c::updateObjectType(); }
   */
-#endif
+#endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
   /**
     set new value and trigger AUX2 input state message
@@ -65,5 +66,6 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif // USE_VTOBJECT_auxiliaryinput2
 
+#endif // IVTOBJECTAUXILIARYINPUT2_C_H

@@ -23,6 +23,7 @@
 #include "impl/vtobjectcontainer_c.h"
 
 
+#ifdef USE_VTOBJECT_container
 
 namespace IsoAgLib {
 
@@ -69,13 +70,13 @@ public:
     return vtObjectContainer_c::updateHidden(b_SendRequest);
   }
   */
-#endif
+#endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
   virtual uint16_t getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_container
 
-
+#endif //IVTOBJECTCONTAINER_C_H

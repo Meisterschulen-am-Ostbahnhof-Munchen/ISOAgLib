@@ -23,6 +23,7 @@
 #include "impl/vtobjectauxiliarypointer_c.h"
 
 
+#ifdef USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
 namespace IsoAgLib {
 
@@ -45,12 +46,13 @@ public:
     return vtObjectInputAttributes_c::getValue(b_SendRequest);
   }
   */
-#endif
+#endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   
   virtual uint16_t getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib
 
-#endif
+#endif // USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
 
+#endif // IVTOBJECTAUXILIARYCONTROLDESIGNATOROBJECTPOINTER_C_H

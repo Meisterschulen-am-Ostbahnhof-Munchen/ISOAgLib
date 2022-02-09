@@ -23,6 +23,7 @@
 #include "impl/vtobjectline_c.h"
 
 
+#ifdef USE_VTOBJECT_line
 
 namespace IsoAgLib {
 
@@ -62,5 +63,6 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_line
 
+#endif //IVTOBJECTLINE_C_H

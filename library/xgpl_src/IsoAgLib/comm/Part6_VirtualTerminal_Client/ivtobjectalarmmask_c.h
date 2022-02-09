@@ -22,6 +22,7 @@
 
 #include "impl/vtobjectalarmmask_c.h"
 
+#ifdef USE_VTOBJECT_alarmmask
 
 #include "ivtobjectsoftkeymask_c.h"
 
@@ -50,9 +51,7 @@ public:
 			          acousticSignal)
 	{
 		pool->Append(this);
-	}
-
-
+  }
   ~iVtObjectAlarmMask_c(){}
 
 
@@ -102,12 +101,13 @@ public:
   uint8_t updateAcousticSignal(bool b_SendRequest=false) {
     return vtObjectAlarmMask_c::updateAcousticSignal(b_SendRequest);
   }
-#endif
+#endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
   virtual uint16_t getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib
 
-#endif
+#endif // USE_VTOBJECT_alarmmask
 
+#endif // IVTOBJECTALARMMASK_C_H

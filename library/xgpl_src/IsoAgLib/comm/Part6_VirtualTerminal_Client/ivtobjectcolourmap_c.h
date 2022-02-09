@@ -43,7 +43,7 @@ public:
 	  return 0;
   }
 
-#endif
+#endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
   virtual uint16_t getObjectType() const { return objectType(); }
 };

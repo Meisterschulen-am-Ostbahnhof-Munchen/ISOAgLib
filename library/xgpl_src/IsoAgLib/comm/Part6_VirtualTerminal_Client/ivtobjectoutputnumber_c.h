@@ -23,6 +23,7 @@
 #include "impl/vtobjectoutputnumber_c.h"
 
 
+#ifdef USE_VTOBJECT_outputnumber
 
 #include "ivtobjectfontattributes_c.h"
 
@@ -101,5 +102,6 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif //USE_VTOBJECT_outputnumber
 
+#endif //IVTOBJECTOUTPUTNUMBER_C_H

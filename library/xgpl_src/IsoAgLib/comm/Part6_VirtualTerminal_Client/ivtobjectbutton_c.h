@@ -90,4 +90,4 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif // IVTOBJECTBUTTON_C_H

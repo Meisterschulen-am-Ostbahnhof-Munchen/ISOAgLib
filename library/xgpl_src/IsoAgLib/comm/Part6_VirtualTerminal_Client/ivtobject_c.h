@@ -208,4 +208,4 @@ iVtObject_c::setClientID( uint8_t ui8_clientID )
 
 } // IsoAgLib
 
-#endif
+#endif //IVTOBJECT_C_H

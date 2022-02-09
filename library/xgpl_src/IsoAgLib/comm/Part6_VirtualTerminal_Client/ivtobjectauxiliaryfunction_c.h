@@ -23,6 +23,7 @@
 #include "impl/vtobjectauxiliaryfunction_c.h"
 
 
+#ifdef USE_VTOBJECT_auxiliaryfunction
 
 namespace IsoAgLib {
 
@@ -52,5 +53,6 @@ public:
 
 } // IsoAgLib
 
-#endif
+#endif // USE_VTOBJECT_auxiliaryfunction
 
+#endif // IVTOBJECTAUXILIARYFUNCTION_C_H
