@@ -100,7 +100,9 @@ class iVtObjectWorkingSet_c;
 class iVtObjectDataMask_c;
 class iVtObjectAlarmMask_c;
 class iVtObjectContainer_c;
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
 class iVtObjectSoftKeyMask_c;
+#endif
 class iVtObjectKey_c;
 #ifdef CONFIG_USE_VTOBJECT_button
 	class iVtObjectButton_c;

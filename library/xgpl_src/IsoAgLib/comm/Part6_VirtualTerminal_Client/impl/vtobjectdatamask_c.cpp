@@ -37,9 +37,12 @@ struct vtObjectDataMask_c::iVtObjectDataMask_s: iVtObjectMask_s {
 	IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask;
 #endif
 	explicit iVtObjectDataMask_s(
-			IsoAgLib::ObjectID ID,
-			IsoAgLib::Colour backgroundColour,
-			IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask)
+			  IsoAgLib::ObjectID ID
+			, IsoAgLib::Colour backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+			, IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask
+#endif
+			)
     : iVtObject_s(ID)
 	, iVtObjectMask_s(ID)
 	, backgroundColour(backgroundColour)
@@ -106,15 +109,21 @@ vtObjectDataMask_c::iVtObjectDataMask_s* vtObjectDataMask_c::get_vtObjectDataMas
 }
 
 vtObjectDataMask_c::vtObjectDataMask_c(
-		int ai_multitonInst,
-		IsoAgLib::ObjectID ID,
-		IsoAgLib::Colour backgroundColour,
-		IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask)
+		  int ai_multitonInst
+		, IsoAgLib::ObjectID ID
+		, IsoAgLib::Colour backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+		, IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask
+#endif
+		)
 :vtObjectDataMask_c(
 		new iVtObjectDataMask_s(
-				ID,
-				backgroundColour,
-				softKeyMask),
+				  ID
+				, backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+				, softKeyMask
+#endif
+				),
 		ai_multitonInst)
 {
 }

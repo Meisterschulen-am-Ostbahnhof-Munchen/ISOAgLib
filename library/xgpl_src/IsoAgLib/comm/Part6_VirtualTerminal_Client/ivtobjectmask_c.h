@@ -36,7 +36,9 @@ public:
   : vtObject_c(ai_multitonInst)
   {}
 
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
   virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) = 0;
+#endif
 
   virtual ~iVtObjectMask_c() = default;
 };

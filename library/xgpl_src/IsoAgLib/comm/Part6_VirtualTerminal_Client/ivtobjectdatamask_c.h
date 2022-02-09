@@ -31,12 +31,18 @@ public:
   static uint16_t objectType();
 
   iVtObjectDataMask_c(
-		iVtClientObjectPool_c* pool,
-		ObjectID ID = autoID,
-  	    Colour backgroundColour = BLACK,
-  	    iVtObjectSoftKeyMask_c* softKeyMask = nullptr);
+		  iVtClientObjectPool_c* pool
+		, ObjectID ID = autoID
+  	    , Colour backgroundColour = BLACK
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+  	    , iVtObjectSoftKeyMask_c* softKeyMask = nullptr
+#endif
+		);
 
+
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
   void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+#endif
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false);
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

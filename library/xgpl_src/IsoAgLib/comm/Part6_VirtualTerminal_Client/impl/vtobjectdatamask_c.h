@@ -50,15 +50,21 @@ public:
   iVtObjectDataMask_s* get_vtObjectDataMask_a();
 
   vtObjectDataMask_c(
-	int ai_multitonInst,
-	IsoAgLib::ObjectID ID,
-	IsoAgLib::Colour backgroundColour,
-	IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask);
+	  int ai_multitonInst
+	, IsoAgLib::ObjectID ID
+	, IsoAgLib::Colour backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+	, IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask
+#endif
+	);
 
   vtObjectDataMask_c(iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
   uint32_t fitTerminal() const;
+
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
   void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+#endif
 
   // //////////////////////////////////
   // All special Attribute-Set methods
@@ -72,7 +78,11 @@ public:
   uint8_t updateObjectType() const { return 1; }
   */
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
+
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
   IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false);
+#endif
+
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
