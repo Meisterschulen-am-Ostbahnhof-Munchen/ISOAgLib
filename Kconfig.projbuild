@@ -1,17 +1,103 @@
 menu "### ISOAgLib Example Configuration ###"
 
     config USE_ISO_TERMINAL_GRAPHICCONTEXT
-        bool "USE_ISO_TERMINAL_GRAPHICCONTEXT"
+        bool
         default n
-        help
-            Enable support for ...
             
             
     config USE_ISO_TERMINAL_GETATTRIBUTES
-        bool "USE_ISO_TERMINAL_GETATTRIBUTES"
+        bool
         default n
-        help
-            Enable support for ...
+        
+     config USE_VTOBJECT_alarmmask
+        bool
+        default n
+     config USE_VTOBJECT_archedbargraph
+         bool
+         default n
+     config USE_VTOBJECT_auxiliaryfunction
+         bool
+         default n
+     config USE_VTOBJECT_auxiliaryinput
+         bool
+         default n
+     config USE_VTOBJECT_button
+         bool
+         default n
+     config USE_VTOBJECT_container
+         bool
+         default n
+     config USE_VTOBJECT_datamask
+         bool
+         default n
+     config USE_VTOBJECT_ellipse
+         bool
+         default n
+     config USE_VTOBJECT_fillattributes
+         bool
+         default n
+     config USE_VTOBJECT_fontattributes
+         bool
+         default n
+     config USE_VTOBJECT_inputboolean
+         bool
+         default n
+     config USE_VTOBJECT_inputlist
+         bool
+         default n
+     config USE_VTOBJECT_inputnumber
+         bool
+         default n
+     config USE_VTOBJECT_inputstring
+         bool
+         default n
+     config USE_VTOBJECT_key
+         bool
+         default n
+     config USE_VTOBJECT_line
+         bool
+         default n
+     config USE_VTOBJECT_linearbargraph
+         bool
+         default n
+     config USE_VTOBJECT_macro
+         bool
+         default n
+     config USE_VTOBJECT_meter
+         bool
+         default n
+     config USE_VTOBJECT_numbervariable
+         bool
+         default n
+     config USE_VTOBJECT_objectpointer
+         bool
+         default n
+     config USE_VTOBJECT_outputnumber
+         bool
+         default n
+     config USE_VTOBJECT_outputstring
+         bool
+         default n
+     config USE_VTOBJECT_polygon
+         bool
+         default n
+     config USE_VTOBJECT_picturegraphic
+         bool
+         default n
+     config USE_VTOBJECT_rectangle
+         bool
+         default n
+     config USE_VTOBJECT_softkeymask
+         bool
+         default n
+          
+     config USE_VTOBJECT_stringvariable
+         bool
+         default n
+          
+     config USE_VTOBJECT_workingset
+         bool
+         default n
             
 
 endmenu
