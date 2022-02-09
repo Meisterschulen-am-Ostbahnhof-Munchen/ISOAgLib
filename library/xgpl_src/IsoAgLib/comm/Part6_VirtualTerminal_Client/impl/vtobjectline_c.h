@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_line
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 
@@ -33,13 +34,12 @@ namespace __IsoAgLib {
 class vtObjectLine_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectLine_s;
 
 	// Pointer to the internal implementation
-	iVtObjectLine_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectLine_s> vtObject_a;
+	std::unique_ptr<iVtObjectLine_s> vtObject_a;
 
 
 public:
@@ -48,6 +48,8 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
+
+  vtObjectLine_c() = delete;
 
   vtObjectLine_c(
 		  int ai_multitonInst,
@@ -60,13 +62,15 @@ public:
 
 
   vtObjectLine_c(iVtObjectLine_s* vtObjectLineSROM , int ai_multitonInst);
-  iVtObjectLine_s* get_vtObjectLine_a();
+
+  virtual ~vtObjectLine_c();
+
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);
 
-    virtual // //////////////////////////////////
-  // All special Attribute-Set methods
-  void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    // //////////////////////////////////
+    // All special Attribute-Set methods
+    virtual void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setWidth (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setHeight (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
