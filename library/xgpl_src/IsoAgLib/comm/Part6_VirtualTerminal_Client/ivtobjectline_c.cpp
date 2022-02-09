@@ -17,6 +17,9 @@ namespace IsoAgLib {
 
     uint16_t iVtObjectLine_c::objectType() { return VT_OBJECT_TYPE_LINE; }
 
+
+    iVtObjectLine_c::~iVtObjectLine_c() = default;
+
 iVtObjectLine_c::iVtObjectLine_c(
 		iVtClientObjectPool_c* pool,
 		ObjectID ID,

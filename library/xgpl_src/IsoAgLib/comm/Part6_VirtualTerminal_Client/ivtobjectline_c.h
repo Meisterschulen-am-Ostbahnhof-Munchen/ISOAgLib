@@ -32,7 +32,9 @@ class iVtObjectLine_c : public __IsoAgLib::vtObjectLine_c
 public:
   static uint16_t objectType();
 
-  iVtObjectLine_c(
+
+  iVtObjectLine_c() = delete;
+  explicit iVtObjectLine_c(
 			iVtClientObjectPool_c* pool,
 	  		ObjectID ID = autoID,
 			iVtObjectLineAttributes_c *lineAttributes = nullptr,
@@ -40,25 +42,25 @@ public:
 			uint16_t height =100,
 			uint8_t lineDirection = 0);
 
-
+  ~iVtObjectLine_c() override;
 
   void setLineAttributes(iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setWidth (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setHeight (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setHeight (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectLine_c::updateObjectType(); }
   */
-  iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  uint8_t updateLineDirection(bool b_SendRequest=false);
+  iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false) override;
+  uint16_t updateWidth(bool b_SendRequest=false) override;
+  uint16_t updateHeight(bool b_SendRequest=false) override;
+  uint8_t updateLineDirection(bool b_SendRequest=false) override;
 #endif
-  virtual uint16_t getObjectType() const;
+  uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib
