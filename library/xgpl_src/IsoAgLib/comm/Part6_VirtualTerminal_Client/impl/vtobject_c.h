@@ -65,6 +65,7 @@ protected:
 protected:
 
 
+  void scaleSize( uint16_t &width, uint16_t &height ) const;
   // ATTENTION: Should only be used by Input-Objects of course!
   bool able (uint8_t enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
   bool select(uint8_t selectOrActivate);
