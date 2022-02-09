@@ -327,7 +327,8 @@ vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_up
 	  vtObject_a->height = newHeight;
   }
 
-  scaleSize( newWidth, newHeight );
+  // TODO
+  //scaleSize( newWidth, newHeight );
 
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
