@@ -112,11 +112,8 @@ typedef uint16_t objRange_t;
 
 #define MACRO_scaleSKLocalVars \
     int32_t opSoftKeyWidth,  opSoftKeyHeight, vtSoftKeyWidth, vtSoftKeyHeight, skOffsetX, skOffsetY; \
-    int32_t opButtonWidth, opButtonHeight, vtButtonWidth, vtButtonHeight;\
     int32_t factorM, factorD; /* zaehler, nenner */ \
       MACRO_getSkDimension \
-      /* set defaults for button sizes to avoid compiler warning */ \
-      opButtonWidth = opButtonHeight = vtButtonWidth = vtButtonHeight = 0; \
       const int32_t ci_factorX = (vtSoftKeyWidth  << 20) / opSoftKeyWidth; \
       const int32_t ci_factorY = (vtSoftKeyHeight << 20) / opSoftKeyHeight; \
       if (ci_factorX < ci_factorY) { \
@@ -127,10 +124,13 @@ typedef uint16_t objRange_t;
         factorD = opSoftKeyHeight; \
       } \
 
+
+//TODO !! revert this Change !
+
 #define MACRO_scaleDimension(dim) \
  { \
   int32_t scaleM, scaleD; \
-  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
+  if ((s_properties.flags & FLAG_ORIGIN_SKM)) { \
     scaleM = factorM; \
     scaleD = factorD; \
   } else { \
@@ -144,10 +144,13 @@ typedef uint16_t objRange_t;
   } \
  }
 
+
+//TODO !! revert this Change !
+
 #define MACRO_scaleI32(x,y) \
  { \
   int32_t scaleM, scaleD; \
-  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
+  if ((s_properties.flags & FLAG_ORIGIN_SKM)) { \
     scaleM = factorM; \
     scaleD = factorD; \
   } else { \
@@ -206,7 +209,7 @@ typedef uint16_t objRange_t;
       destMemory [curBytes]   = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
       destMemory [curBytes+1] = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
       MACRO_getBlockfont(nrObjectXY)  \
-      isoaglib_assert( !(s_properties.flags & FLAG_ORIGIN_SKM) && (p_parentButtonObject == NULL) ); \
+      isoaglib_assert( !(s_properties.flags & FLAG_ORIGIN_SKM)); \
       destMemory [curBytes+2] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock+vtOffsetX) & 0xFF; \
       destMemory [curBytes+3] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock+vtOffsetX) >> 8; \
       destMemory [curBytes+4] = ((((vtObject_a->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock+vtOffsetY) & 0xFF; \
