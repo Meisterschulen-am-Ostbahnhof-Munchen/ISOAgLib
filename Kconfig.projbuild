@@ -1,102 +1,101 @@
 menu "### ISOAgLib Example Configuration ###"
 
     config USE_ISO_TERMINAL_GRAPHICCONTEXT
-        bool
+        bool "USE_ISO_TERMINAL_GRAPHICCONTEXT"
         default n
             
             
     config USE_ISO_TERMINAL_GETATTRIBUTES
-        bool
+        bool "USE_ISO_TERMINAL_GETATTRIBUTES"
         default n
         
      config USE_VTOBJECT_alarmmask
-        bool
+        bool "USE_VTOBJECT_alarmmask"
         default n
+        
      config USE_VTOBJECT_archedbargraph
-         bool
+         bool "USE_VTOBJECT_archedbargraph"
          default n
      config USE_VTOBJECT_auxiliaryfunction
-         bool
+         bool "USE_VTOBJECT_auxiliaryfunction"
          default n
      config USE_VTOBJECT_auxiliaryinput
-         bool
+         bool "USE_VTOBJECT_auxiliaryinput"
          default n
      config USE_VTOBJECT_button
-         bool
+         bool "USE_VTOBJECT_button"
          default n
      config USE_VTOBJECT_container
-         bool
+         bool "USE_VTOBJECT_container"
          default n
      config USE_VTOBJECT_datamask
-         bool
+         bool "USE_VTOBJECT_datamask"
          default n
      config USE_VTOBJECT_ellipse
-         bool
+         bool "USE_VTOBJECT_ellipse"
          default n
      config USE_VTOBJECT_fillattributes
-         bool
+         bool "USE_VTOBJECT_fillattributes"
          default n
      config USE_VTOBJECT_fontattributes
-         bool
+         bool "USE_VTOBJECT_fontattributes"
          default n
      config USE_VTOBJECT_inputboolean
-         bool
+         bool "USE_VTOBJECT_inputboolean"
          default n
      config USE_VTOBJECT_inputlist
-         bool
+         bool "USE_VTOBJECT_inputlist"
          default n
      config USE_VTOBJECT_inputnumber
-         bool
+         bool "USE_VTOBJECT_inputnumber"
          default n
      config USE_VTOBJECT_inputstring
-         bool
+         bool "USE_VTOBJECT_inputstring"
          default n
      config USE_VTOBJECT_key
-         bool
+         bool "USE_VTOBJECT_key"
          default n
      config USE_VTOBJECT_line
-         bool
+         bool "USE_VTOBJECT_line"
          default n
      config USE_VTOBJECT_linearbargraph
-         bool
+         bool "USE_VTOBJECT_linearbargraph"
          default n
      config USE_VTOBJECT_macro
-         bool
+         bool "USE_VTOBJECT_macro"
          default n
      config USE_VTOBJECT_meter
-         bool
+         bool "USE_VTOBJECT_meter"
          default n
      config USE_VTOBJECT_numbervariable
-         bool
+         bool "USE_VTOBJECT_numbervariable"
          default n
      config USE_VTOBJECT_objectpointer
-         bool
+         bool "USE_VTOBJECT_objectpointer"
          default n
      config USE_VTOBJECT_outputnumber
-         bool
+         bool "USE_VTOBJECT_outputnumber"
          default n
      config USE_VTOBJECT_outputstring
-         bool
+         bool "USE_VTOBJECT_outputstring"
          default n
      config USE_VTOBJECT_polygon
-         bool
+         bool "USE_VTOBJECT_polygon"
          default n
      config USE_VTOBJECT_picturegraphic
-         bool
+         bool "USE_VTOBJECT_picturegraphic"
          default n
      config USE_VTOBJECT_rectangle
-         bool
+         bool "USE_VTOBJECT_rectangle"
          default n
      config USE_VTOBJECT_softkeymask
-         bool
+         bool "USE_VTOBJECT_softkeymask"
          default n
-          
      config USE_VTOBJECT_stringvariable
-         bool
+         bool "USE_VTOBJECT_stringvariable"
          default n
-          
      config USE_VTOBJECT_workingset
-         bool
+         bool "USE_VTOBJECT_workingset"
          default n
             
 
