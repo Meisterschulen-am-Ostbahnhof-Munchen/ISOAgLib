@@ -46,9 +46,10 @@ public:
 
   vtObjectInputAttributes_c(iVtObjectInputAttributes_s* vtObjectInputAttributesSROM , int ai_multitonInst);
 
-  iVtObjectInputAttributes_s* get_vtObjectInputAttributes_a();
 
+  vtObjectInputAttributes_c() = delete;
 
+  ~vtObjectInputAttributes_c();
 
   uint32_t fitTerminal() const;
 

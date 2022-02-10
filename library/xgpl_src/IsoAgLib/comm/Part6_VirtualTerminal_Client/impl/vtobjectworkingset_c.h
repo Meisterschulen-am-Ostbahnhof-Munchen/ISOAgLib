@@ -64,6 +64,10 @@ public:
 
   vtObjectWorkingSet_c(iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
 
+  vtObjectWorkingSet_c() = delete;
+
+  ~vtObjectWorkingSet_c();
+
   uint32_t fitTerminal() const;
 
   void updateSelectable( uint8_t newSelectable );

@@ -88,6 +88,8 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
 }
 
 
+vtObjectWorkingSet_c::~vtObjectWorkingSet_c() = default;
+
 IsoAgLib::ObjectID vtObjectWorkingSet_c::getID() const {
 	isoaglib_assert(vtObject_a);
 	return vtObject_a->ID;

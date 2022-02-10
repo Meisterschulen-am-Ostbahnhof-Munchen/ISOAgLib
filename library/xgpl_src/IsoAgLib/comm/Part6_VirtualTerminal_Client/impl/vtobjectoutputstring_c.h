@@ -51,8 +51,6 @@ public:
   IsoAgLib::ObjectID getID() const;
 
 
-  iVtObjectOutputString_s* get_vtObjectOutputString_a();
-
   vtObjectOutputString_c(
 		  	int ai_multitonInst,
 		  	IsoAgLib::ObjectID ID,
@@ -69,7 +67,7 @@ public:
 
 
   vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);
-  ~vtObjectOutputString_c() = default;
+  ~vtObjectOutputString_c();
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);
 #ifdef CONFIG_USE_VTOBJECT_button

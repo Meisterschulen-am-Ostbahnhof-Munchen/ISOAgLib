@@ -26,6 +26,11 @@ namespace IsoAgLib {
 			pool->Append(this);
 		}
 
+
+
+
+
+
     void iVtObjectWorkingSet_c::updateSelectable(uint8_t newSelectable) {
         vtObjectWorkingSet_c::updateSelectable( newSelectable );
     }

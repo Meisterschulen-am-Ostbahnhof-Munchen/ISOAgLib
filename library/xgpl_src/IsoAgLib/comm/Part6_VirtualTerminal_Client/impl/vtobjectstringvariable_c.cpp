@@ -72,6 +72,8 @@ vtObjectStringVariable_c::stream(uint8_t* destMemory,
 }
 
 
+vtObjectStringVariable_c::~vtObjectStringVariable_c() = default;
+
 IsoAgLib::ObjectID vtObjectStringVariable_c::getID() const {
 	isoaglib_assert(vtObject_a);
 	return vtObject_a->ID;

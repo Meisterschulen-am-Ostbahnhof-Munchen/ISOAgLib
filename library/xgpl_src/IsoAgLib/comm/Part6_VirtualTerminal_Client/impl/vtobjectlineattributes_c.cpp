@@ -117,6 +117,7 @@ vtObjectLineAttributes_c::vtObjectLineAttributes_c(
 
 
 
+    vtObjectLineAttributes_c::~vtObjectLineAttributes_c() = default;
 
 
 

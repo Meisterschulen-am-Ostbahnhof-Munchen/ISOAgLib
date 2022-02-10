@@ -85,6 +85,9 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
+
+vtObjectInputAttributes_c::~vtObjectInputAttributes_c() = default;
+
 IsoAgLib::ObjectID vtObjectInputAttributes_c::getID() const {
 	isoaglib_assert(vtObject_a);
 	return vtObject_a->ID;
@@ -102,15 +105,15 @@ void
 vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationString, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    char *dest = get_vtObjectInputAttributes_a()->validationString;
+    char *dest = vtObject_a->validationString;
     const char *src = newValidationString;
-    int copyLen = (CNAMESPACE::strlen (newValidationString) <= get_vtObjectInputAttributes_a()->length) ? CNAMESPACE::strlen (newValidationString) : get_vtObjectInputAttributes_a()->length;
+    int copyLen = (CNAMESPACE::strlen (newValidationString) <= vtObject_a->length) ? CNAMESPACE::strlen (newValidationString) : vtObject_a->length;
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
-    for (; i<get_vtObjectInputAttributes_a()->length; i++) *dest++ = ' ';
+    for (; i<vtObject_a->length; i++) *dest++ = ' ';
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValidationString, get_vtObjectInputAttributes_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValidationString, vtObject_a->length, b_enableReplaceOfCmd);
 }
 
 
@@ -119,13 +122,13 @@ vtObjectInputAttributes_c::setValidationStringRef(char* newValidationString, boo
 {
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-      delete (get_vtObjectInputAttributes_a()->validationString);
+      delete (vtObject_a->validationString);
 
     vtObject_a->validationString = newValidationString;
   }
 
   const uint16_t ui16_newValStrLen = uint16_t( CNAMESPACE::strlen (newValidationString) );
-  const uint16_t ui16_inAttrLen = uint16_t( get_vtObjectInputAttributes_a()->length );
+  const uint16_t ui16_inAttrLen = uint16_t( vtObject_a->length );
   const uint16_t ui16_tempLen = (ui16_newValStrLen <= ui16_inAttrLen) ? ui16_newValStrLen : ui16_inAttrLen;
   __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandChangeStringValueRef(this, newValidationString, ui16_tempLen, b_enableReplaceOfCmd);
 }
@@ -135,7 +138,7 @@ vtObjectInputAttributes_c::setValidationStringRef(char* newValidationString, boo
 const char*
 vtObjectInputAttributes_c::getString()
 {
-  return get_vtObjectInputAttributes_a()->validationString;
+  return vtObject_a->validationString;
 }
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 /** that attribute is in parentheses in the spec, so commented out here
@@ -164,10 +167,6 @@ vtObjectInputAttributes_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*
     		,vtObject_a(vtObjectInputAttributesSROM)
     {}
 
-    vtObjectInputAttributes_c::iVtObjectInputAttributes_s *vtObjectInputAttributes_c::get_vtObjectInputAttributes_a()
-    {
-    	return vtObject_a;
-    }
 
 
 } // __IsoAgLib

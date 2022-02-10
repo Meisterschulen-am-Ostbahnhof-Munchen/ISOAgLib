@@ -104,6 +104,8 @@ vtObjectFontAttributes_c::vtObjectFontAttributes_c(
 {
 }
 
+vtObjectFontAttributes_c::~vtObjectFontAttributes_c() = default;
+
 
 vtObjectFontAttributes_c::vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObject_c , int ai_multitonInst)
 : __IsoAgLib::vtObject_c(ai_multitonInst)

@@ -52,6 +52,10 @@ public:
   IsoAgLib::ObjectID getID() const;
 
 
+  vtObjectLineAttributes_c() = delete;
+
+  virtual ~vtObjectLineAttributes_c();
+
   vtObjectLineAttributes_c(
 		  int ai_multitonInst,
 		  IsoAgLib::ObjectID ID,

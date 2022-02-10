@@ -175,7 +175,7 @@ vtObjectOutputString_c::vtObjectOutputString_c(iVtObjectOutputString_s* vtObject
 , vtObject_a(vtObjectOutputStringSROM)
 {}
 
-
+vtObjectOutputString_c::~vtObjectOutputString_c() = default;
 
 uint32_t
 vtObjectOutputString_c::fitTerminal() const
@@ -214,7 +214,7 @@ vtObjectOutputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObj
 
   // TODO !
   const uint8_t cui8_fontType = 0;
-  //cui8_fontType = get_vtObjectOutputString_a()->fontAttributes->get_vtObjectFontAttributes_a().fontType;
+  //cui8_fontType = vtObject_a->fontAttributes->get_vtObjectFontAttributes_a().fontType;
 
   convertStringUnicodeTo8859 (newValue, cui16_strLen, pc_iso8859, cui8_fontType);
 
@@ -225,7 +225,7 @@ vtObjectOutputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObj
 void
 vtObjectOutputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  int copyLen = ( length <= get_vtObjectOutputString_a()->length) ? length : get_vtObjectOutputString_a()->length;
+  int copyLen = ( length <= vtObject_a->length) ? length : vtObject_a->length;
 
   // UTF-16 string must be a multiple of 2 bytes long.
   if( copyLen % 2 )
@@ -236,14 +236,14 @@ vtObjectOutputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length
     if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
       s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new char [get_vtObjectOutputString_a()->length+1];
+      char *newStringBuffer = new char [vtObject_a->length+1];
       saveValueP (MACRO_getStructOffset(get_vtObjectOutputString_a(), value), sizeof(iVtObjectOutputString_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
     }
-    char *dest = get_vtObjectOutputString_a()->value;
+    char *dest = vtObject_a->value;
     const char *src = newValue;
 
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
-    spacePadBomUTF16( dest, copyLen, get_vtObjectOutputString_a()->length );
+    spacePadBomUTF16( dest, copyLen, vtObject_a->length );
   }
 
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueUTF16 (getID(), newValue, copyLen, b_enableReplaceOfCmd);
@@ -261,15 +261,15 @@ vtObjectOutputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b
   }
 
   if (b_updateObject) {
-    char *dest = get_vtObjectOutputString_a()->value;
+    char *dest = vtObject_a->value;
     const char *src = newValue;
-    int copyLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length;
+    int copyLen = (CNAMESPACE::strlen (newValue) <= vtObject_a->length) ? CNAMESPACE::strlen (newValue) : vtObject_a->length;
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
-    for (; i<get_vtObjectOutputString_a()->length; i++) *dest++ = ' ';
+    for (; i<vtObject_a->length; i++) *dest++ = ' ';
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValue, get_vtObjectOutputString_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValue, vtObject_a->length, b_enableReplaceOfCmd);
 }
 
 
@@ -283,13 +283,13 @@ vtObjectOutputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_
 
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-      delete (get_vtObjectOutputString_a()->value);
+      delete (vtObject_a->value);
 
     vtObject_a->value = newValue;
   }
 
   uint16_t ui16_tempLen = 0;
-  if (newValue != NULL ) ui16_tempLen = uint16_t( (CNAMESPACE::strlen (newValue) <= get_vtObjectOutputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectOutputString_a()->length );
+  if (newValue != NULL ) ui16_tempLen = uint16_t( (CNAMESPACE::strlen (newValue) <= vtObject_a->length) ? CNAMESPACE::strlen (newValue) : vtObject_a->length );
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueRef ( this, newValue, ui16_tempLen, b_enableReplaceOfCmd);
 }
 
@@ -326,7 +326,7 @@ vtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_up
 const char*
 vtObjectOutputString_c::getString()
 {
-  return get_vtObjectOutputString_a()->value;
+  return vtObject_a->value;
 }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

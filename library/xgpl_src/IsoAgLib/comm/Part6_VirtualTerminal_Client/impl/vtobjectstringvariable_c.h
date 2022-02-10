@@ -48,6 +48,10 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
+  vtObjectStringVariable_c() = delete;
+
+  ~vtObjectStringVariable_c();
+
   vtObjectStringVariable_c(
 		  int ai_multitonInst,
 		  IsoAgLib::ObjectID ID,
