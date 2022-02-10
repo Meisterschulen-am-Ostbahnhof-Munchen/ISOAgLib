@@ -38,9 +38,7 @@ private:
 	struct iVtObjectContainer_s;
 
 	// Pointer to the internal implementation
-	iVtObjectContainer_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectContainer_s> vtObject_a;
+	std::unique_ptr<iVtObjectContainer_s> vtObject_a;
 
 
 

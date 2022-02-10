@@ -24,6 +24,8 @@
 
 #ifdef CONFIG_USE_VTOBJECT_lineattributes
 
+#include <memory> // PImpl
+
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -34,13 +36,12 @@ namespace __IsoAgLib {
 class vtObjectLineAttributes_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectLineAttributes_s;
 
 	// Pointer to the internal implementation
-	iVtObjectLineAttributes_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectLineAttributes_s> vtObject_a;
+	std::unique_ptr<iVtObjectLineAttributes_s> vtObject_a;
 
 
 

@@ -39,9 +39,7 @@ private:
 	struct iVtObjectLinearBarGraph_s;
 
 	// Pointer to the internal implementation
-	iVtObjectLinearBarGraph_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectLinearBarGraph_s> vtObject_a;
+	std::unique_ptr<iVtObjectLinearBarGraph_s> vtObject_a;
 
 
 public:

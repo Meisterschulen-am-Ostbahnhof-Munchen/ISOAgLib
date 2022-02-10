@@ -212,7 +212,7 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
 
     	if (b_updateObject)
     		vtObject_a->width = newValue;
-        setAttribute (1, scaledDim, b_enableReplaceOfCmd);
+        setAttribute (Width, scaledDim, b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -226,31 +226,31 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
 
     	if (b_updateObject)
     		vtObject_a->height = newValue;
-        setAttribute (2, scaledDim, b_enableReplaceOfCmd);
+        setAttribute (Height, scaledDim, b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->backgroundColour = newValue;
-	setAttribute(3, __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserConvertedColor(newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+	setAttribute(BackgroundColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserConvertedColor(newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->borderColour = newValue;
-    	setAttribute(4, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd);
+    	setAttribute(BorderColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::setKeyCode(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->keyCode = newValue;
-    	setAttribute(5, newValue, b_enableReplaceOfCmd);
+    	setAttribute(KeyCode, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectButton_c::v4setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->options = newValue;
-    	setAttribute(6, newValue, b_enableReplaceOfCmd);
+    	setAttribute(Options, newValue, b_enableReplaceOfCmd);
     }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

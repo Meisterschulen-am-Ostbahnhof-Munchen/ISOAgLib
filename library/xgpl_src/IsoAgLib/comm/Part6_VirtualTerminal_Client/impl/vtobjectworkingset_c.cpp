@@ -115,9 +115,7 @@ vtObjectWorkingSet_c::vtObjectWorkingSet_c(iVtObjectWorkingSet_s* vtObjectWorkin
 	, vtObject_a(vtObjectWorkingSetSROM)
 {}
 
-vtObjectWorkingSet_c::iVtObjectWorkingSet_s* vtObjectWorkingSet_c::get_vtObjectWorkingSet_a() {
-	return vtObject_a;
-}
+
 
 
 

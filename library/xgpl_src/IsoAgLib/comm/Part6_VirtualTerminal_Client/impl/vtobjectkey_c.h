@@ -39,9 +39,7 @@ private:
 	struct iVtObjectKey_s;
 
 	// Pointer to the internal implementation
-	iVtObjectKey_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectKey_s> vtObject_a;
+	std::unique_ptr<iVtObjectKey_s> vtObject_a;
 
 
 public:

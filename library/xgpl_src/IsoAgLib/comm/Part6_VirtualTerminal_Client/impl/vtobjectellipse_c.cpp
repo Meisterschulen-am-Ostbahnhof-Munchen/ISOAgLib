@@ -33,6 +33,20 @@
 namespace __IsoAgLib {
 
 
+
+enum vtObjectEllipse_c::AttributeID:uint8_t
+{
+
+    LineAttributes   = 1,
+    Width            = 2,
+    Height           = 3,
+    EllipseType      = 4,
+    StartAngle       = 5,
+    EndAngle         = 6,
+    FillAttributes   = 7,
+};
+
+
 struct vtObjectEllipse_c::iVtObjectEllipse_s : iVtObjectwMacro_s {
   IsoAgLib::iVtObjectLineAttributes_c* lineAttributes;
   uint16_t width;
@@ -147,67 +161,60 @@ vtObjectEllipse_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
 }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-uint16_t
+IsoAgLib::iVtObjectLineAttributes_c*
 vtObjectEllipse_c::updateLineAttributes(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s));
+	  if (b_SendRequest)
+	    getAttribute(LineAttributes);
+	  return vtObject_a->lineAttributes;
 }
 
 uint16_t
 vtObjectEllipse_c::updateWidth(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s));
+	  if (b_SendRequest)
+	    getAttribute(Width);
+	  return vtObject_a->width;
 }
 
 uint16_t
 vtObjectEllipse_c::updateHeight(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), height), sizeof(iVtObjectEllipse_s), 3);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), height), sizeof(iVtObjectEllipse_s));
+	  if (b_SendRequest)
+	    getAttribute(Height);
+	  return vtObject_a->height;
 }
 
 uint8_t
 vtObjectEllipse_c::updateEllipseType(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType), sizeof(iVtObjectEllipse_s), 4);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType), sizeof(iVtObjectEllipse_s));
+	  if (b_SendRequest)
+	    getAttribute(EllipseType);
+	  return vtObject_a->ellipseType;
 }
 
 uint8_t
 vtObjectEllipse_c::updateStartAngle(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle), sizeof(iVtObjectEllipse_s), 5);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle), sizeof(iVtObjectEllipse_s));
+	  if (b_SendRequest)
+	    getAttribute(StartAngle);
+	  return vtObject_a->startAngle;
 }
 
 uint8_t
 vtObjectEllipse_c::updateEndAngle(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle), sizeof(iVtObjectEllipse_s), 6);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle), sizeof(iVtObjectEllipse_s));
+	  if (b_SendRequest)
+	    getAttribute(EndAngle);
+	  return vtObject_a->endAngle;
 }
 
-uint16_t
+IsoAgLib::iVtObjectFillAttributes_c*
 vtObjectEllipse_c::updateFillAttributes(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes), sizeof(iVtObjectEllipse_s), 7);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes), sizeof(iVtObjectEllipse_s));
+	  if (b_SendRequest)
+	    getAttribute(FillAttributes);
+	  return vtObject_a->fillAttributes;
 }
 
 void
@@ -215,13 +222,13 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), height), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 6: saveValue8(MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 7: saveValue16(MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes), sizeof(iVtObjectEllipse_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    //case LineAttributes:  vtObject_a->lineAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case Width:           vtObject_a->width          = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case Height:          vtObject_a->height         = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case EllipseType:     vtObject_a->ellipseType    = convertLittleEndianStringUi8( pui8_attributeValue); break;
+    case StartAngle:      vtObject_a->startAngle     = convertLittleEndianStringUi8( pui8_attributeValue); break;
+    case EndAngle:        vtObject_a->endAngle       = convertLittleEndianStringUi8( pui8_attributeValue); break;
+    //case FillAttributes:  vtObject_a->fillAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break;
     default: break;
   }
 }
@@ -262,35 +269,47 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 	}
 
     void
-    vtObjectEllipse_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject,
-                                         bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), lineAttributes) : 0, sizeof(iVtObjectEllipse_s), 1 /* "Line Attributes" */, newLineAttributes, b_enableReplaceOfCmd);
+    vtObjectEllipse_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->lineAttributes = newLineAttributes;
+    	setAttribute(LineAttributes /* "Line Attributes" */, newLineAttributes->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectEllipse_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), width) : 0, sizeof(iVtObjectEllipse_s), 2 /* "Width" */, newWidth, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->width = newWidth;
+    	setAttribute(Width /* "Width" */, newWidth, b_enableReplaceOfCmd);
     }
 
     void vtObjectEllipse_c::setHeight(uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), height) : 0, sizeof(iVtObjectEllipse_s), 3 /* "Height" */, newHeight, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->height = newHeight;
+    	setAttribute(Height /* "Height" */, newHeight, b_enableReplaceOfCmd);
     }
 
     void vtObjectEllipse_c::setEllipseType(uint8_t newEllipseType, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), ellipseType) : 0, sizeof(iVtObjectEllipse_s), 4 /* "Ellipse Type" */, newEllipseType, newEllipseType, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->ellipseType = newEllipseType;
+    	setAttribute(EllipseType /* "Ellipse Type" */, newEllipseType, b_enableReplaceOfCmd);
     }
 
     void vtObjectEllipse_c::setStartAngle(uint8_t newStartAngle, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), startAngle) : 0, sizeof(iVtObjectEllipse_s), 5 /* "Start Angle" */, newStartAngle, newStartAngle, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->startAngle = newStartAngle;
+    	setAttribute(StartAngle /* "Start Angle" */, newStartAngle, b_enableReplaceOfCmd);
     }
 
     void vtObjectEllipse_c::setEndAngle(uint8_t newEndAngle, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), endAngle) : 0, sizeof(iVtObjectEllipse_s), 6 /* "End Angle" */, newEndAngle, newEndAngle, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->endAngle = newEndAngle;
+    	setAttribute(EndAngle /* "End Angle" */, newEndAngle, b_enableReplaceOfCmd);
     }
 
     void
-    vtObjectEllipse_c::setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c *newFillAttributes, bool b_updateObject,
-                                         bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectEllipse_a(), fillAttributes) : 0, sizeof(iVtObjectEllipse_s), 7 /* "Fill Attributes" */, newFillAttributes, b_enableReplaceOfCmd);
+    vtObjectEllipse_c::setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c *newFillAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->fillAttributes = newFillAttributes;
+    	setAttribute(FillAttributes /* "Fill Attributes" */, newFillAttributes->getID(), b_enableReplaceOfCmd);
     }
 
 

@@ -40,9 +40,7 @@ private:
 	struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s;
 
 	// Pointer to the internal implementation
-	iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectAuxiliaryControlDesignatorObjectPointer_s> vtObject_a;
+	std::unique_ptr<iVtObjectAuxiliaryControlDesignatorObjectPointer_s> vtObject_a;
 
 public:
   int16_t stream(uint8_t* destMemory,

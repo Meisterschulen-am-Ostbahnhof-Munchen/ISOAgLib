@@ -37,9 +37,7 @@ private:
 	struct iVtObjectAuxiliaryInput_s;
 
 	// Pointer to the internal implementation
-	iVtObjectAuxiliaryInput_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectAuxiliaryInput_s> vtObject_a;
+	std::unique_ptr<iVtObjectAuxiliaryInput_s> vtObject_a;
 
 public:
   int16_t stream(uint8_t* destMemory,

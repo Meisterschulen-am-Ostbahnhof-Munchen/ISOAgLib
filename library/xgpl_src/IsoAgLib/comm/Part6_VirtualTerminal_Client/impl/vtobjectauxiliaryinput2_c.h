@@ -37,9 +37,7 @@ private:
 	struct iVtObjectAuxiliaryInput2_s;
 
 	// Pointer to the internal implementation
-	iVtObjectAuxiliaryInput2_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectAuxiliaryInput2_s> vtObject_a;
+	std::unique_ptr<iVtObjectAuxiliaryInput2_s> vtObject_a;
 
 public:
   enum StateForLearnMode_en

@@ -36,9 +36,7 @@ private:
 	struct iVtObjectGraphicsContext_s;
 
 	// Pointer to the internal implementation
-	iVtObjectGraphicsContext_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectGraphicsContext_s> vtObject_a;
+	std::unique_ptr<iVtObjectGraphicsContext_s> vtObject_a;
 
 public:
   //! ISO related IDs

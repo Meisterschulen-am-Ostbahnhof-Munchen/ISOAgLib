@@ -40,9 +40,7 @@ private:
 	struct iVtObjectInputString_s;
 
 	// Pointer to the internal implementation
-	iVtObjectInputString_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectInputString_s> vtObject_a;
+	std::unique_ptr<iVtObjectInputString_s> vtObject_a;
 
 
 public:

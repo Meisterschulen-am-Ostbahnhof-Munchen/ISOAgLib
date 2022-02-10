@@ -34,13 +34,12 @@ namespace __IsoAgLib {
 class vtObjectEllipse_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectEllipse_s;
 
 	// Pointer to the internal implementation
-	iVtObjectEllipse_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectEllipse_s> vtObject_a;
+	std::unique_ptr<iVtObjectEllipse_s> vtObject_a;
 
 
 public:
@@ -85,13 +84,13 @@ public:
   uint8_t updateObjectType() const { return 15; }
   */
 
-  uint16_t updateLineAttributes(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
   virtual uint8_t updateEllipseType(bool b_SendRequest=false);
   uint8_t updateStartAngle(bool b_SendRequest=false);
   uint8_t updateEndAngle(bool b_SendRequest=false);
-  uint16_t updateFillAttributes(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };

@@ -34,13 +34,12 @@ namespace __IsoAgLib {
 class vtObjectFillAttributes_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectFillAttributes_s;
 
 	// Pointer to the internal implementation
-	iVtObjectFillAttributes_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectFillAttributes_s> vtObject_a;
+	std::unique_ptr<iVtObjectFillAttributes_s> vtObject_a;
 
 
 public:

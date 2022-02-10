@@ -41,9 +41,7 @@ private:
 	struct iVtObjectOutputNumber_s;
 
 	// Pointer to the internal implementation
-	iVtObjectOutputNumber_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectOutputNumber_s> vtObject_a;
+	std::unique_ptr<iVtObjectOutputNumber_s> vtObject_a;
 
 public:
   int16_t stream(uint8_t* destMemory,

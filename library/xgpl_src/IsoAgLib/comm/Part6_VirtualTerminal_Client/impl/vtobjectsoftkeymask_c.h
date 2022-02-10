@@ -20,6 +20,8 @@
 #ifndef VTOBJECTSOFTKEYMASK_C_H
 #define VTOBJECTSOFTKEYMASK_C_H
 
+
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -47,9 +49,7 @@ private:
 	struct iVtObjectSoftKeyMask_s;
 
 	// Pointer to the internal implementation
-	iVtObjectSoftKeyMask_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectSoftKeyMask_s> vtObject_a;
+	std::unique_ptr<iVtObjectSoftKeyMask_s> vtObject_a;
 
 public:
   int16_t stream(uint8_t* destMemory,

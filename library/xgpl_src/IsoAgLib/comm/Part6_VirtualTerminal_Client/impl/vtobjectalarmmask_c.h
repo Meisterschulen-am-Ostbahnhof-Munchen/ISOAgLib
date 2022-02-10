@@ -37,9 +37,7 @@ private:
 	struct iVtObjectAlarmMask_s;
 
 	// Pointer to the internal implementation
-	iVtObjectAlarmMask_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectAlarmMask_s> vtObject_a;
+	std::unique_ptr<iVtObjectAlarmMask_s> vtObject_a;
 
 
 public:

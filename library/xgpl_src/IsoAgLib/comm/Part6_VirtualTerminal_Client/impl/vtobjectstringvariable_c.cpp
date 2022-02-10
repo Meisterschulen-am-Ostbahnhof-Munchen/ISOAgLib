@@ -103,7 +103,7 @@ vtObjectStringVariable_c::setValueCopyUTF8 (const char* newValue, uint8_t aui8_f
 void
 vtObjectStringVariable_c::setValueCopyUTF16 (const char* newValue, uint16_t length, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  int copyLen = ( length <= get_vtObjectStringVariable_a()->length) ? length : get_vtObjectStringVariable_a()->length;
+  int copyLen = ( length <= vtObject_a->length) ? length : vtObject_a->length;
 
   // UTF-16 string must be a multiple of 2 bytes long.
   if( copyLen % 2 )
@@ -114,14 +114,14 @@ vtObjectStringVariable_c::setValueCopyUTF16 (const char* newValue, uint16_t leng
     if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
       s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new char [get_vtObjectStringVariable_a()->length+1];
+      char *newStringBuffer = new char [vtObject_a->length+1];
       saveValueP (MACRO_getStructOffset(get_vtObjectStringVariable_a(), value), sizeof(iVtObjectStringVariable_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
     }
-    char *dest = get_vtObjectStringVariable_a()->value;
+    char *dest = vtObject_a->value;
     const char *src = newValue;
 
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
-    spacePadBomUTF16( dest, copyLen, get_vtObjectStringVariable_a()->length );
+    spacePadBomUTF16( dest, copyLen, vtObject_a->length );
   }
 
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueUTF16 (getID(), newValue, copyLen, b_enableReplaceOfCmd);
@@ -135,15 +135,15 @@ vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject, bool
 {
   if (b_updateObject) {
     // check if not already RAM string buffer?
-    char *dest = get_vtObjectStringVariable_a()->value;
+    char *dest = vtObject_a->value;
     const char *src = newValue;
-    int copyLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectStringVariable_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectStringVariable_a()->length;
+    int copyLen = (CNAMESPACE::strlen (newValue) <= vtObject_a->length) ? CNAMESPACE::strlen (newValue) : vtObject_a->length;
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
-    for (; i<get_vtObjectStringVariable_a()->length; i++) *dest++ = ' ';
+    for (; i<vtObject_a->length; i++) *dest++ = ' ';
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValue, get_vtObjectStringVariable_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValue, vtObject_a->length, b_enableReplaceOfCmd);
 }
 
 
@@ -152,13 +152,13 @@ vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject, bool 
 {
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-      delete (get_vtObjectStringVariable_a()->value);
+      delete (vtObject_a->value);
 
     vtObject_a->value = newValue;
   }
 
   uint16_t ui16_tempLen = 0;
-  if (newValue != NULL ) ui16_tempLen = uint16_t( (CNAMESPACE::strlen (newValue) <= get_vtObjectStringVariable_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectStringVariable_a()->length );
+  if (newValue != NULL ) ui16_tempLen = uint16_t( (CNAMESPACE::strlen (newValue) <= vtObject_a->length) ? CNAMESPACE::strlen (newValue) : vtObject_a->length );
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueRef( this, newValue, ui16_tempLen, b_enableReplaceOfCmd);
 }
 
@@ -166,7 +166,7 @@ vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject, bool 
 const char*
 vtObjectStringVariable_c::getString()
 {
-  return get_vtObjectStringVariable_a()->value;
+  return vtObject_a->value;
 }
 
     vtObjectStringVariable_c::vtObjectStringVariable_c(
@@ -188,9 +188,7 @@ vtObjectStringVariable_c::getString()
     {
     }
 
-    vtObjectStringVariable_c::iVtObjectStringVariable_s *vtObjectStringVariable_c::get_vtObjectStringVariable_a() {
-    	return vtObject_a;
-    }
+
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectStringVariable_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 #endif

@@ -41,9 +41,7 @@ private:
 	struct iVtObjectAuxiliaryFunction2_s;
 
 	// Pointer to the internal implementation
-	iVtObjectAuxiliaryFunction2_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectAuxiliaryFunction2_s> vtObject_a;
+	std::unique_ptr<iVtObjectAuxiliaryFunction2_s> vtObject_a;
 
 public:
   vtObjectAuxiliaryFunction2_c(iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst);

@@ -20,6 +20,9 @@
 #ifndef VTOBJECTWORKINGSET_C_H
 #define VTOBJECTWORKINGSET_C_H
 
+
+
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "../ivtobjectmask_c.h"
 #include "vtclient_c.h"
@@ -34,9 +37,7 @@ private:
 	struct iVtObjectWorkingSet_s;
 
 	// Pointer to the internal implementation
-	iVtObjectWorkingSet_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectWorkingSet_s> vtObject_a;
+	std::unique_ptr<iVtObjectWorkingSet_s> vtObject_a;
 
 
 public:
@@ -49,7 +50,7 @@ public:
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
 
 
-  iVtObjectWorkingSet_s* get_vtObjectWorkingSet_a();
+
 
 
 

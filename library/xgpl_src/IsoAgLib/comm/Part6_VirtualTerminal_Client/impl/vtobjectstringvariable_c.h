@@ -26,6 +26,8 @@
 
 #ifdef CONFIG_USE_VTOBJECT_stringvariable
 
+
+#include <memory> // PImpl
 #include "vtclientconnection_c.h"
 
 
@@ -38,9 +40,7 @@ private:
 	struct iVtObjectStringVariable_s;
 
 	// Pointer to the internal implementation
-	iVtObjectStringVariable_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectOutputString_s> vtObject_a;
+	std::unique_ptr<iVtObjectStringVariable_s> vtObject_a;
 
 public:
   int16_t stream(uint8_t* destMemory,
@@ -54,7 +54,7 @@ public:
 		  char *value);
 
   vtObjectStringVariable_c(iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst);
-  iVtObjectStringVariable_s* get_vtObjectStringVariable_a();
+
   uint32_t fitTerminal() const;
 
     virtual void setValueCopy    (char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

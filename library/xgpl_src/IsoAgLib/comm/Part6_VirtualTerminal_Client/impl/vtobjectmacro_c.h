@@ -20,6 +20,8 @@
 #ifndef VTOBJECTMACRO_C_H
 #define VTOBJECTMACRO_C_H
 
+
+#include <memory> // PImpl
 #include "vtobject_c.h"
 
 
@@ -32,9 +34,7 @@ private:
 	struct iVtObjectMacro_s;
 
 	// Pointer to the internal implementation
-	iVtObjectMacro_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectMacro_s> vtObject_a;
+	std::unique_ptr<iVtObjectMacro_s> vtObject_a;
 
 public:
   int16_t stream(uint8_t* destMemory,

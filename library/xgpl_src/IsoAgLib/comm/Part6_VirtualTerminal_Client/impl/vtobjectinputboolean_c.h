@@ -38,9 +38,7 @@ private:
 	struct iVtObjectInputBoolean_s;
 
 	// Pointer to the internal implementation
-	iVtObjectInputBoolean_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectInputBoolean_s> vtObject_a;
+	std::unique_ptr<iVtObjectInputBoolean_s> vtObject_a;
 
 
 public:

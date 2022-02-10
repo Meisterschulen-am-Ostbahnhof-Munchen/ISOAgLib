@@ -29,7 +29,12 @@
 
 namespace __IsoAgLib {
 
-
+enum vtObjectFillAttributes_c::AttributeID:uint8_t
+{
+	FillType           = 1,
+	FillColour         = 2,
+	FillPatternObject  = 3,
+};
 
 struct vtObjectFillAttributes_c::iVtObjectFillAttributes_s : iVtObjectwMacro_s {
   uint8_t fillType;
@@ -167,8 +172,7 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour) : 0, sizeof(iVtObjectFillAttributes_s), 2 /* "Fill Colour" */, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
     }
 
-    void vtObjectFillAttributes_c::setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c *newValue, bool b_updateObject,
-                                                  bool b_enableReplaceOfCmd) {
+    void vtObjectFillAttributes_c::setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject) : 0, sizeof(iVtObjectFillAttributes_s), 3 /* "Fill Pattern" */, newValue, b_enableReplaceOfCmd);
     }
 

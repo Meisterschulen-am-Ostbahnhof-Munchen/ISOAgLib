@@ -25,6 +25,9 @@
 
 #ifdef CONFIG_USE_VTOBJECT_outputstring
 
+
+#include <memory> // PImpl
+
 #include "../ivtobjectstring_c.h"
 #include "vtclientconnection_c.h"
 #include "vtclient_c.h"
@@ -39,9 +42,7 @@ private:
 	struct iVtObjectOutputString_s;
 
 	// Pointer to the internal implementation
-	iVtObjectOutputString_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectOutputString_s> vtObject_a;
+	std::unique_ptr<iVtObjectOutputString_s> vtObject_a;
 
 public:
   int16_t stream(uint8_t* destMemory,

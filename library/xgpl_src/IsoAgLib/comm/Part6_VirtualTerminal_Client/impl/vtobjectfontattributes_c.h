@@ -20,6 +20,8 @@
 #ifndef VTOBJECTFONTATTRIBUTES_C_H
 #define VTOBJECTFONTATTRIBUTES_C_H
 
+
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -34,9 +36,7 @@ private:
 	struct iVtObjectFontAttributes_s;
 
 	// Pointer to the internal implementation
-	iVtObjectFontAttributes_s* vtObject_a;
-	//TODO
-	//std::unique_ptr<iVtObjectFontAttributes_s> vtObject_a;
+	std::unique_ptr<iVtObjectFontAttributes_s> vtObject_a;
 
 
 public:

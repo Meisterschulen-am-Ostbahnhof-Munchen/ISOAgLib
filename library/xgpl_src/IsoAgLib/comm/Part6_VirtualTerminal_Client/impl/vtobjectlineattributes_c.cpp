@@ -30,6 +30,13 @@
 namespace __IsoAgLib {
 
 
+enum vtObjectLineAttributes_c::AttributeID:uint8_t
+{
+	LineColour = 1,
+    LineWidth  = 2,
+    LineArt    = 3,
+};
+
 
 struct vtObjectLineAttributes_c::iVtObjectLineAttributes_s: iVtObjectwMacro_s {
 	IsoAgLib::Colour lineColour;
@@ -137,7 +144,7 @@ uint8_t
 vtObjectLineAttributes_c::updateLineColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(1);
+    getAttribute(LineColour);
   return vtObject_a->lineColour;
 }
 
@@ -145,7 +152,7 @@ uint8_t
 vtObjectLineAttributes_c::updateLineWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(2);
+    getAttribute(LineWidth);
   return vtObject_a->lineWidth;
 }
 
@@ -153,7 +160,7 @@ uint16_t
 vtObjectLineAttributes_c::updateLineArt(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(3);
+    getAttribute(LineArt);
   return vtObject_a->lineArt;
 }
 
@@ -162,9 +169,9 @@ vtObjectLineAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 {
   switch (attrID)
   {
-    case 1: vtObject_a->lineColour = convertLittleEndianStringColour(pui8_attributeValue); break;
-    case 2: vtObject_a->lineWidth  = convertLittleEndianStringUi8(   pui8_attributeValue); break;
-    case 3: vtObject_a->lineArt    = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case LineColour: vtObject_a->lineColour = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case LineWidth: vtObject_a->lineWidth  = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case LineArt: vtObject_a->lineArt    = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     default: break;
   }
 }
@@ -172,19 +179,19 @@ vtObjectLineAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     void vtObjectLineAttributes_c::setLineColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->lineColour = newValue;
-        setAttribute(1, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
+        setAttribute(LineColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::LineColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectLineAttributes_c::setLineWidth(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->lineWidth = newValue;
-        setAttribute(2, newValue, b_enableReplaceOfCmd);
+        setAttribute(LineWidth, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectLineAttributes_c::setLineArt(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->lineArt = newValue;
-        setAttribute(3, newValue, b_enableReplaceOfCmd);
+        setAttribute(LineArt, newValue, b_enableReplaceOfCmd);
     }
 
 
