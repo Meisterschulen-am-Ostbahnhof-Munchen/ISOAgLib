@@ -266,9 +266,7 @@ vtObjectFontAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 #endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
 
-	vtObjectFontAttributes_c::iVtObjectFontAttributes_s* vtObjectFontAttributes_c::get_vtObjectFontAttributes_a() {
-    	return vtObject_a;
-    }
+
 
     void vtObjectFontAttributes_c::setFontColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)

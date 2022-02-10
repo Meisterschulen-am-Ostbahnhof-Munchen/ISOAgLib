@@ -20,6 +20,8 @@
 #ifndef VTOBJECTINPUTATTRIBUTES_C_H
 #define VTOBJECTINPUTATTRIBUTES_C_H
 
+
+#include <memory> // PImpl
 #include "../ivtobjectstring_c.h"
 #include "vtclientconnection_c.h"
 

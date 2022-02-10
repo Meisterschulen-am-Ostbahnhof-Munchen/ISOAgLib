@@ -92,10 +92,7 @@ vtObjectMacro_c::fitTerminal() const
     		,vtObject_a(vtObjectMacroSROM)
     {}
 
-    vtObjectMacro_c::iVtObjectMacro_s *vtObjectMacro_c::get_vtObjectMacro_a()
-    {
-    	return vtObject_a;
-    }
+
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectMacro_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 #endif

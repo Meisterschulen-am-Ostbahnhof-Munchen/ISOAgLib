@@ -44,7 +44,6 @@ public:
 
   vtObjectMacro_c(iVtObjectMacro_s* vtObjectMacroSROM , int ai_multitonInst);
 
-  iVtObjectMacro_s* get_vtObjectMacro_a();
 
   vtObjectMacro_c();
 

@@ -60,7 +60,7 @@ public:
   		  uint16_t lineArt);
 
   vtObjectLineAttributes_c(iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst);
-  iVtObjectLineAttributes_s* get_vtObjectLineAttributes_a();
+
 
 
 

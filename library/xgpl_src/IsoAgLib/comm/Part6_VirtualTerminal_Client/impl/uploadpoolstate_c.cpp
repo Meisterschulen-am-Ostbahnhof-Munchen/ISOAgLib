@@ -711,7 +711,7 @@ UploadPoolState_c::getLanguageIndex( uint8_t langCode0, uint8_t langCode1 ) cons
   {
 
 	  IsoAgLib::iVtObject_c::iVtObjectLanguages_s* lu;
-	  lu = (IsoAgLib::iVtObject_c::iVtObjectLanguages_s*)m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a();
+	  //lu = (IsoAgLib::iVtObject_c::iVtObjectLanguages_s*)m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a(); //TODO !!!!
 
     const uint8_t* lang = lu->languagesToFollow[ i ].language;
     if(  ( langCode0 == lang[ 0 ] )

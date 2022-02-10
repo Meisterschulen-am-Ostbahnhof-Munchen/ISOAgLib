@@ -45,7 +45,6 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  iVtObjectFontAttributes_s* get_vtObjectFontAttributes_a();
 
 	vtObjectFontAttributes_c(
 			int ai_multitonInst,

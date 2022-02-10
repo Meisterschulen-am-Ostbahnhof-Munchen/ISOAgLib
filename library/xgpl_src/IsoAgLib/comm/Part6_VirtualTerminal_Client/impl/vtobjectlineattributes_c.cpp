@@ -117,9 +117,7 @@ vtObjectLineAttributes_c::vtObjectLineAttributes_c(
 
 
 
-    vtObjectLineAttributes_c::iVtObjectLineAttributes_s *vtObjectLineAttributes_c::get_vtObjectLineAttributes_a() {
-        return vtObject_a;
-    }
+
 
 
 
