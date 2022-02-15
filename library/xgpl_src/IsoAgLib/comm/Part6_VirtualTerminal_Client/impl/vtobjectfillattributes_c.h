@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_fillattributes
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "../ivtobjectpicturegraphic_c.h"
 
@@ -52,7 +53,9 @@ public:
   uint32_t fitTerminal() const;
   void setFillType(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFillColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
   void setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+#endif
   void setFillAttributes(uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

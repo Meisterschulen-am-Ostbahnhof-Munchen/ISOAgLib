@@ -117,27 +117,24 @@ uint8_t
 vtObjectFillAttributes_c::updateFillType(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType), sizeof(iVtObjectFillAttributes_s), 1);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType), sizeof(iVtObjectFillAttributes_s));
+    getAttribute(FillType);
+  return vtObject_a->fillType;
 }
 
 uint8_t
 vtObjectFillAttributes_c::updateFillColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), 2);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s));
+    getAttribute(FillColour);
+  return vtObject_a->fillColour;
 }
 
-uint16_t
+IsoAgLib::iVtObjectPictureGraphic_c*
 vtObjectFillAttributes_c::updateFillPattern(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s), 3);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s));
+    getAttribute(FillPatternObject);
+  return vtObject_a->fillPatternObject;
 }
 
 void
@@ -145,9 +142,9 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 {
   switch (attrID)
   {
-    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType), sizeof(iVtObjectFillAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour), sizeof(iVtObjectFillAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject), sizeof(iVtObjectFillAttributes_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case FillType:          vtObject_a->fillType          = convertLittleEndianStringUi8( pui8_attributeValue); break;
+    case FillColour:        vtObject_a->fillColour        = convertLittleEndianStringUi8( pui8_attributeValue); break;
+    //case FillPatternObject: vtObject_a->fillPatternObject = convertLittleEndianStringUi16(pui8_attributeValue); break; //TODO
     default: break;
   }
 }
@@ -162,17 +159,24 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 
     void vtObjectFillAttributes_c::setFillType(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType) : 0, sizeof(iVtObjectFillAttributes_s), 1 /* "Fill Type" */, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->fillType = newValue;
+    	setAttribute(1 /* "Fill Type" */, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectFillAttributes_c::setFillColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour) : 0, sizeof(iVtObjectFillAttributes_s), 2 /* "Fill Colour" */, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->fillColour = newValue;
+    	setAttribute(2 /* "Fill Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
     }
 
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
     void vtObjectFillAttributes_c::setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject) : 0, sizeof(iVtObjectFillAttributes_s), 3 /* "Fill Pattern" */, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->fillPatternObject = newValue;
+    	setAttribute(3 /* "Fill Pattern" */, newValue, b_enableReplaceOfCmd);
     }
-
+#endif
 
 } // __IsoAgLib
 

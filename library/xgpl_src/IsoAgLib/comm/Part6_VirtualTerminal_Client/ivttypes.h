@@ -122,7 +122,9 @@ class iVtObjectPolygon_c;
 class iVtObjectMeter_c;
 class iVtObjectLinearBarGraph_c;
 class iVtObjectArchedBarGraph_c;
-class iVtObjectPictureGraphic_c;
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
+	class iVtObjectPictureGraphic_c;
+#endif
 class iVtObjectColourMap_c;
 class iVtObjectNumberVariable_c;
 class iVtObjectStringVariable_c;
