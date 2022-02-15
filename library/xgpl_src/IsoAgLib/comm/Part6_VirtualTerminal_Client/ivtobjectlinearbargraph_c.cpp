@@ -50,6 +50,8 @@ namespace IsoAgLib {
 		pool->Append(this);
     }
 
+    iVtObjectLinearBarGraph_c::~iVtObjectLinearBarGraph_c() = default;
+
     void iVtObjectLinearBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLinearBarGraph_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
     }

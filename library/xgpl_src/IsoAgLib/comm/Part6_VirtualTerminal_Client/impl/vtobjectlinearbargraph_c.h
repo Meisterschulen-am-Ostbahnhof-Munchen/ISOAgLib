@@ -70,7 +70,7 @@ public:
 
   vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst);
 
-  virtual ~vtObjectLinearBarGraph_c();
+  ~vtObjectLinearBarGraph_c() override;
 
 
 

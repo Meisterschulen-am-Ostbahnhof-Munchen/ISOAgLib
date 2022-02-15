@@ -51,6 +51,7 @@ public:
 
 
   ~iVtObjectLinearBarGraph_c() override;
+
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
