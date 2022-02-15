@@ -140,10 +140,7 @@ vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValu
     		,vtObject_a(vtObjectKeySROM)
     {}
 
-    vtObjectKey_c::iVtObjectKey_s *vtObjectKey_c::get_vtObjectKey_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void vtObjectKey_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectKey_a(), backgroundColour) : 0, sizeof(iVtObjectKey_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);

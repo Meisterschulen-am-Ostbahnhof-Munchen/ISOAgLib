@@ -64,7 +64,6 @@ public:
   void unRegisterSkmHandler_c( iSkmHandler_c* _SkmHandler );
 #endif // ENABLE_SKM_HANDLER
 
-  iVtObjectSoftKeyMask_s* get_vtObjectSoftKeyMask_a();
 
   virtual ~vtObjectSoftKeyMask_c();
   uint32_t fitTerminal() const;
@@ -79,7 +78,7 @@ public:
   uint8_t updateObjectType() const { return 4; }
   */
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif

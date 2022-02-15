@@ -56,7 +56,7 @@ public:
   }
   */
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
 
   uint16_t updateSoftKeyMask(bool b_SendRequest=false);
 #endif

@@ -55,7 +55,6 @@ public:
 		  uint8_t acousticSignal);
 
   vtObjectAlarmMask_c(iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst);
-  iVtObjectAlarmMask_s* get_vtObjectAlarmMask_a();
   vtObjectAlarmMask_c();
   uint32_t fitTerminal() const;
   void setBackgroundColour(IsoAgLib::Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -70,7 +69,7 @@ public:
   uint8_t updateObjectType() const { return 2; }
   */
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   uint16_t updateSoftKeyMask(bool b_SendRequest=false);
   uint8_t updatePriority(bool b_SendRequest=false);
   uint8_t updateAcousticSignal(bool b_SendRequest=false);

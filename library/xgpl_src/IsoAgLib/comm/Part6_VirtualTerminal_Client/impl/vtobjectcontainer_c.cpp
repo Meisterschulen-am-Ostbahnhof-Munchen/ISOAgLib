@@ -207,10 +207,7 @@ vtObjectContainer_c::saveReceivedAttribute(uint8_t attrID, uint8_t* /*pui8_attri
 
     }
 
-    vtObjectContainer_c::iVtObjectContainer_s *vtObjectContainer_c::get_vtObjectContainer_a()
-    {
-    	return vtObject_a;
-    }
+
 
 
 } // __IsoAgLib

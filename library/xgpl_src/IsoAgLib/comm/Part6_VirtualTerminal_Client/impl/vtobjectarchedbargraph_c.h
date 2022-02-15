@@ -70,7 +70,6 @@ public:
   vtObjectArchedBarGraph_c(iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst);
 
 
-  iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a();
   ~vtObjectArchedBarGraph_c() override = default;
   uint32_t fitTerminal() const;
     virtual void setValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);

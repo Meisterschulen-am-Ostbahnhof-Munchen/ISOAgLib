@@ -51,7 +51,6 @@ public:
 
   vtObjectOutputNumber_c(iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , int ai_multitonInst);
 
-  iVtObjectOutputNumber_s* get_vtObjectOutputNumber_a();
 
   vtObjectOutputNumber_c();
   uint32_t fitTerminal() const;
@@ -84,7 +83,7 @@ public:
 
   uint16_t updateWidth(bool b_SendRequest=false);
   virtual uint16_t updateHeight(bool b_SendRequest=false);
-  virtual uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   virtual uint16_t updateFontAttributes(bool b_SendRequest=false);
   virtual uint8_t updateOptions(bool b_SendRequest=false);
   virtual uint16_t updateVariableReference(bool b_SendRequest=false);

@@ -202,10 +202,7 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     		,vtObject_a(vtObjectRectangleSROM)
     {}
 
-    vtObjectRectangle_c::iVtObjectRectangle_s *vtObjectRectangle_c::get_vtObjectRectangle_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void
     vtObjectRectangle_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject,

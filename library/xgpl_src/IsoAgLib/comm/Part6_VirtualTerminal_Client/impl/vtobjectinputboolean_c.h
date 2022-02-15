@@ -34,6 +34,7 @@ namespace __IsoAgLib {
 class vtObjectInputBoolean_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectInputBoolean_s;
 
@@ -49,8 +50,6 @@ public:
 
   vtObjectInputBoolean_c(iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , int ai_multitonInst);
 
-  iVtObjectInputBoolean_s* get_vtObjectInputBoolean_a();
-
 
 
   uint32_t fitTerminal() const;
@@ -60,8 +59,8 @@ public:
   // All special Attribute-Set methods
   void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setForegroundColour(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setForegroundColour(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(IsoAgLib::ivtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -69,7 +68,7 @@ public:
   uint8_t updateObjectType() const { return 7; }
   */
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateForegroundColour(bool b_SendRequest=false);
   uint16_t updateVariableReference(bool b_SendRequest=false);

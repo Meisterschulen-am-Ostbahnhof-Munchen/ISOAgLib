@@ -109,9 +109,9 @@ public:
 
         virtual uint16_t updateHeight(bool b_SendRequest=false);
 
-        virtual uint8_t updateBackgroundColour(bool b_SendRequest=false);
+        virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
 
-        virtual uint8_t updateBorderColour(bool b_SendRequest=false);
+        virtual IsoAgLib::Colour updateBorderColour(bool b_SendRequest=false);
 
         virtual uint8_t updateKeyCode(bool b_SendRequest=false);
 

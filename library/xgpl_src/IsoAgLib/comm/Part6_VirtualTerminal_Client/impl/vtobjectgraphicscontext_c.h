@@ -83,9 +83,6 @@ public:
   vtObjectGraphicsContext_c(iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst);
 
 
-  //  Operation: get_vtObjectGraphicsContext_a
-  iVtObjectGraphicsContext_s* get_vtObjectGraphicsContext_a( void );
-
   //  Operation: vtObjectGraphicsContext_c
   vtObjectGraphicsContext_c( void );
 
@@ -176,7 +173,7 @@ public:
 
   uint8_t updateForegroundColour(bool b_SendRequest=false);
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
 
   uint16_t updateFontAttributes(bool b_SendRequest=false);
 

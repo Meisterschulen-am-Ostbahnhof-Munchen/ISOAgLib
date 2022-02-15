@@ -372,10 +372,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
             ,vtObject_a(vtObjectInputNumberSROM)
     {}
 
-    vtObjectInputNumber_c::iVtObjectInputNumber_s *vtObjectInputNumber_c::get_vtObjectInputNumber_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void vtObjectInputNumber_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), width) : 0, sizeof(iVtObjectInputNumber_s), 1, newValue, b_enableReplaceOfCmd);

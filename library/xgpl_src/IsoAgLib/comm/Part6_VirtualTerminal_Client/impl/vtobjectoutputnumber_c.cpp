@@ -378,10 +378,7 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputNumber_a(), horizontalJustification) : 0, sizeof(iVtObjectOutputNumber_s), 11, newValue, newValue, b_enableReplaceOfCmd);
     }
 
-    vtObjectOutputNumber_c::iVtObjectOutputNumber_s *vtObjectOutputNumber_c::get_vtObjectOutputNumber_a()
-    {
-    	return vtObject_a;
-    }
+
 
     vtObjectOutputNumber_c::vtObjectOutputNumber_c(
     		vtObjectOutputNumber_c::iVtObjectOutputNumber_s *vtObjectOutputNumberSROMs, int ai_multitonInst)

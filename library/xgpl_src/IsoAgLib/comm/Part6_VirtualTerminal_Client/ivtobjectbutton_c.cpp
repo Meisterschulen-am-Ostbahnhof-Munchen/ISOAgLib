@@ -79,11 +79,11 @@ namespace IsoAgLib {
         return vtObjectButton_c::updateHeight(b_SendRequest);
     }
 
-    uint8_t iVtObjectButton_c::updateBackgroundColour(bool b_SendRequest) {
+    IsoAgLib::Colour iVtObjectButton_c::updateBackgroundColour(bool b_SendRequest) {
         return vtObjectButton_c::updateBackgroundColour(b_SendRequest);
     }
 
-    uint8_t iVtObjectButton_c::updateBorderColour(bool b_SendRequest) {
+    IsoAgLib::Colour iVtObjectButton_c::updateBorderColour(bool b_SendRequest) {
         return vtObjectButton_c::updateBorderColour(b_SendRequest);
     }
 

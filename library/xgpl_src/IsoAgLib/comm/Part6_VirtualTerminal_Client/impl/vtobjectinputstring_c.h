@@ -50,7 +50,6 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectInputString_c(iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst);
-  iVtObjectInputString_s* get_vtObjectInputString_a();
   uint32_t fitTerminal() const;
   const char* getString();
   void setValueRef(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
@@ -79,7 +78,7 @@ public:
 
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   uint16_t updateFontAttributes(bool b_SendRequest=false);
   uint16_t updateInputAttributes(bool b_SendRequest=false);
   uint8_t updateOptions(bool b_SendRequest=false);

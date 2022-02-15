@@ -104,7 +104,7 @@ public:
     return vtObjectInputString_c::updateHeight(b_SendRequest);
   }
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectInputString_c::updateBackgroundColour(b_SendRequest);
   }
 

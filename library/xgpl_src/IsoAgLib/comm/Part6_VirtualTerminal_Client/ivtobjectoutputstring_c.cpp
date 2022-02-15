@@ -100,7 +100,7 @@ namespace IsoAgLib {
         return vtObjectOutputString_c::updateHeight(b_SendRequest);
     }
 
-    uint8_t iVtObjectOutputString_c::updateBackgroundColour(bool b_SendRequest) {
+    Colour iVtObjectOutputString_c::updateBackgroundColour(bool b_SendRequest) {
         return vtObjectOutputString_c::updateBackgroundColour(b_SendRequest);
     }
 

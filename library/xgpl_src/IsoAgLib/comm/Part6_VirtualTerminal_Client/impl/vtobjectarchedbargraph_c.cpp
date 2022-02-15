@@ -233,9 +233,6 @@ IsoAgLib::ObjectID vtObjectArchedBarGraph_c::getID() const {
             , vtObject_a(vtObjectArchedBarGraphSROM)
     {}
 
-    vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s* vtObjectArchedBarGraph_c::get_vtObjectArchedBarGraph_a() {
-        return vtObject_a;
-    }
 
 uint32_t
 vtObjectArchedBarGraph_c::fitTerminal() const

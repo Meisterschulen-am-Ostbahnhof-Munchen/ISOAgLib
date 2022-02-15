@@ -50,8 +50,6 @@ public:
 
   vtObjectContainer_c(iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst);
 
-  iVtObjectContainer_s* get_vtObjectContainer_a();
-
 
   uint32_t fitTerminal() const;
 

@@ -115,10 +115,6 @@ vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*p
     		,vtObject_a(vtObjectNumberVariableSROM)
     {}
 
-    vtObjectNumberVariable_c::iVtObjectNumberVariable_s *vtObjectNumberVariable_c::get_vtObjectNumberVariable_a()
-    {
-    	return vtObject_a;
-    }
 
 
 

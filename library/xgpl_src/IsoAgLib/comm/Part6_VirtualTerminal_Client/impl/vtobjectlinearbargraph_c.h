@@ -68,7 +68,7 @@ public:
 
   vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst);
 
-  iVtObjectLinearBarGraph_s* get_vtObjectLinearBarGraph_a();
+
 
 
 

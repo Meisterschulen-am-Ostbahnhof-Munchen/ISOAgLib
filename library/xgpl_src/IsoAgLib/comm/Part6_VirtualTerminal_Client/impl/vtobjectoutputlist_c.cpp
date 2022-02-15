@@ -239,10 +239,7 @@ vtObjectOutputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attrib
     		,vtObject_a(vtObjectOutputListSROM)
     {}
 
-    vtObjectOutputList_c::iVtObjectOutputList_s *vtObjectOutputList_c::get_vtObjectOutputList_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void vtObjectOutputList_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectOutputList_a(), width) : 0, sizeof(iVtObjectOutputList_s), 1, newValue, b_enableReplaceOfCmd);

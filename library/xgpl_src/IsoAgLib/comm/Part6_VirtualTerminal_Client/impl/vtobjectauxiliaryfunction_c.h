@@ -47,7 +47,6 @@ public:
 
   vtObjectAuxiliaryFunction_c(iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst);
 
-  iVtObjectAuxiliaryFunction_s* get_vtObjectAuxiliaryFunction_a();
 
   ~vtObjectAuxiliaryFunction_c() = default;
 

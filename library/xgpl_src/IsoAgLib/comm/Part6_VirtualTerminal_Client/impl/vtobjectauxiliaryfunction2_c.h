@@ -51,7 +51,6 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  iVtObjectAuxiliaryFunction2_s* get_vtObjectAuxiliaryFunction2_a();
 
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);

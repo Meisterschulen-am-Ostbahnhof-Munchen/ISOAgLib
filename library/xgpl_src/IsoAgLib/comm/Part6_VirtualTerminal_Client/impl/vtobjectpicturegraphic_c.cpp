@@ -472,10 +472,7 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     		,vtObject_a(vtObjectPictureGraphicSROM)
     {}
 
-    vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s *vtObjectPictureGraphic_c::get_vtObjectPictureGraphic_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void vtObjectPictureGraphic_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width) : 0, sizeof(iVtObjectPictureGraphic_s), 1, newValue, b_enableReplaceOfCmd);

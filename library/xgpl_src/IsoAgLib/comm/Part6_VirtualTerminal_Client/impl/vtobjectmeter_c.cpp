@@ -284,10 +284,7 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
     		,vtObject_a(vtObjectMeterSROM)
     {}
 
-    vtObjectMeter_c::iVtObjectMeter_s *vtObjectMeter_c::get_vtObjectMeter_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void vtObjectMeter_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), width) : 0, sizeof(iVtObjectMeter_s), 1 /* "Width" */, newValue, b_enableReplaceOfCmd);

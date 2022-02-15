@@ -23,25 +23,39 @@
 #ifdef CONFIG_USE_VTOBJECT_inputboolean
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
+#include "../ivtobjectfontattributes_c.h"
+#include "../ivtobjectnumbervariable_c.h"
 #include "vtclient_c.h"
 
 
 namespace __IsoAgLib {
 
 
+
+enum vtObjectInputBoolean_c::AttributeID:uint8_t
+{
+	BackgroundColour    = 1,
+	Width               = 2,
+	ForegroundColour    = 3,
+	VariableReference   = 4,
+	Value               = 5,
+	Enabled             = 6,
+};
+
+
 struct vtObjectInputBoolean_c::iVtObjectInputBoolean_s : iVtObjectwMacro_s {
   IsoAgLib::Colour backgroundColour;
   uint16_t width;
-  IsoAgLib::iVtObject_c* foregroundColour;
-  IsoAgLib::iVtObject_c* variableReference;
+  IsoAgLib::iVtObjectFontAttributes_c* foregroundColour;
+  IsoAgLib::ivtObjectNumberVariable_c* variableReference;
   uint8_t value;
   uint8_t enabled;
   iVtObjectInputBoolean_s(
 		IsoAgLib::ObjectID ID,
 		IsoAgLib::Colour backgroundColour,
 		uint16_t width,
-		IsoAgLib::iVtObject_c *foregroundColour,
-		IsoAgLib::iVtObject_c *variableReference,
+		IsoAgLib::iVtObjectFontAttributes_c *foregroundColour,
+		IsoAgLib::ivtObjectNumberVariable_c *variableReference,
 		uint8_t value,
 		uint8_t enabled)
   : iVtObject_s(ID)
@@ -127,22 +141,20 @@ vtObjectInputBoolean_c::setValue(bool newValue, bool b_updateObject, bool b_enab
 }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-uint8_t
+IsoAgLib::Colour
 vtObjectInputBoolean_c::updateBackgroundColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), backgroundColour), sizeof(iVtObjectInputBoolean_s), 1);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), backgroundColour), sizeof(iVtObjectInputBoolean_s));
+    getAttribute(BackgroundColour);
+  return vtObject_a->backgroundColour;
 }
 
 uint16_t
 vtObjectInputBoolean_c::updateWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), width), sizeof(iVtObjectInputBoolean_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), width), sizeof(iVtObjectInputBoolean_s));
+    getAttribute(Width);
+  return vtObject_a->width;
 }
 
 uint16_t
@@ -188,10 +200,10 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 {
   switch (attrID)
   {
-    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), backgroundColour), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), width), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), foregroundColour), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), variableReference), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case BackgroundColour:  saveValue8(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), backgroundColour), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case Width:             saveValue16(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), width), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case ForegroundColour:  saveValue16(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), foregroundColour), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case VariableReference: saveValue16(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), variableReference), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
     /** these attributes are in parentheses in the spec, so commented out here
     case 5: saveValue8(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), value), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
     case 6: saveValue8(MACRO_getStructOffset(get_vtObjectInputBoolean_a(), enabled), sizeof(iVtObjectInputBoolean_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
@@ -206,27 +218,30 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     		,vtObject_a(vtObjectInputBooleanSROM)
     {}
 
-    vtObjectInputBoolean_c::iVtObjectInputBoolean_s *vtObjectInputBoolean_c::get_vtObjectInputBoolean_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void vtObjectInputBoolean_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), backgroundColour) : 0, sizeof(iVtObjectInputBoolean_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->backgroundColour = newValue;
+    	setAttribute(BackgroundColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectInputBoolean_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), width) : 0, sizeof(iVtObjectInputBoolean_s), 2, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->width = newValue;
+    	setAttribute(Width, newValue, b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputBoolean_c::setForegroundColour(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
-                                                     bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), foregroundColour) : 0, sizeof(iVtObjectInputBoolean_s), 3, newValue, b_enableReplaceOfCmd);
+    void vtObjectInputBoolean_c::setForegroundColour(IsoAgLib::iVtObjectFontAttributes_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->foregroundColour = newValue;
+    	setAttribute(ForegroundColour, newValue, b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputBoolean_c::setVariableReference(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
-                                                      bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), variableReference) : 0, sizeof(iVtObjectInputBoolean_s), 4, newValue, b_enableReplaceOfCmd);
+    void vtObjectInputBoolean_c::setVariableReference(IsoAgLib::ivtObjectNumberVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->variableReference = newValue;
+    	setAttribute(VariableReference, newValue->getID(), b_enableReplaceOfCmd);
     }
 
 

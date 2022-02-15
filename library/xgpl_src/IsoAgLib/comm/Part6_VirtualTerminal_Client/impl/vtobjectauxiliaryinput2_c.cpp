@@ -477,10 +477,7 @@ void vtObjectAuxiliaryInput2_c::setTimeStampLastStateMsg()
   m_inputState.mi32_timeStampLastStateMsg = HAL::getTime();
 }
 
-vtObjectAuxiliaryInput2_c::iVtObjectAuxiliaryInput2_s *vtObjectAuxiliaryInput2_c::get_vtObjectAuxiliaryInput2_a()
-    {
-    	return vtObject_a;
-    }
+
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectAuxiliaryInput2_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 #endif

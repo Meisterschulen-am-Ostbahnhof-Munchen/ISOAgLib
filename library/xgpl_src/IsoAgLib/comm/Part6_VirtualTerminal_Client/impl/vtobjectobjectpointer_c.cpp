@@ -127,10 +127,7 @@ vtObjectObjectPointer_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pu
     		,vtObject_a(vtObjectObjectPointerSROM)
     {}
 
-    vtObjectObjectPointer_c::iVtObjectObjectPointer_s *vtObjectObjectPointer_c::get_vtObjectObjectPointer_a()
-    {
-    	return vtObject_a;
-    }
+
 
 
 } // __IsoAgLib

@@ -312,11 +312,7 @@ vtObjectAuxiliaryFunction2_c::clearPreferredAssignments()
     		,vtObject_a(vtObjectAuxiliaryFunction2SROM)
     {}
 
-    vtObjectAuxiliaryFunction2_c::iVtObjectAuxiliaryFunction2_s *
-    vtObjectAuxiliaryFunction2_c::get_vtObjectAuxiliaryFunction2_a()
-    {
-    	return vtObject_a;
-    }
+
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectAuxiliaryFunction2_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 #endif

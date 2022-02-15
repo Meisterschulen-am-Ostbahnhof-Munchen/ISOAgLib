@@ -48,7 +48,7 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectMeter_c(iVtObjectMeter_s* vtObjectMeterSROM , int ai_multitonInst);
-  iVtObjectMeter_s* get_vtObjectMeter_a();
+
   vtObjectMeter_c();
 
   uint32_t fitTerminal() const;

@@ -264,9 +264,7 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
     		, vtObject_a(vtObjectellipseSROM)
     {}
 
-	vtObjectEllipse_c::iVtObjectEllipse_s* vtObjectEllipse_c::get_vtObjectEllipse_a() {
-		return vtObject_a;
-	}
+
 
     void
     vtObjectEllipse_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {

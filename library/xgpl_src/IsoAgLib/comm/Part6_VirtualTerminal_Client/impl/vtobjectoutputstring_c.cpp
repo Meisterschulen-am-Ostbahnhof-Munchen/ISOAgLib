@@ -346,7 +346,7 @@ vtObjectOutputString_c::updateHeight(bool b_SendRequest)
 	return vtObject_a->height;
 }
 
-uint8_t
+IsoAgLib::Colour
 vtObjectOutputString_c::updateBackgroundColour(bool b_SendRequest)
 {
 	if (b_SendRequest)

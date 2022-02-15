@@ -101,7 +101,7 @@ public:
 
     virtual uint16_t updateWidth(bool b_SendRequest=false);
   virtual uint16_t updateHeight(bool b_SendRequest=false);
-  virtual uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   virtual uint16_t updateFontAttributes(bool b_SendRequest=false);
   virtual uint8_t updateOptions(bool b_SendRequest=false);
   virtual IsoAgLib::iVtObjectStringVariable_c*  updateVariableReference(bool b_SendRequest=false);

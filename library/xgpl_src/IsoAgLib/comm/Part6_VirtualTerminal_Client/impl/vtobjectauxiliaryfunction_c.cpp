@@ -114,10 +114,7 @@ vtObjectAuxiliaryFunction_c::setOriginSKM(bool /* b_SKM */)
     		,vtObject_a(vtObjectAuxiliaryFunctionSROM)
     {}
 
-    vtObjectAuxiliaryFunction_c::iVtObjectAuxiliaryFunction_s *vtObjectAuxiliaryFunction_c::get_vtObjectAuxiliaryFunction_a()
-    {
-    	return vtObject_a;
-    }
+
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectAuxiliaryFunction_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 #endif

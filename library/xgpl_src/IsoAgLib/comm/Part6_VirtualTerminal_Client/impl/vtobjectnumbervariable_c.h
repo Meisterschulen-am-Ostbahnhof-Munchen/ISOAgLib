@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_numbervariable
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
 
@@ -47,7 +48,7 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectNumberVariable_c(iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , int ai_multitonInst);
-  iVtObjectNumberVariable_s* get_vtObjectNumberVariable_a();
+
   vtObjectNumberVariable_c();
   uint32_t fitTerminal() const;
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);

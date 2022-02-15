@@ -181,9 +181,7 @@ vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vt
 
 
 
-vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s *vtObjectLinearBarGraph_c::get_vtObjectLinearBarGraph_a() {
-	return vtObject_a;
-}
+
 
 
 uint32_t

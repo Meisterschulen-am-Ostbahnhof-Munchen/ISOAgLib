@@ -149,10 +149,7 @@ vtObjectSoftKeyMask_c::vtObjectSoftKeyMask_c(
 }
 
 
-vtObjectSoftKeyMask_c::iVtObjectSoftKeyMask_s* vtObjectSoftKeyMask_c::get_vtObjectSoftKeyMask_a()
-{
-	return vtObject_a;
-}
+
 
 
 vtObjectSoftKeyMask_c::~vtObjectSoftKeyMask_c()

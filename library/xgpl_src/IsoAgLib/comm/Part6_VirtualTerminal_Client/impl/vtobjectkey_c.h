@@ -49,7 +49,7 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectKey_c(iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst);
-  iVtObjectKey_s* get_vtObjectKey_a();
+
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -66,7 +66,7 @@ public:
   uint8_t updateObjectType() const { return 5; }
   */
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   uint8_t updateKeyCode(bool b_SendRequest=false);
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif

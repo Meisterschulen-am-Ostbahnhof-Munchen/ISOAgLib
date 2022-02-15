@@ -240,10 +240,7 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     		,vtObject_a(vtObjectInputListSROM)
     {}
 
-    vtObjectInputList_c::iVtObjectInputList_s *vtObjectInputList_c::get_vtObjectInputList_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void vtObjectInputList_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), width) : 0, sizeof(iVtObjectInputList_s), 1, newValue, b_enableReplaceOfCmd);

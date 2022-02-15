@@ -159,10 +159,7 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     		, vtObject_a(vtObjectFillAttributesSROM)
     {}
 
-    vtObjectFillAttributes_c::iVtObjectFillAttributes_s *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void vtObjectFillAttributes_c::setFillType(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType) : 0, sizeof(iVtObjectFillAttributes_s), 1 /* "Fill Type" */, newValue, newValue, b_enableReplaceOfCmd);

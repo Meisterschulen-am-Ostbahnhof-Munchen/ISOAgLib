@@ -45,11 +45,11 @@ public:
     vtObjectInputBoolean_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setForegroundColour(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setForegroundColour(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputBoolean_c::setForegroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setVariableReference(ivtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputBoolean_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -65,7 +65,7 @@ public:
   uint8_t updateObjectType() const { return vtObjectInputBoolean_c::updateObjectType(); }
   */
   
-  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectInputBoolean_c::updateBackgroundColour(b_SendRequest);
   }
   

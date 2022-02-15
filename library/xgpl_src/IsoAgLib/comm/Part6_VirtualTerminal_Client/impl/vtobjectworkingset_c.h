@@ -82,7 +82,7 @@ public:
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 0; }
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   uint8_t updateSelectable(bool b_SendRequest=false);
   uint16_t updateActiveMask(bool b_SendRequest=false);
   */

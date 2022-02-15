@@ -271,7 +271,7 @@ vtObjectButton_c::updateHeight(bool b_SendRequest)
 
 }
 
-uint8_t
+IsoAgLib::Colour
 vtObjectButton_c::updateBackgroundColour(bool b_SendRequest)
 {
   if (b_SendRequest)
@@ -279,7 +279,7 @@ vtObjectButton_c::updateBackgroundColour(bool b_SendRequest)
   return vtObject_a->backgroundColour;
 }
 
-uint8_t
+IsoAgLib::Colour
 vtObjectButton_c::updateBorderColour(bool b_SendRequest)
 {
   if (b_SendRequest)

@@ -49,7 +49,6 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectFillAttributes_c(iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst);
-  iVtObjectFillAttributes_s* get_vtObjectFillAttributes_a();
   uint32_t fitTerminal() const;
   void setFillType(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFillColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

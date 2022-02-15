@@ -47,7 +47,7 @@ public:
 
 
   vtObjectObjectPointer_c(iVtObjectObjectPointer_s* vtObjectObjectPointerSROM , int ai_multitonInst);
-  iVtObjectObjectPointer_s* get_vtObjectObjectPointer_a();
+
   vtObjectObjectPointer_c();
   uint32_t fitTerminal() const;
   void setValue(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

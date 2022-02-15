@@ -59,7 +59,7 @@ public:
   
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
-  uint8_t updateBackgroundColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   uint16_t updateFontAttributes(bool b_SendRequest=false);
 
   uint8_t updateOptions(bool b_SendRequest=false) {

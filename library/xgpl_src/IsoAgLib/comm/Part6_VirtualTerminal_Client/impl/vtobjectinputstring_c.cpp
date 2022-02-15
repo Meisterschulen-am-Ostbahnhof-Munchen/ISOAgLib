@@ -407,10 +407,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     		,vtObject_a(vtObjectInputStringSROM)
     {}
 
-    vtObjectInputString_c::iVtObjectInputString_s *vtObjectInputString_c::get_vtObjectInputString_a()
-    {
-    	return vtObject_a;
-    }
+
 
     void vtObjectInputString_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)

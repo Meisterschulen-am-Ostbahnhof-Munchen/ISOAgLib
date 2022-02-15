@@ -46,8 +46,6 @@ public:
 
   vtObjectColourMap_c(iVtObjectColourMap_s* vtObjectColourMapSROM , int ai_multitonInst);
 
-  iVtObjectColourMap_s* get_vtObjectColourMap_a();
-
 
   uint32_t fitTerminal() const;
 

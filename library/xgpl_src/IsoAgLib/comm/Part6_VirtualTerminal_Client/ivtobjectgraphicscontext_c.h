@@ -336,7 +336,7 @@ public:
     return vtObjectGraphicsContext_c::updateForegroundColour(b_SendRequest);
   }
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectGraphicsContext_c::updateBackgroundColour(b_SendRequest);
   }
 

@@ -60,7 +60,7 @@ public:
     return vtObjectWorkingSet_c::updateObjectType();
   }
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectWorkingSet_c::updateBackgroundColour(b_SendRequest);
   }
 

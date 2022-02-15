@@ -114,11 +114,6 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::saveReceivedAttribute(uint8_t
     		, vtObject_a(vtObjectAuxiliaryControlDesignatorObjectPointerSROM)
     {}
 
-    vtObjectAuxiliaryControlDesignatorObjectPointer_c::iVtObjectAuxiliaryControlDesignatorObjectPointer_s *
-    vtObjectAuxiliaryControlDesignatorObjectPointer_c::get_vtObjectAuxiliaryControlDesignatorObjectPointer_a()
-    {
-    	return vtObject_a;
-    }
 
     void vtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId(IsoAgLib::iVtObject_c *apc_newObject,
                                                                                  bool b_updateObject,

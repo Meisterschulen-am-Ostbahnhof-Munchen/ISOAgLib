@@ -46,7 +46,6 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectRectangle_c(iVtObjectRectangle_s* vtObjectRectangleSROM , int ai_multitonInst);
-  iVtObjectRectangle_s* get_vtObjectRectangle_a();
   uint32_t fitTerminal() const;
   void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

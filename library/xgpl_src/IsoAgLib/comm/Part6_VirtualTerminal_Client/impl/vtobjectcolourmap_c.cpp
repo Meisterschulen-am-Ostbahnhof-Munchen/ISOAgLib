@@ -115,10 +115,6 @@ vtObjectColourMap_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 #endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
 
-vtObjectColourMap_c::iVtObjectColourMap_s *vtObjectColourMap_c::get_vtObjectColourMap_a()
-{
-	return vtObject_a;
-}
 
     vtObjectColourMap_c::vtObjectColourMap_c(vtObjectColourMap_c::iVtObjectColourMap_s *vtObjectColourMapSROM,
                                              int ai_multitonInst)

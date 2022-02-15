@@ -50,8 +50,6 @@ public:
 
   vtObjectAuxiliaryControlDesignatorObjectPointer_c(iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst);
 
-  iVtObjectAuxiliaryControlDesignatorObjectPointer_s* get_vtObjectAuxiliaryControlDesignatorObjectPointer_a();
-
 
   ~vtObjectAuxiliaryControlDesignatorObjectPointer_c() = default;
 

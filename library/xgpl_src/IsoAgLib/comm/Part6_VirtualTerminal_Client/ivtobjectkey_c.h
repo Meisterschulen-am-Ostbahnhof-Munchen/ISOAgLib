@@ -57,7 +57,7 @@ public:
   }
    */
 
-  uint8_t updateBackgroundColour(bool b_SendRequest=false) {
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectKey_c::updateBackgroundColour(b_SendRequest);
   }
 

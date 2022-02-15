@@ -171,9 +171,7 @@ vtObjectGraphicsContext_c::vtObjectGraphicsContext_c(iVtObjectGraphicsContext_s*
 {}
 
 
-iVtObjectGraphicsContext_s* vtObjectGraphicsContext_c::get_vtObjectGraphicsContext_a( void ) {
-  return vtObject_a;
-}
+
 
 
 void

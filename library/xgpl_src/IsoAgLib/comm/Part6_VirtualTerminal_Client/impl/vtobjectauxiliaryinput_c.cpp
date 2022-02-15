@@ -115,10 +115,7 @@ vtObjectAuxiliaryInput_c::setOriginSKM(bool /* b_SKM */)
     		,vtObject_a(vtObjectAuxiliaryInputSROM)
     {}
 
-    vtObjectAuxiliaryInput_c::iVtObjectAuxiliaryInput_s *vtObjectAuxiliaryInput_c::get_vtObjectAuxiliaryInput_a()
-    {
-    	return vtObject_a;
-    }
+
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     void vtObjectAuxiliaryInput_c::saveReceivedAttribute(uint8_t, uint8_t *) {}
 #endif

@@ -47,7 +47,6 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectOutputList_c(iVtObjectOutputList_s* vtObjectOutputListSROM , int ai_multitonInst);
-  iVtObjectOutputList_s* get_vtObjectOutputList_a();
   vtObjectOutputList_c();
 
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
