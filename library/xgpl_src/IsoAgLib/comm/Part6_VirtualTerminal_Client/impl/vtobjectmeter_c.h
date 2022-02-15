@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_meter
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -35,6 +36,7 @@ namespace __IsoAgLib {
 class vtObjectMeter_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectMeter_s;
 
@@ -49,7 +51,7 @@ public:
 
   vtObjectMeter_c(iVtObjectMeter_s* vtObjectMeterSROM , int ai_multitonInst);
 
-  vtObjectMeter_c();
+  ~vtObjectMeter_c() override;
 
   uint32_t fitTerminal() const;
 
@@ -63,7 +65,7 @@ public:
   void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setMin(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setMax(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -82,7 +84,7 @@ public:
   uint8_t updateEndAngle(bool b_SendRequest=false);
   uint16_t updateMinValue(bool b_SendRequest=false);
   uint16_t updateMaxValue(bool b_SendRequest=false);
-  IsoAgLib::iVtObject_c * updateVariableReference(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectNumberVariable_c * updateVariableReference(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint16_t updateValue(bool b_SendRequest=false);

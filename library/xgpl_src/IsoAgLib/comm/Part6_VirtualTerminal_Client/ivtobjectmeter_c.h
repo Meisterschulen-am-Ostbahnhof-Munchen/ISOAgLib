@@ -77,7 +77,7 @@ public:
     vtObjectMeter_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
   
@@ -127,7 +127,7 @@ public:
     return vtObjectMeter_c::updateMaxValue(b_SendRequest);
   }
 
-  uint16_t updateVariableReference(bool b_SendRequest=false) {
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
     return vtObjectMeter_c::updateVariableReference(b_SendRequest);
   }
 

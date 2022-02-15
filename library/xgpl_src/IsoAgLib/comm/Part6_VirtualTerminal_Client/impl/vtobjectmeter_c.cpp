@@ -22,11 +22,29 @@
 
 #ifdef CONFIG_USE_VTOBJECT_meter
 #include "vtclient_c.h"
+
+#include "../ivtobjectnumbervariable_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 
 
 namespace __IsoAgLib {
+
+
+enum vtObjectMeter_c::AttributeID:uint8_t
+{
+	Width             =  1,
+	NeedleColour      =  2,
+	BorderColour      =  3,
+	ArcAndTickColour  =  4,
+	Options           =  5,
+	NumberOfTicks     =  6,
+	StartAngle        =  7,
+	EndAngle          =  8,
+	MinValue          =  9,
+	MaxValue          = 10,
+	VariableReference = 11,
+};
 
 
 struct vtObjectMeter_c::iVtObjectMeter_s: iVtObjectwMacro_s {
@@ -40,7 +58,7 @@ struct vtObjectMeter_c::iVtObjectMeter_s: iVtObjectwMacro_s {
 	uint8_t endAngle;
 	uint16_t minValue;
 	uint16_t maxValue;
-	IsoAgLib::iVtObject_c *variableReference;
+	IsoAgLib::iVtObjectNumberVariable_c *variableReference;
 	uint16_t value;
 	iVtObjectMeter_s(
 			IsoAgLib::ObjectID ID,
@@ -54,7 +72,7 @@ struct vtObjectMeter_c::iVtObjectMeter_s: iVtObjectwMacro_s {
 			uint8_t endAngle,
 			uint16_t minValue,
 			uint16_t maxValue,
-			IsoAgLib::iVtObject_c *variableReference,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint16_t value)
     : iVtObject_s(ID)
 	, iVtObjectwMacro_s(ID)
@@ -138,7 +156,7 @@ vtObjectMeter_c::fitTerminal() const
 void
 vtObjectMeter_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (get_vtObjectMeter_a()->variableReference == NULL) {
+  if (vtObject_a->variableReference == NULL) {
     if (b_updateObject)
     	vtObject_a->value = newValue;
 
@@ -150,97 +168,88 @@ vtObjectMeter_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableR
 uint16_t
 vtObjectMeter_c::updateWidth(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), width), sizeof(iVtObjectMeter_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), width), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (Width);
+    return vtObject_a->width;
 }
 
 uint8_t
 vtObjectMeter_c::updateNeedleColour(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour), sizeof(iVtObjectMeter_s), 2);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (NeedleColour);
+    return vtObject_a->needleColour;
 }
 
 uint8_t
 vtObjectMeter_c::updateBorderColour(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour), sizeof(iVtObjectMeter_s), 3);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (BorderColour);
+    return vtObject_a->borderColour;
 }
 
 uint8_t
 vtObjectMeter_c::updateArcAndTickColour(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour), sizeof(iVtObjectMeter_s), 4);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (ArcAndTickColour);
+    return vtObject_a->arcAndTickColour;
 }
 
 uint8_t
 vtObjectMeter_c::updateOptions(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), options), sizeof(iVtObjectMeter_s), 5);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), options), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (Options);
+    return vtObject_a->options;
 }
 
 uint8_t
 vtObjectMeter_c::updateNumberOfTicks(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks), sizeof(iVtObjectMeter_s), 6);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (NumberOfTicks);
+    return vtObject_a->numberOfTicks;
 }
 
 uint8_t
 vtObjectMeter_c::updateStartAngle(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle), sizeof(iVtObjectMeter_s), 7);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (StartAngle);
+    return vtObject_a->startAngle;
 }
 
 uint8_t
 vtObjectMeter_c::updateEndAngle(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle), sizeof(iVtObjectMeter_s), 8);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (EndAngle);
+    return vtObject_a->endAngle;
 }
 
 uint16_t
 vtObjectMeter_c::updateMinValue(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), minValue), sizeof(iVtObjectMeter_s), 9);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), minValue), sizeof(iVtObjectMeter_s));
+	if (b_SendRequest)
+		getAttribute (MinValue);
+    return vtObject_a->minValue;
 }
 
 uint16_t
 vtObjectMeter_c::updateMaxValue(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute (10, false);
+		getAttribute (MaxValue);
     return vtObject_a->maxValue;
 }
 
-IsoAgLib::iVtObject_c *
+IsoAgLib::iVtObjectNumberVariable_c *
 vtObjectMeter_c::updateVariableReference(bool b_SendRequest)
 {
   if (b_SendRequest)
-	  getAttribute (11, false);
+	  getAttribute (VariableReference);
   return vtObject_a->variableReference;
 }
 
@@ -249,7 +258,7 @@ uint16_t
 vtObjectMeter_c::updateValue(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), value), sizeof(iVtObjectMeter_s), 12);
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectMeter_a(), value = 12);
   else
     return getValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), value), sizeof(iVtObjectMeter_s));
 }
@@ -260,19 +269,19 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), width), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), options), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 6: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 7: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 8: saveValue8(MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 9: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), minValue), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 10: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), maxValue), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 11: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), variableReference), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case Width:             vtObject_a->width             = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case NeedleColour:      vtObject_a->needleColour      = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case BorderColour:      vtObject_a->borderColour      = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case ArcAndTickColour:  vtObject_a->arcAndTickColour  = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case Options:           vtObject_a->options           = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case NumberOfTicks:     vtObject_a->numberOfTicks     = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case StartAngle:        vtObject_a->startAngle        = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case EndAngle:          vtObject_a->endAngle          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case MinValue:          vtObject_a->minValue          = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case MaxValue:          vtObject_a->maxValue          = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    //case VariableReference: vtObject_a->variableReference = convertLittleEndianStringUi16(pui8_attributeValue); break; TODO
     /** that attribute is in parentheses in the spec, so commented out here
-    case 12: saveValue16(MACRO_getStructOffset(get_vtObjectMeter_a(), value), sizeof(iVtObjectMeter_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 12: vtObject_a->value = convertLittleEndianStringUi16(pui8_attributeValue)); break;
     */
     default: break;
   }
@@ -284,51 +293,72 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
     		,vtObject_a(vtObjectMeterSROM)
     {}
 
-
+    vtObjectMeter_c::~vtObjectMeter_c() = default;
 
     void vtObjectMeter_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), width) : 0, sizeof(iVtObjectMeter_s), 1 /* "Width" */, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->width = newValue;
+    	setAttribute ( Width /* "Width" */, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setNeedleColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), needleColour) : 0, sizeof(iVtObjectMeter_s), 2 /* "Needle Colour" */, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::NeedleColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->needleColour = newValue;
+    	setAttribute ( NeedleColour /* "Needle Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::NeedleColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), borderColour) : 0, sizeof(iVtObjectMeter_s), 3 /* "BorderColour" */, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->borderColour = newValue;
+    	setAttribute ( BorderColour /* "BorderColour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BorderColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setArcAndTickColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), arcAndTickColour) : 0, sizeof(iVtObjectMeter_s), 4 /* "Arc and Tick Colour" */, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::ArcAndTickColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->arcAndTickColour = newValue;
+    	setAttribute ( ArcAndTickColour /* "Arc and Tick Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::ArcAndTickColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), options) : 0, sizeof(iVtObjectMeter_s), 5 /* "Options" */, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->options = newValue;
+    	setAttribute ( Options /* "Options" */, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setNumberOfTicks(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), numberOfTicks) : 0, sizeof(iVtObjectMeter_s), 6 /* "# of Ticks" */, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->numberOfTicks = newValue;
+    	setAttribute ( NumberOfTicks /* "# of Ticks" */, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setStartAngle(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), startAngle) : 0, sizeof(iVtObjectMeter_s), 7 /* "Start Angle" */, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->startAngle = newValue;
+    	setAttribute ( StartAngle /* "Start Angle" */, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setEndAngle(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), endAngle) : 0, sizeof(iVtObjectMeter_s), 8 /* "End Angle" */, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->endAngle = newValue;
+    	setAttribute ( EndAngle /* "End Angle" */, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setMin(uint16_t newMin, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), minValue) : 0, sizeof(iVtObjectMeter_s), 9 /* "Min value" */, newMin, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->minValue = newMin;
+    	setAttribute ( MinValue /* "Min value" */, newMin, b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setMax(uint16_t newMax, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), maxValue) : 0, sizeof(iVtObjectMeter_s), 10 /* "Max value" */, newMax, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->maxValue = newMax;
+    	setAttribute ( MaxValue /* "Max value" */, newMax, b_enableReplaceOfCmd);
     }
 
-    void vtObjectMeter_c::setVariableReference(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
-                                               bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectMeter_a(), variableReference) : 0, sizeof(iVtObjectMeter_s), 11 /* "Variable Reference" */, newValue, b_enableReplaceOfCmd);
+    void vtObjectMeter_c::setVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->variableReference = newValue;
+    	setAttribute ( VariableReference /* "Variable Reference" */, newValue->getID(), b_enableReplaceOfCmd);
     }
 
 
