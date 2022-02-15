@@ -25,6 +25,9 @@
 
 #ifdef CONFIG_USE_VTOBJECT_inputboolean
 
+#include "ivtobjectfontattributes_c.h"
+#include "ivtobjectnumbervariable_c.h"
+
 namespace IsoAgLib {
 
 class iVtObjectInputBoolean_c : public __IsoAgLib::vtObjectInputBoolean_c
@@ -49,7 +52,7 @@ public:
     vtObjectInputBoolean_c::setForegroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setVariableReference(ivtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputBoolean_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -73,11 +76,11 @@ public:
     return vtObjectInputBoolean_c::updateWidth(b_SendRequest);
   }
 
-  uint16_t updateForegroundColour(bool b_SendRequest=false) {
+  IsoAgLib::iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false) {
     return vtObjectInputBoolean_c::updateForegroundColour(b_SendRequest);
   }
 
-  uint16_t updateVariableReference(bool b_SendRequest=false) {
+  IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
     return vtObjectInputBoolean_c::updateVariableReference(b_SendRequest);
   }
 

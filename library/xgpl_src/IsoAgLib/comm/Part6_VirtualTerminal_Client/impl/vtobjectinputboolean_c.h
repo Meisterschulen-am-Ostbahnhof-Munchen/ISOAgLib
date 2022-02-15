@@ -25,6 +25,8 @@
 
 #ifdef CONFIG_USE_VTOBJECT_inputboolean
 
+#include "../ivtobjectfontattributes_c.h"
+#include "../ivtobjectnumbervariable_c.h"
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 
@@ -60,7 +62,7 @@ public:
   void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setForegroundColour(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(IsoAgLib::ivtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -70,8 +72,8 @@ public:
 
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateForegroundColour(bool b_SendRequest=false);
-  uint16_t updateVariableReference(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateValue(bool b_SendRequest=false);
