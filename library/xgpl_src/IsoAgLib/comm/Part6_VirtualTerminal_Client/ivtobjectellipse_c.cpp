@@ -86,7 +86,7 @@ namespace IsoAgLib {
 
 
 
-    uint16_t iVtObjectEllipse_c::updateLineAttributes(bool b_SendRequest) {
+    IsoAgLib::iVtObjectLineAttributes_c* iVtObjectEllipse_c::updateLineAttributes(bool b_SendRequest) {
         return vtObjectEllipse_c::updateLineAttributes(b_SendRequest);
     }
 
@@ -110,7 +110,7 @@ namespace IsoAgLib {
         return vtObjectEllipse_c::updateEndAngle(b_SendRequest);
     }
 
-    uint16_t iVtObjectEllipse_c::updateFillAttributes(bool b_SendRequest) {
+    IsoAgLib::iVtObjectFillAttributes_c* iVtObjectEllipse_c::updateFillAttributes(bool b_SendRequest) {
         return vtObjectEllipse_c::updateFillAttributes(b_SendRequest);
     }
 #endif

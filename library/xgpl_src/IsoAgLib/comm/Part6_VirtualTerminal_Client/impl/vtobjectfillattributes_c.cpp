@@ -172,6 +172,8 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     {}
 
 
+    vtObjectFillAttributes_c::~vtObjectFillAttributes_c() = default;
+
 
     void vtObjectFillAttributes_c::setFillType(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)

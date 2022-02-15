@@ -59,13 +59,13 @@ public:
   uint8_t updateObjectType() const { return vtObjectEllipse_c::updateObjectType(); }
   */
   
-  uint16_t updateLineAttributes(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
   uint8_t updateEllipseType(bool b_SendRequest=false);
   uint8_t updateStartAngle(bool b_SendRequest=false);
   uint8_t updateEndAngle(bool b_SendRequest=false);
-  uint16_t updateFillAttributes(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
 #endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   uint16_t getObjectType() const override;
 };

@@ -63,6 +63,8 @@ public:
 
   vtObjectEllipse_c(iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst);
 
+  virtual ~vtObjectEllipse_c();
+
 
   uint32_t fitTerminal() const;
 

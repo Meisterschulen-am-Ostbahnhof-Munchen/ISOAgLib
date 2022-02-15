@@ -266,6 +266,10 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 
 
 
+    vtObjectEllipse_c::~vtObjectEllipse_c() = default;
+
+
+
     void
     vtObjectEllipse_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
