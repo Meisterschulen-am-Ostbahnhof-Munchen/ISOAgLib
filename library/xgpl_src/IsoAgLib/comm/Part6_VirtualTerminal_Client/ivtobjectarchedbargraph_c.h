@@ -46,9 +46,9 @@ public:
 			uint16_t barGraphWidth = 15,
 			uint16_t minValue = 0,
 			uint16_t maxValue = 100,
-			iVtObject_c *variableReference = nullptr,
+			iVtObjectNumberVariable_c *variableReference = nullptr,
 			uint16_t value = 20,
-			iVtObject_c *targetValueVariableReference = nullptr,
+			iVtObjectNumberVariable_c *targetValueVariableReference = nullptr,
 			uint16_t targetValue = 50);
 
 

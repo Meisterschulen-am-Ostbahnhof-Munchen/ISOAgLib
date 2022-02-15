@@ -40,6 +40,8 @@ namespace IsoAgLib {
     	pool->Append(this);
 	}
 
+    iVtObjectOutputString_c::~iVtObjectOutputString_c() = default;
+
     uint16_t iVtObjectOutputString_c::objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
 
     uint16_t iVtObjectOutputString_c::getObjectType() const { return objectType(); }

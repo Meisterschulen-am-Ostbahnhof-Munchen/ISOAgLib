@@ -29,9 +29,9 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
 		uint16_t barGraphWidth,
 		uint16_t minValue,
 		uint16_t maxValue,
-		iVtObject_c *variableReference,
+		iVtObjectNumberVariable_c *variableReference,
 		uint16_t value,
-		iVtObject_c *targetValueVariableReference,
+		iVtObjectNumberVariable_c *targetValueVariableReference,
 		uint16_t targetValue)
 	:vtObjectArchedBarGraph_c(
 					pool->getAiMultitonInst(),
@@ -53,6 +53,8 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
 	{
 		pool->Append(this);
 	}
+
+    iVtObjectArchedBarGraph_c::~iVtObjectArchedBarGraph_c() = default;
 
     void iVtObjectArchedBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
@@ -87,8 +89,7 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         vtObjectArchedBarGraph_c::setEndAngle (newEndAngle, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectArchedBarGraph_c::setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject,
-                                                     bool b_enableReplaceOfCmd) {
+    void iVtObjectArchedBarGraph_c::setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setBarGraphWidth (newBarGraphWidth, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -100,13 +101,11 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         vtObjectArchedBarGraph_c::setMaxValue (newMax, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectArchedBarGraph_c::setVariableReference(iVtObject_c *newVariableReference, bool b_updateObject,
-                                                         bool b_enableReplaceOfCmd) {
+    void iVtObjectArchedBarGraph_c::setVariableReference(iVtObjectNumberVariable_c *newVariableReference, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setVariableReference (newVariableReference, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectArchedBarGraph_c::setTargetValueVariableReference(iVtObject_c *newTargetValueVariableReference,
-                                                                    bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectArchedBarGraph_c::setTargetValueVariableReference(iVtObjectNumberVariable_c *newTargetValueVariableReference, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setTargetValueVariableReference (newTargetValueVariableReference, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -117,8 +116,7 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
 
     uint16_t iVtObjectArchedBarGraph_c::getObjectType() const { return objectType(); }
 
-    void iVtObjectArchedBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject,
-                                            bool b_enableReplaceOfCmd) {
+    void iVtObjectArchedBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -134,11 +132,11 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         return vtObjectArchedBarGraph_c::updateHeight(b_SendRequest);
     }
 
-    uint8_t iVtObjectArchedBarGraph_c::updateColour(bool b_SendRequest) {
+    Colour iVtObjectArchedBarGraph_c::updateColour(bool b_SendRequest) {
         return vtObjectArchedBarGraph_c::updateColour(b_SendRequest);
     }
 
-    uint8_t iVtObjectArchedBarGraph_c::updateTargetLineColour(bool b_SendRequest) {
+    Colour iVtObjectArchedBarGraph_c::updateTargetLineColour(bool b_SendRequest) {
         return vtObjectArchedBarGraph_c::updateTargetLineColour(b_SendRequest);
     }
 
@@ -166,11 +164,11 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         return vtObjectArchedBarGraph_c::updateMaxValue(b_SendRequest);
     }
 
-    uint16_t iVtObjectArchedBarGraph_c::updateVariableReference(bool b_SendRequest) {
+    IsoAgLib::iVtObjectNumberVariable_c * iVtObjectArchedBarGraph_c::updateVariableReference(bool b_SendRequest) {
         return vtObjectArchedBarGraph_c::updateVariableReference(b_SendRequest);
     }
 
-    uint16_t iVtObjectArchedBarGraph_c::updateTargetValueVariableReference(bool b_SendRequest) {
+    IsoAgLib::iVtObjectNumberVariable_c * iVtObjectArchedBarGraph_c::updateTargetValueVariableReference(bool b_SendRequest) {
         return vtObjectArchedBarGraph_c::updateTargetValueVariableReference(b_SendRequest);
     }
 

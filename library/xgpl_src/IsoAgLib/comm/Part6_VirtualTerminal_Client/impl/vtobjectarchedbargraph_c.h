@@ -25,7 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_archedbargraph
 
-//#include <memory> // PImpl
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
 #include "vtclient_c.h"
@@ -36,6 +36,7 @@ namespace __IsoAgLib {
 class vtObjectArchedBarGraph_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectArchedBarGraph_s;
 
@@ -62,15 +63,17 @@ public:
 			uint16_t barGraphWidth,
 			uint16_t minValue,
 			uint16_t maxValue,
-			iVtObject_c *variableReference,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint16_t value,
-			iVtObject_c *targetValueVariableReference,
+			IsoAgLib::iVtObjectNumberVariable_c *targetValueVariableReference,
 			uint16_t targetValue);
 
   vtObjectArchedBarGraph_c(iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst);
 
 
-  ~vtObjectArchedBarGraph_c() override = default;
+  ~vtObjectArchedBarGraph_c() override;
+
+
   uint32_t fitTerminal() const;
     virtual void setValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
     virtual void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -83,8 +86,8 @@ public:
     virtual void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setMinValue(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
     virtual void setMaxValue(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-    virtual void setVariableReference(IsoAgLib::iVtObject_c* newVariableReference, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setTargetValueVariableReference(IsoAgLib::iVtObject_c* newTargetValueVariableReference, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newVariableReference, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setTargetValueVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newTargetValueVariableReference, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setTargetValue(uint16_t newTargetValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -96,16 +99,16 @@ public:
 
     virtual uint16_t updateWidth(bool b_SendRequest=false);
     virtual uint16_t updateHeight(bool b_SendRequest=false);
-    virtual uint8_t updateColour(bool b_SendRequest=false);
-    virtual uint8_t updateTargetLineColour(bool b_SendRequest=false);
+    virtual IsoAgLib::Colour updateColour(bool b_SendRequest=false);
+    virtual IsoAgLib::Colour updateTargetLineColour(bool b_SendRequest=false);
     virtual uint8_t updateOptions(bool b_SendRequest=false);
     virtual uint8_t updateStartAngle(bool b_SendRequest=false);
     virtual uint8_t updateEndAngle(bool b_SendRequest=false);
     virtual uint16_t updateBarGraphWidth(bool b_SendRequest=false);
     virtual uint16_t updateMinValue(bool b_SendRequest=false);
     virtual uint16_t updateMaxValue(bool b_SendRequest=false);
-    virtual uint16_t updateVariableReference(bool b_SendRequest=false);
-    virtual uint16_t updateTargetValueVariableReference(bool b_SendRequest=false);
+    virtual IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
+    virtual IsoAgLib::iVtObjectNumberVariable_c* updateTargetValueVariableReference(bool b_SendRequest=false);
     virtual uint16_t updateTargetValue(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here

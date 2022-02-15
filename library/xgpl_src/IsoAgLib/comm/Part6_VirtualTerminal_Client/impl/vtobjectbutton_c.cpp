@@ -268,7 +268,6 @@ vtObjectButton_c::updateHeight(bool b_SendRequest)
   if (b_SendRequest)
 	  getAttribute(Height);
   return vtObject_a->height;
-
 }
 
 IsoAgLib::Colour

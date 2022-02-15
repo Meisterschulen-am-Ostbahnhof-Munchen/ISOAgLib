@@ -35,17 +35,19 @@ namespace __IsoAgLib {
 
 enum vtObjectArchedBarGraph_c::AttributeID:uint8_t
 {
-	Width                        = 1,
-	Height                       = 2,
-	Colour                       = 3,
+    Width                        = 1,
+    Height                       = 2,
+    Colour                       = 3,
     TargetLineColour             = 4,
     Options                      = 5,
-    NumberOfTicks                = 6,
-    MinValue                     = 7,
-	MaxValue                     = 8,
-	VariableReference            = 9,
-	TargetValueVariableReference = 10,
-	TargetValue                  = 11,
+    StartAngle                   = 6,
+    EndAngle                     = 7,
+    BarGraphWidth                = 8,
+    MinValue                     = 9,
+    MaxValue                     = 10,
+    VariableReference            = 11,
+    TargetValueVariableReference = 12,
+    TargetValue                  = 13,
 };
 
 
@@ -60,9 +62,9 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
   uint16_t barGraphWidth;
   uint16_t minValue;
   uint16_t maxValue;
-  iVtObject_c* variableReference;
+  IsoAgLib::iVtObjectNumberVariable_c* variableReference;
   uint16_t value;
-  iVtObject_c* targetValueVariableReference;
+  IsoAgLib::iVtObjectNumberVariable_c* targetValueVariableReference;
   uint16_t targetValue;
   explicit iVtObjectArchedBarGraph_s(
 		    IsoAgLib::ObjectID ID,
@@ -76,9 +78,9 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
 			uint16_t barGraphWidth,
 			uint16_t minValue,
 			uint16_t maxValue,
-			iVtObject_c *variableReference,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint16_t value,
-			iVtObject_c *targetValueVariableReference,
+			IsoAgLib::iVtObjectNumberVariable_c *targetValueVariableReference,
 			uint16_t targetValue);
 };
 
@@ -91,9 +93,9 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
 		   uint8_t endAngle,
 		   uint16_t barGraphWidth,
 		   uint16_t minValue, uint16_t maxValue,
-		   IsoAgLib::iVtObject_c *variableReference,
+		   IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 		   uint16_t value,
-		   IsoAgLib::iVtObject_c *targetValueVariableReference,
+		   IsoAgLib::iVtObjectNumberVariable_c *targetValueVariableReference,
 		   uint16_t targetValue)
 			: iVtObject_s(ID)
 			, iVtObjectwMacro_s(ID)
@@ -218,9 +220,9 @@ IsoAgLib::ObjectID vtObjectArchedBarGraph_c::getID() const {
             uint16_t barGraphWidth,
             uint16_t minValue,
             uint16_t maxValue,
-            iVtObject_c *variableReference,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
             uint16_t value,
-            iVtObject_c *targetValueVariableReference,
+			IsoAgLib::iVtObjectNumberVariable_c *targetValueVariableReference,
             uint16_t targetValue)
             :vtObjectArchedBarGraph_c(
             new iVtObjectArchedBarGraph_s(
@@ -251,6 +253,9 @@ IsoAgLib::ObjectID vtObjectArchedBarGraph_c::getID() const {
     {}
 
 
+    vtObjectArchedBarGraph_c::~vtObjectArchedBarGraph_c() = default;
+
+
 uint32_t
 vtObjectArchedBarGraph_c::fitTerminal() const
 {
@@ -261,7 +266,7 @@ vtObjectArchedBarGraph_c::fitTerminal() const
 void
 vtObjectArchedBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (get_vtObjectArchedBarGraph_a()->variableReference == NULL) {
+  if (vtObject_a->variableReference == NULL) {
     if (b_updateObject)
     	vtObject_a->value = newValue;
 
@@ -289,117 +294,104 @@ uint16_t
 vtObjectArchedBarGraph_c::updateWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width), sizeof(iVtObjectArchedBarGraph_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(Width);
+  return vtObject_a->width;
 }
 
 uint16_t
 vtObjectArchedBarGraph_c::updateHeight(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height), sizeof(iVtObjectArchedBarGraph_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(Height);
+  return vtObject_a->height;
 }
 
-uint8_t
+IsoAgLib::Colour
 vtObjectArchedBarGraph_c::updateColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour), sizeof(iVtObjectArchedBarGraph_s), 3);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(Colour);
+  return vtObject_a->colour;
 }
 
-uint8_t
+IsoAgLib::Colour
 vtObjectArchedBarGraph_c::updateTargetLineColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour), sizeof(iVtObjectArchedBarGraph_s), 4);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(TargetLineColour);
+  return vtObject_a->targetLineColour;
 }
 
 uint8_t
 vtObjectArchedBarGraph_c::updateOptions(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), options), sizeof(iVtObjectArchedBarGraph_s), 5);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), options), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(Options);
+  return vtObject_a->options;
 }
 
 uint8_t
 vtObjectArchedBarGraph_c::updateStartAngle(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), startAngle), sizeof(iVtObjectArchedBarGraph_s), 6);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), startAngle), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(StartAngle);
+  return vtObject_a->startAngle;
 }
 
 uint8_t
 vtObjectArchedBarGraph_c::updateEndAngle(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), endAngle), sizeof(iVtObjectArchedBarGraph_s), 7);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), endAngle), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(EndAngle);
+  return vtObject_a->endAngle;
 }
 
 uint16_t
 vtObjectArchedBarGraph_c::updateBarGraphWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), barGraphWidth), sizeof(iVtObjectArchedBarGraph_s), 8);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), barGraphWidth), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(BarGraphWidth);
+  return vtObject_a->barGraphWidth;
 }
 
 uint16_t
 vtObjectArchedBarGraph_c::updateMinValue(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), minValue), sizeof(iVtObjectArchedBarGraph_s), 9);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), minValue), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(MinValue);
+  return vtObject_a->minValue;
 }
 
 uint16_t
 vtObjectArchedBarGraph_c::updateMaxValue(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), maxValue), sizeof(iVtObjectArchedBarGraph_s), 10);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), maxValue), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(MaxValue);
+  return vtObject_a->maxValue;
 }
 
-uint16_t
+IsoAgLib::iVtObjectNumberVariable_c *
 vtObjectArchedBarGraph_c::updateVariableReference(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), variableReference), sizeof(iVtObjectArchedBarGraph_s), 11);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), variableReference), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(VariableReference);
+  return vtObject_a->variableReference;
 }
 
-uint16_t
+IsoAgLib::iVtObjectNumberVariable_c *
 vtObjectArchedBarGraph_c::updateTargetValueVariableReference(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValueVariableReference), sizeof(iVtObjectArchedBarGraph_s), 12);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValueVariableReference), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(TargetValueVariableReference);
+  return vtObject_a->targetValueVariableReference;
 }
 
 uint16_t
 vtObjectArchedBarGraph_c::updateTargetValue(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValue), sizeof(iVtObjectArchedBarGraph_s), 13);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValue), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(TargetValue);
+  return vtObject_a->targetValue;
 }
 
 /** that attribute is in parentheses in the spec, so commented out here
@@ -407,9 +399,8 @@ uint16_t
 vtObjectArchedBarGraph_c::updateValue(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), value), sizeof(iVtObjectArchedBarGraph_s), 14);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), value), sizeof(iVtObjectArchedBarGraph_s));
+	  getAttribute(Value);
+  return vtObject_a->value;
 }
 */
 
@@ -418,21 +409,21 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), options), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 6: saveValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), startAngle), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 7: saveValue8(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), endAngle), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 8: saveValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), barGraphWidth), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 9: saveValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), minValue), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 10: saveValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), maxValue), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 11: saveValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), variableReference), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 12: saveValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValueVariableReference), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 13: saveValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValue), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case Width:                        vtObject_a->width                         = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case Height:                       vtObject_a->height                        = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case Colour:                       vtObject_a->colour                        = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case TargetLineColour:             vtObject_a->targetLineColour              = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case Options:                      vtObject_a->options                       = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case StartAngle:                   vtObject_a->startAngle                    = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case EndAngle:                     vtObject_a->endAngle                      = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case BarGraphWidth:                vtObject_a->barGraphWidth                 = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case MinValue:                     vtObject_a->minValue                      = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case MaxValue:                     vtObject_a->maxValue                      = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    //case VariableReference:            vtObject_a->variableReference             = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
+    //case TargetValueVariableReference: vtObject_a->targetValueVariableReference  = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
+    case TargetValue:                  vtObject_a->targetValue                   = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     /** that attribute is in parentheses in the spec, so commented out here
-    case 14: saveValue16(MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), value), sizeof(iVtObjectArchedBarGraph_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case 14: vtObject_a->value                        = convertLittleEndianStringUi16(pui8_attributeValue)); break;
     */
     default: break;
   }
@@ -443,62 +434,62 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 
     void vtObjectArchedBarGraph_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), width) : 0, sizeof(iVtObjectArchedBarGraph_s), 1 /* "Width" */, newWidth, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->width = newWidth;
+    	setAttribute(Width /* "Width" */, newWidth, b_enableReplaceOfCmd);
     }
 
     void vtObjectArchedBarGraph_c::setHeight(uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), height) : 0, sizeof(iVtObjectArchedBarGraph_s), 2 /* "Height" */, newHeight, b_enableReplaceOfCmd);
+    	setAttribute(Height /* "Height" */, newHeight, b_enableReplaceOfCmd);
     }
 
     void vtObjectArchedBarGraph_c::setColour(IsoAgLib::Colour newColour, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), colour) : 0, sizeof(iVtObjectArchedBarGraph_s), 3 /* "Colour" */, newColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newColour, this, IsoAgLib::AColour), b_enableReplaceOfCmd);
+    	setAttribute(Colour /* "Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newColour, this, IsoAgLib::AColour), b_enableReplaceOfCmd);
     }
 
-    void vtObjectArchedBarGraph_c::setTargetLineColour(IsoAgLib::Colour newTargetLineColour, bool b_updateObject,
-                                                       bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetLineColour) : 0, sizeof(iVtObjectArchedBarGraph_s), 4 /* "Target Line Colour" */, newTargetLineColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newTargetLineColour, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
+    void vtObjectArchedBarGraph_c::setTargetLineColour(IsoAgLib::Colour newTargetLineColour, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	setAttribute(TargetLineColour /* "Target Line Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newTargetLineColour, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectArchedBarGraph_c::setOptions(uint8_t newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), options) : 0, sizeof(iVtObjectArchedBarGraph_s), 5 /* "Options" */, newOptions, newOptions, b_enableReplaceOfCmd);
+    	setAttribute(Options /* "Options" */, newOptions, b_enableReplaceOfCmd);
     }
 
     void vtObjectArchedBarGraph_c::setStartAngle(uint8_t newStartAngle, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), startAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 6 /* "Start Angle" */, newStartAngle, newStartAngle, b_enableReplaceOfCmd);
+    	setAttribute(StartAngle /* "Start Angle" */, newStartAngle, b_enableReplaceOfCmd);
     }
 
     void vtObjectArchedBarGraph_c::setEndAngle(uint8_t newEndAngle, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), endAngle) : 0, sizeof(iVtObjectArchedBarGraph_s), 7 /* "End Angle" */, newEndAngle, newEndAngle, b_enableReplaceOfCmd);
+    	setAttribute(EndAngle /* "End Angle" */, newEndAngle, b_enableReplaceOfCmd);
     }
 
-    void vtObjectArchedBarGraph_c::setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject,
-                                                    bool b_enableReplaceOfCmd) {
-        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), barGraphWidth) : 0, sizeof(iVtObjectArchedBarGraph_s), 8 /* "Bar Graph Width" */, newBarGraphWidth, b_enableReplaceOfCmd);
+    void vtObjectArchedBarGraph_c::setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	setAttribute(BarGraphWidth /* "Bar Graph Width" */, newBarGraphWidth, b_enableReplaceOfCmd);
     }
 
     void vtObjectArchedBarGraph_c::setMinValue(uint16_t newMin, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), minValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 9 /* "Min value" */, newMin, b_enableReplaceOfCmd);
+    	setAttribute(MinValue /* "Min value" */, newMin, b_enableReplaceOfCmd);
     }
 
     void vtObjectArchedBarGraph_c::setMaxValue(uint16_t newMax, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), maxValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 10 /* "Max value" */, newMax, b_enableReplaceOfCmd);
+    	setAttribute(MaxValue /* "Max value" */, newMax, b_enableReplaceOfCmd);
     }
 
     void
-    vtObjectArchedBarGraph_c::setVariableReference(IsoAgLib::iVtObject_c *newVariableReference, bool b_updateObject,
-                                                   bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), variableReference) : 0, sizeof(iVtObjectArchedBarGraph_s), 11 /* "Variable Reference" */, newVariableReference, b_enableReplaceOfCmd);
+    vtObjectArchedBarGraph_c::setVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newVariableReference, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	setAttribute(VariableReference /* "Variable Reference" */, newVariableReference->getID(), b_enableReplaceOfCmd);
     }
 
     void
-    vtObjectArchedBarGraph_c::setTargetValueVariableReference(IsoAgLib::iVtObject_c *newTargetValueVariableReference,
-                                                              bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValueVariableReference) : 0, sizeof(iVtObjectArchedBarGraph_s), 12 /* "Target Value Variable Reference" */, newTargetValueVariableReference, b_enableReplaceOfCmd);
+    vtObjectArchedBarGraph_c::setTargetValueVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newTargetValueVariableReference, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	setAttribute(TargetValueVariableReference /* "Target Value Variable Reference" */, newTargetValueVariableReference->getID(), b_enableReplaceOfCmd);
     }
 
     void
     vtObjectArchedBarGraph_c::setTargetValue(uint16_t newTargetValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectArchedBarGraph_a(), targetValue) : 0, sizeof(iVtObjectArchedBarGraph_s), 13 /* "Target Value" */, newTargetValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->targetValue = newTargetValue;
+        setAttribute(TargetValue, newTargetValue, b_enableReplaceOfCmd);
     }
 
 
