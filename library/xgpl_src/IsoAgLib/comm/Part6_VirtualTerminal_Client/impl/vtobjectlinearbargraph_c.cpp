@@ -23,6 +23,7 @@
 #ifdef CONFIG_USE_VTOBJECT_linearbargraph
 
 #include "../ivtobjectnumbervariable_c.h"
+#include "../ivtobject_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -361,46 +362,68 @@ vtObjectLinearBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 
 
     void vtObjectLinearBarGraph_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->width = newValue;
         setAttribute(Width, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->height = newValue;
     	setAttribute(Height, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->colour = newValue;
     	setAttribute(Colour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::AColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setTargetLineColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->targetLineColour = newValue;
     	setAttribute(TargetLineColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->options = newValue;
     	setAttribute(Options, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setNumberOfTicks(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->numberOfTicks = newValue;
     	setAttribute(NumberOfTicks, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setMinValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->minValue = newValue;
     	setAttribute(MinValue, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setMaxValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->maxValue = newValue;
     	setAttribute(MaxValue, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->variableReference = newValue;
         setAttribute(VariableReference, newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setTargetValueVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->targetValueVariableReference = newValue;
     	setAttribute(TargetValueVariableReference, newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setTargetValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->targetValue = newValue;
         setAttribute(TargetValue, newValue, b_enableReplaceOfCmd);
     }
 

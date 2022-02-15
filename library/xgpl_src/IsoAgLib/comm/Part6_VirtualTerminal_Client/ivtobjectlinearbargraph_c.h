@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_linearbargraph
 
+
 namespace IsoAgLib {
 
 class iVtObjectLinearBarGraph_c : public __IsoAgLib::vtObjectLinearBarGraph_c
@@ -48,6 +49,8 @@ public:
 			iVtObjectNumberVariable_c *targetValueVariableReference = nullptr,
 			uint16_t targetValue = 50);
 
+
+  ~iVtObjectLinearBarGraph_c() override;
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -61,6 +64,8 @@ public:
   void setTargetValueVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setTargetValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here

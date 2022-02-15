@@ -21,6 +21,8 @@
 #include "vtobjectarchedbargraph_c.h"
 
 #ifdef CONFIG_USE_VTOBJECT_archedbargraph
+
+#include "../ivtobjectnumbervariable_c.h"
 #include "../ivtobject_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
@@ -30,6 +32,21 @@
 namespace __IsoAgLib {
 
 
+
+enum vtObjectArchedBarGraph_c::AttributeID:uint8_t
+{
+	Width                        = 1,
+	Height                       = 2,
+	Colour                       = 3,
+    TargetLineColour             = 4,
+    Options                      = 5,
+    NumberOfTicks                = 6,
+    MinValue                     = 7,
+	MaxValue                     = 8,
+	VariableReference            = 9,
+	TargetValueVariableReference = 10,
+	TargetValue                  = 11,
+};
 
 
 struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
@@ -48,8 +65,8 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
   iVtObject_c* targetValueVariableReference;
   uint16_t targetValue;
   explicit iVtObjectArchedBarGraph_s(
-		  IsoAgLib::ObjectID ID,
-  		uint16_t width,
+		    IsoAgLib::ObjectID ID,
+  		    uint16_t width,
 			uint16_t height,
 			IsoAgLib::Colour colour,
 			IsoAgLib::Colour targetLineColour,

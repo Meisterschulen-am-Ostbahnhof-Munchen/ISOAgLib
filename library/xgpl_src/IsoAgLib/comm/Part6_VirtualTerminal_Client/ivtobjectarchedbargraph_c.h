@@ -22,6 +22,7 @@
 
 #include "impl/vtobjectarchedbargraph_c.h"
 
+
 #ifdef CONFIG_USE_VTOBJECT_archedbargraph
 
 
@@ -51,7 +52,7 @@ public:
 			uint16_t targetValue = 50);
 
 
-  ~iVtObjectArchedBarGraph_c() override = default;
+  ~iVtObjectArchedBarGraph_c() override;
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
   void setWidth(uint16_t newWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setHeight(uint16_t newHeight, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
@@ -63,8 +64,8 @@ public:
   void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setMinValue(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setMaxValue(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(iVtObject_c* newVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setTargetValueVariableReference(iVtObject_c* newTargetValueVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(iVtObjectNumberVariable_c* newVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setTargetValueVariableReference(iVtObjectNumberVariable_c* newTargetValueVariableReference, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setTargetValue(uint16_t newTargetValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -77,16 +78,16 @@ public:
 
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
-  uint8_t updateColour(bool b_SendRequest=false);
-  uint8_t updateTargetLineColour(bool b_SendRequest=false);
+  Colour updateColour(bool b_SendRequest=false);
+  Colour updateTargetLineColour(bool b_SendRequest=false);
   uint8_t updateOptions(bool b_SendRequest=false);
   uint8_t updateStartAngle(bool b_SendRequest=false);
   uint8_t updateEndAngle(bool b_SendRequest=false);
   uint16_t updateBarGraphWidth(bool b_SendRequest=false);
   uint16_t updateMinValue(bool b_SendRequest=false);
   uint16_t updateMaxValue(bool b_SendRequest=false);
-  uint16_t updateVariableReference(bool b_SendRequest=false);
-  uint16_t updateTargetValueVariableReference(bool b_SendRequest=false);
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
+  iVtObjectNumberVariable_c* updateTargetValueVariableReference(bool b_SendRequest=false);
   uint16_t updateTargetValue(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
