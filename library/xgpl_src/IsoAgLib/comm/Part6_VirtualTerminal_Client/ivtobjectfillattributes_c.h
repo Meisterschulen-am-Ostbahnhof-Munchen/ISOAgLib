@@ -34,7 +34,7 @@ public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_FILL_ATTRIBUTES; }
 
 
-  void setFillType(uint8_t newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setFillType(FillType newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillType(newFillType, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -59,7 +59,7 @@ public:
   uint8_t updateObjectType() const { return vtObjectFillAttributes_c::updateObjectType(); }
   */
 
-  uint8_t updateFillType(bool b_SendRequest=false) {
+  FillType updateFillType(bool b_SendRequest=false) {
     return vtObjectFillAttributes_c::updateFillType(b_SendRequest);
   }
 

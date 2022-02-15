@@ -37,14 +37,14 @@ enum vtObjectFillAttributes_c::AttributeID:uint8_t
 };
 
 struct vtObjectFillAttributes_c::iVtObjectFillAttributes_s : iVtObjectwMacro_s {
-  uint8_t fillType;
+  IsoAgLib::FillType fillType;
   IsoAgLib::Colour fillColour;
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
   IsoAgLib::iVtObjectPictureGraphic_c* fillPatternObject;
 #endif
   iVtObjectFillAttributes_s(
 		  IsoAgLib::ObjectID ID
-  		, uint8_t fillType
+  		, IsoAgLib::FillType fillType
 		, IsoAgLib::Colour fillColour
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
 		, IsoAgLib::iVtObjectPictureGraphic_c *fillPatternObject
@@ -125,7 +125,7 @@ vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, IsoAgLib::Colou
 #endif
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-uint8_t
+IsoAgLib::FillType
 vtObjectFillAttributes_c::updateFillType(bool b_SendRequest)
 {
   if (b_SendRequest)
@@ -157,8 +157,8 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 {
   switch (attrID)
   {
-    case FillType:          vtObject_a->fillType          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
-    case FillColour:        vtObject_a->fillColour        = convertLittleEndianStringColour(pui8_attributeValue); break;
+    case FillType:          vtObject_a->fillType          = convertLittleEndianStringFillType(pui8_attributeValue); break;
+    case FillColour:        vtObject_a->fillColour        = convertLittleEndianStringColour(  pui8_attributeValue); break;
     //case FillPatternObject: vtObject_a->fillPatternObject = convertLittleEndianStringUi16(pui8_attributeValue); break; //TODO
     default: break;
   }
@@ -175,7 +175,7 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     vtObjectFillAttributes_c::~vtObjectFillAttributes_c() = default;
 
 
-    void vtObjectFillAttributes_c::setFillType(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectFillAttributes_c::setFillType(IsoAgLib::FillType newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->fillType = newValue;
     	setAttribute(1 /* "Fill Type" */, newValue, b_enableReplaceOfCmd);

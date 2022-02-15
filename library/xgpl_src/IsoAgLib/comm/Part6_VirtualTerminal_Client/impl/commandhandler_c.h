@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "ivttypes.h"
 #include "iColour.h"
+#include "iFillType.h"
 #include "iObjectID.h"
 #include "iFont.h"
 #include <IsoAgLib/isoaglib_config.h>

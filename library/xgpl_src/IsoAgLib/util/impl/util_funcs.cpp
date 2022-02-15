@@ -46,6 +46,13 @@ IsoAgLib::Colour convertLittleEndianStringColour( const uint8_t* apui8_src )
 }
 
 
+/** convert receive multistream into an FillType variable */
+IsoAgLib::FillType convertLittleEndianStringFillType( const uint8_t* apui8_src )
+{
+    return (IsoAgLib::FillType)apui8_src[0];
+}
+
+
 IsoAgLib::Font convertLittleEndianStringFont( const uint8_t* apui8_src )
 {
   return (IsoAgLib::Font)apui8_src[0];

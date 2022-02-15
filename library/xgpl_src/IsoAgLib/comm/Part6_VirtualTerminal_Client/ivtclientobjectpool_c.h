@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "ivttypes.h"
 #include "iColour.h"
+#include "iFillType.h"
 #include "iObjectID.h"
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
