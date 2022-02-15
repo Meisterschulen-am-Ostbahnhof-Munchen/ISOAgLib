@@ -31,6 +31,16 @@
 namespace __IsoAgLib {
 
 
+enum vtObjectRectangle_c::AttributeID:uint8_t
+{
+	LineAttributes   = 1,
+	Width            = 2,
+	Height           = 3,
+	LineSuppression  = 4,
+	FillAttributes   = 5,
+};
+
+
 struct vtObjectRectangle_c::iVtObjectRectangle_s: iVtObjectwMacro_s {
 	IsoAgLib::iVtObjectLineAttributes_c *lineAttributes;
 	uint16_t width;
@@ -137,49 +147,44 @@ vtObjectRectangle_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
 }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-uint16_t
+IsoAgLib::iVtObjectLineAttributes_c *
 vtObjectRectangle_c::updateLineAttributes(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes), sizeof(iVtObjectRectangle_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes), sizeof(iVtObjectRectangle_s));
+    getAttribute(LineAttributes);
+  return vtObject_a->lineAttributes;
 }
 
 uint16_t
 vtObjectRectangle_c::updateWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), width), sizeof(iVtObjectRectangle_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), width), sizeof(iVtObjectRectangle_s));
+    getAttribute(Width);
+  return vtObject_a->width;
 }
 
 uint16_t
 vtObjectRectangle_c::updateHeight(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s), 3);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s));
+    getAttribute(Height);
+  return vtObject_a->height;
 }
 
 uint8_t
 vtObjectRectangle_c::updateLineSuppression(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression), sizeof(iVtObjectRectangle_s), 4);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression), sizeof(iVtObjectRectangle_s));
+    getAttribute(LineSuppression);
+  return vtObject_a->lineSuppression;
 }
 
-uint16_t
+IsoAgLib::iVtObjectFillAttributes_c *
 vtObjectRectangle_c::updateFillAttributes(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes), sizeof(iVtObjectRectangle_s), 5);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes), sizeof(iVtObjectRectangle_s));
+    getAttribute(FillAttributes);
+  return vtObject_a->fillAttributes;
 }
 
 void
@@ -187,11 +192,11 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), width), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), height), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 5: saveValue16(MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes), sizeof(iVtObjectRectangle_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    //case LineAttributes:  vtObject_a->lineAttributes  = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case Width:           vtObject_a->width           = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case Height:          vtObject_a->height          = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case LineSuppression: vtObject_a->lineSuppression = convertLittleEndianStringUi8( pui8_attributeValue); break;
+    //case FillAttributes:  vtObject_a->fillAttributes  = convertLittleEndianStringUi16(pui8_attributeValue); break;
     default: break;
   }
 }
@@ -205,28 +210,51 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 
 
     void
-    vtObjectRectangle_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject,
-                                           bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineAttributes) : 0, sizeof(iVtObjectRectangle_s), 1 /* "Line Attribute" */, (IsoAgLib::iVtObject_c*) newLineAttributes, b_enableReplaceOfCmd);
+    vtObjectRectangle_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->lineAttributes = newLineAttributes;
+    	setAttribute ( LineAttributes /* "Line Attribute" */, newLineAttributes->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectRectangle_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), width) : 0, sizeof(iVtObjectRectangle_s), 2 /* "Width" */, newWidth, b_enableReplaceOfCmd);
+        MACRO_scaleLocalVars
+        MACRO_scaleSKLocalVars
+
+        uint32_t scaledDim = uint32_t( newWidth );
+      #ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+        MACRO_scaleDimension( scaledDim )
+      #endif
+
+    	if (b_updateObject)
+    		vtObject_a->height = newWidth;
+        setAttribute ( Width /* "Width" */, scaledDim, b_enableReplaceOfCmd);
     }
 
     void vtObjectRectangle_c::setHeight(uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), height) : 0, sizeof(iVtObjectRectangle_s), 3 /* "Height" */, newHeight, b_enableReplaceOfCmd);
+        MACRO_scaleLocalVars
+        MACRO_scaleSKLocalVars
+
+        uint32_t scaledDim = uint32_t( newHeight );
+      #ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+        MACRO_scaleDimension( scaledDim )
+      #endif
+
+    	if (b_updateObject)
+    		vtObject_a->height = newHeight;
+    	setAttribute ( Height /* "Height" */, scaledDim, b_enableReplaceOfCmd);
     }
 
-    void vtObjectRectangle_c::setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject,
-                                                 bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), lineSuppression) : 0, sizeof(iVtObjectRectangle_s), 4 /* "Line Suppression" */, newLineSupressionValue, newLineSupressionValue, b_enableReplaceOfCmd);
+    void vtObjectRectangle_c::setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->lineSuppression = newLineSupressionValue;
+    	setAttribute ( LineSuppression /* "Line Suppression" */, newLineSupressionValue, b_enableReplaceOfCmd);
     }
 
     void
-    vtObjectRectangle_c::setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c *newFillAttributes, bool b_updateObject,
-                                           bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectRectangle_a(), fillAttributes) : 0, sizeof(iVtObjectRectangle_s), 5 /* "Fill Attributes" */, (IsoAgLib::iVtObject_c*) newFillAttributes, b_enableReplaceOfCmd);
+    vtObjectRectangle_c::setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c *newFillAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->fillAttributes = newFillAttributes;
+    	setAttribute ( FillAttributes /* "Fill Attributes" */, newFillAttributes->getID(), b_enableReplaceOfCmd);
     }
 
 

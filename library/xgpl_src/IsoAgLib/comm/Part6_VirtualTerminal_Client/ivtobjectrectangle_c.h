@@ -61,7 +61,7 @@ public:
   uint8_t updateObjectType() const { return vtObjectRectangle_c::updateObjectType(); }
   */
 
-  uint16_t updateLineAttributes(bool b_SendRequest=false) {
+  iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false) {
     return vtObjectRectangle_c::updateLineAttributes(b_SendRequest);
   }
 
@@ -77,7 +77,7 @@ public:
     return vtObjectRectangle_c::updateLineSuppression(b_SendRequest);
   }
 
-  uint16_t updateFillAttributes(bool b_SendRequest=false) {
+  iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false) {
     return vtObjectRectangle_c::updateFillAttributes(b_SendRequest);
   }
 #endif

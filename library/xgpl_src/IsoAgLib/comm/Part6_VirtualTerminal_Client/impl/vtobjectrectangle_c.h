@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_rectangle
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 
 
@@ -33,6 +34,7 @@ namespace __IsoAgLib {
 class vtObjectRectangle_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectRectangle_s;
 
@@ -59,11 +61,11 @@ public:
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 14; }
   */
-  uint16_t updateLineAttributes(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
   uint8_t updateLineSuppression(bool b_SendRequest=false);
-  uint16_t updateFillAttributes(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };
