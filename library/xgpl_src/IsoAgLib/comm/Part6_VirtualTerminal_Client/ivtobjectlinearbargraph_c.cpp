@@ -27,9 +27,9 @@ namespace IsoAgLib {
 			uint8_t numberOfTicks,
     		uint16_t minValue,
 			uint16_t maxValue,
-			iVtObject_c *variableReference,
+			iVtObjectNumberVariable_c *variableReference,
     		uint16_t value,
-			iVtObject_c *targetValueVariableReference,
+			iVtObjectNumberVariable_c *targetValueVariableReference,
     		uint16_t targetValue)
     : vtObjectLinearBarGraph_c(
     		pool->getAiMultitonInst(),
@@ -87,13 +87,11 @@ namespace IsoAgLib {
         vtObjectLinearBarGraph_c::setMaxValue (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectLinearBarGraph_c::setVariableReference(iVtObject_c *newValue, bool b_updateObject,
-                                                         bool b_enableReplaceOfCmd) {
+    void iVtObjectLinearBarGraph_c::setVariableReference(iVtObjectNumberVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLinearBarGraph_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectLinearBarGraph_c::setTargetValueVariableReference(iVtObject_c *newValue, bool b_updateObject,
-                                                                    bool b_enableReplaceOfCmd) {
+    void iVtObjectLinearBarGraph_c::setTargetValueVariableReference(iVtObjectNumberVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLinearBarGraph_c::setTargetValueVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -118,11 +116,11 @@ namespace IsoAgLib {
         return vtObjectLinearBarGraph_c::updateHeight(b_SendRequest);
     }
 
-    uint8_t iVtObjectLinearBarGraph_c::updateColour(bool b_SendRequest) {
+    Colour iVtObjectLinearBarGraph_c::updateColour(bool b_SendRequest) {
         return vtObjectLinearBarGraph_c::updateColour(b_SendRequest);
     }
 
-    uint8_t iVtObjectLinearBarGraph_c::updateTargetLineColour(bool b_SendRequest) {
+    Colour iVtObjectLinearBarGraph_c::updateTargetLineColour(bool b_SendRequest) {
         return vtObjectLinearBarGraph_c::updateTargetLineColour(b_SendRequest);
     }
 
@@ -142,11 +140,11 @@ namespace IsoAgLib {
         return vtObjectLinearBarGraph_c::updateMaxValue(b_SendRequest);
     }
 
-    uint16_t iVtObjectLinearBarGraph_c::updateVariableReference(bool b_SendRequest) {
+    iVtObjectNumberVariable_c* iVtObjectLinearBarGraph_c::updateVariableReference(bool b_SendRequest) {
         return vtObjectLinearBarGraph_c::updateVariableReference(b_SendRequest);
     }
 
-    uint16_t iVtObjectLinearBarGraph_c::updateTargetValueVariableReference(bool b_SendRequest) {
+    iVtObjectNumberVariable_c* iVtObjectLinearBarGraph_c::updateTargetValueVariableReference(bool b_SendRequest) {
         return vtObjectLinearBarGraph_c::updateTargetValueVariableReference(b_SendRequest);
     }
 

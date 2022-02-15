@@ -43,9 +43,9 @@ public:
 			uint8_t numberOfTicks = 4,
 			uint16_t minValue = 0,
 			uint16_t maxValue = 100,
-			iVtObject_c *variableReference = nullptr,
+			iVtObjectNumberVariable_c *variableReference = nullptr,
 			uint16_t value = 40,
-			iVtObject_c *targetValueVariableReference = nullptr,
+			iVtObjectNumberVariable_c *targetValueVariableReference = nullptr,
 			uint16_t targetValue = 50);
 
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
@@ -57,8 +57,8 @@ public:
   void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setMinValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setMaxValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setTargetValueVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setTargetValueVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setTargetValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -69,14 +69,14 @@ public:
 
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
-  uint8_t updateColour(bool b_SendRequest=false);
-  uint8_t updateTargetLineColour(bool b_SendRequest=false);
+  Colour updateColour(bool b_SendRequest=false);
+  Colour updateTargetLineColour(bool b_SendRequest=false);
   uint8_t updateOptions(bool b_SendRequest=false);
   uint8_t updateNumberOfTicks(bool b_SendRequest=false);
   uint16_t updateMinValue(bool b_SendRequest=false);
   uint16_t updateMaxValue(bool b_SendRequest=false);
-  uint16_t updateVariableReference(bool b_SendRequest=false);
-  uint16_t updateTargetValueVariableReference(bool b_SendRequest=false);
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
+  iVtObjectNumberVariable_c* updateTargetValueVariableReference(bool b_SendRequest=false);
   uint16_t updateTargetValue(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
