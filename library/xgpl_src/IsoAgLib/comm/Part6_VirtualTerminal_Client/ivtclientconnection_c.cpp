@@ -107,11 +107,13 @@ iVtClientConnection_c::sendCommandChangeSize             (uint16_t aui16_objectU
 }
 
 #ifdef CONFIG_USE_VTOBJECT_fillattributes
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
 bool
 iVtClientConnection_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 {
   return commandHandler().sendCommandChangeFillAttributes(aui16_objectUid, newFillType, newFillColour, newFillPatternObject, b_enableReplaceOfCmd);
 }
+#endif
 #endif
 
 bool
