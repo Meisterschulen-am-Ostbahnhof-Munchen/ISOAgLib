@@ -32,19 +32,25 @@ namespace __IsoAgLib {
 
 struct vtObjectAlarmMask_c::iVtObjectAlarmMask_s : iVtObjectMask_s {
   IsoAgLib::Colour backgroundColour;
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
   IsoAgLib::iVtObjectSoftKeyMask_c* softKeyMask;
+#endif
   uint8_t priority;
   uint8_t acousticSignal;
   explicit iVtObjectAlarmMask_s(
-		  IsoAgLib::ObjectID ID,
-		  IsoAgLib::Colour backgroundColour,
-		  IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask,
-		  uint8_t priority,
-          uint8_t acousticSignal)
+		    IsoAgLib::ObjectID ID
+		  , IsoAgLib::Colour backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+		  , IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask
+#endif
+		  , uint8_t priority
+          , uint8_t acousticSignal)
   : iVtObject_s(ID)
   , iVtObjectMask_s(ID)
   , backgroundColour(backgroundColour)
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
   , softKeyMask(softKeyMask)
+#endif
   , priority(priority)
   , acousticSignal(acousticSignal)
   {}
@@ -63,10 +69,13 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 2; // Object Type = Alarm Mask
       destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
       if (vtObject_a->softKeyMask != NULL) {
           destMemory [4] = vtObject_a->softKeyMask->getID() & 0xFF;
           destMemory [5] = vtObject_a->softKeyMask->getID() >> 8;
-      } else {
+      } else
+#endif
+      {
           destMemory [4] = 0xFF;
           destMemory [5] = 0xFF;
       }
@@ -97,7 +106,7 @@ vtObjectAlarmMask_c::fitTerminal() const
 	return 10 + vtObject_a->numberOfObjectsToFollow * 6	+ vtObject_a->numberOfMacrosToFollow * 2;
 }
 
-
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
 void
 vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask,
                                     bool b_updateObject, bool b_enableReplaceOfCmd)
@@ -108,6 +117,8 @@ vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKey
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSoftKeyMask(
     this, 2 /* "Type: Alarm Mask" */, (newSoftKeyMask == NULL) ? 0xFFFF : newSoftKeyMask->getID(), b_enableReplaceOfCmd );
 }
+#endif
+
 
 /// No cmdReplacing here, as it's a relative command!!
 bool
@@ -190,19 +201,23 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
 
 
     vtObjectAlarmMask_c::vtObjectAlarmMask_c(
-  		  int ai_multitonInst,
-  		  IsoAgLib::ObjectID ID,
-  		  IsoAgLib::Colour backgroundColour,
-  		  IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask,
-  		  uint8_t priority,
-  		  uint8_t acousticSignal)
+  		    int ai_multitonInst
+  		  , IsoAgLib::ObjectID ID
+  		  , IsoAgLib::Colour backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+  		  , IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask
+#endif
+  		  , uint8_t priority
+  		  , uint8_t acousticSignal)
     :vtObjectAlarmMask_c(
     		new iVtObjectAlarmMask_s(
-    		  		  ID,
-    		  		  backgroundColour,
-    		  		  softKeyMask,
-    		  		  priority,
-    		  		  acousticSignal
+    		  		    ID
+    		  		  , backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+    		  		  , softKeyMask
+#endif
+    		  		  , priority
+    		  		  , acousticSignal
     				),
 					ai_multitonInst
   		  )
@@ -216,6 +231,9 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
             : iVtObjectMask_c((iVtObjectMask_s*) vtObjectAlarmMaskSROM, ai_multitonInst)
     		, vtObject_a(vtObjectAlarmMaskSROM)
     {}
+
+
+    vtObjectAlarmMask_c::~vtObjectAlarmMask_c() = default;
 
 
 } // end of namespace __IsoAgLib

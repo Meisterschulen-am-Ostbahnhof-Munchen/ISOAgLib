@@ -36,19 +36,23 @@ public:
 
 
   iVtObjectAlarmMask_c(
-			      iVtClientObjectPool_c* pool,
-				  ObjectID ID = autoID,
-				  Colour backgroundColour = BLACK,
-				  iVtObjectSoftKeyMask_c *softKeyMask = nullptr,
-				  uint8_t priority = 0,
-		          uint8_t acousticSignal = 0)
+			        iVtClientObjectPool_c* pool
+				  , ObjectID ID = autoID
+				  , Colour backgroundColour = BLACK
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+				  , iVtObjectSoftKeyMask_c *softKeyMask = nullptr
+#endif
+				  , uint8_t priority = 0
+		          , uint8_t acousticSignal = 0)
 	:vtObjectAlarmMask_c(
-					pool->getAiMultitonInst(),
-					  ID,
-					  backgroundColour,
-					  softKeyMask,
-					  priority,
-			          acousticSignal)
+					   pool->getAiMultitonInst()
+					 , ID
+					 , backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+					 , softKeyMask
+#endif
+					 , priority
+			         , acousticSignal)
 	{
 		pool->Append(this);
   }
@@ -59,9 +63,11 @@ public:
     vtObjectAlarmMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
   void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectAlarmMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject, b_enableReplaceOfCmd);
   }
+#endif
 
   void setPriority(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectAlarmMask_c::setPriority (newValue, b_updateObject, b_enableReplaceOfCmd);
@@ -90,9 +96,13 @@ public:
     return vtObjectAlarmMask_c::updateBackgroundColour(b_SendRequest);
   }
 
-  uint16_t updateSoftKeyMask(bool b_SendRequest=false) {
+
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+  IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false) {
     return vtObjectAlarmMask_c::updateSoftKeyMask(b_SendRequest);
   }
+#endif
+
 
   uint8_t updatePriority(bool b_SendRequest=false) {
     return vtObjectAlarmMask_c::updatePriority(b_SendRequest);

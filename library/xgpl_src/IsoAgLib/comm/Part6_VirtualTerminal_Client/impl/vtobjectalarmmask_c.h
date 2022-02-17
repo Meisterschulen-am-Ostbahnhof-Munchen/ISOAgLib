@@ -23,6 +23,8 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 #ifdef CONFIG_USE_VTOBJECT_alarmmask
+
+#include <memory> // PImpl
 #include "../ivtobjectmask_c.h"
 #include "../ivtobjectsoftkeymask_c.h"
 #include "vtclient_c.h"
@@ -47,18 +49,24 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectAlarmMask_c(
-		  int ai_multitonInst,
-		  IsoAgLib::ObjectID ID,
-		  IsoAgLib::Colour backgroundColour,
-		  IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask,
-		  uint8_t priority,
-		  uint8_t acousticSignal);
+		    int ai_multitonInst
+		  , IsoAgLib::ObjectID ID
+		  , IsoAgLib::Colour backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+		  , IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask
+#endif
+		  , uint8_t priority
+		  , uint8_t acousticSignal);
 
   vtObjectAlarmMask_c(iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst);
-  vtObjectAlarmMask_c();
+
+  ~vtObjectAlarmMask_c() override;
+
   uint32_t fitTerminal() const;
   void setBackgroundColour(IsoAgLib::Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
   void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+#endif
   void setPriority(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setAcousticSignal(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false);
@@ -70,7 +78,9 @@ public:
   */
 
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
-  uint16_t updateSoftKeyMask(bool b_SendRequest=false);
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+  IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false);
+#endif
   uint8_t updatePriority(bool b_SendRequest=false);
   uint8_t updateAcousticSignal(bool b_SendRequest=false);
 

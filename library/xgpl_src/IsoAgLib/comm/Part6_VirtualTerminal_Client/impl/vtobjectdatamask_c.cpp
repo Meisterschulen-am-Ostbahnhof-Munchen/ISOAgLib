@@ -72,13 +72,12 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
       if (vtObject_a->softKeyMask != NULL) {
           destMemory [4] = vtObject_a->softKeyMask->getID() & 0xFF;
           destMemory [5] = vtObject_a->softKeyMask->getID() >> 8;
-      } else {
+      } else
 #endif
+      {
           destMemory [4] = 0xFF;
           destMemory [5] = 0xFF;
-#ifdef CONFIG_USE_VTOBJECT_softkeymask
       }
-#endif
       destMemory [6] = vtObject_a->numberOfObjectsToFollow;
       destMemory [7] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 8;
