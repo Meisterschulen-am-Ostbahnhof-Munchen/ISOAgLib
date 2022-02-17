@@ -27,7 +27,7 @@
 #ifdef USE_DATASTREAMS_IO
 class StreamInput_c;
 #endif
-#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
+#include <cstdlib>
 #include <cstring>
 #include <vector>
 #ifdef USE_VT_UNICODE_SUPPORT

@@ -22,7 +22,7 @@
 #define IGENERICDATA_H
 
 #include <IsoAgLib/isoaglib_config.h>
-#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
+#include <cstdlib>
 #include <vector>
 
 

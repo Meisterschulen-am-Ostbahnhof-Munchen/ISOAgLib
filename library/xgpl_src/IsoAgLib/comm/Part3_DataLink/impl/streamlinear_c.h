@@ -22,7 +22,7 @@
 
 #include "stream_c.h"
 
-#include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
+#include <cstdlib>
 #include <vector>
 
 

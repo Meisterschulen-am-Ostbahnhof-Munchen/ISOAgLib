@@ -33,7 +33,7 @@
 #include <cstdlib>
 
 
-using namespace std; // simple version to avoid problems with using CNAMESPACE
+using namespace std;
 
 
 namespace __HAL {

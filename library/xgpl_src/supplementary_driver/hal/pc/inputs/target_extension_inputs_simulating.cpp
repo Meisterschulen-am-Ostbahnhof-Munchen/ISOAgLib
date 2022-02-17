@@ -32,7 +32,7 @@
 #pragma warning( disable : 4996 )
 #endif
 
-using namespace std; // simple version to avoid problems with using CNAMESPACE
+using namespace std;
 
 
 namespace __HAL {
