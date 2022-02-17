@@ -30,6 +30,13 @@
 namespace __IsoAgLib {
 
 
+enum vtObjectDataMask_c::AttributeID:uint8_t
+{
+
+	BackgroundColour = 1,
+	SoftKeyMask      = 2,
+};
+
 
 struct vtObjectDataMask_c::iVtObjectDataMask_s: iVtObjectMask_s {
 	IsoAgLib::Colour backgroundColour;
@@ -182,7 +189,7 @@ IsoAgLib::Colour
 vtObjectDataMask_c::updateBackgroundColour (bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(1);
+    getAttribute(BackgroundColour);
   return vtObject_a->backgroundColour;
 }
 
@@ -191,7 +198,7 @@ IsoAgLib::iVtObjectSoftKeyMask_c *
 vtObjectDataMask_c::updateSoftKeyMask(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(2);
+    getAttribute(SoftKeyMask);
   return vtObject_a->softKeyMask;
 }
 #endif
@@ -201,8 +208,8 @@ vtObjectDataMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attribu
 {
   switch (attrID)
   {
-    case 1: vtObject_a->backgroundColour = convertLittleEndianStringColour(pui8_attributeValue); break;
-    //case 2: vtObject_a->softKeyMask      = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
+    case BackgroundColour: vtObject_a->backgroundColour = convertLittleEndianStringColour(pui8_attributeValue); break;
+    //case SoftKeyMask: vtObject_a->softKeyMask      = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
     default: break;
   }
 }
@@ -210,7 +217,7 @@ vtObjectDataMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attribu
     void vtObjectDataMask_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->backgroundColour = newValue;
-        setAttribute (1 /* "Background Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+        setAttribute (BackgroundColour /* "Background Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
 #endif
