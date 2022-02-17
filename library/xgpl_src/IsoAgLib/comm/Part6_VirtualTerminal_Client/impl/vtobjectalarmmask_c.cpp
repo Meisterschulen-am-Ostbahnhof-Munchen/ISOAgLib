@@ -135,17 +135,18 @@ vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKey
 bool
 vtObjectAlarmMask_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject)
 {
-  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, vtObject_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), false);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, vtObject_a->objectsToFollow);
 }
+
 
 bool
 vtObjectAlarmMask_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, vtObject_a->objectsToFollow, MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), b_enableReplaceOfCmd, DataAlarmMaskOffset);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, vtObject_a->objectsToFollow, b_enableReplaceOfCmd, DataAlarmMaskOffset);
 }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-uint8_t
+IsoAgLib::Colour
 vtObjectAlarmMask_c::updateBackgroundColour (bool b_SendRequest)
 {
   if (b_SendRequest)
@@ -186,8 +187,8 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
   {
     case BackgroundColour: vtObject_a->backgroundColour = convertLittleEndianStringColour(pui8_attributeValue); break;
     //case SoftKeyMask:      vtObject_a->softKeyMask      = convertLittleEndianStringUi16(pui8_attributeValue)); break; //TODO
-    case Priority:         vtObject_a->priority         = convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case AcousticSignal:   vtObject_a->acousticSignal   = convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case Priority:         vtObject_a->priority         = convertLittleEndianStringUi8(pui8_attributeValue); break;
+    case AcousticSignal:   vtObject_a->acousticSignal   = convertLittleEndianStringUi8(pui8_attributeValue); break;
     default: break;
   }
 }
@@ -198,19 +199,19 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
     void vtObjectAlarmMask_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     	    		vtObject_a->backgroundColour = newValue;
-    	setAttribute ( BackgroundColour, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    	setAttribute ( BackgroundColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectAlarmMask_c::setPriority(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     	    		vtObject_a->priority = newValue;
-    	setAttribute ( Priority, newValue, newValue, b_enableReplaceOfCmd);
+    	setAttribute ( Priority, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectAlarmMask_c::setAcousticSignal(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     	    		vtObject_a->acousticSignal = newValue;
-    	setAttribute ( AcousticSignal, newValue, newValue, b_enableReplaceOfCmd);
+    	setAttribute ( AcousticSignal, newValue, b_enableReplaceOfCmd);
     }
 
 
