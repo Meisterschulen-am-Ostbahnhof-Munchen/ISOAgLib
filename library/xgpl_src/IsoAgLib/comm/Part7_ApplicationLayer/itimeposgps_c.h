@@ -145,7 +145,7 @@ public:
   /** deliver UTC time in struct tm instead of separate calls to minuteUtc(), hourUtc(), ... to reduce load
     @return struct tm
   */
-  struct CNAMESPACE::tm* currentUtcTm() { return TimePosGps_c::currentUtcTm();}
+  struct std::tm* currentUtcTm() { return TimePosGps_c::currentUtcTm();}
 
   /** deliver raw GPS Latitude [degree] with scaling 10.0e-7 */
   int32_t getGpsLatitudeDegree10Minus7(void) const { return TimePosGps_c::getGpsLatitudeDegree10Minus7();}

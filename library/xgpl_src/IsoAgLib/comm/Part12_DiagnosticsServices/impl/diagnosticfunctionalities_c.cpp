@@ -64,7 +64,7 @@ DiagnosticFunctionalities_c::DiagnosticFunctionalities_c( IdentItem_c& arc_ident
 DiagnosticFunctionalities_c::~DiagnosticFunctionalities_c()
 {
   if (m_currentFunctionalities)
-    CNAMESPACE::free (m_currentFunctionalities);
+    std::free (m_currentFunctionalities);
 }
 
 
@@ -96,7 +96,7 @@ DiagnosticFunctionalities_c::updatePackageIfNeeded()
 
   // destroy previously constructed message
   if (m_currentFunctionalities)
-    CNAMESPACE::free (m_currentFunctionalities);
+    std::free (m_currentFunctionalities);
 
   // compute new length
   mui16_arrayLength = 2; // header size
@@ -110,7 +110,7 @@ DiagnosticFunctionalities_c::updatePackageIfNeeded()
     mui16_arrayLength = 8;
 
   // create array for the message
-  m_currentFunctionalities = (uint8_t *) CNAMESPACE::malloc (sizeof (uint8_t) * mui16_arrayLength);
+  m_currentFunctionalities = (uint8_t *) std::malloc (sizeof (uint8_t) * mui16_arrayLength);
   
   // fill the array
   m_currentFunctionalities[0] = 0xFF;

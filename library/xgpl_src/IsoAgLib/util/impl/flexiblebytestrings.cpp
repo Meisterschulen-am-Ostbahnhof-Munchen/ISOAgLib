@@ -40,7 +40,7 @@ namespace __IsoAgLib {
 
   Flexible8ByteString_c::Flexible8ByteString_c( const uint8_t* apui8_srcStream ) {
     if ( apui8_srcStream != NULL )
-      CNAMESPACE::memcpy( uint8, apui8_srcStream, 8 );
+      std::memcpy( uint8, apui8_srcStream, 8 );
     else {
 #ifdef NO_8BIT_CHAR_TYPE
       for ( uint8_t index = 0; index < 8; index++ )
@@ -62,14 +62,14 @@ namespace __IsoAgLib {
       return;
 
     isoaglib_assert ( ( apui8_srcStream != NULL ) && ( ( aui8_len+aui8_offset )<=8 ) );
-    CNAMESPACE::memcpy ( uint8+aui8_offset, apui8_srcStream, aui8_len );
+    std::memcpy ( uint8+aui8_offset, apui8_srcStream, aui8_len );
   }
 
 
   void
   Flexible8ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_targetStream, uint8_t aui8_len ) const {
     isoaglib_assert ( ( pui8_targetStream != NULL ) && ( ( aui8_len+aui8_offset )<=8 ) );
-    CNAMESPACE::memcpy ( pui8_targetStream, uint8+aui8_offset, aui8_len );
+    std::memcpy ( pui8_targetStream, uint8+aui8_offset, aui8_len );
   }
 
 

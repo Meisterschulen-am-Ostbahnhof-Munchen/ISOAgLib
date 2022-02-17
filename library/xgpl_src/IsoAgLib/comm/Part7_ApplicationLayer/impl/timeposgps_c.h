@@ -415,7 +415,7 @@ public:
   /** deliver UTC time in struct tm instead of separate calls to minuteUtc(), hourUtc(), ... to reduce load
     @return struct tm
   */
-  struct CNAMESPACE::tm* currentUtcTm();
+  struct std::tm* currentUtcTm();
 
 
 
@@ -582,7 +582,7 @@ private:
     */
   ecutime_t calendarSetAge() const {return (System_c::getTime() - mi32_lastCalendarSet);};
 
-  const struct CNAMESPACE::tm* Utc2LocalTime();
+  const struct std::tm* Utc2LocalTime();
 
   /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address
@@ -624,9 +624,9 @@ private:
       /** last timestamp where calendar was set
     -> use this to calculate new time
     */
-  CNAMESPACE::time_t mt_cachedLocalSeconds1970AtLastSet;
+  std::time_t mt_cachedLocalSeconds1970AtLastSet;
 
-  CNAMESPACE::time_t mt_tzOffset;
+  std::time_t mt_tzOffset;
 
   /** bit_calendar */
   struct {

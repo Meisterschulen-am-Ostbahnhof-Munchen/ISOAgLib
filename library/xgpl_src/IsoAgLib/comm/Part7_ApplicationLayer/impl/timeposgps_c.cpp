@@ -288,7 +288,7 @@ namespace __IsoAgLib {
     configGps( NULL, IsoAgLib::IdentModeImplement );
 
     // 01.01.1970 00:00:00
-    struct CNAMESPACE::tm t_testTime = {0, 0, 0, 1, 0, 70, 0 , 0 ,-1
+    struct std::tm t_testTime = {0, 0, 0, 1, 0, 70, 0 , 0 ,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                             , 0, NULL
                             #endif
@@ -918,12 +918,12 @@ namespace __IsoAgLib {
         mui32_timeMillisecondOfDay = ui32_milliseconds;
         mi32_lastMillisecondUpdate = mi32_lastIsoPositionStream;
 
-        const CNAMESPACE::time_t t_tempUnixTime = ( CNAMESPACE::time_t(ui16_daysSince1970) * CNAMESPACE::time_t(60L * 60L * 24L) ) + (ui32_milliseconds/1000);
+        const std::time_t t_tempUnixTime = ( std::time_t(ui16_daysSince1970) * std::time_t(60L * 60L * 24L) ) + (ui32_milliseconds/1000);
 #ifdef WINCE
         time_t_ce ceTime = (time_t_ce)t_tempUnixTime;
         tm* UtcNow = gmtime_ce(&ceTime);
 #else
-        CNAMESPACE::tm* UtcNow = CNAMESPACE::gmtime( &t_tempUnixTime );
+        std::tm* UtcNow = std::gmtime( &t_tempUnixTime );
 #endif
         if ( UtcNow != NULL )
         {
@@ -1211,17 +1211,17 @@ void TimePosGps_c::isoSendDirection( void )
 
     uint16_t ui16_daysSince1970 = 0; // standard value (or 0xFFFF?), if UTC date is not set (= 01.01.1900)
 
-    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    const struct std::tm* p_tm = currentUtcTm();
 
     if (p_tm)
     { // testTime is only used for calculation of ui16_daysSince1970 => use time 12:00:00 to avoid daylight setting influence
-      struct CNAMESPACE::tm testTime = {0, 0, 12, p_tm->tm_mday, p_tm->tm_mon, p_tm->tm_year, 0,0,-1
+      struct std::tm testTime = {0, 0, 12, p_tm->tm_mday, p_tm->tm_mon, p_tm->tm_year, 0,0,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                             , 0, NULL
                             #endif
                             };
       // compensate mktime() time zone influence:
-      const CNAMESPACE::time_t secondsSince1970 = MACRO_ISOAGLIB_MKTIME( &testTime ) + mt_tzOffset;
+      const std::time_t secondsSince1970 = MACRO_ISOAGLIB_MKTIME( &testTime ) + mt_tzOffset;
       // calculate the days
       ui16_daysSince1970 = static_cast<uint16_t>(secondsSince1970 / ( 60L * 60L *24L ));
     }
@@ -1301,7 +1301,7 @@ void TimePosGps_c::isoSendDirection( void )
 
       pkg.setIsoPgn(TIME_DATE_PGN);
 
-      const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+      const struct std::tm* p_tm = currentUtcTm();
       if (NULL != p_tm)
       {
         pkg.setUint8Data(0, (p_tm->tm_sec * 4) );
@@ -1387,16 +1387,16 @@ void TimePosGps_c::isoSendDirection( void )
   {
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
-    struct CNAMESPACE::tm testTime = { ab_second, int(ab_minute)-int(bit_calendar.timezoneMinuteOffset), (int(ab_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
+    struct std::tm testTime = { ab_second, int(ab_minute)-int(bit_calendar.timezoneMinuteOffset), (int(ab_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
                             ab_day,(ab_month-1),(ai16_year-1900),0,0,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                             , 0, NULL
                             #endif
                             };
     // argument of mktime is interpreted as local time (system time zone influence!)
-    const CNAMESPACE::time_t middle = MACRO_ISOAGLIB_MKTIME( &testTime );
+    const std::time_t middle = MACRO_ISOAGLIB_MKTIME( &testTime );
     // compensate system time zone setting: call localtime() and not gmtime()
-    const struct CNAMESPACE::tm* normalizedTime = MACRO_ISOAGLIB_LOCALTIME( &middle );
+    const struct std::tm* normalizedTime = MACRO_ISOAGLIB_LOCALTIME( &middle );
 
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -1414,15 +1414,15 @@ void TimePosGps_c::isoSendDirection( void )
     mt_cachedLocalSeconds1970AtLastSet = 0;
 
     /** @todo ON REQUEST-259: calender time consists of UTC time and local date? */
-    struct CNAMESPACE::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
+    struct std::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
                             ab_day,(ab_month-1),(ai16_year-1900),0,0,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                             , 0, NULL
                             #endif
                           };
 
-    const CNAMESPACE::time_t middle = MACRO_ISOAGLIB_MKTIME( &testTime );
-    const struct CNAMESPACE::tm* normalizedTime = MACRO_ISOAGLIB_LOCALTIME( &middle );
+    const std::time_t middle = MACRO_ISOAGLIB_MKTIME( &testTime );
+    const struct std::tm* normalizedTime = MACRO_ISOAGLIB_LOCALTIME( &middle );
 
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -1445,7 +1445,7 @@ void TimePosGps_c::isoSendDirection( void )
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
 
-    struct CNAMESPACE::tm testTime = { ab_second, int(ab_minute)-int(bit_calendar.timezoneMinuteOffset), (int(ab_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
+    struct std::tm testTime = { ab_second, int(ab_minute)-int(bit_calendar.timezoneMinuteOffset), (int(ab_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
                             bit_calendar.day,(bit_calendar.month-1),
                             (bit_calendar.year == 0) ? 70 : (bit_calendar.year-1900), // in case bit_calendar.year is not yet set: use 1970
                             0,0,-1
@@ -1455,9 +1455,9 @@ void TimePosGps_c::isoSendDirection( void )
                           };
 
     // argument of mktime is interpreted as local time (system time zone influence!)
-    const CNAMESPACE::time_t middle = MACRO_ISOAGLIB_MKTIME( &testTime );
+    const std::time_t middle = MACRO_ISOAGLIB_MKTIME( &testTime );
     // compensate system time zone setting: call localtime() and not gmtime()
-    const struct CNAMESPACE::tm* normalizedTime = MACRO_ISOAGLIB_LOCALTIME( &middle );
+    const struct std::tm* normalizedTime = MACRO_ISOAGLIB_LOCALTIME( &middle );
 
     bit_calendar.hour   = normalizedTime->tm_hour;
     bit_calendar.minute = normalizedTime->tm_min;
@@ -1470,7 +1470,7 @@ void TimePosGps_c::isoSendDirection( void )
   {
     if (b_updateDate)
     {
-      struct CNAMESPACE::tm* p_tm = currentUtcTm();
+      struct std::tm* p_tm = currentUtcTm();
       if (p_tm != NULL)
       {
         bit_calendar.year   = p_tm->tm_year + 1900;
@@ -1488,7 +1488,7 @@ void TimePosGps_c::isoSendDirection( void )
     bit_calendar.msec   = aui16_msec;
   }
 
-  const struct CNAMESPACE::tm* TimePosGps_c::Utc2LocalTime()
+  const struct std::tm* TimePosGps_c::Utc2LocalTime()
   {
     if (0 == mt_cachedLocalSeconds1970AtLastSet)
     {
@@ -1496,13 +1496,13 @@ void TimePosGps_c::isoSendDirection( void )
       currentUtcTm();
     }
 
-    CNAMESPACE::time_t t_secondsSince1970Local = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000L
+    std::time_t t_secondsSince1970Local = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000L
                                      + (bit_calendar.timezoneHourOffsetMinus24 - 24L) * 60L * 60L  // negative offsets => increased local time
                                      + bit_calendar.timezoneMinuteOffset * 60L;
 
     for (;;){
       // compensate system time zone setting: call localtime() and not gmtime()
-      struct CNAMESPACE::tm *p_ret = MACRO_ISOAGLIB_LOCALTIME( &t_secondsSince1970Local );
+      struct std::tm *p_ret = MACRO_ISOAGLIB_LOCALTIME( &t_secondsSince1970Local );
       if (p_ret)
         return p_ret;
       // non-negative, because otherwise localtime(..) would return NULL!
@@ -1557,43 +1557,43 @@ void TimePosGps_c::isoSendDirection( void )
 
   int16_t TimePosGps_c::yearUtc()
   {
-    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    const struct std::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_year + 1900 : 0;
   }
   uint8_t TimePosGps_c::monthUtc()
   {
-    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    const struct std::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_mon + 1 : 0;
   }
   uint8_t TimePosGps_c::dayUtc()
   {
-    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    const struct std::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_mday : 0;
   }
   uint8_t TimePosGps_c::hourUtc()
   {
-    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    const struct std::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_hour : 0;
   }
   uint8_t TimePosGps_c::minuteUtc()
   {
-    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    const struct std::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_min : 0;
   }
   uint8_t TimePosGps_c::second()
   {
-    const struct CNAMESPACE::tm* p_tm = currentUtcTm();
+    const struct std::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_sec : 0;
   }
 
-  struct CNAMESPACE::tm* TimePosGps_c::currentUtcTm()
+  struct std::tm* TimePosGps_c::currentUtcTm()
   {
     if ( 0 == mt_cachedLocalSeconds1970AtLastSet)
     { // recalculate seconds from bit_calendar struct
       // compensate system time zone setting (part 1)
       if (bit_calendar.year != 0)
       {
-        struct CNAMESPACE::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
+        struct std::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
                                bit_calendar.day, bit_calendar.month-1,
                                bit_calendar.year-1900,
                                0,0,-1
@@ -1602,7 +1602,7 @@ void TimePosGps_c::isoSendDirection( void )
                                #endif
                              };
         mt_cachedLocalSeconds1970AtLastSet = MACRO_ISOAGLIB_MKTIME( &testTime );
-        if ((CNAMESPACE::time_t)-1 == mt_cachedLocalSeconds1970AtLastSet)
+        if ((std::time_t)-1 == mt_cachedLocalSeconds1970AtLastSet)
         { // this shouldn't happen anymore, but in case it does, reset the cachedSeconds to 0
           // because -1 will make localtime(..) return NULL!
           mt_cachedLocalSeconds1970AtLastSet = 0;
@@ -1612,7 +1612,7 @@ void TimePosGps_c::isoSendDirection( void )
       // in case bit_calendar.year is not yet set: keep mt_cachedLocalSeconds1970AtLastSet 0.
     }
 
-    const CNAMESPACE::time_t t_secondsSince1970 = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000;
+    const std::time_t t_secondsSince1970 = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000;
 
     // compensate system time zone setting (part 2)
     return MACRO_ISOAGLIB_LOCALTIME( &t_secondsSince1970 );

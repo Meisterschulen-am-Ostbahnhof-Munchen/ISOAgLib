@@ -94,8 +94,8 @@ void FsServerInstance_c::setVolumes(IsoAgLib::iFsDirList v_inVolumes)
     *ps_newDir = *ps_tmpDir;
 
     fileName = (char *)ps_tmpDir->pui8_filename;
-    ps_newDir->pui8_filename = new uint8_t[CNAMESPACE::strlen(fileName) + 1];
-    CNAMESPACE::strcpy((char *)ps_newDir->pui8_filename, fileName);
+    ps_newDir->pui8_filename = new uint8_t[std::strlen(fileName) + 1];
+    std::strcpy((char *)ps_newDir->pui8_filename, fileName);
 
     v_volumes.push_back(ps_newDir);
   }

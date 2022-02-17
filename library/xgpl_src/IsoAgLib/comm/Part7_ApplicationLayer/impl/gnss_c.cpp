@@ -451,12 +451,12 @@ namespace __IsoAgLib {
         // NMEA NMEA_GPS_POSITON_DATA_PGN sends with 0.1 msec
         ui32_milliseconds /= 10;
 
-        const CNAMESPACE::time_t t_tempUnixTime = ( CNAMESPACE::time_t(ui16_daysSince1970) * CNAMESPACE::time_t(60L * 60L * 24L) ) + (ui32_milliseconds/1000);
+        const std::time_t t_tempUnixTime = ( std::time_t(ui16_daysSince1970) * std::time_t(60L * 60L * 24L) ) + (ui32_milliseconds/1000);
 #ifdef WINCE
         time_t_ce ceTime = (time_t_ce)t_tempUnixTime;
         tm* UtcNow = gmtime_ce(&ceTime);
 #else
-        CNAMESPACE::tm* UtcNow = CNAMESPACE::gmtime( &t_tempUnixTime );
+        std::tm* UtcNow = std::gmtime( &t_tempUnixTime );
 #endif
         if ( UtcNow != NULL )
         {

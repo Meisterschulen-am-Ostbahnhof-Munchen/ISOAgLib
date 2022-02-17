@@ -133,7 +133,7 @@ void DiagnosticsServices_c::timeEvent()
     // Copy "dm1Current" -> "dm1Sending" ?
     if (!ms_dm1SendingBroadcast.mb_bufferIsValid)
     {
-      CNAMESPACE::memcpy(marr_dm1SendingBroadcast,marr_dm1Current,marr_dm1CurrentSize);
+      std::memcpy(marr_dm1SendingBroadcast,marr_dm1Current,marr_dm1CurrentSize);
       ms_dm1SendingBroadcast.marr_bufferSize = marr_dm1CurrentSize;
       ms_dm1SendingBroadcast.mb_bufferIsValid = true;
     }
@@ -491,7 +491,7 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* isoI
         // Copy "dm1Current" -> "dm1SendingDestination"
         if (!ms_dm1SendingDestination.mb_bufferIsValid)
         {
-          CNAMESPACE::memcpy(marr_dm1SendingDestination,marr_dm1Current,marr_dm1CurrentSize);
+          std::memcpy(marr_dm1SendingDestination,marr_dm1Current,marr_dm1CurrentSize);
           ms_dm1SendingDestination.marr_bufferSize = marr_dm1CurrentSize;
 
           ms_dm1SendingDestination.mb_bufferIsValid = true;

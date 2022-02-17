@@ -72,7 +72,7 @@ IsoMonitor_c::init()
   setPeriod( 125, false );
   getSchedulerInstance().registerTask( *this, 0 );
 
-  CNAMESPACE::memset( &m_isoItems, 0x0, sizeof( m_isoItems ) );
+  std::memset( &m_isoItems, 0x0, sizeof( m_isoItems ) );
 
   // add filter REQUEST_PGN_MSG_PGN via IsoRequestPgn_c
   getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, ADDRESS_CLAIM_PGN);

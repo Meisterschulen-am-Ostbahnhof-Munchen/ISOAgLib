@@ -116,7 +116,7 @@ namespace IsoAgLib
     /** first check size of vector */
     CheckSizeOfVectorForWrite( aui16_pos, aui16_dataLength );
     /** then copy all the bytes over */
-    CNAMESPACE::memcpy (&vec_data[ aui16_pos ], &arui8_data, aui16_dataLength);
+    std::memcpy (&vec_data[ aui16_pos ], &arui8_data, aui16_dataLength);
   }
 
   void iGenericData_c::setDataStream(uint16_t aui16_pos, const uint8_t* apui8_data, uint16_t aui16_dataLength)

@@ -46,14 +46,14 @@ namespace __IsoAgLib {
 
 
   void DeviceObject_c::init( const char* desig ) {
-    isoaglib_assert( !desig || (CNAMESPACE::strlen( desig ) <= 32) );
+    isoaglib_assert( !desig || (std::strlen( desig ) <= 32) );
     m_designator = desig;
   }
 
 
   void DeviceObject_c::setDesignator( const char* desig ) {
     isoaglib_assert( desig );
-    isoaglib_assert( CNAMESPACE::strlen( desig ) <= 32 );
+    isoaglib_assert( std::strlen( desig ) <= 32 );
     m_designator = desig;
   }
 
@@ -153,7 +153,7 @@ namespace __IsoAgLib {
   void DeviceObjectDvc_c::setStructureLabel( const char* label ) {
     uint8_t tmpBuf[7] = {0, 0, 0, 0, 0, 0, 0};
     
-    unsigned int len = CNAMESPACE::strlen( label );
+    unsigned int len = std::strlen( label );
     isoaglib_assert( len <= 7 );
     
     // limit length only to not crash in release, but problem should be caught in debug!
@@ -171,23 +171,23 @@ namespace __IsoAgLib {
     isoaglib_assert( length <= 32 );
 
     m_extendedStructureLabel.length = length;
-    CNAMESPACE::memcpy( m_extendedStructureLabel.byteString, s, length );
+    std::memcpy( m_extendedStructureLabel.byteString, s, length );
   }
 
   void DeviceObjectDvc_c::setExtendedStructureLabel( const char* s ) {
-    setExtendedStructureLabel( s, (uint8_t)CNAMESPACE::strlen( s ) );
+    setExtendedStructureLabel( s, (uint8_t)std::strlen( s ) );
   }
 
   void DeviceObjectDvc_c::setSerialNumber( const char* s ) {
-    isoaglib_assert( CNAMESPACE::strlen( s ) <= 32 );
-    CNAMESPACE::strcpy( m_serialNumber, s );
+    isoaglib_assert( std::strlen( s ) <= 32 );
+    std::strcpy( m_serialNumber, s );
   }
 
 
   void DeviceObjectDvc_c::formatBytestream( ByteStreamBuffer_c& byteStream, const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
     formatHeader( byteStream );
 
-    isoaglib_assert( CNAMESPACE::strlen( m_version ) <= size_t((caps.versionNr >= 4) ? 128 : 32) );
+    isoaglib_assert( std::strlen( m_version ) <= size_t((caps.versionNr >= 4) ? 128 : 32) );
 
     byteStream.format( m_designator );
     byteStream.format( m_version );
@@ -207,10 +207,10 @@ namespace __IsoAgLib {
 
   uint32_t DeviceObjectDvc_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
     uint32_t size = DeviceObject_c::getSize( caps );
-    size += sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() );
-    size += sizeof( uint8_t ) + CNAMESPACE::strlen( getVersion() );
+    size += sizeof( uint8_t ) + std::strlen( getDesignator() );
+    size += sizeof( uint8_t ) + std::strlen( getVersion() );
     size += 8; // m_wsmName;
-    size += sizeof( uint8_t ) + CNAMESPACE::strlen( getSerialNumber() );
+    size += sizeof( uint8_t ) + std::strlen( getSerialNumber() );
     size += 14; /*  m_structLabel + m_localization */
 
     if( caps.versionNr >= 4 )
@@ -302,7 +302,7 @@ namespace __IsoAgLib {
   uint32_t DeviceObjectDet_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
     uint32_t size = DeviceObject_c::getSize( caps );
     size += sizeof( m_type );
-    size += sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() );
+    size += sizeof( uint8_t ) + std::strlen( getDesignator() );
     size += sizeof( m_elementNumber ) + sizeof( m_parentId );
     size += sizeof( uint16_t ); /* m_childList.size() */
     size += sizeof( uint16_t ) * m_childList.size();
@@ -396,7 +396,7 @@ namespace __IsoAgLib {
 
   uint32_t DeviceObjectDpd_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
     return ( DeviceObject_c::getSize( caps ) + sizeof( m_ddi ) + sizeof( m_properties ) + sizeof( m_method )
-             + sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() )
+             + sizeof( uint8_t ) + std::strlen( getDesignator() )
              + sizeof( m_dvpObjectId ) );
   }
 
@@ -456,7 +456,7 @@ namespace __IsoAgLib {
 
   uint32_t DeviceObjectDpt_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
     return ( DeviceObject_c::getSize( caps ) + sizeof( m_ddi ) + sizeof( m_value )
-             + sizeof( uint8_t ) + CNAMESPACE::strlen( m_designator )
+             + sizeof( uint8_t ) + std::strlen( m_designator )
              + sizeof( m_dvpObjectId ) );
   }
 
@@ -495,7 +495,7 @@ namespace __IsoAgLib {
 
 
   uint32_t DeviceObjectDvp_c::getSize( const IsoAgLib::ProcData::ConnectionCapabilities_s& caps ) const {
-    return ( DeviceObject_c::getSize( caps ) + sizeof( m_offset ) + sizeof( m_scale ) + sizeof( m_decimals ) + sizeof( uint8_t ) + CNAMESPACE::strlen( getDesignator() ) ) ;
+    return ( DeviceObject_c::getSize( caps ) + sizeof( m_offset ) + sizeof( m_scale ) + sizeof( m_decimals ) + sizeof( uint8_t ) + std::strlen( getDesignator() ) ) ;
   }
 
 
@@ -663,7 +663,7 @@ namespace __IsoAgLib {
 
 
   void DevicePool_c::calcChecksumAdd( const char* str ) {
-    const size_t l = CNAMESPACE::strlen( str );
+    const size_t l = std::strlen( str );
     calcChecksumAdd( uint8_t( l ) );
     calcChecksumAdd( ( const uint8_t* )str, l );
   }
@@ -676,7 +676,7 @@ namespace __IsoAgLib {
 
   void DevicePool_c::calcChecksumAdd( float val ) {
     uint32_t iVal = 0;
-    CNAMESPACE::memcpy( &iVal, &val, sizeof( float ) );
+    std::memcpy( &iVal, &val, sizeof( float ) );
   #if defined(__TSW_CPP__) // Tasking uses mixed endian
     uint16_t lo = iVal >> 16;
     iVal = ( iVal << 16 ) | lo;

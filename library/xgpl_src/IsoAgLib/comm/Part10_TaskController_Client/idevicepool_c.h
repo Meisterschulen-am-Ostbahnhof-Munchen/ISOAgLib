@@ -173,10 +173,10 @@ namespace IsoAgLib {
       virtual ~iDevicePool_c() {}
 
       virtual uint8_t* allocByteStreamBuffer( uint32_t size ) {
-        return static_cast<uint8_t*>( CNAMESPACE::malloc( size ) );
+        return static_cast<uint8_t*>( std::malloc( size ) );
       }
       virtual void freeByteStreamBuffer( uint8_t* buffer ) {
-        CNAMESPACE::free( buffer );
+        std::free( buffer );
       }
 
       virtual void calcChecksumStart() { /* no default implementation */ }

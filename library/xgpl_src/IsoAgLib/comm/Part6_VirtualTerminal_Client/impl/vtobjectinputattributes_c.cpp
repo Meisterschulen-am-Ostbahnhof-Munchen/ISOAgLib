@@ -107,7 +107,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
   if (b_updateObject) {
     char *dest = vtObject_a->validationString;
     const char *src = newValidationString;
-    int copyLen = (CNAMESPACE::strlen (newValidationString) <= vtObject_a->length) ? CNAMESPACE::strlen (newValidationString) : vtObject_a->length;
+    int copyLen = (std::strlen (newValidationString) <= vtObject_a->length) ? std::strlen (newValidationString) : vtObject_a->length;
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
     for (; i<vtObject_a->length; i++) *dest++ = ' ';
     *dest = 0x00; // 0-termiante!
@@ -127,7 +127,7 @@ vtObjectInputAttributes_c::setValidationStringRef(char* newValidationString, boo
     vtObject_a->validationString = newValidationString;
   }
 
-  const uint16_t ui16_newValStrLen = uint16_t( CNAMESPACE::strlen (newValidationString) );
+  const uint16_t ui16_newValStrLen = uint16_t( std::strlen (newValidationString) );
   const uint16_t ui16_inAttrLen = uint16_t( vtObject_a->length );
   const uint16_t ui16_tempLen = (ui16_newValStrLen <= ui16_inAttrLen) ? ui16_newValStrLen : ui16_inAttrLen;
   __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandChangeStringValueRef(this, newValidationString, ui16_tempLen, b_enableReplaceOfCmd);

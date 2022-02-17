@@ -102,7 +102,7 @@ namespace __IsoAgLib
     {
     public:
       CanCustomerB_c( ProprietaryMessageHandler_c& handler ) : CanCustomerAB_c( handler, IsoAgLib::iMaskFilterType_c( 0x00FF0000, PROPRIETARY_B_PGN << 8, IsoAgLib::iIdent_c::ExtendedIdent ) ) // B1 and B2
-      { CNAMESPACE::memset( m_msgs, 0x00, sizeof( m_msgs ) ); }
+      { std::memset( m_msgs, 0x00, sizeof( m_msgs ) ); }
 
       virtual ~CanCustomerB_c() {}
 

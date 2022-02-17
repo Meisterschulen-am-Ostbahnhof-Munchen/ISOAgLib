@@ -54,16 +54,16 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& identItem ) :
 DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
 {
   if (mcstr_ecuIdentification)
-    CNAMESPACE::free (mcstr_ecuIdentification);
+    std::free (mcstr_ecuIdentification);
 
   if (mcstr_productIdentification)
-    CNAMESPACE::free (mcstr_productIdentification);
+    std::free (mcstr_productIdentification);
 
   if (mcstr_vehicleIdentification)
-    CNAMESPACE::free (mcstr_vehicleIdentification);
+    std::free (mcstr_vehicleIdentification);
 
   if (mcstr_swIdentification)
-    CNAMESPACE::free (mcstr_swIdentification);
+    std::free (mcstr_swIdentification);
 }
 
 
@@ -366,7 +366,7 @@ DiagnosticPgnHandler_c::setEcuIdentification(
   // string separated by * and terminated by 0x00
   int newLen = len1 + 1 + len2 + 1 + len3 + 1 + len4 + 1 + len5 + 1 + len6 + 1 + 1;
 
-  mcstr_ecuIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
+  mcstr_ecuIdentification = (char *) std::malloc (sizeof (char) * newLen);
 
   char *destPtr = mcstr_ecuIdentification;
   addCStringWithoutTermination (&destPtr, partNr);
@@ -415,7 +415,7 @@ DiagnosticPgnHandler_c::setProductIdentification(
   // string separated by * and terminated by 0x00
   int newLen = len1 + 1 + len2 + 1 + len3 + 1 + 1;
 
-  mcstr_productIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
+  mcstr_productIdentification = (char *) std::malloc (sizeof (char) * newLen);
 
   char *destPtr = mcstr_productIdentification;
   addCStringWithoutTermination (&destPtr, code);
@@ -454,7 +454,7 @@ DiagnosticPgnHandler_c::setVehicleIdentification( const char *vin )
   // string terminated by 0x00
   int newLen = len + 1;
 
-  mcstr_vehicleIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
+  mcstr_vehicleIdentification = (char *) std::malloc (sizeof (char) * newLen);
 
   char *destPtr = mcstr_vehicleIdentification;
   addCStringWithoutTermination (&destPtr, vin);
@@ -488,7 +488,7 @@ DiagnosticPgnHandler_c::setSwIdentification ( const char *swId )
   int numStars = getCStringCount (swId, '*');
 
   int newLen = 1+swIdLen+1; // // uint8,swid,0x00
-  mcstr_swIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
+  mcstr_swIdentification = (char *) std::malloc (sizeof (char) * newLen);
 
   char *destPtr = mcstr_swIdentification;
   *destPtr++ = uint8_t (numStars); // number of fields

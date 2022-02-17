@@ -89,7 +89,7 @@ template<class T> void convertLittleEndianString( const uint8_t* apui8_src, T& r
     r_result |= (T(apui8_src[ind] & 0xFF) << (8*ind));
   }
   #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
-  CNAMESPACE::memcpy( &r_result, apui8_src, sizeof(T) );
+  std::memcpy( &r_result, apui8_src, sizeof(T) );
   #else
   for ( int ind = sizeof(T)-1; ind >= 0; ind-- )
   {
@@ -137,7 +137,7 @@ template<class T> void numberRef2LittleEndianString( const T& acrc_src, uint8_t*
     pui8_target++;
   }
   #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
-  CNAMESPACE::memcpy( pui8_target, &acrc_src, sizeof(T) );
+  std::memcpy( pui8_target, &acrc_src, sizeof(T) );
   #else
   const unsigned int BitSize = sizeof(T) * 8;
   for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
@@ -158,7 +158,7 @@ template<class T> void number2LittleEndianString( const T at_src, uint8_t* pui8_
     pui8_target++;
   }
   #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
-  CNAMESPACE::memcpy( pui8_target, &at_src, sizeof(T) );
+  std::memcpy( pui8_target, &at_src, sizeof(T) );
   #else
   const unsigned int BitSize = sizeof(T) * 8;
   for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )

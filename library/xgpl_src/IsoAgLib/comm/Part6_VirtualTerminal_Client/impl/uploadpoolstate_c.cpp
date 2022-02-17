@@ -69,7 +69,7 @@ UploadPoolState_c::UploadPoolState_c(
 {
   if( _versionLabel )
   {
-    const uint32_t cui_len = CNAMESPACE::strlen( _versionLabel );
+    const uint32_t cui_len = std::strlen( _versionLabel );
     isoaglib_assert( ! ( ( (m_pool.getNumLang() == 0) && (cui_len > 7) ) || ( (m_pool.getNumLang() > 0) && (cui_len > 5) ) ) ); 
     unsigned int i=0;
     for( ; i<cui_len; ++i ) marrp7c_versionLabel[ i ] = _versionLabel[ i ];
@@ -194,7 +194,7 @@ UploadPoolState_c::searchVersionsAndMarkRejected( Stream_c& stream, uint8_t numV
     // check if this is a rejected language
     if( m_pool.multiLanguage() )
     {
-      if( 0 == CNAMESPACE::memcmp( c_nextversion, marrp7c_versionLabel, 5 ) )
+      if( 0 == std::memcmp( c_nextversion, marrp7c_versionLabel, 5 ) )
       {
         if( ( c_nextversion[ 5 ] >= 'A' ) && ( c_nextversion[ 5 ] <= 'Z' ) &&
             ( c_nextversion[ 6 ] >= 'A' ) && ( c_nextversion[ 6 ] <= 'Z' ) )
@@ -225,7 +225,7 @@ UploadPoolState_c::searchVersionsAndMarkRejected( Stream_c& stream, uint8_t numV
     }
     else // no multilanguage
     {
-      if( 0 == CNAMESPACE::memcmp( c_nextversion, marrp7c_versionLabel, 7 ) )
+      if( 0 == std::memcmp( c_nextversion, marrp7c_versionLabel, 7 ) )
       {
         versionFound = true; 
         break;

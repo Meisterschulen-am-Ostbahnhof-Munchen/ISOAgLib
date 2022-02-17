@@ -222,7 +222,7 @@ vtObjectOutputString_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
 void
 vtObjectOutputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  const uint16_t cui16_strLen = (uint16_t)CNAMESPACE::strlen (newValue);
+  const uint16_t cui16_strLen = (uint16_t)std::strlen (newValue);
   char* pc_iso8859 = new char [cui16_strLen+1];
 
   // TODO !
@@ -276,7 +276,7 @@ vtObjectOutputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b
   if (b_updateObject) {
     char *dest = vtObject_a->value;
     const char *src = newValue;
-    int copyLen = (CNAMESPACE::strlen (newValue) <= vtObject_a->length) ? CNAMESPACE::strlen (newValue) : vtObject_a->length;
+    int copyLen = (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length;
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
     for (; i<vtObject_a->length; i++) *dest++ = ' ';
     *dest = 0x00; // 0-termiante!
@@ -302,7 +302,7 @@ vtObjectOutputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_
   }
 
   uint16_t ui16_tempLen = 0;
-  if (newValue != NULL ) ui16_tempLen = uint16_t( (CNAMESPACE::strlen (newValue) <= vtObject_a->length) ? CNAMESPACE::strlen (newValue) : vtObject_a->length );
+  if (newValue != NULL ) ui16_tempLen = uint16_t( (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length );
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueRef ( this, newValue, ui16_tempLen, b_enableReplaceOfCmd);
 }
 

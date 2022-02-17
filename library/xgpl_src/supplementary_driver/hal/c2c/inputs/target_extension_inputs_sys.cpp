@@ -134,7 +134,7 @@ int16_t init_counter(uint16_t aui16_timebase, bool ab_risingEdge)
   { /* standard BIOS frequency and period methods doesn�t fit for
      * the wanted timebase -> use extension functions -> allocate needed vars
      */
-    CNAMESPACE::memset(&_pt_diginTriggerTime, 0, sizeof(t_triggerNode));
+    std::memset(&_pt_diginTriggerTime, 0, sizeof(t_triggerNode));
   }
 
   return i16_errorState;

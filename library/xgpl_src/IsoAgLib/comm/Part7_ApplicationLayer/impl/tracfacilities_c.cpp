@@ -46,7 +46,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   TracFacilities_c::TracFacilities_c()
   : mb_facilitiesOnInitSent(false)
   {
-    CNAMESPACE::memset(arrui8_facilitiesBitData,0,sizeof(arrui8_facilitiesBitData));
+    std::memset(arrui8_facilitiesBitData,0,sizeof(arrui8_facilitiesBitData));
   }
 
 
@@ -78,7 +78,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     }
 
     /// init all value in facilitiesBitData_t with default Not Available
-    CNAMESPACE::memset(arrui8_facilitiesBitData,0,sizeof(arrui8_facilitiesBitData));
+    std::memset(arrui8_facilitiesBitData,0,sizeof(arrui8_facilitiesBitData));
 
     return true;
   }

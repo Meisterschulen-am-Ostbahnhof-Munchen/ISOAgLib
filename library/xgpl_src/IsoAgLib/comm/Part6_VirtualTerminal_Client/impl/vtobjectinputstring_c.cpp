@@ -35,9 +35,14 @@ namespace __IsoAgLib {
 
 enum vtObjectInputString_c::AttributeID:uint8_t
 {
-	Width = 1,
-	Height = 2,
-	BackgroundColour = 3
+	Width                   = 1,
+	Height                  = 2,
+	BackgroundColour        = 3,
+	FontAttributes          = 4,
+	InputAttributes         = 5,
+	Options                 = 6,
+	VariableReference       = 7,
+	HorizontalJustification = 8,
 };
 
 
@@ -46,10 +51,10 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 		uint16_t width;
 		uint16_t height;
 		IsoAgLib::Colour backgroundColour;
-		IsoAgLib::iVtObjectFontAttributes_c *fontAttributes;
-		IsoAgLib::iVtObjectInputAttributes_c *inputAttributes;
+		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes;
+		IsoAgLib::iVtObjectInputAttributes_c* inputAttributes;
 		uint8_t options;
-		IsoAgLib::iVtObjectStringVariable_c *variableReference;
+		IsoAgLib::iVtObjectStringVariable_c* variableReference;
 		uint8_t horizontalJustification;
 		uint16_t length;
 		char *value;
@@ -59,10 +64,10 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 				uint16_t width,
 				uint16_t height,
 				IsoAgLib::Colour backgroundColour,
-				IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
-				IsoAgLib::iVtObjectInputAttributes_c *inputAttributes,
+				IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
+				IsoAgLib::iVtObjectInputAttributes_c* inputAttributes,
 				uint8_t options,
-				IsoAgLib::iVtObjectStringVariable_c *variableReference,
+				IsoAgLib::iVtObjectStringVariable_c* variableReference,
 				uint8_t horizontalJustification,
 				uint16_t length,
 				char *value,
@@ -181,12 +186,12 @@ vtObjectInputString_c::updateEnable(uint8_t aui8_enOrDis)
 void
 vtObjectInputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  const uint16_t cui16_strLen = (uint16_t)CNAMESPACE::strlen (newValue);
+  const uint16_t cui16_strLen = (uint16_t)std::strlen (newValue);
   char* pc_iso8859 = new char [cui16_strLen+1];
 
   //TODO
   const uint8_t cui8_fontType = 0;
-  //cui8_fontType = get_vtObjectInputString_a()->fontAttributes->get_vtObjectFontAttributes_a().fontType;
+  //cui8_fontType = vtObject_a->fontAttributes->get_vtObjectFontAttributes_a().fontType;
 
   convertStringUnicodeTo8859 (newValue, cui16_strLen, pc_iso8859, cui8_fontType);
 
@@ -197,7 +202,7 @@ vtObjectInputString_c::setValueCopyUTF8 (const char* newValue, bool b_updateObje
 void
 vtObjectInputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  int copyLen = ( length <= get_vtObjectInputString_a()->length) ? length : get_vtObjectInputString_a()->length;
+  int copyLen = ( length <= vtObject_a->length) ? length : vtObject_a->length;
 
   // UTF-16 string must be a multiple of 2 bytes long.
   if( copyLen % 2 )
@@ -208,14 +213,14 @@ vtObjectInputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length,
     if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
       s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new char [get_vtObjectInputString_a()->length+1];
-      saveValueP (MACRO_getStructOffset(get_vtObjectInputString_a(), value), sizeof(iVtObjectInputString_s), (IsoAgLib::iVtObject_c*) newStringBuffer);
+      char *newStringBuffer = new char [vtObject_a->length+1];
+      saveValueP (MACRO_getStructOffset(get_vtObjectInputString_a(), value = (IsoAgLib::iVtObject_c*) newStringBuffer);
     }
-    char *dest = get_vtObjectInputString_a()->value;
+    char *dest = vtObject_a->value;
     const char *src = newValue;
 
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
-    spacePadBomUTF16( dest, copyLen, get_vtObjectInputString_a()->length );
+    spacePadBomUTF16( dest, copyLen, vtObject_a->length );
   }
 
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueUTF16 (getID(), newValue, copyLen, b_enableReplaceOfCmd);
@@ -233,22 +238,18 @@ vtObjectInputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b_
   }
 
   if (b_updateObject) {
-    // check if not already RAM string buffer?
-    if (!(s_properties.flags & FLAG_STRING_IN_RAM)) {
-      s_properties.flags |= FLAG_STRING_IN_RAM;
       // create new String buffer with same length as original one, as the size can't be changed !!
-      char *newStringBuffer = new char [get_vtObjectInputString_a()->length+1];
+      char *newStringBuffer = new char [vtObject_a->length+1];
       vtObject_a->value = newStringBuffer;
-    }
-    char *dest = get_vtObjectInputString_a()->value;
+    char *dest = vtObject_a->value;
     const char *src = newValue;
-    int copyLen = (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length;
+    int copyLen = (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length;
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
-    for (; i<get_vtObjectInputString_a()->length; i++) *dest++ = ' ';
+    for (; i<vtObject_a->length; i++) *dest++ = ' ';
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValue, get_vtObjectInputString_a()->length, b_enableReplaceOfCmd);
+  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValue, vtObject_a->length, b_enableReplaceOfCmd);
 }
 
 
@@ -262,16 +263,12 @@ vtObjectInputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_e
 
   if (b_updateObject) {
     // delete RAM_String first, before we lose the pointer!
-    if (s_properties.flags & FLAG_STRING_IN_RAM) {
-      delete (get_vtObjectInputString_a()->value);
-      s_properties.flags &= ~FLAG_STRING_IN_RAM;
-    }
-
+      delete (vtObject_a->value);
     vtObject_a->value = newValue;
   }
 
   uint16_t ui16_tempLen = 0;
-  if (newValue != NULL ) ui16_tempLen = uint16_t( (CNAMESPACE::strlen (newValue) <= get_vtObjectInputString_a()->length) ? CNAMESPACE::strlen (newValue) : get_vtObjectInputString_a()->length );
+  if (newValue != NULL ) ui16_tempLen = uint16_t( (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length );
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueRef( this, newValue, ui16_tempLen, b_enableReplaceOfCmd );
 }
 
@@ -280,7 +277,7 @@ vtObjectInputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_e
 const char*
 vtObjectInputString_c::getString()
 {
-  return get_vtObjectInputString_a()->value;
+  return vtObject_a->value;
 }
 
 void
@@ -301,73 +298,65 @@ vtObjectInputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_upd
 uint16_t
 vtObjectInputString_c::updateWidth(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), width), sizeof(iVtObjectInputString_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), width), sizeof(iVtObjectInputString_s));
+	if (b_SendRequest)
+		getAttribute(Width);
+	return vtObject_a->width;
 }
 
 uint16_t
 vtObjectInputString_c::updateHeight(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), height), sizeof(iVtObjectInputString_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), height), sizeof(iVtObjectInputString_s));
+	if (b_SendRequest)
+		getAttribute(Height);
+	return vtObject_a->height;
 }
 
-uint8_t
+IsoAgLib::Colour
 vtObjectInputString_c::updateBackgroundColour(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour), sizeof(iVtObjectInputString_s), 3);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour), sizeof(iVtObjectInputString_s));
+	if (b_SendRequest)
+		getAttribute(BackgroundColour);
+	return vtObject_a->backgroundColour;
 }
 
-uint16_t
+IsoAgLib::iVtObjectFontAttributes_c*
 vtObjectInputString_c::updateFontAttributes(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputString_s), 4);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputString_s));
+	if (b_SendRequest)
+		getAttribute(FontAttributes);
+	return vtObject_a->fontAttributes;
 }
 
-uint16_t
+IsoAgLib::iVtObjectInputAttributes_c*
 vtObjectInputString_c::updateInputAttributes(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), inputAttributes), sizeof(iVtObjectInputString_s), 5);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), inputAttributes), sizeof(iVtObjectInputString_s));
+	if (b_SendRequest)
+		getAttribute(InputAttributes);
+	return vtObject_a->inputAttributes;
 }
 
 uint8_t
 vtObjectInputString_c::updateOptions(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), options), sizeof(iVtObjectInputString_s), 6);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), options), sizeof(iVtObjectInputString_s));
+	if (b_SendRequest)
+		getAttribute(Options);
+	return vtObject_a->options;
 }
 
-uint16_t
+IsoAgLib::iVtObjectStringVariable_c*
 vtObjectInputString_c::updateVariableReference(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), variableReference), sizeof(iVtObjectInputString_s), 7);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), variableReference), sizeof(iVtObjectInputString_s));
+	if (b_SendRequest)
+		getAttribute(VariableReference);
+	return vtObject_a->variableReference;
 }
 
 uint8_t
 vtObjectInputString_c::updateJustification(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification), sizeof(iVtObjectInputString_s), 8);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification), sizeof(iVtObjectInputString_s));
+	if (b_SendRequest)
+		getAttribute(HorizontalJustification);
+	return vtObject_a->horizontalJustification;
 }
 
 /** that attribute is in parentheses in the spec, so commented out here
@@ -375,7 +364,7 @@ uint8_t
 vtObjectInputString_c::updateEnabled(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s), 9);
+    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled = 9);
   else
     return getValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s));
 }
@@ -386,16 +375,16 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), width), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), height), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), backgroundColour), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 5: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), inputAttributes), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 6: saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), options), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 7: saveValue16(MACRO_getStructOffset(get_vtObjectInputString_a(), variableReference), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 8: saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case Width:                   vtObject_a->width                   = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case Height:                  vtObject_a->height                  = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case BackgroundColour:        vtObject_a->backgroundColour        = convertLittleEndianStringColour(pui8_attributeValue); break;
+    //case FontAttributes:          vtObject_a->fontAttributes          = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    //case InputAttributes:         vtObject_a->inputAttributes         = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case Options:                 vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    //case VariableReference:       vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case HorizontalJustification: vtObject_a->horizontalJustification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     /** that attribute is in parentheses in the spec, so commented out here
-    case 9:  saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled), sizeof(iVtObjectInputString_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 9:  saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled = convertLittleEndianStringUi8(pui8_attributeValue)); break;
     */
     default: break;
   }
@@ -428,23 +417,33 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     }
 
     void vtObjectInputString_c::setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c *newFontAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), fontAttributes) : 0, sizeof(iVtObjectInputString_s), 4 /* "Font Attributes" */, newFontAttributes, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->fontAttributes = newFontAttributes;
+    	setAttribute (FontAttributes, newFontAttributes->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectInputString_c::setInputAttributes(IsoAgLib::iVtObjectInputAttributes_c *newInputAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), inputAttributes) : 0, sizeof(iVtObjectInputString_s), 5 /* "Input Attributes" */, newInputAttributes, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->inputAttributes = newInputAttributes;
+    	setAttribute (InputAttributes, newInputAttributes->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectInputString_c::setOptions(uint8_t newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), options) : 0, sizeof(iVtObjectInputString_s), 6 /* "Options" */, newOptions, newOptions, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->options = newOptions;
+    	setAttribute (Options, newOptions, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c *newVariableRef, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), variableReference) : 0, sizeof(iVtObjectInputString_s), 7 /* "Variable Reference" */, newVariableRef, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->variableReference = newVariableRef;
+    	setAttribute (VariableReference, newVariableRef->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectInputString_c::setHorizontalJustification(uint8_t newHorizontalJustification, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification) : 0, sizeof(iVtObjectInputString_s), 8 /* "Horizontal justification" */, newHorizontalJustification, newHorizontalJustification, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->horizontalJustification = newHorizontalJustification;
+    	setAttribute (HorizontalJustification, newHorizontalJustification, b_enableReplaceOfCmd);
     }
 
 

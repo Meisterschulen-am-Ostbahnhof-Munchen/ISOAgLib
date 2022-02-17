@@ -450,7 +450,7 @@ namespace __IsoAgLib {
         && ( *it )->getRemoteNode()
         && ( *it )->getRemoteNode()->isServer() )
       {
-        static_cast<TcClientConnection_c*>( *it )->sendCommandChangeDesignator( objID, newDesig, CNAMESPACE::strlen( newDesig ) );
+        static_cast<TcClientConnection_c*>( *it )->sendCommandChangeDesignator( objID, newDesig, std::strlen( newDesig ) );
       }
     }
   }

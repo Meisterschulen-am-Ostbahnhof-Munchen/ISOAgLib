@@ -92,7 +92,7 @@ vtObjectStringVariable_c::fitTerminal() const
 void
 vtObjectStringVariable_c::setValueCopyUTF8 (const char* newValue, uint8_t aui8_fontType, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  const uint16_t cui16_strLen = (uint16_t)CNAMESPACE::strlen (newValue);
+  const uint16_t cui16_strLen = (uint16_t)std::strlen (newValue);
   char* pc_iso8859 = new char [cui16_strLen+1];
 
   convertStringUnicodeTo8859 (newValue, cui16_strLen, pc_iso8859, aui8_fontType);
@@ -139,7 +139,7 @@ vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject, bool
     // check if not already RAM string buffer?
     char *dest = vtObject_a->value;
     const char *src = newValue;
-    int copyLen = (CNAMESPACE::strlen (newValue) <= vtObject_a->length) ? CNAMESPACE::strlen (newValue) : vtObject_a->length;
+    int copyLen = (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length;
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
     for (; i<vtObject_a->length; i++) *dest++ = ' ';
     *dest = 0x00; // 0-termiante!
@@ -160,7 +160,7 @@ vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject, bool 
   }
 
   uint16_t ui16_tempLen = 0;
-  if (newValue != NULL ) ui16_tempLen = uint16_t( (CNAMESPACE::strlen (newValue) <= vtObject_a->length) ? CNAMESPACE::strlen (newValue) : vtObject_a->length );
+  if (newValue != NULL ) ui16_tempLen = uint16_t( (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length );
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueRef( this, newValue, ui16_tempLen, b_enableReplaceOfCmd);
 }
 

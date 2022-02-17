@@ -94,7 +94,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
 
 		if( numLeft )
 			{
-			CNAMESPACE::memcpy( &BigBuf[BigBufLen], bpWrite, numLeft );
+			std::memcpy( &BigBuf[BigBufLen], bpWrite, numLeft );
 			BigBufLen += numLeft;
 			}
 

@@ -33,7 +33,7 @@ iLibErr_c &getILibErrInstance()
 
 void iLibErr_c::init()
 {
-  CNAMESPACE::memset( &m_nonFatal, 0, TypeNonFatalSize * sizeof( uint16_t ) );
+  std::memset( &m_nonFatal, 0, TypeNonFatalSize * sizeof( uint16_t ) );
 }
 
 
