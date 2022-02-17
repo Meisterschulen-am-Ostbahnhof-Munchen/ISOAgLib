@@ -367,12 +367,12 @@ vtObjectOutputString_c::updateBackgroundColour(bool b_SendRequest)
 	return vtObject_a->backgroundColour;
 }
 
-uint16_t
+IsoAgLib::iVtObjectFontAttributes_c*
 vtObjectOutputString_c::updateFontAttributes(bool b_SendRequest)
 {
 	if (b_SendRequest)
 		getAttribute(FontAttributes);
-	return vtObject_a->backgroundColour;
+	return vtObject_a->fontAttributes;
 }
 
 uint8_t
