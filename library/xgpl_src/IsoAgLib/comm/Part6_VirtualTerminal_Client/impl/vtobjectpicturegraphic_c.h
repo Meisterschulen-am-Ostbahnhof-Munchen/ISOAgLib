@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"
@@ -35,6 +36,7 @@ namespace __IsoAgLib {
 class vtObjectPictureGraphic_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectPictureGraphic_s;
 
@@ -72,7 +74,7 @@ public:
 
   uint16_t updateWidth(bool b_SendRequest=false);
   uint8_t updateOptions(bool b_SendRequest=false);
-  uint8_t updateTransparencyColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateTransparencyColour(bool b_SendRequest=false);
   /** these attributes are in parentheses in the spec, so commented out here
   uint16_t updateActualWidth(bool b_SendRequest=false);
   uint16_t updateActualHeight(bool b_SendRequest=false);

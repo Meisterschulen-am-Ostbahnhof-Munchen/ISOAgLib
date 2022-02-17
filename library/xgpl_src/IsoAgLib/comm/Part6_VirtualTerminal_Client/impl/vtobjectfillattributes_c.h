@@ -56,7 +56,7 @@ public:
   void setFillColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
   void setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setFillAttributes(uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setFillAttributes(IsoAgLib::FillType newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -66,9 +66,11 @@ public:
 
   IsoAgLib::FillType updateFillType(bool b_SendRequest=false);
 
-  uint8_t updateFillColour(bool b_SendRequest=false);
+  IsoAgLib::Colour updateFillColour(bool b_SendRequest=false);
 
-  uint16_t updateFillPattern(bool b_SendRequest=false);
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
+  IsoAgLib::iVtObjectPictureGraphic_c* updateFillPattern(bool b_SendRequest=false);
+#endif
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif

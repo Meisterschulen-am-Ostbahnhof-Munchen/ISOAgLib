@@ -112,7 +112,7 @@ vtObjectFillAttributes_c::fitTerminal() const
 
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
 void
-vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectFillAttributes_c::setFillAttributes(IsoAgLib::FillType newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
 	vtObject_a->fillType   = newFillType;
@@ -133,7 +133,7 @@ vtObjectFillAttributes_c::updateFillType(bool b_SendRequest)
   return vtObject_a->fillType;
 }
 
-uint8_t
+IsoAgLib::Colour
 vtObjectFillAttributes_c::updateFillColour(bool b_SendRequest)
 {
   if (b_SendRequest)
@@ -178,20 +178,20 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     void vtObjectFillAttributes_c::setFillType(IsoAgLib::FillType newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->fillType = newValue;
-    	setAttribute(1 /* "Fill Type" */, newValue, b_enableReplaceOfCmd);
+    	setAttribute(FillType /* "Fill Type" */, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectFillAttributes_c::setFillColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->fillColour = newValue;
-    	setAttribute(2 /* "Fill Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
+    	setAttribute(FillColour /* "Fill Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
     }
 
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
     void vtObjectFillAttributes_c::setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->fillPatternObject = newValue;
-    	setAttribute(3 /* "Fill Pattern" */, newValue, b_enableReplaceOfCmd);
+    	setAttribute(FillPatternObject /* "Fill Pattern" */, newValue->getID(), b_enableReplaceOfCmd);
     }
 #endif
 

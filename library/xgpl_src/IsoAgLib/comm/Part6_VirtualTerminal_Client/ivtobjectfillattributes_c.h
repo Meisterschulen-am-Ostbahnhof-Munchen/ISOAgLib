@@ -48,7 +48,7 @@ public:
     vtObjectFillAttributes_c::setFillPattern(newFillPatternObject, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setFillAttributes(uint8_t newFillType, Colour newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setFillAttributes(FillType newFillType, Colour newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillAttributes(newFillType, newFillColour, newFillPattern, b_updateObject, b_enableReplaceOfCmd);
   }
 #endif
@@ -63,11 +63,11 @@ public:
     return vtObjectFillAttributes_c::updateFillType(b_SendRequest);
   }
 
-  uint8_t updateFillColour(bool b_SendRequest=false) {
+  Colour updateFillColour(bool b_SendRequest=false) {
     return vtObjectFillAttributes_c::updateFillColour(b_SendRequest);
   }
 
-  uint16_t updateFillPattern(bool b_SendRequest=false) {
+  IsoAgLib::iVtObjectPictureGraphic_c* updateFillPattern(bool b_SendRequest=false) {
     return vtObjectFillAttributes_c::updateFillPattern(b_SendRequest);
   }
 #endif
