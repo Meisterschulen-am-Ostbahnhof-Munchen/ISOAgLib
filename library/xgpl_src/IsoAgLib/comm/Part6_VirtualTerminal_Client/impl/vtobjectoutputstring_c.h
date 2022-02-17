@@ -38,6 +38,7 @@ namespace __IsoAgLib {
 class vtObjectOutputString_c : public IsoAgLib::iVtObjectString_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectOutputString_s;
 

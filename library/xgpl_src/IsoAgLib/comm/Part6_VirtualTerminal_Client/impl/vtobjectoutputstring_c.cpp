@@ -35,6 +35,19 @@ namespace __IsoAgLib {
 
 
 
+enum vtObjectOutputString_c::AttributeID:uint8_t
+{
+
+    Width                   = 1,
+    Height                  = 2,
+	BackgroundColour        = 3,
+	FontAttributes          = 4,
+	Options                 = 5,
+	VariableReference       = 6,
+	HorizontalJustification = 7,
+};
+
+
 struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
@@ -334,7 +347,7 @@ uint16_t
 vtObjectOutputString_c::updateWidth(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(1);
+		getAttribute(Width);
 	return vtObject_a->width;
 }
 
@@ -342,7 +355,7 @@ uint16_t
 vtObjectOutputString_c::updateHeight(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(2);
+		getAttribute(Height);
 	return vtObject_a->height;
 }
 
@@ -350,7 +363,7 @@ IsoAgLib::Colour
 vtObjectOutputString_c::updateBackgroundColour(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(3);
+		getAttribute(BackgroundColour);
 	return vtObject_a->backgroundColour;
 }
 
@@ -358,7 +371,7 @@ uint16_t
 vtObjectOutputString_c::updateFontAttributes(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(4);
+		getAttribute(FontAttributes);
 	return vtObject_a->backgroundColour;
 }
 
@@ -366,7 +379,7 @@ uint8_t
 vtObjectOutputString_c::updateOptions(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(5);
+		getAttribute(Options);
 	return vtObject_a->options;
 }
 
@@ -374,7 +387,7 @@ IsoAgLib::iVtObjectStringVariable_c*
 vtObjectOutputString_c::updateVariableReference(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(6);
+		getAttribute(VariableReference);
 	return vtObject_a->variableReference;
 }
 
@@ -382,7 +395,7 @@ uint8_t
 vtObjectOutputString_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(7);
+		getAttribute(HorizontalJustification);
 	return vtObject_a->horizontalJustification;
 }
 
@@ -392,13 +405,13 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 {
   switch (attrID)
   {
-    case 1: vtObject_a->width                   = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case 2: vtObject_a->height                  = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case 3: vtObject_a->backgroundColour        = convertLittleEndianStringColour(pui8_attributeValue); break;
-    //case 4: vtObject_a->fontAttributes          = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
-    case 5: vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
-    //case 6: vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
-    case 7: vtObject_a->horizontalJustification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Width: vtObject_a->width                   = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case Height: vtObject_a->height                  = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case BackgroundColour: vtObject_a->backgroundColour        = convertLittleEndianStringColour(pui8_attributeValue); break;
+    //case FontAttributes: vtObject_a->fontAttributes          = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
+    case Options: vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    //case VariableReference: vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
+    case HorizontalJustification: vtObject_a->horizontalJustification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     default: break;
   }
 }
@@ -417,7 +430,7 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 
       	if (b_updateObject)
       		vtObject_a->width = newValue;
-    	  setAttribute (1, newValue, b_enableReplaceOfCmd);
+    	  setAttribute (Width, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectOutputString_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -431,39 +444,39 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 
     	if (b_updateObject)
     		vtObject_a->height = newValue;
-  	  setAttribute (2, newValue, b_enableReplaceOfCmd);
+  	  setAttribute (Height, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectOutputString_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->backgroundColour = newValue;
-    	setAttribute (3, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    	setAttribute (BackgroundColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectOutputString_c::setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->fontAttributes = newValue;
-    	setAttribute (4, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
+    	setAttribute (FontAttributes, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectOutputString_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->options = newValue;
-    	setAttribute (5, newValue, b_enableReplaceOfCmd);
+    	setAttribute (Options, newValue, b_enableReplaceOfCmd);
     }
 
     void
     vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->variableReference = newValue;
-    	setAttribute (6, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
+    	setAttribute (VariableReference, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void
     vtObjectOutputString_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->horizontalJustification = newValue;
-    	setAttribute (7, newValue, b_enableReplaceOfCmd);
+    	setAttribute (HorizontalJustification, newValue, b_enableReplaceOfCmd);
     }
 
 
