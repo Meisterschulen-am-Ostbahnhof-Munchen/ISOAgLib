@@ -82,11 +82,11 @@ namespace IsoAgLib {
         return vtObjectOutputNumber_c::updateHeight(b_SendRequest);
     }
 
-    uint8_t iVtObjectOutputNumber_c::updateBackgroundColour(bool b_SendRequest) {
+    Colour iVtObjectOutputNumber_c::updateBackgroundColour(bool b_SendRequest) {
         return vtObjectOutputNumber_c::updateBackgroundColour(b_SendRequest);
     }
 
-    uint16_t iVtObjectOutputNumber_c::updateFontAttributes(bool b_SendRequest) {
+    iVtObjectFontAttributes_c* iVtObjectOutputNumber_c::updateFontAttributes(bool b_SendRequest) {
         return vtObjectOutputNumber_c::updateFontAttributes(b_SendRequest);
     }
 #endif

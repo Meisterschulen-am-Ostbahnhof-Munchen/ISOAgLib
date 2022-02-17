@@ -24,7 +24,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_outputnumber
 
-
+#include <memory> // PImpl
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobject_c.h"
 #include "vtobject_c.h"
@@ -37,6 +37,7 @@ namespace __IsoAgLib {
 class vtObjectOutputNumber_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectOutputNumber_s;
 
@@ -51,8 +52,9 @@ public:
 
   vtObjectOutputNumber_c(iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , int ai_multitonInst);
 
+  ~vtObjectOutputNumber_c() override;
 
-  vtObjectOutputNumber_c();
+
   uint32_t fitTerminal() const;
   virtual void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
   void setOriginSKM(bool b_SKM);
@@ -84,9 +86,9 @@ public:
   uint16_t updateWidth(bool b_SendRequest=false);
   virtual uint16_t updateHeight(bool b_SendRequest=false);
   virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
-  virtual uint16_t updateFontAttributes(bool b_SendRequest=false);
+  virtual IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
   virtual uint8_t updateOptions(bool b_SendRequest=false);
-  virtual uint16_t updateVariableReference(bool b_SendRequest=false);
+  virtual IsoAgLib::iVtObjectNumberVariable_c * updateVariableReference(bool b_SendRequest=false);
   virtual int32_t updateOffset(bool b_SendRequest=false);
   virtual float updateScale(bool b_SendRequest=false);
   virtual uint8_t updateNumberOfDecimals(bool b_SendRequest=false);

@@ -106,7 +106,7 @@ namespace IsoAgLib {
         return vtObjectOutputString_c::updateBackgroundColour(b_SendRequest);
     }
 
-    uint16_t iVtObjectOutputString_c::updateFontAttributes(bool b_SendRequest) {
+    IsoAgLib::iVtObjectFontAttributes_c* iVtObjectOutputString_c::updateFontAttributes(bool b_SendRequest) {
         return vtObjectOutputString_c::updateFontAttributes(b_SendRequest);
     }
 

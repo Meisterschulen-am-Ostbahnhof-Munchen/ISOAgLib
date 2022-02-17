@@ -59,14 +59,14 @@ public:
   
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
-  uint16_t updateFontAttributes(bool b_SendRequest=false);
+  Colour updateBackgroundColour(bool b_SendRequest=false);
+  iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
 
   uint8_t updateOptions(bool b_SendRequest=false) {
     return vtObjectOutputNumber_c::updateOptions(b_SendRequest);
   }
 
-  uint16_t updateVariableReference(bool b_SendRequest=false) {
+  IsoAgLib::iVtObjectNumberVariable_c * updateVariableReference(bool b_SendRequest=false) {
     return vtObjectOutputNumber_c::updateVariableReference(b_SendRequest);
   }
 
