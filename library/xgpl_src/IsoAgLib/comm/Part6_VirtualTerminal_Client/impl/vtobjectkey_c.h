@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_key
 
+#include <memory> // PImpl
 #include "vtclient_c.h"
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
@@ -35,6 +36,7 @@ namespace __IsoAgLib {
 class vtObjectKey_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectKey_s;
 
