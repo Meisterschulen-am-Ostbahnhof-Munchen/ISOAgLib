@@ -256,6 +256,7 @@ vtObjectOutputNumber_c::updateOptions(bool b_SendRequest)
 		getAttribute(Options);
 	return vtObject_a->options;
 }
+
 IsoAgLib::iVtObjectNumberVariable_c *
 vtObjectOutputNumber_c::updateVariableReference(bool b_SendRequest)
 {

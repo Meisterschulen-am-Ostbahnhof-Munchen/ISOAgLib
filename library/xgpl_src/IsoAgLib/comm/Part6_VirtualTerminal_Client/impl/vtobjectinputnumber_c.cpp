@@ -22,6 +22,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_inputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include "../ivtobjectnumbervariable_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -30,15 +31,34 @@
 namespace __IsoAgLib {
 
 
+enum vtObjectInputNumber_c::AttributeID:uint8_t
+{
+    Width                   = 1,
+    Height                  = 2,
+	BackgroundColour        = 3,
+	FontAttributes          = 4,
+	Options                 = 5,
+	VariableReference       = 6,
+	MinValue                = 7,
+	MaxValue                = 8,
+	Offset                  = 9,
+	Scale                   = 10,
+	NumberOfDecimals        = 11,
+	Format                  = 12,
+	HorizontalJustification = 13,
+	SecondOptionsByte       = 14,
+};
+
+
 
 
 struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 	uint16_t width;
 	uint16_t height;
 	IsoAgLib::Colour backgroundColour;
-	IsoAgLib::iVtObject_c *fontAttributes;
+	IsoAgLib::iVtObjectFontAttributes_c *fontAttributes;
 	uint8_t options;
-	IsoAgLib::iVtObject_c *variableReference;
+	IsoAgLib::iVtObjectNumberVariable_c* variableReference;
 	uint32_t value;
 	uint32_t minValue;
 	uint32_t maxValue;
@@ -53,9 +73,9 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 			uint16_t width,
 			uint16_t height,
 			IsoAgLib::Colour backgroundColour,
-			IsoAgLib::iVtObject_c *fontAttributes,
+			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
 			uint8_t options,
-			IsoAgLib::iVtObject_c *variableReference,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint32_t value,
 			uint32_t minValue,
 			uint32_t maxValue,
@@ -181,7 +201,7 @@ void
 vtObjectInputNumber_c::setValue(uint32_t newValue,
                                 bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (get_vtObjectInputNumber_a()->variableReference == NULL) {
+  if (vtObject_a->variableReference == NULL) {
     if (b_updateObject)
     	vtObject_a->value = newValue;
 
@@ -206,118 +226,106 @@ vtObjectInputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_upd
 uint16_t
 vtObjectInputNumber_c::updateWidth(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), width), sizeof(iVtObjectInputNumber_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputNumber_a(), width), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(Width);
+	return vtObject_a->width;
 }
 
 uint16_t
 vtObjectInputNumber_c::updateHeight(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), height), sizeof(iVtObjectInputNumber_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputNumber_a(), height), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(Height);
+	return vtObject_a->height;
 }
 
-uint8_t
+IsoAgLib::Colour
 vtObjectInputNumber_c::updateBackgroundColour(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), backgroundColour), sizeof(iVtObjectInputNumber_s), 3);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), backgroundColour), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(BackgroundColour);
+	return vtObject_a->backgroundColour;
 }
 
-uint16_t
+IsoAgLib::iVtObjectFontAttributes_c*
 vtObjectInputNumber_c::updateFontAttributes(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), fontAttributes), sizeof(iVtObjectInputNumber_s), 4);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputNumber_a(), fontAttributes), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(FontAttributes);
+	return vtObject_a->fontAttributes;
 }
 
 uint8_t
 vtObjectInputNumber_c::updateOptions(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), options), sizeof(iVtObjectInputNumber_s), 5);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), options), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(Options);
+	return vtObject_a->options;
 }
 
-uint16_t
+IsoAgLib::iVtObjectNumberVariable_c*
 vtObjectInputNumber_c::updateVariableReference(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), variableReference), sizeof(iVtObjectInputNumber_s), 6);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputNumber_a(), variableReference), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(VariableReference);
+	return vtObject_a->variableReference;
 }
+
 
 uint32_t
 vtObjectInputNumber_c::updateMinValue(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue32GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), minValue), sizeof(iVtObjectInputNumber_s), 7);
-  else
-    return getValue32(MACRO_getStructOffset(get_vtObjectInputNumber_a(), minValue), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(MinValue);
+	return vtObject_a->minValue;
 }
 
 uint32_t
 vtObjectInputNumber_c::updateMaxValue(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue32GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), maxValue), sizeof(iVtObjectInputNumber_s), 8);
-  else
-    return getValue32(MACRO_getStructOffset(get_vtObjectInputNumber_a(), maxValue), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(MaxValue);
+	return vtObject_a->maxValue;
 }
 
 int32_t
 vtObjectInputNumber_c::updateOffset(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getSignedValue32GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), offset), sizeof(iVtObjectInputNumber_s), 9);
-  else
-    return getSignedValue32(MACRO_getStructOffset(get_vtObjectInputNumber_a(), offset), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(Options);
+	return vtObject_a->options;
 }
 
 float
 vtObjectInputNumber_c::updateScale(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValueFloatGetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), scale), sizeof(iVtObjectInputNumber_s), 10);
-  else
-    return getValueFloat(MACRO_getStructOffset(get_vtObjectInputNumber_a(), scale), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(Scale);
+	return vtObject_a->scale;
 }
 
 uint8_t
 vtObjectInputNumber_c::updateNumberOfDecimals(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), numberOfDecimals), sizeof(iVtObjectInputNumber_s), 11);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), numberOfDecimals), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(NumberOfDecimals);
+	return vtObject_a->numberOfDecimals;
 }
 
 uint8_t
 vtObjectInputNumber_c::updateFormat(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), format), sizeof(iVtObjectInputNumber_s), 12);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), format), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(Format);
+	return vtObject_a->format;
 }
 
 uint8_t
 vtObjectInputNumber_c::updateJustification(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), horizontalJustification), sizeof(iVtObjectInputNumber_s), 13);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), horizontalJustification), sizeof(iVtObjectInputNumber_s));
+	if (b_SendRequest)
+		getAttribute(HorizontalJustification);
+	return vtObject_a->horizontalJustification;
 }
 
 /** these attributes are in parentheses in the spec, so commented out here
@@ -325,7 +333,7 @@ uint32_t
 vtObjectInputNumber_c::updateValue(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue32GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), value), sizeof(iVtObjectInputNumber_s), 14);
+    return getValue32GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), value = 14);
   else
     return getValue32(MACRO_getStructOffset(get_vtObjectInputNumber_a(), value), sizeof(iVtObjectInputNumber_s));
 }
@@ -334,7 +342,7 @@ uint8_t
 vtObjectInputNumber_c::update2ndOptionsByte(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), secondOptionsByte), sizeof(iVtObjectInputNumber_s), 15);
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputNumber_a(), secondOptionsByte = 15);
   else
     return getValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), secondOptionsByte), sizeof(iVtObjectInputNumber_s));
 }
@@ -345,22 +353,22 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectInputNumber_a(), width), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectInputNumber_a(), height), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), backgroundColour), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectInputNumber_a(), fontAttributes), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), options), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 6: saveValue16(MACRO_getStructOffset(get_vtObjectInputNumber_a(), variableReference), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 7: saveValue32(MACRO_getStructOffset(get_vtObjectInputNumber_a(), minValue), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi32(pui8_attributeValue)); break;
-    case 8: saveValue32(MACRO_getStructOffset(get_vtObjectInputNumber_a(), maxValue), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi32(pui8_attributeValue)); break;
-    case 9: saveSignedValue32(MACRO_getStructOffset(get_vtObjectInputNumber_a(), offset), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringI32(pui8_attributeValue)); break;
-    case 10: saveValueFloat(MACRO_getStructOffset(get_vtObjectInputNumber_a(), scale), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringFloat(pui8_attributeValue)); break;
-    case 11: saveValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), numberOfDecimals), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 12: saveValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), format), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 13: saveValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), horizontalJustification), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case Width:                   vtObject_a->width                   = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case Height:                  vtObject_a->height                  = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case BackgroundColour:        vtObject_a->backgroundColour        = convertLittleEndianStringColour(pui8_attributeValue); break;
+    //case FontAttributes:          vtObject_a->fontAttributes          = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case Options:                 vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    //case VariableReference:       vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break;
+    case MinValue:                vtObject_a->minValue                = convertLittleEndianStringUi32(  pui8_attributeValue); break;
+    case MaxValue:                vtObject_a->maxValue                = convertLittleEndianStringUi32(  pui8_attributeValue); break;
+    case Offset:                  vtObject_a->offset                  = convertLittleEndianStringI32(   pui8_attributeValue); break;
+    case Scale:                   vtObject_a->scale                   = convertLittleEndianStringFloat( pui8_attributeValue); break;
+    case NumberOfDecimals:        vtObject_a->numberOfDecimals        = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Format:                  vtObject_a->format                  = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case HorizontalJustification: vtObject_a->horizontalJustification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     /** these attributes are in parentheses in the spec, so commented out here
-    case 14: saveValue32(MACRO_getStructOffset(get_vtObjectInputNumber_a(), value), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi32(pui8_attributeValue)); break;
-    case 15: saveValue8(MACRO_getStructOffset(get_vtObjectInputNumber_a(), secondOptionsByte), sizeof(iVtObjectInputNumber_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 14: vtObject_a->value = convertLittleEndianStringUi32(pui8_attributeValue)); break;
+    case 15: vtObject_a->secondOptionsByte = convertLittleEndianStringUi8(pui8_attributeValue)); break;
     */
     default: break;
   }
@@ -375,62 +383,103 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 
 
     void vtObjectInputNumber_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), width) : 0, sizeof(iVtObjectInputNumber_s), 1, newValue, b_enableReplaceOfCmd);
+    	  MACRO_scaleLocalVars
+    	  MACRO_scaleSKLocalVars
+
+    	  uint32_t scaledDim = uint32_t( newValue );
+    	#ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+    	  MACRO_scaleDimension( scaledDim )
+    	#endif
+
+      	if (b_updateObject)
+      		vtObject_a->width = newValue;
+    	  setAttribute (Width, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), height) : 0, sizeof(iVtObjectInputNumber_s), 2, newValue, b_enableReplaceOfCmd);
+  	  MACRO_scaleLocalVars
+  	  MACRO_scaleSKLocalVars
+
+  	  uint32_t scaledDim = uint32_t( newValue );
+  	#ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+  	  MACRO_scaleDimension( scaledDim )
+  	#endif
+
+    	if (b_updateObject)
+    		vtObject_a->height = newValue;
+  	  setAttribute (Height, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), backgroundColour) : 0, sizeof(iVtObjectInputNumber_s), 3, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    vtObject_a->backgroundColour = newValue;
+    	setAttribute ( BackgroundColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputNumber_c::setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c *newValue, bool b_updateObject,
-                                                  bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), fontAttributes) : 0, sizeof(iVtObjectInputNumber_s), 4, newValue, b_enableReplaceOfCmd);
+    void vtObjectInputNumber_c::setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->fontAttributes = newValue;
+    	setAttribute (FontAttributes, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), options) : 0, sizeof(iVtObjectInputNumber_s), 5, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    vtObject_a->options = newValue;
+    	setAttribute ( Options, newValue, b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputNumber_c::setVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newValue, bool b_updateObject,
-                                                     bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), variableReference) : 0, sizeof(iVtObjectInputNumber_s), 6, (iVtObject_c*)newValue, b_enableReplaceOfCmd);
+    void vtObjectInputNumber_c::setVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    	    vtObject_a->variableReference = newValue;
+    	setAttribute ( VariableReference, newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setMinValue(uint32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), minValue) : 0, sizeof(iVtObjectInputNumber_s), 7, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    vtObject_a->minValue = newValue;
+    	setAttribute ( MinValue, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setMaxValue(uint32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), maxValue) : 0, sizeof(iVtObjectInputNumber_s), 8, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    vtObject_a->maxValue = newValue;
+    	setAttribute ( MaxValue, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setOffset(int32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue32SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), offset) : 0, sizeof(iVtObjectInputNumber_s), 9, (uint32_t) newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    vtObject_a->format = newValue;
+    	setAttribute ( Offset, *((uint32_t*)&newValue), b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setScale(float newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValueFloatSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), scale) : 0, sizeof(iVtObjectInputNumber_s), 10, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    vtObject_a->scale = newValue;
+    	setAttribute ( Scale, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setNumberOfDecimals(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), numberOfDecimals) : 0, sizeof(iVtObjectInputNumber_s), 11, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    vtObject_a->numberOfDecimals = newValue;
+    	setAttribute ( NumberOfDecimals, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setFormat(bool newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), format) : 0, sizeof(iVtObjectInputNumber_s), 12, (newValue) ? 1 : 0, (newValue) ? 1 : 0, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    vtObject_a->format = newValue;
+    	setAttribute ( Format, (newValue) ? 1 : 0, b_enableReplaceOfCmd);
     }
 
-    void
-    vtObjectInputNumber_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), horizontalJustification) : 0, sizeof(iVtObjectInputNumber_s), 13, newValue, newValue, b_enableReplaceOfCmd);
+    void vtObjectInputNumber_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->horizontalJustification = newValue;
+    	setAttribute (HorizontalJustification, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setSecondOptionsByte(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputNumber_a(), secondOptionsByte) : 0, sizeof(iVtObjectInputNumber_s), 14, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->secondOptionsByte = newValue;
+    	setAttribute (SecondOptionsByte, newValue, b_enableReplaceOfCmd);
     }
 
 

@@ -120,7 +120,7 @@ public:
     return vtObjectInputNumber_c::updateBackgroundColour(b_SendRequest);
   }
 
-  uint16_t updateFontAttributes(bool b_SendRequest=false) {
+  IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false) {
     return vtObjectInputNumber_c::updateFontAttributes(b_SendRequest);
   }
 
@@ -128,7 +128,7 @@ public:
     return vtObjectInputNumber_c::updateOptions(b_SendRequest);
   }
 
-  uint16_t updateVariableReference(bool b_SendRequest=false) {
+  IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
     return vtObjectInputNumber_c::updateVariableReference(b_SendRequest);
   }
 
