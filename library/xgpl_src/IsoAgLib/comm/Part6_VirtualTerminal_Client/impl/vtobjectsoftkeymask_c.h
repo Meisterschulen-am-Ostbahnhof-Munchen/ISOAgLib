@@ -45,6 +45,7 @@ public:
 #endif // ENABLE_SKM_HANDLER
 
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectSoftKeyMask_s;
 

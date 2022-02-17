@@ -32,6 +32,14 @@
 
 namespace __IsoAgLib {
 
+
+
+enum vtObjectSoftKeyMask_c::AttributeID:uint8_t
+{
+	BackgroundColour = 1,
+};
+
+
 struct vtObjectSoftKeyMask_c::iVtObjectSoftKeyMask_s: iVtObjectObject_s, iVtObjectwMacro_s {
 	IsoAgLib::Colour backgroundColour;
 	iVtObjectSoftKeyMask_s(
@@ -231,24 +239,28 @@ vtObjectSoftKeyMask_c::setOriginSKM(bool /*b_SKM*/)
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-uint8_t
+IsoAgLib::Colour
 vtObjectSoftKeyMask_c::updateBackgroundColour(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour), sizeof(iVtObjectSoftKeyMask_s), 1);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour), sizeof(iVtObjectSoftKeyMask_s));
+    getAttribute(BackgroundColour);
+  return vtObject_a->backgroundColour;
 }
 
 void
-vtObjectSoftKeyMask_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
+vtObjectSoftKeyMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue)
 {
-  if (attrID == 1)
-    saveValue8(MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour), sizeof(iVtObjectSoftKeyMask_s), convertLittleEndianStringUi8(pui8_attributeValue));
+  switch (attrID)
+  {
+    case BackgroundColour: vtObject_a->backgroundColour = convertLittleEndianStringColour(pui8_attributeValue); break;
+    default: break;
+  }
 }
 
     void vtObjectSoftKeyMask_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour) : 0, sizeof(iVtObjectSoftKeyMask_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    		vtObject_a->backgroundColour = newValue;
+    	setAttribute ( BackgroundColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
 #endif

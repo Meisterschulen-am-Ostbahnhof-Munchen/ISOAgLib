@@ -194,7 +194,7 @@ vtObjectDataMask_c::updateBackgroundColour (bool b_SendRequest)
 }
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-IsoAgLib::iVtObjectSoftKeyMask_c *
+IsoAgLib::iVtObjectSoftKeyMask_c*
 vtObjectDataMask_c::updateSoftKeyMask(bool b_SendRequest)
 {
   if (b_SendRequest)

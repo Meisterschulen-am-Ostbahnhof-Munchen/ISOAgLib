@@ -58,7 +58,7 @@ public:
 
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
 
-  uint16_t updateSoftKeyMask(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectSoftKeyMask_c* updateSoftKeyMask(bool b_SendRequest=false);
 #endif
 
   virtual uint16_t getObjectType() const;

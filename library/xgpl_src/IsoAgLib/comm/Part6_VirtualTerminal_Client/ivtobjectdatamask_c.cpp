@@ -65,7 +65,7 @@ namespace IsoAgLib {
     }
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-    uint16_t iVtObjectDataMask_c::updateSoftKeyMask(bool b_SendRequest) {
+    IsoAgLib::iVtObjectSoftKeyMask_c* iVtObjectDataMask_c::updateSoftKeyMask(bool b_SendRequest) {
         return vtObjectDataMask_c::updateSoftKeyMask(b_SendRequest);
     }
 #endif
