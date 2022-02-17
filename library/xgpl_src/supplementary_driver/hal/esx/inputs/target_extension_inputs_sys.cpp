@@ -42,7 +42,7 @@ extern "C" {
 }
 
 
-using namespace std; // simple version to avoid problems with using CNAMESPACE
+using namespace std;
 
 
 /** prescaler value for digin input channels 1_4 */

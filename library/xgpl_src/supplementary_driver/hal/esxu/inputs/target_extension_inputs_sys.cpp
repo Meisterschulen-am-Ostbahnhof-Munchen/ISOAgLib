@@ -23,7 +23,7 @@
 #include "inputs_target_extensions.h"
 #include <IsoAgLib/util/impl/util_funcs.h>
 
-using namespace std; // simple version to avoid problems with using CNAMESPACE
+using namespace std;
 
 
 namespace __HAL {

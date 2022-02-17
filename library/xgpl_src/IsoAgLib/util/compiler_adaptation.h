@@ -52,23 +52,6 @@
 #endif
 
 
-#undef CNAMESPACE
-#if defined( __TSW_CPP_70__ )
- #define CNAMESPACE
-#elif defined( _MSC_VER )
-	#if _MSC_VER <= 1200
-		#define CNAMESPACE
-	#else
-	 #define CNAMESPACE std
-	#endif
-#elif defined( __IAR_SYSTEMS_ICC__ )
-	#define CNAMESPACE
-#else
- #define CNAMESPACE std
-#endif
-
-
-
 
 #ifdef __IAR_SYSTEMS_ICC__
     // needed for AMS5
