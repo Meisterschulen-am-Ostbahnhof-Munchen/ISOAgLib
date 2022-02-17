@@ -31,6 +31,16 @@
 namespace __IsoAgLib {
 
 
+enum vtObjectPolygon_c::AttributeID:uint8_t
+{
+	Width                   = 1,
+	Height                  = 2,
+	LineAttributes          = 3,
+	FillAttributes          = 4,
+	PolygonType             = 5,
+};
+
+
 struct repeat_x_y_s {
   int16_t x;
   int16_t y;
@@ -40,8 +50,8 @@ struct repeat_x_y_s {
 struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
 	uint16_t width;
 	uint16_t height;
-	IsoAgLib::iVtObjectLineAttributes_c *lineAttributes;
-	IsoAgLib::iVtObjectFillAttributes_c *fillAttributes;
+	IsoAgLib::iVtObjectLineAttributes_c* lineAttributes;
+	IsoAgLib::iVtObjectFillAttributes_c* fillAttributes;
 	uint8_t polygonType;
 	uint8_t numberOfPoints;
 	const repeat_x_y_s *pointsToFollow;
@@ -49,8 +59,8 @@ struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
 			IsoAgLib::ObjectID ID,
 			uint16_t width,
 			uint16_t height,
-			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
-			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes,
+			IsoAgLib::iVtObjectLineAttributes_c* lineAttributes,
+			IsoAgLib::iVtObjectFillAttributes_c* fillAttributes,
 			uint8_t polygonType,
 			uint8_t numberOfPoints,
 			const repeat_x_y_s *pointsToFollow)
@@ -154,58 +164,52 @@ vtObjectPolygon_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
 uint16_t
 vtObjectPolygon_c::updateWidth(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectPolygon_a(), width), sizeof(iVtObjectPolygon_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectPolygon_a(), width), sizeof(iVtObjectPolygon_s));
+	  if (b_SendRequest)
+	    getAttribute(Width);
+	  return vtObject_a->width;
 }
 
 uint16_t
 vtObjectPolygon_c::updateHeight(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectPolygon_a(), height), sizeof(iVtObjectPolygon_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectPolygon_a(), height), sizeof(iVtObjectPolygon_s));
+	  if (b_SendRequest)
+	    getAttribute(Height);
+	  return vtObject_a->height;
 }
 
-uint16_t
+IsoAgLib::iVtObjectLineAttributes_c*
 vtObjectPolygon_c::updateLineAttributes(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectPolygon_a(), lineAttributes), sizeof(iVtObjectPolygon_s), 3);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectPolygon_a(), lineAttributes), sizeof(iVtObjectPolygon_s));
+	  if (b_SendRequest)
+	    getAttribute(LineAttributes);
+	  return vtObject_a->lineAttributes;
 }
 
-uint16_t
+IsoAgLib::iVtObjectFillAttributes_c*
 vtObjectPolygon_c::updateFillAttributes(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectPolygon_a(), fillAttributes), sizeof(iVtObjectPolygon_s), 4);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectPolygon_a(), fillAttributes), sizeof(iVtObjectPolygon_s));
+	  if (b_SendRequest)
+	    getAttribute(FillAttributes);
+	  return vtObject_a->fillAttributes;
 }
 
 uint8_t
 vtObjectPolygon_c::updatePolygonType(bool b_SendRequest)
 {
-  if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectPolygon_a(), polygonType), sizeof(iVtObjectPolygon_s), 5);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectPolygon_a(), polygonType), sizeof(iVtObjectPolygon_s));
+	  if (b_SendRequest)
+	    getAttribute(PolygonType);
+	  return vtObject_a->polygonType;
 }
-
 void
 vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValue)
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectPolygon_a(), width), sizeof(iVtObjectPolygon_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectPolygon_a(), height), sizeof(iVtObjectPolygon_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectPolygon_a(), lineAttributes), sizeof(iVtObjectPolygon_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 4: saveValue16(MACRO_getStructOffset(get_vtObjectPolygon_a(), fillAttributes), sizeof(iVtObjectPolygon_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectPolygon_a(), polygonType), sizeof(iVtObjectPolygon_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case Width:          vtObject_a->width          = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case Height:         vtObject_a->height         = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    //case LineAttributes: vtObject_a->lineAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break; //TODO
+    //case FillAttributes: vtObject_a->fillAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break; //TODO
+    case PolygonType:    vtObject_a->polygonType    = convertLittleEndianStringUi8(pui8_attributeValue); break;
     default: break;
   }
 }
@@ -217,29 +221,37 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
     {}
 
     void vtObjectPolygon_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPolygon_a(), width) : 0, sizeof(iVtObjectPolygon_s), 1 /* "Width" */, newWidth, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->width = newWidth;
+    	setAttribute(Width /* "Width" */, newWidth, b_enableReplaceOfCmd);
     }
 
     void vtObjectPolygon_c::setHeight(uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPolygon_a(), height) : 0, sizeof(iVtObjectPolygon_s), 2 /* "Height" */, newHeight, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->height = newHeight;
+    	setAttribute(Height /* "Height" */, newHeight, b_enableReplaceOfCmd);
     }
 
     void
-    vtObjectPolygon_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject,
-                                         bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPolygon_a(), lineAttributes) : 0, sizeof(iVtObjectPolygon_s), 3 /* "Line Attribute" */, (IsoAgLib::iVtObject_c*) newLineAttributes, b_enableReplaceOfCmd);
+    vtObjectPolygon_c::setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c *newLineAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->lineAttributes = newLineAttributes;
+    	setAttribute(LineAttributes /* "Line Attributes" */, newLineAttributes->getID(), b_enableReplaceOfCmd);
     }
 
 
 
     void
-    vtObjectPolygon_c::setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c *newFillAttributes, bool b_updateObject,
-                                         bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPolygon_a(), fillAttributes) : 0, sizeof(iVtObjectPolygon_s), 4 /* "Fill Attribute" */, (IsoAgLib::iVtObject_c*) newFillAttributes, b_enableReplaceOfCmd);
+    vtObjectPolygon_c::setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c *newFillAttributes, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->fillAttributes = newFillAttributes;
+    	setAttribute(FillAttributes /* "Fill Attributes" */, newFillAttributes->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectPolygon_c::setPolygonType(uint8_t newPolygonType, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectPolygon_a(), polygonType) : 0, sizeof(iVtObjectPolygon_s), 5 /* "Polygon Type" */, newPolygonType, newPolygonType, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->polygonType = newPolygonType;
+    	setAttribute( PolygonType /* "Polygon Type" */, newPolygonType, b_enableReplaceOfCmd);
     }
 
 

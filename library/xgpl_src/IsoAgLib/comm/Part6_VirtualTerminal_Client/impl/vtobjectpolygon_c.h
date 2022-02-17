@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_polygon
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 
 
@@ -33,6 +34,7 @@ namespace __IsoAgLib {
 class vtObjectPolygon_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectPolygon_s;
 
@@ -63,8 +65,8 @@ public:
 
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
-  uint16_t updateLineAttributes(bool b_SendRequest=false);
-  uint16_t updateFillAttributes(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
   uint8_t updatePolygonType(bool b_SendRequest=false);
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif

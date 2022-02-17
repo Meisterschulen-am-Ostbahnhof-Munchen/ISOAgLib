@@ -70,11 +70,11 @@ public:
     return vtObjectPolygon_c::updateHeight(b_SendRequest);
   }
 
-  uint16_t updateLineAttributes(bool b_SendRequest=false) {
+  IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false) {
     return vtObjectPolygon_c::updateLineAttributes(b_SendRequest);
   }
 
-  uint16_t updateFillAttributes(bool b_SendRequest=false) {
+  IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false) {
     return vtObjectPolygon_c::updateFillAttributes(b_SendRequest);
   }
 
