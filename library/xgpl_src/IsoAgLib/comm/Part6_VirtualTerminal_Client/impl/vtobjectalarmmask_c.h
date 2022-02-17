@@ -35,6 +35,7 @@ namespace __IsoAgLib {
 class vtObjectAlarmMask_c : public IsoAgLib::iVtObjectMask_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectAlarmMask_s;
 

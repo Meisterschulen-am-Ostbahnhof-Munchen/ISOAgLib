@@ -30,6 +30,17 @@ namespace __IsoAgLib {
 
 
 
+enum vtObjectAlarmMask_c::AttributeID:uint8_t
+{
+
+	BackgroundColour = 1,
+	SoftKeyMask      = 2,
+	Priority         = 3,
+	AcousticSignal   = 4,
+};
+
+
+
 struct vtObjectAlarmMask_c::iVtObjectAlarmMask_s : iVtObjectMask_s {
   IsoAgLib::Colour backgroundColour;
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
@@ -115,7 +126,7 @@ vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKey
 	  vtObject_a->softKeyMask = newSoftKeyMask;
 
   __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSoftKeyMask(
-    this, 2 /* "Type: Alarm Mask" */, (newSoftKeyMask == NULL) ? 0xFFFF : newSoftKeyMask->getID(), b_enableReplaceOfCmd );
+    this, SoftKeyMask /* "Type: Alarm Mask" */, (newSoftKeyMask == NULL) ? 0xFFFF : newSoftKeyMask->getID(), b_enableReplaceOfCmd );
 }
 #endif
 
@@ -138,36 +149,34 @@ uint8_t
 vtObjectAlarmMask_c::updateBackgroundColour (bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour), sizeof(iVtObjectAlarmMask_s), 1);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour), sizeof(iVtObjectAlarmMask_s));
+    getAttribute(BackgroundColour);
+  return vtObject_a->backgroundColour;
 }
 
-uint16_t
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+IsoAgLib::iVtObjectSoftKeyMask_c*
 vtObjectAlarmMask_c::updateSoftKeyMask(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s));
+    getAttribute(SoftKeyMask);
+  return vtObject_a->softKeyMask;
 }
+#endif
 
 uint8_t
 vtObjectAlarmMask_c::updatePriority (bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), priority), sizeof(iVtObjectAlarmMask_s), 3);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), priority), sizeof(iVtObjectAlarmMask_s));
+    getAttribute(Priority);
+  return vtObject_a->priority;
 }
 
 uint8_t
 vtObjectAlarmMask_c::updateAcousticSignal(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), acousticSignal), sizeof(iVtObjectAlarmMask_s), 4);
-  else
-    return getValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), acousticSignal), sizeof(iVtObjectAlarmMask_s));
+    getAttribute(AcousticSignal);
+  return vtObject_a->acousticSignal;
 }
 
 void
@@ -175,10 +184,10 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
 {
   switch (attrID)
   {
-    case 1: saveValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour), sizeof(iVtObjectAlarmMask_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), priority), sizeof(iVtObjectAlarmMask_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectAlarmMask_a(), acousticSignal), sizeof(iVtObjectAlarmMask_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case BackgroundColour: vtObject_a->backgroundColour = convertLittleEndianStringColour(pui8_attributeValue); break;
+    //case SoftKeyMask:      vtObject_a->softKeyMask      = convertLittleEndianStringUi16(pui8_attributeValue)); break; //TODO
+    case Priority:         vtObject_a->priority         = convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case AcousticSignal:   vtObject_a->acousticSignal   = convertLittleEndianStringUi8(pui8_attributeValue)); break;
     default: break;
   }
 }
@@ -187,15 +196,21 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
 
 
     void vtObjectAlarmMask_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAlarmMask_a(), backgroundColour) : 0, sizeof(iVtObjectAlarmMask_s), 1, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    		vtObject_a->backgroundColour = newValue;
+    	setAttribute ( BackgroundColour, newValue, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectAlarmMask_c::setPriority(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAlarmMask_a(), priority) : 0, sizeof(iVtObjectAlarmMask_s), 3, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    		vtObject_a->priority = newValue;
+    	setAttribute ( Priority, newValue, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectAlarmMask_c::setAcousticSignal(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAlarmMask_a(), acousticSignal) : 0, sizeof(iVtObjectAlarmMask_s), 4, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    	    		vtObject_a->acousticSignal = newValue;
+    	setAttribute ( AcousticSignal, newValue, newValue, b_enableReplaceOfCmd);
     }
 
 
