@@ -30,8 +30,13 @@ namespace IsoAgLib {
 
 class iVtObjectFillAttributes_c : public __IsoAgLib::vtObjectFillAttributes_c
 {
+private:
+    iVtObjectFillAttributes_c() = delete;
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_FILL_ATTRIBUTES; }
+
+   ~iVtObjectFillAttributes_c() override;
+
+  static uint16_t objectType();
 
 
   void setFillType(FillType newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {

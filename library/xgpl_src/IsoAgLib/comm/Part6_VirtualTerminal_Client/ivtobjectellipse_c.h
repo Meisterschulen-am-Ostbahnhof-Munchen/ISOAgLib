@@ -29,10 +29,14 @@ namespace IsoAgLib {
 
 class iVtObjectEllipse_c : public __IsoAgLib::vtObjectEllipse_c
 {
+private:
+    iVtObjectEllipse_c() = delete;
 public:
   static uint16_t objectType();
 
-  iVtObjectEllipse_c(
+  ~iVtObjectEllipse_c() override;
+
+  explicit iVtObjectEllipse_c(
 	iVtClientObjectPool_c* pool,
 	ObjectID ID = autoID,
 	iVtObjectLineAttributes_c *lineAttributes = nullptr,
@@ -45,27 +49,27 @@ public:
 
 
 
-  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setEllipseType(uint8_t newEllipseType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setFillAttributes(iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setFillAttributes(iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectEllipse_c::updateObjectType(); }
   */
   
-  IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  uint8_t updateEllipseType(bool b_SendRequest=false);
-  uint8_t updateStartAngle(bool b_SendRequest=false);
-  uint8_t updateEndAngle(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
+  iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false) override;
+  uint16_t updateWidth(bool b_SendRequest=false) override;
+  uint16_t updateHeight(bool b_SendRequest=false) override;
+  uint8_t updateEllipseType(bool b_SendRequest=false) override;
+  uint8_t updateStartAngle(bool b_SendRequest=false) override;
+  uint8_t updateEndAngle(bool b_SendRequest=false) override;
+  iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false) override;
 #endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   uint16_t getObjectType() const override;
 };

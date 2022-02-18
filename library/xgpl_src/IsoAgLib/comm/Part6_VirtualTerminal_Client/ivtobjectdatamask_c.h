@@ -27,10 +27,15 @@ namespace IsoAgLib {
 
 class iVtObjectDataMask_c : public __IsoAgLib::vtObjectDataMask_c
 {
+private:
+    iVtObjectDataMask_c() = delete;
+
 public:
   static uint16_t objectType();
 
-  iVtObjectDataMask_c(
+  ~iVtObjectDataMask_c() override;
+
+  explicit iVtObjectDataMask_c(
 		  iVtClientObjectPool_c* pool
 		, ObjectID ID = autoID
   	    , Colour backgroundColour = BLACK
@@ -41,11 +46,11 @@ public:
 
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-  void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
 #endif
-  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx,  int8_t dy,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool setChildPosition( iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool moveChildLocation(iVtObject_c* apc_childObject, int16_t dx,  int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool setChildPosition( iVtObject_c* apc_childObject, int16_t  x,  int16_t y,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -56,12 +61,11 @@ public:
   }
   */
 
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
-
-  IsoAgLib::iVtObjectSoftKeyMask_c* updateSoftKeyMask(bool b_SendRequest=false);
+  Colour updateBackgroundColour(bool b_SendRequest=false) override;
+  iVtObjectSoftKeyMask_c* updateSoftKeyMask(bool b_SendRequest=false) override;
 #endif
 
-  virtual uint16_t getObjectType() const;
+  uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib

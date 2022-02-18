@@ -113,6 +113,9 @@ namespace IsoAgLib {
     IsoAgLib::iVtObjectFillAttributes_c* iVtObjectEllipse_c::updateFillAttributes(bool b_SendRequest) {
         return vtObjectEllipse_c::updateFillAttributes(b_SendRequest);
     }
+
+    iVtObjectEllipse_c::~iVtObjectEllipse_c() = default;
+
 #endif
 
 

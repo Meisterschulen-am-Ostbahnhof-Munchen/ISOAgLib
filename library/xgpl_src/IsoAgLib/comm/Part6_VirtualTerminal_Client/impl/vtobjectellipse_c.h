@@ -41,7 +41,7 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectEllipse_s> vtObject_a;
 
-
+    vtObjectEllipse_c() = delete;
 	vtObjectEllipse_c(iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst);
 
 public:
@@ -65,7 +65,7 @@ public:
 
 
 
-  virtual ~vtObjectEllipse_c();
+  ~vtObjectEllipse_c() override;
 
 
   uint32_t fitTerminal() const;
@@ -82,17 +82,22 @@ public:
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  /** that attribute is in parentheses in the spec, so commented out here
+  virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 15; }
   */
 
   IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
+
+        virtual uint16_t updateWidth(bool b_SendRequest=false);
+
+        virtual uint16_t updateHeight(bool b_SendRequest=false);
   virtual uint8_t updateEllipseType(bool b_SendRequest=false);
-  uint8_t updateStartAngle(bool b_SendRequest=false);
-  uint8_t updateEndAngle(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
+
+        virtual uint8_t updateStartAngle(bool b_SendRequest=false);
+
+        virtual uint8_t updateEndAngle(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };

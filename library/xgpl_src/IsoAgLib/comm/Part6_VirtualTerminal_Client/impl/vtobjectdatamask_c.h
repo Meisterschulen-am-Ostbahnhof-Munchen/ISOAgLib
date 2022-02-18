@@ -64,24 +64,28 @@ public:
   uint32_t fitTerminal() const;
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-  void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
 #endif
 
-  // //////////////////////////////////
+        virtual // //////////////////////////////////
   // All special Attribute-Set methods
   void setBackgroundColour(IsoAgLib::Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+        virtual bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+        virtual bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   bool lockUnlockMask( bool b_lockMask, uint16_t ui16_lockTimeOut );
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-  /** that attribute is in parentheses in the spec, so commented out here
+
+        virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 1; }
   */
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-  IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false);
 #endif
 
 
