@@ -20,6 +20,7 @@
 #include "vtobjectinputlist_c.h"
 
 #ifdef CONFIG_USE_VTOBJECT_inputlist
+#include "../ivtobjectnumbervariable_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -28,17 +29,25 @@
 namespace __IsoAgLib {
 
 
+enum vtObjectInputList_c::AttributeID:uint8_t
+{
+	Width                   = 1,
+	Height                  = 2,
+	VariableReference       = 3,
+	Options                 = 5,
+};
+
 struct vtObjectInputList_c::iVtObjectInputList_s : iVtObjectObject_s, iVtObjectwMacro_s {
   uint16_t width;
   uint16_t height;
-  IsoAgLib::iVtObject_c* variableReference;
+  IsoAgLib::iVtObjectNumberVariable_c* variableReference;
   uint8_t value;
   uint8_t options;
   iVtObjectInputList_s(
 		    IsoAgLib::ObjectID ID,
   		    uint16_t width,
 			uint16_t height,
-			IsoAgLib::iVtObject_c *variableReference,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint8_t value,
 			uint8_t options)
   : iVtObject_s(ID)
@@ -104,14 +113,14 @@ IsoAgLib::ObjectID vtObjectInputList_c::getID() const {
 IsoAgLib::iVtObject_c*
 vtObjectInputList_c::getListItem(uint8_t xth)
 {
-  return (dynamic_cast<iVtObjectInputList_s *>(vtObject_a))->objectsToFollow[xth].vtObject;
+  return vtObject_a->objectsToFollow[xth].vtObject;
 }
 
 
 uint8_t
 vtObjectInputList_c::getNumberOfListItems()
 {
-    return (dynamic_cast<iVtObjectInputList_s *>(vtObject_a))->numberOfObjectsToFollow;
+    return vtObject_a->numberOfObjectsToFollow;
 }
 
 
@@ -132,7 +141,7 @@ vtObjectInputList_c::updateEnable(uint8_t aui8_enOrDis)
 void
 vtObjectInputList_c::setValue(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (get_vtObjectInputList_a()->variableReference == NULL) {
+  if (vtObject_a->variableReference == NULL) {
     if (b_updateObject)
     	vtObject_a->value = newValue;
 
@@ -175,27 +184,24 @@ uint16_t
 vtObjectInputList_c::updateWidth(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), width), sizeof(iVtObjectInputList_s), 1);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), width), sizeof(iVtObjectInputList_s));
+    getAttribute(Width);
+  return vtObject_a->width;
 }
 
 uint16_t
 vtObjectInputList_c::updateHeight(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), height), sizeof(iVtObjectInputList_s), 2);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), height), sizeof(iVtObjectInputList_s));
+	  getAttribute(Height);
+  return vtObject_a->height;
 }
 
-uint16_t
+IsoAgLib::iVtObjectNumberVariable_c *
 vtObjectInputList_c::updateVariableReference(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue16GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), variableReference), sizeof(iVtObjectInputList_s), 3);
-  else
-    return getValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), variableReference), sizeof(iVtObjectInputList_s));
+	  getAttribute(VariableReference);
+  return vtObject_a->variableReference;
 }
 
 /** these attributes are in parentheses in the spec, so commented out here
@@ -203,7 +209,7 @@ uint8_t
 vtObjectInputList_c::updateValue(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s), 4);
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), value = 4);
   else
     return getValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s));
 }
@@ -212,7 +218,7 @@ uint8_t
 vtObjectInputList_c::updateOptions(bool b_SendRequest)
 {
   if (b_SendRequest)
-    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), 5);
+    return getValue8GetAttribute(MACRO_getStructOffset(get_vtObjectInputList_a(), enabled = 5);
   else
     return getValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s));
 }
@@ -223,12 +229,12 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), width), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 2: saveValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), height), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
-    case 3: saveValue16(MACRO_getStructOffset(get_vtObjectInputList_a(), variableReference), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
+    case Width:             vtObject_a->width             = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    case Height:            vtObject_a->height            = convertLittleEndianStringUi16(pui8_attributeValue); break;
+    //case VariableReference: vtObject_a->variableReference = convertLittleEndianStringUi16(pui8_attributeValue); break; //TODO
     /** these attributes are in parentheses in the spec, so commented out here
-    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), value), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
-    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), enabled), sizeof(iVtObjectInputList_s), convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 4: saveValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), value = convertLittleEndianStringUi8(pui8_attributeValue)); break;
+    case 5: saveValue8(MACRO_getStructOffset(get_vtObjectInputList_a(), enabled = convertLittleEndianStringUi8(pui8_attributeValue)); break;
     */
     default: break;
   }
@@ -243,20 +249,43 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 
 
     void vtObjectInputList_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), width) : 0, sizeof(iVtObjectInputList_s), 1, newValue, b_enableReplaceOfCmd);
+        MACRO_scaleLocalVars
+        MACRO_scaleSKLocalVars
+
+        uint32_t scaledDim = uint32_t( newValue );
+      #ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+        MACRO_scaleDimension( scaledDim )
+      #endif
+
+    	if (b_updateObject)
+    		vtObject_a->width = newValue;
+        setAttribute (Width, scaledDim, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputList_c::setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue16SetAttributeScaled ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), height) : 0, sizeof(iVtObjectInputList_s), 2, newValue, b_enableReplaceOfCmd);
+        MACRO_scaleLocalVars
+        MACRO_scaleSKLocalVars
+
+        uint32_t scaledDim = uint32_t( newValue );
+      #ifndef USE_VT_CLIENT_OLD_UNSCALED_SIZE_COMMANDS
+        MACRO_scaleDimension( scaledDim )
+      #endif
+
+    	if (b_updateObject)
+    		vtObject_a->height = newValue;
+        setAttribute (Height, scaledDim, b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputList_c::setVariableReference(IsoAgLib::iVtObject_c *newValue, bool b_updateObject,
-                                                   bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), variableReference) : 0, sizeof(iVtObjectInputList_s), 3, newValue, b_enableReplaceOfCmd);
+    void vtObjectInputList_c::setVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->variableReference = newValue;
+    	setAttribute(VariableReference, newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectInputList_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputList_a(), options) : 0, sizeof(iVtObjectInputList_s), 5, newValue, newValue, b_enableReplaceOfCmd);
+    	if (b_updateObject)
+    		vtObject_a->options = newValue;
+    	setAttribute(Options, newValue, b_enableReplaceOfCmd);
     }
 
 

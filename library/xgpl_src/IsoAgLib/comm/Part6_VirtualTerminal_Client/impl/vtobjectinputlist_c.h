@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_inputlist
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclientconnection_c.h"
 
@@ -34,6 +35,7 @@ namespace __IsoAgLib {
 class vtObjectInputList_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectInputList_s;
 
@@ -56,7 +58,7 @@ public:
   // All special Attribute-Set methods
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(IsoAgLib::iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -68,7 +70,7 @@ public:
 
   uint16_t updateWidth(bool b_SendRequest=false);
   uint16_t updateHeight(bool b_SendRequest=false);
-  uint16_t updateVariableReference(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateValue(bool b_SendRequest=false);

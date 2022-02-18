@@ -53,7 +53,7 @@ public:
     vtObjectInputList_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setVariableReference(iVtObject_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputList_c::setVariableReference(newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -86,7 +86,7 @@ public:
     return vtObjectInputList_c::updateHeight(b_SendRequest);
   }
 
-  uint16_t updateVariableReference(bool b_SendRequest=false) {
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
     return vtObjectInputList_c::updateVariableReference(b_SendRequest);
   }
 
