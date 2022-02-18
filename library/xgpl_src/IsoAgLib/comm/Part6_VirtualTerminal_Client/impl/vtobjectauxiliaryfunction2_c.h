@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vttypes.h"
 
@@ -45,6 +46,7 @@ private:
 
 public:
   vtObjectAuxiliaryFunction2_c(iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst);
+  ~vtObjectAuxiliaryFunction2_c() override;
 
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,

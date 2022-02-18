@@ -84,13 +84,13 @@ vtObjectAuxiliaryFunction2_c::fitTerminal() const
 bool
 vtObjectAuxiliaryFunction2_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAuxiliaryFunction2_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryFunction2_s), b_enableReplaceOfCmd);
+  return genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, vtObject_a->objectsToFollow);
 }
 
 bool
 vtObjectAuxiliaryFunction2_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAuxiliaryFunction2_a(), objectsToFollow), sizeof(iVtObjectAuxiliaryFunction2_s), b_enableReplaceOfCmd, SoftKeyOffset);
+  return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, vtObject_a->objectsToFollow, b_enableReplaceOfCmd, SoftKeyOffset);
 }
 
 void
@@ -311,6 +311,8 @@ vtObjectAuxiliaryFunction2_c::clearPreferredAssignments()
             :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectAuxiliaryFunction2SROM)
     {}
+
+    vtObjectAuxiliaryFunction2_c::~vtObjectAuxiliaryFunction2_c() = default;
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
