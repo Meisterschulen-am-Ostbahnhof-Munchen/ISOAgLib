@@ -38,6 +38,21 @@ namespace IsoAgLib {
 
     uint16_t iVtObjectContainer_c::getObjectType() const { return objectType(); }
 
+iVtObjectContainer_c::iVtObjectContainer_c(
+		iVtClientObjectPool_c *pool,
+		ObjectID ID,
+		uint16_t width,
+		uint16_t height,
+		uint8_t hidden)
+:vtObjectContainer_c(
+		pool->getAiMultitonInst(),
+		ID,
+		width,
+		height,
+		hidden)
+{
+	pool->Append(this);
+}
 
 } // IsoAgLib
 

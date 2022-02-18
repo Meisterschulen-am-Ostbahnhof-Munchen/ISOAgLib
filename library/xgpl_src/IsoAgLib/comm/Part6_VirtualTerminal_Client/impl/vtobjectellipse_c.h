@@ -42,6 +42,8 @@ private:
 	std::unique_ptr<iVtObjectEllipse_s> vtObject_a;
 
 
+	vtObjectEllipse_c(iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst);
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
@@ -61,7 +63,7 @@ public:
 			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes);
 
 
-  vtObjectEllipse_c(iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst);
+
 
   virtual ~vtObjectEllipse_c();
 

@@ -32,6 +32,17 @@ class iVtObjectContainer_c : public __IsoAgLib::vtObjectContainer_c
 public:
   ~iVtObjectContainer_c() override;
 
+  iVtObjectContainer_c() = delete;
+
+  iVtObjectContainer_c(
+	iVtClientObjectPool_c* pool,
+	ObjectID ID = autoID,
+    uint16_t width = 100,
+    uint16_t height = 100,
+    uint8_t hidden = 0);
+
+
+
   static uint16_t objectType();
 
   void hide(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

@@ -210,7 +210,22 @@ vtObjectContainer_c::saveReceivedAttribute(uint8_t attrID, uint8_t* /*pui8_attri
 
     vtObjectContainer_c::~vtObjectContainer_c() = default;
 
-
+vtObjectContainer_c::vtObjectContainer_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		uint16_t width,
+		uint16_t height,
+		uint8_t hidden)
+    : vtObjectContainer_c(
+    		new iVtObjectContainer_s(
+    				ID,
+					width,
+					height,
+					hidden
+    				),
+					ai_multitonInst)
+{
+}
 
 } // __IsoAgLib
 #endif //CONFIG_USE_VTOBJECT_container

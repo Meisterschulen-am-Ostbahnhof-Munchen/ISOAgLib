@@ -43,7 +43,9 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectContainer_s> vtObject_a;
 
+  vtObjectContainer_c(iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst);
 
+  vtObjectContainer_c() = delete;
 
 public:
   int16_t stream(uint8_t* destMemory,
@@ -51,7 +53,14 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectContainer_c(iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst);
+  vtObjectContainer_c(
+            int ai_multitonInst,
+            IsoAgLib::ObjectID ID,
+            uint16_t width,
+            uint16_t height,
+            uint8_t hidden);
+
+
 
 
   ~vtObjectContainer_c() override;
