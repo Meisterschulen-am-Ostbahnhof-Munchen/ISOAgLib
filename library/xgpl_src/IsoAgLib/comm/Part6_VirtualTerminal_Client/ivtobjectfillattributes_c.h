@@ -20,7 +20,12 @@
 #ifndef IVTOBJECTFILLATTRIBUTES_C_H
 #define IVTOBJECTFILLATTRIBUTES_C_H
 
+#include <cstdint>
+#include "iColour.h"
+#include "iFillType.h"
 #include "impl/vtobjectfillattributes_c.h"
+#include "iObjectID.h"
+
 #ifdef CONFIG_USE_VTOBJECT_fillattributes
 
 #include "ivtobjectpicturegraphic_c.h"
