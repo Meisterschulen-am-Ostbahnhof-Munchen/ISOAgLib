@@ -103,10 +103,7 @@ vtObjectColourMap_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 {
   switch (attrID)
   {
-    case 1: saveValue16(MACRO_getStructOffset(get_vtObjectColourMap_a(),
-                        numOfColourIdxToFollow),
-                        sizeof(iVtObjectColourMap_s),
-                        convertLittleEndianStringUi16(pui8_attributeValue));
+    case 1: vtObject_a->numOfColourIdxToFollow = convertLittleEndianStringUi16(pui8_attributeValue);
     break;
 
     default: break;
