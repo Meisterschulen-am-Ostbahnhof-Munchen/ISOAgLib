@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_auxiliaryinput2
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vttypes.h"
 

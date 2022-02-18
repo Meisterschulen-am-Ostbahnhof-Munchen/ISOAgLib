@@ -56,34 +56,22 @@ public:
 	{
 		pool->Append(this);
   }
-  ~iVtObjectAlarmMask_c(){}
+  ~iVtObjectAlarmMask_c() override;
 
 
-  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectAlarmMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-  void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectAlarmMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
 #endif
 
-  void setPriority(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectAlarmMask_c::setPriority (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setPriority(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  void setAcousticSignal(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectAlarmMask_c::setAcousticSignal (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setAcousticSignal(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectAlarmMask_c::moveChildLocation (apc_childObject, dx, dy, b_updateObject);
-  }
+  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) override;
 
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    return vtObjectAlarmMask_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
-  }
+  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
@@ -92,28 +80,20 @@ public:
   }
    */
 
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
-    return vtObjectAlarmMask_c::updateBackgroundColour(b_SendRequest);
-  }
+  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) override;
 
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-  IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false) {
-    return vtObjectAlarmMask_c::updateSoftKeyMask(b_SendRequest);
-  }
+  IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false) override;
 #endif
 
 
-  uint8_t updatePriority(bool b_SendRequest=false) {
-    return vtObjectAlarmMask_c::updatePriority(b_SendRequest);
-  }
+  uint8_t updatePriority(bool b_SendRequest=false) override;
 
-  uint8_t updateAcousticSignal(bool b_SendRequest=false) {
-    return vtObjectAlarmMask_c::updateAcousticSignal(b_SendRequest);
-  }
+  uint8_t updateAcousticSignal(bool b_SendRequest=false) override;
 #endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib
