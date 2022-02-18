@@ -18,6 +18,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "commandhandler_c.h"
+#include "../iObjectID.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>
@@ -1560,7 +1561,7 @@ bool CommandHandler_c::sendCommandChangeStringValue (IsoAgLib::iVtObject_c* apc_
 { return sendCommandChangeStringValue(apc_object->getID(), apc_newValue, overrideSendLength, b_enableReplaceOfCmd); }
 
 bool CommandHandler_c::sendCommandChangeActiveMask (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_mask, bool b_enableReplaceOfCmd)
-{ return sendCommandChangeActiveMask( apc_object->getID(), ( apc_mask ) ? apc_mask->getID() : (uint16_t) 0xFFFFU, b_enableReplaceOfCmd ); }
+{ return sendCommandChangeActiveMask( apc_object->getID(), ( apc_mask ) ? apc_mask->getID() : IsoAgLib::nullID, b_enableReplaceOfCmd ); }
 
 bool CommandHandler_c::sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd)
 { return sendCommandChangeChildPosition(apc_object->getID(), apc_childObject->getID(), x, y, b_enableReplaceOfCmd); }

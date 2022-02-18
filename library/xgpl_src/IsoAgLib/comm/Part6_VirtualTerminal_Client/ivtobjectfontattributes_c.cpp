@@ -11,8 +11,7 @@ namespace IsoAgLib {
 	// implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
 	// cconstructor/functions direct in scope of iVtObjectFontAttributes_c
 
-	iVtObjectFontAttributes_c::~iVtObjectFontAttributes_c() {
-	}
+	iVtObjectFontAttributes_c::~iVtObjectFontAttributes_c() = default;
 
 	uint16_t iVtObjectFontAttributes_c::getScaledWidthHeight() {
 		return vtObjectFontAttributes_c::getScaledWidthHeight();
@@ -37,6 +36,7 @@ namespace IsoAgLib {
 	    {
 	    	pool->Append(this);
 	    }
+
 
     uint16_t iVtObjectFontAttributes_c::objectType() { return VT_OBJECT_TYPE_FONT_ATTRIBUTES; }
 

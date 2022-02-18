@@ -14,7 +14,8 @@ namespace IsoAgLib {
 	enum ObjectID : uint16_t
 	{
 		autoID = 0,
-		firstID = 257 /* Macro ObjID must be 0-255 !! */
+		firstID = 257, /* Macro ObjID must be 0-255 !! */
+		nullID = 0xFFFFU,
 	};
 
 };

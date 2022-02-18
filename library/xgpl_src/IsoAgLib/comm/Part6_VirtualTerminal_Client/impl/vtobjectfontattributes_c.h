@@ -57,8 +57,8 @@ public:
 			uint8_t fontStyle);
 
 
-  virtual ~vtObjectFontAttributes_c();
-  uint32_t fitTerminal() const;
+  ~vtObjectFontAttributes_c() override;
+  uint32_t fitTerminal() const override;
   uint16_t getScaledWidthHeight();
 
      // //////////////////////////////////
@@ -67,15 +67,16 @@ public:
     virtual void setFontSize(IsoAgLib::Font newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setFontType(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setFontStyle(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    void setFontAttributes(IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setFontAttributes(IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
-        virtual /** that attribute is in parentheses in the spec, so commented out here
+  /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 23; }
   */
 
-  uint8_t updateFontColour(bool b_SendRequest=false);
+  virtual uint8_t updateFontColour(bool b_SendRequest=false);
   virtual uint8_t updateFontSize(bool b_SendRequest=false);
   virtual uint8_t updateFontType(bool b_SendRequest=false);
   virtual uint8_t updateFontStyle(bool b_SendRequest=false);
