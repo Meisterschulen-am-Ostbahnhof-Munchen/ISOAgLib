@@ -28,6 +28,16 @@
 namespace __IsoAgLib {
 
 
+
+
+enum vtObjectAuxiliaryControlDesignatorObjectPointer_c::AttributeID:uint8_t
+{
+
+	Value            = 2,
+
+};
+
+
 struct vtObjectAuxiliaryControlDesignatorObjectPointer_c::iVtObjectAuxiliaryControlDesignatorObjectPointer_s: iVtObject_s {
 	uint8_t pointerType;
 	iVtObject_c *value;
@@ -115,10 +125,13 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::saveReceivedAttribute(uint8_t
     {}
 
 
-    void vtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId(IsoAgLib::iVtObject_c *apc_newObject,
-                                                                                 bool b_updateObject,
-                                                                                 bool b_enableReplaceOfCmd) {
-        saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectAuxiliaryControlDesignatorObjectPointer_a(), value) : 0, sizeof(iVtObjectAuxiliaryControlDesignatorObjectPointer_s), 2 /* "auxiliary object ID Attribute" */, apc_newObject, b_enableReplaceOfCmd);
+    vtObjectAuxiliaryControlDesignatorObjectPointer_c::~vtObjectAuxiliaryControlDesignatorObjectPointer_c() = default;
+
+
+    void vtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId(IsoAgLib::iVtObject_c *apc_newObject, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	if (b_updateObject)
+    		vtObject_a->value = apc_newObject;
+        setAttribute (Value /* "auxiliary object ID Attribute" */, apc_newObject->getID(), b_enableReplaceOfCmd);
     }
 
 

@@ -36,6 +36,7 @@ namespace __IsoAgLib {
 class vtObjectAuxiliaryControlDesignatorObjectPointer_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectAuxiliaryControlDesignatorObjectPointer_s;
 
@@ -51,7 +52,7 @@ public:
   vtObjectAuxiliaryControlDesignatorObjectPointer_c(iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst);
 
 
-  ~vtObjectAuxiliaryControlDesignatorObjectPointer_c() = default;
+  ~vtObjectAuxiliaryControlDesignatorObjectPointer_c();
 
   uint32_t fitTerminal() const;
 
