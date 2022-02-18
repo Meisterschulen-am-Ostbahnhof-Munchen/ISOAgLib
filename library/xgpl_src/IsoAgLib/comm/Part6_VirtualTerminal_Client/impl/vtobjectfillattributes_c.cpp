@@ -17,7 +17,19 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+
 #include "vtobjectfillattributes_c.h"
+
+#include <cstddef>
+#include <cstdint>
+
+#include "commandhandler_c.h"
+#include "iassert.h"
+#include "ivtobject_c.h"
+#include "ivttypes.h"
+#include "multiton.h"
+#include "util_funcs.h"
+#include "vtclientconnection_c.h"
 
 
 #ifdef CONFIG_USE_VTOBJECT_fillattributes

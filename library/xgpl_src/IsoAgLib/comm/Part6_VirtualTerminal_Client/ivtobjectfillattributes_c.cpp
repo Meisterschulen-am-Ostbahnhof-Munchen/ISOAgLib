@@ -7,6 +7,11 @@
 
 #include "ivtobjectfillattributes_c.h"
 
+#include <cstdint>
+
+#include "ivtclientobjectpool_c.h"
+#include "ivttypes.h"
+
 #ifdef CONFIG_USE_VTOBJECT_fillattributes
 
 namespace IsoAgLib {

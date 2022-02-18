@@ -20,7 +20,11 @@
 #ifndef VTOBJECTFILLATTRIBUTES_C_H
 #define VTOBJECTFILLATTRIBUTES_C_H
 
-#include <IsoAgLib/isoaglib_config.h>
+#include <cstdint>
+#include "../iColour.h"
+#include "../iFillType.h"
+#include "../iObjectID.h"
+#include "vttypes.h"
 
 
 #ifdef CONFIG_USE_VTOBJECT_fillattributes
