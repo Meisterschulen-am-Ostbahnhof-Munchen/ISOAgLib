@@ -44,8 +44,8 @@ public:
   void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 #endif
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false);
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx,  int8_t dy,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool setChildPosition( iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

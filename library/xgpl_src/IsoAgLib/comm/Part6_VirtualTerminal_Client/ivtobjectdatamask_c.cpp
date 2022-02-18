@@ -45,13 +45,12 @@ namespace IsoAgLib {
 
     uint16_t iVtObjectDataMask_c::getObjectType() const { return objectType(); }
 
-    bool iVtObjectDataMask_c::setChildPosition(IsoAgLib::iVtObject_c *apc_childObject, int16_t dx, int16_t dy,
-                                               bool b_updateObject, bool b_enableReplaceOfCmd) {
+    bool iVtObjectDataMask_c::setChildPosition(IsoAgLib::iVtObject_c *apc_childObject, int16_t dx, int16_t dy, bool b_updateObject, bool b_enableReplaceOfCmd) {
         return vtObjectDataMask_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    bool iVtObjectDataMask_c::moveChildLocation(iVtObject_c *apc_childObject, int8_t dx, int8_t dy, bool b_updateObject) {
-        return vtObjectDataMask_c::moveChildLocation (apc_childObject, dx, dy, b_updateObject);
+    bool iVtObjectDataMask_c::moveChildLocation(iVtObject_c *apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        return vtObjectDataMask_c::moveChildLocation (apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
     }
 
 

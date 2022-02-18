@@ -117,6 +117,8 @@ vtObjectAuxiliaryInput2_c::vtObjectAuxiliaryInput2_c(iVtObjectAuxiliaryInput2_s*
 }
 
 
+vtObjectAuxiliaryInput2_c::~vtObjectAuxiliaryInput2_c() = default;
+
 uint32_t
 vtObjectAuxiliaryInput2_c::fitTerminal() const
 {

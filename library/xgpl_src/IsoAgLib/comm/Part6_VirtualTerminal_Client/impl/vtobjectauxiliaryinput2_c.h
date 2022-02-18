@@ -73,14 +73,15 @@ public:
 
   vtObjectAuxiliaryInput2_c(iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst);
 
-
+  ~vtObjectAuxiliaryInput2_c();
 
   uint32_t fitTerminal() const;
 
   void setOriginSKM(bool b_SKM);
 
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+        virtual bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
@@ -106,7 +107,7 @@ public:
   uint16_t getValue2() const;
   bool getInputActivatedInLearnMode() const;
 
-  /**
+        virtual /**
     set new value and trigger AUX2 input state message
     @paramter aen_stateForLearnMode
        - default value: the active state is calculated from aui16_value1 != 0

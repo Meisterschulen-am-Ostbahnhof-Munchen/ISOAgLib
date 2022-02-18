@@ -30,21 +30,18 @@ namespace IsoAgLib {
 class iVtObjectAuxiliaryInput_c : public __IsoAgLib::vtObjectAuxiliaryInput_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_INPUT_1; }
+  static uint16_t objectType();
 
 
-  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
-    return vtObjectAuxiliaryInput_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject);
-  }
-
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx,  int8_t dy,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool setChildPosition( IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     return vtObjectAuxiliaryInput_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectAuxiliaryInput_c::updateObjectType(); }
   */
-#endif CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
+#endif
 
   virtual uint16_t getObjectType() const { return objectType(); }
 };
