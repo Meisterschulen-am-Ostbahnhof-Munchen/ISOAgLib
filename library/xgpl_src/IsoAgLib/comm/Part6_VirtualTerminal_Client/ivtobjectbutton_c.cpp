@@ -130,6 +130,8 @@ namespace IsoAgLib {
     	return VT_OBJECT_TYPE_BUTTON;
     }
 
+    iVtObjectButton_c::~iVtObjectButton_c() = default;
+
 }
 
 #endif //CONFIG_USE_VTOBJECT_button

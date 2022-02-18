@@ -13,7 +13,13 @@
 namespace IsoAgLib {
 
 
+    iVtObjectAuxiliaryControlDesignatorObjectPointer_c::~iVtObjectAuxiliaryControlDesignatorObjectPointer_c() = default;
 
+    void iVtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId(iVtObject_c *apc_newObject, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId (apc_newObject, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    uint16_t iVtObjectAuxiliaryControlDesignatorObjectPointer_c::getObjectType() const { return objectType(); }
 } // IsoAgLib
 
 

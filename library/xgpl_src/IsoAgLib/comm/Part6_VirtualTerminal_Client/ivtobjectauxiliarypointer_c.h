@@ -32,11 +32,9 @@ class iVtObjectAuxiliaryControlDesignatorObjectPointer_c : public __IsoAgLib::vt
 public:
   static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_POINTER; }
 
-  ~iVtObjectAuxiliaryControlDesignatorObjectPointer_c(){}
+  ~iVtObjectAuxiliaryControlDesignatorObjectPointer_c() override;
 
-  void setAuxiliaryObjectId(iVtObject_c* apc_newObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId (apc_newObject, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setAuxiliaryObjectId(iVtObject_c* apc_newObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** these attributes are in parentheses in the spec, so commented out here
@@ -48,7 +46,7 @@ public:
   */
 #endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   
-  virtual uint16_t getObjectType() const { return objectType(); }
+  uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib

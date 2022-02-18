@@ -20,8 +20,12 @@
 #ifndef VTOBJECTCOLOURMAP_C_H
 #define VTOBJECTCOLOURMAP_C_H
 
+#include <IsoAgLib/isoaglib_config.h>
+
 #ifdef CONFIG_USE_VTOBJECT_colourmap
 
+
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 #include "vtclientconnection_c.h"

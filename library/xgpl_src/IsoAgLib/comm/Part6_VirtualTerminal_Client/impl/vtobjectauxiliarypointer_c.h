@@ -56,7 +56,7 @@ public:
 
   uint32_t fitTerminal() const;
 
-  void setAuxiliaryObjectId(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+    virtual void setAuxiliaryObjectId(IsoAgLib::iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
