@@ -25,6 +25,7 @@
 
 #ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction
 
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vttypes.h"
 
@@ -33,6 +34,7 @@ namespace __IsoAgLib {
 class vtObjectAuxiliaryFunction_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectAuxiliaryFunction_s;
 
@@ -48,7 +50,7 @@ public:
   vtObjectAuxiliaryFunction_c(iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst);
 
 
-  ~vtObjectAuxiliaryFunction_c() = default;
+  ~vtObjectAuxiliaryFunction_c() override;
 
   uint32_t fitTerminal() const;
 
