@@ -37,10 +37,10 @@ public:
 
     iVtObjectFillAttributes_c(
     		iVtClientObjectPool_c* pool,
-    		ObjectID ID,
-    		FillType fillType,
-    		Colour fillColour,
-    		iVtObjectPictureGraphic_c *fillPatternObject);
+    		ObjectID ID = autoID,
+    		FillType fillType = fillColour,
+    		Colour fillColour = RED,
+    		iVtObjectPictureGraphic_c *fillPatternObject = nullptr);
 
 
    ~iVtObjectFillAttributes_c() override;
