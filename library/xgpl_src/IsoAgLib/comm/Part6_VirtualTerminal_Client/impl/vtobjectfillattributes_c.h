@@ -52,8 +52,10 @@ public:
   vtObjectFillAttributes_c(iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst);
   virtual ~vtObjectFillAttributes_c();
   uint32_t fitTerminal() const;
-  void setFillType(IsoAgLib::FillType newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setFillColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setFillType(IsoAgLib::FillType newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setFillColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
   void setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFillAttributes(IsoAgLib::FillType newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
