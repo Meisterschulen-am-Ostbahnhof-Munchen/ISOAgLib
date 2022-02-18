@@ -10,11 +10,11 @@
 
 AbstractClientBase::~AbstractClientBase() = default;
 
-AbstractClientBase::AbstractClientBase(int ai_multitonInst) : mi_multitonInst(ai_multitonInst){}
+AbstractClientBase::AbstractClientBase(multiton ai_multitonInst) : mi_multitonInst(ai_multitonInst){}
 
-int AbstractClientBase::getMultitonInst() const { return mi_multitonInst;}
+multiton AbstractClientBase::getMultitonInst() const { return mi_multitonInst;}
 
-void AbstractClientBase::setMultitonInst(int ai_instance) { mi_multitonInst = ai_instance;}
+void AbstractClientBase::setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance;}
 
 const AbstractClientBase &AbstractClientBase::operator=(const AbstractClientBase &acrc_src)
         {
@@ -24,6 +24,6 @@ const AbstractClientBase &AbstractClientBase::operator=(const AbstractClientBase
 
 AbstractClientBase::AbstractClientBase( const AbstractClientBase& acrc_src ) = default;
 
-ClientBase::ClientBase(int ai_multitonInst) : AbstractClientBase(ai_multitonInst){}
+ClientBase::ClientBase(multiton ai_multitonInst) : AbstractClientBase(ai_multitonInst){}
 
 ClientBase::~ClientBase() = default;  //this makes the Class non-abstract

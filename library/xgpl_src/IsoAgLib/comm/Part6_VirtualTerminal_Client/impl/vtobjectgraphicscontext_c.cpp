@@ -165,7 +165,7 @@ IsoAgLib::ObjectID vtObjectGraphicsContext_c::getID() const {
 
 vtObjectGraphicsContext_c::vtObjectGraphicsContext_c() {}
 
-vtObjectGraphicsContext_c::vtObjectGraphicsContext_c(iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst)
+vtObjectGraphicsContext_c::vtObjectGraphicsContext_c(iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , multiton ai_multitonInst)
 :vtObject_c(ai_multitonInst)
 ,vtObject_a(vtObjectGraphicsContextSROM)
 {}

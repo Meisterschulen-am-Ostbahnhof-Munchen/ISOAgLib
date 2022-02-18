@@ -22,7 +22,7 @@
 
 namespace __IsoAgLib {
 
-ProcessPkg_c::ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst )
+ProcessPkg_c::ProcessPkg_c( const CanPkg_c& arc_src, multiton ai_multitonInst )
   : CanPkgExt_c( arc_src, ai_multitonInst )
   , mi32_pdValue( mc_data.getInt32Data(4) )
   , men_command( IsoAgLib::ProcData::CommandType_t(mc_data[0] & 0xf) )

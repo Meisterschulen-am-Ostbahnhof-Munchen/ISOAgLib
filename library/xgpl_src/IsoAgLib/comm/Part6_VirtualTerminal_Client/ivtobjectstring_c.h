@@ -28,7 +28,7 @@ namespace IsoAgLib {
 class iVtObjectString_c : public __IsoAgLib::vtObject_c
 {
 public:
-  iVtObjectString_c(int ai_multitonInst);
+  iVtObjectString_c(multiton ai_multitonInst);
   virtual ~iVtObjectString_c() = default;
 
   virtual const char* getString() = 0;

@@ -47,7 +47,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectPolygon_c(iVtObjectPolygon_s* vtObjectPolygonSROM , int ai_multitonInst);
+  vtObjectPolygon_c(iVtObjectPolygon_s* vtObjectPolygonSROM , multiton ai_multitonInst);
   vtObjectPolygon_c();
   uint32_t fitTerminal() const;
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

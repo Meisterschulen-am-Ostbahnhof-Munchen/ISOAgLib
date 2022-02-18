@@ -71,7 +71,7 @@ private:
 class IsoFilterBox_c : public ClientBase
 {
 public:
-  IsoFilterBox_c (const IsoFilter_s& rrefcs_isoFilter , int ai_multitonInst);
+  IsoFilterBox_c (const IsoFilter_s& rrefcs_isoFilter , multiton ai_multitonInst);
 
   bool hasIsoFilter (const IsoFilter_s& arcs_isoFilter) { return (ms_isoFilter == arcs_isoFilter); }
 

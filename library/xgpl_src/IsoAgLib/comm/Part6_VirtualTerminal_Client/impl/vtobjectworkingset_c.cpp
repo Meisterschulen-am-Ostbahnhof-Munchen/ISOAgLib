@@ -96,7 +96,7 @@ IsoAgLib::ObjectID vtObjectWorkingSet_c::getID() const {
 }
 
 vtObjectWorkingSet_c::vtObjectWorkingSet_c(
-		int ai_multitonInst,
+		multiton ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		IsoAgLib::Colour backgroundColour,
   		uint8_t selectable,
@@ -112,7 +112,7 @@ vtObjectWorkingSet_c::vtObjectWorkingSet_c(
 {
 }
 
-vtObjectWorkingSet_c::vtObjectWorkingSet_c(iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst)
+vtObjectWorkingSet_c::vtObjectWorkingSet_c(iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , multiton ai_multitonInst)
 	: vtObject_c(ai_multitonInst)
 	, vtObject_a(vtObjectWorkingSetSROM)
 {}

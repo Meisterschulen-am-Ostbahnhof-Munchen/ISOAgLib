@@ -80,7 +80,7 @@ public:
   /// Operation: init
   /// @param vtObjectGraphicsContextSROM
   /// @param b_initPointer
-  vtObjectGraphicsContext_c(iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , int ai_multitonInst);
+  vtObjectGraphicsContext_c(iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM , multiton ai_multitonInst);
 
 
   //  Operation: vtObjectGraphicsContext_c

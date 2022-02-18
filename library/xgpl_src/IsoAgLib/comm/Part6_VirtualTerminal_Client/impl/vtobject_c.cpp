@@ -35,7 +35,7 @@ namespace __IsoAgLib {
 
 
 
-vtObject_c::vtObject_c(int ai_multitonInst)
+vtObject_c::vtObject_c(multiton ai_multitonInst)
 :iVtObject_c()
 {
   setMultitonInst( ai_multitonInst );

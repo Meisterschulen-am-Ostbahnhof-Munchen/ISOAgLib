@@ -49,7 +49,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectInputString_c(iVtObjectInputString_s* vtObjectInputStringSROM , int ai_multitonInst);
+  vtObjectInputString_c(iVtObjectInputString_s* vtObjectInputStringSROM , multiton ai_multitonInst);
   uint32_t fitTerminal() const;
   const char* getString();
   void setValueRef(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

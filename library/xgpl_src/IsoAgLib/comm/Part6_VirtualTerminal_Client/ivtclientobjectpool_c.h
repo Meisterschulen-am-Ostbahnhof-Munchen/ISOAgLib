@@ -328,7 +328,7 @@ public:
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
-  virtual void initAllObjectsOnce()=0; //int ai_multitonInst is now set by setAiMultitonInst
+  virtual void initAllObjectsOnce()=0; //multiton ai_multitonInst is now set by setAiMultitonInst
 
   iVtClientObjectPool_c(ObjectPoolSettings_s a_objectPoolSettings);
 
@@ -399,7 +399,7 @@ protected:
   uint16_t skWidth;
   uint16_t skHeight;
   bool b_initAllObjects;
-  int ai_multitonInst;
+  multiton ai_multitonInst;
 
 public:
   iVtObject_c* const * const*

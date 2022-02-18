@@ -109,7 +109,7 @@ vtObjectAuxiliaryFunction_c::setOriginSKM(bool /* b_SKM */)
 
     vtObjectAuxiliaryFunction_c::vtObjectAuxiliaryFunction_c(
             iVtObjectAuxiliaryFunction_s *vtObjectAuxiliaryFunctionSROM,
-            int ai_multitonInst)
+            multiton ai_multitonInst)
             :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectAuxiliaryFunctionSROM)
     {}

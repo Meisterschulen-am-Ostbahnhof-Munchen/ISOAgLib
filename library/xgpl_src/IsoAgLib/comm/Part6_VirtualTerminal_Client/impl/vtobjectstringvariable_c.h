@@ -53,11 +53,11 @@ public:
   ~vtObjectStringVariable_c();
 
   vtObjectStringVariable_c(
-		  int ai_multitonInst,
+		  multiton ai_multitonInst,
 		  IsoAgLib::ObjectID ID,
 		  char *value);
 
-  vtObjectStringVariable_c(iVtObjectStringVariable_s* vtObjectStringVariableSROM , int ai_multitonInst);
+  vtObjectStringVariable_c(iVtObjectStringVariable_s* vtObjectStringVariableSROM , multiton ai_multitonInst);
 
   uint32_t fitTerminal() const;
 

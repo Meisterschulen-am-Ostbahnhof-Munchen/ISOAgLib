@@ -32,7 +32,7 @@ public:
 
   iVtObjectMask_c() = delete;
 
-  iVtObjectMask_c(const iVtObjectMask_s* vtObjectDataMaskSROM , int ai_multitonInst)
+  iVtObjectMask_c(const iVtObjectMask_s* vtObjectDataMaskSROM , multiton ai_multitonInst)
   : vtObject_c(ai_multitonInst)
   {}
 

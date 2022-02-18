@@ -53,7 +53,7 @@ public:
 
 
   vtObjectOutputString_c(
-		  	int ai_multitonInst,
+		  	multiton ai_multitonInst,
 		  	IsoAgLib::ObjectID ID,
 			uint16_t width,
 			uint16_t height,
@@ -67,7 +67,7 @@ public:
 
 
 
-  vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst);
+  vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , multiton ai_multitonInst);
   ~vtObjectOutputString_c();
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);

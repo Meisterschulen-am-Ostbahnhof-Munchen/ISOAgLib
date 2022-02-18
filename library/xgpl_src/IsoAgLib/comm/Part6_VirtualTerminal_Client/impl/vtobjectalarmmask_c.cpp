@@ -217,7 +217,7 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
 
 
     vtObjectAlarmMask_c::vtObjectAlarmMask_c(
-  		    int ai_multitonInst
+  		    multiton ai_multitonInst
   		  , IsoAgLib::ObjectID ID
   		  , IsoAgLib::Colour backgroundColour
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
@@ -243,7 +243,7 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
 
     vtObjectAlarmMask_c::vtObjectAlarmMask_c(
     		vtObjectAlarmMask_c::iVtObjectAlarmMask_s *vtObjectAlarmMaskSROM,
-            int ai_multitonInst)
+            multiton ai_multitonInst)
             : iVtObjectMask_c((iVtObjectMask_s*) vtObjectAlarmMaskSROM, ai_multitonInst)
     		, vtObject_a(vtObjectAlarmMaskSROM)
     {}

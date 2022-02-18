@@ -80,7 +80,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s(
     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     ,bool ab_isFastPacket
     #endif
-    , int ai_multitonInst
+    , multiton ai_multitonInst
   ) 
   : MULTITON_PARENT_CONSTRUCTOR
     mpc_client(&arc_client)

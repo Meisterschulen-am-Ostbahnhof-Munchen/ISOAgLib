@@ -159,7 +159,7 @@ IsoAgLib::ObjectID vtObjectLinearBarGraph_c::getID() const {
 
 
 vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(
-		int ai_multitonInst,
+		multiton ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		uint16_t width,
 		uint16_t height,
@@ -194,7 +194,7 @@ vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(
 
 }
 
-vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst)
+vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , multiton ai_multitonInst)
             : vtObject_c(ai_multitonInst)
 			, vtObject_a(vtObjectLinearBarGraphSROM)
     {}

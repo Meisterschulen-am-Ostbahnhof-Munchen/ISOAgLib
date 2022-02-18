@@ -106,7 +106,7 @@ Colour iVtClientObjectPool_c::convertColourDefault(
 
     }
 
-    int iVtClientObjectPool_c::getAiMultitonInst() const {
+    multiton iVtClientObjectPool_c::getAiMultitonInst() const {
         return ai_multitonInst;
     }
 

@@ -24,12 +24,20 @@
 
 #include <new>
 
+
+
+	enum multiton : int
+	{
+		multitonSTD = 0,
+	};
+
+
 #if defined(OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED) && defined( __GNUC__ ) && __GNUC__ >= 4
 #  include <ext/malloc_allocator.h>
 #endif
 
-#define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF  int ai_multitonInst = 0
-#define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA , int ai_multitonInst = 0
+#define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF  multiton ai_multitonInst = multitonSTD
+#define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA , multiton ai_multitonInst = multitonSTD
 #define MULTITON_INST_PARAMETER_USE               ai_multitonInst
 
 #define MULTITON_PAR_ARR_DEF(PAR)                     int getMultitonInst() const { return (PAR) ? (PAR)->getMultitonInst() : 0; }
@@ -75,16 +83,16 @@
  */
 class AbstractClientBase {
 public:
-	explicit AbstractClientBase( int ai_multitonInst = 0 );
+	explicit AbstractClientBase( multiton ai_multitonInst = multitonSTD);
 	AbstractClientBase( const AbstractClientBase& acrc_src );
 
   virtual ~AbstractClientBase() = 0; //this makes the Class abstract
-  int getMultitonInst() const;
-  void setMultitonInst( int ai_instance );
+  multiton getMultitonInst() const;
+  void setMultitonInst( multiton ai_instance );
 protected:
   const AbstractClientBase& operator=( const AbstractClientBase& acrc_src );;
 private:
-  int mi_multitonInst;
+  multiton mi_multitonInst;
 };
 
 
@@ -92,7 +100,7 @@ private:
 
 class ClientBase : public virtual AbstractClientBase{
 public:
-	explicit ClientBase( int ai_multitonInst = 0 );
+	explicit ClientBase( multiton ai_multitonInst = multitonSTD );
 	~ClientBase() override; //this makes the Class non-abstract
 };
 
@@ -113,10 +121,10 @@ public:
 
 #define MACRO_MULTITON_CONTRIBUTION() \
 public: \
-  int getMultitonInst() const { return mi_multitonInst; } \
-  void setMultitonInst(int ai_instance) { mi_multitonInst = ai_instance; } \
+  multiton getMultitonInst() const { return mi_multitonInst; } \
+  void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; } \
 private: \
-  int mi_multitonInst
+  multiton mi_multitonInst
 
 #define DO_PLACEMENT_NEW_ON_STATIC_BUFFER 1
 

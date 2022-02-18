@@ -55,14 +55,14 @@ public:
 
 
   vtObjectWorkingSet_c(
-		int ai_multitonInst,
+		multiton ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		IsoAgLib::Colour backgroundColour,
   		uint8_t selectable,
 		IsoAgLib::iVtObjectMask_c* activeMask // data or alarm mask
   		);
 
-  vtObjectWorkingSet_c(iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , int ai_multitonInst);
+  vtObjectWorkingSet_c(iVtObjectWorkingSet_s* vtObjectWorkingSetSROM , multiton ai_multitonInst);
 
   vtObjectWorkingSet_c() = delete;
 

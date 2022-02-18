@@ -52,13 +52,13 @@ public:
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default Active value)
   */
-  IState_c(itemState_t ren_itemState = Active, int ai_multitonInst = 0);
+  IState_c(itemState_t ren_itemState = Active, multiton ai_multitonInst = multitonSTD);
 
   /**
     constructor of IState_c which can set the state to given initial value
     @param aui8_state optional wanted state information (default \<empty\> value)
   */
-  IState_c(uint8_t aui8_state, int ai_multitonInst = 0);
+  IState_c(uint8_t aui8_state, multiton ai_multitonInst = multitonSTD);
 
   /**
     copy constructor for IState_c

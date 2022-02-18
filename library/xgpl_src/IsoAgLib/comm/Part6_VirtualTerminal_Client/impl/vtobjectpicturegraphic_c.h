@@ -49,7 +49,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectPictureGraphic_c(iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , int ai_multitonInst);
+  vtObjectPictureGraphic_c(iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , multiton ai_multitonInst);
 
 
 

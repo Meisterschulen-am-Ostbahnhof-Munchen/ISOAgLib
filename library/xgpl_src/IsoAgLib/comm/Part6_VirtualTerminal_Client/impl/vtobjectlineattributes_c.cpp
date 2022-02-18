@@ -93,7 +93,7 @@ IsoAgLib::ObjectID vtObjectLineAttributes_c::getID() const {
 
 
 vtObjectLineAttributes_c::vtObjectLineAttributes_c(
-		int ai_multitonInst,
+		multiton ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		IsoAgLib::Colour lineColour,
 		uint8_t lineWidth,
@@ -110,7 +110,7 @@ vtObjectLineAttributes_c::vtObjectLineAttributes_c(
 
 
     vtObjectLineAttributes_c::vtObjectLineAttributes_c(
-    		vtObjectLineAttributes_c::iVtObjectLineAttributes_s *vtObjectLineAttributesSROM, int ai_multitonInst)
+    		vtObjectLineAttributes_c::iVtObjectLineAttributes_s *vtObjectLineAttributesSROM, multiton ai_multitonInst)
             : vtObject_c(ai_multitonInst)
     		, vtObject_a(vtObjectLineAttributesSROM)
     {}

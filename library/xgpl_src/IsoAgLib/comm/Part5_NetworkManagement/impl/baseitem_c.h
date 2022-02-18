@@ -46,7 +46,7 @@ public:
     @param ab_status state of this ident (off, claimed address, ...) (default: off)
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  BaseItem_c( ecutime_t ai32_time = 0, IState_c::itemState_t ab_status = IState_c::IstateNull, int ai_multitonInst = 0);
+  BaseItem_c( ecutime_t ai32_time = 0, IState_c::itemState_t ab_status = IState_c::IstateNull, multiton ai_multitonInst = multitonSTD);
 
   /**
     copy constructor which takes it initial values from another BaseItem_c instance
@@ -70,7 +70,7 @@ public:
     @param ai32_time optional timestamp to set as update time
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(ecutime_t ai32_time = -1, int ai_multitonInst = 0);
+  void set(ecutime_t ai32_time = -1, multiton ai_multitonInst = multitonSTD);
 
   /**
     set pointer to containing Scheduler_c instance and update timestamp of object
@@ -78,7 +78,7 @@ public:
     @param ab_status state of this ident (off, claimed address, ...) (default: off)
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(ecutime_t ai32_time, IState_c::itemState_t ab_status, int ai_multitonInst = 0);
+  void set(ecutime_t ai32_time, IState_c::itemState_t ab_status, multiton ai_multitonInst = multitonSTD);
 
   /**
     calculates time between now and last set of mi32_lastTime;

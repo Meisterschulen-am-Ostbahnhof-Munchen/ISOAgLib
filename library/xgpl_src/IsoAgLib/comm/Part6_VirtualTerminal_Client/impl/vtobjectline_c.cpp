@@ -105,7 +105,7 @@ vtObjectLine_c::~vtObjectLine_c() = default;
 
 
 vtObjectLine_c::vtObjectLine_c(
-		int ai_multitonInst,
+		multiton ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
 		uint16_t width,
@@ -124,7 +124,7 @@ vtObjectLine_c::vtObjectLine_c(
 
 
 
-vtObjectLine_c::vtObjectLine_c(vtObjectLine_c::iVtObjectLine_s *vtObjectLineSROM, int ai_multitonInst)
+vtObjectLine_c::vtObjectLine_c(vtObjectLine_c::iVtObjectLine_s *vtObjectLineSROM, multiton ai_multitonInst)
         : vtObject_c(ai_multitonInst)
 		, vtObject_a(vtObjectLineSROM)
 {}

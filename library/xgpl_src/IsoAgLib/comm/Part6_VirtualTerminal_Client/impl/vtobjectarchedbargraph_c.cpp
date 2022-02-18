@@ -208,7 +208,7 @@ IsoAgLib::ObjectID vtObjectArchedBarGraph_c::getID() const {
 }
 
     vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
-            int ai_multitonInst,
+            multiton ai_multitonInst,
             IsoAgLib::ObjectID ID,
             uint16_t width,
             uint16_t height,
@@ -247,7 +247,7 @@ IsoAgLib::ObjectID vtObjectArchedBarGraph_c::getID() const {
 
 
     vtObjectArchedBarGraph_c::vtObjectArchedBarGraph_c(
-            vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, int ai_multitonInst)
+            vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s *vtObjectArchedBarGraphSROM, multiton ai_multitonInst)
             : vtObject_c(ai_multitonInst)
             , vtObject_a(vtObjectArchedBarGraphSROM)
     {}

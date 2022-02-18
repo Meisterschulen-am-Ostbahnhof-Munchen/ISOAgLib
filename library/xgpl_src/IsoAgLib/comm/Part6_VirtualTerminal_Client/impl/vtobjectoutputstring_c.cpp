@@ -157,7 +157,7 @@ IsoAgLib::ObjectID vtObjectOutputString_c::getID() const {
 
 
 vtObjectOutputString_c::vtObjectOutputString_c(
-		int ai_multitonInst,
+		multiton ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		uint16_t width,
 		uint16_t height,
@@ -183,7 +183,7 @@ vtObjectOutputString_c::vtObjectOutputString_c(
 {
 }
 
-vtObjectOutputString_c::vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , int ai_multitonInst)
+vtObjectOutputString_c::vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , multiton ai_multitonInst)
 : iVtObjectString_c(ai_multitonInst)
 , vtObject_a(vtObjectOutputStringSROM)
 {}

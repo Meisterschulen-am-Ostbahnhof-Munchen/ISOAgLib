@@ -235,7 +235,7 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 #endif
 
 	vtObjectEllipse_c::vtObjectEllipse_c(
-			int ai_multitonInst,
+			multiton ai_multitonInst,
 			IsoAgLib::ObjectID ID,
 			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
 			uint16_t width,
@@ -259,7 +259,7 @@ vtObjectEllipse_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 }
 
     vtObjectEllipse_c::vtObjectEllipse_c(iVtObjectEllipse_s *vtObjectellipseSROM,
-                                         int ai_multitonInst)
+                                         multiton ai_multitonInst)
             : vtObject_c(ai_multitonInst)
     		, vtObject_a(vtObjectellipseSROM)
     {}

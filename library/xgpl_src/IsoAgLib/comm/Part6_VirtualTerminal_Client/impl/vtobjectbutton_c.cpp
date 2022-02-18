@@ -126,7 +126,7 @@ IsoAgLib::ObjectID vtObjectButton_c::getID() const {
 
 
 vtObjectButton_c::vtObjectButton_c(
-  int ai_multitonInst,
+  multiton ai_multitonInst,
 	IsoAgLib::ObjectID ID,
 	uint16_t width,
 	uint16_t height,
@@ -148,7 +148,7 @@ vtObjectButton_c::vtObjectButton_c(
 
 
 vtObjectButton_c::vtObjectButton_c(vtObjectButton_c::iVtObjectButton_s *vtObjectButtonSROM,
-                                   int ai_multitonInst)
+                                   multiton ai_multitonInst)
         : vtObject_c(ai_multitonInst)
 		, vtObject_a(vtObjectButtonSROM)
 {}

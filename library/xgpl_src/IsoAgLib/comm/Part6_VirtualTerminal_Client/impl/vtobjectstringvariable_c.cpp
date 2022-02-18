@@ -172,13 +172,13 @@ vtObjectStringVariable_c::getString()
 }
 
     vtObjectStringVariable_c::vtObjectStringVariable_c(
-            vtObjectStringVariable_c::iVtObjectStringVariable_s *vtObjectStringVariableSROM, int ai_multitonInst)
+            vtObjectStringVariable_c::iVtObjectStringVariable_s *vtObjectStringVariableSROM, multiton ai_multitonInst)
             :iVtObjectString_c(ai_multitonInst)
     		,vtObject_a(vtObjectStringVariableSROM)
     {}
 
     vtObjectStringVariable_c::vtObjectStringVariable_c(
-    		int ai_multitonInst,
+    		multiton ai_multitonInst,
     		IsoAgLib::ObjectID ID,
     		char *value)
     	:vtObjectStringVariable_c(

@@ -57,7 +57,7 @@ public:
                               #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                               ,bool ab_isFastPacket
                               #endif
-                              , int ai_multitonInst
+                              , multiton ai_multitonInst
                              );
 
   //! Check if this MRCW should handle the given stream

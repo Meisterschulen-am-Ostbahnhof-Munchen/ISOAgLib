@@ -51,7 +51,7 @@ CanPkgExt_c::~CanPkgExt_c()
 {}
 
 
-CanPkgExt_c::CanPkgExt_c( const CanPkg_c& arc_src, int ai_multitonInst )
+CanPkgExt_c::CanPkgExt_c( const CanPkg_c& arc_src, multiton ai_multitonInst )
   : CanPkg_c( arc_src ),
     mc_addrResolveResSA( mc_ident, 0 ),
     mc_addrResolveResDA( mc_ident, 1 ),
@@ -82,7 +82,7 @@ CanPkgExt_c::setIsoPgn(uint32_t aui32_val)
 
 
 bool
-CanPkgExt_c::resolveAddress( AddressResolveResults_c& result, int ai_multitonInstance )
+CanPkgExt_c::resolveAddress( AddressResolveResults_c& result, multiton ai_multitonInstance )
 {
   // TODO: possible optimization: remove isoname setting in CAN rx
   result.mpc_monitorItem = getIsoMonitorInstance( ai_multitonInstance ).isoMemberNrFast( result.getAddress() );
@@ -98,7 +98,7 @@ CanPkgExt_c::resolveAddress( AddressResolveResults_c& result, int ai_multitonIns
 
 
 MessageState_t
-CanPkgExt_c::resolveReceivingInformation( int ai_multitonInstance )
+CanPkgExt_c::resolveReceivingInformation( multiton ai_multitonInstance )
 {
   // resolve source address
   // in context of receiving SA is remote
@@ -126,7 +126,7 @@ CanPkgExt_c::resolveReceivingInformation( int ai_multitonInstance )
 
 
 MessageState_t
-CanPkgExt_c::address2IdentLocalDa( int ai_multitonInstance )
+CanPkgExt_c::address2IdentLocalDa( multiton ai_multitonInstance )
 {
   //we are sure that we have PDU1 format and therefore we have a destination address
   const bool cb_addressBelongsToKnownItem = resolveAddress( mc_addrResolveResDA, ai_multitonInstance );
@@ -160,7 +160,7 @@ CanPkgExt_c::address2IdentLocalDa( int ai_multitonInstance )
 
 
 MessageState_t
-CanPkgExt_c::address2IdentRemoteSa( int ai_multitonInstance )
+CanPkgExt_c::address2IdentRemoteSa( multiton ai_multitonInstance )
 {
   const bool cb_addressBelongsToKnownItem = resolveAddress( mc_addrResolveResSA, ai_multitonInstance );
 
@@ -193,7 +193,7 @@ CanPkgExt_c::address2IdentRemoteSa( int ai_multitonInstance )
 
 
 bool
-CanPkgExt_c::resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance  )
+CanPkgExt_c::resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults, multiton ai_multitonInstance  )
 {
   if ( arc_addressResolveResults.mpc_monitorItem == NULL )
   {
@@ -225,7 +225,7 @@ CanPkgExt_c::resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResu
 
 
 bool
-CanPkgExt_c::resolveSendingInformation( int ai_multitonInst )
+CanPkgExt_c::resolveSendingInformation( multiton ai_multitonInst )
 {
   // handle SA
   if ( !resolveMonitorItem(mc_addrResolveResSA, ai_multitonInst ) )

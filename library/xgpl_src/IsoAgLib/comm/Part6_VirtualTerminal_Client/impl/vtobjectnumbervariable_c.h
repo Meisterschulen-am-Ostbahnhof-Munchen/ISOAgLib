@@ -47,7 +47,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectNumberVariable_c(iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , int ai_multitonInst);
+  vtObjectNumberVariable_c(iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , multiton ai_multitonInst);
 
   vtObjectNumberVariable_c();
   uint32_t fitTerminal() const;

@@ -200,7 +200,7 @@ vtObjectContainer_c::saveReceivedAttribute(uint8_t attrID, uint8_t* /*pui8_attri
 }
 #endif
     vtObjectContainer_c::vtObjectContainer_c(vtObjectContainer_c::iVtObjectContainer_s *vtObjectContainer_sROM,
-                                             int ai_multitonInst)
+                                             multiton ai_multitonInst)
             : vtObject_c(ai_multitonInst)
     		, vtObject_a(vtObjectContainer_sROM)
     {
@@ -211,7 +211,7 @@ vtObjectContainer_c::saveReceivedAttribute(uint8_t attrID, uint8_t* /*pui8_attri
     vtObjectContainer_c::~vtObjectContainer_c() = default;
 
 vtObjectContainer_c::vtObjectContainer_c(
-		int ai_multitonInst,
+		multiton ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		uint16_t width,
 		uint16_t height,

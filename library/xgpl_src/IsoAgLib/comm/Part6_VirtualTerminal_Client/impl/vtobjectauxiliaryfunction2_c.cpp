@@ -307,7 +307,7 @@ vtObjectAuxiliaryFunction2_c::clearPreferredAssignments()
 
     vtObjectAuxiliaryFunction2_c::vtObjectAuxiliaryFunction2_c(
     		vtObjectAuxiliaryFunction2_c::iVtObjectAuxiliaryFunction2_s *vtObjectAuxiliaryFunction2SROM,
-            int ai_multitonInst)
+            multiton ai_multitonInst)
             :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectAuxiliaryFunction2SROM)
     {}

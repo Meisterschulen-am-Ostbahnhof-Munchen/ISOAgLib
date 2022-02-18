@@ -30,7 +30,7 @@ namespace __IsoAgLib {
   @param ab_status state of this ident (off, claimed address, ...) (default: off)
   @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
-BaseItem_c::BaseItem_c( ecutime_t ai32_time, IState_c::itemState_t ab_status, int ai_multitonInst)
+BaseItem_c::BaseItem_c( ecutime_t ai32_time, IState_c::itemState_t ab_status, multiton ai_multitonInst)
   : IState_c(ab_status, ai_multitonInst), mi32_lastTime(ai32_time)
 {}
 
@@ -48,7 +48,7 @@ BaseItem_c::BaseItem_c(const BaseItem_c& acrc_baseItem)
   @param ai32_time optional timestamp to set as update time
   @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
-void BaseItem_c::set(ecutime_t ai32_time, int ai_multitonInst)
+void BaseItem_c::set(ecutime_t ai32_time, multiton ai_multitonInst)
 {
   if (ai32_time >= 0) mi32_lastTime = ai32_time;
   /** ai_multitonInst==-1 is special value to indicate, that the ai_multitonInst should not be changed */
@@ -61,7 +61,7 @@ void BaseItem_c::set(ecutime_t ai32_time, int ai_multitonInst)
   @param ab_status state of this ident (off, claimed address, ...) (default: off)
   @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
-void BaseItem_c::set(ecutime_t ai32_time, IState_c::itemState_t ab_status, int ai_multitonInst)
+void BaseItem_c::set(ecutime_t ai32_time, IState_c::itemState_t ab_status, multiton ai_multitonInst)
 {
   set(  ai32_time,ai_multitonInst);
   // force clear of old item state

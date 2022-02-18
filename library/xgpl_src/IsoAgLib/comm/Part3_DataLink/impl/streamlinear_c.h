@@ -32,7 +32,7 @@ namespace __IsoAgLib {
 class StreamLinear_c : public Stream_c
 {
 public:
-  StreamLinear_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize, ecutime_t ai32_creationTime , int ai_multitonInst , bool b_skipCtsAwait);
+  StreamLinear_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize, ecutime_t ai32_creationTime , multiton ai_multitonInst , bool b_skipCtsAwait);
   virtual ~StreamLinear_c();
 
   void immediateInitAfterConstruction() const {}

@@ -50,7 +50,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectKey_c(iVtObjectKey_s* vtObjectKeySROM , int ai_multitonInst);
+  vtObjectKey_c(iVtObjectKey_s* vtObjectKeySROM , multiton ai_multitonInst);
 
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);

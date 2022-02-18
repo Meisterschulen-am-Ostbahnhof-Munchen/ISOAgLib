@@ -122,7 +122,7 @@ vtObjectObjectPointer_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pu
 }
 #endif
     vtObjectObjectPointer_c::vtObjectObjectPointer_c(
-    		vtObjectObjectPointer_c::iVtObjectObjectPointer_s *vtObjectObjectPointerSROM, int ai_multitonInst)
+    		vtObjectObjectPointer_c::iVtObjectObjectPointer_s *vtObjectObjectPointerSROM, multiton ai_multitonInst)
             :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectObjectPointerSROM)
     {}

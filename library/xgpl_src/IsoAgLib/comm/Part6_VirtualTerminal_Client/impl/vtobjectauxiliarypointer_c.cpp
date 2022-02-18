@@ -119,7 +119,7 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::saveReceivedAttribute(uint8_t
 
     vtObjectAuxiliaryControlDesignatorObjectPointer_c::vtObjectAuxiliaryControlDesignatorObjectPointer_c(
             vtObjectAuxiliaryControlDesignatorObjectPointer_c::iVtObjectAuxiliaryControlDesignatorObjectPointer_s *vtObjectAuxiliaryControlDesignatorObjectPointerSROM,
-            int ai_multitonInst)
+            multiton ai_multitonInst)
             : vtObject_c(ai_multitonInst)
     		, vtObject_a(vtObjectAuxiliaryControlDesignatorObjectPointerSROM)
     {}

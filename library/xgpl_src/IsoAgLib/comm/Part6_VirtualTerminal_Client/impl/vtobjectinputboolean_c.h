@@ -44,14 +44,27 @@ private:
 	std::unique_ptr<iVtObjectInputBoolean_s> vtObject_a;
 
 
+	vtObjectInputBoolean_c() = delete;
+	vtObjectInputBoolean_c(iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , multiton ai_multitonInst);
+
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectInputBoolean_c(iVtObjectInputBoolean_s* vtObjectInputBooleanSROM , int ai_multitonInst);
+  vtObjectInputBoolean_c(
+		multiton ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		IsoAgLib::Colour backgroundColour,
+		uint16_t width,
+		IsoAgLib::iVtObjectFontAttributes_c *foregroundColour,
+		IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+		uint8_t value,
+		uint8_t enabled);
 
+
+  ~vtObjectInputBoolean_c();
 
 
   uint32_t fitTerminal() const;

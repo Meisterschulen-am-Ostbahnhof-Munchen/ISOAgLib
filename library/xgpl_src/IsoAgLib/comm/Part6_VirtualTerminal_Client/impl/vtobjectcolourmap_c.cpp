@@ -114,7 +114,7 @@ vtObjectColourMap_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 
 
     vtObjectColourMap_c::vtObjectColourMap_c(vtObjectColourMap_c::iVtObjectColourMap_s *vtObjectColourMapSROM,
-                                             int ai_multitonInst)
+                                             multiton ai_multitonInst)
             :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectColourMapSROM)
     {}

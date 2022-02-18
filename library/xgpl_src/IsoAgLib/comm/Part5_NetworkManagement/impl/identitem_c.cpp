@@ -130,7 +130,7 @@ const IsoAgLib::iIdentItem_c& IdentItem_c::toConstIidentItem_c() const
 
 
 bool
-IdentItem_c::activate (int ai_multitonInst)
+IdentItem_c::activate (multiton ai_multitonInst)
 {
   if (mb_readyForActivation)
   { /// Set Item to ACTIVE

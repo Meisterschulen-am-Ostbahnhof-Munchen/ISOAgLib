@@ -100,7 +100,7 @@ private:
 
 public:
   CanPkgExt_c();
-  CanPkgExt_c( const CanPkg_c&, int ai_multitonInst );
+  CanPkgExt_c( const CanPkg_c&, multiton ai_multitonInst );
   virtual ~CanPkgExt_c();
 
   // Note: FE is considered here a VALID SA!
@@ -223,7 +223,7 @@ public:
                Invalid -> one or both addresses are invalid
                OnlyNetworkMgmt -> one or both addresses are only useable for network management
     */
-  bool resolveSendingInformation( int ai_multitonInst );
+  bool resolveSendingInformation( multiton ai_multitonInst );
 
   /** set the monitoritem for resolve SA
       @param apc_monitorItem  needed monitoritem
@@ -267,19 +267,19 @@ public:
 
 private:
   /** check if source and destination address are valid - called from the c'tor */
-  MessageState_t resolveReceivingInformation( int ai_multitonInstance );
+  MessageState_t resolveReceivingInformation( multiton ai_multitonInstance );
 
-  bool resolveAddress(AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance );
-
-  /** report if the combination of address and scope is valid in context of message processing
-      @return  true -> address, scope combination is valid
-    */
-  MessageState_t address2IdentRemoteSa( int ai_multitonInstance );
+  bool resolveAddress(AddressResolveResults_c& arc_addressResolveResults, multiton ai_multitonInstance );
 
   /** report if the combination of address and scope is valid in context of message processing
       @return  true -> address, scope combination is valid
     */
-  MessageState_t address2IdentLocalDa( int ai_multitonInstance );
+  MessageState_t address2IdentRemoteSa( multiton ai_multitonInstance );
+
+  /** report if the combination of address and scope is valid in context of message processing
+      @return  true -> address, scope combination is valid
+    */
+  MessageState_t address2IdentLocalDa( multiton ai_multitonInstance );
 
   /** set address in context of sending a message
       @param  arc_addressResolveResults  source or destination address
@@ -293,7 +293,7 @@ private:
       @return true -> monitoritem could be resolved
               false -> nothing more to be done
     */
-  bool resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance  );
+  bool resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults, multiton ai_multitonInstance  );
 
 private:
   AddressResolveResults_c mc_addrResolveResSA;

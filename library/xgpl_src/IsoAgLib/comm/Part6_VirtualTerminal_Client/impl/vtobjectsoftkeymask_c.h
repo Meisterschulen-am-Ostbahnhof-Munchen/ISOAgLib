@@ -58,7 +58,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectSoftKeyMask_c(iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , int ai_multitonInst);
+  vtObjectSoftKeyMask_c(iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , multiton ai_multitonInst);
 
 #ifdef ENABLE_SKM_HANDLER
   void registerSkmHandler_c( iSkmHandler_c* _SkmHandler );

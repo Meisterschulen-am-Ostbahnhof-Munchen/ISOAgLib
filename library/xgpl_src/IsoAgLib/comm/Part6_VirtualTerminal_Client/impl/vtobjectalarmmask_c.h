@@ -50,7 +50,7 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectAlarmMask_c(
-		    int ai_multitonInst
+		    multiton ai_multitonInst
 		  , IsoAgLib::ObjectID ID
 		  , IsoAgLib::Colour backgroundColour
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
@@ -59,7 +59,7 @@ public:
 		  , uint8_t priority
 		  , uint8_t acousticSignal);
 
-  vtObjectAlarmMask_c(iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , int ai_multitonInst);
+  vtObjectAlarmMask_c(iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , multiton ai_multitonInst);
 
   ~vtObjectAlarmMask_c() override;
 

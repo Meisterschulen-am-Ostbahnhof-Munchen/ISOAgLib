@@ -49,7 +49,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectMeter_c(iVtObjectMeter_s* vtObjectMeterSROM , int ai_multitonInst);
+  vtObjectMeter_c(iVtObjectMeter_s* vtObjectMeterSROM , multiton ai_multitonInst);
 
   ~vtObjectMeter_c() override;
 

@@ -24,7 +24,7 @@
   constructor of IState_c which can set the state to given initial value
   @param ren_itemState optional wanted state information (default \<empty\> value)
 */
-__IsoAgLib::IState_c::IState_c(itemState_t ren_itemState, int ai_multitonInst)
+__IsoAgLib::IState_c::IState_c(itemState_t ren_itemState, multiton ai_multitonInst)
 	: ClientBase( ai_multitonInst )
 {
   en_itemState = ren_itemState;
@@ -34,7 +34,7 @@ __IsoAgLib::IState_c::IState_c(itemState_t ren_itemState, int ai_multitonInst)
   constructor of IState_c which can set the state to given initial value
   @param aui8_state optional wanted state information (default \<empty\> value)
 */
-__IsoAgLib::IState_c::IState_c(uint8_t aui8_state, int ai_multitonInst )
+__IsoAgLib::IState_c::IState_c(uint8_t aui8_state, multiton ai_multitonInst )
 	: ClientBase( ai_multitonInst )
 {
   en_itemState = itemState_t(aui8_state);

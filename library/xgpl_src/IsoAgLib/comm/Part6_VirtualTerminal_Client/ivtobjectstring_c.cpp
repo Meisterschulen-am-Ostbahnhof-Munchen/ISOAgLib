@@ -12,7 +12,7 @@ namespace IsoAgLib {
 
   // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple
   // constructor/destructor direct in scope of iVtObjectString_c
-  iVtObjectString_c::iVtObjectString_c(int ai_multitonInst)
+  iVtObjectString_c::iVtObjectString_c(multiton ai_multitonInst)
   :vtObject_c(ai_multitonInst)
   {}
 

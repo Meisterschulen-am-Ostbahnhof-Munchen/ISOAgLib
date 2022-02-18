@@ -51,7 +51,7 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectArchedBarGraph_c(
-		    int ai_multitonInst,
+		    multiton ai_multitonInst,
 			IsoAgLib::ObjectID ID,
 			uint16_t width,
 			uint16_t height,
@@ -68,7 +68,7 @@ public:
 			IsoAgLib::iVtObjectNumberVariable_c *targetValueVariableReference,
 			uint16_t targetValue);
 
-  vtObjectArchedBarGraph_c(iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , int ai_multitonInst);
+  vtObjectArchedBarGraph_c(iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , multiton ai_multitonInst);
 
 
   ~vtObjectArchedBarGraph_c() override;

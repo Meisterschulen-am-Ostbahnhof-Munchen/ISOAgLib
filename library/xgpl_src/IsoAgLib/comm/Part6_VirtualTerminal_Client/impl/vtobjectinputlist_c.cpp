@@ -241,7 +241,7 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 }
 #endif
     vtObjectInputList_c::vtObjectInputList_c(vtObjectInputList_c::iVtObjectInputList_s *vtObjectInputListSROM,
-                                             int ai_multitonInst)
+                                             multiton ai_multitonInst)
             :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectInputListSROM)
     {}

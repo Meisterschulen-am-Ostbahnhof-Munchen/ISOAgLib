@@ -49,7 +49,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectAuxiliaryControlDesignatorObjectPointer_c(iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , int ai_multitonInst);
+  vtObjectAuxiliaryControlDesignatorObjectPointer_c(iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , multiton ai_multitonInst);
 
 
   ~vtObjectAuxiliaryControlDesignatorObjectPointer_c();

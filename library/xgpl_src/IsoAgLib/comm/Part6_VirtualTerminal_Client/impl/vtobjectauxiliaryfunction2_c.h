@@ -45,7 +45,7 @@ private:
 	std::unique_ptr<iVtObjectAuxiliaryFunction2_s> vtObject_a;
 
 public:
-  vtObjectAuxiliaryFunction2_c(iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , int ai_multitonInst);
+  vtObjectAuxiliaryFunction2_c(iVtObjectAuxiliaryFunction2_s* vtObjectAuxiliaryFunction2SROM , multiton ai_multitonInst);
   ~vtObjectAuxiliaryFunction2_c() override;
 
   int16_t stream(uint8_t* destMemory,

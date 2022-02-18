@@ -50,7 +50,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectInputNumber_c(iVtObjectInputNumber_s* vtObjectInputNumberSROM , int ai_multitonInst);
+  vtObjectInputNumber_c(iVtObjectInputNumber_s* vtObjectInputNumberSROM , multiton ai_multitonInst);
   uint32_t fitTerminal() const;
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 

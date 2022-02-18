@@ -134,9 +134,7 @@ IsoItem_c::changeAddressAndBroadcast (uint8_t aui8_newAddress)
 
 
 void 
-IsoItem_c::set(
-    ecutime_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
-    itemState_t aren_status, int ai_multitonInst )
+IsoItem_c::set(ecutime_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr, itemState_t aren_status, multiton ai_multitonInst )
 {
   BaseItem_c::set( ai32_time, aren_status, ai_multitonInst );
   mc_isoName = acrc_isoName;

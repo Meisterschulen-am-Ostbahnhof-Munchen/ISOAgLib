@@ -48,7 +48,7 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
-  vtObjectInputList_c(iVtObjectInputList_s* vtObjectInputListSROM , int ai_multitonInst);
+  vtObjectInputList_c(iVtObjectInputList_s* vtObjectInputListSROM , multiton ai_multitonInst);
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
   uint8_t getNumberOfListItems();
   uint32_t fitTerminal() const;

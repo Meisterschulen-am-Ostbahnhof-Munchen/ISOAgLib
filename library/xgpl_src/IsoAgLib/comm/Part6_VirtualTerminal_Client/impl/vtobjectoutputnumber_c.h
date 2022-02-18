@@ -50,7 +50,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectOutputNumber_c(iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , int ai_multitonInst);
+  vtObjectOutputNumber_c(iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , multiton ai_multitonInst);
 
   ~vtObjectOutputNumber_c() override;
 

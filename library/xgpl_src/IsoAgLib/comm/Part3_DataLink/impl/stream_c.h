@@ -184,7 +184,7 @@ class Stream_c : public StreamInput_c //, public ClientBase --> for single inher
 {
 public:
   Stream_c (const ReceiveStreamIdentifier_c& ac_rsi,
-            uint32_t aui32_msgSize, ecutime_t ai_time , int ai_multitonInst,
+            uint32_t aui32_msgSize, ecutime_t ai_time , multiton ai_multitonInst,
             bool ab_skipCtsAwait=false);
 
   Stream_c (const Stream_c &);

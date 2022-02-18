@@ -178,7 +178,7 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 #endif
 
     vtObjectFillAttributes_c::vtObjectFillAttributes_c(
-            vtObjectFillAttributes_c::iVtObjectFillAttributes_s *vtObjectFillAttributesSROM, int ai_multitonInst)
+            vtObjectFillAttributes_c::iVtObjectFillAttributes_s *vtObjectFillAttributesSROM, multiton ai_multitonInst)
             : vtObject_c(ai_multitonInst)
     		, vtObject_a(vtObjectFillAttributesSROM)
     {}
@@ -208,7 +208,7 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 #endif
 
 vtObjectFillAttributes_c::vtObjectFillAttributes_c(
-		int ai_multitonInst,
+		multiton ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		IsoAgLib::FillType fillType,
 		IsoAgLib::Colour fillColour,

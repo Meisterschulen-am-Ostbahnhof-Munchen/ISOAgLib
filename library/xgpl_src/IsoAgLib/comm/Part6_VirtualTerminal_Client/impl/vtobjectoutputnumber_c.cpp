@@ -430,7 +430,7 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 
 
     vtObjectOutputNumber_c::vtObjectOutputNumber_c(
-    		vtObjectOutputNumber_c::iVtObjectOutputNumber_s *vtObjectOutputNumberSROMs, int ai_multitonInst)
+    		vtObjectOutputNumber_c::iVtObjectOutputNumber_s *vtObjectOutputNumberSROMs, multiton ai_multitonInst)
             :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectOutputNumberSROMs)
     {}

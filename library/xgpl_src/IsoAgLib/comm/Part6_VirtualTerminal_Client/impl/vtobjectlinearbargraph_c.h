@@ -53,7 +53,7 @@ public:
 
 
   vtObjectLinearBarGraph_c(
-		    int ai_multitonInst,
+		    multiton ai_multitonInst,
 			IsoAgLib::ObjectID ID,
 		    uint16_t width,
 			uint16_t height,
@@ -68,7 +68,7 @@ public:
 			IsoAgLib::iVtObjectNumberVariable_c *targetValueVariableReference,
 			uint16_t targetValue);
 
-  vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , int ai_multitonInst);
+  vtObjectLinearBarGraph_c(iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM , multiton ai_multitonInst);
 
   ~vtObjectLinearBarGraph_c() override;
 

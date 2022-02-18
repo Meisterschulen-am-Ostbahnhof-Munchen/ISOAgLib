@@ -51,7 +51,7 @@ public:
   vtObjectDataMask_c() = delete;
 
   vtObjectDataMask_c(
-	  int ai_multitonInst
+	  multiton ai_multitonInst
 	, IsoAgLib::ObjectID ID
 	, IsoAgLib::Colour backgroundColour
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
@@ -59,7 +59,7 @@ public:
 #endif
 	);
 
-  vtObjectDataMask_c(iVtObjectDataMask_s* vtObjectDataMaskSROM , int ai_multitonInst);
+  vtObjectDataMask_c(iVtObjectDataMask_s* vtObjectDataMaskSROM , multiton ai_multitonInst);
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
   uint32_t fitTerminal() const;
 

@@ -29,7 +29,7 @@ namespace __IsoAgLib {
 class ProcessPkg_c : public CanPkgExt_c
 {
 public:
-  ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst = 0 );
+  ProcessPkg_c( const CanPkg_c& arc_src, multiton ai_multitonInst = multitonSTD );
   ProcessPkg_c( IsoAgLib::ProcData::CommandType_t, uint16_t element, uint16_t ddi, int32_t value );
   ProcessPkg_c( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t );
 

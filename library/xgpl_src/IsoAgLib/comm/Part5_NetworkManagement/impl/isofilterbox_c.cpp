@@ -51,7 +51,7 @@ IsoFilter_s::equalMaskAndFilter (const IsoFilter_s& acrc_isoFilter) const
 
 
 
-IsoFilterBox_c::IsoFilterBox_c (const IsoFilter_s& arcs_isoFilter , int ai_multitonInst)
+IsoFilterBox_c::IsoFilterBox_c (const IsoFilter_s& arcs_isoFilter , multiton ai_multitonInst)
 : MULTITON_PARENT_CONSTRUCTOR
   ms_isoFilter (arcs_isoFilter)
 , mpc_filterBox (NULL)

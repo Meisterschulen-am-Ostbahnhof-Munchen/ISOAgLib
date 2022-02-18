@@ -47,7 +47,7 @@ private:
 	std::unique_ptr<iVtObjectFillAttributes_s> vtObject_a;
 
 	vtObjectFillAttributes_c() = delete;
-	vtObjectFillAttributes_c(iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst);
+	vtObjectFillAttributes_c(iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , multiton ai_multitonInst);
 
 
 public:
@@ -59,7 +59,7 @@ public:
 
 
   vtObjectFillAttributes_c(
-		  int ai_multitonInst
+		  multiton ai_multitonInst
 		, IsoAgLib::ObjectID ID
   		, IsoAgLib::FillType fillType
 		, IsoAgLib::Colour fillColour

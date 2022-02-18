@@ -57,13 +57,13 @@ public:
   virtual ~vtObjectLineAttributes_c();
 
   vtObjectLineAttributes_c(
-		  int ai_multitonInst,
+		  multiton ai_multitonInst,
 		  IsoAgLib::ObjectID ID,
 		  IsoAgLib::Colour lineColour,
   		  uint8_t lineWidth,
   		  uint16_t lineArt);
 
-  vtObjectLineAttributes_c(iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , int ai_multitonInst);
+  vtObjectLineAttributes_c(iVtObjectLineAttributes_s* vtObjectLineAttributesSROM , multiton ai_multitonInst);
 
 
 

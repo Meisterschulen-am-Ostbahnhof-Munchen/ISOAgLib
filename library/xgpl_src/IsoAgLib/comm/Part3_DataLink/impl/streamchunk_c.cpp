@@ -35,7 +35,7 @@ namespace __IsoAgLib {
 StreamChunk_c::StreamChunk_c (const ReceiveStreamIdentifier_c& ac_rsi,
                               uint32_t aui32_msgSize,
                               ecutime_t ai32_creationTime
-                              , int ai_multitonInst
+                              , multiton ai_multitonInst
                              ,bool ab_skipCtsAwait)
   : Stream_c (ac_rsi, aui32_msgSize, ai32_creationTime , ai_multitonInst , ab_skipCtsAwait)
 {

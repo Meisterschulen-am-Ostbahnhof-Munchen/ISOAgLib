@@ -52,7 +52,7 @@ public:
   vtObjectLine_c() = delete;
 
   vtObjectLine_c(
-		  int ai_multitonInst,
+		  multiton ai_multitonInst,
 		  IsoAgLib::ObjectID ID,
 		  IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
 		  uint16_t width,
@@ -61,7 +61,7 @@ public:
 		  );
 
 
-  vtObjectLine_c(iVtObjectLine_s* vtObjectLineSROM , int ai_multitonInst);
+  vtObjectLine_c(iVtObjectLine_s* vtObjectLineSROM , multiton ai_multitonInst);
 
   virtual ~vtObjectLine_c();
 

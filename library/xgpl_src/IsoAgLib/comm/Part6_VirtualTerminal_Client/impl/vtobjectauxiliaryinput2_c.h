@@ -71,7 +71,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectAuxiliaryInput2_c(iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , int ai_multitonInst);
+  vtObjectAuxiliaryInput2_c(iVtObjectAuxiliaryInput2_s* vtObjectAuxiliaryInput2SROM , multiton ai_multitonInst);
 
   ~vtObjectAuxiliaryInput2_c();
 

@@ -375,7 +375,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 }
 #endif
     vtObjectInputNumber_c::vtObjectInputNumber_c(
-    		vtObjectInputNumber_c::iVtObjectInputNumber_s *vtObjectInputNumberSROM, int ai_multitonInst)
+    		vtObjectInputNumber_c::iVtObjectInputNumber_s *vtObjectInputNumberSROM, multiton ai_multitonInst)
             :vtObject_c(ai_multitonInst)
             ,vtObject_a(vtObjectInputNumberSROM)
     {}

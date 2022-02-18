@@ -47,7 +47,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectAuxiliaryFunction_c(iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , int ai_multitonInst);
+  vtObjectAuxiliaryFunction_c(iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , multiton ai_multitonInst);
 
 
   ~vtObjectAuxiliaryFunction_c() override;

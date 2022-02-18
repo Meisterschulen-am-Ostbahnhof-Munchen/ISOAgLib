@@ -44,7 +44,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectInputAttributes_c(iVtObjectInputAttributes_s* vtObjectInputAttributesSROM , int ai_multitonInst);
+  vtObjectInputAttributes_c(iVtObjectInputAttributes_s* vtObjectInputAttributesSROM , multiton ai_multitonInst);
 
 
   vtObjectInputAttributes_c() = delete;

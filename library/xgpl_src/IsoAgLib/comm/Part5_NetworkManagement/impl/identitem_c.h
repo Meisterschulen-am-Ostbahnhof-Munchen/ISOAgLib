@@ -76,7 +76,7 @@ public:
     @return false in case this Item wasn't properly set up before
                   using some init(..)-call.
   */
-  bool activate (int ai_multitonInst);
+  bool activate (multiton ai_multitonInst);
 
   /** IsoMonitor uses this function to deactivate/stop this Item
       For later (again) use, it needs to be initialized again.

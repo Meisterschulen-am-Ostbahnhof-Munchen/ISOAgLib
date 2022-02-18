@@ -46,7 +46,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectOutputList_c(iVtObjectOutputList_s* vtObjectOutputListSROM , int ai_multitonInst);
+  vtObjectOutputList_c(iVtObjectOutputList_s* vtObjectOutputListSROM , multiton ai_multitonInst);
   vtObjectOutputList_c();
 
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);

@@ -87,7 +87,7 @@ IsoAgLib::ObjectID vtObjectFontAttributes_c::getID() const {
 
 
 vtObjectFontAttributes_c::vtObjectFontAttributes_c(
-		int ai_multitonInst,
+		multiton ai_multitonInst,
 		IsoAgLib::ObjectID ID,
 		IsoAgLib::Colour fontColour,
 		IsoAgLib::Font fontSize,
@@ -107,7 +107,7 @@ vtObjectFontAttributes_c::vtObjectFontAttributes_c(
 vtObjectFontAttributes_c::~vtObjectFontAttributes_c() = default;
 
 
-vtObjectFontAttributes_c::vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObject_c , int ai_multitonInst)
+vtObjectFontAttributes_c::vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObject_c , multiton ai_multitonInst)
 : __IsoAgLib::vtObject_c(ai_multitonInst)
 , vtObject_a(vtObject_c)
 , mui8_fontSizeScaled( 0xFF ) // set mui8_fontSizeScaled to "not yet calculated"

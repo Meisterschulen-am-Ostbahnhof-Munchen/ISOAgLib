@@ -146,7 +146,7 @@ uint8_t vtObjectSoftKeyMask_c::get_numberOfObjectsToFollow() const
 
 
 vtObjectSoftKeyMask_c::vtObjectSoftKeyMask_c(
-        iVtObjectSoftKeyMask_s *vtObjectSoftKeyMaskSROM, int ai_multitonInst)
+        iVtObjectSoftKeyMask_s *vtObjectSoftKeyMaskSROM, multiton ai_multitonInst)
         :vtObject_c(ai_multitonInst)
 		,vtObject_a(vtObjectSoftKeyMaskSROM)
 #ifdef ENABLE_SKM_HANDLER

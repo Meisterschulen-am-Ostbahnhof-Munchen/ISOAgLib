@@ -39,7 +39,7 @@ private:
 	std::unique_ptr<iVtObjectFontAttributes_s> vtObject_a;
 
 	vtObjectFontAttributes_c() = delete;
-	vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
+	vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , multiton ai_multitonInst);
 
 public:
   int16_t stream(uint8_t* destMemory,
@@ -49,7 +49,7 @@ public:
 
 
 	vtObjectFontAttributes_c(
-			int ai_multitonInst,
+			multiton ai_multitonInst,
 			IsoAgLib::ObjectID ID,
 			IsoAgLib::Colour fontColour,
 			IsoAgLib::Font fontSize,

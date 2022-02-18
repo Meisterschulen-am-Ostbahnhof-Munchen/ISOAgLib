@@ -158,7 +158,7 @@ struct RegisterPgn_s : public std::binary_function< uint32_t, uint32_t, void > {
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {
     getIsoRequestPgnInstance4Comm().registerPGN(*mcp_handler, aui32_pgn, aui32_pgnMask);
   }
-  RegisterPgn_s(IsoRequestPgnHandler_c *apc_handler , int ai_multitonInst) :
+  RegisterPgn_s(IsoRequestPgnHandler_c *apc_handler , multiton ai_multitonInst) :
     MULTITON_MEMBER_CONSTRUCTOR
     mcp_handler(apc_handler) {}
 private:
@@ -174,7 +174,7 @@ struct UnregisterPgn_s : public std::binary_function< uint32_t, uint32_t, void >
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {
     getIsoRequestPgnInstance4Comm().unregisterPGN(*mcp_handler, aui32_pgn, aui32_pgnMask);
   }
-  UnregisterPgn_s(IsoRequestPgnHandler_c *apc_handler , int ai_multitonInst) :
+  UnregisterPgn_s(IsoRequestPgnHandler_c *apc_handler , multiton ai_multitonInst) :
     MULTITON_MEMBER_CONSTRUCTOR
     mcp_handler(apc_handler) {}
 private:

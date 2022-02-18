@@ -211,7 +211,7 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 }
 #endif
     vtObjectInputBoolean_c::vtObjectInputBoolean_c(
-    		vtObjectInputBoolean_c::iVtObjectInputBoolean_s *vtObjectInputBooleanSROM, int ai_multitonInst)
+    		vtObjectInputBoolean_c::iVtObjectInputBoolean_s *vtObjectInputBooleanSROM, multiton ai_multitonInst)
             :vtObject_c(ai_multitonInst)
     		,vtObject_a(vtObjectInputBooleanSROM)
     {}

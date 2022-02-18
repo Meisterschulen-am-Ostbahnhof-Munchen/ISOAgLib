@@ -53,7 +53,7 @@ public:
   vtObjectButton_c() = delete;
 
   vtObjectButton_c(
-    int ai_multitonInst,
+    multiton ai_multitonInst,
 	IsoAgLib::ObjectID ID,
 	uint16_t width,
 	uint16_t height,
@@ -62,7 +62,7 @@ public:
 	uint8_t keyCode,
 	uint8_t options);
 
-  vtObjectButton_c(iVtObjectButton_s* vtObjectButtonSROM , int ai_multitonInst);
+  vtObjectButton_c(iVtObjectButton_s* vtObjectButtonSROM , multiton ai_multitonInst);
 
   ~vtObjectButton_c() override;
 

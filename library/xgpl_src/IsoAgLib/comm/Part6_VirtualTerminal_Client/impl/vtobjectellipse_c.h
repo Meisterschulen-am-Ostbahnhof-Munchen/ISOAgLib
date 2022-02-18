@@ -42,7 +42,7 @@ private:
 	std::unique_ptr<iVtObjectEllipse_s> vtObject_a;
 
     vtObjectEllipse_c() = delete;
-	vtObjectEllipse_c(iVtObjectEllipse_s* vtObjectellipseSROM , int ai_multitonInst);
+	vtObjectEllipse_c(iVtObjectEllipse_s* vtObjectellipseSROM , multiton ai_multitonInst);
 
 public:
   int16_t stream(uint8_t* destMemory,
@@ -52,7 +52,7 @@ public:
 
 
   vtObjectEllipse_c(
-		    int ai_multitonInst,
+		    multiton ai_multitonInst,
 			IsoAgLib::ObjectID ID,
 			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
 			uint16_t width,

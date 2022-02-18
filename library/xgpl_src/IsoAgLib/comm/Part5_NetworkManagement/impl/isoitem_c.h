@@ -61,8 +61,7 @@ public:
     @param aren_status state of this ident (off, claimed address, ...)
     @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(ecutime_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
-           itemState_t aren_status = IState_c::Active, int ai_multitonInst = 0 );
+  void set(ecutime_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr, itemState_t aren_status = IState_c::Active, multiton ai_multitonInst = multitonSTD );
 
   /** this sets the back-reference to the associated IdentItem if this is a LOCAL Item!
       there's no need to unset the back-reference, because the local/remote state

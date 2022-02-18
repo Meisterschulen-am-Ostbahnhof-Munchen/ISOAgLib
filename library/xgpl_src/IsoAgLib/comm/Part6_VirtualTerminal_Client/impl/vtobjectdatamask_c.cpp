@@ -104,7 +104,7 @@ IsoAgLib::ObjectID vtObjectDataMask_c::getID() const {
 }
 
 
-vtObjectDataMask_c::vtObjectDataMask_c(iVtObjectDataMask_s *vtObjectDataMaskSROM, int ai_multitonInst)
+vtObjectDataMask_c::vtObjectDataMask_c(iVtObjectDataMask_s *vtObjectDataMaskSROM, multiton ai_multitonInst)
 	: iVtObjectMask_c((iVtObjectMask_s*) vtObjectDataMaskSROM, ai_multitonInst)
 	, vtObject_a(vtObjectDataMaskSROM)
 {
@@ -114,7 +114,7 @@ vtObjectDataMask_c::vtObjectDataMask_c(iVtObjectDataMask_s *vtObjectDataMaskSROM
 vtObjectDataMask_c::~vtObjectDataMask_c() = default;
 
 vtObjectDataMask_c::vtObjectDataMask_c(
-		  int ai_multitonInst
+		  multiton ai_multitonInst
 		, IsoAgLib::ObjectID ID
 		, IsoAgLib::Colour backgroundColour
 #ifdef CONFIG_USE_VTOBJECT_softkeymask

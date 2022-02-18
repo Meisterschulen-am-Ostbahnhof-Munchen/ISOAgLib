@@ -42,7 +42,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectMacro_c(iVtObjectMacro_s* vtObjectMacroSROM , int ai_multitonInst);
+  vtObjectMacro_c(iVtObjectMacro_s* vtObjectMacroSROM , multiton ai_multitonInst);
 
 
   vtObjectMacro_c();
