@@ -25,6 +25,8 @@
 
 #ifdef CONFIG_USE_VTOBJECT_container
 
+
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vtclient_c.h"
 
@@ -34,6 +36,7 @@ namespace __IsoAgLib {
 class vtObjectContainer_c : public vtObject_c
 {
 private:
+	enum AttributeID:uint8_t;
 	// Internal implementation class
 	struct iVtObjectContainer_s;
 
@@ -50,6 +53,8 @@ public:
 
   vtObjectContainer_c(iVtObjectContainer_s* vtObjectContainer_sROM , int ai_multitonInst);
 
+
+  ~vtObjectContainer_c() override;
 
   uint32_t fitTerminal() const;
 
