@@ -76,19 +76,19 @@ public:
   uint8_t updateObjectType() const { return vtObjectArchedBarGraph_c::updateObjectType(); }
   */
 
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  Colour updateColour(bool b_SendRequest=false);
-  Colour updateTargetLineColour(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
-  uint8_t updateStartAngle(bool b_SendRequest=false);
-  uint8_t updateEndAngle(bool b_SendRequest=false);
-  uint16_t updateBarGraphWidth(bool b_SendRequest=false);
-  uint16_t updateMinValue(bool b_SendRequest=false);
-  uint16_t updateMaxValue(bool b_SendRequest=false);
-  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
-  iVtObjectNumberVariable_c* updateTargetValueVariableReference(bool b_SendRequest=false);
-  uint16_t updateTargetValue(bool b_SendRequest=false);
+  uint16_t updateWidth(bool b_SendRequest=false) override;
+  uint16_t updateHeight(bool b_SendRequest=false) override;
+  Colour updateColour(bool b_SendRequest=false) override;
+  Colour updateTargetLineColour(bool b_SendRequest=false) override;
+  uint8_t updateOptions(bool b_SendRequest=false) override;
+  uint8_t updateStartAngle(bool b_SendRequest=false) override;
+  uint8_t updateEndAngle(bool b_SendRequest=false) override;
+  uint16_t updateBarGraphWidth(bool b_SendRequest=false) override;
+  uint16_t updateMinValue(bool b_SendRequest=false) override;
+  uint16_t updateMaxValue(bool b_SendRequest=false) override;
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) override;
+  iVtObjectNumberVariable_c* updateTargetValueVariableReference(bool b_SendRequest=false) override;
+  uint16_t updateTargetValue(bool b_SendRequest=false) override;
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint16_t updateValue(bool b_SendRequest=false) {

@@ -24,6 +24,9 @@ menu "### ISOAgLib Example Configuration ###"
      config USE_VTOBJECT_auxiliaryinput2
          bool "USE_VTOBJECT_auxiliaryinput2"
          default n
+     config USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer
+         bool "USE_VTOBJECT_auxiliarycontroldesignatorobjectpointer"
+         default n
      config USE_VTOBJECT_button
          bool "USE_VTOBJECT_button"
          default n

@@ -56,6 +56,22 @@ namespace IsoAgLib {
     uint8_t iVtObjectAlarmMask_c::updatePriority(bool b_SendRequest) {
         return vtObjectAlarmMask_c::updatePriority(b_SendRequest);
     }
+
+    uint16_t iVtObjectAlarmMask_c::objectType() { return VT_OBJECT_TYPE_ALARM_MASK; }
+
+    iVtObjectAlarmMask_c::iVtObjectAlarmMask_c(iVtClientObjectPool_c *pool, ObjectID ID, Colour backgroundColour, iVtObjectSoftKeyMask_c *softKeyMask, uint8_t priority, uint8_t acousticSignal)
+            :vtObjectAlarmMask_c(
+            pool->getAiMultitonInst()
+            , ID
+            , backgroundColour
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+            , softKeyMask
+#endif
+            , priority
+            , acousticSignal)
+    {
+        pool->Append(this);
+    }
 } // IsoAgLib
 
 

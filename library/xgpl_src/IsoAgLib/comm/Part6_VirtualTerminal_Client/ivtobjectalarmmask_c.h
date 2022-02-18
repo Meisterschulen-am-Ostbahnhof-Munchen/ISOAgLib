@@ -32,10 +32,10 @@ namespace IsoAgLib {
 class iVtObjectAlarmMask_c : public __IsoAgLib::vtObjectAlarmMask_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_ALARM_MASK; }
+  static uint16_t objectType();
 
 
-  iVtObjectAlarmMask_c(
+  explicit iVtObjectAlarmMask_c(
 			        iVtClientObjectPool_c* pool
 				  , ObjectID ID = autoID
 				  , Colour backgroundColour = BLACK
@@ -43,21 +43,10 @@ public:
 				  , iVtObjectSoftKeyMask_c *softKeyMask = nullptr
 #endif
 				  , uint8_t priority = 0
-		          , uint8_t acousticSignal = 0)
-	:vtObjectAlarmMask_c(
-					   pool->getAiMultitonInst()
-					 , ID
-					 , backgroundColour
-#ifdef CONFIG_USE_VTOBJECT_softkeymask
-					 , softKeyMask
-#endif
-					 , priority
-			         , acousticSignal)
-	{
-		pool->Append(this);
-  }
-  ~iVtObjectAlarmMask_c() override;
+		          , uint8_t acousticSignal = 0);
 
+
+  ~iVtObjectAlarmMask_c() override;
 
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
@@ -66,11 +55,8 @@ public:
 #endif
 
   void setPriority(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   void setAcousticSignal(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -82,17 +68,13 @@ public:
 
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) override;
 
-
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
   IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false) override;
 #endif
 
-
   uint8_t updatePriority(bool b_SendRequest=false) override;
-
   uint8_t updateAcousticSignal(bool b_SendRequest=false) override;
 #endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-
   uint16_t getObjectType() const override;
 };
 
