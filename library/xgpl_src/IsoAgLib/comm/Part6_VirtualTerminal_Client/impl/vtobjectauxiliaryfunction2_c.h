@@ -57,9 +57,12 @@ public:
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);
   bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void overrideFunctionType_onlyAtStartup(uint8_t newValue);
-  bool isAssigned() const;
+
+    virtual bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void overrideFunctionType_onlyAtStartup(uint8_t newValue);
+
+    virtual bool isAssigned() const;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
