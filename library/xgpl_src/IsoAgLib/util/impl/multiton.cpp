@@ -26,4 +26,17 @@ AbstractClientBase::AbstractClientBase( const AbstractClientBase& acrc_src ) = d
 
 ClientBase::ClientBase(multiton ai_multitonInst) : AbstractClientBase(ai_multitonInst){}
 
-ClientBase::~ClientBase() = default;  //this makes the Class non-abstract
+ClientBase::~ClientBase() = default; //this makes the Class non-abstract
+
+multiton& operator ++(multiton &orig) {
+  orig = static_cast<multiton>(orig + 1); // static_cast required because enum + int -> int
+  //!!!!!!!!!!!
+  // TODO : handle overflow !
+  //!!!!!!!!!!!
+  return orig;
+}
+
+
+
+
+

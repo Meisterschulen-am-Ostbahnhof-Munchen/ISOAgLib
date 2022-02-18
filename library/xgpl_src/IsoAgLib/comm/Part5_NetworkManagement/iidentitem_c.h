@@ -139,9 +139,9 @@ public:
   // get the ISOBUS instance
   // NOTE: Calling this is only valid if this IdentItem is already
   // registered to an iIsoBus_c instance! Will throw an assertion otherwise!
-  int getIsoBusInstance() const;
+  multiton getIsoBusInstance() const;
   // OBSOLETE: For backwards compatibility only, don't use in future implementations!
-  int getMultitonInst() const { return getIsoBusInstance(); }
+  multiton getMultitonInst() const { return getIsoBusInstance(); }
 
   /**
     Set ECU Identification fields, needed during the diagnostic procedure
@@ -258,10 +258,10 @@ private:
 };
 
 
-inline int
+inline multiton
 iIdentItem_c::getIsoBusInstance() const
 {
-  int inst = __IsoAgLib::IdentItem_c::getMultitonInst();
+  multiton inst = __IsoAgLib::IdentItem_c::getMultitonInst();
   isoaglib_assert( inst >= 0 );
   return inst;
 }

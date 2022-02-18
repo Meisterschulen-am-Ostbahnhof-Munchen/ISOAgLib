@@ -25,11 +25,16 @@
 #include <new>
 
 
-
 	enum multiton : int
 	{
-		multitonSTD = 0,
+		multitonINVALID = -1, // using an INVALID SingletonVecKey as it will be initialized later!
+		multitonSTD     =  0,
 	};
+
+	// prefix (++my_month)
+	multiton& operator++(multiton& orig);
+
+
 
 
 #if defined(OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED) && defined( __GNUC__ ) && __GNUC__ >= 4
@@ -40,7 +45,7 @@
 #define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA , multiton ai_multitonInst = multitonSTD
 #define MULTITON_INST_PARAMETER_USE               ai_multitonInst
 
-#define MULTITON_PAR_ARR_DEF(PAR)                     int getMultitonInst() const { return (PAR) ? (PAR)->getMultitonInst() : 0; }
+#define MULTITON_PAR_ARR_DEF(PAR)                     multiton getMultitonInst() const { return (PAR) ? (PAR)->getMultitonInst() : 0; }
 #define MULTITON_MEMBER_ASSIGN(PAR)     c_clientBase.setMultitonInst (PAR.c_clientBase.getMultitonInst());
 #define MULTITON_MEMBER_CONSTRUCTOR    c_clientBase( ai_multitonInst ),
 #define MULTITON_MEMBER_COPY_CONSTRUCTOR(PAR) c_clientBase( PAR.getMultitonInst() ),
@@ -156,7 +161,7 @@ union MaxAlign_u {
   DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE); \
   if( !isInitialized ) \
   { \
-    for( unsigned instLoop=0; instLoop < SIZE; ++instLoop ) \
+    for( multiton instLoop = multitonSTD; instLoop < SIZE; ++instLoop ) \
     { \
       sarrpt_instances[ instLoop ] = new STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instLoop) T; \
       sarrpt_instances[ instLoop ]->setMultitonInst( instLoop ); \

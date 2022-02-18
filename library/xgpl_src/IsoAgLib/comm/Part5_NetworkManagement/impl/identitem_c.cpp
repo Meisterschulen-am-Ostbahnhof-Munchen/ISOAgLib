@@ -44,7 +44,7 @@ IdentItem_c::~IdentItem_c()
 
 
 IdentItem_c::IdentItem_c ()
-  : BaseItem_c( System_c::getTime(), IState_c::IstateNull, -1 ) // using an INVALID SingletonVecKey as it will be initialized later!
+  : BaseItem_c( System_c::getTime(), IState_c::IstateNull, multitonINVALID ) // using an INVALID SingletonVecKey as it will be initialized later!
   , mpc_isoItem( NULL )
   , mpc_dataStorageHandler( NULL )
   , mui8_sa( 0x00 )

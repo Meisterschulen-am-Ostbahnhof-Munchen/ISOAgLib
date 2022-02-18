@@ -266,7 +266,7 @@ private:
 
 protected:
 ClientBase c_clientBase;
-int getMultitonInst() const { return c_clientBase.getMultitonInst(); }
+multiton getMultitonInst() const { return c_clientBase.getMultitonInst(); }
 
 
 private:

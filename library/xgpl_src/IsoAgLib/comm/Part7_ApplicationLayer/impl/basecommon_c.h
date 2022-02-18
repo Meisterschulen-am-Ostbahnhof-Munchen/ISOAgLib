@@ -180,11 +180,11 @@ namespace __IsoAgLib
     void notifyOnEvent (uint32_t aui32_pgn);
 
     RegisterPgn_s getRegisterPgn() {
-      return RegisterPgn_s(&mt_handler, 0 ); // XXX TODO
+      return RegisterPgn_s(&mt_handler, multitonSTD ); // XXX TODO
     }
 
     UnregisterPgn_s getUnregisterPgn(){
-      return UnregisterPgn_s(&mt_handler, 0 ); // XXX TODO
+      return UnregisterPgn_s(&mt_handler, multitonSTD ); // XXX TODO
     }
 
     bool initialized() const {

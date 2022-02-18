@@ -67,7 +67,7 @@ DiagnosticsServices_c::~DiagnosticsServices_c()
 {
 }
 
-int DiagnosticsServices_c::getMultitonInst() const
+multiton DiagnosticsServices_c::getMultitonInst() const
 {
   return mrc_identItem.getMultitonInst();
 }

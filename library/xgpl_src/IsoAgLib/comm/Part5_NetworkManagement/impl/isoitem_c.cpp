@@ -41,7 +41,7 @@ namespace __IsoAgLib {
  * --> so these constructors are very dumb now!
  */
 IsoItem_c::IsoItem_c()
-  : BaseItem_c(0, IState_c::IstateNull, 0)
+  : BaseItem_c(0, IState_c::IstateNull, multitonSTD)
   #ifdef USE_WORKING_SET
   , m_wsSlavesAnnounced (NULL)
   , m_wsSlavesAnnouncing (NULL)

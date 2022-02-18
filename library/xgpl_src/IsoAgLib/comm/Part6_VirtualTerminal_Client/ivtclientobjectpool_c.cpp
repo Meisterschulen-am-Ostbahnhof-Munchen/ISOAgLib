@@ -101,7 +101,7 @@ Colour iVtClientObjectPool_c::convertColourDefault(
             , skWidth (a_objectPoolSettings.skWidth)
             , skHeight (a_objectPoolSettings.skHeight)
             , b_initAllObjects (false)
-    		, ai_multitonInst(0)
+    		, ai_multitonInst(multitonSTD)
     {
 
     }
@@ -110,7 +110,7 @@ Colour iVtClientObjectPool_c::convertColourDefault(
         return ai_multitonInst;
     }
 
-    void iVtClientObjectPool_c::setAiMultitonInst(int aiMultitonInst) {
+    void iVtClientObjectPool_c::setAiMultitonInst(multiton aiMultitonInst) {
         ai_multitonInst = aiMultitonInst;
     }
 

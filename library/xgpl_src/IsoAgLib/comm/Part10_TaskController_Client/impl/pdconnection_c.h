@@ -59,7 +59,7 @@ namespace __IsoAgLib
     const PdRemoteNode_c* getRemoteNode() const { return m_pdRemoteNode; }
     const IsoItem_c*      getRemoteItem() const;
   
-    int getMultitonInst() const { return m_identItem->getMultitonInst(); }
+    multiton getMultitonInst() const { return m_identItem->getMultitonInst(); }
 
     virtual void processProcMsg( const ProcessPkg_c& );
 

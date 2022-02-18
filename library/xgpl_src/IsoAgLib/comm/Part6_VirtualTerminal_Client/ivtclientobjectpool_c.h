@@ -415,8 +415,8 @@ public:
   uint8_t               getNumLang()        const; //TODO
   bool                  multiLanguage()     const;
   void                  Append(iVtObject_c* const c);	//TODO !! make this working for Multi-Language as well !!!
-  int                   getAiMultitonInst() const;
-  void                  setAiMultitonInst(int aiMultitonInst);
+  multiton              getAiMultitonInst() const;
+  void                  setAiMultitonInst(multiton aiMultitonInst);
 
   iVtObjectWorkingSet_c&
   getWorkingSetObject() const;

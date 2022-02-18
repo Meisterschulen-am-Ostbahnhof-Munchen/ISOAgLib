@@ -21,6 +21,8 @@
 #ifndef CAN_PKG_EXT_H
 #define CAN_PKG_EXT_H
 
+
+#include <IsoAgLib/util/impl/multiton.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>

@@ -190,7 +190,7 @@ private: // method
 
   void sendSingleDM1DM2(uint32_t ui32_pgn, uint8_t* arr_send8bytes);
 
-  int getMultitonInst() const;
+  multiton getMultitonInst() const;
 
 private: // attributes
   IdentItem_c& mrc_identItem;

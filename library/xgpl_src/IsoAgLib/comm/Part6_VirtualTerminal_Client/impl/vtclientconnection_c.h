@@ -129,7 +129,7 @@ public:
   VtServerInstance_c* getVtServerInstPtr() const { return mpc_vtServerInstance; }
 
   IdentItem_c& getIdentItem() const              { return mrc_wsMasterIdentItem; }
-  int getMultitonInst() { return mrc_wsMasterIdentItem.getMultitonInst(); }
+  multiton getMultitonInst() { return mrc_wsMasterIdentItem.getMultitonInst(); }
 
   bool moveToNextVt();
   bool disconnectFromVt();
