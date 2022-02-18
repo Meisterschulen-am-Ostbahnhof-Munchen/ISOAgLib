@@ -20,9 +20,13 @@ namespace IsoAgLib {
 
     uint16_t iVtObjectContainer_c::objectType() { return VT_OBJECT_TYPE_CONTAINER; }
 
-    void iVtObjectContainer_c::hide(bool b_updateObject, bool b_enableReplaceOfCmd) { vtObjectContainer_c::hideShow (0, b_updateObject, b_enableReplaceOfCmd); }
+    void iVtObjectContainer_c::hide(bool b_updateObject, bool b_enableReplaceOfCmd) {
+		vtObjectContainer_c::hideShow (0, b_updateObject, b_enableReplaceOfCmd);
+	}
 
-    void iVtObjectContainer_c::show(bool b_updateObject, bool b_enableReplaceOfCmd) { vtObjectContainer_c::hideShow (1, b_updateObject, b_enableReplaceOfCmd); }
+    void iVtObjectContainer_c::show(bool b_updateObject, bool b_enableReplaceOfCmd) {
+		vtObjectContainer_c::hideShow (1, b_updateObject, b_enableReplaceOfCmd);
+	}
 
     void iVtObjectContainer_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectContainer_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
