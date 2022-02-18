@@ -30,26 +30,15 @@ namespace IsoAgLib {
 class iVtObjectContainer_c : public __IsoAgLib::vtObjectContainer_c
 {
 public:
-  ~iVtObjectContainer_c();
+  ~iVtObjectContainer_c() override;
 
-  static uint16_t objectType() { return VT_OBJECT_TYPE_CONTAINER; }
+  static uint16_t objectType();
 
-
-
-  void hide(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { vtObjectContainer_c::hideShow (0, b_updateObject, b_enableReplaceOfCmd); }
-  void show(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) { vtObjectContainer_c::hideShow (1, b_updateObject, b_enableReplaceOfCmd); }
-
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectContainer_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    return vtObjectContainer_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    return vtObjectContainer_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void hide(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void show(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** these attributes are in parentheses in the spec, so commented out here
@@ -72,7 +61,7 @@ public:
   */
 #endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual uint16_t getObjectType() const;
 };
 
 } // IsoAgLib

@@ -119,6 +119,7 @@ vtObjectColourMap_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     		,vtObject_a(vtObjectColourMapSROM)
     {}
 
+    vtObjectColourMap_c::~vtObjectColourMap_c() = default;
 
 
 } // __IsoAgLib

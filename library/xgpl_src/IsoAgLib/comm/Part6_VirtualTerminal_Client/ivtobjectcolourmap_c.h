@@ -31,7 +31,10 @@ namespace IsoAgLib {
 class iVtObjectColourMap_c : public __IsoAgLib::vtObjectColourMap_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_COLOUR_MAP; }
+
+	~iVtObjectColourMap_c() override;
+
+  static uint16_t objectType();
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -40,14 +43,11 @@ public:
   uint8_t updateObjectType() const { return vtObjectColourMap_c::updateObjectType(); }
   */
 
-  uint16_t updateNumOfColourIdxToFollow(bool b_SendRequest=false) {
-    //return vtObjectColourMap_c::updateNumOfColourIdxToFollow(b_SendRequest);
-	  return 0;
-  }
+  uint16_t updateNumOfColourIdxToFollow(bool b_SendRequest=false);
 
 #endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  uint16_t getObjectType() const override ;
 };
 
 } // IsoAgLib
