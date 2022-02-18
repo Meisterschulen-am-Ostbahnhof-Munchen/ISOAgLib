@@ -7,4 +7,13 @@
 
 
 
+#include "ivtobjectauxiliaryinput_c.h"
+
+
+namespace IsoAgLib {
+
+
+
+} // IsoAgLib
+
 

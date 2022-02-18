@@ -7,4 +7,15 @@
 
 
 
+#include "ivtobjectcolourmap_c.h"
+
+
+namespace IsoAgLib {
+
+
+
+} // IsoAgLib
+
+
+
 

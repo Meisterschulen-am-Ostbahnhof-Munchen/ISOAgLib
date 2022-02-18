@@ -7,4 +7,14 @@
 
 
 
+#include "ivtobjectgraphicscontext_c.h"
+
+
+namespace IsoAgLib {
+
+
+
+} // IsoAgLib
+
+
 

@@ -6,5 +6,14 @@
  */
 
 
+#include "ivtobjectinputboolean_c.h"
+
+
+namespace IsoAgLib {
+
+
+
+} // IsoAgLib
+
 
 

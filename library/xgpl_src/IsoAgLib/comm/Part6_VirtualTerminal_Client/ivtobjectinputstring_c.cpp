@@ -5,6 +5,14 @@
  *      Author: franz
  */
 
+#include "ivtobjectinputstring_c.h"
+
+
+namespace IsoAgLib {
+
+
+
+} // IsoAgLib
 
 
 

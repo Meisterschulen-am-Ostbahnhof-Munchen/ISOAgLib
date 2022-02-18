@@ -7,4 +7,14 @@
 
 
 
+#include "ivtobjectauxiliarypointer_c.h"
+
+
+namespace IsoAgLib {
+
+
+
+} // IsoAgLib
+
+
 

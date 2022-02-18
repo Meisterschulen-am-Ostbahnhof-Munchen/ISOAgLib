@@ -7,4 +7,13 @@
 
 
 
+#include "ivtobjectinputattributes_c.h"
+
+
+namespace IsoAgLib {
+
+
+
+} // IsoAgLib
+
 
