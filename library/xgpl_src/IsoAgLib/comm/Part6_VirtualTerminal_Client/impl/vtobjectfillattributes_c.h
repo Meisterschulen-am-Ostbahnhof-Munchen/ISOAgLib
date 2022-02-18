@@ -68,7 +68,7 @@ public:
 
   virtual ~vtObjectFillAttributes_c();
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
 
     virtual void setFillType(IsoAgLib::FillType newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -95,7 +95,7 @@ public:
         virtual IsoAgLib::iVtObjectPictureGraphic_c* updateFillPattern(bool b_SendRequest=false);
 #endif
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 
