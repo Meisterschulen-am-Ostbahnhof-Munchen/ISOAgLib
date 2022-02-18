@@ -87,7 +87,7 @@ void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
         	objectsToFollow[numberOfObjectsToFollow].vtObject = vtObject;
         	objectsToFollow[numberOfObjectsToFollow].x = x;
         	objectsToFollow[numberOfObjectsToFollow].y = y;
-        	numberOfObjectsToFollow++;
+        	numberOfObjectsToFollow++; //increase Index !
         } else {
         	//Exception !!! //TODO
         }
