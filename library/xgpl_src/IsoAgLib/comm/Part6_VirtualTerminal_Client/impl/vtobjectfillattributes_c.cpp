@@ -195,6 +195,22 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     }
 #endif
 
+vtObjectFillAttributes_c::vtObjectFillAttributes_c(
+		int ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		IsoAgLib::FillType fillType,
+		IsoAgLib::Colour fillColour,
+		IsoAgLib::iVtObjectPictureGraphic_c *fillPatternObject)
+	:vtObjectFillAttributes_c(
+			new iVtObjectFillAttributes_s(
+			ID,
+			fillType,
+			fillColour,
+			fillPatternObject),
+	ai_multitonInst)
+{
+}
+
 } // __IsoAgLib
 
 #endif //CONFIG_USE_VTOBJECT_fillattributes

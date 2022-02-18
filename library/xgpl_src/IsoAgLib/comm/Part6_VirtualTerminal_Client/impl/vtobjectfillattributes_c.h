@@ -42,6 +42,9 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectFillAttributes_s> vtObject_a;
 
+	vtObjectFillAttributes_c() = delete;
+	vtObjectFillAttributes_c(iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst);
+
 
 public:
   int16_t stream(uint8_t* destMemory,
@@ -49,29 +52,47 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectFillAttributes_c(iVtObjectFillAttributes_s* vtObjectFillAttributesSROM , int ai_multitonInst);
+
+
+  vtObjectFillAttributes_c(
+		  int ai_multitonInst
+		, IsoAgLib::ObjectID ID
+  		, IsoAgLib::FillType fillType
+		, IsoAgLib::Colour fillColour
+#ifdef CONFIG_USE_VTOBJECT_picturegraphic
+		, IsoAgLib::iVtObjectPictureGraphic_c *fillPatternObject
+#endif
+		);
+
+
+
   virtual ~vtObjectFillAttributes_c();
+
   uint32_t fitTerminal() const;
 
     virtual void setFillType(IsoAgLib::FillType newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
     virtual void setFillColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
-  void setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setFillAttributes(IsoAgLib::FillType newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+        virtual void setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+        virtual void setFillAttributes(IsoAgLib::FillType newFillType, IsoAgLib::Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #endif
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-  /** that attribute is in parentheses in the spec, so commented out here
+
+        virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 25; }
   */
 
   IsoAgLib::FillType updateFillType(bool b_SendRequest=false);
 
-  IsoAgLib::Colour updateFillColour(bool b_SendRequest=false);
+        virtual IsoAgLib::Colour updateFillColour(bool b_SendRequest=false);
 
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
-  IsoAgLib::iVtObjectPictureGraphic_c* updateFillPattern(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectPictureGraphic_c* updateFillPattern(bool b_SendRequest=false);
 #endif
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);

@@ -38,6 +38,8 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectFontAttributes_s> vtObject_a;
 
+	vtObjectFontAttributes_c() = delete;
+	vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
 
 public:
   int16_t stream(uint8_t* destMemory,
@@ -54,7 +56,7 @@ public:
 			uint8_t fontType, // always =0 ISO_LATIN_1
 			uint8_t fontStyle);
 
-  vtObjectFontAttributes_c(iVtObjectFontAttributes_s* vtObjectFontAttributesSROM , int ai_multitonInst);
+
   virtual ~vtObjectFontAttributes_c();
   uint32_t fitTerminal() const;
   uint16_t getScaledWidthHeight();

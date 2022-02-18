@@ -34,28 +34,23 @@ private:
     iVtObjectFillAttributes_c() = delete;
 public:
 
+
+    iVtObjectFillAttributes_c(
+    		iVtClientObjectPool_c* pool,
+    		ObjectID ID,
+    		FillType fillType,
+    		Colour fillColour,
+    		iVtObjectPictureGraphic_c *fillPatternObject);
+
+
    ~iVtObjectFillAttributes_c() override;
-
   static uint16_t objectType();
-
-
-  void setFillType(FillType newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectFillAttributes_c::setFillType(newFillType, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setFillColour(Colour newFillColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectFillAttributes_c::setFillColour(newFillColour, b_updateObject, b_enableReplaceOfCmd);
-  }
-
+  void setFillType(FillType newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setFillColour(Colour newFillColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
-  void setFillPattern(iVtObjectPictureGraphic_c* newFillPatternObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectFillAttributes_c::setFillPattern(newFillPatternObject, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setFillAttributes(FillType newFillType, Colour newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectFillAttributes_c::setFillAttributes(newFillType, newFillColour, newFillPattern, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setFillPattern(iVtObjectPictureGraphic_c* newFillPatternObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setFillAttributes(FillType newFillType, Colour newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #endif
 
 
@@ -64,20 +59,11 @@ public:
   uint8_t updateObjectType() const { return vtObjectFillAttributes_c::updateObjectType(); }
   */
 
-  FillType updateFillType(bool b_SendRequest=false) {
-    return vtObjectFillAttributes_c::updateFillType(b_SendRequest);
-  }
-
-  Colour updateFillColour(bool b_SendRequest=false) {
-    return vtObjectFillAttributes_c::updateFillColour(b_SendRequest);
-  }
-
-  IsoAgLib::iVtObjectPictureGraphic_c* updateFillPattern(bool b_SendRequest=false) {
-    return vtObjectFillAttributes_c::updateFillPattern(b_SendRequest);
-  }
+  FillType updateFillType(bool b_SendRequest=false) override;
+  Colour updateFillColour(bool b_SendRequest=false) override;
+  iVtObjectPictureGraphic_c* updateFillPattern(bool b_SendRequest=false) override;
 #endif
-
-  virtual uint16_t getObjectType() const { return objectType(); }
+  uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib
