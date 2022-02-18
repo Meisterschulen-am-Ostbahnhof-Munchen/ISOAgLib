@@ -39,7 +39,7 @@ public:
     		iVtClientObjectPool_c* pool,
     		ObjectID ID = autoID,
     		FillType fillType = fillColour,
-    		Colour fillColour = RED,
+    		Colour fillColour = MAROON,
     		iVtObjectPictureGraphic_c *fillPatternObject = nullptr);
 
 
