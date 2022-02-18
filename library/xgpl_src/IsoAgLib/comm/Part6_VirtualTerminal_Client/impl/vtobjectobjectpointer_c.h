@@ -23,6 +23,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 #ifdef CONFIG_USE_VTOBJECT_objectpointer
+#include <memory> // PImpl
 #include "vtobject_c.h"
 #include "vttypes.h"
 #include "vtclientconnection_c.h"
