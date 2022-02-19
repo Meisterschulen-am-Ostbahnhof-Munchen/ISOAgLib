@@ -57,19 +57,28 @@ struct vtObjectInputBoolean_c::iVtObjectInputBoolean_s : iVtObjectwMacro_s {
 		IsoAgLib::iVtObjectFontAttributes_c *foregroundColour,
 		IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 		uint8_t value,
-		uint8_t enabled)
-  : iVtObject_s(ID)
-  , iVtObjectwMacro_s(ID)
-  , backgroundColour(backgroundColour)
-  , width(width)
-  , foregroundColour(foregroundColour)
-  , variableReference(variableReference)
-  , value(value)
-  , enabled(enabled)
-  {}
+		uint8_t enabled);
 };
 
-int16_t
+    vtObjectInputBoolean_c::iVtObjectInputBoolean_s::iVtObjectInputBoolean_s(
+            IsoAgLib::ObjectID ID,
+            IsoAgLib::Colour backgroundColour,
+            uint16_t width,
+            IsoAgLib::iVtObjectFontAttributes_c *foregroundColour,
+            IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+            uint8_t value,
+            uint8_t enabled)
+            : iVtObject_s(ID)
+            , iVtObjectwMacro_s(ID)
+            , backgroundColour(backgroundColour)
+            , width(width)
+            , foregroundColour(foregroundColour)
+            , variableReference(variableReference)
+            , value(value)
+            , enabled(enabled)
+    {}
+
+    int16_t
 vtObjectInputBoolean_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
                                objRange_t sourceOffset)

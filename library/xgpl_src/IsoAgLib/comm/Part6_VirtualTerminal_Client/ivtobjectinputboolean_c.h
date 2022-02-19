@@ -70,21 +70,10 @@ public:
   uint8_t updateObjectType() const { return vtObjectInputBoolean_c::updateObjectType(); }
   */
   
-  Colour updateBackgroundColour(bool b_SendRequest=false) {
-    return vtObjectInputBoolean_c::updateBackgroundColour(b_SendRequest);
-  }
-  
-  uint16_t updateWidth(bool b_SendRequest=false) {
-    return vtObjectInputBoolean_c::updateWidth(b_SendRequest);
-  }
-
-  iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false) {
-    return vtObjectInputBoolean_c::updateForegroundColour(b_SendRequest);
-  }
-
-  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
-    return vtObjectInputBoolean_c::updateVariableReference(b_SendRequest);
-  }
+  Colour updateBackgroundColour(bool b_SendRequest=false) override;
+  uint16_t updateWidth(bool b_SendRequest=false) override;
+  iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false) override;
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) override;
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateValue(bool b_SendRequest=false) {
@@ -97,7 +86,7 @@ public:
   */
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib

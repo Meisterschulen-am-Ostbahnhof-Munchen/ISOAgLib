@@ -71,20 +71,14 @@ public:
 
     virtual void setValue(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
 
-    virtual // //////////////////////////////////
+  // //////////////////////////////////
   // All special Attribute-Set methods
-  void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
+    virtual void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual void setForegroundColour(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
     virtual bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-
     virtual bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-
     virtual bool getEnabled();
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -94,11 +88,9 @@ public:
   */
 
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
-
         virtual uint16_t updateWidth(bool b_SendRequest=false);
-
         virtual IsoAgLib::iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
+        virtual IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateValue(bool b_SendRequest=false);
@@ -106,10 +98,10 @@ public:
   uint8_t updateEnabled(bool b_SendRequest=false);
   */
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 private:
-  void updateEnable(uint8_t aui8_enOrDis);
+  void updateEnable(uint8_t aui8_enOrDis) override;
 };
 
 } // __IsoAgLib

@@ -68,6 +68,24 @@ namespace IsoAgLib {
 
     bool iVtObjectInputBoolean_c::select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 
+    Colour iVtObjectInputBoolean_c::updateBackgroundColour(bool b_SendRequest) {
+        return vtObjectInputBoolean_c::updateBackgroundColour(b_SendRequest);
+    }
+
+    uint16_t iVtObjectInputBoolean_c::updateWidth(bool b_SendRequest) {
+        return vtObjectInputBoolean_c::updateWidth(b_SendRequest);
+    }
+
+    iVtObjectFontAttributes_c *iVtObjectInputBoolean_c::updateForegroundColour(bool b_SendRequest) {
+        return vtObjectInputBoolean_c::updateForegroundColour(b_SendRequest);
+    }
+
+    iVtObjectNumberVariable_c *iVtObjectInputBoolean_c::updateVariableReference(bool b_SendRequest) {
+        return vtObjectInputBoolean_c::updateVariableReference(b_SendRequest);
+    }
+
+    uint16_t iVtObjectInputBoolean_c::getObjectType() const { return objectType(); }
+
     iVtObjectInputBoolean_c::~iVtObjectInputBoolean_c() = default;
 
 
