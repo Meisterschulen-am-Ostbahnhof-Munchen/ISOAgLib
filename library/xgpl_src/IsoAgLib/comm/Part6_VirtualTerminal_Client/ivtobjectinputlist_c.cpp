@@ -30,6 +30,8 @@ namespace IsoAgLib {
     		{
     			pool->Append(this);
     		}
+
+    iVtObjectInputList_c::~iVtObjectInputList_c() = default;
 } // IsoAgLib
 
 

@@ -51,7 +51,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  ~vtObjectInputList_c();
+  ~vtObjectInputList_c() override;
   vtObjectInputList_c(
 		    multiton ai_multitonInst,
 		    IsoAgLib::ObjectID ID,
@@ -60,6 +60,9 @@ public:
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint8_t value,
 			uint8_t options);
+
+  void Append(iVtObject_c* const vtObject);
+
 
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
   uint8_t getNumberOfListItems();

@@ -34,7 +34,7 @@ private:
 
 public:
 
-	iVtObjectInputList_c(
+	explicit iVtObjectInputList_c(
 			    iVtClientObjectPool_c* pool,
 			    ObjectID ID = autoID,
 	  		    uint16_t width = 100,
@@ -43,7 +43,7 @@ public:
 				uint8_t value = 0,
 				uint8_t options = 0);
 
-	~iVtObjectInputList_c();
+	~iVtObjectInputList_c() override;
 
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_LIST; }
 

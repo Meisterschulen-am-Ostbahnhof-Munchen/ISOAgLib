@@ -310,6 +310,10 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 
     vtObjectInputList_c::~vtObjectInputList_c() = default;
 
+    void vtObjectInputList_c::Append(iVtObject_c * const vtObject) {
+    	vtObject_a->Append(vtObject, 0, 0);
+    }
+
 
 } // __IsoAgLib
 
