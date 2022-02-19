@@ -44,13 +44,13 @@ class iVtClientDataStorage_c {
         @param arc_isoname saved isoname. Set to Undefined if not known
         @param arui8_boottime_s saved boottime in second. Set to 0 or 0xFF if not known
       */
-    virtual void loadPreferredVt( IsoAgLib::iIsoName_c &arc_isoname, uint8_t &arui8_boottime_s ) = 0;
+    virtual void loadPreferredVt( iIsoName_c &arc_isoname, uint8_t &arui8_boottime_s ) = 0;
 
     /** Application needs to store the preferred ISOVT iIsoName_c and boottime.
         @param arc_isoname isoname to be saved
         @param arui8_boottime_s boottime to be saved, in second
       */
-    virtual void storePreferredVt( const IsoAgLib::iIsoName_c &arc_isoname, uint8_t aui8_bootTime) = 0;
+    virtual void storePreferredVt( const iIsoName_c &arc_isoname, uint8_t aui8_bootTime) = 0;
 
 #ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
     /** Application can load for one function object more then one input objects.
@@ -83,7 +83,7 @@ public:
   /**
     register given object pool for uploading when possible.
   */
-  iVtClientConnection_c* initAndRegisterObjectPool (iIdentItem_c& arc_identItem, iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, IsoAgLib::iVtClientDataStorage_c& apc_claimDataStorage, iVtClientObjectPool_c::RegisterPoolMode_en aen_mode);
+  iVtClientConnection_c* initAndRegisterObjectPool (iIdentItem_c& arc_identItem, iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, iVtClientDataStorage_c& apc_claimDataStorage, iVtClientObjectPool_c::RegisterPoolMode_en aen_mode);
 
   bool deregisterObjectPool (iIdentItem_c& arc_wsMasterIdentItem);
 

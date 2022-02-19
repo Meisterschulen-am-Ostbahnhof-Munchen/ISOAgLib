@@ -106,7 +106,7 @@ namespace IsoAgLib {
         return vtObjectOutputString_c::updateBackgroundColour(b_SendRequest);
     }
 
-    IsoAgLib::iVtObjectFontAttributes_c* iVtObjectOutputString_c::updateFontAttributes(bool b_SendRequest) {
+    iVtObjectFontAttributes_c* iVtObjectOutputString_c::updateFontAttributes(bool b_SendRequest) {
         return vtObjectOutputString_c::updateFontAttributes(b_SendRequest);
     }
 
@@ -114,7 +114,7 @@ namespace IsoAgLib {
         return vtObjectOutputString_c::updateOptions(b_SendRequest);
     }
 
-    IsoAgLib::iVtObjectStringVariable_c* iVtObjectOutputString_c::updateVariableReference(bool b_SendRequest) {
+    iVtObjectStringVariable_c* iVtObjectOutputString_c::updateVariableReference(bool b_SendRequest) {
         return vtObjectOutputString_c::updateVariableReference(b_SendRequest);
     }
 

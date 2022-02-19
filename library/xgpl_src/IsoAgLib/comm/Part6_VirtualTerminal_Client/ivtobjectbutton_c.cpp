@@ -54,7 +54,7 @@ namespace IsoAgLib {
         vtObjectButton_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    bool iVtObjectButton_c::moveChildLocation(IsoAgLib::iVtObject_c *apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    bool iVtObjectButton_c::moveChildLocation(iVtObject_c *apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd) {
         return vtObjectButton_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -79,11 +79,11 @@ namespace IsoAgLib {
         return vtObjectButton_c::updateHeight(b_SendRequest);
     }
 
-    IsoAgLib::Colour iVtObjectButton_c::updateBackgroundColour(bool b_SendRequest) {
+    Colour iVtObjectButton_c::updateBackgroundColour(bool b_SendRequest) {
         return vtObjectButton_c::updateBackgroundColour(b_SendRequest);
     }
 
-    IsoAgLib::Colour iVtObjectButton_c::updateBorderColour(bool b_SendRequest) {
+    Colour iVtObjectButton_c::updateBorderColour(bool b_SendRequest) {
         return vtObjectButton_c::updateBorderColour(b_SendRequest);
     }
 
@@ -97,7 +97,7 @@ namespace IsoAgLib {
 
 #endif
 
-    bool iVtObjectButton_c::setChildPosition(IsoAgLib::iVtObject_c *apc_childObject, int16_t dx, int16_t dy,
+    bool iVtObjectButton_c::setChildPosition(iVtObject_c *apc_childObject, int16_t dx, int16_t dy,
                                              bool b_updateObject, bool b_enableReplaceOfCmd) {
         return vtObjectButton_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
     }

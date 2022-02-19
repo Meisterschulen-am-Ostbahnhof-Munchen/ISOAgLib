@@ -104,15 +104,15 @@ public:
     return vtObjectInputString_c::updateHeight(b_SendRequest);
   }
 
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
+  Colour updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectInputString_c::updateBackgroundColour(b_SendRequest);
   }
 
-  IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false) {
+  iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false) {
     return vtObjectInputString_c::updateFontAttributes(b_SendRequest);
   }
 
-  IsoAgLib::iVtObjectInputAttributes_c* updateInputAttributes(bool b_SendRequest=false) {
+  iVtObjectInputAttributes_c* updateInputAttributes(bool b_SendRequest=false) {
     return vtObjectInputString_c::updateInputAttributes(b_SendRequest);
   }
 
@@ -120,7 +120,7 @@ public:
     return vtObjectInputString_c::updateOptions(b_SendRequest);
   }
 
-  IsoAgLib::iVtObjectStringVariable_c* updateVariableReference(bool b_SendRequest=false) {
+  iVtObjectStringVariable_c* updateVariableReference(bool b_SendRequest=false) {
     return vtObjectInputString_c::updateVariableReference(b_SendRequest);
   }
 

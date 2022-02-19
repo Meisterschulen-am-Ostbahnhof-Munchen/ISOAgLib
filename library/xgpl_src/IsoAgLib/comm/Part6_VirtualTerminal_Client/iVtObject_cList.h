@@ -9,6 +9,9 @@
 #define COMPONENTS_ISOAGLIB_LIBRARY_XGPL_SRC_ISOAGLIB_COMM_PART6_VIRTUALTERMINAL_CLIENT_IVTOBJECT_CLIST_H_
 
 
+namespace IsoAgLib
+{
+
 const long DEFAULT_LIST_CAPACITY = 200;
 
 
@@ -17,12 +20,15 @@ public:
     iVtObject_cList(long size = DEFAULT_LIST_CAPACITY);
     ~iVtObject_cList();
     long Count() const;
-    void Append(IsoAgLib::iVtObject_c* const);
-    IsoAgLib::iVtObject_c** _items;
-    IsoAgLib::iVtObject_c*** all_items;
+    void Append(iVtObject_c* const);
+    iVtObject_c** _items;
+    iVtObject_c*** all_items;
     long _size;
     long _count; 
 };
+
+
+} //namespace IsoAgLib
 
 #endif /* COMPONENTS_ISOAGLIB_LIBRARY_XGPL_SRC_ISOAGLIB_COMM_PART6_VIRTUALTERMINAL_CLIENT_IVTOBJECT_CLIST_H_ */
 

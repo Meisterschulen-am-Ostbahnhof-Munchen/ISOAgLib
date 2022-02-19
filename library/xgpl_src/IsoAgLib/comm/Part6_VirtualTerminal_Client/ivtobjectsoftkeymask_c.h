@@ -47,7 +47,7 @@ public:
   }
   */
   
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
+  Colour updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectSoftKeyMask_c::updateBackgroundColour(b_SendRequest);
   }
 #endif

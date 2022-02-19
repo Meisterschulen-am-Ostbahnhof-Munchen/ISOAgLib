@@ -35,15 +35,15 @@ namespace IsoAgLib {
         return vtObjectAlarmMask_c::moveChildLocation (apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    bool iVtObjectAlarmMask_c::setChildPosition(IsoAgLib::iVtObject_c *apc_childObject, int16_t dx, int16_t dy, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    bool iVtObjectAlarmMask_c::setChildPosition(iVtObject_c *apc_childObject, int16_t dx, int16_t dy, bool b_updateObject, bool b_enableReplaceOfCmd) {
         return vtObjectAlarmMask_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    IsoAgLib::Colour iVtObjectAlarmMask_c::updateBackgroundColour(bool b_SendRequest) {
+    Colour iVtObjectAlarmMask_c::updateBackgroundColour(bool b_SendRequest) {
         return vtObjectAlarmMask_c::updateBackgroundColour(b_SendRequest);
     }
 
-    IsoAgLib::iVtObjectSoftKeyMask_c *iVtObjectAlarmMask_c::updateSoftKeyMask(bool b_SendRequest) {
+    iVtObjectSoftKeyMask_c *iVtObjectAlarmMask_c::updateSoftKeyMask(bool b_SendRequest) {
         return vtObjectAlarmMask_c::updateSoftKeyMask(b_SendRequest);
     }
 

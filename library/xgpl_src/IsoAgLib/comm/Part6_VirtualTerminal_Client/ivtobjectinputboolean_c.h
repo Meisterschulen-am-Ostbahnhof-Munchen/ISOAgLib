@@ -32,35 +32,37 @@ namespace IsoAgLib {
 
 class iVtObjectInputBoolean_c : public __IsoAgLib::vtObjectInputBoolean_c
 {
+
+private:
+	iVtObjectInputBoolean_c() = delete;
+
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_BOOLEAN; }
+
+  ~iVtObjectInputBoolean_c() override;
+
+  iVtObjectInputBoolean_c(
+			iVtClientObjectPool_c* pool,
+			ObjectID ID = autoID,
+			Colour backgroundColour = WHITE,
+			uint16_t width = 20,
+			iVtObjectFontAttributes_c *foregroundColour = nullptr,
+			iVtObjectNumberVariable_c *variableReference = nullptr,
+			uint8_t value = 0,
+			uint8_t enabled = 1);
 
 
-  void setValue(bool newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    vtObjectInputBoolean_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  static uint16_t objectType();
 
-  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputBoolean_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
 
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputBoolean_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setForegroundColour(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputBoolean_c::setForegroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputBoolean_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);  //TODO
-  bool getEnabled();  //TODO
-
-  bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
+  void setValue(bool newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) override;
+  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setForegroundColour(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  bool getEnabled() override;
+  bool select(uint8_t selectOrActivate) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES  
   // ///////////////////////// getter for attributes
@@ -68,7 +70,7 @@ public:
   uint8_t updateObjectType() const { return vtObjectInputBoolean_c::updateObjectType(); }
   */
   
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
+  Colour updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectInputBoolean_c::updateBackgroundColour(b_SendRequest);
   }
   
@@ -76,11 +78,11 @@ public:
     return vtObjectInputBoolean_c::updateWidth(b_SendRequest);
   }
 
-  IsoAgLib::iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false) {
+  iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false) {
     return vtObjectInputBoolean_c::updateForegroundColour(b_SendRequest);
   }
 
-  IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
     return vtObjectInputBoolean_c::updateVariableReference(b_SendRequest);
   }
 

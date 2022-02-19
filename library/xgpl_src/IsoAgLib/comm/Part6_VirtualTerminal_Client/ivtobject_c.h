@@ -68,7 +68,7 @@ public:
   struct iVtObjectLanguages_s : virtual iVtObject_s {
 	  uint8_t numberOfLanguagesToFollow_size;
 	  uint8_t numberOfLanguagesToFollow;
-	  const IsoAgLib::repeat_vtLanguage_s* languagesToFollow;
+	  const repeat_vtLanguage_s* languagesToFollow;
 	  explicit iVtObjectLanguages_s() = delete;
 	  explicit iVtObjectLanguages_s(
 		ObjectID ID);
@@ -153,7 +153,7 @@ public:
   ~iVtObject_c() override = 0; //pure virtual
 
   //  Operation: getID
-  virtual IsoAgLib::ObjectID getID() const = 0; //pure virtual
+  virtual ObjectID getID() const = 0; //pure virtual
 
   //! *** API-function ***
   //! Per default, all objects are uploaded.

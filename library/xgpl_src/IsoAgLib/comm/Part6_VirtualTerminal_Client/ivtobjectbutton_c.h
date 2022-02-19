@@ -68,9 +68,9 @@ public:
 
   void v4setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool setChildPosition(iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -82,9 +82,9 @@ public:
 
   uint16_t updateHeight(bool b_SendRequest=false) override;
 
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) override;
+  Colour updateBackgroundColour(bool b_SendRequest=false) override;
 
-  IsoAgLib::Colour updateBorderColour(bool b_SendRequest=false) override;
+  Colour updateBorderColour(bool b_SendRequest=false) override;
 
   uint8_t updateKeyCode(bool b_SendRequest=false) override;
 

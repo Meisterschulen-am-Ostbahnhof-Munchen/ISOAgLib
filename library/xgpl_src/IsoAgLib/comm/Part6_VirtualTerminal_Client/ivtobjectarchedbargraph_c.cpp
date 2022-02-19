@@ -164,11 +164,11 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         return vtObjectArchedBarGraph_c::updateMaxValue(b_SendRequest);
     }
 
-    IsoAgLib::iVtObjectNumberVariable_c * iVtObjectArchedBarGraph_c::updateVariableReference(bool b_SendRequest) {
+    iVtObjectNumberVariable_c * iVtObjectArchedBarGraph_c::updateVariableReference(bool b_SendRequest) {
         return vtObjectArchedBarGraph_c::updateVariableReference(b_SendRequest);
     }
 
-    IsoAgLib::iVtObjectNumberVariable_c * iVtObjectArchedBarGraph_c::updateTargetValueVariableReference(bool b_SendRequest) {
+    iVtObjectNumberVariable_c * iVtObjectArchedBarGraph_c::updateTargetValueVariableReference(bool b_SendRequest) {
         return vtObjectArchedBarGraph_c::updateTargetValueVariableReference(b_SendRequest);
     }
 

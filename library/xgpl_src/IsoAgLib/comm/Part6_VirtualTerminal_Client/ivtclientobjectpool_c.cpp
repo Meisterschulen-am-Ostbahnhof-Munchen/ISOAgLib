@@ -63,7 +63,7 @@ Colour iVtClientObjectPool_c::convertColourDefault(
     unsigned const cu_z1 = cu_r1 % 6u;
     unsigned const cu_r2 = cu_r1 / 6u;
     unsigned const cu_z2 = cu_r2 % 6u;
-    return (IsoAgLib::Colour)(7u < cu_z0 + cu_z1 + cu_z2 ? 1 : 0);
+    return (Colour)(7u < cu_z0 + cu_z1 + cu_z2 ? 1 : 0);
   } else {
     // Convert proprietary colors to black:
     return BLACK;

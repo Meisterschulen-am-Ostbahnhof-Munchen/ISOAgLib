@@ -57,7 +57,7 @@ public:
   void setPriority(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setAcousticSignal(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool setChildPosition(iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
@@ -66,10 +66,10 @@ public:
   }
    */
 
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) override;
+  Colour updateBackgroundColour(bool b_SendRequest=false) override;
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-  IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false) override;
+  iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false) override;
 #endif
 
   uint8_t updatePriority(bool b_SendRequest=false) override;

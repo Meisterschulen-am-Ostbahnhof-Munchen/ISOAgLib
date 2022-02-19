@@ -69,23 +69,35 @@ public:
 
   uint32_t fitTerminal() const;
 
-  void setValue(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
-  // //////////////////////////////////
+    virtual void setValue(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true);
+
+    virtual // //////////////////////////////////
   // All special Attribute-Set methods
   void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setForegroundColour(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setForegroundColour(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual bool getEnabled();
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  /** that attribute is in parentheses in the spec, so commented out here
+  virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 7; }
   */
 
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
-  uint16_t updateWidth(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false);
+
+        virtual uint16_t updateWidth(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false);
   IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
 
   /** these attributes are in parentheses in the spec, so commented out here

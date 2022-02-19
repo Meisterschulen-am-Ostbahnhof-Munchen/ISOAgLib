@@ -55,7 +55,7 @@ public:
   bool sendCommandChangeSize             (uint16_t aui16_objectUid, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
 #ifdef CONFIG_USE_VTOBJECT_fillattributes
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
-  bool sendCommandChangeFillAttributes   (uint16_t aui16_objectUid, uint8_t newFillType, Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeFillAttributes   (uint16_t aui16_objectUid, uint8_t newFillType, Colour newFillColour, iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd=true);
 #endif
 #endif
   bool sendCommandChangeFontAttributes   (uint16_t aui16_objectUid, Colour newFontColour, Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_enableReplaceOfCmd=true);
@@ -74,7 +74,7 @@ public:
    * @param assignments A list of UserPreset-/Preferred-Assignments.
    * @return TRUE: All functions were found/valid, FALSE: One function wasn't valid!
    */
-  bool setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assignments );
+  bool setUserPreset( bool firstClearAllPAs, const iAux2Assignment_c &assignments );
 
   unsigned getCommandQueueSize() const { return commandHandler().getQueueSize(); }
   unsigned getCommandQueueSize( unsigned priority ) const { return commandHandler().getQueueSize( priority ); }
@@ -84,12 +84,12 @@ public:
   //!        versionLabel7chars != NULL: Use VersionLabel given. Must be 7 characters!
   bool sendNonVolatileDeleteVersion( const char* versionLabel7chars );
   bool sendCommandEsc (bool b_enableReplaceOfCmd=true);
-  bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
+  bool sendCommandUpdateObjectPool (iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
 
   uint8_t getClientId() const { return VtClientConnection_c::getClientId(); }
   bool isClientActive() const { return VtClientConnection_c::isClientActive(); }
 
-  iIdentItem_c& getIdentItem() const { return static_cast<IsoAgLib::iIdentItem_c&>(VtClientConnection_c::getIdentItem()); }
+  iIdentItem_c& getIdentItem() const { return static_cast<iIdentItem_c&>(VtClientConnection_c::getIdentItem()); }
   bool connectedToVtServer() const   { return VtClientConnection_c::connectedToVtServer(); }
   /** ATTENTION: Please assure "connectedToVtServer()" before getting this reference */
   iVtServerInstance_c* getVtServerInstPtr() const { return (VtClientConnection_c::getVtServerInstPtr() != NULL) ? VtClientConnection_c::getVtServerInst().toIvtServerInstancePtr_c() : NULL; }

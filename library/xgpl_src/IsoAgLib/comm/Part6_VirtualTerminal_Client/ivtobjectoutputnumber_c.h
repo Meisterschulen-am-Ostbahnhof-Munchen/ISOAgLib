@@ -66,7 +66,7 @@ public:
     return vtObjectOutputNumber_c::updateOptions(b_SendRequest);
   }
 
-  IsoAgLib::iVtObjectNumberVariable_c * updateVariableReference(bool b_SendRequest=false) {
+  iVtObjectNumberVariable_c * updateVariableReference(bool b_SendRequest=false) {
     return vtObjectOutputNumber_c::updateVariableReference(b_SendRequest);
   }
 

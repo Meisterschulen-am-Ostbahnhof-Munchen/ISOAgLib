@@ -10,7 +10,7 @@
 namespace IsoAgLib {
 
 bool
-iVtClientConnection_c::setUserPreset( bool firstClearAllPAs, const IsoAgLib::iAux2Assignment_c &assignments )
+iVtClientConnection_c::setUserPreset( bool firstClearAllPAs, const iAux2Assignment_c &assignments )
 {
   return VtClientConnection_c::setUserPreset( firstClearAllPAs, assignments );
 }
@@ -47,7 +47,7 @@ iVtClientConnection_c::getSendPriority() const
 }
 
 bool
-iVtClientConnection_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
+iVtClientConnection_c::sendCommandUpdateObjectPool (iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
   return commandHandler().sendCommandUpdateObjectPool (rppc_vtObjects, aui16_numObjects);
 }
@@ -109,7 +109,7 @@ iVtClientConnection_c::sendCommandChangeSize             (uint16_t aui16_objectU
 #ifdef CONFIG_USE_VTOBJECT_fillattributes
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
 bool
-iVtClientConnection_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, Colour newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
+iVtClientConnection_c::sendCommandChangeFillAttributes (uint16_t aui16_objectUid, uint8_t newFillType, Colour newFillColour, iVtObjectPictureGraphic_c* newFillPatternObject, bool b_enableReplaceOfCmd)
 {
   return commandHandler().sendCommandChangeFillAttributes(aui16_objectUid, newFillType, newFillColour, newFillPatternObject, b_enableReplaceOfCmd);
 }

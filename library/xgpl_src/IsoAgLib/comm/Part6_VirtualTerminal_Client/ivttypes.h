@@ -207,7 +207,7 @@ typedef struct vtState_s {
 
 struct iAux2InputData
 {
-  IsoAgLib::iIsoName_c name;
+  iIsoName_c name;
   uint16_t    modelIdentificationCode;
   uint16_t    uid;
   bool        preferredAssignmentMatched;
@@ -222,7 +222,7 @@ struct iAux2InputData
                                          // => old preferred assignments candidates with preserve == false will be removed
   {}
 
-  iAux2InputData(const IsoAgLib::iIsoName_c& a_name,
+  iAux2InputData(const iIsoName_c& a_name,
                  uint16_t a_modelIdentificationCode,
                  uint16_t a_uid,
                  bool a_preserve)

@@ -34,7 +34,7 @@ public:
   virtual const char* getString() = 0;
 
   //  Operation: getID
-  virtual IsoAgLib::ObjectID getID() const = 0;
+  virtual ObjectID getID() const = 0;
 };
 
 } // IsoAgLib

@@ -45,7 +45,7 @@ namespace IsoAgLib {
 
     uint16_t iVtObjectDataMask_c::getObjectType() const { return objectType(); }
 
-    bool iVtObjectDataMask_c::setChildPosition(IsoAgLib::iVtObject_c *apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    bool iVtObjectDataMask_c::setChildPosition(iVtObject_c *apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd) {
         return vtObjectDataMask_c::setChildPosition(apc_childObject, x, y, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -64,7 +64,7 @@ namespace IsoAgLib {
     }
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-    IsoAgLib::iVtObjectSoftKeyMask_c* iVtObjectDataMask_c::updateSoftKeyMask(bool b_SendRequest) {
+    iVtObjectSoftKeyMask_c* iVtObjectDataMask_c::updateSoftKeyMask(bool b_SendRequest) {
         return vtObjectDataMask_c::updateSoftKeyMask(b_SendRequest);
     }
 

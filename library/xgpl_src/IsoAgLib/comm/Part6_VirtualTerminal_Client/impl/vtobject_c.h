@@ -75,7 +75,8 @@ protected:
 
   // ATTENTION: Should only be used by Input-Objects of course!
   bool able (uint8_t enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
-  bool select(uint8_t selectOrActivate);
+
+        virtual bool select(uint8_t selectOrActivate);
 
 private:
   friend class vtLayoutManager_c;

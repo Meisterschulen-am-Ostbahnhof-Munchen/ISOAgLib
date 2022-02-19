@@ -42,11 +42,11 @@ public:
     vtObjectKey_c::setKeyCode (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  bool moveChildLocation(iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     return vtObjectKey_c::moveChildLocation(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  bool setChildPosition(iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     return vtObjectKey_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -57,7 +57,7 @@ public:
   }
    */
 
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false) {
+  Colour updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectKey_c::updateBackgroundColour(b_SendRequest);
   }
 

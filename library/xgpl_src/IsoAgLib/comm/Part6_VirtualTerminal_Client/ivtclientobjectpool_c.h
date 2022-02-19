@@ -338,7 +338,7 @@ public:
   /** Default implementation for convertColour which can also be used
    *  by custom color conversion implementations.
    */
-   static IsoAgLib::Colour convertColourDefault(IsoAgLib::Colour colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c *obj, IsoAgLib::e_vtColour whichColour);
+   static Colour convertColourDefault(Colour colorValue, uint8_t colorDepth, iVtObject_c *obj, e_vtColour whichColour);
 
   /**
     hook function that gets called every time a color-value
@@ -351,9 +351,9 @@ public:
                       1 for 4bit-color depth (16-colored VT)
                       2 for 8bit-color depth (256-colored VT)
     @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...-->
-    @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
+    @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See e_vtColour)
   */
-  virtual IsoAgLib::Colour convertColour(IsoAgLib::Colour colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c * obj, IsoAgLib::e_vtColour whichColour)
+  virtual Colour convertColour(Colour colorValue, uint8_t colorDepth, iVtObject_c * obj, e_vtColour whichColour)
   {
     return convertColourDefault(colorValue, colorDepth, obj, whichColour);
   }
@@ -362,7 +362,7 @@ public:
     hook function that gets called immediately after recognizing the success of a command-response message
     for Get Attribute Value command
   */
-  virtual void eventAttributeValue (IsoAgLib::iVtObject_c* /*obj*/, uint8_t /*ui8_attributeValue*/, uint8_t* /*pui8_value*/) {}
+  virtual void eventAttributeValue (iVtObject_c* /*obj*/, uint8_t /*ui8_attributeValue*/, uint8_t* /*pui8_value*/) {}
 
   /** This function enables the application to add proprietary
    * (language independent) IOP-data to the object pool upload

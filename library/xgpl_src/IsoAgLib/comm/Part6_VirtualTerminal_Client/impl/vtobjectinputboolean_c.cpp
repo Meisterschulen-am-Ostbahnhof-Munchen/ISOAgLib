@@ -242,6 +242,40 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     	setAttribute(VariableReference, newValue->getID(), b_enableReplaceOfCmd);
     }
 
+    vtObjectInputBoolean_c::vtObjectInputBoolean_c(
+    		multiton ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::Colour backgroundColour,
+			uint16_t width,
+			IsoAgLib::iVtObjectFontAttributes_c *foregroundColour,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+			uint8_t value,
+			uint8_t enabled)
+    :vtObjectInputBoolean_c(
+    		new iVtObjectInputBoolean_s(
+    				ID,
+    				backgroundColour,
+    				width,
+    				foregroundColour,
+    				variableReference,
+    				value,
+    				enabled),
+    		ai_multitonInst)
+    {
+
+    }
+
+    bool vtObjectInputBoolean_c::getEnabled() {
+        return vtObject_a->enabled & 0x1;}
+
+    bool vtObjectInputBoolean_c::enable(bool b_updateObject, bool b_enableReplaceOfCmd) {
+        return vtObject_c::able (1 | (vtObject_a->enabled & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+
+    bool vtObjectInputBoolean_c::disable(bool b_updateObject, bool b_enableReplaceOfCmd) {
+        return vtObject_c::able (0 | (vtObject_a->enabled & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+
+
+    vtObjectInputBoolean_c::~vtObjectInputBoolean_c() = default;
 
 
 } // __IsoAgLib

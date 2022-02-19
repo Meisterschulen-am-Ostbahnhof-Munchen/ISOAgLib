@@ -41,11 +41,11 @@ public:
     vtObjectPolygon_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setFillAttributes(iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setFillAttributes (newFillAttributes, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -70,11 +70,11 @@ public:
     return vtObjectPolygon_c::updateHeight(b_SendRequest);
   }
 
-  IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false) {
+  iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false) {
     return vtObjectPolygon_c::updateLineAttributes(b_SendRequest);
   }
 
-  IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false) {
+  iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false) {
     return vtObjectPolygon_c::updateFillAttributes(b_SendRequest);
   }
 

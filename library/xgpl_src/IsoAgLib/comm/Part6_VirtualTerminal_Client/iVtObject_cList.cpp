@@ -8,7 +8,10 @@
 #include <iostream>
 #include "iVtObject_cList.h"
 
-using namespace IsoAgLib;
+namespace IsoAgLib
+{
+
+
 
 iVtObject_cList::iVtObject_cList(long size) : _size(size), _count(0) {
     _items = new iVtObject_c*[size];
@@ -39,6 +42,7 @@ void iVtObject_cList::Append(iVtObject_c* const anItem) {
     }
 }
 
+} //namespace IsoAgLib
 
 
 
