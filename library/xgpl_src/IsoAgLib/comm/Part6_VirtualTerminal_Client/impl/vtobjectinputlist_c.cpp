@@ -145,7 +145,7 @@ vtObjectInputList_c::setValue(uint8_t newValue, bool b_updateObject, bool b_enab
     if (b_updateObject)
     	vtObject_a->value = newValue;
 
-    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
+    getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue, 0x00, 0x00, 0x00, b_enableReplaceOfCmd);
   }
 }
 
@@ -161,7 +161,7 @@ vtObjectInputList_c::setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_obje
     lo = apc_object->getID() & 0xFF;
     hi = apc_object->getID() >> 8;
   }
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommand(
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommand(
     177 /* Command: Command --- Parameter: Change List Item */,
     this->getID() & 0xFF, this->getID() >> 8, aui8_index, lo, hi, 0xFF, 0xFF, b_enableReplaceOfCmd );
 }
@@ -176,7 +176,7 @@ vtObjectInputList_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
 
   scaleSize( newWidth, newHeight );
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

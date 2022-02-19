@@ -45,7 +45,7 @@ class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
   void set5ByteCommandHeader(uint8_t* destinBuffer);
 
 private:
-  // ID from the connected __IsoAgLib::vtObject_c
+  // ID from the connected vtObject_c
   uint16_t mui16_vtObjectAId;
   // those both will be set before multisending is getting started.
   const char* mpc_stringToStream;

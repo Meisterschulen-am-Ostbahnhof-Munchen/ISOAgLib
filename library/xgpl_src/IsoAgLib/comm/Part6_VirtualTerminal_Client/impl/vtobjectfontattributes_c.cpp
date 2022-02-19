@@ -67,10 +67,10 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 23; // Object Type = Font Attributes
-    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->fontColour, this, IsoAgLib::FontColour);
+    destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->fontColour, this, IsoAgLib::FontColour);
     destMemory [4] = mui8_fontSizeScaled; // size() must have been called before to prepare!!!!
     destMemory [5] = vtObject_a->fontType;
-    destMemory [6] = vtObject_a->fontStyle & __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().fontTypes;
+    destMemory [6] = vtObject_a->fontStyle & getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().fontTypes;
     destMemory [7] = vtObject_a->numberOfMacrosToFollow;
     sourceOffset += 8;
     curBytes += 8;
@@ -200,7 +200,7 @@ vtObjectFontAttributes_c::calcScaledFontDimension() const
   }
 
   /// Always check if the font is available!
-  while (!(__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtFontSizes() & (1 << mui8_fontSizeScaled))) {
+  while (!(getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtFontSizes() & (1 << mui8_fontSizeScaled))) {
     mui8_fontSizeScaled--; // try a smaller font, but "6x8" should be there in any way, 'cause we set it in processMsg!!
   }
 }
@@ -209,12 +209,12 @@ void
 vtObjectFontAttributes_c::setFontAttributes(IsoAgLib::Colour newFontColour, IsoAgLib::Font newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
-    vtObject_a->fontColour = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newFontColour, this, IsoAgLib::FontColour);
+    vtObject_a->fontColour = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newFontColour, this, IsoAgLib::FontColour);
     vtObject_a->fontSize  =newFontSize;
     vtObject_a->fontType  =newFontType;
     vtObject_a->fontStyle =newFontStyle;
   }
-  VtClientConnection_c& vtCSC = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId);
+  VtClientConnection_c& vtCSC = getVtClientInstance4Comm().getClientByID (s_properties.clientId);
   vtCSC.commandHandler().sendCommandChangeFontAttributes(
     this, vtCSC.getUserConvertedColor (newFontColour, this, IsoAgLib::FontColour),
     newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd );
@@ -273,7 +273,7 @@ vtObjectFontAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     void vtObjectFontAttributes_c::setFontColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->fontColour = newValue;
-    	setAttribute (1, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
+    	setAttribute (1, getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FontColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectFontAttributes_c::setFontSize(IsoAgLib::Font newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {

@@ -156,7 +156,7 @@ vtObjectEllipse_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
 
   scaleSize( newWidth, newHeight );
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize(
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize(
     this, newWidth, newHeight, b_enableReplaceOfCmd );
 }
 

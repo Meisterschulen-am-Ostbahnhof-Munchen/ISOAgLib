@@ -304,7 +304,7 @@ VtClient_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem, u
   for (uint8_t ui8_index = 0; ui8_index < m_vtConnections.size(); ui8_index++)
   {
     if( ( m_vtConnections[ui8_index] != NULL ) &&
-        ( &m_vtConnections[ui8_index]->getIdentItem() == &static_cast<__IsoAgLib::IdentItem_c&>( mrc_wsMasterIdentItem ) ) )
+        ( &m_vtConnections[ui8_index]->getIdentItem() == &static_cast<IdentItem_c&>( mrc_wsMasterIdentItem ) ) )
       return m_vtConnections[ui8_index]->commandHandler().sendCommand(apui8_buffer, ui32_size);
   }
   return false;

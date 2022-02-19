@@ -622,7 +622,7 @@ CommandHandler_c::sendCommandZoomViewport(
 #else
   uint8_t ui8_convertedFloat[4];
   floatVar2LittleEndianStream( &newValue, &ui8_convertedFloat );
-  uint32_t ui32_convertedFloat = __IsoAgLib::convertLittleEndianStringUi32( ui8_convertedFloat );
+  uint32_t ui32_convertedFloat = convertLittleEndianStringUi32( ui8_convertedFloat );
 #endif
 
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
@@ -648,7 +648,7 @@ CommandHandler_c::sendCommandPanAndZoomViewport(
   // zoom
   uint8_t ui8_convertedFloat[4];
   floatVar2LittleEndianStream( &newValue, &ui8_convertedFloat );
-  uint32_t ui32_convertedFloat = __IsoAgLib::convertLittleEndianStringUi32( ui8_convertedFloat );
+  uint32_t ui32_convertedFloat = convertLittleEndianStringUi32( ui8_convertedFloat );
 #endif
   uint8_t pui8_buffer[12];
   pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
@@ -1124,16 +1124,16 @@ CommandHandler_c::reactOnStateChange( const SendStream_c& sendStream )
 
   switch( sendStream.getSendSuccess() )
   {
-  case __IsoAgLib::SendStream_c::Running:
+  case SendStream_c::Running:
     break;
 
-  case __IsoAgLib::SendStream_c::SendAborted:
+  case SendStream_c::SendAborted:
     {
       const bool started = tryToStart();
       isoaglib_assert( started ); ( void )started;
     } break;
 
-  case __IsoAgLib::SendStream_c::SendSuccess:
+  case SendStream_c::SendSuccess:
     mi32_commandTimestamp = HAL::getTime();
     // now two things can be detected:
     // 1) time-out

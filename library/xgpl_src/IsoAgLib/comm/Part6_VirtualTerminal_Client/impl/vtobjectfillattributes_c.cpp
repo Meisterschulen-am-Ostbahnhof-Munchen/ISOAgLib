@@ -87,7 +87,7 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 25; // Object Type = Fill Attributes
       destMemory [3] = vtObject_a->fillType;
-      destMemory [4] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->fillColour, this, IsoAgLib::FillColour);
+      destMemory [4] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->fillColour, this, IsoAgLib::FillColour);
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic
       if (vtObject_a->fillPatternObject != NULL)
       {
@@ -128,10 +128,10 @@ vtObjectFillAttributes_c::setFillAttributes(IsoAgLib::FillType newFillType, IsoA
 {
   if (b_updateObject) {
 	vtObject_a->fillType   = newFillType;
-    vtObject_a->fillColour = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newFillColour, this, IsoAgLib::FillColour);
+    vtObject_a->fillColour = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newFillColour, this, IsoAgLib::FillColour);
     vtObject_a->fillPatternObject = newFillPattern;
   }
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor(
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeFillAttributes (this, newFillType, getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor(
     newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd );
 }
 #endif
@@ -196,7 +196,7 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     void vtObjectFillAttributes_c::setFillColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->fillColour = newValue;
-    	setAttribute(FillColour /* "Fill Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
+    	setAttribute(FillColour /* "Fill Colour" */, getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
     }
 
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic

@@ -131,7 +131,7 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;
       destMemory [6] = height >> 8;
-      destMemory [7] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [7] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObject_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObject_a->fontAttributes->getID() >> 8;
       destMemory [10] = vtObject_a->options;
@@ -162,7 +162,7 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
       destMemory [27] = (vtObject_a->offset >> 16) & 0xFF;
       destMemory [28] = (vtObject_a->offset >> 24) & 0xFF;
 
-      __IsoAgLib::floatVar2LittleEndianStream (&vtObject_a->scale, &destMemory[29]);
+      floatVar2LittleEndianStream (&vtObject_a->scale, &destMemory[29]);
 
       destMemory [33] = vtObject_a->numberOfDecimals;
       destMemory [34] = vtObject_a->format;
@@ -205,7 +205,7 @@ vtObjectInputNumber_c::setValue(uint32_t newValue,
     if (b_updateObject)
     	vtObject_a->value = newValue;
 
-    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
+    getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
   }
 }
 
@@ -219,7 +219,7 @@ vtObjectInputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_upd
 
   scaleSize( newWidth, newHeight );
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -413,7 +413,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     void vtObjectInputNumber_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     	    vtObject_a->backgroundColour = newValue;
-    	setAttribute ( BackgroundColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+    	setAttribute ( BackgroundColour, getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {

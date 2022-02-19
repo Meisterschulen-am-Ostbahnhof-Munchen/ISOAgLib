@@ -87,20 +87,20 @@ typedef uint16_t objRange_t;
 #endif
 
 #define MACRO_scaleLocalVars \
-    int32_t opDimension = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolDimension(); \
-    int32_t vtDimension = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwDimension(); \
-    int32_t vtOffsetX   = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetX(); \
-    int32_t vtOffsetY   = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetY(); \
+    int32_t opDimension = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolDimension(); \
+    int32_t vtDimension = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwDimension(); \
+    int32_t vtOffsetX   = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetX(); \
+    int32_t vtOffsetY   = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetY(); \
     ( void )vtOffsetX; \
     ( void )vtOffsetY;
 
 #define MACRO_getSkDimension \
-    opSoftKeyWidth  = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
-    opSoftKeyHeight = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
-    vtSoftKeyWidth  = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkWidth(); \
-    vtSoftKeyHeight = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkHeight(); \
-    skOffsetX       = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetX(); \
-    skOffsetY       = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetY();
+    opSoftKeyWidth  = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
+    opSoftKeyHeight = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
+    vtSoftKeyWidth  = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkWidth(); \
+    vtSoftKeyHeight = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkHeight(); \
+    skOffsetX       = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetX(); \
+    skOffsetY       = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetY();
 
 
 

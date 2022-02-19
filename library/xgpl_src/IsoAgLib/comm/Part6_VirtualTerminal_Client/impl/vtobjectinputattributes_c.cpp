@@ -113,7 +113,7 @@ vtObjectInputAttributes_c::setValidationStringCopy(const char* newValidationStri
     *dest = 0x00; // 0-termiante!
   }
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValidationString, vtObject_a->length, b_enableReplaceOfCmd);
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValidationString, vtObject_a->length, b_enableReplaceOfCmd);
 }
 
 
@@ -130,7 +130,7 @@ vtObjectInputAttributes_c::setValidationStringRef(char* newValidationString, boo
   const uint16_t ui16_newValStrLen = uint16_t( std::strlen (newValidationString) );
   const uint16_t ui16_inAttrLen = uint16_t( vtObject_a->length );
   const uint16_t ui16_tempLen = (ui16_newValStrLen <= ui16_inAttrLen) ? ui16_newValStrLen : ui16_inAttrLen;
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandChangeStringValueRef(this, newValidationString, ui16_tempLen, b_enableReplaceOfCmd);
+  getVtClientInstance4Comm().getClientByID(s_properties.clientId).commandHandler().sendCommandChangeStringValueRef(this, newValidationString, ui16_tempLen, b_enableReplaceOfCmd);
 }
 
 

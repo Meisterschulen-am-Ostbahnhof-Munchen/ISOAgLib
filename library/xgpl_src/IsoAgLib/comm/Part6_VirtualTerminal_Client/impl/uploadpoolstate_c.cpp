@@ -732,14 +732,14 @@ UploadPoolState_c::reactOnStateChange( const SendStream_c& stream )
 
   switch( stream.getSendSuccess() )
   {
-    case __IsoAgLib::SendStream_c::Running:
+    case SendStream_c::Running:
       break;
 
-    case __IsoAgLib::SendStream_c::SendAborted:
+    case SendStream_c::SendAborted:
       startCurrentUploadPhase(); // re-send the current stream (partial OP)
       break;
 
-    case __IsoAgLib::SendStream_c::SendSuccess:
+    case SendStream_c::SendSuccess:
       indicateUploadPhaseCompletion(); // may complete the upload or switch to the next phase
       break;
   }

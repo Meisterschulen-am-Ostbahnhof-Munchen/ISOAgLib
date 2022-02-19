@@ -155,13 +155,13 @@ struct vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
           options = (vtObject_a->f & 0x03) + ((vtObject_a->f & optionander) ? 0x04 : 0x00); /* get the right RLE 1/4/8 bit to bit 2 when streaming! */
 
 #define MACRO_calculate_ui8_graphicType \
-          ui8_graphicType = ( min (__IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().hwGraphicType, vtObject_a->format) ); \
+          ui8_graphicType = ( min (getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().hwGraphicType, vtObject_a->format) ); \
           /* If 16-color bitmap is not specified, take the 2-color version. -That's the only exception! */ \
           if ((ui8_graphicType == 1) && (vtObject_a->rawData1 == NULL)) ui8_graphicType = 0;
 
 #define MACRO_CheckFixedBitmapsLoop_start \
     /* See if we have colorDepth of VT */ \
-    uint8_t vtDepth = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().hwGraphicType; \
+    uint8_t vtDepth = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities().hwGraphicType; \
     /* Check for 100%-matching fixedBitmaps first */ \
     bool b_foundFixedBitmap = false; \
     for (int fixNr=0; fixNr<vtObject_a->numberOfFixedBitmapsToFollow; fixNr++) { \
@@ -225,7 +225,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
     }
 
     // Get a ref to the vtClient, so that we can convert colours by calling getUserConvertedColor() over and over
-    VtClientConnection_c& vtClient = __IsoAgLib::getVtClientInstance4Comm().getClientByID(s_properties.clientId);
+    VtClientConnection_c& vtClient = getVtClientInstance4Comm().getClientByID(s_properties.clientId);
     const uint32_t pgheaderSize = 17;
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -501,7 +501,7 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     vtObjectPictureGraphic_c::setTransparencyColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->transparencyColour = newValue;
-    	setAttribute ( TransparencyColour, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
+    	setAttribute ( TransparencyColour, getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::TransparencyColour), b_enableReplaceOfCmd);
     }
 
     void

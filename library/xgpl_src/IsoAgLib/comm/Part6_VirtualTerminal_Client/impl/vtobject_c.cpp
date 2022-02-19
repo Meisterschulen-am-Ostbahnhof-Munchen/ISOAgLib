@@ -46,7 +46,7 @@ vtObject_c::~vtObject_c() = default;
 void
 vtObject_c::setAttribute(uint8_t attrID, uint32_t newValue, bool b_enableReplaceOfCmd)
 {
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeAttribute(
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeAttribute(
     this, attrID, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd );
 }
 
@@ -60,7 +60,7 @@ vtObject_c::setAttributeFloat(uint8_t attrID, float newValue, bool b_enableRepla
 #else
   uint8_t ui8_convertedFloat[4];
   floatVar2LittleEndianStream (&newValue, &ui8_convertedFloat);
-  uint32_t ui32_convertedFloat = __IsoAgLib::convertLittleEndianStringUi32(ui8_convertedFloat);
+  uint32_t ui32_convertedFloat = convertLittleEndianStringUi32(ui8_convertedFloat);
 #endif
 
   setAttribute (attrID, ui32_convertedFloat, b_enableReplaceOfCmd);
@@ -70,7 +70,7 @@ vtObject_c::setAttributeFloat(uint8_t attrID, float newValue, bool b_enableRepla
 void
 vtObject_c::getAttribute(uint8_t attrID, bool b_enableReplaceOfCmd)
 {
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandGetAttributeValue (this, attrID, b_enableReplaceOfCmd);
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandGetAttributeValue (this, attrID, b_enableReplaceOfCmd);
 }
 #endif
 
@@ -138,7 +138,7 @@ vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int1
   MACRO_scaleI32(dx32,dy32)
 #endif
 
-  VtClientConnection_c &connection = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId);
+  VtClientConnection_c &connection = getVtClientInstance4Comm().getClientByID (s_properties.clientId);
 
   if ((dx32 < -127) || (dx32 > 128)
    || (dy32 < -127) || (dy32 > 128)) return false;
@@ -182,7 +182,7 @@ vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int1
     ;
   }
 
-  VtClientConnection_c &connection = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId);
+  VtClientConnection_c &connection = getVtClientInstance4Comm().getClientByID (s_properties.clientId);
 
   bool b_result = genericChangeChildLocationPosition (false, childObject, x, y, b_updateObject, numObjectsToFollow, objectsToFollow);
   if (b_result)
@@ -199,7 +199,7 @@ vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCm
   if (b_updateObject)
     updateEnable (enOrDis);
 
-  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommand(
+  return getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommand(
     0xA1 /* Command: Command --- Parameter: Enable/Disable Object */,
 	getID() & 0xFF, getID() >> 8, enOrDis, 0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd );
 }
@@ -208,7 +208,7 @@ vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCm
 bool
 vtObject_c::select(uint8_t selectOrActivate)
 {
-  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSelectInputObject(
+  return getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSelectInputObject(
     getID(), (selectOrActivate == 0), true );
 }
     bool

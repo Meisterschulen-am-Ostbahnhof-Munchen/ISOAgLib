@@ -61,7 +61,7 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
         destMemory [0] = vtObject_a->ID & 0xFF;
         destMemory [1] = vtObject_a->ID >> 8;
         destMemory [2] = 0; // Object Type = Working Set
-        destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+        destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
         destMemory [4] = vtObject_a->selectable;
         if (vtObject_a->activeMask != NULL) {
             destMemory [5] = vtObject_a->activeMask->getID() & 0xFF;
@@ -146,7 +146,7 @@ vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMa
   if (b_updateObject)
 	  vtObject_a->activeMask = apc_vtObjectMask;
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeActiveMask( this, apc_vtObjectMask, b_enableReplaceOfCmd);
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeActiveMask( this, apc_vtObjectMask, b_enableReplaceOfCmd);
 }
 
 void
@@ -155,7 +155,7 @@ vtObjectWorkingSet_c::changeBackgroundColour(IsoAgLib::Colour newValue, bool b_u
   if (b_updateObject)
 	  vtObject_a->backgroundColour = newValue;
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeBackgroundColour (this, newValue, b_enableReplaceOfCmd);
 }
 
 bool
@@ -173,22 +173,22 @@ vtObjectWorkingSet_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, i
 bool
 vtObjectWorkingSet_c::controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime)
 {
-  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandControlAudioDevice (aui8_repetitions, aui16_frequency, aui16_onTime, aui16_offTime);
+  return getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandControlAudioDevice (aui8_repetitions, aui16_frequency, aui16_onTime, aui16_offTime);
 }
 
 bool
 vtObjectWorkingSet_c::setAudioVolume (uint8_t aui8_volume)
 {
-  return __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSetAudioVolume (aui8_volume);
+  return getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSetAudioVolume (aui8_volume);
 }
 
 bool
 vtObjectWorkingSet_c::setColourMapOrPalette (uint16_t aui16_objectId)
 {
   bool result = true;
-  if( __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVersion() >= 4 )
+  if( getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVersion() >= 4 )
   {
-    result = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSetColourMapOrPalette (aui16_objectId);
+    result = getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandSetColourMapOrPalette (aui16_objectId);
   }
   return result;
 }

@@ -74,7 +74,7 @@ vtObjectDataMask_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 1; // Object Type = Data Mask
-      destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+      destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
       if (vtObject_a->softKeyMask != NULL) {
           destMemory [4] = vtObject_a->softKeyMask->getID() & 0xFF;
@@ -146,7 +146,7 @@ vtObjectDataMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyM
   if (b_updateObject)
 	  vtObject_a->softKeyMask = newSoftKeyMask;
 
-  __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSoftKeyMask(
+  getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeSoftKeyMask(
     this, 1 /* "Type: Data Mask" */, (newSoftKeyMask == NULL) ? 0xFFFF : newSoftKeyMask->getID(), b_enableReplaceOfCmd );
 }
 #endif
@@ -168,9 +168,9 @@ bool
 vtObjectDataMask_c::lockUnlockMask( bool b_lockMask, uint16_t ui16_lockTimeOut )
 {
   bool result = true;
-  if( __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVersion() >= 4 )
+  if( getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVersion() >= 4 )
   {
-    result = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandLockUnlockMask( this, b_lockMask, ui16_lockTimeOut );
+    result = getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandLockUnlockMask( this, b_lockMask, ui16_lockTimeOut );
   }
   return result;
 }
@@ -217,7 +217,7 @@ vtObjectDataMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attribu
     void vtObjectDataMask_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->backgroundColour = newValue;
-        setAttribute (BackgroundColour /* "Background Colour" */, __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
+        setAttribute (BackgroundColour /* "Background Colour" */, getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
     }
 
 #endif

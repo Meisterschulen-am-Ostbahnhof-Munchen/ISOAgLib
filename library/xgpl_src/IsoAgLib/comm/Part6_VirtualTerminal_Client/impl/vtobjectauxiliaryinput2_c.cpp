@@ -58,7 +58,7 @@ vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
     destMemory [2] = 32; // Object Type = Auxiliary Input 2
-    destMemory [3] = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
+    destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
     destMemory [4] = vtObject_a->functionAttributes;
     destMemory [5] = vtObject_a->numberOfObjectsToFollow;
     sourceOffset += 6;
@@ -373,7 +373,7 @@ vtObjectAuxiliaryInput2_c::setValue(uint16_t aui16_value1, uint16_t aui16_value2
     // As long as the message can not be sent, mb_valueChangeToHandle stays true 
     // => message sending is tried in Aux2Inputs_c::timeEventInputStateMsg() until timing allows message sending
     mb_valueChangeToHandle = true;
-    __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).triggerAux2InputStatusMsg(this);
+    getVtClientInstance4Comm().getClientByID (s_properties.clientId).triggerAux2InputStatusMsg(this);
   }
 
   return true;

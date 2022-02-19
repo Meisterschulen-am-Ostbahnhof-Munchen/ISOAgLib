@@ -30,7 +30,7 @@ namespace __IsoAgLib {
 //! @param mspData:
 //! @param bytes:
 void
-vtObjectStringStreamer_c::setDataNextStreamPart(__IsoAgLib::MultiSendPkg_c* mspData, uint8_t bytes)
+vtObjectStringStreamer_c::setDataNextStreamPart(MultiSendPkg_c* mspData, uint8_t bytes)
 {
   uint8_t bytesDone=0;
   if (mui32_streamPosition == 0) {
