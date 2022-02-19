@@ -288,6 +288,28 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     	setAttribute(Options, newValue, b_enableReplaceOfCmd);
     }
 
+    vtObjectInputList_c::vtObjectInputList_c(
+    		multiton ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t height,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+			uint8_t value,
+			uint8_t options)
+	:vtObjectInputList_c(
+			new iVtObjectInputList_s(
+					ID,
+					width,
+					height,
+					variableReference,
+					value,
+					options),
+	ai_multitonInst)
+{
+}
+
+    vtObjectInputList_c::~vtObjectInputList_c() = default;
+
 
 } // __IsoAgLib
 

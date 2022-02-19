@@ -29,7 +29,22 @@ namespace IsoAgLib {
 
 class iVtObjectInputList_c : public __IsoAgLib::vtObjectInputList_c
 {
+private:
+	iVtObjectInputList_c() = delete;
+
 public:
+
+	iVtObjectInputList_c(
+			    iVtClientObjectPool_c* pool,
+			    ObjectID ID = autoID,
+	  		    uint16_t width = 100,
+				uint16_t height = 25,
+				iVtObjectNumberVariable_c *variableReference = nullptr,
+				uint8_t value = 0,
+				uint8_t options = 0);
+
+	~iVtObjectInputList_c();
+
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_LIST; }
 
 

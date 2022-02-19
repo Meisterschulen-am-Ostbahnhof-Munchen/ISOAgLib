@@ -42,13 +42,25 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectInputList_s> vtObject_a;
 
+	vtObjectInputList_c() = delete;
+	vtObjectInputList_c(iVtObjectInputList_s* vtObjectInputListSROM , multiton ai_multitonInst);
 
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
-  vtObjectInputList_c(iVtObjectInputList_s* vtObjectInputListSROM , multiton ai_multitonInst);
+
+  ~vtObjectInputList_c();
+  vtObjectInputList_c(
+		    multiton ai_multitonInst,
+		    IsoAgLib::ObjectID ID,
+  		    uint16_t width,
+			uint16_t height,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+			uint8_t value,
+			uint8_t options);
+
   IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
   uint8_t getNumberOfListItems();
   uint32_t fitTerminal() const;
