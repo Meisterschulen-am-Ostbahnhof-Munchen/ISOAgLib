@@ -29,7 +29,33 @@ namespace IsoAgLib {
 
 class iVtObjectInputNumber_c : public __IsoAgLib::vtObjectInputNumber_c
 {
+private:
+	iVtObjectInputNumber_c() = delete;
+
 public:
+
+
+	iVtObjectInputNumber_c(
+			    iVtClientObjectPool_c* pool,
+			    ObjectID ID,
+				uint16_t width,
+				uint16_t height,
+				Colour backgroundColour,
+				iVtObjectFontAttributes_c *fontAttributes,
+				uint8_t options,
+				iVtObjectNumberVariable_c *variableReference,
+				uint32_t value,
+				uint32_t minValue,
+				uint32_t maxValue,
+				int32_t offset,
+				float scale,
+				uint8_t numberOfDecimals,
+				uint8_t format,
+				uint8_t horizontalJustification,
+				uint8_t secondOptionsByte);
+
+  ~iVtObjectInputNumber_c() override;
+
   static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_NUMBER; }
 
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {

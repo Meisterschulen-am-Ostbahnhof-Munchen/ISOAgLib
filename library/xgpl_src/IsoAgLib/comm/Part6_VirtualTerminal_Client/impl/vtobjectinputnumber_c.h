@@ -43,6 +43,8 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectInputNumber_s> vtObject_a;
 
+	vtObjectInputNumber_c() = delete;
+	vtObjectInputNumber_c(iVtObjectInputNumber_s* vtObjectInputNumberSROM , multiton ai_multitonInst);
 
 public:
   int16_t stream(uint8_t* destMemory,
@@ -50,7 +52,29 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectInputNumber_c(iVtObjectInputNumber_s* vtObjectInputNumberSROM , multiton ai_multitonInst);
+
+  vtObjectInputNumber_c(
+		    multiton ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t height,
+			IsoAgLib::Colour backgroundColour,
+			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
+			uint8_t options,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+			uint32_t value,
+			uint32_t minValue,
+			uint32_t maxValue,
+			int32_t offset,
+			float scale,
+			uint8_t numberOfDecimals,
+			uint8_t format,
+			uint8_t horizontalJustification,
+			uint8_t secondOptionsByte);
+
+
+  ~vtObjectInputNumber_c() override;
+
   uint32_t fitTerminal() const;
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 

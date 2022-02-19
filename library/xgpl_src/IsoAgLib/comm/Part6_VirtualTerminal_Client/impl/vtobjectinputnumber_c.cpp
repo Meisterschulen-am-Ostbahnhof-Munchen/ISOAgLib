@@ -482,6 +482,8 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute (SecondOptionsByte, newValue, b_enableReplaceOfCmd);
     }
 
+    vtObjectInputNumber_c::~vtObjectInputNumber_c() = default;
+
 
 } // __IsoAgLib
 
