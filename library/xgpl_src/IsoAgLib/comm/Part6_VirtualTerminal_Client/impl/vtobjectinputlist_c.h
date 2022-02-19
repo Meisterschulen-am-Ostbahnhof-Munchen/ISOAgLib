@@ -64,28 +64,40 @@ public:
   void Append(iVtObject_c* const vtObject);
 
 
-  IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
-  uint8_t getNumberOfListItems();
+    virtual IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
+
+    virtual uint8_t getNumberOfListItems();
   uint32_t fitTerminal() const;
-  void setValue(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
-  void setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false);
-  // //////////////////////////////////
+
+    virtual void setValue(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+
+    virtual void setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false);
+
+    virtual // //////////////////////////////////
   // All special Attribute-Set methods
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+    virtual bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+    virtual bool getEnabled();
+    virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  /** that attribute is in parentheses in the spec, so commented out here
+   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 10; }
   */
 
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
+   virtual uint16_t updateWidth(bool b_SendRequest=false);
+
+        virtual uint16_t updateHeight(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateValue(bool b_SendRequest=false);

@@ -41,51 +41,23 @@ public:
 				uint16_t height = 25,
 				iVtObjectNumberVariable_c *variableReference = nullptr,
 				uint8_t value = 0,
-				uint8_t options = 0);
+				uint8_t options = 1);
 
-	~iVtObjectInputList_c() override;
-
-  static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_LIST; }
-
-
-  iVtObject_c* getListItem(uint8_t xth) { return vtObjectInputList_c::getListItem (xth); }
-
-  uint8_t getNumberOfListItems() { return vtObjectInputList_c::getNumberOfListItems(); }
-
-  void setValue(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) {
-    vtObjectInputList_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setItem(uint8_t aui8_index, iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputList_c::setItem (aui8_index, apc_object, b_enableReplaceOfCmd);
-  }
-
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputList_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputList_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputList_c::setVariableReference(newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputList_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputList_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
-
-  bool getEnabled(); //TODO
-
-  bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
+  ~iVtObjectInputList_c() override;
+  static uint16_t objectType();
+  iVtObject_c* getListItem(uint8_t xth) override;
+  uint8_t getNumberOfListItems() override;
+  void setValue(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) override;
+  void setItem(uint8_t aui8_index, iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false) override;
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  bool getEnabled() override;
+  bool select(uint8_t selectOrActivate) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES  
   // ///////////////////////// getter for attributes
@@ -93,17 +65,9 @@ public:
   uint8_t updateObjectType() const { return vtObjectInputList_c::updateObjectType(); }
   */
   
-  uint16_t updateWidth(bool b_SendRequest=false) {
-    return vtObjectInputList_c::updateWidth(b_SendRequest);
-  }
-  
-  uint16_t updateHeight(bool b_SendRequest=false) {
-    return vtObjectInputList_c::updateHeight(b_SendRequest);
-  }
-
-  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
-    return vtObjectInputList_c::updateVariableReference(b_SendRequest);
-  }
+  uint16_t updateWidth(bool b_SendRequest=false) override;
+  uint16_t updateHeight(bool b_SendRequest=false) override;
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) override;
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateValue(bool b_SendRequest=false) {
@@ -116,7 +80,7 @@ public:
   */
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  uint16_t getObjectType() const override;
 };
 
 } // IsoAgLib

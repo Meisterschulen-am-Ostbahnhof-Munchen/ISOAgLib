@@ -287,6 +287,15 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     		vtObject_a->options = newValue;
     	setAttribute(Options, newValue, b_enableReplaceOfCmd);
     }
+    bool vtObjectInputList_c::getEnabled() {
+        return vtObject_a->options & 0x1;}
+
+    bool vtObjectInputList_c::enable(bool b_updateObject, bool b_enableReplaceOfCmd) {
+        return vtObject_c::able (1 | (vtObject_a->options & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+
+    bool vtObjectInputList_c::disable(bool b_updateObject, bool b_enableReplaceOfCmd) {
+        return vtObject_c::able (0 | (vtObject_a->options & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+
 
     vtObjectInputList_c::vtObjectInputList_c(
     		multiton ai_multitonInst,
