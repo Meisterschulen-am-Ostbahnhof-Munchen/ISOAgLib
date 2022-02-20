@@ -20,7 +20,7 @@ namespace IsoAgLib {
 			uint16_t height,
 			Colour backgroundColour,
 			iVtObjectFontAttributes_c *fontAttributes,
-			uint8_t options,
+			iVtObjectInputNumberOptions options,
 			iVtObjectNumberVariable_c *variableReference,
 			uint32_t value,
 			uint32_t minValue,
@@ -30,7 +30,7 @@ namespace IsoAgLib {
 			uint8_t numberOfDecimals,
 			uint8_t format,
 			uint8_t horizontalJustification,
-			uint8_t secondOptionsByte)
+			iVtObjectInputNumberOptions2 secondOptionsByte)
     :vtObjectInputNumber_c(
 			pool->getAiMultitonInst(),
 			ID,

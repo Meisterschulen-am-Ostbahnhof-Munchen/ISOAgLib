@@ -57,7 +57,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 	uint16_t height;
 	IsoAgLib::Colour backgroundColour;
 	IsoAgLib::iVtObjectFontAttributes_c *fontAttributes;
-	uint8_t options;
+	IsoAgLib::iVtObjectInputNumberOptions options;
 	IsoAgLib::iVtObjectNumberVariable_c* variableReference;
 	uint32_t value;
 	uint32_t minValue;
@@ -67,14 +67,14 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 	uint8_t numberOfDecimals;
 	uint8_t format;
 	uint8_t horizontalJustification;
-	uint8_t secondOptionsByte;
+	IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte;
 	iVtObjectInputNumber_s(
 			IsoAgLib::ObjectID ID,
 			uint16_t width,
 			uint16_t height,
 			IsoAgLib::Colour backgroundColour,
 			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
-			uint8_t options,
+			IsoAgLib::iVtObjectInputNumberOptions options,
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint32_t value,
 			uint32_t minValue,
@@ -84,7 +84,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 			uint8_t numberOfDecimals,
 			uint8_t format,
 			uint8_t horizontalJustification,
-			uint8_t secondOptionsByte)
+			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
     : iVtObject_s(ID)
 	, iVtObjectwMacro_s(ID)
 	, width(width)
@@ -134,7 +134,7 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
       destMemory [7] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObject_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObject_a->fontAttributes->getID() >> 8;
-      destMemory [10] = vtObject_a->options;
+      destMemory [10] = vtObject_a->options.options;
       if (vtObject_a->variableReference != NULL) {
           destMemory [11] = vtObject_a->variableReference->getID() & 0xFF;
           destMemory [12] = vtObject_a->variableReference->getID() >> 8;
@@ -167,7 +167,7 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
       destMemory [33] = vtObject_a->numberOfDecimals;
       destMemory [34] = vtObject_a->format;
       destMemory [35] = vtObject_a->horizontalJustification;
-      destMemory [36] = vtObject_a->secondOptionsByte;
+      destMemory [36] = vtObject_a->secondOptionsByte.options;
       destMemory [37] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 38;
       curBytes += 38;
@@ -191,9 +191,9 @@ vtObjectInputNumber_c::fitTerminal() const
 
 
 void
-vtObjectInputNumber_c::updateEnable(uint8_t aui8_enOrDis)
+vtObjectInputNumber_c::updateEnable(IsoAgLib::Enabled aui8_enOrDis)
 {
-	vtObject_a->secondOptionsByte = aui8_enOrDis;
+	vtObject_a->secondOptionsByte.bits.enabled = aui8_enOrDis;
 }
 
 
@@ -255,7 +255,7 @@ vtObjectInputNumber_c::updateFontAttributes(bool b_SendRequest)
 	return vtObject_a->fontAttributes;
 }
 
-uint8_t
+IsoAgLib::iVtObjectInputNumberOptions
 vtObjectInputNumber_c::updateOptions(bool b_SendRequest)
 {
 	if (b_SendRequest)
@@ -292,8 +292,8 @@ int32_t
 vtObjectInputNumber_c::updateOffset(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(Options);
-	return vtObject_a->options;
+		getAttribute(Offset);
+	return vtObject_a->offset;
 }
 
 float
@@ -357,7 +357,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     case Height:                  vtObject_a->height                  = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case BackgroundColour:        vtObject_a->backgroundColour        = convertLittleEndianStringColour(pui8_attributeValue); break;
     //case FontAttributes:          vtObject_a->fontAttributes          = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case Options:                 vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Options:                 vtObject_a->options.options         = (IsoAgLib::iVtObjectInputNumberOptions_e)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     //case VariableReference:       vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case MinValue:                vtObject_a->minValue                = convertLittleEndianStringUi32(  pui8_attributeValue); break;
     case MaxValue:                vtObject_a->maxValue                = convertLittleEndianStringUi32(  pui8_attributeValue); break;
@@ -422,10 +422,10 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute (FontAttributes, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputNumber_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectInputNumber_c::setOptions(IsoAgLib::iVtObjectInputNumberOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     	    vtObject_a->options = newValue;
-    	setAttribute ( Options, newValue, b_enableReplaceOfCmd);
+    	setAttribute ( Options, newValue.options, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -476,10 +476,10 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute (HorizontalJustification, newValue, b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputNumber_c::setSecondOptionsByte(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectInputNumber_c::setSecondOptionsByte(IsoAgLib::iVtObjectInputNumberOptions2 newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->secondOptionsByte = newValue;
-    	setAttribute (SecondOptionsByte, newValue, b_enableReplaceOfCmd);
+    	setAttribute (SecondOptionsByte, newValue.options, b_enableReplaceOfCmd);
     }
 
     vtObjectInputNumber_c::vtObjectInputNumber_c(
@@ -489,7 +489,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
             uint16_t height,
             IsoAgLib::Colour backgroundColour,
             IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
-            uint8_t options,
+			IsoAgLib::iVtObjectInputNumberOptions options,
             IsoAgLib::iVtObjectNumberVariable_c *variableReference,
             uint32_t value,
             uint32_t minValue,
@@ -499,7 +499,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
             uint8_t numberOfDecimals,
             uint8_t format,
             uint8_t horizontalJustification,
-            uint8_t secondOptionsByte)
+			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
             :vtObjectInputNumber_c(
             new iVtObjectInputNumber_s(
                     ID,

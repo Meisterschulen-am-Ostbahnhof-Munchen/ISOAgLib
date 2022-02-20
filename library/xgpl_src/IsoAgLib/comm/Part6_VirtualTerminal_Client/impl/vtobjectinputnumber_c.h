@@ -60,7 +60,7 @@ public:
 			uint16_t height,
 			IsoAgLib::Colour backgroundColour,
 			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
-			uint8_t options,
+			IsoAgLib::iVtObjectInputNumberOptions options,
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint32_t value,
 			uint32_t minValue,
@@ -70,7 +70,7 @@ public:
 			uint8_t numberOfDecimals,
 			uint8_t format,
 			uint8_t horizontalJustification,
-			uint8_t secondOptionsByte);
+			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte);
 
 
   ~vtObjectInputNumber_c() override;
@@ -84,7 +84,7 @@ public:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOptions(IsoAgLib::iVtObjectInputNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setMinValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setMaxValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -93,7 +93,7 @@ public:
   void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setSecondOptionsByte(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setSecondOptionsByte(IsoAgLib::iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -106,7 +106,7 @@ public:
   uint16_t updateHeight(bool b_SendRequest=false);
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectInputNumberOptions updateOptions(bool b_SendRequest=false);
   IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
   uint32_t updateMinValue(bool b_SendRequest=false);
   uint32_t updateMaxValue(bool b_SendRequest=false);
@@ -125,7 +125,7 @@ public:
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 private:
-  void updateEnable(uint8_t aui8_enOrDis);
+  void updateEnable(IsoAgLib::Enabled aui8_enOrDis);
 };
 
 } // __IsoAgLib

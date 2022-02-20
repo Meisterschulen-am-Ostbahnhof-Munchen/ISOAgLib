@@ -42,7 +42,7 @@ public:
 				uint16_t height = 25,
 				Colour backgroundColour = WHITE,
 				iVtObjectFontAttributes_c *fontAttributes = nullptr,
-				uint8_t options = 0,
+				iVtObjectInputNumberOptions options = iVtObjectInputNumberOptions(),
 				iVtObjectNumberVariable_c *variableReference = nullptr,
 				uint32_t value = 9,
 				uint32_t minValue = 0,
@@ -52,7 +52,7 @@ public:
 				uint8_t numberOfDecimals = 1,
 				uint8_t format = 0,
 				uint8_t horizontalJustification = 0,
-				uint8_t secondOptionsByte = 0);
+				iVtObjectInputNumberOptions2 secondOptionsByte = iVtObjectInputNumberOptions2(enabled));
 
   ~iVtObjectInputNumber_c() override;
 
@@ -78,7 +78,7 @@ public:
     vtObjectInputNumber_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setOptions(iVtObjectInputNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -114,7 +114,7 @@ public:
     vtObjectInputNumber_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setSecondOptionsByte(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setSecondOptionsByte(iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputNumber_c::setSecondOptionsByte (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -150,7 +150,7 @@ public:
     return vtObjectInputNumber_c::updateFontAttributes(b_SendRequest);
   }
 
-  uint8_t updateOptions(bool b_SendRequest=false) {
+  iVtObjectInputNumberOptions updateOptions(bool b_SendRequest=false) {
     return vtObjectInputNumber_c::updateOptions(b_SendRequest);
   }
 
