@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectRectangle_c : public __IsoAgLib::vtObjectRectangle_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_RECTANGLE; }
+  static ObjectType objectType() { return VT_OBJECT_TYPE_RECTANGLE; }
 
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
@@ -82,7 +82,7 @@ public:
   }
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual ObjectType getObjectType() const { return objectType(); }
 };
 
 

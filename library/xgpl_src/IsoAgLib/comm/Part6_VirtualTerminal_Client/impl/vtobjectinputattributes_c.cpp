@@ -56,7 +56,7 @@ vtObjectInputAttributes_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 26; // Object Type = Input Attributes
+      destMemory [2] = VT_OBJECT_TYPE_INPUT_ATTRIBUTES; // Object Type = Input Attributes
       destMemory [3] = vtObject_a->validationType;
 
       destMemory [4] = vtObject_a->length;

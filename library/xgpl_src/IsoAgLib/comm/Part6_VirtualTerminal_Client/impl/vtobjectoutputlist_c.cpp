@@ -69,7 +69,7 @@ vtObjectOutputList_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 37; // Object Type = Output List
+      destMemory [2] = VT_OBJECT_TYPE_OUTPUT_LIST; // Object Type = Output List
       destMemory [3] = width & 0xFF;
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;

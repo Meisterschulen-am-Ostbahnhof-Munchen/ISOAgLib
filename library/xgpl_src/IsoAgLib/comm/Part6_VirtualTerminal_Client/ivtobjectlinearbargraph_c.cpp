@@ -14,7 +14,7 @@
 namespace IsoAgLib {
 
 
-    uint16_t iVtObjectLinearBarGraph_c::objectType() { return VT_OBJECT_TYPE_LINEAR_BAR_GRAPH; }
+	ObjectType iVtObjectLinearBarGraph_c::objectType() { return VT_OBJECT_TYPE_LINEAR_BAR_GRAPH; }
 
     iVtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_c(
     		iVtClientObjectPool_c* pool,
@@ -156,7 +156,7 @@ namespace IsoAgLib {
 #endif
 
 
-    uint16_t iVtObjectLinearBarGraph_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectLinearBarGraph_c::getObjectType() const { return objectType(); }
 
 
 

@@ -34,7 +34,7 @@ namespace IsoAgLib {
 		pool->Append(this);
 	}
 
-    uint16_t iVtObjectInputBoolean_c::objectType() { return VT_OBJECT_TYPE_INPUT_BOOLEAN; }
+    ObjectType iVtObjectInputBoolean_c::objectType() { return VT_OBJECT_TYPE_INPUT_BOOLEAN; }
 
     void iVtObjectInputBoolean_c::setValue(bool newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectInputBoolean_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
@@ -84,7 +84,7 @@ namespace IsoAgLib {
         return vtObjectInputBoolean_c::updateVariableReference(b_SendRequest);
     }
 
-    uint16_t iVtObjectInputBoolean_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectInputBoolean_c::getObjectType() const { return objectType(); }
 
     iVtObjectInputBoolean_c::~iVtObjectInputBoolean_c() = default;
 

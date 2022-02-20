@@ -39,7 +39,7 @@ public:
 		uint8_t fontType = 0, // always =0 ISO_LATIN_1
 		uint8_t fontStyle = 0);
 
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 	~iVtObjectFontAttributes_c() override;
 
@@ -60,7 +60,7 @@ public:
   uint8_t updateFontStyle(bool b_SendRequest=false) override;
 #endif
 
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

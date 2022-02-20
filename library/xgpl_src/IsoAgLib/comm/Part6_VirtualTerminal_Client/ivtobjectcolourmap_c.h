@@ -34,7 +34,7 @@ public:
 
 	~iVtObjectColourMap_c() override;
 
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -47,7 +47,7 @@ public:
 
 #endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
-  uint16_t getObjectType() const override ;
+  ObjectType getObjectType() const override ;
 };
 
 } // IsoAgLib

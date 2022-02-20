@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectAuxiliaryControlDesignatorObjectPointer_c : public __IsoAgLib::vtObjectAuxiliaryControlDesignatorObjectPointer_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_AUXILIARY_POINTER; }
+  static ObjectType objectType() { return VT_OBJECT_TYPE_AUXILIARY_POINTER; }
 
   ~iVtObjectAuxiliaryControlDesignatorObjectPointer_c() override;
 
@@ -46,7 +46,7 @@ public:
   */
 #endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

@@ -98,7 +98,7 @@ vtObjectButton_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 6; // Object Type = Button
+      destMemory [2] = VT_OBJECT_TYPE_BUTTON; // Object Type = Button
       destMemory [3] = width & 0xFF;
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;

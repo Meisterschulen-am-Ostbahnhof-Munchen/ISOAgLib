@@ -19,7 +19,7 @@ namespace IsoAgLib {
 
     iVtObjectFillAttributes_c::~iVtObjectFillAttributes_c() = default;
 
-    uint16_t iVtObjectFillAttributes_c::objectType() { return VT_OBJECT_TYPE_FILL_ATTRIBUTES; }
+    ObjectType iVtObjectFillAttributes_c::objectType() { return VT_OBJECT_TYPE_FILL_ATTRIBUTES; }
 
     void iVtObjectFillAttributes_c::setFillType(FillType newFillType, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectFillAttributes_c::setFillType(newFillType, b_updateObject, b_enableReplaceOfCmd);
@@ -49,7 +49,7 @@ namespace IsoAgLib {
         return vtObjectFillAttributes_c::updateFillPattern(b_SendRequest);
     }
 
-    uint16_t iVtObjectFillAttributes_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectFillAttributes_c::getObjectType() const { return objectType(); }
 
 iVtObjectFillAttributes_c::iVtObjectFillAttributes_c(
 		iVtClientObjectPool_c *pool,

@@ -42,9 +42,9 @@ namespace IsoAgLib {
 
     iVtObjectOutputString_c::~iVtObjectOutputString_c() = default;
 
-    uint16_t iVtObjectOutputString_c::objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
+    ObjectType iVtObjectOutputString_c::objectType() { return VT_OBJECT_TYPE_OUTPUT_STRING; }
 
-    uint16_t iVtObjectOutputString_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectOutputString_c::getObjectType() const { return objectType(); }
 
     void iVtObjectOutputString_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject,
                                           bool b_enableReplaceOfCmd) {

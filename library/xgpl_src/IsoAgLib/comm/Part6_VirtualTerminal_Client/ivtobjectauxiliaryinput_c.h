@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectAuxiliaryInput_c : public __IsoAgLib::vtObjectAuxiliaryInput_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
   bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx,  int8_t dy,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
@@ -41,7 +41,7 @@ public:
   */
 #endif
 
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

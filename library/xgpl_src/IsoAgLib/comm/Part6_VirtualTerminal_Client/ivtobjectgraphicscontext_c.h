@@ -28,7 +28,7 @@ namespace IsoAgLib {
 class iVtObjectGraphicsContext_c : public __IsoAgLib::vtObjectGraphicsContext_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_GRAPHICS_CONTEXT; }
+  static ObjectType objectType() { return VT_OBJECT_TYPE_GRAPHICS_CONTEXT; }
 
   /// This command alters the graphics cursor X/Y attributes of the object (Sub-Command ID 0).
   ///
@@ -365,7 +365,7 @@ public:
   }
 #endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual ObjectType getObjectType() const { return objectType(); }
 }; // class iVtObjectGraphicsContext_c
 
 } // namespace IsoAgLib

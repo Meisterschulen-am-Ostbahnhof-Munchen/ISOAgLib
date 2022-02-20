@@ -15,7 +15,7 @@
 namespace IsoAgLib {
 
 
-    uint16_t iVtObjectLine_c::objectType() { return VT_OBJECT_TYPE_LINE; }
+	ObjectType iVtObjectLine_c::objectType() { return VT_OBJECT_TYPE_LINE; }
 
 
     iVtObjectLine_c::~iVtObjectLine_c() = default;
@@ -65,7 +65,7 @@ iVtObjectLine_c::iVtObjectLine_c(
         vtObjectLine_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    uint16_t iVtObjectLine_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectLine_c::getObjectType() const { return objectType(); }
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

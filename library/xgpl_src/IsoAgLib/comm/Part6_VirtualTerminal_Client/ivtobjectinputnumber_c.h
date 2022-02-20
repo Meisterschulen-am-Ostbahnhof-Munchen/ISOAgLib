@@ -56,7 +56,7 @@ public:
 
   ~iVtObjectInputNumber_c() override;
 
-  static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_NUMBER; }
+  static ObjectType objectType();
 
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     vtObjectInputNumber_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
@@ -197,7 +197,7 @@ public:
   */
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual ObjectType getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib

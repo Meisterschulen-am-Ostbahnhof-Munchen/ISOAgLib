@@ -66,9 +66,9 @@ namespace IsoAgLib {
         return vtObjectWorkingSet_c::setColourMapOrPalette (aui16_objectId);
     }
 
-    uint16_t iVtObjectWorkingSet_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectWorkingSet_c::getObjectType() const { return objectType(); }
 
-    uint16_t iVtObjectWorkingSet_c::objectType() { return VT_OBJECT_TYPE_WORKING_SET; }
+    ObjectType iVtObjectWorkingSet_c::objectType() { return VT_OBJECT_TYPE_WORKING_SET; }
 
 
 }

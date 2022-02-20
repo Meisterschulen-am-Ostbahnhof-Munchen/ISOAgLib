@@ -49,7 +49,7 @@ public:
 
 
    ~iVtObjectFillAttributes_c() override;
-  static uint16_t objectType();
+  static ObjectType objectType();
   void setFillType(FillType newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setFillColour(Colour newFillColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
@@ -68,7 +68,7 @@ public:
   Colour updateFillColour(bool b_SendRequest=false) override;
   iVtObjectPictureGraphic_c* updateFillPattern(bool b_SendRequest=false) override;
 #endif
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

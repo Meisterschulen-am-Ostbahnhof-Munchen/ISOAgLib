@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectPolygon_c : public __IsoAgLib::vtObjectPolygon_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_POLYGON; }
+  static ObjectType objectType() { return VT_OBJECT_TYPE_POLYGON; }
 
 
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -83,7 +83,7 @@ public:
   }
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual ObjectType getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLibb

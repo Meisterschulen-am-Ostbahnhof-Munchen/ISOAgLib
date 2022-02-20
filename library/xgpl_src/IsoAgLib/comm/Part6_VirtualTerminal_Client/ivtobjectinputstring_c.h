@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectInputString_c : public __IsoAgLib::vtObjectInputString_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_INPUT_STRING; }
+  static ObjectType objectType() { return VT_OBJECT_TYPE_INPUT_STRING; }
 
   const char* getString() { return vtObjectInputString_c::getString(); }
 
@@ -135,7 +135,7 @@ public:
   */
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual ObjectType getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib

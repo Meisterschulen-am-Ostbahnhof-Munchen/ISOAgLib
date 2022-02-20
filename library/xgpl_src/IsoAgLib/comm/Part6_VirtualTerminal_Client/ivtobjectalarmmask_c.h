@@ -32,7 +32,7 @@ namespace IsoAgLib {
 class iVtObjectAlarmMask_c : public __IsoAgLib::vtObjectAlarmMask_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
   explicit iVtObjectAlarmMask_c(
@@ -75,7 +75,7 @@ public:
   uint8_t updatePriority(bool b_SendRequest=false) override;
   uint8_t updateAcousticSignal(bool b_SendRequest=false) override;
 #endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

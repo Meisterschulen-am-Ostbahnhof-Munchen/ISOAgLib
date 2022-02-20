@@ -51,7 +51,7 @@ vtObjectNumberVariable_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 21; // Object Type = Number Variable
+      destMemory [2] = VT_OBJECT_TYPE_NUMBER_VARIABLE; // Object Type = Number Variable
 
       destMemory [3] = (vtObject_a->value) & 0xFF;
       destMemory [4] = (vtObject_a->value >> 8) & 0xFF;

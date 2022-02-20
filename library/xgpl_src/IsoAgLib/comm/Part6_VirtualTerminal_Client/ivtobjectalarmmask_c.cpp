@@ -47,7 +47,7 @@ namespace IsoAgLib {
         return vtObjectAlarmMask_c::updateSoftKeyMask(b_SendRequest);
     }
 
-    uint16_t iVtObjectAlarmMask_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectAlarmMask_c::getObjectType() const { return objectType(); }
 
     uint8_t iVtObjectAlarmMask_c::updateAcousticSignal(bool b_SendRequest) {
         return vtObjectAlarmMask_c::updateAcousticSignal(b_SendRequest);
@@ -57,7 +57,7 @@ namespace IsoAgLib {
         return vtObjectAlarmMask_c::updatePriority(b_SendRequest);
     }
 
-    uint16_t iVtObjectAlarmMask_c::objectType() { return VT_OBJECT_TYPE_ALARM_MASK; }
+    ObjectType iVtObjectAlarmMask_c::objectType() { return VT_OBJECT_TYPE_ALARM_MASK; }
 
     iVtObjectAlarmMask_c::iVtObjectAlarmMask_c(iVtClientObjectPool_c *pool, ObjectID ID, Colour backgroundColour, iVtObjectSoftKeyMask_c *softKeyMask, uint8_t priority, uint8_t acousticSignal)
             :vtObjectAlarmMask_c(

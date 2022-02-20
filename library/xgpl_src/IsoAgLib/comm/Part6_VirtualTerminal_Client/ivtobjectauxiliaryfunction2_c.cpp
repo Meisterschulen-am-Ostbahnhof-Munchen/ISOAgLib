@@ -27,9 +27,9 @@ namespace IsoAgLib {
 
     bool iVtObjectAuxiliaryFunction2_c::isAssigned() const { return vtObjectAuxiliaryFunction2_c::isAssigned(); }
 
-    uint16_t iVtObjectAuxiliaryFunction2_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectAuxiliaryFunction2_c::getObjectType() const { return objectType(); }
 
-    uint16_t iVtObjectAuxiliaryFunction2_c::objectType() { return VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2; }
+    ObjectType iVtObjectAuxiliaryFunction2_c::objectType() { return VT_OBJECT_TYPE_AUXILIARY_FUNCTION_2; }
 } // IsoAgLib
 
 

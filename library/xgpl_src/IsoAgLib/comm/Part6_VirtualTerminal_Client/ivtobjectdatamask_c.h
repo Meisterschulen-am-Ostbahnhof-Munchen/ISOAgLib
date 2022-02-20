@@ -31,7 +31,7 @@ private:
     iVtObjectDataMask_c() = delete;
 
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
   ~iVtObjectDataMask_c() override;
 
@@ -65,7 +65,7 @@ public:
   iVtObjectSoftKeyMask_c* updateSoftKeyMask(bool b_SendRequest=false) override;
 #endif
 
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

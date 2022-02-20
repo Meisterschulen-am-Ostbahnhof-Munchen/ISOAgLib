@@ -13,7 +13,7 @@
 namespace IsoAgLib {
 
 
-    uint16_t iVtObjectStringVariable_c::objectType() { return VT_OBJECT_TYPE_STRING_VARIABLE; }
+	ObjectType iVtObjectStringVariable_c::objectType() { return VT_OBJECT_TYPE_STRING_VARIABLE; }
 
 
 
@@ -44,7 +44,7 @@ namespace IsoAgLib {
 #endif
     const char *iVtObjectStringVariable_c::getString() { return vtObjectStringVariable_c::getString(); }
 
-    uint16_t iVtObjectStringVariable_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectStringVariable_c::getObjectType() const { return objectType(); }
 
 iVtObjectStringVariable_c::iVtObjectStringVariable_c(
 		iVtClientObjectPool_c *pool,

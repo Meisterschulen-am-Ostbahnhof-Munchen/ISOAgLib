@@ -73,7 +73,7 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
   if (sourceOffset == 0) { // dump out constant sized stuff
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
-    destMemory [2] = 4; // Object Type = Soft Key Mask
+    destMemory [2] = VT_OBJECT_TYPE_SOFT_KEY_MASK; // Object Type = Soft Key Mask
     destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
     destMemory [4] = numberOfObjectsToFollow;
     destMemory [5] = vtObject_a->numberOfMacrosToFollow;

@@ -32,7 +32,7 @@ class iVtObjectEllipse_c : public __IsoAgLib::vtObjectEllipse_c
 private:
     iVtObjectEllipse_c() = delete;
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
   ~iVtObjectEllipse_c() override;
 
@@ -71,7 +71,7 @@ public:
   uint8_t updateEndAngle(bool b_SendRequest=false) override;
   iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false) override;
 #endif // CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

@@ -85,7 +85,7 @@ vtObjectFillAttributes_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 25; // Object Type = Fill Attributes
+      destMemory [2] = VT_OBJECT_TYPE_FILL_ATTRIBUTES; // Object Type = Fill Attributes
       destMemory [3] = vtObject_a->fillType;
       destMemory [4] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->fillColour, this, IsoAgLib::FillColour);
 #ifdef CONFIG_USE_VTOBJECT_picturegraphic

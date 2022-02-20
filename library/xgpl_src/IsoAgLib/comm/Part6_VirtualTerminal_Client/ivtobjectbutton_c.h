@@ -31,7 +31,7 @@ namespace IsoAgLib {
 class iVtObjectButton_c : public __IsoAgLib::vtObjectButton_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
   iVtObjectButton_c() = delete;
@@ -91,7 +91,7 @@ public:
   uint8_t updateOptions(bool b_SendRequest=false) override;
 #endif
 
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

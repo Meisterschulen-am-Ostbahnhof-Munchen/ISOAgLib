@@ -32,7 +32,7 @@ namespace IsoAgLib {
 class iVtObjectOutputNumber_c : public __IsoAgLib::vtObjectOutputNumber_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
 
@@ -97,7 +97,7 @@ public:
   */
 #endif
 
-  virtual uint16_t getObjectType() const;
+  virtual ObjectType getObjectType() const;
 };
 
 } // IsoAgLib

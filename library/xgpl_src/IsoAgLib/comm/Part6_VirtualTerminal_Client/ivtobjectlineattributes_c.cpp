@@ -14,7 +14,7 @@
 namespace IsoAgLib {
 
 
-    uint16_t iVtObjectLineAttributes_c::objectType() { return VT_OBJECT_TYPE_LINE_ATTRIBUTES; }
+ObjectType iVtObjectLineAttributes_c::objectType() { return VT_OBJECT_TYPE_LINE_ATTRIBUTES; }
 
 iVtObjectLineAttributes_c::iVtObjectLineAttributes_c(
 		iVtClientObjectPool_c* pool,
@@ -49,7 +49,7 @@ iVtObjectLineAttributes_c::iVtObjectLineAttributes_c(
         vtObjectLineAttributes_c::setLineAttributes (newLineColour, newLineWidth, newLineArt, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    uint16_t iVtObjectLineAttributes_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectLineAttributes_c::getObjectType() const { return objectType(); }
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
     /** that attribute is in parentheses in the spec, so commented out here
     uint8_t updateObjectType() const { return vtObjectLineAttributes_c::updateObjectType(); }

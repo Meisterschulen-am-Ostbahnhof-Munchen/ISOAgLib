@@ -44,7 +44,7 @@ public:
 				iVtObjectInputListOptions options = iVtObjectInputListOptions(enabled));
 
   ~iVtObjectInputList_c() override;
-  static uint16_t objectType();
+  static ObjectType objectType();
   iVtObject_c* getListItem(uint8_t xth) override;
   uint8_t getNumberOfListItems() override;
   void setValue(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=true) override;
@@ -80,7 +80,7 @@ public:
   */
 #endif
 
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

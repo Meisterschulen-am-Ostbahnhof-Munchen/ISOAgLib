@@ -76,7 +76,7 @@ vtObjectLine_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 13; // Object Type = Line
+      destMemory [2] = VT_OBJECT_TYPE_LINE; // Object Type = Line
       destMemory [3] = vtObject_a->lineAttributes->getID() & 0xFF;
       destMemory [4] = vtObject_a->lineAttributes->getID() >> 8;
       destMemory [5] = width & 0xFF;

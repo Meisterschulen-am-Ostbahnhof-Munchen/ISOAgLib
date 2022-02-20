@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectAuxiliaryInput2_c : public __IsoAgLib::vtObjectAuxiliaryInput2_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
   typedef  __IsoAgLib::vtObjectAuxiliaryInput2_c::StateForLearnMode_en StateForLearnMode_en;
 
@@ -54,7 +54,7 @@ public:
   */
   bool setValue(uint16_t aui16_value1, uint16_t aui16_value2 = 0, StateForLearnMode_en aen_stateForLearnMode = StateForLearnMode_CalculateInternally) override;
 
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

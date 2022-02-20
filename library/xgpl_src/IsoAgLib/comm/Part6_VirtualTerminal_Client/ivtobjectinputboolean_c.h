@@ -51,7 +51,7 @@ public:
 			Enabled enabled = enabled);
 
 
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
   void setValue(bool newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) override;
@@ -86,7 +86,7 @@ public:
   */
 #endif
 
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

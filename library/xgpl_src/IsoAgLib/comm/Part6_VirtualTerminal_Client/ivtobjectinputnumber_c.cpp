@@ -52,6 +52,8 @@ namespace IsoAgLib {
 	{
 		pool->Append(this);
 	}
+
+    ObjectType iVtObjectInputNumber_c::objectType() { return VT_OBJECT_TYPE_INPUT_NUMBER; }
 } // IsoAgLib
 
 

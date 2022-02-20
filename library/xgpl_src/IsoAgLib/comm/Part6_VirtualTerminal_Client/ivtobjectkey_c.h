@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectKey_c : public __IsoAgLib::vtObjectKey_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_KEY; }
+  static ObjectType objectType() { return VT_OBJECT_TYPE_KEY; }
 
 
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
@@ -66,7 +66,7 @@ public:
   }
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual ObjectType getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib

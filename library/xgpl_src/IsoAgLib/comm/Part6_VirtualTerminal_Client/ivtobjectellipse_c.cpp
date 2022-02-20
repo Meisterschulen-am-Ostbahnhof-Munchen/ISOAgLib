@@ -14,7 +14,7 @@
 namespace IsoAgLib {
 
 
-    uint16_t iVtObjectEllipse_c::objectType() { return VT_OBJECT_TYPE_ELLIPSE; }
+	ObjectType iVtObjectEllipse_c::objectType() { return VT_OBJECT_TYPE_ELLIPSE; }
 
 
 
@@ -49,7 +49,7 @@ namespace IsoAgLib {
         vtObjectEllipse_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    uint16_t iVtObjectEllipse_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectEllipse_c::getObjectType() const { return objectType(); }
 
     void iVtObjectEllipse_c::setWidth(uint16_t newWidth, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectEllipse_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);

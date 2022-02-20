@@ -93,7 +93,7 @@ vtObjectInputBoolean_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 7; // Object Type = Input Boolean
+      destMemory [2] = VT_OBJECT_TYPE_INPUT_BOOLEAN; // Object Type = Input Boolean
       destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [4] = width & 0xFF;
       destMemory [5] = width >> 8;

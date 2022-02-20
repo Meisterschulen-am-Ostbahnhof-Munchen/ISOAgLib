@@ -29,7 +29,7 @@ namespace IsoAgLib {
 class iVtObjectLineAttributes_c : public __IsoAgLib::vtObjectLineAttributes_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
   iVtObjectLineAttributes_c(
 		iVtClientObjectPool_c* pool,
@@ -53,7 +53,7 @@ public:
   uint16_t updateLineArt(bool b_SendRequest=false);
 #endif
 
-  virtual uint16_t getObjectType() const;
+  virtual ObjectType getObjectType() const;
 };
 
 } // IsoAgLib

@@ -47,7 +47,7 @@ vtObjectObjectPointer_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 27; // Object Type = Object Pointer
+      destMemory [2] = VT_OBJECT_TYPE_OBJECT_POINTER; // Object Type = Object Pointer
       if (vtObject_a->value != NULL) {
         destMemory [3] = vtObject_a->value->getID() & 0xFF;
         destMemory [4] = vtObject_a->value->getID() >> 8;

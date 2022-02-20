@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectAuxiliaryFunction2_c : public __IsoAgLib::vtObjectAuxiliaryFunction2_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
   ~iVtObjectAuxiliaryFunction2_c() override;
 
@@ -55,7 +55,7 @@ public:
   //! @return true, if AUX2 input is assigned
   bool isAssigned() const override;
 
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

@@ -12,7 +12,7 @@
 
 namespace IsoAgLib {
 
-	uint16_t iVtObjectArchedBarGraph_c::objectType() {
+	ObjectType iVtObjectArchedBarGraph_c::objectType() {
 		return VT_OBJECT_TYPE_ARCHED_BAR_GRAPH;
 	}
 
@@ -114,7 +114,7 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         vtObjectArchedBarGraph_c::setTargetValue (newTargetValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    uint16_t iVtObjectArchedBarGraph_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectArchedBarGraph_c::getObjectType() const { return objectType(); }
 
     void iVtObjectArchedBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);

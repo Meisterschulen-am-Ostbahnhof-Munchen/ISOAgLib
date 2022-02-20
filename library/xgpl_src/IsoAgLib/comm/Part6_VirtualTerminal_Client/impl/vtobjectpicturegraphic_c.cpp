@@ -231,7 +231,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 20; // Object Type = Picture Graphic
+      destMemory [2] = VT_OBJECT_TYPE_PICTURE_GRAPHIC; // Object Type = Picture Graphic
       destMemory [3] = width & 0xFF; // calculated above
       destMemory [4] = width >> 8;   // dependent on FLAG_ORIGIN_SKM
       destMemory [5] = actualWidth & 0xFF;

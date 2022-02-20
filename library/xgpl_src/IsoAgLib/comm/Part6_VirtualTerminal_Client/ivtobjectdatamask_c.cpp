@@ -43,7 +43,7 @@ namespace IsoAgLib {
         vtObjectDataMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    uint16_t iVtObjectDataMask_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectDataMask_c::getObjectType() const { return objectType(); }
 
     bool iVtObjectDataMask_c::setChildPosition(iVtObject_c *apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd) {
         return vtObjectDataMask_c::setChildPosition(apc_childObject, x, y, b_updateObject, b_enableReplaceOfCmd);
@@ -54,7 +54,7 @@ namespace IsoAgLib {
     }
 
 
-    uint16_t iVtObjectDataMask_c::objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
+    ObjectType iVtObjectDataMask_c::objectType() { return VT_OBJECT_TYPE_DATA_MASK; }
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

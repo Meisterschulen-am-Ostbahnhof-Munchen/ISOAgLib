@@ -78,7 +78,7 @@ vtObjectAlarmMask_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 2; // Object Type = Alarm Mask
+      destMemory [2] = VT_OBJECT_TYPE_ALARM_MASK; // Object Type = Alarm Mask
       destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
       if (vtObject_a->softKeyMask != NULL) {

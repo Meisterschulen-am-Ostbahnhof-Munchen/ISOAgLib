@@ -176,7 +176,7 @@ public:
   /** return object type as described in the standard.
       please note that the upper byte may be used for proprietary objects.
    */
-  virtual uint16_t getObjectType() const = 0;
+  virtual ObjectType getObjectType() const = 0;
 
 protected:
 #ifdef CONFIG_USE_VTOBJECT_button

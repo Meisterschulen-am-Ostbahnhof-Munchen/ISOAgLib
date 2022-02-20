@@ -56,7 +56,7 @@ vtObjectMacro_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 28; // Object Type = Macro
+      destMemory [2] = VT_OBJECT_TYPE_MACRO; // Object Type = Macro
       destMemory [3] = numBytesToFollow & 0xFF;
       destMemory [4] = numBytesToFollow >> 8;
       curBytes += 5;

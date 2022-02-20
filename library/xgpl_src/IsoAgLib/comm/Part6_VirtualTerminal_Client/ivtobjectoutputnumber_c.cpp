@@ -14,7 +14,9 @@
 
 
 namespace IsoAgLib {
-    uint16_t iVtObjectOutputNumber_c::objectType() { return VT_OBJECT_TYPE_OUTPUT_NUMBER; }
+
+
+	ObjectType iVtObjectOutputNumber_c::objectType() { return VT_OBJECT_TYPE_OUTPUT_NUMBER; }
 
     void iVtObjectOutputNumber_c::setValue(uint32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectOutputNumber_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
@@ -46,7 +48,7 @@ namespace IsoAgLib {
         vtObjectOutputNumber_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    uint16_t iVtObjectOutputNumber_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectOutputNumber_c::getObjectType() const { return objectType(); }
 
     void iVtObjectOutputNumber_c::setOffset(int32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectOutputNumber_c::setOffset (newValue, b_updateObject, b_enableReplaceOfCmd);

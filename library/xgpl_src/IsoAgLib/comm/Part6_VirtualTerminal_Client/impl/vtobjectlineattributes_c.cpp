@@ -70,7 +70,7 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 24; // Object Type = Line Attributes
+      destMemory [2] = VT_OBJECT_TYPE_LINE_ATTRIBUTES; // Object Type = Line Attributes
       destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->lineColour, this, IsoAgLib::LineColour);
       destMemory [4] = width & 0xFF;
       destMemory [5] = vtObject_a->lineArt & 0xFF;

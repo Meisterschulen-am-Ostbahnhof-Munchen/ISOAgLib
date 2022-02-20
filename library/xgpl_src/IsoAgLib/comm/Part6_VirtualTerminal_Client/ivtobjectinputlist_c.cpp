@@ -31,7 +31,7 @@ namespace IsoAgLib {
     			pool->Append(this);
     		}
 
-    uint16_t iVtObjectInputList_c::objectType() { return VT_OBJECT_TYPE_INPUT_LIST; }
+    ObjectType iVtObjectInputList_c::objectType() { return VT_OBJECT_TYPE_INPUT_LIST; }
 
     iVtObject_c *iVtObjectInputList_c::getListItem(uint8_t xth) { return vtObjectInputList_c::getListItem (xth); }
 
@@ -89,7 +89,7 @@ namespace IsoAgLib {
         return vtObjectInputList_c::updateVariableReference(b_SendRequest);
     }
 
-    uint16_t iVtObjectInputList_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectInputList_c::getObjectType() const { return objectType(); }
 
     iVtObjectInputList_c::~iVtObjectInputList_c() = default;
 } // IsoAgLib

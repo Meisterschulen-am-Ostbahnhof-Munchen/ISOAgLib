@@ -44,7 +44,7 @@ public:
 
 
 
-  static uint16_t objectType();
+  static ObjectType objectType();
   void hide(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void show(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
@@ -72,7 +72,7 @@ public:
   */
 #endif //CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
-  virtual uint16_t getObjectType() const;
+  virtual ObjectType getObjectType() const;
 };
 
 } // IsoAgLib

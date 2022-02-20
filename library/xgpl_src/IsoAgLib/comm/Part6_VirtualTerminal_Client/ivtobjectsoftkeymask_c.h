@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectSoftKeyMask_c : public __IsoAgLib::vtObjectSoftKeyMask_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_SOFT_KEY_MASK; }
+  static ObjectType objectType() { return VT_OBJECT_TYPE_SOFT_KEY_MASK; }
 
   virtual ~iVtObjectSoftKeyMask_c(){}
 
@@ -52,7 +52,7 @@ public:
   }
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual ObjectType getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib

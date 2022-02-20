@@ -38,9 +38,9 @@ namespace IsoAgLib {
 	    }
 
 
-    uint16_t iVtObjectFontAttributes_c::objectType() { return VT_OBJECT_TYPE_FONT_ATTRIBUTES; }
+	ObjectType iVtObjectFontAttributes_c::objectType() { return VT_OBJECT_TYPE_FONT_ATTRIBUTES; }
 
-    uint16_t iVtObjectFontAttributes_c::getObjectType() const { return objectType(); }
+	ObjectType iVtObjectFontAttributes_c::getObjectType() const { return objectType(); }
 
     void iVtObjectFontAttributes_c::setFontColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectFontAttributes_c::setFontColour (newValue, b_updateObject, b_enableReplaceOfCmd);

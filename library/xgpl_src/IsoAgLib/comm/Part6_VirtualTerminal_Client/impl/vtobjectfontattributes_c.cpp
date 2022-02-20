@@ -66,7 +66,7 @@ vtObjectFontAttributes_c::stream(uint8_t* destMemory,
   if (sourceOffset == 0) { // dump out constant sized stuff
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
-    destMemory [2] = 23; // Object Type = Font Attributes
+    destMemory [2] = VT_OBJECT_TYPE_FONT_ATTRIBUTES; // Object Type = Font Attributes
     destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->fontColour, this, IsoAgLib::FontColour);
     destMemory [4] = mui8_fontSizeScaled; // size() must have been called before to prepare!!!!
     destMemory [5] = vtObject_a->fontType;

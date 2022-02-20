@@ -32,7 +32,7 @@ class iVtObjectAuxiliaryFunction_c : public __IsoAgLib::vtObjectAuxiliaryFunctio
 public:
   ~iVtObjectAuxiliaryFunction_c() override;
 
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
   bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -44,7 +44,7 @@ public:
   */
 #endif
 
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

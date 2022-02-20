@@ -35,7 +35,7 @@ namespace IsoAgLib {
 class iVtObjectStringVariable_c : public __IsoAgLib::vtObjectStringVariable_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
   iVtObjectStringVariable_c(
 		  iVtClientObjectPool_c* pool,
 		  ObjectID ID = autoID,
@@ -55,7 +55,7 @@ public:
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectStringVariable_c::updateObjectType(); }
   */
-  virtual uint16_t getObjectType() const;
+  virtual ObjectType getObjectType() const;
 };
 
 } // IsoAgLib

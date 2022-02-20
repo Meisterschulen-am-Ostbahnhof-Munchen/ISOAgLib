@@ -18,7 +18,7 @@ namespace IsoAgLib {
   // constructor/destructor direct in scope of iVtObjectContainer_c
   iVtObjectContainer_c::~iVtObjectContainer_c() = default;
 
-    uint16_t iVtObjectContainer_c::objectType() { return VT_OBJECT_TYPE_CONTAINER; }
+    ObjectType iVtObjectContainer_c::objectType() { return VT_OBJECT_TYPE_CONTAINER; }
 
     void iVtObjectContainer_c::hide(bool b_updateObject, bool b_enableReplaceOfCmd) {
 		vtObjectContainer_c::hideShow (0, b_updateObject, b_enableReplaceOfCmd);
@@ -40,7 +40,7 @@ namespace IsoAgLib {
         return vtObjectContainer_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    uint16_t iVtObjectContainer_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectContainer_c::getObjectType() const { return objectType(); }
 
 iVtObjectContainer_c::iVtObjectContainer_c(
 		iVtClientObjectPool_c *pool,

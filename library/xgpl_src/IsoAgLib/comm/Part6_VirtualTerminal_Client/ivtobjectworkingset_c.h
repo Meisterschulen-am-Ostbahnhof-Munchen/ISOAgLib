@@ -29,7 +29,7 @@ namespace IsoAgLib {
 class iVtObjectWorkingSet_c : public __IsoAgLib::vtObjectWorkingSet_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
   iVtObjectWorkingSet_c(
@@ -73,7 +73,7 @@ public:
   }
   */
 
-  virtual uint16_t getObjectType() const;
+  virtual ObjectType getObjectType() const;
 };
 
 } // IsoAgLib

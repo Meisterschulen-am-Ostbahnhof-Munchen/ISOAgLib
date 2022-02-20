@@ -63,7 +63,7 @@ vtObjectAuxiliaryControlDesignatorObjectPointer_c::stream(uint8_t* destMemory,
   if (sourceOffset == 0) { // dump out constant sized stuff
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
-    destMemory [2] = 33; // Object Type = Auxiliary Control Designator Object Pointer
+    destMemory [2] = VT_OBJECT_TYPE_AUXILIARY_POINTER; // Object Type = Auxiliary Control Designator Object Pointer
     destMemory [3] = vtObject_a->pointerType;
     if (vtObject_a->value)
     {

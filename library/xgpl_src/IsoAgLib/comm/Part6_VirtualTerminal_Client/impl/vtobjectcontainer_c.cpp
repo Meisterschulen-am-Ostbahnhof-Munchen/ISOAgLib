@@ -68,7 +68,7 @@ vtObjectContainer_c::stream(uint8_t* destMemory,
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
-      destMemory [2] = 3; // Object Type = Container
+      destMemory [2] = VT_OBJECT_TYPE_CONTAINER; // Object Type = Container
       destMemory [3] = width & 0xFF;
       destMemory [4] = width >> 8;
       destMemory [5] = height & 0xFF;

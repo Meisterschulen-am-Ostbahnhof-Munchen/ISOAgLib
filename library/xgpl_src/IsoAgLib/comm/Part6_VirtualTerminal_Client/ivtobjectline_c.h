@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectLine_c : public __IsoAgLib::vtObjectLine_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
   iVtObjectLine_c() = delete;
@@ -60,7 +60,7 @@ public:
   uint16_t updateHeight(bool b_SendRequest=false) override;
   uint8_t updateLineDirection(bool b_SendRequest=false) override;
 #endif
-  uint16_t getObjectType() const override;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

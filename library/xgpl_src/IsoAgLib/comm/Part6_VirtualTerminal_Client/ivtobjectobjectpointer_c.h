@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectObjectPointer_c : public __IsoAgLib::vtObjectObjectPointer_c
 {
 public:
-  static uint16_t objectType() { return VT_OBJECT_TYPE_OBJECT_POINTER; }
+  static ObjectType objectType() { return VT_OBJECT_TYPE_OBJECT_POINTER; }
 
 
   void setValue(iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
@@ -46,7 +46,7 @@ public:
   */
 #endif
 
-  virtual uint16_t getObjectType() const { return objectType(); }
+  virtual ObjectType getObjectType() const { return objectType(); }
 };
 
 } // IsoAgLib

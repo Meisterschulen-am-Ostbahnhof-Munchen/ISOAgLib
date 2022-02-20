@@ -87,6 +87,9 @@ menu "### ISOAgLib Example Configuration ###"
      config USE_VTOBJECT_outputnumber
          bool "USE_VTOBJECT_outputnumber"
          default n
+     config USE_VTOBJECT_outputlist
+         bool "USE_VTOBJECT_outputlist"
+         default n
      config USE_VTOBJECT_outputstring
          bool "USE_VTOBJECT_outputstring"
          default n

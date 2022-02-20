@@ -19,7 +19,7 @@ namespace IsoAgLib {
         vtObjectAuxiliaryControlDesignatorObjectPointer_c::setAuxiliaryObjectId (apc_newObject, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    uint16_t iVtObjectAuxiliaryControlDesignatorObjectPointer_c::getObjectType() const { return objectType(); }
+    ObjectType iVtObjectAuxiliaryControlDesignatorObjectPointer_c::getObjectType() const { return objectType(); }
 } // IsoAgLib
 
 

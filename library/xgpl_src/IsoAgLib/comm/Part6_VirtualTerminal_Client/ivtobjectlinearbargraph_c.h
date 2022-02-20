@@ -31,7 +31,7 @@ namespace IsoAgLib {
 class iVtObjectLinearBarGraph_c : public __IsoAgLib::vtObjectLinearBarGraph_c
 {
 public:
-  static uint16_t objectType();
+  static ObjectType objectType();
 
   iVtObjectLinearBarGraph_c(
 			iVtClientObjectPool_c* pool,
@@ -92,7 +92,7 @@ public:
   */
 #endif
 
-  virtual uint16_t getObjectType() const;
+  virtual ObjectType getObjectType() const;
 };
 
 } // IsoAgLib

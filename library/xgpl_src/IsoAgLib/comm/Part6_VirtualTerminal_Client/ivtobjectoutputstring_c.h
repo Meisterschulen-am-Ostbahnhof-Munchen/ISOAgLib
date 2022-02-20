@@ -34,7 +34,7 @@ class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 public:
   ~iVtObjectOutputString_c() override;
 
-  static uint16_t objectType();
+  static ObjectType objectType();
 
 
 
@@ -85,7 +85,7 @@ public:
   uint8_t updateJustification(bool b_SendRequest=false);
 #endif
 
-  virtual uint16_t getObjectType() const;
+  virtual ObjectType getObjectType() const;
 };
 
 } // IsoAgLib
