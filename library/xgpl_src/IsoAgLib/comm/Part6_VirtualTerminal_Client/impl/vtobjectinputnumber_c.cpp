@@ -66,7 +66,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 	float scale;
 	uint8_t numberOfDecimals;
 	uint8_t format;
-	uint8_t horizontalJustification;
+	uint8_t justification;
 	IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte;
 	iVtObjectInputNumber_s(
 			IsoAgLib::ObjectID ID,
@@ -83,7 +83,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 			float scale,
 			uint8_t numberOfDecimals,
 			uint8_t format,
-			uint8_t horizontalJustification,
+			uint8_t justification,
 			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte);
 
 };
@@ -102,7 +102,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
             float scale,
             uint8_t numberOfDecimals,
             uint8_t format,
-            uint8_t horizontalJustification,
+            uint8_t justification,
             IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
             : iVtObject_s(ID)
             , iVtObjectwMacro_s(ID)
@@ -119,7 +119,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
             , scale(scale)
             , numberOfDecimals(numberOfDecimals)
             , format(format)
-            , horizontalJustification(horizontalJustification)
+            , justification(justification)
             , secondOptionsByte(secondOptionsByte)
     {
     }
@@ -181,7 +181,7 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
 
       destMemory [33] = vtObject_a->numberOfDecimals;
       destMemory [34] = vtObject_a->format;
-      destMemory [35] = vtObject_a->horizontalJustification;
+      destMemory [35] = vtObject_a->justification;
       destMemory [36] = vtObject_a->secondOptionsByte.options;
       destMemory [37] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 38;
@@ -340,7 +340,7 @@ vtObjectInputNumber_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
 		getAttribute(HorizontalJustification);
-	return vtObject_a->horizontalJustification;
+	return vtObject_a->justification;
 }
 
 /** these attributes are in parentheses in the spec, so commented out here
@@ -380,7 +380,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     case Scale:                   vtObject_a->scale                   = convertLittleEndianStringFloat( pui8_attributeValue); break;
     case NumberOfDecimals:        vtObject_a->numberOfDecimals        = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case Format:                  vtObject_a->format                  = convertLittleEndianStringUi8(   pui8_attributeValue); break;
-    case HorizontalJustification: vtObject_a->horizontalJustification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case HorizontalJustification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     /** these attributes are in parentheses in the spec, so commented out here
     case 14: vtObject_a->value = convertLittleEndianStringUi32(pui8_attributeValue)); break;
     case 15: vtObject_a->secondOptionsByte = convertLittleEndianStringUi8(pui8_attributeValue)); break;
@@ -487,7 +487,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 
     void vtObjectInputNumber_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
-    		vtObject_a->horizontalJustification = newValue;
+    		vtObject_a->justification = newValue;
     	setAttribute (HorizontalJustification, newValue, b_enableReplaceOfCmd);
     }
 
@@ -513,7 +513,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
             float scale,
             uint8_t numberOfDecimals,
             uint8_t format,
-            uint8_t horizontalJustification,
+            uint8_t justification,
 			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
             :vtObjectInputNumber_c(
             new iVtObjectInputNumber_s(
@@ -531,7 +531,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
                     scale,
                     numberOfDecimals,
                     format,
-                    horizontalJustification,
+					justification,
                     secondOptionsByte),
             ai_multitonInst)
     {

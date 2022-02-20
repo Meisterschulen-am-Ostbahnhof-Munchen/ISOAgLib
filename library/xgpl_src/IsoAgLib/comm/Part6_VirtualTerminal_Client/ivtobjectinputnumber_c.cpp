@@ -29,7 +29,7 @@ namespace IsoAgLib {
 			float scale,
 			uint8_t numberOfDecimals,
 			uint8_t format,
-			uint8_t horizontalJustification,
+			uint8_t justification,
 			iVtObjectInputNumberOptions2 secondOptionsByte)
     :vtObjectInputNumber_c(
 			pool->getAiMultitonInst(),
@@ -47,7 +47,7 @@ namespace IsoAgLib {
 			scale,
 			numberOfDecimals,
 			format,
-			horizontalJustification,
+			justification,
 			secondOptionsByte)
 	{
 		pool->Append(this);

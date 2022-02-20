@@ -64,7 +64,7 @@ struct vtObjectOutputNumber_c::iVtObjectOutputNumber_s: iVtObjectwMacro_s {
 	float scale;
 	uint8_t numberOfDecimals;
 	uint8_t format;
-	uint8_t horizontalJustification;
+	uint8_t justification;
 	iVtObjectOutputNumber_s(
 			IsoAgLib::ObjectID ID,
 			uint16_t width,
@@ -78,7 +78,7 @@ struct vtObjectOutputNumber_c::iVtObjectOutputNumber_s: iVtObjectwMacro_s {
 			float scale,
 			uint8_t numberOfDecimals,
 			uint8_t format,
-			uint8_t horizontalJustification)
+			uint8_t justification)
     : iVtObject_s(ID)
 	, iVtObjectwMacro_s(ID)
 	, width(width)
@@ -92,7 +92,7 @@ struct vtObjectOutputNumber_c::iVtObjectOutputNumber_s: iVtObjectwMacro_s {
 	, scale(scale)
 	, numberOfDecimals(numberOfDecimals)
 	, format(format)
-	, horizontalJustification(horizontalJustification)
+	, justification(justification)
 	{
 	}
 
@@ -146,7 +146,7 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
 
       destMemory [25] = vtObject_a->numberOfDecimals;
       destMemory [26] = vtObject_a->format;
-      destMemory [27] = vtObject_a->horizontalJustification;
+      destMemory [27] = vtObject_a->justification;
       destMemory [28] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 29;
       curBytes += 29;
@@ -302,7 +302,7 @@ vtObjectOutputNumber_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
 		getAttribute(HorizontalJustification);
-	return vtObject_a->horizontalJustification;
+	return vtObject_a->justification;
 }
 
 /** that attribute is in parentheses in the spec, so commented out here
@@ -331,7 +331,7 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     case Scale:                   vtObject_a->scale                   = convertLittleEndianStringFloat(pui8_attributeValue); break;
     case NumberOfDecimals:        vtObject_a->numberOfDecimals        = convertLittleEndianStringUi8(pui8_attributeValue); break;
     case Format:                  vtObject_a->format                  = convertLittleEndianStringUi8(pui8_attributeValue); break;
-    case HorizontalJustification: vtObject_a->horizontalJustification = convertLittleEndianStringUi8(pui8_attributeValue); break;
+    case HorizontalJustification: vtObject_a->justification = convertLittleEndianStringUi8(pui8_attributeValue); break;
     /** that attribute is in parentheses in the spec, so commented out here
     case 12: saveValue32(MACRO_getStructOffset(get_vtObjectOutputNumber_a(), value = convertLittleEndianStringUi32(pui8_attributeValue)); break;
     */
@@ -421,7 +421,7 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     void
     vtObjectOutputNumber_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
-    		vtObject_a->horizontalJustification = newValue;
+    		vtObject_a->justification = newValue;
     	setAttribute (HorizontalJustification, newValue, b_enableReplaceOfCmd);
     }
 

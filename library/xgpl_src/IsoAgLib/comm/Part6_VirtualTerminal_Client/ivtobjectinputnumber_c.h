@@ -49,7 +49,7 @@ public:
 				float scale = 1.0,
 				uint8_t numberOfDecimals = 1,
 				uint8_t format = 0,
-				uint8_t horizontalJustification = 0,
+				uint8_t justification = 0,
 				iVtObjectInputNumberOptions2 secondOptionsByte = iVtObjectInputNumberOptions2(enabled));
 
   ~iVtObjectInputNumber_c() override;

@@ -55,7 +55,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 		IsoAgLib::iVtObjectInputAttributes_c* inputAttributes;
 		uint8_t options;
 		IsoAgLib::iVtObjectStringVariable_c* variableReference;
-		uint8_t horizontalJustification;
+		uint8_t justification;
 		uint16_t length;
 		char *value;
 		uint8_t enabled;
@@ -68,7 +68,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 				IsoAgLib::iVtObjectInputAttributes_c* inputAttributes,
 				uint8_t options,
 				IsoAgLib::iVtObjectStringVariable_c* variableReference,
-				uint8_t horizontalJustification,
+				uint8_t justification,
 				uint16_t length,
 				char *value,
 				uint8_t enabled)
@@ -82,7 +82,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 		, inputAttributes(inputAttributes)
 		, options(options)
 		, variableReference(variableReference)
-		, horizontalJustification(horizontalJustification)
+		, justification(justification)
 		, length(length)
 		, value(value)
 		, enabled(enabled)
@@ -132,7 +132,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
         destMemory [13] = 0xFF;
         destMemory [14] = 0xFF;
       }
-      destMemory [15] = vtObject_a->horizontalJustification;
+      destMemory [15] = vtObject_a->justification;
       destMemory [16] = static_cast<uint8_t>(vtObject_a->length);  // Length not greater than 255!
       sourceOffset += 17;
       curBytes += 17;
@@ -356,7 +356,7 @@ vtObjectInputString_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
 		getAttribute(HorizontalJustification);
-	return vtObject_a->horizontalJustification;
+	return vtObject_a->justification;
 }
 
 /** that attribute is in parentheses in the spec, so commented out here
@@ -382,7 +382,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     //case InputAttributes:         vtObject_a->inputAttributes         = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case Options:                 vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     //case VariableReference:       vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case HorizontalJustification: vtObject_a->horizontalJustification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case HorizontalJustification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     /** that attribute is in parentheses in the spec, so commented out here
     case 9:  saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled = convertLittleEndianStringUi8(pui8_attributeValue)); break;
     */
@@ -442,7 +442,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 
     void vtObjectInputString_c::setHorizontalJustification(uint8_t newHorizontalJustification, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
-    		vtObject_a->horizontalJustification = newHorizontalJustification;
+    		vtObject_a->justification = newHorizontalJustification;
     	setAttribute (HorizontalJustification, newHorizontalJustification, b_enableReplaceOfCmd);
     }
 

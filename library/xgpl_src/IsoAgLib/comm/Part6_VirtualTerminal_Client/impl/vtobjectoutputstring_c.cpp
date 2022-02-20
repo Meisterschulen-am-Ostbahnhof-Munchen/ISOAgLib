@@ -55,7 +55,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
   IsoAgLib::iVtObjectFontAttributes_c* fontAttributes;
   uint8_t options;
   IsoAgLib::iVtObjectStringVariable_c* variableReference;
-  uint8_t horizontalJustification;
+  uint8_t justification;
   uint16_t length;
   char* value; /* size length+1 (0-termination intern!) */
   explicit iVtObjectOutputString_s(
@@ -66,7 +66,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
 		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
   	    uint8_t options,
 		IsoAgLib::iVtObjectStringVariable_c* variableReference,
-  	    uint8_t horizontalJustification,
+  	    uint8_t justification,
   	    uint16_t length,
   	    char* value /* size length+1 (0-termination intern!) */
   		)
@@ -79,7 +79,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
   , fontAttributes(fontAttributes)
   , options(options)
   , variableReference(variableReference)
-  , horizontalJustification(horizontalJustification)
+  , justification(justification)
   , length(length)
   , value(value) /* size length+1 (0-termination intern!) */
 	{}
@@ -120,7 +120,7 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
         destMemory [11] = 0xFF;
         destMemory [12] = 0xFF;
       }
-      destMemory [13] = vtObject_a->horizontalJustification;
+      destMemory [13] = vtObject_a->justification;
       destMemory [14] = vtObject_a->length & 0xFF;
       destMemory [15] = vtObject_a->length >> 8;
       sourceOffset += 16;
@@ -165,7 +165,7 @@ vtObjectOutputString_c::vtObjectOutputString_c(
 		IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
 		uint8_t options,
 		IsoAgLib::iVtObjectStringVariable_c *variableReference,
-		uint8_t horizontalJustification,
+		uint8_t justification,
 		char *value)
 	:vtObjectOutputString_c(
 			new iVtObjectOutputString_s(
@@ -176,7 +176,7 @@ vtObjectOutputString_c::vtObjectOutputString_c(
 					fontAttributes,
 					options,
 					variableReference,
-					horizontalJustification,
+					justification,
 					strlen(value),
 					value),
 			ai_multitonInst)
@@ -396,7 +396,7 @@ vtObjectOutputString_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
 		getAttribute(HorizontalJustification);
-	return vtObject_a->horizontalJustification;
+	return vtObject_a->justification;
 }
 
 
@@ -411,7 +411,7 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     //case FontAttributes: vtObject_a->fontAttributes          = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
     case Options: vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     //case VariableReference: vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
-    case HorizontalJustification: vtObject_a->horizontalJustification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case HorizontalJustification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     default: break;
   }
 }
@@ -475,7 +475,7 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     void
     vtObjectOutputString_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
-    		vtObject_a->horizontalJustification = newValue;
+    		vtObject_a->justification = newValue;
     	setAttribute (HorizontalJustification, newValue, b_enableReplaceOfCmd);
     }
 

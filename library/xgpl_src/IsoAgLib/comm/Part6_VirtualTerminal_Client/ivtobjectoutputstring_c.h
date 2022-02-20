@@ -47,7 +47,7 @@ public:
   	    iVtObjectFontAttributes_c* fontAttributes = nullptr,
   	    uint8_t options = 0,
   	    iVtObjectStringVariable_c* variableReference = nullptr,
-  	    uint8_t horizontalJustification = 0,
+  	    uint8_t justification = 0,
   	    char* value = nullptr /* size length+1 (0-termination intern!) */
   		);
 

@@ -61,7 +61,7 @@ public:
 			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
 			uint8_t options,
 			IsoAgLib::iVtObjectStringVariable_c *variableReference,
-			uint8_t horizontalJustification,
+			uint8_t justification,
 			char *value);
 
 

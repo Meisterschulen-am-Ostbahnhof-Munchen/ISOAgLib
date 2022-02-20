@@ -22,7 +22,7 @@ namespace IsoAgLib {
 			iVtObjectFontAttributes_c *fontAttributes,
 			uint8_t options,
 			iVtObjectStringVariable_c *variableReference,
-			uint8_t horizontalJustification,
+			uint8_t justification,
 			char *value)
             :vtObjectOutputString_c(
             		pool->getAiMultitonInst(),
@@ -33,7 +33,7 @@ namespace IsoAgLib {
                     fontAttributes,
                     options,
                     variableReference,
-                    horizontalJustification,
+					justification,
                     value /* size length+1 (0-termination intern!) */
             )
 	{
