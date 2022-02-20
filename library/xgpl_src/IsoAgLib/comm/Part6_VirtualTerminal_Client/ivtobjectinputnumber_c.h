@@ -29,13 +29,11 @@ namespace IsoAgLib {
 
 class iVtObjectInputNumber_c : public __IsoAgLib::vtObjectInputNumber_c
 {
-private:
+public:
 	iVtObjectInputNumber_c() = delete;
 
-public:
 
-
-	iVtObjectInputNumber_c(
+	explicit iVtObjectInputNumber_c(
 			    iVtClientObjectPool_c* pool,
 			    ObjectID ID = autoID,
 				uint16_t width = 100,
@@ -55,149 +53,59 @@ public:
 				iVtObjectInputNumberOptions2 secondOptionsByte = iVtObjectInputNumberOptions2(enabled));
 
   ~iVtObjectInputNumber_c() override;
-
   static ObjectType objectType();
-
-  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    vtObjectInputNumber_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setOptions(iVtObjectInputNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setMinValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setMinValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setMaxValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setMaxValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setOffset (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setScale (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setNumberOfDecimals (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setFormat (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setSecondOptionsByte(iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputNumber_c::setSecondOptionsByte (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false){
-    vtObjectInputNumber_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
-  bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO
-
-  bool getEnabled(); //TODO
-
-  bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
+  void setValue(uint32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setHeight(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setBackgroundColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setOptions(iVtObjectInputNumberOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setMinValue(uint32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setMaxValue(uint32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setOffset(int32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setScale(float newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setFormat(bool newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setSecondOptionsByte(iVtObjectInputNumberOptions2 newValue, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject, bool b_enableReplaceOfCmd) override;
+  bool enable(bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool disable(bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  Enabled getEnabled() override;
+  bool select(uint8_t selectOrActivate) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectInputNumber_c::updateObjectType(); }
   */
   
-  uint16_t updateWidth(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateWidth(b_SendRequest);
-  }
-  
-  uint16_t updateHeight(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateHeight(b_SendRequest);
-  }
-
-  Colour updateBackgroundColour(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateBackgroundColour(b_SendRequest);
-  }
-
-  iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateFontAttributes(b_SendRequest);
-  }
-
-  iVtObjectInputNumberOptions updateOptions(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateOptions(b_SendRequest);
-  }
-
-  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateVariableReference(b_SendRequest);
-  }
-
-  uint32_t updateMinValue(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateMinValue(b_SendRequest);
-  }
-
-  uint32_t updateMaxValue(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateMaxValue(b_SendRequest);
-  }
-
-  int32_t updateOffset(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateOffset(b_SendRequest);
-  }
-
-  float updateScale(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateScale(b_SendRequest);
-  }
-
-  uint8_t updateNumberOfDecimals(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateNumberOfDecimals(b_SendRequest);
-  }
-
-  uint8_t updateFormat(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateFormat(b_SendRequest);
-  }
-
-  uint8_t updateJustification(bool b_SendRequest=false) {
-    return vtObjectInputNumber_c::updateJustification(b_SendRequest);
-  }
+  uint16_t updateWidth(bool b_SendRequest) override;
+  uint16_t updateHeight(bool b_SendRequest) override;
+  Colour updateBackgroundColour(bool b_SendRequest) override;
+  iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest) override;
+  iVtObjectInputNumberOptions updateOptions(bool b_SendRequest) override;
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest) override;
+  uint32_t updateMinValue(bool b_SendRequest) override;
+  uint32_t updateMaxValue(bool b_SendRequest) override;
+  int32_t updateOffset(bool b_SendRequest) override;
+  float updateScale(bool b_SendRequest) override;
+  uint8_t updateNumberOfDecimals(bool b_SendRequest) override;
+  uint8_t updateFormat(bool b_SendRequest) override;
+  uint8_t updateJustification(bool b_SendRequest) override;
 
   /** these attributes are in parentheses in the spec, so commented out here
-  uint32_t updateValue(bool b_SendRequest=false) {
+  uint32_t updateValue(bool b_SendRequest) {
     return vtObjectInputNumber_c::getValue(b_SendRequest);
   }
 
-  uint8_t update2ndOptionsByte(bool b_SendRequest=false) {
+  uint8_t update2ndOptionsByte(bool b_SendRequest) {
     return vtObjectInputNumber_c::update2ndOptionsByte(b_SendRequest);
   }
   */
 #endif
 
-  virtual ObjectType getObjectType() const { return objectType(); }
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

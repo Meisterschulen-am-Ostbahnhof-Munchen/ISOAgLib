@@ -84,33 +84,48 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 			uint8_t numberOfDecimals,
 			uint8_t format,
 			uint8_t horizontalJustification,
-			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
-    : iVtObject_s(ID)
-	, iVtObjectwMacro_s(ID)
-	, width(width)
-	, height(height)
-	, backgroundColour(backgroundColour)
-	, fontAttributes(fontAttributes)
-	, options(options)
-	, variableReference(variableReference)
-	, value(value)
-	, minValue(minValue)
-	, maxValue(maxValue)
-	, offset(offset)
-	, scale(scale)
-	, numberOfDecimals(numberOfDecimals)
-	, format(format)
-	, horizontalJustification(horizontalJustification)
-	, secondOptionsByte(secondOptionsByte)
-	{
-	}
+			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte);
 
 };
 
+    vtObjectInputNumber_c::iVtObjectInputNumber_s::iVtObjectInputNumber_s(
+            IsoAgLib::ObjectID ID,
+            uint16_t width, uint16_t height,
+            IsoAgLib::Colour backgroundColour,
+            IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
+            IsoAgLib::iVtObjectInputNumberOptions options,
+            IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+            uint32_t value,
+            uint32_t minValue,
+            uint32_t maxValue,
+            int32_t offset,
+            float scale,
+            uint8_t numberOfDecimals,
+            uint8_t format,
+            uint8_t horizontalJustification,
+            IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
+            : iVtObject_s(ID)
+            , iVtObjectwMacro_s(ID)
+            , width(width)
+            , height(height)
+            , backgroundColour(backgroundColour)
+            , fontAttributes(fontAttributes)
+            , options(options)
+            , variableReference(variableReference)
+            , value(value)
+            , minValue(minValue)
+            , maxValue(maxValue)
+            , offset(offset)
+            , scale(scale)
+            , numberOfDecimals(numberOfDecimals)
+            , format(format)
+            , horizontalJustification(horizontalJustification)
+            , secondOptionsByte(secondOptionsByte)
+    {
+    }
 
 
-
-int16_t
+    int16_t
 vtObjectInputNumber_c::stream(uint8_t* destMemory,
                               uint16_t maxBytes,
                               objRange_t sourceOffset)
@@ -524,6 +539,9 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 
     vtObjectInputNumber_c::~vtObjectInputNumber_c() = default;
 
+IsoAgLib::Enabled vtObjectInputNumber_c::getEnabled() {
+	return vtObject_a->secondOptionsByte.bits.enabled;
+}
 
 } // __IsoAgLib
 

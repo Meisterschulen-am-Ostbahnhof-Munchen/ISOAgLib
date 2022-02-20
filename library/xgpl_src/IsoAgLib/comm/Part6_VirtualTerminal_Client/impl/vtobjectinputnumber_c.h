@@ -49,8 +49,8 @@ private:
 public:
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
 
   vtObjectInputNumber_c(
@@ -75,46 +75,75 @@ public:
 
   ~vtObjectInputNumber_c() override;
 
-  uint32_t fitTerminal() const;
-  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  uint32_t fitTerminal() const override;
 
-  // //////////////////////////////////
+    virtual void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+
+     // //////////////////////////////////
   // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOptions(IsoAgLib::iVtObjectInputNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setMinValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setMaxValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setSecondOptionsByte(IsoAgLib::iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+     virtual void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setOptions(IsoAgLib::iVtObjectInputNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setMinValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setMaxValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setSecondOptionsByte(IsoAgLib::iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual IsoAgLib::Enabled getEnabled();
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  /** that attribute is in parentheses in the spec, so commented out here
+   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 9; }
    */
 
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectInputNumberOptions updateOptions(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
-  uint32_t updateMinValue(bool b_SendRequest=false);
-  uint32_t updateMaxValue(bool b_SendRequest=false);
-  int32_t updateOffset(bool b_SendRequest=false);
-  float updateScale(bool b_SendRequest=false);
-  uint8_t updateNumberOfDecimals(bool b_SendRequest=false);
-  uint8_t updateFormat(bool b_SendRequest=false);
-  uint8_t updateJustification(bool b_SendRequest=false);
+   virtual uint16_t updateWidth(bool b_SendRequest=false);
+
+        virtual uint16_t updateHeight(bool b_SendRequest=false);
+
+        virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectInputNumberOptions updateOptions(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
+
+        virtual uint32_t updateMinValue(bool b_SendRequest=false);
+
+        virtual uint32_t updateMaxValue(bool b_SendRequest=false);
+
+        virtual int32_t updateOffset(bool b_SendRequest=false);
+
+        virtual float updateScale(bool b_SendRequest=false);
+
+        virtual uint8_t updateNumberOfDecimals(bool b_SendRequest=false);
+
+        virtual uint8_t updateFormat(bool b_SendRequest=false);
+
+        virtual uint8_t updateJustification(bool b_SendRequest=false);
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint32_t updateValue(bool b_SendRequest=false);
