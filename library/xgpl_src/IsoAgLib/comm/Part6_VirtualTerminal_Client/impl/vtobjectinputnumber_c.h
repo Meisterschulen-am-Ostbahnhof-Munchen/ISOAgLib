@@ -43,7 +43,7 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectInputNumber_s> vtObject_a;
 
-	vtObjectInputNumber_c() = delete;
+
 	vtObjectInputNumber_c(iVtObjectInputNumber_s* vtObjectInputNumberSROM , multiton ai_multitonInst);
 
 public:
@@ -52,7 +52,7 @@ public:
                  objRange_t sourceOffset) override;
   IsoAgLib::ObjectID getID() const override;
 
-
+  vtObjectInputNumber_c() = delete;
   vtObjectInputNumber_c(
 		    multiton ai_multitonInst,
 			IsoAgLib::ObjectID ID,
@@ -151,10 +151,10 @@ public:
   uint8_t update2ndOptionsByte(bool b_SendRequest=false);
   */
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 private:
-  void updateEnable(IsoAgLib::Enabled aui8_enOrDis);
+  void updateEnable(IsoAgLib::Enabled aui8_enOrDis) override;
 };
 
 } // __IsoAgLib
