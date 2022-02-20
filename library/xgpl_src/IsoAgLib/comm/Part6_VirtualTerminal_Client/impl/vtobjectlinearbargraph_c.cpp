@@ -227,7 +227,7 @@ vtObjectLinearBarGraph_c::fitTerminal() const
 void
 vtObjectLinearBarGraph_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (vtObject_a->variableReference == NULL) {
+  if (vtObject_a->variableReference == nullptr) {
 	    if (b_updateObject)
 	    	vtObject_a->value = newValue;
 

@@ -66,6 +66,8 @@ iVtObjectLineAttributes_c::iVtObjectLineAttributes_c(
         return vtObjectLineAttributes_c::updateLineArt(b_SendRequest);
     }
 
+    iVtObjectLineAttributes_c::~iVtObjectLineAttributes_c() = default;
+
 #endif
 
 

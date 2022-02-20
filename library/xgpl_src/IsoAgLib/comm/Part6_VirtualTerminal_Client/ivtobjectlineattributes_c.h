@@ -31,29 +31,32 @@ class iVtObjectLineAttributes_c : public __IsoAgLib::vtObjectLineAttributes_c
 public:
   static ObjectType objectType();
 
-  iVtObjectLineAttributes_c(
+  iVtObjectLineAttributes_c() = delete;
+  ~iVtObjectLineAttributes_c() override;
+
+  explicit iVtObjectLineAttributes_c(
 		iVtClientObjectPool_c* pool,
   		ObjectID ID = autoID,
   		Colour lineColour = BLACK,
 		uint8_t lineWidth = 1,
 		uint16_t lineArt = 65535);
 
-  void setLineColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setLineArt(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setLineAttributes(Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setLineColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setLineWidth(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setLineArt(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setLineAttributes(Colour newLineColour, uint8_t newLineWidth, uint16_t newLineArt, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectLineAttributes_c::updateObjectType(); }
   */
 
-  uint8_t updateLineColour(bool b_SendRequest=false);
-  uint8_t updateLineWidth(bool b_SendRequest=false);
-  uint16_t updateLineArt(bool b_SendRequest=false);
+  uint8_t updateLineColour(bool b_SendRequest=false) override;
+  uint8_t updateLineWidth(bool b_SendRequest=false) override;
+  uint16_t updateLineArt(bool b_SendRequest=false) override;
 #endif
 
-  virtual ObjectType getObjectType() const;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib
