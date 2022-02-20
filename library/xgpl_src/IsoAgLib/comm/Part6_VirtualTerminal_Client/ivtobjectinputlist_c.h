@@ -29,10 +29,8 @@ namespace IsoAgLib {
 
 class iVtObjectInputList_c : public __IsoAgLib::vtObjectInputList_c
 {
-private:
-	iVtObjectInputList_c() = delete;
-
 public:
+	iVtObjectInputList_c() = delete;
 
 	explicit iVtObjectInputList_c(
 			    iVtClientObjectPool_c* pool,
