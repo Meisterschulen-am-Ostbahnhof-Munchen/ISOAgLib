@@ -74,7 +74,7 @@ public:
     virtual void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setJustification(IsoAgLib::Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -93,7 +93,7 @@ public:
   virtual float updateScale(bool b_SendRequest=false);
   virtual uint8_t updateNumberOfDecimals(bool b_SendRequest=false);
   virtual uint8_t updateFormat(bool b_SendRequest=false);
-  virtual uint8_t updateJustification(bool b_SendRequest=false);
+  virtual IsoAgLib::Justification updateJustification(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint32_t updateValue(bool b_SendRequest=false);

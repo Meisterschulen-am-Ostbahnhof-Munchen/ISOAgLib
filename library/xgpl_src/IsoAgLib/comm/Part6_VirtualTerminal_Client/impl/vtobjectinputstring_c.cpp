@@ -55,7 +55,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 		IsoAgLib::iVtObjectInputAttributes_c* inputAttributes;
 		uint8_t options;
 		IsoAgLib::iVtObjectStringVariable_c* variableReference;
-		Justification justification;
+		IsoAgLib::Justification justification;
 		uint16_t length;
 		char *value;
 		uint8_t enabled;
@@ -68,7 +68,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 				IsoAgLib::iVtObjectInputAttributes_c* inputAttributes,
 				uint8_t options,
 				IsoAgLib::iVtObjectStringVariable_c* variableReference,
-				Justification justification,
+				IsoAgLib::Justification justification,
 				uint16_t length,
 				char *value,
 				uint8_t enabled)
@@ -132,7 +132,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
         destMemory [13] = 0xFF;
         destMemory [14] = 0xFF;
       }
-      destMemory [15] = vtObject_a->justification;
+      destMemory [15] = vtObject_a->justification.justification;
       destMemory [16] = static_cast<uint8_t>(vtObject_a->length);  // Length not greater than 255!
       sourceOffset += 17;
       curBytes += 17;
@@ -351,7 +351,7 @@ vtObjectInputString_c::updateVariableReference(bool b_SendRequest)
 	return vtObject_a->variableReference;
 }
 
-uint8_t
+IsoAgLib::Justification
 vtObjectInputString_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
@@ -382,7 +382,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     //case InputAttributes:         vtObject_a->inputAttributes         = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case Options:                 vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     //case VariableReference:       vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case Justification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Justification: vtObject_a->justification.justification = (IsoAgLib::AllJustification)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     /** that attribute is in parentheses in the spec, so commented out here
     case 9:  saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled = convertLittleEndianStringUi8(pui8_attributeValue)); break;
     */
@@ -440,10 +440,10 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute (VariableReference, newVariableRef->getID(), b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputString_c::setJustification(uint8_t newJustification, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectInputString_c::setJustification(IsoAgLib::Justification newJustification, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->justification = newJustification;
-    	setAttribute (Justification, newJustification, b_enableReplaceOfCmd);
+    	setAttribute (Justification, newJustification.justification, b_enableReplaceOfCmd);
     }
 
 

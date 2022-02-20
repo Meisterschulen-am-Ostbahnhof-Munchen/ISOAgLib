@@ -80,7 +80,7 @@ public:
     vtObjectInputString_c::setOptions (newOptions, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setJustification(uint8_t newJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setJustification(Justification newJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setJustification (newJustification, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -124,7 +124,7 @@ public:
     return vtObjectInputString_c::updateVariableReference(b_SendRequest);
   }
 
-  uint8_t updateJustification(bool b_SendRequest=false) {
+  Justification updateJustification(bool b_SendRequest=false) {
     return vtObjectInputString_c::updateJustification(b_SendRequest);
   }
 

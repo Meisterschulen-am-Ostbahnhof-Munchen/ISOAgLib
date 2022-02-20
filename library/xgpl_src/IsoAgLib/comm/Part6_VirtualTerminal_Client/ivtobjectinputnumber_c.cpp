@@ -107,7 +107,7 @@ namespace IsoAgLib {
         vtObjectInputNumber_c::setFormat (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectInputNumber_c::setJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectInputNumber_c::setJustification(Justification newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectInputNumber_c::setJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -178,7 +178,7 @@ namespace IsoAgLib {
         return vtObjectInputNumber_c::updateFormat(b_SendRequest);
     }
 
-    uint8_t iVtObjectInputNumber_c::updateJustification(bool b_SendRequest) {
+    Justification iVtObjectInputNumber_c::updateJustification(bool b_SendRequest) {
         return vtObjectInputNumber_c::updateJustification(b_SendRequest);
     }
 

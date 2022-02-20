@@ -49,7 +49,7 @@ public:
 				float scale = 1.0,
 				uint8_t numberOfDecimals = 1,
 				uint8_t format = 0,
-				Justification justification = 0,
+				Justification justification = Justification(TopLeft),
 				iVtObjectInputNumberOptions2 secondOptionsByte = iVtObjectInputNumberOptions2(enabled));
 
   ~iVtObjectInputNumber_c() override;
@@ -67,7 +67,7 @@ public:
   void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setJustification(Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setSecondOptionsByte(iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   bool enable(bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -92,7 +92,7 @@ public:
   float updateScale(bool b_SendRequest) override;
   uint8_t updateNumberOfDecimals(bool b_SendRequest) override;
   uint8_t updateFormat(bool b_SendRequest) override;
-  uint8_t updateJustification(bool b_SendRequest) override;
+  Justification updateJustification(bool b_SendRequest) override;
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint32_t updateValue(bool b_SendRequest) {

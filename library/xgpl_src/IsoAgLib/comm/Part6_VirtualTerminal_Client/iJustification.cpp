@@ -12,9 +12,17 @@
 namespace IsoAgLib {
 
 
-}
+
 
 Justification::~Justification() = default;
+
+
+
+Justification::Justification()
+:justification(TopLeft)
+{
+
+}
 
 Justification::Justification(
         HorizontalJustification horizontalJustification,
@@ -29,5 +37,10 @@ Justification::Justification(
 Justification::Justification(AllJustification justification)
 :justification(justification)
 {
+
+}
+
+
+
 
 }

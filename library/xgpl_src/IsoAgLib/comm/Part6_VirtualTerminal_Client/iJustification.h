@@ -8,6 +8,8 @@
 #ifndef COMPONENTS_ISOAGLIB_LIBRARY_XGPL_SRC_ISOAGLIB_COMM_PART6_VIRTUALTERMINAL_CLIENT_IJUSTIFICATION_H_
 #define COMPONENTS_ISOAGLIB_LIBRARY_XGPL_SRC_ISOAGLIB_COMM_PART6_VIRTUALTERMINAL_CLIENT_IJUSTIFICATION_H_
 
+namespace IsoAgLib {
+
 
 
 /**
@@ -70,6 +72,7 @@ union Justification {
 		ReservedJustification   reserved03              : 2;
 
 	} bits ;
+	Justification();
 	explicit Justification(AllJustification justification);
 	explicit Justification(
 			HorizontalJustification horizontalJustification = HorizontalLeft ,
@@ -77,6 +80,6 @@ union Justification {
 	~Justification();
 };
 
-
+}
 
 #endif /* COMPONENTS_ISOAGLIB_LIBRARY_XGPL_SRC_ISOAGLIB_COMM_PART6_VIRTUALTERMINAL_CLIENT_IJUSTIFICATION_H_ */

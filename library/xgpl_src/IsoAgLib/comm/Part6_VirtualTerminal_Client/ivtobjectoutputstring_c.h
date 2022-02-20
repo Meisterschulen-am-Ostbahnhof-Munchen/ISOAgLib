@@ -47,7 +47,7 @@ public:
   	    iVtObjectFontAttributes_c* fontAttributes = nullptr,
   	    uint8_t options = 0,
   	    iVtObjectStringVariable_c* variableReference = nullptr,
-  	    Justification justification = 0,
+  	    Justification justification = Justification(TopLeft),
   	    char* value = nullptr /* size length+1 (0-termination intern!) */
   		);
 
@@ -68,7 +68,7 @@ public:
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setJustification(Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -82,7 +82,7 @@ public:
   iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
   uint8_t updateOptions(bool b_SendRequest=false);
   iVtObjectStringVariable_c* updateVariableReference(bool b_SendRequest=false);
-  uint8_t updateJustification(bool b_SendRequest=false);
+  Justification updateJustification(bool b_SendRequest=false);
 #endif
 
   virtual ObjectType getObjectType() const;

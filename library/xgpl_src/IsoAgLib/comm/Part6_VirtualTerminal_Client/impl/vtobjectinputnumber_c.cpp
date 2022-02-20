@@ -66,7 +66,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 	float scale;
 	uint8_t numberOfDecimals;
 	uint8_t format;
-	Justification justification;
+	IsoAgLib::Justification justification;
 	IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte;
 	iVtObjectInputNumber_s(
 			IsoAgLib::ObjectID ID,
@@ -83,7 +83,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 			float scale,
 			uint8_t numberOfDecimals,
 			uint8_t format,
-			Justification justification,
+			IsoAgLib::Justification justification,
 			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte);
 
 };
@@ -102,7 +102,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
             float scale,
             uint8_t numberOfDecimals,
             uint8_t format,
-            Justification justification,
+			IsoAgLib::Justification justification,
             IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
             : iVtObject_s(ID)
             , iVtObjectwMacro_s(ID)
@@ -181,7 +181,7 @@ vtObjectInputNumber_c::stream(uint8_t* destMemory,
 
       destMemory [33] = vtObject_a->numberOfDecimals;
       destMemory [34] = vtObject_a->format;
-      destMemory [35] = vtObject_a->justification;
+      destMemory [35] = vtObject_a->justification.justification;
       destMemory [36] = vtObject_a->secondOptionsByte.options;
       destMemory [37] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 38;
@@ -335,7 +335,7 @@ vtObjectInputNumber_c::updateFormat(bool b_SendRequest)
 	return vtObject_a->format;
 }
 
-uint8_t
+IsoAgLib::Justification
 vtObjectInputNumber_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
@@ -380,7 +380,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     case Scale:                   vtObject_a->scale                   = convertLittleEndianStringFloat( pui8_attributeValue); break;
     case NumberOfDecimals:        vtObject_a->numberOfDecimals        = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case Format:                  vtObject_a->format                  = convertLittleEndianStringUi8(   pui8_attributeValue); break;
-    case Justification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Justification: vtObject_a->justification.justification = (IsoAgLib::AllJustification)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     /** these attributes are in parentheses in the spec, so commented out here
     case 14: vtObject_a->value = convertLittleEndianStringUi32(pui8_attributeValue)); break;
     case 15: vtObject_a->secondOptionsByte = convertLittleEndianStringUi8(pui8_attributeValue)); break;
@@ -485,10 +485,10 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute ( Format, (newValue) ? 1 : 0, b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputNumber_c::setJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectInputNumber_c::setJustification(IsoAgLib::Justification newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->justification = newValue;
-    	setAttribute (Justification, newValue, b_enableReplaceOfCmd);
+    	setAttribute (Justification, newValue.justification, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setSecondOptionsByte(IsoAgLib::iVtObjectInputNumberOptions2 newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -513,7 +513,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
             float scale,
             uint8_t numberOfDecimals,
             uint8_t format,
-            Justification justification,
+			IsoAgLib::Justification justification,
 			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
             :vtObjectInputNumber_c(
             new iVtObjectInputNumber_s(

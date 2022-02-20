@@ -69,7 +69,7 @@ public:
 			float scale,
 			uint8_t numberOfDecimals,
 			uint8_t format,
-			Justification justification,
+			IsoAgLib::Justification justification,
 			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte);
 
 
@@ -105,7 +105,7 @@ public:
 
     virtual void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setJustification(IsoAgLib::Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
     virtual void setSecondOptionsByte(IsoAgLib::iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -143,7 +143,7 @@ public:
 
         virtual uint8_t updateFormat(bool b_SendRequest=false);
 
-        virtual uint8_t updateJustification(bool b_SendRequest=false);
+        virtual IsoAgLib::Justification updateJustification(bool b_SendRequest=false);
 
   /** these attributes are in parentheses in the spec, so commented out here
   uint32_t updateValue(bool b_SendRequest=false);

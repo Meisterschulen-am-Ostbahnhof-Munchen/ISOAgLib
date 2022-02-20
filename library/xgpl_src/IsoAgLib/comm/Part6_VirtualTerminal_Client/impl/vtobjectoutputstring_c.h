@@ -61,7 +61,7 @@ public:
 			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
 			uint8_t options,
 			IsoAgLib::iVtObjectStringVariable_c *variableReference,
-			Justification justification,
+			IsoAgLib::Justification justification,
 			char *value);
 
 
@@ -91,7 +91,7 @@ public:
         virtual void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
         virtual void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
         virtual void setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-        virtual void setJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+        virtual void setJustification(IsoAgLib::Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
         virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -106,7 +106,7 @@ public:
   virtual IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
   virtual uint8_t updateOptions(bool b_SendRequest=false);
   virtual IsoAgLib::iVtObjectStringVariable_c*  updateVariableReference(bool b_SendRequest=false);
-  virtual uint8_t updateJustification(bool b_SendRequest=false);
+  virtual IsoAgLib::Justification updateJustification(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif

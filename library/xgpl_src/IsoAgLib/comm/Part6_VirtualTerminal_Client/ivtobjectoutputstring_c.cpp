@@ -51,7 +51,7 @@ namespace IsoAgLib {
         vtObjectOutputString_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectOutputString_c::setJustification(uint8_t newValue, bool b_updateObject,
+    void iVtObjectOutputString_c::setJustification(Justification newValue, bool b_updateObject,
                                                              bool b_enableReplaceOfCmd) {
         vtObjectOutputString_c::setJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
@@ -118,7 +118,7 @@ namespace IsoAgLib {
         return vtObjectOutputString_c::updateVariableReference(b_SendRequest);
     }
 
-    uint8_t iVtObjectOutputString_c::updateJustification(bool b_SendRequest) {
+    Justification iVtObjectOutputString_c::updateJustification(bool b_SendRequest) {
         return vtObjectOutputString_c::updateJustification(b_SendRequest);
     }
 

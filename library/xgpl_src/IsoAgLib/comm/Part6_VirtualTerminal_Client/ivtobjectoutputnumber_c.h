@@ -47,7 +47,7 @@ public:
   void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setJustification(Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 
@@ -86,7 +86,7 @@ public:
     return vtObjectOutputNumber_c::updateFormat(b_SendRequest);
   }
 
-  uint8_t updateJustification(bool b_SendRequest=false) {
+  IsoAgLib::Justification updateJustification(bool b_SendRequest=false) {
     return vtObjectOutputNumber_c::updateJustification(b_SendRequest);
   }
 

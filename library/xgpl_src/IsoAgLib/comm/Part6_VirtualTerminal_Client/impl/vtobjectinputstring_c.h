@@ -68,7 +68,7 @@ public:
   void setInputAttributes(IsoAgLib::iVtObjectInputAttributes_c* newInputAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newVariableRef, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setJustification(uint8_t newJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setJustification(IsoAgLib::Justification newJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -83,7 +83,7 @@ public:
   IsoAgLib::iVtObjectInputAttributes_c* updateInputAttributes(bool b_SendRequest=false);
   uint8_t updateOptions(bool b_SendRequest=false);
   IsoAgLib::iVtObjectStringVariable_c* updateVariableReference(bool b_SendRequest=false);
-  uint8_t updateJustification(bool b_SendRequest=false);
+  IsoAgLib::Justification updateJustification(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateEnabled(bool b_SendRequest=false);
