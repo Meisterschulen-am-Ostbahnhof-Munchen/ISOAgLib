@@ -55,7 +55,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 		IsoAgLib::iVtObjectInputAttributes_c* inputAttributes;
 		uint8_t options;
 		IsoAgLib::iVtObjectStringVariable_c* variableReference;
-		uint8_t justification;
+		Justification justification;
 		uint16_t length;
 		char *value;
 		uint8_t enabled;
@@ -68,7 +68,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 				IsoAgLib::iVtObjectInputAttributes_c* inputAttributes,
 				uint8_t options,
 				IsoAgLib::iVtObjectStringVariable_c* variableReference,
-				uint8_t justification,
+				Justification justification,
 				uint16_t length,
 				char *value,
 				uint8_t enabled)

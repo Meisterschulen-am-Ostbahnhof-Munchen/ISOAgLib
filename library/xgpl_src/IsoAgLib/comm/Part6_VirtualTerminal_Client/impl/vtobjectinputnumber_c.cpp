@@ -66,7 +66,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 	float scale;
 	uint8_t numberOfDecimals;
 	uint8_t format;
-	uint8_t justification;
+	Justification justification;
 	IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte;
 	iVtObjectInputNumber_s(
 			IsoAgLib::ObjectID ID,
@@ -83,7 +83,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
 			float scale,
 			uint8_t numberOfDecimals,
 			uint8_t format,
-			uint8_t justification,
+			Justification justification,
 			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte);
 
 };
@@ -102,7 +102,7 @@ struct vtObjectInputNumber_c::iVtObjectInputNumber_s: iVtObjectwMacro_s {
             float scale,
             uint8_t numberOfDecimals,
             uint8_t format,
-            uint8_t justification,
+            Justification justification,
             IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
             : iVtObject_s(ID)
             , iVtObjectwMacro_s(ID)
@@ -513,7 +513,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
             float scale,
             uint8_t numberOfDecimals,
             uint8_t format,
-            uint8_t justification,
+            Justification justification,
 			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte)
             :vtObjectInputNumber_c(
             new iVtObjectInputNumber_s(

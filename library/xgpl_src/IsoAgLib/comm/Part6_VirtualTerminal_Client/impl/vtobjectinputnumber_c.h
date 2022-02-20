@@ -69,7 +69,7 @@ public:
 			float scale,
 			uint8_t numberOfDecimals,
 			uint8_t format,
-			uint8_t justification,
+			Justification justification,
 			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte);
 
 

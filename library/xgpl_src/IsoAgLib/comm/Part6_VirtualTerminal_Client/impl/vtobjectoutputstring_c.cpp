@@ -55,7 +55,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
   IsoAgLib::iVtObjectFontAttributes_c* fontAttributes;
   uint8_t options;
   IsoAgLib::iVtObjectStringVariable_c* variableReference;
-  uint8_t justification;
+  Justification justification;
   uint16_t length;
   char* value; /* size length+1 (0-termination intern!) */
   explicit iVtObjectOutputString_s(
@@ -66,7 +66,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
 		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
   	    uint8_t options,
 		IsoAgLib::iVtObjectStringVariable_c* variableReference,
-  	    uint8_t justification,
+  	    Justification justification,
   	    uint16_t length,
   	    char* value /* size length+1 (0-termination intern!) */
   		)
@@ -165,7 +165,7 @@ vtObjectOutputString_c::vtObjectOutputString_c(
 		IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
 		uint8_t options,
 		IsoAgLib::iVtObjectStringVariable_c *variableReference,
-		uint8_t justification,
+		Justification justification,
 		char *value)
 	:vtObjectOutputString_c(
 			new iVtObjectOutputString_s(

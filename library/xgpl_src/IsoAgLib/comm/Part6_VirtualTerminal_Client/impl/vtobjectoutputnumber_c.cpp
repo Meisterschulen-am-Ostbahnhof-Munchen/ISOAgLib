@@ -64,7 +64,7 @@ struct vtObjectOutputNumber_c::iVtObjectOutputNumber_s: iVtObjectwMacro_s {
 	float scale;
 	uint8_t numberOfDecimals;
 	uint8_t format;
-	uint8_t justification;
+	Justification justification;
 	iVtObjectOutputNumber_s(
 			IsoAgLib::ObjectID ID,
 			uint16_t width,
@@ -78,7 +78,7 @@ struct vtObjectOutputNumber_c::iVtObjectOutputNumber_s: iVtObjectwMacro_s {
 			float scale,
 			uint8_t numberOfDecimals,
 			uint8_t format,
-			uint8_t justification)
+			Justification justification)
     : iVtObject_s(ID)
 	, iVtObjectwMacro_s(ID)
 	, width(width)

@@ -20,12 +20,13 @@
 #ifndef IVTOBJECT_C_H
 #define IVTOBJECT_C_H
 
-#include <stdint.h>
+#include <cstdint>
 #include "ivttypes.h"
 #include "iColour.h"
 #include "iFillType.h"
 #include "iObjectID.h"
 #include "iOptions.h"
+#include "iJustification.h"
 #include "iFont.h"
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/multiton.h>
