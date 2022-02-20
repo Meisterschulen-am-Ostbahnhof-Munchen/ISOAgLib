@@ -16,11 +16,7 @@ multiton AbstractClientBase::getMultitonInst() const { return mi_multitonInst;}
 
 void AbstractClientBase::setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance;}
 
-const AbstractClientBase &AbstractClientBase::operator=(const AbstractClientBase &acrc_src)
-        {
-    mi_multitonInst = acrc_src.mi_multitonInst;
-    return *this;
-        }
+AbstractClientBase &AbstractClientBase::operator=(const AbstractClientBase &acrc_src) = default;
 
 AbstractClientBase::AbstractClientBase( const AbstractClientBase& acrc_src ) = default;
 
