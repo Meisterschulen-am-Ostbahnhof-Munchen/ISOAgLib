@@ -28,13 +28,13 @@ namespace IsoAgLib {
 class iVtObjectString_c : public __IsoAgLib::vtObject_c
 {
 public:
-  iVtObjectString_c(multiton ai_multitonInst);
-  virtual ~iVtObjectString_c() = default;
+  explicit iVtObjectString_c(multiton ai_multitonInst);
+  ~iVtObjectString_c() override;
 
   virtual const char* getString() = 0;
 
   //  Operation: getID
-  virtual ObjectID getID() const = 0;
+  ObjectID getID() const override = 0;
 };
 
 } // IsoAgLib

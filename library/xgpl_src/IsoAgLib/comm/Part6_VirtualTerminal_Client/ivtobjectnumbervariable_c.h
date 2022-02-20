@@ -32,7 +32,7 @@ class iVtObjectNumberVariable_c : public __IsoAgLib::vtObjectNumberVariable_c
 public:
   static ObjectType objectType() { return VT_OBJECT_TYPE_NUMBER_VARIABLE; }
 
-  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
+  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) override {
     vtObjectNumberVariable_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd); }
 
 

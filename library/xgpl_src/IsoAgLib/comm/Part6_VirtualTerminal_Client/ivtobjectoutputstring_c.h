@@ -33,12 +33,13 @@ class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 {
 public:
   ~iVtObjectOutputString_c() override;
+  iVtObjectOutputString_c() = delete;
 
   static ObjectType objectType();
 
 
 
-  iVtObjectOutputString_c(
+  explicit iVtObjectOutputString_c(
 		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
   	    uint16_t width = 50,
@@ -61,31 +62,31 @@ public:
 #endif
 
   void setValueRef(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
-  void setVariableReference(iVtObjectStringVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  const char* getString();
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setVariableReference(iVtObjectStringVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  const char* getString() override;
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setJustification(Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setJustification(Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectOutputString_c::updateObjectType(); }
    */
 
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  Colour updateBackgroundColour(bool b_SendRequest=false);
-  iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
-  iVtObjectStringVariable_c* updateVariableReference(bool b_SendRequest=false);
-  Justification updateJustification(bool b_SendRequest=false);
+  uint16_t updateWidth(bool b_SendRequest=false) override;
+  uint16_t updateHeight(bool b_SendRequest=false) override;
+  Colour updateBackgroundColour(bool b_SendRequest=false) override;
+  iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false) override;
+  uint8_t updateOptions(bool b_SendRequest=false) override;
+  iVtObjectStringVariable_c* updateVariableReference(bool b_SendRequest=false) override;
+  Justification updateJustification(bool b_SendRequest=false) override;
 #endif
 
-  virtual ObjectType getObjectType() const;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

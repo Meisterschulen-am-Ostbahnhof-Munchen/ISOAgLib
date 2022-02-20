@@ -45,11 +45,13 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectOutputString_s> vtObject_a;
 
+    vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , multiton ai_multitonInst);
+
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
 
   vtObjectOutputString_c(
@@ -67,14 +69,14 @@ public:
 
 
 
-  vtObjectOutputString_c(iVtObjectOutputString_s* vtObjectOutputStringSROM , multiton ai_multitonInst);
-  ~vtObjectOutputString_c();
-  uint32_t fitTerminal() const;
-  void setOriginSKM(bool b_SKM);
+
+  ~vtObjectOutputString_c() override;
+  uint32_t fitTerminal() const override;
+  void setOriginSKM(bool b_SKM) override;
 #ifdef CONFIG_USE_VTOBJECT_button
-  void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
+  void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn) override;
 #endif //CONFIG_USE_VTOBJECT_button
-  const char* getString();
+  const char* getString() override;
   virtual void setValueCopy    (char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
 
@@ -108,7 +110,7 @@ public:
   virtual IsoAgLib::iVtObjectStringVariable_c*  updateVariableReference(bool b_SendRequest=false);
   virtual IsoAgLib::Justification updateJustification(bool b_SendRequest=false);
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 

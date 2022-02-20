@@ -16,7 +16,7 @@ namespace IsoAgLib {
   :vtObject_c(ai_multitonInst)
   {}
 
-
+    iVtObjectString_c::~iVtObjectString_c() = default;
 
 
 } // IsoAgLib

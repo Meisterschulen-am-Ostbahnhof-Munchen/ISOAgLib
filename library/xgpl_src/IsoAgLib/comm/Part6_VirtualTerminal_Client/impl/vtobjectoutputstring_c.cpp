@@ -113,7 +113,7 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
       destMemory [8] = vtObject_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObject_a->fontAttributes->getID() >> 8;
       destMemory [10] = vtObject_a->options;
-      if (vtObject_a->variableReference != NULL) {
+      if (vtObject_a->variableReference != nullptr) {
         destMemory [11] = vtObject_a->variableReference->getID() & 0xFF;
         destMemory [12] = vtObject_a->variableReference->getID() >> 8;
       } else {
@@ -128,7 +128,7 @@ vtObjectOutputString_c::stream(uint8_t* destMemory,
     }
 
     while ((sourceOffset >= 16U) && (sourceOffset < (16U+vtObject_a->length)) && ((curBytes+1) <= maxBytes)) {
-      if (vtObject_a->value == NULL)
+      if (vtObject_a->value == nullptr)
         destMemory [curBytes] = 0x00;
       else
         destMemory [curBytes] = vtObject_a->value [sourceOffset-16];
@@ -276,10 +276,10 @@ vtObjectOutputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b
   if (b_updateObject) {
     char *dest = vtObject_a->value;
     const char *src = newValue;
-    int copyLen = (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length;
+    uint16_t copyLen = (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length;
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
     for (; i<vtObject_a->length; i++) *dest++ = ' ';
-    *dest = 0x00; // 0-termiante!
+    *dest = 0x00; // 0-terminate!
   }
 
   getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValue, vtObject_a->length, b_enableReplaceOfCmd);
@@ -289,7 +289,7 @@ vtObjectOutputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b
 void
 vtObjectOutputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (vtObject_a->variableReference != NULL) {
+  if (vtObject_a->variableReference != nullptr) {
     // register error!!
     return;
   }
@@ -302,7 +302,7 @@ vtObjectOutputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_
   }
 
   uint16_t ui16_tempLen = 0;
-  if (newValue != NULL ) ui16_tempLen = uint16_t( (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length );
+  if (newValue != nullptr ) ui16_tempLen = uint16_t( (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length );
   getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueRef ( this, newValue, ui16_tempLen, b_enableReplaceOfCmd);
 }
 
@@ -456,7 +456,7 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     void vtObjectOutputString_c::setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->fontAttributes = newValue;
-    	setAttribute (FontAttributes, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
+    	setAttribute (FontAttributes, (newValue == nullptr) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void vtObjectOutputString_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -469,7 +469,7 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     vtObjectOutputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c *newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->variableReference = newValue;
-    	setAttribute (VariableReference, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
+    	setAttribute (VariableReference, (newValue == nullptr) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
     void
