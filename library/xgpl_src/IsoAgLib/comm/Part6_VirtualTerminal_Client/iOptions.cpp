@@ -13,7 +13,9 @@ namespace IsoAgLib {
 
 	iVtObjectInputListOptions::iVtObjectInputListOptions()
 	:options(allOptionsOff)
-	{}
+	{
+		bits.realTimeDataInput = realTimeDataInputOff;
+	}
 
 	iVtObjectInputListOptions::~iVtObjectInputListOptions() = default;
 
@@ -29,7 +31,9 @@ namespace IsoAgLib {
 
 	iVtObjectInputNumberOptions::iVtObjectInputNumberOptions()
 	:options(ioallOptionsOff)
-	{}
+	{
+		bits.transparent = opaque;
+	}
 
 	iVtObjectInputNumberOptions::~iVtObjectInputNumberOptions() = default;
 

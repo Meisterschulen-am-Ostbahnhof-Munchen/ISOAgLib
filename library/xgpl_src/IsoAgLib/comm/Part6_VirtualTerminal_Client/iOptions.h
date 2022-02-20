@@ -129,8 +129,8 @@ namespace IsoAgLib {
 		} bits ;
 		iVtObjectInputListOptions();
 		~iVtObjectInputListOptions();
-		iVtObjectInputListOptions(iVtObjectInputListOptions_e options);
-		iVtObjectInputListOptions(Enabled 			          enabled);
+		explicit iVtObjectInputListOptions(iVtObjectInputListOptions_e options);
+		explicit iVtObjectInputListOptions(Enabled 			          enabled);
 	};
 
 
@@ -156,7 +156,7 @@ namespace IsoAgLib {
 		} bits ;
 		iVtObjectInputNumberOptions();
 		~iVtObjectInputNumberOptions();
-		iVtObjectInputNumberOptions(iVtObjectInputNumberOptions_e options);
+		explicit iVtObjectInputNumberOptions(iVtObjectInputNumberOptions_e options);
 	};
 
 
@@ -184,12 +184,12 @@ namespace IsoAgLib {
 		} bits ;
 		iVtObjectInputNumberOptions2();
 		~iVtObjectInputNumberOptions2();
-		iVtObjectInputNumberOptions2(iVtObjectInputNumberOptions2_e options);
-		iVtObjectInputNumberOptions2(Enabled 			            enabled);
+		explicit iVtObjectInputNumberOptions2(iVtObjectInputNumberOptions2_e options);
+		explicit iVtObjectInputNumberOptions2(Enabled 			            enabled);
 	};
 
 
-};
+}
 
 
 
