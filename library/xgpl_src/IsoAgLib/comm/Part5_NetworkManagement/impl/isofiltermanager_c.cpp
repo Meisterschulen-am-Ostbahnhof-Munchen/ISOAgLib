@@ -91,7 +91,7 @@ IsoFilterManager_c::insertIsoFilter (const IsoFilter_s& arcs_isoFilter)
   // Check if IsoFilter does yet exist in some IsoFilterBox
   if (!existIsoFilter (arcs_isoFilter))
   { // insert an empty IsoFilterBox. initialized then in list right after
-    mvec_isoFilterBox.push_back (IsoFilterBox_c (arcs_isoFilter MULTITON_INST_WITH_COMMA));
+    mvec_isoFilterBox.push_back (IsoFilterBox_c (arcs_isoFilter , getMultitonInst()));
 
     // now get the inserted IsoFilterBox and retrigger update of real hardware filters
     mvec_isoFilterBox.back().updateOnAdd();

@@ -213,7 +213,7 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
   if (pc_foundStream)
     return NULL; // can't start a sendStream, one already active for this one..
 
-  mlist_sendStream.push_back (SendStream_c(*this MULTITON_INST_WITH_COMMA ));
+  mlist_sendStream.push_back (SendStream_c(*this , getMultitonInst() ));
   return &mlist_sendStream.back();
 }
 

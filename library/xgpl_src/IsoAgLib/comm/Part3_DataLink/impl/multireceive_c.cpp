@@ -716,7 +716,7 @@ MultiReceive_c::registerClientIso(
       #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
       , false
       #endif
-      MULTITON_INST_WITH_COMMA));
+	  , getMultitonInst()));
 
   mlist_clients.back().start (mt_customer);
 }
@@ -746,7 +746,7 @@ MultiReceive_c::registerClientNmea (CanCustomer_c& arc_client, const IsoName_c& 
       ab_alsoGlobalErrors,
       isoNameSender,
       true
-      MULTITON_INST_WITH_COMMA));
+	  , getMultitonInst()));
 
   mlist_clients.back().start (mt_customer);
 }
@@ -850,7 +850,7 @@ Stream_c*
 MultiReceive_c::createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize, ecutime_t ai_time )
 {
   // Assumption/Precondition: Stream not there, so create and add it without checking!
-  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize, ai_time MULTITON_INST_WITH_COMMA, false));
+  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize, ai_time , getMultitonInst(), false));
   mlist_streams.back().immediateInitAfterConstruction();
 
   return &mlist_streams.back();
