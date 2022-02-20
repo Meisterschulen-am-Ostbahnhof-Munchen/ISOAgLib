@@ -55,7 +55,7 @@ struct vtObjectSoftKeyMask_c::iVtObjectSoftKeyMask_s: iVtObjectObject_s, iVtObje
 
 };
 
-int16_t
+uint16_t
 vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
                               uint16_t maxBytes,
                               objRange_t sourceOffset)

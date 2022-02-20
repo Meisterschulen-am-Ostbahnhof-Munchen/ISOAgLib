@@ -82,7 +82,7 @@ struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_
     {}
 
 
-    int16_t
+uint16_t
 vtObjectButton_c::stream(uint8_t* destMemory,
                           uint16_t maxBytes,
                           objRange_t sourceOffset)

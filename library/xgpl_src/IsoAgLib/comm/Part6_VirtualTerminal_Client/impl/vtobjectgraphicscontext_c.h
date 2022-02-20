@@ -72,7 +72,7 @@ public:
   //! @param destMemory
   //! @param maxBytes Maximum bytes that can be streamed out without upload-buffer overrun.
   //! @param sourceOffset
-  int16_t stream(uint8_t* destMemory,
+  uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;

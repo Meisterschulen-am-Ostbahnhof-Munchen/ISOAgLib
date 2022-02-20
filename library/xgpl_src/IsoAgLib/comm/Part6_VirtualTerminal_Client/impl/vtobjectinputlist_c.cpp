@@ -61,7 +61,7 @@ struct vtObjectInputList_c::iVtObjectInputList_s : iVtObjectObject_s, iVtObjectw
   {}
 };
 
-int16_t
+uint16_t
 vtObjectInputList_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)

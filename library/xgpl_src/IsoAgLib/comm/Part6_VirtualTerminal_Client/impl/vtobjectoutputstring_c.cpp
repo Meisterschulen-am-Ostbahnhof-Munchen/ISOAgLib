@@ -88,7 +88,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
 
 
 
-int16_t
+uint16_t
 vtObjectOutputString_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
                                objRange_t sourceOffset)

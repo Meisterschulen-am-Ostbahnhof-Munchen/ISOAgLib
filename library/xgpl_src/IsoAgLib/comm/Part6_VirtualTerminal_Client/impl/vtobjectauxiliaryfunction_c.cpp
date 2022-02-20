@@ -52,7 +52,7 @@ struct vtObjectAuxiliaryFunction_c::iVtObjectAuxiliaryFunction_s: iVtObjectObjec
 
 
 
-int16_t
+uint16_t
 vtObjectAuxiliaryFunction_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
   uint16_t curBytes=0; /* current bytes written */;

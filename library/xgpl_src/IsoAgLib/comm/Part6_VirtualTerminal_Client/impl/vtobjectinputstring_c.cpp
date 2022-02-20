@@ -90,7 +90,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 		}
 	};
 
-int16_t
+uint16_t
 vtObjectInputString_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
                                objRange_t sourceOffset)

@@ -23,7 +23,6 @@
 #ifdef CONFIG_USE_VTOBJECT_linearbargraph
 
 #include "../ivtobjectnumbervariable_c.h"
-#include "../ivtobject_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -75,37 +74,51 @@ struct vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint16_t value,
 			IsoAgLib::iVtObjectNumberVariable_c *targetValueVariableReference,
-			uint16_t targetValue)
-  : iVtObject_s(ID)
-  , iVtObjectwMacro_s(ID)
-  , width(width)
-  , height(height)
-  , colour(colour)
-  , targetLineColour(targetLineColour)
-  , options(options)
-  , numberOfTicks(numberOfTicks)
-  , minValue(minValue)
-  , maxValue(maxValue)
-  , variableReference(variableReference)
-  , value(value)
-  , targetValueVariableReference(targetValueVariableReference)
-  , targetValue(targetValue)
-  {}
+			uint16_t targetValue);
 };
 
+    vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s::iVtObjectLinearBarGraph_s(
+            IsoAgLib::ObjectID ID,
+            uint16_t width,
+            uint16_t height,
+            IsoAgLib::Colour colour,
+            IsoAgLib::Colour targetLineColour,
+            uint8_t options,
+            uint8_t numberOfTicks,
+            uint16_t minValue,
+            uint16_t maxValue,
+            IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+            uint16_t value,
+            IsoAgLib::iVtObjectNumberVariable_c *targetValueVariableReference,
+            uint16_t targetValue)
+            : iVtObject_s(ID)
+            , iVtObjectwMacro_s(ID)
+            , width(width)
+            , height(height)
+            , colour(colour)
+            , targetLineColour(targetLineColour)
+            , options(options)
+            , numberOfTicks(numberOfTicks)
+            , minValue(minValue)
+            , maxValue(maxValue)
+            , variableReference(variableReference)
+            , value(value)
+            , targetValueVariableReference(targetValueVariableReference)
+            , targetValue(targetValue)
+    {}
 
 
-int16_t
+uint16_t
 vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
                                  objRange_t sourceOffset)
 {
-    uint16_t curBytes=0; /* current bytes written */;
-    MACRO_scaleLocalVars;
-    MACRO_scaleSKLocalVars;
+    uint16_t curBytes=0; /* current bytes written */
+    MACRO_scaleLocalVars
+    MACRO_scaleSKLocalVars
 
-    uint32_t width  = (uint32_t)vtObject_a->width;
-    uint32_t height = (uint32_t)vtObject_a->height;
+    auto width  = (uint32_t)vtObject_a->width;
+    auto height = (uint32_t)vtObject_a->height;
     MACRO_scaleSizeI32(width, height);
 
     if (sourceOffset == 0) { // dump out constant sized stuff
@@ -124,7 +137,7 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
       destMemory [12] = vtObject_a->minValue >> 8;
       destMemory [13] = vtObject_a->maxValue & 0xFF;
       destMemory [14] = vtObject_a->maxValue >> 8;
-      if (vtObject_a->variableReference != NULL) {
+      if (vtObject_a->variableReference != nullptr) {
         destMemory [15] = vtObject_a->variableReference->getID() & 0xFF;
         destMemory [16] = vtObject_a->variableReference->getID() >> 8;
       } else {
@@ -133,7 +146,7 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
       }
       destMemory [17] = vtObject_a->value & 0xFF;
       destMemory [18] = vtObject_a->value >> 8;
-      if (vtObject_a->targetValueVariableReference != NULL) {
+      if (vtObject_a->targetValueVariableReference != nullptr) {
         destMemory [19] = vtObject_a->targetValueVariableReference->getID() & 0xFF;
         destMemory [20] = vtObject_a->targetValueVariableReference->getID() >> 8;
       } else {

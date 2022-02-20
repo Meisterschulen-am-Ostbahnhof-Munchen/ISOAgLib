@@ -34,7 +34,7 @@ public:
   explicit vtObject_c(multiton ai_multitonInst);
   ~vtObject_c() override = 0; // pure Virtual !
 
-  virtual int16_t stream(uint8_t* destMemory,
+  virtual uint16_t stream(uint8_t* destMemory,
                          uint16_t maxBytes,
                          objRange_t sourceOffset) = 0;
 

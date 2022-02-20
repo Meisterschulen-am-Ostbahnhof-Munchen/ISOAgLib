@@ -45,10 +45,10 @@ private:
 
 
 public:
-  int16_t stream(uint8_t* destMemory,
+  uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
 
 
@@ -74,7 +74,7 @@ public:
 
 
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
 
   // //////////////////////////////////
   // All special Attribute-Set methods
@@ -114,7 +114,7 @@ public:
   uint16_t updateValue(bool b_SendRequest=false);
   */
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 

@@ -49,7 +49,7 @@ struct vtObjectColourMap_c::iVtObjectColourMap_s: iVtObject_s {
 
 const uint8_t vtObjectColourMap_c::pgheaderSize = 5;
 
-int16_t
+uint16_t
 vtObjectColourMap_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)

@@ -52,7 +52,7 @@ struct vtObjectContainer_c::iVtObjectContainer_s : iVtObjectObject_s, iVtObjectw
   {}
 };
 
-int16_t
+uint16_t
 vtObjectContainer_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)

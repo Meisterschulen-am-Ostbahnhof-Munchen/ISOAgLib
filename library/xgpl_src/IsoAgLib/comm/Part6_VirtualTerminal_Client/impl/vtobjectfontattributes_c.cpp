@@ -56,7 +56,7 @@ uint8_t vtObjectFontAttributes_c::marr_font2PixelDimensionTableH [15] = {8,  8, 
 
 
 
-int16_t
+uint16_t
 vtObjectFontAttributes_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
                                  objRange_t sourceOffset)

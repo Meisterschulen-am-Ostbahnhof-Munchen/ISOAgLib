@@ -38,7 +38,7 @@ struct vtObjectObjectPointer_c::iVtObjectObjectPointer_s: iVtObject_s {
 	}
 };
 
-int16_t
+uint16_t
 vtObjectObjectPointer_c::stream(uint8_t* destMemory,
                                 uint16_t /*maxBytes*/,
                                 objRange_t sourceOffset)

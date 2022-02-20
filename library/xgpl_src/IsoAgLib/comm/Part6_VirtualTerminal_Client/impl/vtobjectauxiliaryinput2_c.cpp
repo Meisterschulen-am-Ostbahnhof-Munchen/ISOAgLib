@@ -49,7 +49,7 @@ struct vtObjectAuxiliaryInput2_c::iVtObjectAuxiliaryInput2_s: iVtObjectObject_s 
 
 
 
-int16_t
+uint16_t
 vtObjectAuxiliaryInput2_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset)
 {
   uint16_t curBytes=0; /* current bytes written */;

@@ -42,7 +42,7 @@ struct vtObjectNumberVariable_c::iVtObjectNumberVariable_s: iVtObject_s {
 
 
 
-int16_t
+uint16_t
 vtObjectNumberVariable_c::stream(uint8_t* destMemory,
                                  uint16_t /*maxBytes*/,
                                  objRange_t sourceOffset)

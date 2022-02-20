@@ -47,7 +47,7 @@ private:
 	vtObjectInputNumber_c(iVtObjectInputNumber_s* vtObjectInputNumberSROM , multiton ai_multitonInst);
 
 public:
-  int16_t stream(uint8_t* destMemory,
+  uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset) override;
   IsoAgLib::ObjectID getID() const override;

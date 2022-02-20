@@ -67,7 +67,7 @@ struct vtObjectRectangle_c::iVtObjectRectangle_s: iVtObjectwMacro_s {
 
 };
 
-int16_t
+uint16_t
 vtObjectRectangle_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)

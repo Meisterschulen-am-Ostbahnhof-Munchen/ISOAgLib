@@ -33,7 +33,7 @@ class iVtObjectLinearBarGraph_c : public __IsoAgLib::vtObjectLinearBarGraph_c
 public:
   static ObjectType objectType();
 
-  iVtObjectLinearBarGraph_c(
+  explicit iVtObjectLinearBarGraph_c(
 			iVtClientObjectPool_c* pool,
 		    ObjectID ID = autoID,
 		    uint16_t width = 30,
@@ -49,22 +49,22 @@ public:
 			iVtObjectNumberVariable_c *targetValueVariableReference = nullptr,
 			uint16_t targetValue = 50);
 
-
+  iVtObjectLinearBarGraph_c() = delete;
   ~iVtObjectLinearBarGraph_c() override;
 
-  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setTargetLineColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setMinValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setMaxValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setTargetValueVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setTargetValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) override;
+  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setTargetLineColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setMinValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setMaxValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setTargetValueVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setTargetValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -73,17 +73,17 @@ public:
   uint8_t updateObjectType() const { return vtObjectLinearBarGraph_c::updateObjectType(); }
   */
 
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  Colour updateColour(bool b_SendRequest=false);
-  Colour updateTargetLineColour(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
-  uint8_t updateNumberOfTicks(bool b_SendRequest=false);
-  uint16_t updateMinValue(bool b_SendRequest=false);
-  uint16_t updateMaxValue(bool b_SendRequest=false);
-  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
-  iVtObjectNumberVariable_c* updateTargetValueVariableReference(bool b_SendRequest=false);
-  uint16_t updateTargetValue(bool b_SendRequest=false);
+  uint16_t updateWidth(bool b_SendRequest=false) override;
+  uint16_t updateHeight(bool b_SendRequest=false) override;
+  Colour updateColour(bool b_SendRequest=false) override;
+  Colour updateTargetLineColour(bool b_SendRequest=false) override;
+  uint8_t updateOptions(bool b_SendRequest=false) override;
+  uint8_t updateNumberOfTicks(bool b_SendRequest=false) override;
+  uint16_t updateMinValue(bool b_SendRequest=false) override;
+  uint16_t updateMaxValue(bool b_SendRequest=false) override;
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) override;
+  iVtObjectNumberVariable_c* updateTargetValueVariableReference(bool b_SendRequest=false) override;
+  uint16_t updateTargetValue(bool b_SendRequest=false) override;
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint16_t updateValue(bool b_SendRequest=false) {
@@ -92,7 +92,7 @@ public:
   */
 #endif
 
-  virtual ObjectType getObjectType() const;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

@@ -78,7 +78,7 @@ struct vtObjectInputBoolean_c::iVtObjectInputBoolean_s : iVtObjectwMacro_s {
             , enabled(enabled)
     {}
 
-    int16_t
+uint16_t
 vtObjectInputBoolean_c::stream(uint8_t* destMemory,
                                uint16_t maxBytes,
                                objRange_t sourceOffset)
