@@ -57,7 +57,7 @@ public:
 		  IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
 		  uint16_t width,
 		  uint16_t height,
-		  uint8_t lineDirection
+		  IsoAgLib::LineDirection lineDirection
 		  );
 
 
@@ -73,8 +73,8 @@ public:
     virtual void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setWidth (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setHeight (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setLineDirection (IsoAgLib::LineDirection newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setEndPoint (uint16_t newWidth, uint16_t newHeight, IsoAgLib::LineDirection newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

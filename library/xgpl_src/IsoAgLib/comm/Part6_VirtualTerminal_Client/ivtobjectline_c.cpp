@@ -26,7 +26,7 @@ iVtObjectLine_c::iVtObjectLine_c(
 		iVtObjectLineAttributes_c *lineAttributes,
 		uint16_t width,
 		uint16_t height,
-		uint8_t lineDirection)
+		LineDirection lineDirection)
 :vtObjectLine_c(
 		pool->getAiMultitonInst(),
         ID,
@@ -51,13 +51,12 @@ iVtObjectLine_c::iVtObjectLine_c(
         vtObjectLine_c::setHeight(newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectLine_c::setLineDirection(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectLine_c::setLineDirection(LineDirection newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLine_c::setLineDirection(newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
     void
-    iVtObjectLine_c::setEndPoint(uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject,
-                                 bool b_enableReplaceOfCmd) {
+    iVtObjectLine_c::setEndPoint(uint16_t newWidth, uint16_t newHeight, IsoAgLib::LineDirection newLineDirection, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLine_c::setEndPoint(newWidth, newHeight, newLineDirection, b_updateObject, b_enableReplaceOfCmd);
     }
 

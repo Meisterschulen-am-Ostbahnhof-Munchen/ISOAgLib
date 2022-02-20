@@ -44,13 +44,13 @@ struct vtObjectLine_c::iVtObjectLine_s : iVtObjectwMacro_s {
   IsoAgLib::iVtObjectLineAttributes_c* lineAttributes;
   uint16_t width;
   uint16_t height;
-  uint8_t lineDirection;
+  IsoAgLib::LineDirection lineDirection;
   explicit iVtObjectLine_s(
 		  IsoAgLib::ObjectID ID,
 		  IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
 			uint16_t width,
 			uint16_t height,
-			uint8_t lineDirection)
+			IsoAgLib::LineDirection lineDirection)
   : iVtObject_s(ID)
   , iVtObjectwMacro_s(ID)
   , lineAttributes(lineAttributes)
@@ -110,7 +110,7 @@ vtObjectLine_c::vtObjectLine_c(
 		IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
 		uint16_t width,
 		uint16_t height,
-		uint8_t lineDirection)
+		IsoAgLib::LineDirection lineDirection)
 	: vtObjectLine_c(
 		new iVtObjectLine_s(
 	        ID,
@@ -161,7 +161,7 @@ vtObjectLine_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObje
 }
 
 void
-vtObjectLine_c::setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectLine_c::setEndPoint (uint16_t newWidth, uint16_t newHeight, IsoAgLib::LineDirection newLineDirection, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
 	  vtObject_a->width = newWidth;
@@ -213,7 +213,7 @@ vtObjectLine_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVal
     //case LineAttributes: vtObject_a->lineAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break; TODO !!
     case Width:         vtObject_a->width          = convertLittleEndianStringUi16(pui8_attributeValue); break;
     case Height:        vtObject_a->height         = convertLittleEndianStringUi16(pui8_attributeValue); break;
-    case lineDirection: vtObject_a->lineDirection  = convertLittleEndianStringUi8(pui8_attributeValue); break;
+    case lineDirection: vtObject_a->lineDirection  = (IsoAgLib::LineDirection)convertLittleEndianStringUi8(pui8_attributeValue); break;
     default: break;
   }
 }
@@ -254,7 +254,7 @@ vtObjectLine_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVal
         setAttribute ( Height, scaledDim, b_enableReplaceOfCmd);
     }
 
-    void vtObjectLine_c::setLineDirection(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectLine_c::setLineDirection(IsoAgLib::LineDirection newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->lineDirection = newValue;
         setAttribute ( lineDirection, newValue, b_enableReplaceOfCmd);

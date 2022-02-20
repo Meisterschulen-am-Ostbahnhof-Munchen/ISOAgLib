@@ -40,15 +40,15 @@ public:
 			iVtObjectLineAttributes_c *lineAttributes = nullptr,
 			uint16_t width = 100,
 			uint16_t height =100,
-			uint8_t lineDirection = 0);
+			LineDirection lineDirection = sink);
 
   ~iVtObjectLine_c() override;
 
   void setLineAttributes(iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setWidth (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setHeight (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setLineDirection (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setLineDirection (LineDirection newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setEndPoint (uint16_t newWidth, uint16_t newHeight, LineDirection newLineDirection, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
