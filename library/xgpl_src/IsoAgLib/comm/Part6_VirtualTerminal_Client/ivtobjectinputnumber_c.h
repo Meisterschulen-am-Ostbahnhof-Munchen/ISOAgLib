@@ -37,22 +37,22 @@ public:
 
 	iVtObjectInputNumber_c(
 			    iVtClientObjectPool_c* pool,
-			    ObjectID ID,
-				uint16_t width,
-				uint16_t height,
-				Colour backgroundColour,
-				iVtObjectFontAttributes_c *fontAttributes,
-				uint8_t options,
-				iVtObjectNumberVariable_c *variableReference,
-				uint32_t value,
-				uint32_t minValue,
-				uint32_t maxValue,
-				int32_t offset,
-				float scale,
-				uint8_t numberOfDecimals,
-				uint8_t format,
-				uint8_t horizontalJustification,
-				uint8_t secondOptionsByte);
+			    ObjectID ID = autoID,
+				uint16_t width = 100,
+				uint16_t height = 25,
+				Colour backgroundColour = WHITE,
+				iVtObjectFontAttributes_c *fontAttributes = nullptr,
+				uint8_t options = 0,
+				iVtObjectNumberVariable_c *variableReference = nullptr,
+				uint32_t value = 9,
+				uint32_t minValue = 0,
+				uint32_t maxValue = 100,
+				int32_t offset = 0,
+				float scale = 1.0,
+				uint8_t numberOfDecimals = 1,
+				uint8_t format = 0,
+				uint8_t horizontalJustification = 0,
+				uint8_t secondOptionsByte = 0);
 
   ~iVtObjectInputNumber_c() override;
 

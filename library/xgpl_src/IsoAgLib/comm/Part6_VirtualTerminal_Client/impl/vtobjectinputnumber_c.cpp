@@ -482,6 +482,46 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute (SecondOptionsByte, newValue, b_enableReplaceOfCmd);
     }
 
+    vtObjectInputNumber_c::vtObjectInputNumber_c(
+            multiton ai_multitonInst,
+            IsoAgLib::ObjectID ID,
+            uint16_t width,
+            uint16_t height,
+            IsoAgLib::Colour backgroundColour,
+            IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
+            uint8_t options,
+            IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+            uint32_t value,
+            uint32_t minValue,
+            uint32_t maxValue,
+            int32_t offset,
+            float scale,
+            uint8_t numberOfDecimals,
+            uint8_t format,
+            uint8_t horizontalJustification,
+            uint8_t secondOptionsByte)
+            :vtObjectInputNumber_c(
+            new iVtObjectInputNumber_s(
+                    ID,
+                    width,
+                    height,
+                    backgroundColour,
+                    fontAttributes,
+                    options,
+                    variableReference,
+                    value,
+                    minValue,
+                    maxValue,
+                    offset,
+                    scale,
+                    numberOfDecimals,
+                    format,
+                    horizontalJustification,
+                    secondOptionsByte),
+            ai_multitonInst)
+    {
+    }
+
     vtObjectInputNumber_c::~vtObjectInputNumber_c() = default;
 
 
