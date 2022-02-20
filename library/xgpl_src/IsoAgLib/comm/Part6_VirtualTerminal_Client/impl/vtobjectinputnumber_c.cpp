@@ -45,7 +45,7 @@ enum vtObjectInputNumber_c::AttributeID:uint8_t
 	Scale                   = 10,
 	NumberOfDecimals        = 11,
 	Format                  = 12,
-	HorizontalJustification = 13,
+	Justification = 13,
 	SecondOptionsByte       = 14,
 };
 
@@ -339,7 +339,7 @@ uint8_t
 vtObjectInputNumber_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(HorizontalJustification);
+		getAttribute(Justification);
 	return vtObject_a->justification;
 }
 
@@ -380,7 +380,7 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     case Scale:                   vtObject_a->scale                   = convertLittleEndianStringFloat( pui8_attributeValue); break;
     case NumberOfDecimals:        vtObject_a->numberOfDecimals        = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case Format:                  vtObject_a->format                  = convertLittleEndianStringUi8(   pui8_attributeValue); break;
-    case HorizontalJustification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Justification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     /** these attributes are in parentheses in the spec, so commented out here
     case 14: vtObject_a->value = convertLittleEndianStringUi32(pui8_attributeValue)); break;
     case 15: vtObject_a->secondOptionsByte = convertLittleEndianStringUi8(pui8_attributeValue)); break;
@@ -485,10 +485,10 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute ( Format, (newValue) ? 1 : 0, b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputNumber_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectInputNumber_c::setJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->justification = newValue;
-    	setAttribute (HorizontalJustification, newValue, b_enableReplaceOfCmd);
+    	setAttribute (Justification, newValue, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputNumber_c::setSecondOptionsByte(IsoAgLib::iVtObjectInputNumberOptions2 newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {

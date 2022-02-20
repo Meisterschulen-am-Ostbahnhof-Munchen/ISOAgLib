@@ -66,9 +66,9 @@ namespace IsoAgLib {
         vtObjectOutputNumber_c::setFormat (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectOutputNumber_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject,
+    void iVtObjectOutputNumber_c::setJustification(uint8_t newValue, bool b_updateObject,
                                                              bool b_enableReplaceOfCmd) {
-        vtObjectOutputNumber_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
+        vtObjectOutputNumber_c::setJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
     void iVtObjectOutputNumber_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject,

@@ -107,8 +107,8 @@ namespace IsoAgLib {
         vtObjectInputNumber_c::setFormat (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectInputNumber_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        vtObjectInputNumber_c::setHorizontalJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
+    void iVtObjectInputNumber_c::setJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectInputNumber_c::setJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
     void iVtObjectInputNumber_c::setSecondOptionsByte(iVtObjectInputNumberOptions2 newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {

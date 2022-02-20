@@ -42,7 +42,7 @@ enum vtObjectInputString_c::AttributeID:uint8_t
 	InputAttributes         = 5,
 	Options                 = 6,
 	VariableReference       = 7,
-	HorizontalJustification = 8,
+	Justification = 8,
 };
 
 
@@ -355,7 +355,7 @@ uint8_t
 vtObjectInputString_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(HorizontalJustification);
+		getAttribute(Justification);
 	return vtObject_a->justification;
 }
 
@@ -382,7 +382,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     //case InputAttributes:         vtObject_a->inputAttributes         = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case Options:                 vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     //case VariableReference:       vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case HorizontalJustification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Justification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     /** that attribute is in parentheses in the spec, so commented out here
     case 9:  saveValue8(MACRO_getStructOffset(get_vtObjectInputString_a(), enabled = convertLittleEndianStringUi8(pui8_attributeValue)); break;
     */
@@ -440,10 +440,10 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute (VariableReference, newVariableRef->getID(), b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputString_c::setHorizontalJustification(uint8_t newHorizontalJustification, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectInputString_c::setJustification(uint8_t newJustification, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
-    		vtObject_a->justification = newHorizontalJustification;
-    	setAttribute (HorizontalJustification, newHorizontalJustification, b_enableReplaceOfCmd);
+    		vtObject_a->justification = newJustification;
+    	setAttribute (Justification, newJustification, b_enableReplaceOfCmd);
     }
 
 

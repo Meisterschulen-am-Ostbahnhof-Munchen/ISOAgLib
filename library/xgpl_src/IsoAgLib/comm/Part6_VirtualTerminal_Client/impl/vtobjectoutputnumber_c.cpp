@@ -46,7 +46,7 @@ enum vtObjectOutputNumber_c::AttributeID:uint8_t
 	Scale                   = 8,
 	NumberOfDecimals        = 9,
 	Format                  = 10,
-	HorizontalJustification = 11,
+	Justification = 11,
 };
 
 
@@ -301,7 +301,7 @@ uint8_t
 vtObjectOutputNumber_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(HorizontalJustification);
+		getAttribute(Justification);
 	return vtObject_a->justification;
 }
 
@@ -331,7 +331,7 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     case Scale:                   vtObject_a->scale                   = convertLittleEndianStringFloat(pui8_attributeValue); break;
     case NumberOfDecimals:        vtObject_a->numberOfDecimals        = convertLittleEndianStringUi8(pui8_attributeValue); break;
     case Format:                  vtObject_a->format                  = convertLittleEndianStringUi8(pui8_attributeValue); break;
-    case HorizontalJustification: vtObject_a->justification = convertLittleEndianStringUi8(pui8_attributeValue); break;
+    case Justification: vtObject_a->justification = convertLittleEndianStringUi8(pui8_attributeValue); break;
     /** that attribute is in parentheses in the spec, so commented out here
     case 12: saveValue32(MACRO_getStructOffset(get_vtObjectOutputNumber_a(), value = convertLittleEndianStringUi32(pui8_attributeValue)); break;
     */
@@ -419,10 +419,10 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     }
 
     void
-    vtObjectOutputNumber_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    vtObjectOutputNumber_c::setJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->justification = newValue;
-    	setAttribute (HorizontalJustification, newValue, b_enableReplaceOfCmd);
+    	setAttribute (Justification, newValue, b_enableReplaceOfCmd);
     }
 
 

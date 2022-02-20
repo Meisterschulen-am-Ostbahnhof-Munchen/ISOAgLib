@@ -44,7 +44,7 @@ enum vtObjectOutputString_c::AttributeID:uint8_t
 	FontAttributes          = 4,
 	Options                 = 5,
 	VariableReference       = 6,
-	HorizontalJustification = 7,
+	Justification = 7,
 };
 
 
@@ -395,7 +395,7 @@ uint8_t
 vtObjectOutputString_c::updateJustification(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(HorizontalJustification);
+		getAttribute(Justification);
 	return vtObject_a->justification;
 }
 
@@ -411,7 +411,7 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     //case FontAttributes: vtObject_a->fontAttributes          = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
     case Options: vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     //case VariableReference: vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break; //TODO
-    case HorizontalJustification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Justification: vtObject_a->justification = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     default: break;
   }
 }
@@ -473,10 +473,10 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     }
 
     void
-    vtObjectOutputString_c::setHorizontalJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    vtObjectOutputString_c::setJustification(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->justification = newValue;
-    	setAttribute (HorizontalJustification, newValue, b_enableReplaceOfCmd);
+    	setAttribute (Justification, newValue, b_enableReplaceOfCmd);
     }
 
 

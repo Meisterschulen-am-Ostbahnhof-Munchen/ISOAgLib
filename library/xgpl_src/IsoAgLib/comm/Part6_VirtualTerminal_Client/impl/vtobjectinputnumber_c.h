@@ -105,7 +105,7 @@ public:
 
     virtual void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
     virtual void setSecondOptionsByte(IsoAgLib::iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 

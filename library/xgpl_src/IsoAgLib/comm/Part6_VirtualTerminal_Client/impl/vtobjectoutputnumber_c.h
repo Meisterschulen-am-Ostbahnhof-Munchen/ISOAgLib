@@ -74,7 +74,7 @@ public:
     virtual void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

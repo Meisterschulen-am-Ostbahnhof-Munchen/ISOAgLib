@@ -80,8 +80,8 @@ public:
     vtObjectInputString_c::setOptions (newOptions, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setHorizontalJustification(uint8_t newHorizontalJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectInputString_c::setHorizontalJustification (newHorizontalJustification, b_updateObject, b_enableReplaceOfCmd);
+  void setJustification(uint8_t newJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+    vtObjectInputString_c::setJustification (newJustification, b_updateObject, b_enableReplaceOfCmd);
   }
 
   bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false); //TODO

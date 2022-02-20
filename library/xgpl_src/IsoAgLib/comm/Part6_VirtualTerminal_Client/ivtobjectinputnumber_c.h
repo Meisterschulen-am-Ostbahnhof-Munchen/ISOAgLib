@@ -67,7 +67,7 @@ public:
   void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setHorizontalJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setJustification(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setSecondOptionsByte(iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   bool enable(bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
