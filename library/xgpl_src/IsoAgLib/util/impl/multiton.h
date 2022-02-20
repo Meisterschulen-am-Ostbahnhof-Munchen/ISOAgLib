@@ -41,44 +41,24 @@
 #  include <ext/malloc_allocator.h>
 #endif
 
-#define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF  multiton ai_multitonInst = multitonSTD
-#define MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA , multiton ai_multitonInst = multitonSTD
-#define MULTITON_INST_PARAMETER_USE               ai_multitonInst
 
-#define MULTITON_PAR_ARR_DEF(PAR)                     multiton getMultitonInst() const { return (PAR) ? (PAR)->getMultitonInst() : 0; }
 #define MULTITON_MEMBER_ASSIGN(PAR)     c_clientBase.setMultitonInst (PAR.c_clientBase.getMultitonInst());
 #define MULTITON_MEMBER_CONSTRUCTOR    c_clientBase( ai_multitonInst ),
 #define MULTITON_MEMBER_COPY_CONSTRUCTOR(PAR) c_clientBase( PAR.getMultitonInst() ),
 #define MULTITON_PARENT_CONSTRUCTOR      ClientBase( ai_multitonInst ),
 
-#define MULTITON_INST                             getMultitonInst()
-#define MULTITON_INST_WITH_COMMA                , getMultitonInst()
 
-
-#define getForeignInstance4Comm(PAR)      PAR.getMultitonInst()
 #define getIsoBusInstance4Comm()          getIsoBusInstance( getMultitonInst() )
 #define getCanInstance4Comm()             getCanInstance( getMultitonInst() )
-#define getTimeDateInstance4Comm()        getTimeDateInstance( getMultitonInst() )
-#define getGnssInstance4Comm()            getGnssInstance( getMultitonInst() )
-#define getTimePosGpsInstance4Comm()      getTimePosGpsInstance( getMultitonInst() )
 #define getTracGeneralInstance4Comm()     getTracGeneralInstance( getMultitonInst() )
-#define getTracFacilitiesInstance4Comm()  getTracFacilitiesInstance( getMultitonInst() )
-#define getTracMoveInstance4Comm()        getTracMoveInstance( getMultitonInst() )
-#define getTracLightInstance4Comm()       getTracLightInstance( getMultitonInst() )
-#define getTracAuxInstance4Comm()         getTracAuxInstance( getMultitonInst() )
-#define getTracPtoInstance4Comm()         getTracPtoInstance( getMultitonInst() )
 #define getTracGuidanceInstance4Comm()    getTracGuidanceInstance( getMultitonInst() )
 #define getTracGuidanceCommandInstance4Comm() getTracGuidanceCommandInstance( getMultitonInst() )
-#define getIsbClientInstance4Comm()       getIsbClientInstance( getMultitonInst() )
 #define getIsoMonitorInstance4Comm()      getIsoMonitorInstance( getMultitonInst() )
-#define getTcClientInstance4Comm()        getTcClientInstance( getMultitonInst() )
 #define getMultiSendInstance4Comm()       getMultiSendInstance( getMultitonInst() )
 #define getMultiReceiveInstance4Comm()    getMultiReceiveInstance( getMultitonInst() )
 #define getVtClientInstance4Comm()        getVtClientInstance( getMultitonInst() )
 #define getIsoRequestPgnInstance4Comm()   getIsoRequestPgnInstance( getMultitonInst() )
 #define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance( getMultitonInst() )
-#define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance( getMultitonInst() )
-#define getFsManagerInstance4Comm()       getFsManagerInstance( getMultitonInst() )
 
 
 
