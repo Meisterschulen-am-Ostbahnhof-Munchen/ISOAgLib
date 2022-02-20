@@ -42,14 +42,14 @@ struct vtObjectInputList_c::iVtObjectInputList_s : iVtObjectObject_s, iVtObjectw
   uint16_t height;
   IsoAgLib::iVtObjectNumberVariable_c* variableReference;
   uint8_t value;
-  uint8_t options;
+  IsoAgLib::iVtObjectInputListOptions options;
   iVtObjectInputList_s(
 		    IsoAgLib::ObjectID ID,
   		    uint16_t width,
 			uint16_t height,
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint8_t value,
-			uint8_t options)
+			IsoAgLib::iVtObjectInputListOptions options)
   : iVtObject_s(ID)
   , iVtObjectObject_s(ID)
   , iVtObjectwMacro_s(ID)
@@ -92,7 +92,7 @@ vtObjectInputList_c::stream(uint8_t* destMemory,
       destMemory [9] = vtObject_a->value;
 
       destMemory [10] = vtObject_a->numberOfObjectsToFollow;
-      destMemory [11] = vtObject_a->options;
+      destMemory [11] = vtObject_a->options.options;
       destMemory [12] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 13;
       curBytes += 13;
@@ -132,9 +132,9 @@ vtObjectInputList_c::fitTerminal() const
 
 
 void
-vtObjectInputList_c::updateEnable(uint8_t aui8_enOrDis)
+vtObjectInputList_c::updateEnable(IsoAgLib::Enabled aui8_enOrDis)
 {
-	vtObject_a->options = aui8_enOrDis;
+	vtObject_a->options.bits.enabled = aui8_enOrDis;
 }
 
 
@@ -282,19 +282,19 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     	setAttribute(VariableReference, newValue->getID(), b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputList_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectInputList_c::setOptions(IsoAgLib::iVtObjectInputListOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->options = newValue;
-    	setAttribute(Options, newValue, b_enableReplaceOfCmd);
+    	setAttribute(Options, newValue.options, b_enableReplaceOfCmd);
     }
-    bool vtObjectInputList_c::getEnabled() {
-        return vtObject_a->options & 0x1;}
+    IsoAgLib::Enabled vtObjectInputList_c::getEnabled() {
+        return vtObject_a->options.bits.enabled;}
 
     bool vtObjectInputList_c::enable(bool b_updateObject, bool b_enableReplaceOfCmd) {
-        return vtObject_c::able (1 | (vtObject_a->options & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+        return vtObject_c::able (IsoAgLib::enabled, b_updateObject, b_enableReplaceOfCmd); }
 
     bool vtObjectInputList_c::disable(bool b_updateObject, bool b_enableReplaceOfCmd) {
-        return vtObject_c::able (0 | (vtObject_a->options & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+        return vtObject_c::able (IsoAgLib::disabled, b_updateObject, b_enableReplaceOfCmd); }
 
 
     vtObjectInputList_c::vtObjectInputList_c(
@@ -304,7 +304,7 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 			uint16_t height,
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint8_t value,
-			uint8_t options)
+			IsoAgLib::iVtObjectInputListOptions options)
 	:vtObjectInputList_c(
 			new iVtObjectInputList_s(
 					ID,

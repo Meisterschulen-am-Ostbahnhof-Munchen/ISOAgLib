@@ -59,7 +59,7 @@ public:
 			uint16_t height,
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint8_t value,
-			uint8_t options);
+			IsoAgLib::iVtObjectInputListOptions options);
 
   void Append(iVtObject_c* const vtObject);
 
@@ -81,10 +81,10 @@ public:
 
     virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setOptions(IsoAgLib::iVtObjectInputListOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
     virtual bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-    virtual bool getEnabled();
+    virtual IsoAgLib::Enabled getEnabled();
     virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -108,7 +108,7 @@ public:
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 private:
-  void updateEnable(uint8_t aui8_enOrDis);
+  void updateEnable(IsoAgLib::Enabled aui8_enOrDis);
 };
 
 } // __IsoAgLib

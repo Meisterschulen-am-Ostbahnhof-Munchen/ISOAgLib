@@ -194,7 +194,7 @@ vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int1
 
 
 bool
-vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObject_c::able (IsoAgLib::Enabled enOrDis, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject)
     updateEnable (enOrDis);
@@ -217,6 +217,6 @@ vtObject_c::select(uint8_t selectOrActivate)
         return (s_properties.flags & FLAG_OMIT_OBJECT) != 0;
     }
 
-    void vtObject_c::updateEnable(uint8_t) {}
+    void vtObject_c::updateEnable(IsoAgLib::Enabled enOrDis) {} //only Input Objects should implement !
 
 } // __IsoAgLib

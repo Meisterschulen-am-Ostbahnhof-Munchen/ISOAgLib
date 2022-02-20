@@ -49,7 +49,7 @@ struct vtObjectInputBoolean_c::iVtObjectInputBoolean_s : iVtObjectwMacro_s {
   IsoAgLib::iVtObjectFontAttributes_c* foregroundColour;
   IsoAgLib::iVtObjectNumberVariable_c* variableReference;
   uint8_t value;
-  uint8_t enabled;
+  IsoAgLib::Enabled enabled;
   iVtObjectInputBoolean_s(
 		IsoAgLib::ObjectID ID,
 		IsoAgLib::Colour backgroundColour,
@@ -57,7 +57,7 @@ struct vtObjectInputBoolean_c::iVtObjectInputBoolean_s : iVtObjectwMacro_s {
 		IsoAgLib::iVtObjectFontAttributes_c *foregroundColour,
 		IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 		uint8_t value,
-		uint8_t enabled);
+		IsoAgLib::Enabled enabled);
 };
 
     vtObjectInputBoolean_c::iVtObjectInputBoolean_s::iVtObjectInputBoolean_s(
@@ -67,7 +67,7 @@ struct vtObjectInputBoolean_c::iVtObjectInputBoolean_s : iVtObjectwMacro_s {
             IsoAgLib::iVtObjectFontAttributes_c *foregroundColour,
             IsoAgLib::iVtObjectNumberVariable_c *variableReference,
             uint8_t value,
-            uint8_t enabled)
+			IsoAgLib::Enabled enabled)
             : iVtObject_s(ID)
             , iVtObjectwMacro_s(ID)
             , backgroundColour(backgroundColour)
@@ -133,7 +133,7 @@ vtObjectInputBoolean_c::fitTerminal() const
 
 
 void
-vtObjectInputBoolean_c::updateEnable(uint8_t aui8_enOrDis)
+vtObjectInputBoolean_c::updateEnable(IsoAgLib::Enabled aui8_enOrDis)
 {
 	vtObject_a->enabled = aui8_enOrDis;
 }
@@ -259,7 +259,7 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 			IsoAgLib::iVtObjectFontAttributes_c *foregroundColour,
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint8_t value,
-			uint8_t enabled)
+			IsoAgLib::Enabled enabled)
     :vtObjectInputBoolean_c(
     		new iVtObjectInputBoolean_s(
     				ID,
@@ -274,14 +274,14 @@ vtObjectInputBoolean_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 
     }
 
-    bool vtObjectInputBoolean_c::getEnabled() {
-        return vtObject_a->enabled & 0x1;}
+    IsoAgLib::Enabled vtObjectInputBoolean_c::getEnabled() {
+        return vtObject_a->enabled;}
 
     bool vtObjectInputBoolean_c::enable(bool b_updateObject, bool b_enableReplaceOfCmd) {
-        return vtObject_c::able (1 | (vtObject_a->enabled & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+        return vtObject_c::able (IsoAgLib::enabled, b_updateObject, b_enableReplaceOfCmd); }
 
     bool vtObjectInputBoolean_c::disable(bool b_updateObject, bool b_enableReplaceOfCmd) {
-        return vtObject_c::able (0 | (vtObject_a->enabled & 0xFE), b_updateObject, b_enableReplaceOfCmd); }
+        return vtObject_c::able (IsoAgLib::disabled, b_updateObject, b_enableReplaceOfCmd); }
 
 
     vtObjectInputBoolean_c::~vtObjectInputBoolean_c() = default;

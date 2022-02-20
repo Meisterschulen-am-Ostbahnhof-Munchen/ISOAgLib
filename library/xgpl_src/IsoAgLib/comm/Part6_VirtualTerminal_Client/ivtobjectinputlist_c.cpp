@@ -18,7 +18,7 @@ namespace IsoAgLib {
 			uint16_t height,
 			iVtObjectNumberVariable_c *variableReference,
 			uint8_t value,
-			uint8_t options)
+			iVtObjectInputListOptions options)
     	    :vtObjectInputList_c(
     				pool->getAiMultitonInst(),
     				ID,
@@ -57,7 +57,7 @@ namespace IsoAgLib {
         vtObjectInputList_c::setVariableReference(newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectInputList_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectInputList_c::setOptions(iVtObjectInputListOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectInputList_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -71,7 +71,7 @@ namespace IsoAgLib {
     bool iVtObjectInputList_c::disable(bool b_updateObject, bool b_enableReplaceOfCmd) {
         return vtObjectInputList_c::disable (b_updateObject, b_enableReplaceOfCmd);
     }
-    bool iVtObjectInputList_c::getEnabled() {
+    Enabled iVtObjectInputList_c::getEnabled() {
         return vtObjectInputList_c::getEnabled ();
     }
 

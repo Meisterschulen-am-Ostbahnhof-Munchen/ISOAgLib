@@ -20,7 +20,7 @@ namespace IsoAgLib {
 			iVtObjectFontAttributes_c *foregroundColour,
 			iVtObjectNumberVariable_c *variableReference,
 			uint8_t value,
-			uint8_t enabled)
+			Enabled enabled)
     :vtObjectInputBoolean_c(
 			pool->getAiMultitonInst(),
 			ID,
@@ -62,7 +62,7 @@ namespace IsoAgLib {
     bool iVtObjectInputBoolean_c::disable(bool b_updateObject, bool b_enableReplaceOfCmd) {
         return vtObjectInputBoolean_c::disable (b_updateObject, b_enableReplaceOfCmd);
     }
-    bool iVtObjectInputBoolean_c::getEnabled() {
+    Enabled iVtObjectInputBoolean_c::getEnabled() {
         return vtObjectInputBoolean_c::getEnabled ();
     }
 

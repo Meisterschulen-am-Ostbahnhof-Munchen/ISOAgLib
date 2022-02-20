@@ -48,7 +48,7 @@ public:
 			iVtObjectFontAttributes_c *foregroundColour = nullptr,
 			iVtObjectNumberVariable_c *variableReference = nullptr,
 			uint8_t value = 0,
-			uint8_t enabled = 1);
+			Enabled enabled = enabled);
 
 
   static uint16_t objectType();
@@ -61,7 +61,7 @@ public:
   void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
   bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
-  bool getEnabled() override;
+  Enabled getEnabled() override;
   bool select(uint8_t selectOrActivate) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES  

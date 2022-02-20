@@ -74,7 +74,7 @@ protected:
   bool genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, bool b_enableReplaceOfCmd, OffsetMode_en);
 
   // ATTENTION: Should only be used by Input-Objects of course!
-  bool able (uint8_t enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+  bool able (IsoAgLib::Enabled enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
         virtual bool select(uint8_t selectOrActivate);
 
@@ -82,7 +82,7 @@ private:
   friend class vtLayoutManager_c;
   bool genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow);
 
-  virtual void updateEnable(uint8_t /*aui8_enOrDis*/);
+  virtual void updateEnable(IsoAgLib::Enabled enOrDis);
 };
 
 

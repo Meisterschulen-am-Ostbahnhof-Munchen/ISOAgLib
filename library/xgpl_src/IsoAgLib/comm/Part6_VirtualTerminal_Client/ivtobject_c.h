@@ -25,6 +25,7 @@
 #include "iColour.h"
 #include "iFillType.h"
 #include "iObjectID.h"
+#include "iOptions.h"
 #include "iFont.h"
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/multiton.h>

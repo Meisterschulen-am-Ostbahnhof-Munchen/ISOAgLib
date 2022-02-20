@@ -119,11 +119,11 @@ namespace IsoAgLib {
     }
 
     bool iVtObjectButton_c::v4enable(bool b_updateObject, bool b_enableReplaceOfCmd) {
-    	return vtObject_c::able (1, b_updateObject, b_enableReplaceOfCmd);
+    	return vtObject_c::able (enabled, b_updateObject, b_enableReplaceOfCmd);
     }
 
     bool iVtObjectButton_c::v4disable(bool b_updateObject, bool b_enableReplaceOfCmd) {
-    	return vtObject_c::able (0, b_updateObject, b_enableReplaceOfCmd);
+    	return vtObject_c::able (disabled, b_updateObject, b_enableReplaceOfCmd);
     }
 
     uint16_t iVtObjectButton_c::objectType() {

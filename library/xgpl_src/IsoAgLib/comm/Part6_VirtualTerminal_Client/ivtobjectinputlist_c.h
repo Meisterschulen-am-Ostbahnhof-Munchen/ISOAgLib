@@ -41,7 +41,7 @@ public:
 				uint16_t height = 25,
 				iVtObjectNumberVariable_c *variableReference = nullptr,
 				uint8_t value = 0,
-				uint8_t options = 1);
+				iVtObjectInputListOptions options = iVtObjectInputListOptions(enabled));
 
   ~iVtObjectInputList_c() override;
   static uint16_t objectType();
@@ -52,11 +52,11 @@ public:
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setOptions(iVtObjectInputListOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
   bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
-  bool getEnabled() override;
+  Enabled getEnabled() override;
   bool select(uint8_t selectOrActivate) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES  

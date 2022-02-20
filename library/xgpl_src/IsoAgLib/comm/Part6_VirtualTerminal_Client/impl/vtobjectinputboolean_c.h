@@ -61,7 +61,7 @@ public:
 		IsoAgLib::iVtObjectFontAttributes_c *foregroundColour,
 		IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 		uint8_t value,
-		uint8_t enabled);
+		IsoAgLib::Enabled enabled);
 
 
   ~vtObjectInputBoolean_c();
@@ -79,7 +79,7 @@ public:
     virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
     virtual bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-    virtual bool getEnabled();
+    virtual IsoAgLib::Enabled getEnabled();
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -101,7 +101,7 @@ public:
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 private:
-  void updateEnable(uint8_t aui8_enOrDis) override;
+  void updateEnable(IsoAgLib::Enabled aui8_enOrDis) override;
 };
 
 } // __IsoAgLib
