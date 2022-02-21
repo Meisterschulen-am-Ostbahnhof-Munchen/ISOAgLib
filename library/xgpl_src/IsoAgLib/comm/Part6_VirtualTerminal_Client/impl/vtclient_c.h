@@ -80,7 +80,7 @@ public:
   VtServerInstance_c* getSpecificVtServer(const IsoAgLib::iVtClientObjectPool_c& arc_pool) const;
 
   ////////////////////////
-  // INTERFACE FUNTIONS //
+  // INTERFACE FUNCTIONS //
   ////////////////////////
 // the following define should be globally defined in the project settings...
 // (currently not supported, due to multi VT enhancements)
@@ -98,30 +98,30 @@ private:
   public:
     typedef VtClient_c Owner_t;
 
-    CanCustomerProxy_c(Owner_t &art_owner);
+    explicit CanCustomerProxy_c(Owner_t &art_owner);
 
-    virtual ~CanCustomerProxy_c() = default;
+    ~CanCustomerProxy_c() override;
 
   private:
-    virtual void processMsg( const CanPkg_c& arc_data );
+    void processMsg( const CanPkg_c& arc_data ) override;
 
-    virtual bool reactOnStreamStart(
+    bool reactOnStreamStart(
         ReceiveStreamIdentifier_c const &ac_ident,
-        uint32_t aui32_totalLen);
+        uint32_t aui32_totalLen) override;
 
-    virtual void reactOnAbort(Stream_c &arc_stream);
+    void reactOnAbort(Stream_c &arc_stream) override;
 
-    virtual bool processPartStreamDataChunk(
+    bool processPartStreamDataChunk(
         Stream_c &apc_stream,
         bool ab_isFirstChunk,
-        bool ab_isLastChunk);
+        bool ab_isLastChunk) override;
 
-    virtual void notificationOnMultiReceiveError(
+    void notificationOnMultiReceiveError(
         ReceiveStreamIdentifier_c const &ac_streamIdent,
         uint8_t aui8_multiReceiveError,
-        bool ab_isGlobal);
+        bool ab_isGlobal) override;
 
-    // CanCustomerProxy_c shall not be copyable. Otherwise the
+    // CanCustomerProxy_c shall not be copyable. Otherwise, the
     // reference to the containing object would become invalid.
     CanCustomerProxy_c(CanCustomerProxy_c const &);
 
@@ -136,14 +136,14 @@ private:
 
     explicit ControlFunctionStateHandlerProxy_c(Owner_t &art_owner);
 
-    virtual ~ControlFunctionStateHandlerProxy_c() = default;
+    ~ControlFunctionStateHandlerProxy_c() override;
 
   private:
-    virtual void reactOnIsoItemModification(
+    void reactOnIsoItemModification(
         iIsoItemAction_e at_action,
-        IsoItem_c const &acrc_isoItem);
+        IsoItem_c const &acrc_isoItem) override;
 
-    // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
+    // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise, the
     // reference to the containing object would become invalid.
     ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
 

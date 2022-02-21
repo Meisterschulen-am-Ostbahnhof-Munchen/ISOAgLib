@@ -31,7 +31,7 @@ class iScheduler_c;
 
 
 /**
-  class to define an interface class for the storage of Preferred ISOVT. Users can derive from
+  class to define an interface class for the storage of Preferred ISO-VT. Users can derive from
   and implement the load and store functions to their needs.
  */
 class iVtClientDataStorage_c {
@@ -40,13 +40,13 @@ class iVtClientDataStorage_c {
 	virtual ~iVtClientDataStorage_c() = default;
 
 
-    /** Application needs to load the stored preferred ISOVT iIsoName_c and boottime.
+    /** Application needs to load the stored preferred ISO-VT iIsoName_c and boottime.
         @param arc_isoname saved isoname. Set to Undefined if not known
         @param arui8_boottime_s saved boottime in second. Set to 0 or 0xFF if not known
       */
     virtual void loadPreferredVt( iIsoName_c &arc_isoname, uint8_t &arui8_boottime_s ) = 0;
 
-    /** Application needs to store the preferred ISOVT iIsoName_c and boottime.
+    /** Application needs to store the preferred ISO-VT iIsoName_c and boottime.
         @param arc_isoname isoname to be saved
         @param arui8_boottime_s boottime to be saved, in second
       */
@@ -83,17 +83,22 @@ public:
   /**
     register given object pool for uploading when possible.
   */
-  iVtClientConnection_c* initAndRegisterObjectPool (iIdentItem_c& arc_identItem, iVtClientObjectPool_c& arc_pool, const char* apc_versionLabel, iVtClientDataStorage_c& apc_claimDataStorage, iVtClientObjectPool_c::RegisterPoolMode_en aen_mode);
+  iVtClientConnection_c* initAndRegisterObjectPool (
+          iIdentItem_c& arc_identItem,
+          iVtClientObjectPool_c& arc_pool,
+          const char* apc_versionLabel,
+          iVtClientDataStorage_c& apc_claimDataStorage,
+          iVtClientObjectPool_c::RegisterPoolMode_en aen_mode);
 
   bool deregisterObjectPool (iIdentItem_c& arc_wsMasterIdentItem);
 
   //! Be sure to only use this function with a valid index!
   iVtClientConnection_c& getClientByID (uint8_t ui8_clientIndex);
 
-  //! Returns NULL if index was not valid. ATTENTION: Index may be valid, but maybe it's a newer client on this index, if it was deregistered/registered.
+  //! Returns NULL if index was not valid. ATTENTION: Index may be valid, but maybe it's a newer client on this index, if it was de registered/registered.
   iVtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex);
 
-  bool isAnyVtAvailable() const { return VtClient_c::isAnyVtAvailable(); }
+  bool isAnyVtAvailable() const override;
 
 // the following define should be globally defined in the project settings...
 #ifdef USE_IOP_GENERATOR_FAKE_VT_PROPERTIES

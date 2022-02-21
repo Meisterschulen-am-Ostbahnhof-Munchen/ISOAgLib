@@ -81,8 +81,7 @@ namespace IsoAgLib {
 
 	}
 
-	iVtObjectMeterOptions::~iVtObjectMeterOptions() {
-	}
+	iVtObjectMeterOptions::~iVtObjectMeterOptions() = default;
 
 
 	iVtObjectMeterOptions::iVtObjectMeterOptions()

@@ -10,9 +10,15 @@
 namespace IsoAgLib {
 
 
-iVtClient_c &getIvtClientInstance() { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( 0 )); }
+iVtClient_c &getIvtClientInstance()
+{
+    return dynamic_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( 0 ));
+}
 
-iVtClient_c &getIvtClientInstance(unsigned int instance) { return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( instance )); }
+iVtClient_c &getIvtClientInstance(unsigned int instance)
+{
+    return dynamic_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( instance ));
+}
 
 #ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
     int32_t iVtClientDataStorage_c::getAux2DeltaWaitBeforeSendingPreferredAssigment() { return 2000; }
@@ -35,6 +41,8 @@ iVtClient_c &getIvtClientInstance(unsigned int instance) { return static_cast<iV
         __IsoAgLib::VtClientConnection_c* result = VtClient_c::getClientPtrByID( ui8_clientIndex );
         return result ? result->toInterfacePointer() : NULL;
     }
+
+    bool iVtClient_c::isAnyVtAvailable() const { return VtClient_c::isAnyVtAvailable(); }
 
 
 }

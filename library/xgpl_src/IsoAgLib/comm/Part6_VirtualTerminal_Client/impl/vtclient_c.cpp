@@ -341,9 +341,13 @@ VtClient_c::notifyAllConnectionsOnAux2InputMaintenance( const CanPkgExt_c& refc_
   }
 }
 
-    VtClientConnection_c &VtClient_c::getClientByID(uint8_t ui8_clientIndex) { return *m_vtConnections[ui8_clientIndex]; }
+	VtClientConnection_c &VtClient_c::getClientByID(uint8_t ui8_clientIndex) {
+		return *m_vtConnections[ui8_clientIndex];
+	}
 
-    VtClientConnection_c *VtClient_c::getClientPtrByID(uint8_t ui8_clientIndex) { return ( ui8_clientIndex < m_vtConnections.size() ) ? m_vtConnections[ui8_clientIndex] : NULL; }
+	VtClientConnection_c *VtClient_c::getClientPtrByID(uint8_t ui8_clientIndex) {
+		return ( ui8_clientIndex < m_vtConnections.size() ) ? m_vtConnections[ui8_clientIndex] : NULL;
+	}
 
     bool VtClient_c::isAnyVtAvailable() const { return m_serverManager.isAnyVtAvailable(); }
 
@@ -418,6 +422,8 @@ VtClient_c::notifyAllConnectionsOnAux2InputMaintenance( const CanPkgExt_c& refc_
                 ab_isGlobal);
     }
 
+    VtClient_c::CanCustomerProxy_c::~CanCustomerProxy_c() = default;
+
     VtClient_c::ControlFunctionStateHandlerProxy_c::ControlFunctionStateHandlerProxy_c(
             VtClient_c::ControlFunctionStateHandlerProxy_c::Owner_t &art_owner) : mrt_owner(art_owner) {}
 
@@ -425,4 +431,6 @@ VtClient_c::notifyAllConnectionsOnAux2InputMaintenance( const CanPkgExt_c& refc_
             ControlFunctionStateHandler_c::iIsoItemAction_e at_action, const IsoItem_c &acrc_isoItem) {
         mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
     }
+
+    VtClient_c::ControlFunctionStateHandlerProxy_c::~ControlFunctionStateHandlerProxy_c() = default;
 } // __IsoAgLib
