@@ -30,7 +30,19 @@ namespace IsoAgLib {
 class iVtObjectRectangle_c : public __IsoAgLib::vtObjectRectangle_c
 {
 public:
-  static ObjectType objectType() { return VT_OBJECT_TYPE_RECTANGLE; }
+  static ObjectType objectType();
+
+  iVtObjectRectangle_c() = delete;
+  ~iVtObjectRectangle_c();
+
+  explicit iVtObjectRectangle_c(
+			iVtClientObjectPool_c* pool,
+			ObjectID ID = autoID,
+			iVtObjectLineAttributes_c *lineAttributes = nullptr,
+			uint16_t width = 50,
+			uint16_t height = 50,
+			LineSuppression lineSuppression = LineSuppression(ClosedRectangle),
+			iVtObjectFillAttributes_c *fillAttributes = nullptr);
 
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);

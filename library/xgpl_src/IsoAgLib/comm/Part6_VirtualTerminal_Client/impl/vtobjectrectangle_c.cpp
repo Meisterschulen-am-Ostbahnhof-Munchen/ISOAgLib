@@ -36,7 +36,7 @@ enum vtObjectRectangle_c::AttributeID:uint8_t
 	LineAttributes   = 1,
 	Width            = 2,
 	Height           = 3,
-	LineSuppression  = 4,
+	aLineSuppression = 4,
 	FillAttributes   = 5,
 };
 
@@ -175,7 +175,7 @@ IsoAgLib::LineSuppression
 vtObjectRectangle_c::updateLineSuppression(bool b_SendRequest)
 {
   if (b_SendRequest)
-    getAttribute(LineSuppression);
+    getAttribute(aLineSuppression);
   return vtObject_a->lineSuppression;
 }
 
@@ -195,7 +195,7 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     //case LineAttributes:  vtObject_a->lineAttributes  = convertLittleEndianStringUi16(pui8_attributeValue); break;
     case Width:           vtObject_a->width           = convertLittleEndianStringUi16(pui8_attributeValue); break;
     case Height:          vtObject_a->height          = convertLittleEndianStringUi16(pui8_attributeValue); break;
-    case LineSuppression: vtObject_a->lineSuppression.lineSuppression = (IsoAgLib::LineSuppression_e)convertLittleEndianStringUi8( pui8_attributeValue); break;
+    case aLineSuppression: vtObject_a->lineSuppression.lineSuppression = (IsoAgLib::LineSuppression_e)convertLittleEndianStringUi8( pui8_attributeValue); break;
     //case FillAttributes:  vtObject_a->fillAttributes  = convertLittleEndianStringUi16(pui8_attributeValue); break;
     default: break;
   }
@@ -247,7 +247,7 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     void vtObjectRectangle_c::setLineSuppression(IsoAgLib::LineSuppression  newLineSupressionValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->lineSuppression = newLineSupressionValue;
-    	setAttribute ( LineSuppression /* "Line Suppression" */, newLineSupressionValue.lineSuppression, b_enableReplaceOfCmd);
+    	setAttribute ( aLineSuppression /* "Line Suppression" */, newLineSupressionValue.lineSuppression, b_enableReplaceOfCmd);
     }
 
     void
@@ -256,6 +256,28 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     		vtObject_a->fillAttributes = newFillAttributes;
     	setAttribute ( FillAttributes /* "Fill Attributes" */, newFillAttributes->getID(), b_enableReplaceOfCmd);
     }
+
+    vtObjectRectangle_c::vtObjectRectangle_c(
+            multiton ai_multitonInst,
+            IsoAgLib::ObjectID ID,
+            IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+            uint16_t width,
+            uint16_t height,
+            IsoAgLib::LineSuppression lineSuppression,
+            IsoAgLib::iVtObjectFillAttributes_c *fillAttributes)
+	: vtObjectRectangle_c(
+		new iVtObjectRectangle_s(
+	        ID,
+			lineAttributes,
+			width,
+			height,
+			lineSuppression,
+			fillAttributes),
+			ai_multitonInst)
+	{
+	}
+
+    vtObjectRectangle_c::~vtObjectRectangle_c() = default;
 
 
 } // __IsoAgLib

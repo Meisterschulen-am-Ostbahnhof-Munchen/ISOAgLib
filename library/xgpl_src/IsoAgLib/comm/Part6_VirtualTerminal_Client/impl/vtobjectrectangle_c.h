@@ -27,7 +27,7 @@
 
 #include <memory> // PImpl
 #include "vtobject_c.h"
-
+#include "vtclient_c.h"
 
 namespace __IsoAgLib {
 
@@ -41,13 +41,28 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectRectangle_s> vtObject_a;
 
+	  vtObjectRectangle_c(iVtObjectRectangle_s* vtObjectRectangleSROM , multiton ai_multitonInst);
+
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectRectangle_c(iVtObjectRectangle_s* vtObjectRectangleSROM , multiton ai_multitonInst);
+
+  vtObjectRectangle_c() = delete;
+
+  ~vtObjectRectangle_c();
+
+  vtObjectRectangle_c(
+		    multiton ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+			uint16_t width,
+			uint16_t height,
+			IsoAgLib::LineSuppression lineSuppression,
+			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes);
+
   uint32_t fitTerminal() const;
   void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
