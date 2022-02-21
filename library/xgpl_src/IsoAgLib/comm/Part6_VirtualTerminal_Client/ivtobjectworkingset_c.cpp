@@ -40,8 +40,8 @@ namespace IsoAgLib {
         vtObjectWorkingSet_c::changeActiveMask (apc_iVtObjectMask, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectWorkingSet_c::changeBackgroundColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-        vtObjectWorkingSet_c::changeBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
+    void iVtObjectWorkingSet_c::setBackgroundColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectWorkingSet_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
     bool iVtObjectWorkingSet_c::moveChildLocation(iVtObject_c *apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd) {

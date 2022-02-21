@@ -18,13 +18,9 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include "../ivtobjectinputstring_c.h"
 #include "vtobjectinputstring_c.h"
 
 #ifdef CONFIG_USE_VTOBJECT_inputstring
-#include "../ivtobjectfontattributes_c.h"
-#include "../ivtobjectinputattributes_c.h"
-#include "../ivtobjectstringvariable_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
@@ -56,7 +52,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 		IsoAgLib::iVtObjectStringOptions options;
 		IsoAgLib::iVtObjectStringVariable_c* variableReference;
 		IsoAgLib::Justification justification;
-		uint8_t enabled;
+		IsoAgLib::Enabled enabled;
 		iVtObjectInputString_s(
 				IsoAgLib::ObjectID ID,
 				uint16_t width,
@@ -68,7 +64,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 				IsoAgLib::iVtObjectStringVariable_c* variableReference,
 				IsoAgLib::Justification justification,
 				char *value,
-				uint8_t enabled)
+				IsoAgLib::Enabled enabled)
 		: iVtObject_s(ID)
 		, iVtObjectString_s(ID, value)
 		, iVtObjectwMacro_s(ID)
@@ -109,7 +105,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
       destMemory [7] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObject_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObject_a->fontAttributes->getID() >> 8;
-      if (vtObject_a->inputAttributes != NULL)
+      if (vtObject_a->inputAttributes != nullptr)
       {
         destMemory [10] = vtObject_a->inputAttributes->getID() & 0xFF;
         destMemory [11] = vtObject_a->inputAttributes->getID() >> 8;
@@ -120,7 +116,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
         destMemory [11] = 0xFF;
       }
       destMemory [12] = vtObject_a->options.options;
-      if (vtObject_a->variableReference != NULL) {
+      if (vtObject_a->variableReference != nullptr) {
         destMemory [13] = vtObject_a->variableReference->getID() & 0xFF;
         destMemory [14] = vtObject_a->variableReference->getID() >> 8;
       } else {
@@ -134,7 +130,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
     }
 
     while ((sourceOffset >= 17U) && (sourceOffset < (17U+vtObject_a->length)) && ((curBytes+1) <= maxBytes)) {
-      if (vtObject_a->value == NULL)
+      if (vtObject_a->value == nullptr)
         destMemory [curBytes] = 0x00;
       else
         destMemory [curBytes] = vtObject_a->value [sourceOffset-17];
@@ -169,7 +165,7 @@ vtObjectInputString_c::vtObjectInputString_c(
 		IsoAgLib::iVtObjectStringVariable_c* variableReference,
 		IsoAgLib::Justification justification,
 	    char* value, /* size length+1 (0-termination intern!) */
-		uint8_t enabled
+		IsoAgLib::Enabled enabled
 		)
 :vtObjectInputString_c(
 		new iVtObjectInputString_s(
@@ -210,7 +206,7 @@ vtObjectInputString_c::fitTerminal() const
 
 
 void
-vtObjectInputString_c::updateEnable(uint8_t aui8_enOrDis)
+vtObjectInputString_c::updateEnable(IsoAgLib::Enabled aui8_enOrDis)
 {
 	vtObject_a->enabled = aui8_enOrDis;
 }
@@ -269,7 +265,7 @@ vtObjectInputString_c::setValueCopyUTF16 (const char* newValue, uint16_t length,
 void
 vtObjectInputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (vtObject_a->variableReference != NULL) {
+  if (vtObject_a->variableReference != nullptr) {
     // register error!!
     return;
   }
@@ -283,7 +279,7 @@ vtObjectInputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b_
     int copyLen = (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length;
     int i=0; for (; i<copyLen; i++) *dest++ = *src++;
     for (; i<vtObject_a->length; i++) *dest++ = ' ';
-    *dest = 0x00; // 0-termiante!
+    *dest = 0x00; // 0-terminate!
   }
 
   getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValue (this, newValue, vtObject_a->length, b_enableReplaceOfCmd);
@@ -293,7 +289,7 @@ vtObjectInputString_c::setValueCopy(char* newValue, bool b_updateObject, bool b_
 void
 vtObjectInputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (vtObject_a->variableReference != NULL) {
+  if (vtObject_a->variableReference != nullptr) {
     // register error!!
     return;
   }
@@ -305,7 +301,7 @@ vtObjectInputString_c::setValueRef(char* newValue, bool b_updateObject, bool b_e
   }
 
   uint16_t ui16_tempLen = 0;
-  if (newValue != NULL ) ui16_tempLen = uint16_t( (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length );
+  if (newValue != nullptr ) ui16_tempLen = uint16_t( (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length );
   getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueRef( this, newValue, ui16_tempLen, b_enableReplaceOfCmd );
 }
 
@@ -485,6 +481,10 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 
     vtObjectInputString_c::~vtObjectInputString_c() = default;
 
+
+    IsoAgLib::Enabled vtObjectInputString_c::getEnabled() {
+        return vtObject_a->enabled;
+    }
 
 } // __IsoAgLib
 

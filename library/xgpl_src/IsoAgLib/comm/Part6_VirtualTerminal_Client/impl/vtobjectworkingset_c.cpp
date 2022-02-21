@@ -156,7 +156,7 @@ vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMa
 }
 
 void
-vtObjectWorkingSet_c::changeBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
+vtObjectWorkingSet_c::setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject)
 	  vtObject_a->backgroundColour = newValue;
