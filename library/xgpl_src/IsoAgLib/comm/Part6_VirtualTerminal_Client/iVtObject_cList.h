@@ -20,6 +20,7 @@ public:
     iVtObject_cList(long size = DEFAULT_LIST_CAPACITY);
     ~iVtObject_cList();
     long Count() const;
+    void AppendWs(iVtObjectWorkingSet_c* const);
     void Append(iVtObject_c* const);
     iVtObject_c** _items;
     iVtObject_c*** all_items;

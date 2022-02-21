@@ -72,7 +72,10 @@ Colour iVtClientObjectPool_c::convertColourDefault(
 
     iVtObject_c *const *const *iVtClientObjectPool_c::getIVtObjects() const { return iVtObjects->all_items; }
 
-    uint16_t iVtClientObjectPool_c::getNumObjects() const { return iVtObjects->Count(); }
+    uint16_t iVtClientObjectPool_c::getNumObjects() const
+    {
+    	return iVtObjects->Count();
+    }
 
     uint16_t iVtClientObjectPool_c::getNumObjectsLang() const { return 0; }
 
@@ -91,9 +94,20 @@ Colour iVtClientObjectPool_c::convertColourDefault(
     	return ws->getNumLang();
     }
 
-    bool iVtClientObjectPool_c::multiLanguage() const { return getNumLang() > 0; }
+    bool iVtClientObjectPool_c::multiLanguage() const
+    {
+    	return getNumLang() > 0;
+    }
 
-    void iVtClientObjectPool_c::Append(iVtObject_c *const c) {iVtObjects->Append(c);}
+    void iVtClientObjectPool_c::Append(iVtObject_c *const c)
+    {
+    	iVtObjects->Append(c);
+    }
+
+    void iVtClientObjectPool_c::AppendWs(iVtObjectWorkingSet_c* const ws)
+    {
+    	iVtObjects->AppendWs(ws);
+    }
 
     iVtObjectWorkingSet_c &iVtClientObjectPool_c::getWorkingSetObject() const {
     	return *getWorkingSetObjectp();

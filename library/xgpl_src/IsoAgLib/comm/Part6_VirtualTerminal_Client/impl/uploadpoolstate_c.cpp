@@ -854,15 +854,10 @@ UploadPoolState_c::setObjectPoolUploadingLanguage()
   if( m_pool.multiLanguage() )
   {
     const int8_t realUploadingLanguage = calcRealUploadingLanguage( false );
-
-	  IsoAgLib::iVtObject_c::iVtObjectLanguages_s* lu;
-	  lu = nullptr; //(IsoAgLib::iVtObject_c::iVtObjectLanguages_s*)m_pool.getWorkingSetObject().get_vtObjectWorkingSet_a(); //TODO !!!!
-
-
-    const uint8_t* lang = 0;//lu->languagesToFollow[ realUploadingLanguage ].language;
-    mui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
-    marrp7c_versionLabel[ 5 ] = lang[ 0 ];
-    marrp7c_versionLabel[ 6 ] = lang[ 1 ];
+	const IsoAgLib::repeat_vtLanguage_s p =	m_pool.getWorkingSetObject().getLang( realUploadingLanguage );
+    mui16_objectPoolUploadingLanguageCode = (p.language [0] << 8) | p.language[1];
+    marrp7c_versionLabel[ 5 ] = p.language[ 0 ];
+    marrp7c_versionLabel[ 6 ] = p.language[ 1 ];
   }
 }
 

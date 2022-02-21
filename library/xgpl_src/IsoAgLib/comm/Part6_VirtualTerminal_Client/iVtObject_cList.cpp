@@ -16,7 +16,10 @@ namespace IsoAgLib
 
 
 
-iVtObject_cList::iVtObject_cList(long size) : _size(size), _count(0) {
+iVtObject_cList::iVtObject_cList(long size)
+		: _size(size)
+		, _count(1) //we want to have 1 here, to reserve 0 for WorkingSet. !
+{
     _items = new iVtObject_c*[size];
     all_items = new iVtObject_c**[2];
     all_items[0] = _items;
@@ -33,6 +36,12 @@ iVtObject_cList::~iVtObject_cList() {
 
 long iVtObject_cList::Count() const {
     return (_count);
+}
+
+
+void iVtObject_cList::AppendWs(iVtObjectWorkingSet_c* const anWsItem) {
+	//WorkingSet MUST be on Place 0
+    _items[0] = anWsItem;
 }
 
 

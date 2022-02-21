@@ -414,7 +414,8 @@ public:
   uint16_t              getSkHeight()       const;
   uint8_t               getNumLang()        const;
   bool                  multiLanguage()     const;
-  void                  Append(iVtObject_c* const c);	//TODO !! make this working for Multi-Language as well !!!
+  void                  AppendWs(iVtObjectWorkingSet_c* const);
+  void                  Append(iVtObject_c* const);	//TODO !! make this working for Multi-Language as well !!!
   multiton              getAiMultitonInst() const;
   void                  setAiMultitonInst(multiton aiMultitonInst);
 
