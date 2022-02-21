@@ -30,6 +30,24 @@ namespace IsoAgLib {
 class iVtObjectPolygon_c : public __IsoAgLib::vtObjectPolygon_c
 {
 public:
+
+	iVtObjectPolygon_c() = delete;
+
+	~iVtObjectPolygon_c();
+
+
+	iVtObjectPolygon_c(
+				iVtClientObjectPool_c* pool,
+				ObjectID ID = autoID,
+				uint16_t width = 32,
+				uint16_t height = 32,
+				iVtObjectLineAttributes_c* lineAttributes = nullptr,
+				iVtObjectFillAttributes_c* fillAttributes = nullptr,
+				PolygonType polygonType = PolygonType::Convex,
+				uint8_t numberOfPoints = 0,
+				const repeat_x_y_s *pointsToFollow = nullptr);
+
+
   static ObjectType objectType() { return VT_OBJECT_TYPE_POLYGON; }
 
 

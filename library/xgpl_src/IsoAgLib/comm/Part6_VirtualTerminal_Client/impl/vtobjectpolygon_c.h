@@ -27,6 +27,7 @@
 
 #include <memory> // PImpl
 #include "vtobject_c.h"
+#include "vtclient_c.h"
 
 
 namespace __IsoAgLib {
@@ -41,15 +42,32 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectPolygon_s> vtObject_a;
 
+	  vtObjectPolygon_c(iVtObjectPolygon_s* vtObjectPolygonSROM , multiton ai_multitonInst);
+
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectPolygon_c(iVtObjectPolygon_s* vtObjectPolygonSROM , multiton ai_multitonInst);
-  vtObjectPolygon_c();
-  uint32_t fitTerminal() const;
+
+  ~vtObjectPolygon_c();
+  vtObjectPolygon_c() = delete;
+
+
+  vtObjectPolygon_c(
+			multiton ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t height,
+			IsoAgLib::iVtObjectLineAttributes_c* lineAttributes,
+			IsoAgLib::iVtObjectFillAttributes_c* fillAttributes,
+			IsoAgLib::PolygonType polygonType,
+			uint8_t numberOfPoints,
+			const IsoAgLib::repeat_x_y_s *pointsToFollow);
+
+
+    uint32_t fitTerminal() const;
   void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

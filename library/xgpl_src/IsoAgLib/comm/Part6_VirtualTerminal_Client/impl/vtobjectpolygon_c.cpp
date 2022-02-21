@@ -37,7 +37,7 @@ enum vtObjectPolygon_c::AttributeID:uint8_t
 	Height                  = 2,
 	LineAttributes          = 3,
 	FillAttributes          = 4,
-	PolygonType             = 5,
+	aPolygonType            = 5,
 };
 
 
@@ -192,7 +192,7 @@ IsoAgLib::PolygonType
 vtObjectPolygon_c::updatePolygonType(bool b_SendRequest)
 {
 	  if (b_SendRequest)
-	    getAttribute(PolygonType);
+	    getAttribute(aPolygonType);
 	  return vtObject_a->polygonType;
 }
 void
@@ -204,7 +204,7 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
     case Height:         vtObject_a->height         = convertLittleEndianStringUi16(pui8_attributeValue); break;
     //case LineAttributes: vtObject_a->lineAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break; //TODO
     //case FillAttributes: vtObject_a->fillAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break; //TODO
-    case PolygonType:    vtObject_a->polygonType    = (IsoAgLib::PolygonType)convertLittleEndianStringUi8(pui8_attributeValue); break;
+    case aPolygonType:    vtObject_a->polygonType    = (IsoAgLib::PolygonType)convertLittleEndianStringUi8(pui8_attributeValue); break;
     default: break;
   }
 }
@@ -246,8 +246,34 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
     void vtObjectPolygon_c::setPolygonType(IsoAgLib::PolygonType newPolygonType, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->polygonType = newPolygonType;
-    	setAttribute( PolygonType /* "Polygon Type" */, newPolygonType, b_enableReplaceOfCmd);
+    	setAttribute( aPolygonType /* "Polygon Type" */, newPolygonType, b_enableReplaceOfCmd);
     }
+
+    vtObjectPolygon_c::vtObjectPolygon_c(
+            multiton ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			uint16_t width, uint16_t height,
+			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes,
+			IsoAgLib::PolygonType polygonType,
+			uint8_t numberOfPoints,
+			const IsoAgLib::repeat_x_y_s *pointsToFollow)
+    :vtObjectPolygon_c(
+    		new iVtObjectPolygon_s(
+    				ID,
+    				width,
+    				height,
+    				lineAttributes,
+    				fillAttributes,
+    				polygonType,
+    				numberOfPoints,
+    				pointsToFollow),
+				ai_multitonInst)
+    {
+
+    }
+
+    vtObjectPolygon_c::~vtObjectPolygon_c() = default;
 
 
 } // __IsoAgLib
