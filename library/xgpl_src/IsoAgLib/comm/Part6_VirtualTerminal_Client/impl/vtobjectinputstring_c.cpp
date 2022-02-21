@@ -42,7 +42,7 @@ enum vtObjectInputString_c::AttributeID:uint8_t
 	InputAttributes         = 5,
 	Options                 = 6,
 	VariableReference       = 7,
-	Justification = 8,
+	Justification           = 8,
 };
 
 
@@ -483,9 +483,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute (Justification, newJustification.justification, b_enableReplaceOfCmd);
     }
 
-
-
-
+    vtObjectInputString_c::~vtObjectInputString_c() = default;
 
 
 } // __IsoAgLib
