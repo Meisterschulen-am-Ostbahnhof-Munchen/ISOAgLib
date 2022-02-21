@@ -45,7 +45,7 @@ public:
 				iVtObjectFillAttributes_c* fillAttributes = nullptr,
 				PolygonType polygonType = PolygonType::Convex,
 				uint8_t numberOfPoints = 0,
-				const repeat_x_y_s *pointsToFollow = nullptr);
+				repeat_x_y_s *pointsToFollow = nullptr);
 
 
   static ObjectType objectType();

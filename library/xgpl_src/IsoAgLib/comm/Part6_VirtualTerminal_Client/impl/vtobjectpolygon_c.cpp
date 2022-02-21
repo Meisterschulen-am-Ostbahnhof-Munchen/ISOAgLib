@@ -26,7 +26,10 @@
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectmacro_c.h"
 #include "vtclient_c.h"
-
+#ifdef CONFIG_POLYGON_DEBUG
+	#include "esp_log.h"
+    static const char * const TAG = "PolygonPoints";
+#endif
 
 namespace __IsoAgLib {
 
@@ -49,7 +52,7 @@ struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
 	IsoAgLib::iVtObjectFillAttributes_c* fillAttributes;
 	IsoAgLib::PolygonType polygonType;
 	uint8_t numberOfPoints;
-	const IsoAgLib::repeat_x_y_s *pointsToFollow;
+	IsoAgLib::repeat_x_y_s *pointsToFollow;
 	iVtObjectPolygon_s(
 			IsoAgLib::ObjectID ID,
 			uint16_t width,
@@ -58,7 +61,7 @@ struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
 			IsoAgLib::iVtObjectFillAttributes_c* fillAttributes,
 			IsoAgLib::PolygonType polygonType,
 			uint8_t numberOfPoints,
-			const IsoAgLib::repeat_x_y_s *pointsToFollow);
+			IsoAgLib::repeat_x_y_s *pointsToFollow);
 
 
 };
@@ -71,7 +74,7 @@ struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
             IsoAgLib::iVtObjectFillAttributes_c *fillAttributes,
             IsoAgLib::PolygonType polygonType,
             uint8_t numberOfPoints,
-            const IsoAgLib::repeat_x_y_s *pointsToFollow)
+            IsoAgLib::repeat_x_y_s *pointsToFollow)
             : iVtObject_s(ID)
             , iVtObjectwMacro_s(ID)
             , width(width)
@@ -126,8 +129,15 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
     MACRO_streamPolygonPoints(14);
 
 #ifdef CONFIG_POLYGON_DEBUG
-	#include "esp_log.h"
-    static const char * const TAG = "PolygonPoints";
+    ESP_LOGI(TAG, "numberOfPoints: %d ", vtObject_a->numberOfPoints);
+    for (int q = 0; q < vtObject_a->numberOfPoints; ++q) {
+    	ESP_LOGI(TAG, "Point: %d  (%d ; %d) ",
+    			q,
+    			vtObject_a->pointsToFollow[q].x,
+				vtObject_a->pointsToFollow[q].y);
+	}
+
+
 
 
 #endif
@@ -274,7 +284,7 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes,
 			IsoAgLib::PolygonType polygonType,
 			uint8_t numberOfPoints,
-			const IsoAgLib::repeat_x_y_s *pointsToFollow)
+			IsoAgLib::repeat_x_y_s *pointsToFollow)
     :vtObjectPolygon_c(
     		new iVtObjectPolygon_s(
     				ID,

@@ -64,7 +64,7 @@ public:
 			IsoAgLib::iVtObjectFillAttributes_c* fillAttributes,
 			IsoAgLib::PolygonType polygonType,
 			uint8_t numberOfPoints,
-			const IsoAgLib::repeat_x_y_s *pointsToFollow);
+			IsoAgLib::repeat_x_y_s *pointsToFollow);
 
 
     uint32_t fitTerminal() const override;
