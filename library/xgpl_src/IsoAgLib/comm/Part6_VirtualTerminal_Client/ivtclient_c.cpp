@@ -12,12 +12,12 @@ namespace IsoAgLib {
 
 iVtClient_c &getIvtClientInstance()
 {
-    return dynamic_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( 0 ));
+    return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( 0 ));
 }
 
 iVtClient_c &getIvtClientInstance(unsigned int instance)
 {
-    return dynamic_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( instance ));
+    return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( instance ));
 }
 
 #ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
