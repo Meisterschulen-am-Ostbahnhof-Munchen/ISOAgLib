@@ -179,22 +179,11 @@ VtClientConnection_c::VtClientConnection_c(
    *
    */
   uint16_t numObjects = getPool().getNumObjects();
-  ESP_LOGI("X", "getPool().getNumObjects() = %i", numObjects);
+  cout << "getPool().getNumObjects()" <<  numObjects << endl;
   for (uint16_t ui16_objIndex = 0; ui16_objIndex < numObjects; ui16_objIndex++)
   {
     IsoAgLib::iVtObject_c* p_obj = getPool().getIVtObjects()[0][ui16_objIndex];
-
-    if(p_obj == nullptr)
-    {
-    	ESP_LOGE("X", "p_obj == nullptr\n");
-    }
-    else
-    {
-        cout << "Type name of p_obj is: "  << demangle(typeid( p_obj).name()) << endl << endl;
-        cout << "Type name of   obj is: "  << demangle(typeid(*p_obj).name()) << endl << endl;
-
-
-    }
+    cout << "Type name of obj [" << ui16_objIndex << "] is: "  << demangle(typeid(*p_obj).name()) << endl;
   }
 
   /**
