@@ -81,7 +81,11 @@ public:
 class MultiSend_c : public SchedulerTask_c
 {
 private:
-  MACRO_MULTITON_CONTRIBUTION();
+  public:
+    multiton getMultitonInst() const { return mi_multitonInst; }
+    void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+private:
+    multiton mi_multitonInst;
   MultiSend_c();
 
 public:

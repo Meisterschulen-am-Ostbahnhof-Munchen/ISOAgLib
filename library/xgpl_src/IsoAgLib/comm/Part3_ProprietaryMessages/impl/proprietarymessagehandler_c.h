@@ -38,7 +38,11 @@ namespace __IsoAgLib
 
   class ProprietaryMessageHandler_c : public Subsystem_c
   {
-    MACRO_MULTITON_CONTRIBUTION();
+    public:
+    multiton getMultitonInst() const { return mi_multitonInst; }
+    void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+private:
+    multiton mi_multitonInst;
   public:
     ProprietaryMessageHandler_c();
 

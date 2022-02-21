@@ -41,7 +41,11 @@ class iIdentItem_c;
 
 /** central IsoAgLib Virtual Terminal-Client management object */
 class VtClient_c : private Subsystem_c {
-  MACRO_MULTITON_CONTRIBUTION();
+public:
+    multiton getMultitonInst() const { return mi_multitonInst; }
+    void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+private:
+    multiton mi_multitonInst;
 public:
   virtual ~VtClient_c() = default;
 

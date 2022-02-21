@@ -30,7 +30,11 @@ namespace __IsoAgLib {
 
 class TimeDate_c : public BaseCommon_c
 {
-  MACRO_MULTITON_CONTRIBUTION();
+  public:
+    multiton getMultitonInst() const { return mi_multitonInst; }
+    void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+private:
+    multiton mi_multitonInst;
 public:
   const IsoAgLib::iTimezone_s &getTimezone() const;
   const IsoAgLib::iDateTime_s &get( IsoAgLib::TimeStandard_t ) const;

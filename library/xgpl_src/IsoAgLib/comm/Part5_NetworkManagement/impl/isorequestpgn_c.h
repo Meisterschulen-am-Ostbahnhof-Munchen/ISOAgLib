@@ -40,7 +40,11 @@ class IsoRequestPgnHandler_c;
 
 class IsoRequestPgn_c : CanCustomer_c
 {
-  MACRO_MULTITON_CONTRIBUTION();
+	public:
+		multiton getMultitonInst() const { return mi_multitonInst; }
+		void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+	private:
+		multiton mi_multitonInst;
 private:
   struct PGN_s
   {

@@ -52,7 +52,11 @@ typedef std::vector<ControlFunctionStateHandler_c*>::const_iterator ControlFunct
 */
 class IsoMonitor_c : public SchedulerTask_c
 {
-  MACRO_MULTITON_CONTRIBUTION();
+public:
+    multiton getMultitonInst() const { return mi_multitonInst; }
+    void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+private:
+    multiton mi_multitonInst;
 private:
   // private typedef alias names
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED

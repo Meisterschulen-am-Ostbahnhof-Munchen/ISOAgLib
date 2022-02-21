@@ -39,7 +39,11 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
 */
 class RS232IO_c {
-  MACRO_MULTITON_CONTRIBUTION();
+	public:
+		multiton getMultitonInst() const { return mi_multitonInst; }
+		void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+	private:
+		multiton mi_multitonInst;
 
 #define BAUDERATE_CONTRUCTOR_DEFAULT_VALUE 0xFFFF
 #define CHANNEL_CONTRUCTOR_DEFAULT_VALUE 0xFF

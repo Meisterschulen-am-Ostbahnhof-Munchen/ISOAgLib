@@ -97,7 +97,11 @@ class TimePosGps_c;
 
 class TimePosGps_c : public BaseCommon_c
 {
-  MACRO_MULTITON_CONTRIBUTION();
+  public:
+    multiton getMultitonInst() const { return mi_multitonInst; }
+    void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+private:
+    multiton mi_multitonInst;
 public:
   // Public methods
   /* ********************************************* */

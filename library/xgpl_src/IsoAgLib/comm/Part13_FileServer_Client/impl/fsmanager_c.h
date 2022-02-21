@@ -43,7 +43,11 @@ namespace __IsoAgLib {
 /** central IsoAgLib terminal management object */
 class FsManager_c : public SchedulerTask_c
 {
-  MACRO_MULTITON_CONTRIBUTION();
+	public:
+		multiton getMultitonInst() const { return mi_multitonInst; }
+		void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+	private:
+		multiton mi_multitonInst;
   private:
     FsManager_c();
 

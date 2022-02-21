@@ -104,12 +104,7 @@ public:
 #endif
 
 
-#define MACRO_MULTITON_CONTRIBUTION() \
-public: \
-  multiton getMultitonInst() const { return mi_multitonInst; } \
-  void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; } \
-private: \
-  multiton mi_multitonInst
+
 
 #define DO_PLACEMENT_NEW_ON_STATIC_BUFFER 1
 

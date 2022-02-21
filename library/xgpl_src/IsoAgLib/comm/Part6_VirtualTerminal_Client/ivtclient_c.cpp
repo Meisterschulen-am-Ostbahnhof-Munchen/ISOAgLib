@@ -12,7 +12,7 @@ namespace IsoAgLib {
 
 iVtClient_c &getIvtClientInstance()
 {
-    return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( 0 ));
+    return dynamic_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( 0 ));
 }
 
 iVtClient_c &getIvtClientInstance(unsigned int instance)

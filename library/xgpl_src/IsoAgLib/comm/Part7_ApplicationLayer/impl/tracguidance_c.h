@@ -37,7 +37,11 @@ namespace __IsoAgLib {
     */
   class TracGuidance_c : public BaseCommon_c
   {
-    MACRO_MULTITON_CONTRIBUTION();
+    public:
+    multiton getMultitonInst() const { return mi_multitonInst; }
+    void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+private:
+    multiton mi_multitonInst;
   public:
 
     /** @param apc_ident pointer to the variable of the responsible member instance. If NULL the module cannot send requests!

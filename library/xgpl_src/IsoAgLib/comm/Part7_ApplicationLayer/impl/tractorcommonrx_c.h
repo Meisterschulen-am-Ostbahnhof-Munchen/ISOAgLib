@@ -40,7 +40,11 @@ namespace __IsoAgLib
 
   class TractorCommonRx_c : public CanCustomer_c
   {
-    MACRO_MULTITON_CONTRIBUTION();
+    public:
+    multiton getMultitonInst() const { return mi_multitonInst; }
+    void setMultitonInst(multiton ai_instance) { mi_multitonInst = ai_instance; }
+private:
+    multiton mi_multitonInst;
   
   public:
     TractorCommonRx_c( uint16_t timeout, uint32_t pgn ) :
