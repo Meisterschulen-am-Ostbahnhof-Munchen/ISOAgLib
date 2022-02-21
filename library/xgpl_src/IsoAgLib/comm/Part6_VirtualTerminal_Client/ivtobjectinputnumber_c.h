@@ -40,7 +40,7 @@ public:
 				uint16_t height = 25,
 				Colour backgroundColour = WHITE,
 				iVtObjectFontAttributes_c *fontAttributes = nullptr,
-				iVtObjectInputNumberOptions options = iVtObjectInputNumberOptions(),
+				iVtObjectInputNumberOptions options = iVtObjectInputNumberOptions(ioallOptionsOff),
 				iVtObjectNumberVariable_c *variableReference = nullptr,
 				uint32_t value = 9,
 				uint32_t minValue = 0,

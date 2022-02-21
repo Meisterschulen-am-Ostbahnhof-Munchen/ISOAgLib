@@ -11,11 +11,6 @@
 
 namespace IsoAgLib {
 
-	iVtObjectInputListOptions::iVtObjectInputListOptions()
-	:options(allOptionsOff)
-	{
-		bits.realTimeDataInput = realTimeDataInputOff;
-	}
 
 	iVtObjectInputListOptions::~iVtObjectInputListOptions() = default;
 
@@ -23,17 +18,18 @@ namespace IsoAgLib {
 	:options(options)
 	{}
 
-	iVtObjectInputListOptions::iVtObjectInputListOptions(Enabled enabled)
+
+	iVtObjectInputListOptions::iVtObjectInputListOptions(
+	Enabled 		  enabled,
+	RealTimeDataInput realTimeDataInput
+	)
 	:options(allOptionsOff)//first all off.
 	{
-		bits.enabled = enabled; //then set this bit.
+		bits.enabled           = enabled;
+		bits.realTimeDataInput = realTimeDataInput;
+
 	}
 
-	iVtObjectInputNumberOptions::iVtObjectInputNumberOptions()
-	:options(ioallOptionsOff)
-	{
-		bits.transparent = opaque;
-	}
 
 	iVtObjectInputNumberOptions::~iVtObjectInputNumberOptions() = default;
 
@@ -43,9 +39,6 @@ namespace IsoAgLib {
 
 
 
-	iVtObjectInputNumberOptions2::iVtObjectInputNumberOptions2()
-	:options(o2allOptionsOff)
-	{}
 
 	iVtObjectInputNumberOptions2::~iVtObjectInputNumberOptions2() = default;
 
@@ -53,11 +46,50 @@ namespace IsoAgLib {
 	:options(options)
 	{}
 
-	iVtObjectInputNumberOptions2::iVtObjectInputNumberOptions2(Enabled enabled)
+	iVtObjectInputNumberOptions2::iVtObjectInputNumberOptions2(
+	Enabled 		  enabled,
+	RealTimeDataInput realTimeDataInput
+	)
 	:options(o2allOptionsOff)//first all off.
 	{
-		bits.enabled = enabled; //then set this bit.
+		bits.enabled           = enabled;
+		bits.realTimeDataInput = realTimeDataInput;
+
 	}
+
+iVtObjectMeterOptions::~iVtObjectMeterOptions() {
+}
+
+iVtObjectMeterOptions::iVtObjectMeterOptions(
+		iVtObjectMeterOptions_e options)
+:options(options)
+{}
+
+iVtObjectMeterOptions::iVtObjectMeterOptions(
+		DrawArc drawArc,
+		DrawBorder drawBorder,
+		DrawTicks drawTicks,
+		DeflectionDirection deflectionDirection)
+:options(allDrawMeter)//first all off.
+{
+	bits.drawArc             = drawArc;
+	bits.drawBorder          = drawBorder;
+	bits.drawTicks           = drawTicks;
+	bits.deflectionDirection = deflectionDirection;
+}
+
+iVtObjectInputNumberOptions::iVtObjectInputNumberOptions(
+		Transparent transparent,
+		DisplayLeadingZeros displayLeadingZeros,
+		DisplayZeroAsBlank displayZeroAsBlank,
+		Truncate truncate)
+:options(ioallOptionsOff)//first all off.
+{
+	bits.transparent         = transparent;
+	bits.displayLeadingZeros = displayLeadingZeros;
+	bits.displayZeroAsBlank  = displayZeroAsBlank;
+	bits.truncate            = truncate;
+}
 
 }
 

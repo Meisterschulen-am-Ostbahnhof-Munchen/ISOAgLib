@@ -106,6 +106,78 @@ namespace IsoAgLib {
 
 
 
+	/**
+	 * Bit 0 = Draw Arc
+	 */
+	enum DrawArc : bool
+	{
+		dontDrawArc = false,
+		doDrawArc   = true,
+	};
+
+	/**
+	 * Bit 1 = Draw Border
+	 */
+	enum  DrawBorder : bool
+	{
+		dontDrawBorder = false,
+		doDrawBorder   = true,
+	};
+
+	/**
+	 * Bit 2 = Draw Ticks
+	 */
+	enum DrawTicks : bool
+	{
+		dontDrawTicks = false,
+		doDrawTicks   = true,
+	};
+
+	/**
+	 * Bit 3 = Deflection Direction.
+	 * 0 = From minimum to maximum, anticlockwise.
+	 * 1 = From minimum to maximum, clockwise.
+	 */
+	enum DeflectionDirection : bool
+	{
+		anticlockwise = false,
+		clockwise     = true,
+	};
+
+
+	enum iVtObjectMeterOptions_e : uint8_t
+	{
+		allDrawMeter = 0b11110000,
+	};
+
+
+
+	union iVtObjectMeterOptions {
+		iVtObjectMeterOptions_e options;
+		struct __attribute__ ((packed))
+		{
+			DrawArc 			drawArc             : 1;
+			DrawBorder 	        drawBorder          : 1;
+			DrawTicks           drawTicks           : 1;
+			DeflectionDirection deflectionDirection : 1;
+
+			Reserved            reserved04          : 1;
+			Reserved            reserved05          : 1;
+			Reserved            reserved06          : 1;
+			Reserved            reserved07          : 1;
+		} bits ;
+		~iVtObjectMeterOptions();
+		explicit iVtObjectMeterOptions(
+				iVtObjectMeterOptions_e options         = allDrawMeter);
+		explicit iVtObjectMeterOptions(
+				DrawArc 			drawArc             = doDrawArc,
+				DrawBorder 	        drawBorder          = doDrawBorder,
+				DrawTicks           drawTicks           = doDrawTicks,
+				DeflectionDirection deflectionDirection = clockwise
+				);
+	};
+
+
 	enum iVtObjectInputListOptions_e : uint8_t
 	{
 		allOptionsOff = 0b00000000,
@@ -127,10 +199,12 @@ namespace IsoAgLib {
 			Reserved            reserved06        : 1;
 			Reserved            reserved07        : 1;
 		} bits ;
-		iVtObjectInputListOptions();
 		~iVtObjectInputListOptions();
-		explicit iVtObjectInputListOptions(iVtObjectInputListOptions_e options);
-		explicit iVtObjectInputListOptions(Enabled 			          enabled);
+		explicit iVtObjectInputListOptions(iVtObjectInputListOptions_e options = allOptionsOff);
+		explicit iVtObjectInputListOptions(
+				Enabled 		  enabled           = enabled,
+				RealTimeDataInput realTimeDataInput = realTimeDataInputOff
+				);
 	};
 
 
@@ -154,9 +228,15 @@ namespace IsoAgLib {
 			Reserved            reserved06          : 1;
 			Reserved            reserved07          : 1;
 		} bits ;
-		iVtObjectInputNumberOptions();
 		~iVtObjectInputNumberOptions();
-		explicit iVtObjectInputNumberOptions(iVtObjectInputNumberOptions_e options);
+		explicit iVtObjectInputNumberOptions(
+				iVtObjectInputNumberOptions_e options = ioallOptionsOff);
+		explicit iVtObjectInputNumberOptions(
+				Transparent 		transparent         = opaque,
+				DisplayLeadingZeros displayLeadingZeros = noDisplayLeadingZeros,
+				DisplayZeroAsBlank  displayZeroAsBlank  = noDisplayZeroAsBlank,
+				Truncate            truncate            = rounded
+				);
 	};
 
 
@@ -182,10 +262,13 @@ namespace IsoAgLib {
 			Reserved            reserved06        : 1;
 			Reserved            reserved07        : 1;
 		} bits ;
-		iVtObjectInputNumberOptions2();
 		~iVtObjectInputNumberOptions2();
-		explicit iVtObjectInputNumberOptions2(iVtObjectInputNumberOptions2_e options);
-		explicit iVtObjectInputNumberOptions2(Enabled 			            enabled);
+		explicit iVtObjectInputNumberOptions2(
+				iVtObjectInputNumberOptions2_e options = o2allOptionsOff);
+		explicit iVtObjectInputNumberOptions2(
+				Enabled 		  enabled           = enabled,
+				RealTimeDataInput realTimeDataInput = realTimeDataInputOff
+				);
 	};
 
 
