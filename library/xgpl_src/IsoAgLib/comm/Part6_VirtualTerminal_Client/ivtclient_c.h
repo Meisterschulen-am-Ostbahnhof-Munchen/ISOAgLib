@@ -93,10 +93,10 @@ public:
   bool deregisterObjectPool (iIdentItem_c& arc_wsMasterIdentItem);
 
   //! Be sure to only use this function with a valid index!
-  iVtClientConnection_c& getClientByID (uint8_t ui8_clientIndex);
+  iVtClientConnection_c& getiClientByID (uint8_t ui8_clientIndex);
 
   //! Returns NULL if index was not valid. ATTENTION: Index may be valid, but maybe it's a newer client on this index, if it was de registered/registered.
-  iVtClientConnection_c* getClientPtrByID (uint8_t ui8_clientIndex);
+  iVtClientConnection_c* getiClientPtrByID (uint8_t ui8_clientIndex);
 
   bool isAnyVtAvailable() const override;
 

@@ -34,12 +34,14 @@ iVtClient_c &getIvtClientInstance(unsigned int instance)
 
 
 
-    iVtClientConnection_c &iVtClient_c::getClientByID(uint8_t ui8_clientIndex) { return VtClient_c::getClientByID (ui8_clientIndex).toInterfaceReference(); }
+    iVtClientConnection_c &iVtClient_c::getiClientByID(uint8_t ui8_clientIndex) {
+        return VtClient_c::getClientByID (ui8_clientIndex).toInterfaceReference();
+    }
 
 
-    iVtClientConnection_c *iVtClient_c::getClientPtrByID(uint8_t ui8_clientIndex) {
+    iVtClientConnection_c *iVtClient_c::getiClientPtrByID(uint8_t ui8_clientIndex) {
         __IsoAgLib::VtClientConnection_c* result = VtClient_c::getClientPtrByID( ui8_clientIndex );
-        return result ? result->toInterfacePointer() : NULL;
+        return result ? result->toInterfacePointer() : nullptr;
     }
 
     bool iVtClient_c::isAnyVtAvailable() const { return VtClient_c::isAnyVtAvailable(); }
