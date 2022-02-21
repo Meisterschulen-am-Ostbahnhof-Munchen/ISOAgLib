@@ -47,6 +47,9 @@ public:
   IsoAgLib::ObjectID getID() const override;
 
 
+  uint8_t               getNumLang()        const;
+  const IsoAgLib::repeat_vtLanguage_s getLang(uint8_t lang)        const;
+
   void Append(iVtObject_c* vtObject, int16_t x, int16_t y);
 
 

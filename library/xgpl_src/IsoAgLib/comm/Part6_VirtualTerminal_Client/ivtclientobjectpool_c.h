@@ -21,7 +21,7 @@
 #ifndef IVTCLIENTOBJECTPOOL_H
 #define IVTCLIENTOBJECTPOOL_H
 
-#include <stdint.h>
+#include <cstdint>
 #include "ivttypes.h"
 #include "iColour.h"
 #include "iFillType.h"
@@ -351,7 +351,7 @@ public:
                       1 for 4bit-color depth (16-colored VT)
                       2 for 8bit-color depth (256-colored VT)
     @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...-->
-    @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See e_vtColour)
+    @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
   */
   virtual Colour convertColour(Colour colorValue, uint8_t colorDepth, iVtObject_c * obj, e_vtColour whichColour)
   {
@@ -412,7 +412,7 @@ public:
   uint16_t              getDimension()      const;
   uint16_t              getSkWidth()        const;
   uint16_t              getSkHeight()       const;
-  uint8_t               getNumLang()        const; //TODO
+  uint8_t               getNumLang()        const;
   bool                  multiLanguage()     const;
   void                  Append(iVtObject_c* const c);	//TODO !! make this working for Multi-Language as well !!!
   multiton              getAiMultitonInst() const;
@@ -420,6 +420,9 @@ public:
 
   iVtObjectWorkingSet_c&
   getWorkingSetObject() const;
+
+  iVtObjectWorkingSet_c*
+  getWorkingSetObjectp() const;
 };
 
 } // IsoAgLib

@@ -19,6 +19,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "ivtclientobjectpool_c.h"
+#include "ivtobjectworkingset_c.h"
 #include <IsoAgLib/util/iassert.h>
 
 namespace
@@ -28,7 +29,6 @@ uint8_t const carrui8_normalized[] = {
   16, 231, 34, 37, 124, 127, 142, 188, 145, 21, 46, 51, 196, 201, 226, 19 };
 
 IsoAgLib::Colour normalizeDepth2Color(IsoAgLib::Colour ui8_color) {
-	//TODO
   return ui8_color < 16 ? (IsoAgLib::Colour)carrui8_normalized[ui8_color] : ui8_color;
 }
 
@@ -86,13 +86,25 @@ Colour iVtClientObjectPool_c::convertColourDefault(
 
     uint16_t iVtClientObjectPool_c::getSkHeight() const { return skHeight; }
 
-    uint8_t iVtClientObjectPool_c::getNumLang() const { return 0; }
+    uint8_t iVtClientObjectPool_c::getNumLang() const {
+    	iVtObjectWorkingSet_c* ws = this->getWorkingSetObjectp();
+    	return ws->getNumLang();
+    }
 
     bool iVtClientObjectPool_c::multiLanguage() const { return getNumLang() > 0; }
 
     void iVtClientObjectPool_c::Append(iVtObject_c *const c) {iVtObjects->Append(c);}
 
-    iVtObjectWorkingSet_c &iVtClientObjectPool_c::getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects->all_items); }
+    iVtObjectWorkingSet_c &iVtClientObjectPool_c::getWorkingSetObject() const {
+    	return *getWorkingSetObjectp();
+    }
+
+    iVtObjectWorkingSet_c* iVtClientObjectPool_c::getWorkingSetObjectp() const {
+    	iVtObject_c** _items = *iVtObjects->all_items;
+    	iVtObject_c* first_item = _items[0];
+    	iVtObjectWorkingSet_c* ws = dynamic_cast<iVtObjectWorkingSet_c*>(first_item);
+    	return ws;
+    }
 
     iVtClientObjectPool_c::iVtClientObjectPool_c(iVtClientObjectPool_c::ObjectPoolSettings_s a_objectPoolSettings)
             : iVtObjects (new iVtObject_cList(300)) // TODO make this more intelligent !

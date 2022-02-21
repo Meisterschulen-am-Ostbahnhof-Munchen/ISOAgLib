@@ -250,6 +250,15 @@ vtObjectWorkingSet_c::saveReceivedAttribute (uint8_t attrID, uint8_t* /*pui8_att
     default: break;
   }
 }
+
+    uint8_t vtObjectWorkingSet_c::getNumLang() const {
+        return vtObject_a->numberOfLanguagesToFollow;
+    }
+
+    const IsoAgLib::repeat_vtLanguage_s vtObjectWorkingSet_c::getLang(uint8_t lang) const {
+        return vtObject_a->languagesToFollow[ lang ];
+    }
+
 #endif
 
 } // __IsoAgLib
