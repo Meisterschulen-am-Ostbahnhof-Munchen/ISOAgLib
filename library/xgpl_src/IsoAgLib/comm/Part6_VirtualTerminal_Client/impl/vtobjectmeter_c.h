@@ -43,15 +43,35 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectMeter_s> vtObject_a;
 
+
+	  vtObjectMeter_c(iVtObjectMeter_s* vtObjectMeterSROM , multiton ai_multitonInst);
+
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectMeter_c(iVtObjectMeter_s* vtObjectMeterSROM , multiton ai_multitonInst);
+  vtObjectMeter_c() = delete;
 
   ~vtObjectMeter_c() override;
+
+
+  vtObjectMeter_c(
+		    multiton ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			IsoAgLib::Colour needleColour,
+			IsoAgLib::Colour borderColour,
+			IsoAgLib::Colour arcAndTickColour,
+			IsoAgLib::iVtObjectMeterOptions options,
+			uint8_t numberOfTicks,
+			uint8_t startAngle,
+			uint8_t endAngle,
+			uint16_t minValue,
+			uint16_t maxValue,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+			uint16_t value);
 
   uint32_t fitTerminal() const;
 

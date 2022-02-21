@@ -33,6 +33,26 @@ public:
   static ObjectType objectType() { return VT_OBJECT_TYPE_METER; }
 
 
+  ~iVtObjectMeter_c();
+
+  iVtObjectMeter_c() = delete;
+
+  iVtObjectMeter_c(
+			iVtClientObjectPool_c* pool,
+	  		ObjectID ID = autoID,
+			uint16_t width = 80,
+			Colour needleColour = BLACK,
+			Colour borderColour = BLACK,
+			Colour arcAndTickColour = BLACK,
+			iVtObjectMeterOptions options = iVtObjectMeterOptions(allDrawMeter),
+			uint8_t numberOfTicks = 12,
+			uint8_t startAngle = 0,
+			uint8_t endAngle = 180,
+			uint16_t minValue = 0,
+			uint16_t maxValue = 500,
+			iVtObjectNumberVariable_c *variableReference = nullptr,
+			uint16_t value = 0);
+
   void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
@@ -49,7 +69,7 @@ public:
     vtObjectMeter_c::setArcAndTickColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setOptions(IsoAgLib::iVtObjectMeterOptions newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+  void setOptions(iVtObjectMeterOptions newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -103,7 +123,7 @@ public:
     return vtObjectMeter_c::updateArcAndTickColour(b_SendRequest);
   }
 
-  IsoAgLib::iVtObjectMeterOptions updateOptions(bool b_SendRequest=false) {
+  iVtObjectMeterOptions updateOptions(bool b_SendRequest=false) {
     return vtObjectMeter_c::updateOptions(b_SendRequest);
   }
 

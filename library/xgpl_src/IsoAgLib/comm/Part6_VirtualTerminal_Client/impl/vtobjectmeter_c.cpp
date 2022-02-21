@@ -293,6 +293,43 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
     		,vtObject_a(vtObjectMeterSROM)
     {}
 
+
+    vtObjectMeter_c::vtObjectMeter_c(
+  		    multiton ai_multitonInst,
+  			IsoAgLib::ObjectID ID,
+  			uint16_t width,
+  			IsoAgLib::Colour needleColour,
+  			IsoAgLib::Colour borderColour,
+  			IsoAgLib::Colour arcAndTickColour,
+  			IsoAgLib::iVtObjectMeterOptions options,
+  			uint8_t numberOfTicks,
+  			uint8_t startAngle,
+  			uint8_t endAngle,
+  			uint16_t minValue,
+  			uint16_t maxValue,
+  			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+  			uint16_t value)
+    :vtObjectMeter_c(
+    		new iVtObjectMeter_s(
+    		  		ID,
+    				width,
+    				needleColour,
+    				borderColour,
+    				arcAndTickColour,
+    				options,
+    				numberOfTicks,
+    				startAngle,
+    				endAngle,
+    				minValue,
+    				maxValue,
+    				variableReference,
+    				value),
+				ai_multitonInst)
+    {
+
+    }
+
+
     vtObjectMeter_c::~vtObjectMeter_c() = default;
 
     void vtObjectMeter_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
