@@ -1153,7 +1153,7 @@ CommandHandler_c::processMsgVtToEcuActivations( const CanPkgExt_c& pkg )
   case 0x00: // Command: "Control Element Function", parameter "Soft Key"
   case 0x01: // Command: "Control Element Function", parameter "Button"
     pool.eventKeyCode(
-        pkg.getUint8Data( 1 ) /* key activation code (pressed, released, held) */,
+        (KeyActivationCode)pkg.getUint8Data( 1 ) /* key activation code (pressed, released, held) */,
         pkg.getUint8Data( 2 ) | (pkg.getUint8Data( 3 ) << 8) /* objID of key object */,
         pkg.getUint8Data( 4 ) | (pkg.getUint8Data( 5 ) << 8) /* objID of visible mask */,
         pkg.getUint8Data( 6 ) /* key code */,

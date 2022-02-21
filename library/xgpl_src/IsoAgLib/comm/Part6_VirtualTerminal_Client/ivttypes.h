@@ -27,13 +27,13 @@
 #include <list>
 #include "impl/vttypes.h"
 
-
-#define BUTTON_HAS_BEEN_RELEASED 0
-#define BUTTON_HAS_BEEN_PRESSED 1
-#define BUTTON_IS_STILL_HELD 2
-#define BUTTON_PRESS_ABORTED 3
-// BUTTON_PRESS_ABORTED is only valid from VT Version 4, but maybe lower versioned VTs do send it also...
-
+enum KeyActivationCode : uint8_t {
+	BUTTON_HAS_BEEN_RELEASED = 0,
+	BUTTON_HAS_BEEN_PRESSED  = 1,
+	BUTTON_IS_STILL_HELD     = 2,
+	BUTTON_PRESS_ABORTED     = 3,
+	// BUTTON_PRESS_ABORTED is only valid from VT Version 4, but maybe lower versioned VTs do send it also...
+};
 #define BUTTON_HAS_BEEN_UNLATCHED 0
 #define BUTTON_HAS_BEEN_LATCHED 1
 

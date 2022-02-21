@@ -91,7 +91,7 @@ public:
     @param aui8_keyCode KeyCode as defined in the vtObjectButton / vtObjectSoftKey object
     @param ab_wasButton true if it was a button object, false if it was a soft key
   */
-  virtual void eventKeyCode (uint8_t aui8_keyActivationCode, uint16_t aui16_objId, uint16_t aui16_objIdMask, uint8_t aui8_keyCode, bool ab_wasButton)=0;
+  virtual void eventKeyCode (KeyActivationCode aui8_keyActivationCode, uint16_t aui16_objId, uint16_t aui16_objIdMask, uint8_t aui8_keyCode, bool ab_wasButton)=0;
 
   /**
     hook function that gets called on a "Pointing Event" Message
