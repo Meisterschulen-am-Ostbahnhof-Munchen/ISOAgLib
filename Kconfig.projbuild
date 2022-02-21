@@ -1,5 +1,10 @@
 menu "### ISOAgLib Example Configuration ###"
 
+
+
+    config SPECIAL_DEBUG
+        bool "SPECIAL_DEBUG"
+        default n
     config USE_ISO_TERMINAL_GRAPHICCONTEXT
         bool "USE_ISO_TERMINAL_GRAPHICCONTEXT"
         default n

@@ -33,7 +33,13 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h>
 #include <IsoAgLib/util/iassert.h>
 
-#include "esp_log.h"
+#ifdef CONFIG_SPECIAL_DEBUG
+#include <iostream>
+#include "demangle.h"
+
+using std::cout;
+using std::endl;
+#endif
 
 #if DEBUG_VTCOMM
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -165,6 +171,38 @@ VtClientConnection_c::VtClientConnection_c(
     true,
     static_cast<uint8_t>(getPool().getVersion()),
     UniversalTerminalOptionsBitMask_t() );
+
+#ifdef CONFIG_SPECIAL_DEBUG
+  /**
+   *
+   * Special Debugging BEGIN
+   *
+   */
+  uint16_t numObjects = getPool().getNumObjects();
+  ESP_LOGI("X", "getPool().getNumObjects() = %i", numObjects);
+  for (uint16_t ui16_objIndex = 0; ui16_objIndex < numObjects; ui16_objIndex++)
+  {
+    IsoAgLib::iVtObject_c* p_obj = getPool().getIVtObjects()[0][ui16_objIndex];
+
+    if(p_obj == nullptr)
+    {
+    	ESP_LOGE("X", "p_obj == nullptr\n");
+    }
+    else
+    {
+        cout << "Type name of p_obj is: "  << demangle(typeid( p_obj).name()) << endl << endl;
+        cout << "Type name of   obj is: "  << demangle(typeid(*p_obj).name()) << endl << endl;
+
+
+    }
+  }
+
+  /**
+   *
+   * Special Debugging END
+   *
+   */
+#endif
 
 #if defined(CONFIG_USE_VTOBJECT_auxiliaryfunction2) || defined (CONFIG_USE_VTOBJECT_auxiliaryinput2)
   AuxNOptionsBitMask_t auxNOptionsFunction;

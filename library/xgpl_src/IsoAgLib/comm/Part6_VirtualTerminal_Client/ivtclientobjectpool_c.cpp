@@ -70,7 +70,10 @@ Colour iVtClientObjectPool_c::convertColourDefault(
   }
 }
 
-    iVtObject_c *const *const *iVtClientObjectPool_c::getIVtObjects() const { return iVtObjects->all_items; }
+    iVtObject_c *const *const *iVtClientObjectPool_c::getIVtObjects() const
+    {
+    	return iVtObjects->all_items;
+    }
 
     uint16_t iVtClientObjectPool_c::getNumObjects() const
     {

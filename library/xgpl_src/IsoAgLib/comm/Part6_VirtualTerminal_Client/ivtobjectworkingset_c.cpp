@@ -23,7 +23,7 @@ namespace IsoAgLib {
 				selectable,
 				activeMask)
 		{
-			pool->Append(this);
+			pool->AppendWs(this); //only WS can and must do this !
 		}
 
 
