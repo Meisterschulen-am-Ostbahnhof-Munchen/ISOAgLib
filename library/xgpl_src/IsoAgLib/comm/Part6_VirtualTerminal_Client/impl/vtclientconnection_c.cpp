@@ -210,19 +210,6 @@ VtClientConnection_c::VtClientConnection_c(
   for (uint16_t ui16_objIndex = 0; ui16_objIndex < getPool().getNumObjects(); ui16_objIndex++)
   {
     IsoAgLib::iVtObject_c* p_obj = getPool().getIVtObjects()[0][ui16_objIndex];
-    if(p_obj == nullptr)
-    {
-    	ESP_LOGE("X", "p_obj == nullptr\n");
-    }
-    else
-    {
-    	ESP_LOGI("X", "OK1");
-    	p_obj->getObjectType();
-    	ESP_LOGI("X", "OK2");
-    	ESP_LOGI("X", "OK3");
-    	ESP_LOGI("X", "OK4");
-    	ESP_LOGI("X", "OK5");
-    }
 #ifdef CONFIG_USE_VTOBJECT_auxiliaryfunction2
     if (p_obj->getObjectType() == IsoAgLib::iVtObjectAuxiliaryFunction2_c::objectType())
     { // collect all available AUX 2 function objects in list
