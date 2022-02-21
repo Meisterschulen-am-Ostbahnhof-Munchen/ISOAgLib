@@ -119,7 +119,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
         destMemory [10] = 0xFF;
         destMemory [11] = 0xFF;
       }
-      destMemory [12] = vtObject_a->options;
+      destMemory [12] = vtObject_a->options.options;
       if (vtObject_a->variableReference != NULL) {
         destMemory [13] = vtObject_a->variableReference->getID() & 0xFF;
         destMemory [14] = vtObject_a->variableReference->getID() >> 8;
@@ -375,7 +375,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     case BackgroundColour:        vtObject_a->backgroundColour        = convertLittleEndianStringColour(pui8_attributeValue); break;
     //case FontAttributes:          vtObject_a->fontAttributes          = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     //case InputAttributes:         vtObject_a->inputAttributes         = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case Options:                 vtObject_a->options                 = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Options:                 vtObject_a->options.options         = (IsoAgLib::iVtObjectStringOptions_e)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     //case VariableReference:       vtObject_a->variableReference       = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case Justification: vtObject_a->justification.justification = (IsoAgLib::AllJustification)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     /** that attribute is in parentheses in the spec, so commented out here
@@ -426,7 +426,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     void vtObjectInputString_c::setOptions(IsoAgLib::iVtObjectStringOptions newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->options = newOptions;
-    	setAttribute (Options, newOptions, b_enableReplaceOfCmd);
+    	setAttribute (Options, newOptions.options, b_enableReplaceOfCmd);
     }
 
     void vtObjectInputString_c::setVariableReference(IsoAgLib::iVtObjectStringVariable_c *newVariableRef, bool b_updateObject, bool b_enableReplaceOfCmd) {

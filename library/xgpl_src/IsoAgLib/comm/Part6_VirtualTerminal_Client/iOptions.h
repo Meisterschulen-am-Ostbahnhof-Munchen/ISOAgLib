@@ -294,24 +294,24 @@ namespace IsoAgLib {
 		iVtObjectStringOptions_e options;
 		struct __attribute__ ((packed))
 		{
-			Transparent   transparent         : 1;
-			AutoWrap      displayLeadingZeros : 1;
-			WrapOnHyphen  displayZeroAsBlank  : 1;
-			Reserved            reserved03          : 1;
+			Transparent  transparent  : 1;
+			AutoWrap     autoWrap     : 1;
+			WrapOnHyphen wrapOnHyphen : 1;
+			Reserved     reserved03   : 1;
 
-			Reserved            reserved04          : 1;
-			Reserved            reserved05          : 1;
-			Reserved            reserved06          : 1;
-			Reserved            reserved07          : 1;
-		} bits ;
+			Reserved     reserved04   : 1;
+			Reserved     reserved05   : 1;
+			Reserved     reserved06   : 1;
+			Reserved     reserved07   : 1;
+		} bits{} ;
 		~iVtObjectStringOptions();
 		iVtObjectStringOptions();
 		explicit iVtObjectStringOptions(
 				iVtObjectStringOptions_e options = soallOptionsOff);
 		explicit iVtObjectStringOptions(
-				Transparent   transparent         = Transparent::opaque,
-				AutoWrap      displayLeadingZeros = AutoWrap::noAutoWrap,
-				WrapOnHyphen  displayZeroAsBlank  = WrapOnHyphen::noWrapOnHyphen
+				Transparent   transparent   = Transparent::opaque,
+				AutoWrap      autoWrap 	    = AutoWrap::noAutoWrap,
+				WrapOnHyphen  wrapOnHyphen  = WrapOnHyphen::noWrapOnHyphen
 				);
 	};
 

@@ -20,7 +20,7 @@ namespace IsoAgLib {
 			uint16_t height,
 			Colour backgroundColour,
 			iVtObjectFontAttributes_c *fontAttributes,
-			uint8_t options,
+			iVtObjectStringOptions options,
 			iVtObjectStringVariable_c *variableReference,
 			Justification justification,
 			char *value)
@@ -88,7 +88,7 @@ namespace IsoAgLib {
         vtObjectOutputString_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectOutputString_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectOutputString_c::setOptions(iVtObjectStringOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectOutputString_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -110,7 +110,7 @@ namespace IsoAgLib {
         return vtObjectOutputString_c::updateFontAttributes(b_SendRequest);
     }
 
-    uint8_t iVtObjectOutputString_c::updateOptions(bool b_SendRequest) {
+    iVtObjectStringOptions iVtObjectOutputString_c::updateOptions(bool b_SendRequest) {
         return vtObjectOutputString_c::updateOptions(b_SendRequest);
     }
 
