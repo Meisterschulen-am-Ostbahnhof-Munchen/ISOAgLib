@@ -42,6 +42,9 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectStringVariable_s> vtObject_a;
 
+
+	vtObjectStringVariable_c(iVtObjectStringVariable_s* vtObjectStringVariableSROM , multiton ai_multitonInst);
+
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
@@ -57,7 +60,7 @@ public:
 		  IsoAgLib::ObjectID ID,
 		  char *value);
 
-  vtObjectStringVariable_c(iVtObjectStringVariable_s* vtObjectStringVariableSROM , multiton ai_multitonInst);
+
 
   uint32_t fitTerminal() const override;
 

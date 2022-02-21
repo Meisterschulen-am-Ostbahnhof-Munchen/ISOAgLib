@@ -54,6 +54,8 @@ public:
   IsoAgLib::ObjectID getID() const override;
 
 
+  vtObjectOutputString_c() = delete;
+
   vtObjectOutputString_c(
 		  	multiton ai_multitonInst,
 		  	IsoAgLib::ObjectID ID,

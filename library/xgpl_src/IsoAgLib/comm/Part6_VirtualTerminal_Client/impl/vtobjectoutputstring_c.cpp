@@ -56,8 +56,6 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
   uint8_t options;
   IsoAgLib::iVtObjectStringVariable_c* variableReference;
   IsoAgLib::Justification justification;
-  uint16_t length;
-  char* value; /* size length+1 (0-termination intern!) */
   explicit iVtObjectOutputString_s(
 		IsoAgLib::ObjectID ID,
   	    uint16_t width,
@@ -67,11 +65,10 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
   	    uint8_t options,
 		IsoAgLib::iVtObjectStringVariable_c* variableReference,
 		IsoAgLib::Justification justification,
-  	    uint16_t length,
   	    char* value /* size length+1 (0-termination intern!) */
   		)
   : iVtObject_s(ID)
-  , iVtObjectString_s(ID)
+  , iVtObjectString_s(ID, value)
   , iVtObjectwMacro_s(ID)
   , width(width)
   , height(height)
@@ -80,9 +77,8 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
   , options(options)
   , variableReference(variableReference)
   , justification(justification)
-  , length(length)
-  , value(value) /* size length+1 (0-termination intern!) */
-	{}
+	{
+	}
 };
 
 
@@ -177,7 +173,6 @@ vtObjectOutputString_c::vtObjectOutputString_c(
 					options,
 					variableReference,
 					justification,
-					strlen(value),
 					value),
 			ai_multitonInst)
 {

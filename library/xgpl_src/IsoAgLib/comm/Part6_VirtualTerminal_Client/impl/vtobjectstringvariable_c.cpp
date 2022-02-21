@@ -31,17 +31,14 @@ namespace __IsoAgLib {
 
 
 
-struct vtObjectStringVariable_c::iVtObjectStringVariable_s : iVtObject_s {
-    uint16_t length;
-    char* value;
+struct vtObjectStringVariable_c::iVtObjectStringVariable_s : iVtObjectString_s {
     iVtObjectStringVariable_s(
     		IsoAgLib::ObjectID ID,
-  		    uint16_t length,
 			char *value)
     : iVtObject_s(ID)
-    , length(length)
-    , value(value)
-    {}
+    , iVtObjectString_s(ID, value)
+	{
+	}
 };
 
 
@@ -185,7 +182,6 @@ vtObjectStringVariable_c::getString()
     	:vtObjectStringVariable_c(
     			new iVtObjectStringVariable_s(
     					ID,
-    					strlen(value),
     					value),
     			ai_multitonInst)
     {

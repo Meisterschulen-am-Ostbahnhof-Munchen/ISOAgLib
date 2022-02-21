@@ -130,10 +130,19 @@ protected:
 
 
   struct iVtObjectString_s : virtual iVtObject_s {
+	  uint16_t length;
+	  char* value; /* size length+1 (0-termination intern!) */
 	  explicit iVtObjectString_s(
-		ObjectID ID)
-	  :iVtObject_s(ID)
-	  {}
+		ObjectID ID,
+		char *value)
+	  : iVtObject_s(ID)
+	  , value(value)
+		{
+	      if (value != nullptr)
+	    	  length = std::strlen(value);
+	      else
+	    	  length = 0;
+		}
   };
 
 

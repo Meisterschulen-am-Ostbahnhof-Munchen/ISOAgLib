@@ -36,6 +36,8 @@ class iVtObjectStringVariable_c : public __IsoAgLib::vtObjectStringVariable_c
 {
 public:
   static ObjectType objectType();
+
+
   explicit iVtObjectStringVariable_c(
 		  iVtClientObjectPool_c* pool,
 		  ObjectID ID = autoID,
