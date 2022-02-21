@@ -51,6 +51,21 @@ public:
   vtObjectInputString_c() = delete;
   ~vtObjectInputString_c();
 
+  explicit vtObjectInputString_c(
+		multiton ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+  	    uint16_t width,
+  	    uint16_t height,
+		IsoAgLib::Colour backgroundColour,
+		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
+		IsoAgLib::iVtObjectInputAttributes_c* inputAttributes,
+		IsoAgLib::iVtObjectStringOptions options,
+		IsoAgLib::iVtObjectStringVariable_c* variableReference,
+		IsoAgLib::Justification justification,
+  	    char* value, /* size length+1 (0-termination intern!) */
+		uint8_t enabled
+  		);
+
 
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,

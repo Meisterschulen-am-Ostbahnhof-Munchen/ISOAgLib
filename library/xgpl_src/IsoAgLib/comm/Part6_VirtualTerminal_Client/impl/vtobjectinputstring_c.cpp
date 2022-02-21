@@ -154,6 +154,48 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
     return curBytes;
 }
 
+
+
+
+vtObjectInputString_c::vtObjectInputString_c(
+		multiton ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+	    uint16_t width,
+	    uint16_t height,
+		IsoAgLib::Colour backgroundColour,
+		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
+		IsoAgLib::iVtObjectInputAttributes_c* inputAttributes,
+		IsoAgLib::iVtObjectStringOptions options,
+		IsoAgLib::iVtObjectStringVariable_c* variableReference,
+		IsoAgLib::Justification justification,
+	    char* value, /* size length+1 (0-termination intern!) */
+		uint8_t enabled
+		)
+:vtObjectInputString_c(
+		new iVtObjectInputString_s(
+				ID,
+				width,
+				height,
+				backgroundColour,
+				fontAttributes,
+				inputAttributes,
+				options,
+				variableReference,
+				justification,
+				value,
+				enabled),
+		ai_multitonInst)
+{
+}
+
+
+
+
+
+
+
+
+
 IsoAgLib::ObjectID vtObjectInputString_c::getID() const {
 	isoaglib_assert(vtObject_a);
 	return vtObject_a->ID;

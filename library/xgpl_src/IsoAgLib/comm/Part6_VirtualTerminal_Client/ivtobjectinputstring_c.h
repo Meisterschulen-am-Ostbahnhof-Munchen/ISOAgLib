@@ -30,6 +30,34 @@ namespace IsoAgLib {
 class iVtObjectInputString_c : public __IsoAgLib::vtObjectInputString_c
 {
 public:
+
+
+
+	  explicit iVtObjectInputString_c(
+			iVtClientObjectPool_c* pool,
+			ObjectID ID = autoID,
+	  	    uint16_t width = 50,
+	  	    uint16_t height= 20,
+	  	    Colour backgroundColour = WHITE,
+	  	    iVtObjectFontAttributes_c* fontAttributes = nullptr,
+			iVtObjectInputAttributes_c* inputAttributes = nullptr,
+			iVtObjectStringOptions options = iVtObjectStringOptions(soallOptionsOff),
+	  	    iVtObjectStringVariable_c* variableReference = nullptr,
+	  	    Justification justification = Justification(TopLeft),
+	  	    char* value = nullptr, /* size length+1 (0-termination intern!) */
+			uint8_t enabled = 1
+	  		);
+
+
+
+
+
+
+
+
+
+
+
   static ObjectType objectType() { return VT_OBJECT_TYPE_INPUT_STRING; }
 
   const char* getString() { return vtObjectInputString_c::getString(); }

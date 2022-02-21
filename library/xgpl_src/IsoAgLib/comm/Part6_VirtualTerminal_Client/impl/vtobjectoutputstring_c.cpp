@@ -44,7 +44,7 @@ enum vtObjectOutputString_c::AttributeID:uint8_t
 	FontAttributes          = 4,
 	Options                 = 5,
 	VariableReference       = 6,
-	Justification = 7,
+	Justification           = 7,
 };
 
 
