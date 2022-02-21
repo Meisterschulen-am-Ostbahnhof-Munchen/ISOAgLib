@@ -118,7 +118,9 @@ class iVtObjectInputNumber_c;
 class iVtObjectInputList_c;
 class iVtObjectOutputString_c;
 class iVtObjectOutputNumber_c;
-class iVtObjectOutputList_c;
+#ifdef CONFIG_USE_VTOBJECT_outputlist
+    class iVtObjectOutputList_c;
+#endif //CONFIG_USE_VTOBJECT_outputlist
 class iVtObjectLine_c;
 class iVtObjectMask_c;
 class iVtObjectRectangle_c;
