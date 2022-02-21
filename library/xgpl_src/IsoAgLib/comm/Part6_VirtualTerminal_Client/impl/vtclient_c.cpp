@@ -40,7 +40,8 @@ VtClient_c &getVtClientInstance( unsigned instance )
 
 
 VtClient_c::VtClient_c()
-  : m_vtConnections()
+  : mi_multitonInst(multitonSTD)
+  , m_vtConnections()
   , mt_handler( *this )
   , m_serverManager()
   , mt_customer( *this )
