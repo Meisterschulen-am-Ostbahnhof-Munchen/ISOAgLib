@@ -86,7 +86,6 @@ struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
         while ((pointsToFollow[numberOfPoints].x != 65535)
            &&  (pointsToFollow[numberOfPoints].y != 65535))
             numberOfPoints++;
-        numberOfPoints--;
     }
 
 
