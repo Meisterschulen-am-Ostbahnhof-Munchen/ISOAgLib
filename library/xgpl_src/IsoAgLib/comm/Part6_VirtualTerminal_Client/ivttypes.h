@@ -154,17 +154,22 @@ struct repeat_iVtObject_s {
 };
 
 // +++ (attribute list) struct declarations
-struct repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s {
+struct repeat_iVtObject_x_y_s {
   iVtObject_c* vtObject;
   int16_t x;
   int16_t y;
+  repeat_iVtObject_x_y_s(
+		  iVtObject_c *vtObject = nullptr,
+		  int16_t x = 0,
+		  int16_t y = 0);
+};
+
+
+struct repeat_iVtObjectFontAttributes_row_col_s {
   iVtObjectFontAttributes_c* vtObjectBlockFont;
   int16_t row;
   int16_t col;
-  repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s(
-		  iVtObject_c *vtObject = nullptr,
-		  int16_t x = 0,
-		  int16_t y = 0,
+  repeat_iVtObjectFontAttributes_row_col_s(
 		  iVtObjectFontAttributes_c *vtObjectBlockFont = nullptr,
 		  int16_t row = 0,
           int16_t col = 0);
@@ -220,43 +225,18 @@ struct iAux2InputData
   bool        preferredAssignmentMatched;
   bool        preserve;
 
-  iAux2InputData()
-    : name(),
-      modelIdentificationCode(0xFFFF),
-      uid(0xFFFF),
-      preferredAssignmentMatched(false), // a matching input object is found in an active joy stick ECU
-      preserve(false)                    // if CONFIG_MAX_AUX2_PREFERRED_ASSIGNMENT_PER_FUNCTION is reached
-                                         // => old preferred assignments candidates with preserve == false will be removed
-  {}
+  iAux2InputData();
 
   iAux2InputData(const iIsoName_c& a_name,
                  uint16_t a_modelIdentificationCode,
                  uint16_t a_uid,
-                 bool a_preserve)
-    : name(a_name),
-      modelIdentificationCode(a_modelIdentificationCode),
-      uid(a_uid),
-      preferredAssignmentMatched(false),
-      preserve(a_preserve)
-  {}
+                 bool a_preserve);
 
-  bool operator==(const iAux2InputData& arc_ref) const
-  {
-    // - check for preferredAssignmentMatched and preserve is not necessary
-    if ( (name != arc_ref.name) ||
-         (modelIdentificationCode != arc_ref.modelIdentificationCode) ||
-         (uid != arc_ref.uid) )
-      return false;
-    else
-      return true;
-  }
+  bool operator==(const iAux2InputData& arc_ref) const;
 
   // Some old Tasking Compiler needs this operator,
   // so don't remove it!
-  bool operator!=(const iAux2InputData& arc_ref) const
-  {
-    return !(operator==(arc_ref));
-  }
+  bool operator!=(const iAux2InputData& arc_ref) const;
 };
 
 
@@ -266,6 +246,7 @@ struct iAux2InputData
 struct iAux2FunctionInputAssignment_t{
   uint16_t functionUid;
   iAux2InputData input;
+  iAux2FunctionInputAssignment_t();
 };
 
 typedef std::list<iAux2FunctionInputAssignment_t> iAux2Assignment_c;
