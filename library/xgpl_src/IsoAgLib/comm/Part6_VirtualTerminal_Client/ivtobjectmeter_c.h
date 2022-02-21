@@ -49,7 +49,7 @@ public:
     vtObjectMeter_c::setArcAndTickColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setOptions(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
+  void setOptions(IsoAgLib::iVtObjectMeterOptions newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectMeter_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -103,7 +103,7 @@ public:
     return vtObjectMeter_c::updateArcAndTickColour(b_SendRequest);
   }
 
-  uint8_t updateOptions(bool b_SendRequest=false) {
+  IsoAgLib::iVtObjectMeterOptions updateOptions(bool b_SendRequest=false) {
     return vtObjectMeter_c::updateOptions(b_SendRequest);
   }
 

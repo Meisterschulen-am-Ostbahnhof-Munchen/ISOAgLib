@@ -59,7 +59,7 @@ public:
   void setNeedleColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setArcAndTickColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setOptions(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setOptions(IsoAgLib::iVtObjectMeterOptions newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
@@ -78,7 +78,7 @@ public:
   uint8_t updateNeedleColour(bool b_SendRequest=false);
   uint8_t updateBorderColour(bool b_SendRequest=false);
   uint8_t updateArcAndTickColour(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectMeterOptions updateOptions(bool b_SendRequest=false);
   uint8_t updateNumberOfTicks(bool b_SendRequest=false);
   uint8_t updateStartAngle(bool b_SendRequest=false);
   uint8_t updateEndAngle(bool b_SendRequest=false);

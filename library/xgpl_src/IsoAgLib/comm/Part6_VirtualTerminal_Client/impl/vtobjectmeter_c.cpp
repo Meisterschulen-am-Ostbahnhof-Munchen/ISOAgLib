@@ -52,7 +52,7 @@ struct vtObjectMeter_c::iVtObjectMeter_s: iVtObjectwMacro_s {
 	IsoAgLib::Colour needleColour;
 	IsoAgLib::Colour borderColour;
 	IsoAgLib::Colour arcAndTickColour;
-	uint8_t options;
+	IsoAgLib::iVtObjectMeterOptions options;
 	uint8_t numberOfTicks;
 	uint8_t startAngle;
 	uint8_t endAngle;
@@ -66,7 +66,7 @@ struct vtObjectMeter_c::iVtObjectMeter_s: iVtObjectwMacro_s {
 			IsoAgLib::Colour needleColour,
 			IsoAgLib::Colour borderColour,
 			IsoAgLib::Colour arcAndTickColour,
-			uint8_t options,
+			IsoAgLib::iVtObjectMeterOptions options,
 			uint8_t numberOfTicks,
 			uint8_t startAngle,
 			uint8_t endAngle,
@@ -113,7 +113,7 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
       destMemory [5] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->needleColour, this, IsoAgLib::NeedleColour);
       destMemory [6] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->borderColour, this, IsoAgLib::BorderColour);
       destMemory [7] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->arcAndTickColour, this, IsoAgLib::ArcAndTickColour);
-      destMemory [8] = vtObject_a->options;
+      destMemory [8] = vtObject_a->options.options;
       destMemory [9] = vtObject_a->numberOfTicks;
       destMemory [10] = vtObject_a->startAngle;
       destMemory [11] = vtObject_a->endAngle;
@@ -197,7 +197,7 @@ vtObjectMeter_c::updateArcAndTickColour(bool b_SendRequest)
     return vtObject_a->arcAndTickColour;
 }
 
-uint8_t
+IsoAgLib::iVtObjectMeterOptions
 vtObjectMeter_c::updateOptions(bool b_SendRequest)
 {
 	if (b_SendRequest)
@@ -273,7 +273,7 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
     case NeedleColour:      vtObject_a->needleColour      = convertLittleEndianStringColour(pui8_attributeValue); break;
     case BorderColour:      vtObject_a->borderColour      = convertLittleEndianStringColour(pui8_attributeValue); break;
     case ArcAndTickColour:  vtObject_a->arcAndTickColour  = convertLittleEndianStringColour(pui8_attributeValue); break;
-    case Options:           vtObject_a->options           = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Options:           vtObject_a->options.options   = (IsoAgLib::iVtObjectMeterOptions_e)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case NumberOfTicks:     vtObject_a->numberOfTicks     = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case StartAngle:        vtObject_a->startAngle        = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case EndAngle:          vtObject_a->endAngle          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
@@ -319,10 +319,10 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
     	setAttribute ( ArcAndTickColour /* "Arc and Tick Colour" */, getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::ArcAndTickColour), b_enableReplaceOfCmd);
     }
 
-    void vtObjectMeter_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectMeter_c::setOptions(IsoAgLib::iVtObjectMeterOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->options = newValue;
-    	setAttribute ( Options /* "Options" */, newValue, b_enableReplaceOfCmd);
+    	setAttribute ( Options /* "Options" */, newValue.options, b_enableReplaceOfCmd);
     }
 
     void vtObjectMeter_c::setNumberOfTicks(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
