@@ -136,18 +136,20 @@ void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
 	// constructor/functions direct in scope of iVtObject_c
 	iVtObject_c::iVtObject_c()
 #ifdef CONFIG_USE_VTOBJECT_button
-	: p_parentButtonObject(NULL)
+	: p_parentButtonObject(nullptr)
+    , s_properties()
 #endif //CONFIG_USE_VTOBJECT_button
 	{
-	s_properties.flags = 0;
-	s_properties.clientId = 0;
 	}
 
 
 	iVtObject_c::~iVtObject_c() = default;
 
 
-
+    iVtObject_c::s_properties_s::s_properties_s()
+    :flags(0)
+    ,clientId(0)
+    {}
 
 
 } // end of namespace IsoAgLib

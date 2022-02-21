@@ -5,7 +5,6 @@
  */
 
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>
-#include <iostream>
 #include "iVtObject_cList.h"
 #include <stdexcept>
 
@@ -39,7 +38,7 @@ long iVtObject_cList::Count() const {
 }
 
 
-void iVtObject_cList::AppendWs(iVtObjectWorkingSet_c* const anWsItem) {
+void iVtObject_cList::AppendWs(iVtObjectWorkingSet_c* const anWsItem) const {
 	//WorkingSet MUST be on Place 0
     _items[0] = anWsItem;
 }

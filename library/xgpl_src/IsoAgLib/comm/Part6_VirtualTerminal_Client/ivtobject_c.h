@@ -96,7 +96,7 @@ protected:
 	uint8_t numberOfObjectsToFollow_size;
     uint8_t numberOfObjectsToFollow;
     repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
-    void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
+    void Append(iVtObject_c* vtObject, int16_t x, int16_t y);
     explicit iVtObjectObject_s() = delete;
     explicit iVtObjectObject_s(
     		ObjectID ID);
@@ -195,9 +195,10 @@ protected:
   iVtObjectButton_c* p_parentButtonObject;
 #endif //CONFIG_USE_VTOBJECT_button
 
-  struct {
+  struct s_properties_s{
     uint8_t flags:5;
     uint8_t clientId:3; // when changing, adapt the assertion in "setClientID(..)"!
+      s_properties_s();
   } s_properties;
 
 private:
