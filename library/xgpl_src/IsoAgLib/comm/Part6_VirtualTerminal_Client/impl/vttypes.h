@@ -87,29 +87,45 @@ typedef uint16_t objRange_t;
 #endif
 
 #define MACRO_scaleLocalVars \
-    int32_t opDimension = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolDimension(); \
-    int32_t vtDimension = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwDimension(); \
-    int32_t vtOffsetX   = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetX(); \
-    int32_t vtOffsetY   = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetY(); \
+    int32_t opDimension = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolDimension(); \
+    int32_t vtDimension = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwDimension(); \
+    int32_t vtOffsetX   = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetX(); \
+    int32_t vtOffsetY   = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getHwOffsetY(); \
     ( void )vtOffsetX; \
     ( void )vtOffsetY;
 
 #define MACRO_getSkDimension \
-    opSoftKeyWidth  = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
-    opSoftKeyHeight = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
-    vtSoftKeyWidth  = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkWidth(); \
-    vtSoftKeyHeight = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkHeight(); \
-    skOffsetX       = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetX(); \
-    skOffsetY       = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetY();
-
-
-
-//TODO !! revert this Change !
+    opSoftKeyWidth  = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
+    opSoftKeyHeight = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
+    vtSoftKeyWidth  = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkWidth(); \
+    vtSoftKeyHeight = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkHeight(); \
+    skOffsetX       = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetX(); \
+    skOffsetY       = __IsoAgLib::getVtClientInstance4Comm().getClientByID (s_properties.clientId).getSkOffsetY();
 
 #define MACRO_scaleSKLocalVars \
     int32_t opSoftKeyWidth,  opSoftKeyHeight, vtSoftKeyWidth, vtSoftKeyHeight, skOffsetX, skOffsetY; \
+    int32_t opButtonWidth, opButtonHeight, vtButtonWidth, vtButtonHeight;\
     int32_t factorM, factorD; /* zaehler, nenner */ \
+    if (p_parentButtonObject != NULL) { \
+      opButtonWidth  = p_parentButtonObject->getWidth()-8; \
+      opButtonHeight = p_parentButtonObject->getHeight()-8; \
+      vtButtonWidth  = ((opButtonWidth+8) * vtDimension) / opDimension - 8; \
+      vtButtonHeight = ((opButtonHeight+8) * vtDimension) / opDimension - 8; \
+      const int32_t ci_factorX = ((vtButtonWidth << 20) / opButtonWidth); \
+      const int32_t ci_factorY = ((vtButtonHeight << 20) / opButtonHeight); \
+      if (ci_factorX < ci_factorY) { \
+        factorM = vtButtonWidth; \
+        factorD = opButtonWidth; \
+      } else { \
+        factorM = vtButtonHeight; \
+        factorD = opButtonHeight; \
+      } \
+      /* initialize variables which are normally only used in the else branch */ \
+      opSoftKeyWidth = opSoftKeyHeight = vtSoftKeyWidth = vtSoftKeyHeight = skOffsetX = skOffsetY = 0; \
+    } else {  \
       MACRO_getSkDimension \
+      /* set defaults for button sizes to avoid compiler warning */ \
+      opButtonWidth = opButtonHeight = vtButtonWidth = vtButtonHeight = 0; \
       const int32_t ci_factorX = (vtSoftKeyWidth  << 20) / opSoftKeyWidth; \
       const int32_t ci_factorY = (vtSoftKeyHeight << 20) / opSoftKeyHeight; \
       if (ci_factorX < ci_factorY) { \
@@ -119,14 +135,12 @@ typedef uint16_t objRange_t;
         factorM = vtSoftKeyHeight; \
         factorD = opSoftKeyHeight; \
       } \
-
-
-//TODO !! revert this Change !
+    }
 
 #define MACRO_scaleDimension(dim) \
  { \
   int32_t scaleM, scaleD; \
-  if ((s_properties.flags & FLAG_ORIGIN_SKM)) { \
+  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
     scaleM = factorM; \
     scaleD = factorD; \
   } else { \
@@ -140,13 +154,10 @@ typedef uint16_t objRange_t;
   } \
  }
 
-
-//TODO !! revert this Change !
-
 #define MACRO_scaleI32(x,y) \
  { \
   int32_t scaleM, scaleD; \
-  if ((s_properties.flags & FLAG_ORIGIN_SKM)) { \
+  if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
     scaleM = factorM; \
     scaleD = factorD; \
   } else { \
@@ -205,7 +216,7 @@ typedef uint16_t objRange_t;
       destMemory [curBytes]   = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
       destMemory [curBytes+1] = vtObject_a->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
       MACRO_getBlockfont(nrObjectXY)  \
-      isoaglib_assert( !(s_properties.flags & FLAG_ORIGIN_SKM)); \
+      isoaglib_assert( !(s_properties.flags & FLAG_ORIGIN_SKM) && (p_parentButtonObject == NULL) ); \
       destMemory [curBytes+2] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock+vtOffsetX) & 0xFF; \
       destMemory [curBytes+3] = ((((vtObject_a->objectsToFollow [nrObjectXY].x)*vtDimension)/opDimension)+xBlock+vtOffsetX) >> 8; \
       destMemory [curBytes+4] = ((((vtObject_a->objectsToFollow [nrObjectXY].y)*vtDimension)/opDimension)+yBlock+vtOffsetY) & 0xFF; \
@@ -237,11 +248,11 @@ typedef uint16_t objRange_t;
       curBytes += 6; \
       sourceOffset += 6; \
     }
-	  //TODO !! revert this Change !
+
 #define MACRO_streamObjectXYcenteredInButton(bytesBefore) \
     uint16_t nrObjectXY = (sourceOffset-(bytesBefore)) / 6; \
-    int16_t centerX = 0; \
-    int16_t centerY = 0; \
+    int16_t centerX = (vtButtonWidth -  ((opButtonWidth *factorM)/factorD)) >>1; \
+    int16_t centerY = (vtButtonHeight - ((opButtonHeight*factorM)/factorD)) >>1; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*vtObject_a->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
       MACRO_getBlockfont(nrObjectXY)  \
       /* write out an objectX_y pair */ \
