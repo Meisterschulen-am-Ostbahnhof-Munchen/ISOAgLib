@@ -45,7 +45,7 @@ class VtServerManager_c {
 public:
     
   VtServerManager_c();
-  virtual ~VtServerManager_c() {}
+  virtual ~VtServerManager_c();
 
   void close();
 

@@ -42,12 +42,15 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectAlarmMask_s> vtObject_a;
 
+    vtObjectAlarmMask_c(iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , multiton ai_multitonInst);
 
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
+
+    vtObjectAlarmMask_c() = delete;
 
   vtObjectAlarmMask_c(
 		    multiton ai_multitonInst
@@ -59,15 +62,15 @@ public:
 		  , IsoAgLib::Priority priority
 		  , IsoAgLib::AcousticSignal acousticSignal);
 
-  vtObjectAlarmMask_c(iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , multiton ai_multitonInst);
+
 
   ~vtObjectAlarmMask_c() override;
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
 
     virtual void setBackgroundColour(IsoAgLib::Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-        virtual void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+        void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
 #endif
 
         virtual void setPriority(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -94,7 +97,7 @@ public:
 
         virtual uint8_t updateAcousticSignal(bool b_SendRequest=false);
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 

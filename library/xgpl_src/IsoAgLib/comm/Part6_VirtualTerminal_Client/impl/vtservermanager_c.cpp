@@ -53,9 +53,9 @@ VtServerManager_c::close()
 
 VtServerInstance_c* VtServerManager_c::getActiveVtServer( bool mustBePrimary, const VtServerInstance_c* ap_searchStart ) const
 {
-  std::vector<VtServerInstance_c*>::const_iterator lit_vtServerInst = ml_vtServerInst.begin();
+  auto lit_vtServerInst = ml_vtServerInst.begin();
 
-  if(NULL != ap_searchStart)
+  if(nullptr != ap_searchStart)
   {
     for ( ; lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
     {
@@ -73,7 +73,7 @@ VtServerInstance_c* VtServerManager_c::getActiveVtServer( bool mustBePrimary, co
     }
   }
 
-  std::vector<VtServerInstance_c*>::const_iterator lit_searchStart = lit_vtServerInst;
+  auto lit_searchStart = lit_vtServerInst;
   
   // search rest of list
   for ( ; lit_vtServerInst != ml_vtServerInst.end(); ++lit_vtServerInst)
@@ -87,7 +87,7 @@ VtServerInstance_c* VtServerManager_c::getActiveVtServer( bool mustBePrimary, co
     if ( (*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive() && (!mustBePrimary || (*lit_vtServerInst)->isPrimaryVt()) )
       return (*lit_vtServerInst);
 
-  return NULL;
+  return nullptr;
 }
 
 
@@ -99,7 +99,7 @@ VtServerInstance_c* VtServerManager_c::getPreferredVtServer(const IsoName_c& are
     if ((*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive() && ((*lit_vtServerInst)->getIsoName() == aref_prefferedVTIsoName))
       return (*lit_vtServerInst);
   }
-  return NULL;
+  return nullptr;
 }
 
 
@@ -111,7 +111,7 @@ VtServerInstance_c* VtServerManager_c::getSpecificVtServer(const IsoAgLib::iVtCl
     if ((*lit_vtServerInst)->isVtActiveAndResetCapabilitiesIfInactive() && arc_pool.selectVtServer((*lit_vtServerInst)->getIsoName().toConstIisoName_c()))
       return (*lit_vtServerInst);
   }
-  return NULL;
+  return nullptr;
 }
 
 uint16_t VtServerManager_c::getActiveVtCount() const
@@ -144,10 +144,9 @@ VtServerManager_c::reactOnIsoItemModification(
   {
     case ControlFunctionStateHandler_c::AddToMonitorList:
     { ///! Attention: This function is also called from "init()", not only from ISOMonitor!
-      for( std::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
-           iter != ml_vtServerInst.end(); ++iter )
+      for(auto & iter : ml_vtServerInst)
       { // check if newly added VtServerInstance is already in our list
-        if (&isoItem == &(*iter)->getIsoItem())
+        if (&isoItem == &iter->getIsoItem())
           return;
       }
 
@@ -156,16 +155,16 @@ VtServerManager_c::reactOnIsoItemModification(
     } break;
 
     case ControlFunctionStateHandler_c::RemoveFromMonitorList:
-      for( std::vector<VtServerInstance_c*>::iterator iter = ml_vtServerInst.begin();
+      for( auto iter = ml_vtServerInst.begin();
            iter != ml_vtServerInst.end(); ++iter )
       { // check if lost VtServerInstance is in our list
         if (&isoItem == &(*iter)->getIsoItem())
         { // the VtServerInstance is already known and in our list,
           // delete it and notify all clients on early loss of that VtServerInstance
-          for (unsigned index = 0; index < aref_vtConnections.size(); ++index)
+          for (auto & aref_vtConnection : aref_vtConnections)
           {
-            if( aref_vtConnections[ index ] )
-              aref_vtConnections[ index ]->notifyOnVtServerInstanceLoss( *(*iter) );
+            if( aref_vtConnection )
+              aref_vtConnection->notifyOnVtServerInstanceLoss( *(*iter) );
           }
 
           delete *iter;
@@ -196,13 +195,13 @@ VtServerManager_c::processVtStatusMsg(const CanPkgExt_c& arc_data,
       (*lit_vtServerInst)->setLatestVtStatusData( arc_data );
 
       // iterate through all registered VtClientServerCommunication and notify their pools with "eventVtStatusMsg"
-      for (unsigned index = 0; index < aref_vtConnections.size(); index++)
+      for (auto & aref_vtConnection : aref_vtConnections)
       {
-        if (aref_vtConnections[index])
+        if (aref_vtConnection)
         {
-          if (aref_vtConnections[index]->getVtServerInstPtr() == (*lit_vtServerInst))
+          if (aref_vtConnection->getVtServerInstPtr() == (*lit_vtServerInst))
           { // this vtClientServerComm is connected to this VT, so notify the objectpool!!
-            aref_vtConnections[index]->notifyOnVtStatusMessage();
+            aref_vtConnection->notifyOnVtStatusMessage();
           }
         }
       }
@@ -220,6 +219,8 @@ VtServerManager_c::processVtStatusMsg(const CanPkgExt_c& arc_data,
 	{ 
 	return ml_vtServerInst; 
 	}
+
+    VtServerManager_c::~VtServerManager_c() = default;
 
 // (currently not supported, due to multi VT enhancements)
 #if 0
