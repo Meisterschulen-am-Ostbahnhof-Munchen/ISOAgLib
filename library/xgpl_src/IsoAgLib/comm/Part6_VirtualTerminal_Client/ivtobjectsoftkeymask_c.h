@@ -32,12 +32,17 @@ class iVtObjectSoftKeyMask_c : public __IsoAgLib::vtObjectSoftKeyMask_c
 public:
   static ObjectType objectType() { return VT_OBJECT_TYPE_SOFT_KEY_MASK; }
 
-  virtual ~iVtObjectSoftKeyMask_c(){}
+  iVtObjectSoftKeyMask_c() = delete;
+  explicit iVtObjectSoftKeyMask_c(
+			iVtClientObjectPool_c* pool,
+			ObjectID ID = autoID,
+			Colour backgroundColour = CYAN);
 
 
-  void setBackgroundColour(Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectSoftKeyMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  ~iVtObjectSoftKeyMask_c() override;
+
+
+  void setBackgroundColour(Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES  
   // ///////////////////////// getter for attributes
@@ -47,12 +52,10 @@ public:
   }
   */
   
-  Colour updateBackgroundColour(bool b_SendRequest=false) {
-    return vtObjectSoftKeyMask_c::updateBackgroundColour(b_SendRequest);
-  }
+  Colour updateBackgroundColour(bool b_SendRequest=false) override;
 #endif
 
-  virtual ObjectType getObjectType() const { return objectType(); }
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

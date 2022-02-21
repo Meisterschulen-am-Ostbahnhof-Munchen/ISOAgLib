@@ -36,7 +36,7 @@ public:
   class iSkmHandler_c
   {
   public:
-    virtual ~iSkmHandler_c() {}
+    virtual ~iSkmHandler_c() = 0;
   public:
     virtual void fitTerminal() = 0;
     virtual uint8_t numberOfObjectsToFollow() const = 0;
@@ -52,36 +52,48 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectSoftKeyMask_s> vtObject_a;
 
+
+	vtObjectSoftKeyMask_c(iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , multiton ai_multitonInst);
+
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
-  vtObjectSoftKeyMask_c(iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM , multiton ai_multitonInst);
+  vtObjectSoftKeyMask_c() = delete;
+
+  vtObjectSoftKeyMask_c(
+    multiton ai_multitonInst,
+	IsoAgLib::ObjectID ID,
+	IsoAgLib::Colour backgroundColour);
 
 #ifdef ENABLE_SKM_HANDLER
-  void registerSkmHandler_c( iSkmHandler_c* _SkmHandler );
-  void unRegisterSkmHandler_c( iSkmHandler_c* _SkmHandler );
+  void registerSkmHandler_c( iSkmHandler_c* SkmHandler );
+  void unRegisterSkmHandler_c( iSkmHandler_c* SkmHandler );
 #endif // ENABLE_SKM_HANDLER
 
 
-  virtual ~vtObjectSoftKeyMask_c();
-  uint32_t fitTerminal() const;
+  ~vtObjectSoftKeyMask_c() override;
+
+
+  uint32_t fitTerminal() const override;
   uint8_t get_numberOfObjectsToFollow() const;
-  void setOriginSKM(bool b_SKM);
+  void setOriginSKM(bool b_SKM) override;
+
   // //////////////////////////////////
   // All special Attribute-Set methods
-  void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+  virtual void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  /** that attribute is in parentheses in the spec, so commented out here
+  virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 4; }
   */
 
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 
 #ifdef ENABLE_SKM_HANDLER
