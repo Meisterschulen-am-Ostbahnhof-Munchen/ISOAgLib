@@ -202,7 +202,7 @@ namespace IsoAgLib {
 		~iVtObjectInputListOptions();
 		explicit iVtObjectInputListOptions(iVtObjectInputListOptions_e options = allOptionsOff);
 		explicit iVtObjectInputListOptions(
-				Enabled 		  enabled           = enabled,
+				Enabled 		  enabled           = Enabled::enabled,
 				RealTimeDataInput realTimeDataInput = realTimeDataInputOff
 				);
 	};
@@ -266,7 +266,7 @@ namespace IsoAgLib {
 		explicit iVtObjectInputNumberOptions2(
 				iVtObjectInputNumberOptions2_e options = o2allOptionsOff);
 		explicit iVtObjectInputNumberOptions2(
-				Enabled 		  enabled           = enabled,
+				Enabled 		  enabled           = Enabled::enabled,
 				RealTimeDataInput realTimeDataInput = realTimeDataInputOff
 				);
 	};

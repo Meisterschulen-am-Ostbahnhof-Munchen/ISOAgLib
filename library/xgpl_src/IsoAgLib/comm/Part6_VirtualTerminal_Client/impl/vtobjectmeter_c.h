@@ -49,8 +49,8 @@ private:
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
   vtObjectMeter_c() = delete;
 
@@ -73,44 +73,65 @@ public:
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint16_t value);
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
 
-  void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setNeedleColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setArcAndTickColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setOptions(IsoAgLib::iVtObjectMeterOptions newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setMin(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setMax(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
+    virtual void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setNeedleColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setArcAndTickColour(IsoAgLib::Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setOptions(IsoAgLib::iVtObjectMeterOptions newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setMin(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setMax(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  /** that attribute is in parentheses in the spec, so commented out here
+  virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 17; }
   */
 
   uint16_t updateWidth(bool b_SendRequest=false);
-  uint8_t updateNeedleColour(bool b_SendRequest=false);
-  uint8_t updateBorderColour(bool b_SendRequest=false);
-  uint8_t updateArcAndTickColour(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectMeterOptions updateOptions(bool b_SendRequest=false);
-  uint8_t updateNumberOfTicks(bool b_SendRequest=false);
-  uint8_t updateStartAngle(bool b_SendRequest=false);
-  uint8_t updateEndAngle(bool b_SendRequest=false);
-  uint16_t updateMinValue(bool b_SendRequest=false);
-  uint16_t updateMaxValue(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectNumberVariable_c * updateVariableReference(bool b_SendRequest=false);
+
+        virtual uint8_t updateNeedleColour(bool b_SendRequest=false);
+
+        virtual uint8_t updateBorderColour(bool b_SendRequest=false);
+
+        virtual uint8_t updateArcAndTickColour(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectMeterOptions updateOptions(bool b_SendRequest=false);
+
+        virtual uint8_t updateNumberOfTicks(bool b_SendRequest=false);
+
+        virtual uint8_t updateStartAngle(bool b_SendRequest=false);
+
+        virtual uint8_t updateEndAngle(bool b_SendRequest=false);
+
+        virtual uint16_t updateMinValue(bool b_SendRequest=false);
+
+        virtual uint16_t updateMaxValue(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectNumberVariable_c * updateVariableReference(bool b_SendRequest=false);
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint16_t updateValue(bool b_SendRequest=false);
   */
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 

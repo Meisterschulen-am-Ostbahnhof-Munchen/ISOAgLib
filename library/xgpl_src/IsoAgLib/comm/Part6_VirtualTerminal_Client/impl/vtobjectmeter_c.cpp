@@ -121,7 +121,7 @@ vtObjectMeter_c::stream(uint8_t* destMemory,
       destMemory [13] = vtObject_a->minValue >> 8;
       destMemory [14] = vtObject_a->maxValue & 0xFF;
       destMemory [15] = vtObject_a->maxValue >> 8;
-      if (vtObject_a->variableReference != NULL) {
+      if (vtObject_a->variableReference != nullptr) {
         destMemory [16] = vtObject_a->variableReference->getID() & 0xFF;
         destMemory [17] = vtObject_a->variableReference->getID() >> 8;
       } else {
@@ -156,7 +156,7 @@ vtObjectMeter_c::fitTerminal() const
 void
 vtObjectMeter_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
-  if (vtObject_a->variableReference == NULL) {
+  if (vtObject_a->variableReference == nullptr) {
     if (b_updateObject)
     	vtObject_a->value = newValue;
 

@@ -33,11 +33,11 @@ public:
   static ObjectType objectType() { return VT_OBJECT_TYPE_METER; }
 
 
-  ~iVtObjectMeter_c();
+  ~iVtObjectMeter_c() override;
 
   iVtObjectMeter_c() = delete;
 
-  iVtObjectMeter_c(
+  explicit iVtObjectMeter_c(
 			iVtClientObjectPool_c* pool,
 	  		ObjectID ID = autoID,
 			uint16_t width = 80,
@@ -53,53 +53,18 @@ public:
 			iVtObjectNumberVariable_c *variableReference = nullptr,
 			uint16_t value = 0);
 
-  void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setNeedleColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setNeedleColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setBorderColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setBorderColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setArcAndTickColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setArcAndTickColour (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setOptions(iVtObjectMeterOptions newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setNumberOfTicks (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setStartAngle (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setEndAngle (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setMin(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setMin (newMin, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setMax(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setMax (newMax, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
-    vtObjectMeter_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
-    vtObjectMeter_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
-  }
+  void setWidth(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setNeedleColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setBorderColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setArcAndTickColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setOptions(iVtObjectMeterOptions newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setNumberOfTicks(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setStartAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setEndAngle(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setMin(uint16_t newMin, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setMax(uint16_t newMax, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) override;
+  void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
   
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
@@ -107,49 +72,17 @@ public:
   uint8_t updateObjectType() const { return vtObjectMeter_c::updateObjectType(); }
   */
   
-  uint16_t updateWidth(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateWidth(b_SendRequest);
-  }
-
-  uint8_t updateNeedleColour(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateNeedleColour(b_SendRequest);
-  }
-
-  uint8_t updateBorderColour(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateBorderColour(b_SendRequest);
-  }
-
-  uint8_t updateArcAndTickColour(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateArcAndTickColour(b_SendRequest);
-  }
-
-  iVtObjectMeterOptions updateOptions(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateOptions(b_SendRequest);
-  }
-
-  uint8_t updateNumberOfTicks(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateNumberOfTicks(b_SendRequest);
-  }
-
-  uint8_t updateStartAngle(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateStartAngle(b_SendRequest);
-  }
-
-  uint8_t updateEndAngle(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateEndAngle(b_SendRequest);
-  }
-
-  uint16_t updateMinValue(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateMinValue(b_SendRequest);
-  }
-
-  uint16_t updateMaxValue(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateMaxValue(b_SendRequest);
-  }
-
-  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) {
-    return vtObjectMeter_c::updateVariableReference(b_SendRequest);
-  }
+  uint16_t updateWidth(bool b_SendRequest=false) override;
+  uint8_t updateNeedleColour(bool b_SendRequest=false) override;
+  uint8_t updateBorderColour(bool b_SendRequest=false) override;
+  uint8_t updateArcAndTickColour(bool b_SendRequest=false) override;
+  iVtObjectMeterOptions updateOptions(bool b_SendRequest=false) override;
+  uint8_t updateNumberOfTicks(bool b_SendRequest=false) override;
+  uint8_t updateStartAngle(bool b_SendRequest=false) override;
+  uint8_t updateEndAngle(bool b_SendRequest=false) override;
+  uint16_t updateMinValue(bool b_SendRequest=false) override;
+  uint16_t updateMaxValue(bool b_SendRequest=false) override;
+  iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false) override;
 
   /** that attribute is in parentheses in the spec, so commented out here
   uint16_t updateValue(bool b_SendRequest=false) {
@@ -158,7 +91,7 @@ public:
   */
 #endif
 
-  virtual ObjectType getObjectType() const { return objectType(); }
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib
