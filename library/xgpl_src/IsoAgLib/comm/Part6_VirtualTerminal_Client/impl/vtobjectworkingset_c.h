@@ -43,11 +43,11 @@ private:
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
 
-  void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
+  void Append(iVtObject_c* vtObject, int16_t x, int16_t y);
 
 
 
@@ -66,16 +66,18 @@ public:
 
   vtObjectWorkingSet_c() = delete;
 
-  ~vtObjectWorkingSet_c();
+  ~vtObjectWorkingSet_c() override;
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
 
-  void updateSelectable( uint8_t newSelectable );
+    virtual void updateSelectable( uint8_t newSelectable );
     virtual void changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
     virtual void changeBackgroundColour(IsoAgLib::Colour newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setOriginSKM(bool b_SKM);
-  bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOriginSKM(bool b_SKM) override;
+
+    virtual bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
     virtual bool setAudioVolume (uint8_t aui8_volume);
     virtual bool setColourMapOrPalette (uint16_t aui16_objectId);
@@ -87,7 +89,7 @@ public:
   uint16_t updateActiveMask(bool b_SendRequest=false);
   */
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 

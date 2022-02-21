@@ -32,7 +32,7 @@ public:
   static ObjectType objectType();
 
 
-  iVtObjectWorkingSet_c(
+  explicit iVtObjectWorkingSet_c(
 		iVtClientObjectPool_c* pool,
 		ObjectID ID = autoID,
   		Colour backgroundColour = BLACK,
@@ -40,19 +40,20 @@ public:
   		iVtObjectMask_c* activeMask = nullptr // data or alarm mask
 		);
 
+  iVtObjectWorkingSet_c() = delete;
+  ~iVtObjectWorkingSet_c() override;
 
 
-
-  void updateSelectable( uint8_t newSelectable );
-  void changeActiveMask(iVtObjectMask_c* apc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void changeBackgroundColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool setChildPosition(iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime);
+  void updateSelectable( uint8_t newSelectable ) override;
+  void changeActiveMask(iVtObjectMask_c* apc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  void changeBackgroundColour(Colour newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool setChildPosition(iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  bool controlAudioDevice (uint8_t aui8_repetitions, uint16_t aui16_frequency, uint16_t aui16_onTime, uint16_t aui16_offTime) override;
 
   //! @param aui8_volume The Volume given in percent. Range 0..100
-  bool setAudioVolume (uint8_t aui8_volume);
-  bool setColourMapOrPalette (uint16_t aui16_objectId);
+  bool setAudioVolume (uint8_t aui8_volume) override;
+  bool setColourMapOrPalette (uint16_t aui16_objectId) override;
 
   // ///////////////////////// getter for attributes
   /** these attributes are in parentheses in the spec, so commented out here
@@ -73,7 +74,7 @@ public:
   }
   */
 
-  virtual ObjectType getObjectType() const;
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

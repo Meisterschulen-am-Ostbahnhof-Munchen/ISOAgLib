@@ -70,5 +70,7 @@ namespace IsoAgLib {
 
     ObjectType iVtObjectWorkingSet_c::objectType() { return VT_OBJECT_TYPE_WORKING_SET; }
 
+    iVtObjectWorkingSet_c::~iVtObjectWorkingSet_c() = default;
+
 
 }

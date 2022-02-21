@@ -38,18 +38,24 @@ struct vtObjectWorkingSet_c::iVtObjectWorkingSet_s : iVtObjectObject_s, iVtObjec
 		IsoAgLib::Colour backgroundColour,
   		uint8_t selectable,
 		IsoAgLib::iVtObjectMask_c* activeMask // data or alarm mask
-  	  	  )
-    : iVtObject_s(ID)
-    , iVtObjectObject_s(ID)
-    , iVtObjectwMacro_s(ID)
-    , iVtObjectLanguages_s(ID)
-    , backgroundColour(backgroundColour)
-    , selectable(selectable)
-	, activeMask(activeMask)
-  {}
+  	  	  );
 };
 
-uint16_t
+    vtObjectWorkingSet_c::iVtObjectWorkingSet_s::iVtObjectWorkingSet_s(
+            IsoAgLib::ObjectID ID,
+            IsoAgLib::Colour backgroundColour,
+            uint8_t selectable,
+            IsoAgLib::iVtObjectMask_c *activeMask)
+            : iVtObject_s(ID)
+            , iVtObjectObject_s(ID)
+            , iVtObjectwMacro_s(ID)
+            , iVtObjectLanguages_s(ID)
+            , backgroundColour(backgroundColour)
+            , selectable(selectable)
+            , activeMask(activeMask)
+    {}
+
+    uint16_t
 vtObjectWorkingSet_c::stream(uint8_t* destMemory,
                              uint16_t maxBytes,
                              objRange_t sourceOffset)
@@ -63,7 +69,7 @@ vtObjectWorkingSet_c::stream(uint8_t* destMemory,
         destMemory [2] = VT_OBJECT_TYPE_WORKING_SET; // Object Type = Working Set
         destMemory [3] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
         destMemory [4] = vtObject_a->selectable;
-        if (vtObject_a->activeMask != NULL) {
+        if (vtObject_a->activeMask != nullptr) {
             destMemory [5] = vtObject_a->activeMask->getID() & 0xFF;
             destMemory [6] = vtObject_a->activeMask->getID() >> 8;
         } else {
@@ -161,12 +167,14 @@ vtObjectWorkingSet_c::changeBackgroundColour(IsoAgLib::Colour newValue, bool b_u
 bool
 vtObjectWorkingSet_c::moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
+    //TODO
   return 0;//genericChangeChildLocation (apc_childObject, dx, dy, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd);
 }
 
 bool
 vtObjectWorkingSet_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_updateObject, bool b_enableReplaceOfCmd)
 {
+    //TODO !
   return 0;//genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObject_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObject_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectWorkingSet_a(), objectsToFollow), sizeof(iVtObjectWorkingSet_s), b_enableReplaceOfCmd, SoftKeyOffset);
 }
 
