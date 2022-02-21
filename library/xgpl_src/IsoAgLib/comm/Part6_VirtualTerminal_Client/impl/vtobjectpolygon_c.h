@@ -63,7 +63,6 @@ public:
 			IsoAgLib::iVtObjectLineAttributes_c* lineAttributes,
 			IsoAgLib::iVtObjectFillAttributes_c* fillAttributes,
 			IsoAgLib::PolygonType polygonType,
-			uint8_t numberOfPoints,
 			IsoAgLib::repeat_x_y_s *pointsToFollow);
 
 

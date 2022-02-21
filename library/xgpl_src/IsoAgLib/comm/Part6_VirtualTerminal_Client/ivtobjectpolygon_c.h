@@ -44,7 +44,6 @@ public:
 				iVtObjectLineAttributes_c* lineAttributes = nullptr,
 				iVtObjectFillAttributes_c* fillAttributes = nullptr,
 				PolygonType polygonType = PolygonType::Convex,
-				uint8_t numberOfPoints = 0,
 				repeat_x_y_s *pointsToFollow = nullptr);
 
 

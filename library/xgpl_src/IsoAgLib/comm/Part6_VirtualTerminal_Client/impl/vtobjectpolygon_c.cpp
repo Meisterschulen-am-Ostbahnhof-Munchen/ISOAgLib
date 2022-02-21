@@ -60,7 +60,6 @@ struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
 			IsoAgLib::iVtObjectLineAttributes_c* lineAttributes,
 			IsoAgLib::iVtObjectFillAttributes_c* fillAttributes,
 			IsoAgLib::PolygonType polygonType,
-			uint8_t numberOfPoints,
 			IsoAgLib::repeat_x_y_s *pointsToFollow);
 
 
@@ -73,7 +72,6 @@ struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
             IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
             IsoAgLib::iVtObjectFillAttributes_c *fillAttributes,
             IsoAgLib::PolygonType polygonType,
-            uint8_t numberOfPoints,
             IsoAgLib::repeat_x_y_s *pointsToFollow)
             : iVtObject_s(ID)
             , iVtObjectwMacro_s(ID)
@@ -82,9 +80,12 @@ struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
             , lineAttributes(lineAttributes)
             , fillAttributes(fillAttributes)
             , polygonType(polygonType)
-            , numberOfPoints(numberOfPoints)
+            , numberOfPoints(0)
             , pointsToFollow(pointsToFollow)
     {
+        while (pointsToFollow[numberOfPoints].x != 65535 && pointsToFollow[numberOfPoints].x != 65535 ) {
+        	numberOfPoints++;
+        }
     }
 
 
@@ -283,7 +284,6 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
 			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
 			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes,
 			IsoAgLib::PolygonType polygonType,
-			uint8_t numberOfPoints,
 			IsoAgLib::repeat_x_y_s *pointsToFollow)
     :vtObjectPolygon_c(
     		new iVtObjectPolygon_s(
@@ -293,7 +293,6 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
     				lineAttributes,
     				fillAttributes,
     				polygonType,
-    				numberOfPoints,
     				pointsToFollow),
 				ai_multitonInst)
     {

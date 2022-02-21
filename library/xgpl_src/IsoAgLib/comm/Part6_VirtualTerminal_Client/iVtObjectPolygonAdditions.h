@@ -15,8 +15,8 @@ namespace IsoAgLib {
 
 
 struct repeat_x_y_s {
-  int16_t x;
-  int16_t y;
+  uint16_t x;
+  uint16_t y;
 };
 
 

@@ -20,7 +20,6 @@ namespace IsoAgLib {
 			iVtObjectLineAttributes_c *lineAttributes,
 			iVtObjectFillAttributes_c *fillAttributes,
 			PolygonType polygonType,
-			uint8_t numberOfPoints,
 			repeat_x_y_s *pointsToFollow)
     :vtObjectPolygon_c(
     		pool->getAiMultitonInst(),
@@ -30,7 +29,6 @@ namespace IsoAgLib {
 			lineAttributes,
 			fillAttributes,
 			polygonType,
-			numberOfPoints,
 			pointsToFollow)
  	{
  		pool->Append(this);
