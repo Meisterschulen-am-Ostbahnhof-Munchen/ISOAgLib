@@ -34,7 +34,7 @@ class iVtObjectAlarmMask_c : public __IsoAgLib::vtObjectAlarmMask_c
 public:
   static ObjectType objectType();
 
-
+  iVtObjectAlarmMask_c() = delete;
   explicit iVtObjectAlarmMask_c(
 			        iVtClientObjectPool_c* pool
 				  , ObjectID ID = autoID
@@ -42,12 +42,11 @@ public:
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
 				  , iVtObjectSoftKeyMask_c *softKeyMask = nullptr
 #endif
-				  , uint8_t priority = 0
-		          , uint8_t acousticSignal = 0);
+				  , Priority priority = Low
+		          , AcousticSignal acousticSignal = nonesilent);
 
 
   ~iVtObjectAlarmMask_c() override;
-
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask

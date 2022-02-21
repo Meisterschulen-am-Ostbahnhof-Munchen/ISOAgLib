@@ -56,8 +56,8 @@ public:
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
 		  , IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask
 #endif
-		  , uint8_t priority
-		  , uint8_t acousticSignal);
+		  , IsoAgLib::Priority priority
+		  , IsoAgLib::AcousticSignal acousticSignal);
 
   vtObjectAlarmMask_c(iVtObjectAlarmMask_s* vtObjectAlarmMaskSROM , multiton ai_multitonInst);
 
@@ -67,7 +67,7 @@ public:
 
     virtual void setBackgroundColour(IsoAgLib::Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-  void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+        virtual void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 #endif
 
         virtual void setPriority(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);

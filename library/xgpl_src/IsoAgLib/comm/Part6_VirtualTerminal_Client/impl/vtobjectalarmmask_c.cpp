@@ -54,20 +54,27 @@ struct vtObjectAlarmMask_c::iVtObjectAlarmMask_s : iVtObjectMask_s {
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
 		  , IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask
 #endif
-		  , uint8_t priority
-          , uint8_t acousticSignal)
-  : iVtObject_s(ID)
-  , iVtObjectMask_s(ID)
-  , backgroundColour(backgroundColour)
-#ifdef CONFIG_USE_VTOBJECT_softkeymask
-  , softKeyMask(softKeyMask)
-#endif
-  , priority(priority)
-  , acousticSignal(acousticSignal)
-  {}
+		  , IsoAgLib::Priority priority
+          , IsoAgLib::AcousticSignal acousticSignal);
 };
 
-uint16_t
+    vtObjectAlarmMask_c::iVtObjectAlarmMask_s::iVtObjectAlarmMask_s(
+            IsoAgLib::ObjectID ID,
+            IsoAgLib::Colour backgroundColour,
+            IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask,
+			IsoAgLib::Priority priority,
+			IsoAgLib::AcousticSignal acousticSignal)
+            : iVtObject_s(ID)
+            , iVtObjectMask_s(ID)
+            , backgroundColour(backgroundColour)
+#ifdef CONFIG_USE_VTOBJECT_softkeymask
+            , softKeyMask(softKeyMask)
+#endif
+            , priority(priority)
+            , acousticSignal(acousticSignal)
+    {}
+
+    uint16_t
 vtObjectAlarmMask_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)
@@ -223,8 +230,8 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
   		  , IsoAgLib::iVtObjectSoftKeyMask_c *softKeyMask
 #endif
-  		  , uint8_t priority
-  		  , uint8_t acousticSignal)
+  		  , IsoAgLib::Priority priority
+  		  , IsoAgLib::AcousticSignal acousticSignal)
     :vtObjectAlarmMask_c(
     		new iVtObjectAlarmMask_s(
     		  		    ID

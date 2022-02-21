@@ -17,8 +17,7 @@ namespace IsoAgLib {
         vtObjectAlarmMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectAlarmMask_c::setSoftKeyMask(iVtObjectSoftKeyMask_c *newSoftKeyMask, bool b_updateObject,
-                                              bool b_enableReplaceOfCmd) {
+    void iVtObjectAlarmMask_c::setSoftKeyMask(iVtObjectSoftKeyMask_c *newSoftKeyMask, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectAlarmMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -59,7 +58,13 @@ namespace IsoAgLib {
 
     ObjectType iVtObjectAlarmMask_c::objectType() { return VT_OBJECT_TYPE_ALARM_MASK; }
 
-    iVtObjectAlarmMask_c::iVtObjectAlarmMask_c(iVtClientObjectPool_c *pool, ObjectID ID, Colour backgroundColour, iVtObjectSoftKeyMask_c *softKeyMask, uint8_t priority, uint8_t acousticSignal)
+    iVtObjectAlarmMask_c::iVtObjectAlarmMask_c(
+    		iVtClientObjectPool_c *pool,
+			ObjectID ID,
+			Colour backgroundColour,
+			iVtObjectSoftKeyMask_c *softKeyMask,
+			Priority priority,
+			AcousticSignal acousticSignal)
             :vtObjectAlarmMask_c(
             pool->getAiMultitonInst()
             , ID
