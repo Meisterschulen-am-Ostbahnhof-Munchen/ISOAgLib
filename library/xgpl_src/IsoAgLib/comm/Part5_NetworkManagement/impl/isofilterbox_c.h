@@ -37,7 +37,7 @@ struct IsoFilter_s
 {
   // dlcForce == -1: don't check dlc. value of 0..8: force to be exactly this dlc!
   IsoFilter_s (CanCustomer_c& arc_canCustomer, const IsoAgLib::iMaskFilter_c& arc_maskFilter, const IsoName_c* apc_isoNameDa = NULL, const IsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1 );
-  ~IsoFilter_s();
+  virtual ~IsoFilter_s();
 
   uint32_t         getMask()      const { return mc_maskFilter.getMask(); }
   uint32_t         getFilter()    const { return mc_maskFilter.getFilter(); }

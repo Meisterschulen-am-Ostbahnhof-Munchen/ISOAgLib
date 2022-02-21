@@ -64,7 +64,7 @@ public:
 
 
 
-  ~vtObjectAlarmMask_c() override;
+  virtual ~vtObjectAlarmMask_c() override;
 
   uint32_t fitTerminal() const override;
 

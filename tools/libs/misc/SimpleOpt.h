@@ -357,7 +357,7 @@ public:
 
 #ifndef SO_MAX_ARGS
     /*! @brief Deallocate any allocated memory. */
-    ~CSimpleOptTempl() { if (m_rgShuffleBuf) free(m_rgShuffleBuf); }
+    virtual ~CSimpleOptTempl() { if (m_rgShuffleBuf) free(m_rgShuffleBuf); }
 #endif
 
     /*! @brief Initialize the class in preparation for calling Next.

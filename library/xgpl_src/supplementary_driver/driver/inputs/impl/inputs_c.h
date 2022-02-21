@@ -35,7 +35,7 @@ public:
 private:
   // only for singleton
   Inputs_c() {}
-  ~Inputs_c() {}
+  virtual ~Inputs_c() {}
 
 private:
   friend Inputs_c &getInputsInstance();

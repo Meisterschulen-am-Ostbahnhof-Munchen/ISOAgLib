@@ -56,7 +56,7 @@ private:
       mui32_pgn( pgn )
     {}
 
-    ~TractorCommonRx_c() {}
+     virtual ~TractorCommonRx_c() {}
 
     void init();
     void close();

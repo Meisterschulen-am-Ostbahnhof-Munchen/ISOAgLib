@@ -42,7 +42,7 @@ public:
 			uint16_t height =100,
 			LineDirection lineDirection = sink);
 
-  ~iVtObjectLine_c() override;
+  virtual ~iVtObjectLine_c() override;
 
   void setLineAttributes(iVtObjectLineAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setWidth (uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;

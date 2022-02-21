@@ -78,7 +78,7 @@ class ExclusiveAccess_c
             assert(NULL != m_exclusiveAccess);
         }
 
-        ~ExclusiveAccess_c()
+         virtual ~ExclusiveAccess_c()
         {
             CloseHandle(m_exclusiveAccess);
         }
@@ -148,7 +148,7 @@ public:
     ( void )i_retV; assert( i_retV == 0 );
   }
   
-  ~ExclusiveAccess_c()
+  virtual ~ExclusiveAccess_c()
   {
     pthread_mutex_destroy( &m_exclusiveAccess ); }
   

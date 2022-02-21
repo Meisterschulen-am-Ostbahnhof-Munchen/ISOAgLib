@@ -64,7 +64,7 @@ public:
 		IsoAgLib::Enabled enabled);
 
 
-  ~vtObjectInputBoolean_c();
+  virtual ~vtObjectInputBoolean_c();
 
 
   uint32_t fitTerminal() const;

@@ -49,7 +49,7 @@ public:
 
 
   vtObjectInputString_c() = delete;
-  ~vtObjectInputString_c() override;
+  virtual ~vtObjectInputString_c() override;
 
   explicit vtObjectInputString_c(
 		multiton ai_multitonInst,

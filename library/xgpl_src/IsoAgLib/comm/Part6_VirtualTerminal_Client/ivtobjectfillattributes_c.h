@@ -48,7 +48,7 @@ public:
     		iVtObjectPictureGraphic_c *fillPatternObject = nullptr);
 
 
-   ~iVtObjectFillAttributes_c() override;
+   virtual ~iVtObjectFillAttributes_c() override;
   static ObjectType objectType();
   void setFillType(FillType newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setFillColour(Colour newFillColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;

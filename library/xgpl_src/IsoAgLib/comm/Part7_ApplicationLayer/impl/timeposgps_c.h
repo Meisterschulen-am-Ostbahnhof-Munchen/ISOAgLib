@@ -550,7 +550,7 @@ private:
 
     MultiSendEventHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
-    ~MultiSendEventHandlerProxy_c() {}
+     virtual ~MultiSendEventHandlerProxy_c() {}
 
   private:
     void reactOnStateChange(const SendStream_c& sendStream)

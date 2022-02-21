@@ -46,7 +46,7 @@ public:
 
 
   iVtObjectStringVariable_c() = delete;
-  ~iVtObjectStringVariable_c() override;
+  virtual ~iVtObjectStringVariable_c() override;
 
   void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef USE_VT_UNICODE_SUPPORT

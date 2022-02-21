@@ -50,7 +50,7 @@ private:
       /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
       void close( void );
 
-      ~CanIo_c() {}
+       virtual ~CanIo_c() {}
 
       /** provide BUS number */
       uint8_t getBusNumber( void ) const {

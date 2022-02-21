@@ -85,7 +85,7 @@ namespace __IsoAgLib
     {}
 
     /** destructor */
-    ~BaseCommon_c() {}
+     virtual ~BaseCommon_c() {}
 
     /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
     void close();

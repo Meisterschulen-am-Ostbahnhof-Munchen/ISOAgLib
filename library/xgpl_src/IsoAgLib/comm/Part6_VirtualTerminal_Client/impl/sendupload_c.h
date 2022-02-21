@@ -57,7 +57,7 @@ public:
 
   SendUpload_c (const SendUpload_c& r_source);
 
-  ~SendUpload_c();
+  virtual ~SendUpload_c();
 
   const SendUpload_c& operator= (const SendUpload_c& r_source);
 

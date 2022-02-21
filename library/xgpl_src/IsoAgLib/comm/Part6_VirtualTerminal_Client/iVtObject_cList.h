@@ -18,7 +18,7 @@ const long DEFAULT_LIST_CAPACITY = 200;
 class iVtObject_cList {
 public:
     explicit iVtObject_cList(long size = DEFAULT_LIST_CAPACITY);
-    ~iVtObject_cList();
+     virtual ~iVtObject_cList();
     long Count() const;
     void AppendWs(iVtObjectWorkingSet_c* ) const;
     void Append(iVtObject_c* );

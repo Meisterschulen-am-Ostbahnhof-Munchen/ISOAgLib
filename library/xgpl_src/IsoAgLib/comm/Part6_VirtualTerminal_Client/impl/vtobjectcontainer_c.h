@@ -63,7 +63,7 @@ public:
 
 
 
-  ~vtObjectContainer_c() override;
+  virtual ~vtObjectContainer_c() override;
 
 
   void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);

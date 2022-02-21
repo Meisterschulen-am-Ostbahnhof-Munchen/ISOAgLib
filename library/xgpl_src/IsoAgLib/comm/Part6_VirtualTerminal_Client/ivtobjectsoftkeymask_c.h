@@ -39,7 +39,7 @@ public:
 			Colour backgroundColour = CYAN);
 
 
-  ~iVtObjectSoftKeyMask_c() override;
+  virtual ~iVtObjectSoftKeyMask_c() override;
 
 
   void setBackgroundColour(Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;

@@ -129,7 +129,7 @@ public:
     TransferErrorFastpacketSequenceError = 119
   };
 
-  ~MultiReceive_c() {}
+  virtual ~MultiReceive_c() {}
 
   virtual void processMsg( const CanPkg_c& arc_data );
 

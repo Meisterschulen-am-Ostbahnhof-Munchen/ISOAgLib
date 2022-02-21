@@ -33,7 +33,7 @@ public:
   ProcessPkg_c( IsoAgLib::ProcData::CommandType_t, uint16_t element, uint16_t ddi, int32_t value );
   ProcessPkg_c( uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t, uint8_t );
 
-  ~ProcessPkg_c() {}
+  virtual ~ProcessPkg_c() {}
 
 public:
   int32_t mi32_pdValue;

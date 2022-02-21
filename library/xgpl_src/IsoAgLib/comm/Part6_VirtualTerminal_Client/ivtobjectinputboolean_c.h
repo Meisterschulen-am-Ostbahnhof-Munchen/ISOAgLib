@@ -38,7 +38,7 @@ private:
 
 public:
 
-  ~iVtObjectInputBoolean_c() override;
+  virtual ~iVtObjectInputBoolean_c() override;
 
   iVtObjectInputBoolean_c(
 			iVtClientObjectPool_c* pool,

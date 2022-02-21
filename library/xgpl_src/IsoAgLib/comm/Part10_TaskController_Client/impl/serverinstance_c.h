@@ -37,7 +37,7 @@ namespace __IsoAgLib {
   {
     public:
       ServerInstance_c( const IsoItem_c& it, IsoAgLib::ProcData::ServerType_t type );
-      ~ServerInstance_c();
+      virtual ~ServerInstance_c();
 
       virtual void processMsg( const ProcessPkg_c& pkg );
       void processStatus( uint8_t status );

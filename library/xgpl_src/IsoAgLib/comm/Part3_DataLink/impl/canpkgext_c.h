@@ -43,7 +43,7 @@ private:
 
 public:
   AddressResolveResults_c(Ident_c& arc_ident, uint8_t aui8_position);
-  ~AddressResolveResults_c();
+  virtual ~AddressResolveResults_c();
 
   uint8_t getAddress() const {return mrc_ident.ident(mui8_position);}
   void setAddress(uint8_t aui8_newAddress) { mrc_ident.setByte(aui8_newAddress,mui8_position); }

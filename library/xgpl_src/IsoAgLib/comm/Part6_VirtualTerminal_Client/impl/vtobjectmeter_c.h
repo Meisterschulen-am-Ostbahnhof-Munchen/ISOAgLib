@@ -54,7 +54,7 @@ public:
 
   vtObjectMeter_c() = delete;
 
-  ~vtObjectMeter_c() override;
+  virtual ~vtObjectMeter_c() override;
 
 
   vtObjectMeter_c(

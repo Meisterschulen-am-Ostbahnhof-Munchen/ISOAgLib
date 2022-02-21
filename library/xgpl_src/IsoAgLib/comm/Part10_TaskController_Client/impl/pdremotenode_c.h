@@ -30,7 +30,7 @@ namespace __IsoAgLib {
   {
   public:
     PdRemoteNode_c( const IsoItem_c& it, bool isServer );
-    ~PdRemoteNode_c();
+    virtual ~PdRemoteNode_c();
 
     bool isServer() const { return m_isServer; }
     virtual void timeEvent() {} // only due to avoiding muiltiple inheritance!

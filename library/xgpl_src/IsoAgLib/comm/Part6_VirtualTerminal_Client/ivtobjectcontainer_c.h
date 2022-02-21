@@ -33,7 +33,7 @@ private:
     iVtObjectContainer_c() = delete;
 
 public:
-  ~iVtObjectContainer_c() override;
+  virtual ~iVtObjectContainer_c() override;
 
   explicit iVtObjectContainer_c(
 	iVtClientObjectPool_c* pool,

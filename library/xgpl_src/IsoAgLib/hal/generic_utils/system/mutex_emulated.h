@@ -40,7 +40,7 @@ public:
                         mi_exclusiveAccess = 0; //unlocked
                       }
 
-  ~ExclusiveAccess_c() {// destroy the Mutex
+  virtual ~ExclusiveAccess_c() {// destroy the Mutex
                             }
 
   int  waitAcquireAccess() {

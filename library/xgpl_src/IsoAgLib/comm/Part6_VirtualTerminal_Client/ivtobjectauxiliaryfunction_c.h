@@ -30,7 +30,7 @@ namespace IsoAgLib {
 class iVtObjectAuxiliaryFunction_c : public __IsoAgLib::vtObjectAuxiliaryFunction_c
 {
 public:
-  ~iVtObjectAuxiliaryFunction_c() override;
+  virtual ~iVtObjectAuxiliaryFunction_c() override;
 
   static ObjectType objectType();
 

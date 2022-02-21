@@ -41,7 +41,7 @@ public:
 				uint8_t value = 0,
 				iVtObjectInputListOptions options = iVtObjectInputListOptions(enabled));
 
-  ~iVtObjectInputList_c() override;
+  virtual ~iVtObjectInputList_c() override;
   static ObjectType objectType();
   iVtObject_c* getListItem(uint8_t xth) override;
   uint8_t getNumberOfListItems() override;

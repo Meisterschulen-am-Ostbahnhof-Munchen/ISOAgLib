@@ -50,7 +50,7 @@ public:
 			uint16_t targetValue = 50);
 
   iVtObjectLinearBarGraph_c() = delete;
-  ~iVtObjectLinearBarGraph_c() override;
+  virtual ~iVtObjectLinearBarGraph_c() override;
 
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) override;
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;

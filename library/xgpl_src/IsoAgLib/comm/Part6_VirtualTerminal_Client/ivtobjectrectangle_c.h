@@ -33,7 +33,7 @@ public:
   static ObjectType objectType();
 
   iVtObjectRectangle_c() = delete;
-  ~iVtObjectRectangle_c() override;
+  virtual ~iVtObjectRectangle_c() override;
 
   explicit iVtObjectRectangle_c(
 			iVtClientObjectPool_c* pool,

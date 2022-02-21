@@ -29,7 +29,7 @@ class iVtObjectString_c : public __IsoAgLib::vtObject_c
 {
 public:
   explicit iVtObjectString_c(multiton ai_multitonInst);
-  ~iVtObjectString_c() override;
+  virtual ~iVtObjectString_c() override;
 
   virtual const char* getString() = 0;
 

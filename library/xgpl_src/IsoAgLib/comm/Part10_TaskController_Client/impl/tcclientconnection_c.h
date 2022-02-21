@@ -49,7 +49,7 @@ namespace __IsoAgLib {
           typedef TcClientConnection_c Owner_t; \
  \
           MultiSendEventHandlerProxy_c( Owner_t &owner ) : m_owner( owner ) {} \
-          ~MultiSendEventHandlerProxy_c() {} \
+		  virtual ~MultiSendEventHandlerProxy_c() {} \
  \
         private: \
           void reactOnStateChange( const SendStream_c& sendStream ) { \
@@ -66,7 +66,7 @@ namespace __IsoAgLib {
           typedef TcClientConnection_c Owner_t; \
  \
           MultiSendStreamerProxy_c( Owner_t &owner ) : m_owner( owner ) {} \
-          ~MultiSendStreamerProxy_c() {} \
+		  virtual ~MultiSendStreamerProxy_c() {} \
  \
         private: \
           virtual uint8_t getFirstByte() { return m_owner.getFirstByte(); } \

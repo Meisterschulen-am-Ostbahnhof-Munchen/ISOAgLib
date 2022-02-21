@@ -40,7 +40,7 @@ namespace __IsoAgLib {
   {
   public:
     RemoteValue_c();
-    ~RemoteValue_c() {}
+    virtual ~RemoteValue_c() {}
 
     void init( MeasurementHandler_c* );
 

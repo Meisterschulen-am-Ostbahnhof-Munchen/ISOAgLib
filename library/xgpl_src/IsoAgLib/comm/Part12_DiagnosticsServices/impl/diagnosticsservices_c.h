@@ -64,7 +64,7 @@ public:
   static const uint32_t spnProprietary = 0x7E000; // range starts here!
 
   DiagnosticsServices_c(IdentItem_c&);
-  ~DiagnosticsServices_c();
+  virtual ~DiagnosticsServices_c();
 
   /**
     Registering of the "iServiceToolVerifier_c"
@@ -127,7 +127,7 @@ private: // typedef
 
     IsoRequestPgnHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
-    ~IsoRequestPgnHandlerProxy_c() {}
+    virtual ~IsoRequestPgnHandlerProxy_c() {}
 
   private:
     bool processMsgRequestPGN(
@@ -158,7 +158,7 @@ private: // typedef
 
     MultiSendEventHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
-    ~MultiSendEventHandlerProxy_c() {}
+    virtual ~MultiSendEventHandlerProxy_c() {}
 
   private:
     void reactOnStateChange(const SendStream_c& sendStream)

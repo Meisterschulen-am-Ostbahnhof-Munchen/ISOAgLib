@@ -32,7 +32,7 @@ class iVtObjectAuxiliaryFunction2_c : public __IsoAgLib::vtObjectAuxiliaryFuncti
 public:
   static ObjectType objectType();
 
-  ~iVtObjectAuxiliaryFunction2_c() override;
+  virtual ~iVtObjectAuxiliaryFunction2_c() override;
 
 
 

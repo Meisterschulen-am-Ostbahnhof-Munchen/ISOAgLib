@@ -47,7 +47,7 @@ public:
   DigitalI_c(uint8_t ab_channel = 0xFF, IsoAgLib::iInput_c::onoff_t ren_onoff = IsoAgLib::iInput_c::OnHigh,
               bool ab_static = false, IsoAgLib::iInputEventHandler* apc_handler = NULL );
 
-  ~DigitalI_c() {}
+  virtual ~DigitalI_c() {}
 
   /**
     internal called constructor for a new digital input channel which performs configuration of hardware

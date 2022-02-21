@@ -57,7 +57,7 @@ public:
 			uint8_t fontStyle);
 
 
-  ~vtObjectFontAttributes_c() override;
+  virtual ~vtObjectFontAttributes_c() override;
   uint32_t fitTerminal() const override;
   uint16_t getScaledWidthHeight();
 

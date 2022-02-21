@@ -38,7 +38,7 @@ public:
   static const uint16_t scui16_sizeDTCList = (CONFIG_MAX_ACTIVE_DTCS) + (CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS);
 
   DtcContainer_c() {}
-  ~DtcContainer_c() {}
+  virtual ~DtcContainer_c() {}
 
   /**
     Get index of the DTC with key (SPN,FMI)

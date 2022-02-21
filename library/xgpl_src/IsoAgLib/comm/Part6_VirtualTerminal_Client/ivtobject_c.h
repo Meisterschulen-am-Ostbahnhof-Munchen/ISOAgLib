@@ -165,7 +165,7 @@ public:
   // Constructor
   iVtObject_c();
 
-  ~iVtObject_c() override = 0; //pure virtual
+  virtual ~iVtObject_c() override = 0; //pure virtual
 
   //  Operation: getID
   virtual ObjectID getID() const = 0; //pure virtual

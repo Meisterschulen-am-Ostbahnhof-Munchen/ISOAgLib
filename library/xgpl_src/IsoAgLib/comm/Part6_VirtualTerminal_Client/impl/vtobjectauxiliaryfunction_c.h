@@ -50,7 +50,7 @@ public:
   vtObjectAuxiliaryFunction_c(iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM , multiton ai_multitonInst);
 
 
-  ~vtObjectAuxiliaryFunction_c() override;
+  virtual ~vtObjectAuxiliaryFunction_c() override;
 
   uint32_t fitTerminal() const;
 

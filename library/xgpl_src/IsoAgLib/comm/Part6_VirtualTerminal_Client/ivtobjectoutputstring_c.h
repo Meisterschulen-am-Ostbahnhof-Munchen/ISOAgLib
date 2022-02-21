@@ -32,7 +32,7 @@ namespace IsoAgLib {
 class iVtObjectOutputString_c : public __IsoAgLib::vtObjectOutputString_c
 {
 public:
-  ~iVtObjectOutputString_c() override;
+  virtual ~iVtObjectOutputString_c() override;
   iVtObjectOutputString_c() = delete;
 
   static ObjectType objectType();

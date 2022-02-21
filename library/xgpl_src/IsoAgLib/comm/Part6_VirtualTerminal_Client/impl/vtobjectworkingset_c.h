@@ -69,7 +69,7 @@ public:
 
   vtObjectWorkingSet_c() = delete;
 
-  ~vtObjectWorkingSet_c() override;
+  virtual ~vtObjectWorkingSet_c() override;
 
   uint32_t fitTerminal() const override;
 

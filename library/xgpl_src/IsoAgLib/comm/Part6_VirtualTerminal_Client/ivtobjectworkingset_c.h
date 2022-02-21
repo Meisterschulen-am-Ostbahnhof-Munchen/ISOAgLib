@@ -41,7 +41,7 @@ public:
 		);
 
   iVtObjectWorkingSet_c() = delete;
-  ~iVtObjectWorkingSet_c() override;
+  virtual ~iVtObjectWorkingSet_c() override;
 
 
   void updateSelectable( uint8_t newSelectable ) override;

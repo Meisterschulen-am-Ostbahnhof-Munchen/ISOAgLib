@@ -40,7 +40,7 @@ namespace __IsoAgLib
   public:
     Setpoint_c();
     Setpoint_c( SetpointHandler_c *, bool settable );
-    ~Setpoint_c() {}
+    virtual ~Setpoint_c() {}
 
     void init( SetpointHandler_c *, bool settable );
 

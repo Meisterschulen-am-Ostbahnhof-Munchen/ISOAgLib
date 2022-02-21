@@ -46,7 +46,7 @@ public:
 		          , AcousticSignal acousticSignal = nonesilent);
 
 
-  ~iVtObjectAlarmMask_c() override;
+  virtual ~iVtObjectAlarmMask_c() override;
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask

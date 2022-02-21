@@ -32,7 +32,7 @@ class vtObject_c : public virtual IsoAgLib::iVtObject_c
 {
 public:
   explicit vtObject_c(multiton ai_multitonInst);
-  ~vtObject_c() override = 0; // pure Virtual !
+  virtual ~vtObject_c() override = 0; // pure Virtual !
 
   virtual uint16_t stream(uint8_t* destMemory,
                          uint16_t maxBytes,

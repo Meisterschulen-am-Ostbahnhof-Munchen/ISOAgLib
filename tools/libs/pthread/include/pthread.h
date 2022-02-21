@@ -818,7 +818,7 @@ struct ptw32_cleanup_t
             {
             }
 
-          ~PThreadCleanup()
+          virtual ~PThreadCleanup()
             {
               if ( executeIt && ((void *) cleanUpRout != (void *) 0) )
                 {

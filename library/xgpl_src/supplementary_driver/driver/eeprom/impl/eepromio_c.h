@@ -40,7 +40,7 @@ class IsoName_c;
 class EepromIo_c 
 {
 public:
-  ~EepromIo_c() {}
+  virtual ~EepromIo_c() {}
 
   void init();
   void close() {}

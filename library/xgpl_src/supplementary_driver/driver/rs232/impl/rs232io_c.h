@@ -58,7 +58,7 @@ public:
         _8_O_1 = 0x41, _8_O_2 = 0x42, _8_N_1 = 0x51, _8_N_2 = 0x52};
 
   /** destructor has nothing to destruct */
-  ~RS232IO_c() {}
+  virtual ~RS232IO_c() {}
 
   // ++++++++++++++++++++++++++++++++++++
   // ++++ RS232 managing operations ++++

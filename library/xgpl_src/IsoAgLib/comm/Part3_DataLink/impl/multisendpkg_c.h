@@ -41,7 +41,7 @@ private:
   // private typedef alias names
 public:
   MultiSendPkg_c() : CanPkgExt_c() {}
-  ~MultiSendPkg_c() {}
+  virtual ~MultiSendPkg_c() {}
 
   /* ************************** */
   /* ***retreiving of values*** */

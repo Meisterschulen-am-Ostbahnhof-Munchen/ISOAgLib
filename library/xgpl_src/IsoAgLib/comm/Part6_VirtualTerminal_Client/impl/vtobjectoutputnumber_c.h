@@ -52,7 +52,7 @@ public:
 
   vtObjectOutputNumber_c(iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , multiton ai_multitonInst);
 
-  ~vtObjectOutputNumber_c() override;
+  virtual ~vtObjectOutputNumber_c() override;
 
 
   uint32_t fitTerminal() const;

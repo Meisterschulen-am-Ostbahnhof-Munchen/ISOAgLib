@@ -33,7 +33,7 @@ private:
 public:
   static ObjectType objectType();
 
-  ~iVtObjectDataMask_c() override;
+  virtual ~iVtObjectDataMask_c() override;
 
   explicit iVtObjectDataMask_c(
 		  iVtClientObjectPool_c* pool

@@ -392,7 +392,7 @@ struct SimpleGlobBase
         m_uiCurr = (size_t)-1;
     }
 
-    ~SimpleGlobBase() {
+    virtual ~SimpleGlobBase() {
         globfree(&m_glob);
     }
 
@@ -534,7 +534,7 @@ public:
     CSimpleGlobTempl(unsigned int a_uiFlags = 0, int a_nReservedSlots = 0);
 
     /*! @brief Deallocate all memory buffers. */
-    ~CSimpleGlobTempl();
+     virtual ~CSimpleGlobTempl();
 
     /*! @brief Initialize (or re-initialize) the class in preparation for
         adding new filespecs.

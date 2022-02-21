@@ -48,7 +48,7 @@ public:
 
   vtObjectAuxiliaryInput_c(iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM , multiton ai_multitonInst);
 
-  ~vtObjectAuxiliaryInput_c();
+  virtual ~vtObjectAuxiliaryInput_c();
 
   uint32_t fitTerminal() const;
 

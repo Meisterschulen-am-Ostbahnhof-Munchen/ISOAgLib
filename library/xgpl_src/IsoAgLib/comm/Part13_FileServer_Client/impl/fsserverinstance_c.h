@@ -48,7 +48,7 @@ class FsServerInstance_c
     // c'tor
     FsServerInstance_c(const IsoItem_c &pref_newItem, FsManager_c &ref_fsManager);
     // d'tor
-    ~FsServerInstance_c();
+    virtual ~FsServerInstance_c();
 
 
     /** States that are set by the fileserver itself with status messages. */

@@ -49,7 +49,7 @@ public:
   IsoAgLib::ObjectID getID() const;
 
   vtObjectColourMap_c(iVtObjectColourMap_s* vtObjectColourMapSROM , multiton ai_multitonInst);
-  ~vtObjectColourMap_c();
+  virtual ~vtObjectColourMap_c();
 
   uint32_t fitTerminal() const;
 

@@ -71,7 +71,7 @@ public:
   vtObjectArchedBarGraph_c(iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM , multiton ai_multitonInst);
 
 
-  ~vtObjectArchedBarGraph_c() override;
+  virtual ~vtObjectArchedBarGraph_c() override;
 
 
   uint32_t fitTerminal() const;

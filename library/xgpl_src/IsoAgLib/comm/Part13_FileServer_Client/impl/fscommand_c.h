@@ -43,7 +43,7 @@ class FsCommand_c : CanCustomer_c
 {
   public:
     FsCommand_c(FsClientServerCommunication_c &FSCSComm, FsServerInstance_c &fileServerInst);
-    ~FsCommand_c();
+    virtual ~FsCommand_c();
 
     CLASS_SCHEDULER_TASK_PROXY(FsCommand_c)
 
@@ -51,7 +51,7 @@ class FsCommand_c : CanCustomer_c
   public:
     typedef FsCommand_c Owner_t;
 
-    MultiSendEventHandlerProxy_c(Owner_t &owner) : mrt_owner(owner) {}    ~MultiSendEventHandlerProxy_c() {}
+    MultiSendEventHandlerProxy_c(Owner_t &owner) : mrt_owner(owner) {}     virtual ~MultiSendEventHandlerProxy_c() {}
 
   private:
     void reactOnStateChange(const SendStream_c& sendStream)

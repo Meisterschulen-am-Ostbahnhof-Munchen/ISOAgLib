@@ -52,7 +52,7 @@ public:
   vtObjectAuxiliaryControlDesignatorObjectPointer_c(iVtObjectAuxiliaryControlDesignatorObjectPointer_s* vtObjectAuxiliaryControlDesignatorObjectPointerSROM , multiton ai_multitonInst);
 
 
-  ~vtObjectAuxiliaryControlDesignatorObjectPointer_c();
+  virtual ~vtObjectAuxiliaryControlDesignatorObjectPointer_c();
 
   uint32_t fitTerminal() const;
 

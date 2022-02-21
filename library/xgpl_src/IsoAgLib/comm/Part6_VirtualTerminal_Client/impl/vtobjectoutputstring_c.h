@@ -72,7 +72,7 @@ public:
 
 
 
-  ~vtObjectOutputString_c() override;
+  virtual ~vtObjectOutputString_c() override;
   uint32_t fitTerminal() const override;
   void setOriginSKM(bool b_SKM) override;
 #ifdef CONFIG_USE_VTOBJECT_button

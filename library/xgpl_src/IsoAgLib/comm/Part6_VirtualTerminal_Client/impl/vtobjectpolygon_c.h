@@ -51,7 +51,7 @@ public:
   IsoAgLib::ObjectID getID() const override;
 
 
-  ~vtObjectPolygon_c() override;
+  virtual ~vtObjectPolygon_c() override;
   vtObjectPolygon_c() = delete;
 
 

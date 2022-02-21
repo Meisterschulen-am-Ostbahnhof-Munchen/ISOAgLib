@@ -36,7 +36,7 @@ public:
 
   Ident_c( uint32_t at_ident, identType_t ren_identType );
   Ident_c(const Ident_c& acrc_src);
-  ~Ident_c();
+  virtual ~Ident_c();
 
   /** compare this ident setting with another
     (use memory operation for max speed)

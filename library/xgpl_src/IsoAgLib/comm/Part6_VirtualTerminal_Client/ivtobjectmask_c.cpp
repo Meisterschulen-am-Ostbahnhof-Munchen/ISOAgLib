@@ -11,6 +11,7 @@
 namespace IsoAgLib {
 
 
+    iVtObjectMask_c::~iVtObjectMask_c() = default;
 } // IsoAgLib
 
 

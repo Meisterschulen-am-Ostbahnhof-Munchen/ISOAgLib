@@ -42,7 +42,7 @@ public:
 
   //  Operation: ~Chunk_c
   //! Destructor: Clears the Vector.
-  ~Chunk_c() { marr_data.clear(); }
+  virtual ~Chunk_c() { marr_data.clear(); }
 
 
   // Copy constructor

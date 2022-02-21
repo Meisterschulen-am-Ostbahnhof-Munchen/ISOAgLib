@@ -49,7 +49,7 @@ private:
     * NEVER define instance of Outputs_c within application
     */
   iOutputs_c();
-  ~iOutputs_c();
+  virtual ~iOutputs_c();
 };
 
 /** C-style function, to get access to the unique iOutputs_c singleton instance */

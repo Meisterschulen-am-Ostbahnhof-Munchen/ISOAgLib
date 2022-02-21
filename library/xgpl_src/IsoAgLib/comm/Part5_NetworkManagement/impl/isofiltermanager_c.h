@@ -43,7 +43,7 @@ public:
   typedef std::vector<IsoFilterBox_c> IsoFilterBox_vec;
   typedef std::vector<IsoFilterBox_c>::iterator IsoFilterBox_it;
 
-  ~IsoFilterManager_c () {}
+  virtual ~IsoFilterManager_c () {}
 
   void init();
   void close();

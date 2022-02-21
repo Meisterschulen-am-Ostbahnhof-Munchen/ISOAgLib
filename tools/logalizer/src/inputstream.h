@@ -24,7 +24,7 @@ class InputStream_c {
 // RAII Programming Idiom for file being the resource
 public:
   InputStream_c(std::string str_filename);
-  ~InputStream_c();
+  virtual ~InputStream_c();
   std::istream &raw();
   bool isOpen();
 

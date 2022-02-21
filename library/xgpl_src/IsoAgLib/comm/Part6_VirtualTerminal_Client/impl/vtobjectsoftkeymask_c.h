@@ -74,7 +74,7 @@ public:
 #endif // ENABLE_SKM_HANDLER
 
 
-  ~vtObjectSoftKeyMask_c() override;
+  virtual ~vtObjectSoftKeyMask_c() override;
 
 
   uint32_t fitTerminal() const override;

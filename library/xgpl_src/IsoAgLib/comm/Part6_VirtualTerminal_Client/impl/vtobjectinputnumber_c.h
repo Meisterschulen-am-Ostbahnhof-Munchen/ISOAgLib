@@ -73,7 +73,7 @@ public:
 			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte);
 
 
-  ~vtObjectInputNumber_c() override;
+  virtual ~vtObjectInputNumber_c() override;
 
   uint32_t fitTerminal() const override;
 

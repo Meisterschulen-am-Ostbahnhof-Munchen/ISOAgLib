@@ -52,7 +52,7 @@ public:
 
   vtObjectRectangle_c() = delete;
 
-  ~vtObjectRectangle_c() override;
+  virtual ~vtObjectRectangle_c() override;
 
   vtObjectRectangle_c(
 		    multiton ai_multitonInst,

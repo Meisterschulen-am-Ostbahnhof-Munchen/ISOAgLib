@@ -104,7 +104,7 @@ private:
 
     explicit CanCustomerProxy_c(Owner_t &art_owner);
 
-    ~CanCustomerProxy_c() override;
+     virtual ~CanCustomerProxy_c() override;
 
   private:
     void processMsg( const CanPkg_c& arc_data ) override;
@@ -140,7 +140,7 @@ private:
 
     explicit ControlFunctionStateHandlerProxy_c(Owner_t &art_owner);
 
-    ~ControlFunctionStateHandlerProxy_c() override;
+     virtual ~ControlFunctionStateHandlerProxy_c() override;
 
   private:
     void reactOnIsoItemModification(

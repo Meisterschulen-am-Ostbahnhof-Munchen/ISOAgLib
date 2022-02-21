@@ -46,7 +46,7 @@ namespace yasper
 struct NullPointerException : public std::exception
 {
     NullPointerException() throw() {}
-    ~NullPointerException() throw() {}
+    virtual ~NullPointerException() throw() {}
 	
     const char* what() const throw()
     {
@@ -125,7 +125,7 @@ public:
 	/* 
 		Destructor 
 	*/ 
-	~ptr()
+	virtual ~ptr()
 	{
 		release();
 	}

@@ -53,7 +53,7 @@ public:
 
   vtObjectStringVariable_c() = delete;
 
-  ~vtObjectStringVariable_c() override;
+  virtual ~vtObjectStringVariable_c() override;
 
   vtObjectStringVariable_c(
 		  multiton ai_multitonInst,

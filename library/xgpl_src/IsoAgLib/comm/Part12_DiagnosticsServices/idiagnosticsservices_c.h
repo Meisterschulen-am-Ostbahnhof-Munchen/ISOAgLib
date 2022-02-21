@@ -127,7 +127,7 @@ public:
 private:
   // this constructor is only needed to be compilable on some compilers.
   iDiagnosticsServices_c(__IsoAgLib::IdentItem_c &x) : DiagnosticsServices_c(x) {}
-  ~iDiagnosticsServices_c() {}
+  virtual ~iDiagnosticsServices_c() {}
 
 private:
   friend class iIdentItem_c;

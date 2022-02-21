@@ -36,7 +36,7 @@ namespace IsoAgLib
   {
   public:
     iGenericData_c() : vec_data() {}
-    ~iGenericData_c() {}
+     virtual ~iGenericData_c() {}
 
     // using implicit copy/assgn c'tors for now
 

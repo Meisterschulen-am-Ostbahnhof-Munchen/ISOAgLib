@@ -77,7 +77,7 @@ class FsClientServerCommunication_c
     /** constructor to init client-server communication without fileserver*/
     FsClientServerCommunication_c(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_fsClient, const IsoAgLib::iFsWhitelistList &v_fsWhitelist);
 
-    ~FsClientServerCommunication_c()
+    virtual ~FsClientServerCommunication_c()
     {
       delete pui8_currentDirectory;
       delete pc_commandHandler;

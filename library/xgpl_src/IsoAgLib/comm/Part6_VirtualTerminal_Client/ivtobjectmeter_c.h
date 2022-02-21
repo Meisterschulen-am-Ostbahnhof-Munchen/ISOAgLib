@@ -33,7 +33,7 @@ public:
   static ObjectType objectType() { return VT_OBJECT_TYPE_METER; }
 
 
-  ~iVtObjectMeter_c() override;
+  virtual ~iVtObjectMeter_c() override;
 
   iVtObjectMeter_c() = delete;
 

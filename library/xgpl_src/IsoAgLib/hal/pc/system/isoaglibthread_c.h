@@ -69,7 +69,7 @@ private:
 	, mpf_threadSetupHook (NULL)
     , mset_keys()
   {} // private c'tor
-  ~IsoAgLibThread_c() {} // private d'tor
+  virtual ~IsoAgLibThread_c() {} // private d'tor
 
   IsoAgLibThread_c (IsoAgLibThread_c const &); // copy c'tor hidden
   IsoAgLibThread_c& operator= (IsoAgLibThread_c const &); // assignm.op. hidden

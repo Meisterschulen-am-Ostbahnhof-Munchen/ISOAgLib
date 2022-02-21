@@ -34,7 +34,7 @@ private:
 public:
   static ObjectType objectType();
 
-  ~iVtObjectEllipse_c() override;
+  virtual ~iVtObjectEllipse_c() override;
 
   explicit iVtObjectEllipse_c(
 	iVtClientObjectPool_c* pool,

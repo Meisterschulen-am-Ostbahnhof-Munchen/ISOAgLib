@@ -32,7 +32,7 @@ public:
   static ObjectType objectType();
 
   iVtObjectLineAttributes_c() = delete;
-  ~iVtObjectLineAttributes_c() override;
+  virtual ~iVtObjectLineAttributes_c() override;
 
   explicit iVtObjectLineAttributes_c(
 		iVtClientObjectPool_c* pool,

@@ -65,7 +65,7 @@ public:
 
 
 
-  ~vtObjectEllipse_c() override;
+  virtual ~vtObjectEllipse_c() override;
 
 
   uint32_t fitTerminal() const;

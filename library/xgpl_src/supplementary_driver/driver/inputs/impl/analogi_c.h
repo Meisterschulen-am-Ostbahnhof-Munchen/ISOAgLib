@@ -48,7 +48,7 @@ public:
   AnalogI_c(uint8_t ab_channel = 0xFF, IsoAgLib::iInput_c::analogType_t ren_analogType = IsoAgLib::iInput_c::voltage, bool ab_useMean = false,
              bool ab_fastAdc = false);
 
-  ~AnalogI_c() {}
+  virtual ~AnalogI_c() {}
 
   /**
     internal called constructor which creates a new input channel,initialize the hardware and configures conversion calculation

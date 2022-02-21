@@ -59,7 +59,7 @@ public:
 
 public:
   DiagnosticFunctionalities_c( IdentItem_c& );
-  ~DiagnosticFunctionalities_c();
+  virtual ~DiagnosticFunctionalities_c();
 
   void init();
   void close();
@@ -92,7 +92,7 @@ private:
   class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
   public:
     MultiSendEventHandlerProxy_c() : m_isMultiSendRunning(false) {}
-    ~MultiSendEventHandlerProxy_c() {}
+    virtual ~MultiSendEventHandlerProxy_c() {}
     bool m_isMultiSendRunning;
   private:
     void reactOnStateChange(const SendStream_c& /*sendStream*/);

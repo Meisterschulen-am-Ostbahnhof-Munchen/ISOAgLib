@@ -51,7 +51,7 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  ~vtObjectInputList_c() override;
+  virtual ~vtObjectInputList_c() override;
   vtObjectInputList_c(
 		    multiton ai_multitonInst,
 		    IsoAgLib::ObjectID ID,

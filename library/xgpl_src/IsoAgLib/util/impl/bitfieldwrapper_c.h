@@ -210,7 +210,7 @@ class BitFieldWrapper_c
     }
 
     /** Destructor */
-    ~BitFieldWrapper_c()
+     virtual ~BitFieldWrapper_c()
 	{
 	}
     

@@ -52,7 +52,7 @@ public:
 			uint16_t targetValue = 50);
 
 
-  ~iVtObjectArchedBarGraph_c() override;
+  virtual ~iVtObjectArchedBarGraph_c() override;
   void setValue(uint16_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
   void setWidth(uint16_t newWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setHeight(uint16_t newHeight, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

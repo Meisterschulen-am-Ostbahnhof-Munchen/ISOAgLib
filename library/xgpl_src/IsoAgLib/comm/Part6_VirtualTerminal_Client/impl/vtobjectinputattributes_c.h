@@ -49,7 +49,7 @@ public:
 
   vtObjectInputAttributes_c() = delete;
 
-  ~vtObjectInputAttributes_c();
+  virtual ~vtObjectInputAttributes_c();
 
   uint32_t fitTerminal() const;
 

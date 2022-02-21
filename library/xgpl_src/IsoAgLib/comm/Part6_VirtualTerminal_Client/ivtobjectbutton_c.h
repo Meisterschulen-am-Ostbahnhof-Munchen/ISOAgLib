@@ -47,7 +47,7 @@ public:
   	    uint8_t options = 0
   		);
 
-  ~iVtObjectButton_c() override;
+  virtual ~iVtObjectButton_c() override;
 
   bool v4enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   bool v4disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

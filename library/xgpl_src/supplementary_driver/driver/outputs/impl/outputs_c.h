@@ -41,7 +41,7 @@ public:
 private:
   // for singleton only
   Outputs_c() {}
-  ~Outputs_c() {}
+  virtual ~Outputs_c() {}
 
 private:
   friend Outputs_c &getOutputsInstance();

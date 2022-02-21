@@ -40,7 +40,7 @@ public:
 
 private:
   // unimplemented, shouldn't be called by app.
-  ~iInputs_c();
+  virtual ~iInputs_c();
 
   /** allow getIinputsInstance() access to shielded base class */
   friend iInputs_c& getIinputsInstance();
