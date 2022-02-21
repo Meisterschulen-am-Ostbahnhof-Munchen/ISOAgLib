@@ -125,6 +125,13 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
     }
     MACRO_streamPolygonPoints(14);
 
+#ifdef CONFIG_POLYGON_DEBUG
+	#include "esp_log.h"
+    static const char * const TAG = "PolygonPoints";
+
+
+#endif
+
     MACRO_streamEventMacro(14U+vtObject_a->numberOfPoints * 4U);
     return curBytes;
 }

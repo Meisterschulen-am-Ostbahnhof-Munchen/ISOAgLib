@@ -1,7 +1,9 @@
 menu "### ISOAgLib Example Configuration ###"
 
 
-
+    config POLYGON_DEBUG
+         bool "POLYGON_DEBUG"
+        default n
     config SPECIAL_DEBUG
         bool "SPECIAL_DEBUG"
         default n
