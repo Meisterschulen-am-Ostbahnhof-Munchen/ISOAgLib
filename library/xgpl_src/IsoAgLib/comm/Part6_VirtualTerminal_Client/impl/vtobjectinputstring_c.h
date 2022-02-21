@@ -43,13 +43,21 @@ private:
 	std::unique_ptr<iVtObjectInputString_s> vtObject_a;
 
 
+	vtObjectInputString_c(iVtObjectInputString_s* vtObjectInputStringSROM , multiton ai_multitonInst);
+
 public:
+
+
+  vtObjectInputString_c() = delete;
+  ~vtObjectInputString_c();
+
+
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectInputString_c(iVtObjectInputString_s* vtObjectInputStringSROM , multiton ai_multitonInst);
+
   uint32_t fitTerminal() const;
   const char* getString();
   void setValueRef(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
@@ -66,7 +74,7 @@ public:
   void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newFontAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setInputAttributes(IsoAgLib::iVtObjectInputAttributes_c* newInputAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOptions(IsoAgLib::iVtObjectStringOptions newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setVariableReference(IsoAgLib::iVtObjectStringVariable_c* newVariableRef, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setJustification(IsoAgLib::Justification newJustification, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -81,7 +89,7 @@ public:
   IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
   IsoAgLib::iVtObjectInputAttributes_c* updateInputAttributes(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectStringOptions updateOptions(bool b_SendRequest=false);
   IsoAgLib::iVtObjectStringVariable_c* updateVariableReference(bool b_SendRequest=false);
   IsoAgLib::Justification updateJustification(bool b_SendRequest=false);
 

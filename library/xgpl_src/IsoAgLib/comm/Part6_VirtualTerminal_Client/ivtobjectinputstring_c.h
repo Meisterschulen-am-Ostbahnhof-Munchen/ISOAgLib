@@ -76,7 +76,7 @@ public:
     vtObjectInputString_c::setInputAttributes (newInputAttributes, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setOptions(iVtObjectStringOptions newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputString_c::setOptions (newOptions, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -116,7 +116,7 @@ public:
     return vtObjectInputString_c::updateInputAttributes(b_SendRequest);
   }
 
-  uint8_t updateOptions(bool b_SendRequest=false) {
+  iVtObjectStringOptions updateOptions(bool b_SendRequest=false) {
     return vtObjectInputString_c::updateOptions(b_SendRequest);
   }
 

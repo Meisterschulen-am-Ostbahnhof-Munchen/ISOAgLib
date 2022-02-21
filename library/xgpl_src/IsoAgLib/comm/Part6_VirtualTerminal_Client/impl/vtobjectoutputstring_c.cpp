@@ -53,7 +53,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
   uint16_t height;
   IsoAgLib::Colour backgroundColour;
   IsoAgLib::iVtObjectFontAttributes_c* fontAttributes;
-  uint8_t options;
+  IsoAgLib::iVtObjectStringOptions options;
   IsoAgLib::iVtObjectStringVariable_c* variableReference;
   IsoAgLib::Justification justification;
   explicit iVtObjectOutputString_s(
@@ -62,7 +62,7 @@ struct vtObjectOutputString_c::iVtObjectOutputString_s : iVtObjectString_s, iVtO
   	    uint16_t height,
 		IsoAgLib::Colour backgroundColour,
 		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
-  	    uint8_t options,
+		IsoAgLib::iVtObjectStringOptions options,
 		IsoAgLib::iVtObjectStringVariable_c* variableReference,
 		IsoAgLib::Justification justification,
   	    char* value /* size length+1 (0-termination intern!) */
@@ -159,7 +159,7 @@ vtObjectOutputString_c::vtObjectOutputString_c(
 		uint16_t height,
 		IsoAgLib::Colour backgroundColour,
 		IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
-		uint8_t options,
+		IsoAgLib::iVtObjectStringOptions options,
 		IsoAgLib::iVtObjectStringVariable_c *variableReference,
 		IsoAgLib::Justification justification,
 		char *value)
@@ -370,7 +370,7 @@ vtObjectOutputString_c::updateFontAttributes(bool b_SendRequest)
 	return vtObject_a->fontAttributes;
 }
 
-uint8_t
+IsoAgLib::iVtObjectStringOptions
 vtObjectOutputString_c::updateOptions(bool b_SendRequest)
 {
 	if (b_SendRequest)
@@ -454,7 +454,7 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     	setAttribute (FontAttributes, (newValue == nullptr) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
-    void vtObjectOutputString_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectOutputString_c::setOptions(IsoAgLib::iVtObjectStringOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->options = newValue;
     	setAttribute (Options, newValue, b_enableReplaceOfCmd);

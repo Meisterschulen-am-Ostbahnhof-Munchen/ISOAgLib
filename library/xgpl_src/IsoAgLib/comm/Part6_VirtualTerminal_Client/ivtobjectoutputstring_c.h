@@ -46,7 +46,7 @@ public:
   	    uint16_t height= 20,
   	    Colour backgroundColour = WHITE,
   	    iVtObjectFontAttributes_c* fontAttributes = nullptr,
-  	    uint8_t options = 0,
+		iVtObjectStringOptions options = iVtObjectStringOptions(soallOptionsOff),
   	    iVtObjectStringVariable_c* variableReference = nullptr,
   	    Justification justification = Justification(TopLeft),
   	    char* value = nullptr /* size length+1 (0-termination intern!) */
@@ -68,7 +68,7 @@ public:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setOptions(iVtObjectStringOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setJustification(Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -81,7 +81,7 @@ public:
   uint16_t updateHeight(bool b_SendRequest=false) override;
   Colour updateBackgroundColour(bool b_SendRequest=false) override;
   iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false) override;
-  uint8_t updateOptions(bool b_SendRequest=false) override;
+  iVtObjectStringOptions updateOptions(bool b_SendRequest=false) override;
   iVtObjectStringVariable_c* updateVariableReference(bool b_SendRequest=false) override;
   Justification updateJustification(bool b_SendRequest=false) override;
 #endif

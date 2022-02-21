@@ -144,6 +144,48 @@ namespace IsoAgLib {
 		clockwise     = true,
 	};
 
+	/**
+	 * Bit 1 = Auto-Wrap. If TRUE, Auto-Wrapping
+	 * rules apply (see 4.6.16.4).
+	 */
+	enum AutoWrap : bool
+	{
+		noAutoWrap = false,
+	    autoWrap   = true,
+	};
+
+	/**
+	 * Bit 2 = Wrap on Hyphen. If TRUE, Auto-
+	 * Wrapping can occur between a hyphen
+	 * (2D 16 ) and the following character (see
+	 * 4.6.16.4). Wrap on Hyphen is a modifier to
+	 * the Auto-Wrap option and is applied only if
+	 * the Auto-Wrap option is TRUE and ignored if
+	 * the Auto-Wrap option is FALSE. a
+	 */
+
+	enum WrapOnHyphen : bool
+	{
+		noWrapOnHyphen = false,
+	    wrapOnHyphen   = true,
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	enum iVtObjectMeterOptions_e : uint8_t
 	{
@@ -167,13 +209,14 @@ namespace IsoAgLib {
 			Reserved            reserved07          : 1;
 		} bits ;
 		~iVtObjectMeterOptions();
+		iVtObjectMeterOptions();
 		explicit iVtObjectMeterOptions(
 				iVtObjectMeterOptions_e options         = allDrawMeter);
 		explicit iVtObjectMeterOptions(
-				DrawArc 			drawArc             = doDrawArc,
-				DrawBorder 	        drawBorder          = doDrawBorder,
-				DrawTicks           drawTicks           = doDrawTicks,
-				DeflectionDirection deflectionDirection = clockwise
+				DrawArc 			drawArc             = DrawArc::doDrawArc,
+				DrawBorder 	        drawBorder          = DrawBorder::doDrawBorder,
+				DrawTicks           drawTicks           = DrawTicks::doDrawTicks,
+				DeflectionDirection deflectionDirection = DeflectionDirection::clockwise
 				);
 	};
 
@@ -200,10 +243,11 @@ namespace IsoAgLib {
 			Reserved            reserved07        : 1;
 		} bits ;
 		~iVtObjectInputListOptions();
+		iVtObjectInputListOptions();
 		explicit iVtObjectInputListOptions(iVtObjectInputListOptions_e options = allOptionsOff);
 		explicit iVtObjectInputListOptions(
 				Enabled 		  enabled           = Enabled::enabled,
-				RealTimeDataInput realTimeDataInput = realTimeDataInputOff
+				RealTimeDataInput realTimeDataInput = RealTimeDataInput::realTimeDataInputOff
 				);
 	};
 
@@ -229,13 +273,45 @@ namespace IsoAgLib {
 			Reserved            reserved07          : 1;
 		} bits ;
 		~iVtObjectInputNumberOptions();
+		iVtObjectInputNumberOptions();
 		explicit iVtObjectInputNumberOptions(
 				iVtObjectInputNumberOptions_e options = ioallOptionsOff);
 		explicit iVtObjectInputNumberOptions(
-				Transparent 		transparent         = opaque,
-				DisplayLeadingZeros displayLeadingZeros = noDisplayLeadingZeros,
-				DisplayZeroAsBlank  displayZeroAsBlank  = noDisplayZeroAsBlank,
-				Truncate            truncate            = rounded
+				Transparent 		transparent         = Transparent::opaque,
+				DisplayLeadingZeros displayLeadingZeros = DisplayLeadingZeros::noDisplayLeadingZeros,
+				DisplayZeroAsBlank  displayZeroAsBlank  = DisplayZeroAsBlank::noDisplayZeroAsBlank,
+				Truncate            truncate            = Truncate::rounded
+				);
+	};
+
+
+	enum iVtObjectStringOptions_e : uint8_t
+	{
+		soallOptionsOff = 0b00000000,
+	};
+
+	union iVtObjectStringOptions{
+		iVtObjectStringOptions_e options;
+		struct __attribute__ ((packed))
+		{
+			Transparent   transparent         : 1;
+			AutoWrap      displayLeadingZeros : 1;
+			WrapOnHyphen  displayZeroAsBlank  : 1;
+			Reserved            reserved03          : 1;
+
+			Reserved            reserved04          : 1;
+			Reserved            reserved05          : 1;
+			Reserved            reserved06          : 1;
+			Reserved            reserved07          : 1;
+		} bits ;
+		~iVtObjectStringOptions();
+		iVtObjectStringOptions();
+		explicit iVtObjectStringOptions(
+				iVtObjectStringOptions_e options = soallOptionsOff);
+		explicit iVtObjectStringOptions(
+				Transparent   transparent         = Transparent::opaque,
+				AutoWrap      displayLeadingZeros = AutoWrap::noAutoWrap,
+				WrapOnHyphen  displayZeroAsBlank  = WrapOnHyphen::noWrapOnHyphen
 				);
 	};
 
@@ -263,11 +339,12 @@ namespace IsoAgLib {
 			Reserved            reserved07        : 1;
 		} bits ;
 		~iVtObjectInputNumberOptions2();
+		iVtObjectInputNumberOptions2();
 		explicit iVtObjectInputNumberOptions2(
 				iVtObjectInputNumberOptions2_e options = o2allOptionsOff);
 		explicit iVtObjectInputNumberOptions2(
 				Enabled 		  enabled           = Enabled::enabled,
-				RealTimeDataInput realTimeDataInput = realTimeDataInputOff
+				RealTimeDataInput realTimeDataInput = RealTimeDataInput::realTimeDataInputOff
 				);
 	};
 

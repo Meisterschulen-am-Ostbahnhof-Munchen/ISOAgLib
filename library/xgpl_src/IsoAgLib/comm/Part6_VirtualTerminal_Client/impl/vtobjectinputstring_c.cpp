@@ -53,7 +53,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 		IsoAgLib::Colour backgroundColour;
 		IsoAgLib::iVtObjectFontAttributes_c* fontAttributes;
 		IsoAgLib::iVtObjectInputAttributes_c* inputAttributes;
-		uint8_t options;
+		IsoAgLib::iVtObjectStringOptions options;
 		IsoAgLib::iVtObjectStringVariable_c* variableReference;
 		IsoAgLib::Justification justification;
 		uint8_t enabled;
@@ -64,7 +64,7 @@ struct vtObjectInputString_c::iVtObjectInputString_s: iVtObjectString_s, iVtObje
 				IsoAgLib::Colour backgroundColour,
 				IsoAgLib::iVtObjectFontAttributes_c* fontAttributes,
 				IsoAgLib::iVtObjectInputAttributes_c* inputAttributes,
-				uint8_t options,
+				IsoAgLib::iVtObjectStringOptions options,
 				IsoAgLib::iVtObjectStringVariable_c* variableReference,
 				IsoAgLib::Justification justification,
 				char *value,
@@ -330,7 +330,7 @@ vtObjectInputString_c::updateInputAttributes(bool b_SendRequest)
 	return vtObject_a->inputAttributes;
 }
 
-uint8_t
+IsoAgLib::iVtObjectStringOptions
 vtObjectInputString_c::updateOptions(bool b_SendRequest)
 {
 	if (b_SendRequest)
@@ -423,7 +423,7 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
     	setAttribute (InputAttributes, newInputAttributes->getID(), b_enableReplaceOfCmd);
     }
 
-    void vtObjectInputString_c::setOptions(uint8_t newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectInputString_c::setOptions(IsoAgLib::iVtObjectStringOptions newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->options = newOptions;
     	setAttribute (Options, newOptions, b_enableReplaceOfCmd);
