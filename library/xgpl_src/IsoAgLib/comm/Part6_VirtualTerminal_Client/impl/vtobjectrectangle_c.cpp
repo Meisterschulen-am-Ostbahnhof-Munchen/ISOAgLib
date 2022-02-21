@@ -84,8 +84,14 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = VT_OBJECT_TYPE_RECTANGLE; // Object Type = Rectangle
-      destMemory [3] = vtObject_a->lineAttributes->getID() & 0xFF;
-      destMemory [4] = vtObject_a->lineAttributes->getID() >> 8;
+      if (vtObject_a->lineAttributes != NULL)
+      {
+		  destMemory [3] = vtObject_a->lineAttributes->getID() & 0xFF;
+		  destMemory [4] = vtObject_a->lineAttributes->getID() >> 8;
+      } else {
+		  destMemory [3] = 0xFF;
+		  destMemory [4] = 0xFF;
+      }
       destMemory [5] = width & 0xFF;
       destMemory [6] = width >> 8;
       destMemory [7] = height & 0xFF;

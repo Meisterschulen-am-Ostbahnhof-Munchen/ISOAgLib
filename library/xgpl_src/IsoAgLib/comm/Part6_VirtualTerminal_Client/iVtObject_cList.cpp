@@ -7,6 +7,9 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>
 #include <iostream>
 #include "iVtObject_cList.h"
+#include <stdexcept>
+
+using std::runtime_error;
 
 namespace IsoAgLib
 {
@@ -38,7 +41,7 @@ void iVtObject_cList::Append(iVtObject_c* const anItem) {
         _items[_count] = anItem;
         _count++;
     } else {
-    	//Exception !!! //TODO
+    	throw runtime_error("_items Array is full !");
     }
 }
 

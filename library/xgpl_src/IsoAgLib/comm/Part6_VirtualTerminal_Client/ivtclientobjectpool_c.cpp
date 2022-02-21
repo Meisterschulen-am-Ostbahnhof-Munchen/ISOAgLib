@@ -95,7 +95,7 @@ Colour iVtClientObjectPool_c::convertColourDefault(
     iVtObjectWorkingSet_c &iVtClientObjectPool_c::getWorkingSetObject() const { return *(iVtObjectWorkingSet_c*)(**iVtObjects->all_items); }
 
     iVtClientObjectPool_c::iVtClientObjectPool_c(iVtClientObjectPool_c::ObjectPoolSettings_s a_objectPoolSettings)
-            : iVtObjects (new iVtObject_cList())
+            : iVtObjects (new iVtObject_cList(300)) // TODO make this more intelligent !
             , version(a_objectPoolSettings.version)
             , dimension (a_objectPoolSettings.dimension)
             , skWidth (a_objectPoolSettings.skWidth)
