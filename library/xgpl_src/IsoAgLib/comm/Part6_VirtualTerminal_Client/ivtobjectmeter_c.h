@@ -47,7 +47,7 @@ public:
 			iVtObjectMeterOptions options = iVtObjectMeterOptions(allDrawMeter),
 			uint8_t numberOfTicks = 12,
 			uint8_t startAngle = 0,
-			uint8_t endAngle = 180,
+			uint8_t endAngle = 90,
 			uint16_t minValue = 0,
 			uint16_t maxValue = 500,
 			iVtObjectNumberVariable_c *variableReference = nullptr,

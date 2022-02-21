@@ -147,7 +147,7 @@ namespace IsoAgLib {
 
 	enum iVtObjectMeterOptions_e : uint8_t
 	{
-		allDrawMeter = 0b11110000,
+		allDrawMeter = 0b00001111,
 	};
 
 
