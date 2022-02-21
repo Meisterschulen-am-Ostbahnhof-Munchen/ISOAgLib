@@ -139,8 +139,9 @@ vtObjectStringVariable_c::setValueCopy(char* newValue, bool b_updateObject, bool
     // check if not already RAM string buffer?
     char *dest = vtObject_a->value;
     const char *src = newValue;
-    int copyLen = (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length;
-    int i=0; for (; i<copyLen; i++) *dest++ = *src++;
+    size_t copyLen = (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length;
+     size_t i=0;
+    for (; i<copyLen; i++) *dest++ = *src++;
     for (; i<vtObject_a->length; i++) *dest++ = ' ';
     *dest = 0x00; // 0-termiante!
   }
@@ -160,7 +161,7 @@ vtObjectStringVariable_c::setValueRef(char* newValue, bool b_updateObject, bool 
   }
 
   uint16_t ui16_tempLen = 0;
-  if (newValue != NULL ) ui16_tempLen = uint16_t( (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length );
+  if (newValue != nullptr ) ui16_tempLen = uint16_t( (std::strlen (newValue) <= vtObject_a->length) ? std::strlen (newValue) : vtObject_a->length );
   getVtClientInstance4Comm().getClientByID (s_properties.clientId).commandHandler().sendCommandChangeStringValueRef( this, newValue, ui16_tempLen, b_enableReplaceOfCmd);
 }
 

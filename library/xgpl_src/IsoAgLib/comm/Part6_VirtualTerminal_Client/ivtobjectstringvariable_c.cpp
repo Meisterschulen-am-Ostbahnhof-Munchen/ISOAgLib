@@ -58,6 +58,8 @@ iVtObjectStringVariable_c::iVtObjectStringVariable_c(
 	pool->Append(this);
 }
 
+    iVtObjectStringVariable_c::~iVtObjectStringVariable_c() = default;
+
 } // IsoAgLib
 
 #endif //CONFIG_USE_VTOBJECT_stringvariable

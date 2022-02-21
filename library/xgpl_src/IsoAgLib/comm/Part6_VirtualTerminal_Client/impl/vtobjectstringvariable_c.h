@@ -45,12 +45,12 @@ private:
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
   vtObjectStringVariable_c() = delete;
 
-  ~vtObjectStringVariable_c();
+  ~vtObjectStringVariable_c() override;
 
   vtObjectStringVariable_c(
 		  multiton ai_multitonInst,
@@ -59,7 +59,7 @@ public:
 
   vtObjectStringVariable_c(iVtObjectStringVariable_s* vtObjectStringVariableSROM , multiton ai_multitonInst);
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
 
     virtual void setValueCopy    (char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef USE_VT_UNICODE_SUPPORT
@@ -71,13 +71,13 @@ public:
 
         virtual void setValueRef(char* newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
-  const char* getString();
+  const char* getString() override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 22; }
   */
 
-  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/);
+  void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) override;
 #endif
 };
 
