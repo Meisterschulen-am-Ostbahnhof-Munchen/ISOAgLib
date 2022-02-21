@@ -7,15 +7,45 @@
 
 #include "ivtclient_c.h"
 
+
+
+#ifdef CONFIG_SPECIAL_DEBUG
+#include <iostream>
+#include "demangle.h"
+
+using std::cout;
+using std::endl;
+#endif
+
 namespace IsoAgLib {
 
 
 iVtClient_c &getIvtClientInstance()
 {
-	return static_cast<iVtClient_c&>(__IsoAgLib::getVtClientInstance( 0 ));
 
 	  __IsoAgLib::VtClient_c& c = __IsoAgLib::getVtClientInstance( 0 );
 	  iVtClient_c& ic = static_cast<iVtClient_c&>(c);
+
+
+	#ifdef CONFIG_SPECIAL_DEBUG
+	  /**
+	   *
+	   * Special Debugging BEGIN
+	   *
+	   */
+		cout << "Type name of  c is: "  << demangle(typeid( c).name()) << endl << endl;
+		cout << "Type name of ic is: "  << demangle(typeid( ic).name()) << endl << endl;
+
+
+	  /**
+	   *
+	   * Special Debugging END
+	   *
+	   */
+	#endif
+
+
+
 	return ic;
 }
 
