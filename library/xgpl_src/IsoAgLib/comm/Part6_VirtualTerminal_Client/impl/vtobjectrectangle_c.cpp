@@ -53,21 +53,28 @@ struct vtObjectRectangle_c::iVtObjectRectangle_s: iVtObjectwMacro_s {
 			uint16_t width,
 			uint16_t height,
 			IsoAgLib::LineSuppression lineSuppression,
-			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes)
-    : iVtObject_s(ID)
-	, iVtObjectwMacro_s(ID)
-	, lineAttributes(lineAttributes)
-	, width(width)
-	, height(height)
-	, lineSuppression(lineSuppression)
-	, fillAttributes(fillAttributes)
-	{
-	}
+			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes);
 
 
 };
 
-uint16_t
+    vtObjectRectangle_c::iVtObjectRectangle_s::iVtObjectRectangle_s(
+            IsoAgLib::ObjectID ID,
+            IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+            uint16_t width, uint16_t height,
+            IsoAgLib::LineSuppression lineSuppression,
+            IsoAgLib::iVtObjectFillAttributes_c *fillAttributes)
+            : iVtObject_s(ID)
+            , iVtObjectwMacro_s(ID)
+            , lineAttributes(lineAttributes)
+            , width(width)
+            , height(height)
+            , lineSuppression(lineSuppression)
+            , fillAttributes(fillAttributes)
+    {
+    }
+
+    uint16_t
 vtObjectRectangle_c::stream(uint8_t* destMemory,
                             uint16_t maxBytes,
                             objRange_t sourceOffset)
@@ -84,7 +91,7 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = VT_OBJECT_TYPE_RECTANGLE; // Object Type = Rectangle
-      if (vtObject_a->lineAttributes != NULL)
+      if (vtObject_a->lineAttributes != nullptr)
       {
 		  destMemory [3] = vtObject_a->lineAttributes->getID() & 0xFF;
 		  destMemory [4] = vtObject_a->lineAttributes->getID() >> 8;
@@ -98,7 +105,7 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
       destMemory [8] = height >> 8;
       destMemory [9] = vtObject_a->lineSuppression.lineSuppression;
 
-    if (vtObject_a->fillAttributes != NULL)
+    if (vtObject_a->fillAttributes != nullptr)
     {
         destMemory [10] = vtObject_a->fillAttributes->getID() & 0xFF;
         destMemory [11] = vtObject_a->fillAttributes->getID() >> 8;

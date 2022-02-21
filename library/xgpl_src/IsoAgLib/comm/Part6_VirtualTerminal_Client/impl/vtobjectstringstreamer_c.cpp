@@ -18,7 +18,6 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "vtobjectstringstreamer_c.h"
-#include "../ivtobjectstring_c.h"
 
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 
@@ -97,13 +96,15 @@ vtObjectStringStreamer_c::getStreamSize()
             , mpc_stringToStream (apc_newValue)
             , mui16_strLenToSend (aui16_strLenToSend)
             , mui32_streamPosition (0)
-            //marr_uploadBuffer
+            , marr_uploadBuffer{0}
             , mui32_streamPositionStored (0)
     {}
 
     const char *vtObjectStringStreamer_c::getStringToStream() { return mpc_stringToStream; }
 
-    uint16_t vtObjectStringStreamer_c::getID() { return mui16_vtObjectAId; }
+    uint16_t vtObjectStringStreamer_c::getID() const {
+    return mui16_vtObjectAId;
+    }
 
     uint8_t vtObjectStringStreamer_c::getFirstByte() { return 179; /* Command: "Command" --- Parameter: "Change String Value"; */ }
 } // end namespace __IsoAgLib

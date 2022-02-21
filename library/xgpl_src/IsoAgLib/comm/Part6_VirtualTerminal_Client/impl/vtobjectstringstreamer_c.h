@@ -34,14 +34,14 @@ class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
  public:
   vtObjectStringStreamer_c(const char* apc_newValue, uint16_t a_ID, uint16_t aui16_strLenToSend);
   void setDataNextStreamPart(MultiSendPkg_c* mspData,
-                             uint8_t bytes);
-  void resetDataNextStreamPart();
-  void saveDataNextStreamPart();
-  void restoreDataNextStreamPart();
-  uint32_t getStreamSize();
-  uint8_t getFirstByte ();
+                             uint8_t bytes) override;
+  void resetDataNextStreamPart() override;
+  void saveDataNextStreamPart() override;
+  void restoreDataNextStreamPart() override;
+  uint32_t getStreamSize() override;
+  uint8_t getFirstByte () override;
   const char* getStringToStream();
-  uint16_t getID();
+  uint16_t getID() const;
   void set5ByteCommandHeader(uint8_t* destinBuffer);
 
 private:

@@ -44,18 +44,22 @@ struct vtObjectSoftKeyMask_c::iVtObjectSoftKeyMask_s: iVtObjectObject_s, iVtObje
 	IsoAgLib::Colour backgroundColour;
 	iVtObjectSoftKeyMask_s(
 			IsoAgLib::ObjectID ID,
-			IsoAgLib::Colour backgroundColour)
-    : iVtObject_s(ID)
-	, iVtObjectObject_s(ID)
-	, iVtObjectwMacro_s(ID)
-	, backgroundColour(backgroundColour)
-	{
-	}
+			IsoAgLib::Colour backgroundColour);
 
 
 };
 
-uint16_t
+    vtObjectSoftKeyMask_c::iVtObjectSoftKeyMask_s::iVtObjectSoftKeyMask_s(
+            IsoAgLib::ObjectID ID,
+            IsoAgLib::Colour backgroundColour)
+            : iVtObject_s(ID)
+            , iVtObjectObject_s(ID)
+            , iVtObjectwMacro_s(ID)
+            , backgroundColour(backgroundColour)
+    {
+    }
+
+    uint16_t
 vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
                               uint16_t maxBytes,
                               objRange_t sourceOffset)

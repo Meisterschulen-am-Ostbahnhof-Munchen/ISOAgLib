@@ -41,29 +41,24 @@ enum vtObjectPolygon_c::AttributeID:uint8_t
 };
 
 
-struct repeat_x_y_s {
-  int16_t x;
-  int16_t y;
-};
-
 
 struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
 	uint16_t width;
 	uint16_t height;
 	IsoAgLib::iVtObjectLineAttributes_c* lineAttributes;
 	IsoAgLib::iVtObjectFillAttributes_c* fillAttributes;
-	uint8_t polygonType;
+	IsoAgLib::PolygonType polygonType;
 	uint8_t numberOfPoints;
-	const repeat_x_y_s *pointsToFollow;
+	const IsoAgLib::repeat_x_y_s *pointsToFollow;
 	iVtObjectPolygon_s(
 			IsoAgLib::ObjectID ID,
 			uint16_t width,
 			uint16_t height,
 			IsoAgLib::iVtObjectLineAttributes_c* lineAttributes,
 			IsoAgLib::iVtObjectFillAttributes_c* fillAttributes,
-			uint8_t polygonType,
+			IsoAgLib::PolygonType polygonType,
 			uint8_t numberOfPoints,
-			const repeat_x_y_s *pointsToFollow)
+			const IsoAgLib::repeat_x_y_s *pointsToFollow)
     : iVtObject_s(ID)
 	, iVtObjectwMacro_s(ID)
 	, width(width)
@@ -193,7 +188,7 @@ vtObjectPolygon_c::updateFillAttributes(bool b_SendRequest)
 	  return vtObject_a->fillAttributes;
 }
 
-uint8_t
+IsoAgLib::PolygonType
 vtObjectPolygon_c::updatePolygonType(bool b_SendRequest)
 {
 	  if (b_SendRequest)
@@ -209,7 +204,7 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
     case Height:         vtObject_a->height         = convertLittleEndianStringUi16(pui8_attributeValue); break;
     //case LineAttributes: vtObject_a->lineAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break; //TODO
     //case FillAttributes: vtObject_a->fillAttributes = convertLittleEndianStringUi16(pui8_attributeValue); break; //TODO
-    case PolygonType:    vtObject_a->polygonType    = convertLittleEndianStringUi8(pui8_attributeValue); break;
+    case PolygonType:    vtObject_a->polygonType    = (IsoAgLib::PolygonType)convertLittleEndianStringUi8(pui8_attributeValue); break;
     default: break;
   }
 }
@@ -248,7 +243,7 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
     	setAttribute(FillAttributes /* "Fill Attributes" */, newFillAttributes->getID(), b_enableReplaceOfCmd);
     }
 
-    void vtObjectPolygon_c::setPolygonType(uint8_t newPolygonType, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectPolygon_c::setPolygonType(IsoAgLib::PolygonType newPolygonType, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->polygonType = newPolygonType;
     	setAttribute( PolygonType /* "Polygon Type" */, newPolygonType, b_enableReplaceOfCmd);

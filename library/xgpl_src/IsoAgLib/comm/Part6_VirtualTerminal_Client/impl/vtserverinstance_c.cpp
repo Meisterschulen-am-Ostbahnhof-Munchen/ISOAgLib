@@ -45,9 +45,7 @@ VtServerInstance_c::VtServerInstance_c( const IsoItem_c& isoItem, VtClient_c& cl
 }
 
 
-VtServerInstance_c::~VtServerInstance_c()
-{
-}
+VtServerInstance_c::~VtServerInstance_c() = default;
 
 
 void

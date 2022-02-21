@@ -49,7 +49,7 @@ public:
     vtObjectPolygon_c::setFillAttributes (newFillAttributes, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setPolygonType(uint8_t newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setPolygonType(IsoAgLib::PolygonType newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPolygon_c::setPolygonType (newPolygonType, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -78,7 +78,7 @@ public:
     return vtObjectPolygon_c::updateFillAttributes(b_SendRequest);
   }
 
-  uint8_t updatePolygonType(bool b_SendRequest=false) {
+  IsoAgLib::PolygonType updatePolygonType(bool b_SendRequest=false) {
     return vtObjectPolygon_c::updatePolygonType(b_SendRequest);
   }
 #endif

@@ -54,7 +54,7 @@ public:
   void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setPolygonType(uint8_t newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setPolygonType(IsoAgLib::PolygonType newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setOriginSKM(bool b_SKM);
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -67,7 +67,7 @@ public:
   uint16_t updateHeight(bool b_SendRequest=false);
   IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
   IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
-  uint8_t updatePolygonType(bool b_SendRequest=false);
+  IsoAgLib::PolygonType updatePolygonType(bool b_SendRequest=false);
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
 #endif
 };

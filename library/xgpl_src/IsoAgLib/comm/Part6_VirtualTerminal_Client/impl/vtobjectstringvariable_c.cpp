@@ -34,15 +34,19 @@ namespace __IsoAgLib {
 struct vtObjectStringVariable_c::iVtObjectStringVariable_s : iVtObjectString_s {
     iVtObjectStringVariable_s(
     		IsoAgLib::ObjectID ID,
-			char *value)
-    : iVtObject_s(ID)
-    , iVtObjectString_s(ID, value)
-	{
-	}
+			char *value);
 };
 
+    vtObjectStringVariable_c::iVtObjectStringVariable_s::iVtObjectStringVariable_s(
+            IsoAgLib::ObjectID ID,
+            char *value)
+            : iVtObject_s(ID)
+            , iVtObjectString_s(ID, value)
+    {
+    }
 
-uint16_t
+
+    uint16_t
 vtObjectStringVariable_c::stream(uint8_t* destMemory,
                                  uint16_t maxBytes,
                                  objRange_t sourceOffset)
