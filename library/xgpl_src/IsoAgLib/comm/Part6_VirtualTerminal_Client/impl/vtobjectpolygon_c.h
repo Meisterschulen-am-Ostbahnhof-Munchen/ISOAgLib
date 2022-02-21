@@ -47,11 +47,11 @@ private:
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
 
-  ~vtObjectPolygon_c();
+  ~vtObjectPolygon_c() override;
   vtObjectPolygon_c() = delete;
 
 
@@ -67,26 +67,27 @@ public:
 			const IsoAgLib::repeat_x_y_s *pointsToFollow);
 
 
-    uint32_t fitTerminal() const;
-  void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setPolygonType(IsoAgLib::PolygonType newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOriginSKM(bool b_SKM);
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    uint32_t fitTerminal() const override;
+    virtual void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setLineAttributes(IsoAgLib::iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setFillAttributes(IsoAgLib::iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setPolygonType(IsoAgLib::PolygonType newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOriginSKM(bool b_SKM) override;
+
+    virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 16; }
   */
 
-  uint16_t updateWidth(bool b_SendRequest=false);
-  uint16_t updateHeight(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
-  IsoAgLib::PolygonType updatePolygonType(bool b_SendRequest=false);
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  virtual uint16_t updateWidth(bool b_SendRequest=false);
+  virtual uint16_t updateHeight(bool b_SendRequest=false);
+  virtual IsoAgLib::iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false);
+  virtual IsoAgLib::iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false);
+  virtual IsoAgLib::PolygonType updatePolygonType(bool b_SendRequest=false);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 

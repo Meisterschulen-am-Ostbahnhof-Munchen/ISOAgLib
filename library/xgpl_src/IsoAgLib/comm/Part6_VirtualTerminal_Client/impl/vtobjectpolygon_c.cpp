@@ -58,24 +58,34 @@ struct vtObjectPolygon_c::iVtObjectPolygon_s: iVtObjectwMacro_s {
 			IsoAgLib::iVtObjectFillAttributes_c* fillAttributes,
 			IsoAgLib::PolygonType polygonType,
 			uint8_t numberOfPoints,
-			const IsoAgLib::repeat_x_y_s *pointsToFollow)
-    : iVtObject_s(ID)
-	, iVtObjectwMacro_s(ID)
-	, width(width)
-	, height(height)
-	, lineAttributes(lineAttributes)
-	, fillAttributes(fillAttributes)
-	, polygonType(polygonType)
-	, numberOfPoints(numberOfPoints)
-	, pointsToFollow(pointsToFollow)
-	{
-	}
+			const IsoAgLib::repeat_x_y_s *pointsToFollow);
 
 
 };
 
+    vtObjectPolygon_c::iVtObjectPolygon_s::iVtObjectPolygon_s(
+            IsoAgLib::ObjectID ID,
+            uint16_t width,
+            uint16_t height,
+            IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
+            IsoAgLib::iVtObjectFillAttributes_c *fillAttributes,
+            IsoAgLib::PolygonType polygonType,
+            uint8_t numberOfPoints,
+            const IsoAgLib::repeat_x_y_s *pointsToFollow)
+            : iVtObject_s(ID)
+            , iVtObjectwMacro_s(ID)
+            , width(width)
+            , height(height)
+            , lineAttributes(lineAttributes)
+            , fillAttributes(fillAttributes)
+            , polygonType(polygonType)
+            , numberOfPoints(numberOfPoints)
+            , pointsToFollow(pointsToFollow)
+    {
+    }
 
-uint16_t
+
+    uint16_t
 vtObjectPolygon_c::stream(uint8_t* destMemory,
                           uint16_t maxBytes,
                           objRange_t sourceOffset)
@@ -99,7 +109,7 @@ vtObjectPolygon_c::stream(uint8_t* destMemory,
       destMemory [7] = vtObject_a->lineAttributes->getID() & 0xFF;
       destMemory [8] = vtObject_a->lineAttributes->getID() >> 8;
 
-      if (vtObject_a->fillAttributes != NULL) {
+      if (vtObject_a->fillAttributes != nullptr) {
         destMemory [9] = vtObject_a->fillAttributes->getID() & 0xFF;
         destMemory [10] = vtObject_a->fillAttributes->getID() >> 8;
       } else {

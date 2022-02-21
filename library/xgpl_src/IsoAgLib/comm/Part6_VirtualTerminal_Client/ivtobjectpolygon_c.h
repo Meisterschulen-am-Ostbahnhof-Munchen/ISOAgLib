@@ -33,10 +33,10 @@ public:
 
 	iVtObjectPolygon_c() = delete;
 
-	~iVtObjectPolygon_c();
+	~iVtObjectPolygon_c() override;
 
 
-	iVtObjectPolygon_c(
+	explicit iVtObjectPolygon_c(
 				iVtClientObjectPool_c* pool,
 				ObjectID ID = autoID,
 				uint16_t width = 32,
@@ -48,60 +48,26 @@ public:
 				const repeat_x_y_s *pointsToFollow = nullptr);
 
 
-  static ObjectType objectType() { return VT_OBJECT_TYPE_POLYGON; }
-
-
-  void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectPolygon_c::setWidth (newWidth, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectPolygon_c::setHeight (newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectPolygon_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setFillAttributes(iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectPolygon_c::setFillAttributes (newFillAttributes, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setPolygonType(IsoAgLib::PolygonType newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectPolygon_c::setPolygonType (newPolygonType, b_updateObject, b_enableReplaceOfCmd);
-  }
-
-  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
-    vtObjectPolygon_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
-  }
+  static ObjectType objectType();
+  void setWidth(uint16_t newWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setLineAttributes(iVtObjectLineAttributes_c* newLineAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setFillAttributes(iVtObjectFillAttributes_c* newFillAttributes, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setPolygonType(IsoAgLib::PolygonType newPolygonType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectPolygon_c::updateObjectType(); }
   */
 
-  uint16_t updateWidth(bool b_SendRequest=false) {
-    return vtObjectPolygon_c::updateWidth(b_SendRequest);
-  }
-
-  uint16_t updateHeight(bool b_SendRequest=false) {
-    return vtObjectPolygon_c::updateHeight(b_SendRequest);
-  }
-
-  iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false) {
-    return vtObjectPolygon_c::updateLineAttributes(b_SendRequest);
-  }
-
-  iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false) {
-    return vtObjectPolygon_c::updateFillAttributes(b_SendRequest);
-  }
-
-  IsoAgLib::PolygonType updatePolygonType(bool b_SendRequest=false) {
-    return vtObjectPolygon_c::updatePolygonType(b_SendRequest);
-  }
+  uint16_t updateWidth(bool b_SendRequest=false) override;
+  uint16_t updateHeight(bool b_SendRequest=false) override;
+  iVtObjectLineAttributes_c* updateLineAttributes(bool b_SendRequest=false) override;
+  iVtObjectFillAttributes_c* updateFillAttributes(bool b_SendRequest=false) override;
+  IsoAgLib::PolygonType updatePolygonType(bool b_SendRequest=false) override;
 #endif
-
-  virtual ObjectType getObjectType() const { return objectType(); }
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLibb
