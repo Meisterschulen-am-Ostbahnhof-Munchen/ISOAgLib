@@ -45,14 +45,14 @@ struct vtObjectRectangle_c::iVtObjectRectangle_s: iVtObjectwMacro_s {
 	IsoAgLib::iVtObjectLineAttributes_c *lineAttributes;
 	uint16_t width;
 	uint16_t height;
-	uint8_t lineSuppression;
+	IsoAgLib::LineSuppression lineSuppression;
 	IsoAgLib::iVtObjectFillAttributes_c *fillAttributes;
 	iVtObjectRectangle_s(
 			IsoAgLib::ObjectID ID,
 			IsoAgLib::iVtObjectLineAttributes_c *lineAttributes,
 			uint16_t width,
 			uint16_t height,
-			uint8_t lineSuppression,
+			IsoAgLib::LineSuppression lineSuppression,
 			IsoAgLib::iVtObjectFillAttributes_c *fillAttributes)
     : iVtObject_s(ID)
 	, iVtObjectwMacro_s(ID)
@@ -90,7 +90,7 @@ vtObjectRectangle_c::stream(uint8_t* destMemory,
       destMemory [6] = width >> 8;
       destMemory [7] = height & 0xFF;
       destMemory [8] = height >> 8;
-      destMemory [9] = vtObject_a->lineSuppression;
+      destMemory [9] = vtObject_a->lineSuppression.lineSuppression;
 
     if (vtObject_a->fillAttributes != NULL)
     {
@@ -171,7 +171,7 @@ vtObjectRectangle_c::updateHeight(bool b_SendRequest)
   return vtObject_a->height;
 }
 
-uint8_t
+IsoAgLib::LineSuppression
 vtObjectRectangle_c::updateLineSuppression(bool b_SendRequest)
 {
   if (b_SendRequest)
@@ -195,7 +195,7 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     //case LineAttributes:  vtObject_a->lineAttributes  = convertLittleEndianStringUi16(pui8_attributeValue); break;
     case Width:           vtObject_a->width           = convertLittleEndianStringUi16(pui8_attributeValue); break;
     case Height:          vtObject_a->height          = convertLittleEndianStringUi16(pui8_attributeValue); break;
-    case LineSuppression: vtObject_a->lineSuppression = convertLittleEndianStringUi8( pui8_attributeValue); break;
+    case LineSuppression: vtObject_a->lineSuppression.lineSuppression = (IsoAgLib::LineSuppression_e)convertLittleEndianStringUi8( pui8_attributeValue); break;
     //case FillAttributes:  vtObject_a->fillAttributes  = convertLittleEndianStringUi16(pui8_attributeValue); break;
     default: break;
   }
@@ -244,10 +244,10 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     	setAttribute ( Height /* "Height" */, scaledDim, b_enableReplaceOfCmd);
     }
 
-    void vtObjectRectangle_c::setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectRectangle_c::setLineSuppression(IsoAgLib::LineSuppression  newLineSupressionValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->lineSuppression = newLineSupressionValue;
-    	setAttribute ( LineSuppression /* "Line Suppression" */, newLineSupressionValue, b_enableReplaceOfCmd);
+    	setAttribute ( LineSuppression /* "Line Suppression" */, newLineSupressionValue.lineSuppression, b_enableReplaceOfCmd);
     }
 
     void

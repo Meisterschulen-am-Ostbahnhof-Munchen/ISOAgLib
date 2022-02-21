@@ -44,7 +44,7 @@ public:
     vtObjectRectangle_c::setLineAttributes (newLineAttributes, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setLineSuppression(uint8_t newLineSupressionValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setLineSuppression(IsoAgLib::LineSuppression  newLineSupressionValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectRectangle_c::setLineSuppression (newLineSupressionValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -73,7 +73,7 @@ public:
     return vtObjectRectangle_c::updateHeight(b_SendRequest);
   }
 
-  uint8_t updateLineSuppression(bool b_SendRequest=false) {
+  IsoAgLib::LineSuppression  updateLineSuppression(bool b_SendRequest=false) {
     return vtObjectRectangle_c::updateLineSuppression(b_SendRequest);
   }
 

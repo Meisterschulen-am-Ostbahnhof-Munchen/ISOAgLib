@@ -28,6 +28,7 @@
 #include "iOptions.h"
 #include "iJustification.h"
 #include "iLineDirection.h"
+#include "iLineSuppression.h"
 #include "iFont.h"
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/multiton.h>
