@@ -183,15 +183,12 @@ typedef uint16_t objRange_t;
   } \
  }
 
+//TODO understand what is it for ?
+
 #define MACRO_getBlockfont(index)  \
     int32_t xBlock, yBlock; \
-    if (vtObject_a->objectsToFollow [index].vtObjectBlockFont != NULL) { \
-      xBlock = vtObject_a->objectsToFollow [index].col * (vtObject_a->objectsToFollow [index].vtObjectBlockFont->getScaledWidthHeight () >> 8); \
-      yBlock = vtObject_a->objectsToFollow [index].row * (vtObject_a->objectsToFollow [index].vtObjectBlockFont->getScaledWidthHeight () & 0xFF); \
-    } else { \
       xBlock = 0; \
-      yBlock = 0; \
-    }
+      yBlock = 0;
 
 #define MACRO_streamObject(bytesBefore) \
     uint16_t nrObject = (sourceOffset-(bytesBefore)) / 2; \

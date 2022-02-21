@@ -97,7 +97,7 @@ protected:
   struct iVtObjectObject_s : virtual iVtObject_s {
 	uint8_t numberOfObjectsToFollow_size;
     uint8_t numberOfObjectsToFollow;
-    repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow;
+    repeat_iVtObject_x_y_s* objectsToFollow;
     void Append(iVtObject_c* vtObject, int16_t x, int16_t y);
     explicit iVtObjectObject_s() = delete;
     explicit iVtObjectObject_s(

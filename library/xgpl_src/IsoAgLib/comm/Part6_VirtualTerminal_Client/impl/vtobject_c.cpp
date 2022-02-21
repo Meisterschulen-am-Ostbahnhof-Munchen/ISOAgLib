@@ -98,7 +98,7 @@ vtObject_c::scaleSize( uint16_t &width, uint16_t &height ) const
 
 
 bool
-vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow)
+vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_s* objectsToFollow)
 {
   bool foundAtLeastOnce = false;
   // Find the child object in question
@@ -127,7 +127,7 @@ vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iV
 // multiple ChangeChildLocation commands - or simply use the ChangeChildPosition instead,
 // which is typically better anyway because it avoids rounding/truncation problems!
 bool
-vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, bool b_enableReplaceOfCmd)
+vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_s* objectsToFollow, bool b_enableReplaceOfCmd)
 {
   MACRO_scaleLocalVars
   MACRO_scaleSKLocalVars
@@ -153,7 +153,7 @@ vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int1
 
 
 bool
-vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t x, int16_t y, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, bool b_enableReplaceOfCmd, OffsetMode_en offsetMode)
+vtObject_c::genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t x, int16_t y, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_s* objectsToFollow, bool b_enableReplaceOfCmd, OffsetMode_en offsetMode)
 {
   MACRO_scaleLocalVars
   MACRO_scaleSKLocalVars

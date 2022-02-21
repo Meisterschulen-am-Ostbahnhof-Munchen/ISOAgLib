@@ -74,7 +74,7 @@ void iVtObject_c::setOriginBTN(iVtObjectButton_c* p_btn)
             , numberOfObjectsToFollow(0)
             , objectsToFollow(nullptr)
     {
-    	objectsToFollow = new repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s[numberOfObjectsToFollow_size];
+    	objectsToFollow = new repeat_iVtObject_x_y_s[numberOfObjectsToFollow_size];
     }
 
 

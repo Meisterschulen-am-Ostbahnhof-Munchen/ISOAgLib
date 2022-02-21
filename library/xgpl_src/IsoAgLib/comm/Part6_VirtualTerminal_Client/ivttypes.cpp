@@ -61,6 +61,6 @@ namespace IsoAgLib {
 
     iAux2FunctionInputAssignment_t::iAux2FunctionInputAssignment_t()
     : functionUid()
-    , input();
+    , input()
     {}
 }

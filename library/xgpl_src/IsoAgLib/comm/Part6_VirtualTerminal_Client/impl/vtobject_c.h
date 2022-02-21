@@ -70,8 +70,8 @@ protected:
 
   void scaleSize( uint16_t &width, uint16_t &height ) const;
 
-  bool genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, bool b_enableReplaceOfCmd=true);
-  bool genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, bool b_enableReplaceOfCmd, OffsetMode_en);
+  bool genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_s* objectsToFollow, bool b_enableReplaceOfCmd=true);
+  bool genericChangeChildPosition (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_s* objectsToFollow, bool b_enableReplaceOfCmd, OffsetMode_en);
 
   // ATTENTION: Should only be used by Input-Objects of course!
   bool able (IsoAgLib::Enabled enOrDis, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
@@ -80,7 +80,7 @@ protected:
 
 private:
   friend class vtLayoutManager_c;
-  bool genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow);
+  bool genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_s* objectsToFollow);
 
   virtual void updateEnable(IsoAgLib::Enabled enOrDis);
 };
