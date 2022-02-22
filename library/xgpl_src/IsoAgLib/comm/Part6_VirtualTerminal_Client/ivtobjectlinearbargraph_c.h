@@ -40,7 +40,7 @@ public:
 			uint16_t height = 100,
 			Colour colour = NAVY,
 			Colour targetLineColour = YELLOW,
-			uint8_t options = 0,
+			iVtObjectLinearBarGraphOptions options = iVtObjectLinearBarGraphOptions(allDrawLinearBarGraph),
 			uint8_t numberOfTicks = 4,
 			uint16_t minValue = 0,
 			uint16_t maxValue = 100,
@@ -57,7 +57,7 @@ public:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setTargetLineColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setOptions(iVtObjectLinearBarGraphOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setNumberOfTicks(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setMinValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setMaxValue(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
@@ -77,7 +77,7 @@ public:
   uint16_t updateHeight(bool b_SendRequest=false) override;
   Colour updateColour(bool b_SendRequest=false) override;
   Colour updateTargetLineColour(bool b_SendRequest=false) override;
-  uint8_t updateOptions(bool b_SendRequest=false) override;
+  iVtObjectLinearBarGraphOptions updateOptions(bool b_SendRequest=false) override;
   uint8_t updateNumberOfTicks(bool b_SendRequest=false) override;
   uint16_t updateMinValue(bool b_SendRequest=false) override;
   uint16_t updateMaxValue(bool b_SendRequest=false) override;

@@ -23,7 +23,7 @@ namespace IsoAgLib {
 			uint16_t height,
 			Colour colour,
     		Colour targetLineColour,
-			uint8_t options,
+			iVtObjectLinearBarGraphOptions options,
 			uint8_t numberOfTicks,
     		uint16_t minValue,
 			uint16_t maxValue,
@@ -73,7 +73,7 @@ namespace IsoAgLib {
         vtObjectLinearBarGraph_c::setTargetLineColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectLinearBarGraph_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectLinearBarGraph_c::setOptions(iVtObjectLinearBarGraphOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectLinearBarGraph_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -126,7 +126,7 @@ namespace IsoAgLib {
         return vtObjectLinearBarGraph_c::updateTargetLineColour(b_SendRequest);
     }
 
-    uint8_t iVtObjectLinearBarGraph_c::updateOptions(bool b_SendRequest) {
+    iVtObjectLinearBarGraphOptions iVtObjectLinearBarGraph_c::updateOptions(bool b_SendRequest) {
         return vtObjectLinearBarGraph_c::updateOptions(b_SendRequest);
     }
 

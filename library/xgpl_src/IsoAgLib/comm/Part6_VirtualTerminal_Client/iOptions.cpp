@@ -156,5 +156,35 @@ namespace IsoAgLib {
                 bits.barGraphType        = barGraphType;
                 bits.deflectionDirection = deflectionDirection;
             }
+
+    iVtObjectLinearBarGraphOptions::~iVtObjectLinearBarGraphOptions() = default;
+
+
+
+    iVtObjectLinearBarGraphOptions::iVtObjectLinearBarGraphOptions()
+    :iVtObjectLinearBarGraphOptions(allDrawLinearBarGraph)
+    {}
+
+    iVtObjectLinearBarGraphOptions::iVtObjectLinearBarGraphOptions(
+            iVtObjectLinearBarGraphOptions_e options)
+            :options(options)
+            {}
+
+    iVtObjectLinearBarGraphOptions::iVtObjectLinearBarGraphOptions(
+            DrawBorder drawBorder,
+            DrawATargetLine drawATargetLine,
+            DrawTicks drawTicks,
+            BarGraphType barGraphType,
+            AxisOrientation axisOrientation,
+            Direction direction)
+        :iVtObjectLinearBarGraphOptions(allDrawLinearBarGraph)
+             {
+                 bits.drawBorder      = drawBorder;
+                 bits.drawATargetLine = drawATargetLine;
+                 bits.drawTicks       = drawTicks;
+                 bits.barGraphType    = barGraphType;
+                 bits.axisOrientation = axisOrientation;
+                 bits.direction       = direction;
+             }
 }
 

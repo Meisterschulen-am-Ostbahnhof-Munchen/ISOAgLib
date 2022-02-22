@@ -214,6 +214,78 @@ namespace IsoAgLib {
 
 
 
+	/**
+	 * 	Orientation and direction of the bar graph:
+	 * 	Bit 4 = Axis orientation.
+	 * 	0 = vertical (increasing values move parallel to the Y axis with constant X),
+	 * 	1 = horizontal (increasing values move parallel to the X axis with constant Y)
+	 */
+
+
+	enum AxisOrientation : bool
+	{
+		vertical     = false,
+		horizontal   = true,
+	};
+
+
+	/*
+	 *
+	 * 	Bit 5 = Direction.
+	 * 	0 = Grows negative (left or down).
+	 * 	1 = Grows positive (right or up).
+	 *
+	 *
+	 */
+
+	enum Direction : bool
+	{
+		growsNegative   = false,
+		growsPositive   = true,
+	};
+
+
+
+
+	enum iVtObjectLinearBarGraphOptions_e : uint8_t
+	{
+		allDrawLinearBarGraph = 0b00110111,
+	};
+
+
+
+	union iVtObjectLinearBarGraphOptions {
+		iVtObjectLinearBarGraphOptions_e options;
+		struct __attribute__ ((packed))
+		{
+			DrawBorder 	        drawBorder          : 1;
+			DrawATargetLine     drawATargetLine     : 1;
+			DrawTicks           drawTicks           : 1;
+			BarGraphType        barGraphType        : 1;
+
+			AxisOrientation     axisOrientation     : 1;
+			Direction           direction           : 1;
+			Reserved            reserved06          : 1;
+			Reserved            reserved07          : 1;
+		} bits ;
+		~iVtObjectLinearBarGraphOptions();
+		iVtObjectLinearBarGraphOptions();
+		explicit iVtObjectLinearBarGraphOptions(
+				iVtObjectLinearBarGraphOptions_e options         = allDrawLinearBarGraph);
+		explicit iVtObjectLinearBarGraphOptions(
+				DrawBorder 	        drawBorder          = DrawBorder::doDrawBorder,
+				DrawATargetLine     drawATargetLine     = DrawATargetLine::drawATargetLine,
+				DrawTicks           drawTicks           = DrawTicks::doDrawTicks,
+				BarGraphType        barGraphType        = BarGraphType::filled,
+				AxisOrientation     axisOrientation     = AxisOrientation::horizontal,
+				Direction           direction           = Direction::growsPositive
+				);
+	};
+
+
+
+
+
 
 
 	enum iVtObjectArchedBarGraphOptions_e : uint8_t

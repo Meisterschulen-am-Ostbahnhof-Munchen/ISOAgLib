@@ -53,7 +53,7 @@ struct vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
   uint16_t height;
   IsoAgLib::Colour colour;
   IsoAgLib::Colour targetLineColour;
-  uint8_t options;
+  IsoAgLib::iVtObjectLinearBarGraphOptions options;
   uint8_t numberOfTicks;
   uint16_t minValue;
   uint16_t maxValue;
@@ -67,7 +67,7 @@ struct vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
 			uint16_t height,
 			IsoAgLib::Colour colour,
 			IsoAgLib::Colour targetLineColour,
-			uint8_t options,
+			IsoAgLib::iVtObjectLinearBarGraphOptions options,
 			uint8_t numberOfTicks,
 			uint16_t minValue,
 			uint16_t maxValue,
@@ -83,7 +83,7 @@ struct vtObjectLinearBarGraph_c::iVtObjectLinearBarGraph_s : iVtObjectwMacro_s {
             uint16_t height,
             IsoAgLib::Colour colour,
             IsoAgLib::Colour targetLineColour,
-            uint8_t options,
+			IsoAgLib::iVtObjectLinearBarGraphOptions options,
             uint8_t numberOfTicks,
             uint16_t minValue,
             uint16_t maxValue,
@@ -131,7 +131,7 @@ vtObjectLinearBarGraph_c::stream(uint8_t* destMemory,
       destMemory [6] = height >> 8;
       destMemory [7] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->colour, this, IsoAgLib::AColour);
       destMemory [8] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->targetLineColour, this, IsoAgLib::TargetLineColour);
-      destMemory [9] = vtObject_a->options;
+      destMemory [9] = vtObject_a->options.options;
       destMemory [10] = vtObject_a->numberOfTicks;
       destMemory [11] = vtObject_a->minValue & 0xFF;
       destMemory [12] = vtObject_a->minValue >> 8;
@@ -178,7 +178,7 @@ vtObjectLinearBarGraph_c::vtObjectLinearBarGraph_c(
 		uint16_t height,
 		IsoAgLib::Colour colour,
 		IsoAgLib::Colour targetLineColour,
-		uint8_t options,
+		IsoAgLib::iVtObjectLinearBarGraphOptions options,
 		uint8_t numberOfTicks,
 		uint16_t minValue,
 		uint16_t maxValue,
@@ -281,7 +281,7 @@ vtObjectLinearBarGraph_c::updateTargetLineColour(bool b_SendRequest)
   return vtObject_a->targetLineColour;
 }
 
-uint8_t
+IsoAgLib::iVtObjectLinearBarGraphOptions
 vtObjectLinearBarGraph_c::updateOptions(bool b_SendRequest)
 {
   if (b_SendRequest)
@@ -356,7 +356,7 @@ vtObjectLinearBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     case Height:                       vtObject_a->height                       = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case Colour:                       vtObject_a->colour                       = convertLittleEndianStringColour(pui8_attributeValue); break;
     case TargetLineColour:             vtObject_a->targetLineColour             = convertLittleEndianStringColour(pui8_attributeValue); break;
-    case Options:                      vtObject_a->options                      = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Options:                      vtObject_a->options.options              = (IsoAgLib::iVtObjectLinearBarGraphOptions_e)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case NumberOfTicks:                vtObject_a->numberOfTicks                = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case MinValue:                     vtObject_a->minValue                     = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case MaxValue:                     vtObject_a->maxValue                     = convertLittleEndianStringUi16(  pui8_attributeValue); break;
@@ -398,10 +398,10 @@ vtObjectLinearBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     	setAttribute(TargetLineColour, getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newValue, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
     }
 
-    void vtObjectLinearBarGraph_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectLinearBarGraph_c::setOptions(IsoAgLib::iVtObjectLinearBarGraphOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->options = newValue;
-    	setAttribute(Options, newValue, b_enableReplaceOfCmd);
+    	setAttribute(Options, newValue.options, b_enableReplaceOfCmd);
     }
 
     void vtObjectLinearBarGraph_c::setNumberOfTicks(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
