@@ -32,6 +32,30 @@ namespace IsoAgLib {
 class iVtObjectOutputNumber_c : public __IsoAgLib::vtObjectOutputNumber_c
 {
 public:
+
+
+	iVtObjectOutputNumber_c() = delete;
+
+	~iVtObjectOutputNumber_c();
+
+	iVtObjectOutputNumber_c(
+		iVtClientObjectPool_c* pool,
+		ObjectID ID = autoID,
+		uint16_t width = 100,
+		uint16_t height = 25,
+		Colour backgroundColour = WHITE,
+		iVtObjectFontAttributes_c *fontAttributes = nullptr,
+		iVtObjectNumberOptions options = iVtObjectNumberOptions(ioallOptionsOff),
+		iVtObjectNumberVariable_c *variableReference = nullptr,
+		uint32_t value = 9,
+		int32_t offset = 0,
+		float scale = 1.0,
+		uint8_t numberOfDecimals = 1,
+		uint8_t format = 0,
+		Justification justification = Justification(TopLeft));
+
+
+
   static ObjectType objectType();
 
 

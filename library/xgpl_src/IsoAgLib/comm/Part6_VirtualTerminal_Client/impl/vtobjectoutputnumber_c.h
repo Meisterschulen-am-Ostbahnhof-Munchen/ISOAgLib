@@ -53,9 +53,25 @@ public:
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-
+  vtObjectOutputNumber_c() = delete;
 
   virtual ~vtObjectOutputNumber_c() override;
+
+  vtObjectOutputNumber_c(
+          multiton ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t height,
+			IsoAgLib::Colour backgroundColour,
+			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
+			IsoAgLib::iVtObjectNumberOptions options,
+			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+			uint32_t value,
+			int32_t offset,
+			float scale,
+			uint8_t numberOfDecimals,
+			uint8_t format,
+			IsoAgLib::Justification justification);
 
 
   uint32_t fitTerminal() const;

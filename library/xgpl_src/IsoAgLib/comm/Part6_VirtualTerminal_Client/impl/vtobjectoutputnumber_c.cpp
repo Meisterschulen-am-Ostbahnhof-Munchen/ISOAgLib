@@ -437,6 +437,40 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 
     vtObjectOutputNumber_c::~vtObjectOutputNumber_c() = default;
 
+    vtObjectOutputNumber_c::vtObjectOutputNumber_c(
+            multiton ai_multitonInst,
+  			IsoAgLib::ObjectID ID,
+  			uint16_t width,
+  			uint16_t height,
+  			IsoAgLib::Colour backgroundColour,
+  			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
+  			IsoAgLib::iVtObjectNumberOptions options,
+  			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
+  			uint32_t value,
+  			int32_t offset,
+  			float scale,
+  			uint8_t numberOfDecimals,
+  			uint8_t format,
+  			IsoAgLib::Justification justification)
+    :vtObjectOutputNumber_c(
+    		new iVtObjectOutputNumber_s(
+  			ID,
+  			width,
+  			height,
+  			backgroundColour,
+  			fontAttributes,
+  			options,
+  			variableReference,
+  			value,
+  			offset,
+  			scale,
+  			numberOfDecimals,
+  			format,
+  			justification),
+			ai_multitonInst)
+    {}
+
+
 } // __IsoAgLib
 
 #endif

@@ -16,6 +16,42 @@
 namespace IsoAgLib {
 
 
+iVtObjectOutputNumber_c::iVtObjectOutputNumber_c(
+	iVtClientObjectPool_c* pool,
+	ObjectID ID,
+	uint16_t width,
+	uint16_t height,
+	Colour backgroundColour,
+	iVtObjectFontAttributes_c *fontAttributes,
+	iVtObjectNumberOptions options,
+	iVtObjectNumberVariable_c *variableReference,
+	uint32_t value,
+	int32_t offset,
+	float scale,
+	uint8_t numberOfDecimals,
+	uint8_t format,
+	Justification justification)
+    	    :vtObjectOutputNumber_c(
+    				pool->getAiMultitonInst(),
+    				ID,
+    				width,
+    				height,
+    				backgroundColour,
+    				fontAttributes,
+    				options,
+    				variableReference,
+    				value,
+    				offset,
+    				scale,
+    				numberOfDecimals,
+    				format,
+    				justification)
+    		{
+    			pool->Append(this);
+    		}
+
+
+
 	ObjectType iVtObjectOutputNumber_c::objectType() { return VT_OBJECT_TYPE_OUTPUT_NUMBER; }
 
     void iVtObjectOutputNumber_c::setValue(uint32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
@@ -91,6 +127,9 @@ namespace IsoAgLib {
     iVtObjectFontAttributes_c* iVtObjectOutputNumber_c::updateFontAttributes(bool b_SendRequest) {
         return vtObjectOutputNumber_c::updateFontAttributes(b_SendRequest);
     }
+
+    iVtObjectOutputNumber_c::~iVtObjectOutputNumber_c() = default;
+
 #endif
 
 } // IsoAgLib
