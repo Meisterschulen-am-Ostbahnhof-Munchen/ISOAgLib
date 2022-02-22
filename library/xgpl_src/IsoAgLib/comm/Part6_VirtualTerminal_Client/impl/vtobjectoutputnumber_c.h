@@ -50,12 +50,12 @@ private:
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
   vtObjectOutputNumber_c() = delete;
 
-  virtual ~vtObjectOutputNumber_c() override;
+  ~vtObjectOutputNumber_c() override;
 
   vtObjectOutputNumber_c(
           multiton ai_multitonInst,
@@ -74,11 +74,11 @@ public:
 			IsoAgLib::Justification justification);
 
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
   virtual void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
-  void setOriginSKM(bool b_SKM);
+  void setOriginSKM(bool b_SKM) override;
 #ifdef CONFIG_USE_VTOBJECT_button
-  void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
+  void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn) override;
 #endif //CONFIG_USE_VTOBJECT_button
 
     // //////////////////////////////////
@@ -118,7 +118,7 @@ public:
   uint32_t updateValue(bool b_SendRequest=false);
   */
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 

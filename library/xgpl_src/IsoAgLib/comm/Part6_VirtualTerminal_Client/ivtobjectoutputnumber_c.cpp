@@ -128,6 +128,34 @@ iVtObjectOutputNumber_c::iVtObjectOutputNumber_c(
         return vtObjectOutputNumber_c::updateFontAttributes(b_SendRequest);
     }
 
+    iVtObjectNumberOptions iVtObjectOutputNumber_c::updateOptions(bool b_SendRequest) {
+        return vtObjectOutputNumber_c::updateOptions(b_SendRequest);
+    }
+
+    iVtObjectNumberVariable_c *iVtObjectOutputNumber_c::updateVariableReference(bool b_SendRequest) {
+        return vtObjectOutputNumber_c::updateVariableReference(b_SendRequest);
+    }
+
+    int32_t iVtObjectOutputNumber_c::updateOffset(bool b_SendRequest) {
+        return vtObjectOutputNumber_c::updateOffset(b_SendRequest);
+    }
+
+    float iVtObjectOutputNumber_c::updateScale(bool b_SendRequest) {
+        return vtObjectOutputNumber_c::updateScale(b_SendRequest);
+    }
+
+    uint8_t iVtObjectOutputNumber_c::updateNumberOfDecimals(bool b_SendRequest) {
+        return vtObjectOutputNumber_c::updateNumberOfDecimals(b_SendRequest);
+    }
+
+    uint8_t iVtObjectOutputNumber_c::updateFormat(bool b_SendRequest) {
+        return vtObjectOutputNumber_c::updateFormat(b_SendRequest);
+    }
+
+    IsoAgLib::Justification iVtObjectOutputNumber_c::updateJustification(bool b_SendRequest) {
+        return vtObjectOutputNumber_c::updateJustification(b_SendRequest);
+    }
+
     iVtObjectOutputNumber_c::~iVtObjectOutputNumber_c() = default;
 
 #endif
