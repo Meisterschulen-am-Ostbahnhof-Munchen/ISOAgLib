@@ -253,13 +253,13 @@ namespace IsoAgLib {
 
 
 
-	enum iVtObjectInputNumberOptions_e : uint8_t
+	enum iVtObjectNumberOptions_e : uint8_t
 	{
 		ioallOptionsOff = 0b00000000,
 	};
 
-	union iVtObjectInputNumberOptions{
-		iVtObjectInputNumberOptions_e options;
+	union iVtObjectNumberOptions{
+		iVtObjectNumberOptions_e options;
 		struct __attribute__ ((packed))
 		{
 			Transparent 		transparent         : 1;
@@ -272,11 +272,11 @@ namespace IsoAgLib {
 			Reserved            reserved06          : 1;
 			Reserved            reserved07          : 1;
 		} bits ;
-		~iVtObjectInputNumberOptions();
-		iVtObjectInputNumberOptions();
-		explicit iVtObjectInputNumberOptions(
-				iVtObjectInputNumberOptions_e options = ioallOptionsOff);
-		explicit iVtObjectInputNumberOptions(
+		~iVtObjectNumberOptions();
+		iVtObjectNumberOptions();
+		explicit iVtObjectNumberOptions(
+				iVtObjectNumberOptions_e options = ioallOptionsOff);
+		explicit iVtObjectNumberOptions(
 				Transparent 		transparent         = Transparent::opaque,
 				DisplayLeadingZeros displayLeadingZeros = DisplayLeadingZeros::noDisplayLeadingZeros,
 				DisplayZeroAsBlank  displayZeroAsBlank  = DisplayZeroAsBlank::noDisplayZeroAsBlank,
@@ -318,14 +318,14 @@ namespace IsoAgLib {
 
 
 
-	enum iVtObjectInputNumberOptions2_e : uint8_t
+	enum iVtObjectNumberOptions2_e : uint8_t
 	{
 		o2allOptionsOff = 0b00000000,
 	};
 
 
-	union iVtObjectInputNumberOptions2 {
-		iVtObjectInputNumberOptions2_e options;
+	union iVtObjectNumberOptions2 {
+		iVtObjectNumberOptions2_e options;
 		struct __attribute__ ((packed))
 		{
 			Enabled 			enabled           : 1;
@@ -338,11 +338,11 @@ namespace IsoAgLib {
 			Reserved            reserved06        : 1;
 			Reserved            reserved07        : 1;
 		} bits ;
-		~iVtObjectInputNumberOptions2();
-		iVtObjectInputNumberOptions2();
-		explicit iVtObjectInputNumberOptions2(
-				iVtObjectInputNumberOptions2_e options = o2allOptionsOff);
-		explicit iVtObjectInputNumberOptions2(
+		~iVtObjectNumberOptions2();
+		iVtObjectNumberOptions2();
+		explicit iVtObjectNumberOptions2(
+				iVtObjectNumberOptions2_e options = o2allOptionsOff);
+		explicit iVtObjectNumberOptions2(
 				Enabled 		  enabled           = Enabled::enabled,
 				RealTimeDataInput realTimeDataInput = RealTimeDataInput::realTimeDataInputOff
 				);

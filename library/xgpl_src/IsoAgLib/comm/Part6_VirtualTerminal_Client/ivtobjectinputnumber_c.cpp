@@ -20,7 +20,7 @@ namespace IsoAgLib {
 			uint16_t height,
 			Colour backgroundColour,
 			iVtObjectFontAttributes_c *fontAttributes,
-			iVtObjectInputNumberOptions options,
+			iVtObjectNumberOptions options,
 			iVtObjectNumberVariable_c *variableReference,
 			uint32_t value,
 			uint32_t minValue,
@@ -30,7 +30,7 @@ namespace IsoAgLib {
 			uint8_t numberOfDecimals,
 			uint8_t format,
 			Justification justification,
-			iVtObjectInputNumberOptions2 secondOptionsByte)
+			iVtObjectNumberOptions2 secondOptionsByte)
     :vtObjectInputNumber_c(
 			pool->getAiMultitonInst(),
 			ID,
@@ -75,7 +75,7 @@ namespace IsoAgLib {
         vtObjectInputNumber_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectInputNumber_c::setOptions(iVtObjectInputNumberOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectInputNumber_c::setOptions(iVtObjectNumberOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectInputNumber_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -111,7 +111,7 @@ namespace IsoAgLib {
         vtObjectInputNumber_c::setJustification (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectInputNumber_c::setSecondOptionsByte(iVtObjectInputNumberOptions2 newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectInputNumber_c::setSecondOptionsByte(iVtObjectNumberOptions2 newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectInputNumber_c::setSecondOptionsByte (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -146,7 +146,7 @@ namespace IsoAgLib {
         return vtObjectInputNumber_c::updateFontAttributes(b_SendRequest);
     }
 
-    iVtObjectInputNumberOptions iVtObjectInputNumber_c::updateOptions(bool b_SendRequest) {
+    iVtObjectNumberOptions iVtObjectInputNumber_c::updateOptions(bool b_SendRequest) {
         return vtObjectInputNumber_c::updateOptions(b_SendRequest);
     }
 

@@ -40,7 +40,7 @@ public:
 				uint16_t height = 25,
 				Colour backgroundColour = WHITE,
 				iVtObjectFontAttributes_c *fontAttributes = nullptr,
-				iVtObjectInputNumberOptions options = iVtObjectInputNumberOptions(ioallOptionsOff),
+				iVtObjectNumberOptions options = iVtObjectNumberOptions(ioallOptionsOff),
 				iVtObjectNumberVariable_c *variableReference = nullptr,
 				uint32_t value = 9,
 				uint32_t minValue = 0,
@@ -50,7 +50,7 @@ public:
 				uint8_t numberOfDecimals = 1,
 				uint8_t format = 0,
 				Justification justification = Justification(TopLeft),
-				iVtObjectInputNumberOptions2 secondOptionsByte = iVtObjectInputNumberOptions2(enabled));
+				iVtObjectNumberOptions2 secondOptionsByte = iVtObjectNumberOptions2(enabled));
 
   ~iVtObjectInputNumber_c() override;
   static ObjectType objectType();
@@ -59,7 +59,7 @@ public:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setOptions(iVtObjectInputNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setOptions(iVtObjectNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setMinValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setMaxValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
@@ -68,7 +68,7 @@ public:
   void setNumberOfDecimals(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setFormat(bool newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setJustification(Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void setSecondOptionsByte(iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void setSecondOptionsByte(iVtObjectNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   bool enable(bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   bool disable(bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -84,7 +84,7 @@ public:
   uint16_t updateHeight(bool b_SendRequest) override;
   Colour updateBackgroundColour(bool b_SendRequest) override;
   iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest) override;
-  iVtObjectInputNumberOptions updateOptions(bool b_SendRequest) override;
+  iVtObjectNumberOptions updateOptions(bool b_SendRequest) override;
   iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest) override;
   uint32_t updateMinValue(bool b_SendRequest) override;
   uint32_t updateMaxValue(bool b_SendRequest) override;

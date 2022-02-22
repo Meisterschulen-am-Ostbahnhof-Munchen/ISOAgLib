@@ -44,13 +44,16 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectOutputNumber_s> vtObject_a;
 
+
+	  vtObjectOutputNumber_c(iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , multiton ai_multitonInst);
+
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectOutputNumber_c(iVtObjectOutputNumber_s* vtObjectOutputNumberSROMs , multiton ai_multitonInst);
+
 
   virtual ~vtObjectOutputNumber_c() override;
 

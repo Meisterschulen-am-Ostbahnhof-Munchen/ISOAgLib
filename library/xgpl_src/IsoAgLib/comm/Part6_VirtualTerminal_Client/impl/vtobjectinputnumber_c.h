@@ -60,7 +60,7 @@ public:
 			uint16_t height,
 			IsoAgLib::Colour backgroundColour,
 			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
-			IsoAgLib::iVtObjectInputNumberOptions options,
+			IsoAgLib::iVtObjectNumberOptions options,
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint32_t value,
 			uint32_t minValue,
@@ -70,7 +70,7 @@ public:
 			uint8_t numberOfDecimals,
 			uint8_t format,
 			IsoAgLib::Justification justification,
-			IsoAgLib::iVtObjectInputNumberOptions2 secondOptionsByte);
+			IsoAgLib::iVtObjectNumberOptions2 secondOptionsByte);
 
 
   virtual ~vtObjectInputNumber_c() override;
@@ -89,7 +89,7 @@ public:
 
     virtual void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setOptions(IsoAgLib::iVtObjectInputNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setOptions(IsoAgLib::iVtObjectNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
     virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -107,7 +107,7 @@ public:
 
     virtual void setJustification(IsoAgLib::Justification newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-    virtual void setSecondOptionsByte(IsoAgLib::iVtObjectInputNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setSecondOptionsByte(IsoAgLib::iVtObjectNumberOptions2 newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
     virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
@@ -127,7 +127,7 @@ public:
 
         virtual IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
 
-        virtual IsoAgLib::iVtObjectInputNumberOptions updateOptions(bool b_SendRequest=false);
+        virtual IsoAgLib::iVtObjectNumberOptions updateOptions(bool b_SendRequest=false);
 
         virtual IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
 

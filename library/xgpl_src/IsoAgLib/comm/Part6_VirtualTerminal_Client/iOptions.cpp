@@ -35,17 +35,17 @@ namespace IsoAgLib {
 	}
 
 
-	iVtObjectInputNumberOptions::~iVtObjectInputNumberOptions() = default;
+	iVtObjectNumberOptions::~iVtObjectNumberOptions() = default;
 
-	iVtObjectInputNumberOptions::iVtObjectInputNumberOptions()
-	:iVtObjectInputNumberOptions(ioallOptionsOff)
+	iVtObjectNumberOptions::iVtObjectNumberOptions()
+	:iVtObjectNumberOptions(ioallOptionsOff)
 	{}
 
-	iVtObjectInputNumberOptions::iVtObjectInputNumberOptions(iVtObjectInputNumberOptions_e options)
+	iVtObjectNumberOptions::iVtObjectNumberOptions(iVtObjectNumberOptions_e options)
 	:options(options)
 	{}
 
-	iVtObjectInputNumberOptions::iVtObjectInputNumberOptions(
+	iVtObjectNumberOptions::iVtObjectNumberOptions(
 			Transparent transparent,
 			DisplayLeadingZeros displayLeadingZeros,
 			DisplayZeroAsBlank displayZeroAsBlank,
@@ -59,18 +59,18 @@ namespace IsoAgLib {
 	}
 
 
-	iVtObjectInputNumberOptions2::~iVtObjectInputNumberOptions2() = default;
+	iVtObjectNumberOptions2::~iVtObjectNumberOptions2() = default;
 
-	iVtObjectInputNumberOptions2::iVtObjectInputNumberOptions2()
-	:iVtObjectInputNumberOptions2(o2allOptionsOff)
+	iVtObjectNumberOptions2::iVtObjectNumberOptions2()
+	:iVtObjectNumberOptions2(o2allOptionsOff)
 	{}
 
 
-	iVtObjectInputNumberOptions2::iVtObjectInputNumberOptions2(iVtObjectInputNumberOptions2_e options)
+	iVtObjectNumberOptions2::iVtObjectNumberOptions2(iVtObjectNumberOptions2_e options)
 	:options(options)
 	{}
 
-	iVtObjectInputNumberOptions2::iVtObjectInputNumberOptions2(
+	iVtObjectNumberOptions2::iVtObjectNumberOptions2(
 	Enabled 		  enabled,
 	RealTimeDataInput realTimeDataInput
 	)
