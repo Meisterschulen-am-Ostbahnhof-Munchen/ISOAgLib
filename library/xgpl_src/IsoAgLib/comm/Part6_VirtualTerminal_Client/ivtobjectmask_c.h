@@ -32,15 +32,13 @@ public:
 
   iVtObjectMask_c() = delete;
 
-  iVtObjectMask_c(const iVtObjectMask_s* vtObjectDataMaskSROM , multiton ai_multitonInst)
-  : vtObject_c(ai_multitonInst)
-  {}
+  iVtObjectMask_c(const iVtObjectMask_s* vtObjectDataMaskSROM , multiton ai_multitonInst);
 
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
   virtual void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) = 0;
 #endif
 
-  virtual ~iVtObjectMask_c();
+  ~iVtObjectMask_c() override;
 };
 
 } // __IsoAgLib
