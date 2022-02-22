@@ -52,7 +52,7 @@ public:
 				Justification justification = Justification(TopLeft),
 				iVtObjectInputNumberOptions2 secondOptionsByte = iVtObjectInputNumberOptions2(enabled));
 
-  virtual ~iVtObjectInputNumber_c() override;
+  ~iVtObjectInputNumber_c() override;
   static ObjectType objectType();
   void setValue(uint32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
