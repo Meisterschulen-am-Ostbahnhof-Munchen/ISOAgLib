@@ -44,7 +44,7 @@ public:
   	    Colour backgroundColour = RED,
   	    Colour borderColour = GREY,
   	    uint8_t keyCode = 251,
-  	    uint8_t options = 0
+		iVtObjectButtonOptions options = iVtObjectButtonOptions(allDrawButton)
   		);
 
   virtual ~iVtObjectButton_c() override;

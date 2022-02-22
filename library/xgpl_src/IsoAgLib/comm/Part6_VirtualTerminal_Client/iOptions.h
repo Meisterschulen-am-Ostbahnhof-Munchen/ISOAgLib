@@ -229,7 +229,7 @@ namespace IsoAgLib {
 	};
 
 
-	/*
+	/**
 	 *
 	 * 	Bit 5 = Direction.
 	 * 	0 = Grows negative (left or down).
@@ -243,6 +243,122 @@ namespace IsoAgLib {
 		growsNegative   = false,
 		growsPositive   = true,
 	};
+
+
+
+	/**
+	 *
+	 * 	Bit 0 = If TRUE, the button is “latchable” and
+	 * 	remains pressed until the next activation. If
+	 * 	FALSE, the button is momentary.
+	 *
+	 */
+
+	enum Latchable : bool
+	{
+		momentary   = false,
+		latchable   = true,
+	};
+
+
+	/**
+	 *
+	 * Bit 1 = Current button state for latchable
+	 * buttons.
+	 * 0 = released,
+	 * 1 = latched.
+	 * This
+	 * attribute is ignored for momentary buttons.
+	 *
+	 *
+	 */
+
+
+	enum CurrentButtonState : bool
+	{
+		released   = false,
+		latched   = true,
+	};
+
+	/**
+	 *
+	 *
+	 * Bit 2 = Suppress border. If FALSE, VT draws
+	 * the proprietary border. If TRUE, no border is
+	 * ever drawn (even when pressed momentarily
+	 * or latched) and the area normally occupied by
+	 * the border is always transparent. a
+	 *
+	 */
+	/**
+	 *
+	 * Bit 3 = Transparent Background. If FALSE,
+	 * the button's interior background is filled using
+	 * the background colour attribute. If TRUE, the
+	 * button's background is always transparent
+	 * and the background colour attribute is not
+	 * used. a
+	 *
+	 *
+	 */
+	/**
+	 *
+	 * Bit 4 = Disabled. If FALSE, the button is
+	 * enabled and can be selected and activated by
+	 * the operator. If TRUE, the button is drawn
+	 * disabled (method proprietary to VT) and it
+	 * cannot be selected or activated by the
+	 * operator. a
+	 *
+	 */
+	/**
+	 *
+	 * Bit 5 = No border. If FALSE, the Button Border
+	 * area is used by the VT as described in Bit 2. If
+	 * TRUE, Bit 2 is ignored therefore no border is
+	 * ever drawn (even when pressed momentarily
+	 * or latched) and the Button Face extends to
+	 * the full Button Area. a
+	 *
+	 */
+
+
+
+	enum iVtObjectButtonOptions_e : uint8_t
+	{
+		allDrawButton = 0b00000000,
+	};
+
+
+
+	union iVtObjectButtonOptions {
+		iVtObjectButtonOptions_e options;
+		struct __attribute__ ((packed))
+		{
+			Latchable 	        latchable          : 1;
+			CurrentButtonState  currentButtonState : 1;
+
+
+
+
+			Reserved            reserved06          : 1;
+			Reserved            reserved07          : 1;
+		} bits ;
+		~iVtObjectButtonOptions();
+		iVtObjectButtonOptions();
+		explicit iVtObjectButtonOptions(
+				iVtObjectButtonOptions_e options         = allDrawButton);
+		explicit iVtObjectButtonOptions(
+				Latchable 	        latchable           = Latchable::latchable,
+				CurrentButtonState  currentButtonState  = CurrentButtonState::currentButtonState,
+				);
+	};
+
+
+
+
+
+
 
 
 
