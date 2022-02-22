@@ -34,7 +34,7 @@ public:
 
 	iVtObjectNumberVariable_c() = delete;
 
-	~iVtObjectNumberVariable_c();
+	~iVtObjectNumberVariable_c() override;
 
 	iVtObjectNumberVariable_c(
 			iVtClientObjectPool_c* pool,
@@ -47,10 +47,9 @@ public:
 
 
 
-  static ObjectType objectType() { return VT_OBJECT_TYPE_NUMBER_VARIABLE; }
+  static ObjectType objectType();
 
-  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) override {
-    vtObjectNumberVariable_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd); }
+  void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) override;
 
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES  
@@ -64,7 +63,7 @@ public:
   */
 #endif
 
-  virtual ObjectType getObjectType() const { return objectType(); }
+  ObjectType getObjectType() const override;
 };
 
 } // IsoAgLib

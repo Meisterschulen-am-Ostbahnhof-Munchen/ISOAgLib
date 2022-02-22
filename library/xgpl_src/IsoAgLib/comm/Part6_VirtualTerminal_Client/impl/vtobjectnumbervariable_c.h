@@ -47,7 +47,7 @@ public:
 
 
 	  vtObjectNumberVariable_c() = delete;
-	  ~vtObjectNumberVariable_c();
+	  ~vtObjectNumberVariable_c() override;
 
 
 	  vtObjectNumberVariable_c(
@@ -58,13 +58,13 @@ public:
 
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
 
 
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
 
     virtual void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
 
@@ -76,7 +76,7 @@ public:
   uint32_t updateValue(bool b_SendRequest=false);
   */
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 

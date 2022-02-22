@@ -24,6 +24,13 @@ namespace IsoAgLib {
     {
         pool->Append(this);
     }
+
+    ObjectType iVtObjectNumberVariable_c::objectType() { return VT_OBJECT_TYPE_NUMBER_VARIABLE; }
+
+    void iVtObjectNumberVariable_c::setValue(uint32_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectNumberVariable_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd); }
+
+    ObjectType iVtObjectNumberVariable_c::getObjectType() const { return objectType(); }
 } // IsoAgLib
 
 
