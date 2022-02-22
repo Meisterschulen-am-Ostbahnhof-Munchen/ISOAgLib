@@ -71,7 +71,7 @@ public:
     virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setFontAttributes(IsoAgLib::iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setOptions(IsoAgLib::iVtObjectNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -90,7 +90,7 @@ public:
   virtual uint16_t updateHeight(bool b_SendRequest=false);
   virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   virtual IsoAgLib::iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
-  virtual uint8_t updateOptions(bool b_SendRequest=false);
+  virtual IsoAgLib::iVtObjectNumberOptions updateOptions(bool b_SendRequest=false);
   virtual IsoAgLib::iVtObjectNumberVariable_c * updateVariableReference(bool b_SendRequest=false);
   virtual int32_t updateOffset(bool b_SendRequest=false);
   virtual float updateScale(bool b_SendRequest=false);

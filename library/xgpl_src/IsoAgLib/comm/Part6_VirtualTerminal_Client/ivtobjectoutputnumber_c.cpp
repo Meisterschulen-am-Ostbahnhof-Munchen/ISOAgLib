@@ -39,7 +39,7 @@ namespace IsoAgLib {
         vtObjectOutputNumber_c::setFontAttributes (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectOutputNumber_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectOutputNumber_c::setOptions(iVtObjectNumberOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectOutputNumber_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 

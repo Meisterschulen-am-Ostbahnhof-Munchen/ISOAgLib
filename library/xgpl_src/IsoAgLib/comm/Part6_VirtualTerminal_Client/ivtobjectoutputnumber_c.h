@@ -41,7 +41,7 @@ public:
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setFontAttributes(iVtObjectFontAttributes_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOptions(iVtObjectNumberOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setVariableReference(iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setOffset(int32_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setScale(float newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -62,7 +62,7 @@ public:
   Colour updateBackgroundColour(bool b_SendRequest=false);
   iVtObjectFontAttributes_c* updateFontAttributes(bool b_SendRequest=false);
 
-  uint8_t updateOptions(bool b_SendRequest=false) {
+  iVtObjectNumberOptions updateOptions(bool b_SendRequest=false) {
     return vtObjectOutputNumber_c::updateOptions(b_SendRequest);
   }
 

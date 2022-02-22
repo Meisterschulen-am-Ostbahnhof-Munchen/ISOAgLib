@@ -57,7 +57,7 @@ struct vtObjectOutputNumber_c::iVtObjectOutputNumber_s: iVtObjectwMacro_s {
 	uint16_t height;
 	IsoAgLib::Colour backgroundColour;
 	IsoAgLib::iVtObjectFontAttributes_c *fontAttributes;
-	uint8_t options;
+	IsoAgLib::iVtObjectNumberOptions options;
 	IsoAgLib::iVtObjectNumberVariable_c *variableReference;
 	uint32_t value;
 	int32_t offset;
@@ -71,7 +71,7 @@ struct vtObjectOutputNumber_c::iVtObjectOutputNumber_s: iVtObjectwMacro_s {
 			uint16_t height,
 			IsoAgLib::Colour backgroundColour,
 			IsoAgLib::iVtObjectFontAttributes_c *fontAttributes,
-			uint8_t options,
+			IsoAgLib::iVtObjectNumberOptions options,
 			IsoAgLib::iVtObjectNumberVariable_c *variableReference,
 			uint32_t value,
 			int32_t offset,
@@ -123,7 +123,7 @@ vtObjectOutputNumber_c::stream(uint8_t* destMemory,
       destMemory [7] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = vtObject_a->fontAttributes->getID() & 0xFF;
       destMemory [9] = vtObject_a->fontAttributes->getID() >> 8;
-      destMemory [10] = vtObject_a->options;
+      destMemory [10] = vtObject_a->options.options;
       if (vtObject_a->variableReference != NULL) {
         destMemory [11] = vtObject_a->variableReference->getID() & 0xFF;
         destMemory [12] = vtObject_a->variableReference->getID() >> 8;
@@ -249,7 +249,7 @@ vtObjectOutputNumber_c::updateFontAttributes(bool b_SendRequest)
 	return vtObject_a->fontAttributes;
 }
 
-uint8_t
+IsoAgLib::iVtObjectNumberOptions
 vtObjectOutputNumber_c::updateOptions(bool b_SendRequest)
 {
 	if (b_SendRequest)
@@ -269,8 +269,8 @@ int32_t
 vtObjectOutputNumber_c::updateOffset(bool b_SendRequest)
 {
 	if (b_SendRequest)
-		getAttribute(Options);
-	return vtObject_a->options;
+		getAttribute(Offset);
+	return vtObject_a->offset;
 }
 
 float
@@ -325,7 +325,7 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     case Height:                  vtObject_a->height                  = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case BackgroundColour:        vtObject_a->backgroundColour        = convertLittleEndianStringColour(pui8_attributeValue); break;
     //case FontAttributes:          vtObject_a->fontAttributes          = convertLittleEndianStringUi16(pui8_attributeValue); break;
-    case Options:                 vtObject_a->options                 = convertLittleEndianStringUi8(pui8_attributeValue); break;
+    case Options:                 vtObject_a->options.options         = (IsoAgLib::iVtObjectNumberOptions_e)convertLittleEndianStringUi8(pui8_attributeValue); break;
     //case VariableReference:       vtObject_a->variableReference       = convertLittleEndianStringUi16(pui8_attributeValue); break;
     case Offset:                  vtObject_a->offset                  = convertLittleEndianStringI32(pui8_attributeValue); break;
     case Scale:                   vtObject_a->scale                   = convertLittleEndianStringFloat(pui8_attributeValue); break;
@@ -381,10 +381,10 @@ vtObjectOutputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     	setAttribute (FontAttributes, (newValue == NULL) ? 65535 : newValue->getID(), b_enableReplaceOfCmd);
     }
 
-    void vtObjectOutputNumber_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectOutputNumber_c::setOptions(IsoAgLib::iVtObjectNumberOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     	    vtObject_a->options = newValue;
-    	setAttribute ( Options, newValue, b_enableReplaceOfCmd);
+    	setAttribute ( Options, newValue.options, b_enableReplaceOfCmd);
     }
 
     void
