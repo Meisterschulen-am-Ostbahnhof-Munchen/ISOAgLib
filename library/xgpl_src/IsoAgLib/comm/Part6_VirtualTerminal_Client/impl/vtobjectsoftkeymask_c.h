@@ -68,6 +68,8 @@ public:
 	IsoAgLib::ObjectID ID,
 	IsoAgLib::Colour backgroundColour);
 
+	void Append(iVtObject_c *const vtObject);
+
 #ifdef ENABLE_SKM_HANDLER
   void registerSkmHandler_c( iSkmHandler_c* SkmHandler );
   void unRegisterSkmHandler_c( iSkmHandler_c* SkmHandler );

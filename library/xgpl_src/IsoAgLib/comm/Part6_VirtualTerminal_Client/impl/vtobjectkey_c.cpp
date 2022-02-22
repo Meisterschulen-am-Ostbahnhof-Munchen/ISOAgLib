@@ -174,6 +174,11 @@ vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValu
     vtObjectKey_c::~vtObjectKey_c() = default;
 
 
+    void vtObjectKey_c::Append(iVtObject_c * const vtObject, int16_t x, int16_t y) {
+    	vtObject_a->Append(vtObject, x, y);
+    }
+
+
 } // __IsoAgLib
 
 #endif //CONFIG_USE_VTOBJECT_key

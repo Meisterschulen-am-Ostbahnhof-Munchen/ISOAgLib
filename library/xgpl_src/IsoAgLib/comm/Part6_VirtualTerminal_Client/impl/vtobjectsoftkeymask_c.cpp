@@ -279,6 +279,11 @@ vtObjectSoftKeyMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attr
 	{
 	}
 
+
+    void vtObjectSoftKeyMask_c::Append(iVtObject_c * const vtObject) {
+    	vtObject_a->Append(vtObject, 0, 0);
+    }
+
 #endif
 
 } // __IsoAgLib

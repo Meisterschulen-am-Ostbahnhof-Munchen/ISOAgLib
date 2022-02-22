@@ -62,62 +62,39 @@ public:
 	uint8_t keyCode,
 	uint8_t options);
 
-  vtObjectButton_c(iVtObjectButton_s* vtObjectButtonSROM , multiton ai_multitonInst);
-
-  virtual ~vtObjectButton_c() override;
-
-
-  void Append(iVtObject_c* const vtObject, int16_t x, int16_t y);
-
-  uint32_t fitTerminal() const override;
-
-    virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    // //////////////////////////////////
-    // All special Attribute-Set methods
-    virtual void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    virtual uint16_t getHeight() const;
-
-    virtual uint16_t getWidth() const;
-
-    virtual void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    virtual void setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    virtual void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    virtual bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    virtual bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+	vtObjectButton_c(iVtObjectButton_s *vtObjectButtonSROM, multiton ai_multitonInst);
+	virtual ~vtObjectButton_c() override;
+	void Append(iVtObject_c *const vtObject, int16_t x, int16_t y);
+	uint32_t fitTerminal() const override;
+	virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	// //////////////////////////////////
+	// All special Attribute-Set methods
+	virtual void setWidth(uint16_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual void setHeight(uint16_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual uint16_t getHeight() const;
+	virtual uint16_t getWidth() const;
+	virtual void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual void setBorderColour(IsoAgLib::Colour newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual void setKeyCode(uint8_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual bool moveChildLocation(IsoAgLib::iVtObject_c *apc_childObject, int8_t dx, int8_t dy, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual bool setChildPosition(IsoAgLib::iVtObject_c *apc_childObject, int16_t dx, int16_t dy, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
 
 #ifdef CONFIG_USE_VTOBJECT_button
-  void setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn);
+	void setOriginBTN(IsoAgLib::iVtObjectButton_c *p_btn);
 #endif //CONFIG_USE_VTOBJECT_button
-
-    virtual void v4setOptions (uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
+	virtual void v4setOptions(uint8_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-    // ///////////////////////// getter for attributes
-     /** that attribute is in parentheses in the spec, so commented out here
-  uint8_t updateObjectType() const { return 6; }
-  */
-
-    virtual uint16_t updateWidth(bool b_SendRequest=false);
-
-        virtual uint16_t updateHeight(bool b_SendRequest=false);
-
-        virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
-
-        virtual IsoAgLib::Colour updateBorderColour(bool b_SendRequest=false);
-
-        virtual uint8_t updateKeyCode(bool b_SendRequest=false);
-
-        virtual uint8_t updateOptions(bool b_SendRequest=false);
-
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+	// ///////////////////////// getter for attributes
+	/** that attribute is in parentheses in the spec, so commented out here
+	 uint8_t updateObjectType() const { return 6; }
+	 */
+	virtual uint16_t updateWidth(bool b_SendRequest = false);
+	virtual uint16_t updateHeight(bool b_SendRequest = false);
+	virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest = false);
+	virtual IsoAgLib::Colour updateBorderColour(bool b_SendRequest = false);
+	virtual uint8_t updateKeyCode(bool b_SendRequest = false);
+	virtual uint8_t updateOptions(bool b_SendRequest = false);
+	void saveReceivedAttribute(uint8_t attrID, uint8_t *pui8_attributeValue);
 #endif
 };
 

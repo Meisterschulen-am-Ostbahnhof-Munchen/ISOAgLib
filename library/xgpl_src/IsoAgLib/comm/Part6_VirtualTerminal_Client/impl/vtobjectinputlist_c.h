@@ -61,54 +61,43 @@ public:
 			uint8_t value,
 			IsoAgLib::iVtObjectInputListOptions options);
 
-  void Append(iVtObject_c* const vtObject);
-
-
-    virtual IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
-
-    virtual uint8_t getNumberOfListItems();
-  uint32_t fitTerminal() const;
-
-    virtual void setValue(uint8_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
-
-    virtual void setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_object, bool b_enableReplaceOfCmd=false);
-
-    virtual // //////////////////////////////////
-  // All special Attribute-Set methods
-  void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    virtual void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-    virtual void setOptions(IsoAgLib::iVtObjectInputListOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual bool enable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-    virtual bool disable(bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-    virtual IsoAgLib::Enabled getEnabled();
-    virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+	void Append(iVtObject_c *const vtObject);
+	virtual IsoAgLib::iVtObject_c* getListItem(uint8_t xth);
+	virtual uint8_t getNumberOfListItems();
+	uint32_t fitTerminal() const;
+	virtual void setValue(uint8_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = true);
+	virtual void setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c *apc_object, bool b_enableReplaceOfCmd = false);
+	// //////////////////////////////////
+	// All special Attribute-Set methods
+	virtual void setWidth(uint16_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual void setHeight(uint16_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual void setVariableReference(IsoAgLib::iVtObjectNumberVariable_c *newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual void setOptions(IsoAgLib::iVtObjectInputListOptions newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual bool enable(bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual bool disable(bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual IsoAgLib::Enabled getEnabled();
+	virtual void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
-  // ///////////////////////// getter for attributes
-   /** that attribute is in parentheses in the spec, so commented out here
-  uint8_t updateObjectType() const { return 10; }
-  */
+	// ///////////////////////// getter for attributes
+	/** that attribute is in parentheses in the spec, so commented out here
+	 uint8_t updateObjectType() const { return 10; }
+	 */
 
-   virtual uint16_t updateWidth(bool b_SendRequest=false);
+	virtual uint16_t updateWidth(bool b_SendRequest = false);
+	virtual uint16_t updateHeight(bool b_SendRequest = false);
+	virtual IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest = false);
 
-        virtual uint16_t updateHeight(bool b_SendRequest=false);
+	/** these attributes are in parentheses in the spec, so commented out here
+	 uint8_t updateValue(bool b_SendRequest=false);
 
-        virtual IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);
+	 uint8_t updateOptions(bool b_SendRequest=false);
+	 */
 
-  /** these attributes are in parentheses in the spec, so commented out here
-  uint8_t updateValue(bool b_SendRequest=false);
-
-  uint8_t updateOptions(bool b_SendRequest=false);
-  */
-
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+	void saveReceivedAttribute(uint8_t attrID, uint8_t *pui8_attributeValue);
 #endif
 private:
-  void updateEnable(IsoAgLib::Enabled aui8_enOrDis);
+	void updateEnable(IsoAgLib::Enabled aui8_enOrDis);
 };
 
 } // __IsoAgLib
