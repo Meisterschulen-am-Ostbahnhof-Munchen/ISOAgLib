@@ -56,7 +56,7 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
   uint16_t height;
   IsoAgLib::Colour colour;
   IsoAgLib::Colour targetLineColour;
-  uint8_t options;
+  IsoAgLib::iVtObjectArchedBarGraphOptions options;
   uint8_t startAngle;
   uint8_t endAngle;
   uint16_t barGraphWidth;
@@ -72,7 +72,7 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
 			uint16_t height,
 			IsoAgLib::Colour colour,
 			IsoAgLib::Colour targetLineColour,
-			uint8_t options,
+			IsoAgLib::iVtObjectArchedBarGraphOptions options,
 			uint8_t startAngle,
 			uint8_t endAngle,
 			uint16_t barGraphWidth,
@@ -86,10 +86,12 @@ struct vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s : iVtObjectwMacro_s {
 
     vtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_s::iVtObjectArchedBarGraph_s(
     	   IsoAgLib::ObjectID ID,
-		   uint16_t width, uint16_t height,
+		   uint16_t width,
+		   uint16_t height,
 		   IsoAgLib::Colour colour,
 		   IsoAgLib::Colour targetLineColour,
-		   uint8_t options, uint8_t startAngle,
+		   IsoAgLib::iVtObjectArchedBarGraphOptions options,
+		   uint8_t startAngle,
 		   uint8_t endAngle,
 		   uint16_t barGraphWidth,
 		   uint16_t minValue, uint16_t maxValue,
@@ -152,7 +154,7 @@ vtObjectArchedBarGraph_c::stream(uint8_t* destMemory,
       destMemory [6] = height >> 8;
       destMemory [7] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->colour, this, IsoAgLib::AColour);
       destMemory [8] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->targetLineColour, this, IsoAgLib::TargetLineColour);
-      destMemory [9] = vtObject_a->options;
+      destMemory [9] = vtObject_a->options.options;
       destMemory [10] = vtObject_a->startAngle;
       destMemory [11] = vtObject_a->endAngle;
       if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject)
@@ -214,7 +216,7 @@ IsoAgLib::ObjectID vtObjectArchedBarGraph_c::getID() const {
             uint16_t height,
 			IsoAgLib::Colour colour,
 			IsoAgLib::Colour targetLineColour,
-            uint8_t options,
+			IsoAgLib::iVtObjectArchedBarGraphOptions options,
             uint8_t startAngle,
             uint8_t endAngle,
             uint16_t barGraphWidth,
@@ -322,7 +324,7 @@ vtObjectArchedBarGraph_c::updateTargetLineColour(bool b_SendRequest)
   return vtObject_a->targetLineColour;
 }
 
-uint8_t
+IsoAgLib::iVtObjectArchedBarGraphOptions
 vtObjectArchedBarGraph_c::updateOptions(bool b_SendRequest)
 {
   if (b_SendRequest)
@@ -413,7 +415,7 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     case Height:                       vtObject_a->height                        = convertLittleEndianStringUi16(  pui8_attributeValue); break;
     case Colour:                       vtObject_a->colour                        = convertLittleEndianStringColour(pui8_attributeValue); break;
     case TargetLineColour:             vtObject_a->targetLineColour              = convertLittleEndianStringColour(pui8_attributeValue); break;
-    case Options:                      vtObject_a->options                       = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Options:                      vtObject_a->options.options               = (IsoAgLib::iVtObjectArchedBarGraphOptions_e)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case StartAngle:                   vtObject_a->startAngle                    = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case EndAngle:                     vtObject_a->endAngle                      = convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case BarGraphWidth:                vtObject_a->barGraphWidth                 = convertLittleEndianStringUi16(  pui8_attributeValue); break;
@@ -451,8 +453,8 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     	setAttribute(TargetLineColour /* "Target Line Colour" */, getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (newTargetLineColour, this, IsoAgLib::TargetLineColour), b_enableReplaceOfCmd);
     }
 
-    void vtObjectArchedBarGraph_c::setOptions(uint8_t newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
-    	setAttribute(Options /* "Options" */, newOptions, b_enableReplaceOfCmd);
+    void vtObjectArchedBarGraph_c::setOptions(IsoAgLib::iVtObjectArchedBarGraphOptions newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	setAttribute(Options /* "Options" */, newOptions.options, b_enableReplaceOfCmd);
     }
 
     void vtObjectArchedBarGraph_c::setStartAngle(uint8_t newStartAngle, bool b_updateObject, bool b_enableReplaceOfCmd) {

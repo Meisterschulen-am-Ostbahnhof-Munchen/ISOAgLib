@@ -173,13 +173,81 @@ namespace IsoAgLib {
 
 
 
+	/**
+	 * Bit 0 = Draw Border
+	 */
+
+
+	/**
+	 * Bit 1 = Draw a target line
+	 */
+	enum DrawATargetLine : bool
+	{
+		drawNoTargetLine  = false,
+		drawATargetLine   = true,
+	};
+
+
+	/**
+	 * Bit 2 = Not used
+	 */
+
+	/**
+	 * Bit 3 = bar graph type. If this bit is FALSE (0),
+	 * bar graph is filled. If this bit is TRUE (1), the bar
+	 * graph is not filled but rather shows the current
+	 * value as a single line at the proper position
+	 * within the bar graph.
+	 */
+	enum BarGraphType : bool
+	{
+		filled      = false,
+		notFilled   = true,
+	};
+
+	/**
+	 * 	Bit 4 = Deflection of the bar graph around the arc.
+	 * 	0 = anticlockwise
+	 * 	    and
+	 * 	1 = clockwise
+	 */
 
 
 
 
 
+	enum iVtObjectArchedBarGraphOptions_e : uint8_t
+	{
+		allDrawArchedBarGraph = 0b00010011,
+	};
 
 
+
+	union iVtObjectArchedBarGraphOptions {
+		iVtObjectArchedBarGraphOptions_e options;
+		struct __attribute__ ((packed))
+		{
+			DrawBorder 	        drawBorder          : 1;
+			DrawATargetLine     drawATargetLine     : 1;
+			Reserved            reserved02          : 1;
+			BarGraphType        barGraphType        : 1;
+
+			DeflectionDirection deflectionDirection : 1;
+			Reserved            reserved05          : 1;
+			Reserved            reserved06          : 1;
+			Reserved            reserved07          : 1;
+		} bits ;
+		~iVtObjectArchedBarGraphOptions();
+		iVtObjectArchedBarGraphOptions();
+		explicit iVtObjectArchedBarGraphOptions(
+				iVtObjectArchedBarGraphOptions_e options         = allDrawArchedBarGraph);
+		explicit iVtObjectArchedBarGraphOptions(
+				DrawBorder 	        drawBorder          = DrawBorder::doDrawBorder,
+				DrawATargetLine     drawATargetLine     = DrawATargetLine::drawATargetLine,
+				BarGraphType        barGraphType        = BarGraphType::filled,
+				DeflectionDirection deflectionDirection = DeflectionDirection::clockwise
+				);
+	};
 
 
 

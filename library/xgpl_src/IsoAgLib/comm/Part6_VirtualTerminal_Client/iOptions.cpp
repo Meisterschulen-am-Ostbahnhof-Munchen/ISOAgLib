@@ -132,5 +132,29 @@ namespace IsoAgLib {
 		bits.autoWrap     = autoWrap;
 		bits.wrapOnHyphen = wrapOnHyphen;
     }
+
+    iVtObjectArchedBarGraphOptions::~iVtObjectArchedBarGraphOptions() = default;
+
+    iVtObjectArchedBarGraphOptions::iVtObjectArchedBarGraphOptions()
+            :iVtObjectArchedBarGraphOptions(allDrawArchedBarGraph)
+    {}
+
+    iVtObjectArchedBarGraphOptions::iVtObjectArchedBarGraphOptions(
+            iVtObjectArchedBarGraphOptions_e options)
+            :options(options)
+            {}
+
+    iVtObjectArchedBarGraphOptions::iVtObjectArchedBarGraphOptions(
+            DrawBorder drawBorder,
+            DrawATargetLine drawATargetLine,
+            BarGraphType barGraphType,
+            DeflectionDirection deflectionDirection)
+            :iVtObjectArchedBarGraphOptions(allDrawArchedBarGraph)
+            {
+                bits.drawBorder          = drawBorder;
+                bits.drawATargetLine     = drawATargetLine;
+                bits.barGraphType        = barGraphType;
+                bits.deflectionDirection = deflectionDirection;
+            }
 }
 

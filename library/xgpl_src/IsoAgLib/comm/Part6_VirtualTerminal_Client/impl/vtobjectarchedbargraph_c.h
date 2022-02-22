@@ -57,7 +57,7 @@ public:
 			uint16_t height,
 			IsoAgLib::Colour colour,
 			IsoAgLib::Colour targetLineColour,
-			uint8_t options,
+			IsoAgLib::iVtObjectArchedBarGraphOptions options,
 			uint8_t startAngle,
 			uint8_t endAngle,
 			uint16_t barGraphWidth,
@@ -80,7 +80,7 @@ public:
     virtual void setHeight(uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setColour(IsoAgLib::Colour newColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setTargetLineColour(IsoAgLib::Colour newTargetLineColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-    virtual void setOptions(uint8_t newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+    virtual void setOptions(IsoAgLib::iVtObjectArchedBarGraphOptions newOptions, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setStartAngle(uint8_t newStartAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setEndAngle(uint8_t newEndAngle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
     virtual void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
@@ -101,7 +101,7 @@ public:
     virtual uint16_t updateHeight(bool b_SendRequest=false);
     virtual IsoAgLib::Colour updateColour(bool b_SendRequest=false);
     virtual IsoAgLib::Colour updateTargetLineColour(bool b_SendRequest=false);
-    virtual uint8_t updateOptions(bool b_SendRequest=false);
+    virtual IsoAgLib::iVtObjectArchedBarGraphOptions updateOptions(bool b_SendRequest=false);
     virtual uint8_t updateStartAngle(bool b_SendRequest=false);
     virtual uint8_t updateEndAngle(bool b_SendRequest=false);
     virtual uint16_t updateBarGraphWidth(bool b_SendRequest=false);

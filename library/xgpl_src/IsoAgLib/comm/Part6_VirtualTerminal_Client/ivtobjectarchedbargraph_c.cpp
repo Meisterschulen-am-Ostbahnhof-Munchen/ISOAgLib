@@ -23,7 +23,7 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
 		uint16_t height,
 		Colour colour,
 		Colour targetLineColour,
-		uint8_t options,
+		iVtObjectArchedBarGraphOptions options,
 		uint8_t startAngle,
 		uint8_t endAngle,
 		uint16_t barGraphWidth,
@@ -77,7 +77,7 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         vtObjectArchedBarGraph_c::setTargetLineColour (newTargetLineColour, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectArchedBarGraph_c::setOptions(uint8_t newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectArchedBarGraph_c::setOptions(iVtObjectArchedBarGraphOptions newOptions, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectArchedBarGraph_c::setOptions (newOptions, b_updateObject, b_enableReplaceOfCmd);
     }
 
@@ -140,7 +140,7 @@ iVtObjectArchedBarGraph_c::iVtObjectArchedBarGraph_c(
         return vtObjectArchedBarGraph_c::updateTargetLineColour(b_SendRequest);
     }
 
-    uint8_t iVtObjectArchedBarGraph_c::updateOptions(bool b_SendRequest) {
+    iVtObjectArchedBarGraphOptions iVtObjectArchedBarGraph_c::updateOptions(bool b_SendRequest) {
         return vtObjectArchedBarGraph_c::updateOptions(b_SendRequest);
     }
 

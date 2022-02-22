@@ -40,7 +40,7 @@ public:
 			uint16_t height = 100,
 			Colour colour = RED,
 			Colour targetLineColour = YELLOW,
-			uint8_t options = 0,
+			iVtObjectArchedBarGraphOptions options = iVtObjectArchedBarGraphOptions(allDrawArchedBarGraph),
 			uint8_t startAngle = 0,
 			uint8_t endAngle = 180,
 			uint16_t barGraphWidth = 15,
@@ -58,7 +58,7 @@ public:
   void setHeight(uint16_t newHeight, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setColour(Colour newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setTargetLineColour(Colour newTargetLineColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-  void setOptions(uint8_t newOptions, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
+  void setOptions(iVtObjectArchedBarGraphOptions newOptions, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setStartAngle(uint8_t newStartAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setEndAngle(uint8_t newEndAngle, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
   void setBarGraphWidth(uint16_t newBarGraphWidth, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
@@ -80,7 +80,7 @@ public:
   uint16_t updateHeight(bool b_SendRequest=false) override;
   Colour updateColour(bool b_SendRequest=false) override;
   Colour updateTargetLineColour(bool b_SendRequest=false) override;
-  uint8_t updateOptions(bool b_SendRequest=false) override;
+  iVtObjectArchedBarGraphOptions updateOptions(bool b_SendRequest=false) override;
   uint8_t updateStartAngle(bool b_SendRequest=false) override;
   uint8_t updateEndAngle(bool b_SendRequest=false) override;
   uint16_t updateBarGraphWidth(bool b_SendRequest=false) override;
