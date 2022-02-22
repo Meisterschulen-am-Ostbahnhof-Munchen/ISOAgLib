@@ -119,8 +119,7 @@ vtObjectLine_c::vtObjectLine_c(
 			height,
 			lineDirection),
 			ai_multitonInst)
-{
-}
+{}
 
 
 

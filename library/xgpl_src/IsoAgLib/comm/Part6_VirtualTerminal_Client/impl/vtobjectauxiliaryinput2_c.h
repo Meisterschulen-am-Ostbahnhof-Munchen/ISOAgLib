@@ -107,7 +107,7 @@ public:
   uint16_t getValue2() const;
   bool getInputActivatedInLearnMode() const;
 
-        virtual /**
+         /**
     set new value and trigger AUX2 input state message
     @paramter aen_stateForLearnMode
        - default value: the active state is calculated from aui16_value1 != 0
@@ -115,7 +115,7 @@ public:
        - StateForLearnMode_SetInactive: set state to not activated
     @return true if range of value matches the expected range for this function type
   */
-  bool setValue(uint16_t aui16_value1, uint16_t aui16_value2, StateForLearnMode_en aen_stateForLearnMode);
+  virtual bool setValue(uint16_t aui16_value1, uint16_t aui16_value2, StateForLearnMode_en aen_stateForLearnMode);
   uint8_t getFunctionType();
 
 private:

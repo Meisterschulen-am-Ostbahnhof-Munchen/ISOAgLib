@@ -83,11 +83,11 @@ public:
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  virtual /** that attribute is in parentheses in the spec, so commented out here
+   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 7; }
   */
 
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
+    virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
         virtual uint16_t updateWidth(bool b_SendRequest=false);
         virtual IsoAgLib::iVtObjectFontAttributes_c* updateForegroundColour(bool b_SendRequest=false);
         virtual IsoAgLib::iVtObjectNumberVariable_c* updateVariableReference(bool b_SendRequest=false);

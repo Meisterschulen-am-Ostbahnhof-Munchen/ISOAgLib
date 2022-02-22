@@ -65,39 +65,30 @@ public:
 
 
   virtual ~vtObjectAlarmMask_c() override;
+	uint32_t fitTerminal() const override;
 
-  uint32_t fitTerminal() const override;
-
-    virtual void setBackgroundColour(IsoAgLib::Colour newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+	virtual void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-        void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) override;
+	void setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c *newSoftKeyMask, bool b_updateObject = false, bool b_enableReplaceOfCmd = false) override;
 #endif
-
-        virtual void setPriority(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-        virtual void setAcousticSignal(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-        virtual bool moveChildLocation(IsoAgLib::iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-
-        virtual bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+	virtual void setPriority(uint8_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual void setAcousticSignal(uint8_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual bool moveChildLocation(IsoAgLib::iVtObject_c *apc_childObject, int8_t dx, int8_t dy, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual bool setChildPosition(IsoAgLib::iVtObject_c *apc_childObject, int16_t dx, int16_t dy, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 
-        virtual /** that attribute is in parentheses in the spec, so commented out here
-  uint8_t updateObjectType() const { return 2; }
-  */
+	/** that attribute is in parentheses in the spec, so commented out here
+	 uint8_t updateObjectType() const { return 2; }
+	 */
 
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
+	virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest = false);
 #ifdef CONFIG_USE_VTOBJECT_softkeymask
-
-        virtual IsoAgLib::iVtObjectSoftKeyMask_c * updateSoftKeyMask(bool b_SendRequest=false);
+	virtual IsoAgLib::iVtObjectSoftKeyMask_c* updateSoftKeyMask(bool b_SendRequest = false);
 #endif
-
-        virtual uint8_t updatePriority(bool b_SendRequest=false);
-
-        virtual uint8_t updateAcousticSignal(bool b_SendRequest=false);
-
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
+	virtual uint8_t updatePriority(bool b_SendRequest = false);
+	virtual uint8_t updateAcousticSignal(bool b_SendRequest = false);
+	void saveReceivedAttribute(uint8_t attrID, uint8_t *pui8_attributeValue) override;
 #endif
 };
 

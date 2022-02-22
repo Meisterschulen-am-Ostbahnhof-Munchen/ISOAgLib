@@ -158,6 +158,21 @@ vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValu
     	setAttribute(KeyCode, newValue, b_enableReplaceOfCmd);
     }
 
+    vtObjectKey_c::vtObjectKey_c(
+            multiton ai_multitonInst,
+            IsoAgLib::ObjectID ID,
+            IsoAgLib::Colour backgroundColour,
+            uint8_t keyCode)
+            : vtObjectKey_c(
+            new iVtObjectKey_s(
+                    ID,
+                    backgroundColour,
+                    keyCode),
+            ai_multitonInst)
+    {}
+
+    vtObjectKey_c::~vtObjectKey_c() = default;
+
 
 } // __IsoAgLib
 

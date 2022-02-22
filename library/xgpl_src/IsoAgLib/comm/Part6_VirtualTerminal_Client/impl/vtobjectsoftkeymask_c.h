@@ -75,8 +75,6 @@ public:
 
 
   virtual ~vtObjectSoftKeyMask_c() override;
-
-
   uint32_t fitTerminal() const override;
   uint8_t get_numberOfObjectsToFollow() const;
   void setOriginSKM(bool b_SKM) override;
@@ -87,12 +85,11 @@ public:
   virtual void setBackgroundColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  virtual /** that attribute is in parentheses in the spec, so commented out here
+   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 4; }
   */
 
-  IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
-
+  virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest=false);
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 

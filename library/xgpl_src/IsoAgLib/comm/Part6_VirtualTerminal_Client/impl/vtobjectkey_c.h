@@ -44,13 +44,31 @@ private:
 	std::unique_ptr<iVtObjectKey_s> vtObject_a;
 
 
+	  vtObjectKey_c(iVtObjectKey_s* vtObjectKeySROM , multiton ai_multitonInst);
+
 public:
+
+
+	  vtObjectKey_c() = delete;
+	  ~vtObjectKey_c();
+	  vtObjectKey_c(
+			  multiton ai_multitonInst,
+              IsoAgLib::ObjectID ID,
+				IsoAgLib::Colour backgroundColour,
+				uint8_t keyCode);
+
+
+
+
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectKey_c(iVtObjectKey_s* vtObjectKeySROM , multiton ai_multitonInst);
+
+
+
+
 
   uint32_t fitTerminal() const;
   void setOriginSKM(bool b_SKM);

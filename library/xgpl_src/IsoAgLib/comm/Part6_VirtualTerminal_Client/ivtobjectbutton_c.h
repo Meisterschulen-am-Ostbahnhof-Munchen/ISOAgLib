@@ -55,21 +55,13 @@ public:
 
 
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   void setBorderColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   void v4setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-
   bool setChildPosition(iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -79,15 +71,10 @@ public:
   */
 
   uint16_t updateWidth(bool b_SendRequest=false) override;
-
   uint16_t updateHeight(bool b_SendRequest=false) override;
-
   Colour updateBackgroundColour(bool b_SendRequest=false) override;
-
   Colour updateBorderColour(bool b_SendRequest=false) override;
-
   uint8_t updateKeyCode(bool b_SendRequest=false) override;
-
   uint8_t updateOptions(bool b_SendRequest=false) override;
 #endif
 

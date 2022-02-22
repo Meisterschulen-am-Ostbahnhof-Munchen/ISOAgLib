@@ -30,6 +30,23 @@ namespace IsoAgLib {
 class iVtObjectKey_c : public __IsoAgLib::vtObjectKey_c
 {
 public:
+
+	iVtObjectKey_c() = delete;
+
+	~iVtObjectKey_c() override;
+
+	iVtObjectKey_c(
+	    iVtClientObjectPool_c* pool,
+		ObjectID ID = autoID,
+		Colour backgroundColour = OLIVE,
+		uint8_t keyCode = 0);
+
+
+
+
+
+
+
   static ObjectType objectType() { return VT_OBJECT_TYPE_KEY; }
 
 
