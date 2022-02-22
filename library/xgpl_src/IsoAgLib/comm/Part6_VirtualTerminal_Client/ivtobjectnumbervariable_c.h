@@ -30,6 +30,23 @@ namespace IsoAgLib {
 class iVtObjectNumberVariable_c : public __IsoAgLib::vtObjectNumberVariable_c
 {
 public:
+
+
+	iVtObjectNumberVariable_c() = delete;
+
+	~iVtObjectNumberVariable_c();
+
+	iVtObjectNumberVariable_c(
+			iVtClientObjectPool_c* pool,
+			ObjectID ID,
+			uint32_t value);
+
+
+
+
+
+
+
   static ObjectType objectType() { return VT_OBJECT_TYPE_NUMBER_VARIABLE; }
 
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) override {

@@ -116,6 +116,18 @@ vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*p
     {}
 
 
+    vtObjectNumberVariable_c::vtObjectNumberVariable_c(
+	    multiton ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		uint32_t value)
+    :vtObjectNumberVariable_c(
+    		new iVtObjectNumberVariable_s(
+    		  		ID,
+    				value),
+				ai_multitonInst)
+    {}
+
+    vtObjectNumberVariable_c::~vtObjectNumberVariable_c() = default;
 
 
 } // __IsoAgLib

@@ -41,15 +41,29 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectNumberVariable_s> vtObject_a;
 
+	  vtObjectNumberVariable_c(iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , multiton ai_multitonInst);
+
 public:
+
+
+	  vtObjectNumberVariable_c() = delete;
+	  ~vtObjectNumberVariable_c();
+
+
+	  vtObjectNumberVariable_c(
+	    multiton ai_multitonInst,
+		IsoAgLib::ObjectID ID,
+		uint32_t value);
+
+
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectNumberVariable_c(iVtObjectNumberVariable_s* vtObjectNumberVariableSROM , multiton ai_multitonInst);
 
-  vtObjectNumberVariable_c();
+
+
   uint32_t fitTerminal() const;
 
     virtual void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true);
