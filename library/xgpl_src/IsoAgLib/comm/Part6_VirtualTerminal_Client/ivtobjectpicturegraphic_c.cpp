@@ -51,6 +51,46 @@ iVtObjectPictureGraphic_c::iVtObjectPictureGraphic_c(
 	pool->Append(this);
 }
 
+    ObjectType iVtObjectPictureGraphic_c::objectType() { return VT_OBJECT_TYPE_PICTURE_GRAPHIC; }
+
+    void iVtObjectPictureGraphic_c::setWidth(uint16_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectPictureGraphic_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    void iVtObjectPictureGraphic_c::setOptions(iVtObjectPictureGraphicOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectPictureGraphic_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    void iVtObjectPictureGraphic_c::setTransparencyColour(Colour newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+        vtObjectPictureGraphic_c::setTransparencyColour (newValue, b_updateObject, b_enableReplaceOfCmd);
+    }
+
+    void iVtObjectPictureGraphic_c::setRawData0(uint8_t *newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth, uint16_t aui16_actHeight, uint16_t aui16_width) {
+        vtObjectPictureGraphic_c::setRawData0 (newValue, aui32_size, ab_rle, aui16_actWidth, aui16_actHeight, aui16_width);
+    }
+
+    void iVtObjectPictureGraphic_c::setRawData1(uint8_t *newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth, uint16_t aui16_actHeight, uint16_t aui16_width) {
+        vtObjectPictureGraphic_c::setRawData1 (newValue, aui32_size, ab_rle, aui16_actWidth, aui16_actHeight, aui16_width);
+    }
+
+    void iVtObjectPictureGraphic_c::setRawData2(uint8_t *newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth, uint16_t aui16_actHeight, uint16_t aui16_width) {
+        vtObjectPictureGraphic_c::setRawData2 (newValue, aui32_size, ab_rle, aui16_actWidth, aui16_actHeight, aui16_width);
+    }
+
+    uint16_t iVtObjectPictureGraphic_c::updateWidth(bool b_SendRequest) {
+        return vtObjectPictureGraphic_c::updateWidth(b_SendRequest);
+    }
+
+    iVtObjectPictureGraphicOptions iVtObjectPictureGraphic_c::updateOptions(bool b_SendRequest) {
+        return vtObjectPictureGraphic_c::updateOptions(b_SendRequest);
+    }
+
+    Colour iVtObjectPictureGraphic_c::updateTransparencyColour(bool b_SendRequest) {
+        return vtObjectPictureGraphic_c::updateTransparencyColour(b_SendRequest);
+    }
+
+    ObjectType iVtObjectPictureGraphic_c::getObjectType() const { return objectType(); }
+
 } // IsoAgLib
 
 #endif //CONFIG_USE_VTOBJECT_picturegraphic

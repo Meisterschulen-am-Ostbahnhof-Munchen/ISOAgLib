@@ -187,7 +187,7 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
 
     uint8_t ui8_graphicType = 0;
 
-    const uint8_t* rawData = NULL;
+    const uint8_t* rawData = nullptr;
     uint32_t numberOfBytesInRawData = 0;
     uint16_t actualWidth = 0;
     uint16_t actualHeight = 0;

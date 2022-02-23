@@ -49,12 +49,12 @@ private:
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
-                 objRange_t sourceOffset);
-  IsoAgLib::ObjectID getID() const;
+                 objRange_t sourceOffset) override;
+  IsoAgLib::ObjectID getID() const override;
 
   vtObjectPictureGraphic_c() = delete;
 
-  ~vtObjectPictureGraphic_c();
+  ~vtObjectPictureGraphic_c() override;
 
 
   vtObjectPictureGraphic_c(
@@ -76,35 +76,41 @@ public:
 			const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow);
 
 
-  uint32_t fitTerminal() const;
+  uint32_t fitTerminal() const override;
 
-  // //////////////////////////////////
+    virtual // //////////////////////////////////
   // All special Attribute-Set methods
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOptions(IsoAgLib::iVtObjectPictureGraphicOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setTransparencyColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
-  /// The following modification functions will only take affect on updating the object pool!
+    virtual void setOptions(IsoAgLib::iVtObjectPictureGraphicOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual void setTransparencyColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+
+    virtual /// The following modification functions will only take affect on updating the object pool!
   /// USE THEM WITH CARE!!!
   void setRawData0 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF);
-  void setRawData1 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF);
-  void setRawData2 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF);
+
+    virtual void setRawData1 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF);
+
+    virtual void setRawData2 (uint8_t* newValue, uint32_t aui32_size, bool ab_rle, uint16_t aui16_actWidth=0xFFFF, uint16_t aui16_actHeight=0xFFFF, uint16_t aui16_width=0xFFFF);
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
   // ///////////////////////// getter for attributes
-  /** that attribute is in parentheses in the spec, so commented out here
+  virtual /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 20; }
   */
 
   uint16_t updateWidth(bool b_SendRequest=false);
-  IsoAgLib::iVtObjectPictureGraphicOptions updateOptions(bool b_SendRequest=false);
-  IsoAgLib::Colour updateTransparencyColour(bool b_SendRequest=false);
+
+        virtual IsoAgLib::iVtObjectPictureGraphicOptions updateOptions(bool b_SendRequest=false);
+
+        virtual IsoAgLib::Colour updateTransparencyColour(bool b_SendRequest=false);
   /** these attributes are in parentheses in the spec, so commented out here
   uint16_t updateActualWidth(bool b_SendRequest=false);
   uint16_t updateActualHeight(bool b_SendRequest=false);
   uint8_t updateFormat(bool b_SendRequest=false);
   */
 
-  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+  void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) override;
 #endif
 };
 
