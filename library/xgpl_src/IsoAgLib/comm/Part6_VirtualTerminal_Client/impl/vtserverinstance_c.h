@@ -22,6 +22,8 @@
 
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include "../ivttypes.h"
+#include "iVtObjectPictureGraphicFormat.h"
+
 
 namespace IsoAgLib {
   class iVtServerInstance_c;
@@ -78,7 +80,7 @@ public:
   typedef struct vtCapabilities_s {
     ecutime_t lastReceivedHardware;
     ecutime_t lastRequestedHardware;
-    uint8_t  hwGraphicType; // 0, 1 or 2 (2, 16 or 256 colors)
+    IsoAgLib::PictureGraphicFormat hwGraphicType; // 0, 1 or 2 (2, 16 or 256 colors)
 
     //Bit 0 = 1 = VT has a touch screen or pointing device and supports Pointing Event message.
     //Bit 1 = 1 = VT reports drag operation via Pointing Event message (Bit 0 shall be set to 1)

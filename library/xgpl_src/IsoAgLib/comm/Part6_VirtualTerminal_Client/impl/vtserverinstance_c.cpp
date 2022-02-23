@@ -146,7 +146,7 @@ VtServerInstance_c::setHardwareData( const CanPkgExt_c& arc_data )
 {
   ms_vtCapabilitiesA.lastReceivedHardware = arc_data.time();
   ms_vtCapabilitiesA.bootTime =             arc_data.getUint8Data (1);
-  ms_vtCapabilitiesA.hwGraphicType =        arc_data.getUint8Data (2);
+  ms_vtCapabilitiesA.hwGraphicType =        (IsoAgLib::PictureGraphicFormat)arc_data.getUint8Data (2);
   ms_vtCapabilitiesA.hwHardware =           arc_data.getUint8Data (3);
   ms_vtCapabilitiesA.hwWidth =              arc_data.getUint8Data (4) + (static_cast<uint16_t>(arc_data.getUint8Data (5)) << 8);
   ms_vtCapabilitiesA.hwHeight =             arc_data.getUint8Data (6) + (static_cast<uint16_t>(arc_data.getUint8Data (7)) << 8);
