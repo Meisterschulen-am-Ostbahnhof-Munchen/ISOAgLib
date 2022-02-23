@@ -51,7 +51,7 @@ struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_
   IsoAgLib::Colour backgroundColour;
   IsoAgLib::Colour borderColour;
   uint8_t keyCode;
-  uint8_t options;
+  IsoAgLib::iVtObjectButtonOptions options;
   explicit iVtObjectButton_s(
 		IsoAgLib::ObjectID ID,
 		uint16_t width,
@@ -59,7 +59,7 @@ struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_
 		IsoAgLib::Colour backgroundColour,
 		IsoAgLib::Colour borderColour,
   	    uint8_t keyCode,
-  	    uint8_t options);
+		IsoAgLib::iVtObjectButtonOptions options);
 };
 
     vtObjectButton_c::iVtObjectButton_s::iVtObjectButton_s(
@@ -69,7 +69,7 @@ struct vtObjectButton_c::iVtObjectButton_s : iVtObjectObject_s, iVtObjectwMacro_
             IsoAgLib::Colour backgroundColour,
             IsoAgLib::Colour borderColour,
             uint8_t keyCode,
-            uint8_t options)
+			IsoAgLib::iVtObjectButtonOptions options)
             : iVtObject_s(ID)
             , iVtObjectObject_s(ID)
             , iVtObjectwMacro_s(ID)
@@ -106,7 +106,7 @@ vtObjectButton_c::stream(uint8_t* destMemory,
       destMemory [7] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->backgroundColour, this, IsoAgLib::BackgroundColour);
       destMemory [8] = getVtClientInstance4Comm().getClientByID (s_properties.clientId).getUserConvertedColor (vtObject_a->borderColour, this, IsoAgLib::BorderColour);
       destMemory [9] = vtObject_a->keyCode;
-      destMemory [10] = vtObject_a->options;
+      destMemory [10] = vtObject_a->options.options;
       destMemory [11] = vtObject_a->numberOfObjectsToFollow;
       destMemory [12] = vtObject_a->numberOfMacrosToFollow;
       sourceOffset += 13;
@@ -133,7 +133,7 @@ vtObjectButton_c::vtObjectButton_c(
 	IsoAgLib::Colour backgroundColour,
 	IsoAgLib::Colour borderColour,
 	uint8_t keyCode,
-	uint8_t options)
+	IsoAgLib::iVtObjectButtonOptions options)
 :vtObjectButton_c(
 		new iVtObjectButton_s(
 			ID,
@@ -247,10 +247,10 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
     	setAttribute(KeyCode, newValue, b_enableReplaceOfCmd);
     }
 
-    void vtObjectButton_c::v4setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void vtObjectButton_c::v4setOptions(IsoAgLib::iVtObjectButtonOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
     	if (b_updateObject)
     		vtObject_a->options = newValue;
-    	setAttribute(Options, newValue, b_enableReplaceOfCmd);
+    	setAttribute(Options, newValue.options, b_enableReplaceOfCmd);
     }
 
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
@@ -294,7 +294,7 @@ vtObjectButton_c::updateKeyCode(bool b_SendRequest)
   return vtObject_a->keyCode;
 }
 
-uint8_t
+IsoAgLib::iVtObjectButtonOptions
 vtObjectButton_c::updateOptions(bool b_SendRequest)
 {
   if (b_SendRequest)
@@ -312,7 +312,7 @@ vtObjectButton_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeV
     case BackgroundColour: vtObject_a->backgroundColour = convertLittleEndianStringColour(pui8_attributeValue); break;
     case BorderColour:     vtObject_a->borderColour     = convertLittleEndianStringColour(pui8_attributeValue); break;
     case KeyCode:          vtObject_a->keyCode          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
-    case Options:          vtObject_a->options          = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Options:          vtObject_a->options.options  = (IsoAgLib::iVtObjectButtonOptions_e)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     default: break;
   }
 }

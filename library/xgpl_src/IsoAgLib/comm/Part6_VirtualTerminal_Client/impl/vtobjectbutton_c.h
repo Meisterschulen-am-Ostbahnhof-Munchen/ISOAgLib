@@ -60,7 +60,7 @@ public:
 	IsoAgLib::Colour backgroundColour,
 	IsoAgLib::Colour borderColour,
 	uint8_t keyCode,
-	uint8_t options);
+	IsoAgLib::iVtObjectButtonOptions options);
 
 	vtObjectButton_c(iVtObjectButton_s *vtObjectButtonSROM, multiton ai_multitonInst);
 	virtual ~vtObjectButton_c() override;
@@ -82,7 +82,7 @@ public:
 #ifdef CONFIG_USE_VTOBJECT_button
 	void setOriginBTN(IsoAgLib::iVtObjectButton_c *p_btn);
 #endif //CONFIG_USE_VTOBJECT_button
-	virtual void v4setOptions(uint8_t newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
+	virtual void v4setOptions(IsoAgLib::iVtObjectButtonOptions newValue, bool b_updateObject = false, bool b_enableReplaceOfCmd = false);
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES
 	// ///////////////////////// getter for attributes
 	/** that attribute is in parentheses in the spec, so commented out here
@@ -93,7 +93,7 @@ public:
 	virtual IsoAgLib::Colour updateBackgroundColour(bool b_SendRequest = false);
 	virtual IsoAgLib::Colour updateBorderColour(bool b_SendRequest = false);
 	virtual uint8_t updateKeyCode(bool b_SendRequest = false);
-	virtual uint8_t updateOptions(bool b_SendRequest = false);
+	virtual IsoAgLib::iVtObjectButtonOptions updateOptions(bool b_SendRequest = false);
 	void saveReceivedAttribute(uint8_t attrID, uint8_t *pui8_attributeValue);
 #endif
 };

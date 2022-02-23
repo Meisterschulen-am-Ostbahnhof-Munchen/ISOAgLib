@@ -290,6 +290,11 @@ namespace IsoAgLib {
 	 * the border is always transparent. a
 	 *
 	 */
+	enum SuppressBorder : bool
+	{
+		drawBorder       = false,
+		suppressBorder   = true,
+	};
 	/**
 	 *
 	 * Bit 3 = Transparent Background. If FALSE,
@@ -301,6 +306,7 @@ namespace IsoAgLib {
 	 *
 	 *
 	 */
+
 	/**
 	 *
 	 * Bit 4 = Disabled. If FALSE, the button is
@@ -311,6 +317,11 @@ namespace IsoAgLib {
 	 * operator. a
 	 *
 	 */
+	enum Disabled : bool
+	{
+		enabledButton    = false,
+		disabledButton   = true,
+	};
 	/**
 	 *
 	 * Bit 5 = No border. If FALSE, the Button Border
@@ -321,6 +332,11 @@ namespace IsoAgLib {
 	 * the full Button Area. a
 	 *
 	 */
+	enum NoBorder : bool
+	{
+		border     = false,
+		noBorder   = true,
+	};
 
 
 
@@ -337,12 +353,13 @@ namespace IsoAgLib {
 		{
 			Latchable 	        latchable          : 1;
 			CurrentButtonState  currentButtonState : 1;
+			SuppressBorder      suppressBorder     : 1;
+			Transparent 		transparent        : 1;
 
-
-
-
-			Reserved            reserved06          : 1;
-			Reserved            reserved07          : 1;
+			Disabled            disabled           : 1;
+			NoBorder            noBorder           : 1;
+			Reserved            reserved06         : 1;
+			Reserved            reserved07         : 1;
 		} bits ;
 		~iVtObjectButtonOptions();
 		iVtObjectButtonOptions();
@@ -350,7 +367,12 @@ namespace IsoAgLib {
 				iVtObjectButtonOptions_e options         = allDrawButton);
 		explicit iVtObjectButtonOptions(
 				Latchable 	        latchable           = Latchable::latchable,
-				CurrentButtonState  currentButtonState  = CurrentButtonState::currentButtonState,
+				CurrentButtonState  currentButtonState  = CurrentButtonState::released,
+				SuppressBorder      suppressBorder      = SuppressBorder::drawBorder,
+				Transparent 		transparent         = Transparent::opaque,
+
+				Disabled            disabled            = Disabled::enabledButton,
+				NoBorder            noBorder            = NoBorder::border
 				);
 	};
 

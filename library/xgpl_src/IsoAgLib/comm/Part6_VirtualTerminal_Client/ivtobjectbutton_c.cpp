@@ -22,7 +22,7 @@ namespace IsoAgLib {
 			Colour backgroundColour,
 			Colour borderColour,
 			uint8_t keyCode,
-			uint8_t options)
+			iVtObjectButtonOptions options)
 	: vtObjectButton_c(
 						pool->getAiMultitonInst(),
 						ID,
@@ -87,7 +87,7 @@ namespace IsoAgLib {
         return vtObjectButton_c::updateBorderColour(b_SendRequest);
     }
 
-    uint8_t iVtObjectButton_c::updateOptions(bool b_SendRequest) {
+    IsoAgLib::iVtObjectButtonOptions iVtObjectButton_c::updateOptions(bool b_SendRequest) {
         return vtObjectButton_c::updateOptions(b_SendRequest);
     }
 
@@ -110,7 +110,7 @@ namespace IsoAgLib {
         vtObjectButton_c::setBorderColour (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 
-    void iVtObjectButton_c::v4setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    void iVtObjectButton_c::v4setOptions(IsoAgLib::iVtObjectButtonOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
         vtObjectButton_c::v4setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
     }
 

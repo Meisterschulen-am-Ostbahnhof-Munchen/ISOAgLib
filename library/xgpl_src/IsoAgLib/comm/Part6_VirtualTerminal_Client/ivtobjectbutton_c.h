@@ -60,7 +60,7 @@ public:
   void setBackgroundColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setBorderColour(Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   void setKeyCode(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
-  void v4setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
+  void v4setOptions(IsoAgLib::iVtObjectButtonOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
   bool setChildPosition(iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
@@ -75,7 +75,7 @@ public:
   Colour updateBackgroundColour(bool b_SendRequest=false) override;
   Colour updateBorderColour(bool b_SendRequest=false) override;
   uint8_t updateKeyCode(bool b_SendRequest=false) override;
-  uint8_t updateOptions(bool b_SendRequest=false) override;
+  IsoAgLib::iVtObjectButtonOptions updateOptions(bool b_SendRequest=false) override;
 #endif
 
   ObjectType getObjectType() const override;
