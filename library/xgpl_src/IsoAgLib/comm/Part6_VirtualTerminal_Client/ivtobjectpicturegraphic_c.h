@@ -37,21 +37,21 @@ public:
 
 	iVtObjectPictureGraphic_c(
 			    iVtClientObjectPool_c* pool,
-				ObjectID ID,
-				uint16_t width,
-				uint16_t actualWidth,
-				uint16_t actualHeight,
-				PictureGraphicFormat format,
-				iVtObjectPictureGraphicOptions options,
-				Colour transparencyColour,
-				uint32_t numberOfBytesInRawData0,
-				const uint8_t *rawData0,
-				uint32_t numberOfBytesInRawData1,
-				const uint8_t *rawData1,
-				uint32_t numberOfBytesInRawData2,
-				const uint8_t *rawData2,
-				uint8_t numberOfFixedBitmapsToFollow,
-				const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow);
+				ObjectID ID = autoID,
+				uint16_t width = 100,
+				uint16_t actualWidth = 100,
+				uint16_t actualHeight = 100,
+				PictureGraphicFormat format = Colour8bit,
+				iVtObjectPictureGraphicOptions options = iVtObjectPictureGraphicOptions(allDrawPicture),
+				Colour transparencyColour = WHITE,
+				uint32_t numberOfBytesInRawData0 = 0,
+				const uint8_t *rawData0 = nullptr,
+				uint32_t numberOfBytesInRawData1 = 0,
+				const uint8_t *rawData1 = nullptr,
+				uint32_t numberOfBytesInRawData2 = 0,
+				const uint8_t *rawData2 = nullptr,
+				uint8_t numberOfFixedBitmapsToFollow = 0,
+				const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow = nullptr);
 
 
 
