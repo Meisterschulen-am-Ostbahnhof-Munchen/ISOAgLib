@@ -30,12 +30,12 @@ namespace IsoAgLib {
 class iVtObjectAuxiliaryFunction_c : public __IsoAgLib::vtObjectAuxiliaryFunction_c
 {
 public:
-  virtual ~iVtObjectAuxiliaryFunction_c() override;
+  ~iVtObjectAuxiliaryFunction_c() override;
 
   static ObjectType objectType();
 
 
-  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
   bool setChildPosition(iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 #ifdef CONFIG_USE_ISO_TERMINAL_GETATTRIBUTES

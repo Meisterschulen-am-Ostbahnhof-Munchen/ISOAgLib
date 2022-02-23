@@ -32,7 +32,7 @@ class iVtObjectAuxiliaryControlDesignatorObjectPointer_c : public __IsoAgLib::vt
 public:
   static ObjectType objectType() { return VT_OBJECT_TYPE_AUXILIARY_POINTER; }
 
-  virtual ~iVtObjectAuxiliaryControlDesignatorObjectPointer_c() override;
+  ~iVtObjectAuxiliaryControlDesignatorObjectPointer_c() override;
 
   void setAuxiliaryObjectId(iVtObject_c* apc_newObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) override;
 
