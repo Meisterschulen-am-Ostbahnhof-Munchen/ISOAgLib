@@ -533,6 +533,43 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
         if (aui16_width    != 0xFFFF) vtObject_a->width        = aui16_width;
     }
 
+	vtObjectPictureGraphic_c::vtObjectPictureGraphic_c(
+			multiton ai_multitonInst,
+			IsoAgLib::ObjectID ID,
+			uint16_t width,
+			uint16_t actualWidth,
+			uint16_t actualHeight,
+			IsoAgLib::PictureGraphicFormat format,
+			IsoAgLib::iVtObjectPictureGraphicOptions options,
+			IsoAgLib::Colour transparencyColour,
+			uint32_t numberOfBytesInRawData0,
+			const uint8_t *rawData0,
+			uint32_t numberOfBytesInRawData1,
+			const uint8_t *rawData1,
+			uint32_t numberOfBytesInRawData2,
+			const uint8_t *rawData2,
+			uint8_t numberOfFixedBitmapsToFollow,
+			const repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s *fixedBitmapsToFollow)
+	:vtObjectPictureGraphic_c(
+			new iVtObjectPictureGraphic_s(
+					ID,
+					width,
+					actualWidth,
+					actualHeight,
+					format,
+					options,
+					transparencyColour,
+					numberOfBytesInRawData0,
+					rawData0,
+					numberOfBytesInRawData1,
+					rawData1,
+					numberOfBytesInRawData2,
+					rawData2,
+					numberOfFixedBitmapsToFollow,
+					fixedBitmapsToFollow),
+			ai_multitonInst)
+	{
+	}
 
 } // __IsoAgLib
 
