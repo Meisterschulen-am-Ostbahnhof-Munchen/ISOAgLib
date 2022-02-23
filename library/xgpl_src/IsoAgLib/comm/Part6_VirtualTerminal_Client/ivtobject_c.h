@@ -32,6 +32,7 @@
 #include "iLineSuppression.h"
 #include "iVtObjectAlarmMaskAdditions.h"
 #include "iVtObjectPolygonAdditions.h"
+#include "iVtObjectPictureGraphicAdditions.h"
 #include "iFont.h"
 #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/multiton.h>

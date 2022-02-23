@@ -37,13 +37,7 @@ enum vtObjectPictureGraphic_c::AttributeID:uint8_t
 };
 
 
-struct repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s {
-  const uint8_t* rawData;
-  uint32_t numberOfBytesInRawData;
-  uint16_t actualWidth;
-  uint16_t actualHeight;
-  uint8_t formatoptions; /* format is bit 8+7, options is bit 2-0 (NO RLE1/4/8 stuff here!! */
-};
+
 
 
 
@@ -424,6 +418,8 @@ vtObjectPictureGraphic_c::updateTransparencyColour(bool b_SendRequest)
     getAttribute(TransparencyColour);
   return vtObject_a->transparencyColour;
 }
+
+vtObjectPictureGraphic_c::~vtObjectPictureGraphic_c() = default;
 
 /** these attributes are in parentheses in the spec, so commented out here
 uint16_t

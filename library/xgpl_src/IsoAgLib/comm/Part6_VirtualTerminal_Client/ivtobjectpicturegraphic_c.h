@@ -30,6 +30,16 @@ namespace IsoAgLib {
 class iVtObjectPictureGraphic_c : public __IsoAgLib::vtObjectPictureGraphic_c
 {
 public:
+
+	iVtObjectPictureGraphic_c() = delete;
+	~iVtObjectPictureGraphic_c();
+
+
+
+
+
+
+
   static ObjectType objectType() { return VT_OBJECT_TYPE_PICTURE_GRAPHIC; }
 
 

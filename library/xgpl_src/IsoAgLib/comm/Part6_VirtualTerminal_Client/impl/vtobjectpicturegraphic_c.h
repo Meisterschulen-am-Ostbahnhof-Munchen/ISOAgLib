@@ -43,14 +43,18 @@ private:
 	// Pointer to the internal implementation
 	std::unique_ptr<iVtObjectPictureGraphic_s> vtObject_a;
 
+    vtObjectPictureGraphic_c(iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , multiton ai_multitonInst);
+
+
 public:
   uint16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
   IsoAgLib::ObjectID getID() const;
 
-  vtObjectPictureGraphic_c(iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM , multiton ai_multitonInst);
+  vtObjectPictureGraphic_c() = delete;
 
+  ~vtObjectPictureGraphic_c();
 
 
   uint32_t fitTerminal() const;

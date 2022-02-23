@@ -11,6 +11,7 @@
 
 namespace IsoAgLib {
 
+iVtObjectPictureGraphic_c::~iVtObjectPictureGraphic_c() = default;
 
 } // IsoAgLib
 
