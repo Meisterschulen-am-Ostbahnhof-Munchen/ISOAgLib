@@ -340,6 +340,102 @@ namespace IsoAgLib {
 
 
 
+
+
+	/**
+	 *
+	 *	Bit 0: 0 = Opaque, 1 = Transparent. If opaque,
+     *  all pixels are drawn in indicated colour.
+     *  Background objects do not show through. If
+	 *  transparent, pixels in the bitmap that have the
+	 *  transparency colour should show the colour of
+	 *  the background or objects underneath this
+	 *  picture graphic instead.
+	 *
+	 */
+
+
+
+
+	/**
+	 *
+	 *	Bit 1: 0 = Normal, 1 = Flashing. Flash style
+	 *	and rate determined by VT design.
+	 *
+	 */
+
+	enum Flashing : bool
+	{
+		normal     = false,
+		flashing   = true,
+	};
+
+
+	/**
+	 *
+	 *	Bit 2: 0 = Raw data, 1 = Run-Length Encoded
+	 *	data (see B.12.2). This bit cannot be changed
+	 *	during runtime by Change Attribute command.
+	 *	(Any change will be ignored by the VT.)
+	 *
+	 */
+
+
+	enum RawData : bool
+	{
+		rawData     = false,
+		rle         = true,
+	};
+
+
+
+	enum iVtObjectPictureGraphicOptions_e : uint8_t
+	{
+		allDrawPicture = 0b00000000,
+	};
+
+
+
+	union iVtObjectPictureGraphicOptions {
+		iVtObjectPictureGraphicOptions_e options;
+		struct __attribute__ ((packed))
+		{
+			Transparent 		transparent         : 1;
+			Flashing	        flashing            : 1;
+			RawData	            rawData             : 1;
+			Reserved            reserved03          : 1;
+
+			Reserved            reserved04          : 1;
+			Reserved            reserved05          : 1;
+			Reserved            reserved06          : 1;
+			Reserved            reserved07          : 1;
+		} bits ;
+		~iVtObjectPictureGraphicOptions();
+		iVtObjectPictureGraphicOptions();
+		explicit iVtObjectPictureGraphicOptions(
+				iVtObjectPictureGraphicOptions_e options         = allDrawPicture);
+		explicit iVtObjectPictureGraphicOptions(
+				Transparent 		transparent         = Transparent::opaque,
+				Flashing	        flashing            = Flashing::normal,
+				RawData	            rawData             = RawData::rle
+				);
+	};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	enum iVtObjectButtonOptions_e : uint8_t
 	{
 		allDrawButton = 0b00000000,

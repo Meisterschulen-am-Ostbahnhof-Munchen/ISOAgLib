@@ -58,7 +58,7 @@ public:
   // //////////////////////////////////
   // All special Attribute-Set methods
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
+  void setOptions(IsoAgLib::iVtObjectPictureGraphicOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
   void setTransparencyColour(IsoAgLib::Colour newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
   /// The following modification functions will only take affect on updating the object pool!
@@ -73,7 +73,7 @@ public:
   */
 
   uint16_t updateWidth(bool b_SendRequest=false);
-  uint8_t updateOptions(bool b_SendRequest=false);
+  IsoAgLib::iVtObjectPictureGraphicOptions updateOptions(bool b_SendRequest=false);
   IsoAgLib::Colour updateTransparencyColour(bool b_SendRequest=false);
   /** these attributes are in parentheses in the spec, so commented out here
   uint16_t updateActualWidth(bool b_SendRequest=false);

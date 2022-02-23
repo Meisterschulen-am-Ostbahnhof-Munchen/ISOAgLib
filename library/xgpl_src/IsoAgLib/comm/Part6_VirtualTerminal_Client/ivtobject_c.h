@@ -26,6 +26,7 @@
 #include "iFillType.h"
 #include "iObjectID.h"
 #include "iOptions.h"
+#include "iVtObjectPictureGraphicFormat.h"
 #include "iJustification.h"
 #include "iLineDirection.h"
 #include "iLineSuppression.h"

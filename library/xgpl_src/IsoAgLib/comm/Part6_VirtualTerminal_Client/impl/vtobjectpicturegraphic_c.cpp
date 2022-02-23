@@ -51,8 +51,8 @@ struct vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
 	uint16_t width;
 	uint16_t actualWidth;
 	uint16_t actualHeight;
-	uint8_t format;
-	uint8_t options;
+	IsoAgLib::PictureGraphicFormat format;
+	IsoAgLib::iVtObjectPictureGraphicOptions options;
 	IsoAgLib::Colour transparencyColour;
 	uint32_t numberOfBytesInRawData0;
 	const uint8_t *rawData0;
@@ -67,8 +67,8 @@ struct vtObjectPictureGraphic_c::iVtObjectPictureGraphic_s: iVtObjectwMacro_s {
 			uint16_t width,
 			uint16_t actualWidth,
 			uint16_t actualHeight,
-			uint8_t format,
-			uint8_t options,
+			IsoAgLib::PictureGraphicFormat format,
+			IsoAgLib::iVtObjectPictureGraphicOptions options,
 			IsoAgLib::Colour transparencyColour,
 			uint32_t numberOfBytesInRawData0,
 			const uint8_t *rawData0,
@@ -217,10 +217,10 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
       actualHeight = vtObject_a->actualHeight;
       MACRO_calculate_ui8_graphicType
       switch (ui8_graphicType) {
-        case 2:  MACRO_helperForDifferentSizes (numberOfBytesInRawData2, options, rawData2, 0x10) break;
-        case 1:  MACRO_helperForDifferentSizes (numberOfBytesInRawData1, options, rawData1, 0x08) break;
+        case 2:  MACRO_helperForDifferentSizes (numberOfBytesInRawData2, options.options, rawData2, 0x10) break;
+        case 1:  MACRO_helperForDifferentSizes (numberOfBytesInRawData1, options.options, rawData1, 0x08) break;
         case 0:
-        default: MACRO_helperForDifferentSizes (numberOfBytesInRawData0, options, rawData0, 0x04) break;
+        default: MACRO_helperForDifferentSizes (numberOfBytesInRawData0, options.options, rawData0, 0x04) break;
       }
     }
 
@@ -409,7 +409,7 @@ vtObjectPictureGraphic_c::updateWidth(bool b_SendRequest)
   return vtObject_a->width;
 }
 
-uint8_t
+IsoAgLib::iVtObjectPictureGraphicOptions
 vtObjectPictureGraphic_c::updateOptions(bool b_SendRequest)
 {
   if (b_SendRequest)
@@ -460,7 +460,7 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
   switch (attrID)
   {
     case Width:              vtObject_a->width              = convertLittleEndianStringUi16(  pui8_attributeValue); break;
-    case Options:            vtObject_a->options            = convertLittleEndianStringUi8(   pui8_attributeValue); break;
+    case Options:            vtObject_a->options.options    = (IsoAgLib::iVtObjectPictureGraphicOptions_e)convertLittleEndianStringUi8(   pui8_attributeValue); break;
     case TransparencyColour: vtObject_a->transparencyColour = convertLittleEndianStringColour(pui8_attributeValue); break;
     /** these attributes are in parentheses in the spec, so commented out here
     case 4: vtObject_a->actualWidth), sizeof(iVtObjectPictureGraphic_s), convertLittleEndianStringUi16(pui8_attributeValue)); break;
@@ -493,8 +493,8 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
         setAttribute (Width, scaledDim, b_enableReplaceOfCmd);
     }
 
-    void vtObjectPictureGraphic_c::setOptions(uint8_t newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
-    	setAttribute ( Options, newValue & 0x7, b_enableReplaceOfCmd);
+    void vtObjectPictureGraphic_c::setOptions(IsoAgLib::iVtObjectPictureGraphicOptions newValue, bool b_updateObject, bool b_enableReplaceOfCmd) {
+    	setAttribute ( Options, newValue.options & 0x7, b_enableReplaceOfCmd);
     }
 
     void
@@ -509,7 +509,7 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
                                           uint16_t aui16_actHeight, uint16_t aui16_width) { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
     	vtObject_a->rawData0 = newValue;
         vtObject_a->numberOfBytesInRawData0 = aui32_size;
-        vtObject_a->options = ab_rle ? (vtObject_a->options |  (1<<2))  : (vtObject_a->options & ~(1<<2));
+        vtObject_a->options.bits.rawData = ab_rle ? IsoAgLib::RawData::rle : IsoAgLib::RawData::rawData ;
         if (aui16_actWidth != 0xFFFF) vtObject_a->actualWidth  = aui16_actWidth;
         if (aui16_actHeight!= 0xFFFF) vtObject_a->actualHeight = aui16_actHeight;
         if (aui16_width    != 0xFFFF) vtObject_a->width        = aui16_width;
@@ -520,7 +520,7 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
                                           uint16_t aui16_actHeight, uint16_t aui16_width) { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
     	vtObject_a->rawData1 = newValue;
         vtObject_a->numberOfBytesInRawData1 = aui32_size;
-        vtObject_a->options = ab_rle ? (vtObject_a->options |  (1<<3)) : (vtObject_a->options & ~(1<<3));
+        vtObject_a->options.bits.rawData = ab_rle ? IsoAgLib::RawData::rle : IsoAgLib::RawData::rawData ;
         if (aui16_actWidth != 0xFFFF) vtObject_a->actualWidth  = aui16_actWidth;
         if (aui16_actHeight!= 0xFFFF) vtObject_a->actualHeight = aui16_actHeight;
         if (aui16_width    != 0xFFFF) vtObject_a->width       = aui16_width;
@@ -531,7 +531,7 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
                                           uint16_t aui16_actHeight, uint16_t aui16_width) { // normally it would be enough to just use saveValueP once, because the ram-struct is then created... but anyway...
     	vtObject_a->rawData2 = newValue;
         vtObject_a->numberOfBytesInRawData2 = aui32_size;
-        vtObject_a->options = ab_rle ? (vtObject_a->options |  (1<<4)) : (vtObject_a->options & ~(1<<4));
+        vtObject_a->options.bits.rawData = ab_rle ? IsoAgLib::RawData::rle : IsoAgLib::RawData::rawData ;
         if (aui16_actWidth != 0xFFFF) vtObject_a->actualWidth  = aui16_actWidth;
         if (aui16_actHeight!= 0xFFFF) vtObject_a->actualHeight = aui16_actHeight;
         if (aui16_width    != 0xFFFF) vtObject_a->width        = aui16_width;

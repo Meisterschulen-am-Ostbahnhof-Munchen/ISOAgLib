@@ -37,7 +37,7 @@ public:
     vtObjectPictureGraphic_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  void setOptions(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setOptions(iVtObjectPictureGraphicOptions newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectPictureGraphic_c::setOptions (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
@@ -64,7 +64,7 @@ public:
     return vtObjectPictureGraphic_c::updateWidth(b_SendRequest);
   }
 
-  uint8_t updateOptions(bool b_SendRequest=false) {
+  iVtObjectPictureGraphicOptions updateOptions(bool b_SendRequest=false) {
     return vtObjectPictureGraphic_c::updateOptions(b_SendRequest);
   }
 
