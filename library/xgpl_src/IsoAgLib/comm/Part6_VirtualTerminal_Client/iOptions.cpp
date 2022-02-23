@@ -186,5 +186,55 @@ namespace IsoAgLib {
                  bits.axisOrientation = axisOrientation;
                  bits.direction       = direction;
              }
+
+	iVtObjectPictureGraphicOptions::~iVtObjectPictureGraphicOptions() = default;
+
+	iVtObjectPictureGraphicOptions::iVtObjectPictureGraphicOptions()
+    :iVtObjectPictureGraphicOptions(allDrawPicture)
+	{}
+
+	iVtObjectPictureGraphicOptions::iVtObjectPictureGraphicOptions(
+			iVtObjectPictureGraphicOptions_e options)
+    	:options(options)
+	{}
+
+	iVtObjectPictureGraphicOptions::iVtObjectPictureGraphicOptions(
+			Transparent transparent,
+			Flashing flashing,
+			RawData rawData)
+    :iVtObjectPictureGraphicOptions(allDrawPicture)
+	{
+		bits.transparent = transparent;
+		bits.flashing    = flashing;
+		bits.rawData     = rawData;
+	}
+
+	iVtObjectButtonOptions::~iVtObjectButtonOptions() = default;
+
+
+	iVtObjectButtonOptions::iVtObjectButtonOptions()
+	:iVtObjectButtonOptions(allDrawButton)
+	{}
+
+	iVtObjectButtonOptions::iVtObjectButtonOptions(
+			iVtObjectButtonOptions_e options)
+    	:options(options)
+	{}
+
+	iVtObjectButtonOptions::iVtObjectButtonOptions(Latchable latchable,
+			CurrentButtonState currentButtonState,
+			SuppressBorder suppressBorder,
+			Transparent transparent,
+			Disabled disabled,
+			NoBorder noBorder)
+	:iVtObjectButtonOptions(allDrawButton)
+	{
+		bits.currentButtonState = currentButtonState;
+		bits.suppressBorder     = suppressBorder;
+		bits.transparent        = transparent;
+		bits.disabled           = disabled;
+		bits.noBorder           = noBorder;
+	}
+
 }
 
