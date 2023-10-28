@@ -49,8 +49,11 @@ DiagnosticsServices_c::DiagnosticsServices_c( IdentItem_c& arc_identItem ) :
   mb_dm1CurrentNeedsToBeSent(false),
   marr_dm1CurrentSize(0),
   m_dm1CurrentAtLeastOneDTC(false),  
+  marr_dm1SendingBroadcast(),
   ms_dm1SendingBroadcast(marr_dm1SendingBroadcast),
+  marr_dm1SendingDestination(),
   ms_dm1SendingDestination(marr_dm1SendingDestination),
+  marr_dm2SendingDestination(),
   ms_dm2SendingDestination(marr_dm2SendingDestination),
   mt_isoRequestPgnHandler(*this),
   mt_multiSendEventHandler(*this)
